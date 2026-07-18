@@ -6,9 +6,9 @@
 - unresolvedFindings: `0`
 - unperformedChecks: `1`
 - reviewedAt: `2026-07-18`
-- verifiedSourceCommit: `ee4b92682c00cf2bb9bd3383d58a11786fbe1006`
+- verifiedSourceCommit: `ed9f1a6997149357ea329bcef6719e3476d31329`
 - canonicalDistSha256: `d84d16c571d48e597c6d2f17078f34280742e310af9118e9b9d3d184e36afc78`
-- reviewBaseCommit: `ee4b92682c00cf2bb9bd3383d58a11786fbe1006`
+- reviewBaseCommit: `ed9f1a6997149357ea329bcef6719e3476d31329`
 - environment: `macOS 26.5.1 (25F80)`
 - browser: `Google Chrome 150.0.7871.124`
 - voiceOver: `操作許可待ち（合格扱いしない）`
