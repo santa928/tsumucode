@@ -1,18 +1,18 @@
 # Accessibility Manual Review
 
-- releaseStatus: `draft`
+- releaseStatus: `approved`
 - journeyStatus: `passed`
-- voiceOverStatus: `pending`
+- voiceOverStatus: `not-required`
 - unresolvedFindings: `0`
-- unperformedChecks: `1`
+- unperformedChecks: `0`
 - reviewedAt: `2026-07-18`
-- verifiedSourceCommit: `afb63516f849c34106e571782c9644db34de591f`
+- verifiedSourceCommit: `5a8f091504f72e547e70160357ef9e4c71601d27`
 - canonicalDistSha256: `d84d16c571d48e597c6d2f17078f34280742e310af9118e9b9d3d184e36afc78`
-- reviewBaseCommit: `afb63516f849c34106e571782c9644db34de591f`
+- reviewBaseCommit: `5a8f091504f72e547e70160357ef9e4c71601d27`
 - environment: `macOS 26.5.1 (25F80)`
 - browser: `Google Chrome 150.0.7871.124`
-- voiceOver: `操作許可待ち（合格扱いしない）`
-- bindingPolicy: 自動・実機完了項目は同一source commitと`/tsumucode/` canonical distへ結合済み。VoiceOverだけ未実施
+- voiceOver: `初回Release対象外（CR-REV-003。合格・対応済みとは主張しない）`
+- bindingPolicy: 必須の自動・実機完了項目は同一source commitと`/tsumucode/` canonical distへ結合済み。VoiceOverは要件差分台帳により対象外
 
 ## 確認方法
 
@@ -34,21 +34,28 @@
 
 ## Accessibility Checklist
 
-| 確認項目             | 方法                                 | 結果 | 備考                                                                          |
-| -------------------- | ------------------------------------ | ---- | ----------------------------------------------------------------------------- |
-| WCAG A/AA axe違反    | 3 Engine、主要Route/状態             | 合格 | 違反0件                                                                       |
-| Tab正順              | Keyboard-only E2E                    | 合格 | 判定、見直し、復帰まで操作                                                    |
-| Shift+Tab逆順        | Keyboard-only E2E                    | 合格 | Homeの教材CTAへ逆順到達しEnterで遷移                                          |
-| CodeMirrorからの脱出 | Keyboard-only E2E                    | 合格 | `Escape`後の`Tab`でEditor外へ移動                                             |
-| Focus indicator      | Computed Style                       | 合格 | `outline-style != none`かつ幅0px超                                            |
-| Focus obscured       | Geometry + hit test                  | 合格 | 対象全体がViewport内で中心点が対象にhit                                       |
-| Target size          | Runtime geometry                     | 合格 | 表示中のnative操作要素が24 CSS px以上                                         |
-| 4 Viewports          | Runtime geometry                     | 合格 | 1440x900、1280x720、768x1024、390x844で重なり/横はみ出し0件                   |
-| 200% Zoom            | Chrome実機 + 640 CSS px E2E          | 合格 | 主要見出し、CTA、進捗、端末データ操作を維持                                   |
-| 400% Reflow          | Chrome実機 + 320 CSS px E2E          | 合格 | アクセシビリティツリーを維持し横スクロール0                                   |
-| `aria-live`          | Role/status E2E                      | 合格 | Export完了、Import差分未適用の文言更新を確認                                  |
-| Reduced Motion       | `prefers-reduced-motion: reduce` E2E | 合格 | animation終了待ちなしでCompletion最終状態を表示                               |
-| VoiceOver読上げ      | macOS VoiceOver                      | 保留 | VoiceOverの一時的なオン/オフ操作許可待ち。未実施のためTask 19を完了扱いしない |
+| 確認項目             | 方法                                 | 結果   | 備考                                                                          |
+| -------------------- | ------------------------------------ | ------ | ----------------------------------------------------------------------------- |
+| WCAG A/AA axe違反    | 3 Engine、主要Route/状態             | 合格   | 違反0件                                                                       |
+| Tab正順              | Keyboard-only E2E                    | 合格   | 判定、見直し、復帰まで操作                                                    |
+| Shift+Tab逆順        | Keyboard-only E2E                    | 合格   | Homeの教材CTAへ逆順到達しEnterで遷移                                          |
+| CodeMirrorからの脱出 | Keyboard-only E2E                    | 合格   | `Escape`後の`Tab`でEditor外へ移動                                             |
+| Focus indicator      | Computed Style                       | 合格   | `outline-style != none`かつ幅0px超                                            |
+| Focus obscured       | Geometry + hit test                  | 合格   | 対象全体がViewport内で中心点が対象にhit                                       |
+| Target size          | Runtime geometry                     | 合格   | 表示中のnative操作要素が24 CSS px以上                                         |
+| 4 Viewports          | Runtime geometry                     | 合格   | 1440x900、1280x720、768x1024、390x844で重なり/横はみ出し0件                   |
+| 200% Zoom            | Chrome実機 + 640 CSS px E2E          | 合格   | 主要見出し、CTA、進捗、端末データ操作を維持                                   |
+| 400% Reflow          | Chrome実機 + 320 CSS px E2E          | 合格   | アクセシビリティツリーを維持し横スクロール0                                   |
+| `aria-live`          | Role/status E2E                      | 合格   | Export完了、Import差分未適用の文言更新を確認                                  |
+| Reduced Motion       | `prefers-reduced-motion: reduce` E2E | 合格   | animation終了待ちなしでCompletion最終状態を表示                               |
+| VoiceOver読上げ      | —                                    | 対象外 | `CR-REV-003`により初回Releaseの必須Gateから除外。合格・対応済みとは主張しない |
+
+## VoiceOverの対象外記録
+
+- 理由: 本人・身内向けの初回Releaseでは、VoiceOver手動実機確認までを必須にしないと利用者が決定した。
+- 維持する代替Gate: WCAG A/AA axe違反0、Keyboard-only全journey、意味構造、accessible name、Focus、`aria-live`、CodeMirror脱出、Chromium／Firefox／WebKit。
+- 影響: VoiceOver固有の読み上げ順・発音・Rotor操作は未検証であり、保証しない。
+- 復帰条件: 対象者拡大、スクリーンリーダー利用者の参加、関連不具合、または利用者による再必須化。
 
 ## 検出と修正
 
@@ -58,4 +65,4 @@
 4. 編集後の旧い「保存済み」表示を新しい保存完了と誤認できたため、対象File全文とSlide IDがIndexedDBに一致するまで待つようにした。
 
 - 未修正のアクセシビリティ指摘: `0件`
-- 未実施: `VoiceOver読上げ確認 1件`
+- 未実施の必須確認: `0件`

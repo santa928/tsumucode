@@ -1,6 +1,6 @@
 schemaVersion: 1
 releaseStatus: approved
-verifiedSourceCommit: afb63516f849c34106e571782c9644db34de591f
+verifiedSourceCommit: 5a8f091504f72e547e70160357ef9e4c71601d27
 canonicalDistSha256: d84d16c571d48e597c6d2f17078f34280742e310af9118e9b9d3d184e36afc78
 lessons:
   - lessonId: html-css-ch00-l01
