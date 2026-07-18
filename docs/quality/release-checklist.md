@@ -9,7 +9,7 @@
 - pendingItems: `4`
 - failedItems: `0`
 - reviewedAt: `2026-07-18`
-- verifiedSourceCommit: `f3d2023e534ac207c5fb25908aac09b28021612e`
+- verifiedSourceCommit: `afb63516f849c34106e571782c9644db34de591f`
 - canonicalDistSha256: `d84d16c571d48e597c6d2f17078f34280742e310af9118e9b9d3d184e36afc78`
 - candidateBaseCommit: `clean-root (parentなし)`
 - bindingPolicy: `自動Gateと完了済み品質記録を同じ最終source commitと/tsumucode/ canonical distへ結合済み`

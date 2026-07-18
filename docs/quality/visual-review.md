@@ -5,9 +5,9 @@
 - unresolvedFindings: `0`
 - finalArtifactReviewed: `true`
 - reviewedAt: `2026-07-18`
-- verifiedSourceCommit: `f3d2023e534ac207c5fb25908aac09b28021612e`
+- verifiedSourceCommit: `afb63516f849c34106e571782c9644db34de591f`
 - canonicalDistSha256: `d84d16c571d48e597c6d2f17078f34280742e310af9118e9b9d3d184e36afc78`
-- reviewBaseCommit: `f3d2023e534ac207c5fb25908aac09b28021612e`
+- reviewBaseCommit: `afb63516f849c34106e571782c9644db34de591f`
 - baselineSet: `tests/e2e/visual-regression.spec.ts-snapshots`
 - verification: Chromiumで20件を差分なしで再実行し、20枚すべてを原寸目視した
 - bindingPolicy: 最終Noticeを含む同一source commitと`/tsumucode/` canonical distへ結合済み
