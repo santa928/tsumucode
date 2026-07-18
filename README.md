@@ -109,7 +109,7 @@ Production Build後、Chromium/Firefox/WebKitのE2E、固定10演習の実ブラ
 
 主な性能予算はLCP 2,500 ms以下、CLS 0.1以下、主要操作200 ms以下、Preview p95 500 ms以下、判定p95 300 ms以下、下書き永続化500 ms以下です。Home初期JavaScriptはgzip 256,000 bytes以下とし、EditorとRunnerをHomeやSlideで読み込みません。予算の完全な固定値は`content/html-css/performance.yaml`と独立固定テストで管理します。
 
-アクセシビリティは、意味のあるLandmarkと見出し、本文スキップ、Keyboard操作、Focus管理、CodeMirrorからの脱出、Reduced Motion、320 CSS px reflow、200%/400% Zoom、WCAG A/AAのaxe検査を対象にします。自動検査に加え、KeyboardとVoiceOverの手動結果を`docs/quality/a11y-manual.md`へ記録します。
+アクセシビリティは、意味のあるLandmarkと見出し、本文スキップ、Keyboard操作、Focus管理、CodeMirrorからの脱出、Reduced Motion、320 CSS px reflow、200%/400% Zoom、WCAG A/AAのaxe検査を対象にします。自動検査に加え、Keyboard／Zoom／Reflowの実機結果を`docs/quality/a11y-manual.md`へ記録します。VoiceOverの手動実機確認は初回Release対象外で、対応済みとは主張しません。
 
 ## GitHub Pages相当のSubpath確認
 

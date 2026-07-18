@@ -146,7 +146,7 @@ export function validateManualQualityRecord(
       return;
     case 'accessibilityManual':
       requireMetadata(recordName, metadata, 'journeyStatus', 'passed');
-      requireMetadata(recordName, metadata, 'voiceOverStatus', 'passed');
+      requireMetadata(recordName, metadata, 'voiceOverStatus', 'not-required');
       requireCount(recordName, metadata, 'unresolvedFindings', (value) => value === 0, '0');
       requireCount(recordName, metadata, 'unperformedChecks', (value) => value === 0, '0');
       return;

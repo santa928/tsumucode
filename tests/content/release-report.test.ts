@@ -140,7 +140,7 @@ describe('manual release approval', () => {
     }).not.toThrow();
   });
 
-  it('VoiceOver未実施または最終Artifact未確認の手動記録を拒否する', () => {
+  it('VoiceOverが初回Release対象外になっていない手動記録を拒否する', () => {
     const accessibility = `# Accessibility Manual Review
 
 - releaseStatus: \`approved\`
@@ -159,18 +159,18 @@ describe('manual release approval', () => {
 
     expect(() => {
       validateManualQualityRecord('accessibilityManual', accessibility);
-    }).toThrow(/voiceOverStatus.*passed/iu);
+    }).toThrow(/voiceOverStatus.*not-required/iu);
     expect(() => {
       validateManualQualityRecord('visualReview', visual);
     }).toThrow(/finalArtifactReviewed.*true/iu);
   });
 
-  it('VoiceOverを含む手動Accessibility条件をすべて満たす記録を受理する', () => {
+  it('VoiceOver対象外と必須手動Accessibility条件を満たす記録を受理する', () => {
     const accessibility = `# Accessibility Manual Review
 
 - releaseStatus: \`approved\`
 - journeyStatus: \`passed\`
-- voiceOverStatus: \`passed\`
+- voiceOverStatus: \`not-required\`
 - unresolvedFindings: \`0\`
 - unperformedChecks: \`0\`
 `;
