@@ -112,10 +112,10 @@ jobs:
           ':(exclude)content/html-css/release-history.yaml'
       - name: Content provenance
         run: ./scripts/docker-compose.sh run --rm app npm run content:provenance
-      - name: Independent lesson review
-        run: ./scripts/docker-compose.sh run --rm app npm run content:review
       - name: Content compile
         run: ./scripts/docker-compose.sh run --rm app npm run content:compile
+      - name: Independent lesson review
+        run: ./scripts/docker-compose.sh run --rm app npm run content:review
       - name: Release continuity for quality-only change
         if: needs.resolve.outputs.release_mode == 'quality-only'
         run: ./scripts/docker-compose.sh run --rm app npm run release:continuity -- --quality-only

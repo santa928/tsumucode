@@ -95,6 +95,15 @@ describe('TsumuCode Pages workflow', () => {
     expect(source).not.toMatch(/(^|\s)docker compose(?:\s|$)/u);
   });
 
+  it('fresh checkoutでは教材Reviewより先にCourse ManifestをCompileする', () => {
+    const { source } = workflow();
+    const compileIndex = source.indexOf('- name: Content compile');
+    const reviewIndex = source.indexOf('- name: Independent lesson review');
+
+    expect(compileIndex).toBeGreaterThan(0);
+    expect(reviewIndex).toBeGreaterThan(compileIndex);
+  });
+
   it('upload-artifactの生digestを台帳用sha256 prefix付き正規形へ変換する', () => {
     const { source } = workflow();
 
