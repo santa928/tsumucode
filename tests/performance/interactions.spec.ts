@@ -31,7 +31,7 @@ async function measureInteraction(
 ): Promise<InteractionMeasurement> {
   const startedAt = await page.evaluate(() => performance.now());
   await action();
-  await expect(ready).toBeVisible();
+  await ready.waitFor({ state: 'visible' });
   await page.evaluate(
     () =>
       new Promise<void>((resolve) => {
