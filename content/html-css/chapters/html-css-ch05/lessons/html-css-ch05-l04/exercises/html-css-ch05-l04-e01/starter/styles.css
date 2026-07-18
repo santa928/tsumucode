@@ -1,0 +1,11 @@
+body {
+  margin: 0;
+  padding: 32px;
+  background: #f5efe4;
+  color: #24323d;
+  font-family: system-ui, sans-serif;
+}
+nav a {
+  color: #24323d;
+  margin-right: 8px;
+}

@@ -1,0 +1,8 @@
+id: html-css-ch13
+sequence: 13
+title: STACK DAY Capstone
+goal: Briefと評価基準から独力でResponsive Landing Pageを設計・実装・検証する
+estimatedMinutes: 120
+kind: capstone
+lessonSources:
+  - lessons/html-css-ch13-l01/lesson.yaml

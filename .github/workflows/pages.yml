@@ -1,0 +1,318 @@
+name: TsumuCode Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: 保護Environment承認後にmainの検証済みArtifactを公開する
+        type: boolean
+        required: true
+        default: false
+      release_mode:
+        description: 新しい候補か公開済みReleaseへのrollbackか
+        type: choice
+        options: [candidate, rollback]
+        required: true
+        default: candidate
+      source_sha:
+        description: candidate承認または公開済みReleaseに登録された40文字SHA
+        type: string
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  resolve:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    outputs:
+      checkout_sha: ${{ steps.target.outputs.checkout_sha || steps.default_target.outputs.checkout_sha }}
+      verified_source_commit: ${{ steps.target.outputs.verified_source_commit || steps.default_target.outputs.verified_source_commit }}
+      release_mode: ${{ steps.target.outputs.release_mode || 'quality-only' }}
+      revision: ${{ steps.target.outputs.revision || '' }}
+      expected_dist_hash: ${{ steps.target.outputs.canonical_dist_sha256 || '' }}
+      expected_course_hash: ${{ steps.target.outputs.course_manifest_sha256 || '' }}
+      expected_provenance_hash: ${{ steps.target.outputs.public_provenance_sha256 || '' }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Reject deploy dispatch outside main
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref != 'refs/heads/main'
+        run: exit 1
+      - name: Use event SHA for quality-only runs
+        if: github.event_name != 'workflow_dispatch' || inputs.deploy != true
+        id: default_target
+        env:
+          EVENT_SHA: ${{ github.sha }}
+        run: |
+          echo "checkout_sha=$EVENT_SHA" >> "$GITHUB_OUTPUT"
+          echo "verified_source_commit=$EVENT_SHA" >> "$GITHUB_OUTPUT"
+      - name: Build release verifier
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'
+        run: ./scripts/docker-compose.sh build app
+      - name: Resolve approved candidate or registered rollback
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'
+        env:
+          RELEASE_MODE: ${{ inputs.release_mode }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          WORKFLOW_HEAD_SHA: ${{ github.sha }}
+        run: >-
+          ./scripts/docker-compose.sh run --rm app npm run release:target --
+          --mode "$RELEASE_MODE"
+          --source-sha "$SOURCE_SHA"
+          --workflow-head-sha "$WORKFLOW_HEAD_SHA"
+          --github-output /workspace/.release-target
+      - name: Export resolved target
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'
+        id: target
+        run: sed -n '1,30p' .release-target >> "$GITHUB_OUTPUT"
+
+  quality:
+    needs: resolve
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pages: read
+    outputs:
+      artifact_digest: ${{ steps.artifact_hash.outputs.artifact_digest }}
+      course_hash: ${{ steps.artifact_hash.outputs.course_hash }}
+      provenance_hash: ${{ steps.artifact_hash.outputs.provenance_hash }}
+      verified_source_commit: ${{ needs.resolve.outputs.verified_source_commit }}
+      quality_evidence_artifact_id: ${{ steps.quality_evidence.outputs['artifact-id'] }}
+      quality_evidence_digest: ${{ steps.quality_evidence.outputs['artifact-digest'] }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ needs.resolve.outputs.checkout_sha }}
+      - name: Build Docker image
+        run: ./scripts/docker-compose.sh build app
+      - name: Confirm candidate Product tree is unchanged
+        if: needs.resolve.outputs.release_mode == 'candidate'
+        env:
+          VERIFIED_SOURCE_COMMIT: ${{ needs.resolve.outputs.verified_source_commit }}
+        run: >-
+          git diff --exit-code "$VERIFIED_SOURCE_COMMIT" HEAD -- .
+          ':(exclude)docs/superpowers/**'
+          ':(exclude)docs/quality/**'
+          ':(exclude)content/html-css/release-history.yaml'
+      - name: Content provenance
+        run: ./scripts/docker-compose.sh run --rm app npm run content:provenance
+      - name: Independent lesson review
+        run: ./scripts/docker-compose.sh run --rm app npm run content:review
+      - name: Content compile
+        run: ./scripts/docker-compose.sh run --rm app npm run content:compile
+      - name: Release continuity for quality-only change
+        if: needs.resolve.outputs.release_mode == 'quality-only'
+        run: ./scripts/docker-compose.sh run --rm app npm run release:continuity -- --quality-only
+      - name: Release continuity for deploy candidate
+        if: needs.resolve.outputs.release_mode == 'candidate'
+        run: ./scripts/docker-compose.sh run --rm app npm run release:continuity
+      - name: Confirm rollback checkout
+        if: needs.resolve.outputs.release_mode == 'rollback'
+        env:
+          VERIFIED_SOURCE_COMMIT: ${{ needs.resolve.outputs.verified_source_commit }}
+        run: test "$(git rev-parse HEAD)" = "$VERIFIED_SOURCE_COMMIT"
+      - name: Lint
+        run: ./scripts/docker-compose.sh run --rm app npm run lint
+      - name: Type check
+        run: ./scripts/docker-compose.sh run --rm app npm run typecheck
+      - name: Unit and content tests
+        run: ./scripts/docker-compose.sh run --rm app npm run test:run
+      - name: Production build
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+        run: ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run build
+      - name: Browser matrix
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+        run: ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run test:e2e
+      - name: Performance budgets
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+        run: ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run test:performance
+      - name: Lighthouse budgets
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+        run: ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run test:lighthouse
+      - name: Static artifact gate
+        run: ./scripts/docker-compose.sh run --rm app npm run release:check
+      - name: Record artifact hashes
+        run: >-
+          ./scripts/docker-compose.sh run --rm app npm run release:report --
+          --hash-only
+          --github-output /workspace/.release-hashes
+      - name: Export artifact hash outputs
+        id: artifact_hash
+        run: sed -n '1,20p' .release-hashes >> "$GITHUB_OUTPUT"
+      - name: Bind candidate Artifact to approval
+        if: needs.resolve.outputs.release_mode == 'candidate'
+        run: >-
+          ./scripts/docker-compose.sh run --rm app npm run release:approval --
+          --artifact
+          --actual-output /workspace/.release-hashes
+      - name: Bind rollback Artifact to release ledger
+        if: needs.resolve.outputs.release_mode == 'rollback'
+        env:
+          EXPECTED_DIST_HASH: ${{ needs.resolve.outputs.expected_dist_hash }}
+          EXPECTED_COURSE_HASH: ${{ needs.resolve.outputs.expected_course_hash }}
+          EXPECTED_PROVENANCE_HASH: ${{ needs.resolve.outputs.expected_provenance_hash }}
+          ACTUAL_DIST_HASH: ${{ steps.artifact_hash.outputs.artifact_digest }}
+          ACTUAL_COURSE_HASH: ${{ steps.artifact_hash.outputs.course_hash }}
+          ACTUAL_PROVENANCE_HASH: ${{ steps.artifact_hash.outputs.provenance_hash }}
+        run: |
+          test "$ACTUAL_DIST_HASH" = "$EXPECTED_DIST_HASH"
+          test "$ACTUAL_COURSE_HASH" = "$EXPECTED_COURSE_HASH"
+          test "$ACTUAL_PROVENANCE_HASH" = "$EXPECTED_PROVENANCE_HASH"
+      - name: Write passed quality summary
+        env:
+          VERIFIED_SOURCE_COMMIT: ${{ needs.resolve.outputs.verified_source_commit }}
+        run: >-
+          ./scripts/docker-compose.sh run --rm app npm run release:report --
+          --quality-summary
+          --source-sha "$VERIFIED_SOURCE_COMMIT"
+          --output /workspace/release-quality.json
+      - name: Verify required quality evidence
+        run: |
+          test -s release-quality.json
+          test -n "$(find playwright-report -type f -print -quit)"
+          test -n "$(find playwright-performance-report -type f -print -quit)"
+          test -n "$(find test-results -type f -print -quit)"
+          test -n "$(find lhci-report -type f -print -quit)"
+      - name: Upload quality evidence
+        id: quality_evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: quality-evidence-${{ needs.resolve.outputs.verified_source_commit }}
+          path: |
+            release-quality.json
+            playwright-report
+            playwright-performance-report
+            test-results
+            lhci-report
+          if-no-files-found: error
+          retention-days: 90
+      - name: Configure Pages metadata
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
+      - name: Upload reviewed Pages artifact
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
+        with:
+          path: dist
+
+  deploy:
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-24.04
+    needs: [resolve, quality]
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Deploy reviewed artifact
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128
+
+  report:
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'
+    needs: [resolve, quality, deploy]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    outputs:
+      report_artifact_id: ${{ steps.release_report.outputs['artifact-id'] }}
+      report_artifact_digest: ${{ steps.release_report.outputs['artifact-digest'] }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+      - name: Build report tool
+        run: ./scripts/docker-compose.sh build app
+      - name: Write immutable release report
+        env:
+          VERIFIED_SOURCE_COMMIT: ${{ needs.resolve.outputs.verified_source_commit }}
+          WORKFLOW_HEAD_SHA: ${{ github.sha }}
+          RELEASE_MODE: ${{ needs.resolve.outputs.release_mode }}
+          ARTIFACT_DIGEST: ${{ needs.quality.outputs.artifact_digest }}
+          COURSE_HASH: ${{ needs.quality.outputs.course_hash }}
+          PROVENANCE_HASH: ${{ needs.quality.outputs.provenance_hash }}
+          QUALITY_ARTIFACT_ID: ${{ needs.quality.outputs.quality_evidence_artifact_id }}
+          QUALITY_ARTIFACT_DIGEST: sha256:${{ needs.quality.outputs.quality_evidence_digest }}
+          WORKFLOW_RUN_ID: ${{ github.run_id }}
+          WORKFLOW_RUN_ATTEMPT: ${{ github.run_attempt }}
+          PAGE_URL: ${{ needs.deploy.outputs.page_url }}
+        run: >-
+          ./scripts/docker-compose.sh run --rm app npm run release:report --
+          --source-sha "$VERIFIED_SOURCE_COMMIT"
+          --workflow-head-sha "$WORKFLOW_HEAD_SHA"
+          --release-mode "$RELEASE_MODE"
+          --artifact-digest "$ARTIFACT_DIGEST"
+          --course-hash "$COURSE_HASH"
+          --provenance-hash "$PROVENANCE_HASH"
+          --quality-artifact-id "$QUALITY_ARTIFACT_ID"
+          --quality-artifact-digest "$QUALITY_ARTIFACT_DIGEST"
+          --workflow-run-id "$WORKFLOW_RUN_ID"
+          --workflow-run-attempt "$WORKFLOW_RUN_ATTEMPT"
+          --page-url "$PAGE_URL"
+          --output /workspace/release-report.md
+      - name: Upload release report artifact
+        id: release_report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: release-report-${{ needs.resolve.outputs.verified_source_commit }}
+          path: release-report.md
+          if-no-files-found: error
+          retention-days: 90
+
+  record_release:
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && inputs.release_mode == 'candidate' && github.ref == 'refs/heads/main'
+    needs: [resolve, quality, deploy, report]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Create annotated release tag without checkout
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: tsumucode-release-${{ needs.resolve.outputs.revision }}
+          TARGET_SHA: ${{ needs.resolve.outputs.verified_source_commit }}
+          WORKFLOW_HEAD_SHA: ${{ github.sha }}
+          DIST_DIGEST: ${{ needs.quality.outputs.artifact_digest }}
+          COURSE_DIGEST: ${{ needs.quality.outputs.course_hash }}
+          PROVENANCE_DIGEST: ${{ needs.quality.outputs.provenance_hash }}
+          QUALITY_ARTIFACT_ID: ${{ needs.quality.outputs.quality_evidence_artifact_id }}
+          QUALITY_ARTIFACT_DIGEST: sha256:${{ needs.quality.outputs.quality_evidence_digest }}
+          REPORT_ARTIFACT_ID: ${{ needs.report.outputs.report_artifact_id }}
+          REPORT_ARTIFACT_DIGEST: sha256:${{ needs.report.outputs.report_artifact_digest }}
+          WORKFLOW_RUN: ${{ github.run_id }}-${{ github.run_attempt }}
+          PAGE_URL: ${{ needs.deploy.outputs.page_url }}
+        run: |
+          EXPECTED_MESSAGE="source=$TARGET_SHA head=$WORKFLOW_HEAD_SHA dist=$DIST_DIGEST course=$COURSE_DIGEST provenance=$PROVENANCE_DIGEST quality_id=$QUALITY_ARTIFACT_ID quality_digest=$QUALITY_ARTIFACT_DIGEST report_id=$REPORT_ARTIFACT_ID report_digest=$REPORT_ARTIFACT_DIGEST workflow=$WORKFLOW_RUN page_url=$PAGE_URL"
+          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG_NAME" >/dev/null 2>&1; then
+            echo "::error::Release tag $TAG_NAME は既に存在するため、新しいRun evidenceで成功扱いにできません"
+            echo "::error::元RunのRelease Reportからpromotionしてください"
+            exit 1
+          fi
+          jq -n --arg tag "$TAG_NAME" --arg message "$EXPECTED_MESSAGE" --arg object "$TARGET_SHA" '{tag:$tag,message:$message,object:$object,type:"commit"}' > tag-request.json
+          gh api --method POST "repos/$GITHUB_REPOSITORY/git/tags" --input tag-request.json > tag-response.json
+          jq -n --arg ref "refs/tags/$TAG_NAME" --arg sha "$(jq -r .sha tag-response.json)" '{ref:$ref,sha:$sha}' > ref-request.json
+          gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" --input ref-request.json

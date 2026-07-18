@@ -1,0 +1,152 @@
+id: html-css-ch07-l01-e01
+kind: standard
+workspaceId: html-css-ch07-l01-e01
+countsTowardStandardExerciseTotal: true
+title: 5つの観点でProfile Cardを完成する
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch07-l01-e01-r01
+    label: Profile CardをArticleとして表す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-profile-card]' }
+    assertion:
+      kind: role
+      operator: equals
+      expected: article
+    feedback:
+      target: Profile CardのSemantic Role
+      expected: article
+      nextAction: 独立して読めるProfile Cardをarticle要素または同等のRoleで表します。
+    hintId: html-css-ch07-l01-e01-h01
+    relatedSlideId: html-css-ch07-l01-r01
+  - id: html-css-ch07-l01-e01-r02
+    label: Profile Imageへ代替Textを付ける
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'img[data-tsumucode-asset-id="avatar-integration-card"]' }
+    assertion:
+      kind: accessible-name
+      operator: present
+    feedback:
+      target: Profile ImageのAccessible Name
+      expected: 空でない画像の説明
+      nextAction: altへ、画像の内容や役割が分かる短い説明を書きます。
+    hintId: html-css-ch07-l01-e01-h01
+    relatedSlideId: html-css-ch07-l01-r01
+  - id: html-css-ch07-l01-e01-r03
+    label: CardをContainer右端へ収める
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-profile-shell]' }
+    assertion:
+      kind: overflow-x
+      operator: equals
+      expected: false
+    feedback:
+      target: Profile ContainerのHorizontal Overflow
+      expected: 'false'
+      nextAction: Cardをborder-boxにし、widthまたはmax-widthをContainer以内へ収めます。
+    hintId: html-css-ch07-l01-e01-h02
+    relatedSlideId: html-css-ch07-l01-r01
+  - id: html-css-ch07-l01-e01-r04
+    label: 自己紹介のLine Heightを24pxにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-bio]' }
+    assertion:
+      kind: computed-style
+      property: line-height
+      operator: equals
+      expected: 24
+      tolerance: 0.5
+    feedback:
+      target: 自己紹介のComputed Line Height
+      expected: 24px前後
+      nextAction: 16pxの本文へline-height 1.5を指定します。
+    hintId: html-css-ch07-l01-e01-h02
+    relatedSlideId: html-css-ch07-l01-r01
+  - id: html-css-ch07-l01-e01-r05
+    label: CardのText Contrastを4.5対1以上にする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-profile-card]' }
+    assertion:
+      kind: contrast
+      minimum: 4.5
+    feedback:
+      target: Profile CardのTextとBackground
+      expected: Contrast Ratio 4.5対1以上
+      nextAction: CardのText ColorとBackground Colorの明るさの差を広げます。
+    hintId: html-css-ch07-l01-e01-h03
+    relatedSlideId: html-css-ch07-l01-r01
+hints:
+  - id: html-css-ch07-l01-e01-h01
+    level: 1
+    title: StructureとImageから確認する
+    text: Profile CardのRoleと、画像のaltが空でないかを確認します。
+    relatedSlideId: html-css-ch07-l01-r01
+  - id: html-css-ch07-l01-e01-h02
+    level: 2
+    title: 実寸と文字を確認する
+    text: ContainerのOverflowと、自己紹介のComputed Line Heightを確認します。
+    relatedSlideId: html-css-ch07-l01-r01
+  - id: html-css-ch07-l01-e01-h03
+    level: 3
+    title: 5条件を順に仕上げる
+    text: article、alt、border-box、line-height 1.5、十分に暗いText Colorの順で見直します。
+    relatedSlideId: html-css-ch07-l01-r01
+relatedSlideIds:
+  - html-css-ch07-l01-r01
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets:
+  - id: avatar-integration-card
+    source: assets/profile-avatar.svg
+    mediaType: image
+    alt: Code Cardを持つTsumuCode学習プロフィールのAvatar
+    provenanceId: ch07-profile-avatar-integration-original
+fixtures:
+  - id: html-css-ch07-l01-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch07-l01-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch07-l01-e01-r03]

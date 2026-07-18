@@ -1,0 +1,54 @@
+id: fixture-e01
+kind: standard
+workspaceId: fixture-e01
+countsTowardStandardExerciseTotal: true
+title: main要素を置く
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: fixture-main-exists
+    label: main要素がある
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop]
+    target: { kind: selector, selector: main }
+    assertion: { kind: exists }
+    feedback:
+      target: ページの中心内容
+      expected: main要素が1つある
+      nextAction: body要素の中へmain要素を置きます。
+    hintId: fixture-h01
+    relatedSlideId: fixture-s01
+hints:
+  - id: fixture-h01
+    level: 1
+    title: 中心内容を見る
+    text: Previewで中心にしたい内容を探します。
+    relatedSlideId: fixture-s01
+  - id: fixture-h02
+    level: 2
+    title: bodyの内側を見る
+    text: body要素の開始Tagと終了Tagの間を確認します。
+    relatedSlideId: fixture-s02
+  - id: fixture-h03
+    level: 3
+    title: mainの形を思い出す
+    text: mainの開始Tag、内容、終了Tagの順に書きます。
+    relatedSlideId: fixture-s03
+relatedSlideIds: [fixture-s01, fixture-s02, fixture-s03]
+previewViewports:
+  - { id: desktop, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: fixture-pass
+    expectedStatus: pass
+    files:
+      - { path: index.html, language: html, source: fixtures/pass/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/pass/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

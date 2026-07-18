@@ -1,0 +1,18 @@
+id: html-css-ch04-l04
+kind: standard
+title: UnitとComputed Valueを読む
+goal: remとpxの基準を区別し、Browserが計算したpx値を使って結果を確認できる
+estimatedMinutes: 12
+prerequisiteLessonIds: [html-css-ch04-l03]
+slideSources:
+  - slides/s01-length-units.md
+  - slides/s02-read-computed-values.md
+exerciseSources:
+  - exercises/html-css-ch04-l04-e01/exercise.yaml
+reflection: 書いたUnitとBrowserが最終的に使うComputed Valueは同じ表記とは限らない
+glossaryRefs: [css-unit, pixel, rem, computed-value]
+nextLessonId: html-css-ch05-l01
+completion:
+  kind: standard
+  finalSlideId: html-css-ch04-l04-s02
+  requiredExerciseIds: [html-css-ch04-l04-e01]

@@ -1,0 +1,39 @@
+id: html-css-ch12-l04
+kind: guided-project
+title: WorksとContactをResponsiveにする
+goal: Works Layout、Contact Link、画像境界、390pxと1280pxの収まりを仕上げる
+estimatedMinutes: 16
+prerequisiteLessonIds: [html-css-ch12-l03]
+slideSources:
+  - slides/g01-project-step.md
+exerciseSources:
+  - exercises/html-css-ch12-l04-e01/exercise.yaml
+reflection: Layout手法よりも内容の関係と全Viewportでの収まりを優先する
+glossaryRefs: [works-grid, contact-link, responsive-layout, horizontal-overflow]
+nextLessonId: html-css-ch12-l05
+project:
+  id: html-css-profile-project
+  briefSource: brief.md
+  guideSources:
+    - guide-01-works-layout.md
+    - guide-02-contact-responsive.md
+  checklist:
+    - id: profile-works-layout
+      label: WorksをGridまたはFlexで並べた
+      required: true
+      ruleIds:
+        - profile-works-layout-method
+    - id: profile-contact-responsive
+      label: Contact、画像境界、2 Viewportの収まりを確認した
+      required: true
+      ruleIds:
+        - html-css-ch12-l04-e01-r03
+        - html-css-ch12-l04-e01-r04
+        - html-css-ch12-l04-e01-r05
+completion:
+  kind: guided-project
+  requiredChecklistItemIds:
+    - profile-works-layout
+    - profile-contact-responsive
+  requiredExerciseIds:
+    - html-css-ch12-l04-e01

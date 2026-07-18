@@ -1,0 +1,18 @@
+id: html-css-ch06-l02
+kind: standard
+title: 色とコントラストを設計する
+goal: 前景色と背景色の組み合わせをContrast Ratioと状態表現から判断できる
+estimatedMinutes: 12
+prerequisiteLessonIds: [html-css-ch06-l01]
+slideSources:
+  - slides/s01-color-formats.md
+  - slides/s02-contrast.md
+exerciseSources:
+  - exercises/html-css-ch06-l02-e01/exercise.yaml
+reflection: 色の値ではなく前景と背景の組み合わせ、文字情報の有無を確認する
+glossaryRefs: [color, contrast-ratio, foreground, background]
+nextLessonId: html-css-ch06-l03
+completion:
+  kind: standard
+  finalSlideId: html-css-ch06-l02-s02
+  requiredExerciseIds: [html-css-ch06-l02-e01]

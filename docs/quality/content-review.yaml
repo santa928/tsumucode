@@ -1,0 +1,566 @@
+schemaVersion: 1
+releaseStatus: approved
+verifiedSourceCommit: ee4b92682c00cf2bb9bd3383d58a11786fbe1006
+canonicalDistSha256: d84d16c571d48e597c6d2f17078f34280742e310af9118e9b9d3d184e36afc78
+lessons:
+  - lessonId: html-css-ch00-l01
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: b94c4206e3d972c5b4d63d2494233f150b119f368d06c50b674ca88761971c5a
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Webページを作る3つの役割」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch00-l02
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 367a83fceeba85a0a1f50d2b0485db79146ced927fd94dea3c31291a264b5d8f
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「編集してPreviewで確かめる」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch01-l01
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: b9e9c1043aff374b8073d2be26cabce143727deb8902cf19bc5343f911567c68
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Elementを1つ書こう」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch01-l02
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 6396a8f6b0507fa380c5464faa6cd18e74704cbf2939a8e266ae66cb501d5325
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Elementを入れ子にする」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch01-l03
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: ef4c087c0e2779a9e438bfc5b28cf92747ffb4d3af21efc39da22a98fbbd49f4
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Attributeで追加情報を伝える」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch02-l01
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 5383b7c97f6c540adc085b7f2a45877013e1ce6a0ca518166690085d24437128
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「見出しで文章の骨組みを作る」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch02-l02
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 2926f1b73323506366a47be79d7d6c4fa604b8da2e4eab1389c65e257aef97eb
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「項目と手順をListにする」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch02-l03
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: e0e6dbf74677ff86031087a62bad18a8108ffe01863d82214e6deb8ca3425b8d
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Landmarkでページの領域を伝える」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch02-l04
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: ab0835c8e5fdcf3f0b5470397f7efe5cdaeb20ec8ace15e2b3076d4c0e8bb0f4
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「文の中の重要さと強調を表す」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch03-l01
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: e844680910ee2a15a0f194d3129bca9893a59b832b6ff393cdcffedcff86085d
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Linkで行き先を結ぶ」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch03-l02
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: a190cac6f2fdaaa831e2d9a7ba52750e29b0c9f65a78395c35484b0c7caf5909
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「画像の内容を言葉でも伝える」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch03-l03
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: a9748e0b90f422a71fba097c20e7e90e9bd6e395f618ac8913b54e38956948e1
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Label付きForm Controlを作る」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch03-l04
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 1037a2557aabd20b9687b76e34b61841fb1f4d1501621460c1b0447d51a589d3
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「安全なContact Cardへ統合する」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch04-l01
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 49d62522357233f16a078bc418e99e477b2ee73caf7d8c88657aa757cf508513
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「CSS RuleとSelectorを読む」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch04-l02
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 9483da4d67cd4135f47a449424b5ac51536b409a421a4f2fb75a5aa3967f0ce3
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「StylesheetとDeclarationを接続する」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch04-l03
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 376e081be10de7a923914ce95802a647285bb87bd91ff889eef42b8532898353
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Cascadeが選ぶ値を予測する」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch04-l04
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: c792e316fc630af113a2c07ec8fa4ceb415cdc5a11bf0aa3fd78aecc6b6df4ab
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「UnitとComputed Valueを読む」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch05-l01
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 102a4f2c474691bec214028d709df09d1f0a867e1dcf7845180a1e4ea45fc1cc
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Boxの4層を読む」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch05-l02
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 58fe1c88aa9100d39fcdd2d57842df9ed878fd0654fbbc28b1cb7583945e4fb7
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Border Boxで幅を収める」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch05-l03
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 0009bf4a445e1100d121cef6e47401d475e5ffdf9326346fbf722a5105488735
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「内側と外側の余白を分ける」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch05-l04
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: fc99fde48e55ba331e60867721eb1b2fc85d98c0727e8ef899a5cb2b4e376a82
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Displayと操作領域を整える」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch05-l05
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 1be21dd27cf548dfd27c02752bc9ea8e931a5d78a8b22542b9b2b88413ba6655
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Overflowを境界から防ぐ」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch06-l01
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 6b5486b55e1092ea10d41d85da5fcf5600b67e82978db1699dfecd690d6c60bf
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「読みやすい文字を組む」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch06-l02
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 0cfce962c55dffbdef9d23c760f5f94ca621dd158eb239d5cd8c1e29b57af736
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「色とコントラストを設計する」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch06-l03
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: a9ce770337503c2f6103424975053888d34b1f114917e0feb8d738980e61e078
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Custom Propertyで値を共有する」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch06-l04
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: cef5a3b188e7a748fdb9866d9d47a4b3bac3ce4cfe3173e705cde134c23d625c
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「再利用できるClassを作る」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch07-l01
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: d2323484dfc24a5202934b70c0ae2fca9b54273ae4e07418222d40d6b898c35e
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Profile Cardを組み立て直す」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch08-l01
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: c7d5437c4a5eaf616b1eb3fdec4966e8a6e639bfbe34339849c43f2584419c8a
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「ContainerとAxisを理解する」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch08-l02
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 5767b8e08ccd0e1ab3ad770d8d17686343253826d4eacc1900269e08b7736b1c
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Main Axisへ分配する」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch08-l03
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 49316e5945e7b657ec491c6839957f617df1ccf3cdd3057f7be671ef82f4bebe
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Cross Axisへ揃える」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch08-l04
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: e8f890bdd6d624751b0fa4ef21aed066b875afbab8e690f2336763a26f71c58f
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Itemを折り返す」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch08-l05
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 4e7f1cc2abec25a0bf3783b0e28a180ade15d497418945d2ef3f43802fe9c3ea
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「NavigationとCard Rowへ応用する」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch09-l01
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 8ae1bb15cccc831922319fd0bc6e5e095a2407df7928d19a99342f2b37b6434a
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Grid ContainerとTrackを作る」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch09-l02
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 4551e534aad3b88de4b7c5a4236f7c06bd0e94259e1da7593fdd66a665e67453
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「repeatとfrでTrackを分配する」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch09-l03
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: ad178d30f19434fa404629753e07969a93acc335bce2abc307738db99a43897a
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Responsive Gridを作る」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch09-l04
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 54070d6d34e9f144c52184e23a224c5298e36b187bc8fd3a2b2df737550dc04c
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「PlacementとLayout手法を選ぶ」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch10-l01
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 5d6b1e92c9f0d1b500274bfc200b305a2d7e3d9f712f9eec63c872b7e3aabbdf
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「ViewportとMobile First」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch10-l02
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 0ce571da2aca3d08fd6830cf2b80724202a86ba1454e0fa160855b2036b7faae
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「内容からBreakpointを決める」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch10-l03
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: e75adb98781aa34bb8f251cfe2f51ddc8a56382bb65572b024ad60cbb9df64a4
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「幅を流動的に保つ」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch10-l04
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 38845a1c0351ff2a7610114f7ad006e4216f909efbef332a972374f63cd42a29
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「ImageをResponsiveにする」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch10-l05
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 1c42a258317f70bbe94330c631d6980312ce1ffd8600bf01d9f2df4645d3d8ed
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「4 ViewportでOverflowを確認する」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch11-l01
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 51f33379195addb2fd3d6681cbdf1bfc7407847985ba65f0291d4f15f5710049
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「KeyboardとFocus」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch11-l02
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 54c9adbf829f5df07f59352d8e4cc66a5fc8d0b201c127bb33b80684cbce7556
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Accessible Name」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch11-l03
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 735ccc2d84100e1414a4f56bcd7bc6236d87a24449fb7e01bdab1bb1b57a9892
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Contrastと色以外の手がかり」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch11-l04
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 195fd6262e9a986845488a2495e7d7fd1a29b027862a804bf287429c1f4999f9
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Reduced Motionと最終Audit」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch12-l01
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: b915b713272fc8478e3da6da40cc0e492c44d3f8fba84606b96fbab037ce12fe
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「Profile Siteの設計図を作る」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch12-l02
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: d70eec13532a057f56c0f2dd87c2debee77f9f05a1337e78961a33953f53f9d7
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「HeaderとHeroを組み立てる」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch12-l03
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: eca3158d0fc9821dd4c76b16905f4551e3ee6ddec40756e18a4ee4a4d0ed42da
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「AboutとSkillsを育てる」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch12-l04
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: c06ee414b955ce491750eff1f3e34b463fac8005d7e24e6deac468206c9b21dc
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「WorksとContactをResponsiveにする」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch12-l05
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: a6c3f633d3e514d4820a91058714e7c6df4cbb49a4d19149a3d7a51953c47ed0
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「アクセシビリティとPolishを完了する」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+  - lessonId: html-css-ch13-l01
+    authorId: tsumucode-content-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 3de0fcd01111cc0981f91b762a5a6bb5fef9848453807da3d2793d8b59408b9d
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 「個人制作展のLanding Pageを完成する」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。

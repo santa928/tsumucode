@@ -1,0 +1,93 @@
+id: html-css-ch11-l03-e01
+kind: standard
+workspaceId: html-css-ch11-l03-e01
+countsTowardStandardExerciseTotal: true
+title: 読めて意味が伝わる公開状態を作る
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch11-l03-e01-r01
+    label: 公開状態のText Contrastを4.5対1以上にする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-status]' }
+    assertion:
+      kind: contrast
+      minimum: 4.5
+    feedback:
+      target: 公開状態CardのTextとBackground
+      expected: Contrast Ratio 4.5対1以上
+      nextAction: Computed Text ColorとBackground Colorの明るさの差を広げます。
+    hintId: html-css-ch11-l03-e01-h01
+    relatedSlideId: html-css-ch11-l03-s01
+  - id: html-css-ch11-l03-e01-r02
+    label: 色以外の状態Textを置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-status-text]' }
+    assertion: { kind: exists }
+    feedback:
+      target: 公開可否を伝える状態Text
+      expected: data-status-textを持つElementが存在する
+      nextAction: 色の丸へ、公開中などの状態Textを併記します。
+    hintId: html-css-ch11-l03-e01-h02
+    relatedSlideId: html-css-ch11-l03-s02
+hints:
+  - id: html-css-ch11-l03-e01-h01
+    level: 1
+    title: 前景と背景を組み合わせる
+    text: data-statusのText ColorとBackground Colorを一組として確認します。
+    relatedSlideId: html-css-ch11-l03-s01
+  - id: html-css-ch11-l03-e01-h02
+    level: 2
+    title: 色を使わず状態を読んでみる
+    text: 緑の丸が見えなくても公開可否が言葉で分かるようにします。
+    relatedSlideId: html-css-ch11-l03-s02
+  - id: html-css-ch11-l03-e01-h03
+    level: 3
+    title: 2条件を順に直す
+    text: 濃いText Colorへ直し、公開中のTextへdata-status-textを付けます。
+    relatedSlideId: html-css-ch11-l03-s02
+relatedSlideIds:
+  - html-css-ch11-l03-s01
+  - html-css-ch11-l03-s02
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch11-l03-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch11-l03-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch11-l03-e01-r02]

@@ -1,0 +1,36 @@
+id: broken-e01
+kind: standard
+workspaceId: broken-e01
+countsTowardStandardExerciseTotal: true
+title: 欠落Source
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/missing.html, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+validationRules:
+  - id: broken-main
+    label: main要素がある
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop]
+    target: { kind: selector, selector: main }
+    assertion: { kind: exists }
+    feedback: { target: main, expected: main要素, nextAction: main要素を置きます。 }
+    hintId: broken-h01
+    relatedSlideId: broken-s01
+hints:
+  - { id: broken-h01, level: 1, title: 見る, text: Previewを見ます。, relatedSlideId: broken-s01 }
+  - { id: broken-h02, level: 2, title: 探す, text: bodyを探します。, relatedSlideId: broken-s01 }
+  - { id: broken-h03, level: 3, title: 書く, text: mainを書きます。, relatedSlideId: broken-s01 }
+relatedSlideIds: [broken-s01]
+previewViewports:
+  - { id: desktop, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: broken-pass
+    expectedStatus: pass
+    files:
+      - { path: index.html, language: html, source: fixtures/pass/index.html, editable: false }
+    expectedFeedbackRuleIds: []

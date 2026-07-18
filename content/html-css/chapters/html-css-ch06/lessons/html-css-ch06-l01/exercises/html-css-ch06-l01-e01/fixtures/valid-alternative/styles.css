@@ -1,0 +1,10 @@
+body {
+  margin: 24px;
+  background: #eef4f3;
+}
+.reading-sample {
+  color: #183438;
+  font:
+    20px/30px system-ui,
+    sans-serif;
+}

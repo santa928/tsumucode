@@ -1,0 +1,18 @@
+:root {
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  background: #f5efe4;
+  color: #24323d;
+  font-family: system-ui, sans-serif;
+}
+
+.measure {
+  margin: 4rem auto;
+  max-width: 32rem;
+  padding: 2rem;
+  border: 1px solid #2d5d62;
+  font-size: 1.25rem;
+}

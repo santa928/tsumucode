@@ -1,0 +1,18 @@
+id: html-css-ch08-l02
+kind: standard
+title: Main Axisへ分配する
+goal: justify-contentとgapを使い、Item間の距離を意図どおりに作れる
+estimatedMinutes: 11
+prerequisiteLessonIds: [html-css-ch08-l01]
+slideSources:
+  - slides/s01-justify-content.md
+  - slides/s02-gap.md
+exerciseSources:
+  - exercises/html-css-ch08-l02-e01/exercise.yaml
+reflection: 分配と固定間隔を使い分け、実測距離で確認する
+glossaryRefs: [justify-content, gap, distribution]
+nextLessonId: html-css-ch08-l03
+completion:
+  kind: standard
+  finalSlideId: html-css-ch08-l02-s02
+  requiredExerciseIds: [html-css-ch08-l02-e01]

@@ -1,0 +1,118 @@
+id: html-css-ch10-l05-e01
+kind: standard
+workspaceId: html-css-ch10-l05-e01
+countsTowardStandardExerciseTotal: true
+title: 4 ViewportでOverflowとCTAを確認する
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch10-l05-e01-r01
+    label: 全ViewportでDocumentの横Overflowを防ぐ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: body }
+    assertion: { kind: overflow-x, operator: equals, expected: false }
+    feedback:
+      {
+        target: DocumentのHorizontal Overflow,
+        expected: 4 Viewportすべてfalse,
+        nextAction: 固定幅をwidth 100%とmax-widthへ置き換えます。,
+      }
+    hintId: html-css-ch10-l05-e01-h01
+    relatedSlideId: html-css-ch10-l05-s01
+  - id: html-css-ch10-l05-e01-r02
+    label: CTAをKeyboard Focus可能にする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: '[data-cta]' }
+    assertion: { kind: focusable, operator: equals, expected: true }
+    feedback:
+      {
+        target: CTAのFocusability,
+        expected: 4 Viewportすべてtrue,
+        nextAction: 安全なhrefを持つa要素を保ちます。,
+      }
+    hintId: html-css-ch10-l05-e01-h02
+    relatedSlideId: html-css-ch10-l05-s02
+  - id: html-css-ch10-l05-e01-r03
+    label: CTAの高さを44px以上にする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: '[data-cta]' }
+    assertion: { kind: rect, metric: height, operator: gte, expected: 44, tolerance: 0.5 }
+    feedback:
+      {
+        target: CTAの実測Height,
+        expected: 4 Viewportすべて44px以上,
+        nextAction: min-height 44pxと内部Paddingを指定します。,
+      }
+    hintId: html-css-ch10-l05-e01-h03
+    relatedSlideId: html-css-ch10-l05-s02
+hints:
+  - {
+      id: html-css-ch10-l05-e01-h01,
+      level: 1,
+      title: 横Scrollを見る,
+      text: bodyのscrollWidthがclientWidthを越えないようにします。,
+      relatedSlideId: html-css-ch10-l05-s01,
+    }
+  - {
+      id: html-css-ch10-l05-e01-h02,
+      level: 2,
+      title: Keyboardで到達する,
+      text: CTAをFocus可能なLinkにします。,
+      relatedSlideId: html-css-ch10-l05-s02,
+    }
+  - {
+      id: html-css-ch10-l05-e01-h03,
+      level: 3,
+      title: 操作領域を測る,
+      text: CTAのHeightを44px以上にします。,
+      relatedSlideId: html-css-ch10-l05-s02,
+    }
+relatedSlideIds: [html-css-ch10-l05-s01, html-css-ch10-l05-s02]
+previewViewports:
+  - { id: mobile-390, width: 390, height: 844 }
+  - { id: tablet-768, width: 768, height: 1024 }
+  - { id: desktop-1280, width: 1280, height: 720 }
+  - { id: wide-1440, width: 1440, height: 900 }
+assets: []
+fixtures:
+  - id: html-css-ch10-l05-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch10-l05-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch10-l05-e01-r01]

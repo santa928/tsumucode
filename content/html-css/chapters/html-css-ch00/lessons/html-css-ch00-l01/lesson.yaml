@@ -1,0 +1,19 @@
+id: html-css-ch00-l01
+kind: standard
+title: Webページを作る3つの役割
+goal: Browser、HTML、CSSの役割を区別し、内容と見た目を1箇所ずつ変更できる
+estimatedMinutes: 10
+prerequisiteLessonIds: []
+slideSources:
+  - slides/s01-web-page.md
+  - slides/s02-html-role.md
+  - slides/s03-css-role.md
+exerciseSources:
+  - exercises/html-css-ch00-l01-e01/exercise.yaml
+reflection: HTMLは内容と意味、CSSは見た目、Browserは両方を読んで画面にする
+glossaryRefs: [browser, html, css]
+nextLessonId: html-css-ch00-l02
+completion:
+  kind: standard
+  finalSlideId: html-css-ch00-l01-s03
+  requiredExerciseIds: [html-css-ch00-l01-e01]

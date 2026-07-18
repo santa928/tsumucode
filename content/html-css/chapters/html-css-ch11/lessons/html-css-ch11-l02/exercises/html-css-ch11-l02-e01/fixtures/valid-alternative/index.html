@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Accessible Profile</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <section class="profile">
+        <img data-avatar src="asset:accessible-avatar" alt="Code Cardを持つ学習者のイラスト" />
+        <div>
+          <h1>Portfolio Profile</h1>
+          <input data-name-input aria-label="プロフィールの表示名" value="Tsumu" />
+          <a data-profile-link href="#portfolio" aria-label="制作したPortfolio一覧へ移動">
+            <span aria-hidden="true">作品一覧 →</span>
+          </a>
+        </div>
+      </section>
+      <section id="portfolio">
+        <h2>Portfolio</h2>
+      </section>
+    </main>
+  </body>
+</html>

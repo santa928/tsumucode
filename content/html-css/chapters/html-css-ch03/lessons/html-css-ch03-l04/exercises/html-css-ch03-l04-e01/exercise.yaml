@@ -1,0 +1,139 @@
+id: html-css-ch03-l04-e01
+kind: standard
+workspaceId: html-css-ch03-l04-e01
+countsTowardStandardExerciseTotal: true
+title: 安全な学習用Contact Cardを完成する
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch03-l04-e01-r01
+    label: 連絡情報をaddressで表す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '.profile-card address' }
+    assertion: { kind: count, operator: equals, expected: 1 }
+    feedback:
+      target: Profile Cardの連絡情報
+      expected: profile-card内のaddressが1つ
+      nextAction: Contact Linkを包むdivをaddressへ変更します。
+    hintId: html-css-ch03-l04-e01-h01
+    relatedSlideId: html-css-ch03-l04-s01
+  - id: html-css-ch03-l04-e01-r02
+    label: Avatarへ代替Textを書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'img[data-tsumucode-asset-id="avatar-contact-card"]' }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: Profile Avatarのalt
+      expected: 空でない画像の説明
+      nextAction: altへ、学習者を表すProfile Avatarだと分かる言葉を書きます。
+    hintId: html-css-ch03-l04-e01-h02
+    relatedSlideId: html-css-ch03-l04-s01
+  - id: html-css-ch03-l04-e01-r03
+    label: Contactをhttps Linkにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'address a[href^="https://"]' }
+    assertion: { kind: count, operator: equals, expected: 1 }
+    feedback:
+      target: 学習用Contactの行き先
+      expected: address内のhttps Linkが1つ
+      nextAction: mailtoやFragmentではなくhttps://example.com/contactのような練習用URLを使います。
+    hintId: html-css-ch03-l04-e01-h03
+    relatedSlideId: html-css-ch03-l04-s02
+  - id: html-css-ch03-l04-e01-r04
+    label: Contact Linkの目的を言葉で伝える
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'address a' }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: Contact LinkのText
+      expected: 空ではない行き先の説明
+      nextAction: a要素の中へ、学習用Contact Pageへ移動すると分かる言葉を書きます。
+    hintId: html-css-ch03-l04-e01-h03
+    relatedSlideId: html-css-ch03-l04-s02
+hints:
+  - id: html-css-ch03-l04-e01-h01
+    level: 1
+    title: Card内の役割を観察する
+    text: 画像、名前、説明、作者への連絡情報の4つがどのElementに入っているか確認します。
+    relatedSlideId: html-css-ch03-l04-s01
+  - id: html-css-ch03-l04-e01-h02
+    level: 2
+    title: 画像と連絡先を言葉でも伝える
+    text: AvatarのaltとLink Textは、見えなくても目的が分かる説明にします。
+    relatedSlideId: html-css-ch03-l04-s02
+  - id: html-css-ch03-l04-e01-h03
+    level: 3
+    title: addressとhttpsを具体的に使う
+    text: contactのdivをaddressへ変え、hrefをhttps://example.com/contactへ変更します。
+    relatedSlideId: html-css-ch03-l04-s02
+relatedSlideIds:
+  - html-css-ch03-l04-s01
+  - html-css-ch03-l04-s02
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets:
+  - id: avatar-contact-card
+    source: assets/profile-avatar.svg
+    mediaType: image
+    alt: Code Cardを持つTsumuCode学習プロフィールのAvatar
+    provenanceId: ch03-profile-avatar-contact-original
+fixtures:
+  - id: html-css-ch03-l04-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch03-l04-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - html-css-ch03-l04-e01-r01
+      - html-css-ch03-l04-e01-r02
+      - html-css-ch03-l04-e01-r03
+      - html-css-ch03-l04-e01-r04
+  - id: html-css-ch03-l04-e01-code-error
+    expectedStatus: code-error
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/code-error/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/code-error/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

@@ -1,0 +1,18 @@
+id: html-css-ch02-l02
+kind: standard
+title: 項目と手順をListにする
+goal: 順序の有無を判断してulとolを使い分け、liで項目を表せる
+estimatedMinutes: 10
+prerequisiteLessonIds: [html-css-ch02-l01]
+slideSources:
+  - slides/s01-unordered-list.md
+  - slides/s02-ordered-list.md
+exerciseSources:
+  - exercises/html-css-ch02-l02-e01/exercise.yaml
+reflection: 項目を入れ替えられる一覧にはul、順番に意味がある手順にはolを選ぶ
+glossaryRefs: [unordered-list, ordered-list, list-item]
+nextLessonId: html-css-ch02-l03
+completion:
+  kind: standard
+  finalSlideId: html-css-ch02-l02-s02
+  requiredExerciseIds: [html-css-ch02-l02-e01]

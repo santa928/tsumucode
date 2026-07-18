@@ -1,0 +1,17 @@
+body {
+  margin: 0;
+  padding: 32px;
+  background: #f5efe4;
+  font-family: system-ui, sans-serif;
+}
+[data-grid] {
+  display: grid;
+  grid-template-columns: 160px 240px;
+  width: 416px;
+  gap: 8px;
+}
+[data-grid] > * {
+  box-sizing: border-box;
+  padding: 20px;
+  background: #fff;
+}

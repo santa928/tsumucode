@@ -1,0 +1,30 @@
+:root {
+  --accent: #ad3f3b;
+}
+
+body {
+  display: grid;
+  min-height: 100vh;
+  margin: 0;
+  place-items: center;
+  background: #fffaf0;
+  color: #19352d;
+  font-family: system-ui, sans-serif;
+}
+
+.profile-card {
+  width: min(32rem, calc(100% - 3rem));
+  padding: 2rem;
+  border: 1px solid #d9cdb8;
+  border-radius: 1.5rem;
+  background: #ffffff;
+}
+
+.profile-action {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: var(--accent);
+  color: #ffffff;
+}

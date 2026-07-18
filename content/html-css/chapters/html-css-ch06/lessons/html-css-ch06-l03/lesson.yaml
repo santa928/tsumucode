@@ -1,0 +1,18 @@
+id: html-css-ch06-l03
+kind: standard
+title: Custom Propertyで値を共有する
+goal: :rootへ値を宣言し、複数の部品からvar関数で再利用できる
+estimatedMinutes: 11
+prerequisiteLessonIds: [html-css-ch06-l02]
+slideSources:
+  - slides/s01-custom-property-declare.md
+  - slides/s02-custom-property-use.md
+exerciseSources:
+  - exercises/html-css-ch06-l03-e01/exercise.yaml
+reflection: 共有値の宣言場所と利用場所を分け、変更の伝わり方を説明する
+glossaryRefs: [custom-property, root-selector, var-function]
+nextLessonId: html-css-ch06-l04
+completion:
+  kind: standard
+  finalSlideId: html-css-ch06-l03-s02
+  requiredExerciseIds: [html-css-ch06-l03-e01]

@@ -1,0 +1,18 @@
+id: html-css-ch05-l02
+kind: standard
+title: Border Boxで幅を収める
+goal: box-sizingを使い指定幅の内側へPaddingとBorderを収められる
+estimatedMinutes: 10
+prerequisiteLessonIds: [html-css-ch05-l01]
+slideSources:
+  - slides/s01-width-height.md
+  - slides/s02-border-box.md
+exerciseSources:
+  - exercises/html-css-ch05-l02-e01/exercise.yaml
+reflection: border-boxは指定幅へPaddingとBorderを含めて予測しやすくする
+glossaryRefs: [width, height, border-box]
+nextLessonId: html-css-ch05-l03
+completion:
+  kind: standard
+  finalSlideId: html-css-ch05-l02-s02
+  requiredExerciseIds: [html-css-ch05-l02-e01]

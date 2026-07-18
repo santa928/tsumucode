@@ -1,0 +1,11 @@
+id: html-css-ch06
+sequence: 6
+title: 文字、色、再利用できる値
+goal: 読みやすい文字と色を選び、Custom Propertyと再利用Classで一貫した見た目を作る
+estimatedMinutes: 45
+kind: standard
+lessonSources:
+  - lessons/html-css-ch06-l01/lesson.yaml
+  - lessons/html-css-ch06-l02/lesson.yaml
+  - lessons/html-css-ch06-l03/lesson.yaml
+  - lessons/html-css-ch06-l04/lesson.yaml

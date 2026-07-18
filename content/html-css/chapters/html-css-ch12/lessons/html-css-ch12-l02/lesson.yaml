@@ -1,0 +1,39 @@
+id: html-css-ch12-l02
+kind: guided-project
+title: HeaderとHeroを組み立てる
+goal: Navigation、Main Heading、Avatar、Primary LinkでProfileの入口を作る
+estimatedMinutes: 16
+prerequisiteLessonIds: [html-css-ch12-l01]
+slideSources:
+  - slides/g01-project-step.md
+exerciseSources:
+  - exercises/html-css-ch12-l02-e01/exercise.yaml
+reflection: Heroでは誰の何が見られるかと次の行動を最初の画面で伝える
+glossaryRefs: [hero, navigation, accessible-name, alternative-text]
+nextLessonId: html-css-ch12-l03
+project:
+  id: html-css-profile-project
+  briefSource: brief.md
+  guideSources:
+    - guide-01-header-navigation.md
+    - guide-02-hero-priority.md
+  checklist:
+    - id: profile-header-navigation
+      label: Navigationの目的を伝えた
+      required: true
+      ruleIds:
+        - html-css-ch12-l02-e01-r01
+    - id: profile-hero-content
+      label: h1、Avatar、Primary Linkをそろえた
+      required: true
+      ruleIds:
+        - html-css-ch12-l02-e01-r02
+        - html-css-ch12-l02-e01-r03
+        - html-css-ch12-l02-e01-r04
+completion:
+  kind: guided-project
+  requiredChecklistItemIds:
+    - profile-header-navigation
+    - profile-hero-content
+  requiredExerciseIds:
+    - html-css-ch12-l02-e01

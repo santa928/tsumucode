@@ -1,0 +1,101 @@
+id: html-css-ch05-l03-e01
+kind: standard
+workspaceId: html-css-ch05-l03-e01
+countsTowardStandardExerciseTotal: true
+title: 内側と外側のSpacingを分ける
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch05-l03-e01-r01
+    label: Card内Paddingを24pxにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '.card' }
+    assertion:
+      kind: computed-style
+      property: padding-top
+      operator: equals
+      expected: 24
+      tolerance: 0.1
+    feedback:
+      target: Card内部のSpacing
+      expected: 24px
+      nextAction: 'paddingを24pxにします。'
+    hintId: html-css-ch05-l03-e01-h02
+    relatedSlideId: html-css-ch05-l03-s01
+  - id: html-css-ch05-l03-e01-r02
+    label: Card間Marginを32pxにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '.card + .card' }
+    assertion:
+      kind: computed-style
+      property: margin-top
+      operator: equals
+      expected: 32
+      tolerance: 0.1
+    feedback:
+      target: 2枚目Cardの外側Spacing
+      expected: 32px
+      nextAction: '2枚目のmargin-topを32pxにします。'
+    hintId: html-css-ch05-l03-e01-h03
+    relatedSlideId: html-css-ch05-l03-s02
+hints:
+  - id: html-css-ch05-l03-e01-h01
+    level: 1
+    title: 状態を観察する
+    text: '空白が背景の内側か外側か観察します。'
+    relatedSlideId: html-css-ch05-l03-s01
+  - id: html-css-ch05-l03-e01-h02
+    level: 2
+    title: 目的を考える
+    text: '内側はPadding、Card間はMarginへ分けます。'
+    relatedSlideId: html-css-ch05-l03-s02
+  - id: html-css-ch05-l03-e01-h03
+    level: 3
+    title: 具体的に直す
+    text: 'padding: 24pxとmargin-top: 32pxを設定します。'
+    relatedSlideId: html-css-ch05-l03-s02
+relatedSlideIds:
+  - html-css-ch05-l03-s01
+  - html-css-ch05-l03-s02
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch05-l03-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch05-l03-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch05-l03-e01-r02]

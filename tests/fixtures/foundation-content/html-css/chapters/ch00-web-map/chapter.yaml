@@ -1,0 +1,8 @@
+id: ch00-web-map
+sequence: 0
+title: Web制作の地図
+goal: HTMLがページへ意味を与える役割を説明し、見出し要素を自分で書ける。
+estimatedMinutes: 15
+kind: standard
+lessonSources:
+  - lessons/lesson-first-heading/lesson.yaml

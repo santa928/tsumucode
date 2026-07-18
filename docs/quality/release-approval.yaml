@@ -1,0 +1,26 @@
+schemaVersion: 1
+status: draft
+verifiedSourceCommit: draft
+candidateTreeSha256: draft
+canonicalDistSha256: draft
+courseManifestSha256: draft
+publicProvenanceSha256: draft
+visualBaselineSha256: draft
+records:
+  contentReview:
+    path: docs/quality/content-review.yaml
+    sha256: draft
+  visualReview:
+    path: docs/quality/visual-review.md
+    sha256: draft
+  accessibilityManual:
+    path: docs/quality/a11y-manual.md
+    sha256: draft
+  noviceObservation:
+    path: docs/quality/novice-observation.md
+    sha256: draft
+  releaseChecklist:
+    path: docs/quality/release-checklist.md
+    sha256: draft
+approvedBy: draft
+approvedAt: draft

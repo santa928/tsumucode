@@ -1,0 +1,12 @@
+schemaVersion: 1
+entries:
+  - id: html
+    term: HTML
+    definition: Webページの内容へ意味と構造を与えるための言語。
+    firstSlideId: slide-html-role
+    relatedIds: [element]
+  - id: element
+    term: 要素
+    definition: 開始Tag、内容、終了Tagをひとまとまりとして扱うHTMLの構成単位。
+    firstSlideId: slide-html-role
+    relatedIds: [html]

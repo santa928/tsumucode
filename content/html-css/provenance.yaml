@@ -1,0 +1,2313 @@
+schemaVersion: 1
+defaults:
+  method: original-authored
+  createdAt: '2026-07-13'
+  creator: TsumuCode project
+  sourceUrl: none
+  license: project-original
+  modified: false
+items:
+  - id: release-course
+    visibility: public
+    path: course.yaml
+  - id: release-glossary
+    visibility: public
+    path: glossary.yaml
+  - id: release-performance-budget
+    visibility: authoring
+    path: performance.yaml
+  - id: release-history-ledger
+    visibility: authoring
+    path: release-history.yaml
+  - id: asset-workflow-original
+    visibility: public
+    path: assets/README.md
+  - id: asset-prompt-workflow-original
+    visibility: public
+    path: assets/source/prompts/README.md
+  - id: release-ch00-chapter
+    visibility: public
+    path: chapters/html-css-ch00/chapter.yaml
+  - id: release-ch00-l01-lesson
+    visibility: public
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l01/lesson.yaml
+  - id: release-ch00-l01-s01
+    visibility: public
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l01/slides/s01-web-page.md
+  - id: release-ch00-l01-s02
+    visibility: public
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l01/slides/s02-html-role.md
+  - id: release-ch00-l01-s03
+    visibility: public
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l01/slides/s03-css-role.md
+  - id: ch00-web-flow-original
+    visibility: public
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l01/slides/assets/web-flow.svg
+    method: original-svg
+  - id: release-ch00-l01-e01
+    visibility: public
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l01/exercises/html-css-ch00-l01-e01/exercise.yaml
+  - id: release-ch00-l01-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l01/exercises/html-css-ch00-l01-e01/instructions.md
+  - id: release-ch00-l01-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l01/exercises/html-css-ch00-l01-e01/starter/index.html
+  - id: release-ch00-l01-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l01/exercises/html-css-ch00-l01-e01/starter/styles.css
+  - id: release-ch00-l01-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l01/exercises/html-css-ch00-l01-e01/solution/index.html
+  - id: release-ch00-l01-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l01/exercises/html-css-ch00-l01-e01/solution/styles.css
+  - id: release-ch00-l01-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l01/exercises/html-css-ch00-l01-e01/fixtures/valid-alternative/index.html
+  - id: release-ch00-l01-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l01/exercises/html-css-ch00-l01-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch00-l01-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l01/exercises/html-css-ch00-l01-e01/fixtures/incomplete/index.html
+  - id: release-ch00-l01-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l01/exercises/html-css-ch00-l01-e01/fixtures/incomplete/styles.css
+  - id: release-ch00-l02-lesson
+    visibility: public
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l02/lesson.yaml
+  - id: release-ch00-l02-s01
+    visibility: public
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l02/slides/s01-edit-save-preview.md
+  - id: release-ch00-l02-s02
+    visibility: public
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l02/slides/s02-read-preview.md
+  - id: ch00-edit-preview-loop-original
+    visibility: public
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l02/slides/assets/edit-preview-loop.svg
+    method: original-svg
+  - id: release-ch00-l02-e01
+    visibility: public
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l02/exercises/html-css-ch00-l02-e01/exercise.yaml
+  - id: release-ch00-l02-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l02/exercises/html-css-ch00-l02-e01/instructions.md
+  - id: release-ch00-l02-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l02/exercises/html-css-ch00-l02-e01/starter/index.html
+  - id: release-ch00-l02-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l02/exercises/html-css-ch00-l02-e01/starter/styles.css
+  - id: release-ch00-l02-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l02/exercises/html-css-ch00-l02-e01/solution/index.html
+  - id: release-ch00-l02-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l02/exercises/html-css-ch00-l02-e01/solution/styles.css
+  - id: release-ch00-l02-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l02/exercises/html-css-ch00-l02-e01/fixtures/valid-alternative/index.html
+  - id: release-ch00-l02-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l02/exercises/html-css-ch00-l02-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch00-l02-e01-code-error-html
+    visibility: authoring
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l02/exercises/html-css-ch00-l02-e01/fixtures/code-error/index.html
+  - id: release-ch00-l02-e01-code-error-css
+    visibility: authoring
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l02/exercises/html-css-ch00-l02-e01/fixtures/code-error/styles.css
+  - id: release-ch01-chapter
+    visibility: public
+    path: chapters/html-css-ch01/chapter.yaml
+  - id: release-ch01-l01-lesson
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l01/lesson.yaml
+  - id: release-ch01-l01-s01
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l01/slides/s01-element-anatomy.md
+  - id: release-ch01-l01-s02
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l01/slides/s02-heading-paragraph.md
+  - id: release-ch01-l01-s03
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l01/slides/s03-closing-tags.md
+  - id: ch01-element-anatomy-original
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l01/slides/assets/element-anatomy.svg
+    method: original-svg
+  - id: release-ch01-l01-e01
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l01/exercises/html-css-ch01-l01-e01/exercise.yaml
+  - id: release-ch01-l01-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l01/exercises/html-css-ch01-l01-e01/instructions.md
+  - id: release-ch01-l01-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l01/exercises/html-css-ch01-l01-e01/starter/index.html
+  - id: release-ch01-l01-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l01/exercises/html-css-ch01-l01-e01/starter/styles.css
+  - id: release-ch01-l01-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l01/exercises/html-css-ch01-l01-e01/solution/index.html
+  - id: release-ch01-l01-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l01/exercises/html-css-ch01-l01-e01/solution/styles.css
+  - id: release-ch01-l01-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l01/exercises/html-css-ch01-l01-e01/fixtures/valid-alternative/index.html
+  - id: release-ch01-l01-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l01/exercises/html-css-ch01-l01-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch01-l01-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l01/exercises/html-css-ch01-l01-e01/fixtures/incomplete/index.html
+  - id: release-ch01-l01-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l01/exercises/html-css-ch01-l01-e01/fixtures/incomplete/styles.css
+  - id: release-ch01-l02-lesson
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l02/lesson.yaml
+  - id: release-ch01-l02-s01
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l02/slides/s01-nesting-tree.md
+  - id: release-ch01-l02-s02
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l02/slides/s02-indentation.md
+  - id: release-ch01-l02-s03
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l02/slides/s03-parent-child.md
+  - id: ch01-dom-tree-original
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l02/slides/assets/dom-tree.svg
+    method: original-svg
+  - id: release-ch01-l02-e01
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l02/exercises/html-css-ch01-l02-e01/exercise.yaml
+  - id: release-ch01-l02-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l02/exercises/html-css-ch01-l02-e01/instructions.md
+  - id: release-ch01-l02-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l02/exercises/html-css-ch01-l02-e01/starter/index.html
+  - id: release-ch01-l02-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l02/exercises/html-css-ch01-l02-e01/starter/styles.css
+  - id: release-ch01-l02-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l02/exercises/html-css-ch01-l02-e01/solution/index.html
+  - id: release-ch01-l02-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l02/exercises/html-css-ch01-l02-e01/solution/styles.css
+  - id: release-ch01-l02-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l02/exercises/html-css-ch01-l02-e01/fixtures/valid-alternative/index.html
+  - id: release-ch01-l02-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l02/exercises/html-css-ch01-l02-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch01-l02-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l02/exercises/html-css-ch01-l02-e01/fixtures/incomplete/index.html
+  - id: release-ch01-l02-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l02/exercises/html-css-ch01-l02-e01/fixtures/incomplete/styles.css
+  - id: release-ch01-l03-lesson
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l03/lesson.yaml
+  - id: release-ch01-l03-s01
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l03/slides/s01-attributes.md
+  - id: release-ch01-l03-s02
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l03/slides/s02-lang-title.md
+  - id: release-ch01-l03-e01
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l03/exercises/html-css-ch01-l03-e01/exercise.yaml
+  - id: release-ch01-l03-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l03/exercises/html-css-ch01-l03-e01/instructions.md
+  - id: release-ch01-l03-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l03/exercises/html-css-ch01-l03-e01/starter/index.html
+  - id: release-ch01-l03-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l03/exercises/html-css-ch01-l03-e01/starter/styles.css
+  - id: release-ch01-l03-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l03/exercises/html-css-ch01-l03-e01/solution/index.html
+  - id: release-ch01-l03-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l03/exercises/html-css-ch01-l03-e01/solution/styles.css
+  - id: release-ch01-l03-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l03/exercises/html-css-ch01-l03-e01/fixtures/valid-alternative/index.html
+  - id: release-ch01-l03-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l03/exercises/html-css-ch01-l03-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch01-l03-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l03/exercises/html-css-ch01-l03-e01/fixtures/incomplete/index.html
+  - id: release-ch01-l03-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l03/exercises/html-css-ch01-l03-e01/fixtures/incomplete/styles.css
+  - id: release-ch02-chapter
+    visibility: public
+    path: chapters/html-css-ch02/chapter.yaml
+  - id: release-ch02-l01-lesson
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l01/lesson.yaml
+  - id: release-ch02-l01-s01
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l01/slides/s01-heading-hierarchy.md
+  - id: release-ch02-l01-s02
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l01/slides/s02-paragraphs.md
+  - id: release-ch02-l01-e01
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l01/exercises/html-css-ch02-l01-e01/exercise.yaml
+  - id: release-ch02-l01-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l01/exercises/html-css-ch02-l01-e01/instructions.md
+  - id: release-ch02-l01-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l01/exercises/html-css-ch02-l01-e01/starter/index.html
+  - id: release-ch02-l01-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l01/exercises/html-css-ch02-l01-e01/starter/styles.css
+  - id: release-ch02-l01-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l01/exercises/html-css-ch02-l01-e01/solution/index.html
+  - id: release-ch02-l01-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l01/exercises/html-css-ch02-l01-e01/solution/styles.css
+  - id: release-ch02-l01-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l01/exercises/html-css-ch02-l01-e01/fixtures/valid-alternative/index.html
+  - id: release-ch02-l01-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l01/exercises/html-css-ch02-l01-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch02-l01-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l01/exercises/html-css-ch02-l01-e01/fixtures/incomplete/index.html
+  - id: release-ch02-l01-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l01/exercises/html-css-ch02-l01-e01/fixtures/incomplete/styles.css
+  - id: release-ch02-l02-lesson
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l02/lesson.yaml
+  - id: release-ch02-l02-s01
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l02/slides/s01-unordered-list.md
+  - id: release-ch02-l02-s02
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l02/slides/s02-ordered-list.md
+  - id: release-ch02-l02-e01
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l02/exercises/html-css-ch02-l02-e01/exercise.yaml
+  - id: release-ch02-l02-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l02/exercises/html-css-ch02-l02-e01/instructions.md
+  - id: release-ch02-l02-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l02/exercises/html-css-ch02-l02-e01/starter/index.html
+  - id: release-ch02-l02-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l02/exercises/html-css-ch02-l02-e01/starter/styles.css
+  - id: release-ch02-l02-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l02/exercises/html-css-ch02-l02-e01/solution/index.html
+  - id: release-ch02-l02-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l02/exercises/html-css-ch02-l02-e01/solution/styles.css
+  - id: release-ch02-l02-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l02/exercises/html-css-ch02-l02-e01/fixtures/valid-alternative/index.html
+  - id: release-ch02-l02-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l02/exercises/html-css-ch02-l02-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch02-l02-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l02/exercises/html-css-ch02-l02-e01/fixtures/incomplete/index.html
+  - id: release-ch02-l02-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l02/exercises/html-css-ch02-l02-e01/fixtures/incomplete/styles.css
+  - id: release-ch02-l03-lesson
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l03/lesson.yaml
+  - id: release-ch02-l03-s01
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l03/slides/s01-semantic-landmarks.md
+  - id: release-ch02-l03-s02
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l03/slides/s02-header-main-footer.md
+  - id: release-ch02-l03-s03
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l03/slides/s03-section-article.md
+  - id: release-ch02-l03-e01
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l03/exercises/html-css-ch02-l03-e01/exercise.yaml
+  - id: release-ch02-l03-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l03/exercises/html-css-ch02-l03-e01/instructions.md
+  - id: release-ch02-l03-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l03/exercises/html-css-ch02-l03-e01/starter/index.html
+  - id: release-ch02-l03-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l03/exercises/html-css-ch02-l03-e01/starter/styles.css
+  - id: release-ch02-l03-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l03/exercises/html-css-ch02-l03-e01/solution/index.html
+  - id: release-ch02-l03-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l03/exercises/html-css-ch02-l03-e01/solution/styles.css
+  - id: release-ch02-l03-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l03/exercises/html-css-ch02-l03-e01/fixtures/valid-alternative/index.html
+  - id: release-ch02-l03-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l03/exercises/html-css-ch02-l03-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch02-l03-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l03/exercises/html-css-ch02-l03-e01/fixtures/incomplete/index.html
+  - id: release-ch02-l03-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l03/exercises/html-css-ch02-l03-e01/fixtures/incomplete/styles.css
+  - id: release-ch02-l04-lesson
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l04/lesson.yaml
+  - id: release-ch02-l04-s01
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l04/slides/s01-strong-emphasis.md
+  - id: release-ch02-l04-s02
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l04/slides/s02-inline-meaning.md
+  - id: release-ch02-l04-e01
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l04/exercises/html-css-ch02-l04-e01/exercise.yaml
+  - id: release-ch02-l04-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l04/exercises/html-css-ch02-l04-e01/instructions.md
+  - id: release-ch02-l04-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l04/exercises/html-css-ch02-l04-e01/starter/index.html
+  - id: release-ch02-l04-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l04/exercises/html-css-ch02-l04-e01/starter/styles.css
+  - id: release-ch02-l04-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l04/exercises/html-css-ch02-l04-e01/solution/index.html
+  - id: release-ch02-l04-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l04/exercises/html-css-ch02-l04-e01/solution/styles.css
+  - id: release-ch02-l04-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l04/exercises/html-css-ch02-l04-e01/fixtures/valid-alternative/index.html
+  - id: release-ch02-l04-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l04/exercises/html-css-ch02-l04-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch02-l04-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l04/exercises/html-css-ch02-l04-e01/fixtures/incomplete/index.html
+  - id: release-ch02-l04-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l04/exercises/html-css-ch02-l04-e01/fixtures/incomplete/styles.css
+  - id: ch03-profile-avatar-source-original
+    visibility: authoring
+    path: assets/source/profile-avatar.svg
+    method: original-svg
+  - id: ch03-profile-avatar-published-original
+    visibility: public
+    path: assets/published/profile-avatar.svg
+    method: original-svg
+    promptPath: assets/source/profile-avatar.svg
+  - id: release-ch03-chapter
+    visibility: public
+    path: chapters/html-css-ch03/chapter.yaml
+  - id: release-ch03-l01-lesson
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l01/lesson.yaml
+  - id: release-ch03-l01-s01
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l01/slides/s01-anchor-anatomy.md
+  - id: release-ch03-l01-s02
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l01/slides/s02-relative-external-links.md
+  - id: release-ch03-l01-e01
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l01/exercises/html-css-ch03-l01-e01/exercise.yaml
+  - id: release-ch03-l01-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l01/exercises/html-css-ch03-l01-e01/instructions.md
+  - id: release-ch03-l01-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l01/exercises/html-css-ch03-l01-e01/starter/index.html
+  - id: release-ch03-l01-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l01/exercises/html-css-ch03-l01-e01/starter/styles.css
+  - id: release-ch03-l01-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l01/exercises/html-css-ch03-l01-e01/solution/index.html
+  - id: release-ch03-l01-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l01/exercises/html-css-ch03-l01-e01/solution/styles.css
+  - id: release-ch03-l01-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l01/exercises/html-css-ch03-l01-e01/fixtures/valid-alternative/index.html
+  - id: release-ch03-l01-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l01/exercises/html-css-ch03-l01-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch03-l01-e01-code-error-html
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l01/exercises/html-css-ch03-l01-e01/fixtures/code-error/index.html
+  - id: release-ch03-l01-e01-code-error-css
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l01/exercises/html-css-ch03-l01-e01/fixtures/code-error/styles.css
+  - id: release-ch03-l02-lesson
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l02/lesson.yaml
+  - id: release-ch03-l02-s01
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l02/slides/s01-image-src-alt.md
+  - id: release-ch03-l02-s02
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l02/slides/s02-meaningful-alt.md
+  - id: release-ch03-l02-e01
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l02/exercises/html-css-ch03-l02-e01/exercise.yaml
+  - id: release-ch03-l02-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l02/exercises/html-css-ch03-l02-e01/instructions.md
+  - id: release-ch03-l02-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l02/exercises/html-css-ch03-l02-e01/starter/index.html
+  - id: release-ch03-l02-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l02/exercises/html-css-ch03-l02-e01/starter/styles.css
+  - id: release-ch03-l02-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l02/exercises/html-css-ch03-l02-e01/solution/index.html
+  - id: release-ch03-l02-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l02/exercises/html-css-ch03-l02-e01/solution/styles.css
+  - id: release-ch03-l02-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l02/exercises/html-css-ch03-l02-e01/fixtures/valid-alternative/index.html
+  - id: release-ch03-l02-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l02/exercises/html-css-ch03-l02-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch03-l02-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l02/exercises/html-css-ch03-l02-e01/fixtures/incomplete/index.html
+  - id: release-ch03-l02-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l02/exercises/html-css-ch03-l02-e01/fixtures/incomplete/styles.css
+  - id: ch03-profile-avatar-exercise-original
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l02/exercises/html-css-ch03-l02-e01/assets/profile-avatar.svg
+    method: original-svg
+    promptPath: assets/published/profile-avatar.svg
+  - id: release-ch03-l03-lesson
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l03/lesson.yaml
+  - id: release-ch03-l03-s01
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l03/slides/s01-form-controls.md
+  - id: release-ch03-l03-s02
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l03/slides/s02-label-association.md
+  - id: release-ch03-l03-s03
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l03/slides/s03-button-types.md
+  - id: release-ch03-l03-e01
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l03/exercises/html-css-ch03-l03-e01/exercise.yaml
+  - id: release-ch03-l03-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l03/exercises/html-css-ch03-l03-e01/instructions.md
+  - id: release-ch03-l03-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l03/exercises/html-css-ch03-l03-e01/starter/index.html
+  - id: release-ch03-l03-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l03/exercises/html-css-ch03-l03-e01/starter/styles.css
+  - id: release-ch03-l03-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l03/exercises/html-css-ch03-l03-e01/solution/index.html
+  - id: release-ch03-l03-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l03/exercises/html-css-ch03-l03-e01/solution/styles.css
+  - id: release-ch03-l03-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l03/exercises/html-css-ch03-l03-e01/fixtures/valid-alternative/index.html
+  - id: release-ch03-l03-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l03/exercises/html-css-ch03-l03-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch03-l03-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l03/exercises/html-css-ch03-l03-e01/fixtures/incomplete/index.html
+  - id: release-ch03-l03-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l03/exercises/html-css-ch03-l03-e01/fixtures/incomplete/styles.css
+  - id: release-ch03-l04-lesson
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l04/lesson.yaml
+  - id: release-ch03-l04-s01
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l04/slides/s01-profile-contact-structure.md
+  - id: release-ch03-l04-s02
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l04/slides/s02-safe-placeholder-content.md
+  - id: release-ch03-l04-e01
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l04/exercises/html-css-ch03-l04-e01/exercise.yaml
+  - id: release-ch03-l04-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l04/exercises/html-css-ch03-l04-e01/instructions.md
+  - id: release-ch03-l04-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l04/exercises/html-css-ch03-l04-e01/starter/index.html
+  - id: release-ch03-l04-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l04/exercises/html-css-ch03-l04-e01/starter/styles.css
+  - id: release-ch03-l04-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l04/exercises/html-css-ch03-l04-e01/solution/index.html
+  - id: release-ch03-l04-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l04/exercises/html-css-ch03-l04-e01/solution/styles.css
+  - id: release-ch03-l04-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l04/exercises/html-css-ch03-l04-e01/fixtures/valid-alternative/index.html
+  - id: release-ch03-l04-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l04/exercises/html-css-ch03-l04-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch03-l04-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l04/exercises/html-css-ch03-l04-e01/fixtures/incomplete/index.html
+  - id: release-ch03-l04-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l04/exercises/html-css-ch03-l04-e01/fixtures/incomplete/styles.css
+  - id: release-ch03-l04-e01-code-error-html
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l04/exercises/html-css-ch03-l04-e01/fixtures/code-error/index.html
+  - id: release-ch03-l04-e01-code-error-css
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l04/exercises/html-css-ch03-l04-e01/fixtures/code-error/styles.css
+  - id: ch03-profile-avatar-contact-original
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l04/exercises/html-css-ch03-l04-e01/assets/profile-avatar.svg
+    method: original-svg
+    promptPath: assets/published/profile-avatar.svg
+  - id: ch04-cascade-source-original
+    visibility: authoring
+    path: assets/source/diagram-cascade.svg
+    method: original-svg
+  - id: ch04-cascade-published-original
+    visibility: public
+    path: assets/published/diagram-cascade.svg
+    method: original-svg
+    promptPath: assets/source/diagram-cascade.svg
+  - id: release-ch04-chapter
+    visibility: public
+    path: chapters/html-css-ch04/chapter.yaml
+  - id: release-ch04-l01-lesson
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l01/lesson.yaml
+  - id: release-ch04-l01-s01
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l01/slides/s01-css-rule.md
+  - id: release-ch04-l01-s02
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l01/slides/s02-type-selector.md
+  - id: release-ch04-l01-s03
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l01/slides/s03-class-selector.md
+  - id: release-ch04-l01-e01
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l01/exercises/html-css-ch04-l01-e01/exercise.yaml
+  - id: release-ch04-l01-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l01/exercises/html-css-ch04-l01-e01/instructions.md
+  - id: release-ch04-l01-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l01/exercises/html-css-ch04-l01-e01/starter/index.html
+  - id: release-ch04-l01-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l01/exercises/html-css-ch04-l01-e01/starter/styles.css
+  - id: release-ch04-l01-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l01/exercises/html-css-ch04-l01-e01/solution/index.html
+  - id: release-ch04-l01-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l01/exercises/html-css-ch04-l01-e01/solution/styles.css
+  - id: release-ch04-l01-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l01/exercises/html-css-ch04-l01-e01/fixtures/valid-alternative/index.html
+  - id: release-ch04-l01-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l01/exercises/html-css-ch04-l01-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch04-l01-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l01/exercises/html-css-ch04-l01-e01/fixtures/incomplete/index.html
+  - id: release-ch04-l01-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l01/exercises/html-css-ch04-l01-e01/fixtures/incomplete/styles.css
+  - id: release-ch04-l02-lesson
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l02/lesson.yaml
+  - id: release-ch04-l02-s01
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l02/slides/s01-stylesheet-link.md
+  - id: release-ch04-l02-s02
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l02/slides/s02-declarations-values.md
+  - id: release-ch04-l02-e01
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l02/exercises/html-css-ch04-l02-e01/exercise.yaml
+  - id: release-ch04-l02-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l02/exercises/html-css-ch04-l02-e01/instructions.md
+  - id: release-ch04-l02-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l02/exercises/html-css-ch04-l02-e01/starter/index.html
+  - id: release-ch04-l02-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l02/exercises/html-css-ch04-l02-e01/starter/styles.css
+  - id: release-ch04-l02-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l02/exercises/html-css-ch04-l02-e01/solution/index.html
+  - id: release-ch04-l02-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l02/exercises/html-css-ch04-l02-e01/solution/styles.css
+  - id: release-ch04-l02-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l02/exercises/html-css-ch04-l02-e01/fixtures/valid-alternative/index.html
+  - id: release-ch04-l02-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l02/exercises/html-css-ch04-l02-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch04-l02-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l02/exercises/html-css-ch04-l02-e01/fixtures/incomplete/index.html
+  - id: release-ch04-l02-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l02/exercises/html-css-ch04-l02-e01/fixtures/incomplete/styles.css
+  - id: release-ch04-l02-e01-code-error-html
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l02/exercises/html-css-ch04-l02-e01/fixtures/code-error/index.html
+  - id: release-ch04-l02-e01-code-error-css
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l02/exercises/html-css-ch04-l02-e01/fixtures/code-error/styles.css
+  - id: release-ch04-l03-lesson
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l03/lesson.yaml
+  - id: release-ch04-l03-s01
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l03/slides/s01-source-order.md
+  - id: release-ch04-l03-s02
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l03/slides/s02-specificity.md
+  - id: release-ch04-l03-s03
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l03/slides/s03-inheritance.md
+  - id: ch04-cascade-slide-original
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l03/slides/assets/diagram-cascade.svg
+    method: original-svg
+    promptPath: assets/published/diagram-cascade.svg
+  - id: release-ch04-l03-e01
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l03/exercises/html-css-ch04-l03-e01/exercise.yaml
+  - id: release-ch04-l03-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l03/exercises/html-css-ch04-l03-e01/instructions.md
+  - id: release-ch04-l03-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l03/exercises/html-css-ch04-l03-e01/starter/index.html
+  - id: release-ch04-l03-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l03/exercises/html-css-ch04-l03-e01/starter/styles.css
+  - id: release-ch04-l03-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l03/exercises/html-css-ch04-l03-e01/solution/index.html
+  - id: release-ch04-l03-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l03/exercises/html-css-ch04-l03-e01/solution/styles.css
+  - id: release-ch04-l03-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l03/exercises/html-css-ch04-l03-e01/fixtures/valid-alternative/index.html
+  - id: release-ch04-l03-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l03/exercises/html-css-ch04-l03-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch04-l03-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l03/exercises/html-css-ch04-l03-e01/fixtures/incomplete/index.html
+  - id: release-ch04-l03-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l03/exercises/html-css-ch04-l03-e01/fixtures/incomplete/styles.css
+  - id: release-ch04-l04-lesson
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l04/lesson.yaml
+  - id: release-ch04-l04-s01
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l04/slides/s01-length-units.md
+  - id: release-ch04-l04-s02
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l04/slides/s02-read-computed-values.md
+  - id: release-ch04-l04-e01
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l04/exercises/html-css-ch04-l04-e01/exercise.yaml
+  - id: release-ch04-l04-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l04/exercises/html-css-ch04-l04-e01/instructions.md
+  - id: release-ch04-l04-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l04/exercises/html-css-ch04-l04-e01/starter/index.html
+  - id: release-ch04-l04-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l04/exercises/html-css-ch04-l04-e01/starter/styles.css
+  - id: release-ch04-l04-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l04/exercises/html-css-ch04-l04-e01/solution/index.html
+  - id: release-ch04-l04-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l04/exercises/html-css-ch04-l04-e01/solution/styles.css
+  - id: release-ch04-l04-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l04/exercises/html-css-ch04-l04-e01/fixtures/valid-alternative/index.html
+  - id: release-ch04-l04-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l04/exercises/html-css-ch04-l04-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch04-l04-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l04/exercises/html-css-ch04-l04-e01/fixtures/incomplete/index.html
+  - id: release-ch04-l04-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l04/exercises/html-css-ch04-l04-e01/fixtures/incomplete/styles.css
+  - id: ch05-box-model-source-original
+    visibility: authoring
+    path: assets/source/diagram-box-model.svg
+    method: original-svg
+  - id: ch05-box-model-published-original
+    visibility: public
+    path: assets/published/diagram-box-model.svg
+    method: original-svg
+    promptPath: assets/source/diagram-box-model.svg
+  - id: release-ch05-chapter
+    visibility: public
+    path: chapters/html-css-ch05/chapter.yaml
+  - id: release-ch05-l01-lesson
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l01/lesson.yaml
+  - id: release-ch05-l01-s01
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l01/slides/s01-box-layers.md
+  - id: release-ch05-l01-s02
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l01/slides/s02-inspect-box.md
+  - id: ch05-box-model-slide-original
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l01/slides/assets/diagram-box-model.svg
+    method: original-svg
+    promptPath: assets/published/diagram-box-model.svg
+  - id: release-ch05-l01-e01
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l01/exercises/html-css-ch05-l01-e01/exercise.yaml
+  - id: release-ch05-l01-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l01/exercises/html-css-ch05-l01-e01/instructions.md
+  - id: release-ch05-l01-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l01/exercises/html-css-ch05-l01-e01/starter/index.html
+  - id: release-ch05-l01-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l01/exercises/html-css-ch05-l01-e01/starter/styles.css
+  - id: release-ch05-l01-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l01/exercises/html-css-ch05-l01-e01/solution/index.html
+  - id: release-ch05-l01-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l01/exercises/html-css-ch05-l01-e01/solution/styles.css
+  - id: release-ch05-l01-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l01/exercises/html-css-ch05-l01-e01/fixtures/valid-alternative/index.html
+  - id: release-ch05-l01-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l01/exercises/html-css-ch05-l01-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch05-l01-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l01/exercises/html-css-ch05-l01-e01/fixtures/incomplete/index.html
+  - id: release-ch05-l01-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l01/exercises/html-css-ch05-l01-e01/fixtures/incomplete/styles.css
+  - id: release-ch05-l02-lesson
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l02/lesson.yaml
+  - id: release-ch05-l02-s01
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l02/slides/s01-width-height.md
+  - id: release-ch05-l02-s02
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l02/slides/s02-border-box.md
+  - id: release-ch05-l02-e01
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l02/exercises/html-css-ch05-l02-e01/exercise.yaml
+  - id: release-ch05-l02-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l02/exercises/html-css-ch05-l02-e01/instructions.md
+  - id: release-ch05-l02-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l02/exercises/html-css-ch05-l02-e01/starter/index.html
+  - id: release-ch05-l02-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l02/exercises/html-css-ch05-l02-e01/starter/styles.css
+  - id: release-ch05-l02-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l02/exercises/html-css-ch05-l02-e01/solution/index.html
+  - id: release-ch05-l02-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l02/exercises/html-css-ch05-l02-e01/solution/styles.css
+  - id: release-ch05-l02-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l02/exercises/html-css-ch05-l02-e01/fixtures/valid-alternative/index.html
+  - id: release-ch05-l02-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l02/exercises/html-css-ch05-l02-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch05-l02-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l02/exercises/html-css-ch05-l02-e01/fixtures/incomplete/index.html
+  - id: release-ch05-l02-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l02/exercises/html-css-ch05-l02-e01/fixtures/incomplete/styles.css
+  - id: release-ch05-l03-lesson
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l03/lesson.yaml
+  - id: release-ch05-l03-s01
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l03/slides/s01-padding.md
+  - id: release-ch05-l03-s02
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l03/slides/s02-margin.md
+  - id: release-ch05-l03-e01
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l03/exercises/html-css-ch05-l03-e01/exercise.yaml
+  - id: release-ch05-l03-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l03/exercises/html-css-ch05-l03-e01/instructions.md
+  - id: release-ch05-l03-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l03/exercises/html-css-ch05-l03-e01/starter/index.html
+  - id: release-ch05-l03-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l03/exercises/html-css-ch05-l03-e01/starter/styles.css
+  - id: release-ch05-l03-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l03/exercises/html-css-ch05-l03-e01/solution/index.html
+  - id: release-ch05-l03-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l03/exercises/html-css-ch05-l03-e01/solution/styles.css
+  - id: release-ch05-l03-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l03/exercises/html-css-ch05-l03-e01/fixtures/valid-alternative/index.html
+  - id: release-ch05-l03-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l03/exercises/html-css-ch05-l03-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch05-l03-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l03/exercises/html-css-ch05-l03-e01/fixtures/incomplete/index.html
+  - id: release-ch05-l03-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l03/exercises/html-css-ch05-l03-e01/fixtures/incomplete/styles.css
+  - id: release-ch05-l04-lesson
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l04/lesson.yaml
+  - id: release-ch05-l04-s01
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l04/slides/s01-display-flow.md
+  - id: release-ch05-l04-s02
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l04/slides/s02-inline-block.md
+  - id: release-ch05-l04-e01
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l04/exercises/html-css-ch05-l04-e01/exercise.yaml
+  - id: release-ch05-l04-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l04/exercises/html-css-ch05-l04-e01/instructions.md
+  - id: release-ch05-l04-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l04/exercises/html-css-ch05-l04-e01/starter/index.html
+  - id: release-ch05-l04-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l04/exercises/html-css-ch05-l04-e01/starter/styles.css
+  - id: release-ch05-l04-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l04/exercises/html-css-ch05-l04-e01/solution/index.html
+  - id: release-ch05-l04-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l04/exercises/html-css-ch05-l04-e01/solution/styles.css
+  - id: release-ch05-l04-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l04/exercises/html-css-ch05-l04-e01/fixtures/valid-alternative/index.html
+  - id: release-ch05-l04-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l04/exercises/html-css-ch05-l04-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch05-l04-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l04/exercises/html-css-ch05-l04-e01/fixtures/incomplete/index.html
+  - id: release-ch05-l04-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l04/exercises/html-css-ch05-l04-e01/fixtures/incomplete/styles.css
+  - id: release-ch05-l05-lesson
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l05/lesson.yaml
+  - id: release-ch05-l05-s01
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l05/slides/s01-overflow.md
+  - id: release-ch05-l05-s02
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l05/slides/s02-safe-sizing.md
+  - id: release-ch05-l05-e01
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l05/exercises/html-css-ch05-l05-e01/exercise.yaml
+  - id: release-ch05-l05-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l05/exercises/html-css-ch05-l05-e01/instructions.md
+  - id: release-ch05-l05-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l05/exercises/html-css-ch05-l05-e01/starter/index.html
+  - id: release-ch05-l05-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l05/exercises/html-css-ch05-l05-e01/starter/styles.css
+  - id: release-ch05-l05-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l05/exercises/html-css-ch05-l05-e01/solution/index.html
+  - id: release-ch05-l05-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l05/exercises/html-css-ch05-l05-e01/solution/styles.css
+  - id: release-ch05-l05-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l05/exercises/html-css-ch05-l05-e01/fixtures/valid-alternative/index.html
+  - id: release-ch05-l05-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l05/exercises/html-css-ch05-l05-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch05-l05-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l05/exercises/html-css-ch05-l05-e01/fixtures/incomplete/index.html
+  - id: release-ch05-l05-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l05/exercises/html-css-ch05-l05-e01/fixtures/incomplete/styles.css
+  - id: release-ch06-chapter
+    visibility: public
+    path: chapters/html-css-ch06/chapter.yaml
+  - id: release-ch06-l01-lesson
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l01/lesson.yaml
+  - id: release-ch06-l01-s01
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l01/slides/s01-typography-properties.md
+  - id: release-ch06-l01-s02
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l01/slides/s02-font-stack.md
+  - id: release-ch06-l01-e01
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l01/exercises/html-css-ch06-l01-e01/exercise.yaml
+  - id: release-ch06-l01-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l01/exercises/html-css-ch06-l01-e01/instructions.md
+  - id: release-ch06-l01-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l01/exercises/html-css-ch06-l01-e01/starter/index.html
+  - id: release-ch06-l01-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l01/exercises/html-css-ch06-l01-e01/starter/styles.css
+  - id: release-ch06-l01-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l01/exercises/html-css-ch06-l01-e01/solution/index.html
+  - id: release-ch06-l01-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l01/exercises/html-css-ch06-l01-e01/solution/styles.css
+  - id: release-ch06-l01-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l01/exercises/html-css-ch06-l01-e01/fixtures/valid-alternative/index.html
+  - id: release-ch06-l01-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l01/exercises/html-css-ch06-l01-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch06-l01-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l01/exercises/html-css-ch06-l01-e01/fixtures/incomplete/index.html
+  - id: release-ch06-l01-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l01/exercises/html-css-ch06-l01-e01/fixtures/incomplete/styles.css
+  - id: release-ch06-l02-lesson
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l02/lesson.yaml
+  - id: release-ch06-l02-s01
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l02/slides/s01-color-formats.md
+  - id: release-ch06-l02-s02
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l02/slides/s02-contrast.md
+  - id: release-ch06-l02-e01
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l02/exercises/html-css-ch06-l02-e01/exercise.yaml
+  - id: release-ch06-l02-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l02/exercises/html-css-ch06-l02-e01/instructions.md
+  - id: release-ch06-l02-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l02/exercises/html-css-ch06-l02-e01/starter/index.html
+  - id: release-ch06-l02-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l02/exercises/html-css-ch06-l02-e01/starter/styles.css
+  - id: release-ch06-l02-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l02/exercises/html-css-ch06-l02-e01/solution/index.html
+  - id: release-ch06-l02-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l02/exercises/html-css-ch06-l02-e01/solution/styles.css
+  - id: release-ch06-l02-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l02/exercises/html-css-ch06-l02-e01/fixtures/valid-alternative/index.html
+  - id: release-ch06-l02-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l02/exercises/html-css-ch06-l02-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch06-l02-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l02/exercises/html-css-ch06-l02-e01/fixtures/incomplete/index.html
+  - id: release-ch06-l02-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l02/exercises/html-css-ch06-l02-e01/fixtures/incomplete/styles.css
+  - id: release-ch06-l03-lesson
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l03/lesson.yaml
+  - id: release-ch06-l03-s01
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l03/slides/s01-custom-property-declare.md
+  - id: release-ch06-l03-s02
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l03/slides/s02-custom-property-use.md
+  - id: release-ch06-l03-e01
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l03/exercises/html-css-ch06-l03-e01/exercise.yaml
+  - id: release-ch06-l03-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l03/exercises/html-css-ch06-l03-e01/instructions.md
+  - id: release-ch06-l03-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l03/exercises/html-css-ch06-l03-e01/starter/index.html
+  - id: release-ch06-l03-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l03/exercises/html-css-ch06-l03-e01/starter/styles.css
+  - id: release-ch06-l03-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l03/exercises/html-css-ch06-l03-e01/solution/index.html
+  - id: release-ch06-l03-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l03/exercises/html-css-ch06-l03-e01/solution/styles.css
+  - id: release-ch06-l03-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l03/exercises/html-css-ch06-l03-e01/fixtures/valid-alternative/index.html
+  - id: release-ch06-l03-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l03/exercises/html-css-ch06-l03-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch06-l03-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l03/exercises/html-css-ch06-l03-e01/fixtures/incomplete/index.html
+  - id: release-ch06-l03-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l03/exercises/html-css-ch06-l03-e01/fixtures/incomplete/styles.css
+  - id: release-ch06-l04-lesson
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l04/lesson.yaml
+  - id: release-ch06-l04-s01
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l04/slides/s01-reusable-class.md
+  - id: release-ch06-l04-s02
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l04/slides/s02-component-boundary.md
+  - id: release-ch06-l04-e01
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l04/exercises/html-css-ch06-l04-e01/exercise.yaml
+  - id: release-ch06-l04-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l04/exercises/html-css-ch06-l04-e01/instructions.md
+  - id: release-ch06-l04-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l04/exercises/html-css-ch06-l04-e01/starter/index.html
+  - id: release-ch06-l04-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l04/exercises/html-css-ch06-l04-e01/starter/styles.css
+  - id: release-ch06-l04-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l04/exercises/html-css-ch06-l04-e01/solution/index.html
+  - id: release-ch06-l04-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l04/exercises/html-css-ch06-l04-e01/solution/styles.css
+  - id: release-ch06-l04-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l04/exercises/html-css-ch06-l04-e01/fixtures/valid-alternative/index.html
+  - id: release-ch06-l04-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l04/exercises/html-css-ch06-l04-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch06-l04-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l04/exercises/html-css-ch06-l04-e01/fixtures/incomplete/index.html
+  - id: release-ch06-l04-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l04/exercises/html-css-ch06-l04-e01/fixtures/incomplete/styles.css
+  - id: release-ch07-chapter
+    visibility: public
+    path: chapters/html-css-ch07/chapter.yaml
+  - id: release-ch07-l01-lesson
+    visibility: public
+    path: chapters/html-css-ch07/lessons/html-css-ch07-l01/lesson.yaml
+  - id: release-ch07-l01-r01
+    visibility: public
+    path: chapters/html-css-ch07/lessons/html-css-ch07-l01/slides/r01-profile-assembly-review.md
+  - id: release-ch07-l01-e01
+    visibility: public
+    path: chapters/html-css-ch07/lessons/html-css-ch07-l01/exercises/html-css-ch07-l01-e01/exercise.yaml
+  - id: release-ch07-l01-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch07/lessons/html-css-ch07-l01/exercises/html-css-ch07-l01-e01/instructions.md
+  - id: release-ch07-l01-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch07/lessons/html-css-ch07-l01/exercises/html-css-ch07-l01-e01/starter/index.html
+  - id: release-ch07-l01-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch07/lessons/html-css-ch07-l01/exercises/html-css-ch07-l01-e01/starter/styles.css
+  - id: release-ch07-l01-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch07/lessons/html-css-ch07-l01/exercises/html-css-ch07-l01-e01/solution/index.html
+  - id: release-ch07-l01-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch07/lessons/html-css-ch07-l01/exercises/html-css-ch07-l01-e01/solution/styles.css
+  - id: release-ch07-l01-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch07/lessons/html-css-ch07-l01/exercises/html-css-ch07-l01-e01/fixtures/valid-alternative/index.html
+  - id: release-ch07-l01-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch07/lessons/html-css-ch07-l01/exercises/html-css-ch07-l01-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch07-l01-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch07/lessons/html-css-ch07-l01/exercises/html-css-ch07-l01-e01/fixtures/incomplete/index.html
+  - id: release-ch07-l01-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch07/lessons/html-css-ch07-l01/exercises/html-css-ch07-l01-e01/fixtures/incomplete/styles.css
+  - id: ch07-profile-avatar-integration-original
+    visibility: public
+    path: chapters/html-css-ch07/lessons/html-css-ch07-l01/exercises/html-css-ch07-l01-e01/assets/profile-avatar.svg
+    method: original-svg
+    promptPath: assets/published/profile-avatar.svg
+  - id: ch08-flex-axis-source-original
+    visibility: authoring
+    path: assets/source/diagram-flex-axis.svg
+    method: original-svg
+  - id: ch08-flex-axis-published-original
+    visibility: public
+    path: assets/published/diagram-flex-axis.svg
+    method: original-svg
+    promptPath: assets/source/diagram-flex-axis.svg
+  - id: release-ch08-chapter
+    visibility: public
+    path: chapters/html-css-ch08/chapter.yaml
+  - id: release-ch08-l01-lesson
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l01/lesson.yaml
+  - id: release-ch08-l01-s01
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l01/slides/s01-flex-container.md
+  - id: release-ch08-l01-s02
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l01/slides/s02-main-cross-axis.md
+  - id: release-ch08-l01-e01
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l01/exercises/html-css-ch08-l01-e01/exercise.yaml
+  - id: release-ch08-l01-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l01/exercises/html-css-ch08-l01-e01/instructions.md
+  - id: release-ch08-l01-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l01/exercises/html-css-ch08-l01-e01/starter/index.html
+  - id: release-ch08-l01-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l01/exercises/html-css-ch08-l01-e01/starter/styles.css
+  - id: release-ch08-l01-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l01/exercises/html-css-ch08-l01-e01/solution/index.html
+  - id: release-ch08-l01-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l01/exercises/html-css-ch08-l01-e01/solution/styles.css
+  - id: release-ch08-l01-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l01/exercises/html-css-ch08-l01-e01/fixtures/valid-alternative/index.html
+  - id: release-ch08-l01-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l01/exercises/html-css-ch08-l01-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch08-l01-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l01/exercises/html-css-ch08-l01-e01/fixtures/incomplete/index.html
+  - id: release-ch08-l01-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l01/exercises/html-css-ch08-l01-e01/fixtures/incomplete/styles.css
+  - id: release-ch08-l02-lesson
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l02/lesson.yaml
+  - id: release-ch08-l02-s01
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l02/slides/s01-justify-content.md
+  - id: release-ch08-l02-s02
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l02/slides/s02-gap.md
+  - id: release-ch08-l02-e01
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l02/exercises/html-css-ch08-l02-e01/exercise.yaml
+  - id: release-ch08-l02-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l02/exercises/html-css-ch08-l02-e01/instructions.md
+  - id: release-ch08-l02-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l02/exercises/html-css-ch08-l02-e01/starter/index.html
+  - id: release-ch08-l02-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l02/exercises/html-css-ch08-l02-e01/starter/styles.css
+  - id: release-ch08-l02-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l02/exercises/html-css-ch08-l02-e01/solution/index.html
+  - id: release-ch08-l02-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l02/exercises/html-css-ch08-l02-e01/solution/styles.css
+  - id: release-ch08-l02-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l02/exercises/html-css-ch08-l02-e01/fixtures/valid-alternative/index.html
+  - id: release-ch08-l02-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l02/exercises/html-css-ch08-l02-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch08-l02-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l02/exercises/html-css-ch08-l02-e01/fixtures/incomplete/index.html
+  - id: release-ch08-l02-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l02/exercises/html-css-ch08-l02-e01/fixtures/incomplete/styles.css
+  - id: release-ch08-l03-lesson
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l03/lesson.yaml
+  - id: release-ch08-l03-s01
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l03/slides/s01-align-items.md
+  - id: release-ch08-l03-s02
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l03/slides/s02-align-self.md
+  - id: release-ch08-l03-e01
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l03/exercises/html-css-ch08-l03-e01/exercise.yaml
+  - id: release-ch08-l03-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l03/exercises/html-css-ch08-l03-e01/instructions.md
+  - id: release-ch08-l03-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l03/exercises/html-css-ch08-l03-e01/starter/index.html
+  - id: release-ch08-l03-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l03/exercises/html-css-ch08-l03-e01/starter/styles.css
+  - id: release-ch08-l03-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l03/exercises/html-css-ch08-l03-e01/solution/index.html
+  - id: release-ch08-l03-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l03/exercises/html-css-ch08-l03-e01/solution/styles.css
+  - id: release-ch08-l03-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l03/exercises/html-css-ch08-l03-e01/fixtures/valid-alternative/index.html
+  - id: release-ch08-l03-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l03/exercises/html-css-ch08-l03-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch08-l03-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l03/exercises/html-css-ch08-l03-e01/fixtures/incomplete/index.html
+  - id: release-ch08-l03-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l03/exercises/html-css-ch08-l03-e01/fixtures/incomplete/styles.css
+  - id: release-ch08-l04-lesson
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l04/lesson.yaml
+  - id: release-ch08-l04-s01
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l04/slides/s01-flex-wrap.md
+  - id: release-ch08-l04-s02
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l04/slides/s02-flex-basis.md
+  - id: release-ch08-l04-e01
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l04/exercises/html-css-ch08-l04-e01/exercise.yaml
+  - id: release-ch08-l04-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l04/exercises/html-css-ch08-l04-e01/instructions.md
+  - id: release-ch08-l04-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l04/exercises/html-css-ch08-l04-e01/starter/index.html
+  - id: release-ch08-l04-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l04/exercises/html-css-ch08-l04-e01/starter/styles.css
+  - id: release-ch08-l04-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l04/exercises/html-css-ch08-l04-e01/solution/index.html
+  - id: release-ch08-l04-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l04/exercises/html-css-ch08-l04-e01/solution/styles.css
+  - id: release-ch08-l04-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l04/exercises/html-css-ch08-l04-e01/fixtures/valid-alternative/index.html
+  - id: release-ch08-l04-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l04/exercises/html-css-ch08-l04-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch08-l04-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l04/exercises/html-css-ch08-l04-e01/fixtures/incomplete/index.html
+  - id: release-ch08-l04-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l04/exercises/html-css-ch08-l04-e01/fixtures/incomplete/styles.css
+  - id: release-ch08-l05-lesson
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l05/lesson.yaml
+  - id: release-ch08-l05-s01
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l05/slides/s01-flex-navigation.md
+  - id: release-ch08-l05-s02
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l05/slides/s02-card-row.md
+  - id: release-ch08-l05-e01
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l05/exercises/html-css-ch08-l05-e01/exercise.yaml
+  - id: release-ch08-l05-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l05/exercises/html-css-ch08-l05-e01/instructions.md
+  - id: release-ch08-l05-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l05/exercises/html-css-ch08-l05-e01/starter/index.html
+  - id: release-ch08-l05-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l05/exercises/html-css-ch08-l05-e01/starter/styles.css
+  - id: release-ch08-l05-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l05/exercises/html-css-ch08-l05-e01/solution/index.html
+  - id: release-ch08-l05-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l05/exercises/html-css-ch08-l05-e01/solution/styles.css
+  - id: release-ch08-l05-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l05/exercises/html-css-ch08-l05-e01/fixtures/valid-alternative/index.html
+  - id: release-ch08-l05-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l05/exercises/html-css-ch08-l05-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch08-l05-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l05/exercises/html-css-ch08-l05-e01/fixtures/incomplete/index.html
+  - id: release-ch08-l05-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l05/exercises/html-css-ch08-l05-e01/fixtures/incomplete/styles.css
+  - id: ch08-flex-axis-slide-original
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l01/slides/assets/diagram-flex-axis.svg
+    method: original-svg
+    promptPath: assets/published/diagram-flex-axis.svg
+  - id: ch09-grid-tracks-source-original
+    visibility: authoring
+    path: assets/source/diagram-grid-tracks.svg
+    method: original-svg
+  - id: ch09-grid-tracks-published-original
+    visibility: public
+    path: assets/published/diagram-grid-tracks.svg
+    method: original-svg
+    promptPath: assets/source/diagram-grid-tracks.svg
+  - id: release-ch09-chapter
+    visibility: public
+    path: chapters/html-css-ch09/chapter.yaml
+  - id: release-ch09-l01-lesson
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l01/lesson.yaml
+  - id: release-ch09-l01-s01
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l01/slides/s01-grid-container.md
+  - id: release-ch09-l01-s02
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l01/slides/s02-explicit-tracks.md
+  - id: release-ch09-l01-e01
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l01/exercises/html-css-ch09-l01-e01/exercise.yaml
+  - id: release-ch09-l01-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l01/exercises/html-css-ch09-l01-e01/instructions.md
+  - id: release-ch09-l01-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l01/exercises/html-css-ch09-l01-e01/starter/index.html
+  - id: release-ch09-l01-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l01/exercises/html-css-ch09-l01-e01/starter/styles.css
+  - id: release-ch09-l01-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l01/exercises/html-css-ch09-l01-e01/solution/index.html
+  - id: release-ch09-l01-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l01/exercises/html-css-ch09-l01-e01/solution/styles.css
+  - id: release-ch09-l01-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l01/exercises/html-css-ch09-l01-e01/fixtures/valid-alternative/index.html
+  - id: release-ch09-l01-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l01/exercises/html-css-ch09-l01-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch09-l01-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l01/exercises/html-css-ch09-l01-e01/fixtures/incomplete/index.html
+  - id: release-ch09-l01-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l01/exercises/html-css-ch09-l01-e01/fixtures/incomplete/styles.css
+  - id: release-ch09-l02-lesson
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l02/lesson.yaml
+  - id: release-ch09-l02-s01
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l02/slides/s01-repeat-fr.md
+  - id: release-ch09-l02-s02
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l02/slides/s02-grid-gap.md
+  - id: release-ch09-l02-e01
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l02/exercises/html-css-ch09-l02-e01/exercise.yaml
+  - id: release-ch09-l02-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l02/exercises/html-css-ch09-l02-e01/instructions.md
+  - id: release-ch09-l02-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l02/exercises/html-css-ch09-l02-e01/starter/index.html
+  - id: release-ch09-l02-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l02/exercises/html-css-ch09-l02-e01/starter/styles.css
+  - id: release-ch09-l02-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l02/exercises/html-css-ch09-l02-e01/solution/index.html
+  - id: release-ch09-l02-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l02/exercises/html-css-ch09-l02-e01/solution/styles.css
+  - id: release-ch09-l02-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l02/exercises/html-css-ch09-l02-e01/fixtures/valid-alternative/index.html
+  - id: release-ch09-l02-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l02/exercises/html-css-ch09-l02-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch09-l02-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l02/exercises/html-css-ch09-l02-e01/fixtures/incomplete/index.html
+  - id: release-ch09-l02-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l02/exercises/html-css-ch09-l02-e01/fixtures/incomplete/styles.css
+  - id: release-ch09-l03-lesson
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l03/lesson.yaml
+  - id: release-ch09-l03-s01
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l03/slides/s01-minmax.md
+  - id: release-ch09-l03-s02
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l03/slides/s02-auto-fit.md
+  - id: release-ch09-l03-e01
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l03/exercises/html-css-ch09-l03-e01/exercise.yaml
+  - id: release-ch09-l03-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l03/exercises/html-css-ch09-l03-e01/instructions.md
+  - id: release-ch09-l03-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l03/exercises/html-css-ch09-l03-e01/starter/index.html
+  - id: release-ch09-l03-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l03/exercises/html-css-ch09-l03-e01/starter/styles.css
+  - id: release-ch09-l03-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l03/exercises/html-css-ch09-l03-e01/solution/index.html
+  - id: release-ch09-l03-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l03/exercises/html-css-ch09-l03-e01/solution/styles.css
+  - id: release-ch09-l03-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l03/exercises/html-css-ch09-l03-e01/fixtures/valid-alternative/index.html
+  - id: release-ch09-l03-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l03/exercises/html-css-ch09-l03-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch09-l03-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l03/exercises/html-css-ch09-l03-e01/fixtures/incomplete/index.html
+  - id: release-ch09-l03-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l03/exercises/html-css-ch09-l03-e01/fixtures/incomplete/styles.css
+  - id: release-ch09-l04-lesson
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l04/lesson.yaml
+  - id: release-ch09-l04-s01
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l04/slides/s01-grid-placement.md
+  - id: release-ch09-l04-s02
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l04/slides/s02-grid-vs-flex.md
+  - id: release-ch09-l04-e01
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l04/exercises/html-css-ch09-l04-e01/exercise.yaml
+  - id: release-ch09-l04-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l04/exercises/html-css-ch09-l04-e01/instructions.md
+  - id: release-ch09-l04-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l04/exercises/html-css-ch09-l04-e01/starter/index.html
+  - id: release-ch09-l04-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l04/exercises/html-css-ch09-l04-e01/starter/styles.css
+  - id: release-ch09-l04-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l04/exercises/html-css-ch09-l04-e01/solution/index.html
+  - id: release-ch09-l04-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l04/exercises/html-css-ch09-l04-e01/solution/styles.css
+  - id: release-ch09-l04-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l04/exercises/html-css-ch09-l04-e01/fixtures/valid-alternative/index.html
+  - id: release-ch09-l04-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l04/exercises/html-css-ch09-l04-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch09-l04-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l04/exercises/html-css-ch09-l04-e01/fixtures/incomplete/index.html
+  - id: release-ch09-l04-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l04/exercises/html-css-ch09-l04-e01/fixtures/incomplete/styles.css
+  - id: ch09-grid-tracks-slide-original
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l01/slides/assets/diagram-grid-tracks.svg
+    method: original-svg
+    promptPath: assets/published/diagram-grid-tracks.svg
+  - id: ch10-responsive-source-original
+    visibility: authoring
+    path: assets/source/diagram-responsive-breakpoints.svg
+    method: original-svg
+  - id: ch10-responsive-published-original
+    visibility: public
+    path: assets/published/diagram-responsive-breakpoints.svg
+    method: original-svg
+    promptPath: assets/source/diagram-responsive-breakpoints.svg
+  - id: release-ch10-chapter
+    visibility: public
+    path: chapters/html-css-ch10/chapter.yaml
+  - id: release-ch10-l01-lesson
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l01/lesson.yaml
+  - id: release-ch10-l01-s01
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l01/slides/s01-viewport-meta.md
+  - id: release-ch10-l01-s02
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l01/slides/s02-mobile-first.md
+  - id: release-ch10-l01-e01
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l01/exercises/html-css-ch10-l01-e01/exercise.yaml
+  - id: release-ch10-l01-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l01/exercises/html-css-ch10-l01-e01/instructions.md
+  - id: release-ch10-l01-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l01/exercises/html-css-ch10-l01-e01/starter/index.html
+  - id: release-ch10-l01-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l01/exercises/html-css-ch10-l01-e01/starter/styles.css
+  - id: release-ch10-l01-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l01/exercises/html-css-ch10-l01-e01/solution/index.html
+  - id: release-ch10-l01-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l01/exercises/html-css-ch10-l01-e01/solution/styles.css
+  - id: release-ch10-l01-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l01/exercises/html-css-ch10-l01-e01/fixtures/valid-alternative/index.html
+  - id: release-ch10-l01-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l01/exercises/html-css-ch10-l01-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch10-l01-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l01/exercises/html-css-ch10-l01-e01/fixtures/incomplete/index.html
+  - id: release-ch10-l01-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l01/exercises/html-css-ch10-l01-e01/fixtures/incomplete/styles.css
+  - id: release-ch10-l02-lesson
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l02/lesson.yaml
+  - id: release-ch10-l02-s01
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l02/slides/s01-content-breakpoint.md
+  - id: release-ch10-l02-s02
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l02/slides/s02-media-query.md
+  - id: release-ch10-l02-e01
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l02/exercises/html-css-ch10-l02-e01/exercise.yaml
+  - id: release-ch10-l02-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l02/exercises/html-css-ch10-l02-e01/instructions.md
+  - id: release-ch10-l02-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l02/exercises/html-css-ch10-l02-e01/starter/index.html
+  - id: release-ch10-l02-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l02/exercises/html-css-ch10-l02-e01/starter/styles.css
+  - id: release-ch10-l02-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l02/exercises/html-css-ch10-l02-e01/solution/index.html
+  - id: release-ch10-l02-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l02/exercises/html-css-ch10-l02-e01/solution/styles.css
+  - id: release-ch10-l02-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l02/exercises/html-css-ch10-l02-e01/fixtures/valid-alternative/index.html
+  - id: release-ch10-l02-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l02/exercises/html-css-ch10-l02-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch10-l02-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l02/exercises/html-css-ch10-l02-e01/fixtures/incomplete/index.html
+  - id: release-ch10-l02-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l02/exercises/html-css-ch10-l02-e01/fixtures/incomplete/styles.css
+  - id: release-ch10-l03-lesson
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l03/lesson.yaml
+  - id: release-ch10-l03-s01
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l03/slides/s01-fluid-width.md
+  - id: release-ch10-l03-s02
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l03/slides/s02-max-width-center.md
+  - id: release-ch10-l03-e01
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l03/exercises/html-css-ch10-l03-e01/exercise.yaml
+  - id: release-ch10-l03-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l03/exercises/html-css-ch10-l03-e01/instructions.md
+  - id: release-ch10-l03-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l03/exercises/html-css-ch10-l03-e01/starter/index.html
+  - id: release-ch10-l03-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l03/exercises/html-css-ch10-l03-e01/starter/styles.css
+  - id: release-ch10-l03-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l03/exercises/html-css-ch10-l03-e01/solution/index.html
+  - id: release-ch10-l03-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l03/exercises/html-css-ch10-l03-e01/solution/styles.css
+  - id: release-ch10-l03-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l03/exercises/html-css-ch10-l03-e01/fixtures/valid-alternative/index.html
+  - id: release-ch10-l03-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l03/exercises/html-css-ch10-l03-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch10-l03-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l03/exercises/html-css-ch10-l03-e01/fixtures/incomplete/index.html
+  - id: release-ch10-l03-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l03/exercises/html-css-ch10-l03-e01/fixtures/incomplete/styles.css
+  - id: release-ch10-l04-lesson
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l04/lesson.yaml
+  - id: release-ch10-l04-s01
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l04/slides/s01-responsive-image.md
+  - id: release-ch10-l04-s02
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l04/slides/s02-object-fit.md
+  - id: release-ch10-l04-e01
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l04/exercises/html-css-ch10-l04-e01/exercise.yaml
+  - id: release-ch10-l04-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l04/exercises/html-css-ch10-l04-e01/instructions.md
+  - id: release-ch10-l04-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l04/exercises/html-css-ch10-l04-e01/starter/index.html
+  - id: release-ch10-l04-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l04/exercises/html-css-ch10-l04-e01/starter/styles.css
+  - id: release-ch10-l04-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l04/exercises/html-css-ch10-l04-e01/solution/index.html
+  - id: release-ch10-l04-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l04/exercises/html-css-ch10-l04-e01/solution/styles.css
+  - id: release-ch10-l04-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l04/exercises/html-css-ch10-l04-e01/fixtures/valid-alternative/index.html
+  - id: release-ch10-l04-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l04/exercises/html-css-ch10-l04-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch10-l04-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l04/exercises/html-css-ch10-l04-e01/fixtures/incomplete/index.html
+  - id: release-ch10-l04-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l04/exercises/html-css-ch10-l04-e01/fixtures/incomplete/styles.css
+  - id: release-ch10-l05-lesson
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l05/lesson.yaml
+  - id: release-ch10-l05-s01
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l05/slides/s01-overflow-check.md
+  - id: release-ch10-l05-s02
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l05/slides/s02-four-viewports.md
+  - id: release-ch10-l05-e01
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l05/exercises/html-css-ch10-l05-e01/exercise.yaml
+  - id: release-ch10-l05-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l05/exercises/html-css-ch10-l05-e01/instructions.md
+  - id: release-ch10-l05-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l05/exercises/html-css-ch10-l05-e01/starter/index.html
+  - id: release-ch10-l05-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l05/exercises/html-css-ch10-l05-e01/starter/styles.css
+  - id: release-ch10-l05-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l05/exercises/html-css-ch10-l05-e01/solution/index.html
+  - id: release-ch10-l05-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l05/exercises/html-css-ch10-l05-e01/solution/styles.css
+  - id: release-ch10-l05-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l05/exercises/html-css-ch10-l05-e01/fixtures/valid-alternative/index.html
+  - id: release-ch10-l05-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l05/exercises/html-css-ch10-l05-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch10-l05-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l05/exercises/html-css-ch10-l05-e01/fixtures/incomplete/index.html
+  - id: release-ch10-l05-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l05/exercises/html-css-ch10-l05-e01/fixtures/incomplete/styles.css
+  - id: ch10-responsive-breakpoints-slide-original
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l02/slides/assets/diagram-responsive-breakpoints.svg
+    method: original-svg
+    promptPath: assets/published/diagram-responsive-breakpoints.svg
+  - id: ch10-responsive-avatar-original
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l04/exercises/html-css-ch10-l04-e01/assets/profile-avatar.svg
+    method: original-svg
+    promptPath: assets/published/profile-avatar.svg
+  - id: ch11-focus-source-original
+    visibility: authoring
+    path: assets/source/diagram-focus-path.svg
+    method: original-svg
+  - id: ch11-focus-published-original
+    visibility: public
+    path: assets/published/diagram-focus-path.svg
+    method: original-svg
+    promptPath: assets/source/diagram-focus-path.svg
+  - id: release-ch11-chapter
+    visibility: public
+    path: chapters/html-css-ch11/chapter.yaml
+  - id: release-ch11-l01-lesson
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l01/lesson.yaml
+  - id: release-ch11-l01-s01
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l01/slides/s01-dom-order.md
+  - id: release-ch11-l01-s02
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l01/slides/s02-focus-visible.md
+  - id: release-ch11-l01-e01
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l01/exercises/html-css-ch11-l01-e01/exercise.yaml
+  - id: release-ch11-l01-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l01/exercises/html-css-ch11-l01-e01/instructions.md
+  - id: release-ch11-l01-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l01/exercises/html-css-ch11-l01-e01/starter/index.html
+  - id: release-ch11-l01-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l01/exercises/html-css-ch11-l01-e01/starter/styles.css
+  - id: release-ch11-l01-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l01/exercises/html-css-ch11-l01-e01/solution/index.html
+  - id: release-ch11-l01-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l01/exercises/html-css-ch11-l01-e01/solution/styles.css
+  - id: release-ch11-l01-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l01/exercises/html-css-ch11-l01-e01/fixtures/valid-alternative/index.html
+  - id: release-ch11-l01-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l01/exercises/html-css-ch11-l01-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch11-l01-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l01/exercises/html-css-ch11-l01-e01/fixtures/incomplete/index.html
+  - id: release-ch11-l01-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l01/exercises/html-css-ch11-l01-e01/fixtures/incomplete/styles.css
+  - id: ch11-focus-path-slide-original
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l01/slides/assets/diagram-focus-path.svg
+    method: original-svg
+    promptPath: assets/published/diagram-focus-path.svg
+  - id: release-ch11-l02-lesson
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l02/lesson.yaml
+  - id: release-ch11-l02-s01
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l02/slides/s01-accessible-name.md
+  - id: release-ch11-l02-s02
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l02/slides/s02-label-alt-link.md
+  - id: release-ch11-l02-e01
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l02/exercises/html-css-ch11-l02-e01/exercise.yaml
+  - id: release-ch11-l02-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l02/exercises/html-css-ch11-l02-e01/instructions.md
+  - id: release-ch11-l02-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l02/exercises/html-css-ch11-l02-e01/starter/index.html
+  - id: release-ch11-l02-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l02/exercises/html-css-ch11-l02-e01/starter/styles.css
+  - id: release-ch11-l02-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l02/exercises/html-css-ch11-l02-e01/solution/index.html
+  - id: release-ch11-l02-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l02/exercises/html-css-ch11-l02-e01/solution/styles.css
+  - id: release-ch11-l02-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l02/exercises/html-css-ch11-l02-e01/fixtures/valid-alternative/index.html
+  - id: release-ch11-l02-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l02/exercises/html-css-ch11-l02-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch11-l02-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l02/exercises/html-css-ch11-l02-e01/fixtures/incomplete/index.html
+  - id: release-ch11-l02-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l02/exercises/html-css-ch11-l02-e01/fixtures/incomplete/styles.css
+  - id: ch11-names-avatar-original
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l02/exercises/html-css-ch11-l02-e01/assets/profile-avatar.svg
+    method: original-svg
+    promptPath: assets/published/profile-avatar.svg
+  - id: release-ch11-l03-lesson
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l03/lesson.yaml
+  - id: release-ch11-l03-s01
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l03/slides/s01-contrast-check.md
+  - id: release-ch11-l03-s02
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l03/slides/s02-color-not-alone.md
+  - id: release-ch11-l03-e01
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l03/exercises/html-css-ch11-l03-e01/exercise.yaml
+  - id: release-ch11-l03-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l03/exercises/html-css-ch11-l03-e01/instructions.md
+  - id: release-ch11-l03-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l03/exercises/html-css-ch11-l03-e01/starter/index.html
+  - id: release-ch11-l03-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l03/exercises/html-css-ch11-l03-e01/starter/styles.css
+  - id: release-ch11-l03-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l03/exercises/html-css-ch11-l03-e01/solution/index.html
+  - id: release-ch11-l03-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l03/exercises/html-css-ch11-l03-e01/solution/styles.css
+  - id: release-ch11-l03-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l03/exercises/html-css-ch11-l03-e01/fixtures/valid-alternative/index.html
+  - id: release-ch11-l03-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l03/exercises/html-css-ch11-l03-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch11-l03-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l03/exercises/html-css-ch11-l03-e01/fixtures/incomplete/index.html
+  - id: release-ch11-l03-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l03/exercises/html-css-ch11-l03-e01/fixtures/incomplete/styles.css
+  - id: release-ch11-l04-lesson
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l04/lesson.yaml
+  - id: release-ch11-l04-s01
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l04/slides/s01-reduced-motion.md
+  - id: release-ch11-l04-s02
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l04/slides/s02-final-audit.md
+  - id: release-ch11-l04-e01
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l04/exercises/html-css-ch11-l04-e01/exercise.yaml
+  - id: release-ch11-l04-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l04/exercises/html-css-ch11-l04-e01/instructions.md
+  - id: release-ch11-l04-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l04/exercises/html-css-ch11-l04-e01/starter/index.html
+  - id: release-ch11-l04-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l04/exercises/html-css-ch11-l04-e01/starter/styles.css
+  - id: release-ch11-l04-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l04/exercises/html-css-ch11-l04-e01/solution/index.html
+  - id: release-ch11-l04-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l04/exercises/html-css-ch11-l04-e01/solution/styles.css
+  - id: release-ch11-l04-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l04/exercises/html-css-ch11-l04-e01/fixtures/valid-alternative/index.html
+  - id: release-ch11-l04-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l04/exercises/html-css-ch11-l04-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch11-l04-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l04/exercises/html-css-ch11-l04-e01/fixtures/incomplete/index.html
+  - id: release-ch11-l04-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l04/exercises/html-css-ch11-l04-e01/fixtures/incomplete/styles.css
+  - id: release-ch12-chapter
+    visibility: public
+    path: chapters/html-css-ch12/chapter.yaml
+  - id: release-ch12-l01-lesson
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l01/lesson.yaml
+  - id: release-ch12-l01-g01
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l01/slides/g01-project-step.md
+  - id: release-ch12-l01-brief
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l01/brief.md
+  - id: release-ch12-l01-guide-01
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l01/guide-01-content-inventory.md
+  - id: release-ch12-l01-guide-02
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l01/guide-02-semantic-outline.md
+  - id: release-ch12-l01-e01
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l01/exercises/html-css-ch12-l01-e01/exercise.yaml
+  - id: release-ch12-l01-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l01/exercises/html-css-ch12-l01-e01/instructions.md
+  - id: release-ch12-l01-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l01/exercises/html-css-ch12-l01-e01/starter/index.html
+  - id: release-ch12-l01-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l01/exercises/html-css-ch12-l01-e01/starter/styles.css
+  - id: release-ch12-l01-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l01/exercises/html-css-ch12-l01-e01/solution/index.html
+  - id: release-ch12-l01-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l01/exercises/html-css-ch12-l01-e01/solution/styles.css
+  - id: release-ch12-l01-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l01/exercises/html-css-ch12-l01-e01/fixtures/valid-alternative/index.html
+  - id: release-ch12-l01-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l01/exercises/html-css-ch12-l01-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch12-l01-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l01/exercises/html-css-ch12-l01-e01/fixtures/incomplete/index.html
+  - id: release-ch12-l01-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l01/exercises/html-css-ch12-l01-e01/fixtures/incomplete/styles.css
+  - id: release-ch12-l02-lesson
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l02/lesson.yaml
+  - id: release-ch12-l02-g01
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l02/slides/g01-project-step.md
+  - id: release-ch12-l02-brief
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l02/brief.md
+  - id: release-ch12-l02-guide-01
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l02/guide-01-header-navigation.md
+  - id: release-ch12-l02-guide-02
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l02/guide-02-hero-priority.md
+  - id: release-ch12-l02-e01
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l02/exercises/html-css-ch12-l02-e01/exercise.yaml
+  - id: release-ch12-l02-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l02/exercises/html-css-ch12-l02-e01/instructions.md
+  - id: release-ch12-l02-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l02/exercises/html-css-ch12-l02-e01/starter/index.html
+  - id: release-ch12-l02-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l02/exercises/html-css-ch12-l02-e01/starter/styles.css
+  - id: release-ch12-l02-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l02/exercises/html-css-ch12-l02-e01/solution/index.html
+  - id: release-ch12-l02-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l02/exercises/html-css-ch12-l02-e01/solution/styles.css
+  - id: release-ch12-l02-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l02/exercises/html-css-ch12-l02-e01/fixtures/valid-alternative/index.html
+  - id: release-ch12-l02-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l02/exercises/html-css-ch12-l02-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch12-l02-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l02/exercises/html-css-ch12-l02-e01/fixtures/incomplete/index.html
+  - id: release-ch12-l02-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l02/exercises/html-css-ch12-l02-e01/fixtures/incomplete/styles.css
+  - id: ch12-profile-avatar-original
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l02/exercises/html-css-ch12-l02-e01/assets/profile-avatar.svg
+    method: original-svg
+    promptPath: assets/published/profile-avatar.svg
+  - id: release-ch12-l03-lesson
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l03/lesson.yaml
+  - id: release-ch12-l03-g01
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l03/slides/g01-project-step.md
+  - id: release-ch12-l03-brief
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l03/brief.md
+  - id: release-ch12-l03-guide-01
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l03/guide-01-about-copy.md
+  - id: release-ch12-l03-guide-02
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l03/guide-02-skills-system.md
+  - id: release-ch12-l03-e01
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l03/exercises/html-css-ch12-l03-e01/exercise.yaml
+  - id: release-ch12-l03-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l03/exercises/html-css-ch12-l03-e01/instructions.md
+  - id: release-ch12-l03-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l03/exercises/html-css-ch12-l03-e01/starter/index.html
+  - id: release-ch12-l03-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l03/exercises/html-css-ch12-l03-e01/starter/styles.css
+  - id: release-ch12-l03-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l03/exercises/html-css-ch12-l03-e01/solution/index.html
+  - id: release-ch12-l03-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l03/exercises/html-css-ch12-l03-e01/solution/styles.css
+  - id: release-ch12-l03-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l03/exercises/html-css-ch12-l03-e01/fixtures/valid-alternative/index.html
+  - id: release-ch12-l03-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l03/exercises/html-css-ch12-l03-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch12-l03-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l03/exercises/html-css-ch12-l03-e01/fixtures/incomplete/index.html
+  - id: release-ch12-l03-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l03/exercises/html-css-ch12-l03-e01/fixtures/incomplete/styles.css
+  - id: ch12-profile-avatar-l03-original
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l03/exercises/html-css-ch12-l03-e01/assets/profile-avatar.svg
+    method: original-svg
+    promptPath: assets/published/profile-avatar.svg
+  - id: release-ch12-l04-lesson
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l04/lesson.yaml
+  - id: release-ch12-l04-g01
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l04/slides/g01-project-step.md
+  - id: release-ch12-l04-brief
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l04/brief.md
+  - id: release-ch12-l04-guide-01
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l04/guide-01-works-layout.md
+  - id: release-ch12-l04-guide-02
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l04/guide-02-contact-responsive.md
+  - id: release-ch12-l04-e01
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l04/exercises/html-css-ch12-l04-e01/exercise.yaml
+  - id: release-ch12-l04-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l04/exercises/html-css-ch12-l04-e01/instructions.md
+  - id: release-ch12-l04-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l04/exercises/html-css-ch12-l04-e01/starter/index.html
+  - id: release-ch12-l04-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l04/exercises/html-css-ch12-l04-e01/starter/styles.css
+  - id: release-ch12-l04-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l04/exercises/html-css-ch12-l04-e01/solution/index.html
+  - id: release-ch12-l04-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l04/exercises/html-css-ch12-l04-e01/solution/styles.css
+  - id: release-ch12-l04-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l04/exercises/html-css-ch12-l04-e01/fixtures/valid-alternative/index.html
+  - id: release-ch12-l04-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l04/exercises/html-css-ch12-l04-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch12-l04-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l04/exercises/html-css-ch12-l04-e01/fixtures/incomplete/index.html
+  - id: release-ch12-l04-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l04/exercises/html-css-ch12-l04-e01/fixtures/incomplete/styles.css
+  - id: ch12-profile-avatar-l04-original
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l04/exercises/html-css-ch12-l04-e01/assets/profile-avatar.svg
+    method: original-svg
+    promptPath: assets/published/profile-avatar.svg
+  - id: release-ch12-l05-lesson
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l05/lesson.yaml
+  - id: release-ch12-l05-g01
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l05/slides/g01-project-step.md
+  - id: release-ch12-l05-brief
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l05/brief.md
+  - id: release-ch12-l05-guide-01
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l05/guide-01-accessibility-audit.md
+  - id: release-ch12-l05-guide-02
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l05/guide-02-motion-viewports.md
+  - id: release-ch12-l05-e01
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l05/exercises/html-css-ch12-l05-e01/exercise.yaml
+  - id: release-ch12-l05-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l05/exercises/html-css-ch12-l05-e01/instructions.md
+  - id: release-ch12-l05-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l05/exercises/html-css-ch12-l05-e01/starter/index.html
+  - id: release-ch12-l05-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l05/exercises/html-css-ch12-l05-e01/starter/styles.css
+  - id: release-ch12-l05-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l05/exercises/html-css-ch12-l05-e01/solution/index.html
+  - id: release-ch12-l05-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l05/exercises/html-css-ch12-l05-e01/solution/styles.css
+  - id: release-ch12-l05-e01-alternative-html
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l05/exercises/html-css-ch12-l05-e01/fixtures/valid-alternative/index.html
+  - id: release-ch12-l05-e01-alternative-css
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l05/exercises/html-css-ch12-l05-e01/fixtures/valid-alternative/styles.css
+  - id: release-ch12-l05-e01-incomplete-html
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l05/exercises/html-css-ch12-l05-e01/fixtures/incomplete/index.html
+  - id: release-ch12-l05-e01-incomplete-css
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l05/exercises/html-css-ch12-l05-e01/fixtures/incomplete/styles.css
+  - id: ch12-profile-avatar-l05-original
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l05/exercises/html-css-ch12-l05-e01/assets/profile-avatar.svg
+    method: original-svg
+    promptPath: assets/published/profile-avatar.svg
+  - id: ch13-stack-day-poster-source-original
+    visibility: authoring
+    path: assets/source/stack-day-poster.svg
+    method: original-svg
+  - id: ch13-stack-day-poster-published-original
+    visibility: public
+    path: assets/published/stack-day-poster.svg
+    method: original-svg
+    promptPath: assets/source/stack-day-poster.svg
+  - id: release-ch13-chapter
+    visibility: public
+    path: chapters/html-css-ch13/chapter.yaml
+  - id: release-ch13-l01-lesson
+    visibility: public
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/lesson.yaml
+  - id: release-ch13-l01-brief
+    visibility: public
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/brief.md
+  - id: release-ch13-l01-guide
+    visibility: public
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/guide-evaluation.md
+  - id: release-ch13-l01-g01
+    visibility: public
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/slides/g01-evaluation-map.md
+  - id: release-ch13-l01-e01
+    visibility: public
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/exercise.yaml
+  - id: release-ch13-l01-e01-instructions
+    visibility: public
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/instructions.md
+  - id: release-ch13-l01-e01-starter-html
+    visibility: public
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/starter/index.html
+  - id: release-ch13-l01-e01-starter-css
+    visibility: public
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/starter/styles.css
+  - id: release-ch13-l01-e01-solution-html
+    visibility: authoring
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/solution/index.html
+  - id: release-ch13-l01-e01-solution-css
+    visibility: authoring
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/solution/styles.css
+  - id: release-ch13-l01-e01-valid-flex-html
+    visibility: authoring
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/fixtures/valid-flex/index.html
+  - id: release-ch13-l01-e01-valid-flex-css
+    visibility: authoring
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/fixtures/valid-flex/styles.css
+  - id: release-ch13-l01-e01-valid-grid-html
+    visibility: authoring
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/fixtures/valid-grid/index.html
+  - id: release-ch13-l01-e01-valid-grid-css
+    visibility: authoring
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/fixtures/valid-grid/styles.css
+  - id: release-ch13-l01-e01-missing-landmark-html
+    visibility: authoring
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/fixtures/missing-landmark/index.html
+  - id: release-ch13-l01-e01-missing-landmark-css
+    visibility: authoring
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/fixtures/missing-landmark/styles.css
+  - id: release-ch13-l01-e01-responsive-overflow-html
+    visibility: authoring
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/fixtures/responsive-overflow/index.html
+  - id: release-ch13-l01-e01-responsive-overflow-css
+    visibility: authoring
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/fixtures/responsive-overflow/styles.css
+  - id: release-ch13-l01-e01-missing-accessible-name-html
+    visibility: authoring
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/fixtures/missing-accessible-name/index.html
+  - id: release-ch13-l01-e01-missing-accessible-name-css
+    visibility: authoring
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/fixtures/missing-accessible-name/styles.css
+  - id: release-ch13-l01-e01-low-contrast-html
+    visibility: authoring
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/fixtures/low-contrast/index.html
+  - id: release-ch13-l01-e01-low-contrast-css
+    visibility: authoring
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/fixtures/low-contrast/styles.css
+  - id: ch13-stack-day-poster-exercise-original
+    visibility: public
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/assets/stack-day-poster.svg
+    method: original-svg
+    promptPath: assets/published/stack-day-poster.svg

@@ -1,0 +1,26 @@
+body {
+  margin: 0;
+  padding: 32px;
+  background: #f5efe4;
+  font-family: system-ui, sans-serif;
+}
+[data-align] {
+  width: 500px;
+  height: 200px;
+  background: #fff;
+}
+[data-align] > * {
+  box-sizing: border-box;
+  width: 100px;
+  border: 0;
+  background: #dcebea;
+}
+[data-tall] {
+  height: 80px;
+}
+[data-center] {
+  height: 60px;
+}
+[data-end] {
+  height: 40px;
+}

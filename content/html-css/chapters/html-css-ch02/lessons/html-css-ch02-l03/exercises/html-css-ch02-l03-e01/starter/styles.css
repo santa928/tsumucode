@@ -1,0 +1,20 @@
+body {
+  margin: 0;
+  background: #f4f0e8;
+  color: #24323d;
+  font-family: system-ui, sans-serif;
+}
+
+.page-header,
+.page-main,
+.page-footer {
+  width: min(42rem, calc(100% - 3rem));
+  margin-inline: auto;
+  padding-block: 1.5rem;
+}
+
+.topic {
+  padding: 1.5rem;
+  background: #ffffff;
+  border-radius: 1rem;
+}

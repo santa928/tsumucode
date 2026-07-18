@@ -1,0 +1,35 @@
+services:
+  bootstrap:
+    image: node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5
+    working_dir: /workspace
+    init: true
+    environment:
+      NPM_CONFIG_STRICT_ALLOW_SCRIPTS: 'true'
+    volumes:
+      - .:/workspace
+
+  app:
+    build:
+      context: .
+    working_dir: /workspace
+    init: true
+    environment:
+      BASE_PATH: ${BASE_PATH:-/}
+      NPM_CONFIG_STRICT_ALLOW_SCRIPTS: 'true'
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      GIT_DIR: /workspace/.git-common/${TSUMUCODE_GIT_ADMIN:-.}
+      GIT_WORK_TREE: /workspace
+      GIT_OPTIONAL_LOCKS: '0'
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: safe.directory
+      GIT_CONFIG_VALUE_0: /workspace
+    ports:
+      - '5173:5173'
+    volumes:
+      - .:/workspace
+      - tsumucode_node_modules:/workspace/node_modules
+      - ${TSUMUCODE_GIT_COMMON_DIR:-.git}:/workspace/.git-common:ro
+    command: npm run dev -- --host 0.0.0.0
+
+volumes:
+  tsumucode_node_modules:

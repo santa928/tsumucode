@@ -1,0 +1,16 @@
+body {
+  margin: 2rem;
+  background: #f1f5f4;
+  font-family: system-ui, sans-serif;
+}
+.topics {
+  max-width: 42rem;
+}
+.panel {
+  box-sizing: border-box;
+  padding: 1.5rem;
+  background: rgb(255 255 255);
+}
+.panel + .panel {
+  margin-top: 1rem;
+}

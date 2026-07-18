@@ -1,0 +1,110 @@
+id: html-css-ch10-l01-e01
+kind: standard
+workspaceId: html-css-ch10-l01-e01
+countsTowardStandardExerciseTotal: true
+title: Viewport MetaとMobile Baseを用意する
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch10-l01-e01-r01
+    label: Viewport Metaを1つ置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390]
+    target: { kind: selector, selector: 'meta[name="viewport"]' }
+    assertion: { kind: count, operator: equals, expected: 1 }
+    feedback:
+      { target: Viewport Meta, expected: 1件, nextAction: headへname viewportのmetaを1つ置きます。 }
+    hintId: html-css-ch10-l01-e01-h01
+    relatedSlideId: html-css-ch10-l01-s01
+  - id: html-css-ch10-l01-e01-r02
+    label: Layout幅をDevice Widthへ合わせる
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390]
+    target: { kind: selector, selector: 'meta[name="viewport"]' }
+    assertion: { kind: attribute, name: content, operator: contains, expected: width=device-width }
+    feedback:
+      {
+        target: Viewport Metaのcontent,
+        expected: width=device-widthを含む,
+        nextAction: contentへwidth=device-widthを追加します。,
+      }
+    hintId: html-css-ch10-l01-e01-h02
+    relatedSlideId: html-css-ch10-l01-s01
+  - id: html-css-ch10-l01-e01-r03
+    label: Mobile Baseの横Overflowを防ぐ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390]
+    target: { kind: selector, selector: '[data-page]' }
+    assertion: { kind: overflow-x, operator: equals, expected: false }
+    feedback:
+      {
+        target: Mobile BaseのHorizontal Overflow,
+        expected: 'false',
+        nextAction: Base Containerをwidth 100%とborder-boxで収めます。,
+      }
+    hintId: html-css-ch10-l01-e01-h03
+    relatedSlideId: html-css-ch10-l01-s02
+hints:
+  - {
+      id: html-css-ch10-l01-e01-h01,
+      level: 1,
+      title: headを見る,
+      text: name viewportのmetaを1つ置きます。,
+      relatedSlideId: html-css-ch10-l01-s01,
+    }
+  - {
+      id: html-css-ch10-l01-e01-h02,
+      level: 2,
+      title: contentを書く,
+      text: width=device-widthとinitial-scale=1を指定します。,
+      relatedSlideId: html-css-ch10-l01-s01,
+    }
+  - {
+      id: html-css-ch10-l01-e01-h03,
+      level: 3,
+      title: Baseを流動幅にする,
+      text: data-pageをwidth 100%とborder-boxにします。,
+      relatedSlideId: html-css-ch10-l01-s02,
+    }
+relatedSlideIds: [html-css-ch10-l01-s01, html-css-ch10-l01-s02]
+previewViewports: [{ id: mobile-390, width: 390, height: 844 }]
+assets: []
+fixtures:
+  - id: html-css-ch10-l01-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch10-l01-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch10-l01-e01-r02]

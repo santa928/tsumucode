@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+  padding: 24px;
+}
+[data-frame] {
+  width: 320px;
+}
+img {
+  display: block;
+  width: 480px;
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}

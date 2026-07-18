@@ -1,0 +1,19 @@
+id: html-css-ch04-l03
+kind: standard
+title: Cascadeが選ぶ値を予測する
+goal: Source Order、Specificity、Inheritanceを順に確認して最終Styleを説明できる
+estimatedMinutes: 13
+prerequisiteLessonIds: [html-css-ch04-l02]
+slideSources:
+  - slides/s01-source-order.md
+  - slides/s02-specificity.md
+  - slides/s03-inheritance.md
+exerciseSources:
+  - exercises/html-css-ch04-l03-e01/exercise.yaml
+reflection: 値が予想と違うときはimportantを足す前に適用元と優先順位を調べる
+glossaryRefs: [cascade, source-order, specificity, inheritance]
+nextLessonId: html-css-ch04-l04
+completion:
+  kind: standard
+  finalSlideId: html-css-ch04-l03-s03
+  requiredExerciseIds: [html-css-ch04-l03-e01]

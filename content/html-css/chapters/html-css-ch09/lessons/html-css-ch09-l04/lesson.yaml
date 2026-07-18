@@ -1,0 +1,18 @@
+id: html-css-ch09-l04
+kind: standard
+title: PlacementとLayout手法を選ぶ
+goal: Grid PlacementでCardをTrackへまたがせ、内部の1次元配置にはFlexboxを選べる
+estimatedMinutes: 11
+prerequisiteLessonIds: [html-css-ch09-l03]
+slideSources:
+  - slides/s01-grid-placement.md
+  - slides/s02-grid-vs-flex.md
+exerciseSources:
+  - exercises/html-css-ch09-l04-e01/exercise.yaml
+reflection: Gallery全体の2次元配置とButton Rowの1次元配置を分ける
+glossaryRefs: [grid-placement, grid-column, layout-selection]
+nextLessonId: html-css-ch10-l01
+completion:
+  kind: standard
+  finalSlideId: html-css-ch09-l04-s02
+  requiredExerciseIds: [html-css-ch09-l04-e01]

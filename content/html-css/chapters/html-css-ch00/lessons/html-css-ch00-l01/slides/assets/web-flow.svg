@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="320" viewBox="0 0 720 320" role="img" aria-labelledby="title description">
+  <title id="title">HTMLとCSSからWebページが表示される流れ</title>
+  <desc id="description">HTMLの内容とCSSの見た目をBrowserが読み、Webページを表示する図</desc>
+  <rect width="720" height="320" rx="28" fill="#fffaf0" />
+  <g font-family="system-ui, sans-serif" text-anchor="middle">
+    <rect x="40" y="72" width="170" height="128" rx="20" fill="#e5b94f" stroke="#19352d" stroke-width="4" />
+    <text x="125" y="124" fill="#19352d" font-size="28" font-weight="700">HTML</text>
+    <text x="125" y="160" fill="#19352d" font-size="18">内容と意味</text>
+    <rect x="40" y="220" width="170" height="56" rx="16" fill="#dcebe5" stroke="#19352d" stroke-width="3" />
+    <text x="125" y="255" fill="#19352d" font-size="18" font-weight="700">CSS  見た目</text>
+    <path d="M235 154h92" fill="none" stroke="#1f5c49" stroke-width="8" stroke-linecap="round" />
+    <path d="m315 136 22 18-22 18" fill="none" stroke="#1f5c49" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+    <rect x="350" y="88" width="150" height="176" rx="24" fill="#1f5c49" />
+    <text x="425" y="154" fill="#fffdf7" font-size="26" font-weight="700">Browser</text>
+    <text x="425" y="190" fill="#fffdf7" font-size="17">2つを読む</text>
+    <path d="M525 176h54" fill="none" stroke="#19776e" stroke-width="8" stroke-linecap="round" />
+    <path d="m567 158 22 18-22 18" fill="none" stroke="#19776e" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+    <rect x="602" y="64" width="88" height="208" rx="18" fill="#ffffff" stroke="#19776e" stroke-width="4" />
+    <rect x="618" y="88" width="56" height="18" rx="6" fill="#e5b94f" />
+    <rect x="618" y="120" width="44" height="10" rx="5" fill="#5d6f68" />
+    <rect x="618" y="142" width="56" height="10" rx="5" fill="#5d6f68" />
+    <rect x="618" y="178" width="56" height="58" rx="10" fill="#dcebe5" />
+    <text x="646" y="299" fill="#19352d" font-size="16" font-weight="700">Webページ</text>
+  </g>
+</svg>

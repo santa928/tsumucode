@@ -1,0 +1,52 @@
+schemaVersion: 1
+defaults:
+  method: original-authored
+  createdAt: '2026-07-13'
+  creator: TsumuCode project
+  sourceUrl: none
+  license: project-original
+  modified: false
+items:
+  - id: fixture-course-original
+    visibility: public
+    path: course.yaml
+  - id: fixture-glossary-original
+    visibility: public
+    path: glossary.yaml
+  - id: fixture-chapter-original
+    visibility: public
+    path: chapters/ch00-web-map/chapter.yaml
+  - id: fixture-lesson-original
+    visibility: public
+    path: chapters/ch00-web-map/lessons/lesson-first-heading/lesson.yaml
+  - id: fixture-slide-original
+    visibility: public
+    path: chapters/ch00-web-map/lessons/lesson-first-heading/slides/html-role.md
+  - id: html-structure-original
+    visibility: public
+    path: chapters/ch00-web-map/lessons/lesson-first-heading/slides/assets/html-structure.svg
+    method: original-svg
+  - id: fixture-exercise-original
+    visibility: public
+    path: chapters/ch00-web-map/lessons/lesson-first-heading/exercises/first-heading/exercise.yaml
+  - id: fixture-instructions-original
+    visibility: public
+    path: chapters/ch00-web-map/lessons/lesson-first-heading/exercises/first-heading/instructions.md
+  - id: fixture-starter-original
+    visibility: public
+    path: chapters/ch00-web-map/lessons/lesson-first-heading/exercises/first-heading/starter/index.html
+  - id: fixture-solution-original
+    visibility: authoring
+    path: chapters/ch00-web-map/lessons/lesson-first-heading/exercises/first-heading/solution/index.html
+  - id: fixture-pass-original
+    visibility: authoring
+    path: chapters/ch00-web-map/lessons/lesson-first-heading/exercises/first-heading/fixtures/solution.html
+  - id: fixture-negative-original
+    visibility: authoring
+    path: chapters/ch00-web-map/lessons/lesson-first-heading/exercises/first-heading/fixtures/missing.html
+  - id: fixture-wrong-text-original
+    visibility: authoring
+    path: chapters/ch00-web-map/lessons/lesson-first-heading/exercises/first-heading/fixtures/wrong-text.html
+  - id: fixture-duplicate-heading-original
+    visibility: authoring
+    path: chapters/ch00-web-map/lessons/lesson-first-heading/exercises/first-heading/fixtures/duplicate-heading.html

@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  padding: 32px;
+  background: #f5efe4;
+  font-family: system-ui, sans-serif;
+}
+[data-profile-nav] a {
+  margin-right: 8px;
+}
+[data-card-row] {
+  width: 400px;
+  margin-top: 24px;
+}
+[data-card] {
+  box-sizing: border-box;
+  width: 160px;
+  padding: 20px;
+  background: #fff;
+}

@@ -1,0 +1,27 @@
+body {
+  margin: 0;
+  padding: 24px;
+  color: #24323d;
+  background: #eef5f3;
+  font-family: system-ui, sans-serif;
+}
+header,
+main,
+footer {
+  max-width: 54rem;
+  margin: auto;
+}
+.hero,
+.content-surface,
+#works {
+  margin-block: 18px;
+  padding: 24px;
+  background: #ffffff;
+}
+[data-about-copy] {
+  font-size: 16px;
+  line-height: 1.75;
+}
+.hero img {
+  width: 160px;
+}

@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 2,
+  "courses": {
+    "html-css": {
+      "courseId": "html-css",
+      "contentRevision": "2026-07-10.1",
+      "lessons": {
+        "html-css-ch00-l01": {
+          "lessonId": "html-css-ch00-l01",
+          "viewedSlideIds": ["slide-html-role"],
+          "currentSlideId": "slide-html-role",
+          "passedExerciseIds": ["exercise-first-heading"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["rule-h1-exists", "rule-h1-count", "rule-h1-text"],
+          "passedViewportIds": [],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-07-11T09:30:00.000Z"
+        },
+        "lesson-first-heading": {
+          "lessonId": "lesson-first-heading",
+          "viewedSlideIds": [],
+          "passedExerciseIds": [],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [],
+          "passedViewportIds": [],
+          "currentComplete": false
+        }
+      },
+      "currentLessonId": "html-css-ch00-l01",
+      "currentChapterId": "ch00-web-map",
+      "currentComplete": false,
+      "firstCompletedAt": "2026-07-11T10:00:00.000Z",
+      "updatedAt": "2026-07-11T10:15:00.000Z"
+    }
+  },
+  "drafts": {
+    "html-css:html-css-ch00-l01-e01": {
+      "courseId": "html-css",
+      "lessonId": "html-css-ch00-l01",
+      "exerciseId": "html-css-ch00-l01-e01",
+      "workspaceId": "html-css-ch00-l01-e01",
+      "contentRevision": "2026-07-10.1",
+      "editRevision": 3,
+      "files": {
+        "index.html": "<h1>古い教材から引き継ぐ見出し</h1>"
+      },
+      "selectedFile": "index.html",
+      "cursors": {
+        "index.html": { "anchor": 8, "head": 8 }
+      },
+      "validationHistory": [],
+      "revealedHintIds": ["hint-h1-1", "hint-h1-2", "hint-h1-3"],
+      "reviewSlideId": "slide-html-role",
+      "reviewScrollOffset": 120,
+      "lastPassingSnapshots": {},
+      "updatedAt": "2026-07-11T10:10:00.000Z"
+    },
+    "html-css:workspace-first-heading": {
+      "courseId": "html-css",
+      "lessonId": "html-css-ch00-l01",
+      "exerciseId": "html-css-ch00-l01-e01",
+      "workspaceId": "workspace-first-heading",
+      "contentRevision": "2026-07-10.1",
+      "editRevision": 1,
+      "files": {
+        "index.html": "<h1>reset対象の作業スペース</h1>"
+      },
+      "selectedFile": "index.html",
+      "cursors": {
+        "index.html": { "anchor": 0, "head": 0 }
+      },
+      "validationHistory": [],
+      "revealedHintIds": [],
+      "lastPassingSnapshots": {},
+      "updatedAt": "2026-07-11T10:05:00.000Z"
+    }
+  },
+  "quarantined": [],
+  "appVersion": "0.0.0-foundation",
+  "exportedAt": "2026-07-11T10:20:00.000Z",
+  "integrity": {
+    "algorithm": "SHA-256",
+    "digest": "906fe261a6b0565a93f10f29afabcc5bf1fae03d0fe4cc33bc1a14636eb04a68"
+  }
+}

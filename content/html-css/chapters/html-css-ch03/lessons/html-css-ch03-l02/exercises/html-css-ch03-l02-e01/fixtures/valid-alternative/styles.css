@@ -1,0 +1,13 @@
+body {
+  color: #1f2930;
+  font-family: sans-serif;
+}
+
+.profile {
+  max-width: 34rem;
+  margin: 3rem auto;
+}
+
+img {
+  max-width: 100%;
+}

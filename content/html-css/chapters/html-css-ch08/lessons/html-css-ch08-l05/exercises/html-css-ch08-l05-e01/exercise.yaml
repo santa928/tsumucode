@@ -1,0 +1,138 @@
+id: html-css-ch08-l05-e01
+kind: standard
+workspaceId: html-css-ch08-l05-e01
+countsTowardStandardExerciseTotal: true
+title: AccessibleなNavigationとCard Rowを組む
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch08-l05-e01-r01
+    label: Profile NavigationをFlexにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-profile-nav]' }
+    assertion: { kind: computed-style, property: display, operator: equals, expected: flex }
+    feedback:
+      target: Profile NavigationのComputed Display
+      expected: flex
+      nextAction: data-profile-navへdisplay flexを指定します。
+    hintId: html-css-ch08-l05-e01-h01
+    relatedSlideId: html-css-ch08-l05-s01
+  - id: html-css-ch08-l05-e01-r02
+    label: Navigationの目的を名前で伝える
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-profile-nav]' }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: Profile NavigationのAccessible Name
+      expected: 空でないNavigationの目的
+      nextAction: aria-labelなどでプロフィール内の移動だと分かる名前を付けます。
+    hintId: html-css-ch08-l05-e01-h02
+    relatedSlideId: html-css-ch08-l05-s01
+  - id: html-css-ch08-l05-e01-r03
+    label: Card RowをFlexにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-card-row]' }
+    assertion: { kind: computed-style, property: display, operator: equals, expected: flex }
+    feedback:
+      target: Card RowのComputed Display
+      expected: flex
+      nextAction: data-card-rowへdisplay flexを指定します。
+    hintId: html-css-ch08-l05-e01-h01
+    relatedSlideId: html-css-ch08-l05-s02
+  - id: html-css-ch08-l05-e01-r04
+    label: 2枚目のCardをx 208pxへ置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-second-card]' }
+    assertion:
+      kind: rect
+      metric: x
+      operator: equals
+      expected: 208
+      tolerance: 1
+    feedback:
+      target: 2枚目のCardの実測x
+      expected: 208px前後
+      nextAction: 幅160pxのCard間へgap 16pxを指定し、32 + 160 + 16を確認します。
+    hintId: html-css-ch08-l05-e01-h03
+    relatedSlideId: html-css-ch08-l05-s02
+  - id: html-css-ch08-l05-e01-r05
+    label: Card Rowの横Overflowを防ぐ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-card-row]' }
+    assertion: { kind: overflow-x, operator: equals, expected: false }
+    feedback:
+      target: Card RowのHorizontal Overflow
+      expected: 'false'
+      nextAction: Card幅とGapをRow幅以内へ収めます。
+    hintId: html-css-ch08-l05-e01-h03
+    relatedSlideId: html-css-ch08-l05-s02
+hints:
+  - id: html-css-ch08-l05-e01-h01
+    level: 1
+    title: 2つのContainerをFlexにする
+    text: NavigationとCard Rowの親へそれぞれdisplay flexを指定します。
+    relatedSlideId: html-css-ch08-l05-s01
+  - id: html-css-ch08-l05-e01-h02
+    level: 2
+    title: Navigationへ目的を付ける
+    text: aria-labelで何のためのNavigationかを短く伝えます。
+    relatedSlideId: html-css-ch08-l05-s01
+  - id: html-css-ch08-l05-e01-h03
+    level: 3
+    title: CardのGeometryを計算する
+    text: Body x 32px、Card幅160px、gap 16pxから2枚目のxを208pxにします。
+    relatedSlideId: html-css-ch08-l05-s02
+relatedSlideIds:
+  - html-css-ch08-l05-s01
+  - html-css-ch08-l05-s02
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch08-l05-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch08-l05-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch08-l05-e01-r04]

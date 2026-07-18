@@ -1,0 +1,100 @@
+id: html-css-ch05-l02-e01
+kind: standard
+workspaceId: html-css-ch05-l02-e01
+countsTowardStandardExerciseTotal: true
+title: Cardを320pxへ収める
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch05-l02-e01-r01
+    label: Border Boxを使う
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '.sized-card' }
+    assertion:
+      kind: computed-style
+      property: box-sizing
+      operator: equals
+      expected: 'border-box'
+    feedback:
+      target: CardのSizing方式
+      expected: border-box
+      nextAction: 'box-sizingをborder-boxにします。'
+    hintId: html-css-ch05-l02-e01-h02
+    relatedSlideId: html-css-ch05-l02-s02
+  - id: html-css-ch05-l02-e01-r02
+    label: Card外幅を320pxにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '.sized-card' }
+    assertion:
+      kind: rect
+      metric: width
+      operator: equals
+      expected: 320
+      tolerance: 0.5
+    feedback:
+      target: Cardの実測Width
+      expected: 320px前後
+      nextAction: 'widthを320pxにしPaddingとBorderを内側へ含めます。'
+    hintId: html-css-ch05-l02-e01-h03
+    relatedSlideId: html-css-ch05-l02-s02
+hints:
+  - id: html-css-ch05-l02-e01-h01
+    level: 1
+    title: 状態を観察する
+    text: 指定幅の外へ加わる層を観察します。
+    relatedSlideId: html-css-ch05-l02-s01
+  - id: html-css-ch05-l02-e01-h02
+    level: 2
+    title: 目的を考える
+    text: border-boxならPaddingとBorderをwidthへ含められます。
+    relatedSlideId: html-css-ch05-l02-s02
+  - id: html-css-ch05-l02-e01-h03
+    level: 3
+    title: 具体的に直す
+    text: 'box-sizing: border-boxとwidth: 320pxを設定します。'
+    relatedSlideId: html-css-ch05-l02-s02
+relatedSlideIds:
+  - html-css-ch05-l02-s01
+  - html-css-ch05-l02-s02
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch05-l02-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch05-l02-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch05-l02-e01-r01]

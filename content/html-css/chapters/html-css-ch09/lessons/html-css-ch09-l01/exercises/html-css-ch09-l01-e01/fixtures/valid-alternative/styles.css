@@ -1,0 +1,10 @@
+body {
+  margin: 0;
+  padding: 2rem;
+}
+[data-grid] {
+  display: grid;
+  grid-template-columns: 10rem 15rem;
+  width: 26rem;
+  column-gap: 1rem;
+}

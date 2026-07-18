@@ -1,0 +1,18 @@
+id: html-css-ch05-l05
+kind: standard
+title: Overflowを境界から防ぐ
+goal: Containerのrightとbottomを越えず横Overflowを防げる
+estimatedMinutes: 10
+prerequisiteLessonIds: [html-css-ch05-l04]
+slideSources:
+  - slides/s01-overflow.md
+  - slides/s02-safe-sizing.md
+exerciseSources:
+  - exercises/html-css-ch05-l05-e01/exercise.yaml
+reflection: 見た目だけでなく実測したrightとbottomで収まりを確認する
+glossaryRefs: [overflow, container-boundary, safe-sizing]
+nextLessonId: html-css-ch06-l01
+completion:
+  kind: standard
+  finalSlideId: html-css-ch05-l05-s02
+  requiredExerciseIds: [html-css-ch05-l05-e01]

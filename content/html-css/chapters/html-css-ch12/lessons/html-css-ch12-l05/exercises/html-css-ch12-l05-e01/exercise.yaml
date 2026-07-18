@@ -1,0 +1,172 @@
+id: html-css-ch12-l05-e01
+kind: guided-project
+projectId: html-css-profile-project
+workspaceId: html-css-profile-project
+countsTowardStandardExerciseTotal: false
+title: Profile Siteの最終Auditを完了する
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch12-l05-e01-r01
+    label: h1を1つにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: h1 }
+    assertion: { kind: count, operator: equals, expected: 1 }
+    feedback:
+      target: Profile SiteのMain Heading
+      expected: h1が1つ
+      nextAction: Page全体の題名だけをh1にします。
+    hintId: html-css-ch12-l05-e01-h01
+    relatedSlideId: html-css-ch12-l05-g01
+  - id: html-css-ch12-l05-e01-r02
+    label: 各主要Sectionをh2で始める
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: 'main section h2' }
+    assertion: { kind: count, operator: gte, expected: 4 }
+    feedback:
+      target: About、Skills、Works、ContactのHeading
+      expected: main内のh2が4つ以上
+      nextAction: h1の次に各主要Sectionをh2で始めます。
+    hintId: html-css-ch12-l05-e01-h01
+    relatedSlideId: html-css-ch12-l05-g01
+  - id: html-css-ch12-l05-e01-r03
+    label: 主要ActionをKeyboard Focus可能にする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: '[data-final-action]' }
+    assertion: { kind: focusable, operator: equals, expected: true }
+    feedback:
+      target: PrimaryとContact ActionのFocusability
+      expected: data-final-actionを持つ全要素がFocus可能
+      nextAction: Actionをhref付きaまたはbuttonとして表します。
+    hintId: html-css-ch12-l05-e01-h02
+    relatedSlideId: html-css-ch12-l05-g01
+  - id: html-css-ch12-l05-e01-r04
+    label: Profile全体のText Contrastを4.5対1以上にする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: '[data-profile-page]' }
+    assertion: { kind: contrast, minimum: 4.5 }
+    feedback:
+      target: Profile PageのTextとBackground
+      expected: Contrast Ratio 4.5対1以上
+      nextAction: BodyのText ColorとBackground Colorの明るさの差を広げます。
+    hintId: html-css-ch12-l05-e01-h02
+    relatedSlideId: html-css-ch12-l05-g01
+  - id: html-css-ch12-l05-e01-r05
+    label: Avatar altを保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: '[data-profile-avatar]' }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: Profile AvatarのAccessible Name
+      expected: 空でない画像の説明
+      nextAction: 意味のあるAvatarのaltを空にしないでください。
+    hintId: html-css-ch12-l05-e01-h02
+    relatedSlideId: html-css-ch12-l05-g01
+  - id: html-css-ch12-l05-e01-r06
+    label: Reduced Motion時のAnimationを短縮する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: '.motion-card' }
+    assertion:
+      kind: computed-style
+      property: animation-duration
+      operator: equals
+      expected: 0.001s
+    feedback:
+      target: Motion CardのComputed Animation Duration
+      expected: 0.001s
+      nextAction: reduce状態とprefers-reduced-motionで装飾Animationを短縮します。
+    hintId: html-css-ch12-l05-e01-h03
+    relatedSlideId: html-css-ch12-l05-g01
+  - id: html-css-ch12-l05-e01-r07
+    label: 4 Viewportで横Overflowを防ぐ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: '[data-profile-page]' }
+    assertion: { kind: overflow-x, operator: equals, expected: false }
+    feedback:
+      target: Profile DocumentのHorizontal Overflow
+      expected: 390、768、1280、1440pxですべてfalse
+      nextAction: 各幅で固定幅、長いText、画像境界を見直します。
+    hintId: html-css-ch12-l05-e01-h03
+    relatedSlideId: html-css-ch12-l05-g01
+hints:
+  - id: html-css-ch12-l05-e01-h01
+    level: 1
+    title: Heading Outlineを読む
+    text: h1を1つ、About、Skills、Works、Contactをh2で始めます。
+    relatedSlideId: html-css-ch12-l05-g01
+  - id: html-css-ch12-l05-e01-h02
+    level: 2
+    title: 操作と理解を分けて確認する
+    text: ActionのFocusability、Text Contrast、Avatar altを順に確認します。
+    relatedSlideId: html-css-ch12-l05-g01
+  - id: html-css-ch12-l05-e01-h03
+    level: 3
+    title: 利用者設定と4幅を測る
+    text: Motionを0.001sへ短縮し、4 ViewportのOverflowを確認します。
+    relatedSlideId: html-css-ch12-l05-g01
+relatedSlideIds: [html-css-ch12-l05-g01]
+previewViewports:
+  - { id: mobile-390, width: 390, height: 844 }
+  - { id: tablet-768, width: 768, height: 1024 }
+  - { id: desktop-1280, width: 1280, height: 720 }
+  - { id: wide-1440, width: 1440, height: 900 }
+assets:
+  - id: avatar-project-audit
+    source: assets/profile-avatar.svg
+    mediaType: image
+    alt: オレンジのCode Cardを持つつむぎ
+    provenanceId: ch12-profile-avatar-l05-original
+fixtures:
+  - id: html-css-ch12-l05-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch12-l05-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch12-l05-e01-r03]

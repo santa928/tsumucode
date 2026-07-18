@@ -1,0 +1,44 @@
+/* 積み木の学習工房で共有するPalette、Spacing、Radius、Shadow、Motionの直接値。 */
+:root {
+  --tc-color-canvas: #f7f1df;
+  --tc-color-workbench: #efe2c2;
+  --tc-color-surface: #fffaf0;
+  --tc-color-surface-raised: #fffdf7;
+  --tc-color-surface-sunken: #e9dfc8;
+  --tc-color-wood: #d8b985;
+  --tc-color-ink: #17362d;
+  --tc-color-ink-muted: #4b635b;
+  --tc-color-primary: #185c47;
+  --tc-color-primary-hover: #114635;
+  --tc-color-on-primary: #ffffff;
+  --tc-color-complete: #00695c;
+  --tc-color-correction: #a93f38;
+  --tc-color-learning: #f2c94c;
+  --tc-color-border: #bdc9bc;
+  --tc-color-focus: #0b65c2;
+  --tc-space-1: 0.25rem;
+  --tc-space-2: 0.5rem;
+  --tc-space-3: 0.75rem;
+  --tc-space-4: 1rem;
+  --tc-space-5: 1.5rem;
+  --tc-space-6: 2rem;
+  --tc-space-7: 3rem;
+  --tc-space-8: 4rem;
+  --tc-radius-piece: 0.2rem;
+  --tc-radius-sm: 0.5rem;
+  --tc-radius-md: 0.875rem;
+  --tc-radius-lg: 1.25rem;
+  --tc-shadow-piece: 0.25rem 0.35rem 0 rgba(23, 54, 45, 0.16);
+  --tc-shadow-raised: 0 0.8rem 2rem rgba(23, 54, 45, 0.12);
+  --tc-motion-reduced: 0.01ms;
+  --tc-motion-fast: 120ms;
+  --tc-motion-normal: 180ms;
+  --tc-ease-piece: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --tc-focus-width: 0.1875rem;
+  --tc-focus-offset: 0.1875rem;
+  --tc-content-reading: 68ch;
+  --tc-content-workspace: 96rem;
+  --tc-content-max: var(--tc-content-workspace);
+  --tc-font-sans: ui-rounded, 'Hiragino Maru Gothic ProN', 'Yu Gothic', sans-serif;
+  --tc-font-mono: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+}

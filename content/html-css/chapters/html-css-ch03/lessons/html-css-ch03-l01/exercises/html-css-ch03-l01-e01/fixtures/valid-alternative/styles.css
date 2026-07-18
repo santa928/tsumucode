@@ -1,0 +1,9 @@
+body {
+  color: #1f2a32;
+  font-family: sans-serif;
+}
+
+main {
+  max-width: 40rem;
+  margin: 3rem auto;
+}

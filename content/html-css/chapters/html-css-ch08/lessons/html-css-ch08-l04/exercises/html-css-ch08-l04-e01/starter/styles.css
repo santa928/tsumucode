@@ -1,0 +1,16 @@
+body {
+  margin: 0;
+  padding: 24px;
+  background: #f5efe4;
+  font-family: system-ui, sans-serif;
+}
+[data-card-grid] {
+  width: 600px;
+}
+[data-card] {
+  box-sizing: border-box;
+  width: 220px;
+  height: 100px;
+  padding: 20px;
+  background: #fff;
+}

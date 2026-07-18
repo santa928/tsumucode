@@ -1,0 +1,59 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="900"
+  height="420"
+  viewBox="0 0 900 420"
+  role="img"
+  aria-labelledby="title description"
+>
+  <title id="title">DOM順とTab移動のFocus Path</title>
+  <desc id="description">
+    ページの上からプロフィールリンク、作品を見るボタン、次の教材リンクへ1、2、3の順にFocusが移動する図
+  </desc>
+  <defs>
+    <marker
+      id="arrow"
+      markerWidth="12"
+      markerHeight="12"
+      refX="10"
+      refY="6"
+      orient="auto"
+      markerUnits="strokeWidth"
+    >
+      <path d="M 0 0 L 12 6 L 0 12 z" fill="#2d7c82" />
+    </marker>
+  </defs>
+  <rect width="900" height="420" rx="28" fill="#f5efe3" />
+  <text x="48" y="58" fill="#172a3a" font-family="system-ui, sans-serif" font-size="28" font-weight="700">
+    DOM順がKeyboardの道順になる
+  </text>
+  <text x="48" y="90" fill="#52616d" font-family="system-ui, sans-serif" font-size="17">
+    Tabを押すたびに、文書内の自然な順序で次の操作へ進む
+  </text>
+  <g font-family="system-ui, sans-serif">
+    <rect x="52" y="142" width="224" height="152" rx="22" fill="#fffdf8" stroke="#ef7d4f" stroke-width="6" />
+    <circle cx="86" cy="178" r="19" fill="#ef7d4f" />
+    <text x="86" y="185" fill="#ffffff" font-size="20" font-weight="700" text-anchor="middle">1</text>
+    <text x="116" y="184" fill="#172a3a" font-size="19" font-weight="700">プロフィール</text>
+    <rect x="83" y="220" width="162" height="44" rx="12" fill="#172a3a" />
+    <text x="164" y="248" fill="#ffffff" font-size="16" text-anchor="middle">自己紹介を見る</text>
+    <path d="M 292 218 H 342" fill="none" stroke="#2d7c82" stroke-width="6" stroke-linecap="round" marker-end="url(#arrow)" />
+    <rect x="359" y="142" width="224" height="152" rx="22" fill="#fffdf8" stroke="#ef7d4f" stroke-width="6" />
+    <circle cx="393" cy="178" r="19" fill="#ef7d4f" />
+    <text x="393" y="185" fill="#ffffff" font-size="20" font-weight="700" text-anchor="middle">2</text>
+    <text x="423" y="184" fill="#172a3a" font-size="19" font-weight="700">作品一覧</text>
+    <rect x="390" y="220" width="162" height="44" rx="12" fill="#2d7c82" />
+    <text x="471" y="248" fill="#ffffff" font-size="16" text-anchor="middle">作品を見る</text>
+    <path d="M 599 218 H 649" fill="none" stroke="#2d7c82" stroke-width="6" stroke-linecap="round" marker-end="url(#arrow)" />
+    <rect x="666" y="142" width="182" height="152" rx="22" fill="#fffdf8" stroke="#ef7d4f" stroke-width="6" />
+    <circle cx="700" cy="178" r="19" fill="#ef7d4f" />
+    <text x="700" y="185" fill="#ffffff" font-size="20" font-weight="700" text-anchor="middle">3</text>
+    <text x="730" y="184" fill="#172a3a" font-size="19" font-weight="700">次の教材</text>
+    <rect x="696" y="220" width="122" height="44" rx="12" fill="#172a3a" />
+    <text x="757" y="248" fill="#ffffff" font-size="16" text-anchor="middle">次へ進む</text>
+  </g>
+  <rect x="52" y="332" width="796" height="54" rx="16" fill="#e5f1ef" />
+  <text x="450" y="366" fill="#172a3a" font-family="system-ui, sans-serif" font-size="18" font-weight="650" text-anchor="middle">
+    見た目の並び替えだけでなく、HTMLの順序とVisible Focusを一緒に確認する
+  </text>
+</svg>

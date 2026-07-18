@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <title>CSS GridのTrackとLine</title>
+  <desc>3本のColumn Trackと2本のRow Track、Gap、Grid Line番号を示す図</desc>
+  <rect width="960" height="540" rx="36" fill="#f5efe3" />
+  <text x="92" y="82" fill="#172a3a" font-family="system-ui, sans-serif" font-size="30" font-weight="700">Grid Container · 3 columns × 2 rows</text>
+  <g transform="translate(110 130)">
+    <rect width="740" height="320" rx="24" fill="#fff" stroke="#172a3a" stroke-width="8" />
+    <g fill="#e3efed" stroke="#2d7c82" stroke-width="4">
+      <rect x="24" y="24" width="210" height="120" rx="16" />
+      <rect x="265" y="24" width="210" height="120" rx="16" />
+      <rect x="506" y="24" width="210" height="120" rx="16" />
+      <rect x="24" y="176" width="210" height="120" rx="16" />
+      <rect x="265" y="176" width="210" height="120" rx="16" />
+      <rect x="506" y="176" width="210" height="120" rx="16" />
+    </g>
+    <g fill="#172a3a" font-family="system-ui, sans-serif" font-size="22" font-weight="700" text-anchor="middle">
+      <text x="129" y="92">Track 1</text>
+      <text x="370" y="92">Track 2</text>
+      <text x="611" y="92">Track 3</text>
+    </g>
+    <path d="M242 16v288M483 16v288" stroke="#ef7d4f" stroke-dasharray="10 10" stroke-width="6" />
+    <text x="253" y="334" fill="#b84f2b" font-family="system-ui, sans-serif" font-size="20" font-weight="700">Gap</text>
+  </g>
+  <g fill="#172a3a" font-family="system-ui, sans-serif" font-size="20" font-weight="700" text-anchor="middle">
+    <text x="110" y="486">Line 1</text>
+    <text x="351" y="486">Line 2</text>
+    <text x="592" y="486">Line 3</text>
+    <text x="850" y="486">Line 4</text>
+  </g>
+</svg>

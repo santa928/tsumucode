@@ -1,0 +1,110 @@
+id: html-css-ch11-l02-e01
+kind: standard
+workspaceId: html-css-ch11-l02-e01
+countsTowardStandardExerciseTotal: true
+title: 3種類のAccessible Nameを仕上げる
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch11-l02-e01-r01
+    label: 表示名Inputへ名前を付ける
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-name-input]' }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: 表示名InputのAccessible Name
+      expected: 空でない入力目的
+      nextAction: forとidで結び付けたlabel、または同等の名前をInputへ用意します。
+    hintId: html-css-ch11-l02-e01-h01
+    relatedSlideId: html-css-ch11-l02-s01
+  - id: html-css-ch11-l02-e01-r02
+    label: Profile画像へ代替Textを付ける
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-avatar]' }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: Profile画像のAccessible Name
+      expected: 画像の内容が分かる空でない説明
+      nextAction: 意味のある画像のaltへ、内容や役割を短く書きます。
+    hintId: html-css-ch11-l02-e01-h02
+    relatedSlideId: html-css-ch11-l02-s02
+  - id: html-css-ch11-l02-e01-r03
+    label: Profile Linkへ目的が分かる名前を付ける
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-profile-link]' }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: Profile LinkのAccessible Name
+      expected: 行き先を予測できる空でない名前
+      nextAction: Link Textへ、誰の何を見るのかが分かる言葉を書きます。
+    hintId: html-css-ch11-l02-e01-h03
+    relatedSlideId: html-css-ch11-l02-s02
+hints:
+  - id: html-css-ch11-l02-e01-h01
+    level: 1
+    title: Inputと見えるCaptionを結ぶ
+    text: labelのforとInputのidを同じ値にすると、入力目的が名前になります。
+    relatedSlideId: html-css-ch11-l02-s01
+  - id: html-css-ch11-l02-e01-h02
+    level: 2
+    title: 画像の役割を短く表す
+    text: 意味のある画像ではaltを空にせず、内容を簡潔に書きます。
+    relatedSlideId: html-css-ch11-l02-s02
+  - id: html-css-ch11-l02-e01-h03
+    level: 3
+    title: Linkを単独で読んでみる
+    text: 矢印だけでなく、移動先を予測できるLink Textを追加します。
+    relatedSlideId: html-css-ch11-l02-s02
+relatedSlideIds:
+  - html-css-ch11-l02-s01
+  - html-css-ch11-l02-s02
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets:
+  - id: accessible-avatar
+    source: assets/profile-avatar.svg
+    mediaType: image
+    alt: オレンジのCode Cardを持つTsumuCode学習者
+    provenanceId: ch11-names-avatar-original
+fixtures:
+  - id: html-css-ch11-l02-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch11-l02-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch11-l02-e01-r02]

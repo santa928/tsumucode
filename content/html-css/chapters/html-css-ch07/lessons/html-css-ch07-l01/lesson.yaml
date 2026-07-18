@@ -1,0 +1,17 @@
+id: html-css-ch07-l01
+kind: standard
+title: Profile Cardを組み立て直す
+goal: Semantic Structure、alt、Spacing、Typography、Contrastを1つの部品へ統合できる
+estimatedMinutes: 35
+prerequisiteLessonIds: [html-css-ch06-l04]
+slideSources:
+  - slides/r01-profile-assembly-review.md
+exerciseSources:
+  - exercises/html-css-ch07-l01-e01/exercise.yaml
+reflection: 5つの観点を別々に確認し、修正理由を言葉で説明する
+glossaryRefs: [profile-card, semantic-structure, alternative-text, spacing, contrast-ratio]
+nextLessonId: html-css-ch08-l01
+completion:
+  kind: standard
+  finalSlideId: html-css-ch07-l01-r01
+  requiredExerciseIds: [html-css-ch07-l01-e01]

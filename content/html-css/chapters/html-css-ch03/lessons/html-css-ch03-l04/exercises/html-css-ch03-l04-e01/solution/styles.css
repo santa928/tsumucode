@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  background: #f3eee3;
+  color: #24323d;
+  font-family: system-ui, sans-serif;
+}
+
+.profile-card {
+  width: min(28rem, calc(100% - 3rem));
+  margin: 4rem auto;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 1.25rem;
+  text-align: center;
+}
+
+img {
+  width: 10rem;
+}

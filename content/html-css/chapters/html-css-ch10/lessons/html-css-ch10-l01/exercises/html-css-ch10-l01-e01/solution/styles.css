@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+  padding: 16px;
+  background: #f5efe4;
+  font-family: system-ui, sans-serif;
+}
+[data-page] {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 20px;
+  background: #fff;
+}

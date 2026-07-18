@@ -1,0 +1,118 @@
+id: html-css-ch05-l05-e01
+kind: standard
+workspaceId: html-css-ch05-l05-e01
+countsTowardStandardExerciseTotal: true
+title: CardをContainer境界へ収める
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch05-l05-e01-r01
+    label: Frameの横Overflowをなくす
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '.frame' }
+    assertion:
+      kind: overflow-x
+      operator: equals
+      expected: false
+    feedback:
+      target: FrameのHorizontal Overflow
+      expected: 'false'
+      nextAction: 'Childの外幅をFrameの320px以内へ収めます。'
+    hintId: html-css-ch05-l05-e01-h01
+    relatedSlideId: html-css-ch05-l05-s01
+  - id: html-css-ch05-l05-e01-r02
+    label: Card幅を320px以内にする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '.safe-card' }
+    assertion:
+      kind: rect
+      metric: width
+      operator: lte
+      expected: 320
+      tolerance: 0.5
+    feedback:
+      target: Cardの実測Width
+      expected: 320px以下
+      nextAction: 'border-boxと100%以内のwidthを使います。'
+    hintId: html-css-ch05-l05-e01-h02
+    relatedSlideId: html-css-ch05-l05-s02
+  - id: html-css-ch05-l05-e01-r03
+    label: Card高さを220px以内にする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '.safe-card' }
+    assertion:
+      kind: rect
+      metric: height
+      operator: lte
+      expected: 220
+      tolerance: 0.5
+    feedback:
+      target: Cardの実測Height
+      expected: 220px以下
+      nextAction: '固定Heightを外しContentに必要な高さへ戻します。'
+    hintId: html-css-ch05-l05-e01-h03
+    relatedSlideId: html-css-ch05-l05-s02
+hints:
+  - id: html-css-ch05-l05-e01-h01
+    level: 1
+    title: 状態を観察する
+    text: 'FrameとCardのright、bottomを観察します。'
+    relatedSlideId: html-css-ch05-l05-s01
+  - id: html-css-ch05-l05-e01-h02
+    level: 2
+    title: 目的を考える
+    text: 'border-boxでPaddingとBorderを幅へ含めます。'
+    relatedSlideId: html-css-ch05-l05-s02
+  - id: html-css-ch05-l05-e01-h03
+    level: 3
+    title: 具体的に直す
+    text: 'widthを100%以内にし不要な固定Heightを外します。'
+    relatedSlideId: html-css-ch05-l05-s02
+relatedSlideIds:
+  - html-css-ch05-l05-s01
+  - html-css-ch05-l05-s02
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch05-l05-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch05-l05-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch05-l05-e01-r03]

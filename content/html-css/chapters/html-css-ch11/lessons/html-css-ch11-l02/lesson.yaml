@@ -1,0 +1,18 @@
+id: html-css-ch11-l02
+kind: standard
+title: Accessible Name
+goal: label、alt、Link Textから操作対象と画像の名前を伝えられる
+estimatedMinutes: 10
+prerequisiteLessonIds: [html-css-ch11-l01]
+slideSources:
+  - slides/s01-accessible-name.md
+  - slides/s02-label-alt-link.md
+exerciseSources:
+  - exercises/html-css-ch11-l02-e01/exercise.yaml
+reflection: 見えるTextと支援技術へ伝わる名前を両方確認する
+glossaryRefs: [accessible-name, label, alternative-text]
+nextLessonId: html-css-ch11-l03
+completion:
+  kind: standard
+  finalSlideId: html-css-ch11-l02-s02
+  requiredExerciseIds: [html-css-ch11-l02-e01]

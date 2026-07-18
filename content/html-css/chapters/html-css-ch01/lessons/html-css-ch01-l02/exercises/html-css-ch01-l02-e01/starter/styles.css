@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+  padding: 2rem;
+  background: #fffaf0;
+  color: #19352d;
+  font-family: system-ui, sans-serif;
+}
+
+section {
+  padding: 1.5rem;
+  border: 1px solid #d9cdb8;
+  border-radius: 1rem;
+  background: #ffffff;
+}

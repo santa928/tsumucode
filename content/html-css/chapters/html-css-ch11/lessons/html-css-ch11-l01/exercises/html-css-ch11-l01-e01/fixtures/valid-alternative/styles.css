@@ -1,0 +1,30 @@
+body {
+  margin: 0;
+  padding: 40px;
+  color: #20313e;
+  background: #eef5f3;
+  font-family: system-ui, sans-serif;
+}
+main {
+  max-width: 38rem;
+  margin: auto;
+}
+.actions {
+  display: grid;
+  gap: 14px;
+  max-width: 18rem;
+}
+.key-target {
+  padding: 14px;
+  border: 2px solid #20313e;
+  border-radius: 10px;
+  color: #20313e;
+  background: #ffffff;
+  font: inherit;
+  text-align: center;
+}
+.key-target:focus-visible,
+.show-focus {
+  outline: 4px solid #c6512d;
+  outline-offset: 4px;
+}

@@ -1,0 +1,18 @@
+id: html-css-ch08-l01
+kind: standard
+title: ContainerとAxisを理解する
+goal: Flex Containerを作り、rowとcolumnのMain AxisとCross Axisを説明できる
+estimatedMinutes: 11
+prerequisiteLessonIds: [html-css-ch07-l01]
+slideSources:
+  - slides/s01-flex-container.md
+  - slides/s02-main-cross-axis.md
+exerciseSources:
+  - exercises/html-css-ch08-l01-e01/exercise.yaml
+reflection: Container側のDirectionから2本のAxisを読み取る
+glossaryRefs: [flex-container, flex-item, main-axis, cross-axis]
+nextLessonId: html-css-ch08-l02
+completion:
+  kind: standard
+  finalSlideId: html-css-ch08-l01-s02
+  requiredExerciseIds: [html-css-ch08-l01-e01]

@@ -1,0 +1,44 @@
+import { readFile } from 'node:fs/promises';
+import { beforeAll, describe, expect, it } from 'vitest';
+import type { CourseManifest } from '../../src/core/content/types';
+
+let course: CourseManifest;
+
+beforeAll(async () => {
+  course = JSON.parse(
+    await readFile('public/generated/content/courses/html-css.json', 'utf8'),
+  ) as CourseManifest;
+});
+
+describe('HTML/CSS release manifest', () => {
+  it('承認済み集計と完全一致する', () => {
+    const chapters = course.phases.flatMap((phase) => phase.chapters);
+    const lessons = chapters.flatMap((chapter) => chapter.lessons);
+    const slides = lessons.flatMap((lesson) => lesson.slides);
+    const exercises = lessons.flatMap((lesson) => lesson.exercises);
+    expect(chapters).toHaveLength(14);
+    expect(lessons).toHaveLength(51);
+    const conceptKinds = new Set(['concept', 'comparison', 'diagram', 'code']);
+    expect(slides.filter((slide) => conceptKinds.has(slide.kind))).toHaveLength(95);
+    expect(exercises.filter((exercise) => exercise.countsTowardStandardExerciseTotal)).toHaveLength(
+      45,
+    );
+    expect(lessons.filter((lesson) => lesson.kind === 'guided-project')).toHaveLength(5);
+    expect(lessons.filter((lesson) => lesson.kind === 'capstone')).toHaveLength(1);
+    expect(chapters.reduce((sum, chapter) => sum + chapter.estimatedMinutes, 0)).toBe(710);
+  });
+
+  it('全Glossary EntryがLessonから参照され、初出Slideを持つ', () => {
+    const lessons = course.phases.flatMap(({ chapters }) =>
+      chapters.flatMap(({ lessons }) => lessons),
+    );
+    const refs = new Set(lessons.flatMap(({ glossaryRefs }) => glossaryRefs));
+    expect(
+      course.glossary.every(
+        ({ id, firstSlideId }) =>
+          refs.has(id) &&
+          lessons.some(({ slides }) => slides.some(({ id: slideId }) => slideId === firstSlideId)),
+      ),
+    ).toBe(true);
+  });
+});

@@ -1,0 +1,117 @@
+id: html-css-ch10-l02-e01
+kind: standard
+workspaceId: html-css-ch10-l02-e01
+countsTowardStandardExerciseTotal: true
+title: 内容が崩れる768pxでRowへ切り替える
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch10-l02-e01-r01
+    label: Mobileで2枚目を2行目へ置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390]
+    target: { kind: selector, selector: '[data-second]' }
+    assertion: { kind: rect, metric: y, operator: equals, expected: 132, tolerance: 1 }
+    feedback:
+      {
+        target: Mobileの2枚目のy,
+        expected: 132px前後,
+        nextAction: Base Layoutをcolumnとgap 16pxにします。,
+      }
+    hintId: html-css-ch10-l02-e01-h01
+    relatedSlideId: html-css-ch10-l02-s01
+  - id: html-css-ch10-l02-e01-r02
+    label: Tabletで2枚目をx 272pxへ置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [tablet-768]
+    target: { kind: selector, selector: '[data-second]' }
+    assertion: { kind: rect, metric: x, operator: equals, expected: 272, tolerance: 1 }
+    feedback:
+      {
+        target: Tabletの2枚目のx,
+        expected: 272px前後,
+        nextAction: min-width 768pxでrowへ切り替えます。,
+      }
+    hintId: html-css-ch10-l02-e01-h02
+    relatedSlideId: html-css-ch10-l02-s02
+  - id: html-css-ch10-l02-e01-r03
+    label: DesktopでもRowを保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-second]' }
+    assertion: { kind: rect, metric: x, operator: equals, expected: 272, tolerance: 1 }
+    feedback:
+      {
+        target: Desktopの2枚目のx,
+        expected: 272px前後,
+        nextAction: min-width条件をDesktopでも有効に保ちます。,
+      }
+    hintId: html-css-ch10-l02-e01-h03
+    relatedSlideId: html-css-ch10-l02-s02
+hints:
+  - {
+      id: html-css-ch10-l02-e01-h01,
+      level: 1,
+      title: BaseはColumn,
+      text: Mobileでは2枚目を下へ置きます。,
+      relatedSlideId: html-css-ch10-l02-s01,
+    }
+  - {
+      id: html-css-ch10-l02-e01-h02,
+      level: 2,
+      title: 768pxで切り替える,
+      text: min-width 768pxのMedia Queryを書きます。,
+      relatedSlideId: html-css-ch10-l02-s02,
+    }
+  - {
+      id: html-css-ch10-l02-e01-h03,
+      level: 3,
+      title: 実測位置を見る,
+      text: Rowでは32ではなくBody x16から240pxとgap16を足します。,
+      relatedSlideId: html-css-ch10-l02-s02,
+    }
+relatedSlideIds: [html-css-ch10-l02-s01, html-css-ch10-l02-s02]
+previewViewports:
+  - { id: mobile-390, width: 390, height: 844 }
+  - { id: tablet-768, width: 768, height: 1024 }
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch10-l02-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch10-l02-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch10-l02-e01-r02]

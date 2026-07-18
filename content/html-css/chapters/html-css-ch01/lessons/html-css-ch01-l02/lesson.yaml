@@ -1,0 +1,19 @@
+id: html-css-ch01-l02
+kind: standard
+title: Elementを入れ子にする
+goal: 親子関係を保ち、読みやすく字下げしたHTML構造を書ける
+estimatedMinutes: 12
+prerequisiteLessonIds: [html-css-ch01-l01]
+slideSources:
+  - slides/s01-nesting-tree.md
+  - slides/s02-indentation.md
+  - slides/s03-parent-child.md
+exerciseSources:
+  - exercises/html-css-ch01-l02-e01/exercise.yaml
+reflection: 字下げは見た目の飾りではなくElementの親子関係を読み取る手掛かりになる
+glossaryRefs: [nesting, parent-element, child-element, indentation]
+nextLessonId: html-css-ch01-l03
+completion:
+  kind: standard
+  finalSlideId: html-css-ch01-l02-s03
+  requiredExerciseIds: [html-css-ch01-l02-e01]

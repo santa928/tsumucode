@@ -1,0 +1,121 @@
+id: html-css-ch02-l02-e01
+kind: standard
+workspaceId: html-css-ch02-l02-e01
+countsTowardStandardExerciseTotal: true
+title: Skill一覧と制作手順をListにする
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch02-l02-e01-r01
+    label: 順不同の一覧をulにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: ul }
+    assertion: { kind: count, operator: gte, expected: 1 }
+    feedback:
+      target: 学んでいるSkillの一覧
+      expected: ulが1つ以上ある
+      nextAction: 順番を入れ替えられるSkill一覧をulで包みます。
+    hintId: html-css-ch02-l02-e01-h01
+    relatedSlideId: html-css-ch02-l02-s01
+  - id: html-css-ch02-l02-e01-r02
+    label: ulへ3つ以上の項目を入れる
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'ul > li' }
+    assertion: { kind: count, operator: gte, expected: 3 }
+    feedback:
+      target: Skill一覧の項目
+      expected: ul直下のliが3つ以上
+      nextAction: ulの中へ、学んでいるSkillをliで3つ以上書きます。
+    hintId: html-css-ch02-l02-e01-h02
+    relatedSlideId: html-css-ch02-l02-s01
+  - id: html-css-ch02-l02-e01-r03
+    label: 順番のある手順をolにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: ol }
+    assertion: { kind: count, operator: equals, expected: 1 }
+    feedback:
+      target: 制作の手順
+      expected: olが1つある
+      nextAction: 編集、保存、確認の順番に意味があるため、2つ目のListをolへ変更します。
+    hintId: html-css-ch02-l02-e01-h02
+    relatedSlideId: html-css-ch02-l02-s02
+  - id: html-css-ch02-l02-e01-r04
+    label: olへ3つ以上の手順を入れる
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'ol > li' }
+    assertion: { kind: count, operator: gte, expected: 3 }
+    feedback:
+      target: 制作手順の項目
+      expected: ol直下のliが3つ以上
+      nextAction: olの中へ、順番どおりに進める手順をliで3つ以上入れます。
+    hintId: html-css-ch02-l02-e01-h03
+    relatedSlideId: html-css-ch02-l02-s02
+hints:
+  - id: html-css-ch02-l02-e01-h01
+    level: 1
+    title: 項目を入れ替えて考える
+    text: 並び替えても意味が変わらない一覧と、結果が変わる手順を見分けます。
+    relatedSlideId: html-css-ch02-l02-s01
+  - id: html-css-ch02-l02-e01-h02
+    level: 2
+    title: 2つ目のListの役割を見る
+    text: 編集より先にPreviewしても完成しないため、制作手順には順序を表すListが必要です。
+    relatedSlideId: html-css-ch02-l02-s02
+  - id: html-css-ch02-l02-e01-h03
+    level: 3
+    title: ulをolへ置き換える
+    text: 制作の手順を包む開始Tagと終了Tagだけをulからolへ変更し、liはそのまま使います。
+    relatedSlideId: html-css-ch02-l02-s02
+relatedSlideIds:
+  - html-css-ch02-l02-s01
+  - html-css-ch02-l02-s02
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch02-l02-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch02-l02-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - html-css-ch02-l02-e01-r03
+      - html-css-ch02-l02-e01-r04

@@ -1,0 +1,117 @@
+id: html-css-ch10-l04-e01
+kind: standard
+workspaceId: html-css-ch10-l04-e01
+countsTowardStandardExerciseTotal: true
+title: ImageをContainerへ比率のまま収める
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch10-l04-e01-r01
+    label: Image幅を320px以内へ収める
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390]
+    target: { kind: selector, selector: img }
+    assertion: { kind: rect, metric: width, operator: lte, expected: 320, tolerance: 1 }
+    feedback:
+      { target: ImageのWidth, expected: 320px以下, nextAction: max-width 100%を指定します。 }
+    hintId: html-css-ch10-l04-e01-h01
+    relatedSlideId: html-css-ch10-l04-s01
+  - id: html-css-ch10-l04-e01-r02
+    label: 正方形のAspect Ratioを保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390]
+    target: { kind: selector, selector: img }
+    assertion: { kind: rect, metric: height, operator: equals, expected: 320, tolerance: 1 }
+    feedback:
+      {
+        target: ImageのHeight,
+        expected: 320px前後,
+        nextAction: height autoで元の正方形比率を保ちます。,
+      }
+    hintId: html-css-ch10-l04-e01-h02
+    relatedSlideId: html-css-ch10-l04-s01
+  - id: html-css-ch10-l04-e01-r03
+    label: Image Boxをcoverで満たす
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390]
+    target: { kind: selector, selector: img }
+    assertion: { kind: computed-style, property: object-fit, operator: equals, expected: cover }
+    feedback:
+      {
+        target: ImageのComputed Object Fit,
+        expected: cover,
+        nextAction: object-fit coverを指定します。,
+      }
+    hintId: html-css-ch10-l04-e01-h03
+    relatedSlideId: html-css-ch10-l04-s02
+hints:
+  - {
+      id: html-css-ch10-l04-e01-h01,
+      level: 1,
+      title: 境界へ収める,
+      text: max-widthを100%にします。,
+      relatedSlideId: html-css-ch10-l04-s01,
+    }
+  - {
+      id: html-css-ch10-l04-e01-h02,
+      level: 2,
+      title: 比率を保つ,
+      text: heightをautoにします。,
+      relatedSlideId: html-css-ch10-l04-s01,
+    }
+  - {
+      id: html-css-ch10-l04-e01-h03,
+      level: 3,
+      title: Boxを満たす,
+      text: object-fitをcoverにします。,
+      relatedSlideId: html-css-ch10-l04-s02,
+    }
+relatedSlideIds: [html-css-ch10-l04-s01, html-css-ch10-l04-s02]
+previewViewports: [{ id: mobile-390, width: 390, height: 844 }]
+assets:
+  - {
+      id: responsive-avatar,
+      source: assets/profile-avatar.svg,
+      mediaType: image,
+      alt: Code Cardを持つ学習者のAvatar,
+      provenanceId: ch10-responsive-avatar-original,
+    }
+fixtures:
+  - id: html-css-ch10-l04-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch10-l04-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch10-l04-e01-r02]

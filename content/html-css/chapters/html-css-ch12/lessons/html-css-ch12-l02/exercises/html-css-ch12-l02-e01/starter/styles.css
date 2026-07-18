@@ -1,0 +1,31 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  color: #172a3a;
+  background: #f5efe3;
+  font-family: system-ui, sans-serif;
+}
+header,
+main,
+footer {
+  width: min(100% - 32px, 56rem);
+  margin-inline: auto;
+}
+header {
+  padding-block: 32px 20px;
+}
+main section {
+  padding: 32px;
+  border-radius: 24px;
+  background: #fffdf8;
+}
+footer {
+  padding-block: 24px 40px;
+}
+.site-name {
+  color: #155e63;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}

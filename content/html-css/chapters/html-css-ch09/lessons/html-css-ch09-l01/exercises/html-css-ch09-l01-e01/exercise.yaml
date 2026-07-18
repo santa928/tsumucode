@@ -1,0 +1,110 @@
+id: html-css-ch09-l01-e01
+kind: standard
+workspaceId: html-css-ch09-l01-e01
+countsTowardStandardExerciseTotal: true
+title: 160pxと240pxのGrid Trackを作る
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch09-l01-e01-r01
+    label: 親をGrid Containerにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-grid]' }
+    assertion: { kind: computed-style, property: display, operator: equals, expected: grid }
+    feedback:
+      target: Grid ContainerのComputed Display
+      expected: grid
+      nextAction: data-gridへdisplay gridを指定します。
+    hintId: html-css-ch09-l01-e01-h01
+    relatedSlideId: html-css-ch09-l01-s01
+  - id: html-css-ch09-l01-e01-r02
+    label: 2枚目をx 208pxへ置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-second]' }
+    assertion:
+      kind: rect
+      metric: x
+      operator: equals
+      expected: 208
+      tolerance: 1
+    feedback:
+      target: 2枚目のGrid Itemの実測x
+      expected: 208px前後
+      nextAction: 最初のTrackを160px、Column Gapを16pxにし、32 + 160 + 16を確認します。
+    hintId: html-css-ch09-l01-e01-h02
+    relatedSlideId: html-css-ch09-l01-s02
+  - id: html-css-ch09-l01-e01-r03
+    label: Gridの横Overflowを防ぐ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-grid]' }
+    assertion: { kind: overflow-x, operator: equals, expected: false }
+    feedback:
+      target: Grid ContainerのHorizontal Overflow
+      expected: 'false'
+      nextAction: 2つのTrackとGapの合計をContainer幅へ合わせます。
+    hintId: html-css-ch09-l01-e01-h03
+    relatedSlideId: html-css-ch09-l01-s02
+hints:
+  - id: html-css-ch09-l01-e01-h01
+    level: 1
+    title: 親をGridにする
+    text: data-gridへdisplay gridを指定します。
+    relatedSlideId: html-css-ch09-l01-s01
+  - id: html-css-ch09-l01-e01-h02
+    level: 2
+    title: 明示Trackを並べる
+    text: grid-template-columnsへ160px 240pxを指定します。
+    relatedSlideId: html-css-ch09-l01-s02
+  - id: html-css-ch09-l01-e01-h03
+    level: 3
+    title: 境界を計算する
+    text: Body x 32pxへ最初のTrack 160pxとGap 16pxを足します。
+    relatedSlideId: html-css-ch09-l01-s02
+relatedSlideIds:
+  - html-css-ch09-l01-s01
+  - html-css-ch09-l01-s02
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch09-l01-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch09-l01-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch09-l01-e01-r02]

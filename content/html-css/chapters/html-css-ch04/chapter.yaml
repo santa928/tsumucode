@@ -1,0 +1,11 @@
+id: html-css-ch04
+sequence: 4
+title: CSSの基本とカスケード
+goal: SelectorとDeclarationを読み、Cascadeが選んだComputed Valueを根拠にStyleを調整する
+estimatedMinutes: 50
+kind: standard
+lessonSources:
+  - lessons/html-css-ch04-l01/lesson.yaml
+  - lessons/html-css-ch04-l02/lesson.yaml
+  - lessons/html-css-ch04-l03/lesson.yaml
+  - lessons/html-css-ch04-l04/lesson.yaml

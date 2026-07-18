@@ -1,0 +1,18 @@
+id: html-css-ch05-l04
+kind: standard
+title: Displayと操作領域を整える
+goal: Linkを横並びにし44px以上の操作領域を確保できる
+estimatedMinutes: 10
+prerequisiteLessonIds: [html-css-ch05-l03]
+slideSources:
+  - slides/s01-display-flow.md
+  - slides/s02-inline-block.md
+exerciseSources:
+  - exercises/html-css-ch05-l04-e01/exercise.yaml
+reflection: 横並びでもKeyboard Focusと44px以上の操作領域を保つ
+glossaryRefs: [display, inline-block, focus-target]
+nextLessonId: html-css-ch05-l05
+completion:
+  kind: standard
+  finalSlideId: html-css-ch05-l04-s02
+  requiredExerciseIds: [html-css-ch05-l04-e01]

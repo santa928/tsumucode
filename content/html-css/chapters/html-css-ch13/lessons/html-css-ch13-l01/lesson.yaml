@@ -1,0 +1,72 @@
+id: html-css-ch13-l01
+kind: capstone
+title: 個人制作展のLanding Pageを完成する
+goal: Purpose、Audience、Content、Layout、a11y要件を満たすSTACK DAYのLPを独力で作る
+estimatedMinutes: 120
+prerequisiteLessonIds: [html-css-ch12-l05]
+slideSources:
+  - slides/g01-evaluation-map.md
+exerciseSources:
+  - exercises/html-css-ch13-l01-e01/exercise.yaml
+reflection: 実装の選択をBriefと観測結果から説明し、別解を受け入れられる評価にする
+glossaryRefs: [capstone, landing-page, rule-group, responsive-audit]
+project:
+  id: html-css-capstone-landing
+  briefSource: brief.md
+  guideSources:
+    - guide-evaluation.md
+  checklist:
+    - id: capstone-semantic
+      label: LandmarkとHeadingで内容の骨格を作った
+      required: true
+      ruleIds:
+        - html-css-ch13-l01-e01-r01
+        - html-css-ch13-l01-e01-r02
+    - id: capstone-navigation
+      label: Navigationの目的を支援技術へ伝えた
+      required: true
+      ruleIds:
+        - html-css-ch13-l01-e01-r03
+    - id: capstone-poster
+      label: Event Posterへ代替Textを付けた
+      required: true
+      ruleIds:
+        - html-css-ch13-l01-e01-r04
+    - id: capstone-layout
+      label: GridまたはFlexでEvent Cardを並べた
+      required: true
+      ruleIds:
+        - capstone-layout-method
+    - id: capstone-responsive
+      label: Card幅と4 Viewportの横Overflowを確認した
+      required: true
+      ruleIds:
+        - html-css-ch13-l01-e01-r07
+        - html-css-ch13-l01-e01-r08
+    - id: capstone-keyboard
+      label: 主要ActionをKeyboard操作できる
+      required: true
+      ruleIds:
+        - html-css-ch13-l01-e01-r09
+    - id: capstone-contrast
+      label: 本文Contrastを4.5対1以上にした
+      required: true
+      ruleIds:
+        - html-css-ch13-l01-e01-r10
+completion:
+  kind: capstone
+  requiredRuleIds:
+    - html-css-ch13-l01-e01-r01
+    - html-css-ch13-l01-e01-r02
+    - html-css-ch13-l01-e01-r03
+    - html-css-ch13-l01-e01-r04
+    - capstone-layout-method
+    - html-css-ch13-l01-e01-r07
+    - html-css-ch13-l01-e01-r08
+    - html-css-ch13-l01-e01-r09
+    - html-css-ch13-l01-e01-r10
+  requiredViewportIds:
+    - mobile-390
+    - tablet-768
+    - desktop-1280
+    - wide-1440

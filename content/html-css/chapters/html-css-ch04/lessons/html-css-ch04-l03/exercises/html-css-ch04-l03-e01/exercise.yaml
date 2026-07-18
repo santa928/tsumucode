@@ -1,0 +1,100 @@
+id: html-css-ch04-l03-e01
+kind: standard
+workspaceId: html-css-ch04-l03-e01
+countsTowardStandardExerciseTotal: true
+title: Source OrderとInheritanceで色を選ぶ
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch04-l03-e01-r01
+    label: MessageへCardの最終色を継承する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: .cascade-card .message }
+    assertion:
+      kind: computed-style
+      property: color
+      operator: equals
+      expected: rgb(154, 63, 37)
+    feedback:
+      target: MessageのInherited Computed Color
+      expected: rgb(154, 63, 37)
+      nextAction: 同じ.cascade-card Selectorのうち、橙色のRuleが後になる順番へ直します。
+    hintId: html-css-ch04-l03-e01-h02
+    relatedSlideId: html-css-ch04-l03-s01
+  - id: html-css-ch04-l03-e01-r02
+    label: Controlは青緑色を保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: .cascade-card .control }
+    assertion:
+      kind: computed-style
+      property: color
+      operator: equals
+      expected: rgb(45, 93, 98)
+    feedback:
+      target: Control Linkの直接指定Color
+      expected: rgb(45, 93, 98)
+      nextAction: '.controlへcolor: #2d5d62;を直接指定し、広い一括上書きを避けます。'
+    hintId: html-css-ch04-l03-e01-h03
+    relatedSlideId: html-css-ch04-l03-s03
+hints:
+  - id: html-css-ch04-l03-e01-h01
+    level: 1
+    title: 届いているRuleを列挙する
+    text: cascade-cardには同じSelectorが2回、controlには追加の直接指定があることを確認します。
+    relatedSlideId: html-css-ch04-l03-s02
+  - id: html-css-ch04-l03-e01-h02
+    level: 2
+    title: 同点なら後を選ぶ
+    text: 2つの.cascade-cardはSpecificityが同じなので、後のColorがParentの最終値になります。
+    relatedSlideId: html-css-ch04-l03-s01
+  - id: html-css-ch04-l03-e01-h03
+    level: 3
+    title: Ruleの順番だけを入れ替える
+    text: 青緑の.cascade-cardを先、橙の.cascade-cardを後にし、.control Ruleは残します。
+    relatedSlideId: html-css-ch04-l03-s03
+relatedSlideIds:
+  - html-css-ch04-l03-s01
+  - html-css-ch04-l03-s02
+  - html-css-ch04-l03-s03
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch04-l03-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch04-l03-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch04-l03-e01-r01]

@@ -1,0 +1,9 @@
+id: html-css-ch00
+sequence: 0
+title: Web制作の地図
+goal: Browser、HTML、CSSの役割と学習の操作手順を説明できる
+estimatedMinutes: 20
+kind: standard
+lessonSources:
+  - lessons/html-css-ch00-l01/lesson.yaml
+  - lessons/html-css-ch00-l02/lesson.yaml

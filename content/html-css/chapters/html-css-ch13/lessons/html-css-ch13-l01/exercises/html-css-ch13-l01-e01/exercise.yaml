@@ -1,0 +1,276 @@
+id: html-css-ch13-l01-e01
+kind: capstone
+projectId: html-css-capstone-landing
+workspaceId: html-css-capstone-landing
+countsTowardStandardExerciseTotal: false
+title: STACK DAY Landing Pageを完成する
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch13-l01-e01-r01
+    label: Header、Main、Footerを1つずつ置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: 'header, main, footer' }
+    assertion: { kind: count, operator: equals, expected: 3 }
+    feedback:
+      target: PageのSemantic Landmark
+      expected: header、main、footerが合計3つ
+      nextAction: Eventの導入、中心内容、補足を3つのLandmarkへ分けます。
+    hintId: html-css-ch13-l01-e01-h01
+    relatedSlideId: html-css-ch13-l01-g01
+  - id: html-css-ch13-l01-e01-r02
+    label: Pageのh1を1つにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: h1 }
+    assertion: { kind: count, operator: equals, expected: 1 }
+    feedback:
+      target: Event PageのMain Heading
+      expected: h1が1つ
+      nextAction: EventのPurposeが分かるPage題名だけをh1にします。
+    hintId: html-css-ch13-l01-e01-h01
+    relatedSlideId: html-css-ch13-l01-g01
+  - id: html-css-ch13-l01-e01-r03
+    label: NavigationへAccessible Nameを付ける
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: nav }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: Event NavigationのAccessible Name
+      expected: Navigationの目的が分かる空でない名前
+      nextAction: Navigationへ案内範囲を表す名前を付けます。
+    hintId: html-css-ch13-l01-e01-h01
+    relatedSlideId: html-css-ch13-l01-g01
+  - id: html-css-ch13-l01-e01-r04
+    label: Event Posterへ代替Textを付ける
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: '[data-event-poster]' }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: STACK DAY PosterのAccessible Name
+      expected: Event名と開催内容が分かる説明
+      nextAction: PosterのaltへEvent名と重要な内容を短く書きます。
+    hintId: html-css-ch13-l01-e01-h01
+    relatedSlideId: html-css-ch13-l01-g01
+  - id: html-css-ch13-l01-e01-r05
+    groupId: capstone-layout-method
+    label: Event CardをGridで並べる
+    required: true
+    group: any
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: '[data-event-grid]' }
+    assertion: { kind: computed-style, property: display, operator: equals, expected: grid }
+    feedback:
+      target: Event Card ContainerのComputed Display
+      expected: Gridまたは同じGroupのFlex
+      nextAction: Card ContainerへGridまたはFlexのLayoutを選びます。
+    hintId: html-css-ch13-l01-e01-h02
+    relatedSlideId: html-css-ch13-l01-g01
+  - id: html-css-ch13-l01-e01-r06
+    groupId: capstone-layout-method
+    label: Event CardをFlexで並べる
+    required: true
+    group: any
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: '[data-event-grid]' }
+    assertion: { kind: computed-style, property: display, operator: equals, expected: flex }
+    feedback:
+      target: Event Card ContainerのComputed Display
+      expected: Flexまたは同じGroupのGrid
+      nextAction: Card ContainerへFlexまたはGridのLayoutを選びます。
+    hintId: html-css-ch13-l01-e01-h02
+    relatedSlideId: html-css-ch13-l01-g01
+  - id: html-css-ch13-l01-e01-r07
+    label: 4 ViewportでCard幅を360px以下にする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: '[data-event-card]' }
+    assertion:
+      kind: rect
+      metric: width
+      operator: lte
+      expected: 360
+      tolerance: 0.5
+    feedback:
+      target: 各Event Cardの実測Width
+      expected: 390、768、1280、1440pxで360px以下
+      nextAction: Layout TrackまたはFlex Basisを内容幅へ合わせます。
+    hintId: html-css-ch13-l01-e01-h02
+    relatedSlideId: html-css-ch13-l01-g01
+  - id: html-css-ch13-l01-e01-r08
+    label: 4 Viewportで横Overflowを防ぐ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: '[data-capstone-page]' }
+    assertion: { kind: overflow-x, operator: equals, expected: false }
+    feedback:
+      target: STACK DAY DocumentのHorizontal Overflow
+      expected: 390、768、1280、1440pxですべてfalse
+      nextAction: 固定幅、長いText、画像境界を4幅で見直します。
+    hintId: html-css-ch13-l01-e01-h02
+    relatedSlideId: html-css-ch13-l01-g01
+  - id: html-css-ch13-l01-e01-r09
+    label: 主要ActionをKeyboard Focus可能にする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: '[data-capstone-action]' }
+    assertion: { kind: focusable, operator: equals, expected: true }
+    feedback:
+      target: 予約と問い合わせActionのFocusability
+      expected: data-capstone-actionを持つ全要素がFocus可能
+      nextAction: 主要Actionをhref付きaまたはbuttonで表します。
+    hintId: html-css-ch13-l01-e01-h03
+    relatedSlideId: html-css-ch13-l01-g01
+  - id: html-css-ch13-l01-e01-r10
+    label: 本文Contrastを4.5対1以上にする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: '[data-capstone-page]' }
+    assertion: { kind: contrast, minimum: 4.5 }
+    feedback:
+      target: STACK DAY PageのTextとBackground
+      expected: Contrast Ratio 4.5対1以上
+      nextAction: TextとBackgroundの明るさの差を広げます。
+    hintId: html-css-ch13-l01-e01-h03
+    relatedSlideId: html-css-ch13-l01-g01
+hints:
+  - id: html-css-ch13-l01-e01-h01
+    level: 1
+    title: Structureと名前を読む
+    text: Landmark、h1、Navigation名、Poster altを順に確認します。
+    relatedSlideId: html-css-ch13-l01-g01
+  - id: html-css-ch13-l01-e01-h02
+    level: 2
+    title: Layoutと境界を測る
+    text: GridまたはFlexを選び、Card幅と4 Viewport Overflowを確認します。
+    relatedSlideId: html-css-ch13-l01-g01
+  - id: html-css-ch13-l01-e01-h03
+    level: 3
+    title: 操作とContrastを確認する
+    text: 主要ActionのFocusabilityと本文Contrast 4.5対1を測ります。
+    relatedSlideId: html-css-ch13-l01-g01
+relatedSlideIds: [html-css-ch13-l01-g01]
+previewViewports:
+  - { id: mobile-390, width: 390, height: 844 }
+  - { id: tablet-768, width: 768, height: 1024 }
+  - { id: desktop-1280, width: 1280, height: 720 }
+  - { id: wide-1440, width: 1440, height: 900 }
+assets:
+  - id: stack-day-poster
+    source: assets/stack-day-poster.svg
+    mediaType: image
+    alt: STACK DAY個人制作展Poster
+    provenanceId: ch13-stack-day-poster-exercise-original
+fixtures:
+  - id: html-css-ch13-l01-e01-valid-flex
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-flex/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/valid-flex/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch13-l01-e01-valid-grid
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-grid/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/valid-grid/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch13-l01-e01-missing-landmark
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/missing-landmark/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/missing-landmark/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: [html-css-ch13-l01-e01-r01]
+  - id: html-css-ch13-l01-e01-responsive-overflow
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/responsive-overflow/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/responsive-overflow/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: [html-css-ch13-l01-e01-r08]
+  - id: html-css-ch13-l01-e01-missing-accessible-name
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/missing-accessible-name/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/missing-accessible-name/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: [html-css-ch13-l01-e01-r03]
+  - id: html-css-ch13-l01-e01-low-contrast
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/low-contrast/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/low-contrast/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: [html-css-ch13-l01-e01-r10]

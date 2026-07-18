@@ -1,0 +1,13 @@
+body {
+  color: #1e2930;
+  font-family: sans-serif;
+}
+
+.card {
+  max-width: 30rem;
+  margin: 3rem auto;
+}
+
+img {
+  max-width: 10rem;
+}

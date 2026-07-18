@@ -1,0 +1,18 @@
+id: html-css-ch02-l04
+kind: standard
+title: 文の中の重要さと強調を表す
+goal: 文脈上の重要事項をstrong、発声上の強調をemで示せる
+estimatedMinutes: 10
+prerequisiteLessonIds: [html-css-ch02-l03]
+slideSources:
+  - slides/s01-strong-emphasis.md
+  - slides/s02-inline-meaning.md
+exerciseSources:
+  - exercises/html-css-ch02-l04-e01/exercise.yaml
+reflection: strongとemは太字や斜体にする道具ではなく文章へ意味を加える
+glossaryRefs: [strong, emphasis, inline-element]
+nextLessonId: html-css-ch03-l01
+completion:
+  kind: standard
+  finalSlideId: html-css-ch02-l04-s02
+  requiredExerciseIds: [html-css-ch02-l04-e01]

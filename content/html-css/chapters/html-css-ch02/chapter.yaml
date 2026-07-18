@@ -1,0 +1,11 @@
+id: html-css-ch02
+sequence: 2
+title: 意味のある文章構造
+goal: 見出し、リスト、Landmark、Inline要素を内容の意味に合わせて組み立てる
+estimatedMinutes: 40
+kind: standard
+lessonSources:
+  - lessons/html-css-ch02-l01/lesson.yaml
+  - lessons/html-css-ch02-l02/lesson.yaml
+  - lessons/html-css-ch02-l03/lesson.yaml
+  - lessons/html-css-ch02-l04/lesson.yaml

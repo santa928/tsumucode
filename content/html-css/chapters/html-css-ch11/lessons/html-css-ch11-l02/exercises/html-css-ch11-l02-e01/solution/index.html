@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>名前が伝わるプロフィール</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <article class="profile">
+        <img
+          data-avatar
+          src="asset:accessible-avatar"
+          alt="オレンジのCode Cardを持つTsumuCode学習者"
+        />
+        <div>
+          <h1>学習プロフィール</h1>
+          <label for="display-name">表示名</label>
+          <input data-name-input id="display-name" name="display-name" value="つむ" />
+          <a data-profile-link href="#works">つむのHTML/CSS作品を見る</a>
+        </div>
+      </article>
+      <section id="works">
+        <h2>作品</h2>
+        <p>読みやすいプロフィールカードを制作中です。</p>
+      </section>
+    </main>
+  </body>
+</html>

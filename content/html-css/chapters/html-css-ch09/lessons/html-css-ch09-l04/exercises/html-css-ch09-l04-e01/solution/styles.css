@@ -1,0 +1,24 @@
+body {
+  margin: 0;
+  padding: 32px;
+  background: #f5efe4;
+  font-family: system-ui, sans-serif;
+}
+[data-gallery] {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  width: 600px;
+  gap: 16px;
+}
+[data-gallery] article {
+  box-sizing: border-box;
+  padding: 24px;
+  background: #fff;
+}
+[data-feature] {
+  grid-column: 1 / -1;
+}
+[data-actions] {
+  display: flex;
+  gap: 12px;
+}

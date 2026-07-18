@@ -1,0 +1,11 @@
+id: html-css-ch03
+sequence: 3
+title: リンク、画像、フォーム
+goal: 安全なLink、意味のある画像説明、Label付きFormを組み合わせて情報へ到達できるページを作る
+estimatedMinutes: 35
+kind: standard
+lessonSources:
+  - lessons/html-css-ch03-l01/lesson.yaml
+  - lessons/html-css-ch03-l02/lesson.yaml
+  - lessons/html-css-ch03-l03/lesson.yaml
+  - lessons/html-css-ch03-l04/lesson.yaml

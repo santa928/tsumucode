@@ -1,0 +1,18 @@
+id: html-css-ch10-l03
+kind: standard
+title: 幅を流動的に保つ
+goal: 百分率、max-width、auto MarginでContainerを中央へ収められる
+estimatedMinutes: 12
+prerequisiteLessonIds: [html-css-ch10-l02]
+slideSources:
+  - slides/s01-fluid-width.md
+  - slides/s02-max-width-center.md
+exerciseSources:
+  - exercises/html-css-ch10-l03-e01/exercise.yaml
+reflection: 小さい画面では縮み、大きい画面では読みやすい上限へ止める
+glossaryRefs: [fluid-width, max-width, margin-auto]
+nextLessonId: html-css-ch10-l04
+completion:
+  kind: standard
+  finalSlideId: html-css-ch10-l03-s02
+  requiredExerciseIds: [html-css-ch10-l03-e01]

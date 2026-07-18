@@ -1,0 +1,17 @@
+body {
+  margin: 0;
+  padding: 32px;
+  background: #f5efe4;
+  font-family: system-ui, sans-serif;
+}
+[data-actions] {
+  width: 400px;
+}
+[data-actions] a {
+  box-sizing: border-box;
+  display: inline-block;
+  width: 80px;
+  padding: 12px;
+  color: #fff;
+  background: #2d5d62;
+}

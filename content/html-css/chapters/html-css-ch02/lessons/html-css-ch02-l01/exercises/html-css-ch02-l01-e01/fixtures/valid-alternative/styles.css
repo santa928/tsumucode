@@ -1,0 +1,9 @@
+body {
+  color: #182126;
+  font-family: sans-serif;
+}
+
+.journal {
+  max-width: 40rem;
+  margin: 3rem auto;
+}

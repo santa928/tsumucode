@@ -1,0 +1,11 @@
+body {
+  margin: 0;
+  padding: 3rem;
+  color: #19352d;
+  font-family: system-ui, sans-serif;
+}
+
+.topic {
+  padding: 2rem;
+  background: #f6f0e3;
+}

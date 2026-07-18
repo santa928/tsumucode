@@ -1,0 +1,21 @@
+body {
+  margin: 0;
+  padding: 32px;
+  background: #f5efe4;
+  color: #24323d;
+  font-family: system-ui, sans-serif;
+}
+[data-row],
+[data-column] {
+  gap: 12px;
+  padding: 16px;
+  background: #fff;
+}
+[data-column] {
+  display: flex;
+  flex-direction: row;
+}
+span {
+  padding: 8px 12px;
+  background: #e3efed;
+}

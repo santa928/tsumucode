@@ -1,0 +1,38 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="1000"
+  height="600"
+  viewBox="0 0 1000 600"
+  role="img"
+  aria-labelledby="stack-title stack-description"
+>
+  <title id="stack-title">STACK DAY 個人制作展Poster</title>
+  <desc id="stack-description">
+    紙色の背景に濃紺、オレンジ、青緑のブロックが積み上がり、STACK DAYと7月26日の文字があるPoster
+  </desc>
+  <rect width="1000" height="600" rx="36" fill="#f5efe3" />
+  <rect x="54" y="54" width="892" height="492" rx="28" fill="#fffdf8" stroke="#172a3a" stroke-width="8" />
+  <g transform="translate(92 104)">
+    <rect x="0" y="288" width="244" height="92" rx="18" fill="#172a3a" />
+    <rect x="38" y="190" width="206" height="82" rx="18" fill="#2d7c82" />
+    <rect x="0" y="92" width="166" height="82" rx="18" fill="#ef7d4f" />
+    <rect x="78" y="0" width="166" height="76" rx="18" fill="#172a3a" />
+    <text x="122" y="346" fill="#ffffff" font-family="system-ui, sans-serif" font-size="34" font-weight="800" text-anchor="middle">
+      04 PIECES
+    </text>
+  </g>
+  <g font-family="system-ui, sans-serif">
+    <text x="408" y="160" fill="#2d7c82" font-size="24" font-weight="800" letter-spacing="6">
+      PERSONAL MAKERS EXHIBITION
+    </text>
+    <text x="402" y="270" fill="#172a3a" font-size="92" font-weight="900" letter-spacing="-4">
+      STACK
+    </text>
+    <text x="402" y="358" fill="#ef7d4f" font-size="92" font-weight="900" letter-spacing="-4">
+      DAY
+    </text>
+    <line x1="408" y1="398" x2="866" y2="398" stroke="#172a3a" stroke-width="6" />
+    <text x="408" y="448" fill="#172a3a" font-size="30" font-weight="750">JUL 26 · 11:00–18:00</text>
+    <text x="408" y="490" fill="#52616d" font-size="24">NORTH HALL / FREE ENTRY</text>
+  </g>
+</svg>

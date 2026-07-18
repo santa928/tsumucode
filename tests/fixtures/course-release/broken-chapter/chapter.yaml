@@ -1,0 +1,7 @@
+id: broken-chapter
+sequence: 0
+title: Broken fixture
+goal: 欠落Sourceを検出する
+estimatedMinutes: 5
+kind: standard
+lessonSources: [lessons/broken-l01/lesson.yaml]

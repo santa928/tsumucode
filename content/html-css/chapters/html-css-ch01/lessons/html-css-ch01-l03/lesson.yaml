@@ -1,0 +1,18 @@
+id: html-css-ch01-l03
+kind: standard
+title: Attributeで追加情報を伝える
+goal: Attributeの名前と値を区別し、文書の言語とBrowser Tabの題名を設定できる
+estimatedMinutes: 11
+prerequisiteLessonIds: [html-css-ch01-l02]
+slideSources:
+  - slides/s01-attributes.md
+  - slides/s02-lang-title.md
+exerciseSources:
+  - exercises/html-css-ch01-l03-e01/exercise.yaml
+reflection: AttributeはElementの役割を変えずに言語や識別情報を追加する
+glossaryRefs: [attribute, language-attribute, metadata]
+nextLessonId: html-css-ch02-l01
+completion:
+  kind: standard
+  finalSlideId: html-css-ch01-l03-s02
+  requiredExerciseIds: [html-css-ch01-l03-e01]

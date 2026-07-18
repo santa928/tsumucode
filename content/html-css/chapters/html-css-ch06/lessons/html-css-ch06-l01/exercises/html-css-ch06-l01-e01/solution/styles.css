@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  padding: 32px;
+  background: #f5efe4;
+  color: #24323d;
+}
+.reading-sample {
+  max-width: 42rem;
+  padding: 24px;
+  background: #fff;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+}

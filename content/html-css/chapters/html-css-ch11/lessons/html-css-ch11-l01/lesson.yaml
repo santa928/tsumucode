@@ -1,0 +1,18 @@
+id: html-css-ch11-l01
+kind: standard
+title: KeyboardとFocus
+goal: DOM順を保ち、主要ActionをKeyboard操作でき、Focus Indicatorを見える状態にする
+estimatedMinutes: 10
+prerequisiteLessonIds: [html-css-ch10-l05]
+slideSources:
+  - slides/s01-dom-order.md
+  - slides/s02-focus-visible.md
+exerciseSources:
+  - exercises/html-css-ch11-l01-e01/exercise.yaml
+reflection: Tab順は見た目ではなくDOM順から始まる
+glossaryRefs: [keyboard-navigation, dom-order, focus-visible]
+nextLessonId: html-css-ch11-l02
+completion:
+  kind: standard
+  finalSlideId: html-css-ch11-l01-s02
+  requiredExerciseIds: [html-css-ch11-l01-e01]

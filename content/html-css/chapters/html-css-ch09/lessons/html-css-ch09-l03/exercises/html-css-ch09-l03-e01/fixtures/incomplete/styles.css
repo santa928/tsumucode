@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  padding: 16px;
+  background: #f5efe4;
+  font-family: system-ui, sans-serif;
+}
+[data-gallery] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  width: 100%;
+  max-width: 720px;
+  gap: 16px;
+}
+[data-gallery] > * {
+  box-sizing: border-box;
+  height: 100px;
+  padding: 16px;
+  background: #fff;
+}

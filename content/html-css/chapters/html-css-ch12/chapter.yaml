@@ -1,0 +1,12 @@
+id: html-css-ch12
+sequence: 12
+title: ガイド付きプロフィール制作
+goal: 設計からアクセシビリティ確認まで5工程を積み重ね、1つのProfile Siteを完成する
+estimatedMinutes: 80
+kind: guided-project
+lessonSources:
+  - lessons/html-css-ch12-l01/lesson.yaml
+  - lessons/html-css-ch12-l02/lesson.yaml
+  - lessons/html-css-ch12-l03/lesson.yaml
+  - lessons/html-css-ch12-l04/lesson.yaml
+  - lessons/html-css-ch12-l05/lesson.yaml

@@ -1,0 +1,94 @@
+id: html-css-ch06-l02-e01
+kind: standard
+workspaceId: html-css-ch06-l02-e01
+countsTowardStandardExerciseTotal: true
+title: 読めて伝わる状態Messageを作る
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch06-l02-e01-r01
+    label: 本文Contrastを4.5対1以上にする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-message]' }
+    assertion:
+      kind: contrast
+      minimum: 4.5
+    feedback:
+      target: 状態MessageのTextとBackground
+      expected: Contrast Ratio 4.5対1以上
+      nextAction: TextとBackgroundのComputed Colorを確認し、明るさの差を広げます。
+    hintId: html-css-ch06-l02-e01-h02
+    relatedSlideId: html-css-ch06-l02-s02
+  - id: html-css-ch06-l02-e01-r02
+    label: 色以外の状態Textを置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-status-text]' }
+    assertion:
+      kind: exists
+    feedback:
+      target: 状態を伝えるText
+      expected: data-status-textを持つElementが存在する
+      nextAction: 色の印へ公開中などの状態Textを追加します。
+    hintId: html-css-ch06-l02-e01-h03
+    relatedSlideId: html-css-ch06-l02-s02
+hints:
+  - id: html-css-ch06-l02-e01-h01
+    level: 1
+    title: 前景と背景を組み合わせて見る
+    text: Text Colorだけでなく、背後のBackground Colorも確認します。
+    relatedSlideId: html-css-ch06-l02-s01
+  - id: html-css-ch06-l02-e01-h02
+    level: 2
+    title: 明るさの差を広げる
+    text: 明るい背景には十分に暗いTextを組み合わせます。
+    relatedSlideId: html-css-ch06-l02-s02
+  - id: html-css-ch06-l02-e01-h03
+    level: 3
+    title: 状態を言葉でも伝える
+    text: data-status-textを持つElementへ公開中などのTextを入れます。
+    relatedSlideId: html-css-ch06-l02-s02
+relatedSlideIds:
+  - html-css-ch06-l02-s01
+  - html-css-ch06-l02-s02
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch06-l02-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch06-l02-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch06-l02-e01-r02]

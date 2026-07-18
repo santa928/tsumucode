@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  padding: 32px;
+  background: #f5efe4;
+  font-family: system-ui, sans-serif;
+}
+[data-actions] {
+  display: flex;
+  justify-content: flex-start;
+  width: 400px;
+  gap: 20px;
+}
+[data-actions] a {
+  box-sizing: border-box;
+  width: 80px;
+  padding: 12px;
+  color: #fff;
+  background: #2d5d62;
+}

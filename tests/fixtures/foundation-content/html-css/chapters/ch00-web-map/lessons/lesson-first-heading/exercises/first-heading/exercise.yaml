@@ -1,0 +1,112 @@
+id: exercise-first-heading
+kind: standard
+workspaceId: workspace-first-heading
+countsTowardStandardExerciseTotal: true
+title: ページの見出しをh1で表す
+instructionsSource: instructions.md
+files:
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: true
+solutionFiles:
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: rule-h1-exists
+    label: main要素の中にh1見出しがある
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop]
+    target: { kind: selector, selector: main > h1 }
+    assertion: { kind: exists }
+    feedback:
+      target: main要素の中のh1見出し
+      expected: 1つある
+      nextAction: main要素の開始Tagと終了Tagの間へh1要素を書きます。
+    hintId: hint-h1-1
+    relatedSlideId: slide-html-role
+  - id: rule-h1-count
+    label: h1見出しが1つだけある
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop]
+    target: { kind: selector, selector: main > h1 }
+    assertion: { kind: count, operator: equals, expected: 1 }
+    feedback:
+      target: main要素の中のh1見出し
+      expected: 1つだけある
+      nextAction: h1要素が複数ある場合は、ページを代表する1つだけを残します。
+    hintId: hint-h1-2
+    relatedSlideId: slide-html-role
+  - id: rule-h1-text
+    label: h1に指定された見出し文がある
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop]
+    target: { kind: selector, selector: main > h1 }
+    assertion: { kind: text, operator: equals, expected: はじめてのWebページ }
+    feedback:
+      target: h1見出しの内容
+      expected: はじめてのWebページ
+      nextAction: h1の開始Tagと終了Tagの間へ、指定された見出し文を書きます。
+    hintId: hint-h1-3
+    relatedSlideId: slide-html-role
+hints:
+  - id: hint-h1-1
+    level: 1
+    title: 見出しのTagを思い出す
+    text: ページで最も大切な見出しにはh1を使います。
+    relatedSlideId: slide-html-role
+  - id: hint-h1-2
+    level: 2
+    title: 置く場所を確認する
+    text: main要素の開始Tagと終了Tagの間へ見出しを置きます。
+    relatedSlideId: slide-html-role
+  - id: hint-h1-3
+    level: 3
+    title: 要素の形を組み立てる
+    text: h1の開始Tag、見出しにしたい言葉、スラッシュ付きのh1終了Tagの順に書きます。
+    relatedSlideId: slide-html-role
+relatedSlideIds: [slide-html-role]
+previewViewports:
+  - { id: desktop, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: solution
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/solution.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: missing-heading
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/missing.html
+        editable: false
+    expectedFeedbackRuleIds: [rule-h1-exists, rule-h1-count, rule-h1-text]
+  - id: wrong-heading-text
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/wrong-text.html
+        editable: false
+    expectedFeedbackRuleIds: [rule-h1-text]
+  - id: duplicate-heading
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/duplicate-heading.html
+        editable: false
+    expectedFeedbackRuleIds: [rule-h1-count]

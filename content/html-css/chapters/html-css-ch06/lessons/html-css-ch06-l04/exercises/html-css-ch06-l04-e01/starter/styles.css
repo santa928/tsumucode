@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  padding: 32px;
+  background: #e9efed;
+  color: #24323d;
+  font-family: system-ui, sans-serif;
+}
+.card-list {
+  max-width: 40rem;
+}
+.html-card {
+  padding: 16px;
+  background: #fff;
+}
+.css-card {
+  margin-top: 16px;
+  padding: 12px;
+  background: #f5efe4;
+}

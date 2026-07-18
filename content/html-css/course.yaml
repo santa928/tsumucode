@@ -1,0 +1,130 @@
+schemaVersion: 1
+id: html-css
+title: HTML/CSS はじめの一歩
+description: 読んで、書いて、確かめながら、レスポンシブなWebページを完成させる
+audience: プログラミングを初めて学ぶ本人と身内
+estimatedMinutes: 710
+revision: 2026-07-13.1
+runnerId: html-css
+validatorId: html-css
+glossarySource: glossary.yaml
+documentationSources:
+  - assets/README.md
+  - assets/source/prompts/README.md
+authoringSources:
+  - performance.yaml
+  - release-history.yaml
+progressMigrations:
+  - fromRevision: 2026-07-10.1
+    toRevision: 2026-07-13.1
+    steps:
+      - {
+          action: intentionally-reset,
+          entity: chapter,
+          id: ch00-web-map,
+          reason: 完全CourseでChapter完了条件が増えるため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: lesson,
+          id: lesson-first-heading,
+          reason: 完全CourseでLesson完了条件が増えるため,
+        }
+      - { action: map-to, entity: slide, fromId: slide-html-role, toId: html-css-ch00-l01-s02 }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: exercise-first-heading,
+          reason: 課題と判定条件がHTMLとCSSへ拡張されるため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: rule,
+          id: rule-h1-exists,
+          reason: 完全Courseの判定Ruleへ置き換えるため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: rule,
+          id: rule-h1-count,
+          reason: 完全Courseの判定Ruleへ置き換えるため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: rule,
+          id: rule-h1-text,
+          reason: 完全Courseの判定Ruleへ置き換えるため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: hint,
+          id: hint-h1-1,
+          reason: 課題内容に合わせてHintを刷新するため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: hint,
+          id: hint-h1-2,
+          reason: 課題内容に合わせてHintを刷新するため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: hint,
+          id: hint-h1-3,
+          reason: 課題内容に合わせてHintを刷新するため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: workspace-first-heading,
+          reason: WorkspaceがHTMLとCSSの複数File構成へ変わるため,
+        }
+supportedDevices:
+  exercise: desktop
+  study: [desktop, tablet, mobile]
+prerequisites: []
+publicationStatus: published
+expectedTotals:
+  chapters: 14
+  lessons: 51
+  conceptSlides: 95
+  standardExercises: 45
+  guidedProjectLessons: 5
+  capstoneLessons: 1
+  estimatedMinutes: 710
+provenanceManifestPath: provenance.yaml
+phases:
+  - id: html-css-p01-web-foundations
+    title: Webページの土台
+    description: HTMLで意味のある文書を作る
+    chapterSources:
+      - chapters/html-css-ch00/chapter.yaml
+      - chapters/html-css-ch01/chapter.yaml
+      - chapters/html-css-ch02/chapter.yaml
+      - chapters/html-css-ch03/chapter.yaml
+  - id: html-css-p02-css-foundations
+    title: 見た目を積み上げる
+    description: CSSのCascade、Box、文字、色を理解する
+    chapterSources:
+      - chapters/html-css-ch04/chapter.yaml
+      - chapters/html-css-ch05/chapter.yaml
+      - chapters/html-css-ch06/chapter.yaml
+      - chapters/html-css-ch07/chapter.yaml
+  - id: html-css-p03-layout-accessibility
+    title: 崩れないLayoutを作る
+    description: Flex、Grid、Responsive、a11yを実践する
+    chapterSources:
+      - chapters/html-css-ch08/chapter.yaml
+      - chapters/html-css-ch09/chapter.yaml
+      - chapters/html-css-ch10/chapter.yaml
+      - chapters/html-css-ch11/chapter.yaml
+  - id: html-css-p04-guided-profile
+    title: Profile Siteを完成する
+    description: 5工程のGuideで学んだ内容を統合する
+    chapterSources:
+      - chapters/html-css-ch12/chapter.yaml
+  - id: html-css-p05-capstone
+    title: 自分の力でLanding Pageを作る
+    description: Briefだけを読み、複数の正解がある最終課題へ挑む
+    chapterSources:
+      - chapters/html-css-ch13/chapter.yaml

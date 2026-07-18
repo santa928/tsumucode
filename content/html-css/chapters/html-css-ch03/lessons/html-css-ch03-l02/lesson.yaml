@@ -1,0 +1,18 @@
+id: html-css-ch03-l02
+kind: standard
+title: 画像の内容を言葉でも伝える
+goal: 登録済みAssetをimgで表示し、画像の目的に合うaltを記述できる
+estimatedMinutes: 9
+prerequisiteLessonIds: [html-css-ch03-l01]
+slideSources:
+  - slides/s01-image-src-alt.md
+  - slides/s02-meaningful-alt.md
+exerciseSources:
+  - exercises/html-css-ch03-l02-e01/exercise.yaml
+reflection: altは画像の見た目を列挙するのではなく、その場で画像が担う情報を伝える
+glossaryRefs: [image, source-attribute, alternative-text, decorative-image]
+nextLessonId: html-css-ch03-l03
+completion:
+  kind: standard
+  finalSlideId: html-css-ch03-l02-s02
+  requiredExerciseIds: [html-css-ch03-l02-e01]

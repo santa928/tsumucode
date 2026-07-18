@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+  padding: 32px;
+  background: #f5efe4;
+  font-family: system-ui, sans-serif;
+}
+[data-grid] {
+  width: 416px;
+}
+[data-grid] > * {
+  box-sizing: border-box;
+  padding: 20px;
+  background: #fff;
+}

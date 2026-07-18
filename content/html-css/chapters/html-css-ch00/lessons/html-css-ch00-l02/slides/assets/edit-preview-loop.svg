@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="300" viewBox="0 0 720 300" role="img" aria-labelledby="title description">
+  <title id="title">編集から判定までの循環</title>
+  <desc id="description">編集、保存、Preview、判定の4つのピースを矢印で順につないだ図</desc>
+  <rect width="720" height="300" rx="28" fill="#fffaf0" />
+  <g font-family="system-ui, sans-serif" text-anchor="middle" font-weight="700">
+    <rect x="32" y="102" width="130" height="88" rx="18" fill="#e5b94f" stroke="#19352d" stroke-width="3" />
+    <text x="97" y="154" fill="#19352d" font-size="23">1 編集</text>
+    <rect x="206" y="102" width="130" height="88" rx="18" fill="#fffdf7" stroke="#1f5c49" stroke-width="3" />
+    <text x="271" y="154" fill="#19352d" font-size="23">2 保存</text>
+    <rect x="380" y="102" width="130" height="88" rx="18" fill="#dcebe5" stroke="#19776e" stroke-width="3" />
+    <text x="445" y="154" fill="#19352d" font-size="23">3 Preview</text>
+    <rect x="554" y="102" width="134" height="88" rx="18" fill="#1f5c49" />
+    <text x="621" y="154" fill="#fffdf7" font-size="23">4 判定</text>
+  </g>
+  <g fill="none" stroke="#5d6f68" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M170 146h26m-10-10 10 10-10 10" />
+    <path d="M344 146h26m-10-10 10 10-10 10" />
+    <path d="M518 146h26m-10-10 10 10-10 10" />
+    <path d="M621 208c0 52-524 52-524 0" />
+    <path d="m86 218 11-10 10 11" />
+  </g>
+  <text x="360" y="264" fill="#5d6f68" font-family="system-ui, sans-serif" font-size="17" text-anchor="middle">結果を見て、次の小さな編集へ戻る</text>
+</svg>

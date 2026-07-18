@@ -1,0 +1,19 @@
+id: html-css-ch04-l01
+kind: standard
+title: CSS RuleとSelectorを読む
+goal: CSS RuleのSelector、Property、Valueを区別し、TypeとClass Selectorを使える
+estimatedMinutes: 13
+prerequisiteLessonIds: [html-css-ch03-l04]
+slideSources:
+  - slides/s01-css-rule.md
+  - slides/s02-type-selector.md
+  - slides/s03-class-selector.md
+exerciseSources:
+  - exercises/html-css-ch04-l01-e01/exercise.yaml
+reflection: Selectorは何を変えるか、Declarationは何をどの値へ変えるかを分担する
+glossaryRefs: [css-rule, selector, declaration, class-selector]
+nextLessonId: html-css-ch04-l02
+completion:
+  kind: standard
+  finalSlideId: html-css-ch04-l01-s03
+  requiredExerciseIds: [html-css-ch04-l01-e01]

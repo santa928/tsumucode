@@ -1,0 +1,18 @@
+id: html-css-ch06-l01
+kind: standard
+title: 読みやすい文字を組む
+goal: Font Size、Line Height、System Font StackをComputed Styleで確認できる
+estimatedMinutes: 11
+prerequisiteLessonIds: [html-css-ch05-l05]
+slideSources:
+  - slides/s01-typography-properties.md
+  - slides/s02-font-stack.md
+exerciseSources:
+  - exercises/html-css-ch06-l01-e01/exercise.yaml
+reflection: 読みやすさを文字の大きさ、行間、利用可能なFontの組み合わせで説明する
+glossaryRefs: [typography, font-size, line-height, font-family]
+nextLessonId: html-css-ch06-l02
+completion:
+  kind: standard
+  finalSlideId: html-css-ch06-l01-s02
+  requiredExerciseIds: [html-css-ch06-l01-e01]

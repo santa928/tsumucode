@@ -1,0 +1,17 @@
+body {
+  margin: 0;
+  padding: 32px;
+  background: #f5efe4;
+  color: #24323d;
+  font-family: system-ui, sans-serif;
+}
+[data-action] {
+  display: inline-block;
+  padding: 12px 18px;
+  color: #fff;
+  background-color: #6b7c80;
+}
+[data-tag] {
+  color: #6b7c80;
+  font-weight: 700;
+}

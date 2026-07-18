@@ -1,0 +1,757 @@
+schemaVersion: 1
+entries:
+  - id: browser
+    term: 'ブラウザ'
+    definition: 'HTMLとCSSを読み取り、Webページとして画面に表示するアプリ。'
+    firstSlideId: html-css-ch00-l01-s01
+    relatedIds: [html, css]
+  - id: html
+    term: 'HTML'
+    definition: '文章や画像に役割を与え、Webページの内容と構造を作る言語。'
+    firstSlideId: html-css-ch00-l01-s01
+    relatedIds: [element, css]
+  - id: css
+    term: 'CSS'
+    definition: 'HTMLで作った内容の色、余白、配置などの見た目を指定する言語。'
+    firstSlideId: html-css-ch00-l01-s01
+    relatedIds: [html, css-rule]
+  - id: editor
+    term: 'エディター'
+    definition: 'HTMLやCSSのコードを入力して編集するための道具。'
+    firstSlideId: html-css-ch00-l02-s01
+    relatedIds: [preview]
+  - id: preview
+    term: 'プレビュー'
+    definition: '書いたコードがブラウザでどう見えるかを確かめる表示。'
+    firstSlideId: html-css-ch00-l02-s01
+    relatedIds: [browser, editor]
+  - id: element
+    term: '要素'
+    definition: '見出しや段落など、HTML文書を構成する一つのまとまり。'
+    firstSlideId: html-css-ch01-l01-s01
+    relatedIds: [tag, html]
+  - id: tag
+    term: 'タグ'
+    definition: '要素の種類や始まりと終わりを山括弧で表す記号。'
+    firstSlideId: html-css-ch01-l01-s01
+    relatedIds: [element]
+  - id: heading
+    term: '見出し'
+    definition: '章や節の題名を表し、文章の階層を作る要素。'
+    firstSlideId: html-css-ch01-l01-s01
+    relatedIds: [paragraph, heading-hierarchy]
+  - id: paragraph
+    term: '段落'
+    definition: 'ひとまとまりの文章を表す要素。'
+    firstSlideId: html-css-ch01-l01-s01
+    relatedIds: [heading]
+  - id: nesting
+    term: '入れ子'
+    definition: 'ある要素の内側へ別の要素を含める構造。'
+    firstSlideId: html-css-ch01-l02-s01
+    relatedIds: [parent-element, child-element]
+  - id: parent-element
+    term: '親要素'
+    definition: '入れ子構造で、別の要素を内側に含む要素。'
+    firstSlideId: html-css-ch01-l02-s01
+    relatedIds: [child-element, nesting]
+  - id: child-element
+    term: '子要素'
+    definition: '入れ子構造で、別の要素の内側に含まれる要素。'
+    firstSlideId: html-css-ch01-l02-s01
+    relatedIds: [parent-element, nesting]
+  - id: indentation
+    term: 'インデント'
+    definition: '入れ子関係を読みやすくするため、行頭に入れる空白。'
+    firstSlideId: html-css-ch01-l02-s01
+    relatedIds: [nesting]
+  - id: attribute
+    term: '属性'
+    definition: '要素へ追加情報や動作を指定する、開始タグ内の名前と値。'
+    firstSlideId: html-css-ch01-l03-s01
+    relatedIds: [tag, value]
+  - id: language-attribute
+    term: '言語属性'
+    definition: 'HTML文書で使われている言語をブラウザへ伝える属性。'
+    firstSlideId: html-css-ch01-l03-s01
+    relatedIds: [attribute, metadata]
+  - id: metadata
+    term: 'メタデータ'
+    definition: '文字コードやページ名など、文書そのものについての情報。'
+    firstSlideId: html-css-ch01-l03-s01
+    relatedIds: [html, language-attribute]
+  - id: section
+    term: 'セクション'
+    definition: '同じ話題の見出しと内容をひとまとまりにする要素。'
+    firstSlideId: html-css-ch02-l01-s01
+    relatedIds: [heading, semantic-element]
+  - id: unordered-list
+    term: '順不同リスト'
+    definition: '並び順に意味がない項目を箇条書きで表すリスト。'
+    firstSlideId: html-css-ch02-l02-s01
+    relatedIds: [ordered-list, list-item]
+  - id: ordered-list
+    term: '順序付きリスト'
+    definition: '手順や順位など、並び順に意味がある項目を表すリスト。'
+    firstSlideId: html-css-ch02-l02-s01
+    relatedIds: [unordered-list, list-item]
+  - id: list-item
+    term: 'リスト項目'
+    definition: 'リストの中に置く一つひとつの項目。'
+    firstSlideId: html-css-ch02-l02-s01
+    relatedIds: [unordered-list, ordered-list]
+  - id: semantic-element
+    term: '意味のある要素'
+    definition: '内容の役割を要素名から読み取れるHTML要素。'
+    firstSlideId: html-css-ch02-l03-s01
+    relatedIds: [landmark, semantic-structure]
+  - id: landmark
+    term: 'ランドマーク'
+    definition: 'ページ内の主要な領域を支援技術から見つけやすくする目印。'
+    firstSlideId: html-css-ch02-l03-s01
+    relatedIds: [semantic-element, navigation]
+  - id: article
+    term: '記事要素'
+    definition: '単独でも意味が通じる記事や作品などを表す要素。'
+    firstSlideId: html-css-ch02-l03-s01
+    relatedIds: [section, semantic-element]
+  - id: strong
+    term: '重要性'
+    definition: '文章の中で重要な部分であることを意味として示す要素。'
+    firstSlideId: html-css-ch02-l04-s01
+    relatedIds: [emphasis, inline-element]
+  - id: emphasis
+    term: '強調'
+    definition: '文章の中で語調を強めて読む部分を示す要素。'
+    firstSlideId: html-css-ch02-l04-s01
+    relatedIds: [strong, inline-element]
+  - id: inline-element
+    term: 'インライン要素'
+    definition: '文章の流れを分断せず、行の中で扱われる要素。'
+    firstSlideId: html-css-ch02-l04-s01
+    relatedIds: [strong, emphasis]
+  - id: anchor
+    term: 'リンク要素'
+    definition: '別のページや同じページ内の場所へ移動するリンクを作る要素。'
+    firstSlideId: html-css-ch03-l01-s01
+    relatedIds: [href, fragment-link]
+  - id: href
+    term: 'href属性'
+    definition: 'リンクの移動先を指定する属性。'
+    firstSlideId: html-css-ch03-l01-s01
+    relatedIds: [anchor, external-link]
+  - id: fragment-link
+    term: 'ページ内リンク'
+    definition: '同じページにあるID付き要素へ移動するリンク。'
+    firstSlideId: html-css-ch03-l01-s01
+    relatedIds: [anchor, href]
+  - id: external-link
+    term: '外部リンク'
+    definition: '現在のサイトとは別のWebサイトへ移動するリンク。'
+    firstSlideId: html-css-ch03-l01-s01
+    relatedIds: [anchor, href]
+  - id: image
+    term: '画像要素'
+    definition: '画像ファイルをWebページへ表示する要素。'
+    firstSlideId: html-css-ch03-l02-s01
+    relatedIds: [source-attribute, alternative-text]
+  - id: source-attribute
+    term: 'src属性'
+    definition: '表示する画像などのファイル場所を指定する属性。'
+    firstSlideId: html-css-ch03-l02-s01
+    relatedIds: [image, attribute]
+  - id: alternative-text
+    term: '代替テキスト'
+    definition: '画像を見られない場合にも内容や目的を伝える短い説明。'
+    firstSlideId: html-css-ch03-l02-s01
+    relatedIds: [image, accessible-name]
+  - id: decorative-image
+    term: '装飾画像'
+    definition: '情報を増やさず、見た目だけを整える目的の画像。'
+    firstSlideId: html-css-ch03-l02-s01
+    relatedIds: [image, alternative-text]
+  - id: form
+    term: 'フォーム'
+    definition: '入力欄や送信ボタンをまとめ、利用者から情報を受け取る領域。'
+    firstSlideId: html-css-ch03-l03-s01
+    relatedIds: [form-control, label]
+  - id: form-control
+    term: 'フォーム部品'
+    definition: '入力欄、選択欄、ボタンなど、フォームを操作する要素。'
+    firstSlideId: html-css-ch03-l03-s01
+    relatedIds: [form, label]
+  - id: label
+    term: 'ラベル'
+    definition: '入力欄が何を入力する場所かを名前で示す要素。'
+    firstSlideId: html-css-ch03-l03-s01
+    relatedIds: [form-control, accessible-name]
+  - id: button-type
+    term: 'ボタン種別'
+    definition: 'ボタンが送信、リセット、通常操作のどれを行うかを指定する値。'
+    firstSlideId: html-css-ch03-l03-s01
+    relatedIds: [form, attribute]
+  - id: address
+    term: '連絡先要素'
+    definition: 'ページや記事の作成者に関する連絡先を表す要素。'
+    firstSlideId: html-css-ch03-l04-s01
+    relatedIds: [semantic-element, contact-link]
+  - id: accessible-name
+    term: 'アクセシブルネーム'
+    definition: '支援技術が操作部品の目的を伝えるために使う名前。'
+    firstSlideId: html-css-ch03-l04-s01
+    relatedIds: [label, alternative-text]
+  - id: placeholder-content
+    term: '仮コンテンツ'
+    definition: '公開前に実在情報へ置き換えることを前提とした見本の内容。'
+    firstSlideId: html-css-ch03-l04-s01
+    relatedIds: [privacy]
+  - id: privacy
+    term: 'プライバシー'
+    definition: '本人の許可なく公開すべきでない個人情報を守る考え方。'
+    firstSlideId: html-css-ch03-l04-s01
+    relatedIds: [placeholder-content]
+  - id: css-rule
+    term: 'CSSルール'
+    definition: 'どの要素へ、どの見た目を適用するかをまとめたCSSの単位。'
+    firstSlideId: html-css-ch04-l01-s01
+    relatedIds: [selector, declaration]
+  - id: selector
+    term: 'セレクター'
+    definition: 'CSSを適用するHTML要素を選ぶ記述。'
+    firstSlideId: html-css-ch04-l01-s01
+    relatedIds: [css-rule, class-selector]
+  - id: declaration
+    term: '宣言'
+    definition: 'プロパティと値を組み合わせた一つの見た目指定。'
+    firstSlideId: html-css-ch04-l01-s01
+    relatedIds: [property, value]
+  - id: class-selector
+    term: 'クラスセレクター'
+    definition: 'class属性の値を使って要素を選ぶセレクター。'
+    firstSlideId: html-css-ch04-l01-s01
+    relatedIds: [selector, reusable-class]
+  - id: stylesheet
+    term: 'スタイルシート'
+    definition: '複数のCSSルールをまとめて保存するCSSファイル。'
+    firstSlideId: html-css-ch04-l02-s01
+    relatedIds: [css, link-element]
+  - id: link-element
+    term: 'link要素'
+    definition: 'HTML文書と外部スタイルシートなどを関連付ける要素。'
+    firstSlideId: html-css-ch04-l02-s01
+    relatedIds: [stylesheet, html]
+  - id: property
+    term: 'プロパティ'
+    definition: '色や幅など、CSSで変更する見た目の項目名。'
+    firstSlideId: html-css-ch04-l02-s01
+    relatedIds: [declaration, value]
+  - id: value
+    term: '値'
+    definition: 'CSSプロパティへ設定する具体的な内容。'
+    firstSlideId: html-css-ch04-l02-s01
+    relatedIds: [property, computed-value]
+  - id: cascade
+    term: 'カスケード'
+    definition: '複数のCSS宣言から、最終的に使う指定を決める仕組み。'
+    firstSlideId: html-css-ch04-l03-s01
+    relatedIds: [source-order, specificity]
+  - id: source-order
+    term: '記述順'
+    definition: '同じ強さのCSS宣言が競合したときに後の記述を優先する順序。'
+    firstSlideId: html-css-ch04-l03-s01
+    relatedIds: [cascade, specificity]
+  - id: specificity
+    term: '詳細度'
+    definition: 'セレクターがどれだけ対象を限定しているかを表す優先度。'
+    firstSlideId: html-css-ch04-l03-s01
+    relatedIds: [cascade, selector]
+  - id: inheritance
+    term: '継承'
+    definition: '親要素の一部のCSS値が子要素へ引き継がれる仕組み。'
+    firstSlideId: html-css-ch04-l03-s01
+    relatedIds: [parent-element, computed-value]
+  - id: css-unit
+    term: 'CSS単位'
+    definition: '長さや大きさをCSSの値として表すときの基準。'
+    firstSlideId: html-css-ch04-l04-s01
+    relatedIds: [pixel, rem]
+  - id: pixel
+    term: 'px'
+    definition: '画面上の長さを固定的に表すCSS単位。'
+    firstSlideId: html-css-ch04-l04-s01
+    relatedIds: [css-unit, rem]
+  - id: rem
+    term: 'rem'
+    definition: 'ルート要素の文字サイズを基準に長さを表す相対単位。'
+    firstSlideId: html-css-ch04-l04-s01
+    relatedIds: [css-unit, font-size]
+  - id: computed-value
+    term: '計算値'
+    definition: 'カスケードや継承、単位計算の後にブラウザが実際に使うCSS値。'
+    firstSlideId: html-css-ch04-l04-s01
+    relatedIds: [cascade, value]
+  - id: box-model
+    term: 'ボックスモデル'
+    definition: '要素を内容、内側余白、境界線、外側余白の箱として扱う仕組み。'
+    firstSlideId: html-css-ch05-l01-s01
+    relatedIds: [content-box, padding, border, margin]
+  - id: content-box
+    term: '内容領域'
+    definition: '文字や画像など、要素の内容が置かれるボックスの中心部分。'
+    firstSlideId: html-css-ch05-l01-s01
+    relatedIds: [box-model, padding]
+  - id: padding
+    term: '内側余白'
+    definition: '内容と境界線の間に作る余白。'
+    firstSlideId: html-css-ch05-l01-s01
+    relatedIds: [border, margin]
+  - id: border
+    term: '境界線'
+    definition: '内側余白の外側を囲む線。'
+    firstSlideId: html-css-ch05-l01-s01
+    relatedIds: [padding, margin]
+  - id: margin
+    term: '外側余白'
+    definition: '要素の境界線より外側に作る余白。'
+    firstSlideId: html-css-ch05-l01-s01
+    relatedIds: [padding, spacing]
+  - id: width
+    term: '幅'
+    definition: '要素の横方向の大きさを指定するCSSプロパティ。'
+    firstSlideId: html-css-ch05-l02-s01
+    relatedIds: [height, border-box]
+  - id: height
+    term: '高さ'
+    definition: '要素の縦方向の大きさを指定するCSSプロパティ。'
+    firstSlideId: html-css-ch05-l02-s01
+    relatedIds: [width, border-box]
+  - id: border-box
+    term: 'border-box'
+    definition: '指定した幅と高さへpaddingとborderを含めるサイズ計算方法。'
+    firstSlideId: html-css-ch05-l02-s01
+    relatedIds: [box-model, safe-sizing]
+  - id: spacing
+    term: '間隔'
+    definition: '要素どうしや内容の周囲に設ける空き。'
+    firstSlideId: html-css-ch05-l03-s01
+    relatedIds: [margin, padding, gap]
+  - id: display
+    term: 'display'
+    definition: '要素をどのレイアウト方式の箱として扱うかを指定するプロパティ。'
+    firstSlideId: html-css-ch05-l04-s01
+    relatedIds: [inline-block, flex-container, grid-container]
+  - id: inline-block
+    term: 'inline-block'
+    definition: '文章の流れに並びつつ、幅や高さを指定できる表示形式。'
+    firstSlideId: html-css-ch05-l04-s01
+    relatedIds: [display, inline-element]
+  - id: focus-target
+    term: 'フォーカス対象'
+    definition: 'キーボード操作で選択位置を移せるリンクやボタンなどの要素。'
+    firstSlideId: html-css-ch05-l04-s01
+    relatedIds: [keyboard-navigation, focus-visible]
+  - id: overflow
+    term: 'はみ出し'
+    definition: '内容が要素の決められた領域を越える状態。'
+    firstSlideId: html-css-ch05-l05-s01
+    relatedIds: [container-boundary, horizontal-overflow]
+  - id: container-boundary
+    term: 'コンテナ境界'
+    definition: '子要素を収める親要素の内側の限界。'
+    firstSlideId: html-css-ch05-l05-s01
+    relatedIds: [overflow, safe-sizing]
+  - id: safe-sizing
+    term: '安全なサイズ設計'
+    definition: '余白や境界線を含めても親領域からはみ出さない寸法の決め方。'
+    firstSlideId: html-css-ch05-l05-s01
+    relatedIds: [border-box, container-boundary]
+  - id: typography
+    term: 'タイポグラフィ'
+    definition: '文字の大きさ、書体、行間などを整えて読みやすくする設計。'
+    firstSlideId: html-css-ch06-l01-s01
+    relatedIds: [font-size, line-height, font-family]
+  - id: font-size
+    term: '文字サイズ'
+    definition: '文字の大きさを指定するCSSプロパティ。'
+    firstSlideId: html-css-ch06-l01-s01
+    relatedIds: [typography, rem]
+  - id: line-height
+    term: '行の高さ'
+    definition: '文章の各行が占める高さを指定し、行間を整えるプロパティ。'
+    firstSlideId: html-css-ch06-l01-s01
+    relatedIds: [typography, font-size]
+  - id: font-family
+    term: 'フォントファミリー'
+    definition: '表示に使う書体の候補と優先順を指定するプロパティ。'
+    firstSlideId: html-css-ch06-l01-s01
+    relatedIds: [typography]
+  - id: color
+    term: '文字色'
+    definition: '文字など前景の色を指定するCSSプロパティ。'
+    firstSlideId: html-css-ch06-l02-s01
+    relatedIds: [foreground, background, contrast-ratio]
+  - id: contrast-ratio
+    term: 'コントラスト比'
+    definition: '前景色と背景色の明るさの差を数値で表したもの。'
+    firstSlideId: html-css-ch06-l02-s01
+    relatedIds: [foreground, background]
+  - id: foreground
+    term: '前景'
+    definition: '背景の手前に表示される文字やアイコンなどの情報。'
+    firstSlideId: html-css-ch06-l02-s01
+    relatedIds: [background, contrast-ratio]
+  - id: background
+    term: '背景'
+    definition: '文字や部品の後ろに広がる色や画像。'
+    firstSlideId: html-css-ch06-l02-s01
+    relatedIds: [foreground, contrast-ratio]
+  - id: custom-property
+    term: 'カスタムプロパティ'
+    definition: '繰り返し使うCSS値へ名前を付けて保存する仕組み。'
+    firstSlideId: html-css-ch06-l03-s01
+    relatedIds: [root-selector, var-function]
+  - id: root-selector
+    term: ':rootセレクター'
+    definition: '文書の最上位要素を選び、共通のCSS変数を定義しやすくするセレクター。'
+    firstSlideId: html-css-ch06-l03-s01
+    relatedIds: [custom-property, selector]
+  - id: var-function
+    term: 'var関数'
+    definition: 'カスタムプロパティに保存した値をCSS宣言で使う関数。'
+    firstSlideId: html-css-ch06-l03-s01
+    relatedIds: [custom-property, value]
+  - id: reusable-class
+    term: '再利用クラス'
+    definition: '複数の要素で同じ見た目を使い回すためのクラス。'
+    firstSlideId: html-css-ch06-l04-s01
+    relatedIds: [class-selector, base-class]
+  - id: base-class
+    term: '基底クラス'
+    definition: '部品に共通する見た目をまとめた土台のクラス。'
+    firstSlideId: html-css-ch06-l04-s01
+    relatedIds: [reusable-class, component-boundary]
+  - id: component-boundary
+    term: '部品の境界'
+    definition: '一つのUI部品として責任を持つHTMLとCSSのまとまり。'
+    firstSlideId: html-css-ch06-l04-s01
+    relatedIds: [reusable-class, container-boundary]
+  - id: profile-card
+    term: 'プロフィールカード'
+    definition: '人物の名前、紹介、画像などを一つにまとめたUI部品。'
+    firstSlideId: html-css-ch07-l01-r01
+    relatedIds: [component-boundary, semantic-structure]
+  - id: semantic-structure
+    term: '意味のある構造'
+    definition: '見た目だけでなく内容の役割に合うHTML要素で組み立てた構造。'
+    firstSlideId: html-css-ch07-l01-r01
+    relatedIds: [semantic-element, heading-hierarchy]
+  - id: flex-container
+    term: 'Flexコンテナ'
+    definition: 'display flexを指定し、子要素を一次元に並べる親要素。'
+    firstSlideId: html-css-ch08-l01-s01
+    relatedIds: [flex-item, main-axis, cross-axis]
+  - id: flex-item
+    term: 'Flexアイテム'
+    definition: 'Flexコンテナの直接の子として配置される要素。'
+    firstSlideId: html-css-ch08-l01-s01
+    relatedIds: [flex-container]
+  - id: main-axis
+    term: '主軸'
+    definition: 'Flexアイテムが並ぶ方向の軸。'
+    firstSlideId: html-css-ch08-l01-s01
+    relatedIds: [cross-axis, justify-content]
+  - id: cross-axis
+    term: '交差軸'
+    definition: '主軸と直角に交わる方向の軸。'
+    firstSlideId: html-css-ch08-l01-s01
+    relatedIds: [main-axis, align-items]
+  - id: justify-content
+    term: 'justify-content'
+    definition: 'FlexやGridの主軸方向で、項目の位置や余白配分を決めるプロパティ。'
+    firstSlideId: html-css-ch08-l02-s01
+    relatedIds: [main-axis, distribution]
+  - id: gap
+    term: 'gap'
+    definition: 'FlexやGridの項目どうしの間隔を指定するプロパティ。'
+    firstSlideId: html-css-ch08-l02-s01
+    relatedIds: [spacing, grid-gap]
+  - id: distribution
+    term: '分配'
+    definition: '利用できる空間へ項目や余白を割り当てること。'
+    firstSlideId: html-css-ch08-l02-s01
+    relatedIds: [justify-content, spacing]
+  - id: align-items
+    term: 'align-items'
+    definition: 'コンテナ内の全項目を交差軸方向へそろえるプロパティ。'
+    firstSlideId: html-css-ch08-l03-s01
+    relatedIds: [cross-axis, align-self]
+  - id: align-self
+    term: 'align-self'
+    definition: '一つの項目だけ交差軸方向のそろえ方を変えるプロパティ。'
+    firstSlideId: html-css-ch08-l03-s01
+    relatedIds: [align-items, flex-item]
+  - id: flex-wrap
+    term: 'flex-wrap'
+    definition: 'Flexアイテムを一行に収めるか、複数行へ折り返すかを決めるプロパティ。'
+    firstSlideId: html-css-ch08-l04-s01
+    relatedIds: [flex-line, flex-basis]
+  - id: flex-basis
+    term: 'flex-basis'
+    definition: 'Flexアイテムを配分する前の基準サイズを指定するプロパティ。'
+    firstSlideId: html-css-ch08-l04-s01
+    relatedIds: [flex-item, flex-wrap]
+  - id: flex-line
+    term: 'Flexライン'
+    definition: '折り返されたFlexアイテムが並ぶ一つの行または列。'
+    firstSlideId: html-css-ch08-l04-s01
+    relatedIds: [flex-wrap, flex-container]
+  - id: navigation
+    term: 'ナビゲーション'
+    definition: 'サイト内の主要なページや場所へ移動するリンクのまとまり。'
+    firstSlideId: html-css-ch08-l05-s01
+    relatedIds: [landmark, anchor]
+  - id: card-row
+    term: 'カード列'
+    definition: '複数のカード部品を横方向または折り返して並べた領域。'
+    firstSlideId: html-css-ch08-l05-s01
+    relatedIds: [profile-card, flex-wrap]
+  - id: grid-container
+    term: 'Gridコンテナ'
+    definition: 'display gridを指定し、行と列の二次元で子要素を配置する親要素。'
+    firstSlideId: html-css-ch09-l01-s01
+    relatedIds: [grid-item, grid-track, grid-line]
+  - id: grid-item
+    term: 'Gridアイテム'
+    definition: 'Gridコンテナの直接の子として配置される要素。'
+    firstSlideId: html-css-ch09-l01-s01
+    relatedIds: [grid-container, grid-placement]
+  - id: grid-track
+    term: 'Gridトラック'
+    definition: 'Gridの線と線の間にできる一つの行または列。'
+    firstSlideId: html-css-ch09-l01-s01
+    relatedIds: [grid-line, fr-unit]
+  - id: grid-line
+    term: 'Gridライン'
+    definition: 'Gridの行や列を区切り、配置位置の基準になる線。'
+    firstSlideId: html-css-ch09-l01-s01
+    relatedIds: [grid-track, grid-placement]
+  - id: repeat-function
+    term: 'repeat関数'
+    definition: '同じGridトラック定義を指定回数だけ繰り返すCSS関数。'
+    firstSlideId: html-css-ch09-l02-s01
+    relatedIds: [grid-track, fr-unit]
+  - id: fr-unit
+    term: 'fr単位'
+    definition: 'Gridコンテナの残り空間を比率で分ける単位。'
+    firstSlideId: html-css-ch09-l02-s01
+    relatedIds: [grid-track, css-unit]
+  - id: grid-gap
+    term: 'Gridの間隔'
+    definition: 'Gridアイテムの行間と列間に設ける空き。'
+    firstSlideId: html-css-ch09-l02-s01
+    relatedIds: [gap, grid-item]
+  - id: minmax-function
+    term: 'minmax関数'
+    definition: 'Gridトラックの最小サイズと最大サイズを一組で指定する関数。'
+    firstSlideId: html-css-ch09-l03-s01
+    relatedIds: [grid-track, auto-fit]
+  - id: auto-fit
+    term: 'auto-fit'
+    definition: '入る数だけGrid列を作り、空の列を縮めるrepeat関数の指定値。'
+    firstSlideId: html-css-ch09-l03-s01
+    relatedIds: [repeat-function, responsive-grid]
+  - id: responsive-grid
+    term: 'レスポンシブGrid'
+    definition: '画面幅に応じて列数や幅が自然に変化するGridレイアウト。'
+    firstSlideId: html-css-ch09-l03-s01
+    relatedIds: [auto-fit, minmax-function]
+  - id: grid-placement
+    term: 'Grid配置'
+    definition: 'Gridラインを基準にアイテムの位置や占有範囲を指定すること。'
+    firstSlideId: html-css-ch09-l04-s01
+    relatedIds: [grid-line, grid-column]
+  - id: grid-column
+    term: 'grid-column'
+    definition: 'Gridアイテムが使う列の開始線と終了線を指定するプロパティ。'
+    firstSlideId: html-css-ch09-l04-s01
+    relatedIds: [grid-placement, grid-item]
+  - id: layout-selection
+    term: 'レイアウト選択'
+    definition: '内容の並び方に合わせてBlock、Flex、Gridなどを選ぶ判断。'
+    firstSlideId: html-css-ch09-l04-s01
+    relatedIds: [flex-container, grid-container]
+  - id: viewport-meta
+    term: 'viewportメタ設定'
+    definition: 'モバイル端末の画面幅を基準にページを表示させるmeta設定。'
+    firstSlideId: html-css-ch10-l01-s01
+    relatedIds: [metadata, mobile-first]
+  - id: mobile-first
+    term: 'モバイルファースト'
+    definition: '小さい画面向けを基本にし、広い画面の指定を後から加える設計方法。'
+    firstSlideId: html-css-ch10-l01-s01
+    relatedIds: [base-layout, media-query]
+  - id: base-layout
+    term: '基本レイアウト'
+    definition: 'メディアクエリがない状態で全画面幅に適用されるレイアウト。'
+    firstSlideId: html-css-ch10-l01-s01
+    relatedIds: [mobile-first, responsive-layout]
+  - id: breakpoint
+    term: 'ブレークポイント'
+    definition: 'レイアウトを切り替える基準となる画面幅。'
+    firstSlideId: html-css-ch10-l02-s01
+    relatedIds: [media-query, responsive-layout]
+  - id: media-query
+    term: 'メディアクエリ'
+    definition: '画面幅などの条件に応じてCSSを適用する仕組み。'
+    firstSlideId: html-css-ch10-l02-s01
+    relatedIds: [breakpoint, mobile-first]
+  - id: responsive-layout
+    term: 'レスポンシブレイアウト'
+    definition: '画面や内容の幅に応じて読みやすい配置へ変化するレイアウト。'
+    firstSlideId: html-css-ch10-l02-s01
+    relatedIds: [media-query, fluid-width]
+  - id: fluid-width
+    term: '流動幅'
+    definition: '利用できる領域に合わせて伸び縮みする幅。'
+    firstSlideId: html-css-ch10-l03-s01
+    relatedIds: [max-width, responsive-layout]
+  - id: max-width
+    term: '最大幅'
+    definition: '要素が広がれる上限を指定するCSSプロパティ。'
+    firstSlideId: html-css-ch10-l03-s01
+    relatedIds: [width, fluid-width]
+  - id: margin-auto
+    term: '自動マージン'
+    definition: '利用できる余白をブラウザに配分させ、固定幅の箱などを中央へ置く指定。'
+    firstSlideId: html-css-ch10-l03-s01
+    relatedIds: [margin, max-width]
+  - id: responsive-image
+    term: 'レスポンシブ画像'
+    definition: '親領域を越えず、画面幅に合わせて縮小できる画像。'
+    firstSlideId: html-css-ch10-l04-s01
+    relatedIds: [image, object-fit]
+  - id: aspect-ratio
+    term: 'アスペクト比'
+    definition: '幅と高さの比率を表し、要素の形を保つために使う値。'
+    firstSlideId: html-css-ch10-l04-s01
+    relatedIds: [width, height]
+  - id: object-fit
+    term: 'object-fit'
+    definition: '画像や動画を指定領域へどのように収めるかを決めるプロパティ。'
+    firstSlideId: html-css-ch10-l04-s01
+    relatedIds: [responsive-image, container-boundary]
+  - id: horizontal-overflow
+    term: '横はみ出し'
+    definition: '内容が画面の右端を越え、不要な横スクロールを生む状態。'
+    firstSlideId: html-css-ch10-l05-s01
+    relatedIds: [overflow, viewport-testing]
+  - id: viewport-testing
+    term: '画面幅テスト'
+    definition: '複数の代表的な画面幅で表示と操作を確かめる検証。'
+    firstSlideId: html-css-ch10-l05-s01
+    relatedIds: [responsive-audit, breakpoint]
+  - id: cta
+    term: 'CTA'
+    definition: '利用者に次の行動を促す、目立つリンクやボタン。'
+    firstSlideId: html-css-ch10-l05-s01
+    relatedIds: [anchor, focus-target]
+  - id: keyboard-navigation
+    term: 'キーボード操作'
+    definition: 'Tabキーなどを使い、マウスなしでページを移動し操作すること。'
+    firstSlideId: html-css-ch11-l01-s01
+    relatedIds: [focus-target, dom-order]
+  - id: dom-order
+    term: 'DOM順序'
+    definition: 'HTMLに要素が記述され、支援技術やTab移動でたどられる順番。'
+    firstSlideId: html-css-ch11-l01-s01
+    relatedIds: [keyboard-navigation, semantic-structure]
+  - id: focus-visible
+    term: 'フォーカス表示'
+    definition: '現在キーボード操作の対象になっている要素を見た目で示す印。'
+    firstSlideId: html-css-ch11-l01-s01
+    relatedIds: [focus-target, keyboard-navigation]
+  - id: color-independent-cue
+    term: '色に依存しない手掛かり'
+    definition: '色が分からなくても文字、形、下線などで状態を伝える表現。'
+    firstSlideId: html-css-ch11-l03-s01
+    relatedIds: [color, status-text]
+  - id: status-text
+    term: '状態テキスト'
+    definition: '成功、失敗、選択中などの現在状態を言葉で伝える表示。'
+    firstSlideId: html-css-ch11-l03-s01
+    relatedIds: [color-independent-cue, accessible-name]
+  - id: prefers-reduced-motion
+    term: '動きを減らす設定'
+    definition: '利用者がOSで動きの軽減を希望していることをCSSで検出する条件。'
+    firstSlideId: html-css-ch11-l04-s01
+    relatedIds: [animation-duration, media-query]
+  - id: animation-duration
+    term: 'アニメーション時間'
+    definition: 'アニメーションが開始から終了までにかかる時間。'
+    firstSlideId: html-css-ch11-l04-s01
+    relatedIds: [prefers-reduced-motion]
+  - id: final-audit
+    term: '最終監査'
+    definition: '公開前に構造、見た目、操作性、画面幅対応をまとめて確認する工程。'
+    firstSlideId: html-css-ch11-l04-s01
+    relatedIds: [responsive-audit, viewport-testing]
+  - id: audience
+    term: '対象読者'
+    definition: 'そのページを誰に読んでもらい、何を伝えるかを定めた相手。'
+    firstSlideId: html-css-ch12-l01-g01
+    relatedIds: [landing-page]
+  - id: semantic-outline
+    term: '意味のある見出し構成'
+    definition: 'ページの話題を見出し階層とセクションで論理的に表した設計。'
+    firstSlideId: html-css-ch12-l01-g01
+    relatedIds: [semantic-structure, heading-hierarchy]
+  - id: hero
+    term: 'ヒーロー領域'
+    definition: 'ページ冒頭で主題、説明、主要な行動を目立たせる領域。'
+    firstSlideId: html-css-ch12-l02-g01
+    relatedIds: [cta, landing-page]
+  - id: about-section
+    term: '自己紹介セクション'
+    definition: '人物や活動の概要を見出しと文章で伝える領域。'
+    firstSlideId: html-css-ch12-l03-g01
+    relatedIds: [section, profile-card]
+  - id: skill-list
+    term: 'スキル一覧'
+    definition: '扱える技術や得意分野を項目として整理したリスト。'
+    firstSlideId: html-css-ch12-l03-g01
+    relatedIds: [unordered-list, reusable-class]
+  - id: works-grid
+    term: '作品Grid'
+    definition: '複数の制作物カードを行と列で見やすく並べた領域。'
+    firstSlideId: html-css-ch12-l04-g01
+    relatedIds: [responsive-grid, card-row]
+  - id: contact-link
+    term: '連絡先リンク'
+    definition: 'メールなど、連絡を始めるための移動先を持つリンク。'
+    firstSlideId: html-css-ch12-l04-g01
+    relatedIds: [anchor, address]
+  - id: heading-hierarchy
+    term: '見出し階層'
+    definition: 'h1から始まり、内容の親子関係に沿って段階を付けた見出し構造。'
+    firstSlideId: html-css-ch12-l05-g01
+    relatedIds: [heading, semantic-outline]
+  - id: capstone
+    term: '最終課題'
+    definition: '学んだ複数の知識を自分で選び、完成物へ統合する総仕上げの課題。'
+    firstSlideId: html-css-ch13-l01-g01
+    relatedIds: [final-audit, landing-page]
+  - id: landing-page
+    term: 'ランディングページ'
+    definition: '一つの目的や行動へ内容を集中させたWebページ。'
+    firstSlideId: html-css-ch13-l01-g01
+    relatedIds: [hero, cta]
+  - id: rule-group
+    term: 'ルールグループ'
+    definition: '複数の条件から必要な数を満たせば合格とする判定のまとまり。'
+    firstSlideId: html-css-ch13-l01-g01
+    relatedIds: [capstone, layout-selection]
+  - id: responsive-audit
+    term: 'レスポンシブ監査'
+    definition: '複数画面幅で崩れ、はみ出し、読みづらさ、操作阻害を確認する検証。'
+    firstSlideId: html-css-ch13-l01-g01
+    relatedIds: [viewport-testing, final-audit]

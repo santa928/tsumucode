@@ -1,0 +1,9 @@
+:root {
+  font-size: 16px;
+}
+
+.measure {
+  padding: 1.5rem;
+  border: 1px solid #2d5d62;
+  font-size: 1.25rem;
+}

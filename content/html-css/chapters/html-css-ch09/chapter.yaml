@@ -1,0 +1,11 @@
+id: html-css-ch09
+sequence: 9
+title: CSS Grid
+goal: RowとColumnの2次元Trackを設計し、ResponsiveなGalleryを組み立てる
+estimatedMinutes: 45
+kind: standard
+lessonSources:
+  - lessons/html-css-ch09-l01/lesson.yaml
+  - lessons/html-css-ch09-l02/lesson.yaml
+  - lessons/html-css-ch09-l03/lesson.yaml
+  - lessons/html-css-ch09-l04/lesson.yaml

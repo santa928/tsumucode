@@ -1,0 +1,18 @@
+id: html-css-ch04-l02
+kind: standard
+title: StylesheetとDeclarationを接続する
+goal: HTMLからStylesheetを読み込み、PropertyとValueを正しい構文で記述できる
+estimatedMinutes: 12
+prerequisiteLessonIds: [html-css-ch04-l01]
+slideSources:
+  - slides/s01-stylesheet-link.md
+  - slides/s02-declarations-values.md
+exerciseSources:
+  - exercises/html-css-ch04-l02-e01/exercise.yaml
+reflection: Code Errorは構文、Preview未達は結果を分けて読むと次の修正を選びやすい
+glossaryRefs: [stylesheet, link-element, property, value]
+nextLessonId: html-css-ch04-l03
+completion:
+  kind: standard
+  finalSlideId: html-css-ch04-l02-s02
+  requiredExerciseIds: [html-css-ch04-l02-e01]

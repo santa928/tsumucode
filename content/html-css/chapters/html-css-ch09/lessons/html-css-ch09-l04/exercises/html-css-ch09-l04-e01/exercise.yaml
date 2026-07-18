@@ -1,0 +1,124 @@
+id: html-css-ch09-l04-e01
+kind: standard
+workspaceId: html-css-ch09-l04-e01
+countsTowardStandardExerciseTotal: true
+title: Grid GalleryとFlex Actionを組み合わせる
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch09-l04-e01-r01
+    label: GalleryをGridにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-gallery]' }
+    assertion: { kind: computed-style, property: display, operator: equals, expected: grid }
+    feedback:
+      target: GalleryのComputed Display
+      expected: grid
+      nextAction: data-galleryへdisplay gridを指定します。
+    hintId: html-css-ch09-l04-e01-h01
+    relatedSlideId: html-css-ch09-l04-s01
+  - id: html-css-ch09-l04-e01-r02
+    label: Card内ActionをFlexにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-actions]' }
+    assertion: { kind: computed-style, property: display, operator: equals, expected: flex }
+    feedback:
+      target: Action RowのComputed Display
+      expected: flex
+      nextAction: data-actionsへdisplay flexを指定します。
+    hintId: html-css-ch09-l04-e01-h02
+    relatedSlideId: html-css-ch09-l04-s02
+  - id: html-css-ch09-l04-e01-r03
+    label: Feature Cardを2 Track分の600pxへ広げる
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-feature]' }
+    assertion:
+      kind: rect
+      metric: width
+      operator: equals
+      expected: 600
+      tolerance: 1
+    feedback:
+      target: Feature Cardの実測Width
+      expected: 600px前後
+      nextAction: data-featureへgrid-column 1 / -1またはspan 2を指定します。
+    hintId: html-css-ch09-l04-e01-h03
+    relatedSlideId: html-css-ch09-l04-s01
+  - id: html-css-ch09-l04-e01-r04
+    label: Galleryの横Overflowを防ぐ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-gallery]' }
+    assertion: { kind: overflow-x, operator: equals, expected: false }
+    feedback:
+      target: GalleryのHorizontal Overflow
+      expected: 'false'
+      nextAction: 2 TrackとGapを幅600pxのGallery内へ収めます。
+    hintId: html-css-ch09-l04-e01-h03
+    relatedSlideId: html-css-ch09-l04-s02
+hints:
+  - id: html-css-ch09-l04-e01-h01
+    level: 1
+    title: 外側は2次元で組む
+    text: Galleryへdisplay gridと2つの1frを指定します。
+    relatedSlideId: html-css-ch09-l04-s01
+  - id: html-css-ch09-l04-e01-h02
+    level: 2
+    title: 内側は1次元で並べる
+    text: data-actionsへdisplay flexとgapを指定します。
+    relatedSlideId: html-css-ch09-l04-s02
+  - id: html-css-ch09-l04-e01-h03
+    level: 3
+    title: Featureを全幅へ広げる
+    text: data-featureへgrid-column 1 / -1を指定し、Width 600pxを確認します。
+    relatedSlideId: html-css-ch09-l04-s01
+relatedSlideIds:
+  - html-css-ch09-l04-s01
+  - html-css-ch09-l04-s02
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch09-l04-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch09-l04-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch09-l04-e01-r03]

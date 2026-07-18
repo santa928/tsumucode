@@ -1,0 +1,18 @@
+id: html-css-ch02-l01
+kind: standard
+title: 見出しで文章の骨組みを作る
+goal: h1とh2の階層を保ち、各SectionをParagraphで説明できる
+estimatedMinutes: 10
+prerequisiteLessonIds: [html-css-ch01-l03]
+slideSources:
+  - slides/s01-heading-hierarchy.md
+  - slides/s02-paragraphs.md
+exerciseSources:
+  - exercises/html-css-ch02-l01-e01/exercise.yaml
+reflection: 見出しLevelは文字の大きさではなく文章の階層を表す
+glossaryRefs: [heading, paragraph, section]
+nextLessonId: html-css-ch02-l02
+completion:
+  kind: standard
+  finalSlideId: html-css-ch02-l01-s02
+  requiredExerciseIds: [html-css-ch02-l01-e01]

@@ -1,0 +1,123 @@
+id: html-css-ch03-l03-e01
+kind: standard
+workspaceId: html-css-ch03-l03-e01
+countsTowardStandardExerciseTotal: true
+title: LabelとButton Typeを整える
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch03-l03-e01-r01
+    label: labelを表示名Inputへ結び付ける
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'label[for="display-name"]' }
+    assertion: { kind: count, operator: equals, expected: 1 }
+    feedback:
+      target: 表示名InputのLabel
+      expected: forがdisplay-nameのlabelが1つ
+      nextAction: labelのforをdisplay-nameへ変更します。
+    hintId: html-css-ch03-l03-e01-h01
+    relatedSlideId: html-css-ch03-l03-s02
+  - id: html-css-ch03-l03-e01-r02
+    label: 表示名Inputを1つ置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'input#display-name' }
+    assertion: { kind: count, operator: equals, expected: 1 }
+    feedback:
+      target: 表示名のForm Control
+      expected: idがdisplay-nameのinputが1つ
+      nextAction: Text Inputへid="display-name"を設定します。
+    hintId: html-css-ch03-l03-e01-h01
+    relatedSlideId: html-css-ch03-l03-s01
+  - id: html-css-ch03-l03-e01-r03
+    label: 確認Buttonを送信しないTypeにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'button[type="button"]' }
+    assertion: { kind: count, operator: equals, expected: 1 }
+    feedback:
+      target: 入力を確認するButton
+      expected: typeがbuttonのbutton要素が1つ
+      nextAction: 確認Buttonへtype="button"を追加します。
+    hintId: html-css-ch03-l03-e01-h02
+    relatedSlideId: html-css-ch03-l03-s03
+  - id: html-css-ch03-l03-e01-r04
+    label: InputへAccessible Nameを付ける
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'input#display-name' }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: 表示名Inputの名前
+      expected: 関連付けられた空でないLabel
+      nextAction: labelのforとinputのidを同じ値にし、Label Textを残します。
+    hintId: html-css-ch03-l03-e01-h03
+    relatedSlideId: html-css-ch03-l03-s02
+hints:
+  - id: html-css-ch03-l03-e01-h01
+    level: 1
+    title: forとidを見比べる
+    text: labelのforとinputのidが異なるため、同じControlを指せているか確認します。
+    relatedSlideId: html-css-ch03-l03-s02
+  - id: html-css-ch03-l03-e01-h02
+    level: 2
+    title: Buttonの目的を考える
+    text: このButtonは入力を送らず画面で確認するだけなので、送信しないTypeを選びます。
+    relatedSlideId: html-css-ch03-l03-s03
+  - id: html-css-ch03-l03-e01-h03
+    level: 3
+    title: 2つの属性を具体的に直す
+    text: labelをfor="display-name"へ、buttonをtype="button"へ変更します。
+    relatedSlideId: html-css-ch03-l03-s02
+relatedSlideIds:
+  - html-css-ch03-l03-s01
+  - html-css-ch03-l03-s02
+  - html-css-ch03-l03-s03
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch03-l03-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch03-l03-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - html-css-ch03-l03-e01-r01
+      - html-css-ch03-l03-e01-r03
+      - html-css-ch03-l03-e01-r04

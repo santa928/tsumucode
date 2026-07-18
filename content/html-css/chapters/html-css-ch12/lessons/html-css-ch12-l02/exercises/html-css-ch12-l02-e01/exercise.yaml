@@ -1,0 +1,123 @@
+id: html-css-ch12-l02-e01
+kind: guided-project
+projectId: html-css-profile-project
+workspaceId: html-css-profile-project
+countsTowardStandardExerciseTotal: false
+title: HeaderとHeroでProfileの入口を作る
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch12-l02-e01-r01
+    label: Navigationへ目的が分かる名前を付ける
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: nav }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: Profile NavigationのAccessible Name
+      expected: 空でないNavigationの説明
+      nextAction: aria-labelなどでNavigationの範囲と目的を伝えます。
+    hintId: html-css-ch12-l02-e01-h01
+    relatedSlideId: html-css-ch12-l02-g01
+  - id: html-css-ch12-l02-e01-r02
+    label: Heroへh1を1つ置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '.hero h1' }
+    assertion: { kind: count, operator: equals, expected: 1 }
+    feedback:
+      target: HeroのMain Heading
+      expected: h1が1つ
+      nextAction: Profile Ownerとページ目的が分かるh1をHeroへ置きます。
+    hintId: html-css-ch12-l02-e01-h02
+    relatedSlideId: html-css-ch12-l02-g01
+  - id: html-css-ch12-l02-e01-r03
+    label: Avatarへ代替Textを付ける
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-profile-avatar]' }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: Profile AvatarのAccessible Name
+      expected: 画像内容が分かる空でない説明
+      nextAction: 意味のあるAvatarのaltへ人物と内容を短く書きます。
+    hintId: html-css-ch12-l02-e01-h02
+    relatedSlideId: html-css-ch12-l02-g01
+  - id: html-css-ch12-l02-e01-r04
+    label: Worksへ進むPrimary Linkを置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'a[data-primary-link][href="#works"]' }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: HeroのPrimary Link
+      expected: '#worksへ進み目的が分かるLink'
+      nextAction: hrefを#worksにし、作品を見ることが分かるLink Textを書きます。
+    hintId: html-css-ch12-l02-e01-h03
+    relatedSlideId: html-css-ch12-l02-g01
+hints:
+  - id: html-css-ch12-l02-e01-h01
+    level: 1
+    title: Navigationを単独で説明する
+    text: Linkの集まりが何を案内するか、短い名前を付けます。
+    relatedSlideId: html-css-ch12-l02-g01
+  - id: html-css-ch12-l02-e01-h02
+    level: 2
+    title: Heroの2つの名前を見る
+    text: h1はPage、altはAvatarの内容をそれぞれ伝えます。
+    relatedSlideId: html-css-ch12-l02-g01
+  - id: html-css-ch12-l02-e01-h03
+    level: 3
+    title: 次の行動を明確にする
+    text: data-primary-linkを持つaのhrefを#worksへし、目的が分かるTextを残します。
+    relatedSlideId: html-css-ch12-l02-g01
+relatedSlideIds: [html-css-ch12-l02-g01]
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets:
+  - id: avatar-project-hero
+    source: assets/profile-avatar.svg
+    mediaType: image
+    alt: オレンジのCode Cardを持つつむぎ
+    provenanceId: ch12-profile-avatar-original
+fixtures:
+  - id: html-css-ch12-l02-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch12-l02-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch12-l02-e01-r03]

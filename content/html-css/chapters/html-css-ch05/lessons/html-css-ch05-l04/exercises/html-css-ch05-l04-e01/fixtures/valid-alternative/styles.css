@@ -1,0 +1,13 @@
+body {
+  margin: 0;
+  padding: 32px;
+  background: #f5efe4;
+  color: #24323d;
+  font-family: system-ui, sans-serif;
+}
+nav a {
+  display: inline-block;
+  min-height: 44px;
+  padding: 12px 20px;
+  color: #24323d;
+}

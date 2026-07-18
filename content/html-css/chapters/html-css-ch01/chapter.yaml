@@ -1,0 +1,10 @@
+id: html-css-ch01
+sequence: 1
+title: はじめてのHTML
+goal: Element、Tag、入れ子、Attributeを使って基本のHTML文書を組み立てる
+estimatedMinutes: 35
+kind: standard
+lessonSources:
+  - lessons/html-css-ch01-l01/lesson.yaml
+  - lessons/html-css-ch01-l02/lesson.yaml
+  - lessons/html-css-ch01-l03/lesson.yaml

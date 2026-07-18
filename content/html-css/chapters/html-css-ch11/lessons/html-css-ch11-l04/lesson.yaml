@@ -1,0 +1,18 @@
+id: html-css-ch11-l04
+kind: standard
+title: Reduced Motionと最終Audit
+goal: Motionを減らす設定を尊重し、Overflowを含む最終Checklistを完了できる
+estimatedMinutes: 10
+prerequisiteLessonIds: [html-css-ch11-l03]
+slideSources:
+  - slides/s01-reduced-motion.md
+  - slides/s02-final-audit.md
+exerciseSources:
+  - exercises/html-css-ch11-l04-e01/exercise.yaml
+reflection: AnimationとLayoutの安全性を利用者設定と複数幅で確認する
+glossaryRefs: [prefers-reduced-motion, animation-duration, final-audit]
+nextLessonId: html-css-ch12-l01
+completion:
+  kind: standard
+  finalSlideId: html-css-ch11-l04-s02
+  requiredExerciseIds: [html-css-ch11-l04-e01]

@@ -1,0 +1,20 @@
+id: fixture-l01
+kind: standard
+title: Fixture Lesson
+goal: main要素を使う
+estimatedMinutes: 5
+prerequisiteLessonIds: []
+slideSources:
+  - slides/s01-fixture.md
+  - slides/s02-fixture.md
+  - slides/s03-fixture.md
+  - slides/s04-fixture.md
+  - slides/s05-fixture.md
+exerciseSources:
+  - exercises/fixture-e01/exercise.yaml
+reflection: main要素はページ固有の中心内容を表す
+glossaryRefs: []
+completion:
+  kind: standard
+  finalSlideId: fixture-s05
+  requiredExerciseIds: [fixture-e01]

@@ -1,0 +1,10 @@
+body {
+  color: #1f2930;
+  font-family: sans-serif;
+}
+
+form {
+  display: grid;
+  gap: 1rem;
+  max-width: 30rem;
+}

@@ -1,0 +1,18 @@
+id: html-css-ch06-l04
+kind: standard
+title: 再利用できるClassを作る
+goal: 共通の見た目をBase Classへまとめ、複数のCardへ同じ結果を適用できる
+estimatedMinutes: 11
+prerequisiteLessonIds: [html-css-ch06-l03]
+slideSources:
+  - slides/s01-reusable-class.md
+  - slides/s02-component-boundary.md
+exerciseSources:
+  - exercises/html-css-ch06-l04-e01/exercise.yaml
+reflection: 共通Ruleと個別Ruleの責務を分け、再利用単位を説明する
+glossaryRefs: [reusable-class, base-class, component-boundary]
+nextLessonId: html-css-ch07-l01
+completion:
+  kind: standard
+  finalSlideId: html-css-ch06-l04-s02
+  requiredExerciseIds: [html-css-ch06-l04-e01]

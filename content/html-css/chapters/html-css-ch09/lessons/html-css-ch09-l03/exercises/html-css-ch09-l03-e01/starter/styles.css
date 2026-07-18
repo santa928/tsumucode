@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+  padding: 16px;
+  background: #f5efe4;
+  font-family: system-ui, sans-serif;
+}
+[data-gallery] {
+  width: 720px;
+}
+[data-gallery] > * {
+  height: 100px;
+  padding: 16px;
+  background: #fff;
+}

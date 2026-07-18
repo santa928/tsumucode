@@ -1,0 +1,123 @@
+id: html-css-ch02-l04-e01
+kind: standard
+workspaceId: html-css-ch02-l04-e01
+countsTowardStandardExerciseTotal: true
+title: 注意の重要さと発声上の強調を表す
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch02-l04-e01-r01
+    label: 重要事項をstrongで表す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'p strong' }
+    assertion: { kind: count, operator: equals, expected: 1 }
+    feedback:
+      target: 保存に関する重要な注意
+      expected: Paragraph内のstrongが1つ
+      nextAction: 保存してからという重要部分のspanをstrongへ変更します。
+    hintId: html-css-ch02-l04-e01-h01
+    relatedSlideId: html-css-ch02-l04-s01
+  - id: html-css-ch02-l04-e01-r02
+    label: strongへ言葉を入れる
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'p strong' }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: strongの内容
+      expected: 空ではない重要事項
+      nextAction: strongの開始Tagと終了Tagの間へ、見逃せない注意を書きます。
+    hintId: html-css-ch02-l04-e01-h02
+    relatedSlideId: html-css-ch02-l04-s01
+  - id: html-css-ch02-l04-e01-r03
+    label: 発声上の強調をemで表す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'p em' }
+    assertion: { kind: count, operator: equals, expected: 1 }
+    feedback:
+      target: CSSと対比して強く読む言葉
+      expected: Paragraph内のemが1つ
+      nextAction: CSSと対比するHTMLのspanをemへ変更します。
+    hintId: html-css-ch02-l04-e01-h02
+    relatedSlideId: html-css-ch02-l04-s02
+  - id: html-css-ch02-l04-e01-r04
+    label: emへ言葉を入れる
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'p em' }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: emの内容
+      expected: 空ではない強調語
+      nextAction: emの開始Tagと終了Tagの間へ、対比して強く読む言葉を書きます。
+    hintId: html-css-ch02-l04-e01-h03
+    relatedSlideId: html-css-ch02-l04-s02
+hints:
+  - id: html-css-ch02-l04-e01-h01
+    level: 1
+    title: 読み飛ばすと困る言葉を探す
+    text: 2つの文を読み、操作を失敗しないために重要な部分を見つけます。
+    relatedSlideId: html-css-ch02-l04-s01
+  - id: html-css-ch02-l04-e01-h02
+    level: 2
+    title: 重要性と発声を分ける
+    text: 保存の注意はstrong、CSSと対比して強く読むHTMLはemへ対応させます。
+    relatedSlideId: html-css-ch02-l04-s02
+  - id: html-css-ch02-l04-e01-h03
+    level: 3
+    title: spanのTag名だけを変える
+    text: class属性と中の言葉は残し、1つ目をstrong、2つ目をemの開始Tagと終了Tagへ変更します。
+    relatedSlideId: html-css-ch02-l04-s02
+relatedSlideIds:
+  - html-css-ch02-l04-s01
+  - html-css-ch02-l04-s02
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch02-l04-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch02-l04-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - html-css-ch02-l04-e01-r01
+      - html-css-ch02-l04-e01-r02
+      - html-css-ch02-l04-e01-r03
+      - html-css-ch02-l04-e01-r04

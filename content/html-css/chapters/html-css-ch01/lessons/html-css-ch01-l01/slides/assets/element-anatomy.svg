@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="260" viewBox="0 0 760 260" role="img" aria-labelledby="title description">
+  <title id="title">HTML Elementの3つの部分</title>
+  <desc id="description">開始Tag、内容、終了Tagを横に並べ、全体がElementであることを示す図</desc>
+  <rect width="760" height="260" rx="28" fill="#fffaf0" />
+  <path d="M74 74v-24h612v24" fill="none" stroke="#1f5c49" stroke-width="5" stroke-linecap="round" />
+  <text x="380" y="36" fill="#19352d" font-family="system-ui, sans-serif" font-size="24" font-weight="700" text-anchor="middle">1つのElement</text>
+  <g font-family="ui-monospace, monospace" font-size="28" font-weight="700" text-anchor="middle">
+    <rect x="52" y="102" width="178" height="86" rx="18" fill="#e5b94f" />
+    <text x="141" y="154" fill="#19352d">&lt;p&gt;</text>
+    <rect x="252" y="102" width="256" height="86" rx="18" fill="#ffffff" stroke="#d9cdb8" stroke-width="3" />
+    <text x="380" y="154" fill="#19352d">学びます</text>
+    <rect x="530" y="102" width="178" height="86" rx="18" fill="#dcebe5" />
+    <text x="619" y="154" fill="#19352d">&lt;/p&gt;</text>
+  </g>
+  <g fill="#5d6f68" font-family="system-ui, sans-serif" font-size="17" text-anchor="middle">
+    <text x="141" y="218">開始Tag</text>
+    <text x="380" y="218">内容</text>
+    <text x="619" y="218">終了Tag</text>
+  </g>
+</svg>

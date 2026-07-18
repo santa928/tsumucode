@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>つむぎのProfile</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="site-name" href="#top">TSUMUGI PROFILE</a>
+      <nav aria-label="プロフィール内">
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#works">Works</a>
+      </nav>
+      <p data-audience>Web制作を学び始めた友人へ、学習と作品を紹介します。</p>
+    </header>
+    <main id="top">
+      <section class="hero" aria-labelledby="profile-title">
+        <img
+          data-profile-avatar
+          src="asset:avatar-project-about"
+          alt="オレンジのCode Cardを持つつむぎ"
+        />
+        <div>
+          <p class="eyebrow">LEARNING PROFILE</p>
+          <h1 id="profile-title">つむぎの学習プロフィール</h1>
+          <p>HTMLとCSSで、伝わるページを少しずつ作っています。</p>
+          <a data-primary-link class="primary-link" href="#works">つむぎの作品を見る</a>
+        </div>
+      </section>
+      <section data-about id="about" class="surface-card" aria-labelledby="about-title">
+        <h2 id="about-title">About</h2>
+        <p data-about-copy>
+          はじめて訪れた人にも内容が伝わり、Keyboardでも迷わず使えるページを目指しています。
+          学んだことを小さな作品にして、改善理由まで説明できるように取り組んでいます。
+        </p>
+      </section>
+      <section id="skills" class="surface-card" aria-labelledby="skills-title">
+        <h2 id="skills-title">Skills</h2>
+        <ul data-skill-list class="skill-list">
+          <li>Semantic HTML</li>
+          <li>Responsive CSS</li>
+          <li>Accessibility Audit</li>
+        </ul>
+      </section>
+      <section id="works" aria-labelledby="works-title">
+        <h2 id="works-title">Works</h2>
+        <p>最初のProfile Cardを準備中です。</p>
+      </section>
+    </main>
+    <footer>
+      <p>つむぎの学習記録</p>
+    </footer>
+  </body>
+</html>

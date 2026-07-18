@@ -1,0 +1,9 @@
+body {
+  color: #1c2830;
+  font-family: sans-serif;
+}
+
+.plan {
+  max-width: 42rem;
+  margin: 3rem auto;
+}

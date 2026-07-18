@@ -1,0 +1,9 @@
+body {
+  color: #24323d;
+  font-family: system-ui, sans-serif;
+}
+
+form {
+  display: grid;
+  gap: 0.75rem;
+}

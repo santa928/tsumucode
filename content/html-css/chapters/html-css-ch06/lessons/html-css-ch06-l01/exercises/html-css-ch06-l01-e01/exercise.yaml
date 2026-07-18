@@ -1,0 +1,119 @@
+id: html-css-ch06-l01-e01
+kind: standard
+workspaceId: html-css-ch06-l01-e01
+countsTowardStandardExerciseTotal: true
+title: 読みやすい本文の文字を整える
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch06-l01-e01-r01
+    label: Font Sizeを20pxにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: .reading-sample }
+    assertion:
+      kind: computed-style
+      property: font-size
+      operator: equals
+      expected: 20
+      tolerance: 0.5
+    feedback:
+      target: 本文SampleのComputed Font Size
+      expected: 20px前後
+      nextAction: font-sizeを1.25remまたは20pxへ調整します。
+    hintId: html-css-ch06-l01-e01-h01
+    relatedSlideId: html-css-ch06-l01-s01
+  - id: html-css-ch06-l01-e01-r02
+    label: Line Heightを30pxにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: .reading-sample }
+    assertion:
+      kind: computed-style
+      property: line-height
+      operator: equals
+      expected: 30
+      tolerance: 0.5
+    feedback:
+      target: 本文SampleのComputed Line Height
+      expected: 30px前後
+      nextAction: 20pxのFont Sizeへline-height 1.5を掛けます。
+    hintId: html-css-ch06-l01-e01-h02
+    relatedSlideId: html-css-ch06-l01-s01
+  - id: html-css-ch06-l01-e01-r03
+    label: System Font Stackを使う
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: .reading-sample }
+    assertion:
+      kind: computed-style
+      property: font-family
+      operator: contains
+      expected: system-ui
+    feedback:
+      target: 本文SampleのComputed Font Family
+      expected: system-uiを含むFont Stack
+      nextAction: font-familyの先頭へsystem-uiを指定し、sans-serifをFallbackに残します。
+    hintId: html-css-ch06-l01-e01-h03
+    relatedSlideId: html-css-ch06-l01-s02
+hints:
+  - id: html-css-ch06-l01-e01-h01
+    level: 1
+    title: 文字そのものの大きさを見る
+    text: Root Font Sizeが16pxなら1.25remは20pxです。
+    relatedSlideId: html-css-ch06-l01-s01
+  - id: html-css-ch06-l01-e01-h02
+    level: 2
+    title: 行の高さを倍率で計算する
+    text: 20pxへ1.5を掛けるとComputed Line Heightは30pxです。
+    relatedSlideId: html-css-ch06-l01-s01
+  - id: html-css-ch06-l01-e01-h03
+    level: 3
+    title: 3つのDeclarationをそろえる
+    text: font-size、line-height、font-familyをreading-sampleへ指定します。
+    relatedSlideId: html-css-ch06-l01-s02
+relatedSlideIds:
+  - html-css-ch06-l01-s01
+  - html-css-ch06-l01-s02
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch06-l01-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch06-l01-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch06-l01-e01-r02]

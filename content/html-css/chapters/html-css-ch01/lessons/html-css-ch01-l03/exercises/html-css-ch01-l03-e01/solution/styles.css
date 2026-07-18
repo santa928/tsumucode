@@ -1,0 +1,11 @@
+body {
+  margin: 0;
+  background: #f5f1e8;
+  color: #263238;
+  font-family: sans-serif;
+}
+
+main {
+  width: min(40rem, calc(100% - 3rem));
+  margin: 5rem auto;
+}

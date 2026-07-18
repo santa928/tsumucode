@@ -1,0 +1,15 @@
+body {
+  margin: 0;
+  background: #f7f3ea;
+  color: #24323d;
+  font-family: system-ui, sans-serif;
+}
+
+main {
+  width: min(42rem, calc(100% - 3rem));
+  margin: 4rem auto;
+}
+
+section {
+  margin-block: 2rem;
+}

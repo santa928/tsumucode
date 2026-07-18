@@ -1,0 +1,169 @@
+/* Tailwind themeと積み木の学習工房のGlobal styleを接続する。 */
+@import 'tailwindcss' source(none);
+@import './tokens.css';
+@source '../';
+@source '../../index.html';
+
+@theme inline {
+  --color-workshop-canvas: var(--tc-color-canvas);
+  --color-workshop-workbench: var(--tc-color-workbench);
+  --color-workshop-surface: var(--tc-color-surface);
+  --color-workshop-raised: var(--tc-color-surface-raised);
+  --color-workshop-sunken: var(--tc-color-surface-sunken);
+  --color-workshop-wood: var(--tc-color-wood);
+  --color-workshop-ink: var(--tc-color-ink);
+  --color-workshop-muted: var(--tc-color-ink-muted);
+  --color-workshop-primary: var(--tc-color-primary);
+  --color-workshop-on-primary: var(--tc-color-on-primary);
+  --color-workshop-complete: var(--tc-color-complete);
+  --color-workshop-correction: var(--tc-color-correction);
+  --color-workshop-learning: var(--tc-color-learning);
+  --color-workshop-border: var(--tc-color-border);
+  --radius-workshop-piece: var(--tc-radius-piece);
+  --radius-workshop-sm: var(--tc-radius-sm);
+  --radius-workshop-md: var(--tc-radius-md);
+  --radius-workshop-lg: var(--tc-radius-lg);
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    min-height: 100%;
+    color-scheme: light;
+    background: var(--tc-color-canvas);
+  }
+
+  body,
+  #root {
+    min-width: 20rem;
+    min-height: 100dvh;
+  }
+
+  body {
+    margin: 0;
+    color: var(--tc-color-ink);
+    background: var(--tc-color-canvas);
+    font-family: var(--tc-font-sans);
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3 {
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: var(--tc-focus-width) solid var(--tc-color-focus);
+    outline-offset: var(--tc-focus-offset);
+  }
+
+  a {
+    color: inherit;
+  }
+}
+
+@layer components {
+  .tc-skip-link {
+    position: fixed;
+    z-index: 50;
+    inset-block-start: max(var(--tc-space-3), env(safe-area-inset-top));
+    inset-inline-start: max(var(--tc-space-3), env(safe-area-inset-left));
+    transform: translateY(
+      calc(-100% - max(var(--tc-space-3), env(safe-area-inset-top)) - var(--tc-space-2))
+    );
+    transition: transform var(--tc-motion-fast) var(--tc-ease-piece);
+  }
+
+  .tc-skip-link:focus {
+    transform: translateY(0);
+  }
+
+  .tc-content-frame {
+    padding-inline-start: max(var(--tc-space-4), env(safe-area-inset-left));
+    padding-inline-end: max(var(--tc-space-4), env(safe-area-inset-right));
+  }
+
+  .tc-site-header {
+    padding-block-start: env(safe-area-inset-top);
+  }
+
+  .tc-site-footer {
+    padding-block-end: max(var(--tc-space-5), env(safe-area-inset-bottom));
+  }
+
+  .tc-slide-tray-details[open] .tc-slide-tray-indicator {
+    transform: rotate(45deg);
+  }
+
+  .tc-code-editor-host .cm-editor {
+    height: 28rem;
+    color: var(--tc-color-ink);
+    background: var(--tc-color-surface-raised);
+    font-family: var(--tc-font-mono);
+    font-size: 0.875rem;
+  }
+
+  .tc-code-editor-host .cm-scroller {
+    overflow: auto;
+    font-family: inherit;
+    line-height: 1.65;
+  }
+
+  .tc-code-editor-host .cm-content {
+    padding-block: var(--tc-space-4);
+    caret-color: var(--tc-color-primary);
+  }
+
+  .tc-code-editor-host .cm-gutters {
+    color: var(--tc-color-ink-muted);
+    background: var(--tc-color-surface-sunken);
+    border-inline-end: 1px solid var(--tc-color-border);
+  }
+
+  .tc-code-editor-host .cm-activeLine,
+  .tc-code-editor-host .cm-activeLineGutter {
+    background: color-mix(in srgb, var(--tc-color-learning) 32%, transparent);
+  }
+
+  .tc-code-editor-host .cm-focused {
+    outline: none;
+  }
+
+  .tc-code-editor-host .cm-focused .cm-selectionBackground,
+  .tc-code-editor-host .cm-selectionBackground {
+    background: color-mix(in srgb, var(--tc-color-learning) 62%, transparent);
+  }
+}
+
+@media (min-width: 64rem) {
+  .tc-slide-tray-details > summary {
+    display: none;
+  }
+
+  .tc-slide-tray-details > nav {
+    display: block !important;
+    margin-block-start: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: var(--tc-motion-reduced) !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: var(--tc-motion-reduced) !important;
+  }
+}

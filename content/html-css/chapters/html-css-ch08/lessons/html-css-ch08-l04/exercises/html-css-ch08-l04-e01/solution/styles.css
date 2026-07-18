@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  padding: 24px;
+  background: #f5efe4;
+  font-family: system-ui, sans-serif;
+}
+[data-card-grid] {
+  display: flex;
+  flex-wrap: wrap;
+  width: 600px;
+  gap: 16px;
+}
+[data-card] {
+  box-sizing: border-box;
+  flex: 0 0 180px;
+  height: 100px;
+  padding: 20px;
+  background: #fff;
+}

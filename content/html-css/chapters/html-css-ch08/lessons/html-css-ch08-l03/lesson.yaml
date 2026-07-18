@@ -1,0 +1,18 @@
+id: html-css-ch08-l03
+kind: standard
+title: Cross Axisへ揃える
+goal: align-itemsで全体を揃え、align-selfで1 Itemだけ配置を変えられる
+estimatedMinutes: 11
+prerequisiteLessonIds: [html-css-ch08-l02]
+slideSources:
+  - slides/s01-align-items.md
+  - slides/s02-align-self.md
+exerciseSources:
+  - exercises/html-css-ch08-l03-e01/exercise.yaml
+reflection: Container全体と個別ItemのCross Axis責務を区別する
+glossaryRefs: [align-items, align-self, cross-axis]
+nextLessonId: html-css-ch08-l04
+completion:
+  kind: standard
+  finalSlideId: html-css-ch08-l03-s02
+  requiredExerciseIds: [html-css-ch08-l03-e01]

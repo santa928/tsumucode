@@ -1,0 +1,19 @@
+id: html-css-ch02-l03
+kind: standard
+title: Landmarkでページの領域を伝える
+goal: header、main、footerとsectionを使い、ページの主要領域を意味で分けられる
+estimatedMinutes: 10
+prerequisiteLessonIds: [html-css-ch02-l02]
+slideSources:
+  - slides/s01-semantic-landmarks.md
+  - slides/s02-header-main-footer.md
+  - slides/s03-section-article.md
+exerciseSources:
+  - exercises/html-css-ch02-l03-e01/exercise.yaml
+reflection: Semantic Elementは見た目が同じでも領域の役割をBrowserへ伝える
+glossaryRefs: [semantic-element, landmark, section, article]
+nextLessonId: html-css-ch02-l04
+completion:
+  kind: standard
+  finalSlideId: html-css-ch02-l03-s03
+  requiredExerciseIds: [html-css-ch02-l03-e01]

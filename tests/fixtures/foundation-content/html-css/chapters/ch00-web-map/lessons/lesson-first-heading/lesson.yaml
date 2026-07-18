@@ -1,0 +1,16 @@
+id: lesson-first-heading
+kind: standard
+title: 最初の見出しを置く
+goal: h1要素を使い、ページで最も大切な見出しを表せる。
+estimatedMinutes: 15
+prerequisiteLessonIds: []
+slideSources:
+  - slides/html-role.md
+exerciseSources:
+  - exercises/first-heading/exercise.yaml
+reflection: Tagで囲むと、文字が「ページの見出し」という意味を持つことを確認しました。
+glossaryRefs: [html, element]
+completion:
+  kind: standard
+  finalSlideId: slide-html-role
+  requiredExerciseIds: [exercise-first-heading]

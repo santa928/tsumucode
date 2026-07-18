@@ -1,0 +1,17 @@
+body {
+  margin: 0;
+  padding: 40px;
+  background: #f5efe3;
+  font-family: system-ui, sans-serif;
+}
+[data-status] {
+  max-width: 34rem;
+  margin: auto;
+  padding: 28px;
+  border-radius: 18px;
+  color: #ffffff;
+  background: #24323d;
+}
+[data-status] span {
+  color: #9fe2c1;
+}

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>名前を仕上げるプロフィール</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <article class="profile">
+        <img data-avatar src="asset:accessible-avatar" alt="" />
+        <div>
+          <h1>学習プロフィール</h1>
+          <span class="field-caption">表示名</span>
+          <input data-name-input id="display-name" name="display-name" value="つむ" />
+          <a data-profile-link href="#works"><span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+      <section id="works">
+        <h2>作品</h2>
+        <p>読みやすいプロフィールカードを制作中です。</p>
+      </section>
+    </main>
+  </body>
+</html>

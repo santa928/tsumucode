@@ -1,0 +1,18 @@
+id: html-css-ch00-l02
+kind: standard
+title: 編集してPreviewで確かめる
+goal: 編集、保存、Preview、判定の順に操作し、コードと画面の対応を説明できる
+estimatedMinutes: 10
+prerequisiteLessonIds: [html-css-ch00-l01]
+slideSources:
+  - slides/s01-edit-save-preview.md
+  - slides/s02-read-preview.md
+exerciseSources:
+  - exercises/html-css-ch00-l02-e01/exercise.yaml
+reflection: 小さく編集してPreviewで確認すると、どの変更が画面へ効いたか追いやすい
+glossaryRefs: [editor, preview]
+nextLessonId: html-css-ch01-l01
+completion:
+  kind: standard
+  finalSlideId: html-css-ch00-l02-s02
+  requiredExerciseIds: [html-css-ch00-l02-e01]

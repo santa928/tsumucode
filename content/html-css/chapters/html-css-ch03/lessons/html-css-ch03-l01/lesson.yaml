@@ -1,0 +1,18 @@
+id: html-css-ch03-l01
+kind: standard
+title: Linkで行き先を結ぶ
+goal: a要素のhrefとLink Textを使い、ページ内移動と安全な外部Linkを作れる
+estimatedMinutes: 9
+prerequisiteLessonIds: [html-css-ch02-l04]
+slideSources:
+  - slides/s01-anchor-anatomy.md
+  - slides/s02-relative-external-links.md
+exerciseSources:
+  - exercises/html-css-ch03-l01-e01/exercise.yaml
+reflection: Link TextはURLではなく移動先で何が分かるかを伝える
+glossaryRefs: [anchor, href, fragment-link, external-link]
+nextLessonId: html-css-ch03-l02
+completion:
+  kind: standard
+  finalSlideId: html-css-ch03-l01-s02
+  requiredExerciseIds: [html-css-ch03-l01-e01]

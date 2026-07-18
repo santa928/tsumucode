@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+  padding: 32px;
+  color: #172a3a;
+  background: #f5efe3;
+  font-family: system-ui, sans-serif;
+}
+.page {
+  max-width: 44rem;
+  margin: auto;
+  padding: 28px;
+  border-radius: 20px;
+  background: #fffdf8;
+}

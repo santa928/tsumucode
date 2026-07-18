@@ -1,0 +1,108 @@
+id: html-css-ch01-l03-e01
+kind: standard
+workspaceId: html-css-ch01-l03-e01
+countsTowardStandardExerciseTotal: true
+title: 日本語ページの基本情報を整える
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch01-l03-e01-r01
+    label: ページの言語を日本語にする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: html }
+    assertion: { kind: attribute, name: lang, operator: equals, expected: ja }
+    feedback:
+      target: html要素のlang属性
+      expected: lang属性がja
+      nextAction: htmlの開始Tagへlang="ja"を設定します。
+    hintId: html-css-ch01-l03-e01-h01
+    relatedSlideId: html-css-ch01-l03-s01
+  - id: html-css-ch01-l03-e01-r02
+    label: 文字コードをUTF-8にする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'meta[charset]' }
+    assertion: { kind: attribute, name: charset, operator: equals, expected: UTF-8 }
+    feedback:
+      target: meta要素のcharset属性
+      expected: charset属性がUTF-8
+      nextAction: head内のmetaへcharset="UTF-8"を設定します。
+    hintId: html-css-ch01-l03-e01-h02
+    relatedSlideId: html-css-ch01-l03-s02
+  - id: html-css-ch01-l03-e01-r03
+    label: 内容が分かるtitleを書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: title }
+    assertion: { kind: text, operator: contains, expected: HTML }
+    feedback:
+      target: title要素の題名
+      expected: HTMLを含む空でない題名
+      nextAction: titleの開始Tagと終了Tagの間へ、HTMLを含む具体的な題名を書きます。
+    hintId: html-css-ch01-l03-e01-h03
+    relatedSlideId: html-css-ch01-l03-s02
+hints:
+  - id: html-css-ch01-l03-e01-h01
+    level: 1
+    title: htmlの開始Tagを見る
+    text: ページ全体を包むhtmlの開始Tagに、文書の言語を表す属性を加えます。
+    relatedSlideId: html-css-ch01-l03-s01
+  - id: html-css-ch01-l03-e01-h02
+    level: 2
+    title: headのmetaを確認する
+    text: Browserが文字を正しく読むためのcharset属性をUTF-8へ直します。
+    relatedSlideId: html-css-ch01-l03-s02
+  - id: html-css-ch01-l03-e01-h03
+    level: 3
+    title: titleを具体的にする
+    text: 未設定という言葉を、HTMLとページ内容の両方が伝わる題名へ置き換えます。
+    relatedSlideId: html-css-ch01-l03-s02
+relatedSlideIds:
+  - html-css-ch01-l03-s01
+  - html-css-ch01-l03-s02
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch01-l03-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch01-l03-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - html-css-ch01-l03-e01-r01
+      - html-css-ch01-l03-e01-r02
+      - html-css-ch01-l03-e01-r03

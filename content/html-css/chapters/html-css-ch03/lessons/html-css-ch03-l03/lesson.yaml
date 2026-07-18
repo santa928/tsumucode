@@ -1,0 +1,19 @@
+id: html-css-ch03-l03
+kind: standard
+title: Label付きForm Controlを作る
+goal: labelとControlを関連付け、目的に合うButton Typeを設定できる
+estimatedMinutes: 9
+prerequisiteLessonIds: [html-css-ch03-l02]
+slideSources:
+  - slides/s01-form-controls.md
+  - slides/s02-label-association.md
+  - slides/s03-button-types.md
+exerciseSources:
+  - exercises/html-css-ch03-l03-e01/exercise.yaml
+reflection: 見えるLabelとControlの関連付けは入力目的と操作範囲を同時に広げる
+glossaryRefs: [form, form-control, label, button-type]
+nextLessonId: html-css-ch03-l04
+completion:
+  kind: standard
+  finalSlideId: html-css-ch03-l03-s03
+  requiredExerciseIds: [html-css-ch03-l03-e01]

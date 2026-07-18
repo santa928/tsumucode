@@ -1,0 +1,17 @@
+schemaVersion: 1
+status: draft
+revision: draft
+tag: draft
+sourceCommit: draft
+workflowHeadCommit: draft
+workflowRunId: draft
+workflowRunAttempt: draft
+reportArtifactId: draft
+reportArtifactDigest: draft
+pageUrl: draft
+environmentApprovalStatus: pending
+pageVerificationStatus: pending
+reportVerificationStatus: pending
+tagVerificationStatus: pending
+verifiedBy: draft
+verifiedAt: draft

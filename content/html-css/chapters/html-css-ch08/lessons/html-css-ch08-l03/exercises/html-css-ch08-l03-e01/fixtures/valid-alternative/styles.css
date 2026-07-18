@@ -1,0 +1,24 @@
+body {
+  margin: 0;
+  padding: 2rem;
+}
+[data-align] {
+  display: flex;
+  align-items: center;
+  width: 31.25rem;
+  height: 12.5rem;
+}
+[data-align] > * {
+  box-sizing: border-box;
+  width: 6.25rem;
+}
+[data-tall] {
+  height: 5rem;
+}
+[data-center] {
+  height: 3.75rem;
+}
+[data-end] {
+  align-self: flex-end;
+  height: 2.5rem;
+}

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 480 900" role="img" aria-labelledby="title description" style="display:block;max-width:480px;height:auto;margin-inline:auto">
+  <title id="title">HTML要素の3つの部品</title>
+  <desc id="description">開始Tag、内容、終了Tagの3つの積み木が縦につながり、ひとつのh1要素になる図。</desc>
+  <rect width="480" height="900" rx="28" fill="#FFF8E8"/>
+  <text x="40" y="58" fill="#244B49" font-family="system-ui, sans-serif" font-size="25" font-weight="700">h1要素を3つの部品で</text>
+  <text x="40" y="92" fill="#244B49" font-family="system-ui, sans-serif" font-size="25" font-weight="700">組み立てる</text>
+  <path d="M40 122h400" stroke="#244B49" stroke-width="4" stroke-linecap="round" opacity=".18"/>
+
+  <g transform="translate(40 154)">
+    <rect width="400" height="174" rx="22" fill="#E7A93B"/>
+    <circle cx="28" cy="28" r="8" fill="#FFF8E8" opacity=".75"/>
+    <text x="200" y="50" text-anchor="middle" fill="#3B2A13" font-family="system-ui, sans-serif" font-size="24" font-weight="700">1. 開始Tag</text>
+    <text x="200" y="108" text-anchor="middle" fill="#3B2A13" font-family="ui-monospace, monospace" font-size="38" font-weight="700">&lt;h1&gt;</text>
+    <text x="200" y="145" text-anchor="middle" fill="#3B2A13" font-family="system-ui, sans-serif" font-size="24">見出しの始まりを示す</text>
+  </g>
+
+  <path d="M240 338v28" stroke="#244B49" stroke-width="6" stroke-linecap="round"/>
+  <path d="m227 356 13 15 13-15" fill="none" stroke="#244B49" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g transform="translate(40 386)">
+    <rect width="400" height="174" rx="22" fill="#D96C4A"/>
+    <text x="200" y="50" text-anchor="middle" fill="#FFF9EC" font-family="system-ui, sans-serif" font-size="24" font-weight="700">2. 内容</text>
+    <text x="200" y="104" text-anchor="middle" fill="#FFF9EC" font-family="system-ui, sans-serif" font-size="26" font-weight="700">はじめてのWebページ</text>
+    <text x="200" y="145" text-anchor="middle" fill="#FFF9EC" font-family="system-ui, sans-serif" font-size="24">画面で伝える言葉を持つ</text>
+  </g>
+
+  <path d="M240 570v28" stroke="#244B49" stroke-width="6" stroke-linecap="round"/>
+  <path d="m227 588 13 15 13-15" fill="none" stroke="#244B49" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g transform="translate(40 618)">
+    <rect width="400" height="174" rx="22" fill="#4B8580"/>
+    <text x="200" y="50" text-anchor="middle" fill="#F9FFF8" font-family="system-ui, sans-serif" font-size="24" font-weight="700">3. 終了Tag</text>
+    <text x="200" y="108" text-anchor="middle" fill="#F9FFF8" font-family="ui-monospace, monospace" font-size="38" font-weight="700">&lt;/h1&gt;</text>
+    <text x="200" y="145" text-anchor="middle" fill="#F9FFF8" font-family="system-ui, sans-serif" font-size="24">見出しの終わりを示す</text>
+  </g>
+
+  <rect x="40" y="816" width="400" height="58" rx="29" fill="#244B49"/>
+  <text x="240" y="853" text-anchor="middle" fill="#FFF8E8" font-family="system-ui, sans-serif" font-size="24" font-weight="700">3つで、ひとつのh1要素</text>
+</svg>

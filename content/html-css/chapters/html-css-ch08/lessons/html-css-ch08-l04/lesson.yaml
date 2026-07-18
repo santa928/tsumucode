@@ -1,0 +1,18 @@
+id: html-css-ch08-l04
+kind: standard
+title: Itemを折り返す
+goal: flex-wrapとflex-basisで行あたりのItem数を制御し、Overflowを防げる
+estimatedMinutes: 11
+prerequisiteLessonIds: [html-css-ch08-l03]
+slideSources:
+  - slides/s01-flex-wrap.md
+  - slides/s02-flex-basis.md
+exerciseSources:
+  - exercises/html-css-ch08-l04-e01/exercise.yaml
+reflection: Container幅、Basis、Gapから折り返し位置を予測する
+glossaryRefs: [flex-wrap, flex-basis, flex-line]
+nextLessonId: html-css-ch08-l05
+completion:
+  kind: standard
+  finalSlideId: html-css-ch08-l04-s02
+  requiredExerciseIds: [html-css-ch08-l04-e01]

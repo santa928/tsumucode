@@ -1,0 +1,12 @@
+id: html-css-ch05
+sequence: 5
+title: ボックスモデルと余白
+goal: Boxの4層、Sizing、Spacing、Display、Overflowを実寸と境界から調整する
+estimatedMinutes: 50
+kind: standard
+lessonSources:
+  - lessons/html-css-ch05-l01/lesson.yaml
+  - lessons/html-css-ch05-l02/lesson.yaml
+  - lessons/html-css-ch05-l03/lesson.yaml
+  - lessons/html-css-ch05-l04/lesson.yaml
+  - lessons/html-css-ch05-l05/lesson.yaml

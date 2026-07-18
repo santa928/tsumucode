@@ -1,0 +1,18 @@
+id: html-css-ch11-l03
+kind: standard
+title: Contrastと色以外の手がかり
+goal: Contrast 4.5対1と状態Textを別々に確認できる
+estimatedMinutes: 10
+prerequisiteLessonIds: [html-css-ch11-l02]
+slideSources:
+  - slides/s01-contrast-check.md
+  - slides/s02-color-not-alone.md
+exerciseSources:
+  - exercises/html-css-ch11-l03-e01/exercise.yaml
+reflection: 色の組み合わせと意味の伝達を別Ruleで検査する
+glossaryRefs: [contrast-ratio, color-independent-cue, status-text]
+nextLessonId: html-css-ch11-l04
+completion:
+  kind: standard
+  finalSlideId: html-css-ch11-l03-s02
+  requiredExerciseIds: [html-css-ch11-l03-e01]

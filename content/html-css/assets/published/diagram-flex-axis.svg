@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="520" viewBox="0 0 960 520">
+  <title>FlexboxのMain AxisとCross Axis</title>
+  <desc>row方向のFlex Containerで、左から右へ進むMain Axisと上から下へ進むCross Axisを示す図</desc>
+  <rect width="960" height="520" rx="36" fill="#f5efe3" />
+  <rect x="92" y="90" width="776" height="340" rx="28" fill="#fff" stroke="#172a3a" stroke-width="8" />
+  <text x="124" y="142" fill="#172a3a" font-family="system-ui, sans-serif" font-size="28" font-weight="700">Flex Container · row</text>
+  <g fill="#fff8f1" stroke="#172a3a" stroke-width="5">
+    <rect x="142" y="206" width="148" height="112" rx="20" />
+    <rect x="332" y="206" width="148" height="112" rx="20" />
+    <rect x="522" y="206" width="148" height="112" rx="20" />
+  </g>
+  <g fill="#172a3a" font-family="system-ui, sans-serif" font-size="24" font-weight="700" text-anchor="middle">
+    <text x="216" y="272">Item 1</text>
+    <text x="406" y="272">Item 2</text>
+    <text x="596" y="272">Item 3</text>
+  </g>
+  <path d="M140 370h590" fill="none" stroke="#ef7d4f" stroke-linecap="round" stroke-width="12" />
+  <path d="m730 370-30-20v40z" fill="#ef7d4f" />
+  <text x="142" y="412" fill="#b84f2b" font-family="system-ui, sans-serif" font-size="24" font-weight="700">Main Axis · start</text>
+  <text x="688" y="412" fill="#b84f2b" font-family="system-ui, sans-serif" font-size="24" font-weight="700">end</text>
+  <path d="M780 174v166" fill="none" stroke="#2d7c82" stroke-linecap="round" stroke-width="12" />
+  <path d="m780 340-20-30h40z" fill="#2d7c82" />
+  <text x="752" y="154" fill="#24656a" font-family="system-ui, sans-serif" font-size="22" font-weight="700">Cross Axis</text>
+</svg>

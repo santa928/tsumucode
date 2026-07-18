@@ -1,0 +1,18 @@
+id: html-css-ch03-l04
+kind: standard
+title: 安全なContact Cardへ統合する
+goal: address、画像、Linkを組み合わせ、個人情報を使わない学習用Contact Cardを作れる
+estimatedMinutes: 8
+prerequisiteLessonIds: [html-css-ch03-l03]
+slideSources:
+  - slides/s01-profile-contact-structure.md
+  - slides/s02-safe-placeholder-content.md
+exerciseSources:
+  - exercises/html-css-ch03-l04-e01/exercise.yaml
+reflection: 練習用ページでは本物の氏名や連絡先を公開せず、役割が伝わる架空情報を使う
+glossaryRefs: [address, accessible-name, placeholder-content, privacy]
+nextLessonId: html-css-ch04-l01
+completion:
+  kind: standard
+  finalSlideId: html-css-ch03-l04-s02
+  requiredExerciseIds: [html-css-ch03-l04-e01]

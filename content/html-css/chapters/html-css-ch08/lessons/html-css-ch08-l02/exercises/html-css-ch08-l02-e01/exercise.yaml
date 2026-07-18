@@ -1,0 +1,111 @@
+id: html-css-ch08-l02-e01
+kind: standard
+workspaceId: html-css-ch08-l02-e01
+countsTowardStandardExerciseTotal: true
+title: Action間へ20pxの距離を作る
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch08-l02-e01-r01
+    label: ActionをFlex Layoutにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-actions]' }
+    assertion: { kind: computed-style, property: display, operator: equals, expected: flex }
+    feedback:
+      target: Action ContainerのComputed Display
+      expected: flex
+      nextAction: data-actionsを持つ親へdisplay flexを指定します。
+    hintId: html-css-ch08-l02-e01-h01
+    relatedSlideId: html-css-ch08-l02-s01
+  - id: html-css-ch08-l02-e01-r02
+    label: ItemをMain Startから並べる
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-actions]' }
+    assertion:
+      { kind: computed-style, property: justify-content, operator: equals, expected: flex-start }
+    feedback:
+      target: Action ContainerのComputed Justify Content
+      expected: flex-start
+      nextAction: justify-contentをflex-startへ設定します。
+    hintId: html-css-ch08-l02-e01-h02
+    relatedSlideId: html-css-ch08-l02-s01
+  - id: html-css-ch08-l02-e01-r03
+    label: 2つ目のActionをx 132pxへ置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-second]' }
+    assertion:
+      kind: rect
+      metric: x
+      operator: equals
+      expected: 132
+      tolerance: 1
+    feedback:
+      target: 2つ目のActionの実測x
+      expected: 132px前後
+      nextAction: 幅80pxのItem間へgap 20pxを指定し、32 + 80 + 20を確認します。
+    hintId: html-css-ch08-l02-e01-h03
+    relatedSlideId: html-css-ch08-l02-s02
+hints:
+  - id: html-css-ch08-l02-e01-h01
+    level: 1
+    title: Containerから始める
+    text: data-actionsへdisplay flexを指定します。
+    relatedSlideId: html-css-ch08-l02-s01
+  - id: html-css-ch08-l02-e01-h02
+    level: 2
+    title: Main Startへ揃える
+    text: justify-content flex-startならBody Paddingのx 32pxから始まります。
+    relatedSlideId: html-css-ch08-l02-s01
+  - id: html-css-ch08-l02-e01-h03
+    level: 3
+    title: 実測距離を計算する
+    text: Item幅80pxへgap 20pxを足し、2つ目のxを132pxにします。
+    relatedSlideId: html-css-ch08-l02-s02
+relatedSlideIds:
+  - html-css-ch08-l02-s01
+  - html-css-ch08-l02-s02
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch08-l02-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch08-l02-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch08-l02-e01-r03]

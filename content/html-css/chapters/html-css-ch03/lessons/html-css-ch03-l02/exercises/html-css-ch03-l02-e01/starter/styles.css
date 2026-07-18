@@ -1,0 +1,17 @@
+body {
+  margin: 0;
+  background: #f6f0e4;
+  color: #24323d;
+  font-family: system-ui, sans-serif;
+}
+
+main {
+  width: min(36rem, calc(100% - 3rem));
+  margin: 4rem auto;
+  text-align: center;
+}
+
+img {
+  width: 12rem;
+  height: 12rem;
+}

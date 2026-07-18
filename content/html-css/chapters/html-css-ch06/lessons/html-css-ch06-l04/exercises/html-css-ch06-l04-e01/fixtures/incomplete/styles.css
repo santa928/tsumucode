@@ -1,0 +1,22 @@
+body {
+  margin: 0;
+  padding: 32px;
+  background: #e9efed;
+  color: #24323d;
+  font-family: system-ui, sans-serif;
+}
+.card-list {
+  max-width: 40rem;
+}
+.card {
+  padding: 24px;
+  background-color: #fff;
+  border: 1px solid #c8d4d2;
+}
+.card + .card {
+  margin-top: 16px;
+}
+.card--compact {
+  padding-top: 0;
+  padding-bottom: 0;
+}

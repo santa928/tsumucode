@@ -1,0 +1,96 @@
+id: html-css-ch11-l01-e01
+kind: standard
+workspaceId: html-css-ch11-l01-e01
+countsTowardStandardExerciseTotal: true
+title: KeyboardでたどれるActionを仕上げる
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch11-l01-e01-r01
+    label: 主要ActionをKeyboard Focus可能にする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-action]' }
+    assertion: { kind: focusable, operator: equals, expected: true }
+    feedback:
+      target: 主要LinkとButtonのFocusability
+      expected: data-actionを持つ全要素がFocus可能
+      nextAction: hrefを持つaまたはbuttonなど、Keyboardで操作できる要素を使います。
+    hintId: html-css-ch11-l01-e01-h01
+    relatedSlideId: html-css-ch11-l01-s01
+  - id: html-css-ch11-l01-e01-r02
+    label: Visible FocusのOutlineを3px以上にする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-focus-demo]' }
+    assertion:
+      kind: computed-style
+      property: outline-width
+      operator: gte
+      expected: 3
+      tolerance: 0.1
+    feedback:
+      target: Focus IndicatorのComputed Outline Width
+      expected: 3px以上
+      nextAction: focus-visible状態へ3px以上のoutlineと見分けやすい色を指定します。
+    hintId: html-css-ch11-l01-e01-h02
+    relatedSlideId: html-css-ch11-l01-s02
+hints:
+  - id: html-css-ch11-l01-e01-h01
+    level: 1
+    title: DOM順と要素の役割を見る
+    text: 操作する対象がhref付きLinkまたはButtonになっているか確認します。
+    relatedSlideId: html-css-ch11-l01-s01
+  - id: html-css-ch11-l01-e01-h02
+    level: 2
+    title: Focus状態を見える形にする
+    text: data-focus-demoのComputed outline-widthが3px以上になるようにします。
+    relatedSlideId: html-css-ch11-l01-s02
+  - id: html-css-ch11-l01-e01-h03
+    level: 3
+    title: Indicatorを具体的に指定する
+    text: focus-visibleへ3px solidのoutlineと3px程度のoutline-offsetを指定します。
+    relatedSlideId: html-css-ch11-l01-s02
+relatedSlideIds:
+  - html-css-ch11-l01-s01
+  - html-css-ch11-l01-s02
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch11-l01-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch11-l01-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch11-l01-e01-r02]

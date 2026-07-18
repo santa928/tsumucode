@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  background: #f8f4ec;
+  color: #24323d;
+  font-family: system-ui, sans-serif;
+}
+
+main {
+  width: min(40rem, calc(100% - 3rem));
+  margin: 4rem auto;
+}
+
+.important {
+  color: #9f2d20;
+}
+
+.emphasis {
+  text-decoration: underline;
+}

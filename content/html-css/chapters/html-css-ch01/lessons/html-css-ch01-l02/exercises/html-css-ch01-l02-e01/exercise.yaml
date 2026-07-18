@@ -1,0 +1,127 @@
+id: html-css-ch01-l02-e01
+kind: standard
+workspaceId: html-css-ch01-l02-e01
+countsTowardStandardExerciseTotal: true
+title: 親子関係を保ったSectionを作る
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch01-l02-e01-r01
+    label: main直下にsectionを置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'main > section' }
+    assertion: { kind: count, operator: equals, expected: 1 }
+    feedback:
+      target: mainの中心内容
+      expected: main直下のsectionが1つ
+      nextAction: mainの開始Tagと終了Tagの間へsectionを置きます。
+    hintId: html-css-ch01-l02-e01-h01
+    relatedSlideId: html-css-ch01-l02-s01
+  - id: html-css-ch01-l02-e01-r02
+    label: section直下にh2を置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'main > section > h2' }
+    assertion: { kind: count, operator: equals, expected: 1 }
+    feedback:
+      target: sectionの見出し
+      expected: section直下のh2が1つ
+      nextAction: sectionの内側へh2を置きます。
+    hintId: html-css-ch01-l02-e01-h02
+    relatedSlideId: html-css-ch01-l02-s03
+  - id: html-css-ch01-l02-e01-r03
+    label: section直下のpに文章を書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'main > section > p' }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: sectionの説明
+      expected: section直下のpに空でない文章
+      nextAction: h2の次へpを置いて説明を書きます。
+    hintId: html-css-ch01-l02-e01-h02
+    relatedSlideId: html-css-ch01-l02-s03
+  - id: html-css-ch01-l02-e01-r04
+    label: h2の直後にpを置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'main > section > h2' }
+    assertion:
+      kind: relation
+      relation: next-sibling
+      otherSelector: 'main > section > p'
+    feedback:
+      target: section内の読み順
+      expected: h2の直後にpがある
+      nextAction: sectionの中でh2を先、pをその直後に並べます。
+    hintId: html-css-ch01-l02-e01-h03
+    relatedSlideId: html-css-ch01-l02-s03
+hints:
+  - id: html-css-ch01-l02-e01-h01
+    level: 1
+    title: Treeで外側から見る
+    text: main、section、h2とpの順で外側から内側へたどります。
+    relatedSlideId: html-css-ch01-l02-s01
+  - id: html-css-ch01-l02-e01-h02
+    level: 2
+    title: 字下げをそろえる
+    text: sectionをmainより1段、h2とpをsectionより1段右へ下げます。
+    relatedSlideId: html-css-ch01-l02-s02
+  - id: html-css-ch01-l02-e01-h03
+    level: 3
+    title: 閉じる順番を確認する
+    text: p、section、mainの順に内側から終了Tagを閉じ、h2の直後にpを置きます。
+    relatedSlideId: html-css-ch01-l02-s03
+relatedSlideIds:
+  - html-css-ch01-l02-s01
+  - html-css-ch01-l02-s02
+  - html-css-ch01-l02-s03
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch01-l02-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch01-l02-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - html-css-ch01-l02-e01-r01
+      - html-css-ch01-l02-e01-r02
+      - html-css-ch01-l02-e01-r03
+      - html-css-ch01-l02-e01-r04

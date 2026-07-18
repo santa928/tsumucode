@@ -1,0 +1,96 @@
+id: html-css-ch03-l02-e01
+kind: standard
+workspaceId: html-css-ch03-l02-e01
+countsTowardStandardExerciseTotal: true
+title: Profile Avatarを情報として伝える
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch03-l02-e01-r01
+    label: 登録済みProfile Avatarを表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'img[data-tsumucode-asset-id="avatar-html-basics"]' }
+    assertion: { kind: count, operator: equals, expected: 1 }
+    feedback:
+      target: Profile画像のSource
+      expected: srcがasset:avatar-html-basicsのimgが1つ
+      nextAction: imgのsrcをasset:avatar-html-basicsにします。
+    hintId: html-css-ch03-l02-e01-h01
+    relatedSlideId: html-css-ch03-l02-s01
+  - id: html-css-ch03-l02-e01-r02
+    label: Profile Avatarへ代替Textを書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'img[data-tsumucode-asset-id="avatar-html-basics"]' }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: Profile Avatarのalt
+      expected: 画像の目的が分かる空でない代替Text
+      nextAction: altへ、誰または何を表すProfile Avatarかを短く書きます。
+    hintId: html-css-ch03-l02-e01-h03
+    relatedSlideId: html-css-ch03-l02-s02
+hints:
+  - id: html-css-ch03-l02-e01-h01
+    level: 1
+    title: imgの2つの属性を見る
+    text: 画像の場所を示すsrcと、言葉で情報を伝えるaltを区別します。
+    relatedSlideId: html-css-ch03-l02-s01
+  - id: html-css-ch03-l02-e01-h02
+    level: 2
+    title: この画像の役割を考える
+    text: Avatarは学習Profileを表す情報を持つため、装飾画像のような空altにはしません。
+    relatedSlideId: html-css-ch03-l02-s02
+  - id: html-css-ch03-l02-e01-h03
+    level: 3
+    title: altへ短い説明を書く
+    text: altのQuoteの間へ、Codeを学ぶCharacterのProfile Avatarだと分かる言葉を書きます。
+    relatedSlideId: html-css-ch03-l02-s02
+relatedSlideIds:
+  - html-css-ch03-l02-s01
+  - html-css-ch03-l02-s02
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets:
+  - id: avatar-html-basics
+    source: assets/profile-avatar.svg
+    mediaType: image
+    alt: Code Cardを持つTsumuCode学習プロフィールのAvatar
+    provenanceId: ch03-profile-avatar-exercise-original
+fixtures:
+  - id: html-css-ch03-l02-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch03-l02-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch03-l02-e01-r02]

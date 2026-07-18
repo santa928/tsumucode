@@ -1,0 +1,14 @@
+id: broken-l01
+kind: standard
+title: Broken Lesson
+goal: 欠落Sourceを検出する
+estimatedMinutes: 5
+prerequisiteLessonIds: []
+slideSources: [slides/s01.md]
+exerciseSources: [exercises/broken-e01/exercise.yaml]
+reflection: 欠落したSourceは公開前に直す
+glossaryRefs: []
+completion:
+  kind: standard
+  finalSlideId: broken-s01
+  requiredExerciseIds: [broken-e01]

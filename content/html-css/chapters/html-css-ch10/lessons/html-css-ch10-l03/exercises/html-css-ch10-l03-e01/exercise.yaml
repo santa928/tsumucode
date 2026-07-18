@@ -1,0 +1,132 @@
+id: html-css-ch10-l03-e01
+kind: standard
+workspaceId: html-css-ch10-l03-e01
+countsTowardStandardExerciseTotal: true
+title: Fluid Containerを中央へ収める
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch10-l03-e01-r01
+    label: Mobileで幅358pxにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390]
+    target: { kind: selector, selector: '[data-container]' }
+    assertion: { kind: rect, metric: width, operator: equals, expected: 358, tolerance: 1 }
+    feedback:
+      {
+        target: Mobile ContainerのWidth,
+        expected: 358px前後,
+        nextAction: widthをcalc(100% - 32px)にします。,
+      }
+    hintId: html-css-ch10-l03-e01-h01
+    relatedSlideId: html-css-ch10-l03-s01
+  - id: html-css-ch10-l03-e01-r02
+    label: Desktopで幅720pxへ止める
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-container]' }
+    assertion: { kind: rect, metric: width, operator: equals, expected: 720, tolerance: 1 }
+    feedback:
+      {
+        target: Desktop ContainerのWidth,
+        expected: 720px前後,
+        nextAction: max-widthを720pxにします。,
+      }
+    hintId: html-css-ch10-l03-e01-h02
+    relatedSlideId: html-css-ch10-l03-s02
+  - id: html-css-ch10-l03-e01-r03
+    label: Desktopでx 280pxへ中央寄せする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-container]' }
+    assertion: { kind: rect, metric: x, operator: equals, expected: 280, tolerance: 1 }
+    feedback:
+      {
+        target: Desktop Containerのx,
+        expected: 280px前後,
+        nextAction: margin-inline autoで残り幅を左右へ分けます。,
+      }
+    hintId: html-css-ch10-l03-e01-h03
+    relatedSlideId: html-css-ch10-l03-s02
+  - id: html-css-ch10-l03-e01-r04
+    label: 両Viewportで横Overflowを防ぐ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, desktop-1280]
+    target: { kind: selector, selector: '[data-container]' }
+    assertion: { kind: overflow-x, operator: equals, expected: false }
+    feedback:
+      {
+        target: ContainerのHorizontal Overflow,
+        expected: 両方false,
+        nextAction: 流動幅とmax-widthを組み合わせます。,
+      }
+    hintId: html-css-ch10-l03-e01-h03
+    relatedSlideId: html-css-ch10-l03-s02
+hints:
+  - {
+      id: html-css-ch10-l03-e01-h01,
+      level: 1,
+      title: 左右余白を残す,
+      text: 100%から32pxを引きます。,
+      relatedSlideId: html-css-ch10-l03-s01,
+    }
+  - {
+      id: html-css-ch10-l03-e01-h02,
+      level: 2,
+      title: 上限を作る,
+      text: max-widthを720pxにします。,
+      relatedSlideId: html-css-ch10-l03-s02,
+    }
+  - {
+      id: html-css-ch10-l03-e01-h03,
+      level: 3,
+      title: 中央へ置く,
+      text: margin-inline autoを指定します。,
+      relatedSlideId: html-css-ch10-l03-s02,
+    }
+relatedSlideIds: [html-css-ch10-l03-s01, html-css-ch10-l03-s02]
+previewViewports:
+  - { id: mobile-390, width: 390, height: 844 }
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch10-l03-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch10-l03-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch10-l03-e01-r03]

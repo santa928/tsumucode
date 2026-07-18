@@ -1,0 +1,17 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="240"
+  height="240"
+  viewBox="0 0 240 240"
+  role="img"
+  aria-labelledby="avatar-title avatar-description"
+>
+  <title id="avatar-title">TsumuCode学習プロフィールのAvatar</title>
+  <desc id="avatar-description">濃紺の髪とオレンジのCode Cardを持つ人物のイラスト</desc>
+  <rect width="240" height="240" rx="52" fill="#e5f1ef" />
+  <circle cx="120" cy="92" r="48" fill="#f3c8a7" />
+  <path d="M 72 92 C 72 36 168 30 170 92 C 151 74 113 68 72 92 Z" fill="#172a3a" />
+  <path d="M 54 220 C 58 158 88 136 120 136 C 152 136 182 158 186 220 Z" fill="#2d7c82" />
+  <rect x="90" y="156" width="96" height="58" rx="12" fill="#ef7d4f" transform="rotate(-6 138 185)" />
+  <path d="M 112 181 L 124 191 L 112 201 M 147 177 L 137 203" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

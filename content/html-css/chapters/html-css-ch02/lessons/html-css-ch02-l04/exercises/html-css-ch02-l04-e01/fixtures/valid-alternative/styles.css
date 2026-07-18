@@ -1,0 +1,9 @@
+body {
+  color: #1e2930;
+  font-family: sans-serif;
+}
+
+article {
+  max-width: 38rem;
+  margin: 3rem auto;
+}

@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  background: #f6f1e7;
+  color: #24323d;
+  font-family: system-ui, sans-serif;
+}
+
+main {
+  width: min(40rem, calc(100% - 3rem));
+  margin: 4rem auto;
+}
+
+p {
+  color: #24323d;
+}
+
+.accent {
+  color: #24323d;
+}

@@ -1,0 +1,8 @@
+id: fixture-chapter
+sequence: 0
+title: Course Release fixture
+goal: Chapter Package loaderを単独検証する
+estimatedMinutes: 5
+kind: standard
+lessonSources:
+  - lessons/fixture-l01/lesson.yaml

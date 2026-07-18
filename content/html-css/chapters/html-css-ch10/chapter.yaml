@@ -1,0 +1,12 @@
+id: html-css-ch10
+sequence: 10
+title: レスポンシブ設計
+goal: Mobile Firstで複数Viewportに適応し、Imageと主要ContainerのOverflowを防ぐ
+estimatedMinutes: 60
+kind: standard
+lessonSources:
+  - lessons/html-css-ch10-l01/lesson.yaml
+  - lessons/html-css-ch10-l02/lesson.yaml
+  - lessons/html-css-ch10-l03/lesson.yaml
+  - lessons/html-css-ch10-l04/lesson.yaml
+  - lessons/html-css-ch10-l05/lesson.yaml

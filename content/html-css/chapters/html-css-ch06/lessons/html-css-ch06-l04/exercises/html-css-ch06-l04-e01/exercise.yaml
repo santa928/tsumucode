@@ -1,0 +1,117 @@
+id: html-css-ch06-l04-e01
+kind: standard
+workspaceId: html-css-ch06-l04-e01
+countsTowardStandardExerciseTotal: true
+title: 2枚のCardへBase Styleを再利用する
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch06-l04-e01-r01
+    label: 2枚のCardを用意する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-card]' }
+    assertion:
+      kind: count
+      operator: equals
+      expected: 2
+    feedback:
+      target: data-cardを持つElement
+      expected: 2件
+      nextAction: 内容の異なるCardを2枚用意します。
+    hintId: html-css-ch06-l04-e01-h01
+    relatedSlideId: html-css-ch06-l04-s01
+  - id: html-css-ch06-l04-e01-r02
+    label: 両方のCardを白い背景にする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-card]' }
+    assertion:
+      kind: computed-style
+      property: background-color
+      operator: equals
+      expected: 'rgb(255, 255, 255)'
+    feedback:
+      target: 2枚のCardのComputed Background Color
+      expected: すべてrgb(255, 255, 255)
+      nextAction: 共通のBase Classへ白いbackground-colorを指定し、両方へ適用します。
+    hintId: html-css-ch06-l04-e01-h02
+    relatedSlideId: html-css-ch06-l04-s01
+  - id: html-css-ch06-l04-e01-r03
+    label: 両方のCardへ24pxの内部余白を付ける
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-card]' }
+    assertion:
+      kind: computed-style
+      property: padding-top
+      operator: equals
+      expected: 24
+      tolerance: 0.5
+    feedback:
+      target: 2枚のCardのComputed Padding Top
+      expected: すべて24px前後
+      nextAction: 共通のBase Classへpadding 24pxを置き、個別Ruleで打ち消していないか確認します。
+    hintId: html-css-ch06-l04-e01-h03
+    relatedSlideId: html-css-ch06-l04-s02
+hints:
+  - id: html-css-ch06-l04-e01-h01
+    level: 1
+    title: 共通するElementを見つける
+    text: data-cardを持つ2枚を同じ再利用単位として扱います。
+    relatedSlideId: html-css-ch06-l04-s01
+  - id: html-css-ch06-l04-e01-h02
+    level: 2
+    title: Base Styleへ共通色を置く
+    text: 同じClassへbackground-color whiteを1度だけ宣言します。
+    relatedSlideId: html-css-ch06-l04-s01
+  - id: html-css-ch06-l04-e01-h03
+    level: 3
+    title: 両方の実値を確認する
+    text: Base Classへpadding 24pxを置き、2枚のComputed Paddingを確認します。
+    relatedSlideId: html-css-ch06-l04-s02
+relatedSlideIds:
+  - html-css-ch06-l04-s01
+  - html-css-ch06-l04-s02
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch06-l04-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch06-l04-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch06-l04-e01-r03]

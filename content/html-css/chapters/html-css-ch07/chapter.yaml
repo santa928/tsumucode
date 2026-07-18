@@ -1,0 +1,8 @@
+id: html-css-ch07
+sequence: 7
+title: プロフィール部品を整える
+goal: Chapter 00から06までの概念を振り返り、読みやすく収まるProfile Cardへ統合する
+estimatedMinutes: 35
+kind: standard
+lessonSources:
+  - lessons/html-css-ch07-l01/lesson.yaml

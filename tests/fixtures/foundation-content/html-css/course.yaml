@@ -1,0 +1,97 @@
+schemaVersion: 1
+id: html-css
+title: HTML/CSS はじめの一歩
+description: 見出しを積みながら、HTMLがページへ意味を与える仕組みを学びます。
+audience: プログラミングを初めて学ぶ人
+estimatedMinutes: 15
+revision: 2026-07-10.1
+runnerId: html-css
+validatorId: html-css
+glossarySource: glossary.yaml
+supportedDevices:
+  exercise: desktop
+  study: [desktop, tablet, mobile]
+prerequisites: []
+publicationStatus: published
+expectedTotals:
+  chapters: 1
+  lessons: 1
+  conceptSlides: 1
+  standardExercises: 1
+  guidedProjectLessons: 0
+  capstoneLessons: 0
+  estimatedMinutes: 15
+provenanceManifestPath: provenance.yaml
+progressMigrations:
+  - fromRevision: 2026-06-01.1
+    toRevision: 2026-07-01.1
+    steps:
+      - action: map-to
+        entity: chapter
+        fromId: chapter-legacy-web-map
+        toId: chapter-heading-foundation
+      - action: map-to
+        entity: lesson
+        fromId: lesson-legacy-heading
+        toId: lesson-heading-foundation
+      - action: map-to
+        entity: slide
+        fromId: slide-legacy-html-role
+        toId: slide-html-foundation
+      - action: map-to
+        entity: exercise
+        fromId: exercise-legacy-heading
+        toId: exercise-heading-foundation
+      - action: map-to
+        entity: rule
+        fromId: rule-legacy-heading
+        toId: rule-heading-exists
+      - action: map-to
+        entity: hint
+        fromId: hint-legacy-heading
+        toId: hint-heading-1
+      - action: map-to
+        entity: workspace
+        fromId: workspace-legacy-heading
+        toId: workspace-heading-foundation
+      - action: intentionally-reset
+        entity: hint
+        id: hint-legacy-obsolete
+        reason: 旧教材で役目を終えたヒントのため
+  - fromRevision: 2026-07-01.1
+    toRevision: 2026-07-10.1
+    steps:
+      - action: map-to
+        entity: chapter
+        fromId: chapter-heading-foundation
+        toId: ch00-web-map
+      - action: map-to
+        entity: lesson
+        fromId: lesson-heading-foundation
+        toId: lesson-first-heading
+      - action: map-to
+        entity: slide
+        fromId: slide-html-foundation
+        toId: slide-html-role
+      - action: map-to
+        entity: exercise
+        fromId: exercise-heading-foundation
+        toId: exercise-first-heading
+      - action: map-to
+        entity: rule
+        fromId: rule-heading-exists
+        toId: rule-h1-exists
+      - action: map-to
+        entity: hint
+        fromId: hint-heading-1
+        toId: hint-h1-1
+      - action: map-to
+        entity: workspace
+        fromId: workspace-heading-foundation
+        toId: workspace-first-heading
+phases:
+  - id: first-piece
+    title: 最初のピース
+    description: Webページの意味と構造を、最初の見出しから組み立てます。
+    chapterSources:
+      - chapters/ch00-web-map/chapter.yaml

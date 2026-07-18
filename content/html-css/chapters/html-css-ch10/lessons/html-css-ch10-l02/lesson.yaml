@@ -1,0 +1,18 @@
+id: html-css-ch10-l02
+kind: standard
+title: 内容からBreakpointを決める
+goal: 390px、768px、1280pxで内容が崩れないMedia Queryを設計できる
+estimatedMinutes: 12
+prerequisiteLessonIds: [html-css-ch10-l01]
+slideSources:
+  - slides/s01-content-breakpoint.md
+  - slides/s02-media-query.md
+exerciseSources:
+  - exercises/html-css-ch10-l02-e01/exercise.yaml
+reflection: 端末名ではなく内容が崩れる幅をBreakpointにする
+glossaryRefs: [breakpoint, media-query, responsive-layout]
+nextLessonId: html-css-ch10-l03
+completion:
+  kind: standard
+  finalSlideId: html-css-ch10-l02-s02
+  requiredExerciseIds: [html-css-ch10-l02-e01]

@@ -1,0 +1,40 @@
+id: html-css-ch12-l01
+kind: guided-project
+title: Profile Siteの設計図を作る
+goal: Audience、掲載内容、Semantic Outlineを決める
+estimatedMinutes: 16
+prerequisiteLessonIds: [html-css-ch11-l04]
+slideSources:
+  - slides/g01-project-step.md
+exerciseSources:
+  - exercises/html-css-ch12-l01-e01/exercise.yaml
+reflection: 書き始める前に誰へ何を伝えるかを決めるとElementを選びやすい
+glossaryRefs: [audience, semantic-outline]
+nextLessonId: html-css-ch12-l02
+project:
+  id: html-css-profile-project
+  briefSource: brief.md
+  guideSources:
+    - guide-01-content-inventory.md
+    - guide-02-semantic-outline.md
+  checklist:
+    - id: profile-plan-audience
+      label: 読み手を1文で書いた
+      required: true
+      ruleIds:
+        - html-css-ch12-l01-e01-r01
+    - id: profile-plan-outline
+      label: header、main、footerを含むOutlineを作った
+      required: true
+      ruleIds:
+        - html-css-ch12-l01-e01-r02
+        - html-css-ch12-l01-e01-r03
+        - html-css-ch12-l01-e01-r04
+        - html-css-ch12-l01-e01-r05
+completion:
+  kind: guided-project
+  requiredChecklistItemIds:
+    - profile-plan-audience
+    - profile-plan-outline
+  requiredExerciseIds:
+    - html-css-ch12-l01-e01

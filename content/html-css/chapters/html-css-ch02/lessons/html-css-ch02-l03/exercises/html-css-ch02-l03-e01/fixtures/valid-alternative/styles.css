@@ -1,0 +1,11 @@
+body {
+  color: #1d2830;
+  font-family: sans-serif;
+}
+
+.intro,
+#content,
+.note {
+  max-width: 40rem;
+  margin: 2rem auto;
+}

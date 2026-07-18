@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="360" viewBox="0 0 720 360" role="img" aria-labelledby="title description">
+  <title id="title">HTMLの親子関係</title>
+  <desc id="description">mainからsectionへ枝が伸び、sectionからh2とpへ枝が伸びるTree図</desc>
+  <rect width="720" height="360" rx="28" fill="#fffaf0" />
+  <g fill="none" stroke="#5d6f68" stroke-width="5" stroke-linecap="round">
+    <path d="M360 102v46" />
+    <path d="M360 224v34H230v28" />
+    <path d="M360 258h130v28" />
+  </g>
+  <g font-family="ui-monospace, monospace" font-size="24" font-weight="700" text-anchor="middle">
+    <rect x="270" y="36" width="180" height="66" rx="18" fill="#1f5c49" />
+    <text x="360" y="77" fill="#ffffff">main</text>
+    <rect x="270" y="148" width="180" height="76" rx="18" fill="#e5b94f" />
+    <text x="360" y="195" fill="#19352d">section</text>
+    <rect x="150" y="286" width="160" height="58" rx="16" fill="#dcebe5" />
+    <text x="230" y="323" fill="#19352d">h2</text>
+    <rect x="410" y="286" width="160" height="58" rx="16" fill="#dcebe5" />
+    <text x="490" y="323" fill="#19352d">p</text>
+  </g>
+</svg>

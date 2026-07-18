@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
+  <title>TsumuCodeの学習プロフィールAvatar</title>
+  <desc>橙色の丸いCharacterが濃紺のCode Cardを持つ独自Illustration</desc>
+  <defs>
+    <clipPath id="a"><circle cx="120" cy="120" r="108" /></clipPath>
+  </defs>
+  <g clip-path="url(#a)">
+    <path fill="#f5efe3" d="M0 0h240v240H0z" />
+    <circle cx="120" cy="105" r="72" fill="#ef7d4f" />
+    <path fill="#f6a46e" d="M72 102c7-36 26-55 48-55s41 19 48 55" />
+    <circle cx="96" cy="111" r="6" fill="#172a3a" />
+    <circle cx="144" cy="111" r="6" fill="#172a3a" />
+    <path fill="none" stroke="#172a3a" stroke-linecap="round" stroke-width="6" d="M102 137c12 9 24 9 36 0" />
+    <rect width="112" height="58" x="64" y="165" fill="#172a3a" rx="14" />
+    <path fill="none" stroke="#f5efe3" stroke-linecap="round" stroke-linejoin="round" stroke-width="5" d="m102 184-13 10 13 10m36-20 13 10-13 10" />
+    <path fill="none" stroke="#ef7d4f" stroke-linecap="round" stroke-width="5" d="m127 180-14 29" />
+  </g>
+  <circle cx="120" cy="120" r="108" fill="none" stroke="#172a3a" stroke-width="8" />
+</svg>

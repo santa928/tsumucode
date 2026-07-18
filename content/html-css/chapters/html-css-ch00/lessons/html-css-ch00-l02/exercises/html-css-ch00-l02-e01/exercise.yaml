@@ -1,0 +1,111 @@
+id: html-css-ch00-l02-e01
+kind: standard
+workspaceId: html-css-ch00-l02-e01
+countsTowardStandardExerciseTotal: true
+title: Profile名とAccent Colorを更新する
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch00-l02-e01-r01
+    label: Profile名が空でない
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: h1 }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: Profileのh1
+      expected: 空でない名前が表示される
+      nextAction: index.htmlのh1開始Tagと終了Tagの間へ名前を書きます。
+    hintId: html-css-ch00-l02-e01-h01
+    relatedSlideId: html-css-ch00-l02-s02
+  - id: html-css-ch00-l02-e01-r02
+    label: Accent Colorの変数を指定する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: ':root' }
+    assertion:
+      kind: computed-style
+      property: --accent
+      operator: equals
+      expected: '#0f766e'
+    feedback:
+      target: CSSのAccent Color
+      expected: --accentが#0f766e
+      nextAction: styles.cssの:root Ruleで--accentの値を書き換えます。
+    hintId: html-css-ch00-l02-e01-h02
+    relatedSlideId: html-css-ch00-l02-s01
+  - id: html-css-ch00-l02-e01-r03
+    label: Accent ColorがButtonへ反映される
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'a[href="#note"]' }
+    assertion:
+      kind: computed-style
+      property: background-color
+      operator: equals
+      expected: rgb(15, 118, 110)
+    feedback:
+      target: 学習ノートLinkの背景
+      expected: Accent Colorの青緑色
+      nextAction: Linkのbackgroundへvar(--accent)が使われているか確認します。
+    hintId: html-css-ch00-l02-e01-h03
+    relatedSlideId: html-css-ch00-l02-s02
+hints:
+  - id: html-css-ch00-l02-e01-h01
+    level: 1
+    title: 変わる場所を観察する
+    text: PreviewのProfile名と色付きLinkを見て、変更したい2箇所を確認します。
+    relatedSlideId: html-css-ch00-l02-s02
+  - id: html-css-ch00-l02-e01-h02
+    level: 2
+    title: HTMLとCSSを切り替える
+    text: 名前はindex.html、Accent Colorはstyles.cssにあることをFile Tabで確認します。
+    relatedSlideId: html-css-ch00-l02-s02
+  - id: html-css-ch00-l02-e01-h03
+    level: 3
+    title: 記号の組を確認する
+    text: CSSはproperty、colon、value、semicolonの順です。波かっこの開きと閉じも対にします。
+    relatedSlideId: html-css-ch00-l02-s01
+relatedSlideIds: [html-css-ch00-l02-s01, html-css-ch00-l02-s02]
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: html-css-ch00-l02-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch00-l02-e01-code-error
+    expectedStatus: code-error
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/code-error/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/code-error/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

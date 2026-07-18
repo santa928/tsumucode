@@ -1,0 +1,124 @@
+id: html-css-ch08-l04-e01
+kind: standard
+workspaceId: html-css-ch08-l04-e01
+countsTowardStandardExerciseTotal: true
+title: 3枚ずつ折り返すCard Gridを作る
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch08-l04-e01-r01
+    label: Card ContainerをFlexにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [tablet-768]
+    target: { kind: selector, selector: '[data-card-grid]' }
+    assertion: { kind: computed-style, property: display, operator: equals, expected: flex }
+    feedback:
+      target: Card ContainerのComputed Display
+      expected: flex
+      nextAction: data-card-gridへdisplay flexを指定します。
+    hintId: html-css-ch08-l04-e01-h01
+    relatedSlideId: html-css-ch08-l04-s01
+  - id: html-css-ch08-l04-e01-r02
+    label: Cardを次のFlex Lineへ折り返す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [tablet-768]
+    target: { kind: selector, selector: '[data-card-grid]' }
+    assertion: { kind: computed-style, property: flex-wrap, operator: equals, expected: wrap }
+    feedback:
+      target: Card ContainerのComputed Flex Wrap
+      expected: wrap
+      nextAction: flex-wrapをwrapへ設定します。
+    hintId: html-css-ch08-l04-e01-h01
+    relatedSlideId: html-css-ch08-l04-s01
+  - id: html-css-ch08-l04-e01-r03
+    label: 3枚目を1行目のy 24pxへ置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [tablet-768]
+    target: { kind: selector, selector: '[data-third]' }
+    assertion:
+      kind: rect
+      metric: y
+      operator: equals
+      expected: 24
+      tolerance: 1
+    feedback:
+      target: 3枚目のCardの実測y
+      expected: 24px前後
+      nextAction: Basisを180pxにし、180 × 3 + 16 × 2が600px以内へ収まるようにします。
+    hintId: html-css-ch08-l04-e01-h02
+    relatedSlideId: html-css-ch08-l04-s02
+  - id: html-css-ch08-l04-e01-r04
+    label: Card Containerの横Overflowを防ぐ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [tablet-768]
+    target: { kind: selector, selector: '[data-card-grid]' }
+    assertion: { kind: overflow-x, operator: equals, expected: false }
+    feedback:
+      target: Card ContainerのHorizontal Overflow
+      expected: 'false'
+      nextAction: ItemのBasisとGapの合計をContainer幅以内へ収めます。
+    hintId: html-css-ch08-l04-e01-h03
+    relatedSlideId: html-css-ch08-l04-s02
+hints:
+  - id: html-css-ch08-l04-e01-h01
+    level: 1
+    title: 折り返せるContainerを作る
+    text: display flexとflex-wrap wrapをdata-card-gridへ指定します。
+    relatedSlideId: html-css-ch08-l04-s01
+  - id: html-css-ch08-l04-e01-h02
+    level: 2
+    title: 3枚分を計算する
+    text: Basis 180pxを3枚とgap 16pxを2つで572pxです。
+    relatedSlideId: html-css-ch08-l04-s02
+  - id: html-css-ch08-l04-e01-h03
+    level: 3
+    title: 実測位置とOverflowを見る
+    text: 3枚目のyが24px、ContainerのHorizontal Overflowがfalseか確認します。
+    relatedSlideId: html-css-ch08-l04-s02
+relatedSlideIds:
+  - html-css-ch08-l04-s01
+  - html-css-ch08-l04-s02
+previewViewports:
+  - { id: tablet-768, width: 768, height: 640 }
+assets: []
+fixtures:
+  - id: html-css-ch08-l04-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch08-l04-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch08-l04-e01-r03]

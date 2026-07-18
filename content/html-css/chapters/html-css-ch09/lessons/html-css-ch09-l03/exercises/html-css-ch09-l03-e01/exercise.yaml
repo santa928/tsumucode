@@ -1,0 +1,130 @@
+id: html-css-ch09-l03-e01
+kind: standard
+workspaceId: html-css-ch09-l03-e01
+countsTowardStandardExerciseTotal: true
+title: auto-fitでResponsive Galleryを作る
+instructionsSource: instructions.md
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: html-css-ch09-l03-e01-r01
+    label: GalleryをGridにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280, mobile-390]
+    target: { kind: selector, selector: '[data-gallery]' }
+    assertion: { kind: computed-style, property: display, operator: equals, expected: grid }
+    feedback:
+      target: GalleryのComputed Display
+      expected: すべてのViewportでgrid
+      nextAction: data-galleryへdisplay gridを指定します。
+    hintId: html-css-ch09-l03-e01-h01
+    relatedSlideId: html-css-ch09-l03-s01
+  - id: html-css-ch09-l03-e01-r02
+    label: Desktopで3枚目を1行目へ置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-third]' }
+    assertion:
+      kind: rect
+      metric: y
+      operator: equals
+      expected: 16
+      tolerance: 1
+    feedback:
+      target: Desktopの3枚目の実測y
+      expected: 16px前後
+      nextAction: 720px幅で3枚目が1行目へ収まる最小Track幅にします。
+    hintId: html-css-ch09-l03-e01-h02
+    relatedSlideId: html-css-ch09-l03-s02
+  - id: html-css-ch09-l03-e01-r03
+    label: Mobileで3枚目を2行目へ置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390]
+    target: { kind: selector, selector: '[data-third]' }
+    assertion:
+      kind: rect
+      metric: y
+      operator: equals
+      expected: 132
+      tolerance: 1
+    feedback:
+      target: Mobileの3枚目の実測y
+      expected: 132px前後
+      nextAction: minmaxの最小値を160pxにし、利用可能幅358pxへ2列を収めます。
+    hintId: html-css-ch09-l03-e01-h02
+    relatedSlideId: html-css-ch09-l03-s02
+  - id: html-css-ch09-l03-e01-r04
+    label: 両Viewportで横Overflowを防ぐ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280, mobile-390]
+    target: { kind: selector, selector: '[data-gallery]' }
+    assertion: { kind: overflow-x, operator: equals, expected: false }
+    feedback:
+      target: GalleryのHorizontal Overflow
+      expected: すべてのViewportでfalse
+      nextAction: width 100%とminmaxを使い、固定Column合計で越えないようにします。
+    hintId: html-css-ch09-l03-e01-h03
+    relatedSlideId: html-css-ch09-l03-s02
+hints:
+  - id: html-css-ch09-l03-e01-h01
+    level: 1
+    title: ResponsiveなGridを始める
+    text: Galleryへdisplay gridを指定します。
+    relatedSlideId: html-css-ch09-l03-s01
+  - id: html-css-ch09-l03-e01-h02
+    level: 2
+    title: Trackの最小幅を決める
+    text: repeat(auto-fit, minmax(160px, 1fr))を使います。
+    relatedSlideId: html-css-ch09-l03-s02
+  - id: html-css-ch09-l03-e01-h03
+    level: 3
+    title: 2つのViewportを比べる
+    text: Desktopの3枚目はy 16px、Mobileではy 132px、Overflowは両方falseです。
+    relatedSlideId: html-css-ch09-l03-s02
+relatedSlideIds:
+  - html-css-ch09-l03-s01
+  - html-css-ch09-l03-s02
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+  - { id: mobile-390, width: 390, height: 844 }
+assets: []
+fixtures:
+  - id: html-css-ch09-l03-e01-valid-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch09-l03-e01-incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch09-l03-e01-r03]

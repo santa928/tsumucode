@@ -1,0 +1,14 @@
+node_modules
+dist
+coverage
+public/generated/content
+playwright-report
+test-results
+*.tsbuildinfo
+.git
+.superpowers
+progress.md
+.env
+.env.*
+!.env.sample
+.npmrc

@@ -1,0 +1,57 @@
+id: html-css-ch12-l05
+kind: guided-project
+title: アクセシビリティとPolishを完了する
+goal: Heading、Keyboard、Contrast、alt、Reduced Motion、4 Viewportを最終確認する
+estimatedMinutes: 16
+prerequisiteLessonIds: [html-css-ch12-l04]
+slideSources:
+  - slides/g01-project-step.md
+exerciseSources:
+  - exercises/html-css-ch12-l05-e01/exercise.yaml
+reflection: 完成は見た目だけでなく操作、理解、利用者設定、複数幅の観測で判断する
+glossaryRefs: [heading-hierarchy, keyboard-navigation, contrast-ratio, prefers-reduced-motion]
+nextLessonId: html-css-ch13-l01
+project:
+  id: html-css-profile-project
+  briefSource: brief.md
+  guideSources:
+    - guide-01-accessibility-audit.md
+    - guide-02-motion-viewports.md
+  checklist:
+    - id: profile-heading-structure
+      label: h1とSection見出しを整えた
+      required: true
+      ruleIds:
+        - html-css-ch12-l05-e01-r01
+        - html-css-ch12-l05-e01-r02
+    - id: profile-keyboard
+      label: 主要ActionをKeyboard操作できる
+      required: true
+      ruleIds:
+        - html-css-ch12-l05-e01-r03
+    - id: profile-contrast-alt
+      label: ContrastとAvatar altを確認した
+      required: true
+      ruleIds:
+        - html-css-ch12-l05-e01-r04
+        - html-css-ch12-l05-e01-r05
+    - id: profile-reduced-motion
+      label: Reduced Motionへ対応した
+      required: true
+      ruleIds:
+        - html-css-ch12-l05-e01-r06
+    - id: profile-four-viewports
+      label: 4 Viewportで横Overflowがない
+      required: true
+      ruleIds:
+        - html-css-ch12-l05-e01-r07
+completion:
+  kind: guided-project
+  requiredChecklistItemIds:
+    - profile-heading-structure
+    - profile-keyboard
+    - profile-contrast-alt
+    - profile-reduced-motion
+    - profile-four-viewports
+  requiredExerciseIds:
+    - html-css-ch12-l05-e01

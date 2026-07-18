@@ -1,0 +1,42 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  padding: 20px;
+  color: #ffffff;
+  background: #24323d;
+  font-family: system-ui, sans-serif;
+}
+[data-page] {
+  width: 100%;
+  max-width: 38rem;
+  margin: auto;
+  padding: 28px;
+  overflow-wrap: break-word;
+  border-radius: 18px;
+  background: #155e63;
+}
+.motion-card {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 12px;
+  color: #172a3a;
+  background: #fffdf8;
+  animation: gentle-pulse 600ms linear infinite;
+}
+.reduce-motion .motion-card {
+  animation-duration: 0.001s;
+  animation-iteration-count: 1;
+}
+@keyframes gentle-pulse {
+  to {
+    opacity: 0.92;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .motion-card {
+    animation-duration: 0.001s;
+    animation-iteration-count: 1;
+  }
+}

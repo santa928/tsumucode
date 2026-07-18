@@ -1,0 +1,25 @@
+body {
+  margin: 0;
+  padding: 32px;
+  background: #e9efed;
+  font-family: system-ui, sans-serif;
+}
+[data-profile-shell] {
+  width: 320px;
+}
+[data-profile-card] {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 24px;
+  color: #24323d;
+  background-color: #fff;
+  border: 1px solid #c8d4d2;
+}
+img {
+  width: 96px;
+  height: 96px;
+}
+[data-bio] {
+  font-size: 16px;
+  line-height: 1.5;
+}

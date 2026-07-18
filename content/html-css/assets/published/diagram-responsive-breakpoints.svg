@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="520" viewBox="0 0 960 520">
+  <title>Responsive Breakpointの3つのViewport</title>
+  <desc>390px、768px、1280pxで同じCardが1列、2列、3列へ変化する図</desc>
+  <rect width="960" height="520" rx="36" fill="#f5efe3" />
+  <text x="64" y="72" fill="#172a3a" font-family="system-ui, sans-serif" font-size="30" font-weight="700">Content-driven breakpoints</text>
+  <g transform="translate(62 112)">
+    <rect width="214" height="320" rx="24" fill="#fff" stroke="#172a3a" stroke-width="7" />
+    <text x="107" y="42" fill="#172a3a" font-family="system-ui, sans-serif" font-size="22" font-weight="700" text-anchor="middle">390px</text>
+    <g fill="#e3efed" stroke="#2d7c82" stroke-width="3">
+      <rect x="24" y="70" width="166" height="56" rx="12" />
+      <rect x="24" y="142" width="166" height="56" rx="12" />
+      <rect x="24" y="214" width="166" height="56" rx="12" />
+    </g>
+  </g>
+  <g transform="translate(332 112)">
+    <rect width="270" height="320" rx="24" fill="#fff" stroke="#172a3a" stroke-width="7" />
+    <text x="135" y="42" fill="#172a3a" font-family="system-ui, sans-serif" font-size="22" font-weight="700" text-anchor="middle">768px</text>
+    <g fill="#e3efed" stroke="#2d7c82" stroke-width="3">
+      <rect x="24" y="70" width="103" height="86" rx="12" />
+      <rect x="143" y="70" width="103" height="86" rx="12" />
+      <rect x="24" y="172" width="103" height="86" rx="12" />
+    </g>
+  </g>
+  <g transform="translate(658 112)">
+    <rect width="240" height="320" rx="24" fill="#fff" stroke="#172a3a" stroke-width="7" />
+    <text x="120" y="42" fill="#172a3a" font-family="system-ui, sans-serif" font-size="22" font-weight="700" text-anchor="middle">1280px</text>
+    <g fill="#fff4ea" stroke="#ef7d4f" stroke-width="3">
+      <rect x="18" y="82" width="60" height="110" rx="12" />
+      <rect x="90" y="82" width="60" height="110" rx="12" />
+      <rect x="162" y="82" width="60" height="110" rx="12" />
+    </g>
+  </g>
+  <path d="M278 272h46M604 272h46" stroke="#ef7d4f" stroke-linecap="round" stroke-width="10" />
+</svg>

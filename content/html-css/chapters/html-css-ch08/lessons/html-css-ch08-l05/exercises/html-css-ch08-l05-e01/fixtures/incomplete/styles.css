@@ -1,0 +1,22 @@
+body {
+  margin: 0;
+  padding: 32px;
+  background: #f5efe4;
+  font-family: system-ui, sans-serif;
+}
+[data-profile-nav] {
+  display: flex;
+  gap: 12px;
+}
+[data-card-row] {
+  display: flex;
+  width: 400px;
+  margin-top: 24px;
+  gap: 8px;
+}
+[data-card] {
+  box-sizing: border-box;
+  width: 160px;
+  padding: 20px;
+  background: #fff;
+}

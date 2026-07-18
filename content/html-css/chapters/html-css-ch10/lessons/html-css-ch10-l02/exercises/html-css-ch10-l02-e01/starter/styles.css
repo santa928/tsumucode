@@ -1,0 +1,7 @@
+body {
+  margin: 0;
+  padding: 16px;
+}
+[data-layout] article {
+  height: 100px;
+}

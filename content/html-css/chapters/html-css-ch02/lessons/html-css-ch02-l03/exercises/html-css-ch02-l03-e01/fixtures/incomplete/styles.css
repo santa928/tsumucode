@@ -1,0 +1,11 @@
+body {
+  color: #24323d;
+  font-family: system-ui, sans-serif;
+}
+
+.page-header,
+.page-main,
+.page-footer {
+  max-width: 42rem;
+  margin: 2rem auto;
+}

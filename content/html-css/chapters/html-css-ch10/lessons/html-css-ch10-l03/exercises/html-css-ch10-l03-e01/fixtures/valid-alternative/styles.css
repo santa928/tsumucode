@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+  background: #f5efe4;
+}
+[data-container] {
+  box-sizing: border-box;
+  width: calc(100% - 32px);
+  max-width: 720px;
+  margin-inline: auto;
+  padding: 24px;
+  background: #fff;
+}

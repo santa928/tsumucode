@@ -1,0 +1,11 @@
+id: html-css-ch11
+sequence: 11
+title: アクセシビリティと仕上げ
+goal: Keyboard、Accessible Name、Contrast、Reduced Motionを確認しHTML/CSS作品を仕上げる
+estimatedMinutes: 40
+kind: standard
+lessonSources:
+  - lessons/html-css-ch11-l01/lesson.yaml
+  - lessons/html-css-ch11-l02/lesson.yaml
+  - lessons/html-css-ch11-l03/lesson.yaml
+  - lessons/html-css-ch11-l04/lesson.yaml

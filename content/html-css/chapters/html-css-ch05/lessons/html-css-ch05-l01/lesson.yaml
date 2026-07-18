@@ -1,0 +1,18 @@
+id: html-css-ch05-l01
+kind: standard
+title: Boxの4層を読む
+goal: content、padding、border、marginを区別しComputed Styleで確認できる
+estimatedMinutes: 10
+prerequisiteLessonIds: [html-css-ch04-l04]
+slideSources:
+  - slides/s01-box-layers.md
+  - slides/s02-inspect-box.md
+exerciseSources:
+  - exercises/html-css-ch05-l01-e01/exercise.yaml
+reflection: 4層の値を外からではなくContentを基準に読み分ける
+glossaryRefs: [box-model, content-box, padding, border, margin]
+nextLessonId: html-css-ch05-l02
+completion:
+  kind: standard
+  finalSlideId: html-css-ch05-l01-s02
+  requiredExerciseIds: [html-css-ch05-l01-e01]

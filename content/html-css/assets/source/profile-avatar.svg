@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
+  <title>Profile avatar source artwork</title>
+  <desc>Paper-colored circular character holding a small navy code card</desc>
+  <defs>
+    <clipPath id="avatar-circle">
+      <circle cx="120" cy="120" r="108" />
+    </clipPath>
+  </defs>
+  <g clip-path="url(#avatar-circle)">
+    <rect width="240" height="240" fill="#f5efe3" />
+    <circle cx="120" cy="105" r="72" fill="#ef7d4f" />
+    <path d="M72 102c7-36 26-55 48-55s41 19 48 55" fill="#f6a46e" />
+    <circle cx="96" cy="111" r="6" fill="#172a3a" />
+    <circle cx="144" cy="111" r="6" fill="#172a3a" />
+    <path d="M102 137c12 9 24 9 36 0" fill="none" stroke="#172a3a" stroke-linecap="round" stroke-width="6" />
+    <rect x="64" y="165" width="112" height="58" rx="14" fill="#172a3a" />
+    <path d="m102 184-13 10 13 10m36-20 13 10-13 10" fill="none" stroke="#f5efe3" stroke-linecap="round" stroke-linejoin="round" stroke-width="5" />
+    <path d="m127 180-14 29" fill="none" stroke="#ef7d4f" stroke-linecap="round" stroke-width="5" />
+  </g>
+  <circle cx="120" cy="120" r="108" fill="none" stroke="#172a3a" stroke-width="8" />
+</svg>

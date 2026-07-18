@@ -1,0 +1,10 @@
+body {
+  margin: 24px;
+  background: #e9f0ef;
+  font-family: system-ui, sans-serif;
+}
+[data-message] {
+  padding: 1.5rem;
+  color: rgb(33 49 58);
+  background-color: hsl(0deg 0% 100%);
+}
