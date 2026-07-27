@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" aria-labelledby="title desc">
+  <title id="title">横Overflowと安全なSizing</title>
+  <desc id="desc">320pxのFrameからはみ出す360px Cardと、100%のborder-boxで収まるCardを比較する</desc>
+  <defs>
+    <clipPath id="frame-clip"><rect x="44" y="96" width="286" height="164" rx="16" /></clipPath>
+  </defs>
+  <rect width="720" height="400" rx="28" fill="#f5efe4" />
+  <g font-family="system-ui, sans-serif">
+    <text x="187" y="59" text-anchor="middle" fill="#24323d" font-size="21" font-weight="750">はみ出す</text>
+    <text x="533" y="59" text-anchor="middle" fill="#24323d" font-size="21" font-weight="750">安全に収まる</text>
+    <rect x="44" y="96" width="286" height="164" rx="16" fill="#fffdf8" stroke="#b7893d" stroke-width="3" />
+    <g clip-path="url(#frame-clip)">
+      <rect x="70" y="126" width="326" height="104" rx="12" fill="#ead9bc" stroke="#bf5b42" stroke-width="4" />
+      <text x="204" y="184" text-anchor="middle" fill="#8f3f2d" font-size="18" font-weight="750">width: 360px</text>
+    </g>
+    <path d="M330 170h52" stroke="#bf5b42" stroke-width="4" stroke-linecap="round" />
+    <path d="m382 170-12-8m12 8-12 8" stroke="#bf5b42" stroke-width="4" fill="none" />
+    <rect x="390" y="96" width="286" height="164" rx="16" fill="#fffdf8" stroke="#2d5d62" stroke-width="3" />
+    <rect x="416" y="126" width="234" height="104" rx="12" fill="#c9ded9" stroke="#2d5d62" stroke-width="3" />
+    <text x="533" y="173" text-anchor="middle" fill="#23484c" font-size="18" font-weight="750">width: 100%</text>
+    <text x="533" y="198" text-anchor="middle" fill="#52616a" font-size="15">border-box</text>
+    <text x="187" y="299" text-anchor="middle" fill="#8f3f2d" font-size="17" font-weight="700">overflow-x: true</text>
+    <text x="533" y="299" text-anchor="middle" fill="#23484c" font-size="17" font-weight="700">overflow-x: false</text>
+    <rect x="172" y="329" width="376" height="46" rx="12" fill="#ead9bc" />
+    <text x="360" y="358" text-anchor="middle" fill="#24323d" font-size="16" font-weight="700">親320px = ChildのBorder外端320px</text>
+  </g>
+</svg>

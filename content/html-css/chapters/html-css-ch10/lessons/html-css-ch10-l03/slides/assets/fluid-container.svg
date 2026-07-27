@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <title>流動幅とmax-widthのContainer</title>
+  <desc>390pxでは左右16pxを残して幅358pxになり、1280pxでは720pxで止まり左右280pxになる図</desc>
+  <rect width="960" height="540" rx="36" fill="#f5efe3" />
+  <text x="60" y="68" fill="#172a3a" font-family="system-ui, sans-serif" font-size="30" font-weight="700">縮めるwidthと、止めるmax-width</text>
+  <g font-family="system-ui, sans-serif">
+    <text x="60" y="124" fill="#172a3a" font-size="22" font-weight="700">Mobile · 390px</text>
+    <rect x="60" y="146" width="390" height="132" rx="22" fill="#ffffff" stroke="#172a3a" stroke-width="6" />
+    <rect x="76" y="166" width="358" height="92" rx="15" fill="#dcefed" stroke="#2d7c82" stroke-width="4" />
+    <text x="255" y="214" fill="#172a3a" font-size="24" font-weight="700" text-anchor="middle">358px</text>
+    <text x="255" y="244" fill="#2d7c82" font-size="18" text-anchor="middle">390 − 32</text>
+    <g fill="#b84f2b" font-size="17" font-weight="700" text-anchor="middle">
+      <text x="68" y="304">16</text><text x="442" y="304">16</text>
+    </g>
+
+    <text x="60" y="364" fill="#172a3a" font-size="22" font-weight="700">Desktop · 1280px</text>
+    <rect x="60" y="386" width="840" height="108" rx="22" fill="#ffffff" stroke="#172a3a" stroke-width="6" />
+    <rect x="244" y="404" width="472" height="72" rx="14" fill="#fff3dd" stroke="#ef7d4f" stroke-width="4" />
+    <text x="480" y="447" fill="#172a3a" font-size="24" font-weight="700" text-anchor="middle">max-width: 720px</text>
+    <g fill="#2d7c82" font-size="18" font-weight="700" text-anchor="middle">
+      <text x="150" y="447">280px</text><text x="810" y="447">280px</text>
+    </g>
+  </g>
+</svg>

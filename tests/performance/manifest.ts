@@ -39,7 +39,10 @@ const PerformanceManifestSchema = z.object({
     interactionMaxMs: PositiveNumber,
   }),
   bundle: z.object({
+    baselineCommit: z.string().regex(/^[0-9a-f]{40}$/u),
+    baselineEditorIncrementalJavaScriptGzipBytes: PositiveInteger,
     homeInitialJavaScriptGzipMaxBytes: PositiveInteger,
+    editorIncrementalJavaScriptGzipMaxBytes: PositiveInteger,
     editorLoadedOnHome: z.literal(false),
   }),
   content: z.object({
@@ -52,6 +55,17 @@ const PerformanceManifestSchema = z.object({
     authoringFieldsForbidden: z.array(z.string().min(1)).min(1),
   }),
   draftPersistenceMaxMs: PositiveNumber,
+  starterReset: z.object({
+    drawerOpenMaxMs: PositiveNumber,
+    previewVisibleMaxMs: PositiveNumber,
+    addedJavaScriptGzipMaxBytes: PositiveInteger,
+  }),
+  slideLibrary: z.object({
+    baselineCommit: z.string().regex(/^[0-9a-f]{40}$/u),
+    baselineHomeInitialJavaScriptGzipBytes: PositiveInteger,
+    addedHomeInitialJavaScriptGzipMaxBytes: PositiveInteger,
+    interactionMaxMs: PositiveNumber,
+  }),
 });
 
 export type PerformanceManifest = z.infer<typeof PerformanceManifestSchema>;

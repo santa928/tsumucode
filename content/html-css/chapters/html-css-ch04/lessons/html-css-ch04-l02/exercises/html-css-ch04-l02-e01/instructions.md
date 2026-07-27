@@ -1,10 +1,10 @@
 ## Stylesheet接続とDeclarationを直す
 
-CardのStyleが届かない原因を、HTMLとCSSの両方から順に直します。
+CardのStyleが届かない原因をHTMLで直し、背景色のValueをCSSで直します。
 
-1. headのlinkをhref="styles.css"へ変更します。
-2. styles.cssのbackground-colorを#ffffffへ変更します。
-3. 波括弧とSemicolonを確認します。
-4. Diagnosticが消えた後、Computed Colorを判定します。
+1. headのlinkで`href="theme.css"`を`href="styles.css"`へ変更します。
+2. `.card`の`background-color`を`#fffaf0`から`#ffffff`へ変更します。
+3. 完成済みの`color: #24323d;`は残します。
+4. Previewで白背景と濃紺文字を確認し、判定を実行します。
 
-Parser Diagnosticと、構文は正しいがValueが違う未達を区別して確認しましょう。
+変更するのはhrefと背景色Valueの2か所です。Code Errorが出たらColon、Semicolon、波括弧を確認しましょう。

@@ -18,14 +18,14 @@ beforeAll(async () => {
 }, 60_000);
 
 describe('独自教材本文の完成度', () => {
-  it('95 Concept Slideが中心概念1つ、十分な説明、具体例、次操作を持つ', () => {
+  it('全Concept Slideが中心概念1つ、十分な説明、具体例、次操作を持つ', () => {
     const conceptKinds = new Set(['concept', 'comparison', 'diagram', 'code']);
     const slides = course.phases
       .flatMap(({ chapters }) => chapters)
       .flatMap(({ lessons }) => lessons)
       .flatMap(({ slides: lessonSlides }) => lessonSlides)
       .filter(({ kind }) => conceptKinds.has(kind));
-    expect(slides).toHaveLength(95);
+    expect(slides.length).toBeGreaterThanOrEqual(95);
     for (const slide of slides) {
       expect(slide.concept, slide.id).toBeTruthy();
       expect(slide.blocks.length, slide.id).toBeGreaterThanOrEqual(3);

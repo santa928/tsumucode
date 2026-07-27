@@ -6,6 +6,10 @@ const IdSchema = z
   .string()
   .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'IDはlower-kebab-caseで指定してください');
 const NonEmptyTextSchema = z.string().trim().min(1, '空でない文字列を指定してください');
+const NonBlankPreservedTextSchema = z
+  .string()
+  .min(1, '空でない文字列を指定してください')
+  .refine((value) => value.trim().length > 0, '空白だけでない文字列を指定してください');
 
 /** Task 2と同じcanonical URL境界でPublic相対Pathを検証する。 */
 function isSafePublicRelativePath(value: string): boolean {
@@ -22,11 +26,50 @@ const RelativePathSchema = z
   .min(1)
   .refine(isSafePublicRelativePath, '安全な相対Pathで指定してください');
 
+export const MasteryLevelSchema = z.enum(['seen', 'read', 'fill', 'transform', 'compose']);
+export const SlideLayoutSchema = z.enum([
+  'explanation',
+  'code-preview',
+  'comparison',
+  'checkpoint',
+]);
+export const ScreenBudgetSchema = z
+  .object({
+    maxTextCharacters: z.number().int().min(40).max(420),
+    maxCodeLines: z.number().int().min(0).max(12),
+    maxVisuals: z.number().int().min(0).max(2),
+  })
+  .strict();
+export const ConceptRequirementSchema = z
+  .object({ conceptId: IdSchema, minimumLevel: MasteryLevelSchema })
+  .strict();
+export const ConceptDefinitionSchema = z
+  .object({
+    id: IdSchema,
+    introducedBySlideId: IdSchema,
+    prerequisiteConceptIds: z.array(IdSchema),
+    minimumProjectLevel: MasteryLevelSchema,
+  })
+  .strict();
+export const ExerciseStepSchema = z
+  .object({
+    id: IdSchema,
+    file: RelativePathSchema,
+    target: NonEmptyTextSchema,
+    starterAnchor: NonEmptyTextSchema,
+    change: NonEmptyTextSchema,
+    observe: NonEmptyTextSchema,
+    requiresConceptIds: z.array(IdSchema).min(1),
+    validationRuleIds: z.array(IdSchema).min(1),
+  })
+  .strict();
+
 export const PreviewViewportSchema = z
   .object({
     id: IdSchema,
     width: z.number().int().positive(),
     height: z.number().int().positive(),
+    reducedMotion: z.literal('reduce').optional(),
   })
   .strict()
   .readonly();
@@ -38,8 +81,18 @@ export const AssetRefSchema = z
     mediaType: z.enum(['image', 'font', 'other']),
     alt: z.string().optional(),
     provenanceId: IdSchema,
+    intrinsicWidth: z.number().positive().optional(),
+    intrinsicHeight: z.number().positive().optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((asset, context) => {
+    if ((asset.intrinsicWidth === undefined) === (asset.intrinsicHeight === undefined)) return;
+    context.addIssue({
+      code: 'custom',
+      path: [asset.intrinsicWidth === undefined ? 'intrinsicWidth' : 'intrinsicHeight'],
+      message: 'intrinsicWidthとintrinsicHeightは両方を指定してください',
+    });
+  });
 
 export const SlideBlockSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('paragraph'), text: NonEmptyTextSchema }).strict(),
@@ -92,6 +145,10 @@ export const SlideSchema = z
       'checklist',
     ]),
     concept: NonEmptyTextSchema.optional(),
+    layout: SlideLayoutSchema,
+    teachesConceptIds: z.array(IdSchema),
+    masteryTarget: MasteryLevelSchema,
+    screenBudget: ScreenBudgetSchema,
     blocks: z.array(SlideBlockSchema).min(1),
     assets: z.array(AssetRefSchema),
   })
@@ -162,9 +219,14 @@ const HtmlCssNodeTargetSchema = z
     'node targetはtagName、role、textIncludesを1件以上指定してください',
   );
 
+const HtmlCssSourceTargetSchema = z
+  .object({ kind: z.literal('source'), file: RelativePathSchema })
+  .strict();
+
 export const HtmlCssRuleTargetSchema = z.union([
   HtmlCssSelectorTargetSchema,
   HtmlCssNodeTargetSchema,
+  HtmlCssSourceTargetSchema,
 ]);
 
 const ExistsAssertionSchema = z.object({ kind: z.literal('exists') }).strict();
@@ -217,7 +279,14 @@ const TextContainsAssertionSchema = z
   .object({
     kind: z.literal('text'),
     operator: z.literal('contains'),
-    expected: NonEmptyTextSchema,
+    expected: NonBlankPreservedTextSchema,
+  })
+  .strict();
+const NormalizedTextContainsAssertionSchema = z
+  .object({
+    kind: z.literal('text'),
+    operator: z.literal('contains-normalized'),
+    expected: NonBlankPreservedTextSchema,
   })
   .strict();
 const ComputedStyleEqualsAssertionSchema = z
@@ -249,6 +318,41 @@ const ComputedStyleContainsAssertionSchema = z
 const ComputedStyleNumberAssertionSchema = z
   .object({
     kind: z.literal('computed-style'),
+    property: NonEmptyTextSchema,
+    operator: z.enum(['gte', 'lte']),
+    expected: z.number(),
+    tolerance: z.number().nonnegative().optional(),
+  })
+  .strict();
+const FocusVisibleStyleEqualsAssertionSchema = z
+  .object({
+    kind: z.literal('focus-visible-style'),
+    property: NonEmptyTextSchema,
+    operator: z.literal('equals'),
+    expected: z.union([z.string(), z.number()]),
+    tolerance: z.number().nonnegative().optional(),
+  })
+  .strict()
+  .superRefine((assertion, context) => {
+    if (typeof assertion.expected === 'string' && assertion.tolerance !== undefined) {
+      context.addIssue({
+        code: 'custom',
+        path: ['tolerance'],
+        message: '文字列比較へtoleranceは指定できません',
+      });
+    }
+  });
+const FocusVisibleStyleContainsAssertionSchema = z
+  .object({
+    kind: z.literal('focus-visible-style'),
+    property: NonEmptyTextSchema,
+    operator: z.literal('contains'),
+    expected: NonEmptyTextSchema,
+  })
+  .strict();
+const FocusVisibleStyleNumberAssertionSchema = z
+  .object({
+    kind: z.literal('focus-visible-style'),
     property: NonEmptyTextSchema,
     operator: z.enum(['gte', 'lte']),
     expected: z.number(),
@@ -289,7 +393,7 @@ const RoleEqualsAssertionSchema = z
 const RelationAssertionSchema = z
   .object({
     kind: z.literal('relation'),
-    relation: z.enum(['child', 'descendant', 'next-sibling', 'before']),
+    relation: z.enum(['child', 'descendant', 'next-sibling', 'before', 'contained-by']),
     otherSelector: NonEmptyTextSchema,
   })
   .strict();
@@ -306,9 +410,13 @@ export const HtmlCssRuleAssertionSchema = z.union([
   AttributeNumberAssertionSchema,
   TextEqualsAssertionSchema,
   TextContainsAssertionSchema,
+  NormalizedTextContainsAssertionSchema,
   ComputedStyleEqualsAssertionSchema,
   ComputedStyleContainsAssertionSchema,
   ComputedStyleNumberAssertionSchema,
+  FocusVisibleStyleEqualsAssertionSchema,
+  FocusVisibleStyleContainsAssertionSchema,
+  FocusVisibleStyleNumberAssertionSchema,
   RectAssertionSchema,
   OverflowAssertionSchema,
   FocusableAssertionSchema,
@@ -383,7 +491,27 @@ export const HtmlCssValidationRuleDefinitionSchema = z
     target: HtmlCssRuleTargetSchema,
     assertion: HtmlCssRuleAssertionSchema,
   })
-  .strict();
+  .strict()
+  .superRefine((rule, context) => {
+    if (rule.target.kind === 'source' && rule.assertion.kind !== 'text') {
+      context.addIssue({
+        code: 'custom',
+        path: ['assertion'],
+        message: 'source targetはtext assertionだけ使用できます',
+      });
+    }
+    if (
+      rule.assertion.kind === 'text' &&
+      rule.assertion.operator === 'contains-normalized' &&
+      rule.target.kind !== 'source'
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['assertion', 'operator'],
+        message: 'contains-normalizedはsource targetだけで使用できます',
+      });
+    }
+  });
 
 export const ValidationRuleDefinitionSchema = z
   .object({
@@ -399,6 +527,9 @@ const ExerciseBaseShape = {
   countsTowardStandardExerciseTotal: z.boolean(),
   title: NonEmptyTextSchema,
   instructions: z.array(SlideBlockSchema).min(1),
+  requiresConcepts: z.array(ConceptRequirementSchema),
+  scaffoldLevel: MasteryLevelSchema,
+  steps: z.array(ExerciseStepSchema),
   files: z.array(ExerciseFileSchema).min(1),
   validationRules: z.array(ValidationRuleDefinitionSchema).min(1),
   hints: z.array(HintSchema).length(3),
@@ -521,7 +652,11 @@ const ExpectedTotalsSchema = z
   .object({
     chapters: z.number().int().nonnegative(),
     lessons: z.number().int().nonnegative(),
-    conceptSlides: z.number().int().nonnegative(),
+    conceptSlides: z
+      .number()
+      .int()
+      .nonnegative()
+      .describe('学習上必要な追加分割を許可するConcept Slide最低枚数'),
     standardExercises: z.number().int().nonnegative(),
     guidedProjectLessons: z.number().int().nonnegative(),
     capstoneLessons: z.number().int().nonnegative(),
@@ -593,6 +728,7 @@ const CourseManifestBaseSchema = z
     runnerId: IdSchema,
     validatorId: IdSchema,
     glossary: z.array(GlossaryEntrySchema),
+    concepts: z.array(ConceptDefinitionSchema),
     supportedDevices: SupportedDevicesSchema,
     prerequisites: z.array(IdSchema),
     publicationStatus: z.enum(['draft', 'published']),
@@ -932,6 +1068,8 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
       mediaType: asset.mediaType,
       alt: asset.alt ?? null,
       provenanceId: asset.provenanceId,
+      intrinsicWidth: asset.intrinsicWidth ?? null,
+      intrinsicHeight: asset.intrinsicHeight ?? null,
     });
     const previous = assetSignatureById.get(asset.id);
     if (previous !== undefined && previous !== signature) {
@@ -1516,6 +1654,7 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
   }
 
   for (const key of Object.keys(totals) as (keyof Totals)[]) {
+    if (key === 'conceptSlides') continue;
     if (course.expectedTotals[key] !== totals[key]) {
       addIssue(
         context,
@@ -1523,6 +1662,13 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
         `expectedTotals.${key}=${String(course.expectedTotals[key])} ですが実集計は${String(totals[key])}です`,
       );
     }
+  }
+  if (totals.conceptSlides < course.expectedTotals.conceptSlides) {
+    addIssue(
+      context,
+      ['expectedTotals', 'conceptSlides'],
+      `Concept Slideの最低枚数は${String(course.expectedTotals.conceptSlides)}ですが実集計は${String(totals.conceptSlides)}です`,
+    );
   }
   if (course.estimatedMinutes !== totals.estimatedMinutes) {
     addIssue(
@@ -1547,6 +1693,7 @@ export const CourseCatalogEntrySchema = z
     revision: NonEmptyTextSchema,
     publicationStatus: z.enum(['draft', 'published']),
     manifestPath: RelativePathSchema,
+    manifestSha256: z.string().regex(/^[0-9a-f]{64}$/u),
   })
   .strict();
 

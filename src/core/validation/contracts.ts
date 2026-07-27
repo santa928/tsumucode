@@ -8,6 +8,7 @@ export type ValidationStatus = 'pass' | 'incomplete' | 'code-error' | 'system-er
 export interface ValidationContext {
   readonly exerciseId: string;
   readonly rules: readonly ValidatorRule[];
+  readonly files: Readonly<Record<string, string>>;
   readonly snapshots: Readonly<Record<string, PreviewSnapshot>>;
   readonly diagnostics: readonly RunnerDiagnostic[];
   readonly now: string;

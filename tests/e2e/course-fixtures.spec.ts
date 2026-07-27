@@ -6,7 +6,7 @@ import {
   type AuthoringFixture,
 } from '../../scripts/content/compileCourse';
 import type { HtmlCssRunnerAdapter as HtmlCssRunnerAdapterType } from '../../src/adapters/runtime/html-css';
-import type { ExerciseFile } from '../../src/core/content/types';
+import type { AssetRef, ExerciseFile } from '../../src/core/content/types';
 import type { ValidationResult } from '../../src/core/validation/contracts';
 import type { ValidatorRuleEngine as ValidatorRuleEngineType } from '../../src/core/validation/validatorRuleEngine';
 import { observeRuntimePage, readRuntimeErrors } from './helpers/openRuntimeFixture';
@@ -15,6 +15,7 @@ import { testBasePath, testServerUrl } from './helpers/testBasePath';
 interface BrowserFixtureCase {
   readonly id: string;
   readonly exercise: Omit<AuthoringExercise, 'solutionFiles' | 'fixtures'>;
+  readonly workspaceAssets: readonly AssetRef[];
   readonly files: Readonly<Record<string, string>>;
   readonly expectedStatus: 'pass' | 'incomplete' | 'code-error' | 'not-pass';
   readonly expectedFeedbackRuleIds?: readonly string[];
@@ -38,11 +39,23 @@ function payloadFiles(
 
 /** Authoring PackageからSolution、Starter、宣言済みFixtureのBrowser caseを作る。 */
 function createCases(exercises: readonly AuthoringExercise[]): readonly BrowserFixtureCase[] {
+  const workspaceAssets = new Map<string, readonly AssetRef[]>();
+  for (const exercise of exercises) {
+    if (workspaceAssets.has(exercise.workspaceId)) continue;
+    const byId = new Map<string, AssetRef>();
+    for (const asset of exercises
+      .filter(({ workspaceId }) => workspaceId === exercise.workspaceId)
+      .flatMap(({ assets }) => assets)) {
+      byId.set(asset.id, asset);
+    }
+    workspaceAssets.set(exercise.workspaceId, [...byId.values()]);
+  }
   return exercises.flatMap((authoring) => {
     const { solutionFiles, fixtures, ...exercise } = authoring;
     const solution: BrowserFixtureCase = {
       id: `${authoring.id}/solution`,
       exercise,
+      workspaceAssets: workspaceAssets.get(authoring.workspaceId) ?? authoring.assets,
       files: payloadFiles(authoring, solutionFiles),
       expectedStatus: 'pass',
       expectedFeedbackRuleIds: [],
@@ -50,12 +63,14 @@ function createCases(exercises: readonly AuthoringExercise[]): readonly BrowserF
     const starter: BrowserFixtureCase = {
       id: `${authoring.id}/starter`,
       exercise,
+      workspaceAssets: workspaceAssets.get(authoring.workspaceId) ?? authoring.assets,
       files: payloadFiles(authoring, []),
       expectedStatus: 'not-pass',
     };
     const fixtureCases = fixtures.map((fixture: AuthoringFixture): BrowserFixtureCase => ({
       id: `${authoring.id}/${fixture.id}`,
       exercise,
+      workspaceAssets: workspaceAssets.get(authoring.workspaceId) ?? authoring.assets,
       files: payloadFiles(authoring, fixture.files),
       expectedStatus: fixture.expectedStatus,
       expectedFeedbackRuleIds: fixture.expectedFeedbackRuleIds,
@@ -71,7 +86,7 @@ async function evaluateCase(
 ): Promise<ValidationResult> {
   return page.evaluate<ValidationResult, BrowserFixtureEvaluationInput>(
     async (input) => {
-      const { exercise, files } = input.fixtureCase;
+      const { exercise, files, workspaceAssets } = input.fixtureCase;
       const { runnerModulePath, validatorModulePath } = input;
       const { HtmlCssRunnerAdapter } = (await import(/* @vite-ignore */ runnerModulePath)) as {
         readonly HtmlCssRunnerAdapter: typeof HtmlCssRunnerAdapterType;
@@ -119,7 +134,7 @@ async function evaluateCase(
             executionRevision,
             languageId: 'html-css',
             files,
-            assets: exercise.assets.map((asset) => ({
+            assets: workspaceAssets.map((asset) => ({
               id: asset.id,
               mediaType: asset.mediaType,
               url: new URL(asset.path, window.location.href).href,
@@ -138,6 +153,7 @@ async function evaluateCase(
         return await validator.validate({
           exerciseId: exercise.id,
           rules: exercise.validationRules,
+          files,
           snapshots,
           diagnostics,
           now: new Date().toISOString(),

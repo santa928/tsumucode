@@ -1,19 +1,38 @@
 ---
 id: html-css-ch05-l02-s01
-title: widthとheightはSizingの基準を作る
+title: widthはContent幅を指定する
 kind: concept
 concept: width-height
-assets: []
+layout: code-preview
+teachesConceptIds: [width-height]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 400, maxCodeLines: 5, maxVisuals: 1 }
+assets:
+  - id: sizing-width
+    source: assets/sizing-comparison.svg
+    mediaType: image
+    alt: width 320pxにPaddingとBorderが加わるcontent-boxの図
+    provenanceId: ch05-sizing-comparison-original
 ---
 
-`width`と`height`はBoxの大きさを指定しますが、既定のcontent-boxではPaddingとBorderが指定幅の外へ加わります。
+`width`はBoxの横幅、`height`は縦幅を指定します。ただし既定の`content-box`では、`width`が表すのはContentだけです。
 
-Containerへ収めたいときは、指定幅がどの層を表すかを先に確認します。数値だけ合わせてもBox全体が越える場合があります。
+![content-boxの指定幅と外幅](asset:sizing-width)
+
+Width 320pxへ左右24pxのPaddingと2pxのBorderを足すと、外幅は372pxになります。320pxのFrameには収まりません。
+
+```css
+.sized-card {
+  width: 320px;
+  padding: 24px;
+  border: 2px solid;
+}
+```
 
 :::practice
-prompt: width 300pxへ左右Padding 20pxを加えたcontent-boxの外幅を計算します。
-expectedAction: Borderなしなら340pxと答える
+prompt: width 320pxへ左右Padding 24px、Border 2pxを加えた外幅を計算します。
+expectedAction: 320 + 48 + 4で372pxと答える
 estimatedMinutes: 2
 :::
 
-次はborder-boxで指定幅へ内側の層を含めます。
+次は、指定幅へPaddingとBorderを含める書き方を見ます。

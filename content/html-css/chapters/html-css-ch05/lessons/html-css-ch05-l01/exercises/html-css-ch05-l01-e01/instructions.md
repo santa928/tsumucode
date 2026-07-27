@@ -1,8 +1,7 @@
-## Boxの4層を実寸へそろえる
+## Paddingを24pxへ広げる
 
-1. Content幅を240pxにします。
-2. Paddingを24px、Borderを2pxにします。
-3. Marginを32pxにします。
-4. Computed Styleで4層を確認します。
+`.box`の`padding: 16px;`を`padding: 24px;`へ変更します。
 
-Incomplete例ではPaddingだけが未達になります。
+Width 240px、Border 2px、Margin 32pxは完成済みです。削除や変更をせず、そのまま残してください。
+
+実行すると、SourceのPaddingとPreviewのComputed Paddingがどちらも24pxか確認されます。

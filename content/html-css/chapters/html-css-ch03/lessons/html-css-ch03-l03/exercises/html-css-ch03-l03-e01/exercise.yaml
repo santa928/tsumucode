@@ -4,6 +4,30 @@ workspaceId: html-css-ch03-l03-e01
 countsTowardStandardExerciseTotal: true
 title: LabelとButton Typeを整える
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: label-control-relation, minimumLevel: transform }
+  - { conceptId: button-type, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: connect-display-name-label
+    file: index.html
+    target: 表示名Labelのfor属性
+    starterAnchor: <label for="nickname">表示名</label>
+    change: forの値をdisplay-nameへ変更する
+    observe: Labelを選ぶとdisplay-nameのInputへFocusする
+    requiresConceptIds: [label-control-relation]
+    validationRuleIds:
+      - html-css-ch03-l03-e01-r01
+      - html-css-ch03-l03-e01-r02
+      - html-css-ch03-l03-e01-r04
+  - id: prevent-confirm-submit
+    file: index.html
+    target: 「入力を確認する」Buttonの開始Tag
+    starterAnchor: <button>入力を確認する</button>
+    change: type="button"を追加する
+    observe: 判定で送信しない確認Buttonとして認識される
+    requiresConceptIds: [button-type]
+    validationRuleIds: [html-css-ch03-l03-e01-r03]
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }

@@ -77,6 +77,8 @@ export class FixtureValidatorAdapter implements ValidatorAdapter {
       selectors: [],
       attributes: [],
       computedStyles: [],
+      focusVisibleSelectors: [],
+      focusVisibleComputedStyles: [],
       includeAllElements: false,
     };
   }

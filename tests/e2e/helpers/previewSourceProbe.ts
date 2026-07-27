@@ -14,6 +14,8 @@ interface SnapshotPolicyEnvelope {
   readonly selectors: readonly string[];
   readonly attributes: readonly string[];
   readonly computedStyles: readonly string[];
+  readonly focusVisibleSelectors: readonly string[];
+  readonly focusVisibleComputedStyles: readonly string[];
   readonly includeAllElements: boolean;
 }
 
@@ -56,7 +58,14 @@ function isStrictSnapshotPolicy(value: unknown): value is SnapshotPolicyEnvelope
   if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
   const policy = value as Record<string, unknown>;
   const keys = Object.keys(policy).sort();
-  const expectedKeys = ['attributes', 'computedStyles', 'includeAllElements', 'selectors'];
+  const expectedKeys = [
+    'attributes',
+    'computedStyles',
+    'focusVisibleComputedStyles',
+    'focusVisibleSelectors',
+    'includeAllElements',
+    'selectors',
+  ];
   const isStringArray = (candidate: unknown): candidate is readonly string[] =>
     Array.isArray(candidate) && candidate.every((item) => typeof item === 'string');
   return (
@@ -65,6 +74,8 @@ function isStrictSnapshotPolicy(value: unknown): value is SnapshotPolicyEnvelope
     isStringArray(policy.selectors) &&
     isStringArray(policy.attributes) &&
     isStringArray(policy.computedStyles) &&
+    isStringArray(policy.focusVisibleSelectors) &&
+    isStringArray(policy.focusVisibleComputedStyles) &&
     typeof policy.includeAllElements === 'boolean'
   );
 }

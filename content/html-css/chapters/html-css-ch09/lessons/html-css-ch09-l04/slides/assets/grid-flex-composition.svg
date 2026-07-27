@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <title>外側Gridと内側Flexboxの組み合わせ</title>
+  <desc>2列GalleryのFeature Cardを全幅へ広げ、そのCard内のActionをFlexboxで横並びにする図</desc>
+  <rect width="960" height="540" rx="36" fill="#f5efe3" />
+  <text x="60" y="68" fill="#172a3a" font-family="system-ui, sans-serif" font-size="30" font-weight="700">外側と内側で、Layoutの役割を分ける</text>
+  <g transform="translate(60 106)" font-family="system-ui, sans-serif">
+    <rect width="840" height="350" rx="26" fill="#ffffff" stroke="#172a3a" stroke-width="7" />
+    <text x="28" y="42" fill="#2d7c82" font-size="21" font-weight="700">data-gallery · Grid / 2 columns</text>
+    <g transform="translate(28 62)">
+      <rect width="784" height="164" rx="20" fill="#dcefed" stroke="#2d7c82" stroke-width="5" />
+      <g fill="#172a3a" font-weight="700">
+        <text x="24" y="42" font-size="23">Feature Card</text>
+        <text x="24" y="72" font-size="18">grid-column: 1 / -1</text>
+      </g>
+      <g transform="translate(395 88)">
+        <rect width="365" height="54" rx="14" fill="#172a3a" />
+        <text x="18" y="-10" fill="#b84f2b" font-size="17" font-weight="700">data-actions · Flex / 1 row</text>
+        <g fill="#ffffff" font-size="17" font-weight="700" text-anchor="middle">
+          <rect x="16" y="10" width="98" height="34" rx="10" fill="#ef7d4f" />
+          <rect x="132" y="10" width="98" height="34" rx="10" fill="#2d7c82" />
+          <text x="65" y="33">Preview</text><text x="181" y="33">Details</text>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(28 246)">
+      <rect width="382" height="74" rx="17" fill="#fff3dd" stroke="#ef7d4f" stroke-width="4" />
+      <rect x="402" width="382" height="74" rx="17" fill="#fff3dd" stroke="#ef7d4f" stroke-width="4" />
+      <g fill="#172a3a" font-size="19" font-weight="700" text-anchor="middle">
+        <text x="191" y="45">Card 2</text><text x="593" y="45">Card 3</text>
+      </g>
+    </g>
+  </g>
+  <g fill="#172a3a" font-family="system-ui, sans-serif" font-size="20" font-weight="700" text-anchor="middle">
+    <text x="260" y="500">Gallery全体 = 2次元のGrid</text>
+    <text x="700" y="500">Actionだけ = 1次元のFlexbox</text>
+  </g>
+</svg>

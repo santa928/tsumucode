@@ -1,17 +1,34 @@
 ---
 id: html-css-ch10-l01-s01
-title: Viewport MetaがCSS Pixelの表示幅を合わせる
+title: Viewport MetaでCSS幅を端末幅へ合わせる
 kind: concept
 concept: viewport-meta
-assets: []
+layout: code-preview
+teachesConceptIds: [viewport-meta]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 400, maxCodeLines: 6, maxVisuals: 1 }
+assets:
+  - id: viewport-device-width
+    source: assets/viewport-mobile-first.svg
+    mediaType: image
+    alt: Viewport Metaの有無で390px端末のCSS表示幅が変わる比較図
+    provenanceId: ch10-viewport-mobile-first-original
 ---
 
-`&lt;meta name="viewport" content="width=device-width, initial-scale=1" /&gt;`は、Mobile BrowserへLayout Viewportを端末幅に合わせるよう伝えます。これがないと小さい画面でも広いPageを縮小表示し、意図したBreakpointになりません。
+Viewport Metaは、Mobile Browserへ「CSSの表示幅を端末幅へ合わせる」と伝えます。`head`の中へ1つだけ置きます。
+
+![Viewport Metaによる390px表示幅の比較](asset:viewport-device-width)
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+```
+
+`width=device-width`がないと、Browserが広いPageを縮小して見せるため、後で書くBreakpointを意図した幅で確認できません。
 
 :::practice
-prompt: meta要素をheadへ置き、contentへwidth=device-widthを含める
-expectedAction: Viewport Metaを正しく置く
+prompt: Starterのcontentに足りないValueを答えます。
+expectedAction: width=device-widthを追加すると答える
 estimatedMinutes: 2
 :::
 
-次の観察または実習で、Viewportごとの最終結果を確認します。
+次は、小さい画面向けCSSを標準にします。

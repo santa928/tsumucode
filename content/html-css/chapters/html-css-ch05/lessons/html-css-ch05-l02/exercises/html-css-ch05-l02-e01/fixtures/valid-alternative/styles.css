@@ -9,8 +9,8 @@ body {
   width: 320px;
 }
 .sized-card {
-  width: 320px;
   box-sizing: border-box;
+  width: 320px;
   padding: 1.5rem;
   border: 2px solid #2d5d62;
 }

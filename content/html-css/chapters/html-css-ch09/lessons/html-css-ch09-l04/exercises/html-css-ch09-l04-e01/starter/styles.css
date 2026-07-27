@@ -5,11 +5,22 @@ body {
   font-family: system-ui, sans-serif;
 }
 [data-gallery] {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   width: 600px;
+  gap: 16px;
 }
 [data-gallery] article {
+  box-sizing: border-box;
   padding: 24px;
   background: #fff;
+}
+[data-feature] {
+  grid-column: auto;
+}
+[data-actions] {
+  display: block;
+  gap: 12px;
 }
 [data-actions] a {
   margin-right: 12px;

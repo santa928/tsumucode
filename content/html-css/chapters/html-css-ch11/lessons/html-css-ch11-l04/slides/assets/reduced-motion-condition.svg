@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="220" viewBox="0 0 960 220">
+  <title>Reduced Motion条件からRuleへ届く流れ</title>
+  <desc>利用者のreduce設定をMedia Queryが受け取り、Motion CardのAnimation Durationを短縮する流れ</desc>
+  <rect width="960" height="220" rx="28" fill="#f5efe3" />
+  <g transform="translate(42 48)" font-family="system-ui, sans-serif" text-anchor="middle">
+    <rect width="250" height="124" rx="20" fill="#fffdf8" stroke="#2d7c82" stroke-width="4" />
+    <text x="125" y="42" fill="#52616d" font-size="17">利用者設定</text>
+    <text x="125" y="82" fill="#172a3a" font-size="24" font-weight="700">reduce</text>
+    <path d="M270 62h48" stroke="#2d7c82" stroke-width="6" />
+    <path d="m310 50 18 12-18 12" fill="none" stroke="#2d7c82" stroke-width="6" />
+    <rect x="342" width="300" height="124" rx="20" fill="#172a3a" />
+    <text x="492" y="44" fill="#7bd6d0" font-size="17">@media condition</text>
+    <text x="492" y="82" fill="#ffffff" font-size="20" font-weight="700">prefers-reduced-motion</text>
+    <path d="M662 62h48" stroke="#2d7c82" stroke-width="6" />
+    <path d="m702 50 18 12-18 12" fill="none" stroke="#2d7c82" stroke-width="6" />
+    <rect x="734" width="142" height="124" rx="20" fill="#fffdf8" stroke="#ef7d4f" stroke-width="4" />
+    <text x="805" y="42" fill="#52616d" font-size="16">duration</text>
+    <text x="805" y="82" fill="#172a3a" font-size="23" font-weight="700">0.001s</text>
+  </g>
+</svg>

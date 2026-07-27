@@ -17,7 +17,20 @@ export default defineConfig(({ mode }) => {
     base: normalizeBasePath(env.BASE_PATH),
     plugins: [react(), tailwindcss()],
     test: { maxWorkers: 2 },
-    build: { manifest: true },
+    build: {
+      cssCodeSplit: false,
+      manifest: true,
+      modulePreload: false,
+      rolldownOptions: {
+        input: {
+          index: fileURLToPath(new URL('./index.html', import.meta.url)),
+          library: fileURLToPath(new URL('./src/app/libraryEntry.tsx', import.meta.url)),
+          normalLearning: fileURLToPath(
+            new URL('./src/app/normalLearningEntry.tsx', import.meta.url),
+          ),
+        },
+      },
+    },
     resolve: {
       alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
     },

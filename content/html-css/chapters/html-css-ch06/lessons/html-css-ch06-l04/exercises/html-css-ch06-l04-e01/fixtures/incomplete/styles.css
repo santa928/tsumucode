@@ -16,7 +16,6 @@ body {
 .card + .card {
   margin-top: 16px;
 }
-.card--compact {
-  padding-top: 0;
-  padding-bottom: 0;
+.card--featured {
+  border-left: 4px solid #b7893d;
 }

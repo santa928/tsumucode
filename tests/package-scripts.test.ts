@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 interface PackageManifest {
   readonly scripts: Readonly<Record<string, string>>;
+  readonly dependencies: Readonly<Record<string, string>>;
 }
 
 const projectRoot = new URL('../', import.meta.url);
@@ -34,6 +35,15 @@ function collectMissingScriptAliases(scripts: Readonly<Record<string, string>>):
 }
 
 describe('package scripts', () => {
+  it('Editor入力支援の直接Dependencyを完全固定する', () => {
+    expect(manifest.dependencies).toMatchObject({
+      '@codemirror/commands': '6.10.4',
+      '@codemirror/language': '6.12.4',
+      '@codemirror/autocomplete': '6.20.3',
+      '@lezer/highlight': '1.2.3',
+    });
+  });
+
   it('教材の検証とCompileを独立したlocal entrypointとして公開する', () => {
     expect(manifest.scripts['content:compile']).toBe('tsx scripts/content/compile.ts');
     expect(manifest.scripts['content:check']).toBe('tsx scripts/content/compile.ts --check');

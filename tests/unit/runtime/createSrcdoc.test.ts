@@ -9,7 +9,12 @@ interface SrcdocOverrides {
   readonly exerciseSessionId?: string;
   readonly executionRevision?: number;
   readonly bootstrapToken?: string;
-  readonly viewport?: { readonly id: string; readonly width: number; readonly height: number };
+  readonly viewport?: {
+    readonly id: string;
+    readonly width: number;
+    readonly height: number;
+    readonly reducedMotion?: 'reduce';
+  };
 }
 
 /** 安全な既定値へ差分を重ねてsrcdocを生成する。 */
@@ -27,6 +32,21 @@ function createSrcdoc(source: string, overrides: SrcdocOverrides = {}): string {
 }
 
 describe('secure srcdoc', () => {
+  it('reduce Viewportではprefers-reduced-motion Ruleを検証用Overrideへ展開する', () => {
+    const parsed = new DOMParser().parseFromString(
+      createSrcdoc('<main class="motion-card">Motion</main>', {
+        css: '@media (prefers-reduced-motion: reduce) { .motion-card { animation-duration: 0.001s; } }',
+        viewport: { id: 'mobile-reduced', width: 390, height: 844, reducedMotion: 'reduce' },
+      }),
+      'text/html',
+    );
+    const bridge = parsed.querySelector('script')?.textContent ?? '';
+
+    expect(bridge).toContain('"reducedMotion":"reduce"');
+    expect(bridge).toContain('prefers-reduced-motion');
+    expect(bridge).toContain('instanceof CSSMediaRule');
+  });
+
   it('CSPを先頭へ置き、trusted Bridgeだけにnonceを付けて安全な本文を構築する', () => {
     const srcdoc = createSrcdoc(
       '<html lang="ja"><head><title>教材</title><link rel="stylesheet" href="styles/main.css">' +
@@ -92,17 +112,43 @@ describe('secure srcdoc', () => {
           },
         ],
       });
+      Object.defineProperty(childWindow.document, 'readyState', {
+        configurable: true,
+        get: () => 'loading',
+      });
       childWindow.document.open();
       // eslint-disable-next-line @typescript-eslint/no-deprecated -- parser中のBridge実行とDOMContentLoaded前状態を再現するTest専用fixture。
       childWindow.document.write(
-        '<!doctype html><html><head><script id="trusted" type="application/json">secret</script>' +
-          `<script>document.documentElement.dataset.bridgeExecuted="true";${source}</script></head><body><main id="lesson">` +
-          '<nav><a id="guide" href="https://example.com">Guide</a></nav></main></body></html>',
+        '<!doctype html><html><head><style>' +
+          '.primary:focus-visible{outline-width:3px;outline-style:solid;outline-offset:4px}' +
+          '.contact:focus-visible{outline-width:5px;outline-style:dashed;outline-offset:6px}' +
+          '</style>' +
+          '<script id="trusted" type="application/json">secret</script>' +
+          `<script>document.documentElement.dataset.bridgeExecuted="true";document.documentElement.dataset.bridgeReadyState=document.readyState;${source}</script></head><body><main id="lesson">` +
+          '<nav><a class="primary" id="guide" href="https://example.com">Guide</a>' +
+          '<a class="contact" id="contact" href="https://example.com/contact">Contact</a></nav>' +
+          '<img id="preview-image" alt="Preview" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3C%2Fsvg%3E">' +
+          '</main></body></html>',
       );
 
       expect(childWindow.document.documentElement.dataset.bridgeExecuted).toBe('true');
+      expect(childWindow.document.documentElement.dataset.bridgeReadyState).toBe('loading');
       expect(messages).toEqual([]);
+      Reflect.deleteProperty(childWindow.document, 'readyState');
+      let finishImageDecode: (() => void) | undefined;
+      const image = childWindow.document.querySelector<HTMLImageElement>('#preview-image')!;
+      const decode = vi.fn(
+        () =>
+          new Promise<void>((resolve) => {
+            finishImageDecode = resolve;
+          }),
+      );
+      Object.defineProperty(image, 'decode', { configurable: true, value: decode });
       childWindow.document.dispatchEvent(new Event('DOMContentLoaded'));
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      expect(decode).toHaveBeenCalledOnce();
+      expect(messages).toEqual([]);
+      finishImageDecode?.();
       await vi.waitFor(() => {
         expect(messages[0]).toMatchObject({
           type: 'bridge.ready',
@@ -136,6 +182,8 @@ describe('secure srcdoc', () => {
           ],
           attributes: ['id', 'href', 'rel'],
           computedStyles: ['display'],
+          focusVisibleSelectors: ['.primary', '.contact'],
+          focusVisibleComputedStyles: ['outline-width', 'outline-style', 'outline-offset'],
           includeAllElements: false,
         },
       };
@@ -150,6 +198,7 @@ describe('secure srcdoc', () => {
             readonly text: string;
             readonly accessibleName: string;
             readonly matchedSelectors: readonly string[];
+            readonly focusVisibleComputedStyles: Readonly<Record<string, string>>;
           }[];
         };
       };
@@ -162,6 +211,7 @@ describe('secure srcdoc', () => {
         'body',
         'main',
         'nav',
+        'a',
         'a',
       ]);
       expect(
@@ -177,6 +227,49 @@ describe('secure srcdoc', () => {
       expect(response.payload.nodes.find(({ tagName }) => tagName === 'nav')?.accessibleName).toBe(
         '',
       );
+      expect(
+        response.payload.nodes.find(({ tagName }) => tagName === 'a')?.focusVisibleComputedStyles,
+      ).toMatchObject({
+        'outline-width': '3px',
+        'outline-style': 'solid',
+        'outline-offset': '4px',
+      });
+      expect(
+        response.payload.nodes.find(({ accessibleName }) => accessibleName === 'Contact')
+          ?.focusVisibleComputedStyles,
+      ).toMatchObject({
+        'outline-width': '5px',
+        'outline-style': 'dashed',
+        'outline-offset': '6px',
+      });
+
+      childWindow.dispatchEvent(
+        new MessageEvent('message', {
+          source: parentWindow,
+          data: {
+            ...request,
+            requestId: 'request-repeat',
+            oneTimeToken: 'repeat-token',
+          },
+        }),
+      );
+      const repeatedResponse = messages[2] as typeof response;
+      expect(
+        repeatedResponse.payload.nodes.find(({ accessibleName }) => accessibleName === 'Guide')
+          ?.focusVisibleComputedStyles,
+      ).toMatchObject({
+        'outline-width': '3px',
+        'outline-style': 'solid',
+        'outline-offset': '4px',
+      });
+      expect(
+        repeatedResponse.payload.nodes.find(({ accessibleName }) => accessibleName === 'Contact')
+          ?.focusVisibleComputedStyles,
+      ).toMatchObject({
+        'outline-width': '5px',
+        'outline-style': 'dashed',
+        'outline-offset': '6px',
+      });
 
       childWindow.dispatchEvent(
         new MessageEvent('message', {
@@ -189,7 +282,7 @@ describe('secure srcdoc', () => {
           },
         }),
       );
-      expect(messages[2]).toMatchObject({
+      expect(messages[3]).toMatchObject({
         type: 'snapshot.response',
         payload: { nodes: [{ tagName: 'html', matchedSelectors: ['html'] }] },
       });
@@ -197,7 +290,7 @@ describe('secure srcdoc', () => {
       childWindow.dispatchEvent(
         new MessageEvent('message', { source: parentWindow, data: request }),
       );
-      expect(messages).toHaveLength(3);
+      expect(messages).toHaveLength(4);
 
       childWindow.dispatchEvent(
         new MessageEvent('message', {
@@ -210,7 +303,7 @@ describe('secure srcdoc', () => {
           },
         }),
       );
-      expect(messages[3]).toMatchObject({
+      expect(messages[4]).toMatchObject({
         type: 'bridge.error',
         requestId: 'request-2',
         payload: 'Snapshot policy schema error',

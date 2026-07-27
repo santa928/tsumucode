@@ -4,6 +4,20 @@ workspaceId: html-css-ch11-l01-e01
 countsTowardStandardExerciseTotal: true
 title: KeyboardでたどれるActionを仕上げる
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: focus-visible, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: show-visible-focus
+    file: styles.css
+    target: '[data-action]:focus-visible Ruleのoutline Declaration'
+    starterAnchor: 'outline: 0 solid #ef7d4f;'
+    change: Outlineの太さだけを0から3pxへ変更する
+    observe: Actionの外側へ3pxの橙色Focus Indicatorが表示される
+    requiresConceptIds: [focus-visible]
+    validationRuleIds:
+      - html-css-ch11-l01-e01-r01
+      - html-css-ch11-l01-e01-r02
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }

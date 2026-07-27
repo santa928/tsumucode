@@ -5,9 +5,14 @@ body {
   font-family: system-ui, sans-serif;
 }
 [data-gallery] {
-  width: 720px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  width: 100%;
+  max-width: 720px;
+  gap: 16px;
 }
 [data-gallery] > * {
+  box-sizing: border-box;
   height: 100px;
   padding: 16px;
   background: #fff;

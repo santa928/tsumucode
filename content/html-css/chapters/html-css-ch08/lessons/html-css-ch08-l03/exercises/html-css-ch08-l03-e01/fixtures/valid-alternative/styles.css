@@ -1,24 +1,24 @@
 body {
   margin: 0;
-  padding: 2rem;
+  padding: 32px;
 }
 [data-align] {
   display: flex;
   align-items: center;
-  width: 31.25rem;
-  height: 12.5rem;
+  width: 500px;
+  height: 200px;
 }
 [data-align] > * {
   box-sizing: border-box;
-  width: 6.25rem;
+  width: 100px;
 }
 [data-tall] {
-  height: 5rem;
+  height: 80px;
 }
 [data-center] {
-  height: 3.75rem;
+  height: 60px;
 }
 [data-end] {
   align-self: flex-end;
-  height: 2.5rem;
+  height: 40px;
 }

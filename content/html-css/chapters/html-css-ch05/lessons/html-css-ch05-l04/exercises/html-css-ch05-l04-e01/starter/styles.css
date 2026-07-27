@@ -6,6 +6,10 @@ body {
   font-family: system-ui, sans-serif;
 }
 nav a {
+  display: inline;
+  box-sizing: border-box;
+  padding: 4px 16px;
+  line-height: 20px;
   color: #24323d;
   margin-right: 8px;
 }

@@ -7,7 +7,7 @@ body {
 }
 .box {
   width: 240px;
-  padding: 24px 24px 24px 24px;
+  padding: 24px;
   border: solid 2px #2d5d62;
   margin: 32px;
 }

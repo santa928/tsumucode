@@ -75,7 +75,45 @@ beforeEach(() => {
 });
 
 describe('AppShell', () => {
-  it('Landmark、Main、Navigation、非提携表記を表示する', () => {
+  it('Slide routeでは学習ShellをDocument高へ収める印を付ける', async () => {
+    renderWithRouter(
+      <Routes>
+        <Route element={<AppShell />}>
+          <Route
+            path="/courses/:courseId/lessons/:lessonId/slides/:slideId"
+            element={<h1>HTMLの仕組み</h1>}
+          />
+        </Route>
+      </Routes>,
+      { route: '/courses/html-css/lessons/lesson-first/slides/slide-html-role' },
+    );
+
+    expect(await screen.findByRole('heading', { name: 'HTMLの仕組み' })).toBeInTheDocument();
+    expect(screen.getByTestId('app-shell')).toHaveAttribute('data-learning-route', 'true');
+    expect(screen.queryByRole('banner')).not.toBeInTheDocument();
+    expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument();
+  });
+
+  it('Exercise詳細routeも固定学習Shellの対象にする', async () => {
+    renderWithRouter(
+      <Routes>
+        <Route element={<AppShell />}>
+          <Route
+            path="/courses/:courseId/lessons/:lessonId/exercises/:exerciseId"
+            element={<h1>見出しを変更する</h1>}
+          />
+        </Route>
+      </Routes>,
+      { route: '/courses/html-css/lessons/lesson-first/exercises/exercise-heading' },
+    );
+
+    expect(await screen.findByRole('heading', { name: '見出しを変更する' })).toBeInTheDocument();
+    expect(screen.getByTestId('app-shell')).toHaveAttribute('data-learning-route', 'true');
+    expect(screen.queryByRole('banner')).not.toBeInTheDocument();
+    expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument();
+  });
+
+  it('通常routeではHeader、Main、Navigationを表示し、Footerを置かない', () => {
     renderWithRouter(
       <Routes>
         <Route element={<AppShell />}>
@@ -88,9 +126,8 @@ describe('AppShell', () => {
     expect(screen.getByRole('navigation', { name: 'メインナビゲーション' })).toBeInTheDocument();
     expect(screen.getByRole('main')).toHaveAttribute('id', 'main-content');
     expect(screen.getByRole('main')).toHaveClass('min-h-dvh');
-    expect(screen.getByRole('contentinfo')).toHaveTextContent(
-      'TsumuCodeは個人・身内向けに制作した非商用の独立学習サイトです。Progateとは提携・関連していません。教材・課題・UIは独自制作です。',
-    );
+    expect(screen.getByTestId('app-shell')).toHaveAttribute('data-learning-route', 'false');
+    expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument();
   });
 
   it('Skip LinkでMainへfocusし、Hash RouterのURLを壊さない', async () => {

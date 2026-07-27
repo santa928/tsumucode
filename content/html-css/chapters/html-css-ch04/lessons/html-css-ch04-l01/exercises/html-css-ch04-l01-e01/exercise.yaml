@@ -4,6 +4,33 @@ workspaceId: html-css-ch04-l01-e01
 countsTowardStandardExerciseTotal: true
 title: TypeとClass Selectorで色を分ける
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: type-selector, minimumLevel: transform }
+  - { conceptId: class-selector, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: set-common-paragraph-color
+    file: styles.css
+    target: 2つのParagraphへ届くp Rule
+    starterAnchor: |-
+      p {
+        color: #24323d;
+      }
+    change: colorを#2d5d62へ変更する
+    observe: introとaccentの両方が青緑になり、Type Selectorの共通範囲を確認できる
+    requiresConceptIds: [type-selector]
+    validationRuleIds: [html-css-ch04-l01-e01-r01, html-css-ch04-l01-e01-r03]
+  - id: override-accent-color
+    file: styles.css
+    target: accent Classだけへ届く.accent Rule
+    starterAnchor: |-
+      .accent {
+        color: #24323d;
+      }
+    change: colorを#9a3f25へ変更する
+    observe: 2つ目だけが橙になり、Class Selectorの狭い範囲を確認できる
+    requiresConceptIds: [class-selector]
+    validationRuleIds: [html-css-ch04-l01-e01-r02, html-css-ch04-l01-e01-r04]
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -45,6 +72,44 @@ validationRules:
       target: accent ParagraphのComputed Color
       expected: rgb(154, 63, 37)
       nextAction: .accent Ruleのcolorを#9a3f25へ変更します。
+    hintId: html-css-ch04-l01-e01-h03
+    relatedSlideId: html-css-ch04-l01-s03
+  - id: html-css-ch04-l01-e01-r03
+    label: p Type Selectorで共通色を指定する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: |-
+        p {
+          color: #2d5d62;
+    feedback:
+      target: styles.cssのp Rule
+      expected: p Type Selectorへcolor #2d5d62を指定
+      nextAction: bodyやinline Styleではなく、用意されたp RuleのValueを#2d5d62へ直します。
+    hintId: html-css-ch04-l01-e01-h01
+    relatedSlideId: html-css-ch04-l01-s02
+  - id: html-css-ch04-l01-e01-r04
+    label: accent Class Selectorで橙を指定する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: |-
+        .accent {
+          color: #9a3f25;
+    feedback:
+      target: styles.cssの.accent Rule
+      expected: .accent Class Selectorへcolor #9a3f25を指定
+      nextAction: inline Styleではなく、用意された.accent RuleのValueを#9a3f25へ直します。
     hintId: html-css-ch04-l01-e01-h03
     relatedSlideId: html-css-ch04-l01-s03
 hints:
@@ -97,4 +162,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch04-l01-e01-r02]
+    expectedFeedbackRuleIds: [html-css-ch04-l01-e01-r02, html-css-ch04-l01-e01-r04]

@@ -16,6 +16,13 @@
   --tc-color-learning: #f2c94c;
   --tc-color-border: #bdc9bc;
   --tc-color-focus: #0b65c2;
+  --tc-code-token-tag: #185c47;
+  --tc-code-token-property: #0b65c2;
+  --tc-code-token-string: #7a3e00;
+  --tc-code-token-number: #6a3d8c;
+  --tc-code-token-keyword: #8a2f2a;
+  --tc-code-token-comment: #4b635b;
+  --tc-code-token-invalid: #a93f38;
   --tc-space-1: 0.25rem;
   --tc-space-2: 0.5rem;
   --tc-space-3: 0.75rem;

@@ -13,6 +13,9 @@ items:
   - id: release-glossary
     visibility: public
     path: glossary.yaml
+  - id: release-concepts
+    visibility: public
+    path: concepts.yaml
   - id: release-performance-budget
     visibility: authoring
     path: performance.yaml
@@ -40,9 +43,16 @@ items:
   - id: release-ch00-l01-s03
     visibility: public
     path: chapters/html-css-ch00/lessons/html-css-ch00-l01/slides/s03-css-role.md
+  - id: release-ch00-l01-s04
+    visibility: public
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l01/slides/s04-role-checkpoint.md
   - id: ch00-web-flow-original
     visibility: public
     path: chapters/html-css-ch00/lessons/html-css-ch00-l01/slides/assets/web-flow.svg
+    method: original-svg
+  - id: ch00-first-page-preview-original
+    visibility: public
+    path: chapters/html-css-ch00/lessons/html-css-ch00-l01/slides/assets/first-page-preview.svg
     method: original-svg
   - id: release-ch00-l01-e01
     visibility: public
@@ -132,9 +142,16 @@ items:
   - id: release-ch01-l01-s03
     visibility: public
     path: chapters/html-css-ch01/lessons/html-css-ch01-l01/slides/s03-closing-tags.md
+  - id: release-ch01-l01-s04
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l01/slides/s04-element-checkpoint.md
   - id: ch01-element-anatomy-original
     visibility: public
     path: chapters/html-css-ch01/lessons/html-css-ch01-l01/slides/assets/element-anatomy.svg
+    method: original-svg
+  - id: ch01-heading-paragraph-preview-original
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l01/slides/assets/heading-paragraph-preview.svg
     method: original-svg
   - id: release-ch01-l01-e01
     visibility: public
@@ -166,6 +183,9 @@ items:
   - id: release-ch01-l01-e01-incomplete-css
     visibility: authoring
     path: chapters/html-css-ch01/lessons/html-css-ch01-l01/exercises/html-css-ch01-l01-e01/fixtures/incomplete/styles.css
+  - id: release-ch01-l01-e01-wrong-heading-html
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l01/exercises/html-css-ch01-l01-e01/fixtures/wrong-heading/index.html
   - id: release-ch01-l02-lesson
     visibility: public
     path: chapters/html-css-ch01/lessons/html-css-ch01-l02/lesson.yaml
@@ -212,6 +232,9 @@ items:
   - id: release-ch01-l02-e01-incomplete-css
     visibility: authoring
     path: chapters/html-css-ch01/lessons/html-css-ch01-l02/exercises/html-css-ch01-l02-e01/fixtures/incomplete/styles.css
+  - id: release-ch01-l02-e01-unindented-html
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l02/exercises/html-css-ch01-l02-e01/fixtures/unindented/index.html
   - id: release-ch01-l03-lesson
     visibility: public
     path: chapters/html-css-ch01/lessons/html-css-ch01-l03/lesson.yaml
@@ -221,6 +244,10 @@ items:
   - id: release-ch01-l03-s02
     visibility: public
     path: chapters/html-css-ch01/lessons/html-css-ch01-l03/slides/s02-lang-title.md
+  - id: ch01-document-settings-preview-original
+    visibility: public
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l03/slides/assets/document-settings-preview.svg
+    method: original-svg
   - id: release-ch01-l03-e01
     visibility: public
     path: chapters/html-css-ch01/lessons/html-css-ch01-l03/exercises/html-css-ch01-l03-e01/exercise.yaml
@@ -251,6 +278,9 @@ items:
   - id: release-ch01-l03-e01-incomplete-css
     visibility: authoring
     path: chapters/html-css-ch01/lessons/html-css-ch01-l03/exercises/html-css-ch01-l03-e01/fixtures/incomplete/styles.css
+  - id: release-ch01-l03-e01-short-title-html
+    visibility: authoring
+    path: chapters/html-css-ch01/lessons/html-css-ch01-l03/exercises/html-css-ch01-l03-e01/fixtures/short-title/index.html
   - id: release-ch02-chapter
     visibility: public
     path: chapters/html-css-ch02/chapter.yaml
@@ -263,6 +293,10 @@ items:
   - id: release-ch02-l01-s02
     visibility: public
     path: chapters/html-css-ch02/lessons/html-css-ch02-l01/slides/s02-paragraphs.md
+  - id: ch02-heading-outline-original
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l01/slides/assets/heading-outline-preview.svg
+    method: original-svg
   - id: release-ch02-l01-e01
     visibility: public
     path: chapters/html-css-ch02/lessons/html-css-ch02-l01/exercises/html-css-ch02-l01-e01/exercise.yaml
@@ -302,6 +336,10 @@ items:
   - id: release-ch02-l02-s02
     visibility: public
     path: chapters/html-css-ch02/lessons/html-css-ch02-l02/slides/s02-ordered-list.md
+  - id: ch02-list-choice-original
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l02/slides/assets/list-choice-preview.svg
+    method: original-svg
   - id: release-ch02-l02-e01
     visibility: public
     path: chapters/html-css-ch02/lessons/html-css-ch02-l02/exercises/html-css-ch02-l02-e01/exercise.yaml
@@ -344,6 +382,10 @@ items:
   - id: release-ch02-l03-s03
     visibility: public
     path: chapters/html-css-ch02/lessons/html-css-ch02-l03/slides/s03-section-article.md
+  - id: ch02-landmark-map-original
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l03/slides/assets/landmark-map-preview.svg
+    method: original-svg
   - id: release-ch02-l03-e01
     visibility: public
     path: chapters/html-css-ch02/lessons/html-css-ch02-l03/exercises/html-css-ch02-l03-e01/exercise.yaml
@@ -383,6 +425,10 @@ items:
   - id: release-ch02-l04-s02
     visibility: public
     path: chapters/html-css-ch02/lessons/html-css-ch02-l04/slides/s02-inline-meaning.md
+  - id: ch02-inline-meaning-original
+    visibility: public
+    path: chapters/html-css-ch02/lessons/html-css-ch02-l04/slides/assets/inline-meaning-preview.svg
+    method: original-svg
   - id: release-ch02-l04-e01
     visibility: public
     path: chapters/html-css-ch02/lessons/html-css-ch02-l04/exercises/html-css-ch02-l04-e01/exercise.yaml
@@ -434,6 +480,10 @@ items:
   - id: release-ch03-l01-s02
     visibility: public
     path: chapters/html-css-ch03/lessons/html-css-ch03-l01/slides/s02-relative-external-links.md
+  - id: ch03-link-destinations-original
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l01/slides/assets/link-destinations-preview.svg
+    method: original-svg
   - id: release-ch03-l01-e01
     visibility: public
     path: chapters/html-css-ch03/lessons/html-css-ch03-l01/exercises/html-css-ch03-l01-e01/exercise.yaml
@@ -464,6 +514,12 @@ items:
   - id: release-ch03-l01-e01-code-error-css
     visibility: authoring
     path: chapters/html-css-ch03/lessons/html-css-ch03-l01/exercises/html-css-ch03-l01-e01/fixtures/code-error/styles.css
+  - id: release-ch03-l01-e01-swapped-destinations-html
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l01/exercises/html-css-ch03-l01-e01/fixtures/swapped-destinations/index.html
+  - id: release-ch03-l01-e01-swapped-destinations-css
+    visibility: authoring
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l01/exercises/html-css-ch03-l01-e01/fixtures/swapped-destinations/styles.css
   - id: release-ch03-l02-lesson
     visibility: public
     path: chapters/html-css-ch03/lessons/html-css-ch03-l02/lesson.yaml
@@ -473,6 +529,10 @@ items:
   - id: release-ch03-l02-s02
     visibility: public
     path: chapters/html-css-ch03/lessons/html-css-ch03-l02/slides/s02-meaningful-alt.md
+  - id: ch03-image-alt-original
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l02/slides/assets/image-alt-preview.svg
+    method: original-svg
   - id: release-ch03-l02-e01
     visibility: public
     path: chapters/html-css-ch03/lessons/html-css-ch03-l02/exercises/html-css-ch03-l02-e01/exercise.yaml
@@ -520,6 +580,10 @@ items:
   - id: release-ch03-l03-s03
     visibility: public
     path: chapters/html-css-ch03/lessons/html-css-ch03-l03/slides/s03-button-types.md
+  - id: ch03-form-relations-original
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l03/slides/assets/form-relations-preview.svg
+    method: original-svg
   - id: release-ch03-l03-e01
     visibility: public
     path: chapters/html-css-ch03/lessons/html-css-ch03-l03/exercises/html-css-ch03-l03-e01/exercise.yaml
@@ -559,6 +623,10 @@ items:
   - id: release-ch03-l04-s02
     visibility: public
     path: chapters/html-css-ch03/lessons/html-css-ch03-l04/slides/s02-safe-placeholder-content.md
+  - id: ch03-contact-card-original
+    visibility: public
+    path: chapters/html-css-ch03/lessons/html-css-ch03-l04/slides/assets/contact-card-preview.svg
+    method: original-svg
   - id: release-ch03-l04-e01
     visibility: public
     path: chapters/html-css-ch03/lessons/html-css-ch03-l04/exercises/html-css-ch03-l04-e01/exercise.yaml
@@ -624,6 +692,10 @@ items:
   - id: release-ch04-l01-s03
     visibility: public
     path: chapters/html-css-ch04/lessons/html-css-ch04-l01/slides/s03-class-selector.md
+  - id: ch04-css-rule-map-original
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l01/slides/assets/css-rule-map.svg
+    method: original-svg
   - id: release-ch04-l01-e01
     visibility: public
     path: chapters/html-css-ch04/lessons/html-css-ch04-l01/exercises/html-css-ch04-l01-e01/exercise.yaml
@@ -663,6 +735,10 @@ items:
   - id: release-ch04-l02-s02
     visibility: public
     path: chapters/html-css-ch04/lessons/html-css-ch04-l02/slides/s02-declarations-values.md
+  - id: ch04-stylesheet-connection-original
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l02/slides/assets/stylesheet-connection.svg
+    method: original-svg
   - id: release-ch04-l02-e01
     visibility: public
     path: chapters/html-css-ch04/lessons/html-css-ch04-l02/exercises/html-css-ch04-l02-e01/exercise.yaml
@@ -755,6 +831,10 @@ items:
   - id: release-ch04-l04-s02
     visibility: public
     path: chapters/html-css-ch04/lessons/html-css-ch04-l04/slides/s02-read-computed-values.md
+  - id: ch04-unit-computation-original
+    visibility: public
+    path: chapters/html-css-ch04/lessons/html-css-ch04-l04/slides/assets/unit-computation.svg
+    method: original-svg
   - id: release-ch04-l04-e01
     visibility: public
     path: chapters/html-css-ch04/lessons/html-css-ch04-l04/exercises/html-css-ch04-l04-e01/exercise.yaml
@@ -850,6 +930,10 @@ items:
   - id: release-ch05-l02-s02
     visibility: public
     path: chapters/html-css-ch05/lessons/html-css-ch05-l02/slides/s02-border-box.md
+  - id: ch05-sizing-comparison-original
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l02/slides/assets/sizing-comparison.svg
+    method: original-svg
   - id: release-ch05-l02-e01
     visibility: public
     path: chapters/html-css-ch05/lessons/html-css-ch05-l02/exercises/html-css-ch05-l02-e01/exercise.yaml
@@ -889,6 +973,10 @@ items:
   - id: release-ch05-l03-s02
     visibility: public
     path: chapters/html-css-ch05/lessons/html-css-ch05-l03/slides/s02-margin.md
+  - id: ch05-spacing-ownership-original
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l03/slides/assets/spacing-ownership.svg
+    method: original-svg
   - id: release-ch05-l03-e01
     visibility: public
     path: chapters/html-css-ch05/lessons/html-css-ch05-l03/exercises/html-css-ch05-l03-e01/exercise.yaml
@@ -928,6 +1016,10 @@ items:
   - id: release-ch05-l04-s02
     visibility: public
     path: chapters/html-css-ch05/lessons/html-css-ch05-l04/slides/s02-inline-block.md
+  - id: ch05-target-size-original
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l04/slides/assets/target-size.svg
+    method: original-svg
   - id: release-ch05-l04-e01
     visibility: public
     path: chapters/html-css-ch05/lessons/html-css-ch05-l04/exercises/html-css-ch05-l04-e01/exercise.yaml
@@ -967,6 +1059,10 @@ items:
   - id: release-ch05-l05-s02
     visibility: public
     path: chapters/html-css-ch05/lessons/html-css-ch05-l05/slides/s02-safe-sizing.md
+  - id: ch05-safe-sizing-original
+    visibility: public
+    path: chapters/html-css-ch05/lessons/html-css-ch05-l05/slides/assets/safe-sizing.svg
+    method: original-svg
   - id: release-ch05-l05-e01
     visibility: public
     path: chapters/html-css-ch05/lessons/html-css-ch05-l05/exercises/html-css-ch05-l05-e01/exercise.yaml
@@ -1009,6 +1105,10 @@ items:
   - id: release-ch06-l01-s02
     visibility: public
     path: chapters/html-css-ch06/lessons/html-css-ch06-l01/slides/s02-font-stack.md
+  - id: ch06-typography-metrics-original
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l01/slides/assets/typography-metrics.svg
+    method: original-svg
   - id: release-ch06-l01-e01
     visibility: public
     path: chapters/html-css-ch06/lessons/html-css-ch06-l01/exercises/html-css-ch06-l01-e01/exercise.yaml
@@ -1048,6 +1148,10 @@ items:
   - id: release-ch06-l02-s02
     visibility: public
     path: chapters/html-css-ch06/lessons/html-css-ch06-l02/slides/s02-contrast.md
+  - id: ch06-contrast-and-cue-original
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l02/slides/assets/contrast-and-cue.svg
+    method: original-svg
   - id: release-ch06-l02-e01
     visibility: public
     path: chapters/html-css-ch06/lessons/html-css-ch06-l02/exercises/html-css-ch06-l02-e01/exercise.yaml
@@ -1087,6 +1191,10 @@ items:
   - id: release-ch06-l03-s02
     visibility: public
     path: chapters/html-css-ch06/lessons/html-css-ch06-l03/slides/s02-custom-property-use.md
+  - id: ch06-custom-property-flow-original
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l03/slides/assets/custom-property-flow.svg
+    method: original-svg
   - id: release-ch06-l03-e01
     visibility: public
     path: chapters/html-css-ch06/lessons/html-css-ch06-l03/exercises/html-css-ch06-l03-e01/exercise.yaml
@@ -1126,6 +1234,10 @@ items:
   - id: release-ch06-l04-s02
     visibility: public
     path: chapters/html-css-ch06/lessons/html-css-ch06-l04/slides/s02-component-boundary.md
+  - id: ch06-base-modifier-classes-original
+    visibility: public
+    path: chapters/html-css-ch06/lessons/html-css-ch06-l04/slides/assets/base-modifier-classes.svg
+    method: original-svg
   - id: release-ch06-l04-e01
     visibility: public
     path: chapters/html-css-ch06/lessons/html-css-ch06-l04/exercises/html-css-ch06-l04-e01/exercise.yaml
@@ -1165,6 +1277,10 @@ items:
   - id: release-ch07-l01-r01
     visibility: public
     path: chapters/html-css-ch07/lessons/html-css-ch07-l01/slides/r01-profile-assembly-review.md
+  - id: ch07-profile-assembly-original
+    visibility: public
+    path: chapters/html-css-ch07/lessons/html-css-ch07-l01/slides/assets/profile-assembly.svg
+    method: original-svg
   - id: release-ch07-l01-e01
     visibility: public
     path: chapters/html-css-ch07/lessons/html-css-ch07-l01/exercises/html-css-ch07-l01-e01/exercise.yaml
@@ -1412,6 +1528,22 @@ items:
     path: chapters/html-css-ch08/lessons/html-css-ch08-l01/slides/assets/diagram-flex-axis.svg
     method: original-svg
     promptPath: assets/published/diagram-flex-axis.svg
+  - id: ch08-distribution-gap-original
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l02/slides/assets/distribution-gap.svg
+    method: original-svg
+  - id: ch08-cross-axis-alignment-original
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l03/slides/assets/cross-axis-alignment.svg
+    method: original-svg
+  - id: ch08-wrap-calculation-original
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l04/slides/assets/wrap-calculation.svg
+    method: original-svg
+  - id: ch08-navigation-card-integration-original
+    visibility: public
+    path: chapters/html-css-ch08/lessons/html-css-ch08-l05/slides/assets/navigation-card-integration.svg
+    method: original-svg
   - id: ch09-grid-tracks-source-original
     visibility: authoring
     path: assets/source/diagram-grid-tracks.svg
@@ -1585,6 +1717,18 @@ items:
     path: chapters/html-css-ch09/lessons/html-css-ch09-l01/slides/assets/diagram-grid-tracks.svg
     method: original-svg
     promptPath: assets/published/diagram-grid-tracks.svg
+  - id: ch09-repeat-fr-calculation-original
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l02/slides/assets/repeat-fr-calculation.svg
+    method: original-svg
+  - id: ch09-responsive-grid-original
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l03/slides/assets/responsive-grid.svg
+    method: original-svg
+  - id: ch09-grid-flex-composition-original
+    visibility: public
+    path: chapters/html-css-ch09/lessons/html-css-ch09-l04/slides/assets/grid-flex-composition.svg
+    method: original-svg
   - id: ch10-responsive-source-original
     visibility: authoring
     path: assets/source/diagram-responsive-breakpoints.svg
@@ -1797,6 +1941,22 @@ items:
     path: chapters/html-css-ch10/lessons/html-css-ch10-l02/slides/assets/diagram-responsive-breakpoints.svg
     method: original-svg
     promptPath: assets/published/diagram-responsive-breakpoints.svg
+  - id: ch10-viewport-mobile-first-original
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l01/slides/assets/viewport-mobile-first.svg
+    method: original-svg
+  - id: ch10-fluid-container-original
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l03/slides/assets/fluid-container.svg
+    method: original-svg
+  - id: ch10-responsive-image-slide-original
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l04/slides/assets/responsive-image.svg
+    method: original-svg
+  - id: ch10-viewport-audit-original
+    visibility: public
+    path: chapters/html-css-ch10/lessons/html-css-ch10-l05/slides/assets/viewport-audit.svg
+    method: original-svg
   - id: ch10-responsive-avatar-original
     visibility: public
     path: chapters/html-css-ch10/lessons/html-css-ch10-l04/exercises/html-css-ch10-l04-e01/assets/profile-avatar.svg
@@ -2223,6 +2383,9 @@ items:
   - id: release-ch12-l05-e01-incomplete-css
     visibility: authoring
     path: chapters/html-css-ch12/lessons/html-css-ch12-l05/exercises/html-css-ch12-l05-e01/fixtures/incomplete/styles.css
+  - id: release-ch12-l05-e01-focus-indicator-disabled-css
+    visibility: authoring
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l05/exercises/html-css-ch12-l05-e01/fixtures/focus-indicator-disabled/styles.css
   - id: ch12-profile-avatar-l05-original
     visibility: public
     path: chapters/html-css-ch12/lessons/html-css-ch12-l05/exercises/html-css-ch12-l05-e01/assets/profile-avatar.svg
@@ -2306,8 +2469,70 @@ items:
   - id: release-ch13-l01-e01-low-contrast-css
     visibility: authoring
     path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/fixtures/low-contrast/styles.css
+  - id: release-ch13-l01-e01-insufficient-cards-html
+    visibility: authoring
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/fixtures/insufficient-cards/index.html
+  - id: release-ch13-l01-e01-duplicate-landmarks-html
+    visibility: authoring
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/fixtures/duplicate-landmarks/index.html
   - id: ch13-stack-day-poster-exercise-original
     visibility: public
     path: chapters/html-css-ch13/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01/assets/stack-day-poster.svg
     method: original-svg
     promptPath: assets/published/stack-day-poster.svg
+  - id: ch11-accessible-name-map-original
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l02/slides/assets/accessible-name-map.svg
+    method: original-svg
+  - id: ch11-contrast-status-original
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l03/slides/assets/contrast-status.svg
+    method: original-svg
+  - id: ch11-final-audit-original
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l04/slides/assets/final-audit.svg
+    method: original-svg
+  - id: ch11-audit-avatar-original
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l04/exercises/html-css-ch11-l04-e01/assets/audit-avatar.svg
+    method: original-svg
+  - id: ch11-focus-outline-parts-original
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l01/slides/assets/focus-outline-parts.svg
+    method: original-svg
+  - id: ch11-accessible-name-code-map-original
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l02/slides/assets/accessible-name-code-map.svg
+    method: original-svg
+  - id: ch11-status-text-map-original
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l03/slides/assets/status-text-map.svg
+    method: original-svg
+  - id: ch11-reduced-motion-condition-original
+    visibility: public
+    path: chapters/html-css-ch11/lessons/html-css-ch11-l04/slides/assets/reduced-motion-condition.svg
+    method: original-svg
+  - id: ch12-audience-outline-flow-original
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l01/slides/assets/audience-outline-flow.svg
+    method: original-svg
+  - id: ch12-navigation-hero-map-original
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l02/slides/assets/navigation-hero-map.svg
+    method: original-svg
+  - id: ch12-skills-works-system-original
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l03/slides/assets/skills-works-system.svg
+    method: original-svg
+  - id: ch12-contact-responsive-check-original
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l04/slides/assets/contact-responsive-check.svg
+    method: original-svg
+  - id: ch12-profile-polish-loop-original
+    visibility: public
+    path: chapters/html-css-ch12/lessons/html-css-ch12-l05/slides/assets/profile-polish-loop.svg
+    method: original-svg
+  - id: ch13-capstone-requirement-trace-original
+    visibility: public
+    path: chapters/html-css-ch13/lessons/html-css-ch13-l01/slides/assets/capstone-requirement-trace.svg
+    method: original-svg

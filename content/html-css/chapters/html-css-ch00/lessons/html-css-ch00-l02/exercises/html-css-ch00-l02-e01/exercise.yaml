@@ -2,8 +2,29 @@ id: html-css-ch00-l02-e01
 kind: standard
 workspaceId: html-css-ch00-l02-e01
 countsTowardStandardExerciseTotal: true
-title: Profile名とAccent Colorを更新する
+title: 2つのFileを順番に更新する
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: edit-save-preview-validate, minimumLevel: transform }
+  - { conceptId: file-tab, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: update-profile-name
+    file: index.html
+    target: h1の開始Tagと終了Tagの間
+    starterAnchor: <h1>ここに名前を入力</h1>
+    change: 日本語を「つむぎ」へ置き換える
+    observe: 保存後のPreviewで題名が「つむぎ」へ変わる
+    requiresConceptIds: [edit-save-preview-validate, file-tab]
+    validationRuleIds: [html-css-ch00-l02-e01-r01]
+  - id: update-page-background
+    file: styles.css
+    target: body内に用意されたbackground-colorの行
+    starterAnchor: 'background-color: #ffffff;'
+    change: 右側の値#ffffffだけを#eef6f4へ置き換える
+    observe: 保存後のPreviewで背景が淡い青緑色へ変わる
+    requiresConceptIds: [edit-save-preview-validate, file-tab]
+    validationRuleIds: [html-css-ch00-l02-e01-r02]
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -12,70 +33,52 @@ solutionFiles:
   - { path: styles.css, language: css, source: solution/styles.css, editable: false }
 validationRules:
   - id: html-css-ch00-l02-e01-r01
-    label: Profile名が空でない
+    label: h1の名前をつむぎへ変える
     required: true
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
     target: { kind: selector, selector: h1 }
-    assertion: { kind: accessible-name, operator: present }
+    assertion: { kind: text, operator: equals, expected: つむぎ }
     feedback:
-      target: Profileのh1
-      expected: 空でない名前が表示される
-      nextAction: index.htmlのh1開始Tagと終了Tagの間へ名前を書きます。
+      target: index.htmlのh1
+      expected: h1の内容が「つむぎ」
+      nextAction: index.htmlのTabへ戻り、h1にある日本語だけを置き換えます。
     hintId: html-css-ch00-l02-e01-h01
     relatedSlideId: html-css-ch00-l02-s02
   - id: html-css-ch00-l02-e01-r02
-    label: Accent Colorの変数を指定する
+    label: bodyの背景を淡い青緑色へ変える
     required: true
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: ':root' }
-    assertion:
-      kind: computed-style
-      property: --accent
-      operator: equals
-      expected: '#0f766e'
-    feedback:
-      target: CSSのAccent Color
-      expected: --accentが#0f766e
-      nextAction: styles.cssの:root Ruleで--accentの値を書き換えます。
-    hintId: html-css-ch00-l02-e01-h02
-    relatedSlideId: html-css-ch00-l02-s01
-  - id: html-css-ch00-l02-e01-r03
-    label: Accent ColorがButtonへ反映される
-    required: true
-    group: all
-    viewportMode: all
-    viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'a[href="#note"]' }
+    target: { kind: selector, selector: body }
     assertion:
       kind: computed-style
       property: background-color
       operator: equals
-      expected: rgb(15, 118, 110)
+      expected: rgb(238, 246, 244)
     feedback:
-      target: 学習ノートLinkの背景
-      expected: Accent Colorの青緑色
-      nextAction: Linkのbackgroundへvar(--accent)が使われているか確認します。
-    hintId: html-css-ch00-l02-e01-h03
+      target: styles.cssの背景色
+      expected: bodyの背景色が#eef6f4
+      nextAction: styles.cssのTabへ戻り、用意された値だけを#eef6f4へ置き換えます。
+    hintId: html-css-ch00-l02-e01-h02
     relatedSlideId: html-css-ch00-l02-s02
 hints:
   - id: html-css-ch00-l02-e01-h01
     level: 1
-    title: 変わる場所を観察する
-    text: PreviewのProfile名と色付きLinkを見て、変更したい2箇所を確認します。
+    title: まずHTMLを1箇所だけ直す
+    text: index.htmlのTabを選び、h1の日本語を変えて保存とPreviewを確認します。
     relatedSlideId: html-css-ch00-l02-s02
   - id: html-css-ch00-l02-e01-h02
     level: 2
-    title: HTMLとCSSを切り替える
-    text: 名前はindex.html、Accent Colorはstyles.cssにあることをFile Tabで確認します。
+    title: 次にCSSの値だけ直す
+    text: styles.cssのTabを選び、background-colorの右側にある#ffffffを探します。
     relatedSlideId: html-css-ch00-l02-s02
   - id: html-css-ch00-l02-e01-h03
     level: 3
-    title: 記号の組を確認する
-    text: CSSはproperty、colon、value、semicolonの順です。波かっこの開きと閉じも対にします。
+    title: 4段階を1回ずつ終える
+    text: 各Fileで編集、保存済み、Preview、判定の順を崩さず、未達の対象だけを直します。
     relatedSlideId: html-css-ch00-l02-s01
 relatedSlideIds: [html-css-ch00-l02-s01, html-css-ch00-l02-s02]
 previewViewports:

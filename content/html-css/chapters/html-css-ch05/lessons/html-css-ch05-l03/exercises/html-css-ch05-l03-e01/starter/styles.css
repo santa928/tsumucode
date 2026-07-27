@@ -6,7 +6,7 @@ body {
   font-family: system-ui, sans-serif;
 }
 .card {
-  padding: 24px;
+  padding: 16px;
   border: 1px solid #2d5d62;
 }
 .card + .card {

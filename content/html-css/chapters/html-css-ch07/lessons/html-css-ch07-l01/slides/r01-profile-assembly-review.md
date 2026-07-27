@@ -1,24 +1,49 @@
 ---
 id: html-css-ch07-l01-r01
-title: 5つの観点でProfile Cardを振り返る
+title: 5つの観点を1枚のProfile Cardへ統合する
 kind: reflection
-assets: []
+layout: code-preview
+teachesConceptIds: [profile-card-integration]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 420, maxCodeLines: 12, maxVisuals: 1 }
+assets:
+  - id: profile-assembly-map
+    source: assets/profile-assembly.svg
+    mediaType: image
+    alt: Structure、Image、Sizing、Typography、ContrastをProfile Cardへ統合する手順図
+    provenanceId: ch07-profile-assembly-original
 ---
 
-この章では新しいConceptを増やしません。これまで個別に学んだ判断を、1枚のProfile Cardへ重ねます。実習中に迷ったら、前のスライドへ戻って理由を確認してから再開できます。
+新しい構文は増えません。既習の5観点を、上から1つずつProfile Cardへ重ねます。実習中も「前のスライド」でこの見本へ戻れます。
 
-- **Structure**: Cardを`article`、名前を見出し、自己紹介を段落として表す
-- **Image**: Profile Imageへ内容を伝える`alt`を付ける
-- **Spacing**: CardをContainer内へ収め、内部Paddingを確保する
-- **Typography**: 本文のFont SizeとLine Heightを読みやすく整える
-- **Contrast**: TextとBackgroundのContrastを4.5:1以上にする
+![Profile Cardを完成する5つの観点](asset:profile-assembly-map)
 
-一度に全部を直さず、判定結果を1項目ずつ観察します。構造はDOM、余白は実寸、文字と色はComputed Styleというように、観察する場所を切り替えます。
+HTMLではCardを`article`へ変え、画像へ内容の分かる`alt`を書きます。
+
+```html
+<article data-profile-card>
+  <img src="avatar.svg" alt="Code Cardを持つAoiのAvatar" />
+</article>
+```
+
+CSSではSizing、Padding、文字色、行間を順に直します。
+
+```css
+[data-profile-card] {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 24px;
+  color: #24323d;
+}
+[data-bio] {
+  line-height: 1.5;
+}
+```
 
 :::practice
-prompt: Starterを見て、5つのうち最初に確認する観点を1つ選びます。
-expectedAction: Structure、Image、Spacing、Typography、Contrastのいずれかと確認方法を説明する
+prompt: HTMLの2項目とCSSの4項目を、実習で直す順に言います。
+expectedAction: article、alt、Sizing、Padding、Color、Line Heightの順に確認する
 estimatedMinutes: 3
 :::
 
-準備ができたら統合実習へ進み、最後に5項目を自分の言葉で振り返ります。
+次の実習では、この6 Stepを判定結果で1つずつ確認します。

@@ -5,15 +5,10 @@ body {
   color: #24323d;
 }
 .reading-sample {
+  font-size: 1.25rem;
+  line-height: 1.5;
+  font-family: system-ui, sans-serif;
   max-width: 42rem;
   padding: 24px;
   background: #fff;
-  font-size: 1.25rem;
-  line-height: 1.5;
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    sans-serif;
 }

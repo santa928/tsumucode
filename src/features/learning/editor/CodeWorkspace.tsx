@@ -1,5 +1,12 @@
 /** 親管理の複数file stateと単一editor instanceを接続する学習UI。 */
-import { type KeyboardEvent, useEffect, useId, useLayoutEffect, useRef } from 'react';
+import {
+  type KeyboardEvent,
+  type ReactNode,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+} from 'react';
 import type { EditorCursor } from '../../../core/persistence/contracts';
 import type { RunnerDiagnostic } from '../../../core/runtime/contracts';
 import type { EditorAdapter, EditorHandle } from './EditorAdapter';
@@ -9,9 +16,16 @@ export interface CodeWorkspaceProps {
   readonly files: Readonly<Record<string, string>>;
   readonly languages: Readonly<Record<string, string>>;
   readonly selectedFile: string;
+  /** filesを最後に受理したSession revision。 */
+  readonly contentRevision: number;
   readonly cursors: Readonly<Record<string, EditorCursor>>;
   readonly diagnostics: readonly RunnerDiagnostic[];
-  readonly onChange: (path: string, content: string) => void;
+  /** 値が変わるたび、履歴を保持した既存EditorへFocusを戻す要求ID。 */
+  readonly editorFocusRequestId?: number;
+  /** 親が作業台Header右側へ渡す副操作。 */
+  readonly headerAction?: ReactNode;
+  /** 受理時はSessionの次revision、拒否時はundefinedを返す。 */
+  readonly onChange: (path: string, content: string) => number | undefined;
   readonly onCursorChange: (path: string, cursor: EditorCursor) => void;
   readonly onSelectedFileChange: (path: string) => void;
 }
@@ -47,9 +61,11 @@ function tabDestinationIndex(key: string, currentIndex: number, count: number): 
 /** controlled propsをCodeMirrorへ同期し、編集結果を最新の選択fileへ通知する。 */
 export function CodeWorkspace(props: CodeWorkspaceProps) {
   const workspaceId = useId();
+  const editorHelpId = `${workspaceId}-editor-help`;
   const hostRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<EditorHandle | null>(null);
   const propsRef = useRef(props);
+  const handledFocusRequestRef = useRef(props.editorFocusRequestId);
 
   useLayoutEffect(() => {
     propsRef.current = props;
@@ -66,11 +82,13 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
       path: initial.selectedFile,
       language: initial.languages[initial.selectedFile] ?? 'text',
       content: initial.files[initial.selectedFile] ?? '',
+      contentRevision: initial.contentRevision,
+      descriptionId: editorHelpId,
       ...(initialCursor ? { cursor: initialCursor } : {}),
       diagnostics: initial.diagnostics,
       onChange: (content) => {
         const current = propsRef.current;
-        current.onChange(current.selectedFile, content);
+        return current.onChange(current.selectedFile, content);
       },
       onCursorChange: (cursor) => {
         const current = propsRef.current;
@@ -83,7 +101,7 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
       handle.destroy();
       if (handleRef.current === handle) handleRef.current = null;
     };
-  }, [props.adapter]);
+  }, [editorHelpId, props.adapter]);
 
   useEffect(() => {
     const handle = handleRef.current;
@@ -92,10 +110,24 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
       path: props.selectedFile,
       language: props.languages[props.selectedFile] ?? 'text',
       content: props.files[props.selectedFile] ?? '',
+      contentRevision: props.contentRevision,
       diagnostics: props.diagnostics,
     });
     handle.setSelection(props.cursors[props.selectedFile]);
-  }, [props.selectedFile, props.files, props.languages, props.cursors, props.diagnostics]);
+  }, [
+    props.selectedFile,
+    props.files,
+    props.languages,
+    props.contentRevision,
+    props.cursors,
+    props.diagnostics,
+  ]);
+
+  useEffect(() => {
+    if (handledFocusRequestRef.current === props.editorFocusRequestId) return;
+    handledFocusRequestRef.current = props.editorFocusRequestId;
+    handleRef.current?.focus();
+  }, [props.editorFocusRequestId]);
 
   const visibleDiagnostics = props.diagnostics.filter(
     ({ file }) => file === undefined || file === props.selectedFile,
@@ -123,18 +155,24 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
   return (
     <section
       aria-labelledby={headingId}
+      data-has-diagnostics={visibleDiagnostics.length > 0 ? 'true' : 'false'}
       className="overflow-hidden rounded-workshop-lg border border-workshop-border bg-workshop-surface shadow-[var(--tc-shadow-piece)]"
     >
-      <header className="flex flex-wrap items-end justify-between gap-3 border-b border-workshop-border bg-workshop-raised px-4 py-4 md:px-5">
+      <header className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 border-b border-workshop-border bg-workshop-raised px-4 py-2 md:px-5">
         <div>
           <p className="text-sm font-black text-workshop-complete">コード作業台</p>
           <h2 id={headingId} className="mt-1 text-xl font-black">
             コードを組み立てる
           </h2>
         </div>
-        <p className="rounded-workshop-sm bg-workshop-workbench px-3 py-1.5 text-sm font-bold text-workshop-muted">
-          {filePaths.length}個のファイルピース
-        </p>
+        <div className="flex items-center gap-2">
+          <p className="whitespace-nowrap rounded-workshop-sm bg-workshop-workbench px-2 py-1 text-xs font-bold text-workshop-muted">
+            {filePaths.length}個のファイルピース
+          </p>
+          {props.headerAction === undefined ? null : (
+            <div className="[&>*]:min-h-11">{props.headerAction}</div>
+          )}
+        </div>
       </header>
       <div
         role="tablist"
@@ -179,6 +217,12 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
         aria-labelledby={selectedTabId}
         className="min-w-0 bg-workshop-raised"
       >
+        <p
+          id={editorHelpId}
+          className="border-b border-workshop-border bg-workshop-workbench px-4 py-2 text-xs font-bold text-workshop-muted"
+        >
+          Tabで字下げ、Shift+Tabで戻す。Escの後にTabを押すとエディターを出られます。
+        </p>
         <div
           ref={hostRef}
           aria-label={`${props.selectedFile} のコードエディター`}
@@ -188,7 +232,8 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
       <ul
         aria-label="コード診断"
         aria-live="polite"
-        className="space-y-2 border-t border-workshop-border bg-workshop-surface p-3 empty:hidden"
+        tabIndex={visibleDiagnostics.length > 0 ? 0 : -1}
+        className="tc-code-diagnostics space-y-2 border-t border-workshop-border bg-workshop-surface p-3 empty:hidden"
       >
         {visibleDiagnostics.map((diagnostic, index) => (
           <li

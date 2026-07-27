@@ -59,6 +59,8 @@ function canonicalFiles(files: Readonly<Record<string, string>>): ReadonlyMap<st
 
 /** Full／read-only共通の入力境界をiframe更新前に検証する。 */
 export function validateHtmlCssPreviewInput(input: RunnerInput): ValidatedHtmlCssPreviewInput {
+  const configuredReducedMotion = (input.viewport as { readonly reducedMotion?: unknown })
+    .reducedMotion;
   if (input.languageId !== 'html-css') throw new Error('Runner languageId mismatch');
   if (
     !SAFE_ID.test(input.exerciseSessionId) ||
@@ -74,7 +76,8 @@ export function validateHtmlCssPreviewInput(input: RunnerInput): ValidatedHtmlCs
     !Number.isInteger(input.viewport.width) ||
     input.viewport.width <= 0 ||
     !Number.isInteger(input.viewport.height) ||
-    input.viewport.height <= 0
+    input.viewport.height <= 0 ||
+    (configuredReducedMotion !== undefined && configuredReducedMotion !== 'reduce')
   ) {
     throw new Error('Invalid preview viewport');
   }

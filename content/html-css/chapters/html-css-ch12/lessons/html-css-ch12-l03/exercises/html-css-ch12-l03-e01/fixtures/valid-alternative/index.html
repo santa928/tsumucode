@@ -14,7 +14,7 @@
     <main>
       <section class="hero">
         <h1>つむぎの制作ノート</h1>
-        <img data-profile-avatar src="asset:avatar-project-about" alt="制作を学ぶつむぎ" />
+        <img data-profile-avatar src="asset:profile-avatar" alt="制作を学ぶつむぎ" />
         <a data-primary-link href="#works">作品へ進む</a>
       </section>
       <section data-about class="content-surface">
@@ -30,7 +30,16 @@
           <li>Keyboard</li>
         </ul>
       </section>
-      <section id="works"><h2>Works</h2></section>
+      <section id="works">
+        <h2>Works</h2>
+        <div data-works-layout class="project-grid">
+          <article data-work-card>
+            <img data-work-image src="asset:profile-avatar" alt="Profile Card作品Preview" />
+            Profile Card
+          </article>
+          <article data-work-card>Learning Note</article>
+        </div>
+      </section>
     </main>
     <footer>Learning Note</footer>
   </body>

@@ -4,6 +4,31 @@ workspaceId: html-css-ch10-l01-e01
 countsTowardStandardExerciseTotal: true
 title: Viewport MetaとMobile Baseを用意する
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: viewport-meta, minimumLevel: transform }
+  - { conceptId: mobile-first-base, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: complete-viewport-content
+    file: index.html
+    target: head内のViewport Meta content属性
+    starterAnchor: 'content="initial-scale=1"'
+    change: Valueをwidth=device-width, initial-scale=1へ変更する
+    observe: Mobile BrowserのLayout幅が端末幅に合う
+    requiresConceptIds: [viewport-meta]
+    validationRuleIds:
+      - html-css-ch10-l01-e01-r01
+      - html-css-ch10-l01-e01-r02
+  - id: make-mobile-base-fluid
+    file: styles.css
+    target: '[data-page] Ruleのwidth Declaration'
+    starterAnchor: 'width: 500px;'
+    change: Valueを100%へ変更する
+    observe: 390pxでContainerが親幅へ収まり、横Overflowが消える
+    requiresConceptIds: [mobile-first-base]
+    validationRuleIds:
+      - html-css-ch10-l01-e01-r03
+      - html-css-ch10-l01-e01-r04
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -53,6 +78,20 @@ validationRules:
         expected: 'false',
         nextAction: Base Containerをwidth 100%とborder-boxで収めます。,
       }
+    hintId: html-css-ch10-l01-e01-h03
+    relatedSlideId: html-css-ch10-l01-s02
+  - id: html-css-ch10-l01-e01-r04
+    label: Mobile Baseの流動幅をSourceへ書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390]
+    target: { kind: source, file: styles.css }
+    assertion: { kind: text, operator: contains-normalized, expected: 'width: 100%;' }
+    feedback:
+      target: data-pageのWidth Source
+      expected: width 100%
+      nextAction: widthのValueを500pxから100%へ変更します。
     hintId: html-css-ch10-l01-e01-h03
     relatedSlideId: html-css-ch10-l01-s02
 hints:

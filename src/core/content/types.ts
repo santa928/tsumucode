@@ -3,23 +3,28 @@ import type { z } from 'zod';
 import type {
   AssetRefSchema,
   ChapterManifestSchema,
+  ConceptDefinitionSchema,
+  ConceptRequirementSchema,
   ContentProgressMigrationSchema,
   CourseCatalogEntrySchema,
   CourseCatalogSchema,
   CourseManifestSchema,
   ExerciseFileSchema,
   ExerciseSchema,
+  ExerciseStepSchema,
   GlossaryEntrySchema,
   HintSchema,
   HtmlCssRuleAssertionSchema,
   HtmlCssRuleTargetSchema,
   HtmlCssValidationRuleDefinitionSchema,
   LessonSchema,
+  MasteryLevelSchema,
   PhaseManifestSchema,
   PreviewViewportSchema,
   ProgressMigrationStepSchema,
   RuleAssertionSchema,
   RuleTargetSchema,
+  SlideLayoutSchema,
   SlideBlockSchema,
   SlideSchema,
   ValidationRuleDefinitionSchema,
@@ -35,8 +40,13 @@ export type ChapterManifest = z.infer<typeof ChapterManifestSchema>;
 export type Lesson = z.infer<typeof LessonSchema>;
 export type Slide = z.infer<typeof SlideSchema>;
 export type SlideBlock = z.infer<typeof SlideBlockSchema>;
+export type SlideLayout = z.infer<typeof SlideLayoutSchema>;
+export type MasteryLevel = z.infer<typeof MasteryLevelSchema>;
 export type Exercise = z.infer<typeof ExerciseSchema>;
 export type ExerciseFile = z.infer<typeof ExerciseFileSchema>;
+export type ExerciseStep = z.infer<typeof ExerciseStepSchema>;
+export type ConceptDefinition = z.infer<typeof ConceptDefinitionSchema>;
+export type ConceptRequirement = z.infer<typeof ConceptRequirementSchema>;
 export type GlossaryEntry = z.infer<typeof GlossaryEntrySchema>;
 export type Hint = z.infer<typeof HintSchema>;
 export type AssetRef = z.infer<typeof AssetRefSchema>;

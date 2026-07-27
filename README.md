@@ -8,6 +8,7 @@ TsumuCodeは、スライドで仕組みを理解し、ブラウザ上でコー�
 - 5工程でプロフィールページを組み立てるGuided Project
 - Briefから個人制作展サイトを完成させるCapstone Project
 - スライドの前後移動と一覧、演習中の関連スライド見直し、段階ヒント
+- 進捗と下書きへ触れず、全95スライドを自由に読めるスライド閲覧モード
 - HTML/CSS編集、隔離プレビュー、構造・見た目・アクセシビリティの自動判定
 - 端末内の進捗・下書き保存、JSONでの書き出しと差分確認付き読み込み
 
@@ -45,13 +46,21 @@ Node.jsやnpmをHostへインストールする必要はありません。依存
 
 [http://localhost:5173/](http://localhost:5173/)を開きます。停止するときは、起動したTerminalで`Ctrl+C`を押します。
 
+## スライドだけ見る
+
+外出先などで読むだけの場合は、Homeの「スライドだけ見る」から目次を開きます。
+
+閲覧モードは通常学習の進捗、再開地点、下書きを参照・更新しません。目次と各スライドはHash URLを再読込・共有できます。通常学習へ戻ると、Course Map以降は通常の端末保存が再開します。
+
+GitHub Pagesへ公開した後のHTML/CSSコースの直リンクは、[スライド目次](https://santa928.github.io/tsumucode/#/library/html-css)です。
+
 ## 学習方法
 
 1. Homeの教材棚から「HTML/CSS はじめの一歩」を選びます。
 2. コースマップから現在のレッスンを開きます。
 3. スライド一覧、前後ボタン、左右矢印キーで概念を学びます。
-4. PCではHTML/CSSを編集し、プレビューと「判定する」で結果を確認します。
-5. 不合格時は段階ヒントを開くか、演習画面を保ったまま関連スライドを見直します。
+4. PCでは手順、Editor、Preview、判定操作を固定Workspace内で見比べながらHTML/CSSを編集します。Tab／Shift+Tabで字下げし、Editorを出るときはEscapeの後にTabまたはShift+Tabを押します。
+5. 不合格時は段階ヒントを開くか、コードと判定履歴を保ったまま関連スライドを重ねて見直します。
 6. 合格後は完了画面とコースマップで進捗を確認します。
 
 ## 端末データ、容量、引き継ぎ
@@ -74,6 +83,7 @@ Node.jsやnpmをHostへインストールする必要はありません。依存
 教材の唯一のSource of truthは`content/html-css/`です。生成物を直接編集しません。
 
 - `content/html-css/course.yaml`: コース構造、公開状態、教材Revision
+- `content/html-css/concepts.yaml`: Conceptの前提関係、初出Slide、Project要求Level
 - `content/html-css/chapters/`: 章、レッスン、演習、ルール、ヒント
 - `content/html-css/slides/`: スライド本文
 - `content/html-css/workspaces/`: Starter、Solution、負例Fixture
@@ -87,6 +97,12 @@ SourceやAssetを追加したら、同じ変更で`provenance.yaml`へ登録し�
 ```bash
 ./scripts/docker-compose.sh run --rm app npm run content:provenance
 ./scripts/docker-compose.sh run --rm app npm run content:check
+```
+
+ページ送りMetadataとConcept習得条件の移行状況は、次の単独Reportで確認します。不足があれば対象Lesson、Slide、Exercise、Conceptを安定した順序で表示して終了Code 1になります。教材再編集が完了するまでは既知の移行Reportであり、`npm run check`やRelease合格条件には含めません。全項目を移行した後にRelease Gateへ昇格します。
+
+```bash
+./scripts/docker-compose.sh run --rm app npm run content:coverage
 ```
 
 ## 品質ゲート
@@ -152,6 +168,6 @@ tag ref作成後の通信断などでRunだけが失敗表示になった場合�
 - 利用者コードからの外部Network、Storage、親画面操作
 - Progateの教材、課題、UI、名称、ロゴ、キャラクターの複製や互換性
 
-## 独立制作と非提携Notice
+## 独立制作と権利方針
 
-TsumuCodeは個人・身内向けに制作した非商用の独立学習サイトです。Progateとは提携・関連していません。教材・課題・UIは独自制作です。この文言は全RouteのFooterから確認できます。
+TsumuCodeは個人・身内向けに制作した非商用の独立学習サイトです。教材・課題・UI・画像資産は独自制作し、他社サービスの名称、ロゴ、キャラクター、教材、画面資産を流用しません。この説明は学習画面の限られた表示領域を消費しないようRepository文書で管理します。

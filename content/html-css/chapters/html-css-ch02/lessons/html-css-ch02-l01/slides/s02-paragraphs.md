@@ -3,21 +3,35 @@ id: html-css-ch02-l01-s02
 title: 1つの話題を1つのParagraphにまとめる
 kind: comparison
 concept: paragraph-structure
-assets: []
+layout: code-preview
+teachesConceptIds: [section-paragraph]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 380, maxCodeLines: 8, maxVisuals: 1 }
+assets:
+  - id: preview-section-paragraph
+    source: assets/heading-outline-preview.svg
+    mediaType: image
+    alt: 各h2の直後に説明のpが1つずつある2つのSection
+    provenanceId: ch02-heading-outline-original
 ---
 
-`p`は、互いに関係する文を1つのParagraphとして表します。見出しだけでは話題の名前しか伝わらないため、各Sectionに説明となるParagraphを添えます。
+`p`は関係する文を1つのParagraphとして表します。見出しだけでは話題の名前しか伝わらないため、各sectionで`h2`の直後へ説明の`p`を置きます。
 
-短い文をすべて別の`p`へ分ける必要はありません。同じ話題を説明する文は1つにまとめ、話題が切り替わるところで次のParagraphへ分けます。
+```html
+<section>
+  <h2>学んだこと</h2>
+  <p>見出しは文章の階層を表します。</p>
+</section>
+```
 
-- 見出しは話題の名前を示す
-- Paragraphはその話題を説明する
-- 改行したいだけならParagraphを増やさず、文章のまとまりを見直す
+![h2とpを組み合わせたSection](asset:preview-section-paragraph)
+
+実習では2つのsectionそれぞれに、h2と同じ話題のpを1つ追加します。h1、section、h2の順番は変えません。
 
 :::practice
-prompt: 2つの見出しに対して、どの説明文を同じSectionへ入れるか整理します。
-expectedAction: 話題の一致を理由に見出しとParagraphを組み合わせる
+prompt: h2「次に試すこと」の直後へ置く説明文を1つ考えます。
+expectedAction: 同じ話題を説明する短い文をpにすると答える
 estimatedMinutes: 2
 :::
 
-次の実習では、1つのh1と2つのSectionに、階層を保ったh2とpを組みます。
+次の実習ではh3をh2へ直した後、各h2の直後へpを追加します。

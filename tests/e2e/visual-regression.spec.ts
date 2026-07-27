@@ -1,16 +1,27 @@
 import { expect, test, type Page } from '@playwright/test';
+import { replaceEditorText } from './helpers/progress';
 import { testBasePath } from './helpers/testBasePath';
 
 const COURSE_PATH = `${testBasePath()}#/courses/html-css`;
 const SLIDE_PATH = `${COURSE_PATH}/lessons/html-css-ch00-l01/slides/html-css-ch00-l01-s01`;
 const EXERCISE_PATH = `${COURSE_PATH}/lessons/html-css-ch00-l01/exercises/html-css-ch00-l01-e01`;
 const COMPLETION_PATH = `${EXERCISE_PATH}/completion`;
+const LIBRARY_INDEX_PATH = `${testBasePath()}#/library/html-css`;
+const LIBRARY_SLIDE_PATH = `${LIBRARY_INDEX_PATH}/lessons/html-css-ch00-l01/slides/html-css-ch00-l01-s01`;
 
 const VIEWPORTS = [
   { id: 'desktop-wide', width: 1440, height: 900 },
   { id: 'desktop-compact', width: 1280, height: 720 },
   { id: 'tablet-portrait', width: 768, height: 1024 },
   { id: 'mobile-portrait', width: 390, height: 844 },
+] as const;
+
+const LIBRARY_VIEWPORTS = [
+  { id: 'mobile-primary', width: 390, height: 844 },
+  { id: 'mobile-tall', width: 412, height: 915 },
+  { id: 'tablet-portrait', width: 768, height: 1024 },
+  { id: 'desktop-compact', width: 1280, height: 720 },
+  { id: 'desktop-wide', width: 1440, height: 900 },
 ] as const;
 
 interface VisualScreen {
@@ -89,8 +100,9 @@ async function seedCompletionProgress(page: Page): Promise<void> {
               'html-css-ch00-l01-s01',
               'html-css-ch00-l01-s02',
               'html-css-ch00-l01-s03',
+              'html-css-ch00-l01-s04',
             ],
-            currentSlideId: 'html-css-ch00-l01-s03',
+            currentSlideId: 'html-css-ch00-l01-s04',
             passedExerciseIds: [exerciseId],
             passedChecklistItemIds: [],
             passedRuleIds: ['html-css-ch00-l01-e01-r01', 'html-css-ch00-l01-e01-r02'],
@@ -195,6 +207,10 @@ const SCREENS: readonly VisualScreen[] = [
               .evaluate((element) => getComputedStyle(element).transform !== 'none'),
           )
           .toBe(true);
+        await page.locator('.cm-scroller').evaluate((element) => {
+          element.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        });
+        await expect(page.locator('[data-save-status="idle"]')).toHaveText('自動保存オン');
         await workspace.scrollIntoViewIfNeeded();
       } else {
         await expect(page.getByRole('heading', { name: 'PCで演習を開く' })).toBeVisible();
@@ -212,6 +228,39 @@ const SCREENS: readonly VisualScreen[] = [
   },
 ];
 
+const LIBRARY_SCREENS: readonly VisualScreen[] = [
+  {
+    id: 'library-index',
+    path: LIBRARY_INDEX_PATH,
+    ready: async (page) => {
+      await expect(
+        page.getByRole('heading', {
+          level: 1,
+          name: 'HTML/CSS はじめの一歩 スライド目次',
+        }),
+      ).toBeVisible();
+      await expect(
+        page.getByText('進捗を変えずに、すべてのスライドを自由に読めます'),
+      ).toBeVisible();
+      await expect.poll(() => page.evaluate(() => document.fonts.status)).toBe('loaded');
+    },
+  },
+  {
+    id: 'library-slide',
+    path: LIBRARY_SLIDE_PATH,
+    ready: async (page) => {
+      await expect(
+        page.getByRole('heading', {
+          level: 1,
+          name: 'Webページは3つの役割でできている',
+        }),
+      ).toBeVisible();
+      await expect(page.getByText('進捗には反映されません')).toBeVisible();
+      await expect.poll(() => page.evaluate(() => document.fonts.status)).toBe('loaded');
+    },
+  },
+] as const;
+
 test.describe('World-A visual regression', () => {
   test.beforeEach(async ({ browserName, page }) => {
     test.skip(browserName !== 'chromium', 'Baseline画像はChromiumで一意に固定する');
@@ -223,6 +272,57 @@ test.describe('World-A visual regression', () => {
       test(`${screen.id}-${viewport.id}`, async ({ page }) => {
         await page.setViewportSize({ width: viewport.width, height: viewport.height });
         await screen.prepare?.(page);
+        await page.goto(screen.path);
+        await screen.ready(page);
+        await stabilizeScreenshotScroll(page, screen.id);
+        await expect(page).toHaveScreenshot(`${screen.id}-${viewport.id}.png`, {
+          animations: 'disabled',
+          caret: 'hide',
+          fullPage: false,
+        });
+      });
+    }
+  }
+});
+
+test.describe('Exercise diagnostic visual regression', () => {
+  test.beforeEach(async ({ browserName, page }) => {
+    test.skip(browserName !== 'chromium', 'Baseline画像はChromiumで一意に固定する');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+  });
+
+  for (const viewport of VIEWPORTS.slice(0, 2)) {
+    test(`exercise-diagnostics-${viewport.id}`, async ({ page }) => {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      await page.goto(EXERCISE_PATH);
+      await expect(page.getByTestId('code-workspace')).toBeVisible();
+      await page.getByRole('tab', { name: 'styles.css' }).click();
+      await replaceEditorText(page, '<main><p>複数診断</p></main>');
+      await page.getByRole('button', { name: '判定する' }).click();
+      await expect(page.getByRole('heading', { name: 'コードを確認しよう' })).toBeVisible();
+      await page.getByRole('button', { name: '閉じる' }).click();
+      const diagnostics = page.getByRole('list', { name: 'コード診断' });
+      await expect(diagnostics).toBeVisible();
+      expect(await diagnostics.getByRole('listitem').count()).toBeGreaterThan(1);
+      await expect(page).toHaveScreenshot(`exercise-diagnostics-${viewport.id}.png`, {
+        animations: 'disabled',
+        caret: 'hide',
+        fullPage: false,
+      });
+    });
+  }
+});
+
+test.describe('Slide library visual regression', () => {
+  test.beforeEach(async ({ browserName, page }) => {
+    test.skip(browserName !== 'chromium', 'Baseline画像はChromiumで一意に固定する');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+  });
+
+  for (const screen of LIBRARY_SCREENS) {
+    for (const viewport of LIBRARY_VIEWPORTS) {
+      test(`${screen.id}-${viewport.id}`, async ({ page }) => {
+        await page.setViewportSize({ width: viewport.width, height: viewport.height });
         await page.goto(screen.path);
         await screen.ready(page);
         await stabilizeScreenshotScroll(page, screen.id);

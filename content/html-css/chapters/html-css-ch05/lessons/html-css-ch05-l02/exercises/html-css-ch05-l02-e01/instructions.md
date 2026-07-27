@@ -1,8 +1,7 @@
-## Cardを320pxのContainerへ収める
+## Cardを320pxのFrameへ収める
 
-1. .sized-cardへbox-sizing: border-boxを設定します。
-2. widthを320pxにします。
-3. PaddingとBorderを指定幅の内側へ含めます。
-4. Computed Widthで収まりを確認します。
+`.sized-card`の先頭へ`box-sizing: border-box;`を追加します。
 
-Incomplete例は外幅320pxでもSizing方式だけが未達です。
+続いて、`width: 280px;`を`width: 320px;`へ変更します。Padding 24pxとBorder 2pxは完成済みなので残してください。
+
+実行すると、Sourceの書き方とCardのBorder外幅320pxが確認されます。

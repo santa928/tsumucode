@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">srcとaltの役割</title>
+  <desc id="desc">srcは画像を表示し、altは画像が担う情報を言葉で伝えることを示す</desc>
+  <rect width="640" height="360" rx="24" fill="#e8dfcf" />
+  <rect x="28" y="30" width="276" height="300" rx="20" fill="#fffaf0" stroke="#8a7657" stroke-width="3" />
+  <rect x="336" y="30" width="276" height="300" rx="20" fill="#fffaf0" stroke="#8a7657" stroke-width="3" />
+  <g font-family="system-ui, sans-serif" text-anchor="middle">
+    <text x="166" y="72" font-size="24" font-weight="800" fill="#19352d">src</text>
+    <text x="474" y="72" font-size="24" font-weight="800" fill="#19352d">alt</text>
+    <rect x="88" y="98" width="156" height="142" rx="22" fill="#dcebe5" />
+    <circle cx="166" cy="142" r="32" fill="#f4c95d" />
+    <path d="M116 218c6-42 29-62 50-62s44 20 50 62" fill="#3d7665" />
+    <text x="166" y="276" font-size="18" fill="#3f514b">登録済み画像を表示</text>
+    <rect x="372" y="100" width="204" height="140" rx="18" fill="#19352d" />
+    <text x="474" y="148" font-size="17" font-weight="700" fill="#f4c95d">画像を見なくても</text>
+    <text x="474" y="181" font-size="17" fill="#fffaf0">学習Profileの</text>
+    <text x="474" y="210" font-size="17" fill="#fffaf0">Avatarと分かる</text>
+    <text x="474" y="276" font-size="18" fill="#3f514b">目的を言葉で伝える</text>
+  </g>
+</svg>

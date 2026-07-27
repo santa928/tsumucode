@@ -12,7 +12,8 @@ body {
 }
 [data-card] {
   box-sizing: border-box;
-  flex: 0 0 180px;
+  flex-basis: 180px;
+  flex-shrink: 0;
   height: 100px;
   padding: 20px;
   background: #fff;

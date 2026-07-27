@@ -9,10 +9,10 @@ body {
   font-family: system-ui, sans-serif;
 }
 [data-action] {
+  background-color: var(--color-primary);
   display: inline-block;
   padding: 12px 18px;
   color: #fff;
-  background-color: var(--color-primary);
 }
 [data-tag] {
   color: var(--color-primary);

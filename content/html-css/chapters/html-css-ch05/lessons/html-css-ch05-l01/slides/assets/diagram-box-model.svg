@@ -1,15 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420">
-  <title>Box Modelの4層</title>
-  <desc>Margin、Border、Padding、Contentを外側から内側へ重ねた独自図解</desc>
-  <rect width="720" height="420" rx="28" fill="#f5efe3" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" aria-labelledby="title desc">
+  <title id="title">Box Modelの4層</title>
+  <desc id="desc">Margin、Border、Padding、Contentを外側から色分けし、内側から読む順番を示す</desc>
+  <rect width="720" height="400" rx="28" fill="#f5efe4" />
+  <rect x="70" y="54" width="580" height="292" rx="24" fill="#ead9bc" stroke="#b7893d" stroke-width="3" />
+  <rect x="116" y="91" width="488" height="218" rx="18" fill="#2d5d62" />
+  <rect x="148" y="123" width="424" height="154" rx="14" fill="#c9ded9" />
+  <rect x="204" y="159" width="312" height="82" rx="10" fill="#fffdf8" stroke="#24323d" stroke-width="2" />
   <g font-family="system-ui, sans-serif" text-anchor="middle">
-    <rect x="70" y="44" width="580" height="332" rx="24" fill="#f3c892" />
-    <text x="360" y="76" fill="#172a3a" font-size="20" font-weight="700">Margin</text>
-    <rect x="120" y="94" width="480" height="242" rx="20" fill="#2d5d62" />
-    <text x="360" y="124" fill="#fff" font-size="19" font-weight="700">Border</text>
-    <rect x="158" y="138" width="404" height="162" rx="16" fill="#f6a46e" />
-    <text x="360" y="168" fill="#172a3a" font-size="18" font-weight="700">Padding</text>
-    <rect x="212" y="182" width="296" height="84" rx="12" fill="#fff" />
-    <text x="360" y="232" fill="#172a3a" font-size="22" font-weight="700">Content</text>
+    <text x="360" y="79" fill="#6f4b1f" font-size="19" font-weight="700">Margin 32px</text>
+    <text x="360" y="116" fill="#fffdf8" font-size="18" font-weight="700">Border 2px</text>
+    <text x="360" y="151" fill="#23484c" font-size="18" font-weight="700">Padding 24px</text>
+    <text x="360" y="194" fill="#24323d" font-size="23" font-weight="750">Content</text>
+    <text x="360" y="220" fill="#52616a" font-size="15">width: 240px</text>
   </g>
+  <g fill="none" stroke="#bf5b42" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M184 360H536" />
+    <path d="m184 360 12-8m-12 8 12 8M536 360l-12-8m12 8-12 8" />
+  </g>
+  <text x="360" y="386" text-anchor="middle" fill="#8f3f2d" font-family="system-ui, sans-serif" font-size="16" font-weight="700">内側から Content → Padding → Border → Margin</text>
 </svg>

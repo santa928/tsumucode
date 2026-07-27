@@ -6,6 +6,7 @@ interface PieceProgressProps {
   readonly total: number;
   readonly label: string;
   readonly className?: string;
+  readonly compact?: boolean;
 }
 
 /** 外部の進捗値を、描画可能な0以上の整数へ正規化する。 */
@@ -13,8 +14,14 @@ function normalizePieceCount(value: number): number {
   return Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
 }
 
-/** 数値、native progress、積み上がるPiece形状で学習進捗を伝える。 */
-export function PieceProgress({ completed, total, label, className }: PieceProgressProps) {
+/** 数値とnative progressを保ち、通常時だけ積み上がるPiece形状も表示する。 */
+export function PieceProgress({
+  completed,
+  total,
+  label,
+  className,
+  compact = false,
+}: PieceProgressProps) {
   const labelId = useId();
   const safeTotal = normalizePieceCount(total);
   const safeCompleted = Math.min(normalizePieceCount(completed), safeTotal);
@@ -23,7 +30,12 @@ export function PieceProgress({ completed, total, label, className }: PieceProgr
   const isComplete = safeTotal > 0 && safeCompleted === safeTotal;
 
   return (
-    <section aria-labelledby={labelId} className={className} data-complete={isComplete}>
+    <section
+      aria-labelledby={labelId}
+      className={className}
+      data-complete={isComplete}
+      data-compact={compact}
+    >
       <div className="flex flex-wrap items-end justify-between gap-2">
         <strong id={labelId} className="text-sm font-black text-workshop-muted">
           {label}
@@ -41,29 +53,31 @@ export function PieceProgress({ completed, total, label, className }: PieceProgr
       >
         {progressText} ピース完了
       </progress>
-      <ol
-        aria-hidden="true"
-        className="mt-3 grid list-none grid-cols-[repeat(auto-fit,minmax(1.25rem,1fr))] gap-2 p-0"
-      >
-        {Array.from({ length: safeTotal }, (_, index) => {
-          const pieceIsComplete = index < safeCompleted;
-          const isFinalPiece = index === safeTotal - 1;
-          return (
-            <li
-              key={index}
-              data-testid="progress-piece"
-              data-state={pieceIsComplete ? 'complete' : 'next'}
-              className={cn(
-                'h-3 min-w-5 rounded-workshop-piece border border-workshop-border transition-transform duration-[var(--tc-motion-normal)] ease-[var(--tc-ease-piece)]',
-                pieceIsComplete
-                  ? 'translate-y-0 bg-workshop-complete'
-                  : 'translate-y-1 bg-workshop-raised',
-                isComplete && isFinalPiece && 'shadow-[var(--tc-shadow-piece)]',
-              )}
-            />
-          );
-        })}
-      </ol>
+      {compact ? null : (
+        <ol
+          aria-hidden="true"
+          className="mt-3 grid list-none grid-cols-[repeat(auto-fit,minmax(1.25rem,1fr))] gap-2 p-0"
+        >
+          {Array.from({ length: safeTotal }, (_, index) => {
+            const pieceIsComplete = index < safeCompleted;
+            const isFinalPiece = index === safeTotal - 1;
+            return (
+              <li
+                key={index}
+                data-testid="progress-piece"
+                data-state={pieceIsComplete ? 'complete' : 'next'}
+                className={cn(
+                  'h-3 min-w-5 rounded-workshop-piece border border-workshop-border transition-transform duration-[var(--tc-motion-normal)] ease-[var(--tc-ease-piece)]',
+                  pieceIsComplete
+                    ? 'translate-y-0 bg-workshop-complete'
+                    : 'translate-y-1 bg-workshop-raised',
+                  isComplete && isFinalPiece && 'shadow-[var(--tc-shadow-piece)]',
+                )}
+              />
+            );
+          })}
+        </ol>
+      )}
     </section>
   );
 }

@@ -1,1 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240"><title>TsumuCode Avatar</title><rect width="240" height="240" fill="#f5efe3"/><circle cx="120" cy="104" r="70" fill="#ef7d4f"/><circle cx="96" cy="105" r="6" fill="#172a3a"/><circle cx="144" cy="105" r="6" fill="#172a3a"/><rect x="62" y="164" width="116" height="58" rx="14" fill="#172a3a"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="320" viewBox="0 0 480 320">
+  <title>TsumuCode responsive image scene</title>
+  <rect width="480" height="320" fill="#f5efe3" />
+  <circle cx="116" cy="126" r="74" fill="#ef7d4f" />
+  <circle cx="92" cy="122" r="6" fill="#172a3a" />
+  <circle cx="140" cy="122" r="6" fill="#172a3a" />
+  <path d="M88 154 Q116 176 144 154" fill="none" stroke="#172a3a" stroke-width="8" stroke-linecap="round" />
+  <rect x="48" y="214" width="136" height="78" rx="18" fill="#172a3a" />
+  <rect x="220" y="54" width="216" height="212" rx="22" fill="#172a3a" />
+  <rect x="242" y="78" width="172" height="164" rx="12" fill="#fffaf2" />
+  <path d="M266 116 H354" stroke="#ef7d4f" stroke-width="12" stroke-linecap="round" />
+  <path d="M266 154 H388" stroke="#7f9d76" stroke-width="12" stroke-linecap="round" />
+  <path d="M266 192 H330" stroke="#5b7fa3" stroke-width="12" stroke-linecap="round" />
+</svg>

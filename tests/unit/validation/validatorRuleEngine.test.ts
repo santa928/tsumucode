@@ -55,6 +55,112 @@ describe('ValidatorRuleEngine statusと説明', () => {
     expect(result.checks[0]?.actual).toContain('[desktop] block');
   });
 
+  it('検証用focus-visible状態のComputed Styleを通常状態と分けて評価する', async () => {
+    const assertion: HtmlCssRuleAssertion = {
+      kind: 'focus-visible-style',
+      property: 'outline-width',
+      operator: 'gte',
+      expected: 3,
+    };
+    const passing = previewSnapshot({
+      nodes: [
+        previewNode({
+          computedStyles: { 'outline-width': '0px' },
+          focusVisibleComputedStyles: { 'outline-width': '3px' },
+        }),
+      ],
+    });
+    const missing = previewSnapshot({
+      nodes: [
+        previewNode({
+          computedStyles: { 'outline-width': '0px' },
+          focusVisibleComputedStyles: { 'outline-width': '0px' },
+        }),
+      ],
+    });
+
+    await expect(evaluate(assertion, passing)).resolves.toMatchObject({ status: 'pass' });
+    await expect(evaluate(assertion, missing)).resolves.toMatchObject({ status: 'incomplete' });
+  });
+
+  it('Source targetは同じrevisionの編集Fileに指定文字列があるか判定する', async () => {
+    const rule = validationRule({
+      target: { kind: 'source', file: 'index.html' },
+      assertion: { kind: 'text', operator: 'contains', expected: '\n      <p>本文</p>\n' },
+    });
+    const engine = new ValidatorRuleEngine();
+
+    await expect(
+      engine.validate(
+        validationContext({
+          rules: [rule],
+          files: { 'index.html': '<main>\n      <p>本文</p>\n</main>' },
+        }),
+      ),
+    ).resolves.toMatchObject({ status: 'pass' });
+    const context = validationContext({
+      rules: [rule],
+      files: { 'index.html': '<main>\n<p>本文</p>\n</main>' },
+    });
+    expect(context.files['index.html']).not.toContain('\n      <p>本文</p>\n');
+    const incomplete = await engine.validate(context);
+    expect(incomplete.checks[0]).toMatchObject({
+      passed: false,
+      actual: '[desktop] index.html: 指定文字列なし',
+    });
+    expect(incomplete).toMatchObject({ status: 'incomplete' });
+  });
+
+  it('Source targetは空白差を無視しつつSelector・Value・順序を保って判定する', async () => {
+    const rule = validationRule({
+      target: { kind: 'source', file: 'styles.css' },
+      assertion: {
+        kind: 'text',
+        operator: 'contains-normalized',
+        expected: '.card { color: #24323d; } .card { color: #9a3f25; }',
+      },
+    });
+    const engine = new ValidatorRuleEngine();
+
+    await expect(
+      engine.validate(
+        validationContext({
+          rules: [rule],
+          files: {
+            'styles.css': '.card{\ncolor : #24323d ;\n}\n\n.card { color:#9a3f25; }',
+          },
+        }),
+      ),
+    ).resolves.toMatchObject({ status: 'pass' });
+    await expect(
+      engine.validate(
+        validationContext({
+          rules: [rule],
+          files: {
+            'styles.css': '.card { color: #9a3f25; } .card { color: #24323d; }',
+          },
+        }),
+      ),
+    ).resolves.toMatchObject({ status: 'incomplete' });
+
+    const descendantRule = validationRule({
+      target: { kind: 'source', file: 'styles.css' },
+      assertion: {
+        kind: 'text',
+        operator: 'contains-normalized',
+        expected: '.card .title { color: #24323d; }',
+      },
+    });
+    await expect(
+      engine.validate(
+        validationContext({
+          rules: [descendantRule],
+          files: { 'styles.css': '.card.title { color: #24323d; }' },
+        }),
+      ),
+    ).resolves.toMatchObject({ status: 'incomplete' });
+  });
+
   it('system要因をlearner errorより優先し、warningだけなら評価を続ける', async () => {
     const learnerError = {
       code: 'HTML_SYNTAX',
@@ -687,6 +793,68 @@ describe('ValidatorRuleEngine relation', () => {
 
     expect(result.status).toBe('incomplete');
     expect(result.checks[0]?.actual).toBe('[desktop] #1:成立 | #3:不成立 (child .other)');
+  });
+
+  it('contained-byは対象の実測矩形が祖先Containerの4辺へ収まるか判定する', async () => {
+    const assertion = {
+      kind: 'relation',
+      relation: 'contained-by',
+      otherSelector: '.frame',
+    } as unknown as HtmlCssRuleAssertion;
+    const contained = previewSnapshot({
+      nodes: [
+        previewNode({
+          nodeId: 1,
+          parentId: null,
+          documentOrder: 0,
+          matchedSelectors: ['.frame'],
+          rect: { x: 32, y: 32, width: 320, height: 220 },
+        }),
+        previewNode({
+          nodeId: 2,
+          parentId: 1,
+          documentOrder: 1,
+          matchedSelectors: ['.safe-card'],
+          rect: { x: 32, y: 32, width: 320, height: 220 },
+        }),
+      ],
+    });
+    const outsideBottom = previewSnapshot({
+      nodes: [
+        previewNode({
+          nodeId: 1,
+          parentId: null,
+          documentOrder: 0,
+          matchedSelectors: ['.frame'],
+          rect: { x: 32, y: 32, width: 320, height: 220 },
+        }),
+        previewNode({
+          nodeId: 2,
+          parentId: 1,
+          documentOrder: 1,
+          matchedSelectors: ['.safe-card'],
+          rect: { x: 32, y: 32, width: 320, height: 240 },
+        }),
+      ],
+    });
+
+    const evaluateContainment = (snapshot: ReturnType<typeof previewSnapshot>) =>
+      new ValidatorRuleEngine().validate(
+        validationContext({
+          rules: [
+            validationRule({
+              target: { kind: 'selector', selector: '.safe-card' },
+              assertion,
+            }),
+          ],
+          snapshots: { desktop: snapshot },
+        }),
+      );
+
+    await expect(evaluateContainment(contained)).resolves.toMatchObject({ status: 'pass' });
+    await expect(evaluateContainment(outsideBottom)).resolves.toMatchObject({
+      status: 'incomplete',
+    });
   });
 });
 

@@ -4,6 +4,31 @@ workspaceId: html-css-ch06-l02-e01
 countsTowardStandardExerciseTotal: true
 title: 読めて伝わる状態Messageを作る
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: color-background-color, minimumLevel: transform }
+  - { conceptId: non-color-cue, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: darken-message-text
+    file: styles.css
+    target: '[data-message] Ruleのcolor Declaration'
+    starterAnchor: 'color: #9a9a9a;'
+    change: Valueを#24323dへ変更し、白い背景は残す
+    observe: Sourceの前景色と背景色が指定どおりになり、Computed Contrast Ratioが4.5対1以上になる
+    requiresConceptIds: [color-background-color]
+    validationRuleIds:
+      - html-css-ch06-l02-e01-r01
+      - html-css-ch06-l02-e01-r03
+  - id: add-status-text-cue
+    file: index.html
+    target: 状態MessageのPortfolio Text直前
+    starterAnchor: 'Portfolio</p>'
+    change: '<strong data-status-text>公開中</strong> — をPortfolioの前へ追加する'
+    observe: 緑の丸に加えて公開中というTextが存在し、Sourceにもdata-status-textが残る
+    requiresConceptIds: [non-color-cue]
+    validationRuleIds:
+      - html-css-ch06-l02-e01-r02
+      - html-css-ch06-l02-e01-r04
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -40,6 +65,40 @@ validationRules:
       target: 状態を伝えるText
       expected: data-status-textを持つElementが存在する
       nextAction: 色の印へ公開中などの状態Textを追加します。
+    hintId: html-css-ch06-l02-e01-h03
+    relatedSlideId: html-css-ch06-l02-s02
+  - id: html-css-ch06-l02-e01-r03
+    label: 状態Messageへ濃い文字色と白い背景を記述する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '[data-message] { color: #24323d; background: #fff;'
+    feedback:
+      target: '[data-message]のColor Source'
+      expected: 'color: #24323d; と background: #fff;'
+      nextAction: Rule先頭のcolorだけを#24323dへ変更し、backgroundは残します。
+    hintId: html-css-ch06-l02-e01-h02
+    relatedSlideId: html-css-ch06-l02-s01
+  - id: html-css-ch06-l02-e01-r04
+    label: 公開中という状態Textを記述する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: index.html }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '<strong data-status-text>公開中</strong>'
+    feedback:
+      target: 状態MessageのHTML Source
+      expected: '<strong data-status-text>公開中</strong>'
+      nextAction: Portfolioの前へ、見本どおりのstrong要素を追加します。
     hintId: html-css-ch06-l02-e01-h03
     relatedSlideId: html-css-ch06-l02-s02
 hints:
@@ -91,4 +150,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch06-l02-e01-r02]
+    expectedFeedbackRuleIds: [html-css-ch06-l02-e01-r02, html-css-ch06-l02-e01-r04]

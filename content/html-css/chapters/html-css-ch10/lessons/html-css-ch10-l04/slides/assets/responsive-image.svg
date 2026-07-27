@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <title>Responsive Imageとobject-fit</title>
+  <desc>480×320pxの横長画像を320px幅へ比率を保って縮める例と、containとcoverの見え方を比較する図</desc>
+  <rect width="960" height="540" rx="36" fill="#f5efe3" />
+  <text x="60" y="68" fill="#172a3a" font-family="system-ui, sans-serif" font-size="30" font-weight="700">境界へ収める / Boxの中を満たす</text>
+  <g font-family="system-ui, sans-serif">
+    <text x="60" y="118" fill="#2d7c82" font-size="21" font-weight="700">max-width: 100% + height: auto</text>
+    <g transform="translate(60 140)">
+      <rect width="300" height="250" rx="22" fill="#ffffff" stroke="#172a3a" stroke-width="6" />
+      <rect x="28" y="24" width="244" height="202" rx="16" fill="#dcefed" stroke="#2d7c82" stroke-width="4" />
+      <circle cx="150" cy="94" r="38" fill="#ef7d4f" />
+      <path d="M82 202c18-56 53-78 68-78s50 22 68 78" fill="#2d7c82" />
+      <text x="150" y="226" fill="#172a3a" font-size="17" font-weight="700" text-anchor="middle">480px → 320px / 比率を維持</text>
+    </g>
+
+    <text x="418" y="118" fill="#172a3a" font-size="21" font-weight="700">object-fitの比較</text>
+    <g transform="translate(418 140)">
+      <rect width="210" height="250" rx="22" fill="#ffffff" stroke="#172a3a" stroke-width="6" />
+      <rect x="24" y="24" width="162" height="162" rx="14" fill="#fff3dd" stroke="#ef7d4f" stroke-width="4" />
+      <rect x="70" y="38" width="70" height="134" rx="12" fill="#dcefed" stroke="#2d7c82" stroke-width="4" />
+      <circle cx="105" cy="79" r="22" fill="#ef7d4f" />
+      <text x="105" y="222" fill="#172a3a" font-size="21" font-weight="700" text-anchor="middle">contain</text>
+    </g>
+    <g transform="translate(674 140)">
+      <rect width="226" height="250" rx="22" fill="#ffffff" stroke="#172a3a" stroke-width="6" />
+      <clipPath id="cover-box"><rect x="24" y="24" width="178" height="162" rx="14" /></clipPath>
+      <g clip-path="url(#cover-box)">
+        <rect x="24" y="24" width="178" height="162" fill="#dcefed" />
+        <circle cx="113" cy="76" r="45" fill="#ef7d4f" />
+        <path d="M20 198c22-78 64-108 93-108s71 30 93 108" fill="#2d7c82" />
+      </g>
+      <rect x="24" y="24" width="178" height="162" rx="14" fill="none" stroke="#2d7c82" stroke-width="4" />
+      <text x="113" y="222" fill="#172a3a" font-size="21" font-weight="700" text-anchor="middle">cover</text>
+    </g>
+  </g>
+  <g transform="translate(60 432)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+    <rect width="840" height="64" rx="17" fill="#172a3a" />
+    <text x="420" y="41" fill="#ffffff" font-size="22" text-anchor="middle">max-width: 100%;  height: auto;  object-fit: cover;</text>
+  </g>
+</svg>

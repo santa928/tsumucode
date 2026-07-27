@@ -14,9 +14,13 @@ import type {
   SlideBlock,
 } from '../../src/core/content/types';
 import { parseRestrictedMarkdown, parseSlideMarkdown } from './markdown';
+import { collectMasteryDiagnostics, type MasteryDiagnostic } from './conceptMastery';
+import { assertExerciseTrace } from './exerciseTrace';
 import { joinSourcePath, readBinaryFile, readUtf8File, readYamlFile } from './io';
+import { assertSlideScreenBudget } from './screenBudget';
 import {
   ChapterSourceSchema,
+  ConceptCatalogSourceSchema,
   CourseSourceSchema,
   ExerciseSourceSchema,
   GlossarySourceSchema,
@@ -46,6 +50,9 @@ export type AuthoringExercise = Exercise & {
 export interface AuthoringCoursePackage {
   readonly runtime: CourseManifest;
   readonly exercises: readonly AuthoringExercise[];
+  readonly masteryDiagnostics: readonly MasteryDiagnostic[];
+  readonly missingSlideMetadata: readonly string[];
+  readonly missingExerciseMetadata: readonly string[];
   readonly provenance: ProvenanceSource;
 }
 
@@ -69,6 +76,8 @@ interface CompileContext {
   readonly provenanceFileByPath: ReadonlyMap<string, Uint8Array>;
   readonly consumedPaths: Set<string>;
   readonly assets: Map<string, Uint8Array>;
+  readonly missingSlideMetadataIds: Set<string>;
+  readonly missingExerciseMetadataIds: Set<string>;
 }
 
 interface CompiledExercise {
@@ -87,6 +96,27 @@ interface CompiledChapter {
 }
 
 type RuntimeProject = Extract<Lesson, { kind: 'guided-project' }>['project'];
+
+const LEGACY_SLIDE_SCREEN_BUDGET: Slide['screenBudget'] = {
+  maxTextCharacters: 420,
+  maxCodeLines: 12,
+  maxVisuals: 2,
+};
+
+/** 旧kindを移行期間中のページ送りLayoutへ対応付ける。 */
+function legacySlideLayout(kind: Slide['kind']): Slide['layout'] {
+  switch (kind) {
+    case 'code':
+      return 'code-preview';
+    case 'comparison':
+      return 'comparison';
+    case 'reflection':
+    case 'checklist':
+      return 'checkpoint';
+    default:
+      return 'explanation';
+  }
+}
 
 /** Source相対pathのowner directoryを`.`なしのPOSIX表記で返す。 */
 function sourceDirectory(relativePath: string): string {
@@ -171,9 +201,9 @@ function canonicalizeJson(value: unknown): unknown {
   return result;
 }
 
-/** 公開Artifactをrecursive key sort、LF、末尾改行1件のJSONへ変換する。 */
+/** 公開Artifactをrecursive key sortした最小JSONへ変換し、末尾改行を1件付ける。 */
 export function stringifyCanonicalJson(value: unknown): string {
-  return `${JSON.stringify(canonicalizeJson(value), null, 2)}\n`;
+  return `${JSON.stringify(canonicalizeJson(value))}\n`;
 }
 
 /** Full Provenanceの一意性、実File、visibility、image-generation promptを検証する。 */
@@ -239,6 +269,112 @@ function createPublicProvenance(provenance: ProvenanceSource): PublicProvenanceM
   });
 }
 
+/** XML属性で許される4種類の空白文字かを判定する。 */
+function isXmlWhitespace(value: string | undefined): boolean {
+  return value === ' ' || value === '\t' || value === '\n' || value === '\r';
+}
+
+const SVG_NUMBER_SOURCE = '[-+]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][-+]?[0-9]+)?';
+const SVG_WSP_SOURCE = '[\\u0009\\u000A\\u000D\\u0020]';
+const SVG_COMMA_WSP_SOURCE = `(?:${SVG_WSP_SOURCE}+,?${SVG_WSP_SOURCE}*|,${SVG_WSP_SOURCE}*)`;
+const SVG_VIEW_BOX_PATTERN = new RegExp(
+  `^${SVG_WSP_SOURCE}*(${SVG_NUMBER_SOURCE})${SVG_COMMA_WSP_SOURCE}(${SVG_NUMBER_SOURCE})${SVG_COMMA_WSP_SOURCE}(${SVG_NUMBER_SOURCE})${SVG_COMMA_WSP_SOURCE}(${SVG_NUMBER_SOURCE})${SVG_WSP_SOURCE}*$`,
+  'u',
+);
+
+/** SVG numberとcomma-wspの全文文法に一致する有限なviewBox 4値だけを返す。 */
+function parseSvgViewBox(value: string): readonly [number, number, number, number] | undefined {
+  const match = SVG_VIEW_BOX_PATTERN.exec(value);
+  if (match === null) return undefined;
+  const values = [Number(match[1]), Number(match[2]), Number(match[3]), Number(match[4])] as const;
+  if (!values.every(Number.isFinite)) return undefined;
+  return values;
+}
+
+/** SVG root開始タグをquote-awareにtokenizeし、一意な実viewBox属性だけを返す。 */
+function readUniqueSvgViewBox(source: string): string | undefined {
+  const rootPrefix = source.match(
+    /^\uFEFF?\s*(?:<\?xml[\s\S]*?\?>\s*)?(?:<!--[\s\S]*?-->\s*)*<svg(?=[\t\n\r />])/u,
+  );
+  if (rootPrefix === null) return undefined;
+
+  const attributesStart = rootPrefix[0].length;
+  let rootEnd = attributesStart;
+  let activeQuote: '"' | "'" | undefined;
+  for (; rootEnd < source.length; rootEnd += 1) {
+    const character = source[rootEnd];
+    if (activeQuote !== undefined) {
+      if (character === activeQuote) activeQuote = undefined;
+      continue;
+    }
+    if (character === '"' || character === "'") {
+      activeQuote = character;
+      continue;
+    }
+    if (character === '>') break;
+  }
+  if (source[rootEnd] !== '>' || activeQuote !== undefined) return undefined;
+
+  const attributesSource = source.slice(attributesStart, rootEnd);
+  let index = 0;
+  let viewBox: string | undefined;
+  let hasViewBox = false;
+  while (index < attributesSource.length) {
+    const separatorStart = index;
+    while (isXmlWhitespace(attributesSource[index])) index += 1;
+    if (index === attributesSource.length) break;
+    if (attributesSource[index] === '/') {
+      index += 1;
+      while (isXmlWhitespace(attributesSource[index])) index += 1;
+      return index === attributesSource.length ? viewBox : undefined;
+    }
+    if (index === separatorStart) return undefined;
+
+    const name = attributesSource.slice(index).match(/^[A-Za-z_:][A-Za-z0-9_.:-]*/u)?.[0];
+    if (name === undefined) return undefined;
+    index += name.length;
+    while (isXmlWhitespace(attributesSource[index])) index += 1;
+    if (attributesSource[index] !== '=') return undefined;
+    index += 1;
+    while (isXmlWhitespace(attributesSource[index])) index += 1;
+
+    const quote = attributesSource[index];
+    if (quote !== '"' && quote !== "'") return undefined;
+    index += 1;
+    const valueStart = index;
+    while (index < attributesSource.length && attributesSource[index] !== quote) index += 1;
+    if (index === attributesSource.length) return undefined;
+    const value = attributesSource.slice(valueStart, index);
+    index += 1;
+
+    if (name === 'viewBox') {
+      if (hasViewBox) return undefined;
+      hasViewBox = true;
+      viewBox = value;
+    }
+  }
+  return viewBox;
+}
+
+/** 検証済みSVG bytesのroot viewBoxをload前に使える有限正数の寸法へ変換する。 */
+function readSvgIntrinsicDimensions(
+  assetId: string,
+  sourceBytes: Uint8Array,
+): Pick<AssetRef, 'intrinsicWidth' | 'intrinsicHeight'> {
+  let source: string;
+  try {
+    source = new TextDecoder('utf-8', { fatal: true }).decode(sourceBytes);
+  } catch {
+    throw new Error(`画像SVGの有効なviewBox寸法を取得できません: ${assetId}`);
+  }
+  const viewBox = readUniqueSvgViewBox(source);
+  const values = viewBox === undefined ? undefined : parseSvgViewBox(viewBox);
+  if (values === undefined || values[2] <= 0 || values[3] <= 0) {
+    throw new Error(`画像SVGの有効なviewBox寸法を取得できません: ${assetId}`);
+  }
+  return { intrinsicWidth: values[2], intrinsicHeight: values[3] };
+}
+
 /** owner内AssetをProvenanceへjoinし、検証済みBufferとRuntime参照へ変換する。 */
 async function compileAssets(
   ownerDirectory: string,
@@ -266,6 +402,11 @@ async function compileAssets(
     }
     const extension = path.posix.extname(sourcePath).toLowerCase();
     if (extension.length === 0) throw new Error(`Asset Sourceに拡張子がありません: ${asset.id}`);
+    if (asset.mediaType === 'image' && extension !== '.svg') {
+      throw new Error(`画像AssetのSVG Sourceが必要です: ${asset.id}`);
+    }
+    const intrinsicDimensions =
+      asset.mediaType === 'image' ? readSvgIntrinsicDimensions(asset.id, sourceBytes) : undefined;
     const artifactPath = `assets/${context.courseId}/${asset.id}${extension}`;
     const previous = context.assets.get(artifactPath);
     if (previous !== undefined && !hasSameBytes(previous, sourceBytes)) {
@@ -278,6 +419,7 @@ async function compileAssets(
       mediaType: asset.mediaType,
       ...(asset.alt === undefined ? {} : { alt: asset.alt }),
       provenanceId: asset.provenanceId,
+      ...intrinsicDimensions,
     });
   }
   return assets;
@@ -289,14 +431,33 @@ async function compileSlide(relativePath: string, context: CompileContext): Prom
   context.consumedPaths.add(relativePath);
   const parsed = parseSlideMarkdown(await readUtf8File(context.courseRoot, relativePath));
   const metadata = SlideFrontmatterSchema.parse(parsed.frontmatter);
-  return {
+  const hasExplicitPagedMetadata =
+    metadata.layout !== undefined &&
+    metadata.teachesConceptIds !== undefined &&
+    metadata.masteryTarget !== undefined &&
+    metadata.screenBudget !== undefined;
+  if (!hasExplicitPagedMetadata) context.missingSlideMetadataIds.add(metadata.id);
+  const slide: Slide = {
     id: metadata.id,
     title: metadata.title,
     kind: metadata.kind,
     ...(metadata.concept === undefined ? {} : { concept: metadata.concept }),
+    layout: metadata.layout ?? legacySlideLayout(metadata.kind),
+    teachesConceptIds: metadata.teachesConceptIds ?? [],
+    masteryTarget: metadata.masteryTarget ?? 'seen',
+    screenBudget: metadata.screenBudget ?? LEGACY_SLIDE_SCREEN_BUDGET,
     blocks: parsed.blocks,
     assets: await compileAssets(sourceDirectory(relativePath), metadata.assets, context),
   };
+  if (hasExplicitPagedMetadata) {
+    try {
+      assertSlideScreenBudget(slide);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`${relativePath}: ${message}`, { cause: error });
+    }
+  }
+  return slide;
 }
 
 /** Exercise用File Sourceを同一内容のAuthoring／Runtime Fileへ変換する。 */
@@ -331,6 +492,9 @@ function projectRuntimeExercise(authoring: AuthoringExercise): Exercise {
     countsTowardStandardExerciseTotal: authoring.countsTowardStandardExerciseTotal,
     title: authoring.title,
     instructions: authoring.instructions,
+    requiresConcepts: authoring.requiresConcepts,
+    scaffoldLevel: authoring.scaffoldLevel,
+    steps: authoring.steps,
     files: authoring.files,
     validationRules: authoring.validationRules,
     hints: authoring.hints,
@@ -353,6 +517,11 @@ async function compileExercise(
   assertFileRole(relativePath, 'public');
   context.consumedPaths.add(relativePath);
   const source = await readYamlFile(context.courseRoot, relativePath, ExerciseSourceSchema);
+  const hasExplicitLearningMetadata =
+    source.requiresConcepts !== undefined &&
+    source.scaffoldLevel !== undefined &&
+    source.steps !== undefined;
+  if (!hasExplicitLearningMetadata) context.missingExerciseMetadataIds.add(source.id);
   const directory = sourceDirectory(relativePath);
   const instructionsPath = joinSourcePath(directory, source.instructionsSource);
   assertFileRole(instructionsPath, 'public');
@@ -386,6 +555,9 @@ async function compileExercise(
     countsTowardStandardExerciseTotal: source.countsTowardStandardExerciseTotal,
     title: source.title,
     instructions,
+    requiresConcepts: source.requiresConcepts ?? [],
+    scaffoldLevel: source.scaffoldLevel ?? 'seen',
+    steps: source.steps ?? [],
     files,
     validationRules: source.validationRules,
     hints: source.hints,
@@ -404,6 +576,7 @@ async function compileExercise(
   } else {
     authoring = { ...common, kind: 'capstone', projectId: source.projectId };
   }
+  if (authoring.steps.length > 0) assertExerciseTrace(authoring);
   return { authoring, runtime: projectRuntimeExercise(authoring) };
 }
 
@@ -572,6 +745,34 @@ function assertAllSourceFilesConsumed(
   }
 }
 
+/** 未移行Metadata IDをLessonとの安定した組へ変換する。 */
+function collectMissingMetadataPaths(
+  runtime: CourseManifest,
+  missingSlideIds: ReadonlySet<string>,
+  missingExerciseIds: ReadonlySet<string>,
+): {
+  readonly slides: readonly string[];
+  readonly exercises: readonly string[];
+} {
+  const slides: string[] = [];
+  const exercises: string[] = [];
+  for (const phase of runtime.phases) {
+    for (const chapter of phase.chapters) {
+      for (const lesson of chapter.lessons) {
+        for (const slide of lesson.slides) {
+          if (missingSlideIds.has(slide.id)) slides.push(`${lesson.id}/${slide.id}`);
+        }
+        for (const exercise of lesson.exercises) {
+          if (missingExerciseIds.has(exercise.id)) {
+            exercises.push(`${lesson.id}/${exercise.id}`);
+          }
+        }
+      }
+    }
+  }
+  return { slides: slides.toSorted(), exercises: exercises.toSorted() };
+}
+
 /** 1 Courseを副作用なしでAuthoring Packageと公開Artifactへ構築する。 */
 async function buildCourseCompilation(courseRoot: string): Promise<CourseCompilation> {
   const resolvedCourseRoot = path.resolve(courseRoot);
@@ -597,6 +798,8 @@ async function buildCourseCompilation(courseRoot: string): Promise<CourseCompila
     provenanceFileByPath: validatedProvenance.fileByPath,
     consumedPaths,
     assets: new Map(),
+    missingSlideMetadataIds: new Set(),
+    missingExerciseMetadataIds: new Set(),
   };
   for (const documentationSource of source.documentationSources) {
     assertFileRole(documentationSource, 'public');
@@ -623,6 +826,14 @@ async function buildCourseCompilation(courseRoot: string): Promise<CourseCompila
     source.glossarySource,
     GlossarySourceSchema,
   );
+  let concepts: CourseManifest['concepts'] = [];
+  if (source.conceptsSource !== undefined) {
+    assertFileRole(source.conceptsSource, 'public');
+    consumedPaths.add(source.conceptsSource);
+    concepts = (
+      await readYamlFile(resolvedCourseRoot, source.conceptsSource, ConceptCatalogSourceSchema)
+    ).concepts;
+  }
   const phases: PhaseManifest[] = [];
   const authoringExercises: AuthoringExercise[] = [];
   for (const phaseSource of source.phases) {
@@ -651,6 +862,7 @@ async function buildCourseCompilation(courseRoot: string): Promise<CourseCompila
     runnerId: source.runnerId,
     validatorId: source.validatorId,
     glossary: glossary.entries,
+    concepts,
     supportedDevices: source.supportedDevices,
     prerequisites: source.prerequisites,
     publicationStatus: source.publicationStatus,
@@ -664,6 +876,12 @@ async function buildCourseCompilation(courseRoot: string): Promise<CourseCompila
   const runtimeRoundTrip = CourseManifestSchema.parse(
     JSON.parse(stringifyCanonicalJson(runtime)) as unknown,
   );
+  const masteryDiagnostics = collectMasteryDiagnostics(runtimeRoundTrip);
+  const missingMetadata = collectMissingMetadataPaths(
+    runtimeRoundTrip,
+    context.missingSlideMetadataIds,
+    context.missingExerciseMetadataIds,
+  );
   const provenanceRoundTrip = PublicProvenanceManifestSchema.parse(
     JSON.parse(stringifyCanonicalJson(publicProvenance)) as unknown,
   );
@@ -673,6 +891,9 @@ async function buildCourseCompilation(courseRoot: string): Promise<CourseCompila
     authoring: {
       runtime: runtimeRoundTrip,
       exercises: authoringExercises,
+      masteryDiagnostics,
+      missingSlideMetadata: missingMetadata.slides,
+      missingExerciseMetadata: missingMetadata.exercises,
       provenance,
     },
     publicProvenance: provenanceRoundTrip,

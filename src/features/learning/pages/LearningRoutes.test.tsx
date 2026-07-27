@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { EditorView } from '@codemirror/view';
 import userEvent from '@testing-library/user-event';
 import { RouterProvider } from 'react-router-dom';
@@ -190,11 +190,29 @@ let router: ReturnType<typeof createAppRouter> | undefined;
 
 /** 公開CatalogとFixture CourseをURL別に返す。 */
 function stubContentFetch(course: CourseManifest = fixtureCourse): void {
+  const source = JSON.stringify(course);
+  const sha256Promise = crypto.subtle
+    .digest('SHA-256', new TextEncoder().encode(source))
+    .then((digest) =>
+      [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join(''),
+    );
   vi.stubGlobal(
     'fetch',
     vi.fn(async (input: RequestInfo | URL) => {
       const url = input instanceof Request ? input.url : input.toString();
-      return Response.json(url.endsWith('html-css.json') ? course : fixtureCatalog);
+      if (url.endsWith('html-css.json')) return new Response(source, { status: 200 });
+      const catalog = structuredClone(fixtureCatalog);
+      Object.assign(catalog.courses[0]!, {
+        audience: course.audience,
+        description: course.description,
+        estimatedMinutes: course.estimatedMinutes,
+        id: course.id,
+        manifestSha256: await sha256Promise,
+        publicationStatus: course.publicationStatus,
+        revision: course.revision,
+        title: course.title,
+      });
+      return Response.json(catalog);
     }),
   );
 }
@@ -241,6 +259,17 @@ function renderRoute(path: string): void {
 /** Dynamic importを含む編集作業台が全Suite負荷下でも準備完了するまで待つ。 */
 async function findCodeWorkspace(): Promise<HTMLElement> {
   return screen.findByTestId('code-workspace', {}, { timeout: 5_000 });
+}
+
+/** Dynamic import後にmountされた実CodeMirror viewを返す。 */
+async function findEditorView(): Promise<EditorView> {
+  return waitFor(() => {
+    const editorElement = document.querySelector<HTMLElement>('.cm-editor');
+    if (editorElement === null) throw new Error('CodeMirror elementを待機しています');
+    const view = EditorView.findFromDOM(editorElement);
+    if (view === null) throw new Error('CodeMirror viewを待機しています');
+    return view;
+  });
 }
 
 /** 現在Course revisionと同じ合格snapshotを持つDraftを作る。 */
@@ -444,6 +473,8 @@ function stubAdapters(options: AdapterStubOptions = {}): {
       selectors: [],
       attributes: [],
       computedStyles: [],
+      focusVisibleSelectors: [],
+      focusVisibleComputedStyles: [],
       includeAllElements: false,
     })),
     validate,
@@ -725,6 +756,7 @@ describe('Learning routes', () => {
     renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
     expect(await findCodeWorkspace()).toBeInTheDocument();
 
+    await user.click(screen.getByRole('button', { name: 'ヒントを見る' }));
     await user.click(screen.getByRole('button', { name: /ヒント1を見る/u }));
     await act(async () => {
       await runtime.lease.beforeYield?.(runtime.lease.runFencedWrite);
@@ -746,6 +778,7 @@ describe('Learning routes', () => {
     const user = userEvent.setup();
     renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
     expect(await findCodeWorkspace()).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'ヒントを見る' }));
     await user.click(screen.getByRole('button', { name: /ヒント1を見る/u }));
     runtime.lease.writeError = new LeaseFenceRejectedError();
 
@@ -784,6 +817,37 @@ describe('Learning routes', () => {
     expect(await findCodeWorkspace()).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'プレビューを更新' })).toBeEnabled();
     expect(screen.getByRole('button', { name: '判定する' })).toBeEnabled();
+  });
+
+  it('Desktop演習を固定Shellの工程票・Editor・Preview・Pagerへ分ける', async () => {
+    stubEditingCapability(true);
+    stubAdapters();
+    renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
+
+    expect(await findCodeWorkspace()).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: '学習ツール' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'TsumuCodeホームへ' })).toHaveAttribute('href', '#/');
+    expect(screen.getByRole('region', { name: 'コード演習の本文' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: '演習の手順' })).toBeInTheDocument();
+    const instructions = screen.getByRole('complementary', { name: '工程票' });
+    expect(instructions).toHaveAttribute('tabindex', '0');
+    expect(
+      within(instructions).getByRole('heading', {
+        level: 1,
+        name: 'h1見出しを追加する',
+      }),
+    ).toBeVisible();
+    expect(screen.queryByText(/^作業中/u)).not.toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'index.html' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'ヒントを見る' })).toBeEnabled();
+      expect(screen.getByRole('button', { name: 'プレビューを更新' })).toBeEnabled();
+      expect(screen.getByRole('button', { name: '判定する' })).toBeEnabled();
+    });
+    expect(screen.getByTestId('runtime-preview-frame')).toBeInTheDocument();
   });
 
   it('Repository初期化失敗を未処理Promiseにせず再試行可能な警告へ変換する', async () => {
@@ -1021,9 +1085,13 @@ describe('Learning routes', () => {
 
     renderRoute('/courses/html-css/lessons/lesson-guided-step-2/exercises/exercise-guided-step-2');
     expect(await findCodeWorkspace()).toBeInTheDocument();
-    const editorElement = document.querySelector<HTMLElement>('.cm-editor');
-    const editorView = editorElement === null ? null : EditorView.findFromDOM(editorElement);
-    if (editorView === null) throw new Error('Guided工程2のCodeMirror viewが見つかりません');
+    const editorView = await waitFor(() => {
+      const editorElement = document.querySelector<HTMLElement>('.cm-editor');
+      if (editorElement === null) throw new Error('CodeMirror elementを待機しています');
+      const view = EditorView.findFromDOM(editorElement);
+      if (view === null) throw new Error('CodeMirror viewを待機しています');
+      return view;
+    });
     const editedSource = '<main><h1>工程1を保った工程2</h1></main>';
 
     act(() => {
@@ -1089,7 +1157,7 @@ describe('Learning routes', () => {
       ['exercise-guided-step-1', 'exercise-guided-step-2'],
       2,
     );
-  });
+  }, 15_000);
 
   it('合格判定の原子的保存後にCompletionへ一度だけ遷移する', async () => {
     stubEditingCapability(true);
@@ -1148,5 +1216,361 @@ describe('Learning routes', () => {
     });
     expect(screen.queryByTestId('learning-completion')).not.toBeInTheDocument();
     expect(await screen.findByRole('heading', { name: 'PCで演習を開く' })).toBeInTheDocument();
+  });
+
+  it('Starter一致では復元を無効化し、実CodeMirrorの編集後だけ有効化する', async () => {
+    stubEditingCapability(true);
+    stubAdapters();
+    renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
+    expect(await findCodeWorkspace()).toBeInTheDocument();
+
+    const reset = screen.getByRole('button', { name: '最初に戻す' });
+    expect(reset).toBeDisabled();
+    const editorView = await findEditorView();
+    act(() => {
+      editorView.dispatch({
+        changes: { from: 0, to: editorView.state.doc.length, insert: '' },
+      });
+    });
+
+    await waitFor(() => {
+      expect(reset).toBeEnabled();
+    });
+  });
+
+  it('復元確認の取消とEscapeは編集・revision・Previewを変えずTriggerへFocusを戻す', async () => {
+    stubEditingCapability(true);
+    const adapters = stubAdapters();
+    const user = userEvent.setup();
+    renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
+    expect(await findCodeWorkspace()).toBeInTheDocument();
+    const editorView = await findEditorView();
+    const editedSource = '<main>取消後も残す</main>';
+    act(() => {
+      editorView.dispatch({
+        changes: { from: 0, to: editorView.state.doc.length, insert: editedSource },
+      });
+    });
+    const reset = screen.getByRole('button', { name: '最初に戻す' });
+    await waitFor(() => {
+      expect(reset).toBeEnabled();
+      expect(adapters.getLastRenderInput()?.files['index.html']).toBe(editedSource);
+    });
+    const renderCount = adapters.render.mock.calls.length;
+    const revision = adapters.getLastRenderInput()?.executionRevision;
+
+    await user.click(reset);
+    let dialog = screen.getByRole('dialog', { name: '最初のコードに戻しますか？' });
+    expect(dialog).toHaveTextContent('現在の編集内容と全ファイル');
+    const cancel = within(dialog).getByRole('button', { name: '編集を続ける' });
+    const confirm = within(dialog).getByRole('button', { name: '最初のコードに戻す' });
+    expect(reset).toHaveClass('min-h-11');
+    expect(cancel).toHaveClass('min-h-11');
+    expect(confirm).toHaveClass('min-h-11');
+    expect(cancel).toHaveFocus();
+    expect(confirm).toBeEnabled();
+
+    await user.click(cancel);
+    await waitFor(() => {
+      expect(reset).toHaveFocus();
+    });
+    expect(editorView.state.doc.toString()).toBe(editedSource);
+    expect(adapters.getLastRenderInput()?.executionRevision).toBe(revision);
+    expect(adapters.render).toHaveBeenCalledTimes(renderCount);
+
+    await user.click(reset);
+    dialog = screen.getByRole('dialog', { name: '最初のコードに戻しますか？' });
+    expect(within(dialog).getByRole('button', { name: '編集を続ける' })).toHaveFocus();
+    await user.keyboard('{Escape}');
+    await waitFor(() => {
+      expect(reset).toHaveFocus();
+    });
+    expect(editorView.state.doc.toString()).toBe(editedSource);
+    expect(adapters.getLastRenderInput()?.executionRevision).toBe(revision);
+    expect(adapters.render).toHaveBeenCalledTimes(renderCount);
+  });
+
+  it('復元確認のBackdrop取消は編集・revision・Previewを変えずTriggerへFocusを戻す', async () => {
+    stubEditingCapability(true);
+    const adapters = stubAdapters();
+    const user = userEvent.setup();
+    renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
+    expect(await findCodeWorkspace()).toBeInTheDocument();
+    const editorView = await findEditorView();
+    const editedSource = '<main>Backdrop後も残す</main>';
+    act(() => {
+      editorView.dispatch({
+        changes: { from: 0, to: editorView.state.doc.length, insert: editedSource },
+      });
+    });
+    const reset = screen.getByRole('button', { name: '最初に戻す' });
+    await waitFor(() => {
+      expect(reset).toBeEnabled();
+      expect(adapters.getLastRenderInput()?.files['index.html']).toBe(editedSource);
+    });
+    const renderCount = adapters.render.mock.calls.length;
+    const revision = adapters.getLastRenderInput()?.executionRevision;
+    const dirtyCount = runtime.passFreshness.markDirty.mock.calls.length;
+
+    await user.click(reset);
+    const dialog = screen.getByRole('dialog', { name: '最初のコードに戻しますか？' });
+    fireEvent.click(dialog);
+
+    await waitFor(() => {
+      expect(reset).toHaveFocus();
+    });
+    expect(editorView.state.doc.toString()).toBe(editedSource);
+    expect(adapters.getLastRenderInput()?.executionRevision).toBe(revision);
+    expect(adapters.render).toHaveBeenCalledTimes(renderCount);
+    expect(runtime.passFreshness.markDirty).toHaveBeenCalledTimes(dirtyCount);
+  });
+
+  it('確定後は全fileをStarterへ保存・Previewし、HintとEditor local stateを初期化する', async () => {
+    stubContentFetch(guidedWorkspaceCourse);
+    stubEditingCapability(true);
+    const adapters = stubAdapters();
+    const user = userEvent.setup();
+    let storedDraft: ExerciseDraft | undefined;
+    runtime.repository.getDraft.mockImplementation(async () => storedDraft);
+    runtime.repository.putDraft.mockReset().mockImplementation(async (draft) => {
+      storedDraft = structuredClone(draft);
+    });
+    renderRoute('/courses/html-css/lessons/lesson-guided-step-2/exercises/exercise-guided-step-2');
+    expect(await findCodeWorkspace()).toBeInTheDocument();
+    const editorView = await findEditorView();
+    act(() => {
+      editorView.dispatch({
+        changes: { from: 0, to: editorView.state.doc.length, insert: '<main>編集中</main>' },
+        selection: { anchor: 3 },
+      });
+    });
+    await user.click(screen.getByRole('tab', { name: 'styles.css' }));
+    await waitFor(() => {
+      expect(editorView.state.doc.toString()).toBe('main { display: block; }');
+    });
+    act(() => {
+      editorView.dispatch({
+        changes: { from: 0, to: editorView.state.doc.length, insert: 'main { color: red; }' },
+        selection: { anchor: 5 },
+      });
+    });
+    await user.click(screen.getByRole('button', { name: 'ヒントを見る' }));
+    const hintDialog = screen.getByRole('dialog', { name: 'ヒント' });
+    await user.click(within(hintDialog).getByRole('button', { name: /ヒント1を見る/u }));
+    await user.click(within(hintDialog).getByRole('button', { name: '閉じる' }));
+
+    const reset = screen.getByRole('button', { name: '最初に戻す' });
+    await waitFor(() => {
+      expect(reset).toBeEnabled();
+    });
+    await user.click(reset);
+    const resetDialog = screen.getByRole('dialog', { name: '最初のコードに戻しますか？' });
+    await user.click(within(resetDialog).getByRole('button', { name: '最初のコードに戻す' }));
+
+    const starterFiles = {
+      'index.html': '<main>工程2 starter</main>',
+      'styles.css': 'main { display: block; }',
+    };
+    await waitFor(() => {
+      expect(reset).toBeDisabled();
+      expect(storedDraft?.files).toEqual(starterFiles);
+      expect(adapters.getLastRenderInput()?.files).toEqual(starterFiles);
+      expect(editorView.contentDOM).toHaveFocus();
+    });
+    expect(storedDraft).toMatchObject({
+      cursors: {},
+      validationHistory: [],
+      revealedHintIds: [],
+      lastPassingSnapshots: {},
+    });
+    expect(adapters.getLastRenderInput()?.executionRevision).toBe(storedDraft?.editRevision);
+    expect(runtime.passFreshness.markDirty).toHaveBeenLastCalledWith(
+      guidedWorkspaceCourse.id,
+      GUIDED_WORKSPACE_ID,
+      ['exercise-guided-step-1', 'exercise-guided-step-2'],
+      storedDraft?.editRevision,
+    );
+    expect(
+      screen.queryByRole('dialog', { name: '最初のコードに戻しますか？' }),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: '判定結果を見る' })).not.toBeInTheDocument();
+    expect(EditorView.findFromDOM(document.querySelector<HTMLElement>('.cm-editor')!)).toBe(
+      editorView,
+    );
+  }, 15_000);
+
+  it('Reset flush中の遅延Editor eventを拒否し、StarterのDraft・Preview・Focusを維持する', async () => {
+    stubContentFetch(guidedWorkspaceCourse);
+    stubEditingCapability(true);
+    const adapters = stubAdapters();
+    const user = userEvent.setup();
+    const starterFiles = {
+      'index.html': '<main>工程2 starter</main>',
+      'styles.css': 'main { display: block; }',
+    };
+    let storedDraft: ExerciseDraft | undefined;
+    let resolveResetSaveStarted!: () => void;
+    const resetSaveStarted = new Promise<void>((resolve) => {
+      resolveResetSaveStarted = resolve;
+    });
+    let releaseResetSave!: () => void;
+    const resetSaveGate = new Promise<void>((resolve) => {
+      releaseResetSave = resolve;
+    });
+    let resetSaveBlocked = false;
+    runtime.repository.getDraft.mockImplementation(async () => storedDraft);
+    runtime.repository.putDraft.mockReset().mockImplementation(async (draft) => {
+      if (!resetSaveBlocked && draft.files['index.html'] === starterFiles['index.html']) {
+        resetSaveBlocked = true;
+        resolveResetSaveStarted();
+        await resetSaveGate;
+      }
+      storedDraft = structuredClone(draft);
+    });
+    renderRoute('/courses/html-css/lessons/lesson-guided-step-2/exercises/exercise-guided-step-2');
+    const workspace = await findCodeWorkspace();
+    const editorView = await findEditorView();
+    act(() => {
+      editorView.dispatch({
+        changes: { from: 0, to: editorView.state.doc.length, insert: '<main>Reset前</main>' },
+      });
+    });
+    const reset = screen.getByRole('button', { name: '最初に戻す' });
+    await waitFor(() => {
+      expect(reset).toBeEnabled();
+    });
+    await user.click(reset);
+    await user.click(
+      within(screen.getByRole('dialog', { name: '最初のコードに戻しますか？' })).getByRole(
+        'button',
+        { name: '最初のコードに戻す' },
+      ),
+    );
+    await act(async () => {
+      await resetSaveStarted;
+    });
+    const resetWasInert = workspace.hasAttribute('inert');
+    const resetWasBusy = workspace.getAttribute('aria-busy');
+
+    act(() => {
+      editorView.dispatch({
+        changes: {
+          from: 0,
+          to: editorView.state.doc.length,
+          insert: '<main>Reset中の遅延入力</main>',
+        },
+        selection: { anchor: 4 },
+      });
+      screen
+        .getByRole('tab', { name: 'styles.css' })
+        .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    releaseResetSave();
+
+    await waitFor(() => {
+      expect(editorView.contentDOM).toHaveFocus();
+      expect(storedDraft?.files).toEqual(starterFiles);
+      expect(adapters.getLastRenderInput()?.files).toEqual(starterFiles);
+    });
+    expect(resetWasInert).toBe(true);
+    expect(resetWasBusy).toBe('true');
+    expect(storedDraft).toMatchObject({
+      selectedFile: 'index.html',
+      cursors: {},
+      files: starterFiles,
+    });
+    expect(adapters.getLastRenderInput()?.executionRevision).toBe(storedDraft?.editRevision);
+    expect(runtime.passFreshness.markDirty).toHaveBeenCalledTimes(2);
+    expect(screen.getByRole('tab', { name: 'index.html' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    expect(editorView.state.doc.toString()).toBe(starterFiles['index.html']);
+  }, 15_000);
+
+  it('Starter保存失敗でも復元を巻き戻さずSaveStatusと復旧案内を一致させる', async () => {
+    stubEditingCapability(true);
+    stubAdapters();
+    const user = userEvent.setup();
+    runtime.repository.putDraft.mockReset().mockRejectedValue(new Error('indexeddb full'));
+    renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
+    expect(await findCodeWorkspace()).toBeInTheDocument();
+    const editorView = await findEditorView();
+    act(() => {
+      editorView.dispatch({
+        changes: { from: 0, to: editorView.state.doc.length, insert: '<main>保存失敗前</main>' },
+      });
+    });
+    const reset = screen.getByRole('button', { name: '最初に戻す' });
+    await waitFor(() => {
+      expect(reset).toBeEnabled();
+    });
+    await user.click(reset);
+    await user.click(
+      within(screen.getByRole('dialog', { name: '最初のコードに戻しますか？' })).getByRole(
+        'button',
+        { name: '最初のコードに戻す' },
+      ),
+    );
+
+    expect(
+      await screen.findByText('最初のコードには戻りましたが、自動保存を完了できませんでした。'),
+    ).toHaveAttribute('role', 'alert');
+    expect(screen.getByText('保存できません。編集内容は画面に残っています')).toHaveAttribute(
+      'data-save-status',
+      'error',
+    );
+    expect(editorView.state.doc.toString()).toBe('<main></main>');
+    expect(reset).toBeDisabled();
+    expect(runtime.notices.reportError).toHaveBeenCalledWith('exercise-save', expect.any(Error));
+  });
+
+  it('Starter Preview失敗でも復元を巻き戻さず再準備導線を残す', async () => {
+    stubEditingCapability(true);
+    const starter = '<main></main>';
+    stubAdapters({
+      render: async (input) => {
+        if (input.executionRevision > 0 && input.files['index.html'] === starter) {
+          throw new Error('reset render failed');
+        }
+        return {
+          exerciseSessionId: input.exerciseSessionId,
+          executionRevision: input.executionRevision,
+          diagnostics: [],
+        };
+      },
+    });
+    const user = userEvent.setup();
+    runtime.repository.putDraft.mockReset().mockResolvedValue(undefined);
+    renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
+    expect(await findCodeWorkspace()).toBeInTheDocument();
+    const editorView = await findEditorView();
+    act(() => {
+      editorView.dispatch({
+        changes: { from: 0, to: editorView.state.doc.length, insert: '<main>Preview失敗前</main>' },
+      });
+    });
+    const reset = screen.getByRole('button', { name: '最初に戻す' });
+    await waitFor(() => {
+      expect(reset).toBeEnabled();
+    });
+    await user.click(reset);
+    await user.click(
+      within(screen.getByRole('dialog', { name: '最初のコードに戻しますか？' })).getByRole(
+        'button',
+        { name: '最初のコードに戻す' },
+      ),
+    );
+
+    expect(
+      await screen.findByText('最初のコードに戻しました。プレビューだけ更新できませんでした。'),
+    ).toHaveAttribute('role', 'alert');
+    expect(screen.getByRole('button', { name: 'プレビューを再準備' })).toBeEnabled();
+    expect(editorView.state.doc.toString()).toBe(starter);
+    expect(reset).toBeDisabled();
+    expect(runtime.notices.reportError).toHaveBeenCalledWith('exercise-preview', expect.any(Error));
+    await waitFor(() => {
+      expect(editorView.contentDOM).toHaveFocus();
+    });
   });
 });

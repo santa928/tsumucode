@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="360" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
+  <title id="title">SkillsとWorksの部品構成</title>
+  <desc id="desc">SkillsのリストとWorksのカードを共通Surfaceの中へ整理する図</desc>
+  <rect width="960" height="360" rx="28" fill="#fffaf0"/>
+  <rect x="34" y="36" width="408" height="288" rx="24" fill="#ffffff" stroke="#d4e3df" stroke-width="4"/>
+  <text x="64" y="82" fill="#172a3a" font-family="system-ui, sans-serif" font-size="28" font-weight="850">Skills</text>
+  <rect x="64" y="112" width="152" height="46" rx="23" fill="#2d7c82"/>
+  <rect x="232" y="112" width="174" height="46" rx="23" fill="#2d7c82"/>
+  <rect x="64" y="174" width="198" height="46" rx="23" fill="#2d7c82"/>
+  <text x="86" y="142" fill="#ffffff" font-family="system-ui, sans-serif" font-size="17" font-weight="750">Semantic HTML</text>
+  <text x="254" y="142" fill="#ffffff" font-family="system-ui, sans-serif" font-size="17" font-weight="750">Responsive CSS</text>
+  <text x="86" y="204" fill="#ffffff" font-family="system-ui, sans-serif" font-size="17" font-weight="750">Accessibility Audit</text>
+  <text x="64" y="276" fill="#155e63" font-family="ui-monospace, monospace" font-size="18" font-weight="800">ul.skill-list &gt; li</text>
+  <rect x="474" y="36" width="452" height="288" rx="24" fill="#ffffff" stroke="#d4e3df" stroke-width="4"/>
+  <text x="504" y="82" fill="#172a3a" font-family="system-ui, sans-serif" font-size="28" font-weight="850">Works</text>
+  <rect x="504" y="108" width="184" height="126" rx="16" fill="#dcebe8"/>
+  <rect x="708" y="108" width="184" height="126" rx="16" fill="#dcebe8"/>
+  <rect x="522" y="126" width="148" height="46" rx="10" fill="#ef7d4f"/>
+  <rect x="726" y="126" width="148" height="46" rx="10" fill="#2d7c82"/>
+  <text x="528" y="206" fill="#172a3a" font-family="system-ui, sans-serif" font-size="18" font-weight="800">Profile Card</text>
+  <text x="732" y="206" fill="#172a3a" font-family="system-ui, sans-serif" font-size="18" font-weight="800">Learning Note</text>
+  <text x="504" y="276" fill="#155e63" font-family="ui-monospace, monospace" font-size="18" font-weight="800">div.works-grid &gt; article × 2</text>
+</svg>

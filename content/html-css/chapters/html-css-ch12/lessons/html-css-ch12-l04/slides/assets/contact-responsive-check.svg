@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="360" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
+  <title id="title">ContactとResponsive確認</title>
+  <desc id="desc">Profileを390ピクセルの1列と1280ピクセルの2列で比較する図</desc>
+  <rect width="960" height="360" rx="28" fill="#fffaf0"/>
+  <text x="82" y="52" fill="#155e63" font-family="system-ui, sans-serif" font-size="20" font-weight="850">390px · 1列</text>
+  <rect x="68" y="70" width="250" height="252" rx="24" fill="#172a3a"/>
+  <rect x="92" y="94" width="202" height="76" rx="14" fill="#dcebe8"/>
+  <rect x="92" y="184" width="202" height="52" rx="14" fill="#ffffff"/>
+  <rect x="92" y="250" width="202" height="48" rx="14" fill="#ef7d4f"/>
+  <text x="135" y="281" fill="#172a3a" font-family="system-ui, sans-serif" font-size="17" font-weight="850">感想を送る</text>
+  <path d="M348 196h84" stroke="#ef7d4f" stroke-width="8" stroke-linecap="round"/>
+  <path d="m421 180 18 16-18 16" fill="none" stroke="#ef7d4f" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="514" y="52" fill="#155e63" font-family="system-ui, sans-serif" font-size="20" font-weight="850">1280px · 2列</text>
+  <rect x="478" y="70" width="414" height="252" rx="24" fill="#172a3a"/>
+  <rect x="502" y="94" width="174" height="104" rx="14" fill="#dcebe8"/>
+  <rect x="692" y="94" width="176" height="104" rx="14" fill="#dcebe8"/>
+  <rect x="502" y="216" width="366" height="82" rx="14" fill="#ffffff"/>
+  <rect x="690" y="232" width="154" height="50" rx="14" fill="#ef7d4f"/>
+  <text x="724" y="263" fill="#172a3a" font-family="system-ui, sans-serif" font-size="17" font-weight="850">感想を送る</text>
+  <path d="M68 332h824" stroke="#2d7c82" stroke-width="6" stroke-linecap="round" stroke-dasharray="8 12"/>
+</svg>

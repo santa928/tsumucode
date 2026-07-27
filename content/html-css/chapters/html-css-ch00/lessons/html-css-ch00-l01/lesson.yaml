@@ -8,6 +8,7 @@ slideSources:
   - slides/s01-web-page.md
   - slides/s02-html-role.md
   - slides/s03-css-role.md
+  - slides/s04-role-checkpoint.md
 exerciseSources:
   - exercises/html-css-ch00-l01-e01/exercise.yaml
 reflection: HTMLは内容と意味、CSSは見た目、Browserは両方を読んで画面にする
@@ -15,5 +16,5 @@ glossaryRefs: [browser, html, css]
 nextLessonId: html-css-ch00-l02
 completion:
   kind: standard
-  finalSlideId: html-css-ch00-l01-s03
+  finalSlideId: html-css-ch00-l01-s04
   requiredExerciseIds: [html-css-ch00-l01-e01]

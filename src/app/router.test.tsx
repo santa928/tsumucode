@@ -83,6 +83,56 @@ afterEach(() => {
 });
 
 describe('createAppRouter', () => {
+  it('Library目次へ直接アクセスし、通常学習Runtimeへ触れず全Slide入口を表示する', async () => {
+    window.location.hash = '#/library/html-css';
+    router = createAppRouter();
+    render(<RouterProvider router={router} />);
+
+    expect(
+      await screen.findByRole('heading', {
+        level: 1,
+        name: `${fixtureCourse.title} スライド目次`,
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '見出しを置くを先頭から見る' })).toHaveAttribute(
+      'href',
+      '#/library/html-css/lessons/lesson-first-heading/slides/slide-html-role',
+    );
+    expect(router.state.location.pathname).toBe('/library/html-css');
+    expect(runtime.ensureCourse).not.toHaveBeenCalled();
+    expect(runtime.repository.getCourse).not.toHaveBeenCalled();
+    expect(runtime.repository.getDraft).not.toHaveBeenCalled();
+  });
+
+  it('Library Viewerへ直接アクセスし、Hashを維持して対象Slideを表示する', async () => {
+    window.location.hash = '#/library/html-css/lessons/lesson-first-heading/slides/slide-html-role';
+    router = createAppRouter();
+    render(<RouterProvider router={router} />);
+
+    expect(await screen.findByText('閲覧モード')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'HTMLは意味を伝える' }),
+    ).toBeInTheDocument();
+    expect(router.state.location.pathname).toBe(
+      '/library/html-css/lessons/lesson-first-heading/slides/slide-html-role',
+    );
+    expect(runtime.ensureCourse).not.toHaveBeenCalled();
+    expect(runtime.repository.getCourse).not.toHaveBeenCalled();
+    expect(runtime.repository.getDraft).not.toHaveBeenCalled();
+  });
+
+  it('未知のLibrary Courseを既存の再試行可能な404画面で受け止める', async () => {
+    window.location.hash = '#/library/missing-course';
+    router = createAppRouter();
+    render(<RouterProvider router={router} />);
+
+    expect(
+      await screen.findByRole('heading', { name: '教材を読み込めませんでした' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'もう一度読み込む' })).toBeEnabled();
+    expect(runtime.ensureCourse).not.toHaveBeenCalled();
+  });
+
   it('Hash RouterのHome routeを表示する', async () => {
     window.location.hash = '#/';
     router = createAppRouter();

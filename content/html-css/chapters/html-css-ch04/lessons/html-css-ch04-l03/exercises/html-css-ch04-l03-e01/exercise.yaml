@@ -4,6 +4,29 @@ workspaceId: html-css-ch04-l03-e01
 countsTowardStandardExerciseTotal: true
 title: Source OrderとInheritanceで色を選ぶ
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: cascade-source-order, minimumLevel: transform }
+  - { conceptId: inheritance, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: reorder-card-color-rules
+    file: styles.css
+    target: 連続する2つの.cascade-card Rule
+    starterAnchor: |-
+      .cascade-card {
+        color: #9a3f25;
+      }
+
+      .cascade-card {
+        color: #2d5d62;
+      }
+    change: Ruleの順番を青緑#2d5d62、橙#9a3f25の順へ入れ替える
+    observe: messageはCardの最終的な橙を継承し、直接指定のcontrolは青緑を保つ
+    requiresConceptIds: [cascade-source-order, inheritance]
+    validationRuleIds:
+      - html-css-ch04-l03-e01-r01
+      - html-css-ch04-l03-e01-r02
+      - html-css-ch04-l03-e01-r03
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -47,6 +70,30 @@ validationRules:
       nextAction: '.controlへcolor: #2d5d62;を直接指定し、広い一括上書きを避けます。'
     hintId: html-css-ch04-l03-e01-h03
     relatedSlideId: html-css-ch04-l03-s03
+  - id: html-css-ch04-l03-e01-r03
+    label: 同じSelectorを青緑から橙のSource Orderへ並べる
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: |-
+        .cascade-card {
+          color: #2d5d62;
+        }
+
+        .cascade-card {
+          color: #9a3f25;
+        }
+    feedback:
+      target: 2つの.cascade-card RuleのSource Order
+      expected: 青緑のRuleが先、橙のRuleが後
+      nextAction: Color Valueを別Selectorへ移さず、2つの.cascade-card Ruleの順番だけを入れ替えます。
+    hintId: html-css-ch04-l03-e01-h02
+    relatedSlideId: html-css-ch04-l03-s01
 hints:
   - id: html-css-ch04-l03-e01-h01
     level: 1
@@ -97,4 +144,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch04-l03-e01-r01]
+    expectedFeedbackRuleIds: [html-css-ch04-l03-e01-r01, html-css-ch04-l03-e01-r03]

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="400" viewBox="0 0 720 400" role="img" aria-labelledby="title desc">
+  <title id="title">Flex Wrapの幅計算</title>
+  <desc id="desc">600pxのContainerへ180pxのCard3枚と16pxのGap2つが572pxで収まり4枚目が次の行へ折り返す</desc>
+  <rect width="720" height="400" rx="28" fill="#f5efe4"/>
+  <text x="48" y="54" fill="#24323d" font-family="system-ui, sans-serif" font-size="24" font-weight="700">600px に何枚入る？</text>
+  <rect x="58" y="88" width="604" height="226" rx="18" fill="#fff" stroke="#b58b42" stroke-width="3"/>
+  <g font-family="system-ui, sans-serif" text-anchor="middle">
+    <g fill="#2d5d62">
+      <rect x="78" y="116" width="166" height="76" rx="12"/><rect x="260" y="116" width="166" height="76" rx="12"/><rect x="442" y="116" width="166" height="76" rx="12"/>
+    </g>
+    <g fill="#fff" font-size="17" font-weight="700"><text x="161" y="161">180px</text><text x="343" y="161">180px</text><text x="525" y="161">180px</text></g>
+    <rect x="78" y="216" width="166" height="70" rx="12" fill="#f7d7ca" stroke="#d45d3f" stroke-width="2"/>
+    <text x="161" y="256" fill="#8f3f2d" font-size="17" font-weight="700">4枚目</text>
+  </g>
+  <g stroke="#d45d3f" stroke-width="3"><path d="M244 106V114M260 106V114M244 110H260"/><path d="M426 106V114M442 106V114M426 110H442"/></g>
+  <g fill="#d45d3f" font-family="system-ui, sans-serif" font-size="13" font-weight="700"><text x="236" y="103">16px</text><text x="418" y="103">16px</text></g>
+  <path d="M622 154H642V250H258" fill="none" stroke="#d45d3f" stroke-width="3" stroke-dasharray="7 7"/>
+  <path d="M270 242L254 250L270 258" fill="none" stroke="#d45d3f" stroke-width="3"/>
+  <text x="360" y="356" text-anchor="middle" fill="#24323d" font-family="system-ui, sans-serif" font-size="19" font-weight="700">180 × 3 + 16 × 2 = 572px</text>
+</svg>

@@ -124,4 +124,81 @@ describe('LearningSession reducer', () => {
     expect(duplicateHint).toBe(hinted);
     expect(saved).toMatchObject({ phase: 'completion', saveStatus: 'saved' });
   });
+
+  it('Starter復元は全fileとExercise-local状態を同じrevisionで原子的に初期化する', () => {
+    const starter = { 'index.html': '<h1>最初</h1>', 'styles.css': 'body {}' };
+    const validationResult: ValidationResult = {
+      exerciseId: 'ex-1',
+      executionRevision: 1,
+      status: 'pass',
+      checks: [],
+      passedRequirementIds: ['requirement-1'],
+      diagnostics: [],
+      evaluatedAt: '2026-07-10T00:00:00.000Z',
+    };
+    const initial = createLearningSessionState({
+      courseId: 'fixture',
+      lessonId: 'lesson-1',
+      exerciseId: 'ex-1',
+      files: { 'index.html': '<h1>編集前</h1>', 'styles.css': '' },
+      selectedFile: 'index.html',
+    });
+    const edited = learningSessionReducer(initial, {
+      type: 'editor.changed',
+      path: 'index.html',
+      content: '<h1>編集後</h1>',
+    });
+    const cursorMoved = learningSessionReducer(edited, {
+      type: 'editor.cursor',
+      path: 'index.html',
+      cursor: { anchor: 2, head: 4 },
+    });
+    const previewed = learningSessionReducer(cursorMoved, {
+      type: 'preview.completed',
+      revision: cursorMoved.executionRevision,
+      diagnostics: [
+        {
+          code: 'fixture-error',
+          kind: 'syntax',
+          severity: 'error',
+          message: '構文エラー',
+          learnerMessage: 'タグを閉じてください',
+        },
+      ],
+    });
+    const validated = learningSessionReducer(previewed, {
+      type: 'validation.completed',
+      revision: previewed.executionRevision,
+      result: validationResult,
+    });
+    const hinted = learningSessionReducer(validated, {
+      type: 'hint.revealed',
+      hintId: 'hint-1',
+    });
+    const reviewing = learningSessionReducer(hinted, {
+      type: 'review.open',
+      slideId: 'slide-2',
+      scrollOffset: 160,
+    });
+
+    const reset = learningSessionReducer(reviewing, {
+      type: 'editor.reset',
+      files: starter,
+      selectedFile: 'index.html',
+    });
+
+    expect(reset).toMatchObject({
+      phase: 'exercise',
+      files: starter,
+      selectedFile: 'index.html',
+      cursors: {},
+      executionRevision: reviewing.executionRevision + 1,
+      previewRevision: null,
+      diagnostics: [],
+      validationHistory: [],
+      revealedHintIds: [],
+      saveStatus: 'saving',
+    });
+    expect(reset.reviewReturn).toBeUndefined();
+  });
 });

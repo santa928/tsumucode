@@ -4,6 +4,31 @@ workspaceId: html-css-ch05-l03-e01
 countsTowardStandardExerciseTotal: true
 title: 内側と外側のSpacingを分ける
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: padding-property, minimumLevel: transform }
+  - { conceptId: margin-property, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: expand-card-inner-spacing
+    file: styles.css
+    target: .card Ruleのpadding Declaration
+    starterAnchor: 'padding: 16px;'
+    change: Valueを24pxへ変更する
+    observe: Cardの背景内でContentとBorderの間が24pxになり、Sourceもpadding 24pxになる
+    requiresConceptIds: [padding-property]
+    validationRuleIds:
+      - html-css-ch05-l03-e01-r01
+      - html-css-ch05-l03-e01-r03
+  - id: expand-card-outer-spacing
+    file: styles.css
+    target: .card + .card Ruleのmargin-top Declaration
+    starterAnchor: 'margin-top: 16px;'
+    change: Valueを32pxへ変更する
+    observe: 2枚目のCardの外側だけが32px離れ、Sourceもmargin-top 32pxになる
+    requiresConceptIds: [margin-property]
+    validationRuleIds:
+      - html-css-ch05-l03-e01-r02
+      - html-css-ch05-l03-e01-r04
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -47,6 +72,40 @@ validationRules:
       target: 2枚目Cardの外側Spacing
       expected: 32px
       nextAction: '2枚目のmargin-topを32pxにします。'
+    hintId: html-css-ch05-l03-e01-h03
+    relatedSlideId: html-css-ch05-l03-s02
+  - id: html-css-ch05-l03-e01-r03
+    label: .cardへPaddingを24pxで記述する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '.card { padding: 24px;'
+    feedback:
+      target: .cardのPadding Source
+      expected: 'padding: 24px;'
+      nextAction: .cardにあるpaddingのValueを24pxへ変更します。
+    hintId: html-css-ch05-l03-e01-h02
+    relatedSlideId: html-css-ch05-l03-s01
+  - id: html-css-ch05-l03-e01-r04
+    label: 2枚目のCardへMargin Topを32pxで記述する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '.card + .card { margin-top: 32px;'
+    feedback:
+      target: .card + .cardのMargin Source
+      expected: 'margin-top: 32px;'
+      nextAction: 2枚目以降を選ぶRuleのmargin-topを32pxへ変更します。
     hintId: html-css-ch05-l03-e01-h03
     relatedSlideId: html-css-ch05-l03-s02
 hints:
@@ -98,4 +157,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch05-l03-e01-r02]
+    expectedFeedbackRuleIds: [html-css-ch05-l03-e01-r02, html-css-ch05-l03-e01-r04]

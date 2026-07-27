@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Contact Cardの構成</title>
+  <desc id="desc">Profile画像、名前、説明、address内の安全なhttps Linkを1枚のCardへ組み合わせる</desc>
+  <rect width="640" height="360" rx="24" fill="#e8dfcf" />
+  <rect x="164" y="26" width="312" height="308" rx="24" fill="#fffaf0" stroke="#8a7657" stroke-width="3" />
+  <circle cx="244" cy="108" r="46" fill="#f4c95d" />
+  <path d="M198 169c7-37 24-55 46-55s39 18 46 55" fill="#3d7665" />
+  <g font-family="system-ui, sans-serif" fill="#19352d">
+    <text x="316" y="90" font-size="24" font-weight="800">Tsumu Learner</text>
+    <text x="316" y="124" font-size="17">意味が伝わるPageを練習中</text>
+  </g>
+  <rect x="196" y="202" width="248" height="92" rx="18" fill="#dcebe5" />
+  <text x="216" y="230" font-family="ui-monospace, monospace" font-size="16" font-weight="700" fill="#19352d">address</text>
+  <rect x="216" y="244" width="208" height="34" rx="10" fill="#19352d" />
+  <text x="320" y="267" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" font-weight="700" fill="#fffaf0">学習用Contact Pageを見る</text>
+  <g font-family="system-ui, sans-serif" font-size="16" font-weight="700" fill="#3f514b">
+    <text x="28" y="76">画像 + alt</text>
+    <text x="496" y="48">名前と説明</text>
+    <text x="28" y="278">連絡情報の役割</text>
+    <text x="486" y="278">安全なhttps Link</text>
+  </g>
+  <g fill="none" stroke="#3d7665" stroke-width="4" stroke-linecap="round">
+    <path d="M124 80h54l24 20" />
+    <path d="M490 54h-22l-16 16" />
+    <path d="M148 274h48" />
+    <path d="M480 274h-56" />
+  </g>
+</svg>

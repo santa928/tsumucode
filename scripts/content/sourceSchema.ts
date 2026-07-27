@@ -1,9 +1,14 @@
 /** Authoring YAMLのstrict構造と、公開Schemaへ組み立てる前のSource契約を定義する。 */
 import { z } from 'zod';
 import {
+  ConceptDefinitionSchema,
+  ConceptRequirementSchema,
   ContentProgressMigrationSchema,
   HintSchema,
+  MasteryLevelSchema,
   PreviewViewportSchema,
+  ScreenBudgetSchema,
+  SlideLayoutSchema,
   ValidationRuleDefinitionSchema,
 } from '../../src/core/content/schema';
 
@@ -40,6 +45,19 @@ export const WorkspacePathSchema = z
   .string()
   .refine(isCanonicalRelativePath, '安全なWorkspace相対Pathで指定してください');
 
+export const ExerciseStepSourceSchema = z
+  .object({
+    id: IdSchema,
+    file: WorkspacePathSchema,
+    target: TextSchema,
+    starterAnchor: TextSchema,
+    change: TextSchema,
+    observe: TextSchema,
+    requiresConceptIds: z.array(IdSchema).min(1),
+    validationRuleIds: z.array(IdSchema).min(1),
+  })
+  .strict();
+
 export const AssetSourceSchema = z
   .object({
     id: IdSchema,
@@ -75,6 +93,9 @@ const ExerciseBaseSchema = z
     countsTowardStandardExerciseTotal: z.boolean(),
     title: TextSchema,
     instructionsSource: SourcePathSchema,
+    requiresConcepts: z.array(ConceptRequirementSchema).min(1).optional(),
+    scaffoldLevel: MasteryLevelSchema.optional(),
+    steps: z.array(ExerciseStepSourceSchema).min(1).optional(),
     files: z.array(FileSourceSchema).min(1),
     solutionFiles: z.array(FileSourceSchema).min(1),
     validationRules: z.array(ValidationRuleDefinitionSchema).min(1),
@@ -251,6 +272,10 @@ export const SlideFrontmatterSchema = z
       'checklist',
     ]),
     concept: TextSchema.optional(),
+    layout: SlideLayoutSchema.optional(),
+    teachesConceptIds: z.array(IdSchema).min(1).optional(),
+    masteryTarget: MasteryLevelSchema.optional(),
+    screenBudget: ScreenBudgetSchema.optional(),
     assets: z.array(AssetSourceSchema).default([]),
   })
   .strict();
@@ -428,11 +453,22 @@ export const ChapterSourceSchema = z
   })
   .strict();
 
+export const ConceptCatalogSourceSchema = z
+  .object({
+    schemaVersion: z.literal(1),
+    concepts: z.array(ConceptDefinitionSchema).min(1),
+  })
+  .strict();
+
 const ExpectedTotalsSourceSchema = z
   .object({
     chapters: z.number().int().nonnegative(),
     lessons: z.number().int().nonnegative(),
-    conceptSlides: z.number().int().nonnegative(),
+    conceptSlides: z
+      .number()
+      .int()
+      .nonnegative()
+      .describe('学習上必要な追加分割を許可するConcept Slide最低枚数'),
     standardExercises: z.number().int().nonnegative(),
     guidedProjectLessons: z.number().int().nonnegative(),
     capstoneLessons: z.number().int().nonnegative(),
@@ -468,6 +504,7 @@ export const CourseSourceSchema = z
     runnerId: IdSchema,
     validatorId: IdSchema,
     glossarySource: SourcePathSchema,
+    conceptsSource: SourcePathSchema.optional(),
     documentationSources: z.array(SourcePathSchema).default([]),
     authoringSources: z.array(SourcePathSchema).default([]),
     supportedDevices: SupportedDevicesSourceSchema,

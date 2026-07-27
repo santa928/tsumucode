@@ -4,6 +4,70 @@ workspaceId: html-css-ch07-l01-e01
 countsTowardStandardExerciseTotal: true
 title: 5つの観点でProfile Cardを完成する
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: profile-card-integration, minimumLevel: compose }
+scaffoldLevel: compose
+steps:
+  - id: use-article-for-profile-card
+    file: index.html
+    target: data-profile-cardを持つ外側Elementの開始Tagと終了Tag
+    starterAnchor: '<div data-profile-card>'
+    change: 開始Tagと対応する終了Tagをdivからarticleへ変更する
+    observe: Sourceにarticleが残り、Profile CardのSemantic Roleがarticleになる
+    requiresConceptIds: [profile-card-integration]
+    validationRuleIds:
+      - html-css-ch07-l01-e01-r01
+      - html-css-ch07-l01-e01-r07
+  - id: describe-profile-image
+    file: index.html
+    target: Profile Imageのalt Attribute
+    starterAnchor: 'alt=""'
+    change: ValueへCode Cardを持つAoiのAvatarと記述する
+    observe: Sourceに説明が残り、Profile ImageのAccessible Nameが空でなくなる
+    requiresConceptIds: [profile-card-integration]
+    validationRuleIds:
+      - html-css-ch07-l01-e01-r02
+      - html-css-ch07-l01-e01-r08
+  - id: contain-card-in-shell
+    file: styles.css
+    target: '[data-profile-card] Ruleの先頭とwidth Declaration'
+    starterAnchor: 'width: 360px;'
+    change: Rule先頭へbox-sizing border-boxを追加し、widthを100%へ変更する
+    observe: 320pxのShell内へPaddingとBorderを含むCardが収まり、横Overflowがfalseになる
+    requiresConceptIds: [profile-card-integration]
+    validationRuleIds:
+      - html-css-ch07-l01-e01-r03
+      - html-css-ch07-l01-e01-r09
+  - id: expand-profile-padding
+    file: styles.css
+    target: '[data-profile-card] Ruleのpadding Declaration'
+    starterAnchor: 'padding: 12px;'
+    change: Valueを24pxへ変更する
+    observe: Card内部のComputed Paddingが24pxになり、統合Sourceの順序もそろう
+    requiresConceptIds: [profile-card-integration]
+    validationRuleIds:
+      - html-css-ch07-l01-e01-r06
+      - html-css-ch07-l01-e01-r09
+  - id: darken-profile-text
+    file: styles.css
+    target: '[data-profile-card] Ruleのcolor Declaration'
+    starterAnchor: 'color: #a0a0a0;'
+    change: Valueを#24323dへ変更する
+    observe: 白い背景とのContrast Ratioが4.5対1以上になり、統合Sourceもそろう
+    requiresConceptIds: [profile-card-integration]
+    validationRuleIds:
+      - html-css-ch07-l01-e01-r05
+      - html-css-ch07-l01-e01-r09
+  - id: open-profile-line-height
+    file: styles.css
+    target: '[data-bio] Ruleのline-height Declaration'
+    starterAnchor: 'line-height: 1.2;'
+    change: Valueを1.5へ変更する
+    observe: 16pxの本文でComputed Line Heightが24pxになり、Sourceにも1.5が残る
+    requiresConceptIds: [profile-card-integration]
+    validationRuleIds:
+      - html-css-ch07-l01-e01-r04
+      - html-css-ch07-l01-e01-r10
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -96,6 +160,93 @@ validationRules:
       nextAction: CardのText ColorとBackground Colorの明るさの差を広げます。
     hintId: html-css-ch07-l01-e01-h03
     relatedSlideId: html-css-ch07-l01-r01
+  - id: html-css-ch07-l01-e01-r06
+    label: Card内部へ24pxのPaddingを付ける
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-profile-card]' }
+    assertion:
+      kind: computed-style
+      property: padding-top
+      operator: equals
+      expected: 24
+      tolerance: 0.5
+    feedback:
+      target: Profile CardのComputed Padding Top
+      expected: 24px
+      nextAction: '[data-profile-card]のpaddingを24pxへ変更します。'
+    hintId: html-css-ch07-l01-e01-h02
+    relatedSlideId: html-css-ch07-l01-r01
+  - id: html-css-ch07-l01-e01-r07
+    label: Profile Cardをarticle要素で記述する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: index.html }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '<article data-profile-card'
+    feedback:
+      target: Profile CardのHTML Source
+      expected: data-profile-cardを持つarticle要素
+      nextAction: 外側Elementの開始Tagと終了Tagをarticleへ変更します。
+    hintId: html-css-ch07-l01-e01-h01
+    relatedSlideId: html-css-ch07-l01-r01
+  - id: html-css-ch07-l01-e01-r08
+    label: Profile Imageへ内容を表すaltを記述する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: index.html }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '<img src="asset:avatar-integration-card" alt="Code Cardを持つ'
+    feedback:
+      target: Profile ImageのHTML Source
+      expected: Code Cardを持つ人物だと分かるalt
+      nextAction: 空のaltへ、画像の内容が伝わる短い説明を書きます。
+    hintId: html-css-ch07-l01-e01-h01
+    relatedSlideId: html-css-ch07-l01-r01
+  - id: html-css-ch07-l01-e01-r09
+    label: CardのSizing、Padding、Colorを統合して記述する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '[data-profile-card] { box-sizing: border-box; width: 100%; padding: 24px; color: #24323d; background-color: #fff;'
+    feedback:
+      target: Profile CardのCSS Source
+      expected: border-box、100%、24px、#24323d、白背景
+      nextAction: Reflectionの見本順に5つのDeclarationをそろえます。
+    hintId: html-css-ch07-l01-e01-h03
+    relatedSlideId: html-css-ch07-l01-r01
+  - id: html-css-ch07-l01-e01-r10
+    label: 自己紹介へLine Height 1.5を記述する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '[data-bio] { font-size: 16px; line-height: 1.5;'
+    feedback:
+      target: 自己紹介のCSS Source
+      expected: 'line-height: 1.5;'
+      nextAction: 既存のfont-sizeを残し、line-heightのValueを1.5へ変更します。
+    hintId: html-css-ch07-l01-e01-h02
+    relatedSlideId: html-css-ch07-l01-r01
 hints:
   - id: html-css-ch07-l01-e01-h01
     level: 1
@@ -149,4 +300,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch07-l01-e01-r03]
+    expectedFeedbackRuleIds: [html-css-ch07-l01-e01-r03, html-css-ch07-l01-e01-r09]

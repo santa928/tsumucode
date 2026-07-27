@@ -4,6 +4,32 @@ workspaceId: html-css-ch10-l05-e01
 countsTowardStandardExerciseTotal: true
 title: 4 ViewportでOverflowとCTAを確認する
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: horizontal-overflow, minimumLevel: compose }
+  - { conceptId: multi-viewport-audit, minimumLevel: compose }
+scaffoldLevel: compose
+steps:
+  - id: remove-fixed-section-overflow
+    file: styles.css
+    target: '[data-wide] Ruleのwidth Declaration'
+    starterAnchor: 'width: 1100px;'
+    change: Valueを100%へ変更する
+    observe: 4 ViewportすべてでDocumentの横Overflowがfalseになる
+    requiresConceptIds: [horizontal-overflow]
+    validationRuleIds:
+      - html-css-ch10-l05-e01-r01
+      - html-css-ch10-l05-e01-r04
+  - id: complete-four-viewport-cta-audit
+    file: styles.css
+    target: '[data-cta] Ruleのmin-height Declaration'
+    starterAnchor: 'min-height: 24px;'
+    change: Valueを44pxへ変更する
+    observe: 4 ViewportすべてでCTAがFocus可能かつ44px以上になる
+    requiresConceptIds: [multi-viewport-audit]
+    validationRuleIds:
+      - html-css-ch10-l05-e01-r02
+      - html-css-ch10-l05-e01-r03
+      - html-css-ch10-l05-e01-r05
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -57,6 +83,35 @@ validationRules:
         expected: 4 Viewportすべて44px以上,
         nextAction: min-height 44pxと内部Paddingを指定します。,
       }
+    hintId: html-css-ch10-l05-e01-h03
+    relatedSlideId: html-css-ch10-l05-s02
+  - id: html-css-ch10-l05-e01-r04
+    label: Overflowしない幅をSourceへ書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: source, file: styles.css }
+    assertion:
+      { kind: text, operator: contains-normalized, expected: '[data-wide] { width: 100%; }' }
+    feedback:
+      target: data-wideのWidth Source
+      expected: width 100%
+      nextAction: widthを1100pxから100%へ変更します。
+    hintId: html-css-ch10-l05-e01-h01
+    relatedSlideId: html-css-ch10-l05-s01
+  - id: html-css-ch10-l05-e01-r05
+    label: CTAの最小高さをSourceへ書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: source, file: styles.css }
+    assertion: { kind: text, operator: contains-normalized, expected: 'min-height: 44px;' }
+    feedback:
+      target: data-ctaのMin Height Source
+      expected: 44px
+      nextAction: min-heightを24pxから44pxへ変更します。
     hintId: html-css-ch10-l05-e01-h03
     relatedSlideId: html-css-ch10-l05-s02
 hints:
@@ -115,4 +170,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch10-l05-e01-r01]
+    expectedFeedbackRuleIds: [html-css-ch10-l05-e01-r01, html-css-ch10-l05-e01-r04]

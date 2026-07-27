@@ -134,6 +134,14 @@ describe('Design System primitives', () => {
     expect(screen.getByRole('progressbar', { name: '章の進捗' })).toHaveValue(3);
   });
 
+  it('PieceProgressのcompact表示はnative progressを保って装飾Pieceだけを省く', () => {
+    render(<PieceProgress completed={4} total={4} label="スライドの現在位置" compact />);
+
+    expect(screen.getByText('4 / 4')).toBeInTheDocument();
+    expect(screen.getByRole('progressbar', { name: 'スライドの現在位置' })).toBeInTheDocument();
+    expect(screen.queryByTestId('progress-piece')).not.toBeInTheDocument();
+  });
+
   it.each([
     ['learning', '学習のヒント'],
     ['complete', '完了'],

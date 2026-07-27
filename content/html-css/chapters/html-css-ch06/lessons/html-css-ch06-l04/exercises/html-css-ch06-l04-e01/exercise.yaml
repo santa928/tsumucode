@@ -4,6 +4,36 @@ workspaceId: html-css-ch06-l04-e01
 countsTowardStandardExerciseTotal: true
 title: 2枚のCardへBase Styleを再利用する
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: reusable-base-class, minimumLevel: compose }
+  - { conceptId: modifier-class, minimumLevel: compose }
+scaffoldLevel: compose
+steps:
+  - id: apply-base-class-to-first-card
+    file: index.html
+    target: 1枚目のarticleにあるclass Attribute
+    starterAnchor: 'class="html-card"'
+    change: Valueをcardへ変更する
+    observe: 1枚目へ完成済みの白い背景、24px Padding、Borderが適用される
+    requiresConceptIds: [reusable-base-class]
+    validationRuleIds:
+      - html-css-ch06-l04-e01-r01
+      - html-css-ch06-l04-e01-r02
+      - html-css-ch06-l04-e01-r03
+      - html-css-ch06-l04-e01-r05
+  - id: compose-base-and-modifier-on-second-card
+    file: index.html
+    target: 2枚目のarticleにあるclass Attribute
+    starterAnchor: 'class="css-card"'
+    change: Valueをcard card--featuredへ変更する
+    observe: 2枚目もBase Styleを共有し、Modifierの左Border 4pxだけが追加される
+    requiresConceptIds: [reusable-base-class, modifier-class]
+    validationRuleIds:
+      - html-css-ch06-l04-e01-r01
+      - html-css-ch06-l04-e01-r02
+      - html-css-ch06-l04-e01-r03
+      - html-css-ch06-l04-e01-r04
+      - html-css-ch06-l04-e01-r06
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -65,6 +95,59 @@ validationRules:
       nextAction: 共通のBase Classへpadding 24pxを置き、個別Ruleで打ち消していないか確認します。
     hintId: html-css-ch06-l04-e01-h03
     relatedSlideId: html-css-ch06-l04-s02
+  - id: html-css-ch06-l04-e01-r04
+    label: 2枚目へFeatured Modifierを適用する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-card]:nth-of-type(2)' }
+    assertion:
+      kind: computed-style
+      property: border-left-width
+      operator: equals
+      expected: 4
+      tolerance: 0.1
+    feedback:
+      target: 2枚目CardのComputed Border Left Width
+      expected: 4px
+      nextAction: 2枚目のclassへcard--featuredを追加し、Base Classも残します。
+    hintId: html-css-ch06-l04-e01-h03
+    relatedSlideId: html-css-ch06-l04-s02
+  - id: html-css-ch06-l04-e01-r05
+    label: 1枚目へBase Classを記述する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: index.html }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '<article data-card class="card">'
+    feedback:
+      target: 1枚目CardのClass Source
+      expected: 'class="card"'
+      nextAction: html-cardをcardへ変更します。
+    hintId: html-css-ch06-l04-e01-h02
+    relatedSlideId: html-css-ch06-l04-s01
+  - id: html-css-ch06-l04-e01-r06
+    label: 2枚目へBaseとModifier Classを記述する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: index.html }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '<article data-card class="card card--featured">'
+    feedback:
+      target: 2枚目CardのClass Source
+      expected: 'class="card card--featured"'
+      nextAction: css-cardをcard card--featuredへ変更します。
+    hintId: html-css-ch06-l04-e01-h03
+    relatedSlideId: html-css-ch06-l04-s02
 hints:
   - id: html-css-ch06-l04-e01-h01
     level: 1
@@ -79,7 +162,7 @@ hints:
   - id: html-css-ch06-l04-e01-h03
     level: 3
     title: 両方の実値を確認する
-    text: Base Classへpadding 24pxを置き、2枚のComputed Paddingを確認します。
+    text: 2枚目にはcardを残したままcard--featuredを空白で続けます。
     relatedSlideId: html-css-ch06-l04-s02
 relatedSlideIds:
   - html-css-ch06-l04-s01
@@ -114,4 +197,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch06-l04-e01-r03]
+    expectedFeedbackRuleIds: [html-css-ch06-l04-e01-r04, html-css-ch06-l04-e01-r06]

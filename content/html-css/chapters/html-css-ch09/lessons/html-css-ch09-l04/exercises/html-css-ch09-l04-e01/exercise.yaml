@@ -4,6 +4,33 @@ workspaceId: html-css-ch09-l04-e01
 countsTowardStandardExerciseTotal: true
 title: Grid GalleryとFlex Actionを組み合わせる
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: grid-line-placement, minimumLevel: compose }
+  - { conceptId: grid-flex-choice, minimumLevel: compose }
+scaffoldLevel: compose
+steps:
+  - id: span-feature-across-grid
+    file: styles.css
+    target: '[data-feature] Ruleのgrid-column Declaration'
+    starterAnchor: 'grid-column: auto;'
+    change: Valueを1 / -1へ変更する
+    observe: Feature Cardが2列分の600pxへ広がる
+    requiresConceptIds: [grid-line-placement]
+    validationRuleIds:
+      - html-css-ch09-l04-e01-r01
+      - html-css-ch09-l04-e01-r03
+      - html-css-ch09-l04-e01-r04
+      - html-css-ch09-l04-e01-r05
+  - id: choose-flex-for-action-row
+    file: styles.css
+    target: '[data-actions] Ruleのdisplay Declaration'
+    starterAnchor: 'display: block;'
+    change: Valueをflexへ変更する
+    observe: 2つのActionが横1列に並ぶ
+    requiresConceptIds: [grid-flex-choice]
+    validationRuleIds:
+      - html-css-ch09-l04-e01-r02
+      - html-css-ch09-l04-e01-r06
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -55,7 +82,7 @@ validationRules:
     feedback:
       target: Feature Cardの実測Width
       expected: 600px前後
-      nextAction: data-featureへgrid-column 1 / -1またはspan 2を指定します。
+      nextAction: data-featureへgrid-column 1 / -1を指定します。
     hintId: html-css-ch09-l04-e01-h03
     relatedSlideId: html-css-ch09-l04-s01
   - id: html-css-ch09-l04-e01-r04
@@ -71,6 +98,40 @@ validationRules:
       expected: 'false'
       nextAction: 2 TrackとGapを幅600pxのGallery内へ収めます。
     hintId: html-css-ch09-l04-e01-h03
+    relatedSlideId: html-css-ch09-l04-s02
+  - id: html-css-ch09-l04-e01-r05
+    label: FeatureのPlacementをSourceへ書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: 'grid-column: 1 / -1;'
+    feedback:
+      target: Feature CardのSource
+      expected: grid-column 1 / -1
+      nextAction: data-featureのgrid-columnをautoから1 / -1へ変更します。
+    hintId: html-css-ch09-l04-e01-h03
+    relatedSlideId: html-css-ch09-l04-s01
+  - id: html-css-ch09-l04-e01-r06
+    label: ActionへFlexboxをSourceで選ぶ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '[data-actions] { display: flex;'
+    feedback:
+      target: Action RowのSource
+      expected: display flex
+      nextAction: data-actionsのdisplayをblockからflexへ変更します。
+    hintId: html-css-ch09-l04-e01-h02
     relatedSlideId: html-css-ch09-l04-s02
 hints:
   - id: html-css-ch09-l04-e01-h01
@@ -121,4 +182,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch09-l04-e01-r03]
+    expectedFeedbackRuleIds: [html-css-ch09-l04-e01-r03, html-css-ch09-l04-e01-r05]

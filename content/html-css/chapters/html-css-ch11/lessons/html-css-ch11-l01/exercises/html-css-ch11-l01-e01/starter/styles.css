@@ -35,6 +35,6 @@ nav {
 }
 [data-action]:focus-visible,
 .is-focus-visible {
-  outline: 0 solid transparent;
+  outline: 0 solid #ef7d4f;
   outline-offset: 3px;
 }

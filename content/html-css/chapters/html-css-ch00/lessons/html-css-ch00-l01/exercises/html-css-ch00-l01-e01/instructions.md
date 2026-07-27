@@ -2,8 +2,8 @@
 
 HTMLとCSSの役割を使い分けて、最初のWebページを完成させます。
 
-1. `index.html`の`h1`を「わたしの学習ノート」に書き換えます。
-2. `styles.css`の`body`へ`background-color: #fffaf0;`を指定します。
+1. `index.html`の`h1`にある日本語だけを「わたしの学習ノート」に書き換えます。
+2. `styles.css`に用意された`background-color`の値`#ffffff`だけを`#fffaf0`へ置き換えます。
 3. Previewで見出しの言葉と背景色の両方が変わったことを確認します。
 
-見た目が予想と違うときは、判定する前にHTMLとCSSのどちらを直しているかを確認しましょう。
+`doctype`、`head`、`meta`、`link`、`class`と、CSSのほかの行には今回は触りません。見た目が予想と違うときは、HTMLとCSSのどちらを直しているかを確認しましょう。

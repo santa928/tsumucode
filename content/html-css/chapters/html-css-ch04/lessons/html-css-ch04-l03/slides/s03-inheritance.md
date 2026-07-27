@@ -3,10 +3,19 @@ id: html-css-ch04-l03-s03
 title: 一部のPropertyはParentからChildへ継承される
 kind: concept
 concept: css-inheritance
-assets: []
+layout: code-preview
+teachesConceptIds: [inheritance]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 410, maxCodeLines: 3, maxVisuals: 1 }
+assets:
+  - id: inheritance-cascade
+    source: assets/diagram-cascade.svg
+    mediaType: image
+    alt: ParentのComputed ColorをChildが継承し直接指定が優先される図
+    provenanceId: ch04-cascade-slide-original
 ---
 
-`color`や`font-family`など一部のPropertyは、Childに直接ValueがなければParentのComputed Valueを受け取ります。これをInheritanceと呼びます。
+`color`や`font-family`は、Childに直接ValueがなければParentのComputed Valueを受け取ります。これがInheritanceです。
 
 ```css
 .card {
@@ -14,11 +23,13 @@ assets: []
 }
 ```
 
-cardの中のpへcolorを直接書かなくても、そのpはParentの色を継承します。一方、marginのように通常は継承されないPropertyもあります。
+![ParentからChildへ値が届く順序](asset:inheritance-cascade)
+
+実習の`.message`は直接指定がないため、Cardの最終的な橙を継承します。`.control`には青緑が直接指定されているので、Parentの橙ではなく青緑のままです。marginなど継承されないPropertyもあります。
 
 :::practice
-prompt: card内のpにcolor指定がないとき、どこから色を受け取るか探します。
-expectedAction: 最も近いParentのComputed Colorをたどる
+prompt: messageとcontrolのどちらがCardの橙を継承するか選びます。
+expectedAction: 直接colorがないmessageを選ぶ
 estimatedMinutes: 2
 :::
 

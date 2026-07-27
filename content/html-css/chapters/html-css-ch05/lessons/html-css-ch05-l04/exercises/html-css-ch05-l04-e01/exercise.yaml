@@ -4,6 +4,32 @@ workspaceId: html-css-ch05-l04-e01
 countsTowardStandardExerciseTotal: true
 title: 横並びLinkへ44pxの操作領域を作る
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: display-inline-block, minimumLevel: transform }
+  - { conceptId: minimum-target-size, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: turn-links-into-sized-boxes
+    file: styles.css
+    target: nav a Ruleのdisplay Declaration
+    starterAnchor: 'display: inline;'
+    change: Valueをinline-blockへ変更し、a要素とhrefは残す
+    observe: Linkは横並びを保ったままBox寸法を持ち、Keyboard Focusも保たれる
+    requiresConceptIds: [display-inline-block]
+    validationRuleIds:
+      - html-css-ch05-l04-e01-r01
+      - html-css-ch05-l04-e01-r03
+      - html-css-ch05-l04-e01-r04
+  - id: expand-link-target-height
+    file: styles.css
+    target: nav a Ruleのpadding Declaration
+    starterAnchor: 'padding: 4px 16px;'
+    change: 上下のValueだけを12pxへ変更してpadding 12px 16pxにする
+    observe: 完成済みのLine Height 20pxへ上下12pxずつが加わり、実測Heightが44pxになる
+    requiresConceptIds: [minimum-target-size]
+    validationRuleIds:
+      - html-css-ch05-l04-e01-r02
+      - html-css-ch05-l04-e01-r04
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -65,6 +91,23 @@ validationRules:
       nextAction: 'a要素と安全なhrefを残します。'
     hintId: html-css-ch05-l04-e01-h01
     relatedSlideId: html-css-ch05-l04-s01
+  - id: html-css-ch05-l04-e01-r04
+    label: nav aへinline-blockとPaddingを記述する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: 'nav a { display: inline-block; box-sizing: border-box; padding: 12px 16px;'
+    feedback:
+      target: nav aのDisplayとPadding Source
+      expected: 'display: inline-block; と padding: 12px 16px;'
+      nextAction: StarterのdisplayとpaddingにあるValueだけを変更します。
+    hintId: html-css-ch05-l04-e01-h03
+    relatedSlideId: html-css-ch05-l04-s02
 hints:
   - id: html-css-ch05-l04-e01-h01
     level: 1
@@ -114,4 +157,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch05-l04-e01-r02]
+    expectedFeedbackRuleIds: [html-css-ch05-l04-e01-r02, html-css-ch05-l04-e01-r04]

@@ -31,6 +31,7 @@ export const fixtureCourse: CourseManifest = {
       relatedIds: ['html'],
     },
   ],
+  concepts: [],
   prerequisites: [],
   publicationStatus: 'published',
   expectedTotals: {
@@ -71,6 +72,14 @@ export const fixtureCourse: CourseManifest = {
                   title: 'HTMLは意味を伝える',
                   kind: 'concept',
                   concept: 'HTML',
+                  layout: 'code-preview',
+                  teachesConceptIds: ['html-element'],
+                  masteryTarget: 'read',
+                  screenBudget: {
+                    maxTextCharacters: 240,
+                    maxCodeLines: 8,
+                    maxVisuals: 1,
+                  },
                   blocks: [
                     {
                       type: 'paragraph',
@@ -97,6 +106,20 @@ export const fixtureCourse: CourseManifest = {
                     {
                       type: 'paragraph',
                       text: 'ページにh1見出しを1つ追加します。',
+                    },
+                  ],
+                  requiresConcepts: [{ conceptId: 'html-element', minimumLevel: 'fill' }],
+                  scaffoldLevel: 'fill',
+                  steps: [
+                    {
+                      id: 'write-heading',
+                      file: 'index.html',
+                      target: 'main要素の内側',
+                      starterAnchor: '<main></main>',
+                      change: 'h1要素を追加する',
+                      observe: '見出しがPreviewへ表示される',
+                      requiresConceptIds: ['html-element'],
+                      validationRuleIds: ['rule-h1-exists'],
                     },
                   ],
                   files: [
@@ -181,6 +204,7 @@ export const fixtureCatalog: CourseCatalog = {
       revision: fixtureCourse.revision,
       publicationStatus: fixtureCourse.publicationStatus,
       manifestPath: 'generated/content/courses/html-css.json',
+      manifestSha256: 'a199fa17eb3da55123cf99d5d7234af710d551a6a6d8c90f350251c6b203e3bb',
     },
   ],
 };

@@ -4,6 +4,35 @@ workspaceId: html-css-ch03-l04-e01
 countsTowardStandardExerciseTotal: true
 title: 安全な学習用Contact Cardを完成する
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: address-element, minimumLevel: transform }
+  - { conceptId: contact-card-composition, minimumLevel: compose }
+scaffoldLevel: compose
+steps:
+  - id: describe-contact-avatar
+    file: index.html
+    target: profile-card先頭のimgにある空のalt
+    starterAnchor: <img src="asset:avatar-contact-card" alt="" />
+    change: Tsumu LearnerのProfile Avatarだと分かる説明を書く
+    observe: 判定でCard画像のAccessible Nameが認識される
+    requiresConceptIds: [contact-card-composition]
+    validationRuleIds: [html-css-ch03-l04-e01-r02]
+  - id: mark-up-contact-address
+    file: index.html
+    target: Contact Linkを包むcontactクラスのdiv
+    starterAnchor: <div class="contact">
+    change: 開始Tagと終了Tagをaddressへ変更し、classは残す
+    observe: Previewを保ちながら連絡情報の役割が構造へ加わる
+    requiresConceptIds: [address-element]
+    validationRuleIds: [html-css-ch03-l04-e01-r01]
+  - id: connect-safe-contact-page
+    file: index.html
+    target: addressへ変更する領域内のContact Link
+    starterAnchor: <a href="#contact">学習用Contact Pageを見る</a>
+    change: hrefをhttps://example.com/contactへ変更する
+    observe: 判定で個人情報を含まない外部Contact Linkとして認識される
+    requiresConceptIds: [contact-card-composition]
+    validationRuleIds: [html-css-ch03-l04-e01-r03, html-css-ch03-l04-e01-r04]
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -17,26 +46,26 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: '.profile-card address' }
+    target: { kind: selector, selector: '.profile-card address.contact' }
     assertion: { kind: count, operator: equals, expected: 1 }
     feedback:
       target: Profile Cardの連絡情報
-      expected: profile-card内のaddressが1つ
-      nextAction: Contact Linkを包むdivをaddressへ変更します。
+      expected: profile-card内にcontactクラスのaddressが1つ
+      nextAction: contactのclassは残し、Contact Linkを包むdivをaddressへ変更します。
     hintId: html-css-ch03-l04-e01-h01
     relatedSlideId: html-css-ch03-l04-s01
   - id: html-css-ch03-l04-e01-r02
-    label: Avatarへ代替Textを書く
+    label: Avatarへ目的が分かるaltを書く
     required: true
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
     target: { kind: selector, selector: 'img[data-tsumucode-asset-id="avatar-contact-card"]' }
-    assertion: { kind: accessible-name, operator: present }
+    assertion: { kind: attribute, name: alt, operator: contains, expected: Avatar }
     feedback:
       target: Profile Avatarのalt
-      expected: 空でない画像の説明
-      nextAction: altへ、学習者を表すProfile Avatarだと分かる言葉を書きます。
+      expected: Avatarという目的を含むalt属性
+      nextAction: aria-labelではなくaltへ、学習者を表すProfile Avatarだと分かる言葉を書きます。
     hintId: html-css-ch03-l04-e01-h02
     relatedSlideId: html-css-ch03-l04-s01
   - id: html-css-ch03-l04-e01-r03
@@ -45,12 +74,16 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'address a[href^="https://"]' }
+    target:
+      {
+        kind: selector,
+        selector: '.profile-card address.contact > a[href="https://example.com/contact"]',
+      }
     assertion: { kind: count, operator: equals, expected: 1 }
     feedback:
       target: 学習用Contactの行き先
-      expected: address内のhttps Linkが1つ
-      nextAction: mailtoやFragmentではなくhttps://example.com/contactのような練習用URLを使います。
+      expected: contactのaddress内に指定されたexample.comの練習用Linkが1つ
+      nextAction: 個人URLではなく、スライド例のhttps://example.com/contactをhrefへ設定します。
     hintId: html-css-ch03-l04-e01-h03
     relatedSlideId: html-css-ch03-l04-s02
   - id: html-css-ch03-l04-e01-r04
@@ -59,7 +92,7 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'address a' }
+    target: { kind: selector, selector: '.profile-card address.contact > a' }
     assertion: { kind: accessible-name, operator: present }
     feedback:
       target: Contact LinkのText

@@ -7,15 +7,25 @@ export interface EditorMountInput {
   readonly path: string;
   readonly language: string;
   readonly content: string;
+  /** 親が受理したDocument更新を識別する単調増加revision。 */
+  readonly contentRevision: number;
+  /** CodeMirror入力面へ関連付ける操作説明要素のID。 */
+  readonly descriptionId?: string;
   readonly cursor?: EditorCursor;
   readonly diagnostics: readonly RunnerDiagnostic[];
-  readonly onChange: (content: string) => void;
+  /** 受理時は親の次revision、拒否時はundefinedを返す。 */
+  readonly onChange: (content: string) => number | undefined;
   readonly onCursorChange: (cursor: EditorCursor) => void;
 }
 
 export interface EditorHandle {
   /** 表示file・言語・内容・診断を親のcontrolled stateへ同期する。 */
-  setDocument(input: Pick<EditorMountInput, 'path' | 'language' | 'content' | 'diagnostics'>): void;
+  setDocument(
+    input: Pick<
+      EditorMountInput,
+      'path' | 'language' | 'content' | 'contentRevision' | 'diagnostics'
+    >,
+  ): void;
   /** 親が保持するcursorを現在documentの有効範囲へ復元する。 */
   setSelection(cursor?: EditorCursor): void;
   /** 編集面へkeyboard focusを移す。 */

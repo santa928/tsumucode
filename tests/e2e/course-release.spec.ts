@@ -51,7 +51,7 @@ test('HomeからSlide、演習、見直しを経て代表Lessonを完了する',
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('./#/');
   await page.getByRole('link', { name: 'HTML/CSS はじめの一歩：最初のピースを置く' }).click();
-  await page.getByRole('link', { name: '← コースマップへ戻る' }).click();
+  await page.getByRole('link', { name: 'コースマップへ戻る' }).click();
   await page.getByRole('link', { name: 'Webページを作る3つの役割レッスンを始める' }).click();
   await expect(page.getByRole('progressbar', { name: 'スライドの現在位置' })).toHaveAttribute(
     'value',
@@ -62,6 +62,8 @@ test('HomeからSlide、演習、見直しを経て代表Lessonを完了する',
   await expectStoredViewedSlide(page, STANDARD_LESSON_ID, 'html-css-ch00-l01-s02');
   await page.getByRole('link', { name: '次のスライドへ →' }).click();
   await expectStoredViewedSlide(page, STANDARD_LESSON_ID, 'html-css-ch00-l01-s03');
+  await page.getByRole('link', { name: '次のスライドへ →' }).click();
+  await expectStoredViewedSlide(page, STANDARD_LESSON_ID, 'html-css-ch00-l01-s04');
   await page
     .getByRole('link', { name: '「内容と見た目を1箇所ずつ変える」のコード演習を始める' })
     .click();
@@ -77,11 +79,13 @@ test('HomeからSlide、演習、見直しを経て代表Lessonを完了する',
     .getByRole('button', { name: /次のヒントを見る/u })
     .first()
     .click();
+  await page.getByRole('button', { name: '閉じる' }).click();
+  await page.getByRole('button', { name: '判定結果を見る' }).click();
   await page
     .getByRole('button', { name: /関連スライドを見直す/u })
     .first()
     .click();
-  await expect(page).toHaveURL(/\/review\//u);
+  await expect(page.getByRole('dialog', { name: /関連スライド/u })).toBeVisible();
   await page.getByRole('button', { name: '演習へ戻る' }).click();
   await expect(page.getByTestId('code-workspace')).toBeVisible();
 
@@ -117,6 +121,38 @@ test('Chapter 12の5工程が同じProfile workspaceへ追加内容を積み上�
   expect(
     stored.drafts.filter((draft) => draft['workspaceId'] === PROFILE_WORKSPACE_ID),
   ).toHaveLength(1);
+});
+
+test('Chapter 12のSolutionを5工程で持ち越し、過去工程を含む累積判定へ合格する', async ({
+  page,
+}) => {
+  for (const [index, step] of PROFILE_STEPS.entries()) {
+    await openEditableExercise(page, step.lessonId, step.exerciseId, step.title);
+
+    if (index > 0) {
+      const stored = await readStoredProgress(page);
+      const draft = stored.drafts.find(
+        (candidate) => candidate['workspaceId'] === PROFILE_WORKSPACE_ID,
+      );
+      expect(draft?.['exerciseId']).toBe(PROFILE_STEPS[index - 1]!.exerciseId);
+    }
+
+    const solution = await readExerciseSolution(step.chapterId, step.lessonId, step.exerciseId);
+    await replaceWorkspaceFiles(page, solution);
+    await page.getByRole('button', { name: '判定する' }).click();
+    await expect(page.getByTestId('learning-completion')).toBeVisible({ timeout: 20_000 });
+  }
+
+  const stored = await readStoredProgress(page);
+  const htmlCss = stored.courses.find((course) => course['courseId'] === 'html-css');
+  const lessons = htmlCss?.['lessons'];
+  expect(typeof lessons === 'object' && lessons !== null).toBe(true);
+  for (const step of PROFILE_STEPS) {
+    const lesson = (lessons as Readonly<Record<string, Readonly<Record<string, unknown>>>>)[
+      step.lessonId
+    ];
+    expect(lesson?.['currentComplete'], `${step.lessonId}が累積判定後に未完了です`).toBe(true);
+  }
 });
 
 test('Chapter 13 CapstoneをProfileとは別workspaceへ保存する', async ({ page }) => {

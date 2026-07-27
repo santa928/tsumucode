@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="220" viewBox="0 0 960 220">
+  <title>3種類のAccessible Name Source</title>
+  <desc>label、alt、Link TextがInput、画像、Linkへ名前を届ける対応図</desc>
+  <rect width="960" height="220" rx="28" fill="#f5efe3" />
+  <g transform="translate(40 44)" font-family="system-ui, sans-serif" text-anchor="middle">
+    <g>
+      <rect width="260" height="128" rx="20" fill="#fffdf8" stroke="#2d7c82" stroke-width="4" />
+      <text x="130" y="40" fill="#ef7d4f" font-size="22" font-weight="700">label</text>
+      <text x="130" y="74" fill="#52616d" font-size="17">for = inputのid</text>
+      <text x="130" y="105" fill="#172a3a" font-size="19" font-weight="700">Inputの目的</text>
+    </g>
+    <g transform="translate(310)">
+      <rect width="260" height="128" rx="20" fill="#fffdf8" stroke="#2d7c82" stroke-width="4" />
+      <text x="130" y="40" fill="#ef7d4f" font-size="22" font-weight="700">alt</text>
+      <text x="130" y="74" fill="#52616d" font-size="17">画像内容の短い説明</text>
+      <text x="130" y="105" fill="#172a3a" font-size="19" font-weight="700">Imageの意味</text>
+    </g>
+    <g transform="translate(620)">
+      <rect width="260" height="128" rx="20" fill="#fffdf8" stroke="#2d7c82" stroke-width="4" />
+      <text x="130" y="40" fill="#ef7d4f" font-size="22" font-weight="700">Link Text</text>
+      <text x="130" y="74" fill="#52616d" font-size="17">移動先を予測できる言葉</text>
+      <text x="130" y="105" fill="#172a3a" font-size="19" font-weight="700">Linkの目的</text>
+    </g>
+  </g>
+</svg>

@@ -35,6 +35,10 @@ const SLIDE_ROUTES = [
     route: './#/courses/html-css/lessons/html-css-ch00-l01/slides/html-css-ch00-l01-s03',
     slideId: 'html-css-ch00-l01-s03',
   },
+  {
+    route: './#/courses/html-css/lessons/html-css-ch00-l01/slides/html-css-ch00-l01-s04',
+    slideId: 'html-css-ch00-l01-s04',
+  },
 ] as const;
 
 interface ObservedRequest {

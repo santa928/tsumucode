@@ -1,23 +1,33 @@
 ---
 id: html-css-ch01-l01-s02
-title: 題名はh1、文章はpで表す
-kind: comparison
+title: ページの題名はh1、文章はpで表す
+kind: code
 concept: heading-and-paragraph
-assets: []
+layout: code-preview
+teachesConceptIds: [heading-h1, paragraph-p]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 350, maxCodeLines: 2, maxVisuals: 1 }
+assets:
+  - id: preview-heading-paragraph
+    source: assets/heading-paragraph-preview.svg
+    mediaType: image
+    alt: h1の題名とpの文章が順に表示されたBrowser Preview
+    provenanceId: ch01-heading-paragraph-preview-original
 ---
 
-`h1`はページ全体を代表するHeading、`p`はひとまとまりのParagraphを表します。Browserの既定表示ではh1が大きく見えますが、文字サイズではなく内容の役割を基準にElementを選びます。
+`h1`はページ全体を代表する題名、`p`はひとまとまりの文章です。開始Tagと終了Tagの間へ内容を書きます。文字の大きさではなく、内容の役割で選びます。
 
-自己紹介ページなら、ページの題名をh1にし、学ぶ理由や好きなことをpにします。同じ見た目に整えることはCSSでできますが、HTMLの意味は読み上げや検索にも使われます。
+```html
+<h1>わたしのプロフィール</h1>
+<p>Web制作を学んでいます。</p>
+```
 
-- h1はページ全体の題名を1つ表す
-- pは文章のまとまりごとに分ける
-- 見た目を変える目的だけでTagを選ばない
+![h1とpをBrowserが役割に合わせて表示した結果](asset:preview-heading-paragraph)
 
 :::practice
-prompt: 「わたしのプロフィール」と「Web制作を学んでいます」をh1とpのどちらへ入れるか予測します。
-expectedAction: 題名をh1、説明文をpへ分類し、その理由を言葉にする
+prompt: コードの2行とPreviewを見比べ、題名と文章を指します。
+expectedAction: 題名はh1、説明文はpへ入れると説明する
 estimatedMinutes: 2
 :::
 
-次は、開始Tagと終了Tagを対にしてElementを正しく閉じる方法を確認します。
+次は、Tagの閉じ忘れを見つける読み方です。

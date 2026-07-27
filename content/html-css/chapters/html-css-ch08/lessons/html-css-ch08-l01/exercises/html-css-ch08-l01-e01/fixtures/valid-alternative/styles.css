@@ -2,13 +2,11 @@ body {
   margin: 2rem;
   font-family: system-ui, sans-serif;
 }
-[data-row] {
-  display: flex;
-  flex-flow: row nowrap;
-  gap: 1rem;
-}
+[data-row],
 [data-column] {
   display: flex;
-  flex-flow: column nowrap;
-  gap: 0.5rem;
+  gap: 12px;
+}
+[data-column] {
+  flex-direction: column;
 }

@@ -23,8 +23,8 @@ export async function homeLoader() {
   const publishedCourses = await Promise.all(
     catalog.courses
       .filter(({ publicationStatus }) => publicationStatus === 'published')
-      .map(async ({ manifestPath }) => {
-        const course = await loadCourseManifest(import.meta.env.BASE_URL, manifestPath);
+      .map(async (entry) => {
+        const course = await loadCourseManifest(import.meta.env.BASE_URL, entry);
         await learningRuntimeServices.ensureCourse(course);
         return course;
       }),
@@ -41,7 +41,7 @@ export async function courseLoader({ params }: CourseLoaderArgs) {
     // eslint-disable-next-line @typescript-eslint/only-throw-error -- React Routerへ404 statusを渡すためResponseを送出する。
     throw new Response('教材が見つかりません。', { status: 404 });
   }
-  const course = await loadCourseManifest(import.meta.env.BASE_URL, entry.manifestPath);
+  const course = await loadCourseManifest(import.meta.env.BASE_URL, entry);
   await learningRuntimeServices.ensureCourse(course);
   return course;
 }

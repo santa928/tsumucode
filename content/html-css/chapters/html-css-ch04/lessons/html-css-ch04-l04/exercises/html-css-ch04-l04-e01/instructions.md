@@ -1,10 +1,10 @@
 ## remで余白と文字を調整する
 
-Root Font Sizeを基準にしたUnitと、固定したい細さのUnitを使い分けます。
+`padding`のValueを1か所だけ直し、SourceとComputed Valueを見比べます。
 
 1. .measureのpaddingを2remにします。
-2. font-sizeは1.25remのまま、Computed 20pxを確認します。
-3. borderは固定したい細さとして1pxを使います。
-4. Previewと判定でComputed Valueを読みます。
+2. 完成済みの`font-size: 1.25rem;`と`border: 1px`は残します。
+3. Previewを更新し、Paddingが広がったことを確認します。
+4. 判定でSourceの2remとComputed Paddingの32pxを確認します。
 
-Rootが16pxなら2remは32pxです。判定は小さな計算差を許容します。
+変更するのは`1.5rem`から`2rem`の1か所だけです。Rootが16pxなので、2remは32pxになります。

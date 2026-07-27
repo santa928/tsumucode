@@ -1,0 +1,21 @@
+body {
+  margin: 0;
+  background: #f7f2e8;
+  color: #24323d;
+  font-family: system-ui, sans-serif;
+}
+
+main {
+  width: min(42rem, calc(100% - 3rem));
+  margin: 4rem auto;
+}
+
+nav {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+a {
+  color: #9a3f25;
+}

@@ -8,6 +8,7 @@ revision: 2026-07-13.1
 runnerId: html-css
 validatorId: html-css
 glossarySource: glossary.yaml
+conceptsSource: concepts.yaml
 documentationSources:
   - assets/README.md
   - assets/source/prompts/README.md
@@ -87,7 +88,7 @@ publicationStatus: published
 expectedTotals:
   chapters: 14
   lessons: 51
-  conceptSlides: 95
+  conceptSlides: 95 # 最低枚数。理解を1画面へ収める追加分割は許可する。
   standardExercises: 45
   guidedProjectLessons: 5
   capstoneLessons: 1

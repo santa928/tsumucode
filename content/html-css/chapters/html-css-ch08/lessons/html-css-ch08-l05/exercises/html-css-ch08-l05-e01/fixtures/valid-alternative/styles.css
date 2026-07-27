@@ -1,18 +1,18 @@
 body {
   margin: 0;
-  padding: 2rem;
+  padding: 32px;
 }
 [data-profile-nav] {
   display: flex;
-  gap: 0.75rem;
+  gap: 12px;
 }
 [data-card-row] {
   display: flex;
-  width: 25rem;
-  margin-top: 1.5rem;
-  gap: 1rem;
+  width: 400px;
+  margin-top: 24px;
+  gap: 16px;
 }
 [data-card] {
   box-sizing: border-box;
-  flex: 0 0 10rem;
+  width: 160px;
 }

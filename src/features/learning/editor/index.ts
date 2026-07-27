@@ -3,8 +3,8 @@ export { CodeWorkspace } from './CodeWorkspace';
 export type { CodeWorkspaceProps } from './CodeWorkspace';
 export type { EditorAdapter, EditorHandle, EditorMountInput } from './EditorAdapter';
 export { EditorLanguageRegistry } from './EditorLanguageRegistry';
+export { createCodeMirrorEditor } from './createCodeMirrorEditor';
 export {
-  createCodeMirrorEditor,
   createHtmlCssEditorLanguageRegistry,
   registerHtmlCssEditorLanguages,
-} from './createCodeMirrorEditor';
+} from './htmlCssEditorLanguages';

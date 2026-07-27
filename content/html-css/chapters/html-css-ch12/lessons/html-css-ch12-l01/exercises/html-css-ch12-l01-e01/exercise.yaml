@@ -5,6 +5,32 @@ workspaceId: html-css-profile-project
 countsTowardStandardExerciseTotal: false
 title: AudienceとSemantic Outlineを作る
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: audience, minimumLevel: compose }
+  - { conceptId: outline, minimumLevel: compose }
+scaffoldLevel: compose
+steps:
+  - id: define-audience
+    file: index.html
+    target: .page内の仮Text
+    starterAnchor: '<p>ここへAudienceとSemantic Outlineを作ります。</p>'
+    change: data-audienceを持つpへ読み手と目的を1文で書く
+    observe: Audienceの判定が合格し、誰向けのページかPreviewで読める
+    requiresConceptIds: [audience]
+    validationRuleIds:
+      - html-css-ch12-l01-e01-r01
+  - id: compose-semantic-outline
+    file: index.html
+    target: body内の仮div
+    starterAnchor: '<div class="page">'
+    change: header、main、footerとmain内のsectionへ内容を分ける
+    observe: HTMLだけでも導入、中心内容、補足の順序が伝わる
+    requiresConceptIds: [outline]
+    validationRuleIds:
+      - html-css-ch12-l01-e01-r02
+      - html-css-ch12-l01-e01-r03
+      - html-css-ch12-l01-e01-r04
+      - html-css-ch12-l01-e01-r05
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }

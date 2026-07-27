@@ -1,4 +1,5 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { Profiler, type ProfilerOnRenderCallback } from 'react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
@@ -47,7 +48,7 @@ function TestLoadingState() {
 }
 
 /** 各Testで編集可否を固定し、実Routeと同じLoader dataを持つMemory Routerを表示する。 */
-function renderSlide(slideId: string, canEdit: boolean) {
+function renderSlide(slideId: string, canEdit: boolean, onRender?: ProfilerOnRenderCallback) {
   vi.stubGlobal(
     'matchMedia',
     vi.fn((query: string) => ({
@@ -67,7 +68,14 @@ function renderSlide(slideId: string, canEdit: boolean) {
           slide: lesson.slides.find(({ id }) => id === params.slideId)!,
         }),
         HydrateFallback: TestLoadingState,
-        element: <SlidePage />,
+        element:
+          onRender === undefined ? (
+            <SlidePage />
+          ) : (
+            <Profiler id="slide-page" onRender={onRender}>
+              <SlidePage />
+            </Profiler>
+          ),
       },
     ],
     {
@@ -90,29 +98,39 @@ beforeEach(() => {
 });
 
 describe('SlidePage', () => {
-  it('一覧と前後導線を表示し、左右Arrowでも往復して見出しへFocusする', async () => {
+  it('一覧をDrawerで開き、前後導線と左右Arrowで往復して見出しへFocusする', async () => {
     const router = renderSlide('slide-second', true);
 
     const secondTitle = await screen.findByRole('heading', { level: 1, name: '次の説明' });
     expect(secondTitle).not.toHaveFocus();
-    expect(screen.getByRole('complementary', { name: 'スライド部品トレイ' })).toBeInTheDocument();
-    expect(screen.getByRole('navigation', { name: 'スライド一覧' })).toBeInTheDocument();
-    await waitFor(() => {
-      expect(screen.getByText('スライド一覧を開く').closest('details')).toHaveAttribute('open');
-    });
+    expect(
+      screen.queryByRole('complementary', { name: 'スライド部品トレイ' }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: '学習ツール' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'TsumuCodeホームへ' })).toHaveAttribute('href', '/');
     expect(screen.getByRole('progressbar', { name: 'スライドの現在位置' })).toHaveAttribute(
       'aria-valuetext',
       '2 / 2 ピース完了',
     );
-    expect(screen.getByRole('link', { name: '2. 次の説明' })).toHaveAttribute(
+
+    await userEvent.click(screen.getByRole('button', { name: 'スライド一覧を開く' }));
+    const drawer = screen.getByRole('dialog', { name: 'スライド一覧' });
+    expect(within(drawer).getByRole('navigation', { name: 'スライド一覧' })).toBeVisible();
+    expect(within(drawer).getByRole('link', { name: '2. 次の説明' })).toHaveAttribute(
       'aria-current',
       'step',
     );
+    await userEvent.click(within(drawer).getByRole('button', { name: '閉じる' }));
     expect(screen.getByRole('link', { name: '← 前のスライドへ' })).toHaveAttribute(
       'href',
       '/courses/html-css/lessons/lesson-first-heading/slides/slide-html-role',
     );
-    expect(screen.getByText('このスライドが最後です')).toHaveAttribute('aria-disabled', 'true');
+    expect(
+      screen.getByRole('link', { name: '「h1見出しを追加する」のコード演習を始める' }),
+    ).toHaveAttribute(
+      'href',
+      '/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading',
+    );
 
     await userEvent.keyboard('{ArrowLeft}');
     const firstTitle = await screen.findByRole('heading', {
@@ -179,10 +197,10 @@ describe('SlidePage', () => {
       'href',
       '/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading',
     );
-    expect(screen.getByRole('region', { name: '次はコード演習へ' })).toBeInTheDocument();
+    expect(screen.queryByText(/今回のピース/u)).not.toBeInTheDocument();
     expect(
-      screen.getByText(/コードを書いて、結果をプレビューしながら確認できます/u),
-    ).toBeInTheDocument();
+      screen.queryByText(/コードを書いて、結果をプレビューしながら確認できます/u),
+    ).not.toBeInTheDocument();
     expect(screen.queryByText(/次の実装工程/u)).not.toBeInTheDocument();
     expect(
       screen.queryByRole('heading', { name: '演習はPCで積み上げよう' }),
@@ -205,6 +223,29 @@ describe('SlidePage', () => {
       });
       expect(runtime.notices.reportError).toHaveBeenCalledWith('slide-progress', expect.any(Error));
     });
+  });
+
+  it('非表示の保存中状態ではSlide本文を再描画しない', async () => {
+    let finishSave: (() => void) | undefined;
+    runtime.repository.putCourseVersioned.mockReturnValueOnce(
+      new Promise<number>((resolve) => {
+        finishSave = () => {
+          resolve(1);
+        };
+      }),
+    );
+    const phases: string[] = [];
+    renderSlide('slide-second', true, (_id, phase) => {
+      phases.push(phase);
+    });
+
+    await screen.findByRole('heading', { level: 1, name: '次の説明' });
+    await waitFor(() => {
+      expect(runtime.repository.putCourseVersioned).toHaveBeenCalledOnce();
+    });
+
+    expect(phases).toEqual(['mount']);
+    finishSave?.();
   });
 
   it('Slide進捗の保存失敗をinline表示し、同じSlideから明示的に再保存できる', async () => {
@@ -232,14 +273,17 @@ describe('SlidePage', () => {
     renderSlide('slide-second', false);
 
     expect(await screen.findByText('開始タグと終了タグで内容を囲みます。')).toBeInTheDocument();
-    expect(screen.getByText('スライド一覧を開く').closest('details')).not.toHaveAttribute('open');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '演習はPCで積み上げよう' })).toBeInTheDocument();
     expect(screen.getByText(/幅1024px以上/u)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'コースマップへ戻る' })).toHaveAttribute(
+    const pager = screen.getByRole('navigation', { name: 'スライド移動' });
+    expect(within(pager).getByRole('link', { name: 'コースマップへ戻る' })).toHaveAttribute(
       'href',
       '/courses/html-css',
     );
-    expect(screen.getByRole('heading', { name: 'このレッスンの用語' })).toBeInTheDocument();
-    expect(screen.getByText('Webページの意味と構造を表す言語')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: '用語を開く' }));
+    const glossaryDrawer = screen.getByRole('dialog', { name: 'このレッスンの用語' });
+    expect(glossaryDrawer).toBeVisible();
+    expect(within(glossaryDrawer).getByText('Webページの意味と構造を表す言語')).toBeVisible();
   });
 });

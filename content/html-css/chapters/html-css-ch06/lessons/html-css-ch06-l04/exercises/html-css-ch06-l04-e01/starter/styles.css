@@ -8,12 +8,14 @@ body {
 .card-list {
   max-width: 40rem;
 }
-.html-card {
-  padding: 16px;
-  background: #fff;
+.card {
+  padding: 24px;
+  background-color: #fff;
+  border: 1px solid #c8d4d2;
 }
-.css-card {
+.card + .card {
   margin-top: 16px;
-  padding: 12px;
-  background: #f5efe4;
+}
+.card--featured {
+  border-left: 4px solid #b7893d;
 }

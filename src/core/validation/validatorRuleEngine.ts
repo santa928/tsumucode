@@ -65,6 +65,49 @@ interface RgbaColor {
 const STRICT_NUMBER_PATTERN = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i;
 const CSS_NUMERIC_PATTERN = /^([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?)(?:%|[a-z][a-z0-9-]*)?$/i;
 
+/** QuoteとSelector内の意味ある空白を保ち、区切り記号周辺の整形差だけを畳む。 */
+function normalizeSourceWhitespace(source: string): string {
+  let normalized = '';
+  let quote: '"' | "'" | undefined;
+  let escaped = false;
+  let pendingWhitespace = false;
+  const separators = new Set(['{', '}', ':', ';', ',']);
+  for (const character of source) {
+    if (quote !== undefined) {
+      normalized += character;
+      if (escaped) {
+        escaped = false;
+      } else if (character === '\\') {
+        escaped = true;
+      } else if (character === quote) {
+        quote = undefined;
+      }
+      continue;
+    }
+    if (/\s/u.test(character)) {
+      pendingWhitespace = true;
+      continue;
+    }
+    if (separators.has(character)) {
+      normalized = normalized.trimEnd();
+      normalized += character;
+      pendingWhitespace = false;
+      continue;
+    }
+    if (pendingWhitespace && normalized.length > 0 && !separators.has(normalized.at(-1) ?? '')) {
+      normalized += ' ';
+    }
+    pendingWhitespace = false;
+    if (character === '"' || character === "'") {
+      quote = character;
+      normalized += character;
+    } else {
+      normalized += character;
+    }
+  }
+  return normalized.trim();
+}
+
 /** 学習者向け情報を保ったsystem diagnosticを生成する。 */
 function systemDiagnostic(code: string, message: string): RunnerDiagnostic {
   return {
@@ -175,8 +218,11 @@ function indexSnapshot(snapshot: PreviewSnapshot): SnapshotIndex {
   return { snapshot, nodes, byId, siblingsByParent: mutableSiblings };
 }
 
+type PreviewTarget = Exclude<HtmlCssRuleTarget, { readonly kind: 'source' }>;
+type SourceTarget = Extract<HtmlCssRuleTarget, { readonly kind: 'source' }>;
+
 /** selector/node targetを観測済みNode集合へ解決する。 */
-function targetNodes(index: SnapshotIndex, target: HtmlCssRuleTarget): readonly PreviewNode[] {
+function targetNodes(index: SnapshotIndex, target: PreviewTarget): readonly PreviewNode[] {
   if (target.kind === 'selector') {
     return index.nodes.filter((node) => node.matchedSelectors.includes(target.selector));
   }
@@ -187,6 +233,31 @@ function targetNodes(index: SnapshotIndex, target: HtmlCssRuleTarget): readonly 
       (target.role === undefined || node.role === target.role) &&
       (target.textIncludes === undefined || node.text.includes(target.textIncludes)),
   );
+}
+
+/** 編集Sourceをtext assertionへ適用し、全内容を漏らさない要約を返す。 */
+function evaluateSourceAssertion(
+  files: Readonly<Record<string, string>>,
+  target: SourceTarget,
+  assertion: HtmlCssRuleAssertion,
+): AssertionEvaluation {
+  const source = files[target.file];
+  if (source === undefined) {
+    return { passed: false, actual: `${target.file}: Fileが見つかりません` };
+  }
+  if (assertion.kind !== 'text') {
+    return { passed: false, actual: `${target.file}: 非対応のSource判定です` };
+  }
+  const passed =
+    assertion.operator === 'equals'
+      ? source === assertion.expected
+      : assertion.operator === 'contains-normalized'
+        ? normalizeSourceWhitespace(source).includes(normalizeSourceWhitespace(assertion.expected))
+        : source.includes(assertion.expected);
+  return {
+    passed,
+    actual: `${target.file}: 指定文字列${passed ? 'あり' : 'なし'}`,
+  };
 }
 
 /** 有限なHTML属性数値だけを返し、単位や末尾junkを拒否する。 */
@@ -263,9 +334,16 @@ function evaluateAttribute(
 /** computed style assertionをNode一件へ適用する。 */
 function evaluateComputedStyle(
   node: PreviewNode,
-  assertion: Extract<HtmlCssRuleAssertion, { readonly kind: 'computed-style' }>,
+  assertion: Extract<
+    HtmlCssRuleAssertion,
+    { readonly kind: 'computed-style' | 'focus-visible-style' }
+  >,
 ): AssertionEvaluation {
-  const value = node.computedStyles[assertion.property];
+  const styles =
+    assertion.kind === 'focus-visible-style'
+      ? node.focusVisibleComputedStyles
+      : node.computedStyles;
+  const value = styles[assertion.property];
   if (assertion.operator === 'contains') {
     return { passed: value?.includes(assertion.expected) ?? false, actual: displayValue(value) };
   }
@@ -318,6 +396,22 @@ function evaluateRelation(
         const sourceIndex = siblings.findIndex(({ nodeId }) => nodeId === source.nodeId);
         const next = sourceIndex < 0 ? undefined : siblings[sourceIndex + 1];
         return next?.matchedSelectors.includes(assertion.otherSelector) ?? false;
+      }
+      if (assertion.relation === 'contained-by') {
+        const tolerance = 0.5;
+        return candidates.some((candidate) => {
+          if (!isDescendant(index, candidate, source)) return false;
+          const sourceRight = source.rect.x + source.rect.width;
+          const sourceBottom = source.rect.y + source.rect.height;
+          const candidateRight = candidate.rect.x + candidate.rect.width;
+          const candidateBottom = candidate.rect.y + candidate.rect.height;
+          return (
+            source.rect.x + tolerance >= candidate.rect.x &&
+            source.rect.y + tolerance >= candidate.rect.y &&
+            sourceRight <= candidateRight + tolerance &&
+            sourceBottom <= candidateBottom + tolerance
+          );
+        });
       }
       return candidates.some((candidate) => source.documentOrder < candidate.documentOrder);
     })();
@@ -497,6 +591,7 @@ function evaluateNodeAssertion(
         actual: displayValue(node.text),
       };
     case 'computed-style':
+    case 'focus-visible-style':
       return evaluateComputedStyle(node, assertion);
     case 'rect': {
       const actual = node.rect[assertion.metric];
@@ -547,7 +642,11 @@ function evaluateNodeAssertion(
 function evaluateOnSnapshot(
   rule: HtmlCssValidationRuleDefinition,
   index: SnapshotIndex,
+  files: Readonly<Record<string, string>>,
 ): AssertionEvaluation {
+  if (rule.target.kind === 'source') {
+    return evaluateSourceAssertion(files, rule.target, rule.assertion);
+  }
   const nodes = targetNodes(index, rule.target);
   const assertion = rule.assertion;
   if (assertion.kind === 'exists') {
@@ -574,10 +673,11 @@ function evaluateOnSnapshot(
 function evaluateRule(
   rule: HtmlCssValidationRuleDefinition,
   indexes: ReadonlyMap<string, SnapshotIndex>,
+  files: Readonly<Record<string, string>>,
 ): RuleEvaluation {
   const viewportEvaluations = rule.viewportIds.map((viewportId) => {
     const index = indexes.get(viewportId)!;
-    return { viewportId, ...evaluateOnSnapshot(rule, index) };
+    return { viewportId, ...evaluateOnSnapshot(rule, index, files) };
   });
   return {
     rule,
@@ -693,7 +793,7 @@ export class ValidatorRuleEngine implements ValidatorAdapter {
           indexSnapshot(snapshot),
         ]),
       );
-      const evaluations = rules.map((rule) => evaluateRule(rule, indexes));
+      const evaluations = rules.map((rule) => evaluateRule(rule, indexes, context.files));
       const requirements = aggregateRequirements(evaluations);
       const checks = createChecks(evaluations, requirements);
       const passedRequirementIds = requirements.filter(({ passed }) => passed).map(({ id }) => id);

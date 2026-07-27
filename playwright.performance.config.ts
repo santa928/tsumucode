@@ -4,13 +4,14 @@ import { testServerUrl } from './tests/e2e/helpers/testBasePath';
 /** 同一production distを1 workerで測る性能専用Playwright設定。 */
 export default defineConfig({
   testDir: './tests/performance',
+  outputDir: 'test-results/performance-artifacts',
   testMatch: ['preview-validation.spec.ts', 'interactions.spec.ts'],
   fullyParallel: false,
   workers: 1,
   timeout: 120_000,
   reporter: [
     ['html', { outputFolder: 'playwright-performance-report', open: 'never' }],
-    ['json', { outputFile: 'test-results/performance.json' }],
+    ['json', { outputFile: 'test-results/performance-summary.json' }],
   ],
   use: {
     baseURL: testServerUrl(),

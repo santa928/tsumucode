@@ -43,6 +43,7 @@ export function previewNode(overrides: Partial<PreviewNode> = {}): PreviewNode {
       'background-color': 'rgb(255, 255, 255)',
       'background-image': 'none',
     },
+    focusVisibleComputedStyles: {},
     rect: { x: 0, y: 0, width: 960, height: 500 },
     overflow: {
       x: false,
@@ -83,6 +84,7 @@ export function validationContext(overrides: Partial<ValidationContext> = {}): V
   return {
     exerciseId: 'exercise-1',
     rules: [validationRule()],
+    files: { 'index.html': '<main></main>' },
     snapshots: { desktop: previewSnapshot() },
     diagnostics: [],
     now: '2026-07-10T00:00:00.000Z',

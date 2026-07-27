@@ -4,6 +4,33 @@ workspaceId: html-css-ch08-l01-e01
 countsTowardStandardExerciseTotal: true
 title: RowとColumnのAxisを作る
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: flex-container, minimumLevel: transform }
+  - { conceptId: flex-direction, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: activate-two-flex-containers
+    file: styles.css
+    target: '[data-row], [data-column]の共通Rule'
+    starterAnchor: 'gap: 12px;'
+    change: gapの直前へdisplay flexを追加する
+    observe: 2つの親のComputed Displayがflexになる
+    requiresConceptIds: [flex-container]
+    validationRuleIds:
+      - html-css-ch08-l01-e01-r01
+      - html-css-ch08-l01-e01-r03
+      - html-css-ch08-l01-e01-r05
+  - id: turn-column-main-axis
+    file: styles.css
+    target: '[data-column] Ruleのflex-direction Declaration'
+    starterAnchor: 'flex-direction: row;'
+    change: Valueをcolumnへ変更する
+    observe: Column側のItemが上から下へ並ぶ
+    requiresConceptIds: [flex-direction]
+    validationRuleIds:
+      - html-css-ch08-l01-e01-r02
+      - html-css-ch08-l01-e01-r04
+      - html-css-ch08-l01-e01-r06
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -68,6 +95,40 @@ validationRules:
       nextAction: flex-directionをcolumnへ設定します。
     hintId: html-css-ch08-l01-e01-h03
     relatedSlideId: html-css-ch08-l01-s02
+  - id: html-css-ch08-l01-e01-r05
+    label: 共通Ruleへdisplay flexを書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '[data-row], [data-column] { display: flex; gap: 12px;'
+    feedback:
+      target: 2つのContainerの共通Source
+      expected: 共通Rule先頭のdisplay flex
+      nextAction: '[data-row], [data-column]のgap直前へdisplay: flex;を追加します。'
+    hintId: html-css-ch08-l01-e01-h01
+    relatedSlideId: html-css-ch08-l01-s01
+  - id: html-css-ch08-l01-e01-r06
+    label: Column Ruleへflex-direction columnを書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '[data-column] { flex-direction: column; }'
+    feedback:
+      target: Column ContainerのDirection Source
+      expected: flex-direction column
+      nextAction: '[data-column]のflex-directionをrowからcolumnへ変更します。'
+    hintId: html-css-ch08-l01-e01-h03
+    relatedSlideId: html-css-ch08-l01-s02
 hints:
   - id: html-css-ch08-l01-e01-h01
     level: 1
@@ -117,4 +178,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch08-l01-e01-r04]
+    expectedFeedbackRuleIds: [html-css-ch08-l01-e01-r04, html-css-ch08-l01-e01-r06]

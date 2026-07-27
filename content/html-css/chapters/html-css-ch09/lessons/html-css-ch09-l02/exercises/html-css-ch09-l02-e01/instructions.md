@@ -1,8 +1,10 @@
 ## repeatとfrで3つの等幅Trackを作る
 
-1. 幅600pxの`[data-grid]`をGrid Containerにします。
-2. `repeat(3, 1fr)`で3つの等幅Columnを作ります。
-3. Track間へ16pxのGapを指定します。
-4. 2枚目のxが約237.33pxとなり、横Overflowがないことを確認します。
+`styles.css`の`[data-grid]` Ruleを1か所だけ編集します。
 
-BrowserのSubpixel丸めを含むため、実測値には1pxの許容幅があります。
+1. `grid-template-columns: 200px 200px 200px;`を探します。
+2. Value全体を`repeat(3, 1fr)`へ変更します。
+3. 既にある`display: grid;`、`width: 600px;`、`gap: 16px;`は残します。
+4. 実行し、3列が等幅で、2枚目のxが約237.33pxになることを確認します。
+
+迷ったら「前のスライド」で`(600 - 16 × 2) ÷ 3`の図を見直せます。実測値はBrowserの丸めを考慮して1pxの幅を許容します。

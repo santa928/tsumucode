@@ -5,6 +5,47 @@ workspaceId: html-css-capstone-landing
 countsTowardStandardExerciseTotal: false
 title: STACK DAY Landing Pageを完成する
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: capstone-requirement-trace, minimumLevel: compose }
+scaffoldLevel: compose
+steps:
+  - id: translate-semantic-requirements
+    file: index.html
+    target: body内のSemantic Structure、Navigation、Poster
+    starterAnchor: '<!-- 1. Structureと名前:'
+    change: Briefの導入、中心内容、補足をLandmarkへ分け、h1、Navigation名、Poster altを設計する
+    observe: 見た目を外してもEventのPurposeと情報の位置が伝わる
+    requiresConceptIds: [capstone-requirement-trace]
+    validationRuleIds:
+      - html-css-ch13-l01-e01-r01
+      - html-css-ch13-l01-e01-r01-main
+      - html-css-ch13-l01-e01-r01-footer
+      - html-css-ch13-l01-e01-r02
+      - html-css-ch13-l01-e01-r03
+      - html-css-ch13-l01-e01-r04
+  - id: choose-layout-and-boundaries
+    file: styles.css
+    target: Event Card群と4 Viewportの境界
+    starterAnchor: '/* 2. Layoutと境界:'
+    change: GridまたはFlexを選び、3件以上のCardを360px以下へ保ち、4幅の横Overflowを防ぐ
+    observe: 390、768、1280、1440pxでCardの関係と読み順が保たれる
+    requiresConceptIds: [capstone-requirement-trace]
+    validationRuleIds:
+      - html-css-ch13-l01-e01-r05
+      - html-css-ch13-l01-e01-r06
+      - html-css-ch13-l01-e01-r07-card-count
+      - html-css-ch13-l01-e01-r07
+      - html-css-ch13-l01-e01-r08
+  - id: audit-operation-and-contrast
+    file: styles.css
+    target: 主要ActionとPage全体
+    starterAnchor: '/* 3. 最終Audit:'
+    change: 予約と問い合わせActionのKeyboard Focus、本文Contrast 4.5対1以上を確認する
+    observe: Pointerや色の見え方に依存せず、Event情報と予約導線を利用できる
+    requiresConceptIds: [capstone-requirement-trace]
+    validationRuleIds:
+      - html-css-ch13-l01-e01-r09
+      - html-css-ch13-l01-e01-r10
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -13,17 +54,45 @@ solutionFiles:
   - { path: styles.css, language: css, source: solution/styles.css, editable: false }
 validationRules:
   - id: html-css-ch13-l01-e01-r01
-    label: Header、Main、Footerを1つずつ置く
+    label: Headerを1つ置く
     required: true
     group: all
     viewportMode: all
     viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
-    target: { kind: selector, selector: 'header, main, footer' }
-    assertion: { kind: count, operator: equals, expected: 3 }
+    target: { kind: selector, selector: header }
+    assertion: { kind: count, operator: equals, expected: 1 }
     feedback:
-      target: PageのSemantic Landmark
-      expected: header、main、footerが合計3つ
-      nextAction: Eventの導入、中心内容、補足を3つのLandmarkへ分けます。
+      target: Page導入のHeader Landmark
+      expected: headerが1つ
+      nextAction: BrandとNavigationを1つのheaderへまとめます。
+    hintId: html-css-ch13-l01-e01-h01
+    relatedSlideId: html-css-ch13-l01-g01
+  - id: html-css-ch13-l01-e01-r01-main
+    label: Mainを1つ置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: main }
+    assertion: { kind: count, operator: equals, expected: 1 }
+    feedback:
+      target: PageのMain Landmark
+      expected: mainが1つ
+      nextAction: Eventの中心内容を1つのmainへまとめます。
+    hintId: html-css-ch13-l01-e01-h01
+    relatedSlideId: html-css-ch13-l01-g01
+  - id: html-css-ch13-l01-e01-r01-footer
+    label: Footerを1つ置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: footer }
+    assertion: { kind: count, operator: equals, expected: 1 }
+    feedback:
+      target: Page補足のFooter Landmark
+      expected: footerが1つ
+      nextAction: 主催情報などの補足を1つのfooterへまとめます。
     hintId: html-css-ch13-l01-e01-h01
     relatedSlideId: html-css-ch13-l01-g01
   - id: html-css-ch13-l01-e01-r02
@@ -115,6 +184,20 @@ validationRules:
       target: 各Event Cardの実測Width
       expected: 390、768、1280、1440pxで360px以下
       nextAction: Layout TrackまたはFlex Basisを内容幅へ合わせます。
+    hintId: html-css-ch13-l01-e01-h02
+    relatedSlideId: html-css-ch13-l01-g01
+  - id: html-css-ch13-l01-e01-r07-card-count
+    label: Event Cardを3件以上置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, tablet-768, desktop-1280, wide-1440]
+    target: { kind: selector, selector: '[data-event-card]' }
+    assertion: { kind: count, operator: gte, expected: 3 }
+    feedback:
+      target: Event Cardの件数
+      expected: 3件以上
+      nextAction: 異なる展示Themeを表すEvent Cardを3件以上用意します。
     hintId: html-css-ch13-l01-e01-h02
     relatedSlideId: html-css-ch13-l01-g01
   - id: html-css-ch13-l01-e01-r08
@@ -225,7 +308,7 @@ fixtures:
           source: fixtures/missing-landmark/styles.css,
           editable: false,
         }
-    expectedFeedbackRuleIds: [html-css-ch13-l01-e01-r01]
+    expectedFeedbackRuleIds: [html-css-ch13-l01-e01-r01-footer]
   - id: html-css-ch13-l01-e01-responsive-overflow
     expectedStatus: incomplete
     files:
@@ -274,3 +357,28 @@ fixtures:
           editable: false,
         }
     expectedFeedbackRuleIds: [html-css-ch13-l01-e01-r10]
+  - id: html-css-ch13-l01-e01-insufficient-cards
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/insufficient-cards/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/valid-flex/styles.css, editable: false }
+    expectedFeedbackRuleIds: [html-css-ch13-l01-e01-r07-card-count]
+  - id: html-css-ch13-l01-e01-duplicate-landmarks
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/duplicate-landmarks/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/valid-flex/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - html-css-ch13-l01-e01-r01
+      - html-css-ch13-l01-e01-r01-main
+      - html-css-ch13-l01-e01-r01-footer

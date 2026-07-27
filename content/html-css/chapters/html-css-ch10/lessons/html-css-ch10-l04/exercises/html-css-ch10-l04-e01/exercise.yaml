@@ -2,8 +2,36 @@ id: html-css-ch10-l04-e01
 kind: standard
 workspaceId: html-css-ch10-l04-e01
 countsTowardStandardExerciseTotal: true
-title: ImageをContainerへ比率のまま収める
+title: Imageを縮め、Crop Boxへきれいに収める
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: responsive-image, minimumLevel: transform }
+  - { conceptId: object-fit, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: constrain-image-to-frame
+    file: styles.css
+    target: '[data-responsive-image] Ruleのmax-width Declaration'
+    starterAnchor: 'max-width: none;'
+    change: Valueを100%へ変更する
+    observe: 480×320px画像が320×約213pxへ縮み、元の3:2比率を保つ
+    requiresConceptIds: [responsive-image]
+    validationRuleIds:
+      - html-css-ch10-l04-e01-r01
+      - html-css-ch10-l04-e01-r02
+      - html-css-ch10-l04-e01-r04
+  - id: fill-image-box-with-cover
+    file: styles.css
+    target: '[data-crop-image] Ruleのobject-fit Declaration'
+    starterAnchor: 'object-fit: contain;'
+    change: Valueをcoverへ変更する
+    observe: 320×180pxの横長Boxが画像で隙間なく埋まり、上下が少しCropされる
+    requiresConceptIds: [object-fit]
+    validationRuleIds:
+      - html-css-ch10-l04-e01-r03
+      - html-css-ch10-l04-e01-r05
+      - html-css-ch10-l04-e01-r06
+      - html-css-ch10-l04-e01-r07
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -17,25 +45,25 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [mobile-390]
-    target: { kind: selector, selector: img }
+    target: { kind: selector, selector: '[data-responsive-image]' }
     assertion: { kind: rect, metric: width, operator: lte, expected: 320, tolerance: 1 }
     feedback:
       { target: ImageのWidth, expected: 320px以下, nextAction: max-width 100%を指定します。 }
     hintId: html-css-ch10-l04-e01-h01
     relatedSlideId: html-css-ch10-l04-s01
   - id: html-css-ch10-l04-e01-r02
-    label: 正方形のAspect Ratioを保つ
+    label: 元の3対2のAspect Ratioを保つ
     required: true
     group: all
     viewportMode: all
     viewportIds: [mobile-390]
-    target: { kind: selector, selector: img }
-    assertion: { kind: rect, metric: height, operator: equals, expected: 320, tolerance: 1 }
+    target: { kind: selector, selector: '[data-responsive-image]' }
+    assertion: { kind: rect, metric: height, operator: equals, expected: 213.33, tolerance: 1 }
     feedback:
       {
         target: ImageのHeight,
-        expected: 320px前後,
-        nextAction: height autoで元の正方形比率を保ちます。,
+        expected: 約213px,
+        nextAction: height autoで元の480対320の比率を保ちます。,
       }
     hintId: html-css-ch10-l04-e01-h02
     relatedSlideId: html-css-ch10-l04-s01
@@ -45,7 +73,7 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [mobile-390]
-    target: { kind: selector, selector: img }
+    target: { kind: selector, selector: '[data-crop-image]' }
     assertion: { kind: computed-style, property: object-fit, operator: equals, expected: cover }
     feedback:
       {
@@ -53,6 +81,68 @@ validationRules:
         expected: cover,
         nextAction: object-fit coverを指定します。,
       }
+    hintId: html-css-ch10-l04-e01-h03
+    relatedSlideId: html-css-ch10-l04-s02
+  - id: html-css-ch10-l04-e01-r04
+    label: Image境界をSourceへ書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '[data-responsive-image] { display: block; width: 480px; max-width: 100%; height: auto; }'
+    feedback:
+      target: Responsive ImageのRule Source
+      expected: 100%
+      nextAction: max-widthをnoneから100%へ変更します。
+    hintId: html-css-ch10-l04-e01-h01
+    relatedSlideId: html-css-ch10-l04-s01
+  - id: html-css-ch10-l04-e01-r05
+    label: coverをSourceへ書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '[data-crop-image] { display: block; width: 320px; height: 180px; object-fit: cover; }'
+    feedback:
+      target: Crop ImageのRule Source
+      expected: cover
+      nextAction: object-fitをcontainからcoverへ変更します。
+    hintId: html-css-ch10-l04-e01-h03
+    relatedSlideId: html-css-ch10-l04-s02
+  - id: html-css-ch10-l04-e01-r06
+    label: Crop Boxの幅を320pxに保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390]
+    target: { kind: selector, selector: '[data-crop-image]' }
+    assertion: { kind: rect, metric: width, operator: equals, expected: 320, tolerance: 1 }
+    feedback:
+      target: Crop ImageのWidth
+      expected: 320px
+      nextAction: 完成済みのwidth 320pxを残します。
+    hintId: html-css-ch10-l04-e01-h03
+    relatedSlideId: html-css-ch10-l04-s02
+  - id: html-css-ch10-l04-e01-r07
+    label: Crop Boxの高さを180pxに保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390]
+    target: { kind: selector, selector: '[data-crop-image]' }
+    assertion: { kind: rect, metric: height, operator: equals, expected: 180, tolerance: 1 }
+    feedback:
+      target: Crop ImageのHeight
+      expected: 180px
+      nextAction: 完成済みのheight 180pxを残します。
     hintId: html-css-ch10-l04-e01-h03
     relatedSlideId: html-css-ch10-l04-s02
 hints:
@@ -84,7 +174,7 @@ assets:
       id: responsive-avatar,
       source: assets/profile-avatar.svg,
       mediaType: image,
-      alt: Code Cardを持つ学習者のAvatar,
+      alt: Code Cardを持つ学習者がいる横長イラスト,
       provenanceId: ch10-responsive-avatar-original,
     }
 fixtures:
@@ -114,4 +204,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch10-l04-e01-r02]
+    expectedFeedbackRuleIds: [html-css-ch10-l04-e01-r03, html-css-ch10-l04-e01-r05]

@@ -2,8 +2,8 @@
 
 教材へ登録されたOriginal Avatarを表示し、画像を見なくても役割が分かる説明を付けます。
 
-1. imgのsrcがasset:avatar-html-basicsになっていることを確認します。
-2. altへ、学習Profileを表すAvatarだと分かる短い説明を書きます。
+1. h1直後に用意されたimgの空のsrcへasset:avatar-html-basicsを書きます。
+2. 同じimgの空のaltへ、学習Profileを表すAvatarだと分かる短い説明を書きます。
 3. ファイル名や「画像」だけではなく、ページ内での目的を伝えます。
 4. Previewと判定で表示とAccessible Nameを確認します。
 

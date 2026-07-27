@@ -1,14 +1,21 @@
 ---
 id: html-css-ch00-l01-s03
-title: CSSは見た目の約束をまとめる
+title: CSSは色などの見た目を受け持つ
 kind: code
 concept: css-visual-rules
-assets: []
+layout: code-preview
+teachesConceptIds: [css-role]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 330, maxCodeLines: 3, maxVisuals: 1 }
+assets:
+  - id: preview-first-page-css
+    source: assets/first-page-preview.svg
+    mediaType: image
+    alt: 生成り色の背景で学習ノートが表示されたBrowser Preview
+    provenanceId: ch00-first-page-preview-original
 ---
 
-CSSは、HTMLで意味を付けたElementをどの色や余白で見せるか決めます。波かっこの前で対象を選び、波かっこの中へ変えたい見た目と値を書きます。このひとまとまりをCSS Ruleと呼びます。
-
-次のRuleはページ全体の背景色を生成り色にします。HTMLの題名や文章は変えず、見た目だけを変えられるため、内容と装飾を別々に直せます。
+CSSは、HTMLの言葉を変えずに色や余白などの見た目を変えます。記号の詳しい読み方はChapter 04で学びます。今は`background-color:`の右にある`#fffaf0`が背景色の値だと確認します。
 
 ```css
 body {
@@ -16,10 +23,12 @@ body {
 }
 ```
 
+![CSSの色がページ背景へ反映された結果](asset:preview-first-page-css)
+
 :::practice
-prompt: 色の値を一度別の色へ変え、Previewの背景だけが変わることを確認してから元へ戻します。
-expectedAction: HTMLの文章は同じままCSSが背景色だけを変えることを観察する
+prompt: CSSの#fffaf0とPreviewの生成り色の背景を見比べます。
+expectedAction: 言葉は同じままCSSが背景の見た目を変えたと説明する
 estimatedMinutes: 2
 :::
 
-次の演習では、HTMLの見出しとCSSの背景色を1箇所ずつ編集して、2つの役割を使い分けます。
+次は、HTMLとCSSのどちらを直すか選びます。

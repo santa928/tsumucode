@@ -103,6 +103,16 @@ main section {
   background: #2d7c82;
   font-weight: 700;
 }
+.works-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.work-card {
+  padding: 20px;
+  border: 2px solid #d4e3df;
+  border-radius: 18px;
+}
 footer {
   padding-block: 24px 40px;
 }

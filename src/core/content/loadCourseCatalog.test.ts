@@ -3,6 +3,18 @@ import { fixtureCatalog, fixtureCourse } from '../../../tests/fixtures/course';
 import { loadCourseCatalog, loadCourseManifest } from './loadCourseCatalog';
 import type { ContentLoadError } from './loadCourseCatalog';
 
+/** Test response文字列と一致するManifest entryをWeb Cryptoで作る。 */
+async function manifestEntry(source: string) {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(source));
+  const manifestSha256 = [...new Uint8Array(digest)]
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
+  return {
+    ...fixtureCatalog.courses[0]!,
+    manifestSha256,
+  };
+}
+
 afterEach(() => {
   vi.unstubAllGlobals();
 });
@@ -77,13 +89,14 @@ describe('loadCourseCatalog', () => {
 
 describe('loadCourseManifest', () => {
   it('Catalogの安全な相対PathをBASE_URL配下へ解決してCourseを再検証する', async () => {
+    const source = JSON.stringify(fixtureCourse);
     const fetchMock = vi
       .fn<typeof fetch>()
-      .mockResolvedValue(new Response(JSON.stringify(fixtureCourse), { status: 200 }));
+      .mockResolvedValue(new Response(source, { status: 200 }));
     vi.stubGlobal('fetch', fetchMock);
 
     await expect(
-      loadCourseManifest('/repository-name/', fixtureCatalog.courses[0]!.manifestPath),
+      loadCourseManifest('/repository-name/', await manifestEntry(source)),
     ).resolves.toEqual(fixtureCourse);
     expect(fetchMock).toHaveBeenCalledWith(
       '/repository-name/generated/content/courses/html-css.json',
@@ -92,15 +105,48 @@ describe('loadCourseManifest', () => {
   });
 
   it('Course Schema不一致をschema ContentLoadErrorへ分類する', async () => {
+    const source = JSON.stringify({ schemaVersion: 1 });
     vi.stubGlobal(
       'fetch',
-      vi
-        .fn<typeof fetch>()
-        .mockResolvedValue(new Response(JSON.stringify({ schemaVersion: 1 }), { status: 200 })),
+      vi.fn<typeof fetch>().mockResolvedValue(new Response(source, { status: 200 })),
+    );
+
+    await expect(loadCourseManifest('/', await manifestEntry(source))).rejects.toMatchObject({
+      kind: 'schema',
+      resource: '/generated/content/courses/html-css.json',
+    } satisfies Partial<ContentLoadError>);
+  });
+
+  it('CatalogのSHA-256と異なるCourse bytesをintegrity ContentLoadErrorへ分類する', async () => {
+    const source = JSON.stringify(fixtureCourse);
+    vi.stubGlobal(
+      'fetch',
+      vi.fn<typeof fetch>().mockResolvedValue(new Response(source, { status: 200 })),
     );
 
     await expect(
-      loadCourseManifest('/', fixtureCatalog.courses[0]!.manifestPath),
+      loadCourseManifest('/', {
+        ...(await manifestEntry(source)),
+        manifestSha256: 'f'.repeat(64),
+      }),
+    ).rejects.toMatchObject({
+      kind: 'integrity',
+      resource: '/generated/content/courses/html-css.json',
+    } satisfies Partial<ContentLoadError>);
+  });
+
+  it('CatalogとCourseの公開Metadata不一致をschema ContentLoadErrorへ分類する', async () => {
+    const source = JSON.stringify(fixtureCourse);
+    vi.stubGlobal(
+      'fetch',
+      vi.fn<typeof fetch>().mockResolvedValue(new Response(source, { status: 200 })),
+    );
+
+    await expect(
+      loadCourseManifest('/', {
+        ...(await manifestEntry(source)),
+        publicationStatus: fixtureCourse.publicationStatus === 'published' ? 'draft' : 'published',
+      }),
     ).rejects.toMatchObject({
       kind: 'schema',
       resource: '/generated/content/courses/html-css.json',
@@ -117,7 +163,12 @@ describe('loadCourseManifest', () => {
     const fetchMock = vi.fn<typeof fetch>();
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(loadCourseManifest('/repository-name/', manifestPath)).rejects.toMatchObject({
+    await expect(
+      loadCourseManifest('/repository-name/', {
+        ...fixtureCatalog.courses[0]!,
+        manifestPath,
+      }),
+    ).rejects.toMatchObject({
       kind: 'schema',
       resource: manifestPath,
     } satisfies Partial<ContentLoadError>);

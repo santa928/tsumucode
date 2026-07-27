@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">remからComputed pxへの計算</title>
+  <desc id="desc">Root Font Size 16pxに2remを掛け、BrowserのComputed Paddingが32pxになる計算図</desc>
+  <rect width="640" height="360" rx="24" fill="#e8dfcf" />
+  <rect x="28" y="28" width="584" height="304" rx="20" fill="#fffaf0" stroke="#8a7657" stroke-width="3" />
+  <text x="56" y="68" font-family="system-ui, sans-serif" font-size="21" font-weight="800" fill="#19352d">書いたUnitをBrowserが計算する</text>
+  <g font-family="system-ui, sans-serif">
+    <rect x="56" y="100" width="150" height="76" rx="16" fill="#19352d" />
+    <text x="131" y="128" text-anchor="middle" font-size="14" fill="#dcebe5">Root Font Size</text>
+    <text x="131" y="157" text-anchor="middle" font-size="24" font-weight="800" fill="#f4c95d">16px</text>
+    <text x="238" y="148" text-anchor="middle" font-size="31" font-weight="800" fill="#3d7665">×</text>
+    <rect x="270" y="100" width="126" height="76" rx="16" fill="#dcebe5" stroke="#3d7665" stroke-width="3" />
+    <text x="333" y="128" text-anchor="middle" font-size="14" fill="#3f514b">Source</text>
+    <text x="333" y="157" text-anchor="middle" font-size="24" font-weight="800" fill="#2d5d62">2rem</text>
+    <text x="428" y="148" text-anchor="middle" font-size="31" font-weight="800" fill="#3d7665">=</text>
+    <rect x="460" y="100" width="126" height="76" rx="16" fill="#f4c95d" />
+    <text x="523" y="128" text-anchor="middle" font-size="14" fill="#3f514b">Computed</text>
+    <text x="523" y="157" text-anchor="middle" font-size="24" font-weight="800" fill="#19352d">32px</text>
+    <rect x="76" y="222" width="488" height="58" rx="15" fill="#19352d" />
+    <text x="320" y="258" text-anchor="middle" font-family="ui-monospace, monospace" font-size="19" fill="#fffaf0">padding: <tspan fill="#f4c95d">2rem</tspan>;  →  padding-top: <tspan fill="#7fc3ad">32px</tspan></text>
+    <text x="320" y="310" text-anchor="middle" font-size="15" fill="#3f514b">Source表記とComputed表記は違っても、同じ長さを表す</text>
+  </g>
+</svg>

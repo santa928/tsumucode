@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">CSS RuleとSelectorの届く範囲</title>
+  <desc id="desc">p Type Selectorが2つのParagraphへ届き、accent Class Selectorが2つ目だけを橙色へ上書きする図</desc>
+  <rect width="640" height="360" rx="24" fill="#e8dfcf" />
+  <rect x="28" y="28" width="584" height="304" rx="20" fill="#fffaf0" stroke="#8a7657" stroke-width="3" />
+  <text x="56" y="68" font-family="system-ui, sans-serif" font-size="21" font-weight="800" fill="#19352d">「どれを」と「どうする」を分ける</text>
+  <g font-family="ui-monospace, monospace" font-size="18">
+    <rect x="56" y="92" width="252" height="188" rx="16" fill="#19352d" />
+    <text x="82" y="128" fill="#f4c95d">p</text>
+    <text x="101" y="128" fill="#fffaf0"> {</text>
+    <text x="84" y="158" fill="#7fc3ad">color</text>
+    <text x="139" y="158" fill="#fffaf0">: </text>
+    <text x="158" y="158" fill="#f4c95d">#2d5d62</text>
+    <text x="248" y="158" fill="#fffaf0">;</text>
+    <text x="82" y="188" fill="#fffaf0">}</text>
+    <text x="82" y="226" fill="#f4c95d">.accent</text>
+    <text x="159" y="226" fill="#fffaf0"> { color: </text>
+    <text x="82" y="256" fill="#ef997a">#9a3f25</text>
+    <text x="172" y="256" fill="#fffaf0">; }</text>
+  </g>
+  <g font-family="system-ui, sans-serif">
+    <rect x="368" y="98" width="212" height="72" rx="14" fill="#dcebe5" stroke="#3d7665" stroke-width="3" />
+    <text x="474" y="126" text-anchor="middle" font-size="15" fill="#3f514b">p.intro</text>
+    <text x="474" y="151" text-anchor="middle" font-size="18" font-weight="800" fill="#2d5d62">共通の青緑</text>
+    <rect x="368" y="204" width="212" height="72" rx="14" fill="#f7dfd4" stroke="#9a3f25" stroke-width="3" />
+    <text x="474" y="232" text-anchor="middle" font-size="15" fill="#3f514b">p.accent</text>
+    <text x="474" y="257" text-anchor="middle" font-size="18" font-weight="800" fill="#9a3f25">Classで橙へ</text>
+    <text x="182" y="308" text-anchor="middle" font-size="15" fill="#3f514b">Selector</text>
+    <text x="474" y="308" text-anchor="middle" font-size="15" fill="#3f514b">Computed Color</text>
+  </g>
+  <g fill="none" stroke="#3d7665" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M308 126h42v10h18" />
+    <path d="m358 126 12 10-12 10" />
+    <path d="M308 148h30v72h30" />
+    <path d="m358 210 12 10-12 10" />
+  </g>
+  <g fill="none" stroke="#9a3f25" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M308 246h60" />
+    <path d="m358 236 12 10-12 10" />
+  </g>
+</svg>

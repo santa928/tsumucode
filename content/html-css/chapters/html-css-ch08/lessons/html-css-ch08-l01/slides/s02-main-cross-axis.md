@@ -3,6 +3,10 @@ id: html-css-ch08-l01-s02
 title: DirectionがMain Axisの向きを決める
 kind: diagram
 concept: flex-main-cross-axis
+layout: code-preview
+teachesConceptIds: [flex-direction, main-cross-axis]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 420, maxCodeLines: 4, maxVisuals: 1 }
 assets:
   - id: diagram-flex-axis
     source: assets/diagram-flex-axis.svg
@@ -11,11 +15,17 @@ assets:
     provenanceId: ch08-flex-axis-slide-original
 ---
 
-`flex-direction: row`ではMain Axisが横、Cross Axisが縦です。`column`へ変えるとMain Axisが縦になり、2本の役割が入れ替わります。
+`flex-direction`はMain Axisの向きを決めます。`row`は左→右、`column`は上→下がMain Axisで、Cross Axisはそれと直交します。
 
 ![Flexboxの2本のAxis](asset:diagram-flex-axis)
 
-`justify-*`はMain Axis、`align-*`はCross Axisへ働きます。画面の横・縦で覚えず、現在のDirectionからAxisを読みます。
+```css
+[data-column] {
+  flex-direction: column;
+}
+```
+
+`row`は初期値です。実習では完成済みのSelectorを使い、親をContainerにする変更と`column`への変更だけを行います。
 
 :::practice
 prompt: flex-direction columnのとき、Main Axisが進む方向を答えます。
@@ -23,4 +33,4 @@ expectedAction: 上から下へ進む縦方向と答える
 estimatedMinutes: 2
 :::
 
-次の実習ではrowとcolumnのComputed Directionを確認します。
+次の実習では、今読んだ2つのDeclarationだけを変更します。

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <title>Viewport MetaとMobile First</title>
+  <desc>Viewport Metaが390px端末のCSS表示幅を合わせ、小さい画面の流動幅をBaseにする図</desc>
+  <rect width="960" height="540" rx="36" fill="#f5efe3" />
+  <text x="60" y="68" fill="#172a3a" font-family="system-ui, sans-serif" font-size="30" font-weight="700">390px端末を、390 CSS pxとして扱う</text>
+  <g transform="translate(60 108)" font-family="system-ui, sans-serif">
+    <text x="170" y="0" fill="#b84f2b" font-size="21" font-weight="700" text-anchor="middle">width=device-width なし</text>
+    <rect x="40" y="22" width="260" height="268" rx="30" fill="#ffffff" stroke="#ef7d4f" stroke-width="6" />
+    <rect x="66" y="64" width="208" height="162" rx="12" fill="#fff3dd" stroke="#ef7d4f" stroke-width="4" />
+    <text x="170" y="130" fill="#172a3a" font-size="22" font-weight="700" text-anchor="middle">広いLayoutを縮小</text>
+    <text x="170" y="166" fill="#b84f2b" font-size="25" font-weight="700" text-anchor="middle">約980 CSS px</text>
+    <text x="170" y="258" fill="#172a3a" font-size="18" text-anchor="middle">Breakpointが意図どおり動かない</text>
+
+    <text x="600" y="0" fill="#2d7c82" font-size="21" font-weight="700" text-anchor="middle">width=device-width あり</text>
+    <rect x="470" y="22" width="260" height="268" rx="30" fill="#ffffff" stroke="#2d7c82" stroke-width="6" />
+    <rect x="496" y="64" width="208" height="162" rx="12" fill="#dcefed" stroke="#2d7c82" stroke-width="4" />
+    <text x="600" y="130" fill="#172a3a" font-size="22" font-weight="700" text-anchor="middle">端末幅と一致</text>
+    <text x="600" y="166" fill="#2d7c82" font-size="27" font-weight="700" text-anchor="middle">390 CSS px</text>
+    <text x="600" y="258" fill="#172a3a" font-size="18" text-anchor="middle">Mobile Base: width 100%</text>
+  </g>
+  <g transform="translate(60 424)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+    <rect width="840" height="72" rx="18" fill="#172a3a" />
+    <text x="420" y="45" fill="#ffffff" font-size="21" text-anchor="middle">&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot; /&gt;</text>
+  </g>
+</svg>

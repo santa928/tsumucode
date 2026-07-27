@@ -4,6 +4,30 @@ workspaceId: html-css-ch03-l01-e01
 countsTowardStandardExerciseTotal: true
 title: ページ内と外部の行き先をLinkにする
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: fragment-link, minimumLevel: transform }
+  - { conceptId: external-link, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: connect-practice-fragment
+    file: index.html
+    target: Navigation内の「練習内容を見る」Link
+    starterAnchor: <a class="practice-link" href="#overview">練習内容を見る</a>
+    change: hrefを#practiceへ変更する
+    observe: PreviewでLinkを選ぶと練習内容Sectionへ移動する
+    requiresConceptIds: [fragment-link]
+    validationRuleIds:
+      - html-css-ch03-l01-e01-r01
+      - html-css-ch03-l01-e01-r03
+      - html-css-ch03-l01-e01-r05
+  - id: connect-external-site
+    file: index.html
+    target: Navigation内の「外部の練習用Siteを見る」Link
+    starterAnchor: <a class="external-link" href="#external">外部の練習用Siteを見る</a>
+    change: hrefをhttps://example.com/へ変更する
+    observe: 判定で安全な外部Linkとして認識される
+    requiresConceptIds: [external-link]
+    validationRuleIds: [html-css-ch03-l01-e01-r02, html-css-ch03-l01-e01-r04]
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -17,12 +41,12 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'a[href="#practice"]' }
+    target: { kind: selector, selector: 'a.practice-link[href="#practice"]' }
     assertion: { kind: count, operator: equals, expected: 1 }
     feedback:
       target: ページ内の練習SectionへのLink
-      expected: hrefが#practiceのa要素が1つ
-      nextAction: 練習内容を見るLinkのhrefを#practiceにします。
+      expected: practice-linkクラスでhrefが#practiceのa要素が1つ
+      nextAction: practice-linkのclassは残し、練習内容を見るLinkのhrefを#practiceにします。
     hintId: html-css-ch03-l01-e01-h01
     relatedSlideId: html-css-ch03-l01-s01
   - id: html-css-ch03-l01-e01-r02
@@ -31,12 +55,12 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'a[href^="https://"]' }
+    target: { kind: selector, selector: 'a.external-link[href^="https://"]' }
     assertion: { kind: count, operator: equals, expected: 1 }
     feedback:
       target: 外部の練習用SiteへのLink
-      expected: httpsで始まるhrefのa要素が1つ
-      nextAction: 外部Linkのhrefへhttps://example.com/のような安全なURLを設定します。
+      expected: external-linkクラスでhttpsから始まるhrefのa要素が1つ
+      nextAction: external-linkのclassは残し、hrefへhttps://example.com/のような安全なURLを設定します。
     hintId: html-css-ch03-l01-e01-h02
     relatedSlideId: html-css-ch03-l01-s02
   - id: html-css-ch03-l01-e01-r03
@@ -45,7 +69,7 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'a[href="#practice"]' }
+    target: { kind: selector, selector: 'a.practice-link' }
     assertion: { kind: accessible-name, operator: present }
     feedback:
       target: ページ内LinkのText
@@ -59,7 +83,7 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'a[href^="https://"]' }
+    target: { kind: selector, selector: 'a.external-link' }
     assertion: { kind: accessible-name, operator: present }
     feedback:
       target: 外部LinkのText
@@ -131,3 +155,21 @@ fixtures:
         }
       - { path: styles.css, language: css, source: fixtures/code-error/styles.css, editable: false }
     expectedFeedbackRuleIds: []
+  - id: html-css-ch03-l01-e01-swapped-destinations
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/swapped-destinations/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/swapped-destinations/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds:
+      - html-css-ch03-l01-e01-r01
+      - html-css-ch03-l01-e01-r02

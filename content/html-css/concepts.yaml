@@ -1,0 +1,522 @@
+schemaVersion: 1
+concepts:
+  - id: web-page-three-roles
+    introducedBySlideId: html-css-ch00-l01-s01
+    prerequisiteConceptIds: []
+    minimumProjectLevel: read
+  - id: html-role
+    introducedBySlideId: html-css-ch00-l01-s02
+    prerequisiteConceptIds: [web-page-three-roles]
+    minimumProjectLevel: read
+  - id: css-role
+    introducedBySlideId: html-css-ch00-l01-s03
+    prerequisiteConceptIds: [web-page-three-roles]
+    minimumProjectLevel: read
+  - id: edit-save-preview-validate
+    introducedBySlideId: html-css-ch00-l02-s01
+    prerequisiteConceptIds: [web-page-three-roles]
+    minimumProjectLevel: transform
+  - id: file-tab
+    introducedBySlideId: html-css-ch00-l02-s02
+    prerequisiteConceptIds: [edit-save-preview-validate]
+    minimumProjectLevel: transform
+
+  - id: html-element
+    introducedBySlideId: html-css-ch01-l01-s01
+    prerequisiteConceptIds: [html-role]
+    minimumProjectLevel: transform
+  - id: opening-closing-tag
+    introducedBySlideId: html-css-ch01-l01-s01
+    prerequisiteConceptIds: [html-element]
+    minimumProjectLevel: transform
+  - id: heading-h1
+    introducedBySlideId: html-css-ch01-l01-s02
+    prerequisiteConceptIds: [opening-closing-tag]
+    minimumProjectLevel: transform
+  - id: paragraph-p
+    introducedBySlideId: html-css-ch01-l01-s02
+    prerequisiteConceptIds: [opening-closing-tag]
+    minimumProjectLevel: transform
+  - id: html-parent-child
+    introducedBySlideId: html-css-ch01-l02-s01
+    prerequisiteConceptIds: [html-element]
+    minimumProjectLevel: transform
+  - id: nesting
+    introducedBySlideId: html-css-ch01-l02-s01
+    prerequisiteConceptIds: [html-parent-child]
+    minimumProjectLevel: transform
+  - id: indentation
+    introducedBySlideId: html-css-ch01-l02-s02
+    prerequisiteConceptIds: [nesting]
+    minimumProjectLevel: transform
+  - id: html-attribute
+    introducedBySlideId: html-css-ch01-l03-s01
+    prerequisiteConceptIds: [opening-closing-tag]
+    minimumProjectLevel: transform
+  - id: lang-attribute
+    introducedBySlideId: html-css-ch01-l03-s02
+    prerequisiteConceptIds: [html-attribute]
+    minimumProjectLevel: transform
+  - id: title-element
+    introducedBySlideId: html-css-ch01-l03-s02
+    prerequisiteConceptIds: [html-element]
+    minimumProjectLevel: transform
+
+  - id: heading-hierarchy
+    introducedBySlideId: html-css-ch02-l01-s01
+    prerequisiteConceptIds: [heading-h1]
+    minimumProjectLevel: transform
+  - id: h2
+    introducedBySlideId: html-css-ch02-l01-s01
+    prerequisiteConceptIds: [heading-hierarchy]
+    minimumProjectLevel: transform
+  - id: section-paragraph
+    introducedBySlideId: html-css-ch02-l01-s02
+    prerequisiteConceptIds: [paragraph-p]
+    minimumProjectLevel: transform
+  - id: unordered-list
+    introducedBySlideId: html-css-ch02-l02-s01
+    prerequisiteConceptIds: [html-element]
+    minimumProjectLevel: transform
+  - id: ordered-list
+    introducedBySlideId: html-css-ch02-l02-s02
+    prerequisiteConceptIds: [unordered-list]
+    minimumProjectLevel: transform
+  - id: list-item
+    introducedBySlideId: html-css-ch02-l02-s01
+    prerequisiteConceptIds: [html-element]
+    minimumProjectLevel: transform
+  - id: landmark-elements
+    introducedBySlideId: html-css-ch02-l03-s01
+    prerequisiteConceptIds: [html-element]
+    minimumProjectLevel: transform
+  - id: header-main-footer
+    introducedBySlideId: html-css-ch02-l03-s02
+    prerequisiteConceptIds: [landmark-elements]
+    minimumProjectLevel: transform
+  - id: section-article
+    introducedBySlideId: html-css-ch02-l03-s03
+    prerequisiteConceptIds: [landmark-elements]
+    minimumProjectLevel: transform
+  - id: strong-element
+    introducedBySlideId: html-css-ch02-l04-s01
+    prerequisiteConceptIds: [html-element]
+    minimumProjectLevel: transform
+  - id: em-element
+    introducedBySlideId: html-css-ch02-l04-s02
+    prerequisiteConceptIds: [html-element]
+    minimumProjectLevel: transform
+
+  - id: anchor-element
+    introducedBySlideId: html-css-ch03-l01-s01
+    prerequisiteConceptIds: [html-element]
+    minimumProjectLevel: transform
+  - id: href-attribute
+    introducedBySlideId: html-css-ch03-l01-s01
+    prerequisiteConceptIds: [anchor-element, html-attribute]
+    minimumProjectLevel: transform
+  - id: fragment-link
+    introducedBySlideId: html-css-ch03-l01-s02
+    prerequisiteConceptIds: [href-attribute]
+    minimumProjectLevel: transform
+  - id: external-link
+    introducedBySlideId: html-css-ch03-l01-s02
+    prerequisiteConceptIds: [href-attribute]
+    minimumProjectLevel: transform
+  - id: image-element
+    introducedBySlideId: html-css-ch03-l02-s01
+    prerequisiteConceptIds: [html-element]
+    minimumProjectLevel: transform
+  - id: src-attribute
+    introducedBySlideId: html-css-ch03-l02-s01
+    prerequisiteConceptIds: [image-element, html-attribute]
+    minimumProjectLevel: transform
+  - id: alt-attribute
+    introducedBySlideId: html-css-ch03-l02-s01
+    prerequisiteConceptIds: [image-element, html-attribute]
+    minimumProjectLevel: transform
+  - id: label-control-relation
+    introducedBySlideId: html-css-ch03-l03-s02
+    prerequisiteConceptIds: [html-attribute]
+    minimumProjectLevel: transform
+  - id: input-element
+    introducedBySlideId: html-css-ch03-l03-s01
+    prerequisiteConceptIds: [html-element]
+    minimumProjectLevel: transform
+  - id: button-type
+    introducedBySlideId: html-css-ch03-l03-s03
+    prerequisiteConceptIds: [html-element, html-attribute]
+    minimumProjectLevel: transform
+  - id: address-element
+    introducedBySlideId: html-css-ch03-l04-s01
+    prerequisiteConceptIds: [html-element]
+    minimumProjectLevel: transform
+  - id: contact-card-composition
+    introducedBySlideId: html-css-ch03-l04-s01
+    prerequisiteConceptIds: [address-element, anchor-element, image-element]
+    minimumProjectLevel: compose
+
+  - id: css-rule
+    introducedBySlideId: html-css-ch04-l01-s01
+    prerequisiteConceptIds: [css-role]
+    minimumProjectLevel: transform
+  - id: type-selector
+    introducedBySlideId: html-css-ch04-l01-s02
+    prerequisiteConceptIds: [css-rule]
+    minimumProjectLevel: transform
+  - id: class-selector
+    introducedBySlideId: html-css-ch04-l01-s03
+    prerequisiteConceptIds: [css-rule, html-attribute]
+    minimumProjectLevel: transform
+  - id: declaration
+    introducedBySlideId: html-css-ch04-l01-s01
+    prerequisiteConceptIds: [css-rule]
+    minimumProjectLevel: transform
+  - id: stylesheet-link
+    introducedBySlideId: html-css-ch04-l02-s01
+    prerequisiteConceptIds: [css-rule, html-attribute]
+    minimumProjectLevel: transform
+  - id: css-property-value
+    introducedBySlideId: html-css-ch04-l02-s02
+    prerequisiteConceptIds: [declaration]
+    minimumProjectLevel: transform
+  - id: colon-semicolon
+    introducedBySlideId: html-css-ch04-l02-s02
+    prerequisiteConceptIds: [declaration]
+    minimumProjectLevel: transform
+  - id: cascade-source-order
+    introducedBySlideId: html-css-ch04-l03-s01
+    prerequisiteConceptIds: [css-rule]
+    minimumProjectLevel: transform
+  - id: specificity
+    introducedBySlideId: html-css-ch04-l03-s02
+    prerequisiteConceptIds: [type-selector, class-selector]
+    minimumProjectLevel: transform
+  - id: inheritance
+    introducedBySlideId: html-css-ch04-l03-s03
+    prerequisiteConceptIds: [cascade-source-order]
+    minimumProjectLevel: transform
+  - id: css-px
+    introducedBySlideId: html-css-ch04-l04-s01
+    prerequisiteConceptIds: [css-property-value]
+    minimumProjectLevel: transform
+  - id: css-rem
+    introducedBySlideId: html-css-ch04-l04-s01
+    prerequisiteConceptIds: [css-property-value]
+    minimumProjectLevel: transform
+  - id: computed-value
+    introducedBySlideId: html-css-ch04-l04-s02
+    prerequisiteConceptIds: [css-px, css-rem]
+    minimumProjectLevel: transform
+
+  - id: box-model-content-padding-border-margin
+    introducedBySlideId: html-css-ch05-l01-s01
+    prerequisiteConceptIds: [css-rule]
+    minimumProjectLevel: read
+  - id: width-height
+    introducedBySlideId: html-css-ch05-l02-s01
+    prerequisiteConceptIds: [box-model-content-padding-border-margin, css-property-value]
+    minimumProjectLevel: transform
+  - id: box-sizing-border-box
+    introducedBySlideId: html-css-ch05-l02-s02
+    prerequisiteConceptIds: [width-height]
+    minimumProjectLevel: transform
+  - id: padding-property
+    introducedBySlideId: html-css-ch05-l03-s01
+    prerequisiteConceptIds: [box-model-content-padding-border-margin]
+    minimumProjectLevel: transform
+  - id: margin-property
+    introducedBySlideId: html-css-ch05-l03-s02
+    prerequisiteConceptIds: [box-model-content-padding-border-margin]
+    minimumProjectLevel: transform
+  - id: display-inline-block
+    introducedBySlideId: html-css-ch05-l04-s02
+    prerequisiteConceptIds: [width-height]
+    minimumProjectLevel: transform
+  - id: minimum-target-size
+    introducedBySlideId: html-css-ch05-l04-s02
+    prerequisiteConceptIds: [display-inline-block, padding-property]
+    minimumProjectLevel: transform
+  - id: overflow-x
+    introducedBySlideId: html-css-ch05-l05-s01
+    prerequisiteConceptIds: [width-height]
+    minimumProjectLevel: transform
+  - id: safe-sizing
+    introducedBySlideId: html-css-ch05-l05-s02
+    prerequisiteConceptIds: [box-sizing-border-box, overflow-x]
+    minimumProjectLevel: transform
+
+  - id: font-size
+    introducedBySlideId: html-css-ch06-l01-s01
+    prerequisiteConceptIds: [css-property-value, css-rem]
+    minimumProjectLevel: transform
+  - id: line-height
+    introducedBySlideId: html-css-ch06-l01-s01
+    prerequisiteConceptIds: [css-property-value]
+    minimumProjectLevel: transform
+  - id: font-family-system
+    introducedBySlideId: html-css-ch06-l01-s02
+    prerequisiteConceptIds: [css-property-value]
+    minimumProjectLevel: transform
+  - id: color-background-color
+    introducedBySlideId: html-css-ch06-l02-s01
+    prerequisiteConceptIds: [css-property-value]
+    minimumProjectLevel: transform
+  - id: contrast-ratio
+    introducedBySlideId: html-css-ch06-l02-s02
+    prerequisiteConceptIds: [color-background-color]
+    minimumProjectLevel: transform
+  - id: non-color-cue
+    introducedBySlideId: html-css-ch06-l02-s02
+    prerequisiteConceptIds: [contrast-ratio]
+    minimumProjectLevel: transform
+  - id: custom-property-root
+    introducedBySlideId: html-css-ch06-l03-s01
+    prerequisiteConceptIds: [css-rule]
+    minimumProjectLevel: transform
+  - id: var-function
+    introducedBySlideId: html-css-ch06-l03-s02
+    prerequisiteConceptIds: [custom-property-root]
+    minimumProjectLevel: transform
+  - id: reusable-base-class
+    introducedBySlideId: html-css-ch06-l04-s01
+    prerequisiteConceptIds: [class-selector]
+    minimumProjectLevel: compose
+  - id: modifier-class
+    introducedBySlideId: html-css-ch06-l04-s02
+    prerequisiteConceptIds: [reusable-base-class]
+    minimumProjectLevel: compose
+  - id: profile-card-integration
+    introducedBySlideId: html-css-ch07-l01-r01
+    prerequisiteConceptIds: [contact-card-composition, modifier-class, safe-sizing]
+    minimumProjectLevel: compose
+
+  - id: flex-container
+    introducedBySlideId: html-css-ch08-l01-s01
+    prerequisiteConceptIds: [css-rule, box-model-content-padding-border-margin]
+    minimumProjectLevel: transform
+  - id: flex-direction
+    introducedBySlideId: html-css-ch08-l01-s02
+    prerequisiteConceptIds: [flex-container]
+    minimumProjectLevel: transform
+  - id: main-cross-axis
+    introducedBySlideId: html-css-ch08-l01-s02
+    prerequisiteConceptIds: [flex-container]
+    minimumProjectLevel: transform
+  - id: css-attribute-selector
+    introducedBySlideId: html-css-ch08-l01-s01
+    prerequisiteConceptIds: [css-rule, html-attribute]
+    minimumProjectLevel: transform
+  - id: justify-content
+    introducedBySlideId: html-css-ch08-l02-s01
+    prerequisiteConceptIds: [flex-container, main-cross-axis]
+    minimumProjectLevel: transform
+  - id: gap
+    introducedBySlideId: html-css-ch08-l02-s02
+    prerequisiteConceptIds: [flex-container]
+    minimumProjectLevel: transform
+  - id: align-items
+    introducedBySlideId: html-css-ch08-l03-s01
+    prerequisiteConceptIds: [flex-container, main-cross-axis]
+    minimumProjectLevel: transform
+  - id: align-self
+    introducedBySlideId: html-css-ch08-l03-s02
+    prerequisiteConceptIds: [align-items]
+    minimumProjectLevel: transform
+  - id: flex-wrap
+    introducedBySlideId: html-css-ch08-l04-s01
+    prerequisiteConceptIds: [flex-container]
+    minimumProjectLevel: transform
+  - id: flex-basis
+    introducedBySlideId: html-css-ch08-l04-s02
+    prerequisiteConceptIds: [flex-container]
+    minimumProjectLevel: transform
+  - id: flex-navigation
+    introducedBySlideId: html-css-ch08-l05-s01
+    prerequisiteConceptIds: [flex-container, justify-content, gap]
+    minimumProjectLevel: compose
+  - id: flex-card-row
+    introducedBySlideId: html-css-ch08-l05-s02
+    prerequisiteConceptIds: [flex-wrap, flex-basis, gap]
+    minimumProjectLevel: compose
+
+  - id: grid-container
+    introducedBySlideId: html-css-ch09-l01-s01
+    prerequisiteConceptIds: [css-rule, flex-container]
+    minimumProjectLevel: transform
+  - id: grid-template-columns
+    introducedBySlideId: html-css-ch09-l01-s02
+    prerequisiteConceptIds: [grid-container]
+    minimumProjectLevel: transform
+  - id: repeat-function
+    introducedBySlideId: html-css-ch09-l02-s01
+    prerequisiteConceptIds: [grid-template-columns]
+    minimumProjectLevel: transform
+  - id: fr-unit
+    introducedBySlideId: html-css-ch09-l02-s01
+    prerequisiteConceptIds: [grid-template-columns]
+    minimumProjectLevel: transform
+  - id: grid-gap
+    introducedBySlideId: html-css-ch09-l02-s02
+    prerequisiteConceptIds: [grid-container, gap]
+    minimumProjectLevel: transform
+  - id: minmax-function
+    introducedBySlideId: html-css-ch09-l03-s01
+    prerequisiteConceptIds: [grid-template-columns]
+    minimumProjectLevel: transform
+  - id: auto-fit
+    introducedBySlideId: html-css-ch09-l03-s02
+    prerequisiteConceptIds: [minmax-function, repeat-function]
+    minimumProjectLevel: transform
+  - id: grid-line-placement
+    introducedBySlideId: html-css-ch09-l04-s01
+    prerequisiteConceptIds: [grid-template-columns]
+    minimumProjectLevel: compose
+  - id: grid-flex-choice
+    introducedBySlideId: html-css-ch09-l04-s02
+    prerequisiteConceptIds: [grid-container, flex-container, flex-direction]
+    minimumProjectLevel: compose
+
+  - id: viewport-meta
+    introducedBySlideId: html-css-ch10-l01-s01
+    prerequisiteConceptIds: [html-attribute]
+    minimumProjectLevel: transform
+  - id: mobile-first-base
+    introducedBySlideId: html-css-ch10-l01-s02
+    prerequisiteConceptIds: [css-rule, viewport-meta, grid-flex-choice]
+    minimumProjectLevel: transform
+  - id: media-query
+    introducedBySlideId: html-css-ch10-l02-s02
+    prerequisiteConceptIds: [mobile-first-base]
+    minimumProjectLevel: transform
+  - id: content-breakpoint
+    introducedBySlideId: html-css-ch10-l02-s01
+    prerequisiteConceptIds: [mobile-first-base]
+    minimumProjectLevel: transform
+  - id: percentage-width
+    introducedBySlideId: html-css-ch10-l03-s01
+    prerequisiteConceptIds: [width-height]
+    minimumProjectLevel: transform
+  - id: max-width
+    introducedBySlideId: html-css-ch10-l03-s02
+    prerequisiteConceptIds: [percentage-width]
+    minimumProjectLevel: transform
+  - id: auto-margin
+    introducedBySlideId: html-css-ch10-l03-s02
+    prerequisiteConceptIds: [margin-property, max-width]
+    minimumProjectLevel: transform
+  - id: responsive-image
+    introducedBySlideId: html-css-ch10-l04-s01
+    prerequisiteConceptIds: [image-element, max-width]
+    minimumProjectLevel: transform
+  - id: height-auto
+    introducedBySlideId: html-css-ch10-l04-s01
+    prerequisiteConceptIds: [responsive-image]
+    minimumProjectLevel: transform
+  - id: object-fit
+    introducedBySlideId: html-css-ch10-l04-s02
+    prerequisiteConceptIds: [responsive-image, width-height]
+    minimumProjectLevel: transform
+  - id: multi-viewport-audit
+    introducedBySlideId: html-css-ch10-l05-s02
+    prerequisiteConceptIds: [media-query, responsive-image]
+    minimumProjectLevel: compose
+  - id: horizontal-overflow
+    introducedBySlideId: html-css-ch10-l05-s01
+    prerequisiteConceptIds: [overflow-x, safe-sizing]
+    minimumProjectLevel: compose
+
+  - id: dom-order
+    introducedBySlideId: html-css-ch11-l01-s01
+    prerequisiteConceptIds: [html-parent-child]
+    minimumProjectLevel: transform
+  - id: keyboard-operation
+    introducedBySlideId: html-css-ch11-l01-s01
+    prerequisiteConceptIds: [dom-order, anchor-element, button-type]
+    minimumProjectLevel: transform
+  - id: focus-visible
+    introducedBySlideId: html-css-ch11-l01-s02
+    prerequisiteConceptIds: [keyboard-operation, css-rule]
+    minimumProjectLevel: transform
+  - id: accessible-name
+    introducedBySlideId: html-css-ch11-l02-s01
+    prerequisiteConceptIds: [html-element]
+    minimumProjectLevel: transform
+  - id: label-text
+    introducedBySlideId: html-css-ch11-l02-s02
+    prerequisiteConceptIds: [accessible-name, label-control-relation]
+    minimumProjectLevel: transform
+  - id: link-text
+    introducedBySlideId: html-css-ch11-l02-s02
+    prerequisiteConceptIds: [accessible-name, anchor-element]
+    minimumProjectLevel: transform
+  - id: alt-text
+    introducedBySlideId: html-css-ch11-l02-s02
+    prerequisiteConceptIds: [accessible-name, alt-attribute]
+    minimumProjectLevel: transform
+  - id: contrast-45
+    introducedBySlideId: html-css-ch11-l03-s01
+    prerequisiteConceptIds: [contrast-ratio]
+    minimumProjectLevel: transform
+  - id: status-text
+    introducedBySlideId: html-css-ch11-l03-s02
+    prerequisiteConceptIds: [non-color-cue]
+    minimumProjectLevel: transform
+  - id: prefers-reduced-motion
+    introducedBySlideId: html-css-ch11-l04-s01
+    prerequisiteConceptIds: [media-query]
+    minimumProjectLevel: transform
+  - id: final-a11y-audit
+    introducedBySlideId: html-css-ch11-l04-s02
+    prerequisiteConceptIds:
+      - focus-visible
+      - accessible-name
+      - label-text
+      - link-text
+      - alt-text
+      - contrast-45
+      - status-text
+      - prefers-reduced-motion
+      - horizontal-overflow
+    minimumProjectLevel: compose
+
+  - id: audience
+    introducedBySlideId: html-css-ch12-l01-g01
+    prerequisiteConceptIds: [profile-card-integration]
+    minimumProjectLevel: compose
+  - id: outline
+    introducedBySlideId: html-css-ch12-l01-g01
+    prerequisiteConceptIds: [heading-hierarchy, landmark-elements]
+    minimumProjectLevel: compose
+  - id: navigation
+    introducedBySlideId: html-css-ch12-l02-g01
+    prerequisiteConceptIds: [flex-navigation, accessible-name]
+    minimumProjectLevel: compose
+  - id: hero
+    introducedBySlideId: html-css-ch12-l02-g01
+    prerequisiteConceptIds: [heading-hierarchy, responsive-image]
+    minimumProjectLevel: compose
+  - id: skills
+    introducedBySlideId: html-css-ch12-l03-g01
+    prerequisiteConceptIds: [unordered-list, reusable-base-class]
+    minimumProjectLevel: compose
+  - id: works
+    introducedBySlideId: html-css-ch12-l03-g01
+    prerequisiteConceptIds: [grid-container, grid-flex-choice]
+    minimumProjectLevel: compose
+  - id: contact
+    introducedBySlideId: html-css-ch12-l04-g01
+    prerequisiteConceptIds: [contact-card-composition, label-control-relation]
+    minimumProjectLevel: compose
+  - id: responsive
+    introducedBySlideId: html-css-ch12-l04-g01
+    prerequisiteConceptIds: [multi-viewport-audit, horizontal-overflow]
+    minimumProjectLevel: compose
+  - id: polish
+    introducedBySlideId: html-css-ch12-l05-g01
+    prerequisiteConceptIds: [final-a11y-audit, responsive]
+    minimumProjectLevel: compose
+  - id: capstone-requirement-trace
+    introducedBySlideId: html-css-ch13-l01-g01
+    prerequisiteConceptIds: [audience, outline, navigation, hero, skills, works, contact, polish]
+    minimumProjectLevel: compose

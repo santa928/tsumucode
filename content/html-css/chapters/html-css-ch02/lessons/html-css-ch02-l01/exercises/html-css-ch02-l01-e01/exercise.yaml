@@ -4,6 +4,39 @@ workspaceId: html-css-ch02-l01-e01
 countsTowardStandardExerciseTotal: true
 title: 見出しとParagraphで学習記録を組み立てる
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: h2, minimumLevel: transform }
+  - { conceptId: section-paragraph, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: correct-heading-levels
+    file: index.html
+    target: 2つのsectionに用意されたh3の開始Tagと終了Tag
+    starterAnchor: <h3>学んだこと</h3>
+    change: 2組のh3をどちらもh2へ置き換える
+    observe: ページ題名のh1の下へ、同じLevelのh2が2つ並ぶ
+    requiresConceptIds: [h2]
+    validationRuleIds:
+      - html-css-ch02-l01-e01-r01
+      - html-css-ch02-l01-e01-r02
+      - html-css-ch02-l01-e01-r03
+      - html-css-ch02-l01-e01-r04
+  - id: add-learned-paragraph
+    file: index.html
+    target: learned-topic内のh2直後にあるコメント位置
+    starterAnchor: <!-- add-learned-description -->
+    change: 学んだことを説明するpを1つ追加する
+    observe: Previewで学んだことのh2直後に説明文が表示される
+    requiresConceptIds: [section-paragraph]
+    validationRuleIds: [html-css-ch02-l01-e01-r05]
+  - id: add-next-paragraph
+    file: index.html
+    target: next-topic内のh2直後にあるコメント位置
+    starterAnchor: <!-- add-next-description -->
+    change: 次に試すことを説明するpを1つ追加する
+    observe: Previewで次に試すことのh2直後に説明文が表示される
+    requiresConceptIds: [section-paragraph]
+    validationRuleIds: [html-css-ch02-l01-e01-r06]
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -26,7 +59,7 @@ validationRules:
     hintId: html-css-ch02-l01-e01-h01
     relatedSlideId: html-css-ch02-l01-s01
   - id: html-css-ch02-l01-e01-r02
-    label: 話題を2つのsectionに分ける
+    label: main直下に2つの話題Sectionを置く
     required: true
     group: all
     viewportMode: all
@@ -34,37 +67,65 @@ validationRules:
     target: { kind: selector, selector: 'main > section' }
     assertion: { kind: count, operator: equals, expected: 2 }
     feedback:
-      target: main内の話題
+      target: 学んだことと次に試すことの2話題
       expected: main直下のsectionが2つ
-      nextAction: h1の後へ同じLevelのsectionを2つ置きます。
+      nextAction: 用意された2つのsectionは削除や追加をせず、そのまま使います。
     hintId: html-css-ch02-l01-e01-h01
     relatedSlideId: html-css-ch02-l01-s01
   - id: html-css-ch02-l01-e01-r03
-    label: 各話題へh2を置く
+    label: 1つ目の話題へh2を置く
     required: true
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'main > section > h2' }
-    assertion: { kind: count, operator: equals, expected: 2 }
+    target: { kind: selector, selector: 'main > section.learned-topic > h2' }
+    assertion: { kind: count, operator: equals, expected: 1 }
     feedback:
-      target: 2つのsectionの見出し
-      expected: section直下のh2が合計2つ
-      nextAction: それぞれのsectionの最初へh2を1つずつ置きます。
+      target: 1つ目のsectionの見出し
+      expected: 1つ目のsection直下にh2が1つ
+      nextAction: 学んだことのsectionでh3の開始Tagと終了Tagをh2へ変更します。
     hintId: html-css-ch02-l01-e01-h02
     relatedSlideId: html-css-ch02-l01-s01
   - id: html-css-ch02-l01-e01-r04
-    label: 各h2の直後へParagraphを置く
+    label: 2つ目の話題へh2を置く
     required: true
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'main > section > h2 + p' }
-    assertion: { kind: count, operator: equals, expected: 2 }
+    target: { kind: selector, selector: 'main > section.next-topic > h2' }
+    assertion: { kind: count, operator: equals, expected: 1 }
     feedback:
-      target: 各話題の説明
-      expected: 2つのh2それぞれの直後にpがある
-      nextAction: 各sectionでh2の直後へ、話題を説明するpを1つ置きます。
+      target: 2つ目のsectionの見出し
+      expected: 2つ目のsection直下にh2が1つ
+      nextAction: 次に試すことのsectionでh3の開始Tagと終了Tagをh2へ変更します。
+    hintId: html-css-ch02-l01-e01-h02
+    relatedSlideId: html-css-ch02-l01-s01
+  - id: html-css-ch02-l01-e01-r05
+    label: 1つ目のh2直後へParagraphを置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'main > section.learned-topic > h2 + p' }
+    assertion: { kind: count, operator: equals, expected: 1 }
+    feedback:
+      target: 学んだことの説明
+      expected: 1つ目のsectionでh2直後にpが1つ
+      nextAction: 学んだことのh2直後へ、同じ話題を説明するpを置きます。
+    hintId: html-css-ch02-l01-e01-h03
+    relatedSlideId: html-css-ch02-l01-s02
+  - id: html-css-ch02-l01-e01-r06
+    label: 2つ目のh2直後へParagraphを置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: 'main > section.next-topic > h2 + p' }
+    assertion: { kind: count, operator: equals, expected: 1 }
+    feedback:
+      target: 次に試すことの説明
+      expected: 2つ目のsectionでh2直後にpが1つ
+      nextAction: 次に試すことのh2直後へ、同じ話題を説明するpを置きます。
     hintId: html-css-ch02-l01-e01-h03
     relatedSlideId: html-css-ch02-l01-s02
 hints:
@@ -116,4 +177,8 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch02-l01-e01-r04]
+    expectedFeedbackRuleIds:
+      - html-css-ch02-l01-e01-r03
+      - html-css-ch02-l01-e01-r04
+      - html-css-ch02-l01-e01-r05
+      - html-css-ch02-l01-e01-r06

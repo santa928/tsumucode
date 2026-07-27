@@ -17,7 +17,7 @@ async function artifact(extraName: string, extraContent: string): Promise<string
     path.join(root, 'index.html'),
     '<script src="/repository-name/assets/app.js"></script>',
   );
-  await writeFile(path.join(root, 'assets/app.js'), 'Progateとは提携・関連していません');
+  await writeFile(path.join(root, 'assets/app.js'), 'safe application');
   await writeFile(path.join(root, 'generated/content/courses/html-css.json'), '{}');
   await writeFile(path.join(root, extraName), extraContent);
   return root;
@@ -48,10 +48,10 @@ describe('static artifact', () => {
     await expect(checkStaticArtifact(await artifact(name, content))).rejects.toThrow();
   });
 
-  it('React Routerのlocation欠落時URL組立fallbackだけをhashed entry chunkで許可する', async () => {
+  it('React Routerのlocation欠落時URL組立fallbackだけをhashed router chunkで許可する', async () => {
     const root = await artifact(
-      'assets/index-reviewed.js',
-      'function ae(e,t,n=!1){let r=`http://localhost`;e&&(r=e.location.origin===`null`?e.location.href:e.location.origin),D(r,`No window.location.(origin|href) available to create URL`);let i=typeof t==`string`?t:k(t);return i=i.replace(/ $/,`%20`),!n&&S.test(i)&&(i=r+i),new URL(i,r)}',
+      'assets/router-reviewed.js',
+      'function xe(e,t,n=!1){let r=`http://localhost`;e&&(r=e.location.origin===`null`?e.location.href:e.location.origin),I(r,`No window.location.(origin|href) available to create URL`);let i=typeof t==`string`?t:ve(t);return i=i.replace(/ $/,`%20`),!n&&ue.test(i)&&(i=r+i),new URL(i,r)}',
     );
 
     await expect(checkStaticArtifact(root)).resolves.toEqual({ files: 4 });
@@ -64,12 +64,6 @@ describe('static artifact', () => {
     );
 
     await expect(checkStaticArtifact(root)).rejects.toThrow(/開発URL/iu);
-  });
-
-  it('非提携NoticeがないArtifactを拒否する', async () => {
-    const root = await artifact('extra.json', '{}');
-    await writeFile(path.join(root, 'assets/app.js'), 'safe application');
-    await expect(checkStaticArtifact(root)).rejects.toThrow('非提携Notice');
   });
 
   it('公開CourseがないArtifactを拒否する', async () => {

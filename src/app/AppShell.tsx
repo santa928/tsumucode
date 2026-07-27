@@ -1,6 +1,5 @@
 import { useSyncExternalStore, type MouseEvent } from 'react';
-import { Link, Outlet } from 'react-router-dom';
-import { ProjectNotice } from '../design-system/components/ProjectNotice';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { learningRuntimeServices } from '../features/learning/runtimeServices';
 import { PersistenceHealthBanner } from '../features/progress/PersistenceHealthBanner';
 
@@ -10,8 +9,15 @@ function focusMainContent(event: MouseEvent<HTMLAnchorElement>): void {
   document.getElementById('main-content')?.focus();
 }
 
-/** 全画面共通のNavigation、本文、safe-area、非提携表記を提供する。 */
+/** Slide／Exerciseの詳細Routeだけを固定学習Viewport対象として判定する。 */
+function isLearningDetailRoute(pathname: string): boolean {
+  return /^\/courses\/[^/]+\/lessons\/[^/]+\/(?:slides|exercises)\/[^/]+\/?$/u.test(pathname);
+}
+
+/** 通常RouteのNavigationと全Route共通の本文・safe-area・Runtime Noticeを提供する。 */
 export function AppShell() {
+  const location = useLocation();
+  const learningRoute = isLearningDetailRoute(location.pathname);
   const notices = useSyncExternalStore(
     learningRuntimeServices.notices.subscribe,
     learningRuntimeServices.notices.getSnapshot,
@@ -19,7 +25,11 @@ export function AppShell() {
   );
 
   return (
-    <div className="flex min-h-dvh flex-col bg-workshop-canvas text-workshop-ink">
+    <div
+      className="tc-app-shell flex min-h-dvh flex-col bg-workshop-canvas text-workshop-ink"
+      data-learning-route={String(learningRoute)}
+      data-testid="app-shell"
+    >
       <a
         href="#main-content"
         onClick={focusMainContent}
@@ -27,26 +37,28 @@ export function AppShell() {
       >
         本文へ移動
       </a>
-      <header className="tc-site-header border-b border-workshop-border bg-workshop-surface">
-        <div className="tc-content-frame mx-auto flex w-full max-w-[var(--tc-content-max)] flex-wrap items-center justify-between gap-4 py-4">
-          <Link to="/" className="inline-flex min-h-11 items-center gap-3 font-black">
-            <span aria-hidden="true" className="grid grid-cols-2 gap-0.5">
-              <span className="size-2.5 rounded-workshop-piece bg-workshop-learning" />
-              <span className="size-2.5 rounded-workshop-piece bg-workshop-complete" />
-              <span className="col-span-2 h-2.5 rounded-workshop-piece bg-workshop-primary" />
-            </span>
-            <span className="text-xl">TsumuCode</span>
-          </Link>
-          <nav aria-label="メインナビゲーション">
-            <Link
-              to="/"
-              className="inline-flex min-h-11 items-center rounded-workshop-sm px-3 py-2 font-bold transition-colors duration-[var(--tc-motion-fast)] hover:bg-workshop-workbench"
-            >
-              教材を選ぶ
+      {!learningRoute ? (
+        <header className="tc-site-header border-b border-workshop-border bg-workshop-surface">
+          <div className="tc-content-frame mx-auto flex w-full max-w-[var(--tc-content-max)] flex-wrap items-center justify-between gap-4 py-4">
+            <Link to="/" className="inline-flex min-h-11 items-center gap-3 font-black">
+              <span aria-hidden="true" className="grid grid-cols-2 gap-0.5">
+                <span className="size-2.5 rounded-workshop-piece bg-workshop-learning" />
+                <span className="size-2.5 rounded-workshop-piece bg-workshop-complete" />
+                <span className="col-span-2 h-2.5 rounded-workshop-piece bg-workshop-primary" />
+              </span>
+              <span className="text-xl">TsumuCode</span>
             </Link>
-          </nav>
-        </div>
-      </header>
+            <nav aria-label="メインナビゲーション">
+              <Link
+                to="/"
+                className="inline-flex min-h-11 items-center rounded-workshop-sm px-3 py-2 font-bold transition-colors duration-[var(--tc-motion-fast)] hover:bg-workshop-workbench"
+              >
+                教材を選ぶ
+              </Link>
+            </nav>
+          </div>
+        </header>
+      ) : null}
       <PersistenceHealthBanner />
       {notices.length > 0 ? (
         <section
@@ -76,15 +88,12 @@ export function AppShell() {
       <main
         id="main-content"
         tabIndex={-1}
-        className="tc-content-frame mx-auto min-h-dvh w-full max-w-[var(--tc-content-max)] flex-1 py-8 md:py-10"
+        className={`tc-content-frame mx-auto w-full max-w-[var(--tc-content-max)] flex-1 ${
+          learningRoute ? 'tc-learning-main' : 'min-h-dvh py-8 md:py-10'
+        }`}
       >
         <Outlet />
       </main>
-      <footer className="tc-site-footer border-t border-workshop-border bg-workshop-surface pt-5 text-sm text-workshop-muted">
-        <div className="tc-content-frame mx-auto w-full max-w-[var(--tc-content-max)]">
-          <ProjectNotice />
-        </div>
-      </footer>
     </div>
   );
 }

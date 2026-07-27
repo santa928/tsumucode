@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">HTMLとStylesheetの接続</title>
+  <desc id="desc">index.htmlのlinkがstyles.cssを読み込み、Property、Colon、Value、SemicolonからなるDeclarationをCardへ届ける図</desc>
+  <rect width="640" height="360" rx="24" fill="#e8dfcf" />
+  <rect x="28" y="28" width="584" height="304" rx="20" fill="#fffaf0" stroke="#8a7657" stroke-width="3" />
+  <text x="56" y="68" font-family="system-ui, sans-serif" font-size="21" font-weight="800" fill="#19352d">Fileをつなぎ、Declarationを届ける</text>
+  <g font-family="system-ui, sans-serif">
+    <rect x="54" y="96" width="230" height="84" rx="15" fill="#19352d" />
+    <text x="74" y="122" font-size="14" font-weight="700" fill="#f4c95d">index.html</text>
+    <text x="74" y="151" font-family="ui-monospace, monospace" font-size="14" fill="#fffaf0">href=&quot;styles.css&quot;</text>
+    <rect x="356" y="96" width="230" height="118" rx="15" fill="#19352d" />
+    <text x="376" y="122" font-size="14" font-weight="700" fill="#f4c95d">styles.css</text>
+    <text x="376" y="151" font-family="ui-monospace, monospace" font-size="14" fill="#7fc3ad">background-color</text>
+    <text x="513" y="151" font-family="ui-monospace, monospace" font-size="14" fill="#fffaf0">:</text>
+    <text x="376" y="178" font-family="ui-monospace, monospace" font-size="14" fill="#f4c95d">#ffffff</text>
+    <text x="447" y="178" font-family="ui-monospace, monospace" font-size="14" fill="#fffaf0">;</text>
+    <rect x="183" y="248" width="274" height="54" rx="14" fill="#ffffff" stroke="#3d7665" stroke-width="3" />
+    <text x="320" y="282" text-anchor="middle" font-size="17" font-weight="800" fill="#24323d">白い Study Card</text>
+    <text x="111" y="206" font-size="14" fill="#3f514b">href = File名</text>
+    <text x="460" y="238" text-anchor="middle" font-size="14" fill="#3f514b">Property : Value ;</text>
+  </g>
+  <g fill="none" stroke="#3d7665" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M284 138h54" />
+    <path d="m328 127 12 11-12 11" />
+    <path d="M470 214v24c0 22-18 37-40 37h-3" />
+    <path d="m438 265-12 10 12 10" />
+  </g>
+</svg>

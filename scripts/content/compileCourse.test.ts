@@ -1,14 +1,23 @@
 // @vitest-environment node
 /** 最小Courseの成功Compile、公開投影、checkOnly、byte決定性を検証する。 */
+import { createHash } from 'node:crypto';
 import { lstat, mkdir, mkdtemp, readdir, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { CourseManifestSchema } from '../../src/core/content/schema';
 import { compileContent } from './compile';
-import { compileCourse, loadAuthoringCourse } from './compileCourse';
+import { compileCourse, loadAuthoringCourse, stringifyCanonicalJson } from './compileCourse';
 
 const temporaryRoots: string[] = [];
+
+describe('stringifyCanonicalJson', () => {
+  it('公開JSONをkey順を固定した1行へ最小化する', () => {
+    expect(stringifyCanonicalJson({ z: 1, a: { y: 2, b: true } })).toBe(
+      '{"a":{"b":true,"y":2},"z":1}\n',
+    );
+  });
+});
 
 /** Testごとに隔離した一時Rootを作成する。 */
 async function createTemporaryRoot(): Promise<string> {
@@ -50,6 +59,7 @@ revision: "1"
 runnerId: html-css
 validatorId: html-css
 glossarySource: glossary.yaml
+conceptsSource: concepts.yaml
 supportedDevices:
   exercise: desktop
   study: [desktop, tablet, mobile]
@@ -83,6 +93,9 @@ items:
   - id: public-course
     visibility: public
     path: course.yaml
+  - id: public-concepts
+    visibility: public
+    path: concepts.yaml
   - id: public-html-role-art
     visibility: public
     path: ${lessonRoot}/slides/assets/html-role.svg
@@ -102,6 +115,13 @@ entries:
     definition: ページの構造を表す言語
     firstSlideId: slide-html-role
     relatedIds: []
+`,
+    'concepts.yaml': `schemaVersion: 1
+concepts:
+  - id: html-element
+    introducedBySlideId: slide-html-role
+    prerequisiteConceptIds: []
+    minimumProjectLevel: transform
 `,
     'chapters/ch00/chapter.yaml': `id: ch00
 sequence: 0
@@ -147,7 +167,8 @@ expectedAction: 見出しを確認する
 estimatedMinutes: 2
 :::
 `,
-    [`${lessonRoot}/slides/assets/html-role.svg`]: '<svg aria-label="HTMLの構造図"></svg>\n',
+    [`${lessonRoot}/slides/assets/html-role.svg`]:
+      '<svg viewBox="0 0 640 360" aria-label="HTMLの構造図"></svg>\n',
     [`${lessonRoot}/slides/prompts/html-role.txt`]: 'HTMLの構造を積み木で表現する\n',
     [`${exerciseRoot}/exercise.yaml`]: `id: exercise-first
 kind: standard
@@ -255,18 +276,51 @@ describe('minimal Course compilation', () => {
     const authoring = await loadAuthoringCourse(courseRoot);
 
     expect(summary.courseCount).toBe(1);
-    expect(CourseManifestSchema.parse(JSON.parse(publicCourseSource) as unknown).id).toBe(
-      'html-css',
+    expect(summary.catalog.courses[0]?.manifestSha256).toBe(
+      createHash('sha256').update(publicCourseSource, 'utf8').digest('hex'),
     );
+    const runtime = CourseManifestSchema.parse(JSON.parse(publicCourseSource) as unknown);
+    expect(runtime.id).toBe('html-css');
+    expect(runtime.concepts).toContainEqual({
+      id: 'html-element',
+      introducedBySlideId: 'slide-html-role',
+      prerequisiteConceptIds: [],
+      minimumProjectLevel: 'transform',
+    });
+    expect(runtime.phases[0]?.chapters[0]?.lessons[0]?.slides[0]).toMatchObject({
+      layout: 'explanation',
+      teachesConceptIds: [],
+      masteryTarget: 'seen',
+      screenBudget: { maxTextCharacters: 420, maxCodeLines: 12, maxVisuals: 2 },
+      assets: [
+        expect.objectContaining({
+          id: 'html-role-art',
+          intrinsicWidth: 640,
+          intrinsicHeight: 360,
+        }),
+      ],
+    });
+    expect(runtime.phases[0]?.chapters[0]?.lessons[0]?.exercises[0]).toMatchObject({
+      requiresConcepts: [],
+      scaffoldLevel: 'seen',
+      steps: [],
+    });
     expect(authoring.exercises[0]?.solutionFiles[0]?.content).toContain('<h1>');
     expect(authoring.exercises[0]?.fixtures[0]?.id).toBe('solution');
+    expect(authoring.masteryDiagnostics).toContainEqual(
+      expect.objectContaining({
+        kind: 'introduction-slide-does-not-teach',
+        conceptId: 'html-element',
+      }),
+    );
     expect(publicCourseSource).not.toMatch(/solutionFiles|fixtures|authoring-solution/u);
+    expect(publicCourseSource).not.toContain('conceptsSource');
     expect(publicProvenance).not.toMatch(/authoring-solution|authoring-fixture|promptPath/u);
     expect(publicProvenance).not.toContain('slides/prompts/html-role.txt');
     expect(publicProvenance).toContain('public-html-role-art');
     await expect(
       readFile(path.join(outputRoot, 'assets/html-css/html-role-art.svg'), 'utf8'),
-    ).resolves.toBe('<svg aria-label="HTMLの構造図"></svg>\n');
+    ).resolves.toBe('<svg viewBox="0 0 640 360" aria-label="HTMLの構造図"></svg>\n');
     await expect(lstat(`${outputRoot}.lock`)).rejects.toMatchObject({ code: 'ENOENT' });
   });
 
@@ -286,6 +340,199 @@ describe('minimal Course compilation', () => {
     );
 
     await expect(loadAuthoringCourse(courseRoot)).rejects.toThrow('Provenance IDがありません');
+  });
+
+  it('画像SVGのviewBoxから安全な寸法を取得できない場合は拒否する', async () => {
+    const root = await createTemporaryRoot();
+    const sourceRoot = path.join(root, 'source');
+    const courseRoot = await writeMinimalCourse(sourceRoot);
+    const svgPath = path.join(
+      courseRoot,
+      'chapters/ch00/lessons/lesson-first/slides/assets/html-role.svg',
+    );
+    await writeFile(svgPath, '<svg viewBox="0 0 0 360"></svg>\n', 'utf8');
+
+    await expect(loadAuthoringCourse(courseRoot)).rejects.toThrow(
+      '画像SVGの有効なviewBox寸法を取得できません: html-role-art',
+    );
+  });
+
+  it('別属性値内のviewBox文字列をSVG寸法として受理しない', async () => {
+    const root = await createTemporaryRoot();
+    const sourceRoot = path.join(root, 'source');
+    const courseRoot = await writeMinimalCourse(sourceRoot);
+    const svgPath = path.join(
+      courseRoot,
+      'chapters/ch00/lessons/lesson-first/slides/assets/html-role.svg',
+    );
+    await writeFile(svgPath, `<svg aria-label=' viewBox="0 0 640 360"'></svg>\n`, 'utf8');
+
+    await expect(loadAuthoringCourse(courseRoot)).rejects.toThrow(
+      '画像SVGの有効なviewBox寸法を取得できません: html-role-art',
+    );
+  });
+
+  it('SVG root開始タグにviewBox属性が重複する場合は拒否する', async () => {
+    const root = await createTemporaryRoot();
+    const sourceRoot = path.join(root, 'source');
+    const courseRoot = await writeMinimalCourse(sourceRoot);
+    const svgPath = path.join(
+      courseRoot,
+      'chapters/ch00/lessons/lesson-first/slides/assets/html-role.svg',
+    );
+    await writeFile(svgPath, `<svg viewBox="0 0 640 360" viewBox='0 0 800 450'></svg>\n`, 'utf8');
+
+    await expect(loadAuthoringCourse(courseRoot)).rejects.toThrow(
+      '画像SVGの有効なviewBox寸法を取得できません: html-role-art',
+    );
+  });
+
+  it.each([
+    ['16進数', '0 0 0x280 360'],
+    ['2進数', '0 0 0b1010000000 360'],
+    ['連続comma', '0,,0,640,360'],
+    ['NBSP', '0\u00a00\u00a0640\u00a0360'],
+    ['空値', ''],
+    ['余剰token', '0 0 640 360 1'],
+  ])('SVG文法外の%sをviewBox値として拒否する', async (_label, viewBox) => {
+    const root = await createTemporaryRoot();
+    const sourceRoot = path.join(root, 'source');
+    const courseRoot = await writeMinimalCourse(sourceRoot);
+    const svgPath = path.join(
+      courseRoot,
+      'chapters/ch00/lessons/lesson-first/slides/assets/html-role.svg',
+    );
+    await writeFile(svgPath, `<svg viewBox="${viewBox}"></svg>\n`, 'utf8');
+
+    await expect(loadAuthoringCourse(courseRoot)).rejects.toThrow(
+      '画像SVGの有効なviewBox寸法を取得できません: html-role-art',
+    );
+  });
+
+  it('SVG numberとcomma-wspの符号・小数・指数を含む正当なviewBoxを受理する', async () => {
+    const root = await createTemporaryRoot();
+    const sourceRoot = path.join(root, 'source');
+    const courseRoot = await writeMinimalCourse(sourceRoot);
+    const svgPath = path.join(
+      courseRoot,
+      'chapters/ch00/lessons/lesson-first/slides/assets/html-role.svg',
+    );
+    await writeFile(svgPath, `<svg viewBox=' \t-.5\r\n,+.25 6.4e2,\t3.6E+2 \r\n'></svg>\n`, 'utf8');
+
+    await expect(loadAuthoringCourse(courseRoot)).resolves.toMatchObject({
+      runtime: {
+        phases: [
+          {
+            chapters: [
+              {
+                lessons: [
+                  {
+                    slides: [
+                      {
+                        assets: [
+                          expect.objectContaining({
+                            intrinsicWidth: 640,
+                            intrinsicHeight: 360,
+                          }),
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    });
+  });
+
+  it('Structured StepのStarter anchor不整合をCompilerで拒否する', async () => {
+    const root = await createTemporaryRoot();
+    const sourceRoot = path.join(root, 'source');
+    const courseRoot = await writeMinimalCourse(sourceRoot);
+    const exercisePath = path.join(
+      courseRoot,
+      'chapters/ch00/lessons/lesson-first/exercises/exercise-first/exercise.yaml',
+    );
+    const exercise = await readFile(exercisePath, 'utf8');
+    await writeFile(
+      exercisePath,
+      exercise.replace(
+        'instructionsSource: instructions.md\nfiles:',
+        `instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: html-element, minimumLevel: fill }
+scaffoldLevel: fill
+steps:
+  - id: write-heading
+    file: index.html
+    target: main要素の内側
+    starterAnchor: "<!-- missing-anchor -->"
+    change: h1要素を追加する
+    observe: 見出しがPreviewへ表示される
+    requiresConceptIds: [html-element]
+    validationRuleIds: [rule-h1]
+files:`,
+      ),
+      'utf8',
+    );
+
+    await expect(loadAuthoringCourse(courseRoot)).rejects.toThrow(
+      /exercise-first.*write-heading.*missing-starter-anchor/u,
+    );
+  });
+
+  it('Legacy Slide kindを移行用Layoutへ正規化する', async () => {
+    const root = await createTemporaryRoot();
+    const sourceRoot = path.join(root, 'source');
+    const courseRoot = await writeMinimalCourse(sourceRoot);
+    const slidePath = path.join(
+      courseRoot,
+      'chapters/ch00/lessons/lesson-first/slides/html-role.md',
+    );
+    const slide = await readFile(slidePath, 'utf8');
+    await writeFile(slidePath, slide.replace('kind: concept', 'kind: code'), 'utf8');
+
+    await expect(loadAuthoringCourse(courseRoot)).resolves.toMatchObject({
+      runtime: {
+        phases: [
+          {
+            chapters: [
+              { lessons: [{ slides: [{ id: 'slide-html-role', layout: 'code-preview' }] }] },
+            ],
+          },
+        ],
+      },
+    });
+  });
+
+  it('明示したSlide Layout契約違反をSource path付きで拒否する', async () => {
+    const root = await createTemporaryRoot();
+    const sourceRoot = path.join(root, 'source');
+    const courseRoot = await writeMinimalCourse(sourceRoot);
+    const slidePath = path.join(
+      courseRoot,
+      'chapters/ch00/lessons/lesson-first/slides/html-role.md',
+    );
+    const slide = await readFile(slidePath, 'utf8');
+    await writeFile(
+      slidePath,
+      slide.replace(
+        'concept: HTML\nassets:',
+        `concept: HTML
+layout: code-preview
+teachesConceptIds: [html-element]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 240, maxCodeLines: 8, maxVisuals: 1 }
+assets:`,
+      ),
+      'utf8',
+    );
+
+    await expect(loadAuthoringCourse(courseRoot)).rejects.toThrow(
+      /slides\/html-role\.md.*code-preview.*Code 1件以上/u,
+    );
   });
 
   it('公開Assetからauthoring Provenanceを参照しない', async () => {

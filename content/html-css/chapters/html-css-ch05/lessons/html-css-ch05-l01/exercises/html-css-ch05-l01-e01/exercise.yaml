@@ -4,6 +4,23 @@ workspaceId: html-css-ch05-l01-e01
 countsTowardStandardExerciseTotal: true
 title: Boxの4層を実寸へそろえる
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: box-model-content-padding-border-margin, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: expand-box-padding
+    file: styles.css
+    target: .box Ruleのpadding Declaration
+    starterAnchor: 'padding: 16px;'
+    change: Valueだけを24pxへ変更し、width、border、marginは残す
+    observe: SourceとComputed Paddingは24pxになり、完成済みのContent幅240px、Border 2px、Margin 32pxも保たれる
+    requiresConceptIds: [box-model-content-padding-border-margin]
+    validationRuleIds:
+      - html-css-ch05-l01-e01-r01
+      - html-css-ch05-l01-e01-r02
+      - html-css-ch05-l01-e01-r03
+      - html-css-ch05-l01-e01-r04
+      - html-css-ch05-l01-e01-r05
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -87,6 +104,23 @@ validationRules:
       nextAction: 'widthを240pxにします。'
     hintId: html-css-ch05-l01-e01-h03
     relatedSlideId: html-css-ch05-l01-s02
+  - id: html-css-ch05-l01-e01-r05
+    label: .boxへPaddingを24pxで記述する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '.box { width: 240px; padding: 24px;'
+    feedback:
+      target: .boxのPadding Source
+      expected: 'padding: 24px;'
+      nextAction: .boxにあるpaddingのValueだけを24pxへ変更します。
+    hintId: html-css-ch05-l01-e01-h02
+    relatedSlideId: html-css-ch05-l01-s02
 hints:
   - id: html-css-ch05-l01-e01-h01
     level: 1
@@ -96,12 +130,12 @@ hints:
   - id: html-css-ch05-l01-e01-h02
     level: 2
     title: 目的を考える
-    text: Padding 24、Border 2、Margin 32の各辺をそろえます。
+    text: ContentとBorderの間を広げるのはPaddingです。
     relatedSlideId: html-css-ch05-l01-s02
   - id: html-css-ch05-l01-e01-h03
     level: 3
     title: 具体的に直す
-    text: width 240pxと3つのSpacing Valueを具体的に書きます。
+    text: .boxのpaddingにある16pxだけを24pxへ書き換えます。
     relatedSlideId: html-css-ch05-l01-s02
 relatedSlideIds:
   - html-css-ch05-l01-s01
@@ -136,4 +170,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch05-l01-e01-r01]
+    expectedFeedbackRuleIds: [html-css-ch05-l01-e01-r01, html-css-ch05-l01-e01-r05]

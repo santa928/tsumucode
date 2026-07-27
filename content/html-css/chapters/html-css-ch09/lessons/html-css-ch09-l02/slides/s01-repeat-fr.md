@@ -1,12 +1,23 @@
 ---
 id: html-css-ch09-l02-s01
-title: repeatとfrが等幅Trackを簡潔に表す
+title: repeatは同じTrack定義をまとめる
 kind: code
 concept: repeat-fr-tracks
-assets: []
+layout: code-preview
+teachesConceptIds: [repeat-function, fr-unit]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 390, maxCodeLines: 4, maxVisuals: 1 }
+assets:
+  - id: repeat-three-tracks
+    source: assets/repeat-fr-calculation.svg
+    mediaType: image
+    alt: 3つの等幅Trackをrepeat関数でまとめる対応図
+    provenanceId: ch09-repeat-fr-calculation-original
 ---
 
-同じTrack定義を繰り返すときは`repeat()`を使えます。`fr`はGapなどを除いた利用可能な余白を比率で分ける単位です。
+同じ列幅を繰り返すときは`repeat(回数, Track幅)`でまとめられます。`1fr 1fr 1fr`なら`repeat(3, 1fr)`です。
+
+![3つのTrackとrepeatの対応](asset:repeat-three-tracks)
 
 ```css
 .gallery {
@@ -14,12 +25,12 @@ assets: []
 }
 ```
 
-幅600px、Gap 16pxが2つなら、Trackへ分ける幅は568pxです。各1frは約189.33pxになります。
+1つ目の引数`3`が列数、2つ目の`1fr`が繰り返す幅です。`fr`の詳しい幅計算は次のスライドで確認します。
 
 :::practice
-prompt: 600pxから16pxのGapを2つ引き、3つの1frへ分ける計算をします。
-expectedAction: 568 ÷ 3で約189.33pxと答える
+prompt: 160pxの列を4本作るrepeatを答えます。
+expectedAction: repeat(4, 160px)と答える
 estimatedMinutes: 2
 :::
 
-次はGapを含めたItemの実測位置を確認します。
+次は固定pxを、残り幅を分ける`fr`へ置き換えます。

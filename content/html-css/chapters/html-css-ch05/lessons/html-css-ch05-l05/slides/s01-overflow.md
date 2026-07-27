@@ -1,19 +1,42 @@
 ---
 id: html-css-ch05-l05-s01
-title: OverflowはContentが境界を越えた状態
+title: overflow-xは横の境界越えを表す
 kind: concept
 concept: overflow-boundary
-assets: []
+layout: code-preview
+teachesConceptIds: [overflow-x]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 420, maxCodeLines: 9, maxVisuals: 1 }
+assets:
+  - id: safe-sizing-overflow
+    source: assets/safe-sizing.svg
+    mediaType: image
+    alt: 320pxのFrameから360pxのCardが横へはみ出す図
+    provenanceId: ch05-safe-sizing-original
 ---
 
-固定幅、長いText、Paddingが重なると、Childのright端がContainerを越えて横Scrollを生むことがあります。
+Childの外幅が親の幅を越えると、`overflow-x`が発生します。内容を隠す前に、ChildのSizingを直します。
 
-`overflow: hidden`で隠す前に、Boxのwidth、max-width、box-sizingを直し、内容が自然に収まるようにします。
+![横Overflowが起きるCard](asset:safe-sizing-overflow)
+
+実習のFrameは幅320px・高さ220px、Cardは幅360px・高さ240pxです。さらに既定のcontent-boxではPaddingとBorderも外へ加わるため、rightとbottomの両方を越えます。
+
+```css
+.frame {
+  width: 320px;
+  height: 220px;
+}
+.safe-card {
+  width: 360px;
+  height: 240px;
+  padding: 24px;
+}
+```
 
 :::practice
-prompt: はみ出しを隠す方法とSizing原因を直す方法を比べます。
-expectedAction: 内容を失わないSizing修正を先に選ぶ
+prompt: 320×220pxのFrameと360×240pxのChildで越える辺を答えます。
+expectedAction: rightとbottomを越え、横方向にはoverflow-xが起きると答える
 estimatedMinutes: 2
 :::
 
-次はrightとbottomの境界値を実測します。
+次は、親幅へ安全に収める2つの宣言を見ます。

@@ -6,9 +6,9 @@ body {
 }
 [data-grid] {
   display: grid;
-  grid-template-columns: 160px 240px;
+  grid-template-columns: 200px 200px;
   width: 416px;
-  gap: 8px;
+  gap: 16px;
 }
 [data-grid] > * {
   box-sizing: border-box;

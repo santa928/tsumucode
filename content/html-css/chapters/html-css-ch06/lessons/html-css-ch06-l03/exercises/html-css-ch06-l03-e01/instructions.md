@@ -1,8 +1,7 @@
 ## Primary Colorを2つの部品で共有する
 
-1. `:root`へ`--color-primary: #2d5d62`を宣言します。
-2. `[data-action]`のBackground Colorで変数を利用します。
-3. `[data-tag]`のText Colorでも同じ変数を利用します。
-4. 両方のComputed Colorが`rgb(45, 93, 98)`になったことを確認します。
+1. `:root`のComment直後へ`--color-primary: #2d5d62;`を追加します。
+2. `[data-action]`の`background-color`を`var(--color-primary)`へ変更します。
+3. `[data-tag]`の`color`も`var(--color-primary)`へ変更します。
 
-宣言した値を1箇所だけ変え、2つの部品へ同時に届くこともPreviewで試します。
+実行後に、1つの宣言がActionの背景とTagの文字へ届いたことを確認します。

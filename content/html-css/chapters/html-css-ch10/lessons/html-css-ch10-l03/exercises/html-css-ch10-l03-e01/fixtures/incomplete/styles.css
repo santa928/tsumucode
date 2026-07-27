@@ -5,8 +5,8 @@ body {
 [data-container] {
   box-sizing: border-box;
   width: calc(100% - 32px);
-  max-width: 720px;
-  margin-inline: 0 auto;
+  max-width: 900px;
+  margin-inline: auto;
   padding: 24px;
   background: #fff;
 }

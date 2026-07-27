@@ -4,6 +4,40 @@ workspaceId: html-css-ch06-l03-e01
 countsTowardStandardExerciseTotal: true
 title: Primary Colorを2つの部品で共有する
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: custom-property-root, minimumLevel: transform }
+  - { conceptId: var-function, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: declare-primary-color
+    file: styles.css
+    target: :root RuleのComment直後
+    starterAnchor: '/* Primary Colorをここへ宣言 */'
+    change: Commentの次へ--color-primary #2d5d62のDeclarationを追加する
+    observe: Sourceの:rootへPrimary Colorが1箇所だけ宣言される
+    requiresConceptIds: [custom-property-root]
+    validationRuleIds:
+      - html-css-ch06-l03-e01-r03
+  - id: reuse-primary-on-action
+    file: styles.css
+    target: '[data-action] Ruleのbackground-color Declaration'
+    starterAnchor: 'background-color: #6b7c80;'
+    change: Valueをvar(--color-primary)へ変更する
+    observe: Sourceはvar関数を使い、ActionのComputed Background Colorがrgb(45, 93, 98)になる
+    requiresConceptIds: [custom-property-root, var-function]
+    validationRuleIds:
+      - html-css-ch06-l03-e01-r01
+      - html-css-ch06-l03-e01-r04
+  - id: reuse-primary-on-tag
+    file: styles.css
+    target: '[data-tag] Ruleのcolor Declaration'
+    starterAnchor: '[data-tag] {'
+    change: Valueをvar(--color-primary)へ変更する
+    observe: Sourceは同じvar関数を使い、TagのComputed Colorもrgb(45, 93, 98)になる
+    requiresConceptIds: [custom-property-root, var-function]
+    validationRuleIds:
+      - html-css-ch06-l03-e01-r02
+      - html-css-ch06-l03-e01-r05
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -45,6 +79,57 @@ validationRules:
       target: TagのComputed Text Color
       expected: rgb(45, 93, 98)
       nextAction: Tagのcolorから同じ--color-primaryをvar関数で参照します。
+    hintId: html-css-ch06-l03-e01-h03
+    relatedSlideId: html-css-ch06-l03-s02
+  - id: html-css-ch06-l03-e01-r03
+    label: rootへPrimary Colorを宣言する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: ':root { --color-primary: #2d5d62;'
+    feedback:
+      target: :rootのCustom Property Source
+      expected: '--color-primary: #2d5d62;'
+      nextAction: :rootのComment直後へCustom Propertyを1行追加します。
+    hintId: html-css-ch06-l03-e01-h01
+    relatedSlideId: html-css-ch06-l03-s01
+  - id: html-css-ch06-l03-e01-r04
+    label: Actionの背景でvar関数を使う
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '[data-action] { background-color: var(--color-primary);'
+    feedback:
+      target: ActionのBackground Source
+      expected: 'background-color: var(--color-primary);'
+      nextAction: '[data-action]の先頭にある背景色Valueをvar関数へ変更します。'
+    hintId: html-css-ch06-l03-e01-h02
+    relatedSlideId: html-css-ch06-l03-s02
+  - id: html-css-ch06-l03-e01-r05
+    label: Tagの文字でvar関数を使う
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '[data-tag] { color: var(--color-primary);'
+    feedback:
+      target: TagのColor Source
+      expected: 'color: var(--color-primary);'
+      nextAction: '[data-tag]のcolor Valueも同じvar関数へ変更します。'
     hintId: html-css-ch06-l03-e01-h03
     relatedSlideId: html-css-ch06-l03-s02
 hints:
@@ -96,4 +181,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch06-l03-e01-r02]
+    expectedFeedbackRuleIds: [html-css-ch06-l03-e01-r05]

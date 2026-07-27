@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Label関連付けとButton Type</title>
+  <desc id="desc">labelのforとinputのidが一致し、確認Buttonへtype buttonを指定する構造</desc>
+  <rect width="640" height="360" rx="24" fill="#e8dfcf" />
+  <rect x="30" y="28" width="580" height="304" rx="20" fill="#fffaf0" stroke="#8a7657" stroke-width="3" />
+  <text x="62" y="72" font-family="system-ui, sans-serif" font-size="22" font-weight="800" fill="#19352d">属性の値で関係と動作を固定する</text>
+  <g font-family="ui-monospace, monospace" font-size="18" fill="#19352d">
+    <rect x="62" y="104" width="220" height="58" rx="14" fill="#f4c95d" />
+    <text x="172" y="140" text-anchor="middle">for=&quot;display-name&quot;</text>
+    <rect x="358" y="104" width="220" height="58" rx="14" fill="#dcebe5" />
+    <text x="468" y="140" text-anchor="middle">id=&quot;display-name&quot;</text>
+    <rect x="168" y="226" width="304" height="62" rx="14" fill="#19352d" />
+    <text x="320" y="264" text-anchor="middle" fill="#fffaf0">button type=&quot;button&quot;</text>
+  </g>
+  <g fill="none" stroke="#3d7665" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M282 133h66" />
+    <path d="m338 122 12 11-12 11" />
+  </g>
+  <g font-family="system-ui, sans-serif" font-size="17" fill="#3f514b" text-anchor="middle">
+    <text x="320" y="194">同じ値ならLabelを選んでもInputへFocus</text>
+    <text x="320" y="316">確認だけを行い、Formを送信しない</text>
+  </g>
+</svg>

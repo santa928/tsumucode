@@ -1,7 +1,7 @@
 id: html-css-ch10-l02
 kind: standard
-title: 内容からBreakpointを決める
-goal: 390px、768px、1280pxで内容が崩れないMedia Queryを設計できる
+title: 内容が窮屈になる幅で切り替える
+goal: MobileのColumnを保ち、768px以上だけRowへ変えるMedia Queryを修正できる
 estimatedMinutes: 12
 prerequisiteLessonIds: [html-css-ch10-l01]
 slideSources:
@@ -9,7 +9,7 @@ slideSources:
   - slides/s02-media-query.md
 exerciseSources:
   - exercises/html-css-ch10-l02-e01/exercise.yaml
-reflection: 端末名ではなく内容が崩れる幅をBreakpointにする
+reflection: 端末名ではなく、2枚のCardが横に収まる幅からBreakpointを説明する
 glossaryRefs: [breakpoint, media-query, responsive-layout]
 nextLessonId: html-css-ch10-l03
 completion:

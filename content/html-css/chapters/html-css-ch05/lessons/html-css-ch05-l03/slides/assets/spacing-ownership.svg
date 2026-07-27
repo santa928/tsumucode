@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" aria-labelledby="title desc">
+  <title id="title">PaddingとMarginの所属</title>
+  <desc id="desc">Card内側のPadding 24pxと2枚のCard間のMargin 32pxを示す</desc>
+  <rect width="720" height="400" rx="28" fill="#f5efe4" />
+  <g font-family="system-ui, sans-serif">
+    <text x="360" y="30" text-anchor="middle" fill="#6f4b1f" font-size="17" font-weight="700">Padding 24px（Cardの内側）</text>
+    <rect x="126" y="48" width="468" height="128" rx="18" fill="#c9ded9" stroke="#2d5d62" stroke-width="3" />
+    <rect x="174" y="78" width="372" height="68" rx="10" fill="#fffdf8" />
+    <text x="360" y="109" text-anchor="middle" fill="#24323d" font-size="20" font-weight="750">CardのContent</text>
+    <text x="360" y="135" text-anchor="middle" fill="#52616a" font-size="14">背景の内側</text>
+    <path d="M98 68v88M88 68h20M88 156h20" stroke="#b7893d" stroke-width="3" fill="none" />
+    <rect x="126" y="248" width="468" height="104" rx="18" fill="#c9ded9" stroke="#2d5d62" stroke-width="3" />
+    <rect x="174" y="276" width="372" height="48" rx="10" fill="#fffdf8" />
+    <text x="360" y="306" text-anchor="middle" fill="#24323d" font-size="19" font-weight="750">次のCard</text>
+    <path d="M620 178v68M610 178h20M610 246h20" stroke="#bf5b42" stroke-width="3" fill="none" />
+    <text x="602" y="219" text-anchor="end" fill="#8f3f2d" font-size="17" font-weight="700">Margin 32px</text>
+    <text x="360" y="388" text-anchor="middle" fill="#23484c" font-size="16" font-weight="700">内側は padding　・　Box同士は margin</text>
+  </g>
+</svg>

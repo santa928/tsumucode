@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" aria-labelledby="title desc">
+  <title id="title">content-boxとborder-boxの比較</title>
+  <desc id="desc">同じwidth 320pxでもcontent-boxは外幅372px、border-boxは外幅320pxになる</desc>
+  <rect width="720" height="400" rx="28" fill="#f5efe4" />
+  <g font-family="system-ui, sans-serif">
+    <text x="184" y="54" text-anchor="middle" fill="#24323d" font-size="22" font-weight="750">content-box</text>
+    <text x="536" y="54" text-anchor="middle" fill="#24323d" font-size="22" font-weight="750">border-box</text>
+    <rect x="46" y="92" width="276" height="188" rx="18" fill="#ead9bc" stroke="#bf5b42" stroke-width="4" />
+    <rect x="76" y="122" width="216" height="128" rx="12" fill="#fffdf8" stroke="#2d5d62" stroke-width="3" />
+    <text x="184" y="181" text-anchor="middle" fill="#24323d" font-size="20" font-weight="700">width 320px</text>
+    <text x="184" y="208" text-anchor="middle" fill="#6a777f" font-size="15">Contentだけ</text>
+    <rect x="400" y="92" width="272" height="188" rx="18" fill="#c9ded9" stroke="#2d5d62" stroke-width="4" />
+    <rect x="432" y="124" width="208" height="124" rx="12" fill="#fffdf8" />
+    <text x="536" y="181" text-anchor="middle" fill="#24323d" font-size="20" font-weight="700">width 320px</text>
+    <text x="536" y="208" text-anchor="middle" fill="#52616a" font-size="15">PaddingとBorderを含む</text>
+    <text x="184" y="316" text-anchor="middle" fill="#8f3f2d" font-size="21" font-weight="750">外幅 372px</text>
+    <text x="536" y="316" text-anchor="middle" fill="#23484c" font-size="21" font-weight="750">外幅 320px</text>
+    <text x="360" y="368" text-anchor="middle" fill="#6f4b1f" font-size="16" font-weight="700">320 + Padding 48 + Border 4　／　指定幅の内側へ含める</text>
+  </g>
+</svg>

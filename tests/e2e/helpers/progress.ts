@@ -135,8 +135,9 @@ export async function seedCompletedProgress(page: Page): Promise<void> {
               'html-css-ch00-l01-s01',
               'html-css-ch00-l01-s02',
               'html-css-ch00-l01-s03',
+              'html-css-ch00-l01-s04',
             ],
-            currentSlideId: 'html-css-ch00-l01-s03',
+            currentSlideId: 'html-css-ch00-l01-s04',
             passedExerciseIds: ['html-css-ch00-l01-e01'],
             passedChecklistItemIds: [],
             passedRuleIds: ['html-css-ch00-l01-e01-r01', 'html-css-ch00-l01-e01-r02'],
@@ -264,9 +265,11 @@ export async function readStoredProgress(page: Page): Promise<StoredProgressProb
   });
 }
 
-/** CodeMirrorの現在選択中Document textをDOM上の行構造に依存せず返す。 */
+/** CodeMirrorの現在選択中Document textを行要素間の改行も含めて返す。 */
 export async function editorText(page: Page): Promise<string> {
-  return page.locator('.cm-content').evaluate((element) => element.textContent);
+  return page
+    .locator('.cm-content .cm-line')
+    .evaluateAll((lines) => lines.map((line) => line.textContent).join('\n'));
 }
 
 /** CodeMirror全体を置換し、期待値がReact stateへ反映されるまで待つ。 */

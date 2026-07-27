@@ -5,10 +5,10 @@ body {
   color: #24323d;
 }
 .reading-sample {
+  font-size: 1rem;
+  line-height: 1.25;
+  font-family: system-ui, sans-serif;
   max-width: 42rem;
   padding: 24px;
   background: #fff;
-  font-size: 1rem;
-  line-height: 1.25;
-  font-family: sans-serif;
 }

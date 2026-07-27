@@ -1,7 +1,7 @@
 id: html-css-ch09-l03
 kind: standard
-title: Responsive Gridを作る
-goal: minmaxとauto-fitでViewport幅に応じたColumn数を作り、Overflowを防げる
+title: 幅に応じて列数を変える
+goal: minmaxとauto-fitを順に指定し、Cardの最小幅を守りながら自動で折り返せる
 estimatedMinutes: 12
 prerequisiteLessonIds: [html-css-ch09-l02]
 slideSources:
@@ -9,7 +9,7 @@ slideSources:
   - slides/s02-auto-fit.md
 exerciseSources:
   - exercises/html-css-ch09-l03-e01/exercise.yaml
-reflection: 最小Track幅と利用可能幅からColumn数を説明する
+reflection: 最小Track幅・Gap・利用可能幅から、収まるColumn数を説明する
 glossaryRefs: [minmax-function, auto-fit, responsive-grid]
 nextLessonId: html-css-ch09-l04
 completion:

@@ -196,12 +196,26 @@ function safelyMeasure(stage: 'start' | 'end', name: string, marker: string): vo
   }
 }
 
+/** File keyと内容が完全に一致するかを、未知のDraft由来Fileも含めて判定する。 */
+function filesEqual(
+  left: Readonly<Record<string, string>>,
+  right: Readonly<Record<string, string>>,
+): boolean {
+  const paths = Object.keys(left);
+  return (
+    paths.length === Object.keys(right).length &&
+    paths.every((path) => Object.hasOwn(right, path) && left[path] === right[path])
+  );
+}
+
 /** Editor、Runner、Validator、Repositoryをrevision付きの1セッションへ直列化する。 */
 export class LearningSessionController {
   readonly #listeners = new Set<() => void>();
   readonly #autosave;
   readonly #editableFiles: ReadonlyMap<string, boolean>;
   readonly #exerciseSessionId: string;
+  readonly #starterFiles: Readonly<Record<string, string>>;
+  readonly #starterSelectedFile: string;
   #operationTail: Promise<void> = Promise.resolve();
   #previewTimer: ReturnType<typeof setTimeout> | undefined;
   #lastPassingSnapshots: ExerciseDraft['lastPassingSnapshots'] = {};
@@ -218,6 +232,8 @@ export class LearningSessionController {
     const files = Object.fromEntries(input.exercise.files.map((file) => [file.path, file.content]));
     const selectedFile = input.exercise.files[0]?.path;
     if (selectedFile === undefined) throw new Error('ExerciseにFileがありません');
+    this.#starterFiles = Object.freeze({ ...files });
+    this.#starterSelectedFile = selectedFile;
     this.#editableFiles = new Map(
       input.exercise.files.map((file) => [file.path, file.editable] as const),
     );
@@ -414,8 +430,8 @@ export class LearningSessionController {
     return this.#enqueue(() => this.input.runner.prepare(frame));
   }
 
-  /** 既知かつeditableなFileだけを変更し、保存と250ms previewを予約する。 */
-  edit(path: string, content: string): void {
+  /** 既知かつeditableなFileだけを変更し、保存と250ms previewを予約して新revisionを返す。 */
+  edit(path: string, content: string): number {
     this.#assertAcceptingOperations();
     const editable = this.#editableFiles.get(path);
     if (editable === undefined) throw new Error(`FileがExerciseに存在しません: ${path}`);
@@ -432,6 +448,29 @@ export class LearningSessionController {
         if (!(error instanceof StaleExecutionError)) this.#reportBackgroundError(error);
       });
     }, 250);
+    return this.#state.executionRevision;
+  }
+
+  /** 現在Exerciseの全Starterを1 mutationで復元し、変更があった場合だけ保存を予約する。 */
+  resetToStarter(): boolean {
+    this.#assertAcceptingOperations();
+    if (filesEqual(this.#state.files, this.#starterFiles)) return false;
+    this.#markDraftMutation();
+    this.#clearPreviewTimer();
+    const selectedFile = Object.hasOwn(this.#starterFiles, this.#state.selectedFile)
+      ? this.#state.selectedFile
+      : this.#starterSelectedFile;
+    this.#lastPassingSnapshots = {};
+    this.#lastValidationBatch = [];
+    this.#dispatch({
+      type: 'editor.reset',
+      files: this.#starterFiles,
+      selectedFile,
+    });
+    const draft = this.#draft();
+    this.input.onDirty?.(draft);
+    this.#autosave.schedule(draft);
+    return true;
   }
 
   /** 存在するFileだけをEditor選択へ反映して保存する。 */
@@ -641,6 +680,7 @@ export class LearningSessionController {
       const result = await this.input.validator.validate({
         exerciseId: item.id,
         rules: item.validationRules,
+        files: execution.files,
         snapshots,
         diagnostics,
         now: this.input.now(),

@@ -5,6 +5,33 @@ workspaceId: html-css-profile-project
 countsTowardStandardExerciseTotal: false
 title: WorksとContactを2 Viewportへ収める
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: contact, minimumLevel: compose }
+  - { conceptId: responsive, minimumLevel: compose }
+scaffoldLevel: compose
+steps:
+  - id: compose-contact
+    file: index.html
+    target: main末尾のContact Section
+    starterAnchor: '</main>'
+    change: bodyへdata-profile-pageを付け、h2、説明、相手と目的が分かるLinkを持つContactを追加する
+    observe: Contact Linkを単独で読んでも目的が伝わり、Page境界を2幅で測れる
+    requiresConceptIds: [contact]
+    validationRuleIds:
+      - html-css-ch12-l04-e01-r03
+  - id: make-project-responsive
+    file: styles.css
+    target: Works Grid、Work画像、Mobile Media Query
+    starterAnchor: '.skill-list li {'
+    change: Worksの列を可変にし、画像をCardへ収め、700px以下ではHeroを1列にする
+    observe: GridまたはFlexのLayoutを保ち、390pxと1280pxでDocumentと画像がはみ出さない
+    requiresConceptIds: [responsive]
+    validationRuleIds:
+      - html-css-ch12-l04-e01-r01
+      - html-css-ch12-l04-e01-r02
+      - html-css-ch12-l04-e01-r04
+      - html-css-ch12-l04-e01-r05
+      - html-css-ch12-l04-e01-r06
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -84,6 +111,23 @@ validationRules:
       nextAction: Work画像へwidthとmax-width 100%を指定しCard境界へ収めます。
     hintId: html-css-ch12-l04-e01-h03
     relatedSlideId: html-css-ch12-l04-g01
+  - id: html-css-ch12-l04-e01-r06
+    label: Work画像の幅境界をSourceへ書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390, desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '.work-image { display: block; width: 100%; max-width: 100%; height: auto; }'
+    feedback:
+      target: Work ImageのResponsive Source
+      expected: widthとmax-width 100%、height auto
+      nextAction: .work-imageへ3つの境界を指定します。
+    hintId: html-css-ch12-l04-e01-h03
+    relatedSlideId: html-css-ch12-l04-g01
 hints:
   - id: html-css-ch12-l04-e01-h01
     level: 1
@@ -105,7 +149,7 @@ previewViewports:
   - { id: mobile-390, width: 390, height: 844 }
   - { id: desktop-1280, width: 1280, height: 720 }
 assets:
-  - id: avatar-project-works
+  - id: profile-avatar-l04-source
     source: assets/profile-avatar.svg
     mediaType: image
     alt: オレンジのCode Cardを持つつむぎ
@@ -137,4 +181,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch12-l04-e01-r05]
+    expectedFeedbackRuleIds: [html-css-ch12-l04-e01-r05, html-css-ch12-l04-e01-r06]

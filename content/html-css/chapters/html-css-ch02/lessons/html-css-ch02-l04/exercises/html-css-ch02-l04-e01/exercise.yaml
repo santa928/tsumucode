@@ -4,6 +4,27 @@ workspaceId: html-css-ch02-l04-e01
 countsTowardStandardExerciseTotal: true
 title: 注意の重要さと発声上の強調を表す
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: strong-element, minimumLevel: transform }
+  - { conceptId: em-element, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: replace-important-span
+    file: index.html
+    target: 保存してからを包むimportantクラスのspan
+    starterAnchor: <span class="important">保存してから</span>
+    change: 開始Tagと終了Tagのspanをstrongへ変更する
+    observe: 保存の注意が文脈上の重要事項として伝わる
+    requiresConceptIds: [strong-element]
+    validationRuleIds: [html-css-ch02-l04-e01-r01, html-css-ch02-l04-e01-r02]
+  - id: replace-emphasis-span
+    file: index.html
+    target: HTMLを包むemphasisクラスのspan
+    starterAnchor: <span class="emphasis">HTML</span>
+    change: 開始Tagと終了Tagのspanをemへ変更する
+    observe: CSSと対比して読むHTMLへ発声上の強調が加わる
+    requiresConceptIds: [em-element]
+    validationRuleIds: [html-css-ch02-l04-e01-r03, html-css-ch02-l04-e01-r04]
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -17,12 +38,12 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'p strong' }
+    target: { kind: selector, selector: 'p strong.important' }
     assertion: { kind: count, operator: equals, expected: 1 }
     feedback:
       target: 保存に関する重要な注意
-      expected: Paragraph内のstrongが1つ
-      nextAction: 保存してからという重要部分のspanをstrongへ変更します。
+      expected: importantクラスを持つstrongがParagraph内に1つ
+      nextAction: importantのclassは残し、保存してからを包むspanをstrongへ変更します。
     hintId: html-css-ch02-l04-e01-h01
     relatedSlideId: html-css-ch02-l04-s01
   - id: html-css-ch02-l04-e01-r02
@@ -31,7 +52,7 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'p strong' }
+    target: { kind: selector, selector: 'p strong.important' }
     assertion: { kind: accessible-name, operator: present }
     feedback:
       target: strongの内容
@@ -45,12 +66,12 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'p em' }
+    target: { kind: selector, selector: 'p em.emphasis' }
     assertion: { kind: count, operator: equals, expected: 1 }
     feedback:
       target: CSSと対比して強く読む言葉
-      expected: Paragraph内のemが1つ
-      nextAction: CSSと対比するHTMLのspanをemへ変更します。
+      expected: emphasisクラスを持つemがParagraph内に1つ
+      nextAction: emphasisのclassは残し、CSSと対比するHTMLのspanをemへ変更します。
     hintId: html-css-ch02-l04-e01-h02
     relatedSlideId: html-css-ch02-l04-s02
   - id: html-css-ch02-l04-e01-r04
@@ -59,7 +80,7 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'p em' }
+    target: { kind: selector, selector: 'p em.emphasis' }
     assertion: { kind: accessible-name, operator: present }
     feedback:
       target: emの内容

@@ -21,6 +21,8 @@ project:
       required: true
       ruleIds:
         - html-css-ch13-l01-e01-r01
+        - html-css-ch13-l01-e01-r01-main
+        - html-css-ch13-l01-e01-r01-footer
         - html-css-ch13-l01-e01-r02
     - id: capstone-navigation
       label: Navigationの目的を支援技術へ伝えた
@@ -41,6 +43,7 @@ project:
       label: Card幅と4 Viewportの横Overflowを確認した
       required: true
       ruleIds:
+        - html-css-ch13-l01-e01-r07-card-count
         - html-css-ch13-l01-e01-r07
         - html-css-ch13-l01-e01-r08
     - id: capstone-keyboard
@@ -57,10 +60,13 @@ completion:
   kind: capstone
   requiredRuleIds:
     - html-css-ch13-l01-e01-r01
+    - html-css-ch13-l01-e01-r01-main
+    - html-css-ch13-l01-e01-r01-footer
     - html-css-ch13-l01-e01-r02
     - html-css-ch13-l01-e01-r03
     - html-css-ch13-l01-e01-r04
     - capstone-layout-method
+    - html-css-ch13-l01-e01-r07-card-count
     - html-css-ch13-l01-e01-r07
     - html-css-ch13-l01-e01-r08
     - html-css-ch13-l01-e01-r09

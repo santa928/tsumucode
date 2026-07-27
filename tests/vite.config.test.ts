@@ -49,6 +49,39 @@ describe('Vite production build', () => {
     expect(config.build.manifest).toBe(true);
   });
 
+  it('初期HTMLへinlineする単一CSSを遅延Chunkの追加requestから分離する', async () => {
+    const config = await resolveConfig(
+      { configFile: fileURLToPath(new URL('../vite.config.ts', import.meta.url)) },
+      'build',
+      'production',
+    );
+
+    expect(config.build.cssCodeSplit).toBe(false);
+  });
+
+  it('Mode別manifest closureをpost-buildで先読みするためViteのJS preload helperを無効にする', async () => {
+    const config = await resolveConfig(
+      { configFile: fileURLToPath(new URL('../vite.config.ts', import.meta.url)) },
+      'build',
+      'production',
+    );
+
+    expect(config.build.modulePreload).toBe(false);
+  });
+
+  it('通常学習とLibraryをHTML bootstrapから独立したProduction entryとして生成する', async () => {
+    const config = await resolveConfig(
+      { configFile: fileURLToPath(new URL('../vite.config.ts', import.meta.url)) },
+      'build',
+      'production',
+    );
+    const input = config.build.rolldownOptions.input as Readonly<Record<string, string>>;
+
+    expect(Object.keys(input).sort()).toEqual(['index', 'library', 'normalLearning']);
+    expect(input.library).toMatch(/\/src\/app\/libraryEntry\.tsx$/u);
+    expect(input.normalLearning).toMatch(/\/src\/app\/normalLearningEntry\.tsx$/u);
+  });
+
   it('Vitestの全Suiteを再現可能な2 worker以下で実行する', async () => {
     const config = await resolveConfig(
       { configFile: fileURLToPath(new URL('../vite.config.ts', import.meta.url)) },

@@ -3,6 +3,7 @@ dist/
 coverage/
 public/generated/content/
 content/**/fixtures/code-error/**
+content/**/fixtures/unindented/**
 docs/superpowers/
 .superpowers/
 progress.md

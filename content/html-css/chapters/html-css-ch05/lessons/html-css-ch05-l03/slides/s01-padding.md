@@ -1,19 +1,36 @@
 ---
 id: html-css-ch05-l03-s01
-title: PaddingはContentとBorderの間を広げる
+title: paddingはBoxの内側を広げる
 kind: concept
 concept: padding-spacing
-assets: []
+layout: code-preview
+teachesConceptIds: [padding-property]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 400, maxCodeLines: 3, maxVisuals: 1 }
+assets:
+  - id: spacing-padding
+    source: assets/spacing-ownership.svg
+    mediaType: image
+    alt: Card内側のPadding 24pxを強調した図
+    provenanceId: ch05-spacing-ownership-original
 ---
 
-PaddingはCardの背景色の内側に残る余白です。TextがBorderへ貼り付かないための呼吸を作ります。
+`padding`はContentとBorderの間にある内側の余白です。背景色はPaddingまで広がるため、文字とCardの端を離すときに使います。
 
-Content周囲を24px空けたいならCardへ`padding: 24px`を設定します。隣のCardとの距離には使いません。
+![Card内側のPadding](asset:spacing-padding)
+
+実習では`.card`の`padding: 16px;`を`24px`へ変えます。Card同士の距離にはPaddingを使いません。
+
+```css
+.card {
+  padding: 24px;
+}
+```
 
 :::practice
-prompt: TextとCard背景の端の距離をpaddingとmarginから選びます。
+prompt: 文字とCard背景の端を離すPropertyを選びます。
 expectedAction: Box内部の距離なのでpaddingと答える
 estimatedMinutes: 2
 :::
 
-次は隣り合うBoxの外側をMarginで離します。
+次は、Card同士の外側を離すPropertyを見ます。

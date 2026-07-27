@@ -4,6 +4,33 @@ workspaceId: html-css-ch08-l04-e01
 countsTowardStandardExerciseTotal: true
 title: 3枚ずつ折り返すCard Gridを作る
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: flex-wrap, minimumLevel: transform }
+  - { conceptId: flex-basis, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: allow-card-wrapping
+    file: styles.css
+    target: '[data-card-grid] Ruleのflex-wrap Declaration'
+    starterAnchor: 'flex-wrap: nowrap;'
+    change: Valueをwrapへ変更する
+    observe: 収まらないCardが次のFlex Lineへ進める状態になる
+    requiresConceptIds: [flex-wrap]
+    validationRuleIds:
+      - html-css-ch08-l04-e01-r01
+      - html-css-ch08-l04-e01-r02
+      - html-css-ch08-l04-e01-r05
+  - id: fit-three-card-bases
+    file: styles.css
+    target: '[data-card] Ruleのflex-basis Declaration'
+    starterAnchor: 'flex-basis: 220px;'
+    change: Valueを180pxへ変更する
+    observe: 3枚分の572pxが600pxのContainerへ収まる
+    requiresConceptIds: [flex-basis]
+    validationRuleIds:
+      - html-css-ch08-l04-e01-r03
+      - html-css-ch08-l04-e01-r04
+      - html-css-ch08-l04-e01-r06
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -72,6 +99,40 @@ validationRules:
       nextAction: ItemのBasisとGapの合計をContainer幅以内へ収めます。
     hintId: html-css-ch08-l04-e01-h03
     relatedSlideId: html-css-ch08-l04-s02
+  - id: html-css-ch08-l04-e01-r05
+    label: Containerへflex-wrap wrapを書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [tablet-768]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '[data-card-grid] { display: flex; flex-wrap: wrap; width: 600px; gap: 16px; }'
+    feedback:
+      target: Card ContainerのSource
+      expected: flex-wrap wrap
+      nextAction: 完成済みのdisplay、width、gapは残し、flex-wrapのValueをwrapへ変更します。
+    hintId: html-css-ch08-l04-e01-h01
+    relatedSlideId: html-css-ch08-l04-s01
+  - id: html-css-ch08-l04-e01-r06
+    label: Cardのflex-basisを180pxにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [tablet-768]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '[data-card] { box-sizing: border-box; flex-basis: 180px; flex-shrink: 0; height: 100px;'
+    feedback:
+      target: Card ItemのBasis Source
+      expected: flex-basis 180px
+      nextAction: flex-shrinkはそのままで、flex-basisのValueだけを180pxへ変更します。
+    hintId: html-css-ch08-l04-e01-h02
+    relatedSlideId: html-css-ch08-l04-s02
 hints:
   - id: html-css-ch08-l04-e01-h01
     level: 1
@@ -121,4 +182,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch08-l04-e01-r03]
+    expectedFeedbackRuleIds: [html-css-ch08-l04-e01-r03, html-css-ch08-l04-e01-r06]

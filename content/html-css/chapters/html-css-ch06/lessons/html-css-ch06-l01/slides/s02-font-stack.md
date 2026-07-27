@@ -1,30 +1,36 @@
 ---
 id: html-css-ch06-l01-s02
-title: System Font Stackは端末にある文字を使う
+title: Font Stackは左から使える候補を選ぶ
 kind: comparison
 concept: system-font-stack
-assets: []
+layout: code-preview
+teachesConceptIds: [font-family-system]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 400, maxCodeLines: 4, maxVisuals: 1 }
+assets:
+  - id: font-stack-order
+    source: assets/typography-metrics.svg
+    mediaType: image
+    alt: system-uiからsans-serifへ候補を順に確認するFont Stackの図
+    provenanceId: ch06-typography-metrics-original
 ---
 
-`font-family`には候補を左から順に並べます。Browserは利用できる最初のFontを選び、最後の`sans-serif`は環境ごとの差を吸収する一般Familyです。
+`font-family`へ候補を左から並べると、Browserは使える最初のFontを選びます。`system-ui`は端末のUI Font、`sans-serif`は最後のFallbackです。
+
+![Font Stackの選択順](asset:font-stack-order)
+
+実習ではFont Familyが完成済みです。`font-size`と`line-height`の2つだけを変更し、`system-ui, sans-serif`は壊さず残します。
 
 ```css
-body {
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    sans-serif;
+.reading-sample {
+  font-family: system-ui, sans-serif;
 }
 ```
 
-このStackは外部FontのDownloadを待たず、端末に馴染む文字を表示できます。特定のOSだけで使えるFont名を1つに固定しません。
-
 :::practice
-prompt: 外部Networkなしでも表示できるFont Stackの最後に置く一般Familyを確認します。
+prompt: system-uiが使えない環境で次に使う一般Familyを答えます。
 expectedAction: sans-serifをFallbackとして残す
 estimatedMinutes: 2
 :::
 
-次の実習ではFont Size、Line Height、Font StackをComputed Styleで確かめます。
+次の実習では、2つのValueを変更し、Font Stackも保たれたことを確認します。

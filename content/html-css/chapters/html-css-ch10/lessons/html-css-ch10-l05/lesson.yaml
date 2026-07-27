@@ -1,7 +1,7 @@
 id: html-css-ch10-l05
 kind: standard
-title: 4 ViewportでOverflowを確認する
-goal: 主要ContainerとCTAを4つのViewportで確認し操作阻害を防げる
+title: 4つの幅で完成条件を監査する
+goal: 固定幅とCTA高さを直し、4 ViewportすべてでOverflowと操作領域を確認できる
 estimatedMinutes: 12
 prerequisiteLessonIds: [html-css-ch10-l04]
 slideSources:
@@ -9,7 +9,7 @@ slideSources:
   - slides/s02-four-viewports.md
 exerciseSources:
   - exercises/html-css-ch10-l05-e01/exercise.yaml
-reflection: 幅ごとの見た目ではなくOverflowと操作可能性を検査する
+reflection: Screenshotだけでなく、Overflow・Focus・CTA実寸を全幅で検査する
 glossaryRefs: [horizontal-overflow, viewport-testing, cta]
 nextLessonId: html-css-ch11-l01
 completion:

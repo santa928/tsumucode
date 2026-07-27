@@ -2,8 +2,32 @@ id: html-css-ch11-l02-e01
 kind: standard
 workspaceId: html-css-ch11-l02-e01
 countsTowardStandardExerciseTotal: true
-title: 3種類のAccessible Nameを仕上げる
+title: labelとaltで2種類の名前を仕上げる
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: label-text, minimumLevel: transform }
+  - { conceptId: alt-text, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: connect-visible-label
+    file: index.html
+    target: 表示名Input直前のfield-caption
+    starterAnchor: '<span class="field-caption">表示名</span>'
+    change: spanをforがdisplay-nameのlabelへ置き換える
+    observe: InputのAccessible Nameが表示名になる
+    requiresConceptIds: [label-text]
+    validationRuleIds:
+      - html-css-ch11-l02-e01-r01
+      - html-css-ch11-l02-e01-r03
+  - id: describe-profile-image
+    file: index.html
+    target: data-avatar画像の空のalt属性
+    starterAnchor: 'alt=""'
+    change: 画像内容が分かる短い説明をaltへ書く
+    observe: Profile画像のAccessible Nameが空でなくなる
+    requiresConceptIds: [alt-text]
+    validationRuleIds:
+      - html-css-ch11-l02-e01-r02
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }

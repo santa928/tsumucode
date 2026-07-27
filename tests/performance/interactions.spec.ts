@@ -1,11 +1,12 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
-import { editorText } from '../e2e/helpers/progress';
+import { editorText, readStoredProgress } from '../e2e/helpers/progress';
 import {
   STANDARD_EXERCISE_ID,
   STANDARD_EXERCISE_TITLE,
   STANDARD_LESSON_ID,
   expectStoredViewedSlide,
   openEditableExercise,
+  readExerciseStarter,
 } from '../e2e/helpers/releaseCourse';
 import { loadPerformanceManifest } from './manifest';
 
@@ -18,6 +19,11 @@ interface InteractionMeasurement {
 interface InteractionReadyProbe {
   readonly selector: string;
   readonly exactText?: string;
+}
+
+interface PaintedClickMeasurement {
+  readonly name: string;
+  readonly durationMs: number;
 }
 
 const manifest = await loadPerformanceManifest();
@@ -119,6 +125,161 @@ async function measureInteraction(
   );
   await ready.waitFor({ state: 'visible' });
   return measurement;
+}
+
+/** 実click生成時刻からmain document内のready表示と2 RAF paint完了までを測る。 */
+async function measurePaintedPageClick(
+  page: Page,
+  name: string,
+  action: () => Promise<void>,
+  ready: Locator,
+  readyProbe: InteractionReadyProbe,
+): Promise<PaintedClickMeasurement> {
+  await page.evaluate(
+    ({ interactionName, probe }) => {
+      const normalizedExpectedText = probe.exactText?.replace(/\s+/gu, ' ').trim();
+      const isReady = (): boolean =>
+        [...document.querySelectorAll(probe.selector)].some((element) => {
+          const textMatches =
+            normalizedExpectedText === undefined ||
+            element.textContent.replace(/\s+/gu, ' ').trim() === normalizedExpectedText;
+          if (!textMatches) return false;
+          const style = getComputedStyle(element);
+          return (
+            style.display !== 'none' &&
+            style.visibility !== 'hidden' &&
+            element.getClientRects().length > 0
+          );
+        });
+      if (isReady()) {
+        throw new Error(`${interactionName}のready probeがclick前から成立しています`);
+      }
+
+      const measured = new Promise<number>((resolve) => {
+        window.addEventListener(
+          'click',
+          (event) => {
+            const startedAt = event.timeStamp;
+            const check = (): void => {
+              if (!isReady()) {
+                requestAnimationFrame(check);
+                return;
+              }
+              requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                  resolve(performance.now() - startedAt);
+                });
+              });
+            };
+            requestAnimationFrame(check);
+          },
+          { capture: true, once: true },
+        );
+      });
+      Reflect.set(window, '__tsumucodePaintedPageClick', measured);
+    },
+    { interactionName: name, probe: readyProbe },
+  );
+
+  await action();
+  const durationMs = await page.evaluate((interactionName) => {
+    const measured = Reflect.get(window, '__tsumucodePaintedPageClick') as unknown;
+    if (!(measured instanceof Promise)) {
+      throw new Error(`${interactionName}のpaint計測Promiseを取得できませんでした`);
+    }
+    return measured as Promise<number>;
+  }, name);
+  await ready.waitFor({ state: 'visible' });
+  return { name, durationMs };
+}
+
+/** 実click生成時刻からopaque iframe内のready表示と2 RAF paint完了までを測る。 */
+async function measurePaintedPreviewClick(
+  page: Page,
+  name: string,
+  action: () => Promise<void>,
+  ready: Locator,
+  readyProbe: InteractionReadyProbe,
+): Promise<PaintedClickMeasurement> {
+  const frameHandle = await page.locator('iframe[title="コードのプレビュー"]').elementHandle();
+  const previewFrame = await frameHandle?.contentFrame();
+  if (previewFrame === null || previewFrame === undefined) {
+    throw new Error(`${name}のPreview frameを取得できませんでした`);
+  }
+  const readyInitially = await previewFrame.evaluate((probe) => {
+    const normalizedExpectedText = probe.exactText?.replace(/\s+/gu, ' ').trim();
+    return [...document.querySelectorAll(probe.selector)].some((element) => {
+      const textMatches =
+        normalizedExpectedText === undefined ||
+        element.textContent.replace(/\s+/gu, ' ').trim() === normalizedExpectedText;
+      if (!textMatches) return false;
+      const style = getComputedStyle(element);
+      return (
+        style.display !== 'none' &&
+        style.visibility !== 'hidden' &&
+        element.getClientRects().length > 0
+      );
+    });
+  }, readyProbe);
+  if (readyInitially) throw new Error(`${name}のready probeがclick前から成立しています`);
+
+  const readyHandle = previewFrame.waitForFunction(
+    (probe) => {
+      const normalizedExpectedText = probe.exactText?.replace(/\s+/gu, ' ').trim();
+      return [...document.querySelectorAll(probe.selector)].some((element) => {
+        const textMatches =
+          normalizedExpectedText === undefined ||
+          element.textContent.replace(/\s+/gu, ' ').trim() === normalizedExpectedText;
+        if (!textMatches) return false;
+        const style = getComputedStyle(element);
+        return (
+          style.display !== 'none' &&
+          style.visibility !== 'hidden' &&
+          element.getClientRects().length > 0
+        );
+      });
+    },
+    readyProbe,
+    { polling: 'raf' },
+  );
+  await page.evaluate((interactionName) => {
+    Reflect.set(window, '__tsumucodePaintedPreviewClickStartedAt', undefined);
+    window.addEventListener(
+      'click',
+      (event) => {
+        Reflect.set(
+          window,
+          '__tsumucodePaintedPreviewClickStartedAt',
+          performance.timeOrigin + event.timeStamp,
+        );
+      },
+      { capture: true, once: true },
+    );
+    Reflect.set(window, '__tsumucodePaintedPreviewClickName', interactionName);
+  }, name);
+
+  await action();
+  const readyElement = await readyHandle;
+  await readyElement.dispose();
+  const readyAt = await previewFrame.evaluate(
+    () =>
+      new Promise<number>((resolve) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            resolve(performance.timeOrigin + performance.now());
+          });
+        });
+      }),
+  );
+  const startedAt = await page.evaluate((interactionName) => {
+    const value = Reflect.get(window, '__tsumucodePaintedPreviewClickStartedAt') as unknown;
+    if (typeof value !== 'number' || !Number.isFinite(value)) {
+      throw new Error(`${interactionName}のclick生成時刻を取得できませんでした`);
+    }
+    return value;
+  }, name);
+  await ready.waitFor({ state: 'visible' });
+  return { name, durationMs: readyAt - startedAt };
 }
 
 test('Playwrightからclickを配信する前の待機はユーザー操作時間へ含めない', async ({ page }) => {
@@ -223,7 +384,7 @@ test('主要5操作、Event Timing、Draft永続化が予算内に完了する',
     ),
   );
 
-  await page.getByRole('link', { name: '← コースマップへ戻る' }).click();
+  await page.getByRole('link', { name: 'コースマップへ戻る' }).click();
   const lessonLink = page.getByRole('link', {
     name: 'Webページを作る3つの役割レッスンを始める',
   });
@@ -243,8 +404,8 @@ test('主要5操作、Event Timing、Draft永続化が予算内に完了する',
       page,
       'slide-next',
       () => page.getByRole('link', { name: '次のスライドへ →' }).click(),
-      page.getByRole('heading', { level: 1, name: 'HTMLは内容と意味を積み上げる' }),
-      { selector: 'main h1', exactText: 'HTMLは内容と意味を積み上げる' },
+      page.getByRole('heading', { level: 1, name: 'HTMLは画面に載せる内容を受け持つ' }),
+      { selector: 'main h1', exactText: 'HTMLは画面に載せる内容を受け持つ' },
     ),
   );
   await expectStoredViewedSlide(page, STANDARD_LESSON_ID, 'html-css-ch00-l01-s02');
@@ -278,8 +439,8 @@ test('主要5操作、Event Timing、Draft永続化が予算内に完了する',
       page,
       'review-return',
       () => returnButton.click(),
-      page.getByTestId('code-workspace'),
-      { selector: '[data-testid="code-workspace"]' },
+      page.locator('.cm-editor.cm-focused'),
+      { selector: '.cm-editor.cm-focused' },
     ),
   );
 
@@ -318,6 +479,175 @@ test('主要5操作、Event Timing、Draft永続化が予算内に完了する',
     }
   }
   expect(draftPersistenceMs).toBeLessThanOrEqual(manifest.draftPersistenceMaxMs);
+});
+
+test('閲覧モードのHome、目次、Viewer、次Slide、目次Drawerが専用予算内に応答する', async ({
+  page,
+}, testInfo) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.addInitScript(() => {
+    const entries: { startTime: number; duration: number }[] = [];
+    Reflect.set(window, '__tsumucodePerformanceEvents', entries);
+    const observer = new PerformanceObserver((list) => {
+      entries.push(
+        ...list.getEntries().map(({ startTime, duration }) => ({ startTime, duration })),
+      );
+    });
+    observer.observe({
+      type: 'event',
+      buffered: true,
+      durationThreshold: 16,
+    } as PerformanceObserverInit & { readonly durationThreshold: number });
+    Reflect.set(window, '__tsumucodePerformanceObserver', observer);
+  });
+
+  await page.goto('./#/');
+  await expect(page.getByRole('heading', { level: 1, name: '学びたいピースを選ぶ' })).toBeVisible();
+  const measurements: InteractionMeasurement[] = [];
+  measurements.push(
+    await measureInteraction(
+      page,
+      'library-home-to-index',
+      () => page.getByRole('link', { name: 'HTML/CSS はじめの一歩：スライドだけ見る' }).click(),
+      page.getByRole('heading', {
+        level: 1,
+        name: 'HTML/CSS はじめの一歩 スライド目次',
+      }),
+      { selector: 'main h1', exactText: 'HTML/CSS はじめの一歩 スライド目次' },
+    ),
+  );
+
+  measurements.push(
+    await measureInteraction(
+      page,
+      'library-index-to-viewer',
+      () => page.getByRole('link', { name: 'Webページを作る3つの役割を先頭から見る' }).click(),
+      page.getByRole('heading', {
+        level: 1,
+        name: 'Webページは3つの役割でできている',
+      }),
+      { selector: 'main h1', exactText: 'Webページは3つの役割でできている' },
+    ),
+  );
+
+  measurements.push(
+    await measureInteraction(
+      page,
+      'library-viewer-next',
+      () => page.getByRole('link', { name: '次のスライドへ' }).click(),
+      page.getByRole('heading', {
+        level: 1,
+        name: 'HTMLは画面に載せる内容を受け持つ',
+      }),
+      { selector: 'main h1', exactText: 'HTMLは画面に載せる内容を受け持つ' },
+    ),
+  );
+
+  measurements.push(
+    await measureInteraction(
+      page,
+      'library-viewer-index-drawer',
+      () => page.getByRole('button', { name: 'スライド目次を開く' }).click(),
+      page.getByRole('dialog', { name: 'スライド目次' }),
+      { selector: 'dialog[open] h2', exactText: 'スライド目次' },
+    ),
+  );
+
+  await testInfo.attach('slide-library-interaction-performance.json', {
+    body: Buffer.from(JSON.stringify({ measurements }, undefined, 2)),
+    contentType: 'application/json',
+  });
+
+  for (const measurement of measurements) {
+    expect(measurement.routeReadyMs, measurement.name).toBeLessThanOrEqual(
+      manifest.slideLibrary.interactionMaxMs,
+    );
+    for (const duration of measurement.eventDurationsMs) {
+      expect(duration, `${measurement.name} Event Timing`).toBeLessThanOrEqual(
+        manifest.slideLibrary.interactionMaxMs,
+      );
+    }
+  }
+});
+
+test('Starter復元Drawerと保存済みPreviewが専用予算内に2 RAF描画される', async ({
+  page,
+}, testInfo) => {
+  const editedHeading = 'Starter復元前の性能計測';
+  const starterHeading = 'ここを書き換えます';
+  const editedHtml = `<!doctype html><html lang="ja"><body><main><h1>${editedHeading}</h1></main></body></html>`;
+  const starter = await readExerciseStarter(
+    'html-css-ch00',
+    STANDARD_LESSON_ID,
+    STANDARD_EXERCISE_ID,
+  );
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await openEditableExercise(
+    page,
+    STANDARD_LESSON_ID,
+    STANDARD_EXERCISE_ID,
+    STANDARD_EXERCISE_TITLE,
+  );
+
+  const editor = page.locator('.cm-content');
+  await editor.click();
+  await page.keyboard.press('ControlOrMeta+A');
+  await page.keyboard.insertText(editedHtml);
+  await expect.poll(() => editorText(page)).toBe(editedHtml);
+  await page.getByRole('button', { name: 'プレビューを更新' }).click();
+  const preview = page.frameLocator('iframe[title="コードのプレビュー"]');
+  await expect(preview.getByRole('heading', { name: editedHeading, exact: true })).toBeVisible();
+  await expect(preview.getByRole('heading', { name: starterHeading, exact: true })).toHaveCount(0);
+
+  const resetTrigger = page.getByRole('button', { name: '最初に戻す', exact: true });
+  await expect(resetTrigger).toBeEnabled();
+  const resetDrawer = page.getByRole('dialog', { name: '最初のコードに戻しますか？' });
+  const drawer = await measurePaintedPageClick(
+    page,
+    'starter-reset-drawer',
+    () => resetTrigger.click(),
+    resetDrawer,
+    { selector: 'dialog h2', exactText: '最初のコードに戻しますか？' },
+  );
+
+  const confirm = resetDrawer.getByRole('button', { name: '最初のコードに戻す', exact: true });
+  const starterPreview = preview.getByRole('heading', { name: starterHeading, exact: true });
+  const previewMeasurement = await measurePaintedPreviewClick(
+    page,
+    'starter-reset-preview',
+    () => confirm.click(),
+    starterPreview,
+    { selector: 'h1', exactText: starterHeading },
+  );
+
+  const storedDraft = (await readStoredProgress(page)).drafts.find(
+    (draft) => draft['workspaceId'] === STANDARD_EXERCISE_ID,
+  );
+  expect(storedDraft?.['files']).toEqual(starter);
+  await expect(page.getByText('保存済み', { exact: true })).toBeVisible();
+  await expect(
+    page.getByText('最初のコードには戻りましたが、自動保存を完了できませんでした。'),
+  ).toHaveCount(0);
+  await expect(page.getByText('保存できません。編集内容は画面に残っています')).toHaveCount(0);
+
+  await testInfo.attach('starter-reset-interaction-performance.json', {
+    body: Buffer.from(
+      JSON.stringify(
+        {
+          drawerOpenMs: drawer.durationMs,
+          previewVisibleMs: previewMeasurement.durationMs,
+        },
+        undefined,
+        2,
+      ),
+    ),
+    contentType: 'application/json',
+  });
+
+  expect(drawer.durationMs, drawer.name).toBeLessThanOrEqual(manifest.starterReset.drawerOpenMaxMs);
+  expect(previewMeasurement.durationMs, previewMeasurement.name).toBeLessThanOrEqual(
+    manifest.starterReset.previewVisibleMaxMs,
+  );
 });
 
 test('EditorとHTML/CSS RunnerはExercise routeでだけ遅延取得する', async ({ page }) => {

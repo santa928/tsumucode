@@ -1,13 +1,14 @@
 id: html-css-ch01-l01
 kind: standard
-title: Elementを1つ書こう
-goal: Element、開始Tag、終了Tagを区別し、見出しと段落を記述できる
+title: Elementの中身を完成させよう
+goal: 開始Tagと終了Tagの間を見つけ、h1の題名とpの段落を完成できる
 estimatedMinutes: 12
 prerequisiteLessonIds: [html-css-ch00-l02]
 slideSources:
   - slides/s01-element-anatomy.md
   - slides/s02-heading-paragraph.md
   - slides/s03-closing-tags.md
+  - slides/s04-element-checkpoint.md
 exerciseSources:
   - exercises/html-css-ch01-l01-e01/exercise.yaml
 reflection: h1は大きくしたい文字ではなくページ全体の題名を表す
@@ -15,5 +16,5 @@ glossaryRefs: [element, tag, heading, paragraph]
 nextLessonId: html-css-ch01-l02
 completion:
   kind: standard
-  finalSlideId: html-css-ch01-l01-s03
+  finalSlideId: html-css-ch01-l01-s04
   requiredExerciseIds: [html-css-ch01-l01-e01]

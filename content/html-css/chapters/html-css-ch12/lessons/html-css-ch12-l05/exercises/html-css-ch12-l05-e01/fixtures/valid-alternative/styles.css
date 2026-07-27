@@ -161,7 +161,8 @@ footer {
   }
 }
 
-[data-final-action]:focus-visible {
+.primary-link:focus-visible,
+[data-contact-link]:focus-visible {
   outline: 3px solid #ef7d4f;
   outline-offset: 4px;
 }

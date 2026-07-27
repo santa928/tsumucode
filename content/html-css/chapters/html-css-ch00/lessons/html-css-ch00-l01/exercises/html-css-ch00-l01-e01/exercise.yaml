@@ -4,6 +4,27 @@ workspaceId: html-css-ch00-l01-e01
 countsTowardStandardExerciseTotal: true
 title: 内容と見た目を1箇所ずつ変える
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: html-role, minimumLevel: fill }
+  - { conceptId: css-role, minimumLevel: fill }
+scaffoldLevel: fill
+steps:
+  - id: change-heading-text
+    file: index.html
+    target: h1の開始Tagと終了Tagの間
+    starterAnchor: <h1>ここを書き換えます</h1>
+    change: 日本語を「わたしの学習ノート」へ置き換える
+    observe: Previewの題名が同じ言葉へ変わる
+    requiresConceptIds: [html-role]
+    validationRuleIds: [html-css-ch00-l01-e01-r01]
+  - id: fill-background-value
+    file: styles.css
+    target: body内に用意されたbackground-colorの行
+    starterAnchor: 'background-color: #ffffff;'
+    change: 右側の値#ffffffだけを#fffaf0へ置き換える
+    observe: Previewの背景だけが生成り色へ変わる
+    requiresConceptIds: [css-role]
+    validationRuleIds: [html-css-ch00-l01-e01-r02]
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -40,7 +61,7 @@ validationRules:
     feedback:
       target: ページ全体の背景
       expected: bodyの背景色が#fffaf0
-      nextAction: styles.cssのbody Ruleへbackground-colorを追加します。
+      nextAction: 用意されたbackground-colorの右側を#fffaf0へ置き換えます。
     hintId: html-css-ch00-l01-e01-h02
     relatedSlideId: html-css-ch00-l01-s03
 hints:
@@ -57,7 +78,7 @@ hints:
   - id: html-css-ch00-l01-e01-h03
     level: 3
     title: CSSのbody Ruleを確認する
-    text: styles.cssのbody波かっこ内へ、背景色を指定するpropertyと値を1行追加します。
+    text: styles.cssにあるbackground-colorの行を探し、#ffffffだけを#fffaf0へ置き換えます。
     relatedSlideId: html-css-ch00-l01-s03
 relatedSlideIds: [html-css-ch00-l01-s02, html-css-ch00-l01-s03]
 previewViewports:

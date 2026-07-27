@@ -4,6 +4,30 @@ workspaceId: html-css-ch02-l03-e01
 countsTowardStandardExerciseTotal: true
 title: ページの領域をLandmarkで表す
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: header-main-footer, minimumLevel: transform }
+  - { conceptId: section-article, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: replace-page-landmarks
+    file: index.html
+    target: body直下のpage-header、page-main、page-footerの3つのdiv
+    starterAnchor: <div class="page-header">
+    change: 開始Tagと終了Tagを順にheader、main、footerへ置き換える
+    observe: Previewを保ちながらページの導入・中心・末尾がLandmarkになる
+    requiresConceptIds: [header-main-footer]
+    validationRuleIds:
+      - html-css-ch02-l03-e01-r01
+      - html-css-ch02-l03-e01-r02
+      - html-css-ch02-l03-e01-r03
+  - id: replace-topic-section
+    file: index.html
+    target: mainへ変更した領域内のtopicクラスを持つdiv
+    starterAnchor: <div class="topic">
+    change: 開始Tagと終了Tagをsectionへ置き換える
+    observe: 今日の発見がmain内の1つの話題として伝わる
+    requiresConceptIds: [section-article]
+    validationRuleIds: [html-css-ch02-l03-e01-r04]
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -17,12 +41,12 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'body > header' }
+    target: { kind: selector, selector: 'body > header.page-header' }
     assertion: { kind: count, operator: equals, expected: 1 }
     feedback:
       target: ページの導入領域
-      expected: body直下のheaderが1つ
-      nextAction: h1を含む最初のdivをheaderへ変更します。
+      expected: page-headerクラスを持つbody直下のheaderが1つ
+      nextAction: page-headerのclassは残し、h1を含む最初のdivをheaderへ変更します。
     hintId: html-css-ch02-l03-e01-h01
     relatedSlideId: html-css-ch02-l03-s02
   - id: html-css-ch02-l03-e01-r02
@@ -31,12 +55,12 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'body > main' }
+    target: { kind: selector, selector: 'body > main.page-main' }
     assertion: { kind: count, operator: equals, expected: 1 }
     feedback:
       target: ページ固有の中心内容
-      expected: body直下のmainが1つ
-      nextAction: 今日の発見を含む中央のdivをmainへ変更します。
+      expected: page-mainクラスを持つbody直下のmainが1つ
+      nextAction: page-mainのclassは残し、今日の発見を含む中央のdivをmainへ変更します。
     hintId: html-css-ch02-l03-e01-h01
     relatedSlideId: html-css-ch02-l03-s02
   - id: html-css-ch02-l03-e01-r03
@@ -45,12 +69,12 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'body > footer' }
+    target: { kind: selector, selector: 'body > footer.page-footer' }
     assertion: { kind: count, operator: equals, expected: 1 }
     feedback:
       target: ページ末尾の補足領域
-      expected: body直下のfooterが1つ
-      nextAction: 最後の補足文を含むdivをfooterへ変更します。
+      expected: page-footerクラスを持つbody直下のfooterが1つ
+      nextAction: page-footerのclassは残し、最後の補足文を含むdivをfooterへ変更します。
     hintId: html-css-ch02-l03-e01-h02
     relatedSlideId: html-css-ch02-l03-s02
   - id: html-css-ch02-l03-e01-r04
@@ -59,12 +83,12 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'main > section' }
+    target: { kind: selector, selector: 'main.page-main > section.topic' }
     assertion: { kind: count, operator: equals, expected: 1 }
     feedback:
       target: main内の今日の発見
-      expected: main直下のsectionが1つ
-      nextAction: h2とpを含むtopicのdivをsectionへ変更します。
+      expected: page-main直下にtopicクラスのsectionが1つ
+      nextAction: topicのclassは残し、h2とpを含むdivをsectionへ変更します。
     hintId: html-css-ch02-l03-e01-h03
     relatedSlideId: html-css-ch02-l03-s03
 hints:
@@ -119,6 +143,4 @@ fixtures:
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
     expectedFeedbackRuleIds:
       - html-css-ch02-l03-e01-r01
-      - html-css-ch02-l03-e01-r02
       - html-css-ch02-l03-e01-r03
-      - html-css-ch02-l03-e01-r04

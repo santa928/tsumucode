@@ -8,6 +8,7 @@ import { loadPerformanceManifest } from './manifest';
 
 interface ViteChunk {
   readonly file: string;
+  readonly name?: string;
   readonly isEntry?: boolean;
   readonly imports?: readonly string[];
   readonly dynamicImports?: readonly string[];
@@ -21,6 +22,8 @@ interface PublicProvenanceItem {
 
 const distRoot = path.resolve('dist');
 const performanceManifest = await loadPerformanceManifest();
+const starterResetBaselineCommit = '7e739754710138aa3433bfa085f7dd0479d9ca62';
+const starterResetBaselineEditorIncrementalJavaScriptGzipBytes = 177_635;
 const imageExtensions = new Set(['.avif', '.gif', '.jpeg', '.jpg', '.png', '.svg', '.webp']);
 const fontExtensions = new Set(['.otf', '.ttf', '.woff', '.woff2']);
 const textExtensions = new Set(['.css', '.html', '.js', '.json', '.md', '.svg', '.txt', '.xml']);
@@ -58,23 +61,35 @@ async function readJsonObject(relativePath: string): Promise<Readonly<Record<str
   return value as Readonly<Record<string, unknown>>;
 }
 
-/** Vite manifestの初期Entryと静的importsだけを重複なく辿る。 */
-function collectInitialChunks(manifest: Readonly<Record<string, ViteChunk>>): readonly ViteChunk[] {
-  const entryKey = Object.entries(manifest).find(([, chunk]) => chunk.isEntry)?.[0];
-  if (entryKey === undefined) throw new Error('Vite manifestにEntryがありません');
-
+/** 任意のroot群から静的import closureのManifest keyを重複なく収集する。 */
+function collectStaticChunkKeys(
+  manifest: Readonly<Record<string, ViteChunk>>,
+  roots: readonly string[],
+): ReadonlySet<string> {
   const visited = new Set<string>();
-  const chunks: ViteChunk[] = [];
   const visit = (key: string): void => {
     if (visited.has(key)) return;
-    visited.add(key);
     const chunk = manifest[key];
     if (chunk === undefined) throw new Error(`Vite manifest参照がありません: ${key}`);
-    chunks.push(chunk);
+    visited.add(key);
     for (const importedKey of chunk.imports ?? []) visit(importedKey);
   };
-  visit(entryKey);
-  return chunks;
+  for (const root of roots) visit(root);
+  return visited;
+}
+
+/** Lazy RouterでHome初期表示時に並行読込するShell・Loader・Pageのrootを返す。 */
+function homeInitialRootKeys(manifest: Readonly<Record<string, ViteChunk>>): readonly string[] {
+  const entryKey = 'src/app/normalLearningEntry.tsx';
+  if (manifest[entryKey]?.isEntry !== true) {
+    throw new Error('Vite manifestに通常学習Entryがありません');
+  }
+  return [entryKey];
+}
+
+/** Router Lazy化前のEditor baselineと同じ通常学習共有root群を返す。 */
+function preEditorSharedRootKeys(manifest: Readonly<Record<string, ViteChunk>>): readonly string[] {
+  return homeInitialRootKeys(manifest);
 }
 
 /** 指定File群のgzip合計を返す。 */
@@ -83,6 +98,19 @@ async function totalGzipBytes(relativePaths: readonly string[]): Promise<number>
     relativePaths.map((relativePath) => readFile(path.join(distRoot, relativePath))),
   );
   return buffers.reduce((total, source) => total + gzipSync(source).byteLength, 0);
+}
+
+/** 現在のEditor増分JS gzipから固定したStarter復元前baselineを差し引く。 */
+function calculateAddedJavaScriptGzipBytes(currentBytes: number): number {
+  return currentBytes - starterResetBaselineEditorIncrementalJavaScriptGzipBytes;
+}
+
+/** 現在のHome初期JS gzipから固定baseline以後の純増だけを返す。 */
+function calculateAddedHomeInitialJavaScriptGzipBytes(currentBytes: number): number {
+  return Math.max(
+    0,
+    currentBytes - performanceManifest.slideLibrary.baselineHomeInitialJavaScriptGzipBytes,
+  );
 }
 
 /** 指定File群のraw bytesと最大File bytesを返す。 */
@@ -120,6 +148,10 @@ function collectForbiddenJsonKeys(
 }
 
 describe('production bundle budget', () => {
+  it('Starter復元で追加したEditor増分JS gzipをbaselineとの差分として計算する', () => {
+    expect(calculateAddedJavaScriptGzipBytes(178_641)).toBe(1_006);
+  });
+
   it('Home初期JSとSubpath Assetを同じVite manifestから検証する', async () => {
     await expect(
       assertSubpathBuild({
@@ -132,18 +164,38 @@ describe('production bundle budget', () => {
     const viteManifest = (await readJsonObject('.vite/manifest.json')) as Readonly<
       Record<string, ViteChunk>
     >;
-    const entry = Object.values(viteManifest).find(({ isEntry }) => isEntry);
+    const normalEntryKey = 'src/app/normalLearningEntry.tsx';
+    const libraryEntryKey = 'src/app/libraryEntry.tsx';
+    const normalEntry = viteManifest[normalEntryKey];
+    const libraryEntry = viteManifest[libraryEntryKey];
     const transferServiceKey = 'src/core/persistence/transferService.ts';
     expect(viteManifest[transferServiceKey]).toBeDefined();
-    expect(entry?.dynamicImports).toContain(transferServiceKey);
-    const initialChunks = collectInitialChunks(viteManifest);
-    const initialJavaScript = initialChunks
-      .map(({ file }) => file)
+    const transferOwner = Object.values(viteManifest).find(({ dynamicImports }) =>
+      dynamicImports?.includes(transferServiceKey),
+    );
+    expect(normalEntry?.isEntry).toBe(true);
+    expect(libraryEntry?.isEntry).toBe(true);
+    const normalGraph = collectStaticChunkKeys(viteManifest, [normalEntryKey]);
+    expect(
+      [...normalGraph].some((key) =>
+        viteManifest[key]?.dynamicImports?.includes(
+          'src/features/learning/pages/EditableExercisePage.tsx',
+        ),
+      ),
+    ).toBe(true);
+    expect(transferOwner?.dynamicImports).toContain(transferServiceKey);
+    const homeKeys = collectStaticChunkKeys(viteManifest, homeInitialRootKeys(viteManifest));
+    const initialJavaScript = [...homeKeys]
+      .map((key) => viteManifest[key]!.file)
       .filter((file) => file.endsWith('.js'));
 
-    await expect(totalGzipBytes(initialJavaScript)).resolves.toBeLessThanOrEqual(
+    const currentHomeInitialJavaScriptGzipBytes = await totalGzipBytes(initialJavaScript);
+    expect(currentHomeInitialJavaScriptGzipBytes).toBeLessThanOrEqual(
       performanceManifest.bundle.homeInitialJavaScriptGzipMaxBytes,
     );
+    expect(
+      calculateAddedHomeInitialJavaScriptGzipBytes(currentHomeInitialJavaScriptGzipBytes),
+    ).toBeLessThanOrEqual(performanceManifest.slideLibrary.addedHomeInitialJavaScriptGzipMaxBytes);
     expect(initialJavaScript).not.toEqual(
       expect.arrayContaining([
         expect.stringMatching(
@@ -151,6 +203,56 @@ describe('production bundle budget', () => {
         ),
       ]),
     );
+    const indexHtml = await readFile(path.join(distRoot, 'index.html'), 'utf8');
+    expect(indexHtml).toContain('data-tsumucode-entry');
+    expect(indexHtml).toContain('^#\\/library');
+    expect(indexHtml).toContain(normalEntry?.file);
+    expect(indexHtml).toContain(libraryEntry?.file);
+  });
+
+  it('Editor増分JSをHome初期graphから分離して専用予算内に保つ', async () => {
+    const viteManifest = (await readJsonObject('.vite/manifest.json')) as Readonly<
+      Record<string, ViteChunk>
+    >;
+    const editableKey = 'src/features/learning/pages/EditableExercisePage.tsx';
+    const workspaceKey = 'src/features/learning/editor/CodeWorkspace.tsx';
+    const homeKeys = collectStaticChunkKeys(viteManifest, preEditorSharedRootKeys(viteManifest));
+    const editorKeys = collectStaticChunkKeys(viteManifest, [editableKey, workspaceKey]);
+    const incrementalJavaScript = [
+      ...new Set(
+        [...editorKeys]
+          .filter((key) => !homeKeys.has(key))
+          .map((key) => viteManifest[key]!.file)
+          .filter((file) => file.endsWith('.js')),
+      ),
+    ];
+
+    expect(incrementalJavaScript.length).toBeGreaterThan(0);
+    expect(performanceManifest.bundle.baselineCommit).toBe(starterResetBaselineCommit);
+    expect(performanceManifest.bundle.baselineEditorIncrementalJavaScriptGzipBytes).toBe(
+      starterResetBaselineEditorIncrementalJavaScriptGzipBytes,
+    );
+    const currentIncrementalJavaScriptGzipBytes = await totalGzipBytes(incrementalJavaScript);
+    expect(currentIncrementalJavaScriptGzipBytes).toBeLessThanOrEqual(
+      performanceManifest.bundle.editorIncrementalJavaScriptGzipMaxBytes,
+    );
+    expect(
+      calculateAddedJavaScriptGzipBytes(currentIncrementalJavaScriptGzipBytes),
+    ).toBeLessThanOrEqual(performanceManifest.starterReset.addedJavaScriptGzipMaxBytes);
+  });
+
+  it('LibraryとRouter entryの静的graphから進捗Runtime・Editor・Runner・Validatorを除外する', async () => {
+    const viteManifest = (await readJsonObject('.vite/manifest.json')) as Readonly<
+      Record<string, ViteChunk>
+    >;
+    const libraryEntryKey = 'src/app/libraryEntry.tsx';
+    const normalEntryKey = 'src/app/normalLearningEntry.tsx';
+    const libraryKeys = collectStaticChunkKeys(viteManifest, [libraryEntryKey]);
+    const forbiddenPattern =
+      /normalLearningRouteModules|runtimeServices|features\/progress|core\/persistence|adapters\/persistence|CodeWorkspace|EditableExercisePage|adapters\/runtime|core\/validation/u;
+
+    expect([...libraryKeys].filter((key) => forbiddenPattern.test(key))).toEqual([]);
+    expect(libraryKeys.has(normalEntryKey)).toBe(false);
   });
 
   it('Catalog、Course、Image、Fontを公開容量予算内に保つ', async () => {

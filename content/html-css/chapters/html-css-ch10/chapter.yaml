@@ -1,7 +1,7 @@
 id: html-css-ch10
 sequence: 10
 title: レスポンシブ設計
-goal: Mobile Firstで複数Viewportに適応し、Imageと主要ContainerのOverflowを防ぐ
+goal: 小さい画面を基準に、Container・画像・CTAを4つのViewportへ安全に適応させる
 estimatedMinutes: 60
 kind: standard
 lessonSources:

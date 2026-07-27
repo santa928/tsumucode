@@ -21,6 +21,59 @@ body {
   font-weight: 800;
   letter-spacing: 0.08em;
 }
+.profile-check {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 16px;
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 16px;
+  background: #f5efe3;
+}
+.profile-check img {
+  width: 96px;
+  height: 96px;
+  border-radius: 14px;
+}
+.profile-check h2 {
+  margin-top: 0;
+}
+label {
+  display: block;
+  font-weight: 700;
+}
+input {
+  width: 100%;
+  min-height: 44px;
+  margin-block: 6px 16px;
+  padding: 8px 10px;
+  font: inherit;
+}
+[data-action] {
+  display: inline-block;
+  color: #155e63;
+  font-weight: 700;
+}
+[data-action]:focus-visible,
+.is-focus-visible {
+  outline: 3px solid #ef7d4f;
+  outline-offset: 3px;
+}
+[data-status] {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 14px 18px;
+  color: #172a3a;
+  background: #dcefed;
+  border-radius: 14px;
+}
+.status-dot {
+  width: 14px;
+  height: 14px;
+  background: #2d7c82;
+  border-radius: 50%;
+}
 .motion-card {
   max-width: 100%;
   margin-top: 24px;
@@ -29,10 +82,6 @@ body {
   border-radius: 16px;
   background: #e5f1ef;
   animation: float-card 800ms ease-in-out infinite alternate;
-}
-.reduce-motion .motion-card {
-  animation-duration: 0.2s;
-  animation-iteration-count: 1;
 }
 @keyframes float-card {
   from {
@@ -44,7 +93,7 @@ body {
 }
 @media (prefers-reduced-motion: reduce) {
   .motion-card {
-    animation-duration: 0.001s;
+    animation-duration: 0.2s;
     animation-iteration-count: 1;
   }
 }

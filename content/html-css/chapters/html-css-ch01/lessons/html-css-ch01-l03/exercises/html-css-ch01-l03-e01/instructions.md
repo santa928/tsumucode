@@ -1,10 +1,9 @@
-## 日本語ページの基本情報を整える
+## 日本語ページの言語とTab名を整える
 
-ページを日本語向けに設定し、Browserと検索結果へ伝わる基本情報を整えます。
+完成例と見比べ、用意されたAttributeの値とtitleの内容だけを変更します。
 
-1. `html`の`lang`属性を`ja`にします。
-2. `meta`の`charset`属性を`UTF-8`にします。
-3. `title`へ「HTML」を含む、ページの内容が分かる題名を書きます。
-4. Previewと判定で3つの情報を確認します。
+1. `html`の開始Tagにある`lang="en"`を探し、値`en`だけを`ja`へ置き換えます。
+2. `title`の開始Tagと終了Tagの間にある「未設定」を「HTML学習プロフィール」へ置き換えます。
+3. Browser Tabの題名を確認してから判定します。
 
-画面には直接見えにくい情報も、読む人とBrowserのために欠かせません。
+`doctype`、`head`、`meta charset`、`meta viewport`、`link`とCSSには今回は触りません。

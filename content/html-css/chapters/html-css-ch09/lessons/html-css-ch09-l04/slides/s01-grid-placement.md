@@ -1,19 +1,36 @@
 ---
 id: html-css-ch09-l04-s01
-title: Grid LineでItemを複数Trackへまたがせる
+title: grid-columnでFeature Cardを全列へ広げる
 kind: concept
 concept: grid-item-placement
-assets: []
+layout: code-preview
+teachesConceptIds: [grid-line-placement]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 390, maxCodeLines: 4, maxVisuals: 1 }
+assets:
+  - id: grid-feature-placement
+    source: assets/grid-flex-composition.svg
+    mediaType: image
+    alt: 2列GridでFeature CardがLine 1から最後のLineまで広がる図
+    provenanceId: ch09-grid-flex-composition-original
 ---
 
-`grid-column`はItemが始まるLineと終わるLineを指定します。`1 / -1`なら最初から最後まで、`span 2`なら現在位置から2 Track分へまたがります。
+`grid-column`は、Itemが始まるGrid Lineと終わるLineを指定します。`1 / -1`は最初のLineから最後のLineまでです。
 
-Placementは内容の重要度や構造を表すために使い、すべてのItemを座標で固定しません。自動配置を土台に、Feature Cardだけを広げます。
+![Feature Cardを2列へまたがせる配置](asset:grid-feature-placement)
+
+```css
+[data-feature] {
+  grid-column: 1 / -1;
+}
+```
+
+すべてのCardを座標指定せず、自動配置を土台にFeature Cardだけを広げます。`-1`なら列数が変わっても最後のLineを指せます。
 
 :::practice
 prompt: 2 ColumnのGalleryでFeature Cardを全幅へ広げる指定を答えます。
-expectedAction: grid-column 1 / -1またはspan 2を使う
+expectedAction: grid-column 1 / -1を使う
 estimatedMinutes: 2
 :::
 
-次はGridとFlexboxの役割を選び分けます。
+次はCardの内側だけをFlexboxにします。

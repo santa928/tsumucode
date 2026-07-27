@@ -14,6 +14,8 @@ const policy: SnapshotPolicy = {
   selectors: ['main'],
   attributes: ['id'],
   computedStyles: ['display'],
+  focusVisibleSelectors: [],
+  focusVisibleComputedStyles: [],
   includeAllElements: false,
 };
 
@@ -47,6 +49,7 @@ function previewNode(overrides: Partial<PreviewNode> = {}): PreviewNode {
     attributes: {},
     text: '',
     computedStyles: {},
+    focusVisibleComputedStyles: {},
     rect: { x: 0, y: 0, width: 100, height: 50 },
     overflow: {
       x: false,

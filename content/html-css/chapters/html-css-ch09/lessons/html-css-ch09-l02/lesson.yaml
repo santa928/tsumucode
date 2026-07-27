@@ -1,7 +1,7 @@
 id: html-css-ch09-l02
 kind: standard
-title: repeatとfrでTrackを分配する
-goal: repeat、fr、gapを組み合わせ、等幅Columnの実測位置を予測できる
+title: repeatとfrで等幅列を作る
+goal: 3つの固定幅をrepeatとfrへ置き換え、残り幅を等分できる
 estimatedMinutes: 11
 prerequisiteLessonIds: [html-css-ch09-l01]
 slideSources:
@@ -9,7 +9,7 @@ slideSources:
   - slides/s02-grid-gap.md
 exerciseSources:
   - exercises/html-css-ch09-l02-e01/exercise.yaml
-reflection: Container幅からGapを引き、frへ分配される幅を計算する
+reflection: Container幅からGapを引き、3つの1frへ分ける式を説明する
 glossaryRefs: [repeat-function, fr-unit, grid-gap]
 nextLessonId: html-css-ch09-l03
 completion:

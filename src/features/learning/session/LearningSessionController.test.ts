@@ -142,6 +142,8 @@ function validatorHarness(events: string[] = []): ValidatorHarness {
     selectors: [],
     attributes: [],
     computedStyles: [],
+    focusVisibleSelectors: [],
+    focusVisibleComputedStyles: [],
     includeAllElements: false,
   }));
   const validate = vi.fn(async (context: ValidationContext): Promise<ValidationResult> => {
@@ -317,6 +319,7 @@ describe('LearningSessionController', () => {
       'DIAGNOSTIC_desktop',
       'DIAGNOSTIC_mobile',
     ]);
+    expect(validation.validate.mock.calls[0]?.[0].files['index.html']).toContain('積む');
     const savedDraft = persistence.putDraft.mock.calls.at(-1)?.[0];
     expect(savedDraft?.validationHistory).toHaveLength(1);
     expect(savedDraft?.validationHistory[0]).toMatchObject({
@@ -399,6 +402,99 @@ describe('LearningSessionController', () => {
 
     await expect(preview).rejects.toBeInstanceOf(StaleExecutionError);
     expect(controller.getSnapshot().previewRevision).toBeNull();
+  });
+
+  it('Resetは現在Exerciseの全Starterをbyte一致で復元し、履歴とpassing snapshotを消して保存する', async () => {
+    const htmlStarter = {
+      path: 'index.html',
+      language: 'html' as const,
+      content: '<main><h1>Starter</h1></main>',
+      editable: true,
+    };
+    const cssStarter = {
+      path: 'styles.css',
+      language: 'css' as const,
+      content: 'main { color: navy; }',
+      editable: true,
+    };
+    const current = exercise({ files: [htmlStarter, cssStarter] });
+    const editedDraft = storedDraft({
+      files: {
+        'index.html': '<main><h1>編集済み</h1></main>',
+        'styles.css': 'main { color: crimson; }',
+        'old.html': '<p>旧File</p>',
+      },
+      selectedFile: 'old.html',
+      cursors: { 'old.html': { anchor: 3, head: 3 } },
+    });
+    const onDirty = vi.fn();
+    const persistence = repositoryHarness({ draft: editedDraft });
+    const controller = new LearningSessionController(
+      controllerInput({ exercise: current, repository: persistence.repository, onDirty }),
+    );
+    await controller.initialize();
+    controller.setCursor('index.html', { anchor: 1, head: 1 });
+    controller.revealNextHint();
+
+    expect(controller.resetToStarter()).toBe(true);
+    await controller.flush();
+
+    expect(controller.getSnapshot()).toMatchObject({
+      files: Object.fromEntries(current.files.map(({ path, content }) => [path, content])),
+      selectedFile: 'index.html',
+      cursors: {},
+      previewRevision: null,
+      diagnostics: [],
+      validationHistory: [],
+      revealedHintIds: [],
+    });
+    expect(onDirty).toHaveBeenCalledOnce();
+    expect(persistence.putDraft.mock.calls.at(-1)?.[0]).toMatchObject({
+      files: Object.fromEntries(current.files.map(({ path, content }) => [path, content])),
+      selectedFile: 'index.html',
+      cursors: {},
+      validationHistory: [],
+      revealedHintIds: [],
+      lastPassingSnapshots: {},
+    });
+  });
+
+  it('全fileがStarterと一致するとResetをno-opにする', () => {
+    const onDirty = vi.fn();
+    const controller = new LearningSessionController(controllerInput({ onDirty }));
+    const before = controller.getSnapshot();
+
+    expect(controller.resetToStarter()).toBe(false);
+    expect(controller.getSnapshot()).toBe(before);
+    expect(onDirty).not.toHaveBeenCalled();
+  });
+
+  it('render中のResetで旧previewをStaleExecutionErrorとして破棄する', async () => {
+    const pending = deferred<RunnerRenderResult>();
+    const runtime = runnerHarness();
+    runtime.render.mockImplementationOnce(() => pending.promise);
+    const controller = new LearningSessionController(controllerInput({ runner: runtime.runner }));
+    controller.edit('index.html', '<main>reset前</main>');
+    const preview = controller.previewNow();
+    await Promise.resolve();
+
+    expect(controller.resetToStarter()).toBe(true);
+    pending.resolve({
+      exerciseSessionId: 'html-css:exercise-first-heading',
+      executionRevision: 1,
+      diagnostics: [
+        {
+          code: 'OLD_DIAGNOSTIC',
+          kind: 'syntax',
+          severity: 'warning',
+          message: 'old',
+          learnerMessage: 'old',
+        },
+      ],
+    });
+
+    await expect(preview).rejects.toBeInstanceOf(StaleExecutionError);
+    expect(controller.getSnapshot()).toMatchObject({ previewRevision: null, diagnostics: [] });
   });
 
   it('Validator待機中の編集で履歴とpassing snapshotをcommitしない', async () => {

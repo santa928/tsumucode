@@ -4,6 +4,27 @@ workspaceId: html-css-ch03-l02-e01
 countsTowardStandardExerciseTotal: true
 title: Profile Avatarを情報として伝える
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: src-attribute, minimumLevel: transform }
+  - { conceptId: alt-attribute, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: connect-profile-avatar
+    file: index.html
+    target: h1直後のimgにある空のsrc
+    starterAnchor: <img src="" alt="" />
+    change: srcへasset:avatar-html-basicsを書く
+    observe: Previewへ登録済みProfile Avatarが表示される
+    requiresConceptIds: [src-attribute]
+    validationRuleIds: [html-css-ch03-l02-e01-r01]
+  - id: describe-profile-avatar
+    file: index.html
+    target: 同じimgにある空のalt
+    starterAnchor: <img src="" alt="" />
+    change: 学習Profileを表すAvatarだと分かる短い説明を書く
+    observe: 判定で画像のAccessible Nameが認識される
+    requiresConceptIds: [alt-attribute]
+    validationRuleIds: [html-css-ch03-l02-e01-r02]
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -26,17 +47,17 @@ validationRules:
     hintId: html-css-ch03-l02-e01-h01
     relatedSlideId: html-css-ch03-l02-s01
   - id: html-css-ch03-l02-e01-r02
-    label: Profile Avatarへ代替Textを書く
+    label: Profile Avatarへ目的が分かるaltを書く
     required: true
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
     target: { kind: selector, selector: 'img[data-tsumucode-asset-id="avatar-html-basics"]' }
-    assertion: { kind: accessible-name, operator: present }
+    assertion: { kind: attribute, name: alt, operator: contains, expected: Avatar }
     feedback:
       target: Profile Avatarのalt
-      expected: 画像の目的が分かる空でない代替Text
-      nextAction: altへ、誰または何を表すProfile Avatarかを短く書きます。
+      expected: Avatarという目的を含むalt属性
+      nextAction: aria-labelではなくaltへ、誰または何を表すProfile Avatarかを短く書きます。
     hintId: html-css-ch03-l02-e01-h03
     relatedSlideId: html-css-ch03-l02-s02
 hints:

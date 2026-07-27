@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <title>3種類の要素へAccessible Nameを届ける</title>
+  <desc>Inputにはlabel、意味のある画像にはalt、Linkには目的が分かる文字を対応させる図</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0 0 12 6 0 12z" fill="#2d7c82" />
+    </marker>
+  </defs>
+  <rect width="960" height="540" rx="36" fill="#f5efe3" />
+  <text x="60" y="70" fill="#172a3a" font-family="system-ui, sans-serif" font-size="30" font-weight="700">見た目の部品と、伝わる名前を結ぶ</text>
+  <text x="60" y="104" fill="#52616d" font-family="system-ui, sans-serif" font-size="18">HTMLの関係があると、支援技術も目的を説明できる</text>
+  <g transform="translate(60 146)" font-family="system-ui, sans-serif">
+    <g>
+      <rect width="250" height="250" rx="24" fill="#fffdf8" stroke="#c8d4cf" stroke-width="3" />
+      <text x="28" y="42" fill="#172a3a" font-size="20" font-weight="700">Input</text>
+      <text x="28" y="82" fill="#52616d" font-size="17">表示名</text>
+      <rect x="28" y="100" width="194" height="54" rx="10" fill="#ffffff" stroke="#2d7c82" stroke-width="4" />
+      <path d="M125 174v30" stroke="#2d7c82" stroke-width="5" marker-end="url(#arrow)" />
+      <rect x="40" y="210" width="170" height="28" rx="14" fill="#172a3a" />
+      <text x="125" y="230" fill="#ffffff" font-size="15" text-anchor="middle">label「表示名」</text>
+    </g>
+    <g transform="translate(295)">
+      <rect width="250" height="250" rx="24" fill="#fffdf8" stroke="#c8d4cf" stroke-width="3" />
+      <text x="28" y="42" fill="#172a3a" font-size="20" font-weight="700">Image</text>
+      <circle cx="125" cy="117" r="56" fill="#dcefed" stroke="#2d7c82" stroke-width="4" />
+      <rect x="91" y="92" width="68" height="50" rx="9" fill="#ef7d4f" />
+      <path d="M125 174v30" stroke="#2d7c82" stroke-width="5" marker-end="url(#arrow)" />
+      <rect x="28" y="210" width="194" height="28" rx="14" fill="#172a3a" />
+      <text x="125" y="230" fill="#ffffff" font-size="14" text-anchor="middle">alt「Code Cardを持つ人」</text>
+    </g>
+    <g transform="translate(590)">
+      <rect width="250" height="250" rx="24" fill="#fffdf8" stroke="#c8d4cf" stroke-width="3" />
+      <text x="28" y="42" fill="#172a3a" font-size="20" font-weight="700">Link</text>
+      <rect x="28" y="90" width="194" height="64" rx="14" fill="#2d7c82" />
+      <text x="125" y="129" fill="#ffffff" font-size="17" font-weight="700" text-anchor="middle">作品を見る →</text>
+      <path d="M125 174v30" stroke="#2d7c82" stroke-width="5" marker-end="url(#arrow)" />
+      <rect x="32" y="210" width="186" height="28" rx="14" fill="#172a3a" />
+      <text x="125" y="230" fill="#ffffff" font-size="14" text-anchor="middle">Link Text「作品を見る」</text>
+    </g>
+  </g>
+  <rect x="60" y="430" width="840" height="62" rx="18" fill="#172a3a" />
+  <text x="480" y="469" fill="#7bd6d0" font-family="system-ui, sans-serif" font-size="21" font-weight="700" text-anchor="middle">単独で聞いても「何か・何をするか」が分かれば名前が届く</text>
+</svg>

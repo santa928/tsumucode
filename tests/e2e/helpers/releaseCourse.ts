@@ -1,6 +1,12 @@
 import { readFile } from 'node:fs/promises';
 import { expect, type Page, type Request, type Response } from '@playwright/test';
-import { editorText, readStoredProgress, replaceEditorText, waitForDraftSaved } from './progress';
+import {
+  editorText,
+  readStoredProgress,
+  replaceEditorText,
+  waitForDraftSaved,
+  waitForStoredDraftContent,
+} from './progress';
 
 export const COURSE_ROUTE = './#/courses/html-css';
 export const STANDARD_LESSON_ID = 'html-css-ch00-l01';
@@ -115,7 +121,7 @@ export async function openEditableExercise(
   }
 }
 
-/** CodeWorkspaceの指定file tabを選び、Document全体を置換する。 */
+/** CodeWorkspaceの指定fileを置換し、仮想描画ではなく保存済み全文で反映を確認する。 */
 export async function replaceWorkspaceFile(
   page: Page,
   path: string,
@@ -124,7 +130,11 @@ export async function replaceWorkspaceFile(
   const tab = page.getByRole('tab', { name: path, exact: true });
   await tab.click();
   await expect(tab).toHaveAttribute('aria-selected', 'true');
-  await replaceEditorText(page, content);
+  const editor = page.locator('.cm-content');
+  await editor.click();
+  await page.keyboard.press(process.platform === 'darwin' ? 'Meta+A' : 'Control+A');
+  await page.keyboard.insertText(content);
+  await waitForStoredDraftContent(page, content);
 }
 
 /** 複数fileのsolutionを実UIから順に入力し、最後のautosave完了まで待つ。 */
@@ -177,6 +187,19 @@ export async function readExerciseSolution(
   exerciseId: string,
 ): Promise<Readonly<Record<string, string>>> {
   const root = `content/html-css/chapters/${chapterId}/lessons/${lessonId}/exercises/${exerciseId}/solution`;
+  return {
+    'index.html': await readFile(`${root}/index.html`, 'utf8'),
+    'styles.css': await readFile(`${root}/styles.css`, 'utf8'),
+  };
+}
+
+/** 指定Exerciseのauthoring-only starterをテストプロセス内だけで読む。 */
+export async function readExerciseStarter(
+  chapterId: string,
+  lessonId: string,
+  exerciseId: string,
+): Promise<Readonly<Record<string, string>>> {
+  const root = `content/html-css/chapters/${chapterId}/lessons/${lessonId}/exercises/${exerciseId}/starter`;
   return {
     'index.html': await readFile(`${root}/index.html`, 'utf8'),
     'styles.css': await readFile(`${root}/styles.css`, 'utf8'),

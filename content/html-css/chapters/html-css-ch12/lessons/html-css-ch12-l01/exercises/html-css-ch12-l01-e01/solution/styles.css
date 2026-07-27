@@ -10,7 +10,8 @@ body {
 header,
 main,
 footer {
-  width: min(100% - 32px, 56rem);
+  width: calc(100% - 32px);
+  max-width: 896px;
   margin-inline: auto;
 }
 header {

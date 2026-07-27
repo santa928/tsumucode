@@ -2,8 +2,29 @@ id: html-css-ch01-l02-e01
 kind: standard
 workspaceId: html-css-ch01-l02-e01
 countsTowardStandardExerciseTotal: true
-title: 親子関係を保ったSectionを作る
+title: pをmainのChildへ移す
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: nesting, minimumLevel: transform }
+  - { conceptId: indentation, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: move-paragraph-inside
+    file: index.html
+    target: mainのh1の後、終了Tagの前
+    starterAnchor: <!-- move-paragraph-task -->
+    change: 直後にあるpの1行を切り取り、mainの内側へ移す
+    observe: Previewの表示を保ったままpがmainのChildになる
+    requiresConceptIds: [nesting]
+    validationRuleIds: [html-css-ch01-l02-e01-r01, html-css-ch01-l02-e01-r02]
+  - id: indent-paragraph
+    file: index.html
+    target: mainのChildへ移したpの行頭
+    starterAnchor: <p>HTMLの親子関係を練習しています。</p>
+    change: h1と同じ位置まで半角Space 2文字で字下げする
+    observe: h1とpが同じ深さのChildとして読み取れる
+    requiresConceptIds: [indentation]
+    validationRuleIds: [html-css-ch01-l02-e01-r03]
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -12,80 +33,69 @@ solutionFiles:
   - { path: styles.css, language: css, source: solution/styles.css, editable: false }
 validationRules:
   - id: html-css-ch01-l02-e01-r01
-    label: main直下にsectionを置く
+    label: pをmainのChildにする
     required: true
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'main > section' }
+    target: { kind: selector, selector: 'main > p' }
     assertion: { kind: count, operator: equals, expected: 1 }
     feedback:
-      target: mainの中心内容
-      expected: main直下のsectionが1つ
-      nextAction: mainの開始Tagと終了Tagの間へsectionを置きます。
+      target: mainとpの親子関係
+      expected: main直下のpが1つ
+      nextAction: pの1行をmainの終了Tagより前へ移します。
     hintId: html-css-ch01-l02-e01-h01
-    relatedSlideId: html-css-ch01-l02-s01
+    relatedSlideId: html-css-ch01-l02-s03
   - id: html-css-ch01-l02-e01-r02
-    label: section直下にh2を置く
+    label: h1の直後へpを置く
     required: true
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'main > section > h2' }
-    assertion: { kind: count, operator: equals, expected: 1 }
-    feedback:
-      target: sectionの見出し
-      expected: section直下のh2が1つ
-      nextAction: sectionの内側へh2を置きます。
-    hintId: html-css-ch01-l02-e01-h02
-    relatedSlideId: html-css-ch01-l02-s03
-  - id: html-css-ch01-l02-e01-r03
-    label: section直下のpに文章を書く
-    required: true
-    group: all
-    viewportMode: all
-    viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'main > section > p' }
-    assertion: { kind: accessible-name, operator: present }
-    feedback:
-      target: sectionの説明
-      expected: section直下のpに空でない文章
-      nextAction: h2の次へpを置いて説明を書きます。
-    hintId: html-css-ch01-l02-e01-h02
-    relatedSlideId: html-css-ch01-l02-s03
-  - id: html-css-ch01-l02-e01-r04
-    label: h2の直後にpを置く
-    required: true
-    group: all
-    viewportMode: all
-    viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'main > section > h2' }
+    target: { kind: selector, selector: 'main > h1' }
     assertion:
       kind: relation
       relation: next-sibling
-      otherSelector: 'main > section > p'
+      otherSelector: 'main > p'
     feedback:
-      target: section内の読み順
-      expected: h2の直後にpがある
-      nextAction: sectionの中でh2を先、pをその直後に並べます。
-    hintId: html-css-ch01-l02-e01-h03
+      target: main内の読み順
+      expected: h1の直後にpがある
+      nextAction: mainの中でh1を先、その次へpを2文字下げて置きます。
+    hintId: html-css-ch01-l02-e01-h02
     relatedSlideId: html-css-ch01-l02-s03
+  - id: html-css-ch01-l02-e01-r03
+    label: pをh1と同じ深さへ字下げする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: index.html }
+    assertion:
+      kind: text
+      operator: contains
+      expected: "\n      <p>HTMLの親子関係を練習しています。</p>\n"
+    feedback:
+      target: main内に移したpの行頭
+      expected: h1と同じ半角Space 6文字の位置からpが始まる
+      nextAction: pの行頭をh1の行頭へそろえ、内容はそのままにします。
+    hintId: html-css-ch01-l02-e01-h03
+    relatedSlideId: html-css-ch01-l02-s02
 hints:
   - id: html-css-ch01-l02-e01-h01
     level: 1
-    title: Treeで外側から見る
-    text: main、section、h2とpの順で外側から内側へたどります。
-    relatedSlideId: html-css-ch01-l02-s01
+    title: mainの終了Tagを探す
+    text: pはmainの終了Tagより後ろにあります。まずmainが閉じる位置を確認します。
+    relatedSlideId: html-css-ch01-l02-s03
   - id: html-css-ch01-l02-e01-h02
     level: 2
-    title: 字下げをそろえる
-    text: sectionをmainより1段、h2とpをsectionより1段右へ下げます。
-    relatedSlideId: html-css-ch01-l02-s02
+    title: pの1行を内側へ移す
+    text: pを切り取り、h1の次かつmainの終了Tagより前へ貼り付けます。
+    relatedSlideId: html-css-ch01-l02-s03
   - id: html-css-ch01-l02-e01-h03
     level: 3
-    title: 閉じる順番を確認する
-    text: p、section、mainの順に内側から終了Tagを閉じ、h2の直後にpを置きます。
-    relatedSlideId: html-css-ch01-l02-s03
+    title: 同じ深さへそろえる
+    text: mainのChildであるh1とpの行頭を、どちらも半角Space 2文字ぶん右へそろえます。
+    relatedSlideId: html-css-ch01-l02-s02
 relatedSlideIds:
   - html-css-ch01-l02-s01
   - html-css-ch01-l02-s02
@@ -124,4 +134,19 @@ fixtures:
       - html-css-ch01-l02-e01-r01
       - html-css-ch01-l02-e01-r02
       - html-css-ch01-l02-e01-r03
-      - html-css-ch01-l02-e01-r04
+  - id: html-css-ch01-l02-e01-unindented
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/unindented/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-alternative/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: [html-css-ch01-l02-e01-r03]

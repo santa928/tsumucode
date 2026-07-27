@@ -4,6 +4,32 @@ workspaceId: html-css-ch06-l01-e01
 countsTowardStandardExerciseTotal: true
 title: 読みやすい本文の文字を整える
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: font-size, minimumLevel: transform }
+  - { conceptId: line-height, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: set-reading-font-size
+    file: styles.css
+    target: .reading-sample Ruleのfont-size Declaration
+    starterAnchor: 'font-size: 1rem;'
+    change: Valueを1.25remへ変更する
+    observe: Root 16pxを基準にComputed Font Sizeが20pxになる
+    requiresConceptIds: [font-size]
+    validationRuleIds:
+      - html-css-ch06-l01-e01-r01
+      - html-css-ch06-l01-e01-r03
+      - html-css-ch06-l01-e01-r04
+  - id: set-reading-line-height
+    file: styles.css
+    target: .reading-sample Ruleのline-height Declaration
+    starterAnchor: 'line-height: 1.25;'
+    change: Valueを1.5へ変更する
+    observe: 20pxへ1.5を掛けてComputed Line Heightが30pxになる
+    requiresConceptIds: [font-size, line-height]
+    validationRuleIds:
+      - html-css-ch06-l01-e01-r02
+      - html-css-ch06-l01-e01-r04
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -67,6 +93,23 @@ validationRules:
       nextAction: font-familyの先頭へsystem-uiを指定し、sans-serifをFallbackに残します。
     hintId: html-css-ch06-l01-e01-h03
     relatedSlideId: html-css-ch06-l01-s02
+  - id: html-css-ch06-l01-e01-r04
+    label: .reading-sampleへ3つのTypography Valueを記述する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '.reading-sample { font-size: 1.25rem; line-height: 1.5; font-family: system-ui, sans-serif;'
+    feedback:
+      target: .reading-sampleのTypography Source
+      expected: 1.25rem、1.5、system-uiとsans-serif
+      nextAction: Rule先頭のfont-size、line-height、font-familyのValueを順に変更します。
+    hintId: html-css-ch06-l01-e01-h03
+    relatedSlideId: html-css-ch06-l01-s02
 hints:
   - id: html-css-ch06-l01-e01-h01
     level: 1
@@ -81,7 +124,7 @@ hints:
   - id: html-css-ch06-l01-e01-h03
     level: 3
     title: 3つのDeclarationをそろえる
-    text: font-size、line-height、font-familyをreading-sampleへ指定します。
+    text: font-sizeとline-heightを変え、完成済みのfont-familyは残します。
     relatedSlideId: html-css-ch06-l01-s02
 relatedSlideIds:
   - html-css-ch06-l01-s01
@@ -116,4 +159,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch06-l01-e01-r02]
+    expectedFeedbackRuleIds: [html-css-ch06-l01-e01-r02, html-css-ch06-l01-e01-r04]

@@ -3,6 +3,10 @@ id: html-css-ch11-l01-s01
 title: DOM順がKeyboardの移動順を作る
 kind: diagram
 concept: keyboard-focus-order
+layout: comparison
+teachesConceptIds: [dom-order, keyboard-operation]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 410, maxCodeLines: 0, maxVisuals: 1 }
 assets:
   - id: diagram-focus-path
     source: assets/diagram-focus-path.svg
@@ -11,7 +15,7 @@ assets:
     provenanceId: ch11-focus-path-slide-original
 ---
 
-Tabによる移動は、画面上の座標ではなくHTMLのDOM順を基準にします。CSSで見た目だけを並べ替える前に、読み上げ順と操作順が内容の流れに合っているか確認します。
+Tabによる移動は、画面上の座標ではなくHTMLのDOM順を基準にします。`href`を持つ`a`や`button`は、特別な属性を足さなくてもKeyboardで移動・操作できます。
 
 ![DOM順とKeyboard Focusの経路](asset:diagram-focus-path)
 
@@ -21,4 +25,4 @@ expectedAction: プロフィール、作品一覧、次の教材の順と答え�
 estimatedMinutes: 2
 :::
 
-次の観察または実習で、見えるFocus Indicatorを確認します。
+見た目だけをCSSで並べ替える前に、HTMLの順序が内容の流れと一致するかを確認します。次は、現在地を見せるCSSです。

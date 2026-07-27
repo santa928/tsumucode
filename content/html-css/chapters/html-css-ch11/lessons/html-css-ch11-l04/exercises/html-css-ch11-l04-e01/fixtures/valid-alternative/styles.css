@@ -17,6 +17,53 @@ body {
   border-radius: 18px;
   background: #155e63;
 }
+.profile-check {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 16px;
+  padding: 18px;
+  color: #172a3a;
+  background: #fffdf8;
+  border-radius: 14px;
+}
+.profile-check img {
+  width: 88px;
+  height: 88px;
+  border-radius: 12px;
+}
+label {
+  display: block;
+  font-weight: 700;
+}
+input {
+  width: 100%;
+  min-height: 44px;
+  margin-block: 6px 14px;
+}
+[data-action] {
+  display: inline-block;
+  color: #155e63;
+  font-weight: 700;
+}
+[data-action]:focus-visible,
+.is-focus-visible {
+  outline: 4px solid #ef7d4f;
+  outline-offset: 3px;
+}
+[data-status] {
+  display: flex;
+  gap: 10px;
+  padding: 12px 16px;
+  color: #172a3a;
+  background: #dcefed;
+  border-radius: 12px;
+}
+.status-dot {
+  width: 14px;
+  height: 14px;
+  background: #2d7c82;
+  border-radius: 50%;
+}
 .motion-card {
   margin-top: 20px;
   padding: 20px;
@@ -24,10 +71,6 @@ body {
   color: #172a3a;
   background: #fffdf8;
   animation: gentle-pulse 600ms linear infinite;
-}
-.reduce-motion .motion-card {
-  animation-duration: 0.001s;
-  animation-iteration-count: 1;
 }
 @keyframes gentle-pulse {
   to {

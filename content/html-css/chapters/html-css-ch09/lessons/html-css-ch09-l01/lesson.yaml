@@ -1,7 +1,7 @@
 id: html-css-ch09-l01
 kind: standard
-title: Grid ContainerとTrackを作る
-goal: display gridと明示的なColumn TrackでItemの2次元配置を始められる
+title: 親とColumn Trackを決める
+goal: 親をGrid Containerにし、2つの列幅を左から順に指定できる
 estimatedMinutes: 11
 prerequisiteLessonIds: [html-css-ch08-l05]
 slideSources:
@@ -9,7 +9,7 @@ slideSources:
   - slides/s02-explicit-tracks.md
 exerciseSources:
   - exercises/html-css-ch09-l01-e01/exercise.yaml
-reflection: ContainerへTrackを定義し、Item境界からColumn幅を読み取る
+reflection: display gridを書く親と、2つのColumn幅の順序を説明する
 glossaryRefs: [grid-container, grid-item, grid-track, grid-line]
 nextLessonId: html-css-ch09-l02
 completion:

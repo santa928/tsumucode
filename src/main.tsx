@@ -1,16 +1,11 @@
-/** #rootを前提に、Routerを1個だけ所有してReact treeをStrictModeでDOMへmountする。 */
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { App } from '@/app/App';
-import { createAppRouter } from '@/app/router';
+/** 初期Hashに必要なMode entryだけを読み、Library直リンクのRuntime境界を守る。 */
+import { resolveInitialAppMode } from '@/app/initialMode';
 import '@/design-system/base.css';
 
-const root = document.getElementById('root');
-if (root === null) throw new Error('TsumuCodeの描画先 #root が見つかりません。');
-
-const router = createAppRouter();
-createRoot(root).render(
-  <StrictMode>
-    <App router={router} />
-  </StrictMode>,
-);
+if (import.meta.env.DEV) {
+  if (resolveInitialAppMode(location.hash) === 'library') {
+    void import('@/app/libraryEntry');
+  } else {
+    void import('@/app/normalLearningEntry');
+  }
+}

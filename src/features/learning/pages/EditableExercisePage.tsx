@@ -12,6 +12,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import type { exerciseLoader } from '../../../app/contentLoaders';
 import type { CourseManifest, Exercise } from '../../../core/content/types';
+import { findSlideInCourse } from '../../../core/content/selectors';
 import {
   findWorkspaceTargets,
   findWorkspaceValidationTargets,
@@ -21,16 +22,21 @@ import {
 import { LeaseFenceRejectedError } from '../../../core/persistence/contracts';
 import type { ResolvedPreviewAsset } from '../../../core/runtime/contracts';
 import { ValidatorRuleEngine } from '../../../core/validation/validatorRuleEngine';
-import { StackedCard } from '../../../design-system/components/StackedCard';
 import { WorkshopNotice } from '../../../design-system/components/WorkshopNotice';
 import { resolvePublicAsset } from '../../../shared/lib/resolvePublicAsset';
 import type { WorkspaceLeaseAccess } from '../../progress/WorkspaceLeaseGate';
-import { FeedbackPanel, HintPanel, PreviewFrame, SaveStatus } from '../components';
-import { SlideBlocks } from '../components/SlideBlocks';
 import {
-  createCodeMirrorEditor,
-  registerHtmlCssEditorLanguages,
-} from '../editor/createCodeMirrorEditor';
+  ExerciseInstructionPane,
+  ExerciseStatusDrawer,
+  LearningDrawer,
+  PreviewFrame,
+  SaveStatus,
+} from '../components';
+import { SlideBlocks } from '../components/SlideBlocks';
+import { createCodeMirrorEditor } from '../editor/createCodeMirrorEditor';
+import { registerHtmlCssEditorLanguages } from '../editor/htmlCssEditorLanguages';
+import { LearningToolRail } from '../layout/LearningToolRail';
+import { LearningViewportShell } from '../layout/LearningViewportShell';
 import { LearningSessionController, StaleExecutionError, useLearningSession } from '../session';
 import { learningRuntimeServices } from '../runtimeServices';
 
@@ -40,7 +46,15 @@ const LazyCodeWorkspace = lazy(() =>
 
 type ExerciseLoaderData = Awaited<ReturnType<typeof exerciseLoader>>;
 type InitializationState = 'loading' | 'ready' | 'error';
-type OperationState = 'idle' | 'preview' | 'validate' | 'review';
+type OperationState = 'idle' | 'preview' | 'validate' | 'reset';
+
+interface ExerciseViewState {
+  readonly activeFilePath: string;
+  readonly activeStepId: string | undefined;
+  readonly drawerMode: 'feedback' | 'hint' | undefined;
+  readonly relatedSlideId: string | undefined;
+  readonly editorFocusRequestId: number;
+}
 
 interface EditableSessionProps extends ExerciseLoaderData {
   readonly lease: WorkspaceLeaseAccess;
@@ -76,14 +90,12 @@ function resolveWorkspaceAssets(
 }
 
 /** 非同期操作の種別を学習者が次に行える操作へ変換する。 */
-function operationErrorMessage(operation: Exclude<OperationState, 'idle'>): string {
+function operationErrorMessage(operation: Exclude<OperationState, 'idle' | 'reset'>): string {
   switch (operation) {
     case 'preview':
       return 'プレビューを更新できませんでした。少し待ってからもう一度試してください。';
     case 'validate':
       return '判定を完了できませんでした。編集内容は残っています。もう一度試してください。';
-    case 'review':
-      return 'スライドの見直しを開けませんでした。もう一度試してください。';
   }
 }
 
@@ -114,9 +126,22 @@ function EditableSession({ course, lesson, exercise, lease, onRetry }: EditableS
   const [operation, setOperation] = useState<OperationState>('idle');
   const [operationError, setOperationError] = useState<string>();
   const [previewNeedsPrepare, setPreviewNeedsPrepare] = useState(false);
+  const [resetOpen, setResetOpen] = useState(false);
+  const [activeStepId, setActiveStepId] = useState<string | undefined>(exercise.steps[0]?.id);
+  const [drawerMode, setDrawerMode] = useState<'feedback' | 'hint'>();
+  const [relatedSlideId, setRelatedSlideId] = useState<string>();
+  const [editorFocusRequestId, setEditorFocusRequestId] = useState(0);
+  const [restoreEditorFocus, setRestoreEditorFocus] = useState(false);
   const mountedRef = useRef(true);
   const operationGenerationRef = useRef(0);
+  const resetInFlightRef = useRef(false);
   const previewFrameRef = useRef<HTMLIFrameElement | undefined>(undefined);
+  const hintTriggerRef = useRef<HTMLButtonElement>(null);
+  const feedbackTriggerRef = useRef<HTMLButtonElement>(null);
+  const validateTriggerRef = useRef<HTMLButtonElement>(null);
+  const resetTriggerRef = useRef<HTMLButtonElement>(null);
+  const resetCancelRef = useRef<HTMLButtonElement>(null);
+  const statusReturnFocusRef = useRef<HTMLElement>(null);
   const allWorkspaceTargets = useMemo(
     () => findWorkspaceTargets(course, exercise.id),
     [course, exercise.id],
@@ -221,12 +246,39 @@ function EditableSession({ course, lesson, exercise, lease, onRetry }: EditableS
     ],
   );
   const state = useLearningSession(controller);
+  const starterFiles = useMemo(
+    () => Object.fromEntries(exercise.files.map(({ path, content }) => [path, content])),
+    [exercise.files],
+  );
+  const canReset = useMemo(() => {
+    const currentPaths = Object.keys(state.files);
+    const starterPaths = Object.keys(starterFiles);
+    return (
+      currentPaths.length !== starterPaths.length ||
+      starterPaths.some((path) => state.files[path] !== starterFiles[path])
+    );
+  }, [starterFiles, state.files]);
+  const workspaceFiles = useMemo(
+    () => (operation === 'reset' ? { ...state.files } : state.files),
+    [operation, state.files],
+  );
   const editor = useMemo(() => {
     registerHtmlCssEditorLanguages(learningRuntimeServices.editorLanguageRegistry);
     return createCodeMirrorEditor(learningRuntimeServices.editorLanguageRegistry);
   }, []);
   const result = state.validationHistory.at(-1);
   const busy = operation !== 'idle';
+  const viewState: ExerciseViewState = {
+    activeFilePath: state.selectedFile,
+    activeStepId,
+    drawerMode,
+    relatedSlideId,
+    editorFocusRequestId,
+  };
+  const relatedSlide =
+    viewState.relatedSlideId === undefined
+      ? undefined
+      : findSlideInCourse(course, viewState.relatedSlideId).slide;
 
   useEffect(() => {
     mountedRef.current = true;
@@ -235,6 +287,17 @@ function EditableSession({ course, lesson, exercise, lease, onRetry }: EditableS
       operationGenerationRef.current += 1;
     };
   }, []);
+
+  useEffect(() => {
+    if (!restoreEditorFocus) return;
+    const frame = requestAnimationFrame(() => {
+      setEditorFocusRequestId((current) => current + 1);
+      setRestoreEditorFocus(false);
+    });
+    return () => {
+      cancelAnimationFrame(frame);
+    };
+  }, [restoreEditorFocus]);
 
   /** 画面操作の世代を進め、古いPromise callbackを後続操作から分離する。 */
   const beginOperation = useCallback((): number => {
@@ -349,9 +412,11 @@ function EditableSession({ course, lesson, exercise, lease, onRetry }: EditableS
   /** 判定batch・最新Draft・進捗を同じrevisionで原子的に保存する。 */
   const validate = (): void => {
     if (!lease.isWritable()) return;
+    statusReturnFocusRef.current = validateTriggerRef.current;
     const generation = beginOperation();
     setOperation('validate');
     setOperationError(undefined);
+    setDrawerMode(undefined);
     void (async () => {
       try {
         const nextResult = await controller.validateNow();
@@ -431,12 +496,15 @@ function EditableSession({ course, lesson, exercise, lease, onRetry }: EditableS
             executionRevision,
           );
         }
-        if (
-          isCurrentOperation(generation) &&
-          nextResult.status === 'pass' &&
-          persisted.updated.lessons[lesson.id]?.currentComplete === true
-        ) {
-          await navigate('completion');
+        if (isCurrentOperation(generation)) {
+          if (
+            nextResult.status === 'pass' &&
+            persisted.updated.lessons[lesson.id]?.currentComplete === true
+          ) {
+            await navigate('completion');
+          } else {
+            setDrawerMode('feedback');
+          }
         }
       } catch (error: unknown) {
         if (isCurrentOperation(generation)) {
@@ -452,26 +520,104 @@ function EditableSession({ course, lesson, exercise, lease, onRetry }: EditableS
     })();
   };
 
-  /** 見直し復帰位置を保存してから関連Slideへ移動する。 */
+  /** Feedback Drawerを閉じ、同じ画面の関連Slide Drawerへ切り替える。 */
   const review = (slideId: string): void => {
     if (!lease.isWritable()) return;
+    setDrawerMode(undefined);
+    setRelatedSlideId(slideId);
+  };
+
+  /** 次のHintを開示し、単一Drawer SlotをHintへ切り替える。 */
+  const revealNextHint = (): void => {
+    if (!lease.isWritable()) return;
+    controller.revealNextHint();
+    setDrawerMode('hint');
+  };
+
+  /** Structured Stepと対象Fileを同じ操作で現在地へ揃える。 */
+  const selectStep = (stepId: string): void => {
+    if (!lease.isWritable()) return;
+    const step = exercise.steps.find(({ id }) => id === stepId);
+    if (step === undefined) return;
+    setActiveStepId(step.id);
+    if (state.selectedFile !== step.file) controller.selectFile(step.file);
+  };
+
+  /** 関連Slideを閉じた次frameでEditorへFocusを戻す。 */
+  const closeRelatedSlide = (): void => {
+    setRelatedSlideId(undefined);
+    setRestoreEditorFocus(true);
+  };
+
+  /** 全Starter復元を保存・Previewへ直列化し、失敗時も復元済みstateを保持する。 */
+  const resetToStarter = (): void => {
+    if (!lease.isWritable() || busy || !canReset) return;
+    resetInFlightRef.current = true;
     const generation = beginOperation();
-    setOperation('review');
+    setOperation('reset');
     setOperationError(undefined);
+    setDrawerMode(undefined);
+    setRelatedSlideId(undefined);
+    setActiveStepId(exercise.steps[0]?.id);
+
+    let changed: boolean;
+    try {
+      changed = controller.resetToStarter();
+    } catch (error: unknown) {
+      resetInFlightRef.current = false;
+      learningRuntimeServices.notices.reportError('exercise-save', error);
+      setOperationError('最初のコードに戻せませんでした。編集内容はそのまま残っています。');
+      setOperation('idle');
+      return;
+    }
+    if (!changed) {
+      resetInFlightRef.current = false;
+      setResetOpen(false);
+      setOperation('idle');
+      return;
+    }
+    setResetOpen(false);
+
     void (async () => {
       try {
-        controller.openReview(slideId, window.scrollY);
-        await controller.flush();
-        if (isCurrentOperation(generation)) {
-          learningRuntimeServices.notices.dismiss('error:exercise-save');
-          await navigate(`review/${slideId}`);
+        let saveFailed = false;
+        try {
+          await controller.flush();
+        } catch {
+          saveFailed = true;
+          if (isCurrentOperation(generation)) {
+            setOperationError('最初のコードには戻りましたが、自動保存を完了できませんでした。');
+          }
         }
-      } catch {
-        if (isCurrentOperation(generation)) {
-          setOperationError(operationErrorMessage('review'));
+        if (!isCurrentOperation(generation)) return;
+
+        const frame = previewFrameRef.current;
+        if (frame === undefined) {
+          setPreviewNeedsPrepare(true);
+          if (!saveFailed) setOperationError(previewPreparationErrorMessage());
+          return;
+        }
+        try {
+          await controller.previewNow();
+          if (isCurrentOperation(generation)) {
+            setPreviewNeedsPrepare(false);
+            learningRuntimeServices.notices.dismiss('error:exercise-preview');
+          }
+        } catch (error: unknown) {
+          if (isCurrentOperation(generation) && !(error instanceof StaleExecutionError)) {
+            setPreviewNeedsPrepare(true);
+            learningRuntimeServices.notices.reportError('exercise-preview', error);
+            if (!saveFailed) {
+              setOperationError('最初のコードに戻しました。プレビューだけ更新できませんでした。');
+            }
+          }
         }
       } finally {
-        if (isCurrentOperation(generation)) setOperation('idle');
+        resetInFlightRef.current = false;
+        if (isCurrentOperation(generation)) {
+          setOperation('idle');
+          setRestoreEditorFocus(true);
+        }
       }
     })();
   };
@@ -497,143 +643,239 @@ function EditableSession({ course, lesson, exercise, lease, onRetry }: EditableS
   }
 
   return (
-    <article className="mx-auto w-full max-w-[var(--tc-content-workspace)]">
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="font-black text-workshop-complete">{lesson.title}</p>
-          <h1 className="mt-2 text-3xl font-black md:text-5xl">{exercise.title}</h1>
+    <LearningViewportShell
+      label="コード演習"
+      header={
+        <LearningToolRail coursePath={`/courses/${course.id}`} lessonTitle={lesson.title}>
+          <SaveStatus status={state.saveStatus} />
+        </LearningToolRail>
+      }
+      pager={
+        <div className="tc-exercise-pager">
+          {operationError !== undefined ? (
+            <p role="alert" className="tc-exercise-operation-error">
+              {operationError}
+            </p>
+          ) : null}
+          <div className="tc-exercise-pager-actions">
+            <button
+              ref={hintTriggerRef}
+              type="button"
+              disabled={busy}
+              onClick={() => {
+                statusReturnFocusRef.current = hintTriggerRef.current;
+                setDrawerMode('hint');
+              }}
+              className="tc-exercise-pager-secondary"
+            >
+              ヒントを見る
+            </button>
+            {result !== undefined ? (
+              <button
+                ref={feedbackTriggerRef}
+                type="button"
+                disabled={busy}
+                onClick={() => {
+                  statusReturnFocusRef.current = feedbackTriggerRef.current;
+                  setDrawerMode('feedback');
+                }}
+                className="tc-exercise-pager-secondary"
+              >
+                判定結果を見る
+              </button>
+            ) : null}
+            <button
+              type="button"
+              disabled={busy}
+              onClick={updatePreview}
+              className="tc-exercise-pager-secondary"
+            >
+              {operation === 'preview'
+                ? previewNeedsPrepare
+                  ? '再準備しています'
+                  : '更新しています'
+                : previewNeedsPrepare
+                  ? 'プレビューを再準備'
+                  : 'プレビューを更新'}
+            </button>
+            <button
+              ref={validateTriggerRef}
+              type="button"
+              disabled={busy}
+              onClick={validate}
+              className="tc-exercise-pager-primary"
+            >
+              {operation === 'validate' ? '判定しています' : '判定する'}
+            </button>
+          </div>
         </div>
-        <SaveStatus status={state.saveStatus} />
-      </header>
-
-      {lesson.kind !== 'standard' ? (
-        <StackedCard
-          as="section"
-          aria-labelledby="project-brief-title"
-          className="mt-7 bg-workshop-raised"
-        >
-          <h2 id="project-brief-title" className="text-2xl font-black">
-            制作ブリーフ
-          </h2>
-          <div className="mt-4">
-            <SlideBlocks
-              blocks={lesson.project.brief}
-              assets={exercise.assets}
+      }
+    >
+      <div className="tc-exercise-stage-stack">
+        <div className="tc-exercise-workspace">
+          <aside className="tc-exercise-instructions" aria-label="工程票" tabIndex={0}>
+            <header className="tc-exercise-instruction-title">
+              <p>コード演習</p>
+              <h1>{exercise.title}</h1>
+            </header>
+            {lesson.kind !== 'standard' ? (
+              <details className="tc-exercise-project-brief">
+                <summary>制作ブリーフと工程ガイド</summary>
+                <div>
+                  <SlideBlocks
+                    blocks={lesson.project.brief}
+                    assets={exercise.assets}
+                    baseUrl={import.meta.env.BASE_URL}
+                  />
+                  <SlideBlocks
+                    blocks={lesson.project.guide}
+                    assets={exercise.assets}
+                    baseUrl={import.meta.env.BASE_URL}
+                  />
+                </div>
+              </details>
+            ) : null}
+            <ExerciseInstructionPane
+              steps={exercise.steps}
+              activeStepId={viewState.activeStepId}
+              onStepChange={selectStep}
+              fallbackInstructions={exercise.instructions}
+              fallbackAssets={exercise.assets}
               baseUrl={import.meta.env.BASE_URL}
             />
-          </div>
-          <details className="mt-5 rounded-workshop-md bg-workshop-surface p-4">
-            <summary className="font-black">工程ガイドを見る</summary>
-            <div className="mt-4">
-              <SlideBlocks
-                blocks={lesson.project.guide}
-                assets={exercise.assets}
-                baseUrl={import.meta.env.BASE_URL}
-              />
-            </div>
-          </details>
-        </StackedCard>
-      ) : null}
+          </aside>
 
-      <StackedCard className="mt-7 bg-workshop-surface p-5 md:p-7">
-        <SlideBlocks
-          blocks={exercise.instructions}
-          assets={exercise.assets}
-          baseUrl={import.meta.env.BASE_URL}
-        />
-      </StackedCard>
-
-      <section
-        aria-label="コードとプレビューの作業台"
-        className="mt-7 rounded-workshop-lg bg-workshop-workbench p-3 shadow-[var(--tc-shadow-piece)] md:p-5"
-      >
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1.08fr)_minmax(24rem,0.92fr)] xl:items-start">
-          <div data-testid="code-workspace" className="min-w-0">
+          <div
+            data-testid="code-workspace"
+            className="tc-exercise-editor"
+            aria-busy={operation === 'reset'}
+            inert={operation === 'reset'}
+          >
             <Suspense fallback={<p role="status">エディターを準備しています</p>}>
               <LazyCodeWorkspace
                 adapter={editor}
-                files={state.files}
+                files={workspaceFiles}
                 languages={Object.fromEntries(
                   exercise.files.map(({ path, language }) => [path, language]),
                 )}
-                selectedFile={state.selectedFile}
+                selectedFile={viewState.activeFilePath}
+                contentRevision={state.executionRevision}
                 cursors={state.cursors}
                 diagnostics={state.diagnostics}
+                editorFocusRequestId={viewState.editorFocusRequestId}
+                headerAction={
+                  <button
+                    ref={resetTriggerRef}
+                    type="button"
+                    disabled={!canReset || busy || !lease.isWritable()}
+                    className="inline-flex min-h-11 items-center rounded-workshop-sm border border-workshop-border bg-workshop-surface px-3 py-2 text-sm font-black text-workshop-muted transition-colors duration-[var(--tc-motion-fast)] hover:bg-workshop-raised disabled:cursor-not-allowed disabled:opacity-50"
+                    onClick={() => {
+                      if (canReset && !busy && lease.isWritable()) setResetOpen(true);
+                    }}
+                  >
+                    最初に戻す
+                  </button>
+                }
                 onChange={(path, content) => {
-                  if (!lease.isWritable()) return;
-                  controller.edit(path, content);
+                  if (!lease.isWritable() || resetInFlightRef.current) return undefined;
+                  return controller.edit(path, content);
                 }}
                 onCursorChange={(path, cursor) => {
-                  if (!lease.isWritable()) return;
+                  if (!lease.isWritable() || resetInFlightRef.current) return;
                   controller.setCursor(path, cursor);
                 }}
                 onSelectedFileChange={(path) => {
-                  if (!lease.isWritable()) return;
+                  if (!lease.isWritable() || resetInFlightRef.current) return;
                   controller.selectFile(path);
                 }}
               />
             </Suspense>
           </div>
 
-          <div className="min-w-0">
+          <div className="tc-exercise-preview">
             <div data-testid="runtime-preview-frame">
               <PreviewFrame onReady={preparePreview} />
             </div>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
-              <button
-                type="button"
-                disabled={busy}
-                onClick={updatePreview}
-                className="inline-flex min-h-11 items-center justify-center rounded-workshop-md border-2 border-workshop-primary bg-workshop-surface px-5 py-3 font-bold text-workshop-primary disabled:opacity-60"
-              >
-                {operation === 'preview'
-                  ? previewNeedsPrepare
-                    ? '再準備しています'
-                    : '更新しています'
-                  : previewNeedsPrepare
-                    ? 'プレビューを再準備'
-                    : 'プレビューを更新'}
-              </button>
-              <button
-                type="button"
-                disabled={busy}
-                onClick={validate}
-                className="inline-flex min-h-11 items-center justify-center rounded-workshop-md bg-workshop-primary px-5 py-3 font-bold text-workshop-on-primary shadow-[var(--tc-shadow-piece)] disabled:opacity-60"
-              >
-                {operation === 'validate' ? '判定しています' : '判定する'}
-              </button>
-            </div>
           </div>
         </div>
-      </section>
-      {operationError !== undefined ? (
-        <div role="alert" className="mt-5">
-          <WorkshopNotice tone="correction" title="操作を完了できませんでした">
-            {operationError}
-          </WorkshopNotice>
-        </div>
-      ) : null}
+      </div>
 
-      <div data-testid="validation-feedback" className="mt-7">
-        <FeedbackPanel
+      <div data-testid="validation-feedback">
+        <ExerciseStatusDrawer
+          mode={viewState.drawerMode}
           result={result}
-          onRevealNextHint={() => {
-            if (!lease.isWritable()) return;
-            controller.revealNextHint();
+          hints={exercise.hints}
+          revealedHintIds={state.revealedHintIds}
+          placement="side"
+          returnFocusRef={statusReturnFocusRef}
+          onClose={() => {
+            setDrawerMode(undefined);
           }}
+          onRevealNextHint={revealNextHint}
           onReviewSlide={review}
         />
       </div>
-      <div className="mt-7">
-        <HintPanel
-          hints={exercise.hints}
-          revealedHintIds={state.revealedHintIds}
-          onRevealNext={() => {
-            if (!lease.isWritable()) return;
-            controller.revealNextHint();
-          }}
-        />
-      </div>
-    </article>
+
+      <LearningDrawer
+        open={resetOpen}
+        title="最初のコードに戻しますか？"
+        placement="bottom"
+        initialFocusRef={resetCancelRef}
+        returnFocusRef={resetTriggerRef}
+        onClose={() => {
+          if (!busy) setResetOpen(false);
+        }}
+      >
+        <div className="space-y-4">
+          <p className="text-workshop-muted">
+            現在の編集内容と全ファイルを演習開始時のコードへ戻します。開示したヒントと判定結果も消えます。
+          </p>
+          <div className="flex flex-wrap justify-end gap-3">
+            <button
+              ref={resetCancelRef}
+              type="button"
+              disabled={busy}
+              className="inline-flex min-h-11 items-center justify-center rounded-workshop-sm border border-workshop-border bg-workshop-surface px-4 py-2 font-black text-workshop-muted disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={() => {
+                setResetOpen(false);
+              }}
+            >
+              編集を続ける
+            </button>
+            <button
+              type="button"
+              disabled={busy || !canReset || !lease.isWritable()}
+              className="inline-flex min-h-11 items-center justify-center rounded-workshop-sm bg-workshop-correction px-4 py-2 font-black text-workshop-on-primary disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={resetToStarter}
+            >
+              最初のコードに戻す
+            </button>
+          </div>
+        </div>
+      </LearningDrawer>
+
+      <LearningDrawer
+        open={relatedSlide !== undefined}
+        title={relatedSlide === undefined ? '関連スライド' : `関連スライド：${relatedSlide.title}`}
+        placement="side"
+        onClose={closeRelatedSlide}
+      >
+        {relatedSlide !== undefined ? (
+          <div className="tc-exercise-related-slide">
+            <p>コードと判定履歴を保ったまま、直前の説明を確認できます。</p>
+            <div>
+              <SlideBlocks
+                blocks={relatedSlide.blocks}
+                assets={relatedSlide.assets}
+                baseUrl={import.meta.env.BASE_URL}
+              />
+            </div>
+            <button type="button" onClick={closeRelatedSlide} className="tc-exercise-pager-primary">
+              演習へ戻る
+            </button>
+          </div>
+        ) : null}
+      </LearningDrawer>
+    </LearningViewportShell>
   );
 }

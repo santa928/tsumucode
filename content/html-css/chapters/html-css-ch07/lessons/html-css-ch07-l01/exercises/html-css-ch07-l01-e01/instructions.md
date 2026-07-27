@@ -1,9 +1,12 @@
-## 5つの観点でProfile Cardを完成する
+## 6 StepでProfile Cardを完成する
 
-1. Profile Cardを`article`として表します。
-2. Profile Imageへ内容が分かる`alt`を書きます。
-3. CardをContainerの右端へ収めます。
-4. 自己紹介のLine Heightを24pxにします。
-5. TextとBackgroundのContrastを4.5:1以上にします。
+HTMLからCSSの順に、1項目ずつ変更します。
 
-迷ったときは前のReflection Slideへ戻り、1項目ずつ確認してから実習へ戻れます。TextやClass名の完全一致ではなく、Semantic Roleと最終表示で判定します。
+1. `data-profile-card`を持つ外側Elementの開始Tagと終了Tagを、divからarticleへ変えます。
+2. 画像の空の`alt`へ`Code Cardを持つAoiのAvatar`と書きます。
+3. Card Ruleの先頭へ`box-sizing: border-box;`を加え、Widthを360pxから100%へ変えます。
+4. Paddingを12pxから24pxへ変えます。
+5. Colorを`#a0a0a0`から`#24323d`へ変えます。
+6. 自己紹介のLine Heightを1.2から1.5へ変えます。
+
+迷ったら前のReflectionへ戻り、見本を確認してから同じ実習へ戻れます。

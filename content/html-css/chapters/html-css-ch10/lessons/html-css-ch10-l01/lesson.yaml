@@ -1,7 +1,7 @@
 id: html-css-ch10-l01
 kind: standard
-title: ViewportとMobile First
-goal: Viewport Metaと小さい画面向けBase Layoutを正しく用意できる
+title: Mobile表示の土台を作る
+goal: Viewport Metaを直し、小さい画面を基準にした流動幅Containerを用意できる
 estimatedMinutes: 12
 prerequisiteLessonIds: [html-css-ch09-l04]
 slideSources:
@@ -9,7 +9,7 @@ slideSources:
   - slides/s02-mobile-first.md
 exerciseSources:
   - exercises/html-css-ch10-l01-e01/exercise.yaml
-reflection: Viewport設定とBase Layoutの役割を分ける
+reflection: Viewport設定とMobile BaseのCSSが、それぞれ何を決めるか説明する
 glossaryRefs: [viewport-meta, mobile-first, base-layout]
 nextLessonId: html-css-ch10-l02
 completion:

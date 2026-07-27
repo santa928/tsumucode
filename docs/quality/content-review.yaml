@@ -1,12 +1,12 @@
 schemaVersion: 1
 releaseStatus: approved
-verifiedSourceCommit: 5a8f091504f72e547e70160357ef9e4c71601d27
-canonicalDistSha256: d84d16c571d48e597c6d2f17078f34280742e310af9118e9b9d3d184e36afc78
+verifiedSourceCommit: d402188d5708ad287f294be7c33e0d44bfa4e2d7
+canonicalDistSha256: 952053ed146ff6b28f7e1deae9b0161600aa57c17a42c5811894bfcebb1a2062
 lessons:
   - lessonId: html-css-ch00-l01
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: b94c4206e3d972c5b4d63d2494233f150b119f368d06c50b674ca88761971c5a
+    sourceHash: d3b084f315c7570d55bdc9c2a1a82bd06c7d278bea3cea6f4fcdfc35f6670f2e
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -17,7 +17,7 @@ lessons:
   - lessonId: html-css-ch00-l02
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 367a83fceeba85a0a1f50d2b0485db79146ced927fd94dea3c31291a264b5d8f
+    sourceHash: 7dc0da980be6349bf76b3deeaf1fcdb5d4b83f5a5835f5604d7e34fa73c1d03e
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -28,7 +28,7 @@ lessons:
   - lessonId: html-css-ch01-l01
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: b9e9c1043aff374b8073d2be26cabce143727deb8902cf19bc5343f911567c68
+    sourceHash: 17713b38f2a33dacaabb92647425fd4d16e39c27ba69ad095d07e35bb8712e68
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -39,7 +39,7 @@ lessons:
   - lessonId: html-css-ch01-l02
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 6396a8f6b0507fa380c5464faa6cd18e74704cbf2939a8e266ae66cb501d5325
+    sourceHash: c39fa82630f978f00c888c3a6b142527df49b996c76c2dcf7378b861c3174acb
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -50,7 +50,7 @@ lessons:
   - lessonId: html-css-ch01-l03
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: ef4c087c0e2779a9e438bfc5b28cf92747ffb4d3af21efc39da22a98fbbd49f4
+    sourceHash: fb855e254bcc9fae7c8880dac5388b798dbf586dc6e55f9942d3316fd1ce7bc7
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -61,7 +61,7 @@ lessons:
   - lessonId: html-css-ch02-l01
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 5383b7c97f6c540adc085b7f2a45877013e1ce6a0ca518166690085d24437128
+    sourceHash: 28b6c336bad2ef015e609a29616d3a6cae1c0f3f06ff92fcbb8ff23f0a9f4f3a
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -72,7 +72,7 @@ lessons:
   - lessonId: html-css-ch02-l02
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 2926f1b73323506366a47be79d7d6c4fa604b8da2e4eab1389c65e257aef97eb
+    sourceHash: 12c969567d27e548d076f714c44eb0b9908d2d19c9c27fe3a7e36a3c37d01276
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -83,7 +83,7 @@ lessons:
   - lessonId: html-css-ch02-l03
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: e0e6dbf74677ff86031087a62bad18a8108ffe01863d82214e6deb8ca3425b8d
+    sourceHash: 0a5268ce21058c22be2bdd0d56700250dc6fa2c05abd12edf10582d44eaf6207
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -94,7 +94,7 @@ lessons:
   - lessonId: html-css-ch02-l04
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: ab0835c8e5fdcf3f0b5470397f7efe5cdaeb20ec8ace15e2b3076d4c0e8bb0f4
+    sourceHash: abfe04b434f0fab5cc8c55a147475a217ac1d266fe0cee52e9bf6d842dd9ec96
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -105,7 +105,7 @@ lessons:
   - lessonId: html-css-ch03-l01
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: e844680910ee2a15a0f194d3129bca9893a59b832b6ff393cdcffedcff86085d
+    sourceHash: 4546ac2897716018afaa09b6bb392e764a16dfcb0f794f6a51a55f6317633bab
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -116,7 +116,7 @@ lessons:
   - lessonId: html-css-ch03-l02
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: a190cac6f2fdaaa831e2d9a7ba52750e29b0c9f65a78395c35484b0c7caf5909
+    sourceHash: b19ddb85594ee13683396c425016f12cc26d8c20b96d9ec43d908844134a0565
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -127,7 +127,7 @@ lessons:
   - lessonId: html-css-ch03-l03
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: a9748e0b90f422a71fba097c20e7e90e9bd6e395f618ac8913b54e38956948e1
+    sourceHash: bfd20b6627fc5f59e4cbcd7387930c84d4b0eb006c60dce0dcbd5186a08d7b9b
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -138,7 +138,7 @@ lessons:
   - lessonId: html-css-ch03-l04
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 1037a2557aabd20b9687b76e34b61841fb1f4d1501621460c1b0447d51a589d3
+    sourceHash: d6cb6da75b2085d2a311bacb5fdf90c460bbd4e769f26ae58702e26744e6a46b
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -149,7 +149,7 @@ lessons:
   - lessonId: html-css-ch04-l01
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 49d62522357233f16a078bc418e99e477b2ee73caf7d8c88657aa757cf508513
+    sourceHash: d73f9180d73e3b99ea1f41b2f33ac41d260a408d695f613c7d6a5761517c9d88
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -160,7 +160,7 @@ lessons:
   - lessonId: html-css-ch04-l02
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 9483da4d67cd4135f47a449424b5ac51536b409a421a4f2fb75a5aa3967f0ce3
+    sourceHash: 849a1c512e3761706309772e6e057d65fd76dabee9dd73b50ede663342d722f2
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -171,7 +171,7 @@ lessons:
   - lessonId: html-css-ch04-l03
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 376e081be10de7a923914ce95802a647285bb87bd91ff889eef42b8532898353
+    sourceHash: 2b66039ef03243bfcd63852bb664b0265f5b512d71624cd5cb8dd86fd4464079
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -182,7 +182,7 @@ lessons:
   - lessonId: html-css-ch04-l04
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: c792e316fc630af113a2c07ec8fa4ceb415cdc5a11bf0aa3fd78aecc6b6df4ab
+    sourceHash: 939bc218936b8db343ac49838ab29723609fe46852562c90b6da456fb970ca25
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -193,7 +193,7 @@ lessons:
   - lessonId: html-css-ch05-l01
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 102a4f2c474691bec214028d709df09d1f0a867e1dcf7845180a1e4ea45fc1cc
+    sourceHash: f1724e125a154f8699c6984348528f83785e19a7a038e76ba1ec0b93a8c4df59
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -204,7 +204,7 @@ lessons:
   - lessonId: html-css-ch05-l02
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 58fe1c88aa9100d39fcdd2d57842df9ed878fd0654fbbc28b1cb7583945e4fb7
+    sourceHash: d7daa8a9eaf358b0addae10b040b5048c775edd22cec10a99e3b866836581bb7
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -215,7 +215,7 @@ lessons:
   - lessonId: html-css-ch05-l03
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 0009bf4a445e1100d121cef6e47401d475e5ffdf9326346fbf722a5105488735
+    sourceHash: 16915d1bfc293b7b96e96c4eee6c3125328fc231552709aa7be37f7fb6dca0f2
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -226,7 +226,7 @@ lessons:
   - lessonId: html-css-ch05-l04
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: fc99fde48e55ba331e60867721eb1b2fc85d98c0727e8ef899a5cb2b4e376a82
+    sourceHash: 8c0d3c0ac22c2e4e53be5e6d84bc9caa5226859a4a5799fc644c4714e0a3b8f0
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -237,7 +237,7 @@ lessons:
   - lessonId: html-css-ch05-l05
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 1be21dd27cf548dfd27c02752bc9ea8e931a5d78a8b22542b9b2b88413ba6655
+    sourceHash: 30584498fe3df121e2b74f1429a863ac460375de24d43b35679d7efd83ce3256
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -248,7 +248,7 @@ lessons:
   - lessonId: html-css-ch06-l01
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 6b5486b55e1092ea10d41d85da5fcf5600b67e82978db1699dfecd690d6c60bf
+    sourceHash: fe8757a9be3eb4035df39c2aa80a8c1456fb86db987224da5e3a1d08d9502d21
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -259,7 +259,7 @@ lessons:
   - lessonId: html-css-ch06-l02
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 0cfce962c55dffbdef9d23c760f5f94ca621dd158eb239d5cd8c1e29b57af736
+    sourceHash: 515adadde18fac3f2e4a2475ab0528279c973b4c07ccb9c25194904c489e112c
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -270,7 +270,7 @@ lessons:
   - lessonId: html-css-ch06-l03
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: a9ce770337503c2f6103424975053888d34b1f114917e0feb8d738980e61e078
+    sourceHash: d5b82892fa4df4af77d71e1bf4d3d3f911ae654e045e5bd3c759f334e9ce4be5
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -281,7 +281,7 @@ lessons:
   - lessonId: html-css-ch06-l04
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: cef5a3b188e7a748fdb9866d9d47a4b3bac3ce4cfe3173e705cde134c23d625c
+    sourceHash: d946d984486733a98954450f6f48a6e3028f729c4f9c2ea8ed52a24d90d1efc3
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -292,7 +292,7 @@ lessons:
   - lessonId: html-css-ch07-l01
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: d2323484dfc24a5202934b70c0ae2fca9b54273ae4e07418222d40d6b898c35e
+    sourceHash: c3a8bda339f7f88b17d34c8d1cfe7d2b84809ccedcf2d95644a7718c5668f344
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -303,7 +303,7 @@ lessons:
   - lessonId: html-css-ch08-l01
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: c7d5437c4a5eaf616b1eb3fdec4966e8a6e639bfbe34339849c43f2584419c8a
+    sourceHash: 8e98fda5ce50b1671a9eb33833ea18194450e5b89c8249486b8f40f0ae206a3c
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -314,7 +314,7 @@ lessons:
   - lessonId: html-css-ch08-l02
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 5767b8e08ccd0e1ab3ad770d8d17686343253826d4eacc1900269e08b7736b1c
+    sourceHash: 2c789738c50838d536d0e9c696abb5c99b68d4eca156e68cce6b83a6b2308a41
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -325,7 +325,7 @@ lessons:
   - lessonId: html-css-ch08-l03
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 49316e5945e7b657ec491c6839957f617df1ccf3cdd3057f7be671ef82f4bebe
+    sourceHash: 4925d82bdac422adb3cdc587c2a023a6de061f4aae6d225d95d76deb9b057f44
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -336,7 +336,7 @@ lessons:
   - lessonId: html-css-ch08-l04
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: e8f890bdd6d624751b0fa4ef21aed066b875afbab8e690f2336763a26f71c58f
+    sourceHash: 2d3a7d33de0db7a5baeeb374ab120e768f5184b31e646f11b4dde59d467e00bd
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -347,7 +347,7 @@ lessons:
   - lessonId: html-css-ch08-l05
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 4e7f1cc2abec25a0bf3783b0e28a180ade15d497418945d2ef3f43802fe9c3ea
+    sourceHash: 7f8db34be5d7e1a8b9337efe471b789da74c96dac5133505c61f63486cee8909
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -358,7 +358,7 @@ lessons:
   - lessonId: html-css-ch09-l01
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 8ae1bb15cccc831922319fd0bc6e5e095a2407df7928d19a99342f2b37b6434a
+    sourceHash: ab8a25d3b6f8a32a02a45d62d986941c045c715e63766076d57f966cc2f3815f
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -369,7 +369,7 @@ lessons:
   - lessonId: html-css-ch09-l02
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 4551e534aad3b88de4b7c5a4236f7c06bd0e94259e1da7593fdd66a665e67453
+    sourceHash: e37a55c14ad1f2da3e09931ea84c026e1a4051f6c68f833b95e20f89d34a855c
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -380,7 +380,7 @@ lessons:
   - lessonId: html-css-ch09-l03
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: ad178d30f19434fa404629753e07969a93acc335bce2abc307738db99a43897a
+    sourceHash: 104633e858fe61dd516c9defdfc88d4bab86c0163bf18217733975f45a17248e
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -391,7 +391,7 @@ lessons:
   - lessonId: html-css-ch09-l04
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 54070d6d34e9f144c52184e23a224c5298e36b187bc8fd3a2b2df737550dc04c
+    sourceHash: 4dcbcf938a18ceef7774698c5033f5854dc6ea4d5f5c0990088375f64f39cfbc
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -402,7 +402,7 @@ lessons:
   - lessonId: html-css-ch10-l01
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 5d6b1e92c9f0d1b500274bfc200b305a2d7e3d9f712f9eec63c872b7e3aabbdf
+    sourceHash: c5308416e4c8c0a8c581283612d89b3b54d4451ff5e56055916f34defa6d279b
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -413,7 +413,7 @@ lessons:
   - lessonId: html-css-ch10-l02
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 0ce571da2aca3d08fd6830cf2b80724202a86ba1454e0fa160855b2036b7faae
+    sourceHash: 9a0038a1cc02db9dba7c7ac4a05b0f1dd59973aafee7e2d3ec9ca76e59f1545c
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -424,7 +424,7 @@ lessons:
   - lessonId: html-css-ch10-l03
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: e75adb98781aa34bb8f251cfe2f51ddc8a56382bb65572b024ad60cbb9df64a4
+    sourceHash: e5e43d2e175f222e53b8b1094edf940ed4b21736b2c91aecbff9ac4e63c586ec
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -435,7 +435,7 @@ lessons:
   - lessonId: html-css-ch10-l04
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 38845a1c0351ff2a7610114f7ad006e4216f909efbef332a972374f63cd42a29
+    sourceHash: 7783e3a3393d65173df4c569bf1dd6d50e9a998ff8a75d9967a93abd949304bd
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -446,7 +446,7 @@ lessons:
   - lessonId: html-css-ch10-l05
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 1c42a258317f70bbe94330c631d6980312ce1ffd8600bf01d9f2df4645d3d8ed
+    sourceHash: cb0a6a28566d1d26a2994c2ada8a946730bdf1e9e814cea258949490c65baa3c
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -457,7 +457,7 @@ lessons:
   - lessonId: html-css-ch11-l01
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 51f33379195addb2fd3d6681cbdf1bfc7407847985ba65f0291d4f15f5710049
+    sourceHash: ec3f4d1bb403c8c1d90b4e2545be3d0f3218f3ddbd447e67580619787452e1ad
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -468,7 +468,7 @@ lessons:
   - lessonId: html-css-ch11-l02
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 54c9adbf829f5df07f59352d8e4cc66a5fc8d0b201c127bb33b80684cbce7556
+    sourceHash: d663985544c13c9c79741cc1973f6b0f74dfe678f6b7168385ebd13543134ec5
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -479,7 +479,7 @@ lessons:
   - lessonId: html-css-ch11-l03
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 735ccc2d84100e1414a4f56bcd7bc6236d87a24449fb7e01bdab1bb1b57a9892
+    sourceHash: 0e84a5ba4c2854df3d214fec274c37acc48583717e163b3ca970f5a375f1bec1
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -490,7 +490,7 @@ lessons:
   - lessonId: html-css-ch11-l04
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 195fd6262e9a986845488a2495e7d7fd1a29b027862a804bf287429c1f4999f9
+    sourceHash: b11470e01f7cc4d367d6c637e022695dc4abef8c0e223ba8b7fae92c7ed82f28
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -501,7 +501,7 @@ lessons:
   - lessonId: html-css-ch12-l01
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: b915b713272fc8478e3da6da40cc0e492c44d3f8fba84606b96fbab037ce12fe
+    sourceHash: 21ffe93cd75a5004787894e17e82f90a51354540ab43587455be51730723a2b3
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -512,7 +512,7 @@ lessons:
   - lessonId: html-css-ch12-l02
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: d70eec13532a057f56c0f2dd87c2debee77f9f05a1337e78961a33953f53f9d7
+    sourceHash: a78b401fb872571af81905f6dbdde437257f11f2d30b8ee06258e02be9f0de36
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -523,7 +523,7 @@ lessons:
   - lessonId: html-css-ch12-l03
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: eca3158d0fc9821dd4c76b16905f4551e3ee6ddec40756e18a4ee4a4d0ed42da
+    sourceHash: bcb7be5015862ecceca32252888fefcafc32519c56b265e1bad895a7ae26d89c
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -534,7 +534,7 @@ lessons:
   - lessonId: html-css-ch12-l04
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: c06ee414b955ce491750eff1f3e34b463fac8005d7e24e6deac468206c9b21dc
+    sourceHash: c81c00d07bcd0ef2a7f92a5e64bb7aaa4c76ab43a8df44372c2897aa3e0fa6c1
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -545,7 +545,7 @@ lessons:
   - lessonId: html-css-ch12-l05
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: a6c3f633d3e514d4820a91058714e7c6df4cbb49a4d19149a3d7a51953c47ed0
+    sourceHash: 3fa1018612d4a49bcae9a59dd1b35c5e6e9c70428454dd2db8ad40c4d2bb9e31
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -556,7 +556,7 @@ lessons:
   - lessonId: html-css-ch13-l01
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 3de0fcd01111cc0981f91b762a5a6bb5fef9848453807da3d2793d8b59408b9d
+    sourceHash: cbdf1c47bfa534d690b9def34367eb9b97cdc833dc7cb4acba9a27f6289470a2
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0

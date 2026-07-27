@@ -5,7 +5,10 @@ body {
   font-family: system-ui, sans-serif;
 }
 [data-grid] {
+  display: block;
+  grid-template-columns: 200px;
   width: 416px;
+  gap: 16px;
 }
 [data-grid] > * {
   box-sizing: border-box;

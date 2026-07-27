@@ -1,9 +1,6 @@
 * {
   box-sizing: border-box;
 }
-html {
-  scroll-behavior: smooth;
-}
 body {
   margin: 0;
   color: #172a3a;
@@ -13,7 +10,8 @@ body {
 .site-header,
 main,
 footer {
-  width: min(100% - 32px, 64rem);
+  width: calc(100% - 32px);
+  max-width: 1024px;
   margin-inline: auto;
 }
 .site-header {
@@ -29,7 +27,7 @@ footer {
 }
 .site-name {
   color: #155e63;
-  font-weight: 850;
+  font-weight: 800;
   letter-spacing: 0.08em;
   text-decoration: none;
 }
@@ -47,7 +45,7 @@ main {
   gap: 24px;
 }
 main section {
-  padding: clamp(24px, 5vw, 48px);
+  padding: 32px;
   border-radius: 24px;
   background: #fffdf8;
 }

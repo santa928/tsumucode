@@ -1,3 +1,12 @@
+body {
+  margin: 0;
+  background: #f5efe4;
+}
 [data-container] {
+  box-sizing: border-box;
   width: 900px;
+  max-width: 900px;
+  margin-inline: auto;
+  padding: 24px;
+  background: #fff;
 }

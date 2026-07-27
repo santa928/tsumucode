@@ -1,23 +1,33 @@
 ---
 id: html-css-ch00-l02-s02
-title: コードと画面を往復して読む
-kind: comparison
+title: File Tabで編集する場所を切り替える
+kind: code
 concept: workspace-regions
-assets: []
+layout: code-preview
+teachesConceptIds: [edit-save-preview-validate, file-tab]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 390, maxCodeLines: 2, maxVisuals: 1 }
+assets:
+  - id: diagram-edit-preview-loop-files
+    source: assets/edit-preview-loop.svg
+    mediaType: image
+    alt: 1箇所ずつ編集しPreviewと判定へ進む流れ
+    provenanceId: ch00-edit-preview-loop-original
 ---
 
-演習画面には、コードを書くEditor、結果を見るPreview、次に直す場所を示す案内Panelがあります。EditorのFile TabでHTMLとCSSを切り替え、Previewでその組み合わせがどのように見えるか確かめます。
+Editor上部の`index.html`と`styles.css`がFile Tabです。題名ならHTML、背景色ならCSSのTabを選びます。Tabを切り替えても、もう一方のFileに書いた内容は保存されています。
 
-Previewだけを見て答えを当てるのではなく、変えたコードの行と画面の変化を往復して読みます。判定が未達なら、案内Panelの「対象」「期待する状態」「次の操作」を順に読み、関係するSlideへ戻ることもできます。
+```text
+index.html  → <h1>の日本語
+styles.css  → background-colorの右側の値
+```
 
-- Editorは自分が書いたHTMLとCSSを確認する場所
-- PreviewはBrowserが組み立てた現在の結果を見る場所
-- 案内Panelは次に観察または修正する場所を絞る手掛かり
+![各Fileで1箇所ずつ編集して確認する流れ](asset:diagram-edit-preview-loop-files)
 
 :::practice
-prompt: Editorの名前、Previewの色、案内PanelのButtonを順に指し、それぞれ何を確認する場所か説明します。
-expectedAction: 3つの領域を混同せず、次の操作に使う場所を選ぶ
+prompt: index.html、Preview、styles.css、Previewの順に視線を移し、変わる場所を予測します。
+expectedAction: File Tabごとに1箇所だけ編集し、毎回Previewを確認する
 estimatedMinutes: 2
 :::
 
-次の演習では、Profile名とAccent Colorを1つずつ変え、この往復を自分で実行します。
+判定が未達なら、案内の対象と次の操作を読み、関係するTabへ戻ります。

@@ -19,7 +19,14 @@ describe('HTML/CSS release manifest', () => {
     expect(chapters).toHaveLength(14);
     expect(lessons).toHaveLength(51);
     const conceptKinds = new Set(['concept', 'comparison', 'diagram', 'code']);
-    expect(slides.filter((slide) => conceptKinds.has(slide.kind))).toHaveLength(95);
+    expect(slides.filter((slide) => conceptKinds.has(slide.kind)).length).toBeGreaterThanOrEqual(
+      95,
+    );
+    expect(
+      slides.every(({ layout }) =>
+        ['explanation', 'code-preview', 'comparison', 'checkpoint'].includes(layout),
+      ),
+    ).toBe(true);
     expect(exercises.filter((exercise) => exercise.countsTowardStandardExerciseTotal)).toHaveLength(
       45,
     );

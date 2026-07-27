@@ -1,13 +1,16 @@
 /** 公開教材JSONを同一Originから取得し、Runtime境界でSchema検証する。 */
 import { resolvePublicAsset } from '../../shared/lib/resolvePublicAsset';
-import { CourseCatalogSchema, CourseManifestSchema } from './schema';
-import type { CourseCatalog, CourseManifest } from './types';
+import {
+  parseIntegrityVerifiedCourseManifest,
+  parseRuntimeCourseCatalog,
+} from './runtimeValidation';
+import type { CourseCatalog, CourseCatalogEntry, CourseManifest } from './types';
 
 const CATALOG_PATH = 'generated/content/catalog.json';
 const CONTENT_LOAD_ERROR_MESSAGE =
   '教材を読み込めませんでした。通信を確認して、もう一度お試しください。';
 
-export type ContentLoadErrorKind = 'http' | 'json' | 'schema';
+export type ContentLoadErrorKind = 'http' | 'integrity' | 'json' | 'schema';
 
 /** 教材取得の失敗段階と対象resourceを、表示文言から分離して保持するError。 */
 export class ContentLoadError extends Error {
@@ -39,8 +42,8 @@ function resolveContentResource(baseUrl: string, relativePath: string): string {
   }
 }
 
-/** JSON resourceを取得し、network／HTTP status／JSON parseの失敗を分類する。 */
-async function fetchJson(resource: string): Promise<unknown> {
+/** Resourceを取得し、network／HTTP statusの失敗を分類する。 */
+async function fetchResource(resource: string): Promise<Response> {
   let response: Response;
   try {
     response = await fetch(resource, { headers: { Accept: 'application/json' } });
@@ -52,8 +55,31 @@ async function fetchJson(resource: string): Promise<unknown> {
     throw new ContentLoadError('http', resource, response.status);
   }
 
+  return response;
+}
+
+/** JSON resourceを取得し、JSON parseの失敗を分類する。 */
+async function fetchJson(resource: string): Promise<unknown> {
+  const response = await fetchResource(resource);
+
   try {
     return await response.json();
+  } catch (error) {
+    throw new ContentLoadError('json', resource, error);
+  }
+}
+
+/** SHA-256をWeb Cryptoで計算し、小文字hexへ変換する。 */
+async function sha256Hex(bytes: ArrayBuffer): Promise<string> {
+  const digest = await globalThis.crypto.subtle.digest('SHA-256', bytes);
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
+/** UTF-8 bytesをJSONへ変換し、decode／parse失敗を同じ分類へ閉じ込める。 */
+function parseJsonBytes(bytes: Uint8Array, resource: string): unknown {
+  try {
+    const source = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+    return JSON.parse(source) as unknown;
   } catch (error) {
     throw new ContentLoadError('json', resource, error);
   }
@@ -63,25 +89,35 @@ async function fetchJson(resource: string): Promise<unknown> {
 export async function loadCourseCatalog(baseUrl: string): Promise<CourseCatalog> {
   const resource = resolveContentResource(baseUrl, CATALOG_PATH);
   const payload = await fetchJson(resource);
-  const result = CourseCatalogSchema.safeParse(payload);
-
-  if (!result.success) {
-    throw new ContentLoadError('schema', resource, result.error);
+  try {
+    return parseRuntimeCourseCatalog(payload);
+  } catch (error) {
+    throw new ContentLoadError('schema', resource, error);
   }
-  return result.data;
 }
 
-/** Catalogが指すCourse Manifestを同一Originから取得し、Course契約へ変換する。 */
+/** Catalogが指すCourse Manifestを同一Originから取得し、integrity付きCourseへ変換する。 */
 export async function loadCourseManifest(
   baseUrl: string,
-  manifestPath: string,
+  entry: CourseCatalogEntry,
 ): Promise<CourseManifest> {
-  const resource = resolveContentResource(baseUrl, manifestPath);
-  const payload = await fetchJson(resource);
-  const result = CourseManifestSchema.safeParse(payload);
-
-  if (!result.success) {
-    throw new ContentLoadError('schema', resource, result.error);
+  const resource = resolveContentResource(baseUrl, entry.manifestPath);
+  const response = await fetchResource(resource);
+  const buffer = await response.arrayBuffer();
+  const bytes = new Uint8Array(buffer);
+  let actualSha256: string;
+  try {
+    actualSha256 = await sha256Hex(buffer);
+  } catch (error) {
+    throw new ContentLoadError('integrity', resource, error);
   }
-  return result.data;
+  if (actualSha256 !== entry.manifestSha256) {
+    throw new ContentLoadError('integrity', resource);
+  }
+  const payload = parseJsonBytes(bytes, resource);
+  try {
+    return parseIntegrityVerifiedCourseManifest(payload, entry);
+  } catch (error) {
+    throw new ContentLoadError('schema', resource, error);
+  }
 }

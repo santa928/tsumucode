@@ -9,12 +9,12 @@ body {
   font-family: system-ui, sans-serif;
 }
 [data-action] {
+  background-color: var(--color-primary);
   display: inline-block;
   padding: 12px 18px;
   color: #fff;
-  background-color: var(--color-primary);
 }
 [data-tag] {
-  color: #6b7c80;
+  color: #2d5d62;
   font-weight: 700;
 }

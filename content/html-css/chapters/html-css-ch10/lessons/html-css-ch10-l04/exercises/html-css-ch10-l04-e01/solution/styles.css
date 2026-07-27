@@ -2,13 +2,20 @@ body {
   margin: 0;
   padding: 24px;
 }
-[data-frame] {
+[data-frame],
+[data-crop-frame] {
   width: 320px;
+  margin-block-end: 24px;
 }
-img {
+[data-responsive-image] {
   display: block;
   width: 480px;
   max-width: 100%;
   height: auto;
+}
+[data-crop-image] {
+  display: block;
+  width: 320px;
+  height: 180px;
   object-fit: cover;
 }

@@ -1,19 +1,35 @@
 ---
 id: html-css-ch08-l05-s01
-title: Navigationは並びと名前の両方を持つ
+title: NavigationのLinkを横並びに統合する
 kind: concept
 concept: accessible-flex-navigation
-assets: []
+layout: code-preview
+teachesConceptIds: [flex-navigation]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 400, maxCodeLines: 5, maxVisuals: 1 }
+assets:
+  - id: navigation-card-integration
+    source: assets/navigation-card-integration.svg
+    mediaType: image
+    alt: NavigationとCard Rowを別々のFlex Containerとして組み立てる図
+    provenanceId: ch08-navigation-card-integration-original
 ---
 
-NavigationをFlexboxで横並びにしても、`nav`の意味やLinkのAccessible Nameは失われません。見た目の配置と、支援技術へ伝わる役割を別々に確認します。
+NavigationのHTMLはそのままで、`nav`をFlex Containerにすると直接のLinkが横並びになります。見た目のためにLinkの順序や文字を変える必要はありません。
 
-複数のNavigationがある場合は`aria-label`などで目的を区別します。FlexboxのClass名や並び順だけに意味を預けません。
+![NavigationとCard Rowの2つのContainer](asset:navigation-card-integration)
+
+```css
+[data-profile-nav] {
+  display: flex;
+  gap: 12px;
+}
+```
 
 :::practice
-prompt: Profile内のNavigationへ、目的を伝えるAccessible Nameを追加します。
-expectedAction: aria-labelへプロフィール内の移動などの名前を書く
+prompt: NavigationのどのElementへdisplay flexを書くか答えます。
+expectedAction: 3つのLinkを直接包むnavへ書くと答える
 estimatedMinutes: 2
 :::
 
-最後にNavigationとCard Rowを統合します。
+次は、別のContainerとしてCard Rowも組み立てます。

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="360" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
+  <title id="title">NavigationとHeroの情報順序</title>
+  <desc id="desc">道案内から名前、画像、主要リンクへ情報が進むProfileの入口</desc>
+  <rect width="960" height="360" rx="28" fill="#fffaf0"/>
+  <rect x="38" y="34" width="884" height="68" rx="18" fill="#172a3a"/>
+  <text x="68" y="76" fill="#ffffff" font-family="system-ui, sans-serif" font-size="22" font-weight="850">TSUMUGI PROFILE</text>
+  <rect x="594" y="50" width="128" height="38" rx="19" fill="#2d7c82"/>
+  <rect x="738" y="50" width="148" height="38" rx="19" fill="#2d7c82"/>
+  <text x="623" y="76" fill="#ffffff" font-family="system-ui, sans-serif" font-size="17" font-weight="750">About</text>
+  <text x="779" y="76" fill="#ffffff" font-family="system-ui, sans-serif" font-size="17" font-weight="750">Works</text>
+  <rect x="38" y="126" width="884" height="198" rx="22" fill="#ffffff" stroke="#d4e3df" stroke-width="3"/>
+  <circle cx="174" cy="225" r="70" fill="#dcebe8" stroke="#2d7c82" stroke-width="5"/>
+  <path d="M144 231c18-54 52-54 69 0M151 252h48" fill="none" stroke="#ef7d4f" stroke-width="10" stroke-linecap="round"/>
+  <text x="286" y="178" fill="#155e63" font-family="system-ui, sans-serif" font-size="18" font-weight="800">LEARNING PROFILE</text>
+  <text x="286" y="220" fill="#172a3a" font-family="system-ui, sans-serif" font-size="30" font-weight="850">つむぎの学習プロフィール</text>
+  <rect x="286" y="248" width="248" height="50" rx="14" fill="#ef7d4f"/>
+  <text x="320" y="280" fill="#172a3a" font-family="system-ui, sans-serif" font-size="19" font-weight="850">つむぎの作品を見る</text>
+  <path d="M536 272h110" stroke="#2d7c82" stroke-width="6" stroke-linecap="round"/>
+  <path d="m635 260 14 12-14 12" fill="none" stroke="#2d7c82" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="676" y="280" fill="#155e63" font-family="system-ui, sans-serif" font-size="19" font-weight="800">次の行動</text>
+</svg>

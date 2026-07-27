@@ -1,15 +1,15 @@
 id: html-css-ch12-l03
 kind: guided-project
-title: AboutとSkillsを育てる
-goal: About Section、Skill List、再利用Class、読みやすいTypographyを追加する
+title: About、Skills、Worksを育てる
+goal: About Section、Skill List、再利用Class、Works Grid、読みやすいTypographyを追加する
 estimatedMinutes: 16
 prerequisiteLessonIds: [html-css-ch12-l02]
 slideSources:
   - slides/g01-project-step.md
 exerciseSources:
   - exercises/html-css-ch12-l03-e01/exercise.yaml
-reflection: 同じ見た目の役割には同じClassを使い、内容の違いとStyleの共通点を分ける
-glossaryRefs: [about-section, skill-list, reusable-class, line-height]
+reflection: 内容の意味はElementで、繰り返す見た目はClassで、Cardの関係はLayoutで表す
+glossaryRefs: [about-section, skill-list, reusable-class, line-height, works-grid]
 nextLessonId: html-css-ch12-l04
 project:
   id: html-css-profile-project
@@ -30,10 +30,17 @@ project:
       ruleIds:
         - html-css-ch12-l03-e01-r02
         - html-css-ch12-l03-e01-r03
+    - id: profile-works-system
+      label: 2件以上のWork CardをGridで並べた
+      required: true
+      ruleIds:
+        - html-css-ch12-l03-e01-r05
+        - html-css-ch12-l03-e01-r06
 completion:
   kind: guided-project
   requiredChecklistItemIds:
     - profile-about-section
     - profile-skills-system
+    - profile-works-system
   requiredExerciseIds:
     - html-css-ch12-l03-e01

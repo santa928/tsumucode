@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">hrefとLinkの行き先</title>
+  <desc id="desc">Fragment Linkは同じページのSectionへ、https Linkは外部Siteへつながることを示す</desc>
+  <rect width="640" height="360" rx="24" fill="#e8dfcf" />
+  <rect x="28" y="28" width="584" height="304" rx="20" fill="#fffaf0" stroke="#8a7657" stroke-width="3" />
+  <text x="64" y="76" font-family="system-ui, sans-serif" font-size="22" font-weight="800" fill="#19352d">href が行き先を結ぶ</text>
+  <g font-family="ui-monospace, monospace" font-size="18" fill="#19352d">
+    <rect x="62" y="104" width="232" height="58" rx="14" fill="#f4c95d" />
+    <text x="178" y="140" text-anchor="middle">href=&quot;#practice&quot;</text>
+    <rect x="346" y="104" width="218" height="58" rx="14" fill="#dcebe5" />
+    <text x="455" y="140" text-anchor="middle">section#practice</text>
+    <rect x="62" y="218" width="272" height="58" rx="14" fill="#f4c95d" />
+    <text x="198" y="254" text-anchor="middle">href=&quot;https://...&quot;</text>
+  </g>
+  <g fill="none" stroke="#3d7665" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M294 133h42" />
+    <path d="m326 122 12 11-12 11" />
+    <path d="M334 247h58" />
+    <path d="m382 236 12 11-12 11" />
+  </g>
+  <g font-family="system-ui, sans-serif" fill="#3f514b">
+    <text x="455" y="194" text-anchor="middle" font-size="18">同じページ内</text>
+    <rect x="410" y="212" width="154" height="76" rx="18" fill="#19352d" />
+    <circle cx="450" cy="246" r="15" fill="#f4c95d" />
+    <path d="M478 236h56M478 251h42" stroke="#fffaf0" stroke-width="7" stroke-linecap="round" />
+    <text x="487" y="314" text-anchor="middle" font-size="18">外部の安全なSite</text>
+  </g>
+</svg>

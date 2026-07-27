@@ -85,6 +85,11 @@ for (const target of manifest.exercises) {
         previewDurations.push(await latestMeasure(page, 'tsumucode:preview-update'));
         validationDurations.push(await latestMeasure(page, 'tsumucode:validation'));
       }
+
+      const feedback = page.getByRole('dialog', { name: '判定結果' });
+      await expect(feedback).toBeVisible();
+      await feedback.getByRole('button', { name: '閉じる' }).click();
+      await expect(feedback).toBeHidden();
     }
 
     const result = {

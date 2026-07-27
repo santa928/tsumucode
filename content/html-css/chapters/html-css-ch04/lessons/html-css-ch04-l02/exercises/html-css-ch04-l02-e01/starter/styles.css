@@ -1,5 +1,13 @@
+body {
+  margin: 0;
+  background: #f3eee4;
+  font-family: system-ui, sans-serif;
+}
+
 .card {
   background-color: #fffaf0;
+  margin: 4rem auto;
+  max-width: 34rem;
   color: #24323d;
   padding: 2rem;
 }

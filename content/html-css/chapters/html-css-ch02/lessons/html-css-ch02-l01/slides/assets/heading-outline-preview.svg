@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">h1とh2の文書Outline</title>
+  <desc id="desc">1つのh1から同じLevelの2つのh2へ枝が伸び、それぞれにpが付いている</desc>
+  <rect width="640" height="360" rx="24" fill="#e8dfcf" />
+  <rect x="28" y="28" width="584" height="304" rx="20" fill="#fffaf0" stroke="#8a7657" stroke-width="3" />
+  <rect x="196" y="58" width="248" height="58" rx="18" fill="#19352d" />
+  <text x="320" y="94" text-anchor="middle" font-family="system-ui, sans-serif" font-size="22" font-weight="800" fill="#fffaf0">h1 学習記録</text>
+  <path d="M320 116V154M166 154H474M166 154V178M474 154V178" fill="none" stroke="#8a7657" stroke-width="5" stroke-linecap="round" />
+  <rect x="72" y="178" width="188" height="54" rx="16" fill="#dcebe6" stroke="#3d7665" stroke-width="3" />
+  <rect x="380" y="178" width="188" height="54" rx="16" fill="#dcebe6" stroke="#3d7665" stroke-width="3" />
+  <text x="166" y="212" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="800" fill="#19352d">h2 学んだこと</text>
+  <text x="474" y="212" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="800" fill="#19352d">h2 次に試すこと</text>
+  <rect x="92" y="258" width="148" height="38" rx="19" fill="#f4c95d" />
+  <rect x="400" y="258" width="148" height="38" rx="19" fill="#f4c95d" />
+  <text x="166" y="284" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" font-weight="700" fill="#19352d">p 説明</text>
+  <text x="474" y="284" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" font-weight="700" fill="#19352d">p 説明</text>
+</svg>

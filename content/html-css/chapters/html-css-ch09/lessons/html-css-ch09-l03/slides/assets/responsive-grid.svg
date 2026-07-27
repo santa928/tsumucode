@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <title>auto-fitとminmaxによるResponsive Grid</title>
+  <desc>同じCSSで利用可能幅720pxでは4列、358pxでは2列になる比較図</desc>
+  <rect width="960" height="540" rx="36" fill="#f5efe3" />
+  <text x="60" y="68" fill="#172a3a" font-family="system-ui, sans-serif" font-size="30" font-weight="700">最小160pxを守り、収まる列数へ変わる</text>
+  <g font-family="system-ui, sans-serif">
+    <text x="60" y="120" fill="#172a3a" font-size="22" font-weight="700">Desktop · 利用可能幅 720px</text>
+    <rect x="60" y="140" width="840" height="126" rx="22" fill="#ffffff" stroke="#172a3a" stroke-width="6" />
+    <g fill="#dcefed" stroke="#2d7c82" stroke-width="4">
+      <rect x="80" y="160" width="185" height="86" rx="14" />
+      <rect x="285" y="160" width="185" height="86" rx="14" />
+      <rect x="490" y="160" width="185" height="86" rx="14" />
+      <rect x="695" y="160" width="185" height="86" rx="14" />
+    </g>
+    <g fill="#172a3a" font-size="22" font-weight="700" text-anchor="middle">
+      <text x="172" y="211">Card 1</text><text x="377" y="211">Card 2</text>
+      <text x="582" y="211">Card 3</text><text x="787" y="211">Card 4</text>
+    </g>
+    <text x="60" y="320" fill="#172a3a" font-size="22" font-weight="700">Mobile · 利用可能幅 358px</text>
+    <rect x="60" y="340" width="398" height="162" rx="22" fill="#ffffff" stroke="#172a3a" stroke-width="6" />
+    <g fill="#fff3dd" stroke="#ef7d4f" stroke-width="4">
+      <rect x="80" y="360" width="171" height="52" rx="12" />
+      <rect x="267" y="360" width="171" height="52" rx="12" />
+      <rect x="80" y="430" width="171" height="52" rx="12" />
+      <rect x="267" y="430" width="171" height="52" rx="12" />
+    </g>
+    <g fill="#172a3a" font-size="19" font-weight="700" text-anchor="middle">
+      <text x="165" y="393">Card 1</text><text x="352" y="393">Card 2</text>
+      <text x="165" y="463">Card 3</text><text x="352" y="463">Card 4</text>
+    </g>
+    <g transform="translate(500 348)">
+      <rect width="400" height="146" rx="20" fill="#172a3a" />
+      <text x="24" y="42" fill="#ffffff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="19">repeat(auto-fit,</text>
+      <text x="24" y="78" fill="#7bd6d0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="21" font-weight="700">  minmax(160px, 1fr)</text>
+      <text x="24" y="114" fill="#ffffff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="19">)</text>
+    </g>
+  </g>
+</svg>

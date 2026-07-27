@@ -3,10 +3,19 @@ id: html-css-ch04-l02-s02
 title: DeclarationはPropertyとValueを正しい記号で結ぶ
 kind: comparison
 concept: declaration-syntax
-assets: []
+layout: code-preview
+teachesConceptIds: [css-property-value, colon-semicolon]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 410, maxCodeLines: 4, maxVisuals: 1 }
+assets:
+  - id: css-declaration-map
+    source: assets/stylesheet-connection.svg
+    mediaType: image
+    alt: CSS DeclarationのProperty、Colon、Value、Semicolonを順に示す図
+    provenanceId: ch04-stylesheet-connection-original
 ---
 
-CSS ParserはColon、Semicolon、波括弧を手掛かりにRuleを読みます。記号が欠けると、意図したDeclarationを解釈できずCode Errorになります。
+Declarationは`Property: Value;`の順です。Colon、Semicolon、波括弧が欠けるとParserは意図を読めず、Code Errorになります。
 
 ```css
 .card {
@@ -15,11 +24,13 @@ CSS ParserはColon、Semicolon、波括弧を手掛かりにRuleを読みます�
 }
 ```
 
-構文が正しくてもValueが違えば、Previewは表示できても課題の目標には届きません。Diagnosticがあるときは構文を先に直し、次にComputed Styleを比べます。
+![Declarationを読む順序](asset:css-declaration-map)
+
+実習では`color: #24323d;`は完成済みです。`background-color`のValueだけを`#fffaf0`から`#ffffff`へ直し、正しい文字色は残します。Diagnosticがあれば記号を先に確認します。
 
 :::practice
-prompt: Colon不足と色Value違いを、Code ErrorとPreview未達へ分類します。
-expectedAction: Parserが読めるかと結果が合うかを別々に判断する
+prompt: Colon不足と#fffaf0というValue違いを、Code Errorと未達へ分類します。
+expectedAction: 構文とComputed結果を別々に確認する
 estimatedMinutes: 2
 :::
 

@@ -60,15 +60,14 @@ export class HtmlCssRunnerAdapter implements RunnerAdapter {
   #inFlight: InFlightRender | undefined;
   #generation = 0;
 
-  /** 既存処理を解放して、実行scriptだけを許可するiframeを準備する。 */
+  /** 旧frameの処理を解放し、新frameを最初の実renderへ備える。 */
   async prepare(frame: HTMLIFrameElement): Promise<void> {
     const previousFrame = this.#frame;
     await this.#reset(false);
-    if (previousFrame !== undefined) previousFrame.srcdoc = '';
+    if (previousFrame !== undefined && previousFrame !== frame) previousFrame.srcdoc = '';
     frame.setAttribute('sandbox', 'allow-scripts');
     frame.setAttribute('referrerpolicy', 'no-referrer');
     frame.setAttribute('title', 'コードのプレビュー');
-    frame.srcdoc = '';
     this.#frame = frame;
   }
 

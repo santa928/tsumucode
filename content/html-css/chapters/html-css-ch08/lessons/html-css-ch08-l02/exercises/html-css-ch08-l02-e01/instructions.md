@@ -1,8 +1,8 @@
 ## Action間へ20pxの距離を作る
 
-1. `[data-actions]`をFlex Containerにします。
-2. ItemをMain Startから並べます。
-3. 幅80pxのAction同士へ`gap: 20px`を指定します。
-4. Bodyのx 32pxを基準に、2つ目のActionがx 132pxになることを確認します。
+1. `styles.css`の`[data-actions]` Ruleを開きます。
+2. `justify-content: center;`のValueを`flex-start`へ変えます。
+3. `gap: 12px;`のValueを`20px`へ変えます。
+4. Previewで1つ目がx 32px、2つ目が`32 + 80 + 20 = 132px`になることを確かめます。
 
-Computed Propertyだけでなく、隣接Itemの実測位置から20pxの距離を確かめます。
+手が止まったら「前のスライド」で`justify-content`と`gap`の完成Ruleを見直せます。

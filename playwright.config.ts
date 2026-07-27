@@ -5,13 +5,14 @@ import { testServerUrl } from './tests/e2e/helpers/testBasePath';
 export function createPlaywrightConfig(basePath = process.env['BASE_PATH']) {
   return defineConfig({
     testDir: './tests/e2e',
+    outputDir: 'test-results/e2e-artifacts',
     fullyParallel: false,
     forbidOnly: Boolean(process.env.CI),
     workers: process.env.CI ? 1 : 2,
     retries: process.env.CI ? 2 : 0,
     reporter: [
       ['html', { outputFolder: 'playwright-report', open: 'never' }],
-      ['json', { outputFile: 'test-results/e2e.json' }],
+      ['json', { outputFile: 'test-results/e2e-summary.json' }],
     ],
     use: {
       baseURL: testServerUrl(4173, basePath),

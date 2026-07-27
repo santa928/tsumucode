@@ -1,20 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="400" viewBox="0 0 720 400">
-  <title>CSS Cascadeが値を選ぶ積層図</title>
-  <desc>Inheritance、Specificity、Source Orderを順に比べてComputed Valueへ至る図</desc>
-  <rect width="720" height="400" rx="28" fill="#f5efe3" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" aria-labelledby="title desc">
+  <title id="title">CSS Cascadeが値を選ぶ順序</title>
+  <desc id="desc">直接指定と継承から候補を集め、Specificity、Source Orderを比べてComputed Valueへ至る図</desc>
+  <rect width="720" height="400" rx="28" fill="#e8dfcf" />
+  <rect x="30" y="28" width="660" height="344" rx="22" fill="#fffaf0" stroke="#8a7657" stroke-width="3" />
   <g font-family="system-ui, sans-serif">
-    <rect x="70" y="54" width="300" height="76" rx="16" fill="#fff" stroke="#172a3a" stroke-width="4" />
-    <text x="96" y="86" fill="#172a3a" font-size="20" font-weight="700">1. Inheritance</text>
-    <text x="96" y="112" fill="#536271" font-size="16">Parentから候補値を受け取る</text>
-    <rect x="150" y="156" width="300" height="76" rx="16" fill="#fff7ed" stroke="#ef7d4f" stroke-width="4" />
-    <text x="176" y="188" fill="#172a3a" font-size="20" font-weight="700">2. Specificity</text>
-    <text x="176" y="214" fill="#536271" font-size="16">より具体的なSelectorを比べる</text>
-    <rect x="230" y="258" width="300" height="76" rx="16" fill="#e4f1ee" stroke="#2d5d62" stroke-width="4" />
-    <text x="256" y="290" fill="#172a3a" font-size="20" font-weight="700">3. Source order</text>
-    <text x="256" y="316" fill="#536271" font-size="16">同点なら後のDeclarationを選ぶ</text>
-    <path d="M560 82v214" fill="none" stroke="#172a3a" stroke-linecap="round" stroke-width="6" />
-    <path d="m544 278 16 22 16-22" fill="none" stroke="#172a3a" stroke-linecap="round" stroke-linejoin="round" stroke-width="6" />
-    <rect x="550" y="318" width="120" height="48" rx="24" fill="#172a3a" />
-    <text x="610" y="349" fill="#f5efe3" font-size="17" font-weight="700" text-anchor="middle">Computed</text>
+    <text x="62" y="70" font-size="22" font-weight="800" fill="#19352d">Cascadeは候補を順に絞る</text>
+    <rect x="62" y="94" width="350" height="70" rx="15" fill="#dcebe5" stroke="#3d7665" stroke-width="3" />
+    <text x="84" y="122" font-size="18" font-weight="800" fill="#19352d">1. 候補を集める</text>
+    <text x="84" y="147" font-size="15" fill="#3f514b">直接指定がなければParentから継承</text>
+    <rect x="112" y="184" width="350" height="70" rx="15" fill="#f8eed0" stroke="#c59b33" stroke-width="3" />
+    <text x="134" y="212" font-size="18" font-weight="800" fill="#19352d">2. Specificity</text>
+    <text x="134" y="237" font-size="15" fill="#3f514b">より具体的なSelectorを選ぶ</text>
+    <rect x="162" y="274" width="350" height="70" rx="15" fill="#f7dfd4" stroke="#9a3f25" stroke-width="3" />
+    <text x="184" y="302" font-size="18" font-weight="800" fill="#19352d">3. Source Order</text>
+    <text x="184" y="327" font-size="15" fill="#3f514b">同点なら後のDeclarationを選ぶ</text>
+    <path d="M552 112v190" fill="none" stroke="#3d7665" stroke-linecap="round" stroke-width="6" />
+    <path d="m536 284 16 22 16-22" fill="none" stroke="#3d7665" stroke-linecap="round" stroke-linejoin="round" stroke-width="6" />
+    <rect x="574" y="286" width="92" height="58" rx="18" fill="#19352d" />
+    <text x="620" y="310" text-anchor="middle" font-size="13" fill="#dcebe5">Computed</text>
+    <text x="620" y="333" text-anchor="middle" font-size="17" font-weight="800" fill="#f4c95d">Value</text>
   </g>
 </svg>

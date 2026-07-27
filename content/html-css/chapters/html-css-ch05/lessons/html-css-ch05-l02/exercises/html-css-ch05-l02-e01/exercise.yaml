@@ -4,6 +4,31 @@ workspaceId: html-css-ch05-l02-e01
 countsTowardStandardExerciseTotal: true
 title: Cardを320pxへ収める
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: width-height, minimumLevel: transform }
+  - { conceptId: box-sizing-border-box, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: include-inner-layers-in-width
+    file: styles.css
+    target: .sized-card Ruleの先頭
+    starterAnchor: '.sized-card {'
+    change: box-sizing border-boxのDeclarationを先頭へ追加する
+    observe: WidthがContentだけでなくPaddingとBorderを含むSizing方式になる
+    requiresConceptIds: [box-sizing-border-box]
+    validationRuleIds:
+      - html-css-ch05-l02-e01-r01
+      - html-css-ch05-l02-e01-r03
+  - id: expand-card-to-frame-width
+    file: styles.css
+    target: .sized-card Ruleのwidth Declaration
+    starterAnchor: 'width: 280px;'
+    change: Valueを320pxへ変更する
+    observe: Sourceはborder-boxとwidth 320pxになり、CardのBorder外幅も320pxになる
+    requiresConceptIds: [width-height, box-sizing-border-box]
+    validationRuleIds:
+      - html-css-ch05-l02-e01-r02
+      - html-css-ch05-l02-e01-r03
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -46,6 +71,23 @@ validationRules:
       target: Cardの実測Width
       expected: 320px前後
       nextAction: 'widthを320pxにしPaddingとBorderを内側へ含めます。'
+    hintId: html-css-ch05-l02-e01-h03
+    relatedSlideId: html-css-ch05-l02-s02
+  - id: html-css-ch05-l02-e01-r03
+    label: .sized-cardへborder-boxと320pxを記述する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '.sized-card { box-sizing: border-box; width: 320px;'
+    feedback:
+      target: .sized-cardのSizing Source
+      expected: 'box-sizing: border-box; と width: 320px;'
+      nextAction: Ruleの先頭へbox-sizingを加え、続くwidthを320pxへ変更します。
     hintId: html-css-ch05-l02-e01-h03
     relatedSlideId: html-css-ch05-l02-s02
 hints:
@@ -97,4 +139,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch05-l02-e01-r01]
+    expectedFeedbackRuleIds: [html-css-ch05-l02-e01-r01, html-css-ch05-l02-e01-r03]

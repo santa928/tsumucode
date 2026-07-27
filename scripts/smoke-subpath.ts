@@ -120,8 +120,11 @@ async function measureInitialJavaScript(
   distRoot: string,
   manifest: Readonly<Record<string, ManifestChunk>>,
 ): Promise<number> {
-  const entryKey = Object.entries(manifest).find(([, chunk]) => chunk.isEntry)?.[0];
-  if (!entryKey) throw new Error('Vite manifestにEntryがありません');
+  const normalLearningEntryKey = 'src/app/normalLearningEntry.tsx';
+  const entryKey = manifest[normalLearningEntryKey]?.isEntry
+    ? normalLearningEntryKey
+    : Object.entries(manifest).find(([, chunk]) => chunk.isEntry)?.[0];
+  if (!entryKey) throw new Error('Vite manifestに通常学習Entryがありません');
 
   const visitedChunks = new Set<string>();
   const measuredFiles = new Set<string>();

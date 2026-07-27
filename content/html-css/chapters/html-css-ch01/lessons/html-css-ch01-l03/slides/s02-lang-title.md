@@ -1,14 +1,21 @@
 ---
 id: html-css-ch01-l03-s02
-title: 文書の言語とTabの題名を設定する
-kind: comparison
+title: langは言語、titleはTabの題名を伝える
+kind: code
 concept: document-language-and-title
-assets: []
+layout: code-preview
+teachesConceptIds: [lang-attribute, title-element]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 390, maxCodeLines: 6, maxVisuals: 1 }
+assets:
+  - id: preview-document-settings
+    source: assets/document-settings-preview.svg
+    mediaType: image
+    alt: Browser TabにHTML学習プロフィールと表示され、ページ言語が日本語に設定されたPreview
+    provenanceId: ch01-document-settings-preview-original
 ---
 
-`html`の`lang`は文書全体の基本言語を伝えます。日本語のページなら`ja`を指定します。`head`内の`title`はページ本文には表示されず、Browser TabやBookmarkの名前として使われます。
-
-さらに`meta charset="UTF-8"`は文字をどの規則で読むか伝えます。この3つは画面の本文ではなく文書全体を支えるMetadataです。見えない設定も、文字化けや読み上げ言語の誤りを防ぎます。
+`html`の`lang="ja"`は文書の基本言語を日本語にします。`head`内の`title`は本文ではなくBrowser Tabの名前です。完成例では、開始Tagのlang値とtitleの内容だけを変更します。
 
 ```html
 <html lang="ja">
@@ -19,10 +26,12 @@ assets: []
 </html>
 ```
 
+![langとtitleを設定したBrowserの結果](asset:preview-document-settings)
+
 :::practice
-prompt: コード例から本文に見える設定とBrowser Tabで使う設定を分けて探します。
-expectedAction: langは言語、titleはTab名、charsetは文字の読み方を伝えると説明する
+prompt: コードのjaとBrowserの言語、titleの内容とTab名をそれぞれ結びます。
+expectedAction: langは言語、titleはTab名を伝えると説明する
 estimatedMinutes: 2
 :::
 
-次の演習では、3つのMetadataを自分で設定してChapter 01を仕上げます。
+`meta charset`は固定済みなので、今回は触りません。次の演習ではlangの値とtitleの内容だけを変更します。

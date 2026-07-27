@@ -1,5 +1,5 @@
 /** 全Courseを決定的にCompileし、検証成功時だけgenerated/contentを差し替える。 */
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { lstat, mkdir, readdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -94,12 +94,17 @@ async function listCourseDirectories(sourceRoot: string): Promise<string[]> {
   return directories.sort((left, right) => (left < right ? -1 : left > right ? 1 : 0));
 }
 
-/** Course Manifest配列から公開Catalogをallowlist投影する。 */
-function createCatalog(courses: readonly CourseManifest[]): CourseCatalog {
+/** Compilerが公開するCourse文字列のSHA-256を小文字hexで返す。 */
+function courseManifestSha256(course: CourseManifest): string {
+  return createHash('sha256').update(stringifyCanonicalJson(course), 'utf8').digest('hex');
+}
+
+/** Course Compilation配列からintegrity付き公開Catalogをallowlist投影する。 */
+function createCatalog(compilations: readonly CompiledCourseArtifacts[]): CourseCatalog {
   return CourseCatalogSchema.parse({
     schemaVersion: 1,
-    courses: courses
-      .map((course) => ({
+    courses: compilations
+      .map(({ runtime: course }) => ({
         id: course.id,
         title: course.title,
         description: course.description,
@@ -108,6 +113,7 @@ function createCatalog(courses: readonly CourseManifest[]): CourseCatalog {
         revision: course.revision,
         publicationStatus: course.publicationStatus,
         manifestPath: `generated/content/courses/${course.id}.json`,
+        manifestSha256: courseManifestSha256(course),
       }))
       .sort((left, right) => (left.id < right.id ? -1 : left.id > right.id ? 1 : 0)),
   });
@@ -326,7 +332,7 @@ export async function compileContent(options: CompileContentOptions): Promise<Co
       courses.push(course);
       compilations.push(compilation);
     }
-    const catalog = createCatalog(courses);
+    const catalog = createCatalog(compilations);
     const catalogRoundTrip = CourseCatalogSchema.parse(
       JSON.parse(stringifyCanonicalJson(catalog)) as unknown,
     );

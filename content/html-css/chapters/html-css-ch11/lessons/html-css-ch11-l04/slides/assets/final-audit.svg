@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <title>5領域の最終Accessibility監査</title>
+  <desc>Keyboard、Accessible Name、Contrastと状態、Reduced Motion、Overflowを順番に測る監査ボード</desc>
+  <rect width="960" height="540" rx="36" fill="#f5efe3" />
+  <text x="60" y="70" fill="#172a3a" font-family="system-ui, sans-serif" font-size="30" font-weight="700">最終Auditは5つの測定を順番に行う</text>
+  <g transform="translate(60 120)" font-family="system-ui, sans-serif">
+    <g fill="#fffdf8" stroke="#c8d4cf" stroke-width="3">
+      <rect width="840" height="58" rx="18" />
+      <rect y="70" width="840" height="58" rx="18" />
+      <rect y="140" width="840" height="58" rx="18" />
+      <rect y="210" width="840" height="58" rx="18" />
+      <rect y="280" width="840" height="58" rx="18" />
+    </g>
+    <g font-size="20" font-weight="700">
+      <g transform="translate(22 17)">
+        <circle cx="14" cy="12" r="14" fill="#2d7c82" /><text x="14" y="19" fill="#fff" text-anchor="middle">1</text>
+        <text x="48" y="20" fill="#172a3a">KeyboardとVisible Focus</text><text x="520" y="20" fill="#52616d" font-size="17">Tabで移動・現在地が見える</text>
+      </g>
+      <g transform="translate(22 87)">
+        <circle cx="14" cy="12" r="14" fill="#2d7c82" /><text x="14" y="19" fill="#fff" text-anchor="middle">2</text>
+        <text x="48" y="20" fill="#172a3a">Accessible Name</text><text x="520" y="20" fill="#52616d" font-size="17">Input・画像・Linkに名前がある</text>
+      </g>
+      <g transform="translate(22 157)">
+        <circle cx="14" cy="12" r="14" fill="#2d7c82" /><text x="14" y="19" fill="#fff" text-anchor="middle">3</text>
+        <text x="48" y="20" fill="#172a3a">Contrastと状態Text</text><text x="520" y="20" fill="#52616d" font-size="17">4.5:1以上・色以外でも伝わる</text>
+      </g>
+      <g transform="translate(22 227)">
+        <circle cx="14" cy="12" r="14" fill="#2d7c82" /><text x="14" y="19" fill="#fff" text-anchor="middle">4</text>
+        <text x="48" y="20" fill="#172a3a">Reduced Motion</text><text x="520" y="20" fill="#52616d" font-size="17">装飾Motionを0.001sへ短縮</text>
+      </g>
+      <g transform="translate(22 297)">
+        <circle cx="14" cy="12" r="14" fill="#2d7c82" /><text x="14" y="19" fill="#fff" text-anchor="middle">5</text>
+        <text x="48" y="20" fill="#172a3a">390px / 1280px Overflow</text><text x="520" y="20" fill="#52616d" font-size="17">scrollWidthがclientWidth以内</text>
+      </g>
+    </g>
+  </g>
+  <rect x="60" y="486" width="840" height="30" rx="15" fill="#172a3a" />
+  <text x="480" y="508" fill="#7bd6d0" font-family="system-ui, sans-serif" font-size="16" font-weight="700" text-anchor="middle">見た目・名前・Computed値・実寸を別々に測って完成</text>
+</svg>

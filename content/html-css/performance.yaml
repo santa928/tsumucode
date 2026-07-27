@@ -25,7 +25,10 @@ webVitals:
   clsMax: 0.1
   interactionMaxMs: 200
 bundle:
+  baselineCommit: 7e739754710138aa3433bfa085f7dd0479d9ca62
+  baselineEditorIncrementalJavaScriptGzipBytes: 177635
   homeInitialJavaScriptGzipMaxBytes: 256000
+  editorIncrementalJavaScriptGzipMaxBytes: 180000
   editorLoadedOnHome: false
 content:
   catalogGzipMaxBytes: 20480
@@ -36,3 +39,12 @@ content:
   totalFontsMaxBytes: 307200
   authoringFieldsForbidden: [solutionFiles, fixtures]
 draftPersistenceMaxMs: 500
+starterReset:
+  drawerOpenMaxMs: 100
+  previewVisibleMaxMs: 1000
+  addedJavaScriptGzipMaxBytes: 5120
+slideLibrary:
+  baselineCommit: 3ccb9f48dc939db209852bd6c10b9f53012184af
+  baselineHomeInitialJavaScriptGzipBytes: 158062
+  addedHomeInitialJavaScriptGzipMaxBytes: 20480
+  interactionMaxMs: 200

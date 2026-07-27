@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" aria-labelledby="title desc">
+  <title id="title">Typographyの寸法とFont Stack</title>
+  <desc id="desc">Font Size 20px、Line Height 30pxと、system-uiからsans-serifへ選ぶ順番を示す</desc>
+  <rect width="720" height="400" rx="28" fill="#f5efe4" />
+  <g font-family="system-ui, sans-serif">
+    <text x="194" y="52" text-anchor="middle" fill="#24323d" font-size="21" font-weight="750">文字と行の寸法</text>
+    <rect x="48" y="82" width="292" height="178" rx="18" fill="#fffdf8" stroke="#2d5d62" stroke-width="3" />
+    <rect x="84" y="124" width="220" height="60" rx="8" fill="#c9ded9" />
+    <text x="194" y="164" text-anchor="middle" fill="#24323d" font-size="27" font-weight="750">読みやすい文章</text>
+    <path d="M316 124v60M307 124h18M307 184h18" fill="none" stroke="#bf5b42" stroke-width="3" />
+    <text x="194" y="214" text-anchor="middle" fill="#8f3f2d" font-size="16" font-weight="700">Line Height 30px</text>
+    <text x="194" y="239" text-anchor="middle" fill="#52616a" font-size="15">Font Size 20px × 1.5</text>
+    <text x="526" y="52" text-anchor="middle" fill="#24323d" font-size="21" font-weight="750">Font Stackの順番</text>
+    <rect x="382" y="82" width="290" height="178" rx="18" fill="#ead9bc" stroke="#b7893d" stroke-width="3" />
+    <rect x="416" y="112" width="220" height="52" rx="10" fill="#2d5d62" />
+    <text x="526" y="145" text-anchor="middle" fill="#fffdf8" font-size="18" font-weight="750">1. system-ui</text>
+    <path d="M526 169v22" stroke="#bf5b42" stroke-width="3" />
+    <path d="m526 194-7-10h14z" fill="#bf5b42" />
+    <rect x="416" y="198" width="220" height="38" rx="9" fill="#fffdf8" />
+    <text x="526" y="223" text-anchor="middle" fill="#6f4b1f" font-size="16" font-weight="700">2. sans-serif</text>
+    <rect x="102" y="302" width="516" height="58" rx="14" fill="#c9ded9" />
+    <text x="360" y="327" text-anchor="middle" fill="#24323d" font-size="17" font-weight="700">font-size: 1.25rem　／　line-height: 1.5</text>
+    <text x="360" y="349" text-anchor="middle" fill="#23484c" font-size="16" font-weight="700">font-family: system-ui, sans-serif</text>
+  </g>
+</svg>

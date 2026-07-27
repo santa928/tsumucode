@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Locator, type Page } from '@playwright/test';
-import { readStoredProgress } from './helpers/progress';
+import { editorText, readStoredProgress } from './helpers/progress';
 import {
   STANDARD_EXERCISE_ID,
   STANDARD_EXERCISE_TITLE,
@@ -16,12 +16,23 @@ const SLIDE_ROUTES = [
   './#/courses/html-css/lessons/html-css-ch00-l01/slides/html-css-ch00-l01-s01',
   './#/courses/html-css/lessons/html-css-ch00-l01/slides/html-css-ch00-l01-s02',
   './#/courses/html-css/lessons/html-css-ch00-l01/slides/html-css-ch00-l01-s03',
+  './#/courses/html-css/lessons/html-css-ch00-l01/slides/html-css-ch00-l01-s04',
 ] as const;
 
 const INITIAL_ROUTES = [
   { name: 'home', path: './#/', readyName: '学びたいピースを選ぶ' },
   { name: 'course-map', path: './#/courses/html-css', readyName: 'HTML/CSS はじめの一歩' },
   { name: 'slide', path: SLIDE_ROUTES[0], readyName: 'Webページは3つの役割でできている' },
+  {
+    name: 'library-index',
+    path: './#/library/html-css',
+    readyName: 'HTML/CSS はじめの一歩 スライド目次',
+  },
+  {
+    name: 'library-slide',
+    path: './#/library/html-css/lessons/html-css-ch00-l01/slides/html-css-ch00-l01-s01',
+    readyName: 'Webページは3つの役割でできている',
+  },
   {
     name: 'exercise',
     path: exerciseRoute(STANDARD_LESSON_ID, STANDARD_EXERCISE_ID),
@@ -40,6 +51,22 @@ async function expectNoAxeViolations(page: Page): Promise<void> {
       impact,
       targets: nodes.map((node) => node.target),
     })),
+  ).toEqual([]);
+}
+
+/** Drawer開閉中を含む画面にCritical／Seriousのaxe違反がないことを確認する。 */
+async function expectNoCriticalOrSeriousAxeViolations(page: Page): Promise<void> {
+  const result = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+    .analyze();
+  expect(
+    result.violations
+      .filter(({ impact }) => impact === 'critical' || impact === 'serious')
+      .map(({ id, impact, nodes }) => ({
+        id,
+        impact,
+        targets: nodes.map((node) => node.target),
+      })),
   ).toEqual([]);
 }
 
@@ -62,36 +89,98 @@ async function visitRequiredSlides(page: Page): Promise<void> {
   }
 }
 
-/** TabまたはShift+Tabだけで対象へ到達し、focus表示と非遮蔽を確認して操作する。 */
+/** Tab移動後、open Drawer画像のload完了を待ち、focus表示と非遮蔽を再確認して操作する。 */
 async function tabToAndActivate(
   page: Page,
   target: Locator,
   direction: 'Tab' | 'Shift+Tab' = 'Tab',
 ): Promise<void> {
+  const startsFocused = await target.evaluate((element) => element === document.activeElement);
+  expect(startsFocused, 'helper入口では対象が未Focusであること').toBe(false);
+  const baselineIndicator = await target.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      outlineStyle: style.outlineStyle,
+      outlineWidth: style.outlineWidth,
+      outlineColor: style.outlineColor,
+      outlineOffset: style.outlineOffset,
+      boxShadow: style.boxShadow,
+    };
+  });
   const focusTrail: string[] = [];
   for (let index = 0; index < 120; index += 1) {
     if (await target.evaluate((element) => element === document.activeElement)) {
       const indicator = await target.evaluate((element) => {
         const style = getComputedStyle(element);
-        return { outlineStyle: style.outlineStyle, outlineWidth: style.outlineWidth };
-      });
-      expect(indicator.outlineStyle).not.toBe('none');
-      expect(Number.parseFloat(indicator.outlineWidth)).toBeGreaterThan(0);
-      const operable = await target.evaluate((element) => {
-        const rect = element.getBoundingClientRect();
-        const x = Math.min(innerWidth - 1, Math.max(0, rect.left + rect.width / 2));
-        const y = Math.min(innerHeight - 1, Math.max(0, rect.top + rect.height / 2));
-        const hit = document.elementFromPoint(x, y);
         return {
-          insideViewport:
-            rect.left >= 0 &&
-            rect.top >= 0 &&
-            rect.right <= innerWidth &&
-            rect.bottom <= innerHeight,
-          hitTarget: hit === element || (hit !== null && element.contains(hit)),
+          outlineStyle: style.outlineStyle,
+          outlineWidth: style.outlineWidth,
+          outlineColor: style.outlineColor,
+          outlineOffset: style.outlineOffset,
+          boxShadow: style.boxShadow,
         };
       });
-      expect(operable).toEqual({ insideViewport: true, hitTarget: true });
+      const outlineChanged =
+        indicator.outlineStyle !== baselineIndicator.outlineStyle ||
+        indicator.outlineWidth !== baselineIndicator.outlineWidth ||
+        indicator.outlineColor !== baselineIndicator.outlineColor ||
+        indicator.outlineOffset !== baselineIndicator.outlineOffset;
+      const hasVisibleFocusOutline =
+        indicator.outlineStyle !== 'none' &&
+        Number.parseFloat(indicator.outlineWidth) > 0 &&
+        outlineChanged;
+      const hasChangedFocusShadow =
+        indicator.boxShadow !== 'none' && indicator.boxShadow !== baselineIndicator.boxShadow;
+      expect(
+        hasVisibleFocusOutline || hasChangedFocusShadow,
+        `Keyboard Focus表示が非Focus時から変化していません: ${JSON.stringify({ baselineIndicator, indicator })}`,
+      ).toBe(true);
+      await expect
+        .poll(() =>
+          target.evaluate((element) => {
+            const dialog = element.closest('dialog[open]');
+            if (dialog === null) return [];
+            return Array.from(dialog.querySelectorAll('img')).flatMap((image, index) => {
+              const rect = image.getBoundingClientRect();
+              return image.complete &&
+                image.naturalWidth > 0 &&
+                image.naturalHeight > 0 &&
+                rect.width > 0 &&
+                rect.height > 0
+                ? []
+                : [
+                    {
+                      index,
+                      complete: image.complete,
+                      naturalWidth: image.naturalWidth,
+                      naturalHeight: image.naturalHeight,
+                      rectWidth: rect.width,
+                      rectHeight: rect.height,
+                    },
+                  ];
+            });
+          }),
+        )
+        .toEqual([]);
+      await expect
+        .poll(() =>
+          target.evaluate((element) => {
+            const rect = element.getBoundingClientRect();
+            const subpixelTolerance = 0.5;
+            const x = Math.min(innerWidth - 1, Math.max(0, rect.left + rect.width / 2));
+            const y = Math.min(innerHeight - 1, Math.max(0, rect.top + rect.height / 2));
+            const hit = document.elementFromPoint(x, y);
+            return {
+              insideViewport:
+                rect.left >= -subpixelTolerance &&
+                rect.top >= -subpixelTolerance &&
+                rect.right <= innerWidth + subpixelTolerance &&
+                rect.bottom <= innerHeight + subpixelTolerance,
+              hitTarget: hit === element || (hit !== null && element.contains(hit)),
+            };
+          }),
+        )
+        .toEqual({ insideViewport: true, hitTarget: true });
       await page.keyboard.press('Enter');
       return;
     }
@@ -148,6 +237,27 @@ async function expectMinimumTargetSize(page: Page): Promise<void> {
   expect(undersized).toEqual([]);
 }
 
+/** 閲覧ViewerのTool RailとPagerを44px以上のポインター操作面へ固定する。 */
+async function expectLibraryTargetSize(page: Page): Promise<void> {
+  const undersized = await page
+    .locator('.tc-library-tool-button, .tc-library-pager a')
+    .evaluateAll((elements) =>
+      elements.flatMap((element) => {
+        const rect = element.getBoundingClientRect();
+        return rect.width + 0.5 < 44 || rect.height + 0.5 < 44
+          ? [
+              {
+                name: element.getAttribute('aria-label') ?? element.textContent.trim(),
+                width: rect.width,
+                height: rect.height,
+              },
+            ]
+          : [];
+      }),
+    );
+  expect(undersized).toEqual([]);
+}
+
 for (const route of INITIAL_ROUTES) {
   test(`${route.name}にWCAG A/AA対象のaxe違反がない`, async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
@@ -178,6 +288,7 @@ test('Exerciseのcode-error、incomplete、Hint、Review、pass、Completionにa
   await page.getByRole('button', { name: '判定する' }).click();
   await expect(page.getByRole('heading', { name: 'コードを確認しよう' })).toBeVisible();
   await expectNoAxeViolations(page);
+  await page.getByRole('button', { name: '閉じる' }).click();
 
   await replaceWorkspaceFiles(page, {
     'index.html': '<main><h1>わたしの学習ノート</h1></main>',
@@ -193,6 +304,8 @@ test('Exerciseのcode-error、incomplete、Hint、Review、pass、Completionにa
     .click();
   await expect(page.getByRole('region', { name: 'ヒント' })).toContainText('観察ポイント');
   await expectNoAxeViolations(page);
+  await page.getByRole('button', { name: '閉じる' }).click();
+  await page.getByRole('button', { name: '判定結果を見る' }).click();
 
   await page
     .getByRole('button', { name: /関連スライドを見直す/u })
@@ -222,6 +335,56 @@ test('Shift+Tab逆順でHomeの主要CTAへ到達し、focusが隠れず操作�
   await expect(page.getByRole('heading', { level: 1, name: '学びたいピースを選ぶ' })).toBeVisible();
   await tabToAndActivate(page, courseCta, 'Shift+Tab');
   await expect(page).toHaveURL(/html-css-ch00-l01\/slides\/html-css-ch00-l01-s01$/u);
+});
+
+test('Keyboardだけで閲覧目次、用語、前後Slide、目次復帰を操作できる', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./#/library/html-css');
+  const indexHeading = page.getByRole('heading', {
+    level: 1,
+    name: 'HTML/CSS はじめの一歩 スライド目次',
+  });
+  await expect(indexHeading).toBeVisible();
+
+  await page.keyboard.press('Tab');
+  const skipLink = page.getByRole('link', { name: '本文へ移動' });
+  await expect(skipLink).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('main')).toBeFocused();
+
+  const firstLesson = page.getByRole('link', {
+    name: 'Webページを作る3つの役割を先頭から見る',
+  });
+  await tabToAndActivate(page, firstLesson);
+  const firstSlideHeading = page.getByRole('heading', {
+    level: 1,
+    name: 'Webページは3つの役割でできている',
+  });
+  await expect(firstSlideHeading).toBeVisible();
+  await expectLibraryTargetSize(page);
+
+  const glossaryTrigger = page.getByRole('button', { name: '用語を開く' });
+  await tabToAndActivate(page, glossaryTrigger);
+  const glossaryDrawer = page.getByRole('dialog', { name: 'このレッスンの用語' });
+  await expect(glossaryDrawer).toBeVisible();
+  await expect(glossaryDrawer).toContainText('ブラウザ');
+  await expectNoAxeViolations(page);
+  await page.keyboard.press('Escape');
+  await expect(glossaryDrawer).toBeHidden();
+  await expect(glossaryTrigger).toBeFocused();
+
+  await page.keyboard.press('ArrowRight');
+  await expect(
+    page.getByRole('heading', { level: 1, name: 'HTMLは画面に載せる内容を受け持つ' }),
+  ).toBeFocused();
+  await page.keyboard.press('ArrowLeft');
+  await expect(firstSlideHeading).toBeFocused();
+
+  await page.goto('./#/library/html-css/lessons/html-css-ch13-l01/slides/html-css-ch13-l01-g01');
+  const indexReturn = page.getByRole('link', { name: 'スライド目次へ戻る' });
+  await tabToAndActivate(page, indexReturn);
+  await expect(indexHeading).toBeVisible();
+  await expectNoAxeViolations(page);
 });
 
 test('Import差分と削除確認にaxe違反がなく、状態をaria-liveで伝える', async ({ page }, testInfo) => {
@@ -256,6 +419,68 @@ test('390pxのPC案内にaxe違反がなく、Editorを配信しない', async (
   await expectNoAxeViolations(page);
 });
 
+test('768pxのPC案内にaxe違反がなく、EditorとResetを配信しない', async ({ page }) => {
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await page.goto(exerciseRoute(STANDARD_LESSON_ID, STANDARD_EXERCISE_ID));
+  await expect(page.getByRole('heading', { level: 1, name: 'PCで演習を開く' })).toBeVisible();
+  await expect(page.getByTestId('code-workspace')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: '最初に戻す', exact: true })).toHaveCount(0);
+  await expectNoAxeViolations(page);
+});
+
+test('KeyboardだけでStarter ResetのDrawerを取消・Backdrop・確定でき、Focusを復帰する', async ({
+  page,
+}) => {
+  await openEditableExercise(
+    page,
+    STANDARD_LESSON_ID,
+    STANDARD_EXERCISE_ID,
+    STANDARD_EXERCISE_TITLE,
+  );
+  await replaceWorkspaceFiles(page, {
+    'index.html': '<main><h1>Keyboard Reset</h1></main>',
+    'styles.css': 'main { color: rebeccapurple; }',
+  });
+
+  const resetTrigger = page.getByRole('button', { name: '最初に戻す', exact: true });
+  const resetDrawer = page.getByRole('dialog', { name: '最初のコードに戻しますか？' });
+  const cancel = resetDrawer.getByRole('button', { name: '編集を続ける', exact: true });
+  const confirm = resetDrawer.getByRole('button', { name: '最初のコードに戻す', exact: true });
+  await expect(resetTrigger).toBeEnabled();
+
+  await tabToAndActivate(page, resetTrigger, 'Shift+Tab');
+  await expect(resetDrawer).toBeVisible();
+  await expect(cancel).toBeFocused();
+  await expectNoCriticalOrSeriousAxeViolations(page);
+  await page.keyboard.press('Enter');
+  await expect(resetDrawer).toBeHidden();
+  await expect(resetTrigger).toBeFocused();
+  await expectNoCriticalOrSeriousAxeViolations(page);
+
+  await page.keyboard.press('Enter');
+  await expect(resetDrawer).toBeVisible();
+  await expect(cancel).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(resetDrawer).toBeHidden();
+  await expect(resetTrigger).toBeFocused();
+  await expectNoCriticalOrSeriousAxeViolations(page);
+
+  await page.keyboard.press('Enter');
+  await expect(resetDrawer).toBeVisible();
+  await expect(cancel).toBeFocused();
+  await page.mouse.click(4, 4);
+  await expect(resetDrawer).toBeHidden();
+  await expect(resetTrigger).toBeFocused();
+
+  await page.keyboard.press('Enter');
+  await expect(resetDrawer).toBeVisible();
+  await expect(cancel).toBeFocused();
+  await tabToAndActivate(page, confirm);
+  await expect(resetDrawer).toBeHidden();
+  await expect(page.locator('.cm-content')).toBeFocused();
+  await expectNoCriticalOrSeriousAxeViolations(page);
+});
+
 test('Keyboardだけで判定、見直し、復帰でき、CodeMirrorからEscapeとTabで脱出できる', async ({
   page,
 }) => {
@@ -268,14 +493,30 @@ test('Keyboardだけで判定、見直し、復帰でき、CodeMirrorからEscap
   await tabToAndActivate(page, page.getByRole('button', { name: '判定する' }));
   await expect(page.getByRole('heading', { name: 'あと一歩' })).toBeVisible();
   await tabToAndActivate(page, page.getByRole('button', { name: /関連スライドを見直す/u }).first());
-  await expect(page).toHaveURL(/\/review\//u);
+  await expect(page.getByRole('dialog', { name: /関連スライド/u })).toBeVisible();
   await tabToAndActivate(page, page.getByRole('button', { name: '演習へ戻る' }));
   await expect(page.getByTestId('code-workspace')).toBeVisible();
+  await expect(page.locator('.cm-content')).toBeFocused();
 
   const editor = page.locator('.cm-content');
   await editor.focus();
+  await page.keyboard.press('ControlOrMeta+A');
+  await page.keyboard.insertText('tabで字下げ');
+  await page.keyboard.press('Home');
+  await page.keyboard.press('Tab');
+  await expect.poll(() => editorText(page)).toBe('  tabで字下げ');
+  await expect
+    .poll(() => page.evaluate(() => document.activeElement?.closest('.cm-editor') !== null))
+    .toBe(true);
   await page.keyboard.press('Escape');
   await page.keyboard.press('Tab');
+  await expect
+    .poll(() => page.evaluate(() => document.activeElement?.closest('.cm-editor') === null))
+    .toBe(true);
+
+  await editor.focus();
+  await page.keyboard.press('Escape');
+  await page.keyboard.press('Shift+Tab');
   await expect
     .poll(() => page.evaluate(() => document.activeElement?.closest('.cm-editor') === null))
     .toBe(true);

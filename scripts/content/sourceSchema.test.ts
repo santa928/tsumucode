@@ -1,9 +1,11 @@
 /** Authoring YAMLのstrict構造と安全なSource path契約を検証する。 */
 import { describe, expect, it } from 'vitest';
 import {
+  ConceptCatalogSourceSchema,
   CourseSourceSchema,
   ExerciseSourceSchema,
   LessonSourceSchema,
+  SlideFrontmatterSchema,
   SourcePathSchema,
 } from './sourceSchema';
 
@@ -127,6 +129,47 @@ describe('SourcePathSchema', () => {
 });
 
 describe('content source schema', () => {
+  it('Concept台帳をstrictに受理する', () => {
+    expect(
+      ConceptCatalogSourceSchema.parse({
+        schemaVersion: 1,
+        concepts: [
+          {
+            id: 'html-element',
+            introducedBySlideId: 'slide-html-element',
+            prerequisiteConceptIds: ['web-page-three-roles'],
+            minimumProjectLevel: 'transform',
+          },
+        ],
+      }),
+    ).toMatchObject({ concepts: [{ id: 'html-element' }] });
+  });
+
+  it('ページ送り教材のMetadataをstrictに受理する', () => {
+    expect(
+      SlideFrontmatterSchema.parse({
+        id: 'slide-html-element',
+        title: 'Elementの形',
+        kind: 'code',
+        layout: 'code-preview',
+        teachesConceptIds: ['html-element'],
+        masteryTarget: 'read',
+        screenBudget: { maxTextCharacters: 240, maxCodeLines: 8, maxVisuals: 1 },
+        assets: [],
+      }),
+    ).toMatchObject({ layout: 'code-preview', masteryTarget: 'read' });
+  });
+
+  it('Exercise Stepのfile・target・change・observeを必須にする', () => {
+    const result = ExerciseSourceSchema.safeParse({
+      ...validExerciseSource,
+      requiresConcepts: [{ conceptId: 'html-element', minimumLevel: 'fill' }],
+      scaffoldLevel: 'fill',
+      steps: [{ id: 'write-heading', file: 'index.html', target: 'body内' }],
+    });
+    expect(result.success).toBe(false);
+  });
+
   it('strictなCourse sourceを受理する', () => {
     expect(CourseSourceSchema.parse(validCourseSource)).toEqual(validCourseSource);
   });

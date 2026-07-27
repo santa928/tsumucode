@@ -5,6 +5,50 @@ workspaceId: html-css-profile-project
 countsTowardStandardExerciseTotal: false
 title: AboutとSkillsを再利用Styleで育てる
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: skills, minimumLevel: compose }
+  - { conceptId: works, minimumLevel: compose }
+scaffoldLevel: compose
+steps:
+  - id: compose-about-and-skills
+    file: index.html
+    target: AboutとWorks準備中のsection
+    starterAnchor: '<section id="works" aria-labelledby="works-title">'
+    change: About本文を整え、3件のSkillをulへ入れ、2つのSectionでsurface-cardを再利用する
+    observe: About、Skill List、共通Surface、Line Heightの4判定が合格する
+    requiresConceptIds: [skills]
+    validationRuleIds:
+      - html-css-ch12-l03-e01-r01
+      - html-css-ch12-l03-e01-r02
+      - html-css-ch12-l03-e01-r03
+  - id: style-about-and-skills
+    file: styles.css
+    target: '.surface-card、[data-about-copy]、.skill-listのRule'
+    starterAnchor: '.primary-link {'
+    change: 共通SurfaceへBorder、About本文へ1.6のLine Height、Skill ListへFlexとgapを指定する
+    observe: 16px本文のComputed Line Heightが25.6pxになり、Skillsが折り返して並ぶ
+    requiresConceptIds: [skills]
+    validationRuleIds:
+      - html-css-ch12-l03-e01-r04
+  - id: compose-works
+    file: index.html
+    target: '#works内の準備中Text'
+    starterAnchor: '<p>最初のProfile Cardを準備中です。</p>'
+    change: 2件のarticleをdata-works-layout内へ置き、1件目へ説明的なaltを持つasset:profile-avatar画像を入れる
+    observe: Worksが画像付きProfile CardとLearning Noteの2件として読める
+    requiresConceptIds: [works]
+    validationRuleIds:
+      - html-css-ch12-l03-e01-r06
+      - html-css-ch12-l03-e01-r07
+  - id: style-works
+    file: styles.css
+    target: '.works-gridと.work-cardのRule'
+    starterAnchor: "footer {\n  padding-block: 24px 40px;"
+    change: Works親を2列Gridにし、CardへPadding、Border、背景を指定する
+    observe: WorksのComputed Displayがgridになり、2つのCardが同じ列幅で並ぶ
+    requiresConceptIds: [works]
+    validationRuleIds:
+      - html-css-ch12-l03-e01-r05
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -73,6 +117,52 @@ validationRules:
       nextAction: 16px本文ならline-heightを1.5以上にします。
     hintId: html-css-ch12-l03-e01-h03
     relatedSlideId: html-css-ch12-l03-g01
+  - id: html-css-ch12-l03-e01-r05
+    label: WorksをCSS Gridで並べる
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-works-layout]' }
+    assertion:
+      kind: computed-style
+      property: display
+      operator: equals
+      expected: grid
+    feedback:
+      target: Works LayoutのComputed Display
+      expected: grid
+      nextAction: data-works-layoutを持つ要素へdisplay gridを指定します。
+    hintId: html-css-ch12-l03-e01-h03
+    relatedSlideId: html-css-ch12-l03-g01
+  - id: html-css-ch12-l03-e01-r06
+    label: Work Cardを2件以上置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-works-layout] [data-work-card]' }
+    assertion: { kind: count, operator: gte, expected: 2 }
+    feedback:
+      target: Works内のWork Card
+      expected: data-work-cardを持つarticleが2件以上
+      nextAction: Profile CardとLearning Noteをそれぞれarticleとして追加します。
+    hintId: html-css-ch12-l03-e01-h03
+    relatedSlideId: html-css-ch12-l03-g01
+  - id: html-css-ch12-l03-e01-r07
+    label: Work画像へ代替Textを付ける
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '[data-work-image]' }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: Profile Card作品画像のAccessible Name
+      expected: 画像内容が分かる空でない説明
+      nextAction: data-work-imageを持つimgへ作品内容が分かるaltを書きます。
+    hintId: html-css-ch12-l03-e01-h03
+    relatedSlideId: html-css-ch12-l03-g01
 hints:
   - id: html-css-ch12-l03-e01-h01
     level: 1
@@ -86,14 +176,14 @@ hints:
     relatedSlideId: html-css-ch12-l03-g01
   - id: html-css-ch12-l03-e01-h03
     level: 3
-    title: 本文の実測値を見る
-    text: data-about-copyのComputed line-heightを24px以上へ整えます。
+    title: CSSの実測値とLayoutを見る
+    text: AboutのComputed line-heightを24px以上にし、Works親へdisplay grid、子へdata-work-cardを指定します。
     relatedSlideId: html-css-ch12-l03-g01
 relatedSlideIds: [html-css-ch12-l03-g01]
 previewViewports:
   - { id: desktop-1280, width: 1280, height: 720 }
 assets:
-  - id: avatar-project-about
+  - id: profile-avatar-l03-source
     source: assets/profile-avatar.svg
     mediaType: image
     alt: オレンジのCode Cardを持つつむぎ

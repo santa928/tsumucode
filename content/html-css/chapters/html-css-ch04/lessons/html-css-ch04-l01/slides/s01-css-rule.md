@@ -3,10 +3,19 @@ id: html-css-ch04-l01-s01
 title: CSS Ruleは対象と変更内容を1組にする
 kind: concept
 concept: css-rule-anatomy
-assets: []
+layout: code-preview
+teachesConceptIds: [css-rule, declaration]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 390, maxCodeLines: 3, maxVisuals: 1 }
+assets:
+  - id: css-rule-map
+    source: assets/css-rule-map.svg
+    mediaType: image
+    alt: p Selectorとcolor PropertyとValueを1つのCSS Ruleとして分解した図
+    provenanceId: ch04-css-rule-map-original
 ---
 
-CSS Ruleは、Styleを適用する対象を示すSelectorと、波括弧の中のDeclaration Blockでできています。
+CSS Ruleは「どれを」「どうする」を1組にします。Selectorが対象、波括弧の中のDeclarationが変更内容です。
 
 ```css
 p {
@@ -14,11 +23,13 @@ p {
 }
 ```
 
-`p`がSelector、`color`がProperty、`#24323d`がValueです。ColonはPropertyとValueを分け、Semicolonは1つのDeclarationを閉じます。
+![CSS Ruleの4つの部品](asset:css-rule-map)
+
+`p`がSelector、`color`がProperty、`#24323d`がValueです。ColonはPropertyとValueを結び、SemicolonはDeclarationを閉じます。実習では既にある2つのRuleのValueだけを直します。
 
 :::practice
-prompt: Code例でSelector、Property、Value、Semicolonを順に指します。
-expectedAction: 4つの役割を区別し、Rule全体を自分の言葉で説明する
+prompt: 図とCodeでSelector、Property、Value、Semicolonを順に探します。
+expectedAction: 4つの役割を指し、Ruleを「どれをどうする」で説明する
 estimatedMinutes: 2
 :::
 

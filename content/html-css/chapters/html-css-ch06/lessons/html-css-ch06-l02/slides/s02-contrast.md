@@ -1,21 +1,34 @@
 ---
 id: html-css-ch06-l02-s02
-title: Contrastは前景と背景の組み合わせで測る
+title: ContrastとTextの2つで状態を伝える
 kind: concept
 concept: text-contrast
-assets: []
+layout: code-preview
+teachesConceptIds: [contrast-ratio, non-color-cue]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 410, maxCodeLines: 3, maxVisuals: 1 }
+assets:
+  - id: contrast-non-color-cue
+    source: assets/contrast-and-cue.svg
+    mediaType: image
+    alt: 緑の丸だけの状態表示と公開中というTextを併記した状態表示の比較
+    provenanceId: ch06-contrast-and-cue-original
 ---
 
-Text Contrastは文字色だけでは決まりません。同じ灰色でも、白い背景と暗い背景では読みやすさが変わるため、最終的な前景色と背景色を組み合わせて測ります。
+Contrast Ratioは前景色と背景色の明るさの差です。通常サイズの本文は`4.5:1`以上を基準にします。
 
-通常サイズの本文は4.5:1以上を基準にします。背景が透明なら、祖先Elementの背景までたどった表示結果が必要です。
+![Contrastと色以外の手がかり](asset:contrast-non-color-cue)
 
-色だけで「成功」「失敗」を表すと、色を区別しづらい人や白黒表示では意味が失われます。色へ加えて、状態を示すTextやIconのAccessible Nameを用意します。
+色だけの緑の丸では、意味を区別できない場合があります。実習では`Portfolio`の前へ、`data-status-text`を持つstrong要素と区切り線を追加し、言葉でも状態を伝えます。
+
+```html
+<strong data-status-text>公開中</strong> — Portfolio
+```
 
 :::practice
-prompt: 緑の丸だけで公開状態を示したUIへ、色以外の手がかりを追加します。
-expectedAction: 公開中などの状態Textを加える
+prompt: 緑の丸だけで示した公開状態へ、色以外の手がかりを追加します。
+expectedAction: 公開中という状態Textを加える
 estimatedMinutes: 2
 :::
 
-次の実習ではContrast 4.5:1と状態Textの両方を確認します。
+次の実習では、文字色1箇所と状態Text 1箇所を変更します。

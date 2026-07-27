@@ -5,19 +5,20 @@
 - voiceOverStatus: `not-required`
 - unresolvedFindings: `0`
 - unperformedChecks: `0`
-- reviewedAt: `2026-07-18`
-- verifiedSourceCommit: `5a8f091504f72e547e70160357ef9e4c71601d27`
-- canonicalDistSha256: `d84d16c571d48e597c6d2f17078f34280742e310af9118e9b9d3d184e36afc78`
-- reviewBaseCommit: `5a8f091504f72e547e70160357ef9e4c71601d27`
+- reviewedAt: `2026-07-19`
+- verifiedSourceCommit: `d402188d5708ad287f294be7c33e0d44bfa4e2d7`
+- canonicalDistSha256: `952053ed146ff6b28f7e1deae9b0161600aa57c17a42c5811894bfcebb1a2062`
+- reviewBaseCommit: `d402188d5708ad287f294be7c33e0d44bfa4e2d7`
 - environment: `macOS 26.5.1 (25F80)`
-- browser: `Google Chrome 150.0.7871.124`
+- browser: `Codex In-app Browser（Chromium系、macOS）`
 - voiceOver: `初回Release対象外（CR-REV-003。合格・対応済みとは主張しない）`
 - bindingPolicy: 必須の自動・実機完了項目は同一source commitと`/tsumucode/` canonical distへ結合済み。VoiceOverは要件差分台帳により対象外
 
 ## 確認方法
 
 - 自動：GitHub Pagesの`/tsumucode/`で生成した同一`dist/`を`vite preview`で配信し、Chromium、Firefox、WebKitの実ブラウザで確認した。
-- 実機：macOSのGoogle Chromeで同じ`dist/`を開き、100%から200%、400%へズームし、最後に100%へ戻した。
+- 手動：Codex In-app Browserで同じ`dist/`を開き、200%相当の640x360と400%相当の320x800を確認した。640x360ではSlide Stage末尾まで実際にscrollできること、1280x360のExercise error状態ではPager下端とSite Footer上端に4pxの安全余白があることを確認した。
+- Reflow：Chromium、Firefox、WebKitのE2Eで200%相当と400%相当を確認し、手動確認と相互検証した。
 - axe：`wcag2a`、`wcag2aa`、`wcag21a`、`wcag21aa`、`wcag22aa`の対象違反をimpactにかかわら0件とした。
 - Keyboard：直接focusやmouse clickで証明を短絡せず、Tab、Shift+Tab、Enter、Escapeで到達した。
 
@@ -44,11 +45,24 @@
 | Focus obscured       | Geometry + hit test                  | 合格   | 対象全体がViewport内で中心点が対象にhit                                       |
 | Target size          | Runtime geometry                     | 合格   | 表示中のnative操作要素が24 CSS px以上                                         |
 | 4 Viewports          | Runtime geometry                     | 合格   | 1440x900、1280x720、768x1024、390x844で重なり/横はみ出し0件                   |
-| 200% Zoom            | Chrome実機 + 640 CSS px E2E          | 合格   | 主要見出し、CTA、進捗、端末データ操作を維持                                   |
-| 400% Reflow          | Chrome実機 + 320 CSS px E2E          | 合格   | アクセシビリティツリーを維持し横スクロール0                                   |
+| 200% Zoom            | 3 Engine E2E + 640x360手動確認       | 合格   | 主要見出し、CTA、進捗、Stage内救済Scrollを維持                                |
+| 400% Reflow          | 3 Engine E2E + 320x800手動確認       | 合格   | アクセシビリティツリーを維持し横スクロール0                                   |
 | `aria-live`          | Role/status E2E                      | 合格   | Export完了、Import差分未適用の文言更新を確認                                  |
 | Reduced Motion       | `prefers-reduced-motion: reduce` E2E | 合格   | animation終了待ちなしでCompletion最終状態を表示                               |
 | VoiceOver読上げ      | —                                    | 対象外 | `CR-REV-003`により初回Releaseの必須Gateから除外。合格・対応済みとは主張しない |
+
+## Slide Library追加証跡
+
+- 確認日: `2026-07-26`
+- 対象source: `0c9df90e998323a158e807decdd141b81075f7eb`
+- 配信条件: `BASE_PATH=/tsumucode/`のProduction build
+- 自動結果: `responsive-layout.spec.ts`、`accessibility.spec.ts`、`slide-library.spec.ts`をChromium／Firefox／WebKit、retry 0で実行し、`135/135`合格
+- axe: 閲覧目次、閲覧Viewer、用語Drawerを含むWCAG A/AA対象違反0件
+- Keyboard: 本文スキップ、最初のLesson、用語Drawer、`Escape`で閉じてTriggerへFocus復帰、左右矢印による前後Slide、Course最終Slideから目次復帰までKeyboardだけで完了
+- Reflow: 390x844、412x915、768x1024で意図しない横Scroll、重なり、操作阻害0件。1280x720、1440x900ではDocument Scrollなし
+- 200%相当: 640x360ではTool RailとPagerを固定し、Slide Stage内だけに救済Scrollを残して本文末尾へ到達
+- Target size: 閲覧ViewerのTool RailとPagerは44 CSS px以上
+- VoiceOver: 従来どおり初回Release対象外。読み上げ順、発音、Rotor操作の合格は主張しない
 
 ## VoiceOverの対象外記録
 
@@ -63,6 +77,7 @@
 2. Preview iframeがTab順序を内部Documentへ移し、後続の更新/判定操作へ到達できなかったため、iframe自体を`tabIndex={-1}`とした。Previewの読み上げ専用内容は親Documentに持たせている。
 3. 実ブラウザを5ワーカーで同時実行するとIndexedDBとPreview判定が資源競合した。2ワーカーで60件が全通過し、最終構成はCI 1ワーカーで66件が再試行なし全通過したため、Localを2、CIを1へ固定した。
 4. 編集後の旧い「保存済み」表示を新しい保存完了と誤認できたため、対象File全文とSlide IDがIndexedDBに一致するまで待つようにした。
+5. 低い画面で固定Header、Stage、Pagerが利用可能領域を超える問題を、学習Route専用のcompact配置とStage内救済Scrollで解消した。640x360のSlide末尾到達、320x800の横Scrollなし、1280x360のExercise Footer非重複を確認した。
 
 - 未修正のアクセシビリティ指摘: `0件`
 - 未実施の必須確認: `0件`

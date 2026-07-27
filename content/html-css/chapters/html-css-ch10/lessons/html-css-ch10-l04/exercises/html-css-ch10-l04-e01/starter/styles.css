@@ -1,7 +1,21 @@
-[data-frame] {
-  width: 320px;
+body {
+  margin: 0;
+  padding: 24px;
 }
-img {
+[data-frame],
+[data-crop-frame] {
+  width: 320px;
+  margin-block-end: 24px;
+}
+[data-responsive-image] {
+  display: block;
   width: 480px;
-  height: 200px;
+  max-width: none;
+  height: auto;
+}
+[data-crop-image] {
+  display: block;
+  width: 320px;
+  height: 180px;
+  object-fit: contain;
 }

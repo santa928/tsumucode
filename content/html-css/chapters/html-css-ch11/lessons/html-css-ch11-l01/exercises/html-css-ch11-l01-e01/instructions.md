@@ -1,8 +1,10 @@
 ## KeyboardでたどれるActionを仕上げる
 
-1. `[data-action]`のLinkとButtonをKeyboard Focus可能な要素として保ちます。
-2. `[data-focus-demo]`に表示されるFocus Indicatorを3px以上の`outline`にします。
-3. `:focus-visible`へ同じIndicatorを指定し、実際のKeyboard操作でも現在地を示します。
-4. Previewと判定結果でFocusabilityとOutline Widthを別々に確認します。
+`styles.css`に用意されたFocus Ruleで、数値を1箇所だけ変更します。
 
-Class名、色、太さは、観測条件を満たす別案でも合格します。
+1. `[data-action]:focus-visible, .is-focus-visible` Ruleを探します。
+2. `outline: 0 solid #ef7d4f;`の`0`を`3px`へ変更します。
+3. 完成済みの`outline-offset: 3px;`とHTMLのLink・Buttonはそのまま残します。
+4. Previewで橙色の線を確認し、判定でFocusabilityとOutline Widthを確認します。
+
+色は別案でも合格します。編集対象は`outline`の太さだけです。

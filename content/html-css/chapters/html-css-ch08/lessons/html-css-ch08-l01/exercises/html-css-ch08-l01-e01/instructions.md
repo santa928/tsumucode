@@ -1,8 +1,8 @@
 ## RowとColumnのAxisを作る
 
-1. `[data-row]`をFlex Containerにし、Main Axisをrowにします。
-2. `[data-column]`もFlex Containerにし、Main Axisをcolumnにします。
-3. PreviewでItemの並ぶ向きを確認します。
-4. 判定結果で2つのComputed DisplayとDirectionを確認します。
+1. `styles.css`の`[data-row], [data-column]`共通Ruleを開きます。
+2. `gap: 12px;`の直前へ`display: flex;`を追加します。
+3. `[data-column]`の`flex-direction: row;`を`column`へ変えます。
+4. PreviewでRowは左→右、Columnは上→下に並ぶことを確かめます。
 
-Axis図へ戻り、Main AxisとCross Axisの向きを説明してから実習へ戻ることもできます。
+手が止まったら「前のスライド」でAxis図と完成コードを見直し、そのまま実習へ戻れます。

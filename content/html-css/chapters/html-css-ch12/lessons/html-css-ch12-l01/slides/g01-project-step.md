@@ -1,16 +1,37 @@
 ---
 id: html-css-ch12-l01-g01
-title: 工程1は内容とSemantic Outlineを先に決める
+title: 読み手からSemantic Outlineを組み立てる
 kind: guide
-assets: []
+layout: code-preview
+teachesConceptIds: [audience, outline]
+masteryTarget: compose
+screenBudget: { maxTextCharacters: 380, maxCodeLines: 10, maxVisuals: 1 }
+assets:
+  - id: audience-outline-flow
+    source: assets/audience-outline-flow.svg
+    mediaType: image
+    alt: 読み手の目的をheader、main、footerの順序へ変換する流れ
+    provenanceId: ch12-audience-outline-flow-original
 ---
 
-Audienceを1文で定め、header、main、footerとmain内のSectionへ内容を分けます。見た目の調整は次の工程で行います。
+最初に「誰へ何を伝えるか」を1文にします。その文を判断軸にすると、導入は`header`、中心内容は`main`、補足は`footer`へ分けられます。
+
+![AudienceからSemantic Outlineを決める流れ](asset:audience-outline-flow)
+
+```html
+<header>
+  <p data-audience>Web制作を学び始めた友人へ紹介します。</p>
+</header>
+<main>
+  <section><h1>つむぎの学習プロフィール</h1></section>
+</main>
+<footer>つむぎの学習記録</footer>
+```
 
 :::practice
-prompt: この工程で最初に確認する観点を1つ選び、理由を説明する
-expectedAction: BriefとChecklistに沿って観点と理由を言葉にする
+prompt: 作品紹介をページの中心内容として置くなら、どのLandmarkの中へ入れるか答えます。
+expectedAction: mainの中へ置くと答え、中心内容だからと説明する
 estimatedMinutes: 2
 :::
 
-完成Codeではなく、判定結果とPreviewから次の修正を決めます。
+実習では仮の`div`を消し、Audience文と3つのLandmarkを自分で組み立てます。CSSはまだ変更しません。

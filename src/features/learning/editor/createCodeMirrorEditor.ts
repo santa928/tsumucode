@@ -1,17 +1,17 @@
-/** CodeMirrorの状態とDOM副作用をEditorAdapter内部へ閉じ込める。 */
-import { css } from '@codemirror/lang-css';
-import { html } from '@codemirror/lang-html';
-import { Compartment, EditorSelection, EditorState } from '@codemirror/state';
+/** CodeMirrorの状態、File別履歴、DOM副作用をEditorAdapter内部へ閉じ込める。 */
+import { EditorSelection, EditorState } from '@codemirror/state';
 import {
   EditorView,
   highlightActiveLine,
   highlightActiveLineGutter,
-  keymap,
   lineNumbers,
 } from '@codemirror/view';
 import type { EditorCursor } from '../../../core/persistence/contracts';
-import type { EditorAdapter } from './EditorAdapter';
-import { EditorLanguageRegistry } from './EditorLanguageRegistry';
+import type { EditorAdapter, EditorMountInput } from './EditorAdapter';
+import { EditorDocumentStateStore, type EditorDocumentInput } from './EditorDocumentStateStore';
+import type { EditorLanguageRegistry } from './EditorLanguageRegistry';
+import { createEditorExperienceExtensions } from './createEditorExperienceExtensions';
+import { createHtmlCssEditorLanguageRegistry } from './htmlCssEditorLanguages';
 
 /** cursor offsetを現在documentの両端を含む有効範囲へ丸める。 */
 function clampOffset(offset: number, documentLength: number): number {
@@ -27,66 +27,116 @@ function selectionFor(cursor: EditorCursor | undefined, documentLength: number) 
   );
 }
 
-/** 初回HTML/CSS Courseが使う言語を、将来拡張可能なRegistryとして生成する。 */
-export function createHtmlCssEditorLanguageRegistry(): EditorLanguageRegistry {
-  const registry = new EditorLanguageRegistry();
-  registerHtmlCssEditorLanguages(registry);
-  return registry;
+/** File名と操作説明をCodeMirrorのcontenteditable面へ付与する。 */
+function editorAttributes(
+  path: string,
+  descriptionId: string | undefined,
+): Readonly<Record<string, string>> {
+  return {
+    'aria-label': `${path} のコードエディター`,
+    ...(descriptionId ? { 'aria-describedby': descriptionId } : {}),
+    tabindex: '0',
+    spellcheck: 'false',
+  };
 }
 
-/** CodeMirror lazy chunk評価後にだけHTML/CSS既定言語を共有Registryへ補う。 */
-export function registerHtmlCssEditorLanguages(registry: EditorLanguageRegistry): void {
-  if (!registry.has('html')) registry.register('html', html);
-  if (!registry.has('css')) registry.register('css', css);
-  if (!registry.has('text')) registry.register('text', () => []);
+/** Scroll親をTab順から外し、文字入力面だけを単一のKeyboard入口にする。 */
+function configureEditorFocusTarget(view: EditorView): void {
+  view.scrollDOM.removeAttribute('tabindex');
+  view.contentDOM.tabIndex = 0;
+}
+
+/** mount入力からState生成に必要なDocument情報だけを取り出す。 */
+function initialDocument(input: EditorMountInput): EditorDocumentInput {
+  return { path: input.path, language: input.language, content: input.content };
 }
 
 /** CodeMirrorのimperative APIをUI・Repository非依存のEditorAdapterへ変換する。 */
 export function createCodeMirrorEditor(
-  registry = createHtmlCssEditorLanguageRegistry(),
+  registry: EditorLanguageRegistry = createHtmlCssEditorLanguageRegistry(),
 ): EditorAdapter {
   return {
     mount(input) {
       let currentPath = input.path;
       let currentLanguage = input.language;
+      let highestControlledRevision = input.contentRevision;
       let restoring = false;
       let destroyed = false;
-      const languageCompartment = new Compartment();
-      const attributesCompartment = new Compartment();
-      const initialSelection = selectionFor(input.cursor, input.content.length);
-      const view = new EditorView({
-        parent: input.parent,
-        state: EditorState.create({
-          doc: input.content,
+      const documents = new EditorDocumentStateStore();
+      const pendingLocalRevisionsByPath = new Map<string, Set<number>>();
+
+      /** 親が受理したローカル編集revisionだけをFile単位で追跡する。 */
+      const recordLocalRevision = (path: string, revision: number | undefined): void => {
+        if (
+          revision === undefined ||
+          !Number.isInteger(revision) ||
+          revision <= highestControlledRevision
+        ) {
+          return;
+        }
+        const revisions = pendingLocalRevisionsByPath.get(path) ?? new Set<number>();
+        revisions.add(revision);
+        pendingLocalRevisionsByPath.set(path, revisions);
+      };
+
+      /** 遅着echoをrevisionで拒否し、新しい外部更新は値に関係なく受理する。 */
+      const shouldApplyControlledDocument = (
+        document: EditorDocumentInput & Pick<EditorMountInput, 'contentRevision'>,
+      ): boolean => {
+        if (document.contentRevision < highestControlledRevision) return false;
+        const pending = pendingLocalRevisionsByPath.get(document.path);
+        const hasNewerLocalRevision = [...(pending ?? [])].some(
+          (revision) => revision > document.contentRevision,
+        );
+        highestControlledRevision = Math.max(highestControlledRevision, document.contentRevision);
+        for (const [path, revisions] of pendingLocalRevisionsByPath) {
+          for (const revision of revisions) {
+            if (revision <= document.contentRevision) revisions.delete(revision);
+          }
+          if (revisions.size === 0) pendingLocalRevisionsByPath.delete(path);
+        }
+        return !hasNewerLocalRevision;
+      };
+
+      /** 言語・入力支援・Accessibilityを含む独立したFile Stateを生成する。 */
+      const createState = (document: EditorDocumentInput, cursor?: EditorCursor): EditorState => {
+        const initialSelection = selectionFor(cursor, document.content.length);
+        return EditorState.create({
+          doc: document.content,
           ...(initialSelection ? { selection: initialSelection } : {}),
           extensions: [
-            languageCompartment.of(registry.extensionFor(input.language)),
+            ...createEditorExperienceExtensions(),
+            registry.extensionFor(document.language),
             lineNumbers(),
             highlightActiveLineGutter(),
             highlightActiveLine(),
-            keymap.of([]),
             EditorView.lineWrapping,
-            attributesCompartment.of(
-              EditorView.contentAttributes.of({
-                'aria-label': `${input.path} のコードエディター`,
-                spellcheck: 'false',
-              }),
-            ),
+            EditorView.contentAttributes.of(editorAttributes(document.path, input.descriptionId)),
             EditorView.updateListener.of((update) => {
               if (restoring || destroyed) return;
-              if (update.docChanged) input.onChange(update.state.doc.toString());
+              if (update.docChanged) {
+                const content = update.state.doc.toString();
+                recordLocalRevision(currentPath, input.onChange(content));
+              }
               if (update.selectionSet) {
                 const { anchor, head } = update.state.selection.main;
                 input.onCursorChange({ anchor, head });
               }
             }),
           ],
-        }),
+        });
+      };
+
+      const view = new EditorView({
+        parent: input.parent,
+        state: createState(initialDocument(input), input.cursor),
       });
+      configureEditorFocusTarget(view);
 
       return {
         setDocument(next) {
           if (destroyed) return;
+          if (!shouldApplyControlledDocument(next)) return;
           const contentMatches = next.content === view.state.doc.toString();
           if (next.path === currentPath && next.language === currentLanguage && contentMatches) {
             return;
@@ -94,42 +144,27 @@ export function createCodeMirrorEditor(
 
           restoring = true;
           try {
+            documents.save(currentPath, currentLanguage, view.state);
+            const nextState = documents.restore(next, () => createState(next));
             currentPath = next.path;
             currentLanguage = next.language;
-            view.dispatch({
-              ...(contentMatches
-                ? {}
-                : {
-                    changes: {
-                      from: 0,
-                      to: view.state.doc.length,
-                      insert: next.content,
-                    },
-                  }),
-              effects: [
-                languageCompartment.reconfigure(registry.extensionFor(next.language)),
-                attributesCompartment.reconfigure(
-                  EditorView.contentAttributes.of({
-                    'aria-label': `${next.path} のコードエディター`,
-                    spellcheck: 'false',
-                  }),
-                ),
-              ],
-            });
+            view.setState(nextState);
+            configureEditorFocusTarget(view);
           } finally {
             restoring = false;
           }
         },
         setSelection(cursor) {
           if (destroyed || !cursor) return;
+          const documentLength = view.state.doc.length;
+          const anchor = clampOffset(cursor.anchor, documentLength);
+          const head = clampOffset(cursor.head, documentLength);
+          const currentSelection = view.state.selection.main;
+          if (currentSelection.anchor === anchor && currentSelection.head === head) return;
           restoring = true;
           try {
-            const documentLength = view.state.doc.length;
             view.dispatch({
-              selection: {
-                anchor: clampOffset(cursor.anchor, documentLength),
-                head: clampOffset(cursor.head, documentLength),
-              },
+              selection: { anchor, head },
             });
           } finally {
             restoring = false;
@@ -142,6 +177,8 @@ export function createCodeMirrorEditor(
           if (destroyed) return;
           destroyed = true;
           view.destroy();
+          documents.clear();
+          pendingLocalRevisionsByPath.clear();
         },
       };
     },

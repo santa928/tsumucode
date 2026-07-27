@@ -1,17 +1,17 @@
 :root {
-  --color-primary: rgb(45 93 98);
+  --color-primary: #2d5d62;
 }
 body {
   margin: 2rem;
   font-family: system-ui, sans-serif;
 }
 [data-action] {
+  background-color: var(--color-primary);
   padding: 0.75rem 1rem;
   border: 0;
   color: white;
-  background: var(--color-primary);
 }
 [data-tag] {
-  margin-right: 1rem;
   color: var(--color-primary);
+  margin-right: 1rem;
 }

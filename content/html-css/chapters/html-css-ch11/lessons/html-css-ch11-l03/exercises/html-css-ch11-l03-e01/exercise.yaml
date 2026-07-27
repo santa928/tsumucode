@@ -4,6 +4,29 @@ workspaceId: html-css-ch11-l03-e01
 countsTowardStandardExerciseTotal: true
 title: 読めて意味が伝わる公開状態を作る
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: contrast-45, minimumLevel: transform }
+  - { conceptId: status-text, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: darken-status-text
+    file: styles.css
+    target: '[data-status] Ruleのcolor Declaration'
+    starterAnchor: 'color: #aaa097;'
+    change: Text Colorを#172a3aへ変更する
+    observe: 明るい背景とのContrast Ratioが4.5対1以上になる
+    requiresConceptIds: [contrast-45]
+    validationRuleIds:
+      - html-css-ch11-l03-e01-r01
+  - id: add-status-text
+    file: index.html
+    target: status-dot直後の状態表示
+    starterAnchor: '<span class="status-dot" aria-hidden="true"></span>'
+    change: 直後へstrong data-status-textで公開中を追加する
+    observe: 色の丸を隠しても公開状態が言葉で分かる
+    requiresConceptIds: [status-text]
+    validationRuleIds:
+      - html-css-ch11-l03-e01-r02
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }

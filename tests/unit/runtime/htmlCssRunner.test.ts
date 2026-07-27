@@ -18,6 +18,8 @@ const policy: SnapshotPolicy = {
   selectors: ['main'],
   attributes: ['id'],
   computedStyles: ['display'],
+  focusVisibleSelectors: [],
+  focusVisibleComputedStyles: [],
   includeAllElements: false,
 };
 
@@ -367,16 +369,18 @@ describe('materializePreviewAssets', () => {
 });
 
 describe('HtmlCssRunnerAdapter', () => {
-  it('prepareは既存状態を破棄しsandbox・referrer・titleを固定する', async () => {
+  it('prepareは旧frameだけを破棄し、新frameへ空Navigationを発生させない', async () => {
     const first = createFrame();
     const second = createFrame();
     const runner = new HtmlCssRunnerAdapter();
 
     await runner.prepare(first);
     first.srcdoc = '<p>old</p>';
+    second.srcdoc = '<p>host placeholder</p>';
     await runner.prepare(second);
 
     expect(first.srcdoc).toBe('');
+    expect(second.srcdoc).toBe('<p>host placeholder</p>');
     expect(second.getAttribute('sandbox')).toBe('allow-scripts');
     expect(second.getAttribute('sandbox')).not.toContain('allow-same-origin');
     expect(second.getAttribute('referrerpolicy')).toBe('no-referrer');

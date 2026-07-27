@@ -3,7 +3,16 @@ id: html-css-ch02-l03-s02
 title: header、main、footerでページの大枠を作る
 kind: code
 concept: page-landmark-order
-assets: []
+layout: code-preview
+teachesConceptIds: [header-main-footer]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 390, maxCodeLines: 9, maxVisuals: 1 }
+assets:
+  - id: preview-page-landmarks
+    source: assets/landmark-map-preview.svg
+    mediaType: image
+    alt: header、main、footerが上から順に並ぶページの地図
+    provenanceId: ch02-landmark-map-original
 ---
 
 ページの大枠は、導入を`header`、そのページ固有の中心内容を`main`、末尾の補足を`footer`として順に置けます。
@@ -20,7 +29,9 @@ assets: []
 </footer>
 ```
 
-通常、ページ内のmainは1つです。headerやfooterはmainの中にも置けますが、まずはページ全体を表す3領域の兄弟関係から覚えます。
+![header、main、footerのページ地図](asset:preview-page-landmarks)
+
+まずはbody直下へ3領域をこの順で1つずつ置きます。実習ではpage-header、page-main、page-footerのclassを残し、対応するdivの開始Tagと終了Tagを変更します。
 
 :::practice
 prompt: 導入、中心内容、末尾の補足を3つのTagへ対応させます。

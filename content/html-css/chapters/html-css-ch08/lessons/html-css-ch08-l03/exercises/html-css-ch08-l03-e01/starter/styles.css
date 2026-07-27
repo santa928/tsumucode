@@ -5,6 +5,8 @@ body {
   font-family: system-ui, sans-serif;
 }
 [data-align] {
+  display: flex;
+  align-items: flex-start;
   width: 500px;
   height: 200px;
   background: #fff;
@@ -22,5 +24,6 @@ body {
   height: 60px;
 }
 [data-end] {
+  align-self: center;
   height: 40px;
 }

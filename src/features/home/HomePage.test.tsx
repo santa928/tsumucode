@@ -55,6 +55,9 @@ describe('HomePage', () => {
       'href',
       '/courses/html-css/lessons/lesson-first-heading/slides/slide-html-role',
     );
+    expect(
+      screen.getByRole('link', { name: `${fixtureCourse.title}：スライドだけ見る` }),
+    ).toHaveAttribute('href', '/library/html-css');
     expect(await screen.findByRole('region', { name: '端末データPanel' })).toBeInTheDocument();
   });
 
@@ -90,6 +93,57 @@ describe('HomePage', () => {
       'href',
       '/courses/html-css/lessons/lesson-first-heading/slides/slide-html-role',
     );
+    expect(
+      screen.getByRole('link', { name: `${fixtureCourse.title}：スライドだけ見る` }),
+    ).toHaveAttribute('href', '/library/html-css');
+  });
+
+  it('Course完了後も主要見直しCTAと独立したスライド閲覧導線を維持する', async () => {
+    const completedAt = '2026-07-16T00:00:00.000Z';
+    const completedProgress = {
+      courseId: fixtureCourse.id,
+      contentRevision: fixtureCourse.revision,
+      lessons: {
+        'lesson-first-heading': {
+          lessonId: 'lesson-first-heading',
+          viewedSlideIds: ['slide-html-role'],
+          passedExerciseIds: ['exercise-first-heading'],
+          passedChecklistItemIds: [],
+          passedRuleIds: ['rule-h1-exists'],
+          passedViewportIds: ['desktop'],
+          currentComplete: true,
+          firstCompletedAt: completedAt,
+        },
+      },
+      currentLessonId: 'lesson-first-heading',
+      currentChapterId: 'ch00-web-map',
+      currentComplete: true,
+      firstCompletedAt: completedAt,
+      updatedAt: completedAt,
+    } satisfies CourseProgress;
+    useCourseProgress.mockReturnValue({
+      status: 'ready',
+      progress: completedProgress,
+      error: undefined,
+      retry: vi.fn(),
+    });
+    const router = createMemoryRouter([
+      {
+        path: '/',
+        loader: () => ({ catalog: fixtureCatalog, publishedCourses: [fixtureCourse] }),
+        HydrateFallback: () => <p>教材を準備中</p>,
+        element: <HomePage />,
+      },
+    ]);
+
+    render(<RouterProvider router={router} />);
+
+    expect(
+      await screen.findByRole('link', { name: `${fixtureCourse.title}：完成したコースを見直す` }),
+    ).toHaveAttribute('href', '/courses/html-css');
+    expect(
+      screen.getByRole('link', { name: `${fixtureCourse.title}：スライドだけ見る` }),
+    ).toHaveAttribute('href', '/library/html-css');
   });
 
   it('未公開Courseしかない場合は開始Linkを出さず準備中と伝える', async () => {

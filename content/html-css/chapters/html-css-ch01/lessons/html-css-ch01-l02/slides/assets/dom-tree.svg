@@ -1,20 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="360" viewBox="0 0 720 360" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
   <title id="title">HTMLの親子関係</title>
-  <desc id="description">mainからsectionへ枝が伸び、sectionからh2とpへ枝が伸びるTree図</desc>
-  <rect width="720" height="360" rx="28" fill="#fffaf0" />
-  <g fill="none" stroke="#5d6f68" stroke-width="5" stroke-linecap="round">
-    <path d="M360 102v46" />
-    <path d="M360 224v34H230v28" />
-    <path d="M360 258h130v28" />
-  </g>
-  <g font-family="ui-monospace, monospace" font-size="24" font-weight="700" text-anchor="middle">
-    <rect x="270" y="36" width="180" height="66" rx="18" fill="#1f5c49" />
-    <text x="360" y="77" fill="#ffffff">main</text>
-    <rect x="270" y="148" width="180" height="76" rx="18" fill="#e5b94f" />
-    <text x="360" y="195" fill="#19352d">section</text>
-    <rect x="150" y="286" width="160" height="58" rx="16" fill="#dcebe5" />
-    <text x="230" y="323" fill="#19352d">h2</text>
-    <rect x="410" y="286" width="160" height="58" rx="16" fill="#dcebe5" />
-    <text x="490" y="323" fill="#19352d">p</text>
-  </g>
+  <desc id="desc">bodyの子にmainがあり、mainの子にh1とpが並ぶTree</desc>
+  <rect width="640" height="420" rx="24" fill="#fffaf0" />
+  <rect x="238" y="34" width="164" height="64" rx="14" fill="#19352d" />
+  <text x="320" y="76" text-anchor="middle" font-family="system-ui, sans-serif" font-size="26" font-weight="800" fill="#fffaf0">body</text>
+  <path d="M320 98V142" stroke="#8a7657" stroke-width="5" />
+  <rect x="238" y="142" width="164" height="64" rx="14" fill="#dcebe6" stroke="#376f61" stroke-width="3" />
+  <text x="320" y="184" text-anchor="middle" font-family="system-ui, sans-serif" font-size="26" font-weight="800" fill="#19352d">main</text>
+  <path d="M320 206V250M320 250H172M320 250H468M172 250V286M468 250V286" fill="none" stroke="#8a7657" stroke-width="5" />
+  <rect x="90" y="286" width="164" height="64" rx="14" fill="#fff3c7" stroke="#b98c18" stroke-width="3" />
+  <text x="172" y="328" text-anchor="middle" font-family="system-ui, sans-serif" font-size="26" font-weight="800" fill="#5c4610">h1</text>
+  <rect x="386" y="286" width="164" height="64" rx="14" fill="#fff3c7" stroke="#b98c18" stroke-width="3" />
+  <text x="468" y="328" text-anchor="middle" font-family="system-ui, sans-serif" font-size="26" font-weight="800" fill="#5c4610">p</text>
+  <text x="320" y="392" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#3f514b">Parent → Child</text>
 </svg>

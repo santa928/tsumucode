@@ -4,6 +4,30 @@ workspaceId: html-css-ch04-l02-e01
 countsTowardStandardExerciseTotal: true
 title: Stylesheet接続とDeclarationを直す
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: stylesheet-link, minimumLevel: transform }
+  - { conceptId: css-property-value, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: connect-stylesheet-file
+    file: index.html
+    target: head内でtheme.cssを指しているlink
+    starterAnchor: <link rel="stylesheet" href="theme.css" />
+    change: hrefをstyles.cssへ変更する
+    observe: Previewへstyles.cssのCard Styleが届く
+    requiresConceptIds: [stylesheet-link]
+    validationRuleIds: [html-css-ch04-l02-e01-r01]
+  - id: set-card-background-value
+    file: styles.css
+    target: .card Ruleのbackground-color Declaration
+    starterAnchor: 'background-color: #fffaf0;'
+    change: Valueを#ffffffへ変更し、完成済みのcolorは残す
+    observe: Cardが白背景と濃紺文字になり、構文とComputed Colorの両方が合う
+    requiresConceptIds: [css-property-value]
+    validationRuleIds:
+      - html-css-ch04-l02-e01-r02
+      - html-css-ch04-l02-e01-r03
+      - html-css-ch04-l02-e01-r04
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -61,6 +85,23 @@ validationRules:
       nextAction: '.cardへcolor: #24323d;を正しいDeclaration構文で書きます。'
     hintId: html-css-ch04-l02-e01-h03
     relatedSlideId: html-css-ch04-l02-s02
+  - id: html-css-ch04-l02-e01-r04
+    label: background-colorのValueを正しいDeclarationへ書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '.card { background-color: #ffffff;'
+    feedback:
+      target: styles.cssのbackground-color Declaration
+      expected: 'background-color: #ffffff;'
+      nextAction: .card内のbackground-colorでColon後のValueを#ffffffにし、Semicolonを残します。
+    hintId: html-css-ch04-l02-e01-h02
+    relatedSlideId: html-css-ch04-l02-s02
 hints:
   - id: html-css-ch04-l02-e01-h01
     level: 1
@@ -110,7 +151,7 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch04-l02-e01-r02]
+    expectedFeedbackRuleIds: [html-css-ch04-l02-e01-r02, html-css-ch04-l02-e01-r04]
   - id: html-css-ch04-l02-e01-code-error
     expectedStatus: code-error
     files:

@@ -2,8 +2,36 @@ id: html-css-ch08-l05-e01
 kind: standard
 workspaceId: html-css-ch08-l05-e01
 countsTowardStandardExerciseTotal: true
-title: AccessibleなNavigationとCard Rowを組む
+title: NavigationとCard Rowを組む
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: flex-navigation, minimumLevel: compose }
+  - { conceptId: flex-card-row, minimumLevel: compose }
+scaffoldLevel: compose
+steps:
+  - id: compose-flex-navigation
+    file: styles.css
+    target: '[data-profile-nav] Rule'
+    starterAnchor: '[data-profile-nav]'
+    change: display flexを追加し、gapを12pxへ変更する
+    observe: 3つのLinkが12px間隔で横に並ぶ
+    requiresConceptIds: [flex-navigation]
+    validationRuleIds:
+      - html-css-ch08-l05-e01-r01
+      - html-css-ch08-l05-e01-r02
+      - html-css-ch08-l05-e01-r06
+  - id: compose-flex-card-row
+    file: styles.css
+    target: '[data-card-row] Rule'
+    starterAnchor: '[data-card-row]'
+    change: display flexを追加し、gapを16pxへ変更する
+    observe: 2枚目のCardがx 208pxへ並ぶ
+    requiresConceptIds: [flex-card-row]
+    validationRuleIds:
+      - html-css-ch08-l05-e01-r03
+      - html-css-ch08-l05-e01-r04
+      - html-css-ch08-l05-e01-r05
+      - html-css-ch08-l05-e01-r07
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -26,17 +54,17 @@ validationRules:
     hintId: html-css-ch08-l05-e01-h01
     relatedSlideId: html-css-ch08-l05-s01
   - id: html-css-ch08-l05-e01-r02
-    label: Navigationの目的を名前で伝える
+    label: NavigationのLink間を12pxにする
     required: true
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
     target: { kind: selector, selector: '[data-profile-nav]' }
-    assertion: { kind: accessible-name, operator: present }
+    assertion: { kind: computed-style, property: gap, operator: equals, expected: 12 }
     feedback:
-      target: Profile NavigationのAccessible Name
-      expected: 空でないNavigationの目的
-      nextAction: aria-labelなどでプロフィール内の移動だと分かる名前を付けます。
+      target: Profile NavigationのComputed Gap
+      expected: 12px
+      nextAction: data-profile-navのgapを8pxから12pxへ変更します。
     hintId: html-css-ch08-l05-e01-h02
     relatedSlideId: html-css-ch08-l05-s01
   - id: html-css-ch08-l05-e01-r03
@@ -86,6 +114,40 @@ validationRules:
       nextAction: Card幅とGapをRow幅以内へ収めます。
     hintId: html-css-ch08-l05-e01-h03
     relatedSlideId: html-css-ch08-l05-s02
+  - id: html-css-ch08-l05-e01-r06
+    label: NavigationのFlex Sourceを統合する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '[data-profile-nav] { display: flex; gap: 12px; }'
+    feedback:
+      target: Profile NavigationのSource
+      expected: display flexとgap 12px
+      nextAction: 既存Ruleへdisplay flexを追加し、gapを12pxへ変更します。
+    hintId: html-css-ch08-l05-e01-h02
+    relatedSlideId: html-css-ch08-l05-s01
+  - id: html-css-ch08-l05-e01-r07
+    label: Card RowのFlex Sourceを統合する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '[data-card-row] { display: flex; width: 400px; margin-top: 24px; gap: 16px; }'
+    feedback:
+      target: Card RowのSource
+      expected: display flexとgap 16px
+      nextAction: widthとmarginは残し、display flexとgap 16pxをそろえます。
+    hintId: html-css-ch08-l05-e01-h03
+    relatedSlideId: html-css-ch08-l05-s02
 hints:
   - id: html-css-ch08-l05-e01-h01
     level: 1
@@ -94,8 +156,8 @@ hints:
     relatedSlideId: html-css-ch08-l05-s01
   - id: html-css-ch08-l05-e01-h02
     level: 2
-    title: Navigationへ目的を付ける
-    text: aria-labelで何のためのNavigationかを短く伝えます。
+    title: Navigationの2つのDeclarationを揃える
+    text: display flexを追加し、gapのValueを12pxへ変更します。
     relatedSlideId: html-css-ch08-l05-s01
   - id: html-css-ch08-l05-e01-h03
     level: 3
@@ -135,4 +197,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch08-l05-e01-r04]
+    expectedFeedbackRuleIds: [html-css-ch08-l05-e01-r04, html-css-ch08-l05-e01-r07]

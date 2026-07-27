@@ -1,7 +1,7 @@
 id: html-css-ch09
 sequence: 9
 title: CSS Grid
-goal: RowとColumnの2次元Trackを設計し、ResponsiveなGalleryを組み立てる
+goal: 親にGridを宣言し、列幅・自動折り返し・Item配置を段階的に組み立てる
 estimatedMinutes: 45
 kind: standard
 lessonSources:

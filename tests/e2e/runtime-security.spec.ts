@@ -271,7 +271,7 @@ for (const [name, payload] of Object.entries(securityPayloads)) {
 
 test('有効なtokenでもtop window sourceのsnapshotを無視する', async ({ page }) => {
   await installPreviewSourceProbe(page);
-  const validate = page.getByRole('button', { name: /^判定/u });
+  const validate = page.getByRole('button', { name: /^判定(?:する|しています)$/u });
   await validate.click();
   const response = await captureStrictSnapshotResponse(page);
   expect(response.payload.viewport).toEqual({ id: 'desktop', width: 1280, height: 720 });

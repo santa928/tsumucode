@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="360" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
+  <title id="title">Capstone Requirement Trace</title>
+  <desc id="desc">Briefを計測フック、独立したRule、4つのViewportへつなぐ流れ</desc>
+  <rect width="960" height="360" rx="28" fill="#fffaf0"/>
+  <rect x="34" y="48" width="216" height="264" rx="24" fill="#172a3a"/>
+  <text x="62" y="88" fill="#ef7d4f" font-family="system-ui, sans-serif" font-size="20" font-weight="850">BRIEF</text>
+  <text x="62" y="132" fill="#ffffff" font-family="system-ui, sans-serif" font-size="21" font-weight="800">目的・読み手</text>
+  <text x="62" y="172" fill="#ffffff" font-family="system-ui, sans-serif" font-size="21" font-weight="800">必須Content</text>
+  <text x="62" y="212" fill="#ffffff" font-family="system-ui, sans-serif" font-size="21" font-weight="800">操作・Contrast</text>
+  <text x="62" y="252" fill="#ffffff" font-family="system-ui, sans-serif" font-size="21" font-weight="800">4 Viewport</text>
+  <path d="M268 180h56" stroke="#ef7d4f" stroke-width="8" stroke-linecap="round"/>
+  <path d="m313 164 18 16-18 16" fill="none" stroke="#ef7d4f" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="350" y="48" width="248" height="264" rx="24" fill="#ffffff" stroke="#d4e3df" stroke-width="4"/>
+  <text x="378" y="88" fill="#155e63" font-family="system-ui, sans-serif" font-size="20" font-weight="850">MEASUREMENT HOOKS</text>
+  <rect x="378" y="112" width="192" height="40" rx="12" fill="#dcebe8"/>
+  <rect x="378" y="164" width="192" height="40" rx="12" fill="#dcebe8"/>
+  <rect x="378" y="216" width="192" height="40" rx="12" fill="#dcebe8"/>
+  <text x="394" y="138" fill="#155e63" font-family="ui-monospace, monospace" font-size="16" font-weight="800">data-event-poster</text>
+  <text x="394" y="190" fill="#155e63" font-family="ui-monospace, monospace" font-size="16" font-weight="800">data-event-grid</text>
+  <text x="394" y="242" fill="#155e63" font-family="ui-monospace, monospace" font-size="16" font-weight="800">data-capstone-action</text>
+  <path d="M616 180h56" stroke="#ef7d4f" stroke-width="8" stroke-linecap="round"/>
+  <path d="m661 164 18 16-18 16" fill="none" stroke="#ef7d4f" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="698" y="48" width="228" height="264" rx="24" fill="#ffffff" stroke="#d4e3df" stroke-width="4"/>
+  <text x="726" y="88" fill="#155e63" font-family="system-ui, sans-serif" font-size="20" font-weight="850">RULES + VIEWPORTS</text>
+  <circle cx="752" cy="138" r="18" fill="#2d7c82"/><text x="745" y="146" fill="#ffffff" font-family="system-ui, sans-serif" font-size="18" font-weight="850">1</text>
+  <text x="784" y="145" fill="#172a3a" font-family="system-ui, sans-serif" font-size="19" font-weight="800">Structure</text>
+  <circle cx="752" cy="186" r="18" fill="#2d7c82"/><text x="745" y="194" fill="#ffffff" font-family="system-ui, sans-serif" font-size="18" font-weight="850">2</text>
+  <text x="784" y="193" fill="#172a3a" font-family="system-ui, sans-serif" font-size="19" font-weight="800">Layout</text>
+  <circle cx="752" cy="234" r="18" fill="#2d7c82"/><text x="745" y="242" fill="#ffffff" font-family="system-ui, sans-serif" font-size="18" font-weight="850">3</text>
+  <text x="784" y="241" fill="#172a3a" font-family="system-ui, sans-serif" font-size="19" font-weight="800">Audit</text>
+  <text x="720" y="284" fill="#ef7d4f" font-family="system-ui, sans-serif" font-size="17" font-weight="850">390 · 768 · 1280 · 1440</text>
+</svg>

@@ -16,7 +16,12 @@ export interface CreatePreviewSrcdocInput {
   readonly exerciseSessionId: string;
   readonly executionRevision: number;
   readonly bootstrapToken?: string;
-  readonly viewport: { readonly id: string; readonly width: number; readonly height: number };
+  readonly viewport: {
+    readonly id: string;
+    readonly width: number;
+    readonly height: number;
+    readonly reducedMotion?: 'reduce' | undefined;
+  };
 }
 
 const SAFE_NONCE = /^[a-z0-9_-]+$/iu;

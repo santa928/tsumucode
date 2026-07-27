@@ -1,17 +1,16 @@
 body {
   margin: 0;
-  padding: 1.5rem;
+  padding: 24px;
 }
 [data-card-grid] {
   display: flex;
-  flex-flow: row wrap;
-  width: 37.5rem;
-  gap: 1rem;
+  flex-wrap: wrap;
+  width: 600px;
+  gap: 16px;
 }
 [data-card] {
   box-sizing: border-box;
-  flex-basis: 11.25rem;
-  flex-grow: 0;
+  flex-basis: 180px;
   flex-shrink: 0;
-  height: 6.25rem;
+  height: 100px;
 }

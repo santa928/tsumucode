@@ -10,9 +10,9 @@ body {
 }
 
 .measure {
+  padding: 1.5rem;
   margin: 4rem auto;
   max-width: 32rem;
-  padding: 1.5rem;
   border: 1px solid #2d5d62;
   font-size: 1.25rem;
 }

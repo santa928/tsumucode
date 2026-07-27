@@ -1,26 +1,35 @@
 ---
 id: html-css-ch06-l04-s01
-title: Base Classへ共通の見た目を集める
+title: Base Classで共通Styleを再利用する
 kind: concept
 concept: reusable-base-class
-assets: []
+layout: code-preview
+teachesConceptIds: [reusable-base-class]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 400, maxCodeLines: 5, maxVisuals: 1 }
+assets:
+  - id: base-class-reuse
+    source: assets/base-modifier-classes.svg
+    mediaType: image
+    alt: 1つのcard Base Classが2枚のCardへ共通Styleを届ける図
+    provenanceId: ch06-base-modifier-classes-original
 ---
 
-複数のCardへ同じPadding、背景、Borderを個別に書くと、変更箇所が増えて差分も生まれます。共通RuleをBase Classへまとめると、1つの変更をすべてのCardへ届けられます。
+Base Classは、複数の部品へ共通する見た目を1つのRuleへ集めます。実習では`.card`のPadding、背景、Borderが完成済みです。
 
-```css
-.card {
-  padding: 1.5rem;
-  background: white;
-}
+![Base Classの再利用](asset:base-class-reuse)
+
+HTMLで両方の`article`へ`card` Classを付けると、同じStyleが2枚へ届きます。
+
+```html
+<article data-card class="card">HTML</article>
+<article data-card class="card">CSS</article>
 ```
 
-Class名そのものより、何を共有する単位かが重要です。Base Classは共通部分だけを持ち、個別の差は追加Classや内容側で表します。
-
 :::practice
-prompt: 2枚のCardで重複しているPaddingと背景のRuleを探します。
-expectedAction: 共通のBase Classへ移すRuleとして選ぶ
+prompt: 2枚へ共通のPaddingと背景を届けるClassを答えます。
+expectedAction: cardというBase Classを両方へ付ける
 estimatedMinutes: 2
 :::
 
-次はComponentの境界を見つけます。
+次は、2枚目だけの差を追加Classで重ねます。

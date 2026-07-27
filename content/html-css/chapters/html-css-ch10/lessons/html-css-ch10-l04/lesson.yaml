@@ -1,7 +1,7 @@
 id: html-css-ch10-l04
 kind: standard
-title: ImageをResponsiveにする
-goal: max-width、height auto、object-fitで画像の境界と比率を保てる
+title: 画像を枠へ安全に収める
+goal: 画像の比率を保ったまま枠内へ縮め、object-fitで見せ方を選べる
 estimatedMinutes: 12
 prerequisiteLessonIds: [html-css-ch10-l03]
 slideSources:
@@ -9,7 +9,7 @@ slideSources:
   - slides/s02-object-fit.md
 exerciseSources:
   - exercises/html-css-ch10-l04-e01/exercise.yaml
-reflection: ImageのContainer境界とAspect Ratioを別々に確認する
+reflection: max-width、height auto、object-fitが担当する条件を分けて説明する
 glossaryRefs: [responsive-image, aspect-ratio, object-fit]
 nextLessonId: html-css-ch10-l05
 completion:

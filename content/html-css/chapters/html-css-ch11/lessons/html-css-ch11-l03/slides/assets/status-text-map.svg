@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="220" viewBox="0 0 960 220">
+  <title>色だけの状態とText付き状態の比較</title>
+  <desc>緑の丸だけの表示から、装飾の丸と公開中Textを組み合わせた表示へ改善する図</desc>
+  <rect width="960" height="220" rx="28" fill="#f5efe3" />
+  <g transform="translate(58 42)" font-family="system-ui, sans-serif">
+    <rect width="330" height="136" rx="22" fill="#fffdf8" stroke="#ef7d4f" stroke-width="4" />
+    <text x="28" y="38" fill="#8f3f2d" font-size="18" font-weight="700">色だけ</text>
+    <circle cx="84" cy="88" r="18" fill="#46a46d" />
+    <text x="122" y="96" fill="#52616d" font-size="19">意味を推測する</text>
+    <path d="M362 68h112" stroke="#2d7c82" stroke-width="6" />
+    <path d="m462 56 18 12-18 12" fill="none" stroke="#2d7c82" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+    <rect x="508" width="330" height="136" rx="22" fill="#fffdf8" stroke="#2d7c82" stroke-width="4" />
+    <text x="536" y="38" fill="#155e63" font-size="18" font-weight="700">色 + Text</text>
+    <circle cx="590" cy="88" r="18" fill="#2d7c82" />
+    <text x="628" y="96" fill="#172a3a" font-size="21" font-weight="700">公開中</text>
+  </g>
+</svg>

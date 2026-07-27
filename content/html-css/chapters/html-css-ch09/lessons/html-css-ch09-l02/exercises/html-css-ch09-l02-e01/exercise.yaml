@@ -4,6 +4,23 @@ workspaceId: html-css-ch09-l02-e01
 countsTowardStandardExerciseTotal: true
 title: repeatとfrで3つの等幅Trackを作る
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: repeat-function, minimumLevel: transform }
+  - { conceptId: fr-unit, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: replace-fixed-tracks-with-repeat-fr
+    file: styles.css
+    target: '[data-grid] Ruleのgrid-template-columns Declaration'
+    starterAnchor: 'grid-template-columns: 200px 200px 200px;'
+    change: Valueをrepeat(3, 1fr)へ変更する
+    observe: 3列が等幅になり、2枚目のxが約237.33pxになる
+    requiresConceptIds: [repeat-function, fr-unit]
+    validationRuleIds:
+      - html-css-ch09-l02-e01-r01
+      - html-css-ch09-l02-e01-r02
+      - html-css-ch09-l02-e01-r03
+      - html-css-ch09-l02-e01-r04
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -58,6 +75,23 @@ validationRules:
       nextAction: frで利用可能幅を分配し、固定幅の合計で越えないようにします。
     hintId: html-css-ch09-l02-e01-h03
     relatedSlideId: html-css-ch09-l02-s02
+  - id: html-css-ch09-l02-e01-r04
+    label: repeatとfrをSourceへ書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: 'grid-template-columns: repeat(3, 1fr);'
+    feedback:
+      target: data-gridのColumn Source
+      expected: repeat(3, 1fr)
+      nextAction: 200px 200px 200pxをrepeat(3, 1fr)へ置き換えます。
+    hintId: html-css-ch09-l02-e01-h01
+    relatedSlideId: html-css-ch09-l02-s02
 hints:
   - id: html-css-ch09-l02-e01-h01
     level: 1
@@ -107,4 +141,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch09-l02-e01-r02]
+    expectedFeedbackRuleIds: [html-css-ch09-l02-e01-r02, html-css-ch09-l02-e01-r04]

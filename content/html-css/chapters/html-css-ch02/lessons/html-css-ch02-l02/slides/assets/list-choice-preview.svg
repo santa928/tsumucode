@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">ulとolの使い分け</title>
+  <desc id="desc">順番を入れ替えられるSkillはBullet、順番どおり進める制作手順は番号で表示されている</desc>
+  <rect width="640" height="360" rx="24" fill="#e8dfcf" />
+  <rect x="28" y="32" width="276" height="296" rx="20" fill="#fffaf0" stroke="#8a7657" stroke-width="3" />
+  <rect x="336" y="32" width="276" height="296" rx="20" fill="#fffaf0" stroke="#8a7657" stroke-width="3" />
+  <text x="166" y="82" text-anchor="middle" font-family="system-ui, sans-serif" font-size="24" font-weight="800" fill="#19352d">ul Skill</text>
+  <text x="474" y="82" text-anchor="middle" font-family="system-ui, sans-serif" font-size="24" font-weight="800" fill="#19352d">ol 手順</text>
+  <g font-family="system-ui, sans-serif" font-size="21" fill="#3f514b">
+    <circle cx="82" cy="132" r="7" fill="#3d7665" /><text x="104" y="140">HTML</text>
+    <circle cx="82" cy="190" r="7" fill="#3d7665" /><text x="104" y="198">CSS</text>
+    <circle cx="82" cy="248" r="7" fill="#3d7665" /><text x="104" y="256">Accessibility</text>
+    <circle cx="396" cy="132" r="18" fill="#f4c95d" /><text x="396" y="140" text-anchor="middle" font-weight="800" fill="#19352d">1</text><text x="430" y="140">編集</text>
+    <circle cx="396" cy="190" r="18" fill="#f4c95d" /><text x="396" y="198" text-anchor="middle" font-weight="800" fill="#19352d">2</text><text x="430" y="198">保存</text>
+    <circle cx="396" cy="248" r="18" fill="#f4c95d" /><text x="396" y="256" text-anchor="middle" font-weight="800" fill="#19352d">3</text><text x="430" y="256">確認</text>
+  </g>
+</svg>

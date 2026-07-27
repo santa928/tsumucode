@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="360" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
+  <title id="title">Profile Siteの最終確認ループ</title>
+  <desc id="desc">Heading、Keyboard Focus、Contrast、画像alt、Viewportを順に測って再確認する流れ</desc>
+  <rect width="960" height="360" rx="28" fill="#fffaf0"/>
+  <path d="M172 178c0-116 138-156 238-92M548 86c102-62 240-24 240 92M788 210c0 112-136 150-238 88M410 298c-102 62-238 22-238-88" fill="none" stroke="#2d7c82" stroke-width="8" stroke-linecap="round"/>
+  <path d="m395 70 28 20-32 12M804 194l-20 28-12-32M565 314l-28-20 32-12M156 194l20-28 12 32" fill="none" stroke="#2d7c82" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="338" y="122" width="284" height="116" rx="26" fill="#172a3a"/>
+  <text x="408" y="170" fill="#ef7d4f" font-family="system-ui, sans-serif" font-size="22" font-weight="850">1項目ずつ測る</text>
+  <text x="386" y="206" fill="#ffffff" font-family="system-ui, sans-serif" font-size="20" font-weight="750">修正 → 再判定 → 完成</text>
+  <rect x="76" y="52" width="168" height="56" rx="28" fill="#dcebe8"/>
+  <rect x="716" y="52" width="168" height="56" rx="28" fill="#dcebe8"/>
+  <rect x="716" y="252" width="168" height="56" rx="28" fill="#dcebe8"/>
+  <rect x="76" y="252" width="168" height="56" rx="28" fill="#dcebe8"/>
+  <rect x="394" y="22" width="172" height="56" rx="28" fill="#ef7d4f"/>
+  <text x="111" y="87" fill="#155e63" font-family="system-ui, sans-serif" font-size="19" font-weight="850">Heading</text>
+  <text x="748" y="87" fill="#155e63" font-family="system-ui, sans-serif" font-size="19" font-weight="850">Keyboard</text>
+  <text x="751" y="287" fill="#155e63" font-family="system-ui, sans-serif" font-size="19" font-weight="850">Contrast</text>
+  <text x="143" y="287" fill="#155e63" font-family="system-ui, sans-serif" font-size="19" font-weight="850">Alt</text>
+  <text x="436" y="58" fill="#172a3a" font-family="system-ui, sans-serif" font-size="19" font-weight="850">Viewport</text>
+</svg>

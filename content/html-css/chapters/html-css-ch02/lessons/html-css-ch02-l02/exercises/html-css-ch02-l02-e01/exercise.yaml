@@ -4,6 +4,27 @@ workspaceId: html-css-ch02-l02-e01
 countsTowardStandardExerciseTotal: true
 title: Skill一覧と制作手順をListにする
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: ordered-list, minimumLevel: transform }
+  - { conceptId: list-item, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: add-skill-item
+    file: index.html
+    target: 学んでいるSkillのul内、CSSのliの直後
+    starterAnchor: <li>CSS</li>
+    change: <li>Accessibility</li>を1行追加する
+    observe: Previewの順不同Listが3項目になる
+    requiresConceptIds: [list-item]
+    validationRuleIds: [html-css-ch02-l02-e01-r01, html-css-ch02-l02-e01-r02]
+  - id: change-steps-to-ordered-list
+    file: index.html
+    target: 制作の手順を包む2つ目のul
+    starterAnchor: <h2>制作の手順</h2>
+    change: 開始Tagと終了Tagをulからolへ変更する
+    observe: Previewで制作手順だけが番号付きListになる
+    requiresConceptIds: [ordered-list]
+    validationRuleIds: [html-css-ch02-l02-e01-r03, html-css-ch02-l02-e01-r04]
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -17,12 +38,12 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: ul }
+    target: { kind: selector, selector: 'ul.skill-list' }
     assertion: { kind: count, operator: gte, expected: 1 }
     feedback:
       target: 学んでいるSkillの一覧
-      expected: ulが1つ以上ある
-      nextAction: 順番を入れ替えられるSkill一覧をulで包みます。
+      expected: skill-listクラスのulが1つある
+      nextAction: Skill一覧のclassは残し、ulで包みます。
     hintId: html-css-ch02-l02-e01-h01
     relatedSlideId: html-css-ch02-l02-s01
   - id: html-css-ch02-l02-e01-r02
@@ -31,12 +52,12 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'ul > li' }
+    target: { kind: selector, selector: 'ul.skill-list > li' }
     assertion: { kind: count, operator: gte, expected: 3 }
     feedback:
       target: Skill一覧の項目
-      expected: ul直下のliが3つ以上
-      nextAction: ulの中へ、学んでいるSkillをliで3つ以上書きます。
+      expected: Skill一覧のul直下にliが3つ以上
+      nextAction: skill-listのul内でCSSの直後へAccessibilityのliを追加します。
     hintId: html-css-ch02-l02-e01-h02
     relatedSlideId: html-css-ch02-l02-s01
   - id: html-css-ch02-l02-e01-r03
@@ -45,12 +66,12 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: ol }
+    target: { kind: selector, selector: 'ol.workflow-list' }
     assertion: { kind: count, operator: equals, expected: 1 }
     feedback:
       target: 制作の手順
-      expected: olが1つある
-      nextAction: 編集、保存、確認の順番に意味があるため、2つ目のListをolへ変更します。
+      expected: workflow-listクラスのolが1つある
+      nextAction: workflow-listのclassは残し、開始Tagと終了Tagをolへ変更します。
     hintId: html-css-ch02-l02-e01-h02
     relatedSlideId: html-css-ch02-l02-s02
   - id: html-css-ch02-l02-e01-r04
@@ -59,12 +80,12 @@ validationRules:
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: selector, selector: 'ol > li' }
+    target: { kind: selector, selector: 'ol.workflow-list > li' }
     assertion: { kind: count, operator: gte, expected: 3 }
     feedback:
       target: 制作手順の項目
-      expected: ol直下のliが3つ以上
-      nextAction: olの中へ、順番どおりに進める手順をliで3つ以上入れます。
+      expected: 制作手順のol直下にliが3つ以上
+      nextAction: workflow-list内の3つのliは残したまま、外側だけをolへ変更します。
     hintId: html-css-ch02-l02-e01-h03
     relatedSlideId: html-css-ch02-l02-s02
 hints:
@@ -117,5 +138,7 @@ fixtures:
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
     expectedFeedbackRuleIds:
+      - html-css-ch02-l02-e01-r01
+      - html-css-ch02-l02-e01-r02
       - html-css-ch02-l02-e01-r03
       - html-css-ch02-l02-e01-r04

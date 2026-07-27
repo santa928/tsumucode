@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { useLoaderData, useLocation } from 'react-router-dom';
+import { Link, useLoaderData, useLocation } from 'react-router-dom';
 import type { homeLoader } from '../../app/contentLoaders';
 import { buildCourseMap } from '../../core/content/courseMap';
 import type { CourseManifest } from '../../core/content/types';
@@ -109,10 +109,17 @@ function CourseShelfCard({ course }: { readonly course: CourseManifest }) {
             </button>
           </WorkshopNotice>
         ) : null}
-        <div className="mt-auto pt-7">
+        <div className="mt-auto flex flex-wrap gap-3 pt-7">
           <ActionLink to={actionPath} className="w-full sm:w-auto">
             {actionLabel}
           </ActionLink>
+          <Link
+            to={`/library/${course.id}`}
+            aria-label={`${course.title}：スライドだけ見る`}
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-workshop-md border-2 border-workshop-primary px-5 py-3 font-bold text-workshop-primary sm:w-auto"
+          >
+            スライドだけ見る
+          </Link>
         </div>
       </div>
     </StackedCard>

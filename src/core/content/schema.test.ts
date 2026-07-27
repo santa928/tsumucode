@@ -1,7 +1,14 @@
 /** 公開Course契約のfail-closed境界、参照整合、移行chainを固定する。 */
 import { describe, expect, it } from 'vitest';
 import { fixtureCatalog, fixtureCourse } from '../../../tests/fixtures/course';
-import { CourseCatalogSchema, CourseManifestSchema, PreviewViewportSchema } from './schema';
+import {
+  AssetRefSchema,
+  CourseCatalogSchema,
+  CourseManifestSchema,
+  ExerciseSchema,
+  PreviewViewportSchema,
+  SlideSchema,
+} from './schema';
 import type {
   ContentProgressMigration,
   CourseManifest,
@@ -232,6 +239,52 @@ function assertViewportReadonly(viewport: PreviewViewport): void {
 void assertViewportReadonly;
 
 describe('CourseManifestSchema 公開境界', () => {
+  it('ページ送りSlideのLayout・習得段階・画面予算を受理する', () => {
+    const slide = structuredClone(firstStandardLesson(cloneCourse()).slides[0]!);
+    Object.assign(slide, {
+      layout: 'code-preview',
+      teachesConceptIds: ['html-element'],
+      masteryTarget: 'read',
+      screenBudget: { maxTextCharacters: 240, maxCodeLines: 8, maxVisuals: 1 },
+    });
+
+    expect(SlideSchema.safeParse(slide).success).toBe(true);
+  });
+
+  it('公開Slideでページ送りMetadataを必須にする', () => {
+    const slide = structuredClone(firstStandardLesson(cloneCourse()).slides[0]!);
+    Reflect.deleteProperty(slide, 'layout');
+    expect(SlideSchema.safeParse(slide).success).toBe(false);
+  });
+
+  it('公開ExerciseでConcept要件と実行可能なStepを必須にする', () => {
+    const exercise = structuredClone(firstStandardExercise(firstStandardLesson(cloneCourse())));
+    Object.assign(exercise, {
+      requiresConcepts: [{ conceptId: 'html-element', minimumLevel: 'fill' }],
+      scaffoldLevel: 'fill',
+      steps: [
+        {
+          id: 'write-heading',
+          file: 'index.html',
+          target: 'main要素の内側',
+          starterAnchor: '<main></main>',
+          change: 'h1要素を追加する',
+          observe: '見出しがPreviewへ表示される',
+          requiresConceptIds: ['html-element'],
+          validationRuleIds: ['rule-h1-exists'],
+        },
+      ],
+    });
+
+    expect(ExerciseSchema.safeParse(exercise).success).toBe(true);
+  });
+
+  it('公開ExerciseでConcept要件とStepを省略できない', () => {
+    const exercise = structuredClone(firstStandardExercise(firstStandardLesson(cloneCourse())));
+    Reflect.deleteProperty(exercise, 'steps');
+    expect(ExerciseSchema.safeParse(exercise).success).toBe(false);
+  });
+
   it('正しい公開Courseを変形せず受理する', () => {
     expect(CourseManifestSchema.parse(fixtureCourse)).toEqual(fixtureCourse);
   });
@@ -619,6 +672,34 @@ describe('CourseManifestSchema ID、参照、workspace', () => {
 });
 
 describe('CourseManifestSchema Asset、Rule、completion', () => {
+  it('Asset intrinsic寸法は有限正数のwidth／height pairだけを受理する', () => {
+    const asset = {
+      id: 'diagram-heading',
+      path: 'generated/content/assets/diagram-heading.svg',
+      mediaType: 'image',
+      provenanceId: 'diagram-heading-provenance',
+    };
+
+    expect(
+      AssetRefSchema.safeParse({
+        ...asset,
+        intrinsicWidth: 640,
+        intrinsicHeight: 360,
+      }).success,
+    ).toBe(true);
+    expect(AssetRefSchema.safeParse({ ...asset, intrinsicWidth: 640 }).success).toBe(false);
+    expect(
+      AssetRefSchema.safeParse({
+        ...asset,
+        intrinsicWidth: Number.POSITIVE_INFINITY,
+        intrinsicHeight: 360,
+      }).success,
+    ).toBe(false);
+    expect(
+      AssetRefSchema.safeParse({ ...asset, intrinsicWidth: 640, intrinsicHeight: 0 }).success,
+    ).toBe(false);
+  });
+
   it('image blockを同じownerのAssetだけへ結び、別ownerでのAsset再利用を許可する', () => {
     const valid = cloneCourse();
     const lesson = firstStandardLesson(valid);
@@ -629,6 +710,8 @@ describe('CourseManifestSchema Asset、Rule、completion', () => {
       mediaType: 'image' as const,
       alt: '見出し構造の図',
       provenanceId: 'diagram-heading-provenance',
+      intrinsicWidth: 640,
+      intrinsicHeight: 360,
     };
     lesson.slides[0]!.assets.push(sharedAsset);
     lesson.slides[0]!.blocks.push({
@@ -648,6 +731,11 @@ describe('CourseManifestSchema Asset、Rule、completion', () => {
     firstStandardExercise(firstStandardLesson(conflictingReuse)).assets[0]!.path =
       'generated/content/assets/other-diagram.png';
     expectCourseIssue(conflictingReuse, 'Asset IDの定義がowner間で一致しません');
+
+    const conflictingDimensions = structuredClone(valid);
+    firstStandardExercise(firstStandardLesson(conflictingDimensions)).assets[0]!.intrinsicWidth =
+      800;
+    expectCourseIssue(conflictingDimensions, 'Asset IDの定義がowner間で一致しません');
 
     const invalid = cloneCourse();
     firstStandardExercise(firstStandardLesson(invalid)).instructions.push({
@@ -746,6 +834,10 @@ describe('CourseManifestSchema Asset、Rule、completion', () => {
       id: 'slide-reflection-last',
       title: '振り返り',
       kind: 'reflection',
+      layout: 'checkpoint',
+      teachesConceptIds: ['html-element'],
+      masteryTarget: 'read',
+      screenBudget: { maxTextCharacters: 120, maxCodeLines: 0, maxVisuals: 0 },
       blocks: [{ type: 'paragraph', text: '見出しの役割を振り返ります。' }],
       assets: [],
     });
@@ -872,7 +964,6 @@ describe('CourseManifestSchema kind、順序、集計', () => {
   it.each([
     'chapters',
     'lessons',
-    'conceptSlides',
     'standardExercises',
     'guidedProjectLessons',
     'capstoneLessons',
@@ -880,6 +971,16 @@ describe('CourseManifestSchema kind、順序、集計', () => {
     const course = cloneCourse();
     course.expectedTotals[key] += 1;
     expectCourseIssue(course, `expectedTotals.${key}`);
+  });
+
+  it('expectedTotals.conceptSlidesを追加分割可能な最低枚数として扱う', () => {
+    const course = cloneCourse();
+    course.expectedTotals.conceptSlides = 0;
+
+    expect(CourseManifestSchema.safeParse(course).success).toBe(true);
+
+    course.expectedTotals.conceptSlides = 2;
+    expectCourseIssue(course, 'Concept Slideの最低枚数');
   });
 });
 
@@ -1201,6 +1302,12 @@ describe('CourseCatalogSchema', () => {
     const catalog = structuredClone(fixtureCatalog);
     catalog.courses = [];
     expect(CourseCatalogSchema.safeParse(catalog).success).toBe(false);
+  });
+
+  it('Manifest integrityを64桁の小文字SHA-256に限定する', () => {
+    const invalid = structuredClone(fixtureCatalog);
+    invalid.courses[0]!.manifestSha256 = 'ABC123';
+    expect(CourseCatalogSchema.safeParse(invalid).success).toBe(false);
   });
 
   it('Catalog rootとentryの未知fieldを拒否する', () => {

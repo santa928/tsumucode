@@ -9,6 +9,8 @@ function validator(): ValidatorAdapter {
       selectors: [],
       attributes: [],
       computedStyles: [],
+      focusVisibleSelectors: [],
+      focusVisibleComputedStyles: [],
       includeAllElements: false,
     }),
     validate: async (context) => ({

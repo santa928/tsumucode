@@ -4,6 +4,37 @@ workspaceId: html-css-ch11-l04-e01
 countsTowardStandardExerciseTotal: true
 title: Reduced MotionとOverflowを最終確認する
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: prefers-reduced-motion, minimumLevel: transform }
+  - { conceptId: final-a11y-audit, minimumLevel: compose }
+scaffoldLevel: compose
+steps:
+  - id: shorten-reduced-motion
+    file: styles.css
+    target: '@media (prefers-reduced-motion: reduce) 内の .motion-card Ruleのanimation-duration Declaration'
+    starterAnchor: 'animation-duration: 0.8s;'
+    change: Valueを0.001sへ変更する
+    observe: Reduced Motion状態のComputed Durationが0.001sになる
+    requiresConceptIds: [prefers-reduced-motion]
+    validationRuleIds:
+      - html-css-ch11-l04-e01-r01
+      - html-css-ch11-l04-e01-r10
+  - id: complete-final-audit
+    file: styles.css
+    target: '[data-page] Ruleのwidth Declaration'
+    starterAnchor: 'width: 900px;'
+    change: Valueをmin(100%, 44rem)へ変更する
+    observe: 390pxと1280pxでOverflowが消え、完成済みのFocus・Name・Contrast・状態も合格する
+    requiresConceptIds: [final-a11y-audit]
+    validationRuleIds:
+      - html-css-ch11-l04-e01-r02
+      - html-css-ch11-l04-e01-r03
+      - html-css-ch11-l04-e01-r04
+      - html-css-ch11-l04-e01-r05
+      - html-css-ch11-l04-e01-r06
+      - html-css-ch11-l04-e01-r07
+      - html-css-ch11-l04-e01-r08
+      - html-css-ch11-l04-e01-r09
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -16,7 +47,7 @@ validationRules:
     required: true
     group: all
     viewportMode: all
-    viewportIds: [mobile-390, desktop-1280]
+    viewportIds: [mobile-390-reduced]
     target: { kind: selector, selector: '.motion-card' }
     assertion:
       kind: computed-style
@@ -26,7 +57,7 @@ validationRules:
     feedback:
       target: Motion CardのComputed Animation Duration
       expected: 0.001s
-      nextAction: reduce状態とprefers-reduced-motion内で装飾Animationを極めて短くします。
+      nextAction: prefers-reduced-motionがreduceのときのRuleで装飾Animationを極めて短くします。
     hintId: html-css-ch11-l04-e01-h01
     relatedSlideId: html-css-ch11-l04-s01
   - id: html-css-ch11-l04-e01-r02
@@ -34,7 +65,7 @@ validationRules:
     required: true
     group: all
     viewportMode: all
-    viewportIds: [mobile-390, desktop-1280]
+    viewportIds: [mobile-390-reduced, desktop-1280]
     target: { kind: selector, selector: '[data-page]' }
     assertion: { kind: overflow-x, operator: equals, expected: false }
     feedback:
@@ -43,6 +74,126 @@ validationRules:
       nextAction: 固定幅をwidth 100%とmax-widthへ置き換え、長いTextを折り返します。
     hintId: html-css-ch11-l04-e01-h02
     relatedSlideId: html-css-ch11-l04-s02
+  - id: html-css-ch11-l04-e01-r03
+    label: 主要LinkをKeyboard Focus可能に保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390-reduced, desktop-1280]
+    target: { kind: selector, selector: '[data-action]' }
+    assertion: { kind: focusable, operator: equals, expected: true }
+    feedback:
+      target: 最終Pageの主要Link
+      expected: Keyboard Focus可能
+      nextAction: data-actionをhref付きaとして保ちます。
+    hintId: html-css-ch11-l04-e01-h03
+    relatedSlideId: html-css-ch11-l04-s02
+  - id: html-css-ch11-l04-e01-r04
+    label: Focus Indicatorを3px以上に保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390-reduced, desktop-1280]
+    target: { kind: selector, selector: '[data-focus-demo]' }
+    assertion:
+      kind: computed-style
+      property: outline-width
+      operator: gte
+      expected: 3
+      tolerance: 0.1
+    feedback:
+      target: 最終PageのFocus Indicator
+      expected: Outline Width 3px以上
+      nextAction: 完成済みのis-focus-visible ClassとOutline Ruleを残します。
+    hintId: html-css-ch11-l04-e01-h03
+    relatedSlideId: html-css-ch11-l04-s02
+  - id: html-css-ch11-l04-e01-r05
+    label: 表示名Inputの名前を保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390-reduced, desktop-1280]
+    target: { kind: selector, selector: '[data-name-input]' }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: 最終Pageの表示名Input
+      expected: 空でないAccessible Name
+      nextAction: labelのforとInputのidを同じ値のまま保ちます。
+    hintId: html-css-ch11-l04-e01-h03
+    relatedSlideId: html-css-ch11-l04-s02
+  - id: html-css-ch11-l04-e01-r06
+    label: Profile画像の代替Textを保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390-reduced, desktop-1280]
+    target: { kind: selector, selector: '[data-avatar]' }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: 最終PageのProfile画像
+      expected: 空でない画像説明
+      nextAction: data-avatarのaltを空にせず残します。
+    hintId: html-css-ch11-l04-e01-h03
+    relatedSlideId: html-css-ch11-l04-s02
+  - id: html-css-ch11-l04-e01-r07
+    label: Profile Linkの目的を名前で保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390-reduced, desktop-1280]
+    target: { kind: selector, selector: '[data-profile-link]' }
+    assertion: { kind: accessible-name, operator: present }
+    feedback:
+      target: 最終PageのProfile Link
+      expected: 移動先が分かるAccessible Name
+      nextAction: 作品の公開状態を見るというLink Textを残します。
+    hintId: html-css-ch11-l04-e01-h03
+    relatedSlideId: html-css-ch11-l04-s02
+  - id: html-css-ch11-l04-e01-r08
+    label: 公開状態のContrastを4.5対1以上に保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390-reduced, desktop-1280]
+    target: { kind: selector, selector: '[data-status]' }
+    assertion: { kind: contrast, minimum: 4.5 }
+    feedback:
+      target: 最終Pageの公開状態Textと背景
+      expected: Contrast Ratio 4.5対1以上
+      nextAction: 完成済みの濃いText Colorと明るい背景を残します。
+    hintId: html-css-ch11-l04-e01-h03
+    relatedSlideId: html-css-ch11-l04-s02
+  - id: html-css-ch11-l04-e01-r09
+    label: 色以外の公開状態Textを保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390-reduced, desktop-1280]
+    target: { kind: selector, selector: '[data-status-text]' }
+    assertion: { kind: exists }
+    feedback:
+      target: 最終Pageの公開状態
+      expected: 色以外の状態Textが存在する
+      nextAction: data-status-textを持つ公開中Textを残します。
+    hintId: html-css-ch11-l04-e01-h03
+    relatedSlideId: html-css-ch11-l04-s02
+  - id: html-css-ch11-l04-e01-r10
+    label: Reduced Motionの実Media Queryへ短縮Ruleを書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [mobile-390-reduced]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '@media (prefers-reduced-motion: reduce) { .motion-card { animation-duration: 0.001s; animation-iteration-count: 1; } }'
+    feedback:
+      target: prefers-reduced-motionのSource
+      expected: reduce条件内のanimation-duration 0.001s
+      nextAction: '@media内の0.8sだけを0.001sへ変更します。'
+    hintId: html-css-ch11-l04-e01-h01
+    relatedSlideId: html-css-ch11-l04-s01
 hints:
   - id: html-css-ch11-l04-e01-h01
     level: 1
@@ -56,16 +207,21 @@ hints:
     relatedSlideId: html-css-ch11-l04-s02
   - id: html-css-ch11-l04-e01-h03
     level: 3
-    title: 2つの最終条件をそろえる
-    text: durationを0.001s、Containerをwidth 100%とmax-widthの組み合わせにします。
+    title: 完成済みのAudit対象を保つ
+    text: durationとContainer幅だけを変更し、Focus、Name、Contrast、状態Textは残します。
     relatedSlideId: html-css-ch11-l04-s02
 relatedSlideIds:
   - html-css-ch11-l04-s01
   - html-css-ch11-l04-s02
 previewViewports:
-  - { id: mobile-390, width: 390, height: 844 }
+  - { id: mobile-390-reduced, width: 390, height: 844, reducedMotion: reduce }
   - { id: desktop-1280, width: 1280, height: 720 }
-assets: []
+assets:
+  - id: audit-avatar
+    source: assets/audit-avatar.svg
+    mediaType: image
+    alt: オレンジのCode Cardを持つTsumuCode学習者
+    provenanceId: ch11-audit-avatar-original
 fixtures:
   - id: html-css-ch11-l04-e01-valid-alternative
     expectedStatus: pass
@@ -93,4 +249,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch11-l04-e01-r01]
+    expectedFeedbackRuleIds: [html-css-ch11-l04-e01-r01, html-css-ch11-l04-e01-r10]

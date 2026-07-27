@@ -30,6 +30,8 @@ export interface SnapshotPolicy {
   readonly selectors: readonly string[];
   readonly attributes: readonly string[];
   readonly computedStyles: readonly string[];
+  readonly focusVisibleSelectors: readonly string[];
+  readonly focusVisibleComputedStyles: readonly string[];
   readonly includeAllElements: boolean;
 }
 
@@ -81,6 +83,7 @@ export interface PreviewNode {
   readonly attributes: Readonly<Record<string, string>>;
   readonly text: string;
   readonly computedStyles: Readonly<Record<string, string>>;
+  readonly focusVisibleComputedStyles: Readonly<Record<string, string>>;
   readonly rect: PreviewRect;
   readonly overflow: PreviewOverflow;
   readonly focusable: boolean;

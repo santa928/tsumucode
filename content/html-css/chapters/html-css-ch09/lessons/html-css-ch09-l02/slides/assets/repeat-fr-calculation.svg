@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <title>repeatとfrの幅計算</title>
+  <desc>幅600pxから2つの16px Gapを引き、残り568pxを3つの1frへ等分する図</desc>
+  <rect width="960" height="540" rx="36" fill="#f5efe3" />
+  <text x="70" y="72" fill="#172a3a" font-family="system-ui, sans-serif" font-size="30" font-weight="700">600pxを3つの1frへ分ける</text>
+  <g transform="translate(70 112)">
+    <rect width="820" height="178" rx="24" fill="#ffffff" stroke="#172a3a" stroke-width="7" />
+    <g fill="#dcefed" stroke="#2d7c82" stroke-width="4">
+      <rect x="24" y="24" width="244" height="130" rx="16" />
+      <rect x="288" y="24" width="244" height="130" rx="16" />
+      <rect x="552" y="24" width="244" height="130" rx="16" />
+    </g>
+    <g fill="#172a3a" font-family="system-ui, sans-serif" font-size="25" font-weight="700" text-anchor="middle">
+      <text x="146" y="82">1fr</text>
+      <text x="410" y="82">1fr</text>
+      <text x="674" y="82">1fr</text>
+    </g>
+    <g fill="#b84f2b" font-family="system-ui, sans-serif" font-size="18" font-weight="700" text-anchor="middle">
+      <text x="278" y="124">16px</text>
+      <text x="542" y="124">16px</text>
+    </g>
+  </g>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+    <rect x="70" y="326" width="820" height="72" rx="18" fill="#172a3a" />
+    <text x="480" y="371" fill="#ffffff" font-size="25" font-weight="700" text-anchor="middle">grid-template-columns: repeat(3, 1fr);</text>
+  </g>
+  <g font-family="system-ui, sans-serif" font-weight="700" text-anchor="middle">
+    <text x="480" y="444" fill="#172a3a" font-size="25">600 − (16 × 2) = 568px</text>
+    <text x="480" y="488" fill="#2d7c82" font-size="29">568 ÷ 3 = 約189.33px / Track</text>
+  </g>
+</svg>

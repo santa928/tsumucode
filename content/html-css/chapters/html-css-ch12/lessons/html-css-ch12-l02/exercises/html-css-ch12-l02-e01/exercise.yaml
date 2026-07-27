@@ -5,6 +5,50 @@ workspaceId: html-css-profile-project
 countsTowardStandardExerciseTotal: false
 title: HeaderとHeroでProfileの入口を作る
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: navigation, minimumLevel: compose }
+  - { conceptId: hero, minimumLevel: compose }
+scaffoldLevel: compose
+steps:
+  - id: compose-navigation
+    file: index.html
+    target: header内のSite名とNavigation
+    starterAnchor: '<header>'
+    change: Site名をLinkにし、目的が分かるaria-labelを持つnavへAboutとWorksのLinkを置く
+    observe: NavigationのAccessible Nameが合格し、DOM順どおりに移動できる
+    requiresConceptIds: [navigation]
+    validationRuleIds:
+      - html-css-ch12-l02-e01-r01
+  - id: style-navigation
+    file: styles.css
+    target: '.site-headerとnavのLayout Rule'
+    starterAnchor: 'header {'
+    change: site-headerをFlexで折り返し可能にし、navを右寄せしてLink間にgapを付ける
+    observe: HeaderのComputed Displayがflexになり、Site名とNavigationが同じ行へ並ぶ
+    requiresConceptIds: [navigation]
+    validationRuleIds:
+      - html-css-ch12-l02-e01-r05
+  - id: compose-hero
+    file: index.html
+    target: main内の最初のsection
+    starterAnchor: '<section aria-labelledby="intro-title">'
+    change: 説明的なaltを持つAvatar、h1、Worksへ進むPrimary LinkをHeroへまとめる
+    observe: 最初の画面で誰のページかと次の行動が伝わる
+    requiresConceptIds: [hero]
+    validationRuleIds:
+      - html-css-ch12-l02-e01-r02
+      - html-css-ch12-l02-e01-r03
+      - html-css-ch12-l02-e01-r04
+  - id: style-hero
+    file: styles.css
+    target: '.heroと.hero imgのLayout Rule'
+    starterAnchor: 'main section {'
+    change: HeroをAvatarとTextの2列Gridにし、画像幅を親の100%へ収める
+    observe: HeroのComputed Displayがgridになり、Avatarと説明が横へ並ぶ
+    requiresConceptIds: [hero]
+    validationRuleIds:
+      - html-css-ch12-l02-e01-r06
+      - html-css-ch12-l02-e01-r07
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -68,6 +112,50 @@ validationRules:
       nextAction: hrefを#worksにし、作品を見ることが分かるLink Textを書きます。
     hintId: html-css-ch12-l02-e01-h03
     relatedSlideId: html-css-ch12-l02-g01
+  - id: html-css-ch12-l02-e01-r05
+    label: HeaderをFlexで並べる
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: header }
+    assertion: { kind: computed-style, property: display, operator: equals, expected: flex }
+    feedback:
+      target: Site HeaderのComputed Display
+      expected: flex
+      nextAction: .site-headerへdisplay flexを指定します。
+    hintId: html-css-ch12-l02-e01-h01
+    relatedSlideId: html-css-ch12-l02-g01
+  - id: html-css-ch12-l02-e01-r06
+    groupId: profile-hero-layout-method
+    label: HeroをGridで並べる
+    required: true
+    group: any
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '.hero' }
+    assertion: { kind: computed-style, property: display, operator: equals, expected: grid }
+    feedback:
+      target: HeroのComputed Display
+      expected: grid
+      nextAction: .heroへdisplay gridを指定します。
+    hintId: html-css-ch12-l02-e01-h02
+    relatedSlideId: html-css-ch12-l02-g01
+  - id: html-css-ch12-l02-e01-r07
+    groupId: profile-hero-layout-method
+    label: HeroをFlexで並べる
+    required: true
+    group: any
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '.hero' }
+    assertion: { kind: computed-style, property: display, operator: equals, expected: flex }
+    feedback:
+      target: HeroのComputed Display
+      expected: Gridまたは同じGroupのFlex
+      nextAction: .heroをGridまたはFlexで並べます。
+    hintId: html-css-ch12-l02-e01-h02
+    relatedSlideId: html-css-ch12-l02-g01
 hints:
   - id: html-css-ch12-l02-e01-h01
     level: 1
@@ -88,7 +176,7 @@ relatedSlideIds: [html-css-ch12-l02-g01]
 previewViewports:
   - { id: desktop-1280, width: 1280, height: 720 }
 assets:
-  - id: avatar-project-hero
+  - id: profile-avatar
     source: assets/profile-avatar.svg
     mediaType: image
     alt: オレンジのCode Cardを持つつむぎ

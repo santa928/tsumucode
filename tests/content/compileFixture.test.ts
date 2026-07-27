@@ -66,6 +66,8 @@ describe('HTML/CSS Course compilation', () => {
         mediaType: 'image',
         alt: 'HTML要素が開始Tag、内容、終了Tagから組み上がる図',
         provenanceId: 'html-structure-original',
+        intrinsicWidth: 480,
+        intrinsicHeight: 900,
       },
     ]);
     expect(publicAsset).toEqual(sourceAsset);

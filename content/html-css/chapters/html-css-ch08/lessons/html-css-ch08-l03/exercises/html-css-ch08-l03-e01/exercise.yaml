@@ -4,6 +4,33 @@ workspaceId: html-css-ch08-l03-e01
 countsTowardStandardExerciseTotal: true
 title: 高さの違うItemをCross Axisへ揃える
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: align-items, minimumLevel: transform }
+  - { conceptId: align-self, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: center-all-items
+    file: styles.css
+    target: '[data-align] Ruleのalign-items Declaration'
+    starterAnchor: 'align-items: flex-start;'
+    change: Valueをcenterへ変更する
+    observe: 高さ60pxのItemがContainer上端から70px下へ移動する
+    requiresConceptIds: [align-items]
+    validationRuleIds:
+      - html-css-ch08-l03-e01-r01
+      - html-css-ch08-l03-e01-r02
+      - html-css-ch08-l03-e01-r03
+      - html-css-ch08-l03-e01-r05
+  - id: move-one-item-to-cross-end
+    file: styles.css
+    target: '[data-end] Ruleのalign-self Declaration'
+    starterAnchor: 'align-self: center;'
+    change: Valueをflex-endへ変更する
+    observe: 高さ40pxの例外Itemのyが192pxになる
+    requiresConceptIds: [align-self]
+    validationRuleIds:
+      - html-css-ch08-l03-e01-r04
+      - html-css-ch08-l03-e01-r06
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -77,6 +104,40 @@ validationRules:
       nextAction: 高さ40pxのdata-endへalign-self flex-endを指定します。
     hintId: html-css-ch08-l03-e01-h03
     relatedSlideId: html-css-ch08-l03-s02
+  - id: html-css-ch08-l03-e01-r05
+    label: Containerへalign-items centerを書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '[data-align] { display: flex; align-items: center; width: 500px; height: 200px;'
+    feedback:
+      target: Alignment ContainerのSource
+      expected: display flexとalign-items center
+      nextAction: 完成済みのdisplay flexを残し、align-itemsのValueだけをcenterへ変更します。
+    hintId: html-css-ch08-l03-e01-h02
+    relatedSlideId: html-css-ch08-l03-s01
+  - id: html-css-ch08-l03-e01-r06
+    label: 例外Itemへalign-self flex-endを書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '[data-end] { align-self: flex-end; height: 40px; }'
+    feedback:
+      target: 例外ItemのSource
+      expected: align-self flex-end
+      nextAction: '[data-end]のalign-selfをcenterからflex-endへ変更します。'
+    hintId: html-css-ch08-l03-e01-h03
+    relatedSlideId: html-css-ch08-l03-s02
 hints:
   - id: html-css-ch08-l03-e01-h01
     level: 1
@@ -126,4 +187,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch08-l03-e01-r04]
+    expectedFeedbackRuleIds: [html-css-ch08-l03-e01-r04, html-css-ch08-l03-e01-r06]

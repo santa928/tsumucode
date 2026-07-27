@@ -1,10 +1,21 @@
 * {
   box-sizing: border-box;
 }
+:root {
+  --paper: #f5efe3;
+  --ink: #172a3a;
+  --accent: #ef7d4f;
+  --support: #2d7c82;
+  --surface: #fffdf8;
+}
 body {
   margin: 0;
   padding: 24px;
-  color: #172a3a;
-  background: #f5efe3;
+  color: var(--ink);
+  background: var(--paper);
   font-family: system-ui, sans-serif;
 }
+
+/* 2. Layoutと境界: data-event-grid、Card幅、390・768・1280・1440px */
+
+/* 3. 最終Audit: data-capstone-actionのFocusと本文Contrast */

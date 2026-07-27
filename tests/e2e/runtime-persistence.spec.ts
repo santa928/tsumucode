@@ -407,29 +407,32 @@ test('共通observerがPageとtop・frameの未処理例外をnavigation外で�
   expect(observed.consoleErrors).toContain('observer-console-error');
 });
 
-test('code・Hint・判定履歴・見直し位置をreload後も復元する', async ({ page }) => {
+test('code・Hint・判定履歴をOverlay利用後のreloadでも復元する', async ({ page }) => {
   await openRuntimeFixture(page);
   await replaceEditorText(page, INVALID_SOURCE);
+  await page.getByRole('button', { name: 'ヒントを見る' }).click();
   await page.getByRole('button', { name: /ヒント1を見る/u }).click();
+  await page.getByRole('button', { name: '閉じる' }).click();
   await page.getByRole('button', { name: '判定する' }).click();
   await expect(page.getByRole('heading', { name: 'あと一歩' })).toBeVisible();
   await expect(page.getByRole('button', { name: '判定する' })).toBeEnabled();
-  await page.evaluate(() => {
-    window.scrollTo(0, 240);
-  });
   await page
     .getByRole('button', { name: /関連スライドを見直す/u })
     .first()
     .click();
+  await expect(page.getByRole('dialog', { name: /関連スライド/u })).toBeVisible();
   await page.getByRole('button', { name: '演習へ戻る' }).click();
-  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThanOrEqual(200);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
   await waitForDraftSaved(page);
 
   await page.reload();
   await page.getByTestId('code-workspace').waitFor();
 
   await expect.poll(() => editorText(page)).toContain('保存と復元');
+  await page.getByRole('button', { name: 'ヒントを見る' }).click();
   await expect(page.getByText('Previewでページの題名になっている言葉を確認します。')).toBeVisible();
+  await page.getByRole('button', { name: '閉じる' }).click();
+  await page.getByRole('button', { name: '判定結果を見る' }).click();
   await expect(page.getByRole('heading', { name: 'あと一歩' })).toBeVisible();
 });
 

@@ -1,8 +1,8 @@
 ## 読みやすい本文の文字を整える
 
-1. `.reading-sample`のFont Sizeを20pxにします。
-2. Line Heightを30pxになるように指定します。
-3. 外部Fontへ接続せず、`system-ui`から始まるFont Stackを設定します。
-4. Previewと判定結果で3つのComputed Styleを確認します。
+`.reading-sample`の先頭にある2つのValueを変更します。
 
-書き方が違っても、同じ表示結果なら合格します。
+1. `font-size: 1rem;`を`font-size: 1.25rem;`へ変えます。
+2. `line-height: 1.25;`を`line-height: 1.5;`へ変えます。
+
+Font Familyは完成済みです。ほかの宣言と一緒に残し、実行後にComputed 20px・30pxとFont Stackを確認します。

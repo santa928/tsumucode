@@ -5,10 +5,10 @@ body {
   font-family: system-ui, sans-serif;
 }
 [data-message] {
-  max-width: 32rem;
-  padding: 24px;
   color: #9a9a9a;
   background: #fff;
+  max-width: 32rem;
+  padding: 24px;
 }
 .status-dot {
   display: inline-block;

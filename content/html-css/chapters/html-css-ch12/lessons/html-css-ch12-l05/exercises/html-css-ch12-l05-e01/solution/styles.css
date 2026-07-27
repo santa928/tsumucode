@@ -1,9 +1,6 @@
 * {
   box-sizing: border-box;
 }
-html {
-  scroll-behavior: smooth;
-}
 body {
   margin: 0;
   color: #172a3a;
@@ -13,7 +10,8 @@ body {
 .site-header,
 main,
 footer {
-  width: min(100% - 32px, 64rem);
+  width: calc(100% - 32px);
+  max-width: 1024px;
   margin-inline: auto;
 }
 .site-header {
@@ -29,7 +27,7 @@ footer {
 }
 .site-name {
   color: #155e63;
-  font-weight: 850;
+  font-weight: 800;
   letter-spacing: 0.08em;
   text-decoration: none;
 }
@@ -48,8 +46,7 @@ main {
   gap: 24px;
 }
 main section {
-  padding: clamp(24px, 5vw, 48px);
-  overflow-wrap: anywhere;
+  padding: 32px;
   border-radius: 24px;
   background: #fffdf8;
 }
@@ -84,10 +81,9 @@ main section {
 }
 .surface-card {
   border: 2px solid #d4e3df;
-  box-shadow: 0 14px 32px rgb(23 42 58 / 8%);
 }
 [data-about-copy] {
-  max-width: 62ch;
+  max-width: 620px;
   font-size: 16px;
   line-height: 1.6;
 }
@@ -95,8 +91,7 @@ main section {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  padding: 0;
-  list-style: none;
+  padding-left: 24px;
 }
 .skill-list li {
   padding: 10px 14px;
@@ -107,34 +102,20 @@ main section {
 }
 .works-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 20px;
 }
 .work-card {
-  min-width: 0;
-  overflow: hidden;
+  padding: 20px;
   border: 2px solid #d4e3df;
   border-radius: 18px;
   background: #ffffff;
-}
-.work-card > div:not(.work-placeholder) {
-  padding: 20px;
 }
 .work-image {
   display: block;
   width: 100%;
   max-width: 100%;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-}
-.work-placeholder {
-  display: grid;
-  min-height: 180px;
-  place-items: center;
-  color: #ffffff;
-  background: #2d7c82;
-  font-size: 3rem;
-  font-weight: 850;
+  height: auto;
 }
 .contact {
   border-left: 8px solid #ef7d4f;
@@ -158,31 +139,8 @@ footer {
   }
 }
 
-[data-final-action]:focus-visible {
+.primary-link:focus-visible,
+[data-contact-link]:focus-visible {
   outline: 3px solid #ef7d4f;
   outline-offset: 4px;
-}
-.motion-card {
-  animation: profile-float 800ms ease-in-out infinite alternate;
-}
-.reduce-motion .motion-card {
-  animation-duration: 0.001s;
-  animation-iteration-count: 1;
-}
-@keyframes profile-float {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-8px);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  .motion-card {
-    animation-duration: 0.001s;
-    animation-iteration-count: 1;
-  }
 }

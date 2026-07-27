@@ -2,6 +2,7 @@
 
 - h1を1つにし、各Sectionをh2で始める
 - 主要ActionへKeyboardで到達する
+- `:focus-visible`で現在位置を3pxの実線Outlineとして表示し、4px離す
 - Profile全体のText Contrastを4.5対1以上にする
 - 意味のあるAvatarのaltを空にしない
 

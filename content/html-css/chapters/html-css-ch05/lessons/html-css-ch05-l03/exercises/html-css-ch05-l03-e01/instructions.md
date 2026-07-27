@@ -1,8 +1,7 @@
-## 内側と外側のSpacingを分ける
+## 内側と外側の余白を分ける
 
-1. Card内部のPaddingを24pxにします。
-2. 2枚目のCardのMargin Topを32pxにします。
-3. 背景内とCard間の空白を見比べます。
-4. Computed Styleで確認します。
+`.card`の`padding: 16px;`を`padding: 24px;`へ変更します。
 
-Incomplete例ではCard間Marginだけが未達です。
+次に、`.card + .card`の`margin-top: 16px;`を`margin-top: 32px;`へ変更します。
+
+実行すると、Card内側のPaddingと2枚目のCard外側のMarginが、SourceとComputed Styleの両方で確認されます。

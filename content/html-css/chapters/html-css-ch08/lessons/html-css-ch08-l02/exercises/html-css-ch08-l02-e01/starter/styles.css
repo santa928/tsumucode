@@ -5,7 +5,10 @@ body {
   font-family: system-ui, sans-serif;
 }
 [data-actions] {
+  display: flex;
+  justify-content: center;
   width: 400px;
+  gap: 12px;
 }
 [data-actions] a {
   box-sizing: border-box;

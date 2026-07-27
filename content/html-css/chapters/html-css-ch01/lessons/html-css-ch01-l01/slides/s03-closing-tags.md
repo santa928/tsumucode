@@ -1,14 +1,16 @@
 ---
 id: html-css-ch01-l01-s03
 title: 開いたTagを同じ名前で閉じる
-kind: code
+kind: comparison
 concept: closing-tags
+layout: comparison
+teachesConceptIds: [opening-closing-tag]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 350, maxCodeLines: 4, maxVisuals: 0 }
 assets: []
 ---
 
-開始Tagを書いたら、内容の終わりに同じ名前の終了Tagを置きます。終了Tagにはslashが付きます。対が崩れるとBrowserが後ろの内容まで同じElementとして補正し、予想と違う構造になることがあります。
-
-コードを読むときは左から文字だけを追わず、開始Tagを見つけたら対応する終了Tagを探します。字下げは後のレッスンで扱いますが、まず名前の組が一致しているかを確認しましょう。
+開始Tagを見つけたら、同じ名前の終了Tagまでを1組として読みます。右の正しい例は`h1`と`p`がそれぞれ閉じています。終了Tagを忘れると、Browserが後ろの内容まで同じ箱として補うことがあります。
 
 ```html
 <h1>わたしのプロフィール</h1>
@@ -16,9 +18,9 @@ assets: []
 ```
 
 :::practice
-prompt: コード例のh1とpについて、開始Tagと対応する終了Tagを線で結ぶように視線で追います。
-expectedAction: 開始と終了のTag名が一致し、終了側にslashがあると確認する
+prompt: h1とpの開始Tagから、対応する終了Tagへ視線を動かします。
+expectedAction: 終了側のslashと、開始・終了で同じTag名を確認する
 estimatedMinutes: 2
 :::
 
-次の演習では、h1とpを自分で書き、Previewと判定でElementの形を確かめます。
+次は、用意されたh1とpの中身を埋めます。

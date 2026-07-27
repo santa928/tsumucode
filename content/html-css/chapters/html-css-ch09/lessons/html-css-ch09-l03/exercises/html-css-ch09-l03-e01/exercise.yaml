@@ -4,6 +4,32 @@ workspaceId: html-css-ch09-l03-e01
 countsTowardStandardExerciseTotal: true
 title: auto-fitでResponsive Galleryを作る
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: minmax-function, minimumLevel: transform }
+  - { conceptId: auto-fit, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: raise-track-minimum
+    file: styles.css
+    target: '[data-gallery] Rule内のminmax関数'
+    starterAnchor: 'minmax(120px, 1fr)'
+    change: 最小値120pxを160pxへ変更する
+    observe: Cardが160px未満へ縮まない
+    requiresConceptIds: [minmax-function]
+    validationRuleIds:
+      - html-css-ch09-l03-e01-r03
+      - html-css-ch09-l03-e01-r04
+  - id: fit-track-count-automatically
+    file: styles.css
+    target: '[data-gallery] Ruleのrepeat関数'
+    starterAnchor: 'repeat(2, minmax(120px, 1fr))'
+    change: 回数2をauto-fitへ変更する
+    observe: Desktopは4列、Mobileは2列になり、3枚目のRowが変わる
+    requiresConceptIds: [auto-fit]
+    validationRuleIds:
+      - html-css-ch09-l03-e01-r01
+      - html-css-ch09-l03-e01-r02
+      - html-css-ch09-l03-e01-r05
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -77,6 +103,23 @@ validationRules:
       nextAction: width 100%とminmaxを使い、固定Column合計で越えないようにします。
     hintId: html-css-ch09-l03-e01-h03
     relatedSlideId: html-css-ch09-l03-s02
+  - id: html-css-ch09-l03-e01-r05
+    label: minmaxとauto-fitをSourceへ書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280, mobile-390]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: 'grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));'
+    feedback:
+      target: GalleryのColumn Source
+      expected: repeat(auto-fit, minmax(160px, 1fr))
+      nextAction: minmaxの最小値を160px、repeatの回数をauto-fitへ変更します。
+    hintId: html-css-ch09-l03-e01-h02
+    relatedSlideId: html-css-ch09-l03-s02
 hints:
   - id: html-css-ch09-l03-e01-h01
     level: 1
@@ -127,4 +170,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch09-l03-e01-r03]
+    expectedFeedbackRuleIds: [html-css-ch09-l03-e01-r03, html-css-ch09-l03-e01-r05]

@@ -75,6 +75,7 @@ describe('runtime adapter extensibility', () => {
       path: 'fixture.txt',
       language: 'fixture-lang',
       content: 'fixture',
+      contentRevision: 0,
       diagnostics: [],
       onChange: vi.fn(),
       onCursorChange: vi.fn(),

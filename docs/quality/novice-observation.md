@@ -1,34 +1,40 @@
 # 完全初心者Observation
 
 - releaseStatus: `draft`
-- participantCount: `0`
+- participantCount: `1`
 - requiredCheckpoints: `5`
 - approvedCheckpoints: `0`
 - guidedProjectStatus: `pending`
 - capstoneStatus: `pending`
-- unresolvedFindings: `0`
-- status: `未実施（合格扱いしない）`
-- verifiedSourceCommit: `5a8f091504f72e547e70160357ef9e4c71601d27`
-- canonicalDistSha256: `d84d16c571d48e597c6d2f17078f34280742e310af9118e9b9d3d184e36afc78`
-- participant: `未割当。実装者・教材authorではない完全初心者1名以上が必要`
+- unresolvedFindings: `1`
+- status: `部分観察（Chapter 00実習と導入Slide 3枚。Starter Reset自動Gate合格済み、同範囲再観察待ち。合格扱いしない）`
+- verifiedSourceCommit: `a9c2553a8e0b654ff2dc11ee04b9db16ab8b4978`
+- canonicalDistSha256: `draft`
+- checkpointHashStatus: `partial-observation-reset-implemented-reobservation-pending`
+- runbook: `docs/quality/novice-observation-runbook.md`
+- participant: `NOV-001。実装者・教材authorではない完全初心者として匿名記録`
 - facilitatorPolicy: `口頭補助、正解誘導、実装者による代理回答を禁止する`
-- bindingPolicy: `観察対象を最終source commitと/tsumucode/ canonical distへ固定済み。観察結果は未実施`
+- bindingPolicy: `部分観察をproduct source commitへ固定した。Starter Reset後の最終source binding、canonical dist結合、全Checkpoint、Project、Teach-backは未承認・未完了`
 
-## 未実施の理由
+## 現在の観察範囲
 
-この確認は、実装者や自動テストでは代替できない第三者の学習観察です。参加者の操作、発話、所要時間、teach-back、Project完成結果がまだ得られていないため、推測値や架空の結果は記録しません。全Checkpointの観察、必要修正、再確認が完了するまでRelease承認を保留します。
+NOV-001から、Chapter 00の実習と導入Slide 3枚目まで自力で進行できたとの報告を得た。一方、観察時点では、HTMLとCSSを全消去した場合にStarterコードへ戻す製品内手段がないFindingを得た。現在は、Exerciseの全fileを確認付きでStarterへ戻すResetを実装し、取消、Starter Preview、IndexedDBへの全file byte一致とreload後の永続化、Keyboard／Focus、4 desktop viewport、低Heightを含む自動Gateに合格している。所要時間、環境詳細、Teach-back、残りCheckpoint、Guided、Capstoneは未記録のため、導入Checkpointを含めて合格扱いにしない。NOV-001または別の完全初心者による同範囲の再観察と全Checkpointの観察が完了するまでRelease承認を保留する。
 
-## 対象Lessonと現在のSource hash
+## 対象Lessonと現行Source hash（観察候補）
+
+以下のhashは、51 Lesson独立レビューと公式`content:review`で一致を確認した現行候補です。観察中に教材を修正した場合は失効します。
 
 | Checkpoint           | 対象Lesson                                                 | Source hash                                                                                                                                                                                                                                                                                                                                        |
 | -------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 導入とHTML基礎       | `ch00-l01`、`ch00-l02`、`ch01-l01`、`ch01-l02`、`ch01-l03` | `b94c4206e3d972c5b4d63d2494233f150b119f368d06c50b674ca88761971c5a`、`367a83fceeba85a0a1f50d2b0485db79146ced927fd94dea3c31291a264b5d8f`、`b9e9c1043aff374b8073d2be26cabce143727deb8902cf19bc5343f911567c68`、`6396a8f6b0507fa380c5464faa6cd18e74704cbf2939a8e266ae66cb501d5325`、`ef4c087c0e2779a9e438bfc5b28cf92747ffb4d3af21efc39da22a98fbbd49f4` |
-| Phase 02終端         | `ch07-l01`                                                 | `d2323484dfc24a5202934b70c0ae2fca9b54273ae4e07418222d40d6b898c35e`                                                                                                                                                                                                                                                                                 |
-| Phase 03終端         | `ch11-l04`                                                 | `195fd6262e9a986845488a2495e7d7fd1a29b027862a804bf287429c1f4999f9`                                                                                                                                                                                                                                                                                 |
-| Guided Profile 5工程 | `ch12-l01`、`ch12-l02`、`ch12-l03`、`ch12-l04`、`ch12-l05` | `b915b713272fc8478e3da6da40cc0e492c44d3f8fba84606b96fbab037ce12fe`、`d70eec13532a057f56c0f2dd87c2debee77f9f05a1337e78961a33953f53f9d7`、`eca3158d0fc9821dd4c76b16905f4551e3ee6ddec40756e18a4ee4a4d0ed42da`、`c06ee414b955ce491750eff1f3e34b463fac8005d7e24e6deac468206c9b21dc`、`a6c3f633d3e514d4820a91058714e7c6df4cbb49a4d19149a3d7a51953c47ed0` |
-| STACK DAY Capstone   | `ch13-l01`                                                 | `3de0fcd01111cc0981f91b762a5a6bb5fef9848453807da3d2793d8b59408b9d`                                                                                                                                                                                                                                                                                 |
+| 導入とHTML基礎       | `ch00-l01`、`ch00-l02`、`ch01-l01`、`ch01-l02`、`ch01-l03` | `d3b084f315c7570d55bdc9c2a1a82bd06c7d278bea3cea6f4fcdfc35f6670f2e`、`7dc0da980be6349bf76b3deeaf1fcdb5d4b83f5a5835f5604d7e34fa73c1d03e`、`17713b38f2a33dacaabb92647425fd4d16e39c27ba69ad095d07e35bb8712e68`、`c39fa82630f978f00c888c3a6b142527df49b996c76c2dcf7378b861c3174acb`、`fb855e254bcc9fae7c8880dac5388b798dbf586dc6e55f9942d3316fd1ce7bc7` |
+| Phase 02終端         | `ch07-l01`                                                 | `c3a8bda339f7f88b17d34c8d1cfe7d2b84809ccedcf2d95644a7718c5668f344`                                                                                                                                                                                                                                                                                 |
+| Phase 03終端         | `ch11-l04`                                                 | `b11470e01f7cc4d367d6c637e022695dc4abef8c0e223ba8b7fae92c7ed82f28`                                                                                                                                                                                                                                                                                 |
+| Guided Profile 5工程 | `ch12-l01`、`ch12-l02`、`ch12-l03`、`ch12-l04`、`ch12-l05` | `21ffe93cd75a5004787894e17e82f90a51354540ab43587455be51730723a2b3`、`a78b401fb872571af81905f6dbdde437257f11f2d30b8ee06258e02be9f0de36`、`bcb7be5015862ecceca32252888fefcafc32519c56b265e1bad895a7ae26d89c`、`c81c00d07bcd0ef2a7f92a5e64bb7aaa4c76ab43a8df44372c2897aa3e0fa6c1`、`3fa1018612d4a49bcae9a59dd1b35c5e6e9c70428454dd2db8ad40c4d2bb9e31` |
+| STACK DAY Capstone   | `ch13-l01`                                                 | `cbdf1c47bfa534d690b9def34367eb9b97cdc833dc7cb4acba9a27f6289470a2`                                                                                                                                                                                                                                                                                 |
 
 ## 実施条件
+
+実施担当者は、開始URL、許可する声かけ、禁止支援、Finding分類、合格条件を固定した[完全初心者Observation Runbook](./novice-observation-runbook.md)に従います。
 
 - 氏名、メールアドレス、実データはRepositoryへ記録しない。参加者IDは匿名の連番にする。
 - 初回利用の端末とブラウザ、Viewport、支援技術の有無を記録する。
@@ -40,18 +46,24 @@
 
 ## 観察記録
 
-| Checkpoint           | 実施日 | 環境 | 所要時間 | 迷った画面 | 誤解した用語 | 次操作の認識 | Teach-back | Project結果 | 修正 | 再確認 | 判定 |
-| -------------------- | ------ | ---- | -------- | ---------- | ------------ | ------------ | ---------- | ----------- | ---- | ------ | ---- |
-| 導入とHTML基礎       | 未実施 | —    | —        | —          | —            | —            | —          | 対象外      | —    | —      | 保留 |
-| Phase 02終端         | 未実施 | —    | —        | —          | —            | —            | —          | 対象外      | —    | —      | 保留 |
-| Phase 03終端         | 未実施 | —    | —        | —          | —            | —            | —          | 対象外      | —    | —      | 保留 |
-| Guided Profile 5工程 | 未実施 | —    | —        | —          | —            | —            | —          | 未実施      | —    | —      | 保留 |
-| STACK DAY Capstone   | 未実施 | —    | —        | —          | —            | —            | —          | 未実施      | —    | —      | 保留 |
+| Checkpoint           | 実施日     | 環境                  | 所要時間 | 迷った画面                                   | 誤解した用語 | 次操作の認識                            | Teach-back | Project結果 | 修正                                      | 再確認                           | 判定   |
+| -------------------- | ---------- | --------------------- | -------- | -------------------------------------------- | ------------ | --------------------------------------- | ---------- | ----------- | ----------------------------------------- | -------------------------------- | ------ |
+| 導入とHTML基礎       | 2026-07-20 | PC／Browser詳細未記録 | 未記録   | 観察時点でHTML／CSS全消去後にStarterへ戻せず | 未記録       | Chapter 00実習とSlide 3枚目まで自力進行 | 未記録     | 対象外      | `OBS-RESET-001`（実装・自動Gate合格済み） | 完全初心者による同範囲再観察待ち | 再観察 |
+| Phase 02終端         | 未実施     | —                     | —        | —                                            | —            | —                                       | —          | 対象外      | —                                         | —                                | 保留   |
+| Phase 03終端         | 未実施     | —                     | —        | —                                            | —            | —                                       | —          | 対象外      | —                                         | —                                | 保留   |
+| Guided Profile 5工程 | 未実施     | —                     | —        | —                                            | —            | —                                       | —          | 未実施      | —                                         | —                                | 保留   |
+| STACK DAY Capstone   | 未実施     | —                     | —        | —                                            | —            | —                                       | —          | 未実施      | —                                         | —                                | 保留   |
+
+## Finding
+
+| ID              | 区分      | 事実                                                                     | 影響                                                                    | 対応                                                         | 復帰条件／現在状態                                                    |
+| --------------- | --------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------- | ------------------------------------------------------------ | --------------------------------------------------------------------- |
+| `OBS-RESET-001` | Important | 観察時点では、HTMLとCSSを全消去した後にStarterへ戻す製品内操作がなかった | 初心者が誤操作から自力復帰できず、直前Slideと実習をやり直す可能性がある | 現在Exerciseの全fileを確認付きでStarterへ戻すResetを実装済み | 自動Gate合格済み。NOV-001または別の完全初心者による同範囲の再観察待ち |
 
 ## Release判定
 
-- 進行不能: `未確認`
+- 進行不能: `製品内のStarter復旧経路は自動Gate合格済み。完全初心者による同範囲の再観察は未完了`
 - 説明不能: `未確認`
-- 未修正の誤操作: `未確認`
+- 未解決Finding: `OBS-RESET-001（製品対応済み、完全初心者による再観察待ち）`
 - 2 Project完了: `未確認`
 - 総合判定: `保留`

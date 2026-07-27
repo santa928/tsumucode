@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" aria-labelledby="title desc">
+  <title id="title">inlineとinline-blockの操作領域</title>
+  <desc id="desc">小さいinline Linkと高さ44pxのinline-block Linkを比較する</desc>
+  <rect width="720" height="400" rx="28" fill="#f5efe4" />
+  <g font-family="system-ui, sans-serif">
+    <text x="180" y="62" text-anchor="middle" fill="#24323d" font-size="22" font-weight="750">inline</text>
+    <text x="540" y="62" text-anchor="middle" fill="#24323d" font-size="22" font-weight="750">inline-block</text>
+    <rect x="64" y="116" width="232" height="92" rx="16" fill="#fffdf8" stroke="#b7893d" stroke-width="2" />
+    <rect x="116" y="145" width="128" height="30" rx="6" fill="#ead9bc" />
+    <text x="180" y="166" text-anchor="middle" fill="#6f4b1f" font-size="16" font-weight="700">コースを見る</text>
+    <text x="180" y="239" text-anchor="middle" fill="#8f3f2d" font-size="17" font-weight="700">文字の高さだけ</text>
+    <rect x="424" y="108" width="232" height="108" rx="16" fill="#fffdf8" stroke="#2d5d62" stroke-width="2" />
+    <rect x="472" y="134" width="136" height="56" rx="10" fill="#2d5d62" />
+    <text x="540" y="168" text-anchor="middle" fill="#fffdf8" font-size="16" font-weight="700">コースを見る</text>
+    <path d="M634 134v56M624 134h20M624 190h20" stroke="#bf5b42" stroke-width="3" fill="none" />
+    <text x="540" y="239" text-anchor="middle" fill="#23484c" font-size="17" font-weight="700">実寸 44px以上</text>
+    <rect x="172" y="292" width="376" height="64" rx="12" fill="#ead9bc" />
+    <text x="360" y="320" text-anchor="middle" fill="#24323d" font-size="17" font-weight="700">Line Height 20px + 上12px + 下12px</text>
+    <text x="360" y="343" text-anchor="middle" fill="#8f3f2d" font-size="18" font-weight="800">= 44px</text>
+  </g>
+</svg>

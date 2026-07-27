@@ -1,29 +1,37 @@
 ---
 id: html-css-ch06-l02-s01
-title: 色の形式が違っても表示結果を比較できる
+title: colorとbackground-colorを組み合わせる
 kind: comparison
 concept: css-color-formats
-assets: []
+layout: code-preview
+teachesConceptIds: [color-background-color]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 400, maxCodeLines: 5, maxVisuals: 1 }
+assets:
+  - id: contrast-colors
+    source: assets/contrast-and-cue.svg
+    mediaType: image
+    alt: 薄い文字と濃い文字を白い背景上で比較した図
+    provenanceId: ch06-contrast-and-cue-original
 ---
 
-CSSではHex、`rgb()`、`hsl()`などで色を表せます。同じ表示色を違う形式で書けるため、正解判定ではSource TextではなくComputed Colorを見ます。
+`color`は文字などの前景色、`background-color`は背景色です。文字の読みやすさは、2つの組み合わせで決まります。
+
+![前景色と背景色の組み合わせ](asset:contrast-colors)
+
+実習の白い背景は完成済みです。薄い`color: #9a9a9a;`だけを、濃い`#24323d`へ変更します。
 
 ```css
-/* どちらも同じ濃い青緑 */
-.a {
-  color: #2d5d62;
-}
-.b {
-  color: rgb(45 93 98);
+[data-message] {
+  color: #24323d;
+  background: #fff;
 }
 ```
 
-形式は目的に合わせて選び、Project内で読みやすい方針を保ちます。透明度を加えると背景との合成結果が変わる点にも注意します。
-
 :::practice
-prompt: "#2d5d62をRGBの各Channelへ読み替えます。"
-expectedAction: rgb(45 93 98)と対応づける
+prompt: 白い背景上で、薄い灰色と濃い青灰色のどちらが読みやすいか比べます。
+expectedAction: 明るさの差が大きい#24323dを選ぶ
 estimatedMinutes: 2
 :::
 
-次は前景色と背景色の差を比率で確認します。
+次は、色の差を比率で測り、色以外でも状態を伝えます。

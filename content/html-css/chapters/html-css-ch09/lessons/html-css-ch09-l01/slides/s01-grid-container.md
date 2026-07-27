@@ -1,25 +1,36 @@
 ---
 id: html-css-ch09-l01-s01
-title: display gridが2次元の配置領域を作る
+title: 並べたいItemを包む親をGridにする
 kind: concept
 concept: grid-container-items
-assets: []
+layout: code-preview
+teachesConceptIds: [grid-container]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 390, maxCodeLines: 4, maxVisuals: 1 }
+assets:
+  - id: grid-container-tracks
+    source: assets/diagram-grid-tracks.svg
+    mediaType: image
+    alt: 1つのGrid Container内に3列2行のTrackと6つのItemが並ぶ図
+    provenanceId: ch09-grid-tracks-slide-original
 ---
 
-`display: grid`を親へ指定すると、直接の子がGrid Itemになります。Flexboxが主に1本のAxisへ並べるのに対し、GridはRowとColumnを同時に設計できます。
+`display: grid;`を親へ書くと、直接の子がGrid Itemになります。並べたいCard一つずつではなく、Cardをまとめて包む親を選びます。
+
+![Grid Containerと直接の子Item](asset:grid-container-tracks)
 
 ```css
-.gallery {
+[data-grid] {
   display: grid;
 }
 ```
 
-まずContainerを決め、その中へどんなTrackを作るかを宣言します。Itemごとに座標を固定するところから始めません。
+Gridは横のColumnと縦のRowを同時に扱えます。ただし最初の一歩はFlexboxと同じく「親をContainerにする」です。
 
 :::practice
-prompt: GalleryのCardをGrid Itemにしたいとき、display gridをどこへ指定するか答えます。
-expectedAction: Cardを直接包む親Elementへ指定すると答える
+prompt: 2枚のCardをGrid Itemにするとき、display gridを書くElementを指します。
+expectedAction: 2枚のCardを直接包むdata-grid属性の親を指す
 estimatedMinutes: 2
 :::
 
-次は明示的なColumn Trackを作ります。
+次は親の中へ2本のColumn Trackを作ります。

@@ -4,6 +4,32 @@ workspaceId: html-css-ch08-l02-e01
 countsTowardStandardExerciseTotal: true
 title: Action間へ20pxの距離を作る
 instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: justify-content, minimumLevel: transform }
+  - { conceptId: gap, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: move-actions-to-main-start
+    file: styles.css
+    target: '[data-actions] Ruleのjustify-content Declaration'
+    starterAnchor: 'justify-content: center;'
+    change: Valueをflex-startへ変更する
+    observe: 1つ目のActionがBodyのx 32pxから始まる
+    requiresConceptIds: [justify-content]
+    validationRuleIds:
+      - html-css-ch08-l02-e01-r01
+      - html-css-ch08-l02-e01-r02
+      - html-css-ch08-l02-e01-r04
+  - id: widen-action-gap
+    file: styles.css
+    target: '[data-actions] Ruleのgap Declaration'
+    starterAnchor: 'gap: 12px;'
+    change: Valueを20pxへ変更する
+    observe: 2つ目のActionのxが132pxになる
+    requiresConceptIds: [gap]
+    validationRuleIds:
+      - html-css-ch08-l02-e01-r03
+      - html-css-ch08-l02-e01-r04
 files:
   - { path: index.html, language: html, source: starter/index.html, editable: true }
   - { path: styles.css, language: css, source: starter/styles.css, editable: true }
@@ -59,6 +85,23 @@ validationRules:
       nextAction: 幅80pxのItem間へgap 20pxを指定し、32 + 80 + 20を確認します。
     hintId: html-css-ch08-l02-e01-h03
     relatedSlideId: html-css-ch08-l02-s02
+  - id: html-css-ch08-l02-e01-r04
+    label: Main Startと20pxのGapをSourceに書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: source, file: styles.css }
+    assertion:
+      kind: text
+      operator: contains-normalized
+      expected: '[data-actions] { display: flex; justify-content: flex-start; width: 400px; gap: 20px;'
+    feedback:
+      target: Action ContainerのSource
+      expected: justify-content flex-startとgap 20px
+      nextAction: 完成済みのdisplay flexとwidthを残し、2つのValueだけを変更します。
+    hintId: html-css-ch08-l02-e01-h03
+    relatedSlideId: html-css-ch08-l02-s02
 hints:
   - id: html-css-ch08-l02-e01-h01
     level: 1
@@ -108,4 +151,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch08-l02-e01-r03]
+    expectedFeedbackRuleIds: [html-css-ch08-l02-e01-r03, html-css-ch08-l02-e01-r04]

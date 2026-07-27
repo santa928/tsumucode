@@ -155,7 +155,7 @@ describe('subpath build smoke', () => {
     ).rejects.toThrow('Course Manifestが見つかりません: generated/content/courses/missing.json');
   });
 
-  it('Vite manifestのEntry欠落を拒否する', async () => {
+  it('Vite manifestの通常学習Entry欠落を拒否する', async () => {
     const distRoot = await createFixture({
       manifest: { 'index.html': { file: 'assets/index.js' } },
     });
@@ -166,7 +166,7 @@ describe('subpath build smoke', () => {
         basePath: '/repository-name/',
         homeBudgetBytes: 250 * 1024,
       }),
-    ).rejects.toThrow('Vite manifestにEntryがありません');
+    ).rejects.toThrow('Vite manifestに通常学習Entryがありません');
   });
 
   it('Vite manifestの欠落した静的Import参照を拒否する', async () => {

@@ -5,11 +5,15 @@ body {
   font-family: system-ui, sans-serif;
 }
 [data-card-grid] {
+  display: flex;
+  flex-wrap: nowrap;
   width: 600px;
+  gap: 16px;
 }
 [data-card] {
   box-sizing: border-box;
-  width: 220px;
+  flex-basis: 220px;
+  flex-shrink: 0;
   height: 100px;
   padding: 20px;
   background: #fff;

@@ -20,8 +20,17 @@ export class EditorLanguageRegistry {
     this.#factories.set(id, factory);
   }
 
-  /** 登録済みextensionを生成し、未知IDはplain text相当の空Extensionへ解決する。 */
+  /** 登録済みextensionを生成し、未知IDや壊れたProfileはplain textへ安全退避する。 */
   extensionFor(id: string): Extension {
-    return this.#factories.get(id)?.() ?? [];
+    const factory = this.#factories.get(id);
+    if (factory === undefined) return [];
+    try {
+      return factory();
+    } catch (error: unknown) {
+      if (import.meta.env.DEV) {
+        console.error(`Editor Language Profileを読み込めませんでした: ${id}`, error);
+      }
+      return [];
+    }
   }
 }

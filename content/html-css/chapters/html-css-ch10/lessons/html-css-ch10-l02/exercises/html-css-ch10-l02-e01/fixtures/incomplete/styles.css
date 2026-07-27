@@ -2,8 +2,6 @@ body {
   margin: 0;
   padding: 16px;
 }
-.x {
-}
 [data-layout] {
   display: flex;
   flex-direction: column;

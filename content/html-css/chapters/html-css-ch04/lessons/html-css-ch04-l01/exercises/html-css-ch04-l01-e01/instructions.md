@@ -1,10 +1,10 @@
 ## TypeとClass Selectorで色を分ける
 
-通常のParagraphと、AccentのParagraphへ異なる役割の色を設定します。
+用意された2つのCSS Ruleで、共通色とAccent色を設定します。HTMLは変更しません。
 
-1. Type Selectorのpで.introを青緑色にします。
-2. Class Selectorの.accentでAccentを橙色にします。
-3. Selector、Property、Value、Semicolonを確認します。
-4. Previewと判定でComputed Colorを比べます。
+1. `p` Ruleのcolorを`#2d5d62`へ変更し、2つのParagraphを青緑にします。
+2. `.accent` Ruleのcolorを`#9a3f25`へ変更し、2つ目だけを橙へ上書きします。
+3. Previewでintroとaccentの色が分かれたことを確認します。
+4. 判定でSelectorの書き方とComputed Colorを確認します。
 
-色の書式はHex以外でも、Browserが同じ色として計算できれば合格します。
+Selector、波括弧、Property、Colon、Semicolonは用意済みです。2つのValueだけを直しましょう。

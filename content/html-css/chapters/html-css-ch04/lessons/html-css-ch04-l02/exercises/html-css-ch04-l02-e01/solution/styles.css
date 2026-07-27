@@ -5,9 +5,9 @@ body {
 }
 
 .card {
+  background-color: #ffffff;
   margin: 4rem auto;
   max-width: 34rem;
-  padding: 2rem;
-  background-color: #ffffff;
   color: #24323d;
+  padding: 2rem;
 }

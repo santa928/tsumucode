@@ -1,7 +1,7 @@
 id: html-css-ch09-l04
 kind: standard
-title: PlacementとLayout手法を選ぶ
-goal: Grid PlacementでCardをTrackへまたがせ、内部の1次元配置にはFlexboxを選べる
+title: 外側Gridと内側Flexを組み合わせる
+goal: Feature Cardを全列へ広げ、Card内のActionだけをFlexboxで横並びにできる
 estimatedMinutes: 11
 prerequisiteLessonIds: [html-css-ch09-l03]
 slideSources:
@@ -9,7 +9,7 @@ slideSources:
   - slides/s02-grid-vs-flex.md
 exerciseSources:
   - exercises/html-css-ch09-l04-e01/exercise.yaml
-reflection: Gallery全体の2次元配置とButton Rowの1次元配置を分ける
+reflection: Galleryの2次元配置とActionの1次元配置を、別々の親へ任せる理由を説明する
 glossaryRefs: [grid-placement, grid-column, layout-selection]
 nextLessonId: html-css-ch10-l01
 completion:

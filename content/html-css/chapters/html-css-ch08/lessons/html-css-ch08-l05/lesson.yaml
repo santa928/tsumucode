@@ -1,7 +1,7 @@
 id: html-css-ch08-l05
 kind: standard
 title: NavigationとCard Rowへ応用する
-goal: Accessible Nameを保ちながらNavigationとCardをGeometryに基づいて並べられる
+goal: 既習のFlex ContainerとGapを使い、NavigationとCardをGeometryに基づいて並べられる
 estimatedMinutes: 11
 prerequisiteLessonIds: [html-css-ch08-l04]
 slideSources:
@@ -9,8 +9,8 @@ slideSources:
   - slides/s02-card-row.md
 exerciseSources:
   - exercises/html-css-ch08-l05-e01/exercise.yaml
-reflection: 見た目の並びとAccessibleな意味を同時に確認する
-glossaryRefs: [navigation, accessible-name, card-row]
+reflection: 2つのContainerの責務とCardの実測Geometryを確認する
+glossaryRefs: [navigation, flex-container, card-row]
 nextLessonId: html-css-ch09-l01
 completion:
   kind: standard

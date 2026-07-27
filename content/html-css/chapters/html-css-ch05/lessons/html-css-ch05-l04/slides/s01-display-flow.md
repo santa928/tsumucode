@@ -1,19 +1,36 @@
 ---
 id: html-css-ch05-l04-s01
-title: DisplayはBoxがFlowへ参加する形を決める
+title: inlineのLinkは文字の流れに並ぶ
 kind: concept
 concept: display-flow
-assets: []
+layout: code-preview
+teachesConceptIds: [width-height]
+masteryTarget: transform
+screenBudget: { maxTextCharacters: 400, maxCodeLines: 3, maxVisuals: 1 }
+assets:
+  - id: target-inline
+    source: assets/target-size.svg
+    mediaType: image
+    alt: inlineの小さいLinkとinline-blockの44px Linkを比較した図
+    provenanceId: ch05-target-size-original
 ---
 
-Blockは通常新しい行を作り、InlineはTextの流れに沿います。Linkは既定でInlineなので横へ並びますが、高さ指定の扱いに注意が必要です。
+`a`要素は既定で`inline`です。文字の流れに沿って横へ並びますが、上下Paddingを含むBoxの寸法を扱う操作部品には向きません。
 
-操作要素では見た目の並びだけでなく、Focusできる範囲とClick領域の実寸を確認します。
+![inlineと操作領域の比較](asset:target-inline)
+
+実習のLinkにも`display: inline;`が書かれています。`a`要素と`href`はKeyboard操作に必要なので、そのまま残します。
+
+```css
+nav a {
+  display: inline;
+}
+```
 
 :::practice
-prompt: 新しい行を作るBlockとTextに沿うInlineを見分けます。
-expectedAction: Flow内での開始位置とBox寸法の違いを説明する
+prompt: 横へ並ぶ既定のLinkが持つDisplayを答えます。
+expectedAction: inlineと答え、文字の流れに沿うと説明する
 estimatedMinutes: 2
 :::
 
-次はinline-blockで横並びとBox寸法を両立します。
+次は、横並びのまま44pxのBoxを持てるDisplayを見ます。

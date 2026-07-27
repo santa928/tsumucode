@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">langとtitleを設定したBrowser</title>
+  <desc id="desc">Browser TabにHTML学習プロフィールと表示され、本文に日本語ページと示されている</desc>
+  <rect width="640" height="360" rx="24" fill="#e8dfcf" />
+  <rect x="28" y="32" width="584" height="296" rx="18" fill="#ffffff" stroke="#8a7657" stroke-width="3" />
+  <rect x="28" y="32" width="584" height="76" rx="18" fill="#19352d" />
+  <rect x="50" y="52" width="330" height="56" rx="12" fill="#fffaf0" />
+  <text x="74" y="87" font-family="system-ui, sans-serif" font-size="20" font-weight="800" fill="#19352d">HTML学習プロフィール</text>
+  <circle cx="568" cy="70" r="10" fill="#f4c95d" />
+  <rect x="68" y="148" width="180" height="42" rx="21" fill="#dcebe6" />
+  <text x="158" y="176" text-anchor="middle" font-family="system-ui, sans-serif" font-size="19" font-weight="800" fill="#19352d">lang = ja</text>
+  <text x="68" y="238" font-family="system-ui, sans-serif" font-size="32" font-weight="800" fill="#19352d">日本語のページ</text>
+  <text x="68" y="282" font-family="system-ui, sans-serif" font-size="20" fill="#3f514b">Tabの題名と文書の言語を確認</text>
+</svg>

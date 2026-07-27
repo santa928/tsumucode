@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" aria-labelledby="title desc">
+  <title id="title">Contrastと色以外の手がかり</title>
+  <desc id="desc">薄い文字と濃い文字、緑の丸だけの状態と公開中Text付きの状態を比較する</desc>
+  <rect width="720" height="400" rx="28" fill="#f5efe4" />
+  <g font-family="system-ui, sans-serif">
+    <text x="190" y="50" text-anchor="middle" fill="#24323d" font-size="21" font-weight="750">Contrast</text>
+    <rect x="48" y="78" width="284" height="188" rx="18" fill="#fffdf8" stroke="#b7893d" stroke-width="3" />
+    <text x="190" y="133" text-anchor="middle" fill="#9a9a9a" font-size="22" font-weight="700">公開状態</text>
+    <text x="190" y="162" text-anchor="middle" fill="#9a9a9a" font-size="14">#9a9a9a / white</text>
+    <path d="M82 184h216" stroke="#ead9bc" stroke-width="2" />
+    <text x="190" y="222" text-anchor="middle" fill="#24323d" font-size="22" font-weight="750">公開状態</text>
+    <text x="190" y="248" text-anchor="middle" fill="#52616a" font-size="14">#24323d / white</text>
+    <text x="530" y="50" text-anchor="middle" fill="#24323d" font-size="21" font-weight="750">状態の手がかり</text>
+    <rect x="382" y="78" width="290" height="188" rx="18" fill="#fffdf8" stroke="#2d5d62" stroke-width="3" />
+    <circle cx="438" cy="130" r="10" fill="#2d8a57" />
+    <text x="470" y="136" fill="#52616a" font-size="17">Portfolio</text>
+    <text x="530" y="171" text-anchor="middle" fill="#8f3f2d" font-size="15" font-weight="700">色だけでは意味が残らない</text>
+    <circle cx="438" cy="218" r="10" fill="#2d8a57" />
+    <text x="466" y="224" fill="#24323d" font-size="17" font-weight="750">公開中</text>
+    <text x="526" y="224" fill="#52616a" font-size="17">— Portfolio</text>
+    <rect x="132" y="304" width="456" height="58" rx="14" fill="#ead9bc" />
+    <text x="360" y="329" text-anchor="middle" fill="#24323d" font-size="17" font-weight="700">通常Textは4.5:1以上を目安にする</text>
+    <text x="360" y="351" text-anchor="middle" fill="#8f3f2d" font-size="15" font-weight="700">色 + 「公開中」というText</text>
+  </g>
+</svg>

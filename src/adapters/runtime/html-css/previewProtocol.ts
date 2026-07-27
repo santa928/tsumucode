@@ -32,6 +32,7 @@ const ViewportSchema = z
     id: IdentifierSchema,
     width: FiniteNumberSchema.positive(),
     height: FiniteNumberSchema.positive(),
+    reducedMotion: z.literal('reduce').optional(),
   })
   .strict();
 const AttributeRecordSchema = z
@@ -50,6 +51,7 @@ const PreviewNodeSchema = z
     attributes: AttributeRecordSchema,
     text: z.string().max(MAX_TEXT_LENGTH),
     computedStyles: ComputedStyleRecordSchema,
+    focusVisibleComputedStyles: ComputedStyleRecordSchema,
     rect: z
       .object({
         x: FiniteNumberSchema,

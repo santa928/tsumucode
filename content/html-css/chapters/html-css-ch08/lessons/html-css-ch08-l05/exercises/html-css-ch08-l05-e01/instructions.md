@@ -1,8 +1,8 @@
-## AccessibleなNavigationとCard Rowを組む
+## NavigationとCard Rowを組む
 
-1. Profile NavigationをFlexboxで横並びにします。
-2. Navigationへ目的が分かるAccessible Nameを付けます。
-3. Card RowもFlex Containerにし、幅160pxのCard間へ16pxのGapを作ります。
-4. 2枚目のCardがx 208pxへあり、Rowが横Overflowしないことを確認します。
+1. `[data-profile-nav]`へ`display: flex;`を追加します。
+2. 同じRuleの`gap: 8px;`を`12px`へ変えます。
+3. `[data-card-row]`へも`display: flex;`を追加し、`gap`を16pxへ変えます。
+4. Previewで2枚目のCardが`32 + 160 + 16 = 208px`の位置へ並ぶことを確かめます。
 
-TextやClass名ではなく、Navigationの名前とCardの実測Geometryで判定します。
+すべて既習のDeclarationです。手が止まったら「前のスライド」で2つの完成Ruleを見直せます。

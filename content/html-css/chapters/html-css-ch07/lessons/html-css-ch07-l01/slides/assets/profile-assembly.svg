@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" aria-labelledby="title desc">
+  <title id="title">Profile Card統合の5観点</title>
+  <desc id="desc">Structure、Image、SizingとPadding、Typography、Contrastを順にCardへ適用する</desc>
+  <rect width="720" height="400" rx="28" fill="#f5efe4" />
+  <g font-family="system-ui, sans-serif">
+    <rect x="258" y="52" width="404" height="296" rx="24" fill="#fffdf8" stroke="#2d5d62" stroke-width="4" />
+    <rect x="258" y="52" width="10" height="296" rx="5" fill="#b7893d" />
+    <circle cx="350" cy="142" r="48" fill="#c9ded9" stroke="#2d5d62" stroke-width="3" />
+    <path d="M327 151c12-28 36-28 48 0M336 128h28" fill="none" stroke="#2d5d62" stroke-width="4" stroke-linecap="round" />
+    <text x="422" y="121" fill="#24323d" font-size="25" font-weight="800">Aoi</text>
+    <text x="422" y="151" fill="#52616a" font-size="16">HTML &amp; CSS Learner</text>
+    <path d="M316 214h290M316 244h250M316 274h274" stroke="#c8d4d2" stroke-width="10" stroke-linecap="round" />
+    <rect x="42" y="40" width="174" height="54" rx="12" fill="#2d5d62" />
+    <text x="129" y="73" text-anchor="middle" fill="#fffdf8" font-size="16" font-weight="750">1. Structure + Image</text>
+    <rect x="42" y="112" width="174" height="54" rx="12" fill="#ead9bc" />
+    <text x="129" y="145" text-anchor="middle" fill="#6f4b1f" font-size="16" font-weight="750">2. Safe Sizing</text>
+    <rect x="42" y="184" width="174" height="54" rx="12" fill="#c9ded9" />
+    <text x="129" y="217" text-anchor="middle" fill="#23484c" font-size="16" font-weight="750">3. Padding 24px</text>
+    <rect x="42" y="256" width="174" height="54" rx="12" fill="#ead9bc" />
+    <text x="129" y="289" text-anchor="middle" fill="#6f4b1f" font-size="16" font-weight="750">4. Line Height</text>
+    <rect x="42" y="328" width="174" height="42" rx="12" fill="#bf5b42" />
+    <text x="129" y="354" text-anchor="middle" fill="#fffdf8" font-size="16" font-weight="750">5. Contrast</text>
+    <path d="M218 67h26M218 139h26M218 211h26M218 283h26M218 349h26" stroke="#bf5b42" stroke-width="3" stroke-linecap="round" />
+    <path d="m250 67-10-7v14zm0 72-10-7v14zm0 72-10-7v14zm0 72-10-7v14zm0 66-10-7v14z" fill="#bf5b42" />
+    <text x="460" y="382" text-anchor="middle" fill="#24323d" font-size="16" font-weight="700">6 Stepを上から1つずつ完成する</text>
+  </g>
+</svg>

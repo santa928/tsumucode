@@ -4,7 +4,12 @@ export interface BridgeConfig {
   readonly exerciseSessionId: string;
   readonly executionRevision: number;
   readonly bootstrapToken: string;
-  readonly viewport: { readonly id: string; readonly width: number; readonly height: number };
+  readonly viewport: {
+    readonly id: string;
+    readonly width: number;
+    readonly height: number;
+    readonly reducedMotion?: 'reduce' | undefined;
+  };
   readonly stylesheetReferences?: readonly BridgeStylesheetReference[];
 }
 
@@ -18,6 +23,8 @@ const SAFE_TOKEN = /^[a-z0-9_-]+$/iu;
 /** Bridgeへ埋め込む識別子・Token・viewportが有限でcode境界を作らないことを検証する。 */
 export function assertBridgeConfig(config: BridgeConfig): void {
   const stylesheetReferences = config.stylesheetReferences ?? [];
+  const configuredReducedMotion = (config.viewport as { readonly reducedMotion?: unknown })
+    .reducedMotion;
   const validStylesheetReferences =
     stylesheetReferences.length <= 64 &&
     stylesheetReferences.every(({ attributes }) => {
@@ -53,6 +60,7 @@ export function assertBridgeConfig(config: BridgeConfig): void {
     config.viewport.width <= 0 ||
     !Number.isFinite(config.viewport.height) ||
     config.viewport.height <= 0 ||
+    (configuredReducedMotion !== undefined && configuredReducedMotion !== 'reduce') ||
     !validStylesheetReferences
   ) {
     throw new Error('Invalid preview configuration');
@@ -79,6 +87,31 @@ function bridgeRuntime(config: BridgeConfig): void {
     for (const [name, value] of reference.attributes) link.setAttribute(name, value);
     observableDocument.head.append(link);
   }
+
+  /** reduce検証用Viewportでは、実Media Query内のRuleだけをtrusted overrideへ展開する。 */
+  const applyReducedMotionEmulation = (): void => {
+    if (config.viewport.reducedMotion !== 'reduce') return;
+    const reducedRules: string[] = [];
+    for (const stylesheet of [...document.styleSheets]) {
+      let rules: CSSRuleList;
+      try {
+        rules = stylesheet.cssRules;
+      } catch {
+        continue;
+      }
+      for (const rule of [...rules]) {
+        if (!(rule instanceof CSSMediaRule)) continue;
+        const normalizedCondition = rule.conditionText.replace(/\s+/gu, '').toLowerCase();
+        if (normalizedCondition !== '(prefers-reduced-motion:reduce)') continue;
+        reducedRules.push(...[...rule.cssRules].map((nestedRule) => nestedRule.cssText));
+      }
+    }
+    if (reducedRules.length === 0) return;
+    const override = document.createElement('style');
+    override.setAttribute('data-tsumucode-reduced-motion-emulation', '');
+    override.textContent = reducedRules.join('\n');
+    document.head.append(override);
+  };
 
   const send = (
     type: 'bridge.ready' | 'bridge.error' | 'snapshot.response',
@@ -118,17 +151,35 @@ function bridgeRuntime(config: BridgeConfig): void {
     const selectors = value.selectors;
     const attributes = value.attributes;
     const computedStyles = value.computedStyles;
+    const focusVisibleSelectors = value.focusVisibleSelectors;
+    const focusVisibleComputedStyles = value.focusVisibleComputedStyles;
     const includeAllElements = value.includeAllElements;
     if (
-      !hasExactKeys(value, ['selectors', 'attributes', 'computedStyles', 'includeAllElements']) ||
+      !hasExactKeys(value, [
+        'selectors',
+        'attributes',
+        'computedStyles',
+        'focusVisibleSelectors',
+        'focusVisibleComputedStyles',
+        'includeAllElements',
+      ]) ||
       !boundedStringArray(selectors, maxSelectors) ||
       !boundedStringArray(attributes, maxAttributes) ||
       !boundedStringArray(computedStyles, maxComputedStyles) ||
+      !boundedStringArray(focusVisibleSelectors, maxSelectors) ||
+      !boundedStringArray(focusVisibleComputedStyles, maxComputedStyles) ||
       typeof includeAllElements !== 'boolean'
     ) {
       throw new Error('Snapshot policy schema error');
     }
-    return { selectors, attributes, computedStyles, includeAllElements };
+    return {
+      selectors,
+      attributes,
+      computedStyles,
+      focusVisibleSelectors,
+      focusVisibleComputedStyles,
+      includeAllElements,
+    };
   };
 
   const finite = (value: number): number => {
@@ -250,6 +301,89 @@ function bridgeRuntime(config: BridgeConfig): void {
     clientHeight: nonNegative(element.clientHeight),
   });
 
+  type MutableRuleContainer = {
+    readonly cssRules: CSSRuleList;
+    insertRule(rule: string, index?: number): number;
+    deleteRule(index: number): void;
+  };
+
+  /** 実効な:focus-visible Ruleを同じcascade位置の検証用属性Ruleへ一時展開する。 */
+  const installFocusVisibleValidationState = (
+    elements: readonly Element[],
+    selectors: readonly string[],
+    token: string,
+  ): (() => void) => {
+    if (selectors.length === 0) return () => undefined;
+    const tokenSuffix = Array.from(
+      token,
+      (character) => character.codePointAt(0)?.toString(36) ?? '0',
+    ).join('-');
+    const attribute = `data-tsumucode-focus-${tokenSuffix}`;
+    const attributeSelector = `[${attribute}]`;
+    const targets = elements.filter(
+      (element) =>
+        element.ownerDocument === document &&
+        selectors.some((selector) => element.matches(selector)),
+    );
+    const previousAttributes = targets.map((element) => ({
+      element,
+      value: element.getAttribute(attribute),
+    }));
+    const insertions: { readonly container: MutableRuleContainer; readonly index: number }[] = [];
+    const isMutableContainer = (value: unknown): value is MutableRuleContainer =>
+      typeof value === 'object' &&
+      value !== null &&
+      'cssRules' in value &&
+      typeof (value as MutableRuleContainer).insertRule === 'function' &&
+      typeof (value as MutableRuleContainer).deleteRule === 'function';
+    const installRules = (container: MutableRuleContainer): void => {
+      for (let index = container.cssRules.length - 1; index >= 0; index -= 1) {
+        const rule = container.cssRules[index];
+        if (rule === undefined) continue;
+        const candidate = rule as CSSStyleRule;
+        if (
+          typeof candidate.selectorText === 'string' &&
+          candidate.selectorText.includes(':focus-visible')
+        ) {
+          const selector = candidate.selectorText.replace(/:focus-visible\b/gu, attributeSelector);
+          try {
+            const inserted = container.insertRule(
+              `${selector} { ${candidate.style.cssText} }`,
+              index + 1,
+            );
+            insertions.push({ container, index: inserted });
+          } catch {
+            // 個別の未知Selectorを理由に他の有効なFocus Ruleまで捨てない。
+          }
+        }
+        if (isMutableContainer(rule)) installRules(rule);
+      }
+    };
+    for (const stylesheet of [...document.styleSheets]) {
+      try {
+        installRules(stylesheet);
+      } catch {
+        // opaque-originから読めないSheetは検証対象へ展開しない。
+      }
+    }
+    for (const { element } of previousAttributes) element.setAttribute(attribute, token);
+    return () => {
+      for (let insertionIndex = insertions.length - 1; insertionIndex >= 0; insertionIndex -= 1) {
+        const insertion = insertions[insertionIndex];
+        if (insertion === undefined) continue;
+        try {
+          insertion.container.deleteRule(insertion.index);
+        } catch {
+          // Snapshot後のcleanupは残りのRule復元を優先する。
+        }
+      }
+      for (const { element, value } of previousAttributes) {
+        if (value === null) element.removeAttribute(attribute);
+        else element.setAttribute(attribute, value);
+      }
+    };
+  };
+
   const closestAnchor = (target: EventTarget | null): Element | null => {
     if (target instanceof Element) return target.closest('a');
     if (target instanceof Node) return target.parentElement?.closest('a') ?? null;
@@ -362,7 +496,7 @@ function bridgeRuntime(config: BridgeConfig): void {
         return left.compareDocumentPosition(right) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
       });
       const ids = new Map(elements.map((element, index) => [element, index + 1]));
-      const nodes = elements.map((element, index) => {
+      const baseNodes = elements.map((element, index) => {
         const isDocumentElement = element === document.documentElement;
         const isObservableReference = element.ownerDocument === observableDocument;
         const style = isObservableReference
@@ -431,6 +565,43 @@ function bridgeRuntime(config: BridgeConfig): void {
           role,
         };
       });
+      const focusVisibleStyles = new Map<Element, Readonly<Record<string, string>>>();
+      const cleanupFocusVisible = installFocusVisibleValidationState(
+        elements,
+        policy.focusVisibleSelectors,
+        message.oneTimeToken,
+      );
+      try {
+        document.documentElement.getBoundingClientRect();
+        for (const element of elements) {
+          if (
+            element.ownerDocument !== document ||
+            !policy.focusVisibleSelectors.some((selector) => element.matches(selector))
+          ) {
+            continue;
+          }
+          const style = getComputedStyle(element);
+          focusVisibleStyles.set(
+            element,
+            Object.fromEntries(
+              policy.focusVisibleComputedStyles.map((name) => {
+                outputString(name, 'focus-visible computed style name', 256);
+                const value = outputString(
+                  style.getPropertyValue(name),
+                  'focus-visible computed style',
+                );
+                return [name, value];
+              }),
+            ),
+          );
+        }
+      } finally {
+        cleanupFocusVisible();
+      }
+      const nodes = baseNodes.map((node, index) => ({
+        ...node,
+        focusVisibleComputedStyles: focusVisibleStyles.get(elements[index]!) ?? {},
+      }));
       const root = document.documentElement;
       send('snapshot.response', message.requestId, message.oneTimeToken, {
         exerciseSessionId: config.exerciseSessionId,
@@ -451,9 +622,24 @@ function bridgeRuntime(config: BridgeConfig): void {
     readySent = true;
     send('bridge.ready', 'ready', config.bootstrapToken, null);
   };
+  /** Snapshotへ使う画像とFontのLayout寸法が確定するまで待つ。 */
+  const waitForLayoutAssets = async (): Promise<void> => {
+    const waits: Promise<unknown>[] = [];
+    const fonts = (document as unknown as { readonly fonts?: FontFaceSet }).fonts;
+    if (fonts !== undefined) waits.push(fonts.ready.catch(() => undefined));
+    for (const image of Array.from(document.images)) {
+      if (typeof image.decode !== 'function') continue;
+      waits.push(image.decode().catch(() => undefined));
+    }
+    await Promise.all(waits);
+  };
   const announceAfterLayout = (): void => {
-    document.documentElement.getBoundingClientRect();
-    setTimeout(announceReady, 0);
+    void (async () => {
+      await waitForLayoutAssets();
+      applyReducedMotionEmulation();
+      document.documentElement.getBoundingClientRect();
+      setTimeout(announceReady, 0);
+    })();
   };
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', announceAfterLayout, { once: true });

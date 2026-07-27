@@ -281,13 +281,19 @@ function stubCompletionDrafts(
 }
 
 /** 指定CourseをCatalogとManifest fetchへ順に返す。 */
-function stubCourseFetch(course: CourseManifest): void {
+async function stubCourseFetch(course: CourseManifest): Promise<void> {
+  const source = JSON.stringify(course);
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(source));
+  const catalog = structuredClone(fixtureCatalog);
+  catalog.courses[0]!.manifestSha256 = [...new Uint8Array(digest)]
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
   vi.stubGlobal(
     'fetch',
     vi
       .fn()
-      .mockResolvedValueOnce(Response.json(fixtureCatalog))
-      .mockResolvedValueOnce(Response.json(course)),
+      .mockResolvedValueOnce(Response.json(catalog))
+      .mockResolvedValueOnce(new Response(source, { status: 200 })),
   );
 }
 
@@ -461,7 +467,7 @@ describe('content route loaders', () => {
 
   it('standardは複数workspaceの全必須Exerciseがfreshな場合だけCompletionを許可する', async () => {
     const { course, lesson, exercises } = createCompletionCourse('standard');
-    stubCourseFetch(course);
+    await stubCourseFetch(course);
     runtime.repository.getCourse.mockResolvedValue(completedProgress(course, lesson));
     runtime.repository.getDraft.mockImplementation(async (_courseId, workspaceId) => {
       const exercise = exercises.find((item) => item.workspaceId === workspaceId);
@@ -492,7 +498,7 @@ describe('content route loaders', () => {
   it('standard optional Exerciseはorphan passing snapshotだけではCompletionへ入れない', async () => {
     const { course, lesson, requiredExercise, optionalExercise } =
       createStandardCourseWithOptionalExercise();
-    stubCourseFetch(course);
+    await stubCourseFetch(course);
     runtime.repository.getCourse.mockResolvedValue(
       withoutPassedExercise(completedProgress(course, lesson), lesson, optionalExercise.id),
     );
@@ -509,7 +515,7 @@ describe('content route loaders', () => {
   it('standard optional Exerciseは永続pass済みでも同期dirtyならCompletionへ入れない', async () => {
     const { course, lesson, requiredExercise, optionalExercise } =
       createStandardCourseWithOptionalExercise();
-    stubCourseFetch(course);
+    await stubCourseFetch(course);
     runtime.repository.getCourse.mockResolvedValue(completedProgress(course, lesson));
     stubCompletionDrafts(course, lesson, [requiredExercise, optionalExercise]);
     runtime.passFreshness.isDirty.mockImplementation(
@@ -526,7 +532,7 @@ describe('content route loaders', () => {
   it('standard optional Exerciseは永続pass済みでもcurrent snapshot欠落ならCompletionへ入れない', async () => {
     const { course, lesson, requiredExercise, optionalExercise } =
       createStandardCourseWithOptionalExercise();
-    stubCourseFetch(course);
+    await stubCourseFetch(course);
     runtime.repository.getCourse.mockResolvedValue(completedProgress(course, lesson));
     stubCompletionDrafts(course, lesson, [requiredExercise, optionalExercise], optionalExercise.id);
     runtime.passFreshness.isDirty.mockReturnValue(false);
@@ -541,7 +547,7 @@ describe('content route loaders', () => {
   it('standard optional Exerciseは永続passとcurrent snapshotが揃えばCompletionを許可する', async () => {
     const { course, lesson, requiredExercise, optionalExercise } =
       createStandardCourseWithOptionalExercise();
-    stubCourseFetch(course);
+    await stubCourseFetch(course);
     runtime.repository.getCourse.mockResolvedValue(completedProgress(course, lesson));
     stubCompletionDrafts(course, lesson, [requiredExercise, optionalExercise]);
     runtime.passFreshness.isDirty.mockReturnValue(false);
@@ -556,7 +562,7 @@ describe('content route loaders', () => {
 
   it('guided-projectは必須Checklist ruleを担う別Exerciseの同期dirtyをfail closedにする', async () => {
     const { course, lesson, exercises } = createCompletionCourse('guided-project');
-    stubCourseFetch(course);
+    await stubCourseFetch(course);
     runtime.repository.getCourse.mockResolvedValue(completedProgress(course, lesson));
     runtime.repository.getDraft.mockImplementation(async (_courseId, workspaceId) => {
       const exercise = exercises.find((item) => item.workspaceId === workspaceId);
@@ -583,7 +589,7 @@ describe('content route loaders', () => {
 
   it('capstoneは必須Ruleを担う別Exerciseのpassing snapshot欠落をfail closedにする', async () => {
     const { course, lesson, exercises } = createCompletionCourse('capstone');
-    stubCourseFetch(course);
+    await stubCourseFetch(course);
     runtime.repository.getCourse.mockResolvedValue(completedProgress(course, lesson));
     runtime.repository.getDraft.mockImplementation(async (_courseId, workspaceId) => {
       const exercise = exercises.find((item) => item.workspaceId === workspaceId);

@@ -14,11 +14,20 @@ interface LearningChunkOptions {
   readonly readAsset: (file: string) => Promise<string>;
 }
 
-const entryKey = 'index.html';
+const normalLearningEntryKey = 'src/app/normalLearningEntry.tsx';
 const editableKey = 'src/features/learning/pages/EditableExercisePage.tsx';
 const workspaceKey = 'src/features/learning/editor/CodeWorkspace.tsx';
 const runnerKey = 'src/adapters/runtime/html-css/index.ts';
-const requiredKeys = [entryKey, editableKey, workspaceKey, runnerKey] as const;
+const readOnlyPreviewKey =
+  'src/adapters/runtime/read-only-html-css/HtmlCssReadOnlyPreviewAdapter.ts';
+const requiredKeys = [
+  normalLearningEntryKey,
+  editableKey,
+  workspaceKey,
+  runnerKey,
+  readOnlyPreviewKey,
+] as const;
+const codeMirrorMarker = /(?:EditorView|EditorState|cm-content)/u;
 
 /** unknown値を安全にproperty検査できるObjectへ絞り込む。 */
 function isUnknownRecord(value: unknown): value is Readonly<Record<string, unknown>> {
@@ -82,6 +91,18 @@ function assertDynamicEdge(
   }
 }
 
+/** 指定rootの静的closure内に期待する遅延edgeが存在することを保証する。 */
+function assertDynamicEdgeFromStaticGraph(
+  manifest: Readonly<Record<string, ManifestChunk>>,
+  ownerRoot: string,
+  imported: string,
+): void {
+  const owners = collectStaticGraph(manifest, [ownerRoot]);
+  if (![...owners].some((owner) => manifest[owner]?.dynamicImports.includes(imported))) {
+    throw new Error(`遅延import境界が見つかりません: ${ownerRoot} graph -> ${imported}`);
+  }
+}
+
 /** hash付きAsset名に依存せず、配信graphと生成物内markerからCodeMirror分離を検証する。 */
 export async function assertLearningChunkIsolation(options: LearningChunkOptions): Promise<void> {
   const manifest = parseManifest(options.manifest);
@@ -91,17 +112,33 @@ export async function assertLearningChunkIsolation(options: LearningChunkOptions
     }
   }
 
-  assertDynamicEdge(manifest, entryKey, editableKey);
-  assertDynamicEdge(manifest, entryKey, runnerKey);
+  assertDynamicEdgeFromStaticGraph(manifest, normalLearningEntryKey, editableKey);
+  assertDynamicEdgeFromStaticGraph(manifest, normalLearningEntryKey, runnerKey);
+  assertDynamicEdgeFromStaticGraph(manifest, normalLearningEntryKey, readOnlyPreviewKey);
   assertDynamicEdge(manifest, editableKey, workspaceKey);
 
-  const mobileGraph = collectStaticGraph(manifest, [entryKey]);
+  const mobileGraph = collectStaticGraph(manifest, [normalLearningEntryKey, readOnlyPreviewKey]);
   const forbiddenMobileChunks = [editableKey, workspaceKey, runnerKey].filter((key) =>
     mobileGraph.has(key),
   );
   if (forbiddenMobileChunks.length > 0) {
     throw new Error(
       `mobile静的graphへ編集専用chunkが混入しています: ${forbiddenMobileChunks.join(', ')}`,
+    );
+  }
+
+  const mobileMarkerResults = await Promise.all(
+    [...mobileGraph].map(async (key) => ({
+      key,
+      containsCodeMirror: codeMirrorMarker.test(await options.readAsset(manifest[key]!.file)),
+    })),
+  );
+  const mobileCodeMirrorChunks = mobileMarkerResults
+    .filter(({ containsCodeMirror }) => containsCodeMirror)
+    .map(({ key }) => key);
+  if (mobileCodeMirrorChunks.length > 0) {
+    throw new Error(
+      `mobile静的graphへCodeMirror実装が混入しています: ${mobileCodeMirrorChunks.join(', ')}`,
     );
   }
 
@@ -113,7 +150,7 @@ export async function assertLearningChunkIsolation(options: LearningChunkOptions
   const markerResults = await Promise.all(
     sharedCandidates.map(async (key) => {
       const source = await options.readAsset(manifest[key]!.file);
-      return /(?:EditorView|EditorState|cm-content)/u.test(source);
+      return codeMirrorMarker.test(source);
     }),
   );
   if (!markerResults.some(Boolean)) {

@@ -1,25 +1,36 @@
 ---
 id: html-css-ch08-l01-s01
-title: display flexが親をFlex Containerにする
+title: 親にdisplay flexを書く
 kind: concept
 concept: flex-container-items
-assets: []
+layout: code-preview
+teachesConceptIds: [flex-container, css-attribute-selector]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 420, maxCodeLines: 5, maxVisuals: 1 }
+assets:
+  - id: flex-container-axis
+    source: assets/diagram-flex-axis.svg
+    mediaType: image
+    alt: 親のFlex Container内に3つの直接の子Itemが並ぶ図
+    provenanceId: ch08-flex-axis-slide-original
 ---
 
-`display: flex`を親Elementへ指定すると、その直接の子がFlex Itemになります。子自身ではなく、並べる範囲を持つ親からLayoutを始めます。
+`display: flex;`を親Elementへ書くと、直接の子がFlex Itemになります。並べたい3つの`span`ではなく、それらを包む親をContainerにします。
+
+![親Containerと3つの直接の子Item](asset:flex-container-axis)
 
 ```css
-.skills {
+[data-row] {
   display: flex;
 }
 ```
 
-Flexboxは1本のAxisを中心にItemを配置する仕組みです。横並びか縦並びか、分配、揃え方、折り返しをContainer側で調整します。
+`[data-row]`は、`data-row`属性を持つElementを選ぶ属性Selectorです。中括弧`[]`の外へDeclarationを書かないよう、SelectorとRuleの範囲を分けて読みます。
 
 :::practice
-prompt: 3つのItemを並べたいとき、display flexを親と子のどちらへ指定するか答えます。
-expectedAction: 直接の子を包む親Elementへ指定すると答える
+prompt: data-row属性を持つ親をFlex Containerにする1行を読み上げます。
+expectedAction: 属性Selector data-rowのRuleへdisplay flexを書くと答える
 estimatedMinutes: 2
 :::
 
-次はDirectionから2本のAxisを読みます。
+次は、ContainerがItemを並べる向きを決めます。

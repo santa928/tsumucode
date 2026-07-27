@@ -16,3 +16,6 @@ body {
 .card + .card {
   margin-top: 16px;
 }
+.card--featured {
+  border-left: 4px solid #b7893d;
+}

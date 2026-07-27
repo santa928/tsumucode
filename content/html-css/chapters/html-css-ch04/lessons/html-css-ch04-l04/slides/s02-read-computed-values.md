@@ -3,18 +3,31 @@ id: html-css-ch04-l04-s02
 title: Computed ValueはBrowserが最終的に使う値
 kind: concept
 concept: computed-values
-assets: []
+layout: code-preview
+teachesConceptIds: [computed-value]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 410, maxCodeLines: 1, maxVisuals: 1 }
+assets:
+  - id: computed-unit
+    source: assets/unit-computation.svg
+    mediaType: image
+    alt: Sourceの2remをBrowserがComputed 32pxへ変換する図
+    provenanceId: ch04-unit-computation-original
 ---
 
-Stylesheetへ`2rem`と書いても、BrowserはInheritanceやRoot Font Sizeを解決し、Layoutに使うComputed Valueをpxで持つことがあります。
+Sourceへ`2rem`と書くと、BrowserはRoot Font Sizeを解決し、Layoutに使うComputed Valueを`32px`として持ちます。
 
-TsumuCodeの判定は、単なるSource文字列ではなくPreview SnapshotのComputed Styleを読みます。そのため`32px`と同じ結果になる妥当な書き方も許容できます。
+![SourceからComputed Valueへの変換](asset:computed-unit)
 
-小数計算ではBrowser差が生じる場合があるため、Length判定には小さなToleranceを持たせます。目標から大きく外れた値まで許すわけではありません。
+この実習は2つを確認します。Sourceに`padding: 2rem;`と書けていること、PreviewのComputed Paddingが32pxになったことです。Font Size 20pxとBorder 1pxは完成済みなので壊さず残します。
+
+```css
+padding: 2rem; /* Computed: 32px */
+```
 
 :::practice
-prompt: 2remと32pxが同じComputed Valueになる条件を説明します。
-expectedAction: Root Font Sizeが16pxであることを根拠にする
+prompt: SourceとComputedで表記が違っても同じ長さになる理由を考えます。
+expectedAction: Root 16pxへ2を掛けた結果だと説明する
 estimatedMinutes: 2
 :::
 

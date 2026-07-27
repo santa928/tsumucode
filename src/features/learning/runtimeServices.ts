@@ -134,9 +134,7 @@ class LazyTransferService implements TransferServicePort {
 async function loadTransferCoursesFromCatalog(): Promise<readonly CourseManifest[]> {
   const catalog = await loadCourseCatalog(import.meta.env.BASE_URL);
   return Promise.all(
-    catalog.courses.map(({ manifestPath }) =>
-      loadCourseManifest(import.meta.env.BASE_URL, manifestPath),
-    ),
+    catalog.courses.map((entry) => loadCourseManifest(import.meta.env.BASE_URL, entry)),
   );
 }
 

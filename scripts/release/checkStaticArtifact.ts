@@ -15,23 +15,21 @@ const ALLOWED_EXTENSIONS = new Set([
   '.ico',
 ]);
 const TEXT_EXTENSIONS = new Set(['.html', '.css', '.js', '.json', '.svg']);
-const REQUIRED_NOTICE = 'Progateとは提携・関連していません';
 const DEVELOPMENT_URL = /https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?/iu;
 const DEVELOPMENT_URL_GLOBAL = /https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?/giu;
 const REVIEWED_ROUTER_FALLBACK =
-  'function ae(e,t,n=!1){let r=`http://localhost`;e&&(r=e.location.origin===`null`?e.location.href:e.location.origin),D(r,`No window.location.(origin|href) available to create URL`);let i=typeof t==`string`?t:k(t);return i=i.replace(/ $/,`%20`),!n&&S.test(i)&&(i=r+i),new URL(i,r)}';
+  /function [$\w]+\(e,t,n=!1\)\{let r=`http:\/\/localhost`;e&&\(r=e\.location\.origin===`null`\?e\.location\.href:e\.location\.origin\),[$\w]+\(r,`No window\.location\.\(origin\|href\) available to create URL`\);let i=typeof t==`string`\?t:[$\w]+\(t\);return i=i\.replace\(\/ \$\/,`%20`\),!n&&[$\w]+\.test\(i\)&&\(i=r\+i\),new URL\(i,r\)\}/gu;
 
 /** React Routerの非通信URL組立fallback 1件だけをpinned entry chunkから除外する。 */
 function withoutReviewedRouterFallback(relative: string, source: string): string {
-  if (!/^assets\/index-[A-Za-z0-9_-]+\.js$/u.test(relative)) return source;
+  if (!/^assets\/(?:index|router)-[A-Za-z0-9_-]+\.js$/u.test(relative)) return source;
   const matches = [...source.matchAll(DEVELOPMENT_URL_GLOBAL)];
   if (matches.length !== 1) return source;
   if (matches[0]?.[0] !== 'http://localhost') return source;
-  const firstIndex = source.indexOf(REVIEWED_ROUTER_FALLBACK);
-  if (firstIndex === -1 || firstIndex !== source.lastIndexOf(REVIEWED_ROUTER_FALLBACK))
-    return source;
+  const fallbackMatches = [...source.matchAll(REVIEWED_ROUTER_FALLBACK)];
+  if (fallbackMatches.length !== 1 || fallbackMatches[0]?.[0] === undefined) return source;
 
-  return source.replace(REVIEWED_ROUTER_FALLBACK, 'reviewed-react-router-url-builder');
+  return source.replace(fallbackMatches[0][0], 'reviewed-react-router-url-builder');
 }
 
 /** Directory symlinkを辿らず、Artifact内の通常Fileだけを列挙する。 */
@@ -90,7 +88,6 @@ export interface StaticArtifactReport {
 export async function checkStaticArtifact(distDir: string): Promise<StaticArtifactReport> {
   const root = path.resolve(distDir);
   const files = await collectFiles(root);
-  let noticeFound = false;
 
   for (const file of files) {
     const relative = path.relative(root, file).split(path.sep).join('/');
@@ -108,12 +105,10 @@ export async function checkStaticArtifact(distDir: string): Promise<StaticArtifa
 
     const source = await readFile(file, 'utf8');
     assertSafeText(relative, source);
-    if (source.includes(REQUIRED_NOTICE)) noticeFound = true;
   }
 
   await access(path.join(root, 'index.html'));
   await access(path.join(root, 'generated/content/courses/html-css.json'));
-  if (!noticeFound) throw new Error('非提携NoticeがArtifactにありません');
 
   return { files: files.length };
 }

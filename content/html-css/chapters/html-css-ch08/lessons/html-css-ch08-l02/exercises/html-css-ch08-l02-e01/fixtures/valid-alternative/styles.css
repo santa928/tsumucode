@@ -1,17 +1,17 @@
 body {
   margin: 0;
-  padding: 2rem;
+  padding: 32px;
   font-family: system-ui, sans-serif;
 }
 [data-actions] {
   display: flex;
   justify-content: flex-start;
-  width: 25rem;
-  gap: 1.25rem;
+  width: 400px;
+  gap: 20px;
   padding: 0;
   list-style: none;
 }
 [data-actions] li {
   box-sizing: border-box;
-  width: 5rem;
+  width: 80px;
 }

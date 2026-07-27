@@ -1,23 +1,28 @@
 ---
 id: html-css-ch01-l02-s03
-title: Parentを選ぶと内容のまとまりが伝わる
+title: pをmainのChildへ移して関係を直す
 kind: comparison
 concept: parent-child-structure
+layout: comparison
+teachesConceptIds: [html-parent-child, nesting, indentation]
+masteryTarget: read
+screenBudget: { maxTextCharacters: 390, maxCodeLines: 8, maxVisuals: 0 }
 assets: []
 ---
 
-どのParentの中へ置くかで、Element同士の関係が決まります。`section`の見出しと説明を同じsectionのChildにすると、その2つが同じ話題のまとまりだとBrowserや支援技術へ伝わります。
+左の考え方では`p`が`main`の終了Tagより後ろにあり、mainのChildではありません。演習ではpの1行を切り取り、mainを閉じる直前へ2文字下げて置きます。Tagを新しく覚えて書く課題ではありません。
 
-見た目が同じでも、h2やpをmainの外へばらばらに置くと関係が弱くなります。まず内容のまとまりを考え、外側のParentを書いてから、内側へHeadingとParagraphを順に積みます。
-
-- 外側のmainはページ固有の中心内容をまとめる
-- sectionは1つの話題をまとめる
-- h2とpは同じsectionのChildとして内容を説明する
+```html
+<main>
+  <h1>学習プロフィール</h1>
+</main>
+<p>親子関係を練習しています。</p>
+```
 
 :::practice
-prompt: 「好きなこと」というh2と説明のpを、main直下とsection内のどちらへまとめるか選びます。
-expectedAction: 同じ話題なので1つのsectionのChildにすると説明する
+prompt: pをどの2行の間へ移すとmainのChildになるか指します。
+expectedAction: h1の後、mainの終了Tagより前へpを移す
 estimatedMinutes: 2
 :::
 
-次の演習では、main、section、h2、pを正しい親子と順番で組み立てます。
+次の演習では、既存のpを移動して字下げします。

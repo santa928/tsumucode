@@ -36,9 +36,103 @@ describe('parseValidatorRules', () => {
       ]),
     ).toThrow(/required/i);
   });
+
+  it('Source targetはtext比較だけを受理する', () => {
+    const parsed = parseValidatorRules([
+      validationRule({
+        target: { kind: 'source', file: 'index.html' },
+        assertion: { kind: 'text', operator: 'contains', expected: '\n  <p>本文</p>\n' },
+      }),
+    ]);
+    expect(parsed[0]?.assertion).toMatchObject({ expected: '\n  <p>本文</p>\n' });
+    expect(
+      parseValidatorRules([
+        validationRule({
+          target: { kind: 'source', file: 'styles.css' },
+          assertion: {
+            kind: 'text',
+            operator: 'contains-normalized',
+            expected: '.card { color: #24323d; }',
+          },
+        }),
+      ])[0]?.assertion,
+    ).toMatchObject({ operator: 'contains-normalized' });
+    expect(() =>
+      parseValidatorRules([
+        validationRule({
+          target: { kind: 'source', file: 'index.html' },
+          assertion: { kind: 'exists' },
+        }),
+      ]),
+    ).toThrow(/source.*text|text.*source/i);
+    expect(() =>
+      parseValidatorRules([
+        validationRule({
+          assertion: {
+            kind: 'text',
+            operator: 'contains-normalized',
+            expected: '本文',
+          },
+        }),
+      ]),
+    ).toThrow(/contains-normalized.*source|source.*contains-normalized/i);
+  });
+
+  it.each([
+    ['countのexpected欠落', { kind: 'count', operator: 'equals' }],
+    ['contrastの範囲外', { kind: 'contrast', minimum: 0.5 }],
+    ['existsの未知field', { kind: 'exists', solutionFiles: {} }],
+  ])('%sを拒否する', (_name, assertion) => {
+    expect(() =>
+      parseValidatorRules([
+        {
+          ...validationRule(),
+          assertion,
+        },
+      ]),
+    ).toThrow(/assertion|契約/i);
+  });
+
+  it('Target、Feedback、Rule rootの未知fieldを拒否する', () => {
+    for (const rule of [
+      {
+        ...validationRule(),
+        target: { kind: 'selector', selector: 'main', fixtures: [] },
+      },
+      {
+        ...validationRule(),
+        feedback: { ...validationRule().feedback, solutionFiles: {} },
+      },
+      {
+        ...validationRule(),
+        solutionFiles: {},
+      },
+    ]) {
+      expect(() => parseValidatorRules([rule])).toThrow(/field|target|feedback|契約/i);
+    }
+  });
 });
 
 describe('buildSnapshotPolicy', () => {
+  it('focus-visible-styleは対象Selectorと専用Computed Styleだけを検証用状態へ要求する', () => {
+    const policy = buildSnapshotPolicy([
+      validationRule({
+        target: { kind: 'selector', selector: '.primary-link' },
+        assertion: {
+          kind: 'focus-visible-style',
+          property: 'outline-width',
+          operator: 'gte',
+          expected: 3,
+        } as never,
+      }),
+    ]);
+
+    expect(policy).toMatchObject({
+      focusVisibleSelectors: ['.primary-link'],
+      focusVisibleComputedStyles: ['outline-width'],
+    });
+  });
+
   it('観測fieldを重複排除・辞書順で抽出しcontrastの背景画像とnode全件を要求する', () => {
     const policy = buildSnapshotPolicy([
       validationRule({
@@ -72,6 +166,8 @@ describe('buildSnapshotPolicy', () => {
       selectors: ['.a', '.item', '.z'],
       attributes: ['aria-label'],
       computedStyles: ['background-color', 'background-image', 'color', 'display'],
+      focusVisibleSelectors: [],
+      focusVisibleComputedStyles: [],
       includeAllElements: true,
     });
   });
@@ -125,5 +221,23 @@ describe('buildSnapshotPolicy', () => {
     ]);
 
     expect(policy.includeAllElements).toBe(true);
+  });
+
+  it('Source targetはPreview Bridgeの観測項目を増やさない', () => {
+    expect(
+      buildSnapshotPolicy([
+        validationRule({
+          target: { kind: 'source', file: 'index.html' },
+          assertion: { kind: 'text', operator: 'contains', expected: '  <p>本文</p>' },
+        }),
+      ]),
+    ).toEqual({
+      selectors: [],
+      attributes: [],
+      computedStyles: [],
+      focusVisibleSelectors: [],
+      focusVisibleComputedStyles: [],
+      includeAllElements: false,
+    });
   });
 });

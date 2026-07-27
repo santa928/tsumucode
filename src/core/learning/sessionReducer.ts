@@ -30,6 +30,11 @@ export type LearningSessionAction =
   | { readonly type: 'editor.cursor'; readonly path: string; readonly cursor: EditorCursor }
   | { readonly type: 'editor.changed'; readonly path: string; readonly content: string }
   | {
+      readonly type: 'editor.reset';
+      readonly files: Readonly<Record<string, string>>;
+      readonly selectedFile: string;
+    }
+  | {
       readonly type: 'preview.completed';
       readonly revision: number;
       readonly diagnostics: readonly RunnerDiagnostic[];
@@ -86,6 +91,23 @@ export function learningSessionReducer(
         executionRevision: state.executionRevision + 1,
         saveStatus: 'saving',
       };
+    case 'editor.reset': {
+      const resetState: LearningSessionState = {
+        ...state,
+        phase: 'exercise',
+        files: { ...action.files },
+        selectedFile: action.selectedFile,
+        cursors: {},
+        executionRevision: state.executionRevision + 1,
+        previewRevision: null,
+        diagnostics: [],
+        validationHistory: [],
+        revealedHintIds: [],
+        saveStatus: 'saving',
+      };
+      Reflect.deleteProperty(resetState, 'reviewReturn');
+      return resetState;
+    }
     case 'preview.completed':
       return action.revision === state.executionRevision
         ? {

@@ -29,6 +29,8 @@ const assets: AssetRef[] = [
     mediaType: 'image',
     alt: 'HTML要素の図',
     provenanceId: 'original-html-diagram',
+    intrinsicWidth: 640,
+    intrinsicHeight: 360,
   },
 ];
 
@@ -56,10 +58,13 @@ describe('SlideBlocks', () => {
     expect(codeRegion).toHaveAttribute('tabindex', '0');
     expect(codeRegion).toHaveAttribute('data-slide-horizontal-scroll');
 
-    expect(screen.getByRole('img', { name: 'HTML要素の組み立て図' })).toHaveAttribute(
-      'src',
-      '/repository-name/generated/assets/html-diagram.svg',
-    );
+    const image = screen.getByRole('img', { name: 'HTML要素の組み立て図' });
+    expect(image).toHaveAttribute('src', '/repository-name/generated/assets/html-diagram.svg');
+    expect(image).toHaveAttribute('width', '640');
+    expect(image).toHaveAttribute('height', '360');
+    expect(image).toHaveAttribute('decoding', 'async');
+    expect(image).toHaveAttribute('fetchpriority', 'low');
+    expect(image).toHaveStyle({ aspectRatio: '640 / 360' });
     expect(screen.getByRole('region', { name: '今すぐ試す（約2分）' })).toHaveTextContent(
       '確認すること：h1が題名を表すことを確認する',
     );

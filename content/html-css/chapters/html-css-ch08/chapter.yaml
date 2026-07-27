@@ -1,7 +1,7 @@
 id: html-css-ch08
 sequence: 8
 title: Flexbox
-goal: Main AxisとCross Axisを基準に、NavigationとCard Rowを柔軟に配置する
+goal: Main AxisとCross Axisを基準に、NavigationとCard Rowを段階的に配置する
 estimatedMinutes: 55
 kind: standard
 lessonSources:
