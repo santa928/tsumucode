@@ -13,9 +13,9 @@ on:
         required: true
         default: false
       release_mode:
-        description: 新しい候補か公開済みReleaseへのrollbackか
+        description: 正式候補、身内向けβ、公開済みReleaseへのrollback
         type: choice
-        options: [candidate, rollback]
+        options: [candidate, beta, rollback]
         required: true
         default: candidate
       source_sha:
@@ -122,6 +122,9 @@ jobs:
       - name: Release continuity for deploy candidate
         if: needs.resolve.outputs.release_mode == 'candidate'
         run: ./scripts/docker-compose.sh run --rm app npm run release:continuity
+      - name: Release continuity for beta deploy
+        if: needs.resolve.outputs.release_mode == 'beta'
+        run: ./scripts/docker-compose.sh run --rm app npm run release:continuity -- --quality-only
       - name: Confirm rollback checkout
         if: needs.resolve.outputs.release_mode == 'rollback'
         env:

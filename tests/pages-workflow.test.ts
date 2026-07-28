@@ -6,6 +6,7 @@ import { parse } from 'yaml';
 const workflowUrl = new URL('../.github/workflows/pages.yml', import.meta.url);
 
 interface WorkflowStep {
+  readonly if?: string;
   readonly name?: string;
   readonly uses?: string;
   readonly run?: string;
@@ -42,6 +43,7 @@ describe('TsumuCode Pages workflow', () => {
     expect(parsed.on).toHaveProperty('workflow_dispatch.inputs.deploy.type', 'boolean');
     expect(parsed.on).toHaveProperty('workflow_dispatch.inputs.release_mode.options', [
       'candidate',
+      'beta',
       'rollback',
     ]);
     expect(parsed.jobs?.deploy?.if).toContain("github.event_name == 'workflow_dispatch'");
@@ -58,6 +60,25 @@ describe('TsumuCode Pages workflow', () => {
     expect(deploy?.steps?.[0]?.uses).toBe(
       'actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128',
     );
+  });
+
+  it('betaは全品質Gateを共有し正式Approvalとtag記録だけを実行しない', () => {
+    const { parsed, source } = workflow();
+    const qualitySteps = parsed.jobs?.quality?.steps ?? [];
+    const betaContinuity = qualitySteps.find(
+      ({ name }) => name === 'Release continuity for beta deploy',
+    );
+    const candidateBinding = qualitySteps.find(
+      ({ name }) => name === 'Bind candidate Artifact to approval',
+    );
+
+    expect(betaContinuity?.if).toContain("needs.resolve.outputs.release_mode == 'beta'");
+    expect(betaContinuity?.run).toContain('release:continuity -- --quality-only');
+    expect(candidateBinding?.if).toBe("needs.resolve.outputs.release_mode == 'candidate'");
+    expect(parsed.jobs?.record_release?.if).toContain("inputs.release_mode == 'candidate'");
+    expect(source).toContain('npm run test:e2e');
+    expect(source).toContain('npm run test:performance');
+    expect(source).toContain('npm run test:lighthouse');
   });
 
   it('既定権限をread-onlyにしRelease tag jobだけcontents writeを持つ', () => {

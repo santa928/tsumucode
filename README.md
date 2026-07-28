@@ -148,6 +148,15 @@ gh workflow run "TsumuCode Pages" --ref main -f source_sha=<40文字の承認済
 
 WorkflowはSource SHA、canonical `dist/` digest、Course/Public Provenance hash、3 Engine、a11y、Security、Performance、静的Artifact検査を結び付けます。公開後はEnvironmentの独立承認、Actions Release Report、annotated tag、公開URLを実確認し、同じRunの値をrevision別の`docs/quality/post-deploy/<revision>.yaml`へ記録してから公開台帳へ追記します。Environment承認を省略した直接Deployや、公開後確認を公開前に合格扱いする運用は行いません。
 
+身内向けβは、mainのSHAを指定して同じ全自動Gateを通したうえで、次のように明示dispatchします。
+
+```bash
+SOURCE_SHA="$(git rev-parse origin/main)"
+gh workflow run "TsumuCode Pages" --ref main -f source_sha="$SOURCE_SHA" -f release_mode=beta -f deploy=true
+```
+
+βでは初心者全コースを観察済みとは主張せず、正式Releaseのtagや公開台帳は作成しません。
+
 公開台帳へ追記するときは、対象Runの`release-report-<source SHA>` Artifactを`.release-evidence/`へ展開し、`content/html-css/release-history.yaml`の`releases`末尾へ承認済みcandidateを1件だけ移します。追記RecordにはQuality/Report Artifact IDとdigest、workflow head/run/attempt、公開URLを記録し、`candidate`はbindingと`persistentIds`を空にした`draft`へ戻して`previousReleaseTag`を最新tagへ接続します。
 
 ```bash
