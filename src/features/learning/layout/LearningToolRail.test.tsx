@@ -15,8 +15,11 @@ describe('LearningToolRail', () => {
     expect(screen.getByRole('navigation', { name: '学習ツール' })).toHaveClass(
       'tc-learning-tool-rail',
     );
-    expect(screen.getByRole('link', { name: 'TsumuCodeホームへ' })).toHaveAttribute('href', '/');
-    expect(screen.getByLabelText('ベータ版')).toBeVisible();
+    expect(screen.getByRole('link', { name: 'TsumuCodeホームへ（ベータ版）' })).toHaveAttribute(
+      'href',
+      '/',
+    );
+    expect(screen.getByRole('status', { name: 'ベータ版' })).toBeVisible();
     expect(screen.getByRole('link', { name: 'コースマップへ戻る' })).toHaveAttribute(
       'href',
       '/courses/html-css',

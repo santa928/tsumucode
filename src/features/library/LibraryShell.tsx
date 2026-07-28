@@ -15,7 +15,7 @@ function LibraryCatalogHeader() {
       <div className="tc-content-frame mx-auto flex min-h-14 w-full max-w-[var(--tc-content-max)] items-center justify-between">
         <Link
           to="/"
-          aria-label="TsumuCodeホームへ"
+          aria-label="TsumuCodeホームへ（ベータ版）"
           className="inline-flex min-h-11 items-center gap-3 font-black"
         >
           <span aria-hidden="true" className="grid grid-cols-2 gap-0.5">

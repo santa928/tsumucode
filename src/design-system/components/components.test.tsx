@@ -10,9 +10,9 @@ import { StatusBadge } from './StatusBadge';
 import { WorkshopNotice } from './WorkshopNotice';
 
 describe('Design System primitives', () => {
-  it('BetaBadgeは短い表示とベータ版のAccessible Nameを両立する', () => {
+  it('BetaBadgeは短い表示とベータ版のStatus Nameを両立する', () => {
     render(<BetaBadge />);
-    expect(screen.getByLabelText('ベータ版')).toHaveTextContent('β');
+    expect(screen.getByRole('status', { name: 'ベータ版' })).toHaveTextContent('β');
   });
 
   it('StackedCardの要素型とspacingを利用側が安全に上書きできる', () => {

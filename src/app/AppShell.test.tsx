@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react';
+import { act, screen, within } from '@testing-library/react';
 import { Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderWithRouter } from '@/test/renderWithRouter';
@@ -124,7 +124,11 @@ describe('AppShell', () => {
 
     expect(screen.getByRole('banner')).toBeInTheDocument();
     expect(screen.getByRole('navigation', { name: 'メインナビゲーション' })).toBeInTheDocument();
-    expect(screen.getByLabelText('ベータ版')).toBeVisible();
+    expect(screen.getByRole('link', { name: 'TsumuCodeホームへ（ベータ版）' })).toHaveAttribute(
+      'href',
+      '/',
+    );
+    expect(screen.getByRole('status', { name: 'ベータ版' })).toBeVisible();
     expect(screen.getByRole('main')).toHaveAttribute('id', 'main-content');
     expect(screen.getByRole('main')).toHaveClass('min-h-dvh');
     expect(screen.getByTestId('app-shell')).toHaveAttribute('data-learning-route', 'false');
@@ -172,7 +176,7 @@ describe('AppShell', () => {
       name: '端末の学習データに関するお知らせ',
     });
     expect(noticeRegion).toHaveTextContent('教材の更新に合わせて');
-    expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(within(noticeRegion).getByRole('status')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'このお知らせを閉じる' }));
     expect(runtime.notices.dismiss).toHaveBeenCalledWith('migration:notice-1');

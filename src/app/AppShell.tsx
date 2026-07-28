@@ -43,7 +43,7 @@ export function AppShell() {
           <div className="tc-content-frame mx-auto flex w-full max-w-[var(--tc-content-max)] flex-wrap items-center justify-between gap-4 py-4">
             <Link
               to="/"
-              aria-label="TsumuCodeホームへ"
+              aria-label="TsumuCodeホームへ（ベータ版）"
               className="inline-flex min-h-11 items-center gap-3 font-black"
             >
               <span aria-hidden="true" className="grid grid-cols-2 gap-0.5">

@@ -12,7 +12,7 @@ export interface LearningToolRailProps {
 export function LearningToolRail({ coursePath, lessonTitle, children }: LearningToolRailProps) {
   return (
     <nav aria-label="学習ツール" className="tc-learning-tool-rail">
-      <Link to="/" aria-label="TsumuCodeホームへ" className="tc-learning-tool-brand">
+      <Link to="/" aria-label="TsumuCodeホームへ（ベータ版）" className="tc-learning-tool-brand">
         <span aria-hidden="true" className="tc-learning-tool-mark">
           <span />
           <span />
