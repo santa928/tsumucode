@@ -107,7 +107,10 @@ describe('SlidePage', () => {
       screen.queryByRole('complementary', { name: 'スライド部品トレイ' }),
     ).not.toBeInTheDocument();
     expect(screen.getByRole('navigation', { name: '学習ツール' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'TsumuCodeホームへ' })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: 'TsumuCodeホームへ（ベータ版）' })).toHaveAttribute(
+      'href',
+      '/',
+    );
     expect(screen.getByRole('progressbar', { name: 'スライドの現在位置' })).toHaveAttribute(
       'aria-valuetext',
       '2 / 2 ピース完了',

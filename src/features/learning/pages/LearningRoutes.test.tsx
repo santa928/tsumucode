@@ -826,7 +826,10 @@ describe('Learning routes', () => {
 
     expect(await findCodeWorkspace()).toBeInTheDocument();
     expect(screen.getByRole('navigation', { name: '学習ツール' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'TsumuCodeホームへ' })).toHaveAttribute('href', '#/');
+    expect(screen.getByRole('link', { name: 'TsumuCodeホームへ（ベータ版）' })).toHaveAttribute(
+      'href',
+      '#/',
+    );
     expect(screen.getByRole('region', { name: 'コード演習の本文' })).toBeInTheDocument();
     expect(screen.getByRole('region', { name: '演習の手順' })).toBeInTheDocument();
     const instructions = screen.getByRole('complementary', { name: '工程票' });
