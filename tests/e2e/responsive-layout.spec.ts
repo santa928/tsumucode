@@ -214,7 +214,7 @@ for (const viewport of NORMAL_PC_VIEWPORTS) {
     const toolRail = page.getByRole('navigation', { name: '学習ツール' });
     const actionRail = page.locator('.tc-learning-shell-pager');
     const brand = page.getByRole('link', { name: 'TsumuCodeホームへ（ベータ版）' });
-    const betaBadge = page.getByRole('status', { name: 'ベータ版' });
+    const betaBadge = brand.getByRole('img', { name: 'ベータ版' });
     const course = page.getByRole('link', { name: 'コースマップへ戻る' });
     const learningStage = page.getByTestId('learning-stage');
     const slideStage = page.getByTestId('slide-stage');

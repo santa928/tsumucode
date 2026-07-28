@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { LibraryShell } from './LibraryShell';
@@ -30,11 +30,12 @@ describe('LibraryShell', () => {
 
     expect(screen.getByTestId('library-shell')).toHaveAttribute('data-library-viewer', 'false');
     expect(screen.getByRole('banner')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'TsumuCodeホームへ（ベータ版）' })).toHaveAttribute(
+    const brandLink = screen.getByRole('link', { name: 'TsumuCodeホームへ（ベータ版）' });
+    expect(brandLink).toHaveAttribute(
       'href',
       '/',
     );
-    expect(screen.getByRole('status', { name: 'ベータ版' })).toBeVisible();
+    expect(within(brandLink).getByRole('img', { name: 'ベータ版' })).toBeVisible();
     expect(screen.getByRole('main')).toHaveClass('tc-library-index-main');
     expect(screen.getByRole('main')).not.toHaveClass('tc-learning-main');
   });
