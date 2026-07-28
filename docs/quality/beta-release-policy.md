@@ -1,8 +1,8 @@
 # TsumuCode 身内向けβ公開設計
 
-- status: `review-required`
+- status: `approved`
 - approvedBy: `product-owner`
-- approvedAt: `2026-07-28`
+- approvedAt: `2026-07-29`
 - scope: `GitHub Pages beta deployment`
 
 ## 目的
