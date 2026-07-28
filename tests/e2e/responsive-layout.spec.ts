@@ -214,11 +214,13 @@ for (const viewport of NORMAL_PC_VIEWPORTS) {
     const toolRail = page.getByRole('navigation', { name: '学習ツール' });
     const actionRail = page.locator('.tc-learning-shell-pager');
     const brand = page.getByRole('link', { name: 'TsumuCodeホームへ' });
+    const betaBadge = page.locator('[aria-label="ベータ版"]');
     const course = page.getByRole('link', { name: 'コースマップへ戻る' });
     const learningStage = page.getByTestId('learning-stage');
     const slideStage = page.getByTestId('slide-stage');
     await expect(toolRail).toBeVisible();
     await expect(slideStage.getByRole('heading', { level: 1 })).toBeVisible();
+    await expect(betaBadge).toBeVisible();
 
     const toolRailRect = await rectangle(toolRail);
     const actionRailRect = await rectangle(actionRail);
@@ -233,6 +235,11 @@ for (const viewport of NORMAL_PC_VIEWPORTS) {
     expect((await rectangle(course)).bottom - (await rectangle(course)).top).toBeGreaterThanOrEqual(
       44,
     );
+    const badgeRect = await rectangle(betaBadge);
+    const brandRect = await rectangle(brand);
+    expect(badgeRect.top).toBeGreaterThanOrEqual(brandRect.top - 0.5);
+    expect(badgeRect.bottom).toBeLessThanOrEqual(brandRect.bottom + 0.5);
+    expect(badgeRect.right).toBeLessThanOrEqual(brandRect.right + 0.5);
     await expectNoDocumentScroll(page);
     await expectNoHiddenOverflow(learningStage);
 

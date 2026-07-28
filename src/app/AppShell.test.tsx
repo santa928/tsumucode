@@ -124,6 +124,7 @@ describe('AppShell', () => {
 
     expect(screen.getByRole('banner')).toBeInTheDocument();
     expect(screen.getByRole('navigation', { name: 'メインナビゲーション' })).toBeInTheDocument();
+    expect(screen.getByLabelText('ベータ版')).toBeVisible();
     expect(screen.getByRole('main')).toHaveAttribute('id', 'main-content');
     expect(screen.getByRole('main')).toHaveClass('min-h-dvh');
     expect(screen.getByTestId('app-shell')).toHaveAttribute('data-learning-route', 'false');

@@ -30,7 +30,8 @@ describe('LibraryShell', () => {
 
     expect(screen.getByTestId('library-shell')).toHaveAttribute('data-library-viewer', 'false');
     expect(screen.getByRole('banner')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'TsumuCode' })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: 'TsumuCodeホームへ' })).toHaveAttribute('href', '/');
+    expect(screen.getByLabelText('ベータ版')).toBeVisible();
     expect(screen.getByRole('main')).toHaveClass('tc-library-index-main');
     expect(screen.getByRole('main')).not.toHaveClass('tc-learning-main');
   });

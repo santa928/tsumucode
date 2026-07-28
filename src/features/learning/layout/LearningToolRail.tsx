@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import { BetaBadge } from '../../../design-system/components/BetaBadge';
 
 export interface LearningToolRailProps {
   readonly coursePath: string;
@@ -17,7 +18,10 @@ export function LearningToolRail({ coursePath, lessonTitle, children }: Learning
           <span />
           <span />
         </span>
-        <span>TsumuCode</span>
+        <span className="inline-flex items-center gap-2">
+          TsumuCode
+          <BetaBadge />
+        </span>
       </Link>
       <Link to={coursePath} aria-label="コースマップへ戻る" className="tc-learning-tool-course">
         ← コース

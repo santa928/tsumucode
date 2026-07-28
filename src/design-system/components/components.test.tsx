@@ -3,12 +3,18 @@ import { createRef } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import { ActionLink } from './ActionLink';
+import { BetaBadge } from './BetaBadge';
 import { PieceProgress } from './PieceProgress';
 import { StackedCard } from './StackedCard';
 import { StatusBadge } from './StatusBadge';
 import { WorkshopNotice } from './WorkshopNotice';
 
 describe('Design System primitives', () => {
+  it('BetaBadgeは短い表示とベータ版のAccessible Nameを両立する', () => {
+    render(<BetaBadge />);
+    expect(screen.getByLabelText('ベータ版')).toHaveTextContent('β');
+  });
+
   it('StackedCardの要素型とspacingを利用側が安全に上書きできる', () => {
     render(
       <StackedCard as="article" className="p-2">

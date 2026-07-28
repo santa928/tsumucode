@@ -1,5 +1,6 @@
 import type { MouseEvent } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
+import { BetaBadge } from '../../design-system/components/BetaBadge';
 
 /** Hashを変更せず、Skip Linkから閲覧MainへFocusを移す。 */
 function focusMainContent(event: MouseEvent<HTMLAnchorElement>): void {
@@ -12,13 +13,20 @@ function LibraryCatalogHeader() {
   return (
     <header className="tc-site-header border-b border-workshop-border bg-workshop-surface">
       <div className="tc-content-frame mx-auto flex min-h-14 w-full max-w-[var(--tc-content-max)] items-center justify-between">
-        <Link to="/" className="inline-flex min-h-11 items-center gap-3 font-black">
+        <Link
+          to="/"
+          aria-label="TsumuCodeホームへ"
+          className="inline-flex min-h-11 items-center gap-3 font-black"
+        >
           <span aria-hidden="true" className="grid grid-cols-2 gap-0.5">
             <span className="size-2.5 rounded-workshop-piece bg-workshop-learning" />
             <span className="size-2.5 rounded-workshop-piece bg-workshop-complete" />
             <span className="col-span-2 h-2.5 rounded-workshop-piece bg-workshop-primary" />
           </span>
-          <span className="text-xl">TsumuCode</span>
+          <span className="inline-flex items-center gap-2 text-xl">
+            TsumuCode
+            <BetaBadge />
+          </span>
         </Link>
         <Link
           to="/"
