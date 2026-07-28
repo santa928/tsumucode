@@ -7,7 +7,10 @@ import {
   formatArtifactHashOutput,
   parseReleaseReport,
 } from '../../scripts/release/writeReleaseReport';
-import { serializeReleaseTargetOutput } from '../../scripts/release/verifyReleaseTarget';
+import {
+  resolveBetaTarget,
+  serializeReleaseTargetOutput,
+} from '../../scripts/release/verifyReleaseTarget';
 import { validateManualQualityRecord } from '../../scripts/release/verifyReleaseApproval';
 import { ReleaseApprovalSchema } from '../../scripts/release/releaseSchema';
 
@@ -98,6 +101,22 @@ describe('release report', () => {
 });
 
 describe('release target output', () => {
+  it('最新mainとcheckoutが一致するSHAだけをbeta targetにする', () => {
+    expect(resolveBetaTarget(sha, sha, sha)).toMatchObject({
+      checkoutSha: sha,
+      verifiedSourceCommit: sha,
+      releaseMode: 'beta',
+      revision: 'beta',
+    });
+  });
+
+  it.each([
+    ['dispatch', 'b'.repeat(40), sha, sha],
+    ['checkout', sha, sha, 'b'.repeat(40)],
+  ] as const)('%s SHAが一致しないbeta targetを拒否する', (_label, source, workflow, checkout) => {
+    expect(() => resolveBetaTarget(source, workflow, checkout)).toThrow(/beta.*SHA/iu);
+  });
+
   it('改行を含む値をGitHub outputへ書き出さない', () => {
     expect(() =>
       serializeReleaseTargetOutput({
@@ -110,6 +129,30 @@ describe('release target output', () => {
         publicProvenanceSha256: 'd'.repeat(64),
       }),
     ).toThrow(/改行/iu);
+  });
+});
+
+describe('beta release report', () => {
+  it('beta Deploy reportをSourceと品質Artifactへ結び付ける', () => {
+    const report = buildReleaseReport({
+      sourceSha: sha,
+      workflowHeadSha: sha,
+      releaseMode: 'beta',
+      artifactDigest: digest,
+      courseHash: 'c'.repeat(64),
+      provenanceHash: 'd'.repeat(64),
+      qualityArtifactId: '123',
+      qualityArtifactDigest: `sha256:${'e'.repeat(64)}`,
+      workflowRunId: '456',
+      workflowRunAttempt: '1',
+      pageUrl: 'https://example.github.io/tsumucode/',
+    });
+
+    expect(parseReleaseReport(report)).toMatchObject({
+      sourceSha: sha,
+      workflowHeadSha: sha,
+      releaseMode: 'beta',
+    });
   });
 });
 

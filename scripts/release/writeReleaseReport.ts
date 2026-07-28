@@ -140,7 +140,7 @@ export function parseReleaseReport(source: string): ReleaseReportInput {
 export function buildReleaseReport(input: ReleaseReportInput): string {
   const sourceSha = CommitShaSchema.parse(input.sourceSha);
   const workflowHeadSha = CommitShaSchema.parse(input.workflowHeadSha);
-  const releaseMode = z.enum(['candidate', 'rollback']).parse(input.releaseMode);
+  const releaseMode = z.enum(['candidate', 'beta', 'rollback']).parse(input.releaseMode);
   const artifactDigest = Sha256Schema.parse(input.artifactDigest);
   const courseHash = Sha256Schema.parse(input.courseHash);
   const provenanceHash = Sha256Schema.parse(input.provenanceHash);

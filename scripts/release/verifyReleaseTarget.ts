@@ -14,7 +14,7 @@ import {
 
 const execFileAsync = promisify(execFile);
 
-export type ReleaseMode = 'candidate' | 'rollback';
+export type ReleaseMode = 'candidate' | 'beta' | 'rollback';
 
 export interface ResolvedReleaseTarget {
   readonly checkoutSha: string;
@@ -24,6 +24,32 @@ export interface ResolvedReleaseTarget {
   readonly canonicalDistSha256: string;
   readonly courseManifestSha256: string;
   readonly publicProvenanceSha256: string;
+}
+
+/** 最新main、workflow、checkoutが同一のβSourceだけをDeploy対象へ変換する。 */
+export function resolveBetaTarget(
+  sourceShaInput: string,
+  workflowHeadShaInput: string,
+  checkoutHeadShaInput: string,
+): ResolvedReleaseTarget {
+  const sourceSha = CommitShaSchema.parse(sourceShaInput);
+  const workflowHeadSha = CommitShaSchema.parse(workflowHeadShaInput);
+  const checkoutHeadSha = CommitShaSchema.parse(checkoutHeadShaInput);
+  if (sourceSha !== workflowHeadSha) {
+    throw new Error('beta source SHAが最新mainのworkflow SHAと一致しません');
+  }
+  if (checkoutHeadSha !== workflowHeadSha) {
+    throw new Error('beta checkout SHAがworkflow SHAと一致しません');
+  }
+  return {
+    checkoutSha: sourceSha,
+    verifiedSourceCommit: sourceSha,
+    releaseMode: 'beta',
+    revision: 'beta',
+    canonicalDistSha256: '',
+    courseManifestSha256: '',
+    publicProvenanceSha256: '',
+  };
 }
 
 /** 登録済み公開Releaseからrollback対象SHAを一意に解決する。 */
@@ -113,7 +139,7 @@ export async function verifyPublishedTag(
   assertPublishedTagMessage(release, tagObject.slice(messageOffset + 2));
 }
 
-/** candidate承認または公開済みrollbackだけをcheckout可能なtargetへ解決する。 */
+/** candidate承認、最新mainのβ、または公開済みrollbackをcheckout可能なtargetへ解決する。 */
 export async function verifyReleaseTarget(options: {
   readonly repositoryRoot: string;
   readonly mode: ReleaseMode;
@@ -123,6 +149,13 @@ export async function verifyReleaseTarget(options: {
   const root = path.resolve(options.repositoryRoot);
   const sourceSha = CommitShaSchema.parse(options.sourceSha);
   const workflowHeadSha = CommitShaSchema.parse(options.workflowHeadSha);
+  const { stdout: checkoutHeadShaOutput } = await execFileAsync('git', ['rev-parse', 'HEAD'], {
+    cwd: root,
+    encoding: 'utf8',
+  });
+  if (options.mode === 'beta') {
+    return resolveBetaTarget(sourceSha, workflowHeadSha, checkoutHeadShaOutput.trim());
+  }
   const history = ReleaseHistorySchema.parse(
     parse(await readFile(path.join(root, 'content/html-css/release-history.yaml'), 'utf8')),
   );
@@ -188,7 +221,9 @@ async function writeTargetOutput(filePath: string, target: ResolvedReleaseTarget
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const arguments_ = process.argv.slice(2);
   const mode = requiredArgument(arguments_, '--mode');
-  if (mode !== 'candidate' && mode !== 'rollback') throw new Error('release modeが不正です');
+  if (mode !== 'candidate' && mode !== 'beta' && mode !== 'rollback') {
+    throw new Error('release modeが不正です');
+  }
   const target = await verifyReleaseTarget({
     repositoryRoot: process.cwd(),
     mode,
