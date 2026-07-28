@@ -31,10 +31,7 @@ describe('LibraryShell', () => {
     expect(screen.getByTestId('library-shell')).toHaveAttribute('data-library-viewer', 'false');
     expect(screen.getByRole('banner')).toBeInTheDocument();
     const brandLink = screen.getByRole('link', { name: 'TsumuCodeホームへ（ベータ版）' });
-    expect(brandLink).toHaveAttribute(
-      'href',
-      '/',
-    );
+    expect(brandLink).toHaveAttribute('href', '/');
     expect(within(brandLink).getByRole('img', { name: 'ベータ版' })).toBeVisible();
     expect(screen.getByRole('main')).toHaveClass('tc-library-index-main');
     expect(screen.getByRole('main')).not.toHaveClass('tc-learning-main');

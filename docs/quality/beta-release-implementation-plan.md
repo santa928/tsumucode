@@ -41,11 +41,13 @@
 ### Task 1: βRelease targetとReport schema
 
 **Files:**
+
 - Modify: `tests/content/release-report.test.ts`
 - Modify: `scripts/release/verifyReleaseTarget.ts`
 - Modify: `scripts/release/writeReleaseReport.ts`
 
 **Interfaces:**
+
 - Produces: `ReleaseMode = 'candidate' | 'beta' | 'rollback'`
 - Produces: `resolveBetaTarget(sourceSha: string, workflowHeadSha: string, checkoutHeadSha: string): ResolvedReleaseTarget`
 - Produces: `buildReleaseReport(input)`／`parseReleaseReport(source)`が`releaseMode: 'beta'`を往復する。
@@ -171,11 +173,13 @@ git -c user.name=santa928 -c user.email=38289324+santa928@users.noreply.github.c
 ### Task 2: GitHub Pages βworkflow
 
 **Files:**
+
 - Modify: `tests/pages-workflow.test.ts`
 - Modify: `.github/workflows/pages.yml`
 - Modify: `README.md`
 
 **Interfaces:**
+
 - Consumes: `release:target -- --mode beta --source-sha "$SOURCE_SHA" --workflow-head-sha "$SOURCE_SHA"`
 - Consumes: `release:report -- --release-mode beta`
 - Produces: `workflow_dispatch.inputs.release_mode.options = [candidate, beta, rollback]`
@@ -271,6 +275,7 @@ git -c user.name=santa928 -c user.email=38289324+santa928@users.noreply.github.c
 ### Task 3: 高さを増やさないβ表示
 
 **Files:**
+
 - Create: `src/design-system/components/BetaBadge.tsx`
 - Modify: `src/design-system/components/components.test.tsx`
 - Modify: `src/app/AppShell.tsx`
@@ -282,6 +287,7 @@ git -c user.name=santa928 -c user.email=38289324+santa928@users.noreply.github.c
 - Modify: `tests/e2e/responsive-layout.spec.ts`
 
 **Interfaces:**
+
 - Produces: `BetaBadge(): JSX.Element`
 - Accessible Name: `ベータ版`
 - Visible text: `β`
@@ -379,9 +385,11 @@ git -c user.name=santa928 -c user.email=38289324+santa928@users.noreply.github.c
 ### Task 4: 完全な公開前検証
 
 **Files:**
+
 - Verify only: repository working tree and canonical `dist/`
 
 **Interfaces:**
+
 - Consumes: Tasks 1–3のcommits
 - Produces: 公開対象SHAに対するDocker品質証跡
 
@@ -428,11 +436,13 @@ Expected: 未commit差分なし。公開範囲のcommit author／committerにホ
 ### Task 5: main反映とGitHub Pages β公開
 
 **Files:**
+
 - External state: `origin/main`
 - External state: GitHub Actions `TsumuCode Pages`
 - External state: `https://santa928.github.io/tsumucode/`
 
 **Interfaces:**
+
 - Consumes: Task 4を通過した40文字`HEAD` SHA
 - Produces: 同じSHAへ結合されたGitHub Pages βDeploymentとReport Artifact
 

@@ -13,17 +13,17 @@
 
 ## 要件台帳
 
-| ID | 状態 | 要件 |
-| --- | --- | --- |
-| REQ-BETA-001 | 追加 | Pages workflowへ`beta`公開Modeを追加する |
-| REQ-BETA-002 | 追加 | β公開対象はdispatch時点の最新`main` SHAと完全一致させる |
+| ID           | 状態 | 要件                                                                                                                                                       |
+| ------------ | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| REQ-BETA-001 | 追加 | Pages workflowへ`beta`公開Modeを追加する                                                                                                                   |
+| REQ-BETA-002 | 追加 | β公開対象はdispatch時点の最新`main` SHAと完全一致させる                                                                                                    |
 | REQ-BETA-003 | 維持 | Content provenance、独立Lesson review、Compile、Continuity、Lint、Typecheck、Unit、3 Engine E2E、axe、Performance、Lighthouse、Static Artifactをすべて通す |
-| REQ-BETA-004 | 維持 | 正式`candidate`の初心者観察、Release Approval、Artifact binding、tag、台帳の要件を変更しない |
-| REQ-BETA-005 | 追加 | βDeployにもSource SHA、Artifact hash、品質Artifact、Workflow run、公開URLを結合したReportを残す |
-| REQ-BETA-006 | 追加 | βDeployでは正式Release tagを作らず、`release-history.yaml`へReleaseを追加しない |
-| REQ-BETA-007 | 追加 | TsumuCode名の横へ、Layoutの高さを増やさない小さな「β」表示を追加する |
-| REQ-BETA-008 | 維持 | GitHub Pagesは認証を追加せず、URLを知る人以外も閲覧可能な公開Siteとして扱う |
-| REQ-BETA-009 | 追加 | 正式版への昇格条件は、5 Checkpoint、Guided Project、Capstone、未解決Finding 0件の初心者観察完了とする |
+| REQ-BETA-004 | 維持 | 正式`candidate`の初心者観察、Release Approval、Artifact binding、tag、台帳の要件を変更しない                                                               |
+| REQ-BETA-005 | 追加 | βDeployにもSource SHA、Artifact hash、品質Artifact、Workflow run、公開URLを結合したReportを残す                                                            |
+| REQ-BETA-006 | 追加 | βDeployでは正式Release tagを作らず、`release-history.yaml`へReleaseを追加しない                                                                            |
+| REQ-BETA-007 | 追加 | TsumuCode名の横へ、Layoutの高さを増やさない小さな「β」表示を追加する                                                                                       |
+| REQ-BETA-008 | 維持 | GitHub Pagesは認証を追加せず、URLを知る人以外も閲覧可能な公開Siteとして扱う                                                                                |
+| REQ-BETA-009 | 追加 | 正式版への昇格条件は、5 Checkpoint、Guided Project、Capstone、未解決Finding 0件の初心者観察完了とする                                                      |
 
 保留・削除する既存要件はない。
 

@@ -125,10 +125,7 @@ describe('AppShell', () => {
     expect(screen.getByRole('banner')).toBeInTheDocument();
     expect(screen.getByRole('navigation', { name: 'メインナビゲーション' })).toBeInTheDocument();
     const brandLink = screen.getByRole('link', { name: 'TsumuCodeホームへ（ベータ版）' });
-    expect(brandLink).toHaveAttribute(
-      'href',
-      '/',
-    );
+    expect(brandLink).toHaveAttribute('href', '/');
     expect(within(brandLink).getByRole('img', { name: 'ベータ版' })).toBeVisible();
     expect(screen.getByRole('main')).toHaveAttribute('id', 'main-content');
     expect(screen.getByRole('main')).toHaveClass('min-h-dvh');
