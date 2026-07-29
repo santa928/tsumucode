@@ -46,9 +46,21 @@ describe('TsumuCode Pages workflow', () => {
       'beta',
       'rollback',
     ]);
+    expect(parsed.on).toHaveProperty(
+      'workflow_dispatch.inputs.source_sha.description',
+      'candidate承認、身内向けβ、または公開済みReleaseに登録された40文字SHA',
+    );
     expect(parsed.jobs?.deploy?.if).toContain("github.event_name == 'workflow_dispatch'");
     expect(parsed.jobs?.deploy?.if).toContain('inputs.deploy == true');
     expect(parsed.jobs?.deploy?.if).toContain("github.ref == 'refs/heads/main'");
+  });
+
+  it('release targetの解決step名にcandidate、beta、rollbackを明示する', () => {
+    const targetResolver = workflow().parsed.jobs?.resolve?.steps?.find(({ run }) =>
+      run?.includes('npm run release:target'),
+    );
+
+    expect(targetResolver?.name).toBe('Resolve candidate, beta, or registered rollback');
   });
 
   it('Deploy jobを保護Environmentと最小権限のdeploy-pages 1 stepへ限定する', () => {
@@ -75,7 +87,9 @@ describe('TsumuCode Pages workflow', () => {
     expect(betaContinuity?.if).toContain("needs.resolve.outputs.release_mode == 'beta'");
     expect(betaContinuity?.run).toContain('release:continuity -- --quality-only');
     expect(candidateBinding?.if).toBe("needs.resolve.outputs.release_mode == 'candidate'");
-    expect(parsed.jobs?.record_release?.if).toContain("inputs.release_mode == 'candidate'");
+    expect(parsed.jobs?.record_release?.if).toBe(
+      "github.event_name == 'workflow_dispatch' && inputs.deploy == true && inputs.release_mode == 'candidate' && github.ref == 'refs/heads/main'",
+    );
     expect(source).toContain('npm run test:e2e');
     expect(source).toContain('npm run test:performance');
     expect(source).toContain('npm run test:lighthouse');
