@@ -82,7 +82,7 @@ describe('performance manifest', () => {
       },
       draftPersistenceMaxMs: 500,
       starterReset: {
-        drawerOpenMaxMs: 100,
+        drawerReadyMaxMs: 100,
         previewVisibleMaxMs: 1000,
         addedJavaScriptGzipMaxBytes: 5120,
       },

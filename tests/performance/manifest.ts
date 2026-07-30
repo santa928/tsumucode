@@ -56,7 +56,7 @@ const PerformanceManifestSchema = z.object({
   }),
   draftPersistenceMaxMs: PositiveNumber,
   starterReset: z.object({
-    drawerOpenMaxMs: PositiveNumber,
+    drawerReadyMaxMs: PositiveNumber,
     previewVisibleMaxMs: PositiveNumber,
     addedJavaScriptGzipMaxBytes: PositiveInteger,
   }),

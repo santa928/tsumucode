@@ -21,9 +21,16 @@ interface InteractionReadyProbe {
   readonly exactText?: string;
 }
 
-interface PaintedClickMeasurement {
+interface RafFencedClickMeasurement {
   readonly name: string;
   readonly durationMs: number;
+}
+
+interface ReadyPageClickMeasurement {
+  readonly name: string;
+  readonly readyDurationMs: number;
+  readonly rafFenceDurationMs: number;
+  readonly longTaskDurationsMs: readonly number[];
 }
 
 const manifest = await loadPerformanceManifest();
@@ -127,14 +134,14 @@ async function measureInteraction(
   return measurement;
 }
 
-/** 実click生成時刻からmain document内のready表示と2 RAF paint完了までを測る。 */
-async function measurePaintedPageClick(
+/** 実clickからready表示までを測り、2 RAF fenceまでのLong Taskも収集する。 */
+async function measureReadyPageClick(
   page: Page,
   name: string,
   action: () => Promise<void>,
   ready: Locator,
   readyProbe: InteractionReadyProbe,
-): Promise<PaintedClickMeasurement> {
+): Promise<ReadyPageClickMeasurement> {
   await page.evaluate(
     ({ interactionName, probe }) => {
       const normalizedExpectedText = probe.exactText?.replace(/\s+/gu, ' ').trim();
@@ -155,52 +162,101 @@ async function measurePaintedPageClick(
         throw new Error(`${interactionName}のready probeがclick前から成立しています`);
       }
 
-      const measured = new Promise<number>((resolve) => {
+      const measured = new Promise<{
+        readonly readyDurationMs: number;
+        readonly rafFenceDurationMs: number;
+        readonly longTaskDurationsMs: readonly number[];
+      }>((resolve) => {
+        if (!PerformanceObserver.supportedEntryTypes.includes('longtask')) {
+          throw new Error(`${interactionName}のLong Task計測をこのBrowserはサポートしていません`);
+        }
+
+        const longTasks: { readonly startTime: number; readonly duration: number }[] = [];
+        const longTaskObserver = new PerformanceObserver((list) => {
+          longTasks.push(
+            ...list.getEntries().map(({ startTime, duration }) => ({ startTime, duration })),
+          );
+        });
+        longTaskObserver.observe({ type: 'longtask' });
+
+        let startedAt: number | undefined;
+        let readyAt: number | undefined;
+        function markReady(): void {
+          const started = startedAt;
+          if (started === undefined || readyAt !== undefined || !isReady()) return;
+          const resolvedReadyAt = performance.now();
+          readyAt = resolvedReadyAt;
+          observer.disconnect();
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              const rafFenceAt = performance.now();
+              setTimeout(() => {
+                longTasks.push(
+                  ...longTaskObserver
+                    .takeRecords()
+                    .map(({ startTime, duration }) => ({ startTime, duration })),
+                );
+                longTaskObserver.disconnect();
+                resolve({
+                  readyDurationMs: resolvedReadyAt - started,
+                  rafFenceDurationMs: rafFenceAt - started,
+                  longTaskDurationsMs: longTasks
+                    .filter(
+                      ({ startTime, duration }) =>
+                        startTime <= rafFenceAt && startTime + duration >= started,
+                    )
+                    .map(({ duration }) => duration),
+                });
+              }, 0);
+            });
+          });
+        }
+
+        const observer = new MutationObserver(markReady);
+        observer.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['class', 'hidden', 'open', 'style'],
+          childList: true,
+          subtree: true,
+        });
         window.addEventListener(
           'click',
           (event) => {
-            const startedAt = event.timeStamp;
-            const check = (): void => {
-              if (!isReady()) {
-                requestAnimationFrame(check);
-                return;
-              }
-              requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                  resolve(performance.now() - startedAt);
-                });
-              });
-            };
-            requestAnimationFrame(check);
+            startedAt = event.timeStamp;
+            queueMicrotask(markReady);
           },
           { capture: true, once: true },
         );
       });
-      Reflect.set(window, '__tsumucodePaintedPageClick', measured);
+      Reflect.set(window, '__tsumucodeReadyPageClick', measured);
     },
     { interactionName: name, probe: readyProbe },
   );
 
   await action();
-  const durationMs = await page.evaluate((interactionName) => {
-    const measured = Reflect.get(window, '__tsumucodePaintedPageClick') as unknown;
+  const measurement = await page.evaluate((interactionName) => {
+    const measured = Reflect.get(window, '__tsumucodeReadyPageClick') as unknown;
     if (!(measured instanceof Promise)) {
-      throw new Error(`${interactionName}のpaint計測Promiseを取得できませんでした`);
+      throw new Error(`${interactionName}のready計測Promiseを取得できませんでした`);
     }
-    return measured as Promise<number>;
+    return measured as Promise<{
+      readonly readyDurationMs: number;
+      readonly rafFenceDurationMs: number;
+      readonly longTaskDurationsMs: readonly number[];
+    }>;
   }, name);
   await ready.waitFor({ state: 'visible' });
-  return { name, durationMs };
+  return { name, ...measurement };
 }
 
-/** 実click生成時刻からopaque iframe内のready表示と2 RAF paint完了までを測る。 */
-async function measurePaintedPreviewClick(
+/** 実click生成時刻からopaque iframe内のready表示後、2 RAF fenceまでを測る。 */
+async function measureRafFencedPreviewClick(
   page: Page,
   name: string,
   action: () => Promise<void>,
   ready: Locator,
   readyProbe: InteractionReadyProbe,
-): Promise<PaintedClickMeasurement> {
+): Promise<RafFencedClickMeasurement> {
   const frameHandle = await page.locator('iframe[title="コードのプレビュー"]').elementHandle();
   const previewFrame = await frameHandle?.contentFrame();
   if (previewFrame === null || previewFrame === undefined) {
@@ -243,19 +299,19 @@ async function measurePaintedPreviewClick(
     { polling: 'raf' },
   );
   await page.evaluate((interactionName) => {
-    Reflect.set(window, '__tsumucodePaintedPreviewClickStartedAt', undefined);
+    Reflect.set(window, '__tsumucodeRafFencedPreviewClickStartedAt', undefined);
     window.addEventListener(
       'click',
       (event) => {
         Reflect.set(
           window,
-          '__tsumucodePaintedPreviewClickStartedAt',
+          '__tsumucodeRafFencedPreviewClickStartedAt',
           performance.timeOrigin + event.timeStamp,
         );
       },
       { capture: true, once: true },
     );
-    Reflect.set(window, '__tsumucodePaintedPreviewClickName', interactionName);
+    Reflect.set(window, '__tsumucodeRafFencedPreviewClickName', interactionName);
   }, name);
 
   await action();
@@ -272,7 +328,7 @@ async function measurePaintedPreviewClick(
       }),
   );
   const startedAt = await page.evaluate((interactionName) => {
-    const value = Reflect.get(window, '__tsumucodePaintedPreviewClickStartedAt') as unknown;
+    const value = Reflect.get(window, '__tsumucodeRafFencedPreviewClickStartedAt') as unknown;
     if (typeof value !== 'number' || !Number.isFinite(value)) {
       throw new Error(`${interactionName}のclick生成時刻を取得できませんでした`);
     }
@@ -570,7 +626,50 @@ test('閲覧モードのHome、目次、Viewer、次Slide、目次Drawerが専�
   }
 });
 
-test('Starter復元Drawerと保存済みPreviewが専用予算内に2 RAF描画される', async ({
+test('Long Task計測は2段目RAF内の60ms blockを陽性検出する', async ({ page }) => {
+  await page.setContent(`
+    <button type="button">Drawerを開く</button>
+    <dialog aria-labelledby="long-task-title">
+      <h2 id="long-task-title">Long Task確認</h2>
+    </dialog>
+  `);
+  await page.evaluate(() => {
+    const button = document.querySelector('button');
+    const dialog = document.querySelector('dialog');
+    if (!(button instanceof HTMLButtonElement) || !(dialog instanceof HTMLDialogElement)) {
+      throw new Error('Long Task positive controlを準備できませんでした');
+    }
+    button.addEventListener(
+      'click',
+      () => {
+        dialog.showModal();
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            const blockUntil = performance.now() + 60;
+            while (performance.now() < blockUntil) {
+              // 2段目RAFと同じrendering taskを意図的にLong Taskへする。
+            }
+          });
+        });
+      },
+      { once: true },
+    );
+  });
+
+  const dialog = page.getByRole('dialog', { name: 'Long Task確認' });
+  const measurement = await measureReadyPageClick(
+    page,
+    'long-task-positive-control',
+    () => page.getByRole('button', { name: 'Drawerを開く' }).click(),
+    dialog,
+    { selector: 'dialog[open] h2', exactText: 'Long Task確認' },
+  );
+
+  expect(measurement.readyDurationMs).toBeLessThanOrEqual(100);
+  expect(measurement.longTaskDurationsMs.some((duration) => duration >= 50)).toBe(true);
+});
+
+test('Starter復元Drawerが100ms以内にreadyとなり、2 RAF fenceまでLong Taskを生まない', async ({
   page,
 }, testInfo) => {
   const editedHeading = 'Starter復元前の性能計測';
@@ -602,7 +701,7 @@ test('Starter復元Drawerと保存済みPreviewが専用予算内に2 RAF描画�
   const resetTrigger = page.getByRole('button', { name: '最初に戻す', exact: true });
   await expect(resetTrigger).toBeEnabled();
   const resetDrawer = page.getByRole('dialog', { name: '最初のコードに戻しますか？' });
-  const drawer = await measurePaintedPageClick(
+  const drawer = await measureReadyPageClick(
     page,
     'starter-reset-drawer',
     () => resetTrigger.click(),
@@ -612,7 +711,7 @@ test('Starter復元Drawerと保存済みPreviewが専用予算内に2 RAF描画�
 
   const confirm = resetDrawer.getByRole('button', { name: '最初のコードに戻す', exact: true });
   const starterPreview = preview.getByRole('heading', { name: starterHeading, exact: true });
-  const previewMeasurement = await measurePaintedPreviewClick(
+  const previewMeasurement = await measureRafFencedPreviewClick(
     page,
     'starter-reset-preview',
     () => confirm.click(),
@@ -634,7 +733,9 @@ test('Starter復元Drawerと保存済みPreviewが専用予算内に2 RAF描画�
     body: Buffer.from(
       JSON.stringify(
         {
-          drawerOpenMs: drawer.durationMs,
+          drawerReadyMs: drawer.readyDurationMs,
+          drawerRafFenceMs: drawer.rafFenceDurationMs,
+          drawerLongTaskDurationsMs: drawer.longTaskDurationsMs,
           previewVisibleMs: previewMeasurement.durationMs,
         },
         undefined,
@@ -644,7 +745,10 @@ test('Starter復元Drawerと保存済みPreviewが専用予算内に2 RAF描画�
     contentType: 'application/json',
   });
 
-  expect(drawer.durationMs, drawer.name).toBeLessThanOrEqual(manifest.starterReset.drawerOpenMaxMs);
+  expect(drawer.readyDurationMs, drawer.name).toBeLessThanOrEqual(
+    manifest.starterReset.drawerReadyMaxMs,
+  );
+  expect(drawer.longTaskDurationsMs, `${drawer.name} Long Task`).toEqual([]);
   expect(previewMeasurement.durationMs, previewMeasurement.name).toBeLessThanOrEqual(
     manifest.starterReset.previewVisibleMaxMs,
   );
