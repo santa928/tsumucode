@@ -23,7 +23,7 @@ function memoryStorage(): Storage {
 }
 
 describe('RuntimeNoticeStore', () => {
-  it('migration NoticeをIDで重複排除してsession内へ保持し、購読とdismissを通知する', () => {
+  it('同じCourseのmigration Noticeを1件へ集約してsession内へ保持し、購読とdismissを通知する', () => {
     const storage = memoryStorage();
     const store = new RuntimeNoticeStore({ storage });
     const listener = vi.fn();
@@ -31,11 +31,11 @@ describe('RuntimeNoticeStore', () => {
 
     store.addMigrationNotices([
       { id: 'notice-1', courseId: 'html-css', reason: '旧IDを初期化' },
-      { id: 'notice-1', courseId: 'html-css', reason: '重複' },
+      { id: 'notice-2', courseId: 'html-css', reason: '別の旧IDを初期化' },
     ]);
     expect(store.getSnapshot()).toHaveLength(1);
     expect(store.getSnapshot()[0]).toMatchObject({
-      id: 'migration:notice-1',
+      id: 'migration:html-css',
       kind: 'migration',
     });
     expect(store.getSnapshot()[0]?.message).toContain('教材の更新');
@@ -43,10 +43,25 @@ describe('RuntimeNoticeStore', () => {
 
     const restored = new RuntimeNoticeStore({ storage });
     expect(restored.getSnapshot()).toEqual(store.getSnapshot());
-    store.dismiss('migration:notice-1');
+    store.dismiss('migration:html-css');
     expect(store.getSnapshot()).toEqual([]);
     expect(listener).toHaveBeenCalledTimes(2);
     unsubscribe();
+  });
+
+  it('複数Courseのmigration NoticeはCourseごとに1件ずつ保持する', () => {
+    const store = new RuntimeNoticeStore({ storage: memoryStorage() });
+
+    store.addMigrationNotices([
+      { id: 'notice-1', courseId: 'html-css', reason: '旧IDを初期化' },
+      { id: 'notice-2', courseId: 'html-css', reason: '別の旧IDを初期化' },
+      { id: 'notice-3', courseId: 'typescript', reason: '旧IDを初期化' },
+    ]);
+
+    expect(store.getSnapshot()).toEqual([
+      expect.objectContaining({ id: 'migration:html-css', kind: 'migration' }),
+      expect.objectContaining({ id: 'migration:typescript', kind: 'migration' }),
+    ]);
   });
 
   it('同じ領域のErrorを重複させず常設警告へ変換し、内部Error文字列を表示しない', () => {
@@ -98,7 +113,7 @@ describe('RuntimeNoticeStore', () => {
     store.addMigrationNotices(
       Array.from({ length: 100 }, (_, index) => ({
         id: `notice-${String(index + 1)}`,
-        courseId: 'html-css',
+        courseId: `course-${String(index + 1)}`,
         reason: '旧IDを初期化',
       })),
     );
@@ -109,6 +124,6 @@ describe('RuntimeNoticeStore', () => {
     expect(store.getSnapshot()).toContainEqual(
       expect.objectContaining({ id: 'error:slide-progress', kind: 'error' }),
     );
-    expect(store.getSnapshot().some(({ id }) => id === 'migration:notice-1')).toBe(false);
+    expect(store.getSnapshot().some(({ id }) => id === 'migration:course-1')).toBe(false);
   });
 });

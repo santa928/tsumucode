@@ -6,6 +6,7 @@ import path from 'node:path';
 import { promisify } from 'node:util';
 import { afterEach, describe, expect, it } from 'vitest';
 import {
+  assertSyntheticMigrationContractCoverage,
   validateReleaseMetadata,
   type ReleaseHistory,
 } from '../../scripts/release/checkReleaseContinuity';
@@ -117,6 +118,51 @@ function publishedTagMessage(release: PublishedRelease): string {
 }
 
 describe('release continuity metadata', () => {
+  it('各migration edgeのentity/action契約が合成Bundleにない状態を拒否する', () => {
+    const migrations = [
+      {
+        fromRevision: '2026-07-10.1',
+        toRevision: '2026-07-13.1',
+        steps: [
+          {
+            action: 'intentionally-reset' as const,
+            entity: 'exercise' as const,
+            id: 'exercise-old',
+            reason: '判定を更新したため',
+          },
+          {
+            action: 'intentionally-reset' as const,
+            entity: 'workspace' as const,
+            id: 'workspace-old',
+            reason: 'Starterを更新したため',
+          },
+        ],
+      },
+      {
+        fromRevision: '2026-07-13.1',
+        toRevision: '2026-07-29.1',
+        steps: [
+          {
+            action: 'map-to' as const,
+            entity: 'slide' as const,
+            fromId: 'slide-old',
+            toId: 'slide-current',
+          },
+        ],
+      },
+    ];
+
+    expect(() => {
+      assertSyntheticMigrationContractCoverage(migrations, new Set(['exercise-old', 'slide-old']));
+    }).toThrow(/workspace/iu);
+    expect(() => {
+      assertSyntheticMigrationContractCoverage(
+        migrations,
+        new Set(['exercise-old', 'workspace-old', 'slide-old']),
+      );
+    }).not.toThrow();
+  });
+
   it('教材内容hashが変わったのにrevisionを据え置く候補を拒否する', () => {
     const fixture = history();
     fixture.releases.push({

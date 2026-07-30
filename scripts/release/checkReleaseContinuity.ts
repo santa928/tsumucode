@@ -60,6 +60,11 @@ function isNewerRevision(left: string, right: string): boolean {
   return leftDate > rightDate || (leftDate === rightDate && leftSequence > rightSequence);
 }
 
+/** migration stepが参照する移行前IDをaction差へ依存せず返す。 */
+function migrationSourceId(step: ContentProgressMigration['steps'][number]): string {
+  return step.action === 'map-to' ? step.fromId : step.id;
+}
+
 /** migration source IDからactionを一意に引けるMapを作る。 */
 function migrationActions(
   migrations: readonly ContentProgressMigration[],
@@ -67,7 +72,7 @@ function migrationActions(
   const actions = new Map<string, readonly ContentProgressMigration['steps'][number][]>();
   for (const migration of migrations) {
     for (const step of migration.steps) {
-      const sourceId = step.action === 'map-to' ? step.fromId : step.id;
+      const sourceId = migrationSourceId(step);
       const existing = actions.get(sourceId) ?? [];
       if (existing.some(({ entity }) => entity === step.entity)) {
         throw new Error(`移行宣言のsource IDが重複しています: ${step.entity}:${sourceId}`);
@@ -76,6 +81,30 @@ function migrationActions(
     }
   }
   return actions;
+}
+
+/**
+ * 各revision edgeのentity/action契約が合成Bundle上で最低1件は実行されることを要求する。
+ * 個別ID集合はRelease metadataとrevision固有testで固定し、ここでは汎用migrator経路の欠落を防ぐ。
+ */
+export function assertSyntheticMigrationContractCoverage(
+  migrations: readonly ContentProgressMigration[],
+  inputStrings: ReadonlySet<string>,
+): void {
+  for (const migration of migrations) {
+    const stepsByContract = new Map<string, readonly ContentProgressMigration['steps'][number][]>();
+    for (const step of migration.steps) {
+      const key = `${step.action}:${step.entity}`;
+      stepsByContract.set(key, [...(stepsByContract.get(key) ?? []), step]);
+    }
+    for (const [contract, steps] of stepsByContract) {
+      if (!steps.some((step) => inputStrings.has(migrationSourceId(step)))) {
+        throw new Error(
+          `合成Bundleがmigration契約を実行していません: ${migration.fromRevision} -> ${migration.toRevision} ${contract}`,
+        );
+      }
+    }
+  }
 }
 
 /** ID自体を廃止する移行だけをtombstone対象とし、同一IDの証跡resetは再利用扱いにしない。 */
@@ -309,6 +338,7 @@ export async function verifySyntheticProgressBundle(
 
   const stored = migrateRepositorySnapshot(unsigned, bundle.exportedAt);
   const inputStrings = stringValues({ courses: stored.courses, drafts: stored.drafts });
+  assertSyntheticMigrationContractCoverage(course.progressMigrations, inputStrings);
   const migrationSources = migrationActions(course.progressMigrations);
   const exercisedMigrationSources = new Map(
     [...migrationSources].filter(([sourceId]) => inputStrings.has(sourceId)),

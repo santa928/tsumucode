@@ -8,6 +8,7 @@ import type {
   RepositorySnapshot,
 } from '../../src/core/persistence/contracts';
 import { ContentProgressMigrationService } from '../../src/core/persistence/contentProgressMigration';
+import { recordSlideView } from '../../src/core/persistence/progressUpdates';
 
 const PREVIOUS_REVISION = '2026-07-13.1';
 const CURRENT_REVISION = '2026-07-29.1';
@@ -213,10 +214,28 @@ describe('HTML/CSS content revision migration', () => {
       const after = progress?.lessons[lesson.id];
       expect(after?.viewedSlideIds, lesson.id).toEqual(before?.viewedSlideIds);
       expect(after?.passedExerciseIds, lesson.id).toEqual([]);
+      expect(after?.passedChecklistItemIds, lesson.id).toEqual([]);
+      expect(after?.passedRuleIds, lesson.id).toEqual([]);
+      expect(after?.passedViewportIds, lesson.id).toEqual([]);
       expect(after?.currentComplete, lesson.id).toBe(false);
       expect(after, lesson.id).not.toHaveProperty('firstCompletedAt');
     }
     expect(JSON.stringify(result.drafts)).not.toContain('lastPassingSnapshots');
     expect(JSON.stringify(result.drafts)).not.toContain('validationHistory');
+
+    const capstone = lessons.find(({ kind }) => kind === 'capstone');
+    const capstoneSlideId = capstone?.slides.at(-1)?.id;
+    if (progress === undefined || capstone === undefined || capstoneSlideId === undefined) {
+      throw new Error('Capstone再計算検証に必要な教材がありません');
+    }
+    const recalculated = recordSlideView(
+      progress,
+      course,
+      capstone,
+      capstoneSlideId,
+      '2026-07-29T00:01:00.000Z',
+    );
+    expect(recalculated.lessons[capstone.id]?.currentComplete).toBe(false);
+    expect(recalculated.currentComplete).toBe(false);
   });
 });

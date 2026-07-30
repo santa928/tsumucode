@@ -497,11 +497,65 @@ describe('ContentProgressMigrationService', () => {
       viewedSlideIds: ['slide-html-role'],
       currentSlideId: 'slide-html-role',
       passedExerciseIds: [],
+      passedChecklistItemIds: [],
+      passedRuleIds: [],
+      passedViewportIds: [],
       currentComplete: false,
     });
     expect(lesson).not.toHaveProperty('firstCompletedAt');
     expect(progress).toMatchObject({ contentRevision: 'rev-2', currentComplete: false });
     expect(progress).not.toHaveProperty('firstCompletedAt');
+  });
+
+  it('Exercise未合格でも部分Rule・Viewport evidenceを失効しreset noticeを返す', async () => {
+    const base = oldSnapshot();
+    const input: RepositorySnapshot = {
+      ...base,
+      courses: {
+        'html-css': {
+          ...base.courses['html-css']!,
+          contentRevision: 'rev-1',
+          lessons: {
+            'lesson-first-heading': {
+              lessonId: 'lesson-first-heading',
+              viewedSlideIds: ['slide-html-role'],
+              currentSlideId: 'slide-html-role',
+              passedExerciseIds: [],
+              passedChecklistItemIds: ['partial-checklist'],
+              passedRuleIds: ['rule-h1-exists'],
+              passedViewportIds: ['desktop'],
+              currentComplete: false,
+            },
+          },
+          currentLessonId: 'lesson-first-heading',
+          currentChapterId: 'ch00-web-map',
+          currentComplete: false,
+        },
+      },
+      drafts: {},
+    };
+    const service = new ContentProgressMigrationService(repositoryFor(input), {
+      now: () => now,
+      id: () => 'partial-reset',
+    });
+    service.registerCourse(resettingExerciseCourse);
+
+    const result = await service.migrateSnapshotWithNotices(input);
+    expect(result.snapshot.courses['html-css']?.lessons['lesson-first-heading']).toMatchObject({
+      passedExerciseIds: [],
+      passedChecklistItemIds: [],
+      passedRuleIds: [],
+      passedViewportIds: [],
+      currentComplete: false,
+    });
+    expect(result.notices).toEqual([
+      expect.objectContaining({
+        id: 'partial-reset-1',
+        courseId: 'html-css',
+        entity: 'exercise',
+        sourceId: 'exercise-first-heading',
+      }),
+    ]);
   });
 
   it('snapshotとUIに安全なreset noticeを同時に返す', async () => {

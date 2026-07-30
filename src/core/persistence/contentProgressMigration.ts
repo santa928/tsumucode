@@ -17,6 +17,10 @@ import { canonicalJson } from './canonicalJson';
 export type ContentMigrationEntity = ProgressMigrationStep['entity'];
 type ProgressEntity = ContentMigrationEntity;
 type StoredValidationCheck = ExerciseDraft['validationHistory'][number]['checks'][number];
+type ResetMigrationStep = Extract<
+  ProgressMigrationStep,
+  { readonly action: 'intentionally-reset' }
+>;
 
 export interface ContentMigrationNotice {
   readonly id: string;
@@ -125,18 +129,39 @@ function migrateLessonProgress(
   lessonId: string,
   actions: ReadonlyMap<string, ProgressMigrationStep>,
   context: MigrationContext,
+  resetExerciseSteps: readonly ResetMigrationStep[],
 ): LessonProgress {
   const currentSlideId = migrateOptionalId(lesson.currentSlideId, 'slide', actions, context);
   const passedExerciseIds = migrateIdList(lesson.passedExerciseIds, 'exercise', actions, context);
-  const passedChecklistItemIds = migrateIdList(
+  const migratedChecklistItemIds = migrateIdList(
     lesson.passedChecklistItemIds,
     'checklist',
     actions,
     context,
   );
-  const passedRuleIds = migrateIdList(lesson.passedRuleIds, 'rule', actions, context);
+  const migratedRuleIds = migrateIdList(lesson.passedRuleIds, 'rule', actions, context);
+  const resetExerciseEvidence = resetExerciseSteps.length > 0;
+  const passedExerciseEvidenceReset = passedExerciseIds.length !== lesson.passedExerciseIds.length;
+  const derivedExerciseEvidencePresent =
+    lesson.passedChecklistItemIds.length > 0 ||
+    lesson.passedRuleIds.length > 0 ||
+    lesson.passedViewportIds.length > 0;
+  if (resetExerciseEvidence && derivedExerciseEvidencePresent && !passedExerciseEvidenceReset) {
+    const representative = resetExerciseSteps[0];
+    if (representative !== undefined) {
+      context.quarantine('exercise', representative.id, representative.reason, {
+        passedChecklistItemIds: lesson.passedChecklistItemIds,
+        passedRuleIds: lesson.passedRuleIds,
+        passedViewportIds: lesson.passedViewportIds,
+      });
+    }
+  }
+  const passedChecklistItemIds = resetExerciseEvidence ? [] : migratedChecklistItemIds;
+  const passedRuleIds = resetExerciseEvidence ? [] : migratedRuleIds;
+  const passedViewportIds = resetExerciseEvidence ? [] : lesson.passedViewportIds;
   const completionEvidenceReset =
-    passedExerciseIds.length !== lesson.passedExerciseIds.length ||
+    resetExerciseEvidence ||
+    passedExerciseEvidenceReset ||
     passedChecklistItemIds.length !== lesson.passedChecklistItemIds.length ||
     passedRuleIds.length !== lesson.passedRuleIds.length;
   return {
@@ -146,7 +171,7 @@ function migrateLessonProgress(
     passedExerciseIds,
     passedChecklistItemIds,
     passedRuleIds,
-    passedViewportIds: lesson.passedViewportIds,
+    passedViewportIds,
     currentComplete: completionEvidenceReset ? false : lesson.currentComplete,
     ...(completionEvidenceReset || lesson.firstCompletedAt === undefined
       ? {}
@@ -154,13 +179,39 @@ function migrateLessonProgress(
   };
 }
 
+/** 現Course上でreset対象Exerciseを持つLessonへ、派生evidence失効対象Stepを割り当てる。 */
+function resetExerciseStepsByLesson(
+  course: CourseManifest,
+  migration: ContentProgressMigration,
+): ReadonlyMap<string, readonly ResetMigrationStep[]> {
+  const resetByExerciseId = new Map<string, ResetMigrationStep>();
+  for (const step of migration.steps) {
+    if (step.action === 'intentionally-reset' && step.entity === 'exercise') {
+      resetByExerciseId.set(step.id, step);
+    }
+  }
+  const result = new Map<string, readonly ResetMigrationStep[]>();
+  for (const lesson of course.phases.flatMap(({ chapters }) =>
+    chapters.flatMap(({ lessons }) => lessons),
+  )) {
+    const steps = lesson.exercises.flatMap(({ id }) => {
+      const step = resetByExerciseId.get(id);
+      return step === undefined ? [] : [step];
+    });
+    if (steps.length > 0) result.set(lesson.id, steps);
+  }
+  return result;
+}
+
 /** CourseProgressのLesson record keyと現在地を単一revision分移行する。 */
 function migrateCourseStep(
   progress: CourseProgress,
   migration: ContentProgressMigration,
   context: MigrationContext,
+  course: CourseManifest,
 ): CourseProgress {
   const actions = actionMap(migration);
+  const exerciseStepsByLesson = resetExerciseStepsByLesson(course, migration);
   const lessons: Record<string, LessonProgress> = {};
   let completionInvalidated = false;
   for (const [sourceKey, lesson] of Object.entries(progress.lessons)) {
@@ -182,7 +233,13 @@ function migrateCourseStep(
     if (Object.hasOwn(lessons, keyReference.id)) {
       throw new Error(`Lesson keyのmap先が衝突しました: ${keyReference.id}`);
     }
-    const migratedLesson = migrateLessonProgress(lesson, keyReference.id, actions, context);
+    const migratedLesson = migrateLessonProgress(
+      lesson,
+      keyReference.id,
+      actions,
+      context,
+      exerciseStepsByLesson.get(keyReference.id) ?? [],
+    );
     completionInvalidated ||= lesson.currentComplete && !migratedLesson.currentComplete;
     lessons[keyReference.id] = migratedLesson;
   }
@@ -440,7 +497,7 @@ export class ContentProgressMigrationService {
           migration,
           quarantine: quarantineFor(courseId),
         };
-        migrated = migrateCourseStep(migrated, migration, context);
+        migrated = migrateCourseStep(migrated, migration, context, course);
       }
       courses[courseId] = migrated;
     }

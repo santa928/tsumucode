@@ -24,12 +24,54 @@ const VALID_SOURCE = '<main><h1>はじめてのWebページ</h1></main>';
 const LEGACY_REVISION = '2026-07-10.1';
 const LEGACY_FIRST_COMPLETED_AT = '2026-06-15T00:00:00.000Z';
 const LEGACY_SOURCE = '<main><h1>旧教材の隔離対象下書き</h1></main>';
+const PREVIOUS_CONTENT_REVISION = '2026-07-13.1';
+const CURRENT_CONTENT_REVISION = '2026-07-29.1';
+const CURRENT_COURSE_MANIFEST = new URL(
+  '../../public/generated/content/courses/html-css.json',
+  import.meta.url,
+);
 const EDITOR_RUNTIME_CHUNK_PATTERN =
   /CodeWorkspace|EditableExercisePage|codemirror|adapters\/runtime\/html-css/iu;
 const PLAYWRIGHT_INITIAL_SCRIPTLESS_SANDBOX_WARNING =
   "Blocked script execution in 'about:blank' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.";
 const PLAYWRIGHT_SRCDOC_SCRIPTLESS_SANDBOX_WARNING =
   "Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.";
+
+interface GeneratedExercise {
+  readonly id: string;
+  readonly workspaceId: string;
+  readonly files: readonly { readonly path: string; readonly content: string }[];
+  readonly validationRules: readonly { readonly id: string; readonly groupId?: string }[];
+  readonly previewViewports: readonly { readonly id: string }[];
+}
+
+interface GeneratedLesson {
+  readonly id: string;
+  readonly slides: readonly { readonly id: string }[];
+  readonly exercises: readonly GeneratedExercise[];
+  readonly project?: {
+    readonly checklist: readonly { readonly id: string; readonly required: boolean }[];
+  };
+}
+
+interface GeneratedCourse {
+  readonly id: string;
+  readonly phases: readonly {
+    readonly chapters: readonly {
+      readonly id: string;
+      readonly lessons: readonly GeneratedLesson[];
+    }[];
+  }[];
+  readonly progressMigrations: readonly {
+    readonly fromRevision: string;
+    readonly toRevision: string;
+    readonly steps: readonly {
+      readonly action: string;
+      readonly entity: string;
+      readonly id?: string;
+    }[];
+  }[];
+}
 
 /** unsigned BundleへSHA-256を付け、Unicode pathに依存しないbuffer選択用Fileへ保存する。 */
 async function writeSignedBundle(
@@ -210,6 +252,167 @@ async function seedLegacyContentProgress(page: Page): Promise<void> {
       database.close();
     }
   }, legacy);
+}
+
+/** 直前revisionを全完了した実教材shapeのsnapshotをIndexedDBへ保存する。 */
+async function seedCompletedPreviousRevisionProgress(page: Page): Promise<void> {
+  const course = JSON.parse(await readFile(CURRENT_COURSE_MANIFEST, 'utf8')) as GeneratedCourse;
+  const chapters = course.phases.flatMap(({ chapters: items }) => items);
+  const lessons = chapters.flatMap(({ lessons: items }) => items);
+  const exercises = lessons.flatMap(({ exercises: items }) => items);
+  const migration = course.progressMigrations.find(
+    ({ fromRevision, toRevision }) =>
+      fromRevision === PREVIOUS_CONTENT_REVISION && toRevision === CURRENT_CONTENT_REVISION,
+  );
+  if (migration === undefined) throw new Error('直前revisionのmigrationがありません');
+  const resetWorkspaceIds = new Set(
+    migration.steps.flatMap(({ action, entity, id }) =>
+      action === 'intentionally-reset' && entity === 'workspace' && id !== undefined ? [id] : [],
+    ),
+  );
+  const completedAt = '2026-07-28T12:00:00.000Z';
+  const lastChapter = chapters.at(-1);
+  const lastLesson = lessons.at(-1);
+  if (lastChapter === undefined || lastLesson === undefined) {
+    throw new Error('全完了snapshotに必要な教材がありません');
+  }
+  const lessonProgress = Object.fromEntries(
+    lessons.map((lesson) => {
+      const currentSlideId = lesson.slides.at(-1)?.id;
+      return [
+        lesson.id,
+        {
+          lessonId: lesson.id,
+          viewedSlideIds: lesson.slides.map(({ id }) => id),
+          ...(currentSlideId === undefined ? {} : { currentSlideId }),
+          passedExerciseIds: lesson.exercises.map(({ id }) => id),
+          passedChecklistItemIds:
+            lesson.project?.checklist.filter(({ required }) => required).map(({ id }) => id) ?? [],
+          passedRuleIds: [
+            ...new Set(
+              lesson.exercises.flatMap(({ validationRules }) =>
+                validationRules.map(({ id, groupId }) => groupId ?? id),
+              ),
+            ),
+          ],
+          passedViewportIds: [
+            ...new Set(
+              lesson.exercises.flatMap(({ previewViewports }) =>
+                previewViewports.map(({ id }) => id),
+              ),
+            ),
+          ],
+          currentComplete: true,
+          firstCompletedAt: completedAt,
+        },
+      ];
+    }),
+  );
+  const drafts = Object.fromEntries(
+    exercises.flatMap((exercise) => {
+      if (!resetWorkspaceIds.has(exercise.workspaceId)) return [];
+      const lesson = lessons.find(({ exercises: items }) =>
+        items.some(({ id }) => id === exercise.id),
+      );
+      if (lesson === undefined) throw new Error(`ExerciseのLessonがありません: ${exercise.id}`);
+      const files = Object.fromEntries(exercise.files.map(({ path, content }) => [path, content]));
+      return [
+        [
+          `${course.id}:${exercise.workspaceId}`,
+          {
+            key: `${course.id}:${exercise.workspaceId}`,
+            courseId: course.id,
+            lessonId: lesson.id,
+            exerciseId: exercise.id,
+            workspaceId: exercise.workspaceId,
+            contentRevision: PREVIOUS_CONTENT_REVISION,
+            editRevision: 1,
+            files,
+            selectedFile: exercise.files[0]?.path ?? 'index.html',
+            cursors: {},
+            validationHistory: [],
+            revealedHintIds: [],
+            lastPassingSnapshots: {
+              [exercise.id]: {
+                editRevision: 1,
+                contentRevision: PREVIOUS_CONTENT_REVISION,
+                files,
+                evaluatedAt: completedAt,
+              },
+            },
+            updatedAt: completedAt,
+          },
+        ],
+      ];
+    }),
+  );
+  const snapshot = {
+    course: {
+      courseId: course.id,
+      contentRevision: PREVIOUS_CONTENT_REVISION,
+      lessons: lessonProgress,
+      currentLessonId: lastLesson.id,
+      currentChapterId: lastChapter.id,
+      currentComplete: true,
+      firstCompletedAt: completedAt,
+      updatedAt: completedAt,
+    },
+    drafts,
+  };
+
+  await page.goto(`${testBasePath()}generated/content/catalog.json`);
+  await page.evaluate(async (seed) => {
+    await new Promise<void>((resolve, reject) => {
+      const deletion = indexedDB.deleteDatabase('tsumucode-progress');
+      deletion.onsuccess = () => {
+        resolve();
+      };
+      deletion.onerror = () => {
+        reject(deletion.error ?? new Error('completed seed database delete failed'));
+      };
+      deletion.onblocked = () => {
+        reject(new Error('completed seed database delete blocked'));
+      };
+    });
+    const database = await new Promise<IDBDatabase>((resolve, reject) => {
+      const opening = indexedDB.open('tsumucode-progress', 2);
+      opening.onerror = () => {
+        reject(opening.error ?? new Error('completed seed database open failed'));
+      };
+      opening.onupgradeneeded = () => {
+        const next = opening.result;
+        next.createObjectStore('courses', { keyPath: 'courseId' });
+        next.createObjectStore('drafts', { keyPath: 'key' });
+        next.createObjectStore('backups', { keyPath: 'id' });
+        next.createObjectStore('quarantine', { keyPath: 'id' });
+        next.createObjectStore('metadata', { keyPath: 'key' });
+      };
+      opening.onsuccess = () => {
+        resolve(opening.result);
+      };
+    });
+    try {
+      const transaction = database.transaction(['courses', 'drafts', 'metadata'], 'readwrite');
+      transaction.objectStore('courses').put(seed.course);
+      for (const draft of Object.values(seed.drafts)) {
+        transaction.objectStore('drafts').put(draft);
+      }
+      transaction.objectStore('metadata').put({ key: 'recordSchemaVersion', value: 2 });
+      await new Promise<void>((resolve, reject) => {
+        transaction.oncomplete = () => {
+          resolve();
+        };
+        transaction.onerror = () => {
+          reject(transaction.error ?? new Error('completed seed transaction failed'));
+        };
+        transaction.onabort = () => {
+          reject(transaction.error ?? new Error('completed seed transaction aborted'));
+        };
+      });
+    } finally {
+      database.close();
+    }
+  }, snapshot);
 }
 
 /** Backupを除く利用者snapshotをcanonical比較できる文字列へ変換する。 */
@@ -490,6 +693,57 @@ test('通常Course loadで直前教材revisionをbackup後に移行しreset対�
 
   await page.reload();
   await expect.poll(() => editorText(page)).toContain('ここを書き換えます');
+});
+
+test('全完了の直前revisionを移行してもNoticeを1件へ集約し学習操作を画面内へ保つ', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', '大量migrationの統合境界はChromiumで検証する');
+  await seedCompletedPreviousRevisionProgress(page);
+  await openRuntimeFixture(page);
+  await page.setViewportSize({ width: 1024, height: 768 });
+
+  await expect(page.getByTestId('code-workspace')).toBeVisible();
+  const migrationMessage = page.getByText(
+    '教材の更新に合わせて、一部の進捗を安全に初期化しました。',
+    { exact: true },
+  );
+  await expect(migrationMessage).toHaveCount(1);
+  const noticeRegion = page.getByRole('region', { name: '端末の学習データに関するお知らせ' });
+  await expect(noticeRegion.locator(':scope > div')).toHaveCount(1);
+
+  const stage = page.getByTestId('learning-stage');
+  const pager = page.locator('.tc-learning-shell-pager');
+  const validate = pager.getByRole('button', { name: '判定する', exact: true });
+  await expect(stage).toBeVisible();
+  await expect(validate).toBeVisible();
+  const pagerBox = await pager.boundingBox();
+  if (pagerBox === null) throw new Error('Pagerの実寸を取得できません');
+  expect(pagerBox.y).toBeGreaterThanOrEqual(0);
+  expect(pagerBox.y + pagerBox.height).toBeLessThanOrEqual(768);
+  expect(
+    await page.evaluate(() => ({
+      width: document.documentElement.scrollWidth,
+      viewport: window.innerWidth,
+    })),
+  ).toEqual({ width: 1024, viewport: 1024 });
+
+  const stored = await readStoredProgress(page);
+  expect(stored.drafts).toEqual([]);
+  expect(stored.quarantined).toHaveLength(88);
+  const course = stored.courses[0];
+  expect(course).toMatchObject({
+    contentRevision: CURRENT_CONTENT_REVISION,
+    currentComplete: false,
+  });
+  const lessons = course?.['lessons'] as Record<string, Record<string, unknown>>;
+  for (const [lessonId, lesson] of Object.entries(lessons)) {
+    expect(lesson['passedExerciseIds'], lessonId).toEqual([]);
+    expect(lesson['passedChecklistItemIds'], lessonId).toEqual([]);
+    expect(lesson['passedRuleIds'], lessonId).toEqual([]);
+    expect(lesson['passedViewportIds'], lessonId).toEqual([]);
+    expect(lesson['currentComplete'], lessonId).toBe(false);
+  }
 });
 
 test('全Course Bundleを空の新規ContextへImportしてDraftを復元する', async ({

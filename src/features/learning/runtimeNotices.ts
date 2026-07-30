@@ -125,12 +125,12 @@ export class RuntimeNoticeStore {
     for (const listener of [...this.#listeners]) listener();
   }
 
-  /** ID重複を除き、教材resetの内部理由を公開せず安全な定型文へ変換する。 */
+  /** Course単位へ集約し、教材resetの件数・内部理由を公開せず安全な定型文へ変換する。 */
   addMigrationNotices(notices: readonly ContentMigrationNotice[]): void {
     const byId = new Map(this.#snapshot.map((notice) => [notice.id, notice]));
-    for (const notice of notices) {
-      if (!isValidNoticeId(notice.id)) continue;
-      const id = `migration:${notice.id}`;
+    for (const { courseId } of notices) {
+      if (!isValidNoticeId(courseId)) continue;
+      const id = `migration:${courseId}`;
       if (!isValidNoticeId(id) || byId.has(id) || byId.size >= 100) continue;
       byId.set(id, {
         id,
