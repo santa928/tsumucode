@@ -1,7 +1,7 @@
 /** 学習中の一覧、用語、Hint、Feedbackを同じModal Drawerで表示する。 */
 import {
-  useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   type KeyboardEvent,
   type MouseEvent,
@@ -20,7 +20,7 @@ export interface LearningDrawerProps {
   readonly children: ReactNode;
 }
 
-/** native dialogへopen状態を同期し、閉じた後のTrigger Focusまで所有する。 */
+/** native dialogを初回paint前に同期し、閉じた後のTrigger Focusまで所有する。 */
 export function LearningDrawer({
   open,
   title,
@@ -36,7 +36,7 @@ export function LearningDrawer({
   const wasOpenRef = useRef(false);
   const titleId = useId();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const dialog = dialogRef.current;
     if (dialog === null) return;
 
