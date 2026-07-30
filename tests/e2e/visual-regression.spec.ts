@@ -31,6 +31,24 @@ interface VisualScreen {
   readonly ready: (page: Page) => Promise<void>;
 }
 
+/** Slide画像が通常のimg取得だけで描画可能になり、壊れたAssetを残していないことを確認する。 */
+async function expectSlideImageLoaded(page: Page): Promise<void> {
+  const image = page.getByRole('img', {
+    name: 'HTMLとCSSをBrowserが画面へ組み立てる流れ',
+  });
+  await expect(image).toBeVisible();
+  await expect
+    .poll(() =>
+      image.evaluate((element) => element instanceof HTMLImageElement && element.complete),
+    )
+    .toBe(true);
+  await expect
+    .poll(() =>
+      image.evaluate((element) => (element instanceof HTMLImageElement ? element.naturalWidth : 0)),
+    )
+    .toBeGreaterThan(0);
+}
+
 /** Screenshot対象を決定的なscroll anchorへ戻し、route遷移時のscroll復元差を除外する。 */
 async function stabilizeScreenshotScroll(page: Page, screenId: string): Promise<void> {
   if (
@@ -187,6 +205,7 @@ const SCREENS: readonly VisualScreen[] = [
     ready: async (page) => {
       await expect(page.locator('[data-slide-card]')).toBeVisible();
       await expect(page.getByRole('progressbar', { name: 'スライドの現在位置' })).toBeVisible();
+      await expectSlideImageLoaded(page);
     },
   },
   {
@@ -256,6 +275,7 @@ const LIBRARY_SCREENS: readonly VisualScreen[] = [
         }),
       ).toBeVisible();
       await expect(page.getByText('進捗には反映されません')).toBeVisible();
+      await expectSlideImageLoaded(page);
       await expect.poll(() => page.evaluate(() => document.fonts.status)).toBe('loaded');
     },
   },
