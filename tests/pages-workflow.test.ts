@@ -171,6 +171,28 @@ describe('TsumuCode Pages workflow', () => {
     }
   });
 
+  it('Docker生成Evidenceのpermissionを存在確認とuploadより先に読み取り可能へ正規化する', () => {
+    const { source } = workflow();
+    const normalizationIndex = source.indexOf('- name: Normalize quality evidence permissions');
+    const verificationIndex = source.indexOf('- name: Verify required quality evidence');
+    const uploadIndex = source.indexOf('- name: Upload quality evidence');
+    const normalizationStep = source.slice(normalizationIndex, verificationIndex);
+
+    expect(normalizationIndex).toBeGreaterThan(0);
+    expect(verificationIndex).toBeGreaterThan(normalizationIndex);
+    expect(uploadIndex).toBeGreaterThan(verificationIndex);
+    expect(normalizationStep).toContain('./scripts/docker-compose.sh run --rm app chmod -R a+rX');
+    for (const path of [
+      '/workspace/release-quality.json',
+      '/workspace/playwright-report',
+      '/workspace/playwright-performance-report',
+      '/workspace/test-results',
+      '/workspace/lhci-report',
+    ]) {
+      expect(normalizationStep).toContain(path);
+    }
+  });
+
   it('全品質Gate、Artifact binding、監査Report、annotated tagを順に持つ', () => {
     const { source, parsed } = workflow();
 

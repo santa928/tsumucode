@@ -189,6 +189,14 @@ jobs:
           --quality-summary
           --source-sha "$VERIFIED_SOURCE_COMMIT"
           --output /workspace/release-quality.json
+      - name: Normalize quality evidence permissions
+        run: >-
+          ./scripts/docker-compose.sh run --rm app chmod -R a+rX
+          /workspace/release-quality.json
+          /workspace/playwright-report
+          /workspace/playwright-performance-report
+          /workspace/test-results
+          /workspace/lhci-report
       - name: Verify required quality evidence
         run: |
           test -s release-quality.json
