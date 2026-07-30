@@ -4,13 +4,6 @@ import { BetaBadge } from '../design-system/components/BetaBadge';
 import { learningRuntimeServices } from '../features/learning/runtimeServices';
 import { PersistenceHealthBanner } from '../features/progress/PersistenceHealthBanner';
 
-const PERSISTENCE_NOTICE_IDS = new Set([
-  'error:exercise-save',
-  'error:exercise-initialize',
-  'error:slide-progress',
-  'error:learning-progress',
-]);
-
 /** Hash routeを変更せず、Keyboard focusを本文Landmarkへ移す。 */
 function focusMainContent(event: MouseEvent<HTMLAnchorElement>): void {
   event.preventDefault();
@@ -31,17 +24,6 @@ export function AppShell() {
     learningRuntimeServices.notices.getSnapshot,
     learningRuntimeServices.notices.getSnapshot,
   );
-  const persistenceHealth = useSyncExternalStore(
-    learningRuntimeServices.progressService.subscribeHealth,
-    learningRuntimeServices.progressService.getHealthSnapshot,
-    learningRuntimeServices.progressService.getHealthSnapshot,
-  );
-  const persistenceDegraded =
-    persistenceHealth.kind !== 'initializing' && persistenceHealth.kind !== 'healthy';
-  const visibleNotices =
-    learningRoute && persistenceDegraded
-      ? notices.filter(({ id }) => !PERSISTENCE_NOTICE_IDS.has(id))
-      : notices;
 
   return (
     <div
@@ -86,12 +68,12 @@ export function AppShell() {
         </header>
       ) : null}
       <PersistenceHealthBanner />
-      {visibleNotices.length > 0 ? (
+      {notices.length > 0 ? (
         <section
           aria-label="端末の学習データに関するお知らせ"
           className="tc-content-frame mx-auto mt-4 w-full max-w-[var(--tc-content-max)] space-y-2"
         >
-          {visibleNotices.map((notice) => (
+          {notices.map((notice) => (
             <div
               key={notice.id}
               role={notice.kind === 'error' ? 'alert' : 'status'}

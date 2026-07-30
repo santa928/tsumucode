@@ -25,6 +25,7 @@ export interface RuntimeNotice {
 
 export interface RuntimeNoticeStoreOptions {
   readonly storage?: Storage;
+  readonly isPersistenceDegraded?: () => boolean;
 }
 
 interface StoredNotices {
@@ -78,10 +79,12 @@ function isStoredNotices(value: unknown): value is StoredNotices {
 export class RuntimeNoticeStore {
   readonly #listeners = new Set<() => void>();
   readonly #storage: Storage | undefined;
+  readonly #isPersistenceDegraded: () => boolean;
   #snapshot: readonly RuntimeNotice[] = [];
 
   constructor(options: RuntimeNoticeStoreOptions = {}) {
     this.#storage = options.storage ?? defaultStorage();
+    this.#isPersistenceDegraded = options.isPersistenceDegraded ?? (() => false);
     try {
       const raw = this.#storage?.getItem(STORAGE_KEY);
       if (raw === undefined || raw === null) return;
@@ -151,6 +154,12 @@ export class RuntimeNoticeStore {
       `error:${candidateScope}`.length <= MAX_NOTICE_ID_LENGTH
         ? candidateScope
         : 'learning-progress';
+    const persistenceError =
+      safeScope === 'exercise-save' ||
+      safeScope === 'exercise-initialize' ||
+      safeScope === 'slide-progress' ||
+      safeScope === 'learning-progress';
+    if (persistenceError && this.#isPersistenceDegraded()) return;
     const id = `error:${safeScope}`;
     if (this.#snapshot.some((notice) => notice.id === id)) return;
     let retained = this.#snapshot;

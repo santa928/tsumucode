@@ -159,6 +159,24 @@ function repositoryHarness(): RepositoryHarness {
 }
 
 describe('createLearningRuntimeServices', () => {
+  it('保存healthがdegradedなら既定Notice Storeは重複する保存Errorだけを抑止する', async () => {
+    const { repository, open } = repositoryHarness();
+    open.mockRejectedValueOnce(new DOMException('denied', 'SecurityError'));
+    const services = createLearningRuntimeServices({ repository });
+
+    await services.ready;
+    expect(services.progressService.getHealthSnapshot().kind).toBe('memory-only');
+    services.notices.reportError('slide-progress', new Error('write'));
+    services.notices.reportError('exercise-preview', new Error('frame'));
+
+    expect(services.notices.getSnapshot()).not.toContainEqual(
+      expect.objectContaining({ id: 'error:slide-progress' }),
+    );
+    expect(services.notices.getSnapshot()).toContainEqual(
+      expect.objectContaining({ id: 'error:exercise-preview' }),
+    );
+  });
+
   it('明示注入したTabLeaseCoordinatorを同一instanceで返す', () => {
     const { repository } = repositoryHarness();
     const leaseCoordinator = new TabLeaseCoordinator({

@@ -91,6 +91,29 @@ describe('RuntimeNoticeStore', () => {
     expect(JSON.stringify(store.getSnapshot())).not.toContain('internal frame detail');
   });
 
+  it('保存healthがdegradedなら重複する保存Errorだけを抑止し、Preview失敗は保持する', () => {
+    let persistenceDegraded = true;
+    const store = new RuntimeNoticeStore({
+      storage: memoryStorage(),
+      isPersistenceDegraded: () => persistenceDegraded,
+    });
+
+    store.reportError('exercise-save', new Error('quota'));
+    store.reportError('exercise-initialize', new Error('read'));
+    store.reportError('slide-progress', new Error('write'));
+    store.reportError('learning-progress', new Error('transaction'));
+    store.reportError('exercise-preview', new Error('frame'));
+    expect(store.getSnapshot()).toEqual([
+      expect.objectContaining({ id: 'error:exercise-preview', kind: 'error' }),
+    ]);
+
+    persistenceDegraded = false;
+    store.reportError('slide-progress', new Error('write'));
+    expect(store.getSnapshot()).toContainEqual(
+      expect.objectContaining({ id: 'error:slide-progress', kind: 'error' }),
+    );
+  });
+
   it('壊れた保存値とStorage例外を無視し、memory queueを維持する', () => {
     const broken = {
       getItem: vi.fn(() => '{broken'),

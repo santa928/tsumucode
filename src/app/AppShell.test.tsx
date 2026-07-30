@@ -113,19 +113,12 @@ describe('AppShell', () => {
     expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument();
   });
 
-  it('学習routeの保存degraded中は復旧Bannerと重複する保存Error Noticeを表示しない', async () => {
+  it('学習routeの保存degraded中は復旧Bannerを常設表示する', async () => {
     runtime.publishHealth({
       kind: 'memory-only',
       hasUnsavedChanges: true,
       cause: 'write',
     });
-    runtime.notices.publish([
-      {
-        id: 'error:exercise-save',
-        kind: 'error',
-        message: '端末への進捗保存に失敗しました。もう一度操作してください。',
-      },
-    ]);
     renderWithRouter(
       <Routes>
         <Route element={<AppShell />}>
@@ -141,9 +134,6 @@ describe('AppShell', () => {
     expect(
       await screen.findByRole('alert', { name: 'この端末へ保存できていません' }),
     ).toBeInTheDocument();
-    expect(
-      screen.queryByRole('region', { name: '端末の学習データに関するお知らせ' }),
-    ).not.toBeInTheDocument();
   });
 
   it('保存degraded中も教材移行とPreview失敗のNoticeは隠さない', async () => {
@@ -202,6 +192,37 @@ describe('AppShell', () => {
     expect(screen.getByRole('main')).toHaveClass('min-h-dvh');
     expect(screen.getByTestId('app-shell')).toHaveAttribute('data-learning-route', 'false');
     expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument();
+  });
+
+  it('保存状態がinitializingからhealthyへ変わっても本文を再描画しない', () => {
+    const renderProbe = vi.fn();
+    function RenderProbe() {
+      renderProbe();
+      return <h1>教材カタログ</h1>;
+    }
+    runtime.publishHealth({
+      kind: 'initializing',
+      hasUnsavedChanges: false,
+      cause: undefined,
+    });
+    renderWithRouter(
+      <Routes>
+        <Route element={<AppShell />}>
+          <Route index element={<RenderProbe />} />
+        </Route>
+      </Routes>,
+    );
+    const initialRenderCount = renderProbe.mock.calls.length;
+
+    act(() => {
+      runtime.publishHealth({
+        kind: 'healthy',
+        hasUnsavedChanges: false,
+        cause: undefined,
+      });
+    });
+
+    expect(renderProbe).toHaveBeenCalledTimes(initialRenderCount);
   });
 
   it('Skip LinkでMainへfocusし、Hash RouterのURLを壊さない', async () => {

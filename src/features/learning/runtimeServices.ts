@@ -274,7 +274,14 @@ export function createLearningRuntimeServices(
       : new ResilientProgressService(rawRepository));
   const repository = progressService;
   const passFreshness = options.passFreshness ?? new PassFreshnessRegistry();
-  const notices = options.notices ?? new RuntimeNoticeStore();
+  const notices =
+    options.notices ??
+    new RuntimeNoticeStore({
+      isPersistenceDegraded: () => {
+        const { kind } = progressService.getHealthSnapshot();
+        return kind !== 'initializing' && kind !== 'healthy';
+      },
+    });
   const contentMigrations =
     options.contentMigrations ??
     new ContentProgressMigrationService(repository, { id: migrationId });
