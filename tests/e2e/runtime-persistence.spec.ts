@@ -473,11 +473,11 @@ test('通常Course loadで直前教材revisionをbackup後に移行しreset対�
   ).toBeVisible();
   const stored = await readStoredProgress(page);
   expect(stored.courses[0]).toMatchObject({
-    contentRevision: '2026-07-13.1',
+    contentRevision: '2026-07-29.1',
     lessons: {},
-    currentComplete: true,
-    firstCompletedAt: LEGACY_FIRST_COMPLETED_AT,
+    currentComplete: false,
   });
+  expect(stored.courses[0]).not.toHaveProperty('firstCompletedAt');
   expect(stored.drafts).toEqual([]);
   expect(stored.quarantined.map(({ reason }) => reason)).toEqual(
     expect.arrayContaining([
@@ -544,11 +544,12 @@ test('旧revision Bundleを確定前にreset理由表示して移行し現行Rou
   const stored = await readStoredProgress(page);
   expect(stored.courses).toEqual([
     expect.objectContaining({
-      contentRevision: '2026-07-13.1',
-      firstCompletedAt: LEGACY_FIRST_COMPLETED_AT,
+      contentRevision: '2026-07-29.1',
+      currentComplete: false,
       lessons: {},
     }),
   ]);
+  expect(stored.courses[0]).not.toHaveProperty('firstCompletedAt');
   expect(stored.drafts).toEqual([]);
   expect(stored.quarantined.map(({ reason }) => reason)).toEqual(
     expect.arrayContaining([

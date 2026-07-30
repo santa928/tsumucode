@@ -133,6 +133,7 @@ function renderGate(
   children: (access: WorkspaceLeaseAccess) => React.ReactNode = () => (
     <p data-testid="editable-session">編集Session</p>
   ),
+  showCoordinationWarning = true,
 ) {
   return render(
     <MemoryRouter>
@@ -140,6 +141,7 @@ function renderGate(
         courseId="html-css"
         workspaceId="workspace-first-heading"
         coordinator={coordinator}
+        showCoordinationWarning={showCoordinationWarning}
       >
         {children}
       </WorkspaceLeaseGate>
@@ -238,6 +240,18 @@ describe('WorkspaceLeaseGate', () => {
       'href',
       '/?focus=device-data',
     );
+  });
+
+  it('上位の保存Bannerが警告を担う場合はcoordination警告を重複表示しない', async () => {
+    const lease = createFakeLease({ status: 'owned', coordination: 'unavailable' });
+    const { coordinator } = coordinatorHarness(lease.handle);
+    renderGate(coordinator, undefined, false);
+
+    expect(await screen.findByTestId('editable-session')).toBeInTheDocument();
+    expect(screen.queryByText(/複数のタブで同時に開かないでください/u)).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: '救済用に端末データを書き出す' }),
+    ).not.toBeInTheDocument();
   });
 
   it.each([

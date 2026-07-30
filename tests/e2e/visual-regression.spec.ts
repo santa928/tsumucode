@@ -92,7 +92,7 @@ async function seedCompletionProgress(page: Page): Promise<void> {
       const transaction = database.transaction(['courses', 'drafts', 'metadata'], 'readwrite');
       transaction.objectStore('courses').put({
         courseId,
-        contentRevision: '2026-07-13.1',
+        contentRevision: '2026-07-29.1',
         lessons: {
           [lessonId]: {
             lessonId,
@@ -122,7 +122,7 @@ async function seedCompletionProgress(page: Page): Promise<void> {
         lessonId,
         exerciseId,
         workspaceId: exerciseId,
-        contentRevision: '2026-07-13.1',
+        contentRevision: '2026-07-29.1',
         editRevision: 1,
         files,
         selectedFile: 'index.html',
@@ -132,7 +132,7 @@ async function seedCompletionProgress(page: Page): Promise<void> {
         lastPassingSnapshots: {
           [exerciseId]: {
             editRevision: 1,
-            contentRevision: '2026-07-13.1',
+            contentRevision: '2026-07-29.1',
             files,
             evaluatedAt: now,
           },

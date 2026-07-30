@@ -65,6 +65,10 @@ describe('PersistenceHealthBanner', () => {
     rerender(<PersistenceHealthBanner port={degraded.port} />);
 
     expect(screen.getByRole('alert')).toHaveTextContent('保存容量');
+    expect(screen.getByRole('alert')).toHaveAttribute(
+      'data-persistence-health-banner',
+      'memory-only',
+    );
     expect(screen.queryByRole('button', { name: /閉じる/u })).not.toBeInTheDocument();
   });
 

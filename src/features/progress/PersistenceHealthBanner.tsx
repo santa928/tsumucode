@@ -143,6 +143,7 @@ export function PersistenceHealthBanner({
       role={role}
       aria-labelledby="persistence-health-title"
       aria-busy={recoveryBusy || exportBusy || health.kind === 'retrying'}
+      data-persistence-health-banner={health.kind}
       className={`tc-content-frame mx-auto mt-4 w-full max-w-[var(--tc-content-max)] border-2 bg-workshop-raised ${
         health.kind === 'retrying' ? 'border-workshop-complete' : 'border-workshop-correction'
       }`}

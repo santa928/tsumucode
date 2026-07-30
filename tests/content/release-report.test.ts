@@ -1,4 +1,9 @@
 // @vitest-environment node
+import { execFile } from 'node:child_process';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import { promisify } from 'node:util';
 import { describe, expect, it } from 'vitest';
 import type { ArtifactHashes } from '../../scripts/release/releaseHashes';
 import {
@@ -10,18 +15,80 @@ import {
 import {
   resolveBetaTarget,
   serializeReleaseTargetOutput,
+  verifyReleaseTarget,
 } from '../../scripts/release/verifyReleaseTarget';
 import { validateManualQualityRecord } from '../../scripts/release/verifyReleaseApproval';
 import { ReleaseApprovalSchema } from '../../scripts/release/releaseSchema';
 
 const sha = 'a'.repeat(40);
 const digest = 'b'.repeat(64);
+const execFileAsync = promisify(execFile);
+const inheritedGitVariableKeys = [
+  'GIT_DIR',
+  'GIT_WORK_TREE',
+  'GIT_COMMON_DIR',
+  'GIT_INDEX_FILE',
+  'GIT_OBJECT_DIRECTORY',
+  'GIT_ALTERNATE_OBJECT_DIRECTORIES',
+] as const;
+const isolatedGitEnvironment = { ...process.env };
+for (const key of inheritedGitVariableKeys) {
+  Reflect.deleteProperty(isolatedGitEnvironment, key);
+}
 const hashes: ArtifactHashes = {
   artifactDigest: digest,
   courseHash: 'c'.repeat(64),
   provenanceHash: 'd'.repeat(64),
   visualBaselineHash: 'e'.repeat(64),
 };
+
+/** 親worktree用のGit環境変数を引き継がず、一時repositoryだけを操作する。 */
+async function runIsolatedGit(
+  repositoryRoot: string,
+  arguments_: readonly string[],
+): Promise<string> {
+  const { stdout } = await execFileAsync('git', [...arguments_], {
+    cwd: repositoryRoot,
+    encoding: 'utf8',
+    env: isolatedGitEnvironment,
+  });
+  return stdout;
+}
+
+/** Production helperの子Gitも一時repositoryを参照するよう親worktree環境を一時退避する。 */
+async function withoutParentGitEnvironment(run: () => Promise<void>): Promise<void> {
+  const inherited = new Map(
+    inheritedGitVariableKeys.map((key) => [key, process.env[key]] as const),
+  );
+  for (const key of inheritedGitVariableKeys) Reflect.deleteProperty(process.env, key);
+  try {
+    await run();
+  } finally {
+    for (const [key, value] of inherited) {
+      if (value === undefined) Reflect.deleteProperty(process.env, key);
+      else process.env[key] = value;
+    }
+  }
+}
+
+/** 実Git repositoryを一時作成し、callback成否にかかわらず必ず削除する。 */
+async function withTemporaryGitRepository(
+  run: (repositoryRoot: string, headSha: string) => Promise<void>,
+): Promise<void> {
+  const repositoryRoot = await mkdtemp(path.join(tmpdir(), 'tsumucode-beta-target-'));
+  try {
+    await runIsolatedGit(repositoryRoot, ['init', '--quiet']);
+    await runIsolatedGit(repositoryRoot, ['config', 'user.name', 'TsumuCode Test']);
+    await runIsolatedGit(repositoryRoot, ['config', 'user.email', 'test@tsumucode.invalid']);
+    await writeFile(path.join(repositoryRoot, 'fixture.txt'), 'beta target fixture\n');
+    await runIsolatedGit(repositoryRoot, ['add', 'fixture.txt']);
+    await runIsolatedGit(repositoryRoot, ['commit', '--quiet', '-m', 'fixture']);
+    const headSha = await runIsolatedGit(repositoryRoot, ['rev-parse', 'HEAD']);
+    await withoutParentGitEnvironment(() => run(repositoryRoot, headSha.trim()));
+  } finally {
+    await rm(repositoryRoot, { recursive: true, force: true });
+  }
+}
 
 /** 公開後検証APIを遅延解決し、未実装時もVitestのassertionとして失敗させる。 */
 async function loadPostDeployValidator(): Promise<
@@ -130,6 +197,67 @@ describe('release target output', () => {
       }),
     ).toThrow(/改行/iu);
   });
+
+  it('実Git HEADとsource・workflowが完全一致するとbeta targetを返す', async () => {
+    await withTemporaryGitRepository(async (repositoryRoot, headSha) => {
+      await expect(
+        verifyReleaseTarget({
+          repositoryRoot,
+          mode: 'beta',
+          sourceSha: headSha,
+          workflowHeadSha: headSha,
+        }),
+      ).resolves.toMatchObject({
+        checkoutSha: headSha,
+        verifiedSourceCommit: headSha,
+        releaseMode: 'beta',
+      });
+    });
+  });
+
+  it('実Git HEADだけがsource・workflowと異なるbeta targetを拒否する', async () => {
+    await withTemporaryGitRepository(async (repositoryRoot, headSha) => {
+      const otherSha = headSha.startsWith('a') ? 'b'.repeat(40) : 'a'.repeat(40);
+      await expect(
+        verifyReleaseTarget({
+          repositoryRoot,
+          mode: 'beta',
+          sourceSha: otherSha,
+          workflowHeadSha: otherSha,
+        }),
+      ).rejects.toThrow(/checkout SHA.*workflow SHA/iu);
+    });
+  });
+
+  it('sourceとworkflowが異なるbeta targetを実Git境界でも拒否する', async () => {
+    await withTemporaryGitRepository(async (repositoryRoot, headSha) => {
+      const otherSha = headSha.startsWith('a') ? 'b'.repeat(40) : 'a'.repeat(40);
+      await expect(
+        verifyReleaseTarget({
+          repositoryRoot,
+          mode: 'beta',
+          sourceSha: headSha,
+          workflowHeadSha: otherSha,
+        }),
+      ).rejects.toThrow(/source SHA.*workflow SHA/iu);
+    });
+  });
+
+  it.each(['', 'main', 'g'.repeat(40)])(
+    '不正なsource SHA「%s」を実Git境界で拒否する',
+    async (sourceSha) => {
+      await withTemporaryGitRepository(async (repositoryRoot, headSha) => {
+        await expect(
+          verifyReleaseTarget({
+            repositoryRoot,
+            mode: 'beta',
+            sourceSha,
+            workflowHeadSha: headSha,
+          }),
+        ).rejects.toThrow();
+      });
+    },
+  );
 });
 
 describe('beta release report', () => {

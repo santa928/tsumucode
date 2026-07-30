@@ -4,7 +4,7 @@ title: HTML/CSS はじめの一歩
 description: 読んで、書いて、確かめながら、レスポンシブなWebページを完成させる
 audience: プログラミングを初めて学ぶ本人と身内
 estimatedMinutes: 710
-revision: 2026-07-13.1
+revision: 2026-07-29.1
 runnerId: html-css
 validatorId: html-css
 glossarySource: glossary.yaml
@@ -79,6 +79,537 @@ progressMigrations:
           entity: workspace,
           id: workspace-first-heading,
           reason: WorkspaceがHTMLとCSSの複数File構成へ変わるため,
+        }
+  - fromRevision: 2026-07-13.1
+    toRevision: 2026-07-29.1
+    steps:
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch00-l01-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch00-l02-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch01-l01-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch01-l02-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch01-l03-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch02-l01-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch02-l02-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch02-l03-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch02-l04-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch03-l01-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch03-l02-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch03-l03-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch03-l04-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch04-l01-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch04-l02-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch04-l03-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch04-l04-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch05-l01-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch05-l02-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch05-l03-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch05-l04-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch05-l05-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch06-l01-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch06-l02-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch06-l03-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch06-l04-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch07-l01-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch08-l01-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch08-l02-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch08-l03-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch08-l04-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch08-l05-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch09-l01-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch09-l02-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch09-l03-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch09-l04-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch10-l01-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch10-l02-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch10-l03-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch10-l04-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch10-l05-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch11-l01-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch11-l02-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch11-l03-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch11-l04-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch12-l01-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch12-l02-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch12-l03-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch12-l04-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch12-l05-e01,
+          reason: 判定条件と合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: exercise,
+          id: html-css-ch13-l01-e01,
+          reason: Capstoneの必須合格条件を完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-capstone-landing,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch00-l01-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch00-l02-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch01-l01-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch01-l02-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch01-l03-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch02-l01-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch02-l02-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch03-l01-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch03-l02-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch04-l02-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch04-l04-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch05-l02-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch05-l03-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch05-l04-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch05-l05-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch06-l01-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch06-l02-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch06-l03-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch06-l04-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch08-l02-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch08-l03-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch08-l04-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch08-l05-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch09-l01-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch09-l02-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch09-l03-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch09-l04-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch10-l01-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch10-l02-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch10-l03-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch10-l04-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch10-l05-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch11-l01-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch11-l02-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-ch11-l04-e01,
+          reason: Starter fileを完成版へ更新したため,
+        }
+      - {
+          action: intentionally-reset,
+          entity: workspace,
+          id: html-css-profile-project,
+          reason: Starter fileを完成版へ更新したため,
         }
 supportedDevices:
   exercise: desktop

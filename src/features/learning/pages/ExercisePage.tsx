@@ -1,5 +1,5 @@
 /** 端末能力に応じて編集Runtimeまたは閲覧専用画面だけを遅延読込する。 */
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useSyncExternalStore } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import type { exerciseLoader } from '../../../app/contentLoaders';
 import { WorkspaceLeaseGate } from '../../progress/WorkspaceLeaseGate';
@@ -29,6 +29,13 @@ function ExerciseLoadingNotice() {
 export function ExercisePage() {
   const data = useLoaderData<typeof exerciseLoader>();
   const canEdit = useEditingCapability();
+  const persistenceHealth = useSyncExternalStore(
+    learningRuntimeServices.progressService.subscribeHealth,
+    learningRuntimeServices.progressService.getHealthSnapshot,
+    learningRuntimeServices.progressService.getHealthSnapshot,
+  );
+  const showCoordinationWarning =
+    persistenceHealth.kind === 'initializing' || persistenceHealth.kind === 'healthy';
   const sessionKey = `${data.course.id}:${data.course.revision}:${data.exercise.id}:${data.exercise.workspaceId}`;
   if (!canEdit) {
     return (
@@ -44,6 +51,7 @@ export function ExercisePage() {
         courseId={data.course.id}
         workspaceId={data.exercise.workspaceId}
         coordinator={learningRuntimeServices.leaseCoordinator}
+        showCoordinationWarning={showCoordinationWarning}
       >
         {(lease) => (
           <Suspense fallback={<ExerciseLoadingNotice />}>

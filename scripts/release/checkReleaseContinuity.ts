@@ -63,17 +63,29 @@ function isNewerRevision(left: string, right: string): boolean {
 /** migration source IDからactionを一意に引けるMapを作る。 */
 function migrationActions(
   migrations: readonly ContentProgressMigration[],
-): ReadonlyMap<string, ContentProgressMigration['steps'][number]> {
-  const actions = new Map<string, ContentProgressMigration['steps'][number]>();
+): ReadonlyMap<string, readonly ContentProgressMigration['steps'][number][]> {
+  const actions = new Map<string, readonly ContentProgressMigration['steps'][number][]>();
   for (const migration of migrations) {
     for (const step of migration.steps) {
       const sourceId = step.action === 'map-to' ? step.fromId : step.id;
-      if (actions.has(sourceId))
-        throw new Error(`移行宣言のsource IDが重複しています: ${sourceId}`);
-      actions.set(sourceId, step);
+      const existing = actions.get(sourceId) ?? [];
+      if (existing.some(({ entity }) => entity === step.entity)) {
+        throw new Error(`移行宣言のsource IDが重複しています: ${step.entity}:${sourceId}`);
+      }
+      actions.set(sourceId, [...existing, step]);
     }
   }
   return actions;
+}
+
+/** ID自体を廃止する移行だけをtombstone対象とし、同一IDの証跡resetは再利用扱いにしない。 */
+function requiresTombstone(
+  sourceId: string,
+  step: ContentProgressMigration['steps'][number],
+  persistentIds: readonly string[],
+): boolean {
+  if (step.action === 'preserve') return false;
+  return step.action === 'map-to' || !persistentIds.includes(sourceId);
 }
 
 /** 公開済みReleaseの順序、一意性、tag chain、ID hashとmigration契約を検証する。 */
@@ -116,12 +128,17 @@ function validatePublishedReleaseChain(history: ReleaseHistory): void {
     const reused = release.persistentIds.find((id) => cumulativeTombstones.has(id));
     if (reused !== undefined)
       throw new Error(`公開Releaseがtombstone IDを再利用しています: ${reused}`);
-    for (const [sourceId, step] of migrationActions(release.migrations)) {
-      if (!release.tombstonedIds.includes(sourceId)) {
-        throw new Error(`公開Releaseの移行source IDにtombstoneがありません: ${sourceId}`);
-      }
-      if (step.action === 'map-to' && !release.persistentIds.includes(step.toId)) {
-        throw new Error(`公開Releaseのmap-to先IDが永続IDにありません: ${step.toId}`);
+    for (const [sourceId, steps] of migrationActions(release.migrations)) {
+      for (const step of steps) {
+        if (
+          requiresTombstone(sourceId, step, release.persistentIds) &&
+          !release.tombstonedIds.includes(sourceId)
+        ) {
+          throw new Error(`公開Releaseの移行source IDにtombstoneがありません: ${sourceId}`);
+        }
+        if (step.action === 'map-to' && !release.persistentIds.includes(step.toId)) {
+          throw new Error(`公開Releaseのmap-to先IDが永続IDにありません: ${step.toId}`);
+        }
       }
     }
     previous = release;
@@ -155,12 +172,17 @@ export function validateReleaseMetadata(input: ReleaseMetadataInput): void {
   if (reused !== undefined) throw new Error(`tombstone IDを再利用しています: ${reused}`);
 
   const actions = migrationActions(candidate.migrations);
-  for (const [sourceId, step] of actions) {
-    if (!candidate.tombstonedIds.includes(sourceId)) {
-      throw new Error(`移行source IDにtombstoneがありません: ${sourceId}`);
-    }
-    if (step.action === 'map-to' && !currentIds.includes(step.toId)) {
-      throw new Error(`map-to先IDが現行Courseにありません: ${sourceId} -> ${step.toId}`);
+  for (const [sourceId, steps] of actions) {
+    for (const step of steps) {
+      if (
+        requiresTombstone(sourceId, step, currentIds) &&
+        !candidate.tombstonedIds.includes(sourceId)
+      ) {
+        throw new Error(`移行source IDにtombstoneがありません: ${sourceId}`);
+      }
+      if (step.action === 'map-to' && !currentIds.includes(step.toId)) {
+        throw new Error(`map-to先IDが現行Courseにありません: ${sourceId} -> ${step.toId}`);
+      }
     }
   }
 
@@ -288,10 +310,11 @@ export async function verifySyntheticProgressBundle(
   const stored = migrateRepositorySnapshot(unsigned, bundle.exportedAt);
   const inputStrings = stringValues({ courses: stored.courses, drafts: stored.drafts });
   const migrationSources = migrationActions(course.progressMigrations);
-  for (const sourceId of migrationSources.keys()) {
-    if (!inputStrings.has(sourceId)) {
-      throw new Error(`合成Bundleに移行source IDがありません: ${sourceId}`);
-    }
+  const exercisedMigrationSources = new Map(
+    [...migrationSources].filter(([sourceId]) => inputStrings.has(sourceId)),
+  );
+  if (exercisedMigrationSources.size === 0) {
+    throw new Error('合成Bundleに移行source IDがありません');
   }
 
   const migrations = new ContentProgressMigrationService({} as ProgressRepository, {
@@ -304,15 +327,17 @@ export async function verifySyntheticProgressBundle(
   });
   const normalStrings = stringValues({ courses: snapshot.courses, drafts: snapshot.drafts });
 
-  for (const [sourceId, step] of migrationSources) {
+  for (const [sourceId, steps] of exercisedMigrationSources) {
     if (normalStrings.has(sourceId)) {
       throw new Error(`移行後の通常進捗へ旧IDが残っています: ${sourceId}`);
     }
-    if (step.action === 'map-to' && !normalStrings.has(step.toId)) {
-      throw new Error(`map-to先が移行後進捗にありません: ${sourceId} -> ${step.toId}`);
+    for (const step of steps) {
+      if (step.action === 'map-to' && !normalStrings.has(step.toId)) {
+        throw new Error(`map-to先が移行後進捗にありません: ${sourceId} -> ${step.toId}`);
+      }
     }
     if (
-      step.action === 'intentionally-reset' &&
+      steps.some(({ action }) => action === 'intentionally-reset') &&
       !notices.some(({ sourceId: noticedId }) => noticedId === sourceId)
     ) {
       throw new Error(`intentionally-resetのNoticeがありません: ${sourceId}`);
@@ -333,7 +358,6 @@ export async function verifySyntheticProgressBundle(
   const stableDrafts = Object.entries(stored.drafts).filter(([, draft]) =>
     [draft.lessonId, draft.exerciseId, draft.workspaceId].every((id) => !migrationSources.has(id)),
   );
-  if (stableDrafts.length === 0) throw new Error('合成Bundleにpreserve対象Draftがありません');
   for (const [key, draft] of stableDrafts) {
     const migrated = snapshot.drafts[key];
     if (

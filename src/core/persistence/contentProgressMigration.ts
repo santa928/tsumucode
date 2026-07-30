@@ -127,21 +127,30 @@ function migrateLessonProgress(
   context: MigrationContext,
 ): LessonProgress {
   const currentSlideId = migrateOptionalId(lesson.currentSlideId, 'slide', actions, context);
+  const passedExerciseIds = migrateIdList(lesson.passedExerciseIds, 'exercise', actions, context);
+  const passedChecklistItemIds = migrateIdList(
+    lesson.passedChecklistItemIds,
+    'checklist',
+    actions,
+    context,
+  );
+  const passedRuleIds = migrateIdList(lesson.passedRuleIds, 'rule', actions, context);
+  const completionEvidenceReset =
+    passedExerciseIds.length !== lesson.passedExerciseIds.length ||
+    passedChecklistItemIds.length !== lesson.passedChecklistItemIds.length ||
+    passedRuleIds.length !== lesson.passedRuleIds.length;
   return {
     lessonId,
     viewedSlideIds: migrateIdList(lesson.viewedSlideIds, 'slide', actions, context),
     ...(currentSlideId === undefined ? {} : { currentSlideId }),
-    passedExerciseIds: migrateIdList(lesson.passedExerciseIds, 'exercise', actions, context),
-    passedChecklistItemIds: migrateIdList(
-      lesson.passedChecklistItemIds,
-      'checklist',
-      actions,
-      context,
-    ),
-    passedRuleIds: migrateIdList(lesson.passedRuleIds, 'rule', actions, context),
+    passedExerciseIds,
+    passedChecklistItemIds,
+    passedRuleIds,
     passedViewportIds: lesson.passedViewportIds,
-    currentComplete: lesson.currentComplete,
-    ...(lesson.firstCompletedAt === undefined ? {} : { firstCompletedAt: lesson.firstCompletedAt }),
+    currentComplete: completionEvidenceReset ? false : lesson.currentComplete,
+    ...(completionEvidenceReset || lesson.firstCompletedAt === undefined
+      ? {}
+      : { firstCompletedAt: lesson.firstCompletedAt }),
   };
 }
 
@@ -153,15 +162,18 @@ function migrateCourseStep(
 ): CourseProgress {
   const actions = actionMap(migration);
   const lessons: Record<string, LessonProgress> = {};
+  let completionInvalidated = false;
   for (const [sourceKey, lesson] of Object.entries(progress.lessons)) {
     const keyReference = resolveReference(actions, 'lesson', sourceKey);
     const idReference = resolveReference(actions, 'lesson', lesson.lessonId);
     if (keyReference.kind === 'reset') {
       context.quarantine('lesson', sourceKey, keyReference.reason, lesson);
+      completionInvalidated ||= lesson.currentComplete;
       continue;
     }
     if (idReference.kind === 'reset') {
       context.quarantine('lesson', lesson.lessonId, idReference.reason, lesson);
+      completionInvalidated ||= lesson.currentComplete;
       continue;
     }
     if (keyReference.id !== idReference.id) {
@@ -170,7 +182,9 @@ function migrateCourseStep(
     if (Object.hasOwn(lessons, keyReference.id)) {
       throw new Error(`Lesson keyのmap先が衝突しました: ${keyReference.id}`);
     }
-    lessons[keyReference.id] = migrateLessonProgress(lesson, keyReference.id, actions, context);
+    const migratedLesson = migrateLessonProgress(lesson, keyReference.id, actions, context);
+    completionInvalidated ||= lesson.currentComplete && !migratedLesson.currentComplete;
+    lessons[keyReference.id] = migratedLesson;
   }
 
   const currentLessonId = migrateOptionalId(progress.currentLessonId, 'lesson', actions, context);
@@ -186,8 +200,8 @@ function migrateCourseStep(
     lessons,
     ...(currentLessonId === undefined ? {} : { currentLessonId }),
     ...(currentChapterId === undefined ? {} : { currentChapterId }),
-    currentComplete: progress.currentComplete,
-    ...(progress.firstCompletedAt === undefined
+    currentComplete: completionInvalidated ? false : progress.currentComplete,
+    ...(completionInvalidated || progress.firstCompletedAt === undefined
       ? {}
       : { firstCompletedAt: progress.firstCompletedAt }),
     updatedAt: progress.updatedAt,

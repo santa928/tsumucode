@@ -258,6 +258,46 @@ describe('release continuity metadata', () => {
     }).toThrow(/tombstone/iu);
   });
 
+  it('現行IDの合格証跡だけをintentionally-resetする候補はtombstoneを要求しない', () => {
+    const fixture = history();
+    fixture.candidate.migrations = [
+      {
+        fromRevision: '2026-07-10.1',
+        toRevision: '2026-07-13.1',
+        steps: [
+          {
+            action: 'intentionally-reset',
+            entity: 'lesson',
+            id: 'current-lesson',
+            reason: '同じIDの合格条件を更新したため',
+          },
+          {
+            action: 'intentionally-reset',
+            entity: 'workspace',
+            id: 'current-lesson',
+            reason: '同じIDのStarterを更新したため',
+          },
+        ],
+      },
+    ];
+    fixture.candidate.tombstonedIds = [];
+    const resetCourse = {
+      revision: course.revision,
+      progressMigrations: fixture.candidate.migrations,
+    };
+
+    expect(() => {
+      validateReleaseMetadata({
+        history: fixture,
+        course: resetCourse,
+        currentCourseManifestSha256: 'b'.repeat(64),
+        currentPersistentIds: ['current-lesson'],
+        releaseTags: [],
+        mode: 'quality-only',
+      });
+    }).not.toThrow();
+  });
+
   it('map-to先IDが現行Courseにない候補を拒否する', () => {
     const fixture = history();
     fixture.candidate.migrations = [

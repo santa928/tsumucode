@@ -1,3 +1,5 @@
+import { mkdir, writeFile } from 'node:fs/promises';
+import path from 'node:path';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import {
   STANDARD_EXERCISE_ID,
@@ -15,6 +17,20 @@ interface Rectangle {
   readonly bottom: number;
 }
 
+interface DegradedLayoutMetrics {
+  readonly banner: Rectangle;
+  readonly toolRail: Rectangle;
+  readonly stage: Rectangle;
+  readonly pager: Rectangle;
+  readonly stageScroll: {
+    readonly clientHeight: number;
+    readonly scrollHeight: number;
+    readonly clientWidth: number;
+    readonly scrollWidth: number;
+    readonly overflowY: string;
+  };
+}
+
 const NORMAL_PC_VIEWPORTS = [
   { name: 'desktop-minimum', width: 1024, height: 768 },
   { name: 'desktop-compact', width: 1280, height: 720 },
@@ -29,6 +45,9 @@ const LIBRARY_VIEWPORTS = [
   { name: 'desktop-compact', width: 1280, height: 720 },
   { name: 'desktop-wide', width: 1440, height: 900 },
 ] as const;
+const LOW_HEIGHT_EVIDENCE_ROOT = path.resolve(
+  '.superpowers/sdd/beta-release-implementation-plan/low-height-evidence',
+);
 
 /** Locatorの境界を比較しやすいleft/top/right/bottomへ変換する。 */
 async function rectangle(locator: Locator): Promise<Rectangle> {
@@ -56,6 +75,176 @@ async function expectNoDocumentScroll(page: Page): Promise<void> {
   }));
   expect(root.scrollHeight).toBeLessThanOrEqual(root.clientHeight + 1);
   expect(root.scrollWidth).toBeLessThanOrEqual(root.clientWidth);
+}
+
+/** IndexedDBをfuture versionへ進め、次のApplication openをmemory-onlyへ固定する。 */
+async function seedUnsupportedProgressDatabase(page: Page): Promise<void> {
+  await page.goto('generated/content/catalog.json');
+  await page.evaluate(async () => {
+    const database = await new Promise<IDBDatabase>((resolve, reject) => {
+      const opening = indexedDB.open('tsumucode-progress', 99);
+      opening.onsuccess = () => {
+        resolve(opening.result);
+      };
+      opening.onerror = () => {
+        reject(opening.error ?? new Error('future database seed failed'));
+      };
+    });
+    database.close();
+  });
+}
+
+/** memory救済中のbaselineと異なるv2正本を作り、明示retryをconflictへ進める。 */
+async function replaceWithDivergedDurableDatabase(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    await new Promise<void>((resolve, reject) => {
+      const deletion = indexedDB.deleteDatabase('tsumucode-progress');
+      deletion.onsuccess = () => {
+        resolve();
+      };
+      deletion.onerror = () => {
+        reject(deletion.error ?? new Error('future database delete failed'));
+      };
+      deletion.onblocked = () => {
+        reject(new Error('future database delete blocked'));
+      };
+    });
+    const database = await new Promise<IDBDatabase>((resolve, reject) => {
+      const opening = indexedDB.open('tsumucode-progress', 2);
+      opening.onerror = () => {
+        reject(opening.error ?? new Error('diverged database open failed'));
+      };
+      opening.onupgradeneeded = () => {
+        const next = opening.result;
+        next.createObjectStore('courses', { keyPath: 'courseId' });
+        next.createObjectStore('drafts', { keyPath: 'key' });
+        next.createObjectStore('backups', { keyPath: 'id' });
+        next.createObjectStore('quarantine', { keyPath: 'id' });
+        next.createObjectStore('metadata', { keyPath: 'key' });
+      };
+      opening.onsuccess = () => {
+        resolve(opening.result);
+      };
+    });
+    try {
+      const transaction = database.transaction(['quarantine', 'metadata'], 'readwrite');
+      transaction.objectStore('quarantine').put({
+        id: 'other-device-state',
+        reason: '別の端末保存状態を再現するfixture',
+        quarantinedAt: '2026-07-29T00:00:00.000Z',
+        raw: { source: 'durable' },
+      });
+      transaction.objectStore('metadata').put({
+        key: 'recordSchemaVersion',
+        kind: 'record-schema-version',
+        value: 2,
+      });
+      await new Promise<void>((resolve, reject) => {
+        transaction.oncomplete = () => {
+          resolve();
+        };
+        transaction.onerror = () => {
+          reject(transaction.error ?? new Error('diverged database seed failed'));
+        };
+        transaction.onabort = () => {
+          reject(transaction.error ?? new Error('diverged database seed aborted'));
+        };
+      });
+    } finally {
+      database.close();
+    }
+  });
+}
+
+/** degraded Banner表示時に固定領域とStage救済Scrollの実寸契約を検証する。 */
+async function expectDegradedLowHeightLayout(
+  page: Page,
+  viewport: { readonly width: number; readonly height: number },
+  health: 'memory-only' | 'conflict',
+): Promise<DegradedLayoutMetrics> {
+  const banner = page.locator(`[data-persistence-health-banner="${health}"]`);
+  const toolRail = page.getByRole('navigation', { name: '学習ツール' });
+  const stage = page.getByTestId('learning-stage');
+  const pager = page.locator('.tc-learning-shell-pager');
+  const exportButton = banner.getByRole('button', { name: '救済中データを書き出す' });
+  const validate = pager.getByRole('button', { name: '判定する', exact: true });
+  await expect(banner).toBeVisible();
+  await expect(stage).toBeVisible();
+
+  const bannerRect = await rectangle(banner);
+  const toolRailRect = await rectangle(toolRail);
+  const stageRect = await rectangle(stage);
+  const pagerRect = await rectangle(pager);
+  expect(bannerRect.top).toBeGreaterThanOrEqual(-0.5);
+  expect(bannerRect.bottom).toBeLessThanOrEqual(viewport.height + 0.5);
+  expectNoOverlap(bannerRect, toolRailRect);
+  expectNoOverlap(toolRailRect, stageRect);
+  expectNoOverlap(stageRect, pagerRect);
+  const shellChildren = await page.getByTestId('app-shell').evaluate((element) =>
+    Array.from(element.children).map((child) => {
+      const rect = child.getBoundingClientRect();
+      return {
+        tag: child.tagName,
+        className: child.className,
+        role: child.getAttribute('role'),
+        top: rect.top,
+        bottom: rect.bottom,
+        height: rect.height,
+        text: child.textContent.trim().slice(0, 80),
+      };
+    }),
+  );
+  const learningChildren = await page.locator('.tc-learning-viewport-shell').evaluate((element) =>
+    Array.from(element.children).map((child) => {
+      const rect = child.getBoundingClientRect();
+      return {
+        className: child.className,
+        top: rect.top,
+        bottom: rect.bottom,
+        height: rect.height,
+        clientHeight: child.clientHeight,
+        scrollHeight: child.scrollHeight,
+      };
+    }),
+  );
+  expect(pagerRect.bottom, JSON.stringify({ shellChildren, learningChildren })).toBeLessThanOrEqual(
+    viewport.height + 0.5,
+  );
+
+  const stageMetrics = await stage.evaluate((element) => ({
+    clientHeight: element.clientHeight,
+    scrollHeight: element.scrollHeight,
+    clientWidth: element.clientWidth,
+    scrollWidth: element.scrollWidth,
+    overflowY: getComputedStyle(element).overflowY,
+  }));
+  expect(stageMetrics.clientHeight).toBeGreaterThanOrEqual(48);
+  expect(stageMetrics.scrollHeight).toBeGreaterThan(stageMetrics.clientHeight);
+  expect(stageMetrics.overflowY).toBe('auto');
+  expect(stageMetrics.scrollWidth).toBeLessThanOrEqual(stageMetrics.clientWidth + 1);
+
+  for (const target of [
+    page.getByTestId('code-workspace').getByRole('heading', { name: 'コードを組み立てる' }),
+    page.getByTestId('runtime-preview-frame').locator('iframe'),
+  ]) {
+    await target.scrollIntoViewIfNeeded();
+    const targetRect = await rectangle(target);
+    const currentStageRect = await rectangle(stage);
+    expect(targetRect.right).toBeLessThanOrEqual(viewport.width + 0.5);
+    expect(targetRect.bottom).toBeGreaterThan(currentStageRect.top);
+    expect(targetRect.top).toBeLessThan(currentStageRect.bottom);
+  }
+  await expectReachablePrimaryAction(exportButton, viewport.width, viewport.height);
+  await expectReachablePrimaryAction(validate, viewport.width, viewport.height);
+  await expectNoDocumentScroll(page);
+  await expectDocumentScrollAtOrigin(page);
+  return {
+    banner: bannerRect,
+    toolRail: toolRailRect,
+    stage: stageRect,
+    pager: pagerRect,
+    stageScroll: stageMetrics,
+  };
 }
 
 /** 固定学習Shellの救済Scroll前後でDocument自体が原点から動いていないことを確認する。 */
@@ -600,6 +789,54 @@ test('低いPC ViewportでもExercise Stageに救済Scrollと操作面を残す'
   expect(afterPagerAction, 'Pager内判定の検査ではStageをscrollしない').toBe(beforePagerAction);
   await expectNoDocumentScroll(page);
   await expectDocumentScrollAtOrigin(page);
+});
+
+test('保存degraded時も低いPCでBanner・Tool Rail・Stage・Pagerを操作可能に保つ', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'failure injectionはChromiumで検証する');
+  test.setTimeout(60_000);
+  await seedUnsupportedProgressDatabase(page);
+  await page.setViewportSize({ width: 1024, height: 500 });
+  await page.goto(exerciseRoute(STANDARD_LESSON_ID, STANDARD_EXERCISE_ID));
+  await expect(page.getByTestId('code-workspace')).toBeVisible();
+  await expect(page.getByRole('alert', { name: 'この端末へ保存できていません' })).toBeVisible();
+  await replaceEditorText(page, '<main><h1>低画面高のmemory救済</h1></main>');
+  await expect(page.getByText('保存できません。編集内容は画面に残っています')).toBeVisible();
+  const memoryOnlyMetrics = await expectDegradedLowHeightLayout(
+    page,
+    { width: 1024, height: 500 },
+    'memory-only',
+  );
+  await mkdir(LOW_HEIGHT_EVIDENCE_ROOT, { recursive: true });
+  await page.getByTestId('learning-stage').evaluate((element) => {
+    element.scrollTop = 0;
+  });
+  await page.screenshot({
+    path: path.join(LOW_HEIGHT_EVIDENCE_ROOT, 'memory-only-1024x500.png'),
+  });
+
+  await replaceWithDivergedDurableDatabase(page);
+  await page.getByRole('button', { name: '端末保存を再試行する' }).click();
+  await expect(
+    page.getByRole('alert', { name: '端末データの保存先が競合しています' }),
+  ).toBeVisible();
+  await page.setViewportSize({ width: 1280, height: 600 });
+  const conflictMetrics = await expectDegradedLowHeightLayout(
+    page,
+    { width: 1280, height: 600 },
+    'conflict',
+  );
+  await page.getByTestId('learning-stage').evaluate((element) => {
+    element.scrollTop = 0;
+  });
+  await page.screenshot({
+    path: path.join(LOW_HEIGHT_EVIDENCE_ROOT, 'conflict-1280x600.png'),
+  });
+  await writeFile(
+    path.join(LOW_HEIGHT_EVIDENCE_ROOT, 'layout-metrics.json'),
+    `${JSON.stringify({ memoryOnly: memoryOnlyMetrics, conflict: conflictMetrics }, null, 2)}\n`,
+  );
 });
 
 for (const viewport of LIBRARY_VIEWPORTS) {

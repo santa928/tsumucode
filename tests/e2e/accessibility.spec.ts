@@ -54,22 +54,6 @@ async function expectNoAxeViolations(page: Page): Promise<void> {
   ).toEqual([]);
 }
 
-/** Drawer開閉中を含む画面にCritical／Seriousのaxe違反がないことを確認する。 */
-async function expectNoCriticalOrSeriousAxeViolations(page: Page): Promise<void> {
-  const result = await new AxeBuilder({ page })
-    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
-    .analyze();
-  expect(
-    result.violations
-      .filter(({ impact }) => impact === 'critical' || impact === 'serious')
-      .map(({ id, impact, nodes }) => ({
-        id,
-        impact,
-        targets: nodes.map((node) => node.target),
-      })),
-  ).toEqual([]);
-}
-
 /** 必須Slideを利用者と同じ「次へ」操作で読み、各閲覧記録のdurable保存を待つ。 */
 async function visitRequiredSlides(page: Page): Promise<void> {
   await page.goto(SLIDE_ROUTES[0]);
@@ -451,11 +435,11 @@ test('KeyboardだけでStarter ResetのDrawerを取消・Backdrop・確定でき
   await tabToAndActivate(page, resetTrigger, 'Shift+Tab');
   await expect(resetDrawer).toBeVisible();
   await expect(cancel).toBeFocused();
-  await expectNoCriticalOrSeriousAxeViolations(page);
+  await expectNoAxeViolations(page);
   await page.keyboard.press('Enter');
   await expect(resetDrawer).toBeHidden();
   await expect(resetTrigger).toBeFocused();
-  await expectNoCriticalOrSeriousAxeViolations(page);
+  await expectNoAxeViolations(page);
 
   await page.keyboard.press('Enter');
   await expect(resetDrawer).toBeVisible();
@@ -463,7 +447,7 @@ test('KeyboardだけでStarter ResetのDrawerを取消・Backdrop・確定でき
   await page.keyboard.press('Escape');
   await expect(resetDrawer).toBeHidden();
   await expect(resetTrigger).toBeFocused();
-  await expectNoCriticalOrSeriousAxeViolations(page);
+  await expectNoAxeViolations(page);
 
   await page.keyboard.press('Enter');
   await expect(resetDrawer).toBeVisible();
@@ -478,7 +462,7 @@ test('KeyboardだけでStarter ResetのDrawerを取消・Backdrop・確定でき
   await tabToAndActivate(page, confirm);
   await expect(resetDrawer).toBeHidden();
   await expect(page.locator('.cm-content')).toBeFocused();
-  await expectNoCriticalOrSeriousAxeViolations(page);
+  await expectNoAxeViolations(page);
 });
 
 test('Keyboardだけで判定、見直し、復帰でき、CodeMirrorからEscapeとTabで脱出できる', async ({

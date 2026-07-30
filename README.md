@@ -4,11 +4,11 @@ TsumuCodeは、スライドで仕組みを理解し、ブラウザ上でコー�
 
 初回公開版は、完全初心者向けのHTML/CSSコースです。
 
-- 14章、51レッスン、95スライド、45演習、学習時間の目安710分
+- 14章、51レッスン、104スライド、45標準演習、学習時間の目安710分
 - 5工程でプロフィールページを組み立てるGuided Project
 - Briefから個人制作展サイトを完成させるCapstone Project
 - スライドの前後移動と一覧、演習中の関連スライド見直し、段階ヒント
-- 進捗と下書きへ触れず、全95スライドを自由に読めるスライド閲覧モード
+- 進捗と下書きへ触れず、全104スライドを自由に読めるスライド閲覧モード
 - HTML/CSS編集、隔離プレビュー、構造・見た目・アクセシビリティの自動判定
 - 端末内の進捗・下書き保存、JSONでの書き出しと差分確認付き読み込み
 
@@ -99,7 +99,7 @@ SourceやAssetを追加したら、同じ変更で`provenance.yaml`へ登録し�
 ./scripts/docker-compose.sh run --rm app npm run content:check
 ```
 
-ページ送りMetadataとConcept習得条件の移行状況は、次の単独Reportで確認します。不足があれば対象Lesson、Slide、Exercise、Conceptを安定した順序で表示して終了Code 1になります。教材再編集が完了するまでは既知の移行Reportであり、`npm run check`やRelease合格条件には含めません。全項目を移行した後にRelease Gateへ昇格します。
+ページ送りMetadataとConcept習得条件のcoverageは現在不足0件です。同じ不変条件はChapter別Vitest契約として`npm run check`へ含まれます。次の単独Reportは対象Lesson、Slide、Exercise、Conceptを安定した順序で詳しく確認する診断用で、不足があれば終了Code 1になります。
 
 ```bash
 ./scripts/docker-compose.sh run --rm app npm run content:coverage

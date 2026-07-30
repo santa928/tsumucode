@@ -20,13 +20,14 @@ import type {
   TabLeaseState,
   TabLeaseWriteFence,
 } from '../../../core/persistence/TabLeaseCoordinator';
+import type { PersistenceHealthSnapshot } from '../../../core/persistence/ResilientProgressService';
 import type { RunnerAdapter } from '../../../core/runtime/contracts';
 import type { ValidatorAdapter } from '../../../core/validation/contracts';
 import { createAppRouter } from '../../../app/router';
 
 const runtime = vi.hoisted(() => {
   const emptyNotices: readonly unknown[] = [];
-  const healthyProgress = Object.freeze({
+  const healthyProgress: PersistenceHealthSnapshot = Object.freeze({
     kind: 'healthy' as const,
     hasUnsavedChanges: false,
   });
@@ -124,7 +125,7 @@ const runtime = vi.hoisted(() => {
       close: vi.fn(),
     },
     progressService: {
-      getHealthSnapshot: vi.fn(() => healthyProgress),
+      getHealthSnapshot: vi.fn<() => PersistenceHealthSnapshot>(() => healthyProgress),
       subscribeHealth: vi.fn(() => () => undefined),
       retainEmergencyDraft: vi.fn<(draft: ExerciseDraft) => void>(),
     },
@@ -525,6 +526,10 @@ beforeEach(() => {
   runtime.passFreshness.markPassed.mockClear();
   runtime.notices.reportError.mockClear();
   runtime.notices.dismiss.mockClear();
+  runtime.progressService.getHealthSnapshot.mockReset().mockReturnValue({
+    kind: 'healthy',
+    hasUnsavedChanges: false,
+  });
   runtime.progressService.retainEmergencyDraft.mockClear();
   runtime.lease.reset();
   runtime.leaseCoordinator.acquire.mockClear();
@@ -712,6 +717,25 @@ describe('Learning routes', () => {
 
     expect(await findCodeWorkspace()).toBeInTheDocument();
     expect(runtime.runnerRegistry.create).toHaveBeenCalledWith(fixtureCourse.runnerId);
+  });
+
+  it('保存Banner表示中はlease coordination警告を重複せず作業台を直後に表示する', async () => {
+    stubEditingCapability(true);
+    stubAdapters();
+    runtime.progressService.getHealthSnapshot.mockReturnValue({
+      kind: 'memory-only',
+      cause: 'open',
+      hasUnsavedChanges: true,
+    });
+    runtime.lease.setState({ status: 'owned', coordination: 'unavailable' });
+
+    renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
+
+    expect(
+      await screen.findByRole('heading', { name: 'この端末へ保存できていません' }),
+    ).toBeInTheDocument();
+    expect(await findCodeWorkspace()).toBeInTheDocument();
+    expect(screen.queryByText(/複数のタブで同時に開かないでください/u)).not.toBeInTheDocument();
   });
 
   it('lease競合中はEditor・Runnerを生成せず、明示takeover成功後だけ編集を開始する', async () => {

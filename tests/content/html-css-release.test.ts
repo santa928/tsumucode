@@ -3,11 +3,15 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import type { CourseManifest } from '../../src/core/content/types';
 
 let course: CourseManifest;
+let readme: string;
 
 beforeAll(async () => {
-  course = JSON.parse(
-    await readFile('public/generated/content/courses/html-css.json', 'utf8'),
-  ) as CourseManifest;
+  const [courseSource, readmeSource] = await Promise.all([
+    readFile('public/generated/content/courses/html-css.json', 'utf8'),
+    readFile('README.md', 'utf8'),
+  ]);
+  course = JSON.parse(courseSource) as CourseManifest;
+  readme = readmeSource;
 });
 
 describe('HTML/CSS release manifest', () => {
@@ -18,6 +22,7 @@ describe('HTML/CSS release manifest', () => {
     const exercises = lessons.flatMap((lesson) => lesson.exercises);
     expect(chapters).toHaveLength(14);
     expect(lessons).toHaveLength(51);
+    expect(slides).toHaveLength(104);
     const conceptKinds = new Set(['concept', 'comparison', 'diagram', 'code']);
     expect(slides.filter((slide) => conceptKinds.has(slide.kind)).length).toBeGreaterThanOrEqual(
       95,
@@ -33,6 +38,13 @@ describe('HTML/CSS release manifest', () => {
     expect(lessons.filter((lesson) => lesson.kind === 'guided-project')).toHaveLength(5);
     expect(lessons.filter((lesson) => lesson.kind === 'capstone')).toHaveLength(1);
     expect(chapters.reduce((sum, chapter) => sum + chapter.estimatedMinutes, 0)).toBe(710);
+  });
+
+  it('READMEの教材集計とcoverage gate説明が現在の実体に一致する', () => {
+    expect(readme).toMatch(/51レッスン、104スライド/u);
+    expect(readme).toMatch(/全104スライド/u);
+    expect(readme).toMatch(/Chapter別Vitest契約として`npm run check`へ含まれます/u);
+    expect(readme).not.toMatch(/教材再編集が完了するまでは既知の移行Report/u);
   });
 
   it('全Glossary EntryがLessonから参照され、初出Slideを持つ', () => {

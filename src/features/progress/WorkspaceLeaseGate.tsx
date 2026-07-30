@@ -29,6 +29,7 @@ export interface WorkspaceLeaseGateProps {
   readonly courseId: string;
   readonly workspaceId: string;
   readonly coordinator: WorkspaceLeaseCoordinator;
+  readonly showCoordinationWarning?: boolean;
   readonly children: (access: WorkspaceLeaseAccess) => ReactNode;
 }
 
@@ -172,10 +173,15 @@ function WorkspaceLeaseAcquisitionError() {
 interface WorkspaceLeaseSessionViewProps {
   readonly session: WorkspaceLeaseSession;
   readonly children: WorkspaceLeaseGateProps['children'];
+  readonly showCoordinationWarning: boolean;
 }
 
 /** commit後に取得済みのLeaseだけを購読し、状態ごとの編集可否へ変換する。 */
-function WorkspaceLeaseSessionView({ session, children }: WorkspaceLeaseSessionViewProps) {
+function WorkspaceLeaseSessionView({
+  session,
+  children,
+  showCoordinationWarning,
+}: WorkspaceLeaseSessionViewProps) {
   const actionGenerationRef = useRef(0);
   const mountedRef = useRef(false);
   const takeoverPendingRef = useRef(false);
@@ -221,7 +227,7 @@ function WorkspaceLeaseSessionView({ session, children }: WorkspaceLeaseSessionV
   if (lease.status === 'owned' || lease.status === 'local-rescue') {
     return (
       <>
-        {lease.coordination === 'unavailable' ? (
+        {lease.coordination === 'unavailable' && showCoordinationWarning ? (
           <StackedCard
             as="aside"
             role="alert"
@@ -313,6 +319,7 @@ export function WorkspaceLeaseGate({
   courseId,
   workspaceId,
   coordinator,
+  showCoordinationWarning = true,
   children,
 }: WorkspaceLeaseGateProps) {
   const [binding, setBinding] = useState<WorkspaceLeaseBinding>();
@@ -361,5 +368,11 @@ export function WorkspaceLeaseGate({
   if (currentBinding.acquisitionFailed || currentBinding.session === undefined) {
     return <WorkspaceLeaseAcquisitionError />;
   }
-  return <WorkspaceLeaseSessionView session={currentBinding.session} children={children} />;
+  return (
+    <WorkspaceLeaseSessionView
+      session={currentBinding.session}
+      children={children}
+      showCoordinationWarning={showCoordinationWarning}
+    />
+  );
 }

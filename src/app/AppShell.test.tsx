@@ -113,6 +113,77 @@ describe('AppShell', () => {
     expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument();
   });
 
+  it('学習routeの保存degraded中は復旧Bannerと重複する保存Error Noticeを表示しない', async () => {
+    runtime.publishHealth({
+      kind: 'memory-only',
+      hasUnsavedChanges: true,
+      cause: 'write',
+    });
+    runtime.notices.publish([
+      {
+        id: 'error:exercise-save',
+        kind: 'error',
+        message: '端末への進捗保存に失敗しました。もう一度操作してください。',
+      },
+    ]);
+    renderWithRouter(
+      <Routes>
+        <Route element={<AppShell />}>
+          <Route
+            path="/courses/:courseId/lessons/:lessonId/exercises/:exerciseId"
+            element={<h1>見出しを変更する</h1>}
+          />
+        </Route>
+      </Routes>,
+      { route: '/courses/html-css/lessons/lesson-first/exercises/exercise-heading' },
+    );
+
+    expect(
+      await screen.findByRole('alert', { name: 'この端末へ保存できていません' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('region', { name: '端末の学習データに関するお知らせ' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('保存degraded中も教材移行とPreview失敗のNoticeは隠さない', async () => {
+    runtime.publishHealth({
+      kind: 'memory-only',
+      hasUnsavedChanges: true,
+      cause: 'write',
+    });
+    runtime.notices.publish([
+      {
+        id: 'migration:content-reset',
+        kind: 'migration',
+        message: '教材の更新に合わせて、一部の進捗を安全に初期化しました。',
+      },
+      {
+        id: 'error:exercise-preview',
+        kind: 'error',
+        message: 'プレビューの自動更新に失敗しました。手動の更新をもう一度試してください。',
+      },
+    ]);
+    renderWithRouter(
+      <Routes>
+        <Route element={<AppShell />}>
+          <Route
+            path="/courses/:courseId/lessons/:lessonId/exercises/:exerciseId"
+            element={<h1>見出しを変更する</h1>}
+          />
+        </Route>
+      </Routes>,
+      { route: '/courses/html-css/lessons/lesson-first/exercises/exercise-heading' },
+    );
+
+    expect(
+      await screen.findByText('教材の更新に合わせて、一部の進捗を安全に初期化しました。'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('プレビューの自動更新に失敗しました。手動の更新をもう一度試してください。'),
+    ).toBeInTheDocument();
+  });
+
   it('通常routeではHeader、Main、Navigationを表示し、Footerを置かない', () => {
     renderWithRouter(
       <Routes>

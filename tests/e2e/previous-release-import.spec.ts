@@ -6,16 +6,14 @@ const PREVIOUS_RELEASE_BUNDLE = new URL(
   '../fixtures/progress/previous-release-bundle.json',
   import.meta.url,
 );
-const CURRENT_REVISION = '2026-07-13.1';
-const FIRST_COMPLETED_AT = '2026-07-11T09:30:00.000Z';
-const COURSE_FIRST_COMPLETED_AT = '2026-07-11T10:00:00.000Z';
+const CURRENT_REVISION = '2026-07-29.1';
 const CURRENT_LESSON_ID = 'html-css-ch00-l01';
 const CURRENT_EXERCISE_ID = 'html-css-ch00-l01-e01';
 const MAPPED_SLIDE_ID = 'html-css-ch00-l01-s02';
 
 test.describe.configure({ timeout: 90_000 });
 
-test('前回Releaseの合成Bundleを実Importし、map・reset・preserveをIndexedDBへ反映する', async ({
+test('前回Releaseの合成Bundleを実Importし、mapと連続resetをIndexedDBへ反映する', async ({
   page,
 }) => {
   await page.goto('./#/');
@@ -29,7 +27,7 @@ test('前回Releaseの合成Bundleを実Importし、map・reset・preserveをInd
 
   const preview = page.getByRole('region', { name: '読み込み差分' });
   await expect(preview).toBeVisible();
-  await expect(preview).toContainText('html-css：追加・1レッスン完了');
+  await expect(preview).toContainText('html-css：追加・0レッスン完了');
   for (const sourceId of [
     'ch00-web-map',
     'lesson-first-heading',
@@ -59,7 +57,6 @@ test('前回Releaseの合成Bundleを実Importし、map・reset・preserveをInd
     contentRevision: CURRENT_REVISION,
     currentLessonId: CURRENT_LESSON_ID,
     currentComplete: false,
-    firstCompletedAt: COURSE_FIRST_COMPLETED_AT,
     lessons: {
       [CURRENT_LESSON_ID]: {
         lessonId: CURRENT_LESSON_ID,
@@ -67,30 +64,19 @@ test('前回Releaseの合成Bundleを実Importし、map・reset・preserveをInd
         currentSlideId: MAPPED_SLIDE_ID,
         passedExerciseIds: [],
         passedRuleIds: [],
-        currentComplete: true,
-        firstCompletedAt: FIRST_COMPLETED_AT,
+        currentComplete: false,
       },
     },
   });
+  expect(course).not.toHaveProperty('firstCompletedAt');
+  expect((course?.['lessons'] as Record<string, unknown>)[CURRENT_LESSON_ID]).not.toHaveProperty(
+    'firstCompletedAt',
+  );
   expect(course).not.toHaveProperty('currentChapterId');
   expect((course?.['lessons'] as Record<string, unknown>)['lesson-first-heading']).toBeUndefined();
 
-  expect(stored.drafts).toEqual([
-    expect.objectContaining({
-      key: `html-css:${CURRENT_EXERCISE_ID}`,
-      courseId: 'html-css',
-      lessonId: CURRENT_LESSON_ID,
-      exerciseId: CURRENT_EXERCISE_ID,
-      workspaceId: CURRENT_EXERCISE_ID,
-      contentRevision: CURRENT_REVISION,
-      files: { 'index.html': '<h1>古い教材から引き継ぐ見出し</h1>' },
-      revealedHintIds: [],
-      reviewSlideId: MAPPED_SLIDE_ID,
-      reviewScrollOffset: 120,
-      updatedAt: '2026-07-11T10:10:00.000Z',
-    }),
-  ]);
-  expect(stored.quarantined).toHaveLength(10);
+  expect(stored.drafts).toEqual([]);
+  expect(stored.quarantined).toHaveLength(11);
   const quarantined = JSON.stringify(stored.quarantined);
   for (const sourceId of [
     'ch00-web-map',
@@ -103,6 +89,7 @@ test('前回Releaseの合成Bundleを実Importし、map・reset・preserveをInd
     'hint-h1-2',
     'hint-h1-3',
     'workspace-first-heading',
+    CURRENT_EXERCISE_ID,
   ]) {
     expect(quarantined).toContain(sourceId);
   }
@@ -113,5 +100,5 @@ test('前回Releaseの合成Bundleを実Importし、map・reset・preserveをInd
     `./#/courses/html-css/lessons/${CURRENT_LESSON_ID}/exercises/${CURRENT_EXERCISE_ID}`,
   );
   await expect(page.getByTestId('code-workspace')).toBeVisible();
-  await expect.poll(() => editorText(page)).toContain('古い教材から引き継ぐ見出し');
+  await expect.poll(() => editorText(page)).not.toContain('古い教材から引き継ぐ見出し');
 });

@@ -290,6 +290,7 @@ git -c user.name=santa928 -c user.email=38289324+santa928@users.noreply.github.c
 
 - Produces: `BetaBadge(): JSX.Element`
 - Accessible Name: `ベータ版`
+- Semantic role: `img`（状態変化を通知するlive regionではない）
 - Visible text: `β`
 
 - [ ] **Step 1: Badge primitiveとShell配置の失敗testを書く**
@@ -301,7 +302,7 @@ import { BetaBadge } from './BetaBadge';
 
 it('BetaBadgeは短い表示とベータ版のAccessible Nameを両立する', () => {
   render(<BetaBadge />);
-  expect(screen.getByLabelText('ベータ版')).toHaveTextContent('β');
+  expect(screen.getByRole('img', { name: 'ベータ版' })).toHaveTextContent('β');
 });
 ```
 
@@ -342,6 +343,7 @@ Expected: `BetaBadge`未作成、またはShellにBadgeがなくFAIL。
 export function BetaBadge() {
   return (
     <span
+      role="img"
       aria-label="ベータ版"
       className="inline-flex shrink-0 items-center rounded-workshop-piece border border-workshop-border bg-workshop-learning px-1.5 py-0.5 text-[0.625rem] font-black leading-none text-workshop-ink"
     >
@@ -360,7 +362,7 @@ export function BetaBadge() {
 </span>
 ```
 
-Brand linkへ`aria-label="TsumuCodeホームへ"`を付け、既存Linkの目的を維持する。
+Brand linkへ`aria-label="TsumuCodeホームへ（ベータ版）"`を付け、Link自体のAccessible Nameでもβ版であることを明示する。`BetaBadge`は非liveの`role="img"`であり、画面表示時に不要な状態通知を発生させない。
 
 `LearningToolRail.tsx`は既存の最後のBrand label `span`内へ`BetaBadge`を置く。既存CSSの`.tc-learning-tool-brand > span:last-child`が低幅時にlabelとBadgeを一緒に隠すため、新しい縦領域を作らない。
 

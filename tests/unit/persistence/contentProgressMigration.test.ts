@@ -131,6 +131,25 @@ const resettingWorkspaceCourse: CourseManifest = {
   ],
 };
 
+const resettingExerciseCourse: CourseManifest = {
+  ...fixtureCourse,
+  revision: 'rev-2',
+  progressMigrations: [
+    {
+      fromRevision: 'rev-1',
+      toRevision: 'rev-2',
+      steps: [
+        {
+          action: 'intentionally-reset',
+          entity: 'exercise',
+          id: 'exercise-first-heading',
+          reason: '判定条件を更新したため',
+        },
+      ],
+    },
+  ],
+};
+
 const secondResettingCourse: CourseManifest = {
   ...resettingWorkspaceCourse,
   id: 'css-2',
@@ -277,8 +296,9 @@ describe('ContentProgressMigrationService', () => {
       contentRevision: 'rev-3',
       currentLessonId: 'lesson-first-heading',
       currentChapterId: 'ch00-web-map',
-      firstCompletedAt: '2026-07-09T00:00:00.000Z',
+      currentComplete: false,
     });
+    expect(course).not.toHaveProperty('firstCompletedAt');
     expect(lesson).toMatchObject({
       lessonId: 'lesson-first-heading',
       viewedSlideIds: ['slide-html-role', 'slide-stable'],
@@ -286,8 +306,9 @@ describe('ContentProgressMigrationService', () => {
       passedExerciseIds: ['exercise-first-heading'],
       passedChecklistItemIds: ['checklist-current'],
       passedRuleIds: ['rule-h1-exists'],
-      firstCompletedAt: '2026-07-09T00:00:00.000Z',
+      currentComplete: false,
     });
+    expect(lesson).not.toHaveProperty('firstCompletedAt');
     expect(draft).toMatchObject({
       lessonId: 'lesson-first-heading',
       exerciseId: 'exercise-first-heading',
@@ -434,6 +455,53 @@ describe('ContentProgressMigrationService', () => {
     expect(migrated.quarantined).toHaveLength(1);
     expect(migrated.quarantined[0]?.reason).toContain('workspace:workspace-old');
     expect(migrated.quarantined[0]?.raw).toBe(input.drafts['html-css:workspace-old']);
+  });
+
+  it('Exercise合格evidenceのresetでは閲覧Slideを保ちLessonとCourseを未完了へ戻す', async () => {
+    const base = oldSnapshot();
+    const input: RepositorySnapshot = {
+      ...base,
+      courses: {
+        'html-css': {
+          ...base.courses['html-css']!,
+          contentRevision: 'rev-1',
+          lessons: {
+            'lesson-first-heading': {
+              lessonId: 'lesson-first-heading',
+              viewedSlideIds: ['slide-html-role'],
+              currentSlideId: 'slide-html-role',
+              passedExerciseIds: ['exercise-first-heading'],
+              passedChecklistItemIds: [],
+              passedRuleIds: ['rule-h1-exists'],
+              passedViewportIds: ['desktop'],
+              currentComplete: true,
+              firstCompletedAt: '2026-07-09T00:00:00.000Z',
+            },
+          },
+          currentLessonId: 'lesson-first-heading',
+          currentChapterId: 'ch00-web-map',
+          currentComplete: true,
+          firstCompletedAt: '2026-07-09T00:00:00.000Z',
+        },
+      },
+      drafts: {},
+    };
+    const service = new ContentProgressMigrationService(repositoryFor(input));
+    service.registerCourse(resettingExerciseCourse);
+
+    const migrated = await service.migrateSnapshot(input);
+    const progress = migrated.courses['html-css'];
+    const lesson = progress?.lessons['lesson-first-heading'];
+
+    expect(lesson).toMatchObject({
+      viewedSlideIds: ['slide-html-role'],
+      currentSlideId: 'slide-html-role',
+      passedExerciseIds: [],
+      currentComplete: false,
+    });
+    expect(lesson).not.toHaveProperty('firstCompletedAt');
+    expect(progress).toMatchObject({ contentRevision: 'rev-2', currentComplete: false });
+    expect(progress).not.toHaveProperty('firstCompletedAt');
   });
 
   it('snapshotとUIに安全なreset noticeを同時に返す', async () => {
