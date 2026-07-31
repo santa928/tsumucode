@@ -203,6 +203,8 @@ function stubContentFetch(course: CourseManifest = fixtureCourse): void {
       const url = input instanceof Request ? input.url : input.toString();
       if (url.endsWith('html-css.json')) return new Response(source, { status: 200 });
       const catalog = structuredClone(fixtureCatalog);
+      // 通常学習Routeのfixtureでは、draft Courseと公開Pathの組合せを作らない。
+      catalog.learningPaths = [];
       Object.assign(catalog.courses[0]!, {
         audience: course.audience,
         description: course.description,

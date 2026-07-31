@@ -36,7 +36,12 @@ describe('App', () => {
     expect(
       await screen.findByRole('heading', { name: '学びたいピースを選ぶ' }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('article')).toHaveTextContent(fixtureCatalog.courses[0]!.title);
+    expect(
+      screen.getByRole('article', { name: fixtureCatalog.learningPaths[0]!.title }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('article', { name: fixtureCatalog.courses[0]!.title }),
+    ).toHaveTextContent(fixtureCatalog.courses[0]!.title);
     expect(screen.getByText('公開中')).toBeInTheDocument();
     expect(screen.queryByText('現在のピース')).not.toBeInTheDocument();
   });

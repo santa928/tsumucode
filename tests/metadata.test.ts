@@ -13,14 +13,12 @@ describe('HTML metadata', () => {
     expect(favicon).toContain('<title>TsumuCode</title>');
   });
 
-  it('全主要routeで必要な公開CatalogとCourseをBASE_URL配下から先読みする', async () => {
+  it('Homeに必要な公開CatalogだけをBASE_URL配下から先読みする', async () => {
     const html = await readFile(resolve('index.html'), 'utf8');
 
     expect(html).toMatch(
       /href="%BASE_URL%generated\/content\/catalog\.json"\s+as="fetch"\s+crossorigin/u,
     );
-    expect(html).toMatch(
-      /href="%BASE_URL%generated\/content\/courses\/html-css\.json"\s+as="fetch"\s+crossorigin/u,
-    );
+    expect(html).not.toContain('generated/content/courses/html-css.json');
   });
 });
