@@ -196,6 +196,13 @@ export async function seedCompletedProgress(page: Page): Promise<void> {
 /** 現在DBのversion、schema metadata、主要store recordを一貫したprobeへ読む。 */
 export async function readStoredProgress(page: Page): Promise<StoredProgressProbe> {
   return page.evaluate(async () => {
+    const emptyProbe = (databaseVersion: number): StoredProgressProbe => ({
+      databaseVersion,
+      courses: [],
+      drafts: [],
+      backups: [],
+      quarantined: [],
+    });
     const requestResult = <Value>(request: IDBRequest<Value>): Promise<Value> =>
       new Promise<Value>((resolve, reject) => {
         request.onsuccess = () => {
@@ -217,6 +224,12 @@ export async function readStoredProgress(page: Page): Promise<StoredProgressProb
           reject(transaction.error ?? new Error('IndexedDB aborted'));
         };
       });
+    // read probeが製品より先に名前だけのv1 DBを作ると、製品側のv1 migration契約を壊す。
+    // 存在確認はDBを作らないdatabases()で行い、初期化中は次のexpect.pollへ譲る。
+    const knownDatabases = await indexedDB.databases();
+    if (!knownDatabases.some(({ name }) => name === 'tsumucode-progress')) {
+      return emptyProbe(0);
+    }
     const database = await new Promise<IDBDatabase>((resolve, reject) => {
       const opening = indexedDB.open('tsumucode-progress');
       opening.onsuccess = () => {
@@ -233,13 +246,7 @@ export async function readStoredProgress(page: Page): Promise<StoredProgressProb
       // 初回表示では、probe側のopenが製品側のschema upgradeより先に成功する場合がある。
       // 空transactionを作らず未初期化snapshotを返し、expect.pollの次回読取へ譲る。
       if (names.length === 0) {
-        return {
-          databaseVersion: database.version,
-          courses: [],
-          drafts: [],
-          backups: [],
-          quarantined: [],
-        };
+        return emptyProbe(database.version);
       }
       const transaction = database.transaction(names, 'readonly');
       const readAll = async (name: string): Promise<readonly Record<string, unknown>[]> => {
