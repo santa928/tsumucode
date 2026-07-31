@@ -6,7 +6,14 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['dist', 'coverage', 'public/generated/content', 'playwright-report', 'test-results'],
+    ignores: [
+      'dist',
+      'coverage',
+      'public/generated/content',
+      'playwright-report',
+      'test-results',
+      '.worktrees',
+    ],
   },
   {
     files: ['**/*.{js,cjs,mjs}'],
