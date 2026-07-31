@@ -169,7 +169,11 @@ export function HomePage() {
             </p>
           </StackedCard>
         ) : (
-          <ul className="mt-5 grid list-none gap-7 p-0 lg:grid-cols-2">
+          <ul
+            className={`mt-5 grid list-none gap-7 p-0 ${
+              publishedPaths.length > 1 ? 'lg:grid-cols-2' : 'max-w-4xl'
+            }`}
+          >
             {publishedPaths.map((path) => {
               const courses = path.steps.map((step) => {
                 const course = publishedCourseById.get(step.courseId);

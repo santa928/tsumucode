@@ -3,6 +3,7 @@ import { replaceEditorText } from './helpers/progress';
 import { testBasePath } from './helpers/testBasePath';
 
 const COURSE_PATH = `${testBasePath()}#/courses/html-css`;
+const LEARNING_PATH = `${testBasePath()}#/paths/frontend`;
 const SLIDE_PATH = `${COURSE_PATH}/lessons/html-css-ch00-l01/slides/html-css-ch00-l01-s01`;
 const EXERCISE_PATH = `${COURSE_PATH}/lessons/html-css-ch00-l01/exercises/html-css-ch00-l01-e01`;
 const COMPLETION_PATH = `${EXERCISE_PATH}/completion`;
@@ -187,6 +188,17 @@ const SCREENS: readonly VisualScreen[] = [
         page.getByRole('progressbar', { name: 'HTML/CSS はじめの一歩の進捗' }),
       ).toBeVisible();
       await expect(page.getByRole('heading', { name: 'この端末の学習データ' })).toBeVisible();
+    },
+  },
+  {
+    id: 'learning-path',
+    path: LEARNING_PATH,
+    ready: async (page) => {
+      await expect(
+        page.getByRole('heading', { level: 1, name: 'フロントエンド学習パス' }),
+      ).toBeVisible();
+      await expect(page.getByRole('progressbar', { name: '必須コースの進捗' })).toBeVisible();
+      await expect(page.locator('[data-learning-path-step]').first()).toBeVisible();
     },
   },
   {

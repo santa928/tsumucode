@@ -24,6 +24,37 @@ const defaultIndexHtml = `<!doctype html>
   </head>
 </html>`;
 
+/** Catalog v2のsubpath検査に必要なCourseとLearningPathの最小成功例を返す。 */
+function createCatalogV2(manifestPath: string): unknown {
+  return {
+    schemaVersion: 2,
+    courses: [
+      {
+        id: 'html-css',
+        manifestPath,
+        lessonStarts: [
+          {
+            lessonId: 'html-css-ch00-l01',
+            target: { kind: 'slide', targetId: 'html-css-ch00-l01-s01' },
+          },
+        ],
+      },
+    ],
+    learningPaths: [
+      {
+        id: 'frontend',
+        steps: [
+          {
+            courseId: 'html-css',
+            role: 'required',
+            prerequisiteCourseIds: [],
+          },
+        ],
+      },
+    ],
+  };
+}
+
 /** Testごとに独立した最小Production成果物を作り、検証対象Pathを返す。 */
 async function createFixture(options: FixtureOptions = {}): Promise<string> {
   const root = await mkdtemp(path.join(tmpdir(), 'tsumucode-subpath-'));
@@ -55,7 +86,7 @@ async function createFixture(options: FixtureOptions = {}): Promise<string> {
   const manifestPath = options.catalogManifestPath ?? 'generated/content/courses/html-css.json';
   await writeFile(
     path.join(root, 'generated/content/catalog.json'),
-    JSON.stringify(options.catalog ?? { courses: [{ manifestPath }] }),
+    JSON.stringify(options.catalog ?? createCatalogV2(manifestPath)),
   );
   await writeFile(path.join(root, 'generated/content/courses/html-css.json'), '{}');
   return root;
@@ -66,7 +97,7 @@ afterEach(async () => {
 });
 
 describe('subpath build smoke', () => {
-  it('必要なAsset、教材、静的Importが揃ったRepository subpath Buildを受理する', async () => {
+  it('Catalog v2のlessonStartsとLearningPathを含むRepository subpath Buildを受理する', async () => {
     const distRoot = await createFixture();
 
     await expect(
@@ -76,6 +107,44 @@ describe('subpath build smoke', () => {
         homeBudgetBytes: 250 * 1024,
       }),
     ).resolves.toBeUndefined();
+  });
+
+  it('Catalog v1を後方互換と誤認せず拒否する', async () => {
+    const distRoot = await createFixture({
+      catalog: {
+        schemaVersion: 1,
+        courses: [
+          {
+            id: 'html-css',
+            manifestPath: 'generated/content/courses/html-css.json',
+          },
+        ],
+      },
+    });
+
+    await expect(
+      assertSubpathBuild({
+        distRoot,
+        basePath: '/repository-name/',
+        homeBudgetBytes: 250 * 1024,
+      }),
+    ).rejects.toThrow('Course CatalogのschemaVersionは2である必要があります');
+  });
+
+  it('LearningPathが参照する未知Courseを拒否する', async () => {
+    const catalog = createCatalogV2('generated/content/courses/html-css.json') as {
+      learningPaths: { steps: { courseId: string }[] }[];
+    };
+    catalog.learningPaths[0]!.steps[0]!.courseId = 'unknown-course';
+    const distRoot = await createFixture({ catalog });
+
+    await expect(
+      assertSubpathBuild({
+        distRoot,
+        basePath: '/repository-name/',
+        homeBudgetBytes: 250 * 1024,
+      }),
+    ).rejects.toThrow('LearningPathが未知Courseを参照しています: unknown-course');
   });
 
   it('Repository subpathの外へ出るRoot Asset URLを拒否する', async () => {
@@ -118,7 +187,13 @@ describe('subpath build smoke', () => {
   });
 
   it('Catalog entryのmanifestPath欠落を構造Errorとして拒否する', async () => {
-    const distRoot = await createFixture({ catalog: { courses: [{}] } });
+    const distRoot = await createFixture({
+      catalog: {
+        schemaVersion: 2,
+        courses: [{ id: 'html-css', lessonStarts: [] }],
+        learningPaths: [],
+      },
+    });
 
     await expect(
       assertSubpathBuild({
@@ -130,7 +205,9 @@ describe('subpath build smoke', () => {
   });
 
   it('公開Courseが0件のCatalogを拒否する', async () => {
-    const distRoot = await createFixture({ catalog: { courses: [] } });
+    const distRoot = await createFixture({
+      catalog: { schemaVersion: 2, courses: [], learningPaths: [] },
+    });
 
     await expect(
       assertSubpathBuild({

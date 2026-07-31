@@ -11,6 +11,7 @@ TsumuCodeは、スライドで仕組みを理解し、ブラウザ上でコー�
 - 進捗と下書きへ触れず、全104スライドを自由に読めるスライド閲覧モード
 - HTML/CSS編集、隔離プレビュー、構造・見た目・アクセシビリティの自動判定
 - 端末内の進捗・下書き保存、JSONでの書き出しと差分確認付き読み込み
+- 独立したコースをおすすめ順に並べる学習パス
 
 ## 対象者と対応環境
 
@@ -45,6 +46,14 @@ Node.jsやnpmをHostへインストールする必要はありません。依存
 ```
 
 [http://localhost:5173/](http://localhost:5173/)を開きます。停止するときは、起動したTerminalで`Ctrl+C`を押します。
+
+## 学習パスとコース
+
+Homeでは、複数のコースをおすすめ順に並べる「学習パス」を最初の導線として表示します。学習パスは順番を案内する設計図であり、各コースは独立して開始・完了できます。前のコースが未完了でもロックされず、学びたいコースから直接始められます。
+
+現在公開している「フロントエンド学習パス」にはHTML/CSSコースだけを収録しています。JavaScript、TypeScript、Reactなどのコースは、教材と品質確認が完成してから順次このパスへ追加します。学習パスの直リンクは[`#/paths/frontend`](http://localhost:5173/#/paths/frontend)です。
+
+学習パスの進捗は、この端末に保存された各コースの進捗からその都度計算します。学習パス専用の進捗Recordは作らないため、既存の書き出し・読み込み形式や各コースの下書きはそのまま利用できます。
 
 ## スライドだけ見る
 
@@ -89,6 +98,7 @@ GitHub Pagesへ公開した後のHTML/CSSコースの直リンクは、[スラ�
 - `content/html-css/workspaces/`: Starter、Solution、負例Fixture
 - `content/html-css/assets/`: 教材Asset
 - `content/html-css/provenance.yaml`: 全SourceとAssetの由来、作成方法、公開可否
+- `content/learning-paths/`: 公開コースを束ねるおすすめ学習順
 - `public/generated/content/`: 開発用の未追跡生成物
 - `dist/`: Production Buildの未追跡生成物
 

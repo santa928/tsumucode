@@ -11,6 +11,11 @@ const roots = [
   'src/features/library/LibrarySlidePage.tsx',
   'src/app/libraryContentLoaders.ts',
 ] as const;
+const catalogSurfaceRoots = [
+  'src/features/home/HomePage.tsx',
+  'src/features/paths/LearningPathCard.tsx',
+  'src/features/paths/LearningPathPage.tsx',
+] as const;
 const forbidden = [
   /src\/features\/learning\/runtimeServices\.tsx?$/u,
   /src\/features\/progress\//u,
@@ -21,6 +26,13 @@ const forbidden = [
   /src\/core\/validation\//u,
 ] as const;
 const sourceExtensions = ['.ts', '.tsx', '.js', '.jsx'] as const;
+const catalogSurfaceForbiddenDirectImports = [
+  /src\/features\/learning\/editor\//u,
+  /src\/features\/learning\/pages\/EditableExercisePage\.tsx$/u,
+  /src\/core\/runtime\/RunnerRegistry\.ts$/u,
+  /src\/core\/validation\/ValidatorRegistry\.ts$/u,
+  /src\/adapters\/runtime\//u,
+] as const;
 
 interface ImportClosure {
   readonly parentByFile: ReadonlyMap<string, string | undefined>;
@@ -122,7 +134,25 @@ function forbiddenImportChains(closure: ImportClosure): readonly string[] {
     .sort();
 }
 
-describe('Library source import boundary', () => {
+/** Catalog主体画面の直接Importだけを解決し、重い学習Runtimeへの接続を検出する。 */
+async function catalogSurfaceForbiddenDirectImportChains(): Promise<readonly string[]> {
+  const violations: string[] = [];
+  for (const root of catalogSurfaceRoots) {
+    const source = await readFile(path.join(workspaceRoot, root), 'utf8');
+    for (const imported of ts.preProcessFile(source, true, true).importedFiles) {
+      const resolved = await resolveWorkspaceImport(root, imported.fileName, new Map());
+      if (
+        resolved !== undefined &&
+        catalogSurfaceForbiddenDirectImports.some((pattern) => pattern.test(resolved))
+      ) {
+        violations.push(`${root} → ${resolved}`);
+      }
+    }
+  }
+  return violations.sort();
+}
+
+describe('Static source import boundaries', () => {
   it('Syntheticな間接runtime importをrootから禁止FileまでのChain付きで検出する', async () => {
     const closure = await collectImportClosure(
       ['src/features/library/LibrarySlidePage.tsx'],
@@ -144,5 +174,9 @@ describe('Library source import boundary', () => {
 
     expect(closure.parentByFile.size).toBeGreaterThan(roots.length);
     expect(forbiddenImportChains(closure)).toEqual([]);
+  });
+
+  it('HomeとLearningPath画面からEditor・Runner・Validator実装を直接Importしない', async () => {
+    await expect(catalogSurfaceForbiddenDirectImportChains()).resolves.toEqual([]);
   });
 });

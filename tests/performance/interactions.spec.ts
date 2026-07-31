@@ -8,7 +8,7 @@ import {
   openEditableExercise,
   readExerciseStarter,
 } from '../e2e/helpers/releaseCourse';
-import { loadPerformanceManifest } from './manifest';
+import { loadPerformanceManifest, percentile95 } from './manifest';
 
 interface InteractionMeasurement {
   readonly name: string;
@@ -621,6 +621,84 @@ test('閲覧モードのHome、目次、Viewer、次Slide、目次Drawerが専�
     for (const duration of measurement.eventDurationsMs) {
       expect(duration, `${measurement.name} Event Timing`).toBeLessThanOrEqual(
         manifest.slideLibrary.interactionMaxMs,
+      );
+    }
+  }
+});
+
+test('Home→PathとPath→最初のCourseのwarm p95を200ms以内に保つ', async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.addInitScript(() => {
+    const entries: { startTime: number; duration: number }[] = [];
+    Reflect.set(window, '__tsumucodePerformanceEvents', entries);
+    const observer = new PerformanceObserver((list) => {
+      entries.push(
+        ...list.getEntries().map(({ startTime, duration }) => ({ startTime, duration })),
+      );
+    });
+    observer.observe({
+      type: 'event',
+      buffered: true,
+      durationThreshold: 16,
+    } as PerformanceObserverInit & { readonly durationThreshold: number });
+    Reflect.set(window, '__tsumucodePerformanceObserver', observer);
+  });
+
+  const homeToPath: InteractionMeasurement[] = [];
+  const pathToCourse: InteractionMeasurement[] = [];
+  const totalRuns = manifest.warmupRuns + manifest.runsPerExercise;
+  for (let run = 0; run < totalRuns; run += 1) {
+    await page.goto('./#/');
+    await expect(
+      page.getByRole('heading', { level: 1, name: '学びたいピースを選ぶ' }),
+    ).toBeVisible();
+    const pathLink = page.getByRole('link', {
+      name: 'フロントエンド学習パスの全体を見る',
+    });
+    await expect(pathLink).toBeVisible();
+    const first = await measureInteraction(
+      page,
+      `home-to-path-${String(run + 1)}`,
+      () => pathLink.click(),
+      page.getByRole('heading', { level: 1, name: 'フロントエンド学習パス' }),
+      { selector: 'main h1', exactText: 'フロントエンド学習パス' },
+    );
+    const courseLink = page.locator('[data-learning-path-step] article a').first();
+    await expect(courseLink).toBeVisible();
+    const second = await measureInteraction(
+      page,
+      `path-to-course-${String(run + 1)}`,
+      () => courseLink.click(),
+      page.getByRole('progressbar', { name: 'スライドの現在位置' }),
+      { selector: 'progress[aria-label="スライドの現在位置"]' },
+    );
+    if (run >= manifest.warmupRuns) {
+      homeToPath.push(first);
+      pathToCourse.push(second);
+    }
+  }
+
+  const evidence = {
+    homeToPath,
+    pathToCourse,
+    p95: {
+      homeToPath: percentile95(homeToPath.map(({ routeReadyMs }) => routeReadyMs)),
+      pathToCourse: percentile95(pathToCourse.map(({ routeReadyMs }) => routeReadyMs)),
+    },
+  };
+  await testInfo.attach('learning-path-interaction-performance.json', {
+    body: Buffer.from(JSON.stringify(evidence, undefined, 2)),
+    contentType: 'application/json',
+  });
+
+  expect(homeToPath).toHaveLength(manifest.runsPerExercise);
+  expect(pathToCourse).toHaveLength(manifest.runsPerExercise);
+  expect(evidence.p95.homeToPath).toBeLessThanOrEqual(manifest.learningPath.interactionMaxMs);
+  expect(evidence.p95.pathToCourse).toBeLessThanOrEqual(manifest.learningPath.interactionMaxMs);
+  for (const measurement of [...homeToPath, ...pathToCourse]) {
+    for (const duration of measurement.eventDurationsMs) {
+      expect(duration, `${measurement.name} Event Timing`).toBeLessThanOrEqual(
+        manifest.learningPath.interactionMaxMs,
       );
     }
   }

@@ -95,7 +95,7 @@ export function LearningPathPage() {
                 total={summary.totalRequiredCourses}
                 label="必須コースの進捗"
               />
-              <ActionLink to={summary.actionPath} className="mt-6 w-full">
+              <ActionLink to={summary.actionPath} className="mt-6 w-full" dataPathPrimaryAction>
                 {learningPathActionLabel(path.title, summary.status)}
               </ActionLink>
             </>
@@ -127,6 +127,7 @@ export function LearningPathPage() {
             return (
               <li
                 key={step.course.id}
+                data-learning-path-step
                 className="grid grid-cols-[3rem_minmax(0,1fr)] gap-3 md:grid-cols-[4rem_minmax(0,1fr)] md:gap-5"
               >
                 <div aria-hidden="true" className="relative flex justify-center">
@@ -143,6 +144,7 @@ export function LearningPathPage() {
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex flex-wrap items-center gap-2">
                       <span
+                        data-path-role-badge
                         className={`inline-flex rounded-workshop-sm px-3 py-1 text-sm font-black ${
                           step.role === 'required'
                             ? 'bg-workshop-primary text-workshop-on-primary'

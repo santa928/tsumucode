@@ -45,6 +45,10 @@ const LIBRARY_VIEWPORTS = [
   { name: 'desktop-compact', width: 1280, height: 720 },
   { name: 'desktop-wide', width: 1440, height: 900 },
 ] as const;
+const PATH_VIEWPORTS = [
+  { name: 'mobile-primary', width: 390, height: 844 },
+  { name: 'desktop-compact', width: 1280, height: 720 },
+] as const;
 const LOW_HEIGHT_EVIDENCE_ROOT = path.resolve(
   '.superpowers/sdd/beta-release-implementation-plan/low-height-evidence',
 );
@@ -391,6 +395,39 @@ async function expectLibraryTargetSizes(page: Page): Promise<void> {
       }),
     );
   expect(undersized).toEqual([]);
+}
+
+for (const viewport of PATH_VIEWPORTS) {
+  test(`${viewport.name}でHomeのLearningPath主導線を初期画面内へ収める`, async ({ page }) => {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.goto('./#/');
+    await expect(
+      page.getByRole('heading', { level: 1, name: '学びたいピースを選ぶ' }),
+    ).toBeVisible();
+    const primaryAction = page.locator('[data-path-primary-action]').first();
+    await expect(primaryAction).toBeVisible();
+    await expectReachablePrimaryAction(primaryAction, viewport.width, viewport.height);
+  });
+
+  test(`${viewport.name}でPathのH1・必須進捗・主要CTAを初期画面内へ収める`, async ({ page }) => {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.goto('./#/paths/frontend');
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'フロントエンド学習パス' }),
+    ).toBeVisible();
+    await expect(page.getByRole('progressbar', { name: '必須コースの進捗' })).toBeVisible();
+    const primaryAction = page.locator('[data-path-primary-action]').first();
+    await expectReachablePrimaryAction(primaryAction, viewport.width, viewport.height);
+
+    const step = page.locator('[data-learning-path-step]').first();
+    const card = step.getByRole('article');
+    await card.scrollIntoViewIfNeeded();
+    await expectInside(step.locator('[data-path-role-badge]'), card);
+    for (const action of await card.getByRole('link').all()) {
+      await expectInside(action, card);
+    }
+    await expectContained(page, card, viewport.width, viewport.height, false);
+  });
 }
 
 for (const viewport of NORMAL_PC_VIEWPORTS) {

@@ -18,7 +18,13 @@ interface SmokeOptions {
 }
 
 interface CourseCatalogSummary {
-  readonly courses: readonly { readonly manifestPath: string }[];
+  readonly courses: readonly {
+    readonly id: string;
+    readonly manifestPath: string;
+  }[];
+  readonly learningPaths: readonly {
+    readonly courseIds: readonly string[];
+  }[];
 }
 
 /** unknown値を安全にproperty検査できるObjectへ絞り込む。 */
@@ -33,20 +39,73 @@ function isStringArray(value: unknown): value is readonly string[] {
 
 /** Smokeに必要なCatalog最小構造だけをruntime検証する。 */
 function parseCourseCatalog(value: unknown): CourseCatalogSummary {
-  if (!isUnknownRecord(value) || !Array.isArray(value.courses)) {
+  if (!isUnknownRecord(value)) {
+    throw new Error('Course CatalogがObjectではありません');
+  }
+  if (value.schemaVersion !== 2) {
+    throw new Error('Course CatalogのschemaVersionは2である必要があります');
+  }
+  if (!Array.isArray(value.courses)) {
     throw new Error('Course Catalogにcourses配列がありません');
   }
   if (value.courses.length === 0) throw new Error('Course Catalogに公開Courseがありません');
+  if (!Array.isArray(value.learningPaths)) {
+    throw new Error('Course CatalogにlearningPaths配列がありません');
+  }
 
-  return {
-    courses: value.courses.map((course, index) => {
-      if (!isUnknownRecord(course) || typeof course.manifestPath !== 'string') {
+  const courses = value.courses.map((course, index) => {
+    if (!isUnknownRecord(course) || typeof course.id !== 'string') {
+      throw new Error(`Course Catalogのidが文字列ではありません: index ${String(index)}`);
+    }
+    if (typeof course.manifestPath !== 'string') {
+      throw new Error(`Course CatalogのmanifestPathが文字列ではありません: index ${String(index)}`);
+    }
+    if (!Array.isArray(course.lessonStarts)) {
+      throw new Error(`Course CatalogのlessonStartsが配列ではありません: index ${String(index)}`);
+    }
+    course.lessonStarts.forEach((lessonStart, lessonIndex) => {
+      if (
+        !isUnknownRecord(lessonStart) ||
+        typeof lessonStart.lessonId !== 'string' ||
+        !isUnknownRecord(lessonStart.target) ||
+        (lessonStart.target.kind !== 'slide' && lessonStart.target.kind !== 'exercise') ||
+        typeof lessonStart.target.targetId !== 'string'
+      ) {
         throw new Error(
-          `Course CatalogのmanifestPathが文字列ではありません: index ${String(index)}`,
+          `Course CatalogのlessonStartsが不正です: index ${String(index)}, lesson ${String(lessonIndex)}`,
         );
       }
-      return { manifestPath: course.manifestPath };
-    }),
+    });
+    return { id: course.id, manifestPath: course.manifestPath };
+  });
+
+  const learningPaths = value.learningPaths.map((learningPath, pathIndex) => {
+    if (!isUnknownRecord(learningPath) || !Array.isArray(learningPath.steps)) {
+      throw new Error(`Course CatalogのLearningPathが不正です: index ${String(pathIndex)}`);
+    }
+    const courseIds = learningPath.steps.map((step, stepIndex) => {
+      if (!isUnknownRecord(step) || typeof step.courseId !== 'string') {
+        throw new Error(
+          `Course CatalogのLearningPath Stepが不正です: index ${String(pathIndex)}, step ${String(stepIndex)}`,
+        );
+      }
+      return step.courseId;
+    });
+    return { courseIds };
+  });
+
+  const courseIds = new Set(courses.map(({ id }) => id));
+  for (const learningPath of learningPaths) {
+    for (const courseId of learningPath.courseIds) {
+      if (!courseIds.has(courseId)) {
+        throw new Error(`LearningPathが未知Courseを参照しています: ${courseId}`);
+      }
+    }
+  }
+
+  return {
+    courses,
+    learningPaths,
   };
 }
 

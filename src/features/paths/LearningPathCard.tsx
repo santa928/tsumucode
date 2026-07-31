@@ -82,7 +82,11 @@ export function LearningPathCard({ path, courses }: LearningPathCardProps) {
               label={`${path.title}の進捗`}
             />
             <div className="mt-auto flex flex-wrap gap-3 pt-7">
-              <ActionLink to={progress.summary.actionPath} className="w-full sm:w-auto">
+              <ActionLink
+                to={progress.summary.actionPath}
+                className="w-full sm:w-auto"
+                dataPathPrimaryAction
+              >
                 {learningPathActionLabel(path.title, progress.summary.status)}
               </ActionLink>
               <Link

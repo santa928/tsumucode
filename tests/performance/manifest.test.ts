@@ -92,6 +92,11 @@ describe('performance manifest', () => {
         addedHomeInitialJavaScriptGzipMaxBytes: 20480,
         interactionMaxMs: 200,
       },
+      learningPath: {
+        baselineCommit: '98fde1bcbd290436b3298437567848fe33491059',
+        addedHomeInitialJavaScriptGzipMaxBytes: 20480,
+        interactionMaxMs: 200,
+      },
     });
   });
 

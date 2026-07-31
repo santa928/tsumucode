@@ -24,6 +24,7 @@ const distRoot = path.resolve('dist');
 const performanceManifest = await loadPerformanceManifest();
 const starterResetBaselineCommit = '7e739754710138aa3433bfa085f7dd0479d9ca62';
 const starterResetBaselineEditorIncrementalJavaScriptGzipBytes = 177_635;
+const learningPathBaselineCommit = '98fde1bcbd290436b3298437567848fe33491059';
 const imageExtensions = new Set(['.avif', '.gif', '.jpeg', '.jpg', '.png', '.svg', '.webp']);
 const fontExtensions = new Set(['.otf', '.ttf', '.woff', '.woff2']);
 const textExtensions = new Set(['.css', '.html', '.js', '.json', '.md', '.svg', '.txt', '.xml']);
@@ -196,6 +197,20 @@ describe('production bundle budget', () => {
     expect(
       calculateAddedHomeInitialJavaScriptGzipBytes(currentHomeInitialJavaScriptGzipBytes),
     ).toBeLessThanOrEqual(performanceManifest.slideLibrary.addedHomeInitialJavaScriptGzipMaxBytes);
+    expect(performanceManifest.learningPath.baselineCommit).toBe(learningPathBaselineCommit);
+    expect(
+      calculateAddedHomeInitialJavaScriptGzipBytes(currentHomeInitialJavaScriptGzipBytes),
+    ).toBeLessThanOrEqual(performanceManifest.learningPath.addedHomeInitialJavaScriptGzipMaxBytes);
+    const forbiddenInitialChunk =
+      /EditorLanguageRegistry|RunnerRegistry|ValidatorRegistry|CodeWorkspace|EditableExercisePage|codemirror/u;
+    expect(
+      [...homeKeys].flatMap((key) => {
+        const file = viteManifest[key]!.file;
+        return forbiddenInitialChunk.test(key) || forbiddenInitialChunk.test(file)
+          ? [{ key, file }]
+          : [];
+      }),
+    ).toEqual([]);
     expect(initialJavaScript).not.toEqual(
       expect.arrayContaining([
         expect.stringMatching(
@@ -208,6 +223,7 @@ describe('production bundle budget', () => {
     expect(indexHtml).toContain('^#\\/library');
     expect(indexHtml).toContain(normalEntry?.file);
     expect(indexHtml).toContain(libraryEntry?.file);
+    expect(indexHtml).not.toContain('generated/content/courses/html-css.json');
   });
 
   it('Editor増分JSをHome初期graphから分離して専用予算内に保つ', async () => {

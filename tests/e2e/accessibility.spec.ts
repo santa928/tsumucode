@@ -21,6 +21,11 @@ const SLIDE_ROUTES = [
 
 const INITIAL_ROUTES = [
   { name: 'home', path: './#/', readyName: '学びたいピースを選ぶ' },
+  {
+    name: 'learning-path',
+    path: './#/paths/frontend',
+    readyName: 'フロントエンド学習パス',
+  },
   { name: 'course-map', path: './#/courses/html-css', readyName: 'HTML/CSS はじめの一歩' },
   { name: 'slide', path: SLIDE_ROUTES[0], readyName: 'Webページは3つの役割でできている' },
   {
@@ -319,6 +324,32 @@ test('Shift+Tab逆順でHomeの主要CTAへ到達し、focusが隠れず操作�
   await expect(page.getByRole('heading', { level: 1, name: '学びたいピースを選ぶ' })).toBeVisible();
   await tabToAndActivate(page, courseCta, 'Shift+Tab');
   await expect(page).toHaveURL(/html-css-ch00-l01\/slides\/html-css-ch00-l01-s01$/u);
+});
+
+test('Homeの見出し順とSkip Linkを保ち、KeyboardだけでPathからCourseへ移動できる', async ({
+  page,
+}) => {
+  await page.goto('./#/');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+  const homeSectionHeadings = await page.locator('main h2').allTextContents();
+  expect(homeSectionHeadings.slice(0, 2)).toEqual(['学習パスから始める', '個別コースを選ぶ']);
+
+  await page.keyboard.press('Tab');
+  const skipLink = page.getByRole('link', { name: '本文へ移動' });
+  await expect(skipLink).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('main')).toBeFocused();
+
+  await page.goto('./#/paths/frontend');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+  const courseLink = page.getByRole('link', {
+    name: 'HTML/CSS はじめの一歩を始める',
+  });
+  await tabToAndActivate(page, courseLink);
+  await expect(page).toHaveURL(/html-css-ch00-l01\/slides\/html-css-ch00-l01-s01$/u);
+  await expect(
+    page.getByRole('heading', { level: 1, name: 'Webページは3つの役割でできている' }),
+  ).toBeVisible();
 });
 
 test('Keyboardだけで閲覧目次、用語、前後Slide、目次復帰を操作できる', async ({ page }) => {

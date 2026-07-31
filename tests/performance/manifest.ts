@@ -66,6 +66,11 @@ const PerformanceManifestSchema = z.object({
     addedHomeInitialJavaScriptGzipMaxBytes: PositiveInteger,
     interactionMaxMs: PositiveNumber,
   }),
+  learningPath: z.object({
+    baselineCommit: z.string().regex(/^[0-9a-f]{40}$/u),
+    addedHomeInitialJavaScriptGzipMaxBytes: PositiveInteger,
+    interactionMaxMs: PositiveNumber,
+  }),
 });
 
 export type PerformanceManifest = z.infer<typeof PerformanceManifestSchema>;
