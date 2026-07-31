@@ -139,9 +139,7 @@ function parseLearningPathStep(value: unknown): LearningPathStep {
     !ID_PATTERN.test(value.courseId) ||
     (value.role !== 'required' && value.role !== 'recommended') ||
     !Array.isArray(value.prerequisiteCourseIds) ||
-    !value.prerequisiteCourseIds.every(
-      (item) => isNonEmptyText(item) && ID_PATTERN.test(item),
-    )
+    !value.prerequisiteCourseIds.every((item) => isNonEmptyText(item) && ID_PATTERN.test(item))
   ) {
     throw new Error('LearningPath Stepの値が契約に一致しません。');
   }

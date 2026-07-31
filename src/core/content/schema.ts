@@ -1683,11 +1683,10 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
 
 export const CourseManifestSchema = CourseManifestBaseSchema.superRefine(validateCourse);
 
-export const LessonStartTargetSchema = z
-  .discriminatedUnion('kind', [
-    z.object({ kind: z.literal('slide'), targetId: IdSchema }).strict(),
-    z.object({ kind: z.literal('exercise'), targetId: IdSchema }).strict(),
-  ]);
+export const LessonStartTargetSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('slide'), targetId: IdSchema }).strict(),
+  z.object({ kind: z.literal('exercise'), targetId: IdSchema }).strict(),
+]);
 
 export const CourseCatalogLessonStartSchema = z
   .object({

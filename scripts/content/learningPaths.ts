@@ -79,9 +79,7 @@ export async function compileLearningPaths(
     const source = await readYamlFile(root, entry.name, LearningPathSourceSchema);
     const filenameId = entry.name.slice(0, -'.yaml'.length);
     if (source.id !== filenameId) {
-      throw new Error(
-        `LearningPath filenameとIDが一致しません: ${entry.name}/${source.id}`,
-      );
+      throw new Error(`LearningPath filenameとIDが一致しません: ${entry.name}/${source.id}`);
     }
     definitions.push(
       LearningPathDefinitionSchema.parse({

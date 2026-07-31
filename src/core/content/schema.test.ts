@@ -1312,9 +1312,7 @@ describe('CourseCatalogSchema', () => {
 
   it('Course内のLesson開始先重複を拒否する', () => {
     const invalid = structuredClone(fixtureCatalog);
-    invalid.courses[0]!.lessonStarts.push(
-      structuredClone(invalid.courses[0]!.lessonStarts[0]!),
-    );
+    invalid.courses[0]!.lessonStarts.push(structuredClone(invalid.courses[0]!.lessonStarts[0]!));
     expectCatalogIssue(invalid, 'Catalog Lesson IDが重複しています');
   });
 
@@ -1328,9 +1326,7 @@ describe('CourseCatalogSchema', () => {
     expectCatalogIssue(unknown, 'LearningPathのCourse参照先がありません');
 
     const duplicate = structuredClone(fixtureCatalog);
-    duplicate.learningPaths[0]!.steps.push(
-      structuredClone(duplicate.learningPaths[0]!.steps[0]!),
-    );
+    duplicate.learningPaths[0]!.steps.push(structuredClone(duplicate.learningPaths[0]!.steps[0]!));
     expectCatalogIssue(duplicate, 'LearningPathのCourse Stepが重複しています');
   });
 
