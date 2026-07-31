@@ -1,16 +1,16 @@
 # World-A Visual Review
 
 - releaseStatus: `approved`
-- reviewedScreens: `20`
+- reviewedScreens: `24`
 - slideLibraryReviewedScreens: `10`
 - unresolvedFindings: `0`
 - finalArtifactReviewed: `true`
-- reviewedAt: `2026-07-29`
+- reviewedAt: `2026-07-31`
 - verifiedSourceCommit: `draft`
 - canonicalDistSha256: `draft`
 - reviewBaseCommit: `draft`
 - baselineSet: `tests/e2e/visual-regression.spec.ts-snapshots`
-- verification: `2026-07-29`のβBadge最終レビューでは24比較組のactual／expected／diff計72画像を独立に原寸目視し、別レビューで24 baseline更新をAPPROVEDとした。下表の標準20画面＋低画面高診断2画面は、現在のbaseline実体からSHA-256を再計算して結び直した
+- verification: `2026-07-29`のβBadge最終レビューでは24比較組のactual／expected／diff計72画像を独立に原寸目視し、別レビューで24 baseline更新をAPPROVEDとした。`2026-07-31`にはLearningPath 4画面と変更後Home 4画面を原寸目視し、同一sourceの全visual regressionを再実行した。下表の標準20画面＋LearningPath 4画面＋低画面高診断2画面は、現在のbaseline実体からSHA-256を再計算して結び直した
 - bindingPolicy: 自動検証済み。最終source commitとcanonical distへの結合はRelease Approval時に行う
 
 ## 判定基準
@@ -25,10 +25,10 @@
 
 | 画面       | Viewport | Baseline SHA-256                                                   | 世界観 | Text切れ | 重なり | 右端／下端 | CTA                        | Focus              | PC案内                 | 判定 |
 | ---------- | -------- | ------------------------------------------------------------------ | ------ | -------- | ------ | ---------- | -------------------------- | ------------------ | ---------------------- | ---- |
-| Home       | 1440x900 | `3f96508e594278687af95a2a801a1d22e3afd168c701f9b766ac465c3ffb9af3` | 一致   | なし     | なし   | 安全       | 最初のピースが明瞭         | 共通契約確認       | 対象外                 | 承認 |
-| Home       | 1280x720 | `5f99dc1e09acdcd544357cb9d2aad22718c9fc4bc29aef62fdf2b477a167bacc` | 一致   | なし     | なし   | 安全       | 最初のピースが明瞭         | 共通契約確認       | 対象外                 | 承認 |
-| Home       | 768x1024 | `82c4526ceabf5466d44a7aadb51e5032c4c21a9dff077ba11e2714d1ed31a1a9` | 一致   | なし     | なし   | 安全       | 教材CTAが明瞭              | 共通契約確認       | 対象外                 | 承認 |
-| Home       | 390x844  | `7c374dc56f821f5afa00e52e2d1921a75e5960f84f2b3bfe500fc769bfcf7892` | 一致   | なし     | なし   | 安全       | 1列導線が明瞭              | 共通契約確認       | 対象外                 | 承認 |
+| Home       | 1440x900 | `715fa4d560209cb075fce5fec1a842dcbfc6b46914606256faed05bca72fec25` | 一致   | なし     | なし   | 安全       | 学習Pathの主CTAが明瞭      | 共通契約確認       | 対象外                 | 承認 |
+| Home       | 1280x720 | `cd9d06a0526c7e80fcf5ff727328a718e739a0915154f4a5ba2db152c18c2568` | 一致   | なし     | なし   | 安全       | 学習Pathの主CTAが明瞭      | 共通契約確認       | 対象外                 | 承認 |
+| Home       | 768x1024 | `d18c8e3b89fce33a6795b8642f0c27513228a191169740ae715c65831b2e6dc9` | 一致   | なし     | なし   | 安全       | 教材CTAが明瞭              | 共通契約確認       | 対象外                 | 承認 |
+| Home       | 390x844  | `351c72505fa2a8e409b343dd767519dc5f4dcd177c1f8c9290066d47f22a0c48` | 一致   | なし     | なし   | 安全       | 主CTAが初期画面内          | 共通契約確認       | 対象外                 | 承認 |
 | Course Map | 1440x900 | `3cde221bfca3c69c7f97a906e54b3860b1ad3db44a58adc3d03efabcb794d986` | 一致   | なし     | なし   | 安全       | 最初のLessonが明瞭         | 共通契約確認       | 対象外                 | 承認 |
 | Course Map | 1280x720 | `3cdb7ddda8372449ccdc4fc7bb6a7c6ae7ac41cfaf8308084c8e097090368ab3` | 一致   | なし     | なし   | 安全       | 最初のLessonが明瞭         | 共通契約確認       | 対象外                 | 承認 |
 | Course Map | 768x1024 | `c97926d65b88b49bc6e48306fd74278fca3e4eb5f8123a5ad3d03d3283543db7` | 一致   | なし     | なし   | 安全       | 学習順序が明瞭             | 共通契約確認       | 対象外                 | 承認 |
@@ -67,6 +67,21 @@
 | 閲覧Viewer | `library-slide-tablet-portrait-chromium-linux.png` |
 | 閲覧Viewer | `library-slide-desktop-compact-chromium-linux.png` |
 | 閲覧Viewer | `library-slide-desktop-wide-chromium-linux.png`    |
+
+## LearningPath追加証跡
+
+- 確認日: `2026-07-31`
+- 対象source: `6195f13a0be4b29cceced94d2ed59c6ab80e1e9b`
+- 配信条件: `BASE_PATH=/tsumucode/`のProduction build
+- 結果: 下記4枚と変更後Home 4枚を原寸目視し、意図しないText切れ、重なり、横はみ出し、右端／下端の欠け、誤ったCTA階層は0件。同一sourceの全E2Eは`318 passed / 90 skipped / 0 failed / 0 flaky`
+- Responsive境界: 390x844と1280x720で主CTAを初期Viewport内へ維持。Course Card内のBadgeと全CTAは親境界を越えず、順序を示す番号とCardは衝突しない
+
+| 画面         | Viewport | Baseline SHA-256                                                   | 世界観 | Text切れ | 重なり | 右端／下端 | CTA                  | 判定 |
+| ------------ | -------- | ------------------------------------------------------------------ | ------ | -------- | ------ | ---------- | -------------------- | ---- |
+| LearningPath | 1440x900 | `4571235ecdbfae977341cf66b2ccc4706720a08444398b21471b41b75d70c484` | 一致   | なし     | なし   | 安全       | 続き／最初からが明瞭 | 承認 |
+| LearningPath | 1280x720 | `fe7f54c056b7779435f282429bf92f733bc658680c4b89d3e91f2d46254ac50c` | 一致   | なし     | なし   | 安全       | 主CTAが初期画面内    | 承認 |
+| LearningPath | 768x1024 | `47a15a2a7367297e4c125c87064294919b61ac2ae141746e259e1d780b857706` | 一致   | なし     | なし   | 安全       | Card内CTAが明瞭      | 承認 |
+| LearningPath | 390x844  | `febbaf4e9454efb3f261ed58cc06a03774ff88f3c2d15a57f13a00caff9e2565` | 一致   | なし     | なし   | 安全       | 主CTAが初期画面内    | 承認 |
 
 ## Starter Reset／診断の追加証跡
 

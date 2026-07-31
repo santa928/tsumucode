@@ -64,6 +64,18 @@
 - Target size: 閲覧ViewerのTool RailとPagerは44 CSS px以上
 - VoiceOver: 従来どおり初回Release対象外。読み上げ順、発音、Rotor操作の合格は主張しない
 
+## LearningPath追加証跡
+
+- 確認日: `2026-07-31`
+- 対象source: `6195f13a0be4b29cceced94d2ed59c6ab80e1e9b`
+- 配信条件: `BASE_PATH=/tsumucode/`のProduction build
+- 全E2E結果: Chromium／Firefox／WebKit、retry 0で`318 passed / 90 skipped / 0 failed / 0 flaky`
+- LearningPath Journey: Home主導線、Pathの順序と必須表示、既存Courseへのロックなし遷移、CourseProgress再利用、Path専用record非作成、既存direct URL維持を3 Engineで`12/12`合格
+- axe: Home、LearningPath、Course Map、Slide、Library、Exerciseを含むWCAG A/AA対象違反0件
+- Keyboard: HomeのSkip Linkから本文へ移動し、LearningPathのCourse CTAへTabで到達してEnterだけで最初のSlideへ遷移
+- Responsive: 390x844と1280x720でHome主CTA、PathのH1・必須進捗・主要CTAが初期Viewport内へ到達可能。Badgeと全CTAの境界がCourse Card内へ収まり、意図しない横Scroll、重なり、操作阻害0件
+- VoiceOver: 従来どおり初回Release対象外。読み上げ順、発音、Rotor操作の合格は主張しない
+
 ## VoiceOverの対象外記録
 
 - 理由: 本人・身内向けの初回Releaseでは、VoiceOver手動実機確認までを必須にしないと利用者が決定した。
