@@ -51,6 +51,17 @@ describe('package scripts', () => {
     expect(manifest.scripts.check).toContain('npm run content:check');
   });
 
+  it('checkは教材検証後にArtifactを生成してからtest suiteを実行する', () => {
+    const command = manifest.scripts.check ?? '';
+    const checkIndex = command.indexOf('npm run content:check');
+    const compileIndex = command.indexOf('npm run content:compile');
+    const testIndex = command.indexOf('npm run test:run');
+
+    expect(checkIndex).toBeGreaterThanOrEqual(0);
+    expect(compileIndex).toBeGreaterThan(checkIndex);
+    expect(testIndex).toBeGreaterThan(compileIndex);
+  });
+
   it('GitHub Pages subpath smokeを実在するlocal entrypointとして公開する', () => {
     expect(manifest.scripts['smoke:subpath']).toBe('tsx scripts/smoke-subpath.ts');
   });
