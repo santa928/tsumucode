@@ -61,6 +61,9 @@ vi.mock('../features/learning/runtimeServices', () => ({
 const originalHash = window.location.hash;
 let router: ReturnType<typeof createAppRouter> | undefined;
 
+/** 全suite負荷でも動的importを含むRouter初期化を待てる上限。 */
+const ROUTER_READY_TIMEOUT_MS = 5_000;
+
 beforeEach(() => {
   vi.stubGlobal(
     'fetch',
@@ -137,9 +140,12 @@ describe('createAppRouter', () => {
     window.location.hash = '#/';
     router = createAppRouter();
     render(<RouterProvider router={router} />);
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { name: '学びたいピースを選ぶ' })).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByRole('heading', { name: '学びたいピースを選ぶ' })).toBeInTheDocument();
+      },
+      { timeout: ROUTER_READY_TIMEOUT_MS },
+    );
   });
 
   it('Catalog取得中を通知してからHomeへ遷移する', async () => {
@@ -160,9 +166,13 @@ describe('createAppRouter', () => {
     router = createAppRouter();
     render(<RouterProvider router={router} />);
 
-    const loadingTitle = await screen.findByRole('heading', {
-      name: '教材のピースを並べています',
-    });
+    const loadingTitle = await screen.findByRole(
+      'heading',
+      {
+        name: '教材のピースを並べています',
+      },
+      { timeout: ROUTER_READY_TIMEOUT_MS },
+    );
     expect(loadingTitle.closest('section')).toHaveAttribute('aria-busy', 'true');
     expect(screen.getByRole('status')).toHaveTextContent('学習工房を準備しています');
 
@@ -171,7 +181,11 @@ describe('createAppRouter', () => {
       await pendingFetch;
     });
     expect(
-      await screen.findByRole('heading', { name: '学びたいピースを選ぶ' }),
+      await screen.findByRole(
+        'heading',
+        { name: '学びたいピースを選ぶ' },
+        { timeout: ROUTER_READY_TIMEOUT_MS },
+      ),
     ).toBeInTheDocument();
   });
 
