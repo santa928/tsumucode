@@ -7,6 +7,7 @@ import type {
   ConceptRequirementSchema,
   ContentProgressMigrationSchema,
   CourseCatalogEntrySchema,
+  CourseCatalogLessonStartSchema,
   CourseCatalogSchema,
   CourseManifestSchema,
   ExerciseFileSchema,
@@ -18,6 +19,9 @@ import type {
   HtmlCssRuleTargetSchema,
   HtmlCssValidationRuleDefinitionSchema,
   LessonSchema,
+  LearningPathDefinitionSchema,
+  LearningPathStepSchema,
+  LessonStartTargetSchema,
   MasteryLevelSchema,
   PhaseManifestSchema,
   PreviewViewportSchema,
@@ -32,6 +36,10 @@ import type {
 
 export type CourseCatalog = z.infer<typeof CourseCatalogSchema>;
 export type CourseCatalogEntry = z.infer<typeof CourseCatalogEntrySchema>;
+export type CourseCatalogLessonStart = z.infer<typeof CourseCatalogLessonStartSchema>;
+export type LearningPathDefinition = z.infer<typeof LearningPathDefinitionSchema>;
+export type LearningPathStep = z.infer<typeof LearningPathStepSchema>;
+export type LessonStartTarget = z.infer<typeof LessonStartTargetSchema>;
 export type CourseManifest = z.infer<typeof CourseManifestSchema>;
 export type ContentProgressMigration = z.infer<typeof ContentProgressMigrationSchema>;
 export type ProgressMigrationStep = z.infer<typeof ProgressMigrationStepSchema>;

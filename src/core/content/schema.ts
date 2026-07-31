@@ -1683,6 +1683,37 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
 
 export const CourseManifestSchema = CourseManifestBaseSchema.superRefine(validateCourse);
 
+export const LessonStartTargetSchema = z
+  .discriminatedUnion('kind', [
+    z.object({ kind: z.literal('slide'), targetId: IdSchema }).strict(),
+    z.object({ kind: z.literal('exercise'), targetId: IdSchema }).strict(),
+  ]);
+
+export const CourseCatalogLessonStartSchema = z
+  .object({
+    lessonId: IdSchema,
+    target: LessonStartTargetSchema,
+  })
+  .strict();
+
+export const LearningPathStepSchema = z
+  .object({
+    courseId: IdSchema,
+    role: z.enum(['required', 'recommended']),
+    prerequisiteCourseIds: z.array(IdSchema),
+  })
+  .strict();
+
+export const LearningPathDefinitionSchema = z
+  .object({
+    id: IdSchema,
+    title: NonEmptyTextSchema,
+    description: NonEmptyTextSchema,
+    publicationStatus: z.enum(['draft', 'published']),
+    steps: z.array(LearningPathStepSchema).min(1),
+  })
+  .strict();
+
 export const CourseCatalogEntrySchema = z
   .object({
     id: IdSchema,
@@ -1694,18 +1725,21 @@ export const CourseCatalogEntrySchema = z
     publicationStatus: z.enum(['draft', 'published']),
     manifestPath: RelativePathSchema,
     manifestSha256: z.string().regex(/^[0-9a-f]{64}$/u),
+    lessonStarts: z.array(CourseCatalogLessonStartSchema).min(1),
   })
   .strict();
 
 export const CourseCatalogSchema = z
   .object({
-    schemaVersion: z.literal(1),
+    schemaVersion: z.literal(2),
     courses: z.array(CourseCatalogEntrySchema).min(1),
+    learningPaths: z.array(LearningPathDefinitionSchema),
   })
   .strict()
   .superRefine((catalog, context) => {
     const ids = new Set<string>();
     const manifestPaths = new Set<string>();
+    const courseStatusById = new Map<string, 'draft' | 'published'>();
     for (const [index, course] of catalog.courses.entries()) {
       if (ids.has(course.id)) {
         addIssue(
@@ -1715,6 +1749,7 @@ export const CourseCatalogSchema = z
         );
       }
       ids.add(course.id);
+      courseStatusById.set(course.id, course.publicationStatus);
       const canonicalPath = canonicalPublicPath(course.manifestPath);
       if (canonicalPath === undefined) continue;
       if (manifestPaths.has(canonicalPath)) {
@@ -1725,5 +1760,91 @@ export const CourseCatalogSchema = z
         );
       }
       manifestPaths.add(canonicalPath);
+
+      const lessonIds = new Set<string>();
+      for (const [lessonIndex, lessonStart] of course.lessonStarts.entries()) {
+        if (lessonIds.has(lessonStart.lessonId)) {
+          addIssue(
+            context,
+            ['courses', index, 'lessonStarts', lessonIndex, 'lessonId'],
+            `Catalog Lesson IDが重複しています: ${lessonStart.lessonId}`,
+          );
+        }
+        lessonIds.add(lessonStart.lessonId);
+      }
+    }
+
+    const pathIds = new Set<string>();
+    for (const [pathIndex, learningPath] of catalog.learningPaths.entries()) {
+      if (pathIds.has(learningPath.id)) {
+        addIssue(
+          context,
+          ['learningPaths', pathIndex, 'id'],
+          `LearningPath IDが重複しています: ${learningPath.id}`,
+        );
+      }
+      pathIds.add(learningPath.id);
+
+      const stepCourseIds = new Set<string>();
+      for (const [stepIndex, step] of learningPath.steps.entries()) {
+        if (stepCourseIds.has(step.courseId)) {
+          addIssue(
+            context,
+            ['learningPaths', pathIndex, 'steps', stepIndex, 'courseId'],
+            `LearningPathのCourse Stepが重複しています: ${step.courseId}`,
+          );
+        }
+        if (!ids.has(step.courseId)) {
+          addIssue(
+            context,
+            ['learningPaths', pathIndex, 'steps', stepIndex, 'courseId'],
+            `LearningPathのCourse参照先がありません: ${step.courseId}`,
+          );
+        }
+        if (
+          learningPath.publicationStatus === 'published' &&
+          courseStatusById.get(step.courseId) === 'draft'
+        ) {
+          addIssue(
+            context,
+            ['learningPaths', pathIndex, 'steps', stepIndex, 'courseId'],
+            `公開LearningPathからdraft Courseを参照できません: ${step.courseId}`,
+          );
+        }
+
+        const prerequisites = new Set<string>();
+        for (const [prerequisiteIndex, prerequisiteId] of step.prerequisiteCourseIds.entries()) {
+          if (prerequisites.has(prerequisiteId)) {
+            addIssue(
+              context,
+              [
+                'learningPaths',
+                pathIndex,
+                'steps',
+                stepIndex,
+                'prerequisiteCourseIds',
+                prerequisiteIndex,
+              ],
+              `LearningPath prerequisiteが重複しています: ${prerequisiteId}`,
+            );
+          }
+          prerequisites.add(prerequisiteId);
+          if (!stepCourseIds.has(prerequisiteId)) {
+            addIssue(
+              context,
+              [
+                'learningPaths',
+                pathIndex,
+                'steps',
+                stepIndex,
+                'prerequisiteCourseIds',
+                prerequisiteIndex,
+              ],
+              `LearningPath prerequisiteは現在Stepより前のCourseだけを参照できます: ${prerequisiteId}`,
+            );
+          }
+        }
+        stepCourseIds.add(step.courseId);
+      }
     }
   });

@@ -1310,6 +1310,54 @@ describe('CourseCatalogSchema', () => {
     expect(CourseCatalogSchema.safeParse(invalid).success).toBe(false);
   });
 
+  it('Course内のLesson開始先重複を拒否する', () => {
+    const invalid = structuredClone(fixtureCatalog);
+    invalid.courses[0]!.lessonStarts.push(
+      structuredClone(invalid.courses[0]!.lessonStarts[0]!),
+    );
+    expectCatalogIssue(invalid, 'Catalog Lesson IDが重複しています');
+  });
+
+  it('LearningPathの未知Course参照と重複Stepを拒否する', () => {
+    const unknown = structuredClone(fixtureCatalog);
+    unknown.learningPaths[0]!.steps.push({
+      courseId: 'javascript',
+      role: 'required',
+      prerequisiteCourseIds: ['html-css'],
+    });
+    expectCatalogIssue(unknown, 'LearningPathのCourse参照先がありません');
+
+    const duplicate = structuredClone(fixtureCatalog);
+    duplicate.learningPaths[0]!.steps.push(
+      structuredClone(duplicate.learningPaths[0]!.steps[0]!),
+    );
+    expectCatalogIssue(duplicate, 'LearningPathのCourse Stepが重複しています');
+  });
+
+  it('前方prerequisiteと公開Pathからdraft Courseへの参照を拒否する', () => {
+    const forward = structuredClone(fixtureCatalog);
+    forward.courses.push({
+      ...structuredClone(forward.courses[0]!),
+      id: 'javascript',
+      revision: '2026-07-31.javascript',
+      manifestPath: 'generated/content/courses/javascript.json',
+      manifestSha256: 'b'.repeat(64),
+    });
+    forward.learningPaths[0]!.steps.unshift({
+      courseId: 'javascript',
+      role: 'required',
+      prerequisiteCourseIds: ['html-css'],
+    });
+    expectCatalogIssue(
+      forward,
+      'LearningPath prerequisiteは現在Stepより前のCourseだけを参照できます',
+    );
+
+    const draft = structuredClone(fixtureCatalog);
+    draft.courses[0]!.publicationStatus = 'draft';
+    expectCatalogIssue(draft, '公開LearningPathからdraft Courseを参照できません');
+  });
+
   it('Catalog rootとentryの未知fieldを拒否する', () => {
     const root = structuredClone(fixtureCatalog);
     Object.assign(root, { generatedAt: 'now' });

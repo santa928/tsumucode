@@ -193,7 +193,7 @@ export const fixtureCourse: CourseManifest = {
 };
 
 export const fixtureCatalog: CourseCatalog = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   courses: [
     {
       id: fixtureCourse.id,
@@ -205,6 +205,27 @@ export const fixtureCatalog: CourseCatalog = {
       publicationStatus: fixtureCourse.publicationStatus,
       manifestPath: 'generated/content/courses/html-css.json',
       manifestSha256: 'a199fa17eb3da55123cf99d5d7234af710d551a6a6d8c90f350251c6b203e3bb',
+      lessonStarts: [
+        {
+          lessonId: 'lesson-first-heading',
+          target: { kind: 'slide', targetId: 'slide-html-role' },
+        },
+      ],
+    },
+  ],
+  learningPaths: [
+    {
+      id: 'frontend',
+      title: 'フロントエンド学習パス',
+      description: 'Webページから対話型アプリへ、順番に技術を積み上げます。',
+      publicationStatus: 'published',
+      steps: [
+        {
+          courseId: 'html-css',
+          role: 'required',
+          prerequisiteCourseIds: [],
+        },
+      ],
     },
   ],
 };

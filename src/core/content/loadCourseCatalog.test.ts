@@ -85,6 +85,16 @@ describe('loadCourseCatalog', () => {
       resource: '/generated/content/catalog.json',
     } satisfies Partial<ContentLoadError>);
   });
+
+  it('Catalog v1を曖昧に受理せずschema ContentLoadErrorへ分類する', async () => {
+    const legacy = { ...structuredClone(fixtureCatalog), schemaVersion: 1 };
+    vi.stubGlobal('fetch', vi.fn<typeof fetch>().mockResolvedValue(Response.json(legacy)));
+
+    await expect(loadCourseCatalog('/')).rejects.toMatchObject({
+      kind: 'schema',
+      resource: '/generated/content/catalog.json',
+    } satisfies Partial<ContentLoadError>);
+  });
 });
 
 describe('loadCourseManifest', () => {

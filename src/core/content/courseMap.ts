@@ -1,5 +1,6 @@
 /** 教材Manifestを、学習順と開始先を持つコースマップ表示Modelへ変換する。 */
 import type { CourseManifest, Lesson } from './types';
+import { lessonStartTarget, lessonStartTargetPath } from './lessonStart';
 
 export type CourseMapStatus = 'complete' | 'current' | 'not-started';
 
@@ -40,21 +41,7 @@ export interface CourseMap {
 
 /** 基礎Lessonは先頭Slide、制作LessonはGuideを飛ばして先頭ExerciseへのRouteを返す。 */
 export function lessonStartPath(courseId: string, lesson: Lesson): string {
-  const firstExercise = lesson.exercises[0];
-  if (lesson.kind !== 'standard' && firstExercise !== undefined) {
-    return `/courses/${courseId}/lessons/${lesson.id}/exercises/${firstExercise.id}`;
-  }
-
-  const firstSlide = lesson.slides[0];
-  if (firstSlide !== undefined) {
-    return `/courses/${courseId}/lessons/${lesson.id}/slides/${firstSlide.id}`;
-  }
-
-  if (firstExercise !== undefined) {
-    return `/courses/${courseId}/lessons/${lesson.id}/exercises/${firstExercise.id}`;
-  }
-
-  throw new Error(`Lessonに開始できる教材がありません: ${lesson.id}`);
+  return lessonStartTargetPath(courseId, lesson.id, lessonStartTarget(lesson));
 }
 
 /** Phase／Lessonの著者順を保ち、Chapterをsequence順へ整列した表示Modelを作る。 */
