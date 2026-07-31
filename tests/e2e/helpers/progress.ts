@@ -230,6 +230,17 @@ export async function readStoredProgress(page: Page): Promise<StoredProgressProb
       const names = ['metadata', 'courses', 'drafts', 'backups', 'quarantine'].filter((name) =>
         database.objectStoreNames.contains(name),
       );
+      // 初回表示では、probe側のopenが製品側のschema upgradeより先に成功する場合がある。
+      // 空transactionを作らず未初期化snapshotを返し、expect.pollの次回読取へ譲る。
+      if (names.length === 0) {
+        return {
+          databaseVersion: database.version,
+          courses: [],
+          drafts: [],
+          backups: [],
+          quarantined: [],
+        };
+      }
       const transaction = database.transaction(names, 'readonly');
       const readAll = async (name: string): Promise<readonly Record<string, unknown>[]> => {
         if (!database.objectStoreNames.contains(name)) return [];
