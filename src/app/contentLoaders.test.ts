@@ -14,6 +14,7 @@ import {
 } from './contentLoaders';
 
 const runtime = vi.hoisted(() => ({
+  ready: Promise.resolve(),
   ensureCourse: vi.fn(async () => undefined),
   repository: {
     getCourse: vi.fn<(courseId: string) => Promise<CourseProgress | undefined>>(),
@@ -27,6 +28,7 @@ const runtime = vi.hoisted(() => ({
 
 vi.mock('../features/learning/runtimeServices', () => ({
   learningRuntimeServices: {
+    ready: runtime.ready,
     ensureCourse: runtime.ensureCourse,
     repository: runtime.repository,
     passFreshness: runtime.passFreshness,
@@ -334,7 +336,28 @@ describe('content route loaders', () => {
     await expect(catalogLoader()).resolves.toEqual(fixtureCatalog);
   });
 
-  it('Home loaderは公開CourseだけをManifestまで検証して返す', async () => {
+  it('Home loaderはCatalogだけを1回読み公開CourseとLearningPathを返す', async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(Response.json(fixtureCatalog));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(homeLoader()).resolves.toEqual({
+      catalog: fixtureCatalog,
+      publishedCourses: [fixtureCatalog.courses[0]!],
+      publishedPaths: fixtureCatalog.learningPaths,
+    });
+    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(runtime.repository.getCourse).toHaveBeenCalledWith('html-css');
+    expect(runtime.ensureCourse).not.toHaveBeenCalled();
+  });
+
+  it('Home loaderは保存済みrevisionが古いCourseだけManifestを読みmigrationへ渡す', async () => {
+    runtime.repository.getCourse.mockResolvedValue({
+      courseId: fixtureCourse.id,
+      contentRevision: 'old-revision',
+      lessons: {},
+      currentComplete: false,
+      updatedAt: '2026-07-31T00:00:00.000Z',
+    });
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(Response.json(fixtureCatalog))
@@ -343,8 +366,10 @@ describe('content route loaders', () => {
 
     await expect(homeLoader()).resolves.toEqual({
       catalog: fixtureCatalog,
-      publishedCourses: [fixtureCourse],
+      publishedCourses: [fixtureCatalog.courses[0]!],
+      publishedPaths: fixtureCatalog.learningPaths,
     });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(runtime.ensureCourse).toHaveBeenCalledWith(fixtureCourse);
   });
 

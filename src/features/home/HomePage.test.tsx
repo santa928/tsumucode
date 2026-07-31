@@ -27,7 +27,11 @@ describe('HomePage', () => {
     const router = createMemoryRouter([
       {
         path: '/',
-        loader: () => ({ catalog: fixtureCatalog, publishedCourses: [fixtureCourse] }),
+        loader: () => ({
+          catalog: fixtureCatalog,
+          publishedCourses: [fixtureCatalog.courses[0]!],
+          publishedPaths: fixtureCatalog.learningPaths,
+        }),
         HydrateFallback: () => <p>教材を準備中</p>,
         element: <HomePage />,
       },
@@ -79,7 +83,11 @@ describe('HomePage', () => {
     const router = createMemoryRouter([
       {
         path: '/',
-        loader: () => ({ catalog: fixtureCatalog, publishedCourses: [fixtureCourse] }),
+        loader: () => ({
+          catalog: fixtureCatalog,
+          publishedCourses: [fixtureCatalog.courses[0]!],
+          publishedPaths: fixtureCatalog.learningPaths,
+        }),
         HydrateFallback: () => <p>教材を準備中</p>,
         element: <HomePage />,
       },
@@ -130,7 +138,11 @@ describe('HomePage', () => {
     const router = createMemoryRouter([
       {
         path: '/',
-        loader: () => ({ catalog: fixtureCatalog, publishedCourses: [fixtureCourse] }),
+        loader: () => ({
+          catalog: fixtureCatalog,
+          publishedCourses: [fixtureCatalog.courses[0]!],
+          publishedPaths: fixtureCatalog.learningPaths,
+        }),
         HydrateFallback: () => <p>教材を準備中</p>,
         element: <HomePage />,
       },
@@ -146,15 +158,55 @@ describe('HomePage', () => {
     ).toHaveAttribute('href', '/library/html-css');
   });
 
+  it('教材revision不一致時は古い続き位置を使わずCourse Mapで更新確認を促す', async () => {
+    useCourseProgress.mockReturnValue({
+      status: 'ready',
+      progress: {
+        courseId: fixtureCourse.id,
+        contentRevision: 'old-revision',
+        lessons: {},
+        currentLessonId: 'lesson-first-heading',
+        currentComplete: false,
+        updatedAt: '2026-07-16T00:00:00.000Z',
+      } satisfies CourseProgress,
+      error: undefined,
+      retry: vi.fn(),
+    });
+    const router = createMemoryRouter([
+      {
+        path: '/',
+        loader: () => ({
+          catalog: fixtureCatalog,
+          publishedCourses: [fixtureCatalog.courses[0]!],
+          publishedPaths: fixtureCatalog.learningPaths,
+        }),
+        HydrateFallback: () => <p>教材を準備中</p>,
+        element: <HomePage />,
+      },
+    ]);
+
+    render(<RouterProvider router={router} />);
+
+    expect(
+      await screen.findByRole('link', {
+        name: `${fixtureCourse.title}：教材の更新を確認する`,
+      }),
+    ).toHaveAttribute('href', '/courses/html-css');
+    expect(
+      screen.getByRole('progressbar', { name: `${fixtureCourse.title}の進捗` }),
+    ).toHaveAttribute('aria-valuetext', '0 / 1 ピース完了');
+  });
+
   it('未公開Courseしかない場合は開始Linkを出さず準備中と伝える', async () => {
     const draftCatalog = {
       ...fixtureCatalog,
       courses: [{ ...fixtureCatalog.courses[0]!, publicationStatus: 'draft' as const }],
+      learningPaths: [],
     };
     const router = createMemoryRouter([
       {
         path: '/',
-        loader: () => ({ catalog: draftCatalog, publishedCourses: [] }),
+        loader: () => ({ catalog: draftCatalog, publishedCourses: [], publishedPaths: [] }),
         HydrateFallback: () => <p>教材を準備中</p>,
         element: <HomePage />,
       },

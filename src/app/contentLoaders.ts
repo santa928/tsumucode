@@ -3,6 +3,10 @@ import { loadCourseCatalog, loadCourseManifest } from '../core/content/loadCours
 import { findExercise, findLesson, findSlide, findSlideInCourse } from '../core/content/selectors';
 import type { Exercise, Lesson } from '../core/content/types';
 import { learningRuntimeServices } from '../features/learning/runtimeServices';
+import {
+  createCatalogProgressMigrationPort,
+  ensureCatalogCourseRevisions,
+} from './catalogProgressMigrations';
 
 type CourseLoaderArgs = Pick<LoaderFunctionArgs, 'params'>;
 
@@ -17,19 +21,20 @@ export async function catalogLoader() {
   return loadCourseCatalog(import.meta.env.BASE_URL);
 }
 
-/** Homeで進捗と再開地点を表示できるよう、公開Courseを検証・移行してまとめて返す。 */
+/** Home用の公開metadataをCatalogだけで返し、古い保存revisionだけ選択的に移行する。 */
 export async function homeLoader() {
   const catalog = await loadCourseCatalog(import.meta.env.BASE_URL);
-  const publishedCourses = await Promise.all(
-    catalog.courses
-      .filter(({ publicationStatus }) => publicationStatus === 'published')
-      .map(async (entry) => {
-        const course = await loadCourseManifest(import.meta.env.BASE_URL, entry);
-        await learningRuntimeServices.ensureCourse(course);
-        return course;
-      }),
+  const publishedCourses = catalog.courses.filter(
+    ({ publicationStatus }) => publicationStatus === 'published',
   );
-  return { catalog, publishedCourses };
+  const publishedPaths = catalog.learningPaths.filter(
+    ({ publicationStatus }) => publicationStatus === 'published',
+  );
+  await ensureCatalogCourseRevisions(
+    publishedCourses,
+    createCatalogProgressMigrationPort(import.meta.env.BASE_URL),
+  );
+  return { catalog, publishedCourses, publishedPaths };
 }
 
 /** Catalogに登録されたCourseだけを検証済みManifestとして返す。 */

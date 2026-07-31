@@ -1,13 +1,12 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { Link, useLoaderData, useLocation } from 'react-router-dom';
 import type { homeLoader } from '../../app/contentLoaders';
-import { buildCourseMap } from '../../core/content/courseMap';
-import type { CourseManifest } from '../../core/content/types';
+import type { CourseCatalogEntry } from '../../core/content/types';
 import { ActionLink } from '../../design-system/components/ActionLink';
 import { PieceProgress } from '../../design-system/components/PieceProgress';
 import { StackedCard } from '../../design-system/components/StackedCard';
 import { WorkshopNotice } from '../../design-system/components/WorkshopNotice';
-import { applyCourseProgress } from '../progress/courseMapProgress';
+import { summarizeCatalogCourseProgress } from '../progress/catalogCourseProgress';
 import { useCourseProgress } from '../progress/useCourseProgress';
 
 const ProgressTransferPanel = lazy(() =>
@@ -33,27 +32,21 @@ function useDeferredDeviceDataTools(loadImmediately: boolean): boolean {
   return loadImmediately || delayElapsed;
 }
 
-/** 1 Courseの保存済み進捗から、最初・続き・見直しの主要導線を組み立てる。 */
-function CourseShelfCard({ course }: { readonly course: CourseManifest }) {
+/** 1 CourseのCatalog metadataと保存済み進捗から主要導線を組み立てる。 */
+function CourseShelfCard({ course }: { readonly course: CourseCatalogEntry }) {
   const courseProgress = useCourseProgress(course.id);
-  const map = applyCourseProgress(
-    buildCourseMap(course),
+  const progressSummary = summarizeCatalogCourseProgress(
+    course,
     courseProgress.status === 'ready' ? courseProgress.progress : undefined,
-    course.revision,
   );
-  const lessons = map.phases.flatMap(({ chapters }) =>
-    chapters.flatMap(({ lessons: chapterLessons }) => chapterLessons),
-  );
-  const currentLesson = lessons.find(({ status }) => status === 'current') ?? lessons[0];
-  const coursePath = `/courses/${course.id}`;
-  const complete = map.totalLessons > 0 && map.completedLessons === map.totalLessons;
-  const started = courseProgress.status === 'ready' && courseProgress.progress !== undefined;
-  const actionLabel = complete
-    ? `${course.title}：完成したコースを見直す`
-    : started
-      ? `${course.title}：つづきから`
-      : `${course.title}：最初のピースを置く`;
-  const actionPath = complete ? coursePath : (currentLesson?.startPath ?? coursePath);
+  const actionLabel =
+    progressSummary.status === 'complete'
+      ? `${course.title}：完成したコースを見直す`
+      : progressSummary.status === 'revision-mismatch'
+        ? `${course.title}：教材の更新を確認する`
+        : progressSummary.status === 'in-progress'
+          ? `${course.title}：つづきから`
+          : `${course.title}：最初のピースを置く`;
   const titleId = `course-title-${course.id}`;
 
   return (
@@ -88,8 +81,8 @@ function CourseShelfCard({ course }: { readonly course: CourseManifest }) {
         </dl>
         <PieceProgress
           className="mt-6"
-          completed={map.completedLessons}
-          total={map.totalLessons}
+          completed={progressSummary.completedLessons}
+          total={progressSummary.totalLessons}
           label={`${course.title}の進捗`}
         />
         {courseProgress.status === 'loading' ? (
@@ -109,8 +102,13 @@ function CourseShelfCard({ course }: { readonly course: CourseManifest }) {
             </button>
           </WorkshopNotice>
         ) : null}
+        {progressSummary.status === 'revision-mismatch' ? (
+          <WorkshopNotice tone="neutral" title="教材が更新されています" className="mt-4">
+            <p>コースマップを開くと、この端末の続き位置を新しい教材へ合わせます。</p>
+          </WorkshopNotice>
+        ) : null}
         <div className="mt-auto flex flex-wrap gap-3 pt-7">
-          <ActionLink to={actionPath} className="w-full sm:w-auto">
+          <ActionLink to={progressSummary.actionPath} className="w-full sm:w-auto">
             {actionLabel}
           </ActionLink>
           <Link
