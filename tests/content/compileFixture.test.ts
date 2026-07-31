@@ -52,6 +52,35 @@ describe('HTML/CSS Course compilation', () => {
     expect(summary.courseCount).toBe(1);
     expect(summary.warnings).toEqual([]);
     expect(summary.catalog.courses).toHaveLength(1);
+    expect(summary.catalog).toMatchObject({
+      schemaVersion: 2,
+      courses: [
+        {
+          id: 'html-css',
+          lessonStarts: [
+            {
+              lessonId: 'lesson-first-heading',
+              target: { kind: 'slide', targetId: 'slide-html-role' },
+            },
+          ],
+        },
+      ],
+      learningPaths: [
+        {
+          id: 'frontend',
+          title: 'フロントエンド学習パス',
+          description: 'Webページから対話型アプリへ、順番に技術を積み上げます。',
+          publicationStatus: 'published',
+          steps: [
+            {
+              courseId: 'html-css',
+              role: 'required',
+              prerequisiteCourseIds: [],
+            },
+          ],
+        },
+      ],
+    });
     expect(publicCourse.revision).toBe('2026-07-10.1');
     expect(publicCourse.expectedTotals).toMatchObject({
       chapters: 1,

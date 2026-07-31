@@ -1,0 +1,9 @@
+schemaVersion: 1
+id: frontend
+title: フロントエンド学習パス
+description: Webページから対話型アプリへ、順番に技術を積み上げます。
+publicationStatus: published
+steps:
+  - courseId: html-css
+    role: required
+    prerequisiteCourseIds: []

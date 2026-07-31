@@ -276,6 +276,21 @@ describe('minimal Course compilation', () => {
     const authoring = await loadAuthoringCourse(courseRoot);
 
     expect(summary.courseCount).toBe(1);
+    expect(summary.catalog).toMatchObject({
+      schemaVersion: 2,
+      courses: [
+        {
+          id: 'html-css',
+          lessonStarts: [
+            {
+              lessonId: 'lesson-first',
+              target: { kind: 'slide', targetId: 'slide-html-role' },
+            },
+          ],
+        },
+      ],
+      learningPaths: [],
+    });
     expect(summary.catalog.courses[0]?.manifestSha256).toBe(
       createHash('sha256').update(publicCourseSource, 'utf8').digest('hex'),
     );

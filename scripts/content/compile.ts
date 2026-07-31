@@ -4,13 +4,19 @@ import { lstat, mkdir, readdir, readFile, rename, rm, writeFile } from 'node:fs/
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { CourseCatalogSchema } from '../../src/core/content/schema';
-import type { CourseCatalog, CourseManifest } from '../../src/core/content/types';
+import { lessonStartTarget } from '../../src/core/content/lessonStart';
+import type {
+  CourseCatalog,
+  CourseManifest,
+  LearningPathDefinition,
+} from '../../src/core/content/types';
 import {
   compileCourse,
   stringifyCanonicalJson,
   type CompiledCourseArtifacts,
 } from './compileCourse';
 import { resolveInside } from './io';
+import { compileLearningPaths } from './learningPaths';
 
 export interface CompileContentOptions {
   readonly sourceRoot: string;
@@ -89,6 +95,7 @@ async function listCourseDirectories(sourceRoot: string): Promise<string[]> {
     if (!entry.isDirectory()) {
       throw new Error(`Content Root直下にはCourse Directoryだけを置けます: ${entry.name}`);
     }
+    if (entry.name === 'learning-paths') continue;
     directories.push(entry.name);
   }
   return directories.sort((left, right) => (left < right ? -1 : left > right ? 1 : 0));
@@ -100,9 +107,12 @@ function courseManifestSha256(course: CourseManifest): string {
 }
 
 /** Course Compilation配列からintegrity付き公開Catalogをallowlist投影する。 */
-function createCatalog(compilations: readonly CompiledCourseArtifacts[]): CourseCatalog {
+function createCatalog(
+  compilations: readonly CompiledCourseArtifacts[],
+  learningPaths: readonly LearningPathDefinition[],
+): CourseCatalog {
   return CourseCatalogSchema.parse({
-    schemaVersion: 1,
+    schemaVersion: 2,
     courses: compilations
       .map(({ runtime: course }) => ({
         id: course.id,
@@ -114,8 +124,19 @@ function createCatalog(compilations: readonly CompiledCourseArtifacts[]): Course
         publicationStatus: course.publicationStatus,
         manifestPath: `generated/content/courses/${course.id}.json`,
         manifestSha256: courseManifestSha256(course),
+        lessonStarts: course.phases.flatMap((phase) =>
+          [...phase.chapters]
+            .sort((left, right) => left.sequence - right.sequence)
+            .flatMap((chapter) =>
+              chapter.lessons.map((lesson) => ({
+                lessonId: lesson.id,
+                target: lessonStartTarget(lesson),
+              })),
+            ),
+        ),
       }))
       .sort((left, right) => (left.id < right.id ? -1 : left.id > right.id ? 1 : 0)),
+    learningPaths,
   });
 }
 
@@ -332,7 +353,8 @@ export async function compileContent(options: CompileContentOptions): Promise<Co
       courses.push(course);
       compilations.push(compilation);
     }
-    const catalog = createCatalog(compilations);
+    const learningPaths = await compileLearningPaths(path.join(sourceRoot, 'learning-paths'));
+    const catalog = createCatalog(compilations, learningPaths);
     const catalogRoundTrip = CourseCatalogSchema.parse(
       JSON.parse(stringifyCanonicalJson(catalog)) as unknown,
     );

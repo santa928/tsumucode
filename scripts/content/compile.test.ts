@@ -1,6 +1,16 @@
 // @vitest-environment node
 /** Content Compilerが既存出力を壊さない公開境界を検証する。 */
-import { lstat, mkdir, mkdtemp, readdir, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import {
+  cp,
+  lstat,
+  mkdir,
+  mkdtemp,
+  readdir,
+  readFile,
+  rm,
+  symlink,
+  writeFile,
+} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -58,6 +68,38 @@ describe('compileContent output safety', () => {
     await writeFile(path.join(outputRoot, 'sentinel.txt'), 'keep', 'utf8');
 
     await expect(compileContent({ sourceRoot, outputRoot, checkOnly: false })).rejects.toThrow();
+    await expect(readFile(path.join(outputRoot, 'sentinel.txt'), 'utf8')).resolves.toBe('keep');
+    const siblings = await readdir(path.dirname(outputRoot));
+    expect(siblings.some((entry) => entry.startsWith('content.staging-'))).toBe(false);
+    expect(siblings.some((entry) => entry.startsWith('content.backup-'))).toBe(false);
+    expect(siblings.includes('content.lock')).toBe(false);
+  });
+
+  it('LearningPathが未知Courseを参照した場合も既存Outputを保持する', async () => {
+    const root = await createTemporaryRoot();
+    const sourceRoot = path.join(root, 'source');
+    const outputRoot = path.join(root, 'public/generated/content');
+    await cp(path.resolve('tests/fixtures/foundation-content'), sourceRoot, { recursive: true });
+    await writeFile(
+      path.join(sourceRoot, 'learning-paths/frontend.yaml'),
+      `schemaVersion: 1
+id: frontend
+title: フロントエンド学習パス
+description: 未知Course参照を拒否するテストです。
+publicationStatus: published
+steps:
+  - courseId: missing-course
+    role: required
+    prerequisiteCourseIds: []
+`,
+      'utf8',
+    );
+    await mkdir(outputRoot, { recursive: true });
+    await writeFile(path.join(outputRoot, 'sentinel.txt'), 'keep', 'utf8');
+
+    await expect(compileContent({ sourceRoot, outputRoot, checkOnly: false })).rejects.toThrow(
+      'LearningPathのCourse参照先がありません',
+    );
     await expect(readFile(path.join(outputRoot, 'sentinel.txt'), 'utf8')).resolves.toBe('keep');
     const siblings = await readdir(path.dirname(outputRoot));
     expect(siblings.some((entry) => entry.startsWith('content.staging-'))).toBe(false);
