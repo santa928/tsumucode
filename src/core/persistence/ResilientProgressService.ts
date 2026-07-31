@@ -67,6 +67,12 @@ function snapshotsEqual(left: RepositorySnapshot, right: RepositorySnapshot): bo
   return canonicalJson(left) === canonicalJson(right);
 }
 
+/** optionalな単一Repository recordを全snapshotへ展開せず内容比較する。 */
+function optionalRecordsEqual<Value>(left: Value | undefined, right: Value | undefined): boolean {
+  if (left === undefined || right === undefined) return left === right;
+  return canonicalJson(left) === canonicalJson(right);
+}
+
 /** revision・保存時刻を除く全Draft状態が同一で、救済分岐を包含すると判定できるか返す。 */
 function draftsHaveEquivalentRecoveryState(left: ExerciseDraft, right: ExerciseDraft): boolean {
   return (
@@ -174,9 +180,21 @@ export class ResilientProgressService implements ProgressRepository {
     for (const listener of [...this.#dataListeners]) listener();
   }
 
+  /** 内部でclone済みrecordから組み立てた不変snapshotを再cloneせずmemoryへ採用する。 */
+  #commitPreparedMemory(next: RepositorySnapshot): void {
+    this.#memory = next;
+    this.#dataRevision += 1;
+    for (const listener of [...this.#dataListeners]) listener();
+  }
+
   /** durable baselineを呼出側と共有しない値へ更新する。 */
   #commitBaseline(next: RepositorySnapshot): void {
     this.#baseline = clone(next);
+  }
+
+  /** 内部所有の不変snapshotをmemoryと共有可能なbaselineとして採用する。 */
+  #commitPreparedBaseline(next: RepositorySnapshot): void {
+    this.#baseline = next;
   }
 
   /** 現在のmemoryをbaselineとしてhealthyへ確定する。 */
@@ -285,13 +303,15 @@ export class ResilientProgressService implements ProgressRepository {
     }
     try {
       const versioned = await this.delegate.getCourseVersioned(courseId);
-      const courses: Record<string, CourseProgress> = Object.fromEntries(
-        Object.entries(this.#memory.courses).filter(([key]) => key !== courseId),
-      );
-      if (versioned.progress !== undefined) courses[courseId] = clone(versioned.progress);
-      const next = { ...this.#memory, courses };
-      this.#commitMemory(next);
-      this.#commitBaseline(next);
+      if (!optionalRecordsEqual(this.#memory.courses[courseId], versioned.progress)) {
+        const courses: Record<string, CourseProgress> = Object.fromEntries(
+          Object.entries(this.#memory.courses).filter(([key]) => key !== courseId),
+        );
+        if (versioned.progress !== undefined) courses[courseId] = clone(versioned.progress);
+        const next = { ...this.#memory, courses };
+        this.#commitPreparedMemory(next);
+        this.#commitPreparedBaseline(next);
+      }
       return clone(versioned);
     } catch (error: unknown) {
       this.#markUnavailable(classifyFailure(error, 'read'), false);
@@ -410,8 +430,8 @@ export class ResilientProgressService implements ProgressRepository {
           ...this.#memory,
           drafts: { ...this.#memory.drafts, [key]: clone(draft) },
         };
-        this.#commitMemory(next, true);
-        this.#commitBaseline(next);
+        this.#commitPreparedMemory(next);
+        this.#commitPreparedBaseline(next);
       } catch (error: unknown) {
         if (isLogicalWriteRejection(error)) throw error;
         const key = draftKey(draft.courseId, draft.workspaceId);
@@ -484,8 +504,8 @@ export class ResilientProgressService implements ProgressRepository {
           courses: { ...this.#memory.courses, [progress.courseId]: clone(progress) },
           drafts: { ...this.#memory.drafts, [key]: clone(draft) },
         };
-        this.#commitMemory(next, true);
-        this.#commitBaseline(next);
+        this.#commitPreparedMemory(next);
+        this.#commitPreparedBaseline(next);
         return nextVersion;
       } catch (error: unknown) {
         if (isLogicalWriteRejection(error)) throw error;

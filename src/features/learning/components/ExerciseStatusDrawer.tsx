@@ -13,6 +13,7 @@ export interface ExerciseStatusDrawerProps {
   readonly hints: readonly HintViewModel[];
   readonly revealedHintIds: readonly string[];
   readonly placement: 'side' | 'bottom';
+  readonly busy?: boolean;
   readonly returnFocusRef?: RefObject<HTMLElement | null>;
   readonly onClose: () => void;
   readonly onRevealNextHint: () => void;
@@ -26,6 +27,7 @@ export function ExerciseStatusDrawer({
   hints,
   revealedHintIds,
   placement,
+  busy = false,
   returnFocusRef,
   onClose,
   onRevealNextHint,
@@ -36,12 +38,14 @@ export function ExerciseStatusDrawer({
       open={mode !== undefined}
       title={mode === 'hint' ? 'ヒント' : '判定結果'}
       placement={placement}
+      dismissDisabled={busy}
       {...(returnFocusRef === undefined ? {} : { returnFocusRef })}
       onClose={onClose}
     >
       {mode === 'feedback' ? (
         <FeedbackPanel
           result={result}
+          actionsDisabled={busy}
           onRevealNextHint={onRevealNextHint}
           onReviewSlide={onReviewSlide}
         />

@@ -220,6 +220,7 @@ export class LearningSessionController {
   #previewTimer: ReturnType<typeof setTimeout> | undefined;
   #lastPassingSnapshots: ExerciseDraft['lastPassingSnapshots'] = {};
   #lastValidationBatch: readonly WorkspaceValidationItem[] = [];
+  #lastValidationDraft: ExerciseDraft | undefined;
   #state: LearningSessionState;
   #initializePromise: Promise<void> | undefined;
   #disposePromise: Promise<void> | undefined;
@@ -328,6 +329,7 @@ export class LearningSessionController {
   /** 永続Draftへ影響する同期UI操作を非同期処理用generationへ記録する。 */
   #markDraftMutation(): void {
     this.#mutationRevision += 1;
+    this.#lastValidationDraft = undefined;
   }
 
   /** 背景通知先の例外をtimer起点Promiseへ再伝播させない。 */
@@ -508,6 +510,13 @@ export class LearningSessionController {
   /** 直近のExercise別判定batchを入力順で返す。 */
   getLastValidationBatch(): readonly WorkspaceValidationItem[] {
     return this.#lastValidationBatch;
+  }
+
+  /** 指定revisionで判定保存済みのDraftだけを、原子的な進捗保存へ再利用する。 */
+  getLastValidationDraft(executionRevision: number): ExerciseDraft | undefined {
+    return this.#lastValidationDraft?.editRevision === executionRevision
+      ? this.#lastValidationDraft
+      : undefined;
   }
 
   /** Exerciseに紐づくSlideと非負offsetだけを見直し先として保存する。 */
@@ -700,7 +709,8 @@ export class LearningSessionController {
       revision: execution.revision,
       result,
     });
-    this.#autosave.schedule(this.#draft(candidateState, nextPassingSnapshots));
+    const validationDraft = this.#draft(candidateState, nextPassingSnapshots);
+    this.#autosave.schedule(validationDraft);
     try {
       await this.#autosave.flush();
     } catch (error: unknown) {
@@ -730,6 +740,7 @@ export class LearningSessionController {
     this.#assertFresh(execution);
     this.#lastValidationBatch = batch;
     this.#lastPassingSnapshots = nextPassingSnapshots;
+    this.#lastValidationDraft = validationDraft;
     this.#replaceState({ ...committedState, saveStatus: this.#state.saveStatus });
     return result;
   }

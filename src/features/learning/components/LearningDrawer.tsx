@@ -1,7 +1,7 @@
 /** 学習中の一覧、用語、Hint、Feedbackを同じModal Drawerで表示する。 */
 import {
-  useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   type KeyboardEvent,
   type MouseEvent,
@@ -17,6 +17,7 @@ export interface LearningDrawerProps {
   readonly returnFocusRef?: RefObject<HTMLElement | null>;
   readonly placement: 'side' | 'bottom';
   readonly heightMode?: 'content' | 'viewport';
+  readonly dismissDisabled?: boolean;
   readonly children: ReactNode;
 }
 
@@ -29,6 +30,7 @@ export function LearningDrawer({
   returnFocusRef,
   placement,
   heightMode = 'content',
+  dismissDisabled = false,
   children,
 }: LearningDrawerProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -36,7 +38,7 @@ export function LearningDrawer({
   const wasOpenRef = useRef(false);
   const titleId = useId();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const dialog = dialogRef.current;
     if (dialog === null) return;
 
@@ -54,12 +56,13 @@ export function LearningDrawer({
   function handleKeyDown(event: KeyboardEvent<HTMLDialogElement>): void {
     if (event.key !== 'Escape') return;
     event.preventDefault();
+    if (dismissDisabled) return;
     onClose();
   }
 
   /** Drawer panel外のBackdrop clickだけをCloseとして扱う。 */
   function handleBackdropClick(event: MouseEvent<HTMLDialogElement>): void {
-    if (event.target === event.currentTarget) onClose();
+    if (!dismissDisabled && event.target === event.currentTarget) onClose();
   }
 
   return (
@@ -72,7 +75,7 @@ export function LearningDrawer({
       data-placement={placement}
       onCancel={(event) => {
         event.preventDefault();
-        onClose();
+        if (!dismissDisabled) onClose();
       }}
       onClick={handleBackdropClick}
       onKeyDown={handleKeyDown}
@@ -84,7 +87,8 @@ export function LearningDrawer({
             ref={closeButtonRef}
             type="button"
             aria-label="閉じる"
-            className="tc-learning-drawer-close"
+            disabled={dismissDisabled}
+            className="tc-learning-drawer-close disabled:cursor-wait disabled:opacity-50"
             onClick={onClose}
           >
             <span aria-hidden="true">×</span>

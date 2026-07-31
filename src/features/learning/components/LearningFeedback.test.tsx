@@ -175,6 +175,22 @@ describe('FeedbackPanel', () => {
     expect(onReviewSlide).toHaveBeenCalledWith('slide-main');
   });
 
+  it('判定結果の保存中はHintと関連Slideの操作を無効化する', () => {
+    renderWithRouter(
+      <FeedbackPanel
+        result={result('incomplete', {
+          checks: [failedCheck('main', { hintId: 'hint-1', relatedSlideId: 'slide-main' })],
+        })}
+        actionsDisabled
+        onRevealNextHint={vi.fn()}
+        onReviewSlide={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: '次のヒントを見る：mainを積む' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: '関連スライドを見直す：mainを積む' })).toBeDisabled();
+  });
+
   it('同一requirementの先頭checkが合格なら、後続の最初の不合格checkを表示する', () => {
     const checks = [
       failedCheck('shared', {

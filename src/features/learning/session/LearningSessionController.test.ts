@@ -327,6 +327,8 @@ describe('LearningSessionController', () => {
       executionRevision: 1,
     });
     expect(savedDraft?.lastPassingSnapshots[current.id]).toMatchObject({ editRevision: 1 });
+    expect(controller.getLastValidationDraft(1)).toEqual(savedDraft);
+    expect(controller.getLastValidationDraft(0)).toBeUndefined();
   });
 
   it('250ms previewをcoalesceし、stateful Runner操作を同時実行しない', async () => {

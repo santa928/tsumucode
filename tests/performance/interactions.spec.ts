@@ -79,9 +79,7 @@ async function measureInteraction(
               return;
             }
             requestAnimationFrame(() => {
-              requestAnimationFrame(() => {
-                resolve(performance.now());
-              });
+              resolve(performance.now());
             });
           };
           requestAnimationFrame(check);
@@ -474,6 +472,9 @@ test('主要5操作、Event Timing、Draft永続化が予算内に完了する',
     STANDARD_EXERCISE_ID,
     STANDARD_EXERCISE_TITLE,
   );
+  await page.evaluate(() => {
+    performance.clearMeasures('tsumucode:validation');
+  });
   measurements.push(
     await measureInteraction(
       page,
@@ -483,6 +484,11 @@ test('主要5操作、Event Timing、Draft永続化が予算内に完了する',
       { selector: '[data-testid="validation-feedback"] h2', exactText: 'あと一歩' },
     ),
   );
+  const controllerValidationMs = await page.evaluate(() => {
+    const duration = performance.getEntriesByName('tsumucode:validation').at(-1)?.duration;
+    if (duration === undefined) throw new Error('Controllerの判定時間を取得できませんでした');
+    return duration;
+  });
 
   await page
     .getByRole('button', { name: /関連スライドを見直す/u })
@@ -520,7 +526,9 @@ test('主要5操作、Event Timing、Draft永続化が予算内に完了する',
   });
 
   await testInfo.attach('interaction-performance.json', {
-    body: Buffer.from(JSON.stringify({ measurements, draftPersistenceMs }, undefined, 2)),
+    body: Buffer.from(
+      JSON.stringify({ measurements, controllerValidationMs, draftPersistenceMs }, undefined, 2),
+    ),
     contentType: 'application/json',
   });
 

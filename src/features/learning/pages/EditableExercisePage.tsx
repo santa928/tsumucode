@@ -422,6 +422,9 @@ function EditableSession({ course, lesson, exercise, lease, onRetry }: EditableS
         const nextResult = await controller.validateNow();
         const executionRevision = nextResult.executionRevision;
         if (executionRevision === null) throw new Error('判定revisionがありません');
+        if (nextResult.status !== 'pass' && isCurrentOperation(generation)) {
+          setDrawerMode('feedback');
+        }
         let persisted;
         try {
           persisted = await lease.runFencedWrite(async (_token, proof) =>
@@ -449,10 +452,7 @@ function EditableSession({ course, lesson, exercise, lease, onRetry }: EditableS
                 };
               });
               const updated = recordWorkspaceValidation(current.progress, course, progressBatch);
-              const draft = await learningRuntimeServices.repository.getDraft(
-                course.id,
-                exercise.workspaceId,
-              );
+              const draft = controller.getLastValidationDraft(executionRevision);
               const passedIds = progressBatch
                 .filter(({ result: targetResult }) => targetResult.status === 'pass')
                 .map(({ exercise: target }) => target.id);
@@ -508,6 +508,7 @@ function EditableSession({ course, lesson, exercise, lease, onRetry }: EditableS
         }
       } catch (error: unknown) {
         if (isCurrentOperation(generation)) {
+          if (error instanceof StaleExecutionError) setDrawerMode(undefined);
           setOperationError(
             error instanceof StaleExecutionError
               ? '編集中の内容が変わりました。最新のコードでもう一度判定してください。'
@@ -807,6 +808,7 @@ function EditableSession({ course, lesson, exercise, lease, onRetry }: EditableS
           hints={exercise.hints}
           revealedHintIds={state.revealedHintIds}
           placement="side"
+          busy={busy}
           returnFocusRef={statusReturnFocusRef}
           onClose={() => {
             setDrawerMode(undefined);

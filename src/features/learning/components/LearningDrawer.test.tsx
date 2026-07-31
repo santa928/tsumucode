@@ -1,8 +1,8 @@
 /** 学習DrawerのModal表示、Escape、Focus復帰を検証する。 */
 import { useRef, useState } from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { LearningDrawer } from './LearningDrawer';
 
 /** TriggerとDrawerを同じFocus lifecycleで操作するTest Harness。 */
@@ -48,5 +48,23 @@ describe('LearningDrawer', () => {
     await user.keyboard('{Escape}');
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(trigger).toHaveFocus();
+  });
+
+  it('保存中はClose、Escape、BackdropによるDismissを受け付けない', () => {
+    const onClose = vi.fn();
+    render(
+      <LearningDrawer open title="判定結果" placement="side" dismissDisabled onClose={onClose}>
+        <p>進捗を保存しています。</p>
+      </LearningDrawer>,
+    );
+    const dialog = screen.getByRole('dialog', { name: '判定結果' });
+    const close = screen.getByRole('button', { name: '閉じる' });
+
+    expect(close).toBeDisabled();
+    fireEvent.keyDown(dialog, { key: 'Escape' });
+    fireEvent.click(dialog);
+
+    expect(onClose).not.toHaveBeenCalled();
+    expect(dialog).toBeVisible();
   });
 });

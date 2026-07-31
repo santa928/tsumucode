@@ -7,6 +7,7 @@ import type {
 
 interface FeedbackPanelProps {
   readonly result: ValidationResult | undefined;
+  readonly actionsDisabled?: boolean;
   readonly onRevealNextHint: () => void;
   readonly onReviewSlide: (slideId: string) => void;
 }
@@ -64,7 +65,12 @@ function selectPrimaryChecks(checks: readonly ValidationCheck[]): readonly Valid
 }
 
 /** 判定状態を学習者向け説明と次の操作へ変換して表示する。 */
-export function FeedbackPanel({ result, onRevealNextHint, onReviewSlide }: FeedbackPanelProps) {
+export function FeedbackPanel({
+  result,
+  actionsDisabled = false,
+  onRevealNextHint,
+  onReviewSlide,
+}: FeedbackPanelProps) {
   if (result === undefined) {
     return (
       <StackedCard as="section" aria-label="判定結果">
@@ -110,7 +116,8 @@ export function FeedbackPanel({ result, onRevealNextHint, onReviewSlide }: Feedb
                       <button
                         type="button"
                         aria-label={`次のヒントを見る：${check.label}`}
-                        className="inline-flex min-h-11 items-center justify-center rounded-workshop-md bg-workshop-primary px-5 py-3 font-bold text-workshop-on-primary transition-colors duration-[var(--tc-motion-fast)] hover:bg-[var(--tc-color-primary-hover)]"
+                        disabled={actionsDisabled}
+                        className="inline-flex min-h-11 items-center justify-center rounded-workshop-md bg-workshop-primary px-5 py-3 font-bold text-workshop-on-primary transition-colors duration-[var(--tc-motion-fast)] hover:bg-[var(--tc-color-primary-hover)] disabled:cursor-wait disabled:opacity-50"
                         onClick={onRevealNextHint}
                       >
                         次のヒントを見る
@@ -120,7 +127,8 @@ export function FeedbackPanel({ result, onRevealNextHint, onReviewSlide }: Feedb
                       <button
                         type="button"
                         aria-label={`関連スライドを見直す：${check.label}`}
-                        className="inline-flex min-h-11 items-center justify-center rounded-workshop-md border-2 border-workshop-primary bg-workshop-surface px-5 py-3 font-bold text-workshop-primary hover:bg-workshop-workbench"
+                        disabled={actionsDisabled}
+                        className="inline-flex min-h-11 items-center justify-center rounded-workshop-md border-2 border-workshop-primary bg-workshop-surface px-5 py-3 font-bold text-workshop-primary hover:bg-workshop-workbench disabled:cursor-wait disabled:opacity-50"
                         onClick={() => {
                           onReviewSlide(relatedSlideId);
                         }}
