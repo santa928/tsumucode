@@ -330,9 +330,8 @@ test('Homeの見出し順とSkip Linkを保ち、KeyboardだけでPathからCour
   page,
 }) => {
   await page.goto('./#/');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
-  const homeSectionHeadings = await page.locator('main h2').allTextContents();
-  expect(homeSectionHeadings.slice(0, 2)).toEqual(['学習パスから始める', '個別コースを選ぶ']);
+  await expect(page.getByRole('heading', { level: 1, name: '学びたいピースを選ぶ' })).toBeVisible();
+  await expect(page.locator('main h2')).toHaveText(['学習パスから始める', '個別コースを選ぶ']);
 
   await page.keyboard.press('Tab');
   const skipLink = page.getByRole('link', { name: '本文へ移動' });
@@ -341,7 +340,9 @@ test('Homeの見出し順とSkip Linkを保ち、KeyboardだけでPathからCour
   await expect(page.getByRole('main')).toBeFocused();
 
   await page.goto('./#/paths/frontend');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+  await expect(
+    page.getByRole('heading', { level: 1, name: 'フロントエンド学習パス' }),
+  ).toBeVisible();
   const courseLink = page.getByRole('link', {
     name: 'HTML/CSS はじめの一歩を始める',
   });
