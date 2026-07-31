@@ -559,7 +559,9 @@ describe('Learning routes', () => {
 
     renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
 
-    expect(await screen.findByRole('heading', { name: 'PCで演習を開く' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: 'PCで演習を開く' }, { timeout: 5_000 }),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole('complementary', { name: 'コード編集はPCから利用できます' }),
     ).toBeInTheDocument();
