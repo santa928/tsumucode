@@ -6,6 +6,7 @@ import { ActionLink } from '../../design-system/components/ActionLink';
 import { PieceProgress } from '../../design-system/components/PieceProgress';
 import { StackedCard } from '../../design-system/components/StackedCard';
 import { WorkshopNotice } from '../../design-system/components/WorkshopNotice';
+import { LearningPathCard } from '../paths/LearningPathCard';
 import { summarizeCatalogCourseProgress } from '../progress/catalogCourseProgress';
 import { useCourseProgress } from '../progress/useCourseProgress';
 
@@ -126,10 +127,13 @@ function CourseShelfCard({ course }: { readonly course: CourseCatalogEntry }) {
 
 /** 公開Courseを対象者・所要時間・再開地点が分かる学習ピースとして表示する。 */
 export function HomePage() {
-  const { publishedCourses } = useLoaderData<typeof homeLoader>();
+  const { publishedCourses, publishedPaths } = useLoaderData<typeof homeLoader>();
   const location = useLocation();
   const showDeviceDataTools = useDeferredDeviceDataTools(
     new URLSearchParams(location.search).get('focus') === 'device-data',
+  );
+  const publishedCourseById = new Map(
+    publishedCourses.map((course) => [course.id, course] as const),
   );
 
   return (
@@ -144,12 +148,52 @@ export function HomePage() {
         </p>
       </header>
 
-      <section className="mt-10" aria-labelledby="course-shelf-title">
+      <section className="mt-10" aria-labelledby="learning-path-shelf-title">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="text-sm font-bold text-workshop-muted">おすすめの組み立て順</p>
+            <h2 id="learning-path-shelf-title" className="mt-1 text-2xl font-black">
+              学習パスから始める
+            </h2>
+          </div>
+          <p className="text-sm text-workshop-muted">公開中 {publishedPaths.length}件</p>
+        </div>
+
+        {publishedPaths.length === 0 ? (
+          <StackedCard className="mt-5 max-w-2xl bg-workshop-raised">
+            <p role="status" className="font-bold">
+              公開中の学習パスを準備しています。
+            </p>
+            <p className="mt-2 text-workshop-muted">
+              下の個別コースは、好きなものから始められます。
+            </p>
+          </StackedCard>
+        ) : (
+          <ul className="mt-5 grid list-none gap-7 p-0 lg:grid-cols-2">
+            {publishedPaths.map((path) => {
+              const courses = path.steps.map((step) => {
+                const course = publishedCourseById.get(step.courseId);
+                if (course === undefined) {
+                  throw new Error(`公開LearningPathのCourseが見つかりません: ${step.courseId}`);
+                }
+                return course;
+              });
+              return (
+                <li key={path.id}>
+                  <LearningPathCard path={path} courses={courses} />
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
+
+      <section className="mt-14" aria-labelledby="course-shelf-title">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="text-sm font-bold text-workshop-muted">工房の教材棚</p>
             <h2 id="course-shelf-title" className="mt-1 text-2xl font-black">
-              次に積む教材
+              個別コースを選ぶ
             </h2>
           </div>
           <p className="text-sm text-workshop-muted">公開中 {publishedCourses.length}件</p>

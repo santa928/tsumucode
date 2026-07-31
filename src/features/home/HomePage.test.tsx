@@ -6,8 +6,10 @@ import type { CourseProgress } from '../../core/persistence/contracts';
 import { HomePage } from './HomePage';
 
 const useCourseProgress = vi.hoisted(() => vi.fn());
+const useLearningPathProgress = vi.hoisted(() => vi.fn());
 
 vi.mock('../progress/useCourseProgress', () => ({ useCourseProgress }));
+vi.mock('../progress/useLearningPathProgress', () => ({ useLearningPathProgress }));
 
 vi.mock('../progress/ProgressTransferPanel', () => ({
   ProgressTransferPanel: () => <section aria-label="端末データPanel">端末データを管理</section>,
@@ -15,9 +17,35 @@ vi.mock('../progress/ProgressTransferPanel', () => ({
 
 describe('HomePage', () => {
   beforeEach(() => {
+    const course = fixtureCatalog.courses[0]!;
     useCourseProgress.mockReturnValue({
       status: 'ready',
       progress: undefined,
+      error: undefined,
+      retry: vi.fn(),
+    });
+    useLearningPathProgress.mockReturnValue({
+      status: 'ready',
+      summary: {
+        status: 'not-started',
+        completedRequiredCourses: 0,
+        totalRequiredCourses: 1,
+        actionPath: '/courses/html-css/lessons/lesson-first-heading/slides/slide-html-role',
+        steps: [
+          {
+            course,
+            role: 'required',
+            prerequisiteCourseIds: [],
+            courseProgress: {
+              status: 'not-started',
+              completedLessons: 0,
+              totalLessons: 1,
+              actionPath: '/courses/html-css/lessons/lesson-first-heading/slides/slide-html-role',
+              currentLessonId: 'lesson-first-heading',
+            },
+          },
+        ],
+      },
       error: undefined,
       retry: vi.fn(),
     });
@@ -43,7 +71,31 @@ describe('HomePage', () => {
       await screen.findByRole('heading', { level: 1, name: '学びたいピースを選ぶ' }),
     ).toBeInTheDocument();
     expect(screen.queryByRole('region', { name: '端末データPanel' })).not.toBeInTheDocument();
-    expect(screen.getByRole('heading', { level: 2, name: '次に積む教材' })).toBeInTheDocument();
+    const pathHeading = screen.getByRole('heading', {
+      level: 2,
+      name: '学習パスから始める',
+    });
+    const courseHeading = screen.getByRole('heading', {
+      level: 2,
+      name: '個別コースを選ぶ',
+    });
+    expect(
+      pathHeading.compareDocumentPosition(courseHeading) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      screen.getByRole('heading', {
+        level: 3,
+        name: fixtureCatalog.learningPaths[0]!.title,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', {
+        name: `「${fixtureCatalog.learningPaths[0]!.title}」を最初から始める`,
+      }),
+    ).toHaveAttribute(
+      'href',
+      '/courses/html-css/lessons/lesson-first-heading/slides/slide-html-role',
+    );
     expect(
       screen.getByRole('heading', { level: 3, name: fixtureCatalog.courses[0]!.title }),
     ).toBeInTheDocument();
@@ -197,16 +249,19 @@ describe('HomePage', () => {
     ).toHaveAttribute('aria-valuetext', '0 / 1 ピース完了');
   });
 
-  it('未公開Courseしかない場合は開始Linkを出さず準備中と伝える', async () => {
+  it('LearningPathが0件でも個別Course棚を利用できる', async () => {
     const draftCatalog = {
       ...fixtureCatalog,
-      courses: [{ ...fixtureCatalog.courses[0]!, publicationStatus: 'draft' as const }],
       learningPaths: [],
     };
     const router = createMemoryRouter([
       {
         path: '/',
-        loader: () => ({ catalog: draftCatalog, publishedCourses: [], publishedPaths: [] }),
+        loader: () => ({
+          catalog: draftCatalog,
+          publishedCourses: draftCatalog.courses,
+          publishedPaths: [],
+        }),
         HydrateFallback: () => <p>教材を準備中</p>,
         element: <HomePage />,
       },
@@ -214,7 +269,12 @@ describe('HomePage', () => {
 
     render(<RouterProvider router={router} />);
 
-    expect(await screen.findByText('公開中の教材を準備しています。')).toBeInTheDocument();
-    expect(screen.queryByRole('link', { name: /始める/u })).not.toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { level: 2, name: '個別コースを選ぶ' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { level: 3, name: fixtureCourse.title }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { level: 3, name: /学習パス/u })).not.toBeInTheDocument();
   });
 });

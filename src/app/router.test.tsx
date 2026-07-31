@@ -187,6 +187,20 @@ describe('createAppRouter', () => {
     expect(screen.getByRole('button', { name: 'もう一度読み込む' })).toBeEnabled();
   });
 
+  it('LearningPath URLへ直接アクセスしてPath詳細を表示する', async () => {
+    window.location.hash = '#/paths/frontend';
+    router = createAppRouter();
+    render(<RouterProvider router={router} />);
+
+    expect(
+      await screen.findByRole('heading', {
+        level: 1,
+        name: fixtureCatalog.learningPaths[0]!.title,
+      }),
+    ).toBeInTheDocument();
+    expect(router.state.location.pathname).toBe('/paths/frontend');
+  });
+
   it('Course URLへ直接アクセスして検証済みコースマップを表示する', async () => {
     vi.stubGlobal(
       'fetch',

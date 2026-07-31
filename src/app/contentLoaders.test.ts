@@ -9,6 +9,7 @@ import {
   courseLoader,
   exerciseLoader,
   homeLoader,
+  learningPathLoader,
   reviewLoader,
   slideLoader,
 } from './contentLoaders';
@@ -368,6 +369,64 @@ describe('content route loaders', () => {
       catalog: fixtureCatalog,
       publishedCourses: [fixtureCatalog.courses[0]!],
       publishedPaths: fixtureCatalog.learningPaths,
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(runtime.ensureCourse).toHaveBeenCalledWith(fixtureCourse);
+  });
+
+  it('LearningPath loaderは公開PathのCourseをStep定義順で返す', async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(Response.json(fixtureCatalog));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(learningPathLoader({ params: { pathId: 'frontend' } })).resolves.toEqual({
+      path: fixtureCatalog.learningPaths[0]!,
+      courses: [fixtureCatalog.courses[0]!],
+    });
+    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(runtime.repository.getCourse).toHaveBeenCalledWith('html-css');
+    expect(runtime.ensureCourse).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['未知Path', fixtureCatalog, 'missing-path'],
+    [
+      'draft Path',
+      {
+        ...structuredClone(fixtureCatalog),
+        learningPaths: [
+          {
+            ...structuredClone(fixtureCatalog.learningPaths[0]!),
+            publicationStatus: 'draft' as const,
+          },
+        ],
+      },
+      'frontend',
+    ],
+  ])('%sを404 Responseへ変換する', async (_label, catalog, pathId) => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValueOnce(Response.json(catalog)));
+
+    await expect(learningPathLoader({ params: { pathId } })).rejects.toMatchObject({
+      status: 404,
+    });
+  });
+
+  it('LearningPath loaderも保存済みrevisionが古いCourseだけmigrationする', async () => {
+    runtime.repository.getCourse.mockResolvedValue({
+      courseId: fixtureCourse.id,
+      contentRevision: 'old-revision',
+      lessons: {},
+      currentComplete: false,
+      updatedAt: '2026-07-31T00:00:00.000Z',
+    });
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(Response.json(fixtureCatalog))
+      .mockResolvedValueOnce(Response.json(fixtureCourse));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(learningPathLoader({ params: { pathId: 'frontend' } })).resolves.toEqual({
+      path: fixtureCatalog.learningPaths[0]!,
+      courses: [fixtureCatalog.courses[0]!],
     });
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(runtime.ensureCourse).toHaveBeenCalledWith(fixtureCourse);

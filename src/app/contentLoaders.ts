@@ -1,7 +1,12 @@
 import { redirect, type LoaderFunctionArgs } from 'react-router-dom';
 import { loadCourseCatalog, loadCourseManifest } from '../core/content/loadCourseCatalog';
 import { findExercise, findLesson, findSlide, findSlideInCourse } from '../core/content/selectors';
-import type { Exercise, Lesson } from '../core/content/types';
+import type {
+  CourseCatalogEntry,
+  Exercise,
+  LearningPathDefinition,
+  Lesson,
+} from '../core/content/types';
 import { learningRuntimeServices } from '../features/learning/runtimeServices';
 import {
   createCatalogProgressMigrationPort,
@@ -9,6 +14,11 @@ import {
 } from './catalogProgressMigrations';
 
 type CourseLoaderArgs = Pick<LoaderFunctionArgs, 'params'>;
+
+export interface LearningPathLoaderData {
+  readonly path: LearningPathDefinition;
+  readonly courses: readonly CourseCatalogEntry[];
+}
 
 /** React Routerへ教材階層の404 statusだけを渡し、内部の検索詳細は公開しない。 */
 function throwContentNotFound(): never {
@@ -35,6 +45,32 @@ export async function homeLoader() {
     createCatalogProgressMigrationPort(import.meta.env.BASE_URL),
   );
   return { catalog, publishedCourses, publishedPaths };
+}
+
+/** 公開LearningPathとStep順の公開Course metadataをCatalogだけから解決する。 */
+export async function learningPathLoader({
+  params,
+}: CourseLoaderArgs): Promise<LearningPathLoaderData> {
+  const pathId = params.pathId ?? '';
+  const catalog = await loadCourseCatalog(import.meta.env.BASE_URL);
+  const learningPath = catalog.learningPaths.find(
+    (candidate) => candidate.id === pathId && candidate.publicationStatus === 'published',
+  );
+  if (learningPath === undefined) return throwContentNotFound();
+
+  const publishedCourses: CourseCatalogEntry[] = [];
+  for (const step of learningPath.steps) {
+    const course = catalog.courses.find(
+      (course) => course.id === step.courseId && course.publicationStatus === 'published',
+    );
+    if (course === undefined) return throwContentNotFound();
+    publishedCourses.push(course);
+  }
+  await ensureCatalogCourseRevisions(
+    publishedCourses,
+    createCatalogProgressMigrationPort(import.meta.env.BASE_URL),
+  );
+  return { path: learningPath, courses: publishedCourses };
 }
 
 /** Catalogに登録されたCourseだけを検証済みManifestとして返す。 */

@@ -5,6 +5,7 @@ import {
   courseLoader,
   exerciseLoader,
   homeLoader,
+  learningPathLoader,
   reviewLoader,
   slideLoader,
 } from './contentLoaders';
@@ -14,6 +15,7 @@ import { CompletionPage } from '../features/learning/pages/CompletionPage';
 import { ExercisePage } from '../features/learning/pages/ExercisePage';
 import { ReviewPage } from '../features/learning/pages/ReviewPage';
 import { SlidePage } from '../features/learning/pages/SlidePage';
+import { LearningPathPage } from '../features/paths/LearningPathPage';
 
 /**
  * React Routerのlazy戻り値を通常学習用の単一chunkから提供する。
@@ -22,6 +24,7 @@ import { SlidePage } from '../features/learning/pages/SlidePage';
 export const normalLearningRouteModules = {
   shell: { Component: AppShell },
   home: { loader: homeLoader, Component: HomePage },
+  path: { loader: learningPathLoader, Component: LearningPathPage },
   course: { loader: courseLoader, Component: CourseMapPage },
   slide: { loader: slideLoader, Component: SlidePage },
   exercise: { loader: exerciseLoader, Component: ExercisePage },
