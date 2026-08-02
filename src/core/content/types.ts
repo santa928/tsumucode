@@ -1,6 +1,13 @@
 /** Zod公開契約からCompiler／Runtimeが共有する教材型を一元exportする。 */
 import type { z } from 'zod';
 import type {
+  CourseCatalogEntryV3Schema,
+  CourseCatalogV3Schema,
+  CourseIndexSchema,
+  LessonManifestSchema,
+  LessonOutlineSchema,
+} from './deliverySchema';
+import type {
   AssetRefSchema,
   ChapterManifestSchema,
   ConceptDefinitionSchema,
@@ -36,6 +43,11 @@ import type {
 
 export type CourseCatalog = z.infer<typeof CourseCatalogSchema>;
 export type CourseCatalogEntry = z.infer<typeof CourseCatalogEntrySchema>;
+export type CourseCatalogV3 = z.infer<typeof CourseCatalogV3Schema>;
+export type CourseCatalogEntryV3 = z.infer<typeof CourseCatalogEntryV3Schema>;
+export type CourseIndex = z.infer<typeof CourseIndexSchema>;
+export type LessonManifest = z.infer<typeof LessonManifestSchema>;
+export type LessonOutline = z.infer<typeof LessonOutlineSchema>;
 export type CourseCatalogLessonStart = z.infer<typeof CourseCatalogLessonStartSchema>;
 export type LearningPathDefinition = z.infer<typeof LearningPathDefinitionSchema>;
 export type LearningPathStep = z.infer<typeof LearningPathStepSchema>;

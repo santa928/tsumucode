@@ -1,5 +1,11 @@
 /** 公開Course契約の最小成功例を、CompilerとRuntimeのTestで共有する。 */
-import type { CourseCatalog, CourseManifest } from '../../src/core/content/types';
+import type {
+  CourseCatalog,
+  CourseCatalogV3,
+  CourseIndex,
+  CourseManifest,
+  LessonManifest,
+} from '../../src/core/content/types';
 
 export const fixtureCourse: CourseManifest = {
   schemaVersion: 1,
@@ -228,4 +234,115 @@ export const fixtureCatalog: CourseCatalog = {
       ],
     },
   ],
+};
+
+export const fixtureCourseIndex: CourseIndex = {
+  schemaVersion: 1,
+  id: fixtureCourse.id,
+  title: fixtureCourse.title,
+  description: fixtureCourse.description,
+  audience: fixtureCourse.audience,
+  estimatedMinutes: fixtureCourse.estimatedMinutes,
+  revision: fixtureCourse.revision,
+  runnerId: fixtureCourse.runnerId,
+  validatorId: fixtureCourse.validatorId,
+  supportedDevices: fixtureCourse.supportedDevices,
+  glossary: fixtureCourse.glossary,
+  concepts: fixtureCourse.concepts,
+  prerequisites: fixtureCourse.prerequisites,
+  publicationStatus: fixtureCourse.publicationStatus,
+  expectedTotals: fixtureCourse.expectedTotals,
+  provenanceManifestPath: 'generated/content/courses/html-css/provenance.json',
+  progressMigrations: fixtureCourse.progressMigrations,
+  entityIds: {
+    chapter: ['ch00-web-map'],
+    lesson: ['lesson-first-heading'],
+    slide: ['slide-html-role'],
+    exercise: ['exercise-first-heading'],
+    rule: ['rule-h1-exists'],
+    hint: ['hint-h1-1', 'hint-h1-2', 'hint-h1-3'],
+    checklist: [],
+    workspace: ['workspace-first-heading'],
+  },
+  phases: [
+    {
+      id: 'first-piece',
+      title: '最初のピース',
+      description: 'Web制作の入口',
+      chapters: [
+        {
+          id: 'ch00-web-map',
+          sequence: 0,
+          title: 'Web制作の地図',
+          goal: 'HTMLの役割を説明する',
+          estimatedMinutes: 15,
+          kind: 'standard',
+          lessons: [
+            {
+              id: 'lesson-first-heading',
+              kind: 'standard',
+              title: '見出しを置く',
+              goal: 'h1要素を使う',
+              estimatedMinutes: 15,
+              prerequisiteLessonIds: [],
+              slides: [
+                {
+                  id: 'slide-html-role',
+                  title: 'HTMLは意味を伝える',
+                  kind: 'concept',
+                },
+              ],
+              exercises: [
+                {
+                  id: 'exercise-first-heading',
+                  title: 'h1見出しを追加する',
+                  kind: 'standard',
+                  workspaceId: 'workspace-first-heading',
+                },
+              ],
+              completion: {
+                kind: 'standard',
+                finalSlideId: 'slide-html-role',
+                requiredExerciseIds: ['exercise-first-heading'],
+              },
+              manifestPath: 'generated/content/courses/html-css/lessons/lesson-first-heading.json',
+              manifestSha256: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+            },
+          ],
+        },
+      ],
+    },
+  ],
+};
+
+export const fixtureCatalogV3: CourseCatalogV3 = {
+  schemaVersion: 3,
+  courses: [
+    {
+      id: fixtureCourse.id,
+      title: fixtureCourse.title,
+      description: fixtureCourse.description,
+      audience: fixtureCourse.audience,
+      estimatedMinutes: fixtureCourse.estimatedMinutes,
+      revision: fixtureCourse.revision,
+      publicationStatus: fixtureCourse.publicationStatus,
+      indexPath: 'generated/content/courses/html-css/index.json',
+      indexSha256: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
+      lessonStarts: [
+        {
+          lessonId: 'lesson-first-heading',
+          target: { kind: 'slide', targetId: 'slide-html-role' },
+        },
+      ],
+    },
+  ],
+  learningPaths: fixtureCatalog.learningPaths,
+};
+
+export const fixtureLessonManifest: LessonManifest = {
+  schemaVersion: 1,
+  courseId: fixtureCourse.id,
+  courseRevision: fixtureCourse.revision,
+  lessonId: 'lesson-first-heading',
+  lesson: fixtureCourse.phases[0]!.chapters[0]!.lessons[0]!,
 };

@@ -2,10 +2,10 @@
 import { z } from 'zod';
 import { resolvePublicAsset } from '../../shared/lib/resolvePublicAsset';
 
-const IdSchema = z
+export const IdSchema = z
   .string()
   .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'IDはlower-kebab-caseで指定してください');
-const NonEmptyTextSchema = z.string().trim().min(1, '空でない文字列を指定してください');
+export const NonEmptyTextSchema = z.string().trim().min(1, '空でない文字列を指定してください');
 const NonBlankPreservedTextSchema = z
   .string()
   .min(1, '空でない文字列を指定してください')
@@ -21,10 +21,12 @@ function isSafePublicRelativePath(value: string): boolean {
   }
 }
 
-const RelativePathSchema = z
+export const RelativePathSchema = z
   .string()
   .min(1)
   .refine(isSafePublicRelativePath, '安全な相対Pathで指定してください');
+
+export const Sha256Schema = z.string().regex(/^[0-9a-f]{64}$/u, 'SHA-256を指定してください');
 
 export const MasteryLevelSchema = z.enum(['seen', 'read', 'fill', 'transform', 'compose']);
 export const SlideLayoutSchema = z.enum([
@@ -648,7 +650,7 @@ export const PhaseManifestSchema = z
   })
   .strict();
 
-const ExpectedTotalsSchema = z
+export const ExpectedTotalsSchema = z
   .object({
     chapters: z.number().int().nonnegative(),
     lessons: z.number().int().nonnegative(),
@@ -709,7 +711,7 @@ export const ContentProgressMigrationSchema = z
   })
   .strict();
 
-const SupportedDevicesSchema = z
+export const SupportedDevicesSchema = z
   .object({
     exercise: z.literal('desktop'),
     study: z.array(z.enum(['desktop', 'tablet', 'mobile'])).min(1),
@@ -1723,7 +1725,7 @@ export const CourseCatalogEntrySchema = z
     revision: NonEmptyTextSchema,
     publicationStatus: z.enum(['draft', 'published']),
     manifestPath: RelativePathSchema,
-    manifestSha256: z.string().regex(/^[0-9a-f]{64}$/u),
+    manifestSha256: Sha256Schema,
     lessonStarts: z.array(CourseCatalogLessonStartSchema).min(1),
   })
   .strict();
