@@ -1,8 +1,8 @@
 /** 学習者が現在地を失わず、1画面ずつ前後・一覧・用語へ移れるSlide Viewerを提供する。 */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLoaderData, useNavigate } from 'react-router';
-import type { CourseManifest, Lesson } from '../../../core/content/types';
-import { recordSlideView } from '../../../core/persistence/progressUpdates';
+import type { CourseIndex, Lesson } from '../../../core/content/types';
+import { recordSlideViewFromIndex } from '../../../core/persistence/progressUpdates';
 import type { slideLoader } from '../../../app/contentLoaders';
 import { ActionLink } from '../../../design-system/components/ActionLink';
 import { PieceProgress } from '../../../design-system/components/PieceProgress';
@@ -14,6 +14,7 @@ import { SlideStage } from '../components/SlideStage';
 import { LearningToolRail } from '../layout/LearningToolRail';
 import { LearningViewportShell } from '../layout/LearningViewportShell';
 import { learningRuntimeServices } from '../runtimeServices';
+import { useAdjacentLessonPrefetch } from '../useAdjacentLessonPrefetch';
 
 type DrawerMode = 'slides' | 'glossary' | undefined;
 
@@ -38,7 +39,7 @@ function isSlideShortcutBlockedTarget(target: EventTarget | null): boolean {
 }
 
 /** 検証済み参照をGlossary entityへ変換し、契約違反なら明示的に失敗する。 */
-function resolveGlossary(course: CourseManifest, lesson: Lesson) {
+function resolveGlossary(course: CourseIndex, lesson: Lesson) {
   return lesson.glossaryRefs.map((glossaryId) => {
     const entry = course.glossary.find(({ id }) => id === glossaryId);
     if (entry === undefined) throw new Error(`用語が見つかりません: ${glossaryId}`);
@@ -54,6 +55,7 @@ function drawerTriggerClass(): string {
 /** 一覧・前後移動・Course Map復帰を固定Viewport内に収めるSlide画面。 */
 export function SlidePage() {
   const { course, lesson, slide } = useLoaderData<typeof slideLoader>();
+  useAdjacentLessonPrefetch(course, lesson.id);
   const navigate = useNavigate();
   const canEdit = useEditingCapability();
   const slideTitleRef = useRef<HTMLHeadingElement>(null);
@@ -89,7 +91,13 @@ export function SlidePage() {
         await learningRuntimeServices.runCourseProgressMutation(course.id, async () => {
           const current = await learningRuntimeServices.repository.getCourseVersioned(course.id);
           await learningRuntimeServices.repository.putCourseVersioned(
-            recordSlideView(current.progress, course, lesson, slide.id, new Date().toISOString()),
+            recordSlideViewFromIndex(
+              current.progress,
+              course,
+              lesson,
+              slide.id,
+              new Date().toISOString(),
+            ),
             current.version,
           );
         });

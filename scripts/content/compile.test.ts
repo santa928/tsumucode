@@ -32,6 +32,31 @@ afterEach(async () => {
 });
 
 describe('compileContent output safety', () => {
+  it('production compilerはCatalog v3と分割Courseだけをatomic publishする', async () => {
+    const root = await createTemporaryRoot();
+    const sourceRoot = path.join(root, 'source');
+    const outputRoot = path.join(root, 'public/generated/content');
+    await cp(path.resolve('tests/fixtures/foundation-content'), sourceRoot, { recursive: true });
+
+    await compileContent({ sourceRoot, outputRoot, checkOnly: false });
+
+    await expect(readFile(path.join(outputRoot, 'catalog-v3.json'), 'utf8')).resolves.toContain(
+      '"schemaVersion":3',
+    );
+    await expect(
+      lstat(path.join(outputRoot, 'courses/html-css/index.json')),
+    ).resolves.toBeDefined();
+    await expect(
+      lstat(path.join(outputRoot, 'courses/html-css/lessons/lesson-first-heading.json')),
+    ).resolves.toBeDefined();
+    await expect(lstat(path.join(outputRoot, 'catalog.json'))).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+    await expect(lstat(path.join(outputRoot, 'courses/html-css.json'))).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+  });
+
   it('generated/content以外をoutputRootにできない', async () => {
     const root = await createTemporaryRoot();
     const sourceRoot = path.join(root, 'source');
@@ -98,7 +123,7 @@ steps:
     await writeFile(path.join(outputRoot, 'sentinel.txt'), 'keep', 'utf8');
 
     await expect(compileContent({ sourceRoot, outputRoot, checkOnly: false })).rejects.toThrow(
-      'LearningPathのCourse参照先がありません',
+      /LearningPath.*Course参照先がありません/u,
     );
     await expect(readFile(path.join(outputRoot, 'sentinel.txt'), 'utf8')).resolves.toBe('keep');
     const siblings = await readdir(path.dirname(outputRoot));

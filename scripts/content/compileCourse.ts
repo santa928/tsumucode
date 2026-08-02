@@ -850,7 +850,7 @@ async function buildCourseCompilation(courseRoot: string): Promise<CourseCompila
       chapters,
     });
   }
-  const provenanceManifestPath = `generated/content/courses/${source.id}.provenance.json`;
+  const provenanceManifestPath = `generated/content/courses/${source.id}/provenance.json`;
   const runtime = CourseManifestSchema.parse({
     schemaVersion: source.schemaVersion,
     id: source.id,

@@ -1,7 +1,10 @@
 // @vitest-environment node
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { fixtureCatalog, fixtureCourse } from '../../tests/fixtures/course';
-import type { CourseManifest, Exercise, Lesson } from '../core/content/types';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  fixtureCatalog,
+  fixtureCourseIndex,
+  fixtureLessonManifest,
+} from '../../tests/fixtures/course';
 import type { CourseProgress, ExerciseDraft } from '../core/persistence/contracts';
 import {
   catalogLoader,
@@ -14,9 +17,16 @@ import {
   slideLoader,
 } from './contentLoaders';
 
+const content = vi.hoisted(() => ({
+  loadCourseCatalog: vi.fn(),
+  loadCourseIndex: vi.fn(),
+  loadLessonManifest: vi.fn(),
+  loadWorkspaceLessons: vi.fn(),
+}));
+
 const runtime = vi.hoisted(() => ({
   ready: Promise.resolve(),
-  ensureCourse: vi.fn(async () => undefined),
+  ensureCourseIndex: vi.fn(async () => []),
   repository: {
     getCourse: vi.fn<(courseId: string) => Promise<CourseProgress | undefined>>(),
     getDraft:
@@ -27,421 +37,83 @@ const runtime = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('../features/learning/runtimeServices', () => ({
-  learningRuntimeServices: {
-    ready: runtime.ready,
-    ensureCourse: runtime.ensureCourse,
-    repository: runtime.repository,
-    passFreshness: runtime.passFreshness,
-  },
+vi.mock('../core/content/loadCourseCatalog', () => ({
+  loadCourseCatalog: content.loadCourseCatalog,
+  loadCourseIndex: content.loadCourseIndex,
+  loadLessonManifest: content.loadLessonManifest,
 }));
 
-/** Fixture Exerciseを別ID・workspace・requirementへ複製する。 */
-function createSiblingExercise(
-  source: Exercise,
-  id: string,
-  workspaceId: string,
-  requirementId: string,
-): Exercise {
-  const rule = source.validationRules[0]!;
-  return {
-    ...structuredClone(source),
-    id,
-    workspaceId,
-    title: `${source.title} ${id}`,
-    validationRules: [
-      {
-        ...rule,
-        id: requirementId,
-        label: `${rule.label} ${id}`,
-        hintId: `${id}-hint-1`,
-      },
-    ],
-    hints: source.hints.map((hint, index) => ({
-      ...hint,
-      id: `${id}-hint-${String(index + 1)}`,
-    })),
-  };
-}
+vi.mock('../core/content/CourseContentRepository', () => ({
+  courseContentRepository: { loadWorkspaceLessons: content.loadWorkspaceLessons },
+}));
 
-/** Completion guard用にLessonとExercise構成だけを差し替えた検証済みCourseを作る。 */
-function createCompletionCourse(kind: Lesson['kind']): {
-  readonly course: CourseManifest;
-  readonly lesson: Lesson;
-  readonly exercises: readonly Exercise[];
-} {
-  const course = structuredClone(fixtureCourse);
-  const chapter = course.phases[0]!.chapters[0]!;
-  const sourceLesson = chapter.lessons[0]!;
-  if (sourceLesson.kind !== 'standard') throw new Error('Fixture Lessonがstandardではありません');
-  const current = structuredClone(sourceLesson.exercises[0]!);
-  const sibling = createSiblingExercise(
-    current,
-    `exercise-${kind}-sibling`,
-    `workspace-${kind}-sibling`,
-    `rule-${kind}-sibling`,
+vi.mock('../features/learning/runtimeServices', () => ({
+  learningRuntimeServices: runtime,
+}));
+
+/** PromiseがReact Routerの指定statusで失敗したことを確認する。 */
+async function expectRouteStatus(promise: Promise<unknown>, status: number): Promise<void> {
+  const error = await promise.then(
+    () => undefined,
+    (reason: unknown) => reason,
   );
-
-  if (kind === 'standard') {
-    const lesson: Lesson = {
-      ...sourceLesson,
-      exercises: [current, sibling],
-      completion: {
-        kind: 'standard',
-        finalSlideId: sourceLesson.slides.at(-1)!.id,
-        requiredExerciseIds: [current.id, sibling.id],
-      },
-    };
-    chapter.lessons = [lesson];
-    course.expectedTotals.standardExercises = 2;
-    return { course, lesson, exercises: lesson.exercises };
-  }
-
-  const projectId = `project-${kind}`;
-  const projectExercises = [current, sibling].map((exercise) => ({
-    ...exercise,
-    kind,
-    projectId,
-    workspaceId: current.workspaceId,
-    countsTowardStandardExerciseTotal: false,
-  })) as Exercise[];
-  const siblingRequirementId = sibling.validationRules[0]!.id;
-  const project = {
-    id: projectId,
-    brief: sourceLesson.slides[0]!.blocks,
-    guide: [],
-    checklist: [
-      {
-        id: `checklist-${kind}`,
-        label: `${kind} checklist`,
-        required: true,
-        ruleIds: [siblingRequirementId],
-      },
-    ],
-  };
-  const lesson: Lesson =
-    kind === 'guided-project'
-      ? {
-          ...sourceLesson,
-          kind,
-          exercises: projectExercises,
-          project,
-          completion: {
-            kind,
-            requiredChecklistItemIds: [`checklist-${kind}`],
-            requiredExerciseIds: [projectExercises[0]!.id],
-          },
-        }
-      : {
-          ...sourceLesson,
-          kind,
-          exercises: projectExercises,
-          project,
-          completion: {
-            kind,
-            requiredRuleIds: [siblingRequirementId],
-            requiredViewportIds: [sibling.previewViewports[0]!.id],
-          },
-        };
-  chapter.kind = kind;
-  chapter.lessons = [lesson];
-  course.expectedTotals.standardExercises = 0;
-  course.expectedTotals.guidedProjectLessons = kind === 'guided-project' ? 1 : 0;
-  course.expectedTotals.capstoneLessons = kind === 'capstone' ? 1 : 0;
-  return { course, lesson, exercises: projectExercises };
+  expect(error).toBeInstanceOf(Response);
+  expect((error as Response).status).toBe(status);
 }
 
-/** 必須Exercise完了だけでLesson completeになるstandard Courseへ別workspaceのoptional演習を加える。 */
-function createStandardCourseWithOptionalExercise(): {
-  readonly course: CourseManifest;
-  readonly lesson: Lesson;
-  readonly requiredExercise: Exercise;
-  readonly optionalExercise: Exercise;
-} {
-  const course = structuredClone(fixtureCourse);
-  const chapter = course.phases[0]!.chapters[0]!;
-  const sourceLesson = chapter.lessons[0]!;
-  if (sourceLesson.kind !== 'standard') throw new Error('Fixture Lessonがstandardではありません');
-  const requiredExercise = structuredClone(sourceLesson.exercises[0]!);
-  const optionalExercise = createSiblingExercise(
-    requiredExercise,
-    'exercise-standard-optional',
-    'workspace-standard-optional',
-    'rule-standard-optional',
-  );
-  const lesson: Lesson = {
-    ...sourceLesson,
-    exercises: [requiredExercise, optionalExercise],
-    completion: {
-      kind: 'standard',
-      finalSlideId: sourceLesson.slides.at(-1)!.id,
-      requiredExerciseIds: [requiredExercise.id],
-    },
-  };
-  chapter.lessons = [lesson];
-  course.expectedTotals.standardExercises = 2;
-  return { course, lesson, requiredExercise, optionalExercise };
-}
-
-/** 指定Exerciseを同一revisionでpass済みにしたworkspace Draftを作る。 */
-function passingDraft(
-  course: CourseManifest,
-  lesson: Lesson,
-  exercise: Exercise,
-  workspaceExercises: readonly Exercise[] = [exercise],
-): ExerciseDraft {
-  return {
-    courseId: course.id,
-    lessonId: lesson.id,
-    exerciseId: exercise.id,
-    workspaceId: exercise.workspaceId,
-    contentRevision: course.revision,
-    editRevision: 3,
-    files: { 'index.html': '<h1>done</h1>' },
-    selectedFile: 'index.html',
-    cursors: {},
-    validationHistory: [],
-    revealedHintIds: [],
-    lastPassingSnapshots: Object.fromEntries(
-      workspaceExercises.map((item) => [
-        item.id,
-        {
-          editRevision: 3,
-          contentRevision: course.revision,
-          files: { 'index.html': '<h1>done</h1>' },
-          evaluatedAt: '2026-07-10T00:01:00.000Z',
-        },
-      ]),
-    ),
-    updatedAt: '2026-07-10T00:01:00.000Z',
-  };
-}
-
-/** Lesson完了済みとしてCompletion guardの永続側条件を満たす。 */
-function completedProgress(course: CourseManifest, lesson: Lesson): CourseProgress {
-  return {
-    courseId: course.id,
-    contentRevision: course.revision,
-    lessons: {
-      [lesson.id]: {
-        lessonId: lesson.id,
-        viewedSlideIds: lesson.slides.map(({ id }) => id),
-        passedExerciseIds: lesson.exercises.map(({ id }) => id),
-        passedChecklistItemIds:
-          lesson.kind === 'guided-project' ? [...lesson.completion.requiredChecklistItemIds] : [],
-        passedRuleIds: lesson.exercises.flatMap(({ validationRules }) =>
-          validationRules.map(({ groupId, id }) => groupId ?? id),
-        ),
-        passedViewportIds: lesson.exercises.flatMap(({ previewViewports }) =>
-          previewViewports.map(({ id }) => id),
-        ),
-        currentComplete: true,
-        firstCompletedAt: '2026-07-10T00:01:00.000Z',
-      },
-    },
-    currentLessonId: lesson.id,
-    currentChapterId: course.phases[0]!.chapters[0]!.id,
-    currentComplete: true,
-    firstCompletedAt: '2026-07-10T00:01:00.000Z',
-    updatedAt: '2026-07-10T00:01:00.000Z',
-  };
-}
-
-/** 指定Exerciseだけを未合格に戻し、Lesson complete自体は維持した進捗を作る。 */
-function withoutPassedExercise(
-  progress: CourseProgress,
-  lesson: Lesson,
-  exerciseId: string,
-): CourseProgress {
-  const lessonProgress = progress.lessons[lesson.id]!;
-  return {
-    ...progress,
-    lessons: {
-      ...progress.lessons,
-      [lesson.id]: {
-        ...lessonProgress,
-        passedExerciseIds: lessonProgress.passedExerciseIds.filter((id) => id !== exerciseId),
-      },
-    },
-  };
-}
-
-/** Exerciseごとのworkspaceへcurrent Draftを返し、指定対象だけpassing snapshotを欠落させる。 */
-function stubCompletionDrafts(
-  course: CourseManifest,
-  lesson: Lesson,
-  exercises: readonly Exercise[],
-  withoutSnapshotExerciseId?: string,
-): void {
-  runtime.repository.getDraft.mockImplementation(async (_courseId, workspaceId) => {
-    const exercise = exercises.find((item) => item.workspaceId === workspaceId);
-    if (exercise === undefined) return undefined;
-    const draft = passingDraft(course, lesson, exercise);
-    return exercise.id === withoutSnapshotExerciseId
-      ? { ...draft, lastPassingSnapshots: {} }
-      : draft;
-  });
-}
-
-/** 指定CourseをCatalogとManifest fetchへ順に返す。 */
-async function stubCourseFetch(course: CourseManifest): Promise<void> {
-  const source = JSON.stringify(course);
-  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(source));
-  const catalog = structuredClone(fixtureCatalog);
-  catalog.courses[0]!.manifestSha256 = [...new Uint8Array(digest)]
-    .map((byte) => byte.toString(16).padStart(2, '0'))
-    .join('');
-  vi.stubGlobal(
-    'fetch',
-    vi
-      .fn()
-      .mockResolvedValueOnce(Response.json(catalog))
-      .mockResolvedValueOnce(new Response(source, { status: 200 })),
-  );
-}
-
-afterEach(() => {
-  runtime.ensureCourse.mockClear();
-  runtime.repository.getCourse.mockReset();
-  runtime.repository.getDraft.mockReset();
-  runtime.passFreshness.isDirty.mockReset();
-  vi.unstubAllGlobals();
+beforeEach(() => {
+  content.loadCourseCatalog.mockReset().mockResolvedValue(structuredClone(fixtureCatalog));
+  content.loadCourseIndex.mockReset().mockResolvedValue(structuredClone(fixtureCourseIndex));
+  content.loadLessonManifest.mockReset().mockResolvedValue(structuredClone(fixtureLessonManifest));
+  content.loadWorkspaceLessons
+    .mockReset()
+    .mockResolvedValue([structuredClone(fixtureLessonManifest)]);
+  runtime.ensureCourseIndex.mockClear();
+  runtime.repository.getCourse.mockReset().mockResolvedValue(undefined);
+  runtime.repository.getDraft.mockReset().mockResolvedValue(undefined);
+  runtime.passFreshness.isDirty.mockReset().mockReturnValue(false);
 });
 
-describe('content route loaders', () => {
-  it('Catalog entryに対応する検証済みCourseを返す', async () => {
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(Response.json(fixtureCatalog))
-      .mockResolvedValueOnce(Response.json(fixtureCourse));
-    vi.stubGlobal('fetch', fetchMock);
-
-    await expect(courseLoader({ params: { courseId: 'html-css' } })).resolves.toEqual(
-      fixtureCourse,
-    );
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(runtime.ensureCourse).toHaveBeenCalledOnce();
-    expect(runtime.ensureCourse).toHaveBeenCalledWith(fixtureCourse);
-  });
-
-  it('CatalogにないCourse IDを404 Responseへ変換する', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(Response.json(fixtureCatalog)));
-
-    await expect(courseLoader({ params: { courseId: 'missing' } })).rejects.toMatchObject({
-      status: 404,
-    });
-  });
-
-  it('Catalog loaderは公開Catalogを返す', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(Response.json(fixtureCatalog)));
+describe('Catalog route loaders', () => {
+  it('Catalog loaderはCatalog v3をそのまま返す', async () => {
     await expect(catalogLoader()).resolves.toEqual(fixtureCatalog);
   });
 
-  it('Home loaderはCatalogだけを1回読み公開CourseとLearningPathを返す', async () => {
-    const fetchMock = vi.fn().mockResolvedValueOnce(Response.json(fixtureCatalog));
-    vi.stubGlobal('fetch', fetchMock);
-
+  it('Homeは未開始ならCatalogだけで公開CourseとPathを返す', async () => {
     await expect(homeLoader()).resolves.toEqual({
       catalog: fixtureCatalog,
-      publishedCourses: [fixtureCatalog.courses[0]!],
+      publishedCourses: fixtureCatalog.courses,
       publishedPaths: fixtureCatalog.learningPaths,
     });
-    expect(fetchMock).toHaveBeenCalledOnce();
-    expect(runtime.repository.getCourse).toHaveBeenCalledWith('html-css');
-    expect(runtime.ensureCourse).not.toHaveBeenCalled();
+    expect(content.loadCourseIndex).not.toHaveBeenCalled();
   });
 
-  it('Home loaderは保存済みrevisionが古いCourseだけManifestを読みmigrationへ渡す', async () => {
-    runtime.repository.getCourse.mockResolvedValue({
-      courseId: fixtureCourse.id,
-      contentRevision: 'old-revision',
-      lessons: {},
-      currentComplete: false,
-      updatedAt: '2026-07-31T00:00:00.000Z',
-    });
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(Response.json(fixtureCatalog))
-      .mockResolvedValueOnce(Response.json(fixtureCourse));
-    vi.stubGlobal('fetch', fetchMock);
-
-    await expect(homeLoader()).resolves.toEqual({
-      catalog: fixtureCatalog,
-      publishedCourses: [fixtureCatalog.courses[0]!],
-      publishedPaths: fixtureCatalog.learningPaths,
-    });
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(runtime.ensureCourse).toHaveBeenCalledWith(fixtureCourse);
-  });
-
-  it('LearningPath loaderは公開PathのCourseをStep定義順で返す', async () => {
-    const fetchMock = vi.fn().mockResolvedValueOnce(Response.json(fixtureCatalog));
-    vi.stubGlobal('fetch', fetchMock);
-
+  it('LearningPathはStep順の公開Course metadataだけを返す', async () => {
     await expect(learningPathLoader({ params: { pathId: 'frontend' } })).resolves.toEqual({
-      path: fixtureCatalog.learningPaths[0]!,
-      courses: [fixtureCatalog.courses[0]!],
+      path: fixtureCatalog.learningPaths[0],
+      courses: fixtureCatalog.courses,
     });
-    expect(fetchMock).toHaveBeenCalledOnce();
-    expect(runtime.repository.getCourse).toHaveBeenCalledWith('html-css');
-    expect(runtime.ensureCourse).not.toHaveBeenCalled();
+    expect(content.loadCourseIndex).not.toHaveBeenCalled();
   });
+});
 
-  it.each([
-    ['未知Path', fixtureCatalog, 'missing-path'],
-    [
-      'draft Path',
-      {
-        ...structuredClone(fixtureCatalog),
-        learningPaths: [
-          {
-            ...structuredClone(fixtureCatalog.learningPaths[0]!),
-            publicationStatus: 'draft' as const,
-          },
-        ],
-      },
-      'frontend',
-    ],
-  ])('%sを404 Responseへ変換する', async (_label, catalog, pathId) => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValueOnce(Response.json(catalog)));
-
-    await expect(learningPathLoader({ params: { pathId } })).rejects.toMatchObject({
-      status: 404,
-    });
-  });
-
-  it('LearningPath loaderも保存済みrevisionが古いCourseだけmigrationする', async () => {
-    runtime.repository.getCourse.mockResolvedValue({
-      courseId: fixtureCourse.id,
-      contentRevision: 'old-revision',
-      lessons: {},
-      currentComplete: false,
-      updatedAt: '2026-07-31T00:00:00.000Z',
-    });
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(Response.json(fixtureCatalog))
-      .mockResolvedValueOnce(Response.json(fixtureCourse));
-    vi.stubGlobal('fetch', fetchMock);
-
-    await expect(learningPathLoader({ params: { pathId: 'frontend' } })).resolves.toEqual({
-      path: fixtureCatalog.learningPaths[0]!,
-      courses: [fixtureCatalog.courses[0]!],
-    });
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(runtime.ensureCourse).toHaveBeenCalledWith(fixtureCourse);
-  });
-
-  it('Slide URLの永続IDからCourse、Lesson、Slideをまとめて返す', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi
-        .fn()
-        .mockResolvedValueOnce(Response.json(fixtureCatalog))
-        .mockResolvedValueOnce(Response.json(fixtureCourse)),
+describe('分割教材 route loaders', () => {
+  it('Course mapはCatalogとIndexだけを読みLessonを読まない', async () => {
+    await expect(courseLoader({ params: { courseId: 'html-css' } })).resolves.toEqual(
+      fixtureCourseIndex,
     );
+    expect(content.loadCourseIndex).toHaveBeenCalledOnce();
+    expect(content.loadLessonManifest).not.toHaveBeenCalled();
+    expect(content.loadWorkspaceLessons).not.toHaveBeenCalled();
+    expect(runtime.ensureCourseIndex).toHaveBeenCalledWith(fixtureCourseIndex);
+  });
 
-    const lesson = fixtureCourse.phases[0]!.chapters[0]!.lessons[0]!;
+  it('未知CourseはIndex取得前に404にする', async () => {
+    await expectRouteStatus(courseLoader({ params: { courseId: 'missing' } }), 404);
+    expect(content.loadCourseIndex).not.toHaveBeenCalled();
+  });
+
+  it('Slideは所有Lessonだけを読み本文を返す', async () => {
     await expect(
       slideLoader({
         params: {
@@ -450,243 +122,135 @@ describe('content route loaders', () => {
           slideId: 'slide-html-role',
         },
       }),
-    ).resolves.toEqual({ course: fixtureCourse, lesson, slide: lesson.slides[0] });
+    ).resolves.toMatchObject({
+      course: { id: 'html-css' },
+      lesson: { id: 'lesson-first-heading' },
+      slide: { id: 'slide-html-role' },
+    });
+    expect(content.loadLessonManifest).toHaveBeenCalledOnce();
   });
 
-  it.each([
-    {
-      label: 'Lesson',
-      params: { courseId: 'html-css', lessonId: 'missing-lesson', slideId: 'slide-html-role' },
-    },
-    {
-      label: 'Slide',
-      params: {
-        courseId: 'html-css',
-        lessonId: 'lesson-first-heading',
-        slideId: 'missing-slide',
-      },
-    },
-  ])('存在しない$label IDを404 Responseへ変換する', async ({ params }) => {
-    vi.stubGlobal(
-      'fetch',
-      vi
-        .fn()
-        .mockResolvedValueOnce(Response.json(fixtureCatalog))
-        .mockResolvedValueOnce(Response.json(fixtureCourse)),
-    );
-
-    await expect(slideLoader({ params })).rejects.toMatchObject({ status: 404 });
-  });
-
-  it('Exercise URLの永続IDからCourse、Lesson、Exerciseをまとめて返す', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi
-        .fn()
-        .mockResolvedValueOnce(Response.json(fixtureCatalog))
-        .mockResolvedValueOnce(Response.json(fixtureCourse)),
-    );
-    const lesson = fixtureCourse.phases[0]!.chapters[0]!.lessons[0]!;
-
+  it('Exerciseは現在工程までのworkspace所有LessonだけをRepositoryへ要求する', async () => {
     await expect(
       exerciseLoader({
         params: {
-          courseId: fixtureCourse.id,
-          lessonId: lesson.id,
-          exerciseId: lesson.exercises[0]!.id,
+          courseId: 'html-css',
+          lessonId: 'lesson-first-heading',
+          exerciseId: 'exercise-first-heading',
         },
       }),
-    ).resolves.toEqual({ course: fixtureCourse, lesson, exercise: lesson.exercises[0] });
+    ).resolves.toMatchObject({
+      course: { id: 'html-css' },
+      lesson: { id: 'lesson-first-heading' },
+      exercise: { id: 'exercise-first-heading' },
+      workspaceLessons: [{ id: 'lesson-first-heading' }],
+    });
+    expect(content.loadWorkspaceLessons).toHaveBeenCalledWith(
+      expect.any(String),
+      fixtureCourseIndex,
+      'exercise-first-heading',
+    );
+    expect(content.loadLessonManifest).not.toHaveBeenCalled();
   });
 
-  it('Review先SlideをCourse全体から解決して所有Lessonも返す', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi
-        .fn()
-        .mockResolvedValueOnce(Response.json(fixtureCatalog))
-        .mockResolvedValueOnce(Response.json(fixtureCourse)),
-    );
-    const lesson = fixtureCourse.phases[0]!.chapters[0]!.lessons[0]!;
-
+  it('Reviewはworkspace依存を読まず、同じ所有Lessonを1度だけ読む', async () => {
     await expect(
       reviewLoader({
         params: {
-          courseId: fixtureCourse.id,
-          lessonId: lesson.id,
-          exerciseId: lesson.exercises[0]!.id,
-          slideId: lesson.slides[0]!.id,
+          courseId: 'html-css',
+          lessonId: 'lesson-first-heading',
+          exerciseId: 'exercise-first-heading',
+          slideId: 'slide-html-role',
         },
       }),
-    ).resolves.toEqual({
-      course: fixtureCourse,
-      lesson,
-      exercise: lesson.exercises[0],
-      slide: lesson.slides[0],
-      slideLesson: lesson,
+    ).resolves.toMatchObject({
+      exercise: { id: 'exercise-first-heading' },
+      slide: { id: 'slide-html-role' },
     });
+    expect(content.loadWorkspaceLessons).not.toHaveBeenCalled();
+    expect(content.loadLessonManifest).toHaveBeenCalledOnce();
   });
 
-  it.each([
-    { label: 'Exercise', exerciseId: 'missing-exercise', slideId: 'slide-html-role' },
-    { label: 'Review Slide', exerciseId: 'exercise-first-heading', slideId: 'missing-slide' },
-  ])('存在しない$label IDを404 Responseへ変換する', async ({ exerciseId, slideId }) => {
-    vi.stubGlobal(
-      'fetch',
-      vi
-        .fn()
-        .mockResolvedValueOnce(Response.json(fixtureCatalog))
-        .mockResolvedValueOnce(Response.json(fixtureCourse)),
+  it('Index上の所有LessonとURLが違う場合はLesson取得前に404にする', async () => {
+    await expectRouteStatus(
+      slideLoader({
+        params: {
+          courseId: 'html-css',
+          lessonId: 'missing-lesson',
+          slideId: 'slide-html-role',
+        },
+      }),
+      404,
     );
-    const params = {
-      courseId: fixtureCourse.id,
-      lessonId: 'lesson-first-heading',
-      exerciseId,
-      slideId,
-    };
-
-    const loader = exerciseId === 'missing-exercise' ? exerciseLoader : reviewLoader;
-    await expect(loader({ params })).rejects.toMatchObject({ status: 404 });
+    expect(content.loadLessonManifest).not.toHaveBeenCalled();
   });
+});
 
-  it('standardは複数workspaceの全必須Exerciseがfreshな場合だけCompletionを許可する', async () => {
-    const { course, lesson, exercises } = createCompletionCourse('standard');
-    await stubCourseFetch(course);
-    runtime.repository.getCourse.mockResolvedValue(completedProgress(course, lesson));
-    runtime.repository.getDraft.mockImplementation(async (_courseId, workspaceId) => {
-      const exercise = exercises.find((item) => item.workspaceId === workspaceId);
-      return exercise === undefined
-        ? undefined
-        : passingDraft(
-            course,
-            lesson,
-            exercise,
-            exercises.filter((item) => item.workspaceId === workspaceId),
-          );
+describe('completionLoader', () => {
+  it('現在Lessonの完了・合格・fresh snapshotが揃う場合だけ完了画面へ入れる', async () => {
+    const lesson = fixtureLessonManifest.lesson;
+    const exercise = lesson.exercises[0]!;
+    runtime.repository.getCourse.mockResolvedValue({
+      courseId: fixtureCourseIndex.id,
+      contentRevision: fixtureCourseIndex.revision,
+      lessons: {
+        [lesson.id]: {
+          lessonId: lesson.id,
+          viewedSlideIds: lesson.slides.map(({ id }) => id),
+          passedExerciseIds: [exercise.id],
+          passedChecklistItemIds: [],
+          passedRuleIds: exercise.validationRules.map(({ groupId, id }) => groupId ?? id),
+          passedViewportIds: exercise.previewViewports.map(({ id }) => id),
+          currentComplete: true,
+        },
+      },
+      currentComplete: false,
+      updatedAt: '2026-08-02T00:00:00.000Z',
     });
-    runtime.passFreshness.isDirty.mockReturnValue(false);
-
-    await expect(
-      completionLoader({
-        params: { courseId: course.id, lessonId: lesson.id, exerciseId: exercises[0]!.id },
-      }),
-    ).resolves.toMatchObject({ course: { id: course.id }, lesson: { id: lesson.id } });
-    expect(runtime.repository.getDraft).toHaveBeenCalledTimes(2);
-    expect(runtime.passFreshness.isDirty).toHaveBeenCalledWith(
-      course.id,
-      exercises[1]!.workspaceId,
-      exercises[1]!.id,
-    );
-  });
-
-  it('standard optional Exerciseはorphan passing snapshotだけではCompletionへ入れない', async () => {
-    const { course, lesson, requiredExercise, optionalExercise } =
-      createStandardCourseWithOptionalExercise();
-    await stubCourseFetch(course);
-    runtime.repository.getCourse.mockResolvedValue(
-      withoutPassedExercise(completedProgress(course, lesson), lesson, optionalExercise.id),
-    );
-    stubCompletionDrafts(course, lesson, [requiredExercise, optionalExercise]);
-    runtime.passFreshness.isDirty.mockReturnValue(false);
-
-    await expect(
-      completionLoader({
-        params: { courseId: course.id, lessonId: lesson.id, exerciseId: optionalExercise.id },
-      }),
-    ).rejects.toMatchObject({ status: 302 });
-  });
-
-  it('standard optional Exerciseは永続pass済みでも同期dirtyならCompletionへ入れない', async () => {
-    const { course, lesson, requiredExercise, optionalExercise } =
-      createStandardCourseWithOptionalExercise();
-    await stubCourseFetch(course);
-    runtime.repository.getCourse.mockResolvedValue(completedProgress(course, lesson));
-    stubCompletionDrafts(course, lesson, [requiredExercise, optionalExercise]);
-    runtime.passFreshness.isDirty.mockImplementation(
-      (_courseId, _workspaceId, exerciseId) => exerciseId === optionalExercise.id,
-    );
-
-    await expect(
-      completionLoader({
-        params: { courseId: course.id, lessonId: lesson.id, exerciseId: optionalExercise.id },
-      }),
-    ).rejects.toMatchObject({ status: 302 });
-  });
-
-  it('standard optional Exerciseは永続pass済みでもcurrent snapshot欠落ならCompletionへ入れない', async () => {
-    const { course, lesson, requiredExercise, optionalExercise } =
-      createStandardCourseWithOptionalExercise();
-    await stubCourseFetch(course);
-    runtime.repository.getCourse.mockResolvedValue(completedProgress(course, lesson));
-    stubCompletionDrafts(course, lesson, [requiredExercise, optionalExercise], optionalExercise.id);
-    runtime.passFreshness.isDirty.mockReturnValue(false);
-
-    await expect(
-      completionLoader({
-        params: { courseId: course.id, lessonId: lesson.id, exerciseId: optionalExercise.id },
-      }),
-    ).rejects.toMatchObject({ status: 302 });
-  });
-
-  it('standard optional Exerciseは永続passとcurrent snapshotが揃えばCompletionを許可する', async () => {
-    const { course, lesson, requiredExercise, optionalExercise } =
-      createStandardCourseWithOptionalExercise();
-    await stubCourseFetch(course);
-    runtime.repository.getCourse.mockResolvedValue(completedProgress(course, lesson));
-    stubCompletionDrafts(course, lesson, [requiredExercise, optionalExercise]);
-    runtime.passFreshness.isDirty.mockReturnValue(false);
-
-    await expect(
-      completionLoader({
-        params: { courseId: course.id, lessonId: lesson.id, exerciseId: optionalExercise.id },
-      }),
-    ).resolves.toMatchObject({ exercise: { id: optionalExercise.id } });
-    expect(runtime.repository.getDraft).toHaveBeenCalledTimes(2);
-  });
-
-  it('guided-projectは必須Checklist ruleを担う別Exerciseの同期dirtyをfail closedにする', async () => {
-    const { course, lesson, exercises } = createCompletionCourse('guided-project');
-    await stubCourseFetch(course);
-    runtime.repository.getCourse.mockResolvedValue(completedProgress(course, lesson));
-    runtime.repository.getDraft.mockImplementation(async (_courseId, workspaceId) => {
-      const exercise = exercises.find((item) => item.workspaceId === workspaceId);
-      return exercise === undefined
-        ? undefined
-        : passingDraft(
-            course,
-            lesson,
-            exercise,
-            exercises.filter((item) => item.workspaceId === workspaceId),
-          );
+    runtime.repository.getDraft.mockResolvedValue({
+      courseId: fixtureCourseIndex.id,
+      lessonId: lesson.id,
+      exerciseId: exercise.id,
+      workspaceId: exercise.workspaceId,
+      contentRevision: fixtureCourseIndex.revision,
+      editRevision: 1,
+      files: { 'index.html': '<h1>done</h1>' },
+      selectedFile: 'index.html',
+      cursors: {},
+      validationHistory: [],
+      revealedHintIds: [],
+      lastPassingSnapshots: {
+        [exercise.id]: {
+          editRevision: 1,
+          contentRevision: fixtureCourseIndex.revision,
+          files: { 'index.html': '<h1>done</h1>' },
+          evaluatedAt: '2026-08-02T00:00:00.000Z',
+        },
+      },
+      updatedAt: '2026-08-02T00:00:00.000Z',
     });
-    runtime.passFreshness.isDirty.mockImplementation(
-      (_courseId, _workspaceId, exerciseId) => exerciseId === exercises[1]!.id,
-    );
 
     await expect(
       completionLoader({
-        params: { courseId: course.id, lessonId: lesson.id, exerciseId: exercises[0]!.id },
+        params: {
+          courseId: 'html-css',
+          lessonId: lesson.id,
+          exerciseId: exercise.id,
+        },
       }),
-    ).rejects.toMatchObject({ status: 302 });
-    expect(runtime.repository.getDraft).toHaveBeenCalledOnce();
+    ).resolves.toMatchObject({ exercise: { id: exercise.id } });
   });
 
-  it('capstoneは必須Ruleを担う別Exerciseのpassing snapshot欠落をfail closedにする', async () => {
-    const { course, lesson, exercises } = createCompletionCourse('capstone');
-    await stubCourseFetch(course);
-    runtime.repository.getCourse.mockResolvedValue(completedProgress(course, lesson));
-    runtime.repository.getDraft.mockImplementation(async (_courseId, workspaceId) => {
-      const exercise = exercises.find((item) => item.workspaceId === workspaceId);
-      if (exercise === undefined || exercise.id === exercises[1]!.id) return undefined;
-      return passingDraft(course, lesson, exercise);
-    });
-    runtime.passFreshness.isDirty.mockReturnValue(false);
-
-    await expect(
+  it('fresh snapshotがなければ演習へredirectする', async () => {
+    await expectRouteStatus(
       completionLoader({
-        params: { courseId: course.id, lessonId: lesson.id, exerciseId: exercises[0]!.id },
+        params: {
+          courseId: 'html-css',
+          lessonId: 'lesson-first-heading',
+          exerciseId: 'exercise-first-heading',
+        },
       }),
-    ).rejects.toMatchObject({ status: 302 });
-    expect(runtime.repository.getDraft).toHaveBeenCalledOnce();
+      302,
+    );
   });
 });

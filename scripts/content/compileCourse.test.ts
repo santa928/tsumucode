@@ -8,6 +8,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { CourseManifestSchema } from '../../src/core/content/schema';
 import { compileContent } from './compile';
 import { compileCourse, loadAuthoringCourse, stringifyCanonicalJson } from './compileCourse';
+import { readSplitCourseArtifacts } from './readSplitCourseArtifacts';
 
 const temporaryRoots: string[] = [];
 
@@ -265,19 +266,19 @@ describe('minimal Course compilation', () => {
     const courseRoot = await writeMinimalCourse(sourceRoot);
 
     const summary = await compileContent({ sourceRoot, outputRoot, checkOnly: false });
-    const publicCourseSource = await readFile(
-      path.join(outputRoot, 'courses/html-css.json'),
+    const publicIndexSource = await readFile(
+      path.join(outputRoot, 'courses/html-css/index.json'),
       'utf8',
     );
     const publicProvenance = await readFile(
-      path.join(outputRoot, 'courses/html-css.provenance.json'),
+      path.join(outputRoot, 'courses/html-css/provenance.json'),
       'utf8',
     );
     const authoring = await loadAuthoringCourse(courseRoot);
 
     expect(summary.courseCount).toBe(1);
     expect(summary.catalog).toMatchObject({
-      schemaVersion: 2,
+      schemaVersion: 3,
       courses: [
         {
           id: 'html-css',
@@ -291,10 +292,13 @@ describe('minimal Course compilation', () => {
       ],
       learningPaths: [],
     });
-    expect(summary.catalog.courses[0]?.manifestSha256).toBe(
-      createHash('sha256').update(publicCourseSource, 'utf8').digest('hex'),
+    expect(summary.catalog.courses[0]?.indexSha256).toBe(
+      createHash('sha256').update(publicIndexSource, 'utf8').digest('hex'),
     );
-    const runtime = CourseManifestSchema.parse(JSON.parse(publicCourseSource) as unknown);
+    const runtime = CourseManifestSchema.parse(
+      await readSplitCourseArtifacts(path.join(root, 'public'), 'html-css'),
+    );
+    const publicCourseSource = stringifyCanonicalJson(runtime);
     expect(runtime.id).toBe('html-css');
     expect(runtime.concepts).toContainEqual({
       id: 'html-element',

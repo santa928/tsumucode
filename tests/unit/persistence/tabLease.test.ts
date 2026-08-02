@@ -185,7 +185,11 @@ class SharedLeasePersistence {
     if (candidate.dataEpoch !== undefined && candidate.dataEpoch !== this.#dataEpoch) {
       return { acquired: false, reason: 'data-epoch-mismatch' };
     }
-    if (current !== undefined && current.expiresAt > this.now()) {
+    if (
+      current !== undefined &&
+      current.expiresAt > this.now() &&
+      current.ownerId !== candidate.ownerId
+    ) {
       return { acquired: false, owner: structuredClone(current) };
     }
     const proof = { ...candidate, dataEpoch: this.#dataEpoch };
@@ -371,6 +375,43 @@ describe('TabLeaseCoordinator', () => {
     ).toHaveLength(1);
     first.dispose();
     second.dispose();
+  });
+
+  it('reloadは保存済みtab IDを再利用し、新tokenで永続Leaseを引き継ぐ', async () => {
+    const hub = new BroadcastHub();
+    const clock = new FakeClock();
+    const storage = new MemoryStorage();
+    const persistence = new SharedLeasePersistence(() => clock.now);
+    const beforeReload = createCoordinator('tab-before', hub, clock, {
+      storage,
+      leasePersistence: persistence,
+    });
+    const oldHandle = beforeReload.acquire(COURSE_ID, WORKSPACE_ID, {
+      beforeYield: async () => {},
+    });
+    finishClaim(clock);
+    await flushPromises();
+    const ownerId = oldHandle.getSnapshot().ownerId;
+
+    const afterReload = createCoordinator('tab-after', hub, clock, {
+      storage,
+      reuseStoredTabId: true,
+      leasePersistence: persistence,
+    });
+    const newHandle = afterReload.acquire(COURSE_ID, WORKSPACE_ID, {
+      beforeYield: async () => {},
+    });
+    finishClaim(clock);
+    await flushPromises();
+
+    expect(newHandle.getSnapshot()).toMatchObject({ status: 'owned', ownerId });
+    await expect(
+      oldHandle.runFencedWrite(async (_token, proof) => {
+        persistence.assertWrite(proof);
+      }),
+    ).rejects.toBeInstanceOf(LeaseFenceRejectedError);
+    beforeReload.dispose();
+    afterReload.dispose();
   });
 
   it('late joinのprobeへownerがheartbeatで応答しread-onlyにする', () => {

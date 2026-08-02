@@ -11,13 +11,11 @@ import {
 } from 'react';
 import { useNavigate } from 'react-router';
 import type { exerciseLoader } from '../../../app/contentLoaders';
-import type { CourseManifest, Exercise } from '../../../core/content/types';
-import { findSlideInCourse } from '../../../core/content/selectors';
+import type { Exercise } from '../../../core/content/types';
 import {
-  findWorkspaceTargets,
   findWorkspaceValidationTargets,
-  recordWorkspaceDraftMutation,
-  recordWorkspaceValidation,
+  recordDraftMutationFromIndex,
+  recordValidationFromIndex,
 } from '../../../core/persistence/progressUpdates';
 import { LeaseFenceRejectedError } from '../../../core/persistence/contracts';
 import type { ResolvedPreviewAsset } from '../../../core/runtime/contracts';
@@ -39,6 +37,7 @@ import { LearningToolRail } from '../layout/LearningToolRail';
 import { LearningViewportShell } from '../layout/LearningViewportShell';
 import { LearningSessionController, StaleExecutionError, useLearningSession } from '../session';
 import { learningRuntimeServices } from '../runtimeServices';
+import { useAdjacentLessonPrefetch } from '../useAdjacentLessonPrefetch';
 
 const LazyCodeWorkspace = lazy(() =>
   import('../editor/CodeWorkspace').then((module) => ({ default: module.CodeWorkspace })),
@@ -66,10 +65,7 @@ interface EditableExercisePageProps extends ExerciseLoaderData {
 }
 
 /** workspace全ExerciseのAssetをIDでunionし、異なる同一ID定義を拒否する。 */
-function resolveWorkspaceAssets(
-  course: CourseManifest,
-  exercises: readonly Exercise[],
-): readonly ResolvedPreviewAsset[] {
+function resolveWorkspaceAssets(exercises: readonly Exercise[]): readonly ResolvedPreviewAsset[] {
   const byId = new Map<string, ResolvedPreviewAsset>();
   for (const asset of exercises.flatMap((item) => item.assets)) {
     const resolved: ResolvedPreviewAsset = {
@@ -106,6 +102,7 @@ function previewPreparationErrorMessage(): string {
 
 /** retryごとにSession全体を再構築し、失敗済み初期化PromiseとRunnerを再利用しない。 */
 export function EditableExercisePage({ lease, ...data }: EditableExercisePageProps) {
+  useAdjacentLessonPrefetch(data.course, data.lesson.id);
   const [attempt, setAttempt] = useState(0);
   return (
     <EditableSession
@@ -120,7 +117,14 @@ export function EditableExercisePage({ lease, ...data }: EditableExercisePagePro
 }
 
 /** 単一attemptのController lifecycleと全学習操作を画面へ接続する。 */
-function EditableSession({ course, lesson, exercise, lease, onRetry }: EditableSessionProps) {
+function EditableSession({
+  course,
+  lesson,
+  exercise,
+  workspaceLessons,
+  lease,
+  onRetry,
+}: EditableSessionProps) {
   const navigate = useNavigate();
   const [initialization, setInitialization] = useState<InitializationState>('loading');
   const [operation, setOperation] = useState<OperationState>('idle');
@@ -142,21 +146,14 @@ function EditableSession({ course, lesson, exercise, lease, onRetry }: EditableS
   const resetTriggerRef = useRef<HTMLButtonElement>(null);
   const resetCancelRef = useRef<HTMLButtonElement>(null);
   const statusReturnFocusRef = useRef<HTMLElement>(null);
-  const allWorkspaceTargets = useMemo(
-    () => findWorkspaceTargets(course, exercise.id),
-    [course, exercise.id],
-  );
   const validationTargets = useMemo(
-    () => findWorkspaceValidationTargets(course, exercise.id),
-    [course, exercise.id],
+    () => findWorkspaceValidationTargets(course, workspaceLessons, exercise.id),
+    [course, exercise.id, workspaceLessons],
   );
+  const allWorkspaceTargets = validationTargets;
   const resolvedWorkspaceAssets = useMemo(
-    () =>
-      resolveWorkspaceAssets(
-        course,
-        allWorkspaceTargets.map(({ exercise: target }) => target),
-      ),
-    [allWorkspaceTargets, course],
+    () => resolveWorkspaceAssets(allWorkspaceTargets.map(({ exercise: target }) => target)),
+    [allWorkspaceTargets],
   );
   const validator = useMemo(() => {
     if (
@@ -204,11 +201,14 @@ function EditableSession({ course, lesson, exercise, lease, onRetry }: EditableS
                 const current = await learningRuntimeServices.repository.getCourseVersioned(
                   course.id,
                 );
-                const invalidated = recordWorkspaceDraftMutation(
+                const invalidated = allWorkspaceTargets.reduce(
+                  (progress, target) =>
+                    recordDraftMutationFromIndex(progress, course, target.lesson, target.exercise, {
+                      ...draft,
+                      lessonId: target.lesson.id,
+                      exerciseId: target.exercise.id,
+                    }) ?? progress,
                   current.progress,
-                  course,
-                  allWorkspaceTargets,
-                  draft,
                 );
                 if (invalidated === undefined) {
                   await learningRuntimeServices.repository.putDraftFenced(draft, proof);
@@ -278,7 +278,9 @@ function EditableSession({ course, lesson, exercise, lease, onRetry }: EditableS
   const relatedSlide =
     viewState.relatedSlideId === undefined
       ? undefined
-      : findSlideInCourse(course, viewState.relatedSlideId).slide;
+      : workspaceLessons
+          .flatMap(({ slides }) => slides)
+          .find(({ id }) => id === viewState.relatedSlideId);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -451,7 +453,24 @@ function EditableSession({ course, lesson, exercise, lease, onRetry }: EditableS
                   },
                 };
               });
-              const updated = recordWorkspaceValidation(current.progress, course, progressBatch);
+              const firstTarget = progressBatch[0];
+              if (firstTarget === undefined) throw new Error('Workspace判定対象がありません');
+              let updated = recordValidationFromIndex(
+                current.progress,
+                course,
+                firstTarget.lesson,
+                firstTarget.exercise,
+                firstTarget.result,
+              );
+              for (const target of progressBatch.slice(1)) {
+                updated = recordValidationFromIndex(
+                  updated,
+                  course,
+                  target.lesson,
+                  target.exercise,
+                  target.result,
+                );
+              }
               const draft = controller.getLastValidationDraft(executionRevision);
               const passedIds = progressBatch
                 .filter(({ result: targetResult }) => targetResult.status === 'pass')

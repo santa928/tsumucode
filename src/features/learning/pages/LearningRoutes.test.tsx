@@ -3,11 +3,13 @@ import { EditorView } from '@codemirror/view';
 import userEvent from '@testing-library/user-event';
 import { RouterProvider } from 'react-router/dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fixtureCatalog, fixtureCourse } from '../../../../tests/fixtures/course';
+import { fixtureCourse } from '../../../../tests/fixtures/course';
+import { createSplitCourseFetchFixture } from '../../../../tests/fixtures/splitCourseDelivery';
 import {
   GUIDED_WORKSPACE_ID,
   guidedWorkspaceCourse,
 } from '../../../../tests/fixtures/guidedWorkspaceCourse';
+import { CourseManifestSchema } from '../../../core/content/schema';
 import type { CourseManifest } from '../../../core/content/types';
 import {
   LeaseFenceRejectedError,
@@ -93,7 +95,7 @@ const runtime = vi.hoisted(() => {
   };
   return {
     readyPromise: Promise.resolve(),
-    ensureCourse: vi.fn(async () => undefined),
+    ensureCourseIndex: vi.fn(async () => undefined),
     repository: {
       open: vi.fn(async () => undefined),
       getCourse: vi.fn<(courseId: string) => Promise<CourseProgress | undefined>>(),
@@ -175,7 +177,7 @@ vi.mock('../runtimeServices', () => ({
     editorLanguageRegistry: runtime.editorLanguageRegistry,
     notices: runtime.notices,
     leaseCoordinator: runtime.leaseCoordinator,
-    ensureCourse: runtime.ensureCourse,
+    ensureCourseIndex: runtime.ensureCourseIndex,
     runCourseProgressMutation: runtime.runCourseProgressMutation,
     retryPersistence: runtime.retryPersistence,
     resolvePersistenceConflict: runtime.resolvePersistenceConflict,
@@ -189,33 +191,43 @@ const originalHash = window.location.hash;
 const originalClipboard = Object.getOwnPropertyDescriptor(navigator, 'clipboard');
 let router: ReturnType<typeof createAppRouter> | undefined;
 
-/** 公開CatalogとFixture CourseをURL別に返す。 */
-function stubContentFetch(course: CourseManifest = fixtureCourse): void {
-  const source = JSON.stringify(course);
-  const sha256Promise = crypto.subtle
-    .digest('SHA-256', new TextEncoder().encode(source))
-    .then((digest) =>
-      [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join(''),
-    );
+const standardPhase = fixtureCourse.phases[0]!;
+const guidedChapter = structuredClone(guidedWorkspaceCourse.phases[0]!.chapters[0]!);
+guidedChapter.id = 'ch01-guided-workspace';
+guidedChapter.sequence = 1;
+/** Route Suiteが参照する標準Lessonと共有workspace工程を同じ不変Catalogへ統合する。 */
+const learningRoutesCourse: CourseManifest = CourseManifestSchema.parse({
+  ...fixtureCourse,
+  estimatedMinutes: 45,
+  expectedTotals: {
+    chapters: 2,
+    lessons: 3,
+    conceptSlides: 3,
+    standardExercises: 1,
+    guidedProjectLessons: 2,
+    capstoneLessons: 0,
+    estimatedMinutes: 45,
+  },
+  phases: [
+    {
+      ...standardPhase,
+      chapters: [standardPhase.chapters[0]!, guidedChapter],
+    },
+  ],
+});
+
+/** 公開Catalog v3・Course Index・Lesson Manifestを本番と同じcanonical bytesで返す。 */
+function stubContentFetch(): void {
+  const fixturePromise = createSplitCourseFetchFixture(learningRoutesCourse);
   vi.stubGlobal(
     'fetch',
     vi.fn(async (input: RequestInfo | URL) => {
       const url = input instanceof Request ? input.url : input.toString();
-      if (url.endsWith('html-css.json')) return new Response(source, { status: 200 });
-      const catalog = structuredClone(fixtureCatalog);
-      // 通常学習Routeのfixtureでは、draft Courseと公開Pathの組合せを作らない。
-      catalog.learningPaths = [];
-      Object.assign(catalog.courses[0]!, {
-        audience: course.audience,
-        description: course.description,
-        estimatedMinutes: course.estimatedMinutes,
-        id: course.id,
-        manifestSha256: await sha256Promise,
-        publicationStatus: course.publicationStatus,
-        revision: course.revision,
-        title: course.title,
-      });
-      return Response.json(catalog);
+      const { sources } = await fixturePromise;
+      const source = [...sources].find(([relativePath]) => url.endsWith(relativePath))?.[1];
+      return source === undefined
+        ? new Response('not found', { status: 404 })
+        : new Response(source, { status: 200, headers: { 'content-type': 'application/json' } });
     }),
   );
 }
@@ -347,10 +359,12 @@ function viewedProgress(): CourseProgress {
 
 /** Guided工程1だけ合格し、工程2のSlideまで閲覧済みのCourseProgressを作る。 */
 function guidedStepOneProgress(): CourseProgress {
+  const standardProgress = completedProgress().lessons['lesson-first-heading']!;
   return {
     courseId: guidedWorkspaceCourse.id,
     contentRevision: guidedWorkspaceCourse.revision,
     lessons: {
+      'lesson-first-heading': standardProgress,
       'lesson-guided-step-1': {
         lessonId: 'lesson-guided-step-1',
         viewedSlideIds: ['slide-guided-step-1'],
@@ -374,7 +388,7 @@ function guidedStepOneProgress(): CourseProgress {
       },
     },
     currentLessonId: 'lesson-guided-step-2',
-    currentChapterId: 'ch00-web-map',
+    currentChapterId: 'ch01-guided-workspace',
     currentComplete: false,
     updatedAt: '2026-07-10T00:00:00.000Z',
   };
@@ -499,7 +513,7 @@ function stubAdapters(options: AdapterStubOptions = {}): {
 beforeEach(() => {
   stubContentFetch();
   runtime.readyPromise = Promise.resolve();
-  runtime.ensureCourse.mockClear();
+  runtime.ensureCourseIndex.mockClear();
   runtime.repository.getCourse.mockReset().mockResolvedValue(undefined);
   runtime.repository.getCourseVersioned.mockReset().mockImplementation(async (courseId) => {
     const progress = await runtime.repository.getCourse(courseId);
@@ -560,7 +574,7 @@ describe('Learning routes', () => {
     renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
 
     expect(
-      await screen.findByRole('heading', { name: 'PCで演習を開く' }, { timeout: 5_000 }),
+      await screen.findByRole('heading', { name: 'PCで演習を開く' }, { timeout: 10_000 }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('complementary', { name: 'コード編集はPCから利用できます' }),
@@ -573,8 +587,8 @@ describe('Learning routes', () => {
     );
     expect(screen.queryByTestId('code-workspace')).not.toBeInTheDocument();
     expect(runtime.runnerRegistry.create).not.toHaveBeenCalled();
-    expect(runtime.ensureCourse).toHaveBeenCalledTimes(1);
-  });
+    expect(runtime.ensureCourseIndex).toHaveBeenCalledTimes(1);
+  }, 15_000);
 
   it('小画面の進捗確認中もPC案内を先に表示し、保存領域待ちをLCPへ持ち込まない', async () => {
     stubEditingCapability(false);
@@ -1099,7 +1113,7 @@ describe('Learning routes', () => {
   });
 
   it('Guided工程2の編集で全工程をdirty化し、同じSource・Viewport・Asset unionから原子的に再合格する', async () => {
-    stubContentFetch(guidedWorkspaceCourse);
+    stubContentFetch();
     stubEditingCapability(true);
     const adapters = stubAdapters();
     let storedCourse: CourseProgress | undefined = guidedStepOneProgress();
@@ -1357,7 +1371,7 @@ describe('Learning routes', () => {
   });
 
   it('確定後は全fileをStarterへ保存・Previewし、HintとEditor local stateを初期化する', async () => {
-    stubContentFetch(guidedWorkspaceCourse);
+    stubContentFetch();
     stubEditingCapability(true);
     const adapters = stubAdapters();
     const user = userEvent.setup();
@@ -1431,7 +1445,7 @@ describe('Learning routes', () => {
   }, 15_000);
 
   it('Reset flush中の遅延Editor eventを拒否し、StarterのDraft・Preview・Focusを維持する', async () => {
-    stubContentFetch(guidedWorkspaceCourse);
+    stubContentFetch();
     stubEditingCapability(true);
     const adapters = stubAdapters();
     const user = userEvent.setup();

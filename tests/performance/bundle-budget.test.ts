@@ -2,6 +2,7 @@
 import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { gzipSync } from 'node:zlib';
+import { JSDOM } from 'jsdom';
 import { describe, expect, it } from 'vitest';
 import { assertSubpathBuild } from '../../scripts/smoke-subpath';
 import { loadPerformanceManifest } from './manifest';
@@ -99,6 +100,25 @@ async function totalGzipBytes(relativePaths: readonly string[]): Promise<number>
     relativePaths.map((relativePath) => readFile(path.join(distRoot, relativePath))),
   );
   return buffers.reduce((total, source) => total + gzipSync(source).byteLength, 0);
+}
+
+/** 指定File群の個別gzip bytes最大値を返す。 */
+async function maximumGzipBytes(relativePaths: readonly string[]): Promise<number> {
+  const sizes = await Promise.all(
+    relativePaths.map(
+      async (relativePath) =>
+        gzipSync(await readFile(path.join(distRoot, relativePath))).byteLength,
+    ),
+  );
+  return Math.max(0, ...sizes);
+}
+
+/** Inline bootstrapからRoute別先読み対応表のJSON sourceだけを取得する。 */
+function extractRoutePreloadMapSource(indexHtml: string): string {
+  const source = indexHtml.match(/const routes=(\[[\s\S]*?\]);const route=/u)?.[1];
+  if (source === undefined) throw new Error('Route別先読み対応表がありません');
+  JSON.parse(source);
+  return source;
 }
 
 /** 現在のEditor増分JS gzipから固定したStarter復元前baselineを差し引く。 */
@@ -223,7 +243,49 @@ describe('production bundle budget', () => {
     expect(indexHtml).toContain('^#\\/library');
     expect(indexHtml).toContain(normalEntry?.file);
     expect(indexHtml).toContain(libraryEntry?.file);
-    expect(indexHtml).not.toContain('generated/content/courses/html-css.json');
+    const basePath = process.env.BASE_PATH ?? '/repository-name/';
+    const homeDocument = new JSDOM(indexHtml, {
+      runScripts: 'dangerously',
+      url: `https://example.test${basePath}#/`,
+    }).window.document;
+    expect(homeDocument.querySelector('link[data-tsumucode-course-index-preload]')).toBeNull();
+    expect(homeDocument.querySelector('link[data-tsumucode-lesson-preload]')).toBeNull();
+
+    const courseDocument = new JSDOM(indexHtml, {
+      runScripts: 'dangerously',
+      url: `https://example.test${basePath}#/courses/html-css`,
+    }).window.document;
+    expect(
+      courseDocument.querySelector<HTMLLinkElement>('link[data-tsumucode-course-index-preload]')
+        ?.href,
+    ).toBe(
+      new URL('generated/content/courses/html-css/index.json', `https://example.test${basePath}`)
+        .href,
+    );
+    expect(courseDocument.querySelector('link[data-tsumucode-lesson-preload]')).toBeNull();
+
+    const lessonDocument = new JSDOM(indexHtml, {
+      runScripts: 'dangerously',
+      url: `https://example.test${basePath}#/courses/html-css/lessons/html-css-ch00-l01/slides/html-css-ch00-l01-s01`,
+    }).window.document;
+    expect(
+      lessonDocument.querySelector<HTMLLinkElement>('link[data-tsumucode-course-index-preload]')
+        ?.href,
+    ).toBe(
+      new URL('generated/content/courses/html-css/index.json', `https://example.test${basePath}`)
+        .href,
+    );
+    expect(
+      lessonDocument.querySelector<HTMLLinkElement>('link[data-tsumucode-lesson-preload]')?.href,
+    ).toBe(
+      new URL(
+        'generated/content/courses/html-css/lessons/html-css-ch00-l01.json',
+        `https://example.test${basePath}`,
+      ).href,
+    );
+    expect(gzipSync(extractRoutePreloadMapSource(indexHtml)).byteLength).toBeLessThanOrEqual(
+      performanceManifest.content.routeMapAddedGzipMaxBytes,
+    );
   });
 
   it('Editor増分JSをHome初期graphから分離して専用予算内に保つ', async () => {
@@ -271,14 +333,21 @@ describe('production bundle budget', () => {
     expect(libraryKeys.has(normalEntryKey)).toBe(false);
   });
 
-  it('Catalog、Course、Image、Fontを公開容量予算内に保つ', async () => {
+  it('Catalog、Course Index、Lesson Manifest、Image、Fontを公開容量予算内に保つ', async () => {
     const files = await listFiles(distRoot);
-    await expect(totalGzipBytes(['generated/content/catalog.json'])).resolves.toBeLessThanOrEqual(
-      performanceManifest.content.catalogGzipMaxBytes,
-    );
     await expect(
-      totalGzipBytes(['generated/content/courses/html-css.json']),
-    ).resolves.toBeLessThanOrEqual(performanceManifest.content.courseManifestGzipMaxBytes);
+      totalGzipBytes(['generated/content/catalog-v3.json']),
+    ).resolves.toBeLessThanOrEqual(performanceManifest.content.catalogGzipMaxBytes);
+    await expect(
+      totalGzipBytes(['generated/content/courses/html-css/index.json']),
+    ).resolves.toBeLessThanOrEqual(performanceManifest.content.courseIndexGzipMaxBytes);
+    const lessonManifests = files.filter((file) =>
+      /^generated\/content\/courses\/html-css\/lessons\/[^/]+\.json$/u.test(file),
+    );
+    expect(lessonManifests.length).toBeGreaterThan(0);
+    await expect(maximumGzipBytes(lessonManifests)).resolves.toBeLessThanOrEqual(
+      performanceManifest.content.lessonManifestGzipMaxBytes,
+    );
 
     const images = await measureFiles(
       files.filter((file) => imageExtensions.has(path.extname(file).toLowerCase())),
@@ -312,7 +381,7 @@ describe('production bundle budget', () => {
   });
 
   it('公開Provenanceをpublic itemだけに限定する', async () => {
-    const provenance = await readJsonObject('generated/content/courses/html-css.provenance.json');
+    const provenance = await readJsonObject('generated/content/courses/html-css/provenance.json');
     if (!Array.isArray(provenance.items)) {
       throw new Error('公開Provenanceにitems配列がありません');
     }

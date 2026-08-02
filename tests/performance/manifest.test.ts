@@ -73,7 +73,9 @@ describe('performance manifest', () => {
       },
       content: {
         catalogGzipMaxBytes: 20480,
-        courseManifestGzipMaxBytes: 393216,
+        courseIndexGzipMaxBytes: 40960,
+        lessonManifestGzipMaxBytes: 12288,
+        routeMapAddedGzipMaxBytes: 8192,
         singleImageMaxBytes: 204800,
         totalImagesMaxBytes: 2097152,
         singleFontMaxBytes: 153600,

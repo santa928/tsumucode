@@ -73,6 +73,7 @@ export interface TabLeaseCoordinatorOptions {
   readonly leasePersistence?: TabLeasePersistence | undefined;
   readonly lifecycleTarget?: EventTarget | undefined;
   readonly isVisible?: (() => boolean) | undefined;
+  readonly reuseStoredTabId?: boolean | undefined;
 }
 
 interface LeaseOwner {
@@ -358,8 +359,32 @@ function timingValue(value: number | undefined, fallback: number, maximum: numbe
   return resolved;
 }
 
-/** clone可能なStorage値は再利用せず、instance固有tab IDをbest-effortで記録する。 */
-function resolveTabId(storage: Storage | undefined, createId: () => string): string {
+/** Navigation Timingが明示するreloadだけ、直前documentのtab ID引継ぎ対象にする。 */
+function defaultReuseStoredTabId(): boolean {
+  try {
+    if (typeof performance === 'undefined') return false;
+    const navigation = performance.getEntriesByType('navigation')[0] as
+      PerformanceNavigationTiming | undefined;
+    return navigation?.type === 'reload';
+  } catch {
+    return false;
+  }
+}
+
+/** 通常navigationはclone値を拒否し、reloadだけ同じtab IDをbest-effortで再利用する。 */
+function resolveTabId(
+  storage: Storage | undefined,
+  createId: () => string,
+  reuseStoredTabId: boolean,
+): string {
+  if (reuseStoredTabId) {
+    try {
+      const stored = storage?.getItem(TAB_ID_STORAGE_KEY);
+      if (isValidId(stored)) return stored;
+    } catch {
+      // 読み出せない環境ではinstance固有IDへfallbackする。
+    }
+  }
   const created = createId();
   if (!isValidId(created)) throw new Error('idFactoryは空でないbounded文字列を返す必要があります');
   try {
@@ -1651,7 +1676,11 @@ export class TabLeaseCoordinator {
       throw new Error('heartbeat間隔はlease期限より短くする必要があります');
     }
     const storage = Object.hasOwn(options, 'storage') ? options.storage : defaultStorage();
-    this.#tabId = resolveTabId(storage, () => this.#createId());
+    this.#tabId = resolveTabId(
+      storage,
+      () => this.#createId(),
+      options.reuseStoredTabId ?? defaultReuseStoredTabId(),
+    );
     const factory = options.channelFactory ?? defaultChannelFactory();
     try {
       this.#channel = factory?.(CHANNEL_NAME);

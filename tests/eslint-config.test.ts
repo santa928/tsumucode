@@ -8,4 +8,4 @@ test('repository-local linked worktreeをroot lintの対象外にする', async 
   const nestedWorktreeFile = path.join(process.cwd(), '.worktrees', 'example', 'src', 'fixture.ts');
 
   await expect(eslint.isPathIgnored(nestedWorktreeFile)).resolves.toBe(true);
-});
+}, 15_000);

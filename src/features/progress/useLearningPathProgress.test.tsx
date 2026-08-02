@@ -36,8 +36,8 @@ function pathFixture(): {
     ...structuredClone(html),
     id: 'javascript',
     revision: '2026-07-31.javascript',
-    manifestPath: 'generated/content/courses/javascript.json',
-    manifestSha256: 'b'.repeat(64),
+    indexPath: 'generated/content/courses/javascript/index.json',
+    indexSha256: 'b'.repeat(64),
     lessonStarts: [
       {
         lessonId: 'js-values',

@@ -91,6 +91,12 @@ export async function checkStaticArtifact(distDir: string): Promise<StaticArtifa
 
   for (const file of files) {
     const relative = path.relative(root, file).split(path.sep).join('/');
+    if (
+      relative === 'generated/content/catalog.json' ||
+      /^generated\/content\/courses\/[^/]+\.json$/u.test(relative)
+    ) {
+      throw new Error(`旧v2教材Artifactを公開できません: ${relative}`);
+    }
     const extension = path.extname(relative).toLowerCase();
     if (
       relative.startsWith('../') ||
@@ -108,7 +114,12 @@ export async function checkStaticArtifact(distDir: string): Promise<StaticArtifa
   }
 
   await access(path.join(root, 'index.html'));
-  await access(path.join(root, 'generated/content/courses/html-css.json'));
+  await access(path.join(root, 'generated/content/catalog-v3.json'));
+  await access(path.join(root, 'generated/content/courses/html-css/index.json'));
+  const lessons = await readdir(path.join(root, 'generated/content/courses/html-css/lessons'));
+  if (!lessons.some((lesson) => lesson.endsWith('.json'))) {
+    throw new Error('公開Lesson Artifactがありません: html-css');
+  }
 
   return { files: files.length };
 }

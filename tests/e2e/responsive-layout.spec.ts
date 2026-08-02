@@ -83,7 +83,7 @@ async function expectNoDocumentScroll(page: Page): Promise<void> {
 
 /** IndexedDBをfuture versionへ進め、次のApplication openをmemory-onlyへ固定する。 */
 async function seedUnsupportedProgressDatabase(page: Page): Promise<void> {
-  await page.goto('generated/content/catalog.json');
+  await page.goto('generated/content/catalog-v3.json');
   await page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolve, reject) => {
       const opening = indexedDB.open('tsumucode-progress', 99);

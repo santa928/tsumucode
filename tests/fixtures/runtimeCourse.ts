@@ -13,7 +13,7 @@ export const runtimeFixtureCourse: CourseManifest = CourseManifestSchema.parse({
   publicationStatus: 'draft',
   runnerId: 'fixture-runner',
   validatorId: 'fixture-validator',
-  provenanceManifestPath: 'generated/content/courses/runtime-fixture.provenance.json',
+  provenanceManifestPath: 'generated/content/courses/runtime-fixture/provenance.json',
   phases: source.phases.map((phase) => ({
     ...phase,
     chapters: phase.chapters.map((chapter) => ({

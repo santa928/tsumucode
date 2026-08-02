@@ -61,7 +61,7 @@ describe('ContentErrorPage', () => {
     });
     const loader = vi
       .fn()
-      .mockRejectedValueOnce(new ContentLoadError('http', '/generated/content/catalog.json'))
+      .mockRejectedValueOnce(new ContentLoadError('http', '/generated/content/catalog-v3.json'))
       .mockReturnValueOnce(pendingRetry);
     const router = createMemoryRouter([
       {
@@ -78,7 +78,7 @@ describe('ContentErrorPage', () => {
     expect(
       await screen.findByRole('heading', { name: '教材を読み込めませんでした' }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('alert')).not.toHaveTextContent('/generated/content/catalog.json');
+    expect(screen.getByRole('alert')).not.toHaveTextContent('/generated/content/catalog-v3.json');
     const retryButton = screen.getByRole('button', { name: 'もう一度読み込む' });
     await user.click(retryButton);
     expect(screen.getByRole('button', { name: '読み込み中' })).toBeDisabled();

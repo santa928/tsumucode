@@ -17,7 +17,7 @@ describe('HTML metadata', () => {
     const html = await readFile(resolve('index.html'), 'utf8');
 
     expect(html).toMatch(
-      /href="%BASE_URL%generated\/content\/catalog\.json"\s+as="fetch"\s+crossorigin/u,
+      /href="%BASE_URL%generated\/content\/catalog-v3\.json"\s+as="fetch"\s+crossorigin/u,
     );
     expect(html).not.toContain('generated/content/courses/html-css.json');
   });

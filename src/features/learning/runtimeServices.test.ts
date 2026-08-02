@@ -217,42 +217,42 @@ describe('createLearningRuntimeServices', () => {
     });
   });
 
-  it('Transfer用Course読込をsingle-flight成功cacheし、失敗時は次回再試行する', async () => {
+  it('Transfer用Course Index読込をsingle-flight成功cacheし、失敗時は次回再試行する', async () => {
     const { repository } = repositoryHarness();
-    const loadTransferCourses = vi
-      .fn<() => Promise<readonly (typeof fixtureCourse)[]>>()
+    const loadTransferCourseIndexes = vi
+      .fn<() => Promise<readonly (typeof fixtureCourseIndex)[]>>()
       .mockRejectedValueOnce(new Error('offline'))
-      .mockResolvedValueOnce([fixtureCourse]);
-    const services = createLearningRuntimeServices({ repository, loadTransferCourses });
+      .mockResolvedValueOnce([fixtureCourseIndex]);
+    const services = createLearningRuntimeServices({ repository, loadTransferCourseIndexes });
 
     await expect(services.prepareTransferCatalog()).rejects.toThrow('offline');
     await expect(
       Promise.all([services.prepareTransferCatalog(), services.prepareTransferCatalog()]),
     ).resolves.toEqual([undefined, undefined]);
 
-    expect(loadTransferCourses).toHaveBeenCalledTimes(2);
+    expect(loadTransferCourseIndexes).toHaveBeenCalledTimes(2);
   });
 
-  it('memory-onlyからの復旧後に成功cache済みCourse migrationを再評価する', async () => {
+  it('memory-onlyからの復旧後に成功cache済みCourse Index migrationを再評価する', async () => {
     const { repository, open } = repositoryHarness();
     open.mockRejectedValueOnce(new Error('blocked')).mockResolvedValue(undefined);
-    const ensureStoredCourse = vi.fn().mockResolvedValue([]);
+    const ensureStoredCourseDescriptor = vi.fn().mockResolvedValue([]);
     const services = createLearningRuntimeServices({
       repository,
       contentMigrations: {
-        registerCourse: vi.fn(),
-        ensureStoredCourse,
+        registerCourseDescriptor: vi.fn(),
+        ensureStoredCourseDescriptor,
       } as unknown as ContentProgressMigrationService,
       notices: { addMigrationNotices: vi.fn() } as unknown as RuntimeNoticeStore,
       passFreshness: {} as PassFreshnessRegistry,
     });
-    await services.ensureCourse(fixtureCourse);
+    await services.ensureCourseIndex(fixtureCourseIndex);
     expect(services.progressService.getHealthSnapshot().kind).toBe('memory-only');
 
     await expect(services.retryPersistence()).resolves.toEqual({ kind: 'recovered' });
 
     expect(open).toHaveBeenCalledTimes(2);
-    expect(ensureStoredCourse).toHaveBeenCalledTimes(2);
+    expect(ensureStoredCourseDescriptor).toHaveBeenCalledTimes(2);
   });
 
   it('既定Runnerは同期Registry契約を保ち、本体を初回prepareまで遅延生成する', async () => {
@@ -335,52 +335,6 @@ describe('createLearningRuntimeServices', () => {
     expect(lazyRunner.prepare).toHaveBeenCalledOnce();
   });
 
-  it('Repository openと同一Course revisionのmigrationをsingle-flightにし、Noticeを一度だけ保持する', async () => {
-    const { repository, open } = repositoryHarness();
-    let resolveMigration!: () => void;
-    const registerCourse = vi.fn();
-    const ensureStoredCourse = vi.fn(
-      () =>
-        new Promise<readonly { id: string; courseId: string; reason: string }[]>((resolve) => {
-          resolveMigration = () => {
-            resolve([{ id: 'notice-1', courseId: fixtureCourse.id, reason: '旧Exerciseを初期化' }]);
-          };
-        }),
-    );
-    const migrations = {
-      registerCourse,
-      ensureStoredCourse,
-    } as unknown as ContentProgressMigrationService;
-    const addMigrationNotices = vi.fn();
-    const notices = {
-      addMigrationNotices,
-    } as unknown as RuntimeNoticeStore;
-    const services = createLearningRuntimeServices({
-      repository,
-      contentMigrations: migrations,
-      notices,
-      passFreshness: {} as PassFreshnessRegistry,
-    });
-
-    const first = services.ensureCourse(fixtureCourse);
-    const concurrent = services.ensureCourse(fixtureCourse);
-    expect(open).toHaveBeenCalledOnce();
-    expect(registerCourse).toHaveBeenCalledOnce();
-    await vi.waitFor(() => {
-      expect(ensureStoredCourse).toHaveBeenCalledOnce();
-    });
-
-    resolveMigration();
-    await Promise.all([first, concurrent]);
-    await services.ensureCourse(fixtureCourse);
-
-    expect(ensureStoredCourse).toHaveBeenCalledOnce();
-    expect(addMigrationNotices).toHaveBeenCalledOnce();
-    expect(addMigrationNotices).toHaveBeenCalledWith([
-      { id: 'notice-1', courseId: fixtureCourse.id, reason: '旧Exerciseを初期化' },
-    ]);
-  });
-
   it('Course Index migrationをsingle-flightし、descriptor noticeを呼出元へ返す', async () => {
     const { repository } = repositoryHarness();
     const notice = {
@@ -414,13 +368,13 @@ describe('createLearningRuntimeServices', () => {
 
   it('migration失敗はcacheせず、同じRouteの再試行で成功できる', async () => {
     const { repository, open } = repositoryHarness();
-    const ensureStoredCourse = vi
+    const ensureStoredCourseDescriptor = vi
       .fn()
       .mockRejectedValueOnce(new Error('quota'))
       .mockResolvedValueOnce([]);
     const migrations = {
-      registerCourse: vi.fn(),
-      ensureStoredCourse,
+      registerCourseDescriptor: vi.fn(),
+      ensureStoredCourseDescriptor,
     } as unknown as ContentProgressMigrationService;
     const services = createLearningRuntimeServices({
       repository,
@@ -429,19 +383,19 @@ describe('createLearningRuntimeServices', () => {
       passFreshness: {} as PassFreshnessRegistry,
     });
 
-    await expect(services.ensureCourse(fixtureCourse)).rejects.toThrow('quota');
-    await expect(services.ensureCourse(fixtureCourse)).resolves.toBeUndefined();
-    expect(ensureStoredCourse).toHaveBeenCalledTimes(2);
+    await expect(services.ensureCourseIndex(fixtureCourseIndex)).rejects.toThrow('quota');
+    await expect(services.ensureCourseIndex(fixtureCourseIndex)).resolves.toEqual([]);
+    expect(ensureStoredCourseDescriptor).toHaveBeenCalledTimes(2);
     expect(open).toHaveBeenCalledOnce();
   });
 
   it('同じCourseでも新しいcontent revisionは別migrationとして実行する', async () => {
     const { repository } = repositoryHarness();
-    const registerCourse = vi.fn();
-    const ensureStoredCourse = vi.fn().mockResolvedValue([]);
+    const registerCourseDescriptor = vi.fn();
+    const ensureStoredCourseDescriptor = vi.fn().mockResolvedValue([]);
     const migrations = {
-      registerCourse,
-      ensureStoredCourse,
+      registerCourseDescriptor,
+      ensureStoredCourseDescriptor,
     } as unknown as ContentProgressMigrationService;
     const services = createLearningRuntimeServices({
       repository,
@@ -449,13 +403,13 @@ describe('createLearningRuntimeServices', () => {
       notices: { addMigrationNotices: vi.fn() } as unknown as RuntimeNoticeStore,
       passFreshness: {} as PassFreshnessRegistry,
     });
-    const nextRevision = { ...fixtureCourse, revision: '2026-07-10.2' };
+    const nextRevision = { ...fixtureCourseIndex, revision: '2026-07-10.2' };
 
-    await services.ensureCourse(fixtureCourse);
-    await services.ensureCourse(nextRevision);
+    await services.ensureCourseIndex(fixtureCourseIndex);
+    await services.ensureCourseIndex(nextRevision);
 
-    expect(ensureStoredCourse).toHaveBeenCalledTimes(2);
-    expect(registerCourse).toHaveBeenNthCalledWith(2, nextRevision);
+    expect(ensureStoredCourseDescriptor).toHaveBeenCalledTimes(2);
+    expect(registerCourseDescriptor).toHaveBeenNthCalledWith(2, nextRevision);
   });
 
   it('同一Courseのread-modify-writeを直列化し、並行Mutationでも更新を失わない', async () => {

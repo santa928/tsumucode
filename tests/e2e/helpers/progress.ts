@@ -14,7 +14,7 @@ export interface StoredProgressProbe {
 
 /** 新規Contextへschema v1の公開Course Draftを直接保存し、open-time migrationを準備する。 */
 export async function seedSchemaV1Progress(page: Page): Promise<void> {
-  await page.goto('generated/content/catalog.json');
+  await page.goto('generated/content/catalog-v3.json');
   await page.evaluate(async () => {
     await new Promise<void>((resolve, reject) => {
       const deletion = indexedDB.deleteDatabase('tsumucode-progress');
@@ -81,7 +81,7 @@ export async function seedSchemaV1Progress(page: Page): Promise<void> {
 
 /** Mobile read-only Preview用に現行schemaの完了済みCourseとpassing snapshotを保存する。 */
 export async function seedCompletedProgress(page: Page): Promise<void> {
-  await page.goto('generated/content/catalog.json');
+  await page.goto('generated/content/catalog-v3.json');
   await page.evaluate(async () => {
     await new Promise<void>((resolve, reject) => {
       const deletion = indexedDB.deleteDatabase('tsumucode-progress');

@@ -633,7 +633,11 @@ export class IndexedDbProgressRepository implements ProgressRepository {
         return { acquired: false, reason: 'data-epoch-mismatch' };
       }
       if (candidate.expiresAt <= now) return { acquired: false };
-      if (existing?.kind === 'workspace-lease' && existing.expiresAt > now) {
+      if (
+        existing?.kind === 'workspace-lease' &&
+        existing.expiresAt > now &&
+        existing.ownerId !== candidate.ownerId
+      ) {
         return { acquired: false, owner: leaseProof(existing) };
       }
       const proof: WorkspaceLeaseProof = {

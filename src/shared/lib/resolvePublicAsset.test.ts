@@ -7,8 +7,8 @@ describe('resolvePublicAsset', () => {
   it.each([
     [
       '/repository-name/',
-      'generated/content/catalog.json',
-      '/repository-name/generated/content/catalog.json',
+      'generated/content/catalog-v3.json',
+      '/repository-name/generated/content/catalog-v3.json',
     ],
     ['/', './assets/logo.png', '/assets/logo.png'],
     ['', 'evil.example/icon.svg', '/evil.example/icon.svg'],

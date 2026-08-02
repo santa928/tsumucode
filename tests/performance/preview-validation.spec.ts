@@ -1,5 +1,5 @@
-import { readFile } from 'node:fs/promises';
 import { expect, test, type Page } from '@playwright/test';
+import { readSplitCourseArtifacts } from '../../scripts/content/readSplitCourseArtifacts';
 import { openEditableExercise } from '../e2e/helpers/releaseCourse';
 import { loadPerformanceManifest, percentile95 } from './manifest';
 
@@ -22,9 +22,7 @@ interface PerformanceCourseProbe {
 }
 
 const manifest = await loadPerformanceManifest();
-const course = JSON.parse(
-  await readFile('public/generated/content/courses/html-css.json', 'utf8'),
-) as PerformanceCourseProbe;
+const course = (await readSplitCourseArtifacts('public', 'html-css')) as PerformanceCourseProbe;
 const lessons = course.phases.flatMap(({ chapters }) =>
   chapters.flatMap(({ lessons: chapterLessons }) => chapterLessons),
 );

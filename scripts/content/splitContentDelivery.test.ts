@@ -60,13 +60,15 @@ describe('split content delivery', () => {
     });
   });
 
-  it('公開用Courseだけprovenance pathを新しいCourse treeへ投影する', () => {
+  it('新しいCourse treeのprovenance pathを入力変更なしで公開用Courseへ投影する', () => {
     const projected = projectCourseForSplitDelivery(fixtureCourse);
     expect(projected.provenanceManifestPath).toBe(
       'generated/content/courses/html-css/provenance.json',
     );
+    expect(projected).not.toBe(fixtureCourse);
+    expect(projected).toEqual(fixtureCourse);
     expect(fixtureCourse.provenanceManifestPath).toBe(
-      'generated/content/courses/html-css.provenance.json',
+      'generated/content/courses/html-css/provenance.json',
     );
   });
 

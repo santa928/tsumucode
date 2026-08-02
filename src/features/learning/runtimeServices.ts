@@ -1,12 +1,7 @@
 /** 学習routeが共有するRepository・migration・Runner・Validatorの依存を構築する。 */
 import { IndexedDbProgressRepository } from '../../adapters/persistence/indexeddb';
-import {
-  loadCourseCatalog,
-  loadCourseCatalogV3,
-  loadCourseIndex,
-  loadCourseManifest,
-} from '../../core/content/loadCourseCatalog';
-import type { CourseIndex, CourseManifest } from '../../core/content/types';
+import { loadCourseCatalog, loadCourseIndex } from '../../core/content/loadCourseCatalog';
+import type { CourseIndex } from '../../core/content/types';
 import {
   ContentProgressMigrationService,
   type ContentMigrationNotice,
@@ -60,7 +55,6 @@ export interface LearningRuntimeServices extends CourseIndexRuntimeRegistration 
   prepareTransferCatalog(): Promise<void>;
   retryPersistence(): Promise<PersistenceRetryResult>;
   resolvePersistenceConflict(resolution: PersistenceConflictResolution): Promise<void>;
-  ensureCourse(course: CourseManifest): Promise<void>;
   runCourseProgressMutation<Result>(
     courseId: string,
     mutation: () => Promise<Result>,
@@ -74,7 +68,7 @@ export interface LearningRuntimeServiceOptions {
   readonly contentMigrations?: ContentProgressMigrationService;
   readonly transferService?: TransferServicePort;
   readonly leaseCoordinator?: TabLeaseCoordinator;
-  readonly loadTransferCourses?: () => Promise<readonly CourseManifest[]>;
+  readonly loadTransferCourseIndexes?: () => Promise<readonly CourseIndex[]>;
   readonly notices?: RuntimeNoticeStore;
   readonly runnerRegistry?: RunnerRegistry;
   readonly runnerRegistrations?: readonly (readonly [string, RunnerFactory])[];
@@ -142,17 +136,9 @@ class LazyTransferService implements TransferServicePort {
   }
 }
 
-/** Catalogの全Course ManifestをGitHub Pagesの現在Base Pathから検証済みで読み込む。 */
-async function loadTransferCoursesFromCatalog(): Promise<readonly CourseManifest[]> {
-  const catalog = await loadCourseCatalog(import.meta.env.BASE_URL);
-  return Promise.all(
-    catalog.courses.map((entry) => loadCourseManifest(import.meta.env.BASE_URL, entry)),
-  );
-}
-
-/** Catalog v3の全Course IndexをGitHub Pagesの現在Base Pathから検証済みで読み込む。 */
+/** Catalogの全Course IndexをGitHub Pagesの現在Base Pathから検証済みで読み込む。 */
 export async function loadTransferCourseIndexesFromCatalog(): Promise<readonly CourseIndex[]> {
-  const catalog = await loadCourseCatalogV3(import.meta.env.BASE_URL);
+  const catalog = await loadCourseCatalog(import.meta.env.BASE_URL);
   return Promise.all(
     catalog.courses.map((entry) => loadCourseIndex(import.meta.env.BASE_URL, entry)),
   );
@@ -309,7 +295,8 @@ export function createLearningRuntimeServices(
     options.transferService ?? new LazyTransferService(repository, contentMigrations);
   const leaseCoordinator =
     options.leaseCoordinator ?? new TabLeaseCoordinator({ leasePersistence: progressService });
-  const loadTransferCourses = options.loadTransferCourses ?? loadTransferCoursesFromCatalog;
+  const loadTransferCourseIndexes =
+    options.loadTransferCourseIndexes ?? loadTransferCourseIndexesFromCatalog;
   const runnerRegistry = options.runnerRegistry ?? createRunnerRegistry();
   for (const [id, factory] of options.runnerRegistrations ?? []) {
     runnerRegistry.register(id, factory);
@@ -325,8 +312,6 @@ export function createLearningRuntimeServices(
   for (const [id, factory] of options.editorRegistrations ?? []) {
     editorLanguageRegistry.register(id, factory);
   }
-  const courseMigrations = new Map<string, Promise<void>>();
-  const registeredCourses = new Map<string, CourseManifest>();
   const courseIndexMigrations = new Map<string, Promise<readonly ContentMigrationNotice[]>>();
   const registeredCourseIndexes = new Map<string, CourseIndex>();
   const courseProgressMutations = new Map<string, Promise<void>>();
@@ -342,27 +327,6 @@ export function createLearningRuntimeServices(
       throw error;
     });
     openPromise = guarded;
-    return guarded;
-  }
-
-  /** Course IDとrevision単位でmigrationをsingle-flight・成功cacheする。 */
-  function ensureCourse(course: CourseManifest): Promise<void> {
-    registeredCourses.set(course.id, course);
-    const key = JSON.stringify([course.id, course.revision]);
-    const current = courseMigrations.get(key);
-    if (current !== undefined) return current;
-
-    contentMigrations.registerCourse(course);
-    const operation = (async () => {
-      await ready();
-      const migrationNotices = await contentMigrations.ensureStoredCourse(course);
-      notices.addMigrationNotices(migrationNotices);
-    })();
-    const guarded = operation.catch((error: unknown) => {
-      if (courseMigrations.get(key) === guarded) courseMigrations.delete(key);
-      throw error;
-    });
-    courseMigrations.set(key, guarded);
     return guarded;
   }
 
@@ -388,13 +352,13 @@ export function createLearningRuntimeServices(
     return guarded;
   }
 
-  /** Import検証前にCatalogの全Manifestをsingle-flightで登録し、失敗後は再試行可能にする。 */
+  /** Import検証前にCatalogの全Indexをsingle-flightで登録し、失敗後は再試行可能にする。 */
   function prepareTransferCatalog(): Promise<void> {
     if (transferCatalogPromise !== undefined) return transferCatalogPromise;
-    const pending = loadTransferCourses().then((courses) => {
-      for (const course of courses) {
-        registeredCourses.set(course.id, course);
-        contentMigrations.registerCourse(course);
+    const pending = loadTransferCourseIndexes().then((indexes) => {
+      for (const index of indexes) {
+        registeredCourseIndexes.set(index.id, index);
+        contentMigrations.registerCourseDescriptor(index);
       }
     });
     const guarded = pending.catch((error: unknown) => {
@@ -407,11 +371,7 @@ export function createLearningRuntimeServices(
 
   /** Repository recovery後に既知Courseのmigration成功cacheを破棄して順番に再評価する。 */
   async function recheckRegisteredCourses(): Promise<void> {
-    courseMigrations.clear();
     courseIndexMigrations.clear();
-    for (const course of registeredCourses.values()) {
-      await ensureCourse(course);
-    }
     for (const index of registeredCourseIndexes.values()) {
       await ensureCourseIndex(index);
     }
@@ -485,7 +445,6 @@ export function createLearningRuntimeServices(
     prepareTransferCatalog,
     retryPersistence,
     resolvePersistenceConflict,
-    ensureCourse,
     ensureCourseIndex,
     runCourseProgressMutation,
   };

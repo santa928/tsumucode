@@ -1,19 +1,17 @@
-import { readFile } from 'node:fs/promises';
 import { beforeAll, describe, expect, it } from 'vitest';
 import {
   loadAuthoringCourse,
   type AuthoringCoursePackage,
 } from '../../scripts/content/compileCourse';
 import { CourseManifestSchema } from '../../src/core/content/schema';
+import { readSplitCourseArtifacts } from '../../scripts/content/readSplitCourseArtifacts';
 import type { CourseManifest } from '../../src/core/content/types';
 
 let course: CourseManifest;
 let authoring: AuthoringCoursePackage;
 
 beforeAll(async () => {
-  course = CourseManifestSchema.parse(
-    JSON.parse(await readFile('public/generated/content/courses/html-css.json', 'utf8')) as unknown,
-  );
+  course = CourseManifestSchema.parse(await readSplitCourseArtifacts('public', 'html-css'));
   authoring = await loadAuthoringCourse('content/html-css');
 }, 60_000);
 

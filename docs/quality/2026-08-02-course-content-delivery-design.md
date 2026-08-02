@@ -1,6 +1,6 @@
 # Course教材の分割配信設計
 
-- 状態: レビュー待ち
+- 状態: 実装済み・公開前全Gate確認中
 - 作成日: 2026-08-02
 - 対象: TsumuCodeの公開Catalog、Course Index、Lesson Manifest、Runtime loader
 - 親ロードマップ: GitHub Issue #1「複数コースとLearningPathを追加する」
@@ -216,18 +216,27 @@ Course Indexが成功して現在Lessonまたはworkspace依存Lessonだけ失�
 
 ## 12. 受け入れ条件
 
-- [ ] Catalog v3、Course Index、Lesson Manifestがstrict契約とSHA付きで生成される
-- [ ] 再結合CourseがAuthoring Courseと完全一致する
-- [ ] HomeはCatalogだけ、Course mapはIndexまで、Slideは対象Lessonまでを必須取得する
-- [ ] Exerciseは対象Lessonと同じworkspaceの現在工程までに必要なLessonだけを取得する
-- [ ] 既知直リンクでIndexと対象Lessonがentryと並行preloadされる
-- [ ] 未知routeとHomeで教材preloadが発生しない
-- [ ] 進捗、下書き、Reset、Review、Library、Export／Importの既存データが維持される
-- [ ] 任意prefetch失敗が現在画面を壊さず、実移動時に再取得できる
-- [ ] 旧Artifactを公開せず、旧Version失敗時にreload CTAを表示する
+- [x] Catalog v3、Course Index、Lesson Manifestがstrict契約とSHA付きで生成される
+- [x] 再結合CourseがAuthoring Courseと完全一致する
+- [x] HomeはCatalogだけ、Course mapはIndexまで、Slideは対象Lessonまでを必須取得する
+- [x] Exerciseは対象Lessonと同じworkspaceの現在工程までに必要なLessonだけを取得する
+- [x] 既知直リンクでIndexと対象Lessonがentryと並行preloadされる
+- [x] 未知routeとHomeで教材preloadが発生しない
+- [x] 進捗、下書き、Reset、Review、Library、Export／Importの既存データが維持される
+- [x] 任意prefetch失敗が現在画面を壊さず、実移動時に再取得できる
+- [x] 旧Artifactを公開せず、旧Version失敗時にreload CTAを表示する
 - [ ] Unit、Content、Lint、Typecheck、3 Browser E2E、axe、Keyboard、performance、build、subpathが合格する
-- [ ] 4 URL×3 runのLCPがすべて2,500 ms以下である
+- [x] 4 URL×3 runのLCPがすべて2,500 ms以下である
 - [ ] 日本語commit、secret scan、main push、Pages公開後検証が完了する
+
+### 12.1 実装・性能確認結果（2026-08-02）
+
+- route別教材JSON取得契約: Chromium／Firefox／WebKitで27件PASS
+- Preview／判定／主要操作性能: Playwright 18件PASS
+- bundle／Catalog／Index／Lesson／route map容量: 7件PASS
+- Lighthouse: 4 URL×3 runの12件PASS、LCP最大2,198.924 ms、CLSは全件0
+- 教材Review: 51 Lesson、stale hash 0、rejected 0
+- WebKitで検出したCompletion直後の履歴復帰とLease解放競合は、解放完了後の再取得へ修正し、対象Flowを3回連続PASSで確認
 
 ## 13. 非対象
 

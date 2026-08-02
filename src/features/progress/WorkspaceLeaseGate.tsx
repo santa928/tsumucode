@@ -53,6 +53,8 @@ class WorkspaceLeaseSession {
   #writeFence: TabLeaseWriteFence;
   #retained = 0;
   #releaseStarted = false;
+  readonly #released: Promise<void>;
+  readonly #resolveReleased: () => void;
 
   constructor(
     coordinator: WorkspaceLeaseCoordinator,
@@ -60,6 +62,11 @@ class WorkspaceLeaseSession {
     workspaceId: string,
     private readonly onReleased: () => void,
   ) {
+    let resolveReleased!: () => void;
+    this.#released = new Promise<void>((resolve) => {
+      resolveReleased = resolve;
+    });
+    this.#resolveReleased = resolveReleased;
     const regularFence: TabLeaseWriteFence = (operation) => this.handle.runFencedWrite(operation);
     this.#writeFence = regularFence;
     const acquired = coordinator.acquire(courseId, workspaceId, {
@@ -97,9 +104,16 @@ class WorkspaceLeaseSession {
     });
   }
 
-  /** committed effectごとにSession利用数を増やす。 */
-  retain(): void {
+  /** committed effectごとにSession利用数を増やし、解放開始後の再利用だけを拒否する。 */
+  retain(): boolean {
+    if (this.#releaseStarted) return false;
     this.#retained += 1;
+    return true;
+  }
+
+  /** 解放中SessionがCoordinatorと共有Mapから完全に外れるまで待つ。 */
+  waitUntilReleased(): Promise<void> {
+    return this.#released;
   }
 
   /** StrictMode再setupを待ち、利用者が0の実unmount時だけleaseを解放する。 */
@@ -114,6 +128,7 @@ class WorkspaceLeaseSession {
         .finally(() => {
           this.handle.dispose();
           this.onReleased();
+          this.#resolveReleased();
         });
     });
   }
@@ -327,30 +342,39 @@ export function WorkspaceLeaseGate({
   useEffect(() => {
     let active = true;
     let session: WorkspaceLeaseSession | undefined;
-    try {
-      session = getLeaseSession(coordinator, courseId, workspaceId);
-      session.retain();
-      const nextBinding: WorkspaceLeaseBinding = {
-        coordinator,
-        courseId,
-        workspaceId,
-        session,
-        acquisitionFailed: false,
-      };
-      queueMicrotask(() => {
-        if (active) setBinding(nextBinding);
-      });
-    } catch {
-      const failedBinding: WorkspaceLeaseBinding = {
-        coordinator,
-        courseId,
-        workspaceId,
-        acquisitionFailed: true,
-      };
-      queueMicrotask(() => {
-        if (active) setBinding(failedBinding);
-      });
-    }
+    /** 解放中の古いSessionを再利用せず、完全解放後に同じworkspaceを再取得する。 */
+    const bindSession = async (): Promise<void> => {
+      try {
+        let candidate = getLeaseSession(coordinator, courseId, workspaceId);
+        while (!candidate.retain()) {
+          await candidate.waitUntilReleased();
+          if (!active) return;
+          candidate = getLeaseSession(coordinator, courseId, workspaceId);
+        }
+        session = candidate;
+        const nextBinding: WorkspaceLeaseBinding = {
+          coordinator,
+          courseId,
+          workspaceId,
+          session,
+          acquisitionFailed: false,
+        };
+        queueMicrotask(() => {
+          if (active) setBinding(nextBinding);
+        });
+      } catch {
+        const failedBinding: WorkspaceLeaseBinding = {
+          coordinator,
+          courseId,
+          workspaceId,
+          acquisitionFailed: true,
+        };
+        queueMicrotask(() => {
+          if (active) setBinding(failedBinding);
+        });
+      }
+    };
+    void bindSession();
 
     return () => {
       active = false;

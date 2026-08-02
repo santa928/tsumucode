@@ -1,17 +1,23 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fixtureCatalog, fixtureCourse } from '../../tests/fixtures/course';
+import {
+  fixtureCatalog,
+  fixtureCourseIndex,
+  fixtureLessonManifest,
+} from '../../tests/fixtures/course';
 import type { CourseCatalog } from '../core/content/types';
 import { libraryCourseLoader, librarySlideLoader } from './libraryContentLoaders';
 
 const content = vi.hoisted(() => ({
   loadCourseCatalog: vi.fn(),
-  loadCourseManifest: vi.fn(),
+  loadCourseIndex: vi.fn(),
+  loadLessonManifest: vi.fn(),
 }));
 
 vi.mock('../core/content/loadCourseCatalog', () => ({
   loadCourseCatalog: content.loadCourseCatalog,
-  loadCourseManifest: content.loadCourseManifest,
+  loadCourseIndex: content.loadCourseIndex,
+  loadLessonManifest: content.loadLessonManifest,
 }));
 
 /** PromiseがReact Router用404 Responseで失敗したことを確認する。 */
@@ -26,66 +32,63 @@ async function expectNotFound(promise: Promise<unknown>): Promise<void> {
 
 beforeEach(() => {
   content.loadCourseCatalog.mockReset().mockResolvedValue(structuredClone(fixtureCatalog));
-  content.loadCourseManifest.mockReset().mockResolvedValue(structuredClone(fixtureCourse));
+  content.loadCourseIndex.mockReset().mockResolvedValue(structuredClone(fixtureCourseIndex));
+  content.loadLessonManifest.mockReset().mockResolvedValue(structuredClone(fixtureLessonManifest));
 });
 
 describe('libraryCourseLoader', () => {
-  it('公開Catalogに登録されたCourseだけを進捗処理なしで返す', async () => {
-    await expect(libraryCourseLoader({ params: { courseId: fixtureCourse.id } })).resolves.toEqual(
-      fixtureCourse,
-    );
-    expect(content.loadCourseManifest).toHaveBeenCalledOnce();
+  it('公開Course Indexだけを進捗処理なしで返す', async () => {
+    await expect(
+      libraryCourseLoader({ params: { courseId: fixtureCourseIndex.id } }),
+    ).resolves.toEqual(fixtureCourseIndex);
+    expect(content.loadCourseIndex).toHaveBeenCalledOnce();
+    expect(content.loadLessonManifest).not.toHaveBeenCalled();
   });
 
-  it('draft Courseと未知のCourseを404にし、Manifestを取得しない', async () => {
+  it('draft Courseと未知Courseを404にし、Indexを取得しない', async () => {
     const draftCatalog: CourseCatalog = structuredClone(fixtureCatalog);
     draftCatalog.courses[0]!.publicationStatus = 'draft';
-    content.loadCourseCatalog.mockResolvedValueOnce(draftCatalog);
+    content.loadCourseCatalog.mockResolvedValue(draftCatalog);
 
-    await expectNotFound(libraryCourseLoader({ params: { courseId: fixtureCourse.id } }));
+    await expectNotFound(libraryCourseLoader({ params: { courseId: fixtureCourseIndex.id } }));
     await expectNotFound(libraryCourseLoader({ params: { courseId: 'missing-course' } }));
-    expect(content.loadCourseManifest).not.toHaveBeenCalled();
+    expect(content.loadCourseIndex).not.toHaveBeenCalled();
   });
 
   it('Catalog取得失敗は404へ潰さず教材読込Errorとして伝える', async () => {
     const error = new Error('catalog failed');
     content.loadCourseCatalog.mockRejectedValueOnce(error);
 
-    await expect(libraryCourseLoader({ params: { courseId: fixtureCourse.id } })).rejects.toBe(
+    await expect(libraryCourseLoader({ params: { courseId: fixtureCourseIndex.id } })).rejects.toBe(
       error,
     );
   });
 });
 
 describe('librarySlideLoader', () => {
-  it('Courseと全体移動用Slide contextを返す', async () => {
+  it('Indexの全体移動contextと現在Slide本文だけを返す', async () => {
     const result = await librarySlideLoader({
       params: {
-        courseId: fixtureCourse.id,
+        courseId: fixtureCourseIndex.id,
         lessonId: 'lesson-first-heading',
         slideId: 'slide-html-role',
       },
     });
+
     expect(result).toMatchObject({
-      course: { id: fixtureCourse.id },
-      context: {
-        current: {
-          lesson: { id: 'lesson-first-heading' },
-          slide: { id: 'slide-html-role' },
-          courseSlideIndex: 0,
-          courseSlideCount: 1,
-        },
-      },
+      course: { id: fixtureCourseIndex.id },
+      context: { current: { lesson: { id: 'lesson-first-heading' } } },
+      lesson: { id: 'lesson-first-heading' },
+      slide: { id: 'slide-html-role' },
     });
-    expect(result.context).not.toHaveProperty('previous');
-    expect(result.context).not.toHaveProperty('next');
+    expect(content.loadLessonManifest).toHaveBeenCalledOnce();
   });
 
-  it('Slideの欠落と所有Lesson不一致を404にする', async () => {
+  it('Slide欠落と所有Lesson不一致をLesson取得前に404にする', async () => {
     await expectNotFound(
       librarySlideLoader({
         params: {
-          courseId: fixtureCourse.id,
+          courseId: fixtureCourseIndex.id,
           lessonId: 'lesson-first-heading',
           slideId: 'missing-slide',
         },
@@ -94,11 +97,12 @@ describe('librarySlideLoader', () => {
     await expectNotFound(
       librarySlideLoader({
         params: {
-          courseId: fixtureCourse.id,
+          courseId: fixtureCourseIndex.id,
           lessonId: 'missing-lesson',
           slideId: 'slide-html-role',
         },
       }),
     );
+    expect(content.loadLessonManifest).not.toHaveBeenCalled();
   });
 });

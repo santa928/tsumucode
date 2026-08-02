@@ -352,6 +352,31 @@ describe('IndexedDbProgressRepository', () => {
     ).toHaveLength(1);
   });
 
+  it('reloadした同じownerは新tokenへ原子的に引き継ぎ、旧tokenを失効させる', async () => {
+    const fake = createFakeDatabase();
+    const repository = new IndexedDbProgressRepository('test', async () => fake.database, {
+      now: () => 1_000,
+    });
+    await repository.open();
+    const leases = repository as unknown as {
+      tryClaimWorkspaceLease(input: ReturnType<typeof leaseProof>): Promise<{
+        readonly acquired: boolean;
+        readonly proof?: ReturnType<typeof leaseProof>;
+        readonly owner?: ReturnType<typeof leaseProof>;
+      }>;
+    };
+    const initial = leaseProof();
+    const reloaded = leaseProof({ token: 'token-reloaded' });
+
+    await expect(leases.tryClaimWorkspaceLease(initial)).resolves.toMatchObject({ acquired: true });
+    await expect(leases.tryClaimWorkspaceLease(reloaded)).resolves.toMatchObject({
+      acquired: true,
+      proof: reloaded,
+    });
+    await expect(repository.releaseWorkspaceLease(initial)).resolves.toBe(false);
+    await expect(repository.releaseWorkspaceLease(reloaded)).resolves.toBe(true);
+  });
+
   it.each([
     ['ownerId', { ownerId: 'owner-b' }],
     ['token', { token: 'token-b' }],

@@ -4,7 +4,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parse } from 'yaml';
 import { z } from 'zod';
-import { CourseManifestSchema } from '../../src/core/content/schema';
+import { readSplitCourseArtifacts } from './readSplitCourseArtifacts';
 
 const HashSchema = z.string().regex(/^[a-f0-9]{64}$/u);
 const DraftOrCommitSchema = z.union([z.literal('draft'), z.string().regex(/^[a-f0-9]{40}$/u)]);
@@ -47,7 +47,8 @@ export interface ContentReviewReport {
 
 export interface VerifyContentReviewOptions {
   readonly courseRoot?: string;
-  readonly courseManifestPath?: string;
+  readonly publicRoot?: string;
+  readonly courseId?: string;
   readonly reviewPath?: string;
 }
 
@@ -175,13 +176,10 @@ export async function verifyContentReview(
   options: VerifyContentReviewOptions = {},
 ): Promise<ContentReviewReport> {
   const courseRoot = path.resolve(options.courseRoot ?? 'content/html-css');
-  const courseManifestPath = path.resolve(
-    options.courseManifestPath ?? 'public/generated/content/courses/html-css.json',
-  );
+  const publicRoot = path.resolve(options.publicRoot ?? 'public');
+  const courseId = options.courseId ?? 'html-css';
   const reviewPath = path.resolve(options.reviewPath ?? 'docs/quality/content-review.yaml');
-  const course = CourseManifestSchema.parse(
-    JSON.parse(await readFile(courseManifestPath, 'utf8')) as unknown,
-  );
+  const course = await readSplitCourseArtifacts(publicRoot, courseId);
   const releaseLessonIds = new Set(
     course.phases
       .flatMap(({ chapters }) => chapters)

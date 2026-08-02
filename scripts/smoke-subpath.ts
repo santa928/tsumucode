@@ -3,7 +3,9 @@ import { lstat, readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { gzipSync } from 'node:zlib';
+import { CourseCatalogV3Schema } from '../src/core/content/deliverySchema';
 import { normalizePublicBasePath, resolvePublicAsset } from '../src/shared/lib/resolvePublicAsset';
+import { readSplitCourseArtifacts } from './content/readSplitCourseArtifacts';
 
 interface ManifestChunk {
   readonly file: string;
@@ -17,16 +19,6 @@ interface SmokeOptions {
   readonly homeBudgetBytes: number;
 }
 
-interface CourseCatalogSummary {
-  readonly courses: readonly {
-    readonly id: string;
-    readonly manifestPath: string;
-  }[];
-  readonly learningPaths: readonly {
-    readonly courseIds: readonly string[];
-  }[];
-}
-
 /** unknown値を安全にproperty検査できるObjectへ絞り込む。 */
 function isUnknownRecord(value: unknown): value is Readonly<Record<string, unknown>> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -35,78 +27,6 @@ function isUnknownRecord(value: unknown): value is Readonly<Record<string, unkno
 /** unknown値がstringだけの配列であることをruntimeで確認する。 */
 function isStringArray(value: unknown): value is readonly string[] {
   return Array.isArray(value) && value.every((item: unknown) => typeof item === 'string');
-}
-
-/** Smokeに必要なCatalog最小構造だけをruntime検証する。 */
-function parseCourseCatalog(value: unknown): CourseCatalogSummary {
-  if (!isUnknownRecord(value)) {
-    throw new Error('Course CatalogがObjectではありません');
-  }
-  if (value.schemaVersion !== 2) {
-    throw new Error('Course CatalogのschemaVersionは2である必要があります');
-  }
-  if (!Array.isArray(value.courses)) {
-    throw new Error('Course Catalogにcourses配列がありません');
-  }
-  if (value.courses.length === 0) throw new Error('Course Catalogに公開Courseがありません');
-  if (!Array.isArray(value.learningPaths)) {
-    throw new Error('Course CatalogにlearningPaths配列がありません');
-  }
-
-  const courses = value.courses.map((course, index) => {
-    if (!isUnknownRecord(course) || typeof course.id !== 'string') {
-      throw new Error(`Course Catalogのidが文字列ではありません: index ${String(index)}`);
-    }
-    if (typeof course.manifestPath !== 'string') {
-      throw new Error(`Course CatalogのmanifestPathが文字列ではありません: index ${String(index)}`);
-    }
-    if (!Array.isArray(course.lessonStarts)) {
-      throw new Error(`Course CatalogのlessonStartsが配列ではありません: index ${String(index)}`);
-    }
-    course.lessonStarts.forEach((lessonStart, lessonIndex) => {
-      if (
-        !isUnknownRecord(lessonStart) ||
-        typeof lessonStart.lessonId !== 'string' ||
-        !isUnknownRecord(lessonStart.target) ||
-        (lessonStart.target.kind !== 'slide' && lessonStart.target.kind !== 'exercise') ||
-        typeof lessonStart.target.targetId !== 'string'
-      ) {
-        throw new Error(
-          `Course CatalogのlessonStartsが不正です: index ${String(index)}, lesson ${String(lessonIndex)}`,
-        );
-      }
-    });
-    return { id: course.id, manifestPath: course.manifestPath };
-  });
-
-  const learningPaths = value.learningPaths.map((learningPath, pathIndex) => {
-    if (!isUnknownRecord(learningPath) || !Array.isArray(learningPath.steps)) {
-      throw new Error(`Course CatalogのLearningPathが不正です: index ${String(pathIndex)}`);
-    }
-    const courseIds = learningPath.steps.map((step, stepIndex) => {
-      if (!isUnknownRecord(step) || typeof step.courseId !== 'string') {
-        throw new Error(
-          `Course CatalogのLearningPath Stepが不正です: index ${String(pathIndex)}, step ${String(stepIndex)}`,
-        );
-      }
-      return step.courseId;
-    });
-    return { courseIds };
-  });
-
-  const courseIds = new Set(courses.map(({ id }) => id));
-  for (const learningPath of learningPaths) {
-    for (const courseId of learningPath.courseIds) {
-      if (!courseIds.has(courseId)) {
-        throw new Error(`LearningPathが未知Courseを参照しています: ${courseId}`);
-      }
-    }
-  }
-
-  return {
-    courses,
-    learningPaths,
-  };
 }
 
 /** Smokeに必要なVite manifest chunk構造をruntime検証する。 */
@@ -224,12 +144,11 @@ export async function assertSubpathBuild(options: SmokeOptions): Promise<void> {
     await readBuildFile(options.distRoot, relativePath, 'Build Asset');
   }
 
-  const catalog = parseCourseCatalog(
-    await readBuildJson(options.distRoot, 'generated/content/catalog.json', 'Course Catalog'),
+  const catalog = CourseCatalogV3Schema.parse(
+    await readBuildJson(options.distRoot, 'generated/content/catalog-v3.json', 'Course Catalog v3'),
   );
   for (const course of catalog.courses) {
-    const manifestPath = assertSafeRelativePath(course.manifestPath, 'Course manifestPath');
-    await readBuildFile(options.distRoot, manifestPath, 'Course Manifest');
+    await readSplitCourseArtifacts(options.distRoot, course.id);
   }
 
   const manifest = parseViteManifest(

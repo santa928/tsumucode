@@ -46,8 +46,10 @@ const PerformanceManifestSchema = z.object({
     editorLoadedOnHome: z.literal(false),
   }),
   content: z.object({
-    catalogGzipMaxBytes: PositiveInteger,
-    courseManifestGzipMaxBytes: PositiveInteger,
+    catalogGzipMaxBytes: z.literal(20_480),
+    courseIndexGzipMaxBytes: z.literal(40_960),
+    lessonManifestGzipMaxBytes: z.literal(12_288),
+    routeMapAddedGzipMaxBytes: z.literal(8_192),
     singleImageMaxBytes: PositiveInteger,
     totalImagesMaxBytes: PositiveInteger,
     singleFontMaxBytes: PositiveInteger,

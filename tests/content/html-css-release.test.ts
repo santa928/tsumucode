@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { readSplitCourseArtifacts } from '../../scripts/content/readSplitCourseArtifacts';
 import type { CourseManifest } from '../../src/core/content/types';
 
 let course: CourseManifest;
@@ -7,10 +8,10 @@ let readme: string;
 
 beforeAll(async () => {
   const [courseSource, readmeSource] = await Promise.all([
-    readFile('public/generated/content/courses/html-css.json', 'utf8'),
+    readSplitCourseArtifacts('public', 'html-css'),
     readFile('README.md', 'utf8'),
   ]);
-  course = JSON.parse(courseSource) as CourseManifest;
+  course = courseSource;
   readme = readmeSource;
 });
 

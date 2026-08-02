@@ -1,5 +1,6 @@
 /** 分割教材を同一Originからintegrity検証し、同時取得を集約するRepository。 */
 import { resolvePublicAsset } from '../../shared/lib/resolvePublicAsset';
+import { resolveWorkspaceLessonIds } from './selectors';
 import {
   parseIntegrityVerifiedCourseIndex,
   parseIntegrityVerifiedLessonManifest,
@@ -40,6 +41,11 @@ export interface CourseContentRepositoryContract {
   loadCatalog(baseUrl: string): Promise<CourseCatalogV3>;
   loadCourseIndex(baseUrl: string, entry: CourseCatalogEntryV3): Promise<CourseIndex>;
   loadLesson(baseUrl: string, index: CourseIndex, lessonId: string): Promise<LessonManifest>;
+  loadWorkspaceLessons(
+    baseUrl: string,
+    index: CourseIndex,
+    currentExerciseId: string,
+  ): Promise<readonly LessonManifest[]>;
   prefetchLesson(baseUrl: string, index: CourseIndex, lessonId: string): Promise<void>;
 }
 
@@ -149,6 +155,16 @@ export class CourseContentRepository implements CourseContentRepositoryContract 
         throw new ContentLoadError('schema', resource, error);
       }
     });
+  }
+
+  /** 現在Exerciseまでの同一workspaceを所有するLessonだけを教材順で取得する。 */
+  async loadWorkspaceLessons(
+    baseUrl: string,
+    index: CourseIndex,
+    currentExerciseId: string,
+  ): Promise<readonly LessonManifest[]> {
+    const lessonIds = resolveWorkspaceLessonIds(index, currentExerciseId);
+    return Promise.all(lessonIds.map((lessonId) => this.loadLesson(baseUrl, index, lessonId)));
   }
 
   /** 任意prefetchを通常Lesson取得と同じcache／検証経路へ流す。 */

@@ -68,7 +68,7 @@ async function stabilizeScreenshotScroll(page: Page, screenId: string): Promise<
 
 /** Completion guardが要求する現在版の進捗とpassing snapshotをIndexedDBへ保存する。 */
 async function seedCompletionProgress(page: Page): Promise<void> {
-  await page.goto('generated/content/catalog.json');
+  await page.goto('generated/content/catalog-v3.json');
   await page.evaluate(async () => {
     await new Promise<void>((resolve, reject) => {
       const deletion = indexedDB.deleteDatabase('tsumucode-progress');

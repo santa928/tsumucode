@@ -1,22 +1,16 @@
 /** 全Courseを決定的にCompileし、検証成功時だけgenerated/contentを差し替える。 */
-import { createHash, randomUUID } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import { lstat, mkdir, readdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { CourseCatalogSchema } from '../../src/core/content/schema';
-import { lessonStartTarget } from '../../src/core/content/lessonStart';
-import type {
-  CourseCatalog,
-  CourseManifest,
-  LearningPathDefinition,
-} from '../../src/core/content/types';
+import type { CourseCatalogV3, CourseManifest } from '../../src/core/content/types';
 import {
   compileCourse,
   stringifyCanonicalJson,
   type CompiledCourseArtifacts,
 } from './compileCourse';
-import { resolveInside } from './io';
 import { compileLearningPaths } from './learningPaths';
+import { buildSplitContentDelivery, writeSplitContentDeliveryTree } from './splitContentDelivery';
 
 export interface CompileContentOptions {
   readonly sourceRoot: string;
@@ -25,7 +19,7 @@ export interface CompileContentOptions {
 }
 
 export interface CompilationSummary {
-  readonly catalog: CourseCatalog;
+  readonly catalog: CourseCatalogV3;
   readonly courseCount: number;
   readonly warnings: readonly string[];
 }
@@ -99,69 +93,6 @@ async function listCourseDirectories(sourceRoot: string): Promise<string[]> {
     directories.push(entry.name);
   }
   return directories.sort((left, right) => (left < right ? -1 : left > right ? 1 : 0));
-}
-
-/** Compilerが公開するCourse文字列のSHA-256を小文字hexで返す。 */
-function courseManifestSha256(course: CourseManifest): string {
-  return createHash('sha256').update(stringifyCanonicalJson(course), 'utf8').digest('hex');
-}
-
-/** Course Compilation配列からintegrity付き公開Catalogをallowlist投影する。 */
-function createCatalog(
-  compilations: readonly CompiledCourseArtifacts[],
-  learningPaths: readonly LearningPathDefinition[],
-): CourseCatalog {
-  return CourseCatalogSchema.parse({
-    schemaVersion: 2,
-    courses: compilations
-      .map(({ runtime: course }) => ({
-        id: course.id,
-        title: course.title,
-        description: course.description,
-        audience: course.audience,
-        estimatedMinutes: course.estimatedMinutes,
-        revision: course.revision,
-        publicationStatus: course.publicationStatus,
-        manifestPath: `generated/content/courses/${course.id}.json`,
-        manifestSha256: courseManifestSha256(course),
-        lessonStarts: course.phases.flatMap((phase) =>
-          [...phase.chapters]
-            .sort((left, right) => left.sequence - right.sequence)
-            .flatMap((chapter) =>
-              chapter.lessons.map((lesson) => ({
-                lessonId: lesson.id,
-                target: lessonStartTarget(lesson),
-              })),
-            ),
-        ),
-      }))
-      .sort((left, right) => (left.id < right.id ? -1 : left.id > right.id ? 1 : 0)),
-    learningPaths,
-  });
-}
-
-/** 検証済みCourse Artifactだけを新規staging Rootへ書き込む。 */
-async function writeCourseArtifacts(
-  outputRoot: string,
-  compilation: CompiledCourseArtifacts,
-): Promise<void> {
-  const courseId = compilation.runtime.id;
-  await mkdir(resolveInside(outputRoot, 'courses'), { recursive: true });
-  await writeFile(
-    resolveInside(outputRoot, `courses/${courseId}.json`),
-    stringifyCanonicalJson(compilation.runtime),
-  );
-  await writeFile(
-    resolveInside(outputRoot, `courses/${courseId}.provenance.json`),
-    stringifyCanonicalJson(compilation.publicProvenance),
-  );
-  for (const artifactPath of [...compilation.assets.keys()].sort()) {
-    const bytes = compilation.assets.get(artifactPath);
-    if (bytes === undefined) continue;
-    const target = resolveInside(outputRoot, artifactPath);
-    await mkdir(path.dirname(target), { recursive: true });
-    await writeFile(target, bytes);
-  }
 }
 
 type RemoveTree = (target: string) => Promise<void>;
@@ -354,23 +285,17 @@ export async function compileContent(options: CompileContentOptions): Promise<Co
       compilations.push(compilation);
     }
     const learningPaths = await compileLearningPaths(path.join(sourceRoot, 'learning-paths'));
-    const catalog = createCatalog(compilations, learningPaths);
-    const catalogRoundTrip = CourseCatalogSchema.parse(
-      JSON.parse(stringifyCanonicalJson(catalog)) as unknown,
-    );
+    const delivery = buildSplitContentDelivery(compilations, learningPaths);
+    const catalogRoundTrip = JSON.parse(
+      stringifyCanonicalJson(delivery.catalog),
+    ) as CourseCatalogV3;
     if (!options.checkOnly) {
       await mkdir(path.dirname(outputRoot), { recursive: true });
       await assertNoExistingSymlinkComponents(path.dirname(outputRoot));
       await acquireCompilerLock(lockRoot, lockToken, stagingRoot, backupRoot);
       ownsLock = true;
       await mkdir(stagingRoot, { recursive: false });
-      for (const compilation of compilations) {
-        await writeCourseArtifacts(stagingRoot, compilation);
-      }
-      await writeFile(
-        path.join(stagingRoot, 'catalog.json'),
-        stringifyCanonicalJson(catalogRoundTrip),
-      );
+      await writeSplitContentDeliveryTree(stagingRoot, delivery);
       await publishStaging(stagingRoot, outputRoot, backupRoot);
       published = true;
     }

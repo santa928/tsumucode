@@ -313,4 +313,36 @@ describe('WorkspaceLeaseGate', () => {
     expect(lease.dispose).toHaveBeenCalledOnce();
     expect(flush).toHaveBeenCalledTimes(2);
   });
+
+  it('解放中に同じworkspaceへ戻ると解放完了後に新しいLeaseを取得する', async () => {
+    const firstLease = createFakeLease({ status: 'owned', coordination: 'available' });
+    const secondLease = createFakeLease({ status: 'owned', coordination: 'available' });
+    const released = deferred<undefined>();
+    let useSecondLease = false;
+    firstLease.release.mockImplementationOnce(async () => {
+      firstLease.setState({ status: 'yielding', coordination: 'available' });
+      await released.promise;
+      firstLease.setState({ status: 'released', coordination: 'available' });
+    });
+    const coordinator: WorkspaceLeaseCoordinator = {
+      acquire: vi.fn(() => (useSecondLease ? secondLease.handle : firstLease.handle)),
+    };
+
+    const initial = renderGate(coordinator);
+    expect(await screen.findByTestId('editable-session')).toBeInTheDocument();
+    initial.unmount();
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(firstLease.release).toHaveBeenCalledOnce();
+
+    const resumed = renderGate(coordinator);
+    useSecondLease = true;
+    released.resolve(undefined);
+
+    expect(await screen.findByTestId('editable-session')).toBeInTheDocument();
+    expect(coordinator.acquire).toHaveBeenCalledTimes(2);
+    resumed.unmount();
+  });
 });

@@ -10,6 +10,7 @@ import { canonicalJson } from '../../src/core/persistence/canonicalJson';
 import { ContentProgressMigrationService } from '../../src/core/persistence/contentProgressMigration';
 import type { ProgressBundle, ProgressRepository } from '../../src/core/persistence/contracts';
 import { compileCourse, stringifyCanonicalJson } from '../content/compileCourse';
+import { projectCourseForSplitDelivery } from '../content/splitContentDelivery';
 import { hashPersistentIds, sha256Text } from './releaseHashes';
 import { ReleaseHistorySchema, type ReleaseHistory } from './releaseSchema';
 import {
@@ -431,7 +432,7 @@ export async function checkReleaseContinuity(
     parse(await readFile(path.join(root, 'content/html-css/release-history.yaml'), 'utf8')),
   );
   const compilation = await compileCourse(path.join(root, 'content/html-css'));
-  const course = compilation.runtime;
+  const course = projectCourseForSplitDelivery(compilation.runtime);
   const persistentIds = collectPersistentIds(course);
   const courseHash = sha256Text(stringifyCanonicalJson(course));
   validateReleaseMetadata({

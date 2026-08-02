@@ -49,7 +49,7 @@ export const fixtureCourse: CourseManifest = {
     capstoneLessons: 0,
     estimatedMinutes: 15,
   },
-  provenanceManifestPath: 'generated/content/courses/html-css.provenance.json',
+  provenanceManifestPath: 'generated/content/courses/html-css/provenance.json',
   progressMigrations: [],
   phases: [
     {
@@ -199,7 +199,7 @@ export const fixtureCourse: CourseManifest = {
 };
 
 export const fixtureCatalog: CourseCatalog = {
-  schemaVersion: 2,
+  schemaVersion: 3,
   courses: [
     {
       id: fixtureCourse.id,
@@ -209,8 +209,8 @@ export const fixtureCatalog: CourseCatalog = {
       estimatedMinutes: fixtureCourse.estimatedMinutes,
       revision: fixtureCourse.revision,
       publicationStatus: fixtureCourse.publicationStatus,
-      manifestPath: 'generated/content/courses/html-css.json',
-      manifestSha256: 'a199fa17eb3da55123cf99d5d7234af710d551a6a6d8c90f350251c6b203e3bb',
+      indexPath: 'generated/content/courses/html-css/index.json',
+      indexSha256: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
       lessonStarts: [
         {
           lessonId: 'lesson-first-heading',

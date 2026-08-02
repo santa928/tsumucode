@@ -26,8 +26,8 @@ function pageFixture(): {
     title: 'Tailwind CSS',
     description: 'Utility classで見た目を組み立てる',
     revision: '2026-07-31.tailwind',
-    manifestPath: 'generated/content/courses/tailwind.json',
-    manifestSha256: 'b'.repeat(64),
+    indexPath: 'generated/content/courses/tailwind/index.json',
+    indexSha256: 'b'.repeat(64),
     lessonStarts: [
       {
         lessonId: 'tailwind-utilities',
@@ -41,8 +41,8 @@ function pageFixture(): {
     title: 'JavaScript',
     description: 'ページへ動きを加える',
     revision: '2026-07-31.javascript',
-    manifestPath: 'generated/content/courses/javascript.json',
-    manifestSha256: 'c'.repeat(64),
+    indexPath: 'generated/content/courses/javascript/index.json',
+    indexSha256: 'c'.repeat(64),
     lessonStarts: [
       { lessonId: 'js-values', target: { kind: 'slide', targetId: 'js-values-intro' } },
     ],

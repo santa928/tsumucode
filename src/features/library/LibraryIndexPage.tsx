@@ -1,6 +1,6 @@
 import { Link, useLoaderData } from 'react-router';
 import type { libraryCourseLoader } from '../../app/libraryContentLoaders';
-import type { Lesson } from '../../core/content/types';
+import type { LessonOutline } from '../../core/content/types';
 import { buildLibrarySlidePath } from './courseSlideSequence';
 
 const CHAPTER_KIND_LABEL = {
@@ -10,7 +10,7 @@ const CHAPTER_KIND_LABEL = {
 } as const;
 
 /** Lessonの先頭Slideを返し、公開教材の閲覧契約違反は明示的に失敗する。 */
-function requireFirstSlide(lesson: Lesson) {
+function requireFirstSlide(lesson: LessonOutline) {
   const firstSlide = lesson.slides[0];
   if (firstSlide === undefined) {
     throw new Error(`スライド目次へ表示できるSlideがありません: ${lesson.id}`);

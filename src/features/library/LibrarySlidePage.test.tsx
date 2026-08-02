@@ -3,9 +3,9 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { createMemoryRouter } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
-import { fixtureCourse } from '../../../tests/fixtures/course';
-import type { CourseManifest, Lesson, Slide } from '../../core/content/types';
-import { resolveCourseSlideContext } from './courseSlideSequence';
+import { fixtureCourse, fixtureCourseIndex } from '../../../tests/fixtures/course';
+import type { CourseIndex, CourseManifest, Lesson, Slide } from '../../core/content/types';
+import { resolveCourseSlideOutlineContext } from './courseSlideSequence';
 import { LibrarySlidePage } from './LibrarySlidePage';
 
 /** Fixture SlideをViewer Test用の永続IDと題名へ複製する。 */
@@ -43,18 +43,69 @@ function createViewerCourse(): CourseManifest {
   return course;
 }
 
+/** Viewer専用Courseから本文を持たない移動用Indexを投影する。 */
+function createViewerIndex(course: CourseManifest): CourseIndex {
+  return {
+    ...structuredClone(fixtureCourseIndex),
+    phases: course.phases.map((phase) => ({
+      id: phase.id,
+      title: phase.title,
+      description: phase.description,
+      chapters: phase.chapters.map((chapter) => ({
+        id: chapter.id,
+        sequence: chapter.sequence,
+        title: chapter.title,
+        goal: chapter.goal,
+        estimatedMinutes: chapter.estimatedMinutes,
+        kind: chapter.kind,
+        lessons: chapter.lessons.map((lesson) => {
+          if (lesson.kind !== 'standard') throw new Error('Viewer fixtureはstandardだけです');
+          return {
+            id: lesson.id,
+            kind: lesson.kind,
+            title: lesson.title,
+            goal: lesson.goal,
+            estimatedMinutes: lesson.estimatedMinutes,
+            prerequisiteLessonIds: lesson.prerequisiteLessonIds,
+            slides: lesson.slides.map(({ id, title, kind }) => ({ id, title, kind })),
+            exercises: lesson.exercises.map(({ id, title, kind, workspaceId }) => ({
+              id,
+              title,
+              kind,
+              workspaceId,
+            })),
+            completion: lesson.completion,
+            manifestPath: `generated/content/courses/${course.id}/lessons/${lesson.id}.json`,
+            manifestSha256: 'a'.repeat(64),
+          };
+        }),
+      })),
+    })),
+  };
+}
+
 /** 実Loaderと同じSlide Contextを解決するMemory RouterでViewerを表示する。 */
 function renderLibrarySlide(slideId: string) {
   const course = createViewerCourse();
+  const index = createViewerIndex(course);
   const route = '/library/:courseId/lessons/:lessonId/slides/:slideId';
   const router = createMemoryRouter(
     [
       {
         path: route,
-        loader: ({ params }) => ({
-          course,
-          context: resolveCourseSlideContext(course, params.lessonId ?? '', params.slideId ?? ''),
-        }),
+        loader: ({ params }) => {
+          const context = resolveCourseSlideOutlineContext(
+            index,
+            params.lessonId ?? '',
+            params.slideId ?? '',
+          );
+          const lesson = course.phases
+            .flatMap(({ chapters }) => chapters)
+            .flatMap(({ lessons }) => lessons)
+            .find(({ id }) => id === context.current.lesson.id)!;
+          const slide = lesson.slides.find(({ id }) => id === context.current.slide.id)!;
+          return { course: index, context, lesson, slide };
+        },
         HydrateFallback: () => <p>スライドを準備中</p>,
         element: <LibrarySlidePage />,
       },

@@ -1,20 +1,22 @@
 /** 編集不能端末向けにPC案内または現在合格済みのsandbox Previewを表示する。 */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router';
-import type { CourseManifest, Exercise, Lesson } from '../../../core/content/types';
+import type { CourseIndex, Exercise, Lesson } from '../../../core/content/types';
 import type { ExerciseDraft } from '../../../core/persistence/contracts';
-import { findWorkspaceTargets } from '../../../core/persistence/progressUpdates';
+import { findWorkspaceValidationTargets } from '../../../core/persistence/progressUpdates';
 import type { ReadOnlyPreviewAdapter, ResolvedPreviewAsset } from '../../../core/runtime/contracts';
 import { StackedCard } from '../../../design-system/components/StackedCard';
 import { WorkshopNotice } from '../../../design-system/components/WorkshopNotice';
 import { resolvePublicAsset } from '../../../shared/lib/resolvePublicAsset';
 import { PreviewFrame } from '../components';
 import { learningRuntimeServices } from '../runtimeServices';
+import { useAdjacentLessonPrefetch } from '../useAdjacentLessonPrefetch';
 
 interface ReadOnlyExercisePageProps {
-  readonly course: CourseManifest;
+  readonly course: CourseIndex;
   readonly lesson: Lesson;
   readonly exercise: Exercise;
+  readonly workspaceLessons: readonly Lesson[];
 }
 
 type PassingSnapshot = ExerciseDraft['lastPassingSnapshots'][string];
@@ -33,11 +35,12 @@ type ClipboardState = 'idle' | 'copying' | 'success' | 'error';
 
 /** workspace全工程のAssetをIDで重複排除し、定義衝突を明示的に拒否する。 */
 function resolveWorkspaceAssets(
-  course: CourseManifest,
+  course: CourseIndex,
+  workspaceLessons: readonly Lesson[],
   exercise: Exercise,
 ): readonly ResolvedPreviewAsset[] {
   const byId = new Map<string, ResolvedPreviewAsset>();
-  for (const asset of findWorkspaceTargets(course, exercise.id).flatMap(
+  for (const asset of findWorkspaceValidationTargets(course, workspaceLessons, exercise.id).flatMap(
     ({ exercise: target }) => target.assets,
   )) {
     const resolved: ResolvedPreviewAsset = {
@@ -69,7 +72,13 @@ async function copyCurrentUrl(): Promise<void> {
 }
 
 /** 小画面ではEditorを起動せず、完了済みDraftだけをread-only Previewへ接続する。 */
-export function ReadOnlyExercisePage({ course, lesson, exercise }: ReadOnlyExercisePageProps) {
+export function ReadOnlyExercisePage({
+  course,
+  lesson,
+  exercise,
+  workspaceLessons,
+}: ReadOnlyExercisePageProps) {
+  useAdjacentLessonPrefetch(course, lesson.id);
   const [state, setState] = useState<ReadOnlyState>({ kind: 'loading' });
   const [clipboardState, setClipboardState] = useState<ClipboardState>('idle');
   const [attempt, setAttempt] = useState(0);
@@ -77,8 +86,8 @@ export function ReadOnlyExercisePage({ course, lesson, exercise }: ReadOnlyExerc
   const previewOperationsRef = useRef(new WeakMap<ReadOnlyPreviewAdapter, Promise<void>>());
   const previewDisposalsRef = useRef(new WeakMap<ReadOnlyPreviewAdapter, Promise<void>>());
   const resolvedAssets = useMemo(
-    () => resolveWorkspaceAssets(course, exercise),
-    [course, exercise],
+    () => resolveWorkspaceAssets(course, workspaceLessons, exercise),
+    [course, exercise, workspaceLessons],
   );
   const previewViewport = exercise.previewViewports[0];
   const previewViewportId = previewViewport?.id;

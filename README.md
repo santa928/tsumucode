@@ -133,7 +133,7 @@ Production Build後、Chromium/Firefox/WebKitのE2E、固定10演習の実ブラ
 ./scripts/docker-compose.sh run --rm -e BASE_PATH=/repository-name/ app npm run test:lighthouse
 ```
 
-主な性能予算はLCP 2,500 ms以下、CLS 0.1以下、主要操作200 ms以下、Preview p95 500 ms以下、判定p95 300 ms以下、下書き永続化500 ms以下です。Home初期JavaScriptはgzip 256,000 bytes以下とし、EditorとRunnerをHomeやSlideで読み込みません。予算の完全な固定値は`content/html-css/performance.yaml`と独立固定テストで管理します。
+主な性能予算はLCP 2,500 ms以下、CLS 0.1以下、主要操作200 ms以下、Preview p95 500 ms以下、判定p95 300 ms以下、下書き永続化500 ms以下です。Home初期JavaScriptはgzip 256,000 bytes以下とし、EditorとRunnerをHomeやSlideで読み込みません。教材配信はCatalog v3 gzip 20,480 bytes、Course Index 40,960 bytes、各Lesson Manifest 12,288 bytes、route map追加分8,192 bytesを上限にします。予算の完全な固定値は`content/html-css/performance.yaml`と独立固定テストで管理します。
 
 アクセシビリティは、意味のあるLandmarkと見出し、本文スキップ、Keyboard操作、Focus管理、CodeMirrorからの脱出、Reduced Motion、320 CSS px reflow、200%/400% Zoom、WCAG A/AAのaxe検査を対象にします。自動検査に加え、Keyboard／Zoom／Reflowの実機結果を`docs/quality/a11y-manual.md`へ記録します。VoiceOverの手動実機確認は初回Release対象外で、対応済みとは主張しません。
 
@@ -146,7 +146,7 @@ Production Build後、Chromium/Firefox/WebKitのE2E、固定10演習の実ブラ
 ./scripts/docker-compose.sh run --rm -e BASE_PATH=/repository-name/ app npm run smoke:subpath
 ```
 
-Smokeは、HTMLが参照する初期Asset、教材Catalog、Course Manifest、Viteの静的import、安全な相対Path、Service Worker不在、配信容量を検証します。このコマンドだけでは公開しません。
+Smokeは、HTMLが参照する初期Asset、教材Catalog v3、Course Index、Lesson Manifest、Viteの静的import、安全な相対Path、Service Worker不在、配信容量を検証します。Course mapではIndexまで、Slideでは現在Lessonだけを取得するため、51 Lesson全体を初期表示で配信しません。このコマンドだけでは公開しません。
 
 ## GitHub Pagesへの公開
 

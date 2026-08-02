@@ -1,6 +1,6 @@
-import { readFile } from 'node:fs/promises';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { CourseManifestSchema } from '../../src/core/content/schema';
+import { readSplitCourseArtifacts } from '../../scripts/content/readSplitCourseArtifacts';
 import type { CourseManifest, Exercise, Lesson } from '../../src/core/content/types';
 import type {
   ExerciseDraft,
@@ -58,9 +58,7 @@ let lessons: readonly Lesson[];
 let exercises: readonly Exercise[];
 
 beforeAll(async () => {
-  course = CourseManifestSchema.parse(
-    JSON.parse(await readFile('public/generated/content/courses/html-css.json', 'utf8')) as unknown,
-  );
+  course = CourseManifestSchema.parse(await readSplitCourseArtifacts('public', 'html-css'));
   lessons = course.phases.flatMap(({ chapters }) =>
     chapters.flatMap(({ lessons: chapterLessons }) => chapterLessons),
   );

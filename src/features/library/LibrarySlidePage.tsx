@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLoaderData, useNavigate } from 'react-router';
 import type { librarySlideLoader } from '../../app/libraryContentLoaders';
-import type { CourseManifest, Lesson } from '../../core/content/types';
+import type { CourseIndex, Lesson } from '../../core/content/types';
 import { LearningDrawer } from '../learning/components/LearningDrawer';
 import { SlideStage } from '../learning/components/SlideStage';
 import { LearningViewportShell } from '../learning/layout/LearningViewportShell';
-import { buildCourseSlideSequence } from './courseSlideSequence';
+import { useAdjacentLessonPrefetch } from '../learning/useAdjacentLessonPrefetch';
+import { buildCourseSlideOutlineSequence } from './courseSlideSequence';
 import { LibraryToolRail } from './LibraryToolRail';
 
 type DrawerMode = 'slides' | 'glossary' | undefined;
@@ -25,7 +26,7 @@ function isLibrarySlideShortcutBlockedTarget(target: EventTarget | null): boolea
 }
 
 /** 検証済み参照を現在LessonのGlossary entityへ変換する。 */
-function resolveGlossary(course: CourseManifest, lesson: Lesson) {
+function resolveGlossary(course: CourseIndex, lesson: Lesson) {
   return lesson.glossaryRefs.map((glossaryId) => {
     const entry = course.glossary.find(({ id }) => id === glossaryId);
     if (entry === undefined) throw new Error(`用語が見つかりません: ${glossaryId}`);
@@ -35,7 +36,8 @@ function resolveGlossary(course: CourseManifest, lesson: Lesson) {
 
 /** 進捗へ触れず、Course全体を連続して読めるスライドViewerを表示する。 */
 export function LibrarySlidePage() {
-  const { course, context } = useLoaderData<typeof librarySlideLoader>();
+  const { course, context, lesson, slide } = useLoaderData<typeof librarySlideLoader>();
+  useAdjacentLessonPrefetch(course, lesson.id);
   const navigate = useNavigate();
   const slideTitleRef = useRef<HTMLHeadingElement>(null);
   const slideListTriggerRef = useRef<HTMLButtonElement>(null);
@@ -44,8 +46,8 @@ export function LibrarySlidePage() {
   const [drawerMode, setDrawerMode] = useState<DrawerMode>();
   const { current, next, previous } = context;
   const currentSlideId = current.slide.id;
-  const sequence = buildCourseSlideSequence(course);
-  const glossary = resolveGlossary(course, current.lesson);
+  const sequence = buildCourseSlideOutlineSequence(course);
+  const glossary = resolveGlossary(course, lesson);
   const previousPath = previous?.path;
   const nextPath = next?.path;
   const positionLabel = `Lesson ${String(current.lessonIndex + 1)} / ${String(
@@ -145,11 +147,7 @@ export function LibrarySlidePage() {
         }
       >
         <div className="tc-slide-stage-stack tc-library-stage-stack">
-          <SlideStage
-            slide={current.slide}
-            baseUrl={import.meta.env.BASE_URL}
-            titleRef={slideTitleRef}
-          />
+          <SlideStage slide={slide} baseUrl={import.meta.env.BASE_URL} titleRef={slideTitleRef} />
         </div>
       </LearningViewportShell>
 

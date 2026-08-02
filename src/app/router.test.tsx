@@ -1,14 +1,37 @@
 import { RouterProvider } from 'react-router/dom';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fixtureCatalog, fixtureCourse } from '../../tests/fixtures/course';
+import {
+  fixtureCatalog,
+  fixtureCourse,
+  fixtureCourseIndex,
+  fixtureLessonManifest,
+} from '../../tests/fixtures/course';
+import { courseContentRepository } from '../core/content/CourseContentRepository';
+import type * as LoadCourseCatalogModule from '../core/content/loadCourseCatalog';
 import { createAppRouter } from './router';
+
+const content = vi.hoisted(() => ({
+  loadCourseCatalog: vi.fn(),
+  loadCourseIndex: vi.fn(),
+  loadLessonManifest: vi.fn(),
+}));
+
+vi.mock('../core/content/loadCourseCatalog', async (importOriginal) => {
+  const actual = await importOriginal<typeof LoadCourseCatalogModule>();
+  return {
+    ...actual,
+    loadCourseCatalog: content.loadCourseCatalog,
+    loadCourseIndex: content.loadCourseIndex,
+    loadLessonManifest: content.loadLessonManifest,
+  };
+});
 
 const runtime = vi.hoisted(() => {
   const emptyNotices: readonly unknown[] = [];
   const healthyPersistence = { kind: 'healthy' as const, hasUnsavedChanges: false };
   return {
-    ensureCourse: vi.fn(async () => undefined),
+    ensureCourseIndex: vi.fn(async () => []),
     repository: {
       getCourse: vi.fn(async () => undefined),
       putCourse: vi.fn(async () => undefined),
@@ -65,14 +88,14 @@ let router: ReturnType<typeof createAppRouter> | undefined;
 const ROUTER_READY_TIMEOUT_MS = 5_000;
 
 beforeEach(() => {
-  vi.stubGlobal(
-    'fetch',
-    vi.fn(async (input: RequestInfo | URL) => {
-      const url = input instanceof Request ? input.url : input.toString();
-      return Response.json(url.endsWith('html-css.json') ? fixtureCourse : fixtureCatalog);
-    }),
-  );
-  runtime.ensureCourse.mockClear();
+  content.loadCourseCatalog.mockReset().mockResolvedValue(structuredClone(fixtureCatalog));
+  content.loadCourseIndex.mockReset().mockResolvedValue(structuredClone(fixtureCourseIndex));
+  content.loadLessonManifest.mockReset().mockResolvedValue(structuredClone(fixtureLessonManifest));
+  vi.spyOn(courseContentRepository, 'loadWorkspaceLessons').mockResolvedValue([
+    structuredClone(fixtureLessonManifest),
+  ]);
+  vi.spyOn(courseContentRepository, 'prefetchLesson').mockResolvedValue();
+  runtime.ensureCourseIndex.mockClear();
   runtime.repository.getCourse.mockClear();
   runtime.repository.putCourse.mockClear();
   runtime.repository.getDraft.mockClear();
@@ -82,6 +105,7 @@ afterEach(() => {
   router?.dispose();
   router = undefined;
   window.location.hash = originalHash;
+  vi.restoreAllMocks();
   vi.unstubAllGlobals();
 });
 
@@ -102,7 +126,7 @@ describe('createAppRouter', () => {
       '#/library/html-css/lessons/lesson-first-heading/slides/slide-html-role',
     );
     expect(router.state.location.pathname).toBe('/library/html-css');
-    expect(runtime.ensureCourse).not.toHaveBeenCalled();
+    expect(runtime.ensureCourseIndex).not.toHaveBeenCalled();
     expect(runtime.repository.getCourse).not.toHaveBeenCalled();
     expect(runtime.repository.getDraft).not.toHaveBeenCalled();
   });
@@ -119,7 +143,7 @@ describe('createAppRouter', () => {
     expect(router.state.location.pathname).toBe(
       '/library/html-css/lessons/lesson-first-heading/slides/slide-html-role',
     );
-    expect(runtime.ensureCourse).not.toHaveBeenCalled();
+    expect(runtime.ensureCourseIndex).not.toHaveBeenCalled();
     expect(runtime.repository.getCourse).not.toHaveBeenCalled();
     expect(runtime.repository.getDraft).not.toHaveBeenCalled();
   });
@@ -133,7 +157,7 @@ describe('createAppRouter', () => {
       await screen.findByRole('heading', { name: '教材を読み込めませんでした' }),
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'もう一度読み込む' })).toBeEnabled();
-    expect(runtime.ensureCourse).not.toHaveBeenCalled();
+    expect(runtime.ensureCourseIndex).not.toHaveBeenCalled();
   });
 
   it('Hash RouterのHome routeを表示する', async () => {
@@ -153,15 +177,10 @@ describe('createAppRouter', () => {
     const pendingFetch = new Promise<void>((resolve) => {
       resolveFetch = resolve;
     });
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(async (input: RequestInfo | URL) => {
-        const url = input instanceof Request ? input.url : input.toString();
-        if (url.endsWith('html-css.json')) return Response.json(fixtureCourse);
-        await pendingFetch;
-        return Response.json(fixtureCatalog);
-      }),
-    );
+    content.loadCourseCatalog.mockImplementation(async () => {
+      await pendingFetch;
+      return structuredClone(fixtureCatalog);
+    });
     window.location.hash = '#/';
     router = createAppRouter();
     render(<RouterProvider router={router} />);
@@ -190,7 +209,7 @@ describe('createAppRouter', () => {
   });
 
   it('Catalog取得失敗を再試行可能な画面へ変換する', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('error', { status: 500 })));
+    content.loadCourseCatalog.mockRejectedValue(new Error('offline'));
     window.location.hash = '#/';
     router = createAppRouter();
     render(<RouterProvider router={router} />);
@@ -216,13 +235,6 @@ describe('createAppRouter', () => {
   });
 
   it('Course URLへ直接アクセスして検証済みコースマップを表示する', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(async (input: RequestInfo | URL) => {
-        const url = input instanceof Request ? input.url : input.toString();
-        return Response.json(url.endsWith('html-css.json') ? fixtureCourse : fixtureCatalog);
-      }),
-    );
     window.location.hash = '#/courses/html-css';
     router = createAppRouter();
     render(<RouterProvider router={router} />);
@@ -241,17 +253,10 @@ describe('createAppRouter', () => {
     const pendingCatalog = new Promise<void>((resolve) => {
       resolveCatalog = resolve;
     });
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(async (input: RequestInfo | URL) => {
-        const url = input instanceof Request ? input.url : input.toString();
-        if (!url.endsWith('html-css.json')) {
-          await pendingCatalog;
-          return Response.json(fixtureCatalog);
-        }
-        return Response.json(fixtureCourse);
-      }),
-    );
+    content.loadCourseCatalog.mockImplementation(async () => {
+      await pendingCatalog;
+      return structuredClone(fixtureCatalog);
+    });
     window.location.hash = '#/courses/html-css';
     router = createAppRouter();
     render(<RouterProvider router={router} />);
@@ -270,13 +275,6 @@ describe('createAppRouter', () => {
   });
 
   it('Slide URLへ直接アクセスして検証済み教材本文を表示する', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(async (input: RequestInfo | URL) => {
-        const url = input instanceof Request ? input.url : input.toString();
-        return Response.json(url.endsWith('html-css.json') ? fixtureCourse : fixtureCatalog);
-      }),
-    );
     window.location.hash = '#/courses/html-css/lessons/lesson-first-heading/slides/slide-html-role';
     router = createAppRouter();
     render(<RouterProvider router={router} />);
@@ -288,13 +286,6 @@ describe('createAppRouter', () => {
   });
 
   it('Exercise URLは404にせず端末条件付きのPC案内で受け止める', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(async (input: RequestInfo | URL) => {
-        const url = input instanceof Request ? input.url : input.toString();
-        return Response.json(url.endsWith('html-css.json') ? fixtureCourse : fixtureCatalog);
-      }),
-    );
     window.location.hash =
       '#/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading';
     router = createAppRouter();

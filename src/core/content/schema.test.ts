@@ -1,9 +1,8 @@
 /** 公開Course契約のfail-closed境界、参照整合、移行chainを固定する。 */
 import { describe, expect, it } from 'vitest';
-import { fixtureCatalog, fixtureCourse } from '../../../tests/fixtures/course';
+import { fixtureCourse } from '../../../tests/fixtures/course';
 import {
   AssetRefSchema,
-  CourseCatalogSchema,
   CourseManifestSchema,
   ExerciseSchema,
   PreviewViewportSchema,
@@ -56,18 +55,6 @@ function expectCourseIssue(input: unknown, expected: string | RegExp, expectedPa
   if (expectedPath !== undefined) {
     expect(result.error.issues.some((issue) => issue.path.join('.') === expectedPath)).toBe(true);
   }
-}
-
-/** Catalog Schemaの失敗messageとpathを1つの検証可能な文字列へ畳む。 */
-function expectCatalogIssue(input: unknown, expected: string | RegExp): void {
-  const result = CourseCatalogSchema.safeParse(input);
-  expect(result.success).toBe(false);
-  if (result.success) throw new Error('Catalog Schemaが不正入力を受理しました');
-  const issues = result.error.issues
-    .map((issue) => `${issue.path.join('.')}: ${issue.message}`)
-    .join('\n');
-  if (typeof expected === 'string') expect(issues).toContain(expected);
-  else expect(issues).toMatch(expected);
 }
 
 /** 全IDと宣言集計を整えた2 Lesson Courseを作る。 */
@@ -415,7 +402,7 @@ describe('CourseManifestSchema canonical path', () => {
     }
   });
 
-  it('File、Asset、Catalogも同じcanonical path契約を使う', () => {
+  it('FileとAssetも同じcanonical path契約を使う', () => {
     const fileCourse = cloneCourse();
     firstStandardExercise(firstStandardLesson(fileCourse)).files[0]!.path = '%2e%2e/index.html';
     expectCourseIssue(fileCourse, '安全な相対Path');
@@ -429,10 +416,6 @@ describe('CourseManifestSchema canonical path', () => {
       provenanceId: 'unsafe-asset-provenance',
     });
     expectCourseIssue(assetCourse, '安全な相対Path');
-
-    const catalog = structuredClone(fixtureCatalog);
-    catalog.courses[0]!.manifestPath = 'generated//course.json';
-    expectCatalogIssue(catalog, '安全な相対Path');
   });
 });
 
@@ -1276,91 +1259,5 @@ describe('CourseManifestSchema progress migration', () => {
       },
     ]);
     expectCourseIssue(course, 'migration終端が現行IDへ到達しません');
-  });
-});
-
-describe('CourseCatalogSchema', () => {
-  it('正しいCatalogを受理する', () => {
-    expect(CourseCatalogSchema.parse(fixtureCatalog)).toEqual(fixtureCatalog);
-  });
-
-  it('Course IDとcanonical manifest pathの重複を拒否する', () => {
-    const duplicateId = structuredClone(fixtureCatalog);
-    duplicateId.courses.push(structuredClone(duplicateId.courses[0]!));
-    expectCatalogIssue(duplicateId, 'Catalog Course IDが重複しています');
-
-    const duplicatePath = structuredClone(fixtureCatalog);
-    duplicatePath.courses.push({
-      ...structuredClone(duplicatePath.courses[0]!),
-      id: 'another-course',
-      manifestPath: './generated/content/courses/html-css.json',
-    });
-    expectCatalogIssue(duplicatePath, 'Catalog manifest pathが重複しています');
-  });
-
-  it('Course entryが0件の公開Catalogを拒否する', () => {
-    const catalog = structuredClone(fixtureCatalog);
-    catalog.courses = [];
-    expect(CourseCatalogSchema.safeParse(catalog).success).toBe(false);
-  });
-
-  it('Manifest integrityを64桁の小文字SHA-256に限定する', () => {
-    const invalid = structuredClone(fixtureCatalog);
-    invalid.courses[0]!.manifestSha256 = 'ABC123';
-    expect(CourseCatalogSchema.safeParse(invalid).success).toBe(false);
-  });
-
-  it('Course内のLesson開始先重複を拒否する', () => {
-    const invalid = structuredClone(fixtureCatalog);
-    invalid.courses[0]!.lessonStarts.push(structuredClone(invalid.courses[0]!.lessonStarts[0]!));
-    expectCatalogIssue(invalid, 'Catalog Lesson IDが重複しています');
-  });
-
-  it('LearningPathの未知Course参照と重複Stepを拒否する', () => {
-    const unknown = structuredClone(fixtureCatalog);
-    unknown.learningPaths[0]!.steps.push({
-      courseId: 'javascript',
-      role: 'required',
-      prerequisiteCourseIds: ['html-css'],
-    });
-    expectCatalogIssue(unknown, 'LearningPathのCourse参照先がありません');
-
-    const duplicate = structuredClone(fixtureCatalog);
-    duplicate.learningPaths[0]!.steps.push(structuredClone(duplicate.learningPaths[0]!.steps[0]!));
-    expectCatalogIssue(duplicate, 'LearningPathのCourse Stepが重複しています');
-  });
-
-  it('前方prerequisiteと公開Pathからdraft Courseへの参照を拒否する', () => {
-    const forward = structuredClone(fixtureCatalog);
-    forward.courses.push({
-      ...structuredClone(forward.courses[0]!),
-      id: 'javascript',
-      revision: '2026-07-31.javascript',
-      manifestPath: 'generated/content/courses/javascript.json',
-      manifestSha256: 'b'.repeat(64),
-    });
-    forward.learningPaths[0]!.steps.unshift({
-      courseId: 'javascript',
-      role: 'required',
-      prerequisiteCourseIds: ['html-css'],
-    });
-    expectCatalogIssue(
-      forward,
-      'LearningPath prerequisiteは現在Stepより前のCourseだけを参照できます',
-    );
-
-    const draft = structuredClone(fixtureCatalog);
-    draft.courses[0]!.publicationStatus = 'draft';
-    expectCatalogIssue(draft, '公開LearningPathからdraft Courseを参照できません');
-  });
-
-  it('Catalog rootとentryの未知fieldを拒否する', () => {
-    const root = structuredClone(fixtureCatalog);
-    Object.assign(root, { generatedAt: 'now' });
-    expectCatalogIssue(root, /Unrecognized key/);
-
-    const entry = structuredClone(fixtureCatalog);
-    Object.assign(entry.courses[0]!, { manifestPatth: 'typo' });
-    expectCatalogIssue(entry, /Unrecognized key/);
   });
 });

@@ -2,6 +2,7 @@
 import { lstat, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { resolvePublicAsset } from '../src/shared/lib/resolvePublicAsset.ts';
 
 interface InlineProductionCssOptions {
   readonly distRoot: string;
@@ -14,6 +15,14 @@ interface ViteManifestChunk {
 
 const libraryEntryKey = 'src/app/libraryEntry.tsx';
 const normalLearningEntryKey = 'src/app/normalLearningEntry.tsx';
+const courseIdPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/u;
+const contentCatalogPath = 'generated/content/catalog-v3.json';
+
+interface CoursePreloadRoute {
+  readonly courseId: string;
+  readonly indexPath: string;
+  readonly lessons: readonly (readonly [string, string])[];
+}
 
 /** unknown値をJSON Objectへ安全に絞り込む。 */
 function isUnknownRecord(value: unknown): value is Readonly<Record<string, unknown>> {
@@ -100,12 +109,119 @@ function modeAssetPaths(manifestSource: string): {
   };
 }
 
+/** 公開pathをcanonical相対pathへ変換し、期待する完全pathと一致することを確認する。 */
+function canonicalContentPath(value: unknown, expected: string, label: string): string {
+  if (typeof value !== 'string') throw new Error(`${label}がありません`);
+  const canonicalPath = resolvePublicAsset('/', value).slice(1);
+  if (canonicalPath !== value || canonicalPath !== expected) {
+    throw new Error(`${label}がcanonicalではありません: ${value}`);
+  }
+  return canonicalPath;
+}
+
+/** Course Index最小構造からLesson IDと公開Manifest pathを重複なく取得する。 */
+function lessonPreloadPaths(
+  indexSource: string,
+  courseId: string,
+): readonly (readonly [string, string])[] {
+  const index = JSON.parse(indexSource) as unknown;
+  if (
+    !isUnknownRecord(index) ||
+    index.schemaVersion !== 1 ||
+    index.id !== courseId ||
+    !Array.isArray(index.phases)
+  ) {
+    throw new Error(`公開Course Indexの最小構造が不正です: ${courseId}`);
+  }
+  const lessons: (readonly [string, string])[] = [];
+  const lessonIds = new Set<string>();
+  for (const phase of index.phases) {
+    if (!isUnknownRecord(phase) || !Array.isArray(phase.chapters)) {
+      throw new Error(`公開Course IndexのPhaseが不正です: ${courseId}`);
+    }
+    for (const chapter of phase.chapters) {
+      if (!isUnknownRecord(chapter) || !Array.isArray(chapter.lessons)) {
+        throw new Error(`公開Course IndexのChapterが不正です: ${courseId}`);
+      }
+      for (const lesson of chapter.lessons) {
+        if (
+          !isUnknownRecord(lesson) ||
+          typeof lesson.id !== 'string' ||
+          !courseIdPattern.test(lesson.id)
+        ) {
+          throw new Error(`公開Course IndexのLesson idがcanonicalではありません: ${courseId}`);
+        }
+        if (lessonIds.has(lesson.id)) {
+          throw new Error(`公開Course IndexのLesson idが重複しています: ${lesson.id}`);
+        }
+        lessonIds.add(lesson.id);
+        lessons.push([
+          lesson.id,
+          canonicalContentPath(
+            lesson.manifestPath,
+            `generated/content/courses/${courseId}/lessons/${lesson.id}.json`,
+            `公開Lesson manifestPath: ${lesson.id}`,
+          ),
+        ]);
+      }
+    }
+  }
+  if (lessons.length === 0) throw new Error(`公開Course IndexにLessonがありません: ${courseId}`);
+  return lessons;
+}
+
+/** 公開Catalog v3と各Indexから検証済みのRoute別先読み対応表を取得する。 */
+async function coursePreloadRoutes(
+  distRoot: string,
+  catalogSource: string,
+): Promise<readonly CoursePreloadRoute[]> {
+  const catalog = JSON.parse(catalogSource) as unknown;
+  if (!isUnknownRecord(catalog) || catalog.schemaVersion !== 3 || !Array.isArray(catalog.courses)) {
+    throw new Error('公開Catalogのcoursesが配列ではありません');
+  }
+
+  const courseIds = new Set<string>();
+  const routes: CoursePreloadRoute[] = [];
+  for (const [index, course] of catalog.courses.entries()) {
+    if (!isUnknownRecord(course)) {
+      throw new Error(`公開CatalogのCourseがObjectではありません: ${String(index)}`);
+    }
+    if (typeof course.id !== 'string' || !courseIdPattern.test(course.id)) {
+      throw new Error(`公開CatalogのCourse idがcanonicalではありません: ${String(course.id)}`);
+    }
+    if (courseIds.has(course.id)) {
+      throw new Error(`公開CatalogのCourse idが重複しています: ${course.id}`);
+    }
+    const indexPath = canonicalContentPath(
+      course.indexPath,
+      `generated/content/courses/${course.id}/index.json`,
+      `公開CatalogのCourse indexPath: ${course.id}`,
+    );
+    await assertRegularDistFile(distRoot, indexPath, '公開Course Index');
+    const lessons = lessonPreloadPaths(
+      await readFile(path.join(distRoot, ...indexPath.split('/')), 'utf8'),
+      course.id,
+    );
+    for (const [, lessonPath] of lessons) {
+      await assertRegularDistFile(distRoot, lessonPath, '公開Lesson Manifest');
+    }
+    courseIds.add(course.id);
+    routes.push({ courseId: course.id, indexPath, lessons });
+  }
+  return routes;
+}
+
 /** 初期Hashに一致するMode closureだけを先読みし、対応entryを1回実行する。 */
-function modeEntryBootstrap(assets: {
-  readonly library: readonly string[];
-  readonly normalLearning: readonly string[];
-}): string {
-  return `<script data-tsumucode-entry>(()=>{const files=/^#\\/library(?:\\/|$)/.test(location.hash)?${JSON.stringify(assets.library)}:${JSON.stringify(assets.normalLearning)};for(const file of files){const link=document.createElement('link');link.rel='modulepreload';link.crossOrigin='anonymous';link.href=new URL(file,document.baseURI).href;document.head.append(link)}const entry=document.createElement('script');entry.type='module';entry.src=new URL(files[0],document.baseURI).href;document.head.append(entry)})();</script>`;
+function modeEntryBootstrap(
+  assets: {
+    readonly library: readonly string[];
+    readonly normalLearning: readonly string[];
+  },
+  routes: readonly CoursePreloadRoute[],
+): string {
+  const id = '[a-z0-9]+(?:-[a-z0-9]+)*';
+  const routePattern = `^#\\/(?:courses|library)\\/(${id})(?:\\/lessons\\/(${id})\\/(?:slides\\/${id}|exercises\\/${id}(?:\\/(?:completion|review\\/${id}))?))?$`;
+  return `<script data-tsumucode-entry>(()=>{const match=new RegExp(${JSON.stringify(routePattern)}).exec(location.hash);const routes=${JSON.stringify(routes)};const route=match?routes.find(value=>value.courseId===match[1]):undefined;const preload=(file,key)=>{const link=document.createElement('link');link.rel='preload';link.as='fetch';link.crossOrigin='anonymous';link.dataset[key]='';link.href=new URL(file,document.baseURI).href;document.head.append(link)};if(route){preload(route.indexPath,'tsumucodeCourseIndexPreload');const lesson=match[2]?route.lessons.find(value=>value[0]===match[2]):undefined;if(lesson)preload(lesson[1],'tsumucodeLessonPreload')}const files=/^#\\/library(?:\\/|$)/.test(location.hash)?${JSON.stringify(assets.library)}:${JSON.stringify(assets.normalLearning)};for(const file of files){const link=document.createElement('link');link.rel='modulepreload';link.crossOrigin='anonymous';link.href=new URL(file,document.baseURI).href;document.head.append(link)}const entry=document.createElement('script');entry.type='module';entry.src=new URL(files[0],document.baseURI).href;document.head.append(entry)})();</script>`;
 }
 
 /**
@@ -115,6 +231,7 @@ function modeEntryBootstrap(assets: {
 export async function inlineProductionCss(options: InlineProductionCssOptions): Promise<void> {
   const indexPath = path.join(options.distRoot, 'index.html');
   const manifestPath = path.join(options.distRoot, '.vite/manifest.json');
+  const catalogPath = path.join(options.distRoot, ...contentCatalogPath.split('/'));
   const html = await readFile(indexPath, 'utf8');
   const stylesheetTags = [...html.matchAll(/<link\b(?=[^>]*\brel=["']stylesheet["'])[^>]*>/giu)];
   if (stylesheetTags.length !== 1) {
@@ -148,6 +265,11 @@ export async function inlineProductionCss(options: InlineProductionCssOptions): 
   }
   const moduleScriptTag = moduleScriptTags[0]?.[0];
   const modeAssets = modeAssetPaths(await readFile(manifestPath, 'utf8'));
+  await assertRegularDistFile(options.distRoot, contentCatalogPath, '公開Catalog');
+  const preloadRoutes = await coursePreloadRoutes(
+    options.distRoot,
+    await readFile(catalogPath, 'utf8'),
+  );
   for (const assetPath of new Set([...modeAssets.library, ...modeAssets.normalLearning])) {
     await assertRegularDistFile(options.distRoot, assetPath, 'Vite Mode Asset');
   }
@@ -155,7 +277,7 @@ export async function inlineProductionCss(options: InlineProductionCssOptions): 
     stylesheetTag,
     `<style data-tsumucode-critical-css>${css}</style>`,
   );
-  const bootstrap = modeEntryBootstrap(modeAssets);
+  const bootstrap = modeEntryBootstrap(modeAssets, preloadRoutes);
   const optimizedHtml =
     moduleScriptTag === undefined
       ? inlinedHtml.replace(/<\/body>/iu, `${bootstrap}</body>`)

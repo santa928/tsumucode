@@ -1,5 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { expect, test, type ConsoleMessage, type Page, type TestInfo } from '@playwright/test';
+import { readSplitCourseArtifacts } from '../../scripts/content/readSplitCourseArtifacts';
 import { canonicalJson, sha256 } from '../../src/core/persistence/canonicalJson';
 import {
   observeRuntimeContext,
@@ -26,10 +27,6 @@ const LEGACY_FIRST_COMPLETED_AT = '2026-06-15T00:00:00.000Z';
 const LEGACY_SOURCE = '<main><h1>旧教材の隔離対象下書き</h1></main>';
 const PREVIOUS_CONTENT_REVISION = '2026-07-13.1';
 const CURRENT_CONTENT_REVISION = '2026-07-29.1';
-const CURRENT_COURSE_MANIFEST = new URL(
-  '../../public/generated/content/courses/html-css.json',
-  import.meta.url,
-);
 const EDITOR_RUNTIME_CHUNK_PATTERN =
   /CodeWorkspace|EditableExercisePage|codemirror|adapters\/runtime\/html-css/iu;
 const PLAYWRIGHT_INITIAL_SCRIPTLESS_SANDBOX_WARNING =
@@ -197,7 +194,7 @@ async function seedLegacyContentProgress(page: Page): Promise<void> {
     readonly courses: Readonly<Record<string, Readonly<Record<string, unknown>>>>;
     readonly drafts: Readonly<Record<string, Readonly<Record<string, unknown>>>>;
   };
-  await page.goto(`${testBasePath()}generated/content/catalog.json`);
+  await page.goto(`${testBasePath()}generated/content/catalog-v3.json`);
   await page.evaluate(async (snapshot) => {
     await new Promise<void>((resolve, reject) => {
       const deletion = indexedDB.deleteDatabase('tsumucode-progress');
@@ -256,7 +253,7 @@ async function seedLegacyContentProgress(page: Page): Promise<void> {
 
 /** 直前revisionを全完了した実教材shapeのsnapshotをIndexedDBへ保存する。 */
 async function seedCompletedPreviousRevisionProgress(page: Page): Promise<void> {
-  const course = JSON.parse(await readFile(CURRENT_COURSE_MANIFEST, 'utf8')) as GeneratedCourse;
+  const course = (await readSplitCourseArtifacts('public', 'html-css')) as GeneratedCourse;
   const chapters = course.phases.flatMap(({ chapters: items }) => items);
   const lessons = chapters.flatMap(({ lessons: items }) => items);
   const exercises = lessons.flatMap(({ exercises: items }) => items);
@@ -360,7 +357,7 @@ async function seedCompletedPreviousRevisionProgress(page: Page): Promise<void> 
     drafts,
   };
 
-  await page.goto(`${testBasePath()}generated/content/catalog.json`);
+  await page.goto(`${testBasePath()}generated/content/catalog-v3.json`);
   await page.evaluate(async (seed) => {
     await new Promise<void>((resolve, reject) => {
       const deletion = indexedDB.deleteDatabase('tsumucode-progress');
@@ -898,7 +895,7 @@ test('IndexedDB open拒否でもmemory救済・緊急Export・明示retryで復�
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'failure injectionはChromiumで検証する');
-  await page.goto('generated/content/catalog.json');
+  await page.goto('generated/content/catalog-v3.json');
   await page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolve, reject) => {
       const opening = indexedDB.open('tsumucode-progress', 99);
@@ -1306,14 +1303,17 @@ for (const viewport of [
 test('教材fetch失敗後に同じRouteから再試行できる', async ({ page }, testInfo) => {
   let injectFailure = true;
   let abortedRequests = 0;
-  await page.route('**/generated/content/courses/html-css.json', async (route) => {
-    if (injectFailure) {
-      abortedRequests += 1;
-      await route.abort('failed');
-      return;
-    }
-    await route.continue();
-  });
+  await page.route(
+    '**/generated/content/courses/html-css/lessons/html-css-ch00-l01.json',
+    async (route) => {
+      if (injectFailure) {
+        abortedRequests += 1;
+        await route.abort('failed');
+        return;
+      }
+      await route.continue();
+    },
+  );
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto(RUNTIME_EXERCISE_PATH);
   await expect(page.getByRole('heading', { name: '教材を読み込めませんでした' })).toBeVisible();

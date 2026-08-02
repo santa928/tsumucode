@@ -5,8 +5,8 @@ import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { compileContent } from '../../scripts/content/compile';
-import { loadAuthoringCourse } from '../../scripts/content/compileCourse';
-import { CourseManifestSchema } from '../../src/core/content/schema';
+import { loadAuthoringCourse, stringifyCanonicalJson } from '../../scripts/content/compileCourse';
+import { readSplitCourseArtifacts } from '../../scripts/content/readSplitCourseArtifacts';
 
 const temporaryRoots: string[] = [];
 
@@ -30,13 +30,10 @@ describe('HTML/CSS Course compilation', () => {
     const outputRoot = path.join(temporaryRoot, 'generated/content');
 
     const summary = await compileContent({ sourceRoot, outputRoot, checkOnly: false });
-    const publicCourseSource = await readFile(
-      path.join(outputRoot, 'courses/html-css.json'),
-      'utf8',
-    );
-    const publicCourse = CourseManifestSchema.parse(JSON.parse(publicCourseSource) as unknown);
+    const publicCourse = await readSplitCourseArtifacts(temporaryRoot, 'html-css');
+    const publicCourseSource = stringifyCanonicalJson(publicCourse);
     const publicProvenance = await readFile(
-      path.join(outputRoot, 'courses/html-css.provenance.json'),
+      path.join(outputRoot, 'courses/html-css/provenance.json'),
       'utf8',
     );
     const sourceAsset = await readFile(
@@ -53,7 +50,7 @@ describe('HTML/CSS Course compilation', () => {
     expect(summary.warnings).toEqual([]);
     expect(summary.catalog.courses).toHaveLength(1);
     expect(summary.catalog).toMatchObject({
-      schemaVersion: 2,
+      schemaVersion: 3,
       courses: [
         {
           id: 'html-css',

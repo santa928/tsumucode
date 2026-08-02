@@ -4,6 +4,8 @@ import { lstat, readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import { canonicalJson } from '../../src/core/persistence/canonicalJson';
+import { stringifyCanonicalJson } from '../content/compileCourse';
+import { readSplitCourseArtifacts } from '../content/readSplitCourseArtifacts';
 
 const execFileAsync = promisify(execFile);
 
@@ -143,11 +145,11 @@ export async function calculateArtifactHashes(
 ): Promise<ArtifactHashes> {
   const root = path.resolve(repositoryRoot);
   const dist = path.resolve(root, distDirectory);
-  const coursePath = path.join(dist, 'generated/content/courses/html-css.json');
-  const provenancePath = path.join(dist, 'generated/content/courses/html-css.provenance.json');
+  const course = await readSplitCourseArtifacts(dist, 'html-css');
+  const provenancePath = path.join(dist, 'generated/content/courses/html-css/provenance.json');
   return {
     artifactDigest: await hashDirectory(dist),
-    courseHash: sha256Bytes(await readFile(coursePath)),
+    courseHash: sha256Text(stringifyCanonicalJson(course)),
     provenanceHash: sha256Bytes(await readFile(provenancePath)),
     visualBaselineHash: await hashDirectory(
       path.join(root, 'tests/e2e/visual-regression.spec.ts-snapshots'),

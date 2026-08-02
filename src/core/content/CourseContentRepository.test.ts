@@ -149,4 +149,39 @@ describe('CourseContentRepository', () => {
     });
     expect(fetchMock).not.toHaveBeenCalled();
   });
+
+  it('共有workspaceの現在工程までを所有するLessonだけ教材順で読む', async () => {
+    const repository = new CourseContentRepository();
+    const index = structuredClone(fixtureCourseIndex);
+    const first = index.phases[0]!.chapters[0]!.lessons[0]!;
+    first.exercises[0] = {
+      ...first.exercises[0]!,
+      id: 'exercise-step-1',
+      workspaceId: 'workspace-shared',
+    };
+    const second = structuredClone(first);
+    second.id = 'lesson-step-2';
+    second.exercises[0] = { ...second.exercises[0]!, id: 'exercise-step-2' };
+    second.manifestPath = 'generated/content/courses/html-css/lessons/lesson-step-2.json';
+    index.phases[0]!.chapters[0]!.lessons.push(second);
+    const firstManifest = structuredClone(fixtureLessonManifest);
+    const secondManifest = {
+      ...structuredClone(fixtureLessonManifest),
+      lessonId: second.id,
+      lesson: { ...structuredClone(fixtureLessonManifest.lesson), id: second.id },
+    };
+    const loadLesson = vi
+      .spyOn(repository, 'loadLesson')
+      .mockResolvedValueOnce(firstManifest)
+      .mockResolvedValueOnce(secondManifest);
+
+    await expect(repository.loadWorkspaceLessons('/', index, 'exercise-step-2')).resolves.toEqual([
+      firstManifest,
+      secondManifest,
+    ]);
+    expect(loadLesson.mock.calls.map(([, , lessonId]) => lessonId)).toEqual([
+      'lesson-first-heading',
+      'lesson-step-2',
+    ]);
+  });
 });

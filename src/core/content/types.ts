@@ -13,9 +13,7 @@ import type {
   ConceptDefinitionSchema,
   ConceptRequirementSchema,
   ContentProgressMigrationSchema,
-  CourseCatalogEntrySchema,
   CourseCatalogLessonStartSchema,
-  CourseCatalogSchema,
   CourseManifestSchema,
   ExerciseFileSchema,
   ExerciseSchema,
@@ -41,10 +39,10 @@ import type {
   ValidationRuleDefinitionSchema,
 } from './schema';
 
-export type CourseCatalog = z.infer<typeof CourseCatalogSchema>;
-export type CourseCatalogEntry = z.infer<typeof CourseCatalogEntrySchema>;
 export type CourseCatalogV3 = z.infer<typeof CourseCatalogV3Schema>;
 export type CourseCatalogEntryV3 = z.infer<typeof CourseCatalogEntryV3Schema>;
+export type CourseCatalog = CourseCatalogV3;
+export type CourseCatalogEntry = CourseCatalogEntryV3;
 export type CourseIndex = z.infer<typeof CourseIndexSchema>;
 export type LessonManifest = z.infer<typeof LessonManifestSchema>;
 export type LessonOutline = z.infer<typeof LessonOutlineSchema>;

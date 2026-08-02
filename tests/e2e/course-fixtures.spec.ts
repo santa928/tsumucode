@@ -1,10 +1,10 @@
-import { readFile } from 'node:fs/promises';
 import { expect, test, type Page } from '@playwright/test';
 import {
   loadAuthoringCourse,
   type AuthoringExercise,
   type AuthoringFixture,
 } from '../../scripts/content/compileCourse';
+import { readSplitCourseArtifacts } from '../../scripts/content/readSplitCourseArtifacts';
 import type { HtmlCssRunnerAdapter as HtmlCssRunnerAdapterType } from '../../src/adapters/runtime/html-css';
 import type { AssetRef, ExerciseFile } from '../../src/core/content/types';
 import type { ValidationResult } from '../../src/core/validation/contracts';
@@ -209,8 +209,8 @@ test('全Solution、Starter、Fixtureを実Browser Runner／Validatorで検証�
     0,
   );
 
-  const generatedCourse = await readFile('public/generated/content/courses/html-css.json', 'utf8');
-  expect(generatedCourse).not.toMatch(/"solutionFiles"|"fixtures"/u);
+  const generatedCourse = await readSplitCourseArtifacts('public', 'html-css');
+  expect(JSON.stringify(generatedCourse)).not.toMatch(/"solutionFiles"|"fixtures"/u);
 
   const contentResponseChecks: Promise<void>[] = [];
   const contentLeaks: string[] = [];

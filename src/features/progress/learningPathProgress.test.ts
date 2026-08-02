@@ -13,8 +13,8 @@ function courseEntry(id: string, lessonId: string, targetId: string): CourseCata
     ...structuredClone(fixtureCatalog.courses[0]!),
     id,
     revision: `2026-07-31.${id}`,
-    manifestPath: `generated/content/courses/${id}.json`,
-    manifestSha256: id === 'javascript' ? 'b'.repeat(64) : 'c'.repeat(64),
+    indexPath: `generated/content/courses/${id}/index.json`,
+    indexSha256: id === 'javascript' ? 'b'.repeat(64) : 'c'.repeat(64),
     lessonStarts: [{ lessonId, target: { kind: 'slide', targetId } }],
   };
 }

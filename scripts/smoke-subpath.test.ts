@@ -1,16 +1,24 @@
 // @vitest-environment node
 /** GitHub PagesのRepository subpathへ置くProduction成果物をfail-closedに検証する。 */
+import { createHash } from 'node:crypto';
 import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
+import type { CourseCatalogV3, CourseIndex } from '../src/core/content/types';
+import {
+  fixtureCatalogV3,
+  fixtureCourseIndex,
+  fixtureLessonManifest,
+} from '../tests/fixtures/course';
+import { stringifyCanonicalJson } from './content/compileCourse';
 import { assertSubpathBuild } from './smoke-subpath';
 
 interface FixtureOptions {
   readonly indexHtml?: string;
   readonly entryJavaScript?: string;
   readonly manifest?: unknown;
-  readonly catalogManifestPath?: string;
+  readonly catalogIndexPath?: string;
   readonly catalog?: unknown;
 }
 
@@ -24,35 +32,9 @@ const defaultIndexHtml = `<!doctype html>
   </head>
 </html>`;
 
-/** Catalog v2のsubpath検査に必要なCourseとLearningPathの最小成功例を返す。 */
-function createCatalogV2(manifestPath: string): unknown {
-  return {
-    schemaVersion: 2,
-    courses: [
-      {
-        id: 'html-css',
-        manifestPath,
-        lessonStarts: [
-          {
-            lessonId: 'html-css-ch00-l01',
-            target: { kind: 'slide', targetId: 'html-css-ch00-l01-s01' },
-          },
-        ],
-      },
-    ],
-    learningPaths: [
-      {
-        id: 'frontend',
-        steps: [
-          {
-            courseId: 'html-css',
-            role: 'required',
-            prerequisiteCourseIds: [],
-          },
-        ],
-      },
-    ],
-  };
+/** bytesのSHA-256を小文字hexで返す。 */
+function sha256(source: string): string {
+  return createHash('sha256').update(source, 'utf8').digest('hex');
 }
 
 /** Testごとに独立した最小Production成果物を作り、検証対象Pathを返す。 */
@@ -61,7 +43,7 @@ async function createFixture(options: FixtureOptions = {}): Promise<string> {
   roots.push(root);
   await mkdir(path.join(root, '.vite'), { recursive: true });
   await mkdir(path.join(root, 'assets'), { recursive: true });
-  await mkdir(path.join(root, 'generated/content/courses'), { recursive: true });
+  await mkdir(path.join(root, 'generated/content/courses/html-css/lessons'), { recursive: true });
   await writeFile(path.join(root, 'index.html'), options.indexHtml ?? defaultIndexHtml);
   await writeFile(path.join(root, 'favicon.svg'), '<svg xmlns="http://www.w3.org/2000/svg"/>');
   await writeFile(path.join(root, 'assets/index.css'), 'body { color: #123; }');
@@ -83,12 +65,30 @@ async function createFixture(options: FixtureOptions = {}): Promise<string> {
       },
     ),
   );
-  const manifestPath = options.catalogManifestPath ?? 'generated/content/courses/html-css.json';
+  const lessonSource = stringifyCanonicalJson(fixtureLessonManifest);
+  const courseIndex = structuredClone(fixtureCourseIndex) as {
+    phases: { chapters: { lessons: { manifestSha256: string }[] }[] }[];
+  } & CourseIndex;
+  courseIndex.phases[0]!.chapters[0]!.lessons[0]!.manifestSha256 = sha256(lessonSource);
+  const courseIndexSource = stringifyCanonicalJson(courseIndex);
+  const catalog = structuredClone(fixtureCatalogV3) as {
+    courses: { indexPath: string; indexSha256: string }[];
+  } & CourseCatalogV3;
+  catalog.courses[0]!.indexPath =
+    options.catalogIndexPath ?? 'generated/content/courses/html-css/index.json';
+  catalog.courses[0]!.indexSha256 = sha256(courseIndexSource);
   await writeFile(
-    path.join(root, 'generated/content/catalog.json'),
-    JSON.stringify(options.catalog ?? createCatalogV2(manifestPath)),
+    path.join(root, 'generated/content/catalog-v3.json'),
+    stringifyCanonicalJson(options.catalog ?? catalog),
   );
-  await writeFile(path.join(root, 'generated/content/courses/html-css.json'), '{}');
+  await writeFile(
+    path.join(root, 'generated/content/courses/html-css/index.json'),
+    courseIndexSource,
+  );
+  await writeFile(
+    path.join(root, 'generated/content/courses/html-css/lessons/lesson-first-heading.json'),
+    lessonSource,
+  );
   return root;
 }
 
@@ -97,7 +97,7 @@ afterEach(async () => {
 });
 
 describe('subpath build smoke', () => {
-  it('Catalog v2のlessonStartsとLearningPathを含むRepository subpath Buildを受理する', async () => {
+  it('Catalog v3・Course Index・Lessonを含むRepository subpath Buildを受理する', async () => {
     const distRoot = await createFixture();
 
     await expect(
@@ -109,10 +109,10 @@ describe('subpath build smoke', () => {
     ).resolves.toBeUndefined();
   });
 
-  it('Catalog v1を後方互換と誤認せず拒否する', async () => {
+  it('Catalog v2を後方互換と誤認せず拒否する', async () => {
     const distRoot = await createFixture({
       catalog: {
-        schemaVersion: 1,
+        schemaVersion: 2,
         courses: [
           {
             id: 'html-css',
@@ -128,11 +128,11 @@ describe('subpath build smoke', () => {
         basePath: '/repository-name/',
         homeBudgetBytes: 250 * 1024,
       }),
-    ).rejects.toThrow('Course CatalogのschemaVersionは2である必要があります');
+    ).rejects.toThrow(/schemaVersion/u);
   });
 
   it('LearningPathが参照する未知Courseを拒否する', async () => {
-    const catalog = createCatalogV2('generated/content/courses/html-css.json') as {
+    const catalog = structuredClone(fixtureCatalogV3) as {
       learningPaths: { steps: { courseId: string }[] }[];
     };
     catalog.learningPaths[0]!.steps[0]!.courseId = 'unknown-course';
@@ -144,7 +144,7 @@ describe('subpath build smoke', () => {
         basePath: '/repository-name/',
         homeBudgetBytes: 250 * 1024,
       }),
-    ).rejects.toThrow('LearningPathが未知Courseを参照しています: unknown-course');
+    ).rejects.toThrow(/LearningPath Course参照先がありません/u);
   });
 
   it('Repository subpathの外へ出るRoot Asset URLを拒否する', async () => {
@@ -174,8 +174,8 @@ describe('subpath build smoke', () => {
     ).rejects.toThrow('Build Assetが見つかりません: assets/index.css');
   });
 
-  it('Catalogの安全でないCourse manifestPathをFilesystem参照前に拒否する', async () => {
-    const distRoot = await createFixture({ catalogManifestPath: '../secret.json' });
+  it('Catalogの安全でないCourse indexPathをFilesystem参照前に拒否する', async () => {
+    const distRoot = await createFixture({ catalogIndexPath: '../secret.json' });
 
     await expect(
       assertSubpathBuild({
@@ -183,13 +183,13 @@ describe('subpath build smoke', () => {
         basePath: '/repository-name/',
         homeBudgetBytes: 250 * 1024,
       }),
-    ).rejects.toThrow('Course manifestPathは安全な相対Pathで指定してください: ../secret.json');
+    ).rejects.toThrow(/安全な相対Path/u);
   });
 
-  it('Catalog entryのmanifestPath欠落を構造Errorとして拒否する', async () => {
+  it('Catalog entryのindexPath欠落を構造Errorとして拒否する', async () => {
     const distRoot = await createFixture({
       catalog: {
-        schemaVersion: 2,
+        schemaVersion: 3,
         courses: [{ id: 'html-css', lessonStarts: [] }],
         learningPaths: [],
       },
@@ -201,12 +201,12 @@ describe('subpath build smoke', () => {
         basePath: '/repository-name/',
         homeBudgetBytes: 250 * 1024,
       }),
-    ).rejects.toThrow('Course CatalogのmanifestPathが文字列ではありません: index 0');
+    ).rejects.toThrow(/indexPath/u);
   });
 
   it('公開Courseが0件のCatalogを拒否する', async () => {
     const distRoot = await createFixture({
-      catalog: { schemaVersion: 2, courses: [], learningPaths: [] },
+      catalog: { schemaVersion: 3, courses: [], learningPaths: [] },
     });
 
     await expect(
@@ -215,13 +215,12 @@ describe('subpath build smoke', () => {
         basePath: '/repository-name/',
         homeBudgetBytes: 250 * 1024,
       }),
-    ).rejects.toThrow('Course Catalogに公開Courseがありません');
+    ).rejects.toThrow(/Too small/u);
   });
 
-  it('欠落したCourse ManifestをPath付きで拒否する', async () => {
-    const distRoot = await createFixture({
-      catalogManifestPath: 'generated/content/courses/missing.json',
-    });
+  it('欠落したCourse IndexをPath付きで拒否する', async () => {
+    const distRoot = await createFixture();
+    await rm(path.join(distRoot, 'generated/content/courses/html-css/index.json'));
 
     await expect(
       assertSubpathBuild({
@@ -229,7 +228,7 @@ describe('subpath build smoke', () => {
         basePath: '/repository-name/',
         homeBudgetBytes: 250 * 1024,
       }),
-    ).rejects.toThrow('Course Manifestが見つかりません: generated/content/courses/missing.json');
+    ).rejects.toThrow('教材Source Fileがありません: generated/content/courses/html-css/index.json');
   });
 
   it('Vite manifestの通常学習Entry欠落を拒否する', async () => {
