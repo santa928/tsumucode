@@ -1,7 +1,8 @@
 /** LearningPath詳細のStep順・自由なCourse導線・進捗失敗状態を検証する。 */
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import { createMemoryRouter } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fixtureCatalog } from '../../../tests/fixtures/course';
 import type { CourseCatalogEntry, LearningPathDefinition } from '../../core/content/types';
@@ -117,6 +118,7 @@ function renderPage(data: ReturnType<typeof pageFixture>): ReturnType<typeof cre
         path: '/paths/:pathId',
         loader: () => ({ path: data.path, courses: data.courses }),
         element: <LearningPathPage />,
+        HydrateFallback: () => <p>学習パスを準備中</p>,
       },
     ],
     { initialEntries: ['/paths/frontend'] },

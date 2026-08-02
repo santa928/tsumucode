@@ -1,4 +1,4 @@
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData } from 'react-router';
 import type { courseLoader } from '../../app/contentLoaders';
 import { buildCourseMap } from '../../core/content/courseMap';
 import { ActionLink } from '../../design-system/components/ActionLink';

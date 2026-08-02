@@ -1,5 +1,5 @@
 /** 公開LearningPathを順序付きCourse一覧として表示する通常学習Page。 */
-import { Link, useLoaderData } from 'react-router-dom';
+import { Link, useLoaderData } from 'react-router';
 import type { learningPathLoader } from '../../app/contentLoaders';
 import { ActionLink } from '../../design-system/components/ActionLink';
 import { PieceProgress } from '../../design-system/components/PieceProgress';

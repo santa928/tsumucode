@@ -1,6 +1,6 @@
 /** 端末能力に応じて編集Runtimeまたは閲覧専用画面だけを遅延読込する。 */
 import { lazy, Suspense, useSyncExternalStore } from 'react';
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData } from 'react-router';
 import type { exerciseLoader } from '../../../app/contentLoaders';
 import { WorkspaceLeaseGate } from '../../progress/WorkspaceLeaseGate';
 import { WorkshopNotice } from '../../../design-system/components/WorkshopNotice';

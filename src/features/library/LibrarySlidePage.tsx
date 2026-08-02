@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useLoaderData, useNavigate } from 'react-router-dom';
+import { Link, useLoaderData, useNavigate } from 'react-router';
 import type { librarySlideLoader } from '../../app/libraryContentLoaders';
 import type { CourseManifest, Lesson } from '../../core/content/types';
 import { LearningDrawer } from '../learning/components/LearningDrawer';

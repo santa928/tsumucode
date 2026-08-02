@@ -1,5 +1,5 @@
 import type { RefObject } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 export interface LibraryToolRailProps {
   readonly courseId: string;

@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs } from 'react-router-dom';
+import type { LoaderFunctionArgs } from 'react-router';
 import { loadCourseCatalog, loadCourseManifest } from '../core/content/loadCourseCatalog';
 import type { CourseManifest } from '../core/content/types';
 import {

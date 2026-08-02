@@ -1,5 +1,5 @@
 /** 演習状態を保持したまま関連Slideを見直すroute画面。 */
-import { useLoaderData, useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router';
 import type { reviewLoader } from '../../../app/contentLoaders';
 import { StackedCard } from '../../../design-system/components/StackedCard';
 import { SlideBlocks } from '../components/SlideBlocks';

@@ -1,7 +1,8 @@
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
-import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import { createMemoryRouter } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
 import { fixtureCourse } from '../../../tests/fixtures/course';
 import type { CourseManifest, Lesson, Slide } from '../../core/content/types';
 import { resolveCourseSlideContext } from './courseSlideSequence';

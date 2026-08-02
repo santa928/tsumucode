@@ -1,6 +1,7 @@
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import { createMemoryRouter } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
 import { describe, expect, it, vi } from 'vitest';
 import { ContentLoadError } from '../../core/content/loadCourseCatalog';
 import { ContentErrorPage } from './ContentErrorPage';

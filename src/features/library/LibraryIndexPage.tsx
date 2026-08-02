@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from 'react-router-dom';
+import { Link, useLoaderData } from 'react-router';
 import type { libraryCourseLoader } from '../../app/libraryContentLoaders';
 import type { Lesson } from '../../core/content/types';
 import { buildLibrarySlidePath } from './courseSlideSequence';

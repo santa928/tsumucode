@@ -1,5 +1,5 @@
 import { act, screen, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import type { PersistenceHealthSnapshot } from '../../core/persistence/ResilientProgressService';
 import type { RepositorySnapshot } from '../../core/persistence/contracts';

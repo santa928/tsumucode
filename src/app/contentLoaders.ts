@@ -1,4 +1,4 @@
-import { redirect, type LoaderFunctionArgs } from 'react-router-dom';
+import { redirect, type LoaderFunctionArgs } from 'react-router';
 import { loadCourseCatalog, loadCourseManifest } from '../core/content/loadCourseCatalog';
 import { findExercise, findLesson, findSlide, findSlideInCourse } from '../core/content/selectors';
 import type {

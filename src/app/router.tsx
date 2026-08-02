@@ -1,5 +1,5 @@
 /** Browser Hash historyを所有するRouter factory module。呼出側がdispose責任を持つ。 */
-import { createHashRouter, type RouteObject } from 'react-router-dom';
+import { createHashRouter, type RouteObject } from 'react-router';
 import { ContentErrorPage } from '@/features/home/ContentErrorPage';
 import { ContentLoadingPage } from '@/features/home/ContentLoadingPage';
 import type { LibraryRouteModules } from './libraryRouteModules';

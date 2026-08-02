@@ -1,4 +1,4 @@
-import { Link, useRevalidator, useRouteError } from 'react-router-dom';
+import { Link, useRevalidator, useRouteError } from 'react-router';
 import { ContentLoadError } from '../../core/content/loadCourseCatalog';
 
 /** 教材取得失敗を内部詳細へ露出せず、再試行とHome復帰へ変換する。 */

@@ -1,5 +1,5 @@
 /** 現在も完了条件を満たすExerciseだけに表示する達成画面。 */
-import { Link, useLoaderData } from 'react-router-dom';
+import { Link, useLoaderData } from 'react-router';
 import type { completionLoader } from '../../../app/contentLoaders';
 import { lessonStartPath } from '../../../core/content/courseMap';
 import { findLesson } from '../../../core/content/selectors';

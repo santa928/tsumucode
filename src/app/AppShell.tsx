@@ -1,5 +1,5 @@
 import { useSyncExternalStore, type MouseEvent } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router';
 import { BetaBadge } from '../design-system/components/BetaBadge';
 import { learningRuntimeServices } from '../features/learning/runtimeServices';
 import { PersistenceHealthBanner } from '../features/progress/PersistenceHealthBanner';

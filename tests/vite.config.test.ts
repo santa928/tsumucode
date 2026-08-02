@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { resolveConfig } from 'vite';
+import { createLogger, resolveConfig } from 'vite';
 import { normalizeBasePath } from '../vite.config';
 
 const ERROR = 'BASE_PATHは同一OriginのPathで指定してください。';
@@ -39,6 +39,23 @@ describe('normalizeBasePath', () => {
 });
 
 describe('Vite production build', () => {
+  it('native config loaderへ移行できない相対import警告を残さない', async () => {
+    const warnings: string[] = [];
+    const logger = createLogger();
+    logger.warn = (message) => warnings.push(message);
+
+    await resolveConfig(
+      {
+        configFile: fileURLToPath(new URL('../vite.config.ts', import.meta.url)),
+        customLogger: logger,
+      },
+      'build',
+      'production',
+    );
+
+    expect(warnings).toEqual([]);
+  });
+
   it('Subpath smokeがEntryと静的Importを追跡できるmanifestを生成する', async () => {
     const config = await resolveConfig(
       { configFile: fileURLToPath(new URL('../vite.config.ts', import.meta.url)) },

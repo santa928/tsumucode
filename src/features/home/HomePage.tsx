@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { Link, useLoaderData, useLocation } from 'react-router-dom';
+import { Link, useLoaderData, useLocation } from 'react-router';
 import type { homeLoader } from '../../app/contentLoaders';
 import type { CourseCatalogEntry } from '../../core/content/types';
 import { ActionLink } from '../../design-system/components/ActionLink';

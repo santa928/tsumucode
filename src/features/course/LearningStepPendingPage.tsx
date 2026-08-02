@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router';
 import { useEditingCapability } from '../../shared/device/editingCapability';
 
 /** 演習画面の実装前も404にせず、提供状況・端末条件・Courseへの復帰手段を示す。 */

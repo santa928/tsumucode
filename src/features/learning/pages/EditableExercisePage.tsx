@@ -9,7 +9,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import type { exerciseLoader } from '../../../app/contentLoaders';
 import type { CourseManifest, Exercise } from '../../../core/content/types';
 import { findSlideInCourse } from '../../../core/content/selectors';

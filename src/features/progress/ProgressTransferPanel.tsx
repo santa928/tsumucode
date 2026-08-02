@@ -6,7 +6,7 @@ import {
   useSyncExternalStore,
   type ChangeEvent,
 } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router';
 import type { PersistenceHealthSnapshot } from '../../core/persistence/ResilientProgressService';
 import {
   CURRENT_PROGRESS_SCHEMA_VERSION,

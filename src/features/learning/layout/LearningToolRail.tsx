@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { BetaBadge } from '../../../design-system/components/BetaBadge';
 
 export interface LearningToolRailProps {

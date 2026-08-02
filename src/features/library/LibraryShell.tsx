@@ -1,5 +1,5 @@
 import type { MouseEvent } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router';
 import { BetaBadge } from '../../design-system/components/BetaBadge';
 
 /** Hashを変更せず、Skip Linkから閲覧MainへFocusを移す。 */

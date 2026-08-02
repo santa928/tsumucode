@@ -1,7 +1,7 @@
 /** Home用LearningPath cardの進捗・CTA・失敗状態を検証する。 */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fixtureCatalog } from '../../../tests/fixtures/course';
 import { LearningPathCard } from './LearningPathCard';

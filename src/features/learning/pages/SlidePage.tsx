@@ -1,6 +1,6 @@
 /** 学習者が現在地を失わず、1画面ずつ前後・一覧・用語へ移れるSlide Viewerを提供する。 */
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Link, useLoaderData, useNavigate } from 'react-router-dom';
+import { Link, useLoaderData, useNavigate } from 'react-router';
 import type { CourseManifest, Lesson } from '../../../core/content/types';
 import { recordSlideView } from '../../../core/persistence/progressUpdates';
 import type { slideLoader } from '../../../app/contentLoaders';

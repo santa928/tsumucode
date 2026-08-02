@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 import { loadEnv } from 'vite';
 import { defineConfig } from 'vitest/config';
-import { normalizePublicBasePath } from './src/shared/lib/resolvePublicAsset';
+import { normalizePublicBasePath } from './src/shared/lib/resolvePublicAsset.ts';
 
 /** GitHub Pages project siteで使える先頭・末尾Slash付きPathへ正規化する。 */
 export function normalizeBasePath(value: string | undefined): string {

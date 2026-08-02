@@ -1,6 +1,6 @@
 /** 編集不能端末向けにPC案内または現在合格済みのsandbox Previewを表示する。 */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import type { CourseManifest, Exercise, Lesson } from '../../../core/content/types';
 import type { ExerciseDraft } from '../../../core/persistence/contracts';
 import { findWorkspaceTargets } from '../../../core/persistence/progressUpdates';

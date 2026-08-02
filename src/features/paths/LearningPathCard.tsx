@@ -1,5 +1,5 @@
 /** HomeでLearningPathの役割・進捗・次のrequired Courseを一枚にまとめる。 */
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import type { CourseCatalogEntry, LearningPathDefinition } from '../../core/content/types';
 import { ActionLink } from '../../design-system/components/ActionLink';
 import { PieceProgress } from '../../design-system/components/PieceProgress';
