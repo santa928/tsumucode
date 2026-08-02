@@ -1,0 +1,481 @@
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { PREVIEW_PROTOCOL_VERSION } from '../../html-css/previewProtocol';
+import type { JavaScriptAnalysisResult } from '../analyzer/contracts';
+import { JavaScriptRunnerAdapter } from './JavaScriptRunnerAdapter';
+import { JAVASCRIPT_PROTOCOL_VERSION } from './protocol';
+import type {
+  PreviewSnapshot,
+  RunnerInput,
+  SnapshotPolicy,
+} from '../../../../core/runtime/contracts';
+
+const snapshotPolicy: SnapshotPolicy = {
+  selectors: ['#message'],
+  attributes: ['id'],
+  computedStyles: [],
+  focusVisibleSelectors: [],
+  focusVisibleComputedStyles: [],
+  includeAllElements: false,
+};
+
+/** JavaScript Runnerの正常入力へ差分を重ねる。 */
+function runnerInput(overrides: Partial<RunnerInput> = {}): RunnerInput {
+  return {
+    exerciseSessionId: 'session-1',
+    executionRevision: 1,
+    languageId: 'javascript',
+    files: {
+      'index.html': '<main><p id="message">変更前</p></main>',
+      'styles.css': '#message { color: green; }',
+      'script.js': 'document.querySelector("#message").textContent = "変更後";',
+    },
+    assets: [],
+    viewport: { id: 'desktop', width: 1280, height: 720 },
+    options: { entryFile: 'index.html', scriptFile: 'script.js' },
+    ...overrides,
+  };
+}
+
+/** Analyzer成功結果をidentity付きで作る。 */
+function analysisSuccess(
+  executionRevision = 1,
+  overrides: Partial<Extract<JavaScriptAnalysisResult, { status: 'success' }>> = {},
+): Extract<JavaScriptAnalysisResult, { status: 'success' }> {
+  return {
+    status: 'success',
+    requestId: 'analysis-1',
+    exerciseSessionId: 'session-1',
+    executionRevision,
+    file: 'script.js',
+    instrumentedCode: 'document.querySelector("#message").textContent = "変更後";',
+    sourceSha256: 'a'.repeat(64),
+    facts: [],
+    diagnostics: [],
+    ...overrides,
+  };
+}
+
+/** srcdocに埋め込まれたbootstrap tokenを取得する。 */
+function bootstrapToken(frame: HTMLIFrameElement): string {
+  const token = /"bootstrapToken":"([a-z0-9_-]+)"/iu.exec(frame.srcdoc)?.[1];
+  if (token === undefined) throw new Error('bootstrap tokenが見つかりません');
+  return token;
+}
+
+/** JavaScript実行完了messageを任意sourceから送る。 */
+function dispatchExecution(
+  frame: HTMLIFrameElement,
+  overrides: Readonly<Record<string, unknown>> = {},
+  source: MessageEventSource | null = frame.contentWindow,
+): void {
+  window.dispatchEvent(
+    new MessageEvent('message', {
+      source,
+      data: {
+        version: JAVASCRIPT_PROTOCOL_VERSION,
+        type: 'javascript.execution-complete',
+        exerciseSessionId: 'session-1',
+        executionRevision: 1,
+        requestId: 'execution',
+        oneTimeToken: bootstrapToken(frame),
+        payload: {
+          executed: true,
+          budgetExhausted: false,
+          timerLimitExceeded: false,
+          runtimeError: null,
+        },
+        ...overrides,
+      },
+    }),
+  );
+}
+
+/** 既存Snapshot Bridgeのreadyを送る。 */
+function dispatchBridgeReady(frame: HTMLIFrameElement): void {
+  window.dispatchEvent(
+    new MessageEvent('message', {
+      source: frame.contentWindow,
+      data: {
+        version: PREVIEW_PROTOCOL_VERSION,
+        type: 'bridge.ready',
+        exerciseSessionId: 'session-1',
+        requestId: 'ready',
+        oneTimeToken: bootstrapToken(frame),
+        payload: null,
+      },
+    }),
+  );
+}
+
+/** Protocol schemaを通る空Snapshotを作る。 */
+function snapshot(): PreviewSnapshot {
+  return {
+    exerciseSessionId: 'session-1',
+    executionRevision: 1,
+    viewport: { id: 'desktop', width: 1280, height: 720 },
+    nodes: [],
+    documentOverflow: {
+      x: false,
+      y: false,
+      scrollWidth: 1280,
+      scrollHeight: 720,
+      clientWidth: 1280,
+      clientHeight: 720,
+    },
+  };
+}
+
+/** iframe準備などのPromise continuationを指定回数だけ進める。 */
+async function flushMicrotasks(count = 30): Promise<void> {
+  for (let index = 0; index < count; index += 1) await Promise.resolve();
+}
+
+afterEach(() => {
+  vi.useRealTimers();
+  vi.restoreAllMocks();
+  document.body.replaceChildren();
+});
+
+describe('JavaScriptRunnerAdapter', () => {
+  it.each([
+    ['language', { languageId: 'html-css' }],
+    ['script path', { options: { entryFile: 'index.html', scriptFile: '../script.js' } }],
+    ['script missing', { files: { 'index.html': '<main>本文</main>' } }],
+    [
+      'workspace size',
+      {
+        files: {
+          'index.html': '<main>本文</main>',
+          'script.js': 'x'.repeat(300 * 1024 + 1),
+        },
+      },
+    ],
+  ] satisfies readonly [string, Partial<RunnerInput>][])(
+    '%s不正入力を遷移前に拒否する',
+    async (_name, override) => {
+      const analyzer = {
+        analyze: vi.fn(async () => analysisSuccess()),
+        dispose: vi.fn(async () => undefined),
+      };
+      const frame = document.createElement('iframe');
+      document.body.append(frame);
+      const runner = new JavaScriptRunnerAdapter({ analyzer });
+      await runner.prepare(frame);
+
+      await expect(runner.render(runnerInput(override))).rejects.toThrow();
+      expect(frame.srcdoc).toBe('');
+      expect(analyzer.analyze).not.toHaveBeenCalled();
+      await runner.dispose();
+    },
+  );
+
+  it('sandboxを固定し、正しいwindow／identityの実行完了後だけevidenceを返す', async () => {
+    const analyzer = {
+      analyze: vi.fn(async () => analysisSuccess()),
+      dispose: vi.fn(async () => undefined),
+    };
+    const createObjectURL = vi.fn(() => 'blob:https://example.test/runtime');
+    const revokeObjectURL = vi.fn();
+    const frame = document.createElement('iframe');
+    const wrongFrame = document.createElement('iframe');
+    document.body.append(frame, wrongFrame);
+    const runner = new JavaScriptRunnerAdapter({ analyzer, createObjectURL, revokeObjectURL });
+
+    await runner.prepare(frame);
+    const pending = runner.render(runnerInput());
+    await vi.waitFor(() => {
+      expect(frame.srcdoc).toContain('data-tsumucode-javascript-runtime');
+    });
+    expect(frame.getAttribute('sandbox')).toBe('allow-scripts');
+    expect(frame.getAttribute('sandbox')).not.toContain('allow-same-origin');
+    expect(frame.getAttribute('referrerpolicy')).toBe('no-referrer');
+
+    let settled = false;
+    void pending.then(() => {
+      settled = true;
+    });
+    dispatchExecution(frame, {}, wrongFrame.contentWindow);
+    dispatchExecution(frame, { executionRevision: 2 });
+    dispatchExecution(frame, { oneTimeToken: 'wrong-token' });
+    dispatchBridgeReady(frame);
+    await Promise.resolve();
+    expect(settled).toBe(false);
+    dispatchExecution(frame);
+
+    await expect(pending).resolves.toMatchObject({
+      diagnostics: [],
+      evidence: [
+        { id: 'javascript.executed', value: true },
+        { id: 'javascript.source-sha256', file: 'script.js', value: 'a'.repeat(64) },
+        { id: 'javascript.budget-exhausted', value: false },
+      ],
+    });
+    await runner.dispose();
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:https://example.test/runtime');
+  });
+
+  it('budget超過を不正解ではなく再試行可能なsystem診断へ変換する', async () => {
+    const analyzer = {
+      analyze: vi.fn(async () => analysisSuccess()),
+      dispose: vi.fn(async () => undefined),
+    };
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    const runner = new JavaScriptRunnerAdapter({
+      analyzer,
+      createObjectURL: () => 'blob:https://example.test/runtime',
+      revokeObjectURL: () => undefined,
+    });
+    await runner.prepare(frame);
+    const pending = runner.render(runnerInput());
+    await vi.waitFor(() => {
+      expect(frame.srcdoc).not.toBe('');
+    });
+    dispatchBridgeReady(frame);
+    dispatchExecution(frame, {
+      payload: {
+        executed: true,
+        budgetExhausted: true,
+        timerLimitExceeded: false,
+        runtimeError: null,
+      },
+    });
+
+    const result = await pending;
+    expect(result.diagnostics).toEqual([
+      expect.objectContaining({ kind: 'system', code: 'javascript-budget' }),
+    ]);
+    expect(result.evidence).toContainEqual({
+      id: 'javascript.budget-exhausted',
+      value: true,
+    });
+    await runner.dispose();
+  });
+
+  it('Analyzer診断ではframeを更新せず同じ診断を返す', async () => {
+    const failure: JavaScriptAnalysisResult = {
+      status: 'failure',
+      requestId: 'analysis-1',
+      exerciseSessionId: 'session-1',
+      executionRevision: 1,
+      file: 'script.js',
+      diagnostics: [
+        {
+          code: 'javascript-analyzer-syntax',
+          kind: 'syntax',
+          severity: 'error',
+          message: 'Unexpected token',
+          learnerMessage: '括弧を確認してください。',
+          file: 'script.js',
+          line: 1,
+          column: 2,
+        },
+      ],
+    };
+    const analyzer = {
+      analyze: vi.fn(async () => failure),
+      dispose: vi.fn(async () => undefined),
+    };
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    const runner = new JavaScriptRunnerAdapter({ analyzer });
+    await runner.prepare(frame);
+
+    await expect(runner.render(runnerInput())).resolves.toMatchObject({
+      diagnostics: failure.diagnostics,
+      evidence: [],
+    });
+    expect(frame.srcdoc).toBe('');
+    await runner.dispose();
+  });
+
+  it('bridge／実行完了が期限内に来なければ未完成frameを破棄してsystem診断を返す', async () => {
+    vi.useFakeTimers();
+    const analyzer = {
+      analyze: vi.fn(async () => analysisSuccess()),
+      dispose: vi.fn(async () => undefined),
+    };
+    const revokeObjectURL = vi.fn();
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    const runner = new JavaScriptRunnerAdapter({
+      analyzer,
+      createObjectURL: () => 'blob:https://example.test/runtime',
+      revokeObjectURL,
+      executionTimeoutMs: 50,
+    });
+    await runner.prepare(frame);
+    const pending = runner.render(runnerInput());
+    await flushMicrotasks();
+    expect(frame.srcdoc).not.toBe('');
+
+    await vi.advanceTimersByTimeAsync(50);
+    const result = await pending;
+
+    expect(result.diagnostics).toEqual([
+      expect.objectContaining({ kind: 'system', code: 'javascript-runner-system' }),
+    ]);
+    expect(result.evidence).toEqual([]);
+    expect(frame.srcdoc).toBe('');
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:https://example.test/runtime');
+    await runner.dispose();
+  });
+
+  it('新revisionのwatchdog失敗後は直前のready済みPreviewを同じidentityで復元する', async () => {
+    vi.useFakeTimers();
+    const analyzer = {
+      analyze: vi.fn(async (input: { readonly executionRevision: number }) =>
+        analysisSuccess(input.executionRevision, {
+          requestId: `analysis-${String(input.executionRevision)}`,
+        }),
+      ),
+      dispose: vi.fn(async () => undefined),
+    };
+    let runtimeNumber = 0;
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    const runner = new JavaScriptRunnerAdapter({
+      analyzer,
+      createObjectURL: () => {
+        runtimeNumber += 1;
+        return `blob:https://example.test/runtime-${String(runtimeNumber)}`;
+      },
+      revokeObjectURL: () => undefined,
+      executionTimeoutMs: 50,
+    });
+    await runner.prepare(frame);
+
+    const first = runner.render(runnerInput({ executionRevision: 1 }));
+    await flushMicrotasks();
+    dispatchExecution(frame);
+    dispatchBridgeReady(frame);
+    await first;
+    const previousSrcdoc = frame.srcdoc;
+
+    const second = runner.render(runnerInput({ executionRevision: 2 }));
+    await flushMicrotasks();
+    expect(frame.srcdoc).not.toBe(previousSrcdoc);
+    await vi.advanceTimersByTimeAsync(50);
+    await flushMicrotasks();
+    expect(frame.srcdoc).toBe(previousSrcdoc);
+    dispatchExecution(frame);
+    dispatchBridgeReady(frame);
+
+    const result = await second;
+    expect(result.executionRevision).toBe(2);
+    expect(result.diagnostics).toEqual([
+      expect.objectContaining({ kind: 'system', code: 'javascript-runner-system' }),
+    ]);
+    expect(frame.srcdoc).toBe(previousSrcdoc);
+    await runner.dispose();
+  });
+
+  it('Snapshot前にtimerを停止し、同じsession／revisionの応答だけを返す', async () => {
+    const analyzer = {
+      analyze: vi.fn(async () => analysisSuccess()),
+      dispose: vi.fn(async () => undefined),
+    };
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    const childWindow = frame.contentWindow!;
+    const postMessage = vi.spyOn(childWindow, 'postMessage').mockImplementation(() => undefined);
+    const runner = new JavaScriptRunnerAdapter({
+      analyzer,
+      createObjectURL: () => 'blob:https://example.test/runtime',
+      revokeObjectURL: () => undefined,
+    });
+    await runner.prepare(frame);
+    const render = runner.render(runnerInput());
+    await vi.waitFor(() => {
+      expect(frame.srcdoc).not.toBe('');
+    });
+    dispatchExecution(frame);
+    dispatchBridgeReady(frame);
+    await render;
+
+    const pending = runner.requestSnapshot({
+      exerciseSessionId: 'session-1',
+      executionRevision: 1,
+      requestId: 'snapshot-1',
+      policy: snapshotPolicy,
+    });
+    const clearRequest = postMessage.mock.calls[0]?.[0] as {
+      readonly requestId: string;
+      readonly oneTimeToken: string;
+    };
+    expect(clearRequest).toMatchObject({ type: 'javascript.clear-timers' });
+    window.dispatchEvent(
+      new MessageEvent('message', {
+        source: childWindow,
+        data: {
+          version: JAVASCRIPT_PROTOCOL_VERSION,
+          type: 'javascript.timers-cleared',
+          exerciseSessionId: 'session-1',
+          executionRevision: 1,
+          requestId: clearRequest.requestId,
+          oneTimeToken: clearRequest.oneTimeToken,
+          payload: null,
+        },
+      }),
+    );
+    await vi.waitFor(() => {
+      expect(postMessage).toHaveBeenCalledTimes(2);
+    });
+    const snapshotRequest = postMessage.mock.calls[1]?.[0] as {
+      readonly oneTimeToken: string;
+    };
+    window.dispatchEvent(
+      new MessageEvent('message', {
+        source: childWindow,
+        data: {
+          version: PREVIEW_PROTOCOL_VERSION,
+          type: 'snapshot.response',
+          exerciseSessionId: 'session-1',
+          requestId: 'snapshot-1',
+          oneTimeToken: snapshotRequest.oneTimeToken,
+          payload: snapshot(),
+        },
+      }),
+    );
+
+    await expect(pending).resolves.toEqual(snapshot());
+    await runner.dispose();
+  });
+
+  it('ready後にiframe navigationが再発したらactive Previewを破棄する', async () => {
+    const analyzer = {
+      analyze: vi.fn(async () => analysisSuccess()),
+      dispose: vi.fn(async () => undefined),
+    };
+    const revokeObjectURL = vi.fn();
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    const runner = new JavaScriptRunnerAdapter({
+      analyzer,
+      createObjectURL: () => 'blob:https://example.test/runtime',
+      revokeObjectURL,
+    });
+    await runner.prepare(frame);
+    const render = runner.render(runnerInput());
+    await vi.waitFor(() => {
+      expect(frame.srcdoc).not.toBe('');
+    });
+    dispatchExecution(frame);
+    dispatchBridgeReady(frame);
+    await render;
+
+    frame.dispatchEvent(new Event('load'));
+
+    expect(frame.srcdoc).toBe('');
+    await expect(
+      runner.requestSnapshot({
+        exerciseSessionId: 'session-1',
+        executionRevision: 1,
+        requestId: 'after-navigation',
+        policy: snapshotPolicy,
+      }),
+    ).rejects.toThrow('not current');
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:https://example.test/runtime');
+    await runner.dispose();
+  });
+});

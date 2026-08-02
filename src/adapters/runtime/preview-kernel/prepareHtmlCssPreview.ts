@@ -58,10 +58,13 @@ function canonicalFiles(files: Readonly<Record<string, string>>): ReadonlyMap<st
 }
 
 /** Full／read-only共通の入力境界をiframe更新前に検証する。 */
-export function validateHtmlCssPreviewInput(input: RunnerInput): ValidatedHtmlCssPreviewInput {
+export function validateHtmlCssPreviewInput(
+  input: RunnerInput,
+  expectedLanguageId: string = 'html-css',
+): ValidatedHtmlCssPreviewInput {
   const configuredReducedMotion = (input.viewport as { readonly reducedMotion?: unknown })
     .reducedMotion;
-  if (input.languageId !== 'html-css') throw new Error('Runner languageId mismatch');
+  if (input.languageId !== expectedLanguageId) throw new Error('Runner languageId mismatch');
   if (
     !SAFE_ID.test(input.exerciseSessionId) ||
     input.exerciseSessionId.length > 256 ||

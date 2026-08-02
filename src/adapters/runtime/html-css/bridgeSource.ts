@@ -78,6 +78,9 @@ function bridgeRuntime(config: BridgeConfig): void {
   const maxSnapshotCharacters = 2_000_000;
   const maxRequests = 1_024;
   const parentWindow = window.parent;
+  const scheduleTask = window.setTimeout.bind(window);
+  const executingScript = document.currentScript;
+  if (executingScript instanceof HTMLScriptElement) executingScript.remove();
   const usedRequestIds = new Set<string>();
   const usedTokens = new Set<string>();
   const observableDocument = document.implementation.createHTMLDocument('');
@@ -638,7 +641,7 @@ function bridgeRuntime(config: BridgeConfig): void {
       await waitForLayoutAssets();
       applyReducedMotionEmulation();
       document.documentElement.getBoundingClientRect();
-      setTimeout(announceReady, 0);
+      scheduleTask(announceReady, 0);
     })();
   };
   if (document.readyState === 'loading') {

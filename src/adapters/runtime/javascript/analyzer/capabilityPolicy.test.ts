@@ -32,6 +32,8 @@ describe('assertJavaScriptCapabilityPolicy', () => {
     ['localStorage.setItem("key", "value")', /Storage/u],
     ['document.cookie', /許可されていない/u],
     ['window.location = "https://example.com"', /画面遷移/u],
+    ['self.parent.postMessage("message", "*")', /画面遷移/u],
+    ['frames[0]', /画面遷移/u],
     ['history.pushState({}, "", "/next")', /画面遷移/u],
     ['open("https://example.com")', /popup/u],
     ['document["cookie"]', /computed property/u],
@@ -45,6 +47,19 @@ describe('assertJavaScriptCapabilityPolicy', () => {
       'document.querySelector("#image").setAttribute("src", "https://example.com/a.png")',
       /外部resource/u,
     ],
+    [
+      'const name = "src"; document.querySelector("#image").setAttribute(name, "https://example.com/a.png")',
+      /属性変更/u,
+    ],
+    [
+      'document.querySelector("body").innerHTML = "<img src=https://example.com/a.png>"',
+      /HTML挿入/u,
+    ],
+    [
+      'document.querySelector("body").ownerDocument.defaultView.fetch("https://example.com")',
+      /実行環境/u,
+    ],
+    ['document.querySelector("body").constructor.constructor("return 1")()', /動的実行/u],
     ['class Unsupported {}', /この構文/u],
     ['/(a+)+$/.test("aaaaaaaaaaaaaaaa!")', /正規表現/u],
   ])('%s を拒否する', (source, message) => {

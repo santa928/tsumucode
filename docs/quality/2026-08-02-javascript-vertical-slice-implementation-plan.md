@@ -212,7 +212,7 @@ Expected: Analyzer全テストPASS、audit 0 vulnerabilities。lockfile上で4�
 - Consumes: Task 2の`JavaScriptAnalyzerClient`、既存preview-kernel sanitizer、Task 1のevidence契約。
 - Produces: `JavaScriptRunnerAdapter implements RunnerAdapter`、`languageId = 'javascript'`。
 
-- [ ] **Step 1: CSP、identity、watchdogの失敗テストを書く**
+- [x] **Step 1: CSP、identity、watchdogの失敗テストを書く**
 
 ```ts
 expect(srcdoc).toContain("default-src 'none'");
@@ -225,13 +225,13 @@ await expect(adapter.render(inputWith('while(true){}'))).resolves.toMatchObject(
 expect(postMessageFromWrongWindow()).toBeIgnored();
 ```
 
-- [ ] **Step 2: REDを確認する**
+- [x] **Step 2: REDを確認する**
 
 Run: `./scripts/docker-compose.sh run --rm app npm run test:run -- src/adapters/runtime/javascript/runner`
 
 Expected: Runner module未作成でFAIL。
 
-- [ ] **Step 3: trusted bootstrapとbudget objectを実装する**
+- [x] **Step 3: trusted bootstrapとbudget objectを実装する**
 
 ```ts
 interface ExecutionBudget {
@@ -243,11 +243,11 @@ interface ExecutionBudget {
 
 100,000 checkpointまたは250 msでguardが`false`を返し、挿入code側はLoopを`break`、Functionを`return`する。timerは最大10件、callbackごとにbudgetを再開し、validation／dispose時に全timerを破棄する。`try/catch`へ例外を投げない。
 
-- [ ] **Step 4: sandbox、CSP、API無効化、protocolを実装する**
+- [x] **Step 4: sandbox、CSP、API無効化、protocolを実装する**
 
 frameは`sandbox="allow-scripts"`、`referrerpolicy="no-referrer"`とし、nonce付きtrusted scriptだけを許可する。`fetch`、XHR、WebSocket、EventSource、Beacon、Worker、Storage、open、navigation sink、form送信を実行前に無効化する。token、session ID、revision、`event.source === frame.contentWindow`が一致する応答だけを受理する。
 
-- [ ] **Step 5: 正常renderとevidenceを実装する**
+- [x] **Step 5: 正常renderとevidenceを実装する**
 
 ```ts
 evidence: [
@@ -259,11 +259,11 @@ evidence: [
 
 HTMLから`script`とevent handlerを除去し、CSSと同一Origin教材Assetだけを既存preview kernelでmaterializeする。bridge readyが1,500 ms以内に届かない場合はframeを再生成し、直前の正常Preview DOMを保持する。
 
-- [ ] **Step 6: Snapshotを既存契約へ接続する**
+- [x] **Step 6: Snapshotを既存契約へ接続する**
 
 Task 1と同じsession／revisionだけを観測し、`requestId`重複、別session、別revisionを拒否する。snapshot payloadは既存HTML/CSS bridgeのbounded node変換を共通化して再利用する。
 
-- [ ] **Step 7: Runner単体テストをGREENにする**
+- [x] **Step 7: Runner単体テストをGREENにする**
 
 Run: `./scripts/docker-compose.sh run --rm app npm run test:run -- src/adapters/runtime/javascript src/adapters/runtime/html-css`
 

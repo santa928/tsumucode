@@ -24,10 +24,27 @@ const NAVIGATION_IDENTIFIERS = new Set([
   'opener',
   'location',
   'history',
+  'self',
+  'frames',
 ]);
 const DOCUMENT_MEMBERS = new Set(['querySelector', 'querySelectorAll', 'getElementById']);
 const NAVIGATION_MEMBERS = new Set(['location', 'history', 'pushState', 'replaceState', 'assign']);
 const RESOURCE_MEMBERS = new Set(['src', 'href', 'action', 'formAction']);
+const RUNTIME_ESCAPE_MEMBERS = new Set([
+  '__proto__',
+  'contentDocument',
+  'contentWindow',
+  'currentTarget',
+  'defaultView',
+  'ownerDocument',
+  'opener',
+  'parent',
+  'postMessage',
+  'prototype',
+  'top',
+  'view',
+]);
+const HTML_INSERTION_MEMBERS = new Set(['innerHTML', 'outerHTML', 'insertAdjacentHTML']);
 const ALLOWED_NODE_TYPES = new Set([
   'Program',
   'ExpressionStatement',
@@ -226,6 +243,15 @@ export function assertJavaScriptCapabilityPolicy(program: Node, file: string): v
       if (property !== undefined && NETWORK_IDENTIFIERS.has(property)) {
         reject(node, file, '外部通信を行う機能は使えません');
       }
+      if (property === 'constructor') {
+        reject(node, file, 'constructorを使った動的実行は使えません');
+      }
+      if (property !== undefined && RUNTIME_ESCAPE_MEMBERS.has(property)) {
+        reject(node, file, '実行環境へ戻るmemberは使えません');
+      }
+      if (property !== undefined && HTML_INSERTION_MEMBERS.has(property)) {
+        reject(node, file, '文字列によるHTML挿入は使えません');
+      }
       if (property === 'serviceWorker') reject(node, file, 'Service Workerは使えません');
       if (property !== undefined && NAVIGATION_MEMBERS.has(property)) {
         reject(node, file, '画面遷移を行うmemberは使えません');
@@ -258,6 +284,9 @@ export function assertJavaScriptCapabilityPolicy(program: Node, file: string): v
           RESOURCE_MEMBERS.has(attribute)
         ) {
           reject(node, file, '外部resourceへつながる属性の変更は使えません');
+        }
+        if (property === 'setAttribute' || property === 'setAttributeNS') {
+          reject(node, file, '動的な属性変更はこの演習では使えません');
         }
       }
     }
