@@ -19,7 +19,6 @@ import {
 } from '../../../core/persistence/progressUpdates';
 import { LeaseFenceRejectedError } from '../../../core/persistence/contracts';
 import type { ResolvedPreviewAsset } from '../../../core/runtime/contracts';
-import { ValidatorRuleEngine } from '../../../core/validation/validatorRuleEngine';
 import { WorkshopNotice } from '../../../design-system/components/WorkshopNotice';
 import { resolvePublicAsset } from '../../../shared/lib/resolvePublicAsset';
 import type { WorkspaceLeaseAccess } from '../../progress/WorkspaceLeaseGate';
@@ -32,7 +31,6 @@ import {
 } from '../components';
 import { SlideBlocks } from '../components/SlideBlocks';
 import { createCodeMirrorEditor } from '../editor/createCodeMirrorEditor';
-import { registerHtmlCssEditorLanguages } from '../editor/htmlCssEditorLanguages';
 import { LearningToolRail } from '../layout/LearningToolRail';
 import { LearningViewportShell } from '../layout/LearningViewportShell';
 import { LearningSessionController, StaleExecutionError, useLearningSession } from '../session';
@@ -45,6 +43,12 @@ const LazyCodeWorkspace = lazy(() =>
 
 type ExerciseLoaderData = Awaited<ReturnType<typeof exerciseLoader>>;
 type InitializationState = 'loading' | 'ready' | 'error';
+type RuntimePreparationState = 'loading' | 'ready' | 'error';
+
+interface RuntimePreparation {
+  readonly key: string;
+  readonly state: RuntimePreparationState;
+}
 type OperationState = 'idle' | 'preview' | 'validate' | 'reset';
 
 interface ExerciseViewState {
@@ -104,6 +108,67 @@ function previewPreparationErrorMessage(): string {
 export function EditableExercisePage({ lease, ...data }: EditableExercisePageProps) {
   useAdjacentLessonPrefetch(data.course, data.lesson.id);
   const [attempt, setAttempt] = useState(0);
+  const runtimePreparationKey = JSON.stringify([
+    data.course.id,
+    data.course.runnerId,
+    data.course.validatorId,
+    attempt,
+  ]);
+  const [runtimePreparation, setRuntimePreparation] = useState<RuntimePreparation>({
+    key: runtimePreparationKey,
+    state: 'loading',
+  });
+  const currentRuntimePreparation =
+    runtimePreparation.key === runtimePreparationKey ? runtimePreparation.state : 'loading';
+  const runtimeErrorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const abortController = new AbortController();
+    void import('../javascriptRuntimeServices')
+      .then(({ ensureCourseRuntime }) => ensureCourseRuntime(data.course, learningRuntimeServices))
+      .then(
+        () => {
+          if (!abortController.signal.aborted) {
+            setRuntimePreparation({ key: runtimePreparationKey, state: 'ready' });
+          }
+        },
+        () => {
+          if (!abortController.signal.aborted) {
+            setRuntimePreparation({ key: runtimePreparationKey, state: 'error' });
+          }
+        },
+      );
+    return () => {
+      abortController.abort();
+    };
+  }, [data.course, runtimePreparationKey]);
+
+  useEffect(() => {
+    if (currentRuntimePreparation === 'error') runtimeErrorRef.current?.focus();
+  }, [currentRuntimePreparation]);
+
+  if (currentRuntimePreparation === 'loading') {
+    return <p role="status">演習環境を読み込んでいます</p>;
+  }
+  if (currentRuntimePreparation === 'error') {
+    return (
+      <div ref={runtimeErrorRef} role="alert" tabIndex={-1}>
+        <WorkshopNotice tone="correction" title="演習環境を読み込めませんでした">
+          <p>通信状態を確認してください。コードや下書きは変更せず、同じ画面で再試行できます。</p>
+        </WorkshopNotice>
+        <button
+          type="button"
+          onClick={() => {
+            setAttempt((current) => current + 1);
+          }}
+          className="mt-4 inline-flex min-h-11 items-center rounded-workshop-md bg-workshop-primary px-5 py-3 font-bold text-workshop-on-primary"
+        >
+          もう一度読み込む
+        </button>
+      </div>
+    );
+  }
+
   return (
     <EditableSession
       key={attempt}
@@ -155,18 +220,10 @@ function EditableSession({
     () => resolveWorkspaceAssets(allWorkspaceTargets.map(({ exercise: target }) => target)),
     [allWorkspaceTargets],
   );
-  const validator = useMemo(() => {
-    if (
-      course.validatorId === 'html-css' &&
-      !learningRuntimeServices.validatorRegistry.has('html-css')
-    ) {
-      learningRuntimeServices.validatorRegistry.register(
-        'html-css',
-        () => new ValidatorRuleEngine(),
-      );
-    }
-    return learningRuntimeServices.validatorRegistry.create(course.validatorId);
-  }, [course.validatorId]);
+  const validator = useMemo(
+    () => learningRuntimeServices.validatorRegistry.create(course.validatorId),
+    [course.validatorId],
+  );
   const controller = useMemo(
     () =>
       new LearningSessionController({
@@ -262,10 +319,10 @@ function EditableSession({
     () => (operation === 'reset' ? { ...state.files } : state.files),
     [operation, state.files],
   );
-  const editor = useMemo(() => {
-    registerHtmlCssEditorLanguages(learningRuntimeServices.editorLanguageRegistry);
-    return createCodeMirrorEditor(learningRuntimeServices.editorLanguageRegistry);
-  }, []);
+  const editor = useMemo(
+    () => createCodeMirrorEditor(learningRuntimeServices.editorLanguageRegistry),
+    [],
+  );
   const result = state.validationHistory.at(-1);
   const busy = operation !== 'idle';
   const viewState: ExerciseViewState = {
@@ -834,6 +891,14 @@ function EditableSession({
           }}
           onRevealNextHint={revealNextHint}
           onReviewSlide={review}
+          onResolveCodeError={() => {
+            setDrawerMode(undefined);
+            setEditorFocusRequestId((current) => current + 1);
+          }}
+          onRetrySystemError={() => {
+            setDrawerMode(undefined);
+            validate();
+          }}
         />
       </div>
 

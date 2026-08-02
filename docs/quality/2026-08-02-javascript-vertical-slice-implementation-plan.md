@@ -337,17 +337,23 @@ Expected: 全テストPASS。
 - Test: `src/features/learning/editor/javascriptEditorLanguage.test.ts`
 - Create: `src/features/learning/javascriptRuntimeServices.ts`
 - Test: `src/features/learning/javascriptRuntimeServices.test.ts`
+- Create: `src/features/learning/diagnosticLocation.ts`
+- Test: `src/features/learning/diagnosticLocation.test.ts`
 - Modify: `src/features/learning/pages/EditableExercisePage.tsx`
 - Modify: `src/features/learning/pages/LearningRoutes.test.tsx`
 - Modify: `src/features/learning/runtimeServices.ts`
 - Modify: `src/features/learning/runtimeServices.test.ts`
+- Modify: `src/features/learning/components/FeedbackPanel.tsx`
+- Modify: `src/features/learning/components/ExerciseStatusDrawer.tsx`
+- Modify: `src/features/learning/editor/CodeWorkspace.tsx`
+- Modify: `scripts/check-learning-chunks.ts`
 
 **Interfaces:**
 
 - Consumes: Task 3のRunner、Task 4のValidator、`@codemirror/lang-javascript`。
 - Produces: `ensureCourseRuntime(course, services): Promise<void>`と`registerJavaScriptEditorLanguage(registry): Promise<void>`。
 
-- [ ] **Step 1: 初期graph非混入とJavaScript route遅延読込の失敗テストを書く**
+- [x] **Step 1: 初期graph非混入とJavaScript route遅延読込の失敗テストを書く**
 
 ```ts
 expect(homeManifestModules).not.toContain('acorn');
@@ -357,29 +363,31 @@ expect(services.runnerRegistry.create('javascript').languageId).toBe('javascript
 expect(services.validatorRegistry.has('javascript')).toBe(true);
 ```
 
-- [ ] **Step 2: REDを確認する**
+- [x] **Step 2: REDを確認する**
 
 Run: `./scripts/docker-compose.sh run --rm app npm run test:run -- src/features/learning/javascriptRuntimeServices.test.ts src/features/learning/pages/LearningRoutes.test.tsx`
 
 Expected: JavaScript登録module未作成でFAIL。
 
-- [ ] **Step 3: JavaScript editor profileを実装する**
+- [x] **Step 3: JavaScript editor profileを実装する**
 
 `javascript({ jsx: false, typescript: false })`、2 space indent、bracket matching、close bracketsを登録する。既存registryを上書きせず、import失敗時はpending Promiseを破棄して再試行可能にする。
 
-- [ ] **Step 4: Course IDによる遅延runtime登録を実装する**
+- [x] **Step 4: Course IDによる遅延runtime登録を実装する**
 
 `html-css`は既存同期経路を維持し、`javascript`だけが`import('../../adapters/runtime/javascript')`、`import('../../adapters/validation/javascript')`、JavaScript editor languageをExercise routeで読み込む。unknown IDは明示的な準備Errorにする。
 
-- [ ] **Step 5: UI文言とError focusを接続する**
+- [x] **Step 5: UI文言とError focusを接続する**
 
 `script.js`初期選択、File／line付きError summary、再試行CTA、live regionを追加する。構文・securityは「コードを直す」、system errorは「もう一度実行する」とし、Source／cursor／selected fileを変更しない。
 
-- [ ] **Step 6: route、Editor、runtimeテストをGREENにする**
+- [x] **Step 6: route、Editor、runtimeテストをGREENにする**
 
 Run: `./scripts/docker-compose.sh run --rm app npm run test:run -- src/features/learning/editor src/features/learning/javascriptRuntimeServices.test.ts src/features/learning/pages/LearningRoutes.test.tsx src/features/learning/runtimeServices.test.ts`
 
 Expected: 全テストPASS。
+
+Fresh verification: `npm run format:check`、`npm run check`、`npm run smoke:subpath`、`npm run test:performance`（18 browser tests／7 bundle budgets）、診断visual E2E 2件、全E2E 432件（342 PASS／90 Chromium限定baselineの想定skip／0 FAIL）をPASS。Editor増分予算超過はCourse runtime orchestratorを0.85KB gzipの独立chunkへ分離して解消した。
 
 ### Task 6: draft JavaScript Chapter 00教材とCompiler
 

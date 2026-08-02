@@ -9,6 +9,7 @@ import {
 } from 'react';
 import type { EditorCursor } from '../../../core/persistence/contracts';
 import type { RunnerDiagnostic } from '../../../core/runtime/contracts';
+import { supplementalDiagnosticLocation } from '../diagnosticLocation';
 import type { EditorAdapter, EditorHandle } from './EditorAdapter';
 
 export interface CodeWorkspaceProps {
@@ -240,7 +241,12 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
             key={diagnosticKey(diagnostic, index)}
             className="rounded-workshop-sm border-l-4 border-workshop-correction bg-workshop-raised px-3 py-2 text-sm font-bold text-workshop-correction"
           >
-            {diagnostic.learnerMessage}
+            {supplementalDiagnosticLocation(diagnostic) === undefined ? null : (
+              <span className="mr-2 font-mono text-xs">
+                {supplementalDiagnosticLocation(diagnostic)}
+              </span>
+            )}
+            <span>{diagnostic.learnerMessage}</span>
           </li>
         ))}
       </ul>

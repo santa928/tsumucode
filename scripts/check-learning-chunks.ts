@@ -20,12 +20,20 @@ const workspaceKey = 'src/features/learning/editor/CodeWorkspace.tsx';
 const runnerKey = 'src/adapters/runtime/html-css/index.ts';
 const readOnlyPreviewKey =
   'src/adapters/runtime/read-only-html-css/HtmlCssReadOnlyPreviewAdapter.ts';
+const courseRuntimeKey = 'src/features/learning/javascriptRuntimeServices.ts';
+const javascriptRunnerKey = 'src/adapters/runtime/javascript/index.ts';
+const javascriptValidatorKey = 'src/adapters/validation/javascript/index.ts';
+const javascriptEditorKey = 'src/features/learning/editor/javascriptEditorLanguage.ts';
 const requiredKeys = [
   normalLearningEntryKey,
   editableKey,
   workspaceKey,
   runnerKey,
   readOnlyPreviewKey,
+  courseRuntimeKey,
+  javascriptRunnerKey,
+  javascriptValidatorKey,
+  javascriptEditorKey,
 ] as const;
 const codeMirrorMarker = /(?:EditorView|EditorState|cm-content)/u;
 
@@ -116,6 +124,10 @@ export async function assertLearningChunkIsolation(options: LearningChunkOptions
   assertDynamicEdgeFromStaticGraph(manifest, normalLearningEntryKey, runnerKey);
   assertDynamicEdgeFromStaticGraph(manifest, normalLearningEntryKey, readOnlyPreviewKey);
   assertDynamicEdge(manifest, editableKey, workspaceKey);
+  assertDynamicEdge(manifest, editableKey, courseRuntimeKey);
+  assertDynamicEdgeFromStaticGraph(manifest, courseRuntimeKey, javascriptRunnerKey);
+  assertDynamicEdgeFromStaticGraph(manifest, courseRuntimeKey, javascriptValidatorKey);
+  assertDynamicEdgeFromStaticGraph(manifest, courseRuntimeKey, javascriptEditorKey);
 
   const mobileGraph = collectStaticGraph(manifest, [normalLearningEntryKey, readOnlyPreviewKey]);
   const forbiddenMobileChunks = [editableKey, workspaceKey, runnerKey].filter((key) =>
@@ -124,6 +136,17 @@ export async function assertLearningChunkIsolation(options: LearningChunkOptions
   if (forbiddenMobileChunks.length > 0) {
     throw new Error(
       `mobile静的graphへ編集専用chunkが混入しています: ${forbiddenMobileChunks.join(', ')}`,
+    );
+  }
+  const forbiddenLanguageChunks = [
+    courseRuntimeKey,
+    javascriptRunnerKey,
+    javascriptValidatorKey,
+    javascriptEditorKey,
+  ].filter((key) => mobileGraph.has(key));
+  if (forbiddenLanguageChunks.length > 0) {
+    throw new Error(
+      `初期graphへ言語固有chunkが混入しています: ${forbiddenLanguageChunks.join(', ')}`,
     );
   }
 

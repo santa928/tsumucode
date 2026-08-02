@@ -18,6 +18,8 @@ export interface ExerciseStatusDrawerProps {
   readonly onClose: () => void;
   readonly onRevealNextHint: () => void;
   readonly onReviewSlide: (slideId: string) => void;
+  readonly onResolveCodeError?: () => void;
+  readonly onRetrySystemError?: () => void;
 }
 
 /** modeに対応するPanelだけを1つのAccessible Drawerへ差し替えて表示する。 */
@@ -32,6 +34,8 @@ export function ExerciseStatusDrawer({
   onClose,
   onRevealNextHint,
   onReviewSlide,
+  onResolveCodeError,
+  onRetrySystemError,
 }: ExerciseStatusDrawerProps) {
   return (
     <LearningDrawer
@@ -48,6 +52,8 @@ export function ExerciseStatusDrawer({
           actionsDisabled={busy}
           onRevealNextHint={onRevealNextHint}
           onReviewSlide={onReviewSlide}
+          {...(onResolveCodeError === undefined ? {} : { onResolveCodeError })}
+          {...(onRetrySystemError === undefined ? {} : { onRetrySystemError })}
         />
       ) : mode === 'hint' ? (
         <HintPanel

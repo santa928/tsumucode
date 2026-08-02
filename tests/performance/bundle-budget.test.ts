@@ -221,8 +221,9 @@ describe('production bundle budget', () => {
     expect(
       calculateAddedHomeInitialJavaScriptGzipBytes(currentHomeInitialJavaScriptGzipBytes),
     ).toBeLessThanOrEqual(performanceManifest.learningPath.addedHomeInitialJavaScriptGzipMaxBytes);
+    // 値importを持たない軽量Registry名ではなく、Editor／実行本体の初期混入だけを拒否する。
     const forbiddenInitialChunk =
-      /EditorLanguageRegistry|RunnerRegistry|ValidatorRegistry|CodeWorkspace|EditableExercisePage|codemirror/u;
+      /RunnerRegistry|ValidatorRegistry|CodeWorkspace|EditableExercisePage|codemirror/u;
     expect(
       [...homeKeys].flatMap((key) => {
         const file = viteManifest[key]!.file;

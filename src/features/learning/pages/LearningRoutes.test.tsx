@@ -96,6 +96,9 @@ const runtime = vi.hoisted(() => {
   return {
     readyPromise: Promise.resolve(),
     ensureCourseIndex: vi.fn(async () => undefined),
+    ensureCourseRuntime: vi.fn<(_course: unknown, _services: unknown) => Promise<void>>(
+      async () => undefined,
+    ),
     repository: {
       open: vi.fn(async () => undefined),
       getCourse: vi.fn<(courseId: string) => Promise<CourseProgress | undefined>>(),
@@ -185,6 +188,10 @@ vi.mock('../runtimeServices', () => ({
       return runtime.readyPromise;
     },
   },
+}));
+
+vi.mock('../javascriptRuntimeServices', () => ({
+  ensureCourseRuntime: runtime.ensureCourseRuntime,
 }));
 
 const originalHash = window.location.hash;
@@ -515,6 +522,7 @@ beforeEach(() => {
   stubContentFetch();
   runtime.readyPromise = Promise.resolve();
   runtime.ensureCourseIndex.mockClear();
+  runtime.ensureCourseRuntime.mockReset().mockResolvedValue(undefined);
   runtime.repository.getCourse.mockReset().mockResolvedValue(undefined);
   runtime.repository.getCourseVersioned.mockReset().mockImplementation(async (courseId) => {
     const progress = await runtime.repository.getCourse(courseId);
@@ -736,6 +744,51 @@ describe('Learning routes', () => {
 
     expect(await findCodeWorkspace()).toBeInTheDocument();
     expect(runtime.runnerRegistry.create).toHaveBeenCalledWith(fixtureCourse.runnerId);
+  });
+
+  it('DesktopはCourse固有Runtimeの遅延準備が終わるまでEditorとRunnerを生成しない', async () => {
+    stubEditingCapability(true);
+    stubAdapters();
+    let resolveRuntime!: () => void;
+    runtime.ensureCourseRuntime.mockReturnValueOnce(
+      new Promise<void>((resolve) => {
+        resolveRuntime = resolve;
+      }),
+    );
+
+    renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
+
+    expect(await screen.findByText('演習環境を読み込んでいます')).toHaveAttribute('role', 'status');
+    expect(runtime.runnerRegistry.create).not.toHaveBeenCalled();
+    expect(screen.queryByTestId('code-workspace')).not.toBeInTheDocument();
+
+    await act(async () => {
+      resolveRuntime();
+    });
+    expect(await findCodeWorkspace()).toBeInTheDocument();
+    expect(runtime.ensureCourseRuntime).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'html-css' }),
+      expect.objectContaining({ runnerRegistry: runtime.runnerRegistry }),
+    );
+  });
+
+  it('Course固有Runtimeの読込失敗へFocusを移し、同じSourceのまま再試行する', async () => {
+    stubEditingCapability(true);
+    stubAdapters();
+    runtime.ensureCourseRuntime.mockRejectedValueOnce(new Error('chunk offline'));
+
+    renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
+
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent('演習環境を読み込めませんでした');
+    await waitFor(() => {
+      expect(alert).toHaveFocus();
+    });
+    expect(runtime.runnerRegistry.create).not.toHaveBeenCalled();
+
+    await userEvent.click(screen.getByRole('button', { name: 'もう一度読み込む' }));
+    expect(await findCodeWorkspace()).toBeInTheDocument();
+    expect(runtime.ensureCourseRuntime).toHaveBeenCalledTimes(2);
   });
 
   it('保存Banner表示中はlease coordination警告を重複せず作業台を直後に表示する', async () => {

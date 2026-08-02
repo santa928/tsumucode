@@ -160,6 +160,18 @@ function repositoryHarness(): RepositoryHarness {
 }
 
 describe('createLearningRuntimeServices', () => {
+  it('初期RegistryはHTML/CSS Runnerだけを持ち、言語固有ValidatorとEditorを含めない', () => {
+    const { repository } = repositoryHarness();
+    const services = createLearningRuntimeServices({ repository });
+
+    expect(services.runnerRegistry.has('html-css')).toBe(true);
+    expect(services.runnerRegistry.has('javascript')).toBe(false);
+    expect(services.validatorRegistry.has('html-css')).toBe(false);
+    expect(services.validatorRegistry.has('javascript')).toBe(false);
+    expect(services.editorLanguageRegistry.has('html')).toBe(false);
+    expect(services.editorLanguageRegistry.has('javascript')).toBe(false);
+  });
+
   it('保存healthがdegradedなら既定Notice Storeは重複する保存Errorだけを抑止する', async () => {
     const { repository, open } = repositoryHarness();
     open.mockRejectedValueOnce(new DOMException('denied', 'SecurityError'));

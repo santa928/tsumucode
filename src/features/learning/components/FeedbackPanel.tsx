@@ -4,12 +4,15 @@ import type {
   ValidationResult,
   ValidationStatus,
 } from '../../../core/validation/contracts';
+import { supplementalDiagnosticLocation } from '../diagnosticLocation';
 
 interface FeedbackPanelProps {
   readonly result: ValidationResult | undefined;
   readonly actionsDisabled?: boolean;
   readonly onRevealNextHint: () => void;
   readonly onReviewSlide: (slideId: string) => void;
+  readonly onResolveCodeError?: () => void;
+  readonly onRetrySystemError?: () => void;
 }
 
 const STATUS_COPY: Record<
@@ -70,6 +73,8 @@ export function FeedbackPanel({
   actionsDisabled = false,
   onRevealNextHint,
   onReviewSlide,
+  onResolveCodeError,
+  onRetrySystemError,
 }: FeedbackPanelProps) {
   if (result === undefined) {
     return (
@@ -151,10 +156,36 @@ export function FeedbackPanel({
               key={`${diagnostic.code}-${diagnostic.file ?? ''}-${String(diagnostic.line ?? '')}-${String(diagnostic.column ?? '')}-${diagnostic.message}-${String(index)}`}
               className="rounded-workshop-md bg-workshop-raised p-4"
             >
-              {diagnostic.learnerMessage}
+              {supplementalDiagnosticLocation(diagnostic) === undefined ? null : (
+                <p className="font-mono text-xs font-black text-workshop-correction">
+                  {supplementalDiagnosticLocation(diagnostic)}
+                </p>
+              )}
+              <p className="mt-1">{diagnostic.learnerMessage}</p>
             </li>
           ))}
         </ol>
+      ) : null}
+
+      {result.status === 'code-error' && onResolveCodeError !== undefined ? (
+        <button
+          type="button"
+          disabled={actionsDisabled}
+          onClick={onResolveCodeError}
+          className="mt-5 inline-flex min-h-11 items-center rounded-workshop-md bg-workshop-primary px-5 py-3 font-bold text-workshop-on-primary disabled:cursor-wait disabled:opacity-50"
+        >
+          コードを直す
+        </button>
+      ) : null}
+      {result.status === 'system-error' && onRetrySystemError !== undefined ? (
+        <button
+          type="button"
+          disabled={actionsDisabled}
+          onClick={onRetrySystemError}
+          className="mt-5 inline-flex min-h-11 items-center rounded-workshop-md bg-workshop-primary px-5 py-3 font-bold text-workshop-on-primary disabled:cursor-wait disabled:opacity-50"
+        >
+          もう一度実行する
+        </button>
       ) : null}
     </StackedCard>
   );

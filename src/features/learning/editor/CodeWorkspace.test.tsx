@@ -41,6 +41,7 @@ const diagnostics: readonly RunnerDiagnostic[] = [
     message: 'heading',
     learnerMessage: 'HTMLの見出しを確認してください',
     file: 'index.html',
+    line: 3,
   },
   {
     code: 'css-color',
@@ -253,6 +254,7 @@ describe('CodeWorkspace', () => {
     const diagnosticList = screen.getByRole('list', { name: 'コード診断' });
     expect(diagnosticList).toHaveAttribute('aria-live', 'polite');
     expect(screen.getByText('HTMLの見出しを確認してください')).toBeInTheDocument();
+    expect(screen.getByText('index.html:3')).toBeInTheDocument();
     expect(screen.getByText('ワークスペース全体を確認してください')).toBeInTheDocument();
     expect(screen.queryByText('CSSの色を確認してください')).not.toBeInTheDocument();
 

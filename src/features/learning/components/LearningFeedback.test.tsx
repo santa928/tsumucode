@@ -1,4 +1,5 @@
 import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { StrictMode, useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import type { ValidationCheck, ValidationResult } from '../../../core/validation/contracts';
@@ -217,8 +218,9 @@ describe('FeedbackPanel', () => {
     expect(screen.getByRole('heading', { name: '未達のcheck' })).toBeInTheDocument();
   });
 
-  it('code-errorは同じcodeでも異なる診断を入力順で最大3件表示する', () => {
+  it('code-errorはFile・行付き診断を最大3件表示し、コードへ戻す', async () => {
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const onResolveCodeError = vi.fn();
 
     try {
       renderWithRouter(
@@ -249,6 +251,8 @@ describe('FeedbackPanel', () => {
                 severity: 'warning',
                 message: 'third',
                 learnerMessage: 'styles.cssの波かっこを確認します。',
+                file: 'styles.css',
+                line: 7,
               },
               {
                 code: 'FOURTH',
@@ -261,10 +265,14 @@ describe('FeedbackPanel', () => {
           })}
           onRevealNextHint={vi.fn()}
           onReviewSlide={vi.fn()}
+          onResolveCodeError={onResolveCodeError}
         />,
       );
 
       expect(screen.getByRole('status')).toHaveTextContent('コードを確認しよう');
+      expect(screen.queryByText('index.html:2')).not.toBeInTheDocument();
+      expect(screen.queryByText('index.html:5')).not.toBeInTheDocument();
+      expect(screen.getByText('styles.css:7')).toBeInTheDocument();
       expect(screen.getByText('index.htmlの2行目を確認します。')).toBeInTheDocument();
       expect(screen.getByText('index.htmlの5行目を確認します。')).toBeInTheDocument();
       expect(screen.getByText('styles.cssの波かっこを確認します。')).toBeInTheDocument();
@@ -276,9 +284,26 @@ describe('FeedbackPanel', () => {
           ),
         ),
       ).toBe(false);
+      await userEvent.click(screen.getByRole('button', { name: 'コードを直す' }));
+      expect(onResolveCodeError).toHaveBeenCalledOnce();
     } finally {
       consoleErrorSpy.mockRestore();
     }
+  });
+
+  it('system-errorはSourceを保持した再実行CTAを表示する', async () => {
+    const onRetrySystemError = vi.fn();
+    renderWithRouter(
+      <FeedbackPanel
+        result={result('system-error')}
+        onRevealNextHint={vi.fn()}
+        onReviewSlide={vi.fn()}
+        onRetrySystemError={onRetrySystemError}
+      />,
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'もう一度実行する' }));
+    expect(onRetrySystemError).toHaveBeenCalledOnce();
   });
 
   it.each([

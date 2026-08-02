@@ -40,6 +40,11 @@ function createCheckedRunner(id: RunnerLanguageId, factory: RunnerFactory): Runn
 export class RunnerRegistry {
   readonly #factories = new Map<RunnerLanguageId, RunnerFactory>();
 
+  /** 指定IDが登録済みか、factoryを生成せずに返す。 */
+  has(id: RunnerLanguageId): boolean {
+    return this.#factories.has(id);
+  }
+
   /** IDごとに一つだけRunner factoryを登録する。 */
   register(id: RunnerLanguageId, factory: RunnerFactory): void {
     assertRunnerId(id);

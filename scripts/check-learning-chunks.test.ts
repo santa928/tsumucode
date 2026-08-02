@@ -10,6 +10,10 @@ const workspaceEntry = 'src/features/learning/editor/CodeWorkspace.tsx';
 const runnerEntry = 'src/adapters/runtime/html-css/index.ts';
 const readOnlyPreviewEntry =
   'src/adapters/runtime/read-only-html-css/HtmlCssReadOnlyPreviewAdapter.ts';
+const courseRuntimeEntry = 'src/features/learning/javascriptRuntimeServices.ts';
+const javascriptRunnerEntry = 'src/adapters/runtime/javascript/index.ts';
+const javascriptValidatorEntry = 'src/adapters/validation/javascript/index.ts';
+const javascriptEditorEntry = 'src/features/learning/editor/javascriptEditorLanguage.ts';
 
 /** 実Buildと同じ遅延境界を持つ最小manifestを返す。 */
 function validManifest(): Readonly<Record<string, unknown>> {
@@ -31,7 +35,7 @@ function validManifest(): Readonly<Record<string, unknown>> {
     [editableEntry]: {
       file: 'assets/EditableExercisePage-hash.js',
       imports: ['_jsx.js', mobileEntry, '_components.js', '_codemirror.js'],
-      dynamicImports: [workspaceEntry],
+      dynamicImports: [workspaceEntry, courseRuntimeEntry],
     },
     [workspaceEntry]: {
       file: 'assets/CodeWorkspace-hash.js',
@@ -45,6 +49,25 @@ function validManifest(): Readonly<Record<string, unknown>> {
       file: 'assets/read-only-html-css-hash.js',
       imports: ['_jsx.js', '_components.js'],
     },
+    [courseRuntimeEntry]: {
+      file: 'assets/course-runtime-hash.js',
+      imports: ['_validator-rules.js'],
+      dynamicImports: [javascriptRunnerEntry, javascriptValidatorEntry, javascriptEditorEntry],
+    },
+    '_validator-rules.js': { file: 'assets/validator-rules-hash.js' },
+    [javascriptRunnerEntry]: {
+      file: 'assets/javascript-runner-hash.js',
+      imports: ['_javascript-analysis.js'],
+    },
+    [javascriptValidatorEntry]: {
+      file: 'assets/javascript-validator-hash.js',
+      imports: ['_javascript-analysis.js'],
+    },
+    [javascriptEditorEntry]: {
+      file: 'assets/javascript-editor-hash.js',
+      imports: ['_codemirror.js'],
+    },
+    '_javascript-analysis.js': { file: 'assets/javascript-analysis-hash.js' },
   };
 }
 
@@ -81,6 +104,27 @@ describe('learning chunk isolation', () => {
         readAsset,
       }),
     ).rejects.toThrow('mobile静的graphへ編集専用chunkが混入しています');
+  });
+
+  it('初期graphへJavaScript固有Runnerが混入したBuildを拒否する', async () => {
+    const manifest = validManifest();
+    const entry = manifest[mobileEntry] as {
+      readonly file: string;
+      readonly imports: readonly string[];
+    };
+
+    await expect(
+      assertLearningChunkIsolation({
+        manifest: {
+          ...manifest,
+          [mobileEntry]: {
+            ...entry,
+            imports: [...entry.imports, javascriptRunnerEntry],
+          },
+        },
+        readAsset,
+      }),
+    ).rejects.toThrow('初期graphへ言語固有chunkが混入しています');
   });
 
   it('mobile静的graphへEditor入力支援chunkだけが混入したBuildも拒否する', async () => {
