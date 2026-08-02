@@ -1,5 +1,12 @@
 /** CourseProgressへSlide閲覧・判定・共有workspace編集を純粋に反映する。 */
-import type { CourseManifest, Exercise, Lesson } from '../content/types';
+import { findLessonOutline, resolveWorkspaceExerciseLocations } from '../content/selectors';
+import type {
+  CourseIndex,
+  CourseManifest,
+  Exercise,
+  Lesson,
+  LessonOutline,
+} from '../content/types';
 import { evaluateCompletionRequirement, preserveFirstCompletion } from '../learning/completion';
 import type { ValidationResult } from '../validation/contracts';
 import type { CourseProgress, ExerciseDraft, LessonProgress } from './contracts';
@@ -14,7 +21,7 @@ function courseLessons(course: CourseManifest): readonly Lesson[] {
 /** Courseと既存Progressのidentityが一致することを確認する。 */
 function assertProgressIdentity(
   progress: CourseProgress | undefined,
-  course: CourseManifest,
+  course: Pick<CourseManifest, 'id' | 'revision'>,
 ): void {
   if (
     progress !== undefined &&
@@ -43,12 +50,73 @@ function assertTargetBelongsToCourse(
 }
 
 /** 未作成CourseProgressを現教材revisionで初期化する。 */
-function initial(course: CourseManifest, now: string): CourseProgress {
+function initial(course: Pick<CourseManifest, 'id' | 'revision'>, now: string): CourseProgress {
   return {
     courseId: course.id,
     contentRevision: course.revision,
     lessons: {},
     currentComplete: false,
+    updatedAt: now,
+  };
+}
+
+/** Index outlineと読込済みLesson／Exerciseのcanonical対応を確認する。 */
+function assertIndexTargetBelongsToCourse(
+  course: CourseIndex,
+  lesson: Lesson,
+  exercise?: Exercise,
+): LessonOutline {
+  const outline = findLessonOutline(course, lesson.id);
+  if (outline.kind !== lesson.kind) {
+    throw new Error(`Lesson kindがCourse Indexと一致しません: ${lesson.id}`);
+  }
+  if (exercise !== undefined) {
+    const canonicalExercise = outline.exercises.find(({ id }) => id === exercise.id);
+    if (
+      canonicalExercise === undefined ||
+      canonicalExercise.kind !== exercise.kind ||
+      canonicalExercise.workspaceId !== exercise.workspaceId
+    ) {
+      throw new Error(`ExerciseがLessonまたはworkspaceに一致しません: ${exercise.id}`);
+    }
+  }
+  return outline;
+}
+
+/** Course IndexのoutlineだけでLessonとCourseの完了状態を再計算する。 */
+function recalculateFromIndex(
+  progress: CourseProgress,
+  course: CourseIndex,
+  lesson: LessonOutline,
+  next: LessonProgress,
+  now: string,
+): CourseProgress {
+  const completion = preserveFirstCompletion(
+    next.firstCompletedAt,
+    evaluateCompletionRequirement(lesson.completion, next),
+    now,
+  );
+  const lessons = { ...progress.lessons, [lesson.id]: { ...next, ...completion } };
+  const lessonIds = course.phases.flatMap(({ chapters }) =>
+    chapters.flatMap(({ lessons: items }) => items.map(({ id }) => id)),
+  );
+  const currentChapterId = course.phases
+    .flatMap(({ chapters }) => chapters)
+    .find(({ lessons: items }) => items.some(({ id }) => id === lesson.id))?.id;
+  if (currentChapterId === undefined) {
+    throw new Error(`LessonのChapterがCourse Indexにありません: ${lesson.id}`);
+  }
+  const courseComplete =
+    lessonIds.length > 0 && lessonIds.every((id) => lessons[id]?.currentComplete === true);
+  return {
+    ...progress,
+    lessons,
+    currentLessonId: lesson.id,
+    currentChapterId,
+    currentComplete: courseComplete,
+    ...(progress.firstCompletedAt !== undefined || courseComplete
+      ? { firstCompletedAt: progress.firstCompletedAt ?? now }
+      : {}),
     updatedAt: now,
   };
 }
@@ -135,6 +203,37 @@ export function recordSlideView(
   );
 }
 
+/** Course Indexと現在LessonだけでSlide閲覧と完了状態を記録する。 */
+export function recordSlideViewFromIndex(
+  current: CourseProgress | undefined,
+  course: CourseIndex,
+  lesson: Lesson,
+  slideId: string,
+  now: string,
+): CourseProgress {
+  assertProgressIdentity(current, course);
+  const outline = assertIndexTargetBelongsToCourse(course, lesson);
+  if (
+    !outline.slides.some(({ id }) => id === slideId) ||
+    !lesson.slides.some(({ id }) => id === slideId)
+  ) {
+    throw new Error(`SlideがLessonまたはCourse Indexにありません: ${slideId}`);
+  }
+  const progress = current ?? initial(course, now);
+  const state = lessonState(lesson.id, progress.lessons[lesson.id]);
+  return recalculateFromIndex(
+    progress,
+    course,
+    outline,
+    {
+      ...state,
+      viewedSlideIds: unique([...state.viewedSlideIds, slideId]),
+      currentSlideId: slideId,
+    },
+    now,
+  );
+}
+
 /** Guided Projectの現在Rule evidenceから必須Checklist evidenceを再構築する。 */
 function guidedChecklistEvidence(
   lesson: Lesson,
@@ -147,6 +246,18 @@ function guidedChecklistEvidence(
       ({ required, ruleIds }) =>
         required && ruleIds.every((ruleId) => passedRuleIds.includes(ruleId)),
     )
+    .map(({ id }) => id);
+}
+
+/** Index outlineの必須ChecklistとRule evidenceから現在Checklist evidenceを再構築する。 */
+function guidedChecklistEvidenceFromIndex(
+  lesson: LessonOutline,
+  passedRuleIds: readonly string[],
+  current: readonly string[],
+): readonly string[] {
+  if (lesson.kind !== 'guided-project') return current;
+  return lesson.requiredChecklistItems
+    .filter(({ ruleIds }) => ruleIds.every((ruleId) => passedRuleIds.includes(ruleId)))
     .map(({ id }) => id);
 }
 
@@ -186,6 +297,56 @@ export function recordDraftMutation(
       passedExerciseIds: state.passedExerciseIds.filter((id) => id !== exercise.id),
       passedChecklistItemIds: guidedChecklistEvidence(
         lesson,
+        passedRuleIds,
+        state.passedChecklistItemIds,
+      ),
+      passedRuleIds,
+      passedViewportIds: state.passedViewportIds.filter(
+        (id) => !exercise.previewViewports.some(({ id: viewportId }) => viewportId === id),
+      ),
+    },
+    draft.updatedAt,
+  );
+}
+
+/** Course Indexと現在LessonだけでDraft編集によるpass evidence失効を反映する。 */
+export function recordDraftMutationFromIndex(
+  current: CourseProgress | undefined,
+  course: CourseIndex,
+  lesson: Lesson,
+  exercise: Exercise,
+  draft: ExerciseDraft,
+): CourseProgress | undefined {
+  assertProgressIdentity(current, course);
+  const outline = assertIndexTargetBelongsToCourse(course, lesson, exercise);
+  if (current === undefined) return undefined;
+  if (
+    draft.courseId !== course.id ||
+    draft.lessonId !== lesson.id ||
+    draft.exerciseId !== exercise.id ||
+    draft.contentRevision !== course.revision ||
+    draft.workspaceId !== exercise.workspaceId
+  ) {
+    throw new Error('DraftがCourse Index、Lesson、Exerciseまたはworkspaceに一致しません');
+  }
+  const snapshot = draft.lastPassingSnapshots[exercise.id];
+  const stillPassing =
+    snapshot?.contentRevision === draft.contentRevision &&
+    snapshot.editRevision === draft.editRevision;
+  if (stillPassing) return current;
+
+  const state = lessonState(lesson.id, current.lessons[lesson.id]);
+  const requirementIds = exercise.validationRules.map(({ groupId, id }) => groupId ?? id);
+  const passedRuleIds = state.passedRuleIds.filter((id) => !requirementIds.includes(id));
+  return recalculateFromIndex(
+    current,
+    course,
+    outline,
+    {
+      ...state,
+      passedExerciseIds: state.passedExerciseIds.filter((id) => id !== exercise.id),
+      passedChecklistItemIds: guidedChecklistEvidenceFromIndex(
+        outline,
         passedRuleIds,
         state.passedChecklistItemIds,
       ),
@@ -247,6 +408,55 @@ export function recordValidation(
   );
 }
 
+/** Course Indexと現在Lessonだけで単一Exerciseの判定結果を進捗へ反映する。 */
+export function recordValidationFromIndex(
+  current: CourseProgress | undefined,
+  course: CourseIndex,
+  lesson: Lesson,
+  exercise: Exercise,
+  result: ValidationResult,
+): CourseProgress {
+  assertProgressIdentity(current, course);
+  const outline = assertIndexTargetBelongsToCourse(course, lesson, exercise);
+  if (result.exerciseId !== exercise.id) {
+    throw new Error(`Validation resultのExercise IDが一致しません: ${result.exerciseId}`);
+  }
+  const progress = current ?? initial(course, result.evaluatedAt);
+  const state = lessonState(lesson.id, progress.lessons[lesson.id]);
+  const requirementIds = exercise.validationRules.map(({ groupId, id }) => groupId ?? id);
+  if (result.passedRequirementIds.some((id) => !requirementIds.includes(id))) {
+    throw new Error('Validation resultに対象Exercise外のrequirement evidenceが含まれています');
+  }
+  const passedRuleIds = unique([
+    ...state.passedRuleIds.filter((id) => !requirementIds.includes(id)),
+    ...result.passedRequirementIds,
+  ]);
+  const passed = result.status === 'pass';
+  return recalculateFromIndex(
+    progress,
+    course,
+    outline,
+    {
+      ...state,
+      passedExerciseIds: passed
+        ? unique([...state.passedExerciseIds, exercise.id])
+        : state.passedExerciseIds.filter((id) => id !== exercise.id),
+      passedChecklistItemIds: guidedChecklistEvidenceFromIndex(
+        outline,
+        passedRuleIds,
+        state.passedChecklistItemIds,
+      ),
+      passedRuleIds,
+      passedViewportIds: passed
+        ? unique([...state.passedViewportIds, ...exercise.previewViewports.map(({ id }) => id)])
+        : state.passedViewportIds.filter(
+            (id) => !exercise.previewViewports.some(({ id: viewportId }) => viewportId === id),
+          ),
+    },
+    result.evaluatedAt,
+  );
+}
+
 export interface WorkspaceValidationTarget {
   readonly lesson: Lesson;
   readonly exercise: Exercise;
@@ -279,11 +489,56 @@ export function findWorkspaceTargets(
 export function findWorkspaceValidationTargets(
   course: CourseManifest,
   currentExerciseId: string,
+): readonly WorkspaceValidationTarget[];
+export function findWorkspaceValidationTargets(
+  course: CourseIndex,
+  loadedLessons: readonly Lesson[],
+  currentExerciseId: string,
+): readonly WorkspaceValidationTarget[];
+export function findWorkspaceValidationTargets(
+  course: CourseManifest | CourseIndex,
+  loadedLessonsOrExerciseId: readonly Lesson[] | string,
+  currentExerciseId?: string,
 ): readonly WorkspaceValidationTarget[] {
-  const allTargets = findWorkspaceTargets(course, currentExerciseId);
-  const currentIndex = allTargets.findIndex(({ exercise }) => exercise.id === currentExerciseId);
+  if (typeof loadedLessonsOrExerciseId !== 'string') {
+    if (currentExerciseId === undefined) throw new Error('現在Exercise IDが必要です');
+    const lessonById = new Map<string, Lesson>();
+    for (const lesson of loadedLessonsOrExerciseId) {
+      if (lessonById.has(lesson.id)) {
+        throw new Error(`読込済みWorkspace Lesson IDが重複しています: ${lesson.id}`);
+      }
+      lessonById.set(lesson.id, lesson);
+    }
+    return resolveWorkspaceExerciseLocations(course as CourseIndex, currentExerciseId).map(
+      (location) => {
+        const lesson = lessonById.get(location.lessonId);
+        if (lesson === undefined) {
+          throw new Error(`Workspace Lessonが未読込です: ${location.lessonId}`);
+        }
+        const exercise = lesson.exercises.find(({ id }) => id === location.exerciseId);
+        if (exercise === undefined) {
+          throw new Error(
+            `Workspace Exerciseが未読込です: ${location.lessonId}/${location.exerciseId}`,
+          );
+        }
+        const outline = findLessonOutline(course as CourseIndex, location.lessonId);
+        const exerciseOutline = outline.exercises.find(({ id }) => id === location.exerciseId);
+        if (
+          exerciseOutline?.workspaceId !== exercise.workspaceId ||
+          exerciseOutline.kind !== exercise.kind
+        ) {
+          throw new Error(`Workspace対応がIndexとLessonで一致しません: ${location.exerciseId}`);
+        }
+        return { lesson, exercise };
+      },
+    );
+  }
+
+  const exerciseId = loadedLessonsOrExerciseId;
+  const allTargets = findWorkspaceTargets(course, exerciseId);
+  const currentIndex = allTargets.findIndex(({ exercise }) => exercise.id === exerciseId);
   if (currentIndex < 0) {
-    throw new Error(`Workspace内に現在Exerciseがありません: ${currentExerciseId}`);
+    throw new Error(`Workspace内に現在Exerciseがありません: ${exerciseId}`);
   }
   return allTargets.slice(0, currentIndex + 1);
 }

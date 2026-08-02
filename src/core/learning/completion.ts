@@ -1,5 +1,5 @@
 /** Lesson・Chapter・Courseの現在完了状態と初回完了日時を純粋に評価する。 */
-import type { ChapterManifest, CourseManifest, Lesson } from '../content/types';
+import type { Lesson } from '../content/types';
 import type { LessonProgress } from '../persistence/contracts';
 
 export interface CompletionEvidence {
@@ -15,6 +15,16 @@ export type CompletionRequirement = Lesson['completion'];
 export interface CompletionStatus {
   readonly currentComplete: boolean;
   readonly firstCompletedAt?: string;
+}
+
+interface ChapterCompletionSource {
+  readonly lessons: readonly { readonly id: string }[];
+}
+
+interface CourseCompletionSource {
+  readonly phases: readonly {
+    readonly chapters: readonly { readonly id: string }[];
+  }[];
 }
 
 /** 必須IDの空集合を満たすものとして、全IDが実績に含まれるかを判定する。 */
@@ -74,7 +84,7 @@ export function evaluateLessonCompletion(
 
 /** Chapter所属LessonをIDで照合し、空でない全Lessonが現在完了かを判定する。 */
 export function evaluateChapterCompletion(
-  chapter: Pick<ChapterManifest, 'lessons'>,
+  chapter: ChapterCompletionSource,
   lessons: Readonly<Record<string, Pick<LessonProgress, 'currentComplete'>>>,
 ): boolean {
   return (
@@ -85,7 +95,7 @@ export function evaluateChapterCompletion(
 
 /** Course全Phase配下のChapterをIDで照合し、空でない全Chapterが現在完了かを判定する。 */
 export function evaluateCourseCompletion(
-  course: Pick<CourseManifest, 'phases'>,
+  course: CourseCompletionSource,
   chapters: Readonly<Record<string, Pick<CompletionStatus, 'currentComplete'>>>,
 ): boolean {
   const courseChapters = course.phases.flatMap((phase) => phase.chapters);

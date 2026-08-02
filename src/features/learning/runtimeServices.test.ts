@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fixtureCourse } from '../../../tests/fixtures/course';
+import { fixtureCourse, fixtureCourseIndex } from '../../../tests/fixtures/course';
 import { ResilientProgressService } from '../../core/persistence/ResilientProgressService';
 import { TabLeaseCoordinator } from '../../core/persistence/TabLeaseCoordinator';
 import {
@@ -379,6 +379,37 @@ describe('createLearningRuntimeServices', () => {
     expect(addMigrationNotices).toHaveBeenCalledWith([
       { id: 'notice-1', courseId: fixtureCourse.id, reason: '旧Exerciseを初期化' },
     ]);
+  });
+
+  it('Course Index migrationをsingle-flightし、descriptor noticeを呼出元へ返す', async () => {
+    const { repository } = repositoryHarness();
+    const notice = {
+      id: 'index-notice',
+      courseId: fixtureCourseIndex.id,
+      reason: '旧Exerciseを初期化',
+    };
+    const registerCourseDescriptor = vi.fn();
+    const ensureStoredCourseDescriptor = vi.fn().mockResolvedValue([notice]);
+    const addMigrationNotices = vi.fn();
+    const services = createLearningRuntimeServices({
+      repository,
+      contentMigrations: {
+        registerCourseDescriptor,
+        ensureStoredCourseDescriptor,
+      } as unknown as ContentProgressMigrationService,
+      notices: { addMigrationNotices } as unknown as RuntimeNoticeStore,
+      passFreshness: {} as PassFreshnessRegistry,
+    });
+
+    await expect(
+      Promise.all([
+        services.ensureCourseIndex(fixtureCourseIndex),
+        services.ensureCourseIndex(fixtureCourseIndex),
+      ]),
+    ).resolves.toEqual([[notice], [notice]]);
+    expect(registerCourseDescriptor).toHaveBeenCalledOnce();
+    expect(ensureStoredCourseDescriptor).toHaveBeenCalledOnce();
+    expect(addMigrationNotices).toHaveBeenCalledWith([notice]);
   });
 
   it('migration失敗はcacheせず、同じRouteの再試行で成功できる', async () => {

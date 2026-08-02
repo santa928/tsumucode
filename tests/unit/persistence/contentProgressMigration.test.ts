@@ -1,4 +1,5 @@
 import { describe, expect, it, vi, type Mock } from 'vitest';
+import { splitCourseArtifacts } from '../../../scripts/content/splitCourseArtifacts';
 import type { CourseManifest } from '../../../src/core/content/types';
 import { canonicalJson } from '../../../src/core/persistence/canonicalJson';
 import type {
@@ -505,6 +506,59 @@ describe('ContentProgressMigrationService', () => {
     expect(lesson).not.toHaveProperty('firstCompletedAt');
     expect(progress).toMatchObject({ contentRevision: 'rev-2', currentComplete: false });
     expect(progress).not.toHaveProperty('firstCompletedAt');
+  });
+
+  it('Course Index descriptorだけでもExercise resetを同じ結果へ移行する', async () => {
+    const base = oldSnapshot();
+    const input: RepositorySnapshot = {
+      ...base,
+      courses: {
+        'html-css': {
+          ...base.courses['html-css']!,
+          contentRevision: 'rev-1',
+          lessons: {
+            'lesson-first-heading': {
+              lessonId: 'lesson-first-heading',
+              viewedSlideIds: ['slide-html-role'],
+              passedExerciseIds: ['exercise-first-heading'],
+              passedChecklistItemIds: [],
+              passedRuleIds: ['rule-h1-exists'],
+              passedViewportIds: ['desktop'],
+              currentComplete: true,
+            },
+          },
+          currentComplete: true,
+        },
+      },
+      drafts: {},
+    };
+    const repository = repositoryFor(input);
+    const service = new ContentProgressMigrationService(repository);
+    const index = splitCourseArtifacts(resettingExerciseCourse).index;
+
+    service.registerCourseDescriptor(index);
+    const notices = await service.ensureStoredCourseDescriptor(index);
+
+    expect(notices).toHaveLength(1);
+    const replacement: unknown = mockMethod(repository, 'replaceSnapshotWithBackup').mock
+      .calls[0]?.[0];
+    expect(replacement).toMatchObject({
+      courses: {
+        'html-css': {
+          contentRevision: 'rev-2',
+          currentComplete: false,
+          lessons: {
+            'lesson-first-heading': {
+              passedExerciseIds: [],
+              passedRuleIds: [],
+              passedViewportIds: [],
+              currentComplete: false,
+            },
+          },
+        },
+      },
+    });
+    expect(mockMethod(repository, 'replaceSnapshotWithBackup').mock.calls[0]?.[1]).toBe('recovery');
   });
 
   it('Exercise未合格でも部分Rule・Viewport evidenceを失効しreset noticeを返す', async () => {

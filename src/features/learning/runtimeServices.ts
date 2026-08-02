@@ -1,8 +1,16 @@
 /** 学習routeが共有するRepository・migration・Runner・Validatorの依存を構築する。 */
 import { IndexedDbProgressRepository } from '../../adapters/persistence/indexeddb';
-import { loadCourseCatalog, loadCourseManifest } from '../../core/content/loadCourseCatalog';
-import type { CourseManifest } from '../../core/content/types';
-import { ContentProgressMigrationService } from '../../core/persistence/contentProgressMigration';
+import {
+  loadCourseCatalog,
+  loadCourseCatalogV3,
+  loadCourseIndex,
+  loadCourseManifest,
+} from '../../core/content/loadCourseCatalog';
+import type { CourseIndex, CourseManifest } from '../../core/content/types';
+import {
+  ContentProgressMigrationService,
+  type ContentMigrationNotice,
+} from '../../core/persistence/contentProgressMigration';
 import { PassFreshnessRegistry } from '../../core/persistence/PassFreshnessRegistry';
 import { TabLeaseCoordinator } from '../../core/persistence/TabLeaseCoordinator';
 import {
@@ -32,7 +40,11 @@ import {
 } from './editor/EditorLanguageRegistry';
 import { RuntimeNoticeStore } from './runtimeNotices';
 
-export interface LearningRuntimeServices {
+export interface CourseIndexRuntimeRegistration {
+  ensureCourseIndex(index: CourseIndex): Promise<readonly ContentMigrationNotice[]>;
+}
+
+export interface LearningRuntimeServices extends CourseIndexRuntimeRegistration {
   readonly repository: ResilientProgressService;
   readonly progressService: ResilientProgressService;
   readonly passFreshness: PassFreshnessRegistry;
@@ -135,6 +147,14 @@ async function loadTransferCoursesFromCatalog(): Promise<readonly CourseManifest
   const catalog = await loadCourseCatalog(import.meta.env.BASE_URL);
   return Promise.all(
     catalog.courses.map((entry) => loadCourseManifest(import.meta.env.BASE_URL, entry)),
+  );
+}
+
+/** Catalog v3の全Course IndexをGitHub Pagesの現在Base Pathから検証済みで読み込む。 */
+export async function loadTransferCourseIndexesFromCatalog(): Promise<readonly CourseIndex[]> {
+  const catalog = await loadCourseCatalogV3(import.meta.env.BASE_URL);
+  return Promise.all(
+    catalog.courses.map((entry) => loadCourseIndex(import.meta.env.BASE_URL, entry)),
   );
 }
 
@@ -307,6 +327,8 @@ export function createLearningRuntimeServices(
   }
   const courseMigrations = new Map<string, Promise<void>>();
   const registeredCourses = new Map<string, CourseManifest>();
+  const courseIndexMigrations = new Map<string, Promise<readonly ContentMigrationNotice[]>>();
+  const registeredCourseIndexes = new Map<string, CourseIndex>();
   const courseProgressMutations = new Map<string, Promise<void>>();
   let openPromise: Promise<void> | undefined;
   let transferCatalogPromise: Promise<void> | undefined;
@@ -344,6 +366,28 @@ export function createLearningRuntimeServices(
     return guarded;
   }
 
+  /** Course Indexをmigrationへsingle-flight登録し、発生したnoticeを保持して返す。 */
+  function ensureCourseIndex(index: CourseIndex): Promise<readonly ContentMigrationNotice[]> {
+    registeredCourseIndexes.set(index.id, index);
+    const key = JSON.stringify([index.id, index.revision]);
+    const current = courseIndexMigrations.get(key);
+    if (current !== undefined) return current;
+
+    contentMigrations.registerCourseDescriptor(index);
+    const operation = (async () => {
+      await ready();
+      const migrationNotices = await contentMigrations.ensureStoredCourseDescriptor(index);
+      notices.addMigrationNotices(migrationNotices);
+      return migrationNotices;
+    })();
+    const guarded = operation.catch((error: unknown) => {
+      if (courseIndexMigrations.get(key) === guarded) courseIndexMigrations.delete(key);
+      throw error;
+    });
+    courseIndexMigrations.set(key, guarded);
+    return guarded;
+  }
+
   /** Import検証前にCatalogの全Manifestをsingle-flightで登録し、失敗後は再試行可能にする。 */
   function prepareTransferCatalog(): Promise<void> {
     if (transferCatalogPromise !== undefined) return transferCatalogPromise;
@@ -364,8 +408,12 @@ export function createLearningRuntimeServices(
   /** Repository recovery後に既知Courseのmigration成功cacheを破棄して順番に再評価する。 */
   async function recheckRegisteredCourses(): Promise<void> {
     courseMigrations.clear();
+    courseIndexMigrations.clear();
     for (const course of registeredCourses.values()) {
       await ensureCourse(course);
+    }
+    for (const index of registeredCourseIndexes.values()) {
+      await ensureCourseIndex(index);
     }
   }
 
@@ -438,6 +486,7 @@ export function createLearningRuntimeServices(
     retryPersistence,
     resolvePersistenceConflict,
     ensureCourse,
+    ensureCourseIndex,
     runCourseProgressMutation,
   };
 }

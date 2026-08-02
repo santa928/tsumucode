@@ -1,11 +1,23 @@
 /** Catalog revisionを使った選択的Course migration境界を検証する。 */
 // @vitest-environment node
 import { describe, expect, it, vi } from 'vitest';
-import { fixtureCatalog, fixtureCourse } from '../../tests/fixtures/course';
-import type { CourseCatalogEntry, CourseManifest } from '../core/content/types';
+import {
+  fixtureCatalog,
+  fixtureCatalogV3,
+  fixtureCourse,
+  fixtureCourseIndex,
+} from '../../tests/fixtures/course';
+import type {
+  CourseCatalogEntry,
+  CourseCatalogEntryV3,
+  CourseIndex,
+  CourseManifest,
+} from '../core/content/types';
 import type { CourseProgress } from '../core/persistence/contracts';
 import {
   ensureCatalogCourseRevisions,
+  ensureCatalogCourseIndexRevisions,
+  type CatalogProgressIndexMigrationPort,
   type CatalogProgressMigrationPort,
 } from './catalogProgressMigrations';
 
@@ -111,5 +123,35 @@ describe('ensureCatalogCourseRevisions', () => {
 
     await expect(ensureCatalogCourseRevisions([entry], port)).rejects.toThrow('manifest failed');
     expect(port.ensureCourse).not.toHaveBeenCalled();
+  });
+});
+
+describe('ensureCatalogCourseIndexRevisions', () => {
+  it('古いrevisionのCourseだけIndexを読みdescriptor migrationへ渡す', async () => {
+    const entry = fixtureCatalogV3.courses[0]!;
+    const loadIndex = vi.fn<(entry: CourseCatalogEntryV3) => Promise<CourseIndex>>(async () =>
+      structuredClone(fixtureCourseIndex),
+    );
+    const ensureCourseIndex = vi.fn<(index: CourseIndex) => Promise<readonly []>>(async () => []);
+    const port: CatalogProgressIndexMigrationPort = {
+      ready: Promise.resolve(),
+      repository: {
+        getCourse: vi
+          .fn()
+          .mockResolvedValue(
+            progressFor(
+              { ...fixtureCatalog.courses[0]!, revision: entry.revision },
+              { contentRevision: 'old-revision' },
+            ),
+          ),
+      },
+      loadIndex,
+      ensureCourseIndex,
+    };
+
+    await ensureCatalogCourseIndexRevisions([entry], port);
+
+    expect(loadIndex).toHaveBeenCalledWith(entry);
+    expect(ensureCourseIndex).toHaveBeenCalledWith(fixtureCourseIndex);
   });
 });

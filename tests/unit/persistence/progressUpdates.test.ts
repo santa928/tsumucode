@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import type { CourseManifest, Exercise, Lesson } from '../../../src/core/content/types';
+import type {
+  CourseIndex,
+  CourseManifest,
+  Exercise,
+  Lesson,
+  LessonOutline,
+} from '../../../src/core/content/types';
 import type {
   CourseProgress,
   ExerciseDraft,
@@ -8,14 +14,17 @@ import type {
 import {
   findWorkspaceTargets,
   findWorkspaceValidationTargets,
+  recordDraftMutationFromIndex,
   recordSlideView,
+  recordSlideViewFromIndex,
   recordValidation,
+  recordValidationFromIndex,
   recordWorkspaceDraftMutation,
   recordWorkspaceValidation,
   type WorkspaceValidationTarget,
 } from '../../../src/core/persistence/progressUpdates';
 import type { ValidationResult } from '../../../src/core/validation/contracts';
-import { fixtureCourse } from '../../fixtures/course';
+import { fixtureCourse, fixtureCourseIndex } from '../../fixtures/course';
 
 const PASSED_AT = '2026-07-10T00:01:00.000Z';
 const EDITED_AT = '2026-07-10T00:02:00.000Z';
@@ -113,6 +122,69 @@ function createSharedWorkspaceCourse(): CourseManifest {
         ],
       },
     ],
+  };
+}
+
+/** 純粋進捗fixtureの本文から、Schema検証を伴わず必要なCourse Index outlineを投影する。 */
+function createCourseIndex(course: CourseManifest): CourseIndex {
+  const projectLesson = (lesson: Lesson): LessonOutline => {
+    const common = {
+      id: lesson.id,
+      title: lesson.title,
+      goal: lesson.goal,
+      estimatedMinutes: lesson.estimatedMinutes,
+      prerequisiteLessonIds: lesson.prerequisiteLessonIds,
+      ...(lesson.nextLessonId === undefined ? {} : { nextLessonId: lesson.nextLessonId }),
+      slides: lesson.slides.map(({ id, title, kind }) => ({ id, title, kind })),
+      exercises: lesson.exercises.map(({ id, title, kind, workspaceId }) => ({
+        id,
+        title,
+        kind,
+        workspaceId,
+      })),
+      manifestPath: `generated/content/courses/${course.id}/lessons/${lesson.id}.json`,
+      manifestSha256: 'a'.repeat(64),
+    };
+    if (lesson.kind === 'standard') {
+      return { ...common, kind: lesson.kind, completion: lesson.completion };
+    }
+    const requiredChecklistItems = lesson.project.checklist
+      .filter(({ required }) => required)
+      .map(({ id, label, ruleIds }) => ({ id, label, ruleIds }));
+    if (lesson.kind === 'guided-project') {
+      return {
+        ...common,
+        kind: lesson.kind,
+        requiredChecklistItems,
+        completion: lesson.completion,
+      };
+    }
+    return {
+      ...common,
+      kind: lesson.kind,
+      requiredChecklistItems,
+      completion: lesson.completion,
+    };
+  };
+
+  return {
+    ...structuredClone(fixtureCourseIndex),
+    id: course.id,
+    revision: course.revision,
+    phases: course.phases.map((phase) => ({
+      id: phase.id,
+      title: phase.title,
+      description: phase.description,
+      chapters: phase.chapters.map((chapter) => ({
+        id: chapter.id,
+        sequence: chapter.sequence,
+        title: chapter.title,
+        goal: chapter.goal,
+        estimatedMinutes: chapter.estimatedMinutes,
+        kind: chapter.kind,
+        lessons: chapter.lessons.map(projectLesson),
+      })),
+    })),
   };
 }
 
@@ -266,6 +338,100 @@ describe('progress updates', () => {
     expect(
       findWorkspaceValidationTargets(course, 'exercise-step-3').map(({ exercise }) => exercise.id),
     ).toEqual(['exercise-step-1', 'exercise-step-2', 'exercise-step-3']);
+  });
+
+  it('Course Indexと読込済みLessonだけで現在工程までのworkspace対象を返す', () => {
+    const course = createSharedWorkspaceCourse();
+    const index = createCourseIndex(course);
+    const lessons = course.phases.flatMap(({ chapters }) =>
+      chapters.flatMap(({ lessons: items }) => items),
+    );
+
+    expect(
+      findWorkspaceValidationTargets(index, lessons, 'exercise-step-3').map(
+        ({ exercise }) => exercise.id,
+      ),
+    ).toEqual(['exercise-step-1', 'exercise-step-2', 'exercise-step-3']);
+  });
+
+  it('Index版workspace対象へ未来工程と別workspaceを含めず、未読込Lessonを拒否する', () => {
+    const course = createSharedWorkspaceCourse();
+    const lessons = course.phases.flatMap(({ chapters }) =>
+      chapters.flatMap(({ lessons: items }) => items),
+    );
+    const foreignCourse = structuredClone(course);
+    foreignCourse.phases[0]!.chapters[1]!.lessons[1]!.exercises[0]!.workspaceId =
+      'workspace-foreign';
+    const index = createCourseIndex(foreignCourse);
+    const targets = findWorkspaceValidationTargets(index, lessons, 'exercise-step-3');
+
+    expect(targets.map(({ exercise }) => exercise.id)).toEqual([
+      'exercise-step-1',
+      'exercise-step-2',
+      'exercise-step-3',
+    ]);
+    expect(() =>
+      findWorkspaceValidationTargets(index, lessons.slice(1), 'exercise-step-3'),
+    ).toThrow('Workspace Lessonが未読込です: lesson-step-1');
+  });
+
+  it('Index版のSlide閲覧・判定・Draft編集が既存版と同じ進捗結果を返す', () => {
+    const index = fixtureCourseIndex;
+    const lesson = fixtureCourse.phases[0]!.chapters[0]!.lessons[0]!;
+    const exercise = lesson.exercises[0]!;
+    const viewed = recordSlideViewFromIndex(
+      undefined,
+      index,
+      lesson,
+      'slide-html-role',
+      '2026-07-10T00:00:00.000Z',
+    );
+    const completed = recordValidationFromIndex(
+      viewed,
+      index,
+      lesson,
+      exercise,
+      createValidationResult(exercise, 1),
+    );
+    const draft: ExerciseDraft = {
+      courseId: index.id,
+      lessonId: lesson.id,
+      exerciseId: exercise.id,
+      workspaceId: exercise.workspaceId,
+      contentRevision: index.revision,
+      editRevision: 2,
+      files: { 'index.html': '<h1>編集後</h1>' },
+      selectedFile: 'index.html',
+      cursors: {},
+      validationHistory: [],
+      revealedHintIds: [],
+      lastPassingSnapshots: {},
+      updatedAt: EDITED_AT,
+    };
+
+    expect(completed).toEqual(
+      recordValidation(
+        recordSlideView(
+          undefined,
+          fixtureCourse,
+          lesson,
+          'slide-html-role',
+          '2026-07-10T00:00:00.000Z',
+        ),
+        fixtureCourse,
+        lesson,
+        exercise,
+        createValidationResult(exercise, 1),
+      ),
+    );
+    expect(recordDraftMutationFromIndex(completed, index, lesson, exercise, draft)).toMatchObject({
+      lessons: {
+        [lesson.id]: {
+          passedExerciseIds: [],
+          currentComplete: false,
+        },
+      },
+    });
   });
 
   it('共有workspace編集時に5工程の現在evidenceだけを無効化し、初回完了日時と編集位置を保持する', () => {

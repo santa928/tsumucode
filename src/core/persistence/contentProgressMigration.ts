@@ -1,6 +1,7 @@
 /** Course教材revisionに追随して、進捗とDraft内の参照IDを純粋変換する。 */
 import type {
   ContentProgressMigration,
+  CourseIndex,
   CourseManifest,
   ProgressMigrationStep,
 } from '../content/types';
@@ -13,6 +14,27 @@ import type {
   RepositorySnapshot,
 } from './contracts';
 import { canonicalJson } from './canonicalJson';
+
+interface CourseMigrationLessonDescriptor {
+  readonly id: string;
+  readonly exercises: readonly { readonly id: string }[];
+}
+
+interface CourseMigrationChapterDescriptor {
+  readonly lessons: readonly CourseMigrationLessonDescriptor[];
+}
+
+interface CourseMigrationPhaseDescriptor {
+  readonly chapters: readonly CourseMigrationChapterDescriptor[];
+}
+
+/** 本文なしで進捗migrationとExercise所有関係を解決できるCourse契約。 */
+export type CourseMigrationDescriptor = Pick<
+  CourseIndex,
+  'id' | 'revision' | 'progressMigrations' | 'entityIds'
+> & {
+  readonly phases: readonly CourseMigrationPhaseDescriptor[];
+};
 
 export type ContentMigrationEntity = ProgressMigrationStep['entity'];
 type ProgressEntity = ContentMigrationEntity;
@@ -181,7 +203,7 @@ function migrateLessonProgress(
 
 /** 現Course上でreset対象Exerciseを持つLessonへ、派生evidence失効対象Stepを割り当てる。 */
 function resetExerciseStepsByLesson(
-  course: CourseManifest,
+  course: CourseMigrationDescriptor,
   migration: ContentProgressMigration,
 ): ReadonlyMap<string, readonly ResetMigrationStep[]> {
   const resetByExerciseId = new Map<string, ResetMigrationStep>();
@@ -208,7 +230,7 @@ function migrateCourseStep(
   progress: CourseProgress,
   migration: ContentProgressMigration,
   context: MigrationContext,
-  course: CourseManifest,
+  course: CourseMigrationDescriptor,
 ): CourseProgress {
   const actions = actionMap(migration);
   const exerciseStepsByLesson = resetExerciseStepsByLesson(course, migration);
@@ -404,7 +426,7 @@ function migrateDraftStep(
 
 /** stored revisionから現行revisionまでの連続edgeを求め、未知・欠落・cycleを拒否する。 */
 function migrationPath(
-  course: CourseManifest,
+  course: CourseMigrationDescriptor,
   storedRevision: string,
 ): readonly ContentProgressMigration[] {
   if (storedRevision === course.revision) return [];
@@ -437,7 +459,7 @@ function migrationPath(
 
 /** Course registry、純粋migration、通常load時のbackup-first置換を調停する。 */
 export class ContentProgressMigrationService {
-  readonly #courses = new Map<string, CourseManifest>();
+  readonly #courses = new Map<string, CourseMigrationDescriptor>();
   readonly #now: () => string;
   readonly #id: () => string;
 
@@ -450,13 +472,52 @@ export class ContentProgressMigrationService {
     this.#id = options.id ?? (() => crypto.randomUUID());
   }
 
-  /** 検証済みCourse ManifestをID別registryへ登録する。 */
-  registerCourse(course: CourseManifest): void {
+  /** Course本文からmigrationに必要なID集合と所有関係だけを投影する。 */
+  #descriptorFromManifest(course: CourseManifest): CourseMigrationDescriptor {
+    const unique = (items: readonly string[]): string[] => [...new Set(items)];
+    const chapters = course.phases.flatMap(({ chapters: items }) => items);
+    const lessons = chapters.flatMap(({ lessons: items }) => items);
+    const exercises = lessons.flatMap(({ exercises: items }) => items);
+    return {
+      id: course.id,
+      revision: course.revision,
+      progressMigrations: course.progressMigrations,
+      entityIds: {
+        chapter: unique(chapters.map(({ id }) => id)),
+        lesson: unique(lessons.map(({ id }) => id)),
+        slide: unique(lessons.flatMap(({ slides }) => slides.map(({ id }) => id))),
+        exercise: unique(exercises.map(({ id }) => id)),
+        rule: unique(
+          exercises.flatMap(({ validationRules }) =>
+            validationRules.flatMap(({ id, groupId }) =>
+              groupId === undefined ? [id] : [id, groupId],
+            ),
+          ),
+        ),
+        hint: unique(exercises.flatMap(({ hints }) => hints.map(({ id }) => id))),
+        checklist: unique(
+          lessons.flatMap((lesson) =>
+            lesson.kind === 'standard' ? [] : lesson.project.checklist.map(({ id }) => id),
+          ),
+        ),
+        workspace: unique(exercises.map(({ workspaceId }) => workspaceId)),
+      },
+      phases: course.phases,
+    };
+  }
+
+  /** 本文を持たない検証済みCourse descriptorをID別registryへ登録する。 */
+  registerCourseDescriptor(course: CourseMigrationDescriptor): void {
     const registered = this.#courses.get(course.id);
     if (registered !== undefined && registered.revision !== course.revision) {
       throw new Error(`同じCourse IDへ異なるrevisionを再登録できません: ${course.id}`);
     }
     this.#courses.set(course.id, course);
+  }
+
+  /** 既存full Course APIをdescriptorへ投影して後方互換を維持する。 */
+  registerCourse(course: CourseManifest): void {
+    this.registerCourseDescriptor(this.#descriptorFromManifest(course));
   }
 
   /** 登録済みCourseを純粋変換し、隔離recordとCourse別noticeを同時に組み立てる。 */
@@ -566,14 +627,21 @@ export class ContentProgressMigrationService {
     return (await this.migrateSnapshotWithNotices(snapshot)).snapshot;
   }
 
-  /** 通常load時にCourseを登録・移行し、変更時だけbackup-firstで全snapshotを置換する。 */
-  async ensureStoredCourse(course: CourseManifest): Promise<readonly ContentMigrationNotice[]> {
-    this.registerCourse(course);
+  /** Course descriptorを登録・移行し、変更時だけbackup-firstで全snapshotを置換する。 */
+  async ensureStoredCourseDescriptor(
+    course: CourseMigrationDescriptor,
+  ): Promise<readonly ContentMigrationNotice[]> {
+    this.registerCourseDescriptor(course);
     const current = await this.repository.snapshot();
     const { snapshot: migrated, notices } = this.#transformSnapshot(current);
     if (canonicalJson(current) === canonicalJson(migrated)) return [];
 
     await this.repository.replaceSnapshotWithBackup(migrated, 'recovery');
     return notices;
+  }
+
+  /** 既存full Course APIをdescriptorへ投影して通常load時の後方互換を維持する。 */
+  async ensureStoredCourse(course: CourseManifest): Promise<readonly ContentMigrationNotice[]> {
+    return this.ensureStoredCourseDescriptor(this.#descriptorFromManifest(course));
   }
 }
