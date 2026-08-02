@@ -3,9 +3,11 @@
 - releaseStatus: `approved`
 - reviewedScreens: `24`
 - slideLibraryReviewedScreens: `10`
+- deliveryChangeReviewedScreens: `10`
 - unresolvedFindings: `0`
 - finalArtifactReviewed: `true`
-- reviewedAt: `2026-07-31`
+- reviewedAt: `2026-08-02`
+- latestCandidateSourceCommit: `45a70405e85dff0283a0f040351108cebd02c9c3`
 - verifiedSourceCommit: `draft`
 - canonicalDistSha256: `draft`
 - reviewBaseCommit: `draft`
@@ -94,6 +96,31 @@
 | --------------------------------------------------------- | -------- | ------------------------------------------------------------------ | ------------------------ | ------ | ---- |
 | `exercise-diagnostics-desktop-wide-chromium-linux.png`    | 1440x900 | `c96107a718f0ef00b0a9d72601ee5c26869c1a9ebb0b22955462d213afa36e40` | 収まり、重なりなし       | 一致   | 承認 |
 | `exercise-diagnostics-desktop-compact-chromium-linux.png` | 1280x720 | `cea251d8914d58adcafb312dacf13415c685ff1185c4a5ecbe1573d05fc885d0` | 収まり、重なりなし       | 一致   | 承認 |
+
+## Lesson単位配信後の追加証跡
+
+- 確認日: `2026-08-02`
+- 対象source: `45a70405e85dff0283a0f040351108cebd02c9c3`
+- 配信条件: `BASE_PATH=/tsumucode/`のProduction buildを`?verify=45a70405e85dff0283a0f040351108cebd02c9c3`付きで取得
+- 対象: Home、Course Map、Slide、Exercise、Slide Library目次を1280x720と390x844で撮影した10画面
+- 保存方針: 画像は`output/playwright/45a70405/`の一時証跡であり、`.gitignore`により公開Artifactへ含めない。下表のSHA-256で目視対象を固定する
+- 自動Gate: Unit `1320/1320`、3 Engine E2E `342 passed / 90 skipped / 0 failed / 0 flaky`、Performance `18/18`、bundle budget `7/7`、Lighthouse `12/12`、LCP最大`2192.337 ms`、CLS全件`0`
+- Console: 10画面を同一Chromium sessionで巡回後、error `0`、warning `0`
+- 境界: 全画面で`documentElement.scrollWidth === clientWidth`、`scrollX === 0`。Course MapとLibrary目次は長い一覧の通常Document Scrollを維持し、SlideとExerciseは両viewportで`scrollHeight === clientHeight`として外側Scrollを発生させない
+- Preview例外: Desktop Exerciseの1280px Preview canvasは専用`runtime-preview-scroll`内で縮小されるため内部座標のrightがviewportを越えるが、wrapperとDocumentのrightはviewport内に収まり、実画像でもEditor、Preview、Action Railの重なり・欠けはない
+
+| 画面       | Viewport | Screenshot SHA-256                                                 | Document高          | 代表境界                             | Text切れ／重なり | CTA／案内                        | 判定 |
+| ---------- | -------- | ------------------------------------------------------------------ | ------------------- | ------------------------------------ | ---------------- | -------------------------------- | ---- |
+| Home       | 1280x720 | `b9b4109fba817389a0ed607a86bcb5c3aadf1a9fc28fa26685130857f870be78` | 2012px、通常Scroll  | 横overflow 0                         | なし             | 学習Pathの主CTAが初期画面内      | 承認 |
+| Course Map | 1280x720 | `1cb622b51a77006bbda1c656a6fa508e0ce5c782ec7eb31193ba47833670ec34` | 16871px、通常Scroll | Card右余白16px                       | なし             | コース進捗と最初のChapterが明瞭  | 承認 |
+| Slide      | 1280x720 | `c3d3d21d5ec10b121de8b9bb8d8d048d42aa02d5191ec1d14f06578fe6caf9a0` | 720px、外側Scroll無 | Card右余白31px、下余白62.6px         | なし             | 前後導線と一覧／用語が明瞭       | 承認 |
+| Exercise   | 1280x720 | `e7269931698266eeabe932458486c2626462bed5a4ce91304cc107deb4f431d9` | 720px、外側Scroll無 | Workspace右余白438.7px、下余白58.6px | なし             | Preview／Reset／判定が明瞭       | 承認 |
+| Library    | 1280x720 | `968cd7e832488c632ec4f087051ed43f558fcd54ffb262d58c9f040284e8b6ac` | 8450px、通常Scroll  | Shell左右端0px、横overflow 0         | なし             | 通常学習へ戻る導線が明瞭         | 承認 |
+| Home       | 390x844  | `f53524b80a11ce6322a2893622dc5b10f9422cfd7f754899041bb1458a4b9da3` | 2583px、通常Scroll  | 横overflow 0                         | なし             | 学習Pathの主CTAが初期画面内      | 承認 |
+| Course Map | 390x844  | `eddaad407c4eff60ec759659e8de8cf585db0e76856b9b4f078d597b68624cf8` | 24216px、通常Scroll | Card右余白16px                       | なし             | 1列の学習順序が明瞭              | 承認 |
+| Slide      | 390x844  | `8359bb95fe3225c9670985cc8073c501b92fd5bcd0ac03b6a0cc01640fecedd7` | 844px、外側Scroll無 | Card右余白31px、下余白6.7px          | なし             | 前後導線が下端まで操作可能       | 承認 |
+| Exercise   | 390x844  | `10abe9a7c901d29c7c3be9421bd85dca281bce692a08778fe2f4f1273dc40451` | 844px、外側Scroll無 | Document横overflow 0                 | なし             | PC理由／URL copy／書き出しが明瞭 | 承認 |
+| Library    | 390x844  | `d5a3f75d5053cc85358275b4817bcf480fecf61494943bec44602730cdf4b320` | 15692px、通常Scroll | Shell左右端0px、横overflow 0         | なし             | 目次と通常学習復帰の主従が明瞭   | 承認 |
 
 ## 指摘と解消
 

@@ -225,18 +225,22 @@ Course Indexが成功して現在Lessonまたはworkspace依存Lessonだけ失�
 - [x] 進捗、下書き、Reset、Review、Library、Export／Importの既存データが維持される
 - [x] 任意prefetch失敗が現在画面を壊さず、実移動時に再取得できる
 - [x] 旧Artifactを公開せず、旧Version失敗時にreload CTAを表示する
-- [ ] Unit、Content、Lint、Typecheck、3 Browser E2E、axe、Keyboard、performance、build、subpathが合格する
+- [x] Unit、Content、Lint、Typecheck、3 Browser E2E、axe、Keyboard、performance、build、subpathが合格する
 - [x] 4 URL×3 runのLCPがすべて2,500 ms以下である
 - [ ] 日本語commit、secret scan、main push、Pages公開後検証が完了する
 
 ### 12.1 実装・性能確認結果（2026-08-02）
 
 - route別教材JSON取得契約: Chromium／Firefox／WebKitで27件PASS
+- 全静的／Unit Gate: 138 files、1320 tests PASS
+- 全3 Engine E2E: 342 passed、90 skipped、failure／retry／flaky 0
 - Preview／判定／主要操作性能: Playwright 18件PASS
 - bundle／Catalog／Index／Lesson／route map容量: 7件PASS
-- Lighthouse: 4 URL×3 runの12件PASS、LCP最大2,198.924 ms、CLSは全件0
+- Lighthouse: 4 URL×3 runの12件PASS、LCP最大2,192.337 ms、CLSは全件0
 - 教材Review: 51 Lesson、stale hash 0、rejected 0
 - WebKitで検出したCompletion直後の履歴復帰とLease解放競合は、解放完了後の再取得へ修正し、対象Flowを3回連続PASSで確認
+- Chromium reloadで検出した旧documentのLease解放競合は、同一ownerの新tokenへ原子的に置換し旧tokenをfenceする契約へ修正した
+- 1280x720／390x844のHome、Course、Slide、Exercise、Library計10画面を原寸目視し、横overflow、Text切れ、重なり、CTA欠け、console errorは0件
 
 ## 13. 非対象
 

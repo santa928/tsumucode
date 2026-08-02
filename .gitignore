@@ -6,6 +6,7 @@ playwright-performance-report/
 lhci-report/
 .lighthouseci/
 test-results/
+output/playwright/
 .release-*
 release-quality.json
 release-report.md
