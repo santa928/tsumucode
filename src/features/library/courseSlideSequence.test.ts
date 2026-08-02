@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { fixtureCourse } from '../../../tests/fixtures/course';
+import { fixtureCourse, fixtureCourseIndex } from '../../../tests/fixtures/course';
 import type { CourseManifest, Lesson, Slide } from '../../core/content/types';
 import {
   buildCourseSlideSequence,
   buildLibrarySlidePath,
   resolveCourseSlideContext,
+  resolveCourseSlideOutlineContext,
 } from './courseSlideSequence';
 
 /** Fixture Slideを識別可能な別Slideとして複製する。 */
@@ -138,6 +139,54 @@ describe('buildCourseSlideSequence', () => {
     expect(() => resolveCourseSlideContext(course, 'lesson-b', 'slide-a1')).toThrow(
       /LessonとSlideの組み合わせが見つかりません/,
     );
+  });
+});
+
+describe('resolveCourseSlideOutlineContext', () => {
+  it('Course IndexだけでSlide所有Lessonと前後順序を返す', () => {
+    const index = structuredClone(fixtureCourseIndex);
+    const lesson = index.phases[0]!.chapters[0]!.lessons[0]!;
+    lesson.slides = [
+      { id: 'slide-first', title: '最初', kind: 'concept' },
+      { id: 'slide-current', title: '現在', kind: 'code' },
+      { id: 'slide-next', title: '次', kind: 'reflection' },
+    ];
+
+    const context = resolveCourseSlideOutlineContext(index, lesson.id, 'slide-current');
+
+    expect(context).toMatchObject({
+      previous: { lesson: { id: lesson.id }, slide: { id: 'slide-first' } },
+      current: {
+        lesson: { id: lesson.id },
+        slide: { id: 'slide-current' },
+        courseSlideIndex: 1,
+        courseSlideCount: 3,
+        slideIndex: 1,
+        slideCount: 3,
+      },
+      next: { lesson: { id: lesson.id }, slide: { id: 'slide-next' } },
+    });
+  });
+
+  it('Indexの空Lesson、重複Slide ID、所有Lessonと異なるURLを拒否する', () => {
+    const empty = structuredClone(fixtureCourseIndex);
+    empty.phases[0]!.chapters[0]!.lessons[0]!.slides = [];
+    expect(() =>
+      resolveCourseSlideOutlineContext(empty, 'lesson-first-heading', 'missing'),
+    ).toThrow(/Slideがありません/);
+
+    const duplicate = structuredClone(fixtureCourseIndex);
+    duplicate.phases[0]!.chapters[0]!.lessons[0]!.slides = [
+      { id: 'duplicate', title: '1', kind: 'concept' },
+      { id: 'duplicate', title: '2', kind: 'code' },
+    ];
+    expect(() =>
+      resolveCourseSlideOutlineContext(duplicate, 'lesson-first-heading', 'duplicate'),
+    ).toThrow(/Slide IDがCourse内で重複しています/);
+
+    expect(() =>
+      resolveCourseSlideOutlineContext(fixtureCourseIndex, 'another-lesson', 'slide-html-role'),
+    ).toThrow(/LessonとSlideの組み合わせが見つかりません/);
   });
 });
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fixtureCourse } from '../../../tests/fixtures/course';
+import { fixtureCourse, fixtureCourseIndex } from '../../../tests/fixtures/course';
 import { CourseManifestSchema } from './schema';
 import type { Exercise, Lesson } from './types';
 import { buildCourseMap, lessonStartPath } from './courseMap';
@@ -98,6 +98,27 @@ describe('buildCourseMap', () => {
                 {
                   id: 'lesson-first-heading',
                   status: 'current',
+                  startPath:
+                    '/courses/html-css/lessons/lesson-first-heading/slides/slide-html-role',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it('Lesson本文を持たないCourse Indexから同じ表示Modelを作る', () => {
+    expect(buildCourseMap(fixtureCourseIndex)).toMatchObject({
+      id: 'html-css',
+      phases: [
+        {
+          chapters: [
+            {
+              lessons: [
+                {
+                  id: 'lesson-first-heading',
                   startPath:
                     '/courses/html-css/lessons/lesson-first-heading/slides/slide-html-role',
                 },
