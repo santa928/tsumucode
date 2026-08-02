@@ -23,6 +23,7 @@ import type {
   HtmlCssRuleAssertionSchema,
   HtmlCssRuleTargetSchema,
   HtmlCssValidationRuleDefinitionSchema,
+  JavaScriptValidationRuleDefinitionSchema,
   LessonSchema,
   LearningPathDefinitionSchema,
   LearningPathStepSchema,
@@ -75,3 +76,6 @@ export type ValidationRuleDefinition = z.infer<typeof ValidationRuleDefinitionSc
 export type HtmlCssRuleTarget = z.infer<typeof HtmlCssRuleTargetSchema>;
 export type HtmlCssRuleAssertion = z.infer<typeof HtmlCssRuleAssertionSchema>;
 export type HtmlCssValidationRuleDefinition = z.infer<typeof HtmlCssValidationRuleDefinitionSchema>;
+export type JavaScriptValidationRuleDefinition = z.infer<
+  typeof JavaScriptValidationRuleDefinitionSchema
+>;

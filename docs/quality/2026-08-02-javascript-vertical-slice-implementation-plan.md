@@ -287,7 +287,7 @@ Expected: JavaScriptとHTML/CSS Runner全テストPASS。
 - Consumes: Task 1の`ValidationContext.evidence`、Task 2のsource fact表現、既存`ValidatorRuleEngine`。
 - Produces: `JavaScriptValidationRuleDefinition`と`JavaScriptValidator implements ValidatorAdapter`。
 
-- [ ] **Step 1: strict schemaの失敗テストを書く**
+- [x] **Step 1: strict schemaの失敗テストを書く**
 
 ```ts
 expect(() => parseJavaScriptRule(ruleWith({ unknown: true }))).toThrow();
@@ -295,7 +295,7 @@ expect(() => parseJavaScriptRule(ruleWith({ solutionFiles: [] }))).toThrow();
 expect(parseJavaScriptRule(validSourceRule).target.kind).toBe('javascript-source');
 ```
 
-- [ ] **Step 2: source／evidence／DOMのAND判定テストを書く**
+- [x] **Step 2: source／evidence／DOMのAND判定テストを書く**
 
 ```ts
 expect(await validate(correctSource, matchingEvidence, matchingSnapshot)).toMatchObject({
@@ -309,21 +309,21 @@ expect(await validate(correctSource, staleEvidence, matchingSnapshot)).toMatchOb
 });
 ```
 
-- [ ] **Step 3: REDを確認する**
+- [x] **Step 3: REDを確認する**
 
 Run: `./scripts/docker-compose.sh run --rm app npm run test:run -- src/adapters/validation/javascript src/core/content/schema.test.ts`
 
 Expected: JavaScript rule未定義でFAIL。
 
-- [ ] **Step 4: rule schemaを実装する**
+- [x] **Step 4: rule schemaを実装する**
 
 Chapter 00のsource ruleは`document.querySelector('#message')`で得たtargetの`textContent`へ期待文字列を代入するAST factを要求する。DOM ruleは既存selector text assertionを内包し、unknown fieldとauthoring-only fieldを拒否する。
 
-- [ ] **Step 5: Validatorを実装する**
+- [x] **Step 5: Validatorを実装する**
 
 診断に`syntax`／`reference`／`security` errorがあれば`code-error`、Analyzer／bridge／hash identity障害なら`system-error`にする。現在Source SHA、`javascript.executed=true`、`budget-exhausted=false`、全viewport DOMの4条件をAND評価する。
 
-- [ ] **Step 6: 対象テストと既存Validator回帰をGREENにする**
+- [x] **Step 6: 対象テストと既存Validator回帰をGREENにする**
 
 Run: `./scripts/docker-compose.sh run --rm app npm run test:run -- src/adapters/validation src/core/validation src/core/content/schema.test.ts`
 

@@ -225,6 +225,10 @@ const HtmlCssSourceTargetSchema = z
   .object({ kind: z.literal('source'), file: RelativePathSchema })
   .strict();
 
+const JavaScriptSourceTargetSchema = z
+  .object({ kind: z.literal('javascript-source'), file: RelativePathSchema })
+  .strict();
+
 export const HtmlCssRuleTargetSchema = z.union([
   HtmlCssSelectorTargetSchema,
   HtmlCssNodeTargetSchema,
@@ -403,6 +407,14 @@ const ContrastAssertionSchema = z
   .object({ kind: z.literal('contrast'), minimum: z.number().min(1).max(21) })
   .strict();
 
+const QuerySelectorTextContentAssignmentAssertionSchema = z
+  .object({
+    kind: z.literal('query-selector-text-content-assignment'),
+    selector: NonEmptyTextSchema,
+    expected: z.string(),
+  })
+  .strict();
+
 export const HtmlCssRuleAssertionSchema = z.union([
   ExistsAssertionSchema,
   CountAssertionSchema,
@@ -431,6 +443,10 @@ export const HtmlCssRuleAssertionSchema = z.union([
 ]);
 
 const AUTHORING_ONLY_FIELD_NAMES = new Set(['solutionFiles', 'fixtures']);
+const RESERVED_ADAPTER_RULE_KINDS = new Set([
+  'javascript-source',
+  'query-selector-text-content-assignment',
+]);
 
 /** Adapter固有payloadを再帰走査し、公開禁止fieldの最初のpathを返す。 */
 function findAuthoringOnlyField(
@@ -454,6 +470,13 @@ const AdapterRuleObjectSchema = z
   .object({ kind: IdSchema })
   .catchall(z.unknown())
   .superRefine((value, context) => {
+    if (RESERVED_ADAPTER_RULE_KINDS.has(value.kind)) {
+      context.addIssue({
+        code: 'custom',
+        path: ['kind'],
+        message: '予約済みAdapter Ruleは専用のstrict契約で指定してください',
+      });
+    }
     const path = findAuthoringOnlyField(value);
     if (path !== undefined) {
       context.addIssue({
@@ -463,8 +486,16 @@ const AdapterRuleObjectSchema = z
       });
     }
   });
-export const RuleTargetSchema = z.union([HtmlCssRuleTargetSchema, AdapterRuleObjectSchema]);
-export const RuleAssertionSchema = z.union([HtmlCssRuleAssertionSchema, AdapterRuleObjectSchema]);
+export const RuleTargetSchema = z.union([
+  HtmlCssRuleTargetSchema,
+  JavaScriptSourceTargetSchema,
+  AdapterRuleObjectSchema,
+]);
+export const RuleAssertionSchema = z.union([
+  HtmlCssRuleAssertionSchema,
+  QuerySelectorTextContentAssignmentAssertionSchema,
+  AdapterRuleObjectSchema,
+]);
 
 const FeedbackSchema = z
   .object({
@@ -515,13 +546,36 @@ export const HtmlCssValidationRuleDefinitionSchema = z
     }
   });
 
+export const JavaScriptValidationRuleDefinitionSchema = z
+  .object({
+    ...ValidationRuleBaseShape,
+    target: JavaScriptSourceTargetSchema,
+    assertion: QuerySelectorTextContentAssignmentAssertionSchema,
+  })
+  .strict();
+
 export const ValidationRuleDefinitionSchema = z
   .object({
     ...ValidationRuleBaseShape,
     target: RuleTargetSchema,
     assertion: RuleAssertionSchema,
   })
-  .strict();
+  .strict()
+  .superRefine((rule, context) => {
+    const usesJavaScriptContract =
+      rule.target.kind === 'javascript-source' ||
+      rule.assertion.kind === 'query-selector-text-content-assignment';
+    if (
+      usesJavaScriptContract &&
+      !JavaScriptValidationRuleDefinitionSchema.safeParse(rule).success
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['target'],
+        message: 'JavaScript Source targetとassertionを組み合わせて指定してください',
+      });
+    }
+  });
 
 const ExerciseBaseShape = {
   id: IdSchema,
@@ -1329,6 +1383,8 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
           const groupModes = new Map<string, 'all' | 'any'>();
           for (const [ruleIndex, rule] of exercise.validationRules.entries()) {
             const rulePath = [...exercisePath, 'validationRules', ruleIndex] as const;
+            const htmlCssRule = HtmlCssValidationRuleDefinitionSchema.safeParse(rule);
+            const javaScriptRule = JavaScriptValidationRuleDefinitionSchema.safeParse(rule);
             register('rule', rule.id, [...rulePath, 'id']);
             ruleIds.add(rule.id);
             currentIds.rule.add(rule.id);
@@ -1379,12 +1435,38 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
                 `${reviewableSlideError}: ${rule.relatedSlideId}`,
               );
             }
-            if (
-              course.validatorId === 'html-css' &&
-              !HtmlCssValidationRuleDefinitionSchema.safeParse(rule).success
-            ) {
+            if (course.validatorId === 'html-css' && !htmlCssRule.success) {
               addIssue(context, rulePath, 'HTML/CSS Validator Ruleの形式が不正です');
             }
+            if (
+              course.validatorId === 'javascript' &&
+              !htmlCssRule.success &&
+              !javaScriptRule.success
+            ) {
+              addIssue(context, rulePath, 'JavaScript Validator Ruleの形式が不正です');
+            }
+            if (
+              javaScriptRule.success &&
+              !canonicalFilePaths.includes(
+                canonicalPublicPath(javaScriptRule.data.target.file) ?? '',
+              )
+            ) {
+              addIssue(
+                context,
+                [...rulePath, 'target', 'file'],
+                'JavaScript Source Fileが存在しません',
+              );
+            }
+          }
+          if (
+            course.validatorId === 'javascript' &&
+            !exercise.validationRules.some(({ target }) => target.kind === 'javascript-source')
+          ) {
+            addIssue(
+              context,
+              [...exercisePath, 'validationRules'],
+              'JavaScript ExerciseにはSource Ruleが1件以上必要です',
+            );
           }
         }
 

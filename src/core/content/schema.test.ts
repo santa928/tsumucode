@@ -5,6 +5,7 @@ import {
   AssetRefSchema,
   CourseManifestSchema,
   ExerciseSchema,
+  JavaScriptValidationRuleDefinitionSchema,
   PreviewViewportSchema,
   SlideSchema,
 } from './schema';
@@ -363,6 +364,39 @@ describe('CourseManifestSchema 公開境界', () => {
       options: { fixtures: [] },
     };
     expectCourseIssue(leaked, 'Adapter payloadへauthoring-only fieldを含められません');
+  });
+
+  it('JavaScript ValidatorのSource Ruleだけをstrictな専用契約で受理する', () => {
+    const course = cloneCourse();
+    course.runnerId = 'javascript';
+    course.validatorId = 'javascript';
+    const exercise = firstStandardExercise(firstStandardLesson(course));
+    exercise.files.push({
+      path: 'script.js',
+      language: 'javascript',
+      content: "document.querySelector('#message').textContent = '変更後';",
+      editable: true,
+    });
+    const sourceRule = {
+      ...exercise.validationRules[0]!,
+      target: { kind: 'javascript-source', file: 'script.js' },
+      assertion: {
+        kind: 'query-selector-text-content-assignment',
+        selector: '#message',
+        expected: '変更後',
+      },
+    };
+    exercise.validationRules = [sourceRule];
+
+    expect(JavaScriptValidationRuleDefinitionSchema.parse(sourceRule)).toEqual(sourceRule);
+    expect(CourseManifestSchema.safeParse(course).success).toBe(true);
+
+    const unknown = structuredClone(course);
+    Object.assign(
+      firstStandardExercise(firstStandardLesson(unknown)).validationRules[0]!.assertion,
+      { solutionFiles: [] },
+    );
+    expectCourseIssue(unknown, 'JavaScript Validator Ruleの形式が不正です');
   });
 });
 
