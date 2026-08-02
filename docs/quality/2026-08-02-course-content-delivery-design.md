@@ -14,10 +14,10 @@ JavaScript以降のCourse追加前に、現在画面へ必要な教材だけを�
 ## 2. 決定事項
 
 1. 公開教材を`Course Index`とLesson単位の`Lesson Manifest`へ分割する。
-2. 初回表示はCourse Indexと現在Lessonだけを優先し、操作可能後に前後1 Lessonを先読みする。
+2. 初回表示はCourse Indexと現在Lessonだけをpreloadし、共有workspace課題はIndex確定後に現在工程までの依存Lessonを追加取得する。操作可能後は前後1 Lessonを先読みする。
 3. HomeはCourse IndexもLesson Manifestも読み込まない。
 4. Course map、進捗移行、Export／ImportはCourse Indexだけで完結させる。
-5. Slide、Exercise、ReviewはCourse Indexと必要なLesson Manifestだけを使う。
+5. SlideとReviewはCourse Indexと表示対象Lessonを使う。Exerciseは表示対象に加え、同じworkspaceの現在工程までを累積判定するために必要な所有Lessonだけを使う。
 6. Authoring側のCourse定義は分割せず、compilerが公開境界でのみ分割する。
 7. 現行`catalog.json`とCourse全体JSONは移行Artifactとして残さない。公開時に開いたままの旧タブは再取得へ失敗する可能性を受け入れ、再読み込みを復旧手段とする。
 8. LCP閾値は緩めず、4対象URLを各3回計測した全結果で2,500 ms以下を要求する。
@@ -41,6 +41,7 @@ JavaScript以降のCourse追加前に、現在画面へ必要な教材だけを�
 | REQ-CD-013 | 維持 | draft Courseの直接URL検証と、Home／公開LearningPath／Libraryからの非掲載を維持する                        |
 | REQ-CD-014 | 追加 | production subpath、3 Browser、axe、Keyboard、実画面、公開後consoleを検証する                             |
 | REQ-CD-015 | 削除 | 旧CatalogとCourse全体JSONの移行用二重配信は行わない                                                       |
+| REQ-CD-016 | 維持 | 共有workspaceの現在工程までを同一snapshotで累積再判定し、別workspaceや未来工程を読み込まない              |
 
 ## 4. 要件差分
 
@@ -83,7 +84,9 @@ Course Indexは次を保持する。
 - ExerciseのID、title、kind、workspace ID、順序
 - 各Lesson ManifestのpathとSHA-256
 
-Course IndexはSlide本文、Exercise instructions、files、hints、steps、validation rulesを持たない。Course map、前後移動、404判定、進捗移行、Course完了判定が本文なしで行える境界にする。
+Exercise要約はCourse内の教材順を保持する。これにより、現在Exerciseと同じ`workspaceId`を持ち、現在位置以前にあるExerciseの所有Lessonを本文なしで解決できる。
+
+Course IndexはSlide本文、Exercise instructions、files、hints、steps、validation rulesを持たない。Course map、前後移動、404判定、進捗移行、Course完了判定、共有workspace依存Lessonの特定が本文なしで行える境界にする。
 
 ### 5.4 Lesson Manifest
 
@@ -104,6 +107,7 @@ Runtimeの取得責務を`CourseContentRepository`へ集約する。
 - `loadCatalog(baseUrl)`
 - `loadCourseIndex(baseUrl, catalogEntry)`
 - `loadLesson(baseUrl, courseIndex, lessonId)`
+- `loadWorkspaceLessons(baseUrl, courseIndex, currentExerciseId)`
 - `prefetchLesson(baseUrl, courseIndex, lessonId)`
 - `clearRejected(resourceKey)`
 
@@ -113,12 +117,13 @@ cache keyは正規化済みpathと期待SHAで構成する。pending／fulfilled
 
 - Home／LearningPath: Catalog v3だけ
 - Course map: Catalog v3＋Course Index
-- Slide／Exercise: Catalog v3＋Course Index＋所有Lesson
-- Review: Exercise所有Lessonを読み、Course Indexでreview Slideの所有Lessonを解決する。所有Lessonが異なる場合だけ2つ目のLessonを読む
+- Slide: Catalog v3＋Course Index＋所有Lesson
+- Exercise: Catalog v3＋Course Index＋所有Lesson。同じworkspaceを持つ現在工程以前のExerciseが別Lessonにある場合、その所有Lesson群も並行取得する
+- Review: Exercise所有Lessonを読み、Course Indexでreview Slideの所有Lessonを解決する。所有Lessonが異なる場合だけ2つ目のLessonを読む。判定を行わないためworkspace依存Lessonは読まない
 - Library course: Course Index
 - Library slide: Course Index＋所有Lesson
 
-nested loaderが同時に同じIndexを要求してもrepository cacheで1 fetchへ集約する。Componentへは巨大な全Course aggregateを渡さず、`CourseIndex`と`LessonManifest`を明示的に渡す。
+nested loaderが同時に同じIndexを要求してもrepository cacheで1 fetchへ集約する。共有workspace Lessonは所有Lesson IDで重複排除し、未来工程と別workspaceを除外する。Componentへは巨大な全Course aggregateを渡さず、`CourseIndex`、現在の`LessonManifest`、必要時だけ`workspaceLessons`を明示的に渡す。
 
 ### 6.4 Progress runtime
 
@@ -147,7 +152,7 @@ prefetchは同時2件以下、現在Course内だけ、1回だけとする。Netw
 | path／schema／ID対応不一致          | `ContentLoadError('schema')`             | 同上                                       |
 | 未知Course／Lesson／Slide／Exercise | React Routerの404                        | preloadせず終了                            |
 
-Course Indexが成功してLessonだけ失敗した場合、進捗や下書きを変更しない。再試行は同じrouteでLessonを再取得する。`ContentLoadError`はHTTP statusを任意fieldとして保持し、生成教材の404または410にだけ「ページを再読み込みして最新版へ更新する」CTAを出す。offline、5xx、JSON、integrity、schema失敗では既存の再試行CTAを使う。
+Course Indexが成功して現在Lessonまたはworkspace依存Lessonだけ失敗した場合、進捗や下書きを変更しない。再試行は同じrouteで失敗Lessonを再取得する。`ContentLoadError`はHTTP statusを任意fieldとして保持し、生成教材の404または410にだけ「ページを再読み込みして最新版へ更新する」CTAを出す。offline、5xx、JSON、integrity、schema失敗では既存の再試行CTAを使う。
 
 ## 9. SecurityとPrivacy
 
@@ -188,8 +193,9 @@ Course Indexが成功してLessonだけ失敗した場合、進捗や下書き�
 - 同時loaderが同一Promiseを共有する
 - fulfilledを再利用し、rejectedは削除して再試行できる
 - Course mapはLesson Manifestをfetchしない
-- Slide／Exerciseは所有Lesson以外を必須fetchしない
-- Reviewだけが必要時に2 Lessonを読む
+- Slideは所有Lesson以外を必須fetchしない
+- Exerciseは同じworkspaceの現在工程までを所有するLessonだけを追加fetchし、別workspaceと未来工程を読まない
+- Reviewは表示対象が別Lessonの時だけ2 Lessonを読み、workspace依存Lessonを読まない
 - migration、Course完了、Export／ImportがIndexだけで完結する
 - 既存進捗、下書き、Reset、Review復帰のrecord keyが変わらない
 
@@ -212,7 +218,8 @@ Course Indexが成功してLessonだけ失敗した場合、進捗や下書き�
 
 - [ ] Catalog v3、Course Index、Lesson Manifestがstrict契約とSHA付きで生成される
 - [ ] 再結合CourseがAuthoring Courseと完全一致する
-- [ ] HomeはCatalogだけ、Course mapはIndexまで、Slide／Exerciseは対象Lessonまでを必須取得する
+- [ ] HomeはCatalogだけ、Course mapはIndexまで、Slideは対象Lessonまでを必須取得する
+- [ ] Exerciseは対象Lessonと同じworkspaceの現在工程までに必要なLessonだけを取得する
 - [ ] 既知直リンクでIndexと対象Lessonがentryと並行preloadされる
 - [ ] 未知routeとHomeで教材preloadが発生しない
 - [ ] 進捗、下書き、Reset、Review、Library、Export／Importの既存データが維持される
@@ -232,11 +239,12 @@ Course Indexが成功してLessonだけ失敗した場合、進捗や下書き�
 
 ## 14. リスクと対策
 
-| リスク                                  | 対策                                                                       |
-| --------------------------------------- | -------------------------------------------------------------------------- |
-| Index要約とLesson本文が不一致になる     | compiler再結合完全一致とSHAを必須にする                                    |
-| fetch数増加で逆に遅くなる               | 直リンクpreload、Promise cache、前後1件だけのbounded prefetchを使う        |
-| Course mapやmigrationが本文へ再依存する | `CourseProgressDescriptor`とIndex専用型を境界にし、fetch数テストで固定する |
-| 未知routeから任意pathを作られる         | compiler由来route mapとcanonical IDだけを許可する                          |
-| 旧タブが公開更新後に失敗する            | 旧Artifactは残さず、Error UIのreload CTAで最新版へ復旧する                 |
-| 将来CourseでIndexが肥大化する           | Courseごとの40 KB予算を固定し、本文混入をmanifest graphテストで拒否する    |
+| リスク                                  | 対策                                                                                  |
+| --------------------------------------- | ------------------------------------------------------------------------------------- |
+| Index要約とLesson本文が不一致になる     | compiler再結合完全一致とSHAを必須にする                                               |
+| fetch数増加で逆に遅くなる               | 直リンクpreload、Promise cache、前後1件だけのbounded prefetchを使う                   |
+| Course mapやmigrationが本文へ再依存する | `CourseProgressDescriptor`とIndex専用型を境界にし、fetch数テストで固定する            |
+| 共有workspaceの累積判定が分割で欠落する | Indexのworkspace順序から現在工程までの所有Lessonだけを読み、既存累積判定E2Eを維持する |
+| 未知routeから任意pathを作られる         | compiler由来route mapとcanonical IDだけを許可する                                     |
+| 旧タブが公開更新後に失敗する            | 旧Artifactは残さず、Error UIのreload CTAで最新版へ復旧する                            |
+| 将来CourseでIndexが肥大化する           | Courseごとの40 KB予算を固定し、本文混入をmanifest graphテストで拒否する               |
