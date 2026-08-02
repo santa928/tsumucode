@@ -1,10 +1,19 @@
 import { describe, expect, it } from 'vitest';
-import { fixtureCourse } from '../../../tests/fixtures/course';
+import { fixtureCourse, fixtureCourseIndex } from '../../../tests/fixtures/course';
 import { lessonStartTarget, lessonStartTargetPath } from './lessonStart';
 
 describe('lessonStartTarget', () => {
   it('standard Lessonは先頭Slideを開始targetとして選ぶ', () => {
     const lesson = fixtureCourse.phases[0]!.chapters[0]!.lessons[0]!;
+
+    expect(lessonStartTarget(lesson)).toEqual({
+      kind: 'slide',
+      targetId: 'slide-html-role',
+    });
+  });
+
+  it('Lesson本文を持たないCourse Index outlineでも同じ開始targetを選ぶ', () => {
+    const lesson = fixtureCourseIndex.phases[0]!.chapters[0]!.lessons[0]!;
 
     expect(lessonStartTarget(lesson)).toEqual({
       kind: 'slide',

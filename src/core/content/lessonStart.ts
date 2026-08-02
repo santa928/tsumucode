@@ -1,10 +1,17 @@
 /** Lessonの開始対象をCatalogと通常学習Routeで共有する純粋境界。 */
-import type { Lesson, LessonStartTarget } from './types';
+import type { LessonOutline, LessonStartTarget } from './types';
 
 export type { LessonStartTarget } from './types';
 
+export interface LessonStartSource {
+  readonly id: string;
+  readonly kind: LessonOutline['kind'];
+  readonly slides: readonly { readonly id: string }[];
+  readonly exercises: readonly { readonly id: string }[];
+}
+
 /** Lesson種別から最初に開くSlideまたはExerciseを一意に選ぶ。 */
-export function lessonStartTarget(lesson: Lesson): LessonStartTarget {
+export function lessonStartTarget(lesson: LessonStartSource): LessonStartTarget {
   const firstExercise = lesson.exercises[0];
   if (lesson.kind !== 'standard' && firstExercise !== undefined) {
     return { kind: 'exercise', targetId: firstExercise.id };
