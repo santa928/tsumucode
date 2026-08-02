@@ -1,1 +1,5 @@
-export { sanitizeHtml, type SanitizedHtml } from '../preview-kernel/sanitizeHtml';
+export {
+  sanitizeHtml,
+  type SanitizedHtml,
+  type SanitizeHtmlOptions,
+} from '../preview-kernel/sanitizeHtml';

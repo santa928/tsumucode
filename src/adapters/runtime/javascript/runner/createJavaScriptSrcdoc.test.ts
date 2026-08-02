@@ -18,12 +18,14 @@ function createSrcdoc(): string {
     exerciseSessionId: 'session-1',
     executionRevision: 3,
     viewport: { id: 'desktop', width: 1280, height: 720 },
-    runtimeUrl: 'blob:https://example.test/runtime',
+    runtimeSource:
+      'document.querySelector("#message").textContent = "変更後";' +
+      'const closingTag = "</script><img id=\\"escaped-runtime\\">";',
   });
 }
 
 describe('createJavaScriptSrcdoc', () => {
-  it('nonce付きBridgeと検証済みblob runtimeだけを許可し、学習HTMLの実行経路を除去する', () => {
+  it('nonce付きBridgeとiframe内runtime loaderだけを許可し、学習HTMLの実行経路を除去する', () => {
     const srcdoc = createSrcdoc();
     const parsed = new DOMParser().parseFromString(srcdoc, 'text/html');
     const csp = parsed.head.firstElementChild?.getAttribute('content') ?? '';
@@ -39,11 +41,16 @@ describe('createJavaScriptSrcdoc', () => {
     expect(parsed.querySelector('main')?.hasAttribute('onclick')).toBe(false);
     expect(scripts).toHaveLength(2);
     expect(scripts[0]?.getAttribute('nonce')).toBe('nonce123');
-    expect(scripts[1]?.getAttribute('src')).toBe('blob:https://example.test/runtime');
-    expect(scripts[1]?.hasAttribute('nonce')).toBe(false);
+    expect(scripts[1]?.getAttribute('nonce')).toBe('nonce123');
+    expect(scripts[1]?.hasAttribute('src')).toBe(false);
+    expect(scripts[1]?.hasAttribute('data-tsumucode-javascript-runtime')).toBe(true);
+    expect(scripts[1]?.textContent).toContain('URL.createObjectURL');
+    expect(scripts[1]?.textContent).toContain('URL.revokeObjectURL');
+    expect(scripts[1]?.textContent).not.toContain('</script>');
+    expect(parsed.querySelector('#escaped-runtime')).toBeNull();
   });
 
-  it('runtime URLは親Documentで生成したblob URLだけを受理する', () => {
+  it('runtime sourceが上限を超える場合はsrcdocを生成しない', () => {
     const sanitized = sanitizeHtml('<main>安全</main>', []);
 
     expect(() =>
@@ -55,9 +62,9 @@ describe('createJavaScriptSrcdoc', () => {
         exerciseSessionId: 'session-1',
         executionRevision: 1,
         viewport: { id: 'desktop', width: 1280, height: 720 },
-        runtimeUrl: 'https://evil.example/runtime.js',
+        runtimeSource: 'x'.repeat(256 * 1024 + 1),
       }),
-    ).toThrow('Invalid JavaScript runtime URL');
+    ).toThrow('JavaScript runtime source exceeds srcdoc limit');
   });
 });
 

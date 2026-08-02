@@ -173,6 +173,9 @@ describe('JavaScriptValidator', () => {
       validator.validate(javascriptContext({ diagnostics: [learnerError] })),
     ).resolves.toMatchObject({ status: 'code-error', executionRevision: 4 });
     await expect(
+      validator.validate(javascriptContext({ snapshots: {}, diagnostics: [learnerError] })),
+    ).resolves.toMatchObject({ status: 'code-error', executionRevision: null });
+    await expect(
       validator.validate(javascriptContext({ diagnostics: [learnerError, systemError] })),
     ).resolves.toMatchObject({ status: 'system-error' });
   });

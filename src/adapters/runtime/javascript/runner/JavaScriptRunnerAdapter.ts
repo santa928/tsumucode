@@ -29,15 +29,12 @@ interface JavaScriptAnalyzerPort {
 
 export interface JavaScriptRunnerAdapterOptions {
   readonly analyzer?: JavaScriptAnalyzerPort;
-  readonly createObjectURL?: (blob: Blob) => string;
-  readonly revokeObjectURL?: (url: string) => void;
   readonly executionTimeoutMs?: number;
   readonly uuidFactory?: () => string;
 }
 
 interface RuntimeResources {
   readonly materialized: MaterializedPreviewAssets;
-  readonly runtimeUrl: string;
 }
 
 interface StoredPreview {
@@ -174,8 +171,6 @@ function executionDiagnostics(
 export class JavaScriptRunnerAdapter implements RunnerAdapter {
   readonly languageId = 'javascript' as const;
   readonly #analyzer: JavaScriptAnalyzerPort;
-  readonly #createObjectURL: (blob: Blob) => string;
-  readonly #revokeObjectURL: (url: string) => void;
   readonly #executionTimeoutMs: number;
   readonly #uuidFactory: () => string;
   #frame: HTMLIFrameElement | undefined;
@@ -197,8 +192,6 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
 
   constructor(options: JavaScriptRunnerAdapterOptions = {}) {
     this.#analyzer = options.analyzer ?? new JavaScriptAnalyzerClient();
-    this.#createObjectURL = options.createObjectURL ?? URL.createObjectURL.bind(URL);
-    this.#revokeObjectURL = options.revokeObjectURL ?? URL.revokeObjectURL.bind(URL);
     this.#executionTimeoutMs = options.executionTimeoutMs ?? 1_500;
     this.#uuidFactory = options.uuidFactory ?? (() => crypto.randomUUID());
     if (!Number.isFinite(this.#executionTimeoutMs) || this.#executionTimeoutMs <= 0) {
@@ -257,7 +250,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
     return active.bridge.requestSnapshot(request.requestId, request.policy);
   }
 
-  /** iframe、Worker、Bridge、blob URLを冪等に解放する。 */
+  /** iframe、Worker、Bridge、教材Assetを冪等に解放する。 */
   async dispose(): Promise<void> {
     const frame = this.#frame;
     await this.#reset(true);
@@ -309,6 +302,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
       }
       const preview = await prepareHtmlCssPreview(input, validated.html, {
         signal: operation.controller.signal,
+        acknowledgedScriptFile: validated.scriptFile,
       });
       unownedMaterialized = preview.materialized;
       this.#assertCurrent(frame, operation);
@@ -321,10 +315,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
         guardIdentifier,
         instrumentedCode: analysis.instrumentedCode,
       });
-      const authenticatedRuntimeUrl = this.#createObjectURL(
-        new Blob([authenticatedRuntimeSource], { type: 'text/javascript;charset=utf-8' }),
-      );
-      resources = { materialized: preview.materialized, runtimeUrl: authenticatedRuntimeUrl };
+      resources = { materialized: preview.materialized };
       unownedMaterialized = undefined;
       const srcdoc = createJavaScriptSrcdoc({
         sanitizedDocument: preview.sanitizedDocument,
@@ -334,7 +325,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
         exerciseSessionId: input.exerciseSessionId,
         executionRevision: input.executionRevision,
         viewport: input.viewport,
-        runtimeUrl: authenticatedRuntimeUrl,
+        runtimeSource: authenticatedRuntimeSource,
       });
       this.#assertCurrent(frame, operation);
 
@@ -504,11 +495,10 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
     return pending;
   }
 
-  /** runtime blobと教材Assetを一度だけ解放する。 */
+  /** 教材Assetを一度だけ解放する。runtime Blobはopaque iframe自身が解放する。 */
   #disposeResources(resources: RuntimeResources | undefined): void {
     if (resources === undefined) return;
     resources.materialized.dispose();
-    this.#revokeObjectURL(resources.runtimeUrl);
   }
 
   /** prepare／dispose共通で現在の処理と全資源を閉じる。 */

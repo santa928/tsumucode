@@ -25,7 +25,7 @@ function runnerInput(overrides: Partial<RunnerInput> = {}): RunnerInput {
     executionRevision: 1,
     languageId: 'javascript',
     files: {
-      'index.html': '<main><p id="message">変更前</p></main>',
+      'index.html': '<main><p id="message">変更前</p></main><script src="script.js"></script>',
       'styles.css': '#message { color: green; }',
       'script.js': 'document.querySelector("#message").textContent = "変更後";',
     },
@@ -174,18 +174,17 @@ describe('JavaScriptRunnerAdapter', () => {
       analyze: vi.fn(async () => analysisSuccess()),
       dispose: vi.fn(async () => undefined),
     };
-    const createObjectURL = vi.fn(() => 'blob:https://example.test/runtime');
-    const revokeObjectURL = vi.fn();
     const frame = document.createElement('iframe');
     const wrongFrame = document.createElement('iframe');
     document.body.append(frame, wrongFrame);
-    const runner = new JavaScriptRunnerAdapter({ analyzer, createObjectURL, revokeObjectURL });
+    const runner = new JavaScriptRunnerAdapter({ analyzer });
 
     await runner.prepare(frame);
     const pending = runner.render(runnerInput());
     await vi.waitFor(() => {
       expect(frame.srcdoc).toContain('data-tsumucode-javascript-runtime');
     });
+    expect(frame.srcdoc).not.toContain('blob:https://example.test/runtime');
     expect(frame.getAttribute('sandbox')).toBe('allow-scripts');
     expect(frame.getAttribute('sandbox')).not.toContain('allow-same-origin');
     expect(frame.getAttribute('referrerpolicy')).toBe('no-referrer');
@@ -211,7 +210,6 @@ describe('JavaScriptRunnerAdapter', () => {
       ],
     });
     await runner.dispose();
-    expect(revokeObjectURL).toHaveBeenCalledWith('blob:https://example.test/runtime');
   });
 
   it('budget超過を不正解ではなく再試行可能なsystem診断へ変換する', async () => {
@@ -221,11 +219,7 @@ describe('JavaScriptRunnerAdapter', () => {
     };
     const frame = document.createElement('iframe');
     document.body.append(frame);
-    const runner = new JavaScriptRunnerAdapter({
-      analyzer,
-      createObjectURL: () => 'blob:https://example.test/runtime',
-      revokeObjectURL: () => undefined,
-    });
+    const runner = new JavaScriptRunnerAdapter({ analyzer });
     await runner.prepare(frame);
     const pending = runner.render(runnerInput());
     await vi.waitFor(() => {
@@ -295,13 +289,10 @@ describe('JavaScriptRunnerAdapter', () => {
       analyze: vi.fn(async () => analysisSuccess()),
       dispose: vi.fn(async () => undefined),
     };
-    const revokeObjectURL = vi.fn();
     const frame = document.createElement('iframe');
     document.body.append(frame);
     const runner = new JavaScriptRunnerAdapter({
       analyzer,
-      createObjectURL: () => 'blob:https://example.test/runtime',
-      revokeObjectURL,
       executionTimeoutMs: 50,
     });
     await runner.prepare(frame);
@@ -317,7 +308,6 @@ describe('JavaScriptRunnerAdapter', () => {
     ]);
     expect(result.evidence).toEqual([]);
     expect(frame.srcdoc).toBe('');
-    expect(revokeObjectURL).toHaveBeenCalledWith('blob:https://example.test/runtime');
     await runner.dispose();
   });
 
@@ -331,16 +321,10 @@ describe('JavaScriptRunnerAdapter', () => {
       ),
       dispose: vi.fn(async () => undefined),
     };
-    let runtimeNumber = 0;
     const frame = document.createElement('iframe');
     document.body.append(frame);
     const runner = new JavaScriptRunnerAdapter({
       analyzer,
-      createObjectURL: () => {
-        runtimeNumber += 1;
-        return `blob:https://example.test/runtime-${String(runtimeNumber)}`;
-      },
-      revokeObjectURL: () => undefined,
       executionTimeoutMs: 50,
     });
     await runner.prepare(frame);
@@ -379,11 +363,7 @@ describe('JavaScriptRunnerAdapter', () => {
     document.body.append(frame);
     const childWindow = frame.contentWindow!;
     const postMessage = vi.spyOn(childWindow, 'postMessage').mockImplementation(() => undefined);
-    const runner = new JavaScriptRunnerAdapter({
-      analyzer,
-      createObjectURL: () => 'blob:https://example.test/runtime',
-      revokeObjectURL: () => undefined,
-    });
+    const runner = new JavaScriptRunnerAdapter({ analyzer });
     await runner.prepare(frame);
     const render = runner.render(runnerInput());
     await vi.waitFor(() => {
@@ -447,14 +427,9 @@ describe('JavaScriptRunnerAdapter', () => {
       analyze: vi.fn(async () => analysisSuccess()),
       dispose: vi.fn(async () => undefined),
     };
-    const revokeObjectURL = vi.fn();
     const frame = document.createElement('iframe');
     document.body.append(frame);
-    const runner = new JavaScriptRunnerAdapter({
-      analyzer,
-      createObjectURL: () => 'blob:https://example.test/runtime',
-      revokeObjectURL,
-    });
+    const runner = new JavaScriptRunnerAdapter({ analyzer });
     await runner.prepare(frame);
     const render = runner.render(runnerInput());
     await vi.waitFor(() => {
@@ -475,7 +450,6 @@ describe('JavaScriptRunnerAdapter', () => {
         policy: snapshotPolicy,
       }),
     ).rejects.toThrow('not current');
-    expect(revokeObjectURL).toHaveBeenCalledWith('blob:https://example.test/runtime');
     await runner.dispose();
   });
 });

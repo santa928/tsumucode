@@ -102,6 +102,20 @@ describe('CSS sanitizer', () => {
 });
 
 describe('HTML sanitizer', () => {
+  it('Runnerが指定した単一の外部script参照だけを無言で除き、追加scriptは診断する', () => {
+    const result = sanitizeHtml(
+      '<main>本文</main>' +
+        '<script src="script.js"></script>' +
+        '<script src="other.js"></script>' +
+        '<script src="script.js" onload="alert(1)"></script>',
+      [],
+      { acknowledgedScriptFile: 'script.js' },
+    );
+
+    expect(result.document.querySelectorAll('script')).toHaveLength(0);
+    expect(codes(result)).toEqual(['HTML_UNSAFE_NODE_REMOVED', 'HTML_UNSAFE_NODE_REMOVED']);
+  });
+
   it('bodyの安全なclass・data属性を保持し、予約属性は除く', () => {
     const result = sanitizeHtml(
       '<body class="course" data-profile-page data-tsumucode-forged="true"><main>本文</main></body>',

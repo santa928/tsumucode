@@ -1,4 +1,4 @@
-/** sanitized HTML/CSS、Snapshot Bridge、検証済みJavaScript blobからopaque srcdocを作る。 */
+/** sanitized HTML/CSS、Snapshot Bridge、検証済みJavaScript sourceからopaque srcdocを作る。 */
 import {
   assertBridgeConfig,
   createBridgeSource,
@@ -22,10 +22,38 @@ export interface CreateJavaScriptSrcdocInput {
     readonly height: number;
     readonly reducedMotion?: 'reduce' | undefined;
   };
-  readonly runtimeUrl: string;
+  readonly runtimeSource: string;
 }
 
 const SAFE_NONCE = /^[a-z0-9_-]+$/iu;
+const MAX_RUNTIME_SOURCE_BYTES = 256 * 1024;
+const UTF8 = new TextEncoder();
+
+/** runtime sourceをraw-textから隔離し、iframe自身が所有するBlobとして読み込むloaderを作る。 */
+function createRuntimeLoaderSource(runtimeSource: string): string {
+  if (UTF8.encode(runtimeSource).byteLength > MAX_RUNTIME_SOURCE_BYTES) {
+    throw new Error('JavaScript runtime source exceeds srcdoc limit');
+  }
+  const sourceLiteral = JSON.stringify(runtimeSource)
+    .replaceAll('<', '\\u003c')
+    .replaceAll('\u2028', '\\u2028')
+    .replaceAll('\u2029', '\\u2029');
+  return [
+    '(function(){"use strict";',
+    `const source=${sourceLiteral};`,
+    'const loader=document.currentScript;',
+    'const objectUrl=URL.createObjectURL(new Blob([source],{type:"text/javascript;charset=utf-8"}));',
+    'const runtime=document.createElement("script");',
+    'runtime.setAttribute("data-tsumucode-javascript-runtime-execution","");',
+    'runtime.src=objectUrl;',
+    'const release=()=>URL.revokeObjectURL(objectUrl);',
+    'runtime.addEventListener("load",release,{once:true});',
+    'runtime.addEventListener("error",release,{once:true});',
+    'loader?.remove();',
+    'document.head.append(runtime);',
+    '})();',
+  ].join('');
+}
 
 /** Sanitizer済みheadのstylesheet参照をSnapshot観測用の値へ変換する。 */
 function stylesheetReferences(documentValue: Document): readonly BridgeStylesheetReference[] {
@@ -39,9 +67,7 @@ export function createJavaScriptSrcdoc(input: CreateJavaScriptSrcdocInput): stri
   if (!SAFE_NONCE.test(input.nonce) || input.nonce.length > 128) {
     throw new Error('Invalid JavaScript preview nonce');
   }
-  if (!/^blob:[^\s]+$/u.test(input.runtimeUrl) || /["'<>]/u.test(input.runtimeUrl)) {
-    throw new Error('Invalid JavaScript runtime URL');
-  }
+  const runtimeLoaderSource = createRuntimeLoaderSource(input.runtimeSource);
   const references = stylesheetReferences(input.sanitizedDocument);
   assertBridgeConfig({
     exerciseSessionId: input.exerciseSessionId,
@@ -84,8 +110,9 @@ export function createJavaScriptSrcdoc(input: CreateJavaScriptSrcdocInput): stri
   });
 
   const runtime = output.createElement('script');
-  runtime.setAttribute('src', input.runtimeUrl);
+  runtime.setAttribute('nonce', input.nonce);
   runtime.setAttribute('data-tsumucode-javascript-runtime', '');
+  runtime.textContent = runtimeLoaderSource;
   output.head.prepend(csp, style, snapshotBridge, runtime);
   return `<!doctype html>${output.documentElement.outerHTML}`;
 }

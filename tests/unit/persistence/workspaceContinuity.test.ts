@@ -41,6 +41,7 @@ describe('guided project workspace continuity', () => {
         },
       ],
       previewViewports: [{ id: 'desktop', width: 1280, height: 720 }],
+      steps: [],
       validationRules: [],
       hints: [],
       assets: [],

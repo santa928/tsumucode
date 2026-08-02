@@ -250,6 +250,28 @@ describe('LearningSessionController', () => {
     vi.unstubAllGlobals();
   });
 
+  it('初回表示ではFile配列の並びに関係なく最初の手順の対象Fileを選択する', () => {
+    const firstStep = baseExercise.steps[0];
+    if (firstStep === undefined) throw new Error('Exercise fixtureに手順がありません');
+    const current = exercise({
+      steps: [{ ...firstStep, file: 'script.js' }],
+      files: [
+        { path: 'index.html', language: 'html', content: '<main></main>', editable: true },
+        { path: 'styles.css', language: 'css', content: 'main {}', editable: true },
+        {
+          path: 'script.js',
+          language: 'javascript',
+          content: "document.querySelector('#message');",
+          editable: true,
+        },
+      ],
+    });
+
+    const controller = new LearningSessionController(controllerInput({ exercise: current }));
+
+    expect(controller.getSnapshot().selectedFile).toBe('script.js');
+  });
+
   it('preview更新と判定を公開Performance Entry名で計測する', async () => {
     const measure = vi.spyOn(globalThis.performance, 'measure');
     const controller = new LearningSessionController(controllerInput());
@@ -376,6 +398,46 @@ describe('LearningSessionController', () => {
         ],
       }),
     );
+  });
+
+  it('Runnerのerror診断ではSnapshotを要求せずValidatorへ渡して再試行可能な結果を残す', async () => {
+    const runtime = runnerHarness();
+    const diagnostic = {
+      code: 'JAVASCRIPT_SYNTAX',
+      kind: 'syntax' as const,
+      severity: 'error' as const,
+      message: 'Unexpected token',
+      learnerMessage: '引用符を確認してください。',
+      file: 'script.js',
+      line: 1,
+      column: 20,
+    };
+    runtime.render.mockImplementation(async (input) => ({
+      exerciseSessionId: input.exerciseSessionId,
+      executionRevision: input.executionRevision,
+      diagnostics: [diagnostic],
+      evidence: [],
+    }));
+    const validation = validatorHarness();
+    validation.validate.mockImplementation(async (context) =>
+      validationResult(context.exerciseId, 0, {
+        executionRevision: null,
+        status: 'code-error',
+        diagnostics: context.diagnostics,
+      }),
+    );
+    const controller = new LearningSessionController(
+      controllerInput({ runner: runtime.runner, validator: validation.validator }),
+    );
+
+    const result = await controller.validateNow();
+
+    expect(runtime.requestSnapshot).not.toHaveBeenCalled();
+    expect(validation.validate).toHaveBeenCalledWith(
+      expect.objectContaining({ snapshots: {}, diagnostics: [diagnostic] }),
+    );
+    expect(result.status).toBe('code-error');
+    expect(controller.getSnapshot().validationHistory.at(-1)?.status).toBe('code-error');
   });
 
   it('viewport間でRunner evidenceが異なる判定をidentity不一致として拒否する', async () => {

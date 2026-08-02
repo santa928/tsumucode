@@ -271,10 +271,6 @@ export class JavaScriptValidator implements ValidatorAdapter {
       ]);
     }
 
-    const identity = snapshotIdentity(rules, context.snapshots);
-    if ('kind' in identity) {
-      return blockedResult(context, 'system-error', [...context.diagnostics, identity]);
-    }
     const hasSystemError = context.diagnostics.some(
       ({ kind, severity }) => kind === 'system' && severity === 'error',
     );
@@ -282,8 +278,17 @@ export class JavaScriptValidator implements ValidatorAdapter {
     const hasCodeError = context.diagnostics.some(
       ({ kind, severity }) => kind !== 'system' && severity === 'error',
     );
+    const identity = snapshotIdentity(rules, context.snapshots);
     if (hasCodeError) {
-      return blockedResult(context, 'code-error', context.diagnostics, identity.executionRevision);
+      return blockedResult(
+        context,
+        'code-error',
+        context.diagnostics,
+        'kind' in identity ? null : identity.executionRevision,
+      );
+    }
+    if ('kind' in identity) {
+      return blockedResult(context, 'system-error', [...context.diagnostics, identity]);
     }
     const indexedEvidence = evidenceIndex(context.evidence);
     if ('kind' in indexedEvidence) {

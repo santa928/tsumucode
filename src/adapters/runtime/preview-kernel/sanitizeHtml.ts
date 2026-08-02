@@ -8,6 +8,10 @@ export interface SanitizedHtml {
   readonly diagnostics: readonly RunnerDiagnostic[];
 }
 
+export interface SanitizeHtmlOptions {
+  readonly acknowledgedScriptFile?: string;
+}
+
 const HTML_NAMESPACE = 'http://www.w3.org/1999/xhtml';
 const SAFE_TAGS = new Set([
   'a',
@@ -186,6 +190,36 @@ const COMMUNICATION_ATTRIBUTES = new Set([
 ]);
 const IMAGE_MEDIA_TYPES = new Set<ResolvedPreviewAsset['mediaType']>(['image']);
 
+/** trusted Runnerが指定したworkspace script pathを比較用のcanonical値へ変換する。 */
+function canonicalAcknowledgedScriptFile(file: string | undefined): string | undefined {
+  if (file === undefined) return undefined;
+  try {
+    return resolvePublicAsset('/', file).slice(1);
+  } catch {
+    throw new Error('Acknowledged script file must be a safe relative path');
+  }
+}
+
+/** 実行せず除去することが分かっている単一の外部script参照か確認する。 */
+function isAcknowledgedScriptReference(element: Element, acknowledgedFile: string): boolean {
+  if (
+    element.namespaceURI !== HTML_NAMESPACE ||
+    element.tagName.toLowerCase() !== 'script' ||
+    element.attributes.length !== 1 ||
+    element.attributes[0]?.name.toLowerCase() !== 'src' ||
+    element.textContent.trim().length > 0
+  ) {
+    return false;
+  }
+  const source = element.getAttribute('src');
+  if (source === null) return false;
+  try {
+    return resolvePublicAsset('/', source).slice(1) === acknowledgedFile;
+  } catch {
+    return false;
+  }
+}
+
 /** Security診断を共通Runtime契約へ変換する。 */
 function diagnostic(
   code: string,
@@ -313,12 +347,15 @@ function copySafeAttributes(
 export function sanitizeHtml(
   source: string,
   assets: readonly ResolvedPreviewAsset[],
+  options: SanitizeHtmlOptions = {},
 ): SanitizedHtml {
   const parsed = new DOMParser().parseFromString(source, 'text/html');
   const clean = document.implementation.createHTMLDocument('');
   clean.head.replaceChildren();
   clean.body.replaceChildren();
   const diagnostics: RunnerDiagnostic[] = [];
+  const acknowledgedScriptFile = canonicalAcknowledgedScriptFile(options.acknowledgedScriptFile);
+  let acknowledgedScriptRemoved = false;
 
   const rebuild = (node: Node, parent: Node): void => {
     if (node.nodeType === Node.TEXT_NODE) {
@@ -328,6 +365,14 @@ export function sanitizeHtml(
     if (node.nodeType !== Node.ELEMENT_NODE) return;
     const sourceElement = node as Element;
     const tag = sourceElement.tagName.toLowerCase();
+    if (
+      !acknowledgedScriptRemoved &&
+      acknowledgedScriptFile !== undefined &&
+      isAcknowledgedScriptReference(sourceElement, acknowledgedScriptFile)
+    ) {
+      acknowledgedScriptRemoved = true;
+      return;
+    }
     if (sourceElement.namespaceURI !== HTML_NAMESPACE || DROP_SUBTREE_TAGS.has(tag)) {
       diagnostics.push(
         diagnostic('HTML_UNSAFE_NODE_REMOVED', `<${tag}>はプレビューで使えないため外しました`),

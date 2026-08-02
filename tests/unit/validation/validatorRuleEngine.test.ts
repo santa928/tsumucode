@@ -185,6 +185,13 @@ describe('ValidatorRuleEngine statusと説明', () => {
     expect(
       (
         await new ValidatorRuleEngine().validate(
+          validationContext({ snapshots: {}, diagnostics: [learnerError] }),
+        )
+      ).status,
+    ).toBe('code-error');
+    expect(
+      (
+        await new ValidatorRuleEngine().validate(
           validationContext({ snapshots: {}, diagnostics: [learnerError, systemError] }),
         )
       ).status,

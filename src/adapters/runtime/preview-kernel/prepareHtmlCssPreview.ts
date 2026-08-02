@@ -32,6 +32,7 @@ export interface PreparedHtmlCssPreview {
 
 export interface PrepareHtmlCssPreviewOptions {
   readonly signal?: AbortSignal;
+  readonly acknowledgedScriptFile?: string;
 }
 
 const SAFE_ID = /^[a-z0-9._:-]+$/iu;
@@ -141,7 +142,11 @@ export async function prepareHtmlCssPreview(
     options.signal === undefined ? {} : { signal: options.signal },
   );
   try {
-    const sanitizedHtml = sanitizeHtml(validated.htmlSource, materialized.assets);
+    const sanitizedHtml = sanitizeHtml(validated.htmlSource, materialized.assets, {
+      ...(options.acknowledgedScriptFile === undefined
+        ? {}
+        : { acknowledgedScriptFile: options.acknowledgedScriptFile }),
+    });
     const stylesheets: PreparedPreviewStylesheet[] = [];
     const sanitizedCss: {
       readonly css: string;

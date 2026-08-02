@@ -763,18 +763,13 @@ export class ValidatorRuleEngine implements ValidatorAdapter {
     }
 
     try {
-      const preflight = preflightSnapshots(rules, context.snapshots);
       const hasSystemError = context.diagnostics.some(
         ({ kind, severity }) => kind === 'system' && severity === 'error',
       );
-      if (hasSystemError || preflight.diagnostics.length > 0) {
-        return blockedResult(
-          context,
-          'system-error',
-          [...context.diagnostics, ...preflight.diagnostics],
-          null,
-        );
+      if (hasSystemError) {
+        return blockedResult(context, 'system-error', context.diagnostics, null);
       }
+      const preflight = preflightSnapshots(rules, context.snapshots);
       const hasLearnerError = context.diagnostics.some(
         ({ kind, severity }) => kind !== 'system' && severity === 'error',
       );
@@ -784,6 +779,14 @@ export class ValidatorRuleEngine implements ValidatorAdapter {
           'code-error',
           context.diagnostics,
           preflight.executionRevision,
+        );
+      }
+      if (preflight.diagnostics.length > 0) {
+        return blockedResult(
+          context,
+          'system-error',
+          [...context.diagnostics, ...preflight.diagnostics],
+          null,
         );
       }
 

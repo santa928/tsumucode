@@ -315,8 +315,13 @@ export class LearningSessionController {
 
   constructor(private readonly input: LearningSessionControllerInput) {
     const files = Object.fromEntries(input.exercise.files.map((file) => [file.path, file.content]));
-    const selectedFile = input.exercise.files[0]?.path;
-    if (selectedFile === undefined) throw new Error('ExerciseにFileがありません');
+    const firstFile = input.exercise.files[0]?.path;
+    if (firstFile === undefined) throw new Error('ExerciseにFileがありません');
+    const firstStepFile = input.exercise.steps[0]?.file;
+    const selectedFile =
+      firstStepFile !== undefined && Object.hasOwn(files, firstStepFile)
+        ? firstStepFile
+        : firstFile;
     this.#starterFiles = Object.freeze({ ...files });
     this.#starterSelectedFile = selectedFile;
     this.#editableFiles = new Map(
@@ -764,6 +769,7 @@ export class LearningSessionController {
       } else if (!runnerEvidenceEqual(evidence, rendered.evidence)) {
         throw new Error('Runner evidenceがViewport間で一致しません');
       }
+      if (rendered.diagnostics.some(({ severity }) => severity === 'error')) continue;
       const requestId = this.#nextRequestId(usedRequestIds);
       const currentSnapshot = await this.input.runner.requestSnapshot({
         exerciseSessionId: execution.exerciseSessionId,
