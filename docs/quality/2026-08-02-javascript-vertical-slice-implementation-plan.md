@@ -140,13 +140,13 @@ Expected: どちらもexit 0。
 - Consumes: UTF-8の`script.js` sourceと`executionRevision`。
 - Produces: `analyzeJavaScript(request): Promise<JavaScriptAnalysisResult>`。成功時は監視済みcode、SHA-256、source facts、失敗時は初心者向けdiagnosticを返す。
 
-- [ ] **Step 1: 完全一致dependencyをDocker内で追加する**
+- [x] **Step 1: 完全一致dependencyをDocker内で追加する**
 
 Run: `./scripts/docker-compose.sh run --rm app npm install --save-exact acorn@8.18.0 acorn-walk@8.3.5 magic-string@1.1.0 @codemirror/lang-javascript@6.2.5`
 
 Expected: `package.json`とlockfileへ指定versionが直接記録される。
 
-- [ ] **Step 2: syntax、security、budget挿入の失敗テストを書く**
+- [x] **Step 2: syntax、security、budget挿入の失敗テストを書く**
 
 ```ts
 expect(analyze('while (true) {}').instrumentedCode).toContain('__tsumuBudget.checkLoop()');
@@ -159,17 +159,17 @@ expect(() => analyze('eval("1")')).toThrowError(/許可されていない/);
 expect(() => analyze('const broken =')).toThrowError(/構文/);
 ```
 
-- [ ] **Step 3: REDを確認する**
+- [x] **Step 3: REDを確認する**
 
 Run: `./scripts/docker-compose.sh run --rm app npm run test:run -- src/adapters/runtime/javascript/analyzer`
 
 Expected: module未作成でFAIL。
 
-- [ ] **Step 4: AST制限とfail-closed policyを実装する**
+- [x] **Step 4: AST制限とfail-closed policyを実装する**
 
 `parse(source, { ecmaVersion: 'latest', sourceType: 'script', locations: true })`で解析し、100 KiB、20,000 node、深度256、文字列64 KiB、配列10,000要素を超える入力を拒否する。`eval`、`Function`、dynamic import、WebAssembly、Network、Worker、Storage、navigation、未知の`document`／`navigator` member、computed capability accessを`security` diagnosticへ変換する。
 
-- [ ] **Step 5: Loop／Function entryへguardを挿入する**
+- [x] **Step 5: Loop／Function entryへguardを挿入する**
 
 ```ts
 export interface InstrumentedJavaScript {
@@ -181,11 +181,11 @@ export interface InstrumentedJavaScript {
 
 `while`、`do-while`、`for`、`for-in`、`for-of`のbody先頭と通常Function／arrow Functionのentryへguard呼出しを挿入する。単文bodyはblockへ変換し、directive prologueより後へFunction guardを置く。
 
-- [ ] **Step 6: Worker deadlineとstale応答破棄を実装する**
+- [x] **Step 6: Worker deadlineとstale応答破棄を実装する**
 
 Clientはrequest IDごとにpendingを保持し、500 msで`Worker.terminate()`して`system` diagnosticを返す。dispose後、別revision、重複response、未知request IDを受理しない。
 
-- [ ] **Step 7: 対象テスト、audit、licenseをGREENにする**
+- [x] **Step 7: 対象テスト、audit、licenseをGREENにする**
 
 Run: `./scripts/docker-compose.sh run --rm app npm run test:run -- src/adapters/runtime/javascript/analyzer`
 
