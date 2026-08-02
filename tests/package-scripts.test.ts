@@ -55,11 +55,13 @@ describe('package scripts', () => {
     const command = manifest.scripts.check ?? '';
     const checkIndex = command.indexOf('npm run content:check');
     const compileIndex = command.indexOf('npm run content:compile');
+    const reviewIndex = command.indexOf('npm run content:review');
     const testIndex = command.indexOf('npm run test:run');
 
     expect(checkIndex).toBeGreaterThanOrEqual(0);
     expect(compileIndex).toBeGreaterThan(checkIndex);
-    expect(testIndex).toBeGreaterThan(compileIndex);
+    expect(reviewIndex).toBeGreaterThan(compileIndex);
+    expect(testIndex).toBeGreaterThan(reviewIndex);
   });
 
   it('GitHub Pages subpath smokeを実在するlocal entrypointとして公開する', () => {

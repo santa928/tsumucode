@@ -6,11 +6,11 @@ lessons:
   - lessonId: javascript-ch00-l01
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: fc29add3dbaedba71b1c43511d46ef5856a2705a7b93e12409f95e5235c3fda7
+    sourceHash: e534feb935a032267789074c2fab9ba8f8a4274778e953d473aa8d33a3067076
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 4枚のSlideが引用符内だけを変更するExerciseへ段階接続すること、3段階Hint、Solution、8 FixtureのSourceを確認。Solution／incomplete／HTML-only／wrong literal／syntax／security／timeoutを実Analyzerで実行済み。3 BrowserのRunner検証は後続Gateで行う。
+    notes: 4枚のSlideが引用符内だけを変更するExerciseへ段階接続すること、3段階Hint、Solution、8 FixtureのSourceを確認。公開後是正でs01の未対応強調記法を除去し、役割説明とExercise整合が変わらないことを再確認。Solution／incomplete／HTML-only／wrong literal／syntax／security／timeoutを実Analyzerで実行済み。3 BrowserのRunner検証は後続Gateで行う。

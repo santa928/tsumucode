@@ -41,7 +41,7 @@
     "release:approval": "tsx scripts/release/verifyReleaseApproval.ts",
     "release:target": "tsx scripts/release/verifyReleaseTarget.ts",
     "release:report": "tsx scripts/release/writeReleaseReport.ts",
-    "check": "npm run content:check && npm run content:compile && npm run lint && npm run typecheck && npm run test:run && npm run build && npm run smoke:learning-chunks"
+    "check": "npm run content:check && npm run content:compile && npm run content:review && npm run lint && npm run typecheck && npm run test:run && npm run build && npm run smoke:learning-chunks"
   },
   "dependencies": {
     "@codemirror/autocomplete": "6.20.3",
