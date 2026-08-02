@@ -102,6 +102,7 @@ function runnerHarness(events: string[] = []): RunnerHarness {
           learnerMessage: input.viewport.id,
         },
       ],
+      evidence: [],
     };
   });
   const requestSnapshot = vi.fn<RunnerAdapter['requestSnapshot']>(async (request) => {
@@ -331,6 +332,158 @@ describe('LearningSessionController', () => {
     expect(controller.getLastValidationDraft(0)).toBeUndefined();
   });
 
+  it('全viewportで一致したRunner evidenceだけをValidatorへ渡す', async () => {
+    const current = exercise({
+      previewViewports: [
+        { id: 'desktop', width: 1280, height: 720 },
+        { id: 'mobile', width: 390, height: 844 },
+      ],
+    });
+    const runtime = runnerHarness();
+    const renderImplementation = runtime.render.getMockImplementation();
+    if (renderImplementation === undefined) throw new Error('render fixtureがありません');
+    runtime.render.mockImplementation(async (input) => ({
+      ...(await renderImplementation(input)),
+      evidence: [
+        { id: 'javascript.executed', value: true },
+        {
+          id: 'javascript.source-sha256',
+          file: 'script.js',
+          value: 'a'.repeat(64),
+        },
+      ],
+    }));
+    const validation = validatorHarness();
+    const controller = new LearningSessionController(
+      controllerInput({
+        exercise: current,
+        runner: runtime.runner,
+        validator: validation.validator,
+      }),
+    );
+
+    await controller.validateNow();
+
+    expect(validation.validate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        evidence: [
+          { id: 'javascript.executed', value: true },
+          {
+            id: 'javascript.source-sha256',
+            file: 'script.js',
+            value: 'a'.repeat(64),
+          },
+        ],
+      }),
+    );
+  });
+
+  it('viewport間でRunner evidenceが異なる判定をidentity不一致として拒否する', async () => {
+    const current = exercise({
+      previewViewports: [
+        { id: 'desktop', width: 1280, height: 720 },
+        { id: 'mobile', width: 390, height: 844 },
+      ],
+    });
+    const runtime = runnerHarness();
+    const renderImplementation = runtime.render.getMockImplementation();
+    if (renderImplementation === undefined) throw new Error('render fixtureがありません');
+    runtime.render.mockImplementation(async (input) => ({
+      ...(await renderImplementation(input)),
+      evidence: [
+        {
+          id: 'javascript.executed',
+          value: input.viewport.id === 'desktop',
+        },
+      ],
+    }));
+    const controller = new LearningSessionController(
+      controllerInput({ exercise: current, runner: runtime.runner }),
+    );
+
+    await expect(controller.validateNow()).rejects.toThrow(/Runner evidence/u);
+  });
+
+  it('Runner境界で件数・ID・File・値・identityが契約外のevidenceを拒否する', async () => {
+    const invalidEvidence = [
+      Array.from({ length: 65 }, (_, index) => ({ id: `evidence.${String(index)}`, value: true })),
+      [{ id: '', value: true }],
+      [{ id: 'A'.repeat(129), value: true }],
+      [{ id: 'invalid id', value: true }],
+      [{ id: 'valid.id', file: '/script.js', value: true }],
+      [{ id: 'valid.id', file: '../script.js', value: true }],
+      [{ id: 'valid.id', file: 'a'.repeat(257), value: true }],
+      [{ id: 'valid.id', file: 42, value: true }],
+      [{ id: 'valid.id', value: 'a'.repeat(4097) }],
+      [{ id: 'valid.id', value: Number.NaN }],
+      [{ id: 'valid.id', value: true, unexpected: 'field' }],
+      [{ id: 'valid.id' }],
+      [
+        { id: 'duplicate.id', value: true },
+        { id: 'duplicate.id', value: false },
+      ],
+    ] as const;
+
+    for (const evidence of invalidEvidence) {
+      const runtime = runnerHarness();
+      const renderImplementation = runtime.render.getMockImplementation();
+      if (renderImplementation === undefined) throw new Error('render fixtureがありません');
+      runtime.render.mockImplementation(
+        async (input) =>
+          ({
+            ...(await renderImplementation(input)),
+            evidence,
+          }) as unknown as RunnerRenderResult,
+      );
+      const controller = new LearningSessionController(controllerInput({ runner: runtime.runner }));
+
+      await expect(controller.previewNow()).rejects.toThrow(/Runner evidence/u);
+    }
+  });
+
+  it('Runner evidenceの順序だけが異なるviewportを同じ証拠として扱う', async () => {
+    const current = exercise({
+      previewViewports: [
+        { id: 'desktop', width: 1280, height: 720 },
+        { id: 'mobile', width: 390, height: 844 },
+      ],
+    });
+    const runtime = runnerHarness();
+    const renderImplementation = runtime.render.getMockImplementation();
+    if (renderImplementation === undefined) throw new Error('render fixtureがありません');
+    runtime.render.mockImplementation(async (input) => ({
+      ...(await renderImplementation(input)),
+      evidence:
+        input.viewport.id === 'desktop'
+          ? [
+              { id: 'javascript.executed', value: true },
+              { id: 'javascript.budget-exhausted', value: false },
+            ]
+          : [
+              { id: 'javascript.budget-exhausted', value: false },
+              { id: 'javascript.executed', value: true },
+            ],
+    }));
+    const validation = validatorHarness();
+    const controller = new LearningSessionController(
+      controllerInput({
+        exercise: current,
+        runner: runtime.runner,
+        validator: validation.validator,
+      }),
+    );
+
+    await expect(controller.validateNow()).resolves.toMatchObject({ status: 'pass' });
+    expect(validation.validate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        evidence: [
+          { id: 'javascript.budget-exhausted', value: false },
+          { id: 'javascript.executed', value: true },
+        ],
+      }),
+    );
+  });
+
   it('250ms previewをcoalesceし、stateful Runner操作を同時実行しない', async () => {
     const firstRender = deferred<RunnerRenderResult>();
     let active = 0;
@@ -352,6 +505,7 @@ describe('LearningSessionController', () => {
           exerciseSessionId: input.exerciseSessionId,
           executionRevision: input.executionRevision,
           diagnostics: [],
+          evidence: [],
         };
       });
     const controller = new LearningSessionController(controllerInput({ runner: runtime.runner }));
@@ -368,6 +522,7 @@ describe('LearningSessionController', () => {
       exerciseSessionId: 'html-css:exercise-first-heading',
       executionRevision: 2,
       diagnostics: [],
+      evidence: [],
     });
     await vi.runAllTimersAsync();
     await queued;
@@ -400,6 +555,7 @@ describe('LearningSessionController', () => {
       exerciseSessionId: 'html-css:exercise-first-heading',
       executionRevision: 0,
       diagnostics: [],
+      evidence: [],
     });
 
     await expect(preview).rejects.toBeInstanceOf(StaleExecutionError);
@@ -493,6 +649,7 @@ describe('LearningSessionController', () => {
           learnerMessage: 'old',
         },
       ],
+      evidence: [],
     });
 
     await expect(preview).rejects.toBeInstanceOf(StaleExecutionError);
@@ -895,7 +1052,12 @@ describe('LearningSessionController', () => {
     const firstDispose = controller.dispose();
     const secondDispose = controller.dispose();
     expect(runtime.dispose).not.toHaveBeenCalled();
-    pending.resolve({ exerciseSessionId: 'ignored', executionRevision: 1, diagnostics: [] });
+    pending.resolve({
+      exerciseSessionId: 'ignored',
+      executionRevision: 1,
+      diagnostics: [],
+      evidence: [],
+    });
     await preview;
     await Promise.all([firstDispose, secondDispose]);
 

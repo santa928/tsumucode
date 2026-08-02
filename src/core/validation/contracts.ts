@@ -1,6 +1,11 @@
 /** Runtime の観測結果を学習要件へ評価する Validation 公開契約。 */
 import type { ValidationRuleDefinition } from '../content/types';
-import type { PreviewSnapshot, RunnerDiagnostic, SnapshotPolicy } from '../runtime/contracts';
+import type {
+  PreviewSnapshot,
+  RunnerDiagnostic,
+  RunnerEvidence,
+  SnapshotPolicy,
+} from '../runtime/contracts';
 
 export type ValidatorRule = ValidationRuleDefinition;
 export type ValidationStatus = 'pass' | 'incomplete' | 'code-error' | 'system-error';
@@ -11,6 +16,7 @@ export interface ValidationContext {
   readonly files: Readonly<Record<string, string>>;
   readonly snapshots: Readonly<Record<string, PreviewSnapshot>>;
   readonly diagnostics: readonly RunnerDiagnostic[];
+  readonly evidence: readonly RunnerEvidence[];
   readonly now: string;
 }
 

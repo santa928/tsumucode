@@ -25,6 +25,7 @@ const lazyRunner = vi.hoisted(() => ({
       exerciseSessionId: input.exerciseSessionId,
       executionRevision: input.executionRevision,
       diagnostics: [],
+      evidence: [],
     }),
   ),
   requestSnapshot: vi.fn<(request: SnapshotRequest) => Promise<PreviewSnapshot>>(() =>

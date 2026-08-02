@@ -446,6 +446,7 @@ function stubAdapters(options: AdapterStubOptions = {}): {
           exerciseSessionId: input.exerciseSessionId,
           executionRevision: input.executionRevision,
           diagnostics: [],
+          evidence: [],
         };
       }),
   );
@@ -950,6 +951,7 @@ describe('Learning routes', () => {
           exerciseSessionId: input.exerciseSessionId,
           executionRevision: input.executionRevision,
           diagnostics: [],
+          evidence: [],
         };
       },
     });
@@ -979,6 +981,7 @@ describe('Learning routes', () => {
         exerciseSessionId: input.exerciseSessionId,
         executionRevision: input.executionRevision,
         diagnostics: [],
+        evidence: [],
       };
     });
     const adapters = stubAdapters({ prepare, render });
@@ -1012,6 +1015,7 @@ describe('Learning routes', () => {
           exerciseSessionId: input.exerciseSessionId,
           executionRevision: input.executionRevision,
           diagnostics: [],
+          evidence: [],
         };
       },
     });
@@ -1582,6 +1586,7 @@ describe('Learning routes', () => {
           exerciseSessionId: input.exerciseSessionId,
           executionRevision: input.executionRevision,
           diagnostics: [],
+          evidence: [],
         };
       },
     });

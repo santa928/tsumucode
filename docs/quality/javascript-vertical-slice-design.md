@@ -1,6 +1,6 @@
 # JavaScript Runner／Validator vertical slice 設計
 
-- 状態: レビュー待ち
+- 状態: 承認済み・実装中
 - 作成日: 2026-08-02
 - 対象: JavaScript Course Chapter 00 と、その後のJavaScript全Courseへ残す実行基盤
 - 親ロードマップ: GitHub Issue #1「複数コースとLearningPathを追加する」

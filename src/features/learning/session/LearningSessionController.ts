@@ -15,6 +15,7 @@ import type {
   ResolvedPreviewAsset,
   RunnerAdapter,
   RunnerDiagnostic,
+  RunnerEvidence,
   RunnerRenderResult,
 } from '../../../core/runtime/contracts';
 import type { ValidationResult, ValidatorAdapter } from '../../../core/validation/contracts';
@@ -54,6 +55,89 @@ interface ExecutionInput {
 interface ValidationPlan {
   readonly exercises: readonly Exercise[];
   readonly viewports: readonly PreviewViewport[];
+}
+
+const MAX_EVIDENCE_ITEMS = 64;
+const MAX_EVIDENCE_ID_LENGTH = 128;
+const MAX_EVIDENCE_FILE_LENGTH = 256;
+const MAX_EVIDENCE_STRING_LENGTH = 4096;
+const EVIDENCE_ID_PATTERN = /^[a-z0-9]+(?:[.-][a-z0-9]+)*$/u;
+
+/** EvidenceのFileがworkspace内の正規化済み相対Pathとして安全か確認する。 */
+function isNormalizedEvidenceFile(value: string): boolean {
+  if (
+    value.length === 0 ||
+    value.length > MAX_EVIDENCE_FILE_LENGTH ||
+    value.startsWith('/') ||
+    value.includes('\\') ||
+    value.includes('?') ||
+    value.includes('#')
+  ) {
+    return false;
+  }
+  const segments = value.split('/');
+  return segments.every((segment) => segment.length > 0 && segment !== '.' && segment !== '..');
+}
+
+/** Runner境界のEvidenceをbounded scalarへ限定し、比較可能な決定順で複製する。 */
+function normalizeRunnerEvidence(evidence: unknown): readonly RunnerEvidence[] {
+  if (!Array.isArray(evidence) || evidence.length > MAX_EVIDENCE_ITEMS) {
+    throw new Error('Runner evidenceはboundedな配列で指定してください');
+  }
+  const rawEvidence: readonly unknown[] = evidence;
+  const identities = new Set<string>();
+  const normalized = rawEvidence.map((rawItem) => {
+    if (typeof rawItem !== 'object' || rawItem === null || Array.isArray(rawItem)) {
+      throw new Error('Runner evidence項目がObjectではありません');
+    }
+    const item = rawItem as Readonly<Record<string, unknown>>;
+    const id = item.id;
+    const file = item.file;
+    const value = item.value;
+    const expectedKeys = file === undefined ? ['id', 'value'] : ['file', 'id', 'value'];
+    if (
+      JSON.stringify(Object.keys(item).sort()) !== JSON.stringify(expectedKeys) ||
+      typeof id !== 'string' ||
+      id.length === 0 ||
+      id.length > MAX_EVIDENCE_ID_LENGTH ||
+      !EVIDENCE_ID_PATTERN.test(id)
+    ) {
+      throw new Error('Runner evidence IDが契約に一致しません');
+    }
+    if (file !== undefined && (typeof file !== 'string' || !isNormalizedEvidenceFile(file))) {
+      throw new Error('Runner evidence Fileが契約に一致しません');
+    }
+    if (!(
+      typeof value === 'boolean' ||
+      (typeof value === 'number' && Number.isFinite(value)) ||
+      (typeof value === 'string' && value.length <= MAX_EVIDENCE_STRING_LENGTH)
+    )) {
+      throw new Error('Runner evidence Valueがbounded scalarではありません');
+    }
+    const identity = JSON.stringify([id, file ?? null]);
+    if (identities.has(identity)) throw new Error('Runner evidence identityが重複しています');
+    identities.add(identity);
+    return Object.freeze({
+      id,
+      ...(file === undefined ? {} : { file }),
+      value,
+    });
+  });
+  return Object.freeze(
+    normalized.sort((left, right) =>
+      JSON.stringify([left.id, left.file ?? null, left.value]).localeCompare(
+        JSON.stringify([right.id, right.file ?? null, right.value]),
+      ),
+    ),
+  );
+}
+
+/** 2 viewportのEvidenceがscalar値まで完全一致するか確認する。 */
+function runnerEvidenceEqual(
+  left: readonly RunnerEvidence[],
+  right: readonly RunnerEvidence[],
+): boolean {
+  return JSON.stringify(left) === JSON.stringify(right);
 }
 
 /** editでrevisionが変わった非同期結果をstateへ入れないための公開Error。 */
@@ -570,6 +654,7 @@ export class LearningSessionController {
     ) {
       throw new Error('Runner render identityが要求と一致しません');
     }
+    const evidence = normalizeRunnerEvidence(result.evidence);
     if (commitPreview) {
       this.#dispatch({
         type: 'preview.completed',
@@ -577,7 +662,7 @@ export class LearningSessionController {
         diagnostics: result.diagnostics,
       });
     }
-    return result;
+    return { ...result, evidence };
   }
 
   /** 操作時間をbest-effortで測り、例外時も元の結果を維持する。 */
@@ -668,11 +753,17 @@ export class LearningSessionController {
       plan.exercises.flatMap(({ validationRules }) => validationRules),
     );
     const diagnostics: RunnerDiagnostic[] = [];
+    let evidence: readonly RunnerEvidence[] | undefined;
     const snapshots: Record<string, PreviewSnapshot> = {};
     const usedRequestIds = new Set<string>();
     for (const viewport of plan.viewports) {
       const rendered = await this.#render(execution, viewport, false);
       diagnostics.push(...rendered.diagnostics);
+      if (evidence === undefined) {
+        evidence = rendered.evidence;
+      } else if (!runnerEvidenceEqual(evidence, rendered.evidence)) {
+        throw new Error('Runner evidenceがViewport間で一致しません');
+      }
       const requestId = this.#nextRequestId(usedRequestIds);
       const currentSnapshot = await this.input.runner.requestSnapshot({
         exerciseSessionId: execution.exerciseSessionId,
@@ -692,6 +783,7 @@ export class LearningSessionController {
         files: execution.files,
         snapshots,
         diagnostics,
+        evidence: evidence ?? [],
         now: this.input.now(),
       });
       this.#assertFresh(execution);
@@ -730,6 +822,11 @@ export class LearningSessionController {
         displayResult = await this.#render(execution, displayViewport, false);
       } catch (error: unknown) {
         return this.#rollbackValidationCandidate(error);
+      }
+      if (evidence !== undefined && !runnerEvidenceEqual(evidence, displayResult.evidence)) {
+        return this.#rollbackValidationCandidate(
+          new Error('Runner evidenceが表示Previewの再描画と一致しません'),
+        );
       }
       committedState = learningSessionReducer(committedState, {
         type: 'preview.completed',

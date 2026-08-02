@@ -1241,6 +1241,15 @@ for (const viewport of [
       });
     await expect(page.getByTestId('code-workspace')).toHaveCount(0);
     expect(requested.filter((url) => EDITOR_RUNTIME_CHUNK_PATTERN.test(url))).toEqual([]);
+    await expect
+      .poll(
+        () =>
+          requested.some((url) =>
+            url.endsWith('/generated/content/courses/html-css/lessons/html-css-ch00-l02.json'),
+          ),
+        { message: 'idle時間の隣接Lesson先読みが完了する' },
+      )
+      .toBe(true);
     const topUrlBeforeAnchorClicks = page.url();
     const srcdocBeforeAnchorClicks = await previewFrame.getAttribute('srcdoc');
     const staticFrame = page

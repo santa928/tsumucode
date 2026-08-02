@@ -45,10 +45,20 @@ export interface RunnerInput {
   readonly options: Readonly<Record<string, unknown>>;
 }
 
+export type RunnerEvidenceValue = string | number | boolean;
+
+/** 同じsession／revisionの実行事実をValidatorへ渡すbounded scalar証拠。 */
+export interface RunnerEvidence {
+  readonly id: string;
+  readonly file?: string;
+  readonly value: RunnerEvidenceValue;
+}
+
 export interface RunnerRenderResult {
   readonly exerciseSessionId: string;
   readonly executionRevision: number;
   readonly diagnostics: readonly RunnerDiagnostic[];
+  readonly evidence: readonly RunnerEvidence[];
 }
 
 export interface SnapshotRequest {

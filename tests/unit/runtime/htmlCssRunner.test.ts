@@ -443,6 +443,7 @@ describe('HtmlCssRunnerAdapter', () => {
     const result = await pending;
 
     expect(result.executionRevision).toBe(1);
+    expect(result.evidence).toEqual([]);
     expect(result.diagnostics.map(({ code }) => code)).toEqual([
       'CSS_REFERENCE_MISSING',
       'CSS_SYNTAX',

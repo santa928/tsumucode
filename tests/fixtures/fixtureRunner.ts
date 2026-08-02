@@ -24,6 +24,7 @@ export class FixtureRunner implements RunnerAdapter {
       exerciseSessionId: input.exerciseSessionId,
       executionRevision: input.executionRevision,
       diagnostics: [],
+      evidence: [],
     };
   }
 

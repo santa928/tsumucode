@@ -87,6 +87,7 @@ export function validationContext(overrides: Partial<ValidationContext> = {}): V
     files: { 'index.html': '<main></main>' },
     snapshots: { desktop: previewSnapshot() },
     diagnostics: [],
+    evidence: [],
     now: '2026-07-10T00:00:00.000Z',
     ...overrides,
   };

@@ -156,6 +156,7 @@ async function evaluateCase(
           files,
           snapshots,
           diagnostics,
+          evidence: [],
           now: new Date().toISOString(),
         });
       } catch (error) {
