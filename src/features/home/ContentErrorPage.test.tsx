@@ -7,6 +7,52 @@ import { ContentLoadError } from '../../core/content/loadCourseCatalog';
 import { ContentErrorPage } from './ContentErrorPage';
 
 describe('ContentErrorPage', () => {
+  it.each([404, 410])('生成教材のHTTP %iでは最新版へ更新するCTAを表示する', async (status) => {
+    const router = createMemoryRouter([
+      {
+        path: '/',
+        loader: () => {
+          throw new ContentLoadError('http', '/generated/content/catalog-v3.json', status);
+        },
+        element: <div />,
+        errorElement: <ContentErrorPage />,
+        HydrateFallback: () => <p>教材を準備中</p>,
+      },
+    ]);
+
+    render(<RouterProvider router={router} />);
+
+    expect(
+      await screen.findByRole('button', { name: 'ページを再読み込みして最新版へ更新' }),
+    ).toBeInTheDocument();
+  });
+
+  it.each([
+    new ContentLoadError('http', '/generated/content/catalog-v3.json', 500),
+    new ContentLoadError('integrity', '/generated/content/catalog-v3.json'),
+  ])('更新で直らない失敗には最新版CTAを表示しない', async (error) => {
+    const router = createMemoryRouter([
+      {
+        path: '/',
+        loader: () => {
+          throw error;
+        },
+        element: <div />,
+        errorElement: <ContentErrorPage />,
+        HydrateFallback: () => <p>教材を準備中</p>,
+      },
+    ]);
+
+    render(<RouterProvider router={router} />);
+
+    expect(
+      await screen.findByRole('heading', { name: '教材を読み込めませんでした' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'ページを再読み込みして最新版へ更新' }),
+    ).not.toBeInTheDocument();
+  });
+
   it('内部詳細を出さず、失敗を通知して再試行できる', async () => {
     const user = userEvent.setup();
     let resolveRetry!: (value: null) => void;

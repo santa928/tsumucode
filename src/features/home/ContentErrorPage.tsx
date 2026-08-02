@@ -10,6 +10,10 @@ export function ContentErrorPage() {
     error instanceof ContentLoadError
       ? error.message
       : '教材を表示できませんでした。URLを確認して、教材一覧からもう一度お試しください。';
+  const isRemovedArtifact =
+    error instanceof ContentLoadError &&
+    error.kind === 'http' &&
+    (error.status === 404 || error.status === 410);
 
   return (
     <main
@@ -34,6 +38,17 @@ export function ContentErrorPage() {
         >
           {isLoading ? '読み込み中' : 'もう一度読み込む'}
         </button>
+        {isRemovedArtifact ? (
+          <button
+            type="button"
+            onClick={() => {
+              window.location.reload();
+            }}
+            className="inline-flex min-h-11 items-center justify-center rounded-workshop-md border-2 border-workshop-primary px-5 py-3 font-bold text-workshop-primary"
+          >
+            ページを再読み込みして最新版へ更新
+          </button>
+        ) : null}
         <Link
           to="/"
           className="inline-flex min-h-11 items-center rounded-workshop-sm px-3 py-2 font-bold underline decoration-2 underline-offset-4"

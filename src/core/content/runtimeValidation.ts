@@ -1,13 +1,18 @@
 /** Compiler検証済みArtifactをRuntimeで軽量再検証する純粋境界。 */
 import { resolvePublicAsset } from '../../shared/lib/resolvePublicAsset';
+import { CourseCatalogV3Schema, CourseIndexSchema, LessonManifestSchema } from './deliverySchema';
 import type {
   CourseCatalog,
   CourseCatalogEntry,
+  CourseCatalogEntryV3,
+  CourseCatalogV3,
+  CourseIndex,
   CourseCatalogLessonStart,
   CourseManifest,
   LearningPathDefinition,
   LearningPathStep,
   LessonStartTarget,
+  LessonManifest,
 } from './types';
 
 const ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/u;
@@ -272,4 +277,50 @@ export function parseIntegrityVerifiedCourseManifest(
     throw new Error('Course Manifest rootの値が契約に一致しません。');
   }
   return value as CourseManifest;
+}
+
+/** Catalog v3をstrict公開契約で検証する。 */
+export function parseRuntimeCourseCatalogV3(value: unknown): CourseCatalogV3 {
+  return CourseCatalogV3Schema.parse(value);
+}
+
+/** SHA一致済みCourse IndexをCatalog metadataと照合する。 */
+export function parseIntegrityVerifiedCourseIndex(
+  value: unknown,
+  expected: CourseCatalogEntryV3,
+): CourseIndex {
+  const index = CourseIndexSchema.parse(value);
+  if (
+    index.id !== expected.id ||
+    index.revision !== expected.revision ||
+    index.title !== expected.title ||
+    index.description !== expected.description ||
+    index.audience !== expected.audience ||
+    index.estimatedMinutes !== expected.estimatedMinutes ||
+    index.publicationStatus !== expected.publicationStatus
+  ) {
+    throw new Error('Course Index metadataがCatalog entryと一致しません。');
+  }
+  return index;
+}
+
+/** SHA一致済みLesson ManifestをCourse Indexと要求Lesson IDへ対応付ける。 */
+export function parseIntegrityVerifiedLessonManifest(
+  value: unknown,
+  index: CourseIndex,
+  lessonId: string,
+): LessonManifest {
+  const manifest = LessonManifestSchema.parse(value);
+  const exists = index.phases.some(({ chapters }) =>
+    chapters.some(({ lessons }) => lessons.some(({ id }) => id === lessonId)),
+  );
+  if (
+    !exists ||
+    manifest.courseId !== index.id ||
+    manifest.courseRevision !== index.revision ||
+    manifest.lessonId !== lessonId
+  ) {
+    throw new Error('Lesson ManifestがCourse Indexまたは要求Lessonと一致しません。');
+  }
+  return manifest;
 }

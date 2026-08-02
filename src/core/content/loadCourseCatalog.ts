@@ -4,35 +4,20 @@ import {
   parseIntegrityVerifiedCourseManifest,
   parseRuntimeCourseCatalog,
 } from './runtimeValidation';
-import type { CourseCatalog, CourseCatalogEntry, CourseManifest } from './types';
+import { ContentLoadError, courseContentRepository } from './CourseContentRepository';
+import type {
+  CourseCatalog,
+  CourseCatalogEntry,
+  CourseCatalogEntryV3,
+  CourseCatalogV3,
+  CourseIndex,
+  CourseManifest,
+  LessonManifest,
+} from './types';
+
+export { ContentLoadError, type ContentLoadErrorKind } from './CourseContentRepository';
 
 const CATALOG_PATH = 'generated/content/catalog.json';
-const CONTENT_LOAD_ERROR_MESSAGE =
-  '教材を読み込めませんでした。通信を確認して、もう一度お試しください。';
-
-export type ContentLoadErrorKind = 'http' | 'integrity' | 'json' | 'schema';
-
-/** 教材取得の失敗段階と対象resourceを、表示文言から分離して保持するError。 */
-export class ContentLoadError extends Error {
-  readonly kind: ContentLoadErrorKind;
-  readonly resource: string;
-
-  /** 失敗分類、解決済みまたは入力resource、調査用causeを保持する。 */
-  constructor(kind: ContentLoadErrorKind, resource: string, cause?: unknown) {
-    super(
-      CONTENT_LOAD_ERROR_MESSAGE,
-      cause === undefined
-        ? undefined
-        : {
-            cause,
-          },
-    );
-    this.name = 'ContentLoadError';
-    this.kind = kind;
-    this.resource = resource;
-  }
-}
-
 /** Public相対PathをBASE_URL配下へ解決し、Path契約違反をSchema失敗へ分類する。 */
 function resolveContentResource(baseUrl: string, relativePath: string): string {
   try {
@@ -121,3 +106,20 @@ export async function loadCourseManifest(
     throw new ContentLoadError('schema', resource, error);
   }
 }
+
+/** 新Catalog v3をRepositoryのsingle-flight経路から取得する。 */
+export const loadCourseCatalogV3 = (baseUrl: string): Promise<CourseCatalogV3> =>
+  courseContentRepository.loadCatalog(baseUrl);
+
+/** Catalog v3 entryのCourse IndexをRepositoryから取得する。 */
+export const loadCourseIndex = (
+  baseUrl: string,
+  entry: CourseCatalogEntryV3,
+): Promise<CourseIndex> => courseContentRepository.loadCourseIndex(baseUrl, entry);
+
+/** Course Index内のLesson ManifestをRepositoryから取得する。 */
+export const loadLessonManifest = (
+  baseUrl: string,
+  index: CourseIndex,
+  lessonId: string,
+): Promise<LessonManifest> => courseContentRepository.loadLesson(baseUrl, index, lessonId);

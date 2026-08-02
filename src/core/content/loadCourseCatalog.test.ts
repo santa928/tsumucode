@@ -1,6 +1,18 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { fixtureCatalog, fixtureCourse } from '../../../tests/fixtures/course';
-import { loadCourseCatalog, loadCourseManifest } from './loadCourseCatalog';
+import {
+  fixtureCatalog,
+  fixtureCatalogV3,
+  fixtureCourse,
+  fixtureCourseIndex,
+  fixtureLessonManifest,
+} from '../../../tests/fixtures/course';
+import {
+  loadCourseCatalog,
+  loadCourseCatalogV3,
+  loadCourseIndex,
+  loadCourseManifest,
+  loadLessonManifest,
+} from './loadCourseCatalog';
 import type { ContentLoadError } from './loadCourseCatalog';
 
 /** Test response文字列と一致するManifest entryをWeb Cryptoで作る。 */
@@ -17,6 +29,36 @@ async function manifestEntry(source: string) {
 
 afterEach(() => {
   vi.unstubAllGlobals();
+});
+
+/** Response文字列と一致するSHA-256を小文字hexで返す。 */
+async function sourceSha256(source: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(source));
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
+describe('v3 repository facade', () => {
+  it('Catalog→Index→Lessonを同じRepository検証経路から取得する', async () => {
+    const lessonSource = JSON.stringify(fixtureLessonManifest);
+    const index = structuredClone(fixtureCourseIndex);
+    index.phases[0]!.chapters[0]!.lessons[0]!.manifestSha256 = await sourceSha256(lessonSource);
+    const indexSource = JSON.stringify(index);
+    const catalog = structuredClone(fixtureCatalogV3);
+    catalog.courses[0]!.indexSha256 = await sourceSha256(indexSource);
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(Response.json(catalog))
+      .mockResolvedValueOnce(new Response(indexSource))
+      .mockResolvedValueOnce(new Response(lessonSource));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(loadCourseCatalogV3('/repository-name/')).resolves.toEqual(catalog);
+    await expect(loadCourseIndex('/repository-name/', catalog.courses[0]!)).resolves.toEqual(index);
+    await expect(
+      loadLessonManifest('/repository-name/', index, 'lesson-first-heading'),
+    ).resolves.toEqual(fixtureLessonManifest);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
 });
 
 describe('loadCourseCatalog', () => {
