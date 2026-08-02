@@ -1,0 +1,17 @@
+schemaVersion: 1
+browser: chromium
+runsPerExercise: 20
+warmupRuns: 3
+previewP95Ms: 500
+validationP95Ms: 1000
+exercises:
+  - { id: javascript-ch00-l01-e01, category: simple }
+bundle:
+  homeInitialJavaScriptGzipMaxBytes: 256000
+  exerciseJavaScriptGzipMaxBytes: 180000
+  editorLoadedOnHome: false
+content:
+  catalogGzipMaxBytes: 20480
+  courseIndexGzipMaxBytes: 40960
+  lessonManifestGzipMaxBytes: 12288
+  authoringFieldsForbidden: [solutionFiles, fixtures]

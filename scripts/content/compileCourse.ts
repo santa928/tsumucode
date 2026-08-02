@@ -37,7 +37,7 @@ import {
 
 export interface AuthoringFixture {
   readonly id: string;
-  readonly expectedStatus: 'pass' | 'incomplete' | 'code-error';
+  readonly expectedStatus: 'pass' | 'incomplete' | 'code-error' | 'system-error';
   readonly files: readonly ExerciseFile[];
   readonly expectedFeedbackRuleIds: readonly string[];
 }

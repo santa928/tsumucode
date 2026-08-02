@@ -837,3 +837,30 @@ assets:`,
     });
   });
 });
+
+describe('JavaScript draft Course compilation', () => {
+  it('Chapter 00 Fixtureの期待statusを保持しauthoring dataを公開Lessonへ混入させない', async () => {
+    const courseRoot = path.resolve('content/javascript');
+    const authoring = await loadAuthoringCourse(courseRoot);
+    const compilation = await compileCourse(courseRoot);
+    const exercise = authoring.exercises.find(({ id }) => id === 'javascript-ch00-l01-e01');
+
+    expect(
+      Object.fromEntries(
+        (exercise?.fixtures ?? []).map(({ id, expectedStatus }) => [id, expectedStatus]),
+      ),
+    ).toEqual({
+      'html-only': 'incomplete',
+      incomplete: 'incomplete',
+      pass: 'pass',
+      security: 'code-error',
+      'syntax-error': 'code-error',
+      'system-error': 'system-error',
+      timeout: 'system-error',
+      'wrong-literal': 'incomplete',
+    });
+    expect(stringifyCanonicalJson(compilation.runtime)).not.toMatch(
+      /solutionFiles|fixtures|wrong-literal|syntax-error/u,
+    );
+  });
+});

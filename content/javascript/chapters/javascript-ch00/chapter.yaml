@@ -1,0 +1,7 @@
+id: javascript-ch00
+sequence: 0
+title: 画面の文字を変える
+goal: HTMLで用意された場所をJavaScriptで探し、文字列だけを変更できる。
+estimatedMinutes: 15
+kind: standard
+lessonSources: [lessons/javascript-ch00-l01/lesson.yaml]

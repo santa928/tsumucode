@@ -4,6 +4,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parse } from 'yaml';
 import { z } from 'zod';
+import { CourseCatalogV3Schema } from '../../src/core/content/deliverySchema';
 import { readSplitCourseArtifacts } from './readSplitCourseArtifacts';
 
 const HashSchema = z.string().regex(/^[a-f0-9]{64}$/u);
@@ -50,6 +51,16 @@ export interface VerifyContentReviewOptions {
   readonly publicRoot?: string;
   readonly courseId?: string;
   readonly reviewPath?: string;
+}
+
+export interface VerifyAllContentReviewsOptions {
+  readonly contentRoot?: string;
+  readonly publicRoot?: string;
+  readonly reviewRoot?: string;
+}
+
+export interface AllContentReviewReport extends ContentReviewReport {
+  readonly coursesReviewed: number;
 }
 
 /** Directory配下の通常FileをPOSIX相対path順で列挙し、symlinkを拒否する。 */
@@ -204,11 +215,52 @@ export async function verifyContentReview(
   return verifyReviewLedger(parse(await readFile(reviewPath, 'utf8')), lessonHashes);
 }
 
+/** Course IDを既存HTML台帳との互換を保ったReview台帳名へ変換する。 */
+function reviewFileName(courseId: string): string {
+  return courseId === 'html-css' ? 'content-review.yaml' : `content-review-${courseId}.yaml`;
+}
+
+/** Catalog v3に存在するpublished／draft全Courseの教材Reviewを集約する。 */
+export async function verifyAllContentReviews(
+  options: VerifyAllContentReviewsOptions = {},
+): Promise<AllContentReviewReport> {
+  const contentRoot = path.resolve(options.contentRoot ?? 'content');
+  const publicRoot = path.resolve(options.publicRoot ?? 'public');
+  const reviewRoot = path.resolve(options.reviewRoot ?? 'docs/quality');
+  const catalog = CourseCatalogV3Schema.parse(
+    JSON.parse(
+      await readFile(path.join(publicRoot, 'generated/content/catalog-v3.json'), 'utf8'),
+    ) as unknown,
+  );
+  let lessonsReviewed = 0;
+  let staleHashes = 0;
+  let rejected = 0;
+
+  for (const course of catalog.courses) {
+    const report = await verifyContentReview({
+      courseRoot: path.join(contentRoot, course.id),
+      publicRoot,
+      courseId: course.id,
+      reviewPath: path.join(reviewRoot, reviewFileName(course.id)),
+    });
+    lessonsReviewed += report.lessonsReviewed;
+    staleHashes += report.staleHashes;
+    rejected += report.rejected;
+  }
+
+  return {
+    coursesReviewed: catalog.courses.length,
+    lessonsReviewed,
+    staleHashes,
+    rejected,
+  };
+}
+
 /** CLI実行時にReview reportを1行で出力する。 */
 async function runCli(): Promise<void> {
-  const report = await verifyContentReview();
+  const report = await verifyAllContentReviews();
   process.stdout.write(
-    `${String(report.lessonsReviewed)} lessons reviewed / stale hashes ${String(report.staleHashes)} / rejected ${String(report.rejected)}\n`,
+    `${String(report.coursesReviewed)} courses / ${String(report.lessonsReviewed)} lessons reviewed / stale hashes ${String(report.staleHashes)} / rejected ${String(report.rejected)}\n`,
   );
 }
 

@@ -1,0 +1,37 @@
+schemaVersion: 1
+entries:
+  - id: html
+    term: HTML
+    definition: Webページに見出しや文章などの内容と役割を用意する言語。
+    firstSlideId: javascript-ch00-l01-s01
+    relatedIds: [css, javascript]
+  - id: css
+    term: CSS
+    definition: HTMLで用意した内容の色や余白など、見た目を整える言語。
+    firstSlideId: javascript-ch00-l01-s01
+    relatedIds: [html, javascript]
+  - id: javascript
+    term: JavaScript
+    definition: Webページの内容を変化させたり、操作に反応させたりする言語。
+    firstSlideId: javascript-ch00-l01-s01
+    relatedIds: [html, css, script-file]
+  - id: script-file
+    term: script.js
+    definition: この教材でJavaScriptのコードを書くFile。
+    firstSlideId: javascript-ch00-l01-s02
+    relatedIds: [javascript, selector, text-content]
+  - id: selector
+    term: selector
+    definition: JavaScriptがHTMLから変更したい場所を探すための目印。
+    firstSlideId: javascript-ch00-l01-s03
+    relatedIds: [text-content, script-file]
+  - id: text-content
+    term: textContent
+    definition: 見つけたHTML要素の文字を読み書きするための名前。
+    firstSlideId: javascript-ch00-l01-s03
+    relatedIds: [selector, string]
+  - id: string
+    term: 文字列
+    definition: 引用符で囲み、コードの中でひとまとまりの文字として扱う値。
+    firstSlideId: javascript-ch00-l01-s04
+    relatedIds: [text-content]

@@ -1,0 +1,19 @@
+id: javascript-ch00-l01
+kind: standard
+title: JavaScriptで画面の文字を変える
+goal: HTMLで用意された要素の文字がJavaScript実行後に変わることを説明し、引用符内の文字列を変更できる。
+estimatedMinutes: 15
+prerequisiteLessonIds: []
+slideSources:
+  - slides/s01-three-roles.md
+  - slides/s02-script-connection.md
+  - slides/s03-read-text-content.md
+  - slides/s04-change-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch00-l01-e01/exercise.yaml
+reflection: HTMLは内容、CSSは見た目、JavaScriptは変化を担当し、今回は用意された文字列だけを変更した。
+glossaryRefs: [html, css, javascript, script-file, selector, text-content, string]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch00-l01-s04
+  requiredExerciseIds: [javascript-ch00-l01-e01]

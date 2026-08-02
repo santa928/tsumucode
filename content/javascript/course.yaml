@@ -1,0 +1,33 @@
+schemaVersion: 1
+id: javascript
+title: JavaScript はじめの一歩
+description: HTMLで用意した場所を探し、JavaScriptで画面の文字を変える
+audience: HTMLとCSSの役割を知り、JavaScriptを初めて学ぶ本人と身内
+estimatedMinutes: 15
+revision: 2026-08-02.1
+runnerId: javascript
+validatorId: javascript
+glossarySource: glossary.yaml
+conceptsSource: concepts.yaml
+documentationSources: []
+authoringSources: [performance.yaml]
+supportedDevices:
+  exercise: desktop
+  study: [desktop, tablet, mobile]
+prerequisites: [html-css]
+publicationStatus: draft
+expectedTotals:
+  chapters: 1
+  lessons: 1
+  conceptSlides: 4
+  standardExercises: 1
+  guidedProjectLessons: 0
+  capstoneLessons: 0
+  estimatedMinutes: 15
+provenanceManifestPath: provenance.yaml
+progressMigrations: []
+phases:
+  - id: first-script
+    title: 最初のJavaScript
+    description: 3つのFileの役割を読み、用意されたJavaScriptの文字列を変更します。
+    chapterSources: [chapters/javascript-ch00/chapter.yaml]

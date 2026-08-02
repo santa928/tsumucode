@@ -174,6 +174,25 @@ describe('content source schema', () => {
     expect(CourseSourceSchema.parse(validCourseSource)).toEqual(validCourseSource);
   });
 
+  it('基盤停止Fixtureを学習者の不正解と分離して受理する', () => {
+    const result = ExerciseSourceSchema.parse({
+      ...validExerciseSource,
+      fixtures: [
+        {
+          ...validExerciseSource.fixtures[0],
+          id: 'runtime-timeout',
+          expectedStatus: 'system-error',
+        },
+      ],
+    });
+
+    expect(result.fixtures[0]).toMatchObject({
+      id: 'runtime-timeout',
+      expectedStatus: 'system-error',
+      expectedFeedbackRuleIds: [],
+    });
+  });
+
   it('親Directoryへ出るChapter sourceを拒否する', () => {
     const result = CourseSourceSchema.safeParse({
       ...validCourseSource,

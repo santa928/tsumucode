@@ -1,0 +1,18 @@
+schemaVersion: 1
+concepts:
+  - id: web-page-three-roles
+    introducedBySlideId: javascript-ch00-l01-s01
+    prerequisiteConceptIds: []
+    minimumProjectLevel: read
+  - id: script-file-connection
+    introducedBySlideId: javascript-ch00-l01-s02
+    prerequisiteConceptIds: [web-page-three-roles]
+    minimumProjectLevel: read
+  - id: query-selector-text-content
+    introducedBySlideId: javascript-ch00-l01-s03
+    prerequisiteConceptIds: [script-file-connection]
+    minimumProjectLevel: read
+  - id: string-literal-edit
+    introducedBySlideId: javascript-ch00-l01-s04
+    prerequisiteConceptIds: [query-selector-text-content]
+    minimumProjectLevel: transform

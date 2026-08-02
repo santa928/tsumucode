@@ -1,0 +1,210 @@
+id: javascript-ch00-l01-e01
+kind: standard
+workspaceId: javascript-ch00-l01-e01
+countsTowardStandardExerciseTotal: true
+title: JavaScriptで題名の文字を変える
+instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: string-literal-edit, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: change-message-text
+    file: script.js
+    target: 右端にある引用符の内側
+    starterAnchor: "document.querySelector('#message').textContent = 'ここを書き換えます';"
+    change: 文字を「JavaScriptで文字を変えました」へ置き換える
+    observe: Previewの題名が同じ言葉へ変わる
+    requiresConceptIds: [string-literal-edit]
+    validationRuleIds: [javascript-ch00-l01-e01-r01, javascript-ch00-l01-e01-r02]
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: true }
+  - { path: script.js, language: javascript, source: starter/script.js, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+  - { path: script.js, language: javascript, source: solution/script.js, editable: false }
+validationRules:
+  - id: javascript-ch00-l01-e01-r01
+    groupId: javascript-ch00-l01-e01-message
+    label: script.jsで題名の文字を変更する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: query-selector-text-content-assignment
+      selector: '#message'
+      expected: JavaScriptで文字を変えました
+    feedback:
+      target: script.jsの右端にある文字列
+      expected: 引用符内が「JavaScriptで文字を変えました」
+      nextAction: script.jsを開き、右端の引用符内だけを書き換えます。
+    hintId: javascript-ch00-l01-e01-h01
+    relatedSlideId: javascript-ch00-l01-s04
+  - id: javascript-ch00-l01-e01-r02
+    groupId: javascript-ch00-l01-e01-message
+    label: Previewの題名がJavaScriptで変わる
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: selector, selector: '#message' }
+    assertion: { kind: text, operator: equals, expected: JavaScriptで文字を変えました }
+    feedback:
+      target: Previewの題名
+      expected: 「JavaScriptで文字を変えました」と表示される
+      nextAction: script.jsの文字列を直してからPreviewを更新します。
+    hintId: javascript-ch00-l01-e01-h02
+    relatedSlideId: javascript-ch00-l01-s03
+hints:
+  - id: javascript-ch00-l01-e01-h01
+    level: 1
+    title: 開くFileを確認する
+    text: 画面の文字を変えるコードはscript.jsにあります。
+    relatedSlideId: javascript-ch00-l01-s02
+  - id: javascript-ch00-l01-e01-h02
+    level: 2
+    title: 変更する場所を探す
+    text: 用意された1行の右端にある、引用符で囲まれた「ここを書き換えます」を探します。
+    relatedSlideId: javascript-ch00-l01-s04
+  - id: javascript-ch00-l01-e01-h03
+    level: 3
+    title: 完成する文字列を確認する
+    text: 右端を引用符ごと「'JavaScriptで文字を変えました'」にすると完成です。
+    relatedSlideId: javascript-ch00-l01-s04
+relatedSlideIds:
+  - javascript-ch00-l01-s02
+  - javascript-ch00-l01-s03
+  - javascript-ch00-l01-s04
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: pass
+    expectedStatus: pass
+    files:
+      - { path: index.html, language: html, source: fixtures/pass/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/pass/styles.css, editable: false }
+      - { path: script.js, language: javascript, source: fixtures/pass/script.js, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: incomplete
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/incomplete/index.html,
+          editable: false,
+        }
+      - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/incomplete/script.js,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: [javascript-ch00-l01-e01-r01, javascript-ch00-l01-e01-r02]
+  - id: html-only
+    expectedStatus: incomplete
+    files:
+      - { path: index.html, language: html, source: fixtures/html-only/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/html-only/styles.css, editable: false }
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/html-only/script.js,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: [javascript-ch00-l01-e01-r01]
+  - id: wrong-literal
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/wrong-literal/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/wrong-literal/styles.css,
+          editable: false,
+        }
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/wrong-literal/script.js,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: [javascript-ch00-l01-e01-r01, javascript-ch00-l01-e01-r02]
+  - id: syntax-error
+    expectedStatus: code-error
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/syntax-error/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/syntax-error/styles.css,
+          editable: false,
+        }
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/syntax-error/script.js,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: security
+    expectedStatus: code-error
+    files:
+      - { path: index.html, language: html, source: fixtures/security/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/security/styles.css, editable: false }
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/security/script.js,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: timeout
+    expectedStatus: system-error
+    files:
+      - { path: index.html, language: html, source: fixtures/timeout/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/timeout/styles.css, editable: false }
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/timeout/script.js,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: system-error
+    expectedStatus: system-error
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/system-error/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/system-error/styles.css,
+          editable: false,
+        }
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/system-error/script.js,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []

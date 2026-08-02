@@ -80,7 +80,7 @@ export const FileSourceSchema = z
 export const FixtureSourceSchema = z
   .object({
     id: IdSchema,
-    expectedStatus: z.enum(['pass', 'incomplete', 'code-error']),
+    expectedStatus: z.enum(['pass', 'incomplete', 'code-error', 'system-error']),
     files: z.array(FileSourceSchema).min(1),
     expectedFeedbackRuleIds: z.array(IdSchema),
   })
@@ -245,6 +245,13 @@ export const ExerciseSourceSchema = z
           code: 'custom',
           path: [...path, 'expectedFeedbackRuleIds'],
           message: 'pass FixtureのFeedback Ruleは空にしてください',
+        });
+      }
+      if (fixture.expectedStatus === 'system-error' && fixture.expectedFeedbackRuleIds.length > 0) {
+        context.addIssue({
+          code: 'custom',
+          path: [...path, 'expectedFeedbackRuleIds'],
+          message: 'system-error FixtureのRule Feedbackは空にしてください',
         });
       }
       if (fixture.expectedStatus === 'incomplete' && fixture.expectedFeedbackRuleIds.length === 0) {

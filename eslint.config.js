@@ -10,6 +10,7 @@ export default tseslint.config(
       'dist',
       'coverage',
       'public/generated/content',
+      'content/**/*.js',
       'playwright-report',
       'test-results',
       '.worktrees',

@@ -3,6 +3,7 @@ dist/
 coverage/
 public/generated/content/
 content/**/fixtures/code-error/**
+content/**/fixtures/syntax-error/script.js
 content/**/fixtures/unindented/**
 docs/superpowers/
 .superpowers/

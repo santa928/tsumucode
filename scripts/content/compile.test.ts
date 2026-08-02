@@ -57,6 +57,41 @@ describe('compileContent output safety', () => {
     });
   });
 
+  it('draft JavaScript Courseを直リンク用に出力し公開Learning Pathへ掲載しない', async () => {
+    const root = await createTemporaryRoot();
+    const sourceRoot = path.join(root, 'source');
+    const outputRoot = path.join(root, 'public/generated/content');
+    await cp(path.resolve('tests/fixtures/foundation-content'), sourceRoot, { recursive: true });
+    await cp(path.resolve('content/javascript'), path.join(sourceRoot, 'javascript'), {
+      recursive: true,
+    });
+
+    const summary = await compileContent({ sourceRoot, outputRoot, checkOnly: false });
+    const javaScriptEntry = summary.catalog.courses.find(({ id }) => id === 'javascript');
+    const publishedPathCourseIds = summary.catalog.learningPaths
+      .filter(({ publicationStatus }) => publicationStatus === 'published')
+      .flatMap(({ steps }) => steps.map(({ courseId }) => courseId));
+
+    expect(javaScriptEntry).toMatchObject({
+      id: 'javascript',
+      publicationStatus: 'draft',
+      indexPath: 'generated/content/courses/javascript/index.json',
+      lessonStarts: [
+        {
+          lessonId: 'javascript-ch00-l01',
+          target: { kind: 'slide', targetId: 'javascript-ch00-l01-s01' },
+        },
+      ],
+    });
+    expect(publishedPathCourseIds).not.toContain('javascript');
+    await expect(
+      lstat(path.join(outputRoot, 'courses/javascript/index.json')),
+    ).resolves.toBeDefined();
+    await expect(
+      lstat(path.join(outputRoot, 'courses/javascript/lessons/javascript-ch00-l01.json')),
+    ).resolves.toBeDefined();
+  });
+
   it('generated/content以外をoutputRootにできない', async () => {
     const root = await createTemporaryRoot();
     const sourceRoot = path.join(root, 'source');

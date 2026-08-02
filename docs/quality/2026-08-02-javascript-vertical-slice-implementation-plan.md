@@ -398,6 +398,7 @@ Fresh verification: `npm run format:check`、`npm run check`、`npm run smoke:su
 - Create: `content/javascript/glossary.yaml`
 - Create: `content/javascript/provenance.yaml`
 - Create: `content/javascript/performance.yaml`
+- Create: `content/javascript/chapters/javascript-ch00/chapter.yaml`
 - Create: `content/javascript/chapters/javascript-ch00/lessons/javascript-ch00-l01/lesson.yaml`
 - Create: `content/javascript/chapters/javascript-ch00/lessons/javascript-ch00-l01/slides/s01-three-roles.md`
 - Create: `content/javascript/chapters/javascript-ch00/lessons/javascript-ch00-l01/slides/s02-script-connection.md`
@@ -405,31 +406,36 @@ Fresh verification: `npm run format:check`、`npm run check`、`npm run smoke:su
 - Create: `content/javascript/chapters/javascript-ch00/lessons/javascript-ch00-l01/slides/s04-change-checkpoint.md`
 - Create: `content/javascript/chapters/javascript-ch00/lessons/javascript-ch00-l01/exercises/javascript-ch00-l01-e01/exercise.yaml`
 - Create: `content/javascript/chapters/javascript-ch00/lessons/javascript-ch00-l01/exercises/javascript-ch00-l01-e01/instructions.md`
-- Create: starter、solution、pass、incomplete、html-only、syntax-error、security、timeout Fixtureの`index.html`、`styles.css`、`script.js`
+- Create: starter、solution、pass、incomplete、html-only、wrong-literal、syntax-error、security、timeout、system-error Fixtureの`index.html`、`styles.css`、`script.js`
 - Modify: `scripts/content/compile.ts`
 - Modify: `scripts/content/compileCourse.ts`
 - Modify: `scripts/content/sourceSchema.ts`
 - Modify: `scripts/content/verifyContentReview.ts`
+- Modify: `.prettierignore`
+- Modify: `eslint.config.js`
+- Modify: `tests/e2e/course-fixtures.spec.ts`
 - Test: `scripts/content/compile.test.ts`
+- Test: `scripts/content/compileCourse.test.ts`
 - Test: `scripts/content/sourceSchema.test.ts`
 - Test: `scripts/content/splitContentDelivery.test.ts`
+- Test: `scripts/content/verifyContentReview.test.ts`
 
 **Interfaces:**
 
 - Consumes: Task 4のJavaScript rule schema、現行Catalog v3／Course Index／Lesson manifest compiler。
 - Produces: `generated/content/courses/javascript/index.json`とLesson manifest。Catalog entryは`publication: draft`として直接URLからだけ解決できる。
 
-- [ ] **Step 1: draft掲載境界とFixtureの失敗テストを書く**
+- [x] **Step 1: draft掲載境界とFixtureの失敗テストを書く**
 
 ```ts
-expect(catalog.courses.find(({ id }) => id === 'javascript')?.publication).toBe('draft');
+expect(catalog.courses.find(({ id }) => id === 'javascript')?.publicationStatus).toBe('draft');
 expect(homeVisibleCourses).not.toContain('javascript');
 expect(publicLearningPathCourseIds).not.toContain('javascript');
 expect(await compileFixture('pass')).toMatchObject({ expectedStatus: 'pass' });
 expect(await compileFixture('html-only')).toMatchObject({ expectedStatus: 'incomplete' });
 ```
 
-- [ ] **Step 2: REDを確認する**
+- [x] **Step 2: REDを確認する**
 
 Run: `./scripts/docker-compose.sh run --rm app npm run content:check`
 
@@ -437,11 +443,11 @@ Run: `./scripts/docker-compose.sh run --rm app npm run test:run -- scripts/conte
 
 Expected: JavaScript authoring schemaまたは教材未定義でFAIL。
 
-- [ ] **Step 3: Course metadataと4 Slideを独自制作する**
+- [x] **Step 3: Course metadataと4 Slideを独自制作する**
 
 Slide 1は3役、Slide 2は`script.js`読込、Slide 3は`querySelector`／`textContent`の「探す・変える・結果」、Slide 4は引用符内だけを変える予告に限定する。各Slideはscreen budget内、直前Slideにない記述をExerciseで要求しない。
 
-- [ ] **Step 4: 3 File Exerciseと3段階Hintを制作する**
+- [x] **Step 4: 3 File Exerciseと3段階Hintを制作する**
 
 Starterの`script.js`は次の1行を含む。
 
@@ -451,11 +457,11 @@ document.querySelector('#message').textContent = 'ここを書き換えます';
 
 Solutionは文字列だけを`JavaScriptで文字を変えました`へ変更する。Hintは(1)`script.js`を開く、(2)引用符内を探す、(3)完成文字列を示す順とする。
 
-- [ ] **Step 5: Fixtureとcontent reviewを実装する**
+- [x] **Step 5: Fixtureとcontent reviewを実装する**
 
 passは合格、incomplete／html-only／wrong literalは`incomplete`、syntax／securityは`code-error`、timeoutと基盤障害は不正解ではなく停止／`system-error`として扱う期待値を記録する。solutionとFixtureは公開Lesson manifestへ混入させない。
 
-- [ ] **Step 6: content compileとreviewをGREENにする**
+- [x] **Step 6: content compileとreviewをGREENにする**
 
 Run: `./scripts/docker-compose.sh run --rm app npm run content:compile`
 
@@ -464,6 +470,8 @@ Run: `./scripts/docker-compose.sh run --rm app npm run content:review`
 Run: `./scripts/docker-compose.sh run --rm app npm run test:run -- scripts/content`
 
 Expected: JavaScript Courseを含むcompile、review、content testが全PASS。
+
+Fresh verification: `npm run check`で149 files／1413 tests、production build、learning chunk isolationをPASS。`npm run content:review`で2 Course／52 Lesson、stale hash 0、rejected 0。JavaScript Solutionと8 Fixtureを実Analyzerで確認し、公開Artifactへ`solutionFiles`／`fixtures`が混入しないことをCompiler testで確認した。
 
 ### Task 7: 3ブラウザSecurity、Accessibility、性能Gate
 

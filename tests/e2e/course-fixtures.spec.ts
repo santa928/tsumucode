@@ -17,7 +17,7 @@ interface BrowserFixtureCase {
   readonly exercise: Omit<AuthoringExercise, 'solutionFiles' | 'fixtures'>;
   readonly workspaceAssets: readonly AssetRef[];
   readonly files: Readonly<Record<string, string>>;
-  readonly expectedStatus: 'pass' | 'incomplete' | 'code-error' | 'not-pass';
+  readonly expectedStatus: AuthoringFixture['expectedStatus'] | 'not-pass';
   readonly expectedFeedbackRuleIds?: readonly string[];
 }
 
