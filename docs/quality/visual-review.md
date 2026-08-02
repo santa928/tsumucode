@@ -133,14 +133,15 @@
 - Viewport境界: 1280x720はDocument `scrollHeight <= 721`、390x844はDocument `scrollHeight <= 845`、両方ともDocument／Stageの`scrollWidth <= clientWidth + 1`
 - 救済Scroll: 390x844の最終SlideだけStage内を`overflow-y: auto`とし、下端は`scrollTop + clientHeight >= scrollHeight - 1`で到達可能。上下2画像で完了CardとPager CTAが重ならないことを確認
 - 目視結果: 4 Slide×2 viewport、最終Slide下端、Exercise×2 viewport、Error、Hint、Resetの14画像を原寸確認し、意図しないText切れ、重なり、横はみ出し、右端／下端欠け、誤ったCTAは0件
+- 公開後是正: 最初のbeta公開でSlide 1の未対応Markdown強調が`**HTML**`のように文字表示されることを発見した。教材本文から記号を除き、compilerへ未対応インライン強調の拒否Gateを追加したうえで、Slide 1の2 viewportを更新・原寸再確認した
 
 | 画面         | Viewport | Baseline SHA-256                                                   | Text切れ／重なり | 右端／下端 | CTA／案内                  | 判定 |
 | ------------ | -------- | ------------------------------------------------------------------ | ---------------- | ---------- | -------------------------- | ---- |
-| Slide 1      | 1280x720 | `990af1075af7946f2ad72fa2d507eac91c1fbd7237c60da267f5eeb7b0441d98` | なし             | 安全       | 次Slideが明瞭              | 承認 |
+| Slide 1      | 1280x720 | `b9121dc1840b2c346f41072e54718e6e1da2e4873f3a04edcde21dd7f5ca939b` | なし             | 安全       | 次Slideが明瞭              | 承認 |
 | Slide 2      | 1280x720 | `39964e30ae932960a7cf7e7bb7eaa6ab1b68132110c23ff39e5d95c71f50a40b` | なし             | 安全       | 前後導線が明瞭             | 承認 |
 | Slide 3      | 1280x720 | `8d22893ce3745afcdee7638eddab35aea079a25130eff6cd2e08e869e2018022` | なし             | 安全       | 前後導線が明瞭             | 承認 |
 | Slide 4      | 1280x720 | `506ab40632c04655885041a94227d86c695169aa2edd43f43ca529135114f41d` | なし             | 安全       | 演習導線が明瞭             | 承認 |
-| Slide 1      | 390x844  | `29f92860c73c5647367e971ff9635a06623175947153422dc09f1722d1e41fd8` | なし             | 安全       | 次Slideが明瞭              | 承認 |
+| Slide 1      | 390x844  | `b0662bb62aa9751b8de36e343c57df30cc5895a98a0152a53dfee4d58f4aa351` | なし             | 安全       | 次Slideが明瞭              | 承認 |
 | Slide 2      | 390x844  | `415679a7257f40ffce49b28daaa36d1c4541ac8ecdb1eac05d8d27aafdcc1d3d` | なし             | 安全       | Code横Scroll案内が明瞭     | 承認 |
 | Slide 3      | 390x844  | `559c4ae8888555febe87dbed2d695adc241b4821b0c2b79e92aa50f9e2499bc7` | なし             | 安全       | Code横Scroll案内が明瞭     | 承認 |
 | Slide 4 上端 | 390x844  | `9d13d20f2414aea1147f4883f92205a436a614d631a12b8bb4fccad12efb6b03` | なし             | 安全       | Stage救済Scroll可能        | 承認 |

@@ -12,6 +12,7 @@ const VALID_IMAGE_PATTERN = new RegExp(`^!\\[([^\\]]+)\\]\\(asset:(${ASSET_ID_PA
 const VALID_CODE_FENCE_PATTERN = new RegExp(`^\`\`\`(${CODE_LANGUAGE_PATTERN})$`, 'u');
 const UNORDERED_LIST_PATTERN = /^([-*])\s+(.+)$/u;
 const ORDERED_LIST_PATTERN = /^(\d+)\.\s+(.+)$/u;
+const UNSUPPORTED_INLINE_EMPHASIS_PATTERN = /(?:\*\*[^*\n]+\*\*|__[^_\n]+__)/u;
 
 type PlainRecord = Record<string, unknown>;
 type DirectiveName = 'practice' | 'callout';
@@ -60,6 +61,9 @@ function isPlainRecord(value: unknown): value is PlainRecord {
 /** Code以外へ残す文字列にlink／image／Raw HTML／MDXがないことを保証する。 */
 function assertSafeRenderedText(value: string): void {
   assertNoUnsupportedLinkOrImage(value);
+  if (UNSUPPORTED_INLINE_EMPHASIS_PATTERN.test(value)) {
+    throw new Error('未対応のインラインMarkdownは教材本文で使用できません。');
+  }
   const hasMdxBrace = value.includes('{') || value.includes('}');
   if (JSX_PATTERN.test(value) || MDX_MODULE_PATTERN.test(value) || hasMdxBrace) {
     throw new Error('MDXは教材Markdownで使用できません。');

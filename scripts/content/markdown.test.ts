@@ -135,6 +135,13 @@ describe('parseRestrictedMarkdown', () => {
     expect(parseRestrictedMarkdown('1 < 2')).toEqual([{ type: 'paragraph', text: '1 < 2' }]);
   });
 
+  it.each(['**HTML**を使う', '__CSS__を使う', '- **JavaScript**：表示を変える'])(
+    '表示できないインライン強調を文字列へ残さず拒否する: %s',
+    (source) => {
+      expect(() => parseRestrictedMarkdown(source)).toThrow('未対応のインラインMarkdown');
+    },
+  );
+
   it.each([
     '<script>alert(1)</script>',
     '前半 <strong>重要</strong> 後半',
