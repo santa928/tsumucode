@@ -5,7 +5,7 @@ import { gzipSync } from 'node:zlib';
 import { JSDOM } from 'jsdom';
 import { describe, expect, it } from 'vitest';
 import { assertSubpathBuild } from '../../scripts/smoke-subpath';
-import { loadPerformanceManifest } from './manifest';
+import { loadJavaScriptPerformanceManifest, loadPerformanceManifest } from './manifest';
 
 interface ViteChunk {
   readonly file: string;
@@ -23,6 +23,7 @@ interface PublicProvenanceItem {
 
 const distRoot = path.resolve('dist');
 const performanceManifest = await loadPerformanceManifest();
+const javaScriptPerformanceManifest = await loadJavaScriptPerformanceManifest();
 const starterResetBaselineCommit = '7e739754710138aa3433bfa085f7dd0479d9ca62';
 const starterResetBaselineEditorIncrementalJavaScriptGzipBytes = 177_635;
 const learningPathBaselineCommit = '98fde1bcbd290436b3298437567848fe33491059';
@@ -100,6 +101,19 @@ async function totalGzipBytes(relativePaths: readonly string[]): Promise<number>
     relativePaths.map((relativePath) => readFile(path.join(distRoot, relativePath))),
   );
   return buffers.reduce((total, source) => total + gzipSync(source).byteLength, 0);
+}
+
+/** Bundle予算超過時に原因を追えるよう、File別gzip bytesを大きい順で返す。 */
+async function gzipBytesByFile(
+  relativePaths: readonly string[],
+): Promise<readonly { readonly file: string; readonly gzipBytes: number }[]> {
+  const sizes = await Promise.all(
+    relativePaths.map(async (file) => ({
+      file,
+      gzipBytes: gzipSync(await readFile(path.join(distRoot, file))).byteLength,
+    })),
+  );
+  return sizes.sort((left, right) => right.gzipBytes - left.gzipBytes);
 }
 
 /** 指定File群の個別gzip bytes最大値を返す。 */
@@ -320,6 +334,68 @@ describe('production bundle budget', () => {
     ).toBeLessThanOrEqual(performanceManifest.starterReset.addedJavaScriptGzipMaxBytes);
   });
 
+  it('Home・Path・HTML SlideからJavaScript固有実装を分離し、Exercise増分を予算内に保つ', async () => {
+    const viteManifest = (await readJsonObject('.vite/manifest.json')) as Readonly<
+      Record<string, ViteChunk>
+    >;
+    const normalEntryKey = 'src/app/normalLearningEntry.tsx';
+    const editableKey = 'src/features/learning/pages/EditableExercisePage.tsx';
+    const workspaceKey = 'src/features/learning/editor/CodeWorkspace.tsx';
+    const htmlCssRunnerKey = 'src/adapters/runtime/html-css/index.ts';
+    const courseRuntimeKey = 'src/features/learning/javascriptRuntimeServices.ts';
+    const javascriptRunnerKey = 'src/adapters/runtime/javascript/index.ts';
+    const javascriptValidatorKey = 'src/adapters/validation/javascript/index.ts';
+    const javascriptEditorKey = 'src/features/learning/editor/javascriptEditorLanguage.ts';
+    const javascriptRoots = [
+      courseRuntimeKey,
+      javascriptRunnerKey,
+      javascriptValidatorKey,
+      javascriptEditorKey,
+    ] as const;
+    const existingExerciseRoots = [editableKey, workspaceKey, htmlCssRunnerKey] as const;
+    for (const key of [...existingExerciseRoots, ...javascriptRoots]) {
+      expect(viteManifest[key], key).toBeDefined();
+    }
+
+    const sharedRouteGraph = collectStaticChunkKeys(viteManifest, [normalEntryKey]);
+    const forbiddenInitialMarkers =
+      /(?:acorn|magic-string|JavaScriptAnalyzer|adapters\/runtime\/javascript|adapters\/validation\/javascript|javascriptEditorLanguage)/u;
+    expect(
+      [...sharedRouteGraph].flatMap((key) => {
+        const file = viteManifest[key]!.file;
+        return forbiddenInitialMarkers.test(key) || forbiddenInitialMarkers.test(file)
+          ? [{ key, file }]
+          : [];
+      }),
+    ).toEqual([]);
+
+    const existingExerciseGraph = collectStaticChunkKeys(viteManifest, existingExerciseRoots);
+    const javascriptGraph = collectStaticChunkKeys(viteManifest, javascriptRoots);
+    const incrementalJavaScript = [
+      ...new Set(
+        [...javascriptGraph]
+          .filter((key) => !sharedRouteGraph.has(key) && !existingExerciseGraph.has(key))
+          .map((key) => viteManifest[key]!.file)
+          .filter((file) => file.endsWith('.js')),
+      ),
+    ];
+    expect(incrementalJavaScript.length).toBeGreaterThan(0);
+    const incrementalBreakdown = await gzipBytesByFile(incrementalJavaScript);
+    expect(
+      incrementalBreakdown.reduce((total, { gzipBytes }) => total + gzipBytes, 0),
+      JSON.stringify(incrementalBreakdown),
+    ).toBeLessThanOrEqual(javaScriptPerformanceManifest.bundle.incrementalJavaScriptGzipMaxBytes);
+    await expect(
+      totalGzipBytes(
+        [...sharedRouteGraph]
+          .map((key) => viteManifest[key]!.file)
+          .filter((file) => file.endsWith('.js')),
+      ),
+    ).resolves.toBeLessThanOrEqual(
+      javaScriptPerformanceManifest.bundle.homeInitialJavaScriptGzipMaxBytes,
+    );
+  });
+
   it('LibraryとRouter entryの静的graphから進捗Runtime・Editor・Runner・Validatorを除外する', async () => {
     const viteManifest = (await readJsonObject('.vite/manifest.json')) as Readonly<
       Record<string, ViteChunk>
@@ -361,6 +437,23 @@ describe('production bundle budget', () => {
     );
     expect(fonts.maximum).toBeLessThanOrEqual(performanceManifest.content.singleFontMaxBytes);
     expect(fonts.total).toBeLessThanOrEqual(performanceManifest.content.totalFontsMaxBytes);
+  });
+
+  it('JavaScriptのCatalog、Course Index、Lesson Manifestを公開容量予算内に保つ', async () => {
+    const files = await listFiles(distRoot);
+    await expect(
+      totalGzipBytes(['generated/content/catalog-v3.json']),
+    ).resolves.toBeLessThanOrEqual(javaScriptPerformanceManifest.content.catalogGzipMaxBytes);
+    await expect(
+      totalGzipBytes(['generated/content/courses/javascript/index.json']),
+    ).resolves.toBeLessThanOrEqual(javaScriptPerformanceManifest.content.courseIndexGzipMaxBytes);
+    const lessonManifests = files.filter((file) =>
+      /^generated\/content\/courses\/javascript\/lessons\/[^/]+\.json$/u.test(file),
+    );
+    expect(lessonManifests.length).toBeGreaterThan(0);
+    await expect(maximumGzipBytes(lessonManifests)).resolves.toBeLessThanOrEqual(
+      javaScriptPerformanceManifest.content.lessonManifestGzipMaxBytes,
+    );
   });
 
   it('公開Text AssetへAuthoring専用fieldを含めない', async () => {

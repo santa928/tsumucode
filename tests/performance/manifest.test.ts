@@ -4,7 +4,11 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { parse, stringify } from 'yaml';
 import { afterEach, describe, expect, it } from 'vitest';
-import { loadPerformanceManifest, percentile95 } from './manifest';
+import {
+  loadJavaScriptPerformanceManifest,
+  loadPerformanceManifest,
+  percentile95,
+} from './manifest';
 
 const temporaryDirectories: string[] = [];
 
@@ -143,5 +147,31 @@ describe('performance manifest', () => {
 
   it('空の測定値を拒否する', () => {
     expect(() => percentile95([])).toThrow('p95には1件以上の測定値が必要です');
+  });
+
+  it('JavaScript vertical sliceのExerciseと公開性能予算をschema検証して読む', async () => {
+    const manifest = await loadJavaScriptPerformanceManifest();
+
+    expect(manifest).toEqual({
+      schemaVersion: 1,
+      browser: 'chromium',
+      runsPerExercise: 20,
+      warmupRuns: 3,
+      previewP95Ms: 500,
+      repeatPreviewP95Ms: 250,
+      validationP95Ms: 1000,
+      exercises: [{ id: 'javascript-ch00-l01-e01', category: 'simple' }],
+      bundle: {
+        homeInitialJavaScriptGzipMaxBytes: 256000,
+        incrementalJavaScriptGzipMaxBytes: 180000,
+        editorLoadedOnHome: false,
+      },
+      content: {
+        catalogGzipMaxBytes: 20480,
+        courseIndexGzipMaxBytes: 40960,
+        lessonManifestGzipMaxBytes: 12288,
+        authoringFieldsForbidden: ['solutionFiles', 'fixtures'],
+      },
+    });
   });
 });

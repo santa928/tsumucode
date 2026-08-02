@@ -5,7 +5,11 @@ import { testServerUrl } from './tests/e2e/helpers/testBasePath';
 export default defineConfig({
   testDir: './tests/performance',
   outputDir: 'test-results/performance-artifacts',
-  testMatch: ['preview-validation.spec.ts', 'interactions.spec.ts'],
+  testMatch: [
+    'preview-validation.spec.ts',
+    'interactions.spec.ts',
+    'javascript-performance.spec.ts',
+  ],
   fullyParallel: false,
   workers: 1,
   timeout: 120_000,

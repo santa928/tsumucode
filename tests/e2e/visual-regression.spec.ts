@@ -1,4 +1,10 @@
 import { expect, test, type Page } from '@playwright/test';
+import {
+  JAVASCRIPT_EXERCISE_TITLE,
+  javascriptExerciseRoute,
+  openEditableJavaScriptExercise,
+} from './helpers/javascriptCourse';
+import { observeRuntimePage, readRuntimeErrors } from './helpers/openRuntimeFixture';
 import { replaceEditorText } from './helpers/progress';
 import { testBasePath } from './helpers/testBasePath';
 
@@ -9,6 +15,7 @@ const EXERCISE_PATH = `${COURSE_PATH}/lessons/html-css-ch00-l01/exercises/html-c
 const COMPLETION_PATH = `${EXERCISE_PATH}/completion`;
 const LIBRARY_INDEX_PATH = `${testBasePath()}#/library/html-css`;
 const LIBRARY_SLIDE_PATH = `${LIBRARY_INDEX_PATH}/lessons/html-css-ch00-l01/slides/html-css-ch00-l01-s01`;
+const JAVASCRIPT_LESSON_PATH = `${testBasePath()}#/courses/javascript/lessons/javascript-ch00-l01`;
 
 const VIEWPORTS = [
   { id: 'desktop-wide', width: 1440, height: 900 },
@@ -366,4 +373,131 @@ test.describe('Slide library visual regression', () => {
       });
     }
   }
+});
+
+test.describe('JavaScript vertical slice visual regression', () => {
+  test.beforeEach(async ({ browserName, page }) => {
+    test.skip(browserName !== 'chromium', 'Baseline画像はChromiumで一意に固定する');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await observeRuntimePage(page);
+  });
+
+  test.afterEach(async ({ page }) => {
+    await expect(readRuntimeErrors(page)).resolves.toEqual({
+      pageErrors: [],
+      unhandledRejections: [],
+      consoleErrors: [],
+    });
+  });
+
+  for (const viewport of [
+    { id: 'desktop-compact', width: 1280, height: 720 },
+    { id: 'mobile-portrait', width: 390, height: 844 },
+  ] as const) {
+    for (const slide of [
+      { id: 's01', title: 'Webページを作る3つの役割' },
+      { id: 's02', title: 'index.htmlからscript.jsへつなぐ' },
+      { id: 's03', title: '探す・変える・結果の順に読む' },
+      { id: 's04', title: '引用符の内側だけを変える' },
+    ] as const) {
+      test(`javascript-slide-${slide.id}-${viewport.id}`, async ({ page }) => {
+        await page.setViewportSize({ width: viewport.width, height: viewport.height });
+        await page.goto(`${JAVASCRIPT_LESSON_PATH}/slides/javascript-ch00-l01-${slide.id}`);
+        await expect(page.getByRole('heading', { level: 1, name: slide.title })).toBeVisible();
+        await expect.poll(() => page.evaluate(() => document.fonts.status)).toBe('loaded');
+        await page.getByTestId('learning-stage').evaluate((element) => {
+          element.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        });
+        await expect(page).toHaveScreenshot(`javascript-slide-${slide.id}-${viewport.id}.png`, {
+          animations: 'disabled',
+          caret: 'hide',
+          fullPage: false,
+        });
+      });
+    }
+
+    test(`javascript-exercise-${viewport.id}`, async ({ page }) => {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      await page.goto(javascriptExerciseRoute());
+      if (viewport.width >= 1024) {
+        await expect(
+          page.getByRole('heading', { level: 1, name: JAVASCRIPT_EXERCISE_TITLE }),
+        ).toBeVisible();
+        await expect(page.getByTestId('code-workspace')).toBeVisible();
+        await expect(page.getByRole('button', { name: '判定する' })).toBeEnabled();
+      } else {
+        await expect(page.getByRole('heading', { level: 1, name: 'PCで演習を開く' })).toBeVisible();
+        await expect(page.getByTestId('code-workspace')).toHaveCount(0);
+      }
+      await expect(page).toHaveScreenshot(`javascript-exercise-${viewport.id}.png`, {
+        animations: 'disabled',
+        caret: 'hide',
+        fullPage: false,
+      });
+    });
+  }
+
+  test('javascript-slide-s04-mobile-portrait-bottom', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`${JAVASCRIPT_LESSON_PATH}/slides/javascript-ch00-l01-s04`);
+    await expect(
+      page.getByRole('heading', { level: 1, name: '引用符の内側だけを変える' }),
+    ).toBeVisible();
+    const stage = page.getByTestId('learning-stage');
+    await stage.evaluate((element) => {
+      element.scrollTo({ top: element.scrollHeight, left: 0, behavior: 'auto' });
+    });
+    await expect
+      .poll(() =>
+        stage.evaluate(
+          (element) => element.scrollTop + element.clientHeight >= element.scrollHeight - 1,
+        ),
+      )
+      .toBe(true);
+    await expect(page).toHaveScreenshot('javascript-slide-s04-mobile-portrait-bottom.png', {
+      animations: 'disabled',
+      caret: 'hide',
+      fullPage: false,
+    });
+  });
+
+  test('javascript-error-desktop-compact', async ({ page }) => {
+    await openEditableJavaScriptExercise(page);
+    await replaceEditorText(
+      page,
+      "document.querySelector('#message').textContent = '引用符が閉じていません;",
+    );
+    await page.getByRole('button', { name: '判定する' }).click();
+    await expect(page.getByRole('heading', { name: 'コードを確認しよう' })).toBeVisible();
+    await expect(page).toHaveScreenshot('javascript-error-desktop-compact.png', {
+      animations: 'disabled',
+      caret: 'hide',
+      fullPage: false,
+    });
+  });
+
+  test('javascript-hint-desktop-compact', async ({ page }) => {
+    await openEditableJavaScriptExercise(page);
+    await page.getByRole('button', { name: 'ヒントを見る' }).click();
+    await expect(page.getByRole('dialog', { name: 'ヒント' })).toBeVisible();
+    await expect(page).toHaveScreenshot('javascript-hint-desktop-compact.png', {
+      animations: 'disabled',
+      caret: 'hide',
+      fullPage: false,
+    });
+  });
+
+  test('javascript-reset-desktop-compact', async ({ page }) => {
+    await openEditableJavaScriptExercise(page);
+    await replaceEditorText(page, "document.querySelector('#message').textContent = 'Reset確認';");
+    const resetTrigger = page.getByRole('button', { name: '最初に戻す', exact: true });
+    await expect(resetTrigger).toBeEnabled();
+    await resetTrigger.click();
+    await expect(page.getByRole('dialog', { name: '最初のコードに戻しますか？' })).toBeVisible();
+    await expect(page).toHaveScreenshot('javascript-reset-desktop-compact.png', {
+      animations: 'disabled',
+      caret: 'hide',
+      fullPage: false,
+    });
+  });
 });

@@ -75,13 +75,50 @@ const PerformanceManifestSchema = z.object({
   }),
 });
 
+const JavaScriptPerformanceManifestSchema = z.object({
+  schemaVersion: z.literal(1),
+  browser: z.literal('chromium'),
+  runsPerExercise: z.number().int().min(3),
+  warmupRuns: z.number().int().nonnegative(),
+  previewP95Ms: PositiveNumber,
+  repeatPreviewP95Ms: PositiveNumber,
+  validationP95Ms: PositiveNumber,
+  exercises: z
+    .array(
+      z.object({
+        id: z.string().regex(/^javascript-ch\d{2}-l\d{2}-e\d{2}$/u),
+        category: z.enum(['simple']),
+      }),
+    )
+    .length(1),
+  bundle: z.object({
+    homeInitialJavaScriptGzipMaxBytes: PositiveInteger,
+    incrementalJavaScriptGzipMaxBytes: PositiveInteger,
+    editorLoadedOnHome: z.literal(false),
+  }),
+  content: z.object({
+    catalogGzipMaxBytes: z.literal(20_480),
+    courseIndexGzipMaxBytes: z.literal(40_960),
+    lessonManifestGzipMaxBytes: z.literal(12_288),
+    authoringFieldsForbidden: z.array(z.string().min(1)).min(1),
+  }),
+});
+
 export type PerformanceManifest = z.infer<typeof PerformanceManifestSchema>;
+export type JavaScriptPerformanceManifest = z.infer<typeof JavaScriptPerformanceManifestSchema>;
 
 /** Authoring性能ManifestをYAMLから読み、全予算と固定Exerciseをschema検証する。 */
 export async function loadPerformanceManifest(
   path = 'content/html-css/performance.yaml',
 ): Promise<PerformanceManifest> {
   return PerformanceManifestSchema.parse(parse(await readFile(path, 'utf8')));
+}
+
+/** JavaScript vertical sliceの測定回数と配信量予算をYAMLからfail-closedで読む。 */
+export async function loadJavaScriptPerformanceManifest(
+  path = 'content/javascript/performance.yaml',
+): Promise<JavaScriptPerformanceManifest> {
+  return JavaScriptPerformanceManifestSchema.parse(parse(await readFile(path, 'utf8')));
 }
 
 /** nearest-rank方式で95 percentileを返し、入力配列は変更しない。 */

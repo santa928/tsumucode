@@ -492,23 +492,23 @@ Fresh verification: `npm run check`で149 files／1413 tests、production build�
 - Consumes: Task 5のroute、Task 6の直接URLとFixture。
 - Produces: browser matrix、security request monitor、bundle graph、p95性能のrelease gate。
 
-- [ ] **Step 1: JavaScript基本操作E2Eを書く**
+- [x] **Step 1: JavaScript基本操作E2Eを書く**
 
 Chromium、Firefox、WebKitで直接URLを開き、`script.js`初期選択、highlight、編集、Preview、判定、Reset、Review復帰、自動保存を検証する。HTML-only spoofが不合格で、正しいJavaScriptだけが合格することを確認する。
 
-- [ ] **Step 2: Security payload E2Eを書く**
+- [x] **Step 2: Security payload E2Eを書く**
 
 `fetch`、XHR、WebSocket、Beacon、image external URL、form、popup、top／parent、Storage、Service Worker、self-navigation、forged postMessage、stale token、別revision、無限Loopを投入する。外部request 0、親画面操作不可、frame停止後も再試行CTAが操作可能であることを確認する。
 
-- [ ] **Step 3: Accessibilityとviewport E2Eを書く**
+- [x] **Step 3: Accessibilityとviewport E2Eを書く**
 
 Keyboard-onlyでFile tab、Editor、Error summary、Hint、Resetへ移動し、`axe` critical／serious 0を確認する。1280x720はdocument overflowなし、390x844はdocument水平overflowなしでStage内部だけがScrollすることを数値assertする。
 
-- [ ] **Step 4: lazy graphとperformance gateを追加する**
+- [x] **Step 4: lazy graphとperformance gateを追加する**
 
 Home／Path／HTML Slideのmanifest graphに`acorn`、`magic-string`、JavaScript Runner、CodeMirror JavaScriptが含まれないことを検証する。JavaScript exercise graph gzip 180,000 bytes以下、Preview p95 500 ms以下、判定p95 1,000 ms以下を3回以上の測定でGate化する。
 
-- [ ] **Step 5: 対象Gateを実行する**
+- [x] **Step 5: 対象Gateを実行する**
 
 Run: `BASE_PATH=/tsumucode/ ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run test:e2e -- e2e/javascript-learning.spec.ts e2e/javascript-security.spec.ts e2e/javascript-errors.spec.ts`
 
@@ -517,6 +517,8 @@ Run: `BASE_PATH=/tsumucode/ ./scripts/docker-compose.sh run --rm -e BASE_PATH ap
 Run: `./scripts/docker-compose.sh run --rm app npm run smoke:learning-chunks`
 
 Expected: 3ブラウザ、security、Accessibility、性能、bundle gateが全PASS。
+
+Fresh verification: JavaScript基本操作・Error recovery・Security・AccessibilityをChromium／Firefox／WebKitで検証し、JavaScript対象suiteは36/36をPASS。axe critical／serious 0、Keyboard-only、1280x720のDocument Scrollなし、390x844のDocument固定＋Stage救済Scrollを確認した。性能Gateは20/20、bundle Gateは9/9をPASS。各20回のp95は初回Preview `43.7 ms`（予算500 ms）、再Preview `24.0 ms`（予算250 ms）、判定`60.1 ms`（予算1,000 ms）。Home初期graphへのJavaScript固有依存の非混入とJavaScript固有incremental lazy graph 180,000 gzip bytes以下も検証した。
 
 ### Task 8: 全回帰、実画像、push、GitHub Pages beta公開
 
@@ -532,7 +534,7 @@ Expected: 3ブラウザ、security、Accessibility、性能、bundle gateが全P
 - Consumes: Task 1〜7の完成Artifact。
 - Produces: 受け入れ条件チェック、release evidence、日本語commit、remote main、公開URL。
 
-- [ ] **Step 1: 全DoDをDocker内で実行する**
+- [x] **Step 1: 全DoDをDocker内で実行する**
 
 Run: `BASE_PATH=/tsumucode/ ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run check`
 
@@ -548,9 +550,13 @@ Run: `./scripts/docker-compose.sh run --rm app npm run smoke:subpath`
 
 Expected: lint、type、全Unit／content、build、3 Browser、security、performance、Lighthouse、static artifact、subpathが全PASS。
 
-- [ ] **Step 2: 2 viewportの実画像と境界数値を確認する**
+Fresh verification: `npm run check`は149 files／1417 tests、Lint、型、production build、learning chunk isolationをPASS。全E2EはChromium／Firefox／WebKitで`392 passed / 118 skipped / 0 failed / retry 0`、性能`20/20`、bundle予算`9/9`、Lighthouse`12/12`、Static Artifact `199 files`、GitHub Pages subpath smokeをPASSした。
+
+- [x] **Step 2: 2 viewportの実画像と境界数値を確認する**
 
 1280x720と390x844で4 Slide、Exercise、Error、Hint、Reset dialogを撮影し、画像を目視する。documentとStageの`scrollWidth/clientWidth`、footer／CTA／Editor／Preview境界を数値記録し、重なり・切れ・操作阻害がないことを`docs/quality/visual-review.md`へ記載する。
+
+Fresh verification: 14 baselineを更新なしで14/14再照合し、全画像を原寸目視した。1280x720はDocument高720px以内、390x844はDocument高844px以内に固定し、水平overflow 1px以下をGate化した。最終SlideはStage下端へ`scrollTop + clientHeight >= scrollHeight - 1`で到達でき、完了CardとPager CTAの重なりがないことを上下2画像で確認した。
 
 - [ ] **Step 3: 設計受け入れ条件を証拠付きで完了する**
 

@@ -76,6 +76,17 @@
 - Responsive: 390x844と1280x720でHome主CTA、PathのH1・必須進捗・主要CTAが初期Viewport内へ到達可能。Badgeと全CTAの境界がCourse Card内へ収まり、意図しない横Scroll、重なり、操作阻害0件
 - VoiceOver: 従来どおり初回Release対象外。読み上げ順、発音、Rotor操作の合格は主張しない
 
+## JavaScript vertical slice追加証跡
+
+- 確認日: `2026-08-02`
+- 対象source: `draft`（push後にTask 8 commitへ固定する）
+- 配信条件: `BASE_PATH=/tsumucode/`のProduction build
+- 自動結果: JavaScript基本操作、Error recovery、Security、AccessibilityをChromium／Firefox／WebKitで`36/36`合格
+- axe: 初期Exercise、code error、Hint、Resetでcritical／serious 0。`sandbox="allow-scripts"`のopaque-origin Preview iframeは外部Documentとして除外し、親DocumentのPreview region、見出し、状態文、操作は検査対象へ含めた
+- Keyboard: File tabのHome／End、CodeMirror編集とEscape脱出、判定、Error summary、コードへFocus復帰、Hint、Reset、EscapeでTrigger復帰をpointerなしで3 Engine確認
+- Responsive: 1280x720はDocument Scrollなし、390x844はDocument固定・水平overflowなし。スマートフォンではEditorを描画せず、PC条件、演習URL copy、端末データ書き出しを表示
+- VoiceOver: 従来どおり対象外。読み上げ順、発音、Rotor操作の合格は主張しない
+
 ## VoiceOverの対象外記録
 
 - 理由: 本人・身内向けの初回Releaseでは、VoiceOver手動実機確認までを必須にしないと利用者が決定した。

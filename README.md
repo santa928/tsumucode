@@ -53,6 +53,8 @@ Homeでは、複数のコースをおすすめ順に並べる「学習パス」�
 
 現在公開している「フロントエンド学習パス」にはHTML/CSSコースだけを収録しています。JavaScript、TypeScript、Reactなどのコースは、教材と品質確認が完成してから順次このパスへ追加します。学習パスの直リンクは[`#/paths/frontend`](http://localhost:5173/#/paths/frontend)です。
 
+JavaScriptは、安全な3ファイル実行基盤とChapter 00の最初のレッスンを`draft`として品質検証中です。Home、公開学習パス、スライド閲覧モードにはまだ掲載しません。開発時は[最初のJavaScriptスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s01)と[コード演習](http://localhost:5173/#/courses/javascript/lessons/javascript-ch00-l01/exercises/javascript-ch00-l01-e01)の直接URLから確認できます。`draft`は非掲載を意味するだけで、Production Artifactへ含まれる教材を機密情報として扱うものではありません。
+
 学習パスの進捗は、この端末に保存された各コースの進捗からその都度計算します。学習パス専用の進捗Recordは作らないため、既存の書き出し・読み込み形式や各コースの下書きはそのまま利用できます。
 
 ## スライドだけ見る
@@ -133,7 +135,7 @@ Production Build後、Chromium/Firefox/WebKitのE2E、固定10演習の実ブラ
 ./scripts/docker-compose.sh run --rm -e BASE_PATH=/repository-name/ app npm run test:lighthouse
 ```
 
-主な性能予算はLCP 2,500 ms以下、CLS 0.1以下、主要操作200 ms以下、Preview p95 500 ms以下、判定p95 300 ms以下、下書き永続化500 ms以下です。Home初期JavaScriptはgzip 256,000 bytes以下とし、EditorとRunnerをHomeやSlideで読み込みません。教材配信はCatalog v3 gzip 20,480 bytes、Course Index 40,960 bytes、各Lesson Manifest 12,288 bytes、route map追加分8,192 bytesを上限にします。予算の完全な固定値は`content/html-css/performance.yaml`と独立固定テストで管理します。
+主な性能予算はLCP 2,500 ms以下、CLS 0.1以下、主要操作200 ms以下、Preview p95 500 ms以下、HTML/CSS判定p95 300 ms以下、下書き永続化500 ms以下です。JavaScript縦切りは初回Preview p95 500 ms以下、再Preview p95 250 ms以下、判定p95 1,000 ms以下、JavaScript固有incremental lazy graph gzip 180,000 bytes以下を別Gateで測定します。Home初期JavaScriptはgzip 256,000 bytes以下とし、Editor、Analyzer、Runner、ValidatorをHomeやSlideで読み込みません。教材配信はCatalog v3 gzip 20,480 bytes、Course Index 40,960 bytes、各Lesson Manifest 12,288 bytes、route map追加分8,192 bytesを上限にします。予算の完全な固定値は`content/html-css/performance.yaml`、`content/javascript/performance.yaml`と独立固定テストで管理します。
 
 アクセシビリティは、意味のあるLandmarkと見出し、本文スキップ、Keyboard操作、Focus管理、CodeMirrorからの脱出、Reduced Motion、320 CSS px reflow、200%/400% Zoom、WCAG A/AAのaxe検査を対象にします。自動検査に加え、Keyboard／Zoom／Reflowの実機結果を`docs/quality/a11y-manual.md`へ記録します。VoiceOverの手動実機確認は初回Release対象外で、対応済みとは主張しません。
 

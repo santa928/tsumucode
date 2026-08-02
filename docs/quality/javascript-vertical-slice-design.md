@@ -1,6 +1,6 @@
 # JavaScript Runner／Validator vertical slice 設計
 
-- 状態: 承認済み・実装中
+- 状態: 承認済み・ローカル検証済み（公開待ち）
 - 作成日: 2026-08-02
 - 対象: JavaScript Course Chapter 00 と、その後のJavaScript全Courseへ残す実行基盤
 - 親ロードマップ: GitHub Issue #1「複数コースとLearningPathを追加する」
@@ -238,17 +238,30 @@ stale revision、異なるsession、異なるsource hash、Viewport間で一致�
 
 ## 11. 受け入れ条件
 
-- [ ] Chapter 00のSlideとExerciseが直前に教えた文字列変更だけを要求する
-- [ ] 3 Fileを編集でき、`script.js`が初期選択され、3 File Resetと自動保存が動く
-- [ ] HTMLだけで期待表示を作っても合格しない
-- [ ] 正しいJavaScript source、実行証拠、DOM結果の組だけがpassする
-- [ ] 構文、security、timeout、system errorが不正解と区別され、Sourceと直前Previewが残る
-- [ ] Network、Storage、popup、parent操作、form、navigationのsecurity testが3 Browserで合格する
-- [ ] draft CourseがHome、公開LearningPath、Slide Libraryへ出ない
-- [ ] HTML/CSSの全回帰、LearningPath、進捗、Export／Importが合格する
-- [ ] Editor／Runner／Validatorが遅延配信され、既存bundle budgetを維持する
-- [ ] Keyboard、axe、390x844、1280x720、performance、Subpath、production buildが合格する
+- [x] Chapter 00のSlideとExerciseが直前に教えた文字列変更だけを要求する
+- [x] 3 Fileを編集でき、`script.js`が初期選択され、3 File Resetと自動保存が動く
+- [x] HTMLだけで期待表示を作っても合格しない
+- [x] 正しいJavaScript source、実行証拠、DOM結果の組だけがpassする
+- [x] 構文、security、timeout、system errorが不正解と区別され、Sourceと直前Previewが残る
+- [x] Network、Storage、popup、parent操作、form、navigationのsecurity testが3 Browserで合格する
+- [x] draft CourseがHome、公開LearningPath、Slide Libraryへ出ない
+- [x] HTML/CSSの全回帰、LearningPath、進捗、Export／Importが合格する
+- [x] Editor／Runner／Validatorが遅延配信され、既存bundle budgetを維持する
+- [x] Keyboard、axe、390x844、1280x720、performance、Subpath、production buildが合格する
 - [ ] 日本語commit、secret scan、main push、Pages deployment、公開URL／console確認が完了する
+
+### 11.1 受け入れ証跡対応
+
+| 要件            | 主な自動証跡                                                                                           | 状態     |
+| --------------- | ------------------------------------------------------------------------------------------------------ | -------- |
+| REQ-JS-001〜003 | `javascriptRuntimeServices.test.ts`、`javascriptEditorLanguage.test.ts`、`javascript-learning.spec.ts` | 合格     |
+| REQ-JS-004〜006 | Analyzer／Runner Unit、`javascript-security.spec.ts`                                                   | 合格     |
+| REQ-JS-007〜010 | `JavaScriptValidator.test.ts`、`javascript-learning.spec.ts`、`javascript-errors.spec.ts`              | 合格     |
+| REQ-JS-011〜012 | JavaScript content tests、Compiler draft境界test                                                       | 合格     |
+| REQ-JS-013〜014 | 全Unit／3 Engine E2E、`javascript-accessibility.spec.ts`                                               | 合格     |
+| REQ-JS-015〜016 | 3 Engine Security／Accessibility E2E、14 visual baseline                                               | 合格     |
+| REQ-JS-017      | strict rule schema／runtime evidence contract tests                                                    | 合格     |
+| REQ-JS-018      | secret scan、commit、push、Pages、公開console                                                          | 実施待ち |
 
 ## 12. 非対象
 
