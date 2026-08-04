@@ -1,10 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
+import type { RunnerConsoleRecord } from '../../../core/runtime/contracts';
 import { StackedCard } from '../../../design-system/components/StackedCard';
 import { previewFitScale } from './previewSizing';
+import { RuntimeConsole, type ConsoleFreshness } from './RuntimeConsole';
 
-interface PreviewFrameProps {
+export interface PreviewFrameProps {
   readonly onReady: (frame: HTMLIFrameElement) => void;
   readonly sandboxMode?: 'scripts' | 'scriptless';
+  readonly consoleEnabled?: boolean;
+  readonly primaryOutput?: 'preview' | 'console';
+  readonly consoleRecords?: readonly RunnerConsoleRecord[];
+  readonly consoleFreshness?: ConsoleFreshness;
+  readonly consoleUpdateSequence?: number;
 }
 
 interface PreviewGeometry {
@@ -14,10 +21,28 @@ interface PreviewGeometry {
 }
 
 /** opaque-originのsandboxを固定し、iframe nodeごとに一度だけRunnerへ参照を渡す。 */
-export function PreviewFrame({ onReady, sandboxMode = 'scripts' }: PreviewFrameProps) {
+export function PreviewFrame({
+  onReady,
+  sandboxMode = 'scripts',
+  consoleEnabled = false,
+  primaryOutput = 'preview',
+  consoleRecords = [],
+  consoleFreshness = 'current',
+  consoleUpdateSequence,
+}: PreviewFrameProps) {
   const preparedFrame = useRef<HTMLIFrameElement | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const previewTabRef = useRef<HTMLButtonElement>(null);
+  const consoleTabRef = useRef<HTMLButtonElement>(null);
+  const outputId = useId();
+  const previewTabId = `${outputId}-preview-tab`;
+  const previewPanelId = `${outputId}-preview-panel`;
+  const consoleTabId = `${outputId}-console-tab`;
+  const consolePanelId = `${outputId}-console-panel`;
   const [displayMode, setDisplayMode] = useState<'fit' | 'actual'>('fit');
+  const [activeOutput, setActiveOutput] = useState<'preview' | 'console'>(() =>
+    consoleEnabled ? primaryOutput : 'preview',
+  );
   const [geometry, setGeometry] = useState<PreviewGeometry>({
     frameWidth: 0,
     frameHeight: 0,
@@ -62,6 +87,30 @@ export function PreviewFrame({ onReady, sandboxMode = 'scripts' }: PreviewFrameP
     };
   }, []);
 
+  /** WAI-ARIA tabのroving focusと自動選択を同じ操作へまとめる。 */
+  const handleOutputTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>): void => {
+    let next: 'preview' | 'console' | undefined;
+    switch (event.key) {
+      case 'ArrowLeft':
+        next = activeOutput === 'preview' ? 'console' : 'preview';
+        break;
+      case 'ArrowRight':
+        next = activeOutput === 'console' ? 'preview' : 'console';
+        break;
+      case 'Home':
+        next = 'preview';
+        break;
+      case 'End':
+        next = 'console';
+        break;
+      default:
+        return;
+    }
+    event.preventDefault();
+    setActiveOutput(next);
+    (next === 'preview' ? previewTabRef : consoleTabRef).current?.focus();
+  };
+
   const canFit = geometry.fitScale < 1;
   const isFitDisplay = canFit && displayMode === 'fit';
   const previewCanvasStyle =
@@ -81,13 +130,65 @@ export function PreviewFrame({ onReady, sandboxMode = 'scripts' }: PreviewFrameP
         transformOrigin: 'top left',
       }
     : undefined;
+  const consoleUpdateStatus =
+    consoleUpdateSequence === undefined
+      ? ''
+      : consoleFreshness === 'previous-success'
+        ? `前回成功時のConsoleです。${String(consoleUpdateSequence)}回目の実行結果を表示しています`
+        : `Consoleを更新しました。${String(consoleRecords.length)}件。${String(consoleUpdateSequence)}回目の実行結果です`;
 
   return (
-    <StackedCard as="section" aria-label="プレビュー">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+    <StackedCard
+      as="section"
+      aria-label={consoleEnabled ? '実行結果' : 'プレビュー'}
+      className="tc-runtime-output-card"
+    >
+      <div className="tc-runtime-output-header">
+        {consoleEnabled ? (
+          <>
+            <h2 className="sr-only">実行結果</h2>
+            <div className="tc-runtime-output-tabs" role="tablist" aria-label="実行結果の表示">
+              <button
+                ref={previewTabRef}
+                id={previewTabId}
+                type="button"
+                role="tab"
+                aria-selected={activeOutput === 'preview'}
+                aria-controls={previewPanelId}
+                tabIndex={activeOutput === 'preview' ? 0 : -1}
+                className="tc-runtime-output-tab"
+                onClick={() => {
+                  setActiveOutput('preview');
+                }}
+                onKeyDown={handleOutputTabKeyDown}
+              >
+                画面
+              </button>
+              <button
+                ref={consoleTabRef}
+                id={consoleTabId}
+                type="button"
+                role="tab"
+                aria-selected={activeOutput === 'console'}
+                aria-controls={consolePanelId}
+                tabIndex={activeOutput === 'console' ? 0 : -1}
+                className="tc-runtime-output-tab"
+                onClick={() => {
+                  setActiveOutput('console');
+                }}
+                onKeyDown={handleOutputTabKeyDown}
+              >
+                Console
+              </button>
+            </div>
+          </>
+        ) : (
+          <div>
+            <h2 className="text-xl font-black">プレビュー</h2>
+          </div>
+        )}
         <div>
-          <h2 className="text-xl font-black">プレビュー</h2>
-          {canFit ? (
+          {canFit && activeOutput === 'preview' ? (
             <p className="mt-1 text-sm font-bold text-workshop-muted">
               {isFitDisplay
                 ? `全体を${String(Math.round(geometry.fitScale * 100))}%で表示中`
@@ -95,7 +196,7 @@ export function PreviewFrame({ onReady, sandboxMode = 'scripts' }: PreviewFrameP
             </p>
           ) : null}
         </div>
-        {canFit ? (
+        {canFit && activeOutput === 'preview' ? (
           <button
             type="button"
             aria-pressed={displayMode === 'actual'}
@@ -109,26 +210,56 @@ export function PreviewFrame({ onReady, sandboxMode = 'scripts' }: PreviewFrameP
           </button>
         ) : null}
       </div>
+      {consoleEnabled ? (
+        <p
+          className="sr-only"
+          role="status"
+          aria-label="Consoleの更新"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {consoleUpdateStatus}
+        </p>
+      ) : null}
       <div
-        ref={scrollContainerRef}
-        data-testid="runtime-preview-scroll"
-        role="region"
-        aria-label="コードのプレビュー表示領域"
-        tabIndex={0}
-        className="mt-4 max-w-full overflow-x-auto pb-2"
+        id={consoleEnabled ? previewPanelId : undefined}
+        role={consoleEnabled ? 'tabpanel' : undefined}
+        aria-labelledby={consoleEnabled ? previewTabId : undefined}
+        hidden={consoleEnabled && activeOutput !== 'preview'}
+        className="tc-runtime-preview-panel"
       >
-        <div className="relative" style={previewCanvasStyle}>
-          <iframe
-            ref={setFrame}
-            title="コードのプレビュー"
-            tabIndex={-1}
-            sandbox={sandboxMode === 'scriptless' ? '' : 'allow-scripts'}
-            referrerPolicy="no-referrer"
-            style={frameDisplayStyle}
-            className="box-content block h-[28rem] w-full max-w-none rounded-workshop-md border border-workshop-border bg-workshop-raised"
-          />
+        <div
+          ref={scrollContainerRef}
+          data-testid="runtime-preview-scroll"
+          role="region"
+          aria-label="コードのプレビュー表示領域"
+          tabIndex={0}
+          className="mt-4 max-w-full overflow-x-auto pb-2"
+        >
+          <div className="relative" style={previewCanvasStyle}>
+            <iframe
+              ref={setFrame}
+              title="コードのプレビュー"
+              tabIndex={-1}
+              sandbox={sandboxMode === 'scriptless' ? '' : 'allow-scripts'}
+              referrerPolicy="no-referrer"
+              style={frameDisplayStyle}
+              className="box-content block h-[28rem] w-full max-w-none rounded-workshop-md border border-workshop-border bg-workshop-raised"
+            />
+          </div>
         </div>
       </div>
+      {consoleEnabled ? (
+        <div
+          id={consolePanelId}
+          role="tabpanel"
+          aria-labelledby={consoleTabId}
+          hidden={activeOutput !== 'console'}
+          className="tc-runtime-console-panel"
+        >
+          <RuntimeConsole records={consoleRecords} freshness={consoleFreshness} />
+        </div>
+      ) : null}
     </StackedCard>
   );
 }

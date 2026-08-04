@@ -423,6 +423,90 @@ describe('PreviewFrame', () => {
     rerender(<PreviewFrame sandboxMode="scriptless" onReady={vi.fn()} />);
     expect(frame).toHaveAttribute('sandbox', '');
   });
+
+  it('Console対象ではprimary outputを初期選択し、Arrow keyでiframeを再生成せず切り替える', async () => {
+    const user = userEvent.setup();
+    const onReady = vi.fn();
+    render(
+      <PreviewFrame
+        onReady={onReady}
+        consoleEnabled
+        primaryOutput="console"
+        consoleRecords={[{ sequence: 0, level: 'log', text: 'hello' }]}
+        consoleFreshness="current"
+        consoleUpdateSequence={1}
+      />,
+    );
+
+    const consoleTab = screen.getByRole('tab', { name: 'Console' });
+    const previewTab = screen.getByRole('tab', { name: '画面' });
+    const frame = screen.getByTitle('コードのプレビュー');
+    expect(consoleTab).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('tabpanel', { name: 'Console' })).toBeVisible();
+    expect(frame).toBeInTheDocument();
+
+    consoleTab.focus();
+    await user.keyboard('{ArrowLeft}');
+    expect(previewTab).toHaveFocus();
+    expect(previewTab).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('tabpanel', { name: '画面' })).toBeVisible();
+    expect(screen.getByTitle('コードのプレビュー')).toBe(frame);
+    expect(onReady).toHaveBeenCalledOnce();
+
+    await user.keyboard('{End}');
+    expect(consoleTab).toHaveFocus();
+    expect(consoleTab).toHaveAttribute('aria-selected', 'true');
+
+    await user.keyboard('{ArrowRight}');
+    expect(previewTab).toHaveFocus();
+    expect(previewTab).toHaveAttribute('aria-selected', 'true');
+
+    await user.keyboard('{ArrowLeft}');
+    expect(consoleTab).toHaveFocus();
+    expect(consoleTab).toHaveAttribute('aria-selected', 'true');
+
+    await user.keyboard('{ArrowDown}');
+    expect(consoleTab).toHaveFocus();
+    expect(consoleTab).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('画面Tabの表示中もConsole更新を読み上げ、同じ件数の再実行を区別する', () => {
+    const { rerender } = render(
+      <PreviewFrame
+        onReady={vi.fn()}
+        consoleEnabled
+        primaryOutput="preview"
+        consoleRecords={[{ sequence: 0, level: 'log', text: 'first' }]}
+        consoleFreshness="current"
+        consoleUpdateSequence={1}
+      />,
+    );
+
+    const liveRegion = screen.getByRole('status', { name: 'Consoleの更新' });
+    expect(screen.getByRole('tabpanel', { name: '画面' })).toBeVisible();
+    expect(liveRegion).toBeVisible();
+    expect(liveRegion).toHaveTextContent('Consoleを更新しました。1件。1回目の実行結果です');
+
+    rerender(
+      <PreviewFrame
+        onReady={vi.fn()}
+        consoleEnabled
+        primaryOutput="preview"
+        consoleRecords={[{ sequence: 0, level: 'log', text: 'second' }]}
+        consoleFreshness="current"
+        consoleUpdateSequence={2}
+      />,
+    );
+    expect(liveRegion).toHaveTextContent('Consoleを更新しました。1件。2回目の実行結果です');
+  });
+
+  it('Console非対象ではtablistを出さず既存Preview headingとiframeを維持する', () => {
+    render(<PreviewFrame onReady={vi.fn()} />);
+
+    expect(screen.queryByRole('tablist')).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'プレビュー' })).toBeVisible();
+    expect(screen.getByTitle('コードのプレビュー')).toBeVisible();
+  });
 });
 
 describe('SaveStatus', () => {

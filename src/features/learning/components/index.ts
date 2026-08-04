@@ -11,6 +11,7 @@ export {
 export { FeedbackPanel } from './FeedbackPanel';
 export { HintPanel, type HintViewModel } from './HintPanel';
 export { LearningDrawer, type LearningDrawerProps } from './LearningDrawer';
-export { PreviewFrame } from './PreviewFrame';
+export { PreviewFrame, type PreviewFrameProps } from './PreviewFrame';
+export { RuntimeConsole, type ConsoleFreshness, type RuntimeConsoleProps } from './RuntimeConsole';
 export { SaveStatus } from './SaveStatus';
 export { SlideStage, type SlideStageProps } from './SlideStage';

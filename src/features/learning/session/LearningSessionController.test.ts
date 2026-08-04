@@ -342,6 +342,7 @@ describe('LearningSessionController', () => {
     );
     expect(controller.getSnapshot().runtimeOutput).toEqual({
       revision: 0,
+      updateSequence: 1,
       freshness: 'current',
       console: consoleRecords,
     });

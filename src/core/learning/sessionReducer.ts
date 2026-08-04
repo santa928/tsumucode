@@ -9,6 +9,8 @@ export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 /** 永続化せず、現在または直前成功時のRuntime出力だけを画面へ渡す。 */
 export interface RuntimeOutputState {
   readonly revision: number;
+  /** 同じSource revisionを再実行した場合も区別する、Session内だけの単調増加番号。 */
+  readonly updateSequence: number;
   readonly freshness: 'current' | 'previous-success';
   readonly console: readonly RunnerConsoleRecord[];
 }
@@ -129,6 +131,7 @@ export function learningSessionReducer(
     case 'preview.completed': {
       if (action.revision !== state.executionRevision) return state;
       const failed = action.diagnostics.some(({ severity }) => severity === 'error');
+      const updateSequence = (state.runtimeOutput?.updateSequence ?? 0) + 1;
       return {
         ...state,
         previewRevision: action.revision,
@@ -139,12 +142,14 @@ export function learningSessionReducer(
             : {
                 runtimeOutput: {
                   ...state.runtimeOutput,
+                  updateSequence,
                   freshness: 'previous-success' as const,
                 },
               }
           : {
               runtimeOutput: {
                 revision: action.revision,
+                updateSequence,
                 freshness: 'current' as const,
                 console: action.console,
               },

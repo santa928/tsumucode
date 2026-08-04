@@ -223,9 +223,72 @@ const learningRoutesCourse: CourseManifest = CourseManifestSchema.parse({
   ],
 });
 
+/** Console初期選択を実画面まで通す最小JavaScript Courseを作る。 */
+const javascriptLearningRoutesCourse: CourseManifest = CourseManifestSchema.parse({
+  ...fixtureCourse,
+  id: 'javascript',
+  title: 'JavaScript はじめの一歩',
+  runnerId: 'javascript',
+  validatorId: 'javascript',
+  publicationStatus: 'draft',
+  provenanceManifestPath: 'generated/content/courses/javascript/provenance.json',
+  phases: fixtureCourse.phases.map((phase) => ({
+    ...phase,
+    chapters: phase.chapters.map((chapter) => ({
+      ...chapter,
+      lessons: chapter.lessons.map((lesson) => ({
+        ...lesson,
+        exercises: lesson.exercises.map((exercise) => ({
+          ...exercise,
+          files: [
+            ...exercise.files,
+            {
+              path: 'script.js',
+              language: 'javascript',
+              content: 'console.log("hello");',
+              editable: true,
+            },
+          ],
+          validationRules: [
+            ...exercise.validationRules,
+            {
+              id: 'rule-javascript-message',
+              label: 'JavaScriptで文章を変更する',
+              required: true,
+              group: 'all',
+              viewportMode: 'all',
+              viewportIds: ['desktop'],
+              target: { kind: 'javascript-source', file: 'script.js' },
+              assertion: {
+                kind: 'query-selector-text-content-assignment',
+                selector: '#message',
+                expected: 'hello',
+              },
+              feedback: {
+                target: 'Consoleの文章',
+                expected: 'JavaScriptから変更する',
+                nextAction: 'script.jsの代入を確認します。',
+              },
+              hintId: exercise.hints[0]?.id,
+              relatedSlideId: exercise.relatedSlideIds[0],
+            },
+          ],
+          runtime: {
+            kind: 'javascript',
+            entryFile: 'script.js',
+            sourceType: 'script',
+            capabilityProfile: 'core',
+            primaryOutput: 'console',
+          },
+        })),
+      })),
+    })),
+  })),
+});
+
 /** 公開Catalog v3・Course Index・Lesson Manifestを本番と同じcanonical bytesで返す。 */
-function stubContentFetch(): void {
-  const fixturePromise = createSplitCourseFetchFixture(learningRoutesCourse);
+function stubContentFetch(course: CourseManifest = learningRoutesCourse): void {
+  const fixturePromise = createSplitCourseFetchFixture(course);
   vi.stubGlobal(
     'fetch',
     vi.fn(async (input: RequestInfo | URL) => {
@@ -566,6 +629,7 @@ afterEach(() => {
   router = undefined;
   window.location.hash = originalHash;
   vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
   if (originalClipboard === undefined) {
     Reflect.deleteProperty(navigator, 'clipboard');
   } else {
@@ -949,6 +1013,33 @@ describe('Learning routes', () => {
     });
     expect(screen.getByTestId('runtime-preview-frame')).toBeInTheDocument();
   });
+
+  it('JavaScript演習はprimary outputのConsoleを初期選択し、最新recordを表示する', async () => {
+    // RepositoryのCatalog cacheを既存html-css Fixtureから分離する。
+    vi.stubEnv('BASE_URL', '/javascript-route-test/');
+    stubContentFetch(javascriptLearningRoutesCourse);
+    stubEditingCapability(true);
+    stubAdapters({
+      render: async (input) => ({
+        exerciseSessionId: input.exerciseSessionId,
+        executionRevision: input.executionRevision,
+        diagnostics: [],
+        evidence: [],
+        console: [{ sequence: 0, level: 'log', text: 'hello' }],
+      }),
+    });
+
+    renderRoute(
+      '/courses/javascript/lessons/lesson-first-heading/exercises/exercise-first-heading',
+    );
+
+    expect(await findCodeWorkspace()).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('tab', { name: 'Console' })).toHaveAttribute('aria-selected', 'true');
+      expect(screen.getByText('hello')).toBeVisible();
+    });
+    expect(screen.getByTitle('コードのプレビュー')).toBeInTheDocument();
+  }, 10_000);
 
   it('Repository初期化失敗を未処理Promiseにせず再試行可能な警告へ変換する', async () => {
     stubEditingCapability(true);

@@ -8,6 +8,11 @@ import {
   exerciseRoute,
   openEditableExercise,
 } from './helpers/releaseCourse';
+import {
+  JAVASCRIPT_EXERCISE_TITLE,
+  javascriptExerciseRoute,
+  openEditableJavaScriptExercise,
+} from './helpers/javascriptCourse';
 import { replaceEditorText } from './helpers/progress';
 
 interface Rectangle {
@@ -506,6 +511,52 @@ for (const viewport of NORMAL_PC_VIEWPORTS) {
     await expectNoHiddenOverflow(learningStage);
     await expectInside(workspace, learningStage);
     await expectResetHeaderLayout(page);
+  });
+}
+
+test('desktop-compactでJavaScriptのPreview・Console・PagerをStage内へ収める', async ({ page }) => {
+  await openEditableJavaScriptExercise(page);
+  const stage = page.getByTestId('learning-stage');
+  const card = page.locator('.tc-runtime-output-card');
+  const pager = page.locator('.tc-learning-shell-pager');
+  const frame = page.getByTestId('runtime-preview-frame').locator('iframe');
+  const frameHandle = await frame.elementHandle();
+  if (frameHandle === null) throw new Error('Preview iframeがありません');
+  await frameHandle.evaluate((element) => {
+    Reflect.set(window, '__tcExpectedPreviewFrame', element);
+  });
+
+  await page.getByRole('tab', { name: 'Console' }).click();
+  const consoleRegion = page.getByRole('region', { name: 'Console出力' });
+  await expect(consoleRegion).toBeVisible();
+
+  const stageRect = await rectangle(stage);
+  const cardRect = await rectangle(card);
+  const pagerRect = await rectangle(pager);
+  const consoleRect = await rectangle(consoleRegion);
+  expect(cardRect.bottom).toBeLessThanOrEqual(stageRect.bottom + 0.5);
+  expect(consoleRect.right).toBeLessThanOrEqual(cardRect.right + 0.5);
+  expect(pagerRect.top).toBeGreaterThanOrEqual(stageRect.bottom - 0.5);
+  expect(await frameHandle.evaluate((element) => element.isConnected)).toBe(true);
+  expect(
+    await frame.evaluate((element) => element === Reflect.get(window, '__tcExpectedPreviewFrame')),
+  ).toBe(true);
+  await expectNoDocumentScroll(page);
+});
+
+for (const viewport of [
+  { name: 'mobile-primary', width: 390, height: 844 },
+  { name: 'tablet-portrait', width: 768, height: 1024 },
+] as const) {
+  test(`${viewport.name}のJavaScript ExerciseはPC案内へ切り替わりDocumentから横にはみ出さない`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.goto(javascriptExerciseRoute());
+    await expect(page.getByRole('heading', { level: 1, name: 'PCで演習を開く' })).toBeVisible();
+    await expect(page.getByText(JAVASCRIPT_EXERCISE_TITLE)).toBeVisible();
+    await expect(page.getByTestId('code-workspace')).toHaveCount(0);
+    await expectNoDocumentScroll(page);
   });
 }
 

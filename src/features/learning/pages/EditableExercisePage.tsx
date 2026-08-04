@@ -871,7 +871,17 @@ function EditableSession({
 
           <div className="tc-exercise-preview">
             <div data-testid="runtime-preview-frame">
-              <PreviewFrame onReady={preparePreview} />
+              <PreviewFrame
+                key={`${course.id}:${exercise.id}`}
+                onReady={preparePreview}
+                consoleEnabled={exercise.runtime?.kind === 'javascript'}
+                primaryOutput={exercise.runtime?.primaryOutput ?? 'preview'}
+                consoleRecords={state.runtimeOutput?.console ?? []}
+                consoleFreshness={state.runtimeOutput?.freshness ?? 'current'}
+                {...(state.runtimeOutput === undefined
+                  ? {}
+                  : { consoleUpdateSequence: state.runtimeOutput.updateSequence })}
+              />
             </div>
           </div>
         </div>

@@ -38,14 +38,41 @@ describe('LearningSession reducer', () => {
 
     expect(success.runtimeOutput).toEqual({
       revision: 0,
+      updateSequence: 1,
       freshness: 'current',
       console: consoleRecords,
     });
     expect(failed.runtimeOutput).toEqual({
       revision: 0,
+      updateSequence: 2,
       freshness: 'previous-success',
       console: consoleRecords,
     });
+  });
+
+  it('同じ実行revisionと件数でもRuntime更新順を単調増加させる', () => {
+    const initial = createLearningSessionState({
+      courseId: 'javascript',
+      lessonId: 'lesson-1',
+      exerciseId: 'ex-1',
+      files: { 'script.js': 'console.log(42);' },
+      selectedFile: 'script.js',
+    });
+    const first = learningSessionReducer(initial, {
+      type: 'preview.completed',
+      revision: 0,
+      diagnostics: [],
+      console: [{ sequence: 0, level: 'log', text: '42' }],
+    });
+    const second = learningSessionReducer(first, {
+      type: 'preview.completed',
+      revision: 0,
+      diagnostics: [],
+      console: [{ sequence: 0, level: 'log', text: '42' }],
+    });
+
+    expect(first.runtimeOutput?.updateSequence).toBe(1);
+    expect(second.runtimeOutput?.updateSequence).toBe(2);
   });
 
   it('編集ではConsoleを前回成功表示へ変え、Resetでは破棄する', () => {

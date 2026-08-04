@@ -11,7 +11,7 @@ import { editorText, replaceEditorText, waitForStoredDraftContent } from './help
 async function expectNoSeriousAxeViolations(page: Page): Promise<void> {
   const result = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
-    .exclude('[data-testid="runtime-preview-frame"]')
+    .exclude('[data-testid="runtime-preview-frame"] iframe')
     .analyze();
   expect(
     result.violations
