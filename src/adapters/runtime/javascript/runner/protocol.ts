@@ -1,6 +1,8 @@
 /** opaque-origin JavaScript iframeとの実行完了・timer停止通信契約。 */
+import type { RunnerConsoleRecord } from '../../../../core/runtime/contracts';
+import { CONSOLE_LIMITS } from './consoleFormatter';
 
-export const JAVASCRIPT_PROTOCOL_VERSION = 1 as const;
+export const JAVASCRIPT_PROTOCOL_VERSION = 2 as const;
 
 const MAX_ID_LENGTH = 256;
 const MAX_TOKEN_LENGTH = 512;
@@ -18,6 +20,7 @@ export interface JavaScriptExecutionPayload {
   readonly budgetExhausted: boolean;
   readonly timerLimitExceeded: boolean;
   readonly runtimeError: JavaScriptRuntimeError | null;
+  readonly console: readonly RunnerConsoleRecord[];
 }
 
 interface JavaScriptExecutionEnvelope {
@@ -83,6 +86,32 @@ function isRuntimeError(value: unknown): value is JavaScriptRuntimeError {
   );
 }
 
+/** Console recordを件数・順序・exact key・UTF-8 byte上限まで再検証する。 */
+function isConsoleRecords(value: unknown): value is readonly RunnerConsoleRecord[] {
+  if (!Array.isArray(value) || value.length > CONSOLE_LIMITS.records) return false;
+  const encoder = new TextEncoder();
+  let totalBytes = 0;
+  for (const [index, record] of value.entries()) {
+    if (
+      !isRecord(record) ||
+      !hasExactKeys(record, ['level', 'sequence', 'text']) ||
+      record.sequence !== index ||
+      (record.level !== 'log' &&
+        record.level !== 'info' &&
+        record.level !== 'warn' &&
+        record.level !== 'error') ||
+      typeof record.text !== 'string'
+    ) {
+      return false;
+    }
+    const recordBytes = encoder.encode(record.text).byteLength;
+    if (recordBytes > CONSOLE_LIMITS.recordBytes) return false;
+    totalBytes += recordBytes;
+    if (totalBytes > CONSOLE_LIMITS.totalBytes) return false;
+  }
+  return true;
+}
+
 /** iframe応答がstrictなJavaScript protocol envelopeか検証する。 */
 export function isJavaScriptRuntimeEnvelope(value: unknown): value is JavaScriptRuntimeEnvelope {
   if (
@@ -111,11 +140,18 @@ export function isJavaScriptRuntimeEnvelope(value: unknown): value is JavaScript
   const payload = value.payload;
   return (
     isRecord(payload) &&
-    hasExactKeys(payload, ['budgetExhausted', 'executed', 'runtimeError', 'timerLimitExceeded']) &&
+    hasExactKeys(payload, [
+      'budgetExhausted',
+      'console',
+      'executed',
+      'runtimeError',
+      'timerLimitExceeded',
+    ]) &&
     typeof payload.executed === 'boolean' &&
     typeof payload.budgetExhausted === 'boolean' &&
     typeof payload.timerLimitExceeded === 'boolean' &&
-    (payload.runtimeError === null || isRuntimeError(payload.runtimeError))
+    (payload.runtimeError === null || isRuntimeError(payload.runtimeError)) &&
+    isConsoleRecords(payload.console)
   );
 }
 

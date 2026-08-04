@@ -91,6 +91,7 @@ function dispatchExecution(
           budgetExhausted: false,
           timerLimitExceeded: false,
           runtimeError: null,
+          console: [],
         },
         ...overrides,
       },
@@ -171,6 +172,7 @@ describe('JavaScriptRunnerAdapter', () => {
         },
       },
     ],
+    ['unknown option', { options: { unexpected: true } }],
   ] satisfies readonly [string, Partial<RunnerInput>][])(
     '%s不正入力を遷移前に拒否する',
     async (_name, override) => {
@@ -189,6 +191,33 @@ describe('JavaScriptRunnerAdapter', () => {
       await runner.dispose();
     },
   );
+
+  it('Runtime省略時はChapter 00互換設定でscript.jsを解析する', async () => {
+    const analyzer = {
+      analyze: vi.fn(async () => analysisSuccess()),
+      dispose: vi.fn(async () => undefined),
+    };
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    const runner = new JavaScriptRunnerAdapter({ analyzer });
+    await runner.prepare(frame);
+    const pending = runner.render(runnerInput({ options: {} }));
+    await vi.waitFor(() => {
+      expect(frame.srcdoc).not.toBe('');
+    });
+    dispatchExecution(frame);
+    dispatchBridgeReady(frame);
+
+    await expect(pending).resolves.toMatchObject({ diagnostics: [], console: [] });
+    expect(analyzer.analyze).toHaveBeenCalledWith(
+      expect.objectContaining({
+        file: 'script.js',
+        sourceType: 'script',
+        capabilityProfile: 'core',
+      }),
+    );
+    await runner.dispose();
+  });
 
   it('sandboxを固定し、正しいwindow／identityの実行完了後だけevidenceを返す', async () => {
     const analyzer = {
@@ -229,6 +258,7 @@ describe('JavaScriptRunnerAdapter', () => {
         { id: 'javascript.source-sha256', file: 'script.js', value: 'a'.repeat(64) },
         { id: 'javascript.budget-exhausted', value: false },
       ],
+      console: [],
     });
     expect(analyzer.analyze).toHaveBeenCalledWith(
       expect.objectContaining({ sourceType: 'script', capabilityProfile: 'core' }),
@@ -256,6 +286,7 @@ describe('JavaScriptRunnerAdapter', () => {
         budgetExhausted: true,
         timerLimitExceeded: false,
         runtimeError: null,
+        console: [],
       },
     });
 
@@ -266,6 +297,37 @@ describe('JavaScriptRunnerAdapter', () => {
     expect(result.evidence).toContainEqual({
       id: 'javascript.budget-exhausted',
       value: true,
+    });
+    await runner.dispose();
+  });
+
+  it('学習コードerror前のConsole recordをRunner結果へ保持する', async () => {
+    const analyzer = {
+      analyze: vi.fn(async () => analysisSuccess()),
+      dispose: vi.fn(async () => undefined),
+    };
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    const runner = new JavaScriptRunnerAdapter({ analyzer });
+    await runner.prepare(frame);
+    const pending = runner.render(runnerInput());
+    await vi.waitFor(() => {
+      expect(frame.srcdoc).not.toBe('');
+    });
+    dispatchExecution(frame, {
+      payload: {
+        executed: false,
+        budgetExhausted: false,
+        timerLimitExceeded: false,
+        runtimeError: { name: 'Error', message: 'stopped' },
+        console: [{ sequence: 0, level: 'log', text: '<b>plain</b>' }],
+      },
+    });
+    dispatchBridgeReady(frame);
+
+    await expect(pending).resolves.toMatchObject({
+      diagnostics: [expect.objectContaining({ code: 'javascript-runtime' })],
+      console: [{ sequence: 0, level: 'log', text: '<b>plain</b>' }],
     });
     await runner.dispose();
   });

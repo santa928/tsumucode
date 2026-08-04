@@ -100,6 +100,13 @@ function validateJavaScriptRuntimeOptions(input: RunnerInput): {
   readonly sourceType: JavaScriptSourceType;
   readonly capabilityProfile: JavaScriptCapabilityProfileId;
 } {
+  if (Object.keys(input.options).length === 0) {
+    return {
+      entryFile: 'script.js',
+      sourceType: 'script',
+      capabilityProfile: 'core',
+    };
+  }
   if (Object.keys(input.options).length !== 1 || !('runtime' in input.options)) {
     throw new Error('JavaScript options must contain only runtime');
   }
@@ -472,7 +479,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
             value: executionPayload.budgetExhausted,
           },
         ],
-        console: [],
+        console: executionPayload.console,
       };
     } catch (error: unknown) {
       bridge?.dispose();
