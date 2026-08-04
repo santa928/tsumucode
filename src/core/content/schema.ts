@@ -193,6 +193,22 @@ export const ExerciseFileSchema = z
   })
   .strict();
 
+/** JavaScript ExerciseがAnalyzer／Runnerへ渡す固定Runtime設定。 */
+export const JavaScriptExerciseRuntimeSchema = z
+  .object({
+    kind: z.literal('javascript'),
+    entryFile: RelativePathSchema,
+    sourceType: z.enum(['script', 'module']),
+    capabilityProfile: z.enum(['core', 'modules', 'dom', 'async', 'project']),
+    primaryOutput: z.enum(['preview', 'console']),
+  })
+  .strict();
+
+/** Course追加時にkind単位で拡張するExercise Runtime union。 */
+export const ExerciseRuntimeSchema = z.discriminatedUnion('kind', [
+  JavaScriptExerciseRuntimeSchema,
+]);
+
 export const HintSchema = z
   .object({
     id: IdSchema,
@@ -587,6 +603,7 @@ const ExerciseBaseShape = {
   scaffoldLevel: MasteryLevelSchema,
   steps: z.array(ExerciseStepSchema),
   files: z.array(ExerciseFileSchema).min(1),
+  runtime: ExerciseRuntimeSchema.optional(),
   validationRules: z.array(ValidationRuleDefinitionSchema).min(1),
   hints: z.array(HintSchema).length(3),
   relatedSlideIds: z.array(IdSchema).min(1),
@@ -1236,6 +1253,34 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
           currentIds.exercise.add(exercise.id);
           localExerciseIds.add(exercise.id);
           currentIds.workspace.add(exercise.workspaceId);
+
+          if (course.runnerId === 'javascript' && exercise.runtime?.kind !== 'javascript') {
+            addIssue(
+              context,
+              [...exercisePath, 'runtime'],
+              'JavaScript ExerciseにはRuntime設定が必要です',
+            );
+          }
+          if (course.runnerId !== 'javascript' && exercise.runtime?.kind === 'javascript') {
+            addIssue(
+              context,
+              [...exercisePath, 'runtime'],
+              'Course RunnerとRuntime設定が一致しません',
+            );
+          }
+          if (exercise.runtime?.kind === 'javascript') {
+            const canonicalEntryFile = canonicalPublicPath(exercise.runtime.entryFile);
+            const entryFile = exercise.files.find(
+              (file) => canonicalPublicPath(file.path) === canonicalEntryFile,
+            );
+            if (entryFile?.language !== 'javascript') {
+              addIssue(
+                context,
+                [...exercisePath, 'runtime', 'entryFile'],
+                'JavaScript Runtime entryFileはjavascript Fileを参照してください',
+              );
+            }
+          }
 
           if (exercise.kind !== lesson.kind) {
             addIssue(

@@ -15,6 +15,7 @@ import type {
   ContentProgressMigrationSchema,
   CourseCatalogLessonStartSchema,
   CourseManifestSchema,
+  ExerciseRuntimeSchema,
   ExerciseFileSchema,
   ExerciseSchema,
   ExerciseStepSchema,
@@ -23,6 +24,7 @@ import type {
   HtmlCssRuleAssertionSchema,
   HtmlCssRuleTargetSchema,
   HtmlCssValidationRuleDefinitionSchema,
+  JavaScriptExerciseRuntimeSchema,
   JavaScriptValidationRuleDefinitionSchema,
   LessonSchema,
   LearningPathDefinitionSchema,
@@ -62,6 +64,8 @@ export type SlideBlock = z.infer<typeof SlideBlockSchema>;
 export type SlideLayout = z.infer<typeof SlideLayoutSchema>;
 export type MasteryLevel = z.infer<typeof MasteryLevelSchema>;
 export type Exercise = z.infer<typeof ExerciseSchema>;
+export type ExerciseRuntime = z.infer<typeof ExerciseRuntimeSchema>;
+export type JavaScriptExerciseRuntime = z.infer<typeof JavaScriptExerciseRuntimeSchema>;
 export type ExerciseFile = z.infer<typeof ExerciseFileSchema>;
 export type ExerciseStep = z.infer<typeof ExerciseStepSchema>;
 export type ConceptDefinition = z.infer<typeof ConceptDefinitionSchema>;

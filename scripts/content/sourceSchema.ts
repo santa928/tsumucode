@@ -77,6 +77,22 @@ export const FileSourceSchema = z
   })
   .strict();
 
+/** JavaScript ExerciseがAnalyzer／Runnerへ渡す固定Runtime設定。 */
+export const JavaScriptExerciseRuntimeSourceSchema = z
+  .object({
+    kind: z.literal('javascript'),
+    entryFile: WorkspacePathSchema,
+    sourceType: z.enum(['script', 'module']),
+    capabilityProfile: z.enum(['core', 'modules', 'dom', 'async', 'project']),
+    primaryOutput: z.enum(['preview', 'console']),
+  })
+  .strict();
+
+/** Course追加時にkind単位で拡張するExercise Runtime authoring union。 */
+export const ExerciseRuntimeSourceSchema = z.discriminatedUnion('kind', [
+  JavaScriptExerciseRuntimeSourceSchema,
+]);
+
 export const FixtureSourceSchema = z
   .object({
     id: IdSchema,
@@ -98,6 +114,7 @@ const ExerciseBaseSchema = z
     steps: z.array(ExerciseStepSourceSchema).min(1).optional(),
     files: z.array(FileSourceSchema).min(1),
     solutionFiles: z.array(FileSourceSchema).min(1),
+    runtime: ExerciseRuntimeSourceSchema.optional(),
     validationRules: z.array(ValidationRuleDefinitionSchema).min(1),
     hints: z.array(HintSchema).length(3),
     relatedSlideIds: z.array(IdSchema).min(1),

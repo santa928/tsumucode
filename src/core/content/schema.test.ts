@@ -273,6 +273,22 @@ describe('CourseManifestSchema 公開境界', () => {
     expect(ExerciseSchema.safeParse(exercise).success).toBe(false);
   });
 
+  it('公開ExerciseでstrictなJavaScript Runtime設定を保持する', () => {
+    const exercise = structuredClone(firstStandardExercise(firstStandardLesson(cloneCourse())));
+    const runtime = {
+      kind: 'javascript',
+      entryFile: 'script.js',
+      sourceType: 'script',
+      capabilityProfile: 'core',
+      primaryOutput: 'console',
+    } as const;
+    Object.assign(exercise, { runtime });
+
+    const parsed = ExerciseSchema.parse(exercise);
+
+    expect(parsed.runtime).toEqual(runtime);
+  });
+
   it('正しい公開Courseを変形せず受理する', () => {
     expect(CourseManifestSchema.parse(fixtureCourse)).toEqual(fixtureCourse);
   });
@@ -377,6 +393,15 @@ describe('CourseManifestSchema 公開境界', () => {
       content: "document.querySelector('#message').textContent = '変更後';",
       editable: true,
     });
+    Object.assign(exercise, {
+      runtime: {
+        kind: 'javascript',
+        entryFile: 'script.js',
+        sourceType: 'script',
+        capabilityProfile: 'core',
+        primaryOutput: 'preview',
+      },
+    });
     const sourceRule = {
       ...exercise.validationRules[0]!,
       target: { kind: 'javascript-source', file: 'script.js' },
@@ -397,6 +422,28 @@ describe('CourseManifestSchema 公開境界', () => {
       { solutionFiles: [] },
     );
     expectCourseIssue(unknown, 'JavaScript Validator Ruleの形式が不正です');
+  });
+
+  it('JavaScript RunnerのCourseへRuntime設定を必須にする', () => {
+    const course = cloneCourse();
+    course.runnerId = 'javascript';
+
+    expectCourseIssue(course, 'JavaScript ExerciseにはRuntime設定が必要です');
+  });
+
+  it('HTML/CSS RunnerのCourseへJavaScript Runtime設定を許可しない', () => {
+    const course = cloneCourse();
+    Object.assign(firstStandardExercise(firstStandardLesson(course)), {
+      runtime: {
+        kind: 'javascript',
+        entryFile: 'index.html',
+        sourceType: 'script',
+        capabilityProfile: 'core',
+        primaryOutput: 'preview',
+      },
+    });
+
+    expectCourseIssue(course, 'Course RunnerとRuntime設定が一致しません');
   });
 });
 

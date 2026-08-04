@@ -496,6 +496,7 @@ function projectRuntimeExercise(authoring: AuthoringExercise): Exercise {
     scaffoldLevel: authoring.scaffoldLevel,
     steps: authoring.steps,
     files: authoring.files,
+    ...(authoring.runtime === undefined ? {} : { runtime: authoring.runtime }),
     validationRules: authoring.validationRules,
     hints: authoring.hints,
     relatedSlideIds: authoring.relatedSlideIds,
@@ -549,6 +550,17 @@ async function compileExercise(
       expectedFeedbackRuleIds: fixture.expectedFeedbackRuleIds,
     });
   }
+  const runtime =
+    source.runtime ??
+    (context.courseId === 'javascript'
+      ? {
+          kind: 'javascript' as const,
+          entryFile: 'script.js',
+          sourceType: 'script' as const,
+          capabilityProfile: 'core' as const,
+          primaryOutput: 'preview' as const,
+        }
+      : undefined);
   const common = {
     id: source.id,
     workspaceId: source.workspaceId,
@@ -559,6 +571,7 @@ async function compileExercise(
     scaffoldLevel: source.scaffoldLevel ?? 'seen',
     steps: source.steps ?? [],
     files,
+    ...(runtime === undefined ? {} : { runtime }),
     validationRules: source.validationRules,
     hints: source.hints,
     relatedSlideIds: source.relatedSlideIds,

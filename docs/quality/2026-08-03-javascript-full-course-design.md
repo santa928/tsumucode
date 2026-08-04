@@ -1,6 +1,7 @@
 # JavaScript全Course 設計
 
-- 状態: 対話設計承認済み・書面レビュー前・実装前
+- 状態: 書面レビュー承認済み・実装前
+- 承認日: 2026-08-04
 - 作成日: 2026-08-03
 - 対象: `javascript` Course Chapter 01〜13、既存Chapter 00の互換維持、全Course公開
 - 親ロードマップ: GitHub Issue #1「複数コースとLearningPathを追加する」
@@ -173,7 +174,7 @@ Chapter 00は設定省略時に`script`、`core`、`preview`を使う互換既�
 
 Profileは教材YAMLの任意allowlistでなく、コードに定義した固定集合とする。
 
-- `core`: literal、binding、operator、branch、Loop、Function、Array、Object、bounded Console。
+- `core`: literal、binding、operator、branch、Loop、Function、Array、Object、bounded Console。Chapter 00互換のため、既存教材が使う`document.querySelector()`と`textContent`代入だけを限定許可し、DOM生成・属性変更・Eventは許可しない。
 - `modules`: `core`に同一Workspaceのstatic import／exportを追加。
 - `dom`: `modules`に許可済みDOM query、生成、属性、class、Event APIを追加。
 - `async`: `dom`にPromise、`async`／`await`、bounded timerを追加。

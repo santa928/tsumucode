@@ -844,6 +844,17 @@ describe('JavaScript draft Course compilation', () => {
     const authoring = await loadAuthoringCourse(courseRoot);
     const compilation = await compileCourse(courseRoot);
     const exercise = authoring.exercises.find(({ id }) => id === 'javascript-ch00-l01-e01');
+    const runtimeExercise = compilation.runtime.phases[0]?.chapters[0]?.lessons[0]?.exercises.find(
+      ({ id }) => id === 'javascript-ch00-l01-e01',
+    );
+
+    expect(runtimeExercise?.runtime).toEqual({
+      kind: 'javascript',
+      entryFile: 'script.js',
+      sourceType: 'script',
+      capabilityProfile: 'core',
+      primaryOutput: 'preview',
+    });
 
     expect(
       Object.fromEntries(

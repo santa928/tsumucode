@@ -193,6 +193,51 @@ describe('content source schema', () => {
     });
   });
 
+  it('JavaScript Runtime設定を公開契約のfield名で保持する', () => {
+    const runtime = {
+      kind: 'javascript',
+      entryFile: 'script.js',
+      sourceType: 'script',
+      capabilityProfile: 'core',
+      primaryOutput: 'console',
+    } as const;
+
+    const result = ExerciseSourceSchema.parse({ ...validExerciseSource, runtime });
+
+    expect(result.runtime).toEqual(runtime);
+  });
+
+  it('JavaScript Runtime設定の未知fieldをstripせず拒否する', () => {
+    const result = ExerciseSourceSchema.safeParse({
+      ...validExerciseSource,
+      runtime: {
+        kind: 'javascript',
+        entryFile: 'script.js',
+        sourceType: 'script',
+        capabilityProfile: 'core',
+        primaryOutput: 'console',
+        fetch: true,
+      },
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('JavaScript Runtime設定のWorkspace外entryFileを拒否する', () => {
+    const result = ExerciseSourceSchema.safeParse({
+      ...validExerciseSource,
+      runtime: {
+        kind: 'javascript',
+        entryFile: '../script.js',
+        sourceType: 'script',
+        capabilityProfile: 'core',
+        primaryOutput: 'console',
+      },
+    });
+
+    expect(result.success).toBe(false);
+  });
+
   it('親Directoryへ出るChapter sourceを拒否する', () => {
     const result = CourseSourceSchema.safeParse({
       ...validCourseSource,
