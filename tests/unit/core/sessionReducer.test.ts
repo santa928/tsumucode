@@ -6,6 +6,77 @@ import {
 import type { ValidationResult } from '../../../src/core/validation/contracts';
 
 describe('LearningSession reducer', () => {
+  it('成功Consoleを現在値として保持し、失敗時は直前成功値を明示して残す', () => {
+    const initial = createLearningSessionState({
+      courseId: 'javascript',
+      lessonId: 'lesson-1',
+      exerciseId: 'ex-1',
+      files: { 'script.js': 'console.log(42);' },
+      selectedFile: 'script.js',
+    });
+    const consoleRecords = [{ sequence: 0, level: 'log' as const, text: '42' }];
+    const success = learningSessionReducer(initial, {
+      type: 'preview.completed',
+      revision: 0,
+      diagnostics: [],
+      console: consoleRecords,
+    });
+    const failed = learningSessionReducer(success, {
+      type: 'preview.completed',
+      revision: 0,
+      diagnostics: [
+        {
+          code: 'javascript-runner-system',
+          kind: 'system',
+          severity: 'error',
+          message: 'Runtime failure',
+          learnerMessage: 'もう一度試してください。',
+        },
+      ],
+      console: [],
+    });
+
+    expect(success.runtimeOutput).toEqual({
+      revision: 0,
+      freshness: 'current',
+      console: consoleRecords,
+    });
+    expect(failed.runtimeOutput).toEqual({
+      revision: 0,
+      freshness: 'previous-success',
+      console: consoleRecords,
+    });
+  });
+
+  it('編集ではConsoleを前回成功表示へ変え、Resetでは破棄する', () => {
+    const initial = createLearningSessionState({
+      courseId: 'javascript',
+      lessonId: 'lesson-1',
+      exerciseId: 'ex-1',
+      files: { 'script.js': 'console.log(42);' },
+      selectedFile: 'script.js',
+    });
+    const success = learningSessionReducer(initial, {
+      type: 'preview.completed',
+      revision: 0,
+      diagnostics: [],
+      console: [{ sequence: 0, level: 'log', text: '42' }],
+    });
+    const edited = learningSessionReducer(success, {
+      type: 'editor.changed',
+      path: 'script.js',
+      content: 'console.log(43);',
+    });
+    const reset = learningSessionReducer(edited, {
+      type: 'editor.reset',
+      files: { 'script.js': 'console.log(42);' },
+      selectedFile: 'script.js',
+    });
+
+    expect(edited.runtimeOutput?.freshness).toBe('previous-success');
+    expect(reset.runtimeOutput).toBeUndefined();
+  });
+
   it('見直し前の exercise state を一切失わず復帰する', () => {
     const initial = createLearningSessionState({
       courseId: 'fixture',
@@ -72,6 +143,7 @@ describe('LearningSession reducer', () => {
       type: 'preview.completed',
       revision: 0,
       diagnostics: [],
+      console: [],
     });
     const staleValidation = learningSessionReducer(stalePreview, {
       type: 'validation.completed',
@@ -82,6 +154,7 @@ describe('LearningSession reducer', () => {
       type: 'preview.completed',
       revision: 1,
       diagnostics: [],
+      console: [],
     });
     const validated = learningSessionReducer(previewed, {
       type: 'validation.completed',
@@ -165,6 +238,7 @@ describe('LearningSession reducer', () => {
           learnerMessage: 'タグを閉じてください',
         },
       ],
+      console: [],
     });
     const validated = learningSessionReducer(previewed, {
       type: 'validation.completed',

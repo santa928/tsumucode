@@ -103,6 +103,7 @@ function runnerHarness(events: string[] = []): RunnerHarness {
         },
       ],
       evidence: [],
+      console: [],
     };
   });
   const requestSnapshot = vi.fn<RunnerAdapter['requestSnapshot']>(async (request) => {
@@ -292,6 +293,51 @@ describe('LearningSessionController', () => {
     await controller.dispose();
   });
 
+  it('Exercise RuntimeをRunnerへ渡し、表示renderのConsoleだけをsession stateへ反映する', async () => {
+    const runtime = runnerHarness();
+    const persistence = repositoryHarness();
+    const consoleRecords = [{ sequence: 0, level: 'log' as const, text: 'hello' }];
+    runtime.render.mockImplementation(async (input) => ({
+      exerciseSessionId: input.exerciseSessionId,
+      executionRevision: input.executionRevision,
+      diagnostics: [],
+      evidence: [],
+      console: consoleRecords,
+    }));
+    const current = exercise({
+      runtime: {
+        kind: 'javascript',
+        entryFile: 'script.js',
+        sourceType: 'script',
+        capabilityProfile: 'core',
+        primaryOutput: 'console',
+      },
+    });
+    const controller = new LearningSessionController(
+      controllerInput({
+        courseId: 'javascript',
+        exercise: current,
+        runner: runtime.runner,
+        repository: persistence.repository,
+      }),
+    );
+
+    await controller.previewNow();
+
+    expect(runtime.render).toHaveBeenCalledWith(
+      expect.objectContaining({ options: { runtime: current.runtime } }),
+    );
+    expect(controller.getSnapshot().runtimeOutput).toEqual({
+      revision: 0,
+      freshness: 'current',
+      console: consoleRecords,
+    });
+    controller.edit('index.html', '<main>ConsoleはDraftへ保存しない</main>');
+    await controller.flush();
+    expect(persistence.putDraft.mock.calls.at(-1)?.[0]).not.toHaveProperty('runtimeOutput');
+    await controller.dispose();
+  });
+
   it('先行保存→全viewport render/snapshot→判定保存→表示viewport復元を同revisionで直列実行する', async () => {
     const events: string[] = [];
     const current = exercise({
@@ -417,6 +463,7 @@ describe('LearningSessionController', () => {
       executionRevision: input.executionRevision,
       diagnostics: [diagnostic],
       evidence: [],
+      console: [],
     }));
     const validation = validatorHarness();
     validation.validate.mockImplementation(async (context) =>
@@ -568,6 +615,7 @@ describe('LearningSessionController', () => {
           executionRevision: input.executionRevision,
           diagnostics: [],
           evidence: [],
+          console: [],
         };
       });
     const controller = new LearningSessionController(controllerInput({ runner: runtime.runner }));
@@ -585,6 +633,7 @@ describe('LearningSessionController', () => {
       executionRevision: 2,
       diagnostics: [],
       evidence: [],
+      console: [],
     });
     await vi.runAllTimersAsync();
     await queued;
@@ -618,6 +667,7 @@ describe('LearningSessionController', () => {
       executionRevision: 0,
       diagnostics: [],
       evidence: [],
+      console: [],
     });
 
     await expect(preview).rejects.toBeInstanceOf(StaleExecutionError);
@@ -712,6 +762,7 @@ describe('LearningSessionController', () => {
         },
       ],
       evidence: [],
+      console: [],
     });
 
     await expect(preview).rejects.toBeInstanceOf(StaleExecutionError);
@@ -1119,6 +1170,7 @@ describe('LearningSessionController', () => {
       executionRevision: 1,
       diagnostics: [],
       evidence: [],
+      console: [],
     });
     await preview;
     await Promise.all([firstDispose, secondDispose]);

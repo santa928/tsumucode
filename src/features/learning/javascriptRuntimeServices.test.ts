@@ -24,6 +24,7 @@ function runner(languageId = 'javascript'): RunnerAdapter {
       executionRevision: input.executionRevision,
       diagnostics: [],
       evidence: [],
+      console: [],
     })),
     requestSnapshot: vi.fn<RunnerAdapter['requestSnapshot']>(async () => {
       throw new Error('snapshotはこのTestの対象外です');

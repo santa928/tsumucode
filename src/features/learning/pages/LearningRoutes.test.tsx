@@ -454,6 +454,7 @@ function stubAdapters(options: AdapterStubOptions = {}): {
           executionRevision: input.executionRevision,
           diagnostics: [],
           evidence: [],
+          console: [],
         };
       }),
   );
@@ -1005,6 +1006,7 @@ describe('Learning routes', () => {
           executionRevision: input.executionRevision,
           diagnostics: [],
           evidence: [],
+          console: [],
         };
       },
     });
@@ -1035,6 +1037,7 @@ describe('Learning routes', () => {
         executionRevision: input.executionRevision,
         diagnostics: [],
         evidence: [],
+        console: [],
       };
     });
     const adapters = stubAdapters({ prepare, render });
@@ -1069,6 +1072,7 @@ describe('Learning routes', () => {
           executionRevision: input.executionRevision,
           diagnostics: [],
           evidence: [],
+          console: [],
         };
       },
     });
@@ -1640,6 +1644,7 @@ describe('Learning routes', () => {
           executionRevision: input.executionRevision,
           diagnostics: [],
           evidence: [],
+          console: [],
         };
       },
     });

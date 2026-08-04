@@ -201,6 +201,7 @@ export class HtmlCssRunnerAdapter implements RunnerAdapter {
           ...preview.assetDiagnostics,
         ],
         evidence: [],
+        console: [],
       };
     } catch (error) {
       bridge?.dispose();

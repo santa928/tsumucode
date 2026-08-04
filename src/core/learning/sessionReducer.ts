@@ -1,10 +1,17 @@
 /** 学習画面の同期操作とrevision付き非同期結果を不変状態へ縮約する。 */
 import type { EditorCursor } from '../persistence/contracts';
-import type { RunnerDiagnostic } from '../runtime/contracts';
+import type { RunnerConsoleRecord, RunnerDiagnostic } from '../runtime/contracts';
 import type { ValidationResult } from '../validation/contracts';
 
 export type LearningPhase = 'slide' | 'exercise' | 'review' | 'completion';
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
+
+/** 永続化せず、現在または直前成功時のRuntime出力だけを画面へ渡す。 */
+export interface RuntimeOutputState {
+  readonly revision: number;
+  readonly freshness: 'current' | 'previous-success';
+  readonly console: readonly RunnerConsoleRecord[];
+}
 
 export interface LearningSessionState {
   readonly courseId: string;
@@ -17,6 +24,7 @@ export interface LearningSessionState {
   readonly executionRevision: number;
   readonly previewRevision: number | null;
   readonly diagnostics: readonly RunnerDiagnostic[];
+  readonly runtimeOutput?: RuntimeOutputState;
   readonly validationHistory: readonly ValidationResult[];
   readonly revealedHintIds: readonly string[];
   readonly reviewReturn?: { readonly slideId: string; readonly scrollOffset: number };
@@ -38,6 +46,7 @@ export type LearningSessionAction =
       readonly type: 'preview.completed';
       readonly revision: number;
       readonly diagnostics: readonly RunnerDiagnostic[];
+      readonly console: readonly RunnerConsoleRecord[];
     }
   | {
       readonly type: 'validation.completed';
@@ -89,6 +98,14 @@ export function learningSessionReducer(
         ...state,
         files: { ...state.files, [action.path]: action.content },
         executionRevision: state.executionRevision + 1,
+        ...(state.runtimeOutput === undefined
+          ? {}
+          : {
+              runtimeOutput: {
+                ...state.runtimeOutput,
+                freshness: 'previous-success' as const,
+              },
+            }),
         saveStatus: 'saving',
       };
     case 'editor.reset': {
@@ -106,16 +123,34 @@ export function learningSessionReducer(
         saveStatus: 'saving',
       };
       Reflect.deleteProperty(resetState, 'reviewReturn');
+      Reflect.deleteProperty(resetState, 'runtimeOutput');
       return resetState;
     }
-    case 'preview.completed':
-      return action.revision === state.executionRevision
-        ? {
-            ...state,
-            previewRevision: action.revision,
-            diagnostics: action.diagnostics,
-          }
-        : state;
+    case 'preview.completed': {
+      if (action.revision !== state.executionRevision) return state;
+      const failed = action.diagnostics.some(({ severity }) => severity === 'error');
+      return {
+        ...state,
+        previewRevision: action.revision,
+        diagnostics: action.diagnostics,
+        ...(failed
+          ? state.runtimeOutput === undefined
+            ? {}
+            : {
+                runtimeOutput: {
+                  ...state.runtimeOutput,
+                  freshness: 'previous-success' as const,
+                },
+              }
+          : {
+              runtimeOutput: {
+                revision: action.revision,
+                freshness: 'current' as const,
+                console: action.console,
+              },
+            }),
+      };
+    }
     case 'validation.completed':
       return action.revision === state.executionRevision
         ? { ...state, validationHistory: [...state.validationHistory, action.result] }

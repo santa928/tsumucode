@@ -444,6 +444,7 @@ describe('HtmlCssRunnerAdapter', () => {
 
     expect(result.executionRevision).toBe(1);
     expect(result.evidence).toEqual([]);
+    expect(result.console).toEqual([]);
     expect(result.diagnostics.map(({ code }) => code)).toEqual([
       'CSS_REFERENCE_MISSING',
       'CSS_SYNTAX',

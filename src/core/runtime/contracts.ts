@@ -54,11 +54,21 @@ export interface RunnerEvidence {
   readonly value: RunnerEvidenceValue;
 }
 
+export type RunnerConsoleLevel = 'log' | 'info' | 'warn' | 'error';
+
+/** Runnerが親画面へ返すplain text限定のConsole 1件。 */
+export interface RunnerConsoleRecord {
+  readonly sequence: number;
+  readonly level: RunnerConsoleLevel;
+  readonly text: string;
+}
+
 export interface RunnerRenderResult {
   readonly exerciseSessionId: string;
   readonly executionRevision: number;
   readonly diagnostics: readonly RunnerDiagnostic[];
   readonly evidence: readonly RunnerEvidence[];
+  readonly console: readonly RunnerConsoleRecord[];
 }
 
 export interface SnapshotRequest {

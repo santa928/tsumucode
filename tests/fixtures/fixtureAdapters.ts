@@ -35,6 +35,7 @@ export class FixtureRunnerAdapter implements RunnerAdapter {
       executionRevision: input.executionRevision,
       diagnostics: [],
       evidence: [],
+      console: [],
     };
   }
 

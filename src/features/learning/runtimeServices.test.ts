@@ -26,6 +26,7 @@ const lazyRunner = vi.hoisted(() => ({
       executionRevision: input.executionRevision,
       diagnostics: [],
       evidence: [],
+      console: [],
     }),
   ),
   requestSnapshot: vi.fn<(request: SnapshotRequest) => Promise<PreviewSnapshot>>(() =>

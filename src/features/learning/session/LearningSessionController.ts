@@ -650,7 +650,8 @@ export class LearningSessionController {
       files: execution.files,
       assets: this.input.resolvedAssets,
       viewport,
-      options: {},
+      options:
+        this.input.exercise.runtime === undefined ? {} : { runtime: this.input.exercise.runtime },
     });
     this.#assertFresh(execution);
     if (
@@ -665,6 +666,7 @@ export class LearningSessionController {
         type: 'preview.completed',
         revision: execution.revision,
         diagnostics: result.diagnostics,
+        console: result.console,
       });
     }
     return { ...result, evidence };
@@ -838,6 +840,7 @@ export class LearningSessionController {
         type: 'preview.completed',
         revision: execution.revision,
         diagnostics: displayResult.diagnostics,
+        console: displayResult.console,
       });
     }
     this.#assertFresh(execution);

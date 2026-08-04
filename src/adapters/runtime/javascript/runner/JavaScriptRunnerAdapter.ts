@@ -291,6 +291,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
           executionRevision: input.executionRevision,
           diagnostics: analysis.diagnostics,
           evidence: [],
+          console: [],
         };
       }
       if (
@@ -412,6 +413,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
             value: executionPayload.budgetExhausted,
           },
         ],
+        console: [],
       };
     } catch (error: unknown) {
       bridge?.dispose();
@@ -426,6 +428,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
         executionRevision: input.executionRevision,
         diagnostics: [systemDiagnostic(error)],
         evidence: [],
+        console: [],
       };
     }
   }
