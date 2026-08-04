@@ -909,6 +909,7 @@
   .tc-exercise-preview > [data-testid='runtime-preview-frame'],
   .tc-exercise-preview .tc-runtime-output-card {
     height: 100%;
+    min-width: 0;
     min-height: 0;
   }
 
@@ -924,6 +925,10 @@
     flex-wrap: wrap;
     align-items: flex-start;
     justify-content: space-between;
+    gap: var(--tc-space-3);
+  }
+
+  .tc-runtime-output-card[aria-label='実行結果'] .tc-runtime-output-header {
     gap: var(--tc-space-2);
   }
 
@@ -957,6 +962,7 @@
   .tc-runtime-preview-panel,
   .tc-runtime-console-panel {
     height: 100%;
+    min-width: 0;
     min-height: 0;
   }
 

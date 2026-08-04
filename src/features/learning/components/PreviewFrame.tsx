@@ -185,17 +185,22 @@ export function PreviewFrame({
         ) : (
           <div>
             <h2 className="text-xl font-black">プレビュー</h2>
+            {canFit && activeOutput === 'preview' ? (
+              <p className="mt-1 text-sm font-bold text-workshop-muted">
+                {isFitDisplay
+                  ? `全体を${String(Math.round(geometry.fitScale * 100))}%で表示中`
+                  : '100%表示中。左右に動かして確認できます。'}
+              </p>
+            ) : null}
           </div>
         )}
-        <div>
-          {canFit && activeOutput === 'preview' ? (
-            <p className="mt-1 text-sm font-bold text-workshop-muted">
-              {isFitDisplay
-                ? `全体を${String(Math.round(geometry.fitScale * 100))}%で表示中`
-                : '100%表示中。左右に動かして確認できます。'}
-            </p>
-          ) : null}
-        </div>
+        {consoleEnabled && canFit && activeOutput === 'preview' ? (
+          <p className="mt-1 text-sm font-bold text-workshop-muted">
+            {isFitDisplay
+              ? `全体を${String(Math.round(geometry.fitScale * 100))}%で表示中`
+              : '100%表示中。左右に動かして確認できます。'}
+          </p>
+        ) : null}
         {canFit && activeOutput === 'preview' ? (
           <button
             type="button"
