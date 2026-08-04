@@ -188,6 +188,7 @@ function sourceCheck(
 ): ValidationCheck {
   const fact = analysis.facts.find(
     (candidate) =>
+      candidate.kind === 'query-selector-text-content-assignment' &&
       candidate.file === rule.target.file &&
       candidate.selector === rule.assertion.selector &&
       candidate.value === rule.assertion.expected,
@@ -271,6 +272,17 @@ export class JavaScriptValidator implements ValidatorAdapter {
       ]);
     }
 
+    const runtime = context.runtime;
+    if (runtime?.kind !== 'javascript') {
+      return blockedResult(context, 'system-error', [
+        ...context.diagnostics,
+        systemDiagnostic(
+          'JAVASCRIPT_RUNTIME_INVALID',
+          'JavaScript validation requires a JavaScript runtime contract',
+        ),
+      ]);
+    }
+
     const hasSystemError = context.diagnostics.some(
       ({ kind, severity }) => kind === 'system' && severity === 'error',
     );
@@ -344,6 +356,8 @@ export class JavaScriptValidator implements ValidatorAdapter {
           file,
           source,
           guardIdentifier,
+          sourceType: runtime.sourceType,
+          capabilityProfile: runtime.capabilityProfile,
         });
         if (analysis.status === 'failure') {
           return analysisFailureResult(context, analysis, identity.executionRevision);

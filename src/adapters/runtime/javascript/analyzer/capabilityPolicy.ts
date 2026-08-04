@@ -1,6 +1,7 @@
 import type { Node } from 'acorn';
 import { fullAncestor } from 'acorn-walk';
 import type { RunnerDiagnosticKind } from '../../../../core/runtime/contracts';
+import type { JavaScriptCapabilityProfileId } from './contracts';
 
 type AnalysisIssueKind = Extract<RunnerDiagnosticKind, 'security' | 'system'>;
 type AstNode = Node & Readonly<Record<string, unknown>>;
@@ -27,7 +28,29 @@ const NAVIGATION_IDENTIFIERS = new Set([
   'self',
   'frames',
 ]);
-const DOCUMENT_MEMBERS = new Set(['querySelector', 'querySelectorAll', 'getElementById']);
+const CORE_DOCUMENT_MEMBERS = new Set(['querySelector']);
+const DOM_DOCUMENT_MEMBERS = new Set([
+  'createElement',
+  'createTextNode',
+  'getElementById',
+  'querySelector',
+  'querySelectorAll',
+]);
+const DOM_ONLY_MEMBERS = new Set([
+  'addEventListener',
+  'append',
+  'appendChild',
+  'classList',
+  'prepend',
+  'remove',
+  'removeAttribute',
+  'removeChild',
+  'removeEventListener',
+  'replaceChildren',
+  'setAttribute',
+  'setAttributeNS',
+  'toggleAttribute',
+]);
 const NAVIGATION_MEMBERS = new Set(['location', 'history', 'pushState', 'replaceState', 'assign']);
 const RESOURCE_MEMBERS = new Set(['src', 'href', 'action', 'formAction']);
 const RUNTIME_ESCAPE_MEMBERS = new Set([
@@ -45,6 +68,15 @@ const RUNTIME_ESCAPE_MEMBERS = new Set([
   'view',
 ]);
 const HTML_INSERTION_MEMBERS = new Set(['innerHTML', 'outerHTML', 'insertAdjacentHTML']);
+const MODULE_NODE_TYPES = new Set([
+  'ExportAllDeclaration',
+  'ExportDefaultDeclaration',
+  'ExportNamedDeclaration',
+  'ImportDeclaration',
+  'ImportDefaultSpecifier',
+  'ImportNamespaceSpecifier',
+  'ImportSpecifier',
+]);
 const ALLOWED_NODE_TYPES = new Set([
   'Program',
   'ExpressionStatement',
@@ -98,7 +130,36 @@ const ALLOWED_NODE_TYPES = new Set([
   'AwaitExpression',
   'YieldExpression',
   'SpreadElement',
+  ...MODULE_NODE_TYPES,
 ]);
+
+export interface JavaScriptCapabilityPolicy {
+  readonly id: JavaScriptCapabilityProfileId;
+  readonly allowModules: boolean;
+  readonly allowDom: boolean;
+  readonly allowAsync: boolean;
+}
+
+/** 教材が任意Capabilityを注入できない固定Profile集合。 */
+export const JAVASCRIPT_CAPABILITY_PROFILES: Readonly<
+  Record<JavaScriptCapabilityProfileId, JavaScriptCapabilityPolicy>
+> = Object.freeze({
+  core: Object.freeze({ id: 'core', allowModules: false, allowDom: false, allowAsync: false }),
+  modules: Object.freeze({
+    id: 'modules',
+    allowModules: true,
+    allowDom: false,
+    allowAsync: false,
+  }),
+  dom: Object.freeze({ id: 'dom', allowModules: true, allowDom: true, allowAsync: false }),
+  async: Object.freeze({ id: 'async', allowModules: true, allowDom: true, allowAsync: true }),
+  project: Object.freeze({
+    id: 'project',
+    allowModules: true,
+    allowDom: true,
+    allowAsync: true,
+  }),
+});
 
 /** Source位置と診断種別を失わずAnalyzer内で伝播するError。 */
 export class JavaScriptAnalysisIssue extends Error {
@@ -190,17 +251,35 @@ function literalString(value: unknown): string | undefined {
 }
 
 /** JavaScript ASTがChapter 00の明示Capabilityだけを使うことをfail-closedで確認する。 */
-export function assertJavaScriptCapabilityPolicy(program: Node, file: string): void {
+export function assertJavaScriptCapabilityPolicy(
+  program: Node,
+  file: string,
+  profileId: JavaScriptCapabilityProfileId = 'core',
+): void {
+  const profile = JAVASCRIPT_CAPABILITY_PROFILES[profileId];
   fullAncestor(program, (node: Node, _state: unknown, ancestors: Node[]) => {
     const current = ast(node);
     const parent = ancestors.at(-2);
 
     if (node.type === 'ImportExpression') reject(node, file, '動的importはこの演習では使えません');
+    if (MODULE_NODE_TYPES.has(node.type) && !profile.allowModules) {
+      reject(node, file, 'module構文はこの演習では使えません');
+    }
     if (!ALLOWED_NODE_TYPES.has(node.type)) {
       reject(node, file, `この構文（${node.type}）はまだこの演習では使えません`);
     }
     if (node.type === 'DebuggerStatement' || node.type === 'WithStatement') {
       reject(node, file, `この構文（${node.type}）は安全なPreviewでは使えません`);
+    }
+    if (
+      (node.type === 'AwaitExpression' ||
+        ((node.type === 'FunctionDeclaration' ||
+          node.type === 'FunctionExpression' ||
+          node.type === 'ArrowFunctionExpression') &&
+          current.async === true)) &&
+      !profile.allowAsync
+    ) {
+      reject(node, file, 'async／awaitはこの演習では使えません');
     }
     if (node.type === 'Literal' && typeof current.regex === 'object' && current.regex !== null) {
       reject(node, file, '正規表現はこの演習では使えません');
@@ -231,7 +310,10 @@ export function assertJavaScriptCapabilityPolicy(program: Node, file: string): v
       if (root === 'document') {
         if (property === 'cookie')
           reject(node, file, 'document.cookieは許可されていないmemberです');
-        if (property === undefined || !DOCUMENT_MEMBERS.has(property)) {
+        const allowedDocumentMembers = profile.allowDom
+          ? DOM_DOCUMENT_MEMBERS
+          : CORE_DOCUMENT_MEMBERS;
+        if (property === undefined || !allowedDocumentMembers.has(property)) {
           reject(node, file, `document.${property ?? 'unknown'}は許可されていないmemberです`);
         }
       }
@@ -251,6 +333,18 @@ export function assertJavaScriptCapabilityPolicy(program: Node, file: string): v
       }
       if (property !== undefined && HTML_INSERTION_MEMBERS.has(property)) {
         reject(node, file, '文字列によるHTML挿入は使えません');
+      }
+      const directAttributeCall =
+        (property === 'setAttribute' || property === 'setAttributeNS') &&
+        parent?.type === 'CallExpression' &&
+        ast(parent).callee === node;
+      if (
+        property !== undefined &&
+        DOM_ONLY_MEMBERS.has(property) &&
+        !profile.allowDom &&
+        !directAttributeCall
+      ) {
+        reject(node, file, `${property}はDOM演習でだけ使えます`);
       }
       if (property === 'serviceWorker') reject(node, file, 'Service Workerは使えません');
       if (property !== undefined && NAVIGATION_MEMBERS.has(property)) {
@@ -285,7 +379,7 @@ export function assertJavaScriptCapabilityPolicy(program: Node, file: string): v
         ) {
           reject(node, file, '外部resourceへつながる属性の変更は使えません');
         }
-        if (property === 'setAttribute' || property === 'setAttributeNS') {
+        if ((property === 'setAttribute' || property === 'setAttributeNS') && !profile.allowDom) {
           reject(node, file, '動的な属性変更はこの演習では使えません');
         }
       }

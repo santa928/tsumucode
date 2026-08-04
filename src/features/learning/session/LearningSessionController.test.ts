@@ -295,6 +295,7 @@ describe('LearningSessionController', () => {
 
   it('Exercise RuntimeをRunnerへ渡し、表示renderのConsoleだけをsession stateへ反映する', async () => {
     const runtime = runnerHarness();
+    const validation = validatorHarness();
     const persistence = repositoryHarness();
     const consoleRecords = [{ sequence: 0, level: 'log' as const, text: 'hello' }];
     runtime.render.mockImplementation(async (input) => ({
@@ -304,6 +305,17 @@ describe('LearningSessionController', () => {
       evidence: [],
       console: consoleRecords,
     }));
+    runtime.requestSnapshot.mockImplementation(async (request) =>
+      snapshot({
+        exerciseSessionId: request.exerciseSessionId,
+        executionRevision: request.executionRevision,
+        languageId: 'html-css',
+        files: { 'index.html': '<main></main>' },
+        assets: [],
+        viewport: baseExercise.previewViewports[0]!,
+        options: {},
+      }),
+    );
     const current = exercise({
       runtime: {
         kind: 'javascript',
@@ -318,6 +330,7 @@ describe('LearningSessionController', () => {
         courseId: 'javascript',
         exercise: current,
         runner: runtime.runner,
+        validator: validation.validator,
         repository: persistence.repository,
       }),
     );
@@ -335,6 +348,10 @@ describe('LearningSessionController', () => {
     controller.edit('index.html', '<main>ConsoleはDraftへ保存しない</main>');
     await controller.flush();
     expect(persistence.putDraft.mock.calls.at(-1)?.[0]).not.toHaveProperty('runtimeOutput');
+    await controller.validateNow();
+    expect(validation.validate).toHaveBeenCalledWith(
+      expect.objectContaining({ runtime: current.runtime }),
+    );
     await controller.dispose();
   });
 

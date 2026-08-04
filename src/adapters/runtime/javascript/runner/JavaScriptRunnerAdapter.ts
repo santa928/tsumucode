@@ -17,7 +17,12 @@ import {
   type ValidatedHtmlCssPreviewInput,
 } from '../../preview-kernel/prepareHtmlCssPreview';
 import { JavaScriptAnalyzerClient } from '../analyzer/JavaScriptAnalyzerClient';
-import type { JavaScriptAnalysisInput, JavaScriptAnalysisResult } from '../analyzer/contracts';
+import type {
+  JavaScriptAnalysisInput,
+  JavaScriptAnalysisResult,
+  JavaScriptCapabilityProfileId,
+  JavaScriptSourceType,
+} from '../analyzer/contracts';
 import { createJavaScriptExecutionSource } from './bridgeSource';
 import { createJavaScriptSrcdoc } from './createJavaScriptSrcdoc';
 import { JavaScriptExecutionClient, type JavaScriptExecutionPayload } from './protocol';
@@ -65,6 +70,8 @@ interface ValidatedJavaScriptInput {
   readonly html: ValidatedHtmlCssPreviewInput;
   readonly scriptFile: string;
   readonly scriptSource: string;
+  readonly sourceType: JavaScriptSourceType;
+  readonly capabilityProfile: JavaScriptCapabilityProfileId;
 }
 
 const MAX_WORKSPACE_BYTES = 300 * 1024;
@@ -87,8 +94,56 @@ function canonicalWorkspacePath(path: string): string {
   return resolvePublicAsset('/', path).slice(1);
 }
 
+/** RunnerInput optionsのJavaScript Runtime契約を追加キーなしで検証する。 */
+function validateJavaScriptRuntimeOptions(input: RunnerInput): {
+  readonly entryFile: string;
+  readonly sourceType: JavaScriptSourceType;
+  readonly capabilityProfile: JavaScriptCapabilityProfileId;
+} {
+  if (Object.keys(input.options).length !== 1 || !('runtime' in input.options)) {
+    throw new Error('JavaScript options must contain only runtime');
+  }
+  const runtime = input.options.runtime;
+  if (typeof runtime !== 'object' || runtime === null || Array.isArray(runtime)) {
+    throw new Error('JavaScript runtime must be an object');
+  }
+  const keys = Object.keys(runtime).sort();
+  if (
+    keys.join(',') !==
+    ['capabilityProfile', 'entryFile', 'kind', 'primaryOutput', 'sourceType'].join(',')
+  ) {
+    throw new Error('JavaScript runtime has invalid fields');
+  }
+  const value = runtime as Readonly<Record<string, unknown>>;
+  if (value.kind !== 'javascript') throw new Error('JavaScript runtime kind is invalid');
+  if (typeof value.entryFile !== 'string') {
+    throw new Error('JavaScript runtime entryFile must be a string');
+  }
+  if (value.sourceType !== 'script' && value.sourceType !== 'module') {
+    throw new Error('JavaScript runtime sourceType is invalid');
+  }
+  if (
+    value.capabilityProfile !== 'core' &&
+    value.capabilityProfile !== 'modules' &&
+    value.capabilityProfile !== 'dom' &&
+    value.capabilityProfile !== 'async' &&
+    value.capabilityProfile !== 'project'
+  ) {
+    throw new Error('JavaScript runtime capabilityProfile is invalid');
+  }
+  if (value.primaryOutput !== 'preview' && value.primaryOutput !== 'console') {
+    throw new Error('JavaScript runtime primaryOutput is invalid');
+  }
+  return {
+    entryFile: value.entryFile,
+    sourceType: value.sourceType,
+    capabilityProfile: value.capabilityProfile,
+  };
+}
+
 /** JavaScript用のidentity、workspace容量、entry、scriptを遷移前に検証する。 */
 function validateJavaScriptInput(input: RunnerInput): ValidatedJavaScriptInput {
+  const runtime = validateJavaScriptRuntimeOptions(input);
   const html = validateHtmlCssPreviewInput(input, 'javascript');
   const totalBytes = Object.values(input.files).reduce(
     (total, source) => total + UTF8.encode(source).byteLength,
@@ -97,20 +152,22 @@ function validateJavaScriptInput(input: RunnerInput): ValidatedJavaScriptInput {
   if (totalBytes > MAX_WORKSPACE_BYTES) {
     throw new Error('JavaScript workspace exceeds 300 KiB');
   }
-  const configuredScript = input.options.scriptFile;
-  if (configuredScript !== undefined && typeof configuredScript !== 'string') {
-    throw new Error('JavaScript scriptFile must be a string');
-  }
   let scriptFile: string;
   try {
-    scriptFile = canonicalWorkspacePath(configuredScript ?? 'script.js');
+    scriptFile = canonicalWorkspacePath(runtime.entryFile);
   } catch {
-    throw new Error('JavaScript scriptFile must be a safe relative path');
+    throw new Error('JavaScript runtime entryFile must be a safe relative path');
   }
-  if (!/\.js$/iu.test(scriptFile)) throw new Error('JavaScript scriptFile must end with .js');
+  if (!/\.js$/iu.test(scriptFile)) throw new Error('JavaScript entryFile must end with .js');
   const scriptSource = html.files.get(scriptFile);
-  if (scriptSource === undefined) throw new Error(`JavaScript scriptFile not found: ${scriptFile}`);
-  return { html, scriptFile, scriptSource };
+  if (scriptSource === undefined) throw new Error(`JavaScript entryFile not found: ${scriptFile}`);
+  return {
+    html,
+    scriptFile,
+    scriptSource,
+    sourceType: runtime.sourceType,
+    capabilityProfile: runtime.capabilityProfile,
+  };
 }
 
 /** 基盤障害を学習コードの不正解にしないsystem診断へ変換する。 */
@@ -282,6 +339,8 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
         file: validated.scriptFile,
         source: validated.scriptSource,
         guardIdentifier,
+        sourceType: validated.sourceType,
+        capabilityProfile: validated.capabilityProfile,
       });
       this.#assertCurrent(frame, operation);
       if (analysis.status === 'failure') {

@@ -31,7 +31,15 @@ function runnerInput(overrides: Partial<RunnerInput> = {}): RunnerInput {
     },
     assets: [],
     viewport: { id: 'desktop', width: 1280, height: 720 },
-    options: { entryFile: 'index.html', scriptFile: 'script.js' },
+    options: {
+      runtime: {
+        kind: 'javascript',
+        entryFile: 'script.js',
+        sourceType: 'script',
+        capabilityProfile: 'core',
+        primaryOutput: 'preview',
+      },
+    },
     ...overrides,
   };
 }
@@ -139,7 +147,20 @@ afterEach(() => {
 describe('JavaScriptRunnerAdapter', () => {
   it.each([
     ['language', { languageId: 'html-css' }],
-    ['script path', { options: { entryFile: 'index.html', scriptFile: '../script.js' } }],
+    [
+      'script path',
+      {
+        options: {
+          runtime: {
+            kind: 'javascript',
+            entryFile: '../script.js',
+            sourceType: 'script',
+            capabilityProfile: 'core',
+            primaryOutput: 'preview',
+          },
+        },
+      },
+    ],
     ['script missing', { files: { 'index.html': '<main>本文</main>' } }],
     [
       'workspace size',
@@ -209,6 +230,9 @@ describe('JavaScriptRunnerAdapter', () => {
         { id: 'javascript.budget-exhausted', value: false },
       ],
     });
+    expect(analyzer.analyze).toHaveBeenCalledWith(
+      expect.objectContaining({ sourceType: 'script', capabilityProfile: 'core' }),
+    );
     await runner.dispose();
   });
 

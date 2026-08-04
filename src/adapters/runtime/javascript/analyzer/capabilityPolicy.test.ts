@@ -3,10 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { assertJavaScriptCapabilityPolicy } from './capabilityPolicy';
 
 /** Capability Policy用にECMAScript sourceをlocation付きASTへ変換する。 */
-function program(source: string) {
+function program(source: string, sourceType: 'script' | 'module' = 'script') {
   return parse(source, {
     ecmaVersion: 'latest',
-    sourceType: 'script',
+    sourceType,
     locations: true,
   });
 }
@@ -19,6 +19,62 @@ describe('assertJavaScriptCapabilityPolicy', () => {
       assertJavaScriptCapabilityPolicy(program(source), 'script.js');
     }).not.toThrow();
   });
+
+  it('coreは基礎構文とChapter 00互換DOMだけを許可する', () => {
+    expect(() => {
+      assertJavaScriptCapabilityPolicy(
+        program('const values = [1, 2].map((value) => value * 2);'),
+        'script.js',
+        'core',
+      );
+    }).not.toThrow();
+    expect(() => {
+      assertJavaScriptCapabilityPolicy(
+        program('document.querySelector("#app").textContent = "ready";'),
+        'script.js',
+        'core',
+      );
+    }).not.toThrow();
+    expect(() => {
+      assertJavaScriptCapabilityPolicy(
+        program('document.createElement("button");'),
+        'script.js',
+        'core',
+      );
+    }).toThrow(/許可/u);
+  });
+
+  it('ProfileごとにDOM・async・moduleを段階的に許可する', () => {
+    const createElement = program('document.createElement("button");');
+    expect(() => {
+      assertJavaScriptCapabilityPolicy(createElement, 'script.js', 'dom');
+    }).not.toThrow();
+
+    const asyncFunction = program('async function load() { await Promise.resolve(1); }');
+    expect(() => {
+      assertJavaScriptCapabilityPolicy(asyncFunction, 'script.js', 'core');
+    }).toThrow(/async/u);
+    expect(() => {
+      assertJavaScriptCapabilityPolicy(asyncFunction, 'script.js', 'async');
+    }).not.toThrow();
+
+    const moduleProgram = program('export const value = 1;', 'module');
+    expect(() => {
+      assertJavaScriptCapabilityPolicy(moduleProgram, 'script.js', 'core');
+    }).toThrow(/module/u);
+    expect(() => {
+      assertJavaScriptCapabilityPolicy(moduleProgram, 'script.js', 'modules');
+    }).not.toThrow();
+  });
+
+  it.each(['core', 'modules', 'dom', 'async', 'project'] as const)(
+    '%sでも外部通信を許可しない',
+    (profile) => {
+      expect(() => {
+        assertJavaScriptCapabilityPolicy(program('fetch("/collect");'), 'script.js', profile);
+      }).toThrow(/外部通信/u);
+    },
+  );
 
   it.each([
     ['eval("1")', /許可されていない/u],

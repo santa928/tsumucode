@@ -4,6 +4,7 @@ import type {
   JavaScriptAnalysisRequest,
   JavaScriptAnalysisSuccess,
 } from './contracts';
+import { isAnalyzerWorkerResponse, isJavaScriptAnalysisRequest } from './contracts';
 import { JavaScriptAnalyzerClient } from './JavaScriptAnalyzerClient';
 
 class FakeWorker implements AnalyzerWorkerPort {
@@ -23,6 +24,8 @@ const input = {
   executionRevision: 4,
   file: 'script.js',
   source: 'const value = 1;',
+  sourceType: 'script',
+  capabilityProfile: 'core',
   guardIdentifier: '__tsumuBudget',
 } as const;
 
@@ -42,6 +45,43 @@ function success(request: JavaScriptAnalysisRequest): JavaScriptAnalysisSuccess 
 }
 
 describe('JavaScriptAnalyzerClient', () => {
+  it('Worker requestは固定Profileを受理し、未知Profileと未知fieldを拒否する', () => {
+    const request = { ...input, requestId: 'request-1' };
+
+    expect(isJavaScriptAnalysisRequest(request)).toBe(true);
+    expect(isJavaScriptAnalysisRequest({ ...request, capabilityProfile: 'custom' })).toBe(false);
+    expect(isJavaScriptAnalysisRequest({ ...request, extra: true })).toBe(false);
+  });
+
+  it('Worker responseはSource fact unionをexact keyで検証する', () => {
+    const request = { ...input, requestId: 'request-1' };
+    const result = success(request);
+    const binding = {
+      kind: 'binding',
+      name: 'score',
+      declarationKind: 'const',
+      file: 'script.js',
+      line: 1,
+      column: 1,
+    } as const;
+
+    expect(
+      isAnalyzerWorkerResponse({ type: 'result', result: { ...result, facts: [binding] } }),
+    ).toBe(true);
+    expect(
+      isAnalyzerWorkerResponse({
+        type: 'result',
+        result: { ...result, facts: [{ ...binding, unexpected: true }] },
+      }),
+    ).toBe(false);
+    expect(
+      isAnalyzerWorkerResponse({
+        type: 'result',
+        result: { ...result, facts: [{ ...binding, kind: 'custom' }] },
+      }),
+    ).toBe(false);
+  });
+
   it('同じrequest identityの一度目のresponseだけを受理する', async () => {
     const worker = new FakeWorker();
     const client = new JavaScriptAnalyzerClient({

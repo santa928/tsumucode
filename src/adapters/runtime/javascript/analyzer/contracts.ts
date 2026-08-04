@@ -1,10 +1,15 @@
 import type { RunnerDiagnostic } from '../../../../core/runtime/contracts';
 
+export type JavaScriptSourceType = 'script' | 'module';
+export type JavaScriptCapabilityProfileId = 'core' | 'modules' | 'dom' | 'async' | 'project';
+
 export interface JavaScriptAnalysisInput {
   readonly exerciseSessionId: string;
   readonly executionRevision: number;
   readonly file: string;
   readonly source: string;
+  readonly sourceType: JavaScriptSourceType;
+  readonly capabilityProfile: JavaScriptCapabilityProfileId;
   readonly guardIdentifier: string;
 }
 
@@ -21,7 +26,36 @@ export interface QuerySelectorTextContentAssignmentFact {
   readonly column: number;
 }
 
-export type JavaScriptSourceFact = QuerySelectorTextContentAssignmentFact;
+export interface JavaScriptFactLocation {
+  readonly file: string;
+  readonly line: number;
+  readonly column: number;
+}
+
+export type JavaScriptSourceFact =
+  | (JavaScriptFactLocation & {
+      readonly kind: 'binding';
+      readonly name: string;
+      readonly declarationKind: 'const' | 'let' | 'var';
+    })
+  | (JavaScriptFactLocation & { readonly kind: 'branch'; readonly branchKind: 'if' | 'switch' })
+  | (JavaScriptFactLocation & {
+      readonly kind: 'loop';
+      readonly loopKind: 'for' | 'for-of' | 'for-in' | 'while' | 'do-while';
+    })
+  | (JavaScriptFactLocation & {
+      readonly kind: 'function';
+      readonly functionKind: 'declaration' | 'expression' | 'arrow';
+      readonly parameterCount: number;
+    })
+  | (JavaScriptFactLocation & { readonly kind: 'call'; readonly callee: string })
+  | (JavaScriptFactLocation & {
+      readonly kind: 'scope';
+      readonly scopeKind: 'program' | 'function' | 'block';
+      readonly depth: number;
+    })
+  | (JavaScriptFactLocation & { readonly kind: 'closure'; readonly capturedName: string })
+  | QuerySelectorTextContentAssignmentFact;
 
 interface JavaScriptAnalysisIdentity {
   readonly requestId: string;
@@ -71,6 +105,21 @@ function isRecord(value: unknown): value is Readonly<Record<string, unknown>> {
 /** Workerへ渡せるboundedな解析要求かを検証する。 */
 export function isJavaScriptAnalysisRequest(value: unknown): value is JavaScriptAnalysisRequest {
   if (!isRecord(value)) return false;
+  if (
+    JSON.stringify(Object.keys(value).sort()) !==
+    JSON.stringify([
+      'capabilityProfile',
+      'executionRevision',
+      'exerciseSessionId',
+      'file',
+      'guardIdentifier',
+      'requestId',
+      'source',
+      'sourceType',
+    ])
+  ) {
+    return false;
+  }
   return (
     typeof value.requestId === 'string' &&
     value.requestId.length > 0 &&
@@ -84,6 +133,8 @@ export function isJavaScriptAnalysisRequest(value: unknown): value is JavaScript
     value.file.length > 0 &&
     value.file.length <= 256 &&
     typeof value.source === 'string' &&
+    (value.sourceType === 'script' || value.sourceType === 'module') &&
+    ['core', 'modules', 'dom', 'async', 'project'].includes(String(value.capabilityProfile)) &&
     typeof value.guardIdentifier === 'string' &&
     /^[$A-Z_a-z][$\w]*$/u.test(value.guardIdentifier)
   );
@@ -107,16 +158,67 @@ function isRunnerDiagnostic(value: unknown): value is RunnerDiagnostic {
 /** Validatorへ渡すsource factのstrictな形を検証する。 */
 function isJavaScriptSourceFact(value: unknown): value is JavaScriptSourceFact {
   if (!isRecord(value)) return false;
-  return (
-    value.kind === 'query-selector-text-content-assignment' &&
-    typeof value.selector === 'string' &&
-    typeof value.value === 'string' &&
+  const locationIsValid =
     typeof value.file === 'string' &&
+    value.file.length > 0 &&
+    value.file.length <= 256 &&
     Number.isSafeInteger(value.line) &&
     Number(value.line) >= 1 &&
     Number.isSafeInteger(value.column) &&
-    Number(value.column) >= 1
-  );
+    Number(value.column) >= 1;
+  if (!locationIsValid) return false;
+  const hasKeys = (keys: readonly string[]): boolean =>
+    JSON.stringify(Object.keys(value).sort()) === JSON.stringify([...keys].sort());
+  const bounded = (candidate: unknown): candidate is string =>
+    typeof candidate === 'string' && candidate.length <= 128;
+  switch (value.kind) {
+    case 'binding':
+      return (
+        hasKeys(['column', 'declarationKind', 'file', 'kind', 'line', 'name']) &&
+        bounded(value.name) &&
+        ['const', 'let', 'var'].includes(String(value.declarationKind))
+      );
+    case 'branch':
+      return (
+        hasKeys(['branchKind', 'column', 'file', 'kind', 'line']) &&
+        (value.branchKind === 'if' || value.branchKind === 'switch')
+      );
+    case 'loop':
+      return (
+        hasKeys(['column', 'file', 'kind', 'line', 'loopKind']) &&
+        ['for', 'for-of', 'for-in', 'while', 'do-while'].includes(String(value.loopKind))
+      );
+    case 'function':
+      return (
+        hasKeys(['column', 'file', 'functionKind', 'kind', 'line', 'parameterCount']) &&
+        ['declaration', 'expression', 'arrow'].includes(String(value.functionKind)) &&
+        Number.isSafeInteger(value.parameterCount) &&
+        Number(value.parameterCount) >= 0 &&
+        Number(value.parameterCount) <= 32
+      );
+    case 'call':
+      return hasKeys(['callee', 'column', 'file', 'kind', 'line']) && bounded(value.callee);
+    case 'scope':
+      return (
+        hasKeys(['column', 'depth', 'file', 'kind', 'line', 'scopeKind']) &&
+        ['program', 'function', 'block'].includes(String(value.scopeKind)) &&
+        Number.isSafeInteger(value.depth) &&
+        Number(value.depth) >= 0 &&
+        Number(value.depth) <= 256
+      );
+    case 'closure':
+      return (
+        hasKeys(['capturedName', 'column', 'file', 'kind', 'line']) && bounded(value.capturedName)
+      );
+    case 'query-selector-text-content-assignment':
+      return (
+        hasKeys(['column', 'file', 'kind', 'line', 'selector', 'value']) &&
+        bounded(value.selector) &&
+        bounded(value.value)
+      );
+    default:
+      return false;
+  }
 }
 
 /** Worker responseがstrictな成功／失敗契約かを検証する。 */

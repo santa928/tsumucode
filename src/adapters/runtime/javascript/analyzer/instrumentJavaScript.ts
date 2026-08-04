@@ -201,38 +201,363 @@ function stringLiteral(value: unknown): string | undefined {
     : undefined;
 }
 
-/** Validatorがsource構造を検証するためのbounded factを抽出する。 */
-function collectFacts(nodes: readonly Node[], file: string): readonly JavaScriptSourceFact[] {
-  const facts: JavaScriptSourceFact[] = [];
-  for (const node of nodes) {
-    if (node.type !== 'AssignmentExpression') continue;
-    const assignment = ast(node);
-    if (assignment.operator !== '=' || !isNode(assignment.left)) continue;
-    const left = ast(assignment.left);
-    if (memberProperty(left) !== 'textContent' || !isNode(left.object)) continue;
-    const call = ast(left.object);
-    if (call.type !== 'CallExpression' || !isNode(call.callee)) continue;
-    const callee = ast(call.callee);
-    if (callee.type !== 'MemberExpression' || memberProperty(callee) !== 'querySelector') continue;
-    const root = callee.object;
-    if (typeof root !== 'object' || root === null) continue;
-    const rootNode = root as Readonly<Record<string, unknown>>;
-    if (rootNode.type !== 'Identifier' || rootNode.name !== 'document') continue;
-    const args = Array.isArray(call.arguments) ? call.arguments : [];
-    const selector = stringLiteral(args[0]);
-    const value = stringLiteral(assignment.right);
-    if (selector === undefined || value === undefined) continue;
-    const position = assignment.loc?.start;
-    facts.push({
-      kind: 'query-selector-text-content-assignment',
-      selector,
-      value,
-      file,
-      line: position?.line ?? 1,
-      column: position === undefined ? 1 : position.column + 1,
+/** AST propertyがIdentifierなら名前を返す。 */
+function identifierName(value: unknown): string | undefined {
+  if (typeof value !== 'object' || value === null) return undefined;
+  const candidate = value as Readonly<Record<string, unknown>>;
+  return candidate.type === 'Identifier' && typeof candidate.name === 'string'
+    ? candidate.name
+    : undefined;
+}
+
+interface ScopeInfo {
+  readonly node: Node;
+  readonly kind: 'program' | 'function' | 'block';
+  readonly depth: number;
+  readonly parent?: ScopeInfo;
+  readonly bindings: Set<string>;
+}
+
+/** Factへ共通する1-based source位置を返す。 */
+function factLocation(node: Node, file: string) {
+  const position = node.loc?.start;
+  return {
+    file,
+    line: position?.line ?? 1,
+    column: position === undefined ? 1 : position.column + 1,
+  } as const;
+}
+
+/** Factの公開文字列上限をAnalyzer側でもfail-closedに適用する。 */
+function boundedFactText(value: string, file: string): string {
+  if (value.length > 128) {
+    throw new JavaScriptAnalysisIssue('system', 'Source fact文字列が上限を超えました', file);
+  }
+  return value;
+}
+
+/** 宣言patternに含まれるIdentifierを再帰的に列挙する。 */
+function patternIdentifiers(value: unknown): readonly Node[] {
+  if (!isNode(value)) return [];
+  const current = ast(value);
+  if (value.type === 'Identifier') return [value];
+  if (value.type === 'RestElement') return patternIdentifiers(current.argument);
+  if (value.type === 'AssignmentPattern') return patternIdentifiers(current.left);
+  if (value.type === 'ArrayPattern') {
+    return Array.isArray(current.elements)
+      ? current.elements.flatMap((element) => patternIdentifiers(element))
+      : [];
+  }
+  if (value.type === 'ObjectPattern') {
+    if (!Array.isArray(current.properties)) return [];
+    return current.properties.flatMap((property) => {
+      if (!isNode(property)) return [];
+      const candidate = ast(property);
+      return property.type === 'Property'
+        ? patternIdentifiers(candidate.value)
+        : patternIdentifiers(candidate.argument);
     });
+  }
+  return [];
+}
+
+/** AST nodeが新しいlexical scopeを開始するかを返す。 */
+function scopeKind(node: Node): ScopeInfo['kind'] | undefined {
+  if (node.type === 'Program') return 'program';
+  if (FUNCTION_TYPES.has(node.type)) return 'function';
+  if (node.type === 'BlockStatement') return 'block';
+  return undefined;
+}
+
+/** varだけを最寄りFunction／Program scopeへhoistする。 */
+function declarationScope(scope: ScopeInfo, kind: 'const' | 'let' | 'var'): ScopeInfo {
+  if (kind !== 'var') return scope;
+  let current: ScopeInfo = scope;
+  while (current.kind === 'block' && current.parent !== undefined) current = current.parent;
+  return current;
+}
+
+/** staticなCall calleeを学習用の短い名前へ変換する。 */
+function callName(value: unknown): string | undefined {
+  if (!isNode(value)) return undefined;
+  const current = ast(value);
+  if (value.type === 'Identifier') {
+    return typeof current.name === 'string' ? current.name : undefined;
+  }
+  if (value.type === 'ChainExpression') return callName(current.expression);
+  if (value.type !== 'MemberExpression' || current.computed !== false) return undefined;
+  const object = callName(current.object);
+  const property = identifierName(current.property);
+  return object === undefined || property === undefined ? undefined : `${object}.${property}`;
+}
+
+/** Identifierが参照位置でなく宣言key／label／static propertyかを判定する。 */
+function isIdentifierReference(
+  node: Node,
+  parent: Node | undefined,
+  declarationIdentifiers: ReadonlySet<Node>,
+): boolean {
+  if (declarationIdentifiers.has(node) || parent === undefined) return false;
+  const owner = ast(parent);
+  if (parent.type === 'MemberExpression' && owner.computed === false && owner.property === node) {
+    return false;
+  }
+  if (
+    parent.type === 'Property' &&
+    owner.computed === false &&
+    owner.key === node &&
+    owner.value !== node
+  ) {
+    return false;
+  }
+  if (
+    (parent.type === 'LabeledStatement' ||
+      parent.type === 'BreakStatement' ||
+      parent.type === 'ContinueStatement') &&
+    owner.label === node
+  ) {
+    return false;
+  }
+  return !parent.type.startsWith('Import');
+}
+
+/** 現在scopeからIdentifier宣言scopeをlexicalに解決する。 */
+function resolveBinding(scope: ScopeInfo | undefined, name: string): ScopeInfo | undefined {
+  let current = scope;
+  while (current !== undefined) {
+    if (current.bindings.has(name)) return current;
+    current = current.parent;
+  }
+  return undefined;
+}
+
+/** binding scopeが現在Functionの内側ならlocal、外側ならclosureと判定する。 */
+function bindingBelongsToFunction(binding: ScopeInfo, functionScope: ScopeInfo): boolean {
+  let current: ScopeInfo | undefined = binding;
+  while (current !== undefined) {
+    if (current === functionScope) return true;
+    current = current.parent;
+  }
+  return false;
+}
+
+/** ValidatorがChapter 00〜03のsource構造を検証するbounded factを抽出する。 */
+function collectFacts(
+  program: Node,
+  nodes: readonly Node[],
+  file: string,
+): readonly JavaScriptSourceFact[] {
+  const facts: JavaScriptSourceFact[] = [];
+  const scopesByNode = new Map<Node, ScopeInfo>();
+  const scopeByNode = new Map<Node, ScopeInfo>();
+  const parentByNode = new Map<Node, Node | undefined>();
+  const declarationKindByNode = new Map<Node, 'const' | 'let' | 'var'>();
+  const declarationIdentifiers = new Set<Node>();
+
+  const addFact = (fact: JavaScriptSourceFact): void => {
+    facts.push(fact);
     if (facts.length > MAX_FACTS) {
       throw new JavaScriptAnalysisIssue('system', 'Source fact数が上限を超えました', file);
+    }
+  };
+
+  fullAncestor(program, (node: Node, _state: unknown, ancestors: Node[]) => {
+    let activeScope: ScopeInfo | undefined;
+    for (const ancestor of ancestors) {
+      const kind = scopeKind(ancestor);
+      if (kind === undefined) continue;
+      let scope = scopesByNode.get(ancestor);
+      if (scope === undefined) {
+        scope = {
+          node: ancestor,
+          kind,
+          depth: activeScope === undefined ? 0 : activeScope.depth + 1,
+          ...(activeScope === undefined ? {} : { parent: activeScope }),
+          bindings: new Set<string>(),
+        };
+        scopesByNode.set(ancestor, scope);
+      }
+      activeScope = scope;
+    }
+    if (activeScope !== undefined) scopeByNode.set(node, activeScope);
+    const current = ast(node);
+    const parent = ancestors.at(-2);
+    parentByNode.set(node, parent);
+
+    if (node.type === 'VariableDeclarator' && parent?.type === 'VariableDeclaration') {
+      const declarationKind = ast(parent).kind;
+      if (
+        (declarationKind === 'const' || declarationKind === 'let' || declarationKind === 'var') &&
+        activeScope !== undefined
+      ) {
+        declarationKindByNode.set(node, declarationKind);
+        for (const identifier of patternIdentifiers(current.id)) {
+          declarationIdentifiers.add(identifier);
+          const name = identifierName(identifier);
+          if (name !== undefined) declarationScope(activeScope, declarationKind).bindings.add(name);
+        }
+      }
+    }
+
+    if (FUNCTION_TYPES.has(node.type)) {
+      const functionScope = scopesByNode.get(node);
+      if (functionScope !== undefined && Array.isArray(current.params)) {
+        for (const parameter of current.params) {
+          for (const identifier of patternIdentifiers(parameter)) {
+            declarationIdentifiers.add(identifier);
+            const name = identifierName(identifier);
+            if (name !== undefined) functionScope.bindings.add(name);
+          }
+        }
+      }
+      if (isNode(current.id)) {
+        declarationIdentifiers.add(current.id);
+        const name = identifierName(current.id);
+        const owner = node.type === 'FunctionDeclaration' ? functionScope?.parent : functionScope;
+        if (name !== undefined) owner?.bindings.add(name);
+      }
+    }
+
+    if (node.type.startsWith('Import') && isNode(current.local) && activeScope !== undefined) {
+      declarationIdentifiers.add(current.local);
+      const name = identifierName(current.local);
+      if (name !== undefined) activeScope.bindings.add(name);
+    }
+  });
+
+  const sortedNodes = [...nodes].sort(
+    (left, right) => left.start - right.start || left.end - right.end,
+  );
+  const closureKeys = new Set<string>();
+  for (const node of sortedNodes) {
+    const current = ast(node);
+    const location = factLocation(node, file);
+    const scope = scopesByNode.get(node);
+    if (scope !== undefined) {
+      addFact({ kind: 'scope', scopeKind: scope.kind, depth: scope.depth, ...location });
+    }
+
+    if (node.type === 'VariableDeclarator') {
+      const declarationKind = declarationKindByNode.get(node);
+      if (declarationKind === 'const' || declarationKind === 'let' || declarationKind === 'var') {
+        for (const identifier of patternIdentifiers(current.id)) {
+          const name = identifierName(identifier);
+          if (name !== undefined) {
+            addFact({
+              kind: 'binding',
+              name: boundedFactText(name, file),
+              declarationKind,
+              ...factLocation(identifier, file),
+            });
+          }
+        }
+      }
+    }
+
+    if (node.type === 'IfStatement' || node.type === 'SwitchStatement') {
+      addFact({
+        kind: 'branch',
+        branchKind: node.type === 'IfStatement' ? 'if' : 'switch',
+        ...location,
+      });
+    }
+    const loopKind =
+      node.type === 'ForStatement'
+        ? 'for'
+        : node.type === 'ForOfStatement'
+          ? 'for-of'
+          : node.type === 'ForInStatement'
+            ? 'for-in'
+            : node.type === 'WhileStatement'
+              ? 'while'
+              : node.type === 'DoWhileStatement'
+                ? 'do-while'
+                : undefined;
+    if (loopKind !== undefined) addFact({ kind: 'loop', loopKind, ...location });
+
+    if (FUNCTION_TYPES.has(node.type)) {
+      const parameterCount = Array.isArray(current.params) ? current.params.length : 0;
+      if (parameterCount > 32) {
+        throw new JavaScriptAnalysisIssue('system', 'Function parameter数が上限を超えました', file);
+      }
+      addFact({
+        kind: 'function',
+        functionKind:
+          node.type === 'FunctionDeclaration'
+            ? 'declaration'
+            : node.type === 'FunctionExpression'
+              ? 'expression'
+              : 'arrow',
+        parameterCount,
+        ...location,
+      });
+    }
+
+    if (node.type === 'CallExpression') {
+      const callee = callName(current.callee);
+      if (callee !== undefined) {
+        addFact({ kind: 'call', callee: boundedFactText(callee, file), ...location });
+      }
+    }
+
+    if (node.type === 'AssignmentExpression') {
+      const assignment = current;
+      if (assignment.operator === '=' && isNode(assignment.left)) {
+        const left = ast(assignment.left);
+        if (memberProperty(left) === 'textContent' && isNode(left.object)) {
+          const call = ast(left.object);
+          if (call.type === 'CallExpression' && isNode(call.callee)) {
+            const callee = ast(call.callee);
+            const root = isNode(callee.object) ? ast(callee.object) : undefined;
+            if (
+              callee.type === 'MemberExpression' &&
+              memberProperty(callee) === 'querySelector' &&
+              root?.type === 'Identifier' &&
+              root.name === 'document'
+            ) {
+              const args = Array.isArray(call.arguments) ? call.arguments : [];
+              const selector = stringLiteral(args[0]);
+              const value = stringLiteral(assignment.right);
+              if (selector !== undefined && value !== undefined) {
+                addFact({
+                  kind: 'query-selector-text-content-assignment',
+                  selector: boundedFactText(selector, file),
+                  value: boundedFactText(value, file),
+                  ...location,
+                });
+              }
+            }
+          }
+        }
+      }
+    }
+
+    if (node.type === 'Identifier') {
+      const parent = parentByNode.get(node);
+      if (!isIdentifierReference(node, parent, declarationIdentifiers)) continue;
+      const name = identifierName(node);
+      const activeScope = scopeByNode.get(node);
+      if (name === undefined || activeScope === undefined) continue;
+      let functionScope: ScopeInfo | undefined = activeScope;
+      while (functionScope !== undefined && functionScope.kind !== 'function') {
+        functionScope = functionScope.parent;
+      }
+      const bindingScope = resolveBinding(activeScope, name);
+      if (
+        functionScope === undefined ||
+        bindingScope === undefined ||
+        bindingBelongsToFunction(bindingScope, functionScope)
+      ) {
+        continue;
+      }
+      const key = `${String(functionScope.node.start)}:${name}`;
+      if (closureKeys.has(key)) continue;
+      closureKeys.add(key);
+      addFact({
+        kind: 'closure',
+        capturedName: boundedFactText(name, file),
+        ...location,
+      });
     }
   }
   return Object.freeze(facts);
@@ -264,7 +589,7 @@ export async function analyzeJavaScriptSource(
   try {
     program = parse(request.source, {
       ecmaVersion: 'latest',
-      sourceType: 'script',
+      sourceType: request.sourceType,
       locations: true,
     });
   } catch (error: unknown) {
@@ -290,8 +615,8 @@ export async function analyzeJavaScriptSource(
         request.file,
       );
     }
-    assertJavaScriptCapabilityPolicy(program, request.file);
-    const facts = collectFacts(nodes, request.file);
+    assertJavaScriptCapabilityPolicy(program, request.file, request.capabilityProfile);
+    const facts = collectFacts(program, nodes, request.file);
     return {
       status: 'success',
       requestId: request.requestId,

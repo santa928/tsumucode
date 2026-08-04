@@ -1,5 +1,5 @@
 /** Runtime の観測結果を学習要件へ評価する Validation 公開契約。 */
-import type { ValidationRuleDefinition } from '../content/types';
+import type { ExerciseRuntime, ValidationRuleDefinition } from '../content/types';
 import type {
   PreviewSnapshot,
   RunnerDiagnostic,
@@ -13,6 +13,7 @@ export type ValidationStatus = 'pass' | 'incomplete' | 'code-error' | 'system-er
 export interface ValidationContext {
   readonly exerciseId: string;
   readonly rules: readonly ValidatorRule[];
+  readonly runtime?: ExerciseRuntime;
   readonly files: Readonly<Record<string, string>>;
   readonly snapshots: Readonly<Record<string, PreviewSnapshot>>;
   readonly diagnostics: readonly RunnerDiagnostic[];

@@ -788,6 +788,7 @@ export class LearningSessionController {
       const result = await this.input.validator.validate({
         exerciseId: item.id,
         rules: item.validationRules,
+        ...(item.runtime === undefined ? {} : { runtime: item.runtime }),
         files: execution.files,
         snapshots,
         diagnostics,

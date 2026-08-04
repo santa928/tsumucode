@@ -6,6 +6,8 @@ const baseInput = {
   exerciseSessionId: 'javascript:exercise-1',
   executionRevision: 3,
   file: 'script.js',
+  sourceType: 'script',
+  capabilityProfile: 'core',
   guardIdentifier: '__tsumuBudget',
 } as const;
 
@@ -65,6 +67,92 @@ describe('analyzeJavaScriptSource', () => {
       line: 1,
       column: 1,
     });
+  });
+
+  it('textContentを空にする代入もbounded factとして保持する', async () => {
+    const result = await analyzeJavaScriptSource({
+      ...baseInput,
+      source: 'document.querySelector("#message").textContent = "";',
+    });
+
+    expect(result.status).toBe('success');
+    if (result.status !== 'success') throw new Error('解析が成功しませんでした');
+    expect(result.facts).toContainEqual({
+      kind: 'query-selector-text-content-assignment',
+      selector: '#message',
+      value: '',
+      file: 'script.js',
+      line: 1,
+      column: 1,
+    });
+  });
+
+  it('binding・branch・loop・function・call・scope・closure factを位置付きで抽出する', async () => {
+    const result = await analyzeJavaScriptSource({
+      ...baseInput,
+      source: [
+        'const outer = 1;',
+        'if (outer > 0) { let blockValue = 2; }',
+        'for (const item of [1, 2]) { console.log(item); }',
+        'function make(prefix) {',
+        '  return (value) => prefix + value + outer;',
+        '}',
+      ].join('\n'),
+    });
+
+    expect(result.status).toBe('success');
+    if (result.status !== 'success') throw new Error('解析が成功しませんでした');
+    expect(result.facts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ kind: 'scope', scopeKind: 'program', depth: 0 }),
+        expect.objectContaining({
+          kind: 'binding',
+          name: 'outer',
+          declarationKind: 'const',
+        }),
+        expect.objectContaining({ kind: 'branch', branchKind: 'if' }),
+        expect.objectContaining({ kind: 'loop', loopKind: 'for-of' }),
+        expect.objectContaining({
+          kind: 'function',
+          functionKind: 'declaration',
+          parameterCount: 1,
+        }),
+        expect.objectContaining({ kind: 'function', functionKind: 'arrow', parameterCount: 1 }),
+        expect.objectContaining({ kind: 'call', callee: 'console.log' }),
+        expect.objectContaining({ kind: 'closure', capturedName: 'prefix' }),
+        expect.objectContaining({ kind: 'closure', capturedName: 'outer' }),
+      ]),
+    );
+    expect(result.facts.length).toBeLessThanOrEqual(256);
+    for (const fact of result.facts) {
+      expect(fact.line).toBeGreaterThanOrEqual(1);
+      expect(fact.column).toBeGreaterThanOrEqual(1);
+      for (const value of Object.values(fact)) {
+        if (typeof value === 'string') expect(value.length).toBeLessThanOrEqual(128);
+      }
+    }
+  });
+
+  it('sourceTypeとProfileをparse／policyへ伝播する', async () => {
+    const moduleResult = await analyzeJavaScriptSource({
+      ...baseInput,
+      sourceType: 'module',
+      capabilityProfile: 'modules',
+      source: 'export const value = 1;',
+    });
+    const coreDomResult = await analyzeJavaScriptSource({
+      ...baseInput,
+      source: 'document.createElement("button");',
+    });
+    const domResult = await analyzeJavaScriptSource({
+      ...baseInput,
+      capabilityProfile: 'dom',
+      source: 'document.createElement("button");',
+    });
+
+    expect(moduleResult.status).toBe('success');
+    expect(coreDomResult).toMatchObject({ status: 'failure' });
+    expect(domResult.status).toBe('success');
   });
 
   it.each([

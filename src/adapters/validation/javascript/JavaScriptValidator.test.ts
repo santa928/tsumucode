@@ -79,6 +79,13 @@ function javascriptRules(): readonly ValidationRuleDefinition[] {
 /** JavaScript Validatorの成功条件を満たす同一revisionの入力を返す。 */
 function javascriptContext(overrides: Partial<ValidationContext> = {}): ValidationContext {
   return validationContext({
+    runtime: {
+      kind: 'javascript',
+      entryFile: 'script.js',
+      sourceType: 'script',
+      capabilityProfile: 'core',
+      primaryOutput: 'preview',
+    },
     rules: javascriptRules(),
     files: {
       'index.html': '<p id="message">変更前</p>',
@@ -114,6 +121,9 @@ describe('JavaScriptValidator', () => {
       executionRevision: 4,
       passedRequirementIds: ['message-updated'],
     });
+    expect(analyzer.analyze).toHaveBeenCalledWith(
+      expect.objectContaining({ sourceType: 'script', capabilityProfile: 'core' }),
+    );
     expect(analyzer.dispose).toHaveBeenCalledOnce();
   });
 
