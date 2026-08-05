@@ -1,6 +1,6 @@
 # JavaScript全Course 設計
 
-- 状態: 書面レビュー承認済み・実装前
+- 状態: 書面レビュー承認済み・Core Runtime／Console実装・検証済み（Module／Scenario実装前）
 - 承認日: 2026-08-04
 - 作成日: 2026-08-03
 - 対象: `javascript` Course Chapter 01〜13、既存Chapter 00の互換維持、全Course公開
@@ -67,6 +67,34 @@ Courseは技術項目を列挙するだけの辞書にしない。各標準Chapt
 | REQ-JSC-033 | 追加 | 全Courseを少なくとも1名の完全初心者が通し、観察記録と是正結果を残す                                            |
 | REQ-JSC-034 | 維持 | taskごとに日本語commit、secret scan、main push、Pages deployment、公開URLとconsoleを確認する                   |
 | REQ-JSC-035 | 追加 | Course昇格時にHome、Course直接開始、LearningPathの続きから、Slide Libraryを本番回帰確認する                    |
+
+### 3.1 Core Runtime／Console実装証跡
+
+2026-08-05時点で、Chapter 00互換のCore Runtimeとbounded ConsoleをProduction buildへ実装し、下表の範囲を検証した。これは52 Lessonの全Course完成を意味しない。Courseは引き続き`draft`であり、Module、Scenario、Chapter 01〜13、全Course review、初心者検証、Lighthouse、本番公開後回帰は未完了である。
+
+- Production artifact SHA-256: `38be0f65d89f10a4854b32ef883c32eca9787ba5b38e493894a622e2228ceab0`
+- JavaScript固有lazy graph: `19,608 bytes gzip`（予算`180,000 bytes`以下）
+- Browser／Accessibility／Security／Responsive: Chromium、Firefox、WebKitで`148 passed / 2 skipped / 0 failed / retry 0`
+- Performance: `21/21`、bundle／subpath予算`9/9`
+- JavaScript実測: 初回Preview p95 `35 ms`、再Preview p95 `25.5 ms`、判定p95 `62.1 ms`
+- Console実測: 100件を20回更新し、50 ms超のlong task `0`
+- Visual baseline tree SHA-256: `905a7e2b8cd881439ac5a051ae24c3157139c2c58c8e48f873767ba50c51eb86`
+
+| 要件        | 状態                    | 自動／目視証跡                                                                                                                          |
+| ----------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| REQ-JSC-011 | Core基盤検証済み        | `javascript-security.spec.ts`の実Analyzer→Worker→opaque iframe経路とstrict diagnostics契約                                              |
+| REQ-JSC-012 | 固定Profile基盤検証済み | `core`／`project`の拒否matrix。各章での段階開放教材は未完了                                                                             |
+| REQ-JSC-013 | Core基盤検証済み        | Network、Storage、Worker、Service Worker、eval、Function、dynamic import、popup、親画面、navigation、form、外部画像を`code-error`で拒否 |
+| REQ-JSC-014 | 検証済み                | 100件、1件4 KiB、合計64 KiB、深さ3、collection 50、cycle、getter、Proxy、Unicode、plain text表示                                        |
+| REQ-JSC-015 | 検証済み                | Console確認後のReset／再読込でoutputを復元せず、Source Draftだけを永続化                                                                |
+| REQ-JSC-023 | Core基盤検証済み        | runtime error前のConsole保持、再試行、Source保持、直前成功表示をE2Eで確認                                                               |
+| REQ-JSC-024 | 検証済み                | `前回成功時のConsoleです`と`前回の記録`をbaseline原寸目視                                                                               |
+| REQ-JSC-025 | Core基盤検証済み        | Home／Path／HTML Slideの静的graphからJavaScript Runtime、Console、Analyzer、Validatorを分離し、増分`19,608 bytes gzip`                  |
+| REQ-JSC-032 | Core基盤のみ検証済み    | 3 Engine、axe、Keyboard、1280×720／768×1024／390×844、Security、Performanceを通過。全Course Gateは未完了                                |
+
+### 3.2 未完了要件
+
+REQ-JSC-016〜022は未完了である。相対static module graph、Module固有拒否matrix、trusted Scenario bridge、新規iframeごとのcheckpoint、750 ms bounded poll、全Course用Analyzer fact、早期／後期Lesson別の判定方針は、Module／Scenario実装タスクと各教材タスクで実装・検証する。現時点のCore Runtime／Console証跡をこれらの完了根拠へ読み替えない。
 
 ## 4. 要件差分
 
@@ -361,7 +389,7 @@ system errorは不正解履歴へ保存しない。現在revisionと異なるCon
 
 - Catalog gzip: 20,480 bytes以下
 - Home初期JavaScript gzip: 256,000 bytes以下
-- JavaScript固有lazy graph gzip: 200,000 bytes以下
+- JavaScript固有lazy graph gzip: 180,000 bytes以下
 - Lesson JSON gzip: p95 32 KiB以下、最大48 KiB
 - desktop初回Preview p95: 500 ms以下
 - 標準Scenario判定p95: 1,500 ms以下

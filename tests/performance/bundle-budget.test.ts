@@ -359,7 +359,7 @@ describe('production bundle budget', () => {
 
     const sharedRouteGraph = collectStaticChunkKeys(viteManifest, [normalEntryKey]);
     const forbiddenInitialMarkers =
-      /(?:acorn|magic-string|JavaScriptAnalyzer|adapters\/runtime\/javascript|adapters\/validation\/javascript|javascriptEditorLanguage)/u;
+      /(?:acorn|magic-string|JavaScriptAnalyzer|RuntimeConsole|consoleFormatter|adapters\/runtime\/javascript|adapters\/validation\/javascript|javascriptEditorLanguage)/u;
     expect(
       [...sharedRouteGraph].flatMap((key) => {
         const file = viteManifest[key]!.file;

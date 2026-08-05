@@ -12,6 +12,7 @@ export default tseslint.config(
       'public/generated/content',
       'content/**/*.js',
       'playwright-report',
+      'playwright-performance-report',
       'test-results',
       '.worktrees',
     ],

@@ -3,6 +3,7 @@ import {
   JAVASCRIPT_EXERCISE_ID,
   openEditableJavaScriptExercise,
 } from '../e2e/helpers/javascriptCourse';
+import { replaceEditorText } from '../e2e/helpers/progress';
 import { loadJavaScriptPerformanceManifest, percentile95 } from './manifest';
 
 const manifest = await loadJavaScriptPerformanceManifest();
@@ -26,6 +27,47 @@ async function clearMeasures(page: Page): Promise<void> {
   });
 }
 
+/** 同一PageでExerciseを開き直す前に、前Sessionの永続Workspace Lease解放を待つ。 */
+async function releaseJavaScriptWorkspaceLease(page: Page): Promise<void> {
+  await page.goto('./#/');
+  await expect(page.getByRole('heading', { level: 1, name: '学びたいピースを選ぶ' })).toBeVisible();
+  await expect
+    .poll(
+      () =>
+        page.evaluate(async () => {
+          const database = await new Promise<IDBDatabase>((resolve, reject) => {
+            const request = indexedDB.open('tsumucode-progress');
+            request.onsuccess = () => {
+              resolve(request.result);
+            };
+            request.onerror = () => {
+              reject(request.error ?? new Error('IndexedDB open failed'));
+            };
+          });
+          try {
+            if (!database.objectStoreNames.contains('metadata')) return true;
+            const transaction = database.transaction('metadata', 'readonly');
+            const result = await new Promise<unknown>((resolve, reject) => {
+              const request = transaction
+                .objectStore('metadata')
+                .get('workspaceLease:["javascript","javascript-ch00-l01-e01"]');
+              request.onsuccess = () => {
+                resolve(request.result);
+              };
+              request.onerror = () => {
+                reject(request.error ?? new Error('Lease read failed'));
+              };
+            });
+            return result === undefined;
+          } finally {
+            database.close();
+          }
+        }),
+      { timeout: 10_000 },
+    )
+    .toBe(true);
+}
+
 test('JavaScript初回Previewのp95を500ms以内に保つ', async ({ page }, testInfo) => {
   test.setTimeout(180_000);
   expect(manifest.exercises).toEqual([{ id: JAVASCRIPT_EXERCISE_ID, category: 'simple' }]);
@@ -33,7 +75,7 @@ test('JavaScript初回Previewのp95を500ms以内に保つ', async ({ page }, te
   const totalRuns = manifest.warmupRuns + manifest.runsPerExercise;
 
   for (let index = 0; index < totalRuns; index += 1) {
-    await page.goto('about:blank');
+    await releaseJavaScriptWorkspaceLease(page);
     await openEditableJavaScriptExercise(page);
     await expect
       .poll(() =>
@@ -107,4 +149,70 @@ test('JavaScript再Previewと判定のp95を性能予算内に保つ', async ({ 
 
   expect(result.repeatPreviewP95Ms).toBeLessThanOrEqual(manifest.repeatPreviewP95Ms);
   expect(result.validationP95Ms).toBeLessThanOrEqual(manifest.validationP95Ms);
+});
+
+test('Console 100件を20回更新して50ms超のlong taskを発生させない', async ({ page }, testInfo) => {
+  test.setTimeout(180_000);
+  await openEditableJavaScriptExercise(page);
+  await replaceEditorText(
+    page,
+    `for (let index = 0; index < 100; index += 1) console.log(index);
+document.querySelector('#message').textContent = 'JavaScriptで文字を変えました';`,
+  );
+  const update = page.getByRole('button', { name: 'プレビューを更新' });
+  await update.click();
+  await expect(update).toBeEnabled();
+  await page.getByRole('tab', { name: 'Console' }).click();
+  await expect(page.getByRole('region', { name: 'Console出力' }).getByRole('listitem')).toHaveCount(
+    100,
+  );
+
+  const longTaskSupported = await page.evaluate(() =>
+    PerformanceObserver.supportedEntryTypes.includes('longtask'),
+  );
+  expect(longTaskSupported).toBe(true);
+  await page.evaluate(() => {
+    const durations: number[] = [];
+    const observer = new PerformanceObserver((list) => {
+      durations.push(...list.getEntries().map(({ duration }) => duration));
+    });
+    observer.observe({ type: 'longtask', buffered: false });
+    Reflect.set(window, '__tcConsoleLongTaskProbe', { durations, observer });
+  });
+
+  const updateStatus = page.locator('.tc-runtime-output-card [role="status"]');
+  for (let index = 0; index < 20; index += 1) {
+    const previousStatus = await updateStatus.textContent();
+    await update.click();
+    await expect(update).toBeEnabled();
+    await expect.poll(() => updateStatus.textContent()).not.toBe(previousStatus);
+  }
+
+  const durations = await page.evaluate(async () => {
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          resolve();
+        });
+      });
+    });
+    const probe = Reflect.get(window, '__tcConsoleLongTaskProbe') as
+      { readonly durations: readonly number[]; readonly observer: PerformanceObserver } | undefined;
+    if (probe === undefined) throw new Error('Console long task probeがありません');
+    probe.observer.disconnect();
+    Reflect.deleteProperty(window, '__tcConsoleLongTaskProbe');
+    return [...probe.durations];
+  });
+  const result = {
+    exerciseId: JAVASCRIPT_EXERCISE_ID,
+    renderCount: 20,
+    consoleRecordCount: 100,
+    longTaskThresholdMs: 50,
+    longTaskDurations: durations,
+  };
+  await testInfo.attach(`${JAVASCRIPT_EXERCISE_ID}-console-performance.json`, {
+    body: Buffer.from(JSON.stringify(result, undefined, 2)),
+    contentType: 'application/json',
+  });
+  expect(durations.filter((duration) => duration > 50)).toEqual([]);
 });

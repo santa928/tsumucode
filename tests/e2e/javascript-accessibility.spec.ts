@@ -44,6 +44,36 @@ async function activateWithKeyboard(
   throw new Error('120回Tabしても対象へ到達できませんでした');
 }
 
+/** Pointerを使わずTab順で入力対象へ到達し、内容を変更せずFocusだけを置く。 */
+async function focusWithKeyboard(
+  page: Page,
+  target: Locator,
+  direction: 'Tab' | 'Shift+Tab' = 'Tab',
+): Promise<void> {
+  const focusHistory: string[] = [];
+  for (let index = 0; index < 120; index += 1) {
+    if (await target.evaluate((element) => element === document.activeElement)) return;
+    focusHistory.push(
+      await page.evaluate(() => {
+        const active = document.activeElement;
+        if (!(active instanceof HTMLElement)) return active?.tagName ?? 'null';
+        return [
+          active.tagName,
+          active.getAttribute('role'),
+          active.getAttribute('aria-label'),
+          active.className,
+        ]
+          .filter(Boolean)
+          .join('|');
+      }),
+    );
+    await page.keyboard.press(direction);
+  }
+  throw new Error(
+    `120回Tabしても入力対象へ到達できませんでした: ${focusHistory.slice(-24).join(' -> ')}`,
+  );
+}
+
 /** DocumentとStageの実寸を読み、固定学習ShellのScroll境界を返す。 */
 async function readScrollMetrics(page: Page) {
   return page.evaluate(() => {
@@ -71,6 +101,10 @@ async function readScrollMetrics(page: Page) {
 test('JavaScript Exerciseの初期・Error・Hint・Reset状態に重大なaxe違反がない', async ({ page }) => {
   await openEditableJavaScriptExercise(page);
   await expectNoSeriousAxeViolations(page);
+  await page.getByRole('tab', { name: 'Console' }).click();
+  await expect(page.getByRole('region', { name: 'Console出力' })).toBeVisible();
+  await expectNoSeriousAxeViolations(page);
+  await page.getByRole('tab', { name: '画面' }).click();
 
   const syntaxError = "document.querySelector('#message').textContent = '閉じていません;";
   await replaceEditorText(page, syntaxError);
@@ -111,8 +145,27 @@ test('KeyboardだけでJavaScriptのFile tab・Editor・Error・Hint・Resetを�
   await expect(scriptTab).toBeFocused();
   await expect(scriptTab).toHaveAttribute('aria-selected', 'true');
 
-  await page.keyboard.press('Tab');
+  const previewTab = page.getByRole('tab', { name: '画面' });
+  const consoleTab = page.getByRole('tab', { name: 'Console' });
+  await activateWithKeyboard(page, previewTab);
+  await page.keyboard.press('ArrowRight');
+  await expect(consoleTab).toBeFocused();
+  await expect(consoleTab).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('region', { name: 'Console出力' })).toBeVisible();
+  const focusIndicator = await consoleTab.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return { boxShadow: style.boxShadow, outlineStyle: style.outlineStyle };
+  });
+  expect(
+    focusIndicator.boxShadow !== 'none' || focusIndicator.outlineStyle !== 'none',
+    `Console tabに視認できるFocus表示がありません: ${JSON.stringify(focusIndicator)}`,
+  ).toBe(true);
+  await page.keyboard.press('ArrowLeft');
+  await expect(previewTab).toBeFocused();
+  await expect(previewTab).toHaveAttribute('aria-selected', 'true');
+
   const editor = page.locator('.cm-content');
+  await focusWithKeyboard(page, editor, 'Shift+Tab');
   await expect(editor).toBeFocused();
   const syntaxError = "document.querySelector('#message').textContent = 'Keyboard Error;";
   await page.keyboard.press('ControlOrMeta+A');
@@ -127,6 +180,7 @@ test('KeyboardだけでJavaScriptのFile tab・Editor・Error・Hint・Resetを�
   await expect(feedback.getByRole('list', { name: '確認するコード診断' })).toContainText(
     'script.js',
   );
+  await expect(validate).toBeEnabled();
   await activateWithKeyboard(page, feedback.getByRole('button', { name: 'コードを直す' }));
   await expect(editor).toBeFocused();
 
@@ -176,5 +230,23 @@ test('390x844ではDocumentを固定し、JavaScript SlideのStageだけを救�
   await page.goto(javascriptExerciseRoute());
   await expect(page.getByRole('heading', { level: 1, name: 'PCで演習を開く' })).toBeVisible();
   await expect(page.getByTestId('code-workspace')).toHaveCount(0);
+  await expectNoSeriousAxeViolations(page);
+});
+
+test('768x1024ではDocumentを固定し、JavaScript ExerciseをPC案内へ安全に切り替える', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await page.goto(javascriptExerciseRoute());
+  await expect(page.getByRole('heading', { level: 1, name: 'PCで演習を開く' })).toBeVisible();
+  await expect(page.getByTestId('code-workspace')).toHaveCount(0);
+  const documentMetrics = await page.locator('html').evaluate((element) => ({
+    clientHeight: element.clientHeight,
+    scrollHeight: element.scrollHeight,
+    clientWidth: element.clientWidth,
+    scrollWidth: element.scrollWidth,
+  }));
+  expect(documentMetrics.scrollWidth).toBeLessThanOrEqual(documentMetrics.clientWidth);
+  expect(documentMetrics.scrollHeight).toBeLessThanOrEqual(documentMetrics.clientHeight + 1);
   await expectNoSeriousAxeViolations(page);
 });

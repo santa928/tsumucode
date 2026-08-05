@@ -72,17 +72,63 @@ test('HTMLだけを完成表示へ偽装しても不合格で、正しいJavaScr
   </body>
 </html>`;
   await replaceAndSave(page, spoofedHtml);
-  await page.getByRole('button', { name: '判定する' }).click();
+  const validate = page.getByRole('button', { name: '判定する' });
+  await validate.click();
   await expect(page.getByRole('heading', { name: 'あと一歩' })).toBeVisible();
+  await expect(validate).toBeEnabled();
   await expect(page.getByTestId('learning-completion')).toHaveCount(0);
 
   await page.getByRole('button', { name: '閉じる' }).click();
   await page.getByRole('tab', { name: 'script.js', exact: true }).click();
   await replaceAndSave(page, JAVASCRIPT_SOLUTION_SOURCE);
-  await page.getByRole('button', { name: '判定する' }).click();
+  await validate.click();
   const resultDialog = page.getByRole('dialog', { name: '判定結果' });
   await expect(resultDialog.getByRole('heading', { name: 'できました' })).toBeVisible();
   await expect(resultDialog).toContainText('必要なピースをすべて積めました。');
+});
+
+test('Console出力を確認して画面へ戻り、判定・Reset・再読込まで非永続で学習できる', async ({
+  page,
+}) => {
+  const source = `console.log('hello');
+document.querySelector('#message').textContent = 'JavaScriptで文字を変えました';\n`;
+  await replaceAndSave(page, source);
+
+  const update = page.getByRole('button', { name: 'プレビューを更新' });
+  await update.click();
+  await expect(update).toBeEnabled();
+  await page.getByRole('tab', { name: 'Console' }).click();
+  const consoleRegion = page.getByRole('region', { name: 'Console出力' });
+  await expect(consoleRegion.getByText('log', { exact: true })).toBeVisible();
+  await expect(consoleRegion.getByText('hello', { exact: true })).toBeVisible();
+
+  await page.getByRole('tab', { name: '画面' }).click();
+  await expect(
+    previewFrame(page).getByRole('heading', { name: 'JavaScriptで文字を変えました' }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: '判定する' }).click();
+  const resultDialog = page.getByRole('dialog', { name: '判定結果' });
+  await expect(resultDialog.getByRole('heading', { name: 'できました' })).toBeVisible();
+  await resultDialog.getByRole('button', { name: '閉じる' }).click();
+
+  const reset = page.getByRole('button', { name: '最初に戻す', exact: true });
+  await reset.click();
+  await page
+    .getByRole('dialog', { name: '最初のコードに戻しますか？' })
+    .getByRole('button', { name: '最初のコードに戻す', exact: true })
+    .click();
+  await expect.poll(() => editorText(page)).toBe(JAVASCRIPT_STARTER_SOURCE);
+  await page.getByRole('tab', { name: 'Console' }).click();
+  await expect(
+    consoleRegion.getByText('まだConsole出力はありません', { exact: true }),
+  ).toBeVisible();
+
+  await page.reload();
+  await expect.poll(() => editorText(page)).toBe(JAVASCRIPT_STARTER_SOURCE);
+  await page.getByRole('tab', { name: 'Console' }).click();
+  await expect(
+    consoleRegion.getByText('まだConsole出力はありません', { exact: true }),
+  ).toBeVisible();
 });
 
 test('下書きとReview復帰を保ち、確認後のResetで3 FileをStarterへ戻す', async ({ page }) => {

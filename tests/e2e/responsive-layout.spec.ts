@@ -516,6 +516,14 @@ for (const viewport of NORMAL_PC_VIEWPORTS) {
 
 test('desktop-compactでJavaScriptのPreview・Console・PagerをStage内へ収める', async ({ page }) => {
   await openEditableJavaScriptExercise(page);
+  await replaceEditorText(
+    page,
+    `for (let index = 0; index < 100; index += 1) console.log(index);
+document.querySelector('#message').textContent = 'JavaScriptで文字を変えました';`,
+  );
+  const update = page.getByRole('button', { name: 'プレビューを更新' });
+  await update.click();
+  await expect(update).toBeEnabled();
   const stage = page.getByTestId('learning-stage');
   const card = page.locator('.tc-runtime-output-card');
   const pager = page.locator('.tc-learning-shell-pager');
@@ -529,6 +537,7 @@ test('desktop-compactでJavaScriptのPreview・Console・PagerをStage内へ収�
   await page.getByRole('tab', { name: 'Console' }).click();
   const consoleRegion = page.getByRole('region', { name: 'Console出力' });
   await expect(consoleRegion).toBeVisible();
+  await expect(consoleRegion.getByRole('listitem')).toHaveCount(100);
 
   const stageRect = await rectangle(stage);
   const cardRect = await rectangle(card);
@@ -537,6 +546,13 @@ test('desktop-compactでJavaScriptのPreview・Console・PagerをStage内へ収�
   expect(cardRect.bottom).toBeLessThanOrEqual(stageRect.bottom + 0.5);
   expect(consoleRect.right).toBeLessThanOrEqual(cardRect.right + 0.5);
   expect(pagerRect.top).toBeGreaterThanOrEqual(stageRect.bottom - 0.5);
+  const consoleScroll = await consoleRegion.evaluate((element) => ({
+    clientHeight: element.clientHeight,
+    scrollHeight: element.scrollHeight,
+    overflowY: getComputedStyle(element).overflowY,
+  }));
+  expect(consoleScroll.scrollHeight).toBeGreaterThan(consoleScroll.clientHeight);
+  expect(consoleScroll.overflowY).toBe('auto');
   expect(await frameHandle.evaluate((element) => element.isConnected)).toBe(true);
   expect(
     await frame.evaluate((element) => element === Reflect.get(window, '__tcExpectedPreviewFrame')),

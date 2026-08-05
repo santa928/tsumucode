@@ -500,4 +500,60 @@ test.describe('JavaScript vertical slice visual regression', () => {
       fullPage: false,
     });
   });
+
+  test('javascript-console-empty-desktop-compact', async ({ page }) => {
+    await openEditableJavaScriptExercise(page);
+    await page.getByRole('tab', { name: 'Console' }).click();
+    await expect(page.getByRole('region', { name: 'Console出力' })).toContainText(
+      'まだConsole出力はありません',
+    );
+    await expect(page).toHaveScreenshot('javascript-console-empty-desktop-compact.png', {
+      animations: 'disabled',
+      caret: 'hide',
+      fullPage: false,
+    });
+  });
+
+  test('javascript-console-100-records-desktop-compact', async ({ page }) => {
+    await openEditableJavaScriptExercise(page);
+    await replaceEditorText(
+      page,
+      `for (let index = 0; index < 100; index += 1) console.log(index);
+document.querySelector('#message').textContent = 'JavaScriptで文字を変えました';`,
+    );
+    const update = page.getByRole('button', { name: 'プレビューを更新' });
+    await update.click();
+    await expect(update).toBeEnabled();
+    await page.getByRole('tab', { name: 'Console' }).click();
+    await expect(
+      page.getByRole('region', { name: 'Console出力' }).getByRole('listitem'),
+    ).toHaveCount(100);
+    await expect(page).toHaveScreenshot('javascript-console-100-records-desktop-compact.png', {
+      animations: 'disabled',
+      caret: 'hide',
+      fullPage: false,
+    });
+  });
+
+  test('javascript-console-previous-success-desktop-compact', async ({ page }) => {
+    await openEditableJavaScriptExercise(page);
+    await replaceEditorText(
+      page,
+      `console.log('前回の記録');
+document.querySelector('#message').textContent = 'JavaScriptで文字を変えました';`,
+    );
+    const update = page.getByRole('button', { name: 'プレビューを更新' });
+    await update.click();
+    await expect(update).toBeEnabled();
+    await replaceEditorText(page, "console.log('編集中'");
+    await page.getByRole('tab', { name: 'Console' }).click();
+    const consoleRegion = page.getByRole('region', { name: 'Console出力' });
+    await expect(consoleRegion).toContainText('前回成功時のConsoleです');
+    await expect(consoleRegion).toContainText('前回の記録');
+    await expect(page).toHaveScreenshot('javascript-console-previous-success-desktop-compact.png', {
+      animations: 'disabled',
+      caret: 'hide',
+      fullPage: false,
+    });
+  });
 });

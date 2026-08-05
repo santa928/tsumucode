@@ -4,10 +4,10 @@
 - reviewedScreens: `24`
 - slideLibraryReviewedScreens: `10`
 - deliveryChangeReviewedScreens: `10`
-- javascriptReviewedScreens: `14`
+- javascriptReviewedScreens: `17`
 - unresolvedFindings: `0`
 - finalArtifactReviewed: `true`
-- reviewedAt: `2026-08-02`
+- reviewedAt: `2026-08-05`
 - latestCandidateSourceCommit: `45a70405e85dff0283a0f040351108cebd02c9c3`
 - verifiedSourceCommit: `draft`
 - canonicalDistSha256: `draft`
@@ -151,6 +151,23 @@
 | Error        | 1280x720 | `7e17d48b9e8a92f82444ce593bdbc4531cd9cee6532a5b8745589b0e1414a836` | なし             | 安全       | コードを直すが明瞭         | 承認 |
 | Hint         | 1280x720 | `0140a97d811467bb6aa27adcb4c717b0e7178b5ef42e76db92c00ebceb55976b` | なし             | 安全       | 段階開示が明瞭             | 承認 |
 | Reset        | 1280x720 | `ba36195861cefbb3b5325974e743d0429f95a34ac4e77e53a46a40a4fc0c4755` | なし             | 安全       | 続行／復元の主従が明瞭     | 承認 |
+
+## JavaScript Core Runtime／Console追加証跡
+
+- 確認日: `2026-08-05`
+- 対象source: 本証跡とbaselineを含むTask 6 commit
+- Production artifact SHA-256: `38be0f65d89f10a4854b32ef883c32eca9787ba5b38e493894a622e2228ceab0`
+- Visual baseline tree SHA-256: `905a7e2b8cd881439ac5a051ae24c3157139c2c58c8e48f873767ba50c51eb86`
+- 自動Gate: Chromiumの全visual regression `53/53`、3 EngineのJavaScript Browser／Accessibility／Security／Responsive `148 passed / 2 skipped / 0 failed / retry 0`
+- Responsive境界: 1280x720ではDocument、Stage、Workspaceを外側Scrollなしで維持し、Console 100件だけをConsole panel内の`overflow-y: auto`へ閉じ込めた。768x1024と390x844では編集UIを出さず、PC案内へ切り替えた
+- 原寸目視: 下記4画像を原寸で確認し、Text切れ、重なり、横はみ出し、右端／下端欠け、誤ったCTA、現在結果と前回結果の誤認を0件とした
+
+| 画面            | Viewport | Baseline SHA-256                                                   | Console境界                       | Editor／診断／CTA      | 判定 |
+| --------------- | -------- | ------------------------------------------------------------------ | --------------------------------- | ---------------------- | ---- |
+| 画面出力        | 1280x720 | `01b5f320ade3d5c18f0a6748c9f12701a553b6e05afaf14cabbdbc67cdc4316d` | 対象外                            | 重なり・欠けなし       | 承認 |
+| Console空状態   | 1280x720 | `15938db17785af6b36ce002a30ff8faf9e25009f329d3862edac28cdcd7ecdd9` | 空状態案内がpanel内へ収まる       | 重なり・欠けなし       | 承認 |
+| Console 100件   | 1280x720 | `3217abc8d342bb5f9a70f3e2734ed2a44bf7e9ddbb082cc7e1a3c842222a0faf` | panel内だけ縦Scroll、Document固定 | 重なり・欠けなし       | 承認 |
+| 前回成功Console | 1280x720 | `f29e3fc6cfd620792d46bbc17ed8e803e861ddba56d7277c187687790341dc29` | `前回成功時`と`前回の記録`を明示  | 現在のsyntax診断と両立 | 承認 |
 
 ## 指摘と解消
 
