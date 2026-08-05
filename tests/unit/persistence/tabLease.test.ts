@@ -1131,6 +1131,57 @@ describe('TabLeaseCoordinator', () => {
     coordinator.dispose();
   });
 
+  it('再検証がread-onlyを通知した瞬間のfocusを完了後に再実行し、期限切れownerをclaimする', async () => {
+    const hub = new BroadcastHub();
+    const clock = new FakeClock();
+    const lifecycleTarget = new EventTarget();
+    const persistence = new SharedLeasePersistence(() => clock.now);
+    const coordinator = createCoordinator('tab-a', hub, clock, {
+      leasePersistence: persistence,
+      lifecycleTarget,
+      isVisible: () => true,
+    });
+    const handle = coordinator.acquire(COURSE_ID, WORKSPACE_ID, { beforeYield: async () => {} });
+    finishClaim(clock);
+    await flushPromises();
+    const heartbeatGate = deferred();
+    persistence.deferNextHeartbeat(heartbeatGate.promise);
+    lifecycleTarget.dispatchEvent(new Event('focus'));
+    expect(handle.getSnapshot().status).toBe('yielding');
+
+    let redispatched = false;
+    const unsubscribe = handle.subscribe(() => {
+      if (redispatched || handle.getSnapshot().status !== 'read-only') return;
+      redispatched = true;
+      persistence.forceOwner({
+        courseId: COURSE_ID,
+        workspaceId: WORKSPACE_ID,
+        ownerId: 'expired-owner',
+        token: 'expired-token',
+        dataEpoch: 0,
+        expiresAt: clock.now - 1,
+      });
+      lifecycleTarget.dispatchEvent(new Event('focus'));
+    });
+    persistence.forceOwner({
+      courseId: COURSE_ID,
+      workspaceId: WORKSPACE_ID,
+      ownerId: 'tab-b-owner',
+      token: 'tab-b-token',
+      dataEpoch: 0,
+      expiresAt: clock.now + 60,
+    });
+    heartbeatGate.resolve();
+    await flushPromises();
+    expect(redispatched).toBe(true);
+    finishClaim(clock);
+    await flushPromises();
+
+    expect(handle.getSnapshot()).toMatchObject({ status: 'owned', ownerId: 'tab-a-1' });
+    unsubscribe();
+    coordinator.dispose();
+  });
+
   it('永続claim成功のcontinuation前にBC通知が届いてもself ownerへ収束する', async () => {
     const hub = new BroadcastHub();
     const clock = new FakeClock();

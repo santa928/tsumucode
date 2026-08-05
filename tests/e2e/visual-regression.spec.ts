@@ -5,7 +5,7 @@ import {
   openEditableJavaScriptExercise,
 } from './helpers/javascriptCourse';
 import { observeRuntimePage, readRuntimeErrors } from './helpers/openRuntimeFixture';
-import { replaceEditorText } from './helpers/progress';
+import { replaceEditorText, waitForDraftSaved } from './helpers/progress';
 import { testBasePath } from './helpers/testBasePath';
 
 const COURSE_PATH = `${testBasePath()}#/courses/html-css`;
@@ -490,6 +490,7 @@ test.describe('JavaScript vertical slice visual regression', () => {
   test('javascript-reset-desktop-compact', async ({ page }) => {
     await openEditableJavaScriptExercise(page);
     await replaceEditorText(page, "document.querySelector('#message').textContent = 'Reset確認';");
+    await waitForDraftSaved(page);
     const resetTrigger = page.getByRole('button', { name: '最初に戻す', exact: true });
     await expect(resetTrigger).toBeEnabled();
     await resetTrigger.click();
@@ -521,6 +522,7 @@ test.describe('JavaScript vertical slice visual regression', () => {
       `for (let index = 0; index < 100; index += 1) console.log(index);
 document.querySelector('#message').textContent = 'JavaScriptで文字を変えました';`,
     );
+    await waitForDraftSaved(page);
     const update = page.getByRole('button', { name: 'プレビューを更新' });
     await update.click();
     await expect(update).toBeEnabled();

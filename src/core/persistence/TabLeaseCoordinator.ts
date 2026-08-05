@@ -423,6 +423,7 @@ class LeaseHandleImpl implements TabLeaseHandle {
   #heartbeatTimer: unknown;
   #heartbeatInFlight: Promise<void> | undefined;
   #revalidationInFlight: Promise<void> | undefined;
+  #revalidationRequested = false;
   #expiryTimer: unknown;
   #pendingTakeover: PendingTakeover | undefined;
   #yieldGeneration = 0;
@@ -757,7 +758,11 @@ class LeaseHandleImpl implements TabLeaseHandle {
   revalidatePersistentLease(): void {
     const persistence = this.#runtime.persistence();
     if (persistence === undefined || this.#disposed) return;
-    if (this.#revalidationInFlight !== undefined) return;
+    if (this.#revalidationInFlight !== undefined) {
+      this.#revalidationRequested = true;
+      return;
+    }
+    this.#revalidationRequested = false;
     const owner = this.#owner;
     const startedFromLocalRescue = this.#snapshot.status === 'local-rescue';
     if (
@@ -815,7 +820,11 @@ class LeaseHandleImpl implements TabLeaseHandle {
       }
     })();
     const guarded = operation.finally(() => {
-      if (this.#revalidationInFlight === guarded) this.#revalidationInFlight = undefined;
+      if (this.#revalidationInFlight !== guarded) return;
+      this.#revalidationInFlight = undefined;
+      if (!this.#revalidationRequested || this.#disposed) return;
+      this.#revalidationRequested = false;
+      void this.#reconcilePersistentOwner();
     });
     this.#revalidationInFlight = guarded;
   }
@@ -1139,8 +1148,11 @@ class LeaseHandleImpl implements TabLeaseHandle {
   /** Broadcast通知を契機に永続正本を再読し、配送順と無関係にlocal stateを収束させる。 */
   async #reconcilePersistentOwner(): Promise<void> {
     const persistence = this.#runtime.persistence();
-    if (persistence === undefined || this.#disposed || this.#revalidationInFlight !== undefined)
+    if (persistence === undefined || this.#disposed) return;
+    if (this.#revalidationInFlight !== undefined) {
+      this.#revalidationRequested = true;
       return;
+    }
     const mustSettleOwnedSession =
       (this.#snapshot.status === 'owned' || this.#snapshot.status === 'local-rescue') &&
       this.#owner?.ownerId === this.#runtime.tabId;
