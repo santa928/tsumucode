@@ -79,6 +79,8 @@ function bridgeRuntime(config: BridgeConfig): void {
   const maxRequests = 1_024;
   const parentWindow = window.parent;
   const scheduleTask = window.setTimeout.bind(window);
+  const objectKeys = Object.keys.bind(Object);
+  const objectFromEntries = Object.fromEntries.bind(Object);
   const executingScript = document.currentScript;
   if (executingScript instanceof HTMLScriptElement) executingScript.remove();
   const usedRequestIds = new Set<string>();
@@ -139,7 +141,7 @@ function bridgeRuntime(config: BridgeConfig): void {
     typeof value === 'object' && value !== null && !Array.isArray(value);
 
   const hasExactKeys = (value: Record<string, unknown>, expected: readonly string[]): boolean => {
-    const actual = Object.keys(value).sort();
+    const actual = objectKeys(value).sort();
     const wanted = [...expected].sort();
     return actual.length === wanted.length && actual.every((key, index) => key === wanted[index]);
   };
@@ -513,7 +515,7 @@ function bridgeRuntime(config: BridgeConfig): void {
           ? { x: 0, y: 0, width: 0, height: 0 }
           : element.getBoundingClientRect();
         const html = element as HTMLElement;
-        const attributes = Object.fromEntries(
+        const attributes = objectFromEntries(
           policy.attributes.flatMap((name) => {
             if (!element.hasAttribute(name)) return [];
             outputString(name, 'attribute name', 256);
@@ -521,7 +523,7 @@ function bridgeRuntime(config: BridgeConfig): void {
             return [[name, value]];
           }),
         );
-        const computedStyles = Object.fromEntries(
+        const computedStyles = objectFromEntries(
           policy.computedStyles.map((name) => {
             outputString(name, 'computed style name', 256);
             const value = outputString(style.getPropertyValue(name), 'computed style');
@@ -586,7 +588,7 @@ function bridgeRuntime(config: BridgeConfig): void {
           const style = getComputedStyle(element);
           focusVisibleStyles.set(
             element,
-            Object.fromEntries(
+            objectFromEntries(
               policy.focusVisibleComputedStyles.map((name) => {
                 outputString(name, 'focus-visible computed style name', 256);
                 const value = outputString(

@@ -14,6 +14,7 @@ import {
 import { JavaScriptValidator } from './JavaScriptValidator';
 
 const SOURCE_HASH = 'a'.repeat(64);
+const MODULE_GRAPH_HASH = 'b'.repeat(64);
 const MESSAGE = 'JavaScriptで変更しました';
 
 interface AnalyzerDouble {
@@ -26,28 +27,80 @@ interface AnalyzerDouble {
 /** Sourceの内容に応じたFactを返す隔離Analyzer doubleを作る。 */
 function analyzerDouble(): AnalyzerDouble {
   return {
-    analyze: vi.fn(async (input: JavaScriptAnalysisInput): Promise<JavaScriptAnalysisResult> => ({
-      status: 'success',
-      requestId: 'validator-analysis',
-      exerciseSessionId: input.exerciseSessionId,
-      executionRevision: input.executionRevision,
-      file: input.file,
-      instrumentedCode: input.source,
-      sourceSha256: SOURCE_HASH,
-      facts: input.source.includes('textContent')
-        ? [
-            {
-              kind: 'query-selector-text-content-assignment',
-              selector: '#message',
-              value: MESSAGE,
-              file: input.file,
-              line: 1,
-              column: 1,
-            },
-          ]
-        : [],
-      diagnostics: [],
-    })),
+    analyze: vi.fn(async (input: JavaScriptAnalysisInput): Promise<JavaScriptAnalysisResult> => {
+      if ('files' in input) throw new Error('classic Source解析だけを期待しています');
+      return {
+        status: 'success',
+        requestId: 'validator-analysis',
+        exerciseSessionId: input.exerciseSessionId,
+        executionRevision: input.executionRevision,
+        file: input.file,
+        instrumentedCode: input.source,
+        sourceSha256: SOURCE_HASH,
+        facts: input.source.includes('textContent')
+          ? [
+              {
+                kind: 'query-selector-text-content-assignment',
+                selector: '#message',
+                value: MESSAGE,
+                file: input.file,
+                line: 1,
+                column: 1,
+              },
+            ]
+          : [],
+        diagnostics: [],
+      };
+    }),
+    dispose: vi.fn(async () => undefined),
+  };
+}
+
+/** Module Workspace全体から依存FileのFactを返す隔離Analyzer doubleを作る。 */
+function moduleAnalyzerDouble(): AnalyzerDouble {
+  return {
+    analyze: vi.fn(async (input: JavaScriptAnalysisInput): Promise<JavaScriptAnalysisResult> => {
+      if (!('files' in input)) throw new Error('Module Workspace解析を期待しています');
+      return {
+        status: 'success',
+        requestId: 'validator-module-analysis',
+        exerciseSessionId: input.exerciseSessionId,
+        executionRevision: input.executionRevision,
+        file: input.entryFile,
+        entryFile: input.entryFile,
+        graphSha256: MODULE_GRAPH_HASH,
+        modules: [
+          {
+            file: 'src/message.js',
+            instrumentedCode: `export const update = () => { document.querySelector('#message').textContent = '${MESSAGE}'; };`,
+            dependencies: [],
+          },
+          {
+            file: 'src/main.js',
+            instrumentedCode: "import { update } from './message.js'; update();",
+            dependencies: [
+              {
+                specifier: './message.js',
+                resolvedFile: 'src/message.js',
+                start: 23,
+                end: 35,
+              },
+            ],
+          },
+        ],
+        facts: [
+          {
+            kind: 'query-selector-text-content-assignment',
+            selector: '#message',
+            value: MESSAGE,
+            file: 'src/message.js',
+            line: 1,
+            column: 30,
+          },
+        ],
+        diagnostics: [],
+      };
+    }),
     dispose: vi.fn(async () => undefined),
   };
 }
@@ -124,6 +177,58 @@ describe('JavaScriptValidator', () => {
     expect(analyzer.analyze).toHaveBeenCalledWith(
       expect.objectContaining({ sourceType: 'script', capabilityProfile: 'core' }),
     );
+    expect(analyzer.dispose).toHaveBeenCalledOnce();
+  });
+
+  it('ModuleはWorkspaceを一度だけ解析し、Graph hashと依存FileのFactをANDでpassする', async () => {
+    const analyzer = moduleAnalyzerDouble();
+    const validator = new JavaScriptValidator({ analyzerFactory: () => analyzer });
+    const rules = javascriptRules().map((rule) =>
+      rule.target.kind === 'javascript-source'
+        ? { ...rule, target: { ...rule.target, file: 'src/message.js' } }
+        : rule,
+    );
+
+    await expect(
+      validator.validate(
+        javascriptContext({
+          runtime: {
+            kind: 'javascript',
+            entryFile: 'src/main.js',
+            sourceType: 'module',
+            capabilityProfile: 'modules',
+            primaryOutput: 'preview',
+          },
+          rules,
+          files: {
+            'index.html': '<p id="message">変更前</p>',
+            'src/main.js': "import { update } from './message.js'; update();",
+            'src/message.js': `export const update = () => { document.querySelector('#message').textContent = '${MESSAGE}'; };`,
+          },
+          evidence: [
+            { id: 'javascript.executed', value: true },
+            { id: 'javascript.module-graph-sha256', value: MODULE_GRAPH_HASH },
+            { id: 'javascript.budget-exhausted', value: false },
+          ],
+        }),
+      ),
+    ).resolves.toMatchObject({
+      status: 'pass',
+      executionRevision: 4,
+      passedRequirementIds: ['message-updated'],
+    });
+    expect(analyzer.analyze).toHaveBeenCalledOnce();
+    const analysisInput = analyzer.analyze.mock.calls[0]![0];
+    expect(analysisInput).toMatchObject({
+      entryFile: 'src/main.js',
+      sourceType: 'module',
+      capabilityProfile: 'modules',
+    });
+    if (!('files' in analysisInput)) throw new Error('Module Workspace解析ではありません');
+    expect(analysisInput.files['src/main.js']).toBe(
+      "import { update } from './message.js'; update();",
+    );
+    expect(analysisInput.files['src/message.js']).toContain("document.querySelector('#message')");
     expect(analyzer.dispose).toHaveBeenCalledOnce();
   });
 

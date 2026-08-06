@@ -23,8 +23,12 @@ import type {
   JavaScriptCapabilityProfileId,
   JavaScriptSourceType,
 } from '../analyzer/contracts';
-import { createJavaScriptExecutionSource } from './bridgeSource';
+import {
+  createJavaScriptExecutionSource,
+  createJavaScriptModuleExecutionSource,
+} from './bridgeSource';
 import { createJavaScriptSrcdoc } from './createJavaScriptSrcdoc';
+import { prepareModuleGraph } from './materializeModuleGraph';
 import { JavaScriptExecutionClient, type JavaScriptExecutionPayload } from './protocol';
 
 interface JavaScriptAnalyzerPort {
@@ -165,7 +169,7 @@ function validateJavaScriptInput(input: RunnerInput): ValidatedJavaScriptInput {
   } catch {
     throw new Error('JavaScript runtime entryFile must be a safe relative path');
   }
-  if (!/\.js$/iu.test(scriptFile)) throw new Error('JavaScript entryFile must end with .js');
+  if (!/\.js$/u.test(scriptFile)) throw new Error('JavaScript entryFile must end with .js');
   const scriptSource = html.files.get(scriptFile);
   if (scriptSource === undefined) throw new Error(`JavaScript entryFile not found: ${scriptFile}`);
   return {
@@ -340,15 +344,29 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
     let transitionStarted = false;
     try {
       const guardIdentifier = `__tsumuBudget_${this.#uuidFactory().replaceAll('-', '_')}`;
-      const analysis = await this.#analyzer.analyze({
-        exerciseSessionId: input.exerciseSessionId,
-        executionRevision: input.executionRevision,
-        file: validated.scriptFile,
-        source: validated.scriptSource,
-        guardIdentifier,
-        sourceType: validated.sourceType,
-        capabilityProfile: validated.capabilityProfile,
-      });
+      const analysis = await this.#analyzer.analyze(
+        validated.sourceType === 'module'
+          ? {
+              exerciseSessionId: input.exerciseSessionId,
+              executionRevision: input.executionRevision,
+              entryFile: validated.scriptFile,
+              files: Object.fromEntries(
+                [...validated.html.files].filter(([path]) => path.endsWith('.js')),
+              ),
+              guardIdentifier,
+              sourceType: validated.sourceType,
+              capabilityProfile: validated.capabilityProfile,
+            }
+          : {
+              exerciseSessionId: input.exerciseSessionId,
+              executionRevision: input.executionRevision,
+              file: validated.scriptFile,
+              source: validated.scriptSource,
+              guardIdentifier,
+              sourceType: validated.sourceType,
+              capabilityProfile: validated.capabilityProfile,
+            },
+      );
       this.#assertCurrent(frame, operation);
       if (analysis.status === 'failure') {
         if (this.#inFlight === operation) this.#inFlight = undefined;
@@ -359,6 +377,16 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
           evidence: [],
           console: [],
         };
+      }
+      const isModuleAnalysis = 'modules' in analysis && 'graphSha256' in analysis;
+      if (validated.sourceType === 'module' && !isModuleAnalysis) {
+        throw new Error('JavaScript module analysis payload is invalid');
+      }
+      if (
+        validated.sourceType === 'script' &&
+        (!('instrumentedCode' in analysis) || !('sourceSha256' in analysis))
+      ) {
+        throw new Error('JavaScript classic analysis payload is invalid');
       }
       if (
         analysis.exerciseSessionId !== input.exerciseSessionId ||
@@ -375,14 +403,38 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
       this.#assertCurrent(frame, operation);
       const scriptNonce = this.#uuidFactory().replaceAll('-', '');
       const bootstrapToken = this.#uuidFactory();
-      const authenticatedRuntimeSource = createJavaScriptExecutionSource({
-        exerciseSessionId: input.exerciseSessionId,
-        executionRevision: input.executionRevision,
-        bootstrapToken,
-        guardIdentifier,
-        instrumentedCode: analysis.instrumentedCode,
-      });
-      resources = { materialized: preview.materialized };
+      let executionHash: string;
+      let authenticatedRuntimeSource: string;
+      if (isModuleAnalysis) {
+        const runtimeKey = `__tsumuRuntime_${this.#uuidFactory().replaceAll('-', '_')}`;
+        const moduleGraph = prepareModuleGraph({
+          entryFile: analysis.entryFile,
+          graphSha256: analysis.graphSha256,
+          modules: analysis.modules,
+          guardIdentifier,
+          runtimeKey,
+        });
+        executionHash = analysis.graphSha256;
+        authenticatedRuntimeSource = createJavaScriptModuleExecutionSource({
+          exerciseSessionId: input.exerciseSessionId,
+          executionRevision: input.executionRevision,
+          bootstrapToken,
+          runtimeKey,
+          moduleGraph,
+        });
+      } else {
+        executionHash = analysis.sourceSha256;
+        authenticatedRuntimeSource = createJavaScriptExecutionSource({
+          exerciseSessionId: input.exerciseSessionId,
+          executionRevision: input.executionRevision,
+          bootstrapToken,
+          guardIdentifier,
+          instrumentedCode: analysis.instrumentedCode,
+        });
+      }
+      resources = {
+        materialized: preview.materialized,
+      };
       unownedMaterialized = undefined;
       const srcdoc = createJavaScriptSrcdoc({
         sanitizedDocument: preview.sanitizedDocument,
@@ -443,7 +495,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
       this.#active = {
         exerciseSessionId: input.exerciseSessionId,
         executionRevision: input.executionRevision,
-        sourceSha256: analysis.sourceSha256,
+        sourceSha256: executionHash,
         scriptFile: validated.scriptFile,
         resources,
         srcdoc,
@@ -469,11 +521,16 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
         ],
         evidence: [
           { id: 'javascript.executed', value: executionPayload.executed },
-          {
-            id: 'javascript.source-sha256',
-            file: validated.scriptFile,
-            value: analysis.sourceSha256,
-          },
+          isModuleAnalysis
+            ? {
+                id: 'javascript.module-graph-sha256',
+                value: executionHash,
+              }
+            : {
+                id: 'javascript.source-sha256',
+                file: validated.scriptFile,
+                value: executionHash,
+              },
           {
             id: 'javascript.budget-exhausted',
             value: executionPayload.budgetExhausted,
@@ -564,7 +621,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
     return pending;
   }
 
-  /** 教材Assetを一度だけ解放する。runtime Blobはopaque iframe自身が解放する。 */
+  /** 教材Assetを一度だけ解放する。Module Blobはopaque iframe内のbootstrapが所有する。 */
   #disposeResources(resources: RuntimeResources | undefined): void {
     if (resources === undefined) return;
     resources.materialized.dispose();

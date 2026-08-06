@@ -1,6 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { PREVIEW_PROTOCOL_VERSION } from '../../html-css/previewProtocol';
-import type { JavaScriptAnalysisResult } from '../analyzer/contracts';
+import type {
+  JavaScriptAnalysisResult,
+  JavaScriptWorkspaceAnalysisSuccess,
+} from '../analyzer/contracts';
 import { JavaScriptRunnerAdapter } from './JavaScriptRunnerAdapter';
 import { JAVASCRIPT_PROTOCOL_VERSION } from './protocol';
 import type {
@@ -60,6 +63,40 @@ function analysisSuccess(
     facts: [],
     diagnostics: [],
     ...overrides,
+  };
+}
+
+/** Module graphのAnalyzer成功結果をidentity付きで作る。 */
+function moduleAnalysisSuccess(): JavaScriptWorkspaceAnalysisSuccess {
+  return {
+    status: 'success',
+    requestId: 'analysis-module',
+    exerciseSessionId: 'session-1',
+    executionRevision: 1,
+    file: 'src/main.js',
+    entryFile: 'src/main.js',
+    graphSha256: 'b'.repeat(64),
+    modules: [
+      {
+        file: 'src/score.js',
+        instrumentedCode: 'export const score = 1;',
+        dependencies: [],
+      },
+      {
+        file: 'src/main.js',
+        instrumentedCode: "import { score } from './score.js'; console.log(score);",
+        dependencies: [
+          {
+            specifier: './score.js',
+            resolvedFile: 'src/score.js',
+            start: 22,
+            end: 34,
+          },
+        ],
+      },
+    ],
+    facts: [],
+    diagnostics: [],
   };
 }
 
@@ -146,6 +183,62 @@ afterEach(() => {
 });
 
 describe('JavaScriptRunnerAdapter', () => {
+  it('Module Workspaceをiframe内実行Planへ変換してgraph hash Evidenceを返す', async () => {
+    const analyzer = {
+      analyze: vi.fn(async () => moduleAnalysisSuccess()),
+      dispose: vi.fn(async () => undefined),
+    };
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    const runner = new JavaScriptRunnerAdapter({ analyzer });
+    await runner.prepare(frame);
+    const input = runnerInput({
+      files: {
+        'index.html': '<main><p id="message">Module</p></main>',
+        'styles.css': '#message { color: green; }',
+        'src/main.js': "import { score } from './score.js'; console.log(score);",
+        'src/score.js': 'export const score = 1;',
+      },
+      options: {
+        runtime: {
+          kind: 'javascript',
+          entryFile: 'src/main.js',
+          sourceType: 'module',
+          capabilityProfile: 'modules',
+          primaryOutput: 'console',
+        },
+      },
+    });
+
+    const pending = runner.render(input);
+    await vi.waitFor(() => {
+      expect(frame.srcdoc).not.toBe('');
+    });
+    dispatchExecution(frame);
+    dispatchBridgeReady(frame);
+
+    const result = await pending;
+    expect(result.diagnostics).toEqual([]);
+    expect(result.evidence).toContainEqual({ id: 'javascript.executed', value: true });
+    expect(result.evidence).toContainEqual({
+      id: 'javascript.module-graph-sha256',
+      value: 'b'.repeat(64),
+    });
+    expect(analyzer.analyze).toHaveBeenCalledWith(
+      expect.objectContaining({
+        entryFile: 'src/main.js',
+        files: {
+          'src/main.js': "import { score } from './score.js'; console.log(score);",
+          'src/score.js': 'export const score = 1;',
+        },
+      }),
+    );
+    expect(frame.srcdoc).toContain('sourceSegments');
+    expect(frame.srcdoc).toContain('URL.createObjectURL');
+
+    await runner.dispose();
+  });
+
   it.each([
     ['language', { languageId: 'html-css' }],
     [
@@ -158,6 +251,24 @@ describe('JavaScriptRunnerAdapter', () => {
             sourceType: 'script',
             capabilityProfile: 'core',
             primaryOutput: 'preview',
+          },
+        },
+      },
+    ],
+    [
+      'uppercase extension',
+      {
+        files: {
+          'index.html': '<main>本文</main>',
+          'script.JS': 'console.log("uppercase");',
+        },
+        options: {
+          runtime: {
+            kind: 'javascript',
+            entryFile: 'script.JS',
+            sourceType: 'script',
+            capabilityProfile: 'core',
+            primaryOutput: 'console',
           },
         },
       },

@@ -15,7 +15,43 @@ const NETWORK_IDENTIFIERS = new Set([
 ]);
 const WORKER_IDENTIFIERS = new Set(['Worker', 'SharedWorker']);
 const STORAGE_IDENTIFIERS = new Set(['localStorage', 'sessionStorage', 'indexedDB', 'caches']);
-const DYNAMIC_CODE_IDENTIFIERS = new Set(['eval', 'Function', 'WebAssembly']);
+const ASYNC_IDENTIFIERS = new Set([
+  'Promise',
+  'clearInterval',
+  'clearTimeout',
+  'setInterval',
+  'setTimeout',
+]);
+const TIMER_IDENTIFIERS = new Set(['setInterval', 'setTimeout']);
+const UNSUPPORTED_ASYNC_IDENTIFIERS = new Set([
+  'BroadcastChannel',
+  'IntersectionObserver',
+  'MessageChannel',
+  'MutationObserver',
+  'PerformanceObserver',
+  'ResizeObserver',
+  'cancelAnimationFrame',
+  'cancelIdleCallback',
+  'queueMicrotask',
+  'requestAnimationFrame',
+  'requestIdleCallback',
+  'scheduler',
+]);
+const UNSUPPORTED_ASYNC_MEMBERS = new Set(['postTask']);
+const GLOBAL_EVENT_IDENTIFIERS = new Set([
+  'addEventListener',
+  'dispatchEvent',
+  'postMessage',
+  'removeEventListener',
+]);
+const DYNAMIC_CODE_IDENTIFIERS = new Set([
+  'Blob',
+  'eval',
+  'Function',
+  'Reflect',
+  'URL',
+  'WebAssembly',
+]);
 const RESOURCE_IDENTIFIERS = new Set(['Image', 'Audio']);
 const NAVIGATION_IDENTIFIERS = new Set([
   'window',
@@ -62,12 +98,155 @@ const RUNTIME_ESCAPE_MEMBERS = new Set([
   'ownerDocument',
   'opener',
   'parent',
+  'parentWindow',
   'postMessage',
   'prototype',
   'top',
   'view',
 ]);
 const HTML_INSERTION_MEMBERS = new Set(['innerHTML', 'outerHTML', 'insertAdjacentHTML']);
+const SAFE_DOM_ATTRIBUTE = /^(?:aria-[a-z0-9-]+|class|data-[a-z0-9-]+|disabled|hidden|id|role|tabindex|title)$/u;
+const SAFE_DOM_ELEMENT_TAGS = new Set([
+  'a',
+  'article',
+  'aside',
+  'b',
+  'blockquote',
+  'br',
+  'button',
+  'code',
+  'dd',
+  'details',
+  'div',
+  'dl',
+  'dt',
+  'em',
+  'fieldset',
+  'figcaption',
+  'figure',
+  'footer',
+  'form',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'header',
+  'hr',
+  'i',
+  'input',
+  'label',
+  'legend',
+  'li',
+  'main',
+  'nav',
+  'ol',
+  'option',
+  'p',
+  'pre',
+  'section',
+  'select',
+  'small',
+  'span',
+  'strong',
+  'summary',
+  'table',
+  'tbody',
+  'td',
+  'textarea',
+  'tfoot',
+  'th',
+  'thead',
+  'tr',
+  'ul',
+]);
+const BOOTSTRAP_SECRET_MEMBERS = new Set(['nonce']);
+const EVENT_HANDLER_MEMBERS = new Set([
+  'onanimationcancel',
+  'onanimationend',
+  'onanimationiteration',
+  'onanimationstart',
+  'onbeforeinput',
+  'onblur',
+  'onchange',
+  'onclick',
+  'oncompositionend',
+  'oncompositionstart',
+  'oncompositionupdate',
+  'oncontextmenu',
+  'ondblclick',
+  'ondrag',
+  'ondragend',
+  'ondragenter',
+  'ondragleave',
+  'ondragover',
+  'ondragstart',
+  'ondrop',
+  'onerror',
+  'onfocus',
+  'oninput',
+  'oninvalid',
+  'onkeydown',
+  'onkeypress',
+  'onkeyup',
+  'onload',
+  'onmousedown',
+  'onmouseenter',
+  'onmouseleave',
+  'onmousemove',
+  'onmouseout',
+  'onmouseover',
+  'onmouseup',
+  'onpointercancel',
+  'onpointerdown',
+  'onpointerenter',
+  'onpointerleave',
+  'onpointermove',
+  'onpointerout',
+  'onpointerover',
+  'onpointerup',
+  'onreset',
+  'onscroll',
+  'onsubmit',
+  'ontouchcancel',
+  'ontouchend',
+  'ontouchmove',
+  'ontouchstart',
+  'ontransitioncancel',
+  'ontransitionend',
+  'ontransitionrun',
+  'ontransitionstart',
+  'onwheel',
+]);
+const SAFE_OBJECT_STATIC_MEMBERS = new Set(['entries', 'fromEntries', 'is', 'keys', 'values']);
+const REFLECTION_MEMBERS = new Set([
+  '__defineGetter__',
+  '__defineSetter__',
+  '__lookupGetter__',
+  '__lookupSetter__',
+  'assign',
+  'create',
+  'defineProperties',
+  'defineProperty',
+  'getOwnPropertyDescriptor',
+  'getOwnPropertyDescriptors',
+  'getOwnPropertyNames',
+  'getOwnPropertySymbols',
+  'getPrototypeOf',
+  'preventExtensions',
+  'setPrototypeOf',
+]);
+const DYNAMIC_CODE_MEMBERS = new Set([
+  'Blob',
+  'Function',
+  'Reflect',
+  'URL',
+  'WebAssembly',
+  'construct',
+  'createObjectURL',
+  'eval',
+]);
 const MODULE_NODE_TYPES = new Set([
   'ExportAllDeclaration',
   'ExportDefaultDeclaration',
@@ -243,6 +422,20 @@ function memberName(node: AstNode): string | undefined {
     : undefined;
 }
 
+/** computed memberは静的文字列または非負の整数Literalだけを許可する。 */
+function hasSafeComputedProperty(node: AstNode): boolean {
+  if (node.type !== 'MemberExpression' || node.computed !== true) return true;
+  if (typeof node.property !== 'object' || node.property === null) return false;
+  const property = node.property as Readonly<Record<string, unknown>>;
+  if (property.type !== 'Literal') return false;
+  return (
+    typeof property.value === 'string' ||
+    (typeof property.value === 'number' &&
+      Number.isSafeInteger(property.value) &&
+      property.value >= 0)
+  );
+}
+
 /** Call引数のLiteral文字列を返す。 */
 function literalString(value: unknown): string | undefined {
   if (typeof value !== 'object' || value === null) return undefined;
@@ -288,6 +481,19 @@ export function assertJavaScriptCapabilityPolicy(
     if (node.type === 'Identifier') {
       const name = identifierName(node);
       if (name === undefined || isStaticMemberProperty(node, parent)) return;
+      const directTimerCall =
+        TIMER_IDENTIFIERS.has(name) &&
+        parent?.type === 'CallExpression' &&
+        ast(parent).callee === node;
+      if (!profile.allowAsync && ASYNC_IDENTIFIERS.has(name) && !directTimerCall) {
+        reject(node, file, `${name}はasync演習でだけ使えます`);
+      }
+      if (UNSUPPORTED_ASYNC_IDENTIFIERS.has(name)) {
+        reject(node, file, `${name}は回収できない非同期処理のため使えません`);
+      }
+      if (GLOBAL_EVENT_IDENTIFIERS.has(name)) {
+        reject(node, file, `${name}はwindow経由のEvent処理になるため使えません`);
+      }
       if (NETWORK_IDENTIFIERS.has(name)) reject(node, file, '外部通信を行う機能は使えません');
       if (WORKER_IDENTIFIERS.has(name)) reject(node, file, 'Workerを作る機能は使えません');
       if (STORAGE_IDENTIFIERS.has(name)) reject(node, file, 'Storageへ触れる機能は使えません');
@@ -304,6 +510,34 @@ export function assertJavaScriptCapabilityPolicy(
     if (node.type === 'MemberExpression') {
       const root = identifierName(current.object);
       const property = memberName(current);
+      if (!hasSafeComputedProperty(current)) {
+        reject(
+          node,
+          file,
+          '変数や式によるcomputed property accessは安全なPreviewでは使えません',
+        );
+      }
+      if (root === 'Object' && (property === undefined || !SAFE_OBJECT_STATIC_MEMBERS.has(property))) {
+        reject(node, file, `Object.${property ?? 'unknown'}はreflection防止のため使えません`);
+      }
+      if (property !== undefined && REFLECTION_MEMBERS.has(property)) {
+        reject(node, file, `${property}を使ったObject reflectionは使えません`);
+      }
+      if (property !== undefined && DYNAMIC_CODE_MEMBERS.has(property)) {
+        reject(node, file, `${property}を使った動的実行は使えません`);
+      }
+      if (property !== undefined && BOOTSTRAP_SECRET_MEMBERS.has(property)) {
+        reject(node, file, `${property}はPreviewのbootstrap情報へ触れるため使えません`);
+      }
+      if (property !== undefined && EVENT_HANDLER_MEMBERS.has(property)) {
+        reject(node, file, `${property}は未管理のEvent handlerになるため使えません`);
+      }
+      if (property !== undefined && ASYNC_IDENTIFIERS.has(property) && !profile.allowAsync) {
+        reject(node, file, `${property}はasync演習でだけ使えます`);
+      }
+      if (property !== undefined && UNSUPPORTED_ASYNC_MEMBERS.has(property)) {
+        reject(node, file, `${property}は回収できない非同期処理のため使えません`);
+      }
       if ((root === 'document' || root === 'navigator') && current.computed === true) {
         reject(node, file, `${root}のcomputed property accessは使えません`);
       }
@@ -368,19 +602,41 @@ export function assertJavaScriptCapabilityPolicy(
       ) {
         reject(node, file, '文字列timerは使えません。Functionを渡してください');
       }
+      if (calleeName !== undefined && TIMER_IDENTIFIERS.has(calleeName) && !profile.allowAsync) {
+        reject(node, file, `${calleeName}はasync演習でだけ使えます`);
+      }
       if (isNode(current.callee)) {
         const callee = ast(current.callee);
         const property = memberName(callee);
         const attribute = literalString(args[0]);
+        const elementTag = literalString(args[0]);
+        if (property === 'createElement' && elementTag === undefined) {
+          reject(node, file, 'createElementの要素名は静的な文字列で指定してください');
+        }
         if (
-          (property === 'setAttribute' || property === 'setAttributeNS') &&
+          property === 'createElement' &&
+          !SAFE_DOM_ELEMENT_TAGS.has(elementTag?.toLowerCase() ?? '')
+        ) {
+          reject(node, file, `${elementTag ?? 'unknown'}要素は安全なPreviewで生成できません`);
+        }
+        if (property === 'setAttributeNS') {
+          reject(node, file, 'setAttributeNSは安全なPreviewでは使えません');
+        }
+        if (
+          property === 'setAttribute' &&
           attribute !== undefined &&
           RESOURCE_MEMBERS.has(attribute)
         ) {
           reject(node, file, '外部resourceへつながる属性の変更は使えません');
         }
-        if ((property === 'setAttribute' || property === 'setAttributeNS') && !profile.allowDom) {
+        if (property === 'setAttribute' && !profile.allowDom) {
           reject(node, file, '動的な属性変更はこの演習では使えません');
+        }
+        if (property === 'setAttribute' && attribute === undefined) {
+          reject(node, file, 'setAttributeの属性名は静的な文字列で指定してください');
+        }
+        if (property === 'setAttribute' && !SAFE_DOM_ATTRIBUTE.test(attribute ?? '')) {
+          reject(node, file, 'setAttributeでは安全な属性名だけを指定できます');
         }
       }
     }

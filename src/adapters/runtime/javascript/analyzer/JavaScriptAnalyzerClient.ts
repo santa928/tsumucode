@@ -1,18 +1,46 @@
 import type { RunnerDiagnostic } from '../../../../core/runtime/contracts';
 import {
   isAnalyzerWorkerResponse,
+  isJavaScriptAnalysisRequest,
   type AnalyzerWorkerPort,
   type AnalyzerWorkerRequest,
   type JavaScriptAnalysisFailure,
   type JavaScriptAnalysisInput,
+  type JavaScriptLegacyAnalysisInput,
+  type JavaScriptLegacyAnalysisResult,
   type JavaScriptAnalysisRequest,
   type JavaScriptAnalysisResult,
+  type JavaScriptWorkspaceAnalysisInput,
+  type JavaScriptWorkspaceAnalysisResult,
 } from './contracts';
 
 interface JavaScriptAnalyzerClientOptions {
   readonly workerFactory?: () => AnalyzerWorkerPort;
   readonly requestIdFactory?: () => string;
   readonly deadlineMs?: number;
+}
+
+/** 親側で検出した契約違反を学習コード由来のsecurity診断へ閉じる。 */
+function contractFailure(request: JavaScriptAnalysisRequest): JavaScriptAnalysisFailure {
+  const file = analysisIdentityFile(request);
+  return {
+    status: 'failure',
+    requestId: request.requestId,
+    exerciseSessionId: request.exerciseSessionId,
+    executionRevision: request.executionRevision,
+    file,
+    diagnostics: [
+      {
+        code: 'javascript-analyzer-contract',
+        kind: 'security',
+        severity: 'error',
+        message: 'JavaScript analyzer request violates the strict contract',
+        learnerMessage:
+          'JavaScriptのFile名またはModule設定が安全な形式ではありません。Workspace内の相対.js pathを確認してください。',
+        file,
+      },
+    ],
+  };
 }
 
 interface PendingAnalysis {
@@ -24,6 +52,11 @@ interface PendingAnalysis {
 
 const DEFAULT_DEADLINE_MS = 500;
 
+/** classic requestとWorkspace requestの共通identity Fileを返す。 */
+function analysisIdentityFile(request: JavaScriptAnalysisRequest): string {
+  return 'files' in request ? request.entryFile : request.file;
+}
+
 /** Viteが別chunkへ変換できるmodule Workerを遅延生成する。 */
 function createAnalyzerWorker(): AnalyzerWorkerPort {
   return new Worker(new URL('./analyzerWorker.ts', import.meta.url), { type: 'module' });
@@ -34,6 +67,7 @@ function systemFailure(
   request: JavaScriptAnalysisRequest,
   message: string,
 ): JavaScriptAnalysisFailure {
+  const file = analysisIdentityFile(request);
   const diagnostic: RunnerDiagnostic = {
     code: 'javascript-analyzer-system',
     kind: 'system',
@@ -41,14 +75,14 @@ function systemFailure(
     message,
     learnerMessage:
       'JavaScriptの解析を完了できませんでした。少し待ってからもう一度試してください。',
-    file: request.file,
+    file,
   };
   return {
     status: 'failure',
     requestId: request.requestId,
     exerciseSessionId: request.exerciseSessionId,
     executionRevision: request.executionRevision,
-    file: request.file,
+    file,
     diagnostics: [diagnostic],
   };
 }
@@ -78,6 +112,8 @@ export class JavaScriptAnalyzerClient {
   }
 
   /** requestをWorkerへ送り、同じidentityの最初のresponseかdeadline結果を返す。 */
+  analyze(input: JavaScriptLegacyAnalysisInput): Promise<JavaScriptLegacyAnalysisResult>;
+  analyze(input: JavaScriptWorkspaceAnalysisInput): Promise<JavaScriptWorkspaceAnalysisResult>;
   analyze(input: JavaScriptAnalysisInput): Promise<JavaScriptAnalysisResult> {
     if (this.#disposed) return Promise.reject(analyzerAbortError());
     const requestId = this.#requestIdFactory();
@@ -86,6 +122,9 @@ export class JavaScriptAnalyzerClient {
     }
     this.#usedRequestIds.add(requestId);
     const request: JavaScriptAnalysisRequest = { ...input, requestId };
+    if (!isJavaScriptAnalysisRequest(request)) {
+      return Promise.resolve(contractFailure(request));
+    }
     let worker: AnalyzerWorkerPort;
     try {
       worker = this.#ensureWorker();
@@ -152,7 +191,7 @@ export class JavaScriptAnalyzerClient {
     if (
       result.exerciseSessionId !== request.exerciseSessionId ||
       result.executionRevision !== request.executionRevision ||
-      result.file !== request.file
+      result.file !== analysisIdentityFile(request)
     ) {
       return;
     }

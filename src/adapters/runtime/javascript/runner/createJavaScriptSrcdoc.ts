@@ -26,7 +26,7 @@ export interface CreateJavaScriptSrcdocInput {
 }
 
 const SAFE_NONCE = /^[a-z0-9_-]+$/iu;
-const MAX_RUNTIME_SOURCE_BYTES = 256 * 1024;
+const MAX_RUNTIME_SOURCE_BYTES = 1024 * 1024;
 const UTF8 = new TextEncoder();
 
 /** runtime sourceをraw-textから隔離し、iframe自身が所有するBlobとして読み込むloaderを作る。 */
@@ -42,11 +42,13 @@ function createRuntimeLoaderSource(runtimeSource: string): string {
     '(function(){"use strict";',
     `const source=${sourceLiteral};`,
     'const loader=document.currentScript;',
-    'const objectUrl=URL.createObjectURL(new Blob([source],{type:"text/javascript;charset=utf-8"}));',
+    'const createObjectUrl=URL.createObjectURL.bind(URL);',
+    'const revokeObjectUrl=URL.revokeObjectURL.bind(URL);',
+    'const objectUrl=createObjectUrl(new Blob([source],{type:"text/javascript;charset=utf-8"}));',
     'const runtime=document.createElement("script");',
     'runtime.setAttribute("data-tsumucode-javascript-runtime-execution","");',
     'runtime.src=objectUrl;',
-    'const release=()=>URL.revokeObjectURL(objectUrl);',
+    'const release=()=>revokeObjectUrl(objectUrl);',
     'runtime.addEventListener("load",release,{once:true});',
     'runtime.addEventListener("error",release,{once:true});',
     'loader?.remove();',

@@ -5,10 +5,16 @@ import type { RunnerDiagnostic, RunnerDiagnosticKind } from '../../../../core/ru
 import { JavaScriptAnalysisIssue, assertJavaScriptCapabilityPolicy } from './capabilityPolicy';
 import type {
   JavaScriptAnalysisFailure,
+  JavaScriptLegacyAnalysisResult,
+  JavaScriptLegacyAnalysisRequest,
   JavaScriptAnalysisRequest,
   JavaScriptAnalysisResult,
   JavaScriptSourceFact,
+  JavaScriptWorkspaceAnalysisRequest,
+  JavaScriptWorkspaceAnalysisResult,
+  JavaScriptWorkspaceAnalysisSuccess,
 } from './contracts';
+import { buildModuleGraph, JavaScriptModuleGraphError } from './moduleGraph';
 
 type AstNode = Node & Readonly<Record<string, unknown>>;
 
@@ -56,13 +62,14 @@ function failure(
   line?: number,
   column?: number,
 ): JavaScriptAnalysisFailure {
+  const file = 'files' in request ? request.entryFile : request.file;
   const diagnostic: RunnerDiagnostic = {
     code: `javascript-analyzer-${kind}`,
     kind,
     severity: 'error',
     message,
     learnerMessage,
-    file: request.file,
+    file,
     ...(line === undefined ? {} : { line }),
     ...(column === undefined ? {} : { column }),
   };
@@ -71,7 +78,7 @@ function failure(
     requestId: request.requestId,
     exerciseSessionId: request.exerciseSessionId,
     executionRevision: request.executionRevision,
-    file: request.file,
+    file,
     diagnostics: [diagnostic],
   };
 }
@@ -159,7 +166,7 @@ function instrument(source: string, nodes: readonly Node[], guardIdentifier: str
           functionGuardPosition(body),
           `if (!${guardIdentifier}.enterFunction()) return;try{`,
         );
-        magic.prependLeft(body.end - 1, `}finally{${guardIdentifier}.leaveFunction();}`);
+        magic.appendLeft(body.end - 1, `}finally{${guardIdentifier}.leaveFunction();}`);
       } else if (node.type === 'ArrowFunctionExpression') {
         magic.prependLeft(
           body.start,
@@ -570,9 +577,9 @@ async function sha256(source: string): Promise<string> {
 }
 
 /** Sourceを解析・制限・instrumentし、失敗を診断へ変換する。 */
-export async function analyzeJavaScriptSource(
-  request: JavaScriptAnalysisRequest,
-): Promise<JavaScriptAnalysisResult> {
+async function analyzeLegacyJavaScriptSource(
+  request: JavaScriptLegacyAnalysisRequest,
+): Promise<JavaScriptLegacyAnalysisResult> {
   if (!/^[$A-Z_a-z][$\w]*$/u.test(request.guardIdentifier)) {
     return failure(request, 'system', 'Invalid guard identifier', '実行の準備に失敗しました。');
   }
@@ -648,4 +655,132 @@ export async function analyzeJavaScriptSource(
       'JavaScriptの解析に失敗しました。少し待ってからもう一度試してください。',
     );
   }
+}
+
+/** 到達可能moduleのSource bytesをpath昇順で固定して決定的hashを作る。 */
+async function moduleGraphSha256(
+  modules: readonly { readonly file: string; readonly source: string }[],
+): Promise<string> {
+  const canonical = JSON.stringify(
+    [...modules]
+      .sort((left, right) => (left.file < right.file ? -1 : left.file > right.file ? 1 : 0))
+      .map(({ file, source }) => ({ path: file, source })),
+  );
+  return sha256(canonical);
+}
+
+/** Workspace内の到達可能moduleを全件解析し同じgraph identityへ結ぶ。 */
+async function analyzeJavaScriptWorkspace(
+  request: JavaScriptWorkspaceAnalysisRequest,
+): Promise<JavaScriptAnalysisResult> {
+  if (request.sourceType !== 'module') {
+    return failure(
+      request,
+      'security',
+      'Workspace analysis requires module sourceType',
+      'Module Workspaceの実行形式が不正です。教材を再読み込みしてください。',
+    );
+  }
+  if (!/^[$A-Z_a-z][$\w]*$/u.test(request.guardIdentifier)) {
+    return failure(request, 'system', 'Invalid guard identifier', '実行の準備に失敗しました。');
+  }
+  let graph;
+  try {
+    graph = buildModuleGraph({ entryFile: request.entryFile, files: request.files });
+  } catch (error: unknown) {
+    const candidate =
+      typeof error === 'object' && error !== null
+        ? (error as Readonly<Record<string, unknown>>)
+        : undefined;
+    const file = typeof candidate?.file === 'string' ? candidate.file : request.entryFile;
+    const line = typeof candidate?.line === 'number' ? candidate.line : undefined;
+    const column = typeof candidate?.column === 'number' ? candidate.column : undefined;
+    const kind = error instanceof JavaScriptModuleGraphError ? error.kind : 'system';
+    const result = failure(
+      request,
+      kind,
+      error instanceof Error ? error.message : String(error),
+      kind === 'syntax'
+        ? 'JavaScriptの書き方を確認してください。括弧や引用符が閉じているか見直しましょう。'
+        : kind === 'security'
+          ? `${error instanceof Error ? error.message : String(error)} Workspace内の相対importへ直してください。`
+          : 'Module構成が大きすぎるか複雑すぎます。処理を小さく分けてください。',
+      line,
+      column,
+    );
+    return {
+      ...result,
+      diagnostics: result.diagnostics.map((diagnostic) => ({ ...diagnostic, file })),
+    };
+  }
+
+  const modules: JavaScriptWorkspaceAnalysisSuccess['modules'][number][] = [];
+  const facts: JavaScriptSourceFact[] = [];
+  for (const module of graph.modules) {
+    const analysis = await analyzeLegacyJavaScriptSource({
+      requestId: request.requestId,
+      exerciseSessionId: request.exerciseSessionId,
+      executionRevision: request.executionRevision,
+      file: module.file,
+      source: module.source,
+      sourceType: 'module',
+      capabilityProfile: request.capabilityProfile,
+      guardIdentifier: request.guardIdentifier,
+    });
+    if (analysis.status === 'failure') {
+      return { ...analysis, file: request.entryFile };
+    }
+    if (!('instrumentedCode' in analysis)) {
+      return failure(
+        request,
+        'system',
+        'Nested Workspace analysis result is invalid',
+        'JavaScriptの解析に失敗しました。少し待ってからもう一度試してください。',
+      );
+    }
+    facts.push(...analysis.facts);
+    if (facts.length > MAX_FACTS) {
+      return failure(
+        request,
+        'system',
+        'Workspace source fact count exceeds limit',
+        'コード全体が複雑すぎます。処理を小さく分けてください。',
+      );
+    }
+    modules.push({
+      file: module.file,
+      instrumentedCode: analysis.instrumentedCode,
+      dependencies: module.dependencies,
+    });
+  }
+  return {
+    status: 'success',
+    requestId: request.requestId,
+    exerciseSessionId: request.exerciseSessionId,
+    executionRevision: request.executionRevision,
+    file: request.entryFile,
+    entryFile: request.entryFile,
+    graphSha256: await moduleGraphSha256(graph.modules),
+    modules,
+    facts,
+    diagnostics: [],
+  };
+}
+
+/** classic 1 FileとWorkspace module graphを同じWorker entryで解析する。 */
+export async function analyzeJavaScriptSource(
+  request: JavaScriptLegacyAnalysisRequest,
+): Promise<JavaScriptLegacyAnalysisResult>;
+export async function analyzeJavaScriptSource(
+  request: JavaScriptWorkspaceAnalysisRequest,
+): Promise<JavaScriptWorkspaceAnalysisResult>;
+export async function analyzeJavaScriptSource(
+  request: JavaScriptAnalysisRequest,
+): Promise<JavaScriptAnalysisResult>;
+export async function analyzeJavaScriptSource(
+  request: JavaScriptAnalysisRequest,
+): Promise<JavaScriptAnalysisResult> {
+  return 'files' in request
+    ? analyzeJavaScriptWorkspace(request)
+    : analyzeLegacyJavaScriptSource(request);
 }

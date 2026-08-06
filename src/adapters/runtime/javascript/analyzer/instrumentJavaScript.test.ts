@@ -1,3 +1,4 @@
+import { parse } from 'acorn';
 import { describe, expect, it } from 'vitest';
 import { analyzeJavaScriptSource } from './instrumentJavaScript';
 
@@ -12,6 +13,105 @@ const baseInput = {
 } as const;
 
 describe('analyzeJavaScriptSource', () => {
+  it('Workspace全体を解析して到達module・graph hash・全File factを返す', async () => {
+    const request = {
+      requestId: 'request-module-1',
+      exerciseSessionId: 'javascript:exercise-1',
+      executionRevision: 3,
+      entryFile: 'src/main.js',
+      files: {
+        'src/main.js': "import { score } from './score.js';\nconsole.log(score);",
+        'src/score.js': 'export const score = 1;',
+        'src/unused.js': 'export const unused = true;',
+      },
+      sourceType: 'module',
+      capabilityProfile: 'modules',
+      guardIdentifier: '__tsumuBudget',
+    } as const;
+
+    const first = await analyzeJavaScriptSource(request as never);
+    const second = await analyzeJavaScriptSource({
+      ...request,
+      requestId: 'request-module-2',
+      files: {
+        'src/unused.js': 'export const unused = true;',
+        'src/score.js': 'export const score = 1;',
+        'src/main.js': "import { score } from './score.js';\nconsole.log(score);",
+      },
+    } as never);
+
+    expect(first.status).toBe('success');
+    expect(second.status).toBe('success');
+    if (first.status !== 'success' || second.status !== 'success') {
+      throw new Error('Workspace解析が成功しませんでした');
+    }
+    const firstWorkspace = first as unknown as Readonly<Record<string, unknown>>;
+    const secondWorkspace = second as unknown as Readonly<Record<string, unknown>>;
+    expect(firstWorkspace.graphSha256).toMatch(/^[a-f0-9]{64}$/u);
+    expect(secondWorkspace.graphSha256).toBe(firstWorkspace.graphSha256);
+    expect(firstWorkspace.modules).toEqual([
+      expect.objectContaining({ file: 'src/score.js' }),
+      expect.objectContaining({
+        file: 'src/main.js',
+        dependencies: [
+          expect.objectContaining({ specifier: './score.js', resolvedFile: 'src/score.js' }),
+        ],
+      }),
+    ]);
+    expect(first.facts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ kind: 'binding', file: 'src/score.js', name: 'score' }),
+        expect.objectContaining({ kind: 'call', file: 'src/main.js', callee: 'console.log' }),
+      ]),
+    );
+  });
+
+  it('依存Moduleの構文エラーをsecurityではなくsyntax診断として位置付きで返す', async () => {
+    const result = await analyzeJavaScriptSource({
+      requestId: 'request-module-syntax',
+      exerciseSessionId: 'javascript:exercise-1',
+      executionRevision: 3,
+      entryFile: 'src/main.js',
+      files: {
+        'src/main.js': "import './broken.js';",
+        'src/broken.js': 'export const broken =',
+      },
+      sourceType: 'module',
+      capabilityProfile: 'modules',
+      guardIdentifier: '__tsumuBudget',
+    });
+
+    expect(result).toMatchObject({
+      status: 'failure',
+      diagnostics: [
+        {
+          kind: 'syntax',
+          severity: 'error',
+          file: 'src/broken.js',
+          line: 1,
+        },
+      ],
+    });
+  });
+
+  it('Workspace形状をscript sourceTypeとして直接渡してもfail closedにする', async () => {
+    const result = await analyzeJavaScriptSource({
+      requestId: 'request-module-wrong-source-type',
+      exerciseSessionId: 'javascript:exercise-1',
+      executionRevision: 3,
+      entryFile: 'src/main.js',
+      files: { 'src/main.js': 'console.log("blocked");' },
+      sourceType: 'script',
+      capabilityProfile: 'modules',
+      guardIdentifier: '__tsumuBudget',
+    } as never);
+
+    expect(result).toMatchObject({
+      status: 'failure',
+      diagnostics: [{ kind: 'security', severity: 'error' }],
+    });
+  });
+
   it('LoopとFunctionへbudget guardを挿入しdirective prologueを維持する', async () => {
     const result = await analyzeJavaScriptSource({
       ...baseInput,
@@ -45,6 +145,41 @@ describe('analyzeJavaScriptSource', () => {
     expect(result.instrumentedCode).toContain('if (!__tsumuBudget.enterFunction()) return;');
     expect(result.instrumentedCode).toContain('return (value * 2);');
     expect(result.instrumentedCode).toContain('finally{__tsumuBudget.leaveFunction();}');
+  });
+
+  it('Event callbackと1行Loopを同時に変換しても有効なJavaScriptを生成する', async () => {
+    const sources = [
+      [
+        "const element = document.querySelector('#message');",
+        "element.addEventListener('click', () => {});",
+        'while (true) element.click();',
+      ].join('\n'),
+      [
+        "const element = document.querySelector('#message');",
+        'const recurse = () => {',
+        "  const next = document.createElement('button');",
+        "  next.addEventListener('click', recurse);",
+        '  next.click();',
+        '};',
+        "element.addEventListener('click', recurse);",
+        'element.click();',
+      ].join('\n'),
+    ];
+
+    for (const source of sources) {
+      const result = await analyzeJavaScriptSource({
+        ...baseInput,
+        capabilityProfile: 'dom',
+        source,
+      });
+
+      expect(result.status).toBe('success');
+      if (result.status !== 'success') throw new Error('解析が成功しませんでした');
+      expect(
+        () => parse(result.instrumentedCode, { ecmaVersion: 'latest', sourceType: 'script' }),
+        result.instrumentedCode,
+      ).not.toThrow();
+    }
   });
 
   it('同じsourceからSHA-256とValidator用factを決定的に生成する', async () => {

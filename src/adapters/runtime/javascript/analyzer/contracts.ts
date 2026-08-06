@@ -1,9 +1,14 @@
 import type { RunnerDiagnostic } from '../../../../core/runtime/contracts';
+import {
+  isJavaScriptWorkspacePath,
+  resolveJavaScriptModuleSpecifier,
+} from './modulePath';
+export { isJavaScriptWorkspacePath } from './modulePath';
 
 export type JavaScriptSourceType = 'script' | 'module';
 export type JavaScriptCapabilityProfileId = 'core' | 'modules' | 'dom' | 'async' | 'project';
 
-export interface JavaScriptAnalysisInput {
+export interface JavaScriptLegacyAnalysisInput {
   readonly exerciseSessionId: string;
   readonly executionRevision: number;
   readonly file: string;
@@ -13,9 +18,29 @@ export interface JavaScriptAnalysisInput {
   readonly guardIdentifier: string;
 }
 
-export interface JavaScriptAnalysisRequest extends JavaScriptAnalysisInput {
-  readonly requestId: string;
+export interface JavaScriptWorkspaceAnalysisInput {
+  readonly exerciseSessionId: string;
+  readonly executionRevision: number;
+  readonly entryFile: string;
+  readonly files: Readonly<Record<string, string>>;
+  readonly sourceType: JavaScriptSourceType;
+  readonly capabilityProfile: JavaScriptCapabilityProfileId;
+  readonly guardIdentifier: string;
 }
+
+export type JavaScriptAnalysisInput =
+  | JavaScriptLegacyAnalysisInput
+  | JavaScriptWorkspaceAnalysisInput;
+
+export type JavaScriptLegacyAnalysisRequest = JavaScriptLegacyAnalysisInput & {
+  readonly requestId: string;
+};
+export type JavaScriptWorkspaceAnalysisRequest = JavaScriptWorkspaceAnalysisInput & {
+  readonly requestId: string;
+};
+export type JavaScriptAnalysisRequest =
+  | JavaScriptLegacyAnalysisRequest
+  | JavaScriptWorkspaceAnalysisRequest;
 
 export interface QuerySelectorTextContentAssignmentFact {
   readonly kind: 'query-selector-text-content-assignment';
@@ -64,7 +89,7 @@ interface JavaScriptAnalysisIdentity {
   readonly file: string;
 }
 
-export interface JavaScriptAnalysisSuccess extends JavaScriptAnalysisIdentity {
+export interface JavaScriptLegacyAnalysisSuccess extends JavaScriptAnalysisIdentity {
   readonly status: 'success';
   readonly instrumentedCode: string;
   readonly sourceSha256: string;
@@ -72,11 +97,43 @@ export interface JavaScriptAnalysisSuccess extends JavaScriptAnalysisIdentity {
   readonly diagnostics: readonly [];
 }
 
+export interface JavaScriptInstrumentedModuleDependency {
+  readonly specifier: string;
+  readonly resolvedFile: string;
+  readonly start: number;
+  readonly end: number;
+}
+
+export interface JavaScriptInstrumentedModule {
+  readonly file: string;
+  readonly instrumentedCode: string;
+  readonly dependencies: readonly JavaScriptInstrumentedModuleDependency[];
+}
+
+export interface JavaScriptWorkspaceAnalysisSuccess extends JavaScriptAnalysisIdentity {
+  readonly status: 'success';
+  readonly entryFile: string;
+  readonly graphSha256: string;
+  readonly modules: readonly JavaScriptInstrumentedModule[];
+  readonly facts: readonly JavaScriptSourceFact[];
+  readonly diagnostics: readonly [];
+}
+
+export type JavaScriptAnalysisSuccess =
+  | JavaScriptLegacyAnalysisSuccess
+  | JavaScriptWorkspaceAnalysisSuccess;
+
 export interface JavaScriptAnalysisFailure extends JavaScriptAnalysisIdentity {
   readonly status: 'failure';
   readonly diagnostics: readonly RunnerDiagnostic[];
 }
 
+export type JavaScriptLegacyAnalysisResult =
+  | JavaScriptLegacyAnalysisSuccess
+  | JavaScriptAnalysisFailure;
+export type JavaScriptWorkspaceAnalysisResult =
+  | JavaScriptWorkspaceAnalysisSuccess
+  | JavaScriptAnalysisFailure;
 export type JavaScriptAnalysisResult = JavaScriptAnalysisSuccess | JavaScriptAnalysisFailure;
 
 export interface AnalyzerWorkerRequest {
@@ -102,12 +159,38 @@ function isRecord(value: unknown): value is Readonly<Record<string, unknown>> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+const MAX_ANALYSIS_FILE_BYTES = 100 * 1024;
+const MAX_ANALYSIS_WORKSPACE_BYTES = 300 * 1024;
+const MAX_ANALYSIS_FILES = 64;
+const MAX_ANALYSIS_EDGES = 256;
+const MAX_INSTRUMENTED_FILE_BYTES = 512 * 1024;
+const MAX_INSTRUMENTED_WORKSPACE_BYTES = 768 * 1024;
+const ANALYSIS_UTF8 = new TextEncoder();
+/** strictなJavaScript Workspace Recordと容量上限を検証する。 */
+function isJavaScriptWorkspace(value: unknown, entryFile: unknown): boolean {
+  if (!isRecord(value) || typeof entryFile !== 'string' || !isJavaScriptWorkspacePath(entryFile)) {
+    return false;
+  }
+  const entries = Object.entries(value);
+  if (entries.length === 0 || entries.length > MAX_ANALYSIS_FILES || !Object.hasOwn(value, entryFile)) {
+    return false;
+  }
+  let totalBytes = 0;
+  for (const [path, source] of entries) {
+    if (!isJavaScriptWorkspacePath(path) || typeof source !== 'string') return false;
+    const bytes = ANALYSIS_UTF8.encode(source).byteLength;
+    if (bytes > MAX_ANALYSIS_FILE_BYTES) return false;
+    totalBytes += bytes;
+    if (totalBytes > MAX_ANALYSIS_WORKSPACE_BYTES) return false;
+  }
+  return true;
+}
+
 /** Workerへ渡せるboundedな解析要求かを検証する。 */
 export function isJavaScriptAnalysisRequest(value: unknown): value is JavaScriptAnalysisRequest {
   if (!isRecord(value)) return false;
-  if (
-    JSON.stringify(Object.keys(value).sort()) !==
-    JSON.stringify([
+  const keys = Object.keys(value).sort();
+  const legacyKeys = [
       'capabilityProfile',
       'executionRevision',
       'exerciseSessionId',
@@ -116,11 +199,23 @@ export function isJavaScriptAnalysisRequest(value: unknown): value is JavaScript
       'requestId',
       'source',
       'sourceType',
-    ])
-  ) {
+    ].sort();
+  const workspaceKeys = [
+    'capabilityProfile',
+    'entryFile',
+    'executionRevision',
+    'exerciseSessionId',
+    'files',
+    'guardIdentifier',
+    'requestId',
+    'sourceType',
+  ].sort();
+  const legacyShape = JSON.stringify(keys) === JSON.stringify(legacyKeys);
+  const workspaceShape = JSON.stringify(keys) === JSON.stringify(workspaceKeys);
+  if (!legacyShape && !workspaceShape) {
     return false;
   }
-  return (
+  const commonIsValid =
     typeof value.requestId === 'string' &&
     value.requestId.length > 0 &&
     value.requestId.length <= 128 &&
@@ -129,14 +224,19 @@ export function isJavaScriptAnalysisRequest(value: unknown): value is JavaScript
     value.exerciseSessionId.length <= 256 &&
     Number.isSafeInteger(value.executionRevision) &&
     Number(value.executionRevision) >= 0 &&
-    typeof value.file === 'string' &&
-    value.file.length > 0 &&
-    value.file.length <= 256 &&
-    typeof value.source === 'string' &&
     (value.sourceType === 'script' || value.sourceType === 'module') &&
     ['core', 'modules', 'dom', 'async', 'project'].includes(String(value.capabilityProfile)) &&
     typeof value.guardIdentifier === 'string' &&
-    /^[$A-Z_a-z][$\w]*$/u.test(value.guardIdentifier)
+    /^[$A-Z_a-z][$\w]*$/u.test(value.guardIdentifier);
+  if (!commonIsValid) return false;
+  if (workspaceShape) {
+    return value.sourceType === 'module' && isJavaScriptWorkspace(value.files, value.entryFile);
+  }
+  return (
+    typeof value.file === 'string' &&
+    value.file.length > 0 &&
+    value.file.length <= 256 &&
+    typeof value.source === 'string'
   );
 }
 
@@ -255,6 +355,104 @@ export function isAnalyzerWorkerResponse(value: unknown): value is AnalyzerWorke
         ]) && diagnostics.length > 0
     );
   }
+  const factsAreValid =
+    Array.isArray(result.facts) &&
+    result.facts.length <= 256 &&
+    result.facts.every(isJavaScriptSourceFact);
+  if (result.status === 'success' && 'modules' in result) {
+    if (
+      JSON.stringify(Object.keys(result).sort()) !==
+        JSON.stringify([
+          'diagnostics',
+          'entryFile',
+          'executionRevision',
+          'exerciseSessionId',
+          'facts',
+          'file',
+          'graphSha256',
+          'modules',
+          'requestId',
+          'status',
+        ]) ||
+      diagnostics.length !== 0 ||
+      typeof result.entryFile !== 'string' ||
+      result.entryFile !== result.file ||
+      !isJavaScriptWorkspacePath(result.entryFile) ||
+      typeof result.graphSha256 !== 'string' ||
+      !/^[a-f0-9]{64}$/u.test(result.graphSha256) ||
+      !Array.isArray(result.modules) ||
+      result.modules.length === 0 ||
+      result.modules.length > MAX_ANALYSIS_FILES ||
+      !factsAreValid
+    ) {
+      return false;
+    }
+    const precedingFiles = new Set<string>();
+    let dependencyCount = 0;
+    let instrumentedWorkspaceBytes = 0;
+    let lastModuleFile: string | undefined;
+    for (const module of result.modules) {
+      if (!isRecord(module)) return false;
+      if (
+        JSON.stringify(Object.keys(module).sort()) !==
+          JSON.stringify(['dependencies', 'file', 'instrumentedCode']) ||
+        typeof module.file !== 'string' ||
+        !isJavaScriptWorkspacePath(module.file) ||
+        typeof module.instrumentedCode !== 'string' ||
+        !Array.isArray(module.dependencies) ||
+        module.dependencies.length > MAX_ANALYSIS_EDGES
+      ) {
+        return false;
+      }
+      const instrumentedFileBytes = ANALYSIS_UTF8.encode(module.instrumentedCode).byteLength;
+      if (instrumentedFileBytes > MAX_INSTRUMENTED_FILE_BYTES) return false;
+      instrumentedWorkspaceBytes += instrumentedFileBytes;
+      if (instrumentedWorkspaceBytes > MAX_INSTRUMENTED_WORKSPACE_BYTES) return false;
+      if (precedingFiles.has(module.file)) return false;
+      for (const dependency of module.dependencies) {
+        if (!isRecord(dependency)) return false;
+        if (!(
+          JSON.stringify(Object.keys(dependency).sort()) ===
+            JSON.stringify(['end', 'resolvedFile', 'specifier', 'start']) &&
+          typeof dependency.specifier === 'string' &&
+          dependency.specifier.length > 0 &&
+          dependency.specifier.length <= 256 &&
+          typeof dependency.resolvedFile === 'string' &&
+          isJavaScriptWorkspacePath(dependency.resolvedFile) &&
+          Number.isSafeInteger(dependency.start) &&
+          Number(dependency.start) >= 0 &&
+          Number.isSafeInteger(dependency.end) &&
+          Number(dependency.end) > Number(dependency.start)
+        )) {
+          return false;
+        }
+        if (!precedingFiles.has(dependency.resolvedFile)) return false;
+        try {
+          if (
+            resolveJavaScriptModuleSpecifier(module.file, dependency.specifier) !==
+            dependency.resolvedFile
+          ) {
+            return false;
+          }
+        } catch {
+          return false;
+        }
+        dependencyCount += 1;
+        if (dependencyCount > MAX_ANALYSIS_EDGES) return false;
+      }
+      precedingFiles.add(module.file);
+      lastModuleFile = module.file;
+    }
+    return (
+      precedingFiles.has(result.entryFile) &&
+      lastModuleFile === result.entryFile &&
+      Array.isArray(result.facts) &&
+      result.facts.every(
+        (fact: unknown) =>
+          isRecord(fact) && typeof fact.file === 'string' && precedingFiles.has(fact.file),
+      )
+    );
+  }
   return (
     result.status === 'success' &&
     JSON.stringify(Object.keys(result).sort()) ===
@@ -273,8 +471,6 @@ export function isAnalyzerWorkerResponse(value: unknown): value is AnalyzerWorke
     typeof result.instrumentedCode === 'string' &&
     typeof result.sourceSha256 === 'string' &&
     /^[a-f0-9]{64}$/u.test(result.sourceSha256) &&
-    Array.isArray(result.facts) &&
-    result.facts.length <= 256 &&
-    result.facts.every(isJavaScriptSourceFact)
+    factsAreValid
   );
 }

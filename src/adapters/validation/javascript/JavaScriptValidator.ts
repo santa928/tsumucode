@@ -335,14 +335,68 @@ export class JavaScriptValidator implements ValidatorAdapter {
       ]);
     }
     try {
-      for (const file of new Set(sourceRules.map(({ target }) => target.file))) {
-        const source = context.files[file];
-        if (source === undefined) {
+      const sourceFiles = new Set(sourceRules.map(({ target }) => target.file));
+      for (const file of sourceFiles) {
+        if (context.files[file] === undefined) {
           return blockedResult(context, 'system-error', [
             ...context.diagnostics,
             systemDiagnostic('JAVASCRIPT_SOURCE_MISSING', `JavaScript source is missing: ${file}`),
           ]);
         }
+      }
+
+      if (runtime.sourceType === 'module') {
+        const guardIdentifier = this.#guardIdentifierFactory();
+        if (!GUARD_IDENTIFIER_PATTERN.test(guardIdentifier)) {
+          return blockedResult(context, 'system-error', [
+            ...context.diagnostics,
+            systemDiagnostic('JAVASCRIPT_GUARD_INVALID', 'Validator guard identifier is invalid'),
+          ]);
+        }
+        const files = Object.fromEntries(
+          Object.entries(context.files).filter(([file]) => file.toLowerCase().endsWith('.js')),
+        );
+        const analysis = await analyzer.analyze({
+          exerciseSessionId: identity.exerciseSessionId,
+          executionRevision: identity.executionRevision,
+          entryFile: runtime.entryFile,
+          files,
+          guardIdentifier,
+          sourceType: runtime.sourceType,
+          capabilityProfile: runtime.capabilityProfile,
+        });
+        if (analysis.status === 'failure') {
+          return analysisFailureResult(context, analysis, identity.executionRevision);
+        }
+        if (!('graphSha256' in analysis)) {
+          return blockedResult(context, 'system-error', [
+            ...context.diagnostics,
+            systemDiagnostic(
+              'JAVASCRIPT_ANALYSIS_KIND_MISMATCH',
+              'JavaScript Module validation received a single Source payload',
+            ),
+          ]);
+        }
+        const graphHashEvidence = indexedEvidence.get(
+          JSON.stringify(['javascript.module-graph-sha256', null]),
+        );
+        if (
+          typeof graphHashEvidence?.value !== 'string' ||
+          !SOURCE_HASH_PATTERN.test(graphHashEvidence.value) ||
+          graphHashEvidence.value !== analysis.graphSha256
+        ) {
+          return blockedResult(context, 'system-error', [
+            ...context.diagnostics,
+            systemDiagnostic(
+              'JAVASCRIPT_MODULE_GRAPH_HASH_MISMATCH',
+              'JavaScript Module graph hash does not match execution evidence',
+            ),
+          ]);
+        }
+        for (const file of sourceFiles) analyses.set(file, analysis);
+      } else {
+        for (const file of sourceFiles) {
+        const source = context.files[file];
         const guardIdentifier = this.#guardIdentifierFactory();
         if (!GUARD_IDENTIFIER_PATTERN.test(guardIdentifier)) {
           return blockedResult(context, 'system-error', [
@@ -354,13 +408,22 @@ export class JavaScriptValidator implements ValidatorAdapter {
           exerciseSessionId: identity.exerciseSessionId,
           executionRevision: identity.executionRevision,
           file,
-          source,
+          source: source!,
           guardIdentifier,
           sourceType: runtime.sourceType,
           capabilityProfile: runtime.capabilityProfile,
         });
         if (analysis.status === 'failure') {
           return analysisFailureResult(context, analysis, identity.executionRevision);
+        }
+        if (!('sourceSha256' in analysis)) {
+          return blockedResult(context, 'system-error', [
+            ...context.diagnostics,
+            systemDiagnostic(
+              'JAVASCRIPT_ANALYSIS_KIND_MISMATCH',
+              'JavaScript source validation received a Workspace graph payload',
+            ),
+          ]);
         }
         const hashEvidence = indexedEvidence.get(
           JSON.stringify(['javascript.source-sha256', file]),
@@ -379,6 +442,7 @@ export class JavaScriptValidator implements ValidatorAdapter {
           ]);
         }
         analyses.set(file, analysis);
+        }
       }
 
       let domChecks: readonly ValidationCheck[] = [];

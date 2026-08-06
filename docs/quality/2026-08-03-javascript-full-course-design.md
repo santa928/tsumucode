@@ -1,6 +1,6 @@
 # JavaScript全Course 設計
 
-- 状態: 書面レビュー承認済み・Core Runtime／Console実装・検証済み（Module／Scenario実装前）
+- 状態: 書面レビュー承認済み・Core Runtime／Console／static Module実装・検証済み（Scenario実装前）
 - 承認日: 2026-08-04
 - 作成日: 2026-08-03
 - 対象: `javascript` Course Chapter 01〜13、既存Chapter 00の互換維持、全Course公開
@@ -70,7 +70,7 @@ Courseは技術項目を列挙するだけの辞書にしない。各標準Chapt
 
 ### 3.1 Core Runtime／Console実装証跡
 
-2026-08-05時点で、Chapter 00互換のCore Runtimeとbounded ConsoleをProduction buildへ実装し、下表の範囲を検証した。これは52 Lessonの全Course完成を意味しない。Courseは引き続き`draft`であり、Module、Scenario、Chapter 01〜13、全Course review、初心者検証、Lighthouse、本番公開後回帰は未完了である。
+2026-08-05時点で、Chapter 00互換のCore Runtimeとbounded ConsoleをProduction buildへ実装し、下表の範囲を検証した。これは52 Lessonの全Course完成を意味しない。Courseは引き続き`draft`であり、Scenario、Chapter 01〜13、全Course review、初心者検証、Lighthouse、本番公開後回帰は未完了である。
 
 - Production artifact SHA-256: `38be0f65d89f10a4854b32ef883c32eca9787ba5b38e493894a622e2228ceab0`
 - JavaScript固有lazy graph: `19,608 bytes gzip`（予算`180,000 bytes`以下）
@@ -92,9 +92,21 @@ Courseは技術項目を列挙するだけの辞書にしない。各標準Chapt
 | REQ-JSC-025 | Core基盤検証済み        | Home／Path／HTML Slideの静的graphからJavaScript Runtime、Console、Analyzer、Validatorを分離し、増分`19,608 bytes gzip`                  |
 | REQ-JSC-032 | Core基盤のみ検証済み    | 3 Engine、axe、Keyboard、1280×720／768×1024／390×844、Security、Performanceを通過。全Course Gateは未完了                                |
 
-### 3.2 未完了要件
+### 3.2 static Module実装証跡
 
-REQ-JSC-016〜022は未完了である。相対static module graph、Module固有拒否matrix、trusted Scenario bridge、新規iframeごとのcheckpoint、750 ms bounded poll、全Course用Analyzer fact、早期／後期Lesson別の判定方針は、Module／Scenario実装タスクと各教材タスクで実装・検証する。現時点のCore Runtime／Console証跡をこれらの完了根拠へ読み替えない。
+2026-08-05時点でREQ-JSC-016、REQ-JSC-017を実装した。Analyzer Workerは同一Workspaceの到達可能な相対static import／exportを依存先優先へ解決し、全Moduleをinstrumentしてpath昇順のgraph SHA-256へ結ぶ。Runnerは解析済みSourceを文字列断片と依存Fileの閉じたPlanへ変換し、opaque iframe内だけでBlob URLを生成・import・破棄する。ValidatorはWorkspaceを一度だけ再解析し、実行時graph hashと依存Fileの型付きFactを照合する。
+
+- Unit: module path、bare／dynamic import、未知File、path escape、循環、構文位置、決定順、hash、Plan閉包、Runner Evidence、Validator graph照合
+- Browser: Chromium、Firefox、WebKitのopaque iframeでstatic Module実行 `3/3`、JavaScript Security回帰 `21/21`
+- Security: Network／Storage／popup／親画面／navigation／dynamic codeは未開放。CSPの`connect-src 'none'`とopaque sandboxを維持
+- Performance: Runner performance `21/21`、bundle／subpath予算 `9/9`
+- Error境界: Module構文エラーは起点Fileと位置付き`syntax`、契約外importとgraphは学習者向け`code-error`、基盤失敗は`system-error`
+
+REQ-JSC-021の型付きAnalyzer FactとModule graph hash照合はModule範囲で実装済みである。ただしChapter 01〜13が要求する全Fact種別とLesson別Ruleは教材タスクで追加するため、要件全体は未完了のままとする。
+
+### 3.3 未完了要件
+
+REQ-JSC-018〜020のtrusted Scenario bridge、新規iframeごとのcheckpoint、750 ms bounded pollは未実装である。REQ-JSC-021の全Course用Analyzer fact拡張とREQ-JSC-022の早期／後期Lesson別判定方針は各教材タスクで実装・検証する。現時点のModule証跡をScenarioや全Course教材の完了根拠へ読み替えない。
 
 ## 4. 要件差分
 
@@ -418,7 +430,7 @@ blockingな難度ずれ、直前Slideとの不整合、操作不能、誤判定�
 - [ ] 親Issue記載の全JavaScript ConceptをSlide、Exercise、Projectで扱う
 - [ ] 各標準Lessonに3 Hint、Solution、正負Fixture、独立Reviewがある
 - [ ] Consoleが対象Lessonだけ表示され、bounded outputとAccessibility契約を満たす
-- [ ] static ModuleがWorkspace内だけで動き、危険なimportを拒否する
+- [x] static ModuleがWorkspace内だけで動き、危険なimportを拒否する
 - [ ] 対話Scenarioが回答、得点、次問、結果、再挑戦を実利用順で判定する
 - [ ] 後期ExerciseとProjectが不要なSource固定をせず、別解を許可する
 - [ ] Runner／Analyzer／bridge失敗が不正解にならず、Sourceと直前成功結果が残る
@@ -450,7 +462,7 @@ blockingな難度ずれ、直前Slideとの不整合、操作不能、誤判定�
 | ----------------------------------- | ----------------------------------------------------------------------------------------- |
 | Capability拡張でSecurity holeを作る | 固定Profile、未知構文fail-closed、Profile差分test、3 Browser request監視を必須にする      |
 | Scenarioがflakyになる               | 新規frame、固定sleep禁止、期待状態poll、action上限、同revision identityを使う             |
-| Module Blobが残る                   | generation所有、全error／stale／dispose経路のrevoke test、resource count E2Eを行う        |
+| Module Blobが残る                   | opaque iframeがgeneration内で所有し、import成功／失敗の`finally`で全URLをrevokeする       |
 | ConsoleがMain threadを塞ぐ          | 件数、size、depthを制限し、100件long-task testを行う                                      |
 | Source ruleが別解を落とす           | 早期ConceptだけSource factで確認し、後期は振る舞い中心にする                              |
 | 52 Lessonで難度や用語がずれる       | Concept graph、trace、source hash review、初心者通し検証を重ねる                          |

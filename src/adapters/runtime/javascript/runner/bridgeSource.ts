@@ -2,6 +2,7 @@
 import { assertBridgeConfig } from '../../html-css/bridgeSource';
 import type { RunnerConsoleLevel, RunnerConsoleRecord } from '../../../../core/runtime/contracts';
 import { CONSOLE_LIMITS, createConsoleFormatter, type ConsoleLimits } from './consoleFormatter';
+import type { PreparedJavaScriptModuleGraph } from './materializeModuleGraph';
 import { JAVASCRIPT_PROTOCOL_VERSION } from './protocol';
 
 export interface CreateJavaScriptExecutionSourceInput {
@@ -12,14 +13,75 @@ export interface CreateJavaScriptExecutionSourceInput {
   readonly instrumentedCode: string;
 }
 
+export interface CreateJavaScriptModuleExecutionSourceInput {
+  readonly exerciseSessionId: string;
+  readonly executionRevision: number;
+  readonly bootstrapToken: string;
+  readonly runtimeKey: string;
+  readonly moduleGraph: PreparedJavaScriptModuleGraph;
+}
+
 const SAFE_GUARD_IDENTIFIER = /^[$A-Z_a-z][$\w]*$/u;
+const SAFE_RUNTIME_KEY = /^[$A-Z_a-z][$\w]*$/u;
 const MAX_INSTRUMENTED_CODE_BYTES = 200 * 1024;
+const MAX_MODULE_PLAN_BYTES = 768 * 1024;
 
 interface RuntimeConfig {
   readonly exerciseSessionId: string;
   readonly executionRevision: number;
   readonly bootstrapToken: string;
   readonly protocolVersion: number;
+}
+
+/** Module Blob URLを例外に影響されず全件回収し、再実行しても副作用を起こさない。 */
+export function releaseJavaScriptModuleObjectUrls(
+  objectUrls: string[],
+  revokeObjectUrl: (url: string) => void,
+): void {
+  while (objectUrls.length > 0) {
+    const objectUrl = objectUrls.pop();
+    if (objectUrl === undefined) continue;
+    try {
+      revokeObjectUrl(objectUrl);
+    } catch {
+      // 1件のBrowser API失敗で残りのBlob URL回収を止めない。
+    }
+  }
+}
+
+/** trusted参照の捕捉後、学習globalから未解析scriptを作れるCapabilityを除去する。 */
+export function lockDownJavaScriptDynamicCodeCapabilities(
+  target: Readonly<Record<string, unknown>>,
+): void {
+  const disable = (owner: object, key: PropertyKey): void => {
+    try {
+      Object.defineProperty(owner, key, {
+        configurable: false,
+        enumerable: false,
+        value: undefined,
+        writable: false,
+      });
+    } catch {
+      // Browser差で上書き不能でも、AnalyzerとCSPの防御を継続する。
+    }
+  };
+  const nativeUrl = target['URL'];
+  if ((typeof nativeUrl === 'object' && nativeUrl !== null) || typeof nativeUrl === 'function') {
+    disable(nativeUrl, 'createObjectURL');
+  }
+  disable(target, 'Blob');
+  disable(target, 'Reflect');
+  disable(target, 'URL');
+}
+
+/** 適用済みCSPを維持したまま、学習DOMからbootstrap nonceの観測源を除去する。 */
+export function scrubJavaScriptBootstrapSecrets(target: Document): void {
+  for (const script of [...target.scripts]) script.remove();
+  for (const meta of [...target.head.querySelectorAll('meta[http-equiv]')]) {
+    if (meta.getAttribute('http-equiv')?.trim().toLowerCase() === 'content-security-policy') {
+      meta.remove();
+    }
+  }
 }
 
 /** iframe内の実行状態を閉包へ隔離し、学習Codeへbudget判定だけを公開する。 */
@@ -32,6 +94,7 @@ function createRuntimeState(
   const version = config.protocolVersion;
   const maximumCheckpoints = 100_000;
   const maximumDurationMs = 250;
+  const maximumFunctionDepth = 32;
   const maximumTimers = 10;
   const maximumUsedRequests = 1_024;
   const parentWindow = window.parent;
@@ -43,6 +106,14 @@ function createRuntimeState(
   const nativeClearTimeout = window.clearTimeout.bind(window);
   const nativeSetInterval = window.setInterval.bind(window);
   const nativeClearInterval = window.clearInterval.bind(window);
+  // eslint-disable-next-line @typescript-eslint/unbound-method -- dynamic EventTargetをReflect.applyで明示するため意図的に捕捉する。
+  const nativeAddEventListener = EventTarget.prototype.addEventListener;
+  // eslint-disable-next-line @typescript-eslint/unbound-method -- dynamic EventTargetをReflect.applyで明示するため意図的に捕捉する。
+  const nativeRemoveEventListener = EventTarget.prototype.removeEventListener;
+  const applyFunction = Reflect.apply.bind(Reflect);
+  const objectKeys = Object.keys.bind(Object);
+  const eventListenerWrappers = new WeakMap<EventListenerOrEventListenerObject, EventListener>();
+  const budgetedEvents = new WeakSet<Event>();
   const addWindowListener = window.addEventListener.bind(window);
   const timers = new Map<number, 'timeout' | 'interval'>();
   const usedRequestIds = new Set<string>();
@@ -50,6 +121,7 @@ function createRuntimeState(
   let checkpoints = 0;
   let startedAt = now();
   let functionDepth = 0;
+  let learnerExecutionDepth = 0;
   let budgetExhausted = false;
   let timerLimitExceeded = false;
   let runtimeError: { readonly name: string; readonly message: string } | null = null;
@@ -179,12 +251,86 @@ function createRuntimeState(
     }
   };
 
-  const executeCallback = (callback: (...args: unknown[]) => unknown, args: unknown[]): void => {
-    resetCallbackBudget();
+  const executeCallback = (
+    callback: (...args: unknown[]) => unknown,
+    args: unknown[],
+    thisValue?: unknown,
+    resetBudget = true,
+  ): void => {
+    if (resetBudget) resetCallbackBudget();
+    learnerExecutionDepth += 1;
     try {
-      Reflect.apply(callback, undefined, args);
+      applyFunction(callback, thisValue, args);
     } catch (error: unknown) {
       runtimeError = errorRecord(error);
+    } finally {
+      learnerExecutionDepth = Math.max(0, learnerExecutionDepth - 1);
+    }
+  };
+
+  const wrapEventListener = (
+    listener: EventListenerOrEventListenerObject,
+  ): EventListener => {
+    const existing = eventListenerWrappers.get(listener);
+    if (existing !== undefined) return existing;
+    const wrapped = function (this: EventTarget, event: Event): void {
+      const resetBudget =
+        learnerExecutionDepth === 0 && functionDepth === 0 && !budgetedEvents.has(event);
+      if (resetBudget) budgetedEvents.add(event);
+      if (typeof listener === 'function') {
+        executeCallback(
+          listener as (...args: unknown[]) => unknown,
+          [event],
+          this,
+          resetBudget,
+        );
+        return;
+      }
+      const handleEvent = listener.handleEvent.bind(listener) as (...args: unknown[]) => unknown;
+      executeCallback(handleEvent, [event], listener, resetBudget);
+    };
+    eventListenerWrappers.set(listener, wrapped);
+    return wrapped;
+  };
+
+  const installEventListenerGuards = (): void => {
+    try {
+      Object.defineProperties(EventTarget.prototype, {
+        addEventListener: {
+          configurable: false,
+          writable: false,
+          value: function (
+            this: EventTarget,
+            type: string,
+            listener: EventListenerOrEventListenerObject | null,
+            options?: boolean | AddEventListenerOptions,
+          ): void {
+            applyFunction(nativeAddEventListener, this, [
+              type,
+              listener === null ? null : wrapEventListener(listener),
+              options,
+            ]);
+          },
+        },
+        removeEventListener: {
+          configurable: false,
+          writable: false,
+          value: function (
+            this: EventTarget,
+            type: string,
+            listener: EventListenerOrEventListenerObject | null,
+            options?: boolean | EventListenerOptions,
+          ): void {
+            applyFunction(nativeRemoveEventListener, this, [
+              type,
+              listener === null ? null : (eventListenerWrappers.get(listener) ?? listener),
+              options,
+            ]);
+          },
+        },
+      });
+    } catch {
+      runtimeError = { name: 'Error', message: 'Event callback guard could not be initialized' };
     }
   };
 
@@ -267,6 +413,22 @@ function createRuntimeState(
     'localStorage',
     'sessionStorage',
     'open',
+    'BroadcastChannel',
+    'IntersectionObserver',
+    'MessageChannel',
+    'MutationObserver',
+    'PerformanceObserver',
+    'ResizeObserver',
+    'cancelAnimationFrame',
+    'cancelIdleCallback',
+    'queueMicrotask',
+    'requestAnimationFrame',
+    'requestIdleCallback',
+    'scheduler',
+    'addEventListener',
+    'dispatchEvent',
+    'postMessage',
+    'removeEventListener',
   ]) {
     lockGlobal(name, undefined);
   }
@@ -274,6 +436,7 @@ function createRuntimeState(
   lockGlobal('setInterval', setBoundedInterval);
   lockGlobal('clearTimeout', clearTrackedTimer);
   lockGlobal('clearInterval', clearTrackedTimer);
+  installEventListenerGuards();
   if (!lockGlobal('console', capturedConsole)) {
     try {
       Object.defineProperties(window.console, {
@@ -305,7 +468,7 @@ function createRuntimeState(
       return;
     }
     const message = event.data as Readonly<Record<string, unknown>>;
-    const keys = Object.keys(message).sort();
+    const keys = objectKeys(message).sort();
     const expected = [
       'exerciseSessionId',
       'executionRevision',
@@ -347,7 +510,7 @@ function createRuntimeState(
     },
     enterFunction(): boolean {
       functionDepth += 1;
-      if (functionDepth > 1_024) {
+      if (functionDepth > maximumFunctionDepth) {
         budgetExhausted = true;
         return false;
       }
@@ -358,10 +521,13 @@ function createRuntimeState(
     },
     run(callback: () => void): void {
       resetCallbackBudget();
+      learnerExecutionDepth += 1;
       try {
         callback();
       } catch (error: unknown) {
         runtimeError = errorRecord(error);
+      } finally {
+        learnerExecutionDepth = Math.max(0, learnerExecutionDepth - 1);
       }
       send('javascript.execution-complete', 'execution', config.bootstrapToken, {
         executed: runtimeError === null,
@@ -370,6 +536,30 @@ function createRuntimeState(
         runtimeError,
         console: copyConsoleRecords(),
       });
+    },
+    runModule(loader: () => Promise<unknown>, cleanup: () => void): void {
+      resetCallbackBudget();
+      learnerExecutionDepth += 1;
+      void Promise.resolve()
+        .then(loader)
+        .catch((error: unknown) => {
+          runtimeError = errorRecord(error);
+        })
+        .finally(() => {
+          learnerExecutionDepth = Math.max(0, learnerExecutionDepth - 1);
+          try {
+            cleanup();
+          } catch {
+            // runtime globalの後片付け失敗は学習コードの成否へ混ぜない。
+          }
+          send('javascript.execution-complete', 'execution', config.bootstrapToken, {
+            executed: runtimeError === null,
+            budgetExhausted,
+            timerLimitExceeded,
+            runtimeError,
+            console: copyConsoleRecords(),
+          });
+        });
     },
   });
 }
@@ -399,9 +589,74 @@ export function createJavaScriptExecutionSource(
   const consoleLimits = JSON.stringify(CONSOLE_LIMITS);
   return [
     '(function(){"use strict";',
+    `(${scrubJavaScriptBootstrapSecrets.toString()})(document);`,
     `const ${input.guardIdentifier}=(${createRuntimeState.toString()})(${config},(${createConsoleFormatter.toString()})(${consoleLimits}),${consoleLimits});`,
+    `(${lockDownJavaScriptDynamicCodeCapabilities.toString()})(globalThis);`,
     `${input.guardIdentifier}.run(function(){"use strict";`,
     input.instrumentedCode,
     '\n});})();',
+  ].join('');
+}
+
+/** 検証済みPlanをiframe所有Blobへ変換し、依存順importと全URL回収を行うsourceを作る。 */
+export function createJavaScriptModuleExecutionSource(
+  input: CreateJavaScriptModuleExecutionSourceInput,
+): string {
+  assertBridgeConfig({
+    exerciseSessionId: input.exerciseSessionId,
+    executionRevision: input.executionRevision,
+    bootstrapToken: input.bootstrapToken,
+    viewport: { id: 'runtime', width: 1, height: 1 },
+  });
+  if (!SAFE_RUNTIME_KEY.test(input.runtimeKey)) {
+    throw new Error('Invalid JavaScript module runtime key');
+  }
+  const modulePlan = JSON.stringify(input.moduleGraph);
+  if (new TextEncoder().encode(modulePlan).byteLength > MAX_MODULE_PLAN_BYTES) {
+    throw new Error('JavaScript module plan exceeds runtime limit');
+  }
+  const config = JSON.stringify({
+    exerciseSessionId: input.exerciseSessionId,
+    executionRevision: input.executionRevision,
+    bootstrapToken: input.bootstrapToken,
+    protocolVersion: JAVASCRIPT_PROTOCOL_VERSION,
+  });
+  const consoleLimits = JSON.stringify(CONSOLE_LIMITS);
+  const runtimeKey = JSON.stringify(input.runtimeKey);
+  return [
+    '(function(){"use strict";',
+    `(${scrubJavaScriptBootstrapSecrets.toString()})(document);`,
+    `const runtime=(${createRuntimeState.toString()})(${config},(${createConsoleFormatter.toString()})(${consoleLimits}),${consoleLimits});`,
+    `Object.defineProperty(globalThis,${runtimeKey},{configurable:true,enumerable:false,writable:false,value:runtime});`,
+    `const plan=${modulePlan};`,
+    'const NativeBlob=Blob;',
+    'const createObjectUrl=URL.createObjectURL.bind(URL);',
+    'const revokeObjectUrl=URL.revokeObjectURL.bind(URL);',
+    `const lockDown=${lockDownJavaScriptDynamicCodeCapabilities.toString()};`,
+    'const objectUrls=[];',
+    'const urlsByFile=Object.create(null);',
+    `const releaseObjectUrls=${releaseJavaScriptModuleObjectUrls.toString()};`,
+    'const release=()=>releaseObjectUrls(objectUrls,revokeObjectUrl);',
+    'const load=()=>{',
+    'for(let moduleIndex=0;moduleIndex<plan.modules.length;moduleIndex+=1){',
+    'const module=plan.modules[moduleIndex];',
+    'let source=module.sourceSegments[0];',
+    'for(let dependencyIndex=0;dependencyIndex<module.dependencyFiles.length;dependencyIndex+=1){',
+    'const dependencyUrl=urlsByFile[module.dependencyFiles[dependencyIndex]];',
+    'if(typeof dependencyUrl!=="string")throw new Error("Prepared module dependency is unavailable");',
+    'source+=JSON.stringify(dependencyUrl)+module.sourceSegments[dependencyIndex+1];',
+    '}',
+    'const moduleUrl=createObjectUrl(new NativeBlob([source],{type:"text/javascript;charset=utf-8"}));',
+    'if(typeof moduleUrl!=="string"||!moduleUrl.startsWith("blob:"))throw new Error("Module Blob URL could not be created");',
+    'objectUrls[objectUrls.length]=moduleUrl;',
+    'urlsByFile[module.file]=moduleUrl;',
+    '}',
+    'const entryUrl=urlsByFile[plan.entryFile];',
+    'if(typeof entryUrl!=="string")throw new Error("Entry module URL is unavailable");',
+    'lockDown(globalThis);',
+    'return import(entryUrl);',
+    '};',
+    `runtime.runModule(load,()=>{release();delete globalThis[${runtimeKey}];});`,
+    '})();',
   ].join('');
 }

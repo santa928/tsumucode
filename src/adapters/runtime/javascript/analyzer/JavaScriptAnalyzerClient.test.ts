@@ -2,7 +2,9 @@ import { describe, expect, it, vi } from 'vitest';
 import type {
   AnalyzerWorkerPort,
   JavaScriptAnalysisRequest,
-  JavaScriptAnalysisSuccess,
+  JavaScriptLegacyAnalysisSuccess,
+  JavaScriptWorkspaceAnalysisRequest,
+  JavaScriptWorkspaceAnalysisSuccess,
 } from './contracts';
 import { isAnalyzerWorkerResponse, isJavaScriptAnalysisRequest } from './contracts';
 import { JavaScriptAnalyzerClient } from './JavaScriptAnalyzerClient';
@@ -29,8 +31,22 @@ const input = {
   guardIdentifier: '__tsumuBudget',
 } as const;
 
+const workspaceInput = {
+  exerciseSessionId: 'javascript:exercise-1',
+  executionRevision: 4,
+  entryFile: 'src/main.js',
+  files: {
+    'src/main.js': "import { score } from './score.js'; console.log(score);",
+    'src/score.js': 'export const score = 1;',
+  },
+  sourceType: 'module',
+  capabilityProfile: 'modules',
+  guardIdentifier: '__tsumuBudget',
+} as const;
+
 /** Workerへ送られたrequestとidentityが一致する成功responseを作る。 */
-function success(request: JavaScriptAnalysisRequest): JavaScriptAnalysisSuccess {
+function success(request: JavaScriptAnalysisRequest): JavaScriptLegacyAnalysisSuccess {
+  if ('files' in request) throw new Error('classic requestではありません');
   return {
     status: 'success',
     requestId: request.requestId,
@@ -44,7 +60,107 @@ function success(request: JavaScriptAnalysisRequest): JavaScriptAnalysisSuccess 
   };
 }
 
+/** Workspace requestと同じidentityのmodule graph responseを作る。 */
+function workspaceSuccess(
+  request: JavaScriptWorkspaceAnalysisRequest,
+): JavaScriptWorkspaceAnalysisSuccess {
+  return {
+    status: 'success',
+    requestId: request.requestId,
+    exerciseSessionId: request.exerciseSessionId,
+    executionRevision: request.executionRevision,
+    file: request.entryFile,
+    entryFile: request.entryFile,
+    graphSha256: 'b'.repeat(64),
+    modules: [
+      {
+        file: 'src/score.js',
+        instrumentedCode: 'export const score = 1;',
+        dependencies: [],
+      },
+      {
+        file: 'src/main.js',
+        instrumentedCode: "import { score } from './score.js'; console.log(score);",
+        dependencies: [
+          {
+            specifier: './score.js',
+            resolvedFile: 'src/score.js',
+            start: 22,
+            end: 34,
+          },
+        ],
+      },
+    ],
+    facts: [],
+    diagnostics: [],
+  };
+}
+
 describe('JavaScriptAnalyzerClient', () => {
+  it('Worker requestはentryとWorkspace全体をstrictに受理する', () => {
+    const request = {
+      exerciseSessionId: 'javascript:exercise-1',
+      executionRevision: 4,
+      entryFile: 'src/main.js',
+      files: {
+        'src/main.js': "import { score } from './score.js'; console.log(score);",
+        'src/score.js': 'export const score = 1;',
+      },
+      sourceType: 'module',
+      capabilityProfile: 'modules',
+      guardIdentifier: '__tsumuBudget',
+      requestId: 'request-workspace',
+    } as const;
+
+    expect(isJavaScriptAnalysisRequest(request)).toBe(true);
+    expect(
+      isJavaScriptAnalysisRequest({
+        ...request,
+        files: { ...request.files, '../outside.js': 'export const secret = true;' },
+      }),
+    ).toBe(false);
+    expect(
+      isJavaScriptAnalysisRequest({
+        ...request,
+        files: { ...request.files, 'src/data.json': '{}' },
+      }),
+    ).toBe(false);
+    expect(
+      isJavaScriptAnalysisRequest({
+        ...request,
+        files: { ...request.files, 'https://example.com/evil.js': 'export const evil = true;' },
+      }),
+    ).toBe(false);
+    expect(
+      isJavaScriptAnalysisRequest({
+        ...request,
+        files: { ...request.files, 'src/%2e%2e/evil.js': 'export const evil = true;' },
+      }),
+    ).toBe(false);
+    expect(
+      isJavaScriptAnalysisRequest({
+        ...request,
+        files: {
+          ...request.files,
+          'src/evil.js\nthrow new Error("injected")//.js': 'export const evil = true;',
+        },
+      }),
+    ).toBe(false);
+    expect(
+      isJavaScriptAnalysisRequest({
+        ...request,
+        files: { ...request.files, 'src/evil\u2028injected.js': 'export const evil = true;' },
+      }),
+    ).toBe(false);
+    expect(
+      isJavaScriptAnalysisRequest({
+        ...request,
+        files: { ...request.files, 'src/evil\ud800.js': 'export const evil = true;' },
+      }),
+    ).toBe(false);
+    expect(isJavaScriptAnalysisRequest({ ...request, sourceType: 'script' })).toBe(false);
+  });
+
   it('Worker requestは固定Profileを受理し、未知Profileと未知fieldを拒否する', () => {
     const request = { ...input, requestId: 'request-1' };
 
@@ -82,6 +198,100 @@ describe('JavaScriptAnalyzerClient', () => {
     ).toBe(false);
   });
 
+  it('Worker responseは閉じたmodule graphだけを受理する', () => {
+    const request = {
+      exerciseSessionId: 'javascript:exercise-1',
+      executionRevision: 4,
+      entryFile: 'src/main.js',
+      files: {
+        'src/main.js': "import { score } from './score.js'; console.log(score);",
+        'src/score.js': 'export const score = 1;',
+      },
+      sourceType: 'module',
+      capabilityProfile: 'modules',
+      guardIdentifier: '__tsumuBudget',
+      requestId: 'request-workspace',
+    } as const satisfies JavaScriptWorkspaceAnalysisRequest;
+    const result = workspaceSuccess(request);
+
+    expect(isAnalyzerWorkerResponse({ type: 'result', result })).toBe(true);
+    expect(
+      isAnalyzerWorkerResponse({
+        type: 'result',
+        result: {
+          ...result,
+          modules: [
+            result.modules[0],
+            {
+              ...result.modules[1],
+              dependencies: [
+                {
+                  specifier: './missing.js',
+                  resolvedFile: 'src/missing.js',
+                  start: 22,
+                  end: 36,
+                },
+              ],
+            },
+          ],
+        },
+      }),
+    ).toBe(false);
+    expect(
+      isAnalyzerWorkerResponse({
+        type: 'result',
+        result: { ...result, modules: [result.modules[0], result.modules[0]] },
+      }),
+    ).toBe(false);
+
+    const otherModule = {
+      file: 'src/other.js',
+      instrumentedCode: 'export const score = 2;',
+      dependencies: [],
+    } as const;
+    expect(
+      isAnalyzerWorkerResponse({
+        type: 'result',
+        result: {
+          ...result,
+          modules: [
+            result.modules[0],
+            otherModule,
+            {
+              ...result.modules[1],
+              dependencies: [
+                {
+                  ...result.modules[1]!.dependencies[0]!,
+                  resolvedFile: 'src/other.js',
+                },
+              ],
+            },
+          ],
+        },
+      }),
+    ).toBe(false);
+  });
+
+  it('親側でも不正なWorkspace契約をWorkerへ送らずsecurity failureへ閉じる', async () => {
+    const worker = new FakeWorker();
+    const client = new JavaScriptAnalyzerClient({
+      workerFactory: () => worker,
+      requestIdFactory: () => 'request-invalid-workspace',
+    });
+
+    const result = await client.analyze({
+      ...workspaceInput,
+      sourceType: 'script',
+    } as never);
+
+    expect(worker.postMessage).not.toHaveBeenCalled();
+    expect(result).toMatchObject({
+      status: 'failure',
+      diagnostics: [{ kind: 'security', severity: 'error' }],
+    });
+    await client.dispose();
+  });
+
   it('同じrequest identityの一度目のresponseだけを受理する', async () => {
     const worker = new FakeWorker();
     const client = new JavaScriptAnalyzerClient({
@@ -116,6 +326,33 @@ describe('JavaScriptAnalyzerClient', () => {
     worker.emit({ type: 'result', result: { ...success(message.request), requestId: 'unknown' } });
     expect(worker.terminate).not.toHaveBeenCalled();
     await client.dispose();
+  });
+
+  it('Workspace responseをentryFile identityで受理する', async () => {
+    vi.useFakeTimers();
+    const worker = new FakeWorker();
+    const client = new JavaScriptAnalyzerClient({
+      workerFactory: () => worker,
+      requestIdFactory: () => 'request-workspace',
+      deadlineMs: 500,
+    });
+    const pending = client.analyze(workspaceInput);
+    const message = worker.postMessage.mock.calls[0]?.[0] as {
+      type: 'analyze';
+      request: JavaScriptAnalysisRequest;
+    };
+    if (!('files' in message.request)) throw new Error('Workspace requestではありません');
+
+    worker.emit({ type: 'result', result: workspaceSuccess(message.request) });
+    await Promise.resolve();
+    await vi.advanceTimersByTimeAsync(500);
+
+    await expect(pending).resolves.toMatchObject({
+      status: 'success',
+      entryFile: 'src/main.js',
+    });
+    await client.dispose();
+    vi.useRealTimers();
   });
 
   it('deadlineでWorkerを破棄してsystem diagnosticを返し、次回は新Workerを使う', async () => {

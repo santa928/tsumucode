@@ -47,8 +47,11 @@ describe('createJavaScriptSrcdoc', () => {
     expect(scripts[1]?.hasAttribute('data-tsumucode-javascript-runtime')).toBe(true);
     expect(scripts[1]?.textContent).toContain('URL.createObjectURL');
     expect(scripts[1]?.textContent).toContain('URL.revokeObjectURL');
+    expect(scripts[1]?.textContent).toContain('revokeObjectUrl(objectUrl)');
     expect(scripts[1]?.textContent).not.toContain('</script>');
     expect(parsed.querySelector('#escaped-runtime')).toBeNull();
+    expect(srcdoc).toContain('const objectKeys = Object.keys.bind(Object);');
+    expect(srcdoc).toContain('const objectFromEntries = Object.fromEntries.bind(Object);');
   });
 
   it('runtime sourceが上限を超える場合はsrcdocを生成しない', () => {
@@ -63,7 +66,7 @@ describe('createJavaScriptSrcdoc', () => {
         exerciseSessionId: 'session-1',
         executionRevision: 1,
         viewport: { id: 'desktop', width: 1280, height: 720 },
-        runtimeSource: 'x'.repeat(256 * 1024 + 1),
+        runtimeSource: 'x'.repeat(1024 * 1024 + 1),
       }),
     ).toThrow('JavaScript runtime source exceeds srcdoc limit');
   });
@@ -121,6 +124,7 @@ describe('createJavaScriptExecutionSource', () => {
     const frame = document.createElement('iframe');
     document.body.append(frame);
     const childWindow = frame.contentWindow!;
+    const dispatchWindowEvent = childWindow.dispatchEvent.bind(childWindow);
     const messages: unknown[] = [];
     const postMessage = vi
       .spyOn(childWindow.parent, 'postMessage')
@@ -168,7 +172,7 @@ describe('createJavaScriptExecutionSource', () => {
           console: [],
         },
       });
-      childWindow.dispatchEvent(
+      dispatchWindowEvent(
         new MessageEvent('message', {
           source: childWindow.parent,
           data: {
