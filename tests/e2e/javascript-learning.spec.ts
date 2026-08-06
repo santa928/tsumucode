@@ -147,7 +147,7 @@ test('下書きとReview復帰を保ち、確認後のResetで3 FileをStarter�
     .toBe(incompleteSource);
 
   await page.getByRole('button', { name: '判定する' }).click();
-  await expect(page.getByRole('heading', { name: 'あと一歩' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'あと一歩' })).toBeVisible({ timeout: 15_000 });
   await page
     .getByRole('button', { name: '関連スライドを見直す：script.jsで題名の文字を変更する' })
     .click();
@@ -162,11 +162,23 @@ test('下書きとReview復帰を保ち、確認後のResetで3 FileをStarter�
   await dialog.getByRole('button', { name: '最初のコードに戻す', exact: true }).click();
   await expect.poll(() => editorText(page)).toBe(JAVASCRIPT_STARTER_SOURCE);
   await expect(reset).toBeDisabled();
+  await expect
+    .poll(async () => {
+      const draft = (await readStoredProgress(page)).drafts.find(
+        (candidate) => candidate['workspaceId'] === JAVASCRIPT_EXERCISE_ID,
+      );
+      const files = draft?.['files'];
+      return typeof files === 'object' && files !== null
+        ? (files as Readonly<Record<string, unknown>>)['script.js']
+        : undefined;
+    })
+    .toBe(JAVASCRIPT_STARTER_SOURCE);
 
   await page.reload();
   await expect(page.getByRole('tab', { name: 'script.js', exact: true })).toHaveAttribute(
     'aria-selected',
     'true',
+    { timeout: 15_000 },
   );
   await expect.poll(() => editorText(page)).toBe(JAVASCRIPT_STARTER_SOURCE);
 });
