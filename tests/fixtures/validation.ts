@@ -88,6 +88,7 @@ export function validationContext(overrides: Partial<ValidationContext> = {}): V
     snapshots: { desktop: previewSnapshot() },
     diagnostics: [],
     evidence: [],
+    interactionCheckpoints: {},
     now: '2026-07-10T00:00:00.000Z',
     ...overrides,
   };

@@ -62,6 +62,54 @@ const validExerciseSource = {
   ],
 };
 
+/** 5 actionと5 expectationを通す正当なInteraction Scenarioを返す。 */
+function validInteractionScenario(overrides: Readonly<Record<string, unknown>> = {}) {
+  return {
+    id: 'answer-correctly',
+    label: '正解を選んで次の問題へ進む',
+    actions: [
+      { id: 'choose', kind: 'click', selector: '[data-answer="a"]' },
+      { id: 'fill-name', kind: 'fill', selector: '#name', value: 'つむ' },
+      { id: 'select-level', kind: 'select', selector: '#level', value: 'beginner' },
+      { id: 'submit-key', kind: 'key', selector: '#submit', key: 'Enter' },
+      { id: 'focus-next', kind: 'focus', selector: '#next-question' },
+    ],
+    checkpoints: [
+      {
+        id: 'result-updated',
+        afterActionId: 'focus-next',
+        expectations: [
+          { id: 'result-exists', kind: 'selector-exists', selector: '#result' },
+          {
+            id: 'score-text',
+            kind: 'selector-text',
+            selector: '#score',
+            equals: '1',
+          },
+          {
+            id: 'answer-state',
+            kind: 'attribute',
+            selector: '[data-answer="a"]',
+            name: 'aria-pressed',
+            equals: 'true',
+          },
+          { id: 'next-focused', kind: 'focused', selector: '#next-question' },
+          { id: 'console-result', kind: 'console-includes', includes: '正解' },
+        ],
+      },
+    ],
+    ...overrides,
+  };
+}
+
+const interactionRuntime = {
+  kind: 'javascript',
+  entryFile: 'script.js',
+  sourceType: 'script',
+  capabilityProfile: 'dom',
+  primaryOutput: 'preview',
+} as const;
+
 const validCourseSource = {
   schemaVersion: 1 as const,
   id: 'html-css',
@@ -236,6 +284,176 @@ describe('content source schema', () => {
     });
 
     expect(result.success).toBe(false);
+  });
+
+  it('bounded actionとcheckpoint expectationのInteraction Scenarioをstrictに受理する', () => {
+    const interactionScenarios = [validInteractionScenario()];
+
+    const result = ExerciseSourceSchema.parse({
+      ...validExerciseSource,
+      runtime: interactionRuntime,
+      interactionScenarios,
+    });
+
+    expect(result.interactionScenarios).toEqual(interactionScenarios);
+  });
+
+  it.each([
+    ['空のScenario集合', []],
+    [
+      '5件目のScenario',
+      Array.from({ length: 5 }, (_, index) =>
+        validInteractionScenario({ id: `answer-correctly-${String(index + 1)}` }),
+      ),
+    ],
+    [
+      '11件目のaction',
+      [
+        validInteractionScenario({
+          actions: Array.from({ length: 11 }, (_, index) => ({
+            id: `choose-${String(index + 1)}`,
+            kind: 'click',
+            selector: '[data-answer="a"]',
+          })),
+        }),
+      ],
+    ],
+    [
+      'actionの未知field',
+      [
+        validInteractionScenario({
+          actions: [{ id: 'choose', kind: 'click', selector: '#answer', sleepMs: 100 }],
+        }),
+      ],
+    ],
+    [
+      '4 KiBを超えるfill値',
+      [
+        validInteractionScenario({
+          actions: [{ id: 'fill-name', kind: 'fill', selector: '#name', value: 'a'.repeat(4097) }],
+        }),
+      ],
+    ],
+    [
+      '未許可key',
+      [
+        validInteractionScenario({
+          actions: [{ id: 'submit-key', kind: 'key', selector: '#submit', key: 'F13' }],
+        }),
+      ],
+    ],
+    ['空checkpoint', [validInteractionScenario({ checkpoints: [] })]],
+    [
+      '17件目のexpectation',
+      [
+        validInteractionScenario({
+          checkpoints: [
+            {
+              id: 'result-updated',
+              afterActionId: 'choose',
+              expectations: Array.from({ length: 17 }, (_, index) => ({
+                id: `result-${String(index + 1)}`,
+                kind: 'selector-exists',
+                selector: '#result',
+              })),
+            },
+          ],
+        }),
+      ],
+    ],
+  ])('%sを拒否する', (_label, interactionScenarios) => {
+    expect(
+      ExerciseSourceSchema.safeParse({
+        ...validExerciseSource,
+        runtime: interactionRuntime,
+        interactionScenarios,
+      }).success,
+    ).toBe(false);
+  });
+
+  it('Scenario・action・checkpoint・expectationのscope内重複IDを拒否する', () => {
+    const scenario = validInteractionScenario();
+    const cases = [
+      [scenario, scenario],
+      [
+        validInteractionScenario({
+          actions: [
+            { id: 'choose', kind: 'click', selector: '#answer-a' },
+            { id: 'choose', kind: 'click', selector: '#answer-b' },
+          ],
+        }),
+      ],
+      [
+        validInteractionScenario({
+          checkpoints: [
+            {
+              id: 'result-updated',
+              afterActionId: 'choose',
+              expectations: [{ id: 'result', kind: 'selector-exists', selector: '#result' }],
+            },
+            {
+              id: 'result-updated',
+              afterActionId: 'choose',
+              expectations: [{ id: 'score', kind: 'selector-exists', selector: '#score' }],
+            },
+          ],
+        }),
+      ],
+      [
+        validInteractionScenario({
+          checkpoints: [
+            {
+              id: 'result-updated',
+              afterActionId: 'choose',
+              expectations: [
+                { id: 'result', kind: 'selector-exists', selector: '#result' },
+                { id: 'result', kind: 'selector-exists', selector: '#score' },
+              ],
+            },
+          ],
+        }),
+      ],
+    ];
+
+    for (const interactionScenarios of cases) {
+      expect(
+        ExerciseSourceSchema.safeParse({
+          ...validExerciseSource,
+          runtime: interactionRuntime,
+          interactionScenarios,
+        }).success,
+      ).toBe(false);
+    }
+  });
+
+  it('checkpointの未知afterActionIdを拒否する', () => {
+    expect(
+      ExerciseSourceSchema.safeParse({
+        ...validExerciseSource,
+        runtime: interactionRuntime,
+        interactionScenarios: [
+          validInteractionScenario({
+            checkpoints: [
+              {
+                id: 'result-updated',
+                afterActionId: 'missing-action',
+                expectations: [{ id: 'result', kind: 'selector-exists', selector: '#result' }],
+              },
+            ],
+          }),
+        ],
+      }).success,
+    ).toBe(false);
+  });
+
+  it.each(['core', 'modules'])('Interaction Scenarioへ%s profileを許可しない', (profile) => {
+    expect(
+      ExerciseSourceSchema.safeParse({
+        ...validExerciseSource,
+        runtime: { ...interactionRuntime, capabilityProfile: profile },
+        interactionScenarios: [validInteractionScenario()],
+      }).success,
+    ).toBe(false);
   });
 
   it('親Directoryへ出るChapter sourceを拒否する', () => {

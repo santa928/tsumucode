@@ -793,6 +793,7 @@ export class LearningSessionController {
         snapshots,
         diagnostics,
         evidence: evidence ?? [],
+        interactionCheckpoints: {},
         now: this.input.now(),
       });
       this.#assertFresh(execution);

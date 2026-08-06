@@ -209,6 +209,163 @@ export const ExerciseRuntimeSchema = z.discriminatedUnion('kind', [
   JavaScriptExerciseRuntimeSchema,
 ]);
 
+/** selectorへ制御文字が混入していないことを文字コードで判定する。 */
+function hasNoControlCharacters(value: string): boolean {
+  for (const character of value) {
+    const codePoint = character.codePointAt(0);
+    if (
+      codePoint !== undefined &&
+      ((codePoint >= 0 && codePoint <= 31) || (codePoint >= 127 && codePoint <= 159))
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
+const InteractionSelectorSchema = z
+  .string()
+  .trim()
+  .min(1, '空でないselectorを指定してください')
+  .max(256, 'selectorは256文字以内で指定してください')
+  .refine(hasNoControlCharacters, 'selectorに制御文字は使用できません');
+const InteractionShortValueSchema = z.string().max(256, '値は256文字以内で指定してください');
+const InteractionLongValueSchema = z.string().max(4096, '値は4 KiB以内で指定してください');
+const InteractionKeySchema = z.enum([
+  'Enter',
+  'Escape',
+  'ArrowUp',
+  'ArrowDown',
+  'ArrowLeft',
+  'ArrowRight',
+  'Home',
+  'End',
+  'Space',
+  'Tab',
+]);
+
+/** 信頼済みBridgeへ送れる有限個の学習者操作だけを表す。 */
+export const JavaScriptInteractionActionSchema = z.discriminatedUnion('kind', [
+  z
+    .object({ id: IdSchema, kind: z.literal('click'), selector: InteractionSelectorSchema })
+    .strict(),
+  z
+    .object({
+      id: IdSchema,
+      kind: z.literal('fill'),
+      selector: InteractionSelectorSchema,
+      value: InteractionLongValueSchema,
+    })
+    .strict(),
+  z
+    .object({
+      id: IdSchema,
+      kind: z.literal('select'),
+      selector: InteractionSelectorSchema,
+      value: InteractionShortValueSchema,
+    })
+    .strict(),
+  z
+    .object({
+      id: IdSchema,
+      kind: z.literal('key'),
+      selector: InteractionSelectorSchema,
+      key: InteractionKeySchema,
+    })
+    .strict(),
+  z
+    .object({ id: IdSchema, kind: z.literal('focus'), selector: InteractionSelectorSchema })
+    .strict(),
+]);
+
+/** Scenario checkpointがBridgeの観測結果に要求できる有限個の期待値。 */
+export const JavaScriptCheckpointExpectationSchema = z.discriminatedUnion('kind', [
+  z
+    .object({
+      id: IdSchema,
+      kind: z.literal('selector-exists'),
+      selector: InteractionSelectorSchema,
+    })
+    .strict(),
+  z
+    .object({
+      id: IdSchema,
+      kind: z.literal('selector-text'),
+      selector: InteractionSelectorSchema,
+      equals: InteractionLongValueSchema,
+    })
+    .strict(),
+  z
+    .object({
+      id: IdSchema,
+      kind: z.literal('attribute'),
+      selector: InteractionSelectorSchema,
+      name: InteractionSelectorSchema,
+      equals: InteractionLongValueSchema,
+    })
+    .strict(),
+  z
+    .object({ id: IdSchema, kind: z.literal('focused'), selector: InteractionSelectorSchema })
+    .strict(),
+  z
+    .object({
+      id: IdSchema,
+      kind: z.literal('console-includes'),
+      includes: InteractionLongValueSchema,
+    })
+    .strict(),
+]);
+
+/** 1 action直後に評価するboundedな期待値集合。 */
+export const JavaScriptInteractionCheckpointSchema = z
+  .object({
+    id: IdSchema,
+    afterActionId: IdSchema,
+    expectations: z.array(JavaScriptCheckpointExpectationSchema).min(1).max(16),
+  })
+  .strict()
+  .superRefine((checkpoint, context) => {
+    if (hasDuplicates(checkpoint.expectations, ({ id }) => id)) {
+      context.addIssue({
+        code: 'custom',
+        path: ['expectations'],
+        message: 'Expectation IDが重複しています',
+      });
+    }
+  });
+
+/** 1 Exercise内で再生するbounded Interaction Scenario。 */
+export const JavaScriptInteractionScenarioSchema = z
+  .object({
+    id: IdSchema,
+    label: NonEmptyTextSchema.max(256, 'Scenario labelは256文字以内で指定してください'),
+    actions: z.array(JavaScriptInteractionActionSchema).min(1).max(10),
+    checkpoints: z.array(JavaScriptInteractionCheckpointSchema).min(1).max(10),
+  })
+  .strict()
+  .superRefine((scenario, context) => {
+    if (hasDuplicates(scenario.actions, ({ id }) => id)) {
+      context.addIssue({ code: 'custom', path: ['actions'], message: 'Action IDが重複しています' });
+    }
+    if (hasDuplicates(scenario.checkpoints, ({ id }) => id)) {
+      context.addIssue({
+        code: 'custom',
+        path: ['checkpoints'],
+        message: 'Checkpoint IDが重複しています',
+      });
+    }
+    const actionIds = new Set(scenario.actions.map(({ id }) => id));
+    for (const [checkpointIndex, checkpoint] of scenario.checkpoints.entries()) {
+      if (!actionIds.has(checkpoint.afterActionId)) {
+        context.addIssue({
+          code: 'custom',
+          path: ['checkpoints', checkpointIndex, 'afterActionId'],
+          message: `CheckpointのAction参照先がありません: ${checkpoint.afterActionId}`,
+        });
+      }
+    }
+  });
+
 export const HintSchema = z
   .object({
     id: IdSchema,
@@ -604,6 +761,7 @@ const ExerciseBaseShape = {
   steps: z.array(ExerciseStepSchema),
   files: z.array(ExerciseFileSchema).min(1),
   runtime: ExerciseRuntimeSchema.optional(),
+  interactionScenarios: z.array(JavaScriptInteractionScenarioSchema).min(1).max(4).optional(),
   validationRules: z.array(ValidationRuleDefinitionSchema).min(1),
   hints: z.array(HintSchema).length(3),
   relatedSlideIds: z.array(IdSchema).min(1),
@@ -611,17 +769,41 @@ const ExerciseBaseShape = {
   assets: z.array(AssetRefSchema),
 };
 
-export const ExerciseSchema = z.discriminatedUnion('kind', [
-  z.object({ ...ExerciseBaseShape, kind: z.literal('standard') }).strict(),
-  z
-    .object({
-      ...ExerciseBaseShape,
-      kind: z.literal('guided-project'),
-      projectId: IdSchema,
-    })
-    .strict(),
-  z.object({ ...ExerciseBaseShape, kind: z.literal('capstone'), projectId: IdSchema }).strict(),
-]);
+export const ExerciseSchema = z
+  .discriminatedUnion('kind', [
+    z.object({ ...ExerciseBaseShape, kind: z.literal('standard') }).strict(),
+    z
+      .object({
+        ...ExerciseBaseShape,
+        kind: z.literal('guided-project'),
+        projectId: IdSchema,
+      })
+      .strict(),
+    z.object({ ...ExerciseBaseShape, kind: z.literal('capstone'), projectId: IdSchema }).strict(),
+  ])
+  .superRefine((exercise, context) => {
+    if (
+      exercise.interactionScenarios !== undefined &&
+      (exercise.runtime?.kind !== 'javascript' ||
+        !['dom', 'async', 'project'].includes(exercise.runtime.capabilityProfile))
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['interactionScenarios'],
+        message: 'Interaction Scenarioはdom、async、project profileで指定してください',
+      });
+    }
+    if (
+      exercise.interactionScenarios !== undefined &&
+      hasDuplicates(exercise.interactionScenarios, ({ id }) => id)
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['interactionScenarios'],
+        message: 'Interaction Scenario IDが重複しています',
+      });
+    }
+  });
 
 const ChecklistItemSchema = z
   .object({

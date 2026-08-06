@@ -227,6 +227,97 @@ function assertViewportReadonly(viewport: PreviewViewport): void {
 void assertViewportReadonly;
 
 describe('CourseManifestSchema 公開境界', () => {
+  it('Interaction ScenarioをJavaScript DOM Exerciseの公開契約として受理する', () => {
+    const course = cloneCourse();
+    course.runnerId = 'javascript';
+    course.validatorId = 'javascript';
+    const exercise = firstStandardExercise(firstStandardLesson(course));
+    exercise.files.push({
+      path: 'script.js',
+      language: 'javascript',
+      content: "document.querySelector('#result').textContent = '1';",
+      editable: true,
+    });
+    Object.assign(exercise, {
+      runtime: {
+        kind: 'javascript',
+        entryFile: 'script.js',
+        sourceType: 'script',
+        capabilityProfile: 'dom',
+        primaryOutput: 'preview',
+      },
+      interactionScenarios: [
+        {
+          id: 'answer-correctly',
+          label: '正解を選んで結果を確認する',
+          actions: [{ id: 'choose', kind: 'click', selector: '[data-answer="a"]' }],
+          checkpoints: [
+            {
+              id: 'score-updated',
+              afterActionId: 'choose',
+              expectations: [
+                { id: 'score-text', kind: 'selector-text', selector: '#score', equals: '1' },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+    exercise.validationRules.push({
+      ...exercise.validationRules[0]!,
+      id: 'script-updates-result',
+      target: { kind: 'javascript-source', file: 'script.js' },
+      assertion: {
+        kind: 'query-selector-text-content-assignment',
+        selector: '#result',
+        expected: '1',
+      },
+    });
+
+    const parsed = CourseManifestSchema.parse(course);
+
+    expect(
+      firstStandardExercise(firstStandardLesson(parsed)).interactionScenarios?.[0]?.checkpoints[0]
+        ?.expectations,
+    ).toEqual([{ id: 'score-text', kind: 'selector-text', selector: '#score', equals: '1' }]);
+  });
+
+  it.each(['core', 'modules'])(
+    'Interaction ScenarioをJavaScript %s profileで拒否する',
+    (profile) => {
+      const course = cloneCourse();
+      const exercise = firstStandardExercise(firstStandardLesson(course));
+      Object.assign(exercise, {
+        runtime: {
+          kind: 'javascript',
+          entryFile: 'index.html',
+          sourceType: 'script',
+          capabilityProfile: profile,
+          primaryOutput: 'preview',
+        },
+        interactionScenarios: [
+          {
+            id: 'answer-correctly',
+            label: '正解を選ぶ',
+            actions: [{ id: 'choose', kind: 'click', selector: '#answer' }],
+            checkpoints: [
+              {
+                id: 'result-updated',
+                afterActionId: 'choose',
+                expectations: [{ id: 'result', kind: 'selector-exists', selector: '#result' }],
+              },
+            ],
+          },
+        ],
+      });
+
+      expectCourseIssue(
+        course,
+        'Interaction Scenarioはdom、async、project profileで指定してください',
+      );
+    },
+  );
+
   it('ページ送りSlideのLayout・習得段階・画面予算を受理する', () => {
     const slide = structuredClone(firstStandardLesson(cloneCourse()).slides[0]!);
     Object.assign(slide, {

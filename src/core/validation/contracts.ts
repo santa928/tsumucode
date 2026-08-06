@@ -1,6 +1,7 @@
 /** Runtime の観測結果を学習要件へ評価する Validation 公開契約。 */
 import type { ExerciseRuntime, ValidationRuleDefinition } from '../content/types';
 import type {
+  InteractionCheckpointResult,
   PreviewSnapshot,
   RunnerDiagnostic,
   RunnerEvidence,
@@ -18,6 +19,7 @@ export interface ValidationContext {
   readonly snapshots: Readonly<Record<string, PreviewSnapshot>>;
   readonly diagnostics: readonly RunnerDiagnostic[];
   readonly evidence: readonly RunnerEvidence[];
+  readonly interactionCheckpoints: Readonly<Record<string, readonly InteractionCheckpointResult[]>>;
   readonly now: string;
 }
 

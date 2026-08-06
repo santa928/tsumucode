@@ -25,6 +25,10 @@ import type {
   HtmlCssRuleTargetSchema,
   HtmlCssValidationRuleDefinitionSchema,
   JavaScriptExerciseRuntimeSchema,
+  JavaScriptCheckpointExpectationSchema,
+  JavaScriptInteractionActionSchema,
+  JavaScriptInteractionCheckpointSchema,
+  JavaScriptInteractionScenarioSchema,
   JavaScriptValidationRuleDefinitionSchema,
   LessonSchema,
   LearningPathDefinitionSchema,
@@ -66,6 +70,10 @@ export type MasteryLevel = z.infer<typeof MasteryLevelSchema>;
 export type Exercise = z.infer<typeof ExerciseSchema>;
 export type ExerciseRuntime = z.infer<typeof ExerciseRuntimeSchema>;
 export type JavaScriptExerciseRuntime = z.infer<typeof JavaScriptExerciseRuntimeSchema>;
+export type JavaScriptInteractionAction = z.infer<typeof JavaScriptInteractionActionSchema>;
+export type JavaScriptCheckpointExpectation = z.infer<typeof JavaScriptCheckpointExpectationSchema>;
+export type JavaScriptInteractionCheckpoint = z.infer<typeof JavaScriptInteractionCheckpointSchema>;
+export type JavaScriptInteractionScenario = z.infer<typeof JavaScriptInteractionScenarioSchema>;
 export type ExerciseFile = z.infer<typeof ExerciseFileSchema>;
 export type ExerciseStep = z.infer<typeof ExerciseStepSchema>;
 export type ConceptDefinition = z.infer<typeof ConceptDefinitionSchema>;

@@ -235,6 +235,130 @@ h1見出しを追加します。
   return courseRoot;
 }
 
+/** 最小CourseをJavaScript DOM Interaction Scenarioの公開投影Fixtureへ拡張する。 */
+async function addInteractionScenarioFixture(courseRoot: string): Promise<void> {
+  const exerciseRoot = 'chapters/ch00/lessons/lesson-first/exercises/exercise-first';
+  const coursePath = path.join(courseRoot, 'course.yaml');
+  const course = await readFile(coursePath, 'utf8');
+  await writeFile(
+    coursePath,
+    course
+      .replace('id: html-css', 'id: javascript')
+      .replace('runnerId: html-css', 'runnerId: javascript')
+      .replace('validatorId: html-css', 'validatorId: javascript'),
+    'utf8',
+  );
+
+  const provenancePath = path.join(courseRoot, 'provenance.yaml');
+  const provenance = await readFile(provenancePath, 'utf8');
+  await writeFile(
+    provenancePath,
+    `${provenance.trimEnd()}
+  - id: authoring-script-solution
+    visibility: authoring
+    path: ${exerciseRoot}/solution/script.js
+  - id: authoring-script-fixture
+    visibility: authoring
+    path: ${exerciseRoot}/fixtures/script.js
+`,
+    'utf8',
+  );
+
+  const exercisePath = path.join(courseRoot, exerciseRoot, 'exercise.yaml');
+  const exercise = await readFile(exercisePath, 'utf8');
+  const withRuntime = exercise.replace(
+    'instructionsSource: instructions.md',
+    `instructionsSource: instructions.md
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: dom
+  primaryOutput: preview
+interactionScenarios:
+  - id: answer-correctly
+    label: 正解を選んで結果を確認する
+    actions:
+      - { id: choose, kind: click, selector: '#answer' }
+    checkpoints:
+      - id: result-updated
+        afterActionId: choose
+        expectations:
+          - { id: result-text, kind: selector-text, selector: '#result', equals: 正解 }`,
+  );
+  const withStarterScript = withRuntime.replace(
+    '    source: starter/index.html\n    editable: true\nsolutionFiles:',
+    `    source: starter/index.html
+    editable: true
+  - path: script.js
+    language: javascript
+    source: starter/script.js
+    editable: true
+solutionFiles:`,
+  );
+  const withSolutionScript = withStarterScript.replace(
+    '    source: solution/index.html\n    editable: false\nvalidationRules:',
+    `    source: solution/index.html
+    editable: false
+  - path: script.js
+    language: javascript
+    source: solution/script.js
+    editable: false
+validationRules:`,
+  );
+  const withJavaScriptRule = withSolutionScript.replace(
+    'hints:\n',
+    `  - id: rule-script
+    label: JavaScriptが結果を更新する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: query-selector-text-content-assignment
+      selector: '#result'
+      expected: 正解
+    feedback:
+      target: script.js
+      expected: 結果を正解へ更新する
+      nextAction: 代入する文字列を確認する
+    hintId: hint-h1-1
+    relatedSlideId: slide-html-role
+hints:
+`,
+  );
+  const withFixtureScript = withJavaScriptRule.replace(
+    '        source: fixtures/solution.html\n        editable: false\n    expectedFeedbackRuleIds:',
+    `        source: fixtures/solution.html
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/script.js
+        editable: false
+    expectedFeedbackRuleIds:`,
+  );
+  await writeFile(exercisePath, withFixtureScript, 'utf8');
+
+  await Promise.all([
+    writeFixtureFile(
+      courseRoot,
+      `${exerciseRoot}/starter/script.js`,
+      "document.querySelector('#result').textContent = '未回答';\n",
+    ),
+    writeFixtureFile(
+      courseRoot,
+      `${exerciseRoot}/solution/script.js`,
+      "document.querySelector('#result').textContent = '正解';\n",
+    ),
+    writeFixtureFile(
+      courseRoot,
+      `${exerciseRoot}/fixtures/script.js`,
+      "document.querySelector('#result').textContent = '正解';\n",
+    ),
+  ]);
+}
+
 /** Directory treeをrelative path順のbyte表現へ読み込む。 */
 async function readArtifactTree(
   root: string,
@@ -259,6 +383,35 @@ async function readArtifactTree(
 }
 
 describe('minimal Course compilation', () => {
+  it('Interaction ScenarioをAuthoringと公開Runtimeの両方へ投影する', async () => {
+    const root = await createTemporaryRoot();
+    const sourceRoot = path.join(root, 'source');
+    const courseRoot = await writeMinimalCourse(sourceRoot);
+    await addInteractionScenarioFixture(courseRoot);
+
+    const compiled = await loadAuthoringCourse(courseRoot);
+
+    expect(compiled.exercises[0]?.interactionScenarios).toEqual([
+      {
+        id: 'answer-correctly',
+        label: '正解を選んで結果を確認する',
+        actions: [{ id: 'choose', kind: 'click', selector: '#answer' }],
+        checkpoints: [
+          {
+            id: 'result-updated',
+            afterActionId: 'choose',
+            expectations: [
+              { id: 'result-text', kind: 'selector-text', selector: '#result', equals: '正解' },
+            ],
+          },
+        ],
+      },
+    ]);
+    expect(
+      compiled.runtime.phases[0]?.chapters[0]?.lessons[0]?.exercises[0]?.interactionScenarios,
+    ).toEqual(compiled.exercises[0]?.interactionScenarios);
+  });
+
   it('Authoring dataを読みつつ公開Artifactから除外する', async () => {
     const root = await createTemporaryRoot();
     const sourceRoot = path.join(root, 'source');

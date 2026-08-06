@@ -1,6 +1,9 @@
 /** Runtime・Validation・Persistence 間の公開型境界を固定する compile-time contract test。 */
 import { describe, expect, expectTypeOf, it } from 'vitest';
 import type {
+  InteractionCheckpointResult,
+  InteractionRequest,
+  InteractionResult,
   PreviewSnapshot,
   RunnerAdapter,
   RunnerInput,
@@ -21,6 +24,15 @@ describe('学習ランタイム公開契約', () => {
     expectTypeOf<
       RunnerAdapter['requestSnapshot']
     >().returns.resolves.toEqualTypeOf<PreviewSnapshot>();
+    expectTypeOf<NonNullable<RunnerAdapter['interact']>>()
+      .parameter(0)
+      .toEqualTypeOf<InteractionRequest>();
+    expectTypeOf<
+      NonNullable<RunnerAdapter['interact']>
+    >().returns.resolves.toEqualTypeOf<InteractionResult>();
+    expectTypeOf<ValidationContext['interactionCheckpoints']>().toExtend<
+      Readonly<Record<string, readonly InteractionCheckpointResult[]>>
+    >();
     expectTypeOf<ValidatorAdapter['validate']>().parameter(0).toEqualTypeOf<ValidationContext>();
     expectTypeOf<ValidatorAdapter['validate']>().returns.resolves.toEqualTypeOf<ValidationResult>();
     expectTypeOf<ValidatorRule>().toExtend<{ readonly id: string }>();

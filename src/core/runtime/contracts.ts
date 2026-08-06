@@ -1,7 +1,7 @@
 /// <reference lib="dom" />
 
 /** 学習コードの実行とプレビュー取得を隔離する Runtime 公開契約。 */
-import type { PreviewViewport } from '../content/types';
+import type { JavaScriptInteractionAction, PreviewViewport } from '../content/types';
 
 export type { PreviewViewport } from '../content/types';
 
@@ -61,6 +61,43 @@ export interface RunnerConsoleRecord {
   readonly sequence: number;
   readonly level: RunnerConsoleLevel;
   readonly text: string;
+}
+
+/** 現在のframeへ1件だけ適用する認証対象Interaction要求。 */
+export interface InteractionRequest {
+  readonly exerciseSessionId: string;
+  readonly executionRevision: number;
+  readonly frameGeneration: number;
+  readonly requestId: string;
+  readonly action: JavaScriptInteractionAction;
+}
+
+/** Interaction後の同一性と非永続Consoleを返すbounded結果。 */
+export interface InteractionResult {
+  readonly exerciseSessionId: string;
+  readonly executionRevision: number;
+  readonly frameGeneration: number;
+  readonly requestId: string;
+  readonly console: readonly RunnerConsoleRecord[];
+}
+
+/** Contentのexpectation 1件を観測事実へ評価した結果。 */
+export interface InteractionExpectationResult {
+  readonly expectationId: string;
+  readonly passed: boolean;
+  readonly actual: string;
+}
+
+/** viewport内のScenario checkpointを同一実行へ結びつけた検証入力。 */
+export interface InteractionCheckpointResult {
+  readonly exerciseSessionId: string;
+  readonly executionRevision: number;
+  readonly frameGeneration: number;
+  readonly viewportId: string;
+  readonly scenarioId: string;
+  readonly checkpointId: string;
+  readonly afterActionId: string;
+  readonly expectations: readonly InteractionExpectationResult[];
 }
 
 export interface RunnerRenderResult {
@@ -125,6 +162,8 @@ export interface RunnerAdapter {
   prepare(frame: HTMLIFrameElement): Promise<void>;
   /** prepare 済み frame に同じ languageId の入力を描画し、プレビュー DOM の更新を副作用として行う。 */
   render(input: RunnerInput): Promise<RunnerRenderResult>;
+  /** 対応Runnerだけが現在の同一frameへbounded Interactionを1件適用する。 */
+  interact?(request: InteractionRequest): Promise<InteractionResult>;
   /** 描画済みの同一 session・revision を前提に DOM を観測し、学習コードを変更せず snapshot を返す。 */
   requestSnapshot(request: SnapshotRequest): Promise<PreviewSnapshot>;
   /** frame に登録した監視と保有資源を解放する。呼び出し後の再利用には prepare の再実行を前提とする。 */

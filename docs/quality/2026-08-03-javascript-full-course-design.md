@@ -106,7 +106,9 @@ REQ-JSC-021の型付きAnalyzer FactとModule graph hash照合はModule範囲で
 
 ### 3.3 未完了要件
 
-REQ-JSC-018〜020のtrusted Scenario bridge、新規iframeごとのcheckpoint、750 ms bounded pollは未実装である。REQ-JSC-021の全Course用Analyzer fact拡張とREQ-JSC-022の早期／後期Lesson別判定方針は各教材タスクで実装・検証する。現時点のModule証跡をScenarioや全Course教材の完了根拠へ読み替えない。
+REQ-JSC-018のContent契約は2026-08-06に実装した。公開Artifactは最大4 Scenario、各最大10 action、checkpointごと最大16 expectationをstrict unionで保持し、ID一意性、`afterActionId`参照、`dom`／`async`／`project` profile限定をCompilerで検証する。Runnerの`InteractionRequest`／`InteractionResult`とValidatorの`InteractionCheckpointResult`入力境界も追加済みである。
+
+ただしREQ-JSC-018のtrusted action executor、REQ-JSC-019の新規iframeごとのcheckpoint、REQ-JSC-020の750 ms bounded pollは未実装であり、Content契約だけを対話判定の検証済み証跡へ読み替えない。REQ-JSC-021の全Course用Analyzer fact拡張とREQ-JSC-022の早期／後期Lesson別判定方針は各教材タスクで実装・検証する。現時点のModule／Content契約証跡をScenario runtimeや全Course教材の完了根拠へ読み替えない。
 
 ## 4. 要件差分
 
@@ -252,12 +254,16 @@ Network、Storage、Worker生成、Service Worker、dynamic code、popup、親�
 - action: `click`、`fill`、`select`、`key`、`focus`
 - 1 Exercise最大4 Scenario
 - 1 Scenario最大10 action
+- checkpointは`afterActionId`で同Scenarioのactionへ結び、1 checkpoint最大16 expectation
+- expectationは`selector-exists`、`selector-text`、`attribute`、`focused`、`console-includes`のstrict union
 - selector、入力値、key、request ID、responseをbounded化
 - 任意JavaScript、任意Event constructor、URL、navigation、任意sleepを公開契約へ含めない
 - `fill`と`select`はtrusted bootstrapが値を設定し、必要な標準input／change eventだけを発火する
 - action後の期待状態は最大750 ms、短いintervalでSnapshotをpollする
 
 Scenarioごとに新しいiframeを使い、前Scenarioのstate、timer、Focus、Consoleを引き継がない。
+
+Content契約と公開Artifact投影は実装済みである。trusted bootstrap、frame generation付きBridge、checkpoint evaluator、Controller orchestration、Validator統合は後続Runtime Gateで実装・検証する。
 
 ### 8.5 `JavaScriptAnalyzerFacts`
 

@@ -497,6 +497,9 @@ function projectRuntimeExercise(authoring: AuthoringExercise): Exercise {
     steps: authoring.steps,
     files: authoring.files,
     ...(authoring.runtime === undefined ? {} : { runtime: authoring.runtime }),
+    ...(authoring.interactionScenarios === undefined
+      ? {}
+      : { interactionScenarios: authoring.interactionScenarios }),
     validationRules: authoring.validationRules,
     hints: authoring.hints,
     relatedSlideIds: authoring.relatedSlideIds,
@@ -572,6 +575,9 @@ async function compileExercise(
     steps: source.steps ?? [],
     files,
     ...(runtime === undefined ? {} : { runtime }),
+    ...(source.interactionScenarios === undefined
+      ? {}
+      : { interactionScenarios: source.interactionScenarios }),
     validationRules: source.validationRules,
     hints: source.hints,
     relatedSlideIds: source.relatedSlideIds,

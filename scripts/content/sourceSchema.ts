@@ -5,6 +5,7 @@ import {
   ConceptRequirementSchema,
   ContentProgressMigrationSchema,
   HintSchema,
+  JavaScriptInteractionScenarioSchema,
   MasteryLevelSchema,
   PreviewViewportSchema,
   ScreenBudgetSchema,
@@ -115,6 +116,7 @@ const ExerciseBaseSchema = z
     files: z.array(FileSourceSchema).min(1),
     solutionFiles: z.array(FileSourceSchema).min(1),
     runtime: ExerciseRuntimeSourceSchema.optional(),
+    interactionScenarios: z.array(JavaScriptInteractionScenarioSchema).min(1).max(4).optional(),
     validationRules: z.array(ValidationRuleDefinitionSchema).min(1),
     hints: z.array(HintSchema).length(3),
     relatedSlideIds: z.array(IdSchema).min(1),
@@ -166,6 +168,27 @@ export const ExerciseSourceSchema = z
     CapstoneExerciseSourceSchema,
   ])
   .superRefine((exercise, context) => {
+    if (
+      exercise.interactionScenarios !== undefined &&
+      hasDuplicates(exercise.interactionScenarios.map(({ id }) => id))
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['interactionScenarios'],
+        message: 'Interaction Scenario IDが重複しています',
+      });
+    }
+    if (
+      exercise.interactionScenarios !== undefined &&
+      (exercise.runtime?.kind !== 'javascript' ||
+        !['dom', 'async', 'project'].includes(exercise.runtime.capabilityProfile))
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['interactionScenarios'],
+        message: 'Interaction Scenarioはdom、async、project profileで指定してください',
+      });
+    }
     const ruleIds = exercise.validationRules.map(({ id }) => id);
     if (hasDuplicates(ruleIds)) {
       context.addIssue({
