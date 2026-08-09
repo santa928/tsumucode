@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="title desc">
+  <title id="title">ifとelseの2つの道</title>
+  <desc id="desc">answerとAが同じなら正解です、違うなら不正解ですへ進む</desc>
+  <rect width="960" height="300" rx="32" fill="#fffaf0"/>
+  <path d="M480 36 640 150 480 264 320 150Z" fill="#ffffff" stroke="#1d6b55" stroke-width="4"/>
+  <text x="480" y="140" text-anchor="middle" font-family="system-ui,sans-serif" font-size="28" fill="#173f35">answer === 'A'</text>
+  <text x="480" y="177" text-anchor="middle" font-family="system-ui,sans-serif" font-size="24" fill="#1d6b55">条件</text>
+  <path d="M320 150H186" stroke="#1d6b55" stroke-width="8"/>
+  <path d="M640 150h134" stroke="#1d6b55" stroke-width="8"/>
+  <rect x="32" y="102" width="154" height="96" rx="20" fill="#f2c94c"/>
+  <rect x="774" y="102" width="154" height="96" rx="20" fill="#ffffff" stroke="#173f35" stroke-width="4"/>
+  <text x="109" y="143" text-anchor="middle" font-family="system-ui,sans-serif" font-size="24" font-weight="700" fill="#173f35">true</text>
+  <text x="109" y="174" text-anchor="middle" font-family="system-ui,sans-serif" font-size="20" fill="#173f35">正解です</text>
+  <text x="851" y="143" text-anchor="middle" font-family="system-ui,sans-serif" font-size="24" font-weight="700" fill="#173f35">false</text>
+  <text x="851" y="174" text-anchor="middle" font-family="system-ui,sans-serif" font-size="20" fill="#173f35">不正解です</text>
+</svg>

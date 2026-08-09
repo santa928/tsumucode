@@ -1,0 +1,19 @@
+id: javascript-ch02-l01
+kind: standard
+title: 比較の答えはboolean
+goal: 2つの値を===と!==で比較し、結果がtrueまたはfalseになることを説明できる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch01-l04]
+slideSources:
+  - slides/s01-comparison-result.md
+  - slides/s02-strict-operators.md
+  - slides/s03-check-an-answer.md
+  - slides/s04-comparison-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch02-l01-e01/exercise.yaml
+reflection: 比較式の答えはbooleanになり、===は同じか、!==は違うかを確かめる。
+glossaryRefs: [javascript, console, value, boolean, comparison, strict-equality, strict-inequality]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch02-l01-s04
+  requiredExerciseIds: [javascript-ch02-l01-e01]

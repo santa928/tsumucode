@@ -1,0 +1,11 @@
+id: javascript-ch02
+sequence: 2
+title: 条件分岐・Loop
+goal: 比較の結果を条件に使い、表示の選択と回数の決まった繰り返しができる。
+estimatedMinutes: 60
+kind: standard
+lessonSources:
+  - lessons/javascript-ch02-l01/lesson.yaml
+  - lessons/javascript-ch02-l02/lesson.yaml
+  - lessons/javascript-ch02-l03/lesson.yaml
+  - lessons/javascript-ch02-l04/lesson.yaml

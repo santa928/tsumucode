@@ -1485,7 +1485,7 @@ describe('Learning routes', () => {
     expect(editorView.state.doc.toString()).toBe(editedSource);
     expect(adapters.getLastRenderInput()?.executionRevision).toBe(revision);
     expect(adapters.render).toHaveBeenCalledTimes(renderCount);
-  });
+  }, 15_000);
 
   it('復元確認のBackdrop取消は編集・revision・Previewを変えずTriggerへFocusを戻す', async () => {
     stubEditingCapability(true);

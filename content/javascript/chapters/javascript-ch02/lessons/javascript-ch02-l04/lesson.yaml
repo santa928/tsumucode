@@ -1,0 +1,20 @@
+id: javascript-ch02-l04
+kind: standard
+title: forで問題番号を繰り返す
+goal: forの初期化・条件・更新を順に読み、問題1から問題3までを繰り返し表示できる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch02-l03]
+slideSources:
+  - slides/s01-repeat-counted-work.md
+  - slides/s02-three-parts-of-for.md
+  - slides/s03-increment-and-output.md
+  - slides/s04-for-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch02-l04-e01/exercise.yaml
+reflection: forは初期化、条件、処理、更新を繰り返し、条件がfalseになると止まる。
+glossaryRefs:
+  [javascript, console, variable, let, condition, loop, for-loop, increment, less-than-or-equal]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch02-l04-s04
+  requiredExerciseIds: [javascript-ch02-l04-e01]

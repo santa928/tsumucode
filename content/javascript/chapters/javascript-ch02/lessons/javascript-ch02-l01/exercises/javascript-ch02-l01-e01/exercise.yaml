@@ -1,0 +1,150 @@
+id: javascript-ch02-l01-e01
+kind: standard
+workspaceId: javascript-ch02-l01-e01
+countsTowardStandardExerciseTotal: true
+title: 回答Aの正誤をbooleanで表示する
+instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: boolean-comparison, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: compare-answer
+    file: script.js
+    target: 2行目のanswerと'A'の間にある比較演算子
+    starterAnchor: "const isCorrect = answer !== 'A';"
+    change: '!==を===へ置き換える'
+    observe: Consoleにtrueが1件表示される
+    requiresConceptIds: [boolean-comparison]
+    validationRuleIds:
+      [javascript-ch02-l01-e01-r01, javascript-ch02-l01-e01-r02, javascript-ch02-l01-e01-r03]
+files:
+  - { path: script.js, language: javascript, source: starter/script.js, editable: true }
+  - { path: index.html, language: html, source: starter/index.html, editable: false }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: false }
+solutionFiles:
+  - { path: script.js, language: javascript, source: solution/script.js, editable: false }
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: javascript-ch02-l01-e01-r01
+    groupId: javascript-ch02-l01-e01-result
+    label: ===で値を比較する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: binary-expression, operator: '===' }
+    feedback:
+      target: script.jsとConsole
+      expected: ===を使った比較式
+      nextAction: 2行目の比較記号を===へ直します。
+    hintId: javascript-ch02-l01-e01-h01
+    relatedSlideId: javascript-ch02-l01-s02
+  - id: javascript-ch02-l01-e01-r02
+    groupId: javascript-ch02-l01-e01-result
+    label: 比較結果をconsole.logへ渡す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: call, callee: console.log }
+    feedback:
+      target: script.jsとConsole
+      expected: console.logの呼び出し
+      nextAction: 3行目のconsole.log(isCorrect)を残します。
+    hintId: javascript-ch02-l01-e01-h02
+    relatedSlideId: javascript-ch02-l01-s03
+  - id: javascript-ch02-l01-e01-r03
+    groupId: javascript-ch02-l01-e01-result
+    label: 比較結果のtrueを表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-console }
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - { level: log, text: 'true' }
+    feedback:
+      target: script.jsとConsole
+      expected: trueが1件表示
+      nextAction: answerとAが同じかを確かめる式にします。
+    hintId: javascript-ch02-l01-e01-h03
+    relatedSlideId: javascript-ch02-l01-s04
+hints:
+  - id: javascript-ch02-l01-e01-h01
+    level: 1
+    title: 質問の意味を確認する
+    text: 同じかを確かめるときは===を使います。
+    relatedSlideId: javascript-ch02-l01-s02
+  - id: javascript-ch02-l01-e01-h02
+    level: 2
+    title: 変更する行を絞る
+    text: 1行目と3行目は変えず、2行目の比較記号だけを見ます。
+    relatedSlideId: javascript-ch02-l01-s03
+  - id: javascript-ch02-l01-e01-h03
+    level: 3
+    title: 記号を置き換える
+    text: answer !== 'A'をanswer === 'A'へ直します。
+    relatedSlideId: javascript-ch02-l01-s04
+relatedSlideIds:
+  - javascript-ch02-l01-s03
+  - javascript-ch02-l01-s04
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: pass
+    expectedStatus: pass
+    files:
+      - { path: script.js, language: javascript, source: fixtures/pass.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: incomplete
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/incomplete.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - javascript-ch02-l01-e01-r01
+      - javascript-ch02-l01-e01-r02
+      - javascript-ch02-l01-e01-r03
+  - id: hardcoded-boolean
+    expectedStatus: incomplete
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/hardcoded-boolean.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - javascript-ch02-l01-e01-r01
+      - javascript-ch02-l01-e01-r02
+      - javascript-ch02-l01-e01-r03
+  - id: syntax-error
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/syntax-error.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: security
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/security.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

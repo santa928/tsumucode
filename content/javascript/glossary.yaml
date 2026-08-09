@@ -105,3 +105,63 @@ entries:
     definition: 現在の値へ右側の値を加え、同じ変数へ入れ直す+=の書き方。
     firstSlideId: javascript-ch01-l04-s03
     relatedIds: [let, reassignment, addition]
+  - id: comparison
+    term: 比較式
+    definition: 2つの値を比べ、trueまたはfalseの真偽値を結果として返す式。
+    firstSlideId: javascript-ch02-l01-s01
+    relatedIds: [boolean, strict-equality, strict-inequality, condition]
+  - id: strict-equality
+    term: 厳密等価
+    definition: 左右の値と種類が同じかを確かめる===の比較。
+    firstSlideId: javascript-ch02-l01-s02
+    relatedIds: [comparison, strict-inequality, boolean]
+  - id: strict-inequality
+    term: 厳密不等価
+    definition: 左右の値または種類が違うかを確かめる!==の比較。
+    firstSlideId: javascript-ch02-l01-s02
+    relatedIds: [comparison, strict-equality, boolean]
+  - id: condition
+    term: 条件
+    definition: 分岐やLoopを実行するか決めるtrueまたはfalseの式。
+    firstSlideId: javascript-ch02-l02-s01
+    relatedIds: [boolean, comparison, branch, loop]
+  - id: branch
+    term: 条件分岐
+    definition: 条件の結果に応じて、実行するコードの道を選ぶ仕組み。
+    firstSlideId: javascript-ch02-l02-s01
+    relatedIds: [condition, if-statement, else-branch, else-if]
+  - id: if-statement
+    term: if
+    definition: 丸括弧の条件がtrueのときだけ、波括弧内を実行する文。
+    firstSlideId: javascript-ch02-l02-s02
+    relatedIds: [condition, branch, else-branch]
+  - id: else-branch
+    term: else
+    definition: 直前のifやelse ifの条件がすべてfalseだったときに実行する道。
+    firstSlideId: javascript-ch02-l02-s03
+    relatedIds: [if-statement, else-if, branch]
+  - id: else-if
+    term: else if
+    definition: 前の条件がfalseだったときに、次の条件を確かめる分岐。
+    firstSlideId: javascript-ch02-l03-s02
+    relatedIds: [if-statement, else-branch, branch]
+  - id: loop
+    term: Loop
+    definition: 条件が成り立つ間、同じ形の処理を繰り返す仕組み。
+    firstSlideId: javascript-ch02-l04-s01
+    relatedIds: [condition, for-loop, increment]
+  - id: for-loop
+    term: for
+    definition: 初期化、条件、更新を使い、回数の決まった処理を繰り返す文。
+    firstSlideId: javascript-ch02-l04-s02
+    relatedIds: [loop, condition, increment, let]
+  - id: increment
+    term: インクリメント
+    definition: 変数の現在値へ1を加える++の更新。
+    firstSlideId: javascript-ch02-l04-s03
+    relatedIds: [for-loop, let, reassignment]
+  - id: less-than-or-equal
+    term: 以下
+    definition: 左の値が右の値より小さいか同じかを確かめる<=の比較。
+    firstSlideId: javascript-ch02-l04-s02
+    relatedIds: [comparison, condition, for-loop]

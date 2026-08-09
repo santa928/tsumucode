@@ -1,0 +1,170 @@
+id: javascript-ch02-l02-e01
+kind: standard
+workspaceId: javascript-ch02-l02-e01
+countsTowardStandardExerciseTotal: true
+title: if / elseで正解の表示を選ぶ
+instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: if-else-output, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: choose-correct-output
+    file: script.js
+    target: ifの丸括弧にある比較演算子
+    starterAnchor: "if (answer !== 'A') {"
+    change: '!==を===へ置き換える'
+    observe: Consoleに正解ですだけが表示される
+    requiresConceptIds: [if-else-output]
+    validationRuleIds:
+      [javascript-ch02-l02-e01-r01, javascript-ch02-l02-e01-r02, javascript-ch02-l02-e01-r03]
+files:
+  - { path: script.js, language: javascript, source: starter/script.js, editable: true }
+  - { path: index.html, language: html, source: starter/index.html, editable: false }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: false }
+solutionFiles:
+  - { path: script.js, language: javascript, source: solution/script.js, editable: false }
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: javascript-ch02-l02-e01-r01
+    groupId: javascript-ch02-l02-e01-result
+    label: ifとelseの2つの道を残す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: branch, branchKind: if, hasAlternate: true }
+    feedback:
+      target: script.jsとConsole
+      expected: elseを持つif文
+      nextAction: if、else、波括弧を残します。
+    hintId: javascript-ch02-l02-e01-h01
+    relatedSlideId: javascript-ch02-l02-s03
+  - id: javascript-ch02-l02-e01-r02
+    groupId: javascript-ch02-l02-e01-result
+    label: ===で正解条件を作る
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: binary-expression, operator: '===' }
+    feedback:
+      target: script.jsとConsole
+      expected: answer === 'A'の条件
+      nextAction: ifの丸括弧にある!==を===へ直します。
+    hintId: javascript-ch02-l02-e01-h02
+    relatedSlideId: javascript-ch02-l02-s04
+  - id: javascript-ch02-l02-e01-r03
+    groupId: javascript-ch02-l02-e01-result
+    label: 正解ですだけを表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-console }
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - { level: log, text: 正解です }
+    feedback:
+      target: script.jsとConsole
+      expected: 正解ですが1件だけ表示
+      nextAction: answerがAのときにif側へ進む条件か確認します。
+    hintId: javascript-ch02-l02-e01-h03
+    relatedSlideId: javascript-ch02-l02-s04
+hints:
+  - id: javascript-ch02-l02-e01-h01
+    level: 1
+    title: 2つの道を残す
+    text: if側とelse側のconsole.logは削除せず、条件で片方を選びます。
+    relatedSlideId: javascript-ch02-l02-s03
+  - id: javascript-ch02-l02-e01-h02
+    level: 2
+    title: 同じかを確かめる
+    text: answerとAが同じかを確かめる記号は===です。
+    relatedSlideId: javascript-ch02-l02-s02
+  - id: javascript-ch02-l02-e01-h03
+    level: 3
+    title: 比較記号だけを直す
+    text: if (answer !== 'A')をif (answer === 'A')へ直します。
+    relatedSlideId: javascript-ch02-l02-s04
+relatedSlideIds:
+  - javascript-ch02-l02-s03
+  - javascript-ch02-l02-s04
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: pass
+    expectedStatus: pass
+    files:
+      - { path: script.js, language: javascript, source: fixtures/pass.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: incomplete
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/incomplete.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - javascript-ch02-l02-e01-r01
+      - javascript-ch02-l02-e01-r02
+      - javascript-ch02-l02-e01-r03
+  - id: output-only
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/output-only.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - javascript-ch02-l02-e01-r01
+      - javascript-ch02-l02-e01-r02
+      - javascript-ch02-l02-e01-r03
+  - id: missing-else
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/missing-else.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - javascript-ch02-l02-e01-r01
+      - javascript-ch02-l02-e01-r02
+      - javascript-ch02-l02-e01-r03
+  - id: inverted-condition
+    expectedStatus: incomplete
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/inverted-condition.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - javascript-ch02-l02-e01-r01
+      - javascript-ch02-l02-e01-r02
+      - javascript-ch02-l02-e01-r03
+  - id: syntax-error
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/syntax-error.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: security
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/security.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

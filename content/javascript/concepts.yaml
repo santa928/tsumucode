@@ -80,3 +80,67 @@ concepts:
     introducedBySlideId: javascript-ch01-l04-s04
     prerequisiteConceptIds: [addition-assignment]
     minimumProjectLevel: transform
+  - id: comparison-expression
+    introducedBySlideId: javascript-ch02-l01-s01
+    prerequisiteConceptIds: [let-score-update]
+    minimumProjectLevel: read
+  - id: strict-equality
+    introducedBySlideId: javascript-ch02-l01-s02
+    prerequisiteConceptIds: [comparison-expression]
+    minimumProjectLevel: read
+  - id: strict-inequality
+    introducedBySlideId: javascript-ch02-l01-s02
+    prerequisiteConceptIds: [comparison-expression]
+    minimumProjectLevel: read
+  - id: boolean-comparison
+    introducedBySlideId: javascript-ch02-l01-s03
+    prerequisiteConceptIds: [strict-equality, strict-inequality]
+    minimumProjectLevel: transform
+  - id: conditional-branch
+    introducedBySlideId: javascript-ch02-l02-s01
+    prerequisiteConceptIds: [boolean-comparison]
+    minimumProjectLevel: read
+  - id: if-statement
+    introducedBySlideId: javascript-ch02-l02-s02
+    prerequisiteConceptIds: [conditional-branch]
+    minimumProjectLevel: read
+  - id: else-branch
+    introducedBySlideId: javascript-ch02-l02-s03
+    prerequisiteConceptIds: [if-statement]
+    minimumProjectLevel: read
+  - id: if-else-output
+    introducedBySlideId: javascript-ch02-l02-s03
+    prerequisiteConceptIds: [else-branch]
+    minimumProjectLevel: transform
+  - id: multiple-branches
+    introducedBySlideId: javascript-ch02-l03-s01
+    prerequisiteConceptIds: [if-else-output]
+    minimumProjectLevel: read
+  - id: else-if-branch
+    introducedBySlideId: javascript-ch02-l03-s02
+    prerequisiteConceptIds: [multiple-branches]
+    minimumProjectLevel: read
+  - id: branch-order
+    introducedBySlideId: javascript-ch02-l03-s03
+    prerequisiteConceptIds: [else-if-branch]
+    minimumProjectLevel: read
+  - id: three-way-classification
+    introducedBySlideId: javascript-ch02-l03-s03
+    prerequisiteConceptIds: [branch-order]
+    minimumProjectLevel: transform
+  - id: counted-loop
+    introducedBySlideId: javascript-ch02-l04-s01
+    prerequisiteConceptIds: [three-way-classification]
+    minimumProjectLevel: read
+  - id: for-statement
+    introducedBySlideId: javascript-ch02-l04-s02
+    prerequisiteConceptIds: [counted-loop]
+    minimumProjectLevel: read
+  - id: increment-operator
+    introducedBySlideId: javascript-ch02-l04-s03
+    prerequisiteConceptIds: [for-statement]
+    minimumProjectLevel: read
+  - id: problem-number-loop
+    introducedBySlideId: javascript-ch02-l04-s03
+    prerequisiteConceptIds: [increment-operator]
+    minimumProjectLevel: transform

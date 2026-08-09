@@ -1,0 +1,20 @@
+id: javascript-ch02-l03
+kind: standard
+title: else ifで3通りに分ける
+goal: else ifを上から順に読み、A・B・その他の3通りから1件だけを表示できる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch02-l02]
+slideSources:
+  - slides/s01-more-than-two-paths.md
+  - slides/s02-else-if.md
+  - slides/s03-top-to-bottom.md
+  - slides/s04-three-way-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch02-l03-e01/exercise.yaml
+reflection: else ifは上から順に条件を確かめ、最初にtrueになった1つの道だけを実行する。
+glossaryRefs:
+  [javascript, console, condition, branch, if-statement, else-branch, else-if, strict-equality]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch02-l03-s04
+  requiredExerciseIds: [javascript-ch02-l03-e01]

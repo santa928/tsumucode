@@ -1,0 +1,199 @@
+id: javascript-ch02-l04-e01
+kind: standard
+workspaceId: javascript-ch02-l04-e01
+countsTowardStandardExerciseTotal: true
+title: forで問題1から問題3まで表示する
+instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: problem-number-loop, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: include-problem-three
+    file: script.js
+    target: forの丸括弧にあるnumber < 3の条件
+    starterAnchor: 'for (let number = 1; number < 3; number++) {'
+    change: <を<=へ置き換える
+    observe: Consoleに問題1、問題2、問題3が順番どおり表示される
+    requiresConceptIds: [problem-number-loop]
+    validationRuleIds:
+      [
+        javascript-ch02-l04-e01-r01,
+        javascript-ch02-l04-e01-r02,
+        javascript-ch02-l04-e01-r03,
+        javascript-ch02-l04-e01-r04,
+      ]
+files:
+  - { path: script.js, language: javascript, source: starter/script.js, editable: true }
+  - { path: index.html, language: html, source: starter/index.html, editable: false }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: false }
+solutionFiles:
+  - { path: script.js, language: javascript, source: solution/script.js, editable: false }
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: javascript-ch02-l04-e01-r01
+    groupId: javascript-ch02-l04-e01-result
+    label: forで処理を繰り返す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: loop, loopKind: for }
+    feedback:
+      target: script.jsとConsole
+      expected: for文が1件
+      nextAction: forと波括弧を残します。
+    hintId: javascript-ch02-l04-e01-h01
+    relatedSlideId: javascript-ch02-l04-s02
+  - id: javascript-ch02-l04-e01-r02
+    groupId: javascript-ch02-l04-e01-result
+    label: number++で1ずつ更新する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: assignment, name: number, operator: '++' }
+    feedback:
+      target: script.jsとConsole
+      expected: number++の更新
+      nextAction: forの最後にあるnumber++を残します。
+    hintId: javascript-ch02-l04-e01-h01
+    relatedSlideId: javascript-ch02-l04-s03
+  - id: javascript-ch02-l04-e01-r03
+    groupId: javascript-ch02-l04-e01-result
+    label: 3以下の間だけ続ける
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: binary-expression, operator: '<=' }
+    feedback:
+      target: script.jsとConsole
+      expected: number <= 3の条件
+      nextAction: 条件の<へ=を加えて<=にします。
+    hintId: javascript-ch02-l04-e01-h02
+    relatedSlideId: javascript-ch02-l04-s04
+  - id: javascript-ch02-l04-e01-r04
+    groupId: javascript-ch02-l04-e01-result
+    label: 問題1から問題3まで表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-console }
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - { level: log, text: 問題1 }
+        - { level: log, text: 問題2 }
+        - { level: log, text: 問題3 }
+    feedback:
+      target: script.jsとConsole
+      expected: 問題1、問題2、問題3の順に表示
+      nextAction: 開始値を1、条件をnumber <= 3にします。
+    hintId: javascript-ch02-l04-e01-h03
+    relatedSlideId: javascript-ch02-l04-s04
+hints:
+  - id: javascript-ch02-l04-e01-h01
+    level: 1
+    title: forの形を残す
+    text: let number = 1とnumber++、波括弧の中は変更しません。
+    relatedSlideId: javascript-ch02-l04-s02
+  - id: javascript-ch02-l04-e01-h02
+    level: 2
+    title: 3を含める
+    text: numberが3の回も続けるには「3以下」を表す<=を使います。
+    relatedSlideId: javascript-ch02-l04-s02
+  - id: javascript-ch02-l04-e01-h03
+    level: 3
+    title: 記号を1つ加える
+    text: number < 3をnumber <= 3へ直します。
+    relatedSlideId: javascript-ch02-l04-s04
+relatedSlideIds:
+  - javascript-ch02-l04-s03
+  - javascript-ch02-l04-s04
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: pass
+    expectedStatus: pass
+    files:
+      - { path: script.js, language: javascript, source: fixtures/pass.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: incomplete
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/incomplete.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - javascript-ch02-l04-e01-r01
+      - javascript-ch02-l04-e01-r02
+      - javascript-ch02-l04-e01-r03
+      - javascript-ch02-l04-e01-r04
+  - id: off-by-one
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/off-by-one.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - javascript-ch02-l04-e01-r01
+      - javascript-ch02-l04-e01-r02
+      - javascript-ch02-l04-e01-r03
+      - javascript-ch02-l04-e01-r04
+  - id: unrolled-output
+    expectedStatus: incomplete
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/unrolled-output.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - javascript-ch02-l04-e01-r01
+      - javascript-ch02-l04-e01-r02
+      - javascript-ch02-l04-e01-r03
+      - javascript-ch02-l04-e01-r04
+  - id: infinite-loop
+    expectedStatus: system-error
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/infinite-loop.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: syntax-error
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/syntax-error.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: security
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/security.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

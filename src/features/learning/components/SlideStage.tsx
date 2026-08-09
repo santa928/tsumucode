@@ -56,6 +56,7 @@ export function SlideStage({ slide, baseUrl, titleRef }: SlideStageProps) {
   return (
     <section
       data-slide-card
+      data-slide-id={slide.id}
       data-slide-layout={slide.layout}
       data-testid="slide-stage"
       className="tc-slide-stage"

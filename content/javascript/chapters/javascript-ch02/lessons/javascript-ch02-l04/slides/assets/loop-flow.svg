@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="title desc">
+  <title id="title">forで問題番号を1から3まで進める流れ</title>
+  <desc id="desc">問題1、問題2、問題3を順に表示して条件がfalseになると止まる</desc>
+  <rect width="960" height="300" rx="32" fill="#fffaf0"/>
+  <g font-family="system-ui,sans-serif" text-anchor="middle" fill="#173f35">
+    <rect x="54" y="92" width="190" height="116" rx="22" fill="#ffffff" stroke="#1d6b55" stroke-width="4"/>
+    <text x="149" y="160" font-size="30">問題1</text>
+    <rect x="294" y="92" width="190" height="116" rx="22" fill="#dff4ed" stroke="#1d6b55" stroke-width="4"/>
+    <text x="389" y="160" font-size="30">問題2</text>
+    <rect x="534" y="92" width="190" height="116" rx="22" fill="#f2c94c" stroke="#173f35" stroke-width="4"/>
+    <text x="629" y="160" font-size="30">問題3</text>
+    <rect x="774" y="92" width="132" height="116" rx="22" fill="#173f35"/>
+    <text x="840" y="160" font-size="28" fill="#ffffff">停止</text>
+  </g>
+  <g stroke="#1d6b55" stroke-width="8" stroke-linecap="round">
+    <path d="M244 150h50M484 150h50M724 150h50"/>
+  </g>
+</svg>

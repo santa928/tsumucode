@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="title desc">
+  <title id="title">else ifで3通りへ分ける流れ</title>
+  <desc id="desc">回答を上からA、Bの順に比較し、どちらでもなければその他へ進む</desc>
+  <rect width="960" height="300" rx="32" fill="#fffaf0"/>
+  <rect x="52" y="102" width="168" height="96" rx="20" fill="#ffffff" stroke="#1d6b55" stroke-width="4"/>
+  <text x="136" y="160" text-anchor="middle" font-family="system-ui,sans-serif" font-size="26" fill="#173f35">回答</text>
+  <path d="M220 150h92" stroke="#1d6b55" stroke-width="8"/>
+  <rect x="312" y="34" width="180" height="82" rx="20" fill="#f2c94c"/>
+  <rect x="312" y="184" width="180" height="82" rx="20" fill="#dff4ed" stroke="#1d6b55" stroke-width="4"/>
+  <rect x="700" y="109" width="208" height="82" rx="20" fill="#ffffff" stroke="#173f35" stroke-width="4"/>
+  <text x="402" y="83" text-anchor="middle" font-family="system-ui,sans-serif" font-size="24" fill="#173f35">Aなら Aです</text>
+  <text x="402" y="233" text-anchor="middle" font-family="system-ui,sans-serif" font-size="24" fill="#173f35">Bなら Bです</text>
+  <text x="804" y="159" text-anchor="middle" font-family="system-ui,sans-serif" font-size="24" fill="#173f35">その他です</text>
+  <path d="M492 75h116v75h92M492 225h116v-75" fill="none" stroke="#1d6b55" stroke-width="8"/>
+</svg>

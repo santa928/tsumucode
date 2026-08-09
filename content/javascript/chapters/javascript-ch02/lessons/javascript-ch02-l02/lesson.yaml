@@ -1,0 +1,20 @@
+id: javascript-ch02-l02
+kind: standard
+title: if / elseで表示を選ぶ
+goal: 条件がtrueかfalseかに応じて、ifとelseの片方だけを実行できる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch02-l01]
+slideSources:
+  - slides/s01-choose-by-condition.md
+  - slides/s02-if-when-true.md
+  - slides/s03-else-when-false.md
+  - slides/s04-if-else-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch02-l02-e01/exercise.yaml
+reflection: ifは条件がtrueのとき、elseはfalseのときにだけ実行され、両方は同時に実行されない。
+glossaryRefs:
+  [javascript, console, boolean, condition, branch, if-statement, else-branch, strict-equality]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch02-l02-s04
+  requiredExerciseIds: [javascript-ch02-l02-e01]

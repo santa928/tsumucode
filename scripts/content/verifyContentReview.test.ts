@@ -95,12 +95,13 @@ describe('verifyAllContentReviews', () => {
       [
         'javascript-ch00-l01',
         ...Array.from({ length: 4 }, (_, index) => `javascript-ch01-l0${String(index + 1)}`),
+        ...Array.from({ length: 4 }, (_, index) => `javascript-ch02-l0${String(index + 1)}`),
       ].map((lessonId) => ({
         lessonId,
         lessonDirectory: path.join(
           contentRoot,
           'javascript/chapters',
-          lessonId.startsWith('javascript-ch00') ? 'javascript-ch00' : 'javascript-ch01',
+          lessonId.replace(/-l\d+$/u, ''),
           'lessons',
           lessonId,
         ),
@@ -110,10 +111,10 @@ describe('verifyAllContentReviews', () => {
     await expect(verifyAllContentReviews({ contentRoot, publicRoot, reviewRoot })).resolves.toEqual(
       {
         coursesReviewed: 2,
-        lessonsReviewed: 6,
+        lessonsReviewed: 10,
         staleHashes: 0,
         rejected: 0,
       },
     );
-  });
+  }, 15_000);
 });

@@ -58,3 +58,47 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes: letの宣言・再代入・最終値を4枚のSlideからExerciseへ接続。宣言Fact・代入Fact・Console完全一致のAND判定、3段階Hint、Solution、5 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch02-l01
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 80f5190f5abc159c125744a36290ab1b233eff0934d7a030beefe6448a91b1d5
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: ===と!==の比較結果をbooleanとして読む4枚のSlideから、!==を===へ直すExerciseへ段階接続。二項演算Fact・Console完全一致のAND判定、3段階Hint、Solution、pass／incomplete／hardcoded boolean／syntax／securityの5 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch02-l02
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 85fa975ce54ee31328adf9b05f4850d119630168f8f0a68340b50bf711dcd085
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: ifとelseがtrue／falseの片方だけを選ぶ4枚のSlideから、条件記号だけを直すExerciseへ段階接続。分岐Fact・厳密等価Fact・Console完全一致のAND判定、3段階Hint、Solution、7 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch02-l03
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 8a841b42bf4dbb063aa665228ce7818fc8eb48d694b24ccdf0313dab429dda9e
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: else ifでA／B／そのほかを上から判定する4枚のSlideから、2つ目の比較値だけを直すExerciseへ段階接続。2件以上の比較Fact・3件のConsole call・Console完全一致のAND判定、3段階Hint、Solution、6 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch02-l04
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: af1d3221da9fc3648fea37fbaf4b01c7a8eda4e76634995c0216122c6dc6eede
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: forの初期化・条件・更新を読む4枚のSlideから、3を含む条件へ直すExerciseへ段階接続。for loop・number++・<=・Console完全一致のAND判定、3段階Hint、Solution、off-by-one／unrolled output／無限loopを含む7 Fixtureを実Browser Runner／Validatorで確認。全16 Slideを1280x720と390x844で実寸確認済み。
