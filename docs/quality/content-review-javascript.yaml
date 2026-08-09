@@ -61,7 +61,7 @@ lessons:
   - lessonId: javascript-ch02-l01
     authorId: tsumucode-javascript-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 2d0b211dcb5497c47752c4599c0b8bc055ab8a86b3bcd09818a5242bceb67fcd
+    sourceHash: 80f5190f5abc159c125744a36290ab1b233eff0934d7a030beefe6448a91b1d5
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -83,7 +83,7 @@ lessons:
   - lessonId: javascript-ch02-l03
     authorId: tsumucode-javascript-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 59b357b48bdd375dd1566ede822198095ddbe369ae6a6db8ccd19bedc4f7643a
+    sourceHash: 8a841b42bf4dbb063aa665228ce7818fc8eb48d694b24ccdf0313dab429dda9e
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -94,7 +94,7 @@ lessons:
   - lessonId: javascript-ch02-l04
     authorId: tsumucode-javascript-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 15736e600888bc0dbb71ffd5676777a25fdfab91d4ada3a3f8211f4db749019e
+    sourceHash: af1d3221da9fc3648fea37fbaf4b01c7a8eda4e76634995c0216122c6dc6eede
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0

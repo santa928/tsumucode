@@ -19,7 +19,9 @@ assets:
 
 ```js
 if (answer === 'A') {
-} else if (answer === 'B') {
+} else if (
+  answer === 'B'
+) {
 } else {
 }
 ```
