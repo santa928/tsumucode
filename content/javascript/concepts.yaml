@@ -304,3 +304,67 @@ concepts:
     introducedBySlideId: javascript-ch04-l05-s04
     prerequisiteConceptIds: [array-destructuring]
     minimumProjectLevel: transform
+  - id: map-purpose
+    introducedBySlideId: javascript-ch05-l01-s01
+    prerequisiteConceptIds: [question-destructuring]
+    minimumProjectLevel: read
+  - id: map-callback
+    introducedBySlideId: javascript-ch05-l01-s02
+    prerequisiteConceptIds: [map-purpose]
+    minimumProjectLevel: read
+  - id: map-result-array
+    introducedBySlideId: javascript-ch05-l01-s03
+    prerequisiteConceptIds: [map-callback]
+    minimumProjectLevel: read
+  - id: question-label-map
+    introducedBySlideId: javascript-ch05-l01-s04
+    prerequisiteConceptIds: [map-result-array]
+    minimumProjectLevel: transform
+  - id: filter-purpose
+    introducedBySlideId: javascript-ch05-l02-s01
+    prerequisiteConceptIds: [question-label-map]
+    minimumProjectLevel: read
+  - id: filter-condition
+    introducedBySlideId: javascript-ch05-l02-s02
+    prerequisiteConceptIds: [filter-purpose]
+    minimumProjectLevel: read
+  - id: filter-result-array
+    introducedBySlideId: javascript-ch05-l02-s03
+    prerequisiteConceptIds: [filter-condition]
+    minimumProjectLevel: read
+  - id: question-category-filter
+    introducedBySlideId: javascript-ch05-l02-s04
+    prerequisiteConceptIds: [filter-result-array]
+    minimumProjectLevel: transform
+  - id: reduce-purpose
+    introducedBySlideId: javascript-ch05-l03-s01
+    prerequisiteConceptIds: [question-category-filter]
+    minimumProjectLevel: read
+  - id: reduce-accumulator
+    introducedBySlideId: javascript-ch05-l03-s02
+    prerequisiteConceptIds: [reduce-purpose]
+    minimumProjectLevel: read
+  - id: reduce-initial-value
+    introducedBySlideId: javascript-ch05-l03-s03
+    prerequisiteConceptIds: [reduce-accumulator]
+    minimumProjectLevel: read
+  - id: question-score-total
+    introducedBySlideId: javascript-ch05-l03-s04
+    prerequisiteConceptIds: [reduce-initial-value]
+    minimumProjectLevel: transform
+  - id: immutable-update-purpose
+    introducedBySlideId: javascript-ch05-l04-s01
+    prerequisiteConceptIds: [question-score-total]
+    minimumProjectLevel: read
+  - id: array-map-update
+    introducedBySlideId: javascript-ch05-l04-s02
+    prerequisiteConceptIds: [immutable-update-purpose]
+    minimumProjectLevel: read
+  - id: object-spread-update
+    introducedBySlideId: javascript-ch05-l04-s03
+    prerequisiteConceptIds: [array-map-update]
+    minimumProjectLevel: read
+  - id: question-answer-state
+    introducedBySlideId: javascript-ch05-l04-s04
+    prerequisiteConceptIds: [object-spread-update]
+    minimumProjectLevel: transform

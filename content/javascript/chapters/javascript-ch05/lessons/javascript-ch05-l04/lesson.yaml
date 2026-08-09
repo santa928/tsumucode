@@ -1,0 +1,31 @@
+id: javascript-ch05-l04
+kind: standard
+title: 元データを変えずに更新する
+goal: mapとObject spreadを組み合わせ、元の問題を保ったままansweredを更新した新しいArrayを作れる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch05-l03]
+slideSources:
+  - slides/s01-immutable-update-purpose.md
+  - slides/s02-array-map-update.md
+  - slides/s03-object-spread-update.md
+  - slides/s04-question-answer-state-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch05-l04-e01/exercise.yaml
+reflection: immutable updateは元データへ代入せず、mapとspreadで変更済みの新しいArrayとObjectを作る。
+glossaryRefs:
+  [
+    javascript,
+    console,
+    array,
+    object,
+    property,
+    method,
+    callback,
+    map,
+    immutable-update,
+    spread-syntax,
+  ]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch05-l04-s04
+  requiredExerciseIds: [javascript-ch05-l04-e01]

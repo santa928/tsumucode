@@ -1,0 +1,131 @@
+id: javascript-ch05-l03-e01
+kind: standard
+workspaceId: javascript-ch05-l03-e01
+countsTowardStandardExerciseTotal: true
+title: 3問のpointを合計する
+instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: question-score-total, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: add-reduce-initial-value
+    file: script.js
+    target: reduce callbackの後ろ
+    starterAnchor: 'return sum + question.points;'
+    change: 'callbackの後ろへ初期値0を追加する'
+    observe: Consoleへ数値の60が表示される
+    requiresConceptIds: [question-score-total]
+    validationRuleIds: [javascript-ch05-l03-e01-r01, javascript-ch05-l03-e01-r02]
+files:
+  - { path: script.js, language: javascript, source: starter/script.js, editable: true }
+  - { path: index.html, language: html, source: starter/index.html, editable: false }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: false }
+solutionFiles:
+  - { path: script.js, language: javascript, source: solution/script.js, editable: false }
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: javascript-ch05-l03-e01-r01
+    groupId: javascript-ch05-l03-e01-result
+    label: reduceでpointを集計する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: collection-transform, method: reduce, callbackParameterCount: 2 }
+    feedback:
+      target: reduce callback
+      expected: sumとquestionを受け取るreduce
+      nextAction: reduceとcallbackは残し、丸括弧へ初期値を追加します。
+    hintId: javascript-ch05-l03-e01-h02
+    relatedSlideId: javascript-ch05-l03-s02
+  - id: javascript-ch05-l03-e01-r02
+    groupId: javascript-ch05-l03-e01-result
+    label: 0から始めて合計60を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-console }
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - { level: log, text: '60' }
+    feedback:
+      target: Console
+      expected: 数値の60
+      nextAction: callbackの後ろへカンマと初期値0を追加します。
+    hintId: javascript-ch05-l03-e01-h03
+    relatedSlideId: javascript-ch05-l03-s04
+hints:
+  - id: javascript-ch05-l03-e01-h01
+    level: 1
+    title: callbackの計算は完成済み
+    text: questions、sum + question.points、console.logは変更しません。
+    relatedSlideId: javascript-ch05-l03-s04
+  - id: javascript-ch05-l03-e01-h02
+    level: 2
+    title: 合計は0から始める
+    text: reduceの第2argumentへ、最初のsumに入れる数値を書きます。
+    relatedSlideId: javascript-ch05-l03-s03
+  - id: javascript-ch05-l03-e01-h03
+    level: 3
+    title: reduceを完成させる
+    text: callbackを閉じる波括弧の後ろを }, 0); にします。
+    relatedSlideId: javascript-ch05-l03-s04
+relatedSlideIds: [javascript-ch05-l03-s03, javascript-ch05-l03-s04]
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: pass
+    expectedStatus: pass
+    files:
+      - { path: script.js, language: javascript, source: fixtures/pass.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: missing-initial-value
+    expectedStatus: incomplete
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/missing-initial-value.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: [javascript-ch05-l03-e01-r01, javascript-ch05-l03-e01-r02]
+  - id: for-loop
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/for-loop.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: [javascript-ch05-l03-e01-r01, javascript-ch05-l03-e01-r02]
+  - id: output-only
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/output-only.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: [javascript-ch05-l03-e01-r01, javascript-ch05-l03-e01-r02]
+  - id: syntax-error
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/syntax-error.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: security
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/security.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

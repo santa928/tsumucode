@@ -185,8 +185,33 @@ function functionGuardPosition(body: AstNode): number {
   return position;
 }
 
+/** Concise arrow functionの式全体を、外側の丸括弧を含めて返す。 */
+function arrowExpressionRange(
+  source: string,
+  node: Node,
+  body: AstNode,
+  file: string,
+): Readonly<{
+  start: number;
+  end: number;
+}> {
+  const prefix = source.slice(node.start, body.start);
+  const arrowOffset = prefix.lastIndexOf('=>');
+  if (arrowOffset < 0) {
+    throw new JavaScriptAnalysisIssue('system', 'Arrow functionの式位置を特定できません', file);
+  }
+  let start = node.start + arrowOffset + 2;
+  while (/\s/u.test(source[start] ?? '')) start += 1;
+  return { start, end: node.end };
+}
+
 /** LoopとFunctionへ例外非依存のbudget guardを挿入する。 */
-function instrument(source: string, nodes: readonly Node[], guardIdentifier: string): string {
+function instrument(
+  source: string,
+  nodes: readonly Node[],
+  guardIdentifier: string,
+  file: string,
+): string {
   const magic = new MagicString(source);
   for (const node of nodes) {
     const current = ast(node);
@@ -199,11 +224,12 @@ function instrument(source: string, nodes: readonly Node[], guardIdentifier: str
         );
         magic.appendLeft(body.end - 1, `}finally{${guardIdentifier}.leaveFunction();}`);
       } else if (node.type === 'ArrowFunctionExpression') {
+        const expression = arrowExpressionRange(source, node, body, file);
         magic.prependLeft(
-          body.start,
+          expression.start,
           `{if (!${guardIdentifier}.enterFunction()) return;try{return (`,
         );
-        magic.appendRight(body.end, `);}finally{${guardIdentifier}.leaveFunction();}}`);
+        magic.appendRight(expression.end, `);}finally{${guardIdentifier}.leaveFunction();}}`);
       }
     }
     if (LOOP_TYPES.has(node.type) && isNode(current.body)) {
@@ -898,7 +924,7 @@ async function analyzeLegacyJavaScriptSource(
       exerciseSessionId: request.exerciseSessionId,
       executionRevision: request.executionRevision,
       file: request.file,
-      instrumentedCode: instrument(request.source, nodes, request.guardIdentifier),
+      instrumentedCode: instrument(request.source, nodes, request.guardIdentifier, request.file),
       sourceSha256: await sha256(request.source),
       facts,
       diagnostics: [],

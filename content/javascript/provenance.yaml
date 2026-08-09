@@ -2187,3 +2187,453 @@ items:
       visibility: public,
       path: chapters/javascript-ch04/lessons/javascript-ch04-l05/slides/assets/destructuring-flow.svg,
     }
+  - {
+      id: javascript-ch05-source-001,
+      visibility: public,
+      path: chapters/javascript-ch05/chapter.yaml,
+    }
+  - {
+      id: javascript-ch05-source-002,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/exercises/javascript-ch05-l01-e01/exercise.yaml,
+    }
+  - {
+      id: javascript-ch05-source-003,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/exercises/javascript-ch05-l01-e01/fixtures/for-loop.js,
+    }
+  - {
+      id: javascript-ch05-source-004,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/exercises/javascript-ch05-l01-e01/fixtures/incomplete.js,
+    }
+  - {
+      id: javascript-ch05-source-005,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/exercises/javascript-ch05-l01-e01/fixtures/index.html,
+    }
+  - {
+      id: javascript-ch05-source-006,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/exercises/javascript-ch05-l01-e01/fixtures/output-only.js,
+    }
+  - {
+      id: javascript-ch05-source-007,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/exercises/javascript-ch05-l01-e01/fixtures/pass.js,
+    }
+  - {
+      id: javascript-ch05-source-008,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/exercises/javascript-ch05-l01-e01/fixtures/security.js,
+    }
+  - {
+      id: javascript-ch05-source-009,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/exercises/javascript-ch05-l01-e01/fixtures/styles.css,
+    }
+  - {
+      id: javascript-ch05-source-010,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/exercises/javascript-ch05-l01-e01/fixtures/syntax-error.js,
+    }
+  - {
+      id: javascript-ch05-source-011,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/exercises/javascript-ch05-l01-e01/instructions.md,
+    }
+  - {
+      id: javascript-ch05-source-012,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/exercises/javascript-ch05-l01-e01/solution/index.html,
+    }
+  - {
+      id: javascript-ch05-source-013,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/exercises/javascript-ch05-l01-e01/solution/script.js,
+    }
+  - {
+      id: javascript-ch05-source-014,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/exercises/javascript-ch05-l01-e01/solution/styles.css,
+    }
+  - {
+      id: javascript-ch05-source-015,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/exercises/javascript-ch05-l01-e01/starter/index.html,
+    }
+  - {
+      id: javascript-ch05-source-016,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/exercises/javascript-ch05-l01-e01/starter/script.js,
+    }
+  - {
+      id: javascript-ch05-source-017,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/exercises/javascript-ch05-l01-e01/starter/styles.css,
+    }
+  - {
+      id: javascript-ch05-source-018,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/lesson.yaml,
+    }
+  - {
+      id: javascript-ch05-l01-map-flow-original,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/slides/assets/map-flow.svg,
+    }
+  - {
+      id: javascript-ch05-source-019,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/slides/s01-map-purpose.md,
+    }
+  - {
+      id: javascript-ch05-source-020,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/slides/s02-map-callback.md,
+    }
+  - {
+      id: javascript-ch05-source-021,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/slides/s03-map-result-array.md,
+    }
+  - {
+      id: javascript-ch05-source-022,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l01/slides/s04-question-label-map-checkpoint.md,
+    }
+  - {
+      id: javascript-ch05-source-023,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/exercises/javascript-ch05-l02-e01/exercise.yaml,
+    }
+  - {
+      id: javascript-ch05-source-024,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/exercises/javascript-ch05-l02-e01/fixtures/for-loop.js,
+    }
+  - {
+      id: javascript-ch05-source-025,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/exercises/javascript-ch05-l02-e01/fixtures/index.html,
+    }
+  - {
+      id: javascript-ch05-source-026,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/exercises/javascript-ch05-l02-e01/fixtures/output-only.js,
+    }
+  - {
+      id: javascript-ch05-source-027,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/exercises/javascript-ch05-l02-e01/fixtures/pass.js,
+    }
+  - {
+      id: javascript-ch05-source-028,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/exercises/javascript-ch05-l02-e01/fixtures/security.js,
+    }
+  - {
+      id: javascript-ch05-source-029,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/exercises/javascript-ch05-l02-e01/fixtures/styles.css,
+    }
+  - {
+      id: javascript-ch05-source-030,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/exercises/javascript-ch05-l02-e01/fixtures/syntax-error.js,
+    }
+  - {
+      id: javascript-ch05-source-031,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/exercises/javascript-ch05-l02-e01/fixtures/wrong-condition.js,
+    }
+  - {
+      id: javascript-ch05-source-032,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/exercises/javascript-ch05-l02-e01/instructions.md,
+    }
+  - {
+      id: javascript-ch05-source-033,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/exercises/javascript-ch05-l02-e01/solution/index.html,
+    }
+  - {
+      id: javascript-ch05-source-034,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/exercises/javascript-ch05-l02-e01/solution/script.js,
+    }
+  - {
+      id: javascript-ch05-source-035,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/exercises/javascript-ch05-l02-e01/solution/styles.css,
+    }
+  - {
+      id: javascript-ch05-source-036,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/exercises/javascript-ch05-l02-e01/starter/index.html,
+    }
+  - {
+      id: javascript-ch05-source-037,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/exercises/javascript-ch05-l02-e01/starter/script.js,
+    }
+  - {
+      id: javascript-ch05-source-038,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/exercises/javascript-ch05-l02-e01/starter/styles.css,
+    }
+  - {
+      id: javascript-ch05-source-039,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/lesson.yaml,
+    }
+  - {
+      id: javascript-ch05-l02-filter-flow-original,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/slides/assets/filter-flow.svg,
+    }
+  - {
+      id: javascript-ch05-source-040,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/slides/s01-filter-purpose.md,
+    }
+  - {
+      id: javascript-ch05-source-041,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/slides/s02-filter-condition.md,
+    }
+  - {
+      id: javascript-ch05-source-042,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/slides/s03-filter-result-array.md,
+    }
+  - {
+      id: javascript-ch05-source-043,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l02/slides/s04-question-category-filter-checkpoint.md,
+    }
+  - {
+      id: javascript-ch05-source-044,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/exercises/javascript-ch05-l03-e01/exercise.yaml,
+    }
+  - {
+      id: javascript-ch05-source-045,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/exercises/javascript-ch05-l03-e01/fixtures/for-loop.js,
+    }
+  - {
+      id: javascript-ch05-source-046,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/exercises/javascript-ch05-l03-e01/fixtures/index.html,
+    }
+  - {
+      id: javascript-ch05-source-047,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/exercises/javascript-ch05-l03-e01/fixtures/missing-initial-value.js,
+    }
+  - {
+      id: javascript-ch05-source-048,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/exercises/javascript-ch05-l03-e01/fixtures/output-only.js,
+    }
+  - {
+      id: javascript-ch05-source-049,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/exercises/javascript-ch05-l03-e01/fixtures/pass.js,
+    }
+  - {
+      id: javascript-ch05-source-050,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/exercises/javascript-ch05-l03-e01/fixtures/security.js,
+    }
+  - {
+      id: javascript-ch05-source-051,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/exercises/javascript-ch05-l03-e01/fixtures/styles.css,
+    }
+  - {
+      id: javascript-ch05-source-052,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/exercises/javascript-ch05-l03-e01/fixtures/syntax-error.js,
+    }
+  - {
+      id: javascript-ch05-source-053,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/exercises/javascript-ch05-l03-e01/instructions.md,
+    }
+  - {
+      id: javascript-ch05-source-054,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/exercises/javascript-ch05-l03-e01/solution/index.html,
+    }
+  - {
+      id: javascript-ch05-source-055,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/exercises/javascript-ch05-l03-e01/solution/script.js,
+    }
+  - {
+      id: javascript-ch05-source-056,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/exercises/javascript-ch05-l03-e01/solution/styles.css,
+    }
+  - {
+      id: javascript-ch05-source-057,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/exercises/javascript-ch05-l03-e01/starter/index.html,
+    }
+  - {
+      id: javascript-ch05-source-058,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/exercises/javascript-ch05-l03-e01/starter/script.js,
+    }
+  - {
+      id: javascript-ch05-source-059,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/exercises/javascript-ch05-l03-e01/starter/styles.css,
+    }
+  - {
+      id: javascript-ch05-source-060,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/lesson.yaml,
+    }
+  - {
+      id: javascript-ch05-l03-reduce-flow-original,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/slides/assets/reduce-flow.svg,
+    }
+  - {
+      id: javascript-ch05-source-061,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/slides/s01-reduce-purpose.md,
+    }
+  - {
+      id: javascript-ch05-source-062,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/slides/s02-reduce-accumulator.md,
+    }
+  - {
+      id: javascript-ch05-source-063,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/slides/s03-reduce-initial-value.md,
+    }
+  - {
+      id: javascript-ch05-source-064,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l03/slides/s04-question-score-total-checkpoint.md,
+    }
+  - {
+      id: javascript-ch05-source-065,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/exercises/javascript-ch05-l04-e01/exercise.yaml,
+    }
+  - {
+      id: javascript-ch05-source-066,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/exercises/javascript-ch05-l04-e01/fixtures/function-expression.js,
+    }
+  - {
+      id: javascript-ch05-source-067,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/exercises/javascript-ch05-l04-e01/fixtures/incomplete.js,
+    }
+  - {
+      id: javascript-ch05-source-068,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/exercises/javascript-ch05-l04-e01/fixtures/index.html,
+    }
+  - {
+      id: javascript-ch05-source-069,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/exercises/javascript-ch05-l04-e01/fixtures/output-only.js,
+    }
+  - {
+      id: javascript-ch05-source-070,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/exercises/javascript-ch05-l04-e01/fixtures/pass.js,
+    }
+  - {
+      id: javascript-ch05-source-071,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/exercises/javascript-ch05-l04-e01/fixtures/property-mutation.js,
+    }
+  - {
+      id: javascript-ch05-source-072,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/exercises/javascript-ch05-l04-e01/fixtures/security.js,
+    }
+  - {
+      id: javascript-ch05-source-073,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/exercises/javascript-ch05-l04-e01/fixtures/styles.css,
+    }
+  - {
+      id: javascript-ch05-source-074,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/exercises/javascript-ch05-l04-e01/fixtures/syntax-error.js,
+    }
+  - {
+      id: javascript-ch05-source-075,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/exercises/javascript-ch05-l04-e01/instructions.md,
+    }
+  - {
+      id: javascript-ch05-source-076,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/exercises/javascript-ch05-l04-e01/solution/index.html,
+    }
+  - {
+      id: javascript-ch05-source-077,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/exercises/javascript-ch05-l04-e01/solution/script.js,
+    }
+  - {
+      id: javascript-ch05-source-078,
+      visibility: authoring,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/exercises/javascript-ch05-l04-e01/solution/styles.css,
+    }
+  - {
+      id: javascript-ch05-source-079,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/exercises/javascript-ch05-l04-e01/starter/index.html,
+    }
+  - {
+      id: javascript-ch05-source-080,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/exercises/javascript-ch05-l04-e01/starter/script.js,
+    }
+  - {
+      id: javascript-ch05-source-081,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/exercises/javascript-ch05-l04-e01/starter/styles.css,
+    }
+  - {
+      id: javascript-ch05-source-082,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/lesson.yaml,
+    }
+  - {
+      id: javascript-ch05-l04-immutable-flow-original,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/slides/assets/immutable-flow.svg,
+    }
+  - {
+      id: javascript-ch05-source-083,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/slides/s01-immutable-update-purpose.md,
+    }
+  - {
+      id: javascript-ch05-source-084,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/slides/s02-array-map-update.md,
+    }
+  - {
+      id: javascript-ch05-source-085,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/slides/s03-object-spread-update.md,
+    }
+  - {
+      id: javascript-ch05-source-086,
+      visibility: public,
+      path: chapters/javascript-ch05/lessons/javascript-ch05-l04/slides/s04-question-answer-state-checkpoint.md,
+    }

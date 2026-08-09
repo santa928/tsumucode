@@ -173,7 +173,11 @@ d['query' + 'Selector']('head')['append' + 'Child'](s);`;
       );
     }).toThrow(/computed property/u);
     expect(() => {
-      assertJavaScriptCapabilityPolicy(program('const previous = [1, 2][-1];'), 'script.js', 'core');
+      assertJavaScriptCapabilityPolicy(
+        program('const previous = [1, 2][-1];'),
+        'script.js',
+        'core',
+      );
     }).toThrow(/computed property/u);
   });
 

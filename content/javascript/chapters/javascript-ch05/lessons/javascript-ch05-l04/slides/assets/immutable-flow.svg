@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="260" viewBox="0 0 960 260" role="img" aria-labelledby="title desc">
+  <title id="title">immutable updateによる回答状態の更新</title>
+  <desc id="desc">answeredがfalseの元データを残し、trueの新しいデータを作る</desc>
+  <rect width="960" height="260" rx="28" fill="#fffaf0"/>
+  <g font-family="system-ui, sans-serif" fill="#173f35" text-anchor="middle">
+    <rect x="36" y="48" width="300" height="164" rx="20" fill="#fff" stroke="#1d6b55" stroke-width="4"/>
+    <text x="186" y="96" font-size="25" font-weight="700">questions</text><text x="186" y="147" font-size="24">answered: false</text><text x="186" y="184" font-size="19">元データを保持</text>
+    <path d="M360 130h145" stroke="#1d6b55" stroke-width="8" stroke-linecap="round"/>
+    <path d="m487 110 24 20-24 20" fill="none" stroke="#1d6b55" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="385" y="70" width="100" height="44" rx="22" fill="#f2c94c"/><text x="435" y="100" font-size="21" font-weight="700">map + ...</text>
+    <rect x="540" y="48" width="384" height="164" rx="20" fill="#fff" stroke="#1d6b55" stroke-width="4"/>
+    <text x="732" y="96" font-size="25" font-weight="700">answeredQuestions</text><text x="732" y="147" font-size="24">answered: true</text><text x="732" y="184" font-size="19">新しいデータ</text>
+  </g>
+</svg>

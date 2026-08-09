@@ -320,9 +320,10 @@ async function assertCourseFixtureGate(page: Page, input: CourseFixtureGateInput
           { cause: error },
         );
       }
-      const assertionContext = `${fixtureCase.id}\n${JSON.stringify(result, null, 2)}`;
+      let assertionContext = `${fixtureCase.id}\n${JSON.stringify(result, null, 2)}`;
       if (result.status === 'system-error' && fixtureCase.expectedStatus !== 'system-error') {
         unexpectedSystemErrors += 1;
+        assertionContext += `\nruntimeErrors=${JSON.stringify(await readRuntimeErrors(page))}`;
       }
       if (fixtureCase.expectedStatus === 'not-pass') {
         expect(result.status, assertionContext).not.toBe('pass');
@@ -371,7 +372,7 @@ test('JavaScriptの全Solution、Starter、Fixtureを実Browser Runner／Validat
   await assertCourseFixtureGate(page, {
     courseRoot: 'content/javascript',
     courseId: 'javascript',
-    expectedExerciseCount: 19,
+    expectedExerciseCount: 23,
     runtime: await loadJavaScriptFixtureRuntime(),
   });
 });

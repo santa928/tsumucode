@@ -1,0 +1,19 @@
+id: javascript-ch05-l02
+kind: standard
+title: filterで必要な要素を選ぶ
+goal: filterへbooleanを返すcallbackを渡し、HTML categoryの問題だけを新しいArrayへ選べる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch05-l01]
+slideSources:
+  - slides/s01-filter-purpose.md
+  - slides/s02-filter-condition.md
+  - slides/s03-filter-result-array.md
+  - slides/s04-question-category-filter-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch05-l02-e01/exercise.yaml
+reflection: filterはcallbackの条件がtrueになった要素だけを、新しいArrayへ同じ形で残す。
+glossaryRefs: [javascript, console, array, object, property, method, callback, filter, boolean]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch05-l02-s04
+  requiredExerciseIds: [javascript-ch05-l02-e01]

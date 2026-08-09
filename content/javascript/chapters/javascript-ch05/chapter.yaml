@@ -1,0 +1,11 @@
+id: javascript-ch05
+sequence: 5
+title: Array methodでデータを組み替える
+goal: map・filter・reduceでArrayを変換・選別・集計し、元データを変えない更新を組み立てられる。
+estimatedMinutes: 60
+kind: standard
+lessonSources:
+  - lessons/javascript-ch05-l01/lesson.yaml
+  - lessons/javascript-ch05-l02/lesson.yaml
+  - lessons/javascript-ch05-l03/lesson.yaml
+  - lessons/javascript-ch05-l04/lesson.yaml

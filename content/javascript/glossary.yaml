@@ -305,3 +305,48 @@ entries:
     definition: Object Destructuringでpropertyの値を受け取るために新しく付ける変数名。
     firstSlideId: javascript-ch04-l05-s02
     relatedIds: [destructuring, property, variable]
+  - id: method
+    term: method
+    definition: ArrayやObjectなどの値に結びつき、dotの後ろから呼び出すFunction。
+    firstSlideId: javascript-ch05-l01-s01
+    relatedIds: [function, array, map, filter, reduce]
+  - id: callback
+    term: callback
+    definition: 別のFunctionへargumentとして渡し、決められた時点で呼び出してもらうFunction。
+    firstSlideId: javascript-ch05-l01-s02
+    relatedIds: [function, parameter, map, filter, reduce]
+  - id: map
+    term: map
+    definition: Arrayの全要素をcallbackで変換し、同じ件数の新しいArrayを返すmethod。
+    firstSlideId: javascript-ch05-l01-s01
+    relatedIds: [array, method, callback, immutable-update]
+  - id: filter
+    term: filter
+    definition: callbackの条件がtrueになったArray要素だけを、新しいArrayへ残すmethod。
+    firstSlideId: javascript-ch05-l02-s01
+    relatedIds: [array, method, callback, boolean]
+  - id: reduce
+    term: reduce
+    definition: Array要素を順番に計算へ使い、accumulatorを通して1つの結果へ集計するmethod。
+    firstSlideId: javascript-ch05-l03-s01
+    relatedIds: [array, method, callback, accumulator, initial-value]
+  - id: accumulator
+    term: accumulator
+    definition: reduceのcallbackで、それまでの計算結果を受け取り次の処理へ引き継ぐparameter。
+    firstSlideId: javascript-ch05-l03-s02
+    relatedIds: [reduce, callback, parameter, initial-value]
+  - id: initial-value
+    term: 初期値
+    definition: reduceで最初のaccumulatorへ入れ、集計の開始地点を明示する値。
+    firstSlideId: javascript-ch05-l03-s03
+    relatedIds: [reduce, accumulator, value]
+  - id: immutable-update
+    term: immutable update
+    definition: 元データを直接書き換えず、変更を反映した新しいデータを作る更新方法。
+    firstSlideId: javascript-ch05-l04-s01
+    relatedIds: [array, object, map, spread-syntax]
+  - id: spread-syntax
+    term: spread syntax
+    definition: 3つのdotでArray要素やObject propertyを新しいデータへ展開する書き方。
+    firstSlideId: javascript-ch05-l04-s03
+    relatedIds: [array, object, property, immutable-update]

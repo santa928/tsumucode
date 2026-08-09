@@ -1,0 +1,31 @@
+id: javascript-ch05-l03
+kind: standard
+title: reduceで値を1つに集計する
+goal: reduceのaccumulatorと現在要素を使い、初期値0から問題のpoint合計を求められる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch05-l02]
+slideSources:
+  - slides/s01-reduce-purpose.md
+  - slides/s02-reduce-accumulator.md
+  - slides/s03-reduce-initial-value.md
+  - slides/s04-question-score-total-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch05-l03-e01/exercise.yaml
+reflection: reduceは初期値から始め、accumulatorへ各要素の計算結果を順番に引き継ぐ。
+glossaryRefs:
+  [
+    javascript,
+    console,
+    array,
+    object,
+    property,
+    method,
+    callback,
+    reduce,
+    accumulator,
+    initial-value,
+  ]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch05-l03-s04
+  requiredExerciseIds: [javascript-ch05-l03-e01]

@@ -54,42 +54,22 @@ describe('javascript-ch04', () => {
     ]);
   });
 
-  it('Course累計を19 Lesson／76 Slide／19 Exercise／290分へ更新し既存進捗を保持する', async () => {
+  it('Chapter 04追加時の空MigrationとChapter接続を後続追加後も保持する', async () => {
     const { runtime: course } = await loadAuthoringCourse(path.resolve('content/javascript'));
 
-    expect(course).toMatchObject({
-      revision: '2026-08-10.1',
-      estimatedMinutes: 290,
-      publicationStatus: 'draft',
-      expectedTotals: {
-        chapters: 5,
-        lessons: 19,
-        conceptSlides: 76,
-        standardExercises: 19,
-        guidedProjectLessons: 0,
-        capstoneLessons: 0,
-        estimatedMinutes: 290,
-      },
-      progressMigrations: [
-        {
-          fromRevision: '2026-08-02.1',
-          toRevision: '2026-08-09.1',
-          steps: [],
-        },
+    expect(course.publicationStatus).toBe('draft');
+    expect(course.progressMigrations).toEqual(
+      expect.arrayContaining([
         {
           fromRevision: '2026-08-09.1',
           toRevision: '2026-08-10.1',
           steps: [],
         },
-      ],
-    });
-    expect(course.phases.flatMap(({ chapters }) => chapters).map(({ id }) => id)).toEqual([
-      'javascript-ch00',
-      'javascript-ch01',
-      'javascript-ch02',
-      'javascript-ch03',
+      ]),
+    );
+    expect(course.phases.flatMap(({ chapters }) => chapters).map(({ id }) => id)).toContain(
       'javascript-ch04',
-    ]);
+    );
   }, 20_000);
 
   it('ArrayからDestructuringまでをLessonごとのread→transformへ段階接続する', async () => {

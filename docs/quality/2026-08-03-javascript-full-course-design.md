@@ -1,6 +1,6 @@
 # JavaScript全Course 設計
 
-- 状態: 書面レビュー承認済み・Runtime基盤およびChapter 01〜04教材実装・Chapter 04全ローカル品質検証済み（Chapter 05〜13教材は未実装）
+- 状態: 書面レビュー承認済み・Runtime基盤およびChapter 01〜05教材実装・Chapter 05全ローカル品質検証済み（Chapter 06〜13教材は未実装）
 - 承認日: 2026-08-04
 - 作成日: 2026-08-03
 - 対象: `javascript` Course Chapter 01〜13、既存Chapter 00の互換維持、全Course公開
@@ -186,7 +186,35 @@ WebKitではopaque iframeに対する親からのprogrammatic focusが反映さ�
 | REQ-JSC-032 | Chapter 04全体検証済み         | 3 Engine、axe、複数viewport、Security、Performance、Lighthouse、subpathを全体Gateで確認          |
 | REQ-JSC-034 | ローカル前提検証済み・公開待ち | 日本語commit、staged secret scan、main push、Pages deployment、公開SmokeはRelease工程で確定      |
 
-この節はChapter 04教材の実装と全ローカルGateの完成証跡であり、Chapter 05〜13、全52 Lessonの完全初心者通し検証、`published`昇格、LearningPath追加、本番公開後の全Course回帰は未完了である。
+この節はChapter 04教材の歴史的証跡である。後続Chapter 05は3.6節で追跡し、Chapter 06〜13、全52 Lessonの完全初心者通し検証、`published`昇格、LearningPath追加、本番公開後の全Course回帰は未完了である。
+
+### 3.6 Chapter 05 Data変換教材の実装証跡と未完了境界
+
+2026-08-10にChapter 05の4 Lesson／16 Slide／4 Exercise／60分を実装し、既存Chapter 00〜04を含むCourse累計を23 Lesson／92 Slide／23 Exercise／350分へ更新した。問題Object Arrayを題材に、`map`、`filter`、`reduce`、Array `map`とObject spreadによるimmutable updateを、各Lesson 4 Slideから1箇所変更のExerciseへ接続した。
+
+- 教材契約: 全4 Exerciseに3段階Hint、Solution、5件以上の正負Fixture、Collection変換FactとConsole完全一致のAND判定を持たせた
+- 視覚説明: 実習直前の4 Slideへ、元Arrayから新しいArray／集計値を作る流れを示す独自SVGを追加した
+- 教材品質: JavaScript Provenance `530 files / 530 items`、全2 Course `74 lessons reviewed / stale hashes 0 / rejected 0`を検証した
+- Unit／Content: Chapter契約12件と解析器回帰23件を含む全体Gateで`162 files / 1,625 tests / 0 failed`、Content Compile／Check／Reviewを通過した
+- Runtime修正: 丸括弧付きObject literalを返すConcise Arrow Functionのinstrument範囲を式全体へ広げ、生成後Sourceの再Parseと実Browser Solution実行で回帰を固定した
+- Browser／Accessibility: 全23 JavaScript ExerciseのSolution、Starter、Fixtureを実Browser Runner／Validatorで確認し、1280×720のExerciseと390×844のSlideを原寸目視して、Document Scroll、横はみ出し、重大なaxe違反、操作阻害がないことを確認した
+- 3 Engine／性能: Chromium、Firefox、WebKitで`513 passed / 150 intentionally skipped / 0 failed / retry 0`、性能`22/22`、bundle／subpath予算`9/9`を通過した
+- Build／公開前Gate: Lint、Typecheck、Production Build、learning chunk分離、Lighthouse 4 URL×3回の`12/12`、`254 files`の静的Artifact、`/tsumucode/` subpath smokeを通過した
+- 進捗互換: Revisionを`2026-08-10.2`へ上げ、旧`2026-08-10.1`からID変更なしの空Migrationで既存進捗と下書きを保持した
+- 公開境界: Courseは`draft`を維持し、Home、LearningPath、進捗非干渉Slide Libraryへ未掲載のまま、直接URLだけを章単位β検証対象とする
+
+| 要件        | Data変換範囲の状態             | 自動／目視証跡                                                                                            |
+| ----------- | ------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| REQ-JSC-003 | 累計23／全52 Lesson            | Chapter 05まで350分で完成。Chapter 06〜13の29 Lesson／650分は未実装                                       |
+| REQ-JSC-005 | Chapter 04〜05範囲検証済み     | Array、Object、Destructuring、map、filter、reduce、immutable updateを9 Lesson、36 Slide、9 Exerciseで実装 |
+| REQ-JSC-008 | Chapter 05範囲検証済み         | 全4 Lessonの直前Slide整合、3 Hint、Solution、5件以上Fixture                                               |
+| REQ-JSC-021 | Chapter 05範囲検証済み         | collection-transform、immutable-updateの型付きFactと同一revisionのConsoleをAND判定                        |
+| REQ-JSC-030 | Chapter 05範囲検証済み         | Concept、用語、Trace、screen budget、実行Example、公開／authoring provenanceをContent Gateで確認          |
+| REQ-JSC-031 | Chapter 05範囲検証済み         | authorと別reviewer ID、Lesson source hash、stale 0、rejected 0                                            |
+| REQ-JSC-032 | Chapter 05全体検証済み         | 3 Engine、axe、複数viewport、Security、Performance、Lighthouse、subpath buildを全体Gateで確認             |
+| REQ-JSC-034 | ローカル前提検証済み・公開待ち | 日本語commit、staged secret scan、main push、Pages deployment、公開SmokeはこのTaskのRelease工程で確定する |
+
+この節はChapter 05教材の実装と全ローカルGateの完成証跡であり、Chapter 06〜13、全52 Lessonの完全初心者通し検証、`published`昇格、LearningPath追加、本番公開後の全Course回帰は未完了である。
 
 ## 4. 要件差分
 

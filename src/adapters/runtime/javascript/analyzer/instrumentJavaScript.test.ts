@@ -147,6 +147,20 @@ describe('analyzeJavaScriptSource', () => {
     expect(result.instrumentedCode).toContain('finally{__tsumuBudget.leaveFunction();}');
   });
 
+  it('丸括弧で囲んだobject literalを返すarrow functionも有効なJavaScriptへ変換する', async () => {
+    const result = await analyzeJavaScriptSource({
+      ...baseInput,
+      source: 'const updated = questions.map((question) => ({ ...question, answered: true }));',
+    });
+
+    expect(result.status).toBe('success');
+    if (result.status !== 'success') throw new Error('解析が成功しませんでした');
+    expect(
+      () => parse(result.instrumentedCode, { ecmaVersion: 'latest', sourceType: 'script' }),
+      result.instrumentedCode,
+    ).not.toThrow();
+  });
+
   it('Event callbackと1行Loopを同時に変換しても有効なJavaScriptを生成する', async () => {
     const sources = [
       [

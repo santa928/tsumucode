@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="260" viewBox="0 0 960 260" role="img" aria-labelledby="title desc">
+  <title id="title">filterによるHTML問題の選別</title>
+  <desc id="desc">HTML二問とCSS一問から、HTML二問だけを残す</desc>
+  <rect width="960" height="260" rx="28" fill="#fffaf0"/>
+  <g font-family="system-ui, sans-serif" font-size="25" fill="#173f35" text-anchor="middle">
+    <rect x="36" y="42" width="260" height="176" rx="20" fill="#fff" stroke="#1d6b55" stroke-width="4"/>
+    <text x="166" y="92" font-weight="700">HTML / CSS / HTML</text><text x="166" y="145">3問</text>
+    <path d="M320 130h145" stroke="#1d6b55" stroke-width="8" stroke-linecap="round"/>
+    <path d="m447 110 24 20-24 20" fill="none" stroke="#1d6b55" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="350" y="70" width="92" height="44" rx="22" fill="#f2c94c"/><text x="396" y="100" font-size="22" font-weight="700">filter</text>
+    <rect x="500" y="42" width="424" height="176" rx="20" fill="#fff" stroke="#1d6b55" stroke-width="4"/>
+    <text x="712" y="92" font-weight="700">HTML / HTML</text><text x="712" y="145">2問だけを残す</text>
+  </g>
+</svg>

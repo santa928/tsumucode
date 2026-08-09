@@ -1,0 +1,19 @@
+id: javascript-ch05-l01
+kind: standard
+title: mapで各要素を変換する
+goal: mapへ1つの要素を受け取るcallbackを渡し、元の問題文から表示用ラベルのArrayを作れる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch04-l05]
+slideSources:
+  - slides/s01-map-purpose.md
+  - slides/s02-map-callback.md
+  - slides/s03-map-result-array.md
+  - slides/s04-question-label-map-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch05-l01-e01/exercise.yaml
+reflection: mapは元Arrayの各要素をcallbackで変換し、同じ件数の新しいArrayを返す。
+glossaryRefs: [javascript, console, array, element, method, callback, map, return-value]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch05-l01-s04
+  requiredExerciseIds: [javascript-ch05-l01-e01]

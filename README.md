@@ -53,7 +53,7 @@ Homeでは、複数のコースをおすすめ順に並べる「学習パス」�
 
 現在公開している「フロントエンド学習パス」にはHTML/CSSコースだけを収録しています。JavaScript、TypeScript、Reactなどのコースは、教材と品質確認が完成してから順次このパスへ追加します。学習パスの直リンクは[`#/paths/frontend`](http://localhost:5173/#/paths/frontend)です。
 
-JavaScriptは、安全な3ファイル実行基盤とChapter 00〜04の19 Lesson／76 Slide／19 Exercise（290分）を`draft`として品質検証中です。値・条件分岐・FunctionからArray・Object・Destructuringまでを学べます。Home、公開学習パス、スライド閲覧モードにはまだ掲載しません。開発時は[最初のJavaScriptスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s01)、[Chapter 04の最初のスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch04-l01/slides/javascript-ch04-l01-s01)、[Destructuring演習](http://localhost:5173/#/courses/javascript/lessons/javascript-ch04-l05/exercises/javascript-ch04-l05-e01)の直接URLから確認できます。`draft`は非掲載を意味するだけで、Production Artifactへ含まれる教材を機密情報として扱うものではありません。
+JavaScriptは、安全な3ファイル実行基盤とChapter 00〜05の23 Lesson／92 Slide／23 Exercise（350分）を`draft`として品質検証中です。値・条件分岐・Function・Arrayから`map`・`filter`・`reduce`・immutable updateまでを学べます。Home、公開学習パス、スライド閲覧モードにはまだ掲載しません。開発時は[最初のJavaScriptスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s01)、[Chapter 05の最初のスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch05-l01/slides/javascript-ch05-l01-s01)、[immutable update演習](http://localhost:5173/#/courses/javascript/lessons/javascript-ch05-l04/exercises/javascript-ch05-l04-e01)の直接URLから確認できます。`draft`は非掲載を意味するだけで、Production Artifactへ含まれる教材を機密情報として扱うものではありません。
 
 学習パスの進捗は、この端末に保存された各コースの進捗からその都度計算します。学習パス専用の進捗Recordは作らないため、既存の書き出し・読み込み形式や各コースの下書きはそのまま利用できます。
 

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="260" viewBox="0 0 960 260" role="img" aria-labelledby="title desc">
+  <title id="title">reduceによるpoint集計</title>
+  <desc id="desc">初期値0へ10、20、30を順番に足して60を作る</desc>
+  <rect width="960" height="260" rx="28" fill="#fffaf0"/>
+  <g font-family="system-ui, sans-serif" fill="#173f35" text-anchor="middle">
+    <text x="480" y="52" font-size="26" font-weight="700">accumulatorを次へ引き継ぐ</text>
+    <g font-size="25" font-weight="700">
+      <circle cx="100" cy="145" r="54" fill="#fff" stroke="#1d6b55" stroke-width="4"/><text x="100" y="154">0</text>
+      <circle cx="315" cy="145" r="54" fill="#fff" stroke="#1d6b55" stroke-width="4"/><text x="315" y="154">10</text>
+      <circle cx="530" cy="145" r="54" fill="#fff" stroke="#1d6b55" stroke-width="4"/><text x="530" y="154">30</text>
+      <circle cx="745" cy="145" r="54" fill="#f2c94c" stroke="#1d6b55" stroke-width="4"/><text x="745" y="154">60</text>
+    </g>
+    <g stroke="#1d6b55" stroke-width="7" stroke-linecap="round" fill="none">
+      <path d="M158 145h96"/><path d="m238 128 20 17-20 17"/>
+      <path d="M373 145h96"/><path d="m453 128 20 17-20 17"/>
+      <path d="M588 145h96"/><path d="m668 128 20 17-20 17"/>
+    </g>
+    <g font-size="20"><text x="206" y="118">+10</text><text x="421" y="118">+20</text><text x="636" y="118">+30</text></g>
+  </g>
+</svg>

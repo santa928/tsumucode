@@ -212,3 +212,47 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes: ObjectとArrayのDestructuringを4枚のSlideから、quizとchoicesを2段階で分けるExerciseへ接続。object／array destructuring FactとConsole完全一致のAND判定、3段階Hint、Solution、no-destructuring／output-only／syntax／securityを含む6 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch05-l01
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 6c7128d784430a64d5a4a22c059f9c5085b498420affd8a80c6ee2f061c98483
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: mapの目的・callback・新しいArrayを4枚のSlideから、問題Objectをlabelへ変換するExerciseへ段階接続。mapのcollection-transform FactとConsole完全一致のAND判定、3段階Hint、Solution、for-loop／output-only／syntax／securityを含む6 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch05-l02
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: d8391a3f373cf11338ec8948b1cf67ebc0e8e15e9fe79d00b06cd5ca8256670a
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: filterの目的・boolean条件・元の順序を保つ新しいArrayを4枚のSlideから、HTML categoryだけを残すExerciseへ段階接続。filterのcollection-transform FactとConsole完全一致のAND判定、3段階Hint、Solution、wrong-condition／for-loop／output-only／syntax／securityを含む6 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch05-l03
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 287c38e6dff47b44cd86b12ccbb120a312bb094916f0ee60546e82d0bc64a648
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: reduceのaccumulator・currentValue・initial valueを4枚のSlideから、10・20・30を0から合計するExerciseへ段階接続。reduceのcollection-transform Fact・加算Fact・Console完全一致のAND判定、3段階Hint、Solution、initial value欠落／for-loop／output-only／syntax／securityを含む6 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch05-l04
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: dcb4c0ee2f94e1092cac652672cbeabf65dc45bff0b4a2459895e160b213f6ae
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: immutable update・Array map・Object spreadを4枚のSlideから、元のquestionsを保ち回答済みの新しいArrayを作るExerciseへ段階接続。array-map／object-spread FactとConsole完全一致のAND判定、3段階Hint、Solution、Function expression／property mutation／output-only／syntax／securityを含む7 Fixtureを実Browser Runner／Validatorで確認。丸括弧付きObject literalを返すArrow Functionの実行器回帰もUnitと実Browserで確認。
