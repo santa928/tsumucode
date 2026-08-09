@@ -1,0 +1,12 @@
+id: javascript-ch03
+sequence: 3
+title: Function・Scope・Closure
+goal: 処理をFunctionへまとめ、値を受け取って返し、変数が使える範囲とClosureの記憶を説明できる。
+estimatedMinutes: 75
+kind: standard
+lessonSources:
+  - lessons/javascript-ch03-l01/lesson.yaml
+  - lessons/javascript-ch03-l02/lesson.yaml
+  - lessons/javascript-ch03-l03/lesson.yaml
+  - lessons/javascript-ch03-l04/lesson.yaml
+  - lessons/javascript-ch03-l05/lesson.yaml

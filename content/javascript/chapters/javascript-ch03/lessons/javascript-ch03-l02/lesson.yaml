@@ -1,0 +1,19 @@
+id: javascript-ch03-l02
+kind: standard
+title: 値を受け取って結果を返す
+goal: parameterで値を受け取り、returnで計算結果を呼び出し元へ返せる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch03-l01]
+slideSources:
+  - slides/s01-function-input-output.md
+  - slides/s02-function-parameter.md
+  - slides/s03-return-value.md
+  - slides/s04-score-function-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch03-l02-e01/exercise.yaml
+reflection: parameterは呼び出しから値を受け取る名前、returnはFunctionから結果を返す合図。
+glossaryRefs: [javascript, console, function, parameter, argument, return-value]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch03-l02-s04
+  requiredExerciseIds: [javascript-ch03-l02-e01]

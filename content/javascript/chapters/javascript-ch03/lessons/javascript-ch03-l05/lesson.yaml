@@ -1,0 +1,19 @@
+id: javascript-ch03-l05
+kind: standard
+title: Closureが覚える値を観測する
+goal: 外側Functionの変数を内側Functionが使い続け、呼び出しの間で値を覚えるClosureを説明できる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch03-l04]
+slideSources:
+  - slides/s01-closure-memory.md
+  - slides/s02-outer-inner-function.md
+  - slides/s03-captured-binding.md
+  - slides/s04-score-closure-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch03-l05-e01/exercise.yaml
+reflection: Closureは外側Functionが終わった後も、内側Functionが使う外側の変数を覚えている。
+glossaryRefs: [javascript, console, function, local-scope, closure, captured-variable]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch03-l05-s04
+  requiredExerciseIds: [javascript-ch03-l05-e01]

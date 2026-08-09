@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="title desc">
+  <title id="title">parameterからreturnまでの得点計算</title>
+  <desc id="desc">3問正解と1問10点を受け取り、掛け算して30点を返す</desc>
+  <rect width="960" height="300" rx="32" fill="#fffaf0"/>
+  <g font-family="system-ui,sans-serif" text-anchor="middle" fill="#173f35">
+    <rect x="48" y="82" width="220" height="136" rx="24" fill="#fff" stroke="#1d6b55" stroke-width="4"/><text x="158" y="138" font-size="24" font-weight="700">入力</text><text x="158" y="178" font-size="24">3 と 10</text>
+    <rect x="370" y="82" width="220" height="136" rx="24" fill="#dff4ed" stroke="#1d6b55" stroke-width="4"/><text x="480" y="138" font-size="24" font-weight="700">計算</text><text x="480" y="178" font-size="24">3 × 10</text>
+    <rect x="692" y="82" width="220" height="136" rx="24" fill="#f2c94c" stroke="#173f35" stroke-width="4"/><text x="802" y="138" font-size="24" font-weight="700">return</text><text x="802" y="178" font-size="28">30</text>
+  </g>
+  <g stroke="#1d6b55" stroke-width="8" stroke-linecap="round"><path d="M268 150h102M590 150h102"/></g>
+</svg>

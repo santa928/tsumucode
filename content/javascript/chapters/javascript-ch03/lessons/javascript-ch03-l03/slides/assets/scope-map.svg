@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="title desc">
+  <title id="title">global Scopeとlocal Scope</title>
+  <desc id="desc">globalのcourseNameを表す外枠の中に、showLabels localのlessonNameを表す内枠がある</desc>
+  <rect width="960" height="300" rx="32" fill="#fffaf0"/>
+  <rect x="54" y="42" width="852" height="216" rx="28" fill="#fff" stroke="#1d6b55" stroke-width="4"/>
+  <text x="92" y="92" font-family="system-ui,sans-serif" font-size="25" font-weight="700" fill="#173f35">global: courseName</text>
+  <rect x="294" y="112" width="520" height="110" rx="22" fill="#dff4ed" stroke="#173f35" stroke-width="4"/>
+  <text x="554" y="178" text-anchor="middle" font-family="system-ui,sans-serif" font-size="27" fill="#173f35">showLabels local: lessonName</text>
+</svg>

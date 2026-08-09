@@ -1,0 +1,19 @@
+id: javascript-ch03-l03
+kind: standard
+title: 変数を使えるScopeを見分ける
+goal: globalとlocalの変数が使える範囲を見分け、変数を必要なFunction内へ置ける。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch03-l02]
+slideSources:
+  - slides/s01-variable-scope.md
+  - slides/s02-global-scope.md
+  - slides/s03-local-scope.md
+  - slides/s04-scoped-labels-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch03-l03-e01/exercise.yaml
+reflection: 外側で宣言したglobal変数はFunctionからも使え、Function内のlocal変数はそのFunctionの外から使えない。
+glossaryRefs: [javascript, console, variable, function, scope, global-scope, local-scope]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch03-l03-s04
+  requiredExerciseIds: [javascript-ch03-l03-e01]

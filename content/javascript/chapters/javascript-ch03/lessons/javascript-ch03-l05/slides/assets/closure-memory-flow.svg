@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="title desc">
+  <title id="title">Closureがscoreを覚えて増やす流れ</title>
+  <desc id="desc">score 0を覚えた1つのaddScoreを2回呼び、10、20へ増える</desc>
+  <rect width="960" height="300" rx="32" fill="#fffaf0"/>
+  <g font-family="system-ui,sans-serif" text-anchor="middle" fill="#173f35">
+    <rect x="52" y="72" width="252" height="156" rx="26" fill="#fff" stroke="#1d6b55" stroke-width="4"/><text x="178" y="130" font-size="24" font-weight="700">Closure</text><text x="178" y="178" font-size="27">score = 0</text>
+    <rect x="354" y="72" width="252" height="156" rx="26" fill="#dff4ed" stroke="#1d6b55" stroke-width="4"/><text x="480" y="130" font-size="24" font-weight="700">1回目</text><text x="480" y="178" font-size="30">10</text>
+    <rect x="656" y="72" width="252" height="156" rx="26" fill="#f2c94c" stroke="#173f35" stroke-width="4"/><text x="782" y="130" font-size="24" font-weight="700">2回目</text><text x="782" y="178" font-size="30">20</text>
+  </g>
+  <g stroke="#1d6b55" stroke-width="8" stroke-linecap="round"><path d="M304 150h50M606 150h50"/></g>
+</svg>

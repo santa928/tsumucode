@@ -1,0 +1,19 @@
+id: javascript-ch03-l04
+kind: standard
+title: Arrow Functionで短く表す
+goal: Arrow Functionのparameterとreturnを読み、受け取った値を加工して返せる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch03-l03]
+slideSources:
+  - slides/s01-arrow-function.md
+  - slides/s02-arrow-parameter.md
+  - slides/s03-arrow-return.md
+  - slides/s04-answer-format-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch03-l04-e01/exercise.yaml
+reflection: Arrow Functionはfunctionキーワードの代わりに矢印を使い、parameterを受け取って結果を返せる。
+glossaryRefs: [javascript, console, function, arrow-function, parameter, return-value]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch03-l04-s04
+  requiredExerciseIds: [javascript-ch03-l04-e01]

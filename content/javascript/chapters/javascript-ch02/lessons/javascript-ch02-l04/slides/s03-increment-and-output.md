@@ -18,9 +18,7 @@ assets:
 `number++`は、処理が1回終わるたびにnumberへ1を加える更新です。
 
 ```js
-console.log(
-  '問題' + number,
-);
+console.log('問題' + number);
 number++;
 ```
 

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="title desc">
+  <title id="title">Arrow Functionで回答を整形する</title>
+  <desc id="desc">入力BをformatAnswerへ渡し、回答: Bという文字列を返す</desc>
+  <rect width="960" height="300" rx="32" fill="#fffaf0"/>
+  <g font-family="system-ui,sans-serif" text-anchor="middle" fill="#173f35">
+    <circle cx="130" cy="150" r="72" fill="#fff" stroke="#1d6b55" stroke-width="4"/><text x="130" y="160" font-size="34">B</text>
+    <rect x="318" y="72" width="324" height="156" rx="28" fill="#dff4ed" stroke="#1d6b55" stroke-width="4"/><text x="480" y="132" font-size="25" font-weight="700">formatAnswer</text><text x="480" y="177" font-size="24">'回答: ' + answer</text>
+    <rect x="760" y="98" width="158" height="104" rx="22" fill="#f2c94c" stroke="#173f35" stroke-width="4"/><text x="839" y="160" font-size="27">回答: B</text>
+  </g>
+  <g stroke="#1d6b55" stroke-width="8" stroke-linecap="round"><path d="M202 150h116M642 150h118"/></g>
+</svg>

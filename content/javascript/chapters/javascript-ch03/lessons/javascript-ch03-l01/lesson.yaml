@@ -1,0 +1,19 @@
+id: javascript-ch03-l01
+kind: standard
+title: Functionへ処理をまとめて呼び出す
+goal: Function宣言と呼び出しを区別し、用意した処理を必要な場所で実行できる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch02-l04]
+slideSources:
+  - slides/s01-function-purpose.md
+  - slides/s02-function-declaration.md
+  - slides/s03-function-call.md
+  - slides/s04-show-question-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch03-l01-e01/exercise.yaml
+reflection: Functionは処理へ名前を付ける宣言と、その名前へ丸括弧を付ける呼び出しを組み合わせて使う。
+glossaryRefs: [javascript, console, function, function-declaration, function-call]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch03-l01-s04
+  requiredExerciseIds: [javascript-ch03-l01-e01]

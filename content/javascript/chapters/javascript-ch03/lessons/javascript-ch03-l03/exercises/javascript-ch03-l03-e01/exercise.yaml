@@ -1,0 +1,204 @@
+id: javascript-ch03-l03-e01
+kind: standard
+workspaceId: javascript-ch03-l03-e01
+countsTowardStandardExerciseTotal: true
+title: lessonNameをlocal Scopeへ移す
+instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: scoped-labels, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: move-lesson-name-local
+    file: script.js
+    target: 2行目のlessonName宣言
+    starterAnchor: "const lessonName = 'Scope';"
+    change: 宣言をshowLabelsの波括弧内の先頭へ移す
+    observe: ConsoleはJavaScript、Scopeの順を保つ
+    requiresConceptIds: [scoped-labels]
+    validationRuleIds:
+      [
+        javascript-ch03-l03-e01-r01,
+        javascript-ch03-l03-e01-r02,
+        javascript-ch03-l03-e01-r03,
+        javascript-ch03-l03-e01-r04,
+        javascript-ch03-l03-e01-r05,
+      ]
+files:
+  - { path: script.js, language: javascript, source: starter/script.js, editable: true }
+  - { path: index.html, language: html, source: starter/index.html, editable: false }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: false }
+solutionFiles:
+  - { path: script.js, language: javascript, source: solution/script.js, editable: false }
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: javascript-ch03-l03-e01-r01
+    groupId: javascript-ch03-l03-e01-result
+    label: lessonNameをFunction localにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: binding, name: lessonName, declarationKind: const, scopeDepth: 1 }
+    feedback:
+      target: lessonNameの宣言
+      expected: showLabels内のlocal変数
+      nextAction: lessonNameの宣言をFunctionの波括弧内へ移します。
+    hintId: javascript-ch03-l03-e01-h02
+    relatedSlideId: javascript-ch03-l03-s03
+  - id: javascript-ch03-l03-e01-r02
+    groupId: javascript-ch03-l03-e01-result
+    label: courseNameをglobalに残す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: binding, name: courseName, declarationKind: const, scopeDepth: 0 }
+    feedback:
+      target: courseNameの宣言
+      expected: Functionの外側にあるglobal変数
+      nextAction: courseNameの行は元の場所に残します。
+    hintId: javascript-ch03-l03-e01-h01
+    relatedSlideId: javascript-ch03-l03-s02
+  - id: javascript-ch03-l03-e01-r03
+    groupId: javascript-ch03-l03-e01-result
+    label: showLabelsを宣言する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: function, functionKind: declaration, parameterCount: 0 }
+    feedback:
+      target: showLabels
+      expected: parameterなしのFunction宣言
+      nextAction: function showLabels()と波括弧を残します。
+    hintId: javascript-ch03-l03-e01-h01
+    relatedSlideId: javascript-ch03-l03-s03
+  - id: javascript-ch03-l03-e01-r04
+    groupId: javascript-ch03-l03-e01-result
+    label: showLabelsを呼び出す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: call, callee: showLabels }
+    feedback:
+      target: script.jsの末尾
+      expected: showLabels()の呼び出し
+      nextAction: 末尾の呼び出しを残します。
+    hintId: javascript-ch03-l03-e01-h01
+    relatedSlideId: javascript-ch03-l03-s04
+  - id: javascript-ch03-l03-e01-r05
+    groupId: javascript-ch03-l03-e01-result
+    label: 2つの名前を順番どおり表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-console }
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected: [{ level: log, text: JavaScript }, { level: log, text: Scope }]
+    feedback:
+      target: Console
+      expected: JavaScript、Scopeの順に表示
+      nextAction: 2つのconsole.logの順番と参照する変数名を確認します。
+    hintId: javascript-ch03-l03-e01-h03
+    relatedSlideId: javascript-ch03-l03-s04
+hints:
+  - id: javascript-ch03-l03-e01-h01
+    level: 1
+    title: 変更するのは1行の場所だけ
+    text: courseName、Function宣言、2つの表示、呼び出しは変更しません。
+    relatedSlideId: javascript-ch03-l03-s02
+  - id: javascript-ch03-l03-e01-h02
+    level: 2
+    title: lessonNameが必要な範囲を見る
+    text: lessonNameを使うのはshowLabelsの内側だけです。
+    relatedSlideId: javascript-ch03-l03-s03
+  - id: javascript-ch03-l03-e01-h03
+    level: 3
+    title: 宣言を切り取って移す
+    text: lessonNameの宣言を、showLabelsの開始波括弧の次の行へ移します。
+    relatedSlideId: javascript-ch03-l03-s04
+relatedSlideIds: [javascript-ch03-l03-s03, javascript-ch03-l03-s04]
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: pass
+    expectedStatus: pass
+    files:
+      - { path: script.js, language: javascript, source: fixtures/pass.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: global-scope
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/global-scope.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [
+        javascript-ch03-l03-e01-r01,
+        javascript-ch03-l03-e01-r02,
+        javascript-ch03-l03-e01-r03,
+        javascript-ch03-l03-e01-r04,
+        javascript-ch03-l03-e01-r05,
+      ]
+  - id: output-only
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/output-only.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [
+        javascript-ch03-l03-e01-r01,
+        javascript-ch03-l03-e01-r02,
+        javascript-ch03-l03-e01-r03,
+        javascript-ch03-l03-e01-r04,
+        javascript-ch03-l03-e01-r05,
+      ]
+  - id: wrong-order
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/wrong-order.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [
+        javascript-ch03-l03-e01-r01,
+        javascript-ch03-l03-e01-r02,
+        javascript-ch03-l03-e01-r03,
+        javascript-ch03-l03-e01-r04,
+        javascript-ch03-l03-e01-r05,
+      ]
+  - id: syntax-error
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/syntax-error.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: security
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/security.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

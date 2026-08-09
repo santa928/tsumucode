@@ -144,3 +144,83 @@ concepts:
     introducedBySlideId: javascript-ch02-l04-s03
     prerequisiteConceptIds: [increment-operator]
     minimumProjectLevel: transform
+  - id: function-purpose
+    introducedBySlideId: javascript-ch03-l01-s01
+    prerequisiteConceptIds: [problem-number-loop]
+    minimumProjectLevel: read
+  - id: function-declaration
+    introducedBySlideId: javascript-ch03-l01-s02
+    prerequisiteConceptIds: [function-purpose]
+    minimumProjectLevel: read
+  - id: function-call
+    introducedBySlideId: javascript-ch03-l01-s03
+    prerequisiteConceptIds: [function-declaration]
+    minimumProjectLevel: read
+  - id: show-question-function
+    introducedBySlideId: javascript-ch03-l01-s04
+    prerequisiteConceptIds: [function-call]
+    minimumProjectLevel: transform
+  - id: function-input-output
+    introducedBySlideId: javascript-ch03-l02-s01
+    prerequisiteConceptIds: [show-question-function]
+    minimumProjectLevel: read
+  - id: function-parameter
+    introducedBySlideId: javascript-ch03-l02-s02
+    prerequisiteConceptIds: [function-input-output]
+    minimumProjectLevel: read
+  - id: return-value
+    introducedBySlideId: javascript-ch03-l02-s03
+    prerequisiteConceptIds: [function-parameter]
+    minimumProjectLevel: read
+  - id: score-function
+    introducedBySlideId: javascript-ch03-l02-s04
+    prerequisiteConceptIds: [return-value]
+    minimumProjectLevel: transform
+  - id: variable-scope
+    introducedBySlideId: javascript-ch03-l03-s01
+    prerequisiteConceptIds: [score-function]
+    minimumProjectLevel: read
+  - id: global-scope
+    introducedBySlideId: javascript-ch03-l03-s02
+    prerequisiteConceptIds: [variable-scope]
+    minimumProjectLevel: read
+  - id: local-scope
+    introducedBySlideId: javascript-ch03-l03-s03
+    prerequisiteConceptIds: [global-scope]
+    minimumProjectLevel: read
+  - id: scoped-labels
+    introducedBySlideId: javascript-ch03-l03-s04
+    prerequisiteConceptIds: [local-scope]
+    minimumProjectLevel: transform
+  - id: arrow-function
+    introducedBySlideId: javascript-ch03-l04-s01
+    prerequisiteConceptIds: [scoped-labels]
+    minimumProjectLevel: read
+  - id: arrow-parameter
+    introducedBySlideId: javascript-ch03-l04-s02
+    prerequisiteConceptIds: [arrow-function]
+    minimumProjectLevel: read
+  - id: arrow-return
+    introducedBySlideId: javascript-ch03-l04-s03
+    prerequisiteConceptIds: [arrow-parameter]
+    minimumProjectLevel: read
+  - id: answer-format-function
+    introducedBySlideId: javascript-ch03-l04-s04
+    prerequisiteConceptIds: [arrow-return]
+    minimumProjectLevel: transform
+  - id: closure-memory
+    introducedBySlideId: javascript-ch03-l05-s01
+    prerequisiteConceptIds: [answer-format-function]
+    minimumProjectLevel: read
+  - id: outer-inner-function
+    introducedBySlideId: javascript-ch03-l05-s02
+    prerequisiteConceptIds: [closure-memory]
+    minimumProjectLevel: read
+  - id: captured-binding
+    introducedBySlideId: javascript-ch03-l05-s03
+    prerequisiteConceptIds: [outer-inner-function]
+    minimumProjectLevel: read
+  - id: score-closure
+    introducedBySlideId: javascript-ch03-l05-s04
+    prerequisiteConceptIds: [captured-binding]
+    minimumProjectLevel: transform

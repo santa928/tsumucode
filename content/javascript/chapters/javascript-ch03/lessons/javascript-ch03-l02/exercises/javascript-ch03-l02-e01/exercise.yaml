@@ -1,0 +1,191 @@
+id: javascript-ch03-l02-e01
+kind: standard
+workspaceId: javascript-ch03-l02-e01
+countsTowardStandardExerciseTotal: true
+title: parameterを掛けて合計点を返す
+instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: score-function, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: return-calculated-score
+    file: script.js
+    target: calculateScore内のreturn 0
+    starterAnchor: return 0;
+    change: 0をcorrectAnswers * pointsPerAnswerへ置き換える
+    observe: Consoleに30が表示される
+    requiresConceptIds: [score-function]
+    validationRuleIds:
+      [
+        javascript-ch03-l02-e01-r01,
+        javascript-ch03-l02-e01-r02,
+        javascript-ch03-l02-e01-r03,
+        javascript-ch03-l02-e01-r04,
+      ]
+files:
+  - { path: script.js, language: javascript, source: starter/script.js, editable: true }
+  - { path: index.html, language: html, source: starter/index.html, editable: false }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: false }
+solutionFiles:
+  - { path: script.js, language: javascript, source: solution/script.js, editable: false }
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: javascript-ch03-l02-e01-r01
+    groupId: javascript-ch03-l02-e01-result
+    label: 2つのparameterを受け取るFunctionを宣言する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: function, functionKind: declaration, parameterCount: 2 }
+    feedback:
+      target: calculateScoreの宣言
+      expected: 2つのparameterを持つFunction宣言
+      nextAction: Function名と丸括弧内の2つの名前を残します。
+    hintId: javascript-ch03-l02-e01-h01
+    relatedSlideId: javascript-ch03-l02-s02
+  - id: javascript-ch03-l02-e01-r02
+    groupId: javascript-ch03-l02-e01-result
+    label: returnで結果を返す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion: { kind: javascript-source-fact, fact: { kind: return } }
+    feedback:
+      target: calculateScoreの内側
+      expected: returnが1件
+      nextAction: returnキーワードと末尾のセミコロンを残します。
+    hintId: javascript-ch03-l02-e01-h01
+    relatedSlideId: javascript-ch03-l02-s03
+  - id: javascript-ch03-l02-e01-r03
+    groupId: javascript-ch03-l02-e01-result
+    label: 2つの値を掛け算する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: binary-expression, operator: '*' }
+    feedback:
+      target: returnの右側
+      expected: correctAnswers * pointsPerAnswer
+      nextAction: 0を2つのparameterの掛け算へ置き換えます。
+    hintId: javascript-ch03-l02-e01-h02
+    relatedSlideId: javascript-ch03-l02-s04
+  - id: javascript-ch03-l02-e01-r04
+    groupId: javascript-ch03-l02-e01-result
+    label: 計算結果の30を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-console }
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected: [{ level: log, text: '30' }]
+    feedback:
+      target: Console
+      expected: 30を1回表示
+      nextAction: 3と10を受け取り、掛け算した値をreturnします。
+    hintId: javascript-ch03-l02-e01-h03
+    relatedSlideId: javascript-ch03-l02-s04
+hints:
+  - id: javascript-ch03-l02-e01-h01
+    level: 1
+    title: Functionの外形は残す
+    text: Function名、2つのparameter、return、呼び出し行は変更しません。
+    relatedSlideId: javascript-ch03-l02-s02
+  - id: javascript-ch03-l02-e01-h02
+    level: 2
+    title: 2つのparameterを掛ける
+    text: correctAnswersとpointsPerAnswerの間へ掛け算の記号*を置きます。
+    relatedSlideId: javascript-ch03-l02-s03
+  - id: javascript-ch03-l02-e01-h03
+    level: 3
+    title: 0だけを式へ置き換える
+    text: return 0;をreturn correctAnswers * pointsPerAnswer;へ変更します。
+    relatedSlideId: javascript-ch03-l02-s04
+relatedSlideIds: [javascript-ch03-l02-s03, javascript-ch03-l02-s04]
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: pass
+    expectedStatus: pass
+    files:
+      - { path: script.js, language: javascript, source: fixtures/pass.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: incomplete
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/incomplete.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [
+        javascript-ch03-l02-e01-r01,
+        javascript-ch03-l02-e01-r02,
+        javascript-ch03-l02-e01-r03,
+        javascript-ch03-l02-e01-r04,
+      ]
+  - id: hardcoded-output
+    expectedStatus: incomplete
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/hardcoded-output.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [
+        javascript-ch03-l02-e01-r01,
+        javascript-ch03-l02-e01-r02,
+        javascript-ch03-l02-e01-r03,
+        javascript-ch03-l02-e01-r04,
+      ]
+  - id: addition-instead
+    expectedStatus: incomplete
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/addition-instead.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [
+        javascript-ch03-l02-e01-r01,
+        javascript-ch03-l02-e01-r02,
+        javascript-ch03-l02-e01-r03,
+        javascript-ch03-l02-e01-r04,
+      ]
+  - id: syntax-error
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/syntax-error.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: security
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/security.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

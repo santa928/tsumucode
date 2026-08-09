@@ -1,0 +1,138 @@
+id: javascript-ch03-l01-e01
+kind: standard
+workspaceId: javascript-ch03-l01-e01
+countsTowardStandardExerciseTotal: true
+title: showQuestionを呼び出して問題を表示する
+instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: show-question-function, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: call-show-question
+    file: script.js
+    target: Function宣言の後ろにある空行
+    starterAnchor: '// この下でshowQuestionを呼び出します'
+    change: showQuestion();を1行追加する
+    observe: 'Consoleに「問題1: 2 + 3 は？」が1回表示される'
+    requiresConceptIds: [show-question-function]
+    validationRuleIds:
+      [javascript-ch03-l01-e01-r01, javascript-ch03-l01-e01-r02, javascript-ch03-l01-e01-r03]
+files:
+  - { path: script.js, language: javascript, source: starter/script.js, editable: true }
+  - { path: index.html, language: html, source: starter/index.html, editable: false }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: false }
+solutionFiles:
+  - { path: script.js, language: javascript, source: solution/script.js, editable: false }
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: javascript-ch03-l01-e01-r01
+    groupId: javascript-ch03-l01-e01-result
+    label: parameterなしのFunctionを宣言する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: function, functionKind: declaration, parameterCount: 0 }
+    feedback:
+      target: script.js
+      expected: showQuestionのFunction宣言
+      nextAction: functionから閉じ波括弧までを残します。
+    hintId: javascript-ch03-l01-e01-h01
+    relatedSlideId: javascript-ch03-l01-s02
+  - id: javascript-ch03-l01-e01-r02
+    groupId: javascript-ch03-l01-e01-result
+    label: showQuestionを呼び出す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: call, callee: showQuestion }
+    feedback:
+      target: script.js
+      expected: showQuestion()の呼び出し
+      nextAction: Function宣言の後ろへshowQuestion();を加えます。
+    hintId: javascript-ch03-l01-e01-h02
+    relatedSlideId: javascript-ch03-l01-s03
+  - id: javascript-ch03-l01-e01-r03
+    groupId: javascript-ch03-l01-e01-result
+    label: 問題文を1回表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-console }
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected: [{ level: log, text: '問題1: 2 + 3 は？' }]
+    feedback:
+      target: Console
+      expected: '問題1: 2 + 3 は？を1回表示'
+      nextAction: showQuestionを1回だけ呼び出します。
+    hintId: javascript-ch03-l01-e01-h03
+    relatedSlideId: javascript-ch03-l01-s04
+hints:
+  - id: javascript-ch03-l01-e01-h01
+    level: 1
+    title: 宣言はそのまま残す
+    text: function showQuestion()から閉じ波括弧までは完成しています。
+    relatedSlideId: javascript-ch03-l01-s02
+  - id: javascript-ch03-l01-e01-h02
+    level: 2
+    title: Function名へ丸括弧を付ける
+    text: 宣言した処理は、showQuestionの後ろへ丸括弧を付けると呼び出せます。
+    relatedSlideId: javascript-ch03-l01-s03
+  - id: javascript-ch03-l01-e01-h03
+    level: 3
+    title: 末尾へ1行追加する
+    text: 最後のコメント行の下へshowQuestion();と書きます。
+    relatedSlideId: javascript-ch03-l01-s04
+relatedSlideIds: [javascript-ch03-l01-s03, javascript-ch03-l01-s04]
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: pass
+    expectedStatus: pass
+    files:
+      - { path: script.js, language: javascript, source: fixtures/pass.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: incomplete
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/incomplete.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch03-l01-e01-r01, javascript-ch03-l01-e01-r02, javascript-ch03-l01-e01-r03]
+  - id: output-only
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/output-only.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch03-l01-e01-r01, javascript-ch03-l01-e01-r02, javascript-ch03-l01-e01-r03]
+  - id: syntax-error
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/syntax-error.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: security
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/security.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

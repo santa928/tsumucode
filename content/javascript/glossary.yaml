@@ -165,3 +165,63 @@ entries:
     definition: 左の値が右の値より小さいか同じかを確かめる<=の比較。
     firstSlideId: javascript-ch02-l04-s02
     relatedIds: [comparison, condition, for-loop]
+  - id: function
+    term: Function
+    definition: ひとまとまりの処理へ名前を付け、必要な場所から呼び出せる仕組み。
+    firstSlideId: javascript-ch03-l01-s01
+    relatedIds: [function-declaration, function-call, parameter, return-value]
+  - id: function-declaration
+    term: Function宣言
+    definition: function、名前、丸括弧、波括弧を使ってFunctionの処理を用意するコード。
+    firstSlideId: javascript-ch03-l01-s02
+    relatedIds: [function, function-call, arrow-function]
+  - id: function-call
+    term: Functionの呼び出し
+    definition: Function名の後ろへ丸括弧を付け、用意された処理を実行すること。
+    firstSlideId: javascript-ch03-l01-s03
+    relatedIds: [function, function-declaration, argument]
+  - id: parameter
+    term: parameter
+    definition: Functionが受け取る値へ、宣言の丸括弧内で付ける名前。
+    firstSlideId: javascript-ch03-l02-s02
+    relatedIds: [function, argument, return-value]
+  - id: argument
+    term: argument
+    definition: Functionを呼び出すとき、丸括弧の中からparameterへ渡す値。
+    firstSlideId: javascript-ch03-l02-s02
+    relatedIds: [function-call, parameter, value]
+  - id: return-value
+    term: return
+    definition: Functionから呼び出し元へ結果を返し、そのFunctionの実行を終えるキーワード。
+    firstSlideId: javascript-ch03-l02-s03
+    relatedIds: [function, parameter, value]
+  - id: scope
+    term: Scope
+    definition: 変数やFunctionの名前を使えるコード上の範囲。
+    firstSlideId: javascript-ch03-l03-s01
+    relatedIds: [variable, global-scope, local-scope, closure]
+  - id: global-scope
+    term: global Scope
+    definition: どのFunctionの内側でもない場所で宣言した名前を使える範囲。
+    firstSlideId: javascript-ch03-l03-s02
+    relatedIds: [scope, local-scope, variable]
+  - id: local-scope
+    term: local Scope
+    definition: Functionなどの内側で宣言した名前を、その内側だけで使える範囲。
+    firstSlideId: javascript-ch03-l03-s03
+    relatedIds: [scope, global-scope, closure]
+  - id: arrow-function
+    term: Arrow Function
+    definition: functionキーワードの代わりに=>を使ってFunctionを書く方法。
+    firstSlideId: javascript-ch03-l04-s01
+    relatedIds: [function, function-declaration, parameter, return-value]
+  - id: closure
+    term: Closure
+    definition: 内側Functionが使う外側Functionの変数を、外側の処理終了後も覚える仕組み。
+    firstSlideId: javascript-ch03-l05-s01
+    relatedIds: [function, local-scope, captured-variable]
+  - id: captured-variable
+    term: 覚えられた変数
+    definition: 内側Functionから参照されるため、Closureが値を保ち続ける外側Functionの変数。
+    firstSlideId: javascript-ch03-l05-s03
+    relatedIds: [closure, variable, local-scope]

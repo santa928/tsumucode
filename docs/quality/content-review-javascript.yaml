@@ -61,7 +61,7 @@ lessons:
   - lessonId: javascript-ch02-l01
     authorId: tsumucode-javascript-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 80f5190f5abc159c125744a36290ab1b233eff0934d7a030beefe6448a91b1d5
+    sourceHash: 2d0b211dcb5497c47752c4599c0b8bc055ab8a86b3bcd09818a5242bceb67fcd
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -83,7 +83,7 @@ lessons:
   - lessonId: javascript-ch02-l03
     authorId: tsumucode-javascript-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 8a841b42bf4dbb063aa665228ce7818fc8eb48d694b24ccdf0313dab429dda9e
+    sourceHash: 59b357b48bdd375dd1566ede822198095ddbe369ae6a6db8ccd19bedc4f7643a
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -94,7 +94,7 @@ lessons:
   - lessonId: javascript-ch02-l04
     authorId: tsumucode-javascript-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: af1d3221da9fc3648fea37fbaf4b01c7a8eda4e76634995c0216122c6dc6eede
+    sourceHash: 15736e600888bc0dbb71ffd5676777a25fdfab91d4ada3a3f8211f4db749019e
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -102,3 +102,58 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes: forの初期化・条件・更新を読む4枚のSlideから、3を含む条件へ直すExerciseへ段階接続。for loop・number++・<=・Console完全一致のAND判定、3段階Hint、Solution、off-by-one／unrolled output／無限loopを含む7 Fixtureを実Browser Runner／Validatorで確認。全16 Slideを1280x720と390x844で実寸確認済み。
+  - lessonId: javascript-ch03-l01
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 4a8f3d0c86423e8274784f3324b377e7ec04a0a270072d36fabc352aa0d18400
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: Function宣言・本体・呼び出しの順を4枚のSlideから、既存Functionを1回呼び出すExerciseへ段階接続。Function宣言Fact・呼び出しFact・Console完全一致のAND判定、3段階Hint、Solution、pass／incomplete／output-only／syntax／securityの5 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch03-l02
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 4bcda2f7b295e1b50ea141b813cad124ac0010e60f452c07fddc7ec91d242aec
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: Parameter・Argument・returnを4枚のSlideから、priceとcountを掛けて30を返すExerciseへ段階接続。Parameter・return・乗算・呼び出し・Console完全一致のAND判定、3段階Hint、Solution、hardcoded outputを含む6 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch03-l03
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: f68142787fbbc57cdecf19a50d83a3c7bf46fb0631b18d113f781a7c281e346f
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: Global ScopeとLocal Scopeを4枚のSlideから、lessonNameをFunction内へ移すExerciseへ段階接続。courseNameのGlobal宣言・lessonNameのscopeDepth 1・Console順序のAND判定、3段階Hint、Solution、global-scope偽装を含む6 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch03-l04
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 303364ef401d532ebf06350b2bebdf2ddb110d1319bf6b24522f1c246df54b00
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: Arrow FunctionのParameterと短いreturnを4枚のSlideから、回答へ接頭辞を加えるExerciseへ段階接続。Arrow Function・Parameter・return・呼び出し・Console完全一致のAND判定、3段階Hint、Solution、ordinary function／hardcoded outputを含む7 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch03-l05
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: b7826caabb5e0fb7f30ed4ecfbfc9f81fef164e72377abc281114b4477ed0889
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: Closureが外側のLocal変数を保持する流れを4枚のSlideから、同じFunctionを2回呼び10・20を得るExerciseへ段階接続。Function expressionまたはArrow Functionを許可するgroup:anyと、Local score・加算代入・2回呼び出し・Console完全一致をAND判定。3段階Hint、Solution、global-score／毎回reset／output-onlyを含む8 Fixtureを実Browser Runner／Validatorで確認。1280x720と390x844で重大なaxe違反0件、見切れ・重なり・Document Scrollなしを実寸確認済み。

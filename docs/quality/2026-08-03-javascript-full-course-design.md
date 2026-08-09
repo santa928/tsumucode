@@ -1,6 +1,6 @@
 # JavaScript全Course 設計
 
-- 状態: 書面レビュー承認済み・Core Runtime／Console／static Module／Scenario Runtime基盤実装・検証済み（Chapter 01〜13教材実装前）
+- 状態: 書面レビュー承認済み・Runtime基盤およびChapter 01〜03 Core教材実装・ローカル品質検証済み（Chapter 04〜13教材は未実装）
 - 承認日: 2026-08-04
 - 作成日: 2026-08-03
 - 対象: `javascript` Course Chapter 01〜13、既存Chapter 00の互換維持、全Course公開
@@ -130,6 +130,36 @@ WebKitではopaque iframeに対する親からのprogrammatic focusが反映さ�
 | REQ-JSC-022 | 集約基盤検証済み    | 必須Source ruleとScenario結果のAND集約。Lesson別の別解許容条件は教材taskで継続                      |
 
 ここで検証済みなのはRuntime基盤である。Chapter 01〜13の52 Lesson、各LessonのScenario／Rule、教材Review、完全初心者の通し検証、Courseの`published`昇格、LearningPath追加は未完了であり、本証跡を全Course完成へ読み替えない。
+
+### 3.4 Chapter 01〜03 Core教材の実装証跡と未完了境界
+
+2026-08-09にChapter 01〜03の13 Lesson／52 Slide／13 Exercise／195分を実装し、既存Chapter 00を含むCourse累計を14 Lesson／56 Slide／14 Exercise／210分へ更新した。値・変数・型・演算、条件分岐・Loop、Function・Parameter／Return・Scope・Arrow Function・Closureを、各Lesson 4 Slideから1箇所変更のExerciseへ接続した。
+
+- 教材契約: 全13 Exerciseに3段階Hint、Solution、5件以上の正負Fixture、Source FactとConsoleのAND判定を持たせた
+- 別解境界: ClosureはFunction expressionまたはArrow Functionを`group: any`で許可し、global変数、毎回reset、出力だけの偽装を拒否した
+- 教材品質: JavaScript Provenance `330 files / 330 items`、全2 Course `65 lessons reviewed / stale hashes 0 / rejected 0`
+- Unit／Content: `159 files / 1,583 tests / 0 failed`
+- Browser／Accessibility: Chromium、Firefox、WebKitで`507 passed / 150 intentionally skipped / 0 failed`。1280×720と390×844のChapter 03代表画面を原寸目視し、Document Scroll、横はみ出し、重大なaxe違反はいずれも0
+- Security／Runtime: 全14 Exerciseのpass／incomplete／syntax／security／概念偽装Fixtureを実Analyzer→Runner→Validator経路で確認し、学習者の誤りと基盤失敗を分離した
+- Performance: `22/22`、bundle／subpath予算`9/9`、Lighthouse 4 URL×3回の`12/12`
+- Static artifact: `/tsumucode/` subpath、学習chunk分離、Production CSS inline、`236 files`の静的Artifact検査を通過した
+- 公開境界: Courseは`draft`を維持し、Home、LearningPath、進捗非干渉Slide Libraryへ未掲載のまま、直接URLだけを章単位β検証対象とする
+
+| 要件        | Core範囲の状態                 | 自動／目視証跡                                                                                          |
+| ----------- | ------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| REQ-JSC-001 | Core回帰検証済み               | HTML/CSS、LearningPath、保存、Reset、Review復帰、Export／Import、GitHub Pages subpathを全回帰           |
+| REQ-JSC-002 | 検証済み                       | Chapter 00のID、Workspace、Starter、Draft、passing snapshotを維持                                       |
+| REQ-JSC-003 | Core 13／全52 Lesson           | Chapter 01〜03は195分で完成。Chapter 04〜13の39 Lesson／805分は未実装                                   |
+| REQ-JSC-004 | Core範囲検証済み               | 値からClosureまで13 Lesson、52 Slide、13 Exerciseで実装                                                 |
+| REQ-JSC-008 | Core範囲検証済み               | 全13 Lessonの直前Slide整合、3 Hint、Solution、5件以上Fixture                                            |
+| REQ-JSC-021 | Core範囲検証済み               | 型付きSource Factと同一revisionのConsoleをANDし、Validator内で学習コードを再実行しない                  |
+| REQ-JSC-022 | Core範囲検証済み               | 導入概念は必須Fact、既習Function表現は明示的`group: any`で別解許可                                      |
+| REQ-JSC-030 | Core範囲検証済み               | Concept、用語、Trace、screen budget、実行ExampleをContent Gateで確認                                    |
+| REQ-JSC-031 | Core範囲検証済み               | authorと別reviewer ID、Lesson source hash、stale 0、rejected 0                                          |
+| REQ-JSC-032 | Core範囲検証済み               | 3 Engine、axe、Keyboard、複数viewport、Security、Performance、Lighthouse                                |
+| REQ-JSC-034 | ローカル前提検証済み・公開待ち | 日本語commit、staged secret scan、main push、Pages deployment、公開Smokeは本Taskのrelease工程で確定する |
+
+この節はCore教材の完成証跡であり、Chapter 04〜13、全52 Lessonの完全初心者通し検証、`published`昇格、LearningPath追加、本番公開後の全Course回帰は未完了である。
 
 ## 4. 要件差分
 

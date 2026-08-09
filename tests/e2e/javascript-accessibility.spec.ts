@@ -112,6 +112,12 @@ const CHAPTER_TWO_LOOP_EXERCISE: JavaScriptExerciseLocation = {
   title: 'forで問題1から問題3まで表示する',
 };
 
+const CHAPTER_THREE_CLOSURE_EXERCISE: JavaScriptExerciseLocation = {
+  lessonId: 'javascript-ch03-l05',
+  exerciseId: 'javascript-ch03-l05-e01',
+  title: 'Closureで得点を10ずつ増やす',
+};
+
 test('JavaScript Exerciseの初期・Error・Hint・Reset状態に重大なaxe違反がない', async ({ page }) => {
   await openEditableJavaScriptExercise(page);
   await expectNoSeriousAxeViolations(page);
@@ -344,4 +350,40 @@ test('Chapter 02のExerciseと実習直前Slideを代表2 viewportで安全に�
   expect(slideMetrics.stage.scrollWidth).toBeLessThanOrEqual(slideMetrics.stage.clientWidth + 1);
   expect(slideMetrics.stage.overflowY).toBe('auto');
   await page.screenshot({ path: testInfo.outputPath('javascript-ch02-slide-390x844.png') });
+});
+
+test('Chapter 03のExerciseと実習直前Slideを代表2 viewportで安全に表示する', async ({
+  page,
+}, testInfo: TestInfo) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await openEditableJavaScriptExercise(page, CHAPTER_THREE_CLOSURE_EXERCISE);
+  await expectNoSeriousAxeViolations(page);
+  const exerciseMetrics = await readScrollMetrics(page);
+  expect(exerciseMetrics.document.scrollWidth).toBeLessThanOrEqual(
+    exerciseMetrics.document.clientWidth,
+  );
+  expect(exerciseMetrics.document.scrollHeight).toBeLessThanOrEqual(
+    exerciseMetrics.document.clientHeight + 1,
+  );
+  expect(exerciseMetrics.stage.scrollWidth).toBeLessThanOrEqual(
+    exerciseMetrics.stage.clientWidth + 1,
+  );
+  await page.screenshot({ path: testInfo.outputPath('javascript-ch03-exercise-1280x720.png') });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(
+    `${testBasePath()}#/courses/javascript/lessons/javascript-ch03-l05/slides/javascript-ch03-l05-s04`,
+  );
+  await expect(
+    page.getByRole('heading', { level: 1, name: '2回の呼び出しで10から20へ進める' }),
+  ).toBeVisible();
+  await expectNoSeriousAxeViolations(page);
+  const slideMetrics = await readScrollMetrics(page);
+  expect(slideMetrics.document.scrollWidth).toBeLessThanOrEqual(slideMetrics.document.clientWidth);
+  expect(slideMetrics.document.scrollHeight).toBeLessThanOrEqual(
+    slideMetrics.document.clientHeight + 1,
+  );
+  expect(slideMetrics.stage.scrollWidth).toBeLessThanOrEqual(slideMetrics.stage.clientWidth + 1);
+  expect(slideMetrics.stage.overflowY).toBe('auto');
+  await page.screenshot({ path: testInfo.outputPath('javascript-ch03-slide-390x844.png') });
 });

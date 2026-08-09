@@ -1,9 +1,9 @@
 schemaVersion: 1
 id: javascript
 title: JavaScript はじめの一歩
-description: 画面の変化から始め、値・変数・比較・条件分岐・LoopをConsoleで確かめる
+description: 画面の変化から始め、値・変数・条件分岐・Loop・Function・Scope・ClosureをConsoleで確かめる
 audience: HTMLとCSSの役割を知り、JavaScriptを初めて学ぶ本人と身内
-estimatedMinutes: 135
+estimatedMinutes: 210
 revision: 2026-08-09.1
 runnerId: javascript
 validatorId: javascript
@@ -17,13 +17,13 @@ supportedDevices:
 prerequisites: [html-css]
 publicationStatus: draft
 expectedTotals:
-  chapters: 3
-  lessons: 9
-  conceptSlides: 36
-  standardExercises: 9
+  chapters: 4
+  lessons: 14
+  conceptSlides: 56
+  standardExercises: 14
   guidedProjectLessons: 0
   capstoneLessons: 0
-  estimatedMinutes: 135
+  estimatedMinutes: 210
 provenanceManifestPath: provenance.yaml
 progressMigrations:
   - fromRevision: 2026-08-02.1
@@ -32,8 +32,9 @@ progressMigrations:
 phases:
   - id: javascript-core
     title: JavaScript Core
-    description: 画面を変える最初の1行から、値・変数・比較・条件分岐・Loopへ順番に進みます。
+    description: 画面を変える最初の1行から、値・条件分岐・Loop・Function・Scope・Closureへ順番に進みます。
     chapterSources:
       - chapters/javascript-ch00/chapter.yaml
       - chapters/javascript-ch01/chapter.yaml
       - chapters/javascript-ch02/chapter.yaml
+      - chapters/javascript-ch03/chapter.yaml

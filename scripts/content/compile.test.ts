@@ -113,6 +113,26 @@ describe('compileContent output safety', () => {
           lessonId: 'javascript-ch02-l04',
           target: { kind: 'slide', targetId: 'javascript-ch02-l04-s01' },
         },
+        {
+          lessonId: 'javascript-ch03-l01',
+          target: { kind: 'slide', targetId: 'javascript-ch03-l01-s01' },
+        },
+        {
+          lessonId: 'javascript-ch03-l02',
+          target: { kind: 'slide', targetId: 'javascript-ch03-l02-s01' },
+        },
+        {
+          lessonId: 'javascript-ch03-l03',
+          target: { kind: 'slide', targetId: 'javascript-ch03-l03-s01' },
+        },
+        {
+          lessonId: 'javascript-ch03-l04',
+          target: { kind: 'slide', targetId: 'javascript-ch03-l04-s01' },
+        },
+        {
+          lessonId: 'javascript-ch03-l05',
+          target: { kind: 'slide', targetId: 'javascript-ch03-l05-s01' },
+        },
       ],
     });
     expect(publishedPathCourseIds).not.toContain('javascript');
@@ -135,13 +155,13 @@ describe('compileContent output safety', () => {
       };
     };
     expect(javaScriptIndex).toMatchObject({
-      estimatedMinutes: 135,
+      estimatedMinutes: 210,
       expectedTotals: {
-        chapters: 3,
-        lessons: 9,
-        conceptSlides: 36,
-        standardExercises: 9,
-        estimatedMinutes: 135,
+        chapters: 4,
+        lessons: 14,
+        conceptSlides: 56,
+        standardExercises: 14,
+        estimatedMinutes: 210,
       },
     });
   });

@@ -10,6 +10,31 @@ async function fixtureRoot(): Promise<string> {
 }
 
 describe('checkProvenance', () => {
+  it('JavaScriptなどのコード教材Fileも未登録なら報告する', async () => {
+    const root = await fixtureRoot();
+    await writeFile(path.join(root, 'solution.js'), 'console.log("answer");\n', 'utf8');
+    await writeFile(
+      path.join(root, 'provenance.yaml'),
+      [
+        'schemaVersion: 1',
+        'defaults:',
+        '  method: original-authored',
+        "  createdAt: '2026-07-16'",
+        '  creator: TsumuCode project',
+        '  sourceUrl: none',
+        '  license: project-original',
+        '  modified: false',
+        'items: []',
+        '',
+      ].join('\n'),
+      'utf8',
+    );
+
+    await expect(checkProvenance(root, path.join(root, 'provenance.yaml'))).rejects.toThrow(
+      'solution.js',
+    );
+  });
+
   it('manifestにない教材Fileを報告する', async () => {
     const root = await fixtureRoot();
     await mkdir(path.join(root, 'slides'), { recursive: true });
