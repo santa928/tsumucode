@@ -148,7 +148,7 @@ export interface PreviewNode {
   readonly rect: PreviewRect;
   readonly overflow: PreviewOverflow;
   readonly focusable: boolean;
-  /** Snapshot取得時点でdocument.activeElementと一致するか。 */
+  /** 実activeElementまたは認証済みFocus actionの対象と一致するか。 */
   readonly focused: boolean;
   readonly accessibleName: string;
   readonly role: string;

@@ -157,6 +157,7 @@ async function evaluateCase(
           snapshots,
           diagnostics,
           evidence: [],
+          interactionScenarios: exercise.interactionScenarios ?? [],
           interactionCheckpoints: {},
           now: new Date().toISOString(),
         });

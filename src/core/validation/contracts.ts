@@ -1,5 +1,9 @@
 /** Runtime の観測結果を学習要件へ評価する Validation 公開契約。 */
-import type { ExerciseRuntime, ValidationRuleDefinition } from '../content/types';
+import type {
+  ExerciseRuntime,
+  JavaScriptInteractionScenario,
+  ValidationRuleDefinition,
+} from '../content/types';
 import type {
   InteractionCheckpointResult,
   PreviewSnapshot,
@@ -19,6 +23,8 @@ export interface ValidationContext {
   readonly snapshots: Readonly<Record<string, PreviewSnapshot>>;
   readonly diagnostics: readonly RunnerDiagnostic[];
   readonly evidence: readonly RunnerEvidence[];
+  /** Validatorが観測結果の欠落・未知IDをfail-closedに照合する公開Scenario定義。 */
+  readonly interactionScenarios: readonly JavaScriptInteractionScenario[];
   readonly interactionCheckpoints: Readonly<Record<string, readonly InteractionCheckpointResult[]>>;
   readonly now: string;
 }

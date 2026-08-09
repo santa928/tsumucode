@@ -1,5 +1,7 @@
 import type {
   HtmlCssValidationRuleDefinition,
+  JavaScriptCheckpointExpectation,
+  JavaScriptInteractionScenario,
   JavaScriptValidationRuleDefinition,
 } from '../../../core/content/types';
 import type {
@@ -47,6 +49,12 @@ interface RequirementEvaluation {
   readonly id: string;
   readonly required: boolean;
   readonly passed: boolean;
+}
+
+interface InteractionObservation {
+  readonly viewportId: string;
+  readonly passed: boolean;
+  readonly actual: string;
 }
 
 const SOURCE_HASH_PATTERN = /^[a-f0-9]{64}$/u;
@@ -162,6 +170,93 @@ function executionEvidenceDiagnostic(
   return undefined;
 }
 
+/** Scenario定義とviewport別checkpoint結果を同一実行へfail-closedに照合する。 */
+function interactionResultDiagnostic(
+  scenarios: readonly JavaScriptInteractionScenario[],
+  checkpointsByViewport: ValidationContext['interactionCheckpoints'],
+  identity: SnapshotIdentity,
+  viewportIds: readonly string[],
+): RunnerDiagnostic | undefined {
+  const expectedCheckpoints = new Map<
+    string,
+    JavaScriptInteractionScenario['checkpoints'][number]
+  >();
+  for (const scenario of scenarios) {
+    for (const checkpoint of scenario.checkpoints) {
+      expectedCheckpoints.set(`${scenario.id}\u0000${checkpoint.id}`, checkpoint);
+    }
+  }
+  const actualViewportIds = Object.keys(checkpointsByViewport);
+  if (scenarios.length === 0) {
+    if (
+      actualViewportIds.some((viewportId) => (checkpointsByViewport[viewportId]?.length ?? 0) > 0)
+    ) {
+      return systemDiagnostic(
+        'JAVASCRIPT_INTERACTION_RESULT_INVALID',
+        'Interaction ScenarioがないExerciseへcheckpoint結果が渡されました',
+      );
+    }
+    return undefined;
+  }
+  if (
+    actualViewportIds.length !== viewportIds.length ||
+    actualViewportIds.some((viewportId) => !viewportIds.includes(viewportId))
+  ) {
+    return systemDiagnostic(
+      'JAVASCRIPT_INTERACTION_RESULT_INVALID',
+      'Interaction checkpointのviewport集合がSnapshotと一致しません',
+    );
+  }
+  for (const viewportId of viewportIds) {
+    const results = checkpointsByViewport[viewportId];
+    if (results === undefined || results.length !== expectedCheckpoints.size) {
+      return systemDiagnostic(
+        'JAVASCRIPT_INTERACTION_RESULT_INVALID',
+        `Interaction checkpointが不足または過剰です: ${viewportId}`,
+      );
+    }
+    const seen = new Set<string>();
+    for (const result of results) {
+      const key = `${result.scenarioId}\u0000${result.checkpointId}`;
+      if (seen.has(key)) {
+        return systemDiagnostic(
+          'JAVASCRIPT_INTERACTION_RESULT_INVALID',
+          `Interaction checkpointが重複しています: ${viewportId}/${result.scenarioId}/${result.checkpointId}`,
+        );
+      }
+      seen.add(key);
+      const expected = expectedCheckpoints.get(key);
+      if (
+        expected === undefined ||
+        result.viewportId !== viewportId ||
+        result.exerciseSessionId !== identity.exerciseSessionId ||
+        result.executionRevision !== identity.executionRevision ||
+        !Number.isSafeInteger(result.frameGeneration) ||
+        result.frameGeneration < 0 ||
+        result.afterActionId !== expected.afterActionId
+      ) {
+        return systemDiagnostic(
+          'JAVASCRIPT_INTERACTION_RESULT_INVALID',
+          `Interaction checkpoint identityが一致しません: ${viewportId}/${result.scenarioId}/${result.checkpointId}`,
+        );
+      }
+      const expectationIds = result.expectations.map(({ expectationId }) => expectationId);
+      const expectedIds = new Set(expected.expectations.map(({ id }) => id));
+      if (
+        expectationIds.length !== expectedIds.size ||
+        new Set(expectationIds).size !== expectationIds.length ||
+        expectationIds.some((expectationId) => !expectedIds.has(expectationId))
+      ) {
+        return systemDiagnostic(
+          'JAVASCRIPT_INTERACTION_RESULT_INVALID',
+          `Interaction expectationが不足、未知、または重複しています: ${viewportId}/${result.scenarioId}/${result.checkpointId}`,
+        );
+      }
+    }
+  }
+  return undefined;
+}
+
 /** Analyzer失敗診断をcode／systemの優先順位でResultへ変換する。 */
 function analysisFailureResult(
   context: ValidationContext,
@@ -239,6 +334,87 @@ function aggregateRequirements(
   }));
 }
 
+/** Scenario expectationを初心者が比較できる期待値の文章へ変換する。 */
+function interactionExpected(expectation: JavaScriptCheckpointExpectation): string {
+  switch (expectation.kind) {
+    case 'selector-exists':
+      return `${expectation.selector} が表示される`;
+    case 'selector-text':
+      return `${expectation.selector} の文章が「${expectation.equals}」になる`;
+    case 'attribute':
+      return `${expectation.selector} の ${expectation.name} 属性が「${expectation.equals}」になる`;
+    case 'focused':
+      return `${expectation.selector} にフォーカスが移る`;
+    case 'console-includes':
+      return `Consoleに「${expectation.includes}」が含まれる`;
+  }
+}
+
+/** 公開Scenario順に全viewportの観測をANDした説明可能なcheckを返す。 */
+function interactionChecks(
+  scenarios: readonly JavaScriptInteractionScenario[],
+  checkpointsByViewport: ValidationContext['interactionCheckpoints'],
+  viewportIds: readonly string[],
+): readonly ValidationCheck[] {
+  const checks: ValidationCheck[] = [];
+  for (const scenario of scenarios) {
+    for (const checkpoint of scenario.checkpoints) {
+      const requirementId = `interaction:${scenario.id}:${checkpoint.id}`;
+      for (const expectation of checkpoint.expectations) {
+        const observations: InteractionObservation[] = viewportIds.map((viewportId) => {
+          const result = checkpointsByViewport[viewportId]?.find(
+            (candidate) =>
+              candidate.scenarioId === scenario.id && candidate.checkpointId === checkpoint.id,
+          );
+          const observed = result?.expectations.find(
+            (candidate) => candidate.expectationId === expectation.id,
+          );
+          return {
+            viewportId,
+            passed: observed?.passed === true,
+            actual: observed?.actual ?? '観測結果なし',
+          };
+        });
+        const passed = observations.every(({ passed: viewportPassed }) => viewportPassed);
+        const actual =
+          observations.length === 1
+            ? observations[0]!.actual
+            : observations
+                .map(({ viewportId, actual: value }) => `${viewportId}: ${value}`)
+                .join(' / ');
+        const expected = interactionExpected(expectation);
+        checks.push({
+          ruleId: `${requirementId}:${expectation.id}`,
+          requirementId,
+          label: `${scenario.label}：${checkpoint.id}`,
+          required: true,
+          passed,
+          requirementPassed: false,
+          message: passed
+            ? `${scenario.label}：条件を満たしています`
+            : `${checkpoint.id}で${expected}か確認してください`,
+          expected,
+          actual,
+          nextAction: passed
+            ? '次の手順へ進む'
+            : `「${scenario.label}」をもう一度実行して、${expected}か確認する`,
+        });
+      }
+    }
+  }
+  const passedByRequirement = new Map<string, boolean>();
+  for (const check of checks) {
+    passedByRequirement.set(
+      check.requirementId,
+      (passedByRequirement.get(check.requirementId) ?? true) && check.passed,
+    );
+  }
+  return checks.map((check) => ({
+    ...check,
+    requirementPassed: passedByRequirement.get(check.requirementId) === true,
+  }));
+}
+
 /** JavaScript Source・実行証拠・DOMを同一revisionでAND評価するValidator。 */
 export class JavaScriptValidator implements ValidatorAdapter {
   readonly #analyzerFactory: () => JavaScriptAnalyzerPort;
@@ -311,6 +487,18 @@ export class JavaScriptValidator implements ValidatorAdapter {
       return blockedResult(context, 'system-error', [
         ...context.diagnostics,
         executionEvidenceError,
+      ]);
+    }
+    const interactionResultError = interactionResultDiagnostic(
+      context.interactionScenarios,
+      context.interactionCheckpoints,
+      identity,
+      Object.keys(context.snapshots),
+    );
+    if (interactionResultError !== undefined) {
+      return blockedResult(context, 'system-error', [
+        ...context.diagnostics,
+        interactionResultError,
       ]);
     }
 
@@ -396,52 +584,52 @@ export class JavaScriptValidator implements ValidatorAdapter {
         for (const file of sourceFiles) analyses.set(file, analysis);
       } else {
         for (const file of sourceFiles) {
-        const source = context.files[file];
-        const guardIdentifier = this.#guardIdentifierFactory();
-        if (!GUARD_IDENTIFIER_PATTERN.test(guardIdentifier)) {
-          return blockedResult(context, 'system-error', [
-            ...context.diagnostics,
-            systemDiagnostic('JAVASCRIPT_GUARD_INVALID', 'Validator guard identifier is invalid'),
-          ]);
-        }
-        const analysis = await analyzer.analyze({
-          exerciseSessionId: identity.exerciseSessionId,
-          executionRevision: identity.executionRevision,
-          file,
-          source: source!,
-          guardIdentifier,
-          sourceType: runtime.sourceType,
-          capabilityProfile: runtime.capabilityProfile,
-        });
-        if (analysis.status === 'failure') {
-          return analysisFailureResult(context, analysis, identity.executionRevision);
-        }
-        if (!('sourceSha256' in analysis)) {
-          return blockedResult(context, 'system-error', [
-            ...context.diagnostics,
-            systemDiagnostic(
-              'JAVASCRIPT_ANALYSIS_KIND_MISMATCH',
-              'JavaScript source validation received a Workspace graph payload',
-            ),
-          ]);
-        }
-        const hashEvidence = indexedEvidence.get(
-          JSON.stringify(['javascript.source-sha256', file]),
-        );
-        if (
-          typeof hashEvidence?.value !== 'string' ||
-          !SOURCE_HASH_PATTERN.test(hashEvidence.value) ||
-          hashEvidence.value !== analysis.sourceSha256
-        ) {
-          return blockedResult(context, 'system-error', [
-            ...context.diagnostics,
-            systemDiagnostic(
-              'JAVASCRIPT_SOURCE_HASH_MISMATCH',
-              `JavaScript source hash does not match execution evidence: ${file}`,
-            ),
-          ]);
-        }
-        analyses.set(file, analysis);
+          const source = context.files[file];
+          const guardIdentifier = this.#guardIdentifierFactory();
+          if (!GUARD_IDENTIFIER_PATTERN.test(guardIdentifier)) {
+            return blockedResult(context, 'system-error', [
+              ...context.diagnostics,
+              systemDiagnostic('JAVASCRIPT_GUARD_INVALID', 'Validator guard identifier is invalid'),
+            ]);
+          }
+          const analysis = await analyzer.analyze({
+            exerciseSessionId: identity.exerciseSessionId,
+            executionRevision: identity.executionRevision,
+            file,
+            source: source!,
+            guardIdentifier,
+            sourceType: runtime.sourceType,
+            capabilityProfile: runtime.capabilityProfile,
+          });
+          if (analysis.status === 'failure') {
+            return analysisFailureResult(context, analysis, identity.executionRevision);
+          }
+          if (!('sourceSha256' in analysis)) {
+            return blockedResult(context, 'system-error', [
+              ...context.diagnostics,
+              systemDiagnostic(
+                'JAVASCRIPT_ANALYSIS_KIND_MISMATCH',
+                'JavaScript source validation received a Workspace graph payload',
+              ),
+            ]);
+          }
+          const hashEvidence = indexedEvidence.get(
+            JSON.stringify(['javascript.source-sha256', file]),
+          );
+          if (
+            typeof hashEvidence?.value !== 'string' ||
+            !SOURCE_HASH_PATTERN.test(hashEvidence.value) ||
+            hashEvidence.value !== analysis.sourceSha256
+          ) {
+            return blockedResult(context, 'system-error', [
+              ...context.diagnostics,
+              systemDiagnostic(
+                'JAVASCRIPT_SOURCE_HASH_MISMATCH',
+                `JavaScript source hash does not match execution evidence: ${file}`,
+              ),
+            ]);
+          }
+          analyses.set(file, analysis);
         }
       }
 
@@ -463,21 +651,41 @@ export class JavaScriptValidator implements ValidatorAdapter {
       const sourceChecks = sourceRules.map((rule) =>
         sourceCheck(rule, analyses.get(rule.target.file)!),
       );
+      const scenarioChecks = interactionChecks(
+        context.interactionScenarios,
+        context.interactionCheckpoints,
+        Object.keys(context.snapshots),
+      );
       const checksByRule = new Map(
         [...sourceChecks, ...domChecks].map((check) => [check.ruleId, check]),
       );
-      const orderedChecks = rules.map((rule) => checksByRule.get(rule.id)!);
+      const orderedChecks = [...rules.map((rule) => checksByRule.get(rule.id)!), ...scenarioChecks];
       const requirements = aggregateRequirements(rules, orderedChecks);
-      const requirementsById = new Map(requirements.map((item) => [item.id, item]));
+      const scenarioRequirements: readonly RequirementEvaluation[] = [
+        ...new Map(
+          scenarioChecks.map((check) => [
+            check.requirementId,
+            {
+              id: check.requirementId,
+              required: true,
+              passed: check.requirementPassed,
+            },
+          ]),
+        ).values(),
+      ];
+      const allRequirements = [...requirements, ...scenarioRequirements];
+      const requirementsById = new Map(allRequirements.map((item) => [item.id, item]));
       const checks = orderedChecks.map((check) => ({
         ...check,
         requirementPassed: requirementsById.get(check.requirementId)!.passed,
       }));
-      const passedRequirementIds = requirements.filter(({ passed }) => passed).map(({ id }) => id);
+      const passedRequirementIds = allRequirements
+        .filter(({ passed }) => passed)
+        .map(({ id }) => id);
       return {
         exerciseId: context.exerciseId,
         executionRevision: identity.executionRevision,
-        status: requirements.every(({ required, passed }) => !required || passed)
+        status: allRequirements.every(({ required, passed }) => !required || passed)
           ? 'pass'
           : 'incomplete',
         checks,

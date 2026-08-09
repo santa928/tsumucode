@@ -48,8 +48,10 @@ export interface TrustedInteractionExecutionResult {
 /** learner codeより先に捕捉したDOM APIだけでboundedな教材操作を実行する。 */
 export function createTrustedInteractionExecutor(
   target: Document,
+  focusSignalType?: string,
 ): (action: unknown) => TrustedInteractionExecutionResult {
   'use strict';
+  const trustedFocusSignalType = focusSignalType ?? '';
   const view = target.defaultView;
   if (view === null) throw new Error('Interaction document has no window');
   // eslint-disable-next-line @typescript-eslint/no-deprecated -- learner上書き前のDocument APIを捕捉する。
@@ -159,6 +161,9 @@ export function createTrustedInteractionExecutor(
           };
         }
         applyFunction(kind === 'click' ? nativeClick : nativeFocus, element, []);
+        if (kind === 'focus' && trustedFocusSignalType.length > 0) {
+          dispatch(element, new EventConstructor(trustedFocusSignalType, { bubbles: true }));
+        }
         return { error: null };
       }
       if (kind === 'fill') {
@@ -269,6 +274,7 @@ function createRuntimeState(
   consoleLimits: ConsoleLimits,
   createInteractionExecutor: (
     target: Document,
+    focusSignalType?: string,
   ) => (action: unknown) => TrustedInteractionExecutionResult,
 ) {
   'use strict';
@@ -293,7 +299,10 @@ function createRuntimeState(
   const nativeRemoveEventListener = EventTarget.prototype.removeEventListener;
   const applyFunction = Reflect.apply.bind(Reflect);
   const objectKeys = Object.keys.bind(Object);
-  const executeInteraction = createInteractionExecutor(document);
+  const executeInteraction = createInteractionExecutor(
+    document,
+    `tsumucode-focus-${config.bootstrapToken}`,
+  );
   const eventListenerWrappers = new WeakMap<EventListenerOrEventListenerObject, EventListener>();
   const budgetedEvents = new WeakSet<Event>();
   const addWindowListener = window.addEventListener.bind(window);

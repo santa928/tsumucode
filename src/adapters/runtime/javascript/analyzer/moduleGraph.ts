@@ -1,9 +1,6 @@
 import { parse, type Node } from 'acorn';
 import { full } from 'acorn-walk';
-import {
-  isJavaScriptWorkspacePath,
-  resolveJavaScriptModuleSpecifier,
-} from './modulePath';
+import { isJavaScriptWorkspacePath, resolveJavaScriptModuleSpecifier } from './modulePath';
 
 type AstNode = Node & Readonly<Record<string, unknown>>;
 
@@ -67,7 +64,10 @@ function staticSpecifier(node: Node, file: string): { value: string; start: numb
     literal.value.length === 0 ||
     literal.value.length > 256
   ) {
-    throw new JavaScriptModuleGraphError('Module specifierはboundedな文字列で指定してください', file);
+    throw new JavaScriptModuleGraphError(
+      'Module specifierはboundedな文字列で指定してください',
+      file,
+    );
   }
   return { value: literal.value, start: literal.start, end: literal.end };
 }

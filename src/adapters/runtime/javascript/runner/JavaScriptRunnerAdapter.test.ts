@@ -701,6 +701,78 @@ describe('JavaScriptRunnerAdapter', () => {
     await runner.dispose();
   });
 
+  it('focus InteractionはSnapshot取得後にだけ親画面のFocusを復元する', async () => {
+    const analyzer = {
+      analyze: vi.fn(async () => analysisSuccess()),
+      dispose: vi.fn(async () => undefined),
+    };
+    const returnTarget = document.createElement('button');
+    const frame = document.createElement('iframe');
+    document.body.append(returnTarget, frame);
+    returnTarget.focus();
+    const postMessage = vi
+      .spyOn(frame.contentWindow!, 'postMessage')
+      .mockImplementation(() => undefined);
+    const runner = new JavaScriptRunnerAdapter({ analyzer });
+    await runner.prepare(frame);
+    const rendering = runner.render(runnerInput());
+    await vi.waitFor(() => {
+      expect(frame.srcdoc).not.toBe('');
+    });
+    dispatchExecution(frame);
+    dispatchBridgeReady(frame);
+    const rendered = await rendering;
+    const frameGeneration = rendered.frameGeneration!;
+
+    const interaction = runner.interact({
+      exerciseSessionId: 'session-1',
+      executionRevision: 1,
+      frameGeneration,
+      requestId: 'interaction-focus',
+      action: { id: 'focus-next', kind: 'focus', selector: '#next' },
+    });
+    const interactionMessage = postMessage.mock.calls.at(-1)?.[0] as {
+      readonly oneTimeToken: string;
+    };
+    expect(document.activeElement).toBe(frame);
+    dispatchInteraction(
+      frame,
+      'interaction-focus',
+      interactionMessage.oneTimeToken,
+      frameGeneration,
+    );
+    await interaction;
+    expect(document.activeElement).toBe(frame);
+
+    const pendingSnapshot = runner.requestSnapshot({
+      exerciseSessionId: 'session-1',
+      executionRevision: 1,
+      requestId: 'snapshot-after-focus',
+      policy: snapshotPolicy,
+      preserveTimers: true,
+    });
+    const snapshotMessage = postMessage.mock.calls.at(-1)?.[0] as {
+      readonly oneTimeToken: string;
+    };
+    window.dispatchEvent(
+      new MessageEvent('message', {
+        source: frame.contentWindow,
+        data: {
+          version: PREVIEW_PROTOCOL_VERSION,
+          type: 'snapshot.response',
+          exerciseSessionId: 'session-1',
+          requestId: 'snapshot-after-focus',
+          oneTimeToken: snapshotMessage.oneTimeToken,
+          payload: snapshot(),
+        },
+      }),
+    );
+
+    await expect(pendingSnapshot).resolves.toEqual(snapshot());
+    expect(document.activeElement).toBe(returnTarget);
+    await runner.dispose();
+  });
+
   it('ready後にiframe navigationが再発したらactive Previewを破棄する', async () => {
     const analyzer = {
       analyze: vi.fn(async () => analysisSuccess()),

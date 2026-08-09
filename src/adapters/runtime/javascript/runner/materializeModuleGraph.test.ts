@@ -11,14 +11,15 @@ const modules: readonly JavaScriptInstrumentedModule[] = [
   {
     file: 'src/main.js',
     instrumentedCode: "import { score } from './score.js';\nconsole.log(score);",
-    dependencies: [
-      { specifier: './score.js', resolvedFile: 'src/score.js', start: 22, end: 34 },
-    ],
+    dependencies: [{ specifier: './score.js', resolvedFile: 'src/score.js', start: 22, end: 34 }],
   },
 ];
 
 /** Prepared Planへ依存URLを差し込み、iframe側の組み立て結果を再現する。 */
-function assemble(module: PreparedJavaScriptModule, urls: Readonly<Record<string, string>>): string {
+function assemble(
+  module: PreparedJavaScriptModule,
+  urls: Readonly<Record<string, string>>,
+): string {
   let source = module.sourceSegments[0] ?? '';
   for (const [index, dependencyFile] of module.dependencyFiles.entries()) {
     source += JSON.stringify(urls[dependencyFile]) + (module.sourceSegments[index + 1] ?? '');

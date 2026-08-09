@@ -990,6 +990,7 @@ export class LearningSessionController {
         snapshots,
         diagnostics,
         evidence: evidence ?? [],
+        interactionScenarios: item.interactionScenarios ?? [],
         interactionCheckpoints: interactionResults[item.id] ?? {},
         now: this.input.now(),
       });

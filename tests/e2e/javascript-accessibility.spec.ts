@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page, type TestInfo } from '@playwright/test';
 import {
   JAVASCRIPT_EXERCISE_TITLE,
   javascriptExerciseRoute,
@@ -112,6 +112,10 @@ test('JavaScript Exerciseの初期・Error・Hint・Reset状態に重大なaxe�
   await page.getByRole('button', { name: '判定する' }).click();
   const feedback = page.getByRole('dialog', { name: '判定結果' });
   await expect(feedback.getByRole('heading', { name: 'コードを確認しよう' })).toBeVisible();
+  await expect(feedback.getByRole('status', { name: '判定結果' })).toHaveAttribute(
+    'aria-live',
+    'polite',
+  );
   await expectNoSeriousAxeViolations(page);
   await feedback.getByRole('button', { name: 'コードを直す' }).click();
 
@@ -200,7 +204,10 @@ test('KeyboardだけでJavaScriptのFile tab・Editor・Error・Hint・Resetを�
   await expect(resetTrigger).toBeFocused();
 });
 
-test('1280x720のJavaScript ExerciseをDocument Scrollなしで操作できる', async ({ page }) => {
+test('1280x720のJavaScript ExerciseをDocument Scrollなしで操作できる', async ({
+  page,
+}, testInfo: TestInfo) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
   await openEditableJavaScriptExercise(page);
   await expect(
     page.getByRole('heading', { level: 1, name: JAVASCRIPT_EXERCISE_TITLE }),
@@ -209,11 +216,12 @@ test('1280x720のJavaScript ExerciseをDocument Scrollなしで操作できる',
   expect(metrics.document.scrollWidth).toBeLessThanOrEqual(metrics.document.clientWidth);
   expect(metrics.document.scrollHeight).toBeLessThanOrEqual(metrics.document.clientHeight + 1);
   expect(metrics.stage.scrollWidth).toBeLessThanOrEqual(metrics.stage.clientWidth + 1);
+  await page.screenshot({ path: testInfo.outputPath('javascript-exercise-1280x720.png') });
 });
 
 test('390x844ではDocumentを固定し、JavaScript SlideのStageだけを救済Scrollできる', async ({
   page,
-}) => {
+}, testInfo: TestInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(
     './#/courses/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s04',
@@ -226,16 +234,18 @@ test('390x844ではDocumentを固定し、JavaScript SlideのStageだけを救�
   expect(metrics.stage.scrollHeight).toBeGreaterThan(metrics.stage.clientHeight);
   expect(metrics.stage.overflowY).toBe('auto');
   await expectNoSeriousAxeViolations(page);
+  await page.screenshot({ path: testInfo.outputPath('javascript-slide-390x844.png') });
 
   await page.goto(javascriptExerciseRoute());
   await expect(page.getByRole('heading', { level: 1, name: 'PCで演習を開く' })).toBeVisible();
   await expect(page.getByTestId('code-workspace')).toHaveCount(0);
   await expectNoSeriousAxeViolations(page);
+  await page.screenshot({ path: testInfo.outputPath('javascript-exercise-notice-390x844.png') });
 });
 
 test('768x1024ではDocumentを固定し、JavaScript ExerciseをPC案内へ安全に切り替える', async ({
   page,
-}) => {
+}, testInfo: TestInfo) => {
   await page.setViewportSize({ width: 768, height: 1024 });
   await page.goto(javascriptExerciseRoute());
   await expect(page.getByRole('heading', { level: 1, name: 'PCで演習を開く' })).toBeVisible();
@@ -249,4 +259,5 @@ test('768x1024ではDocumentを固定し、JavaScript ExerciseをPC案内へ安�
   expect(documentMetrics.scrollWidth).toBeLessThanOrEqual(documentMetrics.clientWidth);
   expect(documentMetrics.scrollHeight).toBeLessThanOrEqual(documentMetrics.clientHeight + 1);
   await expectNoSeriousAxeViolations(page);
+  await page.screenshot({ path: testInfo.outputPath('javascript-exercise-notice-768x1024.png') });
 });

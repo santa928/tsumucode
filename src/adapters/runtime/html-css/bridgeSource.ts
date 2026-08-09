@@ -409,6 +409,25 @@ function bridgeRuntime(config: BridgeConfig): void {
     true,
   );
 
+  const trustedFocusSignalType = `tsumucode-focus-${config.bootstrapToken}`;
+  let trustedFocusedElement: Element | null = null;
+  document.addEventListener(
+    'focusin',
+    () => {
+      trustedFocusedElement = null;
+    },
+    true,
+  );
+  document.addEventListener(
+    trustedFocusSignalType,
+    (event) => {
+      if (event.target instanceof Element && document.documentElement.contains(event.target)) {
+        trustedFocusedElement = event.target;
+      }
+    },
+    true,
+  );
+
   /** Learner由来で実行能力のないhead情報だけをSnapshot観測へ許可する。 */
   const isObservableHeadElement = (element: Element): boolean => {
     const tag = element.tagName.toLowerCase();
@@ -563,7 +582,7 @@ function bridgeRuntime(config: BridgeConfig): void {
           },
           overflow: overflow(html),
           focusable: isFocusable(element, style),
-          focused: document.activeElement === element,
+          focused: document.activeElement === element || trustedFocusedElement === element,
           accessibleName: outputString(
             isDocumentElement ? '' : accessibleName(element),
             'accessible name',

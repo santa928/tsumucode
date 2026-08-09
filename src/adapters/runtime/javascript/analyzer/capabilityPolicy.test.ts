@@ -181,7 +181,9 @@ d['query' + 'Selector']('head')['append' + 'Child'](s);`;
     }).not.toThrow();
     expect(() => {
       assertJavaScriptCapabilityPolicy(
-        program('const name = "aria-label"; document.querySelector("#app").setAttribute(name, "結果");'),
+        program(
+          'const name = "aria-label"; document.querySelector("#app").setAttribute(name, "結果");',
+        ),
         'script.js',
         'dom',
       );
@@ -260,7 +262,7 @@ document.querySelector('head').appendChild(script);`),
       for (const source of [
         "document.querySelector('body').getRootNode().parentWindow.setTimeout(() => {}, 0);",
         "document.querySelector('body').getRootNode().parentWindow.Promise.resolve(1);",
-        "const facade = { setTimeout() {} }; facade.setTimeout();",
+        'const facade = { setTimeout() {} }; facade.setTimeout();',
       ]) {
         expect(() => {
           assertJavaScriptCapabilityPolicy(program(source), 'script.js', profile);

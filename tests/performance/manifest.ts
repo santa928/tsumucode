@@ -83,6 +83,8 @@ const JavaScriptPerformanceManifestSchema = z.object({
   previewP95Ms: PositiveNumber,
   repeatPreviewP95Ms: PositiveNumber,
   validationP95Ms: PositiveNumber,
+  scenarioP95Ms: PositiveNumber,
+  guidedScenarioBatchMaxMs: PositiveNumber,
   exercises: z
     .array(
       z.object({

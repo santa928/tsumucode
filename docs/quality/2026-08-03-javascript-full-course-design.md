@@ -1,6 +1,6 @@
 # JavaScript全Course 設計
 
-- 状態: 書面レビュー承認済み・Core Runtime／Console／static Module実装・検証済み（Scenario実装前）
+- 状態: 書面レビュー承認済み・Core Runtime／Console／static Module／Scenario Runtime基盤実装・検証済み（Chapter 01〜13教材実装前）
 - 承認日: 2026-08-04
 - 作成日: 2026-08-03
 - 対象: `javascript` Course Chapter 01〜13、既存Chapter 00の互換維持、全Course公開
@@ -70,7 +70,7 @@ Courseは技術項目を列挙するだけの辞書にしない。各標準Chapt
 
 ### 3.1 Core Runtime／Console実装証跡
 
-2026-08-05時点で、Chapter 00互換のCore Runtimeとbounded ConsoleをProduction buildへ実装し、下表の範囲を検証した。これは52 Lessonの全Course完成を意味しない。Courseは引き続き`draft`であり、Scenario、Chapter 01〜13、全Course review、初心者検証、Lighthouse、本番公開後回帰は未完了である。
+2026-08-05時点で、Chapter 00互換のCore Runtimeとbounded ConsoleをProduction buildへ実装し、下表の範囲を検証した。これは52 Lessonの全Course完成を意味しない。Courseは引き続き`draft`であり、Chapter 01〜13、全Course review、初心者検証、Course昇格、本番公開後回帰は未完了である。Scenario Runtime基盤の後続証跡は3.3へ追記する。
 
 - Production artifact SHA-256: `38be0f65d89f10a4854b32ef883c32eca9787ba5b38e493894a622e2228ceab0`
 - JavaScript固有lazy graph: `19,608 bytes gzip`（予算`180,000 bytes`以下）
@@ -104,11 +104,32 @@ Courseは技術項目を列挙するだけの辞書にしない。各標準Chapt
 
 REQ-JSC-021の型付きAnalyzer FactとModule graph hash照合はModule範囲で実装済みである。ただしChapter 01〜13が要求する全Fact種別とLesson別Ruleは教材タスクで追加するため、要件全体は未完了のままとする。
 
-### 3.3 未完了要件
+### 3.3 Scenario Runtime実装証跡と未完了境界
 
 REQ-JSC-018のContent契約は2026-08-06に実装した。公開Artifactは最大4 Scenario、各最大10 action、checkpointごと最大16 expectationをstrict unionで保持し、ID一意性、`afterActionId`参照、`dom`／`async`／`project` profile限定をCompilerで検証する。Runnerの`InteractionRequest`／`InteractionResult`とValidatorの`InteractionCheckpointResult`入力境界も追加済みである。
 
-ただしREQ-JSC-018のtrusted action executor、REQ-JSC-019の新規iframeごとのcheckpoint、REQ-JSC-020の750 ms bounded pollは未実装であり、Content契約だけを対話判定の検証済み証跡へ読み替えない。REQ-JSC-021の全Course用Analyzer fact拡張とREQ-JSC-022の早期／後期Lesson別判定方針は各教材タスクで実装・検証する。現時点のModule／Content契約証跡をScenario runtimeや全Course教材の完了根拠へ読み替えない。
+2026-08-09にtrusted action executor、新規iframeごとのScenario実行、750 ms bounded poll、5種expectationのpure評価、Validator集約をProduction Runtimeへ実装した。回答click→得点→次問→結果→再挑戦、fill、select、Enter／Arrow key、FocusをChromium、Firefox、WebKitで実行し、Scenario間のstate、timer、Console、Focusを分離した。
+
+- Validator: expectation falseは`incomplete`、checkpoint欠落、identity不一致、unknown expectation、duplicate resultは`system-error`としてfail-closedにする
+- Security: forged postMessage、別frame、stale revision／generation、replay request ID／token、257文字selector、4,097文字fill、navigation、外部requestを拒否する
+- Accessibility: Keyboard-only、Accessible Name、Focus復元、`aria-live="polite"`の判定要約、axe critical／serious 0を3 Engineで確認する
+- Responsive: 1280×720は工程票、Editor、Preview、CTAを1画面へ収め、768×1024／390×844はPC案内へ切り替え、390×844のSlideはStageだけを救済Scrollする。境界数値と4枚の実画像を確認した
+- Performance: 標準20 Scenario p95 `13.3 ms`（予算`1,500 ms`以下）、Guided相当4 Scenario合計`49.9 ms`（予算`3,000 ms`以下）
+- Full local gate: `npm run check`は`156 files / 1,553 tests`、3 Engine E2Eは`461 passed / 124 skipped / 0 failed`、性能は`22/22`とbundle／subpath予算`9/9`、Lighthouseは4 URL×3回の`12/12`、静的Artifactは`199 files`、`/tsumucode/` smokeとPrettierはPASS
+
+WebKitではopaque iframeに対する親からのprogrammatic focusが反映されない既知問題（WebKit Bug 278553）がある。trusted executorはnative `focus()`を実行した上でbootstrap token由来の非公開signalをbridgeへ渡し、SnapshotのFocus証跡だけを補完する。signal名とtokenは学習DOMへ公開せず、Snapshot取得後は親画面のFocusを復元する。
+
+| 要件        | 状態                | 自動／目視証跡                                                                                      |
+| ----------- | ------------------- | --------------------------------------------------------------------------------------------------- |
+| REQ-JSC-016 | Runtime基盤検証済み | static Module graph、hash、opaque iframe実行、危険import拒否                                        |
+| REQ-JSC-017 | Runtime基盤検証済み | bare／dynamic import、path escape、循環、未知moduleのtyped error                                    |
+| REQ-JSC-018 | Runtime基盤検証済み | 5 actionのstrict executor、identity、size上限、replay拒否                                           |
+| REQ-JSC-019 | Runtime基盤検証済み | Scenarioごとの新規frame、checkpoint Snapshot、state／timer／Console／Focus分離                      |
+| REQ-JSC-020 | Runtime基盤検証済み | 50 ms以下interval・最大750 msの期待状態poll、固定sleepなし                                          |
+| REQ-JSC-021 | Runtime一部検証済み | 型付きAnalyzer fact、Source＋Evidence＋Console＋DOM＋FocusのAND。全Course用Fact追加は教材taskで継続 |
+| REQ-JSC-022 | 集約基盤検証済み    | 必須Source ruleとScenario結果のAND集約。Lesson別の別解許容条件は教材taskで継続                      |
+
+ここで検証済みなのはRuntime基盤である。Chapter 01〜13の52 Lesson、各LessonのScenario／Rule、教材Review、完全初心者の通し検証、Courseの`published`昇格、LearningPath追加は未完了であり、本証跡を全Course完成へ読み替えない。
 
 ## 4. 要件差分
 
@@ -437,14 +458,14 @@ blockingな難度ずれ、直前Slideとの不整合、操作不能、誤判定�
 - [ ] 各標準Lessonに3 Hint、Solution、正負Fixture、独立Reviewがある
 - [ ] Consoleが対象Lessonだけ表示され、bounded outputとAccessibility契約を満たす
 - [x] static ModuleがWorkspace内だけで動き、危険なimportを拒否する
-- [ ] 対話Scenarioが回答、得点、次問、結果、再挑戦を実利用順で判定する
+- [x] 対話Scenario Runtimeが回答、得点、次問、結果、再挑戦を実利用順で判定する
 - [ ] 後期ExerciseとProjectが不要なSource固定をせず、別解を許可する
 - [ ] Runner／Analyzer／bridge失敗が不正解にならず、Sourceと直前成功結果が残る
 - [ ] Chapter 00の進捗、下書き、Reset、Review復帰、passing snapshotが維持される
 - [ ] JavaScript固有graphがHome、Path、Slide初期chunkへ混入しない
 - [ ] Course完成前はdraftのまま非掲載で、直接URLの章単位品質確認ができる
 - [ ] 3 Browser、axe、Keyboard、Security、Performance、Lighthouse、subpathが合格する
-- [ ] 3 viewportの実画像と境界数値で重なり、はみ出し、操作阻害がない
+- [x] Scenario Runtime対象画面は3 viewportの実画像と境界数値で重なり、はみ出し、操作阻害がない
 - [ ] 完全初心者の通し検証と是正が完了する
 - [ ] 完成時だけCourseをpublishedへ昇格し、frontend Pathへrequiredとして追加する
 - [ ] HTML/CSS、LearningPath、端末進捗、Export／Import、Slide Libraryが回帰しない
@@ -468,6 +489,7 @@ blockingな難度ずれ、直前Slideとの不整合、操作不能、誤判定�
 | ----------------------------------- | ----------------------------------------------------------------------------------------- |
 | Capability拡張でSecurity holeを作る | 固定Profile、未知構文fail-closed、Profile差分test、3 Browser request監視を必須にする      |
 | Scenarioがflakyになる               | 新規frame、固定sleep禁止、期待状態poll、action上限、同revision identityを使う             |
+| WebKitでiframe Focus証跡が欠落する  | native focus後の非公開signalでSnapshotだけを補完し、学習DOMへtokenを公開せず親Focusを復元 |
 | Module Blobが残る                   | opaque iframeがgeneration内で所有し、import成功／失敗の`finally`で全URLをrevokeする       |
 | ConsoleがMain threadを塞ぐ          | 件数、size、depthを制限し、100件long-task testを行う                                      |
 | Source ruleが別解を落とす           | 早期ConceptだけSource factで確認し、後期は振る舞い中心にする                              |

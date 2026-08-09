@@ -1,8 +1,10 @@
 import { expect, test, type Page } from '@playwright/test';
+import type { JavaScriptRunnerAdapter as JavaScriptRunnerAdapterType } from '../../src/adapters/runtime/javascript';
 import {
   JAVASCRIPT_EXERCISE_ID,
   openEditableJavaScriptExercise,
 } from '../e2e/helpers/javascriptCourse';
+import { loadJavaScriptRunnerModulePath } from '../e2e/helpers/javascriptRunnerModule';
 import { replaceEditorText } from '../e2e/helpers/progress';
 import { loadJavaScriptPerformanceManifest, percentile95 } from './manifest';
 
@@ -149,6 +151,137 @@ test('JavaScript再Previewと判定のp95を性能予算内に保つ', async ({ 
 
   expect(result.repeatPreviewP95Ms).toBeLessThanOrEqual(manifest.repeatPreviewP95Ms);
   expect(result.validationP95Ms).toBeLessThanOrEqual(manifest.validationP95Ms);
+});
+
+test('標準20 ScenarioとGuided相当4 Scenarioを性能予算内に保つ', async ({ page }, testInfo) => {
+  test.setTimeout(180_000);
+  await page.goto('./#/');
+  const runnerModulePath = await loadJavaScriptRunnerModulePath();
+  const result = await page.evaluate<
+    {
+      readonly standardDurations: readonly number[];
+      readonly guidedBatchDuration: number;
+    },
+    {
+      readonly runnerModulePath: string;
+      readonly warmupRuns: number;
+      readonly standardRuns: number;
+    }
+  >(
+    async ({ runnerModulePath, warmupRuns, standardRuns }) => {
+      const { JavaScriptRunnerAdapter } = (await import(/* @vite-ignore */ runnerModulePath)) as {
+        readonly JavaScriptRunnerAdapter: typeof JavaScriptRunnerAdapterType;
+      };
+      const runner = new JavaScriptRunnerAdapter();
+      const frame = document.createElement('iframe');
+      frame.style.position = 'fixed';
+      frame.style.inset = '0';
+      frame.style.opacity = '0';
+      frame.style.pointerEvents = 'none';
+      document.body.append(frame);
+      await runner.prepare(frame);
+      const exerciseSessionId = crypto.randomUUID();
+      let executionRevision = 0;
+      let requestSequence = 0;
+      const policy = {
+        selectors: ['#score'],
+        attributes: [],
+        computedStyles: [],
+        focusVisibleSelectors: [],
+        focusVisibleComputedStyles: [],
+        includeAllElements: false,
+      } as const;
+      const runScenario = async (actionCount: number): Promise<number> => {
+        const startedAt = performance.now();
+        executionRevision += 1;
+        const rendered = await runner.render({
+          exerciseSessionId,
+          executionRevision,
+          languageId: 'javascript',
+          files: {
+            'index.html': '<button id="answer" type="button">回答</button><p id="score">0点</p>',
+            'styles.css': '',
+            'script.js': `let score = 0;
+const scoreNode = document.querySelector('#score');
+document.querySelector('#answer').addEventListener('click', () => {
+  score += 1;
+  scoreNode.textContent = score + '点';
+});`,
+          },
+          assets: [],
+          viewport: { id: 'desktop', width: 1280, height: 720 },
+          options: {
+            runtime: {
+              kind: 'javascript',
+              entryFile: 'script.js',
+              sourceType: 'script',
+              capabilityProfile: 'dom',
+              primaryOutput: 'preview',
+            },
+          },
+        });
+        if (rendered.diagnostics.some(({ severity }) => severity === 'error')) {
+          throw new Error(JSON.stringify(rendered.diagnostics));
+        }
+        if (rendered.frameGeneration === undefined) throw new Error('frame generationがありません');
+        for (let index = 0; index < actionCount; index += 1) {
+          await runner.interact({
+            exerciseSessionId,
+            executionRevision,
+            frameGeneration: rendered.frameGeneration,
+            requestId: `interaction-${String(++requestSequence)}`,
+            action: { id: `answer-${String(index)}`, kind: 'click', selector: '#answer' },
+          });
+        }
+        const snapshot = await runner.requestSnapshot({
+          exerciseSessionId,
+          executionRevision,
+          requestId: `snapshot-${String(++requestSequence)}`,
+          policy,
+          preserveTimers: true,
+        });
+        const score = snapshot.nodes.find(({ matchedSelectors }) =>
+          matchedSelectors.includes('#score'),
+        )?.text;
+        if (score !== `${String(actionCount)}点`)
+          throw new Error(`Scenario結果不一致: ${String(score)}`);
+        return performance.now() - startedAt;
+      };
+
+      try {
+        for (let index = 0; index < warmupRuns; index += 1) await runScenario(1);
+        const standardDurations: number[] = [];
+        for (let index = 0; index < standardRuns; index += 1) {
+          standardDurations.push(await runScenario(1));
+        }
+        const guidedStartedAt = performance.now();
+        for (let index = 0; index < 4; index += 1) await runScenario(4);
+        return {
+          standardDurations,
+          guidedBatchDuration: performance.now() - guidedStartedAt,
+        };
+      } finally {
+        await runner.dispose();
+        frame.remove();
+      }
+    },
+    {
+      runnerModulePath,
+      warmupRuns: manifest.warmupRuns,
+      standardRuns: manifest.runsPerExercise,
+    },
+  );
+  const evidence = {
+    ...result,
+    standardScenarioP95Ms: percentile95(result.standardDurations),
+  };
+  await testInfo.attach('javascript-scenario-performance.json', {
+    body: Buffer.from(JSON.stringify(evidence, undefined, 2)),
+    contentType: 'application/json',
+  });
+  expect(result.standardDurations).toHaveLength(20);
+  expect(evidence.standardScenarioP95Ms).toBeLessThanOrEqual(manifest.scenarioP95Ms);
+  expect(evidence.guidedBatchDuration).toBeLessThanOrEqual(manifest.guidedScenarioBatchMaxMs);
 });
 
 test('Console 100件を20回更新して50ms超のlong taskを発生させない', async ({ page }, testInfo) => {

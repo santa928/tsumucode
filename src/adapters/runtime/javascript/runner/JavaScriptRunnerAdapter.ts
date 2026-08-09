@@ -248,6 +248,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
   #active: ActivePreview | undefined;
   #restorable: StoredPreview | undefined;
   #inFlight: InFlightRender | undefined;
+  #focusReturnTarget: HTMLElement | undefined;
   #generation = 0;
 
   readonly #loadListener = (): void => {
@@ -290,6 +291,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
   render(input: RunnerInput): Promise<RunnerRenderResult> {
     const frame = this.#frame;
     if (frame === undefined) return Promise.reject(new Error('Runner is not prepared'));
+    this.#restoreParentFocus();
     let validated: ValidatedJavaScriptInput;
     try {
       validated = validateJavaScriptInput(input);
@@ -317,10 +319,14 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
     ) {
       throw new Error('JavaScript preview session or revision is not current');
     }
-    if (request.preserveTimers !== true) {
-      await active.execution.clearTimers(this.#uuidFactory());
+    try {
+      if (request.preserveTimers !== true) {
+        await active.execution.clearTimers(this.#uuidFactory());
+      }
+      return await active.bridge.requestSnapshot(request.requestId, request.policy);
+    } finally {
+      this.#restoreParentFocus();
     }
-    return active.bridge.requestSnapshot(request.requestId, request.policy);
   }
 
   /** active frameと同じsession・revision・generationのbounded操作だけを渡す。 */
@@ -334,7 +340,15 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
     ) {
       return Promise.reject(new Error('JavaScript interaction frame is not current'));
     }
-    return active.execution.interact(request);
+    this.#restoreParentFocus();
+    if (request.action.kind === 'focus') {
+      this.#captureParentFocus();
+      this.#frame?.focus({ preventScroll: true });
+    }
+    return active.execution.interact(request).catch((error: unknown) => {
+      this.#restoreParentFocus();
+      throw error;
+    });
   }
 
   /** iframe、Worker、Bridge、教材Assetを冪等に解放する。 */
@@ -657,8 +671,42 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
     resources.materialized.dispose();
   }
 
+  /** focus Action前の親画面要素を記録し、Snapshot観測が終わるまで維持する。 */
+  #captureParentFocus(): void {
+    const frame = this.#frame;
+    const view = frame?.ownerDocument.defaultView;
+    const activeElement = frame?.ownerDocument.activeElement;
+    if (
+      frame === undefined ||
+      view === null ||
+      view === undefined ||
+      !(activeElement instanceof view.HTMLElement) ||
+      activeElement === frame
+    ) {
+      return;
+    }
+    this.#focusReturnTarget = activeElement;
+  }
+
+  /** iframeが奪った場合だけ、接続中の親画面要素へScrollなしでFocusを戻す。 */
+  #restoreParentFocus(): void {
+    const frame = this.#frame;
+    const target = this.#focusReturnTarget;
+    this.#focusReturnTarget = undefined;
+    if (
+      frame === undefined ||
+      target === undefined ||
+      !target.isConnected ||
+      frame.ownerDocument.activeElement !== frame
+    ) {
+      return;
+    }
+    target.focus({ preventScroll: true });
+  }
+
   /** prepare／dispose共通で現在の処理と全資源を閉じる。 */
   async #reset(clearFrame: boolean): Promise<void> {
+    this.#restoreParentFocus();
     this.#generation += 1;
     const pending = this.#cancelInFlight();
     this.#inFlight = undefined;

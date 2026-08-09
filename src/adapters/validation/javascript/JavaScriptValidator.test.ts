@@ -3,7 +3,11 @@ import type {
   JavaScriptAnalysisInput,
   JavaScriptAnalysisResult,
 } from '../../runtime/javascript/analyzer/contracts';
-import type { ValidationRuleDefinition } from '../../../core/content/types';
+import type {
+  JavaScriptInteractionScenario,
+  ValidationRuleDefinition,
+} from '../../../core/content/types';
+import type { InteractionCheckpointResult } from '../../../core/runtime/contracts';
 import type { ValidationContext } from '../../../core/validation/contracts';
 import {
   previewNode,
@@ -164,6 +168,46 @@ function javascriptContext(overrides: Partial<ValidationContext> = {}): Validati
   });
 }
 
+const INTERACTION_SCENARIO: JavaScriptInteractionScenario = {
+  id: 'answer-flow',
+  label: '回答して次の問題へ進む',
+  actions: [{ id: 'answer', kind: 'click', selector: '#answer' }],
+  checkpoints: [
+    {
+      id: 'score-updated',
+      afterActionId: 'answer',
+      expectations: [
+        { id: 'score-text', kind: 'selector-text', selector: '#score', equals: '1点' },
+      ],
+    },
+  ],
+};
+
+/** Scenario Validator test用に同一実行のcheckpoint結果を生成する。 */
+function interactionCheckpointResult(
+  overrides: Partial<InteractionCheckpointResult> = {},
+): InteractionCheckpointResult {
+  return {
+    exerciseSessionId: 'session-1',
+    executionRevision: 4,
+    frameGeneration: 2,
+    viewportId: 'desktop',
+    scenarioId: 'answer-flow',
+    checkpointId: 'score-updated',
+    afterActionId: 'answer',
+    expectations: [{ expectationId: 'score-text', passed: true, actual: '1点' }],
+    ...overrides,
+  };
+}
+
+/** 公開Scenario定義と観測結果を同時に持つValidator入力を返す。 */
+function javascriptInteractionContext(
+  overrides: Partial<ValidationContext> = {},
+  scenarios: readonly JavaScriptInteractionScenario[] = [INTERACTION_SCENARIO],
+): ValidationContext {
+  return javascriptContext({ ...overrides, interactionScenarios: scenarios });
+}
+
 describe('JavaScriptValidator', () => {
   it('Source Fact・同一Source hash・実行証拠・全viewport DOMをANDでpassする', async () => {
     const analyzer = analyzerDouble();
@@ -248,6 +292,128 @@ describe('JavaScriptValidator', () => {
       passed: false,
       requirementPassed: false,
     });
+  });
+
+  it('Scenario期待値が未達なら実測値と次の行動を示してincompleteにする', async () => {
+    const validator = new JavaScriptValidator({ analyzerFactory: analyzerDouble });
+    const result = await validator.validate(
+      javascriptInteractionContext({
+        interactionCheckpoints: {
+          desktop: [
+            interactionCheckpointResult({
+              expectations: [{ expectationId: 'score-text', passed: false, actual: '0点' }],
+            }),
+          ],
+        },
+      }),
+    );
+
+    expect(result.status).toBe('incomplete');
+    const failedCheck = result.checks.find(
+      ({ ruleId }) => ruleId === 'interaction:answer-flow:score-updated:score-text',
+    );
+    expect(failedCheck).toMatchObject({
+      passed: false,
+      expected: '#score の文章が「1点」になる',
+      actual: '0点',
+    });
+    expect(failedCheck?.nextAction).toContain('回答して次の問題へ進む');
+  });
+
+  it.each([
+    ['checkpoint欠落', {}],
+    ['identity不一致', { desktop: [interactionCheckpointResult({ executionRevision: 3 })] }],
+    [
+      '未知expectation',
+      {
+        desktop: [
+          interactionCheckpointResult({
+            expectations: [
+              { expectationId: 'score-text', passed: true, actual: '1点' },
+              { expectationId: 'unknown-result', passed: true, actual: 'unknown' },
+            ],
+          }),
+        ],
+      },
+    ],
+    ['checkpoint重複', { desktop: [interactionCheckpointResult(), interactionCheckpointResult()] }],
+  ] as const)('%sを学習者の不正解ではなくsystem-errorにする', async (_label, checkpoints) => {
+    const analyzer = analyzerDouble();
+    const validator = new JavaScriptValidator({ analyzerFactory: () => analyzer });
+    const result = await validator.validate(
+      javascriptInteractionContext({ interactionCheckpoints: checkpoints }),
+    );
+
+    expect(result).toMatchObject({
+      status: 'system-error',
+      executionRevision: null,
+      checks: [],
+      passedRequirementIds: [],
+    });
+    expect(result.diagnostics).toContainEqual(
+      expect.objectContaining({
+        code: 'JAVASCRIPT_INTERACTION_RESULT_INVALID',
+        kind: 'system',
+      }),
+    );
+    expect(analyzer.analyze).not.toHaveBeenCalled();
+  });
+
+  it('5種類のScenario期待値を実測と比較できる文章へ変換する', async () => {
+    const scenario: JavaScriptInteractionScenario = {
+      id: 'all-expectations',
+      label: '結果と操作状態を確認する',
+      actions: [{ id: 'confirm', kind: 'click', selector: '#confirm' }],
+      checkpoints: [
+        {
+          id: 'all-ready',
+          afterActionId: 'confirm',
+          expectations: [
+            { id: 'result', kind: 'selector-exists', selector: '#result' },
+            { id: 'score', kind: 'selector-text', selector: '#score', equals: '2点' },
+            {
+              id: 'score-data',
+              kind: 'attribute',
+              selector: '.card',
+              name: 'data-score',
+              equals: '2',
+            },
+            { id: 'next-focus', kind: 'focused', selector: '#next' },
+            { id: 'score-log', kind: 'console-includes', includes: 'score=2' },
+          ],
+        },
+      ],
+    };
+    const result = await new JavaScriptValidator({ analyzerFactory: analyzerDouble }).validate(
+      javascriptInteractionContext(
+        {
+          interactionCheckpoints: {
+            desktop: [
+              interactionCheckpointResult({
+                scenarioId: 'all-expectations',
+                checkpointId: 'all-ready',
+                afterActionId: 'confirm',
+                expectations: scenario.checkpoints[0]!.expectations.map(({ id }) => ({
+                  expectationId: id,
+                  passed: false,
+                  actual: '未達',
+                })),
+              }),
+            ],
+          },
+        },
+        [scenario],
+      ),
+    );
+
+    expect(result.status).toBe('incomplete');
+    expect(result.checks.slice(-5).map(({ expected }) => expected)).toEqual([
+      '#result が表示される',
+      '#score の文章が「2点」になる',
+      '.card の data-score 属性が「2」になる',
+      '#next にフォーカスが移る',
+      'Consoleに「score=2」が含まれる',
+    ]);
   });
 
   it('現在Sourceと一致しないhash evidenceをsystem-errorにする', async () => {

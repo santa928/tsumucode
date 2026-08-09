@@ -105,7 +105,8 @@ const RUNTIME_ESCAPE_MEMBERS = new Set([
   'view',
 ]);
 const HTML_INSERTION_MEMBERS = new Set(['innerHTML', 'outerHTML', 'insertAdjacentHTML']);
-const SAFE_DOM_ATTRIBUTE = /^(?:aria-[a-z0-9-]+|class|data-[a-z0-9-]+|disabled|hidden|id|role|tabindex|title)$/u;
+const SAFE_DOM_ATTRIBUTE =
+  /^(?:aria-[a-z0-9-]+|class|data-[a-z0-9-]+|disabled|hidden|id|role|tabindex|title)$/u;
 const SAFE_DOM_ELEMENT_TAGS = new Set([
   'a',
   'article',
@@ -511,13 +512,12 @@ export function assertJavaScriptCapabilityPolicy(
       const root = identifierName(current.object);
       const property = memberName(current);
       if (!hasSafeComputedProperty(current)) {
-        reject(
-          node,
-          file,
-          '変数や式によるcomputed property accessは安全なPreviewでは使えません',
-        );
+        reject(node, file, '変数や式によるcomputed property accessは安全なPreviewでは使えません');
       }
-      if (root === 'Object' && (property === undefined || !SAFE_OBJECT_STATIC_MEMBERS.has(property))) {
+      if (
+        root === 'Object' &&
+        (property === undefined || !SAFE_OBJECT_STATIC_MEMBERS.has(property))
+      ) {
         reject(node, file, `Object.${property ?? 'unknown'}はreflection防止のため使えません`);
       }
       if (property !== undefined && REFLECTION_MEMBERS.has(property)) {

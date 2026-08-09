@@ -1,8 +1,5 @@
 import type { RunnerDiagnostic } from '../../../../core/runtime/contracts';
-import {
-  isJavaScriptWorkspacePath,
-  resolveJavaScriptModuleSpecifier,
-} from './modulePath';
+import { isJavaScriptWorkspacePath, resolveJavaScriptModuleSpecifier } from './modulePath';
 export { isJavaScriptWorkspacePath } from './modulePath';
 
 export type JavaScriptSourceType = 'script' | 'module';
@@ -29,8 +26,7 @@ export interface JavaScriptWorkspaceAnalysisInput {
 }
 
 export type JavaScriptAnalysisInput =
-  | JavaScriptLegacyAnalysisInput
-  | JavaScriptWorkspaceAnalysisInput;
+  JavaScriptLegacyAnalysisInput | JavaScriptWorkspaceAnalysisInput;
 
 export type JavaScriptLegacyAnalysisRequest = JavaScriptLegacyAnalysisInput & {
   readonly requestId: string;
@@ -39,8 +35,7 @@ export type JavaScriptWorkspaceAnalysisRequest = JavaScriptWorkspaceAnalysisInpu
   readonly requestId: string;
 };
 export type JavaScriptAnalysisRequest =
-  | JavaScriptLegacyAnalysisRequest
-  | JavaScriptWorkspaceAnalysisRequest;
+  JavaScriptLegacyAnalysisRequest | JavaScriptWorkspaceAnalysisRequest;
 
 export interface QuerySelectorTextContentAssignmentFact {
   readonly kind: 'query-selector-text-content-assignment';
@@ -120,8 +115,7 @@ export interface JavaScriptWorkspaceAnalysisSuccess extends JavaScriptAnalysisId
 }
 
 export type JavaScriptAnalysisSuccess =
-  | JavaScriptLegacyAnalysisSuccess
-  | JavaScriptWorkspaceAnalysisSuccess;
+  JavaScriptLegacyAnalysisSuccess | JavaScriptWorkspaceAnalysisSuccess;
 
 export interface JavaScriptAnalysisFailure extends JavaScriptAnalysisIdentity {
   readonly status: 'failure';
@@ -129,11 +123,9 @@ export interface JavaScriptAnalysisFailure extends JavaScriptAnalysisIdentity {
 }
 
 export type JavaScriptLegacyAnalysisResult =
-  | JavaScriptLegacyAnalysisSuccess
-  | JavaScriptAnalysisFailure;
+  JavaScriptLegacyAnalysisSuccess | JavaScriptAnalysisFailure;
 export type JavaScriptWorkspaceAnalysisResult =
-  | JavaScriptWorkspaceAnalysisSuccess
-  | JavaScriptAnalysisFailure;
+  JavaScriptWorkspaceAnalysisSuccess | JavaScriptAnalysisFailure;
 export type JavaScriptAnalysisResult = JavaScriptAnalysisSuccess | JavaScriptAnalysisFailure;
 
 export interface AnalyzerWorkerRequest {
@@ -172,7 +164,11 @@ function isJavaScriptWorkspace(value: unknown, entryFile: unknown): boolean {
     return false;
   }
   const entries = Object.entries(value);
-  if (entries.length === 0 || entries.length > MAX_ANALYSIS_FILES || !Object.hasOwn(value, entryFile)) {
+  if (
+    entries.length === 0 ||
+    entries.length > MAX_ANALYSIS_FILES ||
+    !Object.hasOwn(value, entryFile)
+  ) {
     return false;
   }
   let totalBytes = 0;
@@ -191,15 +187,15 @@ export function isJavaScriptAnalysisRequest(value: unknown): value is JavaScript
   if (!isRecord(value)) return false;
   const keys = Object.keys(value).sort();
   const legacyKeys = [
-      'capabilityProfile',
-      'executionRevision',
-      'exerciseSessionId',
-      'file',
-      'guardIdentifier',
-      'requestId',
-      'source',
-      'sourceType',
-    ].sort();
+    'capabilityProfile',
+    'executionRevision',
+    'exerciseSessionId',
+    'file',
+    'guardIdentifier',
+    'requestId',
+    'source',
+    'sourceType',
+  ].sort();
   const workspaceKeys = [
     'capabilityProfile',
     'entryFile',

@@ -138,13 +138,13 @@ export function prepareModuleGraph(input: PrepareModuleGraphInput): PreparedJava
   const modules: PreparedJavaScriptModule[] = [];
   let edgeCount = 0;
   for (const module of input.modules) {
-    if (!isJavaScriptWorkspacePath(module.file)) throw new Error(`Module pathが不正です: ${module.file}`);
-    if (preparedFiles.has(module.file)) throw new Error(`Module Fileが重複しています: ${module.file}`);
+    if (!isJavaScriptWorkspacePath(module.file))
+      throw new Error(`Module pathが不正です: ${module.file}`);
+    if (preparedFiles.has(module.file))
+      throw new Error(`Module Fileが重複しています: ${module.file}`);
     edgeCount += module.dependencies.length;
     if (edgeCount > MAX_MODULE_EDGES) throw new Error('Module importはgraph全体で256件までです');
-    modules.push(
-      prepareModule(module, preparedFiles, input.guardIdentifier, input.runtimeKey),
-    );
+    modules.push(prepareModule(module, preparedFiles, input.guardIdentifier, input.runtimeKey));
     preparedFiles.add(module.file);
   }
   if (!preparedFiles.has(input.entryFile) || modules.at(-1)?.file !== input.entryFile) {

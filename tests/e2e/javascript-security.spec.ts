@@ -1,5 +1,4 @@
 import { expect, test, type Page } from '@playwright/test';
-import { readFile } from 'node:fs/promises';
 import type { JavaScriptRunnerAdapter as JavaScriptRunnerAdapterType } from '../../src/adapters/runtime/javascript';
 import type {
   RunnerConsoleRecord,
@@ -17,7 +16,7 @@ import {
   takeConsoleErrors,
 } from './helpers/openRuntimeFixture';
 import { editorText, replaceEditorText, waitForStoredDraftContent } from './helpers/progress';
-import { testServerUrl } from './helpers/testBasePath';
+import { loadJavaScriptRunnerModulePath } from './helpers/javascriptRunnerModule';
 
 const capabilityPayloads = [
   ['fetch', "fetch('https://evil.test/fetch');"],
@@ -72,15 +71,9 @@ interface JavaScriptHarnessResult {
   readonly snapshotText: string | null;
 }
 
-/** build済みVite manifestから、pageと同一originのJavaScript Runner entryを解決する。 */
-async function loadJavaScriptRunnerModulePath(): Promise<string> {
-  const manifest = JSON.parse(await readFile('dist/.vite/manifest.json', 'utf8')) as Readonly<
-    Record<string, { readonly file?: unknown }>
-  >;
-  const file = manifest['src/adapters/runtime/javascript/index.ts']?.file;
-  if (typeof file !== 'string')
-    throw new Error('JavaScript Runner entryがVite manifestにありません');
-  return new URL(file, testServerUrl(4173)).href;
+interface InteractionSecurityEvidence {
+  readonly validRequestId: string;
+  readonly rejections: Readonly<Record<string, string>>;
 }
 
 /** 実Analyzerとopaque iframe Runnerへ任意ProfileのSourceを渡し、公開結果だけを返す。 */
@@ -275,9 +268,7 @@ test('static Module graphをopaque Previewで実行し、依存Sourceとgraph証
   expect(result.diagnostics).toEqual([]);
   expect(result.console.map(({ text }) => text)).toEqual(['module-ok']);
   expect(result.evidence).toContainEqual({ id: 'javascript.executed', value: true });
-  const graphEvidence = result.evidence.find(
-    ({ id }) => id === 'javascript.module-graph-sha256',
-  );
+  const graphEvidence = result.evidence.find(({ id }) => id === 'javascript.module-graph-sha256');
   expect(graphEvidence?.value).toEqual(expect.stringMatching(/^[a-f0-9]{64}$/u));
 });
 
@@ -335,7 +326,7 @@ test('不正なModule graphをfail-closedで拒否し、未解析コードを実
     capabilityProfile: 'modules',
     entryFile: 'src/main.js',
     files: {
-      'src/main.js': "import './evil.js\\nconsole.log(\\\"injected\\\")//.js';",
+      'src/main.js': 'import \'./evil.js\\nconsole.log(\\"injected\\")//.js\';',
       'src/evil.js\nconsole.log("injected")//.js': 'export const value = 1;',
     },
   });
@@ -410,9 +401,7 @@ test('coreとprojectの両Profileで危険Capabilityをcode-errorとして拒否
   }
 });
 
-test('全Profileでcomputed property runtime escapeをcode-errorとして拒否する', async ({
-  page,
-}) => {
+test('全Profileでcomputed property runtime escapeをcode-errorとして拒否する', async ({ page }) => {
   const source = `const el = document.querySelector('#message');
 const d = el['owner' + 'Document'];
 const w = d['default' + 'View'];
@@ -432,9 +421,7 @@ d['query' + 'Selector']('head')['append' + 'Child'](s);`;
   }
 });
 
-test('全ProfileでObject reflection runtime escapeをcode-errorとして拒否する', async ({
-  page,
-}) => {
+test('全ProfileでObject reflection runtime escapeをcode-errorとして拒否する', async ({ page }) => {
   const source = `function descriptorFor(value, name) {
   let prototype = value;
   while (prototype !== null) {
@@ -603,10 +590,7 @@ element.click();`,
   for (const source of sources) {
     const result = await runJavaScriptHarness(page, { capabilityProfile: 'dom', source });
     expect(result.rejection).toBeNull();
-    expect(
-      result.diagnostics,
-      `${source}\n${JSON.stringify(result.evidence)}`,
-    ).toContainEqual(
+    expect(result.diagnostics, `${source}\n${JSON.stringify(result.evidence)}`).toContainEqual(
       expect.objectContaining({ kind: 'system', code: 'javascript-budget' }),
     );
   }
@@ -632,6 +616,159 @@ document.querySelector('#message').textContent = 'JavaScriptで文字を変え�
   await expect(consoleRegion.locator('img')).toHaveCount(0);
   expect(await page.evaluate(() => document.body.dataset['consolePwned'] ?? null)).toBeNull();
   expect(externalRequests).toEqual([]);
+});
+
+test('Interactionは別frame・stale・replay・oversize要求を実ブラウザで拒否する', async ({
+  page,
+}) => {
+  const runnerModulePath = await loadJavaScriptRunnerModulePath();
+  const evidence = await page.evaluate<
+    InteractionSecurityEvidence,
+    { readonly runnerModulePath: string }
+  >(
+    async ({ runnerModulePath }) => {
+      const { JavaScriptRunnerAdapter } = (await import(/* @vite-ignore */ runnerModulePath)) as {
+        readonly JavaScriptRunnerAdapter: typeof JavaScriptRunnerAdapterType;
+      };
+      const runner = new JavaScriptRunnerAdapter();
+      const frame = document.createElement('iframe');
+      const otherFrame = document.createElement('iframe');
+      frame.style.position = 'fixed';
+      frame.style.inset = '0';
+      frame.style.opacity = '0';
+      frame.style.pointerEvents = 'none';
+      otherFrame.style.display = 'none';
+      document.body.append(frame, otherFrame);
+      await runner.prepare(frame);
+      const exerciseSessionId = crypto.randomUUID();
+      let executionRevision = 1;
+      const render = async () =>
+        runner.render({
+          exerciseSessionId,
+          executionRevision,
+          languageId: 'javascript',
+          files: {
+            'index.html': '<button id="answer" type="button">回答</button>',
+            'styles.css': '',
+            'script.js':
+              "document.querySelector('#answer').addEventListener('click', () => console.log('answer'));",
+          },
+          assets: [],
+          viewport: { id: 'desktop', width: 1280, height: 720 },
+          options: {
+            runtime: {
+              kind: 'javascript',
+              entryFile: 'script.js',
+              sourceType: 'script',
+              capabilityProfile: 'dom',
+              primaryOutput: 'preview',
+            },
+          },
+        });
+      const rejection = async (operation: Promise<unknown>): Promise<string> => {
+        try {
+          await operation;
+          return 'resolved';
+        } catch (error: unknown) {
+          return error instanceof Error ? error.message : String(error);
+        }
+      };
+
+      try {
+        const first = await render();
+        if (first.frameGeneration === undefined) throw new Error('frame generationがありません');
+        const requestId = 'interaction-security-valid';
+        const valid = runner.interact({
+          exerciseSessionId,
+          executionRevision,
+          frameGeneration: first.frameGeneration,
+          requestId,
+          action: { id: 'answer', kind: 'click', selector: '#answer' },
+        });
+        const forgedEnvelope = {
+          version: 1,
+          type: 'javascript.interaction-complete',
+          exerciseSessionId,
+          executionRevision,
+          frameGeneration: first.frameGeneration,
+          requestId,
+          oneTimeToken: 'forged-token',
+          payload: { error: null, console: [] },
+        };
+        window.dispatchEvent(
+          new MessageEvent('message', { source: otherFrame.contentWindow, data: forgedEnvelope }),
+        );
+        window.dispatchEvent(
+          new MessageEvent('message', {
+            source: window,
+            data: { ...forgedEnvelope, executionRevision: executionRevision + 1 },
+          }),
+        );
+        const validResult = await valid;
+
+        const replay = await rejection(
+          runner.interact({
+            exerciseSessionId,
+            executionRevision,
+            frameGeneration: first.frameGeneration,
+            requestId,
+            action: { id: 'answer-again', kind: 'click', selector: '#answer' },
+          }),
+        );
+        const oversizeSelector = await rejection(
+          runner.interact({
+            exerciseSessionId,
+            executionRevision,
+            frameGeneration: first.frameGeneration,
+            requestId: 'interaction-oversize-selector',
+            action: { id: 'oversize-selector', kind: 'click', selector: '#'.repeat(257) },
+          }),
+        );
+        const oversizeValue = await rejection(
+          runner.interact({
+            exerciseSessionId,
+            executionRevision,
+            frameGeneration: first.frameGeneration,
+            requestId: 'interaction-oversize-value',
+            action: {
+              id: 'oversize-value',
+              kind: 'fill',
+              selector: '#answer',
+              value: 'x'.repeat(4_097),
+            },
+          }),
+        );
+        executionRevision += 1;
+        const second = await render();
+        if (second.frameGeneration === undefined) throw new Error('frame generationがありません');
+        const stale = await rejection(
+          runner.interact({
+            exerciseSessionId,
+            executionRevision,
+            frameGeneration: first.frameGeneration,
+            requestId: 'interaction-stale',
+            action: { id: 'stale', kind: 'click', selector: '#answer' },
+          }),
+        );
+
+        return {
+          validRequestId: validResult.requestId,
+          rejections: { replay, oversizeSelector, oversizeValue, stale },
+        };
+      } finally {
+        await runner.dispose();
+        frame.remove();
+        otherFrame.remove();
+      }
+    },
+    { runnerModulePath },
+  );
+
+  expect(evidence.validRequestId).toBe('interaction-security-valid');
+  expect(evidence.rejections.replay).toMatch(/duplicated/u);
+  expect(evidence.rejections.oversizeSelector).toMatch(/invalid/u);
+  expect(evidence.rejections.oversizeValue).toMatch(/invalid/u);
+  expect(evidence.rejections.stale).toMatch(/current/u);
 });
 
 test('JavaScript Capability payloadをfail-closedで拒否し、親画面と外部通信を守る', async ({
