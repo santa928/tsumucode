@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 240" role="img" aria-labelledby="title desc">
+  <title id="title">コードの順番とConsole出力</title>
+  <desc id="desc">3行のコードから問題1、3、trueが同じ順番でConsoleへ届く</desc>
+  <rect width="800" height="240" rx="24" fill="#fffaf0" />
+  <rect x="28" y="28" width="350" height="184" rx="18" fill="#173f35" />
+  <text x="52" y="70" fill="#f2c94c" font-family="monospace" font-size="22">1  console.log('問題1')</text>
+  <text x="52" y="120" fill="#ffffff" font-family="monospace" font-size="22">2  console.log(3)</text>
+  <text x="52" y="170" fill="#ffffff" font-family="monospace" font-size="22">3  console.log(true)</text>
+  <path d="M405 120h55" stroke="#1d6b55" stroke-width="8" stroke-linecap="round" />
+  <path d="m450 102 22 18-22 18" fill="none" stroke="#1d6b55" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+  <rect x="492" y="28" width="280" height="184" rx="18" fill="#ffffff" stroke="#1d6b55" stroke-width="4" />
+  <text x="520" y="68" fill="#1d6b55" font-family="system-ui" font-size="20" font-weight="700">Console</text>
+  <text x="520" y="110" fill="#173f35" font-family="monospace" font-size="24">問題1</text>
+  <text x="520" y="150" fill="#173f35" font-family="monospace" font-size="24">3</text>
+  <text x="520" y="190" fill="#173f35" font-family="monospace" font-size="24">true</text>
+</svg>

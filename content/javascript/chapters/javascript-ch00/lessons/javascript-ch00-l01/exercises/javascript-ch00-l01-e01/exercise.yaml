@@ -117,7 +117,7 @@ fixtures:
           source: fixtures/html-only/script.js,
           editable: false,
         }
-    expectedFeedbackRuleIds: [javascript-ch00-l01-e01-r01]
+    expectedFeedbackRuleIds: [javascript-ch00-l01-e01-r01, javascript-ch00-l01-e01-r02]
   - id: wrong-literal
     expectedStatus: incomplete
     files:
@@ -188,6 +188,7 @@ fixtures:
     expectedFeedbackRuleIds: []
   - id: system-error
     expectedStatus: system-error
+    faultInjection: stale-source-evidence
     files:
       - {
           path: index.html,

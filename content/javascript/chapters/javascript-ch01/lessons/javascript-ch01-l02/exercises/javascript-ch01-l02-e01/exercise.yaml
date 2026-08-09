@@ -1,0 +1,145 @@
+id: javascript-ch01-l02-e01
+kind: standard
+workspaceId: javascript-ch01-l02-e01
+countsTowardStandardExerciseTotal: true
+title: constの変数から問題文を表示する
+instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: const-console-output, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: set-question-text
+    file: script.js
+    target: const questionTextの右側にある引用符の中
+    starterAnchor: "const questionText = 'ここを書き換えます';"
+    change: 文字を「問題2を始めます」へ置き換える
+    observe: Consoleに問題2を始めますと表示される
+    requiresConceptIds: [const-console-output]
+    validationRuleIds:
+      [javascript-ch01-l02-e01-r01, javascript-ch01-l02-e01-r02, javascript-ch01-l02-e01-r03]
+files:
+  - { path: script.js, language: javascript, source: starter/script.js, editable: true }
+  - { path: index.html, language: html, source: starter/index.html, editable: false }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: false }
+solutionFiles:
+  - { path: script.js, language: javascript, source: solution/script.js, editable: false }
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: javascript-ch01-l02-e01-r01
+    groupId: javascript-ch01-l02-e01-result
+    label: questionTextをconstで宣言する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: binding, name: questionText, declarationKind: const }
+    feedback:
+      target: script.jsとConsole
+      expected: const questionTextの宣言
+      nextAction: 1行目のconstと変数名を残します。
+    hintId: javascript-ch01-l02-e01-h01
+    relatedSlideId: javascript-ch01-l02-s02
+  - id: javascript-ch01-l02-e01-r02
+    groupId: javascript-ch01-l02-e01-result
+    label: console.logから値を読む
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: call, callee: console.log }
+    feedback:
+      target: script.jsとConsole
+      expected: console.logの呼び出し
+      nextAction: 2行目のconsole.log(questionText)を残します。
+    hintId: javascript-ch01-l02-e01-h02
+    relatedSlideId: javascript-ch01-l02-s03
+  - id: javascript-ch01-l02-e01-r03
+    groupId: javascript-ch01-l02-e01-result
+    label: 変数の問題文を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-console }
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - { level: log, text: 問題2を始めます }
+    feedback:
+      target: script.jsとConsole
+      expected: 問題2を始めますと表示
+      nextAction: 1行目の引用符内を見直します。
+    hintId: javascript-ch01-l02-e01-h03
+    relatedSlideId: javascript-ch01-l02-s04
+hints:
+  - id: javascript-ch01-l02-e01-h01
+    level: 1
+    title: 宣言を残す
+    text: 1行目のconst questionTextとイコールは削除しません。
+    relatedSlideId: javascript-ch01-l02-s02
+  - id: javascript-ch01-l02-e01-h02
+    level: 2
+    title: 変数から読み出す
+    text: 2行目は文字列を直接書かず、questionTextを丸括弧に残します。
+    relatedSlideId: javascript-ch01-l02-s03
+  - id: javascript-ch01-l02-e01-h03
+    level: 3
+    title: 引用符の中だけを直す
+    text: 1行目の引用符内を「問題2を始めます」へ置き換えます。
+    relatedSlideId: javascript-ch01-l02-s04
+relatedSlideIds:
+  - javascript-ch01-l02-s03
+  - javascript-ch01-l02-s04
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: pass
+    expectedStatus: pass
+    files:
+      - { path: script.js, language: javascript, source: fixtures/pass.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: incomplete
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/incomplete.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - javascript-ch01-l02-e01-r01
+      - javascript-ch01-l02-e01-r02
+      - javascript-ch01-l02-e01-r03
+  - id: literal-only
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/literal-only.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - javascript-ch01-l02-e01-r01
+      - javascript-ch01-l02-e01-r02
+      - javascript-ch01-l02-e01-r03
+  - id: syntax-error
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/syntax-error.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: security
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/security.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

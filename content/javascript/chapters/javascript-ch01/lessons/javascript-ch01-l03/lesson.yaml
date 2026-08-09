@@ -1,0 +1,19 @@
+id: javascript-ch01-l03
+kind: standard
+title: 演算で得点を計算する
+goal: 数値を掛け算し、計算結果をconstへ入れてConsoleで確かめられる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch01-l02]
+slideSources:
+  - slides/s01-calculation-as-a-value.md
+  - slides/s02-multiply-before-add.md
+  - slides/s03-score-calculation.md
+  - slides/s04-operator-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch01-l03-e01/exercise.yaml
+reflection: 演算式も1つの値になり、掛け算は足し算より先に計算される。
+glossaryRefs: [operator, multiplication, addition, precedence, const, number]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch01-l03-s04
+  requiredExerciseIds: [javascript-ch01-l03-e01]

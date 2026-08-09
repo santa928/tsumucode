@@ -1,0 +1,19 @@
+id: javascript-ch01-l01
+kind: standard
+title: 値をConsoleで確かめる
+goal: 文字列・数値・真偽値を見分け、console.logで順番どおりに確かめられる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch00-l01]
+slideSources:
+  - slides/s01-values-on-screen.md
+  - slides/s02-three-value-types.md
+  - slides/s03-console-log.md
+  - slides/s04-output-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch01-l01-e01/exercise.yaml
+reflection: 値には種類があり、console.logへ渡すと上から順に結果を確かめられる。
+glossaryRefs: [javascript, script-file, console, value, string, number, boolean]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch01-l01-s04
+  requiredExerciseIds: [javascript-ch01-l01-e01]

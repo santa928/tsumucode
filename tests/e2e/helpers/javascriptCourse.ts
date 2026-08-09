@@ -17,13 +17,30 @@ export const JAVASCRIPT_STARTER_SOURCE =
 export const JAVASCRIPT_SOLUTION_SOURCE =
   "document.querySelector('#message').textContent = 'JavaScriptで文字を変えました';\n";
 
-/** JavaScript Chapter 00の公開Exercise直接routeを返す。 */
-export function javascriptExerciseRoute(): string {
-  return `${testBasePath()}#/courses/${JAVASCRIPT_COURSE_ID}/lessons/${JAVASCRIPT_LESSON_ID}/exercises/${JAVASCRIPT_EXERCISE_ID}`;
+export interface JavaScriptExerciseLocation {
+  readonly lessonId: string;
+  readonly exerciseId: string;
+  readonly title: string;
+}
+
+const JAVASCRIPT_CH00_EXERCISE: JavaScriptExerciseLocation = {
+  lessonId: JAVASCRIPT_LESSON_ID,
+  exerciseId: JAVASCRIPT_EXERCISE_ID,
+  title: JAVASCRIPT_EXERCISE_TITLE,
+};
+
+/** 指定JavaScript Exerciseの公開直接routeを返す。 */
+export function javascriptExerciseRoute(
+  exercise: JavaScriptExerciseLocation = JAVASCRIPT_CH00_EXERCISE,
+): string {
+  return `${testBasePath()}#/courses/${JAVASCRIPT_COURSE_ID}/lessons/${exercise.lessonId}/exercises/${exercise.exerciseId}`;
 }
 
 /** Desktop編集条件でJavaScript Exerciseを直接開き、遅延Runtimeの準備完了を待つ。 */
-export async function openEditableJavaScriptExercise(page: Page): Promise<void> {
+export async function openEditableJavaScriptExercise(
+  page: Page,
+  exercise: JavaScriptExerciseLocation = JAVASCRIPT_CH00_EXERCISE,
+): Promise<void> {
   const networkErrors: string[] = [];
   const browserErrors: string[] = [];
   const recordBadResponse = (response: Response): void => {
@@ -46,10 +63,10 @@ export async function openEditableJavaScriptExercise(page: Page): Promise<void> 
   page.on('console', recordConsoleError);
   await page.setViewportSize({ width: 1280, height: 720 });
   try {
-    await page.goto(javascriptExerciseRoute());
-    await expect(
-      page.getByRole('heading', { level: 1, name: JAVASCRIPT_EXERCISE_TITLE }),
-    ).toBeVisible({ timeout: 15_000 });
+    await page.goto(javascriptExerciseRoute(exercise));
+    await expect(page.getByRole('heading', { level: 1, name: exercise.title })).toBeVisible({
+      timeout: 15_000,
+    });
     await expect(page.getByTestId('code-workspace')).toBeVisible();
     await expect(page.getByRole('button', { name: '判定する' })).toBeEnabled({ timeout: 15_000 });
     await expect(page.getByTestId('runtime-preview-frame').locator('iframe')).toBeVisible();

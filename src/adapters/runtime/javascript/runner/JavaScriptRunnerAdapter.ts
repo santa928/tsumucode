@@ -250,10 +250,15 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
   #inFlight: InFlightRender | undefined;
   #focusReturnTarget: HTMLElement | undefined;
   #generation = 0;
+  #initialSrcdocLoadPending = false;
 
   readonly #loadListener = (): void => {
     const frame = this.#frame;
     const active = this.#active;
+    if (this.#initialSrcdocLoadPending) {
+      this.#initialSrcdocLoadPending = false;
+      return;
+    }
     if (frame === undefined || active === undefined || this.#inFlight !== undefined) return;
     active.bridge.dispose();
     active.execution.dispose();
@@ -522,6 +527,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
       operation.bridge = bridge;
       operation.execution = execution;
       applyPreviewViewport(frame, input.viewport);
+      this.#initialSrcdocLoadPending = true;
       frame.srcdoc = srcdoc;
       const [, executionPayload] = await Promise.all([
         bridge.waitUntilReady(),
@@ -601,6 +607,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
   async #tryRestore(frame: HTMLIFrameElement, operation: InFlightRender): Promise<void> {
     const previous = this.#restorable;
     if (previous === undefined) {
+      this.#initialSrcdocLoadPending = false;
       frame.srcdoc = '';
       return;
     }
@@ -625,6 +632,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
     operation.execution = execution;
     try {
       applyPreviewViewport(frame, previous.viewport);
+      this.#initialSrcdocLoadPending = true;
       frame.srcdoc = previous.srcdoc;
       await Promise.all([bridge.waitUntilReady(), execution.waitUntilExecuted()]);
       this.#assertCurrent(frame, operation);
@@ -635,6 +643,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
       execution.dispose();
       this.#disposeResources(previous.resources);
       this.#restorable = undefined;
+      this.#initialSrcdocLoadPending = false;
       frame.srcdoc = '';
       if (!this.#isCurrent(frame, operation)) throw renderAbortError();
     }
@@ -716,7 +725,10 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
     this.#active = undefined;
     this.#disposeResources(this.#restorable?.resources);
     this.#restorable = undefined;
-    if (clearFrame && this.#frame !== undefined) this.#frame.srcdoc = '';
+    if (clearFrame && this.#frame !== undefined) {
+      this.#initialSrcdocLoadPending = false;
+      this.#frame.srcdoc = '';
+    }
     if (pending?.promise !== undefined) await pending.promise.catch(() => undefined);
   }
 }

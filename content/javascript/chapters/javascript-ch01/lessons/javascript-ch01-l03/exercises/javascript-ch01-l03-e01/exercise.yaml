@@ -1,0 +1,150 @@
+id: javascript-ch01-l03-e01
+kind: standard
+workspaceId: javascript-ch01-l03-e01
+countsTowardStandardExerciseTotal: true
+title: 問題数と点数を掛けて合計を出す
+instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: score-calculation, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: multiply-score
+    file: script.js
+    target: totalScoreを作る式の演算子
+    starterAnchor: 'const totalScore = questionCount + pointPerQuestion;'
+    change: 足し算の+を掛け算の*へ置き換える
+    observe: Consoleに30と表示される
+    requiresConceptIds: [score-calculation]
+    validationRuleIds:
+      [javascript-ch01-l03-e01-r01, javascript-ch01-l03-e01-r02, javascript-ch01-l03-e01-r03]
+files:
+  - { path: script.js, language: javascript, source: starter/script.js, editable: true }
+  - { path: index.html, language: html, source: starter/index.html, editable: false }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: false }
+solutionFiles:
+  - { path: script.js, language: javascript, source: solution/script.js, editable: false }
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: javascript-ch01-l03-e01-r01
+    groupId: javascript-ch01-l03-e01-result
+    label: 掛け算の式を使う
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: binary-expression, operator: '*' }
+    feedback:
+      target: script.jsとConsole
+      expected: 掛け算の演算子*
+      nextAction: totalScoreの式にある+を*へ変えます。
+    hintId: javascript-ch01-l03-e01-h01
+    relatedSlideId: javascript-ch01-l03-s01
+  - id: javascript-ch01-l03-e01-r02
+    groupId: javascript-ch01-l03-e01-result
+    label: totalScoreをconstで宣言する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: binding, name: totalScore, declarationKind: const }
+    feedback:
+      target: script.jsとConsole
+      expected: const totalScoreの宣言
+      nextAction: totalScoreの変数名を残します。
+    hintId: javascript-ch01-l03-e01-h02
+    relatedSlideId: javascript-ch01-l03-s03
+  - id: javascript-ch01-l03-e01-r03
+    groupId: javascript-ch01-l03-e01-result
+    label: 合計30を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-console }
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - { level: log, text: '30' }
+    feedback:
+      target: script.jsとConsole
+      expected: 30と表示
+      nextAction: 問題数と1問の点数を掛けているか確認します。
+    hintId: javascript-ch01-l03-e01-h03
+    relatedSlideId: javascript-ch01-l03-s04
+hints:
+  - id: javascript-ch01-l03-e01-h01
+    level: 1
+    title: 計算の意味を確認する
+    text: 3問それぞれが10点なので、問題数と1問の点数を掛けます。
+    relatedSlideId: javascript-ch01-l03-s01
+  - id: javascript-ch01-l03-e01-h02
+    level: 2
+    title: 変数名は残す
+    text: questionCount、pointPerQuestion、totalScoreは変更しません。
+    relatedSlideId: javascript-ch01-l03-s03
+  - id: javascript-ch01-l03-e01-h03
+    level: 3
+    title: 演算子1文字を直す
+    text: totalScoreを作る行の+を*へ置き換えます。
+    relatedSlideId: javascript-ch01-l03-s04
+relatedSlideIds:
+  - javascript-ch01-l03-s03
+  - javascript-ch01-l03-s04
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: pass
+    expectedStatus: pass
+    files:
+      - { path: script.js, language: javascript, source: fixtures/pass.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: incomplete
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/incomplete.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - javascript-ch01-l03-e01-r01
+      - javascript-ch01-l03-e01-r02
+      - javascript-ch01-l03-e01-r03
+  - id: hardcoded-total
+    expectedStatus: incomplete
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/hardcoded-total.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - javascript-ch01-l03-e01-r01
+      - javascript-ch01-l03-e01-r02
+      - javascript-ch01-l03-e01-r03
+  - id: syntax-error
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/syntax-error.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: security
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/security.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

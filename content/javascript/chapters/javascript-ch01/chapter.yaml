@@ -1,0 +1,11 @@
+id: javascript-ch01
+sequence: 1
+title: 値・変数・型・演算
+goal: JavaScriptの値へ名前をつけ、計算や更新の結果をConsoleで確かめられる。
+estimatedMinutes: 60
+kind: standard
+lessonSources:
+  - lessons/javascript-ch01-l01/lesson.yaml
+  - lessons/javascript-ch01-l02/lesson.yaml
+  - lessons/javascript-ch01-l03/lesson.yaml
+  - lessons/javascript-ch01-l04/lesson.yaml

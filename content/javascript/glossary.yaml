@@ -34,4 +34,74 @@ entries:
     term: 文字列
     definition: 引用符で囲み、コードの中でひとまとまりの文字として扱う値。
     firstSlideId: javascript-ch00-l01-s04
-    relatedIds: [text-content]
+    relatedIds: [text-content, value, number, boolean]
+  - id: console
+    term: Console
+    definition: JavaScriptが出力した値やErrorを実行順に確認する場所。
+    firstSlideId: javascript-ch01-l01-s01
+    relatedIds: [javascript, value]
+  - id: value
+    term: 値
+    definition: JavaScriptが処理する文字列、数値、真偽値などのデータ。
+    firstSlideId: javascript-ch01-l01-s01
+    relatedIds: [string, number, boolean, variable]
+  - id: number
+    term: 数値
+    definition: 計算に使える数の値。文字列と違い、引用符で囲まない。
+    firstSlideId: javascript-ch01-l01-s02
+    relatedIds: [value, string, boolean, operator]
+  - id: boolean
+    term: 真偽値
+    definition: 正しいか違うかをtrueまたはfalseで表す値。
+    firstSlideId: javascript-ch01-l01-s02
+    relatedIds: [value, string, number]
+  - id: variable
+    term: 変数
+    definition: 値へ名前をつけ、あとからその名前で値を読み出せる仕組み。
+    firstSlideId: javascript-ch01-l02-s01
+    relatedIds: [value, identifier, const, let]
+  - id: identifier
+    term: 変数名
+    definition: 変数を区別し、その値を読み出すために付ける名前。
+    firstSlideId: javascript-ch01-l02-s01
+    relatedIds: [variable, const]
+  - id: const
+    term: const
+    definition: あとで別の値へ変えない変数を宣言するためのキーワード。
+    firstSlideId: javascript-ch01-l02-s02
+    relatedIds: [variable, identifier, let]
+  - id: operator
+    term: 演算子
+    definition: 足し算や掛け算など、値に対する計算を表す記号。
+    firstSlideId: javascript-ch01-l03-s01
+    relatedIds: [multiplication, addition, precedence, number]
+  - id: multiplication
+    term: 掛け算
+    definition: JavaScriptではアスタリスク（*）で表す数値の演算。
+    firstSlideId: javascript-ch01-l03-s01
+    relatedIds: [operator, addition, precedence]
+  - id: addition
+    term: 足し算
+    definition: JavaScriptではプラス（+）で表す数値の演算。
+    firstSlideId: javascript-ch01-l03-s02
+    relatedIds: [operator, multiplication, precedence]
+  - id: precedence
+    term: 演算の優先順位
+    definition: 1つの式に複数の演算があるとき、どれを先に計算するかの決まり。
+    firstSlideId: javascript-ch01-l03-s02
+    relatedIds: [operator, multiplication, addition]
+  - id: let
+    term: let
+    definition: あとで値を更新する変数を宣言するためのキーワード。
+    firstSlideId: javascript-ch01-l04-s02
+    relatedIds: [variable, const, reassignment]
+  - id: reassignment
+    term: 再代入
+    definition: 変数へ新しい値を入れ直して、現在の値を更新すること。
+    firstSlideId: javascript-ch01-l04-s03
+    relatedIds: [let, addition-assignment]
+  - id: addition-assignment
+    term: 加算代入
+    definition: 現在の値へ右側の値を加え、同じ変数へ入れ直す+=の書き方。
+    firstSlideId: javascript-ch01-l04-s03
+    relatedIds: [let, reassignment, addition]

@@ -98,6 +98,7 @@ export const FixtureSourceSchema = z
   .object({
     id: IdSchema,
     expectedStatus: z.enum(['pass', 'incomplete', 'code-error', 'system-error']),
+    faultInjection: z.literal('stale-source-evidence').optional(),
     files: z.array(FileSourceSchema).min(1),
     expectedFeedbackRuleIds: z.array(IdSchema),
   })
@@ -292,6 +293,13 @@ export const ExerciseSourceSchema = z
           code: 'custom',
           path: [...path, 'expectedFeedbackRuleIds'],
           message: 'system-error FixtureのRule Feedbackは空にしてください',
+        });
+      }
+      if (fixture.faultInjection !== undefined && fixture.expectedStatus !== 'system-error') {
+        context.addIssue({
+          code: 'custom',
+          path: [...path, 'faultInjection'],
+          message: '基盤障害faultはsystem-error Fixtureだけに指定してください',
         });
       }
       if (fixture.expectedStatus === 'incomplete' && fixture.expectedFeedbackRuleIds.length === 0) {

@@ -379,6 +379,24 @@ describe('LearningSessionController', () => {
     await controller.dispose();
   });
 
+  it('単一viewportかつInteractionなしの判定は同じframeを再描画せず表示へ採用する', async () => {
+    const runtime = runnerHarness();
+    const renderImplementation = runtime.render.getMockImplementation();
+    if (renderImplementation === undefined) throw new Error('render fixtureがありません');
+    const consoleRecords = [{ sequence: 0, level: 'log' as const, text: '問題1' }];
+    runtime.render.mockImplementation(async (input) => ({
+      ...(await renderImplementation(input)),
+      console: consoleRecords,
+    }));
+    const controller = new LearningSessionController(controllerInput({ runner: runtime.runner }));
+
+    await controller.validateNow();
+
+    expect(runtime.render).toHaveBeenCalledOnce();
+    expect(controller.getSnapshot().runtimeOutput?.console).toEqual(consoleRecords);
+    await controller.dispose();
+  });
+
   it('先行保存→全viewport render/snapshot→判定保存→表示viewport復元を同revisionで直列実行する', async () => {
     const events: string[] = [];
     const current = exercise({
@@ -1161,17 +1179,27 @@ describe('LearningSessionController', () => {
     const renderImplementation = runtime.render.getMockImplementation();
     if (renderImplementation === undefined) throw new Error('render fixtureがありません');
     runtime.render.mockImplementation(async (input) => {
-      if (runtime.render.mock.calls.length === 2) await displayRestore.promise;
+      if (runtime.render.mock.calls.length === 3) await displayRestore.promise;
       return renderImplementation(input);
     });
     const persistence = repositoryHarness();
+    const current = exercise({
+      previewViewports: [
+        { id: 'desktop', width: 1280, height: 720 },
+        { id: 'mobile', width: 390, height: 844 },
+      ],
+    });
     const controller = new LearningSessionController(
-      controllerInput({ runner: runtime.runner, repository: persistence.repository }),
+      controllerInput({
+        exercise: current,
+        runner: runtime.runner,
+        repository: persistence.repository,
+      }),
     );
     controller.edit('index.html', '<main>before restore</main>');
     const validating = controller.validateNow();
     await vi.waitFor(() => {
-      expect(runtime.render).toHaveBeenCalledTimes(2);
+      expect(runtime.render).toHaveBeenCalledTimes(3);
     });
     controller.edit('index.html', '<main>during restore</main>');
     displayRestore.resolve(undefined);

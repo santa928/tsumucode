@@ -1,0 +1,19 @@
+id: javascript-ch01-l04
+kind: standard
+title: letの値を更新する
+goal: 変わる値だけをletで宣言し、+=で現在の値へ数値を加えられる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch01-l03]
+slideSources:
+  - slides/s01-values-that-change.md
+  - slides/s02-const-and-let.md
+  - slides/s03-add-and-assign.md
+  - slides/s04-let-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch01-l04-e01/exercise.yaml
+reflection: constは変えない値、letは変わる値に使い、+=は加算と再代入をまとめる。
+glossaryRefs: [let, reassignment, addition-assignment, variable, const, console]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch01-l04-s04
+  requiredExerciseIds: [javascript-ch01-l04-e01]

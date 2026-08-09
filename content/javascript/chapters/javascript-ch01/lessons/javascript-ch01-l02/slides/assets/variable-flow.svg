@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 240" role="img" aria-labelledby="title desc">
+  <title id="title">変数から値を読み出す流れ</title>
+  <desc id="desc">questionTextという名前の箱に問題文が入り、その値がConsoleへ届く</desc>
+  <rect width="800" height="240" rx="24" fill="#fffaf0" />
+  <text x="42" y="62" fill="#173f35" font-family="system-ui" font-size="22" font-weight="700">constで名前をつける</text>
+  <rect x="42" y="84" width="320" height="110" rx="18" fill="#ffffff" stroke="#1d6b55" stroke-width="4" />
+  <rect x="42" y="84" width="320" height="38" rx="16" fill="#1d6b55" />
+  <text x="66" y="111" fill="#ffffff" font-family="monospace" font-size="20">questionText</text>
+  <text x="66" y="162" fill="#173f35" font-family="system-ui" font-size="22">問題2を始めます</text>
+  <path d="M392 139h64" stroke="#f2c94c" stroke-width="8" stroke-linecap="round" />
+  <path d="m446 121 22 18-22 18" fill="none" stroke="#f2c94c" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+  <rect x="490" y="84" width="268" height="110" rx="18" fill="#173f35" />
+  <text x="516" y="120" fill="#f2c94c" font-family="system-ui" font-size="20" font-weight="700">Console</text>
+  <text x="516" y="162" fill="#ffffff" font-family="system-ui" font-size="22">問題2を始めます</text>
+</svg>

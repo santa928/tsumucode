@@ -773,6 +773,29 @@ describe('JavaScriptRunnerAdapter', () => {
     await runner.dispose();
   });
 
+  it('readyより遅れて届く初回loadを外部navigationとして誤判定しない', async () => {
+    const analyzer = {
+      analyze: vi.fn(async () => analysisSuccess()),
+      dispose: vi.fn(async () => undefined),
+    };
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    const runner = new JavaScriptRunnerAdapter({ analyzer });
+    await runner.prepare(frame);
+    const render = runner.render(runnerInput());
+    await vi.waitFor(() => {
+      expect(frame.srcdoc).not.toBe('');
+    });
+    dispatchExecution(frame);
+    dispatchBridgeReady(frame);
+    await render;
+
+    frame.dispatchEvent(new Event('load'));
+
+    expect(frame.srcdoc).not.toBe('');
+    await runner.dispose();
+  });
+
   it('ready後にiframe navigationが再発したらactive Previewを破棄する', async () => {
     const analyzer = {
       analyze: vi.fn(async () => analysisSuccess()),
@@ -786,6 +809,7 @@ describe('JavaScriptRunnerAdapter', () => {
     await vi.waitFor(() => {
       expect(frame.srcdoc).not.toBe('');
     });
+    frame.dispatchEvent(new Event('load'));
     dispatchExecution(frame);
     dispatchBridgeReady(frame);
     await render;

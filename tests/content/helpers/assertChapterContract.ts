@@ -14,8 +14,9 @@ const CONCEPT_KINDS = new Set(['concept', 'comparison', 'diagram', 'code']);
 
 /** 章SourceのID、順序、集計、時間を1つの期待値で検証する。 */
 export async function assertChapterContract(expected: ChapterContractExpectation): Promise<void> {
+  const courseId = expected.chapterId.replace(/-ch\d+$/u, '');
   const loaded = await loadChapterPackage(
-    path.resolve(`content/html-css/chapters/${expected.chapterId}/chapter.yaml`),
+    path.resolve(`content/${courseId}/chapters/${expected.chapterId}/chapter.yaml`),
   );
   expect(loaded.chapter.id).toBe(expected.chapterId);
   expect(loaded.chapter.estimatedMinutes).toBe(expected.estimatedMinutes);

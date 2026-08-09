@@ -6,11 +6,55 @@ lessons:
   - lessonId: javascript-ch00-l01
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: e534feb935a032267789074c2fab9ba8f8a4274778e953d473aa8d33a3067076
+    sourceHash: 431f7374a1f7ac500bda4da7529d6a94b04d71fb5f318f155f3e0830aa60ac42
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 4枚のSlideが引用符内だけを変更するExerciseへ段階接続すること、3段階Hint、Solution、8 FixtureのSourceを確認。公開後是正でs01の未対応強調記法を除去し、役割説明とExercise整合が変わらないことを再確認。Solution／incomplete／HTML-only／wrong literal／syntax／security／timeoutを実Analyzerで実行済み。3 BrowserのRunner検証は後続Gateで行う。
+    notes: 4枚のSlideが引用符内だけを変更するExerciseへ段階接続すること、3段階Hint、Solution、8 FixtureのSourceを確認。公開後是正でs01の未対応強調記法を除去し、役割説明とExercise整合が変わらないことを再確認。Solution／incomplete／HTML-only／wrong literal／syntax／security／timeout／stale source evidenceを実Browser Runner／Validatorで実行済み。
+  - lessonId: javascript-ch01-l01
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 270034cb192a47c0748db4169bbbc301502ca7403f1045f9e33e6a58c4093347
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 文字列・数値・真偽値をConsoleへ順番に出す4枚のSlideとExerciseを照合。Source FactとConsole完全一致のAND判定、3段階Hint、Solution、pass／incomplete／型違い／syntax／securityの5 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch01-l02
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 894b6d67246d9925c61e72b869724b88827c9659a18146fcd566c5c3efd22431
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: constによる名前付けと参照を4枚のSlideからExerciseへ段階接続。宣言Fact・参照Fact・Console完全一致のAND判定、3段階Hint、Solution、5 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch01-l03
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: e3b3ac28ab4696feba04bd6c094292d9280513ffb090164b1c82834791e7b027
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 四則演算のうち加算を既習のconstと組み合わせ、計算式をConsoleへ出す4枚のSlideとExerciseを照合。二項演算Fact・Console完全一致、3段階Hint、Solution、5 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch01-l04
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 46db3154565082f9d7cc6d17fc0dbd000ddc36fb7dad89e72e77d556420fca19
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: letの宣言・再代入・最終値を4枚のSlideからExerciseへ接続。宣言Fact・代入Fact・Console完全一致のAND判定、3段階Hint、Solution、5 Fixtureを実Browser Runner／Validatorで確認。

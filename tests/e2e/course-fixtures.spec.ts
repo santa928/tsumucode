@@ -5,11 +5,15 @@ import {
   type AuthoringFixture,
 } from '../../scripts/content/compileCourse';
 import { readSplitCourseArtifacts } from '../../scripts/content/readSplitCourseArtifacts';
-import type { HtmlCssRunnerAdapter as HtmlCssRunnerAdapterType } from '../../src/adapters/runtime/html-css';
 import type { AssetRef, ExerciseFile } from '../../src/core/content/types';
+import type { RunnerAdapter } from '../../src/core/runtime/contracts';
 import type { ValidationResult } from '../../src/core/validation/contracts';
-import type { ValidatorRuleEngine as ValidatorRuleEngineType } from '../../src/core/validation/validatorRuleEngine';
+import type { ValidatorAdapter } from '../../src/core/validation/contracts';
 import { observeRuntimePage, readRuntimeErrors } from './helpers/openRuntimeFixture';
+import {
+  loadJavaScriptRunnerModulePath,
+  loadJavaScriptValidatorModulePath,
+} from './helpers/javascriptRunnerModule';
 import { testBasePath, testServerUrl } from './helpers/testBasePath';
 
 interface BrowserFixtureCase {
@@ -18,6 +22,7 @@ interface BrowserFixtureCase {
   readonly workspaceAssets: readonly AssetRef[];
   readonly files: Readonly<Record<string, string>>;
   readonly expectedStatus: AuthoringFixture['expectedStatus'] | 'not-pass';
+  readonly faultInjection?: AuthoringFixture['faultInjection'];
   readonly expectedFeedbackRuleIds?: readonly string[];
 }
 
@@ -25,7 +30,12 @@ interface BrowserFixtureEvaluationInput {
   readonly fixtureCase: BrowserFixtureCase;
   readonly runnerModulePath: string;
   readonly validatorModulePath: string;
+  readonly runnerExportName: string;
+  readonly validatorExportName: string;
+  readonly languageId: string;
 }
+
+type BrowserFixtureRuntimeInput = Omit<BrowserFixtureEvaluationInput, 'fixtureCase'>;
 
 /** StarterへPayload fileを重ね、Runnerへ渡すpath-content recordを返す。 */
 function payloadFiles(
@@ -73,6 +83,7 @@ function createCases(exercises: readonly AuthoringExercise[]): readonly BrowserF
       workspaceAssets: workspaceAssets.get(authoring.workspaceId) ?? authoring.assets,
       files: payloadFiles(authoring, fixture.files),
       expectedStatus: fixture.expectedStatus,
+      ...(fixture.faultInjection === undefined ? {} : { faultInjection: fixture.faultInjection }),
       expectedFeedbackRuleIds: fixture.expectedFeedbackRuleIds,
     }));
     return [solution, starter, ...fixtureCases];
@@ -83,25 +94,42 @@ function createCases(exercises: readonly AuthoringExercise[]): readonly BrowserF
 async function evaluateCase(
   page: Page,
   fixtureCase: BrowserFixtureCase,
+  runtime: BrowserFixtureRuntimeInput,
 ): Promise<ValidationResult> {
   return page.evaluate<ValidationResult, BrowserFixtureEvaluationInput>(
     async (input) => {
       const { exercise, files, workspaceAssets } = input.fixtureCase;
-      const { runnerModulePath, validatorModulePath } = input;
-      const { HtmlCssRunnerAdapter } = (await import(/* @vite-ignore */ runnerModulePath)) as {
-        readonly HtmlCssRunnerAdapter: typeof HtmlCssRunnerAdapterType;
-      };
-      const { ValidatorRuleEngine } = (await import(/* @vite-ignore */ validatorModulePath)) as {
-        readonly ValidatorRuleEngine: typeof ValidatorRuleEngineType;
-      };
+      const {
+        languageId,
+        runnerExportName,
+        runnerModulePath,
+        validatorExportName,
+        validatorModulePath,
+      } = input;
+      const runnerModule = (await import(/* @vite-ignore */ runnerModulePath)) as Record<
+        string,
+        unknown
+      >;
+      const validatorModule = (await import(/* @vite-ignore */ validatorModulePath)) as Record<
+        string,
+        unknown
+      >;
+      const Runner = runnerModule[runnerExportName] as (new () => RunnerAdapter) | undefined;
+      const Validator = validatorModule[validatorExportName] as
+        (new () => ValidatorAdapter) | undefined;
+      if (Runner === undefined || Validator === undefined) {
+        throw new Error(
+          `Fixture runtime exportがありません: ${runnerExportName}/${validatorExportName}`,
+        );
+      }
       const harnessWindow = window as typeof window & {
         __tsumucodeCourseFixtureHarness?: {
-          readonly runner: InstanceType<typeof HtmlCssRunnerAdapter>;
+          readonly runner: RunnerAdapter;
           readonly frame: HTMLIFrameElement;
         };
       };
       if (harnessWindow.__tsumucodeCourseFixtureHarness === undefined) {
-        const runner = new HtmlCssRunnerAdapter();
+        const runner = new Runner();
         const frame = document.createElement('iframe');
         frame.style.position = 'fixed';
         frame.style.left = '0';
@@ -113,12 +141,14 @@ async function evaluateCase(
         harnessWindow.__tsumucodeCourseFixtureHarness = { runner, frame };
       }
       const { runner, frame } = harnessWindow.__tsumucodeCourseFixtureHarness;
-      const validator = new ValidatorRuleEngine();
+      const validator = new Validator();
       const exerciseSessionId = crypto.randomUUID();
       const executionRevision = 1;
       const policy = validator.buildSnapshotPolicy(exercise.validationRules);
       const snapshots: Record<string, Awaited<ReturnType<typeof runner.requestSnapshot>>> = {};
       const diagnostics: Awaited<ReturnType<typeof runner.render>>['diagnostics'][number][] = [];
+      let evidence: Awaited<ReturnType<typeof runner.render>>['evidence'] | undefined;
+      let consoleRecords: Awaited<ReturnType<typeof runner.render>>['console'] | undefined;
       const bridgeMessages: { readonly type: string; readonly sourceMatches: boolean }[] = [];
       const observeBridgeMessage = (event: MessageEvent): void => {
         if (typeof event.data !== 'object' || event.data === null) return;
@@ -132,7 +162,7 @@ async function evaluateCase(
           const rendered = await runner.render({
             exerciseSessionId,
             executionRevision,
-            languageId: 'html-css',
+            languageId,
             files,
             assets: workspaceAssets.map((asset) => ({
               id: asset.id,
@@ -140,9 +170,18 @@ async function evaluateCase(
               url: new URL(asset.path, window.location.href).href,
             })),
             viewport,
-            options: {},
+            options: exercise.runtime === undefined ? {} : { runtime: exercise.runtime },
           });
           diagnostics.push(...rendered.diagnostics);
+          if (evidence === undefined) evidence = rendered.evidence;
+          else if (JSON.stringify(evidence) !== JSON.stringify(rendered.evidence)) {
+            throw new Error('Fixture Runner evidenceがViewport間で一致しません');
+          }
+          if (consoleRecords === undefined) consoleRecords = rendered.console;
+          else if (JSON.stringify(consoleRecords) !== JSON.stringify(rendered.console)) {
+            throw new Error('Fixture Runner ConsoleがViewport間で一致しません');
+          }
+          if (rendered.diagnostics.some(({ severity }) => severity === 'error')) continue;
           snapshots[viewport.id] = await runner.requestSnapshot({
             exerciseSessionId,
             executionRevision,
@@ -150,14 +189,23 @@ async function evaluateCase(
             policy,
           });
         }
+        const validationFiles =
+          input.fixtureCase.faultInjection === 'stale-source-evidence'
+            ? {
+                ...files,
+                [exercise.runtime?.entryFile ?? 'script.js']:
+                  `${files[exercise.runtime?.entryFile ?? 'script.js'] ?? ''}\n`,
+              }
+            : files;
         return await validator.validate({
           exerciseId: exercise.id,
           rules: exercise.validationRules,
-          files,
+          ...(exercise.runtime === undefined ? {} : { runtime: exercise.runtime }),
+          files: validationFiles,
           snapshots,
           diagnostics,
-          evidence: [],
-          console: [],
+          evidence: evidence ?? [],
+          console: consoleRecords ?? [],
           interactionScenarios: exercise.interactionScenarios ?? [],
           interactionCheckpoints: {},
           now: new Date().toISOString(),
@@ -171,14 +219,7 @@ async function evaluateCase(
         window.removeEventListener('message', observeBridgeMessage);
       }
     },
-    {
-      fixtureCase,
-      runnerModulePath: new URL('src/adapters/runtime/html-css/index.ts', testServerUrl(4174)).href,
-      validatorModulePath: new URL(
-        'src/core/validation/validatorRuleEngine.ts',
-        testServerUrl(4174),
-      ).href,
-    },
+    { fixtureCase, ...runtime },
   );
 }
 
@@ -199,21 +240,56 @@ async function disposeFixtureHarness(page: Page): Promise<void> {
   });
 }
 
-test('全Solution、Starter、Fixtureを実Browser Runner／Validatorで検証する', async ({ page }) => {
-  test.setTimeout(20 * 60 * 1000);
+const HTML_FIXTURE_RUNTIME: BrowserFixtureRuntimeInput = {
+  runnerModulePath: new URL('src/adapters/runtime/html-css/index.ts', testServerUrl(4174)).href,
+  validatorModulePath: new URL('src/core/validation/validatorRuleEngine.ts', testServerUrl(4174))
+    .href,
+  runnerExportName: 'HtmlCssRunnerAdapter',
+  validatorExportName: 'ValidatorRuleEngine',
+  languageId: 'html-css',
+};
+
+/** Workerを含むJavaScript runtimeをpreviewと同じoriginのbuild chunkへ固定する。 */
+async function loadJavaScriptFixtureRuntime(): Promise<BrowserFixtureRuntimeInput> {
+  const [runnerModulePath, validatorModulePath] = await Promise.all([
+    loadJavaScriptRunnerModulePath(),
+    loadJavaScriptValidatorModulePath(),
+  ]);
+  return {
+    runnerModulePath,
+    validatorModulePath,
+    runnerExportName: 'JavaScriptRunnerAdapter',
+    validatorExportName: 'JavaScriptValidator',
+    languageId: 'javascript',
+  };
+}
+
+interface CourseFixtureGateInput {
+  readonly courseRoot: string;
+  readonly courseId: string;
+  readonly expectedExerciseCount: number;
+  readonly runtime: BrowserFixtureRuntimeInput;
+}
+
+/** 1 CourseのSolution、Starter、Fixtureを実Browser runtimeへ通す。 */
+async function assertCourseFixtureGate(page: Page, input: CourseFixtureGateInput): Promise<void> {
   await observeRuntimePage(page);
-  const authoring = await loadAuthoringCourse('content/html-css');
-  expect(authoring.exercises).toHaveLength(51);
+  const authoring = await loadAuthoringCourse(input.courseRoot);
+  expect(authoring.exercises).toHaveLength(input.expectedExerciseCount);
   const allCases = createCases(authoring.exercises);
-  expect(allCases.filter(({ id }) => id.endsWith('/solution'))).toHaveLength(51);
-  expect(allCases.filter(({ id }) => id.endsWith('/starter'))).toHaveLength(51);
+  expect(allCases.filter(({ id }) => id.endsWith('/solution'))).toHaveLength(
+    input.expectedExerciseCount,
+  );
+  expect(allCases.filter(({ id }) => id.endsWith('/starter'))).toHaveLength(
+    input.expectedExerciseCount,
+  );
   const filter = process.env['COURSE_FIXTURE_FILTER'];
   const cases = filter === undefined ? allCases : allCases.filter(({ id }) => id.includes(filter));
   expect(cases.length, `Fixture filterに一致するcaseがありません: ${filter ?? ''}`).toBeGreaterThan(
     0,
   );
 
-  const generatedCourse = await readSplitCourseArtifacts('public', 'html-css');
+  const generatedCourse = await readSplitCourseArtifacts('public', input.courseId);
   expect(JSON.stringify(generatedCourse)).not.toMatch(/"solutionFiles"|"fixtures"/u);
 
   const contentResponseChecks: Promise<void>[] = [];
@@ -232,11 +308,11 @@ test('全Solution、Starter、Fixtureを実Browser Runner／Validatorで検証�
   await page.goto(testBasePath());
 
   try {
-    let systemErrors = 0;
+    let unexpectedSystemErrors = 0;
     for (const fixtureCase of cases) {
       let result: ValidationResult;
       try {
-        result = await evaluateCase(page, fixtureCase);
+        result = await evaluateCase(page, fixtureCase, input.runtime);
       } catch (error) {
         const runtimeErrors = await readRuntimeErrors(page);
         throw new Error(
@@ -245,10 +321,12 @@ test('全Solution、Starter、Fixtureを実Browser Runner／Validatorで検証�
         );
       }
       const assertionContext = `${fixtureCase.id}\n${JSON.stringify(result, null, 2)}`;
-      if (result.status === 'system-error') systemErrors += 1;
-      expect(result.status, assertionContext).not.toBe('system-error');
+      if (result.status === 'system-error' && fixtureCase.expectedStatus !== 'system-error') {
+        unexpectedSystemErrors += 1;
+      }
       if (fixtureCase.expectedStatus === 'not-pass') {
         expect(result.status, assertionContext).not.toBe('pass');
+        expect(result.status, assertionContext).not.toBe('system-error');
         continue;
       }
       expect(result.status, assertionContext).toBe(fixtureCase.expectedStatus);
@@ -263,7 +341,7 @@ test('全Solution、Starter、Fixtureを実Browser Runner／Validatorで検証�
 
     await Promise.all(contentResponseChecks);
     expect(contentLeaks).toEqual([]);
-    expect(systemErrors).toBe(0);
+    expect(unexpectedSystemErrors).toBe(0);
     await expect(readRuntimeErrors(page)).resolves.toEqual({
       pageErrors: [],
       unhandledRejections: [],
@@ -272,4 +350,28 @@ test('全Solution、Starter、Fixtureを実Browser Runner／Validatorで検証�
   } finally {
     await disposeFixtureHarness(page);
   }
+}
+
+test('HTML/CSSの全Solution、Starter、Fixtureを実Browser Runner／Validatorで検証する', async ({
+  page,
+}) => {
+  test.setTimeout(20 * 60 * 1000);
+  await assertCourseFixtureGate(page, {
+    courseRoot: 'content/html-css',
+    courseId: 'html-css',
+    expectedExerciseCount: 51,
+    runtime: HTML_FIXTURE_RUNTIME,
+  });
+});
+
+test('JavaScriptの全Solution、Starter、Fixtureを実Browser Runner／Validatorで検証する', async ({
+  page,
+}) => {
+  test.setTimeout(20 * 60 * 1000);
+  await assertCourseFixtureGate(page, {
+    courseRoot: 'content/javascript',
+    courseId: 'javascript',
+    expectedExerciseCount: 5,
+    runtime: await loadJavaScriptFixtureRuntime(),
+  });
 });

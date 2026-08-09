@@ -1,0 +1,192 @@
+id: javascript-ch01-l01-e01
+kind: standard
+workspaceId: javascript-ch01-l01-e01
+countsTowardStandardExerciseTotal: true
+title: 3種類の値をConsoleへ表示する
+instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: console-log-values, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: write-three-values
+    file: script.js
+    target: 3行のconsole.logにある丸括弧の中
+    starterAnchor: "console.log('ここを問題1に変える');"
+    change: 文字列「問題1」、数値3、真偽値trueへ順に置き換える
+    observe: Consoleに問題1、3、trueが順番どおり表示される
+    requiresConceptIds: [console-log-values]
+    validationRuleIds:
+      [
+        javascript-ch01-l01-e01-r01,
+        javascript-ch01-l01-e01-r02,
+        javascript-ch01-l01-e01-r03,
+        javascript-ch01-l01-e01-r04,
+        javascript-ch01-l01-e01-r05,
+      ]
+files:
+  - { path: script.js, language: javascript, source: starter/script.js, editable: true }
+  - { path: index.html, language: html, source: starter/index.html, editable: false }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: false }
+solutionFiles:
+  - { path: script.js, language: javascript, source: solution/script.js, editable: false }
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: javascript-ch01-l01-e01-r01
+    groupId: javascript-ch01-l01-e01-result
+    label: console.logを3回呼び出す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: call, callee: console.log }
+      minimumCount: 3
+    feedback:
+      target: script.jsとConsole
+      expected: console.logの呼び出しが3件
+      nextAction: 3行のconsole.logを残します。
+    hintId: javascript-ch01-l01-e01-h01
+    relatedSlideId: javascript-ch01-l01-s03
+  - id: javascript-ch01-l01-e01-r02
+    groupId: javascript-ch01-l01-e01-result
+    label: 文字列の値を使う
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: literal, valueType: string }
+    feedback:
+      target: script.jsとConsole
+      expected: 文字列が1件以上
+      nextAction: 問題1を引用符で囲みます。
+    hintId: javascript-ch01-l01-e01-h02
+    relatedSlideId: javascript-ch01-l01-s02
+  - id: javascript-ch01-l01-e01-r03
+    groupId: javascript-ch01-l01-e01-result
+    label: 数値の値を使う
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: literal, valueType: number }
+    feedback:
+      target: script.jsとConsole
+      expected: 数値が1件以上
+      nextAction: 3から引用符を外します。
+    hintId: javascript-ch01-l01-e01-h02
+    relatedSlideId: javascript-ch01-l01-s02
+  - id: javascript-ch01-l01-e01-r04
+    groupId: javascript-ch01-l01-e01-result
+    label: 真偽値を使う
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: literal, valueType: boolean }
+    feedback:
+      target: script.jsとConsole
+      expected: 真偽値が1件以上
+      nextAction: trueから引用符を外します。
+    hintId: javascript-ch01-l01-e01-h02
+    relatedSlideId: javascript-ch01-l01-s02
+  - id: javascript-ch01-l01-e01-r05
+    groupId: javascript-ch01-l01-e01-result
+    label: 3種類の値を正しい順で表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-console }
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - { level: log, text: 問題1 }
+        - { level: log, text: '3' }
+        - { level: log, text: 'true' }
+    feedback:
+      target: script.jsとConsole
+      expected: 問題1、3、trueの順に表示
+      nextAction: 3行を上から順に見直します。
+    hintId: javascript-ch01-l01-e01-h03
+    relatedSlideId: javascript-ch01-l01-s04
+hints:
+  - id: javascript-ch01-l01-e01-h01
+    level: 1
+    title: 行数を確認する
+    text: console.logの3行とセミコロンは削除せずに残します。
+    relatedSlideId: javascript-ch01-l01-s03
+  - id: javascript-ch01-l01-e01-h02
+    level: 2
+    title: 引用符の有無を確認する
+    text: 問題1だけを引用符で囲み、3とtrueには引用符を付けません。
+    relatedSlideId: javascript-ch01-l01-s02
+  - id: javascript-ch01-l01-e01-h03
+    level: 3
+    title: 上から順に完成させる
+    text: 丸括弧の中を上から「'問題1'」「3」「true」の順にします。
+    relatedSlideId: javascript-ch01-l01-s04
+relatedSlideIds:
+  - javascript-ch01-l01-s03
+  - javascript-ch01-l01-s04
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: pass
+    expectedStatus: pass
+    files:
+      - { path: script.js, language: javascript, source: fixtures/pass.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: incomplete
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/incomplete.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - javascript-ch01-l01-e01-r01
+      - javascript-ch01-l01-e01-r02
+      - javascript-ch01-l01-e01-r03
+      - javascript-ch01-l01-e01-r04
+      - javascript-ch01-l01-e01-r05
+  - id: strings-only
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/strings-only.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - javascript-ch01-l01-e01-r01
+      - javascript-ch01-l01-e01-r02
+      - javascript-ch01-l01-e01-r03
+      - javascript-ch01-l01-e01-r04
+      - javascript-ch01-l01-e01-r05
+  - id: syntax-error
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/syntax-error.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: security
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/security.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

@@ -22,14 +22,23 @@ afterEach(async () => {
   );
 });
 
-/** 1 Lessonを承認済みにした最小Review台帳を書く。 */
-async function writeApprovedReview(
+interface ApprovedReviewFixture {
+  readonly lessonId: string;
+  readonly lessonDirectory: string;
+}
+
+/** 指定Lessonをすべて承認済みにした最小Review台帳を書く。 */
+async function writeApprovedReviews(
   reviewPath: string,
-  lessonId: string,
-  lessonDirectory: string,
+  fixtures: readonly ApprovedReviewFixture[],
 ): Promise<void> {
   await mkdir(path.dirname(reviewPath), { recursive: true });
-  const sourceHash = await computeLessonSourceHash(lessonDirectory);
+  const lessons = await Promise.all(
+    fixtures.map(async ({ lessonId, lessonDirectory }) => ({
+      lessonId,
+      sourceHash: await computeLessonSourceHash(lessonDirectory),
+    })),
+  );
   await writeFile(
     reviewPath,
     `schemaVersion: 1
@@ -37,7 +46,9 @@ releaseStatus: draft
 verifiedSourceCommit: draft
 canonicalDistSha256: draft
 lessons:
-  - lessonId: ${lessonId}
+${lessons
+  .map(
+    ({ lessonId, sourceHash }) => `  - lessonId: ${lessonId}
     authorId: fixture-author
     reviewerId: fixture-reviewer
     sourceHash: ${sourceHash}
@@ -47,7 +58,9 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Test用の教材Reviewを完了しています。
+    notes: Test用の教材Reviewを完了しています。`,
+  )
+  .join('\n')}
 `,
     'utf8',
   );
@@ -68,21 +81,36 @@ describe('verifyAllContentReviews', () => {
       outputRoot: path.join(publicRoot, 'generated/content'),
       checkOnly: false,
     });
-    await writeApprovedReview(
-      path.join(reviewRoot, 'content-review.yaml'),
-      'lesson-first-heading',
-      path.join(contentRoot, 'html-css/chapters/ch00-web-map/lessons/lesson-first-heading'),
-    );
-    await writeApprovedReview(
+    await writeApprovedReviews(path.join(reviewRoot, 'content-review.yaml'), [
+      {
+        lessonId: 'lesson-first-heading',
+        lessonDirectory: path.join(
+          contentRoot,
+          'html-css/chapters/ch00-web-map/lessons/lesson-first-heading',
+        ),
+      },
+    ]);
+    await writeApprovedReviews(
       path.join(reviewRoot, 'content-review-javascript.yaml'),
-      'javascript-ch00-l01',
-      path.join(contentRoot, 'javascript/chapters/javascript-ch00/lessons/javascript-ch00-l01'),
+      [
+        'javascript-ch00-l01',
+        ...Array.from({ length: 4 }, (_, index) => `javascript-ch01-l0${String(index + 1)}`),
+      ].map((lessonId) => ({
+        lessonId,
+        lessonDirectory: path.join(
+          contentRoot,
+          'javascript/chapters',
+          lessonId.startsWith('javascript-ch00') ? 'javascript-ch00' : 'javascript-ch01',
+          'lessons',
+          lessonId,
+        ),
+      })),
     );
 
     await expect(verifyAllContentReviews({ contentRoot, publicRoot, reviewRoot })).resolves.toEqual(
       {
         coursesReviewed: 2,
-        lessonsReviewed: 2,
+        lessonsReviewed: 6,
         staleHashes: 0,
         rejected: 0,
       },

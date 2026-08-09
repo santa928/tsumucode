@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 240" role="img" aria-labelledby="title desc">
+  <title id="title">問題数と点数から合計を作る流れ</title>
+  <desc id="desc">問題数3と1問10点を掛けてtotalScoreへ30を入れる</desc>
+  <rect width="800" height="240" rx="24" fill="#fffaf0" />
+  <rect x="38" y="66" width="180" height="108" rx="18" fill="#ffffff" stroke="#1d6b55" stroke-width="4" />
+  <text x="60" y="104" fill="#1d6b55" font-family="system-ui" font-size="18" font-weight="700">問題数</text>
+  <text x="110" y="152" fill="#173f35" font-family="monospace" font-size="36">3</text>
+  <text x="246" y="138" fill="#173f35" font-family="monospace" font-size="38">×</text>
+  <rect x="302" y="66" width="180" height="108" rx="18" fill="#ffffff" stroke="#1d6b55" stroke-width="4" />
+  <text x="324" y="104" fill="#1d6b55" font-family="system-ui" font-size="18" font-weight="700">1問の点数</text>
+  <text x="366" y="152" fill="#173f35" font-family="monospace" font-size="36">10</text>
+  <path d="M510 120h54" stroke="#f2c94c" stroke-width="8" stroke-linecap="round" />
+  <path d="m554 102 22 18-22 18" fill="none" stroke="#f2c94c" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+  <rect x="592" y="48" width="170" height="144" rx="18" fill="#173f35" />
+  <text x="612" y="88" fill="#f2c94c" font-family="monospace" font-size="18">totalScore</text>
+  <text x="642" y="154" fill="#ffffff" font-family="monospace" font-size="48">30</text>
+</svg>

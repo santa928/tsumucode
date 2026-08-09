@@ -4,8 +4,10 @@ import {
   JAVASCRIPT_EXERCISE_TITLE,
   javascriptExerciseRoute,
   openEditableJavaScriptExercise,
+  type JavaScriptExerciseLocation,
 } from './helpers/javascriptCourse';
 import { editorText, replaceEditorText, waitForStoredDraftContent } from './helpers/progress';
+import { testBasePath } from './helpers/testBasePath';
 
 /** JavaScript学習画面について、critical／seriousのaxe違反がないことを確認する。 */
 async function expectNoSeriousAxeViolations(page: Page): Promise<void> {
@@ -97,6 +99,12 @@ async function readScrollMetrics(page: Page) {
     };
   });
 }
+
+const CHAPTER_ONE_FIRST_EXERCISE: JavaScriptExerciseLocation = {
+  lessonId: 'javascript-ch01-l01',
+  exerciseId: 'javascript-ch01-l01-e01',
+  title: '3種類の値をConsoleへ表示する',
+};
 
 test('JavaScript Exerciseの初期・Error・Hint・Reset状態に重大なaxe違反がない', async ({ page }) => {
   await openEditableJavaScriptExercise(page);
@@ -260,4 +268,40 @@ test('768x1024ではDocumentを固定し、JavaScript ExerciseをPC案内へ安�
   expect(documentMetrics.scrollHeight).toBeLessThanOrEqual(documentMetrics.clientHeight + 1);
   await expectNoSeriousAxeViolations(page);
   await page.screenshot({ path: testInfo.outputPath('javascript-exercise-notice-768x1024.png') });
+});
+
+test('Chapter 01のExerciseと実習直前Slideを代表2 viewportで安全に表示する', async ({
+  page,
+}, testInfo: TestInfo) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await openEditableJavaScriptExercise(page, CHAPTER_ONE_FIRST_EXERCISE);
+  await expectNoSeriousAxeViolations(page);
+  const exerciseMetrics = await readScrollMetrics(page);
+  expect(exerciseMetrics.document.scrollWidth).toBeLessThanOrEqual(
+    exerciseMetrics.document.clientWidth,
+  );
+  expect(exerciseMetrics.document.scrollHeight).toBeLessThanOrEqual(
+    exerciseMetrics.document.clientHeight + 1,
+  );
+  expect(exerciseMetrics.stage.scrollWidth).toBeLessThanOrEqual(
+    exerciseMetrics.stage.clientWidth + 1,
+  );
+  await page.screenshot({ path: testInfo.outputPath('javascript-ch01-exercise-1280x720.png') });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(
+    `${testBasePath()}#/courses/javascript/lessons/javascript-ch01-l01/slides/javascript-ch01-l01-s04`,
+  );
+  await expect(
+    page.getByRole('heading', { level: 1, name: '3種類の値を順番どおりに書く' }),
+  ).toBeVisible();
+  await expectNoSeriousAxeViolations(page);
+  const slideMetrics = await readScrollMetrics(page);
+  expect(slideMetrics.document.scrollWidth).toBeLessThanOrEqual(slideMetrics.document.clientWidth);
+  expect(slideMetrics.document.scrollHeight).toBeLessThanOrEqual(
+    slideMetrics.document.clientHeight + 1,
+  );
+  expect(slideMetrics.stage.scrollWidth).toBeLessThanOrEqual(slideMetrics.stage.clientWidth + 1);
+  expect(slideMetrics.stage.overflowY).toBe('auto');
+  await page.screenshot({ path: testInfo.outputPath('javascript-ch01-slide-390x844.png') });
 });

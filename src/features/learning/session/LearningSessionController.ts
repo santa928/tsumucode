@@ -952,8 +952,12 @@ export class LearningSessionController {
       plan.exercises.map(({ id }) => [id, {}]),
     );
     const usedRequestIds = new Set<string>();
+    let lastRendered: RunnerRenderResult | undefined;
+    let frameChangedAfterLastRender = false;
     for (const viewport of plan.viewports) {
       const rendered = await this.#render(execution, viewport, false);
+      lastRendered = rendered;
+      frameChangedAfterLastRender = false;
       diagnostics.push(...rendered.diagnostics);
       if (evidence === undefined) {
         evidence = rendered.evidence;
@@ -978,6 +982,7 @@ export class LearningSessionController {
       for (const item of plan.exercises) {
         const scenarios = item.interactionScenarios ?? [];
         if (scenarios.length === 0) continue;
+        frameChangedAfterLastRender = true;
         const viewportResults: InteractionCheckpointResult[] = [];
         for (const scenario of scenarios) {
           viewportResults.push(
@@ -1041,10 +1046,18 @@ export class LearningSessionController {
     const displayViewport = this.input.exercise.previewViewports[0];
     if (displayViewport !== undefined) {
       let displayResult: RunnerRenderResult;
-      try {
-        displayResult = await this.#render(execution, displayViewport, false);
-      } catch (error: unknown) {
-        return this.#rollbackValidationCandidate(error);
+      if (
+        lastRendered !== undefined &&
+        plan.viewports.at(-1)?.id === displayViewport.id &&
+        !frameChangedAfterLastRender
+      ) {
+        displayResult = lastRendered;
+      } else {
+        try {
+          displayResult = await this.#render(execution, displayViewport, false);
+        } catch (error: unknown) {
+          return this.#rollbackValidationCandidate(error);
+        }
       }
       if (evidence !== undefined && !runnerEvidenceEqual(evidence, displayResult.evidence)) {
         return this.#rollbackValidationCandidate(

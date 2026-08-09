@@ -241,6 +241,41 @@ describe('content source schema', () => {
     });
   });
 
+  it('基盤障害Fixtureのauthoring-only fault注入を明示契約として受理する', () => {
+    const result = ExerciseSourceSchema.parse({
+      ...validExerciseSource,
+      fixtures: [
+        {
+          ...validExerciseSource.fixtures[0],
+          id: 'stale-source-evidence',
+          expectedStatus: 'system-error',
+          faultInjection: 'stale-source-evidence',
+        },
+      ],
+    });
+
+    expect(result.fixtures[0]).toMatchObject({
+      id: 'stale-source-evidence',
+      expectedStatus: 'system-error',
+      faultInjection: 'stale-source-evidence',
+    });
+  });
+
+  it('学習者の不正解Fixtureへ基盤障害faultを混在させない', () => {
+    const result = ExerciseSourceSchema.safeParse({
+      ...validExerciseSource,
+      fixtures: [
+        {
+          ...validExerciseSource.fixtures[0],
+          expectedStatus: 'incomplete',
+          faultInjection: 'stale-source-evidence',
+        },
+      ],
+    });
+
+    expect(result.success).toBe(false);
+  });
+
   it('JavaScript Runtime設定を公開契約のfield名で保持する', () => {
     const runtime = {
       kind: 'javascript',

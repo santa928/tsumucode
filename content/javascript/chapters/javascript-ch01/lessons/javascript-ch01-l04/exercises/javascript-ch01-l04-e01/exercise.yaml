@@ -1,0 +1,150 @@
+id: javascript-ch01-l04-e01
+kind: standard
+workspaceId: javascript-ch01-l04-e01
+countsTowardStandardExerciseTotal: true
+title: letの得点へ5点を加える
+instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: let-score-update, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: add-five-points
+    file: script.js
+    target: score += 0の右側にある数値
+    starterAnchor: 'score += 0;'
+    change: 0を5へ置き換える
+    observe: Consoleに15と表示される
+    requiresConceptIds: [let-score-update]
+    validationRuleIds:
+      [javascript-ch01-l04-e01-r01, javascript-ch01-l04-e01-r02, javascript-ch01-l04-e01-r03]
+files:
+  - { path: script.js, language: javascript, source: starter/script.js, editable: true }
+  - { path: index.html, language: html, source: starter/index.html, editable: false }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: false }
+solutionFiles:
+  - { path: script.js, language: javascript, source: solution/script.js, editable: false }
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: javascript-ch01-l04-e01-r01
+    groupId: javascript-ch01-l04-e01-result
+    label: scoreをletで宣言する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: binding, name: score, declarationKind: let }
+    feedback:
+      target: script.jsとConsole
+      expected: let scoreの宣言
+      nextAction: 1行目のlet scoreを残します。
+    hintId: javascript-ch01-l04-e01-h01
+    relatedSlideId: javascript-ch01-l04-s02
+  - id: javascript-ch01-l04-e01-r02
+    groupId: javascript-ch01-l04-e01-result
+    label: scoreを+=で更新する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: assignment, name: score, operator: '+=' }
+    feedback:
+      target: script.jsとConsole
+      expected: score += の更新
+      nextAction: 2行目の+=を残します。
+    hintId: javascript-ch01-l04-e01-h02
+    relatedSlideId: javascript-ch01-l04-s03
+  - id: javascript-ch01-l04-e01-r03
+    groupId: javascript-ch01-l04-e01-result
+    label: 更新後の15を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-console }
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - { level: log, text: '15' }
+    feedback:
+      target: script.jsとConsole
+      expected: 15と表示
+      nextAction: 加える数値を5へ直します。
+    hintId: javascript-ch01-l04-e01-h03
+    relatedSlideId: javascript-ch01-l04-s04
+hints:
+  - id: javascript-ch01-l04-e01-h01
+    level: 1
+    title: 変わる値を確認する
+    text: 途中で変わるscoreにはletを使います。
+    relatedSlideId: javascript-ch01-l04-s02
+  - id: javascript-ch01-l04-e01-h02
+    level: 2
+    title: 更新の記号を残す
+    text: score += は削除せず、右側の数値だけを見ます。
+    relatedSlideId: javascript-ch01-l04-s03
+  - id: javascript-ch01-l04-e01-h03
+    level: 3
+    title: 加える数値を直す
+    text: score += 0の0を5へ置き換えます。
+    relatedSlideId: javascript-ch01-l04-s04
+relatedSlideIds:
+  - javascript-ch01-l04-s03
+  - javascript-ch01-l04-s04
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: pass
+    expectedStatus: pass
+    files:
+      - { path: script.js, language: javascript, source: fixtures/pass.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: incomplete
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/incomplete.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - javascript-ch01-l04-e01-r01
+      - javascript-ch01-l04-e01-r02
+      - javascript-ch01-l04-e01-r03
+  - id: const-hardcode
+    expectedStatus: incomplete
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/const-hardcode.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - javascript-ch01-l04-e01-r01
+      - javascript-ch01-l04-e01-r02
+      - javascript-ch01-l04-e01-r03
+  - id: syntax-error
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/syntax-error.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: security
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/security.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

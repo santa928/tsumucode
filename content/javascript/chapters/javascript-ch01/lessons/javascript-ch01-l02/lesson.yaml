@@ -1,0 +1,19 @@
+id: javascript-ch01-l02
+kind: standard
+title: constで値に名前をつける
+goal: 変えない値をconstで変数へ入れ、変数名を使ってConsoleへ表示できる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch01-l01]
+slideSources:
+  - slides/s01-name-a-value.md
+  - slides/s02-const-binding.md
+  - slides/s03-read-a-variable.md
+  - slides/s04-const-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch01-l02-e01/exercise.yaml
+reflection: constは変えない値へ名前をつけ、同じ名前から値を読み出せる。
+glossaryRefs: [const, variable, identifier, value, console]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch01-l02-s04
+  requiredExerciseIds: [javascript-ch01-l02-e01]

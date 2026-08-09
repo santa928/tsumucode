@@ -81,6 +81,22 @@ describe('compileContent output safety', () => {
           lessonId: 'javascript-ch00-l01',
           target: { kind: 'slide', targetId: 'javascript-ch00-l01-s01' },
         },
+        {
+          lessonId: 'javascript-ch01-l01',
+          target: { kind: 'slide', targetId: 'javascript-ch01-l01-s01' },
+        },
+        {
+          lessonId: 'javascript-ch01-l02',
+          target: { kind: 'slide', targetId: 'javascript-ch01-l02-s01' },
+        },
+        {
+          lessonId: 'javascript-ch01-l03',
+          target: { kind: 'slide', targetId: 'javascript-ch01-l03-s01' },
+        },
+        {
+          lessonId: 'javascript-ch01-l04',
+          target: { kind: 'slide', targetId: 'javascript-ch01-l04-s01' },
+        },
       ],
     });
     expect(publishedPathCourseIds).not.toContain('javascript');
@@ -90,6 +106,28 @@ describe('compileContent output safety', () => {
     await expect(
       lstat(path.join(outputRoot, 'courses/javascript/lessons/javascript-ch00-l01.json')),
     ).resolves.toBeDefined();
+    const javaScriptIndex = JSON.parse(
+      await readFile(path.join(outputRoot, 'courses/javascript/index.json'), 'utf8'),
+    ) as {
+      readonly estimatedMinutes: number;
+      readonly expectedTotals: {
+        readonly chapters: number;
+        readonly lessons: number;
+        readonly conceptSlides: number;
+        readonly standardExercises: number;
+        readonly estimatedMinutes: number;
+      };
+    };
+    expect(javaScriptIndex).toMatchObject({
+      estimatedMinutes: 75,
+      expectedTotals: {
+        chapters: 2,
+        lessons: 5,
+        conceptSlides: 20,
+        standardExercises: 5,
+        estimatedMinutes: 75,
+      },
+    });
   });
 
   it('generated/content以外をoutputRootにできない', async () => {

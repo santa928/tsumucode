@@ -38,6 +38,7 @@ import {
 export interface AuthoringFixture {
   readonly id: string;
   readonly expectedStatus: 'pass' | 'incomplete' | 'code-error' | 'system-error';
+  readonly faultInjection?: 'stale-source-evidence';
   readonly files: readonly ExerciseFile[];
   readonly expectedFeedbackRuleIds: readonly string[];
 }
@@ -549,6 +550,7 @@ async function compileExercise(
     fixtures.push({
       id: fixture.id,
       expectedStatus: fixture.expectedStatus,
+      ...(fixture.faultInjection === undefined ? {} : { faultInjection: fixture.faultInjection }),
       files: fixtureFiles,
       expectedFeedbackRuleIds: fixture.expectedFeedbackRuleIds,
     });

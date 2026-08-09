@@ -16,3 +16,67 @@ concepts:
     introducedBySlideId: javascript-ch00-l01-s04
     prerequisiteConceptIds: [query-selector-text-content]
     minimumProjectLevel: transform
+  - id: javascript-value
+    introducedBySlideId: javascript-ch01-l01-s01
+    prerequisiteConceptIds: [string-literal-edit]
+    minimumProjectLevel: read
+  - id: javascript-primitive-types
+    introducedBySlideId: javascript-ch01-l01-s02
+    prerequisiteConceptIds: [javascript-value]
+    minimumProjectLevel: read
+  - id: console-log
+    introducedBySlideId: javascript-ch01-l01-s03
+    prerequisiteConceptIds: [javascript-primitive-types]
+    minimumProjectLevel: read
+  - id: console-log-values
+    introducedBySlideId: javascript-ch01-l01-s04
+    prerequisiteConceptIds: [console-log]
+    minimumProjectLevel: transform
+  - id: javascript-variable
+    introducedBySlideId: javascript-ch01-l02-s01
+    prerequisiteConceptIds: [console-log-values]
+    minimumProjectLevel: read
+  - id: const-binding
+    introducedBySlideId: javascript-ch01-l02-s02
+    prerequisiteConceptIds: [javascript-variable]
+    minimumProjectLevel: read
+  - id: identifier-reference
+    introducedBySlideId: javascript-ch01-l02-s03
+    prerequisiteConceptIds: [const-binding]
+    minimumProjectLevel: read
+  - id: const-console-output
+    introducedBySlideId: javascript-ch01-l02-s04
+    prerequisiteConceptIds: [identifier-reference]
+    minimumProjectLevel: transform
+  - id: arithmetic-expression
+    introducedBySlideId: javascript-ch01-l03-s01
+    prerequisiteConceptIds: [const-console-output]
+    minimumProjectLevel: read
+  - id: operator-precedence
+    introducedBySlideId: javascript-ch01-l03-s02
+    prerequisiteConceptIds: [arithmetic-expression]
+    minimumProjectLevel: read
+  - id: calculated-binding
+    introducedBySlideId: javascript-ch01-l03-s03
+    prerequisiteConceptIds: [operator-precedence]
+    minimumProjectLevel: read
+  - id: score-calculation
+    introducedBySlideId: javascript-ch01-l03-s04
+    prerequisiteConceptIds: [calculated-binding]
+    minimumProjectLevel: transform
+  - id: mutable-value
+    introducedBySlideId: javascript-ch01-l04-s01
+    prerequisiteConceptIds: [score-calculation]
+    minimumProjectLevel: read
+  - id: let-binding
+    introducedBySlideId: javascript-ch01-l04-s02
+    prerequisiteConceptIds: [mutable-value]
+    minimumProjectLevel: read
+  - id: addition-assignment
+    introducedBySlideId: javascript-ch01-l04-s03
+    prerequisiteConceptIds: [let-binding]
+    minimumProjectLevel: read
+  - id: let-score-update
+    introducedBySlideId: javascript-ch01-l04-s04
+    prerequisiteConceptIds: [addition-assignment]
+    minimumProjectLevel: transform

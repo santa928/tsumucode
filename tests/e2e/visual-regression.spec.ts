@@ -3,6 +3,7 @@ import {
   JAVASCRIPT_EXERCISE_TITLE,
   javascriptExerciseRoute,
   openEditableJavaScriptExercise,
+  type JavaScriptExerciseLocation,
 } from './helpers/javascriptCourse';
 import { observeRuntimePage, readRuntimeErrors } from './helpers/openRuntimeFixture';
 import { replaceEditorText, waitForDraftSaved } from './helpers/progress';
@@ -16,6 +17,12 @@ const COMPLETION_PATH = `${EXERCISE_PATH}/completion`;
 const LIBRARY_INDEX_PATH = `${testBasePath()}#/library/html-css`;
 const LIBRARY_SLIDE_PATH = `${LIBRARY_INDEX_PATH}/lessons/html-css-ch00-l01/slides/html-css-ch00-l01-s01`;
 const JAVASCRIPT_LESSON_PATH = `${testBasePath()}#/courses/javascript/lessons/javascript-ch00-l01`;
+const JAVASCRIPT_CH01_LESSON_PATH = `${testBasePath()}#/courses/javascript/lessons/javascript-ch01-l01`;
+const JAVASCRIPT_CH01_EXERCISE: JavaScriptExerciseLocation = {
+  lessonId: 'javascript-ch01-l01',
+  exerciseId: 'javascript-ch01-l01-e01',
+  title: '3種類の値をConsoleへ表示する',
+};
 
 const VIEWPORTS = [
   { id: 'desktop-wide', width: 1440, height: 900 },
@@ -553,6 +560,88 @@ document.querySelector('#message').textContent = 'JavaScriptで文字を変え�
     await expect(consoleRegion).toContainText('前回成功時のConsoleです');
     await expect(consoleRegion).toContainText('前回の記録');
     await expect(page).toHaveScreenshot('javascript-console-previous-success-desktop-compact.png', {
+      animations: 'disabled',
+      caret: 'hide',
+      fullPage: false,
+    });
+  });
+});
+
+test.describe('JavaScript Chapter 01 visual regression', () => {
+  test.beforeEach(async ({ browserName, page }) => {
+    test.skip(browserName !== 'chromium', 'Baseline画像はChromiumで一意に固定する');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await observeRuntimePage(page);
+  });
+
+  test.afterEach(async ({ page }) => {
+    await expect(readRuntimeErrors(page)).resolves.toEqual({
+      pageErrors: [],
+      unhandledRejections: [],
+      consoleErrors: [],
+    });
+  });
+
+  for (const viewport of [
+    { id: 'desktop-compact', width: 1280, height: 720 },
+    { id: 'mobile-portrait', width: 390, height: 844 },
+  ] as const) {
+    test(`javascript-ch01-slide-s04-${viewport.id}`, async ({ page }) => {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      await page.goto(`${JAVASCRIPT_CH01_LESSON_PATH}/slides/javascript-ch01-l01-s04`);
+      await expect(
+        page.getByRole('heading', { level: 1, name: '3種類の値を順番どおりに書く' }),
+      ).toBeVisible();
+      await expect.poll(() => page.evaluate(() => document.fonts.status)).toBe('loaded');
+      await page.getByTestId('learning-stage').evaluate((element) => {
+        element.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      });
+      await expect(page).toHaveScreenshot(`javascript-ch01-slide-s04-${viewport.id}.png`, {
+        animations: 'disabled',
+        caret: 'hide',
+        fullPage: false,
+      });
+    });
+
+    test(`javascript-ch01-exercise-${viewport.id}`, async ({ page }) => {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      await page.goto(javascriptExerciseRoute(JAVASCRIPT_CH01_EXERCISE));
+      if (viewport.width >= 1024) {
+        await expect(
+          page.getByRole('heading', { level: 1, name: JAVASCRIPT_CH01_EXERCISE.title }),
+        ).toBeVisible();
+        await expect(page.getByTestId('code-workspace')).toBeVisible();
+        await expect(page.getByRole('button', { name: '判定する' })).toBeEnabled();
+      } else {
+        await expect(page.getByRole('heading', { level: 1, name: 'PCで演習を開く' })).toBeVisible();
+        await expect(page.getByTestId('code-workspace')).toHaveCount(0);
+      }
+      await expect(page).toHaveScreenshot(`javascript-ch01-exercise-${viewport.id}.png`, {
+        animations: 'disabled',
+        caret: 'hide',
+        fullPage: false,
+      });
+    });
+  }
+
+  test('javascript-ch01-slide-s04-mobile-portrait-bottom', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`${JAVASCRIPT_CH01_LESSON_PATH}/slides/javascript-ch01-l01-s04`);
+    await expect(
+      page.getByRole('heading', { level: 1, name: '3種類の値を順番どおりに書く' }),
+    ).toBeVisible();
+    const stage = page.getByTestId('learning-stage');
+    await stage.evaluate((element) => {
+      element.scrollTo({ top: element.scrollHeight, left: 0, behavior: 'auto' });
+    });
+    await expect
+      .poll(() =>
+        stage.evaluate(
+          (element) => element.scrollTop + element.clientHeight >= element.scrollHeight - 1,
+        ),
+      )
+      .toBe(true);
+    await expect(page).toHaveScreenshot('javascript-ch01-slide-s04-mobile-portrait-bottom.png', {
       animations: 'disabled',
       caret: 'hide',
       fullPage: false,
