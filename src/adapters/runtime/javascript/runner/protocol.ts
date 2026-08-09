@@ -1,5 +1,9 @@
-/** opaque-origin JavaScript iframeとの実行完了・timer停止通信契約。 */
-import type { RunnerConsoleRecord } from '../../../../core/runtime/contracts';
+/** opaque-origin JavaScript iframeとの実行完了・timer停止・Interaction通信契約。 */
+import type {
+  InteractionRequest,
+  InteractionResult,
+  RunnerConsoleRecord,
+} from '../../../../core/runtime/contracts';
 import { CONSOLE_LIMITS } from './consoleFormatter';
 
 export const JAVASCRIPT_PROTOCOL_VERSION = 2 as const;
@@ -23,6 +27,19 @@ export interface JavaScriptExecutionPayload {
   readonly console: readonly RunnerConsoleRecord[];
 }
 
+export type JavaScriptInteractionErrorCode =
+  'invalid-action' | 'target-not-found' | 'target-type-mismatch' | 'action-failed';
+
+export interface JavaScriptInteractionError {
+  readonly code: JavaScriptInteractionErrorCode;
+  readonly message: string;
+}
+
+export interface JavaScriptInteractionPayload {
+  readonly error: JavaScriptInteractionError | null;
+  readonly console: readonly RunnerConsoleRecord[];
+}
+
 interface JavaScriptExecutionEnvelope {
   readonly version: typeof JAVASCRIPT_PROTOCOL_VERSION;
   readonly type: 'javascript.execution-complete';
@@ -43,17 +60,36 @@ interface JavaScriptTimersClearedEnvelope {
   readonly payload: null;
 }
 
+interface JavaScriptInteractionEnvelope {
+  readonly version: typeof JAVASCRIPT_PROTOCOL_VERSION;
+  readonly type: 'javascript.interaction-complete';
+  readonly exerciseSessionId: string;
+  readonly executionRevision: number;
+  readonly frameGeneration: number;
+  readonly requestId: string;
+  readonly oneTimeToken: string;
+  readonly payload: JavaScriptInteractionPayload;
+}
+
 export type JavaScriptRuntimeEnvelope =
-  JavaScriptExecutionEnvelope | JavaScriptTimersClearedEnvelope;
+  JavaScriptExecutionEnvelope | JavaScriptTimersClearedEnvelope | JavaScriptInteractionEnvelope;
 
 export interface JavaScriptExecutionClientOptions {
   readonly responseTimeoutMs?: number;
   readonly tokenFactory?: () => string;
+  readonly frameGeneration?: number;
 }
 
 interface PendingTimerClear {
   readonly token: string;
   readonly resolve: () => void;
+  readonly reject: (error: Error) => void;
+  readonly timeout: ReturnType<typeof setTimeout>;
+}
+
+interface PendingInteraction {
+  readonly token: string;
+  readonly resolve: (result: InteractionResult) => void;
   readonly reject: (error: Error) => void;
   readonly timeout: ReturnType<typeof setTimeout>;
 }
@@ -75,6 +111,20 @@ function isIdentifier(value: unknown, maximum = MAX_ID_LENGTH): value is string 
   return typeof value === 'string' && value.length > 0 && value.length <= maximum;
 }
 
+/** Content境界と同じ制御文字拒否をInteraction送信前にも適用する。 */
+function hasNoControlCharacters(value: string): boolean {
+  for (const character of value) {
+    const codePoint = character.codePointAt(0);
+    if (
+      codePoint !== undefined &&
+      ((codePoint >= 0 && codePoint <= 31) || (codePoint >= 127 && codePoint <= 159))
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
 /** Runtime error payloadをboundedかつstrictに確認する。 */
 function isRuntimeError(value: unknown): value is JavaScriptRuntimeError {
   return (
@@ -83,6 +133,66 @@ function isRuntimeError(value: unknown): value is JavaScriptRuntimeError {
     isIdentifier(value.name, MAX_ERROR_NAME_LENGTH) &&
     typeof value.message === 'string' &&
     value.message.length <= MAX_ERROR_MESSAGE_LENGTH
+  );
+}
+
+/** Interaction error payloadを固定codeとbounded messageへ限定する。 */
+function isInteractionError(value: unknown): value is JavaScriptInteractionError {
+  return (
+    isRecord(value) &&
+    hasExactKeys(value, ['code', 'message']) &&
+    (value.code === 'invalid-action' ||
+      value.code === 'target-not-found' ||
+      value.code === 'target-type-mismatch' ||
+      value.code === 'action-failed') &&
+    typeof value.message === 'string' &&
+    value.message.length > 0 &&
+    value.message.length <= MAX_ERROR_MESSAGE_LENGTH
+  );
+}
+
+/** 親Runnerへ渡されたactionをstrict fieldと上限で再検証する。 */
+function isInteractionAction(value: unknown): value is InteractionRequest['action'] {
+  if (!isRecord(value) || !isIdentifier(value.id) || typeof value.kind !== 'string') return false;
+  const selector = value.selector;
+  if (
+    typeof selector !== 'string' ||
+    selector.length === 0 ||
+    selector.length > 256 ||
+    !hasNoControlCharacters(selector)
+  ) {
+    return false;
+  }
+  if (value.kind === 'click' || value.kind === 'focus') {
+    return hasExactKeys(value, ['id', 'kind', 'selector']);
+  }
+  if (value.kind === 'fill') {
+    return (
+      hasExactKeys(value, ['id', 'kind', 'selector', 'value']) &&
+      typeof value.value === 'string' &&
+      value.value.length <= 4096
+    );
+  }
+  if (value.kind === 'select') {
+    return (
+      hasExactKeys(value, ['id', 'kind', 'selector', 'value']) &&
+      typeof value.value === 'string' &&
+      value.value.length <= 256
+    );
+  }
+  return (
+    value.kind === 'key' &&
+    hasExactKeys(value, ['id', 'key', 'kind', 'selector']) &&
+    (value.key === 'Enter' ||
+      value.key === 'Escape' ||
+      value.key === 'ArrowUp' ||
+      value.key === 'ArrowDown' ||
+      value.key === 'ArrowLeft' ||
+      value.key === 'ArrowRight' ||
+      value.key === 'Home' ||
+      value.key === 'End' ||
+      value.key === 'Space' ||
+      value.key === 'Tab')
   );
 }
 
@@ -116,6 +226,41 @@ function isConsoleRecords(value: unknown): value is readonly RunnerConsoleRecord
 export function isJavaScriptRuntimeEnvelope(value: unknown): value is JavaScriptRuntimeEnvelope {
   if (
     !isRecord(value) ||
+    value.version !== JAVASCRIPT_PROTOCOL_VERSION ||
+    !isIdentifier(value.exerciseSessionId) ||
+    !Number.isSafeInteger(value.executionRevision) ||
+    Number(value.executionRevision) < 0 ||
+    !isIdentifier(value.requestId) ||
+    !isIdentifier(value.oneTimeToken, MAX_TOKEN_LENGTH)
+  ) {
+    return false;
+  }
+  if (value.type === 'javascript.interaction-complete') {
+    if (
+      !hasExactKeys(value, [
+        'exerciseSessionId',
+        'executionRevision',
+        'frameGeneration',
+        'oneTimeToken',
+        'payload',
+        'requestId',
+        'type',
+        'version',
+      ]) ||
+      !Number.isSafeInteger(value.frameGeneration) ||
+      Number(value.frameGeneration) < 0
+    ) {
+      return false;
+    }
+    const payload = value.payload;
+    return (
+      isRecord(payload) &&
+      hasExactKeys(payload, ['console', 'error']) &&
+      (payload.error === null || isInteractionError(payload.error)) &&
+      isConsoleRecords(payload.console)
+    );
+  }
+  if (
     !hasExactKeys(value, [
       'exerciseSessionId',
       'executionRevision',
@@ -124,13 +269,7 @@ export function isJavaScriptRuntimeEnvelope(value: unknown): value is JavaScript
       'requestId',
       'type',
       'version',
-    ]) ||
-    value.version !== JAVASCRIPT_PROTOCOL_VERSION ||
-    !isIdentifier(value.exerciseSessionId) ||
-    !Number.isSafeInteger(value.executionRevision) ||
-    Number(value.executionRevision) < 0 ||
-    !isIdentifier(value.requestId) ||
-    !isIdentifier(value.oneTimeToken, MAX_TOKEN_LENGTH)
+    ])
   ) {
     return false;
   }
@@ -171,8 +310,10 @@ export class JavaScriptExecutionClient {
   readonly #tokenFactory: () => string;
   readonly #execution: Promise<JavaScriptExecutionPayload>;
   readonly #pendingTimerClears = new Map<string, PendingTimerClear>();
+  readonly #pendingInteractions = new Map<string, PendingInteraction>();
   readonly #usedRequestIds = new Set<string>();
   readonly #usedTokens = new Set<string>();
+  readonly #frameGeneration: number | undefined;
   #executionResolve: ((payload: JavaScriptExecutionPayload) => void) | undefined;
   #executionReject: ((error: Error) => void) | undefined;
   #executionTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -199,6 +340,29 @@ export class JavaScriptExecutionClient {
       this.#executionResolve?.(message.payload);
       this.#executionResolve = undefined;
       this.#executionReject = undefined;
+      return;
+    }
+    if (message.type === 'javascript.interaction-complete') {
+      if (message.frameGeneration !== this.#frameGeneration) return;
+      const pending = this.#pendingInteractions.get(message.requestId);
+      if (pending === undefined || pending.token !== message.oneTimeToken) return;
+      clearTimeout(pending.timeout);
+      this.#pendingInteractions.delete(message.requestId);
+      if (message.payload.error !== null) {
+        pending.reject(
+          new Error(
+            `JavaScript interaction failed (${message.payload.error.code}): ${message.payload.error.message}`,
+          ),
+        );
+        return;
+      }
+      pending.resolve({
+        exerciseSessionId: this.exerciseSessionId,
+        executionRevision: this.executionRevision,
+        frameGeneration: message.frameGeneration,
+        requestId: message.requestId,
+        console: message.payload.console,
+      });
       return;
     }
     const pending = this.#pendingTimerClears.get(message.requestId);
@@ -230,6 +394,13 @@ export class JavaScriptExecutionClient {
     this.#sourceWindow = sourceWindow;
     this.#timeoutMs = responseTimeout(options);
     this.#tokenFactory = options?.tokenFactory ?? (() => crypto.randomUUID());
+    if (
+      options?.frameGeneration !== undefined &&
+      (!Number.isSafeInteger(options.frameGeneration) || options.frameGeneration < 0)
+    ) {
+      throw new Error('Invalid JavaScript frame generation');
+    }
+    this.#frameGeneration = options?.frameGeneration;
     this.#execution = new Promise<JavaScriptExecutionPayload>((resolve, reject) => {
       this.#executionResolve = resolve;
       this.#executionReject = reject;
@@ -248,6 +419,68 @@ export class JavaScriptExecutionClient {
   /** 認証済みの同期実行完了を待つ。 */
   waitUntilExecuted(): Promise<JavaScriptExecutionPayload> {
     return this.#execution;
+  }
+
+  /** 現在frameへstrictなInteractionを送り、認証済み結果だけを返す。 */
+  interact(request: InteractionRequest): Promise<InteractionResult> {
+    if (this.#disposed) return Promise.reject(new Error('JavaScript execution disposed'));
+    if (this.#executionState !== 'resolved') {
+      return Promise.reject(new Error('JavaScript execution is not ready'));
+    }
+    if (
+      this.#frameGeneration === undefined ||
+      request.exerciseSessionId !== this.exerciseSessionId ||
+      request.executionRevision !== this.executionRevision ||
+      request.frameGeneration !== this.#frameGeneration
+    ) {
+      return Promise.reject(new Error('JavaScript interaction identity mismatch'));
+    }
+    if (!isInteractionAction(request.action)) {
+      return Promise.reject(new Error('JavaScript interaction action is invalid'));
+    }
+    if (
+      !isIdentifier(request.requestId) ||
+      this.#usedRequestIds.size >= 1_024 ||
+      this.#usedRequestIds.has(request.requestId)
+    ) {
+      return Promise.reject(new Error('Interaction request ID is invalid or duplicated'));
+    }
+    this.#usedRequestIds.add(request.requestId);
+    const token = this.#tokenFactory();
+    if (!isIdentifier(token, MAX_TOKEN_LENGTH) || this.#usedTokens.has(token)) {
+      return Promise.reject(new Error('Interaction token is invalid or duplicated'));
+    }
+    this.#usedTokens.add(token);
+    let pending!: PendingInteraction;
+    const promise = new Promise<InteractionResult>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        if (this.#pendingInteractions.get(request.requestId) !== pending) return;
+        this.#pendingInteractions.delete(request.requestId);
+        reject(new Error('Interaction response timeout'));
+      }, this.#timeoutMs);
+      pending = { token, resolve, reject, timeout };
+      this.#pendingInteractions.set(request.requestId, pending);
+    });
+    try {
+      this.#sourceWindow.postMessage(
+        {
+          version: JAVASCRIPT_PROTOCOL_VERSION,
+          type: 'javascript.interact',
+          exerciseSessionId: this.exerciseSessionId,
+          executionRevision: this.executionRevision,
+          frameGeneration: this.#frameGeneration,
+          requestId: request.requestId,
+          oneTimeToken: token,
+          payload: request.action,
+        },
+        '*',
+      );
+    } catch (error: unknown) {
+      clearTimeout(pending.timeout);
+      this.#pendingInteractions.delete(request.requestId);
+      pending.reject(error instanceof Error ? error : new Error(String(error)));
+    }
+    return promise;
   }
 
   /** Snapshot前に未完了timerを全停止し、認証済みackを待つ。 */
@@ -318,5 +551,10 @@ export class JavaScriptExecutionClient {
       pending.reject(new Error('JavaScript execution disposed'));
     }
     this.#pendingTimerClears.clear();
+    for (const pending of this.#pendingInteractions.values()) {
+      clearTimeout(pending.timeout);
+      pending.reject(new Error('JavaScript execution disposed'));
+    }
+    this.#pendingInteractions.clear();
   }
 }

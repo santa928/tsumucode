@@ -87,6 +87,7 @@ describe('createJavaScriptExecutionSource', () => {
       const source = createJavaScriptExecutionSource({
         exerciseSessionId: 'session-1',
         executionRevision: 3,
+        frameGeneration: 7,
         bootstrapToken: 'bootstrap-token',
         guardIdentifier: '__tsumuBudgetGuard',
         instrumentedCode: 'while (true) { if (!__tsumuBudgetGuard.checkLoop()) break; }',
@@ -120,6 +121,100 @@ describe('createJavaScriptExecutionSource', () => {
     }
   });
 
+  it('trusted bootstrapだけが同じgenerationのstrict actionを一度実行する', async () => {
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    const childWindow = frame.contentWindow!;
+    const dispatchWindowEvent = childWindow.dispatchEvent.bind(childWindow);
+    const messages: unknown[] = [];
+    const postMessage = vi
+      .spyOn(childWindow.parent, 'postMessage')
+      .mockImplementation((message) => {
+        messages.push(message);
+      });
+    try {
+      const source = createJavaScriptExecutionSource({
+        exerciseSessionId: 'session-1',
+        executionRevision: 3,
+        frameGeneration: 7,
+        bootstrapToken: 'bootstrap-token',
+        guardIdentifier: '__tsumuBudgetGuard',
+        instrumentedCode: [
+          'document.querySelector("#answer").addEventListener("click", () => {',
+          '  document.getElementById("result").textContent = "clicked";',
+          '  console.log("clicked");',
+          '});',
+          'Document.prototype.querySelector = () => null;',
+        ].join('\n'),
+      });
+      childWindow.document.open();
+      // eslint-disable-next-line @typescript-eslint/no-deprecated -- parser実行順を再現するiframe test fixture。
+      childWindow.document.write(
+        `<!doctype html><html><body><button id="answer">回答</button><p id="result"></p><script>${source}</script></body></html>`,
+      );
+      childWindow.document.close();
+      const dispatchInteraction = (data: Readonly<Record<string, unknown>>): void => {
+        dispatchWindowEvent(
+          new MessageEvent('message', {
+            source: childWindow.parent,
+            data: {
+              version: JAVASCRIPT_PROTOCOL_VERSION,
+              type: 'javascript.interact',
+              exerciseSessionId: 'session-1',
+              executionRevision: 3,
+              frameGeneration: 7,
+              requestId: 'interaction-1',
+              oneTimeToken: 'interaction-token',
+              payload: { id: 'answer', kind: 'click', selector: '#answer' },
+              ...data,
+            },
+          }),
+        );
+      };
+
+      dispatchInteraction({
+        requestId: 'invalid-action',
+        oneTimeToken: 'invalid-token',
+        payload: { id: 'answer', kind: 'click', selector: '#answer', sleepMs: 1 },
+      });
+      dispatchInteraction({
+        requestId: 'wrong-generation',
+        oneTimeToken: 'wrong-generation-token',
+        frameGeneration: 8,
+      });
+      dispatchInteraction({});
+      dispatchInteraction({});
+
+      expect(childWindow.document.getElementById('result')?.textContent).toBe('clicked');
+      expect(
+        messages.filter(
+          (message) =>
+            typeof message === 'object' &&
+            message !== null &&
+            (message as Readonly<Record<string, unknown>>).type ===
+              'javascript.interaction-complete',
+        ),
+      ).toEqual([
+        {
+          version: JAVASCRIPT_PROTOCOL_VERSION,
+          type: 'javascript.interaction-complete',
+          exerciseSessionId: 'session-1',
+          executionRevision: 3,
+          frameGeneration: 7,
+          requestId: 'interaction-1',
+          oneTimeToken: 'interaction-token',
+          payload: {
+            error: null,
+            console: [{ sequence: 0, level: 'log', text: 'clicked' }],
+          },
+        },
+      ]);
+    } finally {
+      postMessage.mockRestore();
+      frame.remove();
+    }
+  });
+
   it('危険なglobal APIを無効化し、timerを10件で打ち止めにする', async () => {
     const frame = document.createElement('iframe');
     document.body.append(frame);
@@ -135,6 +230,7 @@ describe('createJavaScriptExecutionSource', () => {
       const source = createJavaScriptExecutionSource({
         exerciseSessionId: 'session-1',
         executionRevision: 4,
+        frameGeneration: 7,
         bootstrapToken: 'bootstrap-token',
         guardIdentifier: '__tsumuBudgetGuard',
         instrumentedCode: [
@@ -213,6 +309,7 @@ describe('createJavaScriptExecutionSource', () => {
       const source = createJavaScriptExecutionSource({
         exerciseSessionId: 'session-1',
         executionRevision: 5,
+        frameGeneration: 7,
         bootstrapToken: 'bootstrap-token',
         guardIdentifier: '__tsumuBudgetGuard',
         instrumentedCode: [
@@ -279,6 +376,7 @@ describe('createJavaScriptExecutionSource', () => {
       const source = createJavaScriptExecutionSource({
         exerciseSessionId: 'session-1',
         executionRevision: 6,
+        frameGeneration: 7,
         bootstrapToken: 'bootstrap-token',
         guardIdentifier: '__tsumuBudgetGuard',
         instrumentedCode: 'for (let index = 0; index < 105; index += 1) console.log(index);',

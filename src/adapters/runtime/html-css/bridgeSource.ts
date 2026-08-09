@@ -563,6 +563,7 @@ function bridgeRuntime(config: BridgeConfig): void {
           },
           overflow: overflow(html),
           focusable: isFocusable(element, style),
+          focused: document.activeElement === element,
           accessibleName: outputString(
             isDocumentElement ? '' : accessibleName(element),
             'accessible name',

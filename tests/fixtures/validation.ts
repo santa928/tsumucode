@@ -54,6 +54,7 @@ export function previewNode(overrides: Partial<PreviewNode> = {}): PreviewNode {
       clientHeight: 500,
     },
     focusable: false,
+    focused: false,
     accessibleName: 'メインコンテンツ',
     role: 'main',
     ...overrides,

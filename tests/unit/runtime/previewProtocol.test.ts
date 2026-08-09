@@ -60,6 +60,7 @@ function previewNode(overrides: Partial<PreviewNode> = {}): PreviewNode {
       clientHeight: 50,
     },
     focusable: false,
+    focused: false,
     accessibleName: '',
     role: 'main',
     ...overrides,
@@ -147,6 +148,25 @@ describe('preview response schema', () => {
       isPreviewResponse({
         ...envelope,
         payload: { ...envelope.payload, nodes: [previewNode({ parentId: 99 })] },
+      }),
+    ).toBe(false);
+  });
+
+  it('現在focus中かを示すfocused fieldを必須にする', () => {
+    const envelope = {
+      ...ready,
+      type: 'snapshot.response',
+      requestId: 'request-1',
+      oneTimeToken: 'request-token',
+      payload: snapshot({ nodes: [previewNode({ focused: true })] }),
+    } as const;
+    expect(isPreviewResponse(envelope)).toBe(true);
+    const { focused: _focused, ...missingFocused } = envelope.payload.nodes[0]!;
+    void _focused;
+    expect(
+      isPreviewResponse({
+        ...envelope,
+        payload: { ...envelope.payload, nodes: [missingFocused] },
       }),
     ).toBe(false);
   });

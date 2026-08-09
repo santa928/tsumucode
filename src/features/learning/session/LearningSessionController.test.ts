@@ -2,11 +2,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Exercise } from '../../../core/content/types';
 import type { ExerciseDraft, ProgressRepository } from '../../../core/persistence/contracts';
 import type {
+  InteractionRequest,
+  InteractionResult,
   PreviewSnapshot,
   RunnerAdapter,
   RunnerInput,
   RunnerRenderResult,
 } from '../../../core/runtime/contracts';
+import { previewNode } from '../../../../tests/fixtures/validation';
 import type {
   ValidationContext,
   ValidationResult,
@@ -81,18 +84,24 @@ interface RunnerHarness {
   readonly runner: RunnerAdapter;
   readonly render: ReturnType<typeof vi.fn<(input: RunnerInput) => Promise<RunnerRenderResult>>>;
   readonly requestSnapshot: ReturnType<typeof vi.fn<RunnerAdapter['requestSnapshot']>>;
+  readonly interact: ReturnType<
+    typeof vi.fn<(request: InteractionRequest) => Promise<InteractionResult>>
+  >;
   readonly dispose: ReturnType<typeof vi.fn<RunnerAdapter['dispose']>>;
 }
 
 /** stateful Runnerのrender→snapshot順を再現するfixtureを生成する。 */
 function runnerHarness(events: string[] = []): RunnerHarness {
   let currentInput: RunnerInput | undefined;
+  let frameGeneration = 0;
   const render = vi.fn(async (input: RunnerInput): Promise<RunnerRenderResult> => {
     currentInput = input;
+    frameGeneration += 1;
     events.push(`render:${input.viewport.id}`);
     return {
       exerciseSessionId: input.exerciseSessionId,
       executionRevision: input.executionRevision,
+      frameGeneration,
       diagnostics: [
         {
           code: `DIAGNOSTIC_${input.viewport.id}`,
@@ -115,16 +124,30 @@ function runnerHarness(events: string[] = []): RunnerHarness {
       executionRevision: request.executionRevision,
     });
   });
+  const interact = vi.fn<(request: InteractionRequest) => Promise<InteractionResult>>(
+    async (request) => {
+      events.push(`interact:${request.action.id}`);
+      return {
+        exerciseSessionId: request.exerciseSessionId,
+        executionRevision: request.executionRevision,
+        frameGeneration: request.frameGeneration,
+        requestId: request.requestId,
+        console: [],
+      };
+    },
+  );
   const dispose = vi.fn<RunnerAdapter['dispose']>();
   return {
     runner: {
       languageId: 'html-css',
       prepare: vi.fn(),
       render,
+      interact,
       requestSnapshot,
       dispose,
     },
     render,
+    interact,
     requestSnapshot,
     dispose,
   };
@@ -462,6 +485,164 @@ describe('LearningSessionController', () => {
         ],
       }),
     );
+  });
+
+  it('Scenarioごとに新しいframeでactionを実行し、checkpointだけをValidatorへ渡す', async () => {
+    const events: string[] = [];
+    const current = exercise({
+      interactionScenarios: [
+        {
+          id: 'answer-flow',
+          label: '回答して結果を見る',
+          actions: [{ id: 'answer', kind: 'click', selector: '#answer' }],
+          checkpoints: [
+            {
+              id: 'result-ready',
+              afterActionId: 'answer',
+              expectations: [{ id: 'result-exists', kind: 'selector-exists', selector: '#result' }],
+            },
+          ],
+        },
+      ],
+    });
+    const runtime = runnerHarness(events);
+    runtime.requestSnapshot.mockImplementation(async (request) => {
+      const renderedInput = runtime.render.mock.calls.at(-1)?.[0];
+      if (renderedInput === undefined) throw new Error('render入力がありません');
+      events.push(`snapshot:${renderedInput.viewport.id}`);
+      return {
+        ...snapshot({
+          ...renderedInput,
+          exerciseSessionId: request.exerciseSessionId,
+          executionRevision: request.executionRevision,
+        }),
+        nodes: [previewNode({ matchedSelectors: ['#result'] })],
+      };
+    });
+    const validation = validatorHarness(events);
+    const controller = new LearningSessionController(
+      controllerInput({
+        exercise: current,
+        runner: runtime.runner,
+        validator: validation.validator,
+      }),
+    );
+
+    await expect(controller.validateNow()).resolves.toMatchObject({ status: 'pass' });
+
+    expect(events).toEqual([
+      'render:desktop',
+      'snapshot:desktop',
+      'render:desktop',
+      'interact:answer',
+      'snapshot:desktop',
+      `validate:${current.id}`,
+      'render:desktop',
+    ]);
+    expect(runtime.requestSnapshot.mock.calls[0]?.[0].preserveTimers).not.toBe(true);
+    expect(runtime.requestSnapshot.mock.calls[1]?.[0].preserveTimers).toBe(true);
+    expect(validation.validate.mock.calls[0]?.[0].interactionCheckpoints).toEqual({
+      desktop: [
+        {
+          exerciseSessionId: `html-css:${current.id}`,
+          executionRevision: 0,
+          frameGeneration: 2,
+          viewportId: 'desktop',
+          scenarioId: 'answer-flow',
+          checkpointId: 'result-ready',
+          afterActionId: 'answer',
+          expectations: [{ expectationId: 'result-exists', passed: true, actual: 'found' }],
+        },
+      ],
+    });
+  });
+
+  it('Interaction timeoutではSourceを保持し、判定履歴とpassing snapshotを更新しない', async () => {
+    const current = exercise({
+      interactionScenarios: [
+        {
+          id: 'answer-flow',
+          label: '回答する',
+          actions: [{ id: 'answer', kind: 'click', selector: '#answer' }],
+          checkpoints: [
+            {
+              id: 'result-ready',
+              afterActionId: 'answer',
+              expectations: [{ id: 'result-exists', kind: 'selector-exists', selector: '#result' }],
+            },
+          ],
+        },
+      ],
+    });
+    const runtime = runnerHarness();
+    runtime.interact.mockRejectedValueOnce(new Error('Interaction response timeout'));
+    const controller = new LearningSessionController(
+      controllerInput({ exercise: current, runner: runtime.runner }),
+    );
+    controller.edit('index.html', '<main>Sourceは保持する</main>');
+
+    await expect(controller.validateNow()).rejects.toThrow('Interaction response timeout');
+
+    expect(controller.getSnapshot().files['index.html']).toBe('<main>Sourceは保持する</main>');
+    expect(controller.getSnapshot().validationHistory).toEqual([]);
+    expect(controller.getLastValidationBatch()).toEqual([]);
+    expect(controller.getLastValidationDraft(1)).toBeUndefined();
+  });
+
+  it('未達checkpointだけを50ms間隔で再観測し、期待値成立時に750msを待たず確定する', async () => {
+    const current = exercise({
+      interactionScenarios: [
+        {
+          id: 'delayed-flow',
+          label: '遅延結果を確認する',
+          actions: [{ id: 'answer', kind: 'click', selector: '#answer' }],
+          checkpoints: [
+            {
+              id: 'result-ready',
+              afterActionId: 'answer',
+              expectations: [{ id: 'result-exists', kind: 'selector-exists', selector: '#result' }],
+            },
+          ],
+        },
+      ],
+    });
+    const runtime = runnerHarness();
+    let interactionPolls = 0;
+    runtime.requestSnapshot.mockImplementation(async (request) => {
+      const renderedInput = runtime.render.mock.calls.at(-1)?.[0];
+      if (renderedInput === undefined) throw new Error('render入力がありません');
+      if (request.preserveTimers === true) interactionPolls += 1;
+      return {
+        ...snapshot({
+          ...renderedInput,
+          exerciseSessionId: request.exerciseSessionId,
+          executionRevision: request.executionRevision,
+        }),
+        nodes:
+          request.preserveTimers === true && interactionPolls >= 3
+            ? [previewNode({ matchedSelectors: ['#result'] })]
+            : [],
+      };
+    });
+    const validation = validatorHarness();
+    const controller = new LearningSessionController(
+      controllerInput({
+        exercise: current,
+        runner: runtime.runner,
+        validator: validation.validator,
+      }),
+    );
+
+    const validating = controller.validateNow();
+    await vi.advanceTimersByTimeAsync(100);
+    await expect(validating).resolves.toMatchObject({ status: 'pass' });
+
+    expect(interactionPolls).toBe(3);
+    expect(
+      validation.validate.mock.calls[0]?.[0].interactionCheckpoints.desktop?.[0],
+    ).toMatchObject({
+      expectations: [{ expectationId: 'result-exists', passed: true, actual: 'found' }],
+    });
   });
 
   it('Runnerのerror診断ではSnapshotを要求せずValidatorへ渡して再試行可能な結果を残す', async () => {

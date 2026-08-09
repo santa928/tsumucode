@@ -7,6 +7,7 @@ import type {
 import { JavaScriptRunnerAdapter } from './JavaScriptRunnerAdapter';
 import { JAVASCRIPT_PROTOCOL_VERSION } from './protocol';
 import type {
+  InteractionRequest,
   PreviewSnapshot,
   RunnerInput,
   SnapshotPolicy,
@@ -45,6 +46,32 @@ function runnerInput(overrides: Partial<RunnerInput> = {}): RunnerInput {
     },
     ...overrides,
   };
+}
+
+/** 認証済みInteraction完了messageを送る。 */
+function dispatchInteraction(
+  frame: HTMLIFrameElement,
+  requestId: string,
+  oneTimeToken: string,
+  frameGeneration: number,
+  overrides: Readonly<Record<string, unknown>> = {},
+): void {
+  window.dispatchEvent(
+    new MessageEvent('message', {
+      source: frame.contentWindow,
+      data: {
+        version: JAVASCRIPT_PROTOCOL_VERSION,
+        type: 'javascript.interaction-complete',
+        exerciseSessionId: 'session-1',
+        executionRevision: 1,
+        frameGeneration,
+        requestId,
+        oneTimeToken,
+        payload: { error: null, console: [] },
+        ...overrides,
+      },
+    }),
+  );
 }
 
 /** Analyzer成功結果をidentity付きで作る。 */
@@ -616,6 +643,61 @@ describe('JavaScriptRunnerAdapter', () => {
     );
 
     await expect(pending).resolves.toEqual(snapshot());
+    await runner.dispose();
+  });
+
+  it('active frame generationと一致するInteractionだけを送受信する', async () => {
+    const analyzer = {
+      analyze: vi.fn(async () => analysisSuccess()),
+      dispose: vi.fn(async () => undefined),
+    };
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    const postMessage = vi
+      .spyOn(frame.contentWindow!, 'postMessage')
+      .mockImplementation(() => undefined);
+    const runner = new JavaScriptRunnerAdapter({ analyzer });
+    await runner.prepare(frame);
+    const rendering = runner.render(runnerInput());
+    await vi.waitFor(() => {
+      expect(frame.srcdoc).not.toBe('');
+    });
+    dispatchExecution(frame);
+    dispatchBridgeReady(frame);
+    const rendered = await rendering;
+    expect(rendered.frameGeneration).toEqual(expect.any(Number));
+    const frameGeneration = rendered.frameGeneration!;
+    const request: InteractionRequest = {
+      exerciseSessionId: 'session-1',
+      executionRevision: 1,
+      frameGeneration,
+      requestId: 'interaction-1',
+      action: { id: 'choose', kind: 'click', selector: '#answer' },
+    };
+
+    const pending = runner.interact(request);
+    const message = postMessage.mock.calls[0]?.[0] as {
+      readonly frameGeneration: number;
+      readonly oneTimeToken: string;
+      readonly requestId: string;
+    };
+    expect(message).toMatchObject({
+      type: 'javascript.interact',
+      frameGeneration,
+      requestId: 'interaction-1',
+    });
+    dispatchInteraction(frame, message.requestId, message.oneTimeToken, frameGeneration + 1);
+    dispatchInteraction(frame, message.requestId, message.oneTimeToken, frameGeneration);
+
+    await expect(pending).resolves.toMatchObject({
+      exerciseSessionId: 'session-1',
+      executionRevision: 1,
+      frameGeneration,
+      requestId: 'interaction-1',
+    });
+    await expect(
+      runner.interact({ ...request, frameGeneration: frameGeneration + 1 }),
+    ).rejects.toThrow(/current/u);
     await runner.dispose();
   });
 

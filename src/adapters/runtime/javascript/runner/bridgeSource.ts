@@ -8,6 +8,7 @@ import { JAVASCRIPT_PROTOCOL_VERSION } from './protocol';
 export interface CreateJavaScriptExecutionSourceInput {
   readonly exerciseSessionId: string;
   readonly executionRevision: number;
+  readonly frameGeneration: number;
   readonly bootstrapToken: string;
   readonly guardIdentifier: string;
   readonly instrumentedCode: string;
@@ -16,6 +17,7 @@ export interface CreateJavaScriptExecutionSourceInput {
 export interface CreateJavaScriptModuleExecutionSourceInput {
   readonly exerciseSessionId: string;
   readonly executionRevision: number;
+  readonly frameGeneration: number;
   readonly bootstrapToken: string;
   readonly runtimeKey: string;
   readonly moduleGraph: PreparedJavaScriptModuleGraph;
@@ -29,8 +31,184 @@ const MAX_MODULE_PLAN_BYTES = 768 * 1024;
 interface RuntimeConfig {
   readonly exerciseSessionId: string;
   readonly executionRevision: number;
+  readonly frameGeneration: number;
   readonly bootstrapToken: string;
   readonly protocolVersion: number;
+}
+
+export interface TrustedInteractionError {
+  readonly code: 'invalid-action' | 'target-not-found' | 'target-type-mismatch' | 'action-failed';
+  readonly message: string;
+}
+
+export interface TrustedInteractionExecutionResult {
+  readonly error: TrustedInteractionError | null;
+}
+
+/** learner codeより先に捕捉したDOM APIだけでboundedな教材操作を実行する。 */
+export function createTrustedInteractionExecutor(
+  target: Document,
+): (action: unknown) => TrustedInteractionExecutionResult {
+  'use strict';
+  const view = target.defaultView;
+  if (view === null) throw new Error('Interaction document has no window');
+  // eslint-disable-next-line @typescript-eslint/no-deprecated -- learner上書き前のDocument APIを捕捉する。
+  const querySelector = target.querySelector.bind(target);
+  const objectKeys = Object.keys.bind(Object);
+  const applyFunction = Reflect.apply.bind(Reflect);
+  const HTMLElementConstructor = view.HTMLElement;
+  const ElementConstructor = view.Element;
+  const InputConstructor = view.HTMLInputElement;
+  const SelectConstructor = view.HTMLSelectElement;
+  // eslint-disable-next-line @typescript-eslint/unbound-method -- 捕捉済みreceiverへReflect.applyする。
+  const nativeClick = HTMLElementConstructor.prototype.click;
+  // eslint-disable-next-line @typescript-eslint/unbound-method -- 捕捉済みreceiverへReflect.applyする。
+  const nativeFocus = HTMLElementConstructor.prototype.focus;
+  // eslint-disable-next-line @typescript-eslint/unbound-method -- 捕捉済みreceiverへReflect.applyする。
+  const nativeDispatchEvent = view.EventTarget.prototype.dispatchEvent;
+  // eslint-disable-next-line @typescript-eslint/unbound-method -- 捕捉済みreceiverへReflect.applyする。
+  const inputValueSetter = Object.getOwnPropertyDescriptor(
+    InputConstructor.prototype,
+    'value',
+  )?.set;
+  // eslint-disable-next-line @typescript-eslint/unbound-method -- 捕捉済みreceiverへReflect.applyする。
+  const selectValueSetter = Object.getOwnPropertyDescriptor(
+    SelectConstructor.prototype,
+    'value',
+  )?.set;
+  const EventConstructor = view.Event;
+  const KeyboardEventConstructor = view.KeyboardEvent;
+  const invalidAction = (): TrustedInteractionExecutionResult => ({
+    error: { code: 'invalid-action', message: 'Interaction action is invalid' },
+  });
+  const hasExactKeys = (
+    value: Readonly<Record<string, unknown>>,
+    expected: readonly string[],
+  ): boolean => {
+    const actual = objectKeys(value).sort();
+    const sortedExpected = [...expected].sort();
+    return (
+      actual.length === sortedExpected.length &&
+      actual.every((key, index) => key === sortedExpected[index])
+    );
+  };
+  const isBoundedString = (value: unknown, maximum: number): value is string =>
+    typeof value === 'string' && value.length > 0 && value.length <= maximum;
+  const isBoundedValue = (value: unknown, maximum: number): value is string =>
+    typeof value === 'string' && value.length <= maximum;
+  const dispatch = (element: Element, event: Event): void => {
+    applyFunction(nativeDispatchEvent, element, [event]);
+  };
+
+  return (action: unknown): TrustedInteractionExecutionResult => {
+    if (typeof action !== 'object' || action === null || Array.isArray(action)) {
+      return invalidAction();
+    }
+    const value = action as Readonly<Record<string, unknown>>;
+    if (
+      !isBoundedString(value['id'], 256) ||
+      !isBoundedString(value['selector'], 256) ||
+      typeof value['kind'] !== 'string'
+    ) {
+      return invalidAction();
+    }
+    const kind = value['kind'];
+    const requiresValue = kind === 'fill' || kind === 'select';
+    const requiresKey = kind === 'key';
+    const expectedKeys = requiresValue
+      ? ['id', 'kind', 'selector', 'value']
+      : requiresKey
+        ? ['id', 'key', 'kind', 'selector']
+        : ['id', 'kind', 'selector'];
+    if (
+      !hasExactKeys(value, expectedKeys) ||
+      (kind !== 'click' &&
+        kind !== 'fill' &&
+        kind !== 'select' &&
+        kind !== 'key' &&
+        kind !== 'focus') ||
+      (requiresValue && !isBoundedValue(value['value'], kind === 'fill' ? 4_096 : 256)) ||
+      (requiresKey &&
+        value['key'] !== 'Enter' &&
+        value['key'] !== 'Escape' &&
+        value['key'] !== 'ArrowUp' &&
+        value['key'] !== 'ArrowDown' &&
+        value['key'] !== 'ArrowLeft' &&
+        value['key'] !== 'ArrowRight' &&
+        value['key'] !== 'Home' &&
+        value['key'] !== 'End' &&
+        value['key'] !== 'Space' &&
+        value['key'] !== 'Tab')
+    ) {
+      return invalidAction();
+    }
+    try {
+      const element = querySelector(value['selector']);
+      if (element === null) {
+        return {
+          error: { code: 'target-not-found', message: 'Interaction target was not found' },
+        };
+      }
+      if (kind === 'click' || kind === 'focus') {
+        if (!(element instanceof HTMLElementConstructor)) {
+          return {
+            error: {
+              code: 'target-type-mismatch',
+              message: 'Interaction target type is invalid',
+            },
+          };
+        }
+        applyFunction(kind === 'click' ? nativeClick : nativeFocus, element, []);
+        return { error: null };
+      }
+      if (kind === 'fill') {
+        if (!(element instanceof InputConstructor) || inputValueSetter === undefined) {
+          return {
+            error: {
+              code: 'target-type-mismatch',
+              message: 'Interaction target type is invalid',
+            },
+          };
+        }
+        applyFunction(inputValueSetter, element, [value['value']]);
+        dispatch(element, new EventConstructor('input', { bubbles: true }));
+        dispatch(element, new EventConstructor('change', { bubbles: true }));
+        return { error: null };
+      }
+      if (kind === 'select') {
+        if (!(element instanceof SelectConstructor) || selectValueSetter === undefined) {
+          return {
+            error: {
+              code: 'target-type-mismatch',
+              message: 'Interaction target type is invalid',
+            },
+          };
+        }
+        applyFunction(selectValueSetter, element, [value['value']]);
+        dispatch(element, new EventConstructor('input', { bubbles: true }));
+        dispatch(element, new EventConstructor('change', { bubbles: true }));
+        return { error: null };
+      }
+      if (!(element instanceof ElementConstructor)) {
+        return {
+          error: { code: 'target-type-mismatch', message: 'Interaction target type is invalid' },
+        };
+      }
+      const key = value['key'] === 'Space' ? ' ' : String(value['key']);
+      const code = value['key'] === 'Space' ? 'Space' : String(value['key']);
+      dispatch(
+        element,
+        new KeyboardEventConstructor('keydown', { bubbles: true, cancelable: true, key, code }),
+      );
+      dispatch(
+        element,
+        new KeyboardEventConstructor('keyup', { bubbles: true, cancelable: true, key, code }),
+      );
+      return { error: null };
+    } catch {
+      return { error: { code: 'action-failed', message: 'Interaction action could not run' } };
+    }
+  };
 }
 
 /** Module Blob URLを例外に影響されず全件回収し、再実行しても副作用を起こさない。 */
@@ -89,6 +267,9 @@ function createRuntimeState(
   config: RuntimeConfig,
   formatConsole: (args: readonly unknown[], limits: ConsoleLimits) => string,
   consoleLimits: ConsoleLimits,
+  createInteractionExecutor: (
+    target: Document,
+  ) => (action: unknown) => TrustedInteractionExecutionResult,
 ) {
   'use strict';
   const version = config.protocolVersion;
@@ -112,6 +293,7 @@ function createRuntimeState(
   const nativeRemoveEventListener = EventTarget.prototype.removeEventListener;
   const applyFunction = Reflect.apply.bind(Reflect);
   const objectKeys = Object.keys.bind(Object);
+  const executeInteraction = createInteractionExecutor(document);
   const eventListenerWrappers = new WeakMap<EventListenerOrEventListenerObject, EventListener>();
   const budgetedEvents = new WeakSet<Event>();
   const addWindowListener = window.addEventListener.bind(window);
@@ -207,13 +389,20 @@ function createRuntimeState(
     },
   });
 
-  const send = (type: string, requestId: string, oneTimeToken: string, payload: unknown): void => {
+  const send = (
+    type: string,
+    requestId: string,
+    oneTimeToken: string,
+    payload: unknown,
+    includeFrameGeneration = false,
+  ): void => {
     sendToParent(
       {
         version,
         type,
         exerciseSessionId: config.exerciseSessionId,
         executionRevision: config.executionRevision,
+        ...(includeFrameGeneration ? { frameGeneration: config.frameGeneration } : {}),
         requestId,
         oneTimeToken,
         payload,
@@ -268,9 +457,7 @@ function createRuntimeState(
     }
   };
 
-  const wrapEventListener = (
-    listener: EventListenerOrEventListenerObject,
-  ): EventListener => {
+  const wrapEventListener = (listener: EventListenerOrEventListenerObject): EventListener => {
     const existing = eventListenerWrappers.get(listener);
     if (existing !== undefined) return existing;
     const wrapped = function (this: EventTarget, event: Event): void {
@@ -278,12 +465,7 @@ function createRuntimeState(
         learnerExecutionDepth === 0 && functionDepth === 0 && !budgetedEvents.has(event);
       if (resetBudget) budgetedEvents.add(event);
       if (typeof listener === 'function') {
-        executeCallback(
-          listener as (...args: unknown[]) => unknown,
-          [event],
-          this,
-          resetBudget,
-        );
+        executeCallback(listener as (...args: unknown[]) => unknown, [event], this, resetBudget);
         return;
       }
       const handleEvent = listener.handleEvent.bind(listener) as (...args: unknown[]) => unknown;
@@ -469,7 +651,7 @@ function createRuntimeState(
     }
     const message = event.data as Readonly<Record<string, unknown>>;
     const keys = objectKeys(message).sort();
-    const expected = [
+    const expectedCommon = [
       'exerciseSessionId',
       'executionRevision',
       'oneTimeToken',
@@ -477,24 +659,44 @@ function createRuntimeState(
       'requestId',
       'type',
       'version',
-    ].sort();
+    ];
+    const isInteraction = message.type === 'javascript.interact';
+    const expected = (
+      isInteraction ? [...expectedCommon, 'frameGeneration'] : expectedCommon
+    ).sort();
     if (
       keys.length !== expected.length ||
       !keys.every((key, index) => key === expected[index]) ||
       message.version !== version ||
-      message.type !== 'javascript.clear-timers' ||
+      (message.type !== 'javascript.clear-timers' && !isInteraction) ||
       message.exerciseSessionId !== config.exerciseSessionId ||
       message.executionRevision !== config.executionRevision ||
+      (isInteraction && message.frameGeneration !== config.frameGeneration) ||
       typeof message.requestId !== 'string' ||
       message.requestId.length === 0 ||
       message.requestId.length > 256 ||
       typeof message.oneTimeToken !== 'string' ||
       message.oneTimeToken.length === 0 ||
       message.oneTimeToken.length > 512 ||
-      message.payload !== null ||
+      (!isInteraction && message.payload !== null) ||
       usedRequestIds.has(message.requestId) ||
       usedTokens.has(message.oneTimeToken)
     ) {
+      return;
+    }
+    if (isInteraction) {
+      const result = executeInteraction(message.payload);
+      if (result.error?.code === 'invalid-action') return;
+      usedRequestIds.add(message.requestId);
+      usedTokens.add(message.oneTimeToken);
+      if (usedRequestIds.size > maximumUsedRequests) return;
+      send(
+        'javascript.interaction-complete',
+        message.requestId,
+        message.oneTimeToken,
+        { error: result.error, console: copyConsoleRecords() },
+        true,
+      );
       return;
     }
     usedRequestIds.add(message.requestId);
@@ -583,6 +785,7 @@ export function createJavaScriptExecutionSource(
   const config = JSON.stringify({
     exerciseSessionId: input.exerciseSessionId,
     executionRevision: input.executionRevision,
+    frameGeneration: input.frameGeneration,
     bootstrapToken: input.bootstrapToken,
     protocolVersion: JAVASCRIPT_PROTOCOL_VERSION,
   });
@@ -590,7 +793,7 @@ export function createJavaScriptExecutionSource(
   return [
     '(function(){"use strict";',
     `(${scrubJavaScriptBootstrapSecrets.toString()})(document);`,
-    `const ${input.guardIdentifier}=(${createRuntimeState.toString()})(${config},(${createConsoleFormatter.toString()})(${consoleLimits}),${consoleLimits});`,
+    `const ${input.guardIdentifier}=(${createRuntimeState.toString()})(${config},(${createConsoleFormatter.toString()})(${consoleLimits}),${consoleLimits},(${createTrustedInteractionExecutor.toString()}));`,
     `(${lockDownJavaScriptDynamicCodeCapabilities.toString()})(globalThis);`,
     `${input.guardIdentifier}.run(function(){"use strict";`,
     input.instrumentedCode,
@@ -618,6 +821,7 @@ export function createJavaScriptModuleExecutionSource(
   const config = JSON.stringify({
     exerciseSessionId: input.exerciseSessionId,
     executionRevision: input.executionRevision,
+    frameGeneration: input.frameGeneration,
     bootstrapToken: input.bootstrapToken,
     protocolVersion: JAVASCRIPT_PROTOCOL_VERSION,
   });
@@ -626,7 +830,7 @@ export function createJavaScriptModuleExecutionSource(
   return [
     '(function(){"use strict";',
     `(${scrubJavaScriptBootstrapSecrets.toString()})(document);`,
-    `const runtime=(${createRuntimeState.toString()})(${config},(${createConsoleFormatter.toString()})(${consoleLimits}),${consoleLimits});`,
+    `const runtime=(${createRuntimeState.toString()})(${config},(${createConsoleFormatter.toString()})(${consoleLimits}),${consoleLimits},(${createTrustedInteractionExecutor.toString()}));`,
     `Object.defineProperty(globalThis,${runtimeKey},{configurable:true,enumerable:false,writable:false,value:runtime});`,
     `const plan=${modulePlan};`,
     'const NativeBlob=Blob;',

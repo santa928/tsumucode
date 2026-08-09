@@ -103,6 +103,8 @@ export interface InteractionCheckpointResult {
 export interface RunnerRenderResult {
   readonly exerciseSessionId: string;
   readonly executionRevision: number;
+  /** Interaction対応Runnerだけが成功したactive frameのgenerationを返す。 */
+  readonly frameGeneration?: number;
   readonly diagnostics: readonly RunnerDiagnostic[];
   readonly evidence: readonly RunnerEvidence[];
   readonly console: readonly RunnerConsoleRecord[];
@@ -113,6 +115,8 @@ export interface SnapshotRequest {
   readonly executionRevision: number;
   readonly requestId: string;
   readonly policy: SnapshotPolicy;
+  /** Interaction polling中だけtrueにし、観測前にlearner timerを停止しない。 */
+  readonly preserveTimers?: boolean;
 }
 
 export interface PreviewRect {
@@ -144,6 +148,8 @@ export interface PreviewNode {
   readonly rect: PreviewRect;
   readonly overflow: PreviewOverflow;
   readonly focusable: boolean;
+  /** Snapshot取得時点でdocument.activeElementと一致するか。 */
+  readonly focused: boolean;
   readonly accessibleName: string;
   readonly role: string;
 }

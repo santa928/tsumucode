@@ -62,6 +62,7 @@ const PreviewNodeSchema = z
       .strict(),
     overflow: OverflowSchema,
     focusable: z.boolean(),
+    focused: z.boolean(),
     accessibleName: z.string().max(MAX_TEXT_LENGTH),
     role: z.string().max(256),
   })

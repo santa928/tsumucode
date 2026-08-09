@@ -1,4 +1,6 @@
 import type {
+  InteractionRequest,
+  InteractionResult,
   PreviewSnapshot,
   PreviewViewport,
   RunnerAdapter,
@@ -49,6 +51,7 @@ interface RuntimeResources {
 interface StoredPreview {
   readonly exerciseSessionId: string;
   readonly executionRevision: number;
+  readonly frameGeneration: number;
   readonly sourceSha256: string;
   readonly scriptFile: string;
   readonly resources: RuntimeResources;
@@ -314,8 +317,24 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
     ) {
       throw new Error('JavaScript preview session or revision is not current');
     }
-    await active.execution.clearTimers(this.#uuidFactory());
+    if (request.preserveTimers !== true) {
+      await active.execution.clearTimers(this.#uuidFactory());
+    }
     return active.bridge.requestSnapshot(request.requestId, request.policy);
+  }
+
+  /** active frameと同じsession・revision・generationのbounded操作だけを渡す。 */
+  interact(request: InteractionRequest): Promise<InteractionResult> {
+    const active = this.#active;
+    if (
+      active === undefined ||
+      active.exerciseSessionId !== request.exerciseSessionId ||
+      active.executionRevision !== request.executionRevision ||
+      active.frameGeneration !== request.frameGeneration
+    ) {
+      return Promise.reject(new Error('JavaScript interaction frame is not current'));
+    }
+    return active.execution.interact(request);
   }
 
   /** iframe、Worker、Bridge、教材Assetを冪等に解放する。 */
@@ -418,6 +437,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
         authenticatedRuntimeSource = createJavaScriptModuleExecutionSource({
           exerciseSessionId: input.exerciseSessionId,
           executionRevision: input.executionRevision,
+          frameGeneration: operation.generation,
           bootstrapToken,
           runtimeKey,
           moduleGraph,
@@ -427,6 +447,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
         authenticatedRuntimeSource = createJavaScriptExecutionSource({
           exerciseSessionId: input.exerciseSessionId,
           executionRevision: input.executionRevision,
+          frameGeneration: operation.generation,
           bootstrapToken,
           guardIdentifier,
           instrumentedCode: analysis.instrumentedCode,
@@ -457,6 +478,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
         this.#restorable = {
           exerciseSessionId: active.exerciseSessionId,
           executionRevision: active.executionRevision,
+          frameGeneration: active.frameGeneration,
           sourceSha256: active.sourceSha256,
           scriptFile: active.scriptFile,
           resources: active.resources,
@@ -478,7 +500,10 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
         input.exerciseSessionId,
         input.executionRevision,
         bootstrapToken,
-        { responseTimeoutMs: this.#executionTimeoutMs },
+        {
+          responseTimeoutMs: this.#executionTimeoutMs,
+          frameGeneration: operation.generation,
+        },
       );
       operation.bridge = bridge;
       operation.execution = execution;
@@ -495,6 +520,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
       this.#active = {
         exerciseSessionId: input.exerciseSessionId,
         executionRevision: input.executionRevision,
+        frameGeneration: operation.generation,
         sourceSha256: executionHash,
         scriptFile: validated.scriptFile,
         resources,
@@ -508,6 +534,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
       return {
         exerciseSessionId: input.exerciseSessionId,
         executionRevision: input.executionRevision,
+        frameGeneration: operation.generation,
         diagnostics: [
           ...diagnoseSyntax('html', validated.html.htmlSource, validated.html.entryFile),
           ...preview.stylesheets.flatMap((stylesheet) =>
@@ -575,7 +602,10 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
       previous.exerciseSessionId,
       previous.executionRevision,
       previous.bootstrapToken,
-      { responseTimeoutMs: this.#executionTimeoutMs },
+      {
+        responseTimeoutMs: this.#executionTimeoutMs,
+        frameGeneration: previous.frameGeneration,
+      },
     );
     operation.bridge = bridge;
     operation.execution = execution;
