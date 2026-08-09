@@ -1026,5 +1026,5 @@ describe('JavaScript draft Course compilation', () => {
     expect(stringifyCanonicalJson(compilation.runtime)).not.toMatch(
       /solutionFiles|fixtures|wrong-literal|syntax-error/u,
     );
-  }, 15_000);
+  }, 30_000);
 });

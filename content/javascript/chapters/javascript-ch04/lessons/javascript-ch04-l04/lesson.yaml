@@ -1,0 +1,19 @@
+id: javascript-ch04-l04
+kind: standard
+title: Objectへ問題の項目をまとめる
+goal: 1問の問題文と正解をproperty名つきでObjectへまとめ、dot accessで読み取れる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch04-l03]
+slideSources:
+  - slides/s01-object-purpose.md
+  - slides/s02-object-literal.md
+  - slides/s03-property-access.md
+  - slides/s04-question-object-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch04-l04-e01/exercise.yaml
+reflection: Objectは値へproperty名を付け、1つの対象が持つ複数の項目をまとめる。
+glossaryRefs: [javascript, console, object, object-literal, property, dot-access, key-value]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch04-l04-s04
+  requiredExerciseIds: [javascript-ch04-l04-e01]

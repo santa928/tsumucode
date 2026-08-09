@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" role="img" aria-labelledby="title desc">
+  <title id="title">questionsをfor ofで順に読む流れ</title>
+  <desc id="desc">3問のArrayからfor ofが1問ずつquestionへ取り出しConsoleへ表示する図</desc>
+  <rect width="720" height="220" rx="24" fill="#fff9e8"/>
+  <g font-family="system-ui, sans-serif" fill="#173f35">
+    <text x="42" y="34" font-size="17" font-weight="700">questions</text>
+    <g font-size="15" font-weight="600">
+      <rect x="36" y="48" width="210" height="38" rx="11" fill="#ffffff" stroke="#88bba5" stroke-width="2"/><text x="52" y="73">HTMLの役割は？</text>
+      <rect x="36" y="94" width="210" height="38" rx="11" fill="#ffffff" stroke="#88bba5" stroke-width="2"/><text x="52" y="119">CSSの役割は？</text>
+      <rect x="36" y="140" width="210" height="38" rx="11" fill="#ffffff" stroke="#88bba5" stroke-width="2"/><text x="52" y="165">JavaScriptの役割は？</text>
+    </g>
+    <path d="M262 113h60" stroke="#d69721" stroke-width="4" stroke-linecap="round"/><path d="m314 103 10 10-10 10" fill="none" stroke="#d69721" stroke-width="4" stroke-linecap="round"/>
+    <rect x="336" y="68" width="158" height="90" rx="20" fill="#176b54"/>
+    <text x="415" y="104" text-anchor="middle" font-size="18" font-weight="700" fill="#ffffff">for...of</text>
+    <text x="415" y="133" text-anchor="middle" font-size="15" fill="#ffffff">1問ずつ questionへ</text>
+    <path d="M508 113h54" stroke="#d69721" stroke-width="4" stroke-linecap="round"/><path d="m554 103 10 10-10 10" fill="none" stroke="#d69721" stroke-width="4" stroke-linecap="round"/>
+    <rect x="578" y="68" width="106" height="90" rx="20" fill="#ffffff" stroke="#176b54" stroke-width="3"/>
+    <text x="631" y="105" text-anchor="middle" font-size="17" font-weight="700">Console</text>
+    <text x="631" y="132" text-anchor="middle" font-size="15">上から3行</text>
+  </g>
+</svg>

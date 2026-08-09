@@ -1,6 +1,6 @@
 # JavaScript全Course 設計
 
-- 状態: 書面レビュー承認済み・Runtime基盤およびChapter 01〜03 Core教材実装・ローカル品質検証済み（Chapter 04〜13教材は未実装）
+- 状態: 書面レビュー承認済み・Runtime基盤およびChapter 01〜04教材実装・Chapter 04全ローカル品質検証済み（Chapter 05〜13教材は未実装）
 - 承認日: 2026-08-04
 - 作成日: 2026-08-03
 - 対象: `javascript` Course Chapter 01〜13、既存Chapter 00の互換維持、全Course公開
@@ -129,7 +129,7 @@ WebKitではopaque iframeに対する親からのprogrammatic focusが反映さ�
 | REQ-JSC-021 | Runtime一部検証済み | 型付きAnalyzer fact、Source＋Evidence＋Console＋DOM＋FocusのAND。全Course用Fact追加は教材taskで継続 |
 | REQ-JSC-022 | 集約基盤検証済み    | 必須Source ruleとScenario結果のAND集約。Lesson別の別解許容条件は教材taskで継続                      |
 
-ここで検証済みなのはRuntime基盤である。Chapter 01〜13の52 Lesson、各LessonのScenario／Rule、教材Review、完全初心者の通し検証、Courseの`published`昇格、LearningPath追加は未完了であり、本証跡を全Course完成へ読み替えない。
+ここで検証済みなのはRuntime基盤である。Chapter 05〜13を含む全52 Lesson、各LessonのScenario／Rule、完全初心者の通し検証、Courseの`published`昇格、LearningPath追加は未完了であり、本証跡を全Course完成へ読み替えない。
 
 ### 3.4 Chapter 01〜03 Core教材の実装証跡と未完了境界
 
@@ -159,7 +159,34 @@ WebKitではopaque iframeに対する親からのprogrammatic focusが反映さ�
 | REQ-JSC-032 | Core範囲検証済み               | 3 Engine、axe、Keyboard、複数viewport、Security、Performance、Lighthouse                                |
 | REQ-JSC-034 | ローカル前提検証済み・公開待ち | 日本語commit、staged secret scan、main push、Pages deployment、公開Smokeは本Taskのrelease工程で確定する |
 
-この節はCore教材の完成証跡であり、Chapter 04〜13、全52 Lessonの完全初心者通し検証、`published`昇格、LearningPath追加、本番公開後の全Course回帰は未完了である。
+この節はChapter 01〜03 Core教材の歴史的証跡である。後続Chapter 04は3.5節で追跡し、Chapter 05〜13、全52 Lessonの完全初心者通し検証、`published`昇格、LearningPath追加、本番公開後の全Course回帰は未完了である。
+
+### 3.5 Chapter 04 Data教材の実装証跡と未完了境界
+
+2026-08-10にChapter 04の5 Lesson／20 Slide／5 Exercise／80分を実装し、既存Chapter 00〜03を含むCourse累計を19 Lesson／76 Slide／19 Exercise／290分へ更新した。Array、indexと`at`、`for...of`、Object、Object／Array Destructuringを、各Lesson 4 Slideから1〜2箇所変更のExerciseへ接続した。
+
+- 教材契約: 全5 Exerciseに3段階Hint、Solution、5件以上の正負Fixture、Source FactとConsoleのAND判定を持たせた
+- 視覚説明: 実習直前の5 Slideへ、変更箇所とConsoleまでの流れを示す独自SVGを追加した
+- 教材品質: Course累計70 LessonのReview台帳を`stale hashes 0 / rejected 0`で検証した
+- Unit／Content: Chapter契約6件とCompiler関連49件を含む全体Gateで`161 files / 1,618 tests / 0 failed`、Content Compile／Check／Reviewを通過した
+- Browser／Accessibility: Chapter 04の全Solution、Starter、Fixtureを実Browser Runner／Validatorで確認し、1280×720のExerciseと390×844のSlideでDocument Scroll、横はみ出し、重大なaxe違反がないことを確認した
+- 3 Engine／性能: Chromium、Firefox、WebKitで`510 passed / 150 intentionally skipped / 0 failed / retry 0`、性能`22/22`、bundle／subpath予算`9/9`を通過した
+- Build／公開前Gate: Lint、Typecheck、Production Build、learning chunk分離、Lighthouse 4 URL×3回の`12/12`、`246 files`の静的Artifact、`/tsumucode/` subpath smokeを通過した
+- 進捗互換: Revisionを`2026-08-10.1`へ上げ、旧`2026-08-09.1`からID変更なしの空Migrationで既存進捗と下書きを保持した
+- 公開境界: Courseは`draft`を維持し、Home、LearningPath、進捗非干渉Slide Libraryへ未掲載のまま、直接URLだけを章単位β検証対象とする
+
+| 要件        | Data範囲の状態                 | 自動／目視証跡                                                                                   |
+| ----------- | ------------------------------ | ------------------------------------------------------------------------------------------------ |
+| REQ-JSC-003 | 累計19／全52 Lesson            | Chapter 04まで290分で完成。Chapter 05〜13の33 Lesson／710分は未実装                              |
+| REQ-JSC-005 | Chapter 04範囲検証済み         | Array、Object、Destructuringを5 Lesson、20 Slide、5 Exerciseで実装                               |
+| REQ-JSC-008 | Chapter 04範囲検証済み         | 全5 Lessonの直前Slide整合、3 Hint、Solution、5件以上Fixture                                      |
+| REQ-JSC-021 | Chapter 04範囲検証済み         | collection、access、loop、destructuringの型付きFactと同一revisionのConsoleをAND判定              |
+| REQ-JSC-030 | Chapter 04範囲検証済み         | Concept、用語、Trace、screen budget、実行Example、公開／authoring provenanceをContent Gateで確認 |
+| REQ-JSC-031 | Chapter 04範囲検証済み         | authorと別reviewer ID、Lesson source hash、stale 0、rejected 0                                   |
+| REQ-JSC-032 | Chapter 04全体検証済み         | 3 Engine、axe、複数viewport、Security、Performance、Lighthouse、subpathを全体Gateで確認          |
+| REQ-JSC-034 | ローカル前提検証済み・公開待ち | 日本語commit、staged secret scan、main push、Pages deployment、公開SmokeはRelease工程で確定      |
+
+この節はChapter 04教材の実装と全ローカルGateの完成証跡であり、Chapter 05〜13、全52 Lessonの完全初心者通し検証、`published`昇格、LearningPath追加、本番公開後の全Course回帰は未完了である。
 
 ## 4. 要件差分
 

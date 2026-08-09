@@ -1,0 +1,160 @@
+id: javascript-ch04-l05-e01
+kind: standard
+workspaceId: javascript-ch04-l05-e01
+countsTowardStandardExerciseTotal: true
+title: ObjectとArrayをDestructuringする
+instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: question-destructuring, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: destructure-question-object
+    file: script.js
+    target: Object Destructuringの右辺にある空のObject
+    starterAnchor: 'const { text: prompt, choices } = {};'
+    change: '{}をquizへ置き換える'
+    observe: promptへ問題文、choicesへ選択肢Arrayが入る
+    requiresConceptIds: [question-destructuring]
+    validationRuleIds: [javascript-ch04-l05-e01-r01, javascript-ch04-l05-e01-r03]
+  - id: destructure-first-choice
+    file: script.js
+    target: Array Destructuringの右辺にある空のArray
+    starterAnchor: 'const [firstChoice] = [];'
+    change: '[]をchoicesへ置き換える'
+    observe: Consoleへ問題文、その次に先頭の選択肢3が表示される
+    requiresConceptIds: [question-destructuring]
+    validationRuleIds: [javascript-ch04-l05-e01-r02, javascript-ch04-l05-e01-r03]
+files:
+  - { path: script.js, language: javascript, source: starter/script.js, editable: true }
+  - { path: index.html, language: html, source: starter/index.html, editable: false }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: false }
+solutionFiles:
+  - { path: script.js, language: javascript, source: solution/script.js, editable: false }
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: javascript-ch04-l05-e01-r01
+    groupId: javascript-ch04-l05-e01-result
+    label: Objectから2つの値をDestructuringする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: destructuring, patternKind: object, bindingCount: 2 }
+    feedback:
+      target: Object Destructuring
+      expected: textとchoicesの2つを受け取る波括弧
+      nextAction: 左辺は残し、右辺をquizへ変更します。
+    hintId: javascript-ch04-l05-e01-h02
+    relatedSlideId: javascript-ch04-l05-s02
+  - id: javascript-ch04-l05-e01-r02
+    groupId: javascript-ch04-l05-e01-result
+    label: Arrayから先頭要素をDestructuringする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: destructuring, patternKind: array, bindingCount: 1 }
+    feedback:
+      target: Array Destructuring
+      expected: firstChoiceを受け取る角括弧
+      nextAction: 左辺は残し、右辺をchoicesへ変更します。
+    hintId: javascript-ch04-l05-e01-h02
+    relatedSlideId: javascript-ch04-l05-s03
+  - id: javascript-ch04-l05-e01-r03
+    groupId: javascript-ch04-l05-e01-result
+    label: 問題文と先頭の選択肢を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-console }
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - { level: log, text: '2 + 3 は？' }
+        - { level: log, text: '3' }
+    feedback:
+      target: Console
+      expected: 問題文、その次に3
+      nextAction: 1段目をquiz、2段目をchoicesからDestructuringします。
+    hintId: javascript-ch04-l05-e01-h03
+    relatedSlideId: javascript-ch04-l05-s04
+hints:
+  - id: javascript-ch04-l05-e01-h01
+    level: 1
+    title: 右辺だけを2箇所変更する
+    text: 波括弧と角括弧の左辺、変数名、console.logは完成しています。
+    relatedSlideId: javascript-ch04-l05-s04
+  - id: javascript-ch04-l05-e01-h02
+    level: 2
+    title: 大きいデータから順に分ける
+    text: 先にquizからpromptとchoicesを受け取り、次にchoicesからfirstChoiceを受け取ります。
+    relatedSlideId: javascript-ch04-l05-s02
+  - id: javascript-ch04-l05-e01-h03
+    level: 3
+    title: 2つの空の値を置き換える
+    text: = {};を= quiz;へ、= [];を= choices;へ変更します。
+    relatedSlideId: javascript-ch04-l05-s04
+relatedSlideIds: [javascript-ch04-l05-s03, javascript-ch04-l05-s04]
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: pass
+    expectedStatus: pass
+    files:
+      - { path: script.js, language: javascript, source: fixtures/pass.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: incomplete
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/incomplete.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch04-l05-e01-r01, javascript-ch04-l05-e01-r02, javascript-ch04-l05-e01-r03]
+  - id: no-destructuring
+    expectedStatus: incomplete
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/no-destructuring.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch04-l05-e01-r01, javascript-ch04-l05-e01-r02, javascript-ch04-l05-e01-r03]
+  - id: output-only
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/output-only.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch04-l05-e01-r01, javascript-ch04-l05-e01-r02, javascript-ch04-l05-e01-r03]
+  - id: syntax-error
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/syntax-error.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: security
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/security.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

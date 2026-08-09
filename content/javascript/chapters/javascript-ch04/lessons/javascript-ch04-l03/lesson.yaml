@@ -1,0 +1,19 @@
+id: javascript-ch04-l03
+kind: standard
+title: for...ofで全問題を読む
+goal: for...ofの反復変数がArrayの要素を順に受け取ることを読み、全問題を表示できる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch04-l02]
+slideSources:
+  - slides/s01-for-of-purpose.md
+  - slides/s02-for-of-statement.md
+  - slides/s03-for-of-item.md
+  - slides/s04-question-list-loop-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch04-l03-e01/exercise.yaml
+reflection: for...ofはArrayの先頭から最後まで、要素を1つずつ反復変数へ渡す。
+glossaryRefs: [javascript, console, array, for-of, iteration-variable, element, loop]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch04-l03-s04
+  requiredExerciseIds: [javascript-ch04-l03-e01]

@@ -1,0 +1,154 @@
+id: javascript-ch04-l04-e01
+kind: standard
+workspaceId: javascript-ch04-l04-e01
+countsTowardStandardExerciseTotal: true
+title: Objectの正解propertyを直す
+instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: question-object, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: fix-answer-property
+    file: script.js
+    target: 'quiz Objectのanswer: 0'
+    starterAnchor: 'answer: 0,'
+    change: 0を5へ置き換える
+    observe: Consoleへ問題文、その次に5が表示される
+    requiresConceptIds: [question-object]
+    validationRuleIds:
+      [javascript-ch04-l04-e01-r01, javascript-ch04-l04-e01-r02, javascript-ch04-l04-e01-r03]
+files:
+  - { path: script.js, language: javascript, source: starter/script.js, editable: true }
+  - { path: index.html, language: html, source: starter/index.html, editable: false }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: false }
+solutionFiles:
+  - { path: script.js, language: javascript, source: solution/script.js, editable: false }
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: javascript-ch04-l04-e01-r01
+    groupId: javascript-ch04-l04-e01-result
+    label: 2つのpropertyを持つObjectを作る
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: collection, collectionKind: object, entryCount: 2 }
+    feedback:
+      target: quiz Object
+      expected: questionとanswerの2つのproperty
+      nextAction: 波括弧と2つのproperty名は変更せず残します。
+    hintId: javascript-ch04-l04-e01-h01
+    relatedSlideId: javascript-ch04-l04-s02
+  - id: javascript-ch04-l04-e01-r02
+    groupId: javascript-ch04-l04-e01-result
+    label: dot accessでpropertyを読む
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: collection-access, accessKind: property }
+      minimumCount: 2
+    feedback:
+      target: 2つのconsole.log
+      expected: quiz.questionとquiz.answer
+      nextAction: 完成済みのdot accessを2行とも残します。
+    hintId: javascript-ch04-l04-e01-h01
+    relatedSlideId: javascript-ch04-l04-s03
+  - id: javascript-ch04-l04-e01-r03
+    groupId: javascript-ch04-l04-e01-result
+    label: 問題文と正解5を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-console }
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - { level: log, text: '2 + 3 は？' }
+        - { level: log, text: '5' }
+    feedback:
+      target: Console
+      expected: 問題文、その次に正解5
+      nextAction: answerの値だけを計算結果の5へ変えます。
+    hintId: javascript-ch04-l04-e01-h03
+    relatedSlideId: javascript-ch04-l04-s04
+hints:
+  - id: javascript-ch04-l04-e01-h01
+    level: 1
+    title: quiz Objectだけを見る
+    text: property名とconsole.logは完成しているため変更しません。
+    relatedSlideId: javascript-ch04-l04-s03
+  - id: javascript-ch04-l04-e01-h02
+    level: 2
+    title: 2 + 3の正解を考える
+    text: answer propertyには問題文の計算結果を数値で入れます。
+    relatedSlideId: javascript-ch04-l04-s04
+  - id: javascript-ch04-l04-e01-h03
+    level: 3
+    title: 数値を1つ置き換える
+    text: 'answer: 0,をanswer: 5,へ変更します。'
+    relatedSlideId: javascript-ch04-l04-s04
+relatedSlideIds: [javascript-ch04-l04-s03, javascript-ch04-l04-s04]
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: pass
+    expectedStatus: pass
+    files:
+      - { path: script.js, language: javascript, source: fixtures/pass.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: incomplete
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/incomplete.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch04-l04-e01-r01, javascript-ch04-l04-e01-r02, javascript-ch04-l04-e01-r03]
+  - id: wrong-property
+    expectedStatus: incomplete
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/wrong-property.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch04-l04-e01-r01, javascript-ch04-l04-e01-r02, javascript-ch04-l04-e01-r03]
+  - id: output-only
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/output-only.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch04-l04-e01-r01, javascript-ch04-l04-e01-r02, javascript-ch04-l04-e01-r03]
+  - id: syntax-error
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/syntax-error.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: security
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/security.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

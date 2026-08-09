@@ -157,3 +157,58 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes: Closureが外側のLocal変数を保持する流れを4枚のSlideから、同じFunctionを2回呼び10・20を得るExerciseへ段階接続。Function expressionまたはArrow Functionを許可するgroup:anyと、Local score・加算代入・2回呼び出し・Console完全一致をAND判定。3段階Hint、Solution、global-score／毎回reset／output-onlyを含む8 Fixtureを実Browser Runner／Validatorで確認。1280x720と390x844で重大なaxe違反0件、見切れ・重なり・Document Scrollなしを実寸確認済み。
+  - lessonId: javascript-ch04-l01
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 75c3d707fe5ae2ff27ed78543da0bb2d58946086d6e0932b205d6724f8fbef71
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: Arrayの目的・literal・lengthを4枚のSlideから、3問目を末尾へ加えるExerciseへ段階接続。collection FactとConsole完全一致のAND判定、3段階Hint、Solution、wrong-count／output-only／syntax／securityを含む6 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch04-l02
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 6c913a02df122f06e47748f01bfb028dd90fbc039b13cb170460d3c720ef2e56
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: zero-based index・角括弧access・atを4枚のSlideから、1問目と2問目を順に表示するExerciseへ段階接続。index Fact・at Fact・Console完全一致のAND判定、3段階Hint、Solution、off-by-one／output-only／syntax／securityを含む6 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch04-l03
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: ce02d0a3cd48599021fcbf8fd87664cc733f1255b074c3c8ca9291bc435ab9bf
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: for ofがArrayを1件ずつ読む流れを4枚のSlideから、空のArrayをquestionsへ置き換えるExerciseへ段階接続。for-of FactとConsole完全一致のAND判定、3段階Hint、Solution、output-only／syntax／securityを含む5 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch04-l04
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 175ba10748d9fbe69a0b3b8285aeeed6393748c2160b0eb596557b5195b2c896
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: Objectの目的・literal・dot property accessを4枚のSlideから、answerの値だけを直すExerciseへ段階接続。object Fact・property access Fact・Console完全一致のAND判定、3段階Hint、Solution、wrong-property／output-only／syntax／securityを含む6 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch04-l05
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 8d6dded9177a48ab1a05c28494a5487bd7612c7018f5d1d7c30ee17d29f7b206
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: ObjectとArrayのDestructuringを4枚のSlideから、quizとchoicesを2段階で分けるExerciseへ接続。object／array destructuring FactとConsole完全一致のAND判定、3段階Hint、Solution、no-destructuring／output-only／syntax／securityを含む6 Fixtureを実Browser Runner／Validatorで確認。

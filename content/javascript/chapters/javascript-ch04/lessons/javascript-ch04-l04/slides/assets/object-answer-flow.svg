@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" role="img" aria-labelledby="title desc">
+  <title id="title">quiz Objectのanswerを5へ直す流れ</title>
+  <desc id="desc">questionとanswerを持つObjectでanswerの値だけを0から5へ直し、正解を表示する図</desc>
+  <rect width="720" height="220" rx="24" fill="#fff9e8"/>
+  <g font-family="system-ui, sans-serif" fill="#173f35">
+    <rect x="40" y="36" width="286" height="148" rx="20" fill="#ffffff" stroke="#7ab49b" stroke-width="3"/>
+    <text x="64" y="70" font-size="18" font-weight="700">quiz Object</text>
+    <text x="64" y="110" font-size="16" font-weight="600">question</text><text x="160" y="110" font-size="16">2 + 3 は？</text>
+    <text x="64" y="150" font-size="16" font-weight="600">answer</text>
+    <text x="160" y="150" font-size="17" fill="#b35b48" text-decoration="line-through">0</text>
+    <path d="M184 143h38" stroke="#d69721" stroke-width="3"/><path d="m214 135 10 8-10 8" fill="none" stroke="#d69721" stroke-width="3"/>
+    <rect x="234" y="126" width="54" height="36" rx="18" fill="#fff1b8"/><text x="261" y="150" text-anchor="middle" font-size="18" font-weight="800">5</text>
+    <path d="M344 110h74" stroke="#176b54" stroke-width="4" stroke-linecap="round"/><path d="m410 100 10 10-10 10" fill="none" stroke="#176b54" stroke-width="4" stroke-linecap="round"/>
+    <rect x="436" y="58" width="244" height="104" rx="20" fill="#176b54"/>
+    <text x="558" y="94" text-anchor="middle" font-size="16" fill="#ffffff">quiz.answer</text>
+    <text x="558" y="136" text-anchor="middle" font-size="30" font-weight="800" fill="#ffffff">5</text>
+  </g>
+</svg>

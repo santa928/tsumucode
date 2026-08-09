@@ -1,0 +1,127 @@
+id: javascript-ch04-l01-e01
+kind: standard
+workspaceId: javascript-ch04-l01-e01
+countsTowardStandardExerciseTotal: true
+title: 3問目をArrayへ追加する
+instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: question-array, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: add-third-question
+    file: script.js
+    target: questionsの角括弧内にあるコメント行
+    starterAnchor: '// この行へ3問目を追加します'
+    change: "'JavaScriptの役割は？',を1行追加する"
+    observe: Consoleへ3問のArray、その次に3が表示される
+    requiresConceptIds: [question-array]
+    validationRuleIds: [javascript-ch04-l01-e01-r01, javascript-ch04-l01-e01-r02]
+files:
+  - { path: script.js, language: javascript, source: starter/script.js, editable: true }
+  - { path: index.html, language: html, source: starter/index.html, editable: false }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: false }
+solutionFiles:
+  - { path: script.js, language: javascript, source: solution/script.js, editable: false }
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: javascript-ch04-l01-e01-r01
+    groupId: javascript-ch04-l01-e01-result
+    label: 3つの要素を持つArrayを作る
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: collection, collectionKind: array, entryCount: 3 }
+    feedback:
+      target: questionsの角括弧内
+      expected: 問題文が3つ並んだArray
+      nextAction: コメント行を3問目の文字列へ置き換えます。
+    hintId: javascript-ch04-l01-e01-h02
+    relatedSlideId: javascript-ch04-l01-s04
+  - id: javascript-ch04-l01-e01-r02
+    groupId: javascript-ch04-l01-e01-result
+    label: 3問のArrayと件数3を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-console }
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - { level: log, text: '["HTMLの役割は？", "CSSの役割は？", "JavaScriptの役割は？"]' }
+        - { level: log, text: '3' }
+    feedback:
+      target: Console
+      expected: 3問のArray、その次に3
+      nextAction: 3問目を角括弧の内側へ加え、2つのconsole.logは残します。
+    hintId: javascript-ch04-l01-e01-h03
+    relatedSlideId: javascript-ch04-l01-s04
+hints:
+  - id: javascript-ch04-l01-e01-h01
+    level: 1
+    title: script.jsのArrayだけを見る
+    text: questionsの角括弧内へ、既存の2問と同じ形で3問目を加えます。
+    relatedSlideId: javascript-ch04-l01-s02
+  - id: javascript-ch04-l01-e01-h02
+    level: 2
+    title: コメント行を文字列へ置き換える
+    text: 追加場所はCSSの問題文と閉じ角括弧の間です。
+    relatedSlideId: javascript-ch04-l01-s04
+  - id: javascript-ch04-l01-e01-h03
+    level: 3
+    title: 3問目を1行で書く
+    text: "'JavaScriptの役割は？',と書きます。"
+    relatedSlideId: javascript-ch04-l01-s04
+relatedSlideIds: [javascript-ch04-l01-s03, javascript-ch04-l01-s04]
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: pass
+    expectedStatus: pass
+    files:
+      - { path: script.js, language: javascript, source: fixtures/pass.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: incomplete
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/incomplete.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: [javascript-ch04-l01-e01-r01, javascript-ch04-l01-e01-r02]
+  - id: wrong-count
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/wrong-count.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: [javascript-ch04-l01-e01-r01, javascript-ch04-l01-e01-r02]
+  - id: output-only
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/output-only.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: [javascript-ch04-l01-e01-r01, javascript-ch04-l01-e01-r02]
+  - id: syntax-error
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/syntax-error.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: security
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/security.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

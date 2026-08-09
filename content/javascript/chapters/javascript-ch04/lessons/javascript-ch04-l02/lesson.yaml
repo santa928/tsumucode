@@ -1,0 +1,19 @@
+id: javascript-ch04-l02
+kind: standard
+title: 番号でArrayの値を取り出す
+goal: 0始まりのindexとatを読み、Arrayの1問目と2問目を順番どおりに取り出せる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch04-l01]
+slideSources:
+  - slides/s01-zero-based-index.md
+  - slides/s02-bracket-access.md
+  - slides/s03-array-at-method.md
+  - slides/s04-question-order-access-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch04-l02-e01/exercise.yaml
+reflection: Arrayの1番目はindex 0で、角括弧とatのどちらでも順番を指定できる。
+glossaryRefs: [javascript, console, array, index, bracket-access, at-method, element]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch04-l02-s04
+  requiredExerciseIds: [javascript-ch04-l02-e01]

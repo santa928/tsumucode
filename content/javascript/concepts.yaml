@@ -224,3 +224,83 @@ concepts:
     introducedBySlideId: javascript-ch03-l05-s04
     prerequisiteConceptIds: [captured-binding]
     minimumProjectLevel: transform
+  - id: array-purpose
+    introducedBySlideId: javascript-ch04-l01-s01
+    prerequisiteConceptIds: [score-closure]
+    minimumProjectLevel: read
+  - id: array-literal
+    introducedBySlideId: javascript-ch04-l01-s02
+    prerequisiteConceptIds: [array-purpose]
+    minimumProjectLevel: read
+  - id: array-length
+    introducedBySlideId: javascript-ch04-l01-s03
+    prerequisiteConceptIds: [array-literal]
+    minimumProjectLevel: read
+  - id: question-array
+    introducedBySlideId: javascript-ch04-l01-s04
+    prerequisiteConceptIds: [array-length]
+    minimumProjectLevel: transform
+  - id: zero-based-index
+    introducedBySlideId: javascript-ch04-l02-s01
+    prerequisiteConceptIds: [question-array]
+    minimumProjectLevel: read
+  - id: bracket-access
+    introducedBySlideId: javascript-ch04-l02-s02
+    prerequisiteConceptIds: [zero-based-index]
+    minimumProjectLevel: read
+  - id: array-at-method
+    introducedBySlideId: javascript-ch04-l02-s03
+    prerequisiteConceptIds: [bracket-access]
+    minimumProjectLevel: read
+  - id: question-order-access
+    introducedBySlideId: javascript-ch04-l02-s04
+    prerequisiteConceptIds: [array-at-method]
+    minimumProjectLevel: transform
+  - id: for-of-purpose
+    introducedBySlideId: javascript-ch04-l03-s01
+    prerequisiteConceptIds: [question-order-access]
+    minimumProjectLevel: read
+  - id: for-of-statement
+    introducedBySlideId: javascript-ch04-l03-s02
+    prerequisiteConceptIds: [for-of-purpose]
+    minimumProjectLevel: read
+  - id: for-of-item
+    introducedBySlideId: javascript-ch04-l03-s03
+    prerequisiteConceptIds: [for-of-statement]
+    minimumProjectLevel: read
+  - id: question-list-loop
+    introducedBySlideId: javascript-ch04-l03-s04
+    prerequisiteConceptIds: [for-of-item]
+    minimumProjectLevel: transform
+  - id: object-purpose
+    introducedBySlideId: javascript-ch04-l04-s01
+    prerequisiteConceptIds: [question-list-loop]
+    minimumProjectLevel: read
+  - id: object-literal
+    introducedBySlideId: javascript-ch04-l04-s02
+    prerequisiteConceptIds: [object-purpose]
+    minimumProjectLevel: read
+  - id: property-access
+    introducedBySlideId: javascript-ch04-l04-s03
+    prerequisiteConceptIds: [object-literal]
+    minimumProjectLevel: read
+  - id: question-object
+    introducedBySlideId: javascript-ch04-l04-s04
+    prerequisiteConceptIds: [property-access]
+    minimumProjectLevel: transform
+  - id: destructuring-purpose
+    introducedBySlideId: javascript-ch04-l05-s01
+    prerequisiteConceptIds: [question-object]
+    minimumProjectLevel: read
+  - id: object-destructuring
+    introducedBySlideId: javascript-ch04-l05-s02
+    prerequisiteConceptIds: [destructuring-purpose]
+    minimumProjectLevel: read
+  - id: array-destructuring
+    introducedBySlideId: javascript-ch04-l05-s03
+    prerequisiteConceptIds: [object-destructuring]
+    minimumProjectLevel: read
+  - id: question-destructuring
+    introducedBySlideId: javascript-ch04-l05-s04
+    prerequisiteConceptIds: [array-destructuring]
+    minimumProjectLevel: transform

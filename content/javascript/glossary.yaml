@@ -225,3 +225,83 @@ entries:
     definition: 内側Functionから参照されるため、Closureが値を保ち続ける外側Functionの変数。
     firstSlideId: javascript-ch03-l05-s03
     relatedIds: [closure, variable, local-scope]
+  - id: array
+    term: Array
+    definition: 複数の値を順番つきで1つにまとめるデータの形。
+    firstSlideId: javascript-ch04-l01-s01
+    relatedIds: [array-literal, element, index, object]
+  - id: array-literal
+    term: Array literal
+    definition: 角括弧の中へ要素をカンマ区切りで並べ、Arrayを作る書き方。
+    firstSlideId: javascript-ch04-l01-s02
+    relatedIds: [array, element, length]
+  - id: element
+    term: 要素
+    definition: Arrayの中へ順番に並べた1つ1つの値。
+    firstSlideId: javascript-ch04-l01-s02
+    relatedIds: [array, index, for-of]
+  - id: length
+    term: length
+    definition: Arrayに入っている要素の件数を読み取るproperty。
+    firstSlideId: javascript-ch04-l01-s03
+    relatedIds: [array, element, property]
+  - id: index
+    term: index
+    definition: Arrayの要素がある位置を0から数えた番号。
+    firstSlideId: javascript-ch04-l02-s01
+    relatedIds: [array, element, bracket-access, at-method]
+  - id: bracket-access
+    term: 角括弧でのアクセス
+    definition: Array名の直後の角括弧へindexを書き、目的の要素を読み取る方法。
+    firstSlideId: javascript-ch04-l02-s02
+    relatedIds: [array, index, at-method]
+  - id: at-method
+    term: at
+    definition: 丸括弧へindexを渡し、Arrayの目的の要素を読み取るmethod。
+    firstSlideId: javascript-ch04-l02-s03
+    relatedIds: [array, index, bracket-access]
+  - id: for-of
+    term: for...of
+    definition: Arrayの先頭から最後まで、要素を1つずつ順番に処理するLoop。
+    firstSlideId: javascript-ch04-l03-s01
+    relatedIds: [array, element, iteration-variable, loop]
+  - id: iteration-variable
+    term: 反復変数
+    definition: Loopするたびに、現在処理しているArray要素を一時的に受け取る変数。
+    firstSlideId: javascript-ch04-l03-s02
+    relatedIds: [for-of, array, element, variable]
+  - id: object
+    term: Object
+    definition: 値へproperty名を付け、1つの対象が持つ複数の項目をまとめるデータの形。
+    firstSlideId: javascript-ch04-l04-s01
+    relatedIds: [object-literal, property, key-value, array]
+  - id: object-literal
+    term: Object literal
+    definition: 波括弧の中へproperty名と値の組を並べ、Objectを作る書き方。
+    firstSlideId: javascript-ch04-l04-s02
+    relatedIds: [object, property, key-value]
+  - id: property
+    term: property
+    definition: Objectの中で値の役割を示し、その値を読み取るために使う名前。
+    firstSlideId: javascript-ch04-l04-s01
+    relatedIds: [object, key-value, dot-access, length]
+  - id: key-value
+    term: property名と値
+    definition: Object literalでcolonの左へproperty名、右へ値を書く組。
+    firstSlideId: javascript-ch04-l04-s02
+    relatedIds: [object, object-literal, property]
+  - id: dot-access
+    term: dot access
+    definition: Object名、dot、property名の順に書き、目的の値を読み取る方法。
+    firstSlideId: javascript-ch04-l04-s03
+    relatedIds: [object, property, destructuring]
+  - id: destructuring
+    term: Destructuring
+    definition: ObjectやArrayの形を左辺に書き、必要な値へ一度に名前を付ける書き方。
+    firstSlideId: javascript-ch04-l05-s01
+    relatedIds: [object, array, property, alias]
+  - id: alias
+    term: 別名
+    definition: Object Destructuringでpropertyの値を受け取るために新しく付ける変数名。
+    firstSlideId: javascript-ch04-l05-s02
+    relatedIds: [destructuring, property, variable]

@@ -1,0 +1,148 @@
+id: javascript-ch04-l02-e01
+kind: standard
+workspaceId: javascript-ch04-l02-e01
+countsTowardStandardExerciseTotal: true
+title: 1問目と2問目を番号で取り出す
+instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: question-order-access, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: fix-first-index
+    file: script.js
+    target: 最初のconsole.logにあるquestions[1]
+    starterAnchor: console.log(questions[1]);
+    change: 角括弧の1を0へ置き換える
+    observe: ConsoleへHTML、CSSの問題文が順に表示される
+    requiresConceptIds: [question-order-access]
+    validationRuleIds:
+      [javascript-ch04-l02-e01-r01, javascript-ch04-l02-e01-r02, javascript-ch04-l02-e01-r03]
+files:
+  - { path: script.js, language: javascript, source: starter/script.js, editable: true }
+  - { path: index.html, language: html, source: starter/index.html, editable: false }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: false }
+solutionFiles:
+  - { path: script.js, language: javascript, source: solution/script.js, editable: false }
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+validationRules:
+  - id: javascript-ch04-l02-e01-r01
+    groupId: javascript-ch04-l02-e01-result
+    label: 角括弧へindexを書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: collection-access, accessKind: index }
+    feedback:
+      target: 最初のconsole.log
+      expected: questions[0]の角括弧アクセス
+      nextAction: 角括弧内を0へ変更します。
+    hintId: javascript-ch04-l02-e01-h02
+    relatedSlideId: javascript-ch04-l02-s02
+  - id: javascript-ch04-l02-e01-r02
+    groupId: javascript-ch04-l02-e01-result
+    label: atへindexを書く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: collection-access, accessKind: at }
+    feedback:
+      target: 2つ目のconsole.log
+      expected: questions.at(1)
+      nextAction: 完成済みのquestions.at(1)を残します。
+    hintId: javascript-ch04-l02-e01-h01
+    relatedSlideId: javascript-ch04-l02-s03
+  - id: javascript-ch04-l02-e01-r03
+    groupId: javascript-ch04-l02-e01-result
+    label: 1問目と2問目を順に表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-console }
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - { level: log, text: 'HTMLの役割は？' }
+        - { level: log, text: 'CSSの役割は？' }
+    feedback:
+      target: Console
+      expected: HTMLの問題文、その次にCSSの問題文
+      nextAction: 最初だけindex 0、次はat(1)にします。
+    hintId: javascript-ch04-l02-e01-h03
+    relatedSlideId: javascript-ch04-l02-s04
+hints:
+  - id: javascript-ch04-l02-e01-h01
+    level: 1
+    title: 変更するのは最初の表示行
+    text: questions.at(1)は2問目を正しく取り出しているため残します。
+    relatedSlideId: javascript-ch04-l02-s03
+  - id: javascript-ch04-l02-e01-h02
+    level: 2
+    title: 1問目のindexを思い出す
+    text: Arrayのindexは0から始まります。
+    relatedSlideId: javascript-ch04-l02-s01
+  - id: javascript-ch04-l02-e01-h03
+    level: 3
+    title: 角括弧の数値を1つ変える
+    text: console.log(questions[1]);をconsole.log(questions[0]);へ変更します。
+    relatedSlideId: javascript-ch04-l02-s04
+relatedSlideIds: [javascript-ch04-l02-s03, javascript-ch04-l02-s04]
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: pass
+    expectedStatus: pass
+    files:
+      - { path: script.js, language: javascript, source: fixtures/pass.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: incomplete
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/incomplete.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch04-l02-e01-r01, javascript-ch04-l02-e01-r02, javascript-ch04-l02-e01-r03]
+  - id: off-by-one
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/off-by-one.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch04-l02-e01-r01, javascript-ch04-l02-e01-r02, javascript-ch04-l02-e01-r03]
+  - id: output-only
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/output-only.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch04-l02-e01-r01, javascript-ch04-l02-e01-r02, javascript-ch04-l02-e01-r03]
+  - id: syntax-error
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/syntax-error.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: security
+    expectedStatus: code-error
+    files:
+      - { path: script.js, language: javascript, source: fixtures/security.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

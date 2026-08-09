@@ -1,0 +1,19 @@
+id: javascript-ch04-l01
+kind: standard
+title: Arrayへ問題文を並べる
+goal: 複数の問題文を角括弧の中へ順番に並べ、Arrayの件数をlengthで確認できる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch03-l05]
+slideSources:
+  - slides/s01-array-purpose.md
+  - slides/s02-array-literal.md
+  - slides/s03-array-length.md
+  - slides/s04-question-array-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch04-l01-e01/exercise.yaml
+reflection: Arrayは複数の値を順番つきで1つにまとめ、lengthで件数を確認できる。
+glossaryRefs: [javascript, console, array, array-literal, length, element]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch04-l01-s04
+  requiredExerciseIds: [javascript-ch04-l01-e01]

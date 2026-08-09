@@ -1,0 +1,17 @@
+:root {
+  color: #173f35;
+  background: #fffaf0;
+  font-family: system-ui, sans-serif;
+}
+body {
+  min-height: 100vh;
+  margin: 0;
+  display: grid;
+  place-items: center;
+}
+.console-guide {
+  padding: 2.5rem;
+  border: 2px solid #1d6b55;
+  border-radius: 1.5rem;
+  background: #fff;
+}

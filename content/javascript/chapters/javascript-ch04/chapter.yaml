@@ -1,0 +1,12 @@
+id: javascript-ch04
+sequence: 4
+title: Array・Object・Destructuring
+goal: 複数の問題をArrayへ並べ、1問の項目をObjectへまとめ、必要な値をDestructuringで取り出せる。
+estimatedMinutes: 80
+kind: standard
+lessonSources:
+  - lessons/javascript-ch04-l01/lesson.yaml
+  - lessons/javascript-ch04-l02/lesson.yaml
+  - lessons/javascript-ch04-l03/lesson.yaml
+  - lessons/javascript-ch04-l04/lesson.yaml
+  - lessons/javascript-ch04-l05/lesson.yaml

@@ -1,0 +1,19 @@
+id: javascript-ch04-l05
+kind: standard
+title: Destructuringで必要な値を受け取る
+goal: ObjectとArrayの形を左辺に書き、必要なpropertyと先頭要素を新しい変数へ分けられる。
+estimatedMinutes: 20
+prerequisiteLessonIds: [javascript-ch04-l04]
+slideSources:
+  - slides/s01-destructuring-purpose.md
+  - slides/s02-object-destructuring.md
+  - slides/s03-array-destructuring.md
+  - slides/s04-question-destructuring-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch04-l05-e01/exercise.yaml
+reflection: Destructuringは右側のObjectやArrayの形に合わせ、必要な値へ一度に名前を付ける。
+glossaryRefs: [javascript, console, object, array, destructuring, property, element, alias]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch04-l05-s04
+  requiredExerciseIds: [javascript-ch04-l05-e01]
