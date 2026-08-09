@@ -119,11 +119,16 @@ function stickyCoordinatorHarness(handle: TabLeaseHandle): GateHarness {
 interface RegisteredSessionProps {
   readonly access: WorkspaceLeaseAccess;
   readonly beforeYield: () => Promise<void>;
+  readonly onRegistered?: () => void;
 }
 
 /** mount中だけController相当のflush callbackをGateへ登録する。 */
-function RegisteredSession({ access, beforeYield }: RegisteredSessionProps) {
-  useEffect(() => access.registerBeforeYield(beforeYield), [access, beforeYield]);
+function RegisteredSession({ access, beforeYield, onRegistered }: RegisteredSessionProps) {
+  useEffect(() => {
+    const unregister = access.registerBeforeYield(beforeYield);
+    onRegistered?.();
+    return unregister;
+  }, [access, beforeYield, onRegistered]);
   return <p data-testid="editable-session">編集Session</p>;
 }
 
@@ -278,6 +283,7 @@ describe('WorkspaceLeaseGate', () => {
     const lease = createFakeLease({ status: 'owned', coordination: 'available' });
     const harness = stickyCoordinatorHarness(lease.handle);
     const flush = vi.fn(async () => undefined);
+    const registered = vi.fn();
     const rendered = render(
       <StrictMode>
         <MemoryRouter>
@@ -286,13 +292,18 @@ describe('WorkspaceLeaseGate', () => {
             workspaceId="workspace-first-heading"
             coordinator={harness.coordinator}
           >
-            {(access) => <RegisteredSession access={access} beforeYield={flush} />}
+            {(access) => (
+              <RegisteredSession access={access} beforeYield={flush} onRegistered={registered} />
+            )}
           </WorkspaceLeaseGate>
         </MemoryRouter>
       </StrictMode>,
     );
 
     expect(await screen.findByTestId('editable-session')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(registered).toHaveBeenCalled();
+    });
 
     await act(async () => {
       await harness.getAcquireOptions()?.beforeYield(lease.runFencedWrite);
