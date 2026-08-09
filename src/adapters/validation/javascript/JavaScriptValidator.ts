@@ -335,6 +335,36 @@ function sourceFactMatches(
       return candidate.kind === 'return';
     case 'closure':
       return candidate.kind === 'closure' && candidate.capturedName === expected.capturedName;
+    case 'collection':
+      return (
+        candidate.kind === 'collection' &&
+        candidate.collectionKind === expected.collectionKind &&
+        candidate.entryCount === expected.entryCount
+      );
+    case 'collection-access':
+      return candidate.kind === 'collection-access' && candidate.accessKind === expected.accessKind;
+    case 'destructuring':
+      return (
+        candidate.kind === 'destructuring' &&
+        candidate.patternKind === expected.patternKind &&
+        candidate.bindingCount === expected.bindingCount
+      );
+    case 'collection-transform':
+      return (
+        candidate.kind === 'collection-transform' &&
+        candidate.method === expected.method &&
+        candidate.callbackParameterCount === expected.callbackParameterCount
+      );
+    case 'immutable-update':
+      return candidate.kind === 'immutable-update' && candidate.updateKind === expected.updateKind;
+    case 'module-boundary':
+      return (
+        candidate.kind === 'module-boundary' &&
+        candidate.boundaryKind === expected.boundaryKind &&
+        candidate.name === expected.name
+      );
+    case 'error-flow':
+      return candidate.kind === 'error-flow' && candidate.flowKind === expected.flowKind;
   }
 }
 

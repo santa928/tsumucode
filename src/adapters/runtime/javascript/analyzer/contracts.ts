@@ -57,6 +57,8 @@ export type JavaScriptBinaryOperator =
 
 export type JavaScriptAssignmentOperator = '=' | '+=' | '-=' | '++' | '--';
 
+export type JavaScriptCollectionTransformMethod = 'map' | 'filter' | 'reduce';
+
 export type JavaScriptSourceFact =
   | (JavaScriptFactLocation & {
       readonly kind: 'binding';
@@ -99,6 +101,38 @@ export type JavaScriptSourceFact =
       readonly depth: number;
     })
   | (JavaScriptFactLocation & { readonly kind: 'closure'; readonly capturedName: string })
+  | (JavaScriptFactLocation & {
+      readonly kind: 'collection';
+      readonly collectionKind: 'array' | 'object';
+      readonly entryCount: number;
+    })
+  | (JavaScriptFactLocation & {
+      readonly kind: 'collection-access';
+      readonly accessKind: 'index' | 'at' | 'property';
+    })
+  | (JavaScriptFactLocation & {
+      readonly kind: 'destructuring';
+      readonly patternKind: 'array' | 'object';
+      readonly bindingCount: number;
+    })
+  | (JavaScriptFactLocation & {
+      readonly kind: 'collection-transform';
+      readonly method: JavaScriptCollectionTransformMethod;
+      readonly callbackParameterCount: number;
+    })
+  | (JavaScriptFactLocation & {
+      readonly kind: 'immutable-update';
+      readonly updateKind: 'array-spread' | 'object-spread' | 'array-map';
+    })
+  | (JavaScriptFactLocation & {
+      readonly kind: 'module-boundary';
+      readonly boundaryKind: 'import' | 'export';
+      readonly name: string;
+    })
+  | (JavaScriptFactLocation & {
+      readonly kind: 'error-flow';
+      readonly flowKind: 'throw' | 'catch';
+    })
   | QuerySelectorTextContentAssignmentFact;
 
 interface JavaScriptAnalysisIdentity {
@@ -353,6 +387,52 @@ function isJavaScriptSourceFact(value: unknown): value is JavaScriptSourceFact {
     case 'closure':
       return (
         hasKeys(['capturedName', 'column', 'file', 'kind', 'line']) && bounded(value.capturedName)
+      );
+    case 'collection':
+      return (
+        hasKeys(['collectionKind', 'column', 'entryCount', 'file', 'kind', 'line']) &&
+        (value.collectionKind === 'array' || value.collectionKind === 'object') &&
+        Number.isSafeInteger(value.entryCount) &&
+        Number(value.entryCount) >= 0 &&
+        Number(value.entryCount) <= 64
+      );
+    case 'collection-access':
+      return (
+        hasKeys(['accessKind', 'column', 'file', 'kind', 'line']) &&
+        ['index', 'at', 'property'].includes(String(value.accessKind))
+      );
+    case 'destructuring':
+      return (
+        hasKeys(['bindingCount', 'column', 'file', 'kind', 'line', 'patternKind']) &&
+        (value.patternKind === 'array' || value.patternKind === 'object') &&
+        Number.isSafeInteger(value.bindingCount) &&
+        Number(value.bindingCount) >= 0 &&
+        Number(value.bindingCount) <= 64
+      );
+    case 'collection-transform':
+      return (
+        hasKeys(['callbackParameterCount', 'column', 'file', 'kind', 'line', 'method']) &&
+        ['map', 'filter', 'reduce'].includes(String(value.method)) &&
+        Number.isSafeInteger(value.callbackParameterCount) &&
+        Number(value.callbackParameterCount) >= 0 &&
+        Number(value.callbackParameterCount) <= 4
+      );
+    case 'immutable-update':
+      return (
+        hasKeys(['column', 'file', 'kind', 'line', 'updateKind']) &&
+        ['array-spread', 'object-spread', 'array-map'].includes(String(value.updateKind))
+      );
+    case 'module-boundary':
+      return (
+        hasKeys(['boundaryKind', 'column', 'file', 'kind', 'line', 'name']) &&
+        (value.boundaryKind === 'import' || value.boundaryKind === 'export') &&
+        bounded(value.name) &&
+        value.name.length > 0
+      );
+    case 'error-flow':
+      return (
+        hasKeys(['column', 'file', 'flowKind', 'kind', 'line']) &&
+        (value.flowKind === 'throw' || value.flowKind === 'catch')
       );
     case 'query-selector-text-content-assignment':
       return (

@@ -285,6 +285,64 @@ describe('JavaScriptValidator', () => {
     ).resolves.toMatchObject({ status: 'incomplete', passedRequirementIds: [] });
   });
 
+  it('Data Source Factを同一FileのAnalyzer結果へ照合する', async () => {
+    const dataAnalyzer: AnalyzerDouble = {
+      analyze: vi.fn(async (input: JavaScriptAnalysisInput): Promise<JavaScriptAnalysisResult> => {
+        if ('files' in input) throw new Error('classic Source解析だけを期待しています');
+        return {
+          status: 'success',
+          requestId: 'validator-data-analysis',
+          exerciseSessionId: input.exerciseSessionId,
+          executionRevision: input.executionRevision,
+          file: input.file,
+          instrumentedCode: input.source,
+          sourceSha256: SOURCE_HASH,
+          facts: [
+            {
+              kind: 'collection-transform',
+              method: 'map',
+              callbackParameterCount: 1,
+              file: input.file,
+              line: 1,
+              column: 16,
+            },
+          ] as never,
+          diagnostics: [],
+        };
+      }),
+      dispose: vi.fn(async () => undefined),
+    };
+    const rules = [
+      {
+        ...validationRule(),
+        id: 'questions-map',
+        label: 'mapで問題文を変換する',
+        target: { kind: 'javascript-source', file: 'script.js' },
+        assertion: {
+          kind: 'javascript-source-fact',
+          fact: {
+            kind: 'collection-transform',
+            method: 'map',
+            callbackParameterCount: 1,
+          },
+        },
+      },
+    ] as never;
+    const context = javascriptContext({
+      rules,
+      files: {
+        'index.html': '<main>Data演習</main>',
+        'script.js': "const labels = ['HTML'].map((question) => `問題: ${question}`);",
+      },
+    });
+    const validator = new JavaScriptValidator({ analyzerFactory: () => dataAnalyzer });
+
+    await expect(validator.validate(context)).resolves.toMatchObject({
+      status: 'pass',
+      passedRequirementIds: ['questions-map'],
+    });
+  });
+
   it('Source Fact・同一Source hash・実行証拠・全viewport DOMをANDでpassする', async () => {
     const analyzer = analyzerDouble();
     const validator = new JavaScriptValidator({ analyzerFactory: () => analyzer });

@@ -12,6 +12,7 @@ import type {
   JavaScriptSourceFact,
   JavaScriptAssignmentOperator,
   JavaScriptBinaryOperator,
+  JavaScriptCollectionTransformMethod,
   JavaScriptWorkspaceAnalysisRequest,
   JavaScriptWorkspaceAnalysisResult,
   JavaScriptWorkspaceAnalysisSuccess,
@@ -60,6 +61,11 @@ const ASSIGNMENT_FACT_OPERATORS = new Set<JavaScriptAssignmentOperator>([
   '-=',
   '++',
   '--',
+]);
+const COLLECTION_TRANSFORM_METHODS = new Set<JavaScriptCollectionTransformMethod>([
+  'map',
+  'filter',
+  'reduce',
 ]);
 
 /** Acorn Nodeを追加propertyへ安全にアクセスできるRecordとして扱う。 */
@@ -242,6 +248,56 @@ function identifierName(value: unknown): string | undefined {
     : undefined;
 }
 
+/** Collection Factへ公開できる0〜64の整数へ件数を絞り込む。 */
+function boundedCollectionCount(value: unknown): number | undefined {
+  return Number.isSafeInteger(value) && Number(value) >= 0 && Number(value) <= 64
+    ? Number(value)
+    : undefined;
+}
+
+/** inline callbackの公開可能なparameter数を返す。 */
+function callbackParameterCount(value: unknown): number | undefined {
+  if (!isNode(value)) return undefined;
+  const current = ast(value);
+  if (value.type !== 'FunctionExpression' && value.type !== 'ArrowFunctionExpression') {
+    return undefined;
+  }
+  const count = Array.isArray(current.params) ? current.params.length : 0;
+  return count <= 4 ? count : undefined;
+}
+
+/** 非負整数Literalのcomputed accessだけを教材用indexとして識別する。 */
+function isTeachingIndex(value: unknown): boolean {
+  if (!isNode(value) || value.type !== 'Literal') return false;
+  const index = ast(value).value;
+  return Number.isSafeInteger(index) && Number(index) >= 0;
+}
+
+/** named export宣言から公開Identifier名をSource順で抽出する。 */
+function namedExportNames(node: AstNode): readonly string[] {
+  if (node.type !== 'ExportNamedDeclaration') return [];
+  if (isNode(node.declaration)) {
+    const declaration = ast(node.declaration);
+    if (
+      node.declaration.type === 'VariableDeclaration' &&
+      Array.isArray(declaration.declarations)
+    ) {
+      return declaration.declarations
+        .filter(isNode)
+        .flatMap((item) => patternIdentifiers(ast(item).id))
+        .map(identifierName)
+        .filter((name): name is string => name !== undefined);
+    }
+    const name = identifierName(declaration.id);
+    return name === undefined ? [] : [name];
+  }
+  if (!Array.isArray(node.specifiers)) return [];
+  return node.specifiers
+    .filter(isNode)
+    .map((specifier) => identifierName(ast(specifier).exported))
+    .filter((name): name is string => name !== undefined);
+}
+
 interface ScopeInfo {
   readonly node: Node;
   readonly kind: 'program' | 'function' | 'block';
@@ -412,7 +468,7 @@ function bindingBelongsToFunction(binding: ScopeInfo, functionScope: ScopeInfo):
   return false;
 }
 
-/** ValidatorがChapter 00〜03のsource構造を検証するbounded factを抽出する。 */
+/** ValidatorがChapter 00〜06のsource構造を検証するbounded factを抽出する。 */
 function collectFacts(
   program: Node,
   nodes: readonly Node[],
@@ -527,6 +583,63 @@ function collectFacts(
           }
         }
       }
+
+      if (isNode(current.id)) {
+        const bindingCount = boundedCollectionCount(patternIdentifiers(current.id).length);
+        if (
+          bindingCount !== undefined &&
+          (current.id.type === 'ArrayPattern' || current.id.type === 'ObjectPattern')
+        ) {
+          addFact({
+            kind: 'destructuring',
+            patternKind: current.id.type === 'ArrayPattern' ? 'array' : 'object',
+            bindingCount,
+            ...factLocation(current.id, file),
+          });
+        }
+      }
+
+      if (isNode(current.init) && current.init.type === 'CallExpression') {
+        const init = ast(current.init);
+        if (isNode(init.callee) && memberProperty(ast(init.callee)) === 'map') {
+          addFact({ kind: 'immutable-update', updateKind: 'array-map', ...location });
+        }
+      }
+    }
+
+    if (node.type === 'ArrayExpression' || node.type === 'ObjectExpression') {
+      const entries = node.type === 'ArrayExpression' ? current.elements : current.properties;
+      const entryCount = Array.isArray(entries)
+        ? boundedCollectionCount(entries.length)
+        : undefined;
+      if (entryCount !== undefined) {
+        addFact({
+          kind: 'collection',
+          collectionKind: node.type === 'ArrayExpression' ? 'array' : 'object',
+          entryCount,
+          ...location,
+        });
+      }
+      if (
+        Array.isArray(entries) &&
+        entries.some((entry) => isNode(entry) && entry.type === 'SpreadElement')
+      ) {
+        addFact({
+          kind: 'immutable-update',
+          updateKind: node.type === 'ArrayExpression' ? 'array-spread' : 'object-spread',
+          ...location,
+        });
+      }
+    }
+
+    if (node.type === 'MemberExpression') {
+      const parent = parentByNode.get(node);
+      const isCalledMember = parent?.type === 'CallExpression' && ast(parent).callee === node;
+      if (current.computed === true && isTeachingIndex(current.property)) {
+        addFact({ kind: 'collection-access', accessKind: 'index', ...location });
+      } else if (!isCalledMember && memberProperty(current) !== undefined) {
+        addFact({ kind: 'collection-access', accessKind: 'property', ...location });
+      }
     }
 
     if (node.type === 'Literal') {
@@ -610,9 +723,57 @@ function collectFacts(
       if (callee !== undefined) {
         addFact({ kind: 'call', callee: boundedFactText(callee, file), ...location });
       }
+      if (isNode(current.callee)) {
+        const method = memberProperty(ast(current.callee));
+        if (method === 'at') {
+          addFact({ kind: 'collection-access', accessKind: 'at', ...location });
+        }
+        if (COLLECTION_TRANSFORM_METHODS.has(method as JavaScriptCollectionTransformMethod)) {
+          const args = Array.isArray(current.arguments) ? current.arguments : [];
+          const parameterCount = callbackParameterCount(args[0]);
+          if (parameterCount !== undefined) {
+            addFact({
+              kind: 'collection-transform',
+              method: method as JavaScriptCollectionTransformMethod,
+              callbackParameterCount: parameterCount,
+              ...location,
+            });
+          }
+        }
+      }
     }
 
     if (node.type === 'ReturnStatement') addFact({ kind: 'return', ...location });
+
+    if (node.type === 'ImportSpecifier') {
+      const name = identifierName(current.imported);
+      if (name !== undefined) {
+        addFact({
+          kind: 'module-boundary',
+          boundaryKind: 'import',
+          name: boundedFactText(name, file),
+          ...location,
+        });
+      }
+    }
+
+    if (node.type === 'ExportNamedDeclaration') {
+      for (const name of namedExportNames(current)) {
+        addFact({
+          kind: 'module-boundary',
+          boundaryKind: 'export',
+          name: boundedFactText(name, file),
+          ...location,
+        });
+      }
+    }
+
+    if (node.type === 'ThrowStatement') {
+      addFact({ kind: 'error-flow', flowKind: 'throw', ...location });
+    }
+    if (node.type === 'CatchClause') {
+      addFact({ kind: 'error-flow', flowKind: 'catch', ...location });
+    }
 
     if (node.type === 'AssignmentExpression') {
       const assignment = current;

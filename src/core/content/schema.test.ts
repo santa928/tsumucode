@@ -515,6 +515,44 @@ describe('CourseManifestSchema 公開境界', () => {
     expectCourseIssue(unknown, 'JavaScript Validator Ruleの形式が不正です');
   });
 
+  it.each([
+    { kind: 'collection', collectionKind: 'array', entryCount: 3 },
+    { kind: 'collection-access', accessKind: 'at' },
+    { kind: 'destructuring', patternKind: 'object', bindingCount: 2 },
+    {
+      kind: 'collection-transform',
+      method: 'reduce',
+      callbackParameterCount: 2,
+    },
+    { kind: 'immutable-update', updateKind: 'array-map' },
+    { kind: 'module-boundary', boundaryKind: 'import', name: 'questions' },
+    { kind: 'error-flow', flowKind: 'throw' },
+  ])('JavaScript Data Source Fact $kindをstrict Ruleとして受理する', (fact) => {
+    const rule = {
+      ...firstStandardExercise(firstStandardLesson(cloneCourse())).validationRules[0]!,
+      target: { kind: 'javascript-source', file: 'script.js' },
+      assertion: { kind: 'javascript-source-fact', fact },
+    };
+
+    expect(JavaScriptValidationRuleDefinitionSchema.safeParse(rule).success).toBe(true);
+  });
+
+  it.each([
+    { kind: 'collection', collectionKind: 'array', entryCount: 65 },
+    { kind: 'destructuring', patternKind: 'object', bindingCount: -1 },
+    { kind: 'collection-transform', method: 'sort', callbackParameterCount: 1 },
+    { kind: 'module-boundary', boundaryKind: 'export', name: '' },
+    { kind: 'error-flow', flowKind: 'finally', unexpected: true },
+  ])('JavaScript Data Source Factのbounded union外を拒否する: $kind', (fact) => {
+    const rule = {
+      ...firstStandardExercise(firstStandardLesson(cloneCourse())).validationRules[0]!,
+      target: { kind: 'javascript-source', file: 'script.js' },
+      assertion: { kind: 'javascript-source-fact', fact },
+    };
+
+    expect(JavaScriptValidationRuleDefinitionSchema.safeParse(rule).success).toBe(false);
+  });
+
   it('JavaScript RunnerのCourseへRuntime設定を必須にする', () => {
     const course = cloneCourse();
     course.runnerId = 'javascript';

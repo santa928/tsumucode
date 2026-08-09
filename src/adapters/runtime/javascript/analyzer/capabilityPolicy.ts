@@ -295,6 +295,7 @@ const ALLOWED_NODE_TYPES = new Set([
   'LogicalExpression',
   'ConditionalExpression',
   'CallExpression',
+  'NewExpression',
   'MemberExpression',
   'ChainExpression',
   'Identifier',
@@ -477,6 +478,9 @@ export function assertJavaScriptCapabilityPolicy(
     }
     if (node.type === 'Literal' && typeof current.regex === 'object' && current.regex !== null) {
       reject(node, file, '正規表現はこの演習では使えません');
+    }
+    if (node.type === 'NewExpression' && identifierName(current.callee) !== 'Error') {
+      reject(node, file, 'このconstructorは安全なPreviewでは使えません');
     }
 
     if (node.type === 'Identifier') {

@@ -268,6 +268,137 @@ describe('analyzeJavaScriptSource', () => {
     }
   });
 
+  it('Collection・Destructuring・変換・Immutable update factを位置付きで抽出する', async () => {
+    const result = await analyzeJavaScriptSource({
+      ...baseInput,
+      source: [
+        "const questions = [{ text: 'HTML', answered: false }, { text: 'CSS', answered: false }];",
+        'const first = questions[0];',
+        'const second = questions.at(1);',
+        'const [firstQuestion] = questions;',
+        'const { text, answered } = firstQuestion;',
+        'const labels = questions.map((question) => question.text);',
+        'const visible = questions.filter((question) => !question.answered);',
+        'const count = questions.reduce((total, _question) => total + 1, 0);',
+        'const cloned = [...questions];',
+        'const updated = questions.map((question) => ({ ...question, answered: true }));',
+      ].join('\n'),
+    });
+
+    expect(result.status).toBe('success');
+    if (result.status !== 'success') throw new Error('解析が成功しませんでした');
+    expect(result.facts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ kind: 'collection', collectionKind: 'array', entryCount: 2 }),
+        expect.objectContaining({ kind: 'collection', collectionKind: 'object', entryCount: 2 }),
+        expect.objectContaining({ kind: 'collection-access', accessKind: 'index' }),
+        expect.objectContaining({ kind: 'collection-access', accessKind: 'at' }),
+        expect.objectContaining({ kind: 'destructuring', patternKind: 'array', bindingCount: 1 }),
+        expect.objectContaining({ kind: 'destructuring', patternKind: 'object', bindingCount: 2 }),
+        expect.objectContaining({
+          kind: 'collection-transform',
+          method: 'map',
+          callbackParameterCount: 1,
+        }),
+        expect.objectContaining({
+          kind: 'collection-transform',
+          method: 'filter',
+          callbackParameterCount: 1,
+        }),
+        expect.objectContaining({
+          kind: 'collection-transform',
+          method: 'reduce',
+          callbackParameterCount: 2,
+        }),
+        expect.objectContaining({ kind: 'immutable-update', updateKind: 'array-spread' }),
+        expect.objectContaining({ kind: 'immutable-update', updateKind: 'object-spread' }),
+        expect.objectContaining({ kind: 'immutable-update', updateKind: 'array-map' }),
+      ]),
+    );
+  });
+
+  it('named Module境界とthrow／catchをSource Factへ変換する', async () => {
+    const result = await analyzeJavaScriptSource({
+      requestId: 'request-data-module',
+      exerciseSessionId: 'javascript:data-module',
+      executionRevision: 1,
+      entryFile: 'src/main.js',
+      files: {
+        'src/main.js': [
+          "import { questions, scoreAnswer } from './questions.js';",
+          'try {',
+          "  if (questions.length === 0) throw new Error('問題文がありません');",
+          '  console.log(scoreAnswer(true));',
+          '} catch (error) {',
+          '  console.log(error.message);',
+          '}',
+        ].join('\n'),
+        'src/questions.js': [
+          "export const questions = ['HTML'];",
+          'export function scoreAnswer(correct) { return correct ? 10 : 0; }',
+        ].join('\n'),
+      },
+      sourceType: 'module',
+      capabilityProfile: 'modules',
+      guardIdentifier: '__tsumuBudget',
+    });
+
+    expect(result.status).toBe('success');
+    if (result.status !== 'success') throw new Error('解析が成功しませんでした');
+    expect(result.facts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          kind: 'module-boundary',
+          boundaryKind: 'import',
+          name: 'questions',
+          file: 'src/main.js',
+        }),
+        expect.objectContaining({
+          kind: 'module-boundary',
+          boundaryKind: 'export',
+          name: 'questions',
+          file: 'src/questions.js',
+        }),
+        expect.objectContaining({ kind: 'error-flow', flowKind: 'throw', file: 'src/main.js' }),
+        expect.objectContaining({ kind: 'error-flow', flowKind: 'catch', file: 'src/main.js' }),
+        expect.objectContaining({
+          kind: 'module-boundary',
+          boundaryKind: 'import',
+          name: 'scoreAnswer',
+          file: 'src/main.js',
+        }),
+        expect.objectContaining({
+          kind: 'module-boundary',
+          boundaryKind: 'export',
+          name: 'scoreAnswer',
+          file: 'src/questions.js',
+        }),
+      ]),
+    );
+  });
+
+  it('default import／exportは既存Runtimeどおり受理しnamed Module Factにはしない', async () => {
+    const result = await analyzeJavaScriptSource({
+      requestId: 'request-data-default-module',
+      exerciseSessionId: 'javascript:data-default-module',
+      executionRevision: 1,
+      entryFile: 'src/main.js',
+      files: {
+        'src/main.js': "import questions from './questions.js';\nconsole.log(questions.length);",
+        'src/questions.js': "export default ['HTML'];",
+      },
+      sourceType: 'module',
+      capabilityProfile: 'modules',
+      guardIdentifier: '__tsumuBudget',
+    });
+
+    expect(result.status).toBe('success');
+    if (result.status !== 'success') throw new Error('解析が成功しませんでした');
+    expect(result.facts).not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ kind: 'module-boundary' })]),
+    );
+  });
+
   it('Core教材用のliteral・演算・代入・else・return・binding scope factを抽出する', async () => {
     const result = await analyzeJavaScriptSource({
       ...baseInput,

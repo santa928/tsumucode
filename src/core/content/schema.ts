@@ -653,6 +653,47 @@ const JavaScriptSourceFactSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('call'), callee: NonEmptyTextSchema.max(128) }).strict(),
   z.object({ kind: z.literal('return') }).strict(),
   z.object({ kind: z.literal('closure'), capturedName: NonEmptyTextSchema.max(128) }).strict(),
+  z
+    .object({
+      kind: z.literal('collection'),
+      collectionKind: z.enum(['array', 'object']),
+      entryCount: z.number().int().min(0).max(64),
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal('collection-access'),
+      accessKind: z.enum(['index', 'at', 'property']),
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal('destructuring'),
+      patternKind: z.enum(['array', 'object']),
+      bindingCount: z.number().int().min(0).max(64),
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal('collection-transform'),
+      method: z.enum(['map', 'filter', 'reduce']),
+      callbackParameterCount: z.number().int().min(0).max(4),
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal('immutable-update'),
+      updateKind: z.enum(['array-spread', 'object-spread', 'array-map']),
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal('module-boundary'),
+      boundaryKind: z.enum(['import', 'export']),
+      name: NonEmptyTextSchema.max(128),
+    })
+    .strict(),
+  z.object({ kind: z.literal('error-flow'), flowKind: z.enum(['throw', 'catch']) }).strict(),
 ]);
 
 const JavaScriptSourceFactAssertionSchema = z

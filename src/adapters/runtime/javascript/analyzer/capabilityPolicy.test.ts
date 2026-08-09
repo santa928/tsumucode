@@ -67,6 +67,22 @@ describe('assertJavaScriptCapabilityPolicy', () => {
     }).not.toThrow();
   });
 
+  it('教材用Errorだけをconstructorとして許可する', () => {
+    expect(() => {
+      assertJavaScriptCapabilityPolicy(
+        program("if (true) throw new Error('問題文がありません');"),
+        'script.js',
+        'core',
+      );
+    }).not.toThrow();
+
+    for (const source of ['new Date()', 'new Function("return 1")', 'new URL("/", "https://x")']) {
+      expect(() => {
+        assertJavaScriptCapabilityPolicy(program(source), 'script.js', 'core');
+      }).toThrow(/構文|動的実行|constructor/u);
+    }
+  });
+
   it.each(['core', 'modules', 'dom', 'async', 'project'] as const)(
     '%sでも外部通信を許可しない',
     (profile) => {
@@ -155,6 +171,9 @@ d['query' + 'Selector']('head')['append' + 'Child'](s);`;
         'script.js',
         'core',
       );
+    }).toThrow(/computed property/u);
+    expect(() => {
+      assertJavaScriptCapabilityPolicy(program('const previous = [1, 2][-1];'), 'script.js', 'core');
     }).toThrow(/computed property/u);
   });
 
