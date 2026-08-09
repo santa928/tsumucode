@@ -10,6 +10,8 @@ import type {
   JavaScriptAnalysisRequest,
   JavaScriptAnalysisResult,
   JavaScriptSourceFact,
+  JavaScriptAssignmentOperator,
+  JavaScriptBinaryOperator,
   JavaScriptWorkspaceAnalysisRequest,
   JavaScriptWorkspaceAnalysisResult,
   JavaScriptWorkspaceAnalysisSuccess,
@@ -35,6 +37,29 @@ const FUNCTION_TYPES = new Set([
   'FunctionDeclaration',
   'FunctionExpression',
   'ArrowFunctionExpression',
+]);
+const BINARY_FACT_OPERATORS = new Set<JavaScriptBinaryOperator>([
+  '+',
+  '-',
+  '*',
+  '/',
+  '%',
+  '===',
+  '!==',
+  '>',
+  '>=',
+  '<',
+  '<=',
+  '&&',
+  '||',
+  '??',
+]);
+const ASSIGNMENT_FACT_OPERATORS = new Set<JavaScriptAssignmentOperator>([
+  '=',
+  '+=',
+  '-=',
+  '++',
+  '--',
 ]);
 
 /** Acorn Nodeを追加propertyへ安全にアクセスできるRecordとして扱う。 */
@@ -284,6 +309,45 @@ function declarationScope(scope: ScopeInfo, kind: 'const' | 'let' | 'var'): Scop
   return current;
 }
 
+/** Function本体の波括弧を重複Scopeとして数えず、教材上のlexical深さへ正規化する。 */
+function teachingScopeDepth(scope: ScopeInfo): number {
+  let depth = 0;
+  let current = scope;
+  while (current.parent !== undefined) {
+    const parent: ScopeInfo = current.parent;
+    const isFunctionBodyBlock =
+      current.kind === 'block' &&
+      parent.kind === 'function' &&
+      ast(parent.node).body === current.node;
+    if (!isFunctionBodyBlock) depth += 1;
+    current = parent;
+  }
+  return depth;
+}
+
+/** 公開Factとして扱うprimitive literal型だけを返す。 */
+function literalValueType(value: unknown): 'string' | 'number' | 'boolean' | undefined {
+  if (typeof value === 'string') return 'string';
+  if (typeof value === 'number') return 'number';
+  if (typeof value === 'boolean') return 'boolean';
+  return undefined;
+}
+
+/** AST operatorを教材で許可したbinary Factへ絞り込む。 */
+function binaryFactOperator(value: unknown): JavaScriptBinaryOperator | undefined {
+  return typeof value === 'string' && BINARY_FACT_OPERATORS.has(value as JavaScriptBinaryOperator)
+    ? (value as JavaScriptBinaryOperator)
+    : undefined;
+}
+
+/** AST operatorを教材で許可したassignment Factへ絞り込む。 */
+function assignmentFactOperator(value: unknown): JavaScriptAssignmentOperator | undefined {
+  return typeof value === 'string' &&
+    ASSIGNMENT_FACT_OPERATORS.has(value as JavaScriptAssignmentOperator)
+    ? (value as JavaScriptAssignmentOperator)
+    : undefined;
+}
+
 /** staticなCall calleeを学習用の短い名前へ変換する。 */
 function callName(value: unknown): string | undefined {
   if (!isNode(value)) return undefined;
@@ -447,6 +511,9 @@ function collectFacts(
     if (node.type === 'VariableDeclarator') {
       const declarationKind = declarationKindByNode.get(node);
       if (declarationKind === 'const' || declarationKind === 'let' || declarationKind === 'var') {
+        const activeScope = scopeByNode.get(node);
+        const bindingScope =
+          activeScope === undefined ? undefined : declarationScope(activeScope, declarationKind);
         for (const identifier of patternIdentifiers(current.id)) {
           const name = identifierName(identifier);
           if (name !== undefined) {
@@ -454,6 +521,7 @@ function collectFacts(
               kind: 'binding',
               name: boundedFactText(name, file),
               declarationKind,
+              scopeDepth: bindingScope === undefined ? 0 : teachingScopeDepth(bindingScope),
               ...factLocation(identifier, file),
             });
           }
@@ -461,10 +529,47 @@ function collectFacts(
       }
     }
 
+    if (node.type === 'Literal') {
+      const valueType = literalValueType(current.value);
+      if (valueType !== undefined) addFact({ kind: 'literal', valueType, ...location });
+    }
+
+    if (node.type === 'BinaryExpression' || node.type === 'LogicalExpression') {
+      const operator = binaryFactOperator(current.operator);
+      if (operator !== undefined) addFact({ kind: 'binary-expression', operator, ...location });
+    }
+
+    if (node.type === 'AssignmentExpression') {
+      const name = identifierName(current.left);
+      const operator = assignmentFactOperator(current.operator);
+      if (name !== undefined && operator !== undefined) {
+        addFact({
+          kind: 'assignment',
+          name: boundedFactText(name, file),
+          operator,
+          ...location,
+        });
+      }
+    }
+
+    if (node.type === 'UpdateExpression') {
+      const name = identifierName(current.argument);
+      const operator = assignmentFactOperator(current.operator);
+      if (name !== undefined && operator !== undefined) {
+        addFact({
+          kind: 'assignment',
+          name: boundedFactText(name, file),
+          operator,
+          ...location,
+        });
+      }
+    }
+
     if (node.type === 'IfStatement' || node.type === 'SwitchStatement') {
       addFact({
         kind: 'branch',
         branchKind: node.type === 'IfStatement' ? 'if' : 'switch',
+        hasAlternate: node.type === 'IfStatement' && isNode(current.alternate),
         ...location,
       });
     }
@@ -506,6 +611,8 @@ function collectFacts(
         addFact({ kind: 'call', callee: boundedFactText(callee, file), ...location });
       }
     }
+
+    if (node.type === 'ReturnStatement') addFact({ kind: 'return', ...location });
 
     if (node.type === 'AssignmentExpression') {
       const assignment = current;

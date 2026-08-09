@@ -8,6 +8,7 @@ import type {
   PreviewSnapshot,
   RunnerDiagnostic,
   RunnerEvidence,
+  RunnerConsoleRecord,
   SnapshotPolicy,
 } from '../../../core/runtime/contracts';
 import type {
@@ -23,6 +24,7 @@ import type {
   JavaScriptAnalysisInput,
   JavaScriptAnalysisResult,
   JavaScriptAnalysisSuccess,
+  JavaScriptSourceFact,
 } from '../../runtime/javascript/analyzer/contracts';
 import {
   buildJavaScriptSnapshotPolicy,
@@ -56,6 +58,19 @@ interface InteractionObservation {
   readonly passed: boolean;
   readonly actual: string;
 }
+
+type JavaScriptSourceRule = Extract<
+  JavaScriptValidationRuleDefinition,
+  { readonly target: { readonly kind: 'javascript-source' } }
+>;
+type JavaScriptConsoleRule = Extract<
+  JavaScriptValidationRuleDefinition,
+  { readonly target: { readonly kind: 'javascript-console' } }
+>;
+type JavaScriptSourceFactAssertion = Extract<
+  JavaScriptSourceRule['assertion'],
+  { readonly kind: 'javascript-source-fact' }
+>;
 
 const SOURCE_HASH_PATTERN = /^[a-f0-9]{64}$/u;
 const GUARD_IDENTIFIER_PATTERN = /^[$A-Z_a-z][$\w]*$/u;
@@ -277,19 +292,73 @@ function analysisFailureResult(
 }
 
 /** Source RuleをAnalyzer Factへ照合して説明可能なcheckを返す。 */
+function sourceFactMatches(
+  candidate: JavaScriptSourceFact,
+  expected: JavaScriptSourceFactAssertion['fact'],
+): boolean {
+  if (candidate.kind !== expected.kind) return false;
+  switch (expected.kind) {
+    case 'binding':
+      return (
+        candidate.kind === 'binding' &&
+        candidate.name === expected.name &&
+        candidate.declarationKind === expected.declarationKind &&
+        (expected.scopeDepth === undefined || candidate.scopeDepth === expected.scopeDepth)
+      );
+    case 'literal':
+      return candidate.kind === 'literal' && candidate.valueType === expected.valueType;
+    case 'binary-expression':
+      return candidate.kind === 'binary-expression' && candidate.operator === expected.operator;
+    case 'assignment':
+      return (
+        candidate.kind === 'assignment' &&
+        candidate.name === expected.name &&
+        candidate.operator === expected.operator
+      );
+    case 'branch':
+      return (
+        candidate.kind === 'branch' &&
+        candidate.branchKind === expected.branchKind &&
+        (expected.hasAlternate === undefined || candidate.hasAlternate === expected.hasAlternate)
+      );
+    case 'loop':
+      return candidate.kind === 'loop' && candidate.loopKind === expected.loopKind;
+    case 'function':
+      return (
+        candidate.kind === 'function' &&
+        candidate.functionKind === expected.functionKind &&
+        candidate.parameterCount === expected.parameterCount
+      );
+    case 'call':
+      return candidate.kind === 'call' && candidate.callee === expected.callee;
+    case 'return':
+      return candidate.kind === 'return';
+    case 'closure':
+      return candidate.kind === 'closure' && candidate.capturedName === expected.capturedName;
+  }
+}
+
+/** Source RuleをAnalyzer Factへ照合して説明可能なcheckを返す。 */
 function sourceCheck(
-  rule: JavaScriptValidationRuleDefinition,
+  rule: JavaScriptSourceRule,
   analysis: JavaScriptAnalysisSuccess,
 ): ValidationCheck {
-  const fact = analysis.facts.find(
-    (candidate) =>
-      candidate.kind === 'query-selector-text-content-assignment' &&
-      candidate.file === rule.target.file &&
-      candidate.selector === rule.assertion.selector &&
-      candidate.value === rule.assertion.expected,
-  );
+  const matchingFacts = analysis.facts.filter((candidate) => {
+    if (candidate.file !== rule.target.file) return false;
+    if (rule.assertion.kind === 'query-selector-text-content-assignment') {
+      return (
+        candidate.kind === 'query-selector-text-content-assignment' &&
+        candidate.selector === rule.assertion.selector &&
+        candidate.value === rule.assertion.expected
+      );
+    }
+    return sourceFactMatches(candidate, rule.assertion.fact);
+  });
+  const minimumCount =
+    rule.assertion.kind === 'javascript-source-fact' ? (rule.assertion.minimumCount ?? 1) : 1;
   const requirementId = rule.groupId ?? rule.id;
-  const passed = fact !== undefined;
+  const passed = matchingFacts.length >= minimumCount;
+  const firstFact = matchingFacts[0];
   return {
     ruleId: rule.id,
     requirementId,
@@ -302,9 +371,39 @@ function sourceCheck(
       : `${rule.feedback.target}を確認してください`,
     expected: rule.feedback.expected,
     actual:
-      fact === undefined
-        ? `${rule.target.file}: 指定した代入式なし`
-        : `${fact.file}:${String(fact.line)}:${String(fact.column)}`,
+      firstFact === undefined
+        ? `${rule.target.file}: 一致するSource Fact 0件`
+        : `${firstFact.file}:${String(firstFact.line)}:${String(firstFact.column)}（${String(matchingFacts.length)}件）`,
+    nextAction: rule.feedback.nextAction,
+    hintId: rule.hintId,
+    relatedSlideId: rule.relatedSlideId,
+  };
+}
+
+/** bounded Consoleをsequence順の期待値へexact照合する。 */
+function consoleCheck(
+  rule: JavaScriptConsoleRule,
+  consoleRecords: readonly RunnerConsoleRecord[],
+): ValidationCheck {
+  const actualRecords = [...consoleRecords]
+    .sort((left, right) => left.sequence - right.sequence)
+    .map(({ level, text }) => ({ level, text }));
+  const passed = JSON.stringify(actualRecords) === JSON.stringify(rule.assertion.expected);
+  const requirementId = rule.groupId ?? rule.id;
+  const format = (records: readonly { readonly level: string; readonly text: string }[]): string =>
+    records.map(({ level, text }) => `${level}: ${text}`).join(' / ');
+  return {
+    ruleId: rule.id,
+    requirementId,
+    label: rule.label,
+    required: rule.required,
+    passed,
+    requirementPassed: passed,
+    message: passed
+      ? `${rule.label}：条件を満たしています`
+      : `${rule.feedback.target}を確認してください`,
+    expected: format(rule.assertion.expected),
+    actual: actualRecords.length === 0 ? 'Console出力なし' : format(actualRecords),
     nextAction: rule.feedback.nextAction,
     hintId: rule.hintId,
     relatedSlideId: rule.relatedSlideId,
@@ -503,11 +602,14 @@ export class JavaScriptValidator implements ValidatorAdapter {
     }
 
     const sourceRules = rules.filter(
-      (rule): rule is JavaScriptValidationRuleDefinition =>
-        rule.target.kind === 'javascript-source',
+      (rule): rule is JavaScriptSourceRule => rule.target.kind === 'javascript-source',
+    );
+    const consoleRules = rules.filter(
+      (rule): rule is JavaScriptConsoleRule => rule.target.kind === 'javascript-console',
     );
     const domRules = rules.filter(
-      (rule): rule is HtmlCssValidationRuleDefinition => rule.target.kind !== 'javascript-source',
+      (rule): rule is HtmlCssValidationRuleDefinition =>
+        rule.target.kind !== 'javascript-source' && rule.target.kind !== 'javascript-console',
     );
     const analyses = new Map<string, JavaScriptAnalysisSuccess>();
     let analyzer: JavaScriptAnalyzerPort;
@@ -651,13 +753,14 @@ export class JavaScriptValidator implements ValidatorAdapter {
       const sourceChecks = sourceRules.map((rule) =>
         sourceCheck(rule, analyses.get(rule.target.file)!),
       );
+      const consoleChecks = consoleRules.map((rule) => consoleCheck(rule, context.console));
       const scenarioChecks = interactionChecks(
         context.interactionScenarios,
         context.interactionCheckpoints,
         Object.keys(context.snapshots),
       );
       const checksByRule = new Map(
-        [...sourceChecks, ...domChecks].map((check) => [check.ruleId, check]),
+        [...sourceChecks, ...consoleChecks, ...domChecks].map((check) => [check.ruleId, check]),
       );
       const orderedChecks = [...rules.map((rule) => checksByRule.get(rule.id)!), ...scenarioChecks];
       const requirements = aggregateRequirements(rules, orderedChecks);

@@ -176,6 +176,7 @@ describe('JavaScriptAnalyzerClient', () => {
       kind: 'binding',
       name: 'score',
       declarationKind: 'const',
+      scopeDepth: 0,
       file: 'script.js',
       line: 1,
       column: 1,
@@ -184,6 +185,23 @@ describe('JavaScriptAnalyzerClient', () => {
     expect(
       isAnalyzerWorkerResponse({ type: 'result', result: { ...result, facts: [binding] } }),
     ).toBe(true);
+    for (const fact of [
+      { kind: 'literal', valueType: 'string' },
+      { kind: 'binary-expression', operator: '===' },
+      { kind: 'assignment', name: 'score', operator: '+=' },
+      { kind: 'branch', branchKind: 'if', hasAlternate: true },
+      { kind: 'return' },
+    ] as const) {
+      expect(
+        isAnalyzerWorkerResponse({
+          type: 'result',
+          result: {
+            ...result,
+            facts: [{ ...fact, file: 'script.js', line: 1, column: 1 }],
+          },
+        }),
+      ).toBe(true);
+    }
     expect(
       isAnalyzerWorkerResponse({
         type: 'result',

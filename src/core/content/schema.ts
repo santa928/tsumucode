@@ -402,6 +402,8 @@ const JavaScriptSourceTargetSchema = z
   .object({ kind: z.literal('javascript-source'), file: RelativePathSchema })
   .strict();
 
+const JavaScriptConsoleTargetSchema = z.object({ kind: z.literal('javascript-console') }).strict();
+
 export const HtmlCssRuleTargetSchema = z.union([
   HtmlCssSelectorTargetSchema,
   HtmlCssNodeTargetSchema,
@@ -588,6 +590,113 @@ const QuerySelectorTextContentAssignmentAssertionSchema = z
   })
   .strict();
 
+const JavaScriptSourceFactSchema = z.discriminatedUnion('kind', [
+  z
+    .object({
+      kind: z.literal('binding'),
+      name: NonEmptyTextSchema.max(128),
+      declarationKind: z.enum(['const', 'let', 'var']),
+      scopeDepth: z.number().int().min(0).max(32).optional(),
+    })
+    .strict(),
+  z
+    .object({ kind: z.literal('literal'), valueType: z.enum(['string', 'number', 'boolean']) })
+    .strict(),
+  z
+    .object({
+      kind: z.literal('binary-expression'),
+      operator: z.enum([
+        '+',
+        '-',
+        '*',
+        '/',
+        '%',
+        '===',
+        '!==',
+        '>',
+        '>=',
+        '<',
+        '<=',
+        '&&',
+        '||',
+        '??',
+      ]),
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal('assignment'),
+      name: NonEmptyTextSchema.max(128),
+      operator: z.enum(['=', '+=', '-=', '++', '--']),
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal('branch'),
+      branchKind: z.enum(['if', 'switch']),
+      hasAlternate: z.boolean().optional(),
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal('loop'),
+      loopKind: z.enum(['for', 'for-of', 'for-in', 'while', 'do-while']),
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal('function'),
+      functionKind: z.enum(['declaration', 'expression', 'arrow']),
+      parameterCount: z.number().int().min(0).max(32),
+    })
+    .strict(),
+  z.object({ kind: z.literal('call'), callee: NonEmptyTextSchema.max(128) }).strict(),
+  z.object({ kind: z.literal('return') }).strict(),
+  z.object({ kind: z.literal('closure'), capturedName: NonEmptyTextSchema.max(128) }).strict(),
+]);
+
+const JavaScriptSourceFactAssertionSchema = z
+  .object({
+    kind: z.literal('javascript-source-fact'),
+    fact: JavaScriptSourceFactSchema,
+    minimumCount: z.number().int().min(1).max(16).optional(),
+  })
+  .strict();
+
+const JavaScriptConsoleRecordExpectationSchema = z
+  .object({
+    level: z.enum(['log', 'info', 'warn', 'error']),
+    text: z.string().max(1024),
+  })
+  .strict()
+  .superRefine((record, context) => {
+    if (new TextEncoder().encode(record.text).byteLength <= 1024) return;
+    context.addIssue({
+      code: 'custom',
+      path: ['text'],
+      message: 'Console期待値1件はUTF-8で1 KiB以下にしてください',
+    });
+  });
+
+const JavaScriptConsoleAssertionSchema = z
+  .object({
+    kind: z.literal('javascript-console'),
+    operator: z.literal('equals'),
+    expected: z.array(JavaScriptConsoleRecordExpectationSchema).min(1).max(32),
+  })
+  .strict()
+  .superRefine((assertion, context) => {
+    const bytes = new TextEncoder().encode(
+      assertion.expected.map(({ level, text }) => `${level}\u0000${text}`).join('\u0000'),
+    ).byteLength;
+    if (bytes <= 16 * 1024) return;
+    context.addIssue({
+      code: 'custom',
+      path: ['expected'],
+      message: 'Console期待値は合計16 KiB以下にしてください',
+    });
+  });
+
 export const HtmlCssRuleAssertionSchema = z.union([
   ExistsAssertionSchema,
   CountAssertionSchema,
@@ -618,6 +727,8 @@ export const HtmlCssRuleAssertionSchema = z.union([
 const AUTHORING_ONLY_FIELD_NAMES = new Set(['solutionFiles', 'fixtures']);
 const RESERVED_ADAPTER_RULE_KINDS = new Set([
   'javascript-source',
+  'javascript-console',
+  'javascript-source-fact',
   'query-selector-text-content-assignment',
 ]);
 
@@ -662,11 +773,14 @@ const AdapterRuleObjectSchema = z
 export const RuleTargetSchema = z.union([
   HtmlCssRuleTargetSchema,
   JavaScriptSourceTargetSchema,
+  JavaScriptConsoleTargetSchema,
   AdapterRuleObjectSchema,
 ]);
 export const RuleAssertionSchema = z.union([
   HtmlCssRuleAssertionSchema,
   QuerySelectorTextContentAssignmentAssertionSchema,
+  JavaScriptSourceFactAssertionSchema,
+  JavaScriptConsoleAssertionSchema,
   AdapterRuleObjectSchema,
 ]);
 
@@ -719,13 +833,29 @@ export const HtmlCssValidationRuleDefinitionSchema = z
     }
   });
 
-export const JavaScriptValidationRuleDefinitionSchema = z
+const JavaScriptSourceValidationRuleDefinitionSchema = z
   .object({
     ...ValidationRuleBaseShape,
     target: JavaScriptSourceTargetSchema,
-    assertion: QuerySelectorTextContentAssignmentAssertionSchema,
+    assertion: z.union([
+      QuerySelectorTextContentAssignmentAssertionSchema,
+      JavaScriptSourceFactAssertionSchema,
+    ]),
   })
   .strict();
+
+const JavaScriptConsoleValidationRuleDefinitionSchema = z
+  .object({
+    ...ValidationRuleBaseShape,
+    target: JavaScriptConsoleTargetSchema,
+    assertion: JavaScriptConsoleAssertionSchema,
+  })
+  .strict();
+
+export const JavaScriptValidationRuleDefinitionSchema = z.union([
+  JavaScriptSourceValidationRuleDefinitionSchema,
+  JavaScriptConsoleValidationRuleDefinitionSchema,
+]);
 
 export const ValidationRuleDefinitionSchema = z
   .object({
@@ -737,7 +867,10 @@ export const ValidationRuleDefinitionSchema = z
   .superRefine((rule, context) => {
     const usesJavaScriptContract =
       rule.target.kind === 'javascript-source' ||
-      rule.assertion.kind === 'query-selector-text-content-assignment';
+      rule.target.kind === 'javascript-console' ||
+      rule.assertion.kind === 'query-selector-text-content-assignment' ||
+      rule.assertion.kind === 'javascript-source-fact' ||
+      rule.assertion.kind === 'javascript-console';
     if (
       usesJavaScriptContract &&
       !JavaScriptValidationRuleDefinitionSchema.safeParse(rule).success
@@ -1674,6 +1807,7 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
             }
             if (
               javaScriptRule.success &&
+              javaScriptRule.data.target.kind === 'javascript-source' &&
               !canonicalFilePaths.includes(
                 canonicalPublicPath(javaScriptRule.data.target.file) ?? '',
               )

@@ -7,6 +7,7 @@ import type {
 import type {
   InteractionCheckpointResult,
   PreviewSnapshot,
+  RunnerConsoleRecord,
   RunnerDiagnostic,
   RunnerEvidence,
   SnapshotPolicy,
@@ -23,6 +24,8 @@ export interface ValidationContext {
   readonly snapshots: Readonly<Record<string, PreviewSnapshot>>;
   readonly diagnostics: readonly RunnerDiagnostic[];
   readonly evidence: readonly RunnerEvidence[];
+  /** 同一renderから得た非永続・bounded plain text Console。 */
+  readonly console: readonly RunnerConsoleRecord[];
   /** Validatorが観測結果の欠落・未知IDをfail-closedに照合する公開Scenario定義。 */
   readonly interactionScenarios: readonly JavaScriptInteractionScenario[];
   readonly interactionCheckpoints: Readonly<Record<string, readonly InteractionCheckpointResult[]>>;

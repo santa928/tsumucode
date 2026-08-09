@@ -268,6 +268,55 @@ describe('analyzeJavaScriptSource', () => {
     }
   });
 
+  it('Core教材用のliteral・演算・代入・else・return・binding scope factを抽出する', async () => {
+    const result = await analyzeJavaScriptSource({
+      ...baseInput,
+      source: [
+        "const questionText = '問題1';",
+        'const questionNumber = 3;',
+        'const ready = true;',
+        'let score = 10;',
+        'score += 5;',
+        'score++;',
+        'const total = questionNumber * score;',
+        "const isCorrect = questionText === '問題1';",
+        "if (isCorrect) { console.log(total); } else { console.log('不正解'); }",
+        'function calculate(points) {',
+        '  const localScore = points + 1;',
+        '  return localScore;',
+        '}',
+      ].join('\n'),
+    });
+
+    expect(result.status).toBe('success');
+    if (result.status !== 'success') throw new Error('解析が成功しませんでした');
+    expect(result.facts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ kind: 'literal', valueType: 'string' }),
+        expect.objectContaining({ kind: 'literal', valueType: 'number' }),
+        expect.objectContaining({ kind: 'literal', valueType: 'boolean' }),
+        expect.objectContaining({ kind: 'binary-expression', operator: '*' }),
+        expect.objectContaining({ kind: 'binary-expression', operator: '===' }),
+        expect.objectContaining({ kind: 'assignment', name: 'score', operator: '+=' }),
+        expect.objectContaining({ kind: 'assignment', name: 'score', operator: '++' }),
+        expect.objectContaining({ kind: 'branch', branchKind: 'if', hasAlternate: true }),
+        expect.objectContaining({ kind: 'return' }),
+        expect.objectContaining({
+          kind: 'binding',
+          name: 'questionText',
+          declarationKind: 'const',
+          scopeDepth: 0,
+        }),
+        expect.objectContaining({
+          kind: 'binding',
+          name: 'localScore',
+          declarationKind: 'const',
+          scopeDepth: 1,
+        }),
+      ]),
+    );
+  });
+
   it('sourceTypeとProfileをparse／policyへ伝播する', async () => {
     const moduleResult = await analyzeJavaScriptSource({
       ...baseInput,

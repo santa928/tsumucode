@@ -17,20 +17,24 @@ function isRecord(value: unknown): value is Readonly<Record<string, unknown>> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-/** JavaScript Source targetまたはassertionを使うRuleかを判定する。 */
-function usesJavaScriptSourceContract(value: unknown): boolean {
+/** JavaScript固有targetまたはassertionを使うRuleかを判定する。 */
+function usesJavaScriptContract(value: unknown): boolean {
   if (!isRecord(value)) return false;
   const target = value.target;
   const assertion = value.assertion;
   return (
-    (isRecord(target) && target.kind === 'javascript-source') ||
-    (isRecord(assertion) && assertion.kind === 'query-selector-text-content-assignment')
+    (isRecord(target) &&
+      (target.kind === 'javascript-source' || target.kind === 'javascript-console')) ||
+    (isRecord(assertion) &&
+      (assertion.kind === 'query-selector-text-content-assignment' ||
+        assertion.kind === 'javascript-source-fact' ||
+        assertion.kind === 'javascript-console'))
   );
 }
 
 /** 単一RuleをJavaScript専用または既存DOMのstrict契約へ変換する。 */
 export function parseJavaScriptRule(value: unknown): JavaScriptValidatorRule {
-  return usesJavaScriptSourceContract(value)
+  return usesJavaScriptContract(value)
     ? JavaScriptValidationRuleDefinitionSchema.parse(value)
     : HtmlCssValidationRuleDefinitionSchema.parse(value);
 }
@@ -73,7 +77,8 @@ export function buildJavaScriptSnapshotPolicy(
   rules: readonly JavaScriptValidatorRule[],
 ): SnapshotPolicy {
   const domRules = rules.filter(
-    (rule): rule is HtmlCssValidationRuleDefinition => rule.target.kind !== 'javascript-source',
+    (rule): rule is HtmlCssValidationRuleDefinition =>
+      rule.target.kind !== 'javascript-source' && rule.target.kind !== 'javascript-console',
   );
   return buildHtmlCssSnapshotPolicy(domRules);
 }

@@ -52,13 +52,36 @@ export interface JavaScriptFactLocation {
   readonly column: number;
 }
 
+export type JavaScriptBinaryOperator =
+  '+' | '-' | '*' | '/' | '%' | '===' | '!==' | '>' | '>=' | '<' | '<=' | '&&' | '||' | '??';
+
+export type JavaScriptAssignmentOperator = '=' | '+=' | '-=' | '++' | '--';
+
 export type JavaScriptSourceFact =
   | (JavaScriptFactLocation & {
       readonly kind: 'binding';
       readonly name: string;
       readonly declarationKind: 'const' | 'let' | 'var';
+      readonly scopeDepth: number;
     })
-  | (JavaScriptFactLocation & { readonly kind: 'branch'; readonly branchKind: 'if' | 'switch' })
+  | (JavaScriptFactLocation & {
+      readonly kind: 'literal';
+      readonly valueType: 'string' | 'number' | 'boolean';
+    })
+  | (JavaScriptFactLocation & {
+      readonly kind: 'binary-expression';
+      readonly operator: JavaScriptBinaryOperator;
+    })
+  | (JavaScriptFactLocation & {
+      readonly kind: 'assignment';
+      readonly name: string;
+      readonly operator: JavaScriptAssignmentOperator;
+    })
+  | (JavaScriptFactLocation & {
+      readonly kind: 'branch';
+      readonly branchKind: 'if' | 'switch';
+      readonly hasAlternate: boolean;
+    })
   | (JavaScriptFactLocation & {
       readonly kind: 'loop';
       readonly loopKind: 'for' | 'for-of' | 'for-in' | 'while' | 'do-while';
@@ -69,6 +92,7 @@ export type JavaScriptSourceFact =
       readonly parameterCount: number;
     })
   | (JavaScriptFactLocation & { readonly kind: 'call'; readonly callee: string })
+  | (JavaScriptFactLocation & { readonly kind: 'return' })
   | (JavaScriptFactLocation & {
       readonly kind: 'scope';
       readonly scopeKind: 'program' | 'function' | 'block';
@@ -270,14 +294,36 @@ function isJavaScriptSourceFact(value: unknown): value is JavaScriptSourceFact {
   switch (value.kind) {
     case 'binding':
       return (
-        hasKeys(['column', 'declarationKind', 'file', 'kind', 'line', 'name']) &&
+        hasKeys(['column', 'declarationKind', 'file', 'kind', 'line', 'name', 'scopeDepth']) &&
         bounded(value.name) &&
-        ['const', 'let', 'var'].includes(String(value.declarationKind))
+        ['const', 'let', 'var'].includes(String(value.declarationKind)) &&
+        Number.isSafeInteger(value.scopeDepth) &&
+        Number(value.scopeDepth) >= 0 &&
+        Number(value.scopeDepth) <= 32
+      );
+    case 'literal':
+      return (
+        hasKeys(['column', 'file', 'kind', 'line', 'valueType']) &&
+        ['string', 'number', 'boolean'].includes(String(value.valueType))
+      );
+    case 'binary-expression':
+      return (
+        hasKeys(['column', 'file', 'kind', 'line', 'operator']) &&
+        ['+', '-', '*', '/', '%', '===', '!==', '>', '>=', '<', '<=', '&&', '||', '??'].includes(
+          String(value.operator),
+        )
+      );
+    case 'assignment':
+      return (
+        hasKeys(['column', 'file', 'kind', 'line', 'name', 'operator']) &&
+        bounded(value.name) &&
+        ['=', '+=', '-=', '++', '--'].includes(String(value.operator))
       );
     case 'branch':
       return (
-        hasKeys(['branchKind', 'column', 'file', 'kind', 'line']) &&
-        (value.branchKind === 'if' || value.branchKind === 'switch')
+        hasKeys(['branchKind', 'column', 'file', 'hasAlternate', 'kind', 'line']) &&
+        (value.branchKind === 'if' || value.branchKind === 'switch') &&
+        typeof value.hasAlternate === 'boolean'
       );
     case 'loop':
       return (
@@ -294,6 +340,8 @@ function isJavaScriptSourceFact(value: unknown): value is JavaScriptSourceFact {
       );
     case 'call':
       return hasKeys(['callee', 'column', 'file', 'kind', 'line']) && bounded(value.callee);
+    case 'return':
+      return hasKeys(['column', 'file', 'kind', 'line']);
     case 'scope':
       return (
         hasKeys(['column', 'depth', 'file', 'kind', 'line', 'scopeKind']) &&

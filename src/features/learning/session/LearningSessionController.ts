@@ -186,6 +186,14 @@ function runnerEvidenceEqual(
   return JSON.stringify(left) === JSON.stringify(right);
 }
 
+/** 2 viewportのbounded Consoleがsequence、level、textまで完全一致するか確認する。 */
+function runnerConsoleEqual(
+  left: readonly RunnerConsoleRecord[],
+  right: readonly RunnerConsoleRecord[],
+): boolean {
+  return JSON.stringify(left) === JSON.stringify(right);
+}
+
 /** editでrevisionが変わった非同期結果をstateへ入れないための公開Error。 */
 export class StaleExecutionError extends Error {
   constructor() {
@@ -938,6 +946,7 @@ export class LearningSessionController {
     );
     const diagnostics: RunnerDiagnostic[] = [];
     let evidence: readonly RunnerEvidence[] | undefined;
+    let renderConsole: readonly RunnerConsoleRecord[] | undefined;
     const snapshots: Record<string, PreviewSnapshot> = {};
     const interactionResults: InteractionResultsByExercise = Object.fromEntries(
       plan.exercises.map(({ id }) => [id, {}]),
@@ -950,6 +959,11 @@ export class LearningSessionController {
         evidence = rendered.evidence;
       } else if (!runnerEvidenceEqual(evidence, rendered.evidence)) {
         throw new Error('Runner evidenceがViewport間で一致しません');
+      }
+      if (renderConsole === undefined) {
+        renderConsole = rendered.console;
+      } else if (!runnerConsoleEqual(renderConsole, rendered.console)) {
+        throw new Error('Runner ConsoleがViewport間で一致しません');
       }
       if (rendered.diagnostics.some(({ severity }) => severity === 'error')) continue;
       const requestId = this.#nextRequestId(usedRequestIds);
@@ -990,6 +1004,7 @@ export class LearningSessionController {
         snapshots,
         diagnostics,
         evidence: evidence ?? [],
+        console: renderConsole ?? [],
         interactionScenarios: item.interactionScenarios ?? [],
         interactionCheckpoints: interactionResults[item.id] ?? {},
         now: this.input.now(),
@@ -1034,6 +1049,14 @@ export class LearningSessionController {
       if (evidence !== undefined && !runnerEvidenceEqual(evidence, displayResult.evidence)) {
         return this.#rollbackValidationCandidate(
           new Error('Runner evidenceが表示Previewの再描画と一致しません'),
+        );
+      }
+      if (
+        renderConsole !== undefined &&
+        !runnerConsoleEqual(renderConsole, displayResult.console)
+      ) {
+        return this.#rollbackValidationCandidate(
+          new Error('Runner Consoleが表示Previewの再描画と一致しません'),
         );
       }
       committedState = learningSessionReducer(committedState, {

@@ -41,18 +41,33 @@ function analyzerDouble(): AnalyzerDouble {
         file: input.file,
         instrumentedCode: input.source,
         sourceSha256: SOURCE_HASH,
-        facts: input.source.includes('textContent')
-          ? [
-              {
-                kind: 'query-selector-text-content-assignment',
-                selector: '#message',
-                value: MESSAGE,
-                file: input.file,
-                line: 1,
-                column: 1,
-              },
-            ]
-          : [],
+        facts: [
+          ...(input.source.includes('textContent')
+            ? [
+                {
+                  kind: 'query-selector-text-content-assignment' as const,
+                  selector: '#message',
+                  value: MESSAGE,
+                  file: input.file,
+                  line: 1,
+                  column: 1,
+                },
+              ]
+            : []),
+          ...(input.source.includes('const questionText')
+            ? [
+                {
+                  kind: 'binding' as const,
+                  name: 'questionText',
+                  declarationKind: 'const' as const,
+                  scopeDepth: 0,
+                  file: input.file,
+                  line: 1,
+                  column: 7,
+                },
+              ]
+            : []),
+        ],
         diagnostics: [],
       };
     }),
@@ -164,6 +179,7 @@ function javascriptContext(overrides: Partial<ValidationContext> = {}): Validati
       { id: 'javascript.source-sha256', file: 'script.js', value: SOURCE_HASH },
       { id: 'javascript.budget-exhausted', value: false },
     ],
+    console: [],
     ...overrides,
   });
 }
@@ -209,6 +225,66 @@ function javascriptInteractionContext(
 }
 
 describe('JavaScriptValidator', () => {
+  it('型付きSource Factと同一実行のConsoleをANDでpassする', async () => {
+    const rules: readonly ValidationRuleDefinition[] = [
+      {
+        ...validationRule(),
+        id: 'question-source',
+        groupId: 'question-ready',
+        label: 'questionTextをconstで宣言する',
+        target: { kind: 'javascript-source', file: 'script.js' },
+        assertion: {
+          kind: 'javascript-source-fact',
+          fact: {
+            kind: 'binding',
+            name: 'questionText',
+            declarationKind: 'const',
+            scopeDepth: 0,
+          },
+        },
+      },
+      {
+        ...validationRule(),
+        id: 'question-console',
+        groupId: 'question-ready',
+        label: '問題文をConsoleへ表示する',
+        target: { kind: 'javascript-console' },
+        assertion: {
+          kind: 'javascript-console',
+          operator: 'equals',
+          expected: [{ level: 'log', text: '問題1' }],
+        },
+      },
+    ];
+    const context = javascriptContext({
+      rules,
+      runtime: {
+        kind: 'javascript',
+        entryFile: 'script.js',
+        sourceType: 'script',
+        capabilityProfile: 'core',
+        primaryOutput: 'console',
+      },
+      files: {
+        'index.html': '<main>Console演習</main>',
+        'script.js': "const questionText = '問題1'; console.log(questionText);",
+      },
+      console: [{ sequence: 0, level: 'log', text: '問題1' }],
+    });
+    const validator = new JavaScriptValidator({ analyzerFactory: analyzerDouble });
+
+    await expect(validator.validate(context)).resolves.toMatchObject({
+      status: 'pass',
+      passedRequirementIds: ['question-ready'],
+    });
+    await expect(
+      validator.validate({
+        ...context,
+        console: [{ sequence: 0, level: 'log', text: '問題2' }],
+      }),
+    ).resolves.toMatchObject({ status: 'incomplete', passedRequirementIds: [] });
+  });
+
   it('Source Fact・同一Source hash・実行証拠・全viewport DOMをANDでpassする', async () => {
     const analyzer = analyzerDouble();
     const validator = new JavaScriptValidator({ analyzerFactory: () => analyzer });

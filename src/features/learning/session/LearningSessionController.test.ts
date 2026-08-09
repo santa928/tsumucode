@@ -374,7 +374,7 @@ describe('LearningSessionController', () => {
     expect(persistence.putDraft.mock.calls.at(-1)?.[0]).not.toHaveProperty('runtimeOutput');
     await controller.validateNow();
     expect(validation.validate).toHaveBeenCalledWith(
-      expect.objectContaining({ runtime: current.runtime }),
+      expect.objectContaining({ runtime: current.runtime, console: consoleRecords }),
     );
     await controller.dispose();
   });
@@ -710,6 +710,39 @@ describe('LearningSessionController', () => {
     );
 
     await expect(controller.validateNow()).rejects.toThrow(/Runner evidence/u);
+  });
+
+  it('viewport間でRunner Consoleが異なる判定をidentity不一致として拒否する', async () => {
+    const current = exercise({
+      previewViewports: [
+        { id: 'desktop', width: 1280, height: 720 },
+        { id: 'mobile', width: 390, height: 844 },
+      ],
+    });
+    const runtime = runnerHarness();
+    const renderImplementation = runtime.render.getMockImplementation();
+    if (renderImplementation === undefined) throw new Error('render fixtureがありません');
+    runtime.render.mockImplementation(async (input) => ({
+      ...(await renderImplementation(input)),
+      console: [
+        {
+          sequence: 0,
+          level: 'log',
+          text: input.viewport.id === 'desktop' ? '問題1' : '問題2',
+        },
+      ],
+    }));
+    const validation = validatorHarness();
+    const controller = new LearningSessionController(
+      controllerInput({
+        exercise: current,
+        runner: runtime.runner,
+        validator: validation.validator,
+      }),
+    );
+
+    await expect(controller.validateNow()).rejects.toThrow(/Runner Console/u);
+    expect(validation.validate).not.toHaveBeenCalled();
   });
 
   it('Runner境界で件数・ID・File・値・identityが契約外のevidenceを拒否する', async () => {
