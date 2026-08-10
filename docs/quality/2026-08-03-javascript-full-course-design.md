@@ -1,6 +1,6 @@
 # JavaScript全Course 設計
 
-- 状態: 書面レビュー承認済み・Runtime基盤およびChapter 01〜05教材実装・Chapter 05全ローカル品質検証済み（Chapter 06〜13教材は未実装）
+- 状態: 書面レビュー承認済み・Runtime基盤およびChapter 01〜06教材実装・Data Phaseの全品質GateとGitHub Pages β公開検証済み（Chapter 07〜13教材は未実装）
 - 承認日: 2026-08-04
 - 作成日: 2026-08-03
 - 対象: `javascript` Course Chapter 01〜13、既存Chapter 00の互換維持、全Course公開
@@ -215,6 +215,35 @@ WebKitではopaque iframeに対する親からのprogrammatic focusが反映さ�
 | REQ-JSC-034 | ローカル前提検証済み・公開待ち | 日本語commit、staged secret scan、main push、Pages deployment、公開SmokeはこのTaskのRelease工程で確定する |
 
 この節はChapter 05教材の実装と全ローカルGateの完成証跡であり、Chapter 06〜13、全52 Lessonの完全初心者通し検証、`published`昇格、LearningPath追加、本番公開後の全Course回帰は未完了である。
+
+### 3.7 Chapter 06およびData Phaseの完成証跡と未完了境界
+
+2026-08-10にChapter 06の4 Lesson／16 Slide／4 Exercise／70分を追加し、Data PhaseをChapter 04〜06の13 Lesson／52 Slide／13 Exercise／210分で完成した。既存Chapter 00〜03を含むCourse累計は27 Lesson／108 Slide／27 Exercise／420分である。Array・Object・DestructuringからCollection変換、immutable update、static Module、Error、Debugまでを、各Lesson 4 Slideから1〜2箇所変更のExerciseへ接続した。
+
+- 教材契約: 全13 Exerciseに3段階Hint、Solution、5件以上の正負Fixture、導入Conceptの型付きSource Factと実行結果のAND判定を持たせた
+- 公開境界: SolutionとFixtureはauthoring treeにのみ保持し、公開Artifactへの混入は0件。Courseは`draft`を維持し、Home、LearningPath、進捗非干渉Slide Libraryには未掲載である
+- 教材監査: 13 Lesson／52 Slide／13 Exercise／210分、3 Hint、Solution、5 Fixture以上を章別契約64件で確認。全2 Courseの78 Lessonは`stale hashes 0 / rejected 0`、未追跡Conceptと未解説用語は0件である
+- 進捗互換: Revisionを`2026-08-10.3`へ上げ、空Migrationで既存進捗と下書きを保持した。`45ebb6b`からのChapter 00〜03に永続IDの追加・削除・変更がないことを差分監査した
+- 自動Gate: `163 files / 1,635 tests / 0 failed`、3 Engine E2E `527 passed / 154 intentionally skipped / 0 failed / retry 0`、性能`22/22`、bundle／subpath予算`9/9`、Lighthouse 4 URL×3回の`12/12`を通過した
+- 表示確認: 1280×720と390×844の代表Slide／Exerciseを原寸目視し、Document Scroll、横はみ出し、重大なaxe違反、操作阻害がないことを確認した
+- 公開証跡: commit `dbb556b2265f6acdae70f9598de33aebf994f157`を`main`へpushし、[GitHub Pages β run 31347145826](https://github.com/santa928/tsumucode/actions/runs/31347145826)を成功させた。[public URL](https://santa928.github.io/tsumucode/)のCourse map、代表Slide／Exercise／Console、404復帰でbrowser console `warn 0 / error 0`を確認した
+
+| 要件        | Data Phaseの状態                 | 自動／目視証跡                                                                                          |
+| ----------- | -------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| REQ-JSC-003 | 累計27／全52 Lesson              | Chapter 06まで420分で完成。Chapter 07〜13の25 Lesson／580分は未実装                                     |
+| REQ-JSC-005 | 検証済み                         | Array、Object、Destructuring、map、filter、reduce、immutable updateを13 Lessonの螺旋型教材へ接続        |
+| REQ-JSC-006 | Module／Error／Debug範囲検証済み | static Module、Error、Debugを4 Lessonで実装。DOM、Event、Form、State、Promise、`async`／`await`は未実装 |
+| REQ-JSC-008 | Data Phase範囲検証済み           | 全13 Lessonの直前Slide整合、3 Hint、Solution、5件以上Fixtureを確認                                      |
+| REQ-JSC-016 | 検証済み                         | 同一Workspace内のnamed static import／export、graph hash、複数File Editorを実教材とE2Eで確認            |
+| REQ-JSC-017 | 検証済み                         | bare／dynamic import、path escape、循環、未知Fileを診断code付き`code-error`で拒否                       |
+| REQ-JSC-021 | Data Phase範囲検証済み           | bounded strict unionのData Factと実行EvidenceをANDし、Validator内で学習コードを再実行しない             |
+| REQ-JSC-022 | Data Phase範囲検証済み           | 導入method／boundaryのFactと振る舞いをANDし、既習Function表現は要件でない限り固定しない                 |
+| REQ-JSC-030 | Data Phase範囲検証済み           | Concept、用語、Trace、screen budget、実行Example、provenanceをContent Gateで確認                        |
+| REQ-JSC-031 | Data Phase範囲検証済み           | authorと別reviewer ID、Lesson source hash、stale 0、rejected 0を確認                                    |
+| REQ-JSC-032 | Data Phase全体検証済み           | 3 Engine、axe、Keyboard、複数viewport、Security、Performance、Lighthouse、subpathを全体Gateで確認       |
+| REQ-JSC-034 | Task 1〜4公開検証済み            | 各taskの日本語commit、staged secret scan、`main` push、Pages β、公開URLとconsoleをIssue #4へ記録        |
+
+ここで完了したのはData Phaseだけである。Chapter 07〜13のBrowser App・Guided Project・Capstone、全52 Lessonの完全初心者通し検証、`published`昇格、Home／LearningPath／Slide Libraryへの追加、昇格後の本番回帰はすべて未完了とする。
 
 ## 4. 要件差分
 
