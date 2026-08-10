@@ -6,6 +6,7 @@ import type {
   RunnerEvidence,
 } from '../../src/core/runtime/contracts';
 import {
+  JAVASCRIPT_CH06_MODULE_EXERCISE,
   JAVASCRIPT_SOLUTION_SOURCE,
   openEditableJavaScriptExercise,
 } from './helpers/javascriptCourse';
@@ -336,6 +337,24 @@ test('不正なModule graphをfail-closedで拒否し、未解析コードを実
     evidence: [],
     rejection: expect.stringMatching(/Preview file path must be safe/u),
   });
+});
+
+test('Chapter 06のModule Exerciseでもbare importを拒否し、診断元のmain.jsを保持する', async ({
+  page,
+}) => {
+  await openEditableJavaScriptExercise(page, JAVASCRIPT_CH06_MODULE_EXERCISE);
+  const mainTab = page.getByRole('tab', { name: 'main.js', exact: true });
+  await mainTab.click();
+  const forbiddenSource = "import 'left-pad';\n";
+  await replaceAndSave(page, forbiddenSource);
+
+  await page.getByRole('button', { name: '判定する' }).click();
+  const feedback = page.getByRole('dialog', { name: '判定結果' });
+  await expect(feedback.getByRole('heading', { name: 'コードを確認しよう' })).toBeVisible();
+  await expect(feedback.getByRole('list', { name: '確認するコード診断' })).toContainText('main.js');
+  await feedback.getByRole('button', { name: 'コードを直す' }).click();
+  await expect(mainTab).toHaveAttribute('aria-selected', 'true');
+  await expect.poll(() => editorText(page)).toBe(forbiddenSource);
 });
 
 test('Console floodと64KiB超をboundedに切り、runtime error前の記録を残して再試行できる', async ({

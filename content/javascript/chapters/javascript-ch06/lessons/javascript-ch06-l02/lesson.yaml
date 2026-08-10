@@ -1,0 +1,21 @@
+id: javascript-ch06-l02
+kind: standard
+title: 採点FunctionをModuleへ分ける
+goal: score.jsでnamed exportしたscoreAnswer Functionを、main.jsから相対importして呼び出せる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch06-l01]
+slideSources:
+  - slides/s01-function-module-purpose.md
+  - slides/s02-named-function-export.md
+  - slides/s03-relative-function-import.md
+  - slides/s04-score-function-module-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch06-l02-e01/exercise.yaml
+nextLessonId: javascript-ch06-l03
+reflection: 値と同じくFunctionもexportし、相対pathからimportして再利用できる。
+glossaryRefs:
+  [javascript, console, function, parameter, module, named-export, named-import, relative-path]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch06-l02-s04
+  requiredExerciseIds: [javascript-ch06-l02-e01]

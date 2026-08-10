@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="260" viewBox="0 0 960 260" role="img" aria-labelledby="title desc">
+  <title id="title">点数計算のDebug flow</title><desc id="desc">期待値30と実際値20を比べ、script.js 1行目の問題数を2から3へ直す</desc>
+  <rect width="960" height="260" rx="28" fill="#fffaf0"/>
+  <g font-family="system-ui, sans-serif" fill="#173f35" text-anchor="middle">
+    <rect x="40" y="54" width="250" height="152" rx="20" fill="#fff" stroke="#1d6b55" stroke-width="4"/><text x="165" y="102" font-size="22" font-weight="700">期待値: 30</text><text x="165" y="145" font-size="22" font-weight="700">実際値: 20</text><text x="165" y="180" font-size="18">差を確認</text>
+    <path d="M312 130h108" stroke="#1d6b55" stroke-width="8"/><path d="m403 110 24 20-24 20" fill="none" stroke="#1d6b55" stroke-width="8"/>
+    <rect x="447" y="54" width="230" height="152" rx="20" fill="#fdf0c1" stroke="#c89515" stroke-width="4"/><text x="562" y="102" font-size="21" font-weight="700">script.js:1</text><text x="562" y="145" font-size="22">count: 2 → 3</text><text x="562" y="180" font-size="18">1点だけ修正</text>
+    <path d="M699 130h92" stroke="#1d6b55" stroke-width="8"/><path d="m774 110 24 20-24 20" fill="none" stroke="#1d6b55" stroke-width="8"/>
+    <rect x="814" y="54" width="110" height="152" rx="20" fill="#fff" stroke="#1d6b55" stroke-width="4"/><text x="869" y="116" font-size="20" font-weight="700">再実行</text><text x="869" y="158" font-size="24" font-weight="700">30</text>
+  </g>
+</svg>

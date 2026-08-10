@@ -248,7 +248,7 @@ lessons:
   - lessonId: javascript-ch05-l04
     authorId: tsumucode-javascript-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: dcb4c0ee2f94e1092cac652672cbeabf65dc45bff0b4a2459895e160b213f6ae
+    sourceHash: 0ccd7e126462611868f8bb80037d9de87e7576fad20b379152d11c63f27718d3
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -256,3 +256,47 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes: immutable update・Array map・Object spreadを4枚のSlideから、元のquestionsを保ち回答済みの新しいArrayを作るExerciseへ段階接続。array-map／object-spread FactとConsole完全一致のAND判定、3段階Hint、Solution、Function expression／property mutation／output-only／syntax／securityを含む7 Fixtureを実Browser Runner／Validatorで確認。丸括弧付きObject literalを返すArrow Functionの実行器回帰もUnitと実Browserで確認。
+  - lessonId: javascript-ch06-l01
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: e30719650fd8b90383f3d52f64a3fbc989fbac12537bbc9f3e0fab72794bfcf4
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: Moduleの目的・named export・named import・相対pathを4枚のSlideから、questions.jsのconstへexportを加えるExerciseへ段階接続。module boundary FactとConsole完全一致のAND判定、3段階Hint、Solution、bare／dynamic import・path escape・unknown file・cycleを含む9 Fixtureを実Browser Runner／Validatorで確認。File切替・診断元への復帰・Resetも実Browserで確認。
+  - lessonId: javascript-ch06-l02
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: d0581a9647a6a92a2fb2fe08a7205b98cdb2709a3096d89d117aaaf7c738e72a
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: FunctionをModuleへ分ける目的・named export・相対importを4枚のSlideから、scoreAnswerをmain.jsへimportするExerciseへ段階接続。module boundary・Function呼び出しFactとConsole完全一致のAND判定、3段階Hint、Solution、network／storage／eval拒否を含む7 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch06-l03
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 497297adbc571f501e149ce4a20b82513df6c7f67de42bc9508aa86cb7f4383e
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: Errorの目的・throw new Error・try/catchを4枚のSlideから、空問題のError messageだけを直すExerciseへ段階接続。throw／catch FactとConsole完全一致のAND判定、3段階Hint、Solution、uncaught runtime・network／storage／eval拒否を含む8 Fixtureを実Browser Runner／Validatorで確認。
+  - lessonId: javascript-ch06-l04
+    authorId: tsumucode-javascript-authoring
+    reviewerId: tsumucode-quality-verification
+    sourceHash: 83de42d8064941a96da3d87036c96e0314be83f142f4a38b6ca02d4ba313b28f
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: Debugの期待値／実際値・File／lineの診断位置を4枚のSlideから、questionCountを2から3へ直すExerciseへ段階接続。乗算FactとConsole完全一致のAND判定、3段階Hint、Solution、output-only・syntax・eval／storage拒否を含む6 Fixtureを実Browser Runner／Validatorで確認。1280x720のExerciseと390x844のSlideで重大なaxe違反0件、Documentの縦横overflowなしを実寸確認済み。

@@ -1,5 +1,8 @@
 import { expect, test } from '@playwright/test';
 import {
+  JAVASCRIPT_CH06_MODULE_EXERCISE,
+  JAVASCRIPT_CH06_MODULE_SOLUTION_SOURCE,
+  JAVASCRIPT_CH06_MODULE_STARTER_SOURCE,
   JAVASCRIPT_EXERCISE_ID,
   JAVASCRIPT_SOLUTION_SOURCE,
   JAVASCRIPT_STARTER_SOURCE,
@@ -181,4 +184,58 @@ test('下書きとReview復帰を保ち、確認後のResetで3 FileをStarter�
     { timeout: 15_000 },
   );
   await expect.poll(() => editorText(page)).toBe(JAVASCRIPT_STARTER_SOURCE);
+});
+
+test('Chapter 06でModuleのFileを切り替え、named exportを完成してConsoleの3まで判定する', async ({
+  page,
+}) => {
+  await openEditableJavaScriptExercise(page, JAVASCRIPT_CH06_MODULE_EXERCISE);
+  const mainTab = page.getByRole('tab', { name: 'main.js', exact: true });
+  const questionsTab = page.getByRole('tab', { name: 'questions.js', exact: true });
+  await expect(questionsTab).toHaveAttribute('aria-selected', 'true');
+
+  await mainTab.click();
+  await expect(mainTab).toHaveAttribute('aria-selected', 'true');
+  await questionsTab.click();
+  await expect(questionsTab).toHaveAttribute('aria-selected', 'true');
+  await expect.poll(() => editorText(page)).toBe(JAVASCRIPT_CH06_MODULE_STARTER_SOURCE);
+  await replaceAndSave(page, JAVASCRIPT_CH06_MODULE_SOLUTION_SOURCE);
+
+  await page.getByRole('button', { name: '判定する' }).click();
+  const resultDialog = page.getByRole('dialog', { name: '判定結果' });
+  await expect(resultDialog.getByRole('heading', { name: 'できました' })).toBeVisible();
+  await resultDialog.getByRole('button', { name: '閉じる' }).click();
+  await page.getByRole('tab', { name: 'Console' }).click();
+  await expect(page.getByRole('region', { name: 'Console出力' })).toContainText('3');
+});
+
+test('Chapter 06のModule診断から該当Fileへ戻り、Source・Hint・Resetを保つ', async ({ page }) => {
+  await openEditableJavaScriptExercise(page, JAVASCRIPT_CH06_MODULE_EXERCISE);
+  const questionsTab = page.getByRole('tab', { name: 'questions.js', exact: true });
+  await questionsTab.click();
+  const syntaxError = 'export const questions = [;\n';
+  await replaceAndSave(page, syntaxError);
+
+  await page.getByRole('button', { name: '判定する' }).click();
+  const feedback = page.getByRole('dialog', { name: '判定結果' });
+  await expect(feedback.getByRole('heading', { name: 'コードを確認しよう' })).toBeVisible();
+  await expect(feedback.getByRole('list', { name: '確認するコード診断' })).toContainText(
+    'questions.js',
+  );
+  await feedback.getByRole('button', { name: 'コードを直す' }).click();
+  await expect(questionsTab).toHaveAttribute('aria-selected', 'true');
+  await expect.poll(() => editorText(page)).toBe(syntaxError);
+
+  await page.getByRole('button', { name: 'ヒントを見る' }).click();
+  const hint = page.getByRole('dialog', { name: 'ヒント' });
+  await hint.getByRole('button', { name: 'ヒント1を見る：観察ポイント' }).click();
+  await expect(hint).toContainText('変更するのはquestions.jsだけ');
+  await page.keyboard.press('Escape');
+
+  await page.getByRole('button', { name: '最初に戻す', exact: true }).click();
+  await page
+    .getByRole('dialog', { name: '最初のコードに戻しますか？' })
+    .getByRole('button', { name: '最初のコードに戻す', exact: true })
+    .click();
+  await expect.poll(() => editorText(page)).toBe(JAVASCRIPT_CH06_MODULE_STARTER_SOURCE);
 });

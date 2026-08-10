@@ -1,10 +1,10 @@
 schemaVersion: 1
 id: javascript
 title: JavaScript はじめの一歩
-description: 画面の変化から始め、値・条件分岐・Function・Arrayからmap・filter・reduce・immutable updateまでをConsoleで確かめる
+description: 画面の変化から始め、値・条件分岐・Function・Array・Module・Error・DebugまでをConsoleで確かめる
 audience: HTMLとCSSの役割を知り、JavaScriptを初めて学ぶ本人と身内
-estimatedMinutes: 350
-revision: 2026-08-10.2
+estimatedMinutes: 420
+revision: 2026-08-10.3
 runnerId: javascript
 validatorId: javascript
 glossarySource: glossary.yaml
@@ -17,13 +17,13 @@ supportedDevices:
 prerequisites: [html-css]
 publicationStatus: draft
 expectedTotals:
-  chapters: 6
-  lessons: 23
-  conceptSlides: 92
-  standardExercises: 23
+  chapters: 7
+  lessons: 27
+  conceptSlides: 108
+  standardExercises: 27
   guidedProjectLessons: 0
   capstoneLessons: 0
-  estimatedMinutes: 350
+  estimatedMinutes: 420
 provenanceManifestPath: provenance.yaml
 progressMigrations:
   - fromRevision: 2026-08-02.1
@@ -35,8 +35,11 @@ progressMigrations:
   - fromRevision: 2026-08-10.1
     toRevision: 2026-08-10.2
     steps: []
+  - fromRevision: 2026-08-10.2
+    toRevision: 2026-08-10.3
+    steps: []
 phases:
-  - id: javascript-core
+  - id: javascript-p00-core
     title: JavaScript Core
     description: 画面を変える最初の1行から、値・条件分岐・Loop・Function・Scope・Closureへ順番に進みます。
     chapterSources:
@@ -44,5 +47,10 @@ phases:
       - chapters/javascript-ch01/chapter.yaml
       - chapters/javascript-ch02/chapter.yaml
       - chapters/javascript-ch03/chapter.yaml
+  - id: javascript-p01-data
+    title: JavaScript Data
+    description: ArrayとObjectを組み替え、Moduleへ分け、Errorと診断からBugを直します。
+    chapterSources:
       - chapters/javascript-ch04/chapter.yaml
       - chapters/javascript-ch05/chapter.yaml
+      - chapters/javascript-ch06/chapter.yaml

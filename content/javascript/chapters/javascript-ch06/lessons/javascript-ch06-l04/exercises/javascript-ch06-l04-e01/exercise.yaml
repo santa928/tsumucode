@@ -1,0 +1,136 @@
+id: javascript-ch06-l04-e01
+kind: standard
+workspaceId: javascript-ch06-l04-e01
+countsTowardStandardExerciseTotal: true
+title: 期待値30と実際値をそろえる
+instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: score-calculation-debug, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: fix-question-count
+    file: script.js
+    target: 1行目のquestionCountへ代入する数値
+    starterAnchor: 'const questionCount = 2;'
+    change: '2を3へ置き換える'
+    observe: Consoleの期待値と実際値がどちらも30になる
+    requiresConceptIds: [score-calculation-debug]
+    validationRuleIds: [javascript-ch06-l04-e01-r01, javascript-ch06-l04-e01-r02]
+files:
+  - { path: script.js, language: javascript, source: starter/script.js, editable: true }
+  - { path: index.html, language: html, source: starter/index.html, editable: false }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: false }
+solutionFiles:
+  - { path: script.js, language: javascript, source: solution/script.js, editable: false }
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+validationRules:
+  - id: javascript-ch06-l04-e01-r01
+    groupId: javascript-ch06-l04-e01-result
+    label: 問題数と1問の点数を掛ける
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: binary-expression, operator: '*' }
+    feedback:
+      target: totalScoreの計算
+      expected: questionCountとpointsPerQuestionの掛け算
+      nextAction: 完成済みの掛け算は変更せず、1行目の問題数だけを直します。
+    hintId: javascript-ch06-l04-e01-h01
+    relatedSlideId: javascript-ch06-l04-s02
+  - id: javascript-ch06-l04-e01-r02
+    groupId: javascript-ch06-l04-e01-result
+    label: 期待値と実際値を30へそろえる
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-console }
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - { level: log, text: '期待値: 30' }
+        - { level: log, text: '実際値: 30' }
+    feedback:
+      target: Console
+      expected: 期待値30、その次に実際値30
+      nextAction: questionCountを実際の3問へ合わせます。
+    hintId: javascript-ch06-l04-e01-h03
+    relatedSlideId: javascript-ch06-l04-s04
+hints:
+  - id: javascript-ch06-l04-e01-h01
+    level: 1
+    title: 診断位置はscript.jsの1行目
+    text: 掛け算、1問10点、2つのconsole.logは完成しています。
+    relatedSlideId: javascript-ch06-l04-s03
+  - id: javascript-ch06-l04-e01-h02
+    level: 2
+    title: 実際の問題数へ合わせる
+    text: 3問あるため、questionCountへ入れる数値も3にします。
+    relatedSlideId: javascript-ch06-l04-s04
+  - id: javascript-ch06-l04-e01-h03
+    level: 3
+    title: 1行目を完成させる
+    text: const questionCount = 3; と書きます。
+    relatedSlideId: javascript-ch06-l04-s04
+relatedSlideIds: [javascript-ch06-l04-s02, javascript-ch06-l04-s03, javascript-ch06-l04-s04]
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: pass
+    expectedStatus: pass
+    files:
+      - { path: script.js, language: javascript, source: fixtures/pass.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: incomplete
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/incomplete.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: [javascript-ch06-l04-e01-r01, javascript-ch06-l04-e01-r02]
+  - id: output-only
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/output-only.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: [javascript-ch06-l04-e01-r01, javascript-ch06-l04-e01-r02]
+  - id: syntax-error
+    expectedStatus: code-error
+    expectedDiagnosticCodes: [javascript-analyzer-syntax]
+    files:
+      - { path: script.js, language: javascript, source: fixtures/syntax-error.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: eval
+    expectedStatus: code-error
+    expectedDiagnosticCodes: [javascript-analyzer-security]
+    files:
+      - { path: script.js, language: javascript, source: fixtures/eval.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: storage
+    expectedStatus: code-error
+    expectedDiagnosticCodes: [javascript-analyzer-security]
+    files:
+      - { path: script.js, language: javascript, source: fixtures/storage.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

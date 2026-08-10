@@ -1,0 +1,175 @@
+id: javascript-ch06-l03-e01
+kind: standard
+workspaceId: javascript-ch06-l03-e01
+countsTowardStandardExerciseTotal: true
+title: 空問題のError messageを直す
+instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: question-text-error, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: change-error-message
+    file: script.js
+    target: throw new Errorの丸括弧内にある文字列
+    starterAnchor: "throw new Error('ここを書き換えます');"
+    change: '文字列を問題文がありませんへ置き換える'
+    observe: catchが受け止め、Consoleへ問題文がありませんと表示する
+    requiresConceptIds: [question-text-error]
+    validationRuleIds:
+      [javascript-ch06-l03-e01-r01, javascript-ch06-l03-e01-r02, javascript-ch06-l03-e01-r03]
+files:
+  - { path: script.js, language: javascript, source: starter/script.js, editable: true }
+  - { path: index.html, language: html, source: starter/index.html, editable: false }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: false }
+solutionFiles:
+  - { path: script.js, language: javascript, source: solution/script.js, editable: false }
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+validationRules:
+  - id: javascript-ch06-l03-e01-r01
+    groupId: javascript-ch06-l03-e01-result
+    label: 空問題でErrorをthrowする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: error-flow, flowKind: throw }
+    feedback:
+      target: readQuestionの空文字分岐
+      expected: throw new Errorで処理を止める
+      nextAction: 完成済みのthrowは残し、Error messageだけを変更します。
+    hintId: javascript-ch06-l03-e01-h01
+    relatedSlideId: javascript-ch06-l03-s02
+  - id: javascript-ch06-l03-e01-r02
+    groupId: javascript-ch06-l03-e01-result
+    label: catchでErrorを受け止める
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: script.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: error-flow, flowKind: catch }
+    feedback:
+      target: try/catch
+      expected: catchでErrorを受け止める
+      nextAction: 完成済みのtry/catchは変更しません。
+    hintId: javascript-ch06-l03-e01-h01
+    relatedSlideId: javascript-ch06-l03-s03
+  - id: javascript-ch06-l03-e01-r03
+    groupId: javascript-ch06-l03-e01-result
+    label: 問題文がない理由を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-console }
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected: [{ level: log, text: 問題文がありません }]
+    feedback:
+      target: Console
+      expected: 問題文がありません
+      nextAction: Errorの文字列を期待するmessageへ置き換えます。
+    hintId: javascript-ch06-l03-e01-h03
+    relatedSlideId: javascript-ch06-l03-s04
+hints:
+  - id: javascript-ch06-l03-e01-h01
+    level: 1
+    title: 変更するのは文字列1つだけ
+    text: if、throw new Error、try/catch、console.logは完成しています。
+    relatedSlideId: javascript-ch06-l03-s04
+  - id: javascript-ch06-l03-e01-h02
+    level: 2
+    title: Errorへ理由を渡す
+    text: new Errorの丸括弧内にある文字列を、空問題の理由へ置き換えます。
+    relatedSlideId: javascript-ch06-l03-s02
+  - id: javascript-ch06-l03-e01-h03
+    level: 3
+    title: messageを完成させる
+    text: "throw new Error('問題文がありません'); と書きます。"
+    relatedSlideId: javascript-ch06-l03-s04
+relatedSlideIds: [javascript-ch06-l03-s02, javascript-ch06-l03-s03, javascript-ch06-l03-s04]
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: pass
+    expectedStatus: pass
+    files:
+      - { path: script.js, language: javascript, source: fixtures/pass.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: incomplete
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/incomplete.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch06-l03-e01-r01, javascript-ch06-l03-e01-r02, javascript-ch06-l03-e01-r03]
+  - id: output-only
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/output-only.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch06-l03-e01-r01, javascript-ch06-l03-e01-r02, javascript-ch06-l03-e01-r03]
+  - id: syntax-error
+    expectedStatus: code-error
+    expectedDiagnosticCodes: [javascript-analyzer-syntax]
+    files:
+      - { path: script.js, language: javascript, source: fixtures/syntax-error.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: uncaught-runtime
+    expectedStatus: code-error
+    expectedDiagnosticCodes: [javascript-runtime]
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/uncaught-runtime.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: network
+    expectedStatus: code-error
+    expectedDiagnosticCodes: [javascript-analyzer-security]
+    files:
+      - { path: script.js, language: javascript, source: fixtures/network.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: storage
+    expectedStatus: code-error
+    expectedDiagnosticCodes: [javascript-analyzer-security]
+    files:
+      - { path: script.js, language: javascript, source: fixtures/storage.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: eval
+    expectedStatus: code-error
+    expectedDiagnosticCodes: [javascript-analyzer-security]
+    files:
+      - { path: script.js, language: javascript, source: fixtures/eval.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

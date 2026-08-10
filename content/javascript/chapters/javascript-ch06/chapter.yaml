@@ -1,0 +1,11 @@
+id: javascript-ch06
+sequence: 6
+title: Module・Error・Debug
+goal: データとFunctionをModuleへ分け、Errorを受け止め、期待値と実際値からBugを1点修正できる。
+estimatedMinutes: 70
+kind: standard
+lessonSources:
+  - lessons/javascript-ch06-l01/lesson.yaml
+  - lessons/javascript-ch06-l02/lesson.yaml
+  - lessons/javascript-ch06-l03/lesson.yaml
+  - lessons/javascript-ch06-l04/lesson.yaml

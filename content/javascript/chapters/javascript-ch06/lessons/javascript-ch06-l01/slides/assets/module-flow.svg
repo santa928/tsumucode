@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="260" viewBox="0 0 960 260" role="img" aria-labelledby="title desc">
+  <title id="title">問題データのModule共有</title>
+  <desc id="desc">questions.jsのquestionsをexportし、main.jsでimportして件数3を表示する</desc>
+  <rect width="960" height="260" rx="28" fill="#fffaf0"/>
+  <g font-family="system-ui, sans-serif" fill="#173f35" text-anchor="middle">
+    <rect x="40" y="48" width="310" height="164" rx="20" fill="#fff" stroke="#1d6b55" stroke-width="4"/>
+    <text x="195" y="94" font-size="25" font-weight="700">questions.js</text><text x="195" y="140" font-size="22">export questions</text><text x="195" y="178" font-size="20">3問のArray</text>
+    <path d="M375 130h205" stroke="#1d6b55" stroke-width="8" stroke-linecap="round"/><path d="m562 110 24 20-24 20" fill="none" stroke="#1d6b55" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="410" y="72" width="138" height="42" rx="21" fill="#f2c94c"/><text x="479" y="101" font-size="20" font-weight="700">named import</text>
+    <rect x="610" y="48" width="310" height="164" rx="20" fill="#fff" stroke="#1d6b55" stroke-width="4"/>
+    <text x="765" y="94" font-size="25" font-weight="700">main.js</text><text x="765" y="140" font-size="22">questions.length</text><text x="765" y="178" font-size="24" font-weight="700">Console: 3</text>
+  </g>
+</svg>

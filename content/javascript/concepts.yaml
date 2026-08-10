@@ -368,3 +368,67 @@ concepts:
     introducedBySlideId: javascript-ch05-l04-s04
     prerequisiteConceptIds: [object-spread-update]
     minimumProjectLevel: transform
+  - id: module-purpose
+    introducedBySlideId: javascript-ch06-l01-s01
+    prerequisiteConceptIds: [question-answer-state]
+    minimumProjectLevel: read
+  - id: named-export
+    introducedBySlideId: javascript-ch06-l01-s02
+    prerequisiteConceptIds: [module-purpose]
+    minimumProjectLevel: read
+  - id: named-import
+    introducedBySlideId: javascript-ch06-l01-s03
+    prerequisiteConceptIds: [named-export]
+    minimumProjectLevel: read
+  - id: question-data-module
+    introducedBySlideId: javascript-ch06-l01-s04
+    prerequisiteConceptIds: [named-import]
+    minimumProjectLevel: transform
+  - id: function-module-purpose
+    introducedBySlideId: javascript-ch06-l02-s01
+    prerequisiteConceptIds: [question-data-module]
+    minimumProjectLevel: read
+  - id: named-function-export
+    introducedBySlideId: javascript-ch06-l02-s02
+    prerequisiteConceptIds: [function-module-purpose]
+    minimumProjectLevel: read
+  - id: relative-function-import
+    introducedBySlideId: javascript-ch06-l02-s03
+    prerequisiteConceptIds: [named-function-export]
+    minimumProjectLevel: read
+  - id: score-function-module
+    introducedBySlideId: javascript-ch06-l02-s04
+    prerequisiteConceptIds: [relative-function-import]
+    minimumProjectLevel: transform
+  - id: error-purpose
+    introducedBySlideId: javascript-ch06-l03-s01
+    prerequisiteConceptIds: [score-function-module]
+    minimumProjectLevel: read
+  - id: throw-error
+    introducedBySlideId: javascript-ch06-l03-s02
+    prerequisiteConceptIds: [error-purpose]
+    minimumProjectLevel: read
+  - id: try-catch
+    introducedBySlideId: javascript-ch06-l03-s03
+    prerequisiteConceptIds: [throw-error]
+    minimumProjectLevel: read
+  - id: question-text-error
+    introducedBySlideId: javascript-ch06-l03-s04
+    prerequisiteConceptIds: [try-catch]
+    minimumProjectLevel: transform
+  - id: debug-purpose
+    introducedBySlideId: javascript-ch06-l04-s01
+    prerequisiteConceptIds: [question-text-error]
+    minimumProjectLevel: read
+  - id: expected-actual-value
+    introducedBySlideId: javascript-ch06-l04-s02
+    prerequisiteConceptIds: [debug-purpose]
+    minimumProjectLevel: read
+  - id: diagnostic-location
+    introducedBySlideId: javascript-ch06-l04-s03
+    prerequisiteConceptIds: [expected-actual-value]
+    minimumProjectLevel: read
+  - id: score-calculation-debug
+    introducedBySlideId: javascript-ch06-l04-s04
+    prerequisiteConceptIds: [diagnostic-location]
+    minimumProjectLevel: transform

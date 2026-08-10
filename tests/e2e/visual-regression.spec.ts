@@ -35,6 +35,12 @@ const JAVASCRIPT_CH03_EXERCISE: JavaScriptExerciseLocation = {
   exerciseId: 'javascript-ch03-l05-e01',
   title: 'Closureで得点を10ずつ増やす',
 };
+const JAVASCRIPT_CH06_LESSON_PATH = `${testBasePath()}#/courses/javascript/lessons/javascript-ch06-l01`;
+const JAVASCRIPT_CH06_EXERCISE: JavaScriptExerciseLocation = {
+  lessonId: 'javascript-ch06-l01',
+  exerciseId: 'javascript-ch06-l01-e01',
+  title: '問題Arrayをexportする',
+};
 
 const VIEWPORTS = [
   { id: 'desktop-wide', width: 1440, height: 900 },
@@ -775,4 +781,53 @@ test.describe('JavaScript Chapter 03 visual regression', () => {
       });
     });
   }
+});
+
+test.describe('JavaScript Chapter 06 visual regression', () => {
+  test.beforeEach(async ({ browserName, page }) => {
+    test.skip(browserName !== 'chromium', 'Baseline画像はChromiumで一意に固定する');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await observeRuntimePage(page);
+  });
+
+  test.afterEach(async ({ page }) => {
+    await expect(readRuntimeErrors(page)).resolves.toEqual({
+      pageErrors: [],
+      unhandledRejections: [],
+      consoleErrors: [],
+    });
+  });
+
+  test('javascript-ch06-exercise-desktop-compact', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.goto(javascriptExerciseRoute(JAVASCRIPT_CH06_EXERCISE));
+    await expect(
+      page.getByRole('heading', { level: 1, name: JAVASCRIPT_CH06_EXERCISE.title }),
+    ).toBeVisible();
+    await expect(page.getByRole('tab', { name: 'main.js', exact: true })).toBeVisible();
+    await expect(page.getByRole('tab', { name: 'questions.js', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: '判定する' })).toBeEnabled();
+    await expect(page).toHaveScreenshot('javascript-ch06-exercise-desktop-compact.png', {
+      animations: 'disabled',
+      caret: 'hide',
+      fullPage: false,
+    });
+  });
+
+  test('javascript-ch06-slide-s04-mobile-portrait', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`${JAVASCRIPT_CH06_LESSON_PATH}/slides/javascript-ch06-l01-s04`);
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'questions.jsの問題数をmain.jsで確かめる' }),
+    ).toBeVisible();
+    await expect.poll(() => page.evaluate(() => document.fonts.status)).toBe('loaded');
+    await page.getByTestId('learning-stage').evaluate((element) => {
+      element.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    });
+    await expect(page).toHaveScreenshot('javascript-ch06-slide-s04-mobile-portrait.png', {
+      animations: 'disabled',
+      caret: 'hide',
+      fullPage: false,
+    });
+  });
 });

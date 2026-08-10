@@ -130,6 +130,12 @@ const CHAPTER_FIVE_IMMUTABLE_EXERCISE: JavaScriptExerciseLocation = {
   title: '回答済みの新しいArrayを作る',
 };
 
+const CHAPTER_SIX_MODULE_EXERCISE: JavaScriptExerciseLocation = {
+  lessonId: 'javascript-ch06-l01',
+  exerciseId: 'javascript-ch06-l01-e01',
+  title: '問題Arrayをexportする',
+};
+
 test('JavaScript Exerciseの初期・Error・Hint・Reset状態に重大なaxe違反がない', async ({ page }) => {
   await openEditableJavaScriptExercise(page);
   await expectNoSeriousAxeViolations(page);
@@ -470,4 +476,42 @@ test('Chapter 05のExerciseと実習直前Slideを代表2 viewportで安全に�
   expect(slideMetrics.stage.scrollWidth).toBeLessThanOrEqual(slideMetrics.stage.clientWidth + 1);
   expect(slideMetrics.stage.overflowY).toBe('auto');
   await page.screenshot({ path: testInfo.outputPath('javascript-ch05-slide-390x844.png') });
+});
+
+test('Chapter 06のModule ExerciseとDebug直前Slideを代表2 viewportで安全に表示する', async ({
+  page,
+}, testInfo: TestInfo) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await openEditableJavaScriptExercise(page, CHAPTER_SIX_MODULE_EXERCISE);
+  await expect(page.getByRole('tab', { name: 'main.js', exact: true })).toBeVisible();
+  await expect(page.getByRole('tab', { name: 'questions.js', exact: true })).toBeVisible();
+  await expectNoSeriousAxeViolations(page);
+  const exerciseMetrics = await readScrollMetrics(page);
+  expect(exerciseMetrics.document.scrollWidth).toBeLessThanOrEqual(
+    exerciseMetrics.document.clientWidth,
+  );
+  expect(exerciseMetrics.document.scrollHeight).toBeLessThanOrEqual(
+    exerciseMetrics.document.clientHeight + 1,
+  );
+  expect(exerciseMetrics.stage.scrollWidth).toBeLessThanOrEqual(
+    exerciseMetrics.stage.clientWidth + 1,
+  );
+  await page.screenshot({ path: testInfo.outputPath('javascript-ch06-exercise-1280x720.png') });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(
+    `${testBasePath()}#/courses/javascript/lessons/javascript-ch06-l04/slides/javascript-ch06-l04-s04`,
+  );
+  await expect(
+    page.getByRole('heading', { level: 1, name: '問題数を直して30点へそろえる' }),
+  ).toBeVisible();
+  await expectNoSeriousAxeViolations(page);
+  const slideMetrics = await readScrollMetrics(page);
+  expect(slideMetrics.document.scrollWidth).toBeLessThanOrEqual(slideMetrics.document.clientWidth);
+  expect(slideMetrics.document.scrollHeight).toBeLessThanOrEqual(
+    slideMetrics.document.clientHeight + 1,
+  );
+  expect(slideMetrics.stage.scrollWidth).toBeLessThanOrEqual(slideMetrics.stage.clientWidth + 1);
+  expect(slideMetrics.stage.overflowY).toBe('auto');
+  await page.screenshot({ path: testInfo.outputPath('javascript-ch06-slide-390x844.png') });
 });

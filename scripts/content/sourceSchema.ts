@@ -99,6 +99,7 @@ export const FixtureSourceSchema = z
     id: IdSchema,
     expectedStatus: z.enum(['pass', 'incomplete', 'code-error', 'system-error']),
     faultInjection: z.literal('stale-source-evidence').optional(),
+    expectedDiagnosticCodes: z.array(IdSchema).min(1).max(16).optional(),
     files: z.array(FileSourceSchema).min(1),
     expectedFeedbackRuleIds: z.array(IdSchema),
   })
@@ -270,6 +271,26 @@ export const ExerciseSourceSchema = z
           code: 'custom',
           path: [...path, 'expectedFeedbackRuleIds'],
           message: 'Fixture Feedback Rule IDが重複しています',
+        });
+      }
+      if (
+        fixture.expectedDiagnosticCodes !== undefined &&
+        hasDuplicates(fixture.expectedDiagnosticCodes)
+      ) {
+        context.addIssue({
+          code: 'custom',
+          path: [...path, 'expectedDiagnosticCodes'],
+          message: 'Fixtureの期待診断codeが重複しています',
+        });
+      }
+      if (
+        fixture.expectedDiagnosticCodes !== undefined &&
+        !['code-error', 'system-error'].includes(fixture.expectedStatus)
+      ) {
+        context.addIssue({
+          code: 'custom',
+          path: [...path, 'expectedDiagnosticCodes'],
+          message: '期待診断codeはcode-errorまたはsystem-error Fixtureだけに指定してください',
         });
       }
       for (const [ruleIndex, ruleId] of fixture.expectedFeedbackRuleIds.entries()) {

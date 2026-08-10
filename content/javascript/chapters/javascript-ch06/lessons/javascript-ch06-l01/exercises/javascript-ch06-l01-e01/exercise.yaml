@@ -1,0 +1,259 @@
+id: javascript-ch06-l01-e01
+kind: standard
+workspaceId: javascript-ch06-l01-e01
+countsTowardStandardExerciseTotal: true
+title: 問題Arrayをexportする
+instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: question-data-module, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: export-questions
+    file: questions.js
+    target: questionsを宣言するconstの直前
+    starterAnchor: 'const questions = ['
+    change: 'constの前へexportと半角spaceを加える'
+    observe: main.jsが問題Arrayをimportし、Consoleへ3と表示する
+    requiresConceptIds: [question-data-module]
+    validationRuleIds:
+      [javascript-ch06-l01-e01-r01, javascript-ch06-l01-e01-r02, javascript-ch06-l01-e01-r03]
+files:
+  - { path: main.js, language: javascript, source: starter/main.js, editable: true }
+  - { path: questions.js, language: javascript, source: starter/questions.js, editable: true }
+  - { path: index.html, language: html, source: starter/index.html, editable: false }
+  - { path: styles.css, language: css, source: starter/styles.css, editable: false }
+solutionFiles:
+  - { path: main.js, language: javascript, source: solution/main.js, editable: false }
+  - { path: questions.js, language: javascript, source: solution/questions.js, editable: false }
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+  - { path: styles.css, language: css, source: solution/styles.css, editable: false }
+runtime:
+  kind: javascript
+  entryFile: main.js
+  sourceType: module
+  capabilityProfile: modules
+  primaryOutput: console
+validationRules:
+  - id: javascript-ch06-l01-e01-r01
+    groupId: javascript-ch06-l01-e01-result
+    label: questionsをnamed exportする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: questions.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: module-boundary, boundaryKind: export, name: questions }
+    feedback:
+      target: questions.jsのquestions宣言
+      expected: questionsという名前のnamed export
+      nextAction: constの直前へexportと半角spaceを加えます。
+    hintId: javascript-ch06-l01-e01-h02
+    relatedSlideId: javascript-ch06-l01-s02
+  - id: javascript-ch06-l01-e01-r02
+    groupId: javascript-ch06-l01-e01-result
+    label: main.jsでquestionsをnamed importする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-source, file: main.js }
+    assertion:
+      kind: javascript-source-fact
+      fact: { kind: module-boundary, boundaryKind: import, name: questions }
+    feedback:
+      target: main.jsのimport
+      expected: questionsという名前のnamed import
+      nextAction: main.jsの完成済みimportは変更せず、questions.jsを確認します。
+    hintId: javascript-ch06-l01-e01-h01
+    relatedSlideId: javascript-ch06-l01-s03
+  - id: javascript-ch06-l01-e01-r03
+    groupId: javascript-ch06-l01-e01-result
+    label: 問題数3を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target: { kind: javascript-console }
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected: [{ level: log, text: '3' }]
+    feedback:
+      target: Console
+      expected: '3'
+      nextAction: questionsをexportし、完成済みのquestions.lengthまで動かします。
+    hintId: javascript-ch06-l01-e01-h03
+    relatedSlideId: javascript-ch06-l01-s04
+hints:
+  - id: javascript-ch06-l01-e01-h01
+    level: 1
+    title: 変更するのはquestions.jsだけ
+    text: main.jsのimportとconsole.log、問題Arrayの3件は完成しています。
+    relatedSlideId: javascript-ch06-l01-s04
+  - id: javascript-ch06-l01-e01-h02
+    level: 2
+    title: constの前へ公開keywordを置く
+    text: named exportは、公開したい宣言の前へexportを書きます。
+    relatedSlideId: javascript-ch06-l01-s02
+  - id: javascript-ch06-l01-e01-h03
+    level: 3
+    title: 宣言の先頭を完成させる
+    text: export const questions = [ と書きます。
+    relatedSlideId: javascript-ch06-l01-s04
+relatedSlideIds: [javascript-ch06-l01-s02, javascript-ch06-l01-s03, javascript-ch06-l01-s04]
+previewViewports:
+  - { id: desktop-1280, width: 1280, height: 720 }
+assets: []
+fixtures:
+  - id: pass
+    expectedStatus: pass
+    files:
+      - { path: main.js, language: javascript, source: fixtures/main-pass.js, editable: false }
+      - {
+          path: questions.js,
+          language: javascript,
+          source: fixtures/questions-pass.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: incomplete
+    expectedStatus: incomplete
+    files:
+      - { path: main.js, language: javascript, source: fixtures/main-pass.js, editable: false }
+      - {
+          path: questions.js,
+          language: javascript,
+          source: fixtures/questions-two.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch06-l01-e01-r01, javascript-ch06-l01-e01-r02, javascript-ch06-l01-e01-r03]
+  - id: output-only
+    expectedStatus: incomplete
+    files:
+      - {
+          path: main.js,
+          language: javascript,
+          source: fixtures/main-output-only.js,
+          editable: false,
+        }
+      - {
+          path: questions.js,
+          language: javascript,
+          source: fixtures/questions-pass.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch06-l01-e01-r01, javascript-ch06-l01-e01-r02, javascript-ch06-l01-e01-r03]
+  - id: syntax-error
+    expectedStatus: code-error
+    expectedDiagnosticCodes: [javascript-analyzer-syntax]
+    files:
+      - { path: main.js, language: javascript, source: fixtures/main-pass.js, editable: false }
+      - {
+          path: questions.js,
+          language: javascript,
+          source: fixtures/questions-syntax.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: bare-import
+    expectedStatus: code-error
+    expectedDiagnosticCodes: [javascript-analyzer-security]
+    files:
+      - {
+          path: main.js,
+          language: javascript,
+          source: fixtures/main-bare-import.js,
+          editable: false,
+        }
+      - {
+          path: questions.js,
+          language: javascript,
+          source: fixtures/questions-pass.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: dynamic-import
+    expectedStatus: code-error
+    expectedDiagnosticCodes: [javascript-analyzer-security]
+    files:
+      - {
+          path: main.js,
+          language: javascript,
+          source: fixtures/main-dynamic-import.js,
+          editable: false,
+        }
+      - {
+          path: questions.js,
+          language: javascript,
+          source: fixtures/questions-pass.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: path-escape
+    expectedStatus: code-error
+    expectedDiagnosticCodes: [javascript-analyzer-security]
+    files:
+      - {
+          path: main.js,
+          language: javascript,
+          source: fixtures/main-path-escape.js,
+          editable: false,
+        }
+      - {
+          path: questions.js,
+          language: javascript,
+          source: fixtures/questions-pass.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: unknown-file
+    expectedStatus: code-error
+    expectedDiagnosticCodes: [javascript-analyzer-security]
+    files:
+      - {
+          path: main.js,
+          language: javascript,
+          source: fixtures/main-unknown-file.js,
+          editable: false,
+        }
+      - {
+          path: questions.js,
+          language: javascript,
+          source: fixtures/questions-pass.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: cycle
+    expectedStatus: code-error
+    expectedDiagnosticCodes: [javascript-analyzer-security]
+    files:
+      - { path: main.js, language: javascript, source: fixtures/main-cycle.js, editable: false }
+      - {
+          path: questions.js,
+          language: javascript,
+          source: fixtures/questions-cycle.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

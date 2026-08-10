@@ -23,6 +23,7 @@ interface BrowserFixtureCase {
   readonly files: Readonly<Record<string, string>>;
   readonly expectedStatus: AuthoringFixture['expectedStatus'] | 'not-pass';
   readonly faultInjection?: AuthoringFixture['faultInjection'];
+  readonly expectedDiagnosticCodes?: readonly string[];
   readonly expectedFeedbackRuleIds?: readonly string[];
 }
 
@@ -84,6 +85,9 @@ function createCases(exercises: readonly AuthoringExercise[]): readonly BrowserF
       files: payloadFiles(authoring, fixture.files),
       expectedStatus: fixture.expectedStatus,
       ...(fixture.faultInjection === undefined ? {} : { faultInjection: fixture.faultInjection }),
+      ...(fixture.expectedDiagnosticCodes === undefined
+        ? {}
+        : { expectedDiagnosticCodes: fixture.expectedDiagnosticCodes }),
       expectedFeedbackRuleIds: fixture.expectedFeedbackRuleIds,
     }));
     return [solution, starter, ...fixtureCases];
@@ -331,6 +335,18 @@ async function assertCourseFixtureGate(page: Page, input: CourseFixtureGateInput
         continue;
       }
       expect(result.status, assertionContext).toBe(fixtureCase.expectedStatus);
+      if (fixtureCase.expectedDiagnosticCodes !== undefined) {
+        const diagnosticCodes = [
+          ...new Set(
+            result.diagnostics
+              .filter(({ severity }) => severity === 'error')
+              .map(({ code }) => code),
+          ),
+        ].sort();
+        expect(diagnosticCodes, assertionContext).toEqual(
+          [...fixtureCase.expectedDiagnosticCodes].sort(),
+        );
+      }
       const failedFeedbackRuleIds = result.checks
         .filter(({ requirementPassed }) => !requirementPassed)
         .map(({ ruleId }) => ruleId)
@@ -372,7 +388,7 @@ test('JavaScriptの全Solution、Starter、Fixtureを実Browser Runner／Validat
   await assertCourseFixtureGate(page, {
     courseRoot: 'content/javascript',
     courseId: 'javascript',
-    expectedExerciseCount: 23,
+    expectedExerciseCount: 27,
     runtime: await loadJavaScriptFixtureRuntime(),
   });
 });

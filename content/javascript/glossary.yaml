@@ -350,3 +350,48 @@ entries:
     definition: 3つのdotでArray要素やObject propertyを新しいデータへ展開する書き方。
     firstSlideId: javascript-ch05-l04-s03
     relatedIds: [array, object, property, immutable-update]
+  - id: module
+    term: Module
+    definition: JavaScriptの役割ごとにFileを分け、必要な値やFunctionだけを共有する仕組み。
+    firstSlideId: javascript-ch06-l01-s01
+    relatedIds: [named-export, named-import, javascript]
+  - id: named-export
+    term: named export
+    definition: exportの後ろに名前を付けた値やFunctionを書き、別Moduleへ公開する方法。
+    firstSlideId: javascript-ch06-l01-s02
+    relatedIds: [module, named-import]
+  - id: named-import
+    term: named import
+    definition: importの波括弧へ公開名を書き、相対pathの別Moduleから受け取る方法。
+    firstSlideId: javascript-ch06-l01-s03
+    relatedIds: [module, named-export, relative-path]
+  - id: relative-path
+    term: 相対path
+    definition: 現在のFileを基準に、同じWorkspace内のFile位置をdotとslashで示す書き方。
+    firstSlideId: javascript-ch06-l01-s03
+    relatedIds: [module, named-import]
+  - id: error
+    term: Error
+    definition: 処理をそのまま続けられない問題と、その理由を表すJavaScriptの値。
+    firstSlideId: javascript-ch06-l03-s01
+    relatedIds: [throw, try-catch, diagnostic]
+  - id: throw
+    term: throw
+    definition: Errorを発生させ、現在の通常処理を止めて受け止める場所へ渡す構文。
+    firstSlideId: javascript-ch06-l03-s02
+    relatedIds: [error, try-catch]
+  - id: try-catch
+    term: try/catch
+    definition: tryで処理を試し、発生したErrorをcatchで受け止める構文。
+    firstSlideId: javascript-ch06-l03-s03
+    relatedIds: [error, throw]
+  - id: debug
+    term: Debug
+    definition: 期待値と実際値や診断位置を比べ、Bugの原因を絞って修正する作業。
+    firstSlideId: javascript-ch06-l04-s01
+    relatedIds: [diagnostic, console]
+  - id: diagnostic
+    term: 診断
+    definition: Errorの種類と、確認するFile・行・位置を示す情報。
+    firstSlideId: javascript-ch06-l04-s03
+    relatedIds: [debug, error]

@@ -11,6 +11,7 @@ slideSources:
   - slides/s04-question-answer-state-checkpoint.md
 exerciseSources:
   - exercises/javascript-ch05-l04-e01/exercise.yaml
+nextLessonId: javascript-ch06-l01
 reflection: immutable updateは元データへ代入せず、mapとspreadで変更済みの新しいArrayとObjectを作る。
 glossaryRefs:
   [

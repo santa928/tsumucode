@@ -261,6 +261,57 @@ describe('content source schema', () => {
     });
   });
 
+  it('code-error Fixtureへ期待診断codeをauthoring-only契約として保持する', () => {
+    const result = ExerciseSourceSchema.parse({
+      ...validExerciseSource,
+      fixtures: [
+        {
+          ...validExerciseSource.fixtures[0],
+          id: 'bare-import',
+          expectedStatus: 'code-error',
+          expectedDiagnosticCodes: ['javascript-analyzer-security'],
+        },
+      ],
+    });
+
+    expect(result.fixtures[0]).toMatchObject({
+      id: 'bare-import',
+      expectedStatus: 'code-error',
+      expectedDiagnosticCodes: ['javascript-analyzer-security'],
+    });
+  });
+
+  it('期待診断codeの重複とpass Fixtureへの指定を拒否する', () => {
+    const cases = [
+      ['javascript-analyzer-security', 'javascript-analyzer-security'],
+      ['javascript-runtime'],
+    ];
+
+    expect(
+      ExerciseSourceSchema.safeParse({
+        ...validExerciseSource,
+        fixtures: [
+          {
+            ...validExerciseSource.fixtures[0],
+            expectedStatus: 'code-error',
+            expectedDiagnosticCodes: cases[0],
+          },
+        ],
+      }).success,
+    ).toBe(false);
+    expect(
+      ExerciseSourceSchema.safeParse({
+        ...validExerciseSource,
+        fixtures: [
+          {
+            ...validExerciseSource.fixtures[0],
+            expectedDiagnosticCodes: cases[1],
+          },
+        ],
+      }).success,
+    ).toBe(false);
+  });
+
   it('学習者の不正解Fixtureへ基盤障害faultを混在させない', () => {
     const result = ExerciseSourceSchema.safeParse({
       ...validExerciseSource,

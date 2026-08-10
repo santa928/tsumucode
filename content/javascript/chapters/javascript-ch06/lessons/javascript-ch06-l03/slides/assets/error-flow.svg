@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="260" viewBox="0 0 960 260" role="img" aria-labelledby="title desc">
+  <title id="title">空問題を扱うError flow</title><desc id="desc">空のtextを検出し、throwしたErrorをcatchしてmessageを表示する</desc>
+  <rect width="960" height="260" rx="28" fill="#fffaf0"/>
+  <g font-family="system-ui, sans-serif" fill="#173f35" text-anchor="middle">
+    <rect x="36" y="58" width="230" height="144" rx="20" fill="#fff" stroke="#1d6b55" stroke-width="4"/><text x="151" y="110" font-size="23" font-weight="700">text === ''</text><text x="151" y="157" font-size="20">空を検出</text>
+    <path d="M286 130h105" stroke="#1d6b55" stroke-width="8"/><path d="m374 110 24 20-24 20" fill="none" stroke="#1d6b55" stroke-width="8"/>
+    <rect x="412" y="58" width="210" height="144" rx="20" fill="#fdf0c1" stroke="#c89515" stroke-width="4"/><text x="517" y="110" font-size="24" font-weight="700">throw Error</text><text x="517" y="157" font-size="20">理由を渡す</text>
+    <path d="M642 130h92" stroke="#1d6b55" stroke-width="8"/><path d="m717 110 24 20-24 20" fill="none" stroke="#1d6b55" stroke-width="8"/>
+    <rect x="756" y="58" width="168" height="144" rx="20" fill="#fff" stroke="#1d6b55" stroke-width="4"/><text x="840" y="108" font-size="24" font-weight="700">catch</text><text x="840" y="151" font-size="18">messageを</text><text x="840" y="178" font-size="18">表示</text>
+  </g>
+</svg>

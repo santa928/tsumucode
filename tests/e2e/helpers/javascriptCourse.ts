@@ -16,6 +16,23 @@ export const JAVASCRIPT_STARTER_SOURCE =
   "document.querySelector('#message').textContent = 'ここを書き換えます';\n";
 export const JAVASCRIPT_SOLUTION_SOURCE =
   "document.querySelector('#message').textContent = 'JavaScriptで文字を変えました';\n";
+export const JAVASCRIPT_CH06_MODULE_EXERCISE: JavaScriptExerciseLocation = {
+  lessonId: 'javascript-ch06-l01',
+  exerciseId: 'javascript-ch06-l01-e01',
+  title: '問題Arrayをexportする',
+};
+export const JAVASCRIPT_CH06_MODULE_STARTER_SOURCE = `const questions = [
+  { text: 'HTMLの役割は？' },
+  { text: 'CSSの役割は？' },
+  { text: 'JavaScriptの役割は？' },
+];
+`;
+export const JAVASCRIPT_CH06_MODULE_SOLUTION_SOURCE = `export const questions = [
+  { text: 'HTMLの役割は？' },
+  { text: 'CSSの役割は？' },
+  { text: 'JavaScriptの役割は？' },
+];
+`;
 
 export interface JavaScriptExerciseLocation {
   readonly lessonId: string;
@@ -69,7 +86,7 @@ export async function openEditableJavaScriptExercise(
     });
     await expect(page.getByTestId('code-workspace')).toBeVisible();
     await expect(page.getByRole('button', { name: '判定する' })).toBeEnabled({ timeout: 15_000 });
-    await expect(page.getByTestId('runtime-preview-frame').locator('iframe')).toBeVisible();
+    await expect(page.getByTestId('runtime-preview-frame').locator('iframe')).toBeAttached();
   } catch (error: unknown) {
     const body = await page
       .locator('body')

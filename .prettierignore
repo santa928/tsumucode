@@ -5,6 +5,8 @@ public/generated/content/
 content/**/fixtures/code-error/**
 content/**/fixtures/syntax-error/script.js
 content/**/fixtures/syntax-error.js
+content/**/fixtures/questions-syntax.js
+content/**/fixtures/main-syntax.js
 content/javascript/chapters/javascript-ch02/lessons/javascript-ch02-l01/slides/s03-check-an-answer.md
 content/javascript/chapters/javascript-ch02/lessons/javascript-ch02-l01/slides/s04-comparison-checkpoint.md
 content/javascript/chapters/javascript-ch02/lessons/javascript-ch02-l03/slides/s03-top-to-bottom.md

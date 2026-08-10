@@ -1,0 +1,20 @@
+id: javascript-ch06-l01
+kind: standard
+title: 問題データをModuleへ分ける
+goal: questions.jsでnamed exportした問題Arrayを、main.jsのnamed importから使える。
+estimatedMinutes: 20
+prerequisiteLessonIds: [javascript-ch05-l04]
+slideSources:
+  - slides/s01-module-purpose.md
+  - slides/s02-named-export.md
+  - slides/s03-named-import.md
+  - slides/s04-question-data-module-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch06-l01-e01/exercise.yaml
+nextLessonId: javascript-ch06-l02
+reflection: Moduleは役割ごとにFileを分け、exportした名前だけをimportして共有する。
+glossaryRefs: [javascript, console, array, module, named-export, named-import, relative-path]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch06-l01-s04
+  requiredExerciseIds: [javascript-ch06-l01-e01]

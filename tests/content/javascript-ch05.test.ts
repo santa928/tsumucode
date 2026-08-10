@@ -52,21 +52,21 @@ describe('javascript-ch05', () => {
     ]);
   });
 
-  it('Course累計を23 Lesson／92 Slide／23 Exercise／350分へ更新し既存進捗を保持する', async () => {
+  it('Chapter 06追加後もChapter 05までの進捗Migrationを保持する', async () => {
     const { runtime: course } = await loadAuthoringCourse(path.resolve('content/javascript'));
 
     expect(course).toMatchObject({
-      revision: '2026-08-10.2',
-      estimatedMinutes: 350,
+      revision: '2026-08-10.3',
+      estimatedMinutes: 420,
       publicationStatus: 'draft',
       expectedTotals: {
-        chapters: 6,
-        lessons: 23,
-        conceptSlides: 92,
-        standardExercises: 23,
+        chapters: 7,
+        lessons: 27,
+        conceptSlides: 108,
+        standardExercises: 27,
         guidedProjectLessons: 0,
         capstoneLessons: 0,
-        estimatedMinutes: 350,
+        estimatedMinutes: 420,
       },
       progressMigrations: [
         {
@@ -84,6 +84,11 @@ describe('javascript-ch05', () => {
           toRevision: '2026-08-10.2',
           steps: [],
         },
+        {
+          fromRevision: '2026-08-10.2',
+          toRevision: '2026-08-10.3',
+          steps: [],
+        },
       ],
     });
     expect(course.phases.flatMap(({ chapters }) => chapters).map(({ id }) => id)).toEqual([
@@ -93,6 +98,7 @@ describe('javascript-ch05', () => {
       'javascript-ch03',
       'javascript-ch04',
       'javascript-ch05',
+      'javascript-ch06',
     ]);
   }, 20_000);
 

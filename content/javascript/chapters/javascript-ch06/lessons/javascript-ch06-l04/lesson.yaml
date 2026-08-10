@@ -1,0 +1,19 @@
+id: javascript-ch06-l04
+kind: standard
+title: Consoleと診断位置からBugを直す
+goal: 期待値・実際値・Fileと行を順に比べ、点数計算の誤った数値だけを修正できる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [javascript-ch06-l03]
+slideSources:
+  - slides/s01-debug-purpose.md
+  - slides/s02-expected-actual-value.md
+  - slides/s03-diagnostic-location.md
+  - slides/s04-score-calculation-debug-checkpoint.md
+exerciseSources:
+  - exercises/javascript-ch06-l04-e01/exercise.yaml
+reflection: Debugでは期待値と実際値を比べ、診断位置から原因候補を1点ずつ確かめる。
+glossaryRefs: [javascript, console, variable, value, debug, diagnostic]
+completion:
+  kind: standard
+  finalSlideId: javascript-ch06-l04-s04
+  requiredExerciseIds: [javascript-ch06-l04-e01]
