@@ -1,6 +1,13 @@
 import { defineConfig, devices } from '@playwright/test';
 import { testServerUrl } from './tests/e2e/helpers/testBasePath';
 
+const CROSS_BROWSER_SMOKE_SPECS = [
+  'initial-preview.spec.ts',
+  'exercise-reset.spec.ts',
+  'editor-input-support.spec.ts',
+  'runtime-security.spec.ts',
+] as const;
+
 /** 任意のGitHub Pages subpathへpreviewとVite serverを揃えた実ブラウザ設定を作る。 */
 export function createPlaywrightConfig(basePath = process.env['BASE_PATH']) {
   return defineConfig({
@@ -33,8 +40,16 @@ export function createPlaywrightConfig(basePath = process.env['BASE_PATH']) {
     ],
     projects: [
       { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-      { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-      { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+      {
+        name: 'firefox',
+        testMatch: [...CROSS_BROWSER_SMOKE_SPECS],
+        use: { ...devices['Desktop Firefox'] },
+      },
+      {
+        name: 'webkit',
+        testMatch: [...CROSS_BROWSER_SMOKE_SPECS],
+        use: { ...devices['Desktop Safari'] },
+      },
     ],
   });
 }

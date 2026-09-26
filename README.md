@@ -119,14 +119,16 @@ SourceやAssetを追加したら、同じ変更で`provenance.yaml`へ登録し�
 
 ## 品質ゲート
 
-通常のSource検証、Lint、型検査、957件以上のUnit/Component/Content test、Production Build、学習用Chunk分離をまとめて実行します。
+作業中とpush/PRの`check`は、教材Compile・Review、Lint、変更関連test、型検査を含むProduction Build、学習用Chunk分離を実行します。testはGit差分とVitestのimport依存関係で選び、教材変更では動的読込のContent testも補います。依存・共通test設定の変更時だけ全Unit/Component/Content testへ拡大します。ローカルの差分基準は`HEAD`、CIではpush前のSHAまたはPRのbase SHAです。
+
+通常Actionsはブラウザ未導入のDocker stageを使い、5分以内を目標、8分を上限とします。新しいpushで古い開発Runを取消し、公開Runとは待ち行列を分離します。詳しい選択基準と削除したtestは[開発中の検証方針](docs/quality/development-testing.md)に記載しています。
 
 ```bash
 ./scripts/docker-compose.sh run --rm app npm run check
 ./scripts/docker-compose.sh run --rm app npm run format:check
 ```
 
-Production Build後、Chromium/Firefox/WebKitのE2E、固定10演習の実ブラウザ性能、配信量、Lighthouse Mobileを実行します。
+明示deployの`check:release`では全Unit/Component/Content testを実行します。Chromiumの全E2E、Firefox/WebKitの代表cross-browser smoke、固定演習の実ブラウザ性能、配信量、Lighthouse Mobileもこの公開Runだけで実行します。Runtime、Security、Browser互換性へ触れた変更では、作業中に変更面の代表Browser検証を追加します。
 
 ```bash
 ./scripts/docker-compose.sh run --rm -e BASE_PATH=/repository-name/ app npm run build
@@ -158,9 +160,9 @@ Smokeは、HTMLが参照する初期Asset、教材Catalog v3、Course Index、Le
 gh workflow run "TsumuCode Pages" --ref main -f source_sha=<40文字の承認済みSHA> -f release_mode=candidate -f deploy=true
 ```
 
-WorkflowはSource SHA、canonical `dist/` digest、Course/Public Provenance hash、3 Engine、a11y、Security、Performance、静的Artifact検査を結び付けます。公開後はEnvironmentの独立承認、Actions Release Report、annotated tag、公開URLを実確認し、同じRunの値をrevision別の`docs/quality/post-deploy/<revision>.yaml`へ記録してから公開台帳へ追記します。Environment承認を省略した直接Deployや、公開後確認を公開前に合格扱いする運用は行いません。
+Workflowはpush/PRのfast gateと明示dispatchの公開前gateを分離します。公開前gateはSource SHA、canonical `dist/` digest、Course/Public Provenance hash、Chromium全E2E、Firefox/WebKit代表smoke、a11y、Security、Performance、静的Artifact検査を結び付けます。公開後はEnvironmentの独立承認、Actions Release Report、annotated tag、公開URLを実確認し、同じRunの値をrevision別の`docs/quality/post-deploy/<revision>.yaml`へ記録してから公開台帳へ追記します。Environment承認を省略した直接Deployや、公開後確認を公開前に合格扱いする運用は行いません。
 
-身内向けβは、mainのSHAを指定して同じ全自動Gateを通したうえで、次のように明示dispatchします。
+身内向けβは、mainのSHAを指定して正式候補と同じ公開前gateを通したうえで、次のように明示dispatchします。
 
 ```bash
 SOURCE_SHA="$(git rev-parse origin/main)"

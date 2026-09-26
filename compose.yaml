@@ -11,6 +11,7 @@ services:
   app:
     build:
       context: .
+      target: ${TSUMUCODE_DOCKER_TARGET:-app}
     working_dir: /workspace
     init: true
     environment:

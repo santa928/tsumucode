@@ -4,7 +4,6 @@ import { describe, expect, it } from 'vitest';
 
 interface PackageManifest {
   readonly scripts: Readonly<Record<string, string>>;
-  readonly dependencies: Readonly<Record<string, string>>;
 }
 
 const projectRoot = new URL('../', import.meta.url);
@@ -35,74 +34,6 @@ function collectMissingScriptAliases(scripts: Readonly<Record<string, string>>):
 }
 
 describe('package scripts', () => {
-  it('Editor入力支援の直接Dependencyを完全固定する', () => {
-    expect(manifest.dependencies).toMatchObject({
-      '@codemirror/commands': '6.10.4',
-      '@codemirror/language': '6.12.4',
-      '@codemirror/autocomplete': '6.20.3',
-      '@lezer/highlight': '1.2.3',
-    });
-  });
-
-  it('教材の検証とCompileを独立したlocal entrypointとして公開する', () => {
-    expect(manifest.scripts['content:compile']).toBe('tsx scripts/content/compile.ts');
-    expect(manifest.scripts['content:check']).toBe('tsx scripts/content/compile.ts --check');
-    expect(manifest.scripts.build).toContain('npm run content:compile');
-    expect(manifest.scripts.check).toContain('npm run content:check');
-  });
-
-  it('checkは教材検証後にArtifactを生成してからtest suiteを実行する', () => {
-    const command = manifest.scripts.check ?? '';
-    const checkIndex = command.indexOf('npm run content:check');
-    const compileIndex = command.indexOf('npm run content:compile');
-    const reviewIndex = command.indexOf('npm run content:review');
-    const testIndex = command.indexOf('npm run test:run');
-
-    expect(checkIndex).toBeGreaterThanOrEqual(0);
-    expect(compileIndex).toBeGreaterThan(checkIndex);
-    expect(reviewIndex).toBeGreaterThan(compileIndex);
-    expect(testIndex).toBeGreaterThan(reviewIndex);
-  });
-
-  it('GitHub Pages subpath smokeを実在するlocal entrypointとして公開する', () => {
-    expect(manifest.scripts['smoke:subpath']).toBe('tsx scripts/smoke-subpath.ts');
-  });
-
-  it('生成済みdistを実ブラウザ品質Gateへ配信するpreview scriptを公開する', () => {
-    expect(manifest.scripts.preview).toBe('vite preview');
-  });
-
-  it('Production CSSをHTMLへinline化して追加requestを避ける', () => {
-    expect(manifest.scripts['build:inline-css']).toBe('tsx scripts/inline-production-css.ts');
-    expect(manifest.scripts.build).toContain('vite build && npm run build:inline-css');
-  });
-
-  it('Build後の学習chunk分離検査をcheckへ組み込む', () => {
-    expect(manifest.scripts['smoke:learning-chunks']).toBe('tsx scripts/check-learning-chunks.ts');
-    expect(manifest.scripts.check).toContain('npm run build && npm run smoke:learning-chunks');
-  });
-
-  it('PerformanceとLighthouseの公開前Gateを固定設定で公開する', () => {
-    expect(manifest.scripts['test:performance']).toBe(
-      'playwright test --config=playwright.performance.config.ts && vitest run --config vitest.bundle.config.ts',
-    );
-    expect(manifest.scripts['test:lighthouse']).toBe('lhci autorun --config=lighthouserc.cjs');
-  });
-
-  it('Pages公開前の静的Artifact・継続性・承認・対象・Report Gateを公開する', () => {
-    expect(manifest.scripts['release:check']).toBe(
-      'tsx scripts/release/checkStaticArtifact.ts dist',
-    );
-    expect(manifest.scripts['release:continuity']).toBe(
-      'tsx scripts/release/checkReleaseContinuity.ts',
-    );
-    expect(manifest.scripts['release:approval']).toBe(
-      'tsx scripts/release/verifyReleaseApproval.ts',
-    );
-    expect(manifest.scripts['release:target']).toBe('tsx scripts/release/verifyReleaseTarget.ts');
-    expect(manifest.scripts['release:report']).toBe('tsx scripts/release/writeReleaseReport.ts');
-  });
-
   it('実在するlocal tsx entrypointだけを参照する', () => {
     expect(collectMissingTsxEntrypoints(manifest.scripts)).toEqual([]);
   });

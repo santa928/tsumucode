@@ -3,6 +3,12 @@ dist
 coverage
 public/generated/content
 playwright-report
+playwright-performance-report
+lhci-report
+.lighthouseci
+.playwright-cli
+output
+.worktrees
 test-results
 *.tsbuildinfo
 .git

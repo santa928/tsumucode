@@ -28,8 +28,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: pages-${{ github.event_name == 'workflow_dispatch' && inputs.deploy == true && 'release' || github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' || inputs.deploy != true }}
 
 jobs:
   resolve:
@@ -80,7 +80,33 @@ jobs:
         id: target
         run: sed -n '1,30p' .release-target >> "$GITHUB_OUTPUT"
 
+  fast:
+    if: github.event_name == 'push' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.deploy != true)
+    needs: resolve
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    env:
+      TSUMUCODE_DOCKER_TARGET: development
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ needs.resolve.outputs.checkout_sha }}
+      - name: Build Docker image
+        run: ./scripts/docker-compose.sh build app
+      - name: Content provenance
+        run: ./scripts/docker-compose.sh run --rm app npm run content:provenance
+      - name: Fast quality
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+          TEST_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || 'HEAD^' }}
+        run: ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TEST_BASE_SHA app npm run check
+
   quality:
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'
     needs: resolve
     runs-on: ubuntu-24.04
     permissions:
@@ -112,13 +138,10 @@ jobs:
           ':(exclude)content/html-css/release-history.yaml'
       - name: Content provenance
         run: ./scripts/docker-compose.sh run --rm app npm run content:provenance
-      - name: Content compile
-        run: ./scripts/docker-compose.sh run --rm app npm run content:compile
-      - name: Independent lesson review
-        run: ./scripts/docker-compose.sh run --rm app npm run content:review
-      - name: Release continuity for quality-only change
-        if: needs.resolve.outputs.release_mode == 'quality-only'
-        run: ./scripts/docker-compose.sh run --rm app npm run release:continuity -- --quality-only
+      - name: Release quality
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+        run: ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run check:release
       - name: Release continuity for deploy candidate
         if: needs.resolve.outputs.release_mode == 'candidate'
         run: ./scripts/docker-compose.sh run --rm app npm run release:continuity
@@ -130,17 +153,7 @@ jobs:
         env:
           VERIFIED_SOURCE_COMMIT: ${{ needs.resolve.outputs.verified_source_commit }}
         run: test "$(git rev-parse HEAD)" = "$VERIFIED_SOURCE_COMMIT"
-      - name: Lint
-        run: ./scripts/docker-compose.sh run --rm app npm run lint
-      - name: Type check
-        run: ./scripts/docker-compose.sh run --rm app npm run typecheck
-      - name: Unit and content tests
-        run: ./scripts/docker-compose.sh run --rm app npm run test:run
-      - name: Production build
-        env:
-          BASE_PATH: /${{ github.event.repository.name }}/
-        run: ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run build
-      - name: Browser matrix
+      - name: Chromium full and cross-browser smoke
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
         run: ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run test:e2e

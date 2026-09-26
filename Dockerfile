@@ -1,4 +1,4 @@
-FROM node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5
+FROM node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5 AS dependencies
 
 WORKDIR /workspace
 ENV CI=true \
@@ -10,9 +10,14 @@ RUN apt-get update \
 
 COPY package.json package-lock.json ./
 RUN npm ci
+
+FROM dependencies AS development
+COPY . .
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+
+FROM dependencies AS app
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 RUN npm exec -- playwright install --with-deps chromium firefox webkit \
   && chmod -R 755 /ms-playwright
-
 COPY . .
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

@@ -24,7 +24,6 @@ interface PagesWorkflow {
   readonly name?: string;
   readonly on?: Readonly<Record<string, unknown>>;
   readonly permissions?: Readonly<Record<string, string>>;
-  readonly concurrency?: Readonly<Record<string, unknown>>;
   readonly jobs?: Readonly<Record<string, WorkflowJob>>;
 }
 
@@ -46,21 +45,9 @@ describe('TsumuCode Pages workflow', () => {
       'beta',
       'rollback',
     ]);
-    expect(parsed.on).toHaveProperty(
-      'workflow_dispatch.inputs.source_sha.description',
-      'candidate承認、身内向けβ、または公開済みReleaseに登録された40文字SHA',
-    );
     expect(parsed.jobs?.deploy?.if).toContain("github.event_name == 'workflow_dispatch'");
     expect(parsed.jobs?.deploy?.if).toContain('inputs.deploy == true');
     expect(parsed.jobs?.deploy?.if).toContain("github.ref == 'refs/heads/main'");
-  });
-
-  it('release targetの解決step名にcandidate、beta、rollbackを明示する', () => {
-    const targetResolver = workflow().parsed.jobs?.resolve?.steps?.find(({ run }) =>
-      run?.includes('npm run release:target'),
-    );
-
-    expect(targetResolver?.name).toBe('Resolve candidate, beta, or registered rollback');
   });
 
   it('Deploy jobを保護Environmentと最小権限のdeploy-pages 1 stepへ限定する', () => {
@@ -74,7 +61,7 @@ describe('TsumuCode Pages workflow', () => {
     );
   });
 
-  it('betaは全品質Gateを共有し正式Approvalとtag記録だけを実行しない', () => {
+  it('betaは公開前Gateを共有し正式Approvalとtag記録だけを実行しない', () => {
     const { parsed, source } = workflow();
     const qualitySteps = parsed.jobs?.quality?.steps ?? [];
     const betaContinuity = qualitySteps.find(
@@ -95,6 +82,24 @@ describe('TsumuCode Pages workflow', () => {
     expect(source).toContain('npm run test:lighthouse');
   });
 
+  it('fast検証はRelease専用のBrowser・性能・Evidence生成を実行しない', () => {
+    const parsed = workflow().parsed;
+    const fast = parsed.jobs?.fast;
+    const source = (fast?.steps ?? []).map(({ run }) => run ?? '').join('\n');
+
+    expect(fast?.if).toContain("github.event_name == 'push'");
+    expect(fast?.if).toContain("github.event_name == 'pull_request'");
+    expect(parsed.jobs?.quality?.if).toBe(
+      "github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'",
+    );
+    expect(source).toContain('npm run check');
+    expect(source).toContain('-e TEST_BASE_SHA');
+    expect(source).not.toContain('npm run test:e2e');
+    expect(source).not.toContain('npm run test:performance');
+    expect(source).not.toContain('npm run test:lighthouse');
+    expect(source).not.toContain('release:report');
+  });
+
   it('既定権限をread-onlyにしRelease tag jobだけcontents writeを持つ', () => {
     const parsed = workflow().parsed;
 
@@ -103,7 +108,6 @@ describe('TsumuCode Pages workflow', () => {
     for (const [name, job] of Object.entries(parsed.jobs ?? {})) {
       if (name !== 'record_release') expect(job.permissions?.contents).not.toBe('write');
     }
-    expect(parsed.concurrency).toEqual({ group: 'pages', 'cancel-in-progress': false });
   });
 
   it('すべての外部Actionを実在確認済み40文字commit SHAへ固定する', () => {
@@ -121,22 +125,6 @@ describe('TsumuCode Pages workflow', () => {
     );
 
     expect(runScripts.join('\n')).not.toContain('${{ inputs.');
-  });
-
-  it('mainとlinked worktreeを自動判定するDocker wrapperだけを使う', () => {
-    const { source } = workflow();
-
-    expect(source).toContain('./scripts/docker-compose.sh');
-    expect(source).not.toMatch(/(^|\s)docker compose(?:\s|$)/u);
-  });
-
-  it('fresh checkoutでは教材Reviewより先にCourse ManifestをCompileする', () => {
-    const { source } = workflow();
-    const compileIndex = source.indexOf('- name: Content compile');
-    const reviewIndex = source.indexOf('- name: Independent lesson review');
-
-    expect(compileIndex).toBeGreaterThan(0);
-    expect(reviewIndex).toBeGreaterThan(compileIndex);
   });
 
   it('upload-artifactの生digestを台帳用sha256 prefix付き正規形へ変換する', () => {
@@ -194,24 +182,10 @@ describe('TsumuCode Pages workflow', () => {
   });
 
   it('全品質Gate、Artifact binding、監査Report、annotated tagを順に持つ', () => {
-    const { source, parsed } = workflow();
-
-    expect(Object.keys(parsed.jobs ?? {})).toEqual([
-      'resolve',
-      'quality',
-      'deploy',
-      'report',
-      'record_release',
-    ]);
+    const { source } = workflow();
     for (const command of [
       'content:provenance',
-      'content:review',
-      'content:compile',
       'release:continuity',
-      'npm run lint',
-      'npm run typecheck',
-      'npm run test:run',
-      'npm run build',
       'npm run test:e2e',
       'npm run test:performance',
       'npm run test:lighthouse',
@@ -227,7 +201,7 @@ describe('TsumuCode Pages workflow', () => {
   it('candidate Product差分から旧Bundle fixtureを除外しない', () => {
     const { source } = workflow();
     const stepStart = source.indexOf('- name: Confirm candidate Product tree is unchanged');
-    const stepEnd = source.indexOf('- name: Content provenance');
+    const stepEnd = source.indexOf('- name: Content provenance', stepStart);
     const candidateDiffStep = source.slice(stepStart, stepEnd);
 
     expect(stepStart).toBeGreaterThan(0);

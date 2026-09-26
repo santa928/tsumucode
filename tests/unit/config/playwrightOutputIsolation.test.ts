@@ -39,4 +39,20 @@ describe('Playwright output isolation', () => {
     expect(isWithin(performanceConfig.outputDir!, e2eSummary!)).toBe(false);
     expect(isWithin(e2eConfig.outputDir!, performanceSummary!)).toBe(false);
   });
+
+  it('Chromiumは全E2E、FirefoxとWebKitは代表cross-browser smokeだけを実行する', () => {
+    const chromium = e2eConfig.projects?.find((project) => project.name === 'chromium');
+    const firefox = e2eConfig.projects?.find((project) => project.name === 'firefox');
+    const webkit = e2eConfig.projects?.find((project) => project.name === 'webkit');
+    const smokeSpecs = [
+      'initial-preview.spec.ts',
+      'exercise-reset.spec.ts',
+      'editor-input-support.spec.ts',
+      'runtime-security.spec.ts',
+    ];
+
+    expect(chromium?.testMatch).toBeUndefined();
+    expect(firefox?.testMatch).toEqual(smokeSpecs);
+    expect(webkit?.testMatch).toEqual(smokeSpecs);
+  });
 });
