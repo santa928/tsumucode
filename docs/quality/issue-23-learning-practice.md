@@ -45,3 +45,13 @@ Issue #23。既存ガイドを入口として残し、ClosureとHTML/CSS導入�
 最終の関連検証はDocker Composeで `npm run lint`、`npm run test:changed`（84ファイル826件）、production build、CSS inline、learning chunk isolation、配信容量9件が成功。教材集計の旧27演習/420分と旧practice専用検査は、29演習/430分とpredictionを許可する契約へ同期した。上限・セキュリティ期待・snapshotを緩和していない。
 
 Production buildのChromiumでは対象JS Fixture、保存往復、既存HTML/CSS全消去Reset、初回自動Previewの4件が成功。最初の同時指定で対象JS用Fixture filterをHTML/CSSの全Fixtureテストにも渡した1件は一致0で失敗しており、HTML/CSS全Fixtureを検証済みとはしない。追加2演習を含むJS対象の全定義済みFixtureは実行済み。
+
+### 同じURLへ直ちに戻る場合の追加回帰
+
+独立レビュー待ちに、編集直後（debounce保存前）の同一URL再検証で、新Sessionが旧Sessionの保存完了より先に古いDraftを読む問題を実Local画面で再現した。同じDocumentであることも確認。新Sessionの初期化は直前までの初期化と旧Controllerのflushを待つようにした。2回連続の即再表示と従来の保存往復の実Browser E2E 2件、画面/Hook 39件・型・Lintが成功。静止画や教材/採点条件は変えていない。全ページを閉じる操作の同期保存保証を追加したものではない。
+
+### 追加練習の説明表示
+
+構造化された手順があると指示本文を表示しない既存分岐に対し、任意練習だけ説明とルールを開閉可能な欄で表示した。e03はstepの意味と残す名前/呼び出しを説明し、完成した更新行自体は後段ヒントに残す。段落Rendererがコード記法を解釈しないため、この2指示文の不要なバッククォートも除いた。採点条件/必須e01は変更しない。
+
+Docker Chromiumの追加回帰2件（即時同URL再表示、従来保存往復＋説明の可視性/答え先出しなし）成功。1280×800でe02/e03の説明先頭と手順末尾へ到達し、Document横あふれなし。4枚を目視し、説明/エディタ/実行操作の重なりがないことを確認した（[e02先頭](evidence/issue-23/closure-e02-instructions-start.png)・[末尾](evidence/issue-23/closure-e02-instructions-end.png)、[e03先頭](evidence/issue-23/closure-e03-instructions-start.png)・[末尾](evidence/issue-23/closure-e03-instructions-end.png)）。実端末/初心者観察の代替ではない。

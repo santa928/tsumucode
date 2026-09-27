@@ -9,6 +9,20 @@ const LESSON = 'javascript-ch03-l05';
 const BASE = `./#/courses/javascript/lessons/${LESSON}`;
 const titles = ['Closureで得点を10ずつ増やす', '毎回の初期化を直す', '2つの係を別の増分で使う'];
 
+test('編集直後の同一URL再検証は旧Sessionの保存を待って最新下書きを復元する', async ({ page }) => {
+  const location = { lessonId: LESSON, exerciseId: `${LESSON}-e02`, title: titles[1]! };
+  await openEditableJavaScriptExercise(page, location);
+  const starter = await editorText(page);
+  for (const suffix of ['最初の編集', '直後の再編集']) {
+    const source = `${starter}\n// ${suffix}`;
+    await replaceEditorText(page, source);
+    // autosave完了を待たず、同じDocument内でloaderを再検証する。
+    await page.goto(`${BASE}/exercises/${location.exerciseId}`);
+    await expect(page.getByTestId('code-workspace')).toBeVisible();
+    await expect.poll(() => editorText(page)).toBe(source);
+  }
+});
+
 /** 既存保存のうち任意練習で失ってはいけない値だけを読む。 */
 async function preservedGuide(page: Page) {
   const stored = await readStoredProgress(page);
@@ -56,6 +70,17 @@ async function grade(page: Page, n: number, solution: boolean): Promise<void> {
     exerciseId,
     title: titles[n - 1]!,
   });
+  if (n > 1) {
+    const overview = page.locator('details').filter({ hasText: '追加練習の説明とルール' });
+    await expect(overview).toHaveAttribute('open', '');
+    await expect(overview).toContainText('この追加練習は任意です');
+    await expect(overview).toContainText('この問題の確認に使うので残します');
+    if (n === 3) {
+      await expect(overview).toContainText('stepは係を作るときに渡す増分');
+      await expect(overview).not.toContainText('score = score + step');
+      await expect(overview).not.toContainText('score += step');
+    }
+  }
   if (solution) {
     const source = await readFile(
       `content/javascript/chapters/javascript-ch03/lessons/${LESSON}/exercises/${exerciseId}/solution/script.js`,

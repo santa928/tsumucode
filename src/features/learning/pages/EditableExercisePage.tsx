@@ -315,6 +315,13 @@ function EditableSession({
     ],
   );
   const state = useLearningSession(controller);
+  const initializationChain = useRef<
+    | {
+        controller: LearningSessionController;
+        settled: Promise<void>;
+      }
+    | undefined
+  >(undefined);
   // 同じURLのloader再検証でもControllerは交代する。旧Sessionのreadyを引き継がない。
   const [initializedSession, setInitializedSession] = useState<{
     controller: LearningSessionController;
@@ -392,10 +399,17 @@ function EditableSession({
 
   useEffect(() => {
     const abortController = new AbortController();
+    const predecessor = initializationChain.current;
     /** awaitの前後で離脱状態を読み直し、旧処理による通知・UI更新を防ぐ。 */
     const isActive = (): boolean => !abortController.signal.aborted;
-    void (async () => {
+    const settled = (async () => {
       try {
+        // 旧Controllerのdebounce保存を新しいDraft読込より先に完了させる。
+        // 連続再検証でも直前だけでなく、それ以前の保存待ちを引き継ぐ。
+        await predecessor?.settled;
+        if (predecessor !== undefined && predecessor.controller !== controller) {
+          await predecessor.controller.flush();
+        }
         await learningRuntimeServices.ready;
         if (!isActive()) return;
         await controller.initialize();
@@ -409,6 +423,7 @@ function EditableSession({
         setInitializedSession({ controller, state: 'error' });
       }
     })();
+    initializationChain.current = { controller, settled };
     return () => {
       abortController.abort();
     };
@@ -869,6 +884,19 @@ function EditableSession({
               ) : null}
               <h1>{exercise.title}</h1>
             </header>
+            {lesson.completion.kind === 'standard' &&
+            !lesson.completion.requiredExerciseIds.includes(exercise.id) ? (
+              <details open className="tc-exercise-project-brief">
+                <summary>追加練習の説明とルール</summary>
+                <div>
+                  <SlideBlocks
+                    blocks={exercise.instructions}
+                    assets={exercise.assets}
+                    baseUrl={import.meta.env.BASE_URL}
+                  />
+                </div>
+              </details>
+            ) : null}
             {lesson.kind !== 'standard' ? (
               <details className="tc-exercise-project-brief">
                 <summary>制作ブリーフと工程ガイド</summary>
