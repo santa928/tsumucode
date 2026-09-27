@@ -1,6 +1,6 @@
 /** 公開教材payloadの構造、Course内参照、宣言集計、進捗移行chainを検証する。 */
 import { z } from 'zod';
-import { exerciseRequirementIds } from './exerciseRequirementIds';
+import { exerciseReferenceIds, exerciseRequirementIds } from './exerciseRequirementIds';
 import { resolvePublicAsset } from '../../shared/lib/resolvePublicAsset';
 
 export const IdSchema = z
@@ -1591,6 +1591,7 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
   const ruleIds = new Set<string>();
   const explicitRuleGroups = new Map<string, IssuePath>();
   const groupOwnerById = new Map<string, string>();
+  const interactionOwnerById = new Map<string, string>();
   const assetSignatureById = new Map<string, string>();
   const workspaceOwnerById = new Map<string, ProjectWorkspaceOwner | undefined>();
   const ownerByProjectId = new Map<string, ProjectOwner>();
@@ -1916,16 +1917,27 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
           }
 
           const groupModes = new Map<string, 'all' | 'any'>();
+          for (const id of exerciseRequirementIds(exercise)) {
+            if (!id.startsWith('interaction:')) continue;
+            const owner = interactionOwnerById.get(id);
+            if (owner !== undefined && owner !== exercise.id) {
+              addIssue(
+                context,
+                [...exercisePath, 'interactionScenarios'],
+                `Course内の別Exerciseで操作checkpoint IDが重複しています: ${id}`,
+              );
+            }
+            interactionOwnerById.set(id, exercise.id);
+          }
+          for (const id of exerciseReferenceIds(exercise)) currentIds.rule.add(id);
           for (const [ruleIndex, rule] of exercise.validationRules.entries()) {
             const rulePath = [...exercisePath, 'validationRules', ruleIndex] as const;
             const htmlCssRule = HtmlCssValidationRuleDefinitionSchema.safeParse(rule);
             const javaScriptRule = JavaScriptValidationRuleDefinitionSchema.safeParse(rule);
             register('rule', rule.id, [...rulePath, 'id']);
             ruleIds.add(rule.id);
-            currentIds.rule.add(rule.id);
             const requirementId = rule.groupId ?? rule.id;
             localRequirementIds.add(requirementId);
-            currentIds.rule.add(requirementId);
             const requirementRules = localRulesByRequirement.get(requirementId) ?? [];
             requirementRules.push(rule);
             localRulesByRequirement.set(requirementId, requirementRules);

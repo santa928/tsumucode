@@ -23,7 +23,10 @@ import {
 /** 既存導入Lessonをテスト内だけDOM操作付きへ差し替え、分割配信hashも同期する。
  * 新教材の完成証拠ではなく、実製品の採点・保存UIを通す統合fixture。
  */
-async function routeDomLesson(page: Page): Promise<void> {
+async function routeDomLesson(
+  page: Page,
+  capabilityProfile: 'dom' | 'async' | 'project' = 'dom',
+): Promise<void> {
   const root = 'dist/generated/content';
   const lessonPath = 'courses/javascript/lessons/javascript-ch00-l01.json';
   const lesson = LessonManifestSchema.parse(
@@ -37,7 +40,7 @@ async function routeDomLesson(page: Page): Promise<void> {
       exercises: [
         {
           ...original,
-          runtime: { ...original.runtime, capabilityProfile: 'dom' },
+          runtime: { ...original.runtime, capabilityProfile },
           interactionScenarios: [
             {
               id: 'current-target-flow',
@@ -109,6 +112,31 @@ async function routeDomLesson(page: Page): Promise<void> {
       route.fulfill({ status: 200, contentType: 'application/json', body: body! }),
     );
   }
+}
+
+for (const profile of ['async', 'project'] as const) {
+  test(`${profile}の遅延currentTargetコードは実行前に未対応となり採点を保存しない`, async ({
+    page,
+  }) => {
+    await routeDomLesson(page, profile);
+    await openEditableJavaScriptExercise(page);
+    const source =
+      "const button=document.querySelector('#message');button.getRootNode().addEventListener('click',e=>{try{console.log(e.currentTarget);}catch{button.textContent='JavaScriptで文字を変えました';}});setTimeout(()=>button.click(),10);";
+    await replaceEditorText(page, source);
+    await waitForStoredDraftContent(page, source);
+    const before = await readStoredProgress(page);
+    await page.getByRole('button', { name: '判定する', exact: true }).click();
+    await expect(page.getByRole('alert')).toContainText('この環境では未対応');
+    await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled();
+    const after = await readStoredProgress(page);
+    expect(after.courses).toEqual(before.courses);
+    const previous = before.drafts.find(
+      (draft) => draft['exerciseId'] === 'javascript-ch00-l01-e01',
+    )!;
+    const next = after.drafts.find((draft) => draft['exerciseId'] === 'javascript-ch00-l01-e01')!;
+    expect(next['validationHistory']).toEqual(previous['validationHistory']);
+    expect(next['lastPassingSnapshots']).toEqual(previous['lastPassingSnapshots']);
+  });
 }
 
 test('DOM操作の未対応は履歴を保ち、修正・Export/Import・Resetで進捗が整合する', async ({

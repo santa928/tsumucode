@@ -518,8 +518,8 @@ export function assertJavaScriptCapabilityPolicy(
     if (property === 'constructor') {
       reject(node, file, 'constructorを使った動的実行は使えません');
     }
-    if (property === 'currentTarget' && !profile.allowDom)
-      reject(node, file, 'currentTargetは現在のブラウザ実行では使えません', 'unsupported');
+    if (property === 'currentTarget' && profileId !== 'dom')
+      reject(node, file, 'currentTargetは現在のdom演習でだけ使えます', 'unsupported');
     if (property !== undefined && RUNTIME_ESCAPE_MEMBERS.has(property)) {
       reject(node, file, '実行環境へ戻るmemberは使えません');
     }

@@ -6,6 +6,7 @@ import {
   exerciseRequirementIds,
 } from '../../../src/core/content/exerciseRequirementIds';
 import {
+  CourseManifestSchema,
   IdSchema,
   LessonSchema,
   ProgressMigrationStepSchema,
@@ -61,6 +62,76 @@ function domExercise(): Exercise {
 }
 
 describe('Exerciseの進捗ID契約', () => {
+  it('Course内の別Lesson間でも操作checkpointの衝突を拒否する', () => {
+    const course = structuredClone(fixtureCourse);
+    course.runnerId = 'javascript';
+    course.validatorId = 'javascript';
+    const chapter = course.phases[0]!.chapters[0]!;
+    const first = chapter.lessons[0]!;
+    first.exercises = [domExercise()];
+    const exercise = first.exercises[0]!;
+    const normalIds = [
+      first.id,
+      ...first.slides.map((item) => item.id),
+      exercise.id,
+      exercise.workspaceId,
+      ...exercise.hints.map((item) => item.id),
+      ...exercise.validationRules.flatMap((rule) => [
+        rule.id,
+        ...(rule.groupId ? [rule.groupId] : []),
+      ]),
+    ];
+    let source = JSON.stringify(first);
+    for (const id of new Set(normalIds))
+      source = source.replaceAll(JSON.stringify(id), JSON.stringify(`${id}-second`));
+    const second = JSON.parse(source) as typeof first;
+    chapter.lessons.push(second);
+    chapter.estimatedMinutes *= 2;
+    course.estimatedMinutes *= 2;
+    course.expectedTotals = {
+      ...course.expectedTotals,
+      lessons: 2,
+      standardExercises: 2,
+      conceptSlides: 2,
+      estimatedMinutes: 30,
+    };
+    const collision = CourseManifestSchema.safeParse(course);
+    expect(collision.success).toBe(false);
+    if (!collision.success)
+      expect(
+        collision.error.issues.some((issue) => issue.message.includes('操作checkpoint IDが重複')),
+      ).toBe(true);
+    second.exercises[0]!.interactionScenarios![0]!.id = 'other-flow';
+    expect(CourseManifestSchema.safeParse(course).success).toBe(true);
+    expect(() => splitCourseArtifacts(course)).not.toThrow();
+  });
+  it.each(['interaction:answer-flow:answered', 'interaction:answer-flow:answered:exists'])(
+    '正規Courseの移行定義は宣言済み参照 %s を保持・対応付けできる',
+    (id) => {
+      const course = structuredClone(fixtureCourse);
+      course.runnerId = 'javascript';
+      course.validatorId = 'javascript';
+      course.phases[0]!.chapters[0]!.lessons[0]!.exercises = [domExercise()];
+      for (const step of [
+        { action: 'preserve' as const, entity: 'rule' as const, id },
+        { action: 'map-to' as const, entity: 'rule' as const, fromId: 'previous-check', toId: id },
+      ]) {
+        course.progressMigrations = [
+          { fromRevision: 'previous-revision', toRevision: course.revision, steps: [step] },
+        ];
+        expect(CourseManifestSchema.safeParse(course).success).toBe(true);
+        expect(splitCourseArtifacts(course).index.entityIds.rule).toContain(id);
+      }
+      course.progressMigrations = [
+        {
+          fromRevision: 'previous-revision',
+          toRevision: course.revision,
+          steps: [{ action: 'preserve', entity: 'rule', id: 'interaction:answer-flow:unknown' }],
+        },
+      ];
+      expect(CourseManifestSchema.safeParse(course).success).toBe(false);
+    },
+  );
   it('合格はgroupとcheckpointに集約し、履歴参照にはruleとexpectationも残す', () => {
     const exercise = domExercise();
     expect(exerciseRequirementIds(exercise)).toEqual([

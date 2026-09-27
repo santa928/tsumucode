@@ -44,6 +44,20 @@ describe('Node source facts', () => {
 });
 
 describe('analyzeJavaScriptSource', () => {
+  it.each(['async', 'project'] as const)(
+    '遅延currentTargetは%sでは実行前に未対応とする',
+    async (capabilityProfile) => {
+      const source =
+        "const button=document.querySelector('button');button.getRootNode().addEventListener('click',e=>{try{console.log(e.currentTarget);}catch{button.textContent='passed';}});setTimeout(()=>button.click(),10);";
+      expect(
+        await analyzeJavaScriptSource({ ...baseInput, capabilityProfile, source }),
+      ).toMatchObject({
+        status: 'failure',
+        diagnostics: [expect.objectContaining({ kind: 'unsupported' })],
+      });
+    },
+  );
+
   it.each([
     ['const { ownerDocument: doc } = event.target;', 'security'],
     ['const { defaultView: win } = event.target.getRootNode();', 'security'],
