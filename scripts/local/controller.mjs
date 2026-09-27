@@ -111,6 +111,7 @@ async function execute(run) {
       // outputの読取障害も失敗として扱い、未処理rejectionを残さない。
       const outputDone = output.done.catch((error) => {
         errorMessage = error.message;
+        run.reason = 'system-error';
         void cancel(run, 'system-error').catch(() => {
           recoveryNeeded = true;
         });
@@ -121,6 +122,7 @@ async function execute(run) {
         undefined,
         LIMITS.wallMs + 10000,
       );
+      clearTimeout(timeout);
       await outputDone;
       exitCode = waited.StatusCode;
       const inspected = await docker('GET', `/containers/${container.Id}/json`);

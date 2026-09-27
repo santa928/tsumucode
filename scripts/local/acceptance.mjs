@@ -161,7 +161,14 @@ assert.equal(
   (await api(`/api/runs/${cancelled.runId}/cancel`)).value.result.terminationReason,
   'cancelled',
 );
-const overflow = await finish((await start('while(true)console.log("x".repeat(4096));')).runId);
+// 非同期consoleのbufferへ無限に蓄積するとOOMと競合する。同期writeで出力上限だけを検証する。
+const overflow = await finish(
+  (
+    await start(
+      'const fs=require("node:fs"); const line="x".repeat(4096); while(true)fs.writeSync(1,line);',
+    )
+  ).runId,
+);
 assert.equal(overflow.terminationReason, 'output-limit');
 assert.ok(Buffer.byteLength(overflow.stdout + overflow.stderr) <= 65536);
 const binary = await finish((await start('process.stdout.write(Buffer.alloc(65536,255));')).runId);

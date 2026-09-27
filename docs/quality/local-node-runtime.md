@@ -88,6 +88,12 @@ Localの組立てはViteのbuild時aliasで置き換える。通常Pages build�
 
 レビュー中の追加契約確認で、HTTP 200のcancel応答でも結果が `system-error` の場合に停止成功として扱う欠陥を再現した。Local clientは完了状態・run identity・非system-errorを確認してから停止を成功扱いにする。HTTP応答doubleの回帰で修正前失敗→修正後成功を確認した。この回帰は実Docker障害試験の代用ではない。
 
+Proの必須指摘として、Docker wait完了後にlogs応答だけが終了しないと回収処理へ進めない経路を修正した。logs要求から15秒の絶対期限、切断・不完全frame検出、明示close時のPromise失敗で待機を終える。不完全な出力は `system-error` とし、wait完了時点で実行5秒タイマーを解除する。
+
+- `scripts/local/docker-engine.test.mjs` は、終了しないstreamで修正前pending→修正後rejectedと要求解放を確認する通信境界の回帰。
+- `scripts/local/output-fault-acceptance.mjs` は実controllerを使い、Docker HTTPだけをfixtureに置換する。**ホストsocketを渡さず**、専用controller imageを `docker run --rm --network none -v "$PWD/scripts/local/output-fault-acceptance.mjs:/verify.mjs:ro" <controller-image> node /verify.mjs` で起動する。waitは終了・logsは未終了を再現し、20秒未満のsystem-error・DELETE回収・次run成功を確認する。learner実行やEngine障害そのものの証拠とは数えない。
+- 実API再検証では、無限 `console.log` が非同期bufferのOOMを先に起こす競合を検出した。出力上限の試験sourceを同期 `fs.writeSync` に変更して出力の制限を単独で確認し、OOMは専用の実メモリ確保試験で維持した。期待する上限・停止条件は緩和していない。
+
 ## 残る制限と未検証
 
 - Engine本体の停止・再起動、daemon固有のlive-restore挙動、LinuxホストやWindowsホストの実機確認は未実施。macOS Docker Desktop上のLinux arm64で実測した。

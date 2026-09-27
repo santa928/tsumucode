@@ -1,5 +1,6 @@
 import { request } from 'node:http';
 import { Buffer } from 'node:buffer';
+import { setTimeout, clearTimeout } from 'node:timers';
 import { LIMITS, NODE_IMAGE } from './protocol.mjs';
 
 // learnerへ渡す固定bootstrap。ホストのshellやcontrollerでは学習コードを実行しない。
@@ -99,10 +100,19 @@ export function containerConfig(files, owner) {
 export function followOutput(id, onRecord, onLimit) {
   let req;
   let res;
+  let deadline;
+  let rejectOutput;
   let pending = Buffer.alloc(0);
   let total = 0;
   let limited = false;
   const done = new Promise((resolve, reject) => {
+    rejectOutput = reject;
+    // streamへ少量のdataが届き続ける場合も、絶対期限で回収処理へ進める。
+    deadline = setTimeout(() => {
+      reject(new Error('Docker output deadline exceeded'));
+      res?.destroy();
+      req?.destroy();
+    }, LIMITS.wallMs + 10000);
     req = request(
       {
         socketPath: '/var/run/docker.sock',
@@ -137,7 +147,14 @@ export function followOutput(id, onRecord, onLimit) {
             }
           }
         });
-        res.on('end', resolve);
+        res.on('end', () => {
+          if (pending.length > 0) reject(new Error('Truncated Docker output frame'));
+          else resolve();
+        });
+        res.on('aborted', () => reject(new Error('Docker output aborted')));
+        res.on('close', () => {
+          if (!res.complete) reject(new Error('Docker output closed before completion'));
+        });
         res.on('error', reject);
       },
     );
@@ -145,8 +162,9 @@ export function followOutput(id, onRecord, onLimit) {
     req.end();
   });
   return {
-    done,
+    done: done.finally(() => clearTimeout(deadline)),
     close() {
+      rejectOutput(new Error('Docker output cancelled'));
       res?.destroy();
       req?.destroy();
     },

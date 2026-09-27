@@ -24,6 +24,7 @@ HTMLやCSSを初めて学ぶ人を対象にしています。スライドと進�
 ## 必要なもの
 
 - Docker Desktop
+- ローカルNode.js学習はDocker Server API v1.47対応が必要です（実測Engine 28.0.1）。旧APIとの自動交渉は行いません。
 - Docker Compose v2
 - GitHub Pagesへ公開する場合のみGitHub CLIまたはGitHubのWeb画面
 
