@@ -11,6 +11,7 @@ import { WorkshopNotice } from '../../../design-system/components/WorkshopNotice
 import { useEditingCapability } from '../../../shared/device/editingCapability';
 import { LearningDrawer } from '../components/LearningDrawer';
 import { SlideStage } from '../components/SlideStage';
+import { OptionalPracticeLinks } from '../components/OptionalPracticeLinks';
 import { LearningToolRail } from '../layout/LearningToolRail';
 import { LearningViewportShell } from '../layout/LearningViewportShell';
 import { learningRuntimeServices } from '../runtimeServices';
@@ -259,6 +260,8 @@ export function SlidePage() {
             baseUrl={import.meta.env.BASE_URL}
             titleRef={slideTitleRef}
           />
+
+          {!next ? <OptionalPracticeLinks courseId={course.id} lesson={lesson} /> : null}
 
           {!next && exercise && !canEdit ? (
             <StackedCard

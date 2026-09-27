@@ -33,17 +33,22 @@ describe('独自教材本文の完成度', () => {
             ? [block.text]
             : block.type === 'list'
               ? block.items
-              : block.type === 'practice'
-                ? [block.prompt, block.expectedAction]
-                : [],
+              : block.type === 'prediction'
+                ? [block.prompt, block.answer, block.explanation]
+                : block.type === 'practice'
+                  ? [block.prompt, block.expectedAction]
+                  : [],
         )
         .join('');
       expect(prose.length, slide.id).toBeGreaterThanOrEqual(100);
       expect(prose, slide.id).not.toMatch(/TODO|TBD|Lorem|仮文|ここに|Progate/iu);
       expect(prose, slide.id).toMatch(/次|試|確認|見て|書いて/u);
-      const practices = slide.blocks.filter((block) => block.type === 'practice');
+      const practices = slide.blocks.filter(
+        (block) => block.type === 'practice' || block.type === 'prediction',
+      );
       expect(practices, slide.id).toHaveLength(1);
-      expect(practices[0]?.estimatedMinutes, slide.id).toBeLessThanOrEqual(5);
+      if (practices[0]?.type === 'practice')
+        expect(practices[0].estimatedMinutes, slide.id).toBeLessThanOrEqual(5);
     }
   });
 

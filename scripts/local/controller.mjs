@@ -9,6 +9,7 @@ import { setTimeout, clearTimeout } from 'node:timers';
 import {
   API_VERSION,
   EXERCISE_ID,
+  EXERCISE_IDS,
   PROFILE_ID,
   NODE_IMAGE,
   LIMITS,
@@ -261,6 +262,7 @@ async function handle(req, res) {
       value = {
         apiVersion: API_VERSION,
         exerciseId: EXERCISE_ID,
+        exerciseIds: EXERCISE_IDS,
         contentRevision: revision,
         runtimeProfileId: PROFILE_ID,
         engineVersion: process.version,

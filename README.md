@@ -54,7 +54,7 @@ Homeでは、複数のコースをおすすめ順に並べる「学習パス」�
 
 現在公開している「フロントエンド学習パス」にはHTML/CSSコースだけを収録しています。JavaScript、TypeScript、Reactなどのコースは、教材と品質確認が完成してから順次このパスへ追加します。学習パスの直リンクは[`#/paths/frontend`](http://localhost:5173/#/paths/frontend)です。
 
-JavaScriptは、安全な複数ファイル実行基盤とChapter 00〜06の27 Lesson／108 Slide／27 Exercise（420分）を`draft`として品質検証中です。値・条件分岐・Function・Arrayから`map`・`filter`・`reduce`・immutable update、Module・Error・Debugまでを学べます。Home、公開学習パス、スライド閲覧モードにはまだ掲載しません。開発時は[最初のJavaScriptスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s01)、[Chapter 06の最初のスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch06-l01/slides/javascript-ch06-l01-s01)、[Debug演習](http://localhost:5173/#/courses/javascript/lessons/javascript-ch06-l04/exercises/javascript-ch06-l04-e01)の直接URLから確認できます。`draft`は非掲載を意味するだけで、Production Artifactへ含まれる教材を機密情報として扱うものではありません。
+JavaScriptは、安全な複数ファイル実行基盤とChapter 00〜06の27 Lesson／108 Slide／29 Exercise（430分）を`draft`として品質検証中です。値・条件分岐・Function・Arrayから`map`・`filter`・`reduce`・immutable update、Module・Error・Debugまでを学べます。Home、公開学習パス、スライド閲覧モードにはまだ掲載しません。開発時は[最初のJavaScriptスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s01)、[Chapter 06の最初のスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch06-l01/slides/javascript-ch06-l01-s01)、[Debug演習](http://localhost:5173/#/courses/javascript/lessons/javascript-ch06-l04/exercises/javascript-ch06-l04-e01)の直接URLから確認できます。`draft`は非掲載を意味するだけで、Production Artifactへ含まれる教材を機密情報として扱うものではありません。
 
 学習パスの進捗は、この端末に保存された各コースの進捗からその都度計算します。学習パス専用の進捗Recordは作らないため、既存の書き出し・読み込み形式や各コースの下書きはそのまま利用できます。
 
@@ -79,7 +79,7 @@ GitHub Pagesへ公開した後のHTML/CSSコースの直リンクは、[スラ�
 
 HTML/CSSとJavaScript演習は「ブラウザで実行」と表示し、既存の隔離Previewを利用します。実行できたことと教材の合格は別です。変数添字など現在のBrowser実行が扱えない書き方は「この環境では未対応」と案内し、未対応・制限停止・環境障害を採点履歴へ保存しません。編集内容と前回の成功結果は保持します。
 
-ローカルDocker学習版では、既存のClosure演習1件を実Node.jsで実行できます。Python、Next.js、ターミナルは未実装です。Pagesや読書画面からlocalhostを探索しません。実行portと任意DOM portの境界・制限は[Issue #27の設計記録](docs/quality/runtime-execution-boundary.md)に記載しています。
+ローカルDocker学習版では、Closureのガイド練習と任意の追加練習2件を実Node.jsで実行できます。Python、Next.js、ターミナルは未実装です。Pagesや読書画面からlocalhostを探索しません。実行portと任意DOM portの境界・制限は[Issue #27の設計記録](docs/quality/runtime-execution-boundary.md)に記載しています。
 
 ## ローカルNode.js学習
 
@@ -91,7 +91,7 @@ Dockerを起動し、リポジトリ直下で次を実行します。初回は�
 
 [http://127.0.0.1:4173/](http://127.0.0.1:4173/)を開き、「ClosureをNode.jsで実行する」を選びます。`localhost`ではなくこのURLを使ってください。最初のコードを「プレビューを更新」で実行すると0、0と出力します。`score += 0`を`score += 10`に直して再実行すると10、20になります。「判定する」で教材条件を確認します。実行中は「実行を停止」で中止できます。編集だけではNodeは起動せず、下書きは従来どおり自動保存します。
 
-対象は`javascript-ch03-l05-e01`だけです。他のHTML/CSS・JavaScript演習はBrowser実行を維持します。NodeにDOMはありません。終了コード0でも教材条件を満たさなければ合格にはなりません。停止・制限到達・接続障害は不正解履歴へ保存しません。
+対象は`javascript-ch03-l05-e01`（ガイド）、`e02`（初期化の修正）、`e03`（別の増分を持つ2つの係）です。追加練習へはClosureの最終スライドか完了画面から進めます。追加練習をしなくても、ガイド練習によるLesson完了は保持します。古い学習用controllerで「未対応」と出た場合はコードを保存し、学習モードを再起動してください。他のHTML/CSS・JavaScript演習はBrowser実行を維持します。NodeにDOMはありません。終了コード0でも教材条件を満たさなければ合格にはなりません。停止・制限到達・接続障害は不正解履歴へ保存しません。
 
 学習用webと信頼controllerは開発用appから分離しています。**controllerだけがDocker管理socketを持ち、これはホスト管理に相当する強い権限です。** 学習コードは別の使い捨てコンテナへ渡し、非root・read-only・ネットワークなし・host mountなしで実行します。同時1件、5秒、256 MiB、PID 64、出力64 KiBが上限です。第三者の敵対コードを安全に実行する公開サービスではありません。詳細とAPI仕様は[Local Node設計・検証記録](docs/quality/local-node-runtime.md)にあります。
 
@@ -227,3 +227,7 @@ tag ref作成後の通信断などでRunだけが失敗表示になった場合�
 ## 独立制作と権利方針
 
 TsumuCodeは個人・身内向けに制作した非商用の独立学習サイトです。教材・課題・UI・画像資産は独自制作し、他社サービスの名称、ロゴ、キャラクター、教材、画面資産を流用しません。この説明は学習画面の限られた表示領域を消費しないようRepository文書で管理します。
+
+## 予測と任意の追加練習
+
+HTML/CSS導入とClosureの一部スライドには「考えてみよう」があります。「答えと理由を見る」を開く前に結果を予測し、理由を照合します。開閉は演習合格や習得率として保存しません。Closureは既存ガイドに加え、毎回初期化されるコードの修正と、増分が異なる2つの係を使う任意練習を選べます。詳しい範囲と未実施の初心者観察は[パイロット記録](docs/quality/issue-23-learning-practice.md)に記載しています。

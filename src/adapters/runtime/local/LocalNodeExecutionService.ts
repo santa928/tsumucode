@@ -140,16 +140,18 @@ export class LocalNodeExecutionService implements ExecutionService {
       const capability = z
         .object({
           apiVersion: z.literal(1),
-          exerciseId: z.string(),
+          exerciseIds: z.array(z.string().max(160)).max(3).optional(),
           contentRevision: z.string(),
           runtimeProfileId: z.literal('node-closure-v1'),
         })
         .parse(await this.#api('capabilities'));
       if (stale()) return stopped();
-      if (
-        capability.exerciseId !== this.exerciseId ||
-        capability.contentRevision !== this.contentRevision
-      )
+      if (!capability.exerciseIds?.includes(this.exerciseId))
+        return result(
+          'unsupported',
+          'このローカル環境では未対応の演習です。コードを保存して学習モードを再起動してください。採点していません。',
+        );
+      if (capability.contentRevision !== this.contentRevision)
         throw new Error('教材の版が異なります。コードを保存して学習モードを再起動してください。');
       const created = this.#api('runs', {
         apiVersion: 1,

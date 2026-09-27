@@ -4,6 +4,11 @@ import { URL } from 'node:url';
 
 export const API_VERSION = 1;
 export const EXERCISE_ID = 'javascript-ch03-l05-e01';
+export const EXERCISE_IDS = Object.freeze([
+  EXERCISE_ID,
+  'javascript-ch03-l05-e02',
+  'javascript-ch03-l05-e03',
+]);
 export const PROFILE_ID = 'node-closure-v1';
 export const NODE_IMAGE =
   'node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5';
@@ -55,7 +60,7 @@ export function validateRun(value, revision) {
       409,
       '教材またはAPIの版が異なります。コードを保存して再読み込みしてください。',
     );
-  if (value.exerciseId !== EXERCISE_ID || value.runtimeProfileId !== PROFILE_ID)
+  if (!EXERCISE_IDS.includes(value.exerciseId) || value.runtimeProfileId !== PROFILE_ID)
     throw new RequestError(422, 'この環境では未対応の演習です。');
   for (const key of ['runId', 'exerciseSessionId']) {
     if (typeof value[key] !== 'string' || !/^[\w:.-]{1,160}$/u.test(value[key]))

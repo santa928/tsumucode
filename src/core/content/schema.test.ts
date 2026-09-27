@@ -1085,7 +1085,7 @@ describe('CourseManifestSchema kind、順序、集計', () => {
       };
       slide.blocks.push(practice, { ...practice, prompt: 'もう一度確認する' });
     }
-    expectCourseIssue(course, 'Concept Slideは5分以内のMicro-practiceを1件');
+    expectCourseIssue(course, 'Concept SlideはMicro-practiceまたは短い予測を1件');
   });
 
   it('Concept系Slideのconcept欠落を拒否する', () => {

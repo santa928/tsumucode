@@ -149,14 +149,14 @@ lessons:
   - lessonId: javascript-ch03-l05
     authorId: tsumucode-javascript-authoring
     reviewerId: astra-pro-independent-review
-    sourceHash: 3649e5a5fc926c5b0ef7f2801de50ba8b2382afa3b53580ec41f86b8d9a7649c
+    sourceHash: f68de16fa1fb00ab757abc1633fb4eda6305f4b813a1c17cb8d273b4c81745b2
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: PR36独立Proレビュー対象539dc46fe056f1b46dba57a29b1cfc41b0ffd602。前回全4Slide/既存演習照合と今回末尾2行を5行へ置換する指示の確認を合わせ、正確性・整合・未説明語0・現行ガイド設計内の漏洩0・decisionを承認（issuecomment-5856275050）。CodexがDocker Nodeで完成例10 20、指示どおり置換した独立係10/20/10、次の30/20を実行照合し、computeLessonSourceHashでLesson全通常fileを計算。Proの独立実行/hash再計算・3ブラウザ全Fixture再検証・初心者観察を意味しない。Drawer参照/下書き/判定履歴と既存Resetの実Browser回帰はCodexが2件確認。
+    notes: PR38初回92b73f04864805216fa115739e466b70e5ae6044の全Lessonレビューと、b5b91efeaf84bc7977a5d29ee479f85cce4e465bの追加指示/表示/保存順の限定Proレビューで全項目承認。Proは原本tree/sourceHashを独立再計算し計10画像を目視。実例と3演習の実Browser/Local Node・保存往復はCodexのDocker実施記録でありProの再実行ではない。代表誤解と妥当別解の学習用判定で、故意の欺瞞耐性や初心者の実学習効果を証明しない。
   - lessonId: javascript-ch04-l01
     authorId: tsumucode-javascript-authoring
     reviewerId: tsumucode-quality-verification

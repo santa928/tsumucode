@@ -47,6 +47,14 @@ export function measureSlideContent(slide: Slide): SlideContentMeasure {
         textCharacters += characterCount(block.prompt) + characterCount(block.expectedAction);
         practiceBlocks += 1;
         break;
+      case 'prediction':
+        // 閉じた答えも展開後の本文予算に含め、活動は既存上限1件を共有する。
+        textCharacters +=
+          characterCount(block.prompt) +
+          characterCount(block.answer) +
+          characterCount(block.explanation);
+        practiceBlocks += 1;
+        break;
       case 'code':
         codeLines += codeLineCount(block.code);
         break;
