@@ -42,7 +42,7 @@ Cloud同期・アカウント・スマホの本格Editor・PWA・全教材offlin
 - Docker既存browser container、Chromium、dev4192で `reading-mode.spec.ts` 6件と `slide-library.spec.ts` 3件成功。再開/URL優先/旧ID/範囲外/保存拒否/Clipboard拒否/有限先読み/通信断再試行を確認。通常学習の保存済みSnapshotを前後比較し、進捗・下書き・再開位置が同一。Library初期化のIDB openは0、Storage書込は専用キーだけ。
 - 同じ本番buildのpreview4192でも上記9件が6.2秒で成功。開発serverでの結果だけを公開時の証拠にしていない。
 - 390×844、root文字サイズ200%で3Lessonの目次・末尾・URL欄・重複ID・Document横はみ出しなしを確認。コード右端への内部scrollも実測し、画像を目視。文字拡大でヘッダーリンクが右へ出たため、Libraryヘッダーだけ折り返す修正を実施。最初の失敗を成功扱いにしない。修正後9件成功、画像追加後の同対象1件も成功。
-- 証拠画像は [evidence/issue-22](evidence/issue-22)。既存画像比較のbaseline更新や閾値緩和は行っていない。
+- 読書の証拠画像は [evidence/issue-22](evidence/issue-22)。通常Libraryの既存比較画像は、下記の意図した変更10枚だけ同期した。画像比較の閾値は変更していない。
 - Docker Composeで `TEST_BASE_SHA=6f6a42b… npm run check` 成功。教材compile、78Lesson承認/stale 0、Lint、変更関連13ファイル86件、型/build、CSS inline、実行chunk分離が成功。続いて `npx vitest run --config vitest.bundle.config.ts` の既存容量9件成功。依存・閾値・公開Gateは変更なし。最新HEADレビュー・CIはPRへ記載する。
 - 未実施: 物理iPhone/実Safari、実初心者の理解観察、複数端末の実共有、全コース全Browser。Chromiumの390px/文字拡大は実機の代替証明ではない。アプリを閉じた後の全教材offlineは非対象。Storageの保持期間はブラウザ設定に依存する。
 
@@ -53,6 +53,8 @@ PR #39の独立レビューで、短い最終sectionの復元順序と通常Libr
 通常Libraryは追加した読書操作が本文の下にあるため、従来の「最下端で本文末尾が見える」という検証がPC/390/412幅で失敗した。本文末尾・読書操作・Pagerをそれぞれ到達確認する形へ同期し、Document固定・横幅・操作サイズ・目次・次Slide実操作と1px許容を維持した。通常学習Slideの契約は変更していない。
 
 追加修正のDocker検証は `TEST_BASE_SHA=a342aa9553e621a6d5b8cb30fc586a707c0f027b npm run check` で関連4ファイル52件、Lint、型/build、CSS inline、chunk分離が成功。本番previewの読書・通常Library・関連responsive 17件と、選択条件から漏れた有限pilot往復1件を別途実行し、計18件成功した。前段のdev関連5件も成功。全Browser・実機・初心者観察は追加実施していない。公開Gateは統合後に別途実行する。
+
+続けて変更画面の既存Visualだけを確認し、通常Libraryの目次・1枚表示で公開対象6件と任意対象4件が旧期待画像との差分で失敗した。全10組のexpected/actual/diffを目視し、通読リンク追加、本文下の読書操作、読書文脈の「PCで試す」、文字拡大用ヘッダーpaddingに伴う通常サイズ4pxの高さ増加に対応すると確認した。本文・Pagerの重なりや欠落は認めなかった。既存のLibrary画像10枚のみを同じ本番buildのactualへ同期し、Dockerの同対象10件が成功。製品・テストコード・閾値・他画面の画像・初回読書証拠6枚はこの追補で変更していない。
 
 - [x] 受入条件・非対象はREQ-001〜008から削減していない。
 - [x] 保存・公開範囲・失敗時のリスクを専用scope/outline照合/再試行で扱う。
