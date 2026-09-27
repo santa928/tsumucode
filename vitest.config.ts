@@ -13,6 +13,7 @@ export default defineConfig({
       ...configDefaults.exclude,
       '.worktrees/**',
       'tests/e2e/**',
+      'tests/local/**',
       'tests/performance/**/*.spec.ts',
       'tests/performance/bundle-budget.test.ts',
     ],

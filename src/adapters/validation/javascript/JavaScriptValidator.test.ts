@@ -225,6 +225,47 @@ function javascriptInteractionContext(
 }
 
 describe('JavaScriptValidator', () => {
+  it('Local Nodeは偽DOMなしでsourceを採点し、停止・DOM混在・hash違いを判定不能にする', async () => {
+    const validator = new JavaScriptValidator({ analyzerFactory: analyzerDouble });
+    const base = javascriptContext();
+    const context: ValidationContext = {
+      ...base,
+      rules: [javascriptRules()[0]!],
+      snapshots: {},
+      execution: {
+        backend: 'local',
+        engine: 'node',
+        runId: 'node-1',
+        exerciseSessionId: 'session-1',
+        executionRevision: 4,
+        status: 'succeeded',
+        console: [],
+        diagnostics: [],
+        evidence: base.evidence,
+      },
+    };
+    expect(await validator.validate(context)).toMatchObject({
+      status: 'pass',
+      executionRevision: 4,
+    });
+    expect(await validator.validate({ ...context, rules: javascriptRules() })).toMatchObject({
+      status: 'system-error',
+    });
+    expect(
+      await validator.validate({
+        ...context,
+        execution: { ...context.execution!, status: 'stopped' },
+      }),
+    ).toMatchObject({ status: 'system-error' });
+    expect(
+      await validator.validate({
+        ...context,
+        evidence: base.evidence.map((item) =>
+          item.id === 'javascript.source-sha256' ? { ...item, value: '0'.repeat(64) } : item,
+        ),
+      }),
+    ).toMatchObject({ status: 'system-error' });
+  });
   it('型付きSource Factと同一実行のConsoleをANDでpassする', async () => {
     const rules: readonly ValidationRuleDefinition[] = [
       {

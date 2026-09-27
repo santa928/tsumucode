@@ -32,7 +32,17 @@ export default defineConfig(({ mode }) => {
       },
     },
     resolve: {
-      alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
+      alias: {
+        '@/features/learning/localRuntime': fileURLToPath(
+          new URL(
+            env.VITE_LOCAL_LEARNING === '1'
+              ? './src/features/learning/localNodeRuntime.ts'
+              : './src/features/learning/localRuntime.ts',
+            import.meta.url,
+          ),
+        ),
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
+      },
     },
   };
 });
