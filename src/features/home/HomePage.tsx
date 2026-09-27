@@ -253,7 +253,10 @@ export function HomePage() {
       {import.meta.env.VITE_LOCAL_LEARNING !== '1' ? (
         <p className="mt-6 text-workshop-muted">
           Node.jsの実行はDockerを使うローカル学習版で試せます。
-          <a className="underline" href="https://github.com/santa928/tsumucode#ローカルnodejs学習">
+          <a
+            className="inline-flex min-h-11 items-center underline"
+            href="https://github.com/santa928/tsumucode#ローカルnodejs学習"
+          >
             起動手順を見る
           </a>
         </p>
