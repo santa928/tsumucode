@@ -69,6 +69,7 @@ push/PRは教材、Lint、Git差分に関連するtest、Production Buildまで�
 
 - `source_sha`が空、不正、または最新`main`と不一致ならDeploy前に失敗させる。
 - 自動Gateが1件でも失敗したらPages ArtifactをDeployしない。
+- quality失敗時は、存在するPlaywright画像・trace・HTML/JSON reportとSource SHA・検査対象File hashを`failure-diagnostics-<workflow SHA>-<Run ID>-<attempt>`へ7日間保存する。これは診断専用であり、成功時のquality-evidenceや公開条件を代替しない。
 - βModeで正式Release tagや台帳記録が実行された場合はworkflow testで失敗させる。
 - Deploy後のURL確認が失敗した場合、正式公開完了とは報告せず、同じRunの状態とArtifactを調査する。
 - βDeployを正式Releaseとして昇格・再利用しない。正式公開時は正式`candidate`を改めて承認する。

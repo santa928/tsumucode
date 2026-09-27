@@ -238,6 +238,32 @@ jobs:
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
         with:
           path: dist
+      - name: Prepare failure diagnostics
+        if: failure()
+        run: |
+          {
+            git rev-parse HEAD
+            git status --short
+            sha256sum playwright.config.ts tests/e2e/course-fixtures.spec.ts tests/e2e/javascript-errors.spec.ts tests/e2e/visual-regression.spec.ts
+          } > failure-source-identity.txt
+          for directory in playwright-report playwright-performance-report test-results lhci-report; do
+            if [ -d "$directory" ]; then
+              sudo chmod -R a+rX "$directory"
+            fi
+          done
+      - name: Upload failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: failure-diagnostics-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            failure-source-identity.txt
+            playwright-report
+            playwright-performance-report
+            test-results
+            lhci-report
+          if-no-files-found: warn
+          retention-days: 7
 
   deploy:
     if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'

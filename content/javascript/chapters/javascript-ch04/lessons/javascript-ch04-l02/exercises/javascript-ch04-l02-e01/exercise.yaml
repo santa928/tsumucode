@@ -140,7 +140,9 @@ fixtures:
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds: []
   - id: security
-    expectedStatus: code-error
+    # 変数による添字は文法エラーではなくBrowser解析器の未対応。Validatorは採点を停止する。
+    expectedStatus: system-error
+    expectedDiagnosticCodes: [javascript-analyzer-unsupported]
     files:
       - { path: script.js, language: javascript, source: fixtures/security.js, editable: false }
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
