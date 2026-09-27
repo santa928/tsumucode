@@ -404,15 +404,32 @@ async function expectLibraryTargetSizes(page: Page): Promise<void> {
 }
 
 for (const viewport of PATH_VIEWPORTS) {
-  test(`${viewport.name}でHomeのLearningPath主導線を初期画面内へ収める`, async ({ page }) => {
+  test(`${viewport.name}でHomeの今回の学習を初期画面内に示し、Pathにも到達できる`, async ({
+    page,
+  }, testInfo) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await page.goto('./#/');
     await expect(
       page.getByRole('heading', { level: 1, name: '学びたいピースを選ぶ' }),
     ).toBeVisible();
-    const primaryAction = page.locator('[data-path-primary-action]').first();
-    await expect(primaryAction).toBeVisible();
+    const primaryAction = page.getByRole('region', { name: '今回の学習' }).getByRole('link', {
+      name: viewport.width < 1024 ? '解説を読む' : '見出しと背景色を変えてみる',
+      exact: true,
+    });
+    // 初期CTAはスクロール前に全体の収まりとhit targetを検査する。
     await expectReachablePrimaryAction(primaryAction, viewport.width, viewport.height);
+    await page.screenshot({ path: testInfo.outputPath('home-primary.png') });
+
+    // Pathは自由選択の棚として残る。従来の寸法・hit target条件で到達性も保つ。
+    const pathAction = page.locator('[data-path-primary-action]').first();
+    await pathAction.scrollIntoViewIfNeeded();
+    await expectReachablePrimaryAction(pathAction, viewport.width, viewport.height);
+    await page.screenshot({ path: testInfo.outputPath('home-path.png') });
+    await pathAction.click();
+    await expect(page).toHaveURL(/html-css-ch00-l01-s01$/u);
+    await expect(
+      page.getByRole('heading', { name: 'Webページは3つの役割でできている', exact: true }),
+    ).toBeVisible();
   });
 
   test(`${viewport.name}でPathのH1・必須進捗・主要CTAを初期画面内へ収める`, async ({ page }) => {
