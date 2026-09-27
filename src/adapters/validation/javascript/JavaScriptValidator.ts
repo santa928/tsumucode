@@ -38,6 +38,7 @@ interface JavaScriptAnalyzerPort {
 }
 
 export interface JavaScriptValidatorOptions {
+  readonly browserConsole?: boolean;
   readonly analyzerFactory?: () => JavaScriptAnalyzerPort;
   readonly guardIdentifierFactory?: () => string;
 }
@@ -548,9 +549,11 @@ function interactionChecks(
 export class JavaScriptValidator implements ValidatorAdapter {
   readonly #analyzerFactory: () => JavaScriptAnalyzerPort;
   readonly #guardIdentifierFactory: () => string;
+  readonly #browserConsole: boolean;
   readonly #domEngine = new ValidatorRuleEngine();
 
   constructor(options: JavaScriptValidatorOptions = {}) {
+    this.#browserConsole = options.browserConsole === true;
     this.#analyzerFactory = options.analyzerFactory ?? (() => new JavaScriptAnalyzerClient());
     this.#guardIdentifierFactory =
       options.guardIdentifierFactory ??
@@ -597,14 +600,24 @@ export class JavaScriptValidator implements ValidatorAdapter {
     );
     const local = context.execution?.backend === 'local';
     const execution = context.execution;
-    if (local && execution?.status !== 'succeeded' && execution?.status !== 'code-error') {
+    const consoleOnly = local || this.#browserConsole;
+    if (consoleOnly && execution?.status !== 'succeeded' && execution?.status !== 'code-error') {
       return blockedResult(context, 'system-error', [
         ...context.diagnostics,
-        systemDiagnostic('JAVASCRIPT_LOCAL_NOT_GRADABLE', 'Node run is not gradable'),
+        systemDiagnostic(
+          local ? 'JAVASCRIPT_LOCAL_NOT_GRADABLE' : 'JAVASCRIPT_CONSOLE_NOT_GRADABLE',
+          local ? 'Node run is not gradable' : 'Console run is not gradable',
+        ),
       ]);
     }
-    const identity = local
-      ? execution?.engine === 'node' &&
+    const identity = consoleOnly
+      ? execution !== undefined &&
+        (this.#browserConsole
+          ? execution.backend === 'browser' &&
+            execution.engine === 'browser-js' &&
+            runtime.sourceType === 'script' &&
+            runtime.primaryOutput === 'console'
+          : execution.engine === 'node') &&
         execution.runId.length > 0 &&
         context.interactionScenarios.length === 0 &&
         rules.every(
@@ -616,8 +629,10 @@ export class JavaScriptValidator implements ValidatorAdapter {
             executionRevision: execution.executionRevision,
           }
         : systemDiagnostic(
-            'JAVASCRIPT_LOCAL_CONTRACT_INVALID',
-            'Local validation requires console/source rules and Node run identity',
+            local ? 'JAVASCRIPT_LOCAL_CONTRACT_INVALID' : 'JAVASCRIPT_CONSOLE_CONTRACT_INVALID',
+            local
+              ? 'Local validation requires console/source rules and Node run identity'
+              : 'Console validation requires matching engine identity and console/source rules',
           )
       : snapshotIdentity(rules, context.snapshots);
     if (hasCodeError) {

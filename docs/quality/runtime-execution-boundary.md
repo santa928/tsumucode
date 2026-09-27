@@ -2,6 +2,8 @@
 
 設計正本は [#20](https://github.com/santa928/tsumucode/issues/20)、実装範囲は [#27](https://github.com/santa928/tsumucode/issues/27)。2026-09-27の本文・コメントを確認した。
 
+以下は#27時点の記録。後続の実Console経路は[Local Node（#28）](local-node-runtime.md)と[Browser Console（#29）](browser-console-runtime.md)を参照する。#27時点の「変数添字を拒否」「DOM観測を要求」は、#29で選ぶClosureのConsole専用経路には適用しない。その他のDOM経路の制約は維持する。
+
 ## 要件台帳
 
 | ID      | 区分 | 受け入れ条件                                                                                                                                    |

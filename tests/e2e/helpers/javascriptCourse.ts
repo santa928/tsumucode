@@ -38,6 +38,7 @@ export interface JavaScriptExerciseLocation {
   readonly lessonId: string;
   readonly exerciseId: string;
   readonly title: string;
+  readonly consoleOnly?: boolean;
 }
 
 const JAVASCRIPT_CH00_EXERCISE: JavaScriptExerciseLocation = {
@@ -86,7 +87,12 @@ export async function openEditableJavaScriptExercise(
     });
     await expect(page.getByTestId('code-workspace')).toBeVisible();
     await expect(page.getByRole('button', { name: '判定する' })).toBeEnabled({ timeout: 15_000 });
-    await expect(page.getByTestId('runtime-preview-frame').locator('iframe')).toBeAttached();
+    if (exercise.consoleOnly === true) {
+      await expect(page.getByRole('region', { name: 'Console出力' })).toBeVisible();
+      await expect(page.getByTestId('runtime-preview-frame').locator('iframe')).toHaveCount(0);
+    } else {
+      await expect(page.getByTestId('runtime-preview-frame').locator('iframe')).toBeAttached();
+    }
   } catch (error: unknown) {
     const body = await page
       .locator('body')

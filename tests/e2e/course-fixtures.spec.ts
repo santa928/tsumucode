@@ -9,10 +9,12 @@ import type { AssetRef, ExerciseFile } from '../../src/core/content/types';
 import type { RunnerAdapter } from '../../src/core/runtime/contracts';
 import type { ValidationResult } from '../../src/core/validation/contracts';
 import type { ValidatorAdapter } from '../../src/core/validation/contracts';
+import type * as ConsoleRuntime from '../../src/features/learning/browserConsoleRuntime';
 import { observeRuntimePage, readRuntimeErrors } from './helpers/openRuntimeFixture';
 import {
   loadJavaScriptRunnerModulePath,
   loadJavaScriptValidatorModulePath,
+  loadBrowserConsoleModulePath,
 } from './helpers/javascriptRunnerModule';
 import { testBasePath, testServerUrl } from './helpers/testBasePath';
 
@@ -34,6 +36,7 @@ interface BrowserFixtureEvaluationInput {
   readonly runnerExportName: string;
   readonly validatorExportName: string;
   readonly languageId: string;
+  readonly consoleModulePath?: string;
 }
 
 type BrowserFixtureRuntimeInput = Omit<BrowserFixtureEvaluationInput, 'fixtureCase'>;
@@ -110,6 +113,49 @@ async function evaluateCase(
         validatorExportName,
         validatorModulePath,
       } = input;
+      // 製品と同じ適用条件でConsoleの実行器・採点器を一組にする。
+      if (input.consoleModulePath !== undefined) {
+        const runtime = (await import(
+          /* @vite-ignore */ input.consoleModulePath
+        )) as typeof ConsoleRuntime;
+        const selected = runtime.selectBrowserConsoleRuntime(exercise, [exercise]);
+        if (selected !== undefined) {
+          const executionService = selected.createExecution();
+          const validator = selected.createValidator();
+          try {
+            const execution = await executionService.execute({
+              runId: crypto.randomUUID(),
+              exerciseSessionId: crypto.randomUUID(),
+              executionRevision: 1,
+              backend: 'browser',
+              engine: 'browser-js',
+              languageId: 'javascript',
+              requiredCapabilities: ['console'],
+              files,
+              options: { runtime: exercise.runtime },
+            });
+            return await validator.validate({
+              exerciseId: exercise.id,
+              rules: exercise.validationRules,
+              ...(exercise.runtime === undefined ? {} : { runtime: exercise.runtime }),
+              files:
+                input.fixtureCase.faultInjection === 'stale-source-evidence'
+                  ? { ...files, 'script.js': `${files['script.js'] ?? ''}\n` }
+                  : files,
+              snapshots: {},
+              diagnostics: execution.diagnostics,
+              evidence: execution.evidence,
+              console: execution.console,
+              execution,
+              interactionScenarios: [],
+              interactionCheckpoints: {},
+              now: new Date().toISOString(),
+            });
+          } finally {
+            await executionService.dispose();
+          }
+        }
+      }
       const runnerModule = (await import(/* @vite-ignore */ runnerModulePath)) as Record<
         string,
         unknown
@@ -255,13 +301,15 @@ const HTML_FIXTURE_RUNTIME: BrowserFixtureRuntimeInput = {
 
 /** Workerを含むJavaScript runtimeをpreviewと同じoriginのbuild chunkへ固定する。 */
 async function loadJavaScriptFixtureRuntime(): Promise<BrowserFixtureRuntimeInput> {
-  const [runnerModulePath, validatorModulePath] = await Promise.all([
+  const [runnerModulePath, validatorModulePath, consoleModulePath] = await Promise.all([
     loadJavaScriptRunnerModulePath(),
     loadJavaScriptValidatorModulePath(),
+    loadBrowserConsoleModulePath(),
   ]);
   return {
     runnerModulePath,
     validatorModulePath,
+    consoleModulePath,
     runnerExportName: 'JavaScriptRunnerAdapter',
     validatorExportName: 'JavaScriptValidator',
     languageId: 'javascript',

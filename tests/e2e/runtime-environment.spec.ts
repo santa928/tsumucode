@@ -48,6 +48,7 @@ test('実JS Runnerで編集→Reset→再編集→Preview→判定を再読込�
     lessonId: 'javascript-ch03-l05',
     exerciseId: closureId,
     title: 'Closureで得点を10ずつ増やす',
+    consoleOnly: true,
   });
   const solution = await readFile(`${closureRoot}/solution/script.js`, 'utf8');
   const starter = await readFile(`${closureRoot}/starter/script.js`, 'utf8');
@@ -64,7 +65,6 @@ test('実JS Runnerで編集→Reset→再編集→Preview→判定を再読込�
   await waitForStoredDraftContent(page, solution);
   await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
   await expect(page.getByText('実行できました（合否は「判定する」で確認）')).toBeVisible();
-  await page.getByRole('tab', { name: 'Console', exact: true }).click();
   const output = page.getByRole('region', { name: 'Console出力' });
   await expect(output).toContainText('10');
   await expect(output).toContainText('20');
@@ -79,11 +79,11 @@ test('Closureの実行・合否・未対応・制限停止・下書き復旧を�
     lessonId: 'javascript-ch03-l05',
     exerciseId: closureId,
     title: 'Closureで得点を10ずつ増やす',
+    consoleOnly: true,
   });
-  await expect(page.getByLabel('実行環境')).toHaveText('ブラウザで実行');
+  await expect(page.getByLabel('実行環境')).toHaveText('ブラウザで実行（Console専用）');
   await expect(page.getByText('実行できました（合否は「判定する」で確認）')).toBeVisible();
   // 成功終了でもStarterは教材要件を満たさない。
-  await page.getByRole('tab', { name: 'Console', exact: true }).click();
   await page.getByRole('button', { name: '判定する', exact: true }).click();
   await expect(
     page.getByRole('dialog', { name: '判定結果' }).getByRole('heading', { name: 'あと一歩' }),
@@ -100,7 +100,23 @@ test('Closureの実行・合否・未対応・制限停止・下書き復旧を�
   await page.getByRole('button', { name: '閉じる', exact: true }).click();
   const previous = await closureDraft(page);
 
-  const unsupported = `${solution}\nconst items = [1]; const i = 0; console.log(items[i]);`;
+  const supported = `${solution}\nconst items = [10,20]; const i = 1; console.log(items[i]);\nconst scores = { alice: 10 }; const key = 'alice'; console.log(scores[key]);\nnew Promise(resolve => resolve(30)).then(console.log);`;
+  await replaceEditorText(page, supported);
+  await waitForStoredDraftContent(page, supported);
+  await expect(page.getByRole('region', { name: 'Console出力' }).locator('code')).toHaveText([
+    '10',
+    '20',
+    '20',
+    '10',
+    '30',
+  ]);
+  await expect(page.getByText('実行できました（合否は「判定する」で確認）')).toBeVisible();
+  expect((await closureDraft(page))?.['validationHistory']).toEqual(
+    previous?.['validationHistory'],
+  );
+  await page.screenshot({ path: testInfo.outputPath('closure-console-supported.png') });
+
+  const unsupported = `${solution}\nfetch('/not-provided');`;
   await replaceEditorText(page, unsupported);
   await waitForStoredDraftContent(page, unsupported);
   await expect(
@@ -108,7 +124,7 @@ test('Closureの実行・合否・未対応・制限停止・下書き復旧を�
   ).toBeVisible();
   await page.getByRole('button', { name: '判定する', exact: true }).click();
   await expect(
-    page.getByRole('alert').filter({ hasText: 'この環境では未対応' }).first(),
+    page.getByRole('alert').filter({ hasText: /この環境では.*未対応/u }).first(),
   ).toBeVisible();
   await expect(page.getByRole('dialog', { name: '判定結果' })).toHaveCount(0);
   await expect(page.getByRole('region', { name: 'Console出力' })).toContainText(

@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises';
-import { testServerUrl } from './testBasePath';
+import { testBasePath } from './testBasePath';
 
 /** build済みVite manifestから同一originのdynamic entryを解決する。 */
 async function loadJavaScriptModulePath(sourcePath: string): Promise<string> {
@@ -10,7 +10,7 @@ async function loadJavaScriptModulePath(sourcePath: string): Promise<string> {
   if (typeof file !== 'string') {
     throw new Error(`JavaScript entryがVite manifestにありません: ${sourcePath}`);
   }
-  return new URL(file, testServerUrl(4173)).href;
+  return `${testBasePath()}${file}`;
 }
 
 /** build済みVite manifestから同一originのJavaScript Runner entryを解決する。 */
@@ -21,4 +21,9 @@ export function loadJavaScriptRunnerModulePath(): Promise<string> {
 /** build済みVite manifestから同一originのJavaScript Validator entryを解決する。 */
 export function loadJavaScriptValidatorModulePath(): Promise<string> {
   return loadJavaScriptModulePath('src/adapters/validation/javascript/index.ts');
+}
+
+/** 製品と同じConsole専用の実行/採点factory entryを解決する。 */
+export function loadBrowserConsoleModulePath(): Promise<string> {
+  return loadJavaScriptModulePath('src/features/learning/browserConsoleRuntime.ts');
 }
