@@ -77,6 +77,27 @@ export function SlideBlocks({
         }
 
         switch (block.type) {
+          case 'prediction':
+            return (
+              <section
+                key={`${key}-${block.prompt}-${block.answer}-${block.explanation}`}
+                aria-label="結果を予測する"
+                className="rounded-workshop-md border-2 border-workshop-learning bg-workshop-raised p-5"
+              >
+                <h2 className="text-lg font-black">考えてみよう</h2>
+                <p className="mt-2 leading-7">{block.prompt}</p>
+                <details className="mt-3">
+                  <summary className="min-h-11 cursor-pointer py-3 font-bold">
+                    答えと理由を見る
+                  </summary>
+                  <p className="font-bold">{block.answer}</p>
+                  <p className="mt-2 leading-7">{block.explanation}</p>
+                  <p className="mt-2 text-sm text-workshop-muted">
+                    自分で確かめる問題です。開閉は演習の合格や進捗に反映しません。
+                  </p>
+                </details>
+              </section>
+            );
           case 'heading':
             return block.level === 2 ? (
               <h2

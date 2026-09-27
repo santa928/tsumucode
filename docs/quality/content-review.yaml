@@ -6,14 +6,14 @@ lessons:
   - lessonId: html-css-ch00-l01
     authorId: tsumucode-content-authoring
     reviewerId: astra-pro-independent-review
-    sourceHash: e2406352265bc7118f0003eb62c5ab963a3d0fa6fc8987af45facbf7ef3615a1
+    sourceHash: b0571ebc4ae9d3c73996d8e6973541ac78531607fb4f2f48b9438d78787f5dc6
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: PR36独立Proレビュー対象539dc46fe056f1b46dba57a29b1cfc41b0ffd602。前回全4Slide/既存演習照合と今回Preview初出説明の修正確認を合わせ、正確性・整合・未説明語0・現行ガイド設計内の漏洩0・decisionを承認（issuecomment-5856275050）。CodexがDocker Node/Chromiumで教材例のHTML本文と背景rgb(255,250,240)を実行照合し、computeLessonSourceHashでLesson全通常fileを計算。Proの独立実行/hash再計算・3ブラウザ全Fixture再検証・初心者観察を意味しない。新候補の正式Release bindingは未承認のためdraft。
+    notes: PR38独立Proレビュー対象92b73f04864805216fa115739e466b70e5ae6044。全4Slideと既存演習、予測の問い/答え/理由を照合し全項目承認。Proが教材原本のtree/hashとPC/390px画像を独立確認。実Browser操作と教材例実行はCodexのDocker記録であり、Pro自身の実行・初心者観察ではない。正式Release bindingはdraftのまま。
   - lessonId: html-css-ch00-l02
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification

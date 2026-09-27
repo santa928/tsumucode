@@ -7,10 +7,14 @@ import { ActionLink } from '../../../design-system/components/ActionLink';
 import { PieceProgress } from '../../../design-system/components/PieceProgress';
 import { StackedCard } from '../../../design-system/components/StackedCard';
 import { WorkshopNotice } from '../../../design-system/components/WorkshopNotice';
+import { OptionalPracticeLinks } from '../components/OptionalPracticeLinks';
 
 /** Lessonの振り返りと次の学習ピースへの導線を表示する。 */
 export function CompletionPage() {
   const { course, lesson, exercise } = useLoaderData<typeof completionLoader>();
+  const optional =
+    lesson.completion.kind === 'standard' &&
+    !lesson.completion.requiredExerciseIds.includes(exercise.id);
   const nextLesson =
     lesson.nextLessonId === undefined ? undefined : findLesson(course, lesson.nextLessonId);
   return (
@@ -28,17 +32,24 @@ export function CompletionPage() {
         <p aria-hidden="true" className="text-5xl">
           ✓
         </p>
-        <h1 className="mt-3 text-3xl font-black md:text-5xl">ピースがはまりました</h1>
+        <h1 className="mt-3 text-3xl font-black md:text-5xl">
+          {optional ? '追加練習を確かめました' : 'ピースがはまりました'}
+        </h1>
         <PieceProgress
           className="mx-auto mt-6 max-w-lg text-left"
           completed={1}
           total={1}
-          label="レッスンの完成"
+          label={optional ? '追加練習の完了' : 'レッスンの完成'}
         />
         <WorkshopNotice tone="complete" title="今回できたこと" className="mt-7 text-left">
           <p className="text-lg leading-8">{lesson.reflection}</p>
           <p className="mt-2">{exercise.title}の完了をこの端末の進捗へ保存しました。</p>
         </WorkshopNotice>
+        <OptionalPracticeLinks
+          courseId={course.id}
+          lesson={lesson}
+          currentExerciseId={exercise.id}
+        />
         <div className="mt-7 flex flex-wrap justify-center gap-3">
           {nextLesson !== undefined ? (
             <>

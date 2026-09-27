@@ -102,3 +102,7 @@ Proの必須指摘として、Docker wait完了後にlogs応答だけが終了�
 - Local/Pagesの自動同期なし。同じID・JSON形式でもOrigin別の保存領域であり、明示Import/Exportが必要。
 - 全Browser×全Courseの新マトリクス、初心者本人の試用、物理端末確認は実施していない。新SHAの全公開Gateはβ公開時に行う。
 - 独立PRレビューとPR/main CIは後続。これらの未完を実装担当自身の合格判定で置き換えない。
+
+## Issue #23の有限対象拡張
+
+Closure `javascript-ch03-l05-e01`に、任意練習`e02`/`e03`を追加する。生成側・API入力・能力応答を3IDへ揃える。`exerciseIds`がない旧controllerや対象外のIDは未対応・再起動案内として扱い、不正解履歴へ保存しない。旧client用`exerciseId`はe01のまま残す。既存の教材版照合、固定profile、Docker隔離・上限・停止・回収処理は変更しない。追加練習の実行証拠は[パイロット記録](issue-23-learning-practice.md)へ記載する。

@@ -23,7 +23,14 @@ test('実行入力は固定教材・版・file集合に限定する', () => {
     executionRevision: 0,
     files: { 'script.js': 'console.log(10)', 'index.html': '', 'styles.css': '' },
   };
-  assert.equal(validateRun(input, 'r1'), input);
+  for (const exerciseId of [
+    'javascript-ch03-l05-e01',
+    'javascript-ch03-l05-e02',
+    'javascript-ch03-l05-e03',
+  ]) {
+    const exerciseInput = { ...input, exerciseId };
+    assert.equal(validateRun(exerciseInput, 'r1'), exerciseInput);
+  }
   for (const mutation of [
     { command: 'sh' },
     { image: 'other' },

@@ -21,7 +21,7 @@ function loadChapter03(): Promise<LoadedChapterPackage> {
 }
 
 describe('javascript-ch03', () => {
-  it('Function・Scope・Closureを5 Lesson／20 Slide／5 Exercise／75分で固定する', async () => {
+  it('Function・Scope・Closureを5 Lesson／20 Slide／7 Exercise／85分で固定する', async () => {
     await assertChapterContract({
       chapterId: 'javascript-ch03',
       lessonIds: LESSON_IDS,
@@ -31,8 +31,12 @@ describe('javascript-ch03', () => {
         `${lessonId}-s03`,
         `${lessonId}-s04`,
       ]),
-      standardExerciseIds: LESSON_IDS.map((lessonId) => `${lessonId}-e01`),
-      estimatedMinutes: 75,
+      standardExerciseIds: [
+        ...LESSON_IDS.map((lessonId) => `${lessonId}-e01`),
+        'javascript-ch03-l05-e02',
+        'javascript-ch03-l05-e03',
+      ],
+      estimatedMinutes: 85,
     });
   });
 
@@ -49,12 +53,16 @@ describe('javascript-ch03', () => {
     ]);
   });
 
-  it('各Lessonを4 Slideから1 Exerciseへ接続する', async () => {
+  it('各Lessonのガイド練習とClosureの任意2課題を接続する', async () => {
     const loaded = await loadChapter03();
 
     for (const lesson of loaded.lessons) {
       expect(lesson.slideSources, `${lesson.id}: Slide数`).toHaveLength(4);
-      expect(lesson.exerciseSources, `${lesson.id}: Exercise数`).toHaveLength(1);
+      expect(lesson.exerciseSources, `${lesson.id}: Exercise数`).toHaveLength(
+        lesson.id === 'javascript-ch03-l05' ? 3 : 1,
+      );
+      if (lesson.completion.kind !== 'standard') throw new Error('標準Lessonではありません');
+      expect(lesson.completion.requiredExerciseIds).toEqual([`${lesson.id}-e01`]);
     }
   });
 
@@ -102,6 +110,7 @@ describe('javascript-ch03', () => {
       requiredConceptIds: ['answer-format-function'],
     });
     expectLessonMastery(loaded, 'javascript-ch03-l05', {
+      exerciseId: 'javascript-ch03-l05-e01',
       beforeExercise: {
         'closure-memory': 'read',
         'outer-inner-function': 'read',
@@ -113,6 +122,18 @@ describe('javascript-ch03', () => {
     });
     await expectChapterConceptCoverage('javascript-ch03', LESSON_IDS, 'content/javascript');
   }, 60_000);
+
+  it('任意の修正・応用も既習のClosureだけで始められる', async () => {
+    const loaded = await loadChapter03();
+    for (const exerciseId of ['javascript-ch03-l05-e02', 'javascript-ch03-l05-e03']) {
+      expectLessonMastery(loaded, 'javascript-ch03-l05', {
+        exerciseId,
+        beforeExercise: { 'score-closure': 'transform' },
+        exerciseLevel: 'transform',
+        requiredConceptIds: ['score-closure'],
+      });
+    }
+  });
 
   it('各Exerciseを3段階Hint・Solution・5境界Fixture以上・SourceとConsoleのAND判定で固定する', async () => {
     const loaded = await loadChapter03();

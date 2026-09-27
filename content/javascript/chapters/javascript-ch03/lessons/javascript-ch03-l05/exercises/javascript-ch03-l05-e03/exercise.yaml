@@ -1,0 +1,439 @@
+id: javascript-ch03-l05-e03
+kind: standard
+workspaceId: javascript-ch03-l05-e03
+countsTowardStandardExerciseTotal: true
+title: 2つの係を別の増分で使う
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: score-closure
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: use-independent-steps
+    file: script.js
+    target: createScoreCounterの得点更新
+    starterAnchor: score += 10;
+    change: 受け取った増分で、それぞれの係の得点を増やす
+    observe: 2、5、4、10、6の順にConsoleへ表示される
+    requiresConceptIds:
+      - score-closure
+    validationRuleIds:
+      - javascript-ch03-l05-e03-r01
+      - javascript-ch03-l05-e03-r02
+      - javascript-ch03-l05-e03-r03
+      - javascript-ch03-l05-e03-r04
+      - javascript-ch03-l05-e03-r05
+      - javascript-ch03-l05-e03-r06
+      - javascript-ch03-l05-e03-r07
+      - javascript-ch03-l05-e03-r08
+      - javascript-ch03-l05-e03-r09
+files:
+  - path: script.js
+    language: javascript
+    source: starter/script.js
+    editable: true
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: starter/styles.css
+    editable: false
+solutionFiles:
+  - path: script.js
+    language: javascript
+    source: solution/script.js
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: solution/styles.css
+    editable: false
+validationRules:
+  - id: javascript-ch03-l05-e03-r01
+    groupId: javascript-ch03-l05-e03-check-1
+    label: scoreを得点係を作る関数の中に置く
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: binding
+        name: score
+        declarationKind: let
+        scopeDepth: 1
+    feedback:
+      target: script.jsの得点係
+      expected: scoreを得点係を作る関数の中に置く
+      nextAction: 変数を用意するタイミングと、得点係を呼ぶタイミングを分けて考えます。
+    hintId: javascript-ch03-l05-e03-h02
+    relatedSlideId: javascript-ch03-l05-s03
+  - id: javascript-ch03-l05-e03-r02
+    groupId: javascript-ch03-l05-e03-check-2
+    label: 内側の関数が外側のscoreを覚える
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: closure
+        capturedName: score
+    feedback:
+      target: script.jsの得点係
+      expected: 内側の関数が外側のscoreを覚える
+      nextAction: 毎回作り直す値ではなく、前回の値を使い続ける場所を確認します。
+    hintId: javascript-ch03-l05-e03-h02
+    relatedSlideId: javascript-ch03-l05-s03
+  - id: javascript-ch03-l05-e03-r03
+    groupId: javascript-ch03-l05-e03-update
+    label: scoreを加算して更新する
+    required: true
+    group: any
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: assignment
+        name: score
+        operator: +=
+    feedback:
+      target: script.jsの得点係
+      expected: scoreを加算して更新する
+      nextAction: 加える前のscoreと増分を使って更新します。+=でも、=と+でも構いません。
+    hintId: javascript-ch03-l05-e03-h02
+    relatedSlideId: javascript-ch03-l05-s03
+  - id: javascript-ch03-l05-e03-r04
+    groupId: javascript-ch03-l05-e03-update
+    label: scoreを加算して代入する
+    required: true
+    group: any
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: assignment
+        name: score
+        operator: =
+    feedback:
+      target: script.jsの得点係
+      expected: scoreを加算して代入する
+      nextAction: 加える前のscoreと増分を使って更新します。+=でも、=と+でも構いません。
+    hintId: javascript-ch03-l05-e03-h02
+    relatedSlideId: javascript-ch03-l05-s03
+  - id: javascript-ch03-l05-e03-r05
+    groupId: javascript-ch03-l05-e03-check-5
+    label: 得点係が受け取ったstepを覚える
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: closure
+        capturedName: step
+    feedback:
+      target: script.jsの得点係
+      expected: 得点係が受け取ったstepを覚える
+      nextAction: 2と5を直接書き分けず、外側の関数へ渡された増分を使います。
+    hintId: javascript-ch03-l05-e03-h02
+    relatedSlideId: javascript-ch03-l05-s03
+  - id: javascript-ch03-l05-e03-r06
+    groupId: javascript-ch03-l05-e03-check-6
+    label: 用意したcreateScoreCounterの呼び出しを残す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: call
+        callee: createScoreCounter
+      minimumCount: 2
+    feedback:
+      target: script.jsの得点係
+      expected: 用意したcreateScoreCounterの呼び出しを残す
+      nextAction: 末尾の得点係を作る行を残して動作を比べます。
+    hintId: javascript-ch03-l05-e03-h02
+    relatedSlideId: javascript-ch03-l05-s03
+  - id: javascript-ch03-l05-e03-r07
+    groupId: javascript-ch03-l05-e03-check-7
+    label: aを3回呼んで値を得る
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: call
+        callee: a
+      minimumCount: 3
+    feedback:
+      target: script.jsの得点係
+      expected: aを3回呼んで値を得る
+      nextAction: Consoleへ数値を直接書かず、用意したa()の呼び出しを残します。
+    hintId: javascript-ch03-l05-e03-h02
+    relatedSlideId: javascript-ch03-l05-s03
+  - id: javascript-ch03-l05-e03-r08
+    groupId: javascript-ch03-l05-e03-check-8
+    label: bを2回呼んで値を得る
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: call
+        callee: b
+      minimumCount: 2
+    feedback:
+      target: script.jsの得点係
+      expected: bを2回呼んで値を得る
+      nextAction: Consoleへ数値を直接書かず、用意したb()の呼び出しを残します。
+    hintId: javascript-ch03-l05-e03-h02
+    relatedSlideId: javascript-ch03-l05-s03
+  - id: javascript-ch03-l05-e03-r09
+    groupId: javascript-ch03-l05-e03-check-9
+    label: 2、5、4、10、6の順に表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-console
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - level: log
+          text: '2'
+        - level: log
+          text: '5'
+        - level: log
+          text: '4'
+        - level: log
+          text: '10'
+        - level: log
+          text: '6'
+    feedback:
+      target: Console
+      expected: 2、5、4、10、6の順に表示する
+      nextAction: 呼ぶ係ごとに、前の得点とその係の増分を確かめます。
+    hintId: javascript-ch03-l05-e03-h02
+    relatedSlideId: javascript-ch03-l05-s03
+hints:
+  - id: javascript-ch03-l05-e03-h01
+    level: 1
+    title: 係ごとの増分を比べる
+    text: aを作るときは2、bを作るときは5を渡しています。いまはどちらも10ずつ増える理由を調べます。
+    relatedSlideId: javascript-ch03-l05-s03
+  - id: javascript-ch03-l05-e03-h02
+    level: 2
+    title: 外側で受け取った値を見る
+    text: stepはcreateScoreCounterが受け取る値です。内側の関数でも使えます。
+    relatedSlideId: javascript-ch03-l05-s02
+  - id: javascript-ch03-l05-e03-h03
+    level: 3
+    title: 更新する量を変える
+    text: score += 10;の10をstepへ変えます。score = score + step;でも同じ更新ができます。
+    relatedSlideId: javascript-ch03-l05-s02
+relatedSlideIds:
+  - javascript-ch03-l05-s02
+  - javascript-ch03-l05-s03
+  - javascript-ch03-l05-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: pass
+    expectedStatus: pass
+    files:
+      - path: script.js
+        language: javascript
+        source: fixtures/pass.js
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: assignment-arrow-pass
+    expectedStatus: pass
+    files:
+      - path: script.js
+        language: javascript
+        source: fixtures/assignment-arrow-pass.js
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: reset-every-call
+    expectedStatus: incomplete
+    files:
+      - path: script.js
+        language: javascript
+        source: fixtures/reset-every-call.js
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch03-l05-e03-r01
+      - javascript-ch03-l05-e03-r02
+      - javascript-ch03-l05-e03-r09
+  - id: shared-global
+    expectedStatus: incomplete
+    files:
+      - path: script.js
+        language: javascript
+        source: fixtures/shared-global.js
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch03-l05-e03-r01
+      - javascript-ch03-l05-e03-r09
+  - id: fixed-return
+    expectedStatus: incomplete
+    files:
+      - path: script.js
+        language: javascript
+        source: fixtures/fixed-return.js
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch03-l05-e03-r09
+  - id: output-only
+    expectedStatus: incomplete
+    files:
+      - path: script.js
+        language: javascript
+        source: fixtures/output-only.js
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch03-l05-e03-r01
+      - javascript-ch03-l05-e03-r02
+      - javascript-ch03-l05-e03-r03
+      - javascript-ch03-l05-e03-r04
+      - javascript-ch03-l05-e03-r05
+      - javascript-ch03-l05-e03-r06
+      - javascript-ch03-l05-e03-r07
+      - javascript-ch03-l05-e03-r08
+  - id: kept-function-fixed-output
+    expectedStatus: incomplete
+    files:
+      - path: script.js
+        language: javascript
+        source: fixtures/kept-function-fixed-output.js
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch03-l05-e03-r07
+      - javascript-ch03-l05-e03-r08
+  - id: syntax-error
+    expectedStatus: code-error
+    files:
+      - path: script.js
+        language: javascript
+        source: fixtures/syntax-error.js
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+    expectedFeedbackRuleIds: []

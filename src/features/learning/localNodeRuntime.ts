@@ -3,17 +3,21 @@ import { analyzeNodeSourceFacts } from '../../adapters/runtime/javascript/analyz
 import { JavaScriptValidator } from '../../adapters/validation/javascript/JavaScriptValidator';
 import type { LocalLearningRuntime } from './localRuntime';
 
-const EXERCISE_ID = 'javascript-ch03-l05-e01';
+const EXERCISE_IDS = new Set([
+  'javascript-ch03-l05-e01',
+  'javascript-ch03-l05-e02',
+  'javascript-ch03-l05-e03',
+]);
 
 /** 専用Local buildだけが持つ対象演習の組立て。API接続は明示実行時まで行わない。 */
 export const localRuntime: LocalLearningRuntime = {
   createExecution(exercise, revision) {
-    return exercise.id === EXERCISE_ID
+    return EXERCISE_IDS.has(exercise.id)
       ? new LocalNodeExecutionService(exercise.id, revision)
       : undefined;
   },
   createValidator(exercise) {
-    if (exercise.id !== EXERCISE_ID) return undefined;
+    if (!EXERCISE_IDS.has(exercise.id)) return undefined;
     return new JavaScriptValidator({
       analyzerFactory: () => ({
         async analyze(input) {

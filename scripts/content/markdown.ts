@@ -19,7 +19,7 @@ const ORDERED_LIST_PATTERN = /^(\d+)\.\s+(.+)$/u;
 const UNSUPPORTED_INLINE_EMPHASIS_PATTERN = /(?:\*\*[^*\n]+\*\*|__[^_\n]+__)/u;
 
 type PlainRecord = Record<string, unknown>;
-type DirectiveName = 'practice' | 'callout';
+type DirectiveName = 'practice' | 'callout' | 'prediction';
 
 export interface ParsedSlideMarkdown {
   readonly frontmatter: unknown;
@@ -173,6 +173,20 @@ function parsePracticeDirective(source: string): SlideBlock {
   return { type: 'practice', prompt, expectedAction, estimatedMinutes };
 }
 
+/** 予測の静的な問い・答え・理由だけを受理し、実行設定を持ち込まない。 */
+function parsePredictionDirective(source: string): SlideBlock {
+  const value = parseSafeYaml(source, 'prediction');
+  if (!isPlainRecord(value) || !hasExactKeys(value, ['prompt', 'answer', 'explanation'])) {
+    throw new Error('predictionの指定が不正です。');
+  }
+  const prompt = readNonEmptyText(value.prompt);
+  const answer = readNonEmptyText(value.answer);
+  const explanation = readNonEmptyText(value.explanation);
+  if (prompt === undefined || answer === undefined || explanation === undefined)
+    throw new Error('predictionの指定が不正です。');
+  return { type: 'prediction', prompt, answer, explanation };
+}
+
 /** callout YAMLをexact schemaで検証してSlideBlockへ変換する。 */
 function parseCalloutDirective(source: string): SlideBlock {
   const value = parseSafeYaml(source, 'callout');
@@ -217,7 +231,11 @@ function parseDirective(
   }
   const yamlSource = yamlLines.join('\n');
   const block =
-    name === 'practice' ? parsePracticeDirective(yamlSource) : parseCalloutDirective(yamlSource);
+    name === 'practice'
+      ? parsePracticeDirective(yamlSource)
+      : name === 'prediction'
+        ? parsePredictionDirective(yamlSource)
+        : parseCalloutDirective(yamlSource);
   return { block, nextIndex: cursor + 1 };
 }
 
@@ -357,8 +375,9 @@ export function parseRestrictedMarkdown(source: string): SlideBlock[] {
       continue;
     }
 
-    if (line === ':::practice' || line === ':::callout') {
-      const name: DirectiveName = line === ':::practice' ? 'practice' : 'callout';
+    if (line === ':::practice' || line === ':::callout' || line === ':::prediction') {
+      const name: DirectiveName =
+        line === ':::practice' ? 'practice' : line === ':::prediction' ? 'prediction' : 'callout';
       const parsed = parseDirective(lines, index, name);
       blocks.push(parsed.block);
       index = parsed.nextIndex;

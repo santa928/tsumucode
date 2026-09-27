@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import type { AssetRef, SlideBlock } from '../../../core/content/types';
 import { SlideBlocks } from './SlideBlocks';
@@ -35,6 +35,30 @@ const assets: AssetRef[] = [
 ];
 
 describe('SlideBlocks', () => {
+  it('予測の答えは開くまで伏せ、別問題へ開いた状態を持ち越さない', () => {
+    const prediction = {
+      type: 'prediction' as const,
+      prompt: '次の得点は？',
+      answer: '30',
+      explanation: '20へ10を加えるため。',
+    };
+    const { container, rerender } = render(
+      <SlideBlocks blocks={[prediction]} assets={[]} baseUrl="/" />,
+    );
+    expect(container.querySelector('details')).not.toHaveAttribute('open');
+    fireEvent.click(screen.getByText('答えと理由を見る'));
+    expect(container.querySelector('details')).toHaveAttribute('open');
+    expect(screen.getByText('20へ10を加えるため。')).toBeVisible();
+    rerender(
+      <SlideBlocks
+        blocks={[{ ...prediction, prompt: '別の係なら？', answer: '10' }]}
+        assets={[]}
+        baseUrl="/"
+      />,
+    );
+    expect(container.querySelector('details')).not.toHaveAttribute('open');
+  });
+
   it('許可された全Blockを意味に合うHTML要素へ写像する', () => {
     const { container } = render(
       <SlideBlocks blocks={blocks} assets={assets} baseUrl="/repository-name/" />,
