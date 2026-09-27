@@ -45,6 +45,47 @@ describe('Node source facts', () => {
 
 describe('analyzeJavaScriptSource', () => {
   it.each([
+    ['const { ownerDocument: doc } = event.target;', 'security'],
+    ['const { defaultView: win } = event.target.getRootNode();', 'security'],
+    ['const { "defaultView": win } = event.target.getRootNode();', 'security'],
+    ['const { ["defaultView"]: win } = event.target.getRootNode();', 'security'],
+    ['const { target: { ownerDocument: doc } } = event;', 'security'],
+    ['let win; ({ defaultView: win } = node);', 'security'],
+    ['function read({ defaultView: win = null }) { return win; }', 'security'],
+    ['try { throw node; } catch ({ defaultView: win }) { console.log(win); }', 'security'],
+    ['const { getOwnPropertyDescriptor: getter } = Object;', 'security'],
+    ['const key = "textContent"; const { [key]: text } = event.target;', 'unsupported'],
+  ])('分割代入によるproperty取得にも既存member境界を適用する: %s', async (source, kind) => {
+    const result = await analyzeJavaScriptSource({
+      ...baseInput,
+      capabilityProfile: 'dom',
+      source,
+    });
+    expect(result).toMatchObject({
+      status: 'failure',
+      diagnostics: [expect.objectContaining({ kind })],
+    });
+  });
+
+  it('安全な分割代入・別名・既定値は維持する', async () => {
+    const source =
+      'const item = { score: 10, textContent: "safe" }; const { score: points = 0, textContent: defaultView } = item; console.log(points, defaultView);';
+    expect(
+      await analyzeJavaScriptSource({ ...baseInput, capabilityProfile: 'dom', source }),
+    ).toMatchObject({ status: 'success', diagnostics: [] });
+  });
+
+  it.each([
+    'event.currentTarget',
+    '(() => { const { currentTarget: item } = event; return item; })()',
+  ])('DOM profileでは保護getterを通るcurrentTargetを許可する: %s', async (access) => {
+    const source = `document.querySelector('button').addEventListener('click', event => console.log(${access}.textContent));`;
+    expect(
+      await analyzeJavaScriptSource({ ...baseInput, capabilityProfile: 'dom', source }),
+    ).toMatchObject({ status: 'success', diagnostics: [] });
+  });
+
+  it.each([
     'const items = [1]; const i = 0; console.log(items[i]);',
     'new Promise((resolve) => resolve(1));',
     'document.querySelector("button").currentTarget;',

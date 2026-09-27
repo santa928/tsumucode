@@ -93,7 +93,6 @@ const RUNTIME_ESCAPE_MEMBERS = new Set([
   '__proto__',
   'contentDocument',
   'contentWindow',
-  'currentTarget',
   'defaultView',
   'ownerDocument',
   'opener',
@@ -418,22 +417,24 @@ function isStaticString(value: unknown): boolean {
   );
 }
 
-/** Literalまたは非computed IdentifierからMember名を得る。 */
+/** Member式・分割代入キーのLiteralまたは非computed Identifierから名前を得る。 */
 function memberName(node: AstNode): string | undefined {
-  if (node.type !== 'MemberExpression') return undefined;
-  if (node.computed === false) return identifierName(node.property);
-  if (typeof node.property !== 'object' || node.property === null) return undefined;
-  const property = node.property as Readonly<Record<string, unknown>>;
+  if (node.type !== 'MemberExpression' && node.type !== 'Property') return undefined;
+  const key = node.type === 'Property' ? node.key : node.property;
+  if (node.computed === false && identifierName(key) !== undefined) return identifierName(key);
+  if (typeof key !== 'object' || key === null) return undefined;
+  const property = key as Readonly<Record<string, unknown>>;
   return property.type === 'Literal' && typeof property.value === 'string'
     ? property.value
     : undefined;
 }
 
-/** computed memberは静的文字列または非負の整数Literalだけを許可する。 */
+/** 通常member・分割代入のcomputed keyは静的文字列または非負整数だけを許可する。 */
 function hasSafeComputedProperty(node: AstNode): boolean {
-  if (node.type !== 'MemberExpression' || node.computed !== true) return true;
-  if (typeof node.property !== 'object' || node.property === null) return false;
-  const property = node.property as Readonly<Record<string, unknown>>;
+  if (node.computed !== true) return true;
+  const key = node.type === 'Property' ? node.key : node.property;
+  if (typeof key !== 'object' || key === null) return false;
+  const property = key as Readonly<Record<string, unknown>>;
   if (property.type !== 'Literal') return false;
   return (
     typeof property.value === 'string' ||
@@ -457,6 +458,98 @@ export function assertJavaScriptCapabilityPolicy(
   profileId: JavaScriptCapabilityProfileId = 'core',
 ): void {
   const profile = JAVASCRIPT_CAPABILITY_PROFILES[profileId];
+  /** 通常memberと分割代入のproperty読取りへ、同じ能力境界を適用する。 */
+  const inspectMember = (node: Node, parent?: Node): void => {
+    const current = ast(node);
+    const root = identifierName(current.object);
+    const property = memberName(current);
+    if (!hasSafeComputedProperty(current)) {
+      reject(
+        node,
+        file,
+        '変数や式によるcomputed property accessは安全なPreviewでは使えません',
+        'unsupported',
+      );
+    }
+    if (
+      root === 'Object' &&
+      (property === undefined || !SAFE_OBJECT_STATIC_MEMBERS.has(property))
+    ) {
+      reject(node, file, `Object.${property ?? 'unknown'}はreflection防止のため使えません`);
+    }
+    if (property !== undefined && REFLECTION_MEMBERS.has(property)) {
+      reject(node, file, `${property}を使ったObject reflectionは使えません`);
+    }
+    if (property !== undefined && DYNAMIC_CODE_MEMBERS.has(property)) {
+      reject(node, file, `${property}を使った動的実行は使えません`);
+    }
+    if (property !== undefined && BOOTSTRAP_SECRET_MEMBERS.has(property)) {
+      reject(node, file, `${property}はPreviewのbootstrap情報へ触れるため使えません`);
+    }
+    if (property !== undefined && EVENT_HANDLER_MEMBERS.has(property)) {
+      reject(node, file, `${property}は未管理のEvent handlerになるため使えません`);
+    }
+    if (property !== undefined && ASYNC_IDENTIFIERS.has(property) && !profile.allowAsync) {
+      reject(node, file, `${property}はasync演習でだけ使えます`, 'unsupported');
+    }
+    if (property !== undefined && UNSUPPORTED_ASYNC_MEMBERS.has(property)) {
+      reject(node, file, `${property}は回収できない非同期処理のため使えません`);
+    }
+    if ((root === 'document' || root === 'navigator') && current.computed === true) {
+      reject(node, file, `${root}のcomputed property accessは使えません`);
+    }
+    if (root === 'document') {
+      if (property === 'cookie') reject(node, file, 'document.cookieは許可されていないmemberです');
+      const allowedDocumentMembers = profile.allowDom
+        ? DOM_DOCUMENT_MEMBERS
+        : CORE_DOCUMENT_MEMBERS;
+      if (property === undefined || !allowedDocumentMembers.has(property)) {
+        reject(node, file, `document.${property ?? 'unknown'}は許可されていないmemberです`);
+      }
+    }
+    if (root === 'navigator') {
+      if (property === 'sendBeacon') reject(node, file, '外部通信を行う機能は使えません');
+      if (property === 'serviceWorker') reject(node, file, 'Service Workerは使えません');
+      reject(node, file, `navigator.${property ?? 'unknown'}は許可されていません`);
+    }
+    if (property !== undefined && NETWORK_IDENTIFIERS.has(property)) {
+      reject(node, file, '外部通信を行う機能は使えません');
+    }
+    if (property === 'constructor') {
+      reject(node, file, 'constructorを使った動的実行は使えません');
+    }
+    if (property === 'currentTarget' && !profile.allowDom)
+      reject(node, file, 'currentTargetは現在のブラウザ実行では使えません', 'unsupported');
+    if (property !== undefined && RUNTIME_ESCAPE_MEMBERS.has(property)) {
+      reject(node, file, '実行環境へ戻るmemberは使えません');
+    }
+    if (property !== undefined && HTML_INSERTION_MEMBERS.has(property)) {
+      reject(node, file, '文字列によるHTML挿入は使えません');
+    }
+    const directAttributeCall =
+      (property === 'setAttribute' || property === 'setAttributeNS') &&
+      parent?.type === 'CallExpression' &&
+      ast(parent).callee === node;
+    if (
+      property !== undefined &&
+      DOM_ONLY_MEMBERS.has(property) &&
+      !profile.allowDom &&
+      !directAttributeCall
+    ) {
+      reject(node, file, `${property}はDOM演習でだけ使えます`, 'unsupported');
+    }
+    if (property === 'serviceWorker') reject(node, file, 'Service Workerは使えません');
+    if (property !== undefined && NAVIGATION_MEMBERS.has(property)) {
+      reject(node, file, '画面遷移を行うmemberは使えません');
+    }
+    if (property !== undefined && RESOURCE_MEMBERS.has(property)) {
+      reject(node, file, '外部resourceへつながるURL memberは使えません');
+    }
+    if (property === 'submit' || property === 'requestSubmit') {
+      reject(node, file, 'form送信は使えません');
+    }
+    if (property === 'download') reject(node, file, 'downloadは使えません');
+  };
   fullAncestor(program, (node: Node, _state: unknown, ancestors: Node[]) => {
     const current = ast(node);
     const parent = ancestors.at(-2);
@@ -517,96 +610,11 @@ export function assertJavaScriptCapabilityPolicy(
       }
     }
 
-    if (node.type === 'MemberExpression') {
-      const root = identifierName(current.object);
-      const property = memberName(current);
-      if (!hasSafeComputedProperty(current)) {
-        reject(
-          node,
-          file,
-          '変数や式によるcomputed property accessは安全なPreviewでは使えません',
-          'unsupported',
-        );
+    if (node.type === 'MemberExpression') inspectMember(node, parent);
+    if (node.type === 'ObjectPattern' && Array.isArray(current.properties)) {
+      for (const property of current.properties) {
+        if (isNode(property) && property.type === 'Property') inspectMember(property);
       }
-      if (
-        root === 'Object' &&
-        (property === undefined || !SAFE_OBJECT_STATIC_MEMBERS.has(property))
-      ) {
-        reject(node, file, `Object.${property ?? 'unknown'}はreflection防止のため使えません`);
-      }
-      if (property !== undefined && REFLECTION_MEMBERS.has(property)) {
-        reject(node, file, `${property}を使ったObject reflectionは使えません`);
-      }
-      if (property !== undefined && DYNAMIC_CODE_MEMBERS.has(property)) {
-        reject(node, file, `${property}を使った動的実行は使えません`);
-      }
-      if (property !== undefined && BOOTSTRAP_SECRET_MEMBERS.has(property)) {
-        reject(node, file, `${property}はPreviewのbootstrap情報へ触れるため使えません`);
-      }
-      if (property !== undefined && EVENT_HANDLER_MEMBERS.has(property)) {
-        reject(node, file, `${property}は未管理のEvent handlerになるため使えません`);
-      }
-      if (property !== undefined && ASYNC_IDENTIFIERS.has(property) && !profile.allowAsync) {
-        reject(node, file, `${property}はasync演習でだけ使えます`, 'unsupported');
-      }
-      if (property !== undefined && UNSUPPORTED_ASYNC_MEMBERS.has(property)) {
-        reject(node, file, `${property}は回収できない非同期処理のため使えません`);
-      }
-      if ((root === 'document' || root === 'navigator') && current.computed === true) {
-        reject(node, file, `${root}のcomputed property accessは使えません`);
-      }
-      if (root === 'document') {
-        if (property === 'cookie')
-          reject(node, file, 'document.cookieは許可されていないmemberです');
-        const allowedDocumentMembers = profile.allowDom
-          ? DOM_DOCUMENT_MEMBERS
-          : CORE_DOCUMENT_MEMBERS;
-        if (property === undefined || !allowedDocumentMembers.has(property)) {
-          reject(node, file, `document.${property ?? 'unknown'}は許可されていないmemberです`);
-        }
-      }
-      if (root === 'navigator') {
-        if (property === 'sendBeacon') reject(node, file, '外部通信を行う機能は使えません');
-        if (property === 'serviceWorker') reject(node, file, 'Service Workerは使えません');
-        reject(node, file, `navigator.${property ?? 'unknown'}は許可されていません`);
-      }
-      if (property !== undefined && NETWORK_IDENTIFIERS.has(property)) {
-        reject(node, file, '外部通信を行う機能は使えません');
-      }
-      if (property === 'constructor') {
-        reject(node, file, 'constructorを使った動的実行は使えません');
-      }
-      if (property === 'currentTarget')
-        reject(node, file, 'currentTargetは現在のブラウザ実行では使えません', 'unsupported');
-      if (property !== undefined && RUNTIME_ESCAPE_MEMBERS.has(property)) {
-        reject(node, file, '実行環境へ戻るmemberは使えません');
-      }
-      if (property !== undefined && HTML_INSERTION_MEMBERS.has(property)) {
-        reject(node, file, '文字列によるHTML挿入は使えません');
-      }
-      const directAttributeCall =
-        (property === 'setAttribute' || property === 'setAttributeNS') &&
-        parent?.type === 'CallExpression' &&
-        ast(parent).callee === node;
-      if (
-        property !== undefined &&
-        DOM_ONLY_MEMBERS.has(property) &&
-        !profile.allowDom &&
-        !directAttributeCall
-      ) {
-        reject(node, file, `${property}はDOM演習でだけ使えます`, 'unsupported');
-      }
-      if (property === 'serviceWorker') reject(node, file, 'Service Workerは使えません');
-      if (property !== undefined && NAVIGATION_MEMBERS.has(property)) {
-        reject(node, file, '画面遷移を行うmemberは使えません');
-      }
-      if (property !== undefined && RESOURCE_MEMBERS.has(property)) {
-        reject(node, file, '外部resourceへつながるURL memberは使えません');
-      }
-      if (property === 'submit' || property === 'requestSubmit') {
-        reject(node, file, 'form送信は使えません');
-      }
-      if (property === 'download') reject(node, file, 'downloadは使えません');
     }
 
     if (node.type === 'CallExpression') {

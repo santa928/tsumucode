@@ -7,6 +7,7 @@ const CROSS_BROWSER_SMOKE_SPECS = [
   'editor-input-support.spec.ts',
   'runtime-security.spec.ts',
   'browser-console-runtime.spec.ts',
+  'browser-dom-runtime.spec.ts',
 ] as const;
 
 /** 任意のGitHub Pages subpathへpreviewとVite serverを揃えた実ブラウザ設定を作る。 */

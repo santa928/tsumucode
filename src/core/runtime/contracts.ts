@@ -79,6 +79,7 @@ export interface InteractionResult {
   readonly frameGeneration: number;
   readonly requestId: string;
   readonly console: readonly RunnerConsoleRecord[];
+  readonly diagnostics?: readonly RunnerDiagnostic[];
 }
 
 /** Contentのexpectation 1件を観測事実へ評価した結果。 */

@@ -50,6 +50,7 @@ describe('Playwright output isolation', () => {
       'editor-input-support.spec.ts',
       'runtime-security.spec.ts',
       'browser-console-runtime.spec.ts',
+      'browser-dom-runtime.spec.ts',
     ];
 
     expect(chromium?.testMatch).toBeUndefined();

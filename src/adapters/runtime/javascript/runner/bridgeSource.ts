@@ -4,6 +4,7 @@ import type { RunnerConsoleLevel, RunnerConsoleRecord } from '../../../../core/r
 import { CONSOLE_LIMITS, createConsoleFormatter, type ConsoleLimits } from './consoleFormatter';
 import type { PreparedJavaScriptModuleGraph } from './materializeModuleGraph';
 import { JAVASCRIPT_PROTOCOL_VERSION } from './protocol';
+import { installCurrentTargetGuard, type CurrentTargetFailure } from './currentTargetGuard';
 
 export interface CreateJavaScriptExecutionSourceInput {
   readonly exerciseSessionId: string;
@@ -276,6 +277,7 @@ function createRuntimeState(
     target: Document,
     focusSignalType?: string,
   ) => (action: unknown) => TrustedInteractionExecutionResult,
+  installCurrentTarget: (target: Document, onUnsupported: () => void) => boolean,
 ) {
   'use strict';
   const version = config.protocolVersion;
@@ -316,6 +318,11 @@ function createRuntimeState(
   let budgetExhausted = false;
   let timerLimitExceeded = false;
   let runtimeError: { readonly name: string; readonly message: string } | null = null;
+  let currentTargetFailure: CurrentTargetFailure = null;
+  const currentTargetReady = installCurrentTarget(document, () => {
+    if (currentTargetFailure === null) currentTargetFailure = 'unsupported';
+  });
+  if (!currentTargetReady) currentTargetFailure = 'setup-error';
   const consoleRecords: RunnerConsoleRecord[] = [];
   const textEncoder = new TextEncoder();
   const encodeConsoleText = textEncoder.encode.bind(textEncoder);
@@ -703,7 +710,7 @@ function createRuntimeState(
         'javascript.interaction-complete',
         message.requestId,
         message.oneTimeToken,
-        { error: result.error, console: copyConsoleRecords() },
+        { error: result.error, console: copyConsoleRecords(), currentTargetFailure },
         true,
       );
       return;
@@ -734,14 +741,15 @@ function createRuntimeState(
       resetCallbackBudget();
       learnerExecutionDepth += 1;
       try {
-        callback();
+        if (currentTargetReady) callback();
       } catch (error: unknown) {
         runtimeError = errorRecord(error);
       } finally {
         learnerExecutionDepth = Math.max(0, learnerExecutionDepth - 1);
       }
       send('javascript.execution-complete', 'execution', config.bootstrapToken, {
-        executed: runtimeError === null,
+        executed: currentTargetFailure === null && runtimeError === null,
+        currentTargetFailure,
         budgetExhausted,
         timerLimitExceeded,
         runtimeError,
@@ -752,7 +760,7 @@ function createRuntimeState(
       resetCallbackBudget();
       learnerExecutionDepth += 1;
       void Promise.resolve()
-        .then(loader)
+        .then(() => (currentTargetReady ? loader() : undefined))
         .catch((error: unknown) => {
           runtimeError = errorRecord(error);
         })
@@ -764,7 +772,8 @@ function createRuntimeState(
             // runtime globalの後片付け失敗は学習コードの成否へ混ぜない。
           }
           send('javascript.execution-complete', 'execution', config.bootstrapToken, {
-            executed: runtimeError === null,
+            executed: currentTargetFailure === null && runtimeError === null,
+            currentTargetFailure,
             budgetExhausted,
             timerLimitExceeded,
             runtimeError,
@@ -802,7 +811,7 @@ export function createJavaScriptExecutionSource(
   return [
     '(function(){"use strict";',
     `(${scrubJavaScriptBootstrapSecrets.toString()})(document);`,
-    `const ${input.guardIdentifier}=(${createRuntimeState.toString()})(${config},(${createConsoleFormatter.toString()})(${consoleLimits}),${consoleLimits},(${createTrustedInteractionExecutor.toString()}));`,
+    `const ${input.guardIdentifier}=(${createRuntimeState.toString()})(${config},(${createConsoleFormatter.toString()})(${consoleLimits}),${consoleLimits},(${createTrustedInteractionExecutor.toString()}),(${installCurrentTargetGuard.toString()}));`,
     `(${lockDownJavaScriptDynamicCodeCapabilities.toString()})(globalThis);`,
     `${input.guardIdentifier}.run(function(){"use strict";`,
     input.instrumentedCode,
@@ -839,7 +848,7 @@ export function createJavaScriptModuleExecutionSource(
   return [
     '(function(){"use strict";',
     `(${scrubJavaScriptBootstrapSecrets.toString()})(document);`,
-    `const runtime=(${createRuntimeState.toString()})(${config},(${createConsoleFormatter.toString()})(${consoleLimits}),${consoleLimits},(${createTrustedInteractionExecutor.toString()}));`,
+    `const runtime=(${createRuntimeState.toString()})(${config},(${createConsoleFormatter.toString()})(${consoleLimits}),${consoleLimits},(${createTrustedInteractionExecutor.toString()}),(${installCurrentTargetGuard.toString()}));`,
     `Object.defineProperty(globalThis,${runtimeKey},{configurable:true,enumerable:false,writable:false,value:runtime});`,
     `const plan=${modulePlan};`,
     'const NativeBlob=Blob;',

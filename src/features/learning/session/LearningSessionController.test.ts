@@ -698,6 +698,65 @@ describe('LearningSessionController', () => {
     expect(controller.getLastValidationDraft(1)).toBeUndefined();
   });
 
+  it.each(['unsupported', 'system'] as const)(
+    'Interactionの%s診断は採点前に止めて保存しない',
+    async (kind) => {
+      const current = exercise({
+        interactionScenarios: [
+          {
+            id: 'answer-flow',
+            label: '回答する',
+            actions: [{ id: 'answer', kind: 'click', selector: '#answer' }],
+            checkpoints: [
+              {
+                id: 'result-ready',
+                afterActionId: 'answer',
+                expectations: [
+                  { id: 'result-exists', kind: 'selector-exists', selector: '#result' },
+                ],
+              },
+            ],
+          },
+        ],
+      });
+      const runtime = runnerHarness();
+      runtime.interact.mockImplementationOnce(async (request) => ({
+        exerciseSessionId: request.exerciseSessionId,
+        executionRevision: request.executionRevision,
+        frameGeneration: request.frameGeneration,
+        requestId: request.requestId,
+        console: [],
+        diagnostics: [
+          {
+            code: 'current-target-test',
+            kind,
+            severity: 'error',
+            message: 'guard',
+            learnerMessage: '環境未対応',
+          },
+        ],
+      }));
+      const validation = validatorHarness();
+      const controller = new LearningSessionController(
+        controllerInput({
+          exercise: current,
+          runner: runtime.runner,
+          validator: validation.validator,
+        }),
+      );
+      controller.edit('index.html', '<main>Sourceは保持する</main>');
+      await expect(controller.validateNow()).rejects.toThrow();
+      expect(validation.validate).not.toHaveBeenCalled();
+      expect(controller.getSnapshot().executionResult?.status).toBe(
+        kind === 'system' ? 'system-error' : 'unsupported',
+      );
+      expect(controller.getSnapshot().files['index.html']).toBe('<main>Sourceは保持する</main>');
+      expect(controller.getSnapshot().validationHistory).toEqual([]);
+      expect(controller.getLastValidationBatch()).toEqual([]);
+      expect(controller.getLastValidationDraft(1)).toBeUndefined();
+    },
+  );
+
   it('未達checkpointだけを50ms間隔で再観測し、期待値成立時に750msを待たず確定する', async () => {
     const current = exercise({
       interactionScenarios: [
