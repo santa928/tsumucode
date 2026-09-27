@@ -112,9 +112,16 @@ export function createAppRouter(
       ...libraryRoute(options, 'shell'),
       errorElement: <ContentErrorPage />,
       children: [
+        { path: 'pilot', ...libraryRoute(options, 'pilotIndex') },
+        { path: 'pilot/:courseId/lessons/:lessonId/read', ...libraryRoute(options, 'pilotRead') },
+        {
+          path: 'pilot/:courseId/lessons/:lessonId/slides/:slideId',
+          ...libraryRoute(options, 'pilotSlide'),
+        },
         {
           path: ':courseId',
           children: [
+            { path: 'lessons/:lessonId/read', ...libraryRoute(options, 'read') },
             {
               index: true,
               HydrateFallback: ContentLoadingPage,

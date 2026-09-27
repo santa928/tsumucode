@@ -163,3 +163,17 @@ it('未知言語は文字を失わず表示し、隣接しただけの画像を�
   expect(container.querySelector('.tc-slide-example')).toBeNull();
   expect(container.querySelector('.tc-code-token-syntax')).toBeNull();
 });
+
+it('読書ではPC用の指示と区別し、複数Slideを並べてもPracticeの見出しIDが衝突しない', () => {
+  const practice = blocks.filter((block) => block.type === 'practice');
+  const { container } = render(
+    <>
+      <SlideBlocks blocks={practice} assets={[]} baseUrl="/" reading />
+      <SlideBlocks blocks={practice} assets={[]} baseUrl="/" reading />
+    </>,
+  );
+  expect(screen.getAllByRole('region', { name: 'PCで試す（約2分）' })).toHaveLength(2);
+  expect(screen.queryByText('今すぐ試す（約2分）')).not.toBeInTheDocument();
+  const ids = [...container.querySelectorAll('[id]')].map((node) => node.id);
+  expect(new Set(ids).size).toBe(ids.length);
+});

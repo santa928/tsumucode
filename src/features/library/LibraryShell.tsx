@@ -42,7 +42,9 @@ function LibraryCatalogHeader() {
 /** 目次とViewerだけを進捗Runtimeから分離して収容する閲覧専用Shell。 */
 export function LibraryShell() {
   const location = useLocation();
-  const viewer = /^\/library\/[^/]+\/lessons\/[^/]+\/slides\/[^/]+\/?$/u.test(location.pathname);
+  const viewer = /^\/library\/(?:pilot\/)?[^/]+\/lessons\/[^/]+\/slides\/[^/]+\/?$/u.test(
+    location.pathname,
+  );
 
   return (
     <div

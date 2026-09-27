@@ -1,4 +1,5 @@
 /** 検証済み教材Blockを、実行可能HTMLへ変換せず安全なReact要素として表示する。 */
+import { useId } from 'react';
 import { SlideCode } from './SlideCode';
 import type { AssetRef, SlideBlock } from '../../../core/content/types';
 import { resolvePublicAsset } from '../../../shared/lib/resolvePublicAsset';
@@ -8,6 +9,7 @@ interface SlideBlocksProps {
   readonly assets: readonly AssetRef[];
   readonly baseUrl: string;
   readonly density?: 'default' | 'compact';
+  readonly reading?: boolean;
 }
 
 const CALLOUT_STYLE = {
@@ -28,7 +30,14 @@ function assertNever(value: never): never {
 }
 
 /** Compilerが許可した種類のBlockだけを、意味に合うReact elementへ写像する。 */
-export function SlideBlocks({ blocks, assets, baseUrl, density = 'default' }: SlideBlocksProps) {
+export function SlideBlocks({
+  blocks,
+  assets,
+  baseUrl,
+  density = 'default',
+  reading = false,
+}: SlideBlocksProps) {
+  const blockGroupId = useId();
   const assetById = new Map(assets.map((asset) => [asset.id, asset]));
   const compact = density === 'compact';
 
@@ -56,7 +65,13 @@ export function SlideBlocks({ blocks, assets, baseUrl, density = 'default' }: Sl
           return (
             <div key={key} className="tc-slide-example" aria-label="入力コードと対応する静的な結果">
               <SlideCode block={block} compact={compact} />
-              <SlideBlocks blocks={[next]} assets={assets} baseUrl={baseUrl} density={density} />
+              <SlideBlocks
+                blocks={[next]}
+                assets={assets}
+                baseUrl={baseUrl}
+                density={density}
+                reading={reading}
+              />
             </div>
           );
         }
@@ -184,7 +199,7 @@ export function SlideBlocks({ blocks, assets, baseUrl, density = 'default' }: Sl
             );
           }
           case 'practice': {
-            const titleId = `slide-practice-title-${String(index)}`;
+            const titleId = `${blockGroupId}-practice-${String(index)}`;
             return (
               <section
                 key={key}
@@ -192,7 +207,7 @@ export function SlideBlocks({ blocks, assets, baseUrl, density = 'default' }: Sl
                 className={`rounded-workshop-md border-2 border-workshop-learning bg-workshop-raised shadow-[var(--tc-shadow-piece)] ${compact ? 'p-4' : 'p-5'}`}
               >
                 <h2 id={titleId} className="text-lg font-black">
-                  今すぐ試す（約{block.estimatedMinutes}分）
+                  {reading ? 'PCで試す' : '今すぐ試す'}（約{block.estimatedMinutes}分）
                 </h2>
                 <p className={compact ? 'mt-2 leading-6' : 'mt-3 leading-7'}>{block.prompt}</p>
                 <p
