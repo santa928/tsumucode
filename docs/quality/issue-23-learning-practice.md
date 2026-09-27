@@ -22,7 +22,7 @@ Issue #23。既存ガイドを入口として残し、ClosureとHTML/CSS導入�
 
 旧Node演習と同じイメージ、資源上限、ファイル形式、停止/回収/隔離を維持する。PagesからLocal APIを探索せず、Homeの既存容量/遅延ロード条件も維持する。
 
-## 検証（実装中）
+## 検証範囲
 
 予測の許可記法・回答非表示/別問題へのリセット、2演習の代表解/誤答、Browser/Local実行と採点、既存完了/下書きとImport/Export、PC/390pxを中心に確認する。実行した結果だけを追記する。全Course×全Browserや固定テスト件数を目標にしない。
 
@@ -55,3 +55,9 @@ Production buildのChromiumでは対象JS Fixture、保存往復、既存HTML/CS
 構造化された手順があると指示本文を表示しない既存分岐に対し、任意練習だけ説明とルールを開閉可能な欄で表示した。e03はstepの意味と残す名前/呼び出しを説明し、完成した更新行自体は後段ヒントに残す。段落Rendererがコード記法を解釈しないため、この2指示文の不要なバッククォートも除いた。採点条件/必須e01は変更しない。
 
 Docker Chromiumの追加回帰2件（即時同URL再表示、従来保存往復＋説明の可視性/答え先出しなし）成功。1280×800でe02/e03の説明先頭と手順末尾へ到達し、Document横あふれなし。4枚を目視し、説明/エディタ/実行操作の重なりがないことを確認した（[e02先頭](evidence/issue-23/closure-e02-instructions-start.png)・[末尾](evidence/issue-23/closure-e02-instructions-end.png)、[e03先頭](evidence/issue-23/closure-e03-instructions-start.png)・[末尾](evidence/issue-23/closure-e03-instructions-end.png)）。実端末/初心者観察の代替ではない。
+
+## 独立レビューと最終差分
+
+同じProが初回92b73f04864805216fa115739e466b70e5ae6044で2Lesson全8Slide/演習を承認し、追加b5b91efeaf84bc7977a5d29ee479f85cce4e465bで保存順/説明表示を限定レビューしてLGTM。accuracy・goalExerciseAlignment・decisionはapproved、unexplainedTerms/hintLeakageは0。原本tree/hashはProも独立再計算し、初回6＋追加4画像を目視。Dockerの実行証拠とは区別する。マージ前には台帳更新後のCIと記録差分を確認する。
+
+追加修正HEADでLint・型/build/CSSinline/chunk/容量9が成功。正しいTEST_BASE_SHAで前回承認HEADとの差分を指定した関連49ファイル493件、production Chromiumの保存/追加説明2E2Eも成功。最初のtest:changedは環境変数指定を誤って対象0件だったため、回帰成功の件数には含めない。初心者観察/物理端末/新HEADの公開Gateは未実施のまま。
