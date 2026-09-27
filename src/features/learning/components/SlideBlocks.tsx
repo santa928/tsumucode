@@ -1,4 +1,5 @@
 /** 検証済み教材Blockを、実行可能HTMLへ変換せず安全なReact要素として表示する。 */
+import { useId } from 'react';
 import { SlideCode } from './SlideCode';
 import type { AssetRef, SlideBlock } from '../../../core/content/types';
 import { resolvePublicAsset } from '../../../shared/lib/resolvePublicAsset';
@@ -8,6 +9,8 @@ interface SlideBlocksProps {
   readonly assets: readonly AssetRef[];
   readonly baseUrl: string;
   readonly density?: 'default' | 'compact';
+  readonly reading?: boolean;
+  readonly headingOffset?: 0 | 1;
 }
 
 const CALLOUT_STYLE = {
@@ -28,7 +31,17 @@ function assertNever(value: never): never {
 }
 
 /** Compilerが許可した種類のBlockだけを、意味に合うReact elementへ写像する。 */
-export function SlideBlocks({ blocks, assets, baseUrl, density = 'default' }: SlideBlocksProps) {
+export function SlideBlocks({
+  blocks,
+  assets,
+  baseUrl,
+  density = 'default',
+  reading = false,
+  headingOffset = 0,
+}: SlideBlocksProps) {
+  const blockGroupId = useId();
+  const H2 = headingOffset === 0 ? 'h2' : 'h3';
+  const H3 = headingOffset === 0 ? 'h3' : 'h4';
   const assetById = new Map(assets.map((asset) => [asset.id, asset]));
   const compact = density === 'compact';
 
@@ -56,7 +69,14 @@ export function SlideBlocks({ blocks, assets, baseUrl, density = 'default' }: Sl
           return (
             <div key={key} className="tc-slide-example" aria-label="入力コードと対応する静的な結果">
               <SlideCode block={block} compact={compact} />
-              <SlideBlocks blocks={[next]} assets={assets} baseUrl={baseUrl} density={density} />
+              <SlideBlocks
+                blocks={[next]}
+                assets={assets}
+                baseUrl={baseUrl}
+                density={density}
+                reading={reading}
+                headingOffset={headingOffset}
+              />
             </div>
           );
         }
@@ -69,7 +89,7 @@ export function SlideBlocks({ blocks, assets, baseUrl, density = 'default' }: Sl
                 aria-label="結果を予測する"
                 className="rounded-workshop-md border-2 border-workshop-learning bg-workshop-raised p-5"
               >
-                <h2 className="text-lg font-black">考えてみよう</h2>
+                <H2 className="text-lg font-black">考えてみよう</H2>
                 <p className="mt-2 leading-7">{block.prompt}</p>
                 <details className="mt-3">
                   <summary className="min-h-11 cursor-pointer py-3 font-bold">
@@ -85,23 +105,23 @@ export function SlideBlocks({ blocks, assets, baseUrl, density = 'default' }: Sl
             );
           case 'heading':
             return block.level === 2 ? (
-              <h2
+              <H2
                 key={key}
                 className={
                   compact ? 'text-xl font-black md:text-2xl' : 'text-2xl font-black md:text-3xl'
                 }
               >
                 {block.text}
-              </h2>
+              </H2>
             ) : (
-              <h3
+              <H3
                 key={key}
                 className={
                   compact ? 'text-lg font-black md:text-xl' : 'text-xl font-black md:text-2xl'
                 }
               >
                 {block.text}
-              </h3>
+              </H3>
             );
           case 'paragraph':
             return (
@@ -205,16 +225,16 @@ export function SlideBlocks({ blocks, assets, baseUrl, density = 'default' }: Sl
             );
           }
           case 'practice': {
-            const titleId = `slide-practice-title-${String(index)}`;
+            const titleId = `${blockGroupId}-practice-${String(index)}`;
             return (
               <section
                 key={key}
                 aria-labelledby={titleId}
                 className={`rounded-workshop-md border-2 border-workshop-learning bg-workshop-raised shadow-[var(--tc-shadow-piece)] ${compact ? 'p-4' : 'p-5'}`}
               >
-                <h2 id={titleId} className="text-lg font-black">
-                  今すぐ試す（約{block.estimatedMinutes}分）
-                </h2>
+                <H2 id={titleId} className="text-lg font-black">
+                  {reading ? 'PCで試す' : '今すぐ試す'}（約{block.estimatedMinutes}分）
+                </H2>
                 <p className={compact ? 'mt-2 leading-6' : 'mt-3 leading-7'}>{block.prompt}</p>
                 <p
                   className={`${compact ? 'mt-2' : 'mt-3'} border-l-4 border-workshop-learning pl-3 text-workshop-muted`}

@@ -977,7 +977,7 @@ for (const viewport of LIBRARY_VIEWPORTS) {
     await expectDocumentScrollAtOrigin(page);
     await expectInside(viewportShell, shell);
     if (!narrow) await expectInside(stage, viewportShell);
-    await expectSlideScrollReachable(page, narrow);
+    await expectSlideScrollReachable(page, narrow, true);
     await expectLibraryTargetSizes(page);
 
     await page.getByRole('button', { name: 'スライド目次を開く' }).click();
@@ -991,7 +991,7 @@ for (const viewport of LIBRARY_VIEWPORTS) {
       'data-slide-id',
       'html-css-ch00-l01-s02',
     );
-    await expectSlideScrollReachable(page, narrow);
+    await expectSlideScrollReachable(page, narrow, true);
 
     await page.goto('./#/library/html-css');
     await expect(

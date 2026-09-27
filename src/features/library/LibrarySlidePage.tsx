@@ -1,6 +1,8 @@
+import { ReadingControls } from './ReadingControls';
+import { readingIndexPath, readingLessons, readingSlidePath } from './readingTargets';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLoaderData, useNavigate } from 'react-router';
-import type { librarySlideLoader } from '../../app/libraryContentLoaders';
+import type { LibrarySlideLoaderData } from '../../app/libraryContentLoaders';
 import type { CourseIndex, Lesson } from '../../core/content/types';
 import { LearningDrawer } from '../learning/components/LearningDrawer';
 import { SlideStage } from '../learning/components/SlideStage';
@@ -36,8 +38,13 @@ function resolveGlossary(course: CourseIndex, lesson: Lesson) {
 
 /** 進捗へ触れず、Course全体を連続して読めるスライドViewerを表示する。 */
 export function LibrarySlidePage() {
-  const { course, context, lesson, slide } = useLoaderData<typeof librarySlideLoader>();
-  useAdjacentLessonPrefetch(course, lesson.id);
+  const {
+    course,
+    context,
+    lesson,
+    slide,
+    pilot = false,
+  } = useLoaderData<LibrarySlideLoaderData & { readonly pilot?: boolean }>();
   const navigate = useNavigate();
   const slideTitleRef = useRef<HTMLHeadingElement>(null);
   const slideListTriggerRef = useRef<HTMLButtonElement>(null);
@@ -46,7 +53,14 @@ export function LibrarySlidePage() {
   const [drawerMode, setDrawerMode] = useState<DrawerMode>();
   const { current, next, previous } = context;
   const currentSlideId = current.slide.id;
-  const sequence = buildCourseSlideOutlineSequence(course);
+  const allowedLessons = readingLessons(course, pilot);
+  const sequence = buildCourseSlideOutlineSequence(course)
+    .filter((item) => allowedLessons.some((allowed) => allowed.id === item.lesson.id))
+    .map((item, index) => ({
+      ...item,
+      courseSlideIndex: index,
+      path: readingSlidePath(course.id, item.lesson.id, item.slide.id, pilot),
+    }));
   const glossary = resolveGlossary(course, lesson);
   const previousPath = previous?.path;
   const nextPath = next?.path;
@@ -94,11 +108,13 @@ export function LibrarySlidePage() {
 
   return (
     <>
+      {pilot ? null : <LibraryPrefetch course={course} lessonId={lesson.id} />}
       <LearningViewportShell
         label="スライド閲覧"
         header={
           <LibraryToolRail
             courseId={course.id}
+            pilot={pilot}
             lessonTitle={current.lesson.title}
             positionLabel={positionLabel}
             onOpenSlides={() => {
@@ -132,7 +148,7 @@ export function LibrarySlidePage() {
             )}
             {nextPath === undefined ? (
               <Link
-                to={`/library/${course.id}`}
+                to={readingIndexPath(course.id, pilot)}
                 aria-label="スライド目次へ戻る"
                 className="tc-library-pager-primary"
               >
@@ -148,10 +164,23 @@ export function LibrarySlidePage() {
       >
         <div className="tc-slide-stage-stack tc-library-stage-stack">
           <SlideStage
+            reading
             codeReference={lesson.slides.find(({ id }) => id === slide.codeReferenceSlideId)}
             slide={slide}
             baseUrl={import.meta.env.BASE_URL}
             titleRef={slideTitleRef}
+          />
+          <ReadingControls
+            key={lesson.id}
+            course={course}
+            lesson={lesson}
+            position={{
+              scope: pilot ? 'pilot' : 'library',
+              courseId: course.id,
+              lessonId: lesson.id,
+              slideId: slide.id,
+              mode: 'slides',
+            }}
           />
         </div>
       </LearningViewportShell>
@@ -216,4 +245,16 @@ export function LibrarySlidePage() {
       </LearningDrawer>
     </>
   );
+}
+
+/** 通常公開Libraryだけが隣接Lessonを先読みし、pilotは対象外本文を取得しない。 */
+function LibraryPrefetch({
+  course,
+  lessonId,
+}: {
+  readonly course: CourseIndex;
+  readonly lessonId: string;
+}) {
+  useAdjacentLessonPrefetch(course, lessonId);
+  return null;
 }

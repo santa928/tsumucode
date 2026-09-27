@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 
 export interface LibraryToolRailProps {
   readonly courseId: string;
+  readonly pilot?: boolean;
   readonly lessonTitle: string;
   readonly positionLabel: string;
   readonly onOpenSlides: () => void;
@@ -14,6 +15,7 @@ export interface LibraryToolRailProps {
 /** 閲覧状態と補助機能を44px高の省スペースRailへまとめる。 */
 export function LibraryToolRail({
   courseId,
+  pilot = false,
   lessonTitle,
   positionLabel,
   onOpenSlides,
@@ -24,7 +26,7 @@ export function LibraryToolRail({
   return (
     <nav aria-label="スライド閲覧ツール" className="tc-library-tool-rail">
       <div className="tc-library-mode">
-        <span className="tc-library-mode-badge">閲覧モード</span>
+        <span className="tc-library-mode-badge">{pilot ? '試用・閲覧モード' : '閲覧モード'}</span>
         <span className="tc-library-mode-copy">進捗には反映されません</span>
       </div>
       <div className="tc-library-location" title={lessonTitle}>
@@ -55,12 +57,14 @@ export function LibraryToolRail({
           </button>
         )}
         <Link
-          to={`/courses/${courseId}`}
-          aria-label="通常学習へ戻る"
+          to={pilot ? '/library/pilot' : `/courses/${courseId}`}
+          aria-label={pilot ? '試用目次へ戻る' : '通常学習へ戻る'}
           className="tc-library-tool-button"
         >
           <span aria-hidden="true">↩</span>
-          <span className="tc-library-tool-label">通常学習へ戻る</span>
+          <span className="tc-library-tool-label">
+            {pilot ? '試用目次へ戻る' : '通常学習へ戻る'}
+          </span>
         </Link>
       </div>
     </nav>

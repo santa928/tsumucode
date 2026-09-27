@@ -1494,3 +1494,92 @@
   cursor: pointer;
   padding-block: 0.5rem;
 }
+
+/* 通読は固定ViewportのSlideとは分け、本文の自然な高さでDocumentをスクロールする。 */
+.tc-reading-article {
+  max-width: 52rem;
+  margin-inline: auto;
+  display: grid;
+  gap: 2rem;
+  overflow-wrap: anywhere;
+}
+.tc-reading-article h1 {
+  font-size: 1.75rem;
+  font-weight: 900;
+}
+.tc-reading-article h2 {
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+.tc-reading-article h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+.tc-reading-article p,
+.tc-reading-controls p {
+  line-height: 1.8;
+}
+.tc-reading-article header,
+.tc-reading-article li,
+.tc-reading-article dl > div {
+  display: grid;
+  gap: 0.75rem;
+}
+.tc-reading-article ol,
+.tc-reading-article dl {
+  display: grid;
+  gap: 1rem;
+}
+.tc-reading-article nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.tc-reading-article a,
+.tc-reading-controls a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  text-decoration: underline;
+  font-weight: 700;
+}
+.tc-reading-article [data-reading-section] {
+  scroll-margin-block-start: 1rem;
+  min-width: 0;
+}
+.tc-reading-article .tc-slide-stage {
+  height: auto;
+  max-height: none;
+  overflow: visible;
+}
+.tc-reading-controls {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+  border: 1px solid var(--tc-color-border);
+  border-radius: 1rem;
+  padding: 1rem;
+  background: var(--tc-color-surface);
+}
+.tc-reading-controls button {
+  min-height: 44px;
+  border: 1px solid currentColor;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-weight: 700;
+}
+.tc-reading-share,
+.tc-reading-share label,
+.tc-reading-exercise {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.tc-reading-share input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid currentColor;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+}

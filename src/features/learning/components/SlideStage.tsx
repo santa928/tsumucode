@@ -9,10 +9,20 @@ export interface SlideStageProps {
   readonly baseUrl: string;
   readonly codeReference?: Slide | undefined;
   readonly titleRef?: Ref<HTMLHeadingElement>;
+  readonly reading?: boolean;
+  readonly titleLevel?: 1 | 2;
 }
 
 /** 見出しから例・結果・練習まで、PCと狭幅で同じ読み順を保持する。 */
-export function SlideStage({ slide, baseUrl, titleRef, codeReference }: SlideStageProps) {
+export function SlideStage({
+  slide,
+  baseUrl,
+  titleRef,
+  codeReference,
+  reading = false,
+  titleLevel = 1,
+}: SlideStageProps) {
+  const Heading = titleLevel === 1 ? 'h1' : 'h2';
   return (
     <section
       data-slide-card
@@ -22,9 +32,13 @@ export function SlideStage({ slide, baseUrl, titleRef, codeReference }: SlideSta
       className="tc-slide-stage"
     >
       <header className="tc-slide-stage-heading">
-        <h1 id="slide-title" ref={titleRef} tabIndex={-1}>
+        <Heading
+          id={titleLevel === 1 ? 'slide-title' : `${slide.id}-title`}
+          ref={titleRef}
+          tabIndex={-1}
+        >
           {slide.title}
-        </h1>
+        </Heading>
       </header>
       <div className="tc-slide-stage-body tc-slide-author-order">
         <SlideCodeReference slide={codeReference} baseUrl={baseUrl} />
@@ -34,6 +48,8 @@ export function SlideStage({ slide, baseUrl, titleRef, codeReference }: SlideSta
           assets={slide.assets}
           baseUrl={baseUrl}
           density="compact"
+          reading={reading}
+          headingOffset={titleLevel === 2 ? 1 : 0}
         />
       </div>
     </section>
