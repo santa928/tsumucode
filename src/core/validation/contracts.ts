@@ -11,12 +11,15 @@ import type {
   RunnerDiagnostic,
   RunnerEvidence,
   SnapshotPolicy,
+  ExecutionResult,
 } from '../runtime/contracts';
 
 export type ValidatorRule = ValidationRuleDefinition;
 export type ValidationStatus = 'pass' | 'incomplete' | 'code-error' | 'system-error';
 
 export interface ValidationContext {
+  /** DOMを持たない環境では、観測の同一性を実行結果から取得する。 */
+  readonly execution?: ExecutionResult;
   readonly exerciseId: string;
   readonly rules: readonly ValidatorRule[];
   readonly runtime?: ExerciseRuntime;

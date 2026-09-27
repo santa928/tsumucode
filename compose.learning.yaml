@@ -1,0 +1,33 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.learning
+      target: web
+    init: true
+    user: '1000:1000'
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
+    ports: ['127.0.0.1:4173:4173']
+    networks: [learning, web]
+    depends_on: [controller]
+  controller:
+    build:
+      context: .
+      dockerfile: Dockerfile.learning
+      target: controller
+    init: true
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
+    environment:
+      TSUMUCODE_LOCAL_OWNER: ${TSUMUCODE_LOCAL_OWNER:?Use scripts/learn.sh}
+    volumes:
+      - ${TSUMUCODE_LOCAL_SOCKET:?Use scripts/learn.sh}:/var/run/docker.sock
+    networks: [learning]
+    stop_grace_period: 30s
+networks:
+  web: {}
+  learning:
+    internal: true

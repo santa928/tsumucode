@@ -19,6 +19,7 @@
     "vitest.config.ts",
     "vitest.bundle.config.ts",
     "playwright.config.ts",
+    "playwright.local.config.ts",
     "playwright.performance.config.ts",
     "scripts",
     "tests"

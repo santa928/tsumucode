@@ -1,0 +1,132 @@
+openapi: 3.1.0
+info:
+  title: TsumuCode Local Node API
+  version: 1.0.0
+  description: >-
+    個人のローカル学習専用。全要求は同一OriginからJSON POSTで行う。
+    Hostは127.0.0.1:4173、Originはhttp://127.0.0.1:4173のみ。
+    null OriginやPages Originは拒否する。tokenは起動ごとに変わり、保存・URL化しない。
+servers:
+  - url: http://127.0.0.1:4173
+security:
+  - SessionToken: []
+paths:
+  /api/session:
+    post:
+      summary: 同一Originの画面へ起動session tokenを渡す
+      security: []
+      requestBody: { $ref: '#/components/requestBodies/Empty' }
+      responses:
+        '200':
+          description: メモリだけに保持するtoken。HostとOriginの検査は省略しない。
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [apiVersion, token]
+                properties:
+                  apiVersion: { const: 1 }
+                  token: { type: string, pattern: '^[a-f0-9]{64}$' }
+        '403': { $ref: '#/components/responses/Error' }
+  /api/capabilities:
+    post:
+      summary: Docker接続・固定教材profile・版・上限を確認する
+      requestBody: { $ref: '#/components/requestBodies/Empty' }
+      responses:
+        '200':
+          description: apiVersion、exerciseId、contentRevision、runtimeProfileId、engineVersion、limits。
+        '401': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
+        '503': { $ref: '#/components/responses/Error' }
+  /api/runs:
+    post:
+      summary: 固定Node profileで1つの使い捨てコンテナを起動する
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                [
+                  apiVersion,
+                  exerciseId,
+                  contentRevision,
+                  runtimeProfileId,
+                  runId,
+                  exerciseSessionId,
+                  executionRevision,
+                  files,
+                ]
+              properties:
+                apiVersion: { const: 1 }
+                exerciseId: { const: javascript-ch03-l05-e01 }
+                contentRevision: { type: string }
+                runtimeProfileId: { const: node-closure-v1 }
+                runId: { type: string, pattern: '^[\w:.-]{1,160}$' }
+                exerciseSessionId: { type: string, pattern: '^[\w:.-]{1,160}$' }
+                executionRevision: { type: integer, minimum: 0 }
+                files:
+                  type: object
+                  description: 合計UTF-8 100 KiB以下。任意パスやsymlinkは受け取らない。
+                  additionalProperties: false
+                  required: [script.js, index.html, styles.css]
+                  properties:
+                    script.js: { type: string }
+                    index.html: { type: string }
+                    styles.css: { type: string }
+      responses:
+        '202': { description: run identityとstate=running。起動受付を実行成功と扱わない。 }
+        '400': { $ref: '#/components/responses/Error' }
+        '409': { description: 版不一致、実行中、または重複run ID。 }
+        '413': { description: sourceまたはHTTP要求の容量超過。 }
+        '422': { description: 未対応教材またはprofile。採点対象外。 }
+        '503': { $ref: '#/components/responses/Error' }
+  /api/runs/{runId}:
+    parameters:
+      - $ref: '#/components/parameters/RunId'
+    post:
+      summary: 実行状態を取得する
+      requestBody: { $ref: '#/components/requestBodies/Empty' }
+      responses:
+        '200':
+          description: >-
+            state=running、またはstate=completedとresult。
+            resultはrunId/session/revision/backend/engine、status、engineVersion、exitCode、
+            terminationReason、stdout/stderr、diagnostics、evidence、console、
+            preparationMs/executionMsを含む。合否は返さない。
+            statusはsucceeded/code-error/stopped/system-error。
+            stdout/stderrは非永続plain textで合計64 KiBまで。直近32runをメモリ内保持。
+        '404': { $ref: '#/components/responses/Error' }
+  /api/runs/{runId}/cancel:
+    parameters:
+      - $ref: '#/components/parameters/RunId'
+    post:
+      summary: 実コンテナ全体を停止し資源回収まで待つ
+      requestBody: { $ref: '#/components/requestBodies/Empty' }
+      responses:
+        '200': { description: 取得APIと同じ完了result。既に完了したrunには冪等。 }
+        '404': { $ref: '#/components/responses/Error' }
+        '503': { $ref: '#/components/responses/Error' }
+components:
+  securitySchemes:
+    SessionToken: { type: apiKey, in: header, name: X-Tsumucode-Token }
+  parameters:
+    RunId: { name: runId, in: path, required: true, schema: { type: string } }
+  requestBodies:
+    Empty:
+      required: true
+      content:
+        application/json:
+          schema: { type: object, maxProperties: 0 }
+  responses:
+    Error:
+      description: 接続・認証・要求エラー。学習者の不正解として保存しない。
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [error]
+            properties:
+              error: { type: string }

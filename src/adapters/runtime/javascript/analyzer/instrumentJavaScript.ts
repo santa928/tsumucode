@@ -870,6 +870,59 @@ async function sha256(source: string): Promise<string> {
   return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
 }
 
+/** Nodeで実行済みの同じsourceから教材factだけを得る。Browser policyや実行用変換は適用しない。 */
+export async function analyzeNodeSourceFacts(
+  request: JavaScriptLegacyAnalysisRequest,
+): Promise<JavaScriptLegacyAnalysisResult> {
+  if (new TextEncoder().encode(request.source).byteLength > MAX_SOURCE_BYTES) {
+    return failure(
+      request,
+      'system',
+      'Source size limit',
+      'コードが大きすぎるため採点していません。',
+    );
+  }
+  let program: Node;
+  try {
+    program = parse(request.source, {
+      ecmaVersion: 'latest',
+      sourceType: request.sourceType,
+      locations: true,
+    });
+  } catch (error: unknown) {
+    const position = syntaxPosition(error);
+    return failure(
+      request,
+      'syntax',
+      String(error),
+      'JavaScriptの書き方を確認してください。',
+      position.line,
+      position.column,
+    );
+  }
+  try {
+    const nodes = collectBoundedNodes(program, request.file);
+    return {
+      status: 'success',
+      requestId: request.requestId,
+      exerciseSessionId: request.exerciseSessionId,
+      executionRevision: request.executionRevision,
+      file: request.file,
+      instrumentedCode: request.source,
+      sourceSha256: await sha256(request.source),
+      facts: collectFacts(program, nodes, request.file),
+      diagnostics: [],
+    };
+  } catch (error: unknown) {
+    return failure(
+      request,
+      'system',
+      String(error),
+      'コードの解析が完了しなかったため採点していません。',
+    );
+  }
+}
+
 /** Sourceを解析・制限・instrumentし、失敗を診断へ変換する。 */
 async function analyzeLegacyJavaScriptSource(
   request: JavaScriptLegacyAnalysisRequest,

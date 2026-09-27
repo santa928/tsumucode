@@ -213,6 +213,8 @@ export type ExecutionStatus =
 /** 実行終了の事実。教材の合否は含めずValidatorが別に判定する。 */
 export interface ExecutionResult extends RunnerRenderResult, RunIdentity {
   readonly status: ExecutionStatus;
+  /** 実環境が返す版。言語名やブラウザから推測しない。 */
+  readonly engineVersion?: string;
 }
 
 export interface DomObservationPort {
