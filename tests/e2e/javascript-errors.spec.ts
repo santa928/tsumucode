@@ -66,16 +66,16 @@ test('Runtime Errorは不正解へ落とさず、Sourceを保持して同じ画�
   await recoverToPassingResult(page);
 });
 
-test('無限Loopはsystem-errorで停止し、再実行CTAとSourceを残して回復できる', async ({ page }) => {
+test('無限Loopは制限停止として採点を行わずSourceを残して回復できる', async ({ page }) => {
   const source = 'while (true) {}';
   await replaceAndSave(page, source);
   await page.getByRole('button', { name: '判定する' }).click();
 
-  const dialog = page.getByRole('dialog', { name: '判定結果' });
-  await expect(dialog.getByRole('heading', { name: 'TsumuCodeで問題が起きました' })).toBeVisible();
-  await expect(dialog.getByRole('button', { name: 'もう一度実行する' })).toBeEnabled();
-  await expect(dialog.getByRole('heading', { name: 'あと一歩' })).toHaveCount(0);
+  await expect(
+    page.getByText('実行を停止しました。採点していません。', { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole('dialog', { name: '判定結果' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'プレビューを更新' })).toBeEnabled();
   await expect.poll(() => editorText(page)).toBe(source);
-  await dialog.getByRole('button', { name: '閉じる' }).click();
   await recoverToPassingResult(page);
 });

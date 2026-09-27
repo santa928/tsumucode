@@ -1,3 +1,4 @@
+import { BrowserExecutionService } from '../../../core/runtime/BrowserExecutionService';
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { EditorView } from '@codemirror/view';
 import userEvent from '@testing-library/user-event';
@@ -144,7 +145,7 @@ const runtime = vi.hoisted(() => {
       markDirty: vi.fn(),
       markPassed: vi.fn(),
     },
-    runnerRegistry: { create: vi.fn() },
+    runnerRegistry: { createExecution: vi.fn() },
     readOnlyPreviewRegistry: { create: vi.fn() },
     validatorRegistry: { has: vi.fn(() => false), register: vi.fn(), create: vi.fn() },
     editorLanguageRegistry: {
@@ -492,6 +493,7 @@ function guidedStepOneDraft(): ExerciseDraft {
 }
 
 interface AdapterStubOptions {
+  readonly languageId?: string;
   readonly prepare?: RunnerAdapter['prepare'];
   readonly render?: RunnerAdapter['render'];
 }
@@ -523,7 +525,8 @@ function stubAdapters(options: AdapterStubOptions = {}): {
   );
   const dispose = vi.fn<RunnerAdapter['dispose']>(async () => undefined);
   const runner: RunnerAdapter = {
-    languageId: 'html-css',
+    languageId: options.languageId ?? 'html-css',
+    stop: vi.fn(async () => undefined),
     prepare,
     render: async (input) => {
       lastRenderInput = input;
@@ -568,7 +571,9 @@ function stubAdapters(options: AdapterStubOptions = {}): {
     })),
     validate,
   };
-  runtime.runnerRegistry.create.mockReturnValue(runner);
+  runtime.runnerRegistry.createExecution.mockImplementation(
+    () => new BrowserExecutionService(runner),
+  );
   runtime.readOnlyPreviewRegistry.create.mockReturnValue(runner);
   runtime.validatorRegistry.create.mockReturnValue(validator);
   return {
@@ -607,7 +612,7 @@ beforeEach(() => {
     return 1;
   });
   runtime.repository.putCourse.mockClear();
-  runtime.runnerRegistry.create.mockReset();
+  runtime.runnerRegistry.createExecution.mockReset();
   runtime.readOnlyPreviewRegistry.create.mockReset();
   runtime.validatorRegistry.create.mockReset();
   runtime.passFreshness.isDirty.mockReset().mockReturnValue(false);
@@ -660,7 +665,7 @@ describe('Learning routes', () => {
       '#/?focus=device-data',
     );
     expect(screen.queryByTestId('code-workspace')).not.toBeInTheDocument();
-    expect(runtime.runnerRegistry.create).not.toHaveBeenCalled();
+    expect(runtime.runnerRegistry.createExecution).not.toHaveBeenCalled();
     expect(runtime.ensureCourseIndex).toHaveBeenCalledTimes(1);
   }, 15_000);
 
@@ -699,7 +704,7 @@ describe('Learning routes', () => {
     ).toBeInTheDocument();
     expect(screen.getByTestId('runtime-preview-frame')).toBeInTheDocument();
     expect(screen.queryByTestId('code-workspace')).not.toBeInTheDocument();
-    expect(runtime.runnerRegistry.create).not.toHaveBeenCalled();
+    expect(runtime.runnerRegistry.createExecution).not.toHaveBeenCalled();
     expect(runtime.readOnlyPreviewRegistry.create).toHaveBeenCalledWith(fixtureCourse.runnerId);
     await waitFor(() => {
       expect(getLastRenderInput()?.options).toEqual({ readOnly: true });
@@ -801,14 +806,14 @@ describe('Learning routes', () => {
       'status',
     );
     expect(screen.queryByTestId('code-workspace')).not.toBeInTheDocument();
-    expect(runtime.runnerRegistry.create).not.toHaveBeenCalled();
+    expect(runtime.runnerRegistry.createExecution).not.toHaveBeenCalled();
 
     act(() => {
       runtime.lease.setState({ status: 'owned', coordination: 'available', ownerId: 'tab-a' });
     });
 
     expect(await findCodeWorkspace()).toBeInTheDocument();
-    expect(runtime.runnerRegistry.create).toHaveBeenCalledWith(fixtureCourse.runnerId);
+    expect(runtime.runnerRegistry.createExecution).toHaveBeenCalledWith(fixtureCourse.runnerId);
   });
 
   it('DesktopはCourse固有Runtimeの遅延準備が終わるまでEditorとRunnerを生成しない', async () => {
@@ -824,7 +829,7 @@ describe('Learning routes', () => {
     renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
 
     expect(await screen.findByText('演習環境を読み込んでいます')).toHaveAttribute('role', 'status');
-    expect(runtime.runnerRegistry.create).not.toHaveBeenCalled();
+    expect(runtime.runnerRegistry.createExecution).not.toHaveBeenCalled();
     expect(screen.queryByTestId('code-workspace')).not.toBeInTheDocument();
 
     await act(async () => {
@@ -849,7 +854,7 @@ describe('Learning routes', () => {
     await waitFor(() => {
       expect(alert).toHaveFocus();
     });
-    expect(runtime.runnerRegistry.create).not.toHaveBeenCalled();
+    expect(runtime.runnerRegistry.createExecution).not.toHaveBeenCalled();
 
     await userEvent.click(screen.getByRole('button', { name: 'もう一度読み込む' }));
     expect(await findCodeWorkspace()).toBeInTheDocument();
@@ -897,7 +902,7 @@ describe('Learning routes', () => {
       await screen.findByRole('heading', { name: '別のタブで編集中です' }),
     ).toBeInTheDocument();
     expect(screen.queryByTestId('code-workspace')).not.toBeInTheDocument();
-    expect(runtime.runnerRegistry.create).not.toHaveBeenCalled();
+    expect(runtime.runnerRegistry.createExecution).not.toHaveBeenCalled();
     await user.click(screen.getByRole('button', { name: 'このタブで編集を引き継ぐ' }));
 
     act(() => {
@@ -907,7 +912,7 @@ describe('Learning routes', () => {
 
     expect(await findCodeWorkspace()).toBeInTheDocument();
     expect(runtime.lease.takeover).toHaveBeenCalledOnce();
-    expect(runtime.runnerRegistry.create).toHaveBeenCalledWith(fixtureCourse.runnerId);
+    expect(runtime.runnerRegistry.createExecution).toHaveBeenCalledWith(fixtureCourse.runnerId);
   });
 
   it('beforeYieldでpending autosaveをfenced writeとしてflushし、yielding直後に編集Sessionを外す', async () => {
@@ -1020,6 +1025,7 @@ describe('Learning routes', () => {
     stubContentFetch(javascriptLearningRoutesCourse);
     stubEditingCapability(true);
     stubAdapters({
+      languageId: 'javascript',
       render: async (input) => ({
         exerciseSessionId: input.exerciseSessionId,
         executionRevision: input.executionRevision,
@@ -1041,6 +1047,38 @@ describe('Learning routes', () => {
     expect(screen.getByTitle('コードのプレビュー')).toBeInTheDocument();
   }, 10_000);
 
+  it('下書き読込中の画面離脱後に正常完了しても古い初期化は通知を更新しない', async () => {
+    stubEditingCapability(true);
+    const { dispose } = stubAdapters();
+    let resolveDraft!: (value: ExerciseDraft | undefined) => void;
+    runtime.repository.getDraft.mockReturnValueOnce(
+      new Promise<ExerciseDraft | undefined>((resolve) => {
+        resolveDraft = resolve;
+      }),
+    );
+    renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
+    await waitFor(() => {
+      expect(runtime.repository.getDraft).toHaveBeenCalledOnce();
+    });
+
+    await act(async () => {
+      await router!.navigate('/courses/html-css');
+    });
+    await waitFor(() => {
+      expect(dispose).toHaveBeenCalled();
+    });
+    runtime.notices.reportError.mockClear();
+    runtime.notices.dismiss.mockClear();
+    await act(async () => {
+      resolveDraft(undefined);
+    });
+
+    expect(runtime.notices.reportError).not.toHaveBeenCalled();
+    expect(runtime.notices.dismiss).not.toHaveBeenCalled();
+    expect(screen.queryByTestId('code-workspace')).not.toBeInTheDocument();
+    expect(screen.queryByText('演習を準備できませんでした')).not.toBeInTheDocument();
+  });
+
   it('Repository初期化失敗を未処理Promiseにせず再試行可能な警告へ変換する', async () => {
     stubEditingCapability(true);
     stubAdapters();
@@ -1049,6 +1087,10 @@ describe('Learning routes', () => {
     renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
 
     expect(await screen.findByRole('alert')).toHaveTextContent('演習を準備できませんでした');
+    expect(runtime.notices.reportError).toHaveBeenCalledWith(
+      'exercise-initialize',
+      expect.objectContaining({ message: 'indexeddb failed' }),
+    );
     const retry = screen.getByRole('button', { name: 'もう一度準備する' });
     expect(retry).toBeEnabled();
     expect(screen.queryByTestId('code-workspace')).not.toBeInTheDocument();
@@ -1136,7 +1178,7 @@ describe('Learning routes', () => {
 
     await userEvent.click(await screen.findByRole('button', { name: 'プレビューを再準備' }));
 
-    expect(await screen.findByRole('alert')).toHaveTextContent('プレビューを更新できませんでした');
+    expect(await screen.findByRole('alert')).toHaveTextContent('実行環境で問題が起きました');
     const retryRender = screen.getByRole('button', { name: 'プレビューを更新' });
     expect(retryRender).toBeEnabled();
     await userEvent.click(retryRender);
@@ -1182,7 +1224,7 @@ describe('Learning routes', () => {
       await router!.navigate('/courses/html-css');
     });
     expect(router!.state.location.pathname).toBe('/courses/html-css');
-    expect(adapters.dispose).not.toHaveBeenCalled();
+    expect(adapters.dispose).toHaveBeenCalledOnce();
 
     await act(async () => {
       resolveRender();
@@ -1726,6 +1768,7 @@ describe('Learning routes', () => {
     stubEditingCapability(true);
     const starter = '<main></main>';
     stubAdapters({
+      languageId: 'javascript',
       render: async (input) => {
         if (input.executionRevision > 0 && input.files['index.html'] === starter) {
           throw new Error('reset render failed');

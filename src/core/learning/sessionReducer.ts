@@ -1,6 +1,6 @@
 /** 学習画面の同期操作とrevision付き非同期結果を不変状態へ縮約する。 */
 import type { EditorCursor } from '../persistence/contracts';
-import type { RunnerConsoleRecord, RunnerDiagnostic } from '../runtime/contracts';
+import type { ExecutionResult, RunnerConsoleRecord, RunnerDiagnostic } from '../runtime/contracts';
 import type { ValidationResult } from '../validation/contracts';
 
 export type LearningPhase = 'slide' | 'exercise' | 'review' | 'completion';
@@ -16,6 +16,8 @@ export interface RuntimeOutputState {
 }
 
 export interface LearningSessionState {
+  /** 非永続の実行結果。採点履歴とは独立し、source revisionとrun IDを保持する。 */
+  readonly executionResult?: ExecutionResult;
   readonly courseId: string;
   readonly lessonId: string;
   readonly exerciseId: string;
@@ -126,6 +128,7 @@ export function learningSessionReducer(
       };
       Reflect.deleteProperty(resetState, 'reviewReturn');
       Reflect.deleteProperty(resetState, 'runtimeOutput');
+      Reflect.deleteProperty(resetState, 'executionResult');
       return resetState;
     }
     case 'preview.completed': {

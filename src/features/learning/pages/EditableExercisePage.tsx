@@ -34,6 +34,7 @@ import { createCodeMirrorEditor } from '../editor/createCodeMirrorEditor';
 import { LearningToolRail } from '../layout/LearningToolRail';
 import { LearningViewportShell } from '../layout/LearningViewportShell';
 import { LearningSessionController, StaleExecutionError, useLearningSession } from '../session';
+import { ExecutionNotGradableError } from '../session/LearningSessionController';
 import { learningRuntimeServices } from '../runtimeServices';
 import { useAdjacentLessonPrefetch } from '../useAdjacentLessonPrefetch';
 
@@ -243,6 +244,8 @@ function EditableSession({
           );
         },
         onBackgroundError: (error) => {
+          // 未対応・停止の理由は実行状態とEditor診断に表示済み。
+          if (error instanceof ExecutionNotGradableError) return;
           learningRuntimeServices.notices.reportError('exercise-preview', error);
         },
         onSaveError: (error) => {
@@ -287,7 +290,7 @@ function EditableSession({
           }
           learningRuntimeServices.notices.dismiss('error:exercise-save');
         },
-        runner: learningRuntimeServices.runnerRegistry.create(course.runnerId),
+        runner: learningRuntimeServices.runnerRegistry.createExecution(course.runnerId),
         validator,
         now: () => new Date().toISOString(),
       }),
@@ -373,17 +376,21 @@ function EditableSession({
 
   useEffect(() => {
     const abortController = new AbortController();
+    /** awaitの前後で離脱状態を読み直し、旧処理による通知・UI更新を防ぐ。 */
+    const isActive = (): boolean => !abortController.signal.aborted;
     void (async () => {
       try {
         await learningRuntimeServices.ready;
+        if (!isActive()) return;
         await controller.initialize();
-        if (!abortController.signal.aborted) {
+        if (isActive()) {
           learningRuntimeServices.notices.dismiss('error:exercise-initialize');
           setInitialization('ready');
         }
       } catch (error: unknown) {
+        if (!isActive() || error instanceof StaleExecutionError) return;
         learningRuntimeServices.notices.reportError('exercise-initialize', error);
-        if (!abortController.signal.aborted) setInitialization('error');
+        setInitialization('error');
       }
     })();
     return () => {
@@ -436,7 +443,11 @@ function EditableSession({
             }
           } catch (error: unknown) {
             if (isCurrentOperation(generation) && !(error instanceof StaleExecutionError)) {
-              setOperationError(operationErrorMessage('preview'));
+              setOperationError(
+                error instanceof ExecutionNotGradableError
+                  ? error.message
+                  : operationErrorMessage('preview'),
+              );
             }
           }
         } finally {
@@ -588,7 +599,9 @@ function EditableSession({
           setOperationError(
             error instanceof StaleExecutionError
               ? '編集中の内容が変わりました。最新のコードでもう一度判定してください。'
-              : operationErrorMessage('validate'),
+              : error instanceof ExecutionNotGradableError
+                ? error.message
+                : operationErrorMessage('validate'),
           );
         }
       } finally {
@@ -793,6 +806,23 @@ function EditableSession({
           <aside className="tc-exercise-instructions" aria-label="工程票" tabIndex={0}>
             <header className="tc-exercise-instruction-title">
               <p>コード演習</p>
+              <p aria-label="実行環境">
+                {controller.environment.backend === 'browser' ? 'ブラウザで実行' : 'ローカルで実行'}
+              </p>
+              {state.executionResult !== undefined &&
+              state.executionResult.executionRevision === state.executionRevision ? (
+                <p role="status">
+                  {state.executionResult.status === 'succeeded'
+                    ? '実行できました（合否は「判定する」で確認）'
+                    : state.executionResult.status === 'unsupported'
+                      ? 'この環境では未対応です。採点していません。'
+                      : state.executionResult.status === 'stopped'
+                        ? '実行を停止しました。採点していません。'
+                        : state.executionResult.status === 'system-error'
+                          ? '実行環境で問題が起きました。採点していません。'
+                          : 'コードのエラーを確認してください。'}
+                </p>
+              ) : null}
               <h1>{exercise.title}</h1>
             </header>
             {lesson.kind !== 'standard' ? (

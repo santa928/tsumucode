@@ -32,6 +32,7 @@ const lazyRunner = vi.hoisted(() => ({
   requestSnapshot: vi.fn<(request: SnapshotRequest) => Promise<PreviewSnapshot>>(() =>
     Promise.reject(new Error('このTestではsnapshotを要求しません')),
   ),
+  stop: vi.fn<() => Promise<void>>(async () => undefined),
   dispose: vi.fn<() => Promise<void>>(async () => undefined),
 }));
 
@@ -63,6 +64,11 @@ vi.mock('../../adapters/runtime/html-css', () => ({
     /** Mock snapshot要求を観測する。 */
     requestSnapshot(request: SnapshotRequest): Promise<PreviewSnapshot> {
       return lazyRunner.requestSnapshot(request);
+    }
+
+    /** Mockの再利用可能な停止を観測する。 */
+    stop(): Promise<void> {
+      return lazyRunner.stop();
     }
 
     /** Mock解放を観測する。 */
@@ -272,6 +278,7 @@ describe('createLearningRuntimeServices', () => {
   it('既定Runnerは同期Registry契約を保ち、本体を初回prepareまで遅延生成する', async () => {
     lazyRunner.construct.mockClear();
     lazyRunner.prepare.mockClear();
+    lazyRunner.stop.mockClear();
     lazyRunner.dispose.mockClear();
     const { repository } = repositoryHarness();
     const services = createLearningRuntimeServices({
@@ -286,6 +293,7 @@ describe('createLearningRuntimeServices', () => {
 
     const runner = services.runnerRegistry.create('html-css');
     expect(runner.languageId).toBe('html-css');
+    await runner.stop();
     expect(lazyRunner.construct).not.toHaveBeenCalled();
 
     const frame = document.createElement('iframe');
@@ -293,6 +301,9 @@ describe('createLearningRuntimeServices', () => {
     expect(lazyRunner.construct).toHaveBeenCalledOnce();
     expect(lazyRunner.prepare).toHaveBeenCalledWith(frame);
 
+    await runner.stop();
+    expect(lazyRunner.stop).toHaveBeenCalledOnce();
+    expect(lazyRunner.dispose).not.toHaveBeenCalled();
     await runner.dispose();
     expect(lazyRunner.dispose).toHaveBeenCalledOnce();
   });

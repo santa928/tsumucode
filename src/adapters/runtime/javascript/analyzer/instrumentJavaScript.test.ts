@@ -13,6 +13,25 @@ const baseInput = {
 } as const;
 
 describe('analyzeJavaScriptSource', () => {
+  it.each([
+    'const items = [1]; const i = 0; console.log(items[i]);',
+    'new Promise((resolve) => resolve(1));',
+    'document.querySelector("button").currentTarget;',
+  ])('標準JSの未対応を構文エラーや危険操作と区別する: %s', async (source) => {
+    const result = await analyzeJavaScriptSource({ ...baseInput, source });
+    expect(result).toMatchObject({
+      status: 'failure',
+      diagnostics: [
+        {
+          code: 'javascript-analyzer-unsupported',
+          kind: 'unsupported',
+          severity: 'error',
+        },
+      ],
+    });
+    expect(result.diagnostics[0]?.learnerMessage).toContain('この環境では未対応');
+  });
+
   it('Workspace全体を解析して到達module・graph hash・全File factを返す', async () => {
     const request = {
       requestId: 'request-module-1',

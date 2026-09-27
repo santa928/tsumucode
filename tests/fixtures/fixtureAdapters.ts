@@ -66,8 +66,13 @@ export class FixtureRunnerAdapter implements RunnerAdapter {
   }
 
   /** 保持したfixture入力を解放する。 */
-  async dispose(): Promise<void> {
+  async stop(): Promise<void> {
     this.#lastInput = undefined;
+  }
+
+  /** fixtureの全資源を最終破棄する。 */
+  async dispose(): Promise<void> {
+    await this.stop();
   }
 }
 

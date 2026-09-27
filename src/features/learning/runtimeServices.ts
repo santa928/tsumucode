@@ -199,7 +199,14 @@ class LazyHtmlCssRunnerAdapter implements RunnerAdapter {
     return delegate.requestSnapshot(request);
   }
 
-  /** 未利用時はchunkを読み込まず、利用済みRunnerだけを解放する。 */
+  /** 未利用時はchunkを読み込まず、利用済みRunnerを再利用可能な状態で止める。 */
+  async stop(): Promise<void> {
+    if (this.#delegatePromise === undefined) return;
+    const delegate = await this.#delegatePromise;
+    await delegate.stop();
+  }
+
+  /** 未利用時はchunkを読み込まず、利用済みRunnerだけを最終破棄する。 */
   async dispose(): Promise<void> {
     if (this.#delegatePromise === undefined) return;
     const delegate = await this.#delegatePromise;

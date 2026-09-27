@@ -6,7 +6,7 @@ import type { JavaScriptInteractionAction, PreviewViewport } from '../content/ty
 export type { PreviewViewport } from '../content/types';
 
 export type RunnerLanguageId = 'html-css' | (string & {});
-export type RunnerDiagnosticKind = 'syntax' | 'reference' | 'security' | 'system';
+export type RunnerDiagnosticKind = 'syntax' | 'reference' | 'security' | 'unsupported' | 'system';
 export type RunnerDiagnosticSeverity = 'warning' | 'error';
 
 export interface RunnerDiagnostic {
@@ -162,6 +162,7 @@ export interface PreviewSnapshot {
   readonly documentOverflow: PreviewOverflow;
 }
 
+/** 既存Browser実装の移行用契約。利用側はExecutionServiceと任意のdom portを使う。 */
 export interface RunnerAdapter {
   readonly languageId: RunnerLanguageId;
   /** 隔離プレビュー用 frame を初期化する。render より前に呼び、frame の設定と監視登録を副作用として行う。 */
@@ -172,7 +173,63 @@ export interface RunnerAdapter {
   interact?(request: InteractionRequest): Promise<InteractionResult>;
   /** 描画済みの同一 session・revision を前提に DOM を観測し、学習コードを変更せず snapshot を返す。 */
   requestSnapshot(request: SnapshotRequest): Promise<PreviewSnapshot>;
-  /** frame に登録した監視と保有資源を解放する。呼び出し後の再利用には prepare の再実行を前提とする。 */
+  /** 旧実行を中断しframe・通信・実行資源を解放する。解析器など再利用資源は残し、次回はprepareを行う。 */
+  stop(): Promise<void>;
+  /** 解析器を含む全資源を最終破棄する。以後の再利用は契約外とし、新しいRunnerを生成する。 */
+  dispose(): Promise<void>;
+}
+
+/** 言語と独立した実行先。能力は現在利用するconsole／DOMに限定する。 */
+export interface ExecutionEnvironment {
+  readonly backend: 'browser' | 'local';
+  readonly engine: 'browser-html-css' | 'browser-js' | 'node';
+  readonly mode: 'console' | 'dom';
+  readonly capabilities: readonly ('console' | 'dom')[];
+}
+
+export interface RunIdentity {
+  readonly runId: string;
+  readonly exerciseSessionId: string;
+  readonly executionRevision: number;
+  readonly backend: ExecutionEnvironment['backend'];
+  readonly engine: ExecutionEnvironment['engine'];
+}
+
+/** console実行にはframe、viewport、snapshotを要求しない。 */
+export interface ExecutionRequest extends RunIdentity {
+  readonly languageId: RunnerLanguageId;
+  readonly files: Readonly<Record<string, string>>;
+  readonly options: Readonly<Record<string, unknown>>;
+  readonly requiredCapabilities: ExecutionEnvironment['capabilities'];
+  readonly presentation?: {
+    readonly assets: readonly ResolvedPreviewAsset[];
+    readonly viewport: PreviewViewport;
+  };
+}
+
+export type ExecutionStatus =
+  'succeeded' | 'code-error' | 'unsupported' | 'stopped' | 'system-error';
+
+/** 実行終了の事実。教材の合否は含めずValidatorが別に判定する。 */
+export interface ExecutionResult extends RunnerRenderResult, RunIdentity {
+  readonly status: ExecutionStatus;
+}
+
+export interface DomObservationPort {
+  prepare(frame: HTMLIFrameElement): Promise<void>;
+  requestSnapshot(request: SnapshotRequest): Promise<PreviewSnapshot>;
+  interact?(request: InteractionRequest): Promise<InteractionResult>;
+}
+
+/** DOMを持たない実行Adapterも実装可能な最小port。 */
+export interface ExecutionService {
+  readonly languageId: RunnerLanguageId;
+  readonly environment: ExecutionEnvironment;
+  readonly dom?: DomObservationPort;
+  execute(request: ExecutionRequest): Promise<ExecutionResult>;
+  /** 旧実行を失効させ、次のexecuteで再利用可能な状態へ戻す。 */
+  stop(): Promise<void>;
+  /** 全資源を最終破棄し、以後のexecuteを拒否する。 */
   dispose(): Promise<void>;
 }
 

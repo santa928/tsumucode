@@ -87,7 +87,7 @@ function isNode(value: unknown): value is Node {
 /** Analyzer failureをRunnerDiagnostic 1件へ正規化する。 */
 function failure(
   request: JavaScriptAnalysisRequest,
-  kind: Extract<RunnerDiagnosticKind, 'syntax' | 'security' | 'system'>,
+  kind: Extract<RunnerDiagnosticKind, 'syntax' | 'security' | 'unsupported' | 'system'>,
   message: string,
   learnerMessage: string,
   line?: number,
@@ -935,9 +935,11 @@ async function analyzeLegacyJavaScriptSource(
         request,
         error.kind,
         error.message,
-        error.kind === 'security'
-          ? `${error.message} 学習用Previewで安全に使える書き方へ直してください。`
-          : 'コードが大きすぎるか複雑すぎます。処理を小さく分けてください。',
+        error.kind === 'unsupported'
+          ? `この環境では未対応です。${error.message} JavaScriptの文法の誤りではなく、現在のブラウザ実行の制約です。採点せず、編集内容を保持します。`
+          : error.kind === 'security'
+            ? `${error.message} 学習用Previewで安全に使える書き方へ直してください。`
+            : 'コードが大きすぎるか複雑すぎます。処理を小さく分けてください。',
         error.line,
         error.column,
       );

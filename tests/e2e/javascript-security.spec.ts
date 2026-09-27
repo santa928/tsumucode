@@ -420,7 +420,9 @@ test('coreとprojectの両Profileで危険Capabilityをcode-errorとして拒否
   }
 });
 
-test('全Profileでcomputed property runtime escapeをcode-errorとして拒否する', async ({ page }) => {
+test('全Profileでcomputed property runtime escapeを環境未対応として実行前に拒否する', async ({
+  page,
+}) => {
   const source = `const el = document.querySelector('#message');
 const d = el['owner' + 'Document'];
 const w = d['default' + 'View'];
@@ -434,7 +436,7 @@ d['query' + 'Selector']('head')['append' + 'Child'](s);`;
     expect(result.rejection).toBeNull();
     expect(result.console).toEqual([]);
     expect(result.diagnostics).toEqual([
-      expect.objectContaining({ kind: 'security', severity: 'error' }),
+      expect.objectContaining({ kind: 'unsupported', severity: 'error' }),
     ]);
     expect(result.diagnostics.some(({ kind }) => kind === 'system')).toBe(false);
   }

@@ -210,6 +210,51 @@ afterEach(() => {
 });
 
 describe('JavaScriptRunnerAdapter', () => {
+  it('stopは旧Previewを解放して解析器を再利用し、disposeだけが解析器を破棄する', async () => {
+    const analyzer = {
+      analyze: vi.fn(async () => analysisSuccess()),
+      dispose: vi.fn(async () => undefined),
+    };
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    const runner = new JavaScriptRunnerAdapter({ analyzer });
+    await runner.prepare(frame);
+    const first = runner.render(runnerInput());
+    await vi.waitFor(() => {
+      expect(frame.srcdoc).not.toBe('');
+    });
+    dispatchExecution(frame);
+    dispatchBridgeReady(frame);
+    await first;
+
+    await runner.stop();
+    expect(frame.srcdoc).toBe('');
+    expect(analyzer.dispose).not.toHaveBeenCalled();
+    await expect(
+      runner.requestSnapshot({
+        exerciseSessionId: 'session-1',
+        executionRevision: 1,
+        requestId: 'stopped',
+        policy: snapshotPolicy,
+      }),
+    ).rejects.toThrow('not current');
+    await expect(runner.render(runnerInput())).rejects.toThrow('not prepared');
+
+    await runner.prepare(frame);
+    const second = runner.render(runnerInput());
+    await vi.waitFor(() => {
+      expect(frame.srcdoc).not.toBe('');
+    });
+    dispatchExecution(frame);
+    dispatchBridgeReady(frame);
+    expect((await second).diagnostics).toEqual([]);
+    expect(analyzer.analyze).toHaveBeenCalledTimes(2);
+    expect(analyzer.dispose).not.toHaveBeenCalled();
+    await runner.dispose();
+    expect(analyzer.dispose).toHaveBeenCalledOnce();
+    expect(frame.srcdoc).toBe('');
+  });
+
   it('Module Workspaceをiframe内実行Planへ変換してgraph hash Evidenceを返す', async () => {
     const analyzer = {
       analyze: vi.fn(async () => moduleAnalysisSuccess()),

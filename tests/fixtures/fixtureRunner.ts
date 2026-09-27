@@ -35,7 +35,12 @@ export class FixtureRunner implements RunnerAdapter {
   }
 
   /** Test用frame参照を解放する。 */
-  async dispose(): Promise<void> {
+  async stop(): Promise<void> {
     this.#frame = undefined;
+  }
+
+  /** Test用Runnerの保有資源を最終破棄する。 */
+  async dispose(): Promise<void> {
+    await this.stop();
   }
 }
