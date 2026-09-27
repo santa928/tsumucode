@@ -22,7 +22,9 @@ async function expectDirectRoute(page: Page, route: string, heading: string): Pr
   });
 }
 
-test('HomeはLearningPathを主導線にし、Course Manifestを先読みしない', async ({ page }) => {
+test('Homeは今回の学習を先頭にし、PathとCourseの棚を残してManifestを先読みしない', async ({
+  page,
+}) => {
   const courseManifestRequests: string[] = [];
   page.on('request', (request) => {
     if (request.url().includes('/generated/content/courses/')) {
@@ -33,11 +35,20 @@ test('HomeはLearningPathを主導線にし、Course Manifestを先読みしな�
   await page.goto(HOME_ROUTE);
   await expect(page.getByRole('heading', { level: 1, name: '学びたいピースを選ぶ' })).toBeVisible();
   await expect(
+    page
+      .getByRole('region', { name: '今回の学習' })
+      .getByRole('heading', { name: '最初の小さな制作' }),
+  ).toBeVisible();
+  await expect(
     page.getByRole('link', { name: '「フロントエンド学習パス」を最初から始める' }),
   ).toBeVisible();
 
   const shelfHeadings = await page.locator('main h2').allTextContents();
-  expect(shelfHeadings.slice(0, 2)).toEqual(['学習パスから始める', '個別コースを選ぶ']);
+  expect(shelfHeadings.slice(0, 3)).toEqual([
+    '最初の小さな制作',
+    '学習パスから始める',
+    '個別コースを選ぶ',
+  ]);
   expect(courseManifestRequests).toEqual([]);
 });
 
