@@ -16,7 +16,7 @@
 ## 採用する最小境界
 
 - `ExecutionService`はexecute・stop・dispose、環境記述、実行結果を持つ。DOMを持つサービスだけが`dom`（prepare・snapshot・interaction）を提供する。
-- `RunnerAdapter`は既存Browser実装の移行用契約として残す。`RunnerRegistry.createExecution()`が薄い`BrowserExecutionService`で包み、演習画面とControllerはその入口を使う。既存Adapterの隔離・認証・復旧を再実装しない。
+- `RunnerAdapter`は既存Browser実装の移行用契約として残す。遅延読込される`EditableExercisePage`で、`RunnerRegistry.create()`の検査済みAdapterを薄い`BrowserExecutionService`で包み、Controllerへ渡す。Homeで共有するRegistryは実行本体を読み込まない。既存Adapterの隔離・認証・復旧を再実装しない。
 - 言語IDとは別にbackend、engine、実行形態、console／dom能力を記述する。既存Browser Runnerはiframeを使うためmode=dom。Consoleが主出力のClosureもNode実行とは表示しない。必要出力能力は既存runtimeのprimaryOutputから導出し、新しい教材metadataは追加しない。
 - 新しい実行結果はsucceeded／code-error／unsupported／stopped／system-error。成功終了後にのみ採点材料を集める。構文・参照・安全拒否のcode-errorは既存のコード診断へ渡すが、未対応・停止・システム障害では採点・履歴保存前に止める。Validator自体のsystem-errorも保存しない。
 - run IDはController instanceを区別する名前空間と実行連番で生成し、同じsource revisionの再実行も区別する。旧Browser通信のsession・revision・frame generation・認証検証は維持する。Controllerの操作世代で採点待機中の旧応答も破棄する。

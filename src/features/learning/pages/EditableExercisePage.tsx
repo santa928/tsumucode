@@ -19,6 +19,7 @@ import {
 } from '../../../core/persistence/progressUpdates';
 import { LeaseFenceRejectedError } from '../../../core/persistence/contracts';
 import type { ResolvedPreviewAsset } from '../../../core/runtime/contracts';
+import { BrowserExecutionService } from '../../../core/runtime/BrowserExecutionService';
 import { WorkshopNotice } from '../../../design-system/components/WorkshopNotice';
 import { resolvePublicAsset } from '../../../shared/lib/resolvePublicAsset';
 import type { WorkspaceLeaseAccess } from '../../progress/WorkspaceLeaseGate';
@@ -290,7 +291,9 @@ function EditableSession({
           }
           learningRuntimeServices.notices.dismiss('error:exercise-save');
         },
-        runner: learningRuntimeServices.runnerRegistry.createExecution(course.runnerId),
+        runner: new BrowserExecutionService(
+          learningRuntimeServices.runnerRegistry.create(course.runnerId),
+        ),
         validator,
         now: () => new Date().toISOString(),
       }),
