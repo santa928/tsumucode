@@ -253,7 +253,12 @@ export function SlidePage() {
             </div>
           ) : null}
 
-          <SlideStage slide={slide} baseUrl={import.meta.env.BASE_URL} titleRef={slideTitleRef} />
+          <SlideStage
+            codeReference={lesson.slides.find(({ id }) => id === slide.codeReferenceSlideId)}
+            slide={slide}
+            baseUrl={import.meta.env.BASE_URL}
+            titleRef={slideTitleRef}
+          />
 
           {!next && exercise && !canEdit ? (
             <StackedCard

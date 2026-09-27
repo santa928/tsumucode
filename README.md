@@ -120,6 +120,8 @@ PagesとLocalはOriginが異なり、IndexedDBは自動同期しません。移�
 
 同じ演習を複数タブで開いた場合は、編集中の1タブだけがleaseを保持します。別タブから編集を引き継ぐときは、画面の明示操作で所有権を移します。
 
+Slideは文章・コード・結果を教材の記述順に表示します。静的な出力例は実行結果と区別し、注目行と前提コードの折り畳みで読み比べられます。[3 Lessonの改訂と記法](docs/quality/issue-21-slide-examples.md)に仕様・検証範囲を記録しています。
+
 ## 教材SourceとProvenance
 
 教材の唯一のSource of truthは`content/html-css/`です。生成物を直接編集しません。

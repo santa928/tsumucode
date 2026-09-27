@@ -5,15 +5,15 @@ canonicalDistSha256: draft
 lessons:
   - lessonId: javascript-ch00-l01
     authorId: tsumucode-content-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: 431f7374a1f7ac500bda4da7529d6a94b04d71fb5f318f155f3e0830aa60ac42
+    reviewerId: astra-pro-independent-review
+    sourceHash: bbc6d3ad5e9c99568defdb92b148212a900376bfa4cc3258963bba147122c189
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 4枚のSlideが引用符内だけを変更するExerciseへ段階接続すること、3段階Hint、Solution、8 FixtureのSourceを確認。公開後是正でs01の未対応強調記法を除去し、役割説明とExercise整合が変わらないことを再確認。Solution／incomplete／HTML-only／wrong literal／syntax／security／timeout／stale source evidenceを実Browser Runner／Validatorで実行済み。
+    notes: PR36独立Proレビュー対象539dc46fe056f1b46dba57a29b1cfc41b0ffd602。全4Slide/既存演習照合による前回承認を維持し、宣言済みHTML/CSS前提の範囲で正確性・整合・未説明語0・現行ガイド設計内の漏洩0・decisionを承認（issuecomment-5856275050）。CodexがDocker Chromiumで教材DOM例3件を実行照合し、computeLessonSourceHashでLesson全通常fileを計算。Proの独立実行/hash再計算・3ブラウザ全Fixture再検証・初心者観察を意味しない。
   - lessonId: javascript-ch01-l01
     authorId: tsumucode-javascript-authoring
     reviewerId: tsumucode-quality-verification
@@ -148,15 +148,15 @@ lessons:
     notes: Arrow FunctionのParameterと短いreturnを4枚のSlideから、回答へ接頭辞を加えるExerciseへ段階接続。Arrow Function・Parameter・return・呼び出し・Console完全一致のAND判定、3段階Hint、Solution、ordinary function／hardcoded outputを含む7 Fixtureを実Browser Runner／Validatorで確認。
   - lessonId: javascript-ch03-l05
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: b7826caabb5e0fb7f30ed4ecfbfc9f81fef164e72377abc281114b4477ed0889
+    reviewerId: astra-pro-independent-review
+    sourceHash: 3649e5a5fc926c5b0ef7f2801de50ba8b2382afa3b53580ec41f86b8d9a7649c
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Closureが外側のLocal変数を保持する流れを4枚のSlideから、同じFunctionを2回呼び10・20を得るExerciseへ段階接続。Function expressionまたはArrow Functionを許可するgroup:anyと、Local score・加算代入・2回呼び出し・Console完全一致をAND判定。3段階Hint、Solution、global-score／毎回reset／output-onlyを含む8 Fixtureを実Browser Runner／Validatorで確認。1280x720と390x844で重大なaxe違反0件、見切れ・重なり・Document Scrollなしを実寸確認済み。
+    notes: PR36独立Proレビュー対象539dc46fe056f1b46dba57a29b1cfc41b0ffd602。前回全4Slide/既存演習照合と今回末尾2行を5行へ置換する指示の確認を合わせ、正確性・整合・未説明語0・現行ガイド設計内の漏洩0・decisionを承認（issuecomment-5856275050）。CodexがDocker Nodeで完成例10 20、指示どおり置換した独立係10/20/10、次の30/20を実行照合し、computeLessonSourceHashでLesson全通常fileを計算。Proの独立実行/hash再計算・3ブラウザ全Fixture再検証・初心者観察を意味しない。Drawer参照/下書き/判定履歴と既存Resetの実Browser回帰はCodexが2件確認。
   - lessonId: javascript-ch04-l01
     authorId: tsumucode-javascript-authoring
     reviewerId: tsumucode-quality-verification

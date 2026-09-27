@@ -348,6 +348,7 @@ export const SlideFrontmatterSchema = z
       'checklist',
     ]),
     concept: TextSchema.optional(),
+    codeReferenceSlideId: IdSchema.optional(),
     layout: SlideLayoutSchema.optional(),
     teachesConceptIds: z.array(IdSchema).min(1).optional(),
     masteryTarget: MasteryLevelSchema.optional(),

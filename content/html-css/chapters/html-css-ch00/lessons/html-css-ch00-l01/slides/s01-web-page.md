@@ -15,7 +15,7 @@ assets:
     provenanceId: ch00-web-flow-original
 ---
 
-Webページ作りでは、内容を受け持つHTML、見た目を受け持つCSS、両方を読んで画面にするBrowserが協力します。最初から記号を全部覚える必要はありません。直したいものが内容か見た目かを分けると、見るFileを選べます。
+自分の学習ノートをWebページにしましょう。内容を受け持つHTML、見た目を受け持つCSS、両方を読んで画面にするブラウザー（Browser）が協力します。最初から記号を全部覚える必要はありません。直したいものが内容か見た目かを分けると、見るファイル（File）を選べます。
 
 ![HTMLとCSSをBrowserが画面へ組み立てる流れ](asset:diagram-web-flow)
 
@@ -25,4 +25,4 @@ expectedAction: 内容はHTML、見た目はCSS、表示はBrowserと区別す�
 estimatedMinutes: 2
 :::
 
-次はHTMLの完成例とPreviewを見比べます。
+コードから作った画面を確かめる表示を、プレビュー（Preview）と呼びます。次はHTMLの完成例と、その表示例の図を見比べます。

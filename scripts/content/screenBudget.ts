@@ -30,6 +30,12 @@ export function measureSlideContent(slide: Slide): SlideContentMeasure {
       case 'heading':
         textCharacters += characterCount(block.text);
         break;
+      case 'table':
+        textCharacters += [...block.headers, ...block.rows.flat()].reduce(
+          (total, text) => total + characterCount(text),
+          0,
+        );
+        break;
       case 'list':
         textCharacters += block.items.reduce((total, item) => total + characterCount(item), 0);
         break;

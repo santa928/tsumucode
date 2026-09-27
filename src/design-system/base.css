@@ -40,7 +40,7 @@
 
   body,
   #root {
-    min-width: 20rem;
+    min-width: min(20rem, 100%);
     min-height: 100dvh;
   }
 
@@ -421,6 +421,77 @@
     min-height: 0;
     align-content: safe center;
     gap: clamp(var(--tc-space-3), 1.5vw, var(--tc-space-4));
+  }
+
+  .tc-learning-shell-stage:has(.tc-slide-author-order) {
+    overflow-y: auto;
+  }
+
+  .tc-slide-stage-stack:has(.tc-slide-author-order) {
+    height: auto;
+    min-height: 100%;
+  }
+
+  .tc-slide-stage:has(.tc-slide-author-order) {
+    flex: 0 0 auto;
+    grid-template-rows: auto auto;
+    overflow: visible;
+  }
+
+  .tc-slide-code {
+    min-width: 0;
+    overflow: hidden;
+    border-radius: var(--tc-radius-md);
+    background: var(--tc-color-ink);
+    color: var(--tc-color-on-primary);
+  }
+  .tc-slide-code-label {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #728b80;
+    color: #ffda75;
+    font-size: 0.875rem;
+    font-weight: 800;
+  }
+  .tc-slide-code-focus {
+    display: block;
+    color: #e0eae5;
+    font-weight: 400;
+  }
+  .tc-slide-code pre {
+    overflow-x: auto;
+  }
+  .tc-slide-code-line {
+    box-decoration-break: clone;
+  }
+  .tc-slide-code-line[data-highlighted] {
+    background: #36574a;
+    box-shadow: inset 3px 0 #ffda75;
+  }
+  .tc-code-token-string {
+    color: #f9d386;
+  }
+  .tc-code-token-syntax {
+    color: #9fdef0;
+  }
+  .tc-code-token-comment {
+    color: #c1d0c8;
+  }
+  .tc-slide-example {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    align-items: start;
+  }
+  .tc-slide-image {
+    min-width: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .tc-slide-author-order {
+    width: min(100%, 52rem);
+    margin-inline: auto;
+    align-content: start;
   }
 
   .tc-slide-stage-copy,
@@ -1367,4 +1438,59 @@
     animation-iteration-count: 1 !important;
     transition-duration: var(--tc-motion-reduced) !important;
   }
+}
+
+/* 同じ例の入力→結果だけを横に置き、本文を種類別に移動しない。 */
+@media (min-width: 64rem) {
+  .tc-slide-example {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  }
+}
+/* 狭幅・文字拡大時はツールも折り返し、長いPagerで本文を塞がない。 */
+@media (max-width: 31.999rem) {
+  .tc-learning-viewport-shell:has(.tc-slide-author-order) {
+    display: block;
+    overflow-y: auto;
+  }
+  .tc-learning-viewport-shell:has(.tc-slide-author-order) .tc-learning-shell-stage {
+    overflow: visible;
+  }
+  .tc-learning-viewport-shell:has(.tc-slide-author-order) .tc-learning-tool-rail {
+    flex-wrap: wrap;
+  }
+  .tc-learning-viewport-shell:has(.tc-slide-author-order) .tc-learning-tool-actions {
+    flex-wrap: wrap;
+    flex: 1 1 auto;
+  }
+  .tc-learning-viewport-shell:has(.tc-slide-author-order) .tc-slide-pager {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.tc-slide-table-scroll {
+  min-width: 0;
+  overflow-x: auto;
+}
+.tc-slide-table-scroll table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--tc-color-surface);
+}
+.tc-slide-table-scroll th,
+.tc-slide-table-scroll td {
+  padding: 0.5rem;
+  border: 1px solid var(--tc-color-border);
+  text-align: left;
+  white-space: nowrap;
+}
+.tc-slide-table-scroll thead {
+  background: var(--tc-color-surface-sunken);
+}
+.tc-slide-code-reference {
+  margin-bottom: 1rem;
+}
+.tc-slide-code-reference summary {
+  min-height: 2.75rem;
+  cursor: pointer;
+  padding-block: 0.5rem;
 }

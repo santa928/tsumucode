@@ -1,27 +1,42 @@
 ---
 id: javascript-ch03-l05-s03
-title: 内側Functionが外側の変数を覚える
+title: 同じ係の2回目と別の係を比べる
 kind: concept
 concept: 外側の変数を覚える
 layout: comparison
 teachesConceptIds: [captured-binding]
 masteryTarget: read
-screenBudget: { maxTextCharacters: 290, maxCodeLines: 5, maxVisuals: 0 }
+screenBudget: { maxTextCharacters: 410, maxCodeLines: 8, maxVisuals: 0 }
 assets: []
+codeReferenceSlideId: javascript-ch03-l05-s02
 ---
 
-`score`は外側Functionのlocal変数です。内側の`addScore`が`score`を使うため、外側Functionが終わっても値は残ります。
+「前提のコードを確認」の関数定義は残します。末尾のconst counter = createScoreCounter();とconsole.log(counter(), counter());の2行を、次の5行に置き換えます。aとbは別々に作った得点係です。
 
-```js
-const addScore = createScoreCounter();
-console.log(addScore()); // 10
-console.log(addScore()); // 20
+```js {"label":"完成例の末尾2行と置き換える呼出例", "role":"input", "highlightedLines":[3,4,5]}
+const a = createScoreCounter();
+const b = createScoreCounter();
+console.log(a());
+console.log(a());
+console.log(b());
 ```
 
-同じ`addScore`を2回呼ぶため、2回目は0からやり直しません。
+```text {"label":"Console・呼出順", "role":"output"}
+10
+20
+10
+```
+
+| 呼ぶ順 | aのscore | bのscore | 戻る値 |
+| --- | --- | --- | --- |
+| a() 1回目 | 0→10 | 0のまま | 10 |
+| a() 2回目 | 10→20 | 0のまま | 20 |
+| b() 1回目 | 20のまま | 0→10 | 10 |
+
+scoreは外側の関数の中だけで使う変数（local variable）です。内側の関数が同じ変数を使い続けます。全得点係が1つのscoreを共有するわけではありません。
 
 :::practice
-prompt: 2回目が20になる理由を答えます。
-expectedAction: addScoreが前回のscoreを覚えているからと答える
+prompt: この後a()、b()を1回ずつ呼ぶと何を返すか予想します。
+expectedAction: aは30、bは20と理由も添えて答える
 estimatedMinutes: 1
 :::

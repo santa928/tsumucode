@@ -1,5 +1,6 @@
 /** 教材Sourceを実行可能markupへ展開せず、許可済みSlideBlockだけへ変換する。 */
 import { parseDocument } from 'yaml';
+import { SlideCodeBlockSchema } from '../../src/core/content/schema';
 import type { SlideBlock } from '../../src/core/content/types';
 
 const DANGEROUS_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
@@ -9,7 +10,10 @@ const RAW_MARKUP_PATTERN = /<\/?(?:>|[^\s<>]+(?=\s|\/?>|$))/u;
 const JSX_PATTERN = /<\/?(?:>|(?:[$_A-Z]|[a-z][A-Za-z0-9_$]*\.)[^\s<>]*(?=\s|\/?>|$))/u;
 const MDX_MODULE_PATTERN = /(?:^|\n)\s*(?:import|export)(?:\s|\{|\*|\/|$)/u;
 const VALID_IMAGE_PATTERN = new RegExp(`^!\\[([^\\]]+)\\]\\(asset:(${ASSET_ID_PATTERN})\\)$`, 'u');
-const VALID_CODE_FENCE_PATTERN = new RegExp(`^\`\`\`(${CODE_LANGUAGE_PATTERN})$`, 'u');
+const VALID_CODE_FENCE_PATTERN = new RegExp(
+  `^\`\`\`(${CODE_LANGUAGE_PATTERN})(?: (\\{.*\\}))?$`,
+  'u',
+);
 const UNORDERED_LIST_PATTERN = /^([-*])\s+(.+)$/u;
 const ORDERED_LIST_PATTERN = /^(\d+)\.\s+(.+)$/u;
 const UNSUPPORTED_INLINE_EMPHASIS_PATTERN = /(?:\*\*[^*\n]+\*\*|__[^_\n]+__)/u;
@@ -364,6 +368,40 @@ export function parseRestrictedMarkdown(source: string): SlideBlock[] {
       throw new Error(`未対応のdirectiveです: ${line}`);
     }
 
+    if (line.startsWith('|')) {
+      const cells = (value: string) => {
+        if (!value.endsWith('|')) throw new Error('表の各行は | で囲んでください。');
+        const result = value
+          .slice(1, -1)
+          .split('|')
+          .map((cell) => cell.trim());
+        result.forEach(assertSafeRenderedText);
+        if (result.some((cell) => cell.length === 0)) throw new Error('表のセルは空にできません。');
+        return result;
+      };
+      const headers = cells(line);
+      const separator = cells(lines[index + 1] ?? '');
+      if (
+        headers.length < 2 ||
+        headers.length > 5 ||
+        separator.length !== headers.length ||
+        separator.some((cell) => !/^---+$/.test(cell))
+      )
+        throw new Error('表は2〜5列の見出しと---区切りで指定してください。');
+      const rows: string[][] = [];
+      let cursor = index + 2;
+      while (lines[cursor]?.startsWith('|')) {
+        const row = cells(lines[cursor] ?? '');
+        if (row.length !== headers.length) throw new Error('表の列数を見出しに合わせてください。');
+        rows.push(row);
+        cursor += 1;
+      }
+      if (rows.length === 0 || rows.length > 12) throw new Error('表の本文は1〜12行です。');
+      blocks.push({ type: 'table', headers, rows });
+      index = cursor;
+      continue;
+    }
+
     if (line.startsWith('```')) {
       if (line === '```') throw new Error('Code fenceには言語名が必要です。');
       const fence = line.match(VALID_CODE_FENCE_PATTERN);
@@ -375,7 +413,32 @@ export function parseRestrictedMarkdown(source: string): SlideBlock[] {
         cursor += 1;
       }
       if (lines[cursor] !== '```') throw new Error('Code fenceが閉じられていません。');
-      blocks.push({ type: 'code', language: fence[1] ?? '', code: code.join('\n') });
+      let metadata: unknown = {};
+      if (fence[2] !== undefined) {
+        try {
+          metadata = JSON.parse(fence[2]);
+        } catch {
+          throw new Error('Code fenceの注釈はJSON Objectで指定してください。');
+        }
+      }
+      if (metadata === null || typeof metadata !== 'object' || Array.isArray(metadata)) {
+        throw new Error('Code fenceの注釈はObjectで指定してください。');
+      }
+      if (
+        Object.keys(metadata).some(
+          (key) => !['label', 'role', 'highlightedLines', 'resultAssetId'].includes(key),
+        )
+      ) {
+        throw new Error('Code fenceに未対応の注釈があります。');
+      }
+      const block = SlideCodeBlockSchema.parse({
+        ...metadata,
+        type: 'code',
+        language: fence[1] ?? '',
+        code: code.join('\n'),
+      });
+      if (block.label !== undefined) assertSafeRenderedText(block.label);
+      blocks.push(block);
       index = cursor + 1;
       continue;
     }

@@ -421,7 +421,7 @@ test.describe('JavaScript vertical slice visual regression', () => {
   ] as const) {
     for (const slide of [
       { id: 's01', title: 'Webページを作る3つの役割' },
-      { id: 's02', title: 'index.htmlからscript.jsへつなぐ' },
+      { id: 's02', title: '2ファイルと表示結果をつなげる' },
       { id: 's03', title: '探す・変える・結果の順に読む' },
       { id: 's04', title: '引用符の内側だけを変える' },
     ] as const) {
@@ -468,7 +468,7 @@ test.describe('JavaScript vertical slice visual regression', () => {
     await expect(
       page.getByRole('heading', { level: 1, name: '引用符の内側だけを変える' }),
     ).toBeVisible();
-    const stage = page.getByTestId('learning-stage');
+    const stage = page.locator('.tc-learning-viewport-shell');
     await stage.evaluate((element) => {
       element.scrollTo({ top: element.scrollHeight, left: 0, behavior: 'auto' });
     });
@@ -479,6 +479,10 @@ test.describe('JavaScript vertical slice visual regression', () => {
         ),
       )
       .toBe(true);
+    await expect(page.getByRole('heading', { name: '演習はPCで積み上げよう' })).toBeInViewport();
+    await expect(
+      page.locator('.tc-slide-pager').getByRole('link', { name: 'コースマップへ戻る' }),
+    ).toBeInViewport();
     await expect(page).toHaveScreenshot('javascript-slide-s04-mobile-portrait-bottom.png', {
       animations: 'disabled',
       caret: 'hide',
@@ -648,7 +652,7 @@ test.describe('JavaScript Chapter 01 visual regression', () => {
     await expect(
       page.getByRole('heading', { level: 1, name: '3種類の値を順番どおりに書く' }),
     ).toBeVisible();
-    const stage = page.getByTestId('learning-stage');
+    const stage = page.locator('.tc-learning-viewport-shell');
     await stage.evaluate((element) => {
       element.scrollTo({ top: element.scrollHeight, left: 0, behavior: 'auto' });
     });
@@ -659,6 +663,10 @@ test.describe('JavaScript Chapter 01 visual regression', () => {
         ),
       )
       .toBe(true);
+    await expect(page.getByRole('heading', { name: '演習はPCで積み上げよう' })).toBeInViewport();
+    await expect(
+      page.locator('.tc-slide-pager').getByRole('link', { name: 'コースマップへ戻る' }),
+    ).toBeInViewport();
     await expect(page).toHaveScreenshot('javascript-ch01-slide-s04-mobile-portrait-bottom.png', {
       animations: 'disabled',
       caret: 'hide',
@@ -748,7 +756,7 @@ test.describe('JavaScript Chapter 03 visual regression', () => {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto(`${JAVASCRIPT_CH03_LESSON_PATH}/slides/javascript-ch03-l05-s04`);
       await expect(
-        page.getByRole('heading', { level: 1, name: '2回の呼び出しで10から20へ進める' }),
+        page.getByRole('heading', { level: 1, name: '値を置く場所を守って試す' }),
       ).toBeVisible();
       await expect.poll(() => page.evaluate(() => document.fonts.status)).toBe('loaded');
       await page.getByTestId('learning-stage').evaluate((element) => {

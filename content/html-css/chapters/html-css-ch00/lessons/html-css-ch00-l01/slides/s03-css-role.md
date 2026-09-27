@@ -17,7 +17,7 @@ assets:
 
 CSSは、HTMLの言葉を変えずに色や余白などの見た目を変えます。記号の詳しい読み方はChapter 04で学びます。今は`background-color:`の右にある`#fffaf0`が背景色の値だと確認します。
 
-```css
+```css {"label":"styles.css・背景色の例", "role":"input", "resultAssetId":"preview-first-page-css", "highlightedLines":[2]}
 body {
   background-color: #fffaf0;
 }
@@ -31,4 +31,4 @@ expectedAction: 言葉は同じままCSSが背景の見た目を変えたと説�
 estimatedMinutes: 2
 :::
 
-次は、HTMLとCSSのどちらを直すか選びます。
+CSSの色を変えても、HTMLの言葉は変わりません。次はどちらのファイルを直すか選びます。
