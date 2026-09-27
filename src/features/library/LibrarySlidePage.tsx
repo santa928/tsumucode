@@ -147,7 +147,12 @@ export function LibrarySlidePage() {
         }
       >
         <div className="tc-slide-stage-stack tc-library-stage-stack">
-          <SlideStage slide={slide} baseUrl={import.meta.env.BASE_URL} titleRef={slideTitleRef} />
+          <SlideStage
+            codeReference={lesson.slides.find(({ id }) => id === slide.codeReferenceSlideId)}
+            slide={slide}
+            baseUrl={import.meta.env.BASE_URL}
+            titleRef={slideTitleRef}
+          />
         </div>
       </LearningViewportShell>
 

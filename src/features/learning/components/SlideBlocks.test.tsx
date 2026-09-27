@@ -50,7 +50,9 @@ describe('SlideBlocks', () => {
     const unorderedList = screen.getByRole('list', { name: 'ポイント' });
     expect(unorderedList.tagName).toBe('UL');
 
-    expect(screen.getByText('<script>alert("実行しない")</script>')).toBeInTheDocument();
+    expect(container.querySelector('code')?.textContent).toBe(
+      '<script>alert("実行しない")</script>',
+    );
     expect(container.querySelector('script')).toBeNull();
     expect(screen.getByText('html')).toBeInTheDocument();
     const codeRegion = screen.getByLabelText('htmlのコード例（横スクロール可能）');
@@ -115,4 +117,49 @@ describe('SlideBlocks', () => {
       ),
     ).toThrow('Public Asset pathは安全な相対Pathで指定してください。');
   });
+});
+
+it('入力と明示した出力だけをまとめ、コード文字列と注目行を保持する', () => {
+  const source = 'const value = "<script>";\nconsole.log(value);';
+  const { container } = render(
+    <SlideBlocks
+      blocks={[
+        { type: 'paragraph', text: '先の説明' },
+        {
+          type: 'code',
+          language: 'js',
+          code: source,
+          role: 'input',
+          label: 'script.js',
+          highlightedLines: [2],
+        },
+        { type: 'code', language: 'text', code: '<script>', role: 'output', label: 'Console' },
+        { type: 'paragraph', text: '後の説明' },
+      ]}
+      assets={[]}
+      baseUrl="/"
+    />,
+  );
+  expect(container.querySelector('.tc-slide-example')?.querySelectorAll('pre')).toHaveLength(2);
+  expect(container.querySelector('code')?.textContent).toBe(source);
+  expect(container.querySelector('[data-highlighted]')?.textContent).toBe('console.log(value);');
+  expect(screen.getByText('注目：2行目')).toBeVisible();
+  expect(screen.getByText('この例の出力（静的な例） · Console')).toBeVisible();
+  expect(container.querySelector('script')).toBeNull();
+});
+
+it('未知言語は文字を失わず表示し、隣接しただけの画像をペアにしない', () => {
+  const { container } = render(
+    <SlideBlocks
+      blocks={[
+        { type: 'code', language: 'unknown', code: '<node>\n42', role: 'input' },
+        { type: 'image', assetId: 'html-diagram', alt: '独立した図' },
+      ]}
+      assets={assets}
+      baseUrl="/"
+    />,
+  );
+  expect(container.querySelector('code')?.textContent).toBe('<node>\n42');
+  expect(container.querySelector('.tc-slide-example')).toBeNull();
+  expect(container.querySelector('.tc-code-token-syntax')).toBeNull();
 });

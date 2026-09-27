@@ -36,12 +36,25 @@ describe('SlideStage', () => {
     expect(within(stage).getByRole('heading', { level: 1, name: slide.title })).toBeVisible();
   });
 
-  it('code-preview Slideを説明とCode/Visualの2領域へ描画する', () => {
-    render(<SlideStage slide={codePreviewSlide()} baseUrl="/tsumucode/" />);
+  it('混在した説明・コード・結果を著者の順序で描画する', () => {
+    const slide = codePreviewSlide();
+    slide.blocks.push({ type: 'paragraph', text: '結果を見てから次の例へ進みます。' });
+    render(<SlideStage slide={slide} baseUrl="/tsumucode/" />);
 
     expect(screen.getByTestId('slide-stage')).toHaveAttribute('data-slide-layout', 'code-preview');
-    expect(screen.getByTestId('slide-copy')).toHaveTextContent('h1はページ全体の題名を表します。');
-    expect(screen.getByTestId('slide-visual')).toHaveTextContent('<h1>学習ノート</h1>');
+    const ordered = screen.getByTestId('slide-stage').querySelectorAll('p, figcaption, pre, img');
+    expect(
+      [...ordered].map((element) =>
+        element.tagName === 'IMG' ? element.getAttribute('alt') : element.textContent,
+      ),
+    ).toEqual([
+      'h1はページ全体の題名を表します。',
+      'html',
+      '<h1>学習ノート</h1>',
+      '静的な図：見出しを表示したPreview',
+      '見出しを表示したPreview',
+      '結果を見てから次の例へ進みます。',
+    ]);
     expect(screen.getByRole('img', { name: '見出しを表示したPreview' })).toHaveAttribute(
       'src',
       '/tsumucode/generated/assets/heading-preview.svg',

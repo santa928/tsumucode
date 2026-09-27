@@ -444,6 +444,9 @@ async function compileSlide(relativePath: string, context: CompileContext): Prom
     title: metadata.title,
     kind: metadata.kind,
     ...(metadata.concept === undefined ? {} : { concept: metadata.concept }),
+    ...(metadata.codeReferenceSlideId === undefined
+      ? {}
+      : { codeReferenceSlideId: metadata.codeReferenceSlideId }),
     layout: metadata.layout ?? legacySlideLayout(metadata.kind),
     teachesConceptIds: metadata.teachesConceptIds ?? [],
     masteryTarget: metadata.masteryTarget ?? 'seen',

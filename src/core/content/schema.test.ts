@@ -8,6 +8,7 @@ import {
   JavaScriptValidationRuleDefinitionSchema,
   PreviewViewportSchema,
   SlideSchema,
+  LessonSchema,
 } from './schema';
 import type {
   ContentProgressMigration,
@@ -1470,4 +1471,19 @@ describe('CourseManifestSchema progress migration', () => {
     ]);
     expectCourseIssue(course, 'migration終端が現行IDへ到達しません');
   });
+});
+
+it('コード参照は同じLessonの先行コードに限定する', () => {
+  const lesson = firstStandardLesson(cloneCourse());
+  const source = lesson.slides[0]!;
+  source.blocks = [{ type: 'code', language: 'js', code: 'const x = 1;' }];
+  const target = structuredClone(source);
+  target.id = 'reference-target';
+  target.codeReferenceSlideId = source.id;
+  lesson.slides = [source, target];
+  expect(LessonSchema.safeParse(lesson).success).toBe(true);
+  target.codeReferenceSlideId = target.id;
+  expect(LessonSchema.safeParse(lesson).success).toBe(false);
+  target.codeReferenceSlideId = 'other-lesson-slide';
+  expect(LessonSchema.safeParse(lesson).success).toBe(false);
 });

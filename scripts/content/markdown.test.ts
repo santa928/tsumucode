@@ -307,7 +307,6 @@ describe('parseRestrictedMarkdown', () => {
 
   it.each([
     ['blockquote', '> 引用'],
-    ['table', '| A | B |\n| - | - |'],
     ['horizontal rule', '---'],
     ['asterisk horizontal rule', '***'],
     ['spaced horizontal rule', '* * *'],
@@ -328,4 +327,49 @@ describe('parseRestrictedMarkdown', () => {
       expect(() => parseRestrictedMarkdown(source)).toThrow();
     },
   );
+});
+
+describe('静的コードの注釈', () => {
+  it('既存コードを保持しラベルと注目行を渡す', () => {
+    expect(
+      parseRestrictedMarkdown(
+        '```js {"label":"script.js", "role":"input", "highlightedLines":[2]}\nconst x = 1;\nconsole.log(x);\n```',
+      ),
+    ).toEqual([
+      {
+        type: 'code',
+        language: 'js',
+        code: 'const x = 1;\nconsole.log(x);',
+        label: 'script.js',
+        role: 'input',
+        highlightedLines: [2],
+      },
+    ]);
+  });
+  it.each([
+    '{"highlightedLines":[0]}',
+    '{"highlightedLines":[2]}',
+    '{"highlightedLines":[1,1]}',
+    '{"role":"run"}',
+    '{"label":"<img>"}',
+    '{"command":"run"}',
+    '{"code":"replace"}',
+  ])('危険または無効な注釈%sを拒否する', (metadata) => {
+    expect(() => parseRestrictedMarkdown('```js ' + metadata + '\nx\n```')).toThrow();
+  });
+});
+
+it('短い対応表を安全な文字列と列構造として読む', () => {
+  expect(parseRestrictedMarkdown('| 呼出 | 値 |\n| --- | --- |\n| a() | 10 |')).toEqual([
+    { type: 'table', headers: ['呼出', '値'], rows: [['a()', '10']] },
+  ]);
+  for (const source of [
+    '| 呼出 | 値 |\n| --- | --- |\n| a() |',
+    '| 呼出 | 値 |\n| --- | --- |\n| <script> | 10 |',
+  ])
+    expect(() => parseRestrictedMarkdown(source)).toThrow();
+});
+
+it('短すぎる区切り行を持つ表は専用の診断で拒否する', () => {
+  expect(() => parseRestrictedMarkdown('| A | B |\n| - | - |')).toThrow('表は2〜5列');
 });

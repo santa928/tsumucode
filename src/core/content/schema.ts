@@ -96,6 +96,32 @@ export const AssetRefSchema = z
     });
   });
 
+/** 静的なコード例の注釈。実行や採点の設定は受け取らない。 */
+export const SlideCodeBlockSchema = z
+  .object({
+    type: z.literal('code'),
+    language: NonEmptyTextSchema,
+    code: z.string(),
+    label: NonEmptyTextSchema.max(80).optional(),
+    resultAssetId: IdSchema.optional(),
+    role: z.enum(['input', 'output']).optional(),
+    highlightedLines: z.array(z.number().int().min(1)).max(100).optional(),
+  })
+  .strict()
+  .superRefine((block, context) => {
+    const lines = block.code.split('\n').length;
+    if (
+      block.highlightedLines?.some((line) => line > lines) ||
+      new Set(block.highlightedLines).size !== (block.highlightedLines?.length ?? 0)
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['highlightedLines'],
+        message: '注目行は重複せずコード内の行番号を指定してください',
+      });
+    }
+  });
+
 export const SlideBlockSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('paragraph'), text: NonEmptyTextSchema }).strict(),
   z
@@ -112,7 +138,22 @@ export const SlideBlockSchema = z.discriminatedUnion('type', [
       items: z.array(NonEmptyTextSchema).min(1),
     })
     .strict(),
-  z.object({ type: z.literal('code'), language: NonEmptyTextSchema, code: z.string() }).strict(),
+  z
+    .object({
+      type: z.literal('table'),
+      headers: z.array(NonEmptyTextSchema).min(2).max(5),
+      rows: z.array(z.array(NonEmptyTextSchema)).min(1).max(12),
+    })
+    .strict()
+    .superRefine((table, context) => {
+      if (table.rows.some((row) => row.length !== table.headers.length))
+        context.addIssue({
+          code: 'custom',
+          path: ['rows'],
+          message: '表の列数を見出しに合わせてください',
+        });
+    }),
+  SlideCodeBlockSchema,
   z.object({ type: z.literal('image'), assetId: IdSchema, alt: NonEmptyTextSchema }).strict(),
   z
     .object({
@@ -147,6 +188,7 @@ export const SlideSchema = z
       'checklist',
     ]),
     concept: NonEmptyTextSchema.optional(),
+    codeReferenceSlideId: IdSchema.optional(),
     layout: SlideLayoutSchema,
     teachesConceptIds: z.array(IdSchema),
     masteryTarget: MasteryLevelSchema,
@@ -159,6 +201,20 @@ export const SlideSchema = z
     let hasLevelTwoHeading = false;
 
     slide.blocks.forEach((block, index) => {
+      if (block.type === 'code' && block.resultAssetId !== undefined) {
+        const next = slide.blocks[index + 1];
+        if (
+          block.role !== 'input' ||
+          next?.type !== 'image' ||
+          next.assetId !== block.resultAssetId
+        ) {
+          context.addIssue({
+            code: 'custom',
+            path: ['blocks', index, 'resultAssetId'],
+            message: '入力コードの直後の結果画像を指定してください',
+          });
+        }
+      }
       if (block.type !== 'heading') return;
       if (block.level === 2) {
         hasLevelTwoHeading = true;
@@ -1009,52 +1065,71 @@ const LessonBaseShape = {
   nextLessonId: IdSchema.optional(),
 };
 
-export const LessonSchema = z.discriminatedUnion('kind', [
-  z
-    .object({
-      ...LessonBaseShape,
-      kind: z.literal('standard'),
-      slides: z.array(SlideSchema).min(1),
-      completion: z
-        .object({
-          kind: z.literal('standard'),
-          finalSlideId: IdSchema,
-          requiredExerciseIds: z.array(IdSchema).min(1),
-        })
-        .strict(),
-    })
-    .strict(),
-  z
-    .object({
-      ...LessonBaseShape,
-      kind: z.literal('guided-project'),
-      slides: z.array(SlideSchema),
-      project: ProjectSchema,
-      completion: z
-        .object({
-          kind: z.literal('guided-project'),
-          requiredChecklistItemIds: z.array(IdSchema).min(1),
-          requiredExerciseIds: z.array(IdSchema).min(1),
-        })
-        .strict(),
-    })
-    .strict(),
-  z
-    .object({
-      ...LessonBaseShape,
-      kind: z.literal('capstone'),
-      slides: z.array(SlideSchema),
-      project: ProjectSchema,
-      completion: z
-        .object({
-          kind: z.literal('capstone'),
-          requiredRuleIds: z.array(IdSchema).min(1),
-          requiredViewportIds: z.array(IdSchema).min(1),
-        })
-        .strict(),
-    })
-    .strict(),
-]);
+export const LessonSchema = z
+  .discriminatedUnion('kind', [
+    z
+      .object({
+        ...LessonBaseShape,
+        kind: z.literal('standard'),
+        slides: z.array(SlideSchema).min(1),
+        completion: z
+          .object({
+            kind: z.literal('standard'),
+            finalSlideId: IdSchema,
+            requiredExerciseIds: z.array(IdSchema).min(1),
+          })
+          .strict(),
+      })
+      .strict(),
+    z
+      .object({
+        ...LessonBaseShape,
+        kind: z.literal('guided-project'),
+        slides: z.array(SlideSchema),
+        project: ProjectSchema,
+        completion: z
+          .object({
+            kind: z.literal('guided-project'),
+            requiredChecklistItemIds: z.array(IdSchema).min(1),
+            requiredExerciseIds: z.array(IdSchema).min(1),
+          })
+          .strict(),
+      })
+      .strict(),
+    z
+      .object({
+        ...LessonBaseShape,
+        kind: z.literal('capstone'),
+        slides: z.array(SlideSchema),
+        project: ProjectSchema,
+        completion: z
+          .object({
+            kind: z.literal('capstone'),
+            requiredRuleIds: z.array(IdSchema).min(1),
+            requiredViewportIds: z.array(IdSchema).min(1),
+          })
+          .strict(),
+      })
+      .strict(),
+  ])
+  .superRefine((lesson, context) => {
+    lesson.slides.forEach((slide, index) => {
+      if (slide.codeReferenceSlideId === undefined) return;
+      const reference = lesson.slides
+        .slice(0, index)
+        .find(({ id }) => id === slide.codeReferenceSlideId);
+      if (
+        reference === undefined ||
+        !reference.blocks.some((block) => block.type === 'code' && block.role !== 'output')
+      ) {
+        context.addIssue({
+          code: 'custom',
+          path: ['slides', index, 'codeReferenceSlideId'],
+          message: '同じLessonの先行するコード例を参照してください',
+        });
+      }
+    });
+  });
 
 export const ChapterManifestSchema = z
   .object({

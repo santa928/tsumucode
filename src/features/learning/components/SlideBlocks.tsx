@@ -1,4 +1,5 @@
 /** 検証済み教材Blockを、実行可能HTMLへ変換せず安全なReact要素として表示する。 */
+import { SlideCode } from './SlideCode';
 import type { AssetRef, SlideBlock } from '../../../core/content/types';
 import { resolvePublicAsset } from '../../../shared/lib/resolvePublicAsset';
 
@@ -26,7 +27,7 @@ function assertNever(value: never): never {
   throw new Error(`未対応のSlide Blockです: ${JSON.stringify(value)}`);
 }
 
-/** Compilerが許可した7種類のBlockだけを、意味に合うReact elementへ写像する。 */
+/** Compilerが許可した種類のBlockだけを、意味に合うReact elementへ写像する。 */
 export function SlideBlocks({ blocks, assets, baseUrl, density = 'default' }: SlideBlocksProps) {
   const assetById = new Map(assets.map((asset) => [asset.id, asset]));
   const compact = density === 'compact';
@@ -38,6 +39,27 @@ export function SlideBlocks({ blocks, assets, baseUrl, density = 'default' }: Sl
     >
       {blocks.map((block, index) => {
         const key = `${block.type}-${String(index)}`;
+        const previous = blocks[index - 1];
+        const next = blocks[index + 1];
+        const pairedResult = (input: SlideBlock | undefined, item: SlideBlock | undefined) =>
+          input?.type === 'code' &&
+          input.role === 'input' &&
+          ((item?.type === 'image' && input.resultAssetId === item.assetId) ||
+            (item?.type === 'code' && item.role === 'output'));
+        if (pairedResult(previous, block)) return null;
+        if (
+          block.type === 'code' &&
+          block.role === 'input' &&
+          pairedResult(block, next) &&
+          next !== undefined
+        ) {
+          return (
+            <div key={key} className="tc-slide-example" aria-label="入力コードと対応する静的な結果">
+              <SlideCode block={block} compact={compact} />
+              <SlideBlocks blocks={[next]} assets={assets} baseUrl={baseUrl} density={density} />
+            </div>
+          );
+        }
 
         switch (block.type) {
           case 'heading':
@@ -90,24 +112,46 @@ export function SlideBlocks({ blocks, assets, baseUrl, density = 'default' }: Sl
               </ul>
             );
           }
-          case 'code':
+          case 'table':
             return (
-              <div key={key} className="overflow-hidden rounded-workshop-md bg-workshop-ink">
-                <p
-                  className={`border-b border-workshop-muted font-mono text-sm font-bold text-workshop-learning ${compact ? 'px-3 py-1.5' : 'px-4 py-2'}`}
-                >
-                  {block.language}
-                </p>
-                <pre
-                  tabIndex={0}
-                  data-slide-horizontal-scroll
-                  aria-label={`${block.language}のコード例（横スクロール可能）`}
-                  className={`overflow-x-auto text-workshop-on-primary ${compact ? 'p-3' : 'p-4'}`}
-                >
-                  <code className="font-mono">{block.code}</code>
-                </pre>
+              <div
+                key={key}
+                className="tc-slide-table-scroll"
+                tabIndex={0}
+                role="region"
+                aria-label="対応表（横スクロール可能）"
+                data-slide-horizontal-scroll
+              >
+                <table>
+                  <thead>
+                    <tr>
+                      {block.headers.map((header, column) => (
+                        <th key={column} scope="col">
+                          {header}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {block.rows.map((row, rowIndex) => (
+                      <tr key={rowIndex}>
+                        {row.map((cell, column) =>
+                          column === 0 ? (
+                            <th key={column} scope="row">
+                              {cell}
+                            </th>
+                          ) : (
+                            <td key={column}>{cell}</td>
+                          ),
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             );
+          case 'code':
+            return <SlideCode key={key} block={block} compact={compact} />;
           case 'image': {
             const asset = assetById.get(block.assetId);
             if (asset === undefined) {
@@ -118,23 +162,25 @@ export function SlideBlocks({ blocks, assets, baseUrl, density = 'default' }: Sl
             }
 
             return (
-              <img
-                key={key}
-                src={resolvePublicAsset(baseUrl, asset.path)}
-                alt={block.alt}
-                width={asset.intrinsicWidth}
-                height={asset.intrinsicHeight}
-                decoding="async"
-                fetchPriority="low"
-                style={
-                  asset.intrinsicWidth !== undefined && asset.intrinsicHeight !== undefined
-                    ? {
-                        aspectRatio: `${String(asset.intrinsicWidth)} / ${String(asset.intrinsicHeight)}`,
-                      }
-                    : undefined
-                }
-                className="h-auto max-w-full rounded-workshop-md border border-workshop-border bg-workshop-raised"
-              />
+              <figure key={key} className="tc-slide-image">
+                <figcaption className="text-sm font-bold">静的な図：{block.alt}</figcaption>
+                <img
+                  src={resolvePublicAsset(baseUrl, asset.path)}
+                  alt={block.alt}
+                  width={asset.intrinsicWidth}
+                  height={asset.intrinsicHeight}
+                  decoding="async"
+                  fetchPriority="low"
+                  style={
+                    asset.intrinsicWidth !== undefined && asset.intrinsicHeight !== undefined
+                      ? {
+                          aspectRatio: `${String(asset.intrinsicWidth)} / ${String(asset.intrinsicHeight)}`,
+                        }
+                      : undefined
+                  }
+                  className="h-auto max-w-full rounded-workshop-md border border-workshop-border bg-workshop-raised"
+                />
+              </figure>
             );
           }
           case 'practice': {

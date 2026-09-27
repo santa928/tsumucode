@@ -6,22 +6,27 @@ concept: querySelectorとtextContent
 layout: comparison
 teachesConceptIds: [query-selector-text-content]
 masteryTarget: read
-screenBudget: { maxTextCharacters: 300, maxCodeLines: 3, maxVisuals: 0 }
+screenBudget: { maxTextCharacters: 370, maxCodeLines: 2, maxVisuals: 0 }
 assets: []
+codeReferenceSlideId: javascript-ch00-l01-s02
 ---
 
-次の1行は、左から「探す場所」「変えるもの」「新しい文字」の順に読めます。
+前のHTMLのmessageという目印を使います。次の行を「探す場所」「変えるもの」「新しい文字」の順に読みましょう。
 
-```js
+```js {"label":"script.js", "role":"input", "highlightedLines":[1]}
 document.querySelector('#message').textContent = 'ここを書き換えます';
 ```
 
-- `'#message'`を目印に、HTMLの場所を探す
-- `textContent`で、その場所の文字を変える
-- 右端の引用符内が、画面へ表示する新しい文字
+```text {"label":"ページに表示する文字", "role":"output"}
+ここを書き換えます
+```
+
+- querySelectorは指定した目印で要素を探す処理。'#message'がHTMLのid="message"に対応する。
+- textContentはその場所の文字。=の右側にある文字へ置き換える。
+- 引用符は文字の範囲を囲む記号。引用符そのものはページへ表示されない。
 
 :::practice
-prompt: 画面へ表示される文字だけをコードから探します。
-expectedAction: 右端の引用符内「ここを書き換えます」を指す
+prompt: 右端の引用符内を「こんにちは」に変えた結果を予想します。
+expectedAction: 表示が「こんにちは」になり、目印のmessageは変えないと答える
 estimatedMinutes: 1
 :::

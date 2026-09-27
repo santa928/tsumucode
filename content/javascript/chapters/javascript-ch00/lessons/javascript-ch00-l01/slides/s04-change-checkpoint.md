@@ -6,20 +6,24 @@ concept: 文字列の変更
 layout: checkpoint
 teachesConceptIds: [string-literal-edit]
 masteryTarget: transform
-screenBudget: { maxTextCharacters: 300, maxCodeLines: 3, maxVisuals: 0 }
+screenBudget: { maxTextCharacters: 340, maxCodeLines: 2, maxVisuals: 0 }
 assets: []
 ---
 
-演習では`script.js`の1行が完成した状態から始めます。新しい書き方を覚えて追加する必要はありません。
+演習は完成した行から始めます。右端の引用符内だけを変え、実行して結果を比べます。
 
-```js
-document.querySelector('#message').textContent = 'ここを書き換えます';
+```js {"label":"script.js・変更例", "role":"input", "highlightedLines":[1]}
+document.querySelector('#message').textContent = 'こんにちは';
 ```
 
-変更するのは、右端の引用符に囲まれた`ここを書き換えます`だけです。`document`、`querySelector`、`textContent`、記号はそのまま残します。
+```text {"label":"この変更例の表示", "role":"output"}
+こんにちは
+```
+
+'#message'の引用符内は探す目印です。そこを変えると別の場所を探してしまいます。document、querySelector、textContentと記号は残します。HTMLの元の文字だけを直しても、JavaScriptが動くと上書きされます。
 
 :::practice
-prompt: 変更する範囲と、残す範囲を確認します。
-expectedAction: 右端の引用符内だけを変更し、それ以外は残すと答える
+prompt: 演習の指定文に合わせて右端の文字だけを直し、Previewで確認してから判定します。
+expectedAction: 変更した文字と表示結果の一致を確認する
 estimatedMinutes: 1
 :::
