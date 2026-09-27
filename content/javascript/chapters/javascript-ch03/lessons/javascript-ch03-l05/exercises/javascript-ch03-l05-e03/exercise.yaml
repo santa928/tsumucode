@@ -1,5 +1,11 @@
 id: javascript-ch03-l05-e03
 kind: standard
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
 workspaceId: javascript-ch03-l05-e03
 countsTowardStandardExerciseTotal: true
 title: 2つの係を別の増分で使う

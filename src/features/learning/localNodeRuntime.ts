@@ -1,5 +1,5 @@
 import { LocalNodeExecutionService } from '../../adapters/runtime/local/LocalNodeExecutionService';
-import { analyzeNodeSourceFacts } from '../../adapters/runtime/javascript/analyzer/instrumentJavaScript';
+import { analyzeConsoleSourceFacts } from '../../adapters/runtime/javascript/analyzer/instrumentJavaScript';
 import { JavaScriptValidator } from '../../adapters/validation/javascript/JavaScriptValidator';
 import type { LocalLearningRuntime } from './localRuntime';
 
@@ -23,7 +23,7 @@ export const localRuntime: LocalLearningRuntime = {
         async analyze(input) {
           if ('files' in input)
             throw new Error('Local source analysis supports the fixed single file profile only');
-          return analyzeNodeSourceFacts({ ...input, requestId: crypto.randomUUID() });
+          return analyzeConsoleSourceFacts({ ...input, requestId: crypto.randomUUID() });
         },
         async dispose() {
           /* 純粋なsource解析は再利用資源を保持しない。 */

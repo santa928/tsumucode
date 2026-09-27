@@ -225,6 +225,66 @@ function javascriptInteractionContext(
 }
 
 describe('JavaScriptValidator', () => {
+  it('明示したBrowser Consoleだけ偽DOMなしで採点し、環境・停止・hash・DOM混在を拒否する', async () => {
+    const validator = new JavaScriptValidator({
+      analyzerFactory: analyzerDouble,
+      browserConsole: true,
+    });
+    const base = javascriptContext();
+    const context: ValidationContext = {
+      ...base,
+      rules: [javascriptRules()[0]!],
+      snapshots: {},
+      runtime: {
+        kind: 'javascript',
+        entryFile: 'script.js',
+        sourceType: 'script',
+        capabilityProfile: 'core',
+        primaryOutput: 'console',
+      },
+      execution: {
+        backend: 'browser',
+        engine: 'browser-js',
+        runId: 'console-1',
+        exerciseSessionId: 'session-1',
+        executionRevision: 4,
+        status: 'succeeded',
+        console: [],
+        diagnostics: [],
+        evidence: base.evidence,
+      },
+    };
+    expect(await validator.validate(context)).toMatchObject({
+      status: 'pass',
+      executionRevision: 4,
+    });
+    expect(
+      await new JavaScriptValidator({ analyzerFactory: analyzerDouble }).validate(context),
+    ).toMatchObject({ status: 'system-error' });
+    for (const status of ['stopped', 'unsupported', 'system-error'] as const) {
+      expect(
+        await validator.validate({ ...context, execution: { ...context.execution!, status } }),
+      ).toMatchObject({ status: 'system-error' });
+    }
+    expect(
+      await validator.validate({
+        ...context,
+        execution: { ...context.execution!, engine: 'browser-html-css' },
+      }),
+    ).toMatchObject({ status: 'system-error' });
+    expect(await validator.validate({ ...context, rules: javascriptRules() })).toMatchObject({
+      status: 'system-error',
+    });
+    expect(
+      await validator.validate({
+        ...context,
+        evidence: base.evidence.map((item) =>
+          item.id === 'javascript.source-sha256' ? { ...item, value: '0'.repeat(64) } : item,
+        ),
+      }),
+    ).toMatchObject({ status: 'system-error' });
+  });
+
   it('Local Nodeは偽DOMなしでsourceを採点し、停止・DOM混在・hash違いを判定不能にする', async () => {
     const validator = new JavaScriptValidator({ analyzerFactory: analyzerDouble });
     const base = javascriptContext();

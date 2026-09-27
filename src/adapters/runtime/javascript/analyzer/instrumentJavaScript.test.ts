@@ -1,6 +1,6 @@
 import { parse } from 'acorn';
 import { describe, expect, it } from 'vitest';
-import { analyzeJavaScriptSource, analyzeNodeSourceFacts } from './instrumentJavaScript';
+import { analyzeJavaScriptSource, analyzeConsoleSourceFacts } from './instrumentJavaScript';
 
 const baseInput = {
   requestId: 'request-1',
@@ -16,7 +16,7 @@ describe('Node source facts', () => {
   it('計算添字とPromiseを拒否せず、sourceを変換せず同じhashと教材factを返す', async () => {
     const source =
       'const values = [10]; const i = 0; Promise.resolve(values[i]).then(value => console.log(value));';
-    const result = await analyzeNodeSourceFacts({ ...baseInput, source });
+    const result = await analyzeConsoleSourceFacts({ ...baseInput, source });
     expect(result).toMatchObject({ status: 'success', instrumentedCode: source, diagnostics: [] });
     if (result.status !== 'success') throw new Error('Node facts failed');
     expect(result.sourceSha256).toMatch(/^[a-f0-9]{64}$/u);
@@ -30,12 +30,12 @@ describe('Node source facts', () => {
   });
 
   it('解析不能なsourceを合格や空factとして返さない', async () => {
-    expect(await analyzeNodeSourceFacts({ ...baseInput, source: 'const =' })).toMatchObject({
+    expect(await analyzeConsoleSourceFacts({ ...baseInput, source: 'const =' })).toMatchObject({
       status: 'failure',
       diagnostics: [expect.objectContaining({ kind: 'syntax' })],
     });
     expect(
-      await analyzeNodeSourceFacts({ ...baseInput, source: ' '.repeat(102401) }),
+      await analyzeConsoleSourceFacts({ ...baseInput, source: ' '.repeat(102401) }),
     ).toMatchObject({
       status: 'failure',
       diagnostics: [expect.objectContaining({ kind: 'system' })],

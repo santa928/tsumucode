@@ -870,8 +870,8 @@ async function sha256(source: string): Promise<string> {
   return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
 }
 
-/** Nodeで実行済みの同じsourceから教材factだけを得る。Browser policyや実行用変換は適用しない。 */
-export async function analyzeNodeSourceFacts(
+/** Consoleで実行済みの同じsourceから教材factだけを得る。DOM policyや実行用変換は適用しない。 */
+export async function analyzeConsoleSourceFacts(
   request: JavaScriptLegacyAnalysisRequest,
 ): Promise<JavaScriptLegacyAnalysisResult> {
   if (new TextEncoder().encode(request.source).byteLength > MAX_SOURCE_BYTES) {

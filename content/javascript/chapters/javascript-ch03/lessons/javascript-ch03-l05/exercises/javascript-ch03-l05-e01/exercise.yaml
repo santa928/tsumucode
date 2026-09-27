@@ -1,5 +1,11 @@
 id: javascript-ch03-l05-e01
 kind: standard
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
 workspaceId: javascript-ch03-l05-e01
 countsTowardStandardExerciseTotal: true
 title: Closureで得点を10ずつ増やす
@@ -281,7 +287,8 @@ fixtures:
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds: []
   - id: security
-    expectedStatus: code-error
+    expectedStatus: system-error
+    expectedDiagnosticCodes: [browser-console-unsupported]
     files:
       - { path: script.js, language: javascript, source: fixtures/security.js, editable: false }
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }

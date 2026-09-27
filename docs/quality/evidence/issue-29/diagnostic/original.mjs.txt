@@ -1,0 +1,48 @@
+import fs from 'node:fs';
+import http from 'node:http';
+import {createRequire} from 'node:module';
+const require=createRequire('/workspace/package.json');
+const {buildSync}=require('esbuild');const engines=require('@playwright/test');const engine=process.argv[2]??'chromium';
+const root='/workspace/.worktrees/issue-29-browser-runtime/src/adapters/runtime/javascript/runner/';
+const bundle=file=>buildSync({entryPoints:[root+file+'.ts'],bundle:true,platform:'browser',format:'iife',globalName:file,write:false}).outputFiles[0].text;
+const service=bundle('BrowserConsoleExecutionService'), sourceModule=bundle('consoleWorkerSource');
+const requests=[];const server=http.createServer((req,res)=>{if(req.url.startsWith('/probe'))requests.push(req.url);res.setHeader('Access-Control-Allow-Origin','*');res.end('<!doctype html><title>real service fixture</title>');});await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));const origin='http://127.0.0.1:'+server.address().port;
+const browser=await engines[engine].launch();const page=await browser.newPage();const results=[];const errors=[];page.on('pageerror',e=>errors.push(String(e)));
+try{
+ await page.goto(origin);await page.addScriptTag({content:service});await page.addScriptTag({content:sourceModule});
+ await page.evaluate(async()=>{window.fixtureRunner=new BrowserConsoleExecutionService.BrowserConsoleExecutionService();window.fixtureRequest=(source,id='run-1')=>({runId:id,exerciseSessionId:'session',executionRevision:1,backend:'browser',engine:'browser-js',languageId:'javascript',requiredCapabilities:['console'],files:{'script.js':source},options:{runtime:{kind:'javascript',entryFile:'script.js',sourceType:'script',primaryOutput:'console'}}});localStorage.setItem('sentinel','parent-safe');await fetch('/probe-control');});requests.length=0;
+ const cases=[
+ ['private-scope','console.log(typeof marker,typeof port,typeof root,typeof arguments);','succeeded',['undefined undefined undefined undefined']],
+ ['poison-builtins','Promise.prototype.then=()=>{};console.log(1);','succeeded',['1']],
+ ['array','const a=[10,20];const i=1;console.log(a[i]);','succeeded',['20']],
+ ['object','const o={alice:10};const k="alice";console.log(o[k]);','succeeded',['10']],
+ ['promise','new Promise(r=>r(10)).then(console.log);','succeeded',['10']],
+ ['reject','Promise.reject(1);','code-error'],
+ ['catch','const p=Promise.reject(1);queueMicrotask(()=>p.catch(()=>console.log(7)));','succeeded',['7']],
+ ['queue','queueMicrotask(()=>Promise.resolve(8).then(console.log));','succeeded',['8']],
+ ['queue-throw','queueMicrotask(()=>{throw Error("queue")});','code-error'],
+ ['syntax','} console.log(3); {','code-error'],
+ ['unknown','missingLessonValue;','code-error'],
+ ['unsupported','new MessageChannel();','unsupported'],
+ ['local-name','var MessageChannel=10;const o={then:20};console.log(MessageChannel,o["then"]);','succeeded',['10 20']],
+ ['fake-message','try{postMessage({status:"succeeded"})}catch{}while(true){}','unsupported'],
+ ['function-csp','try{(()=>{}).constructor("return 1")()}catch(e){console.log(e.name)}','succeeded',['EvalError']],
+ ['record-limit','for(let i=0;i<105;i++)console.log(i);','stopped'],
+ ['byte-limit','for(let i=0;i<30;i++)console.log("あ".repeat(4000));','stopped'],
+ ['loop','while(true){}','stopped'],
+ ['microtask-loop','queueMicrotask(function loop(){queueMicrotask(loop)});','stopped'],
+ ['retry','console.log("retry")','succeeded',['retry']],
+ ];
+ for(const [name,source,status,rows] of cases){const result=await page.evaluate(async({source,name})=>{const start=performance.now();let ticks=0;const timer=setInterval(()=>ticks++,50);const value=await window.fixtureRunner.execute(window.fixtureRequest(source,name));clearInterval(timer);return{...value,ms:performance.now()-start,ticks,remainingFrames:document.querySelectorAll('iframe').length};},{source,name});const texts=result.console.map(row=>row.text);const passed=result.status===status&&result.runId===name&&result.remainingFrames===0&&(!rows||JSON.stringify(texts)===JSON.stringify(rows));results.push({name,expected:status,...result,passed});console.log(name,result.status,passed);}
+ const lifecycle=await page.evaluate(async()=>{const runner=window.fixtureRunner;const before=runner.execute(window.fixtureRequest('while(true){}','old'));await new Promise(r=>setTimeout(r,70));const after=runner.execute(window.fixtureRequest('console.log(42)','new'));const [oldRun,newRun]=await Promise.all([before,after]);const looping=runner.execute(window.fixtureRequest('while(true){}','stop'));await new Promise(r=>setTimeout(r,70));await runner.stop();const stopped=await looping;const retry=await runner.execute(window.fixtureRequest('console.log(43)','after-stop'));await runner.dispose();const disposed=await runner.execute(window.fixtureRequest('console.log(44)','disposed'));return{oldRun,newRun,stopped,retry,disposed,remainingFrames:document.querySelectorAll('iframe').length};});results.push({name:'lifecycle',...lifecycle,passed:lifecycle.oldRun.status==='stopped'&&lifecycle.newRun.status==='succeeded'&&lifecycle.newRun.runId==='new'&&lifecycle.stopped.status==='stopped'&&lifecycle.retry.status==='succeeded'&&lifecycle.disposed.status==='stopped'&&lifecycle.remainingFrames===0});
+ // 入力診断を迂回して、製品と同じbootstrapの実能力を直接検査する。
+ const rawCases=[
+ ['actual-capabilities',`for(const name of ['MessageChannel','MessagePort','Blob','File','crypto','FinalizationRegistry','Atomics','SharedArrayBuffer','WeakRef','fetch','navigator','caches','indexedDB','Worker','SharedWorker','importScripts','dispatchEvent','addEventListener','onunhandledrejection','onrejectionhandled'])console.log(typeof this[name]);`,Array(20).fill('undefined')],
+ ['prototype-capabilities',`let p=this;let found=false;while(p){for(const name of ['Worker','MessageChannel','fetch','navigator','caches','indexedDB','addEventListener','dispatchEvent'])if(p[name]!==undefined)found=true;p=Object.getPrototypeOf(p);}console.log(found);`,['false']],
+ ['network',`try{fetch(${JSON.stringify(origin+'/probe-worker')})}catch(e){console.log(e.name)}`,['TypeError']],
+ ['dynamic-import',`import(${JSON.stringify(origin+'/probe-module')}).then(()=>console.log('escaped'),()=>console.log('blocked'))`,['blocked']],
+ ];
+ for(const [name,source,rows] of rawCases){const result=await page.evaluate(async source=>{const frame=document.createElement('iframe');frame.sandbox='allow-scripts';const answer=new Promise(resolve=>{const timer=setTimeout(()=>resolve({status:'harness-timeout',rows:[]}),3500);window.addEventListener('message',function receive(event){if(event.source!==frame.contentWindow)return;clearTimeout(timer);window.removeEventListener('message',receive);resolve(event.data);});});frame.srcdoc=consoleWorkerSource.createConsoleFrameSource(source,'testnonce');document.body.append(frame);const result=await answer;frame.remove();return result;},source);results.push({name,...result,passed:result.status==='succeeded'&&JSON.stringify(result.rows.map(row=>row.text))===JSON.stringify(rows)});}
+ results.push({name:'parent-boundary',requests,errors,sentinel:await page.evaluate(()=>localStorage.getItem('sentinel')),passed:requests.length===0&&errors.length===0&&await page.evaluate(()=>localStorage.getItem('sentinel'))==='parent-safe'});
+}finally{await browser.close();await new Promise(resolve=>server.close(resolve));fs.writeFileSync('/evidence/issue29-real-service-'+engine+'.json',JSON.stringify({engine,results},null,2));}
+if(results.some(r=>!r.passed))process.exitCode=1;

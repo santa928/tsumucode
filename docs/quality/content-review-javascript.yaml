@@ -149,14 +149,14 @@ lessons:
   - lessonId: javascript-ch03-l05
     authorId: tsumucode-javascript-authoring
     reviewerId: astra-pro-independent-review
-    sourceHash: f68de16fa1fb00ab757abc1633fb4eda6305f4b813a1c17cb8d273b4c81745b2
+    sourceHash: 848c0835a3f357a7acd043bd19edcee4b0b1f9a2b7d45b1f2a247692729cf850
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: PR38初回92b73f04864805216fa115739e466b70e5ae6044の全Lessonレビューと、b5b91efeaf84bc7977a5d29ee479f85cce4e465bの追加指示/表示/保存順の限定Proレビューで全項目承認。Proは原本tree/sourceHashを独立再計算し計10画像を目視。実例と3演習の実Browser/Local Node・保存往復はCodexのDocker実施記録でありProの再実行ではない。代表誤解と妥当別解の学習用判定で、故意の欺瞞耐性や初心者の実学習効果を証明しない。
+    notes: PR38初回92b73f04864805216fa115739e466b70e5ae6044とb5b91efeaf84bc7977a5d29ee479f85cce4e465bの限定Proレビューを維持。PR42の92eff44c848e48afa68e9fb46f81d8758d7640bfではClosure全60原本とtree3088ebaa79760472931f0b8fc8232a81b78448acをProが照合し、Pythonで現行と同じpath順/path+NUL+bytesのsourceHashを独立計算、runtime明示とevalのunsupported診断に限定したfixture変更を承認。教材decisionとRuntime採用・画像の目視承認は別。製品Browser3engine・対象fixture実行はCodexのDocker実施記録でありProの再実行ではない。PR38の計10画像目視承認は今回の比較画像承認へ流用しない。代表誤解と妥当別解の学習用判定で、故意の欺瞞耐性や初心者の実学習効果を証明しない。
   - lessonId: javascript-ch04-l01
     authorId: tsumucode-javascript-authoring
     reviewerId: tsumucode-quality-verification

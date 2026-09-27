@@ -10,6 +10,7 @@ import {
   useState,
 } from 'react';
 import { useNavigate } from 'react-router';
+import type * as BrowserConsoleRuntimeModule from '../browserConsoleRuntime';
 import type { exerciseLoader } from '../../../app/contentLoaders';
 import type { Exercise } from '../../../core/content/types';
 import {
@@ -49,8 +50,10 @@ const LazyCodeWorkspace = lazy(() =>
 type ExerciseLoaderData = Awaited<ReturnType<typeof exerciseLoader>>;
 type InitializationState = 'loading' | 'ready' | 'error';
 type RuntimePreparationState = 'loading' | 'ready' | 'error';
+type BrowserConsoleRuntime = typeof BrowserConsoleRuntimeModule;
 
 interface RuntimePreparation {
+  readonly consoleRuntime?: BrowserConsoleRuntime;
   readonly key: string;
   readonly state: RuntimePreparationState;
 }
@@ -65,6 +68,7 @@ interface ExerciseViewState {
 }
 
 interface EditableSessionProps extends ExerciseLoaderData {
+  readonly consoleRuntime: BrowserConsoleRuntime | undefined;
   readonly lease: WorkspaceLeaseAccess;
   readonly onRetry: () => void;
 }
@@ -130,11 +134,20 @@ export function EditableExercisePage({ lease, ...data }: EditableExercisePagePro
   useEffect(() => {
     const abortController = new AbortController();
     void import('../javascriptRuntimeServices')
-      .then(({ ensureCourseRuntime }) => ensureCourseRuntime(data.course, learningRuntimeServices))
+      .then(async ({ ensureCourseRuntime }) => {
+        await ensureCourseRuntime(data.course, learningRuntimeServices);
+        return data.course.id === 'javascript' && localRuntime === undefined
+          ? import('../browserConsoleRuntime')
+          : undefined;
+      })
       .then(
-        () => {
+        (consoleRuntime) => {
           if (!abortController.signal.aborted) {
-            setRuntimePreparation({ key: runtimePreparationKey, state: 'ready' });
+            setRuntimePreparation({
+              key: runtimePreparationKey,
+              state: 'ready',
+              ...(consoleRuntime === undefined ? {} : { consoleRuntime }),
+            });
           }
         },
         () => {
@@ -178,6 +191,7 @@ export function EditableExercisePage({ lease, ...data }: EditableExercisePagePro
     <EditableSession
       key={attempt}
       {...data}
+      consoleRuntime={runtimePreparation.consoleRuntime}
       lease={lease}
       onRetry={() => {
         setAttempt((current) => current + 1);
@@ -194,6 +208,7 @@ function EditableSession({
   workspaceLessons,
   lease,
   onRetry,
+  consoleRuntime,
 }: EditableSessionProps) {
   const navigate = useNavigate();
   const [operation, setOperation] = useState<OperationState>('idle');
@@ -224,11 +239,20 @@ function EditableSession({
     () => resolveWorkspaceAssets(allWorkspaceTargets.map(({ exercise: target }) => target)),
     [allWorkspaceTargets],
   );
+  const browserConsole = useMemo(
+    () =>
+      consoleRuntime?.selectBrowserConsoleRuntime(
+        exercise,
+        validationTargets.map(({ exercise: target }) => target),
+      ),
+    [consoleRuntime, exercise, validationTargets],
+  );
   const validator = useMemo(
     () =>
       localRuntime?.createValidator(exercise) ??
+      browserConsole?.createValidator() ??
       learningRuntimeServices.validatorRegistry.create(course.validatorId),
-    [course.validatorId, exercise],
+    [course.validatorId, exercise, browserConsole],
   );
   const controller = useMemo(
     () =>
@@ -297,6 +321,7 @@ function EditableSession({
         },
         runner:
           localRuntime?.createExecution(exercise, course.revision) ??
+          browserConsole?.createExecution() ??
           new BrowserExecutionService(
             learningRuntimeServices.runnerRegistry.create(course.runnerId),
           ),
@@ -305,6 +330,7 @@ function EditableSession({
       }),
     [
       allWorkspaceTargets,
+      browserConsole,
       course,
       exercise,
       lease,
@@ -489,6 +515,21 @@ function EditableSession({
     [beginOperation, controller, isCurrentOperation],
   );
 
+  useEffect(() => {
+    if (
+      initialization === 'ready' &&
+      controller.environment.backend === 'browser' &&
+      controller.environment.mode === 'console'
+    ) {
+      const frame = requestAnimationFrame(() => {
+        executePreview(undefined, false);
+      });
+      return () => {
+        cancelAnimationFrame(frame);
+      };
+    }
+  }, [controller, executePreview, initialization]);
+
   /** 初回frameを保持し、失敗後も同じsandboxへ再prepareできるようにする。 */
   const preparePreview = useCallback(
     (frame: HTMLIFrameElement): void => {
@@ -502,7 +543,7 @@ function EditableSession({
   const updatePreview = (): void => {
     if (!lease.isWritable()) return;
     const frame = previewFrameRef.current;
-    if (frame === undefined && controller.environment.backend !== 'local') {
+    if (frame === undefined && controller.environment.mode !== 'console') {
       setPreviewNeedsPrepare(true);
       setOperationError(previewPreparationErrorMessage());
       return;
@@ -713,7 +754,7 @@ function EditableSession({
         if (!isCurrentOperation(generation)) return;
 
         const frame = previewFrameRef.current;
-        if (frame === undefined && controller.environment.backend !== 'local') {
+        if (frame === undefined && controller.environment.mode !== 'console') {
           setPreviewNeedsPrepare(true);
           if (!saveFailed) setOperationError(previewPreparationErrorMessage());
           return;
@@ -828,7 +869,7 @@ function EditableSession({
             >
               {operation === 'validate' ? '判定しています' : '判定する'}
             </button>
-            {controller.environment.backend === 'local' && busy ? (
+            {controller.environment.mode === 'console' && busy ? (
               <button
                 type="button"
                 className="tc-exercise-pager-secondary"
@@ -843,7 +884,9 @@ function EditableSession({
                     .catch(() => {
                       if (isCurrentOperation(generation))
                         setOperationError(
-                          '停止を確認できません。Dockerと学習モードを確認してください。',
+                          controller.environment.backend === 'local'
+                            ? '停止を確認できません。Dockerと学習モードを確認してください。'
+                            : '停止を確認できません。編集内容を保存して画面を開き直してください。',
                         );
                     })
                     .finally(() => {
@@ -865,7 +908,9 @@ function EditableSession({
               <p>コード演習</p>
               <p aria-label="実行環境">
                 {controller.environment.backend === 'browser'
-                  ? 'ブラウザで実行'
+                  ? controller.environment.mode === 'console'
+                    ? 'ブラウザで実行（Console専用）'
+                    : 'ブラウザで実行'
                   : `ローカル Node.js${state.executionResult?.engineVersion ? ` ${state.executionResult.engineVersion}` : ''}で実行`}
               </p>
               {state.executionResult !== undefined &&
@@ -973,10 +1018,12 @@ function EditableSession({
 
           <div className="tc-exercise-preview">
             <div data-testid="runtime-preview-frame">
-              {controller.environment.backend === 'local' ? (
+              {controller.environment.mode === 'console' ? (
                 <div>
                   <p>
-                    編集後に「プレビューを更新」でNode.jsを実行します。Docker切断時は学習モードを再起動し、もう一度実行してください。
+                    {controller.environment.backend === 'local'
+                      ? '編集後に「プレビューを更新」でNode.jsを実行します。Docker切断時は学習モードを再起動し、もう一度実行してください。'
+                      : 'script.jsを編集するとConsoleを更新します。配列・オブジェクトの添字と有限のPromise処理に対応します。HTML/CSSの描画・DOM・タイマー・外部通信は使えません。'}
                   </p>
                   <RuntimeConsole
                     records={(state.runtimeOutput?.console ?? []).slice(0, 200)}

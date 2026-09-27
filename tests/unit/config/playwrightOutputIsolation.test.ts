@@ -49,6 +49,7 @@ describe('Playwright output isolation', () => {
       'exercise-reset.spec.ts',
       'editor-input-support.spec.ts',
       'runtime-security.spec.ts',
+      'browser-console-runtime.spec.ts',
     ];
 
     expect(chromium?.testMatch).toBeUndefined();
