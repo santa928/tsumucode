@@ -100,6 +100,7 @@ describe('verifyAllContentReviews', () => {
         ...Array.from({ length: 5 }, (_, index) => `javascript-ch04-l0${String(index + 1)}`),
         ...Array.from({ length: 4 }, (_, index) => `javascript-ch05-l0${String(index + 1)}`),
         ...Array.from({ length: 4 }, (_, index) => `javascript-ch06-l0${String(index + 1)}`),
+        'javascript-ch07-l01',
       ].map((lessonId) => ({
         lessonId,
         lessonDirectory: path.join(
@@ -115,7 +116,7 @@ describe('verifyAllContentReviews', () => {
     await expect(verifyAllContentReviews({ contentRoot, publicRoot, reviewRoot })).resolves.toEqual(
       {
         coursesReviewed: 2,
-        lessonsReviewed: 28,
+        lessonsReviewed: 29,
         staleHashes: 0,
         rejected: 0,
       },

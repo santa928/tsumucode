@@ -432,3 +432,25 @@ concepts:
     introducedBySlideId: javascript-ch06-l04-s04
     prerequisiteConceptIds: [diagnostic-location]
     minimumProjectLevel: transform
+  - id: dom-element-reference
+    introducedBySlideId: javascript-ch07-l01-s01
+    prerequisiteConceptIds:
+      - query-selector-text-content
+      - identifier-reference
+    minimumProjectLevel: read
+  - id: dom-first-match
+    introducedBySlideId: javascript-ch07-l01-s02
+    prerequisiteConceptIds:
+      - dom-element-reference
+    minimumProjectLevel: read
+  - id: dom-missing-element
+    introducedBySlideId: javascript-ch07-l01-s03
+    prerequisiteConceptIds:
+      - dom-first-match
+      - if-statement
+    minimumProjectLevel: read
+  - id: dom-select-and-change
+    introducedBySlideId: javascript-ch07-l01-s04
+    prerequisiteConceptIds:
+      - dom-missing-element
+    minimumProjectLevel: transform

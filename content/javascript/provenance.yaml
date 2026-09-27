@@ -3327,3 +3327,70 @@ items:
       'visibility': 'public',
       'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e03/starter/styles.css',
     }
+  - id: javascript-ch07-l01-source-01
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/slides/s01.md
+  - id: javascript-ch07-l01-source-02
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/slides/s02.md
+  - id: javascript-ch07-l01-source-03
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/slides/s03.md
+  - id: javascript-ch07-l01-source-04
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/slides/s04.md
+  - id: javascript-ch07-l01-source-05
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/lesson.yaml
+  - id: javascript-ch07-l01-source-06
+    visibility: public
+    path: chapters/javascript-ch07/chapter.yaml
+  - id: javascript-ch07-l01-source-07
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/exercises/javascript-ch07-l01-e01/starter/index.html
+  - id: javascript-ch07-l01-source-08
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/exercises/javascript-ch07-l01-e01/starter/styles.css
+  - id: javascript-ch07-l01-source-09
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/exercises/javascript-ch07-l01-e01/starter/script.js
+  - id: javascript-ch07-l01-source-10
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/exercises/javascript-ch07-l01-e01/solution/index.html
+  - id: javascript-ch07-l01-source-11
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/exercises/javascript-ch07-l01-e01/solution/styles.css
+  - id: javascript-ch07-l01-source-12
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/exercises/javascript-ch07-l01-e01/solution/script.js
+  - id: javascript-ch07-l01-source-13
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/exercises/javascript-ch07-l01-e01/instructions.md
+  - id: javascript-ch07-l01-source-14
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/exercises/javascript-ch07-l01-e01/fixtures/alternate-name/script.js
+  - id: javascript-ch07-l01-source-15
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/exercises/javascript-ch07-l01-e01/fixtures/no-if/script.js
+  - id: javascript-ch07-l01-source-16
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/exercises/javascript-ch07-l01-e01/fixtures/missing-selector/script.js
+  - id: javascript-ch07-l01-source-17
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/exercises/javascript-ch07-l01-e01/fixtures/wrong-text/script.js
+  - id: javascript-ch07-l01-source-18
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/exercises/javascript-ch07-l01-e01/fixtures/both-changed/script.js
+  - id: javascript-ch07-l01-source-19
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/exercises/javascript-ch07-l01-e01/exercise.yaml
+  - id: javascript-ch07-l01-fixture-index-html
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/exercises/javascript-ch07-l01-e01/fixtures/index.html
+  - id: javascript-ch07-l01-fixture-styles-css
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/exercises/javascript-ch07-l01-e01/fixtures/styles.css
+  - id: javascript-ch07-l01-select-and-change-original
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l01/slides/assets/select-and-change.svg
+    createdAt: '2026-09-28'

@@ -56,17 +56,17 @@ describe('javascript-ch05', () => {
     const { runtime: course } = await loadAuthoringCourse(path.resolve('content/javascript'));
 
     expect(course).toMatchObject({
-      revision: '2026-09-27.1',
-      estimatedMinutes: 430,
+      revision: '2026-09-28.1',
+      estimatedMinutes: 450,
       publicationStatus: 'draft',
       expectedTotals: {
-        chapters: 7,
-        lessons: 27,
-        conceptSlides: 108,
-        standardExercises: 29,
+        chapters: 8,
+        lessons: 28,
+        conceptSlides: 112,
+        standardExercises: 30,
         guidedProjectLessons: 0,
         capstoneLessons: 0,
-        estimatedMinutes: 430,
+        estimatedMinutes: 450,
       },
       progressMigrations: [
         {
@@ -90,6 +90,7 @@ describe('javascript-ch05', () => {
           steps: [],
         },
         { fromRevision: '2026-08-10.3', toRevision: '2026-09-27.1', steps: [] },
+        { fromRevision: '2026-09-27.1', toRevision: '2026-09-28.1', steps: [] },
       ],
     });
     expect(course.phases.flatMap(({ chapters }) => chapters).map(({ id }) => id)).toEqual([
@@ -100,6 +101,7 @@ describe('javascript-ch05', () => {
       'javascript-ch04',
       'javascript-ch05',
       'javascript-ch06',
+      'javascript-ch07',
     ]);
   }, 20_000);
 

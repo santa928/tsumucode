@@ -1,0 +1,8 @@
+id: javascript-ch07
+sequence: 7
+title: DOMを探す・変える・作る
+goal: DOMの要素を選び、画面の変化をコードと結び付けて説明する。現在は先頭の1単元だけを試せます。
+estimatedMinutes: 20
+kind: standard
+lessonSources:
+  - lessons/javascript-ch07-l01/lesson.yaml

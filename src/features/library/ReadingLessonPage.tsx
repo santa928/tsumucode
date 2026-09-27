@@ -74,11 +74,11 @@ function ReadingLessonSession({
   return (
     <article className="tc-reading-article">
       <header>
-        <p>{pilot ? '改訂中の3レッスン試用・読書モード' : '読書モード'}</p>
+        <p>{pilot ? '制作途中のレッスン試用・読書モード' : '読書モード'}</p>
         <h1>{lesson.title}</h1>
         <p>読むことは演習の合格には数えません。コードを動かす指示は、あとでPCで試せます。</p>
         <Link to={readingIndexPath(course.id, pilot)}>
-          {pilot ? '3レッスンの試用目次へ' : 'コースの読書目次へ'}
+          {pilot ? '試用レッスンの目次へ' : 'コースの読書目次へ'}
         </Link>
         {requested !== null && requested !== target.id ? (
           <p role="status">前のスライドが見つからないため、このレッスンの目次へ戻りました。</p>

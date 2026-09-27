@@ -110,9 +110,9 @@ export function HomeFirstStep({ course }: { readonly course: CourseCatalogEntry 
       </div>
       <p className="mt-3 text-sm text-workshop-muted">
         <Link to="/library/pilot" className="inline-flex min-h-11 items-center font-bold underline">
-          改訂中の3レッスンを試す
+          制作途中のレッスンを試す
         </Link>
-        <span className="ml-2">HTML導入・JavaScript導入・Closure</span>
+        <span className="ml-2">HTML導入・JavaScript導入・Closure・DOM</span>
       </p>
     </StackedCard>
   );

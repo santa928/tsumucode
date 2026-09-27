@@ -3,6 +3,17 @@ releaseStatus: draft
 verifiedSourceCommit: draft
 canonicalDistSha256: draft
 lessons:
+  - lessonId: javascript-ch07-l01
+    authorId: tsumucode-javascript-authoring
+    reviewerId: astra-pro-independent-review
+    sourceHash: 7951acb742e1c0f796a0d442a6e1be4cfbc5fb8cc19c3170ada695d5136fbd2a
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: PR45の同一Pro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEAD623d8f55aa22dfac80ee423cd987819b153265ebの教材原文とif前提修正を独立確認し承認。参照・最初の一致・null・文字変更の4Slideと振る舞い中心の演習、3段階Hintを確認。CodexがDocker製品DOM Runnerで4Slide例とSolution/Starter/代表Fixture7件を実行し、上記sourceHashを計算。Proによるhash独立再計算・実行・新演習画像承認や、人の初心者試用・実機確認を意味しない。
   - lessonId: javascript-ch00-l01
     authorId: tsumucode-content-authoring
     reviewerId: astra-pro-independent-review

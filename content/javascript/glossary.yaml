@@ -395,3 +395,24 @@ entries:
     definition: Errorの種類と、確認するFile・行・位置を示す情報。
     firstSlideId: javascript-ch06-l04-s03
     relatedIds: [debug, error]
+  - id: dom
+    term: DOM
+    definition: ブラウザがページの要素をJavaScriptから操作できる形で持つ仕組み。
+    firstSlideId: javascript-ch07-l01-s01
+    relatedIds:
+      - dom-reference
+      - selector
+  - id: dom-reference
+    term: 要素への参照
+    definition: ページの要素を操作するためのつながり。文字列のコピーではなく、参照先の要素を変更できる。
+    firstSlideId: javascript-ch07-l01-s01
+    relatedIds:
+      - dom
+      - text-content
+  - id: null-element
+    term: 'null'
+    definition: 値がないことを明示する値。querySelectorでは一致する要素がないときに返る。
+    firstSlideId: javascript-ch07-l01-s03
+    relatedIds:
+      - selector
+      - if-statement
