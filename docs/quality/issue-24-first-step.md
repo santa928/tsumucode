@@ -1,0 +1,94 @@
+# #24 Homeから最初の成功へ
+
+## 対象と観察
+
+基準mainは `2c37cc13082256c41532346a0c4c460ba5c93d73`。直前の製品tree
+`6f6a42b82ca3d03aeeae1022f0af993fb13d748b` からの差分はCI・文書・検証だけで、
+src/contentは同一。変更前のHome・最初のSlide・演習をDockerのChromiumで
+1280×844、390×844の各画面で撮影・目視した。
+
+変更前Homeの読書リンク上端はPCで1328.2px、390幅で1589.7pxだった。
+最初のPath操作は649.2px、718.8pxにあるが、Homeには小さい制作の成果と10分の目安がない。
+これらは画面の観察事実であり、初心者が迷ったことや学習効果の証拠ではない。
+
+生成りの工房・緑の主要操作・黄色の注目という既存表現を維持する。
+Home先頭だけを変更し、Slide/演習/結果は既存の操作でつながりを確認する。
+
+## 要件台帳
+
+| ID | 区分 | 受け入れ条件 |
+|---|---|---|
+| REQ-001 | 維持 | 自由Course選択・Path・Import/Export・復旧・読込再試行を残す |
+| REQ-002 | 追加 | 初回・HTML/CSS再訪・読むだけの主要操作を先頭に表示する |
+| REQ-003 | 追加 | HTML導入の見出しと背景色変更、目安10分を実教材と一致させる |
+| REQ-004 | 維持 | 共通の編集可否を使い、スマホには読書を優先する |
+| REQ-005 | 追加 | #22の有限3 Lesson試用への入口を示す |
+| REQ-006 | 維持 | Slide・演習・結果の説明/操作/次の学習を代表操作で確認する |
+| REQ-007 | 追加 | PC/390幅/文字200%/Keyboard/失敗→修正→合格→次の証拠を残す |
+
+保留・削除なし。人による観察は未達として別記する。
+
+## 実装
+
+`HomeFirstStep` は既存の `useCourseProgress` とCatalog進捗要約を使い、
+readyで確認できた状態だけ初回・続き・完了・教材改訂の操作に分ける。
+loading/errorでは初回と断定せず、読書と既存の再試行を利用できる。
+HomeはCourse全文・Lesson本文・Editor・Runnerを追加取得しない。
+有限の導入設定は対象Lessonの所要時間・前提条件とテストで照合する。
+複数Course全体の「直近」を装わず、HTML/CSSの続きとして表示する。
+
+「ほかの教材を選ぶ」はHash RouterのURLを変更せず、教材棚見出しへ
+スクロールとフォーカスを移す。読書は学習進捗を書き換えない既存Libraryへ進む。
+新しい保存フラグ・追跡・Migrationは追加しない。
+
+## 実施した検証
+
+- Home componentの新規7件は実UI欠落で失敗した後、実装で成功。既存Home5件も成功。
+- 実Lesson metadataの整合1件成功。最初にapp範囲へ置いたNode importの型エラーは
+  scripts/contentの既存Node検証範囲へ移し、型設定や依存を増やさず修正した。
+- Dockerで型・Lint・本番build成功。
+- Docker本番Chromiumで既存Home→Slide→誤答→ヒント/見直し→修正→合格→
+  次Lesson→Home再開、およびHomeのKeyboard既存2件、計3件成功。
+- PC1280/390幅×文字100/200%で読む・自由選択・教材棚へのフォーカス・Hash維持・
+  横はみ出しなしを4件確認。画面画像も目視した。
+
+PR #39統合main `5639c8c15558d34fb979d9fcfc43b391d764f754` を取り込み、
+有限試用リンクも実際の目次へ到達することを確認した。取り込み後の本番buildで
+上記7 E2Eを再実行して全成功、容量・配信境界の既存9件も成功。
+Home変更のcheckは既存の差分選択規則により教材検査を含む52ファイル506件が成功、
+Lint・型・build・CSS inline・chunk分離も成功した。
+
+Home Visualの4サイズ（PC1440/1280、768、390）を比較し、旧baselineとの差分を
+expected/actual/diffの全12画像で目視した。先頭案内が加わり既存棚が下へ移る意図した差分で、
+見出し・操作の欠落や重なりは認めなかった。Home4枚だけ同期し、閾値・skip・他画面は不変。
+同じ4件の同期後再比較も5.3秒で成功した。
+
+検証コマンドの初回失敗も成功へ数えていない。新E2E名の数値templateをLintに合わせて修正。
+一度の容量検査と最初のVisual4件はBASE_PATH未指定で既定の `/repository-name/` と
+実buildの `/` が不一致だった。同じbuildに `BASE_PATH=/` を明示して再実行した。
+文字200%でViewportより高い要素全体を撮ると画面外Skip Linkが合成画像へ入ったため、
+通常Viewportの再撮影とSkip Linkが画面外にあることの実測へ切り替えた。UIの隠蔽修正はしていない。
+
+## 比較画像
+
+変更前6枚と変更後Home4枚を [evidence/issue-24](evidence/issue-24/) に保存。
+変更後は `c47aa83312bea12208c27e2896ef15b47121ce66` の製品sourceと同一。
+文字200%画像は主要操作までスクロールした実Viewportで、全要素を1画面へ収めた主張ではない。
+
+| 画面 | 変更前 | 変更後 |
+|---|---|---|
+| PC1280 Home | [before](evidence/issue-24/before-home-1280.png) | [after](evidence/issue-24/after-home-1280.png) |
+| 390 Home | [before](evidence/issue-24/before-home-390.png) | [after](evidence/issue-24/after-home-390.png) |
+| 文字200% | — | [PC](evidence/issue-24/after-home-1280-text200.png)・[390](evidence/issue-24/after-home-390-text200.png) |
+| Slide | [PC](evidence/issue-24/before-slide-1280.png)・[390](evidence/issue-24/before-slide-390.png) | 製品変更なし、代表操作で確認 |
+| 演習 | [PC](evidence/issue-24/before-exercise-1280.png)・[390](evidence/issue-24/before-exercise-390.png) | 製品変更なし、誤答→修正→合格で確認 |
+
+## 未検証・制限
+
+初心者1〜3名の操作・説明・迷いの観察、iPhone実機は未実施。
+Chromiumの390幅は実機確認ではない。#7の正式版条件を達成したと扱わず、
+#24の人観察はOpenで残す。全Course・全Browserの開発中再走はしない。
+本番公開時は既存Pages β Gateを通し、配信後の操作を別に確認する。
+
+性能予算は既存Home gzip 256KB、LCP2500ms/CLS0.1、遅延チャンク境界を維持する。
+全画面改装、分析基盤、Runtime診断や採点・保存契約の変更は対象外。

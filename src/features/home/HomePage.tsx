@@ -9,6 +9,8 @@ import { WorkshopNotice } from '../../design-system/components/WorkshopNotice';
 import { LearningPathCard } from '../paths/LearningPathCard';
 import { summarizeCatalogCourseProgress } from '../progress/catalogCourseProgress';
 import { useCourseProgress } from '../progress/useCourseProgress';
+import { FIRST_ACTIVITY } from './firstActivity';
+import { HomeFirstStep } from './HomeFirstStep';
 
 const ProgressTransferPanel = lazy(() =>
   import('../progress/ProgressTransferPanel').then(({ ProgressTransferPanel: Panel }) => ({
@@ -135,6 +137,11 @@ export function HomePage() {
   const publishedCourseById = new Map(
     publishedCourses.map((course) => [course.id, course] as const),
   );
+  const firstCourse = publishedCourses.find(
+    (course) =>
+      course.id === FIRST_ACTIVITY.courseId &&
+      course.lessonStarts.some((lesson) => lesson.lessonId === FIRST_ACTIVITY.lessonId),
+  );
 
   return (
     <section aria-labelledby="catalog-title">
@@ -147,6 +154,8 @@ export function HomePage() {
           スライドで仕組みを理解して、ブラウザ上のコードで確かめます。学習の記録はこの端末へ保存されます。
         </p>
       </header>
+
+      {firstCourse ? <HomeFirstStep course={firstCourse} /> : null}
 
       {import.meta.env.VITE_LOCAL_LEARNING === '1' ? (
         <section className="mt-6" aria-label="ローカル学習">
@@ -209,7 +218,7 @@ export function HomePage() {
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="text-sm font-bold text-workshop-muted">工房の教材棚</p>
-            <h2 id="course-shelf-title" className="mt-1 text-2xl font-black">
+            <h2 id="course-shelf-title" tabIndex={-1} className="mt-1 text-2xl font-black">
               個別コースを選ぶ
             </h2>
           </div>
