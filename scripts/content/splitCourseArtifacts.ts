@@ -1,5 +1,6 @@
 /** 完全検証済みCourseをCourse IndexとLesson Manifestへ損失なく分割する。 */
 import { createHash } from 'node:crypto';
+import { exerciseReferenceIds } from '../../src/core/content/exerciseRequirementIds';
 import { CourseIndexSchema, LessonManifestSchema } from '../../src/core/content/deliverySchema';
 import { CourseManifestSchema } from '../../src/core/content/schema';
 import type {
@@ -54,10 +55,7 @@ function collectEntityIds(course: CourseManifest): CourseEntityIds {
         for (const exercise of lesson.exercises) {
           pushUnique(result.exercise, exercise.id);
           pushUnique(result.workspace, exercise.workspaceId);
-          for (const rule of exercise.validationRules) {
-            pushUnique(result.rule, rule.id);
-            if (rule.groupId !== undefined) pushUnique(result.rule, rule.groupId);
-          }
+          for (const id of exerciseReferenceIds(exercise)) pushUnique(result.rule, id);
           for (const hint of exercise.hints) pushUnique(result.hint, hint.id);
         }
         if (lesson.kind !== 'standard') {

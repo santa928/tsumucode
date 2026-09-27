@@ -1,3 +1,7 @@
+import {
+  interactionRequirementId,
+  interactionCheckId,
+} from '../../../core/content/exerciseRequirementIds';
 import type {
   HtmlCssValidationRuleDefinition,
   JavaScriptCheckpointExpectation,
@@ -489,7 +493,7 @@ function interactionChecks(
   const checks: ValidationCheck[] = [];
   for (const scenario of scenarios) {
     for (const checkpoint of scenario.checkpoints) {
-      const requirementId = `interaction:${scenario.id}:${checkpoint.id}`;
+      const requirementId = interactionRequirementId(scenario.id, checkpoint.id);
       for (const expectation of checkpoint.expectations) {
         const observations: InteractionObservation[] = viewportIds.map((viewportId) => {
           const result = checkpointsByViewport[viewportId]?.find(
@@ -514,7 +518,7 @@ function interactionChecks(
                 .join(' / ');
         const expected = interactionExpected(expectation);
         checks.push({
-          ruleId: `${requirementId}:${expectation.id}`,
+          ruleId: interactionCheckId(scenario.id, checkpoint.id, expectation.id),
           requirementId,
           label: `${scenario.label}：${checkpoint.id}`,
           required: true,

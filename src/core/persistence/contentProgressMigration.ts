@@ -1,4 +1,5 @@
 /** Course教材revisionに追随して、進捗とDraft内の参照IDを純粋変換する。 */
+import { exerciseReferenceIds } from '../content/exerciseRequirementIds';
 import type {
   ContentProgressMigration,
   CourseIndex,
@@ -487,13 +488,7 @@ export class ContentProgressMigrationService {
         lesson: unique(lessons.map(({ id }) => id)),
         slide: unique(lessons.flatMap(({ slides }) => slides.map(({ id }) => id))),
         exercise: unique(exercises.map(({ id }) => id)),
-        rule: unique(
-          exercises.flatMap(({ validationRules }) =>
-            validationRules.flatMap(({ id, groupId }) =>
-              groupId === undefined ? [id] : [id, groupId],
-            ),
-          ),
-        ),
+        rule: unique(exercises.flatMap(exerciseReferenceIds)),
         hint: unique(exercises.flatMap(({ hints }) => hints.map(({ id }) => id))),
         checklist: unique(
           lessons.flatMap((lesson) =>
