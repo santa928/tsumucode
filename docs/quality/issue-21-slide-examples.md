@@ -46,6 +46,7 @@ console.log(score);
 ## 検証記録
 
 - Docker Compile成功、表追加前の関連7ファイル329テスト/型成功。表追加後のparser/schema/screen budget/表示4ファイル227テスト、型・対象Lint成功。
+- 最終実装HEAD `539dc46fe056f1b46dba57a29b1cfc41b0ffd602`とmain `8e648498…`の差分に対し、Docker Composeで`npm run lint && npm run test:changed`（`TEST_BASE_SHA=8e648498…`）成功。変更関連80ファイル812件。
 - Docker内Node/Chromiumで改訂した教材コードそのものを実行。Closure完成例`10 20`、独立した係`10,20,10`、次の予測`30,20`、JS DOM例3つ、HTML本文と背景`rgb(255,250,240)`の一致。信頼された静的教材の照合で、learner隔離の受入試験とは区別する。
 - 3 Lesson各1代表×1280/390pxでコード行の縦順、本文末尾、前後Pager、目次、コード参照の展開を確認。ページ全体の横overflowなし。表追加後も再実行成功。
 - root font-size 200%の390px表示で本文末尾と次ページへ到達、横overflowなし。
@@ -56,7 +57,7 @@ console.log(score);
 
 未改訂Lesson1件の表示/次移動と既存演習のEditor/Preview表示smoke成功。Production build／CSS inline／chunk isolation成功。
 
-未完: 修正後教材の限定再reviewとsource hash台帳同期、最新HEADのPRレビュー/CI。実機タッチ・人による初心者試用は未実施。
+未完: 台帳同期後の最新HEADのPRレビュー/CIと、統合後の公開Gate。実機タッチ・人による初心者試用は未実施。
 
 画面予算の全体上限・配信性能予算・安全制限を緩和しない。Slide宣言内の本文/コード数は例の構成に合わせて調整し、Compileで全体上限内を検証する。通常編集ごとの全公開Gateは行わず、公開時に既存Gateを適用する。
 
@@ -66,6 +67,8 @@ console.log(score);
 
 既存Visualの変更対象26件はexpected/actual/diffを個別に確認し、著者順、静的コード/結果ラベル、参照、狭幅通常フローによる意図した差分だけ更新した。HTML s01のPreview説明追加後はその9件を再撮影・個別確認した。末尾2件は実スクロール対象のShellへ移動してから案内とPager到達を検証する。閾値緩和・skip・一括snapshot更新はしていない。
 
-独立Proレビュー（対象HEAD `56b40f6d8b5a3b42e406e268bb4527c802de7fcb`）は[PR #36の記録](https://github.com/santa928/tsumucode/pull/36#issuecomment-5856071665)に保存した。JS導入は正確性・演習整合を承認。HTML導入のPreview初出説明とClosure s03の「末尾2行を5行へ置き換える」明記を必須修正としたため、その2箇所を修正して限定再reviewを依頼する。Closureはこの置換手順どおりにコードを組み立てた実行でも10、20、10を再確認した。
+最終比較はDocker Chromiumで`playwright test tests/e2e/visual-regression.spec.ts --grep 'slide-' --project=chromium`を実行し26件成功。専用preview/outputを指定し、比較失敗時の画像は別ディレクトリへ保存した。
 
-`content:review`はHTML/CSS導入Lessonの旧sourceHashで停止した。改訂3Lessonの正確性・未説明語・演習整合の独立レビューを、Codexによる実例実行・source hash計算と区別して台帳へ反映する。旧承認のhashだけを機械的に付け替えて通すことはしない。
+独立Pro初回レビュー（対象HEAD `56b40f6d8b5a3b42e406e268bb4527c802de7fcb`）は[PR #36の記録](https://github.com/santa928/tsumucode/pull/36#issuecomment-5856071665)に保存した。必須指摘のPreview初出説明とClosureの置換範囲を修正し、[HEAD539dc46の限定再レビュー](https://github.com/santa928/tsumucode/pull/36#issuecomment-5856275050)で3Lesson全ての正確性・演習整合・未説明語0・漏洩0・decisionを承認、必須実装指摘なし。Proは添付6画像を目視しGit blobが6/6一致することも確認。26組のVisual目視、実ズーム操作、Docker実行はCodexの証拠として区別する。
+
+旧HEADの`content:review`失敗は古いHTML導入sourceHashが原因だった。上記の独立承認後、3Lessonだけを新hash・reviewer・notesへ同期した。`examplesExecuted`はCodexの教材例実行、独立判定はProの原文/演習/実装照合に基づく。現行ガイド設計内の漏洩0であり、#23の予測/応用体験や初心者観察が完成したとの判定ではない。HTML台帳の旧正式Release bindingは新候補へ流用せずdraftへ戻した。

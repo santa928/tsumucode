@@ -1,19 +1,19 @@
 schemaVersion: 1
-releaseStatus: approved
-verifiedSourceCommit: d402188d5708ad287f294be7c33e0d44bfa4e2d7
-canonicalDistSha256: 952053ed146ff6b28f7e1deae9b0161600aa57c17a42c5811894bfcebb1a2062
+releaseStatus: draft
+verifiedSourceCommit: draft
+canonicalDistSha256: draft
 lessons:
   - lessonId: html-css-ch00-l01
     authorId: tsumucode-content-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: d3b084f315c7570d55bdc9c2a1a82bd06c7d278bea3cea6f4fcdfc35f6670f2e
+    reviewerId: astra-pro-independent-review
+    sourceHash: e2406352265bc7118f0003eb62c5ab963a3d0fa6fc8987af45facbf7ef3615a1
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 「Webページを作る3つの役割」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+    notes: PR36独立Proレビュー対象539dc46fe056f1b46dba57a29b1cfc41b0ffd602。前回全4Slide/既存演習照合と今回Preview初出説明の修正確認を合わせ、正確性・整合・未説明語0・現行ガイド設計内の漏洩0・decisionを承認（issuecomment-5856275050）。CodexがDocker Node/Chromiumで教材例のHTML本文と背景rgb(255,250,240)を実行照合し、computeLessonSourceHashでLesson全通常fileを計算。Proの独立実行/hash再計算・3ブラウザ全Fixture再検証・初心者観察を意味しない。新候補の正式Release bindingは未承認のためdraft。
   - lessonId: html-css-ch00-l02
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification
