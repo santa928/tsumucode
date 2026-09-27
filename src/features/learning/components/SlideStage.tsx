@@ -29,6 +29,7 @@ export function SlideStage({ slide, baseUrl, titleRef, codeReference }: SlideSta
       <div className="tc-slide-stage-body tc-slide-author-order">
         <SlideCodeReference slide={codeReference} baseUrl={baseUrl} />
         <SlideBlocks
+          key={slide.id}
           blocks={slide.blocks}
           assets={slide.assets}
           baseUrl={baseUrl}

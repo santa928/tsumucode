@@ -123,6 +123,14 @@ export const SlideCodeBlockSchema = z
   });
 
 export const SlideBlockSchema = z.discriminatedUnion('type', [
+  z
+    .object({
+      type: z.literal('prediction'),
+      prompt: NonEmptyTextSchema,
+      answer: NonEmptyTextSchema,
+      explanation: NonEmptyTextSchema,
+    })
+    .strict(),
   z.object({ type: z.literal('paragraph'), text: NonEmptyTextSchema }).strict(),
   z
     .object({
@@ -1649,11 +1657,14 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
                 'Concept系Slideはconceptを指定してください',
               );
             }
-            if (slide.blocks.filter(({ type }) => type === 'practice').length !== 1) {
+            if (
+              slide.blocks.filter(({ type }) => type === 'practice' || type === 'prediction')
+                .length !== 1
+            ) {
               addIssue(
                 context,
                 [...slidePath, 'blocks'],
-                'Concept Slideは5分以内のMicro-practiceを1件持つ必要があります',
+                'Concept SlideはMicro-practiceまたは短い予測を1件持つ必要があります',
               );
             }
           }

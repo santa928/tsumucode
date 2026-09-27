@@ -212,13 +212,13 @@ describe('compileContent output safety', () => {
         };
       };
       expect(javaScriptIndex).toMatchObject({
-        estimatedMinutes: 420,
+        estimatedMinutes: 430,
         expectedTotals: {
           chapters: 7,
           lessons: 27,
           conceptSlides: 108,
-          standardExercises: 27,
-          estimatedMinutes: 420,
+          standardExercises: 29,
+          estimatedMinutes: 430,
         },
       });
     },

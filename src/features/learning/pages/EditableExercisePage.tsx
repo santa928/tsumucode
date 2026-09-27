@@ -196,7 +196,6 @@ function EditableSession({
   onRetry,
 }: EditableSessionProps) {
   const navigate = useNavigate();
-  const [initialization, setInitialization] = useState<InitializationState>('loading');
   const [operation, setOperation] = useState<OperationState>('idle');
   const [operationError, setOperationError] = useState<string>();
   const [previewNeedsPrepare, setPreviewNeedsPrepare] = useState(false);
@@ -316,6 +315,13 @@ function EditableSession({
     ],
   );
   const state = useLearningSession(controller);
+  // 同じURLのloader再検証でもControllerは交代する。旧Sessionのreadyを引き継がない。
+  const [initializedSession, setInitializedSession] = useState<{
+    controller: LearningSessionController;
+    state: InitializationState;
+  }>({ controller, state: 'loading' });
+  const initialization =
+    initializedSession.controller === controller ? initializedSession.state : 'loading';
   const starterFiles = useMemo(
     () => Object.fromEntries(exercise.files.map(({ path, content }) => [path, content])),
     [exercise.files],
@@ -395,12 +401,12 @@ function EditableSession({
         await controller.initialize();
         if (isActive()) {
           learningRuntimeServices.notices.dismiss('error:exercise-initialize');
-          setInitialization('ready');
+          setInitializedSession({ controller, state: 'ready' });
         }
       } catch (error: unknown) {
         if (!isActive() || error instanceof StaleExecutionError) return;
         learningRuntimeServices.notices.reportError('exercise-initialize', error);
-        setInitialization('error');
+        setInitializedSession({ controller, state: 'error' });
       }
     })();
     return () => {
@@ -1050,6 +1056,7 @@ function EditableSession({
                 baseUrl={import.meta.env.BASE_URL}
               />
               <SlideBlocks
+                key={relatedSlide.id}
                 blocks={relatedSlide.blocks}
                 assets={relatedSlide.assets}
                 baseUrl={import.meta.env.BASE_URL}

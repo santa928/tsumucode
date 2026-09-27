@@ -3,6 +3,25 @@ import { describe, expect, it } from 'vitest';
 import { parseRestrictedMarkdown, parseSlideMarkdown } from './markdown';
 
 describe('parseSlideMarkdown', () => {
+  it('予測の問い・答え・理由を分け、未知設定や実行markupを拒否する', () => {
+    const source =
+      ':::prediction\nprompt: 次は何点？\nanswer: 30点\nexplanation: 同じ係の20へ10を加えるため。\n:::';
+    expect(parseRestrictedMarkdown(source)).toEqual([
+      {
+        type: 'prediction',
+        prompt: '次は何点？',
+        answer: '30点',
+        explanation: '同じ係の20へ10を加えるため。',
+      },
+    ]);
+    expect(() =>
+      parseRestrictedMarkdown(source.replace('answer: 30点', 'answer: 30点\nrun: true')),
+    ).toThrow();
+    expect(() =>
+      parseRestrictedMarkdown(source.replace('answer: 30点', 'answer: <script>bad()</script>')),
+    ).toThrow();
+  });
+
   it('Frontmatterと全種類の許可済みBlockへ分解する', () => {
     const result = parseSlideMarkdown(`---
 id: slide-html-role

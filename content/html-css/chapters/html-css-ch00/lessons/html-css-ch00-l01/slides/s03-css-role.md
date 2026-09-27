@@ -25,10 +25,10 @@ body {
 
 ![CSSの色がページ背景へ反映された結果](asset:preview-first-page-css)
 
-:::practice
-prompt: CSSの#fffaf0とPreviewの生成り色の背景を見比べます。
-expectedAction: 言葉は同じままCSSが背景の見た目を変えたと説明する
-estimatedMinutes: 2
+:::prediction
+prompt: HTMLの見出しの言葉だけを変えました。背景色も変わるでしょうか？
+answer: 背景色は生成り色のままです。
+explanation: 言葉はHTML、背景色はCSSが受け持ちます。styles.cssの色の値を変えていないため、背景色は変わりません。
 :::
 
 CSSの色を変えても、HTMLの言葉は変わりません。次はどちらのファイルを直すか選びます。

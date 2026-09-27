@@ -34,7 +34,7 @@ paths:
       requestBody: { $ref: '#/components/requestBodies/Empty' }
       responses:
         '200':
-          description: apiVersion、exerciseId、contentRevision、runtimeProfileId、engineVersion、limits。
+          description: apiVersion、exerciseId（旧client互換用e01）、exerciseIds（対応3演習）、contentRevision、runtimeProfileId、engineVersion、limits。
         '401': { $ref: '#/components/responses/Error' }
         '403': { $ref: '#/components/responses/Error' }
         '503': { $ref: '#/components/responses/Error' }
@@ -61,7 +61,11 @@ paths:
                 ]
               properties:
                 apiVersion: { const: 1 }
-                exerciseId: { const: javascript-ch03-l05-e01 }
+                exerciseId:
+                  {
+                    enum:
+                      [javascript-ch03-l05-e01, javascript-ch03-l05-e02, javascript-ch03-l05-e03],
+                  }
                 contentRevision: { type: string }
                 runtimeProfileId: { const: node-closure-v1 }
                 runId: { type: string, pattern: '^[\w:.-]{1,160}$' }

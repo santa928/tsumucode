@@ -4,6 +4,7 @@ import type { LoadedChapterPackage } from '../../../scripts/content/loadChapterP
 import type { MasteryLevel } from '../../../src/core/content/types';
 
 interface LessonMasteryExpectation {
+  readonly exerciseId?: string;
   readonly beforeExercise: Readonly<Record<string, MasteryLevel>>;
   readonly exerciseLevel: MasteryLevel;
   readonly requiredConceptIds: readonly string[];
@@ -20,7 +21,11 @@ export function expectLessonMastery(
   const slides = loaded.slides.filter(({ frontmatter }) =>
     frontmatter.id.startsWith(`${lessonId}-`),
   );
-  const exercises = loaded.exercises.filter(({ id }) => id.startsWith(`${lessonId}-`));
+  const exercises = loaded.exercises.filter(({ id }) =>
+    expectation.exerciseId === undefined
+      ? id.startsWith(`${lessonId}-`)
+      : id === expectation.exerciseId,
+  );
   expect(exercises, `${lessonId}: Standard Exerciseを1件にしてください`).toHaveLength(1);
   const exercise = exercises[0];
   if (exercise === undefined) throw new Error(`Exerciseが見つかりません: ${lessonId}`);

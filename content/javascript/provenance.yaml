@@ -3147,3 +3147,183 @@ items:
       visibility: public,
       path: chapters/javascript-ch06/lessons/javascript-ch06-l04/slides/s04-score-calculation-debug-checkpoint.md,
     }
+  - {
+      'id': 'javascript-ch03-l05-e02-exercise-yaml',
+      'visibility': 'public',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e02/exercise.yaml',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e02-fixtures-assignment-arrow-pass-js',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e02/fixtures/assignment-arrow-pass.js',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e02-fixtures-fixed-return-js',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e02/fixtures/fixed-return.js',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e02-fixtures-index-html',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e02/fixtures/index.html',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e02-fixtures-kept-function-fixed-output-js',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e02/fixtures/kept-function-fixed-output.js',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e02-fixtures-output-only-js',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e02/fixtures/output-only.js',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e02-fixtures-pass-js',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e02/fixtures/pass.js',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e02-fixtures-reset-every-call-js',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e02/fixtures/reset-every-call.js',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e02-fixtures-shared-global-js',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e02/fixtures/shared-global.js',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e02-fixtures-styles-css',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e02/fixtures/styles.css',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e02-fixtures-syntax-error-js',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e02/fixtures/syntax-error.js',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e02-instructions-md',
+      'visibility': 'public',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e02/instructions.md',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e02-solution-index-html',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e02/solution/index.html',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e02-solution-script-js',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e02/solution/script.js',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e02-solution-styles-css',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e02/solution/styles.css',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e02-starter-index-html',
+      'visibility': 'public',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e02/starter/index.html',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e02-starter-script-js',
+      'visibility': 'public',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e02/starter/script.js',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e02-starter-styles-css',
+      'visibility': 'public',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e02/starter/styles.css',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e03-exercise-yaml',
+      'visibility': 'public',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e03/exercise.yaml',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e03-fixtures-assignment-arrow-pass-js',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e03/fixtures/assignment-arrow-pass.js',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e03-fixtures-fixed-return-js',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e03/fixtures/fixed-return.js',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e03-fixtures-index-html',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e03/fixtures/index.html',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e03-fixtures-kept-function-fixed-output-js',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e03/fixtures/kept-function-fixed-output.js',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e03-fixtures-output-only-js',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e03/fixtures/output-only.js',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e03-fixtures-pass-js',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e03/fixtures/pass.js',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e03-fixtures-reset-every-call-js',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e03/fixtures/reset-every-call.js',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e03-fixtures-shared-global-js',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e03/fixtures/shared-global.js',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e03-fixtures-styles-css',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e03/fixtures/styles.css',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e03-fixtures-syntax-error-js',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e03/fixtures/syntax-error.js',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e03-instructions-md',
+      'visibility': 'public',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e03/instructions.md',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e03-solution-index-html',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e03/solution/index.html',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e03-solution-script-js',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e03/solution/script.js',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e03-solution-styles-css',
+      'visibility': 'authoring',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e03/solution/styles.css',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e03-starter-index-html',
+      'visibility': 'public',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e03/starter/index.html',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e03-starter-script-js',
+      'visibility': 'public',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e03/starter/script.js',
+    }
+  - {
+      'id': 'javascript-ch03-l05-e03-starter-styles-css',
+      'visibility': 'public',
+      'path': 'chapters/javascript-ch03/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e03/starter/styles.css',
+    }

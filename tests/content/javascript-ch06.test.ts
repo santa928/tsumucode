@@ -52,21 +52,21 @@ describe('javascript-ch06', () => {
     ]);
   });
 
-  it('Data PhaseをChapter 04〜06へ分けCourse累計を27 Lesson／108 Slide／27 Exercise／420分へ更新する', async () => {
+  it('Data PhaseをChapter 04〜06へ分けCourse累計を27 Lesson／108 Slide／29 Exercise／430分へ更新する', async () => {
     const { runtime: course } = await loadAuthoringCourse(path.resolve('content/javascript'));
 
     expect(course).toMatchObject({
-      revision: '2026-08-10.3',
-      estimatedMinutes: 420,
+      revision: '2026-09-27.1',
+      estimatedMinutes: 430,
       publicationStatus: 'draft',
       expectedTotals: {
         chapters: 7,
         lessons: 27,
         conceptSlides: 108,
-        standardExercises: 27,
+        standardExercises: 29,
         guidedProjectLessons: 0,
         capstoneLessons: 0,
-        estimatedMinutes: 420,
+        estimatedMinutes: 430,
       },
     });
     expect(
@@ -85,8 +85,8 @@ describe('javascript-ch06', () => {
       },
     ]);
     expect(course.progressMigrations.at(-1)).toEqual({
-      fromRevision: '2026-08-10.2',
-      toRevision: '2026-08-10.3',
+      fromRevision: '2026-08-10.3',
+      toRevision: '2026-09-27.1',
       steps: [],
     });
   }, 20_000);
