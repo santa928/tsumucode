@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { observeRuntimePage, readRuntimeErrors } from './helpers/openRuntimeFixture';
 import { testBasePath } from './helpers/testBasePath';
+import { expectSlideScrollReachable } from './helpers/slideScroll';
 
 const CHAPTER_TWO_SLIDES = [
   ...['01', '02', '03', '04'].flatMap((lessonNumber) =>
@@ -15,7 +16,7 @@ const CHAPTER_TWO_SLIDES = [
 async function expectSlideFitsViewport(
   page: Page,
   expectedSlideId: string,
-  allowStageVerticalScroll: boolean,
+  narrow: boolean,
 ): Promise<void> {
   const stage = page.getByTestId('learning-stage');
   await expect(page.getByTestId('slide-stage')).toHaveAttribute('data-slide-id', expectedSlideId);
@@ -47,11 +48,7 @@ async function expectSlideFitsViewport(
   expect(metrics.document.scrollWidth).toBeLessThanOrEqual(metrics.document.clientWidth);
   expect(metrics.document.scrollHeight).toBeLessThanOrEqual(metrics.document.clientHeight + 1);
   expect(metrics.stage.scrollWidth).toBeLessThanOrEqual(metrics.stage.clientWidth + 1);
-  if (allowStageVerticalScroll) {
-    expect(metrics.stage.overflowY).toBe('auto');
-  } else {
-    expect(metrics.stage.scrollHeight).toBeLessThanOrEqual(metrics.stage.clientHeight + 1);
-  }
+  await expectSlideScrollReachable(page, narrow);
   for (const codeBlock of metrics.codeBlocks) {
     expect(
       codeBlock.scrollWidth,
@@ -87,16 +84,16 @@ test.afterEach(async ({ page }) => {
 });
 
 for (const viewport of [
-  { id: 'desktop-compact', width: 1280, height: 720, allowStageVerticalScroll: false },
-  { id: 'mobile-portrait', width: 390, height: 844, allowStageVerticalScroll: true },
+  { id: 'desktop-compact', width: 1280, height: 720, narrow: false },
+  { id: 'mobile-portrait', width: 390, height: 844, narrow: true },
 ] as const) {
-  test(`Chapter 02の全16 Slideが${viewport.id}の学習領域へ収まる`, async ({ page }) => {
+  test(`Chapter 02の全16 Slideが${viewport.id}の本文末尾まで読める`, async ({ page }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     for (const { lessonId, slideId } of CHAPTER_TWO_SLIDES) {
       await page.goto(
         `${testBasePath()}#/courses/javascript/lessons/${lessonId}/slides/${slideId}`,
       );
-      await expectSlideFitsViewport(page, slideId, viewport.allowStageVerticalScroll);
+      await expectSlideFitsViewport(page, slideId, viewport.narrow);
     }
   });
 }

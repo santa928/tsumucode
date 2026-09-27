@@ -14,6 +14,7 @@ import {
   openEditableJavaScriptExercise,
 } from './helpers/javascriptCourse';
 import { replaceEditorText } from './helpers/progress';
+import { expectSlideScrollReachable } from './helpers/slideScroll';
 
 interface Rectangle {
   readonly left: number;
@@ -436,9 +437,7 @@ for (const viewport of PATH_VIEWPORTS) {
 }
 
 for (const viewport of NORMAL_PC_VIEWPORTS) {
-  test(`${viewport.name}でSlideのTool Rail・Stage・Action Railを1画面へ収める`, async ({
-    page,
-  }) => {
+  test(`${viewport.name}でSlideの操作枠を固定し本文末尾まで読める`, async ({ page }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await page.goto('./#/courses/html-css/lessons/html-css-ch00-l01/slides/html-css-ch00-l01-s04');
 
@@ -447,7 +446,6 @@ for (const viewport of NORMAL_PC_VIEWPORTS) {
     const brand = page.getByRole('link', { name: 'TsumuCodeホームへ（ベータ版）' });
     const betaBadge = brand.getByRole('img', { name: 'ベータ版' });
     const course = page.getByRole('link', { name: 'コースマップへ戻る' });
-    const learningStage = page.getByTestId('learning-stage');
     const slideStage = page.getByTestId('slide-stage');
     await expect(toolRail).toBeVisible();
     await expect(slideStage.getByRole('heading', { level: 1 })).toBeVisible();
@@ -472,13 +470,12 @@ for (const viewport of NORMAL_PC_VIEWPORTS) {
     expect(badgeRect.bottom).toBeLessThanOrEqual(brandRect.bottom + 0.5);
     expect(badgeRect.right).toBeLessThanOrEqual(brandRect.right + 0.5);
     await expectNoDocumentScroll(page);
-    await expectNoHiddenOverflow(learningStage);
+    await expectSlideScrollReachable(page, false);
 
     await page.goto('./#/courses/html-css/lessons/html-css-ch00-l01/slides/html-css-ch00-l01-s01');
     await expect(page.getByTestId('slide-stage')).toBeVisible();
     await expectNoDocumentScroll(page);
-    await expectNoHiddenOverflow(page.getByTestId('learning-stage'));
-    await expectNoHiddenOverflow(page.getByTestId('slide-stage'));
+    await expectSlideScrollReachable(page, false);
   });
 
   test(`${viewport.name}でExerciseの工程票・Editor・Preview・Action Railを1画面へ収める`, async ({
@@ -944,7 +941,7 @@ test('保存degraded時も低いPCでBanner・Tool Rail・Stage・Pagerを操作
 });
 
 for (const viewport of LIBRARY_VIEWPORTS) {
-  test(`${viewport.name}で閲覧Viewerを固定Viewportへ収め、目次だけDocument Scrollを許可する`, async ({
+  test(`${viewport.name}で閲覧Viewerの本文と操作へ到達し、目次だけDocument Scrollを許可する`, async ({
     page,
   }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
@@ -962,14 +959,25 @@ for (const viewport of LIBRARY_VIEWPORTS) {
     const toolRailRect = await rectangle(toolRail);
     const pagerRect = await rectangle(pager);
     expect(toolRailRect.bottom - toolRailRect.top).toBeLessThanOrEqual(52);
-    expect(pagerRect.bottom - pagerRect.top).toBeLessThanOrEqual(56);
-    expect(
-      toolRailRect.bottom - toolRailRect.top + (pagerRect.bottom - pagerRect.top),
-    ).toBeLessThanOrEqual(108);
+    const narrow = viewport.width < 512;
+    if (narrow) {
+      const actions = pager.locator(':scope > *');
+      const first = await rectangle(actions.nth(0));
+      const second = await rectangle(actions.nth(1));
+      expect(first.bottom).toBeLessThanOrEqual(second.top);
+      expect(first.bottom - first.top).toBeGreaterThanOrEqual(44);
+      expect(second.bottom - second.top).toBeGreaterThanOrEqual(44);
+    } else {
+      expect(pagerRect.bottom - pagerRect.top).toBeLessThanOrEqual(56);
+      expect(
+        toolRailRect.bottom - toolRailRect.top + (pagerRect.bottom - pagerRect.top),
+      ).toBeLessThanOrEqual(108);
+    }
     await expectNoDocumentScroll(page);
     await expectDocumentScrollAtOrigin(page);
     await expectInside(viewportShell, shell);
-    await expectInside(stage, viewportShell);
+    if (!narrow) await expectInside(stage, viewportShell);
+    await expectSlideScrollReachable(page, narrow);
     await expectLibraryTargetSizes(page);
 
     await page.getByRole('button', { name: 'スライド目次を開く' }).click();
@@ -978,6 +986,12 @@ for (const viewport of LIBRARY_VIEWPORTS) {
     await expect(drawer).toBeVisible();
     await expectInside(drawerPanel, drawer);
     await page.keyboard.press('Escape');
+    await pager.getByRole('link', { name: '次のスライドへ', exact: true }).click();
+    await expect(page.getByTestId('slide-stage')).toHaveAttribute(
+      'data-slide-id',
+      'html-css-ch00-l01-s02',
+    );
+    await expectSlideScrollReachable(page, narrow);
 
     await page.goto('./#/library/html-css');
     await expect(
