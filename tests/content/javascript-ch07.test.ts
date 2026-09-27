@@ -9,7 +9,7 @@ it('Ch07は先頭1単元のみで、参照・先頭一致・nullから編集へ�
   expect(loaded.lessons.map(({ id }) => id)).toEqual(['javascript-ch07-l01']);
   expect(loaded.lessons[0]?.prerequisiteLessonIds).toEqual([
     'javascript-ch01-l02',
-    'javascript-ch02-l01',
+    'javascript-ch02-l02',
   ]);
   const exercise = loaded.exercises[0]!;
   expect(exercise.runtime).toMatchObject({ capabilityProfile: 'dom', primaryOutput: 'preview' });

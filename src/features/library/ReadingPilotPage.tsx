@@ -31,7 +31,7 @@ export function ReadingPilotPage() {
                       変数の説明
                     </Link>
                     と
-                    <Link to="/courses/javascript/lessons/javascript-ch02-l01/slides/javascript-ch02-l01-s01">
+                    <Link to="/courses/javascript/lessons/javascript-ch02-l02/slides/javascript-ch02-l02-s02">
                       ifの説明
                     </Link>
                     を先に確認できます。

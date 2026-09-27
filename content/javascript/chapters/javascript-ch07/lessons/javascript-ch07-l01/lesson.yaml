@@ -5,7 +5,7 @@ goal: querySelectorで最初の一致要素を参照し、見つからない場�
 estimatedMinutes: 20
 prerequisiteLessonIds:
   - javascript-ch01-l02
-  - javascript-ch02-l01
+  - javascript-ch02-l02
 slideSources:
   - slides/s01.md
   - slides/s02.md
