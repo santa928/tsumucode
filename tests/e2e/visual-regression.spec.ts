@@ -9,6 +9,9 @@ import { observeRuntimePage, readRuntimeErrors } from './helpers/openRuntimeFixt
 import { replaceEditorText, waitForDraftSaved } from './helpers/progress';
 import { testBasePath } from './helpers/testBasePath';
 
+// 意図したUI差分は再試行で直らない。機能E2Eのretry方針とは分離する。
+test.describe.configure({ retries: 0 });
+
 const COURSE_PATH = `${testBasePath()}#/courses/html-css`;
 const LEARNING_PATH = `${testBasePath()}#/paths/frontend`;
 const SLIDE_PATH = `${COURSE_PATH}/lessons/html-css-ch00-l01/slides/html-css-ch00-l01-s01`;
@@ -333,18 +336,24 @@ test.describe('World-A visual regression', () => {
 
   for (const screen of SCREENS) {
     for (const viewport of VIEWPORTS) {
-      test(`${screen.id}-${viewport.id}`, async ({ page }) => {
-        await page.setViewportSize({ width: viewport.width, height: viewport.height });
-        await screen.prepare?.(page);
-        await page.goto(screen.path);
-        await screen.ready(page);
-        await stabilizeScreenshotScroll(page, screen.id);
-        await expect(page).toHaveScreenshot(`${screen.id}-${viewport.id}.png`, {
-          animations: 'disabled',
-          caret: 'hide',
-          fullPage: false,
-        });
-      });
+      test(
+        `${screen.id}-${viewport.id}`,
+        {
+          tag: viewport.id === 'desktop-wide' ? '@visual-extended' : [],
+        },
+        async ({ page }) => {
+          await page.setViewportSize({ width: viewport.width, height: viewport.height });
+          await screen.prepare?.(page);
+          await page.goto(screen.path);
+          await screen.ready(page);
+          await stabilizeScreenshotScroll(page, screen.id);
+          await expect(page).toHaveScreenshot(`${screen.id}-${viewport.id}.png`, {
+            animations: 'disabled',
+            caret: 'hide',
+            fullPage: false,
+          });
+        },
+      );
     }
   }
 });
@@ -356,24 +365,30 @@ test.describe('Exercise diagnostic visual regression', () => {
   });
 
   for (const viewport of VIEWPORTS.slice(0, 2)) {
-    test(`exercise-diagnostics-${viewport.id}`, async ({ page }) => {
-      await page.setViewportSize({ width: viewport.width, height: viewport.height });
-      await page.goto(EXERCISE_PATH);
-      await expect(page.getByTestId('code-workspace')).toBeVisible();
-      await page.getByRole('tab', { name: 'styles.css' }).click();
-      await replaceEditorText(page, '<main><p>複数診断</p></main>');
-      await page.getByRole('button', { name: '判定する' }).click();
-      await expect(page.getByRole('heading', { name: 'コードを確認しよう' })).toBeVisible();
-      await page.getByRole('button', { name: '閉じる' }).click();
-      const diagnostics = page.getByRole('list', { name: 'コード診断' });
-      await expect(diagnostics).toBeVisible();
-      expect(await diagnostics.getByRole('listitem').count()).toBeGreaterThan(1);
-      await expect(page).toHaveScreenshot(`exercise-diagnostics-${viewport.id}.png`, {
-        animations: 'disabled',
-        caret: 'hide',
-        fullPage: false,
-      });
-    });
+    test(
+      `exercise-diagnostics-${viewport.id}`,
+      {
+        tag: viewport.id === 'desktop-wide' ? '@visual-extended' : [],
+      },
+      async ({ page }) => {
+        await page.setViewportSize({ width: viewport.width, height: viewport.height });
+        await page.goto(EXERCISE_PATH);
+        await expect(page.getByTestId('code-workspace')).toBeVisible();
+        await page.getByRole('tab', { name: 'styles.css' }).click();
+        await replaceEditorText(page, '<main><p>複数診断</p></main>');
+        await page.getByRole('button', { name: '判定する' }).click();
+        await expect(page.getByRole('heading', { name: 'コードを確認しよう' })).toBeVisible();
+        await page.getByRole('button', { name: '閉じる' }).click();
+        const diagnostics = page.getByRole('list', { name: 'コード診断' });
+        await expect(diagnostics).toBeVisible();
+        expect(await diagnostics.getByRole('listitem').count()).toBeGreaterThan(1);
+        await expect(page).toHaveScreenshot(`exercise-diagnostics-${viewport.id}.png`, {
+          animations: 'disabled',
+          caret: 'hide',
+          fullPage: false,
+        });
+      },
+    );
   }
 });
 
@@ -385,17 +400,26 @@ test.describe('Slide library visual regression', () => {
 
   for (const screen of LIBRARY_SCREENS) {
     for (const viewport of LIBRARY_VIEWPORTS) {
-      test(`${screen.id}-${viewport.id}`, async ({ page }) => {
-        await page.setViewportSize({ width: viewport.width, height: viewport.height });
-        await page.goto(screen.path);
-        await screen.ready(page);
-        await stabilizeScreenshotScroll(page, screen.id);
-        await expect(page).toHaveScreenshot(`${screen.id}-${viewport.id}.png`, {
-          animations: 'disabled',
-          caret: 'hide',
-          fullPage: false,
-        });
-      });
+      test(
+        `${screen.id}-${viewport.id}`,
+        {
+          tag:
+            viewport.id === 'desktop-wide' || viewport.id === 'mobile-tall'
+              ? '@visual-extended'
+              : [],
+        },
+        async ({ page }) => {
+          await page.setViewportSize({ width: viewport.width, height: viewport.height });
+          await page.goto(screen.path);
+          await screen.ready(page);
+          await stabilizeScreenshotScroll(page, screen.id);
+          await expect(page).toHaveScreenshot(`${screen.id}-${viewport.id}.png`, {
+            animations: 'disabled',
+            caret: 'hide',
+            fullPage: false,
+          });
+        },
+      );
     }
   }
 });
@@ -625,25 +649,33 @@ test.describe('JavaScript Chapter 01 visual regression', () => {
       });
     });
 
-    test(`javascript-ch01-exercise-${viewport.id}`, async ({ page }) => {
-      await page.setViewportSize({ width: viewport.width, height: viewport.height });
-      await page.goto(javascriptExerciseRoute(JAVASCRIPT_CH01_EXERCISE));
-      if (viewport.width >= 1024) {
-        await expect(
-          page.getByRole('heading', { level: 1, name: JAVASCRIPT_CH01_EXERCISE.title }),
-        ).toBeVisible();
-        await expect(page.getByTestId('code-workspace')).toBeVisible();
-        await expect(page.getByRole('button', { name: '判定する' })).toBeEnabled();
-      } else {
-        await expect(page.getByRole('heading', { level: 1, name: 'PCで演習を開く' })).toBeVisible();
-        await expect(page.getByTestId('code-workspace')).toHaveCount(0);
-      }
-      await expect(page).toHaveScreenshot(`javascript-ch01-exercise-${viewport.id}.png`, {
-        animations: 'disabled',
-        caret: 'hide',
-        fullPage: false,
-      });
-    });
+    test(
+      `javascript-ch01-exercise-${viewport.id}`,
+      {
+        tag: '@visual-extended',
+      },
+      async ({ page }) => {
+        await page.setViewportSize({ width: viewport.width, height: viewport.height });
+        await page.goto(javascriptExerciseRoute(JAVASCRIPT_CH01_EXERCISE));
+        if (viewport.width >= 1024) {
+          await expect(
+            page.getByRole('heading', { level: 1, name: JAVASCRIPT_CH01_EXERCISE.title }),
+          ).toBeVisible();
+          await expect(page.getByTestId('code-workspace')).toBeVisible();
+          await expect(page.getByRole('button', { name: '判定する' })).toBeEnabled();
+        } else {
+          await expect(
+            page.getByRole('heading', { level: 1, name: 'PCで演習を開く' }),
+          ).toBeVisible();
+          await expect(page.getByTestId('code-workspace')).toHaveCount(0);
+        }
+        await expect(page).toHaveScreenshot(`javascript-ch01-exercise-${viewport.id}.png`, {
+          animations: 'disabled',
+          caret: 'hide',
+          fullPage: false,
+        });
+      },
+    );
   }
 
   test('javascript-ch01-slide-s04-mobile-portrait-bottom', async ({ page }) => {
@@ -711,25 +743,33 @@ test.describe('JavaScript Chapter 02 visual regression', () => {
       });
     });
 
-    test(`javascript-ch02-exercise-${viewport.id}`, async ({ page }) => {
-      await page.setViewportSize({ width: viewport.width, height: viewport.height });
-      await page.goto(javascriptExerciseRoute(JAVASCRIPT_CH02_EXERCISE));
-      if (viewport.width >= 1024) {
-        await expect(
-          page.getByRole('heading', { level: 1, name: JAVASCRIPT_CH02_EXERCISE.title }),
-        ).toBeVisible();
-        await expect(page.getByTestId('code-workspace')).toBeVisible();
-        await expect(page.getByRole('button', { name: '判定する' })).toBeEnabled();
-      } else {
-        await expect(page.getByRole('heading', { level: 1, name: 'PCで演習を開く' })).toBeVisible();
-        await expect(page.getByTestId('code-workspace')).toHaveCount(0);
-      }
-      await expect(page).toHaveScreenshot(`javascript-ch02-exercise-${viewport.id}.png`, {
-        animations: 'disabled',
-        caret: 'hide',
-        fullPage: false,
-      });
-    });
+    test(
+      `javascript-ch02-exercise-${viewport.id}`,
+      {
+        tag: '@visual-extended',
+      },
+      async ({ page }) => {
+        await page.setViewportSize({ width: viewport.width, height: viewport.height });
+        await page.goto(javascriptExerciseRoute(JAVASCRIPT_CH02_EXERCISE));
+        if (viewport.width >= 1024) {
+          await expect(
+            page.getByRole('heading', { level: 1, name: JAVASCRIPT_CH02_EXERCISE.title }),
+          ).toBeVisible();
+          await expect(page.getByTestId('code-workspace')).toBeVisible();
+          await expect(page.getByRole('button', { name: '判定する' })).toBeEnabled();
+        } else {
+          await expect(
+            page.getByRole('heading', { level: 1, name: 'PCで演習を開く' }),
+          ).toBeVisible();
+          await expect(page.getByTestId('code-workspace')).toHaveCount(0);
+        }
+        await expect(page).toHaveScreenshot(`javascript-ch02-exercise-${viewport.id}.png`, {
+          animations: 'disabled',
+          caret: 'hide',
+          fullPage: false,
+        });
+      },
+    );
   }
 });
 
@@ -769,25 +809,33 @@ test.describe('JavaScript Chapter 03 visual regression', () => {
       });
     });
 
-    test(`javascript-ch03-exercise-${viewport.id}`, async ({ page }) => {
-      await page.setViewportSize({ width: viewport.width, height: viewport.height });
-      await page.goto(javascriptExerciseRoute(JAVASCRIPT_CH03_EXERCISE));
-      if (viewport.width >= 1024) {
-        await expect(
-          page.getByRole('heading', { level: 1, name: JAVASCRIPT_CH03_EXERCISE.title }),
-        ).toBeVisible();
-        await expect(page.getByTestId('code-workspace')).toBeVisible();
-        await expect(page.getByRole('button', { name: '判定する' })).toBeEnabled();
-      } else {
-        await expect(page.getByRole('heading', { level: 1, name: 'PCで演習を開く' })).toBeVisible();
-        await expect(page.getByTestId('code-workspace')).toHaveCount(0);
-      }
-      await expect(page).toHaveScreenshot(`javascript-ch03-exercise-${viewport.id}.png`, {
-        animations: 'disabled',
-        caret: 'hide',
-        fullPage: false,
-      });
-    });
+    test(
+      `javascript-ch03-exercise-${viewport.id}`,
+      {
+        tag: '@visual-extended',
+      },
+      async ({ page }) => {
+        await page.setViewportSize({ width: viewport.width, height: viewport.height });
+        await page.goto(javascriptExerciseRoute(JAVASCRIPT_CH03_EXERCISE));
+        if (viewport.width >= 1024) {
+          await expect(
+            page.getByRole('heading', { level: 1, name: JAVASCRIPT_CH03_EXERCISE.title }),
+          ).toBeVisible();
+          await expect(page.getByTestId('code-workspace')).toBeVisible();
+          await expect(page.getByRole('button', { name: '判定する' })).toBeEnabled();
+        } else {
+          await expect(
+            page.getByRole('heading', { level: 1, name: 'PCで演習を開く' }),
+          ).toBeVisible();
+          await expect(page.getByTestId('code-workspace')).toHaveCount(0);
+        }
+        await expect(page).toHaveScreenshot(`javascript-ch03-exercise-${viewport.id}.png`, {
+          animations: 'disabled',
+          caret: 'hide',
+          fullPage: false,
+        });
+      },
+    );
   }
 });
 
