@@ -3,27 +3,32 @@ id: javascript
 title: JavaScript はじめの一歩
 description: 画面の変化から始め、値・条件分岐・Function・Array・Module・Error・DebugまでをConsoleで確かめる
 audience: HTMLとCSSの役割を知り、JavaScriptを初めて学ぶ本人と身内
-estimatedMinutes: 430
-revision: 2026-09-27.1
+estimatedMinutes: 450
+revision: 2026-09-28.1
 runnerId: javascript
 validatorId: javascript
 glossarySource: glossary.yaml
 conceptsSource: concepts.yaml
 documentationSources: []
-authoringSources: [performance.yaml]
+authoringSources:
+  - performance.yaml
 supportedDevices:
   exercise: desktop
-  study: [desktop, tablet, mobile]
-prerequisites: [html-css]
+  study:
+    - desktop
+    - tablet
+    - mobile
+prerequisites:
+  - html-css
 publicationStatus: draft
 expectedTotals:
-  chapters: 7
-  lessons: 27
-  conceptSlides: 108
-  standardExercises: 29
+  chapters: 8
+  lessons: 28
+  conceptSlides: 112
+  standardExercises: 30
   guidedProjectLessons: 0
   capstoneLessons: 0
-  estimatedMinutes: 430
+  estimatedMinutes: 450
 provenanceManifestPath: provenance.yaml
 progressMigrations:
   - fromRevision: 2026-08-02.1
@@ -41,6 +46,9 @@ progressMigrations:
   - fromRevision: 2026-08-10.3
     toRevision: 2026-09-27.1
     steps: []
+  - fromRevision: 2026-09-27.1
+    toRevision: 2026-09-28.1
+    steps: []
 phases:
   - id: javascript-p00-core
     title: JavaScript Core
@@ -57,3 +65,8 @@ phases:
       - chapters/javascript-ch04/chapter.yaml
       - chapters/javascript-ch05/chapter.yaml
       - chapters/javascript-ch06/chapter.yaml
+  - id: javascript-p02-browser-app
+    title: JavaScript Browser App
+    description: ページの要素とコードのつながりを学びます。現在は最初の1 Lessonだけを試せます。
+    chapterSources:
+      - chapters/javascript-ch07/chapter.yaml

@@ -1,0 +1,28 @@
+id: javascript-ch07-l01
+kind: standard
+title: 要素を探して文字を変える
+goal: querySelectorで最初の一致要素を参照し、見つからない場合と区別して狙った文字を変更できる。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - javascript-ch01-l02
+  - javascript-ch02-l01
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/javascript-ch07-l01-e01/exercise.yaml
+reflection: 要素への参照を使うとページが変わる。正常終了と、狙った要素が変わったことは別に確かめる。
+glossaryRefs:
+  - selector
+  - text-content
+  - const
+  - dom
+  - dom-reference
+  - null-element
+completion:
+  kind: standard
+  finalSlideId: javascript-ch07-l01-s04
+  requiredExerciseIds:
+    - javascript-ch07-l01-e01

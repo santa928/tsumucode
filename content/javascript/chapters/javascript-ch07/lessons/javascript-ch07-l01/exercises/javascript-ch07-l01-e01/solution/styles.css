@@ -1,0 +1,16 @@
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 32px;
+  color: #173e38;
+  background: #f5f7f2;
+}
+main {
+  max-width: 480px;
+  margin: auto;
+}
+.book {
+  padding: 16px;
+  background: white;
+  border-left: 4px solid #327867;
+}

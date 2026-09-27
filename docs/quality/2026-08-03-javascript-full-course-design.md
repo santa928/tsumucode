@@ -1,6 +1,6 @@
 # JavaScript全Course 設計
 
-- 状態: 書面レビュー承認済み・Runtime基盤およびChapter 01〜06教材実装・Data Phaseの全品質GateとGitHub Pages β公開検証済み（Chapter 07〜13教材は未実装）
+- 状態: 書面レビュー承認済み・Runtime基盤およびChapter 01〜06教材実装・Data Phaseの全品質GateとGitHub Pages β公開検証済み（Chapter 07先頭1単元の候補を追加、残りのChapter 07〜13は未実装）
 - 承認日: 2026-08-04
 - 作成日: 2026-08-03
 - 対象: `javascript` Course Chapter 01〜13、既存Chapter 00の互換維持、全Course公開
@@ -624,3 +624,20 @@ blockingな難度ずれ、直前Slideとの不整合、操作不能、誤判定�
 6. Capstoneと公開昇格: Chapter 13、初心者検証、published、LearningPath追加。
 
 各教材taskはCourse totals、Concept trace、Fixture、independent reviewを同じcommit範囲へ含める。Runtime未実装のConcept教材を先に量産しない。
+
+## 2026-09-28 #8 Browser App再開: Ch07の最初の1 Lesson
+
+既存Ch00〜06はClosureパイロット改訂後、27 Lesson／108 Slide／29 Exercise／430分である。以前の27演習／420分という値は改訂前の実績として保持する。今回の追加は `javascript-ch07-l01` の1 Lesson／4 Slide／1 Exercise／20分のみで、累計28／112／30／450分となる。Ch07残りとCh08〜11、Guided Project、Capstoneは未実装。Courseはdraftを維持する。
+
+| ID              | 状態 | 要件と今回の対応                                                                           |
+| --------------- | ---- | ------------------------------------------------------------------------------------------ |
+| REQ-JSC-003     | 維持 | 全体の学習範囲を維持し、今回の小単元と未実装範囲を区別する                                 |
+| REQ-JSC-DOM-001 | 追加 | 変数・ifの既習説明を明示し、DOM参照・最初の一致・null・textContentの説明から編集へ接続する |
+| REQ-JSC-DOM-002 | 追加 | 同じclassの先頭だけを変更する実DOM結果を採点し、別変数名や特定ifの形を強制しない           |
+| REQ-JSC-DOM-003 | 維持 | 実行成功と課題達成を区別する。安全なnull分岐で何も変わらなければ課題未達                   |
+| REQ-JSC-DOM-004 | 維持 | 既存ID、進捗・下書き・Import/Export、独立教材レビュー、公開Gateを維持する                  |
+| REQ-JSC-DOM-005 | 追加 | 試用目次だけへ今回の1件を追加し、未完成Lessonへ先読み・移動させない                        |
+
+既存のDOM Runnerを使い、Runtime・隔離・判定器の新設や緩和はしない。新教材に対する独立内容レビューと実初心者の試用は別の証拠であり、ソースの構造チェックや自動操作で代替しない。#26 Bの既存教材改訂サイクルをこの新設教材で完了扱いにしない。
+
+検証は新演習のSolution/Starter/代表Fixture、編集→Reset→再編集→Preview→判定、PCのTab操作、390px読書、既存入口・読書回帰、旧revisionの保存データ引継ぎに絞る。共有実行基盤を変えていないため全Course×全Browserの再実行は通常開発の目標にしない。性能は既存の遅延ロード分離を維持し、Home/読書へJS実行依存を混入させない。全体のRelease Gateは採用後の公開時に実行する。

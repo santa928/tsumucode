@@ -56,7 +56,7 @@ Homeの「今回の学習」には、初回は目安10分で見出しと背景�
 
 現在公開している「フロントエンド学習パス」にはHTML/CSSコースだけを収録しています。JavaScript、TypeScript、Reactなどのコースは、教材と品質確認が完成してから順次このパスへ追加します。学習パスの直リンクは[`#/paths/frontend`](http://localhost:5173/#/paths/frontend)です。
 
-JavaScriptは、安全な複数ファイル実行基盤とChapter 00〜06の27 Lesson／108 Slide／29 Exercise（430分）を`draft`として品質検証中です。値・条件分岐・Function・Arrayから`map`・`filter`・`reduce`・immutable update、Module・Error・Debugまでを学べます。Home、公開学習パス、スライド閲覧モードにはまだ掲載しません。開発時は[最初のJavaScriptスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s01)、[Chapter 06の最初のスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch06-l01/slides/javascript-ch06-l01-s01)、[Debug演習](http://localhost:5173/#/courses/javascript/lessons/javascript-ch06-l04/exercises/javascript-ch06-l04-e01)の直接URLから確認できます。`draft`は非掲載を意味するだけで、Production Artifactへ含まれる教材を機密情報として扱うものではありません。
+JavaScriptは、安全な複数ファイル実行基盤とChapter 00〜06とChapter 07の先頭1単元の28 Lesson／112 Slide／30 Exercise（450分）を`draft`として品質検証中です。値・条件分岐・Function・Arrayから`map`・`filter`・`reduce`・immutable update、Module・Error・Debugと、DOMで要素を探して文字を変える最初の単元を学べます。Home、公開学習パス、スライド閲覧モードにはまだ掲載しません。開発時は[最初のJavaScriptスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s01)、[Chapter 06の最初のスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch06-l01/slides/javascript-ch06-l01-s01)、[Debug演習](http://localhost:5173/#/courses/javascript/lessons/javascript-ch06-l04/exercises/javascript-ch06-l04-e01)の直接URLから確認できます。`draft`は非掲載を意味するだけで、Production Artifactへ含まれる教材を機密情報として扱うものではありません。
 
 学習パスの進捗は、この端末に保存された各コースの進捗からその都度計算します。学習パス専用の進捗Recordは作らないため、既存の書き出し・読み込み形式や各コースの下書きはそのまま利用できます。
 
@@ -66,7 +66,7 @@ JavaScriptは、安全な複数ファイル実行基盤とChapter 00〜06の27 L
 
 閲覧モードは通常学習の進捗、再開地点、下書きを参照・更新しません。「一続きに読む」でLesson全文を読み、従来の1枚表示とも往復できます。読書専用の続き位置と「あとで試す」の印だけをこの端末・このサイトに保存し、目次の「読書の続きから」で再開します。保存できなくても本文は読めます。目次と各スライドはHash URLを再読込・共有できます。通常学習へ戻ると、Course Map以降は通常の端末保存が再開します。
 
-[3レッスンの試用目次](http://localhost:5173/#/library/pilot)では、HTML導入・JavaScript導入・Closureの改訂教材だけを通読・1枚表示で試せます。通常の公開LibraryやJavaScript Course全体の公開状態は変えません。読書位置のURLとPC向け演習URLは別々にコピーできます。端末間、Pagesとローカル学習版の間でコードや進捗は自動同期されません。学習データの移動には通常学習のJSON書き出し・読み込みを使います。読書の印はこのJSONには含めません。
+[試用レッスンの目次](http://localhost:5173/#/library/pilot)では、HTML導入・JavaScript導入・Closure・DOMの最初の1単元だけを通読・1枚表示で試せます。通常の公開LibraryやJavaScript Course全体の公開状態は変えません。読書位置のURLとPC向け演習URLは別々にコピーできます。端末間、Pagesとローカル学習版の間でコードや進捗は自動同期されません。学習データの移動には通常学習のJSON書き出し・読み込みを使います。読書の印はこのJSONには含めません。
 
 GitHub Pagesへ公開した後のHTML/CSSコースの直リンクは、[スライド目次](https://santa928.github.io/tsumucode/#/library/html-css)です。
 

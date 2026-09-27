@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 210" role="img" aria-labelledby="title desc">
+  <title id="title">目印で選んだ要素の文字を変更する</title>
+  <desc id="desc">querySelectorで.noticeの要素を選び、変数noticeからtextContentへ代入すると、同じ要素にお知らせがありますと表示されます。</desc>
+  <rect width="640" height="210" rx="16" fill="#f7f5ef"/>
+  <g font-family="sans-serif" fill="#24362c">
+    <text x="24" y="34" font-size="18">1. 目印で選ぶ</text>
+    <rect x="24" y="50" width="260" height="52" rx="8" fill="#e0ebdd"/>
+    <text x="40" y="82" font-size="19">.notice → 変数 notice</text>
+    <text x="330" y="34" font-size="18">2. 同じ要素の文字を変更する</text>
+    <rect x="330" y="50" width="286" height="52" rx="8" fill="#e0ebdd"/>
+    <text x="344" y="82" font-size="18">notice.textContent = …</text>
+    <path d="M288 76h32m-8-7 8 7-8 7" stroke="#426348" stroke-width="3" fill="none"/>
+    <text x="24" y="137" font-size="16">ブラウザの表示</text>
+    <rect x="24" y="149" width="592" height="42" rx="6" fill="white" stroke="#426348"/>
+    <text x="42" y="177" font-size="20">お知らせがあります</text>
+  </g>
+</svg>

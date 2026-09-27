@@ -46,12 +46,12 @@ for (const width of [1280, 390]) {
       await expect(page.locator('.cm-editor')).toHaveCount(0);
       if (width === 390 && !enlarged) {
         await page.goto('./#/');
-        await page.getByRole('link', { name: '改訂中の3レッスンを試す' }).click();
+        await page.getByRole('link', { name: '制作途中のレッスンを試す' }).click();
         await expect(page).toHaveURL(/#\/library\/pilot$/u);
         await expect(
-          page.getByRole('heading', { level: 1, name: '3レッスンの試用目次' }),
+          page.getByRole('heading', { level: 1, name: '試用レッスンの目次' }),
         ).toBeVisible();
-        await expect(page.getByRole('link', { name: /^一続きに読む/u })).toHaveCount(3);
+        await expect(page.getByRole('link', { name: /^一続きに読む/u })).toHaveCount(4);
       }
     });
   }
