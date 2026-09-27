@@ -1,3 +1,5 @@
+import { ReadingResume } from './ReadingResume';
+import { readingLessonPath } from './readingTargets';
 import { Link, useLoaderData } from 'react-router';
 import type { libraryCourseLoader } from '../../app/libraryContentLoaders';
 import type { LessonOutline } from '../../core/content/types';
@@ -35,6 +37,7 @@ export function LibraryIndexPage() {
         </Link>
       </header>
 
+      <ReadingResume course={course} pilot={false} />
       <div className="tc-library-phase-list">
         {course.phases.map((phase) => (
           <section key={phase.id} aria-labelledby={`library-phase-${phase.id}`}>
@@ -75,6 +78,12 @@ export function LibraryIndexPage() {
                               <h4 id={`library-lesson-${lesson.id}`}>{lesson.title}</h4>
                               <p>{lesson.goal}</p>
                             </div>
+                            <Link
+                              to={readingLessonPath(course.id, lesson.id, false)}
+                              className="tc-library-lesson-link"
+                            >
+                              一続きに読む：{lesson.title}
+                            </Link>
                             <Link
                               to={buildLibrarySlidePath(course.id, lesson.id, firstSlide.id)}
                               className="tc-library-lesson-link"
