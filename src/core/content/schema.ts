@@ -1,10 +1,20 @@
 /** 公開教材payloadの構造、Course内参照、宣言集計、進捗移行chainを検証する。 */
 import { z } from 'zod';
+import { exerciseReferenceIds, exerciseRequirementIds } from './exerciseRequirementIds';
 import { resolvePublicAsset } from '../../shared/lib/resolvePublicAsset';
 
 export const IdSchema = z
   .string()
   .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'IDはlower-kebab-caseで指定してください');
+/** 進捗のrule参照だけで使用する、宣言IDまたは固定形式の合成操作ID。 */
+export const ProgressRuleReferenceIdSchema = z.union([
+  IdSchema,
+  z
+    .string()
+    .regex(
+      /^interaction:[a-z0-9]+(?:-[a-z0-9]+)*:[a-z0-9]+(?:-[a-z0-9]+)*(?::[a-z0-9]+(?:-[a-z0-9]+)*)?$/u,
+    ),
+]);
 export const NonEmptyTextSchema = z.string().trim().min(1, '空でない文字列を指定してください');
 const NonBlankPreservedTextSchema = z
   .string()
@@ -1121,6 +1131,21 @@ export const LessonSchema = z
       .strict(),
   ])
   .superRefine((lesson, context) => {
+    const interactionOwners = new Map<string, string>();
+    lesson.exercises.forEach((exercise, index) => {
+      for (const id of exerciseRequirementIds(exercise)) {
+        if (!id.startsWith('interaction:')) continue;
+        const owner = interactionOwners.get(id);
+        if (owner !== undefined && owner !== exercise.id) {
+          context.addIssue({
+            code: 'custom',
+            path: ['exercises', index, 'interactionScenarios'],
+            message: `同じLessonの別Exerciseで操作checkpoint IDが重複しています: ${id}`,
+          });
+        }
+        interactionOwners.set(id, exercise.id);
+      }
+    });
     lesson.slides.forEach((slide, index) => {
       if (slide.codeReferenceSlideId === undefined) return;
       const reference = lesson.slides
@@ -1188,30 +1213,53 @@ export const ProgressEntitySchema = z.enum([
 ]);
 
 const PreserveMigrationStepSchema = z
-  .object({ action: z.literal('preserve'), entity: ProgressEntitySchema, id: IdSchema })
+  .object({
+    action: z.literal('preserve'),
+    entity: ProgressEntitySchema,
+    id: ProgressRuleReferenceIdSchema,
+  })
   .strict();
 const MapMigrationStepSchema = z
   .object({
     action: z.literal('map-to'),
     entity: ProgressEntitySchema,
-    fromId: IdSchema,
-    toId: IdSchema,
+    fromId: ProgressRuleReferenceIdSchema,
+    toId: ProgressRuleReferenceIdSchema,
   })
   .strict();
 const ResetMigrationStepSchema = z
   .object({
     action: z.literal('intentionally-reset'),
     entity: ProgressEntitySchema,
-    id: IdSchema,
+    id: ProgressRuleReferenceIdSchema,
     reason: NonEmptyTextSchema,
   })
   .strict();
 
-export const ProgressMigrationStepSchema = z.discriminatedUnion('action', [
-  PreserveMigrationStepSchema,
-  MapMigrationStepSchema,
-  ResetMigrationStepSchema,
-]);
+export const ProgressMigrationStepSchema = z
+  .discriminatedUnion('action', [
+    PreserveMigrationStepSchema,
+    MapMigrationStepSchema,
+    ResetMigrationStepSchema,
+  ])
+  .superRefine((step, context) => {
+    if (step.entity === 'rule') return;
+    const ids =
+      step.action === 'map-to'
+        ? [
+            ['fromId', step.fromId],
+            ['toId', step.toId],
+          ]
+        : [['id', step.id]];
+    for (const [field, id] of ids) {
+      if (!IdSchema.safeParse(id).success)
+        context.addIssue({
+          code: 'custom',
+          path: [field!],
+          message: '操作の合成IDはrule参照だけで使用できます',
+        });
+    }
+  });
 
 export const ContentProgressMigrationSchema = z
   .object({
@@ -1543,6 +1591,7 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
   const ruleIds = new Set<string>();
   const explicitRuleGroups = new Map<string, IssuePath>();
   const groupOwnerById = new Map<string, string>();
+  const interactionOwnerById = new Map<string, string>();
   const assetSignatureById = new Map<string, string>();
   const workspaceOwnerById = new Map<string, ProjectWorkspaceOwner | undefined>();
   const ownerByProjectId = new Map<string, ProjectOwner>();
@@ -1868,16 +1917,27 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
           }
 
           const groupModes = new Map<string, 'all' | 'any'>();
+          for (const id of exerciseRequirementIds(exercise)) {
+            if (!id.startsWith('interaction:')) continue;
+            const owner = interactionOwnerById.get(id);
+            if (owner !== undefined && owner !== exercise.id) {
+              addIssue(
+                context,
+                [...exercisePath, 'interactionScenarios'],
+                `Course内の別Exerciseで操作checkpoint IDが重複しています: ${id}`,
+              );
+            }
+            interactionOwnerById.set(id, exercise.id);
+          }
+          for (const id of exerciseReferenceIds(exercise)) currentIds.rule.add(id);
           for (const [ruleIndex, rule] of exercise.validationRules.entries()) {
             const rulePath = [...exercisePath, 'validationRules', ruleIndex] as const;
             const htmlCssRule = HtmlCssValidationRuleDefinitionSchema.safeParse(rule);
             const javaScriptRule = JavaScriptValidationRuleDefinitionSchema.safeParse(rule);
             register('rule', rule.id, [...rulePath, 'id']);
             ruleIds.add(rule.id);
-            currentIds.rule.add(rule.id);
             const requirementId = rule.groupId ?? rule.id;
             localRequirementIds.add(requirementId);
-            currentIds.rule.add(requirementId);
             const requirementRules = localRulesByRequirement.get(requirementId) ?? [];
             requirementRules.push(rule);
             localRulesByRequirement.set(requirementId, requirementRules);

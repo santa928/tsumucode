@@ -15,6 +15,7 @@ import {
   findWorkspaceTargets,
   findWorkspaceValidationTargets,
   recordDraftMutationFromIndex,
+  recordDraftMutation,
   recordSlideView,
   recordSlideViewFromIndex,
   recordValidation,
@@ -280,6 +281,99 @@ function clone<T>(value: T): T {
 }
 
 describe('progress updates', () => {
+  it('定義済みDOM操作の合格は保存でき、未知checkpointの合格IDは拒否する', () => {
+    const original = fixtureCourse.phases[0]!.chapters[0]!.lessons[0]!;
+    const target: Exercise = {
+      ...original.exercises[0]!,
+      interactionScenarios: [
+        {
+          id: 'answer-flow',
+          label: '回答',
+          actions: [{ id: 'answer', kind: 'click', selector: '#answer' }],
+          checkpoints: [
+            {
+              id: 'answered',
+              afterActionId: 'answer',
+              expectations: [{ id: 'exists', kind: 'selector-exists', selector: '#answer' }],
+            },
+          ],
+        },
+      ],
+    };
+    const lesson: Lesson = { ...original, exercises: [target] };
+    const result = createValidationResult(target, 1);
+    const passed = {
+      ...result,
+      passedRequirementIds: [...result.passedRequirementIds, 'interaction:answer-flow:answered'],
+    };
+    expect(
+      recordValidationFromIndex(undefined, fixtureCourseIndex, lesson, target, passed).lessons[
+        lesson.id
+      ]?.passedExerciseIds,
+    ).toContain(target.id);
+    const course = clone(fixtureCourse);
+    const other: Exercise = {
+      ...target,
+      id: 'other-exercise',
+      workspaceId: 'other-workspace',
+      validationRules: target.validationRules.map((rule) => ({ ...rule, id: `other-${rule.id}` })),
+      interactionScenarios: target.interactionScenarios!.map((scenario) => ({
+        ...scenario,
+        id: 'other-flow',
+      })),
+    };
+    const both = { ...lesson, exercises: [target, other] };
+    course.phases[0]!.chapters[0]!.lessons[0] = both;
+    const index = createCourseIndex(course);
+    for (const unknown of [
+      'interaction:answer-flow:unknown',
+      'interaction:answer-flow:answered:exists',
+      'interaction:other-flow:answered',
+    ]) {
+      const invalid = {
+        ...passed,
+        passedRequirementIds: [...passed.passedRequirementIds, unknown],
+      };
+      expect(() => recordValidationFromIndex(undefined, index, both, target, invalid)).toThrow(
+        '対象Exercise外',
+      );
+      expect(() => recordValidation(undefined, course, both, target, invalid)).toThrow(
+        '対象Exercise外',
+      );
+    }
+    const otherResult = createValidationResult(other, 1, [
+      ...other.validationRules.map(({ id }) => id),
+      'interaction:other-flow:answered',
+    ]);
+    const otherPassed = recordValidation(undefined, course, both, other, otherResult);
+    const completed = recordValidation(otherPassed, course, both, target, passed);
+    expect(recordValidationFromIndex(otherPassed, index, both, target, passed)).toEqual(completed);
+    const failed = createValidationResult(target, 2, [], 'incomplete');
+    const replaced = recordValidation(completed, course, both, target, failed);
+    expect(recordValidationFromIndex(completed, index, both, target, failed)).toEqual(replaced);
+    expect(replaced.lessons[both.id]?.passedRuleIds).toEqual(otherResult.passedRequirementIds);
+    expect(replaced.lessons[both.id]?.passedExerciseIds).toEqual([other.id]);
+    const draft: ExerciseDraft = {
+      courseId: course.id,
+      lessonId: both.id,
+      exerciseId: target.id,
+      workspaceId: target.workspaceId,
+      contentRevision: course.revision,
+      editRevision: 2,
+      files: { 'index.html': 'edited' },
+      selectedFile: 'index.html',
+      cursors: {},
+      validationHistory: [],
+      revealedHintIds: [],
+      lastPassingSnapshots: {},
+      updatedAt: EDITED_AT,
+    };
+    const edited = recordDraftMutation(completed, course, both, target, draft);
+    expect(recordDraftMutationFromIndex(completed, index, both, target, draft)).toEqual(edited);
+    expect(edited?.lessons[both.id]?.passedRuleIds).toEqual(otherResult.passedRequirementIds);
+    expect(edited?.lessons[both.id]?.passedExerciseIds).toEqual([other.id]);
+  });
+
   it('最終slideを見た後に必須exerciseがpassすると初回完了日時を記録する', () => {
     const lesson = fixtureCourse.phases[0]!.chapters[0]!.lessons[0]!;
     const exercise = lesson.exercises[0]!;

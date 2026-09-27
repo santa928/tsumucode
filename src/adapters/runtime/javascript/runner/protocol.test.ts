@@ -22,6 +22,7 @@ function executionEnvelope(payload: Readonly<Record<string, unknown>>): unknown 
       budgetExhausted: false,
       timerLimitExceeded: false,
       runtimeError: null,
+      currentTargetFailure: null,
       console: [record],
       ...payload,
     },
@@ -38,7 +39,7 @@ function interactionEnvelope(overrides: Readonly<Record<string, unknown>> = {}):
     frameGeneration: 7,
     requestId: 'interaction-1',
     oneTimeToken: 'interaction-token-1',
-    payload: { error: null, console: [record] },
+    payload: { error: null, console: [record], currentTargetFailure: null },
     ...overrides,
   };
 }
@@ -60,6 +61,29 @@ afterEach(() => {
 });
 
 describe('isJavaScriptRuntimeEnvelope console contract', () => {
+  it('初回とinteractionのcurrentTarget保護状態を必須の有限値として検証する', () => {
+    for (const currentTargetFailure of [null, 'unsupported', 'setup-error']) {
+      expect(isJavaScriptRuntimeEnvelope(executionEnvelope({ currentTargetFailure }))).toBe(true);
+      expect(
+        isJavaScriptRuntimeEnvelope(
+          interactionEnvelope({
+            payload: { error: null, console: [], currentTargetFailure },
+          }),
+        ),
+      ).toBe(true);
+    }
+    for (const currentTargetFailure of [undefined, false, 'unknown', {}, []]) {
+      expect(isJavaScriptRuntimeEnvelope(executionEnvelope({ currentTargetFailure }))).toBe(false);
+      expect(
+        isJavaScriptRuntimeEnvelope(
+          interactionEnvelope({
+            payload: { error: null, console: [], currentTargetFailure },
+          }),
+        ),
+      ).toBe(false);
+    }
+  });
+
   it('boundedでsequence順のplain text recordだけを受理する', () => {
     expect(isJavaScriptRuntimeEnvelope(executionEnvelope({}))).toBe(true);
     expect(
@@ -115,20 +139,30 @@ describe('isJavaScriptRuntimeEnvelope console contract', () => {
     expect(
       isJavaScriptRuntimeEnvelope(
         interactionEnvelope({
-          payload: { error: { code: 'target-not-found', message: 'なし' }, console: [] },
+          payload: {
+            error: { code: 'target-not-found', message: 'なし' },
+            console: [],
+            currentTargetFailure: null,
+          },
         }),
       ),
     ).toBe(true);
     expect(isJavaScriptRuntimeEnvelope(interactionEnvelope({ frameGeneration: -1 }))).toBe(false);
     expect(
       isJavaScriptRuntimeEnvelope(
-        interactionEnvelope({ payload: { error: null, console: [], unexpected: true } }),
+        interactionEnvelope({
+          payload: { error: null, console: [], currentTargetFailure: null, unexpected: true },
+        }),
       ),
     ).toBe(false);
     expect(
       isJavaScriptRuntimeEnvelope(
         interactionEnvelope({
-          payload: { error: { code: 'unknown-code', message: 'x' }, console: [] },
+          payload: {
+            error: { code: 'unknown-code', message: 'x' },
+            console: [],
+            currentTargetFailure: null,
+          },
         }),
       ),
     ).toBe(false);
@@ -200,6 +234,7 @@ describe('JavaScriptExecutionClient interaction identity', () => {
       frameGeneration: 7,
       requestId: 'interaction-1',
       console: [record],
+      diagnostics: [],
     });
     await expect(client.interact(request)).rejects.toThrow(/duplicated/u);
     client.dispose();

@@ -112,6 +112,7 @@ describe('createJavaScriptExecutionSource', () => {
           budgetExhausted: true,
           timerLimitExceeded: false,
           runtimeError: null,
+          currentTargetFailure: null,
           console: [],
         },
       });
@@ -205,6 +206,7 @@ describe('createJavaScriptExecutionSource', () => {
           oneTimeToken: 'interaction-token',
           payload: {
             error: null,
+            currentTargetFailure: null,
             console: [{ sequence: 0, level: 'log', text: 'clicked' }],
           },
         },
@@ -265,6 +267,7 @@ describe('createJavaScriptExecutionSource', () => {
           budgetExhausted: false,
           timerLimitExceeded: true,
           runtimeError: null,
+          currentTargetFailure: null,
           console: [],
         },
       });
@@ -348,6 +351,7 @@ describe('createJavaScriptExecutionSource', () => {
           budgetExhausted: false,
           timerLimitExceeded: false,
           runtimeError: { name: 'Error', message: 'stop here' },
+          currentTargetFailure: null,
           console: [
             { sequence: 0, level: 'log', text: '1 x true null' },
             { sequence: 1, level: 'info', text: '{markup: "<b>plain</b>"}' },

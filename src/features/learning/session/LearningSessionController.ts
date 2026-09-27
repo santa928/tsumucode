@@ -28,7 +28,10 @@ import type {
   ExecutionService,
   ExecutionResult,
 } from '../../../core/runtime/contracts';
-import { BrowserExecutionService } from '../../../core/runtime/BrowserExecutionService';
+import {
+  BrowserExecutionService,
+  executionStatus,
+} from '../../../core/runtime/BrowserExecutionService';
 import type { ValidationResult, ValidatorAdapter } from '../../../core/validation/contracts';
 import { createAutosaveController } from './createAutosaveController';
 import { evaluateInteractionCheckpoint } from './evaluateInteractionCheckpoint';
@@ -995,6 +998,24 @@ export class LearningSessionController {
       });
       this.#assertFresh(execution);
       this.#assertInteractionIdentity(interaction, execution, frameGeneration, requestId);
+      const interactionDiagnostics = interaction.diagnostics ?? [];
+      const status = executionStatus(interactionDiagnostics);
+      if (status === 'unsupported' || status === 'system-error' || status === 'stopped') {
+        const result: ExecutionResult = {
+          ...rendered,
+          status,
+          diagnostics: interactionDiagnostics,
+          console: interaction.console,
+        };
+        this.#replaceState({ ...this.#state, executionResult: result });
+        this.#dispatch({
+          type: 'preview.completed',
+          revision: execution.revision,
+          diagnostics: result.diagnostics,
+          console: [],
+        });
+        throw new ExecutionNotGradableError(result);
+      }
       for (const checkpoint of scenario.checkpoints) {
         if (checkpoint.afterActionId !== action.id) continue;
         const expectations = await this.#pollInteractionCheckpoint(

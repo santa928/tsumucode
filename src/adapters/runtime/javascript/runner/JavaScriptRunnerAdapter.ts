@@ -32,6 +32,7 @@ import {
 import { createJavaScriptSrcdoc } from './createJavaScriptSrcdoc';
 import { prepareModuleGraph } from './materializeModuleGraph';
 import { JavaScriptExecutionClient, type JavaScriptExecutionPayload } from './protocol';
+import { currentTargetDiagnostics } from './currentTargetGuard';
 
 interface JavaScriptAnalyzerPort {
   analyze(input: JavaScriptAnalysisInput): Promise<JavaScriptAnalysisResult>;
@@ -202,7 +203,7 @@ function executionDiagnostics(
   payload: JavaScriptExecutionPayload,
   scriptFile: string,
 ): RunnerDiagnostic[] {
-  const diagnostics: RunnerDiagnostic[] = [];
+  const diagnostics: RunnerDiagnostic[] = currentTargetDiagnostics(payload.currentTargetFailure);
   if (payload.budgetExhausted) {
     diagnostics.push({
       code: 'javascript-budget',

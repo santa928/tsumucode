@@ -30,7 +30,7 @@
 
 Acornによる構文解析、`assertJavaScriptCapabilityPolicy`によるBrowser安全制限、`collectFacts`による教材目標用の事実抽出を別の処理として維持する。環境依存の拒否はunsupportedへ分類し、今後別実行先を作る際にもBrowser policyをJavaScript文法そのものとして扱わない。
 
-変数添字、未対応constructor、currentTarget、Profile外のmodule／async／DOM機能などは拒否を続け、環境制約と説明する。外部通信・Storage・親画面・動的実行などはsecurityを維持する。CSP、opaque iframe、認証、AST policy、budget制限は削除しない。診断分類は標準JSの全面対応や安全性の新たな保証を意味しない。
+DOM側の変数添字、未対応constructor、Profile外のmodule／async／DOM機能などは拒否を続け、環境制約と説明する。currentTargetはdom profileのみで同じDocumentのElementとnullに限定し、非Elementの取得は未対応として扱う（[DOM実行の境界](browser-dom-runtime.md)）。外部通信・Storage・親画面・動的実行などはsecurityを維持する。CSP、opaque iframe、認証、AST policy、budget制限は削除しない。診断分類は標準JSの全面対応や安全性の新たな保証を意味しない。
 
 ## 非対象・残る制限
 

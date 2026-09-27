@@ -1,4 +1,5 @@
 /** Course教材revisionに追随して、進捗とDraft内の参照IDを純粋変換する。 */
+import { exerciseReferenceIds } from '../content/exerciseRequirementIds';
 import type {
   ContentProgressMigration,
   CourseIndex,
@@ -287,22 +288,27 @@ function migrateCourseStep(
   };
 }
 
-/** Validation check内のRule・Hint・Slide参照を移行し、reset Ruleのcheckを除く。 */
+/** Validation check内のRule・集約要件・Hint・Slideを移行し、reset参照のcheckを隔離する。 */
 function migrateValidationCheck(
   check: StoredValidationCheck,
   actions: ReadonlyMap<string, ProgressMigrationStep>,
   context: MigrationContext,
 ): StoredValidationCheck | undefined {
   const rule = resolveReference(actions, 'rule', check.ruleId);
+  const requirement = resolveReference(actions, 'rule', check.requirementId);
   const hintId = migrateOptionalId(check.hintId, 'hint', actions, context);
   const relatedSlideId = migrateOptionalId(check.relatedSlideId, 'slide', actions, context);
   if (rule.kind === 'reset') {
     context.quarantine('rule', check.ruleId, rule.reason, check);
     return undefined;
   }
+  if (requirement.kind === 'reset') {
+    context.quarantine('rule', check.requirementId, requirement.reason, check);
+    return undefined;
+  }
   return {
     ruleId: rule.id,
-    requirementId: check.requirementId,
+    requirementId: requirement.id,
     label: check.label,
     required: check.required,
     passed: check.passed,
@@ -487,13 +493,7 @@ export class ContentProgressMigrationService {
         lesson: unique(lessons.map(({ id }) => id)),
         slide: unique(lessons.flatMap(({ slides }) => slides.map(({ id }) => id))),
         exercise: unique(exercises.map(({ id }) => id)),
-        rule: unique(
-          exercises.flatMap(({ validationRules }) =>
-            validationRules.flatMap(({ id, groupId }) =>
-              groupId === undefined ? [id] : [id, groupId],
-            ),
-          ),
-        ),
+        rule: unique(exercises.flatMap(exerciseReferenceIds)),
         hint: unique(exercises.flatMap(({ hints }) => hints.map(({ id }) => id))),
         checklist: unique(
           lessons.flatMap((lesson) =>

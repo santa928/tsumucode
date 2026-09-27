@@ -12,6 +12,71 @@ import { fixtureCourse } from '../../fixtures/course';
 
 const now = '2026-07-15T00:00:00.000Z';
 
+it.each(['map-to', 'intentionally-reset'] as const)(
+  '履歴のcheckpoint集約参照にも%sを適用し無関係な履歴を保つ',
+  async (action) => {
+    const input = oldSnapshot();
+    const draft = input.drafts['html-css:workspace-old']!;
+    const result = draft.validationHistory[0]!;
+    const oldRequirement = 'interaction:old-flow:answered';
+    const oldRule = `${oldRequirement}:exists`;
+    const newRequirement = 'interaction:new-flow:answered';
+    const newRule = `${newRequirement}:exists`;
+    const stable = { ...result.checks[0]!, ruleId: 'stable-rule', requirementId: 'stable-rule' };
+    const snapshot: RepositorySnapshot = {
+      ...input,
+      drafts: {
+        'html-css:workspace-old': {
+          ...draft,
+          validationHistory: [
+            {
+              ...result,
+              checks: [
+                { ...result.checks[0]!, ruleId: oldRule, requirementId: oldRequirement },
+                stable,
+              ],
+            },
+          ],
+        },
+      },
+    };
+    const service = new ContentProgressMigrationService(repositoryFor(snapshot));
+    service.registerCourse({
+      ...migratingCourse,
+      progressMigrations: migratingCourse.progressMigrations.map((migration, index) =>
+        index !== 0
+          ? migration
+          : {
+              ...migration,
+              steps: [
+                ...migration.steps,
+                { action: 'map-to', entity: 'rule', fromId: oldRule, toId: newRule },
+                action === 'map-to'
+                  ? { action, entity: 'rule', fromId: oldRequirement, toId: newRequirement }
+                  : {
+                      action,
+                      entity: 'rule',
+                      id: oldRequirement,
+                      reason: 'checkpointを廃止したため',
+                    },
+              ],
+            },
+      ),
+    });
+    const migrated = await service.migrateSnapshot(snapshot);
+    const checks =
+      migrated.drafts['html-css:workspace-first-heading']!.validationHistory[0]!.checks;
+    expect(checks.map(({ ruleId, requirementId }) => ({ ruleId, requirementId }))).toEqual([
+      ...(action === 'map-to' ? [{ ruleId: newRule, requirementId: newRequirement }] : []),
+      { ruleId: 'stable-rule', requirementId: 'stable-rule' },
+    ]);
+    if (action === 'intentionally-reset')
+      expect(migrated.quarantined.some(({ reason }) => reason.includes('checkpointを廃止'))).toBe(
+        true,
+      );
+  },
+);
+
 const migratingCourse: CourseManifest = {
   ...fixtureCourse,
   revision: 'rev-3',

@@ -5,6 +5,7 @@ import type {
   RunnerConsoleRecord,
 } from '../../../../core/runtime/contracts';
 import { CONSOLE_LIMITS } from './consoleFormatter';
+import { currentTargetDiagnostics, type CurrentTargetFailure } from './currentTargetGuard';
 
 export const JAVASCRIPT_PROTOCOL_VERSION = 2 as const;
 
@@ -20,6 +21,7 @@ export interface JavaScriptRuntimeError {
 }
 
 export interface JavaScriptExecutionPayload {
+  readonly currentTargetFailure: CurrentTargetFailure;
   readonly executed: boolean;
   readonly budgetExhausted: boolean;
   readonly timerLimitExceeded: boolean;
@@ -36,6 +38,7 @@ export interface JavaScriptInteractionError {
 }
 
 export interface JavaScriptInteractionPayload {
+  readonly currentTargetFailure: CurrentTargetFailure;
   readonly error: JavaScriptInteractionError | null;
   readonly console: readonly RunnerConsoleRecord[];
 }
@@ -255,7 +258,10 @@ export function isJavaScriptRuntimeEnvelope(value: unknown): value is JavaScript
     const payload = value.payload;
     return (
       isRecord(payload) &&
-      hasExactKeys(payload, ['console', 'error']) &&
+      hasExactKeys(payload, ['console', 'error', 'currentTargetFailure']) &&
+      (payload.currentTargetFailure === null ||
+        payload.currentTargetFailure === 'unsupported' ||
+        payload.currentTargetFailure === 'setup-error') &&
       (payload.error === null || isInteractionError(payload.error)) &&
       isConsoleRecords(payload.console)
     );
@@ -285,7 +291,11 @@ export function isJavaScriptRuntimeEnvelope(value: unknown): value is JavaScript
       'executed',
       'runtimeError',
       'timerLimitExceeded',
+      'currentTargetFailure',
     ]) &&
+    (payload.currentTargetFailure === null ||
+      payload.currentTargetFailure === 'unsupported' ||
+      payload.currentTargetFailure === 'setup-error') &&
     typeof payload.executed === 'boolean' &&
     typeof payload.budgetExhausted === 'boolean' &&
     typeof payload.timerLimitExceeded === 'boolean' &&
@@ -362,6 +372,7 @@ export class JavaScriptExecutionClient {
         frameGeneration: message.frameGeneration,
         requestId: message.requestId,
         console: message.payload.console,
+        diagnostics: currentTargetDiagnostics(message.payload.currentTargetFailure),
       });
       return;
     }

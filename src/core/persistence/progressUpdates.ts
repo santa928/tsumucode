@@ -1,5 +1,6 @@
 /** CourseProgressへSlide閲覧・判定・共有workspace編集を純粋に反映する。 */
 import { findLessonOutline, resolveWorkspaceExerciseLocations } from '../content/selectors';
+import { exerciseRequirementIds } from '../content/exerciseRequirementIds';
 import type {
   CourseIndex,
   CourseManifest,
@@ -286,7 +287,7 @@ export function recordDraftMutation(
   if (stillPassing) return current;
 
   const state = lessonState(lesson.id, current.lessons[lesson.id]);
-  const requirementIds = exercise.validationRules.map(({ groupId, id }) => groupId ?? id);
+  const requirementIds = exerciseRequirementIds(exercise);
   const passedRuleIds = state.passedRuleIds.filter((id) => !requirementIds.includes(id));
   return recalculate(
     current,
@@ -336,7 +337,7 @@ export function recordDraftMutationFromIndex(
   if (stillPassing) return current;
 
   const state = lessonState(lesson.id, current.lessons[lesson.id]);
-  const requirementIds = exercise.validationRules.map(({ groupId, id }) => groupId ?? id);
+  const requirementIds = exerciseRequirementIds(exercise);
   const passedRuleIds = state.passedRuleIds.filter((id) => !requirementIds.includes(id));
   return recalculateFromIndex(
     current,
@@ -374,7 +375,7 @@ export function recordValidation(
   }
   const progress = current ?? initial(course, result.evaluatedAt);
   const state = lessonState(lesson.id, progress.lessons[lesson.id]);
-  const requirementIds = exercise.validationRules.map(({ groupId, id }) => groupId ?? id);
+  const requirementIds = exerciseRequirementIds(exercise);
   if (result.passedRequirementIds.some((id) => !requirementIds.includes(id))) {
     throw new Error('Validation resultに対象Exercise外のrequirement evidenceが含まれています');
   }
@@ -423,7 +424,7 @@ export function recordValidationFromIndex(
   }
   const progress = current ?? initial(course, result.evaluatedAt);
   const state = lessonState(lesson.id, progress.lessons[lesson.id]);
-  const requirementIds = exercise.validationRules.map(({ groupId, id }) => groupId ?? id);
+  const requirementIds = exerciseRequirementIds(exercise);
   if (result.passedRequirementIds.some((id) => !requirementIds.includes(id))) {
     throw new Error('Validation resultに対象Exercise外のrequirement evidenceが含まれています');
   }
