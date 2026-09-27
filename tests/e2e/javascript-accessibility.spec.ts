@@ -76,18 +76,25 @@ async function focusWithKeyboard(
   );
 }
 
-/** DocumentとStageの実寸を読み、固定学習ShellのScroll境界を返す。 */
+/** DocumentとStageの実寸を読み、学習ShellとStageのScroll境界を返す。 */
 async function readScrollMetrics(page: Page) {
   return page.evaluate(() => {
     const root = document.documentElement;
     const stage = document.querySelector<HTMLElement>('[data-testid="learning-stage"]');
     if (stage === null) throw new Error('learning-stageがありません');
+    const shell = stage.closest<HTMLElement>('.tc-learning-viewport-shell');
+    if (shell === null) throw new Error('learning shellがありません');
     return {
       document: {
         clientHeight: root.clientHeight,
         scrollHeight: root.scrollHeight,
         clientWidth: root.clientWidth,
         scrollWidth: root.scrollWidth,
+      },
+      shell: {
+        clientHeight: shell.clientHeight,
+        scrollHeight: shell.scrollHeight,
+        overflowY: getComputedStyle(shell).overflowY,
       },
       stage: {
         clientHeight: stage.clientHeight,
@@ -257,7 +264,7 @@ test('1280x720のJavaScript ExerciseをDocument Scrollなしで操作できる',
   await page.screenshot({ path: testInfo.outputPath('javascript-exercise-1280x720.png') });
 });
 
-test('390x844ではDocumentを固定し、JavaScript SlideのStageだけを救済Scrollできる', async ({
+test('390x844ではDocumentを固定し、Slideの本文から末尾のPagerまでShell内をScrollできる', async ({
   page,
 }, testInfo: TestInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -269,8 +276,17 @@ test('390x844ではDocumentを固定し、JavaScript SlideのStageだけを救�
   expect(metrics.document.scrollWidth).toBeLessThanOrEqual(metrics.document.clientWidth);
   expect(metrics.document.scrollHeight).toBeLessThanOrEqual(metrics.document.clientHeight + 1);
   expect(metrics.stage.scrollWidth).toBeLessThanOrEqual(metrics.stage.clientWidth + 1);
-  expect(metrics.stage.scrollHeight).toBeGreaterThan(metrics.stage.clientHeight);
-  expect(metrics.stage.overflowY).toBe('auto');
+  expect(metrics.shell.scrollHeight).toBeGreaterThan(metrics.shell.clientHeight);
+  expect(metrics.shell.overflowY).toBe('auto');
+  expect(metrics.stage.overflowY).toBe('visible');
+  await page
+    .locator('.tc-slide-pager')
+    .getByRole('link', { name: 'コースマップへ戻る' })
+    .scrollIntoViewIfNeeded();
+  await expect(page.getByRole('heading', { name: '演習はPCで積み上げよう' })).toBeInViewport();
+  await expect(
+    page.locator('.tc-slide-pager').getByRole('link', { name: 'コースマップへ戻る' }),
+  ).toBeInViewport();
   await expectNoSeriousAxeViolations(page);
   await page.screenshot({ path: testInfo.outputPath('javascript-slide-390x844.png') });
 
@@ -332,7 +348,8 @@ test('Chapter 01のExerciseと実習直前Slideを代表2 viewportで安全に�
     slideMetrics.document.clientHeight + 1,
   );
   expect(slideMetrics.stage.scrollWidth).toBeLessThanOrEqual(slideMetrics.stage.clientWidth + 1);
-  expect(slideMetrics.stage.overflowY).toBe('auto');
+  expect(slideMetrics.shell.overflowY).toBe('auto');
+  expect(slideMetrics.stage.overflowY).toBe('visible');
   await page.screenshot({ path: testInfo.outputPath('javascript-ch01-slide-390x844.png') });
 });
 
@@ -366,7 +383,8 @@ test('Chapter 02のExerciseと実習直前Slideを代表2 viewportで安全に�
     slideMetrics.document.clientHeight + 1,
   );
   expect(slideMetrics.stage.scrollWidth).toBeLessThanOrEqual(slideMetrics.stage.clientWidth + 1);
-  expect(slideMetrics.stage.overflowY).toBe('auto');
+  expect(slideMetrics.shell.overflowY).toBe('auto');
+  expect(slideMetrics.stage.overflowY).toBe('visible');
   await page.screenshot({ path: testInfo.outputPath('javascript-ch02-slide-390x844.png') });
 });
 
@@ -393,7 +411,7 @@ test('Chapter 03のExerciseと実習直前Slideを代表2 viewportで安全に�
     `${testBasePath()}#/courses/javascript/lessons/javascript-ch03-l05/slides/javascript-ch03-l05-s04`,
   );
   await expect(
-    page.getByRole('heading', { level: 1, name: '2回の呼び出しで10から20へ進める' }),
+    page.getByRole('heading', { level: 1, name: '値を置く場所を守って試す' }),
   ).toBeVisible();
   await expectNoSeriousAxeViolations(page);
   const slideMetrics = await readScrollMetrics(page);
@@ -402,7 +420,8 @@ test('Chapter 03のExerciseと実習直前Slideを代表2 viewportで安全に�
     slideMetrics.document.clientHeight + 1,
   );
   expect(slideMetrics.stage.scrollWidth).toBeLessThanOrEqual(slideMetrics.stage.clientWidth + 1);
-  expect(slideMetrics.stage.overflowY).toBe('auto');
+  expect(slideMetrics.shell.overflowY).toBe('auto');
+  expect(slideMetrics.stage.overflowY).toBe('visible');
   await page.screenshot({ path: testInfo.outputPath('javascript-ch03-slide-390x844.png') });
 });
 
@@ -438,7 +457,8 @@ test('Chapter 04のExerciseと実習直前Slideを代表2 viewportで安全に�
     slideMetrics.document.clientHeight + 1,
   );
   expect(slideMetrics.stage.scrollWidth).toBeLessThanOrEqual(slideMetrics.stage.clientWidth + 1);
-  expect(slideMetrics.stage.overflowY).toBe('auto');
+  expect(slideMetrics.shell.overflowY).toBe('auto');
+  expect(slideMetrics.stage.overflowY).toBe('visible');
   await page.screenshot({ path: testInfo.outputPath('javascript-ch04-slide-390x844.png') });
 });
 
@@ -474,7 +494,8 @@ test('Chapter 05のExerciseと実習直前Slideを代表2 viewportで安全に�
     slideMetrics.document.clientHeight + 1,
   );
   expect(slideMetrics.stage.scrollWidth).toBeLessThanOrEqual(slideMetrics.stage.clientWidth + 1);
-  expect(slideMetrics.stage.overflowY).toBe('auto');
+  expect(slideMetrics.shell.overflowY).toBe('auto');
+  expect(slideMetrics.stage.overflowY).toBe('visible');
   await page.screenshot({ path: testInfo.outputPath('javascript-ch05-slide-390x844.png') });
 });
 
@@ -512,6 +533,7 @@ test('Chapter 06のModule ExerciseとDebug直前Slideを代表2 viewportで安�
     slideMetrics.document.clientHeight + 1,
   );
   expect(slideMetrics.stage.scrollWidth).toBeLessThanOrEqual(slideMetrics.stage.clientWidth + 1);
-  expect(slideMetrics.stage.overflowY).toBe('auto');
+  expect(slideMetrics.shell.overflowY).toBe('auto');
+  expect(slideMetrics.stage.overflowY).toBe('visible');
   await page.screenshot({ path: testInfo.outputPath('javascript-ch06-slide-390x844.png') });
 });

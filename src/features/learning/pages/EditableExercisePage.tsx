@@ -33,6 +33,7 @@ import {
   SaveStatus,
 } from '../components';
 import { SlideBlocks } from '../components/SlideBlocks';
+import { SlideCodeReference } from '../components/SlideCodeReference';
 import { createCodeMirrorEditor } from '../editor/createCodeMirrorEditor';
 import { LearningToolRail } from '../layout/LearningToolRail';
 import { LearningViewportShell } from '../layout/LearningViewportShell';
@@ -1042,6 +1043,12 @@ function EditableSession({
           <div className="tc-exercise-related-slide">
             <p>コードと判定履歴を保ったまま、直前の説明を確認できます。</p>
             <div>
+              <SlideCodeReference
+                slide={workspaceLessons
+                  .find(({ slides }) => slides.some(({ id }) => id === relatedSlide.id))
+                  ?.slides.find(({ id }) => id === relatedSlide.codeReferenceSlideId)}
+                baseUrl={import.meta.env.BASE_URL}
+              />
               <SlideBlocks
                 blocks={relatedSlide.blocks}
                 assets={relatedSlide.assets}

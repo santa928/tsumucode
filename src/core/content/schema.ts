@@ -2242,7 +2242,9 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
   validateProgressMigrations(course, currentIds, context);
 }
 
-export const CourseManifestSchema = CourseManifestBaseSchema.superRefine(validateCourse);
+/** 全Course検証はCompiler用。未使用のHome bundleでは生成を除去できる純粋な構築。 */
+export const CourseManifestSchema = /* @__PURE__ */ (() =>
+  CourseManifestBaseSchema.superRefine(validateCourse))();
 
 export const LessonStartTargetSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('slide'), targetId: IdSchema }).strict(),

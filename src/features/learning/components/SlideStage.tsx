@@ -2,6 +2,7 @@
 import type { Ref } from 'react';
 import type { Slide } from '../../../core/content/types';
 import { SlideBlocks } from './SlideBlocks';
+import { SlideCodeReference } from './SlideCodeReference';
 
 export interface SlideStageProps {
   readonly slide: Slide;
@@ -26,19 +27,7 @@ export function SlideStage({ slide, baseUrl, titleRef, codeReference }: SlideSta
         </h1>
       </header>
       <div className="tc-slide-stage-body tc-slide-author-order">
-        {codeReference ? (
-          <details className="tc-slide-code-reference">
-            <summary>前提のコードを確認：{codeReference.title}</summary>
-            <SlideBlocks
-              blocks={codeReference.blocks.filter(
-                (block) => block.type === 'code' && block.role !== 'output',
-              )}
-              assets={[]}
-              baseUrl={baseUrl}
-              density="compact"
-            />
-          </details>
-        ) : null}
+        <SlideCodeReference slide={codeReference} baseUrl={baseUrl} />
         <SlideBlocks
           blocks={slide.blocks}
           assets={slide.assets}

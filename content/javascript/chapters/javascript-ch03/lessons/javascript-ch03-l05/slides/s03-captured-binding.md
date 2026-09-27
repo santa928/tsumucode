@@ -11,9 +11,9 @@ assets: []
 codeReferenceSlideId: javascript-ch03-l05-s02
 ---
 
-前の完成例で定義したcreateScoreCounterを使います。「前提のコードを確認」を開けば定義も読めます。aとbは別々に作った得点係です。
+「前提のコードを確認」の関数定義は残します。末尾のconst counter = createScoreCounter();とconsole.log(counter(), counter());の2行を、次の5行に置き換えます。aとbは別々に作った得点係です。
 
-```js {"label":"定義の後へ続ける呼出例", "role":"input", "highlightedLines":[3,4,5]}
+```js {"label":"完成例の末尾2行と置き換える呼出例", "role":"input", "highlightedLines":[3,4,5]}
 const a = createScoreCounter();
 const b = createScoreCounter();
 console.log(a());

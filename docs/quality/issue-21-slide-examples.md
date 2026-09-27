@@ -43,23 +43,29 @@ console.log(score);
 
 色分けはJS/HTML/CSSの読み取り補助で、完全な構文解析ではない。未知言語はプレーン表示。文字列はReactのtext nodeとして保持し、HTMLを実行しない。長い行はコード内でスクロールし、注目色だけに説明を依存させない。
 
-## 検証記録（作業中）
+## 検証記録
 
 - Docker Compile成功、表追加前の関連7ファイル329テスト/型成功。表追加後のparser/schema/screen budget/表示4ファイル227テスト、型・対象Lint成功。
 - Docker内Node/Chromiumで改訂した教材コードそのものを実行。Closure完成例`10 20`、独立した係`10,20,10`、次の予測`30,20`、JS DOM例3つ、HTML本文と背景`rgb(255,250,240)`の一致。信頼された静的教材の照合で、learner隔離の受入試験とは区別する。
 - 3 Lesson各1代表×1280/390pxでコード行の縦順、本文末尾、前後Pager、目次、コード参照の展開を確認。ページ全体の横overflowなし。表追加後も再実行成功。
 - root font-size 200%の390px表示で本文末尾と次ページへ到達、横overflowなし。
-- 実Chromeのブラウザズーム200%は未確認。Tabのキー操作ではズーム変化を確認できず、本体UI操作はMacロックで不可。root font-size検証と同一視しない。
+- Docker内Chromiumの`chrome://settings/appearance`でページズームを実際に200%へ変更。1280×813 / DPR 1 → 640×406 CSS px / DPR 2、root font-sizeは16pxのまま。Closure s03の本文末尾、前後Pager、目次に到達し、ページ横overflowなし。検証用profile内で100%へ戻して終了した。Linux headless Chromiumでの確認であり、Mac/iOS実機確認とは区別する。
+- 演習内の関連Slide Drawerにも先行コード参照を表示。Closure不正解→関連Slide→参照展開→演習へ戻る経路で定義を読め、下書きと保存進捗が変わらない回帰を追加。修正前の参照欠落を検出し、修正後は既存JS下書き/Reset回帰と合わせ2件成功。関連表示unit 9件、対象Lint成功。
+- 狭幅のSlideはShellが本文とPagerを通常フローでスクロールし、Document自体は固定する。既存a11yのスクロール対象をこの契約に合わせ、axe・横overflow・案内/Pager到達を維持した7件成功。
+- 全Course validatorの純粋な生成を明示し、Homeが不要な教材検証schemaを取り込まないようにした。Home初期配信175,066 bytes、追加17,004 bytesで既存上限20,480 bytes以内。容量9件、schema/compiler 131件成功。実際のvalidation呼出しや安全制限は維持する。
 
 未改訂Lesson1件の表示/次移動と既存演習のEditor/Preview表示smoke成功。Production build／CSS inline／chunk isolation成功。
 
-未完: 最新画像の目視整理、配信容量検査、教材の独立reviewとsource hash同期、関連visual差分の個別確認、最新HEADのPRレビュー。これらを完了したとは記録しない。実機タッチ・人による初心者試用は未実施。
+未完: 修正後教材の限定再reviewとsource hash台帳同期、最新HEADのPRレビュー/CI。実機タッチ・人による初心者試用は未実施。
 
 画面予算の全体上限・配信性能予算・安全制限を緩和しない。Slide宣言内の本文/コード数は例の構成に合わせて調整し、Compileで全体上限内を検証する。通常編集ごとの全公開Gateは行わず、公開時に既存Gateを適用する。
 
+## 比較画像と独立レビュー
 
-## 比較画像と独立レビュー待ち
+[変更前](evidence/issue-21/before/)はmain bfd6e174のSlide実装、[変更後](evidence/issue-21/after/)は本改訂。PC1280×800・狭幅390×844。長い内容はtop/endを分け、末尾到達を操作でも確認した。`closure-text200-*`はroot文字サイズ200%、`closure-browser200-*`は上記の実ブラウザズーム200%で別の証拠。ブラウザズーム画像は表示全体をCDPのDIP寸法1280×813で撮影した。
 
-[変更前](evidence/issue-21/before/)はmain bfd6e174のSlide実装、[変更後](evidence/issue-21/after/)は本改訂。PC1280×800・狭幅390×844。長い内容はtop/endを分け、末尾到達を操作でも確認した。文字200%は別画像でありBrowser zoomの証拠ではない。
+既存Visualの変更対象26件はexpected/actual/diffを個別に確認し、著者順、静的コード/結果ラベル、参照、狭幅通常フローによる意図した差分だけ更新した。HTML s01のPreview説明追加後はその9件を再撮影・個別確認した。末尾2件は実スクロール対象のShellへ移動してから案内とPager到達を検証する。閾値緩和・skip・一括snapshot更新はしていない。
 
-`content:review`はHTML/CSS導入Lessonの旧sourceHashで停止した。後続JSレビューには到達していない。改訂3Lessonの正確性・未説明語・演習整合・例の結果を独立レビュー後に台帳へ反映する。旧承認のhashだけを機械的に付け替えて通すことはしない。
+独立Proレビュー（対象HEAD `56b40f6d8b5a3b42e406e268bb4527c802de7fcb`）は[PR #36の記録](https://github.com/santa928/tsumucode/pull/36#issuecomment-5856071665)に保存した。JS導入は正確性・演習整合を承認。HTML導入のPreview初出説明とClosure s03の「末尾2行を5行へ置き換える」明記を必須修正としたため、その2箇所を修正して限定再reviewを依頼する。Closureはこの置換手順どおりにコードを組み立てた実行でも10、20、10を再確認した。
+
+`content:review`はHTML/CSS導入Lessonの旧sourceHashで停止した。改訂3Lessonの正確性・未説明語・演習整合の独立レビューを、Codexによる実例実行・source hash計算と区別して台帳へ反映する。旧承認のhashだけを機械的に付け替えて通すことはしない。

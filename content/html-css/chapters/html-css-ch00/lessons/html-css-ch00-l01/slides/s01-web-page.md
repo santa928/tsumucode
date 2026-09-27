@@ -25,4 +25,4 @@ expectedAction: 内容はHTML、見た目はCSS、表示はBrowserと区別す�
 estimatedMinutes: 2
 :::
 
-次はHTMLの完成例とPreviewを見比べます。
+コードから作った画面を確かめる表示を、プレビュー（Preview）と呼びます。次はHTMLの完成例と、その表示例の図を見比べます。

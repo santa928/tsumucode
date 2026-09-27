@@ -239,3 +239,26 @@ test('Chapter 06のModule診断から該当Fileへ戻り、Source・Hint・Reset
     .click();
   await expect.poll(() => editorText(page)).toBe(JAVASCRIPT_CH06_MODULE_STARTER_SOURCE);
 });
+
+// 参照つきSlideは通常読書だけでなく、採点後の見直し経路でも定義を確認できる。
+test('Closureの関連Slideで前提コードを開き、下書きと判定履歴を保って戻る', async ({ page }) => {
+  await openEditableJavaScriptExercise(page, {
+    lessonId: 'javascript-ch03-l05',
+    exerciseId: 'javascript-ch03-l05-e01',
+    title: 'Closureで得点を10ずつ増やす',
+  });
+  const source = await editorText(page);
+  await page.getByRole('button', { name: '判定する', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'あと一歩' })).toBeVisible();
+  const saved = await readStoredProgress(page);
+  await page.getByRole('button', { name: '関連スライドを見直す：10、20の順に表示する' }).click();
+  const drawer = page.getByRole('dialog', { name: /関連スライド/u });
+  await drawer
+    .getByText('前提のコードを確認：完成例で10から20への変化を見る', { exact: true })
+    .click();
+  await expect(drawer.locator('details pre')).toContainText('function createScoreCounter()');
+  await expect(drawer.locator('details pre')).toContainText('return addScore;');
+  await drawer.getByRole('button', { name: '演習へ戻る' }).click();
+  await expect.poll(() => editorText(page)).toBe(source);
+  expect(await readStoredProgress(page)).toEqual(saved);
+});
