@@ -25,6 +25,8 @@
 
 明示URLのSlideを優先し、保存位置は目次の「読書の続きから」を選んだときだけ使う。復元後にscroll/resizeを監視し、画面上部20%を通過した最後のsection IDが変わったときだけ保存する。長いsectionでも安定させ、requestAnimationFrameの予約とlistenerは離脱時に取り消す。試用/通常のscopeも分離する。未知IDはoutlineで照合して近い目次へ案内する。
 
+操作欄も初期レイアウトへ含めてから位置を復元する。操作欄の描画と位置保存の有効化は分け、復元完了前には書き込まない。短い末尾sectionで復元後にDocumentの高さが増え、前のsectionを保存してしまう競合を防ぐ。
+
 読書位置とPC演習のURLを分け、Clipboard拒否時も選択できるURLを表示する。PagesとLocalのoriginを書き換えず、進捗やコードの自動同期を表示しない。取得済みLessonは通信断でも読め、未取得Lessonの通信失敗は既存Error画面から再試行する。
 
 ## 非対象
@@ -45,6 +47,12 @@ Cloud同期・アカウント・スマホの本格Editor・PWA・全教材offlin
 - 未実施: 物理iPhone/実Safari、実初心者の理解観察、複数端末の実共有、全コース全Browser。Chromiumの390px/文字拡大は実機の代替証明ではない。アプリを閉じた後の全教材offlineは非対象。Storageの保持期間はブラウザ設定に依存する。
 
 ## 受入と残る制限
+
+PR #39の独立レビューで、短い最終sectionの復元順序と通常Libraryの既存回帰確認が指摘された。実教材 `html-css-ch00-l01-s04` の明示URLで、修正前は共有URLがs03へ変わることをDocker Chromiumで再現。操作欄を先に配置し保存だけを復元後へ遅らせ、保存ID・共有URL・目次からの再開先がs04を維持する回帰を追加した。固定時間待機は使っていない。
+
+通常Libraryは追加した読書操作が本文の下にあるため、従来の「最下端で本文末尾が見える」という検証がPC/390/412幅で失敗した。本文末尾・読書操作・Pagerをそれぞれ到達確認する形へ同期し、Document固定・横幅・操作サイズ・目次・次Slide実操作と1px許容を維持した。通常学習Slideの契約は変更していない。
+
+追加修正のDocker検証は `TEST_BASE_SHA=a342aa9553e621a6d5b8cb30fc586a707c0f027b npm run check` で関連4ファイル52件、Lint、型/build、CSS inline、chunk分離が成功。本番previewの読書・通常Library・関連responsive 17件と、選択条件から漏れた有限pilot往復1件を別途実行し、計18件成功した。前段のdev関連5件も成功。全Browser・実機・初心者観察は追加実施していない。公開Gateは統合後に別途実行する。
 
 - [x] 受入条件・非対象はREQ-001〜008から削減していない。
 - [x] 保存・公開範囲・失敗時のリスクを専用scope/outline照合/再試行で扱う。

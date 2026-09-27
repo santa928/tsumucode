@@ -76,6 +76,46 @@ test('明示URLを保存値より優先し、消えたSlideはLesson目次へ安
   await expect(page).toHaveURL(/#\/library\/pilot$/u);
 });
 
+test('短い末尾sectionへ直接再開しても、復元中に前のsectionを保存しない', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 844 });
+  const target = 'html-css-ch00-l01-s04';
+  await page.goto(`${PILOT}/html-css/lessons/html-css-ch00-l01/read?slide=${target}`);
+  await expect(page.getByRole('textbox', { name: '読書位置のURL', exact: true })).toHaveValue(
+    new RegExp(`slide=${target}$`, 'u'),
+  );
+  // 復元から派生したscroll/rAFと、通常の現在位置判定が完了した後も末尾を保持する。
+  await page.evaluate(async () => {
+    window.dispatchEvent(new Event('scroll'));
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          resolve();
+        }),
+      ),
+    );
+  });
+  await expect
+    .poll(() =>
+      page.evaluate((key) => {
+        const value = JSON.parse(localStorage.getItem(key) ?? '{}') as {
+          positions?: { slideId: string }[];
+        };
+        return value.positions?.[0]?.slideId;
+      }, KEY),
+    )
+    .toBe(target);
+  const top = await page
+    .locator(`[data-reading-section="${target}"]`)
+    .evaluate((node) => node.getBoundingClientRect().top);
+  expect(top).toBeLessThanOrEqual(844 * 0.2);
+  await page.goto(PILOT);
+  await page.getByRole('link', { name: /HTML.*読書の続きから/u }).click();
+  await expect(page).toHaveURL(new RegExp(`slide=${target}$`, 'u'));
+  await expect(page.getByRole('textbox', { name: '読書位置のURL', exact: true })).toHaveValue(
+    new RegExp(`slide=${target}$`, 'u'),
+  );
+});
+
 test('保存不可とClipboard拒否でも本文を読め、演習URLを選択して渡せる', async ({ page }) => {
   await page.addInitScript(() => {
     Storage.prototype.setItem = () => {

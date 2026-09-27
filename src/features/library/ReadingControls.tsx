@@ -13,6 +13,7 @@ interface Props {
   readonly course: CourseIndex;
   readonly lesson: Lesson;
   readonly position: ReadingPosition;
+  readonly recordPosition?: boolean;
 }
 
 /** 明示操作だけでURLをコピーし、拒否時も選択できるURLを残す。 */
@@ -52,12 +53,13 @@ function ShareLink({ path, label }: { readonly path: string; readonly label: str
 }
 
 /** 読書位置と明示した印だけを保存し、合否やPC再開位置には触れない。 */
-export function ReadingControls({ course, lesson, position }: Props) {
+export function ReadingControls({ course, lesson, position, recordPosition = true }: Props) {
   const [saved, setSaved] = useState(readReadingState);
   const [saveFailed, setSaveFailed] = useState(!saved.available);
   const pilot = position.scope === 'pilot';
   const { courseId, lessonId, slideId, mode, scope } = position;
   useEffect(() => {
+    if (!recordPosition) return;
     // 復元後の描画に合わせて書き込み、次の位置や離脱では古い予約を取り消す。
     const frame = requestAnimationFrame(() => {
       setSaveFailed(!saveReadingPosition({ courseId, lessonId, slideId, mode, scope }));
@@ -65,7 +67,7 @@ export function ReadingControls({ course, lesson, position }: Props) {
     return () => {
       cancelAnimationFrame(frame);
     };
-  }, [courseId, lessonId, slideId, mode, scope]);
+  }, [courseId, lessonId, slideId, mode, scope, recordPosition]);
   const alternative =
     mode === 'slides'
       ? `${readingLessonPath(course.id, lesson.id, pilot)}?slide=${encodeURIComponent(slideId)}`

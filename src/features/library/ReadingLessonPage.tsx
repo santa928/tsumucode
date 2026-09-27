@@ -139,19 +139,18 @@ function ReadingLessonSession({
           <Link to={readingLessonPath(course.id, next.id, pilot)}>次のレッスン：{next.title}</Link>
         ) : null}
       </nav>
-      {ready ? (
-        <ReadingControls
-          course={course}
-          lesson={lesson}
-          position={{
-            scope: pilot ? 'pilot' : 'library',
-            courseId: course.id,
-            lessonId: lesson.id,
-            slideId: activeSlide,
-            mode: 'continuous',
-          }}
-        />
-      ) : null}
+      <ReadingControls
+        course={course}
+        lesson={lesson}
+        recordPosition={ready}
+        position={{
+          scope: pilot ? 'pilot' : 'library',
+          courseId: course.id,
+          lessonId: lesson.id,
+          slideId: activeSlide,
+          mode: 'continuous',
+        }}
+      />
     </article>
   );
 }
