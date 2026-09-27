@@ -29,6 +29,7 @@ function runner(languageId = 'javascript'): RunnerAdapter {
     requestSnapshot: vi.fn<RunnerAdapter['requestSnapshot']>(async () => {
       throw new Error('snapshotはこのTestの対象外です');
     }),
+    stop: vi.fn<RunnerAdapter['stop']>(async () => undefined),
     dispose: vi.fn<RunnerAdapter['dispose']>(async () => undefined),
   };
 }

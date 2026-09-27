@@ -106,12 +106,17 @@ export class HtmlCssRunnerAdapter implements RunnerAdapter {
     return active.bridge.requestSnapshot(request.requestId, request.policy);
   }
 
-  /** in-flight・Bridge・blob URL・frame参照を冪等に解放する。 */
-  async dispose(): Promise<void> {
+  /** in-flight・Bridge・blob URL・frame参照を解放し、次のprepareで再利用できるようにする。 */
+  async stop(): Promise<void> {
     const frame = this.#frame;
     await this.#reset(true);
     if (frame !== undefined) frame.srcdoc = '';
     this.#frame = undefined;
+  }
+
+  /** 保有する全実行資源を冪等に最終破棄する。 */
+  async dispose(): Promise<void> {
+    await this.stop();
   }
 
   /** Asset、sanitizer、Bridgeを統合し、readyを認証してから結果を返す。 */

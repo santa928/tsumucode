@@ -173,7 +173,9 @@ export interface RunnerAdapter {
   interact?(request: InteractionRequest): Promise<InteractionResult>;
   /** 描画済みの同一 session・revision を前提に DOM を観測し、学習コードを変更せず snapshot を返す。 */
   requestSnapshot(request: SnapshotRequest): Promise<PreviewSnapshot>;
-  /** frame に登録した監視と保有資源を解放する。呼び出し後の再利用には prepare の再実行を前提とする。 */
+  /** 旧実行を中断しframe・通信・実行資源を解放する。解析器など再利用資源は残し、次回はprepareを行う。 */
+  stop(): Promise<void>;
+  /** 解析器を含む全資源を最終破棄する。以後の再利用は契約外とし、新しいRunnerを生成する。 */
   dispose(): Promise<void>;
 }
 
@@ -225,7 +227,9 @@ export interface ExecutionService {
   readonly environment: ExecutionEnvironment;
   readonly dom?: DomObservationPort;
   execute(request: ExecutionRequest): Promise<ExecutionResult>;
+  /** 旧実行を失効させ、次のexecuteで再利用可能な状態へ戻す。 */
   stop(): Promise<void>;
+  /** 全資源を最終破棄し、以後のexecuteを拒否する。 */
   dispose(): Promise<void>;
 }
 

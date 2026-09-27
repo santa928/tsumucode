@@ -145,6 +145,7 @@ function runnerHarness(events: string[] = []): RunnerHarness {
       render,
       interact,
       requestSnapshot,
+      stop: vi.fn(async () => undefined),
       dispose,
     },
     render,

@@ -35,12 +35,37 @@ function harness() {
     requestSnapshot: vi.fn(async () => {
       throw new Error('snapshot must not be called');
     }),
+    stop: vi.fn(async (): Promise<void> => undefined),
     dispose: vi.fn(async () => undefined),
   } satisfies RunnerAdapter;
   return { runner, result, service: new BrowserExecutionService(runner) };
 }
 
 describe('BrowserExecutionService', () => {
+  it('prepare待機中の停止はRunnerを最終破棄せず、次のprepareで再利用できる', async () => {
+    const { runner, service } = harness();
+    const frame = document.createElement('iframe');
+    let finish!: () => void;
+    runner.prepare.mockImplementationOnce(
+      () =>
+        new Promise<void>((resolve) => {
+          finish = resolve;
+        }),
+    );
+    const preparing = service.dom.prepare(frame);
+    const rejected = expect(preparing).rejects.toThrow('disposed');
+    await vi.waitFor(() => {
+      expect(runner.prepare).toHaveBeenCalledOnce();
+    });
+    await service.stop();
+    finish();
+    await rejected;
+    expect(runner.dispose).not.toHaveBeenCalled();
+    expect(runner.stop).toHaveBeenCalledTimes(2);
+    await service.dom.prepare(frame);
+    expect(await service.execute(request)).toMatchObject({ status: 'succeeded' });
+  });
+
   it('prepare待機中の離脱後はframeを復活させない', async () => {
     const { runner, service } = harness();
     let finish!: () => void;
@@ -95,7 +120,38 @@ describe('BrowserExecutionService', () => {
     await service.stop();
     expect(await pending).toMatchObject({ runId: 'run-3', status: 'stopped' });
     finish(result);
+    expect(runner.stop).toHaveBeenCalledOnce();
+    expect(runner.dispose).not.toHaveBeenCalled();
+  });
+
+  it('停止の完了を待って同じframeを再準備し、最終破棄だけがRunnerをdisposeする', async () => {
+    const { runner, service } = harness();
+    const frame = document.createElement('iframe');
+    await service.dom.prepare(frame);
+    let finishStop!: () => void;
+    runner.stop.mockImplementationOnce(
+      () =>
+        new Promise<void>((resolve) => {
+          finishStop = resolve;
+        }),
+    );
+    const stopping = service.stop();
+    const next = service.execute({ ...request, runId: 'after-reset' });
+    await vi.waitFor(() => {
+      expect(runner.stop).toHaveBeenCalledOnce();
+    });
+    expect(runner.prepare).toHaveBeenCalledOnce();
+    expect(runner.render).not.toHaveBeenCalled();
+    expect(runner.dispose).not.toHaveBeenCalled();
+    finishStop();
+    await stopping;
+    expect(await next).toMatchObject({ runId: 'after-reset', status: 'succeeded' });
+    expect(runner.prepare).toHaveBeenCalledTimes(2);
+    expect(runner.prepare).toHaveBeenLastCalledWith(frame);
+    await service.dispose();
+    await service.dispose();
     expect(runner.dispose).toHaveBeenCalledOnce();
+    expect(await service.execute(request)).toMatchObject({ status: 'stopped' });
   });
 
   it('環境identityの不一致と破棄後の実行を拒否する', async () => {

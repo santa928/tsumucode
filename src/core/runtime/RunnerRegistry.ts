@@ -21,6 +21,7 @@ function isRunnerAdapter(value: unknown): value is RunnerAdapter {
     typeof candidate.prepare === 'function' &&
     typeof candidate.render === 'function' &&
     typeof candidate.requestSnapshot === 'function' &&
+    typeof candidate.stop === 'function' &&
     typeof candidate.dispose === 'function'
   );
 }

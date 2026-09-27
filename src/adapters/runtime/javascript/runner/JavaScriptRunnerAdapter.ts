@@ -356,16 +356,21 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
     });
   }
 
-  /** iframe、Worker、Bridge、教材Assetを冪等に解放する。 */
-  async dispose(): Promise<void> {
+  /** 旧実行・iframe・Bridge・教材Assetを解放し、解析器は次のprepare用に保持する。 */
+  async stop(): Promise<void> {
     const frame = this.#frame;
     await this.#reset(true);
-    await this.#analyzer.dispose();
     if (frame !== undefined) {
       frame.removeEventListener('load', this.#loadListener);
       frame.srcdoc = '';
     }
     this.#frame = undefined;
+  }
+
+  /** 再利用可能な停止に加え、解析Workerを含む全資源を最終破棄する。 */
+  async dispose(): Promise<void> {
+    await this.stop();
+    await this.#analyzer.dispose();
   }
 
   /** Analyzer・sanitizer・runtime・Bridgeを1 generationへ結ぶ。 */
@@ -713,7 +718,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
     target.focus({ preventScroll: true });
   }
 
-  /** prepare／dispose共通で現在の処理と全資源を閉じる。 */
+  /** prepare／stop共通で現在の処理と実行資源を閉じ、解析器は保持する。 */
   async #reset(clearFrame: boolean): Promise<void> {
     this.#restoreParentFocus();
     this.#generation += 1;

@@ -47,7 +47,7 @@ export class BrowserExecutionService implements ExecutionService {
           throw new Error('Execution disposed');
         await runner.prepare(frame);
         if (generation !== this.#generation) {
-          await runner.dispose();
+          await this.#releaseStalePreparation();
           throw new Error('Execution disposed');
         }
         this.#frame = frame;
@@ -56,6 +56,12 @@ export class BrowserExecutionService implements ExecutionService {
       requestSnapshot: runner.requestSnapshot.bind(runner),
       ...(runner.interact === undefined ? {} : { interact: runner.interact.bind(runner) }),
     };
+  }
+
+  /** prepare待機中に変わった状態を読み直し、停止なら再利用資源を残し、離脱なら最終破棄する。 */
+  async #releaseStalePreparation(): Promise<void> {
+    if (this.#disposed) await this.runner.dispose();
+    else await this.runner.stop();
   }
 
   /** 同じrevisionの再実行もrun IDで区別し、停止後の遅延応答を返さない。 */
@@ -153,20 +159,23 @@ export class BrowserExecutionService implements ExecutionService {
     return result;
   }
 
-  /** 実行を即座に失効させ、隔離Runnerの資源を解放してから再準備を許可する。 */
+  /** 旧実行を即座に失効させ、再利用可能な停止の完了後に再準備を許可する。 */
   async stop(): Promise<void> {
     ++this.#generation;
     this.#cancel?.();
     this.#cancel = undefined;
     this.#needsPrepare = true;
-    this.#cleanup = this.#cleanup.then(() => this.runner.dispose());
+    this.#cleanup = this.#cleanup.then(() => this.runner.stop());
     return this.#cleanup;
   }
 
   /** 画面離脱・環境交換時に以降の実行を拒否して破棄する。 */
   async dispose(): Promise<void> {
+    if (this.#disposed) return this.#cleanup;
     this.#disposed = true;
-    await this.stop();
+    const stopped = this.stop();
+    this.#cleanup = stopped.then(() => this.runner.dispose());
+    await this.#cleanup;
     this.#frame = undefined;
   }
 }

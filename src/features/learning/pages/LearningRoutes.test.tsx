@@ -526,6 +526,7 @@ function stubAdapters(options: AdapterStubOptions = {}): {
   const dispose = vi.fn<RunnerAdapter['dispose']>(async () => undefined);
   const runner: RunnerAdapter = {
     languageId: options.languageId ?? 'html-css',
+    stop: vi.fn(async () => undefined),
     prepare,
     render: async (input) => {
       lastRenderInput = input;
@@ -1046,6 +1047,38 @@ describe('Learning routes', () => {
     expect(screen.getByTitle('コードのプレビュー')).toBeInTheDocument();
   }, 10_000);
 
+  it('下書き読込中の画面離脱後に正常完了しても古い初期化は通知を更新しない', async () => {
+    stubEditingCapability(true);
+    const { dispose } = stubAdapters();
+    let resolveDraft!: (value: ExerciseDraft | undefined) => void;
+    runtime.repository.getDraft.mockReturnValueOnce(
+      new Promise<ExerciseDraft | undefined>((resolve) => {
+        resolveDraft = resolve;
+      }),
+    );
+    renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
+    await waitFor(() => {
+      expect(runtime.repository.getDraft).toHaveBeenCalledOnce();
+    });
+
+    await act(async () => {
+      await router!.navigate('/courses/html-css');
+    });
+    await waitFor(() => {
+      expect(dispose).toHaveBeenCalled();
+    });
+    runtime.notices.reportError.mockClear();
+    runtime.notices.dismiss.mockClear();
+    await act(async () => {
+      resolveDraft(undefined);
+    });
+
+    expect(runtime.notices.reportError).not.toHaveBeenCalled();
+    expect(runtime.notices.dismiss).not.toHaveBeenCalled();
+    expect(screen.queryByTestId('code-workspace')).not.toBeInTheDocument();
+    expect(screen.queryByText('演習を準備できませんでした')).not.toBeInTheDocument();
+  });
+
   it('Repository初期化失敗を未処理Promiseにせず再試行可能な警告へ変換する', async () => {
     stubEditingCapability(true);
     stubAdapters();
@@ -1054,6 +1087,10 @@ describe('Learning routes', () => {
     renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
 
     expect(await screen.findByRole('alert')).toHaveTextContent('演習を準備できませんでした');
+    expect(runtime.notices.reportError).toHaveBeenCalledWith(
+      'exercise-initialize',
+      expect.objectContaining({ message: 'indexeddb failed' }),
+    );
     const retry = screen.getByRole('button', { name: 'もう一度準備する' });
     expect(retry).toBeEnabled();
     expect(screen.queryByTestId('code-workspace')).not.toBeInTheDocument();

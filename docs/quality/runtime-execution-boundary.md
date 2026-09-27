@@ -20,7 +20,8 @@
 - 言語IDとは別にbackend、engine、実行形態、console／dom能力を記述する。既存Browser Runnerはiframeを使うためmode=dom。Consoleが主出力のClosureもNode実行とは表示しない。必要出力能力は既存runtimeのprimaryOutputから導出し、新しい教材metadataは追加しない。
 - 新しい実行結果はsucceeded／code-error／unsupported／stopped／system-error。成功終了後にのみ採点材料を集める。構文・参照・安全拒否のcode-errorは既存のコード診断へ渡すが、未対応・停止・システム障害では採点・履歴保存前に止める。Validator自体のsystem-errorも保存しない。
 - run IDはController instanceを区別する名前空間と実行連番で生成し、同じsource revisionの再実行も区別する。旧Browser通信のsession・revision・frame generation・認証検証は維持する。Controllerの操作世代で採点待機中の旧応答も破棄する。
-- Resetと離脱は処理の終了を待つ前に失効させ、Runnerを破棄する。Reset後の実行は同じframeを再準備する。今後の環境交換は旧Controllerのdisposeと新Controllerの生成で行う。環境切替UIはまだ提供しない。
+- Resetと離脱は処理の終了を待つ前に失効させる。ResetはRunnerの`stop()`で旧実行・iframe・通信・教材資源を解放し、JS解析器は再利用用に保持する。次の実行は同じframeを再準備する。離脱の`dispose()`は解析器を含む全資源を最終破棄し、Runnerを再利用しない。今後の環境交換は旧Controllerのdisposeと新Controllerの生成で行う。環境切替UIはまだ提供しない。
+- 初期化中に離脱した画面や失効したControllerの処理は、成功・失敗とも通知とUIを更新しない。現在の画面の実際の読込失敗は従来どおり通知し、再試行できる。
 - 実行状態は非永続。保存済み合格snapshotと採点履歴を保持し、失敗時のConsoleは「前回成功時」と表示する。編集による既存の進捗鮮度判定は維持する。
 
 ## 解析と安全性

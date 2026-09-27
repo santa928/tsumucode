@@ -376,17 +376,21 @@ function EditableSession({
 
   useEffect(() => {
     const abortController = new AbortController();
+    /** awaitの前後で離脱状態を読み直し、旧処理による通知・UI更新を防ぐ。 */
+    const isActive = (): boolean => !abortController.signal.aborted;
     void (async () => {
       try {
         await learningRuntimeServices.ready;
+        if (!isActive()) return;
         await controller.initialize();
-        if (!abortController.signal.aborted) {
+        if (isActive()) {
           learningRuntimeServices.notices.dismiss('error:exercise-initialize');
           setInitialization('ready');
         }
       } catch (error: unknown) {
+        if (!isActive() || error instanceof StaleExecutionError) return;
         learningRuntimeServices.notices.reportError('exercise-initialize', error);
-        if (!abortController.signal.aborted) setInitialization('error');
+        setInitialization('error');
       }
     })();
     return () => {

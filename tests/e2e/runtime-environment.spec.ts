@@ -43,6 +43,37 @@ test('HTML/CSS導入はBrowser環境表示から実行と既存採点へつな�
   ).toBeVisible();
 });
 
+test('実JS Runnerで編集→Reset→再編集→Preview→判定を再読込なしで実行する', async ({ page }) => {
+  await openEditableJavaScriptExercise(page, {
+    lessonId: 'javascript-ch03-l05',
+    exerciseId: closureId,
+    title: 'Closureで得点を10ずつ増やす',
+  });
+  const solution = await readFile(`${closureRoot}/solution/script.js`, 'utf8');
+  const starter = await readFile(`${closureRoot}/starter/script.js`, 'utf8');
+  await replaceEditorText(page, solution);
+  await waitForStoredDraftContent(page, solution);
+  await page.getByRole('button', { name: '最初に戻す', exact: true }).click();
+  const reset = page.getByRole('dialog', { name: '最初のコードに戻しますか？' });
+  await reset.getByRole('button', { name: '最初のコードに戻す', exact: true }).click();
+  await expect(reset).toBeHidden();
+  await expect.poll(() => editorText(page)).toBe(starter);
+  await waitForStoredDraftContent(page, starter);
+
+  await replaceEditorText(page, solution);
+  await waitForStoredDraftContent(page, solution);
+  await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
+  await expect(page.getByText('実行できました（合否は「判定する」で確認）')).toBeVisible();
+  await page.getByRole('tab', { name: 'Console', exact: true }).click();
+  const output = page.getByRole('region', { name: 'Console出力' });
+  await expect(output).toContainText('10');
+  await expect(output).toContainText('20');
+  await page.getByRole('button', { name: '判定する', exact: true }).click();
+  await expect(
+    page.getByRole('dialog', { name: '判定結果' }).getByRole('heading', { name: 'できました' }),
+  ).toBeVisible();
+});
+
 test('Closureの実行・合否・未対応・制限停止・下書き復旧を分離する', async ({ page }, testInfo) => {
   await openEditableJavaScriptExercise(page, {
     lessonId: 'javascript-ch03-l05',

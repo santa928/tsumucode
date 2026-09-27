@@ -39,6 +39,7 @@ describe('RunnerRegistry', () => {
         prepare: vi.fn(),
         render: vi.fn(),
         requestSnapshot: vi.fn(),
+        stop: vi.fn(),
         dispose: vi.fn(),
       }));
     }).not.toThrow();
