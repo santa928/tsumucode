@@ -49,6 +49,7 @@ export function SlideStage({
           baseUrl={baseUrl}
           density="compact"
           reading={reading}
+          headingOffset={titleLevel === 2 ? 1 : 0}
         />
       </div>
     </section>

@@ -12,7 +12,7 @@ function focusMainContent(event: MouseEvent<HTMLAnchorElement>): void {
 function LibraryCatalogHeader() {
   return (
     <header className="tc-site-header border-b border-workshop-border bg-workshop-surface">
-      <div className="tc-content-frame mx-auto flex min-h-14 w-full max-w-[var(--tc-content-max)] items-center justify-between">
+      <div className="tc-content-frame mx-auto flex min-h-14 w-full max-w-[var(--tc-content-max)] flex-wrap items-center justify-between gap-3 py-2">
         <Link
           to="/"
           aria-label="TsumuCodeホームへ（ベータ版）"

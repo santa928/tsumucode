@@ -20,7 +20,7 @@ async function openSlideFromLibraryDrawer(page: Page, slideId: string): Promise<
   await expect(page).toHaveURL(new RegExp(`/slides/${slideId}$`, 'u'));
 }
 
-test('Library Viewer直リンクはIndexedDBとTsumuCode Storageへ一度も触れない', async ({ page }) => {
+test('Library Viewer直リンクはIndexedDBに触れず読書専用Storage keyだけを使う', async ({ page }) => {
   await page.addInitScript(() => {
     const events: StorageProbeEvent[] = [];
     Reflect.set(window, '__tsumucodeLibraryStorageProbe', events);
@@ -69,7 +69,10 @@ test('Library Viewer直リンクはIndexedDBとTsumuCode Storageへ一度も触�
   const events = await page.evaluate(
     () => Reflect.get(window, '__tsumucodeLibraryStorageProbe') as StorageProbeEvent[],
   );
-  expect(events).toEqual([]);
+  expect(events.length).toBeGreaterThan(0);
+  expect(
+    events.every((event) => event.kind === 'storage' && event.key === 'tsumucode-reading-v1'),
+  ).toBe(true);
 });
 
 test('Home経由で標準・Guided・Capstoneを巡回しても保存済みSnapshotを変えない', async ({ page }) => {

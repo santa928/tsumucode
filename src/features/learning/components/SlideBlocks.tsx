@@ -10,6 +10,7 @@ interface SlideBlocksProps {
   readonly baseUrl: string;
   readonly density?: 'default' | 'compact';
   readonly reading?: boolean;
+  readonly headingOffset?: 0 | 1;
 }
 
 const CALLOUT_STYLE = {
@@ -36,8 +37,11 @@ export function SlideBlocks({
   baseUrl,
   density = 'default',
   reading = false,
+  headingOffset = 0,
 }: SlideBlocksProps) {
   const blockGroupId = useId();
+  const H2 = headingOffset === 0 ? 'h2' : 'h3';
+  const H3 = headingOffset === 0 ? 'h3' : 'h4';
   const assetById = new Map(assets.map((asset) => [asset.id, asset]));
   const compact = density === 'compact';
 
@@ -71,6 +75,7 @@ export function SlideBlocks({
                 baseUrl={baseUrl}
                 density={density}
                 reading={reading}
+                headingOffset={headingOffset}
               />
             </div>
           );
@@ -84,7 +89,7 @@ export function SlideBlocks({
                 aria-label="結果を予測する"
                 className="rounded-workshop-md border-2 border-workshop-learning bg-workshop-raised p-5"
               >
-                <h2 className="text-lg font-black">考えてみよう</h2>
+                <H2 className="text-lg font-black">考えてみよう</H2>
                 <p className="mt-2 leading-7">{block.prompt}</p>
                 <details className="mt-3">
                   <summary className="min-h-11 cursor-pointer py-3 font-bold">
@@ -100,23 +105,23 @@ export function SlideBlocks({
             );
           case 'heading':
             return block.level === 2 ? (
-              <h2
+              <H2
                 key={key}
                 className={
                   compact ? 'text-xl font-black md:text-2xl' : 'text-2xl font-black md:text-3xl'
                 }
               >
                 {block.text}
-              </h2>
+              </H2>
             ) : (
-              <h3
+              <H3
                 key={key}
                 className={
                   compact ? 'text-lg font-black md:text-xl' : 'text-xl font-black md:text-2xl'
                 }
               >
                 {block.text}
-              </h3>
+              </H3>
             );
           case 'paragraph':
             return (
@@ -227,9 +232,9 @@ export function SlideBlocks({
                 aria-labelledby={titleId}
                 className={`rounded-workshop-md border-2 border-workshop-learning bg-workshop-raised shadow-[var(--tc-shadow-piece)] ${compact ? 'p-4' : 'p-5'}`}
               >
-                <h2 id={titleId} className="text-lg font-black">
+                <H2 id={titleId} className="text-lg font-black">
                   {reading ? 'PCで試す' : '今すぐ試す'}（約{block.estimatedMinutes}分）
-                </h2>
+                </H2>
                 <p className={compact ? 'mt-2 leading-6' : 'mt-3 leading-7'}>{block.prompt}</p>
                 <p
                   className={`${compact ? 'mt-2' : 'mt-3'} border-l-4 border-workshop-learning pl-3 text-workshop-muted`}

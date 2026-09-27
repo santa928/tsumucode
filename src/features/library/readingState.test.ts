@@ -75,6 +75,25 @@ describe('読書専用の端末保存', () => {
     }
   });
 
+  it('通常Libraryと有限試用の位置と印を互いに上書きしない', () => {
+    saveReadingPosition(position);
+    saveReadingPosition({ ...position, scope: 'pilot', slideId: 'javascript-ch03-l05-s01' });
+    const target = {
+      scope: position.scope,
+      courseId: position.courseId,
+      lessonId: position.lessonId,
+      exerciseId: 'javascript-ch03-l05-e01',
+    };
+    setExerciseForLater(target, true);
+    setExerciseForLater({ ...target, scope: 'pilot' }, true);
+    setExerciseForLater({ ...target, scope: 'pilot' }, false);
+    expect(readReadingState().state.positions).toEqual([
+      position,
+      { ...position, scope: 'pilot', slideId: 'javascript-ch03-l05-s01' },
+    ]);
+    expect(readReadingState().state.later).toEqual([target]);
+  });
+
   it('Storage getter/read/writeが拒否されても投げず、保存不可だけを返す', () => {
     vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
       throw new Error('blocked');
