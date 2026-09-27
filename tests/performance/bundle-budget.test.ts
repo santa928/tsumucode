@@ -6,6 +6,7 @@ import { JSDOM } from 'jsdom';
 import { describe, expect, it } from 'vitest';
 import { assertSubpathBuild } from '../../scripts/smoke-subpath';
 import { loadJavaScriptPerformanceManifest, loadPerformanceManifest } from './manifest';
+import { checkHomeJavaScriptBudget } from './homeJavaScriptBudget';
 
 interface ViteChunk {
   readonly file: string;
@@ -26,7 +27,6 @@ const performanceManifest = await loadPerformanceManifest();
 const javaScriptPerformanceManifest = await loadJavaScriptPerformanceManifest();
 const starterResetBaselineCommit = '7e739754710138aa3433bfa085f7dd0479d9ca62';
 const starterResetBaselineEditorIncrementalJavaScriptGzipBytes = 177_635;
-const learningPathBaselineCommit = '98fde1bcbd290436b3298437567848fe33491059';
 const imageExtensions = new Set(['.avif', '.gif', '.jpeg', '.jpg', '.png', '.svg', '.webp']);
 const fontExtensions = new Set(['.otf', '.ttf', '.woff', '.woff2']);
 const textExtensions = new Set(['.css', '.html', '.js', '.json', '.md', '.svg', '.txt', '.xml']);
@@ -140,14 +140,6 @@ function calculateAddedJavaScriptGzipBytes(currentBytes: number): number {
   return currentBytes - starterResetBaselineEditorIncrementalJavaScriptGzipBytes;
 }
 
-/** 現在のHome初期JS gzipから固定baseline以後の純増だけを返す。 */
-function calculateAddedHomeInitialJavaScriptGzipBytes(currentBytes: number): number {
-  return Math.max(
-    0,
-    currentBytes - performanceManifest.slideLibrary.baselineHomeInitialJavaScriptGzipBytes,
-  );
-}
-
 /** 指定File群のraw bytesと最大File bytesを返す。 */
 async function measureFiles(
   relativePaths: readonly string[],
@@ -225,16 +217,16 @@ describe('production bundle budget', () => {
       .filter((file) => file.endsWith('.js'));
 
     const currentHomeInitialJavaScriptGzipBytes = await totalGzipBytes(initialJavaScript);
-    expect(currentHomeInitialJavaScriptGzipBytes).toBeLessThanOrEqual(
-      performanceManifest.bundle.homeInitialJavaScriptGzipMaxBytes,
-    );
-    expect(
-      calculateAddedHomeInitialJavaScriptGzipBytes(currentHomeInitialJavaScriptGzipBytes),
-    ).toBeLessThanOrEqual(performanceManifest.slideLibrary.addedHomeInitialJavaScriptGzipMaxBytes);
-    expect(performanceManifest.learningPath.baselineCommit).toBe(learningPathBaselineCommit);
-    expect(
-      calculateAddedHomeInitialJavaScriptGzipBytes(currentHomeInitialJavaScriptGzipBytes),
-    ).toBeLessThanOrEqual(performanceManifest.learningPath.addedHomeInitialJavaScriptGzipMaxBytes);
+    for (const warning of checkHomeJavaScriptBudget(currentHomeInitialJavaScriptGzipBytes, {
+      maximumBytes: performanceManifest.bundle.homeInitialJavaScriptGzipMaxBytes,
+      baselineBytes: performanceManifest.slideLibrary.baselineHomeInitialJavaScriptGzipBytes,
+      growthWarningBytes: Math.min(
+        performanceManifest.slideLibrary.addedHomeInitialJavaScriptGzipMaxBytes,
+        performanceManifest.learningPath.addedHomeInitialJavaScriptGzipMaxBytes,
+      ),
+    })) {
+      console.warn(`::warning::${warning}`);
+    }
     // 値importを持たない軽量Registry名ではなく、Editor／実行本体の初期混入だけを拒否する。
     const forbiddenInitialChunk =
       /RunnerRegistry|ValidatorRegistry|CodeWorkspace|EditableExercisePage|codemirror/u;

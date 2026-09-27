@@ -104,6 +104,15 @@ jobs:
           BASE_PATH: /${{ github.event.repository.name }}/
           TEST_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || 'HEAD^' }}
         run: ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TEST_BASE_SHA app npm run check
+      - name: Content review status
+        id: content_review
+        continue-on-error: true
+        run: ./scripts/docker-compose.sh run --rm app npm run content:review
+      - name: Report pending content review
+        if: steps.content_review.outcome == 'failure'
+        run: |
+          echo "::warning::教材レビューの確認が必要です。動作検証とは別の結果で、公開前には必須です。Content review statusのログを確認してください。"
+          echo "教材レビュー: 要確認。通常CIの成功は教材承認を意味しません。公開前のcheck:releaseは未承認・hash不一致で停止します。" >> "$GITHUB_STEP_SUMMARY"
 
   quality:
     if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'

@@ -6,6 +6,8 @@ import { parse } from 'yaml';
 const workflowUrl = new URL('../.github/workflows/pages.yml', import.meta.url);
 
 interface WorkflowStep {
+  readonly id?: string;
+  readonly 'continue-on-error'?: boolean;
   readonly if?: string;
   readonly name?: string;
   readonly uses?: string;
@@ -35,6 +37,34 @@ function workflow(): { readonly source: string; readonly parsed: PagesWorkflow }
 }
 
 describe('TsumuCode Pages workflow', () => {
+  it('教材承認待ちは通常の動作検証を止めず、公開前には必須として検査する', () => {
+    const { scripts } = JSON.parse(
+      readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
+    ) as { scripts: Record<string, string> };
+    const jobs = workflow().parsed.jobs;
+    const steps = jobs?.fast?.steps ?? [];
+    const review = steps.find(({ run }) => run?.endsWith('npm run content:review'));
+    const check = steps.find(({ run }) => run?.endsWith('npm run check'));
+    const release = jobs?.quality?.steps?.find(({ run }) => run?.endsWith('npm run check:release'));
+
+    expect(scripts['check']).not.toContain('content:review');
+    expect(scripts['check:release']).toContain('npm run content:review &&');
+    expect(check).toBeDefined();
+    expect(check?.['continue-on-error']).not.toBe(true);
+    expect(review?.['continue-on-error']).toBe(true);
+    expect(steps.indexOf(review!)).toBeGreaterThan(steps.indexOf(check!));
+    expect(
+      steps.some(
+        ({ if: condition, run }) =>
+          condition === `steps.${review?.id ?? ''}.outcome == 'failure'` &&
+          run?.includes('::warning::') &&
+          run.includes('$GITHUB_STEP_SUMMARY'),
+      ),
+    ).toBe(true);
+    expect(release).toBeDefined();
+    expect(release?.['continue-on-error']).not.toBe(true);
+  });
+
   it('失敗診断を成功Evidenceと分離し、失敗したqualityからDeployへ進めない', () => {
     const jobs = workflow().parsed.jobs;
     const steps = jobs?.quality?.steps ?? [];

@@ -154,7 +154,7 @@ SourceやAssetを追加したら、同じ変更で`provenance.yaml`へ登録し�
 
 ## 品質ゲート
 
-作業中とpush/PRの`check`は、教材Compile・Review、Lint、変更関連test、型検査を含むProduction Build、学習用Chunk分離を実行します。testはGit差分とVitestのimport依存関係で選び、教材変更では動的読込のContent testも補います。依存・共通test設定の変更時だけ全Unit/Component/Content testへ拡大します。ローカルの差分基準は`HEAD`、CIではpush前のSHAまたはPRのbase SHAです。
+作業中とpush/PRの`check`は、教材Compile、Lint、変更関連test、型検査を含むProduction Build、学習用Chunk分離を実行します。教材Reviewは通常Actionsの別ステップで警告・Summaryへ記録し、承認待ちでも動作検証を進めます。通常CIの成功は教材承認を意味せず、公開前の`check:release`ではReview失敗を必ず停止条件にします。testはGit差分とVitestのimport依存関係で選び、教材変更では動的読込のContent testも補います。依存・共通test設定の変更時だけ全Unit/Component/Content testへ拡大します。ローカルの差分基準は`HEAD`、CIではpush前のSHAまたはPRのbase SHAです。
 
 通常Actionsはブラウザ未導入のDocker stageを使い、5分以内を目標、8分を上限とします。新しいpushで古い開発Runを取消し、公開Runとは待ち行列を分離します。詳しい選択基準と削除したtestは[開発中の検証方針](docs/quality/development-testing.md)に記載しています。
 
@@ -163,7 +163,7 @@ SourceやAssetを追加したら、同じ変更で`provenance.yaml`へ登録し�
 ./scripts/docker-compose.sh run --rm app npm run format:check
 ```
 
-明示deployの`check:release`では全Unit/Component/Content testを実行します。Chromiumの全E2E、Firefox/WebKitの代表cross-browser smoke、固定演習の実ブラウザ性能、配信量、Lighthouse Mobileもこの公開Runだけで実行します。Runtime、Security、Browser互換性へ触れた変更では、作業中に変更面の代表Browser検証を追加します。
+明示deployの`check:release`では教材Reviewと全Unit/Component/Content testを実行します。Chromiumの機能E2Eと代表画像比較、Firefox/WebKitの代表cross-browser smoke、固定演習の実ブラウザ性能、配信量、Lighthouse Mobileもこの公開Runで実行します。重複する画像比較17ケースは`npm run test:visual:extended`で対象変更時に明示実行します。画像比較の自動retryは行いません。Runtime、Security、Browser互換性へ触れた変更では、作業中に変更面の代表Browser検証を追加します。
 
 ```bash
 ./scripts/docker-compose.sh run --rm -e BASE_PATH=/repository-name/ app npm run build
@@ -173,6 +173,8 @@ SourceやAssetを追加したら、同じ変更で`provenance.yaml`へ登録し�
 ```
 
 主な性能予算はLCP 2,500 ms以下、CLS 0.1以下、主要操作200 ms以下、Preview p95 500 ms以下、HTML/CSS判定p95 300 ms以下、下書き永続化500 ms以下です。JavaScript縦切りは初回Preview p95 500 ms以下、再Preview p95 250 ms以下、判定p95 1,000 ms以下、JavaScript固有incremental lazy graph gzip 180,000 bytes以下を別Gateで測定します。Home初期JavaScriptはgzip 256,000 bytes以下とし、Editor、Analyzer、Runner、ValidatorをHomeやSlideで読み込みません。教材配信はCatalog v3 gzip 20,480 bytes、Course Index 40,960 bytes、各Lesson Manifest 12,288 bytes、route map追加分8,192 bytesを上限にします。予算の完全な固定値は`content/html-css/performance.yaml`、`content/javascript/performance.yaml`と独立固定テストで管理します。
+
+Home初期JSの過去版比増分20,480 bytesは警告値です。絶対上限256,000 bytesや実測性能の条件は必須のまま維持します。検証範囲・任意画像の対応表・再検証条件は[開発中の検証方針](docs/quality/development-testing.md)を参照してください。
 
 アクセシビリティは、意味のあるLandmarkと見出し、本文スキップ、Keyboard操作、Focus管理、CodeMirrorからの脱出、Reduced Motion、320 CSS px reflow、200%/400% Zoom、WCAG A/AAのaxe検査を対象にします。自動検査に加え、Keyboard／Zoom／Reflowの実機結果を`docs/quality/a11y-manual.md`へ記録します。VoiceOverの手動実機確認は初回Release対象外で、対応済みとは主張しません。
 
