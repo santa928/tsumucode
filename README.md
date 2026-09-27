@@ -24,6 +24,7 @@ HTMLやCSSを初めて学ぶ人を対象にしています。スライドと進�
 ## 必要なもの
 
 - Docker Desktop
+- ローカルNode.js学習はDocker Server API v1.47対応が必要です（実測Engine 28.0.1）。旧APIとの自動交渉は行いません。
 - Docker Compose v2
 - GitHub Pagesへ公開する場合のみGitHub CLIまたはGitHubのWeb画面
 
@@ -78,7 +79,31 @@ GitHub Pagesへ公開した後のHTML/CSSコースの直リンクは、[スラ�
 
 HTML/CSSとJavaScript演習は「ブラウザで実行」と表示し、既存の隔離Previewを利用します。実行できたことと教材の合格は別です。変数添字など現在のBrowser実行が扱えない書き方は「この環境では未対応」と案内し、未対応・制限停止・環境障害を採点履歴へ保存しません。編集内容と前回の成功結果は保持します。
 
-ローカルDocker学習版のNode実行、Python、Next.js、ターミナルは未実装です。開発用Dockerを学習コードの実行先にはせず、Pagesや読書画面からlocalhostを探索しません。実行portと任意DOM portの境界・制限は[Issue #27の設計記録](docs/quality/runtime-execution-boundary.md)に記載しています。
+ローカルDocker学習版では、既存のClosure演習1件を実Node.jsで実行できます。Python、Next.js、ターミナルは未実装です。Pagesや読書画面からlocalhostを探索しません。実行portと任意DOM portの境界・制限は[Issue #27の設計記録](docs/quality/runtime-execution-boundary.md)に記載しています。
+
+## ローカルNode.js学習
+
+Dockerを起動し、リポジトリ直下で次を実行します。初回は固定Nodeイメージの取得と学習画面のbuildを行います。ホストへのNode/npm導入は不要です。
+
+```bash
+./scripts/learn.sh
+```
+
+[http://127.0.0.1:4173/](http://127.0.0.1:4173/)を開き、「ClosureをNode.jsで実行する」を選びます。`localhost`ではなくこのURLを使ってください。最初のコードを「プレビューを更新」で実行すると0、0と出力します。`score += 0`を`score += 10`に直して再実行すると10、20になります。「判定する」で教材条件を確認します。実行中は「実行を停止」で中止できます。編集だけではNodeは起動せず、下書きは従来どおり自動保存します。
+
+対象は`javascript-ch03-l05-e01`だけです。他のHTML/CSS・JavaScript演習はBrowser実行を維持します。NodeにDOMはありません。終了コード0でも教材条件を満たさなければ合格にはなりません。停止・制限到達・接続障害は不正解履歴へ保存しません。
+
+学習用webと信頼controllerは開発用appから分離しています。**controllerだけがDocker管理socketを持ち、これはホスト管理に相当する強い権限です。** 学習コードは別の使い捨てコンテナへ渡し、非root・read-only・ネットワークなし・host mountなしで実行します。同時1件、5秒、256 MiB、PID 64、出力64 KiBが上限です。第三者の敵対コードを安全に実行する公開サービスではありません。詳細とAPI仕様は[Local Node設計・検証記録](docs/quality/local-node-runtime.md)にあります。
+
+停止は起動Terminalで`Ctrl+C`、サービスと専用networkの片付けは次のコマンドです。再起動はもう一度`./scripts/learn.sh`を実行します。
+
+```bash
+./scripts/learn.sh down
+```
+
+4173番の競合で起動できない場合は、既に起動した学習モードを確認し、他の作業のサービスを勝手に停止せず競合を解消してください。Host/Originの安全確認があるためportだけを変更しないでください。Docker切断時はDockerと学習モードを起動し直して、画面の「プレビューを更新」または「判定する」で再試行します。Browserへの自動切替はありません。
+
+PagesとLocalはOriginが異なり、IndexedDBは自動同期しません。移行元HomeからJSONを書き出し、移行先Homeで読み込み差分を確認して反映します。教材ID・進捗・下書き・採点履歴の形式は共通です。
 
 ## 端末データ、容量、引き継ぎ
 

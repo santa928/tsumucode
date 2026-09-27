@@ -595,7 +595,31 @@ export class JavaScriptValidator implements ValidatorAdapter {
     const hasCodeError = context.diagnostics.some(
       ({ kind, severity }) => kind !== 'system' && severity === 'error',
     );
-    const identity = snapshotIdentity(rules, context.snapshots);
+    const local = context.execution?.backend === 'local';
+    const execution = context.execution;
+    if (local && execution?.status !== 'succeeded' && execution?.status !== 'code-error') {
+      return blockedResult(context, 'system-error', [
+        ...context.diagnostics,
+        systemDiagnostic('JAVASCRIPT_LOCAL_NOT_GRADABLE', 'Node run is not gradable'),
+      ]);
+    }
+    const identity = local
+      ? execution?.engine === 'node' &&
+        execution.runId.length > 0 &&
+        context.interactionScenarios.length === 0 &&
+        rules.every(
+          (rule) =>
+            rule.target.kind === 'javascript-source' || rule.target.kind === 'javascript-console',
+        )
+        ? {
+            exerciseSessionId: execution.exerciseSessionId,
+            executionRevision: execution.executionRevision,
+          }
+        : systemDiagnostic(
+            'JAVASCRIPT_LOCAL_CONTRACT_INVALID',
+            'Local validation requires console/source rules and Node run identity',
+          )
+      : snapshotIdentity(rules, context.snapshots);
     if (hasCodeError) {
       return blockedResult(
         context,

@@ -148,6 +148,19 @@ export function HomePage() {
         </p>
       </header>
 
+      {import.meta.env.VITE_LOCAL_LEARNING === '1' ? (
+        <section className="mt-6" aria-label="ローカル学習">
+          <h2 className="text-xl font-bold">ローカルNode.jsを試す</h2>
+          <p>Closure演習をDocker内で実行できます。ほかの演習はブラウザで動作します。</p>
+          <Link
+            className="font-bold underline"
+            to="/courses/javascript/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e01"
+          >
+            ClosureをNode.jsで実行する
+          </Link>
+        </section>
+      ) : null}
+
       <section className="mt-10" aria-labelledby="learning-path-shelf-title">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
@@ -237,6 +250,17 @@ export function HomePage() {
           端末データの道具箱を確認しています。
         </p>
       )}
+      {import.meta.env.VITE_LOCAL_LEARNING !== '1' ? (
+        <p className="mt-6 text-workshop-muted">
+          Node.jsの実行はDockerを使うローカル学習版で試せます。
+          <a
+            className="inline-flex min-h-11 items-center underline"
+            href="https://github.com/santa928/tsumucode#ローカルnodejs学習"
+          >
+            起動手順を見る
+          </a>
+        </p>
+      ) : null}
     </section>
   );
 }

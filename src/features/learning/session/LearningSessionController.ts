@@ -366,7 +366,9 @@ export class LearningSessionController {
   readonly #execution: ExecutionService;
   #executionGeneration = 0;
   #runSequence = 0;
-  readonly #runNamespace = String(++sessionSequence);
+  readonly #runNamespace = isRandomUUIDProvider(globalThis.crypto)
+    ? crypto.randomUUID()
+    : String(++sessionSequence);
   readonly #listeners = new Set<() => void>();
   readonly #autosave;
   readonly #editableFiles: ReadonlyMap<string, boolean>;
@@ -633,6 +635,8 @@ export class LearningSessionController {
     this.input.onDirty?.(draft);
     this.#autosave.schedule(draft);
     this.#clearPreviewTimer();
+    // Localは明示実行。編集のたびに使い捨てコンテナを起動しない。
+    if (this.environment.backend === 'local') return this.#state.executionRevision;
     this.#previewTimer = setTimeout(() => {
       this.#previewTimer = undefined;
       void this.previewNow().catch((error: unknown) => {
@@ -759,7 +763,19 @@ export class LearningSessionController {
       options:
         this.input.exercise.runtime === undefined ? {} : { runtime: this.input.exercise.runtime },
       requiredCapabilities:
-        this.input.exercise.runtime?.primaryOutput === 'console' ? ['console'] : ['dom'],
+        (this.environment.mode === 'console' ||
+          this.input.exercise.runtime?.primaryOutput === 'console') &&
+        (this.input.validationExercises ?? [this.input.exercise]).every(
+          (item) =>
+            (item.interactionScenarios?.length ?? 0) === 0 &&
+            item.validationRules.every(
+              (rule) =>
+                rule.target.kind === 'javascript-source' ||
+                rule.target.kind === 'javascript-console',
+            ),
+        )
+          ? ['console']
+          : ['dom'],
     });
     this.#assertFresh(execution);
     if (
@@ -1042,6 +1058,19 @@ export class LearningSessionController {
         throw new Error('Runner ConsoleがViewport間で一致しません');
       }
       if (rendered.diagnostics.some(({ severity }) => severity === 'error')) continue;
+      if (
+        this.#execution.dom === undefined &&
+        plan.exercises.every(
+          (item) =>
+            (item.interactionScenarios?.length ?? 0) === 0 &&
+            item.validationRules.every(
+              (rule) =>
+                rule.target.kind === 'javascript-source' ||
+                rule.target.kind === 'javascript-console',
+            ),
+        )
+      )
+        continue;
       const requestId = this.#nextRequestId(usedRequestIds);
       const currentSnapshot = await this.#requireDom().requestSnapshot({
         exerciseSessionId: execution.exerciseSessionId,
@@ -1074,6 +1103,7 @@ export class LearningSessionController {
     const batch: WorkspaceValidationItem[] = [];
     for (const item of plan.exercises) {
       const result = await this.input.validator.validate({
+        ...(lastRendered === undefined ? {} : { execution: lastRendered }),
         exerciseId: item.id,
         rules: item.validationRules,
         ...(item.runtime === undefined ? {} : { runtime: item.runtime }),

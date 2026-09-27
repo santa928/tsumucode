@@ -20,6 +20,8 @@ import {
 import { LeaseFenceRejectedError } from '../../../core/persistence/contracts';
 import type { ResolvedPreviewAsset } from '../../../core/runtime/contracts';
 import { BrowserExecutionService } from '../../../core/runtime/BrowserExecutionService';
+import { localRuntime } from '@/features/learning/localRuntime';
+import { RuntimeConsole } from '../components/RuntimeConsole';
 import { WorkshopNotice } from '../../../design-system/components/WorkshopNotice';
 import { resolvePublicAsset } from '../../../shared/lib/resolvePublicAsset';
 import type { WorkspaceLeaseAccess } from '../../progress/WorkspaceLeaseGate';
@@ -223,8 +225,10 @@ function EditableSession({
     [allWorkspaceTargets],
   );
   const validator = useMemo(
-    () => learningRuntimeServices.validatorRegistry.create(course.validatorId),
-    [course.validatorId],
+    () =>
+      localRuntime?.createValidator(exercise) ??
+      learningRuntimeServices.validatorRegistry.create(course.validatorId),
+    [course.validatorId, exercise],
   );
   const controller = useMemo(
     () =>
@@ -291,9 +295,11 @@ function EditableSession({
           }
           learningRuntimeServices.notices.dismiss('error:exercise-save');
         },
-        runner: new BrowserExecutionService(
-          learningRuntimeServices.runnerRegistry.create(course.runnerId),
-        ),
+        runner:
+          localRuntime?.createExecution(exercise, course.revision) ??
+          new BrowserExecutionService(
+            learningRuntimeServices.runnerRegistry.create(course.runnerId),
+          ),
         validator,
         now: () => new Date().toISOString(),
       }),
@@ -420,13 +426,13 @@ function EditableSession({
 
   /** 必要なら同じiframeを再初期化し、描画までを一つのbusy/error境界で実行する。 */
   const executePreview = useCallback(
-    (frame: HTMLIFrameElement, shouldPrepare: boolean): void => {
+    (frame: HTMLIFrameElement | undefined, shouldPrepare: boolean): void => {
       const generation = beginOperation();
       setOperation('preview');
       setOperationError(undefined);
       void (async () => {
         try {
-          if (shouldPrepare) {
+          if (shouldPrepare && frame !== undefined) {
             try {
               await controller.prepare(frame);
               if (isCurrentOperation(generation)) setPreviewNeedsPrepare(false);
@@ -474,7 +480,7 @@ function EditableSession({
   const updatePreview = (): void => {
     if (!lease.isWritable()) return;
     const frame = previewFrameRef.current;
-    if (frame === undefined) {
+    if (frame === undefined && controller.environment.backend !== 'local') {
       setPreviewNeedsPrepare(true);
       setOperationError(previewPreparationErrorMessage());
       return;
@@ -685,7 +691,7 @@ function EditableSession({
         if (!isCurrentOperation(generation)) return;
 
         const frame = previewFrameRef.current;
-        if (frame === undefined) {
+        if (frame === undefined && controller.environment.backend !== 'local') {
           setPreviewNeedsPrepare(true);
           if (!saveFailed) setOperationError(previewPreparationErrorMessage());
           return;
@@ -800,6 +806,32 @@ function EditableSession({
             >
               {operation === 'validate' ? '判定しています' : '判定する'}
             </button>
+            {controller.environment.backend === 'local' && busy ? (
+              <button
+                type="button"
+                className="tc-exercise-pager-secondary"
+                onClick={() => {
+                  const generation = beginOperation();
+                  void controller
+                    .stop()
+                    .then(() => {
+                      if (isCurrentOperation(generation))
+                        setOperationError('実行を停止しました。採点していません。');
+                    })
+                    .catch(() => {
+                      if (isCurrentOperation(generation))
+                        setOperationError(
+                          '停止を確認できません。Dockerと学習モードを確認してください。',
+                        );
+                    })
+                    .finally(() => {
+                      if (isCurrentOperation(generation)) setOperation('idle');
+                    });
+                }}
+              >
+                実行を停止
+              </button>
+            ) : null}
           </div>
         </div>
       }
@@ -810,7 +842,9 @@ function EditableSession({
             <header className="tc-exercise-instruction-title">
               <p>コード演習</p>
               <p aria-label="実行環境">
-                {controller.environment.backend === 'browser' ? 'ブラウザで実行' : 'ローカルで実行'}
+                {controller.environment.backend === 'browser'
+                  ? 'ブラウザで実行'
+                  : `ローカル Node.js${state.executionResult?.engineVersion ? ` ${state.executionResult.engineVersion}` : ''}で実行`}
               </p>
               {state.executionResult !== undefined &&
               state.executionResult.executionRevision === state.executionRevision ? (
@@ -904,17 +938,32 @@ function EditableSession({
 
           <div className="tc-exercise-preview">
             <div data-testid="runtime-preview-frame">
-              <PreviewFrame
-                key={`${course.id}:${exercise.id}`}
-                onReady={preparePreview}
-                consoleEnabled={exercise.runtime?.kind === 'javascript'}
-                primaryOutput={exercise.runtime?.primaryOutput ?? 'preview'}
-                consoleRecords={state.runtimeOutput?.console ?? []}
-                consoleFreshness={state.runtimeOutput?.freshness ?? 'current'}
-                {...(state.runtimeOutput === undefined
-                  ? {}
-                  : { consoleUpdateSequence: state.runtimeOutput.updateSequence })}
-              />
+              {controller.environment.backend === 'local' ? (
+                <div>
+                  <p>
+                    編集後に「プレビューを更新」でNode.jsを実行します。Docker切断時は学習モードを再起動し、もう一度実行してください。
+                  </p>
+                  <RuntimeConsole
+                    records={(state.runtimeOutput?.console ?? []).slice(0, 200)}
+                    freshness={state.runtimeOutput?.freshness ?? 'current'}
+                  />
+                  {(state.runtimeOutput?.console.length ?? 0) > 200 ? (
+                    <p>表示は先頭200行までです。出力を減らして再実行してください。</p>
+                  ) : null}
+                </div>
+              ) : (
+                <PreviewFrame
+                  key={`${course.id}:${exercise.id}`}
+                  onReady={preparePreview}
+                  consoleEnabled={exercise.runtime?.kind === 'javascript'}
+                  primaryOutput={exercise.runtime?.primaryOutput ?? 'preview'}
+                  consoleRecords={state.runtimeOutput?.console ?? []}
+                  consoleFreshness={state.runtimeOutput?.freshness ?? 'current'}
+                  {...(state.runtimeOutput === undefined
+                    ? {}
+                    : { consoleUpdateSequence: state.runtimeOutput.updateSequence })}
+                />
+              )}
             </div>
           </div>
         </div>
