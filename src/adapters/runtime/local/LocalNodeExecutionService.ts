@@ -218,7 +218,17 @@ export class LocalNodeExecutionService implements ExecutionService {
       .then(async () => {
         if (active === undefined) return;
         await active.created;
-        await this.#api(`runs/${encodeURIComponent(active.request.runId)}/cancel`);
+        const response = z
+          .object({ state: z.literal('completed'), result: resultSchema })
+          .parse(await this.#api(`runs/${encodeURIComponent(active.request.runId)}/cancel`));
+        const result = response.result;
+        if (
+          result.status === 'system-error' ||
+          result.runId !== active.request.runId ||
+          result.exerciseSessionId !== active.request.exerciseSessionId ||
+          result.executionRevision !== active.request.executionRevision
+        )
+          throw new Error('停止・回収を確認できません。Dockerと学習モードを確認してください。');
       });
     return this.#cleanup;
   }

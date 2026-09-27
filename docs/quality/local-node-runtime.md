@@ -86,6 +86,8 @@ Localの組立てはViteのbuild時aliasで置き換える。通常Pages build�
 - Pages Homeの起動案内・Local API非探索と既存Home画像比較（1280×720、390×844）の3件成功。画像baseline・閾値は変更していない。起動案内の実画像も目視確認した。
 - 一括整形の指定に含めた `Dockerfile.learning` はPrettierのparser未対応で処理できなかった。同ファイルはDocker buildで検証し、Prettier成功とは数えていない。
 
+レビュー中の追加契約確認で、HTTP 200のcancel応答でも結果が `system-error` の場合に停止成功として扱う欠陥を再現した。Local clientは完了状態・run identity・非system-errorを確認してから停止を成功扱いにする。HTTP応答doubleの回帰で修正前失敗→修正後成功を確認した。この回帰は実Docker障害試験の代用ではない。
+
 ## 残る制限と未検証
 
 - Engine本体の停止・再起動、daemon固有のlive-restore挙動、LinuxホストやWindowsホストの実機確認は未実施。macOS Docker Desktop上のLinux arm64で実測した。

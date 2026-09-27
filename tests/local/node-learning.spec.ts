@@ -160,8 +160,15 @@ test('計算添字とPromiseを実Nodeで実行し、停止と接続障害を不
     '20',
   ]);
   await replaceEditorText(page, 'while(true) {}');
+  const created = page.waitForResponse(
+    (response) => response.url().endsWith('/api/runs') && response.status() === 202,
+  );
   await page.getByRole('button', { name: '判定する', exact: true }).click();
+  await created;
   await page.getByRole('button', { name: '実行を停止', exact: true }).click();
+  await expect(
+    page.getByText('実行を停止しました。採点していません。', { exact: true }),
+  ).toBeVisible();
   await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled();
   await expect(page.getByRole('dialog', { name: '判定結果' })).toBeHidden();
   await waitForStoredDraftContent(page, 'while(true) {}');
