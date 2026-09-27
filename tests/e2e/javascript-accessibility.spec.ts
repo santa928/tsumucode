@@ -123,6 +123,7 @@ const CHAPTER_THREE_CLOSURE_EXERCISE: JavaScriptExerciseLocation = {
   lessonId: 'javascript-ch03-l05',
   exerciseId: 'javascript-ch03-l05-e01',
   title: 'Closureで得点を10ずつ増やす',
+  consoleOnly: true,
 };
 
 const CHAPTER_FOUR_DESTRUCTURING_EXERCISE: JavaScriptExerciseLocation = {
