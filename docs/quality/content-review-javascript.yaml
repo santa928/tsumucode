@@ -171,14 +171,14 @@ lessons:
   - lessonId: javascript-ch04-l02
     authorId: tsumucode-javascript-authoring
     reviewerId: tsumucode-quality-verification
-    sourceHash: 6c913a02df122f06e47748f01bfb028dd90fbc039b13cb170460d3c720ef2e56
+    sourceHash: 1b941721d682c4b650dda888dc35358ff7c16dd05b93a07cdae8ea422a75904f
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: zero-based index・角括弧access・atを4枚のSlideから、1問目と2問目を順に表示するExerciseへ段階接続。index Fact・at Fact・Console完全一致のAND判定、3段階Hint、Solution、off-by-one／output-only／syntax／securityを含む6 Fixtureを実Browser Runner／Validatorで確認。
+    notes: zero-based index・角括弧access・atを4枚のSlideから、1問目と2問目を順に表示するExerciseへ段階接続。index Fact・at Fact・Console完全一致のAND判定、3段階Hint、Solution、off-by-one／output-only／syntax／securityを含む6 Fixtureを実Browser Runner／Validatorで確認。Issue #31では変数添字の既存security Fixtureだけをunsupported診断による採点停止へ合わせ、Solution・Starter・全Fixtureを再実行。教材本文・採点規則・安全制約は変更なし。
   - lessonId: javascript-ch04-l03
     authorId: tsumucode-javascript-authoring
     reviewerId: tsumucode-quality-verification

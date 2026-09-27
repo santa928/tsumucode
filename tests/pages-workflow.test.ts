@@ -15,6 +15,7 @@ interface WorkflowStep {
 
 interface WorkflowJob {
   readonly if?: string;
+  readonly needs?: readonly string[];
   readonly permissions?: Readonly<Record<string, string>>;
   readonly environment?: Readonly<Record<string, unknown>>;
   readonly steps?: readonly WorkflowStep[];
@@ -34,6 +35,25 @@ function workflow(): { readonly source: string; readonly parsed: PagesWorkflow }
 }
 
 describe('TsumuCode Pages workflow', () => {
+  it('失敗診断を成功Evidenceと分離し、失敗したqualityからDeployへ進めない', () => {
+    const jobs = workflow().parsed.jobs;
+    const steps = jobs?.quality?.steps ?? [];
+    const diagnostics = steps.find(({ name }) => name === 'Upload failure diagnostics');
+    const preparation = steps.find(({ name }) => name === 'Prepare failure diagnostics');
+
+    expect(preparation?.if).toBe('failure()');
+    expect(diagnostics?.if).toBe('failure()');
+    expect(diagnostics?.with?.['name']).toContain('failure-diagnostics-');
+    expect(diagnostics?.with?.['path']).toBe(
+      'failure-source-identity.txt\nplaywright-report\nplaywright-performance-report\ntest-results\nlhci-report\n',
+    );
+    expect(diagnostics?.with?.['retention-days']).toBe(7);
+    expect(diagnostics?.with?.['if-no-files-found']).toBe('warn');
+    expect(jobs?.deploy?.needs).toEqual(['resolve', 'quality']);
+    expect(jobs?.deploy?.if).not.toMatch(/always\(|failure\(/u);
+    expect(steps.find(({ name }) => name === 'Upload quality evidence')?.if).toBeUndefined();
+  });
+
   it('pushとPRは品質検査だけ、明示dispatchだけをDeploy候補にする', () => {
     const { parsed } = workflow();
 
