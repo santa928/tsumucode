@@ -52,7 +52,36 @@ HomeはCourse全文・Lesson本文・Editor・Runnerを追加取得しない。
 - PC1280/390幅×文字100/200%で読む・自由選択・教材棚へのフォーカス・Hash維持・
   横はみ出しなしを4件確認。画面画像も目視した。
 
-追補した試用リンクを含む最終HEADの再検証とVisual記録は、PR公開前に追記する。
+PR #39統合main `5639c8c15558d34fb979d9fcfc43b391d764f754` を取り込み、
+有限試用リンクも実際の目次へ到達することを確認した。取り込み後の本番buildで
+上記7 E2Eを再実行して全成功、容量・配信境界の既存9件も成功。
+Home変更のcheckは既存の差分選択規則により教材検査を含む52ファイル506件が成功、
+Lint・型・build・CSS inline・chunk分離も成功した。
+
+Home Visualの4サイズ（PC1440/1280、768、390）を比較し、旧baselineとの差分を
+expected/actual/diffの全12画像で目視した。先頭案内が加わり既存棚が下へ移る意図した差分で、
+見出し・操作の欠落や重なりは認めなかった。Home4枚だけ同期し、閾値・skip・他画面は不変。
+同じ4件の同期後再比較も5.3秒で成功した。
+
+検証コマンドの初回失敗も成功へ数えていない。新E2E名の数値templateをLintに合わせて修正。
+一度の容量検査と最初のVisual4件はBASE_PATH未指定で既定の `/repository-name/` と
+実buildの `/` が不一致だった。同じbuildに `BASE_PATH=/` を明示して再実行した。
+文字200%でViewportより高い要素全体を撮ると画面外Skip Linkが合成画像へ入ったため、
+通常Viewportの再撮影とSkip Linkが画面外にあることの実測へ切り替えた。UIの隠蔽修正はしていない。
+
+## 比較画像
+
+変更前6枚と変更後Home4枚を [evidence/issue-24](evidence/issue-24/) に保存。
+変更後は `c47aa83312bea12208c27e2896ef15b47121ce66` の製品sourceと同一。
+文字200%画像は主要操作までスクロールした実Viewportで、全要素を1画面へ収めた主張ではない。
+
+| 画面 | 変更前 | 変更後 |
+|---|---|---|
+| PC1280 Home | [before](evidence/issue-24/before-home-1280.png) | [after](evidence/issue-24/after-home-1280.png) |
+| 390 Home | [before](evidence/issue-24/before-home-390.png) | [after](evidence/issue-24/after-home-390.png) |
+| 文字200% | — | [PC](evidence/issue-24/after-home-1280-text200.png)・[390](evidence/issue-24/after-home-390-text200.png) |
+| Slide | [PC](evidence/issue-24/before-slide-1280.png)・[390](evidence/issue-24/before-slide-390.png) | 製品変更なし、代表操作で確認 |
+| 演習 | [PC](evidence/issue-24/before-exercise-1280.png)・[390](evidence/issue-24/before-exercise-390.png) | 製品変更なし、誤答→修正→合格で確認 |
 
 ## 未検証・制限
 

@@ -44,6 +44,15 @@ for (const width of [1280, 390]) {
         page.getByRole('heading', { name: 'HTML/CSS はじめの一歩 スライド目次' }),
       ).toBeVisible();
       await expect(page.locator('.cm-editor')).toHaveCount(0);
+      if (width === 390 && !enlarged) {
+        await page.goto('./#/');
+        await page.getByRole('link', { name: '改訂中の3レッスンを試す' }).click();
+        await expect(page).toHaveURL(/#\/library\/pilot$/u);
+        await expect(
+          page.getByRole('heading', { level: 1, name: '3レッスンの試用目次' }),
+        ).toBeVisible();
+        await expect(page.getByRole('link', { name: /^一続きに読む/u })).toHaveCount(3);
+      }
     });
   }
 }
