@@ -50,7 +50,10 @@ async function importBundle(page: Page, path: string): Promise<void> {
 test('HomeからSlide、演習、見直しを経て代表Lessonを完了する', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('./#/');
-  await page.getByRole('link', { name: 'HTML/CSS はじめの一歩：最初のピースを置く' }).click();
+  await page
+    .getByRole('region', { name: '今回の学習' })
+    .getByRole('link', { name: '見出しと背景色を変えてみる' })
+    .click();
   await page.getByRole('link', { name: 'コースマップへ戻る' }).click();
   await page.getByRole('link', { name: 'Webページを作る3つの役割レッスンを始める' }).click();
   await expect(page.getByRole('progressbar', { name: 'スライドの現在位置' })).toHaveAttribute(
@@ -101,6 +104,14 @@ test('HomeからSlide、演習、見直しを経て代表Lessonを完了する',
     'href',
     /html-css-ch00-l02\/slides\/html-css-ch00-l02-s01/u,
   );
+  await page.getByRole('link', { name: '次のピースへ進む' }).click();
+  await expect(page).toHaveURL(/html-css-ch00-l02\/slides\/html-css-ch00-l02-s01$/u);
+  await page.goto('./#/');
+  await page
+    .getByRole('region', { name: '今回の学習' })
+    .getByRole('link', { name: 'HTML/CSSの続きから' })
+    .click();
+  await expect(page).toHaveURL(/html-css-ch00-l02\/slides\/html-css-ch00-l02-s01$/u);
 });
 
 test('Chapter 12の5工程が同じProfile workspaceへ追加内容を積み上げる', async ({ page }) => {

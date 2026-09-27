@@ -331,7 +331,11 @@ test('Homeの見出し順とSkip Linkを保ち、KeyboardだけでPathからCour
 }) => {
   await page.goto('./#/');
   await expect(page.getByRole('heading', { level: 1, name: '学びたいピースを選ぶ' })).toBeVisible();
-  await expect(page.locator('main h2')).toHaveText(['学習パスから始める', '個別コースを選ぶ']);
+  await expect(page.locator('main h2')).toHaveText([
+    '最初の小さな制作',
+    '学習パスから始める',
+    '個別コースを選ぶ',
+  ]);
 
   await page.keyboard.press('Tab');
   const skipLink = page.getByRole('link', { name: '本文へ移動' });
