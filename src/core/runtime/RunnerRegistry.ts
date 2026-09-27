@@ -1,4 +1,5 @@
 import type { RunnerAdapter, RunnerLanguageId } from './contracts';
+import { BrowserExecutionService } from './BrowserExecutionService';
 
 export type RunnerFactory = () => RunnerAdapter;
 
@@ -39,6 +40,11 @@ function createCheckedRunner(id: RunnerLanguageId, factory: RunnerFactory): Runn
 /** CourseのRunner IDをfactoryへ解決し、利用側から言語別の分岐を除く。 */
 export class RunnerRegistry {
   readonly #factories = new Map<RunnerLanguageId, RunnerFactory>();
+
+  /** 既存言語のBrowser実装を、DOM非必須の実行入口へ接続する。 */
+  createExecution(id: RunnerLanguageId): BrowserExecutionService {
+    return new BrowserExecutionService(this.create(id));
+  }
 
   /** 指定IDが登録済みか、factoryを生成せずに返す。 */
   has(id: RunnerLanguageId): boolean {

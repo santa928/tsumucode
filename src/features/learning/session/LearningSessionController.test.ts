@@ -6,6 +6,7 @@ import type {
   InteractionResult,
   PreviewSnapshot,
   RunnerAdapter,
+  ExecutionRequest,
   RunnerInput,
   RunnerRenderResult,
 } from '../../../core/runtime/contracts';
@@ -274,6 +275,95 @@ describe('LearningSessionController', () => {
     vi.unstubAllGlobals();
   });
 
+  it.each(['unsupported', 'system', 'limit'] as const)(
+    '%sでは下書き・過去の成功を保持し採点を保存しない',
+    async (kind) => {
+      const runtime = runnerHarness();
+      const validation = validatorHarness();
+      const persistence = repositoryHarness({ draft: storedDraft() });
+      const controller = new LearningSessionController(
+        controllerInput({
+          runner: runtime.runner,
+          validator: validation.validator,
+          repository: persistence.repository,
+        }),
+      );
+      await controller.initialize();
+      await controller.previewNow();
+      const before = controller.getSnapshot();
+      runtime.render.mockImplementation(async (input) => ({
+        exerciseSessionId: input.exerciseSessionId,
+        executionRevision: input.executionRevision,
+        diagnostics: [
+          {
+            code: kind === 'limit' ? 'javascript-budget' : 'test',
+            kind: kind === 'limit' ? 'system' : kind,
+            severity: 'error',
+            message: 'blocked',
+            learnerMessage: '採点していません',
+          },
+        ],
+        evidence: [],
+        console: [],
+      }));
+      controller.edit('index.html', '<main>保持する下書き</main>');
+      await expect(controller.validateNow()).rejects.toThrow('採点していません');
+      await controller.flush();
+      const after = controller.getSnapshot();
+      expect(validation.validate).not.toHaveBeenCalled();
+      expect(after.validationHistory).toEqual(before.validationHistory);
+      expect(after.runtimeOutput?.freshness).toBe('previous-success');
+      expect(persistence.putDraft.mock.calls.at(-1)?.[0]).toMatchObject({
+        files: { 'index.html': '<main>保持する下書き</main>' },
+        validationHistory: before.validationHistory,
+        lastPassingSnapshots: storedDraft().lastPassingSnapshots,
+      });
+      expect(persistence.putDraft.mock.calls.at(-1)?.[0]).not.toHaveProperty('executionResult');
+      await controller.dispose();
+    },
+  );
+
+  it('console専用Adapterはiframeも偽DOMも要求されず実行結果を返す', async () => {
+    const execute = vi.fn(async (request: ExecutionRequest) => ({
+      ...request,
+      status: 'succeeded' as const,
+      diagnostics: [],
+      evidence: [],
+      console: [{ sequence: 0, level: 'log' as const, text: '2' }],
+    }));
+    const controller = new LearningSessionController(
+      controllerInput({
+        exercise: exercise({
+          runtime: {
+            kind: 'javascript',
+            entryFile: 'script.js',
+            sourceType: 'script',
+            capabilityProfile: 'core',
+            primaryOutput: 'console',
+          },
+        }),
+        runner: {
+          languageId: 'javascript',
+          environment: {
+            backend: 'local',
+            engine: 'node',
+            mode: 'console',
+            capabilities: ['console'],
+          },
+          execute,
+          stop: vi.fn(async () => undefined),
+          dispose: vi.fn(async () => undefined),
+        },
+      }),
+    );
+    await controller.previewNow();
+    expect(controller.getSnapshot().runtimeOutput?.console[0]?.text).toBe('2');
+    expect(controller.getSnapshot().validationHistory).toEqual([]);
+    await expect(controller.validateNow()).rejects.toThrow('DOM観測が必要');
+    expect(controller.getSnapshot().validationHistory).toEqual([]);
+    await controller.dispose();
+  });
+
   it('初回表示ではFile配列の並びに関係なく最初の手順の対象Fileを選択する', () => {
     const firstStep = baseExercise.steps[0];
     if (firstStep === undefined) throw new Error('Exercise fixtureに手順がありません');
@@ -352,7 +442,7 @@ describe('LearningSessionController', () => {
       controllerInput({
         courseId: 'javascript',
         exercise: current,
-        runner: runtime.runner,
+        runner: { ...runtime.runner, languageId: 'javascript' },
         validator: validation.validator,
         repository: persistence.repository,
       }),
@@ -1398,7 +1488,7 @@ describe('LearningSessionController', () => {
     expect(recoveredDraft?.lastPassingSnapshots).toEqual({});
   });
 
-  it('disposeは進行Runnerを待ち最新Draftをflushして一度だけ解放する', async () => {
+  it('disposeは進行Runnerを失効させ最新Draftをflushして一度だけ解放する', async () => {
     const pending = deferred<RunnerRenderResult>();
     const events: string[] = [];
     const runtime = runnerHarness(events);
@@ -1421,7 +1511,10 @@ describe('LearningSessionController', () => {
     );
     controller.edit('index.html', '<main>pending</main>');
     const preview = controller.previewNow();
-    await Promise.resolve();
+    await vi.waitFor(() => {
+      expect(runtime.render).toHaveBeenCalledOnce();
+    });
+    const rejectedPreview = expect(preview).rejects.toThrow(StaleExecutionError);
     const firstDispose = controller.dispose();
     const secondDispose = controller.dispose();
     expect(runtime.dispose).not.toHaveBeenCalled();
@@ -1432,10 +1525,12 @@ describe('LearningSessionController', () => {
       evidence: [],
       console: [],
     });
-    await preview;
+    await rejectedPreview;
     await Promise.all([firstDispose, secondDispose]);
 
-    expect(events).toEqual(['render:start', 'render:end', 'save', 'dispose']);
+    expect(events).toContain('save');
+    expect(events).toContain('dispose');
+    expect(controller.getSnapshot().previewRevision).toBeNull();
     expect(runtime.dispose).toHaveBeenCalledOnce();
     await expect(controller.previewNow()).rejects.toThrow(/dispose/u);
   });

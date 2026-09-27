@@ -299,7 +299,7 @@ function isRunnerDiagnostic(value: unknown): value is RunnerDiagnostic {
   if (!isRecord(value)) return false;
   return (
     typeof value.code === 'string' &&
-    ['syntax', 'reference', 'security', 'system'].includes(String(value.kind)) &&
+    ['syntax', 'reference', 'security', 'unsupported', 'system'].includes(String(value.kind)) &&
     ['warning', 'error'].includes(String(value.severity)) &&
     typeof value.message === 'string' &&
     typeof value.learnerMessage === 'string' &&

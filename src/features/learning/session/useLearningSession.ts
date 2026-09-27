@@ -26,11 +26,8 @@ function scheduleLifecycleCleanup(
       return;
     }
     runSafely(async () => {
-      try {
-        await lifecycle.controller.flush();
-      } finally {
-        await lifecycle.controller.dispose();
-      }
+      // disposeが先に実行を失効させ、最新Draftのflushも引き受ける。
+      await lifecycle.controller.dispose();
     });
   });
 }

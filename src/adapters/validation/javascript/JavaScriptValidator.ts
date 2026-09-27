@@ -279,7 +279,7 @@ function analysisFailureResult(
   executionRevision: number,
 ): ValidationResult {
   const status = result.diagnostics.some(
-    ({ kind, severity }) => kind === 'system' && severity === 'error',
+    ({ kind, severity }) => (kind === 'system' || kind === 'unsupported') && severity === 'error',
   )
     ? 'system-error'
     : 'code-error';
@@ -589,7 +589,7 @@ export class JavaScriptValidator implements ValidatorAdapter {
     }
 
     const hasSystemError = context.diagnostics.some(
-      ({ kind, severity }) => kind === 'system' && severity === 'error',
+      ({ kind, severity }) => (kind === 'system' || kind === 'unsupported') && severity === 'error',
     );
     if (hasSystemError) return blockedResult(context, 'system-error', context.diagnostics);
     const hasCodeError = context.diagnostics.some(

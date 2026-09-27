@@ -3,7 +3,7 @@ import { fullAncestor } from 'acorn-walk';
 import type { RunnerDiagnosticKind } from '../../../../core/runtime/contracts';
 import type { JavaScriptCapabilityProfileId } from './contracts';
 
-type AnalysisIssueKind = Extract<RunnerDiagnosticKind, 'security' | 'system'>;
+type AnalysisIssueKind = Extract<RunnerDiagnosticKind, 'security' | 'unsupported' | 'system'>;
 type AstNode = Node & Readonly<Record<string, unknown>>;
 
 const NETWORK_IDENTIFIERS = new Set([
@@ -377,11 +377,16 @@ function identifierName(value: unknown): string | undefined {
     : undefined;
 }
 
-/** Nodeの1-based位置でsecurity issueを投げる。 */
-function reject(node: Node, file: string, message: string): never {
+/** Nodeの1-based位置を保持し、安全拒否と環境未対応を区別して投げる。 */
+function reject(
+  node: Node,
+  file: string,
+  message: string,
+  kind: AnalysisIssueKind = 'security',
+): never {
   const position = node.loc?.start;
   throw new JavaScriptAnalysisIssue(
-    'security',
+    kind,
     message,
     file,
     position?.line,
@@ -458,10 +463,10 @@ export function assertJavaScriptCapabilityPolicy(
 
     if (node.type === 'ImportExpression') reject(node, file, '動的importはこの演習では使えません');
     if (MODULE_NODE_TYPES.has(node.type) && !profile.allowModules) {
-      reject(node, file, 'module構文はこの演習では使えません');
+      reject(node, file, 'module構文はこの演習では使えません', 'unsupported');
     }
     if (!ALLOWED_NODE_TYPES.has(node.type)) {
-      reject(node, file, `この構文（${node.type}）はまだこの演習では使えません`);
+      reject(node, file, `この構文（${node.type}）はまだこの演習では使えません`, 'unsupported');
     }
     if (node.type === 'DebuggerStatement' || node.type === 'WithStatement') {
       reject(node, file, `この構文（${node.type}）は安全なPreviewでは使えません`);
@@ -474,13 +479,13 @@ export function assertJavaScriptCapabilityPolicy(
           current.async === true)) &&
       !profile.allowAsync
     ) {
-      reject(node, file, 'async／awaitはこの演習では使えません');
+      reject(node, file, 'async／awaitはこの演習では使えません', 'unsupported');
     }
     if (node.type === 'Literal' && typeof current.regex === 'object' && current.regex !== null) {
-      reject(node, file, '正規表現はこの演習では使えません');
+      reject(node, file, '正規表現はこの演習では使えません', 'unsupported');
     }
     if (node.type === 'NewExpression' && identifierName(current.callee) !== 'Error') {
-      reject(node, file, 'このconstructorは安全なPreviewでは使えません');
+      reject(node, file, 'このconstructorは安全なPreviewでは使えません', 'unsupported');
     }
 
     if (node.type === 'Identifier') {
@@ -491,7 +496,7 @@ export function assertJavaScriptCapabilityPolicy(
         parent?.type === 'CallExpression' &&
         ast(parent).callee === node;
       if (!profile.allowAsync && ASYNC_IDENTIFIERS.has(name) && !directTimerCall) {
-        reject(node, file, `${name}はasync演習でだけ使えます`);
+        reject(node, file, `${name}はasync演習でだけ使えます`, 'unsupported');
       }
       if (UNSUPPORTED_ASYNC_IDENTIFIERS.has(name)) {
         reject(node, file, `${name}は回収できない非同期処理のため使えません`);
@@ -516,7 +521,12 @@ export function assertJavaScriptCapabilityPolicy(
       const root = identifierName(current.object);
       const property = memberName(current);
       if (!hasSafeComputedProperty(current)) {
-        reject(node, file, '変数や式によるcomputed property accessは安全なPreviewでは使えません');
+        reject(
+          node,
+          file,
+          '変数や式によるcomputed property accessは安全なPreviewでは使えません',
+          'unsupported',
+        );
       }
       if (
         root === 'Object' &&
@@ -537,7 +547,7 @@ export function assertJavaScriptCapabilityPolicy(
         reject(node, file, `${property}は未管理のEvent handlerになるため使えません`);
       }
       if (property !== undefined && ASYNC_IDENTIFIERS.has(property) && !profile.allowAsync) {
-        reject(node, file, `${property}はasync演習でだけ使えます`);
+        reject(node, file, `${property}はasync演習でだけ使えます`, 'unsupported');
       }
       if (property !== undefined && UNSUPPORTED_ASYNC_MEMBERS.has(property)) {
         reject(node, file, `${property}は回収できない非同期処理のため使えません`);
@@ -566,6 +576,8 @@ export function assertJavaScriptCapabilityPolicy(
       if (property === 'constructor') {
         reject(node, file, 'constructorを使った動的実行は使えません');
       }
+      if (property === 'currentTarget')
+        reject(node, file, 'currentTargetは現在のブラウザ実行では使えません', 'unsupported');
       if (property !== undefined && RUNTIME_ESCAPE_MEMBERS.has(property)) {
         reject(node, file, '実行環境へ戻るmemberは使えません');
       }
@@ -582,7 +594,7 @@ export function assertJavaScriptCapabilityPolicy(
         !profile.allowDom &&
         !directAttributeCall
       ) {
-        reject(node, file, `${property}はDOM演習でだけ使えます`);
+        reject(node, file, `${property}はDOM演習でだけ使えます`, 'unsupported');
       }
       if (property === 'serviceWorker') reject(node, file, 'Service Workerは使えません');
       if (property !== undefined && NAVIGATION_MEMBERS.has(property)) {
@@ -607,7 +619,7 @@ export function assertJavaScriptCapabilityPolicy(
         reject(node, file, '文字列timerは使えません。Functionを渡してください');
       }
       if (calleeName !== undefined && TIMER_IDENTIFIERS.has(calleeName) && !profile.allowAsync) {
-        reject(node, file, `${calleeName}はasync演習でだけ使えます`);
+        reject(node, file, `${calleeName}はasync演習でだけ使えます`, 'unsupported');
       }
       if (isNode(current.callee)) {
         const callee = ast(current.callee);
@@ -634,7 +646,7 @@ export function assertJavaScriptCapabilityPolicy(
           reject(node, file, '外部resourceへつながる属性の変更は使えません');
         }
         if (property === 'setAttribute' && !profile.allowDom) {
-          reject(node, file, '動的な属性変更はこの演習では使えません');
+          reject(node, file, '動的な属性変更はこの演習では使えません', 'unsupported');
         }
         if (property === 'setAttribute' && attribute === undefined) {
           reject(node, file, 'setAttributeの属性名は静的な文字列で指定してください');

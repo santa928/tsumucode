@@ -23,10 +23,12 @@ import type {
   RunnerAdapter,
   RunnerDiagnostic,
   RunnerEvidence,
-  RunnerRenderResult,
   RunnerConsoleRecord,
   SnapshotPolicy,
+  ExecutionService,
+  ExecutionResult,
 } from '../../../core/runtime/contracts';
+import { BrowserExecutionService } from '../../../core/runtime/BrowserExecutionService';
 import type { ValidationResult, ValidatorAdapter } from '../../../core/validation/contracts';
 import { createAutosaveController } from './createAutosaveController';
 import { evaluateInteractionCheckpoint } from './evaluateInteractionCheckpoint';
@@ -44,7 +46,7 @@ export interface LearningSessionControllerInput {
   readonly onBackgroundError?: (error: unknown) => void;
   readonly onSaveError?: (error: unknown) => void;
   readonly onSaveRecovered?: () => void;
-  readonly runner: RunnerAdapter;
+  readonly runner: RunnerAdapter | ExecutionService;
   readonly validator: ValidatorAdapter;
   readonly now: () => string;
   readonly createRequestId?: () => string;
@@ -56,6 +58,7 @@ export interface WorkspaceValidationItem {
 }
 
 interface ExecutionInput {
+  readonly generation: number;
   readonly revision: number;
   readonly mutationRevision: number;
   readonly files: Readonly<Record<string, string>>;
@@ -68,6 +71,7 @@ interface ValidationPlan {
 }
 
 const MAX_EVIDENCE_ITEMS = 64;
+let sessionSequence = 0;
 const MAX_EVIDENCE_ID_LENGTH = 128;
 const MAX_EVIDENCE_FILE_LENGTH = 256;
 const MAX_EVIDENCE_STRING_LENGTH = 4096;
@@ -199,6 +203,17 @@ export class StaleExecutionError extends Error {
   constructor() {
     super('新しい操作または編集があるため古い実行結果を破棄しました');
     this.name = 'StaleExecutionError';
+  }
+}
+
+/** 実行不能を採点・進捗保存へ渡さず、画面へ再実行可能な理由を伝える。 */
+export class ExecutionNotGradableError extends Error {
+  constructor(readonly result: ExecutionResult) {
+    super(
+      result.diagnostics.find(({ severity }) => severity === 'error')?.learnerMessage ??
+        '実行を完了できなかったため、採点していません。',
+    );
+    this.name = 'ExecutionNotGradableError';
   }
 }
 
@@ -348,6 +363,10 @@ function filesEqual(
 
 /** Editor、Runner、Validator、Repositoryをrevision付きの1セッションへ直列化する。 */
 export class LearningSessionController {
+  readonly #execution: ExecutionService;
+  #executionGeneration = 0;
+  #runSequence = 0;
+  readonly #runNamespace = String(++sessionSequence);
   readonly #listeners = new Set<() => void>();
   readonly #autosave;
   readonly #editableFiles: ReadonlyMap<string, boolean>;
@@ -368,6 +387,8 @@ export class LearningSessionController {
   #requestSequence = 0;
 
   constructor(private readonly input: LearningSessionControllerInput) {
+    this.#execution =
+      'execute' in input.runner ? input.runner : new BrowserExecutionService(input.runner);
     const files = Object.fromEntries(input.exercise.files.map((file) => [file.path, file.content]));
     const firstFile = input.exercise.files[0]?.path;
     if (firstFile === undefined) throw new Error('ExerciseにFileがありません');
@@ -405,6 +426,11 @@ export class LearningSessionController {
 
   /** React subscription用の安定したsnapshot getter。 */
   readonly getSnapshot = (): LearningSessionState => this.#state;
+
+  /** UIは接続済みの実行環境だけを表示し、言語名からNode等を推測しない。 */
+  get environment() {
+    return this.#execution.environment;
+  }
 
   /** React subscriptionへlistenerを登録し、冪等な解除関数を返す。 */
   readonly subscribe = (listener: () => void): (() => void) => {
@@ -452,6 +478,7 @@ export class LearningSessionController {
   /** 現在revisionとFile snapshotをRunnerへ渡す不変入力として固定する。 */
   #captureExecution(): ExecutionInput {
     return {
+      generation: this.#executionGeneration,
       revision: this.#state.executionRevision,
       mutationRevision: this.#mutationRevision,
       files: Object.freeze({ ...this.#state.files }),
@@ -462,6 +489,8 @@ export class LearningSessionController {
   /** 非同期境界の前後でsourceまたはDraft UI状態が変わっていないことを確認する。 */
   #assertFresh(execution: ExecutionInput): void {
     if (
+      this.#disposeRequested ||
+      execution.generation !== this.#executionGeneration ||
       execution.revision !== this.#state.executionRevision ||
       execution.mutationRevision !== this.#mutationRevision
     ) {
@@ -570,9 +599,26 @@ export class LearningSessionController {
     return this.#initializePromise;
   }
 
+  /** DOM能力がない実行に偽snapshotを要求しない。 */
+  #requireDom() {
+    const dom = this.#execution.dom;
+    if (dom === undefined || !this.environment.capabilities.includes('dom'))
+      throw new Error('この採点にはDOM観測が必要です。この環境では未対応です。');
+    return dom;
+  }
+
+  /** 停止は待機中の実行・採点を即時に失効させ、下書きを保持する。 */
+  async stop(): Promise<void> {
+    this.#executionGeneration += 1;
+    this.#clearPreviewTimer();
+    await this.#execution.stop();
+  }
+
   /** iframe準備も他のRunner操作と直列化する。 */
   async prepare(frame: HTMLIFrameElement): Promise<void> {
-    return this.#enqueue(() => this.input.runner.prepare(frame));
+    return this.#enqueue(async () => {
+      await this.#execution.dom?.prepare(frame);
+    });
   }
 
   /** 既知かつeditableなFileだけを変更し、保存と250ms previewを予約して新revisionを返す。 */
@@ -600,6 +646,9 @@ export class LearningSessionController {
   resetToStarter(): boolean {
     this.#assertAcceptingOperations();
     if (filesEqual(this.#state.files, this.#starterFiles)) return false;
+    void this.stop().catch((error: unknown) => {
+      this.#reportBackgroundError(error);
+    });
     this.#markDraftMutation();
     this.#clearPreviewTimer();
     const selectedFile = Object.hasOwn(this.#starterFiles, this.#state.selectedFile)
@@ -695,26 +744,48 @@ export class LearningSessionController {
     execution: ExecutionInput,
     viewport: PreviewViewport,
     commitPreview: boolean,
-  ): Promise<RunnerRenderResult> {
+  ): Promise<ExecutionResult> {
     this.#assertFresh(execution);
-    const result = await this.input.runner.render({
+    const runId = `${this.#runNamespace}:${String(++this.#runSequence)}`;
+    const result = await this.#execution.execute({
+      runId,
+      backend: this.environment.backend,
+      engine: this.environment.engine,
       exerciseSessionId: execution.exerciseSessionId,
       executionRevision: execution.revision,
-      languageId: this.input.runner.languageId,
+      languageId: this.#execution.languageId,
       files: execution.files,
-      assets: this.input.resolvedAssets,
-      viewport,
+      presentation: { assets: this.input.resolvedAssets, viewport },
       options:
         this.input.exercise.runtime === undefined ? {} : { runtime: this.input.exercise.runtime },
+      requiredCapabilities:
+        this.input.exercise.runtime?.primaryOutput === 'console' ? ['console'] : ['dom'],
     });
     this.#assertFresh(execution);
     if (
+      result.runId !== runId ||
+      result.backend !== this.environment.backend ||
+      result.engine !== this.environment.engine ||
       result.exerciseSessionId !== execution.exerciseSessionId ||
       result.executionRevision !== execution.revision
     ) {
       throw new Error('Runner render identityが要求と一致しません');
     }
     const evidence = normalizeRunnerEvidence(result.evidence);
+    this.#replaceState({ ...this.#state, executionResult: result });
+    if (
+      result.status === 'unsupported' ||
+      result.status === 'stopped' ||
+      result.status === 'system-error'
+    ) {
+      this.#dispatch({
+        type: 'preview.completed',
+        revision: execution.revision,
+        diagnostics: result.diagnostics,
+        console: [],
+      });
+      throw new ExecutionNotGradableError(result);
+    }
     if (commitPreview) {
       this.#dispatch({
         type: 'preview.completed',
@@ -742,6 +813,7 @@ export class LearningSessionController {
   /** debounceを待たず、現在viewportのpreviewをRunner queueで更新する。 */
   async previewNow(): Promise<void> {
     this.#clearPreviewTimer();
+    this.#executionGeneration += 1;
     const execution = this.#captureExecution();
     const viewport = this.input.exercise.previewViewports[0];
     if (viewport === undefined) throw new Error('ExerciseにPreviewViewportがありません');
@@ -851,7 +923,7 @@ export class LearningSessionController {
     for (;;) {
       this.#assertFresh(execution);
       const requestId = this.#nextRequestId(usedRequestIds);
-      const snapshot = await this.input.runner.requestSnapshot({
+      const snapshot = await this.#requireDom().requestSnapshot({
         exerciseSessionId: execution.exerciseSessionId,
         executionRevision: execution.revision,
         requestId,
@@ -880,7 +952,7 @@ export class LearningSessionController {
     scenario: JavaScriptInteractionScenario,
     usedRequestIds: Set<string>,
   ): Promise<InteractionCheckpointResult[]> {
-    const interact = this.input.runner.interact?.bind(this.input.runner);
+    const interact = this.#execution.dom?.interact?.bind(this.#execution.dom);
     if (interact === undefined) throw new Error('RunnerがInteractionに対応していません');
     const rendered = await this.#render(execution, viewport, false);
     if (rendered.diagnostics.some(({ severity }) => severity === 'error')) {
@@ -952,7 +1024,7 @@ export class LearningSessionController {
       plan.exercises.map(({ id }) => [id, {}]),
     );
     const usedRequestIds = new Set<string>();
-    let lastRendered: RunnerRenderResult | undefined;
+    let lastRendered: ExecutionResult | undefined;
     let frameChangedAfterLastRender = false;
     for (const viewport of plan.viewports) {
       const rendered = await this.#render(execution, viewport, false);
@@ -971,7 +1043,7 @@ export class LearningSessionController {
       }
       if (rendered.diagnostics.some(({ severity }) => severity === 'error')) continue;
       const requestId = this.#nextRequestId(usedRequestIds);
-      const currentSnapshot = await this.input.runner.requestSnapshot({
+      const currentSnapshot = await this.#requireDom().requestSnapshot({
         exerciseSessionId: execution.exerciseSessionId,
         executionRevision: execution.revision,
         requestId,
@@ -1015,6 +1087,9 @@ export class LearningSessionController {
         now: this.input.now(),
       });
       this.#assertFresh(execution);
+      if (result.status === 'system-error') {
+        throw new Error('採点環境で問題が起きたため、今回の判定は保存していません。');
+      }
       batch.push({ exercise: item, result });
     }
     const result = mergeWorkspaceValidationResults(
@@ -1045,7 +1120,7 @@ export class LearningSessionController {
     let committedState = candidateState;
     const displayViewport = this.input.exercise.previewViewports[0];
     if (displayViewport !== undefined) {
-      let displayResult: RunnerRenderResult;
+      let displayResult: ExecutionResult;
       if (
         lastRendered !== undefined &&
         plan.viewports.at(-1)?.id === displayViewport.id &&
@@ -1078,6 +1153,7 @@ export class LearningSessionController {
         diagnostics: displayResult.diagnostics,
         console: displayResult.console,
       });
+      committedState = { ...committedState, executionResult: displayResult };
     }
     this.#assertFresh(execution);
     this.#lastValidationBatch = batch;
@@ -1090,6 +1166,7 @@ export class LearningSessionController {
   /** debounceを取消し、保存・multi-viewport判定・履歴保存を1 Runner queueで行う。 */
   async validateNow(): Promise<ValidationResult> {
     this.#clearPreviewTimer();
+    this.#executionGeneration += 1;
     const execution = this.#captureExecution();
     return this.#enqueue(() => this.#measure('validation', () => this.#validate(execution)));
   }
@@ -1104,6 +1181,9 @@ export class LearningSessionController {
   async dispose(): Promise<void> {
     if (this.#disposePromise !== undefined) return this.#disposePromise;
     this.#disposeRequested = true;
+    this.#executionGeneration += 1;
+    const disposal = this.#execution.dispose();
+    void disposal.catch(() => undefined);
     this.#clearPreviewTimer();
     this.#disposePromise = (async () => {
       await this.#operationTail;
@@ -1116,7 +1196,7 @@ export class LearningSessionController {
         this.#autosave.dispose();
       }
       try {
-        await this.input.runner.dispose();
+        await disposal;
       } catch (error: unknown) {
         errors.push(error);
       } finally {

@@ -71,15 +71,12 @@ describe('useLearningSession', () => {
     expect(fixture.flush).toHaveBeenCalledTimes(2);
   });
 
-  it('cleanupでflush後にdisposeし rejectionを未処理にしない', async () => {
+  it('cleanupで保存も引き受けるdisposeを直ちに呼び rejectionを未処理にしない', async () => {
     const fixture = hookController();
     const events: string[] = [];
-    fixture.flush.mockImplementation(async () => {
-      events.push('flush');
-      throw new Error('quota');
-    });
     fixture.dispose.mockImplementation(async () => {
       events.push('dispose');
+      throw new Error('quota');
     });
     const { unmount } = renderHook(() => useLearningSession(fixture.controller));
 
@@ -87,7 +84,8 @@ describe('useLearningSession', () => {
     await nextMicrotask();
     await Promise.resolve();
 
-    expect(events).toEqual(['flush', 'dispose']);
+    expect(events).toEqual(['dispose']);
+    expect(fixture.flush).not.toHaveBeenCalled();
   });
 
   it('Strict Modeのeffect再実行では利用中Controllerをdisposeせず実unmountで一度だけ解放する', async () => {
