@@ -18,6 +18,53 @@ async function closureDraft(page: Page) {
   return (await readStoredProgress(page)).drafts.find((draft) => draft['exerciseId'] === closureId);
 }
 
+test('Worker起動障害を採点履歴へ保存せず、再読込後に実行を回復する', async ({ page }) => {
+  await openEditableJavaScriptExercise(page, {
+    lessonId: 'javascript-ch03-l05',
+    exerciseId: closureId,
+    title: 'Closureで得点を10ずつ増やす',
+    consoleOnly: true,
+  });
+  const solution = await readFile(`${closureRoot}/solution/script.js`, 'utf8');
+  await replaceEditorText(page, solution);
+  await waitForStoredDraftContent(page, solution);
+  await page.getByRole('button', { name: '判定する', exact: true }).click();
+  await expect(
+    page.getByRole('dialog', { name: '判定結果' }).getByRole('heading', { name: 'できました' }),
+  ).toBeVisible();
+  const previous = await closureDraft(page);
+  // 実Worker生成を追加CSPで拒否し、Runnerモックではなく起動障害を作る。
+  const documentUrl = page.url().split('#')[0]!;
+  await page.route(documentUrl, async (route) => {
+    const response = await route.fetch();
+    await route.fulfill({
+      response,
+      headers: { ...response.headers(), 'content-security-policy': "worker-src 'none'" },
+    });
+  });
+  await page.reload();
+  await expect(
+    page.getByText('実行環境で問題が起きました。採点していません。', { exact: true }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: '判定する', exact: true }).click();
+  await expect(page.getByRole('alert').filter({ hasText: '実行環境の準備に失敗' })).toBeVisible();
+  await expect(page.getByRole('dialog', { name: '判定結果' })).toHaveCount(0);
+  expect((await closureDraft(page))?.['validationHistory']).toEqual(
+    previous?.['validationHistory'],
+  );
+  expect((await closureDraft(page))?.['lastPassingSnapshots']).toEqual(
+    previous?.['lastPassingSnapshots'],
+  );
+  await expect.poll(() => editorText(page)).toBe(solution);
+  await page.unroute(documentUrl);
+  await page.reload();
+  await expect(page.getByText('実行できました（合否は「判定する」で確認）')).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Console出力' }).locator('code')).toHaveText([
+    '10',
+    '20',
+  ]);
+});
+
 test('HTML/CSS導入はBrowser環境表示から実行と既存採点へつながる', async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto(RUNTIME_EXERCISE_PATH);
@@ -124,7 +171,10 @@ test('Closureの実行・合否・未対応・制限停止・下書き復旧を�
   ).toBeVisible();
   await page.getByRole('button', { name: '判定する', exact: true }).click();
   await expect(
-    page.getByRole('alert').filter({ hasText: /この環境では.*未対応/u }).first(),
+    page
+      .getByRole('alert')
+      .filter({ hasText: /この環境では.*未対応/u })
+      .first(),
   ).toBeVisible();
   await expect(page.getByRole('dialog', { name: '判定結果' })).toHaveCount(0);
   await expect(page.getByRole('region', { name: 'Console出力' })).toContainText(

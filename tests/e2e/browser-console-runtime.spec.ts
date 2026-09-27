@@ -69,6 +69,18 @@ test('製品Console経路は暴走・旧run・停止を隔離し、同じサー�
             'csp',
           ),
         );
+        const rejected = await runner.execute(
+          request('Promise.reject(new Error("oops"));', 'reject'),
+        );
+        const caught = await runner.execute(
+          request(
+            'const p = Promise.reject(new Error("handled")); queueMicrotask(() => p.catch(() => console.log("caught")));',
+            'catch',
+          ),
+        );
+        const microtaskError = await runner.execute(
+          request('queueMicrotask(() => { throw new Error("microtask"); });', 'microtask-error'),
+        );
         const first = runner.execute(request('while(true){}', 'old'));
         await new Promise((resolve) => setTimeout(resolve, 75));
         const second = runner.execute(request('console.log(42)', 'new'));
@@ -89,6 +101,9 @@ test('製品Console経路は暴走・旧run・停止を隔離し、同じサー�
         const disposed = await runner.execute(request('console.log(44)', 'disposed'));
         return {
           privateScope,
+          rejected,
+          caught,
+          microtaskError,
           csp,
           oldRun,
           newRun,
@@ -111,6 +126,9 @@ test('製品Console経路は暴走・旧run・停止を隔離し、同じサー�
     'undefined undefined undefined undefined',
   ]);
   expect(evidence.csp.console.map((row) => row.text)).toEqual(['EvalError']);
+  expect(evidence.rejected.status).toBe('code-error');
+  expect(evidence.caught).toMatchObject({ status: 'succeeded', console: [{ text: 'caught' }] });
+  expect(evidence.microtaskError.status).toBe('code-error');
   expect(evidence.oldRun).toMatchObject({ runId: 'old', status: 'stopped' });
   expect(evidence.newRun).toMatchObject({
     runId: 'new',
