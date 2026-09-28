@@ -1,0 +1,8 @@
+id: javascript-ch11
+sequence: 11
+title: キーボードで使いやすくする
+goal: Keyboard・Focus・操作の名前をそろえ、マウスだけに依存しないUIを作る。
+estimatedMinutes: 15
+kind: standard
+lessonSources:
+  - lessons/javascript-ch11-l01/lesson.yaml

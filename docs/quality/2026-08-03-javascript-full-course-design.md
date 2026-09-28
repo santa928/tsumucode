@@ -845,3 +845,15 @@ Ch08-l01は15分/4Slide/1演習。Ch00〜07と合わせ32Lesson/128Slide/34Exerc
 | REQ-JS-LOADING-006 | 維持 | Ch11/Project/人試用/独立review/公開昇格は未完。Runtime前提PR57/63/66を維持 |
 
 20分4Slide1演習、候補43Lesson172Slide45演習710分。Ch10の4Lesson75分は原稿候補がそろった段階。本人の初心者試用や独立reviewを完了扱いにしない。実Runnerの正誤と待機時の操作不可/成功失敗後の復旧、Reset後再編集判定、390px読書を確認する。
+
+### Ch11-l01 Keyboard（2026-09-28）
+
+| 要件 | 区分 | 内容 |
+|---|---|---|
+| REQ-JS-KEY-001 | 追加 | 標準buttonのTab/Enter/Spaceと追加Escape handlerを分け、二重clickを教えない |
+| REQ-JS-KEY-002 | 追加 | event.keyの条件でEscapeだけ閉じ、他キーと再操作を保持する |
+| REQ-JS-KEY-003 | 維持 | 既存Scenarioの合成keyはhandler検証。標準キー動作は実Browserキー入力で別途確認 |
+| REQ-JS-KEY-004 | 維持 | .16→.17空移行、ID/進捗/下書き/ImportExportとHome分離・能力制限 |
+| REQ-JS-KEY-005 | 維持 | Ch11残2単元/Project/本人試用/独立レビュー/公開は未完 |
+
+15分4Slide1演習、候補44Lesson176Slide46演習725分。読み取り専用HTMLは標準buttonと明確な名前、CSSはFocus枠を提供し、学習者はJavaScriptの条件へ集中する。実操作ではTabからEnter/Space/Escapeを試し、390px読書と既存保存を確認。画面全体のキー捕捉やRuntimeの合成キーをOS相当とみなす変更は行わない。

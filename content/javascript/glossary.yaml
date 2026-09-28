@@ -616,3 +616,20 @@ entries:
     firstSlideId: javascript-ch10-l04-s03
     relatedIds:
       - try-catch
+  - id: keyboard-focus
+    term: Focus
+    definition: キーボード操作が向かう現在の要素。枠線などで見えるようにする。
+    firstSlideId: javascript-ch11-l01-s01
+    relatedIds: []
+  - id: keydown-event
+    term: keydown
+    definition: キーを押したときに起きるEvent。handlerでevent.keyを調べられる。
+    firstSlideId: javascript-ch11-l01-s02
+    relatedIds:
+      - event-key
+  - id: event-key
+    term: event.key
+    definition: 押されたキーの文字や名前。EscapeはEscape、Spaceは空白1文字。
+    firstSlideId: javascript-ch11-l01-s02
+    relatedIds:
+      - keydown-event

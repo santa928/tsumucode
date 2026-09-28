@@ -760,3 +760,23 @@ concepts:
     prerequisiteConceptIds:
       - finally-release-controls
     minimumProjectLevel: transform
+  - id: native-button-keyboard
+    introducedBySlideId: javascript-ch11-l01-s01
+    prerequisiteConceptIds:
+      - loading-retry-flow
+    minimumProjectLevel: read
+  - id: keyboard-event-key
+    introducedBySlideId: javascript-ch11-l01-s02
+    prerequisiteConceptIds:
+      - native-button-keyboard
+    minimumProjectLevel: read
+  - id: escape-key-condition
+    introducedBySlideId: javascript-ch11-l01-s03
+    prerequisiteConceptIds:
+      - keyboard-event-key
+    minimumProjectLevel: read
+  - id: keyboard-hint-retry
+    introducedBySlideId: javascript-ch11-l01-s04
+    prerequisiteConceptIds:
+      - escape-key-condition
+    minimumProjectLevel: transform
