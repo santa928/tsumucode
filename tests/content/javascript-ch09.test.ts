@@ -15,7 +15,7 @@ it('State単元は既習ScopeとDOMを結び、繰り返し操作を採点する
     },
     'javascript-ch09',
     chapter.lessons.map(({ id }) => id),
-    ['javascript-ch09-l01', 'javascript-ch09-l02', 'javascript-ch09-l03'],
+    ['javascript-ch09-l01', 'javascript-ch09-l02', 'javascript-ch09-l03', 'javascript-ch09-l04'],
   );
   const exercise = course.exercises.find(({ id }) => id === 'javascript-ch09-l01-e01')!;
   expect(exercise.runtime).toMatchObject({ capabilityProfile: 'dom', primaryOutput: 'preview' });

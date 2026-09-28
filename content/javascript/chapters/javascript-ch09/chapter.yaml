@@ -2,9 +2,10 @@ id: javascript-ch09
 sequence: 9
 title: 状態から画面を作る
 goal: 操作の間で値を保持し、値を更新してから表示へ反映できる。
-estimatedMinutes: 55
+estimatedMinutes: 70
 kind: standard
 lessonSources:
   - lessons/javascript-ch09-l01/lesson.yaml
   - lessons/javascript-ch09-l02/lesson.yaml
   - lessons/javascript-ch09-l03/lesson.yaml
+  - lessons/javascript-ch09-l04/lesson.yaml

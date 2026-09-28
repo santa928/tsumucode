@@ -10,7 +10,7 @@ export function ReadingPilotPage() {
     <section className="tc-reading-article">
       <h1>試用レッスンの目次</h1>
       <p>
-        制作途中の教材を試す入口です。対象はHTML/CSS導入・JavaScript導入・Closure・DOMの4単元とclick・input・Form・入力検証の4単元、State・表示更新・一覧の3単元です。JavaScriptコース全体の完成版ではありません。
+        制作途中の教材を試す入口です。対象はHTML/CSS導入・JavaScript導入・Closure・DOMの4単元とclick・input・Form・入力検証の4単元、State・表示更新・一覧・絞り込みの4単元です。JavaScriptコース全体の完成版ではありません。
       </p>
       <p>
         読むだけならスマートフォンでも利用できます。コードの編集・実行は対応するPC演習へ進んでください。Pagesとローカル学習版は保存先が別で、自動同期はありません。
@@ -24,6 +24,18 @@ export function ReadingPilotPage() {
               <li key={lesson.id}>
                 <h3>{lesson.title}</h3>
                 <p>{lesson.goal}</p>
+                {lesson.id === 'javascript-ch09-l04' && (
+                  <p>
+                    <Link to="/courses/javascript/lessons/javascript-ch05-l02/slides/javascript-ch05-l02-s01">
+                      条件を満たす要素を選ぶfilter
+                    </Link>
+                    と、
+                    <Link to="/library/pilot/javascript/lessons/javascript-ch09-l03/read">
+                      Arrayから一覧を描く説明
+                    </Link>
+                    を使います。
+                  </p>
+                )}
                 {lesson.id === 'javascript-ch09-l03' && (
                   <p>
                     <Link to="/courses/javascript/lessons/javascript-ch07-l03/slides/javascript-ch07-l03-s02">

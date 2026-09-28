@@ -1,0 +1,508 @@
+id: javascript-ch09-l04-e01
+kind: standard
+workspaceId: javascript-ch09-l04-e01
+countsTowardStandardExerciseTotal: true
+title: すべての本へ戻せる絞り込み
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: preserve-source-on-filter
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: preserve-source
+    file: script.js
+    target: render内のifの中
+    starterAnchor: "  if (state.onlyUnread) {"
+    change: 元のstate.itemsを上書きせず、visibleへfilterの結果を入れる
+    observe: 未読とすべての往復で、本を失わず一覧と件数を切り替える
+    requiresConceptIds:
+      - preserve-source-on-filter
+    validationRuleIds:
+      - javascript-ch09-l04-e01-r01
+      - javascript-ch09-l04-e01-r02
+      - javascript-ch09-l04-e01-r03
+      - javascript-ch09-l04-e01-r04
+      - javascript-ch09-l04-e01-r05
+files:
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: starter/styles.css
+    editable: false
+  - path: script.js
+    language: javascript
+    source: starter/script.js
+    editable: true
+solutionFiles:
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: solution/styles.css
+    editable: false
+  - path: script.js
+    language: javascript
+    source: solution/script.js
+    editable: false
+validationRules:
+  - id: javascript-ch09-l04-e01-r01
+    label: 最初は表示3冊・全体3冊
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: "#count"
+    assertion:
+      kind: text
+      operator: equals
+      expected: "表示: 3 / 全体: 3"
+    feedback:
+      target: script.jsとPreview
+      expected: 最初は表示3冊・全体3冊
+      nextAction: renderの消去・追加・件数更新の順を確かめます。
+    hintId: javascript-ch09-l04-e01-h02
+    relatedSlideId: javascript-ch09-l04-s03
+  - id: javascript-ch09-l04-e01-r02
+    label: 最初の本は星の本
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: "#books > li:first-child"
+    assertion:
+      kind: text
+      operator: equals
+      expected: 星の本
+    feedback:
+      target: script.jsとPreview
+      expected: 最初の本は星の本
+      nextAction: renderの消去・追加・件数更新の順を確かめます。
+    hintId: javascript-ch09-l04-e01-h02
+    relatedSlideId: javascript-ch09-l04-s03
+  - id: javascript-ch09-l04-e01-r03
+    label: 最初の行は3件
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: "#books > li"
+    assertion:
+      kind: count
+      operator: equals
+      expected: 3
+    feedback:
+      target: script.jsとPreview
+      expected: 最初の行は3件
+      nextAction: renderの消去・追加・件数更新の順を確かめます。
+    hintId: javascript-ch09-l04-e01-h02
+    relatedSlideId: javascript-ch09-l04-s03
+  - id: javascript-ch09-l04-e01-r04
+    label: メモを保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: "#note"
+    assertion:
+      kind: text
+      operator: equals
+      expected: 自分のペースで読もう
+    feedback:
+      target: script.jsとPreview
+      expected: メモを保つ
+      nextAction: renderの消去・追加・件数更新の順を確かめます。
+    hintId: javascript-ch09-l04-e01-h02
+    relatedSlideId: javascript-ch09-l04-s03
+  - id: javascript-ch09-l04-e01-r05
+    label: createElementで新しい要素を作る
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: call
+        callee: document.createElement
+    feedback:
+      target: script.js
+      expected: createElementで新しい要素を作る
+      nextAction: 新しいliの参照を作る行を確かめます。
+    hintId: javascript-ch09-l04-e01-h02
+    relatedSlideId: javascript-ch09-l04-s03
+hints:
+  - id: javascript-ch09-l04-e01-h01
+    level: 1
+    title: 表示を切り替えた後の元データを見る
+    text: 未読だけを選んだとき、state.itemsも2冊へ減っていませんか。
+    relatedSlideId: javascript-ch09-l04-s02
+  - id: javascript-ch09-l04-e01-h02
+    level: 2
+    title: filterの結果は表示用に使う
+    text: 元の3冊を残し、render内のvisibleへ絞り込んだArrayを代入します。
+    relatedSlideId: javascript-ch09-l04-s03
+  - id: javascript-ch09-l04-e01-h03
+    level: 3
+    title: visibleへの代入にまとめる
+    text: if内の2行をvisible = state.items.filter((book) => book.done ===
+      false);の1行へ変えます。state.itemsへは代入しません。
+    relatedSlideId: javascript-ch09-l04-s04
+relatedSlideIds:
+  - javascript-ch09-l04-s01
+  - javascript-ch09-l04-s02
+  - javascript-ch09-l04-s03
+  - javascript-ch09-l04-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: block-filter
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/block-filter/script.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: text-clear
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/text-clear/script.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: wrong-filter
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/wrong-filter/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:filter-state:unread:count
+      - interaction:filter-state:unread:rows
+      - interaction:filter-state:unread:item-0
+      - interaction:filter-state:unread:item-1
+      - interaction:filter-state:unread:note
+      - interaction:filter-state:unread-again:count
+      - interaction:filter-state:unread-again:rows
+      - interaction:filter-state:unread-again:item-0
+      - interaction:filter-state:unread-again:item-1
+      - interaction:filter-state:unread-again:note
+      - interaction:filter-state:unread-return:count
+      - interaction:filter-state:unread-return:rows
+      - interaction:filter-state:unread-return:item-0
+      - interaction:filter-state:unread-return:item-1
+      - interaction:filter-state:unread-return:note
+  - id: always-all
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/always-all/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:filter-state:unread:count
+      - interaction:filter-state:unread:rows
+      - interaction:filter-state:unread:item-0
+      - interaction:filter-state:unread:item-1
+      - interaction:filter-state:unread:note
+      - interaction:filter-state:unread-again:count
+      - interaction:filter-state:unread-again:rows
+      - interaction:filter-state:unread-again:item-0
+      - interaction:filter-state:unread-again:item-1
+      - interaction:filter-state:unread-again:note
+      - interaction:filter-state:unread-return:count
+      - interaction:filter-state:unread-return:rows
+      - interaction:filter-state:unread-return:item-0
+      - interaction:filter-state:unread-return:item-1
+      - interaction:filter-state:unread-return:note
+  - id: always-unread
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/always-unread/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch09-l04-e01-r01
+      - javascript-ch09-l04-e01-r03
+      - interaction:filter-state:all:count
+      - interaction:filter-state:all:rows
+      - interaction:filter-state:all:item-0
+      - interaction:filter-state:all:item-1
+      - interaction:filter-state:all:item-2
+      - interaction:filter-state:all:note
+      - interaction:filter-state:all-return:count
+      - interaction:filter-state:all-return:rows
+      - interaction:filter-state:all-return:item-0
+      - interaction:filter-state:all-return:item-1
+      - interaction:filter-state:all-return:item-2
+      - interaction:filter-state:all-return:note
+  - id: missing-render
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/missing-render/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:filter-state:all:count
+      - interaction:filter-state:all:rows
+      - interaction:filter-state:all:item-0
+      - interaction:filter-state:all:item-1
+      - interaction:filter-state:all:item-2
+      - interaction:filter-state:all:note
+      - interaction:filter-state:all-return:count
+      - interaction:filter-state:all-return:rows
+      - interaction:filter-state:all-return:item-0
+      - interaction:filter-state:all-return:item-1
+      - interaction:filter-state:all-return:item-2
+      - interaction:filter-state:all-return:note
+  - id: stale-count
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/stale-count/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:filter-state:unread:count
+      - interaction:filter-state:unread:rows
+      - interaction:filter-state:unread:item-0
+      - interaction:filter-state:unread:item-1
+      - interaction:filter-state:unread:note
+      - interaction:filter-state:unread-again:count
+      - interaction:filter-state:unread-again:rows
+      - interaction:filter-state:unread-again:item-0
+      - interaction:filter-state:unread-again:item-1
+      - interaction:filter-state:unread-again:note
+      - interaction:filter-state:unread-return:count
+      - interaction:filter-state:unread-return:rows
+      - interaction:filter-state:unread-return:item-0
+      - interaction:filter-state:unread-return:item-1
+      - interaction:filter-state:unread-return:note
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: dom
+  primaryOutput: preview
+interactionScenarios:
+  - id: filter-state
+    label: 表示条件を往復して元の本を保持する
+    actions:
+      - id: unread
+        kind: click
+        selector: "#unread"
+      - id: unread-again
+        kind: click
+        selector: "#unread"
+      - id: all
+        kind: click
+        selector: "#all"
+      - id: unread-return
+        kind: click
+        selector: "#unread"
+      - id: all-return
+        kind: click
+        selector: "#all"
+    checkpoints:
+      - id: unread
+        afterActionId: unread
+        expectations:
+          - id: count
+            kind: selector-text
+            selector: "#count"
+            equals: "表示: 2 / 全体: 3"
+          - id: rows
+            kind: selector-exists
+            selector: "#books > li:nth-child(2):last-child"
+          - id: item-0
+            kind: selector-text
+            selector: "#books > li:nth-child(1)"
+            equals: 星の本
+          - id: item-1
+            kind: selector-text
+            selector: "#books > li:nth-child(2)"
+            equals: 森の本
+          - id: note
+            kind: selector-text
+            selector: "#note"
+            equals: 自分のペースで読もう
+      - id: unread-again
+        afterActionId: unread-again
+        expectations:
+          - id: count
+            kind: selector-text
+            selector: "#count"
+            equals: "表示: 2 / 全体: 3"
+          - id: rows
+            kind: selector-exists
+            selector: "#books > li:nth-child(2):last-child"
+          - id: item-0
+            kind: selector-text
+            selector: "#books > li:nth-child(1)"
+            equals: 星の本
+          - id: item-1
+            kind: selector-text
+            selector: "#books > li:nth-child(2)"
+            equals: 森の本
+          - id: note
+            kind: selector-text
+            selector: "#note"
+            equals: 自分のペースで読もう
+      - id: all
+        afterActionId: all
+        expectations:
+          - id: count
+            kind: selector-text
+            selector: "#count"
+            equals: "表示: 3 / 全体: 3"
+          - id: rows
+            kind: selector-exists
+            selector: "#books > li:nth-child(3):last-child"
+          - id: item-0
+            kind: selector-text
+            selector: "#books > li:nth-child(1)"
+            equals: 星の本
+          - id: item-1
+            kind: selector-text
+            selector: "#books > li:nth-child(2)"
+            equals: 海の本
+          - id: item-2
+            kind: selector-text
+            selector: "#books > li:nth-child(3)"
+            equals: 森の本
+          - id: note
+            kind: selector-text
+            selector: "#note"
+            equals: 自分のペースで読もう
+      - id: unread-return
+        afterActionId: unread-return
+        expectations:
+          - id: count
+            kind: selector-text
+            selector: "#count"
+            equals: "表示: 2 / 全体: 3"
+          - id: rows
+            kind: selector-exists
+            selector: "#books > li:nth-child(2):last-child"
+          - id: item-0
+            kind: selector-text
+            selector: "#books > li:nth-child(1)"
+            equals: 星の本
+          - id: item-1
+            kind: selector-text
+            selector: "#books > li:nth-child(2)"
+            equals: 森の本
+          - id: note
+            kind: selector-text
+            selector: "#note"
+            equals: 自分のペースで読もう
+      - id: all-return
+        afterActionId: all-return
+        expectations:
+          - id: count
+            kind: selector-text
+            selector: "#count"
+            equals: "表示: 3 / 全体: 3"
+          - id: rows
+            kind: selector-exists
+            selector: "#books > li:nth-child(3):last-child"
+          - id: item-0
+            kind: selector-text
+            selector: "#books > li:nth-child(1)"
+            equals: 星の本
+          - id: item-1
+            kind: selector-text
+            selector: "#books > li:nth-child(2)"
+            equals: 海の本
+          - id: item-2
+            kind: selector-text
+            selector: "#books > li:nth-child(3)"
+            equals: 森の本
+          - id: note
+            kind: selector-text
+            selector: "#note"
+            equals: 自分のペースで読もう

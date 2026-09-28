@@ -660,3 +660,23 @@ concepts:
     prerequisiteConceptIds:
       - render-array-items
     minimumProjectLevel: transform
+  - id: source-and-view-state
+    introducedBySlideId: javascript-ch09-l04-s01
+    prerequisiteConceptIds:
+      - array-render-empty
+    minimumProjectLevel: read
+  - id: derived-visible-items
+    introducedBySlideId: javascript-ch09-l04-s02
+    prerequisiteConceptIds:
+      - source-and-view-state
+    minimumProjectLevel: read
+  - id: filter-state-render
+    introducedBySlideId: javascript-ch09-l04-s03
+    prerequisiteConceptIds:
+      - derived-visible-items
+    minimumProjectLevel: read
+  - id: preserve-source-on-filter
+    introducedBySlideId: javascript-ch09-l04-s04
+    prerequisiteConceptIds:
+      - filter-state-render
+    minimumProjectLevel: transform

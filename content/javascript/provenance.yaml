@@ -4168,3 +4168,95 @@ items:
     visibility: public
     path: chapters/javascript-ch09/lessons/javascript-ch09-l03/slides/s04.md
     createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-0
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/exercise.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-1
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/fixtures/always-all/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-2
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/fixtures/always-unread/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-3
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/fixtures/block-filter/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-4
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/fixtures/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-5
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/fixtures/missing-render/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-6
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/fixtures/stale-count/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-7
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/fixtures/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-8
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/fixtures/text-clear/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-9
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/fixtures/wrong-filter/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-10
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/instructions.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-11
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/solution/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-12
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/solution/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-13
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/solution/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-14
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/starter/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-15
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/starter/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-16
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/starter/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-17
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/lesson.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-diagram-original
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/slides/assets/filter-flow.svg
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-19
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/slides/s01.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-20
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/slides/s02.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-21
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/slides/s03.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-22
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/slides/s04.md
+    createdAt: 2026-09-28
