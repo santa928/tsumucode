@@ -1,0 +1,27 @@
+id: javascript-ch07-l04
+kind: standard
+title: 複数の要素へ同じ変更を行う
+goal: querySelectorAllで対象の集合を選び、各要素へ同じ操作を行い、対象外の表示を保てる。
+estimatedMinutes: 15
+prerequisiteLessonIds:
+  - javascript-ch07-l03
+  - javascript-ch03-l04
+  - javascript-ch05-l01
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/javascript-ch07-l04-e01/exercise.yaml
+reflection: 集合を選ぶ条件と、1要素へ行う操作を分けて考える。0件なら操作は1回も起きない。
+glossaryRefs:
+  - selector
+  - node-list
+  - dom-for-each
+  - callback
+completion:
+  kind: standard
+  finalSlideId: javascript-ch07-l04-s04
+  requiredExerciseIds:
+    - javascript-ch07-l04-e01

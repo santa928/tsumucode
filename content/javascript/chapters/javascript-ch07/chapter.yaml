@@ -1,10 +1,11 @@
 id: javascript-ch07
 sequence: 7
 title: DOMを探す・変える・作る
-goal: DOMの要素を選び、文字やclassを変え、新しい要素を作って接続する。現在は先頭の3単元を試せます。
-estimatedMinutes: 55
+goal: DOMの要素を探し、文字やclassを変え、生成と接続、複数要素への操作を説明できる。
+estimatedMinutes: 70
 kind: standard
 lessonSources:
   - lessons/javascript-ch07-l01/lesson.yaml
   - lessons/javascript-ch07-l02/lesson.yaml
   - lessons/javascript-ch07-l03/lesson.yaml
+  - lessons/javascript-ch07-l04/lesson.yaml

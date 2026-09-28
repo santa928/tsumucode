@@ -441,3 +441,17 @@ entries:
     firstSlideId: javascript-ch07-l03-s03
     relatedIds:
       - create-element
+  - id: node-list
+    term: NodeList
+    definition: 要素などのNodeの集合。querySelectorAllは、取得時の条件に合った要素の参照をこの集合で返す。
+    firstSlideId: javascript-ch07-l04-s01
+    relatedIds:
+      - dom-reference
+      - selector
+  - id: dom-for-each
+    term: forEach
+    definition: 集合の各要素についてcallbackを呼び出す操作。NodeListでも使え、0件ならcallbackは呼ばれない。
+    firstSlideId: javascript-ch07-l04-s02
+    relatedIds:
+      - node-list
+      - callback

@@ -3,7 +3,7 @@ import { loadChapterPackage } from '../../scripts/content/loadChapterPackage';
 import { loadAuthoringCourse } from '../../scripts/content/compileCourse';
 import { assertChapterConceptCoverage } from './concept-coverage';
 
-it('Ch07は先頭3単元で、参照・class・生成と接続を学ぶ', async () => {
+it('Ch07は4単元で、参照・class・生成接続・複数操作を学ぶ', async () => {
   const loaded = await loadChapterPackage(
     'content/javascript/chapters/javascript-ch07/chapter.yaml',
   );
@@ -11,6 +11,7 @@ it('Ch07は先頭3単元で、参照・class・生成と接続を学ぶ', async 
     'javascript-ch07-l01',
     'javascript-ch07-l02',
     'javascript-ch07-l03',
+    'javascript-ch07-l04',
   ]);
   expect(loaded.lessons[0]?.prerequisiteLessonIds).toEqual([
     'javascript-ch01-l02',
@@ -45,6 +46,6 @@ it('Ch07は先頭3単元で、参照・class・生成と接続を学ぶ', async 
     },
     'javascript-ch07',
     chapter!.lessons.map(({ id }) => id),
-    ['javascript-ch07-l01', 'javascript-ch07-l02', 'javascript-ch07-l03'],
+    ['javascript-ch07-l01', 'javascript-ch07-l02', 'javascript-ch07-l03', 'javascript-ch07-l04'],
   );
 });

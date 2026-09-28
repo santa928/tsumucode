@@ -671,3 +671,16 @@ l03「要素を作ってページへ追加する」は4Slide/1Exercise/20分。�
 createElementの既存call factを最小の概念確認に使う。appendChildは推奨手段として説明し、親変数名を含むcall factで別名解答を固定しない。接続後に文字を設定する別解も実DOMで確認する。Runtime・セキュリティ・依存・性能予算・公開Gateは不変。Eventと複数要素の走査は後続。
 
 受入検証は新演習の代表Fixture、編集/Reset/Preview/判定と保存、PC/390px通読、掲載例の実Runner実行、対象Compile/Review/型/Lint/遅延chunk。全Courseや全Browserをこの教材追加ごとの条件へ拡大しない。人の初心者・物理実機・#26Bの既存教材改訂計測は別途未完を維持する。
+
+## #8 Ch07の第4単元追加（2026-09-28）
+
+l04「複数の要素へ同じ変更を行う」は4Slide/1Exercise/15分。Ch07は4Lesson70分、累計31Lesson/124Slide/33Exercise/500分。Course draft、2026-09-28.3→.4は既存IDを保つ空移行edge。Ch08以降は未完成である。
+
+| 要件 | 区分 | 内容 |
+|---|---|---|
+| REQ-JSC-DOM-001〜004・006〜009 | 維持 | 先行DOM教材、保存、実行/合否、独立内容レビュー、既存公開Gate |
+| REQ-JSC-DOM-005 | 変更 | 有限試用へ完成したl04だけを追加。Ch08以降は未完成として拒否する |
+| REQ-JSC-DOM-010 | 追加 | querySelectorAllのstatic NodeListと0件、各要素を扱うforEach、mapとの目的の違いを説明する |
+| REQ-JSC-DOM-011 | 追加 | 本3件のclass状態、共通class、各文字、対象外メモを実DOMで確認し、別名とfor-ofの別解も許す |
+
+forEachは既習扱いせず明示導入し、Arrowの引数とmapのcallbackの既習説明をリンクする。最小Source条件はquerySelectorAllのみ、foreachの構文やcallback変数名を固定しない。Runtime/新fact/隔離は変更せず、能力小例と新教材Fixture/実操作/PCと390px読書/掲載例/変更関連Compilerで検証する。性能予算と公開Gateは維持し、Ch07のまとまりを統合してからβ公開候補とする。人の初心者/物理実機やCh08以降の完成を代替しない。

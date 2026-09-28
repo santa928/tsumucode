@@ -1,0 +1,394 @@
+id: javascript-ch07-l04-e01
+kind: standard
+workspaceId: javascript-ch07-l04-e01
+countsTowardStandardExerciseTotal: true
+title: 三冊すべてを読了にする
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: dom-change-all
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: change-all-books
+    file: script.js
+    target: 集合の取得と1件ずつのclass操作
+    starterAnchor: const book = document.querySelector('#books .book');
+    change: 対象を全件取得し、各要素からpendingを外してdoneを付ける
+    observe: 3冊すべての点線が緑の実線になり、メモと文字は変わらない
+    requiresConceptIds:
+      - dom-change-all
+    validationRuleIds:
+      - javascript-ch07-l04-e01-r01
+      - javascript-ch07-l04-e01-r02
+      - javascript-ch07-l04-e01-r03
+      - javascript-ch07-l04-e01-r04
+      - javascript-ch07-l04-e01-r05
+      - javascript-ch07-l04-e01-r06
+      - javascript-ch07-l04-e01-r07
+      - javascript-ch07-l04-e01-r08
+      - javascript-ch07-l04-e01-r09
+files:
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: starter/styles.css
+    editable: false
+  - path: script.js
+    language: javascript
+    source: starter/script.js
+    editable: true
+solutionFiles:
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: solution/styles.css
+    editable: false
+  - path: script.js
+    language: javascript
+    source: solution/script.js
+    editable: false
+validationRules:
+  - id: javascript-ch07-l04-e01-r01
+    label: 共通classを3件とも保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: "#books > .book"
+    assertion:
+      kind: count
+      operator: equals
+      expected: 3
+    feedback:
+      target: Previewとscript.js
+      expected: 共通classを3件とも保つ
+      nextAction: 選んだ集合と、各要素へ行うclass操作を分けて確認します。
+    hintId: javascript-ch07-l04-e01-h02
+    relatedSlideId: javascript-ch07-l04-s03
+  - id: javascript-ch07-l04-e01-r02
+    label: 3冊すべてを読了にする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: "#books > .book.done"
+    assertion:
+      kind: count
+      operator: equals
+      expected: 3
+    feedback:
+      target: Previewとscript.js
+      expected: 3冊すべてを読了にする
+      nextAction: 選んだ集合と、各要素へ行うclass操作を分けて確認します。
+    hintId: javascript-ch07-l04-e01-h02
+    relatedSlideId: javascript-ch07-l04-s03
+  - id: javascript-ch07-l04-e01-r03
+    label: 未読classを残さない
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: "#books > .pending"
+    assertion:
+      kind: count
+      operator: equals
+      expected: 0
+    feedback:
+      target: Previewとscript.js
+      expected: 未読classを残さない
+      nextAction: 選んだ集合と、各要素へ行うclass操作を分けて確認します。
+    hintId: javascript-ch07-l04-e01-h02
+    relatedSlideId: javascript-ch07-l04-s03
+  - id: javascript-ch07-l04-e01-r04
+    label: 一冊目の文字を保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: "#first"
+    assertion:
+      kind: text
+      operator: equals
+      expected: 一冊目
+    feedback:
+      target: Previewとscript.js
+      expected: 一冊目の文字を保つ
+      nextAction: 選んだ集合と、各要素へ行うclass操作を分けて確認します。
+    hintId: javascript-ch07-l04-e01-h02
+    relatedSlideId: javascript-ch07-l04-s03
+  - id: javascript-ch07-l04-e01-r05
+    label: 二冊目の文字を保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: "#second"
+    assertion:
+      kind: text
+      operator: equals
+      expected: 二冊目
+    feedback:
+      target: Previewとscript.js
+      expected: 二冊目の文字を保つ
+      nextAction: 選んだ集合と、各要素へ行うclass操作を分けて確認します。
+    hintId: javascript-ch07-l04-e01-h02
+    relatedSlideId: javascript-ch07-l04-s03
+  - id: javascript-ch07-l04-e01-r06
+    label: 三冊目の文字を保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: "#third"
+    assertion:
+      kind: text
+      operator: equals
+      expected: 三冊目
+    feedback:
+      target: Previewとscript.js
+      expected: 三冊目の文字を保つ
+      nextAction: 選んだ集合と、各要素へ行うclass操作を分けて確認します。
+    hintId: javascript-ch07-l04-e01-h02
+    relatedSlideId: javascript-ch07-l04-s03
+  - id: javascript-ch07-l04-e01-r07
+    label: 対象外メモの状態を保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: "#note.note.pending:not(.done)"
+    assertion:
+      kind: count
+      operator: equals
+      expected: 1
+    feedback:
+      target: Previewとscript.js
+      expected: 対象外メモの状態を保つ
+      nextAction: 選んだ集合と、各要素へ行うclass操作を分けて確認します。
+    hintId: javascript-ch07-l04-e01-h02
+    relatedSlideId: javascript-ch07-l04-s03
+  - id: javascript-ch07-l04-e01-r08
+    label: メモの文字を保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: "#note"
+    assertion:
+      kind: text
+      operator: equals
+      expected: 図書館で探す
+    feedback:
+      target: Previewとscript.js
+      expected: メモの文字を保つ
+      nextAction: 選んだ集合と、各要素へ行うclass操作を分けて確認します。
+    hintId: javascript-ch07-l04-e01-h02
+    relatedSlideId: javascript-ch07-l04-s03
+  - id: javascript-ch07-l04-e01-r09
+    label: querySelectorAllで対象をまとめて取得する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: call
+        callee: document.querySelectorAll
+    feedback:
+      target: script.js
+      expected: querySelectorAllで集合を取得する
+      nextAction: 先頭だけのquerySelectorと集合のquerySelectorAllを比べます。
+    hintId: javascript-ch07-l04-e01-h01
+    relatedSlideId: javascript-ch07-l04-s01
+hints:
+  - id: javascript-ch07-l04-e01-h01
+    level: 1
+    title: 先頭だけか、全件か
+    text: querySelectorは最初の1件です。3冊すべてを扱うには、集合を取得して各要素へ操作します。
+    relatedSlideId: javascript-ch07-l04-s02
+  - id: javascript-ch07-l04-e01-h02
+    level: 2
+    title: 集合と1要素を分ける
+    text: querySelectorAllの結果へforEachを呼び、callbackで受け取った1冊のclassListを操作します。メモは集合へ入れません。
+    relatedSlideId: javascript-ch07-l04-s03
+  - id: javascript-ch07-l04-e01-h03
+    level: 3
+    title: 各要素の状態を直す
+    text: const books = document.querySelectorAll('#books
+      .book');で取得し、books.forEach((book) => { book.classList.remove('pending');
+      book.classList.add('done'); });を実行します。
+    relatedSlideId: javascript-ch07-l04-s04
+relatedSlideIds:
+  - javascript-ch07-l04-s01
+  - javascript-ch07-l04-s02
+  - javascript-ch07-l04-s03
+  - javascript-ch07-l04-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: alternate-name
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/alternate-name/script.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: for-of
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/for-of/script.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: first-only
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/first-only/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch07-l04-e01-r02
+      - javascript-ch07-l04-e01-r03
+      - javascript-ch07-l04-e01-r09
+  - id: pending-remains
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/pending-remains/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch07-l04-e01-r03
+  - id: base-removed
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/base-removed/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch07-l04-e01-r01
+      - javascript-ch07-l04-e01-r02
+      - javascript-ch07-l04-e01-r03
+  - id: outside-changed
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/outside-changed/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch07-l04-e01-r07
+  - id: empty-selection
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/empty-selection/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch07-l04-e01-r02
+      - javascript-ch07-l04-e01-r03
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: dom
+  primaryOutput: preview
