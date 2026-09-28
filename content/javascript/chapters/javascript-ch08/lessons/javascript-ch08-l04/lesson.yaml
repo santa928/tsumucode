@@ -1,0 +1,27 @@
+id: javascript-ch08-l04
+kind: standard
+title: 空欄を確かめてから登録する
+goal: 空白を除いた入力をifで確かめ、案内と登録を分けられる。
+estimatedMinutes: 15
+prerequisiteLessonIds:
+  - javascript-ch08-l03
+  - javascript-ch02-l02
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/javascript-ch08-l04-e01/exercise.yaml
+reflection: trimは前後の空白を除いた別の文字列を返す。その結果を空文字と比べ、無効な入力では案内だけを変えて登録済みの内容を保つ。
+glossaryRefs:
+  - input-validation
+  - string-trim
+  - empty-string
+  - form
+  - prevent-default
+completion:
+  kind: standard
+  finalSlideId: javascript-ch08-l04-s04
+  requiredExerciseIds:
+    - javascript-ch08-l04-e01

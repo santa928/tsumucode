@@ -11,6 +11,7 @@ it('Ch08先頭は既習FunctionとDOMから操作前後を実Scenarioへ接続�
     'javascript-ch08-l01',
     'javascript-ch08-l02',
     'javascript-ch08-l03',
+    'javascript-ch08-l04',
   ]);
   assertChapterConceptCoverage(
     {
@@ -19,8 +20,8 @@ it('Ch08先頭は既習FunctionとDOMから操作前後を実Scenarioへ接続�
       unmetRequirements: authoring.masteryDiagnostics,
     },
     'javascript-ch08',
-    ['javascript-ch08-l01', 'javascript-ch08-l02', 'javascript-ch08-l03'],
-    ['javascript-ch08-l01', 'javascript-ch08-l02', 'javascript-ch08-l03'],
+    ['javascript-ch08-l01', 'javascript-ch08-l02', 'javascript-ch08-l03', 'javascript-ch08-l04'],
+    ['javascript-ch08-l01', 'javascript-ch08-l02', 'javascript-ch08-l03', 'javascript-ch08-l04'],
   );
   const exercise = authoring.exercises.find(({ id }) => id === 'javascript-ch08-l01-e01')!;
   expect(exercise.runtime).toMatchObject({ capabilityProfile: 'dom', primaryOutput: 'preview' });
@@ -43,6 +44,10 @@ it('Ch08先頭は既習FunctionとDOMから操作前後を実Scenarioへ接続�
   ]);
   const form = authoring.exercises.find(({ id }) => id === 'javascript-ch08-l03-e01')!;
   expect(form.runtime).toMatchObject({ capabilityProfile: 'dom-form' });
-  expect(form.interactionScenarios?.[0]?.checkpoints.flatMap(({ expectations }) => expectations).filter(({ kind }) => kind === 'submit-prevented')).toHaveLength(2);
+  expect(
+    form.interactionScenarios?.[0]?.checkpoints
+      .flatMap(({ expectations }) => expectations)
+      .filter(({ kind }) => kind === 'submit-prevented'),
+  ).toHaveLength(2);
   expect(input.fixtures.find(({ id }) => id === 'change-only')?.expectedStatus).toBe('incomplete');
 });
