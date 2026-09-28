@@ -10,7 +10,7 @@ export function ReadingPilotPage() {
     <section className="tc-reading-article">
       <h1>試用レッスンの目次</h1>
       <p>
-        制作途中の教材を試す入口です。対象はHTML/CSS導入・JavaScript導入・Closure・DOMの4単元です。JavaScriptコース全体の完成版ではありません。
+        制作途中の教材を試す入口です。対象はHTML/CSS導入・JavaScript導入・Closure・DOMの4単元とclickの最初の単元です。JavaScriptコース全体の完成版ではありません。
       </p>
       <p>
         読むだけならスマートフォンでも利用できます。コードの編集・実行は対応するPC演習へ進んでください。Pagesとローカル学習版は保存先が別で、自動同期はありません。
@@ -24,6 +24,23 @@ export function ReadingPilotPage() {
               <li key={lesson.id}>
                 <h3>{lesson.title}</h3>
                 <p>{lesson.goal}</p>
+                {lesson.id === 'javascript-ch08-l01' && (
+                  <p>
+                    この単元はDOMで文字を変える操作とFunctionを使います。
+                    <Link to="/courses/javascript/lessons/javascript-ch07-l01/slides/javascript-ch07-l01-s04">
+                      DOMの表示変更
+                    </Link>
+                    、
+                    <Link to="/courses/javascript/lessons/javascript-ch03-l01/slides/javascript-ch03-l01-s03">
+                      Functionを呼ぶ説明
+                    </Link>
+                    、
+                    <Link to="/courses/javascript/lessons/javascript-ch03-l04/slides/javascript-ch03-l04-s02">
+                      Arrowの引数
+                    </Link>
+                    へ戻れます。
+                  </p>
+                )}
                 {lesson.id === 'javascript-ch07-l01' && (
                   <p>
                     この単元はHTMLのid/class、JavaScriptのconst・変数・ifを使います。
