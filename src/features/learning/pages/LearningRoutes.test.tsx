@@ -1579,9 +1579,9 @@ describe('Learning routes', () => {
     act(() => {
       runtime.lease.setState({ status: 'yielding', revalidating: true, coordination: 'available' });
     });
-    await user.click(screen.getByRole('button', { name: '最初に戻す', exact: true }));
+    await user.click(screen.getByRole('button', { name: '最初に戻す' }));
     const dialog = screen.getByRole('dialog', { name: '最初のコードに戻しますか？' });
-    const confirm = within(dialog).getByRole('button', { name: '最初のコードに戻す', exact: true });
+    const confirm = within(dialog).getByRole('button', { name: '最初のコードに戻す' });
     expect(confirm).toBeDisabled();
     const writes = runtime.lease.fencedWriteCalls.mock.calls.length;
     await user.click(confirm);
