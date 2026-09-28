@@ -177,8 +177,8 @@ export function createTrustedInteractionExecutor(
           };
         }
         applyFunction(inputValueSetter, element, [value['value']]);
+        // fillは未確定の文字入力。changeを合成するとblur前の誤ったhandlerも採点を通る。
         dispatch(element, new EventConstructor('input', { bubbles: true }));
-        dispatch(element, new EventConstructor('change', { bubbles: true }));
         return { error: null };
       }
       if (kind === 'select') {

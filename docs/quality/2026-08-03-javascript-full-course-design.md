@@ -393,7 +393,7 @@ Network、Storage、Worker生成、Service Worker、dynamic code、popup、親�
 - expectationは`selector-exists`、`selector-text`、`attribute`、`focused`、`console-includes`のstrict union
 - selector、入力値、key、request ID、responseをbounded化
 - 任意JavaScript、任意Event constructor、URL、navigation、任意sleepを公開契約へ含めない
-- `fill`と`select`はtrusted bootstrapが値を設定し、必要な標準input／change eventだけを発火する
+- `fill`は未確定の文字入力としてtrusted bootstrapが値を設定し、`input`だけを発火する。blurや確定を合成せず、`change`だけのhandlerを「入力のたびに更新」の正解にしない。`select`は選択確定なので`input`と`change`を発火する
 - action後の期待状態は最大750 ms、短いintervalでSnapshotをpollする
 
 Scenarioごとに新しいiframeを使い、前Scenarioのstate、timer、Focus、Consoleを引き継がない。

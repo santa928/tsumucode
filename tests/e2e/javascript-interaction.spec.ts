@@ -20,6 +20,7 @@ const HTML = `<!doctype html>
       <button id="retry" type="button">再挑戦</button>
       <label>名前 <input id="name" /></label>
       <p id="input-status">未入力</p>
+      <p id="change-status">未確定</p>
       <label>分類
         <select id="category">
           <option value="html">HTML</option>
@@ -61,6 +62,9 @@ nameInput.addEventListener('input', () => {
   console.log('fill:' + nameInput.value);
 });
 const categorySelect = document.querySelector('#category');
+nameInput.addEventListener('change', () => {
+  document.querySelector('#change-status').textContent = nameInput.value;
+});
 categorySelect.addEventListener('change', () => {
   document.querySelector('#category-status').textContent = categorySelect.value.toUpperCase();
   console.log('select:' + categorySelect.value);
@@ -87,6 +91,7 @@ interface InteractionBrowserEvidence {
   };
   readonly form: {
     readonly input: string;
+    readonly change: string;
     readonly category: string;
     readonly enter: string;
     readonly arrow: string;
@@ -143,6 +148,7 @@ test('5 actionを実利用順で実行し、Scenarioごとにstate・Console・F
           '#score',
           '#result',
           '#input-status',
+          '#change-status',
           '#category-status',
           '#key-status',
           '#next',
@@ -300,6 +306,7 @@ test('5 actionを実利用順で実行し、Scenarioごとにstate・Console・F
           },
           form: {
             input: snapshotNode(filled, '#input-status').text,
+            change: snapshotNode(filled, '#change-status').text,
             category: snapshotNode(selected, '#category-status').text,
             enter: snapshotNode(entered, '#key-status').text,
             arrow: snapshotNode(arrowed, '#key-status').text,
@@ -333,6 +340,7 @@ test('5 actionを実利用順で実行し、Scenarioごとにstate・Console・F
   });
   expect(evidence.form).toEqual({
     input: 'Ada',
+    change: '未確定',
     category: 'CSS',
     enter: 'Enter',
     arrow: 'ArrowDown',

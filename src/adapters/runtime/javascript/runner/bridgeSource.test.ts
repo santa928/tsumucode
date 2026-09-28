@@ -53,7 +53,6 @@ describe('trusted JavaScript interaction executor', () => {
     expect(events).toEqual([
       'click',
       'input',
-      'change',
       'select-input',
       'select-change',
       'key:Enter',
