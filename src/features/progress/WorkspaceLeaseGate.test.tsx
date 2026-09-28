@@ -168,19 +168,24 @@ describe('WorkspaceLeaseGate', () => {
       act(() => {
         lease.setState({ status, revalidating: true, coordination: 'available' });
       });
+      expect(await screen.findByRole('status')).toHaveTextContent('編集権を再確認しています');
       expect(screen.getByRole('textbox')).toBe(original);
-      expect(screen.getByRole('status')).toHaveTextContent('編集権を再確認しています');
       expect(access.isWritable()).toBe(false);
     }
     act(() => {
       lease.setState({ status: 'owned', coordination: 'available' });
+    });
+    await waitFor(() => {
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
     expect(screen.getByRole('textbox')).toBe(original);
     expect(access.isWritable()).toBe(true);
     act(() => {
       lease.setState({ status: 'read-only', coordination: 'available' });
     });
-    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    });
     expect(access.isWritable()).toBe(false);
   });
 
