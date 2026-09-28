@@ -1,0 +1,27 @@
+id: javascript-ch08-l01
+kind: standard
+title: クリックしたときに処理する
+goal: clickの処理を登録し、操作前と操作後の表示を分けて確かめられる。
+estimatedMinutes: 15
+prerequisiteLessonIds:
+  - javascript-ch07-l01
+  - javascript-ch03-l01
+  - javascript-ch03-l04
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/javascript-ch08-l01-e01/exercise.yaml
+reflection: 登録時にはFunctionを渡し、ボタンが押されたときにブラウザがその処理を呼ぶ。
+glossaryRefs:
+  - event
+  - event-listener
+  - event-handler
+  - callback
+completion:
+  kind: standard
+  finalSlideId: javascript-ch08-l01-s04
+  requiredExerciseIds:
+    - javascript-ch08-l01-e01

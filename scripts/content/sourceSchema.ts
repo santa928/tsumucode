@@ -1,5 +1,6 @@
 /** Authoring YAMLのstrict構造と、公開Schemaへ組み立てる前のSource契約を定義する。 */
 import { z } from 'zod';
+import { interactionCheckId } from '../../src/core/content/exerciseRequirementIds';
 import {
   ConceptDefinitionSchema,
   ConceptRequirementSchema,
@@ -8,6 +9,7 @@ import {
   JavaScriptInteractionScenarioSchema,
   MasteryLevelSchema,
   PreviewViewportSchema,
+  ProgressRuleReferenceIdSchema,
   ScreenBudgetSchema,
   SlideLayoutSchema,
   ValidationRuleDefinitionSchema,
@@ -101,7 +103,7 @@ export const FixtureSourceSchema = z
     faultInjection: z.literal('stale-source-evidence').optional(),
     expectedDiagnosticCodes: z.array(IdSchema).min(1).max(16).optional(),
     files: z.array(FileSourceSchema).min(1),
-    expectedFeedbackRuleIds: z.array(IdSchema),
+    expectedFeedbackRuleIds: z.array(ProgressRuleReferenceIdSchema),
   })
   .strict();
 
@@ -242,7 +244,16 @@ export const ExerciseSourceSchema = z
       });
     }
 
-    const ruleIdSet = new Set(ruleIds);
+    const ruleIdSet = new Set([
+      ...ruleIds,
+      ...(exercise.interactionScenarios ?? []).flatMap((scenario) =>
+        scenario.checkpoints.flatMap((checkpoint) =>
+          checkpoint.expectations.map((expectation) =>
+            interactionCheckId(scenario.id, checkpoint.id, expectation.id),
+          ),
+        ),
+      ),
+    ]);
     for (const [fixtureIndex, fixture] of exercise.fixtures.entries()) {
       const path = ['fixtures', fixtureIndex] as const;
       if (hasDuplicates(fixture.files.map(({ path: filePath }) => filePath))) {
