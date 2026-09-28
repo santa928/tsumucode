@@ -3,6 +3,17 @@ releaseStatus: draft
 verifiedSourceCommit: draft
 canonicalDistSha256: draft
 lessons:
+  - lessonId: javascript-ch08-l02
+    authorId: tsumucode-javascript-authoring
+    reviewerId: astra-pro-independent-review
+    sourceHash: 1b68729df5a494286ed7de30787fcb046ccfd77bb2e4259b5f23127b3cd8b659
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: PR54の同一Pro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEADc2120cfe6e16321fe4e62a80d92b79d79c9579a1の教材原文・採点・Fixture・既習導線・集計を独立確認し内容承認。input通知からEvent/currentTarget/value、値を読む時点、空への戻しまで段階接続し、field.value別解とchange-only誤答が実Scenarioと整合。CodexがDocker製品Runnerで掲載4例と演習7ケースを実行し上記hashを計算。Proのhash独立再計算・実行・画像承認、人の初心者試用や実機確認を意味しない。FormとEvent章後続は未完成。
   - lessonId: javascript-ch08-l01
     authorId: tsumucode-javascript-authoring
     reviewerId: astra-pro-independent-review
