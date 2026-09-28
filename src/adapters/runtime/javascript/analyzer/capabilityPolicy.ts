@@ -615,8 +615,14 @@ export function assertJavaScriptCapabilityPolicy(
     if (node.type === 'Literal' && typeof current.regex === 'object' && current.regex !== null) {
       reject(node, file, '正規表現はこの演習では使えません', 'unsupported');
     }
-    if (node.type === 'NewExpression' && identifierName(current.callee) !== 'Error') {
-      reject(node, file, 'このconstructorは安全なPreviewでは使えません', 'unsupported');
+    if (node.type === 'NewExpression') {
+      const constructorName = identifierName(current.callee);
+      // 非同期教材の標準Promiseだけを追加し、任意constructorやmember経由の生成は開放しない。
+      const supportedConstructor =
+        constructorName === 'Error' || (profile.allowAsync && constructorName === 'Promise');
+      if (!supportedConstructor) {
+        reject(node, file, 'このconstructorは安全なPreviewでは使えません', 'unsupported');
+      }
     }
 
     if (node.type === 'Identifier') {

@@ -67,7 +67,7 @@ describe('assertJavaScriptCapabilityPolicy', () => {
     }).not.toThrow();
   });
 
-  it('教材用Errorだけをconstructorとして許可する', () => {
+  it('coreでは教材用Errorだけをconstructorとして許可する', () => {
     expect(() => {
       assertJavaScriptCapabilityPolicy(
         program("if (true) throw new Error('問題文がありません');"),
@@ -257,6 +257,29 @@ document.querySelector('head').appendChild(script);`),
         'dom',
       );
     }).not.toThrow();
+  });
+
+  it('直接のPromise constructorはasync/projectだけ許可し、別constructorは拒否する', () => {
+    const promise = program('new Promise((resolve) => { setTimeout(() => resolve(1), 25); });');
+    for (const profile of ['async', 'project'] as const) {
+      expect(() => {
+        assertJavaScriptCapabilityPolicy(promise, 'script.js', profile);
+      }).not.toThrow();
+      for (const source of [
+        'new Date()',
+        'const P = Promise; new P(() => {});',
+        'new Promise.constructor("return 1")()',
+      ]) {
+        expect(() => {
+          assertJavaScriptCapabilityPolicy(program(source), 'script.js', profile);
+        }).toThrow();
+      }
+    }
+    for (const profile of ['core', 'modules', 'dom', 'dom-form'] as const) {
+      expect(() => {
+        assertJavaScriptCapabilityPolicy(promise, 'script.js', profile);
+      }).toThrow();
+    }
   });
 
   it('Promiseとbounded timerはasync Profileからだけ許可する', () => {

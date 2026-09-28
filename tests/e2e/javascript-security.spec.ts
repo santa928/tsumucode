@@ -554,6 +554,67 @@ setTimeout(() => {
   expect(result.snapshotText).toBe('timer-ok');
 });
 
+test('直接のPromise constructorでresolve・await・捕捉したrejectをDOMへ反映する', async ({
+  page,
+}) => {
+  for (const capabilityProfile of ['async', 'project'] as const) {
+    for (const source of [
+      "new Promise((resolve) => resolve('promise-ok')).then((value) => { document.querySelector('#message').textContent = value; });",
+      "async function show() { const value = await new Promise((resolve) => { setTimeout(() => resolve('promise-ok'), 25); }); document.querySelector('#message').textContent = value; } show();",
+      "new Promise((resolve, reject) => reject(new Error('教材の失敗例'))).catch(() => { document.querySelector('#message').textContent = 'promise-ok'; });",
+    ]) {
+      const result = await runJavaScriptHarness(page, {
+        capabilityProfile,
+        source,
+        snapshotSelector: '#message',
+        waitBeforeSnapshotMs: 75,
+      });
+      expect(result.rejection).toBeNull();
+      expect(result.diagnostics).toEqual([]);
+      expect(result.snapshotText).toBe('promise-ok');
+    }
+  }
+});
+
+test('Promise executorの予算とstop後の再実行で古い結果を残さない', async ({ page }) => {
+  const exhausted = await runJavaScriptHarness(page, {
+    capabilityProfile: 'async',
+    source: 'new Promise(() => { while (true) {} });',
+  });
+  expect(exhausted.rejection).toBeNull();
+  expect(exhausted.diagnostics).toContainEqual(
+    expect.objectContaining({ code: 'javascript-budget', kind: 'system' }),
+  );
+  const pending = await runJavaScriptHarness(page, {
+    capabilityProfile: 'async',
+    source:
+      "new Promise((resolve) => { setTimeout(() => resolve('old'), 100); }).then((value) => { document.querySelector('#message').textContent = value; });",
+  });
+  expect(pending.diagnostics).toEqual([]);
+  await page.evaluate(async () => {
+    const harnessWindow = window as typeof window & {
+      __tsumucodeJavaScriptSecurityHarness?: {
+        runner: { stop(): Promise<void>; prepare(frame: HTMLIFrameElement): Promise<void> };
+        frame: HTMLIFrameElement;
+      };
+    };
+    const harness = harnessWindow.__tsumucodeJavaScriptSecurityHarness;
+    if (!harness) throw new Error('JavaScript harness is not prepared');
+    await harness.runner.stop();
+    await harness.runner.prepare(harness.frame);
+  });
+  const fresh = await runJavaScriptHarness(page, {
+    capabilityProfile: 'async',
+    source:
+      "new Promise((resolve) => resolve('fresh')).then((value) => { document.querySelector('#message').textContent = value; });",
+    snapshotSelector: '#message',
+    waitBeforeSnapshotMs: 150,
+  });
+  expect(fresh.rejection).toBeNull();
+  expect(fresh.diagnostics).toEqual([]);
+  expect(fresh.snapshotText).toBe('fresh');
+});
+
 test('legacy parentWindow経由でもasync Profile制限を迂回できない', async ({ page }) => {
   const sources = [
     "document.querySelector('body').getRootNode().parentWindow.setTimeout(() => {}, 0);",
