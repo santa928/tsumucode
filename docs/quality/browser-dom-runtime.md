@@ -39,3 +39,9 @@ Ch08で操作後の結果を採点する前提として、Course Fixture Gateを
 `runInteractionScenario`を学習ControllerとFixtureで共用する。FixtureはNode側からBrowserの実Runnerへ要求を渡し、製品と同じcheckpoint評価を使う。成功結果やDOMを合成しない。Fixture中は編集を並行実行しないため、鮮度callbackのみno-opで、返却identityの照合は共通処理で行う。製品の鮮度確認と保存処理はControllerが引き続き担当する。
 
 実操作の回帰用HTMLは教材完成の証拠とは区別する。新教材・新しい操作種別・sandbox/CSPの緩和はこの変更の非対象。受入は実click/fill、Scenario間の状態独立、初期表示だけを完成させた誤答、誤イベントの不合格と既存Controller回帰。性能の待機上限は既存値を維持し、Home/読書への重い実行依存の混入はchunk境界検査で確認する。
+
+### iframe操作と編集権の再確認
+
+プレビューから親画面へフォーカスが戻る場合も、永続LeaseのCAS再確認を行う。同じowner tokenを再確認する `revalidating` phaseではRunner・iframe・Editorを保持する。新規writeは従来どおり拒否し、開始済み保存のsettleと限定されたflush fenceだけを維持する。実譲渡・所有権喪失・再claimでは従来の破棄経路へ戻る。
+
+Resetの確認画面を開く操作は保存を行わないため再確認中も受け付ける。コードの復元・保存を実行する確認ボタンは、編集権を再取得するまで無効とする。focusイベントの除外やLease期限の緩和は行わない。

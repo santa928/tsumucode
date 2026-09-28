@@ -991,10 +991,11 @@ function EditableSession({
                   <button
                     ref={resetTriggerRef}
                     type="button"
-                    disabled={!canReset || busy || !lease.isWritable()}
+                    disabled={!canReset || busy}
                     className="inline-flex min-h-11 items-center rounded-workshop-sm border border-workshop-border bg-workshop-surface px-3 py-2 text-sm font-black text-workshop-muted transition-colors duration-[var(--tc-motion-fast)] hover:bg-workshop-raised disabled:cursor-not-allowed disabled:opacity-50"
                     onClick={() => {
-                      if (canReset && !busy && lease.isWritable()) setResetOpen(true);
+                      // 確認画面を開く操作は保存しない。実際のResetは再検証後のleaseで囲う。
+                      if (canReset && !busy) setResetOpen(true);
                     }}
                   >
                     最初に戻す

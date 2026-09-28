@@ -1561,6 +1561,46 @@ describe('Learning routes', () => {
     expect(runtime.passFreshness.markDirty).toHaveBeenCalledTimes(dirtyCount);
   });
 
+  it('self再検証中はReset確認を保持し、所有権喪失まで復元writeを開始しない', async () => {
+    stubEditingCapability(true);
+    const adapters = stubAdapters();
+    const user = userEvent.setup();
+    renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
+    await findCodeWorkspace();
+    const editorView = await findEditorView();
+    act(() => {
+      editorView.dispatch({
+        changes: { from: 0, to: editorView.state.doc.length, insert: '<main>保持する編集</main>' },
+      });
+    });
+    await waitFor(() => {
+      expect(adapters.getLastRenderInput()?.files['index.html']).toBe('<main>保持する編集</main>');
+    });
+    act(() => {
+      runtime.lease.setState({ status: 'yielding', revalidating: true, coordination: 'available' });
+    });
+    await user.click(screen.getByRole('button', { name: '最初に戻す' }));
+    const dialog = screen.getByRole('dialog', { name: '最初のコードに戻しますか？' });
+    const confirm = within(dialog).getByRole('button', { name: '最初のコードに戻す' });
+    expect(confirm).toBeDisabled();
+    const writes = runtime.lease.fencedWriteCalls.mock.calls.length;
+    await user.click(confirm);
+    expect(editorView.state.doc.toString()).toBe('<main>保持する編集</main>');
+    expect(runtime.lease.fencedWriteCalls).toHaveBeenCalledTimes(writes);
+    act(() => {
+      runtime.lease.setState({
+        status: 'read-only',
+        coordination: 'available',
+        ownerId: 'other-tab',
+      });
+    });
+    expect(screen.queryByTestId('code-workspace')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('dialog', { name: '最初のコードに戻しますか？' }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '別のタブで編集中です' })).toBeInTheDocument();
+  });
+
   it('確定後は全fileをStarterへ保存・Previewし、HintとEditor local stateを初期化する', async () => {
     stubContentFetch();
     stubEditingCapability(true);

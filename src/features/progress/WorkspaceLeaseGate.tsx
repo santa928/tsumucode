@@ -239,7 +239,11 @@ function WorkspaceLeaseSessionView({
     );
   };
 
-  if (lease.status === 'owned' || lease.status === 'local-rescue') {
+  if (
+    lease.status === 'owned' ||
+    lease.status === 'local-rescue' ||
+    ((lease.status === 'yielding' || lease.status === 'claiming') && lease.revalidating)
+  ) {
     return (
       <>
         {lease.coordination === 'unavailable' && showCoordinationWarning ? (
@@ -259,6 +263,9 @@ function WorkspaceLeaseSessionView({
             </Link>
           </StackedCard>
         ) : null}
+        <p role="status" hidden={!lease.revalidating} className="text-sm text-workshop-muted">
+          編集権を再確認しています。保存を伴う操作は確認後に再開します。
+        </p>
         {children(session.access)}
       </>
     );
