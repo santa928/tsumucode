@@ -544,3 +544,10 @@ entries:
       - variable
       - event-handler
       - closure
+  - id: render-function
+    term: render
+    definition: 現在のstateから表示を作る処理につける名前。特別な構文ではなく、この教材では普通のFunctionとして定義して呼ぶ。
+    firstSlideId: javascript-ch09-l02-s01
+    relatedIds:
+      - ui-state
+      - function

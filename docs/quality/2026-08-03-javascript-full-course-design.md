@@ -1,6 +1,6 @@
 # JavaScript全Course 設計
 
-- 状態: 書面レビュー承認済み・Runtime基盤およびChapter 01〜06教材実装・Data Phaseの全品質GateとGitHub Pages β公開検証済み（Chapter 07先頭1単元は統合済み、2単元目の候補を追加。Ch07残りとCh08〜13は未実装）
+- 状態: 全Course設計は書面レビュー承認済み。Runtime基盤・Ch00〜07・Ch08先頭2単元はmainへ統合済み。Ch08後半2単元とCh09先頭2単元は独立レビュー待ちの候補。Ch09後半とCh10〜13、全Course受入は未完。配信済み範囲とSHAはIssue #5を正本とする。
 - 承認日: 2026-08-04
 - 作成日: 2026-08-03
 - 対象: `javascript` Course Chapter 01〜13、既存Chapter 00の互換維持、全Course公開
@@ -753,3 +753,17 @@ Ch08-l01は15分/4Slide/1演習。Ch00〜07と合わせ32Lesson/128Slide/34Exerc
 | REQ-JS-STATE-006 | 維持 | Ch09後続3単元・専用render関数・Collection表示・非同期・人の試用を今回の完成範囲へ含めない |
 
 15分/4Slide/1演習。Ch09は1Lesson15分、累計36Lesson144Slide38演習580分draftの候補。独立内容レビューと必要CI前に統合せず、試用導線だけへ追加する。Runtime・安全境界・Home性能予算・公開Gateを維持する。Chapter09全体4Lesson70分の計画を削減したものではない。
+
+### Ch09-l02 state→renderの準備（2026-09-28）
+
+| 要件 | 区分 | 実装と受入条件 |
+|---|---|---|
+| REQ-JS-STATE-001〜006 | 維持 | stateと表示の区別、既習Scope/Closure、有限試用、独立レビュー条件を維持 |
+| REQ-JS-RENDER-001 | 追加 | renderを現在のstateを表示へ反映する普通のFunctionとして紹介。宣言と呼出しを区別 |
+| REQ-JS-RENDER-002 | 維持 | Object property、Function、clickを利用し、初期描画と更新→renderの順を説明 |
+| REQ-JS-RENDER-003 | 追加 | 読了数と次の冊数を同じstateから作り、2回読了→0へ戻す2回→読了を実採点 |
+| REQ-JS-RENDER-004 | 追加 | 名前付き別解・複数renderを許し、更新前描画/描画中の状態変更/Reset描画漏れ/片方だけ更新を検出 |
+| REQ-JS-RENDER-005 | 維持 | 既存ID・空移行 .9→.10、有限draft。実操作にはPR57の修正が必要で、前提PR56/58/59は未承認 |
+| REQ-JS-RENDER-006 | 維持 | DOM全面差替え・Collection描画・Framework・非同期・実行state永続化は非対象。実Fixture/例/UI/390目視と関連静的検証で確認 |
+
+20分/4Slide/1演習。Ch09は2Lesson35分、累計37Lesson148Slide39演習600分draftの候補。renderという関数名や呼出し回数そのものを採点条件にせず、操作後の両表示の整合を確認する。人の初心者試用・実機は未実施。安全境界・Home性能予算・公開Gateを維持し、Chapter09後続2単元を完了扱いにしない。

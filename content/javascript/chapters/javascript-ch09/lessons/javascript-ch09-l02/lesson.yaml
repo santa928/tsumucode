@@ -1,0 +1,26 @@
+id: javascript-ch09-l02
+kind: standard
+title: 状態から表示をそろえる
+goal: stateを更新してから表示用Functionを呼び、複数の表示を同じ値からそろえられる。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - javascript-ch09-l01
+  - javascript-ch04-l04
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/javascript-ch09-l02-e01/exercise.yaml
+reflection: renderは今のstateを表示へ反映するFunction。初期化時とstate更新後に呼び、renderの中ではstate自体を変更しない。
+glossaryRefs:
+  - render-function
+  - ui-state
+  - property
+  - function
+completion:
+  kind: standard
+  finalSlideId: javascript-ch09-l02-s04
+  requiredExerciseIds:
+    - javascript-ch09-l02-e01

@@ -15,7 +15,7 @@ it('State先頭単元は既習Scopeとclickを結び、繰り返し操作を採�
     },
     'javascript-ch09',
     chapter.lessons.map(({ id }) => id),
-    ['javascript-ch09-l01'],
+    ['javascript-ch09-l01', 'javascript-ch09-l02'],
   );
   const exercise = course.exercises.find(({ id }) => id === 'javascript-ch09-l01-e01')!;
   expect(exercise.runtime).toMatchObject({ capabilityProfile: 'dom', primaryOutput: 'preview' });

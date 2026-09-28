@@ -16,6 +16,7 @@ export const READING_PILOT_LESSONS = [
   { courseId: 'javascript', lessonId: 'javascript-ch08-l03' },
   { courseId: 'javascript', lessonId: 'javascript-ch08-l04' },
   { courseId: 'javascript', lessonId: 'javascript-ch09-l01' },
+  { courseId: 'javascript', lessonId: 'javascript-ch09-l02' },
 ] as const;
 
 /** Courseの集計や公開状態を変更せず、読書用の著者順outlineを返す。 */

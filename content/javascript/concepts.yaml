@@ -620,3 +620,23 @@ concepts:
     prerequisiteConceptIds:
       - state-to-display
     minimumProjectLevel: transform
+  - id: render-function-purpose
+    introducedBySlideId: javascript-ch09-l02-s01
+    prerequisiteConceptIds:
+      - state-retain-between-events
+    minimumProjectLevel: read
+  - id: initial-state-render
+    introducedBySlideId: javascript-ch09-l02-s02
+    prerequisiteConceptIds:
+      - render-function-purpose
+    minimumProjectLevel: read
+  - id: update-then-render
+    introducedBySlideId: javascript-ch09-l02-s03
+    prerequisiteConceptIds:
+      - initial-state-render
+    minimumProjectLevel: read
+  - id: shared-render-reset
+    introducedBySlideId: javascript-ch09-l02-s04
+    prerequisiteConceptIds:
+      - update-then-render
+    minimumProjectLevel: transform
