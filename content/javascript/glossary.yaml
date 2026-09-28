@@ -639,3 +639,14 @@ entries:
     firstSlideId: javascript-ch11-l02-s02
     relatedIds:
       - keyboard-focus
+  - id: accessible-name
+    term: Accessible Name
+    definition: 支援技術が操作対象を区別する名前。標準buttonでは見える文字から分かる名前にする。
+    firstSlideId: javascript-ch11-l03-s01
+    relatedIds: []
+  - id: aria-expanded
+    term: aria-expanded
+    definition: 操作対象の開閉状態をtrue/falseの文字列で伝える属性。表示そのものは切り替えない。
+    firstSlideId: javascript-ch11-l03-s03
+    relatedIds:
+      - accessible-name

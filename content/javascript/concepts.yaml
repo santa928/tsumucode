@@ -800,3 +800,23 @@ concepts:
     prerequisiteConceptIds:
       - focus-return-trigger
     minimumProjectLevel: transform
+  - id: accessible-control-name
+    introducedBySlideId: javascript-ch11-l03-s01
+    prerequisiteConceptIds:
+      - focus-round-trip
+    minimumProjectLevel: read
+  - id: safe-label-text
+    introducedBySlideId: javascript-ch11-l03-s02
+    prerequisiteConceptIds:
+      - accessible-control-name
+    minimumProjectLevel: read
+  - id: expanded-state-attribute
+    introducedBySlideId: javascript-ch11-l03-s03
+    prerequisiteConceptIds:
+      - safe-label-text
+    minimumProjectLevel: read
+  - id: control-name-state-sync
+    introducedBySlideId: javascript-ch11-l03-s04
+    prerequisiteConceptIds:
+      - expanded-state-attribute
+    minimumProjectLevel: transform

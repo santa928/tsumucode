@@ -869,3 +869,15 @@ Ch08-l01は15分/4Slide/1演習。Ch00〜07と合わせ32Lesson/128Slide/34Exerc
 | REQ-JS-FOCUS-005 | 維持 | PR57/63/66/69前提、Ch11残1単元/Project/人試用/独立review/公開は未完 |
 
 20分4Slide1演習、候補45Lesson180Slide47演習745分。初版で既存Schemaにないinput-value条件を指定しCompile失敗したため、Runtimeの抽象化を増やさずFocusの学習目標は既存focused契約で判定する。入力値消去は実画面で確認する。受入目標・非対象・750ms上限/Home分離は保持する。
+
+### Ch11-l03 操作名と状態（2026-09-28）
+
+| 要件 | 区分 | 内容 |
+|---|---|---|
+| REQ-JS-NAME-001 | 追加 | 明確な可視文字をAccessible Nameとし、次の操作名をstateから更新する |
+| REQ-JS-NAME-002 | 追加 | hiddenによる表示とaria-expandedを同じstateにそろえ、開閉・再開を検証 |
+| REQ-JS-NAME-003 | 維持 | textContentで安全に文字更新。標準buttonのEnter/Spaceと名前を実UIで確認 |
+| REQ-JS-NAME-004 | 維持 | .18→.19空移行、既存ID/進捗/下書き/ImportExport/有限試用とHome分離 |
+| REQ-JS-NAME-005 | 維持 | Ch07〜11原稿候補の段階。独立review/merge/人試用/Project/公開は未完 |
+
+15分4Slide1演習、候補46Lesson184Slide48演習760分。Ch11の3単元50分は候補がそろうが、#8の完了記録は独立レビューと実受入条件の確認後とする。PR57/63/66/69のRuntime前提、既存750ms観測上限と保存契約を保持する。

@@ -10,7 +10,7 @@ export function ReadingPilotPage() {
     <section className="tc-reading-article">
       <h1>試用レッスンの目次</h1>
       <p>
-        制作途中の教材を試す入口です。対象はHTML/CSS導入・JavaScript導入・Closure・DOMの4単元とclick・input・Form・入力検証の4単元、State・表示更新・一覧・絞り込みの4単元と、Promise・async/awaitの結果・失敗・読み込み状態を扱う4単元、キーボードでヒントを開閉し、Focusを往復する2単元です。JavaScriptコース全体の完成版ではありません。
+        制作途中の教材を試す入口です。対象はHTML/CSS導入・JavaScript導入・Closure・DOMの4単元とclick・input・Form・入力検証の4単元、State・表示更新・一覧・絞り込みの4単元と、Promise・async/awaitの結果・失敗・読み込み状態を扱う4単元、キーボード操作・Focus・操作名と状態を扱う3単元です。JavaScriptコース全体の完成版ではありません。
       </p>
       <p>
         読むだけならスマートフォンでも利用できます。コードの編集・実行は対応するPC演習へ進んでください。Pagesとローカル学習版は保存先が別で、自動同期はありません。
