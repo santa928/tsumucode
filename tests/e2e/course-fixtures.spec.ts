@@ -565,6 +565,7 @@ test('JavaScript Scenario fixtureは実click/inputを観測し、未操作の完
       { id: 'click', kind: 'click' as const, selector: '#button' },
       { id: 'input', kind: 'fill' as const, selector: '#name', value: '花子' },
       { id: 'again', kind: 'fill' as const, selector: '#name', value: '太郎' },
+      { id: 'clear', kind: 'fill' as const, selector: '#name', value: '' },
     ],
     checkpoints: [
       {
@@ -586,6 +587,13 @@ test('JavaScript Scenario fixtureは実click/inputを観測し、未操作の完
         afterActionId: 'again',
         expectations: [
           { id: 'next', kind: 'selector-text' as const, selector: '#result', equals: '太郎' },
+        ],
+      },
+      {
+        id: 'cleared',
+        afterActionId: 'clear',
+        expectations: [
+          { id: 'empty', kind: 'selector-text' as const, selector: '#result', equals: '' },
         ],
       },
     ],
@@ -633,6 +641,7 @@ test('JavaScript Scenario fixtureは実click/inputを観測し、未操作の完
     for (const [id, script, expected] of [
       ['solution', solution, 'pass'],
       ['wrong-event', solution.replace("'click'", "'mouseover'"), 'incomplete'],
+      ['change-only', solution.replace("'input'", "'change'"), 'incomplete'],
       ['upfront', solution + "document.querySelector('#count').textContent='1';", 'incomplete'],
     ] as const) {
       const result = await evaluateCase(
@@ -660,6 +669,15 @@ test('JavaScript Scenario fixtureは実click/inputを観測し、未操作の完
       if (id === 'upfront')
         expect(result.checks.filter(({ passed }) => !passed).map(({ ruleId }) => ruleId)).toEqual([
           'initial-count',
+        ]);
+      if (id === 'change-only')
+        expect(result.checks.filter(({ passed }) => !passed).map(({ ruleId }) => ruleId)).toEqual([
+          'interaction:button-flow:typed:name',
+          'interaction:button-flow:retyped:next',
+          'interaction:button-flow:cleared:empty',
+          'interaction:fresh-flow:typed:name',
+          'interaction:fresh-flow:retyped:next',
+          'interaction:fresh-flow:cleared:empty',
         ]);
     }
   } finally {
