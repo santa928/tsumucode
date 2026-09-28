@@ -633,3 +633,9 @@ entries:
     firstSlideId: javascript-ch11-l01-s02
     relatedIds:
       - keydown-event
+  - id: element-focus
+    term: focus()
+    definition: 要素へキーボード操作の現在位置を移すメソッド。利用者の操作に続けて必要な時だけ使う。
+    firstSlideId: javascript-ch11-l02-s02
+    relatedIds:
+      - keyboard-focus

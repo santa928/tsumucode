@@ -857,3 +857,15 @@ Ch08-l01は15分/4Slide/1演習。Ch00〜07と合わせ32Lesson/128Slide/34Exerc
 | REQ-JS-KEY-005 | 維持 | Ch11残2単元/Project/本人試用/独立レビュー/公開は未完 |
 
 15分4Slide1演習、候補44Lesson176Slide46演習725分。読み取り専用HTMLは標準buttonと明確な名前、CSSはFocus枠を提供し、学習者はJavaScriptの条件へ集中する。実操作ではTabからEnter/Space/Escapeを試し、390px読書と既存保存を確認。画面全体のキー捕捉やRuntimeの合成キーをOS相当とみなす変更は行わない。
+
+### Ch11-l02 Focusの往復（2026-09-28）
+
+| 要件 | 区分 | 内容 |
+|---|---|---|
+| REQ-JS-FOCUS-001 | 追加 | 開始操作で回答欄へFocusし、戻る操作で起点buttonへ復帰する |
+| REQ-JS-FOCUS-002 | 追加 | focused契約で開始・戻る・再開始を検証し、実キーでそのまま入力できることも確認 |
+| REQ-JS-FOCUS-003 | 維持 | 改名・名前付きhandlerの別解を許容。強制周期FocusやTab封鎖を教えない |
+| REQ-JS-FOCUS-004 | 維持 | .17→.18空移行と既存データ/ID/能力制限。入力消去は配布コードと実UIで確認 |
+| REQ-JS-FOCUS-005 | 維持 | PR57/63/66/69前提、Ch11残1単元/Project/人試用/独立review/公開は未完 |
+
+20分4Slide1演習、候補45Lesson180Slide47演習745分。初版で既存Schemaにないinput-value条件を指定しCompile失敗したため、Runtimeの抽象化を増やさずFocusの学習目標は既存focused契約で判定する。入力値消去は実画面で確認する。受入目標・非対象・750ms上限/Home分離は保持する。

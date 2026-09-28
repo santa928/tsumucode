@@ -780,3 +780,23 @@ concepts:
     prerequisiteConceptIds:
       - escape-key-condition
     minimumProjectLevel: transform
+  - id: focus-next-control
+    introducedBySlideId: javascript-ch11-l02-s01
+    prerequisiteConceptIds:
+      - keyboard-hint-retry
+    minimumProjectLevel: read
+  - id: element-focus-method
+    introducedBySlideId: javascript-ch11-l02-s02
+    prerequisiteConceptIds:
+      - focus-next-control
+    minimumProjectLevel: read
+  - id: focus-return-trigger
+    introducedBySlideId: javascript-ch11-l02-s03
+    prerequisiteConceptIds:
+      - element-focus-method
+    minimumProjectLevel: read
+  - id: focus-round-trip
+    introducedBySlideId: javascript-ch11-l02-s04
+    prerequisiteConceptIds:
+      - focus-return-trigger
+    minimumProjectLevel: transform

@@ -3,8 +3,8 @@ id: javascript
 title: JavaScript はじめの一歩
 description: 画面の変化から始め、値・条件分岐・Function・Array・Module・Error・DebugまでをConsoleで確かめる
 audience: HTMLとCSSの役割を知り、JavaScriptを初めて学ぶ本人と身内
-estimatedMinutes: 725
-revision: 2026-09-28.17
+estimatedMinutes: 745
+revision: 2026-09-28.18
 runnerId: javascript
 validatorId: javascript
 glossarySource: glossary.yaml
@@ -23,12 +23,12 @@ prerequisites:
 publicationStatus: draft
 expectedTotals:
   chapters: 12
-  lessons: 44
-  conceptSlides: 176
-  standardExercises: 46
+  lessons: 45
+  conceptSlides: 180
+  standardExercises: 47
   guidedProjectLessons: 0
   capstoneLessons: 0
-  estimatedMinutes: 725
+  estimatedMinutes: 745
 provenanceManifestPath: provenance.yaml
 progressMigrations:
   - fromRevision: 2026-08-02.1
@@ -96,6 +96,9 @@ progressMigrations:
     steps: []
   - fromRevision: 2026-09-28.16
     toRevision: 2026-09-28.17
+    steps: []
+  - fromRevision: 2026-09-28.17
+    toRevision: 2026-09-28.18
     steps: []
 phases:
   - id: javascript-p00-core
