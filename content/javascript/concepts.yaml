@@ -740,3 +740,23 @@ concepts:
     prerequisiteConceptIds:
       - async-failure-message
     minimumProjectLevel: transform
+  - id: loading-state-display
+    introducedBySlideId: javascript-ch10-l04-s01
+    prerequisiteConceptIds:
+      - async-retry-success
+    minimumProjectLevel: read
+  - id: disabled-during-loading
+    introducedBySlideId: javascript-ch10-l04-s02
+    prerequisiteConceptIds:
+      - loading-state-display
+    minimumProjectLevel: read
+  - id: finally-release-controls
+    introducedBySlideId: javascript-ch10-l04-s03
+    prerequisiteConceptIds:
+      - disabled-during-loading
+    minimumProjectLevel: read
+  - id: loading-retry-flow
+    introducedBySlideId: javascript-ch10-l04-s04
+    prerequisiteConceptIds:
+      - finally-release-controls
+    minimumProjectLevel: transform

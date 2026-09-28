@@ -115,6 +115,7 @@ describe('verifyAllContentReviews', () => {
         'javascript-ch10-l01',
         'javascript-ch10-l02',
         'javascript-ch10-l03',
+        'javascript-ch10-l04',
       ].map((lessonId) => ({
         lessonId,
         lessonDirectory: path.join(
@@ -130,7 +131,7 @@ describe('verifyAllContentReviews', () => {
     await expect(verifyAllContentReviews({ contentRoot, publicRoot, reviewRoot })).resolves.toEqual(
       {
         coursesReviewed: 2,
-        lessonsReviewed: 43,
+        lessonsReviewed: 44,
         staleHashes: 0,
         rejected: 0,
       },

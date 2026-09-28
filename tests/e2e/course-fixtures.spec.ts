@@ -546,7 +546,7 @@ test('JavaScriptの全Solution、Starter、Fixtureを実Browser Runner／Validat
   await assertCourseFixtureGate(page, {
     courseRoot: 'content/javascript',
     courseId: 'javascript',
-    expectedExerciseCount: 44,
+    expectedExerciseCount: 45,
     runtime: await loadJavaScriptFixtureRuntime(),
   });
 });

@@ -832,3 +832,16 @@ Ch08-l01は15分/4Slide/1演習。Ch00〜07と合わせ32Lesson/128Slide/34Exerc
 | REQ-JS-CATCH-006 | 維持 | loading/二重操作は次単元。初心者試用・公開昇格は非対象。Runtime前提PR57/63/66を保持 |
 
 15分4Slide1演習、候補42Lesson168Slide44演習690分。Ch10候補55分と残り1単元20分を区別。初期code-errorを課題不一致に隠さず、実際の捕捉と状態表示を検証する。
+
+### Ch10-l04 読み込み状態と操作回復（2026-09-28）
+
+| 要件 | 区分 | 内容 |
+|---|---|---|
+| REQ-JS-LOADING-001 | 追加 | await前に読み込み中を表示し、loadingとdisabledで二重開始を防ぐ |
+| REQ-JS-LOADING-002 | 追加 | finallyで両方のボタンを戻し、成功後・失敗後の再操作を実証する |
+| REQ-JS-LOADING-003 | 維持 | 同梱データと250msの教材用待機を明示し、実通信を行わない |
+| REQ-JS-LOADING-004 | 維持 | 改名・disabled属性の別解も許容。待機と完了のDOM状態、再試行で判定 |
+| REQ-JS-LOADING-005 | 維持 | .15→.16空移行、ID/進捗/下書き/ImportExport、有限試用、750ms観測/Home分離 |
+| REQ-JS-LOADING-006 | 維持 | Ch11/Project/人試用/独立review/公開昇格は未完。Runtime前提PR57/63/66を維持 |
+
+20分4Slide1演習、候補43Lesson172Slide45演習710分。Ch10の4Lesson75分は原稿候補がそろった段階。本人の初心者試用や独立reviewを完了扱いにしない。実Runnerの正誤と待機時の操作不可/成功失敗後の復旧、Reset後再編集判定、390px読書を確認する。

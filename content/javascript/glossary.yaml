@@ -598,3 +598,21 @@ entries:
     relatedIds:
       - promise
       - try-catch
+  - id: loading-state
+    term: 読み込み中の状態
+    definition: 結果を待っている状態。開始を知らせ、必要なら二重操作を防ぐ。
+    firstSlideId: javascript-ch10-l04-s01
+    relatedIds:
+      - await-expression
+  - id: disabled-control
+    term: disabled
+    definition: ボタン等を操作不可にする性質。trueで無効、falseで有効へ戻る。
+    firstSlideId: javascript-ch10-l04-s02
+    relatedIds:
+      - loading-state
+  - id: finally-block
+    term: finally
+    definition: tryの成功・失敗にかかわらず最後に実行する共通の後処理。
+    firstSlideId: javascript-ch10-l04-s03
+    relatedIds:
+      - try-catch
