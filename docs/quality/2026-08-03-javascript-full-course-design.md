@@ -1,6 +1,6 @@
 # JavaScript全Course 設計
 
-- 状態: 書面レビュー承認済み・Runtime基盤およびChapter 01〜06教材実装・Data Phaseの全品質GateとGitHub Pages β公開検証済み（Chapter 07先頭1単元の候補を追加、残りのChapter 07〜13は未実装）
+- 状態: 書面レビュー承認済み・Runtime基盤およびChapter 01〜06教材実装・Data Phaseの全品質GateとGitHub Pages β公開検証済み（Chapter 07先頭1単元は統合済み、2単元目の候補を追加。Ch07残りとCh08〜13は未実装）
 - 承認日: 2026-08-04
 - 作成日: 2026-08-03
 - 対象: `javascript` Course Chapter 01〜13、既存Chapter 00の互換維持、全Course公開
@@ -641,3 +641,17 @@ blockingな難度ずれ、直前Slideとの不整合、操作不能、誤判定�
 既存のDOM Runnerを使い、Runtime・隔離・判定器の新設や緩和はしない。新教材に対する独立内容レビューと実初心者の試用は別の証拠であり、ソースの構造チェックや自動操作で代替しない。#26 Bの既存教材改訂サイクルをこの新設教材で完了扱いにしない。
 
 検証は新演習のSolution/Starter/代表Fixture、編集→Reset→再編集→Preview→判定、PCのTab操作、390px読書、既存入口・読書回帰、旧revisionの保存データ引継ぎに絞る。共有実行基盤を変えていないため全Course×全Browserの再実行は通常開発の目標にしない。性能は既存の遅延ロード分離を維持し、Home/読書へJS実行依存を混入させない。全体のRelease Gateは採用後の公開時に実行する。
+
+
+## 2026-09-28 #8 続き: Ch07 classの付け外し
+
+Ch07-l02を15分・4Slide・1Exerciseで追加し、累計29Lesson／116Slide／31Exercise／465分。Ch07残り2単元とCh08以降は未実装、Courseはdraftのまま。既存IDは維持し2026-09-28.1→.2の空移行edgeで追加する。
+
+| ID | 状態 | 今回の要件差分 |
+| --- | --- | --- |
+| REQ-JSC-DOM-001〜004 | 維持 | 既習説明、実DOMによる達成確認、実行と合否の区別、保存互換と独立レビュー |
+| REQ-JSC-DOM-005 | 変更 | 試用の有限目次へ完成したl02だけを追加。l03以降の未完成単元は掲載しない |
+| REQ-JSC-DOM-006 | 追加 | querySelectorで取得した要素の共通classを残し、状態classを付け外しする。classListを推奨手段として説明するが同じ結果のsetAttribute別解も許す |
+| REQ-JSC-DOM-007 | 追加 | classの有無と対象外要素・文字の保持を採点し、class文字列順序やcomputed color・変数名・if・操作順を固定しない |
+
+classList能力は既存製品DOM Runnerの3 engineで実測し、保護設定・Runtimeは変更しない。DOM生成・イベントは後続。検証は新演習の正解/誤解Fixture、編集/Reset/Preview/判定、PC/390px読書と関連入口、Compile・Review・遅延chunkを対象とする。スライドの操作前後図は独自制作。性能予算と公開Gateは維持し、今回の自動検証を人の初心者試用や実機検証として扱わない。

@@ -1,0 +1,25 @@
+id: javascript-ch07-l02
+kind: standard
+title: classを付け外しして見た目を変える
+goal: querySelectorで取得した要素の共通classを残し、状態のclassを付け外しして対象だけの見た目を変えられる。
+estimatedMinutes: 15
+prerequisiteLessonIds:
+  - javascript-ch07-l01
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/javascript-ch07-l02-e01/exercise.yaml
+reflection: classを足しても古いclassは消えない。必要なclassと不要なclassを別々に確かめる。
+glossaryRefs:
+  - dom-reference
+  - selector
+  - class-state
+  - class-list
+completion:
+  kind: standard
+  finalSlideId: javascript-ch07-l02-s04
+  requiredExerciseIds:
+    - javascript-ch07-l02-e01

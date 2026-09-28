@@ -1,0 +1,22 @@
+body {
+  font-family: sans-serif;
+  padding: 24px;
+  color: #19352b;
+  background: #f5faf7;
+}
+main {
+  max-width: 520px;
+  margin: auto;
+}
+.book {
+  padding: 16px;
+  background: white;
+  border-radius: 6px;
+}
+.pending {
+  border-left: 6px dashed #777;
+}
+.done {
+  border-left: 6px solid #16764b;
+  background: #e3f5eb;
+}

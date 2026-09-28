@@ -10,7 +10,7 @@ export function ReadingPilotPage() {
     <section className="tc-reading-article">
       <h1>試用レッスンの目次</h1>
       <p>
-        制作途中の教材を試す入口です。対象はHTML/CSS導入・JavaScript導入・Closure・DOMの最初の1単元です。JavaScriptコース全体の完成版ではありません。
+        制作途中の教材を試す入口です。対象はHTML/CSS導入・JavaScript導入・Closure・DOMの最初の2単元です。JavaScriptコース全体の完成版ではありません。
       </p>
       <p>
         読むだけならスマートフォンでも利用できます。コードの編集・実行は対応するPC演習へ進んでください。Pagesとローカル学習版は保存先が別で、自動同期はありません。
@@ -35,6 +35,15 @@ export function ReadingPilotPage() {
                       ifの説明
                     </Link>
                     を先に確認できます。
+                  </p>
+                )}
+                {lesson.id === 'javascript-ch07-l02' && (
+                  <p>
+                    最初のDOM単元の続きです。HTML/CSSの
+                    <Link to="/courses/html-css/lessons/html-css-ch06-l04/slides/html-css-ch06-l04-s01">
+                      共通のclassの説明
+                    </Link>
+                    も確認できます。
                   </p>
                 )}
                 <Link to={readingLessonPath(course.id, lesson.id, true)}>
