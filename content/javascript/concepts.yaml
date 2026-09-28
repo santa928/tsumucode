@@ -720,3 +720,23 @@ concepts:
     prerequisiteConceptIds:
       - await-function-pause
     minimumProjectLevel: transform
+  - id: promise-rejection
+    introducedBySlideId: javascript-ch10-l03-s01
+    prerequisiteConceptIds:
+      - await-question-count
+    minimumProjectLevel: read
+  - id: await-try-catch
+    introducedBySlideId: javascript-ch10-l03-s02
+    prerequisiteConceptIds:
+      - promise-rejection
+    minimumProjectLevel: read
+  - id: async-failure-message
+    introducedBySlideId: javascript-ch10-l03-s03
+    prerequisiteConceptIds:
+      - await-try-catch
+    minimumProjectLevel: read
+  - id: async-retry-success
+    introducedBySlideId: javascript-ch10-l03-s04
+    prerequisiteConceptIds:
+      - async-failure-message
+    minimumProjectLevel: transform

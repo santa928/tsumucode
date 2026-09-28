@@ -3,8 +3,8 @@ id: javascript
 title: JavaScript はじめの一歩
 description: 画面の変化から始め、値・条件分岐・Function・Array・Module・Error・DebugまでをConsoleで確かめる
 audience: HTMLとCSSの役割を知り、JavaScriptを初めて学ぶ本人と身内
-estimatedMinutes: 675
-revision: 2026-09-28.14
+estimatedMinutes: 690
+revision: 2026-09-28.15
 runnerId: javascript
 validatorId: javascript
 glossarySource: glossary.yaml
@@ -23,12 +23,12 @@ prerequisites:
 publicationStatus: draft
 expectedTotals:
   chapters: 11
-  lessons: 41
-  conceptSlides: 164
-  standardExercises: 43
+  lessons: 42
+  conceptSlides: 168
+  standardExercises: 44
   guidedProjectLessons: 0
   capstoneLessons: 0
-  estimatedMinutes: 675
+  estimatedMinutes: 690
 provenanceManifestPath: provenance.yaml
 progressMigrations:
   - fromRevision: 2026-08-02.1
@@ -88,6 +88,9 @@ progressMigrations:
   - fromRevision: 2026-09-28.13
     toRevision: 2026-09-28.14
     steps: []
+  - fromRevision: 2026-09-28.14
+    toRevision: 2026-09-28.15
+    steps: []
 phases:
   - id: javascript-p00-core
     title: JavaScript Core
@@ -106,7 +109,7 @@ phases:
       - chapters/javascript-ch06/chapter.yaml
   - id: javascript-p02-browser-app
     title: JavaScript Browser App
-    description: DOM・Event・Form・Stateと、Promise/async/awaitで結果を受け取り表示する2単元を試せます。
+    description: DOM・Event・Form・Stateと、Promise/async/awaitの成功・失敗・再試行を試せます。
     chapterSources:
       - chapters/javascript-ch07/chapter.yaml
       - chapters/javascript-ch08/chapter.yaml

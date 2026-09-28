@@ -591,3 +591,10 @@ entries:
     relatedIds:
       - async-function
       - promise
+  - id: promise-reject
+    term: reject
+    definition: Promiseを失敗の状態にし、理由を渡すこと。awaitで受け取る場合はcatchで対応できる。
+    firstSlideId: javascript-ch10-l03-s01
+    relatedIds:
+      - promise
+      - try-catch
