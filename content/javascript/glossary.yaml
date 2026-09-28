@@ -501,3 +501,23 @@ entries:
     relatedIds:
       - event-object
       - property
+  - id: form
+    term: Form
+    definition: 入力欄や送信ボタンをまとめるHTMLのform要素。
+    firstSlideId: javascript-ch08-l03-s01
+    relatedIds:
+      - input-value
+  - id: submit-event
+    term: submitイベント
+    definition: Formの送信を開始するとき、そのFormへ届くイベント。
+    firstSlideId: javascript-ch08-l03-s02
+    relatedIds:
+      - form
+      - event
+  - id: prevent-default
+    term: preventDefault
+    definition: Eventが持つメソッドで、取り消せるイベントのブラウザ標準動作を止める。
+    firstSlideId: javascript-ch08-l03-s03
+    relatedIds:
+      - event-object
+      - function
