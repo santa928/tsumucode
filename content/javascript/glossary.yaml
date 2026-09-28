@@ -577,3 +577,17 @@ entries:
     firstSlideId: javascript-ch10-l01-s01
     relatedIds:
       - promise
+  - id: async-function
+    term: async関数
+    definition: Promiseを返す関数。中でawaitを使い、結果が届くまでその関数の続きを待たせられる。
+    firstSlideId: javascript-ch10-l02-s01
+    relatedIds:
+      - promise
+      - await-expression
+  - id: await-expression
+    term: await
+    definition: Promiseの結果を受け取ってからasync関数の続きを進める式。画面全体を止めるものではない。
+    firstSlideId: javascript-ch10-l02-s02
+    relatedIds:
+      - async-function
+      - promise

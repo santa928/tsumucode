@@ -700,3 +700,23 @@ concepts:
     prerequisiteConceptIds:
       - then-result-callback
     minimumProjectLevel: transform
+  - id: async-function-promise
+    introducedBySlideId: javascript-ch10-l02-s01
+    prerequisiteConceptIds:
+      - promise-data-display
+    minimumProjectLevel: read
+  - id: await-result-value
+    introducedBySlideId: javascript-ch10-l02-s02
+    prerequisiteConceptIds:
+      - async-function-promise
+    minimumProjectLevel: read
+  - id: await-function-pause
+    introducedBySlideId: javascript-ch10-l02-s03
+    prerequisiteConceptIds:
+      - await-result-value
+    minimumProjectLevel: read
+  - id: await-question-count
+    introducedBySlideId: javascript-ch10-l02-s04
+    prerequisiteConceptIds:
+      - await-function-pause
+    minimumProjectLevel: transform

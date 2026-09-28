@@ -242,6 +242,10 @@ describe('compileContent output safety', () => {
             lessonId: 'javascript-ch10-l01',
             target: { kind: 'slide', targetId: 'javascript-ch10-l01-s01' },
           },
+          {
+            lessonId: 'javascript-ch10-l02',
+            target: { kind: 'slide', targetId: 'javascript-ch10-l02-s01' },
+          },
         ],
       });
       expect(publishedPathCourseIds).not.toContain('javascript');
@@ -264,13 +268,13 @@ describe('compileContent output safety', () => {
         };
       };
       expect(javaScriptIndex).toMatchObject({
-        estimatedMinutes: 655,
+        estimatedMinutes: 675,
         expectedTotals: {
           chapters: 11,
-          lessons: 40,
-          conceptSlides: 160,
-          standardExercises: 42,
-          estimatedMinutes: 655,
+          lessons: 41,
+          conceptSlides: 164,
+          standardExercises: 43,
+          estimatedMinutes: 675,
         },
       });
     },

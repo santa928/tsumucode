@@ -26,7 +26,7 @@ test('3Lessonを通読し、同じ端末の読書位置とあとで試すを復�
   });
   await page.goto(PILOT);
   await expect(page.getByRole('heading', { name: '試用レッスンの目次' })).toBeVisible();
-  await expect(page.getByRole('link', { name: /^一続きに読む/u })).toHaveCount(16);
+  await expect(page.getByRole('link', { name: /^一続きに読む/u })).toHaveCount(17);
   await page.getByRole('link', { name: '一続きに読む：Closureが覚える値を観測する' }).click();
   await expect(page.locator('[data-reading-section]')).toHaveCount(4);
   const section = page.locator('[data-reading-section="javascript-ch03-l05-s03"]');
@@ -72,7 +72,7 @@ test('明示URLを保存値より優先し、消えたSlideはLesson目次へ安
   await expect(
     page.getByText('前のスライドが見つからないため、このレッスンの目次へ戻りました。'),
   ).toBeVisible();
-  await page.goto(`${PILOT}/javascript/lessons/javascript-ch10-l02/read`);
+  await page.goto(`${PILOT}/javascript/lessons/javascript-ch10-l03/read`);
   await expect(page).toHaveURL(/#\/library\/pilot$/u);
 });
 
@@ -143,7 +143,7 @@ test('試用1枚表示は対象外Lessonを先読みせず、通読との往復�
   await page.goto(`${PILOT}/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s04`);
   await expect(page.getByTestId('slide-stage')).toBeVisible();
   await page.getByRole('button', { name: 'スライド目次を開く' }).click();
-  await expect(page.getByRole('dialog').getByRole('link')).toHaveCount(60);
+  await expect(page.getByRole('dialog').getByRole('link')).toHaveCount(64);
   await page.getByRole('button', { name: '閉じる', exact: true }).click();
   await page.getByRole('link', { name: 'この位置から一続きに読む' }).click();
   await expect(page).toHaveURL(/read\?slide=javascript-ch00-l01-s04$/u);

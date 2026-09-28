@@ -806,3 +806,16 @@ Ch08-l01は15分/4Slide/1演習。Ch00〜07と合わせ32Lesson/128Slide/34Exerc
 | REQ-JS-PROMISE-006 | 維持 | 750msの既存Scenario観測、Home分離、安全境界を維持。Runtime前提はPR63の独立レビュー後統合 |
 
 20分4Slide1演習、候補40Lesson160Slide42演習655分。Ch10計画75分のうち最初の20分であり、残り3単元55分は未完。受入は実Runner/Validatorの正誤・掲載例・編集Reset再編集判定保存・狭幅読書で確認する。候補をmain/公開完了とは扱わない。
+
+### Ch10-l02 async/await（2026-09-28）
+
+| 要件 | 区分 | 内容 |
+|---|---|---|
+| REQ-JS-AWAIT-001 | 追加 | async関数はPromiseを返し、awaitの後に結果Arrayを受け取ってlengthを表示する |
+| REQ-JS-AWAIT-002 | 追加 | 待つのは関数の続きで、呼び出し元が先に進む順番を実例で示す |
+| REQ-JS-AWAIT-003 | 維持 | 同梱loadQuestionsを使い通信しない。PromiseのlengthがundefinedになるStarterを修正 |
+| REQ-JS-AWAIT-004 | 維持 | 引数改名/async arrow/既習thenの同じ振る舞いも許容し、コードの形を固定しない |
+| REQ-JS-AWAIT-005 | 維持 | .13→.14空移行、ID/進捗/下書き/ImportExport、限定試用、750ms観測とHome分離 |
+| REQ-JS-AWAIT-006 | 維持 | 失敗/読み込みstateは残り2単元。実通信/人試用代替/公開昇格は非対象。Runtime前提PR57/63を保持 |
+
+20分4Slide1演習、候補41Lesson164Slide43演習675分。Ch10候補40分と残り2単元35分を区別。実例の順序、実Runner正誤、編集Reset再編集判定保存、390px読書で検証する。
