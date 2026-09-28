@@ -3,7 +3,8 @@ import { isJavaScriptWorkspacePath, resolveJavaScriptModuleSpecifier } from './m
 export { isJavaScriptWorkspacePath } from './modulePath';
 
 export type JavaScriptSourceType = 'script' | 'module';
-export type JavaScriptCapabilityProfileId = 'core' | 'modules' | 'dom' | 'async' | 'project';
+export type JavaScriptCapabilityProfileId =
+  'core' | 'modules' | 'dom' | 'dom-form' | 'async' | 'project';
 
 export interface JavaScriptLegacyAnalysisInput {
   readonly exerciseSessionId: string;
@@ -279,7 +280,9 @@ export function isJavaScriptAnalysisRequest(value: unknown): value is JavaScript
     Number.isSafeInteger(value.executionRevision) &&
     Number(value.executionRevision) >= 0 &&
     (value.sourceType === 'script' || value.sourceType === 'module') &&
-    ['core', 'modules', 'dom', 'async', 'project'].includes(String(value.capabilityProfile)) &&
+    ['core', 'modules', 'dom', 'dom-form', 'async', 'project'].includes(
+      String(value.capabilityProfile),
+    ) &&
     typeof value.guardIdentifier === 'string' &&
     /^[$A-Z_a-z][$\w]*$/u.test(value.guardIdentifier);
   if (!commonIsValid) return false;

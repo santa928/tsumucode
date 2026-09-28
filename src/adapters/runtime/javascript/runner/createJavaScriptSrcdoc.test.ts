@@ -113,6 +113,7 @@ describe('createJavaScriptExecutionSource', () => {
           timerLimitExceeded: false,
           runtimeError: null,
           currentTargetFailure: null,
+          submitEvidence: 'unsupported',
           console: [],
         },
       });
@@ -207,6 +208,7 @@ describe('createJavaScriptExecutionSource', () => {
           payload: {
             error: null,
             currentTargetFailure: null,
+            submitEvidence: 'unsupported',
             console: [{ sequence: 0, level: 'log', text: 'clicked' }],
           },
         },
@@ -268,6 +270,7 @@ describe('createJavaScriptExecutionSource', () => {
           timerLimitExceeded: true,
           runtimeError: null,
           currentTargetFailure: null,
+          submitEvidence: 'unsupported',
           console: [],
         },
       });
@@ -352,6 +355,7 @@ describe('createJavaScriptExecutionSource', () => {
           timerLimitExceeded: false,
           runtimeError: { name: 'Error', message: 'stop here' },
           currentTargetFailure: null,
+          submitEvidence: 'unsupported',
           console: [
             { sequence: 0, level: 'log', text: '1 x true null' },
             { sequence: 1, level: 'info', text: '{markup: "<b>plain</b>"}' },

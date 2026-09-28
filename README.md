@@ -83,7 +83,7 @@ GitHub Pagesへ公開した後のHTML/CSSコースの直リンクは、[スラ�
 
 HTML/CSSとDOMを使うJavaScript演習は「ブラウザで実行」と表示し、既存の隔離Previewを利用します。Closureの3演習（`javascript-ch03-l05-e01`〜`e03`）は「ブラウザで実行（Console専用）」となり、編集時に`script.js`を隔離Workerで実行します。配列・オブジェクトの変数添字と、有限のPromise・microtask処理を利用できます。HTML/CSSファイルの下書きは保持しますが、この3演習では画面描画に使いません。DOM・タイマー・外部通信・Storage・moduleには対応していません。
 
-実行できたことと教材の合格は別です。未対応・制限停止・環境障害を採点履歴へ保存しません。編集内容と前回の成功結果は保持します。Console実行は1500ms、100件・1件4KiB・合計64KiBの出力上限を設け、停止後は新しいWorkerで再試行します。DOM側の変数添字等の制約は残ります。dom profileのみの`currentTarget`は同じDocumentのElementとdispatch後のnullに対応し、非Elementの取得は未対応として採点しません。詳細は[DOM実行の境界](docs/quality/browser-dom-runtime.md)を参照してください。実行方式と確認範囲は[Browser Console設計記録](docs/quality/browser-console-runtime.md)に記載しています。
+実行できたことと教材の合格は別です。未対応・制限停止・環境障害を採点履歴へ保存しません。編集内容と前回の成功結果は保持します。Console実行は1500ms、100件・1件4KiB・合計64KiBの出力上限を設け、停止後は新しいWorkerで再試行します。DOM側の変数添字等の制約は残ります。dom / dom-form profileの`currentTarget`は同じDocumentのElementとdispatch後のnullに対応し、非Elementの取得は未対応として採点しません。Form用の`dom-form`はnative submitと学習者のpreventDefaultを操作ごとに観測します。通信・遷移は引き続き禁止し、Form教材は後続です。詳細は[DOM実行の境界](docs/quality/browser-dom-runtime.md)を参照してください。実行方式と確認範囲は[Browser Console設計記録](docs/quality/browser-console-runtime.md)に記載しています。
 
 ローカルDocker学習版では、Closureのガイド練習と任意の追加練習2件を実Node.jsで実行できます。Python、Next.js、ターミナルは未実装です。Pagesや読書画面からlocalhostを探索しません。実行portと任意DOM portの境界・制限は[Issue #27の設計記録](docs/quality/runtime-execution-boundary.md)に記載しています。
 

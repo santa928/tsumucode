@@ -72,6 +72,9 @@ export interface InteractionRequest {
   readonly action: JavaScriptInteractionAction;
 }
 
+/** Form profileの取消観測。guard設置障害を学習者の不正解から分離する。 */
+export type SubmitEvidence = 'unsupported' | 'setup-error' | 'prevented' | 'not-prevented';
+
 /** Interaction後の同一性と非永続Consoleを返すbounded結果。 */
 export interface InteractionResult {
   readonly exerciseSessionId: string;
@@ -80,6 +83,7 @@ export interface InteractionResult {
   readonly requestId: string;
   readonly console: readonly RunnerConsoleRecord[];
   readonly diagnostics?: readonly RunnerDiagnostic[];
+  readonly submitEvidence?: SubmitEvidence;
 }
 
 /** Contentのexpectation 1件を観測事実へ評価した結果。 */

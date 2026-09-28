@@ -471,6 +471,8 @@ function aggregateRequirements(
 /** Scenario expectationを初心者が比較できる期待値の文章へ変換する。 */
 function interactionExpected(expectation: JavaScriptCheckpointExpectation): string {
   switch (expectation.kind) {
+    case 'submit-prevented':
+      return 'submitイベントのhandlerでpreventDefaultを実行する';
     case 'selector-exists':
       return `${expectation.selector} が表示される`;
     case 'selector-text':

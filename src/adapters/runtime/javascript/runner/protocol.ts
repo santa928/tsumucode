@@ -3,11 +3,13 @@ import type {
   InteractionRequest,
   InteractionResult,
   RunnerConsoleRecord,
+  SubmitEvidence,
 } from '../../../../core/runtime/contracts';
 import { CONSOLE_LIMITS } from './consoleFormatter';
 import { currentTargetDiagnostics, type CurrentTargetFailure } from './currentTargetGuard';
+import { submitDiagnostics } from './submitGuard';
 
-export const JAVASCRIPT_PROTOCOL_VERSION = 2 as const;
+export const JAVASCRIPT_PROTOCOL_VERSION = 3 as const;
 
 const MAX_ID_LENGTH = 256;
 const MAX_TOKEN_LENGTH = 512;
@@ -21,6 +23,7 @@ export interface JavaScriptRuntimeError {
 }
 
 export interface JavaScriptExecutionPayload {
+  readonly submitEvidence: SubmitEvidence;
   readonly currentTargetFailure: CurrentTargetFailure;
   readonly executed: boolean;
   readonly budgetExhausted: boolean;
@@ -38,6 +41,7 @@ export interface JavaScriptInteractionError {
 }
 
 export interface JavaScriptInteractionPayload {
+  readonly submitEvidence: SubmitEvidence;
   readonly currentTargetFailure: CurrentTargetFailure;
   readonly error: JavaScriptInteractionError | null;
   readonly console: readonly RunnerConsoleRecord[];
@@ -95,6 +99,16 @@ interface PendingInteraction {
   readonly resolve: (result: InteractionResult) => void;
   readonly reject: (error: Error) => void;
   readonly timeout: ReturnType<typeof setTimeout>;
+}
+
+/** Form観測は有限の状態だけを受理し、任意payloadを採点へ渡さない。 */
+function isSubmitEvidence(value: unknown): value is SubmitEvidence {
+  return (
+    value === 'unsupported' ||
+    value === 'setup-error' ||
+    value === 'prevented' ||
+    value === 'not-prevented'
+  );
 }
 
 /** unknown値を配列でないRecordへ絞り込む。 */
@@ -258,7 +272,8 @@ export function isJavaScriptRuntimeEnvelope(value: unknown): value is JavaScript
     const payload = value.payload;
     return (
       isRecord(payload) &&
-      hasExactKeys(payload, ['console', 'error', 'currentTargetFailure']) &&
+      hasExactKeys(payload, ['console', 'error', 'currentTargetFailure', 'submitEvidence']) &&
+      isSubmitEvidence(payload.submitEvidence) &&
       (payload.currentTargetFailure === null ||
         payload.currentTargetFailure === 'unsupported' ||
         payload.currentTargetFailure === 'setup-error') &&
@@ -292,7 +307,9 @@ export function isJavaScriptRuntimeEnvelope(value: unknown): value is JavaScript
       'runtimeError',
       'timerLimitExceeded',
       'currentTargetFailure',
+      'submitEvidence',
     ]) &&
+    isSubmitEvidence(payload.submitEvidence) &&
     (payload.currentTargetFailure === null ||
       payload.currentTargetFailure === 'unsupported' ||
       payload.currentTargetFailure === 'setup-error') &&
@@ -372,7 +389,11 @@ export class JavaScriptExecutionClient {
         frameGeneration: message.frameGeneration,
         requestId: message.requestId,
         console: message.payload.console,
-        diagnostics: currentTargetDiagnostics(message.payload.currentTargetFailure),
+        submitEvidence: message.payload.submitEvidence,
+        diagnostics: [
+          ...currentTargetDiagnostics(message.payload.currentTargetFailure),
+          ...submitDiagnostics(message.payload.submitEvidence),
+        ],
       });
       return;
     }

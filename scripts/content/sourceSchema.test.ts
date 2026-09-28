@@ -562,6 +562,28 @@ describe('content source schema', () => {
     ).toBe(false);
   });
 
+  it.each(['dom', 'dom-form', 'async', 'project'])(
+    '取消期待はdom-formだけで受理する: %s',
+    (profile) => {
+      const result = ExerciseSourceSchema.safeParse({
+        ...validExerciseSource,
+        runtime: { ...interactionRuntime, capabilityProfile: profile },
+        interactionScenarios: [
+          validInteractionScenario({
+            checkpoints: [
+              {
+                id: 'cancelled',
+                afterActionId: 'choose',
+                expectations: [{ id: 'cancel', kind: 'submit-prevented' }],
+              },
+            ],
+          }),
+        ],
+      });
+      expect(result.success, JSON.stringify(result)).toBe(profile === 'dom-form');
+    },
+  );
+
   it.each(['core', 'modules'])('Interaction Scenarioへ%s profileを許可しない', (profile) => {
     expect(
       ExerciseSourceSchema.safeParse({

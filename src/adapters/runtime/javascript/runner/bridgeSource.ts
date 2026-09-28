@@ -1,12 +1,18 @@
 /** Analyzer済みJavaScriptをbounded budgetと無効化済みCapability内で実行するblob source。 */
 import { assertBridgeConfig } from '../../html-css/bridgeSource';
-import type { RunnerConsoleLevel, RunnerConsoleRecord } from '../../../../core/runtime/contracts';
+import type {
+  RunnerConsoleLevel,
+  RunnerConsoleRecord,
+  SubmitEvidence,
+} from '../../../../core/runtime/contracts';
 import { CONSOLE_LIMITS, createConsoleFormatter, type ConsoleLimits } from './consoleFormatter';
 import type { PreparedJavaScriptModuleGraph } from './materializeModuleGraph';
 import { JAVASCRIPT_PROTOCOL_VERSION } from './protocol';
 import { installCurrentTargetGuard, type CurrentTargetFailure } from './currentTargetGuard';
+import { installSubmitGuard, type SubmitObservation } from './submitGuard';
 
 export interface CreateJavaScriptExecutionSourceInput {
+  readonly observeSubmit?: boolean;
   readonly exerciseSessionId: string;
   readonly executionRevision: number;
   readonly frameGeneration: number;
@@ -16,6 +22,7 @@ export interface CreateJavaScriptExecutionSourceInput {
 }
 
 export interface CreateJavaScriptModuleExecutionSourceInput {
+  readonly observeSubmit?: boolean;
   readonly exerciseSessionId: string;
   readonly executionRevision: number;
   readonly frameGeneration: number;
@@ -30,6 +37,7 @@ const MAX_INSTRUMENTED_CODE_BYTES = 200 * 1024;
 const MAX_MODULE_PLAN_BYTES = 768 * 1024;
 
 interface RuntimeConfig {
+  readonly observeSubmit: boolean;
   readonly exerciseSessionId: string;
   readonly executionRevision: number;
   readonly frameGeneration: number;
@@ -278,6 +286,7 @@ function createRuntimeState(
     focusSignalType?: string,
   ) => (action: unknown) => TrustedInteractionExecutionResult,
   installCurrentTarget: (target: Document, onUnsupported: () => void) => boolean,
+  installSubmit: (target: Document, isLearnerExecuting: () => boolean) => SubmitObservation | null,
 ) {
   'use strict';
   const version = config.protocolVersion;
@@ -315,6 +324,15 @@ function createRuntimeState(
   let startedAt = now();
   let functionDepth = 0;
   let learnerExecutionDepth = 0;
+  const submitObservation = config.observeSubmit
+    ? installSubmit(document, () => learnerExecutionDepth > 0)
+    : null;
+  const submitReady = !config.observeSubmit || submitObservation !== null;
+  let submitEvidence: SubmitEvidence = !config.observeSubmit
+    ? 'unsupported'
+    : submitReady
+      ? 'not-prevented'
+      : 'setup-error';
   let budgetExhausted = false;
   let timerLimitExceeded = false;
   let runtimeError: { readonly name: string; readonly message: string } | null = null;
@@ -701,7 +719,10 @@ function createRuntimeState(
       return;
     }
     if (isInteraction) {
+      submitObservation?.begin();
       const result = executeInteraction(message.payload);
+      if (submitObservation !== null)
+        submitEvidence = submitObservation.end() ? 'prevented' : 'not-prevented';
       if (result.error?.code === 'invalid-action') return;
       usedRequestIds.add(message.requestId);
       usedTokens.add(message.oneTimeToken);
@@ -710,7 +731,12 @@ function createRuntimeState(
         'javascript.interaction-complete',
         message.requestId,
         message.oneTimeToken,
-        { error: result.error, console: copyConsoleRecords(), currentTargetFailure },
+        {
+          error: result.error,
+          console: copyConsoleRecords(),
+          currentTargetFailure,
+          submitEvidence,
+        },
         true,
       );
       return;
@@ -741,14 +767,15 @@ function createRuntimeState(
       resetCallbackBudget();
       learnerExecutionDepth += 1;
       try {
-        if (currentTargetReady) callback();
+        if (currentTargetReady && submitReady) callback();
       } catch (error: unknown) {
         runtimeError = errorRecord(error);
       } finally {
         learnerExecutionDepth = Math.max(0, learnerExecutionDepth - 1);
       }
       send('javascript.execution-complete', 'execution', config.bootstrapToken, {
-        executed: currentTargetFailure === null && runtimeError === null,
+        executed: currentTargetFailure === null && submitReady && runtimeError === null,
+        submitEvidence,
         currentTargetFailure,
         budgetExhausted,
         timerLimitExceeded,
@@ -760,7 +787,7 @@ function createRuntimeState(
       resetCallbackBudget();
       learnerExecutionDepth += 1;
       void Promise.resolve()
-        .then(() => (currentTargetReady ? loader() : undefined))
+        .then(() => (currentTargetReady && submitReady ? loader() : undefined))
         .catch((error: unknown) => {
           runtimeError = errorRecord(error);
         })
@@ -772,7 +799,8 @@ function createRuntimeState(
             // runtime globalの後片付け失敗は学習コードの成否へ混ぜない。
           }
           send('javascript.execution-complete', 'execution', config.bootstrapToken, {
-            executed: currentTargetFailure === null && runtimeError === null,
+            executed: currentTargetFailure === null && submitReady && runtimeError === null,
+            submitEvidence,
             currentTargetFailure,
             budgetExhausted,
             timerLimitExceeded,
@@ -801,6 +829,7 @@ export function createJavaScriptExecutionSource(
     throw new Error('Instrumented JavaScript exceeds runtime limit');
   }
   const config = JSON.stringify({
+    observeSubmit: input.observeSubmit === true,
     exerciseSessionId: input.exerciseSessionId,
     executionRevision: input.executionRevision,
     frameGeneration: input.frameGeneration,
@@ -811,7 +840,7 @@ export function createJavaScriptExecutionSource(
   return [
     '(function(){"use strict";',
     `(${scrubJavaScriptBootstrapSecrets.toString()})(document);`,
-    `const ${input.guardIdentifier}=(${createRuntimeState.toString()})(${config},(${createConsoleFormatter.toString()})(${consoleLimits}),${consoleLimits},(${createTrustedInteractionExecutor.toString()}),(${installCurrentTargetGuard.toString()}));`,
+    `const ${input.guardIdentifier}=(${createRuntimeState.toString()})(${config},(${createConsoleFormatter.toString()})(${consoleLimits}),${consoleLimits},(${createTrustedInteractionExecutor.toString()}),(${installCurrentTargetGuard.toString()}),(${installSubmitGuard.toString()}));`,
     `(${lockDownJavaScriptDynamicCodeCapabilities.toString()})(globalThis);`,
     `${input.guardIdentifier}.run(function(){"use strict";`,
     input.instrumentedCode,
@@ -837,6 +866,7 @@ export function createJavaScriptModuleExecutionSource(
     throw new Error('JavaScript module plan exceeds runtime limit');
   }
   const config = JSON.stringify({
+    observeSubmit: input.observeSubmit === true,
     exerciseSessionId: input.exerciseSessionId,
     executionRevision: input.executionRevision,
     frameGeneration: input.frameGeneration,
@@ -848,7 +878,7 @@ export function createJavaScriptModuleExecutionSource(
   return [
     '(function(){"use strict";',
     `(${scrubJavaScriptBootstrapSecrets.toString()})(document);`,
-    `const runtime=(${createRuntimeState.toString()})(${config},(${createConsoleFormatter.toString()})(${consoleLimits}),${consoleLimits},(${createTrustedInteractionExecutor.toString()}),(${installCurrentTargetGuard.toString()}));`,
+    `const runtime=(${createRuntimeState.toString()})(${config},(${createConsoleFormatter.toString()})(${consoleLimits}),${consoleLimits},(${createTrustedInteractionExecutor.toString()}),(${installCurrentTargetGuard.toString()}),(${installSubmitGuard.toString()}));`,
     `Object.defineProperty(globalThis,${runtimeKey},{configurable:true,enumerable:false,writable:false,value:runtime});`,
     `const plan=${modulePlan};`,
     'const NativeBlob=Blob;',

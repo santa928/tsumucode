@@ -86,7 +86,7 @@ export const JavaScriptExerciseRuntimeSourceSchema = z
     kind: z.literal('javascript'),
     entryFile: WorkspacePathSchema,
     sourceType: z.enum(['script', 'module']),
-    capabilityProfile: z.enum(['core', 'modules', 'dom', 'async', 'project']),
+    capabilityProfile: z.enum(['core', 'modules', 'dom', 'dom-form', 'async', 'project']),
     primaryOutput: z.enum(['preview', 'console']),
   })
   .strict();
@@ -173,6 +173,20 @@ export const ExerciseSourceSchema = z
   ])
   .superRefine((exercise, context) => {
     if (
+      exercise.interactionScenarios?.some((scenario) =>
+        scenario.checkpoints.some((checkpoint) =>
+          checkpoint.expectations.some((expectation) => expectation.kind === 'submit-prevented'),
+        ),
+      ) &&
+      (exercise.runtime?.kind !== 'javascript' || exercise.runtime.capabilityProfile !== 'dom-form')
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['interactionScenarios'],
+        message: 'submit-preventedはdom-form profileで指定してください',
+      });
+    }
+    if (
       exercise.interactionScenarios !== undefined &&
       hasDuplicates(exercise.interactionScenarios.map(({ id }) => id))
     ) {
@@ -185,12 +199,12 @@ export const ExerciseSourceSchema = z
     if (
       exercise.interactionScenarios !== undefined &&
       (exercise.runtime?.kind !== 'javascript' ||
-        !['dom', 'async', 'project'].includes(exercise.runtime.capabilityProfile))
+        !['dom', 'dom-form', 'async', 'project'].includes(exercise.runtime.capabilityProfile))
     ) {
       context.addIssue({
         code: 'custom',
         path: ['interactionScenarios'],
-        message: 'Interaction Scenarioはdom、async、project profileで指定してください',
+        message: 'Interaction Scenarioはdom、dom-form、async、project profileで指定してください',
       });
     }
     const ruleIds = exercise.validationRules.map(({ id }) => id);
