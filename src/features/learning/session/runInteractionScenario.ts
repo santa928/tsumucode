@@ -72,6 +72,12 @@ export async function runInteractionScenario(
   input.assertFresh();
   const rendered = await input.render();
   input.assertFresh();
+  if (
+    rendered.exerciseSessionId !== exerciseSessionId ||
+    rendered.executionRevision !== executionRevision
+  ) {
+    throw new Error('Interaction render identityが要求と一致しません');
+  }
   if (rendered.diagnostics.some(({ severity }) => severity === 'error')) {
     throw new Error('Interaction ScenarioのPreviewを準備できませんでした');
   }
