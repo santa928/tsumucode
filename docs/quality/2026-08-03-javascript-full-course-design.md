@@ -793,3 +793,16 @@ Ch08-l01は15分/4Slide/1演習。Ch00〜07と合わせ32Lesson/128Slide/34Exerc
 | REQ-JS-FILTER-006 | 維持 | 検索入力/非同期/Framework/実行state保存は非対象。Runtime/安全/性能/公開Gate不変 |
 
 15分4Slide1演習、累計39Lesson156Slide41演習635分draft候補。Ch09は4Lesson70分の原稿候補となるが、独立reviewと人試用を完了扱いにしない。受入は実Runnerの例/正誤・UI編集Reset判定保存・390px読書。Ch10/11と後続Issueは未完を維持。
+
+### Ch10-l01 Promise結果の最初の単元（2026-09-28）
+
+| 要件 | 区分 | 内容 |
+|---|---|---|
+| REQ-JS-PROMISE-001 | 追加 | Promiseと結果Arrayを区別し、thenの引数から件数と最初の問題を表示する |
+| REQ-JS-PROMISE-002 | 追加 | new Promise/resolveと既存bounded timerを使う教材用loadQuestionsを明示。実通信を発生したと教えない |
+| REQ-JS-PROMISE-003 | 維持 | 既習callback/Array/Object/DOM/clickをつなぐ。引数名・named callbackの別解を許容 |
+| REQ-JS-PROMISE-004 | 維持 | .12→.13空移行、ID/進捗/下書き/ImportExportと限定試用を維持 |
+| REQ-JS-PROMISE-005 | 維持 | async/await・失敗処理・読み込みstateは後続。実通信/公開昇格/人試用の代替は非対象 |
+| REQ-JS-PROMISE-006 | 維持 | 750msの既存Scenario観測、Home分離、安全境界を維持。Runtime前提はPR63の独立レビュー後統合 |
+
+20分4Slide1演習、候補40Lesson160Slide42演習655分。Ch10計画75分のうち最初の20分であり、残り3単元55分は未完。受入は実Runner/Validatorの正誤・掲載例・編集Reset再編集判定保存・狭幅読書で確認する。候補をmain/公開完了とは扱わない。

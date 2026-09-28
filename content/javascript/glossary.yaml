@@ -557,3 +557,23 @@ entries:
     firstSlideId: javascript-ch09-l03-s02
     relatedIds:
       - render-function
+
+  - id: promise
+    term: Promise
+    definition: あとで得られる成功または失敗の結果を扱う仕組み。結果のデータそのものとは区別する。
+    firstSlideId: javascript-ch10-l01-s01
+    relatedIds:
+      - promise-then
+      - promise-resolve
+  - id: promise-resolve
+    term: resolve
+    definition: Promiseに成功結果を渡すために受け取る関数。教材では同梱の問題Arrayを渡す。
+    firstSlideId: javascript-ch10-l01-s02
+    relatedIds:
+      - promise
+  - id: promise-then
+    term: then
+    definition: Promiseの成功結果を受け取るcallbackを登録するメソッド。callbackの引数で結果を使う。
+    firstSlideId: javascript-ch10-l01-s01
+    relatedIds:
+      - promise

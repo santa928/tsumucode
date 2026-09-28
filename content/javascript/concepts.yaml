@@ -680,3 +680,23 @@ concepts:
     prerequisiteConceptIds:
       - filter-state-render
     minimumProjectLevel: transform
+  - id: promise-result
+    introducedBySlideId: javascript-ch10-l01-s01
+    prerequisiteConceptIds:
+      - preserve-source-on-filter
+    minimumProjectLevel: read
+  - id: promise-producer
+    introducedBySlideId: javascript-ch10-l01-s02
+    prerequisiteConceptIds:
+      - promise-result
+    minimumProjectLevel: read
+  - id: then-result-callback
+    introducedBySlideId: javascript-ch10-l01-s03
+    prerequisiteConceptIds:
+      - promise-producer
+    minimumProjectLevel: read
+  - id: promise-data-display
+    introducedBySlideId: javascript-ch10-l01-s04
+    prerequisiteConceptIds:
+      - then-result-callback
+    minimumProjectLevel: transform
