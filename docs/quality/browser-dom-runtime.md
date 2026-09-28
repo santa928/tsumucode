@@ -69,13 +69,29 @@ Protocol v3は初回/操作応答の`submitEvidence`を4値（unsupported/setup-
 
 ## Ch10の直接Promise constructor（Issue #8、レビュー前の候補）
 
-| 要件 | 区分 | 契約 |
-|---|---|---|
-| REQ-ASYNC-PROMISE-001 | 追加 | async/projectだけ直接のnew Promiseを許容し、executor/then/awaitと既存bounded timerを接続する |
+| 要件                  | 区分 | 契約                                                                                                       |
+| --------------------- | ---- | ---------------------------------------------------------------------------------------------------------- |
+| REQ-ASYNC-PROMISE-001 | 追加 | async/projectだけ直接のnew Promiseを許容し、executor/then/awaitと既存bounded timerを接続する               |
 | REQ-ASYNC-PROMISE-002 | 維持 | core/modules/dom/dom-formではunsupported。任意constructor・alias・member constructor・動的実行は開放しない |
-| REQ-ASYNC-PROMISE-003 | 維持 | 通信/Storage/親参照拒否、opaque iframe/CSP、計装の予算、timer数/遅延上限、stop/新frame失効を維持する |
-| REQ-ASYNC-PROMISE-004 | 維持 | currentTargetのasync/project制限、未対応/システム障害の非採点、下書き保持、Home分離を維持する |
+| REQ-ASYNC-PROMISE-003 | 維持 | 通信/Storage/親参照拒否、opaque iframe/CSP、計装の予算、timer数/遅延上限、stop/新frame失効を維持する       |
+| REQ-ASYNC-PROMISE-004 | 維持 | currentTargetのasync/project制限、未対応/システム障害の非採点、下書き保持、Home分離を維持する              |
 
 これはConsole専用Runnerの証拠をDOMへ流用する変更ではない。直接のPromise constructorを既存AST policyの有限許可へ追加する候補であり、全Promiseがsettledになるまで待つ契約や任意コードの完全隔離を新設しない。遅延DOM観測は既存Scenarioの750ms上限とpreserveTimersに従う。初期Snapshotでtimerを回収する既存契約も変えない。
 
 受入は実Runnerで直接resolve/reject捕捉・timerからのresolve・async/await・再実行/stop後の古い結果抑止と、関連の拒否境界を代表Browserで確認する。初期実測ではnew Promiseがunsupportedで、既存Promise.resolve().thenのDOM更新のみ動作した。人の初心者試用・教材完成・公開はこの修正の証拠に含めない。既存性能/待機上限は維持する。
+
+## 操作後の実行診断（Issue #8、実測後の修正候補）
+
+実Runnerで、同期click内のthrow、await後の未捕捉拒否、timer内の予算停止を発生させたところ、初回renderだけでなく後続Interactionもdiagnostics空を返した。Bridge内部のruntimeError/budgetExhausted等をInteractionへ載せていないことと、未捕捉Promise拒否の観測がないことを確認した。失敗処理の教材を先に足すと、制限停止を課題不一致として扱う危険がある。
+
+| 要件             | 区分 | 内容                                                                                                         |
+| ---------------- | ---- | ------------------------------------------------------------------------------------------------------------ |
+| REQ-DOM-DIAG-001 | 追加 | InteractionとSnapshotの観測時に、同期/非同期の実行エラー・予算/タイマー制限を認証済みの同じframeから取得する |
+| REQ-DOM-DIAG-002 | 維持 | 未対応/システム停止を採点履歴へ保存せず、コードエラーと課題不一致を区別する                                  |
+| REQ-DOM-DIAG-003 | 維持 | 既存のsourceWindow/session/revision/frameGeneration/一回token/strict payloadと応答上限を維持する             |
+| REQ-DOM-DIAG-004 | 維持 | 観測のためにclick/focusを合成せず、learner callbackや予算・timer・Form取消状態を変更しない                   |
+| REQ-DOM-DIAG-005 | 維持 | 750msのcheckpoint待機、既存Console量上限、停止/再実行・画面離脱による失効を保持する                          |
+
+候補は既存Interaction応答へbounded診断を追加し、同じ認証経路に副作用のない観測要求を設ける。Snapshotへその観測結果を添え、Scenarioの各観測で非採点状態を検出し、遅延Consoleも現在の内容で判定する。代案のDOM変化だけによる推測は例外と制限停止を区別できないため採用しない。全Promise settled待ち、任意ネット通信、sandbox緩和、Framework実行は非対象。未捕捉拒否の観測・偽造/古い応答拒否・遅延予算停止の非保存を実ブラウザと既存関連回帰で確かめる。
+
+応答形式はProtocol v4。古い形式や診断状態が欠けた応答は受理しない。SnapshotにはDOM観測の後に認証した診断とConsoleを添付する。二つの観測は原子的ではなく、判定成立後のすべての非同期処理を追跡するものではない。
