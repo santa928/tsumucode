@@ -698,3 +698,14 @@ forEachは既習扱いせず明示導入し、Arrowの引数とmapのcallbackの
 Ch08-l01は15分/4Slide/1演習。Ch00〜07と合わせ32Lesson/128Slide/34Exercise/515分。前提はDOMの初回、Functionの呼出し、Arrowで、目次から既習Slideへ戻れる。最初から完成文字列を表示するコードは初期Snapshotで拒否する。学習者は実Previewでボタンを押し、判定時は共通Scenario実行から操作結果を受け取る。
 
 受入は教材内容・正誤Fixture・直接Previewクリック・判定/Reset/再編集/保存の整合と390px読書。宣言外のScenario/Checkpoint/Expectationやcheckpoint集合そのものをFeedbackのcheck IDとして受理しない。Form/submit、後続Ch08〜11、全Course公開昇格、人の初心者/実機は非対象・未完。既存の公開Gate・安全境界・Home/読書のchunk分離を維持する。
+
+### Ch08-l02 実装範囲（2026-09-28）
+
+| 要件 | 区分 | 実装と受入条件 |
+|---|---|---|
+| REQ-JS-EVENT-001〜005 | 維持 | 前単元の実観測・既存ID/保存互換・draft有限試用・独立レビューを維持 |
+| REQ-JS-EVENT-006 | 追加 | input通知、Event Object、currentTarget、現在のvalueを4枚で導入。既習propertyとイベント登録へ戻れる |
+| REQ-JS-EVENT-007 | 追加 | handler内で現在値を読む演習。実Scenarioで別の値と空を観測し、change-only・固定値・空を無視する誤答を拒否 |
+| REQ-JS-EVENT-008 | 維持 | Form/入力検証/trimは後続。sandboxや採点Gateを変更せず、実行成功と採点を分離 |
+
+15分を追加しCh08は2 Lesson/30分、JavaScript累計33 Lesson/132 Slide/35演習/530分。revision .5→.6は既存IDを保つ空移行。読む時点の誤りを直す小演習に限定し、currentTarget構文だけへの固定はせず登録先変数.valueも正解とする。文字列末尾空白は既存Snapshotが正規化するため、その差を採点の主題にはしない。性能予算・安全境界は維持し、人の初心者試用と後続章を完了扱いにしない。

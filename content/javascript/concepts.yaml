@@ -538,3 +538,24 @@ concepts:
     prerequisiteConceptIds:
       - event-listener-target
     minimumProjectLevel: transform
+  - id: input-event-notification
+    introducedBySlideId: javascript-ch08-l02-s01
+    prerequisiteConceptIds:
+      - event-before-after
+    minimumProjectLevel: read
+  - id: event-current-target
+    introducedBySlideId: javascript-ch08-l02-s02
+    prerequisiteConceptIds:
+      - input-event-notification
+      - property-access
+    minimumProjectLevel: read
+  - id: input-current-value
+    introducedBySlideId: javascript-ch08-l02-s03
+    prerequisiteConceptIds:
+      - event-current-target
+    minimumProjectLevel: read
+  - id: input-repeated-update
+    introducedBySlideId: javascript-ch08-l02-s04
+    prerequisiteConceptIds:
+      - input-current-value
+    minimumProjectLevel: transform
