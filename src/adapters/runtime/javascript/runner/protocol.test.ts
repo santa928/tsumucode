@@ -23,6 +23,7 @@ function executionEnvelope(payload: Readonly<Record<string, unknown>>): unknown 
       timerLimitExceeded: false,
       runtimeError: null,
       currentTargetFailure: null,
+      submitEvidence: 'unsupported',
       console: [record],
       ...payload,
     },
@@ -39,7 +40,12 @@ function interactionEnvelope(overrides: Readonly<Record<string, unknown>> = {}):
     frameGeneration: 7,
     requestId: 'interaction-1',
     oneTimeToken: 'interaction-token-1',
-    payload: { error: null, console: [record], currentTargetFailure: null },
+    payload: {
+      error: null,
+      console: [record],
+      currentTargetFailure: null,
+      submitEvidence: 'unsupported',
+    },
     ...overrides,
   };
 }
@@ -67,7 +73,12 @@ describe('isJavaScriptRuntimeEnvelope console contract', () => {
       expect(
         isJavaScriptRuntimeEnvelope(
           interactionEnvelope({
-            payload: { error: null, console: [], currentTargetFailure },
+            payload: {
+              error: null,
+              console: [],
+              currentTargetFailure,
+              submitEvidence: 'unsupported',
+            },
           }),
         ),
       ).toBe(true);
@@ -77,11 +88,50 @@ describe('isJavaScriptRuntimeEnvelope console contract', () => {
       expect(
         isJavaScriptRuntimeEnvelope(
           interactionEnvelope({
-            payload: { error: null, console: [], currentTargetFailure },
+            payload: {
+              error: null,
+              console: [],
+              currentTargetFailure,
+              submitEvidence: 'unsupported',
+            },
           }),
         ),
       ).toBe(false);
     }
+  });
+
+  it('submit観測を有限値で検証し欠落・任意値・旧versionを拒否する', () => {
+    for (const submitEvidence of ['unsupported', 'setup-error', 'prevented', 'not-prevented']) {
+      expect(isJavaScriptRuntimeEnvelope(executionEnvelope({ submitEvidence }))).toBe(true);
+      expect(
+        isJavaScriptRuntimeEnvelope(
+          interactionEnvelope({
+            payload: {
+              error: null,
+              console: [],
+              currentTargetFailure: null,
+              submitEvidence,
+            },
+          }),
+        ),
+      ).toBe(true);
+    }
+    for (const submitEvidence of [undefined, null, true, 'approved', {}, []]) {
+      expect(isJavaScriptRuntimeEnvelope(executionEnvelope({ submitEvidence }))).toBe(false);
+      expect(
+        isJavaScriptRuntimeEnvelope(
+          interactionEnvelope({
+            payload: {
+              error: null,
+              console: [],
+              currentTargetFailure: null,
+              submitEvidence,
+            },
+          }),
+        ),
+      ).toBe(false);
+    }
+    expect(isJavaScriptRuntimeEnvelope(interactionEnvelope({ version: 2 }))).toBe(false);
   });
 
   it('boundedでsequence順のplain text recordだけを受理する', () => {
@@ -143,6 +193,7 @@ describe('isJavaScriptRuntimeEnvelope console contract', () => {
             error: { code: 'target-not-found', message: 'なし' },
             console: [],
             currentTargetFailure: null,
+            submitEvidence: 'unsupported',
           },
         }),
       ),
@@ -151,7 +202,13 @@ describe('isJavaScriptRuntimeEnvelope console contract', () => {
     expect(
       isJavaScriptRuntimeEnvelope(
         interactionEnvelope({
-          payload: { error: null, console: [], currentTargetFailure: null, unexpected: true },
+          payload: {
+            error: null,
+            console: [],
+            currentTargetFailure: null,
+            submitEvidence: 'unsupported',
+            unexpected: true,
+          },
         }),
       ),
     ).toBe(false);
@@ -162,6 +219,7 @@ describe('isJavaScriptRuntimeEnvelope console contract', () => {
             error: { code: 'unknown-code', message: 'x' },
             console: [],
             currentTargetFailure: null,
+            submitEvidence: 'unsupported',
           },
         }),
       ),
@@ -235,6 +293,7 @@ describe('JavaScriptExecutionClient interaction identity', () => {
       requestId: 'interaction-1',
       console: [record],
       diagnostics: [],
+      submitEvidence: 'unsupported',
     });
     await expect(client.interact(request)).rejects.toThrow(/duplicated/u);
     client.dispose();

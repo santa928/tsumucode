@@ -332,6 +332,12 @@ export const JAVASCRIPT_CAPABILITY_PROFILES: Readonly<
     allowAsync: false,
   }),
   dom: Object.freeze({ id: 'dom', allowModules: true, allowDom: true, allowAsync: false }),
+  'dom-form': Object.freeze({
+    id: 'dom-form',
+    allowModules: true,
+    allowDom: true,
+    allowAsync: false,
+  }),
   async: Object.freeze({ id: 'async', allowModules: true, allowDom: true, allowAsync: true }),
   project: Object.freeze({
     id: 'project',
@@ -463,6 +469,38 @@ export function assertJavaScriptCapabilityPolicy(
     const current = ast(node);
     const root = identifierName(current.object);
     const property = memberName(current);
+    // dom-formの取消観測は非passive handlerだけを対象とし、aliasによるoptions検査の迂回も閉じる。
+    if (profileId === 'dom-form' && property === 'addEventListener') {
+      const call = parent === undefined ? undefined : ast(parent);
+      if (
+        current.type !== 'MemberExpression' ||
+        current.computed === true ||
+        call?.type !== 'CallExpression' ||
+        call.callee !== node
+      ) {
+        reject(
+          node,
+          file,
+          'FormのaddEventListenerは直接のmember呼出しだけ対応しています',
+          'unsupported',
+        );
+      }
+      const args = call.arguments as readonly Node[];
+      const option = args[2] === undefined ? undefined : ast(args[2]);
+      if (
+        args.length < 2 ||
+        args.length > 3 ||
+        literalString(args[0]) === undefined ||
+        (option !== undefined && (option.type !== 'Literal' || typeof option.value !== 'boolean'))
+      ) {
+        reject(
+          node,
+          file,
+          'FormのEvent登録は静的なEvent名と省略またはbooleanのcaptureだけ対応しています',
+          'unsupported',
+        );
+      }
+    }
     if (!hasSafeComputedProperty(current)) {
       reject(
         node,
@@ -518,7 +556,7 @@ export function assertJavaScriptCapabilityPolicy(
     if (property === 'constructor') {
       reject(node, file, 'constructorを使った動的実行は使えません');
     }
-    if (property === 'currentTarget' && profileId !== 'dom')
+    if (property === 'currentTarget' && profileId !== 'dom' && profileId !== 'dom-form')
       reject(node, file, 'currentTargetは現在のdom演習でだけ使えます', 'unsupported');
     if (property !== undefined && RUNTIME_ESCAPE_MEMBERS.has(property)) {
       reject(node, file, '実行環境へ戻るmemberは使えません');

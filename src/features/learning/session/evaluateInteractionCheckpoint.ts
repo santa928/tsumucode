@@ -4,6 +4,7 @@ import type {
   PreviewNode,
   PreviewSnapshot,
   RunnerConsoleRecord,
+  SubmitEvidence,
 } from '../../../core/runtime/contracts';
 
 const MAX_ACTUAL_LENGTH = 2_000;
@@ -18,13 +19,21 @@ function matchingNodes(snapshot: PreviewSnapshot, selector: string): readonly Pr
   return snapshot.nodes.filter(({ matchedSelectors }) => matchedSelectors.includes(selector));
 }
 
-/** 1 checkpointの5種期待値をSnapshotと非永続Consoleだけから決定的に評価する。 */
+/** checkpointをSnapshot・非永続Console・認証Interactionの取消観測から評価する。 */
 export function evaluateInteractionCheckpoint(
   checkpoint: JavaScriptInteractionCheckpoint,
   snapshot: PreviewSnapshot,
   consoleRecords: readonly RunnerConsoleRecord[],
+  submitEvidence?: SubmitEvidence,
 ): readonly InteractionExpectationResult[] {
   return checkpoint.expectations.map((expectation): InteractionExpectationResult => {
+    if (expectation.kind === 'submit-prevented') {
+      return {
+        expectationId: expectation.id,
+        passed: submitEvidence === 'prevented',
+        actual: submitEvidence ?? 'unsupported',
+      };
+    }
     if (expectation.kind === 'console-includes') {
       const matched = consoleRecords.find(({ text }) => text.includes(expectation.includes));
       return {

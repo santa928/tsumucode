@@ -314,7 +314,7 @@ describe('CourseManifestSchema 公開境界', () => {
 
       expectCourseIssue(
         course,
-        'Interaction Scenarioはdom、async、project profileで指定してください',
+        'Interaction Scenarioはdom、dom-form、async、project profileで指定してください',
       );
     },
   );

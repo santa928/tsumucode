@@ -69,6 +69,10 @@ export function assertBridgeConfig(config: BridgeConfig): void {
 
 /** iframe内だけで実行され、Snapshot requestを検証してbounded dataを親へ返す。 */
 function bridgeRuntime(config: BridgeConfig): void {
+  // JavaScript側のlearner取消観測を経由せず、trusted安全取消を実行する。
+  // eslint-disable-next-line @typescript-eslint/unbound-method -- native receiverをapplyで明示する。
+  const nativePreventDefault = Event.prototype.preventDefault;
+  const applyNative = Reflect.apply.bind(Reflect);
   const version = 1;
   const maxSelectors = 64;
   const maxAttributes = 64;
@@ -404,7 +408,7 @@ function bridgeRuntime(config: BridgeConfig): void {
   document.addEventListener(
     'submit',
     (event) => {
-      event.preventDefault();
+      applyNative(nativePreventDefault, event, []);
     },
     true,
   );

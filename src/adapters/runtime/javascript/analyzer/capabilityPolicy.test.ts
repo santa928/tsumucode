@@ -83,7 +83,7 @@ describe('assertJavaScriptCapabilityPolicy', () => {
     }
   });
 
-  it.each(['core', 'modules', 'dom', 'async', 'project'] as const)(
+  it.each(['core', 'modules', 'dom', 'dom-form', 'async', 'project'] as const)(
     '%sでも外部通信を許可しない',
     (profile) => {
       expect(() => {
@@ -116,7 +116,7 @@ describe('assertJavaScriptCapabilityPolicy', () => {
     }).not.toThrow();
   });
 
-  it.each(['core', 'modules', 'dom', 'async', 'project'] as const)(
+  it.each(['core', 'modules', 'dom', 'dom-form', 'async', 'project'] as const)(
     '%sでもObject reflectionによるruntime escapeを許可しない',
     (profile) => {
       const source = `function descriptorFor(value, name) {
@@ -144,7 +144,7 @@ descriptorFor(owner.querySelector('head'), 'appendChild').value.call(
     },
   );
 
-  it.each(['core', 'modules', 'dom', 'async', 'project'] as const)(
+  it.each(['core', 'modules', 'dom', 'dom-form', 'async', 'project'] as const)(
     '%sでもcomputed property連鎖によるruntime escapeを許可しない',
     (profile) => {
       const source = `const el = document.querySelector('#message');
@@ -181,7 +181,7 @@ d['query' + 'Selector']('head')['append' + 'Child'](s);`;
     }).toThrow(/computed property/u);
   });
 
-  it.each(['core', 'modules', 'dom', 'async', 'project'] as const)(
+  it.each(['core', 'modules', 'dom', 'dom-form', 'async', 'project'] as const)(
     '%sでもBlob経由の未解析script生成を許可しない',
     (profile) => {
       expect(() => {
@@ -294,7 +294,7 @@ document.querySelector('head').appendChild(script);`),
     }
   });
 
-  it.each(['core', 'modules', 'dom', 'async', 'project'] as const)(
+  it.each(['core', 'modules', 'dom', 'dom-form', 'async', 'project'] as const)(
     '%sでもbounded timer外の非同期入口を拒否する',
     (profile) => {
       for (const source of [
@@ -360,5 +360,44 @@ document.querySelector('head').appendChild(script);`),
     expect(() => {
       assertJavaScriptCapabilityPolicy(program(source), 'script.js');
     }).toThrow(message);
+  });
+});
+
+describe('dom-formの非passive取消観測境界', () => {
+  it.each(['', ', false', ', true'])('直接の静的Event登録とcaptureを許可する: %s', (option) => {
+    expect(() =>
+      { assertJavaScriptCapabilityPolicy(
+        program(
+          `const form=document.querySelector('#form');function handler(event){event.preventDefault();}form.addEventListener('submit',handler${option});`,
+        ),
+        'script.js',
+        'dom-form',
+      ); },
+    ).not.toThrow();
+  });
+  it.each([
+    "form.addEventListener('submit',handler,{passive:true})",
+    "form.addEventListener('submit',handler,options)",
+    'form.addEventListener(eventName,handler)',
+    "form.addEventListener('submit',handler,...options)",
+    "form.addEventListener('submit',handler,false,{passive:true})",
+    "const add=form.addEventListener;add('submit',handler)",
+    "const {addEventListener:add}=form;add('submit',handler)",
+    "form.addEventListener.bind(form)('submit',handler)",
+    "form.addEventListener.call(form,'submit',handler)",
+    "form['addEventListener']('submit',handler)",
+  ])('採点意味を変えるoptionsとaliasをunsupportedにする: %s', (source) => {
+    expect(() =>
+      { assertJavaScriptCapabilityPolicy(program(source), 'script.js', 'dom-form'); },
+    ).toThrow();
+  });
+  it('既存domのObject optionsを狭めない', () => {
+    expect(() =>
+      { assertJavaScriptCapabilityPolicy(
+        program("form.addEventListener('click',handler,{once:true})"),
+        'script.js',
+        'dom',
+      ); },
+    ).not.toThrow();
   });
 });

@@ -45,3 +45,24 @@ Ch08で操作後の結果を採点する前提として、Course Fixture Gateを
 プレビューから親画面へフォーカスが戻る場合も、永続LeaseのCAS再確認を行う。同じowner tokenを再確認する `revalidating` phaseではRunner・iframe・Editorを保持する。新規writeは従来どおり拒否し、開始済み保存のsettleと限定されたflush fenceだけを維持する。実譲渡・所有権喪失・再claimでは従来の破棄経路へ戻る。
 
 Resetの確認画面を開く操作は保存を行わないため再確認中も受け付ける。コードの復元・保存を実行する確認ボタンは、編集権を再取得するまで無効とする。focusイベントの除外やLease期限の緩和は行わない。
+
+## Formのnative submitと取消採点（Issue #8）
+
+| 要件         | 区分 | 契約                                                                                                                                      |
+| ------------ | ---- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| REQ-FORM-001 | 追加 | `dom-form`だけsandboxを`allow-scripts allow-forms`とし、native click/Enterのsubmit lifecycleを扱う。既存profileのsandboxは維持する        |
+| REQ-FORM-002 | 維持 | opaque origin、CSPの`form-action 'none'`/`connect-src 'none'`、通信属性除去、JS送信API・URL変更の拒否、trusted capture取消を保つ          |
+| REQ-FORM-003 | 追加 | native取消とは別に、同じnative submit Eventで学習handlerが実行したpreventDefaultだけを観測する。guard設置失敗はsystem診断で採点保存しない |
+| REQ-FORM-004 | 追加 | 認証Interaction単位の有限観測を`submit-prevented`期待へ接続する。無操作・別Event・過去Event・未実行コードを成功としない                   |
+| REQ-FORM-005 | 維持 | Scenarioはnative button.clickを用いる。synthetic Enterからsubmitを生成しない。手操作のEnterは実ブラウザで別に確認する                     |
+| REQ-FORM-006 | 維持 | ID・保存形式・実行予算・未対応と不正解の区別を保ち、初期描画と操作後の判定を分離する                                                      |
+
+HTML Snapshot Bridgeは学習codeより前にnative `preventDefault`を捕捉し、document captureで送信を取り消す。Form側はimmutable wrapperとprivate closureで学習者の呼出しを記録する。既存のcallback予算wrapper・listener identity対応表を使い、Form独自のlistener再実装は追加しない。`defaultPrevented`は安全装置によってもtrueになるため合格の証拠にしない。1操作につき最大16件のnative submitを保持し、nested submitを含め全件の学習者取消が必要。超過・未発火・異なるEventは合格にしない。
+
+取消が本来効かないpassive listenerを誤認しないため、dom-formの`addEventListener`は非computedの直接member呼出し、静的Event名、第3引数は省略またはboolean literal（capture）だけを受け付ける。Object/dynamic options、alias/bind/call/apply、分割代入での抽出はunsupported。既存dom profileのoptionsは変えない。Object optionsを教える場合は別途拡張と独立検証が必要。
+
+Protocol v3は初回/操作応答の`submitEvidence`を4値（unsupported/setup-error/prevented/not-prevented）に固定し、欠落・未知値・旧versionを拒否する。submit期待はdom-formでだけ定義でき、観測取得不能はScenarioを中断する。非永続のEvent参照や内部tokenを学習者へ渡さない。Profile切替・前回成功表示の復元ではsrcdocとsandboxを一緒に保持する。
+
+受入検証は実Runner/Validatorの正解・取消忘れ・到達不能・別イベント、実click/Enter、入力後送信、stopPropagation/stopImmediatePropagation時の安全装置、悪性action/formaction/target/method/scheme、通信/親子遷移/popupの抑止、隔離文書で製品CSP単独の送信拒否を3ブラウザで確認する。allow-formsがなくてもWebKitはsubmitイベントを届け得るため、従来domのイベント不発自体を契約にしない。認証Interactionの待機・予算上限、Home/読書chunk境界を維持する。
+
+この変更でForm教材や人による初心者試用が完了するわけではない。FormData、requestSubmit/submit API、async submit、任意listener options、constraint validationの教材化、外部送信は非対象。教材は別PRでこの実採点経路へ接続する。

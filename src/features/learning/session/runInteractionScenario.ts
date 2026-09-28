@@ -29,7 +29,8 @@ export function extendSnapshotPolicyForInteractions(
     for (const scenario of exercise.interactionScenarios ?? []) {
       for (const checkpoint of scenario.checkpoints) {
         for (const expectation of checkpoint.expectations) {
-          if (expectation.kind === 'console-includes') continue;
+          if (expectation.kind === 'console-includes' || expectation.kind === 'submit-prevented')
+            continue;
           selectors.add(expectation.selector);
           if (expectation.kind === 'attribute') attributes.add(expectation.name);
         }
@@ -110,6 +111,18 @@ export async function runInteractionScenario(
       throw new Error('Interaction result identityが要求と一致しません');
     }
     input.assertGradable(interaction);
+    if (
+      scenario.checkpoints.some(
+        (checkpoint) =>
+          checkpoint.afterActionId === action.id &&
+          checkpoint.expectations.some((expectation) => expectation.kind === 'submit-prevented'),
+      ) &&
+      (interaction.submitEvidence === undefined ||
+        interaction.submitEvidence === 'unsupported' ||
+        interaction.submitEvidence === 'setup-error')
+    ) {
+      throw new Error('Form取消の観測を取得できませんでした');
+    }
     for (const checkpoint of scenario.checkpoints) {
       if (checkpoint.afterActionId !== action.id) continue;
       const deadline = Date.now() + INTERACTION_POLL_TIMEOUT_MS;
@@ -136,6 +149,7 @@ export async function runInteractionScenario(
           checkpoint,
           snapshot,
           interaction.console,
+          interaction.submitEvidence,
         );
         if (expectations.every(({ passed }) => passed) || Date.now() >= deadline) {
           results.push({

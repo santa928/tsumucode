@@ -684,3 +684,92 @@ test('JavaScript Scenario fixtureは実click/inputを観測し、未操作の完
     await disposeFixtureHarness(page);
   }
 });
+
+/** trusted側の送信停止と学習handlerの取消を実Runner/Validatorで区別する。 */
+test('Form Scenarioは同じnative submitのpreventDefaultだけを合格にする', async ({ page }) => {
+  const authoring = await loadAuthoringCourse('content/javascript');
+  const base = createCases([authoring.exercises[0]!])[0]!.exercise;
+  const exercise: BrowserFixtureCase['exercise'] = {
+    ...base,
+    runtime: {
+      kind: 'javascript',
+      entryFile: 'script.js',
+      sourceType: 'script',
+      capabilityProfile: 'dom-form',
+      primaryOutput: 'preview',
+    },
+    validationRules: [
+      {
+        ...base.validationRules[0]!,
+        id: 'initial-display',
+        target: { kind: 'selector', selector: '#result' },
+        assertion: { kind: 'text', operator: 'equals', expected: '待機中' },
+      },
+      {
+        ...base.validationRules[0]!,
+        id: 'query-call',
+        target: { kind: 'javascript-source', file: 'script.js' },
+        assertion: {
+          kind: 'javascript-source-fact',
+          fact: { kind: 'call', callee: 'document.querySelector' },
+        },
+      },
+    ],
+    interactionScenarios: [
+      {
+        id: 'submit',
+        label: '送信を止めて表示する',
+        actions: [{ id: 'send', kind: 'click', selector: '#send' }],
+        checkpoints: [
+          {
+            id: 'handled',
+            afterActionId: 'send',
+            expectations: [
+              { id: 'cancel', kind: 'submit-prevented' },
+              { id: 'display', kind: 'selector-text', selector: '#result', equals: '確認した' },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+  const solution =
+    "const form=document.querySelector('#form');form.addEventListener('submit',event=>{event.preventDefault();document.querySelector('#result').textContent='確認した';});";
+  await page.goto(testBasePath());
+  const runtime = await loadJavaScriptFixtureRuntime();
+  try {
+    for (const [id, script, expected] of [
+      ['solution', solution, 'pass'],
+      ['missing-cancel', solution.replace('event.preventDefault();', ''), 'incomplete'],
+      [
+        'unreachable-cancel',
+        solution.replace('event.preventDefault();', 'if(false){event.preventDefault();}'),
+        'incomplete',
+      ],
+      ['wrong-event', solution.replace("'submit'", "'click'"), 'incomplete'],
+    ] as const) {
+      const result = await evaluateCase(
+        page,
+        {
+          id,
+          exercise,
+          workspaceAssets: [],
+          expectedStatus: expected,
+          files: {
+            'index.html':
+              '<form id="form"><input aria-label="名前"><button id="send" type="submit">確認</button></form><p id="result">待機中</p>',
+            'script.js': script,
+          },
+        },
+        runtime,
+      );
+      expect(result.status, JSON.stringify(result)).toBe(expected);
+      if (id !== 'solution')
+        expect(result.checks.filter(({ passed }) => !passed).map(({ ruleId }) => ruleId)).toContain(
+          'interaction:submit:handled:cancel',
+        );
+    }
+  } finally {
+    await disposeFixtureHarness(page);
+  }
+});

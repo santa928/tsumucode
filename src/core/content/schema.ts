@@ -273,7 +273,7 @@ export const JavaScriptExerciseRuntimeSchema = z
     kind: z.literal('javascript'),
     entryFile: RelativePathSchema,
     sourceType: z.enum(['script', 'module']),
-    capabilityProfile: z.enum(['core', 'modules', 'dom', 'async', 'project']),
+    capabilityProfile: z.enum(['core', 'modules', 'dom', 'dom-form', 'async', 'project']),
     primaryOutput: z.enum(['preview', 'console']),
   })
   .strict();
@@ -354,6 +354,7 @@ export const JavaScriptInteractionActionSchema = z.discriminatedUnion('kind', [
 
 /** Scenario checkpointがBridgeの観測結果に要求できる有限個の期待値。 */
 export const JavaScriptCheckpointExpectationSchema = z.discriminatedUnion('kind', [
+  z.object({ id: IdSchema, kind: z.literal('submit-prevented') }).strict(),
   z
     .object({
       id: IdSchema,
@@ -1031,14 +1032,28 @@ export const ExerciseSchema = z
   ])
   .superRefine((exercise, context) => {
     if (
-      exercise.interactionScenarios !== undefined &&
-      (exercise.runtime?.kind !== 'javascript' ||
-        !['dom', 'async', 'project'].includes(exercise.runtime.capabilityProfile))
+      exercise.interactionScenarios?.some((scenario) =>
+        scenario.checkpoints.some((checkpoint) =>
+          checkpoint.expectations.some((expectation) => expectation.kind === 'submit-prevented'),
+        ),
+      ) &&
+      (exercise.runtime?.kind !== 'javascript' || exercise.runtime.capabilityProfile !== 'dom-form')
     ) {
       context.addIssue({
         code: 'custom',
         path: ['interactionScenarios'],
-        message: 'Interaction Scenarioはdom、async、project profileで指定してください',
+        message: 'submit-preventedはdom-form profileで指定してください',
+      });
+    }
+    if (
+      exercise.interactionScenarios !== undefined &&
+      (exercise.runtime?.kind !== 'javascript' ||
+        !['dom', 'dom-form', 'async', 'project'].includes(exercise.runtime.capabilityProfile))
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['interactionScenarios'],
+        message: 'Interaction Scenarioはdom、dom-form、async、project profileで指定してください',
       });
     }
     if (

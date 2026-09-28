@@ -67,7 +67,12 @@ function dispatchInteraction(
         frameGeneration,
         requestId,
         oneTimeToken,
-        payload: { error: null, console: [], currentTargetFailure: null },
+        payload: {
+          error: null,
+          console: [],
+          currentTargetFailure: null,
+          submitEvidence: 'unsupported',
+        },
         ...overrides,
       },
     }),
@@ -156,6 +161,7 @@ function dispatchExecution(
           timerLimitExceeded: false,
           runtimeError: null,
           currentTargetFailure: null,
+          submitEvidence: 'unsupported',
           console: [],
         },
         ...overrides,
@@ -471,6 +477,7 @@ describe('JavaScriptRunnerAdapter', () => {
         timerLimitExceeded: false,
         runtimeError: null,
         currentTargetFailure: null,
+        submitEvidence: 'unsupported',
         console: [],
       },
     });
@@ -506,6 +513,7 @@ describe('JavaScriptRunnerAdapter', () => {
         timerLimitExceeded: false,
         runtimeError: { name: 'Error', message: 'stopped' },
         currentTargetFailure: null,
+        submitEvidence: 'unsupported',
         console: [{ sequence: 0, level: 'log', text: '<b>plain</b>' }],
       },
     });

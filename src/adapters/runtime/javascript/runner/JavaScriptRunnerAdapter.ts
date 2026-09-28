@@ -33,6 +33,7 @@ import { createJavaScriptSrcdoc } from './createJavaScriptSrcdoc';
 import { prepareModuleGraph } from './materializeModuleGraph';
 import { JavaScriptExecutionClient, type JavaScriptExecutionPayload } from './protocol';
 import { currentTargetDiagnostics } from './currentTargetGuard';
+import { submitDiagnostics } from './submitGuard';
 
 interface JavaScriptAnalyzerPort {
   analyze(input: JavaScriptAnalysisInput): Promise<JavaScriptAnalysisResult>;
@@ -50,6 +51,7 @@ interface RuntimeResources {
 }
 
 interface StoredPreview {
+  readonly sandbox: string;
   readonly exerciseSessionId: string;
   readonly executionRevision: number;
   readonly frameGeneration: number;
@@ -141,6 +143,7 @@ function validateJavaScriptRuntimeOptions(input: RunnerInput): {
     value.capabilityProfile !== 'core' &&
     value.capabilityProfile !== 'modules' &&
     value.capabilityProfile !== 'dom' &&
+    value.capabilityProfile !== 'dom-form' &&
     value.capabilityProfile !== 'async' &&
     value.capabilityProfile !== 'project'
   ) {
@@ -204,6 +207,7 @@ function executionDiagnostics(
   scriptFile: string,
 ): RunnerDiagnostic[] {
   const diagnostics: RunnerDiagnostic[] = currentTargetDiagnostics(payload.currentTargetFailure);
+  diagnostics.push(...submitDiagnostics(payload.submitEvidence));
   if (payload.budgetExhausted) {
     diagnostics.push({
       code: 'javascript-budget',
@@ -460,6 +464,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
         });
         executionHash = analysis.graphSha256;
         authenticatedRuntimeSource = createJavaScriptModuleExecutionSource({
+          observeSubmit: validated.capabilityProfile === 'dom-form',
           exerciseSessionId: input.exerciseSessionId,
           executionRevision: input.executionRevision,
           frameGeneration: operation.generation,
@@ -470,6 +475,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
       } else {
         executionHash = analysis.sourceSha256;
         authenticatedRuntimeSource = createJavaScriptExecutionSource({
+          observeSubmit: validated.capabilityProfile === 'dom-form',
           exerciseSessionId: input.exerciseSessionId,
           executionRevision: input.executionRevision,
           frameGeneration: operation.generation,
@@ -501,6 +507,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
         active.execution.dispose();
         this.#disposeResources(this.#restorable?.resources);
         this.#restorable = {
+          sandbox: active.sandbox,
           exerciseSessionId: active.exerciseSessionId,
           executionRevision: active.executionRevision,
           frameGeneration: active.frameGeneration,
@@ -534,6 +541,9 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
       operation.execution = execution;
       applyPreviewViewport(frame, input.viewport);
       this.#initialSrcdocLoadPending = true;
+      const sandbox =
+        validated.capabilityProfile === 'dom-form' ? 'allow-scripts allow-forms' : 'allow-scripts';
+      frame.setAttribute('sandbox', sandbox);
       frame.srcdoc = srcdoc;
       const [, executionPayload] = await Promise.all([
         bridge.waitUntilReady(),
@@ -544,6 +554,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
       this.#disposeResources(this.#restorable?.resources);
       this.#restorable = undefined;
       this.#active = {
+        sandbox,
         exerciseSessionId: input.exerciseSessionId,
         executionRevision: input.executionRevision,
         frameGeneration: operation.generation,
@@ -639,6 +650,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
     try {
       applyPreviewViewport(frame, previous.viewport);
       this.#initialSrcdocLoadPending = true;
+      frame.setAttribute('sandbox', previous.sandbox);
       frame.srcdoc = previous.srcdoc;
       await Promise.all([bridge.waitUntilReady(), execution.waitUntilExecuted()]);
       this.#assertCurrent(frame, operation);
