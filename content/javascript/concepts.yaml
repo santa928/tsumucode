@@ -494,3 +494,25 @@ concepts:
     prerequisiteConceptIds:
       - dom-append-child
     minimumProjectLevel: transform
+  - id: dom-query-all
+    introducedBySlideId: javascript-ch07-l04-s01
+    prerequisiteConceptIds:
+      - dom-create-and-connect
+    minimumProjectLevel: read
+  - id: dom-node-list-foreach
+    introducedBySlideId: javascript-ch07-l04-s02
+    prerequisiteConceptIds:
+      - dom-query-all
+      - map-callback
+      - arrow-parameter
+    minimumProjectLevel: read
+  - id: dom-scoped-collection
+    introducedBySlideId: javascript-ch07-l04-s03
+    prerequisiteConceptIds:
+      - dom-node-list-foreach
+    minimumProjectLevel: read
+  - id: dom-change-all
+    introducedBySlideId: javascript-ch07-l04-s04
+    prerequisiteConceptIds:
+      - dom-scoped-collection
+    minimumProjectLevel: transform

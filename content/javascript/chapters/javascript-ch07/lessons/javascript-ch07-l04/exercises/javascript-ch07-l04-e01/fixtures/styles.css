@@ -1,0 +1,6 @@
+body { font-family: sans-serif; padding: 24px; color: #19352b; background: #f5faf7; }
+main { max-width: 520px; }
+ul { padding: 0; list-style: none; }
+.book, .note { padding: 12px; margin: 8px 0; background: white; }
+.pending { border-left: 6px dashed #777; }
+.done { border-left: 6px solid #16764b; background: #e3f5eb; }

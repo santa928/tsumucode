@@ -56,7 +56,7 @@ Homeの「今回の学習」には、初回は目安10分で見出しと背景�
 
 現在公開している「フロントエンド学習パス」にはHTML/CSSコースだけを収録しています。JavaScript、TypeScript、Reactなどのコースは、教材と品質確認が完成してから順次このパスへ追加します。学習パスの直リンクは[`#/paths/frontend`](http://localhost:5173/#/paths/frontend)です。
 
-JavaScriptは、安全な複数ファイル実行基盤とChapter 00〜06とChapter 07の先頭3単元の30 Lesson／120 Slide／32 Exercise（485分）を`draft`として品質検証中です。値・条件分岐・Function・Arrayから`map`・`filter`・`reduce`・immutable update、Module・Error・Debugと、DOMで要素を探して文字やclassを変え、新しい要素を接続する最初の3単元を学べます。通常の公開学習パスにはまだ掲載せず、改訂済み単元をHomeの試用目次から利用できます。開発時は[最初のJavaScriptスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s01)、[Chapter 06の最初のスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch06-l01/slides/javascript-ch06-l01-s01)、[Debug演習](http://localhost:5173/#/courses/javascript/lessons/javascript-ch06-l04/exercises/javascript-ch06-l04-e01)の直接URLから確認できます。`draft`は非掲載を意味するだけで、Production Artifactへ含まれる教材を機密情報として扱うものではありません。
+JavaScriptは、安全な複数ファイル実行基盤とChapter 00〜07の31 Lesson／124 Slide／33 Exercise（500分）を`draft`として品質検証中です。値・条件分岐・Function・Arrayから`map`・`filter`・`reduce`・immutable update、Module・Error・Debugと、DOMで要素を探して文字やclassを変え、新しい要素の接続と複数要素への操作を行う4単元を学べます。通常の公開学習パスにはまだ掲載せず、改訂済み単元をHomeの試用目次から利用できます。開発時は[最初のJavaScriptスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s01)、[Chapter 06の最初のスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch06-l01/slides/javascript-ch06-l01-s01)、[Debug演習](http://localhost:5173/#/courses/javascript/lessons/javascript-ch06-l04/exercises/javascript-ch06-l04-e01)の直接URLから確認できます。`draft`は非掲載を意味するだけで、Production Artifactへ含まれる教材を機密情報として扱うものではありません。
 
 学習パスの進捗は、この端末に保存された各コースの進捗からその都度計算します。学習パス専用の進捗Recordは作らないため、既存の書き出し・読み込み形式や各コースの下書きはそのまま利用できます。
 
