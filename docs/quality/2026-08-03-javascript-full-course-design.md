@@ -684,3 +684,17 @@ l04「複数の要素へ同じ変更を行う」は4Slide/1Exercise/15分。Ch07
 | REQ-JSC-DOM-011 | 追加 | 本3件のclass状態、共通class、各文字、対象外メモを実DOMで確認し、別名とfor-ofの別解も許す |
 
 forEachは既習扱いせず明示導入し、Arrowの引数とmapのcallbackの既習説明をリンクする。最小Source条件はquerySelectorAllのみ、foreachの構文やcallback変数名を固定しない。Runtime/新fact/隔離は変更せず、能力小例と新教材Fixture/実操作/PCと390px読書/掲載例/変更関連Compilerで検証する。性能予算と公開Gateは維持し、Ch07のまとまりを統合してからβ公開候補とする。人の初心者/物理実機やCh08以降の完成を代替しない。
+
+## Ch08先頭: クリックの登録と実行（Issue #8）
+
+| 要件             | 区分 | 今回の内容                                                                    |
+| ---------------- | ---- | ----------------------------------------------------------------------------- |
+| REQ-JS-EVENT-001 | 追加 | click/addEventListener/handlerを初出説明し、登録と呼出しを4Slideで分ける      |
+| REQ-JS-EVENT-002 | 追加 | 初期待機、実click後の変更、対象外メモ保持を実Scenarioで判定する               |
+| REQ-JS-EVENT-003 | 維持 | Sourceは最小querySelector call、Arrow/名前付きFunctionや変数名を固定しない    |
+| REQ-JS-EVENT-004 | 追加 | Fixture Feedbackは宣言済みScenario expectation IDを受理し、未知参照を拒否する |
+| REQ-JS-EVENT-005 | 維持 | draft有限試用・既存ID/保存形式を維持し、revision.4→.5は空移行edge             |
+
+Ch08-l01は15分/4Slide/1演習。Ch00〜07と合わせ32Lesson/128Slide/34Exercise/515分。前提はDOMの初回、Functionの呼出し、Arrowで、目次から既習Slideへ戻れる。最初から完成文字列を表示するコードは初期Snapshotで拒否する。学習者は実Previewでボタンを押し、判定時は共通Scenario実行から操作結果を受け取る。
+
+受入は教材内容・正誤Fixture・直接Previewクリック・判定/Reset/再編集/保存の整合と390px読書。宣言外のScenario/Checkpoint/Expectationやcheckpoint集合そのものをFeedbackのcheck IDとして受理しない。Form/submit、後続Ch08〜11、全Course公開昇格、人の初心者/実機は非対象・未完。既存の公開Gate・安全境界・Home/読書のchunk分離を維持する。

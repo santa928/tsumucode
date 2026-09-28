@@ -999,18 +999,18 @@ describe('JavaScript draft Course compilation', () => {
 
     for (const course of [authoring.runtime, compilation.runtime]) {
       expect(course).toMatchObject({
-        revision: '2026-09-28.4',
-        estimatedMinutes: 500,
+        revision: '2026-09-28.5',
+        estimatedMinutes: 515,
         expectedTotals: {
-          chapters: 8,
-          lessons: 31,
-          conceptSlides: 124,
-          standardExercises: 33,
-          estimatedMinutes: 500,
+          chapters: 9,
+          lessons: 32,
+          conceptSlides: 128,
+          standardExercises: 34,
+          estimatedMinutes: 515,
         },
       });
     }
-    expect(authoring.exercises).toHaveLength(33);
+    expect(authoring.exercises).toHaveLength(34);
   }, 30_000);
 
   it('Chapter 00 Fixtureの期待statusを保持しauthoring dataを公開Lessonへ混入させない', async () => {

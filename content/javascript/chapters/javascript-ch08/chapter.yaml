@@ -1,0 +1,8 @@
+id: javascript-ch08
+sequence: 8
+title: 操作を受け取って処理する
+goal: イベントの登録と実行を区別し、操作前後の表示を確認できる。
+estimatedMinutes: 15
+kind: standard
+lessonSources:
+  - lessons/javascript-ch08-l01/lesson.yaml

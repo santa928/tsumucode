@@ -455,3 +455,23 @@ entries:
     relatedIds:
       - node-list
       - callback
+  - id: event
+    term: イベント
+    definition: クリックや入力など、ブラウザで起きた出来事の知らせ。
+    firstSlideId: javascript-ch08-l01-s01
+    relatedIds:
+      - callback
+  - id: event-listener
+    term: addEventListener
+    definition: 対象の要素などへ、特定のイベントで呼ぶFunctionを登録する操作。
+    firstSlideId: javascript-ch08-l01-s01
+    relatedIds:
+      - event
+      - callback
+  - id: event-handler
+    term: handler
+    definition: イベントが起きたときに呼ばれる処理。Functionとして登録する。
+    firstSlideId: javascript-ch08-l01-s01
+    relatedIds:
+      - event
+      - function

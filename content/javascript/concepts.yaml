@@ -516,3 +516,25 @@ concepts:
     prerequisiteConceptIds:
       - dom-scoped-collection
     minimumProjectLevel: transform
+  - id: event-click-notification
+    introducedBySlideId: javascript-ch08-l01-s01
+    prerequisiteConceptIds:
+      - dom-select-and-change
+      - arrow-parameter
+    minimumProjectLevel: read
+  - id: event-handler-registration
+    introducedBySlideId: javascript-ch08-l01-s02
+    prerequisiteConceptIds:
+      - event-click-notification
+      - function-call
+    minimumProjectLevel: read
+  - id: event-listener-target
+    introducedBySlideId: javascript-ch08-l01-s03
+    prerequisiteConceptIds:
+      - event-handler-registration
+    minimumProjectLevel: read
+  - id: event-before-after
+    introducedBySlideId: javascript-ch08-l01-s04
+    prerequisiteConceptIds:
+      - event-listener-target
+    minimumProjectLevel: transform

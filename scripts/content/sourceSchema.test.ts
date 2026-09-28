@@ -384,6 +384,36 @@ describe('content source schema', () => {
     expect(result.interactionScenarios).toEqual(interactionScenarios);
   });
 
+  it('FixtureのInteraction Feedbackは宣言済みexpectationだけを参照できる', () => {
+    const scenario = validInteractionScenario();
+    const checkpoint = scenario.checkpoints[0]!;
+    const expectation = checkpoint.expectations[0]!;
+    const checkId = `interaction:${scenario.id}:${checkpoint.id}:${expectation.id}`;
+    const source = {
+      ...validExerciseSource,
+      runtime: interactionRuntime,
+      interactionScenarios: [scenario],
+    };
+    for (const [reference, accepted] of [
+      [checkId, true],
+      [`${checkId}-missing`, false],
+      [`interaction:${scenario.id}:${checkpoint.id}`, false],
+    ] as const) {
+      expect(
+        ExerciseSourceSchema.safeParse({
+          ...source,
+          fixtures: [
+            {
+              ...source.fixtures[0],
+              expectedStatus: 'incomplete',
+              expectedFeedbackRuleIds: [reference],
+            },
+          ],
+        }).success,
+      ).toBe(accepted);
+    }
+  });
+
   it.each([
     ['空のScenario集合', []],
     [
