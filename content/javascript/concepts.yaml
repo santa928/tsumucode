@@ -599,3 +599,24 @@ concepts:
     prerequisiteConceptIds:
       - empty-input-branch
     minimumProjectLevel: transform
+  - id: ui-state-value
+    introducedBySlideId: javascript-ch09-l01-s01
+    prerequisiteConceptIds:
+      - event-before-after
+      - captured-binding
+    minimumProjectLevel: read
+  - id: handler-local-reset
+    introducedBySlideId: javascript-ch09-l01-s02
+    prerequisiteConceptIds:
+      - ui-state-value
+    minimumProjectLevel: read
+  - id: state-to-display
+    introducedBySlideId: javascript-ch09-l01-s03
+    prerequisiteConceptIds:
+      - handler-local-reset
+    minimumProjectLevel: read
+  - id: state-retain-between-events
+    introducedBySlideId: javascript-ch09-l01-s04
+    prerequisiteConceptIds:
+      - state-to-display
+    minimumProjectLevel: transform

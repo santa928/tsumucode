@@ -739,3 +739,17 @@ Ch08-l01は15分/4Slide/1演習。Ch00〜07と合わせ32Lesson/128Slide/34Exerc
 | REQ-JS-VALIDATE-006 | 維持 | 外部送信/FormData/HTML constraint validation/サーバーは非対象。画面内の案内をサーバー保護と誤認させない |
 
 15分/4Slide/1演習。Ch08は4Lesson65分、累計35Lesson140Slide37演習565分draftとなる候補。前後空白の厳密な表示差はSnapshotの既存正規化があるため主採点にしない。trimで空白だけを空と扱うこと、入力欄を直接書き換える課題ではないことを明示する。受入は説明/予測/演習の対応、実Fixtureと直接操作・Reset・保存・390px読書。Runtime、安全境界、性能予算、公開Gateは維持する。人の初心者試用、物理実機、Ch09〜11は未完のまま。
+
+### Ch09-l01 Stateの準備（2026-09-28）
+
+| 要件 | 区分 | 実装と受入条件 |
+|---|---|---|
+| REQ-JS-VALIDATE-001〜006 | 維持 | Ch08既存教材・保存移行・有限試用を維持。前提PR56/58はレビュー待ち |
+| REQ-JS-STATE-001 | 追加 | stateを特別な構文でなく現在の状況を表す値として説明し、DOM表示と区別 |
+| REQ-JS-STATE-002 | 維持 | Scope・Closure・click・再代入を再利用し、宣言の位置と更新→表示の順序を説明 |
+| REQ-JS-STATE-003 | 追加 | 0→1→2→3の繰り返しclickを実採点し、毎回1/2ずつ/更新前表示/未接続を検出。名前付き別解を許す |
+| REQ-JS-STATE-004 | 維持 | 再Preview時の実行state初期化と学習Draft保存を区別。既存ID・空移行 .8→.9を維持 |
+| REQ-JS-STATE-005 | 追加 | 掲載例・Fixture・編集/Reset/別解/実click/判定/再読込、PC/390読書を検証。最初の判定click修正PR57の依存を明記 |
+| REQ-JS-STATE-006 | 維持 | Ch09後続3単元・専用render関数・Collection表示・非同期・人の試用を今回の完成範囲へ含めない |
+
+15分/4Slide/1演習。Ch09は1Lesson15分、累計36Lesson144Slide38演習580分draftの候補。独立内容レビューと必要CI前に統合せず、試用導線だけへ追加する。Runtime・安全境界・Home性能予算・公開Gateを維持する。Chapter09全体4Lesson70分の計画を削減したものではない。
