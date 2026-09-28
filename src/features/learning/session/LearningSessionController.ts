@@ -1,6 +1,5 @@
 import type {
   Exercise,
-  JavaScriptInteractionCheckpoint,
   JavaScriptInteractionScenario,
   PreviewViewport,
 } from '../../../core/content/types';
@@ -17,7 +16,6 @@ import type {
 } from '../../../core/persistence/contracts';
 import type {
   InteractionCheckpointResult,
-  InteractionResult,
   PreviewSnapshot,
   ResolvedPreviewAsset,
   RunnerAdapter,
@@ -34,7 +32,10 @@ import {
 } from '../../../core/runtime/BrowserExecutionService';
 import type { ValidationResult, ValidatorAdapter } from '../../../core/validation/contracts';
 import { createAutosaveController } from './createAutosaveController';
-import { evaluateInteractionCheckpoint } from './evaluateInteractionCheckpoint';
+import {
+  extendSnapshotPolicyForInteractions,
+  runInteractionScenario,
+} from './runInteractionScenario';
 
 export interface LearningSessionControllerInput {
   readonly courseId: string;
@@ -79,42 +80,8 @@ const MAX_EVIDENCE_ID_LENGTH = 128;
 const MAX_EVIDENCE_FILE_LENGTH = 256;
 const MAX_EVIDENCE_STRING_LENGTH = 4096;
 const EVIDENCE_ID_PATTERN = /^[a-z0-9]+(?:[.-][a-z0-9]+)*$/u;
-const INTERACTION_POLL_INTERVAL_MS = 50;
-const INTERACTION_POLL_TIMEOUT_MS = 750;
-const MAX_INTERACTION_POLICY_ITEMS = 64;
 
 type InteractionResultsByExercise = Record<string, Record<string, InteractionCheckpointResult[]>>;
-
-/** ScenarioのDOM期待値を既存Validator policyへ重複なく追加する。 */
-function extendSnapshotPolicyForInteractions(
-  policy: SnapshotPolicy,
-  exercises: readonly Exercise[],
-): SnapshotPolicy {
-  const selectors = new Set(policy.selectors);
-  const attributes = new Set(policy.attributes);
-  for (const exercise of exercises) {
-    for (const scenario of exercise.interactionScenarios ?? []) {
-      for (const checkpoint of scenario.checkpoints) {
-        for (const expectation of checkpoint.expectations) {
-          if (expectation.kind === 'console-includes') continue;
-          selectors.add(expectation.selector);
-          if (expectation.kind === 'attribute') attributes.add(expectation.name);
-        }
-      }
-    }
-  }
-  if (
-    selectors.size > MAX_INTERACTION_POLICY_ITEMS ||
-    attributes.size > MAX_INTERACTION_POLICY_ITEMS
-  ) {
-    throw new Error('Interaction Snapshot policyが上限を超えています');
-  }
-  return {
-    ...policy,
-    selectors: [...selectors],
-    attributes: [...attributes],
-  };
-}
 
 /** EvidenceのFileがworkspace内の正規化済み相対Pathとして安全か確認する。 */
 function isNormalizedEvidenceFile(value: string): boolean {
@@ -895,75 +862,7 @@ export class LearningSessionController {
     throw error;
   }
 
-  /** Interaction境界が返したidentityをactive frame要求と完全一致で検証する。 */
-  #assertInteractionIdentity(
-    result: InteractionResult,
-    execution: ExecutionInput,
-    frameGeneration: number,
-    requestId: string,
-  ): void {
-    if (
-      result.exerciseSessionId !== execution.exerciseSessionId ||
-      result.executionRevision !== execution.revision ||
-      result.frameGeneration !== frameGeneration ||
-      result.requestId !== requestId
-    ) {
-      throw new Error('Interaction result identityが要求と一致しません');
-    }
-  }
-
-  /** Interaction Snapshotのsession・revision・viewportをpollごとに再検証する。 */
-  #assertInteractionSnapshotIdentity(
-    snapshot: PreviewSnapshot,
-    execution: ExecutionInput,
-    viewport: PreviewViewport,
-  ): void {
-    if (
-      snapshot.exerciseSessionId !== execution.exerciseSessionId ||
-      snapshot.executionRevision !== execution.revision ||
-      snapshot.viewport.id !== viewport.id ||
-      snapshot.viewport.width !== viewport.width ||
-      snapshot.viewport.height !== viewport.height
-    ) {
-      throw new Error('Interaction Snapshot identityが要求と一致しません');
-    }
-  }
-
-  /** 期待値が揃うまで即時観測から始め、50ms以下の間隔で最大750msだけ再観測する。 */
-  async #pollInteractionCheckpoint(
-    execution: ExecutionInput,
-    viewport: PreviewViewport,
-    policy: SnapshotPolicy,
-    checkpoint: JavaScriptInteractionCheckpoint,
-    consoleRecords: readonly RunnerConsoleRecord[],
-    usedRequestIds: Set<string>,
-  ): Promise<InteractionCheckpointResult['expectations']> {
-    const deadline = Date.now() + INTERACTION_POLL_TIMEOUT_MS;
-    for (;;) {
-      this.#assertFresh(execution);
-      const requestId = this.#nextRequestId(usedRequestIds);
-      const snapshot = await this.#requireDom().requestSnapshot({
-        exerciseSessionId: execution.exerciseSessionId,
-        executionRevision: execution.revision,
-        requestId,
-        policy,
-        preserveTimers: true,
-      });
-      this.#assertFresh(execution);
-      this.#assertInteractionSnapshotIdentity(snapshot, execution, viewport);
-      const expectations = evaluateInteractionCheckpoint(checkpoint, snapshot, consoleRecords);
-      if (expectations.every(({ passed }) => passed) || Date.now() >= deadline) {
-        return expectations;
-      }
-      const remaining = deadline - Date.now();
-      await new Promise<void>((resolve) => {
-        setTimeout(resolve, Math.min(INTERACTION_POLL_INTERVAL_MS, Math.max(0, remaining)));
-      });
-      this.#assertFresh(execution);
-    }
-  }
-
-  /** 1 Scenarioをfresh frameへ再描画し、action順とcheckpoint位置を保持して実行する。 */
+  /** 共通Scenario実行へ現在sessionの鮮度・実行不能処理を接続する。 */
   async #runInteractionScenario(
     execution: ExecutionInput,
     viewport: PreviewViewport,
@@ -971,74 +870,48 @@ export class LearningSessionController {
     scenario: JavaScriptInteractionScenario,
     usedRequestIds: Set<string>,
   ): Promise<InteractionCheckpointResult[]> {
-    const interact = this.#execution.dom?.interact?.bind(this.#execution.dom);
+    const dom = this.#requireDom();
+    const interact = dom.interact?.bind(dom);
     if (interact === undefined) throw new Error('RunnerがInteractionに対応していません');
-    const rendered = await this.#render(execution, viewport, false);
-    if (rendered.diagnostics.some(({ severity }) => severity === 'error')) {
-      throw new Error('Interaction ScenarioのPreviewを準備できませんでした');
-    }
-    const frameGeneration = rendered.frameGeneration;
-    if (
-      frameGeneration === undefined ||
-      !Number.isSafeInteger(frameGeneration) ||
-      frameGeneration < 0
-    ) {
-      throw new Error('Runnerが有効なframe generationを返しませんでした');
-    }
-    const results: InteractionCheckpointResult[] = [];
-    for (const action of scenario.actions) {
-      this.#assertFresh(execution);
-      const requestId = this.#nextRequestId(usedRequestIds);
-      const interaction = await interact({
-        exerciseSessionId: execution.exerciseSessionId,
-        executionRevision: execution.revision,
-        frameGeneration,
-        requestId,
-        action,
-      });
-      this.#assertFresh(execution);
-      this.#assertInteractionIdentity(interaction, execution, frameGeneration, requestId);
-      const interactionDiagnostics = interaction.diagnostics ?? [];
-      const status = executionStatus(interactionDiagnostics);
-      if (status === 'unsupported' || status === 'system-error' || status === 'stopped') {
-        const result: ExecutionResult = {
-          ...rendered,
-          status,
-          diagnostics: interactionDiagnostics,
-          console: interaction.console,
-        };
-        this.#replaceState({ ...this.#state, executionResult: result });
-        this.#dispatch({
-          type: 'preview.completed',
-          revision: execution.revision,
-          diagnostics: result.diagnostics,
-          console: [],
-        });
-        throw new ExecutionNotGradableError(result);
-      }
-      for (const checkpoint of scenario.checkpoints) {
-        if (checkpoint.afterActionId !== action.id) continue;
-        const expectations = await this.#pollInteractionCheckpoint(
-          execution,
-          viewport,
-          policy,
-          checkpoint,
-          interaction.console,
-          usedRequestIds,
-        );
-        results.push({
-          exerciseSessionId: execution.exerciseSessionId,
-          executionRevision: execution.revision,
-          frameGeneration,
-          viewportId: viewport.id,
-          scenarioId: scenario.id,
-          checkpointId: checkpoint.id,
-          afterActionId: action.id,
-          expectations,
-        });
-      }
-    }
-    return results;
+    let rendered: ExecutionResult | undefined;
+    return runInteractionScenario({
+      exerciseSessionId: execution.exerciseSessionId,
+      executionRevision: execution.revision,
+      viewport,
+      policy,
+      scenario,
+      render: async () => {
+        rendered = await this.#render(execution, viewport, false);
+        return rendered;
+      },
+      interact,
+      requestSnapshot: dom.requestSnapshot.bind(dom),
+      assertFresh: () => {
+        this.#assertFresh(execution);
+      },
+      nextRequestId: () => this.#nextRequestId(usedRequestIds),
+      assertGradable: (interaction) => {
+        const diagnostics = interaction.diagnostics ?? [];
+        const status = executionStatus(diagnostics);
+        if (status === 'unsupported' || status === 'system-error' || status === 'stopped') {
+          if (rendered === undefined) throw new Error('Interaction Previewが未実行です');
+          const result: ExecutionResult = {
+            ...rendered,
+            status,
+            diagnostics,
+            console: interaction.console,
+          };
+          this.#replaceState({ ...this.#state, executionResult: result });
+          this.#dispatch({
+            type: 'preview.completed',
+            revision: execution.revision,
+            diagnostics,
+            console: [],
+          });
+          throw new ExecutionNotGradableError(result);
+        }
+      },
+    });
   }
 
   /** 同revisionの全viewport Snapshotを集め、判定結果を保存成功後にcommitする。 */
