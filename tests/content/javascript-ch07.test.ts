@@ -1,6 +1,7 @@
 import { expect, it } from 'vitest';
 import { loadChapterPackage } from '../../scripts/content/loadChapterPackage';
-import { expectChapterConceptCoverage } from './concept-coverage';
+import { loadAuthoringCourse } from '../../scripts/content/compileCourse';
+import { assertChapterConceptCoverage } from './concept-coverage';
 
 it('Ch07は先頭2単元で、参照とclass状態から編集へ接続する', async () => {
   const loaded = await loadChapterPackage(
@@ -29,9 +30,20 @@ it('Ch07は先頭2単元で、参照とclass状態から編集へ接続する', 
       .filter((fixture) => fixture.expectedStatus === 'pass')
       .map((fixture) => fixture.id),
   ).toEqual(['alternate-name', 'no-if']);
-  await expectChapterConceptCoverage(
+  // Courseの読込を共有し、Lesson集合とConcept診断を同じ結果から検証する。
+  const authoring = await loadAuthoringCourse('content/javascript');
+  const chapter = authoring.runtime.phases
+    .flatMap(({ chapters }) => chapters)
+    .find(({ id }) => id === 'javascript-ch07');
+  expect(chapter).toBeDefined();
+  assertChapterConceptCoverage(
+    {
+      missingSlideMetadata: authoring.missingSlideMetadata,
+      missingExerciseMetadata: authoring.missingExerciseMetadata,
+      unmetRequirements: authoring.masteryDiagnostics,
+    },
     'javascript-ch07',
+    chapter!.lessons.map(({ id }) => id),
     ['javascript-ch07-l01', 'javascript-ch07-l02'],
-    'content/javascript',
   );
 });
