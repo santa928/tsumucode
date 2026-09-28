@@ -66,3 +66,11 @@ Protocol v3は初回/操作応答の`submitEvidence`を4値（unsupported/setup-
 受入検証は実Runner/Validatorの正解・取消忘れ・到達不能・別イベント、実click/Enter、入力後送信、stopPropagation/stopImmediatePropagation時の安全装置、悪性action/formaction/target/method/scheme、通信/親子遷移/popupの抑止、隔離文書で製品CSP単独の送信拒否を3ブラウザで確認する。allow-formsがなくてもWebKitはsubmitイベントを届け得るため、従来domのイベント不発自体を契約にしない。認証Interactionの待機・予算上限、Home/読書chunk境界を維持する。
 
 この変更でForm教材や人による初心者試用が完了するわけではない。FormData、requestSubmit/submit API、async submit、任意listener options、constraint validationの教材化、外部送信は非対象。教材は別PRでこの実採点経路へ接続する。
+
+### KeyboardでPreviewへ出入りする
+
+- REQ-DOM-KEY-001: 操作可能なPreview iframeはTab順へ含め、EditorのEsc→Tabから入力・ボタンへ入れる。
+- REQ-DOM-KEY-002: iframeの末尾からTabで親の操作へ戻り、同じ実行状態と入力値を保持して判定できる。
+- REQ-DOM-KEY-003: scriptlessの読み取り専用Preview、opaque-origin sandbox、CSP、編集権の契約は維持する。強制focusや合成keyだけでKeyboard-onlyの証拠にしない。
+
+Ch11の実操作検証で、iframeのtabindex=-1が内部の操作先も通常のTab移動から除外していることを確認した。既存DOM入力教材で実キーによる入場・入力・退出・判定を回帰対象とする。

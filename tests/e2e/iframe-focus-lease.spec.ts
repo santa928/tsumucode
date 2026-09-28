@@ -64,3 +64,49 @@ test('iframe入力直後の最初のPreview・判定clickを再確認後に実�
   await page.getByRole('button', { name: '判定する', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'できました', exact: true })).toBeVisible();
 });
+
+/** DOMへ強制focusせず、利用者と同じEsc→Tabからiframeの入力へ到達し、親へ戻る。 */
+test('KeyboardだけでPreviewへ入り入力し、親へ戻って判定する', async ({ page }) => {
+  await openEditableJavaScriptExercise(page, {
+    lessonId: 'javascript-ch08-l02',
+    exerciseId: 'javascript-ch08-l02-e01',
+    title: '入力した題名を読書メモへ映す',
+  });
+  const source = await readFile(
+    'content/javascript/chapters/javascript-ch08/lessons/javascript-ch08-l02/exercises/javascript-ch08-l02-e01/solution/script.js',
+    'utf8',
+  );
+  await replaceEditorText(page, source);
+  await waitForStoredDraftContent(page, source);
+  const iframe = page.getByTestId('runtime-preview-frame').locator('iframe');
+  const old = await iframe.getAttribute('srcdoc');
+  await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
+  await expect(iframe).not.toHaveAttribute('srcdoc', old ?? '');
+  await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled();
+  const field = iframe.contentFrame().getByLabel('本の題名', { exact: true });
+  await page.keyboard.press('Escape');
+  for (let i = 0; i < 30; i += 1) {
+    if (await page.locator('.cm-content').evaluate((el) => el === document.activeElement)) {
+      await page.keyboard.press('Escape');
+    }
+    await page.keyboard.press('Tab');
+    if (await field.evaluate((el) => el === document.activeElement)) break;
+  }
+  await expect(field).toBeFocused();
+  const original = await iframe.elementHandle();
+  await page.keyboard.insertText('キーボードで読書');
+  await expect(iframe.contentFrame().locator('#status')).toHaveText('読みたい本: キーボードで読書');
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: 'ヒントを見る', exact: true })).toBeFocused();
+  expect(await original?.evaluate((el) => el.isConnected)).toBe(true);
+  await expect(field).toHaveValue('キーボードで読書');
+  const judge = page.getByRole('button', { name: '判定する', exact: true });
+  await expect(judge).toBeEnabled();
+  for (let i = 0; i < 5; i += 1) {
+    await page.keyboard.press('Tab');
+    if (await judge.evaluate((el) => el === document.activeElement)) break;
+  }
+  await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('heading', { name: 'できました', exact: true })).toBeVisible();
+});

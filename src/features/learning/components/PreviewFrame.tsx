@@ -245,7 +245,7 @@ export function PreviewFrame({
             <iframe
               ref={setFrame}
               title="コードのプレビュー"
-              tabIndex={-1}
+              tabIndex={sandboxMode === 'scriptless' ? -1 : 0}
               sandbox={sandboxMode === 'scriptless' ? '' : 'allow-scripts'}
               referrerPolicy="no-referrer"
               style={frameDisplayStyle}
