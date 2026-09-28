@@ -475,3 +475,29 @@ entries:
     relatedIds:
       - event
       - function
+  - id: input-event
+    term: inputイベント
+    definition: 文字の入力や削除などで入力欄の値が変わったことを知らせるイベント。
+    firstSlideId: javascript-ch08-l02-s01
+    relatedIds:
+      - event
+  - id: input-value
+    term: value
+    definition: 入力欄などが持つ現在の値。文字の入力欄から読むvalueは文字列。
+    firstSlideId: javascript-ch08-l02-s01
+    relatedIds:
+      - property
+  - id: event-object
+    term: Event
+    definition: ブラウザがイベントの情報をまとめ、handlerへ渡すObject。
+    firstSlideId: javascript-ch08-l02-s02
+    relatedIds:
+      - event
+      - object
+  - id: current-target
+    term: currentTarget
+    definition: イベントのhandlerが実行されている間、そのhandlerを登録した要素などを指すEventのproperty。
+    firstSlideId: javascript-ch08-l02-s02
+    relatedIds:
+      - event-object
+      - property

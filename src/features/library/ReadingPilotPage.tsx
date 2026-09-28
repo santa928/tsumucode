@@ -10,7 +10,7 @@ export function ReadingPilotPage() {
     <section className="tc-reading-article">
       <h1>試用レッスンの目次</h1>
       <p>
-        制作途中の教材を試す入口です。対象はHTML/CSS導入・JavaScript導入・Closure・DOMの4単元とclickの最初の単元です。JavaScriptコース全体の完成版ではありません。
+        制作途中の教材を試す入口です。対象はHTML/CSS導入・JavaScript導入・Closure・DOMの4単元とclick・inputの2単元です。JavaScriptコース全体の完成版ではありません。
       </p>
       <p>
         読むだけならスマートフォンでも利用できます。コードの編集・実行は対応するPC演習へ進んでください。Pagesとローカル学習版は保存先が別で、自動同期はありません。
@@ -24,6 +24,19 @@ export function ReadingPilotPage() {
               <li key={lesson.id}>
                 <h3>{lesson.title}</h3>
                 <p>{lesson.goal}</p>
+                {lesson.id === 'javascript-ch08-l02' && (
+                  <p>
+                    前の単元の
+                    <Link to="/library/pilot/javascript/lessons/javascript-ch08-l01/read">
+                      イベントの登録
+                    </Link>
+                    と、既習の
+                    <Link to="/courses/javascript/lessons/javascript-ch04-l04/slides/javascript-ch04-l04-s03">
+                      Objectのpropertyを読む説明
+                    </Link>
+                    を使います。EventとcurrentTargetはこの単元で説明します。
+                  </p>
+                )}
                 {lesson.id === 'javascript-ch08-l01' && (
                   <p>
                     この単元はDOMで文字を変える操作とFunctionを使います。

@@ -1,0 +1,27 @@
+id: javascript-ch08-l02
+kind: standard
+title: 入力のたびに表示を更新する
+goal: inputイベントのhandlerで現在のvalueを読み、文字を変えたときも消したときも表示へ反映できる。
+estimatedMinutes: 15
+prerequisiteLessonIds:
+  - javascript-ch08-l01
+  - javascript-ch04-l04
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/javascript-ch08-l02-e01/exercise.yaml
+reflection: 入力文字を読む場所をhandlerの中へ置くと、入力が変わるたびに現在のvalueを読み直せる。
+glossaryRefs:
+  - input-event
+  - event-object
+  - current-target
+  - input-value
+  - property
+completion:
+  kind: standard
+  finalSlideId: javascript-ch08-l02-s04
+  requiredExerciseIds:
+    - javascript-ch08-l02-e01

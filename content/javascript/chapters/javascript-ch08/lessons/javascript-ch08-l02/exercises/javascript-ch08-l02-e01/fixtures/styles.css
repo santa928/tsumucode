@@ -1,0 +1,29 @@
+body {
+  font-family: sans-serif;
+  padding: 24px;
+  color: #19352b;
+  background: #f5faf7;
+}
+main {
+  max-width: 520px;
+}
+label {
+  display: block;
+  margin-bottom: 8px;
+}
+input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  font-size: 18px;
+  border: 1px solid #46765f;
+  border-radius: 8px;
+}
+input:focus-visible {
+  outline: 3px solid #19352b;
+  outline-offset: 4px;
+}
+#status {
+  padding: 16px;
+  background: white;
+}
