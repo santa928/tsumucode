@@ -3,6 +3,17 @@ releaseStatus: draft
 verifiedSourceCommit: draft
 canonicalDistSha256: draft
 lessons:
+  - lessonId: javascript-ch08-l01
+    authorId: tsumucode-javascript-authoring
+    reviewerId: astra-pro-independent-review
+    sourceHash: 5ddfc82d994002956a7cbc66995e81a109ec58b219115a45f426c582ab162439
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: PR52の同一Pro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEADe0483c64fe5f30d6f906d018a8da93741cafb75aの教材原文・採点・Fixture・導線を独立確認し、未説明語undefinedの指摘を修正したHEADfa5bae9ff83998756f42eff30463908dd2ac69a2で内容承認。Functionを渡す時点と呼ぶ時点、初期状態とclick後の変化、名前付きhandler別解が整合。CodexがDocker製品Runnerで掲載4例と演習7ケースを実行し上記hashを計算。Proのhash独立再計算・実行・画像承認、人の初心者試用や実機確認を意味しない。Event章後続とFormは未完成。
   - lessonId: javascript-ch07-l04
     authorId: tsumucode-javascript-authoring
     reviewerId: astra-pro-independent-review
