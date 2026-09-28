@@ -454,3 +454,23 @@ concepts:
     prerequisiteConceptIds:
       - dom-missing-element
     minimumProjectLevel: transform
+  - id: dom-class-state
+    introducedBySlideId: javascript-ch07-l02-s01
+    prerequisiteConceptIds:
+      - dom-select-and-change
+    minimumProjectLevel: read
+  - id: dom-class-add
+    introducedBySlideId: javascript-ch07-l02-s02
+    prerequisiteConceptIds:
+      - dom-class-state
+    minimumProjectLevel: read
+  - id: dom-class-remove
+    introducedBySlideId: javascript-ch07-l02-s03
+    prerequisiteConceptIds:
+      - dom-class-add
+    minimumProjectLevel: read
+  - id: dom-class-change
+    introducedBySlideId: javascript-ch07-l02-s04
+    prerequisiteConceptIds:
+      - dom-class-remove
+    minimumProjectLevel: transform

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="180" viewBox="0 0 600 180" role="img" aria-label="noticeは残し、quietをactiveへ変える">
+  <rect width="600" height="180" rx="12" fill="#f5faf7"/>
+  <g font-family="sans-serif" text-anchor="middle">
+    <text x="145" y="35" font-size="18" fill="#19352b">変更前</text>
+    <text x="455" y="35" font-size="18" fill="#19352b">変更後</text>
+    <rect x="30" y="54" width="230" height="62" rx="8" fill="white" stroke="#777" stroke-dasharray="5 4"/>
+    <rect x="340" y="54" width="230" height="62" rx="8" fill="#e3f5eb" stroke="#16764b" stroke-width="2"/>
+    <text x="145" y="92" font-size="22" fill="#19352b">notice quiet</text>
+    <text x="455" y="92" font-size="22" fill="#19352b">notice active</text>
+    <path d="M275 85h48m-10-8 10 8-10 8" fill="none" stroke="#16764b" stroke-width="3"/>
+    <text x="300" y="151" font-size="18" fill="#19352b">noticeは残す・quietを外す・activeを付ける</text>
+  </g>
+</svg>

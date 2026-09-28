@@ -51,9 +51,7 @@ test('DOMの誤selectorを直し、Reset後も再編集・Preview・判定でき
   }
   await expect(judge).toBeFocused();
   await page.keyboard.press('Enter');
-  await expect(
-    page.getByRole('heading', { name: 'できました', exact: true }),
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'できました', exact: true })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('dom-pass-desktop.png') });
   await page.reload();
   await expect.poll(() => editorText(page)).toBe(source);
@@ -76,8 +74,8 @@ test('試用目次からDOMの4枚を狭幅で読み、未完成Lessonを先読�
   await last.scrollIntoViewIfNeeded();
   await expect(last.getByRole('img')).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
-  expect(lessonRequests.filter((url) => /javascript-ch07-l0[2-9]/u.test(url))).toEqual([]);
+  expect(lessonRequests.filter((url) => /javascript-ch07-l0[3-9]/u.test(url))).toEqual([]);
   await page.screenshot({ path: testInfo.outputPath('dom-reading-mobile.png') });
-  await page.goto(`${PILOT}/javascript/lessons/javascript-ch07-l02/read`);
+  await page.goto(`${PILOT}/javascript/lessons/javascript-ch07-l03/read`);
   await expect(page).toHaveURL(/#\/library\/pilot$/u);
 });

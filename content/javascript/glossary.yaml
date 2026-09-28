@@ -416,3 +416,16 @@ entries:
     relatedIds:
       - selector
       - if-statement
+  - id: class-state
+    term: 状態を表すclass
+    definition: 要素の状態に応じた見た目を選ぶclass。共通のclassと一緒に付けられる。
+    firstSlideId: javascript-ch07-l02-s01
+    relatedIds:
+      - selector
+  - id: class-list
+    term: classList
+    definition: 要素に付いているclassを操作する窓口。addで指定したclassを足し、removeで指定したclassだけを外す。
+    firstSlideId: javascript-ch07-l02-s02
+    relatedIds:
+      - class-state
+      - dom-reference

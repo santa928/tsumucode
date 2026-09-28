@@ -7,6 +7,10 @@ defaults:
   license: project-original
   modified: false
 items:
+  - id: javascript-ch07-l02-class-state-original
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/slides/assets/class-state.svg
+    createdAt: '2026-09-28'
   - { id: javascript-course, visibility: public, path: course.yaml }
   - { id: javascript-concepts, visibility: public, path: concepts.yaml }
   - { id: javascript-glossary, visibility: public, path: glossary.yaml }
@@ -3393,4 +3397,88 @@ items:
   - id: javascript-ch07-l01-select-and-change-original
     visibility: public
     path: chapters/javascript-ch07/lessons/javascript-ch07-l01/slides/assets/select-and-change.svg
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-1
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/exercises/javascript-ch07-l02-e01/exercise.yaml
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-2
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/exercises/javascript-ch07-l02-e01/fixtures/alternate-name/script.js
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-3
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/exercises/javascript-ch07-l02-e01/fixtures/base-removed/script.js
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-4
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/exercises/javascript-ch07-l02-e01/fixtures/class-order/script.js
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-5
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/exercises/javascript-ch07-l02-e01/fixtures/done-missing/script.js
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-6
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/exercises/javascript-ch07-l02-e01/fixtures/index.html
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-7
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/exercises/javascript-ch07-l02-e01/fixtures/pending-remains/script.js
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-8
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/exercises/javascript-ch07-l02-e01/fixtures/styles.css
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-9
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/exercises/javascript-ch07-l02-e01/fixtures/wrong-element/script.js
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-10
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/exercises/javascript-ch07-l02-e01/instructions.md
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-11
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/exercises/javascript-ch07-l02-e01/solution/index.html
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-12
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/exercises/javascript-ch07-l02-e01/solution/script.js
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-13
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/exercises/javascript-ch07-l02-e01/solution/styles.css
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-14
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/exercises/javascript-ch07-l02-e01/starter/index.html
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-15
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/exercises/javascript-ch07-l02-e01/starter/script.js
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-16
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/exercises/javascript-ch07-l02-e01/starter/styles.css
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-17
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/lesson.yaml
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-18
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/slides/s01.md
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-19
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/slides/s02.md
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-20
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/slides/s03.md
+    createdAt: '2026-09-28'
+  - id: javascript-ch07-l02-source-21
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l02/slides/s04.md
     createdAt: '2026-09-28'

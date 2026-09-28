@@ -1,0 +1,330 @@
+id: javascript-ch07-l02-e01
+kind: standard
+workspaceId: javascript-ch07-l02-e01
+countsTowardStandardExerciseTotal: true
+title: 一冊目だけを読了の見た目にする
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: dom-class-change
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: change-book-state
+    file: script.js
+    target: removeとaddへ渡すclass名
+    starterAnchor: book.classList.remove('book');
+    change: 共通のbookを残し、pendingを外してdoneを付ける
+    observe: 一冊目だけの点線が緑の実線になり、二冊目は変わらない
+    requiresConceptIds:
+      - dom-class-change
+    validationRuleIds:
+      - javascript-ch07-l02-e01-r01
+      - javascript-ch07-l02-e01-r02
+      - javascript-ch07-l02-e01-r03
+      - javascript-ch07-l02-e01-r04
+      - javascript-ch07-l02-e01-r05
+      - javascript-ch07-l02-e01-r06
+      - javascript-ch07-l02-e01-r07
+files:
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: starter/styles.css
+    editable: false
+  - path: script.js
+    language: javascript
+    source: starter/script.js
+    editable: true
+solutionFiles:
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: solution/styles.css
+    editable: false
+  - path: script.js
+    language: javascript
+    source: solution/script.js
+    editable: false
+validationRules:
+  - id: javascript-ch07-l02-e01-r01
+    label: bookを残す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#first.book'
+    assertion:
+      kind: count
+      operator: equals
+      expected: 1
+    feedback:
+      target: Previewとscript.js
+      expected: bookを残す
+      nextAction: 共通のbookを残します。
+    hintId: javascript-ch07-l02-e01-h01
+    relatedSlideId: javascript-ch07-l02-s01
+  - id: javascript-ch07-l02-e01-r02
+    label: pendingを外す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#first.pending'
+    assertion:
+      kind: count
+      operator: equals
+      expected: 0
+    feedback:
+      target: Previewとscript.js
+      expected: pendingを外す
+      nextAction: removeへ渡すclass名を確認します。
+    hintId: javascript-ch07-l02-e01-h02
+    relatedSlideId: javascript-ch07-l02-s03
+  - id: javascript-ch07-l02-e01-r03
+    label: doneを付ける
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#first.done'
+    assertion:
+      kind: count
+      operator: equals
+      expected: 1
+    feedback:
+      target: Previewとscript.js
+      expected: doneを付ける
+      nextAction: addへ渡すclass名には点を付けません。
+    hintId: javascript-ch07-l02-e01-h03
+    relatedSlideId: javascript-ch07-l02-s02
+  - id: javascript-ch07-l02-e01-r04
+    label: 二冊目は未読のままにする
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#second.book.pending:not(.done)'
+    assertion:
+      kind: count
+      operator: equals
+      expected: 1
+    feedback:
+      target: Previewとscript.js
+      expected: 二冊目は未読のままにする
+      nextAction: 1冊目だけを探し、2冊目へ操作しません。
+    hintId: javascript-ch07-l02-e01-h03
+    relatedSlideId: javascript-ch07-l02-s04
+  - id: javascript-ch07-l02-e01-r05
+    label: 一冊目の文字を保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#first'
+    assertion:
+      kind: text
+      operator: equals
+      expected: 一冊目
+    feedback:
+      target: Preview
+      expected: 一冊目
+      nextAction: 文字の変更は今回不要です。classの付け外しを確認します。
+    hintId: javascript-ch07-l02-e01-h01
+    relatedSlideId: javascript-ch07-l02-s03
+  - id: javascript-ch07-l02-e01-r06
+    label: 二冊目の文字を保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#second'
+    assertion:
+      kind: text
+      operator: equals
+      expected: 二冊目
+    feedback:
+      target: Preview
+      expected: 二冊目
+      nextAction: 文字の変更は今回不要です。classの付け外しを確認します。
+    hintId: javascript-ch07-l02-e01-h01
+    relatedSlideId: javascript-ch07-l02-s03
+  - id: javascript-ch07-l02-e01-r07
+    label: querySelectorで要素を取得する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: call
+        callee: document.querySelector
+    feedback:
+      target: script.js
+      expected: querySelectorで対象を取得する
+      nextAction: 前の単元のquerySelectorで一冊目の参照を取得します。
+    hintId: javascript-ch07-l02-e01-h01
+    relatedSlideId: javascript-ch07-l02-s02
+hints:
+  - id: javascript-ch07-l02-e01-h01
+    level: 1
+    title: 残すものから比べる
+    text: 1冊目と2冊目の余白と左の線を比べます。共通の見た目まで失われたら、外したclassを確認します。
+    relatedSlideId: javascript-ch07-l02-s02
+  - id: javascript-ch07-l02-e01-h02
+    level: 2
+    title: 足すだけでは外れない
+    text: addは追加、removeは削除です。pendingを残したままdoneを足すだけでは課題は完了しません。
+    relatedSlideId: javascript-ch07-l02-s03
+  - id: javascript-ch07-l02-e01-h03
+    level: 3
+    title: 2つの名前を合わせる
+    text: book.classList.remove('pending')で未読のclassを外し、book.classList.add('done')で読了のclassを付けます。bookは残します。
+    relatedSlideId: javascript-ch07-l02-s04
+relatedSlideIds:
+  - javascript-ch07-l02-s01
+  - javascript-ch07-l02-s02
+  - javascript-ch07-l02-s03
+  - javascript-ch07-l02-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: alternate-name
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/alternate-name/script.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: class-order
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/class-order/script.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: pending-remains
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/pending-remains/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch07-l02-e01-r02
+  - id: done-missing
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/done-missing/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch07-l02-e01-r03
+  - id: base-removed
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/base-removed/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch07-l02-e01-r01
+  - id: wrong-element
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/wrong-element/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch07-l02-e01-r02
+      - javascript-ch07-l02-e01-r03
+      - javascript-ch07-l02-e01-r04
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: dom
+  primaryOutput: preview
