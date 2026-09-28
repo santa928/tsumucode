@@ -1,6 +1,6 @@
 # JavaScript全Course 設計
 
-- 状態: 全Course設計は書面レビュー承認済み。Runtime基盤・Ch00〜07・Ch08先頭2単元はmainへ統合済み。Ch08後半2単元とCh09先頭2単元は独立レビュー待ちの候補。Ch09後半とCh10〜13、全Course受入は未完。配信済み範囲とSHAはIssue #5を正本とする。
+- 状態: 全Course設計は書面レビュー承認済み。Runtime基盤・Ch00〜07・Ch08先頭2単元はmainへ統合済み。Ch08後半2単元とCh09先頭3単元は独立レビュー待ちの候補。Ch09最終単元とCh10〜13、全Course受入は未完。配信済み範囲とSHAはIssue #5を正本とする。
 - 承認日: 2026-08-04
 - 作成日: 2026-08-03
 - 対象: `javascript` Course Chapter 01〜13、既存Chapter 00の互換維持、全Course公開
@@ -767,3 +767,16 @@ Ch08-l01は15分/4Slide/1演習。Ch00〜07と合わせ32Lesson/128Slide/34Exerc
 | REQ-JS-RENDER-006 | 維持 | DOM全面差替え・Collection描画・Framework・非同期・実行state永続化は非対象。実Fixture/例/UI/390目視と関連静的検証で確認 |
 
 20分/4Slide/1演習。Ch09は2Lesson35分、累計37Lesson148Slide39演習600分draftの候補。renderという関数名や呼出し回数そのものを採点条件にせず、操作後の両表示の整合を確認する。人の初心者試用・実機は未実施。安全境界・Home性能予算・公開Gateを維持し、Chapter09後続2単元を完了扱いにしない。
+
+### Ch09-l03 Array stateと一覧の準備（2026-09-28）
+
+| 要件 | 状態 | 内容 |
+|---|---|---|
+| REQ-JS-LIST-001 | 追加 | Arrayをstate.itemsへ持ち、forEach/createElement/textContent/appendChildを既習として結ぶ |
+| REQ-JS-LIST-002 | 追加 | replaceChildren()で一覧の子だけを消去し、今の全項目と件数を描画する |
+| REQ-JS-LIST-003 | 維持 | state更新→render。初期1→追加2→追加3→空0→空0→追加1。空Arrayでも古い行を残さない |
+| REQ-JS-LIST-004 | 維持 | Starterの消去忘れを修正するtransform。二重render・textContent空文字の別解を振る舞いで許容する |
+| REQ-JS-LIST-005 | 維持 | 既存ID/学習保存を空移行.10→.11で維持。draft有限試用と未承認PRの状態を保つ |
+| REQ-JS-LIST-006 | 維持 | Framework/非同期/実行state永続化は非対象。Runtime・安全境界・性能予算・公開Gateは変更しない |
+
+20分4Slide1演習、累計38Lesson152Slide40演習620分候補。Chapter09は3Lesson55分、残り1単元15分の計画を維持。受入は掲載コードと実Fixture、編集→Reset→再編集→判定→保存再開、390px読書。人の初心者試用/実機/公開は未実施のまま区別する。

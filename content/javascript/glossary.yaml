@@ -551,3 +551,9 @@ entries:
     relatedIds:
       - ui-state
       - function
+  - id: replace-children
+    term: replaceChildren
+    definition: 要素の子を指定した要素などへ置き換えるメソッド。引数なしで呼ぶと、その要素自体を残して子をすべて取り除く。
+    firstSlideId: javascript-ch09-l03-s02
+    relatedIds:
+      - render-function

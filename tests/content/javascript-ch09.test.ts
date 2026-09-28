@@ -2,7 +2,7 @@ import { expect, it } from 'vitest';
 import { loadAuthoringCourse } from '../../scripts/content/compileCourse';
 import { assertChapterConceptCoverage } from './concept-coverage';
 
-it('State先頭単元は既習Scopeとclickを結び、繰り返し操作を採点する', async () => {
+it('State単元は既習ScopeとDOMを結び、繰り返し操作を採点する', async () => {
   const course = await loadAuthoringCourse('content/javascript');
   const chapter = course.runtime.phases
     .flatMap(({ chapters }) => chapters)
@@ -15,7 +15,7 @@ it('State先頭単元は既習Scopeとclickを結び、繰り返し操作を採�
     },
     'javascript-ch09',
     chapter.lessons.map(({ id }) => id),
-    ['javascript-ch09-l01', 'javascript-ch09-l02'],
+    ['javascript-ch09-l01', 'javascript-ch09-l02', 'javascript-ch09-l03'],
   );
   const exercise = course.exercises.find(({ id }) => id === 'javascript-ch09-l01-e01')!;
   expect(exercise.runtime).toMatchObject({ capabilityProfile: 'dom', primaryOutput: 'preview' });

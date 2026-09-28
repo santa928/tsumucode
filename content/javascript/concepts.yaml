@@ -640,3 +640,23 @@ concepts:
     prerequisiteConceptIds:
       - update-then-render
     minimumProjectLevel: transform
+  - id: array-ui-state
+    introducedBySlideId: javascript-ch09-l03-s01
+    prerequisiteConceptIds:
+      - shared-render-reset
+    minimumProjectLevel: read
+  - id: render-replace-children
+    introducedBySlideId: javascript-ch09-l03-s02
+    prerequisiteConceptIds:
+      - array-ui-state
+    minimumProjectLevel: read
+  - id: render-array-items
+    introducedBySlideId: javascript-ch09-l03-s03
+    prerequisiteConceptIds:
+      - render-replace-children
+    minimumProjectLevel: read
+  - id: array-render-empty
+    introducedBySlideId: javascript-ch09-l03-s04
+    prerequisiteConceptIds:
+      - render-array-items
+    minimumProjectLevel: transform
