@@ -3,13 +3,14 @@ import { loadChapterPackage } from '../../scripts/content/loadChapterPackage';
 import { loadAuthoringCourse } from '../../scripts/content/compileCourse';
 import { assertChapterConceptCoverage } from './concept-coverage';
 
-it('Ch07は先頭2単元で、参照とclass状態から編集へ接続する', async () => {
+it('Ch07は先頭3単元で、参照・class・生成と接続を学ぶ', async () => {
   const loaded = await loadChapterPackage(
     'content/javascript/chapters/javascript-ch07/chapter.yaml',
   );
   expect(loaded.lessons.map(({ id }) => id)).toEqual([
     'javascript-ch07-l01',
     'javascript-ch07-l02',
+    'javascript-ch07-l03',
   ]);
   expect(loaded.lessons[0]?.prerequisiteLessonIds).toEqual([
     'javascript-ch01-l02',
@@ -44,6 +45,6 @@ it('Ch07は先頭2単元で、参照とclass状態から編集へ接続する', 
     },
     'javascript-ch07',
     chapter!.lessons.map(({ id }) => id),
-    ['javascript-ch07-l01', 'javascript-ch07-l02'],
+    ['javascript-ch07-l01', 'javascript-ch07-l02', 'javascript-ch07-l03'],
   );
 });

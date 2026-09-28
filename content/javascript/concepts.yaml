@@ -474,3 +474,23 @@ concepts:
     prerequisiteConceptIds:
       - dom-class-remove
     minimumProjectLevel: transform
+  - id: dom-create-element
+    introducedBySlideId: javascript-ch07-l03-s01
+    prerequisiteConceptIds:
+      - dom-class-change
+    minimumProjectLevel: read
+  - id: dom-detached-text
+    introducedBySlideId: javascript-ch07-l03-s02
+    prerequisiteConceptIds:
+      - dom-create-element
+    minimumProjectLevel: read
+  - id: dom-append-child
+    introducedBySlideId: javascript-ch07-l03-s03
+    prerequisiteConceptIds:
+      - dom-detached-text
+    minimumProjectLevel: read
+  - id: dom-create-and-connect
+    introducedBySlideId: javascript-ch07-l03-s04
+    prerequisiteConceptIds:
+      - dom-append-child
+    minimumProjectLevel: transform

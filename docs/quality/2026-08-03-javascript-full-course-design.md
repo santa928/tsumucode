@@ -655,3 +655,19 @@ Ch07-l02を15分・4Slide・1Exerciseで追加し、累計29Lesson／116Slide／
 | REQ-JSC-DOM-007 | 追加 | classの有無と対象外要素・文字の保持を採点し、class文字列順序やcomputed color・変数名・if・操作順を固定しない |
 
 classList能力は既存製品DOM Runnerの3 engineで実測し、保護設定・Runtimeは変更しない。DOM生成・イベントは後続。検証は新演習の正解/誤解Fixture、編集/Reset/Preview/判定、PC/390px読書と関連入口、Compile・Review・遅延chunkを対象とする。スライドの操作前後図は独自制作。性能予算と公開Gateは維持し、今回の自動検証を人の初心者試用や実機検証として扱わない。
+
+
+## #8 Ch07の第3単元追加（2026-09-28）
+
+l03「要素を作ってページへ追加する」は4Slide/1Exercise/20分。累計30Lesson/120Slide/32Exercise/485分、Ch07は55分。Course draft、2026-09-28.2→.3は既存IDを保つ空移行edge。
+
+| 要件 | 区分 | 内容 |
+|---|---|---|
+| REQ-JSC-DOM-001〜004・006〜007 | 維持 | 既習内容、保存互換、実行/合否、先行単元のclass操作と独立レビュー |
+| REQ-JSC-DOM-005 | 変更 | 試用の有限目次へ完成したl03だけを追加。未完成l04以降を通常Pathへ出さない |
+| REQ-JSC-DOM-008 | 追加 | createElementによる生成とページ接続を分け、textContentとappendChildの役割を説明・予測・修正で学ぶ |
+| REQ-JSC-DOM-009 | 追加 | 元の子と対象外のリストを保ち、期待文字の新しいliが末尾に1件だけ増える実DOMを主採点とする |
+
+createElementの既存call factを最小の概念確認に使う。appendChildは推奨手段として説明し、親変数名を含むcall factで別名解答を固定しない。接続後に文字を設定する別解も実DOMで確認する。Runtime・セキュリティ・依存・性能予算・公開Gateは不変。Eventと複数要素の走査は後続。
+
+受入検証は新演習の代表Fixture、編集/Reset/Preview/判定と保存、PC/390px通読、掲載例の実Runner実行、対象Compile/Review/型/Lint/遅延chunk。全Courseや全Browserをこの教材追加ごとの条件へ拡大しない。人の初心者・物理実機・#26Bの既存教材改訂計測は別途未完を維持する。
