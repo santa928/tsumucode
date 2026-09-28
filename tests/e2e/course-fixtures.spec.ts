@@ -6,8 +6,8 @@ import {
 } from '../../scripts/content/compileCourse';
 import { readSplitCourseArtifacts } from '../../scripts/content/readSplitCourseArtifacts';
 import type { AssetRef, ExerciseFile } from '../../src/core/content/types';
-import type { RunnerAdapter } from '../../src/core/runtime/contracts';
-import type { ValidationResult } from '../../src/core/validation/contracts';
+import type { RunnerInput, SnapshotPolicy, RunnerAdapter } from '../../src/core/runtime/contracts';
+import type { ValidationContext, ValidationResult } from '../../src/core/validation/contracts';
 import type { ValidatorAdapter } from '../../src/core/validation/contracts';
 import type * as ConsoleRuntime from '../../src/features/learning/browserConsoleRuntime';
 import { observeRuntimePage, readRuntimeErrors } from './helpers/openRuntimeFixture';
@@ -17,6 +17,17 @@ import {
   loadBrowserConsoleModulePath,
 } from './helpers/javascriptRunnerModule';
 import { testBasePath, testServerUrl } from './helpers/testBasePath';
+
+import {
+  extendSnapshotPolicyForInteractions,
+  runInteractionScenario,
+} from '../../src/features/learning/session/runInteractionScenario';
+
+interface PendingInteractionValidation {
+  readonly context: ValidationContext;
+  readonly policy: SnapshotPolicy;
+  readonly runnerInput: RunnerInput;
+}
 
 interface BrowserFixtureCase {
   readonly id: string;
@@ -103,7 +114,10 @@ async function evaluateCase(
   fixtureCase: BrowserFixtureCase,
   runtime: BrowserFixtureRuntimeInput,
 ): Promise<ValidationResult> {
-  return page.evaluate<ValidationResult, BrowserFixtureEvaluationInput>(
+  const initial = await page.evaluate<
+    ValidationResult | PendingInteractionValidation,
+    BrowserFixtureEvaluationInput
+  >(
     async (input) => {
       const { exercise, files, workspaceAssets } = input.fixtureCase;
       const {
@@ -247,7 +261,7 @@ async function evaluateCase(
                   `${files[exercise.runtime?.entryFile ?? 'script.js'] ?? ''}\n`,
               }
             : files;
-        return await validator.validate({
+        const context: ValidationContext = {
           exerciseId: exercise.id,
           rules: exercise.validationRules,
           ...(exercise.runtime === undefined ? {} : { runtime: exercise.runtime }),
@@ -259,7 +273,29 @@ async function evaluateCase(
           interactionScenarios: exercise.interactionScenarios ?? [],
           interactionCheckpoints: {},
           now: new Date().toISOString(),
-        });
+        };
+        if (
+          (exercise.interactionScenarios?.length ?? 0) === 0 ||
+          diagnostics.some(({ severity }) => severity === 'error')
+        )
+          return await validator.validate(context);
+        return {
+          context,
+          policy,
+          runnerInput: {
+            exerciseSessionId,
+            executionRevision,
+            languageId,
+            files,
+            assets: workspaceAssets.map((asset) => ({
+              id: asset.id,
+              mediaType: asset.mediaType,
+              url: new URL(asset.path, window.location.href).href,
+            })),
+            viewport: exercise.previewViewports[0]!,
+            options: exercise.runtime === undefined ? {} : { runtime: exercise.runtime },
+          },
+        };
       } catch (error) {
         throw new Error(
           `${error instanceof Error ? error.message : String(error)}; bridgeMessages=${JSON.stringify(bridgeMessages)}`,
@@ -270,6 +306,80 @@ async function evaluateCase(
       }
     },
     { fixtureCase, ...runtime },
+  );
+  if (!('context' in initial)) return initial;
+  // Node側の製品helperへBrowser内の実Runnerを接続し、判定結果を捏造しない。
+  const policy = extendSnapshotPolicyForInteractions(initial.policy, [fixtureCase.exercise]);
+  const checkpoints: Record<string, Awaited<ReturnType<typeof runInteractionScenario>>> = {};
+  const nextRequestId = (): string => crypto.randomUUID();
+  for (const viewport of fixtureCase.exercise.previewViewports) {
+    checkpoints[viewport.id] = [];
+    for (const scenario of fixtureCase.exercise.interactionScenarios ?? []) {
+      checkpoints[viewport.id]!.push(
+        ...(await runInteractionScenario({
+          exerciseSessionId: initial.runnerInput.exerciseSessionId,
+          executionRevision: initial.runnerInput.executionRevision,
+          viewport,
+          policy,
+          scenario,
+          render: () =>
+            page.evaluate(
+              async (input) => {
+                const harness = (
+                  window as typeof window & {
+                    __tsumucodeCourseFixtureHarness?: { runner: RunnerAdapter };
+                  }
+                ).__tsumucodeCourseFixtureHarness;
+                if (harness === undefined) throw new Error('Fixture Runnerがありません');
+                return harness.runner.render(input);
+              },
+              { ...initial.runnerInput, viewport },
+            ),
+          interact: (request) =>
+            page.evaluate(async (request) => {
+              const harness = (
+                window as typeof window & {
+                  __tsumucodeCourseFixtureHarness?: { runner: RunnerAdapter };
+                }
+              ).__tsumucodeCourseFixtureHarness;
+              if (harness?.runner.interact === undefined)
+                throw new Error('Fixture RunnerがInteractionに対応していません');
+              return harness.runner.interact(request);
+            }, request),
+          requestSnapshot: (request) =>
+            page.evaluate(async (request) => {
+              const harness = (
+                window as typeof window & {
+                  __tsumucodeCourseFixtureHarness?: { runner: RunnerAdapter };
+                }
+              ).__tsumucodeCourseFixtureHarness;
+              if (harness === undefined) throw new Error('Fixture Runnerがありません');
+              return harness.runner.requestSnapshot(request);
+            }, request),
+          // Fixtureは編集を並行実行しない。非同期結果のidentity確認は製品helperが行う。
+          assertFresh: () => undefined,
+          nextRequestId,
+          assertGradable: (interaction) => {
+            if ((interaction.diagnostics ?? []).some(({ severity }) => severity === 'error')) {
+              throw new Error(
+                `Fixture Interaction実行不能: ${JSON.stringify(interaction.diagnostics)}`,
+              );
+            }
+          },
+        })),
+      );
+    }
+  }
+  return page.evaluate(
+    async (input) => {
+      const module = (await import(/* @vite-ignore */ input.validatorModulePath)) as Record<
+        string,
+        unknown
+      >;
+      const Validator = module[input.validatorExportName] as new () => ValidatorAdapter;
+      return new Validator().validate(input.context);
+    },
+    { ...runtime, context: { ...initial.context, interactionCheckpoints: checkpoints } },
   );
 }
 
@@ -439,4 +549,120 @@ test('JavaScriptの全Solution、Starter、Fixtureを実Browser Runner／Validat
     expectedExerciseCount: 33,
     runtime: await loadJavaScriptFixtureRuntime(),
   });
+});
+
+/** 実教材とは区別した操作fixtureで、初期状態・操作後・fresh frameの境界を実測する。 */
+test('JavaScript Scenario fixtureは実click/inputを観測し、未操作の完成表示を合格にしない', async ({
+  page,
+}) => {
+  const authoring = await loadAuthoringCourse('content/javascript');
+  const source = authoring.exercises.find(({ id }) => id === 'javascript-ch00-l01-e01')!;
+  const base = createCases([source])[0]!.exercise;
+  const scenario = {
+    id: 'button-flow',
+    label: '押して入力する',
+    actions: [
+      { id: 'click', kind: 'click' as const, selector: '#button' },
+      { id: 'input', kind: 'fill' as const, selector: '#name', value: '花子' },
+      { id: 'again', kind: 'fill' as const, selector: '#name', value: '太郎' },
+    ],
+    checkpoints: [
+      {
+        id: 'clicked',
+        afterActionId: 'click',
+        expectations: [
+          { id: 'one', kind: 'selector-text' as const, selector: '#count', equals: '1' },
+        ],
+      },
+      {
+        id: 'typed',
+        afterActionId: 'input',
+        expectations: [
+          { id: 'name', kind: 'selector-text' as const, selector: '#result', equals: '花子' },
+        ],
+      },
+      {
+        id: 'retyped',
+        afterActionId: 'again',
+        expectations: [
+          { id: 'next', kind: 'selector-text' as const, selector: '#result', equals: '太郎' },
+        ],
+      },
+    ],
+  };
+  const exercise: BrowserFixtureCase['exercise'] = {
+    ...base,
+    runtime: {
+      kind: 'javascript',
+      entryFile: 'script.js',
+      sourceType: 'script',
+      capabilityProfile: 'dom',
+      primaryOutput: 'preview',
+    },
+    validationRules: [
+      {
+        ...base.validationRules[0]!,
+        id: 'query-call',
+        target: { kind: 'javascript-source', file: 'script.js' },
+        assertion: {
+          kind: 'javascript-source-fact',
+          fact: { kind: 'call', callee: 'document.querySelector' },
+        },
+      },
+      {
+        id: 'initial-count',
+        hintId: base.validationRules[0]!.hintId,
+        relatedSlideId: base.validationRules[0]!.relatedSlideId,
+        label: '初期表示は0',
+        required: true,
+        group: 'all',
+        viewportMode: 'all',
+        viewportIds: base.previewViewports.map(({ id }) => id),
+        target: { kind: 'selector', selector: '#count' },
+        assertion: { kind: 'text', operator: 'equals', expected: '0' },
+        feedback: { target: '#count', expected: '0', nextAction: '操作前の状態を確認する' },
+      },
+    ],
+    interactionScenarios: [scenario, { ...scenario, id: 'fresh-flow' }],
+  };
+  const solution =
+    "let count=0;const button=document.querySelector('#button');button.addEventListener('click',()=>{count+=1;document.querySelector('#count').textContent=String(count);});const field=document.querySelector('#name');field.addEventListener('input',event=>{document.querySelector('#result').textContent=event.currentTarget.value;});";
+  await page.goto(testBasePath());
+  const runtime = await loadJavaScriptFixtureRuntime();
+  try {
+    for (const [id, script, expected] of [
+      ['solution', solution, 'pass'],
+      ['wrong-event', solution.replace("'click'", "'mouseover'"), 'incomplete'],
+      ['upfront', solution + "document.querySelector('#count').textContent='1';", 'incomplete'],
+    ] as const) {
+      const result = await evaluateCase(
+        page,
+        {
+          id,
+          exercise,
+          workspaceAssets: [],
+          expectedStatus: expected,
+          files: {
+            'index.html':
+              '<button id="button">押す</button><input id="name" aria-label="名前"><p id="count">0</p><p id="result">待機中</p>',
+            'script.js': script,
+          },
+        },
+        runtime,
+      );
+      expect(result.status, JSON.stringify(result)).toBe(expected);
+      if (id === 'solution') expect(result.checks.every(({ passed }) => passed)).toBe(true);
+      if (id === 'wrong-event')
+        expect(result.checks.filter(({ passed }) => !passed).map(({ ruleId }) => ruleId)).toEqual([
+          'interaction:button-flow:clicked:one',
+          'interaction:fresh-flow:clicked:one',
+        ]);
+      if (id === 'upfront')
+        expect(result.checks.filter(({ passed }) => !passed).map(({ ruleId }) => ruleId)).toEqual([
+          'initial-count',
+        ]);
+    }
+  } finally {
+    await disposeFixtureHarness(page);
+  }
 });
