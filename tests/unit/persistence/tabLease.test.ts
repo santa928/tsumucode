@@ -1048,6 +1048,8 @@ describe('TabLeaseCoordinator', () => {
     const handle = coordinator.acquire(COURSE_ID, WORKSPACE_ID, { beforeYield: async () => {} });
     finishClaim(clock);
     await flushPromises();
+    const transitions: ReturnType<typeof handle.getSnapshot>[] = [];
+    handle.subscribe(() => transitions.push(handle.getSnapshot()));
     const writing = handle.runFencedWrite(async (_token, proof) => {
       await writeGate.promise;
       persistence.assertWrite(proof);
@@ -1055,12 +1057,20 @@ describe('TabLeaseCoordinator', () => {
 
     lifecycleTarget.dispatchEvent(new Event('focus'));
     expect(handle.getSnapshot().status).toBe('yielding');
+    expect(handle.getSnapshot().revalidating).toBe(true);
     await expect(handle.runFencedWrite(async () => undefined)).rejects.toThrow('編集権');
     writeGate.resolve();
 
     await expect(writing).resolves.toBeUndefined();
     await flushPromises();
     expect(handle.getSnapshot()).toMatchObject({ status: 'owned', ownerId: 'tab-a-1' });
+    expect(handle.getSnapshot().revalidating).toBeUndefined();
+    expect(transitions.filter(({ status }) => status !== 'owned')).not.toHaveLength(0);
+    expect(
+      transitions
+        .filter(({ status }) => status !== 'owned')
+        .every(({ revalidating }) => revalidating),
+    ).toBe(true);
     expect(persistence.heartbeatCount).toBeGreaterThan(0);
     coordinator.dispose();
   });

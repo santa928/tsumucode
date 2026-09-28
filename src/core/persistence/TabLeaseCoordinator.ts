@@ -24,6 +24,8 @@ export interface TabLeaseState {
   readonly coordination: TabLeaseCoordination;
   readonly ownerId?: string;
   readonly expiresAt?: number;
+  /** 同じowner tokenの再確認中だけRuntimeを維持する。write許可には使わない。 */
+  readonly revalidating?: true;
 }
 
 /** lease取得時に旧ownerが保存をsettleするためのcallback。 */
@@ -625,6 +627,7 @@ class LeaseHandleImpl implements TabLeaseHandle {
       this.#owner = next;
       this.#setSnapshot({
         status: current.status,
+        ...(this.#snapshot.revalidating ? { revalidating: true as const } : {}),
         coordination: this.#coordination(),
         ownerId: next.ownerId,
         expiresAt: next.expiresAt,
@@ -776,6 +779,7 @@ class LeaseHandleImpl implements TabLeaseHandle {
     this.#clearHeartbeatTimer();
     this.#setSnapshot({
       status: 'yielding',
+      revalidating: true,
       coordination: this.#coordination(),
       ownerId: owner.ownerId,
       expiresAt: owner.expiresAt,
@@ -794,7 +798,11 @@ class LeaseHandleImpl implements TabLeaseHandle {
         this.#beginClaim();
         return;
       }
-      this.#setSnapshot({ status: 'claiming', coordination: this.#coordination() });
+      this.#setSnapshot({
+        status: 'claiming',
+        revalidating: true,
+        coordination: this.#coordination(),
+      });
       try {
         const refreshed = await persistence.heartbeatWorkspaceLease(
           this.#proof(currentOwner),
@@ -1388,6 +1396,7 @@ class LeaseHandleImpl implements TabLeaseHandle {
       };
       this.#setSnapshot({
         status: 'yielding',
+        ...(this.#snapshot.revalidating ? { revalidating: true as const } : {}),
         coordination: this.#coordination(),
         ownerId: persisted.ownerId,
         expiresAt: persisted.expiresAt,
@@ -1504,6 +1513,7 @@ class LeaseHandleImpl implements TabLeaseHandle {
         this.#owner = next;
         this.#setSnapshot({
           status: this.#snapshot.status,
+          ...(this.#snapshot.revalidating ? { revalidating: true as const } : {}),
           coordination: this.#coordination(),
           ownerId: next.ownerId,
           expiresAt: next.expiresAt,
@@ -1605,6 +1615,7 @@ class LeaseHandleImpl implements TabLeaseHandle {
     const current = this.#snapshot;
     if (
       current.status === next.status &&
+      current.revalidating === next.revalidating &&
       current.coordination === next.coordination &&
       current.ownerId === next.ownerId &&
       current.expiresAt === next.expiresAt

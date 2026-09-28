@@ -155,6 +155,35 @@ function renderGate(
 }
 
 describe('WorkspaceLeaseGate', () => {
+  it('self再検証の両phaseで同じRuntimeを保持し、所有権喪失時だけ破棄する', async () => {
+    const lease = createFakeLease({ status: 'owned', coordination: 'available' });
+    const { coordinator } = coordinatorHarness(lease.handle);
+    let access!: WorkspaceLeaseAccess;
+    renderGate(coordinator, (current) => {
+      access = current;
+      return <input aria-label="編集中の内容" defaultValue="保持する" />;
+    });
+    const original = await screen.findByRole('textbox');
+    for (const status of ['yielding', 'claiming'] as const) {
+      act(() => {
+        lease.setState({ status, revalidating: true, coordination: 'available' });
+      });
+      expect(screen.getByRole('textbox')).toBe(original);
+      expect(screen.getByRole('status')).toHaveTextContent('編集権を再確認しています');
+      expect(access.isWritable()).toBe(false);
+    }
+    act(() => {
+      lease.setState({ status: 'owned', coordination: 'available' });
+    });
+    expect(screen.getByRole('textbox')).toBe(original);
+    expect(access.isWritable()).toBe(true);
+    act(() => {
+      lease.setState({ status: 'read-only', coordination: 'available' });
+    });
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    expect(access.isWritable()).toBe(false);
+  });
+
   it('未commitのrenderでは外部Leaseを取得しない', () => {
     const lease = createFakeLease({ status: 'owned', coordination: 'available' });
     const harness = coordinatorHarness(lease.handle);
