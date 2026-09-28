@@ -3482,3 +3482,72 @@ items:
     visibility: public
     path: chapters/javascript-ch07/lessons/javascript-ch07-l02/slides/s04.md
     createdAt: '2026-09-28'
+  - id: javascript-ch07-l03-source-1
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/exercises/javascript-ch07-l03-e01/exercise.yaml
+  - id: javascript-ch07-l03-source-2
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/exercises/javascript-ch07-l03-e01/fixtures/alternate-name/script.js
+  - id: javascript-ch07-l03-source-3
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/exercises/javascript-ch07-l03-e01/fixtures/duplicate-created/script.js
+  - id: javascript-ch07-l03-source-4
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/exercises/javascript-ch07-l03-e01/fixtures/index.html
+  - id: javascript-ch07-l03-source-5
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/exercises/javascript-ch07-l03-e01/fixtures/not-connected/script.js
+  - id: javascript-ch07-l03-source-6
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/exercises/javascript-ch07-l03-e01/fixtures/old-child-removed/script.js
+  - id: javascript-ch07-l03-source-7
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/exercises/javascript-ch07-l03-e01/fixtures/styles.css
+  - id: javascript-ch07-l03-source-8
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/exercises/javascript-ch07-l03-e01/fixtures/text-after-append/script.js
+  - id: javascript-ch07-l03-source-9
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/exercises/javascript-ch07-l03-e01/fixtures/wrong-parent/script.js
+  - id: javascript-ch07-l03-source-10
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/exercises/javascript-ch07-l03-e01/fixtures/wrong-text/script.js
+  - id: javascript-ch07-l03-source-11
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/exercises/javascript-ch07-l03-e01/instructions.md
+  - id: javascript-ch07-l03-source-12
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/exercises/javascript-ch07-l03-e01/solution/index.html
+  - id: javascript-ch07-l03-source-13
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/exercises/javascript-ch07-l03-e01/solution/script.js
+  - id: javascript-ch07-l03-source-14
+    visibility: authoring
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/exercises/javascript-ch07-l03-e01/solution/styles.css
+  - id: javascript-ch07-l03-source-15
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/exercises/javascript-ch07-l03-e01/starter/index.html
+  - id: javascript-ch07-l03-source-16
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/exercises/javascript-ch07-l03-e01/starter/script.js
+  - id: javascript-ch07-l03-source-17
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/exercises/javascript-ch07-l03-e01/starter/styles.css
+  - id: javascript-ch07-l03-source-18
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/lesson.yaml
+  - id: javascript-ch07-l03-diagram-original
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/slides/assets/create-and-connect.svg
+  - id: javascript-ch07-l03-source-20
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/slides/s01.md
+  - id: javascript-ch07-l03-source-21
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/slides/s02.md
+  - id: javascript-ch07-l03-source-22
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/slides/s03.md
+  - id: javascript-ch07-l03-source-23
+    visibility: public
+    path: chapters/javascript-ch07/lessons/javascript-ch07-l03/slides/s04.md

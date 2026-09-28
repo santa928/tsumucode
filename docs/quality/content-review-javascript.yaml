@@ -3,6 +3,17 @@ releaseStatus: draft
 verifiedSourceCommit: draft
 canonicalDistSha256: draft
 lessons:
+  - lessonId: javascript-ch07-l03
+    authorId: tsumucode-javascript-authoring
+    reviewerId: astra-pro-independent-review
+    sourceHash: cfee2512f97e5e73cb3ea7076c605881d66984f57850ec5bcc5b8cf702557770
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: PR47の同一Pro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEAD2a2a5f422abb6bb3e804ac00e3826d1d5aeccccdの教材原文・採点・Fixture・導線を独立確認し内容承認。生成と接続の区別、既存子保持、文字設定、実DOMを主条件とする別名/順序別解が整合。CodexがDocker製品Runnerで掲載4例と演習9ケースを実行し上記hashを計算。Proによるhash独立再計算・実行・新画面画像承認、人の初心者試用や物理実機確認を意味しない。createElementと接続対象の同一性を追跡するデータフロー解析は行わない。
   - lessonId: javascript-ch07-l02
     authorId: tsumucode-javascript-authoring
     reviewerId: astra-pro-independent-review

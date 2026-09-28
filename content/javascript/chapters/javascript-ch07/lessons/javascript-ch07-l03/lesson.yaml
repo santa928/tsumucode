@@ -1,0 +1,24 @@
+id: javascript-ch07-l03
+kind: standard
+title: 要素を作ってページへ追加する
+goal: createElementで要素を作り、文字を設定し、既存の内容を残してリストの末尾へ接続できる。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - javascript-ch07-l02
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/javascript-ch07-l03-e01/exercise.yaml
+reflection: 要素を作ることとページにつなぐことは別。どの親へ追加するかで表示場所が決まる。
+glossaryRefs:
+  - dom-reference
+  - create-element
+  - append-child
+completion:
+  kind: standard
+  finalSlideId: javascript-ch07-l03-s04
+  requiredExerciseIds:
+    - javascript-ch07-l03-e01

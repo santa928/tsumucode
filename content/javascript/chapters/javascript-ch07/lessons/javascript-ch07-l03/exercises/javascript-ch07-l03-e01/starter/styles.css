@@ -1,0 +1,5 @@
+body { font-family: sans-serif; padding: 24px; color: #19352b; background: #f5faf7; }
+main { max-width: 520px; margin: 0; }
+ul { padding: 12px 12px 12px 36px; background: white; border-radius: 8px; }
+li { padding: 8px; }
+#books > li + li { border-top: 2px solid #16764b; }

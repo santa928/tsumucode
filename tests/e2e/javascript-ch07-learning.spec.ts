@@ -76,6 +76,6 @@ test('試用目次からDOMの4枚を狭幅で読み、未完成Lessonを先読�
   expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
   expect(lessonRequests.filter((url) => /javascript-ch07-l0[3-9]/u.test(url))).toEqual([]);
   await page.screenshot({ path: testInfo.outputPath('dom-reading-mobile.png') });
-  await page.goto(`${PILOT}/javascript/lessons/javascript-ch07-l03/read`);
+  await page.goto(`${PILOT}/javascript/lessons/javascript-ch07-l04/read`);
   await expect(page).toHaveURL(/#\/library\/pilot$/u);
 });
