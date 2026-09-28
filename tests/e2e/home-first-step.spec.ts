@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { READING_PILOT_LESSONS } from '../../src/features/library/readingTargets';
 
 for (const width of [1280, 390]) {
   for (const enlarged of [false, true]) {
@@ -51,7 +52,17 @@ for (const width of [1280, 390]) {
         await expect(
           page.getByRole('heading', { level: 1, name: '試用レッスンの目次' }),
         ).toBeVisible();
-        await expect(page.getByRole('link', { name: /^一続きに読む/u })).toHaveCount(4);
+        // 教材追加ごとの件数複製を避け、明示した試用対象への全リンクを照合する。
+        const expectedTargets = READING_PILOT_LESSONS.map(
+          ({ courseId, lessonId }) => `#/library/pilot/${courseId}/lessons/${lessonId}/read`,
+        );
+        await expect
+          .poll(() =>
+            page
+              .getByRole('link', { name: /^一続きに読む/u })
+              .evaluateAll((links) => links.map((link) => link.getAttribute('href'))),
+          )
+          .toEqual(expectedTargets);
       }
     });
   }
