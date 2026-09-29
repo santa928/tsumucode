@@ -11,6 +11,8 @@ export default tseslint.config(
       'coverage',
       'public/generated/content',
       'content/**/*.js',
+      // 型誤り・any・抑制指示を含む教材は専用Compilerと製品採点で検証する。
+      'docs/quality/typescript-ch01-l02-draft/exercises/**/*.ts',
       'playwright-report',
       'playwright-performance-report',
       'test-results',
