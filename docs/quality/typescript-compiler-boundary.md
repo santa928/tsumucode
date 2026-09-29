@@ -94,3 +94,13 @@ Runtime schemaへTypeScript module/.ts entryを追加し、Course/entryの言語
 Dockerの関連8ファイル計185件が成功（schema98、JS Validator16/Rule14、TS Runner4/Validator10、言語登録4/TS Editor1、Routes38）。型・対象Lint・production build・既存chunk検査も成功。実Chromium2件では型検査→隔離実行→採点のpass/incomplete、型だけ変更した元TS・改変されたJS hashの拒否、型エラー非実行と停止後復帰を確認した。初期配信のlibrary/normalLearning両entryの静的7/10chunkとindex HTMLにTS実装・Compiler参照が混入していないことを生成物で確認した。
 
 初回の型検査では配列要素のundefined考慮不足と検証mirror内のファイル名大文字小文字重複を修正。テストLintのspy型とmatcher代入を修正し、受入条件の緩和はしていない。手動配信graph検査は実在しないindex.html manifest keyで一度失敗し、実ビルドの両entryとHTMLに合わせて成功した。製品TS演習の通し操作・保存・診断クリック・Console表示の接続、型の学習要件、現版のproduction実配信、他Browser、全suite、人の試用/実機、p95、公開Gateは未確認であり、教材作成時/公開前に確認する。
+
+## 実演習画面のTS接続検証（2026-09-29追補）
+
+REQ-TS-001〜008を維持し、保留・削除なし。検証用のdraft TS Courseを分割配信hash付きでテスト内だけ供給し、実製品のEditor・Compiler Worker・Runner・Validator・IndexedDBを通した。採点側が対応済みのDOM RuleをCourse schemaが拒否していたため、既存DOMまたはConsoleのstrict契約を受理するよう修正した。生成JSのSource Rule拒否は維持する。PreviewのConsoleタブもTS runtimeで表示し、primaryOutputの選択を反映する。
+
+実Chromium 1280×900で、型エラー→編集した原文の下書き保存→未採点→修正→Console出力→合格→再読込で元TS復元→再度型エラーを確認した。元TSの診断位置、前回成功時のConsoleという案内、過去の採点履歴と合格時snapshotの保持を検証する。編集時点で現在の合格は失効する既存仕様を保ち、型エラー判定自体はそこへ新しい不合格記録を加えない。未編集Starterは保存対象でないため、保存確認は実編集後に行う。
+
+対象Unit/Componentはschema99＋Routes38の137件、型/対象Lintが成功。UIの成功・型エラー両画像を目視し、診断・Console・下部の操作が1280×900内に収まることを確認した。これは独立レビュー前の検証fixtureであり、TS教材完成や初心者の通し試用ではない。診断はCompiler原文で、クリック移動・初学者向け説明・製品教材の作成は未完了。実機、他Browser、p95、公開Gateは対象外のまま保持する。共有基盤の変更はschema受理条件とConsole表示条件に限定し、全suite/production再buildは今回の局所検証では繰り返さず、必要CIと公開前Gateで確認する。
+
+検証過程では、Playwrightの非対応CLI引数を既存形式の一時設定へ修正した。上記DOM Rule拒否を実検出・修正した後、未編集Starterの保存期待と、編集による現行合格失効を判定時の変化として比較していたテストを既存仕様に合わせて修正した。履歴・合格時snapshotを失わせない検証は残し、判定条件や公開Gateは緩和していない。

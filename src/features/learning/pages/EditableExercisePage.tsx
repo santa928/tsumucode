@@ -1040,7 +1040,7 @@ function EditableSession({
                 <PreviewFrame
                   key={`${course.id}:${exercise.id}`}
                   onReady={preparePreview}
-                  consoleEnabled={exercise.runtime?.kind === 'javascript'}
+                  consoleEnabled={exercise.runtime !== undefined}
                   primaryOutput={exercise.runtime?.primaryOutput ?? 'preview'}
                   consoleRecords={state.runtimeOutput?.console ?? []}
                   consoleFreshness={state.runtimeOutput?.freshness ?? 'current'}

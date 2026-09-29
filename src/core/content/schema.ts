@@ -2020,7 +2020,8 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
             }
             if (
               course.validatorId === 'typescript' &&
-              (!javaScriptRule.success || rule.target.kind === 'javascript-source')
+              ((!htmlCssRule.success && !javaScriptRule.success) ||
+                rule.target.kind === 'javascript-source')
             ) {
               addIssue(context, rulePath, 'TypeScript動作採点はDOM/Console Ruleを指定してください');
             }

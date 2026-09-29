@@ -613,6 +613,27 @@ describe('CourseManifestSchema 公開境界', () => {
     };
     expectCourseIssue(course, 'TypeScript動作採点はDOM/Console Ruleを指定してください');
   });
+
+  it('TypeScript Courseの型付きentryとDOM採点を配信契約へ通す', () => {
+    const course = cloneCourse();
+    course.runnerId = 'typescript';
+    course.validatorId = 'typescript';
+    const exercise = firstStandardExercise(firstStandardLesson(course));
+    exercise.files.push({
+      path: 'main.ts',
+      language: 'typescript',
+      content: 'const score: number = 2;',
+      editable: true,
+    });
+    exercise.runtime = {
+      kind: 'typescript',
+      entryFile: 'main.ts',
+      sourceType: 'module',
+      capabilityProfile: 'dom',
+      primaryOutput: 'console',
+    };
+    expect(CourseManifestSchema.parse(course)).toEqual(course);
+  });
 });
 
 describe('CourseManifestSchema canonical path', () => {
