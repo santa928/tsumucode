@@ -948,13 +948,15 @@ function EditableSession({
                 <p role="status">
                   {state.executionResult.status === 'succeeded'
                     ? '実行できました（合否は「判定する」で確認）'
-                    : state.executionResult.status === 'unsupported'
-                      ? 'この環境では未対応です。採点していません。'
-                      : state.executionResult.status === 'stopped'
-                        ? '実行を停止しました。採点していません。'
-                        : state.executionResult.status === 'system-error'
-                          ? '実行環境で問題が起きました。採点していません。'
-                          : 'コードのエラーを確認してください。'}
+                    : state.executionResult.status === 'type-error'
+                      ? '型を確認してください。まだ実行・採点していません。'
+                      : state.executionResult.status === 'unsupported'
+                        ? 'この環境では未対応です。採点していません。'
+                        : state.executionResult.status === 'stopped'
+                          ? '実行を停止しました。採点していません。'
+                          : state.executionResult.status === 'system-error'
+                            ? '実行環境で問題が起きました。採点していません。'
+                            : 'コードのエラーを確認してください。'}
                 </p>
               ) : null}
               <h1>{exercise.title}</h1>
@@ -1068,7 +1070,7 @@ function EditableSession({
                 <PreviewFrame
                   key={`${course.id}:${exercise.id}`}
                   onReady={preparePreview}
-                  consoleEnabled={exercise.runtime?.kind === 'javascript'}
+                  consoleEnabled={exercise.runtime !== undefined}
                   primaryOutput={exercise.runtime?.primaryOutput ?? 'preview'}
                   consoleRecords={state.runtimeOutput?.console ?? []}
                   consoleFreshness={state.runtimeOutput?.freshness ?? 'current'}
