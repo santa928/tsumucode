@@ -1,0 +1,83 @@
+[
+  {
+    "id": "starter",
+    "source": "let score: number = \"2\";\nconsole.log(score);\n",
+    "compileStatus": "type-error",
+    "numberAnnotation": true,
+    "anyType": false,
+    "assertion": false,
+    "suppression": false
+  },
+  {
+    "id": "solution",
+    "source": "let score: number = 0;\nscore = 2;\nconsole.log(score);\n",
+    "compileStatus": "ready",
+    "numberAnnotation": true,
+    "anyType": false,
+    "assertion": false,
+    "suppression": false
+  },
+  {
+    "id": "alternative",
+    "source": "let score: number = 1;\nscore += 1;\nconsole.log(score);\n",
+    "compileStatus": "ready",
+    "numberAnnotation": true,
+    "anyType": false,
+    "assertion": false,
+    "suppression": false
+  },
+  {
+    "id": "inference-only",
+    "source": "let score = 0;\nscore = 2;\nconsole.log(score);\n",
+    "compileStatus": "ready",
+    "numberAnnotation": false,
+    "anyType": false,
+    "assertion": false,
+    "suppression": false
+  },
+  {
+    "id": "any-escape",
+    "source": "let score: any = 0;\nscore = 2;\nconsole.log(score);\n",
+    "compileStatus": "ready",
+    "numberAnnotation": false,
+    "anyType": true,
+    "assertion": false,
+    "suppression": false
+  },
+  {
+    "id": "double-assertion",
+    "source": "let score: number = \"2\" as unknown as number;\nconsole.log(score);\n",
+    "compileStatus": "ready",
+    "numberAnnotation": true,
+    "anyType": false,
+    "assertion": true,
+    "suppression": false
+  },
+  {
+    "id": "suppressed",
+    "source": "// @ts-ignore\nlet score: number = \"2\";\nconsole.log(score);\n",
+    "compileStatus": "ready",
+    "numberAnnotation": true,
+    "anyType": false,
+    "assertion": false,
+    "suppression": true
+  },
+  {
+    "id": "output-only",
+    "source": "let score: number = 0;\nconsole.log(2);\n",
+    "compileStatus": "ready",
+    "numberAnnotation": true,
+    "anyType": false,
+    "assertion": false,
+    "suppression": false
+  },
+  {
+    "id": "wrong-value",
+    "source": "let score: number = 3;\nconsole.log(score);\n",
+    "compileStatus": "ready",
+    "numberAnnotation": true,
+    "anyType": false,
+    "assertion": false,
+    "suppression": false
+  }
+]
