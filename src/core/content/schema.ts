@@ -1008,6 +1008,22 @@ export const TypeScriptLearningRuleDefinitionSchema = z
   .strict()
   .refine((rule) => rule.groupId === undefined, '型習得Ruleは独立した必須要件にしてください');
 
+/** 型注釈Lessonの実Console条件を独立した必須のlog 2に固定する。 */
+export const TypeScriptAnnotationConsoleRuleSchema =
+  JavaScriptConsoleValidationRuleDefinitionSchema.extend({
+    required: z.literal(true),
+    group: z.literal('all'),
+    viewportMode: z.literal('all'),
+  })
+    .refine((rule) => rule.groupId === undefined, 'Console条件は独立した必須要件にしてください')
+    .refine(
+      (rule) =>
+        rule.assertion.expected.length === 1 &&
+        rule.assertion.expected[0]?.level === 'log' &&
+        rule.assertion.expected[0].text === '2',
+      '型注釈LessonのConsole期待値はlog 2だけにしてください',
+    );
+
 export const ValidationRuleDefinitionSchema = z
   .object({
     ...ValidationRuleBaseShape,
@@ -2090,6 +2106,11 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
           const learningRules = exercise.validationRules.filter(
             ({ target }) => target.kind === 'typescript-learning',
           );
+          const annotationConsoleRules = exercise.validationRules.filter(
+            (rule) =>
+              rule.target.kind === 'javascript-console' ||
+              rule.assertion.kind === 'javascript-console',
+          );
           if (
             (learningRules.length > 0 ||
               lesson.id === 'typescript-ch01-l02' ||
@@ -2099,9 +2120,8 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
               exercise.id !== 'typescript-ch01-l02-e01' ||
               learningRules.length !== 1 ||
               !canonicalFilePaths.includes(canonicalPublicPath('main.ts')!) ||
-              !exercise.validationRules.some(
-                (rule) => rule.required && rule.target.kind === 'javascript-console',
-              ))
+              annotationConsoleRules.length !== 1 ||
+              !TypeScriptAnnotationConsoleRuleSchema.safeParse(annotationConsoleRules[0]).success)
           ) {
             addIssue(
               context,

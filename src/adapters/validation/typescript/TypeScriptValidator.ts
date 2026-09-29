@@ -1,6 +1,7 @@
 import {
   TypeScriptExerciseRuntimeSchema,
   TypeScriptLearningRuleDefinitionSchema,
+  TypeScriptAnnotationConsoleRuleSchema,
 } from '../../../core/content/schema';
 import type { ScoreNumberAnnotationResult } from '../../runtime/typescript/checkScoreNumberAnnotation';
 import { isScoreNumberAnnotationResult } from '../../runtime/typescript/workerContract';
@@ -75,6 +76,10 @@ export class TypeScriptValidator implements ValidatorAdapter {
         rule.target.kind === 'typescript-learning' || rule.assertion.kind === 'typescript-learning',
     );
     const behaviorRules = context.rules.filter((rule) => !learningRules.includes(rule));
+    const consoleRules = behaviorRules.filter(
+      (rule) =>
+        rule.target.kind === 'javascript-console' || rule.assertion.kind === 'javascript-console',
+    );
     const learningRule =
       learningRules[0] && TypeScriptLearningRuleDefinitionSchema.safeParse(learningRules[0]);
     if (
@@ -87,7 +92,8 @@ export class TypeScriptValidator implements ValidatorAdapter {
             rule !== learningRules[0] &&
             (rule.id === learningRules[0]!.id || rule.groupId === learningRules[0]!.id),
         ) ||
-        !behaviorRules.some((rule) => rule.required && rule.target.kind === 'javascript-console'))
+        consoleRules.length !== 1 ||
+        !TypeScriptAnnotationConsoleRuleSchema.safeParse(consoleRules[0]).success)
     )
       return blocked(context, 'TYPESCRIPT_LEARNING_CONTRACT');
     if (

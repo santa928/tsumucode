@@ -43,6 +43,8 @@
 
 製品Validatorは元TS hashを照合した同じコピーを再検証し、型条件と既存のDOM/Console動作条件を結合する。型Ruleがない古い基盤試験の動作互換性は維持するが、正式な型注釈Lessonには型Ruleと動作Ruleの両方を必須とする。型条件の未達は関連Hint付きの未達check、通信/実行基盤の失敗はsystem-errorとして区別する。
 
+専用LessonのConsole Ruleは1件だけで、required=true、group=all、groupIdなし、viewportMode=all、equalsでlogの文字列2を1件だけ期待する。Course schemaと製品Validatorが同じ契約を検査し、期待値3・any結合・groupId・重複を採点前に拒否する。これはREQ-005の維持・具体化で、追加・保留・削除する要件はない。
+
 ## 最小検証と未確認事項
 
 1. 既存11ケースを製品採点まで通し、表示が同じでも結果が異なることを確認する。

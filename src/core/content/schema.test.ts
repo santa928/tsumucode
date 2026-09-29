@@ -664,6 +664,10 @@ describe('CourseManifestSchema 公開境界', () => {
       'missing-type',
       'missing-output',
       'optional-output',
+      'wrong-output',
+      'any-output',
+      'grouped-output',
+      'duplicate-output',
       'duplicate-type',
       'other-lesson',
     ] as const) {
@@ -673,6 +677,19 @@ describe('CourseManifestSchema 公開境界', () => {
       if (change === 'missing-type') alteredExercise.validationRules.shift();
       if (change === 'missing-output') alteredExercise.validationRules.pop();
       if (change === 'optional-output') alteredExercise.validationRules[1]!.required = false;
+      if (change === 'wrong-output')
+        alteredExercise.validationRules[1]!.assertion = {
+          kind: 'javascript-console',
+          operator: 'equals',
+          expected: [{ level: 'log', text: '3' }],
+        };
+      if (change === 'any-output') alteredExercise.validationRules[1]!.group = 'any';
+      if (change === 'grouped-output') alteredExercise.validationRules[1]!.groupId = 'shared';
+      if (change === 'duplicate-output')
+        alteredExercise.validationRules.push({
+          ...alteredExercise.validationRules[1]!,
+          id: 'output-other',
+        });
       if (change === 'duplicate-type')
         alteredExercise.validationRules.push({
           ...alteredExercise.validationRules[0]!,

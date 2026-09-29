@@ -126,6 +126,37 @@ describe('TypeScriptValidator', () => {
     expect(f.compiler.compile).not.toHaveBeenCalled();
   });
 
+  it.each(['wrong-output', 'any-output', 'grouped-output', 'duplicate-output'] as const)(
+    '型注釈LessonのConsole契約の改変を採点前に拒否する: %s',
+    async (change) => {
+      const f = fixture();
+      const output = structuredClone(consoleRule);
+      if (change === 'wrong-output')
+        output.assertion = {
+          kind: 'javascript-console',
+          operator: 'equals',
+          expected: [{ level: 'log', text: '3' }],
+        };
+      if (change === 'any-output') output.group = 'any';
+      if (change === 'grouped-output') output.groupId = 'shared';
+      const result = await f.validator.validate({
+        ...(await contextFixture()),
+        exerciseId: 'typescript-ch01-l02-e01',
+        rules: [
+          learningRule,
+          output,
+          ...(change === 'duplicate-output' ? [{ ...output, id: 'output-other' }] : []),
+        ],
+      });
+      expect(result).toMatchObject({ status: 'system-error', checks: [] });
+      expect(result.diagnostics.some(({ code }) => code === 'TYPESCRIPT_LEARNING_CONTRACT')).toBe(
+        true,
+      );
+      expect(f.compiler.compile).not.toHaveBeenCalled();
+      expect(f.validate).not.toHaveBeenCalled();
+    },
+  );
+
   it('型check環境失敗をincompleteにせず、動作採点も実行しない', async () => {
     const original = await contextFixture();
     const f = fixture();
