@@ -1917,3 +1917,40 @@ describe('Learning routes', () => {
     });
   });
 });
+
+it('型検査失敗を未実行・未採点と表示し、診断を残して修正後に再実行できる', async () => {
+  stubEditingCapability(true);
+  let hasTypeError = true;
+  const adapters = stubAdapters({
+    render: async (input) => ({
+      exerciseSessionId: input.exerciseSessionId,
+      executionRevision: input.executionRevision,
+      diagnostics: hasTypeError
+        ? [
+            {
+              code: 'typescript-type-error-2322',
+              kind: 'reference',
+              severity: 'error',
+              message: 'Type mismatch',
+              learnerMessage: 'number型の値を入れてください。',
+              file: 'index.html',
+              line: 1,
+              column: 1,
+            },
+          ]
+        : [],
+      evidence: [],
+      console: [],
+    }),
+  });
+  renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
+  expect(
+    await screen.findByText('型を確認してください。まだ実行・採点していません。'),
+  ).toBeInTheDocument();
+  await userEvent.click(screen.getByRole('button', { name: '判定する' }));
+  expect(adapters.validate).not.toHaveBeenCalled();
+  expect(runtime.repository.putDraftAndCourseFenced).not.toHaveBeenCalled();
+  hasTypeError = false;
+  await userEvent.click(screen.getByRole('button', { name: 'プレビューを更新' }));
+  expect(await screen.findByText('実行できました（合否は「判定する」で確認）')).toBeInTheDocument();
+});

@@ -42,6 +42,8 @@ interface JavaScriptAnalyzerPort {
 }
 
 export interface JavaScriptValidatorOptions {
+  /** 元言語の検証を行うAdapterから、生成JSの動作だけを評価する場合に限る。 */
+  readonly behaviorOnly?: boolean;
   readonly browserConsole?: boolean;
   readonly analyzerFactory?: () => JavaScriptAnalyzerPort;
   readonly guardIdentifierFactory?: () => string;
@@ -558,7 +560,9 @@ export class JavaScriptValidator implements ValidatorAdapter {
   readonly #browserConsole: boolean;
   readonly #domEngine = new ValidatorRuleEngine();
 
+  #requireSourceRule: boolean;
   constructor(options: JavaScriptValidatorOptions = {}) {
+    this.#requireSourceRule = options.behaviorOnly !== true;
     this.#browserConsole = options.browserConsole === true;
     this.#analyzerFactory = options.analyzerFactory ?? (() => new JavaScriptAnalyzerClient());
     this.#guardIdentifierFactory =
@@ -568,14 +572,14 @@ export class JavaScriptValidator implements ValidatorAdapter {
 
   /** strict RuleからSnapshot Bridgeへ要求するDOM観測条件だけを導出する。 */
   buildSnapshotPolicy(rules: readonly ValidatorRule[]): SnapshotPolicy {
-    return buildJavaScriptSnapshotPolicy(parseJavaScriptRules(rules));
+    return buildJavaScriptSnapshotPolicy(parseJavaScriptRules(rules, this.#requireSourceRule));
   }
 
   /** system/code境界を先に確定し、Source・Evidence・DOMを同じ評価時点へ結合する。 */
   async validate(context: ValidationContext): Promise<ValidationResult> {
     let rules: readonly JavaScriptValidatorRule[];
     try {
-      rules = parseJavaScriptRules(context.rules);
+      rules = parseJavaScriptRules(context.rules, this.#requireSourceRule);
     } catch (error: unknown) {
       return blockedResult(context, 'system-error', [
         ...context.diagnostics,
