@@ -1,0 +1,26 @@
+id: javascript-ch08-l03
+kind: standard
+title: Formの送信を受け取って表示する
+goal: Formのsubmit handlerで標準の送信を止め、送信時の入力を画面へ表示できる。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - javascript-ch08-l02
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/javascript-ch08-l03-e01/exercise.yaml
+reflection: 入力欄のinputとFormのsubmitは処理を行う時点が違う。submitのEventで標準送信を止めてから、そのときのvalueを使う。
+glossaryRefs:
+  - form
+  - submit-event
+  - prevent-default
+  - input-event
+  - input-value
+completion:
+  kind: standard
+  finalSlideId: javascript-ch08-l03-s04
+  requiredExerciseIds:
+    - javascript-ch08-l03-e01
