@@ -611,7 +611,96 @@ describe('CourseManifestSchema 公開境界', () => {
         fact: { kind: 'binding', name: 'value', declarationKind: 'const' },
       },
     };
-    expectCourseIssue(course, 'TypeScript動作採点はDOM/Console Ruleを指定してください');
+    expectCourseIssue(
+      course,
+      'TypeScript採点はDOM/Consoleまたは対応する型習得Ruleを指定してください',
+    );
+  });
+
+  it('型注釈Lessonは専用型Ruleと必須Console Ruleの両方が必要になる', () => {
+    const course = cloneCourse();
+    course.runnerId = 'typescript';
+    course.validatorId = 'typescript';
+    const lesson = firstStandardLesson(course);
+    const exercise = firstStandardExercise(lesson);
+    lesson.id = 'typescript-ch01-l02';
+    exercise.id = 'typescript-ch01-l02-e01';
+    lesson.completion.requiredExerciseIds = [exercise.id];
+    exercise.steps = [];
+    exercise.files.push({
+      path: 'main.ts',
+      language: 'typescript',
+      content: 'let score: number = 2; console.log(score);',
+      editable: true,
+    });
+    exercise.runtime = {
+      kind: 'typescript',
+      entryFile: 'main.ts',
+      sourceType: 'module',
+      capabilityProfile: 'core',
+      primaryOutput: 'console',
+    };
+    const base = exercise.validationRules[0]!;
+    exercise.validationRules = [
+      {
+        ...base,
+        id: 'annotation',
+        target: { kind: 'typescript-learning', file: 'main.ts' },
+        assertion: { kind: 'typescript-learning', profile: 'score-number-annotation-v1' },
+      },
+      {
+        ...base,
+        id: 'output',
+        target: { kind: 'javascript-console' },
+        assertion: {
+          kind: 'javascript-console',
+          operator: 'equals',
+          expected: [{ level: 'log', text: '2' }],
+        },
+      },
+    ];
+    expect(CourseManifestSchema.safeParse(course).success).toBe(true);
+    for (const change of [
+      'missing-type',
+      'missing-output',
+      'optional-output',
+      'wrong-output',
+      'any-output',
+      'grouped-output',
+      'duplicate-output',
+      'duplicate-type',
+      'other-lesson',
+    ] as const) {
+      const altered = structuredClone(course);
+      const alteredLesson = firstStandardLesson(altered);
+      const alteredExercise = firstStandardExercise(alteredLesson);
+      if (change === 'missing-type') alteredExercise.validationRules.shift();
+      if (change === 'missing-output') alteredExercise.validationRules.pop();
+      if (change === 'optional-output') alteredExercise.validationRules[1]!.required = false;
+      if (change === 'wrong-output')
+        alteredExercise.validationRules[1]!.assertion = {
+          kind: 'javascript-console',
+          operator: 'equals',
+          expected: [{ level: 'log', text: '3' }],
+        };
+      if (change === 'any-output') alteredExercise.validationRules[1]!.group = 'any';
+      if (change === 'grouped-output') alteredExercise.validationRules[1]!.groupId = 'shared';
+      if (change === 'duplicate-output')
+        alteredExercise.validationRules.push({
+          ...alteredExercise.validationRules[1]!,
+          id: 'output-other',
+        });
+      if (change === 'duplicate-type')
+        alteredExercise.validationRules.push({
+          ...alteredExercise.validationRules[0]!,
+          id: 'annotation-other',
+        });
+      if (change === 'other-lesson') alteredLesson.id = 'other-lesson';
+      expectCourseIssue(
+        altered,
+        '型注釈Ruleは専用Lessonの単一必須RuleとConsole条件を指定してください',
+      );
+    }
   });
 
   it('TypeScript Courseの型付きentryとDOM採点を配信契約へ通す', () => {

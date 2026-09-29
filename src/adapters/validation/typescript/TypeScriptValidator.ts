@@ -1,4 +1,10 @@
-import { TypeScriptExerciseRuntimeSchema } from '../../../core/content/schema';
+import {
+  TypeScriptExerciseRuntimeSchema,
+  TypeScriptLearningRuleDefinitionSchema,
+  TypeScriptAnnotationConsoleRuleSchema,
+} from '../../../core/content/schema';
+import type { ScoreNumberAnnotationResult } from '../../runtime/typescript/checkScoreNumberAnnotation';
+import { isScoreNumberAnnotationResult } from '../../runtime/typescript/workerContract';
 import type {
   ValidationContext,
   ValidationResult,
@@ -18,6 +24,7 @@ import { JavaScriptValidator } from '../javascript/JavaScriptValidator';
 
 interface CompilerPort {
   compile(input: TypeScriptCompileInput): Promise<TypeScriptCompileResult>;
+  learningCheck?(input: TypeScriptCompileInput): Promise<ScoreNumberAnnotationResult>;
   dispose(): void;
 }
 interface ValidatorOptions {
@@ -48,13 +55,15 @@ function blocked(context: ValidationContext, code: string): ValidationResult {
   };
 }
 
-/** 元TSの実行証拠を照合し、再変換したJSの動作を既存Validatorで採点する。型の学習要件はまだ扱わない。 */
+/** 元TSの実行証拠とLesson固有の型要件を照合し、既存の動作条件とANDで採点する。 */
 export class TypeScriptValidator implements ValidatorAdapter {
   constructor(private readonly options: ValidatorOptions = {}) {}
 
   /** 型消去後のASTで型の習得を判定せず、DOM・consoleの観測だけを用意する。 */
   buildSnapshotPolicy(rules: readonly ValidatorRule[]): SnapshotPolicy {
-    return new JavaScriptValidator({ behaviorOnly: true }).buildSnapshotPolicy(rules);
+    return new JavaScriptValidator({ behaviorOnly: true }).buildSnapshotPolicy(
+      rules.filter((rule) => rule.target.kind !== 'typescript-learning'),
+    );
   }
 
   /** 型検査成功だけでは合格にしない。世代・元TS・生成JS・DOMの照合をすべて要求する。 */
@@ -62,6 +71,31 @@ export class TypeScriptValidator implements ValidatorAdapter {
     const files = { ...context.files };
     const parsed = TypeScriptExerciseRuntimeSchema.safeParse(context.runtime);
     const execution = context.execution;
+    const learningRules = context.rules.filter(
+      (rule) =>
+        rule.target.kind === 'typescript-learning' || rule.assertion.kind === 'typescript-learning',
+    );
+    const behaviorRules = context.rules.filter((rule) => !learningRules.includes(rule));
+    const consoleRules = behaviorRules.filter(
+      (rule) =>
+        rule.target.kind === 'javascript-console' || rule.assertion.kind === 'javascript-console',
+    );
+    const learningRule =
+      learningRules[0] && TypeScriptLearningRuleDefinitionSchema.safeParse(learningRules[0]);
+    if (
+      (learningRules.length > 0 || context.exerciseId === 'typescript-ch01-l02-e01') &&
+      (learningRules.length !== 1 ||
+        !learningRule?.success ||
+        context.exerciseId !== 'typescript-ch01-l02-e01' ||
+        context.rules.some(
+          (rule) =>
+            rule !== learningRules[0] &&
+            (rule.id === learningRules[0]!.id || rule.groupId === learningRules[0]!.id),
+        ) ||
+        consoleRules.length !== 1 ||
+        !TypeScriptAnnotationConsoleRuleSchema.safeParse(consoleRules[0]).success)
+    )
+      return blocked(context, 'TYPESCRIPT_LEARNING_CONTRACT');
     if (
       !parsed.success ||
       !execution ||
@@ -104,10 +138,17 @@ export class TypeScriptValidator implements ValidatorAdapter {
       compiler = this.options.compilerFactory?.() ?? new TypeScriptCompilerClient();
       const compiled = await compiler.compile(input);
       if (compiled.status !== 'ready') return blocked(context, 'TYPESCRIPT_VALIDATION_COMPILE');
+      let learningResult: ScoreNumberAnnotationResult | undefined;
+      if (learningRule?.success) {
+        learningResult = await compiler.learningCheck?.(input);
+        if (!isScoreNumberAnnotationResult(learningResult) || learningResult.status !== 'ready')
+          return blocked(context, 'TYPESCRIPT_LEARNING_UNAVAILABLE');
+      }
       const validator =
         this.options.validatorFactory?.() ?? new JavaScriptValidator({ behaviorOnly: true });
       const result = await validator.validate({
         ...context,
+        rules: behaviorRules,
         files: {
           ...Object.fromEntries(Object.entries(files).filter(([file]) => !file.endsWith('.ts'))),
           ...compiled.files,
@@ -118,6 +159,43 @@ export class TypeScriptValidator implements ValidatorAdapter {
           entryFile: runtime.entryFile.replace(/\.ts$/u, '.js'),
         },
       });
+      if (
+        learningRule?.success &&
+        learningResult?.status === 'ready' &&
+        (result.status === 'pass' || result.status === 'incomplete')
+      ) {
+        const rule = learningRule.data;
+        const passed = Object.values(learningResult.facts).every(Boolean);
+        const check = {
+          ruleId: rule.id,
+          requirementId: rule.id,
+          label: rule.label,
+          required: true,
+          passed,
+          requirementPassed: passed,
+          message: passed
+            ? '数値の型注釈と変数の使い方を確認できました。'
+            : '今回の型注釈とscoreの使い方を確認しましょう。',
+          expected: rule.feedback.expected,
+          actual: passed
+            ? '型注釈と正負の型検査を確認しました。'
+            : '型注釈、型の確認を弱める書き方、最後の出力を確認してください。',
+          nextAction: rule.feedback.nextAction,
+          hintId: rule.hintId,
+          relatedSlideId: rule.relatedSlideId,
+        };
+        return {
+          ...result,
+          status: passed && result.status === 'pass' ? 'pass' : 'incomplete',
+          checks: [...result.checks, check],
+          passedRequirementIds: [...result.passedRequirementIds, ...(passed ? [rule.id] : [])],
+          diagnostics: result.diagnostics.flatMap((item) =>
+            item.file?.endsWith('.js')
+              ? mapTypeScriptDiagnostics([item], compiled.sourceMaps, input.files)
+              : [item],
+          ),
+        };
+      }
       return {
         ...result,
         diagnostics: result.diagnostics.flatMap((item) =>

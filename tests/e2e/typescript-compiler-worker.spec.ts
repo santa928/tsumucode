@@ -12,6 +12,169 @@ const annotationFixtures = JSON.parse(
   readFileSync(new URL('../fixtures/typescript-annotation-pilot.json', import.meta.url), 'utf8'),
 ) as { id: string; source: string }[];
 
+test('型注釈の製品採点は元TSの型条件と実ConsoleをANDで判定する', async ({ page }, testInfo) => {
+  test.setTimeout(120_000);
+  const harness = new URL('__typescript-annotation-grading', testServerUrl(4174)).href;
+  await page.route(harness, (route) =>
+    route.fulfill({ contentType: 'text/html', body: '<!doctype html><title>型注釈採点</title>' }),
+  );
+  await page.goto(harness);
+  const observations = await page.evaluate(
+    async (fixtures) => {
+      const runnerPath = new URL(
+        './src/adapters/runtime/typescript/TypeScriptRunnerAdapter.ts',
+        location.href,
+      ).href;
+      const validatorPath = new URL(
+        './src/adapters/validation/typescript/TypeScriptValidator.ts',
+        location.href,
+      ).href;
+      const { TypeScriptRunnerAdapter } = (await import(
+        /* @vite-ignore */ runnerPath
+      )) as typeof RunnerModule;
+      const { TypeScriptValidator } = (await import(
+        /* @vite-ignore */ validatorPath
+      )) as typeof ValidatorModule;
+      const runner = new TypeScriptRunnerAdapter();
+      const validator = new TypeScriptValidator();
+      const frame = document.createElement('iframe');
+      document.body.append(frame);
+      const runtime = {
+        kind: 'typescript',
+        entryFile: 'main.ts',
+        sourceType: 'module',
+        capabilityProfile: 'core',
+        primaryOutput: 'console',
+      } as const;
+      const common = {
+        label: '数値の得点',
+        required: true,
+        group: 'all',
+        viewportMode: 'all',
+        viewportIds: ['desktop'],
+        feedback: {
+          target: 'score',
+          expected: 'number注釈と得点2',
+          nextAction: 'scoreの型注釈と計算を確認します',
+        },
+        hintId: 'hint-1',
+        relatedSlideId: 'slide-1',
+      } as const;
+      const rules: ValidationContext['rules'] = [
+        {
+          ...common,
+          viewportIds: ['desktop'],
+          id: 'annotation',
+          target: { kind: 'typescript-learning', file: 'main.ts' },
+          assertion: { kind: 'typescript-learning', profile: 'score-number-annotation-v1' },
+        },
+        {
+          ...common,
+          viewportIds: ['desktop'],
+          id: 'output',
+          target: { kind: 'javascript-console' },
+          assertion: {
+            kind: 'javascript-console',
+            operator: 'equals',
+            expected: [{ level: 'log', text: '2' }],
+          },
+        },
+      ];
+      const rows = [];
+      try {
+        await runner.prepare(frame);
+        for (const [index, fixture] of fixtures.entries()) {
+          const files = { 'index.html': '<p>型注釈</p>', 'main.ts': fixture.source };
+          const revision = index + 1;
+          const rendered = await runner.render({
+            exerciseSessionId: 'annotation-grading',
+            executionRevision: revision,
+            languageId: 'typescript',
+            files,
+            assets: [],
+            viewport: { id: 'desktop', width: 800, height: 600 },
+            options: { runtime },
+          });
+          if (rendered.diagnostics.length) {
+            rows.push({
+              id: fixture.id,
+              status: 'not-executed',
+              checks: [],
+              diagnostics: rendered.diagnostics,
+              durationMs: 0,
+            });
+            continue;
+          }
+          const snapshot = await runner.requestSnapshot({
+            exerciseSessionId: 'annotation-grading',
+            executionRevision: revision,
+            requestId: `grade-${String(revision)}`,
+            policy: validator.buildSnapshotPolicy(rules),
+          });
+          const started = performance.now();
+          const result = await validator.validate({
+            exerciseId: 'typescript-ch01-l02-e01',
+            rules,
+            runtime,
+            files,
+            execution: {
+              ...rendered,
+              runId: `run-${String(revision)}`,
+              backend: 'browser',
+              engine: 'browser-js',
+              status: 'succeeded',
+            },
+            snapshots: { desktop: snapshot },
+            diagnostics: rendered.diagnostics,
+            evidence: rendered.evidence,
+            console: rendered.console,
+            interactionScenarios: [],
+            interactionCheckpoints: {},
+            now: '2026-09-29T00:00:00Z',
+          });
+          rows.push({
+            id: fixture.id,
+            status: result.status,
+            checks: result.checks,
+            diagnostics: result.diagnostics,
+            durationMs: performance.now() - started,
+          });
+        }
+        return rows;
+      } finally {
+        await runner.dispose();
+        frame.remove();
+      }
+    },
+    [
+      ...annotationFixtures,
+      { id: 'const', source: 'const score: number = 2; console.log(score);' },
+    ],
+  );
+  await testInfo.attach('annotation-product-validation', {
+    body: JSON.stringify(observations, null, 2),
+    contentType: 'application/json',
+  });
+  for (const row of observations) {
+    expect(row.status, row.id).toBe(
+      row.id === 'starter'
+        ? 'not-executed'
+        : ['solution', 'alternative', 'const'].includes(row.id)
+          ? 'pass'
+          : 'incomplete',
+    );
+    if (row.id === 'starter')
+      expect(row.diagnostics).toEqual(
+        expect.arrayContaining([expect.objectContaining({ code: 'typescript-type-error-2322' })]),
+      );
+    else expect(row.diagnostics, row.id).toEqual([]);
+    if (row.id === 'wrong-value') {
+      expect(row.checks.find(({ ruleId }) => ruleId === 'annotation')?.passed).toBe(true);
+      expect(row.checks.find(({ ruleId }) => ruleId === 'output')?.passed).toBe(false);
+    }
+  }
+});
+
 test('型注釈試作の原文を実Runnerで実行し、型誤りの非実行とConsoleだけでは不足する証拠を確認する', async ({
   page,
 }, testInfo) => {

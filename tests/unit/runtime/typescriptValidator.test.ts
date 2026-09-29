@@ -1,7 +1,15 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { TypeScriptExerciseRuntime } from '../../../src/core/content/types';
 import type { TypeScriptCompileResult } from '../../../src/adapters/runtime/typescript/compileTypeScript';
-import type { ValidationContext, ValidationResult } from '../../../src/core/validation/contracts';
+import type {
+  ValidationContext,
+  ValidationResult,
+  ValidatorRule,
+} from '../../../src/core/validation/contracts';
+import {
+  TypeScriptLearningRuleDefinitionSchema,
+  ValidationRuleDefinitionSchema,
+} from '../../../src/core/content/schema';
 import { TypeScriptValidator } from '../../../src/adapters/validation/typescript/TypeScriptValidator';
 import { typeScriptSourceHash } from '../../../src/adapters/runtime/typescript/typeScriptSourceHash';
 import { validationContext, validationRule } from '../../fixtures/validation';
@@ -68,6 +76,107 @@ function fixture() {
 }
 
 describe('TypeScriptValidator', () => {
+  const learningRule: ValidatorRule = {
+    ...validationRule(),
+    id: 'annotation',
+    target: { kind: 'typescript-learning', file: 'main.ts' },
+    assertion: { kind: 'typescript-learning', profile: 'score-number-annotation-v1' },
+  };
+  const consoleRule: ValidatorRule = {
+    ...validationRule(),
+    id: 'output',
+    target: { kind: 'javascript-console' },
+    assertion: {
+      kind: 'javascript-console',
+      operator: 'equals',
+      expected: [{ level: 'log', text: '2' }],
+    },
+  };
+
+  it('型Ruleは単一profile/file・必須allのみを許し、公開汎用payloadへ逃がさない', () => {
+    expect(TypeScriptLearningRuleDefinitionSchema.safeParse(learningRule).success).toBe(true);
+    for (const change of [
+      { group: 'any' },
+      { required: false },
+      { groupId: 'shared' },
+      { target: { kind: 'typescript-learning', file: 'other.ts' } },
+      { assertion: { kind: 'typescript-learning', profile: 'unknown' } },
+      { assertion: { kind: 'exists' } },
+    ]) {
+      expect(ValidationRuleDefinitionSchema.safeParse({ ...learningRule, ...change }).success).toBe(
+        false,
+      );
+    }
+  });
+
+  it('重複型Rule・別Lesson・動作条件欠落は採点前に拒否する', async () => {
+    const f = fixture();
+    const original = await contextFixture();
+    for (const context of [
+      { ...original, rules: [learningRule, consoleRule] },
+      { ...original, exerciseId: 'typescript-ch01-l02-e01', rules: [learningRule] },
+      { ...original, exerciseId: 'typescript-ch01-l02-e01', rules: [consoleRule] },
+      {
+        ...original,
+        exerciseId: 'typescript-ch01-l02-e01',
+        rules: [learningRule, learningRule, consoleRule],
+      },
+    ])
+      expect((await f.validator.validate(context)).status).toBe('system-error');
+    expect(f.compiler.compile).not.toHaveBeenCalled();
+  });
+
+  it.each(['wrong-output', 'any-output', 'grouped-output', 'duplicate-output'] as const)(
+    '型注釈LessonのConsole契約の改変を採点前に拒否する: %s',
+    async (change) => {
+      const f = fixture();
+      const output = structuredClone(consoleRule);
+      if (change === 'wrong-output')
+        output.assertion = {
+          kind: 'javascript-console',
+          operator: 'equals',
+          expected: [{ level: 'log', text: '3' }],
+        };
+      if (change === 'any-output') output.group = 'any';
+      if (change === 'grouped-output') output.groupId = 'shared';
+      const result = await f.validator.validate({
+        ...(await contextFixture()),
+        exerciseId: 'typescript-ch01-l02-e01',
+        rules: [
+          learningRule,
+          output,
+          ...(change === 'duplicate-output' ? [{ ...output, id: 'output-other' }] : []),
+        ],
+      });
+      expect(result).toMatchObject({ status: 'system-error', checks: [] });
+      expect(result.diagnostics.some(({ code }) => code === 'TYPESCRIPT_LEARNING_CONTRACT')).toBe(
+        true,
+      );
+      expect(f.compiler.compile).not.toHaveBeenCalled();
+      expect(f.validate).not.toHaveBeenCalled();
+    },
+  );
+
+  it('型check環境失敗をincompleteにせず、動作採点も実行しない', async () => {
+    const original = await contextFixture();
+    const f = fixture();
+    const compiler = {
+      ...f.compiler,
+      learningCheck: vi.fn().mockResolvedValue({ status: 'system-error' }),
+    };
+    const validator = new TypeScriptValidator({
+      compilerFactory: () => compiler,
+      validatorFactory: () => ({ validate: f.validate, buildSnapshotPolicy: vi.fn() }),
+    });
+    const result = await validator.validate({
+      ...original,
+      exerciseId: 'typescript-ch01-l02-e01',
+      rules: [learningRule, consoleRule],
+    });
+    expect(result).toMatchObject({ status: 'system-error', checks: [] });
+    expect(f.validate).not.toHaveBeenCalled();
+    expect(compiler.dispose).toHaveBeenCalledOnce();
+  });
   it('型検査成功を合格にせず、生成JSとHTMLを動作採点へ渡す', async () => {
     const f = fixture();
     const context = await contextFixture();

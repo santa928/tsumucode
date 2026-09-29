@@ -1,7 +1,9 @@
 import type { TypeScriptCompileResult } from './compileTypeScript';
+import type { ScoreNumberAnnotationResult } from './checkScoreNumberAnnotation';
 import {
   isTypeScriptCompileInput,
   isTypeScriptCompileResult,
+  isScoreNumberAnnotationResult,
   type CompilerWorkerRequest,
   type TypeScriptCompileInput,
 } from './workerContract';
@@ -23,7 +25,7 @@ interface PendingCompile {
   readonly worker: CompilerWorkerPort;
   readonly input: TypeScriptCompileInput;
   readonly requestId: string;
-  readonly resolve: (result: TypeScriptCompileResult) => void;
+  readonly resolve: (result: unknown) => void;
   readonly reject: (error: Error) => void;
   readonly timeout: ReturnType<typeof setTimeout>;
 }
@@ -58,19 +60,36 @@ export class TypeScriptCompilerClient {
 
   /** 新要求で旧計算を中止。入力を複写して呼出し後の編集と応答照合を分離する。 */
   compile(input: TypeScriptCompileInput): Promise<TypeScriptCompileResult> {
+    return this.#request(input, 'compile', isTypeScriptCompileResult, environmentFailure, () => ({
+      status: 'invalid-input',
+      diagnostics: [{ code: 0, message: '型検査するファイルと編集状態を確認してください。' }],
+    }));
+  }
+
+  /** 原文を同世代の専用操作で調べる。probe診断やASTは受け取らない。 */
+  learningCheck(input: TypeScriptCompileInput): Promise<ScoreNumberAnnotationResult> {
+    return this.#request(input, 'learning-check', isScoreNumberAnnotationResult, () => ({
+      status: 'system-error',
+    }));
+  }
+
+  /** 共通の期限・停止機構を維持し、操作ごとの厳密な結果guardだけを切り替える。 */
+  #request<T>(
+    input: TypeScriptCompileInput,
+    kind: CompilerWorkerRequest['kind'],
+    isResult: (value: unknown, snapshot: TypeScriptCompileInput) => value is T,
+    failure: () => T,
+    invalidInput: () => T = failure,
+  ): Promise<T> {
     if (this.#disposed) return Promise.reject(new DOMException('Compiler disposed', 'AbortError'));
     this.cancel();
-    if (!isTypeScriptCompileInput(input))
-      return Promise.resolve({
-        status: 'invalid-input',
-        diagnostics: [{ code: 0, message: '型検査するファイルと編集状態を確認してください。' }],
-      });
+    if (!isTypeScriptCompileInput(input)) return Promise.resolve(invalidInput());
     const snapshot = { ...input, files: { ...input.files } };
     let worker: CompilerWorkerPort;
     try {
       worker = this.#workerFactory();
     } catch {
-      return Promise.resolve(environmentFailure());
+      return Promise.resolve(failure());
     }
     const requestId = String(++this.#sequence);
     return new Promise((resolve, reject) => {
@@ -78,10 +97,12 @@ export class TypeScriptCompilerClient {
         worker,
         input: snapshot,
         requestId,
-        resolve,
+        resolve: (result) => {
+          resolve(isResult(result, snapshot) ? result : failure());
+        },
         reject,
         timeout: setTimeout(() => {
-          this.#finish(pending, environmentFailure());
+          this.#finish(pending, undefined);
         }, this.#deadlineMs),
       };
       this.#pending = pending;
@@ -94,24 +115,28 @@ export class TypeScriptCompilerClient {
           value['revision'] !== snapshot.revision
         )
           return;
+        const exactEnvelope =
+          Object.keys(value).sort().join(',') === 'kind,requestId,result,revision,sessionId';
         this.#finish(
           pending,
-          isTypeScriptCompileResult(value['result'], snapshot)
-            ? value['result']
-            : environmentFailure(),
+          exactEnvelope && value['kind'] === kind ? value['result'] : undefined,
         );
       };
       worker.onerror = (event) => {
         event.preventDefault();
-        this.#finish(pending, environmentFailure());
+        this.#finish(pending, undefined);
       };
       worker.onmessageerror = () => {
-        this.#finish(pending, environmentFailure());
+        this.#finish(pending, undefined);
       };
       try {
-        worker.postMessage({ requestId, input: snapshot });
+        worker.postMessage(
+          kind === 'compile'
+            ? { kind, requestId, input: snapshot }
+            : { kind, profile: 'score-number-annotation-v1', requestId, input: snapshot },
+        );
       } catch {
-        this.#finish(pending, environmentFailure());
+        this.#finish(pending, undefined);
       }
     });
   }
@@ -131,7 +156,7 @@ export class TypeScriptCompilerClient {
   }
 
   /** 古いWorkerからのイベントで現在の計算を終了させない。 */
-  #finish(pending: PendingCompile, result: TypeScriptCompileResult): void {
+  #finish(pending: PendingCompile, result: unknown): void {
     if (this.#pending !== pending) return;
     this.#release(pending);
     pending.resolve(result);
