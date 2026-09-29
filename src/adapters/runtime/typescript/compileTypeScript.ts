@@ -53,7 +53,9 @@ export function compileTypeScript(
     entries.length > MAX_FILES ||
     entries.some(
       ([name, source]) =>
-        !/^(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.ts$/u.test(name) || typeof source !== 'string',
+        name.length > 256 ||
+        !/^(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.ts$/u.test(name) ||
+        typeof source !== 'string',
     ) ||
     entries.reduce((size, [, source]) => size + source.length, 0) > MAX_SOURCE_UNITS
   ) {
@@ -129,15 +131,17 @@ export function compileTypeScript(
       return { status: 'environment-error', diagnostics: diagnosticsForLearner(environment) };
     }
     const syntax = program.getSyntacticDiagnostics();
-    const semantic = program.getSemanticDiagnostics();
-    const libraryErrors = [...syntax, ...semantic].filter((item) =>
-      item.file?.fileName.startsWith(LIB_ROOT),
-    );
-    if (libraryErrors.length) {
-      return { status: 'environment-error', diagnostics: diagnosticsForLearner(libraryErrors) };
+    const librarySyntax = syntax.filter((item) => item.file.fileName.startsWith(LIB_ROOT));
+    if (librarySyntax.length) {
+      return { status: 'environment-error', diagnostics: diagnosticsForLearner(librarySyntax) };
     }
     if (syntax.length) {
       return { status: 'syntax-error', diagnostics: diagnosticsForLearner(syntax) };
+    }
+    const semantic = program.getSemanticDiagnostics();
+    const libraryErrors = semantic.filter((item) => item.file?.fileName.startsWith(LIB_ROOT));
+    if (libraryErrors.length) {
+      return { status: 'environment-error', diagnostics: diagnosticsForLearner(libraryErrors) };
     }
     if (semantic.length) {
       return { status: 'type-error', diagnostics: diagnosticsForLearner(semantic) };

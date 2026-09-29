@@ -4,17 +4,19 @@
 
 ## 要件台帳
 
-| ID         | 区分 | 要件・今回の扱い                                                                                                            |
-| ---------- | ---- | --------------------------------------------------------------------------------------------------------------------------- |
-| REQ-TS-001 | 維持 | #11の型用語・JS作品の型安全化、#12 React、#14 Next.jsの学習目標を保持。教材順序の確定と全教材制作は後続                     |
-| REQ-TS-002 | 追加 | 既存固定TypeScript 6.0.3のProgramで構文・意味診断後にemit。型エラー時にJSを返さない                                         |
-| REQ-TS-003 | 追加 | .ts相対path最大16ファイル、合計131072 UTF-16 code unit。信頼側から同versionの標準libを渡し、CompilerHostは仮想Mapだけを参照 |
-| REQ-TS-004 | 維持 | 型エラー、構文エラー、環境エラー、実行時エラーを区別。入力Sourceを変更せず、修正後に再試行可能                              |
-| REQ-TS-005 | 維持 | Compilerは初期Home/Path/Slideへ入れない。今回のmoduleは製品から未接続。後続で遅延Worker・停止/期限・revision照合を導入      |
-| REQ-TS-006 | 維持 | 変換JSにも既存Analyzer/Runnerの隔離と拒否条件を適用する。型検査成功を安全な実行や教材合格とみなさない                       |
-| REQ-TS-007 | 維持 | 初心者観察・既存公開Gate・独立レビューが揃うまでpublished/Path追加をしない                                                  |
+| ID         | 区分 | 要件・今回の扱い                                                                                                                                                |
+| ---------- | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| REQ-TS-001 | 維持 | #11の型用語・JS作品の型安全化、#12 React、#14 Next.jsの学習目標を保持。教材順序の確定と全教材制作は後続                                                         |
+| REQ-TS-002 | 追加 | 既存固定TypeScript 6.0.3のProgramで構文・意味診断後にemit。型エラー時にJSを返さない                                                                             |
+| REQ-TS-003 | 追加 | .ts相対path最大16ファイル、合計131072 UTF-16 code unit。信頼側から同versionの標準libを渡し、CompilerHostは仮想Mapだけを参照                                     |
+| REQ-TS-004 | 維持 | 型エラー、構文エラー、環境エラー、実行時エラーを区別。入力Sourceを変更せず、修正後に再試行可能                                                                  |
+| REQ-TS-005 | 維持 | Compilerは初期Home/Path/Slideへ入れない。初回要求で専用Workerを生成し、停止/10秒期限/要求置換/離脱でterminate。session/revision/requestを照合。製品画面は未接続 |
+| REQ-TS-006 | 維持 | 変換JSにも既存Analyzer/Runnerの隔離と拒否条件を適用する。型検査成功を安全な実行や教材合格とみなさない                                                           |
+| REQ-TS-007 | 維持 | 初心者観察・既存公開Gate・独立レビューが揃うまでpublished/Path追加をしない                                                                                      |
 
-保留・削除する既存学習目標はない。今回は同期compiler核の技術実証のみで、Worker配信、採点/保存への接続、教材、React TSX、常駐Next.jsは未実装の後続作業。
+保留・削除する既存学習目標はない。同期compiler核に専用Worker境界を追加した。採点/保存への接続、教材、React TSX、常駐Next.jsは未実装の後続作業。
+
+改訂差分: REQ-TS-001〜004/006〜007は維持、REQ-TS-005は維持したままWorkerを実装。要件の保留・削除はなし。source pathは1件256文字以内。Workerの成功/失敗payload混在は環境障害として拒否する。
 
 ## 契約と非対象
 
@@ -24,10 +26,10 @@
 
 ## リスク・性能・受け入れ証拠
 
-入力数/サイズ上限だけでは型計算時間を制限できない。UI接続前に専用Workerを使い、期限超過時にterminate、古いrevisionの応答を破棄することが必須。今回の同期関数をUI main threadで動かしてはならない。Worker初回loadと型検査の実測予算は後続で設定し、現時点で達成済みと主張しない。既存Home chunk予算は維持する。
+入力数/サイズ上限だけでは型計算時間を制限できない。専用Workerは標準libを同梱し、要求ごとに生成・破棄する。読込を含め10秒でterminateし環境障害を返す。これは応答時間の達成目標ではなく停止上限である。cancel/要求置換/離脱はAbortErrorにし、古いWorkerのeventと異なるidentityの応答を無視する。入力は複写し、学習者コードは実行しない。同期関数をUI main threadへ接続しない。低速端末/通信でのp95とproduction配信は未確認、既存Home chunk予算は維持する。
 
-関連テストは実compilerと同versionの標準libを使用し、跨file型不一致→修正→JS生成、DOM/unknown/generic、構文/環境障害、外部import拒否、コード非実行、入力境界を確認する。Browser表示、TS診断クリック、停止、保存、Source map、性能は未確認。
+関連テストは実compilerと同versionの標準libを使用し、跨file型不一致→修正→JS生成、DOM/unknown/generic、構文/環境障害、外部import拒否、コード非実行、入力境界を確認する。製品画面のTS診断クリック・停止UI・保存・Source mapは未実装/未確認。
 
-2026-09-29検証: プロジェクトの既存Composeコンテナ内の一時複写で対象Vitest 6件、`npm run typecheck`、対象ESLint成功。標準libの一部欠落も環境エラーとして確認した。初回Lintはテスト名生成の数値文字列化1件を修正して再成功。製品から未参照のためBrowser/全suite/公開Gateは今回未実行で、Worker・製品接続または公開前に対応する検証を追加する。受け入れ条件・非対象・リスクと対策・性能目標の保持を確認した。
+2026-09-29検証: プロジェクトの既存Composeコンテナ内の一時複写で対象Vitest 12件、`npm run typecheck`、対象ESLint成功。実compiler6件とWorker lifecycle6件を分け、後者のportは遅延/故障を再現するfakeである。Chromiumでは実Vite Worker/標準libを使い、型誤り→修正、中止→再試行、親画面timer継続、source保持、コード非実行を1件で確認（最終3.5秒）。最初はVite依存最適化のHMR reloadで中断したため、境界試験ページをHMR clientから分離して再成功した。独立したproduction形式bundleも成功（Worker約7.28MB、client約4.02KB、非gzip）。この大きさは初期Homeへ加えず、製品接続時に読込体験と圧縮転送を実測する。途中のUnit再確認では構文・環境テスト1件が5000msでtimeoutした。構文エラー時の不要な意味検査を短絡し、同じ時間上限の12件が成功。構文診断の必須fileに対する不要optional chainもLintで修正。初回Lint1件はテスト名生成の数値文字列化を修正。Firefox/WebKit、製品UI、全suite、公開Gate、production配信後は未実施。受け入れ条件・非対象・リスクと対策・性能目標の保持を確認した。
 
 公式参照: [TypeScript Compiler API](https://github.com/microsoft/TypeScript/wiki/Using-the-Compiler-API)。Programの診断とemitを使い、transpileModuleだけを型検査と呼ばない。将来version更新時はAPI互換と教材診断を再検証する。
