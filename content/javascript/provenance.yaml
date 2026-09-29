@@ -3749,3 +3749,66 @@ items:
   - id: javascript-ch08-l02-source-21
     visibility: public
     path: chapters/javascript-ch08/lessons/javascript-ch08-l02/slides/s04.md
+  - id: javascript-ch08-l03-source-1
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/exercise.yaml
+  - id: javascript-ch08-l03-source-2
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/fixtures/click-cancel/script.js
+  - id: javascript-ch08-l03-source-3
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/fixtures/fixed-first/script.js
+  - id: javascript-ch08-l03-source-4
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/fixtures/index.html
+  - id: javascript-ch08-l03-source-5
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/fixtures/named-handler/script.js
+  - id: javascript-ch08-l03-source-6
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/fixtures/outside-changed/script.js
+  - id: javascript-ch08-l03-source-7
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/fixtures/styles.css
+  - id: javascript-ch08-l03-source-8
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/fixtures/unreachable-cancel/script.js
+  - id: javascript-ch08-l03-source-9
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/instructions.md
+  - id: javascript-ch08-l03-source-10
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/solution/index.html
+  - id: javascript-ch08-l03-source-11
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/solution/script.js
+  - id: javascript-ch08-l03-source-12
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/solution/styles.css
+  - id: javascript-ch08-l03-source-13
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/starter/index.html
+  - id: javascript-ch08-l03-source-14
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/starter/script.js
+  - id: javascript-ch08-l03-source-15
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/starter/styles.css
+  - id: javascript-ch08-l03-source-16
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/lesson.yaml
+  - id: javascript-ch08-l03-diagram-original
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/slides/assets/submit-flow.svg
+  - id: javascript-ch08-l03-source-18
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/slides/s01.md
+  - id: javascript-ch08-l03-source-19
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/slides/s02.md
+  - id: javascript-ch08-l03-source-20
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/slides/s03.md
+  - id: javascript-ch08-l03-source-21
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/slides/s04.md
