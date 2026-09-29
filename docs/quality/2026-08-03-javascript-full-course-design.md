@@ -709,3 +709,19 @@ Ch08-l01は15分/4Slide/1演習。Ch00〜07と合わせ32Lesson/128Slide/34Exerc
 | REQ-JS-EVENT-008 | 維持 | Form/入力検証/trimは後続。sandboxや採点Gateを変更せず、実行成功と採点を分離 |
 
 15分を追加しCh08は2 Lesson/30分、JavaScript累計33 Lesson/132 Slide/35演習/530分。revision .5→.6は既存IDを保つ空移行。読む時点の誤りを直す小演習に限定し、currentTarget構文だけへの固定はせず登録先変数.valueも正解とする。文字列末尾空白は既存Snapshotが正規化するため、その差を採点の主題にはしない。性能予算・安全境界は維持し、人の初心者試用と後続章を完了扱いにしない。
+
+### Ch08-l03 Formの送信（2026-09-28）
+
+| 要件 | 区分 | 実装と受入条件 |
+|---|---|---|
+| REQ-JS-EVENT-001〜008 | 維持 | 既習説明、入力の現在値、保存互換、独立レビュー、有限試用を保持 |
+| REQ-JS-FORM-001 | 追加 | form/submit button、submitの登録先、preventDefault、送信時のvalueを4枚で説明 |
+| REQ-JS-FORM-002 | 追加 | formのcurrentTargetと入力欄を区別し、既習のfield.valueで現在値を読む |
+| REQ-JS-FORM-003 | 追加 | 入力だけでは表示を変えず、2回の送信で現在値を表示し、対象外メモを保つ実採点 |
+| REQ-JS-FORM-004 | 維持 | Preview安全装置と学習者自身の取消を区別。PR55の限定dom-formを使い、CSP・通信禁止・送信API禁止を保持 |
+| REQ-JS-FORM-005 | 維持 | 既存IDを維持する空移行 .6→.7、draft有限試用。後続検証とCh09〜11は未完 |
+| REQ-JS-FORM-006 | 追加 | Starter/正解/名前付き別解/届かない取消/click取消/固定値/対象外変更を実Runnerで確認。直接click・EnterとReset・保存、390px通読を確認 |
+
+20分を追加しCh08は3 Lesson/50分、JavaScript累計34 Lesson/136 Slide/36演習/550分。送信を取り消す1行の修正へ焦点を絞る。安全装置が画面遷移を止めるだけでは課題達成にならず、同じsubmitの学習者コードによる取消を採点する。return、stopPropagation、FormData、外部送信、サーバー、constraint validationは今回教えない。Enterの説明と実測は単一入力欄とsubmit buttonの構成に限定する。
+
+仕様は [MDN submit event](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/submit_event) と [MDN preventDefault](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault) を2026-09-28に確認。文章・例・図は独自制作。公開GateとHome予算/遅延chunk分離を維持し、機械操作を人の初心者試用・実機確認の代用にしない。
