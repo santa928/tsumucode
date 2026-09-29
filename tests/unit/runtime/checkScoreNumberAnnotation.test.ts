@@ -17,6 +17,10 @@ const fixtures = JSON.parse(
   readFileSync('tests/fixtures/typescript-annotation-pilot.json', 'utf8'),
 ) as { id: string; source: string }[];
 
+// 元コードと正負probeの3 Programを検査する結合テスト用。共有CIでは5秒を超える。
+// 製品Workerの期限や性能受入条件は変更せず、正しさのassertionを最後まで実行する。
+const compilerIntegrationTimeoutMs = 10_000;
+
 describe('型注釈Lesson専用の信頼側検査', () => {
   it.each(fixtures)(
     '$idの型条件を実Compilerで区別し、元コードと診断を漏らさない',
@@ -32,15 +36,20 @@ describe('型注釈Lesson専用の信頼側検査', () => {
       expect(result).not.toHaveProperty('diagnostics');
       expect(result).not.toHaveProperty('files');
     },
+    compilerIntegrationTimeoutMs,
   );
 
   it.each([
     'const score: number = 2; console.log(score);',
     'let score: number = -(1 + 1); score *= -1; score++; --score; console.log(score);',
-  ])('別解を独立して実Compilerで検証する: %s', (source) => {
-    const result = checkScoreNumberAnnotation({ 'main.ts': source }, libraries);
-    expect(result.status === 'ready' && Object.values(result.facts).every(Boolean)).toBe(true);
-  });
+  ])(
+    '別解を独立して実Compilerで検証する: %s',
+    (source) => {
+      const result = checkScoreNumberAnnotation({ 'main.ts': source }, libraries);
+      expect(result.status === 'ready' && Object.values(result.facts).every(Boolean)).toBe(true);
+    },
+    compilerIntegrationTimeoutMs,
+  );
 
   it('型検査専用経路はJSを返さない', () => {
     expect(checkTypeScript({ 'main.ts': 'let score: number = 2;' }, libraries)).toEqual({
