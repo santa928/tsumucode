@@ -725,3 +725,17 @@ Ch08-l01は15分/4Slide/1演習。Ch00〜07と合わせ32Lesson/128Slide/34Exerc
 20分を追加しCh08は3 Lesson/50分、JavaScript累計34 Lesson/136 Slide/36演習/550分。送信を取り消す1行の修正へ焦点を絞る。安全装置が画面遷移を止めるだけでは課題達成にならず、同じsubmitの学習者コードによる取消を採点する。return、stopPropagation、FormData、外部送信、サーバー、constraint validationは今回教えない。Enterの説明と実測は単一入力欄とsubmit buttonの構成に限定する。
 
 仕様は [MDN submit event](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/submit_event) と [MDN preventDefault](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault) を2026-09-28に確認。文章・例・図は独自制作。公開GateとHome予算/遅延chunk分離を維持し、機械操作を人の初心者試用・実機確認の代用にしない。
+
+### Ch08-l04 入力検証の準備（2026-09-28）
+
+| 要件 | 区分 | 実装と受入条件 |
+|---|---|---|
+| REQ-JS-FORM-001〜006 | 維持 | submit/現在値/取消/保存/有限試用と独立レビューを保持。前提PR56はレビュー待ち |
+| REQ-JS-VALIDATE-001 | 追加 | 入力検証、空文字、trimの戻り値、元の値と途中空白の保持を説明 |
+| REQ-JS-VALIDATE-002 | 維持 | 既習if/else/===と前単元Formへ戻り、新構文で分岐を回避しない |
+| REQ-JS-VALIDATE-003 | 追加 | 空欄/空白だけ/有効値/再び空/別の有効値の送信で、案内更新と登録済み表示の保持を実採点 |
+| REQ-JS-VALIDATE-004 | 維持 | 既存ID・空移行 .7→.8、入力時点と送信時点の区別、安全装置と学習者取消の区別 |
+| REQ-JS-VALIDATE-005 | 追加 | 名前付き別解と、trimの戻り値を使わない/常に拒否/無効入力で消去/案内が残る/取消忘れの誤答を実Runnerで検証 |
+| REQ-JS-VALIDATE-006 | 維持 | 外部送信/FormData/HTML constraint validation/サーバーは非対象。画面内の案内をサーバー保護と誤認させない |
+
+15分/4Slide/1演習。Ch08は4Lesson65分、累計35Lesson140Slide37演習565分draftとなる候補。前後空白の厳密な表示差はSnapshotの既存正規化があるため主採点にしない。trimで空白だけを空と扱うこと、入力欄を直接書き換える課題ではないことを明示する。受入は説明/予測/演習の対応、実Fixtureと直接操作・Reset・保存・390px読書。Runtime、安全境界、性能予算、公開Gateは維持する。人の初心者試用、物理実機、Ch09〜11は未完のまま。

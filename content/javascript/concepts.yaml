@@ -579,3 +579,23 @@ concepts:
     prerequisiteConceptIds:
       - form-prevent-default
     minimumProjectLevel: transform
+  - id: input-validation-purpose
+    introducedBySlideId: javascript-ch08-l04-s01
+    prerequisiteConceptIds:
+      - form-submit-current-value
+    minimumProjectLevel: read
+  - id: string-trim-result
+    introducedBySlideId: javascript-ch08-l04-s02
+    prerequisiteConceptIds:
+      - input-validation-purpose
+    minimumProjectLevel: read
+  - id: empty-input-branch
+    introducedBySlideId: javascript-ch08-l04-s03
+    prerequisiteConceptIds:
+      - string-trim-result
+    minimumProjectLevel: read
+  - id: validation-preserve-entry
+    introducedBySlideId: javascript-ch08-l04-s04
+    prerequisiteConceptIds:
+      - empty-input-branch
+    minimumProjectLevel: transform
