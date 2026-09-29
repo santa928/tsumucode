@@ -1,3 +1,5 @@
+import type { RunnerDiagnostic } from '../../../core/runtime/contracts';
+import { mapTypeScriptDiagnostics } from './mapTypeScriptDiagnostics';
 import { JavaScriptAnalyzerClient } from '../javascript/analyzer/JavaScriptAnalyzerClient';
 import type {
   JavaScriptCapabilityProfileId,
@@ -27,7 +29,11 @@ export type TypeScriptPreparationResult =
         readonly diagnostics: readonly TypeScriptDiagnostic[];
       };
     }
-  | { readonly stage: 'analysis'; readonly result: JavaScriptWorkspaceAnalysisResult };
+  | {
+      readonly stage: 'analysis';
+      readonly result: JavaScriptWorkspaceAnalysisResult;
+      readonly sourceDiagnostics: readonly RunnerDiagnostic[];
+    };
 
 interface CompilerPort {
   compile(input: TypeScriptCompileInput): Promise<TypeScriptCompileResult>;
@@ -136,7 +142,16 @@ export class TypeScriptPreparationClient {
       capabilityProfile: input.capabilityProfile,
       guardIdentifier: input.guardIdentifier,
     });
-    return { stage: 'analysis', result };
+    if (this.#pending !== pending) throw new DOMException('Preparation cancelled', 'AbortError');
+    return {
+      stage: 'analysis',
+      result,
+      sourceDiagnostics: mapTypeScriptDiagnostics(
+        result.diagnostics,
+        compiled.sourceMaps,
+        input.files,
+      ),
+    };
   }
 
   /** 同じ要求の資源だけを解放。Analyzer.disposeは保留Promiseも拒否する。 */

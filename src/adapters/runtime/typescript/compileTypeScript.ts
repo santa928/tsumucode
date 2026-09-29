@@ -10,7 +10,11 @@ export interface TypeScriptDiagnostic {
 }
 
 export type TypeScriptCompileResult =
-  | { readonly status: 'ready'; readonly files: Readonly<Record<string, string>> }
+  | {
+      readonly status: 'ready';
+      readonly files: Readonly<Record<string, string>>;
+      readonly sourceMaps: Readonly<Record<string, string>>;
+    }
   | {
       readonly status: 'invalid-input' | 'environment-error' | 'syntax-error' | 'type-error';
       readonly diagnostics: readonly TypeScriptDiagnostic[];
@@ -89,6 +93,7 @@ export function compileTypeScript(
     moduleResolution: ts.ModuleResolutionKind.Bundler,
     strict: true,
     noEmitOnError: true,
+    sourceMap: true,
     noUncheckedIndexedAccess: true,
     exactOptionalPropertyTypes: true,
     types: [],
@@ -96,6 +101,7 @@ export function compileTypeScript(
     newLine: ts.NewLineKind.LineFeed,
   };
   const output: Record<string, string> = {};
+  const sourceMaps: Record<string, string> = {};
   const host: ts.CompilerHost = {
     getSourceFile: (name, languageVersion) => {
       const source = virtualFiles.get(name);
@@ -112,9 +118,13 @@ export function compileTypeScript(
       [...virtualFiles.keys()].some((name) => name.startsWith(directory.replace(/\/$/u, '') + '/')),
     getDirectories: () => [],
     writeFile: (name, text) => {
-      if (name.startsWith(SOURCE_ROOT) && name.endsWith('.js')) {
-        output[name.slice(SOURCE_ROOT.length)] = text;
-      }
+      if (!name.startsWith(SOURCE_ROOT)) return;
+      if (name.endsWith('.js.map')) sourceMaps[name.slice(SOURCE_ROOT.length, -4)] = text;
+      else if (name.endsWith('.js'))
+        output[name.slice(SOURCE_ROOT.length)] = text.replace(
+          /\n\/\/# sourceMappingURL=[^\n]*\n?$/u,
+          '\n',
+        );
     },
     resolveModuleNames: (names, containingFile) =>
       names.map((name) =>
@@ -150,7 +160,8 @@ export function compileTypeScript(
     if (
       emit.emitSkipped ||
       emit.diagnostics.length ||
-      Object.keys(output).length !== sources.size
+      Object.keys(output).length !== sources.size ||
+      Object.keys(sourceMaps).length !== sources.size
     ) {
       return {
         status: 'environment-error',
@@ -160,7 +171,7 @@ export function compileTypeScript(
         }),
       };
     }
-    return { status: 'ready', files: output };
+    return { status: 'ready', files: output, sourceMaps };
   } catch {
     return {
       status: 'environment-error',

@@ -22,7 +22,11 @@ class FakeWorker implements CompilerWorkerPort {
         requestId: this.request?.requestId,
         sessionId: this.request?.input.sessionId,
         revision: this.request?.input.revision,
-        result: { status: 'ready', files: { 'main.js': 'const count = 1;' } },
+        result: {
+          status: 'ready',
+          files: { 'main.js': 'const count = 1;' },
+          sourceMaps: { 'main.js': '{}' },
+        },
         ...overrides,
       },
     } as MessageEvent<unknown>);
@@ -108,8 +112,25 @@ describe('TypeScriptCompilerClient', () => {
     const worker = new FakeWorker();
     const client = new TypeScriptCompilerClient({ workerFactory: () => worker });
     const invalid = client.compile(input);
-    worker.respond({ result: { status: 'ready', files: { '../other.js': 'invalid' } } });
+    worker.respond({
+      result: {
+        status: 'ready',
+        files: { '../other.js': 'invalid' },
+        sourceMaps: { 'main.js': '{}' },
+      },
+    });
     await expect(invalid).resolves.toMatchObject({ status: 'environment-error' });
+    for (const sourceMaps of [
+      undefined,
+      { 'other.js': '{}' },
+      { 'main.js': 'x'.repeat(4_194_305) },
+    ]) {
+      const invalidMap = client.compile(input);
+      worker.respond({
+        result: { status: 'ready', files: { 'main.js': 'console.log(1);' }, sourceMaps },
+      });
+      await expect(invalidMap).resolves.toMatchObject({ status: 'environment-error' });
+    }
     const mixed = client.compile(input);
     worker.respond({
       result: {

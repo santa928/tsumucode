@@ -113,7 +113,11 @@ test('型検査Workerから既存Analyzer Workerへ接続し、通信拒否と�
       const blocked = await client.prepare({
         ...input,
         revision: 2,
-        files: { 'main.ts': 'fetch("https://example.invalid");' },
+        entryFile: 'src/main.ts',
+        files: {
+          'src/main.ts':
+            'interface Item { label: string; }\n\ntype Title = string;\nfetch("https://example.invalid");',
+        },
       });
       const pending = client
         .prepare(input)
@@ -136,6 +140,11 @@ test('型検査Workerから既存Analyzer Workerへ接続し、通信拒否と�
       status: 'failure',
       diagnostics: expect.arrayContaining([expect.objectContaining({ kind: 'security' })]),
     },
+  });
+  expect(evidence.blocked).toMatchObject({
+    sourceDiagnostics: expect.arrayContaining([
+      expect.objectContaining({ file: 'src/main.ts', line: 4, column: 1 }),
+    ]),
   });
   expect(evidence.cancelled).toBe('AbortError');
   expect(evidence.retry).toMatchObject({

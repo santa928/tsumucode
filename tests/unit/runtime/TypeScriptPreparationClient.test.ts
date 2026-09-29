@@ -19,7 +19,11 @@ const input = {
   capabilityProfile: 'modules' as const,
   guardIdentifier: '__guard',
 };
-const ready = { status: 'ready' as const, files: { 'main.js': 'console.log(1);' } };
+const ready = {
+  status: 'ready' as const,
+  files: { 'main.js': 'console.log(1);' },
+  sourceMaps: { 'main.js': '{}' },
+};
 const failure: JavaScriptWorkspaceAnalysisResult = {
   status: 'failure',
   requestId: 'request',
@@ -99,7 +103,7 @@ describe('TypeScriptから既存安全解析への準備境界', () => {
     const next = client.prepare(changed);
     changed.revision = 99;
     changed.files['main.ts'] = 'changed';
-    expect(await next).toEqual({ stage: 'analysis', result: failure });
+    expect(await next).toEqual({ stage: 'analysis', result: failure, sourceDiagnostics: [] });
     expect(analyze).toHaveBeenCalledWith(
       expect.objectContaining({
         executionRevision: 2,
@@ -182,13 +186,28 @@ describe('TypeScriptから既存安全解析への準備境界', () => {
     const client = realClient();
     const result = await client.prepare({
       ...input,
-      files: { 'main.ts': 'fetch("https://example.invalid");' },
+      files: {
+        'main.ts':
+          'interface Item { label: string; }\n\ntype Title = string;\nfetch("https://example.invalid");',
+      },
     });
     expect(result).toMatchObject({ stage: 'analysis', result: { status: 'failure' } });
     if (result.stage === 'analysis')
       expect(result.result.diagnostics).toEqual(
         expect.arrayContaining([expect.objectContaining({ kind: 'security' })]),
       );
+    if (result.stage === 'analysis') {
+      expect(result.sourceDiagnostics).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ kind: 'security', file: 'main.ts', line: 4, column: 1 }),
+        ]),
+      );
+      expect(
+        result.result.diagnostics.some(
+          (diagnostic) => diagnostic.file === 'main.js' && diagnostic.line !== 4,
+        ),
+      ).toBe(true);
+    }
     client.dispose();
   });
 });

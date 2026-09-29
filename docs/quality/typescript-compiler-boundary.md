@@ -28,7 +28,7 @@
 
 入力数/サイズ上限だけでは型計算時間を制限できない。専用Workerは標準libを同梱し、要求ごとに生成・破棄する。読込を含め10秒でterminateし環境障害を返す。これは応答時間の達成目標ではなく停止上限である。cancel/要求置換/離脱はAbortErrorにし、古いWorkerのeventと異なるidentityの応答を無視する。入力は複写し、学習者コードは実行しない。同期関数をUI main threadへ接続しない。低速端末/通信でのp95とproduction配信は未確認、既存Home chunk予算は維持する。
 
-関連テストは実compilerと同versionの標準libを使用し、跨file型不一致→修正→JS生成、DOM/unknown/generic、構文/環境障害、外部import拒否、コード非実行、入力境界を確認する。製品画面のTS診断クリック・停止UI・保存・Source mapは未実装/未確認。
+関連テストは実compilerと同versionの標準libを使用し、跨file型不一致→修正→JS生成、DOM/unknown/generic、構文/環境障害、外部import拒否、コード非実行、入力境界を確認する。製品画面のTS診断クリック・停止UI・保存・実行時診断位置は未実装/未確認。Analyzer診断の元TS位置への変換は末尾追補を参照。
 
 2026-09-29検証: プロジェクトの既存Composeコンテナ内の一時複写で対象Vitest 12件、`npm run typecheck`、対象ESLint成功。実compiler6件とWorker lifecycle6件を分け、後者のportは遅延/故障を再現するfakeである。Chromiumでは実Vite Worker/標準libを使い、型誤り→修正、中止→再試行、親画面timer継続、source保持、コード非実行を1件で確認（最終3.5秒）。最初はVite依存最適化のHMR reloadで中断したため、境界試験ページをHMR clientから分離して再成功した。独立したproduction形式bundleも成功（Worker約7.28MB、client約4.02KB、非gzip）。この大きさは初期Homeへ加えず、製品接続時に読込体験と圧縮転送を実測する。途中のUnit再確認では構文・環境テスト1件が5000msでtimeoutした。構文エラー時の不要な意味検査を短絡し、同じ時間上限の12件が成功。構文診断の必須fileに対する不要optional chainもLintで修正。初回Lint1件はテスト名生成の数値文字列化を修正。Firefox/WebKit、製品UI、全suite、公開Gate、production配信後は未実施。受け入れ条件・非対象・リスクと対策・性能目標の保持を確認した。
 
@@ -40,6 +40,18 @@
 
 中止・要求置換・離脱では両Workerを破棄し、待機Promiseを即座にAbortErrorへ確定する。型検査完了直後の中止は解析開始を抑止し、解析中の取消は古い結果の返却を抑止する。不正な次入力でも旧要求は失効する。準備処理の例外は環境障害として分ける。
 
-要件改訂差分: REQ-TS-001〜007は全て維持、保留・削除なし。REQ-TS-006のAnalyzer接続を実装し、Runner接続・元TSへのsource map・採点・保存・教材は後続として残す。`stage: compile`の診断は元TS、`stage: analysis`の診断/facts/graph hashは生成JSに属する。JSの行番号をTSの行番号へ単純に置き換えて表示してはならない。`stage: environment`は準備経路自体の障害。いずれも製品UIには未接続で、型検査や解析の成功を教材合格・実行成功として保存しない。
+要件改訂差分: REQ-TS-001〜007は全て維持、保留・削除なし。REQ-TS-006のAnalyzer接続を実装し、Runner接続・採点・保存・教材は後続として残す。元TSへの診断位置変換は下記追補でAnalyzer診断のみ対応。`stage: compile`の診断は元TS、`stage: analysis`の診断/facts/graph hashは生成JSに属する。JSの行番号をTSの行番号へ単純に置き換えて表示してはならない。`stage: environment`は準備経路自体の障害。いずれも製品UIには未接続で、型検査や解析の成功を教材合格・実行成功として保存しない。
 
 追加証拠: Docker内の対象Unit6件（うち実compiler＋実Analyzer2件）、型チェック、対象Lintが成功。残り4件は遅延応答/factory障害のfake portを使った取消競合と経路検証。実Chromiumでは実両Workerによる複数module解析・通信拒否・cancel→retryを1件3.7秒で確認した。初回のテストLintは`void`型引数とinline type importの規約違反を修正し再成功。既存12件の型検査/Worker単体証拠は該当ソース不変のため再利用した。Runnerでの実行、元TSへの診断位置変換、製品UI、他Browser、実機、初心者、公開Gateは未実施。追加の性能目標緩和や権限拡大はない。
+
+## Analyzer診断を元のTS位置へ戻す（2026-09-29追補）
+
+実compilerで`.js.map`も生成し、JSとは別の`sourceMaps`として返す。末尾のsourceMappingURLコメントはJSから除き、mapを実行・配信の追加ファイルとして扱わない。Worker応答では入力に対応する同じJSファイル名のmapを必須とし、map合計4194304 UTF-16 code unitを上限にする。欠損・別ファイル・上限超過は環境障害へ閉じる。
+
+準備結果の`result.diagnostics`/facts/hashは引き続き生成JSに属する。新しい`sourceDiagnostics`だけを固定compilerのmapで元TSへ変換し、元ファイルの実在と行・列範囲を照合する。sourceRootや外部sourceは許可せず、欠損/不正/mapに対応しない場所では位置を省略し、診断内容を保持する。Runnerの実行時stackは未対応。これで製品UIの診断クリックまで完了したとは扱わない。
+
+既存lockにある`@jridgewell/trace-mapping` 0.3.31を直接依存に固定した。APIの1始まりline/0始まりcolumnを確認し、製品契約の1始まりcolumnへ変換する。Dockerのオフラインpackage-lock更新はmetadataキャッシュ不足で失敗し、公式npm registryからmetadataを取得して更新した。ホスト導入や依存script実行なし。既存transitive versionの一括更新はしていない。
+
+改訂差分: REQ-TS-001〜007は維持、保留/削除なし。REQ-TS-006の生成JS診断→元TS位置対応を追加、実行/採点/保存/製品UI/教材/人受入は残る。性能目標と公開Gateは不変。
+
+検証: Dockerの関連Unit計19件（compiler6、Worker契約6、準備6、mapper1）、型チェック、対象Lint成功。実Chromium2件成功（3.5秒/5.1秒、計9.3秒）。interface/type宣言が消える`src/main.ts`の安全検査診断を元の4行1列へ戻す実両Worker経路を確認した。source map欠損/不正/外部source/未対応位置は位置を省略し、欠損/別file/上限超過Worker応答は環境障害とする回帰も確認。初回Lintの不要null判定2件を型の絞り込みに合わせ修正した。production形式bundle成功（client30.99KB/gzip9.26KB、Analyzer175KB、Compiler7.28MB）。今回のsource map対応版のproduction配信実行、他Browser、低速端末p95、Runner実行時stack、製品画面、初心者試用/実機/公開Gateは未確認。

@@ -48,14 +48,24 @@ export function isTypeScriptCompileResult(
   if (!value || typeof value !== 'object') return false;
   const result = value as Record<string, unknown>;
   const expectedKeys =
-    result['status'] === 'ready' ? ['files', 'status'] : ['diagnostics', 'status'];
+    result['status'] === 'ready' ? ['files', 'sourceMaps', 'status'] : ['diagnostics', 'status'];
   if (JSON.stringify(Object.keys(result).sort()) !== JSON.stringify(expectedKeys)) return false;
   if (result['status'] === 'ready') {
     if (!result['files'] || typeof result['files'] !== 'object' || Array.isArray(result['files']))
       return false;
+    if (
+      !result['sourceMaps'] ||
+      typeof result['sourceMaps'] !== 'object' ||
+      Array.isArray(result['sourceMaps'])
+    )
+      return false;
+    const maps = Object.entries(result['sourceMaps']);
     const files = Object.entries(result['files']);
     const expected = new Set(Object.keys(input.files).map((name) => name.replace(/\.ts$/u, '.js')));
     return (
+      maps.length === expected.size &&
+      maps.every(([name, text]) => expected.has(name) && typeof text === 'string') &&
+      maps.reduce((size, [, text]) => size + (text as string).length, 0) <= 4_194_304 &&
       files.length === expected.size &&
       files.every(
         ([name, text]) =>
