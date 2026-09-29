@@ -34,14 +34,15 @@ describe('型注釈Lesson専用の信頼側検査', () => {
     },
   );
 
-  it('constと算術・増減の別解を許し、型検査専用経路はJSを返さない', () => {
-    for (const source of [
-      'const score: number = 2; console.log(score);',
-      'let score: number = -(1 + 1); score *= -1; score++; --score; console.log(score);',
-    ]) {
-      const result = checkScoreNumberAnnotation({ 'main.ts': source }, libraries);
-      expect(result.status === 'ready' && Object.values(result.facts).every(Boolean)).toBe(true);
-    }
+  it.each([
+    'const score: number = 2; console.log(score);',
+    'let score: number = -(1 + 1); score *= -1; score++; --score; console.log(score);',
+  ])('別解を独立して実Compilerで検証する: %s', (source) => {
+    const result = checkScoreNumberAnnotation({ 'main.ts': source }, libraries);
+    expect(result.status === 'ready' && Object.values(result.facts).every(Boolean)).toBe(true);
+  });
+
+  it('型検査専用経路はJSを返さない', () => {
     expect(checkTypeScript({ 'main.ts': 'let score: number = 2;' }, libraries)).toEqual({
       status: 'valid',
     });
