@@ -67,3 +67,11 @@
 要件差分: REQ-TS-001〜007は維持、保留/削除なし。REQ-TS-006の隔離実行接続を追加。非対象（製品UI/採点/保存/教材/React TSX/Next.js）と人の受入、性能目標、公開Gateは維持する。
 
 追加検証: Docker内Runner Unit4件（fake portで型誤り→修正、compile中止、Runner準備中の置換、実行中の離脱）成功。実Chromium1件で型付きDOMを2へ更新した認証済みSnapshot、allow-scriptsだけのsandbox、通信拒否診断の元TS2行目、型誤り時の証拠なし/旧frame解放、stop→prepare→renderの復帰を確認した。製品UI・実機・人の試用ではない。初回のテストLint13件はmockの型指定/void/inline import型/arrowの書式を修正。既存19Unitと両Worker基盤2件は入力不変のため成功証拠を再利用し、全suite/他Browser/現Runnerのproduction配信/公開Gateは未実施。受け入れ条件・非対象・リスク対策・性能目標を維持した。
+
+## 型検査失敗を採点へ渡さない（2026-09-29追補）
+
+REQ-TS-004/006を維持し、実行結果に`type-error`を追加した。compilerが返す`typescript-type-error-*`診断をこの状態へ分類し、一般の実行時`code-error`から分ける。既存の診断kind・永続化形式は変更しない。Sessionは型検査失敗時にValidator/Snapshot/合否保存へ進まず、診断を表示して下書き・過去の合格記録を保持する。実行結果自体は従来どおり永続化しない。画面に「型を確認してください。まだ実行・採点していません。」と示し、コード修正後のPreview更新を使えるままにする。
+
+改訂差分: REQ-TS-001〜007維持、保留・削除なし。型エラー非採点境界と状態案内を追加。TS Course登録・教材・型の学習要件を採点する仕組み・人の受入・既存公開Gateは引き続き未完了/必須。
+
+Docker関連90件（BrowserExecutionService6、Session46、Routes38）成功、型/対象Lint成功。型検査失敗と実行時reference診断の分類、Validator非呼出し・履歴/合格snapshot維持、修正後再実行を検証した。実Chromiumでは実演習画面に診断portだけをfake注入し、1280×900で案内の表示と収まり（x29/y104.375/w259.75/h38.375）、判定時の診断、再実行成功を確認。これはTS教材の通し試用ではない。初回テストのTesting Library非対応exact引数2件を除去して型検査成功。一時画面検証のURLを実際のルート配信に修正して成功。全suite/他Browser/実機/公開Gateは未実施。

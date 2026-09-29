@@ -165,3 +165,25 @@ describe('BrowserExecutionService', () => {
     expect(runner.render).not.toHaveBeenCalled();
   });
 });
+
+describe('TypeScriptの実行前診断', () => {
+  it('型検査失敗はtype-error、実行時のreference診断はcode-errorとして区別する', async () => {
+    const { runner, result, service } = harness();
+    const diagnostic = {
+      code: 'typescript-type-error-2322',
+      kind: 'reference' as const,
+      severity: 'error' as const,
+      message: 'Type mismatch',
+      learnerMessage: '型を確認してください',
+      file: 'main.ts',
+      line: 1,
+    };
+    runner.render.mockResolvedValueOnce({ ...result, diagnostics: [diagnostic] });
+    expect(await service.execute(request)).toMatchObject({ status: 'type-error', evidence: [] });
+    runner.render.mockResolvedValueOnce({
+      ...result,
+      diagnostics: [{ ...diagnostic, code: 'javascript-runtime' }],
+    });
+    expect(await service.execute(request)).toMatchObject({ status: 'code-error' });
+  });
+});
