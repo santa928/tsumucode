@@ -72,6 +72,26 @@
     "suppression": false
   },
   {
+    "id": "union-escape",
+    "source": "let score: number | string = 0;\nscore = 2;\nconsole.log(score);\n",
+    "compileStatus": "ready",
+    "numberAnnotation": false,
+    "anyType": false,
+    "assertion": false,
+    "suppression": false,
+    "rejectsString": false
+  },
+  {
+    "id": "nocheck-escape",
+    "source": "// @ts-nocheck\nlet score: number = \"2\";\nconsole.log(score);\n",
+    "compileStatus": "ready",
+    "numberAnnotation": true,
+    "anyType": false,
+    "assertion": false,
+    "suppression": true,
+    "rejectsString": true
+  },
+  {
     "id": "wrong-value",
     "source": "let score: number = 3;\nconsole.log(score);\n",
     "compileStatus": "ready",

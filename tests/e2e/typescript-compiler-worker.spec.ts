@@ -6,6 +6,79 @@ import type * as ValidatorModule from '../../src/adapters/validation/typescript/
 import type { RunnerInput } from '../../src/core/runtime/contracts';
 import type { ValidationContext } from '../../src/core/validation/contracts';
 import { testServerUrl } from './helpers/testBasePath';
+import { readFileSync } from 'node:fs';
+
+const annotationFixtures = JSON.parse(
+  readFileSync(new URL('../fixtures/typescript-annotation-pilot.json', import.meta.url), 'utf8'),
+) as { id: string; source: string }[];
+
+test('型注釈試作の原文を実Runnerで実行し、型誤りの非実行とConsoleだけでは不足する証拠を確認する', async ({
+  page,
+}, testInfo) => {
+  const harness = new URL('__typescript-annotation-harness', testServerUrl(4174)).href;
+  await page.route(harness, (route) =>
+    route.fulfill({ contentType: 'text/html', body: '<!doctype html><title>型注釈試作</title>' }),
+  );
+  await page.goto(harness);
+  const observations = await page.evaluate(async (fixtures) => {
+    const modulePath = new URL(
+      './src/adapters/runtime/typescript/TypeScriptRunnerAdapter.ts',
+      location.href,
+    ).href;
+    const { TypeScriptRunnerAdapter } = (await import(
+      /* @vite-ignore */ modulePath
+    )) as typeof RunnerModule;
+    const runner = new TypeScriptRunnerAdapter();
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    const rows = [];
+    try {
+      await runner.prepare(frame);
+      for (const [index, fixture] of fixtures.entries()) {
+        const result = await runner.render({
+          exerciseSessionId: 'annotation-pilot',
+          executionRevision: index + 1,
+          languageId: 'typescript',
+          files: { 'index.html': '<p>型注釈試作</p>', 'main.ts': fixture.source },
+          assets: [],
+          viewport: { id: 'desktop', width: 800, height: 600 },
+          options: {
+            runtime: {
+              kind: 'typescript',
+              entryFile: 'main.ts',
+              sourceType: 'module',
+              capabilityProfile: 'core',
+              primaryOutput: 'console',
+            },
+          },
+        });
+        rows.push({ id: fixture.id, console: result.console, diagnostics: result.diagnostics });
+      }
+      return rows;
+    } finally {
+      await runner.dispose();
+      frame.remove();
+    }
+  }, annotationFixtures);
+  await testInfo.attach('annotation-pilot-observations', {
+    body: JSON.stringify(observations, null, 2),
+    contentType: 'application/json',
+  });
+  for (const row of observations) {
+    if (row.id === 'starter') {
+      expect(row.console).toEqual([]);
+      expect(row.diagnostics).toEqual(
+        expect.arrayContaining([expect.objectContaining({ code: 'typescript-type-error-2322' })]),
+      );
+    } else {
+      expect(row.diagnostics).toEqual([]);
+      expect(row.console.map((record) => record.text)).toEqual([
+        row.id === 'wrong-value' ? '3' : '2',
+      ]);
+    }
+  }
+  // 文字列「2」や表示固定も同じConsoleになる。これを教材合格とは判定しない。
+});
 
 test('実TypeScript Workerで型誤り→修正と中止→再試行を行い、親画面は応答し続ける', async ({
   page,

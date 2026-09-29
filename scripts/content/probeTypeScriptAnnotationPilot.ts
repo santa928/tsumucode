@@ -17,6 +17,7 @@ const fixtureSchema = z.array(
       anyType: z.boolean(),
       assertion: z.boolean(),
       suppression: z.boolean(),
+      rejectsString: z.boolean().optional(),
     })
     .strict(),
 );
@@ -72,6 +73,31 @@ function inspectSource(source: string) {
   return { numberAnnotation, anyType, assertion, suppression };
 }
 
+/** 固定fixtureのscoreを別fileから参照し、数値受入と文字列拒否を実Compilerで測る。コードは実行しない。 */
+function inspectAssignmentRelation(source: string) {
+  // 制作者が固定したfixture専用。任意sourceへの追記・export変更は製品契約として未承認。
+  const exportedSource = `${source}\nexport { score };\n`;
+  const probePrefix = 'import type { score } from "./main.js";\n\n';
+  const positive = compileTypeScript(
+    { 'main.ts': exportedSource, 'probe.ts': `${probePrefix}const value: typeof score = 2;\n` },
+    libraries,
+  );
+  const negative = compileTypeScript(
+    { 'main.ts': exportedSource, 'probe.ts': `${probePrefix}const value: typeof score = "2";\n` },
+    libraries,
+  );
+  return {
+    acceptsNumber: positive.status === 'ready',
+    rejectsString:
+      negative.status === 'type-error' &&
+      negative.diagnostics.length === 1 &&
+      negative.diagnostics[0]?.code === 2322 &&
+      negative.diagnostics[0].file === 'probe.ts' &&
+      negative.diagnostics[0].line === 3 &&
+      negative.diagnostics[0].column === 7,
+  };
+}
+
 const generated = new Map<string, string>();
 for (const fixture of fixtures) {
   const compiled = compileTypeScript({ 'main.ts': fixture.source }, libraries);
@@ -80,8 +106,16 @@ for (const fixture of fixtures) {
   const { id, numberAnnotation, anyType, assertion, suppression } = fixture;
   const expectedFacts = { numberAnnotation, anyType, assertion, suppression };
   assert.deepEqual(facts, expectedFacts, id);
-  if (compiled.status === 'ready') generated.set(id, compiled.files['main.js']!);
-  else
+  if (compiled.status === 'ready') {
+    generated.set(id, compiled.files['main.js']!);
+    const relation = inspectAssignmentRelation(fixture.source);
+    assert.deepEqual(
+      relation,
+      { acceptsNumber: true, rejectsString: fixture.rejectsString ?? !anyType },
+      `${id}: 元TSの変数の代入関係`,
+    );
+    console.log(JSON.stringify({ id, relation }));
+  } else
     assert.ok(
       compiled.diagnostics.some(
         ({ code, file, line }) => code === 2322 && file === 'main.ts' && line === 1,
@@ -92,5 +126,5 @@ for (const fixture of fixtures) {
 assert.equal(generated.get('solution'), generated.get('inference-only'));
 assert.equal(generated.get('solution'), generated.get('any-escape'));
 console.log(
-  '9 fixtures一致。注釈削除/any化は同じJSになる。製品の型習得判定・コード実行は未実装/未実施。',
+  `${String(fixtures.length)} fixtures一致。元TS構文と別fileの正負代入を観察。製品の型習得判定・コード実行は未実装/未実施。`,
 );
