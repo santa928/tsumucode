@@ -2,6 +2,9 @@ import { expect, test } from '@playwright/test';
 import type * as PreparationClient from '../../src/adapters/runtime/typescript/TypeScriptPreparationClient';
 import type * as RunnerModule from '../../src/adapters/runtime/typescript/TypeScriptRunnerAdapter';
 import type * as CompilerClient from '../../src/adapters/runtime/typescript/TypeScriptCompilerClient';
+import type * as ValidatorModule from '../../src/adapters/validation/typescript/TypeScriptValidator';
+import type { RunnerInput } from '../../src/core/runtime/contracts';
+import type { ValidationContext } from '../../src/core/validation/contracts';
 import { testServerUrl } from './helpers/testBasePath';
 
 test('実TypeScript Workerで型誤り→修正と中止→再試行を行い、親画面は応答し続ける', async ({
@@ -79,6 +82,124 @@ test('実TypeScript Workerで型誤り→修正と中止→再試行を行い、
     type: 'compiler-worker-duration-ms',
     description: String(Math.round(evidence.durationMs)),
   });
+});
+
+test('実型検査と隔離実行から動作採点し、型だけ編集した古い結果と生成JS証拠の不一致を拒否する', async ({
+  page,
+}) => {
+  const harness = new URL('__typescript-validation-harness', testServerUrl(4174)).href;
+  await page.route(harness, (route) =>
+    route.fulfill({ contentType: 'text/html', body: '<!doctype html><title>TS採点境界</title>' }),
+  );
+  await page.goto(harness);
+  const result = await page.evaluate(async () => {
+    const runnerPath = new URL(
+      './src/adapters/runtime/typescript/TypeScriptRunnerAdapter.ts',
+      location.href,
+    ).href;
+    const validatorPath = new URL(
+      './src/adapters/validation/typescript/TypeScriptValidator.ts',
+      location.href,
+    ).href;
+    const { TypeScriptRunnerAdapter } = (await import(
+      /* @vite-ignore */ runnerPath
+    )) as typeof RunnerModule;
+    const { TypeScriptValidator } = (await import(
+      /* @vite-ignore */ validatorPath
+    )) as typeof ValidatorModule;
+    const runner = new TypeScriptRunnerAdapter();
+    const validator = new TypeScriptValidator();
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    const runtime = {
+      kind: 'typescript',
+      entryFile: 'main.ts',
+      sourceType: 'module',
+      capabilityProfile: 'dom',
+      primaryOutput: 'preview',
+    } as const;
+    const input: RunnerInput = {
+      exerciseSessionId: 'ts-grade',
+      executionRevision: 1,
+      languageId: 'typescript',
+      files: {
+        'index.html': '<p id="score">0</p>',
+        'main.ts':
+          'const value: number = 2; const node = document.querySelector("#score"); if (node !== null) { node.textContent = String(value); }',
+      },
+      assets: [],
+      viewport: { id: 'desktop', width: 800, height: 600 },
+      options: { runtime },
+    };
+    const rules: ValidationContext['rules'] = [
+      {
+        id: 'score',
+        label: '点数を表示する',
+        required: true,
+        group: 'all',
+        viewportMode: 'all',
+        viewportIds: ['desktop'],
+        target: { kind: 'selector', selector: '#score' },
+        assertion: { kind: 'text', operator: 'equals', expected: '2' },
+        feedback: { target: '点数', expected: '2', nextAction: '計算を確認してください' },
+        hintId: 'hint-1',
+        relatedSlideId: 'slide-1',
+      },
+    ];
+    try {
+      await runner.prepare(frame);
+      const rendered = await runner.render(input);
+      const snapshot = await runner.requestSnapshot({
+        exerciseSessionId: input.exerciseSessionId,
+        executionRevision: input.executionRevision,
+        requestId: 'grade',
+        policy: validator.buildSnapshotPolicy(rules),
+      });
+      const context: ValidationContext = {
+        exerciseId: 'ts-exercise',
+        rules,
+        runtime,
+        files: input.files,
+        execution: {
+          ...rendered,
+          runId: 'run-1',
+          backend: 'browser',
+          engine: 'browser-js',
+          status: 'succeeded',
+        },
+        snapshots: { desktop: snapshot },
+        diagnostics: rendered.diagnostics,
+        evidence: rendered.evidence,
+        console: rendered.console,
+        interactionScenarios: [],
+        interactionCheckpoints: {},
+        now: '2026-09-29T00:00:00.000Z',
+      };
+      const passed = await validator.validate(context);
+      const incomplete = await validator.validate({
+        ...context,
+        rules: [{ ...rules[0]!, assertion: { kind: 'text', operator: 'equals', expected: '3' } }],
+      });
+      const stale = await validator.validate({
+        ...context,
+        files: { ...input.files, 'main.ts': input.files['main.ts']!.replace(': number', ': 2') },
+      });
+      const mismatched = await validator.validate({
+        ...context,
+        evidence: rendered.evidence.map((item) =>
+          item.id === 'javascript.module-graph-sha256' ? { ...item, value: '0'.repeat(64) } : item,
+        ),
+      });
+      return { passed, incomplete, stale, mismatched };
+    } finally {
+      await runner.dispose();
+      frame.remove();
+    }
+  });
+  expect(result.passed.status).toBe('pass');
+  expect(result.incomplete.status).toBe('incomplete');
+  expect(result.stale).toMatchObject({ status: 'system-error', checks: [] });
+  expect(result.mismatched).toMatchObject({ status: 'system-error', checks: [] });
 });
 
 test('型検査Workerから既存Analyzer Workerへ接続し、通信拒否と中止後の再試行を確認する', async ({

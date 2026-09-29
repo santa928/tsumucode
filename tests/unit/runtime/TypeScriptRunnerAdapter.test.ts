@@ -80,7 +80,11 @@ describe('TypeScriptRunnerAdapter', () => {
       diagnostics: [{ code: 'typescript-type-error-2322', file: 'main.ts' }],
     });
     expect(f.runnerFactory).not.toHaveBeenCalled();
-    expect(await f.adapter.render(input)).toEqual(rendered);
+    const result = await f.adapter.render(input);
+    expect(result.evidence).toContainEqual(rendered.evidence[0]);
+    expect(result.evidence.find(({ id }) => id === 'typescript.source-sha256')?.value).toMatch(
+      /^[a-f0-9]{64}$/u,
+    );
     expect(f.runner.render).toHaveBeenCalledWith(
       expect.objectContaining({
         languageId: 'javascript',

@@ -279,8 +279,19 @@ export const JavaScriptExerciseRuntimeSchema = z
   .strict();
 
 /** Course追加時にkind単位で拡張するExercise Runtime union。 */
+export const TypeScriptExerciseRuntimeSchema = JavaScriptExerciseRuntimeSchema.extend({
+  kind: z.literal('typescript'),
+  entryFile: RelativePathSchema.refine(
+    (file) => file.endsWith('.ts') && !file.endsWith('.d.ts'),
+    'TypeScript entryFileは.tsファイルを指定してください',
+  ),
+  sourceType: z.literal('module'),
+});
+
+/** Courseごとの実行設定をkindで識別する。 */
 export const ExerciseRuntimeSchema = z.discriminatedUnion('kind', [
   JavaScriptExerciseRuntimeSchema,
+  TypeScriptExerciseRuntimeSchema,
 ]);
 
 /** selectorへ制御文字が混入していないことを文字コードで判定する。 */
@@ -1037,7 +1048,7 @@ export const ExerciseSchema = z
           checkpoint.expectations.some((expectation) => expectation.kind === 'submit-prevented'),
         ),
       ) &&
-      (exercise.runtime?.kind !== 'javascript' || exercise.runtime.capabilityProfile !== 'dom-form')
+      exercise.runtime?.capabilityProfile !== 'dom-form'
     ) {
       context.addIssue({
         code: 'custom',
@@ -1047,7 +1058,7 @@ export const ExerciseSchema = z
     }
     if (
       exercise.interactionScenarios !== undefined &&
-      (exercise.runtime?.kind !== 'javascript' ||
+      (exercise.runtime === undefined ||
         !['dom', 'dom-form', 'async', 'project'].includes(exercise.runtime.capabilityProfile))
     ) {
       context.addIssue({
@@ -1760,30 +1771,37 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
           localExerciseIds.add(exercise.id);
           currentIds.workspace.add(exercise.workspaceId);
 
-          if (course.runnerId === 'javascript' && exercise.runtime?.kind !== 'javascript') {
+          if (
+            ['javascript', 'typescript'].includes(course.runnerId) &&
+            exercise.runtime?.kind !== course.runnerId
+          ) {
             addIssue(
               context,
               [...exercisePath, 'runtime'],
-              'JavaScript ExerciseにはRuntime設定が必要です',
+              course.runnerId === 'javascript'
+                ? 'JavaScript ExerciseにはRuntime設定が必要です'
+                : 'TypeScript ExerciseにはRunnerと一致するRuntime設定が必要です',
             );
           }
-          if (course.runnerId !== 'javascript' && exercise.runtime?.kind === 'javascript') {
+          if (exercise.runtime !== undefined && course.runnerId !== exercise.runtime.kind) {
             addIssue(
               context,
               [...exercisePath, 'runtime'],
               'Course RunnerとRuntime設定が一致しません',
             );
           }
-          if (exercise.runtime?.kind === 'javascript') {
+          if (exercise.runtime !== undefined) {
             const canonicalEntryFile = canonicalPublicPath(exercise.runtime.entryFile);
             const entryFile = exercise.files.find(
               (file) => canonicalPublicPath(file.path) === canonicalEntryFile,
             );
-            if (entryFile?.language !== 'javascript') {
+            if (entryFile?.language !== exercise.runtime.kind) {
               addIssue(
                 context,
                 [...exercisePath, 'runtime', 'entryFile'],
-                'JavaScript Runtime entryFileはjavascript Fileを参照してください',
+                exercise.runtime.kind === 'javascript'
+                  ? 'JavaScript Runtime entryFileはjavascript Fileを参照してください'
+                  : 'TypeScript Runtime entryFileはtypescript Fileを参照してください',
               );
             }
           }
@@ -1999,6 +2017,12 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
             }
             if (course.validatorId === 'html-css' && !htmlCssRule.success) {
               addIssue(context, rulePath, 'HTML/CSS Validator Ruleの形式が不正です');
+            }
+            if (
+              course.validatorId === 'typescript' &&
+              (!javaScriptRule.success || rule.target.kind === 'javascript-source')
+            ) {
+              addIssue(context, rulePath, 'TypeScript動作採点はDOM/Console Ruleを指定してください');
             }
             if (
               course.validatorId === 'javascript' &&

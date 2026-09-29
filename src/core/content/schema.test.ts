@@ -6,6 +6,7 @@ import {
   CourseManifestSchema,
   ExerciseSchema,
   JavaScriptValidationRuleDefinitionSchema,
+  TypeScriptExerciseRuntimeSchema,
   PreviewViewportSchema,
   SlideSchema,
   LessonSchema,
@@ -561,6 +562,28 @@ describe('CourseManifestSchema 公開境界', () => {
     expectCourseIssue(course, 'JavaScript ExerciseにはRuntime設定が必要です');
   });
 
+  it('TypeScriptはmoduleと.ts entryだけを受理し、CourseにもRuntimeを必須にする', () => {
+    const runtime = {
+      kind: 'typescript',
+      entryFile: 'main.ts',
+      sourceType: 'module',
+      capabilityProfile: 'dom',
+      primaryOutput: 'preview',
+    };
+    expect(TypeScriptExerciseRuntimeSchema.safeParse(runtime).success).toBe(true);
+    for (const entryFile of ['main.js', 'types.d.ts', 'main.tsx', '../main.ts']) {
+      expect(TypeScriptExerciseRuntimeSchema.safeParse({ ...runtime, entryFile }).success).toBe(
+        false,
+      );
+    }
+    expect(
+      TypeScriptExerciseRuntimeSchema.safeParse({ ...runtime, sourceType: 'script' }).success,
+    ).toBe(false);
+    const course = cloneCourse();
+    course.runnerId = 'typescript';
+    expectCourseIssue(course, 'TypeScript ExerciseにはRunnerと一致するRuntime設定が必要です');
+  });
+
   it('HTML/CSS RunnerのCourseへJavaScript Runtime設定を許可しない', () => {
     const course = cloneCourse();
     Object.assign(firstStandardExercise(firstStandardLesson(course)), {
@@ -574,6 +597,21 @@ describe('CourseManifestSchema 公開境界', () => {
     });
 
     expectCourseIssue(course, 'Course RunnerとRuntime設定が一致しません');
+  });
+
+  it('TypeScript採点で型消去後のJavaScript Source Ruleを教材要件に指定できない', () => {
+    const course = cloneCourse();
+    course.validatorId = 'typescript';
+    const exercise = firstStandardExercise(firstStandardLesson(course));
+    exercise.validationRules[0] = {
+      ...exercise.validationRules[0]!,
+      target: { kind: 'javascript-source', file: 'index.html' },
+      assertion: {
+        kind: 'javascript-source-fact',
+        fact: { kind: 'binding', name: 'value', declarationKind: 'const' },
+      },
+    };
+    expectCourseIssue(course, 'TypeScript動作採点はDOM/Console Ruleを指定してください');
   });
 });
 

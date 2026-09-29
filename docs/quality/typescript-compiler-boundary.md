@@ -75,3 +75,22 @@ REQ-TS-004/006を維持し、実行結果に`type-error`を追加した。compil
 改訂差分: REQ-TS-001〜007維持、保留・削除なし。型エラー非採点境界と状態案内を追加。TS Course登録・教材・型の学習要件を採点する仕組み・人の受入・既存公開Gateは引き続き未完了/必須。
 
 Docker関連90件（BrowserExecutionService6、Session46、Routes38）成功、型/対象Lint成功。型検査失敗と実行時reference診断の分類、Validator非呼出し・履歴/合格snapshot維持、修正後再実行を検証した。実Chromiumでは実演習画面に診断portだけをfake注入し、1280×900で案内の表示と収まり（x29/y104.375/w259.75/h38.375）、判定時の診断、再実行成功を確認。これはTS教材の通し試用ではない。初回テストのTesting Library非対応exact引数2件を除去して型検査成功。一時画面検証のURLを実際のルート配信に修正して成功。全suite/他Browser/実機/公開Gateは未実施。
+
+## 元TSと動作採点の接続（2026-09-29追補）
+
+| 要件            | 改訂 | 今回の差分                                                                                                      |
+| --------------- | ---- | --------------------------------------------------------------------------------------------------------------- |
+| REQ-TS-001〜007 | 維持 | 保留・削除なし。教材・型の習得条件・初心者/実機受入・公開Gateを残す                                             |
+| REQ-TS-008      | 追加 | 元TSを含む全ファイル・実行設定・session/revisionをSHA-256で結び、型消去で生成JSが同じでも古い実行証拠を拒否する |
+
+`TypeScriptValidator`は元ソース証拠と同一世代のSnapshotを照合してからWorkerで再型検査し、生成JSを既存JavaScript Validatorへ渡す。JS module graph hash、認証済み実行証拠、DOM/console/Interactionの採点を維持する。型検査成功だけでpassを作らず、動作要件が不足すればincomplete、証拠欠落/重複/不一致・Worker障害はsystem-errorで未採点にする。入力TSは保存用の原文のまま保持する。
+
+TSからの委譲に限ってJavaScript Validatorを`behaviorOnly`で使う。通常のJavaScript教材は従来どおりSource Ruleを必須にする。TS側は`javascript-source` Ruleを拒否し、消去後ASTを「型を学べた」証拠にしない。型の学習要件（anyへの逃げ・必要な型境界など）を判定する教材固有契約は後続で必要であり、現在の動作採点だけでTS教材完成とはしない。
+
+Runtime schemaへTypeScript module/.ts entryを追加し、Course/entryの言語一致と既存Interaction profile制約を確認する。編集可能なTypeScript演習に到達した時だけRunner/Validator/TS Editorを登録し、Compilerは最初のcompileまでWorkerを生成しない。Course CatalogやPathには追加しない。
+
+性能目標は不変。採点時の再型検査には追加コストがあり、全TS教材を接続する前に初回/再採点のp95を測定する。現段階では採点整合を優先し、型検査を省略するcacheは導入しない。受け入れ条件・非対象・リスク対策・性能目標を維持する。
+
+Dockerの関連8ファイル計185件が成功（schema98、JS Validator16/Rule14、TS Runner4/Validator10、言語登録4/TS Editor1、Routes38）。型・対象Lint・production build・既存chunk検査も成功。実Chromium2件では型検査→隔離実行→採点のpass/incomplete、型だけ変更した元TS・改変されたJS hashの拒否、型エラー非実行と停止後復帰を確認した。初期配信のlibrary/normalLearning両entryの静的7/10chunkとindex HTMLにTS実装・Compiler参照が混入していないことを生成物で確認した。
+
+初回の型検査では配列要素のundefined考慮不足と検証mirror内のファイル名大文字小文字重複を修正。テストLintのspy型とmatcher代入を修正し、受入条件の緩和はしていない。手動配信graph検査は実在しないindex.html manifest keyで一度失敗し、実ビルドの両entryとHTMLに合わせて成功した。製品TS演習の通し操作・保存・診断クリック・Console表示の接続、型の学習要件、現版のproduction実配信、他Browser、全suite、人の試用/実機、p95、公開Gateは未確認であり、教材作成時/公開前に確認する。

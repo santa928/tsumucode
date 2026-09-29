@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { TypeScriptExerciseRuntimeSchema } from '../../../core/content/schema';
 import type {
   InteractionRequest,
   InteractionResult,
@@ -14,18 +15,11 @@ import { TypeScriptCompilerClient } from './TypeScriptCompilerClient';
 import type { TypeScriptCompileResult } from './compileTypeScript';
 import { mapTypeScriptDiagnostics } from './mapTypeScriptDiagnostics';
 import { isTypeScriptCompileInput, type TypeScriptCompileInput } from './workerContract';
+import { typeScriptSourceHash } from './typeScriptSourceHash';
 
 const optionsSchema = z
   .object({
-    runtime: z
-      .object({
-        kind: z.literal('typescript'),
-        entryFile: z.string(),
-        sourceType: z.literal('module'),
-        capabilityProfile: z.enum(['core', 'modules', 'dom', 'dom-form', 'async', 'project']),
-        primaryOutput: z.enum(['preview', 'console']),
-      })
-      .strict(),
+    runtime: TypeScriptExerciseRuntimeSchema,
   })
   .strict();
 interface CompilerPort {
@@ -129,6 +123,13 @@ export class TypeScriptRunnerAdapter implements RunnerAdapter {
             learnerMessage: item.message,
           })),
         );
+      const sourceHash = await typeScriptSourceHash(
+        snapshot.files,
+        runtime.data.runtime,
+        snapshot.exerciseSessionId,
+        snapshot.executionRevision,
+      );
+      this.#assertCurrent(generation);
       const runner = this.options.runnerFactory?.() ?? new JavaScriptRunnerAdapter();
       this.#runner = runner;
       await runner.prepare(frame);
@@ -157,7 +158,11 @@ export class TypeScriptRunnerAdapter implements RunnerAdapter {
       )
         throw new Error('TypeScript runner identity mismatch');
       this.#source = { maps: compiled.sourceMaps, files };
-      return { ...result, diagnostics: this.#map(result.diagnostics) };
+      return {
+        ...result,
+        diagnostics: this.#map(result.diagnostics),
+        evidence: [...result.evidence, { id: 'typescript.source-sha256', value: sourceHash }],
+      };
     })();
     return Promise.race([operation, cancelled]).finally(() => {
       if (generation === this.#generation) {
