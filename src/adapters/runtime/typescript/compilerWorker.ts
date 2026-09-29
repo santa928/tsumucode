@@ -1,7 +1,8 @@
 /// <reference lib="webworker" />
 
 import { compileTypeScript } from './compileTypeScript';
-import { isTypeScriptCompileInput, type CompilerWorkerRequest } from './workerContract';
+import { isCompilerWorkerRequest } from './workerContract';
+import { checkScoreNumberAnnotation } from './checkScoreNumberAnnotation';
 
 // 標準libとcompilerはこのWorkerだけが読む。学習者指定URLや外部CDNは使わない。
 const librarySources = import.meta.glob<string>('/node_modules/typescript/lib/lib.*.d.ts', {
@@ -18,18 +19,16 @@ const libraries = Object.fromEntries(
 
 /** 入力契約を検証し、元のsession/revision/request IDと型検査結果を返す。 */
 self.onmessage = (event: MessageEvent<unknown>): void => {
-  const value = event.data as Partial<CompilerWorkerRequest> | null;
-  if (
-    !value ||
-    typeof value.requestId !== 'string' ||
-    value.requestId.length > 128 ||
-    !isTypeScriptCompileInput(value.input)
-  )
-    return;
+  const value = event.data;
+  if (!isCompilerWorkerRequest(value)) return;
   self.postMessage({
+    kind: value.kind,
     requestId: value.requestId,
     sessionId: value.input.sessionId,
     revision: value.input.revision,
-    result: compileTypeScript(value.input.files, libraries),
+    result:
+      value.kind === 'compile'
+        ? compileTypeScript(value.input.files, libraries)
+        : checkScoreNumberAnnotation(value.input.files, libraries),
   });
 };

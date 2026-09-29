@@ -228,7 +228,7 @@ tag ref作成後の通信断などでRunだけが失敗表示になった場合�
 
 ## 非対象
 
-TypeScriptコースの準備として、実コンパイラ・停止可能な専用Worker・既存JavaScript安全解析・隔離プレビュー・動作採点をつなぐ[型検査境界の技術実証](docs/quality/typescript-compiler-boundary.md)を追加しています。型検査失敗は未実行・未採点として区別し、元TSと実行結果を照合します。検証用TS教材を実演習画面へ読み込み、Console・修正後の採点・元コードの保存/再読込まで確認しました。TSコースの教材・型の習得を判定する採点要件・公開登録は未完了です。
+TypeScriptコースの準備として、実コンパイラ・停止可能な専用Worker・既存JavaScript安全解析・隔離プレビュー・動作採点をつなぐ[型検査境界の技術実証](docs/quality/typescript-compiler-boundary.md)を追加しています。型検査失敗は未実行・未採点として区別し、元TSと実行結果を照合します。検証用TS教材を実演習画面へ読み込み、Console・修正後の採点・元コードの保存/再読込まで確認しました。[型注釈1課題の採点契約](docs/quality/typescript-annotation-grading-contract.md)では、元TSの明示的なnumber注釈と実Consoleの結果を両方確認します。TSコースの教材全体・残りの型習得要件・公開登録は未完了です。
 
 - 初回公開版でのJavaScript、TypeScript、Reactコース
 - ログイン、Backend、Cloud DB、端末間の自動同期

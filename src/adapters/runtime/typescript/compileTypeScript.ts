@@ -51,6 +51,24 @@ export function compileTypeScript(
   files: Readonly<Record<string, string>>,
   standardLibraries: Readonly<Record<string, string>>,
 ): TypeScriptCompileResult {
+  return processTypeScript(files, standardLibraries, true);
+}
+
+/** 信頼側の型関係検査専用。成功時もJS・source mapを生成せず、Runnerへ渡せる結果を返さない。 */
+export function checkTypeScript(
+  files: Readonly<Record<string, string>>,
+  standardLibraries: Readonly<Record<string, string>>,
+): { readonly status: 'valid' } | Exclude<TypeScriptCompileResult, { status: 'ready' }> {
+  const result = processTypeScript(files, standardLibraries, false);
+  return result.status === 'ready' ? { status: 'valid' } : result;
+}
+
+/** 通常変換と型検査専用経路で、仮想Fileと診断の安全境界を共有する。 */
+function processTypeScript(
+  files: Readonly<Record<string, string>>,
+  standardLibraries: Readonly<Record<string, string>>,
+  emitJavaScript: boolean,
+): TypeScriptCompileResult {
   const entries = Object.entries(files);
   if (
     entries.length === 0 ||
@@ -156,6 +174,7 @@ export function compileTypeScript(
     if (semantic.length) {
       return { status: 'type-error', diagnostics: diagnosticsForLearner(semantic) };
     }
+    if (!emitJavaScript) return { status: 'ready', files: {}, sourceMaps: {} };
     const emit = program.emit();
     if (
       emit.emitSkipped ||

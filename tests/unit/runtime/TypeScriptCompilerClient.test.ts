@@ -3,7 +3,10 @@ import {
   TypeScriptCompilerClient,
   type CompilerWorkerPort,
 } from '../../../src/adapters/runtime/typescript/TypeScriptCompilerClient';
-import type { CompilerWorkerRequest } from '../../../src/adapters/runtime/typescript/workerContract';
+import {
+  isCompilerWorkerRequest,
+  type CompilerWorkerRequest,
+} from '../../../src/adapters/runtime/typescript/workerContract';
 
 /** Workerを走らせず、遅延・古い応答・基盤故障だけを再現する契約用port。 */
 class FakeWorker implements CompilerWorkerPort {
@@ -19,6 +22,7 @@ class FakeWorker implements CompilerWorkerPort {
   respond(overrides: Record<string, unknown> = {}): void {
     this.onmessage?.({
       data: {
+        kind: this.request?.kind,
         requestId: this.request?.requestId,
         sessionId: this.request?.input.sessionId,
         revision: this.request?.input.revision,
@@ -43,6 +47,68 @@ afterEach(() => {
 });
 
 describe('TypeScriptCompilerClient', () => {
+  const facts = {
+    programShapeAccepted: true,
+    explicitNumberAnnotation: true,
+    forbiddenEscapeAbsent: true,
+    logsScoreLast: true,
+    positiveProbeAccepted: true,
+    negativeProbeRejected: true,
+  };
+
+  it('学習検査の操作とsnapshotを固定し、通常compileの応答と混ぜない', async () => {
+    const worker = new FakeWorker();
+    const client = new TypeScriptCompilerClient({ workerFactory: () => worker });
+    const result = client.learningCheck(input);
+    expect(worker.request).toMatchObject({
+      kind: 'learning-check',
+      profile: 'score-number-annotation-v1',
+    });
+    expect(isCompilerWorkerRequest(worker.request)).toBe(true);
+    worker.respond({ result: { status: 'ready', facts } });
+    await expect(result).resolves.toEqual({ status: 'ready', facts });
+    expect(worker.terminate).toHaveBeenCalledOnce();
+  });
+
+  it.each([
+    { kind: 'compile', result: { status: 'ready', facts } },
+    { result: { status: 'ready', facts: { ...facts, logsScoreLast: false } } },
+    { result: { status: 'ready', facts: { ...facts, unknown: true } } },
+    { result: { status: 'ready', facts: { ...facts, explicitNumberAnnotation: 1 } } },
+    { result: { status: 'ready', facts }, diagnostics: [] },
+    { result: { status: 'system-error', facts } },
+  ])('学習検査の不正・混在応答を未採点にする %j', async (response) => {
+    const worker = new FakeWorker();
+    const client = new TypeScriptCompilerClient({ workerFactory: () => worker });
+    const result = client.learningCheck(input);
+    worker.respond(response);
+    await expect(result).resolves.toEqual({ status: 'system-error' });
+  });
+
+  it('学習checkも古い世代を無視し、期限で破棄し、新compileで置換できる', async () => {
+    vi.useFakeTimers();
+    const worker = new FakeWorker();
+    const client = new TypeScriptCompilerClient({ workerFactory: () => worker, deadlineMs: 10 });
+    const result = client.learningCheck(input);
+    worker.respond({ revision: 0, result: { status: 'ready', facts } });
+    await vi.advanceTimersByTimeAsync(10);
+    await expect(result).resolves.toEqual({ status: 'system-error' });
+    const old = client.learningCheck(input).catch((error: unknown) => error);
+    const next = client.compile(input);
+    await expect(old).resolves.toMatchObject({ name: 'AbortError' });
+    worker.respond();
+    await expect(next).resolves.toMatchObject({ status: 'ready' });
+    client.dispose();
+  });
+
+  it('未知profile・余分なrequest項目・操作省略を拒否する', () => {
+    for (const request of [
+      { kind: 'learning-check', profile: 'unknown', requestId: '1', input },
+      { kind: 'compile', requestId: '1', input, profile: 'score-number-annotation-v1' },
+      { requestId: '1', input },
+    ])
+      expect(isCompilerWorkerRequest(request)).toBe(false);
+  });
   it('初回要求までWorkerを作らず、元sourceを保持し同identityの応答だけ受理する', async () => {
     const worker = new FakeWorker();
     const factory = vi.fn(() => worker);

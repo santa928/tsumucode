@@ -489,6 +489,15 @@ const JavaScriptSourceTargetSchema = z
   .strict();
 
 const JavaScriptConsoleTargetSchema = z.object({ kind: z.literal('javascript-console') }).strict();
+const TypeScriptLearningTargetSchema = z
+  .object({ kind: z.literal('typescript-learning'), file: z.literal('main.ts') })
+  .strict();
+const TypeScriptLearningAssertionSchema = z
+  .object({
+    kind: z.literal('typescript-learning'),
+    profile: z.literal('score-number-annotation-v1'),
+  })
+  .strict();
 
 export const HtmlCssRuleTargetSchema = z.union([
   HtmlCssSelectorTargetSchema,
@@ -853,6 +862,7 @@ export const HtmlCssRuleAssertionSchema = z.union([
 
 const AUTHORING_ONLY_FIELD_NAMES = new Set(['solutionFiles', 'fixtures']);
 const RESERVED_ADAPTER_RULE_KINDS = new Set([
+  'typescript-learning',
   'javascript-source',
   'javascript-console',
   'javascript-source-fact',
@@ -898,12 +908,14 @@ const AdapterRuleObjectSchema = z
     }
   });
 export const RuleTargetSchema = z.union([
+  TypeScriptLearningTargetSchema,
   HtmlCssRuleTargetSchema,
   JavaScriptSourceTargetSchema,
   JavaScriptConsoleTargetSchema,
   AdapterRuleObjectSchema,
 ]);
 export const RuleAssertionSchema = z.union([
+  TypeScriptLearningAssertionSchema,
   HtmlCssRuleAssertionSchema,
   QuerySelectorTextContentAssignmentAssertionSchema,
   JavaScriptSourceFactAssertionSchema,
@@ -984,6 +996,18 @@ export const JavaScriptValidationRuleDefinitionSchema = z.union([
   JavaScriptConsoleValidationRuleDefinitionSchema,
 ]);
 
+/** 型注釈1 Lesson専用。動作条件とのany結合や任意profile/fileを許可しない。 */
+export const TypeScriptLearningRuleDefinitionSchema = z
+  .object({
+    ...ValidationRuleBaseShape,
+    required: z.literal(true),
+    group: z.literal('all'),
+    target: TypeScriptLearningTargetSchema,
+    assertion: TypeScriptLearningAssertionSchema,
+  })
+  .strict()
+  .refine((rule) => rule.groupId === undefined, '型習得Ruleは独立した必須要件にしてください');
+
 export const ValidationRuleDefinitionSchema = z
   .object({
     ...ValidationRuleBaseShape,
@@ -992,6 +1016,17 @@ export const ValidationRuleDefinitionSchema = z
   })
   .strict()
   .superRefine((rule, context) => {
+    if (
+      (rule.target.kind === 'typescript-learning' ||
+        rule.assertion.kind === 'typescript-learning') &&
+      !TypeScriptLearningRuleDefinitionSchema.safeParse(rule).success
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['target'],
+        message: '型習得Ruleの組合せが不正です',
+      });
+    }
     const usesJavaScriptContract =
       rule.target.kind === 'javascript-source' ||
       rule.target.kind === 'javascript-console' ||
@@ -2020,10 +2055,16 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
             }
             if (
               course.validatorId === 'typescript' &&
-              ((!htmlCssRule.success && !javaScriptRule.success) ||
+              ((!htmlCssRule.success &&
+                !javaScriptRule.success &&
+                !TypeScriptLearningRuleDefinitionSchema.safeParse(rule).success) ||
                 rule.target.kind === 'javascript-source')
             ) {
-              addIssue(context, rulePath, 'TypeScript動作採点はDOM/Console Ruleを指定してください');
+              addIssue(
+                context,
+                rulePath,
+                'TypeScript採点はDOM/Consoleまたは対応する型習得Ruleを指定してください',
+              );
             }
             if (
               course.validatorId === 'javascript' &&
@@ -2045,6 +2086,28 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
                 'JavaScript Source Fileが存在しません',
               );
             }
+          }
+          const learningRules = exercise.validationRules.filter(
+            ({ target }) => target.kind === 'typescript-learning',
+          );
+          if (
+            (learningRules.length > 0 ||
+              lesson.id === 'typescript-ch01-l02' ||
+              exercise.id === 'typescript-ch01-l02-e01') &&
+            (course.validatorId !== 'typescript' ||
+              lesson.id !== 'typescript-ch01-l02' ||
+              exercise.id !== 'typescript-ch01-l02-e01' ||
+              learningRules.length !== 1 ||
+              !canonicalFilePaths.includes(canonicalPublicPath('main.ts')!) ||
+              !exercise.validationRules.some(
+                (rule) => rule.required && rule.target.kind === 'javascript-console',
+              ))
+          ) {
+            addIssue(
+              context,
+              [...exercisePath, 'validationRules'],
+              '型注釈Ruleは専用Lessonの単一必須RuleとConsole条件を指定してください',
+            );
           }
           if (
             course.validatorId === 'javascript' &&

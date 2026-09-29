@@ -1,4 +1,5 @@
 import type { TypeScriptCompileResult } from './compileTypeScript';
+import type { ScoreNumberAnnotationResult } from './checkScoreNumberAnnotation';
 
 export interface TypeScriptCompileInput {
   readonly sessionId: string;
@@ -6,9 +7,74 @@ export interface TypeScriptCompileInput {
   readonly files: Readonly<Record<string, string>>;
 }
 
-export interface CompilerWorkerRequest {
+interface WorkerRequestBase {
   readonly requestId: string;
   readonly input: TypeScriptCompileInput;
+}
+
+export type CompilerWorkerRequest = WorkerRequestBase &
+  (
+    | { readonly kind: 'compile' }
+    | { readonly kind: 'learning-check'; readonly profile: 'score-number-annotation-v1' }
+  );
+
+/** 学習check結果は有限factだけ。余分な情報や成立しないprobe成功を拒否する。 */
+export function isScoreNumberAnnotationResult(
+  value: unknown,
+): value is ScoreNumberAnnotationResult {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const result = value as Record<string, unknown>;
+  if (result['status'] === 'system-error') return Object.keys(result).length === 1;
+  if (
+    result['status'] !== 'ready' ||
+    Object.keys(result).sort().join(',') !== 'facts,status' ||
+    !result['facts'] ||
+    typeof result['facts'] !== 'object' ||
+    Array.isArray(result['facts'])
+  )
+    return false;
+  const facts = result['facts'] as Record<string, unknown>;
+  const keys = [
+    'explicitNumberAnnotation',
+    'forbiddenEscapeAbsent',
+    'logsScoreLast',
+    'negativeProbeRejected',
+    'positiveProbeAccepted',
+    'programShapeAccepted',
+  ];
+  if (
+    Object.keys(facts).sort().join(',') !== keys.join(',') ||
+    !keys.every((key) => typeof facts[key] === 'boolean')
+  )
+    return false;
+  const eligible =
+    facts['explicitNumberAnnotation'] &&
+    facts['forbiddenEscapeAbsent'] &&
+    facts['logsScoreLast'] &&
+    facts['programShapeAccepted'];
+  return (
+    facts['positiveProbeAccepted'] === !!eligible &&
+    facts['negativeProbeRejected'] === !!eligible &&
+    (!facts['programShapeAccepted'] || facts['logsScoreLast'] === true)
+  );
+}
+
+/** 通常compileとLesson限定checkを曖昧なoptional payloadで混ぜない。 */
+export function isCompilerWorkerRequest(value: unknown): value is CompilerWorkerRequest {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const request = value as Record<string, unknown>;
+  const keys =
+    request['kind'] === 'compile' ? 'input,kind,requestId' : 'input,kind,profile,requestId';
+  return (
+    Object.keys(request).sort().join(',') === keys &&
+    (request['kind'] === 'compile' ||
+      (request['kind'] === 'learning-check' &&
+        request['profile'] === 'score-number-annotation-v1')) &&
+    typeof request['requestId'] === 'string' &&
+    request['requestId'].length > 0 &&
+    request['requestId'].length <= 128 &&
+    isTypeScriptCompileInput(request['input'])
+  );
 }
 
 /** compilerを初期chunkへimportせず、Workerへ渡す文字列Mapとidentityを検証する。 */
