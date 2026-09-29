@@ -33,3 +33,13 @@
 2026-09-29検証: プロジェクトの既存Composeコンテナ内の一時複写で対象Vitest 12件、`npm run typecheck`、対象ESLint成功。実compiler6件とWorker lifecycle6件を分け、後者のportは遅延/故障を再現するfakeである。Chromiumでは実Vite Worker/標準libを使い、型誤り→修正、中止→再試行、親画面timer継続、source保持、コード非実行を1件で確認（最終3.5秒）。最初はVite依存最適化のHMR reloadで中断したため、境界試験ページをHMR clientから分離して再成功した。独立したproduction形式bundleも成功（Worker約7.28MB、client約4.02KB、非gzip）。この大きさは初期Homeへ加えず、製品接続時に読込体験と圧縮転送を実測する。途中のUnit再確認では構文・環境テスト1件が5000msでtimeoutした。構文エラー時の不要な意味検査を短絡し、同じ時間上限の12件が成功。構文診断の必須fileに対する不要optional chainもLintで修正。初回Lint1件はテスト名生成の数値文字列化を修正。Firefox/WebKit、製品UI、全suite、公開Gate、production配信後は未実施。受け入れ条件・非対象・リスクと対策・性能目標の保持を確認した。
 
 公式参照: [TypeScript Compiler API](https://github.com/microsoft/TypeScript/wiki/Using-the-Compiler-API)。Programの診断とemitを使い、transpileModuleだけを型検査と呼ばない。将来version更新時はAPI互換と教材診断を再検証する。
+
+## 既存Analyzerへの接続（2026-09-29追補）
+
+`TypeScriptPreparationClient`を追加した。入力を固定して型検査Workerへ渡し、成功したJSだけを既存JavaScript Analyzer Workerへ渡す。開始するTSファイルが存在しない場合と型検査失敗時は解析を開始しない。相対`.js` importのmodule graph・危険操作の拒否・計装は既存契約を維持する。型が正しい`fetch`も安全検査で拒否する。
+
+中止・要求置換・離脱では両Workerを破棄し、待機Promiseを即座にAbortErrorへ確定する。型検査完了直後の中止は解析開始を抑止し、解析中の取消は古い結果の返却を抑止する。不正な次入力でも旧要求は失効する。準備処理の例外は環境障害として分ける。
+
+要件改訂差分: REQ-TS-001〜007は全て維持、保留・削除なし。REQ-TS-006のAnalyzer接続を実装し、Runner接続・元TSへのsource map・採点・保存・教材は後続として残す。`stage: compile`の診断は元TS、`stage: analysis`の診断/facts/graph hashは生成JSに属する。JSの行番号をTSの行番号へ単純に置き換えて表示してはならない。`stage: environment`は準備経路自体の障害。いずれも製品UIには未接続で、型検査や解析の成功を教材合格・実行成功として保存しない。
+
+追加証拠: Docker内の対象Unit6件（うち実compiler＋実Analyzer2件）、型チェック、対象Lintが成功。残り4件は遅延応答/factory障害のfake portを使った取消競合と経路検証。実Chromiumでは実両Workerによる複数module解析・通信拒否・cancel→retryを1件3.7秒で確認した。初回のテストLintは`void`型引数とinline type importの規約違反を修正し再成功。既存12件の型検査/Worker単体証拠は該当ソース不変のため再利用した。Runnerでの実行、元TSへの診断位置変換、製品UI、他Browser、実機、初心者、公開Gateは未実施。追加の性能目標緩和や権限拡大はない。
