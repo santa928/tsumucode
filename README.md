@@ -226,7 +226,7 @@ tag ref作成後の通信断などでRunだけが失敗表示になった場合�
 
 ## 非対象
 
-TypeScriptコースの準備として、実コンパイラ・停止可能な専用Worker・既存JavaScript安全解析への接続による[型検査境界の技術実証](docs/quality/typescript-compiler-boundary.md)を追加しています。製品画面には未接続で、演習・教材の完成を意味しません。
+TypeScriptコースの準備として、実コンパイラ・停止可能な専用Worker・既存JavaScript安全解析・隔離プレビューへの接続による[型検査境界の技術実証](docs/quality/typescript-compiler-boundary.md)を追加しています。製品画面には未接続で、演習・教材の完成を意味しません。
 
 - 初回公開版でのJavaScript、TypeScript、Reactコース
 - ログイン、Backend、Cloud DB、端末間の自動同期

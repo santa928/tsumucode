@@ -55,3 +55,15 @@
 改訂差分: REQ-TS-001〜007は維持、保留/削除なし。REQ-TS-006の生成JS診断→元TS位置対応を追加、実行/採点/保存/製品UI/教材/人受入は残る。性能目標と公開Gateは不変。
 
 検証: Dockerの関連Unit計19件（compiler6、Worker契約6、準備6、mapper1）、型チェック、対象Lint成功。実Chromium2件成功（3.5秒/5.1秒、計9.3秒）。interface/type宣言が消える`src/main.ts`の安全検査診断を元の4行1列へ戻す実両Worker経路を確認した。source map欠損/不正/外部source/未対応位置は位置を省略し、欠損/別file/上限超過Worker応答は環境障害とする回帰も確認。初回Lintの不要null判定2件を型の絞り込みに合わせ修正した。production形式bundle成功（client30.99KB/gzip9.26KB、Analyzer175KB、Compiler7.28MB）。今回のsource map対応版のproduction配信実行、他Browser、低速端末p95、Runner実行時stack、製品画面、初心者試用/実機/公開Gateは未確認。
+
+## 既存隔離Runnerへの接続（2026-09-29追補）
+
+`TypeScriptRunnerAdapter`を追加。`.ts`と静的HTML/CSSを分け、型検査成功時だけ生成JSを既存JavaScript Runnerへ渡す。Analyzerを省略せず、既存のmodule graph・計算予算・opaque iframe・認証済みSnapshot/Interactionを使う。準備専用clientとは別の実行経路であり、同じ要求を二重解析しない。未型検査の`.js`混在は拒否する。製品の言語登録・教材・保存・採点にはまだ接続していない。
+
+次のrender受付時に旧compileを取消し、旧Runnerを解放してから新しい型検査を始める。型エラー後に古いPreview/証拠を残さない。中止/要求置換/離脱は即時AbortErrorを返し、非同期完了時にも世代を照合する。再開はstop→prepare→render、dispose後の再使用は拒否する。
+
+型検査診断は`typescript-type-error-*`と`reference`、構文診断は`syntax`、環境/設定障害は`system`として既存契約へ渡す。新しい診断kind追加や採点契約変更はしない。実行証拠とhashのJSファイル名は維持し、TS sourceの証拠と偽らない。JS診断だけsource mapを使って元TSへ戻し、HTML/CSS診断は維持する。既存Runnerの実行時診断に行・列がない場合はTSファイル名だけを返す。stackの詳細位置対応は引き続き未実装。
+
+要件差分: REQ-TS-001〜007は維持、保留/削除なし。REQ-TS-006の隔離実行接続を追加。非対象（製品UI/採点/保存/教材/React TSX/Next.js）と人の受入、性能目標、公開Gateは維持する。
+
+追加検証: Docker内Runner Unit4件（fake portで型誤り→修正、compile中止、Runner準備中の置換、実行中の離脱）成功。実Chromium1件で型付きDOMを2へ更新した認証済みSnapshot、allow-scriptsだけのsandbox、通信拒否診断の元TS2行目、型誤り時の証拠なし/旧frame解放、stop→prepare→renderの復帰を確認した。製品UI・実機・人の試用ではない。初回のテストLint13件はmockの型指定/void/inline import型/arrowの書式を修正。既存19Unitと両Worker基盤2件は入力不変のため成功証拠を再利用し、全suite/他Browser/現Runnerのproduction配信/公開Gateは未実施。受け入れ条件・非対象・リスク対策・性能目標を維持した。

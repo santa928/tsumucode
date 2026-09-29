@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import type * as PreparationClient from '../../src/adapters/runtime/typescript/TypeScriptPreparationClient';
+import type * as RunnerModule from '../../src/adapters/runtime/typescript/TypeScriptRunnerAdapter';
 import type * as CompilerClient from '../../src/adapters/runtime/typescript/TypeScriptCompilerClient';
 import { testServerUrl } from './helpers/testBasePath';
 
@@ -151,4 +152,111 @@ test('型検査Workerから既存Analyzer Workerへ接続し、通信拒否と�
     stage: 'analysis',
     result: { status: 'success', executionRevision: 3 },
   });
+});
+
+test('型付きDOM操作を既存隔離Runnerで実行し、通信拒否・型エラー・停止から復帰する', async ({
+  page,
+}) => {
+  const harness = new URL('__typescript-runner-harness', testServerUrl(4174)).href;
+  await page.route(harness, (route) =>
+    route.fulfill({ contentType: 'text/html', body: '<!doctype html><title>TS実行境界</title>' }),
+  );
+  await page.goto(harness);
+  const evidence = await page.evaluate(async () => {
+    const modulePath = new URL(
+      './src/adapters/runtime/typescript/TypeScriptRunnerAdapter.ts',
+      location.href,
+    ).href;
+    const { TypeScriptRunnerAdapter } = (await import(
+      /* @vite-ignore */ modulePath
+    )) as typeof RunnerModule;
+    const runner = new TypeScriptRunnerAdapter();
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    const source =
+      'interface Score { value: number; }\nconst score: Score = { value: 2 };\nconst node = document.querySelector("#score");\nif (node !== null) { node.textContent = String(score.value); }';
+    const input = {
+      exerciseSessionId: 'ts-live',
+      executionRevision: 1,
+      languageId: 'typescript',
+      files: { 'index.html': '<p id="score">初期</p>', 'main.ts': source },
+      assets: [],
+      viewport: { id: 'desktop', width: 800, height: 600 },
+      options: {
+        runtime: {
+          kind: 'typescript',
+          entryFile: 'main.ts',
+          sourceType: 'module',
+          capabilityProfile: 'dom',
+          primaryOutput: 'preview',
+        },
+      },
+    };
+    try {
+      await runner.prepare(frame);
+      const result = await runner.render(input);
+      const snapshot = await runner.requestSnapshot({
+        exerciseSessionId: 'ts-live',
+        executionRevision: 1,
+        requestId: 'first',
+        policy: {
+          selectors: ['#score'],
+          attributes: [],
+          computedStyles: [],
+          focusVisibleSelectors: [],
+          focusVisibleComputedStyles: [],
+          includeAllElements: false,
+        },
+      });
+      const sandbox = frame.getAttribute('sandbox');
+      const blocked = await runner.render({
+        ...input,
+        executionRevision: 2,
+        files: {
+          ...input.files,
+          'main.ts': 'interface X { value: number; }\nfetch("https://example.invalid");',
+        },
+      });
+      const typeError = await runner.render({
+        ...input,
+        executionRevision: 3,
+        files: { ...input.files, 'main.ts': 'const value: number = "wrong";' },
+      });
+      const emptyAfterError = frame.srcdoc;
+      await runner.stop();
+      await runner.prepare(frame);
+      const retry = await runner.render({ ...input, executionRevision: 4 });
+      return {
+        result,
+        snapshot,
+        sandbox,
+        blocked,
+        typeError,
+        emptyAfterError,
+        retry,
+        source: input.files['main.ts'],
+      };
+    } finally {
+      await runner.dispose();
+      frame.remove();
+    }
+  });
+  expect(evidence.result.diagnostics).toEqual([]);
+  expect(evidence.result.evidence).toContainEqual(
+    expect.objectContaining({ id: 'javascript.executed', value: true }),
+  );
+  expect(evidence.snapshot.nodes).toContainEqual(
+    expect.objectContaining({ text: '2', matchedSelectors: ['#score'] }),
+  );
+  expect(evidence.sandbox).toBe('allow-scripts');
+  expect(evidence.blocked.diagnostics).toContainEqual(
+    expect.objectContaining({ kind: 'security', file: 'main.ts', line: 2 }),
+  );
+  expect(evidence.typeError.evidence).toEqual([]);
+  expect(evidence.typeError.diagnostics).toContainEqual(
+    expect.objectContaining({ code: 'typescript-type-error-2322' }),
+  );
+  expect(evidence.emptyAfterError).toBe('');
+  expect(evidence.retry.diagnostics).toEqual([]);
+  expect(evidence.source).toContain('interface Score');
 });
