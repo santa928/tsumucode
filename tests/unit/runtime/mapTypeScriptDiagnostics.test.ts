@@ -2,6 +2,20 @@ import { expect, it } from 'vitest';
 import { mapTypeScriptDiagnostics } from '../../../src/adapters/runtime/typescript/mapTypeScriptDiagnostics';
 import type { RunnerDiagnostic } from '../../../src/core/runtime/contracts';
 
+it.each(['index.html', 'styles.css'])('非JS診断 %s の元の位置と内容を保持する', (file) => {
+  const diagnostic: RunnerDiagnostic = {
+    code: 'blocked',
+    kind: 'security',
+    severity: 'error',
+    message: 'blocked',
+    learnerMessage: '使用できない操作です',
+    file,
+    line: 5,
+    column: 3,
+  };
+  expect(mapTypeScriptDiagnostics([diagnostic], {}, {})).toEqual([diagnostic]);
+});
+
 it('対応不能の位置を推測せず省き、診断の内容と元データを維持する', () => {
   const diagnostic: RunnerDiagnostic = {
     code: 'blocked',

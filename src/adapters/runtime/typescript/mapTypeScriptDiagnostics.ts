@@ -32,7 +32,7 @@ function readCompilerMap(text: string | undefined, file: string): TraceMap | und
   }
 }
 
-/** Analyzerの生成JS位置を元TSへ戻す。対応不能なら位置を消し、推測でジャンプさせない。 */
+/** 生成JSの位置だけ元TSへ戻す。対応不能なJS位置は省き、非JS診断はそのまま保持する。 */
 export function mapTypeScriptDiagnostics(
   diagnostics: readonly RunnerDiagnostic[],
   sourceMaps: Readonly<Record<string, string>>,
@@ -41,7 +41,7 @@ export function mapTypeScriptDiagnostics(
   const maps = new Map<string, TraceMap | undefined>();
   return diagnostics.map((diagnostic) => {
     const { file, line, column, ...detail } = diagnostic;
-    if (!file?.endsWith('.js')) return detail;
+    if (!file?.endsWith('.js')) return diagnostic;
     const originalFile = file.replace(/\.js$/u, '.ts');
     if (!Object.hasOwn(sources, originalFile)) return detail;
     if (!maps.has(file)) maps.set(file, readCompilerMap(sourceMaps[file], file));
