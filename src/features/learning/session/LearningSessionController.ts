@@ -863,6 +863,39 @@ export class LearningSessionController {
     throw error;
   }
 
+  /** 同一実行の観測で型誤り・未対応・制限停止を見つけたら、学習履歴へ渡す前に中断する。 */
+  #assertObservationGradable(
+    rendered: ExecutionResult,
+    observation: {
+      readonly diagnostics: readonly RunnerDiagnostic[];
+      readonly console: readonly RunnerConsoleRecord[];
+    },
+  ): void {
+    const { diagnostics } = observation;
+    const status = executionStatus(diagnostics);
+    if (
+      status === 'type-error' ||
+      status === 'unsupported' ||
+      status === 'system-error' ||
+      status === 'stopped'
+    ) {
+      const result: ExecutionResult = {
+        ...rendered,
+        status,
+        diagnostics,
+        console: observation.console,
+      };
+      this.#replaceState({ ...this.#state, executionResult: result });
+      this.#dispatch({
+        type: 'preview.completed',
+        revision: rendered.executionRevision,
+        diagnostics,
+        console: [],
+      });
+      throw new ExecutionNotGradableError(result);
+    }
+  }
+
   /** 共通Scenario実行へ現在sessionの鮮度・実行不能処理を接続する。 */
   async #runInteractionScenario(
     execution: ExecutionInput,
@@ -870,6 +903,7 @@ export class LearningSessionController {
     policy: SnapshotPolicy,
     scenario: JavaScriptInteractionScenario,
     usedRequestIds: Set<string>,
+    observedDiagnostics: RunnerDiagnostic[],
   ): Promise<InteractionCheckpointResult[]> {
     const dom = this.#requireDom();
     const interact = dom.interact?.bind(dom);
@@ -893,29 +927,9 @@ export class LearningSessionController {
       nextRequestId: () => this.#nextRequestId(usedRequestIds),
       assertGradable: (interaction) => {
         const diagnostics = interaction.diagnostics ?? [];
-        const status = executionStatus(diagnostics);
-        if (
-          status === 'type-error' ||
-          status === 'unsupported' ||
-          status === 'system-error' ||
-          status === 'stopped'
-        ) {
-          if (rendered === undefined) throw new Error('Interaction Previewが未実行です');
-          const result: ExecutionResult = {
-            ...rendered,
-            status,
-            diagnostics,
-            console: interaction.console,
-          };
-          this.#replaceState({ ...this.#state, executionResult: result });
-          this.#dispatch({
-            type: 'preview.completed',
-            revision: execution.revision,
-            diagnostics,
-            console: [],
-          });
-          throw new ExecutionNotGradableError(result);
-        }
+        if (rendered === undefined) throw new Error('Interaction Previewが未実行です');
+        this.#assertObservationGradable(rendered, { diagnostics, console: interaction.console });
+        observedDiagnostics.push(...diagnostics);
       },
     });
   }
@@ -979,6 +993,10 @@ export class LearningSessionController {
         policy,
       });
       this.#assertFresh(execution);
+      if (currentSnapshot.runtimeObservation !== undefined) {
+        this.#assertObservationGradable(rendered, currentSnapshot.runtimeObservation);
+        diagnostics.push(...currentSnapshot.runtimeObservation.diagnostics);
+      }
       snapshots[viewport.id] = currentSnapshot;
       for (const item of plan.exercises) {
         const scenarios = item.interactionScenarios ?? [];
@@ -993,6 +1011,7 @@ export class LearningSessionController {
               policy,
               scenario,
               usedRequestIds,
+              diagnostics,
             )),
           );
         }
@@ -1009,7 +1028,7 @@ export class LearningSessionController {
         ...(item.runtime === undefined ? {} : { runtime: item.runtime }),
         files: execution.files,
         snapshots,
-        diagnostics,
+        diagnostics: dedupeDiagnostics(diagnostics),
         evidence: evidence ?? [],
         console: renderConsole ?? [],
         interactionScenarios: item.interactionScenarios ?? [],

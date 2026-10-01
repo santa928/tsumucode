@@ -803,6 +803,8 @@ Ch08-l01は15分/4Slide/1演習。Ch00〜07と合わせ32Lesson/128Slide/34Exerc
 | REQ-JS-PROMISE-003 | 維持 | 既習callback/Array/Object/DOM/clickをつなぐ。引数名・named callbackの別解を許容 |
 | REQ-JS-PROMISE-004 | 維持 | .12→.13空移行、ID/進捗/下書き/ImportExportと限定試用を維持 |
 | REQ-JS-PROMISE-005 | 維持 | async/await・失敗処理・読み込みstateは後続。実通信/公開昇格/人試用の代替は非対象 |
-| REQ-JS-PROMISE-006 | 維持 | 750msの既存Scenario観測、Home分離、安全境界を維持。Runtime前提はPR63の独立レビュー後統合 |
+| REQ-JS-PROMISE-006 | 維持 | 750msの既存Scenario観測、Home分離、安全境界を維持。最新Promise境界PR63と遅延診断PR66を候補branchに保持し、両PRと本教材の最新HEAD独立レビュー・必要CI後だけmainへ統合 |
 
 20分4Slide1演習、候補40Lesson160Slide42演習655分。Ch10計画75分のうち最初の20分であり、残り3単元55分は未完。受入は実Runner/Validatorの正誤・掲載例・編集Reset再編集判定保存・狭幅読書で確認する。候補をmain/公開完了とは扱わない。
+
+2026-10-02の前提更新では、表示絞り込みPR62 `fde451c610247682c4b44a3d3f196fe525fe40aa`、Promise境界PR63 `c1a14bd86c78802bb61434936e2721082f1dd760`、遅延診断PR66 `0ec8b6c823efde5bbac7ec949700598dfd03048b`を履歴を保持して候補branchに合わせる。前回のRuntime一時上書きは今回の検証入力に使わない。REQ-JS-PROMISE-001〜006の教材・受入・非対象・Home予算・公開Gateは維持し、追加・保留・削除はない。PR56/57/58/59はmain統合済みだが、PR60/61/62/63/66と本教材の独立レビューは未完である。新しいRuntime前提も本PRの差分へ含まれるため、教材だけの変更とは扱わない。検証とCIの実結果はPR本文へ記録し、成功しても内容hash台帳の承認、人の初心者試用・物理実機・全Course受入を完了扱いにしない。
