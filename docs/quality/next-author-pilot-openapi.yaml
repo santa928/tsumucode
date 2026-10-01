@@ -1,0 +1,36 @@
+openapi: 3.1.0
+info:
+  title: Next固定作者Starterの観察用HTTP
+  version: 0.0.0
+  description: 信頼した作者原稿だけの技術確認。TsumuCode管理APIや学習者Runtimeの契約ではない。
+servers:
+  - url: http://127.0.0.1:4260
+    description: Dockerコンテナ内部loopbackの一時作者サーバー。Hostへ公開しない。
+paths:
+  /api/question:
+    get:
+      operationId: observeAuthorQuestion
+      summary: 実request queryに応じた作者データを返す
+      parameters:
+        - name: mode
+          in: query
+          required: false
+          description: secondだけ2つ目のmessage。それ以外と省略時は最初のmessage。
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 現在の作者sourceに対応するJSON
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [revision, message]
+                properties:
+                  revision:
+                    type: string
+                    example: author-1
+                  message:
+                    type: string
+                    enum: [最初の実リクエスト, 2つ目の実リクエスト]
