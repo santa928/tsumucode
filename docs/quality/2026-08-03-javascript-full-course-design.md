@@ -898,3 +898,12 @@ Ch08-l01は15分/4Slide/1演習。Ch00〜07と合わせ32Lesson/128Slide/34Exerc
 | REQ-JS-KEY-001〜005 | 維持 | 標準キー動作/条件/他キー保持、実キーと合成Scenarioの証拠区別、空移行/保存、安全/有限観測/Home性能、独立レビュー/公開Gate、人の受入/後続非対象を保持 |
 
 追加・保留・削除はない。現在の実Runner/Validator、標準buttonの実Enter/Space/Escape、編集・Reset・別解再編集・判定・保存再開、狭幅読書で確認する。Tab修正と最新Runtimeを組み合わせた既存iframe復帰も実Browserで確認し、一致するRuntime・読書の有効な成功証拠は範囲を示して再利用する。前提PR63/66/69と本教材の最新HEAD独立レビュー・必要CI、内容hash台帳を満たすまでmainへ統合しない。Ch11残2単元/Project、初心者本人試用・物理実機・全Course/正式公開受入は別条件として残す。
+
+Ch11-l01の操作画面を実目視した後、全体Previewの親canvas幅によるWebKitの横ずれを検出した。PR69 `2416fa2800e12d2dd0538e6dfb038c5522f0af8f`の表示寸法修正と独立回帰を追加で取り込み、Ch11の実ArrowRight後にも左右端とscrollLeftを確認する。標準キーの既定動作/iframeの論理Viewport/同じ実行状態は維持する。
+
+| 要件 | 区分 | 横ずれ修正を取り込んだ差分 |
+|---|---|---|
+| REQ-JS-KEY-001〜005 | 維持 | 教材のキー条件/他キー保持、実キーと合成Scenarioの証拠区別、保存/能力/Home分離、残単元/人受入/Gateを保持 |
+| REQ-DOM-KEY-004 | 維持 | PR69で追加した全体表示の寸法と100%表示切替の契約を同じPreviewへ適用 |
+
+この教材側の追加・保留・削除はない。Course候補44Lesson/176Slide/46Exercise/725分とCh11残2単元35分は変わらない。新表示入力で実3Browserと代表画面を再検証し、教材/Runtime bytesが同一の実Fixture・掲載例だけを再利用する。内容hash承認、固定HEAD独立レビュー、公開前の既存性能/Release Gate、本人初心者試用・実機・正式公開受入は別条件として保持する。

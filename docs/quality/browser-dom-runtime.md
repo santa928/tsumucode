@@ -117,4 +117,17 @@ Ch11の実操作検証で、iframeのtabindex=-1が内部の操作先も通常�
 |---|---|---|
 | REQ-DOM-KEY-001〜003 | 維持 | 実Esc→Tabによる入場、入力後に親へ戻る状態保持、scriptless/安全境界を保持 |
 
-追加・保留・削除はない。受入は既存DOM入力教材の実Keyboard操作とiframeからの最初のReset/Preview/判定、関連Unit・型検査・Buildで確認する。人の実機/初心者試用、Ch11教材、公開昇格は非対象として別条件に残す。フォーカス復帰時のLease再確認で実行状態を失わないことを既存Gateと実Browserで確認し、Home分離/既存性能予算/公開Gateは維持する。最新HEAD独立レビューと必要CIを満たすまでmainへ統合しない。
+この前提更新では追加・保留・削除はない。受入は既存DOM入力教材の実Keyboard操作とiframeからの最初のReset/Preview/判定、関連Unit・型検査・Buildで確認する。人の実機/初心者試用、Ch11教材、公開昇格は非対象として別条件に残す。フォーカス復帰時のLease再確認で実行状態を失わないことを既存Gateと実Browserで確認し、Home分離/既存性能予算/公開Gateは維持する。最新HEAD独立レビューと必要CIを満たすまでmainへ統合しない。
+
+### Keyboard操作中の全体表示を保持する
+
+PR70候補をWebKitの実画面で確認した際、標準buttonでArrowRightを押すと「全体表示」の左端が切れることを検出した。iframe自体は縮小されていても、その親canvasは未縮小の1282px幅を保持しており、351pxの作業台で親scrollLeftが49pxになった。子文書のscrollLeftは0で、外側の不要な水平移動が原因だった。
+
+| 要件 | 区分 | 実測から追加した差分 |
+|---|---|---|
+| REQ-DOM-KEY-001〜003 | 維持 | Tab入場・親復帰・状態保持と安全境界を保持 |
+| REQ-DOM-KEY-004 | 追加 | 全体表示ではcanvasを表示後の寸法に合わせて未縮小iframeのoverflowを閉じ、標準キー操作後も左右端を作業台内へ収める。100%表示の水平移動と切替時の状態保持は残す |
+
+保留・削除はない。入力の既定動作をpreventDefaultしたりfocusを強制したりせず、表示側の寸法を修正する。iframeの論理Viewport、同じnode、入力/実行状態、sandbox/CSP/Leaseは変更しない。既存Ch08-l01の実Esc→Tab→標準button Enter/ArrowRight、外側scrollWidth/clientWidthと左右端、100%表示の移動、全体表示への復帰を3Browserで確認する。100%表示のscroll能力は位置の実測で、Keyboard-onlyでの移動証拠とは区別する。代表1280x720の全体/100%画像を実目視する。重い全画面Visual/性能/公開Gateは公開条件として維持し、初心者/実機/Ch11教材の完了へ拡張しない。
+
+PR70の教材候補へはPR69の固定HEAD `2416fa2800e12d2dd0538e6dfb038c5522f0af8f`を履歴保持で取り込み、上記KEY-004の修正を同じPreviewへ適用する。Ch11-l01でも実Enter/ArrowRight/Escape/Spaceの後に全体表示のscrollLeft=0と不要な水平幅がないことを確認する。Runtime Protocol/Controller/Scenario/教材sourceは前候補から不変で、既存の実Fixture・掲載例の成功証拠はその同一入力範囲で再利用する。製品表示とnative UI/Leaseは新artifactで再検証し、内容hash承認・最新HEAD独立レビュー・main統合・公開・人の受入は別条件に残す。
