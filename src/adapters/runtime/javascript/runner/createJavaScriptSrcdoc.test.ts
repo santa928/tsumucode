@@ -207,6 +207,9 @@ describe('createJavaScriptExecutionSource', () => {
           oneTimeToken: 'interaction-token',
           payload: {
             error: null,
+            budgetExhausted: false,
+            timerLimitExceeded: false,
+            runtimeError: null,
             currentTargetFailure: null,
             submitEvidence: 'unsupported',
             console: [{ sequence: 0, level: 'log', text: 'clicked' }],

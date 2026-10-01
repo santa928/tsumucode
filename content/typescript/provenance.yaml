@@ -1,0 +1,174 @@
+schemaVersion: 1
+defaults:
+  method: original-authored
+  createdAt: 2026-10-01
+  creator: TsumuCode project
+  sourceUrl: none
+  license: project-original
+  modified: false
+items:
+  - id: typescript-source-1
+    visibility: public
+    path: chapters/typescript-ch01/chapter.yaml
+  - id: typescript-source-2
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/exercises/typescript-ch01-l01-e01/exercise.yaml
+  - id: typescript-source-3
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/exercises/typescript-ch01-l01-e01/fixtures/alternative.ts
+  - id: typescript-source-4
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/exercises/typescript-ch01-l01-e01/fixtures/annotation.ts
+  - id: typescript-source-5
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/exercises/typescript-ch01-l01-e01/fixtures/any.ts
+  - id: typescript-source-6
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/exercises/typescript-ch01-l01-e01/fixtures/assertion.ts
+  - id: typescript-source-7
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/exercises/typescript-ch01-l01-e01/fixtures/const.ts
+  - id: typescript-source-8
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/exercises/typescript-ch01-l01-e01/fixtures/index.html
+  - id: typescript-source-9
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/exercises/typescript-ch01-l01-e01/fixtures/nocheck.ts
+  - id: typescript-source-10
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/exercises/typescript-ch01-l01-e01/fixtures/output-only.ts
+  - id: typescript-source-11
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/exercises/typescript-ch01-l01-e01/fixtures/solution.ts
+  - id: typescript-source-12
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/exercises/typescript-ch01-l01-e01/fixtures/starter.ts
+  - id: typescript-source-13
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/exercises/typescript-ch01-l01-e01/fixtures/string-initializer.ts
+  - id: typescript-source-14
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/exercises/typescript-ch01-l01-e01/fixtures/suppressed.ts
+  - id: typescript-source-15
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/exercises/typescript-ch01-l01-e01/fixtures/union-escape.ts
+  - id: typescript-source-16
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/exercises/typescript-ch01-l01-e01/fixtures/wrong-value.ts
+  - id: typescript-source-17
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/exercises/typescript-ch01-l01-e01/instructions.md
+  - id: typescript-source-18
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/exercises/typescript-ch01-l01-e01/solution/index.html
+  - id: typescript-source-19
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/exercises/typescript-ch01-l01-e01/solution/main.ts
+  - id: typescript-source-20
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/exercises/typescript-ch01-l01-e01/starter/index.html
+  - id: typescript-source-21
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/exercises/typescript-ch01-l01-e01/starter/main.ts
+  - id: typescript-source-22
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/lesson.yaml
+  - id: typescript-ch01-l01-number-update-original
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/slides/assets/number-update.svg
+  - id: typescript-source-24
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/slides/s01-inference.md
+  - id: typescript-source-25
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/slides/s02-reassignment.md
+  - id: typescript-source-26
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/slides/s03-number-update.md
+  - id: typescript-source-27
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l01/slides/s04-checkpoint.md
+  - id: typescript-source-28
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/exercises/typescript-ch01-l02-e01/exercise.yaml
+  - id: typescript-source-29
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/exercises/typescript-ch01-l02-e01/fixtures/alternative.ts
+  - id: typescript-source-30
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/exercises/typescript-ch01-l02-e01/fixtures/any-escape.ts
+  - id: typescript-source-31
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/exercises/typescript-ch01-l02-e01/fixtures/const.ts
+  - id: typescript-source-32
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/exercises/typescript-ch01-l02-e01/fixtures/double-assertion.ts
+  - id: typescript-source-33
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/exercises/typescript-ch01-l02-e01/fixtures/index.html
+  - id: typescript-source-34
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/exercises/typescript-ch01-l02-e01/fixtures/inference-only.ts
+  - id: typescript-source-35
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/exercises/typescript-ch01-l02-e01/fixtures/nocheck-escape.ts
+  - id: typescript-source-36
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/exercises/typescript-ch01-l02-e01/fixtures/output-only.ts
+  - id: typescript-source-37
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/exercises/typescript-ch01-l02-e01/fixtures/solution.ts
+  - id: typescript-source-38
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/exercises/typescript-ch01-l02-e01/fixtures/starter.ts
+  - id: typescript-source-39
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/exercises/typescript-ch01-l02-e01/fixtures/suppressed.ts
+  - id: typescript-source-40
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/exercises/typescript-ch01-l02-e01/fixtures/union-escape.ts
+  - id: typescript-source-41
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/exercises/typescript-ch01-l02-e01/fixtures/wrong-value.ts
+  - id: typescript-source-42
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/exercises/typescript-ch01-l02-e01/instructions.md
+  - id: typescript-source-43
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/exercises/typescript-ch01-l02-e01/solution/index.html
+  - id: typescript-source-44
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/exercises/typescript-ch01-l02-e01/solution/main.ts
+  - id: typescript-source-45
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/exercises/typescript-ch01-l02-e01/starter/index.html
+  - id: typescript-source-46
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/exercises/typescript-ch01-l02-e01/starter/main.ts
+  - id: typescript-source-47
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/lesson.yaml
+  - id: typescript-ch01-l02-annotated-score-original
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/slides/assets/annotated-score.svg
+  - id: typescript-source-49
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/slides/s01-annotation.md
+  - id: typescript-source-50
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/slides/s02-type-mismatch.md
+  - id: typescript-source-51
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/slides/s03-inference.md
+  - id: typescript-source-52
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l02/slides/s04-checkpoint.md
+  - id: typescript-source-53
+    visibility: public
+    path: concepts.yaml
+  - id: typescript-source-54
+    visibility: public
+    path: course.yaml
+  - id: typescript-source-55
+    visibility: public
+    path: glossary.yaml
