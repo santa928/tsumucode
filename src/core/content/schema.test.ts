@@ -6,6 +6,7 @@ import {
   CourseManifestSchema,
   ExerciseSchema,
   JavaScriptValidationRuleDefinitionSchema,
+  TypeScriptExerciseRuntimeSchema,
   PreviewViewportSchema,
   SlideSchema,
   LessonSchema,
@@ -561,6 +562,28 @@ describe('CourseManifestSchema 公開境界', () => {
     expectCourseIssue(course, 'JavaScript ExerciseにはRuntime設定が必要です');
   });
 
+  it('TypeScriptはmoduleと.ts entryだけを受理し、CourseにもRuntimeを必須にする', () => {
+    const runtime = {
+      kind: 'typescript',
+      entryFile: 'main.ts',
+      sourceType: 'module',
+      capabilityProfile: 'dom',
+      primaryOutput: 'preview',
+    };
+    expect(TypeScriptExerciseRuntimeSchema.safeParse(runtime).success).toBe(true);
+    for (const entryFile of ['main.js', 'types.d.ts', 'main.tsx', '../main.ts']) {
+      expect(TypeScriptExerciseRuntimeSchema.safeParse({ ...runtime, entryFile }).success).toBe(
+        false,
+      );
+    }
+    expect(
+      TypeScriptExerciseRuntimeSchema.safeParse({ ...runtime, sourceType: 'script' }).success,
+    ).toBe(false);
+    const course = cloneCourse();
+    course.runnerId = 'typescript';
+    expectCourseIssue(course, 'TypeScript ExerciseにはRunnerと一致するRuntime設定が必要です');
+  });
+
   it('HTML/CSS RunnerのCourseへJavaScript Runtime設定を許可しない', () => {
     const course = cloneCourse();
     Object.assign(firstStandardExercise(firstStandardLesson(course)), {
@@ -574,6 +597,145 @@ describe('CourseManifestSchema 公開境界', () => {
     });
 
     expectCourseIssue(course, 'Course RunnerとRuntime設定が一致しません');
+  });
+
+  it('TypeScript採点で型消去後のJavaScript Source Ruleを教材要件に指定できない', () => {
+    const course = cloneCourse();
+    course.validatorId = 'typescript';
+    const exercise = firstStandardExercise(firstStandardLesson(course));
+    exercise.validationRules[0] = {
+      ...exercise.validationRules[0]!,
+      target: { kind: 'javascript-source', file: 'index.html' },
+      assertion: {
+        kind: 'javascript-source-fact',
+        fact: { kind: 'binding', name: 'value', declarationKind: 'const' },
+      },
+    };
+    expectCourseIssue(
+      course,
+      'TypeScript採点はDOM/Consoleまたは対応する型習得Ruleを指定してください',
+    );
+  });
+
+  it.each(['annotation', 'inference'] as const)(
+    '%s Lessonは専用profileと必須Console Ruleの両方が必要になる',
+    (mode) => {
+      const course = cloneCourse();
+      course.runnerId = 'typescript';
+      course.validatorId = 'typescript';
+      const lesson = firstStandardLesson(course);
+      const exercise = firstStandardExercise(lesson);
+      lesson.id = mode === 'inference' ? 'typescript-ch01-l01' : 'typescript-ch01-l02';
+      exercise.id = `${lesson.id}-e01`;
+      lesson.completion.requiredExerciseIds = [exercise.id];
+      exercise.steps = [];
+      exercise.files.push({
+        path: 'main.ts',
+        language: 'typescript',
+        content: 'let score: number = 2; console.log(score);',
+        editable: true,
+      });
+      exercise.runtime = {
+        kind: 'typescript',
+        entryFile: 'main.ts',
+        sourceType: 'module',
+        capabilityProfile: 'core',
+        primaryOutput: 'console',
+      };
+      const base = exercise.validationRules[0]!;
+      exercise.validationRules = [
+        {
+          ...base,
+          id: 'annotation',
+          target: { kind: 'typescript-learning', file: 'main.ts' },
+          assertion: {
+            kind: 'typescript-learning',
+            profile:
+              mode === 'inference' ? 'score-number-inference-v1' : 'score-number-annotation-v1',
+          },
+        },
+        {
+          ...base,
+          id: 'output',
+          target: { kind: 'javascript-console' },
+          assertion: {
+            kind: 'javascript-console',
+            operator: 'equals',
+            expected: [{ level: 'log', text: '2' }],
+          },
+        },
+      ];
+      expect(CourseManifestSchema.safeParse(course).success).toBe(true);
+      for (const change of [
+        'missing-type',
+        'missing-output',
+        'optional-output',
+        'wrong-output',
+        'any-output',
+        'grouped-output',
+        'duplicate-output',
+        'duplicate-type',
+        'other-lesson',
+        'other-profile',
+      ] as const) {
+        const altered = structuredClone(course);
+        const alteredLesson = firstStandardLesson(altered);
+        const alteredExercise = firstStandardExercise(alteredLesson);
+        if (change === 'missing-type') alteredExercise.validationRules.shift();
+        if (change === 'missing-output') alteredExercise.validationRules.pop();
+        if (change === 'optional-output') alteredExercise.validationRules[1]!.required = false;
+        if (change === 'wrong-output')
+          alteredExercise.validationRules[1]!.assertion = {
+            kind: 'javascript-console',
+            operator: 'equals',
+            expected: [{ level: 'log', text: '3' }],
+          };
+        if (change === 'any-output') alteredExercise.validationRules[1]!.group = 'any';
+        if (change === 'grouped-output') alteredExercise.validationRules[1]!.groupId = 'shared';
+        if (change === 'duplicate-output')
+          alteredExercise.validationRules.push({
+            ...alteredExercise.validationRules[1]!,
+            id: 'output-other',
+          });
+        if (change === 'duplicate-type')
+          alteredExercise.validationRules.push({
+            ...alteredExercise.validationRules[0]!,
+            id: 'annotation-other',
+          });
+        if (change === 'other-lesson') alteredLesson.id = 'other-lesson';
+        if (change === 'other-profile')
+          alteredExercise.validationRules[0]!.assertion = {
+            kind: 'typescript-learning',
+            profile:
+              mode === 'inference' ? 'score-number-annotation-v1' : 'score-number-inference-v1',
+          };
+        expectCourseIssue(
+          altered,
+          '型習得Ruleは専用Lessonの単一必須RuleとConsole条件を指定してください',
+        );
+      }
+    },
+  );
+
+  it('TypeScript Courseの型付きentryとDOM採点を配信契約へ通す', () => {
+    const course = cloneCourse();
+    course.runnerId = 'typescript';
+    course.validatorId = 'typescript';
+    const exercise = firstStandardExercise(firstStandardLesson(course));
+    exercise.files.push({
+      path: 'main.ts',
+      language: 'typescript',
+      content: 'const score: number = 2;',
+      editable: true,
+    });
+    exercise.runtime = {
+      kind: 'typescript',
+      entryFile: 'main.ts',
+      sourceType: 'module',
+      capabilityProfile: 'dom',
+      primaryOutput: 'console',
+    };
+    expect(CourseManifestSchema.parse(course)).toEqual(course);
   });
 });
 

@@ -1,0 +1,9 @@
+id: typescript-ch01
+sequence: 0
+title: 型推論と型注釈
+goal: 最初の値から判断される型と、自分で書く型を区別し、数値の得点を更新できる。
+estimatedMinutes: 30
+kind: standard
+lessonSources:
+  - lessons/typescript-ch01-l01/lesson.yaml
+  - lessons/typescript-ch01-l02/lesson.yaml
