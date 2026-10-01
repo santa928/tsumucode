@@ -890,3 +890,11 @@ Ch08-l01は15分/4Slide/1演習。Ch00〜07と合わせ32Lesson/128Slide/34Exerc
 | REQ-JS-KEY-005 | 維持 | Ch11残2単元/Project/本人試用/独立レビュー/公開は未完 |
 
 15分4Slide1演習、候補44Lesson176Slide46演習725分。読み取り専用HTMLは標準buttonと明確な名前、CSSはFocus枠を提供し、学習者はJavaScriptの条件へ集中する。実操作ではTabからEnter/Space/Escapeを試し、390px読書と既存保存を確認。画面全体のキー捕捉やRuntimeの合成キーをOS相当とみなす変更は行わない。
+
+2026-10-02のCh11-l01前提更新はPR68 `49d9e2995c55ec68c47de1b76940263be586a224`と、実Tab入場修正PR69 `853d7c4541163f01d770bc771f9ef052f51d647b`を履歴保持で候補へ取り込む。最新Promise境界・遅延診断・読書コピー拒否案内を含む実入力とし、旧Runtime一時上書きは使わない。標準buttonのEnter/Spaceと、追加したEscape handlerの合成Scenario検査を区別する。
+
+| 要件 | 区分 | 最新前提へ合わせた差分 |
+|---|---|---|
+| REQ-JS-KEY-001〜005 | 維持 | 標準キー動作/条件/他キー保持、実キーと合成Scenarioの証拠区別、空移行/保存、安全/有限観測/Home性能、独立レビュー/公開Gate、人の受入/後続非対象を保持 |
+
+追加・保留・削除はない。現在の実Runner/Validator、標準buttonの実Enter/Space/Escape、編集・Reset・別解再編集・判定・保存再開、狭幅読書で確認する。Tab修正と最新Runtimeを組み合わせた既存iframe復帰も実Browserで確認し、一致するRuntime・読書の有効な成功証拠は範囲を示して再利用する。前提PR63/66/69と本教材の最新HEAD独立レビュー・必要CI、内容hash台帳を満たすまでmainへ統合しない。Ch11残2単元/Project、初心者本人試用・物理実機・全Course/正式公開受入は別条件として残す。
