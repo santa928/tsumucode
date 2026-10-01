@@ -20,5 +20,5 @@ render();
 const fixedName = document.createElement('span');
 fixedName.setAttribute('id', 'fixed-name');
 fixedName.textContent = 'ヒントを開く';
-document.body.append(fixedName);
+document.querySelector('main').append(fixedName);
 button.setAttribute('aria-labelledby', 'fixed-name');
