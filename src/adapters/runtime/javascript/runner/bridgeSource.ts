@@ -474,6 +474,12 @@ function createRuntimeState(
     }
   };
 
+  // 学習者にwindow listenerを開放せず、未捕捉拒否を同じbounded error状態へ記録する。
+  addWindowListener('unhandledrejection', (event: PromiseRejectionEvent) => {
+    runtimeError = errorRecord(event.reason);
+    event.preventDefault();
+  });
+
   const executeCallback = (
     callback: (...args: unknown[]) => unknown,
     args: unknown[],
@@ -695,17 +701,19 @@ function createRuntimeState(
       'version',
     ];
     const isInteraction = message.type === 'javascript.interact';
+    const isObservation = message.type === 'javascript.observe';
+    const reportsState = isInteraction || isObservation;
     const expected = (
-      isInteraction ? [...expectedCommon, 'frameGeneration'] : expectedCommon
+      reportsState ? [...expectedCommon, 'frameGeneration'] : expectedCommon
     ).sort();
     if (
       keys.length !== expected.length ||
       !keys.every((key, index) => key === expected[index]) ||
       message.version !== version ||
-      (message.type !== 'javascript.clear-timers' && !isInteraction) ||
+      (message.type !== 'javascript.clear-timers' && !reportsState) ||
       message.exerciseSessionId !== config.exerciseSessionId ||
       message.executionRevision !== config.executionRevision ||
-      (isInteraction && message.frameGeneration !== config.frameGeneration) ||
+      (reportsState && message.frameGeneration !== config.frameGeneration) ||
       typeof message.requestId !== 'string' ||
       message.requestId.length === 0 ||
       message.requestId.length > 256 ||
@@ -718,10 +726,10 @@ function createRuntimeState(
     ) {
       return;
     }
-    if (isInteraction) {
-      submitObservation?.begin();
-      const result = executeInteraction(message.payload);
-      if (submitObservation !== null)
+    if (reportsState) {
+      if (isInteraction) submitObservation?.begin();
+      const result = isInteraction ? executeInteraction(message.payload) : { error: null };
+      if (isInteraction && submitObservation !== null)
         submitEvidence = submitObservation.end() ? 'prevented' : 'not-prevented';
       if (result.error?.code === 'invalid-action') return;
       usedRequestIds.add(message.requestId);
@@ -733,6 +741,9 @@ function createRuntimeState(
         message.oneTimeToken,
         {
           error: result.error,
+          budgetExhausted,
+          timerLimitExceeded,
+          runtimeError,
           console: copyConsoleRecords(),
           currentTargetFailure,
           submitEvidence,

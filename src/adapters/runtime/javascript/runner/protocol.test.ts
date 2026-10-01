@@ -42,6 +42,9 @@ function interactionEnvelope(overrides: Readonly<Record<string, unknown>> = {}):
     oneTimeToken: 'interaction-token-1',
     payload: {
       error: null,
+      budgetExhausted: false,
+      timerLimitExceeded: false,
+      runtimeError: null,
       console: [record],
       currentTargetFailure: null,
       submitEvidence: 'unsupported',
@@ -75,6 +78,9 @@ describe('isJavaScriptRuntimeEnvelope console contract', () => {
           interactionEnvelope({
             payload: {
               error: null,
+              budgetExhausted: false,
+              timerLimitExceeded: false,
+              runtimeError: null,
               console: [],
               currentTargetFailure,
               submitEvidence: 'unsupported',
@@ -90,6 +96,9 @@ describe('isJavaScriptRuntimeEnvelope console contract', () => {
           interactionEnvelope({
             payload: {
               error: null,
+              budgetExhausted: false,
+              timerLimitExceeded: false,
+              runtimeError: null,
               console: [],
               currentTargetFailure,
               submitEvidence: 'unsupported',
@@ -108,6 +117,9 @@ describe('isJavaScriptRuntimeEnvelope console contract', () => {
           interactionEnvelope({
             payload: {
               error: null,
+              budgetExhausted: false,
+              timerLimitExceeded: false,
+              runtimeError: null,
               console: [],
               currentTargetFailure: null,
               submitEvidence,
@@ -123,6 +135,9 @@ describe('isJavaScriptRuntimeEnvelope console contract', () => {
           interactionEnvelope({
             payload: {
               error: null,
+              budgetExhausted: false,
+              timerLimitExceeded: false,
+              runtimeError: null,
               console: [],
               currentTargetFailure: null,
               submitEvidence,
@@ -191,6 +206,9 @@ describe('isJavaScriptRuntimeEnvelope console contract', () => {
         interactionEnvelope({
           payload: {
             error: { code: 'target-not-found', message: 'なし' },
+            budgetExhausted: false,
+            timerLimitExceeded: false,
+            runtimeError: null,
             console: [],
             currentTargetFailure: null,
             submitEvidence: 'unsupported',
@@ -204,6 +222,9 @@ describe('isJavaScriptRuntimeEnvelope console contract', () => {
         interactionEnvelope({
           payload: {
             error: null,
+            budgetExhausted: false,
+            timerLimitExceeded: false,
+            runtimeError: null,
             console: [],
             currentTargetFailure: null,
             submitEvidence: 'unsupported',
@@ -228,109 +249,119 @@ describe('isJavaScriptRuntimeEnvelope console contract', () => {
 });
 
 describe('JavaScriptExecutionClient interaction identity', () => {
-  it('同じsource・session・revision・generation・request・tokenの応答だけを確定する', async () => {
-    const frame = document.createElement('iframe');
-    const wrongFrame = document.createElement('iframe');
-    document.body.append(frame, wrongFrame);
-    const postMessage = vi
-      .spyOn(frame.contentWindow!, 'postMessage')
-      .mockImplementation(() => undefined);
-    const client = new JavaScriptExecutionClient(frame, 'session-1', 1, 'token-1', {
-      frameGeneration: 7,
-      tokenFactory: () => 'interaction-token-1',
-    });
-    dispatchExecutionReady(frame);
-    await client.waitUntilExecuted();
-    const request: InteractionRequest = {
-      exerciseSessionId: 'session-1',
-      executionRevision: 1,
-      frameGeneration: 7,
-      requestId: 'interaction-1',
-      action: { id: 'choose', kind: 'click', selector: '#answer' },
-    };
-
-    const pending = client.interact(request);
-    expect(postMessage).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: 'javascript.interact',
+  it.each(['interaction', 'observation'] as const)(
+    '%sは同じsource・session・revision・generation・request・tokenの応答だけを確定する',
+    async (mode) => {
+      const frame = document.createElement('iframe');
+      const wrongFrame = document.createElement('iframe');
+      document.body.append(frame, wrongFrame);
+      const postMessage = vi
+        .spyOn(frame.contentWindow!, 'postMessage')
+        .mockImplementation(() => undefined);
+      const client = new JavaScriptExecutionClient(frame, 'session-1', 1, 'token-1', {
         frameGeneration: 7,
-        requestId: 'interaction-1',
-        oneTimeToken: 'interaction-token-1',
-        payload: request.action,
-      }),
-      '*',
-    );
-    let settled = false;
-    void pending.then(() => {
-      settled = true;
-    });
-    for (const [source, overrides] of [
-      [wrongFrame.contentWindow, {}],
-      [frame.contentWindow, { executionRevision: 2 }],
-      [frame.contentWindow, { frameGeneration: 8 }],
-      [frame.contentWindow, { oneTimeToken: 'wrong-token' }],
-    ] as const) {
-      window.dispatchEvent(
-        new MessageEvent('message', {
-          source,
-          data: interactionEnvelope(overrides),
-        }),
-      );
-    }
-    await Promise.resolve();
-    expect(settled).toBe(false);
-    window.dispatchEvent(
-      new MessageEvent('message', {
-        source: frame.contentWindow,
-        data: interactionEnvelope(),
-      }),
-    );
-
-    await expect(pending).resolves.toEqual({
-      exerciseSessionId: 'session-1',
-      executionRevision: 1,
-      frameGeneration: 7,
-      requestId: 'interaction-1',
-      console: [record],
-      diagnostics: [],
-      submitEvidence: 'unsupported',
-    });
-    await expect(client.interact(request)).rejects.toThrow(/duplicated/u);
-    client.dispose();
-  });
-
-  it('別generation要求を送信前に拒否し、disposeでpending Interactionを終了する', async () => {
-    const frame = document.createElement('iframe');
-    document.body.append(frame);
-    const postMessage = vi
-      .spyOn(frame.contentWindow!, 'postMessage')
-      .mockImplementation(() => undefined);
-    const client = new JavaScriptExecutionClient(frame, 'session-1', 1, 'token-1', {
-      frameGeneration: 7,
-      tokenFactory: () => 'interaction-token-1',
-    });
-    dispatchExecutionReady(frame);
-    await client.waitUntilExecuted();
-
-    await expect(
-      client.interact({
+        tokenFactory: () => 'interaction-token-1',
+      });
+      dispatchExecutionReady(frame);
+      await client.waitUntilExecuted();
+      const request: InteractionRequest = {
         exerciseSessionId: 'session-1',
         executionRevision: 1,
-        frameGeneration: 8,
-        requestId: 'wrong-generation',
+        frameGeneration: 7,
+        requestId: 'interaction-1',
         action: { id: 'choose', kind: 'click', selector: '#answer' },
-      }),
-    ).rejects.toThrow(/identity/u);
-    expect(postMessage).not.toHaveBeenCalled();
+      };
 
-    const pending = client.interact({
-      exerciseSessionId: 'session-1',
-      executionRevision: 1,
-      frameGeneration: 7,
-      requestId: 'interaction-1',
-      action: { id: 'choose', kind: 'click', selector: '#answer' },
-    });
-    client.dispose();
-    await expect(pending).rejects.toThrow(/disposed/u);
-  });
+      const send = () =>
+        mode === 'interaction' ? client.interact(request) : client.observe(request);
+      const pending = send();
+      expect(postMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: mode === 'interaction' ? 'javascript.interact' : 'javascript.observe',
+          frameGeneration: 7,
+          requestId: 'interaction-1',
+          oneTimeToken: 'interaction-token-1',
+          payload: mode === 'interaction' ? request.action : null,
+        }),
+        '*',
+      );
+      let settled = false;
+      void pending.then(() => {
+        settled = true;
+      });
+      for (const [source, overrides] of [
+        [wrongFrame.contentWindow, {}],
+        [frame.contentWindow, { executionRevision: 2 }],
+        [frame.contentWindow, { frameGeneration: 8 }],
+        [frame.contentWindow, { oneTimeToken: 'wrong-token' }],
+      ] as const) {
+        window.dispatchEvent(
+          new MessageEvent('message', {
+            source,
+            data: interactionEnvelope(overrides),
+          }),
+        );
+      }
+      await Promise.resolve();
+      expect(settled).toBe(false);
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          source: frame.contentWindow,
+          data: interactionEnvelope(),
+        }),
+      );
+
+      await expect(pending).resolves.toEqual({
+        exerciseSessionId: 'session-1',
+        executionRevision: 1,
+        frameGeneration: 7,
+        requestId: 'interaction-1',
+        console: [record],
+        diagnostics: [],
+        submitEvidence: 'unsupported',
+      });
+      await expect(send()).rejects.toThrow(/duplicated/u);
+      client.dispose();
+    },
+  );
+
+  it.each(['interaction', 'observation'] as const)(
+    '%sは別generation要求を送信前に拒否しdisposeでpending要求を終了する',
+    async (mode) => {
+      const frame = document.createElement('iframe');
+      document.body.append(frame);
+      const postMessage = vi
+        .spyOn(frame.contentWindow!, 'postMessage')
+        .mockImplementation(() => undefined);
+      const client = new JavaScriptExecutionClient(frame, 'session-1', 1, 'token-1', {
+        frameGeneration: 7,
+        tokenFactory: () => 'interaction-token-1',
+      });
+      dispatchExecutionReady(frame);
+      await client.waitUntilExecuted();
+
+      const send = (request: InteractionRequest) =>
+        mode === 'interaction' ? client.interact(request) : client.observe(request);
+      await expect(
+        send({
+          exerciseSessionId: 'session-1',
+          executionRevision: 1,
+          frameGeneration: 8,
+          requestId: 'wrong-generation',
+          action: { id: 'choose', kind: 'click', selector: '#answer' },
+        }),
+      ).rejects.toThrow(/identity/u);
+      expect(postMessage).not.toHaveBeenCalled();
+
+      const pending = send({
+        exerciseSessionId: 'session-1',
+        executionRevision: 1,
+        frameGeneration: 7,
+        requestId: 'interaction-1',
+        action: { id: 'choose', kind: 'click', selector: '#answer' },
+      });
+      client.dispose();
+      await expect(pending).rejects.toThrow(/disposed/u);
+    },
+  );
 });

@@ -279,8 +279,19 @@ export const JavaScriptExerciseRuntimeSchema = z
   .strict();
 
 /** Course追加時にkind単位で拡張するExercise Runtime union。 */
+export const TypeScriptExerciseRuntimeSchema = JavaScriptExerciseRuntimeSchema.extend({
+  kind: z.literal('typescript'),
+  entryFile: RelativePathSchema.refine(
+    (file) => file.endsWith('.ts') && !file.endsWith('.d.ts'),
+    'TypeScript entryFileは.tsファイルを指定してください',
+  ),
+  sourceType: z.literal('module'),
+});
+
+/** Courseごとの実行設定をkindで識別する。 */
 export const ExerciseRuntimeSchema = z.discriminatedUnion('kind', [
   JavaScriptExerciseRuntimeSchema,
+  TypeScriptExerciseRuntimeSchema,
 ]);
 
 /** selectorへ制御文字が混入していないことを文字コードで判定する。 */
@@ -478,6 +489,15 @@ const JavaScriptSourceTargetSchema = z
   .strict();
 
 const JavaScriptConsoleTargetSchema = z.object({ kind: z.literal('javascript-console') }).strict();
+const TypeScriptLearningTargetSchema = z
+  .object({ kind: z.literal('typescript-learning'), file: z.literal('main.ts') })
+  .strict();
+const TypeScriptLearningAssertionSchema = z
+  .object({
+    kind: z.literal('typescript-learning'),
+    profile: z.enum(['score-number-annotation-v1', 'score-number-inference-v1']),
+  })
+  .strict();
 
 export const HtmlCssRuleTargetSchema = z.union([
   HtmlCssSelectorTargetSchema,
@@ -842,6 +862,7 @@ export const HtmlCssRuleAssertionSchema = z.union([
 
 const AUTHORING_ONLY_FIELD_NAMES = new Set(['solutionFiles', 'fixtures']);
 const RESERVED_ADAPTER_RULE_KINDS = new Set([
+  'typescript-learning',
   'javascript-source',
   'javascript-console',
   'javascript-source-fact',
@@ -887,12 +908,14 @@ const AdapterRuleObjectSchema = z
     }
   });
 export const RuleTargetSchema = z.union([
+  TypeScriptLearningTargetSchema,
   HtmlCssRuleTargetSchema,
   JavaScriptSourceTargetSchema,
   JavaScriptConsoleTargetSchema,
   AdapterRuleObjectSchema,
 ]);
 export const RuleAssertionSchema = z.union([
+  TypeScriptLearningAssertionSchema,
   HtmlCssRuleAssertionSchema,
   QuerySelectorTextContentAssignmentAssertionSchema,
   JavaScriptSourceFactAssertionSchema,
@@ -973,6 +996,34 @@ export const JavaScriptValidationRuleDefinitionSchema = z.union([
   JavaScriptConsoleValidationRuleDefinitionSchema,
 ]);
 
+/** 型推論/型注釈の導入Lesson専用。any結合や任意profile/fileを許可しない。 */
+export const TypeScriptLearningRuleDefinitionSchema = z
+  .object({
+    ...ValidationRuleBaseShape,
+    required: z.literal(true),
+    group: z.literal('all'),
+    target: TypeScriptLearningTargetSchema,
+    assertion: TypeScriptLearningAssertionSchema,
+  })
+  .strict()
+  .refine((rule) => rule.groupId === undefined, '型習得Ruleは独立した必須要件にしてください');
+
+/** scoreを使う導入2Lessonの実Console条件を独立した必須のlog 2に固定する。 */
+export const TypeScriptScoreConsoleTwoRuleSchema =
+  JavaScriptConsoleValidationRuleDefinitionSchema.extend({
+    required: z.literal(true),
+    group: z.literal('all'),
+    viewportMode: z.literal('all'),
+  })
+    .refine((rule) => rule.groupId === undefined, 'Console条件は独立した必須要件にしてください')
+    .refine(
+      (rule) =>
+        rule.assertion.expected.length === 1 &&
+        rule.assertion.expected[0]?.level === 'log' &&
+        rule.assertion.expected[0].text === '2',
+      '型注釈LessonのConsole期待値はlog 2だけにしてください',
+    );
+
 export const ValidationRuleDefinitionSchema = z
   .object({
     ...ValidationRuleBaseShape,
@@ -981,6 +1032,17 @@ export const ValidationRuleDefinitionSchema = z
   })
   .strict()
   .superRefine((rule, context) => {
+    if (
+      (rule.target.kind === 'typescript-learning' ||
+        rule.assertion.kind === 'typescript-learning') &&
+      !TypeScriptLearningRuleDefinitionSchema.safeParse(rule).success
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['target'],
+        message: '型習得Ruleの組合せが不正です',
+      });
+    }
     const usesJavaScriptContract =
       rule.target.kind === 'javascript-source' ||
       rule.target.kind === 'javascript-console' ||
@@ -1037,7 +1099,7 @@ export const ExerciseSchema = z
           checkpoint.expectations.some((expectation) => expectation.kind === 'submit-prevented'),
         ),
       ) &&
-      (exercise.runtime?.kind !== 'javascript' || exercise.runtime.capabilityProfile !== 'dom-form')
+      exercise.runtime?.capabilityProfile !== 'dom-form'
     ) {
       context.addIssue({
         code: 'custom',
@@ -1047,7 +1109,7 @@ export const ExerciseSchema = z
     }
     if (
       exercise.interactionScenarios !== undefined &&
-      (exercise.runtime?.kind !== 'javascript' ||
+      (exercise.runtime === undefined ||
         !['dom', 'dom-form', 'async', 'project'].includes(exercise.runtime.capabilityProfile))
     ) {
       context.addIssue({
@@ -1760,30 +1822,37 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
           localExerciseIds.add(exercise.id);
           currentIds.workspace.add(exercise.workspaceId);
 
-          if (course.runnerId === 'javascript' && exercise.runtime?.kind !== 'javascript') {
+          if (
+            ['javascript', 'typescript'].includes(course.runnerId) &&
+            exercise.runtime?.kind !== course.runnerId
+          ) {
             addIssue(
               context,
               [...exercisePath, 'runtime'],
-              'JavaScript ExerciseにはRuntime設定が必要です',
+              course.runnerId === 'javascript'
+                ? 'JavaScript ExerciseにはRuntime設定が必要です'
+                : 'TypeScript ExerciseにはRunnerと一致するRuntime設定が必要です',
             );
           }
-          if (course.runnerId !== 'javascript' && exercise.runtime?.kind === 'javascript') {
+          if (exercise.runtime !== undefined && course.runnerId !== exercise.runtime.kind) {
             addIssue(
               context,
               [...exercisePath, 'runtime'],
               'Course RunnerとRuntime設定が一致しません',
             );
           }
-          if (exercise.runtime?.kind === 'javascript') {
+          if (exercise.runtime !== undefined) {
             const canonicalEntryFile = canonicalPublicPath(exercise.runtime.entryFile);
             const entryFile = exercise.files.find(
               (file) => canonicalPublicPath(file.path) === canonicalEntryFile,
             );
-            if (entryFile?.language !== 'javascript') {
+            if (entryFile?.language !== exercise.runtime.kind) {
               addIssue(
                 context,
                 [...exercisePath, 'runtime', 'entryFile'],
-                'JavaScript Runtime entryFileはjavascript Fileを参照してください',
+                exercise.runtime.kind === 'javascript'
+                  ? 'JavaScript Runtime entryFileはjavascript Fileを参照してください'
+                  : 'TypeScript Runtime entryFileはtypescript Fileを参照してください',
               );
             }
           }
@@ -2001,6 +2070,19 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
               addIssue(context, rulePath, 'HTML/CSS Validator Ruleの形式が不正です');
             }
             if (
+              course.validatorId === 'typescript' &&
+              ((!htmlCssRule.success &&
+                !javaScriptRule.success &&
+                !TypeScriptLearningRuleDefinitionSchema.safeParse(rule).success) ||
+                rule.target.kind === 'javascript-source')
+            ) {
+              addIssue(
+                context,
+                rulePath,
+                'TypeScript採点はDOM/Consoleまたは対応する型習得Ruleを指定してください',
+              );
+            }
+            if (
               course.validatorId === 'javascript' &&
               !htmlCssRule.success &&
               !javaScriptRule.success
@@ -2020,6 +2102,40 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
                 'JavaScript Source Fileが存在しません',
               );
             }
+          }
+          const learningRules = exercise.validationRules.filter(
+            ({ target }) => target.kind === 'typescript-learning',
+          );
+          const annotationConsoleRules = exercise.validationRules.filter(
+            (rule) =>
+              rule.target.kind === 'javascript-console' ||
+              rule.assertion.kind === 'javascript-console',
+          );
+          const parsedLearningRule = TypeScriptLearningRuleDefinitionSchema.safeParse(
+            learningRules[0],
+          );
+          if (
+            (learningRules.length > 0 ||
+              ['typescript-ch01-l01', 'typescript-ch01-l02'].includes(lesson.id) ||
+              ['typescript-ch01-l01-e01', 'typescript-ch01-l02-e01'].includes(exercise.id)) &&
+            (course.validatorId !== 'typescript' ||
+              !['typescript-ch01-l01', 'typescript-ch01-l02'].includes(lesson.id) ||
+              exercise.id !== `${lesson.id}-e01` ||
+              !parsedLearningRule.success ||
+              parsedLearningRule.data.assertion.profile !==
+                (lesson.id === 'typescript-ch01-l01'
+                  ? 'score-number-inference-v1'
+                  : 'score-number-annotation-v1') ||
+              learningRules.length !== 1 ||
+              !canonicalFilePaths.includes(canonicalPublicPath('main.ts')!) ||
+              annotationConsoleRules.length !== 1 ||
+              !TypeScriptScoreConsoleTwoRuleSchema.safeParse(annotationConsoleRules[0]).success)
+          ) {
+            addIssue(
+              context,
+              [...exercisePath, 'validationRules'],
+              '型習得Ruleは専用Lessonの単一必須RuleとConsole条件を指定してください',
+            );
           }
           if (
             course.validatorId === 'javascript' &&

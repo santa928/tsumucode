@@ -1,0 +1,19 @@
+id: typescript-ch01-l02
+kind: standard
+title: 得点に数値の型を書く
+goal: scoreにnumberの型注釈を残して数値2を表示し、型注釈と値の変換の違いを説明できる。
+estimatedMinutes: 15
+prerequisiteLessonIds: [typescript-ch01-l01]
+slideSources:
+  - slides/s01-annotation.md
+  - slides/s02-type-mismatch.md
+  - slides/s03-inference.md
+  - slides/s04-checkpoint.md
+exerciseSources:
+  - exercises/typescript-ch01-l02-e01/exercise.yaml
+reflection: 型注釈は受け取る値の型を表す約束で、文字列を数値に変換する操作ではない。
+glossaryRefs: [type-annotation, type-inference, number, string, console]
+completion:
+  kind: standard
+  finalSlideId: typescript-ch01-l02-s04
+  requiredExerciseIds: [typescript-ch01-l02-e01]

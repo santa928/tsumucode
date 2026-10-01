@@ -26,6 +26,7 @@ import {
 async function routeDomLesson(
   page: Page,
   capabilityProfile: 'dom' | 'async' | 'project' = 'dom',
+  waitForCompletion = false,
 ): Promise<void> {
   const root = 'dist/generated/content';
   const lessonPath = 'courses/javascript/lessons/javascript-ch00-l01.json';
@@ -55,6 +56,9 @@ async function routeDomLesson(
                   afterActionId: 'second',
                   expectations: [
                     { id: 'message-exists', kind: 'selector-exists', selector: '#message' },
+                    ...(waitForCompletion
+                      ? [{ id: 'completed', kind: 'console-includes', includes: '完了' }]
+                      : []),
                   ],
                 },
               ],
@@ -274,3 +278,55 @@ test('DOM保護の設置障害は実UIでも採点履歴・成功snapshotを上�
     await recovered.close();
   }
 });
+
+for (const [label, callback, system] of [
+  ['遅延予算停止', 'setTimeout(() => { while (true) {} }, 20);', true],
+  ['未捕捉の非同期例外', "await Promise.resolve(); throw new Error('教材の失敗');", false],
+] as const) {
+  test(`${label}を採点UIで区別し、過去の合格・下書きを保持して回復できる`, async ({ page }) => {
+    await routeDomLesson(page, 'async', true);
+    await openEditableJavaScriptExercise(page);
+    const valid =
+      "document.querySelector('#message').textContent = 'JavaScriptで文字を変えました'; document.querySelector('#message').addEventListener('click', () => { setTimeout(() => console.log('完了'), 20); });";
+    await replaceEditorText(page, valid);
+    await waitForStoredDraftContent(page, valid);
+    await page.getByRole('button', { name: '判定する', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'できました', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: '閉じる', exact: true }).click();
+    const broken = `document.querySelector('#message').addEventListener('click', async () => { ${callback} });`;
+    await replaceEditorText(page, broken);
+    await waitForStoredDraftContent(page, broken);
+    const before = await readStoredProgress(page);
+    await page.getByRole('button', { name: '判定する', exact: true }).click();
+    if (system) {
+      await expect(
+        page.getByText('実行を停止しました。採点していません。', { exact: true }),
+      ).toBeVisible();
+      await expect(page.getByRole('dialog', { name: '判定結果' })).toHaveCount(0);
+    } else {
+      await expect(page.getByRole('heading', { name: 'コードを確認しよう' })).toBeVisible();
+      await expect(page.getByRole('dialog', { name: '判定結果' })).toContainText(
+        'JavaScriptの実行中にエラー',
+      );
+    }
+    await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled();
+    const after = await readStoredProgress(page);
+    const prior = before.drafts.find((d) => d['exerciseId'] === 'javascript-ch00-l01-e01')!;
+    const next = after.drafts.find((d) => d['exerciseId'] === 'javascript-ch00-l01-e01')!;
+    expect(next['lastPassingSnapshots']).toEqual(prior['lastPassingSnapshots']);
+    if (system) {
+      expect(next['validationHistory']).toEqual(prior['validationHistory']);
+      expect(after.courses).toEqual(before.courses);
+    } else {
+      expect((next['validationHistory'] as { status: string }[]).at(-1)?.status).toBe('code-error');
+      await page.getByRole('button', { name: 'コードを直す', exact: true }).click();
+    }
+    await expect.poll(() => editorText(page)).toBe(broken);
+    await page.reload();
+    await expect.poll(() => editorText(page)).toBe(broken);
+    await replaceEditorText(page, valid);
+    await waitForStoredDraftContent(page, valid);
+    await page.getByRole('button', { name: '判定する', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'できました', exact: true })).toBeVisible();
+  });
+}
