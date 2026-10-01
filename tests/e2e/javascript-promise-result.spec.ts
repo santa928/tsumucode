@@ -39,8 +39,8 @@ test('Promise結果を表示し、Reset後の再編集・判定・保存を保�
   await expect(frame.locator('#count')).toHaveText('問題: 0');
   for (let i = 0; i < 2; i++) {
     await frame.getByRole('button', { name: '問題を読む', exact: true }).click();
-    await expect(frame.locator('#count')).toHaveText('問題: 2');
-    await expect(frame.locator('#question')).toHaveText('空は何色？');
+    await expect(frame.locator('#count')).toHaveText(i === 0 ? '問題: 2' : '問題: 3');
+    await expect(frame.locator('#question')).toHaveText(i === 0 ? '空は何色？' : '草は何色？');
   }
   await page.screenshot({ path: testInfo.outputPath('promise-result.png') });
   await page.getByRole('button', { name: '最初に戻す', exact: true }).click();

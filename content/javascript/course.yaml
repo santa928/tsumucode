@@ -4,7 +4,7 @@ title: JavaScript はじめの一歩
 description: 画面の変化から始め、値・条件分岐・Function・Array・Module・Error・DebugまでをConsoleで確かめる
 audience: HTMLとCSSの役割を知り、JavaScriptを初めて学ぶ本人と身内
 estimatedMinutes: 760
-revision: 2026-09-28.19
+revision: 2026-10-02.1
 runnerId: javascript
 validatorId: javascript
 glossarySource: glossary.yaml
@@ -102,6 +102,9 @@ progressMigrations:
     steps: []
   - fromRevision: 2026-09-28.18
     toRevision: 2026-09-28.19
+    steps: []
+  - fromRevision: 2026-09-28.19
+    toRevision: 2026-10-02.1
     steps: []
 phases:
   - id: javascript-p00-core

@@ -81,4 +81,48 @@ describe('evaluateInteractionCheckpoint', () => {
       'not found',
     ]);
   });
+
+  it('開閉後は見える文字とAccessible Nameを独立に評価する', () => {
+    const control: JavaScriptInteractionCheckpoint = {
+      id: 'opened',
+      afterActionId: 'open',
+      expectations: [
+        {
+          id: 'visible-name',
+          kind: 'selector-text',
+          selector: '#toggle',
+          equals: 'ヒントを閉じる',
+        },
+        {
+          id: 'spoken-name',
+          kind: 'accessible-name',
+          selector: '#toggle',
+          equals: 'ヒントを閉じる',
+        },
+      ],
+    };
+    const stale = {
+      ...snapshot(),
+      nodes: [
+        previewNode({
+          matchedSelectors: ['#toggle'],
+          text: 'ヒントを閉じる',
+          accessibleName: 'ヒントを開く',
+        }),
+      ],
+    };
+    expect(evaluateInteractionCheckpoint(control, stale, [])).toEqual([
+      { expectationId: 'visible-name', passed: true, actual: 'ヒントを閉じる' },
+      { expectationId: 'spoken-name', passed: false, actual: 'ヒントを開く' },
+    ]);
+    const synced = { ...stale, nodes: [{ ...stale.nodes[0]!, accessibleName: 'ヒントを閉じる' }] };
+    expect(evaluateInteractionCheckpoint(control, synced, []).every(({ passed }) => passed)).toBe(
+      true,
+    );
+    expect(evaluateInteractionCheckpoint(control, { ...stale, nodes: [] }, [])[1]).toEqual({
+      expectationId: 'spoken-name',
+      passed: false,
+      actual: 'not found',
+    });
+  });
 });

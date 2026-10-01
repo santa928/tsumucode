@@ -67,6 +67,14 @@ export function evaluateInteractionCheckpoint(
         actual: actual === undefined ? 'not found' : boundedActual(actual),
       };
     }
+    if (expectation.kind === 'accessible-name') {
+      const actual = first?.accessibleName;
+      return {
+        expectationId: expectation.id,
+        passed: nodes.some(({ accessibleName }) => accessibleName === expectation.equals),
+        actual: actual === undefined ? 'not found' : boundedActual(actual),
+      };
+    }
     const actual = first?.attributes[expectation.name];
     return {
       expectationId: expectation.id,

@@ -12,9 +12,9 @@ steps:
   - id: await-result
     file: script.js
     target: showCount内のloadQuestions()を呼ぶ行
-    starterAnchor: "  const questions = loadQuestions();"
+    starterAnchor: '  const questions = loadQuestions();'
     change: 呼び出しの前にawaitを加えて結果を受け取る
-    observe: "問題を読むと問題: undefinedではなく問題: 2になる"
+    observe: '問題を読むと問題: undefinedではなく問題: 2になる'
     requiresConceptIds:
       - await-question-count
     validationRuleIds:
@@ -57,11 +57,11 @@ validationRules:
       - desktop-1280
     target:
       kind: selector
-      selector: "#count"
+      selector: '#count'
     assertion:
       kind: text
       operator: equals
-      expected: "問題: 0"
+      expected: '問題: 0'
     feedback:
       target: script.jsとPreview
       expected: 読む前は0件
@@ -77,7 +77,7 @@ validationRules:
       - desktop-1280
     target:
       kind: selector
-      selector: "#note"
+      selector: '#note'
     assertion:
       kind: text
       operator: equals
@@ -89,7 +89,7 @@ validationRules:
     hintId: javascript-ch10-l02-e01-h02
     relatedSlideId: javascript-ch10-l02-s03
   - id: javascript-ch10-l02-e01-r03
-    label: loadQuestionsの結果を使う
+    label: 同梱データの取得元を呼ぶ
     required: true
     group: all
     viewportMode: all
@@ -105,7 +105,7 @@ validationRules:
         callee: loadQuestions
     feedback:
       target: script.jsとPreview
-      expected: loadQuestionsの結果を使う
+      expected: 同梱データの取得元を呼ぶ
       nextAction: async関数の中で、loadQuestions()の結果を受け取ってから件数を表示します。
     hintId: javascript-ch10-l02-e01-h02
     relatedSlideId: javascript-ch10-l02-s03
@@ -245,6 +245,23 @@ fixtures:
       - interaction:await-count:load:note
       - interaction:await-count:again:count
       - interaction:await-count:again:note
+  - id: discard-result
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/discard-result/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:await-count:again:count
 runtime:
   kind: javascript
   entryFile: script.js
@@ -257,30 +274,30 @@ interactionScenarios:
     actions:
       - id: load
         kind: click
-        selector: "#load"
+        selector: '#load'
       - id: again
         kind: click
-        selector: "#load"
+        selector: '#load'
     checkpoints:
       - id: load
         afterActionId: load
         expectations:
           - id: count
             kind: selector-text
-            selector: "#count"
-            equals: "問題: 2"
+            selector: '#count'
+            equals: '問題: 2'
           - id: note
             kind: selector-text
-            selector: "#note"
+            selector: '#note'
             equals: 同梱の問題を読む練習です。通信はしません。
       - id: again
         afterActionId: again
         expectations:
           - id: count
             kind: selector-text
-            selector: "#count"
-            equals: "問題: 2"
+            selector: '#count'
+            equals: '問題: 3'
           - id: note
             kind: selector-text
-            selector: "#note"
+            selector: '#note'
             equals: 同梱の問題を読む練習です。通信はしません。

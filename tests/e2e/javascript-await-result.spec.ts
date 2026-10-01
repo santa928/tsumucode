@@ -39,7 +39,7 @@ test('awaitで結果を待ち、Reset後の再編集・判定・保存を保つ'
   await expect(frame.locator('#count')).toHaveText('問題: 0');
   for (let i = 0; i < 2; i++) {
     await frame.getByRole('button', { name: '問題を読む', exact: true }).click();
-    await expect(frame.locator('#count')).toHaveText('問題: 2');
+    await expect(frame.locator('#count')).toHaveText(i === 0 ? '問題: 2' : '問題: 3');
   }
   await page.screenshot({ path: testInfo.outputPath('await-result.png') });
   await page.getByRole('button', { name: '最初に戻す', exact: true }).click();

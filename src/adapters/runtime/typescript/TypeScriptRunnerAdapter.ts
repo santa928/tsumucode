@@ -179,7 +179,17 @@ export class TypeScriptRunnerAdapter implements RunnerAdapter {
     if (!this.#source || !this.#runner) throw this.#abort();
     const result = await this.#runner.requestSnapshot(request);
     this.#assertCurrent(generation);
-    return result;
+    return {
+      ...result,
+      ...(result.runtimeObservation
+        ? {
+            runtimeObservation: {
+              ...result.runtimeObservation,
+              diagnostics: this.#map(result.runtimeObservation.diagnostics),
+            },
+          }
+        : {}),
+    };
   }
 
   /** Interaction診断も元TSへ戻し、停止・置換後の応答は返さない。 */
