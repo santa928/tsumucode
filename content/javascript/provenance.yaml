@@ -3900,3 +3900,91 @@ items:
     visibility: public
     path: chapters/javascript-ch08/lessons/javascript-ch08-l04/slides/s04.md
     createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-0
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/exercises/javascript-ch09-l01-e01/exercise.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-1
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/exercises/javascript-ch09-l01-e01/fixtures/always-one/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-2
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/exercises/javascript-ch09-l01-e01/fixtures/display-before-update/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-3
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/exercises/javascript-ch09-l01-e01/fixtures/double-step/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-4
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/exercises/javascript-ch09-l01-e01/fixtures/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-5
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/exercises/javascript-ch09-l01-e01/fixtures/named-handler/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-6
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/exercises/javascript-ch09-l01-e01/fixtures/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-7
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/exercises/javascript-ch09-l01-e01/fixtures/unconnected/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-8
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/exercises/javascript-ch09-l01-e01/instructions.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-9
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/exercises/javascript-ch09-l01-e01/solution/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-10
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/exercises/javascript-ch09-l01-e01/solution/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-11
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/exercises/javascript-ch09-l01-e01/solution/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-12
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/exercises/javascript-ch09-l01-e01/starter/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-13
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/exercises/javascript-ch09-l01-e01/starter/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-14
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/exercises/javascript-ch09-l01-e01/starter/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-15
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/lesson.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-diagram-original
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/slides/assets/state-flow.svg
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-17
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/slides/s01.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-18
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/slides/s02.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-19
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/slides/s03.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-20
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l01/slides/s04.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l01-original-21
+    visibility: public
+    path: chapters/javascript-ch09/chapter.yaml
+    createdAt: 2026-09-28
