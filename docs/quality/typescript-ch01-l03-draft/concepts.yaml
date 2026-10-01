@@ -1,0 +1,6 @@
+schemaVersion: 1
+concepts:
+  - id: typescript-type-erasure
+    introducedBySlideId: typescript-ch01-l03-s01
+    prerequisiteConceptIds: []
+    minimumProjectLevel: transform

@@ -234,6 +234,8 @@ TypeScriptコースの準備として、実コンパイラ・停止可能な専�
 
 [型推論1課題の採点契約](docs/quality/typescript-inference-grading-contract.md)では、注釈なしのletから推論された数値型と実Consoleを両方確認し、明示注釈の課題とは専用profileで区別します。`content/typescript`に導入2Lesson・8枚・30分のdraft Courseを登録し、型推論から型注釈への順序と用語の初出を統合しています。[統合の範囲と検証記録](docs/quality/typescript-draft-course-integration.md)を参照してください。Home/Pathへの掲載、コース全体の制作、公開受入は未完了です。
 
+[型消去と実行時失敗の次教材原稿](docs/quality/typescript-ch01-l03-draft/AUTHORING.md)は、型注釈が生成JSから消えることと、型が通ってもthrowで実行が止まることを4枚・15分・9Fixtureで扱います。動作課題としてConsoleを判定し、型注釈の有無は採点条件にしていません。独立内容レビューと通常Courseへの登録は未完了です。
+
 - 初回公開版でのJavaScript、TypeScript、Reactコース
 - ログイン、Backend、Cloud DB、端末間の自動同期
 - スマートフォン上でのコード編集
