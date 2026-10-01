@@ -3,6 +3,17 @@ releaseStatus: draft
 verifiedSourceCommit: draft
 canonicalDistSha256: draft
 lessons:
+  - lessonId: javascript-ch09-l01
+    authorId: tsumucode-javascript-authoring
+    reviewerId: astra-pro-independent-review
+    sourceHash: 8121e7dc209587a04d66450ce1b7c87695844d03bf6b9ec037a0f5691dd28c43
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: PR59の同一Pro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEADdfae2f603b88471649321edc601ff2ea93ca80d2の原文4枚・Exercise/Fixture・Concept/Glossary/Provenance・試用導線・集計/移行を独立確認し内容承認。stateとDOM表示、handler内の毎回初期化と外側bindingの保持、変数更新と表示更新、実行stateとDraft保存の区別が整合。Codexが同じLesson source hashの掲載4例を実Runnerで確認済み。最新main統合後はRuntime一時差し替えなしで製品Runner/Validatorの7ケース、実Chromiumの3回click・再Preview・Reset・別解・最初の判定・保存再開・390px通読を確認し、PCと390pxの3画像を実目視、hashを再計算。ProによるDocker再実行・hash独立再計算・画像再目視、人の初心者試用/実機確認を意味しない。初回コードレビューの依存状態記録1件の必須修正と、このLesson内容承認は区別する。Ch09後続・全JavaScript完成・公開承認ではない。
   - lessonId: javascript-ch08-l04
     authorId: tsumucode-javascript-authoring
     reviewerId: astra-pro-independent-review
