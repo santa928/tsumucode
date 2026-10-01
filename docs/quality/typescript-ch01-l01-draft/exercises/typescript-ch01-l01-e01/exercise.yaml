@@ -1,0 +1,282 @@
+id: typescript-ch01-l01-e01
+kind: standard
+workspaceId: typescript-ch01-l01-e01
+countsTowardStandardExerciseTotal: true
+title: 数値の型を保って得点を直す
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: typescript-number-inference
+    minimumLevel: transform
+scaffoldLevel: transform
+runtime:
+  kind: typescript
+  entryFile: main.ts
+  sourceType: module
+  capabilityProfile: core
+  primaryOutput: console
+steps:
+  - id: fix-number-reassignment
+    file: main.ts
+    target: scoreに後から入れる値
+    starterAnchor: score = '2';
+    change: letと最後の変数表示を残し、後から入れる値を数値2に直す
+    observe: 型の案内が消え、Consoleに2が表示される
+    requiresConceptIds:
+      - typescript-number-inference
+    validationRuleIds:
+      - typescript-ch01-l01-e01-r01
+      - typescript-ch01-l01-e01-r02
+files:
+  - path: main.ts
+    language: typescript
+    source: starter/main.ts
+    editable: true
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+solutionFiles:
+  - path: main.ts
+    language: typescript
+    source: solution/main.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: typescript-ch01-l01-e01-r01
+    label: scoreの型を数値から推論し、変数の値を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: typescript-learning
+      file: main.ts
+    assertion:
+      kind: typescript-learning
+      profile: score-number-inference-v1
+    feedback:
+      target: main.tsのscore
+      expected: 型を書き足さず、letと数値の初期値を使う
+      nextAction: let scoreを数値から推論させ、最後にscoreを表示します。
+    hintId: typescript-ch01-l01-e01-h01
+    relatedSlideId: typescript-ch01-l01-s01
+  - id: typescript-ch01-l01-e01-r02
+    label: Consoleに得点2だけを表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-console
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - level: log
+          text: '2'
+    feedback:
+      target: Consoleとscoreの値
+      expected: 2が1回表示される
+      nextAction: scoreの値を2にし、最後のconsole.log(score)を1回だけ残します。
+    hintId: typescript-ch01-l01-e01-h02
+    relatedSlideId: typescript-ch01-l01-s04
+hints:
+  - id: typescript-ch01-l01-e01-h01
+    level: 1
+    title: 最初と後の値を見比べる
+    text: 最初の0は数値です。引用符で囲んだ2は文字列です。
+    relatedSlideId: typescript-ch01-l01-s02
+  - id: typescript-ch01-l01-e01-h02
+    level: 2
+    title: 後から入れる値を直す
+    text: 2行目の値を数値に直します。最初のletと最後のconsole.log(score)を残し、型は書き足しません。
+    relatedSlideId: typescript-ch01-l01-s04
+  - id: typescript-ch01-l01-e01-h03
+    level: 3
+    title: 2行目を数値へ直す
+    text: 2行目を「score = 2;」にし、前後のlet score = 0;とconsole.log(score);を残します。
+    relatedSlideId: typescript-ch01-l01-s04
+relatedSlideIds:
+  - typescript-ch01-l01-s01
+  - typescript-ch01-l01-s02
+  - typescript-ch01-l01-s03
+  - typescript-ch01-l01-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: starter
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - typescript-type-error-2322
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/starter.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: solution
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/solution.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternative
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/alternative.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: annotation
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/annotation.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch01-l01-e01-r01
+  - id: const
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/const.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch01-l01-e01-r01
+  - id: any
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/any.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch01-l01-e01-r01
+  - id: assertion
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/assertion.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch01-l01-e01-r01
+  - id: suppressed
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/suppressed.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch01-l01-e01-r01
+  - id: nocheck
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/nocheck.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch01-l01-e01-r01
+  - id: output-only
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/output-only.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch01-l01-e01-r01
+  - id: wrong-value
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/wrong-value.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch01-l01-e01-r02
+  - id: union-escape
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/union-escape.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch01-l01-e01-r01
+  - id: string-initializer
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/string-initializer.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch01-l01-e01-r01

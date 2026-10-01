@@ -19,6 +19,8 @@ HTMLやCSSを初めて学ぶ人を対象にしています。スライドと進�
 
 コード演習は、幅1024 CSS px以上かつマウスまたはトラックパッドを使えるPC向けです。小画面や編集条件を満たさない端末ではEditorとRunnerを読み込まず、スライド学習、進捗確認、完了済みコードの安全なPreview、PCへ渡す演習URLと学習データの書き出しを提供します。
 
+Preview内を操作した後、編集権の再確認が必要な場合は、Preview更新・判定を「編集権を確認しています」と表示して待機し、確認後に実行します。別のタブへ編集権が移った場合は実行しません。
+
 主要FlowはChromium、Firefox、WebKitで検証します。JavaScriptが無効な環境と古いブラウザは対象外です。
 
 ## 必要なもの
@@ -225,6 +227,10 @@ gh run download <run ID> -n release-report-<source SHA> --dir .release-evidence
 tag ref作成後の通信断などでRunだけが失敗表示になった場合、Workflow全体を再実行して新しい`run_attempt`やArtifactを既存tagへ結び直してはいけません。元Runの`release-report-<source SHA>`を取得し、tag message・Report・公開URLを照合してrevision別の公開後記録を作成し、その元Run evidenceから`--promote`します。既存tagを検出したRunは成功扱いにせず停止します。
 
 ## 非対象
+
+TypeScriptコースの準備として、実コンパイラ・停止可能な専用Worker・既存JavaScript安全解析・隔離プレビュー・動作採点をつなぐ[型検査境界の技術実証](docs/quality/typescript-compiler-boundary.md)を追加しています。型検査失敗は未実行・未採点として区別し、元TSと実行結果を照合します。検証用TS教材を実演習画面へ読み込み、Console・修正後の採点・元コードの保存/再読込まで確認しました。[型注釈1課題の採点契約](docs/quality/typescript-annotation-grading-contract.md)では、元TSの明示的なnumber注釈と実Consoleの結果を両方確認します。TSコースの教材全体・残りの型習得要件・公開登録は未完了です。
+
+[型推論1課題の採点契約](docs/quality/typescript-inference-grading-contract.md)では、注釈なしのletから推論された数値型と実Consoleを両方確認し、明示注釈の課題とは専用profileで区別します。`content/typescript`に導入2Lesson・8枚・30分のdraft Courseを登録し、型推論から型注釈への順序と用語の初出を統合しています。[統合の範囲と検証記録](docs/quality/typescript-draft-course-integration.md)を参照してください。Home/Pathへの掲載、コース全体の制作、公開受入は未完了です。
 
 - 初回公開版でのJavaScript、TypeScript、Reactコース
 - ログイン、Backend、Cloud DB、端末間の自動同期

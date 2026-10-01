@@ -1,12 +1,18 @@
-import { expect, it } from 'vitest';
+import { beforeAll, expect, it } from 'vitest';
 import { loadChapterPackage } from '../../scripts/content/loadChapterPackage';
 import { loadAuthoringCourse } from '../../scripts/content/compileCourse';
 import { assertChapterConceptCoverage } from './concept-coverage';
 
-it('Ch07は4単元で、参照・class・生成接続・複数操作を学ぶ', async () => {
-  const loaded = await loadChapterPackage(
-    'content/javascript/chapters/javascript-ch07/chapter.yaml',
-  );
+let loaded: Awaited<ReturnType<typeof loadChapterPackage>>;
+let authoring: Awaited<ReturnType<typeof loadAuthoringCourse>>;
+
+/** 全Courseの読込は準備で行い、教材契約の検証には既定の実行枠を保つ。 */
+beforeAll(async () => {
+  loaded = await loadChapterPackage('content/javascript/chapters/javascript-ch07/chapter.yaml');
+  authoring = await loadAuthoringCourse('content/javascript');
+}, 30_000);
+
+it('Ch07は4単元で、参照・class・生成接続・複数操作を学ぶ', () => {
   expect(loaded.lessons.map(({ id }) => id)).toEqual([
     'javascript-ch07-l01',
     'javascript-ch07-l02',
@@ -32,8 +38,7 @@ it('Ch07は4単元で、参照・class・生成接続・複数操作を学ぶ', 
       .filter((fixture) => fixture.expectedStatus === 'pass')
       .map((fixture) => fixture.id),
   ).toEqual(['alternate-name', 'no-if']);
-  // Courseの読込を共有し、Lesson集合とConcept診断を同じ結果から検証する。
-  const authoring = await loadAuthoringCourse('content/javascript');
+  // 準備した同じCourseからLesson集合とConcept診断を検証する。
   const chapter = authoring.runtime.phases
     .flatMap(({ chapters }) => chapters)
     .find(({ id }) => id === 'javascript-ch07');
