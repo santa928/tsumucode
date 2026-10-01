@@ -1,0 +1,19 @@
+id: typescript-ch01-l01
+kind: standard
+title: 最初の値から型を判断する
+goal: 数値から推論されたscoreの型を保って2を表示し、文字列を再代入できない理由を説明できる。
+estimatedMinutes: 15
+prerequisiteLessonIds: []
+slideSources:
+  - slides/s01-inference.md
+  - slides/s02-reassignment.md
+  - slides/s03-number-update.md
+  - slides/s04-checkpoint.md
+exerciseSources:
+  - exercises/typescript-ch01-l01-e01/exercise.yaml
+reflection: 型を自分で書かなくても最初の値から型が判断され、後の代入もその型に合う必要がある。
+glossaryRefs: [typescript, type, type-inference, initial-value, number, string, console]
+completion:
+  kind: standard
+  finalSlideId: typescript-ch01-l01-s04
+  requiredExerciseIds: [typescript-ch01-l01-e01]
