@@ -42,6 +42,7 @@ import { LearningSessionController, StaleExecutionError, useLearningSession } fr
 import { ExecutionNotGradableError } from '../session/LearningSessionController';
 import { learningRuntimeServices } from '../runtimeServices';
 import { useAdjacentLessonPrefetch } from '../useAdjacentLessonPrefetch';
+import { PortableHtmlExport } from '../portable/PortableHtmlExport';
 
 const LazyCodeWorkspace = lazy(() =>
   import('../editor/CodeWorkspace').then((module) => ({ default: module.CodeWorkspace })),
@@ -999,6 +1000,9 @@ function EditableSession({
               fallbackAssets={exercise.assets}
               baseUrl={import.meta.env.BASE_URL}
             />
+            {course.id === 'html-css' && exercise.id === 'html-css-ch00-l01-e01' ? (
+              <PortableHtmlExport files={workspaceFiles} disabled={busy} />
+            ) : null}
           </aside>
 
           <div

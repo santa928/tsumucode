@@ -81,6 +81,8 @@ GitHub Pagesへ公開した後のHTML/CSSコースの直リンクは、[スラ�
 5. 不合格時は段階ヒントを開くか、コードと判定履歴を保ったまま関連スライドを重ねて見直します。
 6. 合格後は完了画面とコースマップで進捗を確認します。
 
+最初のHTML/CSS演習の工程票には「HTML/CSSを持ち出す」があります。クリック時点の`index.html`、`styles.css`と開き方をZIPにし、展開した`index.html`をサイト外のブラウザで開けます。この演習にインストールや開発サーバーは不要です。進捗JSONの書き出しとは別で、学習履歴・採点・自動保存は付きません。ZIP内の編集はサイトの下書きへ戻りません。対象・環境差は[ソース持ち出しの記録](docs/quality/portable-html-source.md)を参照してください。
+
 ## 現在の実行環境
 
 HTML/CSSとDOMを使うJavaScript演習は「ブラウザで実行」と表示し、既存の隔離Previewを利用します。Closureの3演習（`javascript-ch03-l05-e01`〜`e03`）は「ブラウザで実行（Console専用）」となり、編集時に`script.js`を隔離Workerで実行します。配列・オブジェクトの変数添字と、有限のPromise・microtask処理を利用できます。HTML/CSSファイルの下書きは保持しますが、この3演習では画面描画に使いません。DOM・タイマー・外部通信・Storage・moduleには対応していません。
