@@ -3,6 +3,39 @@ releaseStatus: draft
 verifiedSourceCommit: draft
 canonicalDistSha256: draft
 lessons:
+  - lessonId: javascript-ch09-l01
+    authorId: tsumucode-javascript-authoring
+    reviewerId: astra-pro-independent-review
+    sourceHash: 8121e7dc209587a04d66450ce1b7c87695844d03bf6b9ec037a0f5691dd28c43
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: PR59の同一Pro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEADdfae2f603b88471649321edc601ff2ea93ca80d2の原文4枚・Exercise/Fixture・Concept/Glossary/Provenance・試用導線・集計/移行を独立確認し内容承認。stateとDOM表示、handler内の毎回初期化と外側bindingの保持、変数更新と表示更新、実行stateとDraft保存の区別が整合。Codexが同じLesson source hashの掲載4例を実Runnerで確認済み。最新main統合後はRuntime一時差し替えなしで製品Runner/Validatorの7ケース、実Chromiumの3回click・再Preview・Reset・別解・最初の判定・保存再開・390px通読を確認し、PCと390pxの3画像を実目視、hashを再計算。ProによるDocker再実行・hash独立再計算・画像再目視、人の初心者試用/実機確認を意味しない。初回コードレビューの依存状態記録1件の必須修正と、このLesson内容承認は区別する。Ch09後続・全JavaScript完成・公開承認ではない。
+  - lessonId: javascript-ch08-l04
+    authorId: tsumucode-javascript-authoring
+    reviewerId: astra-pro-independent-review
+    sourceHash: 60b7297634eec34f92324f7df91e829371e6d4d528f8ba9d68ac5cb2c0e425f7
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: PR58の同一Pro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEAD6c07caf9ede6e72aafe48e242dc108003762f180の原文4枚・図の意味・Hint・Exercise/Scenario/Fixture・前提/用語・集計を独立確認し内容承認。trimの戻り値と元入力不変、空文字と空白だけの区別、if/elseによる案内と登録の分離、無効時の登録済み保持が整合。CodexがDocker製品Runnerで掲載4例と演習8ケースを実行し、最新main統合後の実Chromiumで空白拒否・保持・Reset・別解・Enter・初回判定・保存・390px通読を確認、上記hashを再計算。Proによるhash独立再計算・Docker実行・画像承認、人の初心者試用や実機確認を意味しない。全JavaScriptコース完成や公開承認ではない。
+  - lessonId: javascript-ch08-l03
+    authorId: tsumucode-javascript-authoring
+    reviewerId: astra-pro-independent-review
+    sourceHash: 7c8cdce7af85999231df04305061ee1143c049570f943350ac0e23cfaf52e4c6
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: PR56の同一Pro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEAD54ca4df882b9f06727740a837622ccb2dcd8892dの原文4枚・採点・Fixture・Hint・集計を独立確認し内容承認。Formとsubmit登録先、preventDefaultと後続処理、入力中と送信時の現在値を段階接続し、安全装置の取消と学習者自身の取消を区別。名前付きhandler別解、未取消・未到達・click取消・固定値・対象外変更の拒否が整合。CodexがDocker製品Runnerで掲載4例と演習7ケースを実行し上記hashを計算。Proによるhash独立再計算・実行・画像承認、人の初心者試用や実機確認を意味しない。
   - lessonId: javascript-ch08-l02
     authorId: tsumucode-javascript-authoring
     reviewerId: astra-pro-independent-review

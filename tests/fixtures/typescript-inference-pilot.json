@@ -1,0 +1,65 @@
+[
+  {
+    "id": "starter",
+    "source": "let score = 0; score = '2'; console.log(score);",
+    "expectedStatus": "code-error"
+  },
+  {
+    "id": "solution",
+    "source": "let score = 0; score = 2; console.log(score);",
+    "expectedStatus": "pass"
+  },
+  {
+    "id": "alternative",
+    "source": "let score = 1; score += 1; console.log(score);",
+    "expectedStatus": "pass"
+  },
+  {
+    "id": "annotation",
+    "source": "let score: number = 2; console.log(score);",
+    "expectedStatus": "incomplete",
+    "failedRule": "r01"
+  },
+  {
+    "id": "const",
+    "source": "const score = 2; console.log(score);",
+    "expectedStatus": "incomplete",
+    "failedRule": "r01"
+  },
+  {
+    "id": "any",
+    "source": "let score: any = 2; console.log(score);",
+    "expectedStatus": "incomplete",
+    "failedRule": "r01"
+  },
+  {
+    "id": "assertion",
+    "source": "let score = 2 as number; console.log(score);",
+    "expectedStatus": "incomplete",
+    "failedRule": "r01"
+  },
+  {
+    "id": "suppressed",
+    "source": "let score = 0; // @ts-ignore\nscore = '2'; console.log(score);",
+    "expectedStatus": "incomplete",
+    "failedRule": "r01"
+  },
+  {
+    "id": "nocheck",
+    "source": "// @ts-nocheck\nlet score = 0; score = '2'; console.log(score);",
+    "expectedStatus": "incomplete",
+    "failedRule": "r01"
+  },
+  {
+    "id": "output-only",
+    "source": "let score = 0; console.log(2);",
+    "expectedStatus": "incomplete",
+    "failedRule": "r01"
+  },
+  {
+    "id": "wrong-value",
+    "source": "let score = 3; console.log(score);",
+    "expectedStatus": "incomplete",
+    "failedRule": "r02"
+  }
+]

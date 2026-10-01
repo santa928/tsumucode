@@ -59,6 +59,15 @@ function validator(): ValidatorAdapter {
 
 /** 遅延import相当のloader群と観測spyを構築する。 */
 function loaderHarness(): CourseRuntimeLoaders & {
+  readonly loadTypeScriptRunner: ReturnType<
+    typeof vi.fn<CourseRuntimeLoaders['loadTypeScriptRunner']>
+  >;
+  readonly loadTypeScriptValidator: ReturnType<
+    typeof vi.fn<CourseRuntimeLoaders['loadTypeScriptValidator']>
+  >;
+  readonly loadTypeScriptEditor: ReturnType<
+    typeof vi.fn<CourseRuntimeLoaders['loadTypeScriptEditor']>
+  >;
   readonly loadRunner: ReturnType<typeof vi.fn<CourseRuntimeLoaders['loadJavaScriptRunner']>>;
   readonly loadValidator: ReturnType<typeof vi.fn<CourseRuntimeLoaders['loadJavaScriptValidator']>>;
   readonly loadEditor: ReturnType<typeof vi.fn<CourseRuntimeLoaders['loadJavaScriptEditor']>>;
@@ -75,6 +84,13 @@ function loaderHarness(): CourseRuntimeLoaders & {
     },
   }));
   return {
+    loadTypeScriptRunner: vi.fn(async () => ({ create: () => runner('typescript') })),
+    loadTypeScriptValidator: vi.fn(async () => ({ create: validator })),
+    loadTypeScriptEditor: vi.fn(async () => ({
+      register: async (registry: EditorLanguageRegistry) => {
+        if (!registry.has('typescript')) registry.register('typescript', () => []);
+      },
+    })),
     loadJavaScriptRunner: loadRunner,
     loadJavaScriptValidator: loadValidator,
     loadJavaScriptEditor: loadEditor,
@@ -94,6 +110,25 @@ function runtimeServices() {
 }
 
 describe('ensureCourseRuntime', () => {
+  it('TypeScript実装は明示的な演習準備時だけ読み、既存JavaScript loaderを起動しない', async () => {
+    const loaders = loaderHarness();
+    const ensure = createCourseRuntimeEnsurer(loaders);
+    const services = runtimeServices();
+    const course = { id: 'typescript', runnerId: 'typescript', validatorId: 'typescript' };
+    expect(loaders.loadTypeScriptRunner).not.toHaveBeenCalled();
+    await Promise.all([ensure(course, services), ensure(course, services)]);
+    expect(loaders.loadTypeScriptRunner).toHaveBeenCalledOnce();
+    expect(loaders.loadTypeScriptValidator).toHaveBeenCalledOnce();
+    expect(loaders.loadTypeScriptEditor).toHaveBeenCalledOnce();
+    expect(loaders.loadRunner).not.toHaveBeenCalled();
+    expect(services.runnerRegistry.create('typescript').languageId).toBe('typescript');
+    expect(services.validatorRegistry.has('typescript')).toBe(true);
+    expect(services.editorLanguageRegistry.has('typescript')).toBe(true);
+    expect(services.editorLanguageRegistry.has('html')).toBe(true);
+    await expect(ensure({ ...course, runnerId: 'javascript' }, services)).rejects.toThrow(
+      'Course runtime IDが一致しません',
+    );
+  });
   it('JavaScript route到達時だけ三つの遅延moduleを一度ずつ読み込んで登録する', async () => {
     const loaders = loaderHarness();
     const ensureCourseRuntime = createCourseRuntimeEnsurer(loaders);

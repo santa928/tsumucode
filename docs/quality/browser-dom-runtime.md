@@ -74,3 +74,11 @@ Protocol v3は初回/操作応答の`submitEvidence`を4値（unsupported/setup-
 - REQ-DOM-KEY-003: scriptlessの読み取り専用Preview、opaque-origin sandbox、CSP、編集権の契約は維持する。強制focusや合成keyだけでKeyboard-onlyの証拠にしない。
 
 Ch11の実操作検証で、iframeのtabindex=-1が内部の操作先も通常のTab移動から除外していることを確認した。既存DOM入力教材で実キーによる入場・入力・退出・判定を回帰対象とする。
+
+2026-10-02の前提更新は、PR57の編集権再確認を含むmain `651b385cd95d2dfc3e9910ad613a7518cebeae4f`を履歴保持で候補へ取り込む。操作可能なiframeだけをTab順へ含める1行の変更を維持し、scriptlessは読み取り専用としてtabIndex=-1のままにする。最新mainのTypeScript導入・既存Lease/保存・sandbox/CSP/opaque-originを保持する。
+
+| 要件 | 区分 | 最新前提へ合わせた差分 |
+|---|---|---|
+| REQ-DOM-KEY-001〜003 | 維持 | 実Esc→Tabによる入場、入力後に親へ戻る状態保持、scriptless/安全境界を保持 |
+
+追加・保留・削除はない。受入は既存DOM入力教材の実Keyboard操作とiframeからの最初のReset/Preview/判定、関連Unit・型検査・Buildで確認する。人の実機/初心者試用、Ch11教材、公開昇格は非対象として別条件に残す。フォーカス復帰時のLease再確認で実行状態を失わないことを既存Gateと実Browserで確認し、Home分離/既存性能予算/公開Gateは維持する。最新HEAD独立レビューと必要CIを満たすまでmainへ統合しない。

@@ -1,0 +1,484 @@
+id: javascript-ch08-l04-e01
+kind: standard
+workspaceId: javascript-ch08-l04-e01
+countsTowardStandardExerciseTotal: true
+title: 空白だけの題名を登録しない
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: validation-preserve-entry
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: validate-trimmed
+    file: script.js
+    target: titleへ値を入れる行
+    starterAnchor: '  const title = field.value;'
+    change: 前後の空白を除いた文字列をtitleへ入れる
+    observe: 空白だけは案内を出し、登録済みを消さず、題名があれば更新する
+    requiresConceptIds:
+      - validation-preserve-entry
+    validationRuleIds:
+      - javascript-ch08-l04-e01-r01
+      - javascript-ch08-l04-e01-r02
+      - javascript-ch08-l04-e01-r03
+files:
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: starter/styles.css
+    editable: false
+  - path: script.js
+    language: javascript
+    source: starter/script.js
+    editable: true
+solutionFiles:
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: solution/styles.css
+    editable: false
+  - path: script.js
+    language: javascript
+    source: solution/script.js
+    editable: false
+validationRules:
+  - id: javascript-ch08-l04-e01-r01
+    label: 操作前は待機している
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#status'
+    assertion:
+      kind: text
+      operator: equals
+      expected: 入力待ち
+    feedback:
+      target: script.jsとPreview
+      expected: 操作前は待機している
+      nextAction: 入力だけでは変えず、送信されたときに表示を変えます。
+    hintId: javascript-ch08-l04-e01-h02
+    relatedSlideId: javascript-ch08-l04-s04
+  - id: javascript-ch08-l04-e01-r02
+    label: メモの文字を保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#note'
+    assertion:
+      kind: text
+      operator: equals
+      expected: 感想も残そう
+    feedback:
+      target: script.jsとPreview
+      expected: メモの文字を保つ
+      nextAction: 入力内容を表示する要素と、残すメモを分けます。
+    hintId: javascript-ch08-l04-e01-h02
+    relatedSlideId: javascript-ch08-l04-s04
+  - id: javascript-ch08-l04-e01-r03
+    label: 要素を取得して使う
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: call
+        callee: document.querySelector
+    feedback:
+      target: script.js
+      expected: 操作先と表示先の要素を使う
+      nextAction: querySelectorで入力欄と表示先を取得します。
+    hintId: javascript-ch08-l04-e01-h01
+    relatedSlideId: javascript-ch08-l04-s03
+hints:
+  - id: javascript-ch08-l04-e01-h01
+    level: 1
+    title: 空白は文字として残っている
+    text: 空文字とスペースだけの文字列を比べた最初の説明へ戻りましょう。比較する前の値に何が残っていますか。
+    relatedSlideId: javascript-ch08-l04-s01
+  - id: javascript-ch08-l04-e01-h02
+    level: 2
+    title: 戻り値を使う
+    text: trimは元の値を変えず別の文字列を返します。titleへ入れている値を見直しましょう。
+    relatedSlideId: javascript-ch08-l04-s02
+  - id: javascript-ch08-l04-e01-h03
+    level: 3
+    title: trimした結果をtitleへ入れる
+    text: const title = field.value.trim();とすると、前後の空白を除いた値をifと登録に使えます。
+    relatedSlideId: javascript-ch08-l04-s03
+relatedSlideIds:
+  - javascript-ch08-l04-s01
+  - javascript-ch08-l04-s02
+  - javascript-ch08-l04-s03
+  - javascript-ch08-l04-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: named-handler
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/named-handler/script.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: unused-trim
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/unused-trim/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:validate-title:spaces-send:cancel
+      - interaction:validate-title:spaces-send:status
+      - interaction:validate-title:spaces-send:saved
+      - interaction:validate-title:spaces-send:note
+      - interaction:validate-title:first-input:status
+      - interaction:validate-title:first-input:saved
+      - interaction:validate-title:invalid-after-send:cancel
+      - interaction:validate-title:invalid-after-send:status
+      - interaction:validate-title:invalid-after-send:saved
+      - interaction:validate-title:invalid-after-send:note
+      - interaction:validate-title:second-input:status
+      - interaction:validate-title:second-input:saved
+  - id: always-reject
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/always-reject/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:validate-title:first-send:cancel
+      - interaction:validate-title:first-send:status
+      - interaction:validate-title:first-send:saved
+      - interaction:validate-title:first-send:note
+      - interaction:validate-title:invalid-after-input:status
+      - interaction:validate-title:invalid-after-input:saved
+      - interaction:validate-title:invalid-after-send:cancel
+      - interaction:validate-title:invalid-after-send:status
+      - interaction:validate-title:invalid-after-send:saved
+      - interaction:validate-title:invalid-after-send:note
+      - interaction:validate-title:second-input:status
+      - interaction:validate-title:second-input:saved
+      - interaction:validate-title:second-send:cancel
+      - interaction:validate-title:second-send:status
+      - interaction:validate-title:second-send:saved
+      - interaction:validate-title:second-send:note
+  - id: erase-saved
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/erase-saved/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:validate-title:invalid-after-send:cancel
+      - interaction:validate-title:invalid-after-send:status
+      - interaction:validate-title:invalid-after-send:saved
+      - interaction:validate-title:invalid-after-send:note
+      - interaction:validate-title:second-input:status
+      - interaction:validate-title:second-input:saved
+  - id: stale-notice
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/stale-notice/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:validate-title:first-send:cancel
+      - interaction:validate-title:first-send:status
+      - interaction:validate-title:first-send:saved
+      - interaction:validate-title:first-send:note
+      - interaction:validate-title:invalid-after-input:status
+      - interaction:validate-title:invalid-after-input:saved
+      - interaction:validate-title:second-send:cancel
+      - interaction:validate-title:second-send:status
+      - interaction:validate-title:second-send:saved
+      - interaction:validate-title:second-send:note
+  - id: missing-cancel
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/missing-cancel/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:validate-title:empty-send:cancel
+      - interaction:validate-title:empty-send:status
+      - interaction:validate-title:empty-send:saved
+      - interaction:validate-title:empty-send:note
+      - interaction:validate-title:spaces-send:cancel
+      - interaction:validate-title:spaces-send:status
+      - interaction:validate-title:spaces-send:saved
+      - interaction:validate-title:spaces-send:note
+      - interaction:validate-title:first-send:cancel
+      - interaction:validate-title:first-send:status
+      - interaction:validate-title:first-send:saved
+      - interaction:validate-title:first-send:note
+      - interaction:validate-title:invalid-after-send:cancel
+      - interaction:validate-title:invalid-after-send:status
+      - interaction:validate-title:invalid-after-send:saved
+      - interaction:validate-title:invalid-after-send:note
+      - interaction:validate-title:second-send:cancel
+      - interaction:validate-title:second-send:status
+      - interaction:validate-title:second-send:saved
+      - interaction:validate-title:second-send:note
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: dom-form
+  primaryOutput: preview
+interactionScenarios:
+  - id: validate-title
+    label: 空と題名を繰り返して送信する
+    actions:
+      - id: empty-input
+        kind: fill
+        selector: '#title'
+        value: ''
+      - id: empty-send
+        kind: click
+        selector: '#save'
+      - id: spaces-input
+        kind: fill
+        selector: '#title'
+        value: '   '
+      - id: spaces-send
+        kind: click
+        selector: '#save'
+      - id: first-input
+        kind: fill
+        selector: '#title'
+        value: 春の本
+      - id: first-send
+        kind: click
+        selector: '#save'
+      - id: invalid-after-input
+        kind: fill
+        selector: '#title'
+        value: '   '
+      - id: invalid-after-send
+        kind: click
+        selector: '#save'
+      - id: second-input
+        kind: fill
+        selector: '#title'
+        value: 夏の本
+      - id: second-send
+        kind: click
+        selector: '#save'
+    checkpoints:
+      - id: empty-input
+        afterActionId: empty-input
+        expectations:
+          - id: status
+            kind: selector-text
+            selector: '#status'
+            equals: 入力待ち
+          - id: saved
+            kind: selector-text
+            selector: '#saved'
+            equals: 未登録
+      - id: empty-send
+        afterActionId: empty-send
+        expectations:
+          - id: cancel
+            kind: submit-prevented
+          - id: status
+            kind: selector-text
+            selector: '#status'
+            equals: 題名を入力してください
+          - id: saved
+            kind: selector-text
+            selector: '#saved'
+            equals: 未登録
+          - id: note
+            kind: selector-text
+            selector: '#note'
+            equals: 感想も残そう
+      - id: spaces-input
+        afterActionId: spaces-input
+        expectations:
+          - id: status
+            kind: selector-text
+            selector: '#status'
+            equals: 題名を入力してください
+          - id: saved
+            kind: selector-text
+            selector: '#saved'
+            equals: 未登録
+      - id: spaces-send
+        afterActionId: spaces-send
+        expectations:
+          - id: cancel
+            kind: submit-prevented
+          - id: status
+            kind: selector-text
+            selector: '#status'
+            equals: 題名を入力してください
+          - id: saved
+            kind: selector-text
+            selector: '#saved'
+            equals: 未登録
+          - id: note
+            kind: selector-text
+            selector: '#note'
+            equals: 感想も残そう
+      - id: first-input
+        afterActionId: first-input
+        expectations:
+          - id: status
+            kind: selector-text
+            selector: '#status'
+            equals: 題名を入力してください
+          - id: saved
+            kind: selector-text
+            selector: '#saved'
+            equals: 未登録
+      - id: first-send
+        afterActionId: first-send
+        expectations:
+          - id: cancel
+            kind: submit-prevented
+          - id: status
+            kind: selector-text
+            selector: '#status'
+            equals: 登録しました
+          - id: saved
+            kind: selector-text
+            selector: '#saved'
+            equals: '登録済み: 春の本'
+          - id: note
+            kind: selector-text
+            selector: '#note'
+            equals: 感想も残そう
+      - id: invalid-after-input
+        afterActionId: invalid-after-input
+        expectations:
+          - id: status
+            kind: selector-text
+            selector: '#status'
+            equals: 登録しました
+          - id: saved
+            kind: selector-text
+            selector: '#saved'
+            equals: '登録済み: 春の本'
+      - id: invalid-after-send
+        afterActionId: invalid-after-send
+        expectations:
+          - id: cancel
+            kind: submit-prevented
+          - id: status
+            kind: selector-text
+            selector: '#status'
+            equals: 題名を入力してください
+          - id: saved
+            kind: selector-text
+            selector: '#saved'
+            equals: '登録済み: 春の本'
+          - id: note
+            kind: selector-text
+            selector: '#note'
+            equals: 感想も残そう
+      - id: second-input
+        afterActionId: second-input
+        expectations:
+          - id: status
+            kind: selector-text
+            selector: '#status'
+            equals: 題名を入力してください
+          - id: saved
+            kind: selector-text
+            selector: '#saved'
+            equals: '登録済み: 春の本'
+      - id: second-send
+        afterActionId: second-send
+        expectations:
+          - id: cancel
+            kind: submit-prevented
+          - id: status
+            kind: selector-text
+            selector: '#status'
+            equals: 登録しました
+          - id: saved
+            kind: selector-text
+            selector: '#saved'
+            equals: '登録済み: 夏の本'
+          - id: note
+            kind: selector-text
+            selector: '#note'
+            equals: 感想も残そう
