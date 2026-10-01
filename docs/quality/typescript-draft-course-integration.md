@@ -44,7 +44,11 @@ Docker内の専用コピーでCourse登録・用語初出・概念前提・8枚�
 - 01-01: `b37eaea98f0d48c57403ec2137c5781c69f2127d6666f23a2321fbcef5eb052c`
 - 01-02: `c2fc69f06c7cd24cbdb0ccc7b462097856f5aa47001ff79c3f6caec186022f8a`
 
-Exercise directoryのbytesは原稿と同一であることを`diff -rq`で確認したため、PR #75の型注釈12fixtureとPR #77の型推論13fixture・掲載例の成功証拠を再利用する。今回のCourse/用語/概念・2図・nextLessonIdは上記の新しい検証と固定HEAD独立レビューの対象。統合内容レビュー台帳はレビュー回収まで空のdraftとし、未確認の内容を承認済みとは記録しない。
+Exercise directoryのbytesは原稿と同一であることを`diff -rq`で確認したため、PR #75の型注釈12fixtureとPR #77の型推論13fixture・掲載例の成功証拠を再利用する。今回のCourse/用語/概念・2図・nextLessonIdは上記の新しい検証と固定HEAD独立レビューの対象。
+
+同じPro ChatはPR #78のHEAD `694adabc94fa7316d15d0eaf769a574ab3fed1de` / base `39ffbf3c8212dedd661d9aa4185139543716e719`の原文を独立確認し、必須修正0・必須不明点0・LGTM Yes、2Lessonのdraft Course統合approvedと判定した。両Lessonのaccuracy/goalExerciseAlignment/decisionはapproved、unexplainedTerms/hintLeakageは0。追加図・順序/前提・初版進捗・用語/概念・profile・配信境界がレビュー対象である。examplesExecuted=trueは作者の既存Docker証拠に基づき、Proの実行/画像再目視/hash独立再計算を意味しない。[固定HEADレビュー記録](https://github.com/santa928/tsumucode/pull/78#issuecomment-5931809640)。
+
+この結果を`content-review-typescript.yaml`に2件記録し、Dockerの既存`verifyContentReview`で通常生成CourseとLesson directory hashを照合した。`lessonsReviewed=2 / staleHashes=0 / rejected=0`が成功。台帳のreleaseStatus/verifiedSourceCommit/canonicalDistSha256はdraftのままで、Lesson内容承認をRelease全体の承認へ拡張しない。初回CI36862318851のresolve/fastは成功したが、空台帳時のContent review statusコマンドは2件のReview欠落で失敗し、通常CIでは既存continue-on-errorにより要確認の警告になっていた。台帳追記後の新HEADは同じPRで限定再レビューとCIを回収してからmergeする。
 
 ## 非対象・リスク・性能
 
@@ -56,4 +60,5 @@ Exercise directoryのbytesは原稿と同一であることを`diff -rq`で確�
 - [x] 非対象を今回の統合単位と全体の到達点で区別した。
 - [x] リスクと対策を残した。
 - [x] 性能目標・測定条件・未測定範囲を保持した。
-- [ ] 通常UI・画像目視・固定HEAD独立レビューを回収した。
+- [x] 通常UI・画像目視・教材原文の固定HEAD独立レビューを回収した。
+- [ ] 台帳追記後の最新HEAD限定レビューとCIを回収し、mergeした。

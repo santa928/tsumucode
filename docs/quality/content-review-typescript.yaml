@@ -2,4 +2,26 @@ schemaVersion: 1
 releaseStatus: draft
 verifiedSourceCommit: draft
 canonicalDistSha256: draft
-lessons: []
+lessons:
+  - lessonId: typescript-ch01-l01
+    authorId: tsumucode-typescript-authoring
+    reviewerId: astra-pro-independent-review
+    sourceHash: b37eaea98f0d48c57403ec2137c5781c69f2127d6666f23a2321fbcef5eb052c
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: PR78の同じPro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEAD694adabc94fa7316d15d0eaf769a574ab3fed1deの教材原文・Course順序/前提/初版進捗・用語初出/概念前提・s03追加図・推論profile・配信境界を独立確認し内容承認。CodexのPR77による通常13fixture/掲載例と、同一Exercise bytesを使ったPR78の実Chromium連続UI/保存・2幅画像目視の成功記録に基づくexamplesExecuted。Proによる実行/画像再目視/hash独立再計算、人の初心者試用/実機/全Course完成/公開受入を意味しない。releaseStatusとverifiedSourceCommitはdraftのまま保持する。
+  - lessonId: typescript-ch01-l02
+    authorId: tsumucode-typescript-authoring
+    reviewerId: astra-pro-independent-review
+    sourceHash: c2fc69f06c7cd24cbdb0ccc7b462097856f5aa47001ff79c3f6caec186022f8a
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: PR78の同じPro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEAD694adabc94fa7316d15d0eaf769a574ab3fed1deの教材原文・01-01前提への接続・型注釈の初出/概念・s01追加図・注釈profile・配信境界を独立確認し内容承認。CodexのPR75による通常12fixture/掲載例と、同一Exercise bytesを使ったPR78の実Chromium連続UI/保存・2幅画像目視の成功記録に基づくexamplesExecuted。Proによる実行/画像再目視/hash独立再計算、人の初心者試用/実機/全Course完成/公開受入を意味しない。releaseStatusとverifiedSourceCommitはdraftのまま保持する。
