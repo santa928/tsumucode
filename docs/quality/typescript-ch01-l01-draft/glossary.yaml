@@ -1,0 +1,45 @@
+schemaVersion: 1
+entries:
+  - id: typescript
+    term: TypeScript
+    definition: JavaScriptに型の確認を加えた言語。
+    firstSlideId: typescript-ch01-l01-s01
+    relatedIds:
+      - type
+  - id: type
+    term: 型
+    definition: 数値や文字列など、値の種類。
+    firstSlideId: typescript-ch01-l01-s01
+    relatedIds:
+      - number
+      - string
+  - id: type-inference
+    term: 型推論
+    definition: 初期値などからTypeScriptが型を判断すること。
+    firstSlideId: typescript-ch01-l01-s01
+    relatedIds:
+      - initial-value
+      - number
+  - id: initial-value
+    term: 初期値
+    definition: 変数へ最初に入れる値。
+    firstSlideId: typescript-ch01-l01-s01
+    relatedIds:
+      - type-inference
+  - id: number
+    term: number
+    definition: 数値を表す型。
+    firstSlideId: typescript-ch01-l01-s01
+    relatedIds:
+      - string
+  - id: string
+    term: string
+    definition: 文字列を表す型。引用符で囲んだ2も文字列。
+    firstSlideId: typescript-ch01-l01-s02
+    relatedIds:
+      - number
+  - id: console
+    term: Console
+    definition: console.logで表示した値を確認する場所。JavaScriptで既習。
+    firstSlideId: typescript-ch01-l01-s01
+    relatedIds: []

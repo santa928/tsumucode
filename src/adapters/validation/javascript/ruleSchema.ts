@@ -40,7 +40,10 @@ export function parseJavaScriptRule(value: unknown): JavaScriptValidatorRule {
 }
 
 /** JavaScript Validator用Rule集合を重複・group整合までfail-closedに検証する。 */
-export function parseJavaScriptRules(input: unknown): readonly JavaScriptValidatorRule[] {
+export function parseJavaScriptRules(
+  input: unknown,
+  requireSourceRule = true,
+): readonly JavaScriptValidatorRule[] {
   if (!Array.isArray(input) || input.length === 0) {
     throw new Error('JavaScript Validator ruleを1件以上指定してください');
   }
@@ -66,7 +69,7 @@ export function parseJavaScriptRules(input: unknown): readonly JavaScriptValidat
       throw new Error(`Requirement ${requirementId} のrequiredが一致しません`);
     }
   }
-  if (!rules.some((rule) => rule.target.kind === 'javascript-source')) {
+  if (requireSourceRule && !rules.some((rule) => rule.target.kind === 'javascript-source')) {
     throw new Error('JavaScript Validator ruleにはSource Ruleが1件以上必要です');
   }
   return Object.freeze(rules);

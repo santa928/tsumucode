@@ -214,6 +214,7 @@ function EditableSession({
   const [operation, setOperation] = useState<OperationState>('idle');
   const [operationError, setOperationError] = useState<string>();
   const [previewNeedsPrepare, setPreviewNeedsPrepare] = useState(false);
+  const [waitingForLease, setWaitingForLease] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
   const [activeStepId, setActiveStepId] = useState<string | undefined>(exercise.steps[0]?.id);
   const [drawerMode, setDrawerMode] = useState<'feedback' | 'hint'>();
@@ -222,6 +223,7 @@ function EditableSession({
   const [restoreEditorFocus, setRestoreEditorFocus] = useState(false);
   const mountedRef = useRef(true);
   const operationGenerationRef = useRef(0);
+  const operationAbortRef = useRef<AbortController | undefined>(undefined);
   const resetInFlightRef = useRef(false);
   const previewFrameRef = useRef<HTMLIFrameElement | undefined>(undefined);
   const hintTriggerRef = useRef<HTMLButtonElement>(null);
@@ -396,8 +398,9 @@ function EditableSession({
     return () => {
       mountedRef.current = false;
       operationGenerationRef.current += 1;
+      operationAbortRef.current?.abort();
     };
-  }, []);
+  }, [controller]);
 
   useEffect(() => {
     if (!restoreEditorFocus) return;
@@ -412,6 +415,9 @@ function EditableSession({
 
   /** 画面操作の世代を進め、古いPromise callbackを後続操作から分離する。 */
   const beginOperation = useCallback((): number => {
+    operationAbortRef.current?.abort();
+    operationAbortRef.current = new AbortController();
+    setWaitingForLease(false);
     operationGenerationRef.current += 1;
     return operationGenerationRef.current;
   }, []);
@@ -472,14 +478,31 @@ function EditableSession({
     };
   }, [controller, initialization, state.reviewReturn]);
 
+  /** 受け付けた操作は自タブの編集権再確認後だけ再開し、古い画面・操作では実行しない。 */
+  const waitForOperationLease = useCallback(
+    async (generation: number): Promise<boolean> => {
+      const signal = operationAbortRef.current?.signal;
+      if (signal === undefined || !isCurrentOperation(generation)) return false;
+      setWaitingForLease(!lease.isWritable());
+      try {
+        const writable = await lease.waitUntilWritable(signal);
+        return writable && !signal.aborted && isCurrentOperation(generation) && lease.isWritable();
+      } finally {
+        if (isCurrentOperation(generation)) setWaitingForLease(false);
+      }
+    },
+    [isCurrentOperation, lease],
+  );
+
   /** 必要なら同じiframeを再初期化し、描画までを一つのbusy/error境界で実行する。 */
   const executePreview = useCallback(
-    (frame: HTMLIFrameElement | undefined, shouldPrepare: boolean): void => {
+    (frame: HTMLIFrameElement | undefined, shouldPrepare: boolean, waitForLease = false): void => {
       const generation = beginOperation();
       setOperation('preview');
       setOperationError(undefined);
       void (async () => {
         try {
+          if (waitForLease && !(await waitForOperationLease(generation))) return;
           if (shouldPrepare && frame !== undefined) {
             try {
               await controller.prepare(frame);
@@ -512,7 +535,7 @@ function EditableSession({
         }
       })();
     },
-    [beginOperation, controller, isCurrentOperation],
+    [beginOperation, controller, isCurrentOperation, waitForOperationLease],
   );
 
   useEffect(() => {
@@ -541,19 +564,19 @@ function EditableSession({
 
   /** 手動Preview更新を未処理rejectionなしで実行する。 */
   const updatePreview = (): void => {
-    if (!lease.isWritable()) return;
+    if (busy) return;
     const frame = previewFrameRef.current;
     if (frame === undefined && controller.environment.mode !== 'console') {
       setPreviewNeedsPrepare(true);
       setOperationError(previewPreparationErrorMessage());
       return;
     }
-    executePreview(frame, previewNeedsPrepare);
+    executePreview(frame, previewNeedsPrepare, true);
   };
 
   /** 判定batch・最新Draft・進捗を同じrevisionで原子的に保存する。 */
   const validate = (): void => {
-    if (!lease.isWritable()) return;
+    if (busy) return;
     statusReturnFocusRef.current = validateTriggerRef.current;
     const generation = beginOperation();
     setOperation('validate');
@@ -561,6 +584,7 @@ function EditableSession({
     setDrawerMode(undefined);
     void (async () => {
       try {
+        if (!(await waitForOperationLease(generation))) return;
         const nextResult = await controller.validateNow();
         const executionRevision = nextResult.executionRevision;
         if (executionRevision === null) throw new Error('判定revisionがありません');
@@ -852,13 +876,15 @@ function EditableSession({
               onClick={updatePreview}
               className="tc-exercise-pager-secondary"
             >
-              {operation === 'preview'
-                ? previewNeedsPrepare
-                  ? '再準備しています'
-                  : '更新しています'
-                : previewNeedsPrepare
-                  ? 'プレビューを再準備'
-                  : 'プレビューを更新'}
+              {operation === 'preview' && waitingForLease
+                ? '編集権を確認しています'
+                : operation === 'preview'
+                  ? previewNeedsPrepare
+                    ? '再準備しています'
+                    : '更新しています'
+                  : previewNeedsPrepare
+                    ? 'プレビューを再準備'
+                    : 'プレビューを更新'}
             </button>
             <button
               ref={validateTriggerRef}
@@ -867,7 +893,11 @@ function EditableSession({
               onClick={validate}
               className="tc-exercise-pager-primary"
             >
-              {operation === 'validate' ? '判定しています' : '判定する'}
+              {operation === 'validate'
+                ? waitingForLease
+                  ? '編集権を確認しています'
+                  : '判定しています'
+                : '判定する'}
             </button>
             {controller.environment.mode === 'console' && busy ? (
               <button
@@ -918,13 +948,15 @@ function EditableSession({
                 <p role="status">
                   {state.executionResult.status === 'succeeded'
                     ? '実行できました（合否は「判定する」で確認）'
-                    : state.executionResult.status === 'unsupported'
-                      ? 'この環境では未対応です。採点していません。'
-                      : state.executionResult.status === 'stopped'
-                        ? '実行を停止しました。採点していません。'
-                        : state.executionResult.status === 'system-error'
-                          ? '実行環境で問題が起きました。採点していません。'
-                          : 'コードのエラーを確認してください。'}
+                    : state.executionResult.status === 'type-error'
+                      ? '型を確認してください。まだ実行・採点していません。'
+                      : state.executionResult.status === 'unsupported'
+                        ? 'この環境では未対応です。採点していません。'
+                        : state.executionResult.status === 'stopped'
+                          ? '実行を停止しました。採点していません。'
+                          : state.executionResult.status === 'system-error'
+                            ? '実行環境で問題が起きました。採点していません。'
+                            : 'コードのエラーを確認してください。'}
                 </p>
               ) : null}
               <h1>{exercise.title}</h1>
@@ -1038,7 +1070,7 @@ function EditableSession({
                 <PreviewFrame
                   key={`${course.id}:${exercise.id}`}
                   onReady={preparePreview}
-                  consoleEnabled={exercise.runtime?.kind === 'javascript'}
+                  consoleEnabled={exercise.runtime !== undefined}
                   primaryOutput={exercise.runtime?.primaryOutput ?? 'preview'}
                   consoleRecords={state.runtimeOutput?.console ?? []}
                   consoleFreshness={state.runtimeOutput?.freshness ?? 'current'}
