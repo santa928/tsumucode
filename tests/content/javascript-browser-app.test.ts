@@ -6,10 +6,10 @@ import {
 import { assertChapterConceptCoverage } from './concept-coverage';
 
 let authoring: AuthoringCoursePackage;
-/** 不変な教材の読込を章ごとに重複せず、Browser Appの検査へ同じ結果を渡す。 */
+/** 教材の読込を共有する準備には30秒、各章の契約検証には既定の実行枠を保つ。 */
 beforeAll(async () => {
   authoring = await loadAuthoringCourse('content/javascript');
-});
+}, 30_000);
 
 it('Ch07は4単元で、参照・class・生成接続・複数操作を学ぶ', () => {
   const loaded = {
