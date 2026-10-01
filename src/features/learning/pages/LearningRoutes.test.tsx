@@ -1561,6 +1561,70 @@ describe('Learning routes', () => {
     expect(runtime.passFreshness.markDirty).toHaveBeenCalledTimes(dirtyCount);
   });
 
+  it.each(['プレビューを更新', '判定する'] as const)(
+    '再確認中の%sは最初のクリックを待機し、所有権確認後に一度だけ実行する',
+    async (action) => {
+      stubEditingCapability(true);
+      const adapters = stubAdapters();
+      const user = userEvent.setup();
+      renderRoute(
+        '/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading',
+      );
+      await findCodeWorkspace();
+      await waitFor(() => expect(screen.getByRole('button', { name: action })).toBeEnabled());
+      const renders = adapters.render.mock.calls.length;
+      act(() => {
+        runtime.lease.setState({
+          status: 'yielding',
+          revalidating: true,
+          coordination: 'available',
+        });
+      });
+      await user.click(screen.getByRole('button', { name: action }));
+      expect(screen.getByRole('button', { name: '編集権を確認しています' })).toBeDisabled();
+      expect(adapters.render).toHaveBeenCalledTimes(renders);
+      expect(adapters.validate).not.toHaveBeenCalled();
+      act(() => {
+        runtime.lease.setState({ status: 'owned', coordination: 'available' });
+      });
+      if (action === '判定する') {
+        await waitFor(() => {
+          expect(adapters.validate).toHaveBeenCalledTimes(1);
+        });
+      } else {
+        await waitFor(() => {
+          expect(adapters.render).toHaveBeenCalledTimes(renders + 1);
+        });
+      }
+    },
+  );
+
+  it('再確認中の判定は他タブへの所有権移動で取り消し、採点も保存も開始しない', async () => {
+    stubEditingCapability(true);
+    const adapters = stubAdapters();
+    const user = userEvent.setup();
+    renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
+    await findCodeWorkspace();
+    await waitFor(() => expect(screen.getByRole('button', { name: '判定する' })).toBeEnabled());
+    act(() => {
+      runtime.lease.setState({ status: 'claiming', revalidating: true, coordination: 'available' });
+    });
+    const writes = runtime.lease.fencedWriteCalls.mock.calls.length;
+    await user.click(screen.getByRole('button', { name: '判定する' }));
+    act(() => {
+      runtime.lease.setState({
+        status: 'read-only',
+        coordination: 'available',
+        ownerId: 'other-tab',
+      });
+    });
+    expect(
+      await screen.findByRole('heading', { name: '別のタブで編集中です' }),
+    ).toBeInTheDocument();
+    expect(adapters.validate).not.toHaveBeenCalled();
+    expect(runtime.lease.fencedWriteCalls).toHaveBeenCalledTimes(writes);
+  });
+
   it('self再検証中はReset確認を保持し、所有権喪失まで復元writeを開始しない', async () => {
     stubEditingCapability(true);
     const adapters = stubAdapters();
@@ -1852,4 +1916,41 @@ describe('Learning routes', () => {
       expect(editorView.contentDOM).toHaveFocus();
     });
   });
+});
+
+it('型検査失敗を未実行・未採点と表示し、診断を残して修正後に再実行できる', async () => {
+  stubEditingCapability(true);
+  let hasTypeError = true;
+  const adapters = stubAdapters({
+    render: async (input) => ({
+      exerciseSessionId: input.exerciseSessionId,
+      executionRevision: input.executionRevision,
+      diagnostics: hasTypeError
+        ? [
+            {
+              code: 'typescript-type-error-2322',
+              kind: 'reference',
+              severity: 'error',
+              message: 'Type mismatch',
+              learnerMessage: 'number型の値を入れてください。',
+              file: 'index.html',
+              line: 1,
+              column: 1,
+            },
+          ]
+        : [],
+      evidence: [],
+      console: [],
+    }),
+  });
+  renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
+  expect(
+    await screen.findByText('型を確認してください。まだ実行・採点していません。'),
+  ).toBeInTheDocument();
+  await userEvent.click(screen.getByRole('button', { name: '判定する' }));
+  expect(adapters.validate).not.toHaveBeenCalled();
+  expect(runtime.repository.putDraftAndCourseFenced).not.toHaveBeenCalled();
+  hasTypeError = false;
+  await userEvent.click(screen.getByRole('button', { name: 'プレビューを更新' }));
+  expect(await screen.findByText('実行できました（合否は「判定する」で確認）')).toBeInTheDocument();
 });

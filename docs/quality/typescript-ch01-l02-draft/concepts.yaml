@@ -1,0 +1,6 @@
+schemaVersion: 1
+concepts:
+  - id: typescript-number-annotation
+    introducedBySlideId: typescript-ch01-l02-s01
+    prerequisiteConceptIds: []
+    minimumProjectLevel: transform

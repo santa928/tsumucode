@@ -86,7 +86,7 @@ validationRules:
     feedback:
       target: script.js
       expected: メモを保つ
-      nextAction: 変更する表示先がstatusだけか確認します。
+      nextAction: 表示先のstatusとnextを書き換え、noteを変えていないか確認します。
     hintId: javascript-ch09-l02-e01-h02
     relatedSlideId: javascript-ch09-l02-s04
   - id: javascript-ch09-l02-e01-r03
