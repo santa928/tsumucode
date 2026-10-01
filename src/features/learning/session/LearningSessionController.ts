@@ -760,6 +760,7 @@ export class LearningSessionController {
     const evidence = normalizeRunnerEvidence(result.evidence);
     this.#replaceState({ ...this.#state, executionResult: result });
     if (
+      result.status === 'type-error' ||
       result.status === 'unsupported' ||
       result.status === 'stopped' ||
       result.status === 'system-error'
@@ -862,7 +863,7 @@ export class LearningSessionController {
     throw error;
   }
 
-  /** 同一実行の観測で未対応・制限停止を見つけたら、学習履歴へ渡す前に中断する。 */
+  /** 同一実行の観測で型誤り・未対応・制限停止を見つけたら、学習履歴へ渡す前に中断する。 */
   #assertObservationGradable(
     rendered: ExecutionResult,
     observation: {
@@ -872,7 +873,12 @@ export class LearningSessionController {
   ): void {
     const { diagnostics } = observation;
     const status = executionStatus(diagnostics);
-    if (status === 'unsupported' || status === 'system-error' || status === 'stopped') {
+    if (
+      status === 'type-error' ||
+      status === 'unsupported' ||
+      status === 'system-error' ||
+      status === 'stopped'
+    ) {
       const result: ExecutionResult = {
         ...rendered,
         status,

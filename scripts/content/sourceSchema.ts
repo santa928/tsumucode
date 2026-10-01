@@ -92,8 +92,19 @@ export const JavaScriptExerciseRuntimeSourceSchema = z
   .strict();
 
 /** Course追加時にkind単位で拡張するExercise Runtime authoring union。 */
+export const TypeScriptExerciseRuntimeSourceSchema = JavaScriptExerciseRuntimeSourceSchema.extend({
+  kind: z.literal('typescript'),
+  entryFile: WorkspacePathSchema.refine(
+    (file) => file.endsWith('.ts') && !file.endsWith('.d.ts'),
+    'TypeScript entryFileは.tsファイルを指定してください',
+  ),
+  sourceType: z.literal('module'),
+});
+
+/** JavaScriptとTypeScriptの通常Authoring Sourceを同じ読込経路へ渡す。 */
 export const ExerciseRuntimeSourceSchema = z.discriminatedUnion('kind', [
   JavaScriptExerciseRuntimeSourceSchema,
+  TypeScriptExerciseRuntimeSourceSchema,
 ]);
 
 export const FixtureSourceSchema = z

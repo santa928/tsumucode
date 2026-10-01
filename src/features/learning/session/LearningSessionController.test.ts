@@ -276,7 +276,7 @@ describe('LearningSessionController', () => {
     vi.unstubAllGlobals();
   });
 
-  it.each(['unsupported', 'system', 'limit'] as const)(
+  it.each(['unsupported', 'system', 'limit', 'type'] as const)(
     '%sでは下書き・過去の成功を保持し採点を保存しない',
     async (kind) => {
       const runtime = runnerHarness();
@@ -297,8 +297,13 @@ describe('LearningSessionController', () => {
         executionRevision: input.executionRevision,
         diagnostics: [
           {
-            code: kind === 'limit' ? 'javascript-budget' : 'test',
-            kind: kind === 'limit' ? 'system' : kind,
+            code:
+              kind === 'limit'
+                ? 'javascript-budget'
+                : kind === 'type'
+                  ? 'typescript-type-error-2322'
+                  : 'test',
+            kind: kind === 'limit' ? 'system' : kind === 'type' ? 'reference' : kind,
             severity: 'error',
             message: 'blocked',
             learnerMessage: '採点していません',
@@ -703,6 +708,8 @@ describe('LearningSessionController', () => {
     ['system', 'interaction'],
     ['unsupported', 'snapshot'],
     ['system', 'snapshot'],
+    ['type', 'interaction'],
+    ['type', 'snapshot'],
   ] as const)('%s診断は%s観測でも採点前に止めて保存しない', async (kind, origin) => {
     const current = exercise({
       interactionScenarios: [
@@ -722,8 +729,8 @@ describe('LearningSessionController', () => {
     });
     const runtime = runnerHarness();
     const diagnostic = {
-      code: 'current-target-test',
-      kind,
+      code: kind === 'type' ? 'typescript-type-error-2322' : 'current-target-test',
+      kind: kind === 'type' ? ('reference' as const) : kind,
       severity: 'error' as const,
       message: 'guard',
       learnerMessage: '環境未対応',
@@ -755,7 +762,7 @@ describe('LearningSessionController', () => {
     await expect(controller.validateNow()).rejects.toThrow();
     expect(validation.validate).not.toHaveBeenCalled();
     expect(controller.getSnapshot().executionResult?.status).toBe(
-      kind === 'system' ? 'system-error' : 'unsupported',
+      kind === 'system' ? 'system-error' : kind === 'type' ? 'type-error' : 'unsupported',
     );
     expect(controller.getSnapshot().files['index.html']).toBe('<main>Sourceは保持する</main>');
     expect(controller.getSnapshot().validationHistory).toEqual([]);

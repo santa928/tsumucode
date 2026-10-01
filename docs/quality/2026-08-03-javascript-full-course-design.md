@@ -709,3 +709,47 @@ Ch08-l01は15分/4Slide/1演習。Ch00〜07と合わせ32Lesson/128Slide/34Exerc
 | REQ-JS-EVENT-008 | 維持 | Form/入力検証/trimは後続。sandboxや採点Gateを変更せず、実行成功と採点を分離 |
 
 15分を追加しCh08は2 Lesson/30分、JavaScript累計33 Lesson/132 Slide/35演習/530分。revision .5→.6は既存IDを保つ空移行。読む時点の誤りを直す小演習に限定し、currentTarget構文だけへの固定はせず登録先変数.valueも正解とする。文字列末尾空白は既存Snapshotが正規化するため、その差を採点の主題にはしない。性能予算・安全境界は維持し、人の初心者試用と後続章を完了扱いにしない。
+
+### Ch08-l03 Formの送信（2026-09-28）
+
+| 要件 | 区分 | 実装と受入条件 |
+|---|---|---|
+| REQ-JS-EVENT-001〜008 | 維持 | 既習説明、入力の現在値、保存互換、独立レビュー、有限試用を保持 |
+| REQ-JS-FORM-001 | 追加 | form/submit button、submitの登録先、preventDefault、送信時のvalueを4枚で説明 |
+| REQ-JS-FORM-002 | 追加 | formのcurrentTargetと入力欄を区別し、既習のfield.valueで現在値を読む |
+| REQ-JS-FORM-003 | 追加 | 入力だけでは表示を変えず、2回の送信で現在値を表示し、対象外メモを保つ実採点 |
+| REQ-JS-FORM-004 | 維持 | Preview安全装置と学習者自身の取消を区別。PR55の限定dom-formを使い、CSP・通信禁止・送信API禁止を保持 |
+| REQ-JS-FORM-005 | 維持 | 既存IDを維持する空移行 .6→.7、draft有限試用。後続検証とCh09〜11は未完 |
+| REQ-JS-FORM-006 | 追加 | Starter/正解/名前付き別解/届かない取消/click取消/固定値/対象外変更を実Runnerで確認。直接click・EnterとReset・保存、390px通読を確認 |
+
+20分を追加しCh08は3 Lesson/50分、JavaScript累計34 Lesson/136 Slide/36演習/550分。送信を取り消す1行の修正へ焦点を絞る。安全装置が画面遷移を止めるだけでは課題達成にならず、同じsubmitの学習者コードによる取消を採点する。return、stopPropagation、FormData、外部送信、サーバー、constraint validationは今回教えない。Enterの説明と実測は単一入力欄とsubmit buttonの構成に限定する。
+
+仕様は [MDN submit event](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/submit_event) と [MDN preventDefault](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault) を2026-09-28に確認。文章・例・図は独自制作。公開GateとHome予算/遅延chunk分離を維持し、機械操作を人の初心者試用・実機確認の代用にしない。
+
+### Ch08-l04 入力検証の準備（2026-09-28）
+
+| 要件 | 区分 | 実装と受入条件 |
+|---|---|---|
+| REQ-JS-FORM-001〜006 | 維持 | submit/現在値/取消/保存/有限試用と独立レビューを保持。前提PR56はmain統合済み |
+| REQ-JS-VALIDATE-001 | 追加 | 入力検証、空文字、trimの戻り値、元の値と途中空白の保持を説明 |
+| REQ-JS-VALIDATE-002 | 維持 | 既習if/else/===と前単元Formへ戻り、新構文で分岐を回避しない |
+| REQ-JS-VALIDATE-003 | 追加 | 空欄/空白だけ/有効値/再び空/別の有効値の送信で、案内更新と登録済み表示の保持を実採点 |
+| REQ-JS-VALIDATE-004 | 維持 | 既存ID・空移行 .7→.8、入力時点と送信時点の区別、安全装置と学習者取消の区別 |
+| REQ-JS-VALIDATE-005 | 追加 | 名前付き別解と、trimの戻り値を使わない/常に拒否/無効入力で消去/案内が残る/取消忘れの誤答を実Runnerで検証 |
+| REQ-JS-VALIDATE-006 | 維持 | 外部送信/FormData/HTML constraint validation/サーバーは非対象。画面内の案内をサーバー保護と誤認させない |
+
+15分/4Slide/1演習。Ch08は4Lesson65分、累計35Lesson140Slide37演習565分draftとなる候補。前後空白の厳密な表示差はSnapshotの既存正規化があるため主採点にしない。trimで空白だけを空と扱うこと、入力欄を直接書き換える課題ではないことを明示する。受入は説明/予測/演習の対応、実Fixtureと直接操作・Reset・保存・390px読書。Runtime、安全境界、性能予算、公開Gateは維持する。人の初心者試用、物理実機、Ch09〜11は未完のまま。
+
+### Ch09-l01 Stateの準備（2026-09-28）
+
+| 要件 | 区分 | 実装と受入条件 |
+|---|---|---|
+| REQ-JS-VALIDATE-001〜006 | 維持 | PR56/57/58はmain統合済み。Ch08既存教材・保存移行・有限試用を維持 |
+| REQ-JS-STATE-001 | 追加 | stateを特別な構文でなく現在の状況を表す値として説明し、DOM表示と区別 |
+| REQ-JS-STATE-002 | 維持 | Scope・Closure・click・再代入を再利用し、宣言の位置と更新→表示の順序を説明 |
+| REQ-JS-STATE-003 | 追加 | 0→1→2→3の繰り返しclickを実採点し、毎回1/2ずつ/更新前表示/未接続を検出。名前付き別解を許す |
+| REQ-JS-STATE-004 | 維持 | 再Preview時の実行state初期化と学習Draft保存を区別。既存ID・空移行 .8→.9を維持 |
+| REQ-JS-STATE-005 | 追加 | 掲載例・Fixture・編集/Reset/別解/実click/判定/再読込、PC/390読書を検証。最初の判定click修正PR57の依存を明記 |
+| REQ-JS-STATE-006 | 維持 | Ch09後続3単元・専用render関数・Collection表示・非同期・人の試用を今回の完成範囲へ含めない |
+
+15分/4Slide/1演習。Ch09は1Lesson15分、累計36Lesson144Slide38演習580分draftの候補。独立内容レビューと必要CI前に統合せず、試用導線だけへ追加する。Runtime・安全境界・Home性能予算・公開Gateを維持する。Chapter09全体4Lesson70分の計画を削減したものではない。

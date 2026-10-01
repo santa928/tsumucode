@@ -69,16 +69,23 @@ Protocol v3は初回/操作応答の`submitEvidence`を4値（unsupported/setup-
 
 ## Ch10の直接Promise constructor（Issue #8、レビュー前の候補）
 
-| 要件                  | 区分 | 契約                                                                                                       |
-| --------------------- | ---- | ---------------------------------------------------------------------------------------------------------- |
-| REQ-ASYNC-PROMISE-001 | 追加 | async/projectだけ直接のnew Promiseを許容し、executor/then/awaitと既存bounded timerを接続する               |
-| REQ-ASYNC-PROMISE-002 | 維持 | core/modules/dom/dom-formではunsupported。任意constructor・alias・member constructor・動的実行は開放しない |
-| REQ-ASYNC-PROMISE-003 | 維持 | 通信/Storage/親参照拒否、opaque iframe/CSP、計装の予算、timer数/遅延上限、stop/新frame失効を維持する       |
-| REQ-ASYNC-PROMISE-004 | 維持 | currentTargetのasync/project制限、未対応/システム障害の非採点、下書き保持、Home分離を維持する              |
+| 要件                  | 区分 | 契約                                                                                                                                                                                             |
+| --------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| REQ-ASYNC-PROMISE-001 | 追加 | async/projectだけ直接のnew Promiseを許容し、executor/then/awaitと既存bounded timerを接続する                                                                                                     |
+| REQ-ASYNC-PROMISE-002 | 維持 | core/modules/dom/dom-formではunsupported。async/projectではPromiseの束縛・再代入を拒否し、標準Promiseへの直接newだけを追加する。任意constructor・alias・member constructor・動的実行は開放しない |
+| REQ-ASYNC-PROMISE-003 | 維持 | 通信/Storage/親参照拒否、opaque iframe/CSP、計装の予算、timer数/遅延上限、stop/新frame失効を維持する                                                                                             |
+| REQ-ASYNC-PROMISE-004 | 維持 | currentTargetのasync/project制限、未対応/システム障害の非採点、下書き保持、Home分離を維持する                                                                                                    |
 
 これはConsole専用Runnerの証拠をDOMへ流用する変更ではない。直接のPromise constructorを既存AST policyの有限許可へ追加する候補であり、全Promiseがsettledになるまで待つ契約や任意コードの完全隔離を新設しない。遅延DOM観測は既存Scenarioの750ms上限とpreserveTimersに従う。初期Snapshotでtimerを回収する既存契約も変えない。
 
 受入は実Runnerで直接resolve/reject捕捉・timerからのresolve・async/await・再実行/stop後の古い結果抑止と、関連の拒否境界を代表Browserで確認する。初期実測ではnew Promiseがunsupportedで、既存Promise.resolve().thenのDOM更新のみ動作した。人の初心者試用・教材完成・公開はこの修正の証拠に含めない。既存性能/待機上限は維持する。
+
+PR63の独立レビューで、`const Promise = Date; new Promise()`が名前だけのconstructor検査を通る点を確認した。async/projectではPromiseを予約名として扱い、変数宣言・関数名・引数・分割代入・catch・import・代入・更新・for-in/ofの束縛先を実行前にunsupportedとして拒否する。`object.Promise`や`{ Promise: other }`のproperty名は束縛先と区別して許可する。これは教材環境の制限であり、JavaScript一般で同名の変数を禁止する説明ではない。
+
+| 改訂対象                      | 区分 | 差分                                                                     |
+| ----------------------------- | ---- | ------------------------------------------------------------------------ |
+| REQ-ASYNC-PROMISE-002         | 維持 | 標準Promiseだけを許可するため、名前の置き換えによる迂回を閉じる          |
+| REQ-ASYNC-PROMISE-001/003/004 | 維持 | executor/then/await、待機・予算・隔離・失効・下書き・chunk境界を保持する |
 
 ## 操作後の実行診断（Issue #8、実測後の修正候補）
 
@@ -87,7 +94,7 @@ Protocol v3は初回/操作応答の`submitEvidence`を4値（unsupported/setup-
 | 要件             | 区分 | 内容                                                                                                         |
 | ---------------- | ---- | ------------------------------------------------------------------------------------------------------------ |
 | REQ-DOM-DIAG-001 | 追加 | InteractionとSnapshotの観測時に、同期/非同期の実行エラー・予算/タイマー制限を認証済みの同じframeから取得する |
-| REQ-DOM-DIAG-002 | 維持 | 未対応/システム停止を採点履歴へ保存せず、コードエラーと課題不一致を区別する                                  |
+| REQ-DOM-DIAG-002 | 維持 | 型誤り/未対応/システム停止を採点履歴へ保存せず、コードエラーと課題不一致を区別する                                  |
 | REQ-DOM-DIAG-003 | 維持 | 既存のsourceWindow/session/revision/frameGeneration/一回token/strict payloadと応答上限を維持する             |
 | REQ-DOM-DIAG-004 | 維持 | 観測のためにclick/focusを合成せず、learner callbackや予算・timer・Form取消状態を変更しない                   |
 | REQ-DOM-DIAG-005 | 維持 | 750msのcheckpoint待機、既存Console量上限、停止/再実行・画面離脱による失効を保持する                          |
