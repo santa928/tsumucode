@@ -19,45 +19,12 @@ for (const learningMode of ['annotation', 'inference'] as const) {
   }, testInfo) => {
     test.setTimeout(120_000);
     const draft = await loadAuthoringLessonDraft(
-      'docs/quality/typescript-ch01-l02-draft',
+      learningMode === 'inference'
+        ? 'docs/quality/typescript-ch01-l01-draft'
+        : 'docs/quality/typescript-ch01-l02-draft',
       'typescript',
     );
-    let exercise = draft.authoringExercises[0]!;
-    if (learningMode === 'inference') {
-      // 通常教材の完成前に、同じ採点経路で01-01の専用契約を確認する非公開fixture。
-      exercise.id = 'typescript-ch01-l01-e01';
-      exercise.validationRules = exercise.validationRules.map((rule) => ({
-        ...rule,
-        id: rule.id.replace('ch01-l02', 'ch01-l01'),
-        assertion:
-          rule.target.kind === 'typescript-learning'
-            ? { kind: 'typescript-learning', profile: 'score-number-inference-v1' }
-            : rule.assertion,
-      }));
-      const pilots = JSON.parse(
-        readFileSync('tests/fixtures/typescript-inference-pilot.json', 'utf8'),
-      ) as {
-        id: string;
-        source: string;
-        expectedStatus: 'pass' | 'incomplete' | 'code-error';
-        failedRule?: string;
-      }[];
-      exercise = {
-        ...exercise,
-        fixtures: pilots.map((pilot) => ({
-          id: pilot.id,
-          expectedStatus: pilot.expectedStatus,
-          ...(pilot.expectedStatus === 'code-error'
-            ? { expectedDiagnosticCodes: ['typescript-type-error-2322'] }
-            : {}),
-          expectedFeedbackRuleIds: pilot.failedRule ? [`${exercise.id}-${pilot.failedRule}`] : [],
-          files: [
-            { path: 'main.ts', language: 'typescript', content: pilot.source, editable: false },
-            { path: 'index.html', language: 'html', content: '<main></main>', editable: false },
-          ],
-        })),
-      };
-    }
+    const exercise = draft.authoringExercises[0]!;
     if (exercise.runtime?.kind !== 'typescript') throw new Error('TypeScript runtimeが必要です');
     const harness = new URL('__typescript-annotation-grading', testServerUrl(4174)).href;
     await page.route(harness, (route) =>

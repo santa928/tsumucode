@@ -1,0 +1,90 @@
+schemaVersion: 1
+defaults:
+  method: original-authored
+  createdAt: 2026-10-01
+  creator: TsumuCode project
+  sourceUrl: none
+  license: project-original
+  modified: false
+items:
+  - id: inference-source-1
+    visibility: public
+    path: concepts.yaml
+  - id: inference-source-2
+    visibility: public
+    path: exercises/typescript-ch01-l01-e01/exercise.yaml
+  - id: inference-source-3
+    visibility: authoring
+    path: exercises/typescript-ch01-l01-e01/fixtures/alternative.ts
+  - id: inference-source-4
+    visibility: authoring
+    path: exercises/typescript-ch01-l01-e01/fixtures/annotation.ts
+  - id: inference-source-5
+    visibility: authoring
+    path: exercises/typescript-ch01-l01-e01/fixtures/any.ts
+  - id: inference-source-6
+    visibility: authoring
+    path: exercises/typescript-ch01-l01-e01/fixtures/assertion.ts
+  - id: inference-source-7
+    visibility: authoring
+    path: exercises/typescript-ch01-l01-e01/fixtures/const.ts
+  - id: inference-source-8
+    visibility: authoring
+    path: exercises/typescript-ch01-l01-e01/fixtures/index.html
+  - id: inference-source-9
+    visibility: authoring
+    path: exercises/typescript-ch01-l01-e01/fixtures/nocheck.ts
+  - id: inference-source-10
+    visibility: authoring
+    path: exercises/typescript-ch01-l01-e01/fixtures/output-only.ts
+  - id: inference-source-11
+    visibility: authoring
+    path: exercises/typescript-ch01-l01-e01/fixtures/solution.ts
+  - id: inference-source-12
+    visibility: authoring
+    path: exercises/typescript-ch01-l01-e01/fixtures/starter.ts
+  - id: inference-source-13
+    visibility: authoring
+    path: exercises/typescript-ch01-l01-e01/fixtures/string-initializer.ts
+  - id: inference-source-14
+    visibility: authoring
+    path: exercises/typescript-ch01-l01-e01/fixtures/suppressed.ts
+  - id: inference-source-15
+    visibility: authoring
+    path: exercises/typescript-ch01-l01-e01/fixtures/union-escape.ts
+  - id: inference-source-16
+    visibility: authoring
+    path: exercises/typescript-ch01-l01-e01/fixtures/wrong-value.ts
+  - id: inference-source-17
+    visibility: public
+    path: exercises/typescript-ch01-l01-e01/instructions.md
+  - id: inference-source-18
+    visibility: authoring
+    path: exercises/typescript-ch01-l01-e01/solution/index.html
+  - id: inference-source-19
+    visibility: authoring
+    path: exercises/typescript-ch01-l01-e01/solution/main.ts
+  - id: inference-source-20
+    visibility: public
+    path: exercises/typescript-ch01-l01-e01/starter/index.html
+  - id: inference-source-21
+    visibility: public
+    path: exercises/typescript-ch01-l01-e01/starter/main.ts
+  - id: inference-source-22
+    visibility: public
+    path: glossary.yaml
+  - id: inference-source-23
+    visibility: public
+    path: lesson.yaml
+  - id: inference-source-24
+    visibility: public
+    path: slides/s01-inference.md
+  - id: inference-source-25
+    visibility: public
+    path: slides/s02-reassignment.md
+  - id: inference-source-26
+    visibility: public
+    path: slides/s03-number-update.md
+  - id: inference-source-27
+    visibility: public
+    path: slides/s04-checkpoint.md
