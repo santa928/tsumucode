@@ -47,3 +47,5 @@ ZIP直下は`index.html`、`styles.css`、`README.md`の3ファイルだけ。�
 - 初回のBrowser実行環境にOS依存/Chrome実体不足があり、既存の対応Dockerへ変更した。必須Slide未閲覧でLesson完了にならないテスト準備を実UI閲覧へ修正。別previewが既に占有するportは停止せず、専用portの応答内容を確認した。製品の判定/安全条件を弱めた修正はない。
 
 最新HEAD独立Proレビュー、必要CI、mainへの反映・既存公開Gate・配信後操作は別の完了条件。#25 Bの常駐Project、全Course輸出、初心者/実機/正式公開は未完。
+
+初回CI Run `36925508758`は193ファイル1908テスト中、既存のcross-browser smoke選択契約1件だけ失敗した。持ち出しを共通Firefox/WebKit公開matrixへ加えた設定変更を取り消し、既存の6 smokeを維持した。テストの期待値・判定は変えていない。Chromeの通常E2Eには新しい代表経路を含め、FF/WebKitは変更面の固定artifactを専用設定で実測した上記の証拠を保持する。最終HEADの必要CIは別途確認する。
