@@ -169,6 +169,8 @@ fixtures:
       - interaction:control-sync:reopened:name
       - interaction:control-sync:reopened:expanded
       - interaction:control-sync:reopened:visibility
+      - interaction:control-sync:opened:accessible-name
+      - interaction:control-sync:reopened:accessible-name
   - id: state-only
     expectedStatus: incomplete
     files:
@@ -195,6 +197,9 @@ fixtures:
       - interaction:control-sync:reopened:name
       - interaction:control-sync:reopened:expanded
       - interaction:control-sync:reopened:visibility
+      - interaction:control-sync:opened:accessible-name
+      - interaction:control-sync:closed:accessible-name
+      - interaction:control-sync:reopened:accessible-name
   - id: stale-close-name
     expectedStatus: incomplete
     files:
@@ -214,6 +219,7 @@ fixtures:
       - interaction:control-sync:closed:name
       - interaction:control-sync:closed:expanded
       - interaction:control-sync:closed:visibility
+      - interaction:control-sync:closed:accessible-name
   - id: stale-aria-name
     expectedStatus: incomplete
     files:
@@ -232,6 +238,12 @@ fixtures:
     expectedFeedbackRuleIds:
       - interaction:control-sync:opened:accessible-name
       - interaction:control-sync:reopened:accessible-name
+      - interaction:control-sync:opened:name
+      - interaction:control-sync:opened:expanded
+      - interaction:control-sync:opened:visibility
+      - interaction:control-sync:reopened:name
+      - interaction:control-sync:reopened:expanded
+      - interaction:control-sync:reopened:visibility
   - id: stale-labelledby
     expectedStatus: incomplete
     files:
@@ -250,6 +262,12 @@ fixtures:
     expectedFeedbackRuleIds:
       - interaction:control-sync:opened:accessible-name
       - interaction:control-sync:reopened:accessible-name
+      - interaction:control-sync:opened:name
+      - interaction:control-sync:opened:expanded
+      - interaction:control-sync:opened:visibility
+      - interaction:control-sync:reopened:name
+      - interaction:control-sync:reopened:expanded
+      - interaction:control-sync:reopened:visibility
 runtime:
   kind: javascript
   entryFile: script.js

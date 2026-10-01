@@ -272,6 +272,9 @@ fixtures:
         editable: false
     expectedFeedbackRuleIds:
       - javascript-ch10-l01-e01-r04
+      - interaction:promise-data:again:count
+      - interaction:promise-data:again:question
+      - interaction:promise-data:again:note
   - id: discard-result
     expectedStatus: incomplete
     files:
@@ -290,6 +293,7 @@ fixtures:
     expectedFeedbackRuleIds:
       - interaction:promise-data:again:count
       - interaction:promise-data:again:question
+      - interaction:promise-data:again:note
 runtime:
   kind: javascript
   entryFile: script.js

@@ -262,6 +262,7 @@ fixtures:
         editable: false
     expectedFeedbackRuleIds:
       - interaction:await-count:again:count
+      - interaction:await-count:again:note
 runtime:
   kind: javascript
   entryFile: script.js
