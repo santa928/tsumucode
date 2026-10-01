@@ -3749,3 +3749,154 @@ items:
   - id: javascript-ch08-l02-source-21
     visibility: public
     path: chapters/javascript-ch08/lessons/javascript-ch08-l02/slides/s04.md
+  - id: javascript-ch08-l03-source-1
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/exercise.yaml
+  - id: javascript-ch08-l03-source-2
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/fixtures/click-cancel/script.js
+  - id: javascript-ch08-l03-source-3
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/fixtures/fixed-first/script.js
+  - id: javascript-ch08-l03-source-4
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/fixtures/index.html
+  - id: javascript-ch08-l03-source-5
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/fixtures/named-handler/script.js
+  - id: javascript-ch08-l03-source-6
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/fixtures/outside-changed/script.js
+  - id: javascript-ch08-l03-source-7
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/fixtures/styles.css
+  - id: javascript-ch08-l03-source-8
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/fixtures/unreachable-cancel/script.js
+  - id: javascript-ch08-l03-source-9
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/instructions.md
+  - id: javascript-ch08-l03-source-10
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/solution/index.html
+  - id: javascript-ch08-l03-source-11
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/solution/script.js
+  - id: javascript-ch08-l03-source-12
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/solution/styles.css
+  - id: javascript-ch08-l03-source-13
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/starter/index.html
+  - id: javascript-ch08-l03-source-14
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/starter/script.js
+  - id: javascript-ch08-l03-source-15
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/exercises/javascript-ch08-l03-e01/starter/styles.css
+  - id: javascript-ch08-l03-source-16
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/lesson.yaml
+  - id: javascript-ch08-l03-diagram-original
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/slides/assets/submit-flow.svg
+  - id: javascript-ch08-l03-source-18
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/slides/s01.md
+  - id: javascript-ch08-l03-source-19
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/slides/s02.md
+  - id: javascript-ch08-l03-source-20
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/slides/s03.md
+  - id: javascript-ch08-l03-source-21
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l03/slides/s04.md
+  - id: javascript-ch08-l04-original-0
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/exercises/javascript-ch08-l04-e01/exercise.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-original-1
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/exercises/javascript-ch08-l04-e01/fixtures/always-reject/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-original-2
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/exercises/javascript-ch08-l04-e01/fixtures/erase-saved/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-original-3
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/exercises/javascript-ch08-l04-e01/fixtures/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-original-4
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/exercises/javascript-ch08-l04-e01/fixtures/missing-cancel/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-original-5
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/exercises/javascript-ch08-l04-e01/fixtures/named-handler/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-original-6
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/exercises/javascript-ch08-l04-e01/fixtures/stale-notice/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-original-7
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/exercises/javascript-ch08-l04-e01/fixtures/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-original-8
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/exercises/javascript-ch08-l04-e01/fixtures/unused-trim/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-original-9
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/exercises/javascript-ch08-l04-e01/instructions.md
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-original-10
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/exercises/javascript-ch08-l04-e01/solution/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-original-11
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/exercises/javascript-ch08-l04-e01/solution/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-original-12
+    visibility: authoring
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/exercises/javascript-ch08-l04-e01/solution/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-original-13
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/exercises/javascript-ch08-l04-e01/starter/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-original-14
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/exercises/javascript-ch08-l04-e01/starter/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-original-15
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/exercises/javascript-ch08-l04-e01/starter/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-original-16
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/lesson.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-diagram-original
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/slides/assets/validation-flow.svg
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-original-18
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/slides/s01.md
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-original-19
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/slides/s02.md
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-original-20
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/slides/s03.md
+    createdAt: 2026-09-28
+  - id: javascript-ch08-l04-original-21
+    visibility: public
+    path: chapters/javascript-ch08/lessons/javascript-ch08-l04/slides/s04.md
+    createdAt: 2026-09-28

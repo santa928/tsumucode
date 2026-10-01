@@ -760,6 +760,7 @@ export class LearningSessionController {
     const evidence = normalizeRunnerEvidence(result.evidence);
     this.#replaceState({ ...this.#state, executionResult: result });
     if (
+      result.status === 'type-error' ||
       result.status === 'unsupported' ||
       result.status === 'stopped' ||
       result.status === 'system-error'
@@ -893,7 +894,12 @@ export class LearningSessionController {
       assertGradable: (interaction) => {
         const diagnostics = interaction.diagnostics ?? [];
         const status = executionStatus(diagnostics);
-        if (status === 'unsupported' || status === 'system-error' || status === 'stopped') {
+        if (
+          status === 'type-error' ||
+          status === 'unsupported' ||
+          status === 'system-error' ||
+          status === 'stopped'
+        ) {
           if (rendered === undefined) throw new Error('Interaction Previewが未実行です');
           const result: ExecutionResult = {
             ...rendered,

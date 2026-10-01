@@ -559,3 +559,43 @@ concepts:
     prerequisiteConceptIds:
       - input-current-value
     minimumProjectLevel: transform
+  - id: form-submission
+    introducedBySlideId: javascript-ch08-l03-s01
+    prerequisiteConceptIds:
+      - input-repeated-update
+    minimumProjectLevel: read
+  - id: form-submit-event
+    introducedBySlideId: javascript-ch08-l03-s02
+    prerequisiteConceptIds:
+      - form-submission
+    minimumProjectLevel: read
+  - id: form-prevent-default
+    introducedBySlideId: javascript-ch08-l03-s03
+    prerequisiteConceptIds:
+      - form-submit-event
+    minimumProjectLevel: read
+  - id: form-submit-current-value
+    introducedBySlideId: javascript-ch08-l03-s04
+    prerequisiteConceptIds:
+      - form-prevent-default
+    minimumProjectLevel: transform
+  - id: input-validation-purpose
+    introducedBySlideId: javascript-ch08-l04-s01
+    prerequisiteConceptIds:
+      - form-submit-current-value
+    minimumProjectLevel: read
+  - id: string-trim-result
+    introducedBySlideId: javascript-ch08-l04-s02
+    prerequisiteConceptIds:
+      - input-validation-purpose
+    minimumProjectLevel: read
+  - id: empty-input-branch
+    introducedBySlideId: javascript-ch08-l04-s03
+    prerequisiteConceptIds:
+      - string-trim-result
+    minimumProjectLevel: read
+  - id: validation-preserve-entry
+    introducedBySlideId: javascript-ch08-l04-s04
+    prerequisiteConceptIds:
+      - empty-input-branch
+    minimumProjectLevel: transform
