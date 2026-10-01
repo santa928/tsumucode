@@ -17,7 +17,10 @@ const validSource =
   'const score: number = 2;\nconsole.log(score);\nconst heading = document.querySelector("h1");\nif (heading !== null) { heading.textContent = String(score); }';
 
 /** 配信hash付きの非公開TS fixtureだけを差し替え、製品のRunner・採点・保存を使う。 */
-async function routeTypeScriptExercise(page: Page, annotation = false): Promise<void> {
+async function routeTypeScriptExercise(
+  page: Page,
+  learningMode?: 'annotation' | 'inference',
+): Promise<void> {
   const source = structuredClone(fixtureCourse);
   source.id = 'typescript';
   source.title = 'TypeScript UI検証';
@@ -46,19 +49,22 @@ async function routeTypeScriptExercise(page: Page, annotation = false): Promise<
   };
   exercise.steps = [];
   exercise.validationRules[0]!.assertion = { kind: 'text', operator: 'equals', expected: '2' };
-  if (annotation) {
-    lesson.id = 'typescript-ch01-l02';
-    exercise.id = 'typescript-ch01-l02-e01';
+  if (learningMode) {
+    const inference = learningMode === 'inference';
+    lesson.id = inference ? 'typescript-ch01-l01' : 'typescript-ch01-l02';
+    exercise.id = `${lesson.id}-e01`;
     lesson.completion = {
       kind: 'standard',
       finalSlideId: 'slide-html-role',
       requiredExerciseIds: [exercise.id],
     };
-    exercise.title = '数値の型注釈を確認する';
+    exercise.title = inference ? '数値の型推論を確認する' : '数値の型注釈を確認する';
     exercise.instructions = [
       {
         type: 'paragraph',
-        text: '今回はscoreをletまたはconstで宣言し、numberの型注釈を付けます。数値の計算とscoreの更新だけを使い、最後のconsole.log(score)で2を表示します。',
+        text: inference
+          ? '今回はscoreをletで宣言し、型注釈を付けずに数値から型を推論させます。数値の計算とscoreの更新だけを使い、最後のconsole.log(score)で2を表示します。'
+          : '今回はscoreをletまたはconstで宣言し、numberの型注釈を付けます。数値の計算とscoreの更新だけを使い、最後のconsole.log(score)で2を表示します。',
       },
     ];
     exercise.runtime.capabilityProfile = 'core';
@@ -67,13 +73,18 @@ async function routeTypeScriptExercise(page: Page, annotation = false): Promise<
       {
         ...base,
         id: 'annotation',
-        label: 'scoreに数値の型注釈がある',
+        label: inference ? 'scoreの型を数値から推論する' : 'scoreに数値の型注釈がある',
         target: { kind: 'typescript-learning', file: 'main.ts' },
-        assertion: { kind: 'typescript-learning', profile: 'score-number-annotation-v1' },
+        assertion: {
+          kind: 'typescript-learning',
+          profile: inference ? 'score-number-inference-v1' : 'score-number-annotation-v1',
+        },
         feedback: {
           target: 'scoreの宣言',
-          expected: 'numberの型注釈を使う',
-          nextAction: '宣言の型注釈を確認しましょう。',
+          expected: inference ? '型注釈なしのletと数値の初期値を使う' : 'numberの型注釈を使う',
+          nextAction: inference
+            ? 'let scoreに数値を入れ、型注釈は付けずに確かめましょう。'
+            : '宣言の型注釈を確認しましょう。',
         },
       },
       {
@@ -129,44 +140,54 @@ async function routeTypeScriptExercise(page: Page, annotation = false): Promise<
   }
 }
 
-test('型注釈がない実コードは出力2でも未達になり、修正後だけ合格して元TSを復元する', async ({
-  page,
-}, testInfo) => {
-  test.setTimeout(90_000);
-  await routeTypeScriptExercise(page, true);
-  await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto(
-    `${testServerUrl(4174)}#/courses/typescript/lessons/typescript-ch01-l02/exercises/typescript-ch01-l02-e01`,
-  );
-  await expect(
-    page.getByText('型を確認してください。まだ実行・採点していません。', { exact: true }),
-  ).toBeVisible({ timeout: 20000 });
-  const inferred = 'let score = 2;\nconsole.log(score);';
-  await replaceEditorText(page, inferred);
-  await waitForStoredDraftContent(page, inferred);
-  await page.getByRole('button', { name: '判定する', exact: true }).click();
-  await expect(
-    page.getByText('今回の型注釈とscoreの使い方を確認しましょう。', { exact: true }),
-  ).toBeVisible({ timeout: 30000 });
-  await expect(page.getByRole('heading', { name: 'できました', exact: true })).toHaveCount(0);
-  await expect(page.getByRole('region', { name: 'Console出力' })).toContainText('2');
-  await page.screenshot({ path: testInfo.outputPath('annotation-incomplete.png') });
-  await page.getByRole('button', { name: '閉じる', exact: true }).click();
-  const corrected = 'let score: number = 1;\nscore += 1;\nconsole.log(score);';
-  await replaceEditorText(page, corrected);
-  await waitForStoredDraftContent(page, corrected);
-  await page.getByRole('button', { name: '判定する', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'できました', exact: true })).toBeVisible({
-    timeout: 30000,
+for (const learningMode of ['annotation', 'inference'] as const) {
+  test(`${learningMode}の学習条件がない実コードは出力2でも未達になり、修正後だけ合格して元TSを復元する`, async ({
+    page,
+  }, testInfo) => {
+    test.setTimeout(90_000);
+    const inference = learningMode === 'inference';
+    const lessonId = inference ? 'typescript-ch01-l01' : 'typescript-ch01-l02';
+    await routeTypeScriptExercise(page, learningMode);
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto(
+      `${testServerUrl(4174)}#/courses/typescript/lessons/${lessonId}/exercises/${lessonId}-e01`,
+    );
+    await expect(
+      page.getByText('型を確認してください。まだ実行・採点していません。', { exact: true }),
+    ).toBeVisible({ timeout: 20000 });
+    const inferred = inference
+      ? 'let score: number = 2;\nconsole.log(score);'
+      : 'let score = 2;\nconsole.log(score);';
+    await replaceEditorText(page, inferred);
+    await waitForStoredDraftContent(page, inferred);
+    await page.getByRole('button', { name: '判定する', exact: true }).click();
+    await expect(
+      page.getByText(`今回の${inference ? '型推論' : '型注釈'}とscoreの使い方を確認しましょう。`, {
+        exact: true,
+      }),
+    ).toBeVisible({ timeout: 30000 });
+    await expect(page.getByRole('heading', { name: 'できました', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('region', { name: 'Console出力' })).toContainText('2');
+    await page.screenshot({ path: testInfo.outputPath(`${learningMode}-incomplete.png`) });
+    await page.getByRole('button', { name: '閉じる', exact: true }).click();
+    const corrected = inference
+      ? 'let score = 1;\nscore += 1;\nconsole.log(score);'
+      : 'let score: number = 1;\nscore += 1;\nconsole.log(score);';
+    await replaceEditorText(page, corrected);
+    await waitForStoredDraftContent(page, corrected);
+    await page.getByRole('button', { name: '判定する', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'できました', exact: true })).toBeVisible({
+      timeout: 30000,
+    });
+    await page.getByRole('button', { name: '閉じる', exact: true }).click();
+    await page.reload();
+    await expect.poll(() => editorText(page)).toBe(corrected);
+    await expect(page.getByRole('region', { name: 'Console出力' })).toContainText('2', {
+      timeout: 20000,
+    });
+    await page.screenshot({ path: testInfo.outputPath(`${learningMode}-corrected.png`) });
   });
-  await page.getByRole('button', { name: '閉じる', exact: true }).click();
-  await page.reload();
-  await expect.poll(() => editorText(page)).toBe(corrected);
-  await expect(page.getByRole('region', { name: 'Console出力' })).toContainText('2', {
-    timeout: 20000,
-  });
-  await page.screenshot({ path: testInfo.outputPath('annotation-corrected.png') });
-});
+}
 
 test('実TS演習画面で型エラーを未採点とし、Console・修正・合格・再読込で元コードを保持する', async ({
   page,

@@ -1,9 +1,11 @@
 import type { TypeScriptCompileResult } from './compileTypeScript';
 import type { ScoreNumberAnnotationResult } from './checkScoreNumberAnnotation';
+import type { ScoreNumberInferenceResult } from './checkScoreNumberInference';
 import {
   isTypeScriptCompileInput,
   isTypeScriptCompileResult,
   isScoreNumberAnnotationResult,
+  isScoreNumberInferenceResult,
   type CompilerWorkerRequest,
   type TypeScriptCompileInput,
 } from './workerContract';
@@ -68,7 +70,19 @@ export class TypeScriptCompilerClient {
 
   /** 原文を同世代の専用操作で調べる。probe診断やASTは受け取らない。 */
   learningCheck(input: TypeScriptCompileInput): Promise<ScoreNumberAnnotationResult> {
-    return this.#request(input, 'learning-check', isScoreNumberAnnotationResult, () => ({
+    return this.#request(
+      input,
+      'score-number-annotation-v1',
+      isScoreNumberAnnotationResult,
+      () => ({
+        status: 'system-error',
+      }),
+    );
+  }
+
+  /** 型推論Lesson専用profileと専用guardを選び、元TSの注釈なし推論を検証する。 */
+  inferenceCheck(input: TypeScriptCompileInput): Promise<ScoreNumberInferenceResult> {
+    return this.#request(input, 'score-number-inference-v1', isScoreNumberInferenceResult, () => ({
       status: 'system-error',
     }));
   }
@@ -76,11 +90,12 @@ export class TypeScriptCompilerClient {
   /** 共通の期限・停止機構を維持し、操作ごとの厳密な結果guardだけを切り替える。 */
   #request<T>(
     input: TypeScriptCompileInput,
-    kind: CompilerWorkerRequest['kind'],
+    operation: 'compile' | 'score-number-annotation-v1' | 'score-number-inference-v1',
     isResult: (value: unknown, snapshot: TypeScriptCompileInput) => value is T,
     failure: () => T,
     invalidInput: () => T = failure,
   ): Promise<T> {
+    const kind = operation === 'compile' ? 'compile' : 'learning-check';
     if (this.#disposed) return Promise.reject(new DOMException('Compiler disposed', 'AbortError'));
     this.cancel();
     if (!isTypeScriptCompileInput(input)) return Promise.resolve(invalidInput());
@@ -131,9 +146,9 @@ export class TypeScriptCompilerClient {
       };
       try {
         worker.postMessage(
-          kind === 'compile'
-            ? { kind, requestId, input: snapshot }
-            : { kind, profile: 'score-number-annotation-v1', requestId, input: snapshot },
+          operation === 'compile'
+            ? { kind: 'compile', requestId, input: snapshot }
+            : { kind: 'learning-check', profile: operation, requestId, input: snapshot },
         );
       } catch {
         this.#finish(pending, undefined);

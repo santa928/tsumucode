@@ -56,6 +56,31 @@ describe('TypeScriptCompilerClient', () => {
     negativeProbeRejected: true,
   };
 
+  it('型推論profileを送信し、型注釈の応答を受け入れない', async () => {
+    const worker = new FakeWorker();
+    const client = new TypeScriptCompilerClient({ workerFactory: () => worker });
+    const result = client.inferenceCheck(input);
+    expect(worker.request).toMatchObject({
+      kind: 'learning-check',
+      profile: 'score-number-inference-v1',
+    });
+    expect(isCompilerWorkerRequest(worker.request)).toBe(true);
+    worker.respond({ result: { status: 'ready', facts } });
+    await expect(result).resolves.toEqual({ status: 'system-error' });
+    const retry = client.inferenceCheck(input);
+    const inferenceFacts = {
+      programShapeAccepted: true,
+      forbiddenEscapeAbsent: true,
+      logsScoreLast: true,
+      positiveProbeAccepted: true,
+      negativeProbeRejected: true,
+      unannotatedLetDeclaration: true,
+    };
+    worker.respond({ result: { status: 'ready', facts: inferenceFacts } });
+    await expect(retry).resolves.toEqual({ status: 'ready', facts: inferenceFacts });
+    client.dispose();
+  });
+
   it('学習検査の操作とsnapshotを固定し、通常compileの応答と混ぜない', async () => {
     const worker = new FakeWorker();
     const client = new TypeScriptCompilerClient({ workerFactory: () => worker });

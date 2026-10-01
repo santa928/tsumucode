@@ -93,6 +93,85 @@ describe('TypeScriptValidator', () => {
     },
   };
 
+  it('型推論は専用profileで同一原文を検査し、動作条件とANDで合格させる', async () => {
+    const original = await contextFixture();
+    const f = fixture();
+    const facts = {
+      programShapeAccepted: true,
+      unannotatedLetDeclaration: true,
+      forbiddenEscapeAbsent: true,
+      logsScoreLast: true,
+      positiveProbeAccepted: true,
+      negativeProbeRejected: true,
+    };
+    const compiler = {
+      ...f.compiler,
+      inferenceCheck: vi.fn().mockResolvedValue({ status: 'ready', facts }),
+    };
+    const validator = new TypeScriptValidator({
+      compilerFactory: () => compiler,
+      validatorFactory: () => ({ validate: f.validate, buildSnapshotPolicy: vi.fn() }),
+    });
+    const context = {
+      ...original,
+      exerciseId: 'typescript-ch01-l01-e01',
+      rules: [
+        {
+          ...learningRule,
+          assertion: { kind: 'typescript-learning', profile: 'score-number-inference-v1' },
+        },
+        consoleRule,
+      ],
+    };
+    expect((await validator.validate(context)).status).toBe('incomplete');
+    expect(compiler.inferenceCheck).toHaveBeenCalledWith({
+      sessionId: 'session-1',
+      revision: 4,
+      files: { 'main.ts': original.files['main.ts'] },
+    });
+    f.validate.mockResolvedValue({
+      exerciseId: context.exerciseId,
+      executionRevision: 4,
+      status: 'pass',
+      checks: [],
+      passedRequirementIds: [],
+      diagnostics: [],
+      evaluatedAt: 'now',
+    });
+    const success = await validator.validate(context);
+    expect(success.status).toBe('pass');
+    expect(success.checks.at(-1)?.message).toContain('型推論');
+    compiler.inferenceCheck.mockResolvedValue({
+      status: 'ready',
+      facts: {
+        ...facts,
+        unannotatedLetDeclaration: false,
+        positiveProbeAccepted: false,
+        negativeProbeRejected: false,
+      },
+    });
+    expect((await validator.validate(context)).status).toBe('incomplete');
+  });
+
+  it('型推論Lessonでも型Rule欠落・別profile・Console改変を拒否する', async () => {
+    const original = await contextFixture();
+    const f = fixture();
+    const inferenceRule = {
+      ...learningRule,
+      assertion: { kind: 'typescript-learning', profile: 'score-number-inference-v1' },
+    };
+    for (const rules of [
+      [consoleRule],
+      [learningRule, consoleRule],
+      [inferenceRule, { ...consoleRule, group: 'any' as const }],
+    ])
+      expect(
+        (await f.validator.validate({ ...original, exerciseId: 'typescript-ch01-l01-e01', rules }))
+          .status,
+      ).toBe('system-error');
+    expect(f.compiler.compile).not.toHaveBeenCalled();
+  });
+
   it('型Ruleは単一profile/file・必須allのみを許し、公開汎用payloadへ逃がさない', () => {
     expect(TypeScriptLearningRuleDefinitionSchema.safeParse(learningRule).success).toBe(true);
     for (const change of [
