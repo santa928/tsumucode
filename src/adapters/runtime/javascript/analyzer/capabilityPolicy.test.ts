@@ -83,6 +83,51 @@ describe('assertJavaScriptCapabilityPolicy', () => {
     }
   });
 
+  it.each(['async', 'project'] as const)(
+    '%sでPromiseの束縛と再代入によるconstructor置換を拒否する',
+    (profile) => {
+      for (const source of [
+        'const Promise = Date; new Promise();',
+        'function Promise() {} new Promise();',
+        'const create = function Promise() { return new Promise(); };',
+        'function create(Promise) { return new Promise(); } create(Date);',
+        'const create = (Promise = Date) => new Promise(); create();',
+        'function create(...Promise) {}',
+        'const { value: Promise } = { value: Date }; new Promise();',
+        'const [Promise] = [Date]; new Promise();',
+        'try { throw Date; } catch (Promise) { new Promise(); }',
+        'Promise = Date; new Promise();',
+        '({ value: Promise } = { value: Date }); new Promise();',
+        'Promise++;',
+        'for (Promise of [Date]) { new Promise(); }',
+        'for (Promise in { value: Date }) {}',
+      ]) {
+        expect(() => {
+          assertJavaScriptCapabilityPolicy(program(source), 'script.js', profile);
+        }, source).toThrow(/Promise.*置き換え/u);
+      }
+      for (const source of [
+        "import Promise from './constructor.js'; new Promise();",
+        "import { value as Promise } from './constructor.js'; new Promise();",
+        "import * as Promise from './constructor.js';",
+      ]) {
+        expect(() => {
+          assertJavaScriptCapabilityPolicy(program(source, 'module'), 'script.js', profile);
+        }, source).toThrow(/Promise.*置き換え/u);
+      }
+    },
+  );
+
+  it('Promiseというproperty名を許可し、標準Promiseへの参照を保持する', () => {
+    const source = `const constructors = { Promise: Date };
+const { Promise: other } = constructors;
+constructors.Promise = other;
+new Promise((resolve) => resolve(1));`;
+    expect(() => {
+      assertJavaScriptCapabilityPolicy(program(source), 'script.js', 'async');
+    }).not.toThrow();
+  });
+
   it.each(['core', 'modules', 'dom', 'dom-form', 'async', 'project'] as const)(
     '%sでも外部通信を許可しない',
     (profile) => {

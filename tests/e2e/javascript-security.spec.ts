@@ -576,6 +576,29 @@ test('直接のPromise constructorでresolve・await・捕捉したrejectをDOM�
   }
 });
 
+test('Promiseの束縛や再代入で別constructorを実行前に拒否する', async ({ page }) => {
+  for (const capabilityProfile of ['async', 'project'] as const) {
+    for (const source of [
+      "const Promise = Date; new Promise(); console.log('constructor-ran');",
+      "function Promise() {} new Promise(); console.log('constructor-ran');",
+      "function create(Promise) { new Promise(); console.log('constructor-ran'); } create(Date);",
+      "const { value: Promise } = { value: Date }; new Promise(); console.log('constructor-ran');",
+      "Promise = Date; new Promise(); console.log('constructor-ran');",
+    ]) {
+      const result = await runJavaScriptHarness(page, { capabilityProfile, source });
+      expect(result.rejection).toBeNull();
+      expect(result.console).toEqual([]);
+      expect(result.diagnostics).toEqual([
+        expect.objectContaining({
+          kind: 'unsupported',
+          severity: 'error',
+          message: expect.stringMatching(/Promise.*置き換え/u),
+        }),
+      ]);
+    }
+  }
+});
+
 test('Promise executorの予算とstop後の再実行で古い結果を残さない', async ({ page }) => {
   const exhausted = await runJavaScriptHarness(page, {
     capabilityProfile: 'async',
