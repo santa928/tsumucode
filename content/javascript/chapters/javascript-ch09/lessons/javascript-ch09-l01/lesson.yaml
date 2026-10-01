@@ -1,0 +1,27 @@
+id: javascript-ch09-l01
+kind: standard
+title: 操作の間で値を覚えておく
+goal: 操作のたびに初期化される値を見つけ、前回の値から次の値へ更新できる。
+estimatedMinutes: 15
+prerequisiteLessonIds:
+  - javascript-ch08-l01
+  - javascript-ch03-l03
+  - javascript-ch03-l05
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/javascript-ch09-l01-e01/exercise.yaml
+reflection: handlerの外で作ったcountを操作ごとに更新し、その値から表示を作る。実行中のstateと保存されるソースコードは別のもの。
+glossaryRefs:
+  - ui-state
+  - local-scope
+  - closure
+  - event-handler
+completion:
+  kind: standard
+  finalSlideId: javascript-ch09-l01-s04
+  requiredExerciseIds:
+    - javascript-ch09-l01-e01

@@ -501,3 +501,46 @@ entries:
     relatedIds:
       - event-object
       - property
+  - id: form
+    term: Form
+    definition: 入力欄や送信ボタンをまとめるHTMLのform要素。
+    firstSlideId: javascript-ch08-l03-s01
+    relatedIds:
+      - input-value
+  - id: submit-event
+    term: submitイベント
+    definition: Formの送信を開始するとき、そのFormへ届くイベント。
+    firstSlideId: javascript-ch08-l03-s02
+    relatedIds:
+      - form
+      - event
+  - id: prevent-default
+    term: preventDefault
+    definition: Eventが持つメソッドで、取り消せるイベントのブラウザ標準動作を止める。
+    firstSlideId: javascript-ch08-l03-s03
+    relatedIds:
+      - event-object
+      - function
+  - id: input-validation
+    term: 入力検証
+    definition: 入力された値が画面で決めた条件に合うか確かめること。
+    firstSlideId: javascript-ch08-l04-s01
+    relatedIds: []
+  - id: string-trim
+    term: trim
+    definition: 文字列の前後の空白を除いた別の文字列を返すメソッド。元の値や途中の空白は変えない。
+    firstSlideId: javascript-ch08-l04-s02
+    relatedIds: []
+  - id: empty-string
+    term: 空文字
+    definition: 文字が0個の文字列。コードでは''や""で表す。空白の文字を含む文字列とは異なる。
+    firstSlideId: javascript-ch08-l04-s01
+    relatedIds: []
+  - id: ui-state
+    term: state
+    definition: 画面が今どんな状況かを表す値。変数などに持ち、操作で更新して表示へ反映する。
+    firstSlideId: javascript-ch09-l01-s01
+    relatedIds:
+      - variable
+      - event-handler
+      - closure

@@ -17,6 +17,11 @@ export interface CourseRuntimeServices {
 export type CourseRuntimeDescriptor = Pick<CourseIndex, 'id' | 'runnerId' | 'validatorId'>;
 
 export interface CourseRuntimeLoaders {
+  loadTypeScriptRunner(): Promise<{ readonly create: () => RunnerAdapter }>;
+  loadTypeScriptValidator(): Promise<{ readonly create: () => ValidatorAdapter }>;
+  loadTypeScriptEditor(): Promise<{
+    readonly register: (registry: EditorLanguageRegistry) => Promise<void>;
+  }>;
   loadJavaScriptRunner(): Promise<{ readonly create: () => RunnerAdapter }>;
   loadJavaScriptValidator(): Promise<{ readonly create: () => ValidatorAdapter }>;
   loadJavaScriptEditor(): Promise<{
@@ -25,6 +30,23 @@ export interface CourseRuntimeLoaders {
 }
 
 const defaultLoaders: CourseRuntimeLoaders = {
+  /** TypeScript実行実装を演習到達時に読み、Compiler Worker自体は初回compileまで生成しない。 */
+  async loadTypeScriptRunner() {
+    const { TypeScriptRunnerAdapter } =
+      await import('../../adapters/runtime/typescript/TypeScriptRunnerAdapter');
+    return { create: () => new TypeScriptRunnerAdapter() };
+  },
+  /** 元TS照合と生成JSの動作採点をTypeScript演習だけへ読み込む。 */
+  async loadTypeScriptValidator() {
+    const { TypeScriptValidator } =
+      await import('../../adapters/validation/typescript/TypeScriptValidator');
+    return { create: () => new TypeScriptValidator() };
+  },
+  /** 型構文のEditor支援をTypeScript演習まで分離する。 */
+  async loadTypeScriptEditor() {
+    const { registerTypeScriptEditorLanguage } = await import('./editor/typescriptEditorLanguage');
+    return { register: registerTypeScriptEditorLanguage };
+  },
   /** JavaScript Runner chunkをroute到達まで初期graphから分離する。 */
   async loadJavaScriptRunner() {
     const { JavaScriptRunnerAdapter } = await import('../../adapters/runtime/javascript');
@@ -89,6 +111,21 @@ export function createCourseRuntimeEnsurer(
         if (!services.validatorRegistry.has('javascript')) {
           services.validatorRegistry.register('javascript', validator.create);
         }
+        await editor.register(services.editorLanguageRegistry);
+        return;
+      }
+      case 'typescript': {
+        assertCourseRuntimeIds(course, 'typescript', 'typescript');
+        const [runner, validator, editor] = await Promise.all([
+          loaders.loadTypeScriptRunner(),
+          loaders.loadTypeScriptValidator(),
+          loaders.loadTypeScriptEditor(),
+        ]);
+        if (!services.runnerRegistry.has('typescript'))
+          services.runnerRegistry.register('typescript', runner.create);
+        if (!services.validatorRegistry.has('typescript'))
+          services.validatorRegistry.register('typescript', validator.create);
+        registerHtmlCssEditorLanguages(services.editorLanguageRegistry);
         await editor.register(services.editorLanguageRegistry);
         return;
       }
