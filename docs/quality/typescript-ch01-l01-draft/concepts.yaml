@@ -1,0 +1,6 @@
+schemaVersion: 1
+concepts:
+  - id: typescript-number-inference
+    introducedBySlideId: typescript-ch01-l01-s01
+    prerequisiteConceptIds: []
+    minimumProjectLevel: transform
