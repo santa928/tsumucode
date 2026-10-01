@@ -999,7 +999,7 @@ describe('JavaScript draft Course compilation', () => {
 
     for (const course of [authoring.runtime, compilation.runtime]) {
       expect(course).toMatchObject({
-        revision: '2026-09-28.19',
+        revision: '2026-10-02.1',
         estimatedMinutes: 760,
         expectedTotals: {
           chapters: 12,

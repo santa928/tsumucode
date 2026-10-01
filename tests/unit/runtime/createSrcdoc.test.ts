@@ -340,3 +340,73 @@ describe('secure srcdoc', () => {
     },
   );
 });
+
+it('実Bridgeは有効なaria-labelledbyを優先し、無効な参照だけaria-labelへ戻す', async () => {
+  const frame = document.createElement('iframe');
+  document.body.append(frame);
+  const child = frame.contentWindow!;
+  const messages: unknown[] = [];
+  const spy = vi.spyOn(child.parent, 'postMessage').mockImplementation((message) => {
+    messages.push(message);
+  });
+  try {
+    const source = createBridgeSource({
+      exerciseSessionId: 'name-test',
+      executionRevision: 1,
+      bootstrapToken: 'name-bootstrap',
+      viewport: { id: 'desktop', width: 1280, height: 720 },
+      stylesheetReferences: [],
+    });
+    child.document.open();
+    // eslint-disable-next-line @typescript-eslint/no-deprecated -- 実Bridgeを子Documentで起動するtest fixture。
+    child.document.write(
+      '<!doctype html><html><head><script>' +
+        source +
+        '</script></head><body>' +
+        '<span id="fixed">古い操作名</span><span id="empty"></span>' +
+        '<button id="both" aria-labelledby="fixed" aria-label="新しい操作名">表示名</button>' +
+        '<button id="missing" aria-labelledby="missing-id" aria-label="参照なしの操作名">表示名</button>' +
+        '<button id="empty-name" aria-labelledby="empty" aria-label="代替名">表示名</button>' +
+        '</body></html>',
+    );
+    child.document.dispatchEvent(new Event('DOMContentLoaded'));
+    await vi.waitFor(() => {
+      expect(messages[0]).toMatchObject({ type: 'bridge.ready' });
+    });
+    child.dispatchEvent(
+      new MessageEvent('message', {
+        source: child.parent,
+        data: {
+          version: 1,
+          type: 'snapshot.request',
+          exerciseSessionId: 'name-test',
+          executionRevision: 1,
+          requestId: 'name-request',
+          oneTimeToken: 'name-token',
+          payload: {
+            selectors: ['#both', '#missing', '#empty-name'],
+            attributes: ['id'],
+            computedStyles: [],
+            focusVisibleSelectors: [],
+            focusVisibleComputedStyles: [],
+            includeAllElements: false,
+          },
+        },
+      }),
+    );
+    const response = messages[1] as {
+      payload: {
+        nodes: readonly { matchedSelectors: readonly string[]; accessibleName: string }[];
+      };
+    };
+    const name = (selector: string): string | undefined =>
+      response.payload.nodes.find((node) => node.matchedSelectors.includes(selector))
+        ?.accessibleName;
+    expect(name('#both')).toBe('古い操作名');
+    expect(name('#missing')).toBe('参照なしの操作名');
+    expect(name('#empty-name')).toBe('');
+  } finally {
+    spy.mockRestore();
+    frame.remove();
+  }
+});

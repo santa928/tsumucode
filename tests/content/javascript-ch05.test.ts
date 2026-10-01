@@ -56,7 +56,7 @@ describe('javascript-ch05', () => {
     const { runtime: course } = await loadAuthoringCourse(path.resolve('content/javascript'));
 
     expect(course).toMatchObject({
-      revision: '2026-09-28.19',
+      revision: '2026-10-02.1',
       estimatedMinutes: 760,
       publicationStatus: 'draft',
       expectedTotals: {
@@ -109,6 +109,33 @@ describe('javascript-ch05', () => {
         { fromRevision: '2026-09-28.16', toRevision: '2026-09-28.17', steps: [] },
         { fromRevision: '2026-09-28.17', toRevision: '2026-09-28.18', steps: [] },
         { fromRevision: '2026-09-28.18', toRevision: '2026-09-28.19', steps: [] },
+        {
+          fromRevision: '2026-09-28.19',
+          toRevision: '2026-10-02.1',
+          steps: [
+            {
+              action: 'intentionally-reset',
+              entity: 'exercise',
+              id: 'javascript-ch10-l01-e01',
+              reason:
+                '判定条件と同梱データを更新しました。旧コードは退避データと復旧バックアップに保ちます。新しい最初のコードで再確認してください。',
+            },
+            {
+              action: 'intentionally-reset',
+              entity: 'exercise',
+              id: 'javascript-ch10-l02-e01',
+              reason:
+                '判定条件と同梱データを更新しました。旧コードは退避データと復旧バックアップに保ちます。新しい最初のコードで再確認してください。',
+            },
+            {
+              action: 'intentionally-reset',
+              entity: 'exercise',
+              id: 'javascript-ch11-l03-e01',
+              reason:
+                '判定条件と同梱データを更新しました。旧コードは退避データと復旧バックアップに保ちます。新しい最初のコードで再確認してください。',
+            },
+          ],
+        },
       ],
     });
     expect(course.phases.flatMap(({ chapters }) => chapters).map(({ id }) => id)).toEqual([

@@ -4876,3 +4876,7 @@ items:
     visibility: authoring
     path: chapters/javascript-ch11/lessons/javascript-ch11-l03/exercises/javascript-ch11-l03-e01/fixtures/stale-aria-name/script.js
     createdAt: '2026-10-02'
+  - id: javascript-ch11-l03-e01-stale-labelledby-script
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/exercises/javascript-ch11-l03-e01/fixtures/stale-labelledby/script.js
+    createdAt: '2026-10-02'
