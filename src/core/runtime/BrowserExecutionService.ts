@@ -15,6 +15,7 @@ export function executionStatus(diagnostics: readonly RunnerDiagnostic[]): Execu
     return 'stopped';
   if (errors.some(({ kind }) => kind === 'system')) return 'system-error';
   if (errors.some(({ kind }) => kind === 'unsupported')) return 'unsupported';
+  if (errors.some(({ code }) => code.startsWith('typescript-type-error-'))) return 'type-error';
   return errors.length === 0 ? 'succeeded' : 'code-error';
 }
 

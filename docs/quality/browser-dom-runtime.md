@@ -66,3 +66,68 @@ Protocol v3は初回/操作応答の`submitEvidence`を4値（unsupported/setup-
 受入検証は実Runner/Validatorの正解・取消忘れ・到達不能・別イベント、実click/Enter、入力後送信、stopPropagation/stopImmediatePropagation時の安全装置、悪性action/formaction/target/method/scheme、通信/親子遷移/popupの抑止、隔離文書で製品CSP単独の送信拒否を3ブラウザで確認する。allow-formsがなくてもWebKitはsubmitイベントを届け得るため、従来domのイベント不発自体を契約にしない。認証Interactionの待機・予算上限、Home/読書chunk境界を維持する。
 
 この変更でForm教材や人による初心者試用が完了するわけではない。FormData、requestSubmit/submit API、async submit、任意listener options、constraint validationの教材化、外部送信は非対象。教材は別PRでこの実採点経路へ接続する。
+
+## Ch10の直接Promise constructor（Issue #8、レビュー前の候補）
+
+| 要件                  | 区分 | 契約                                                                                                                                                                                             |
+| --------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| REQ-ASYNC-PROMISE-001 | 追加 | async/projectだけ直接のnew Promiseを許容し、executor/then/awaitと既存bounded timerを接続する                                                                                                     |
+| REQ-ASYNC-PROMISE-002 | 維持 | core/modules/dom/dom-formではunsupported。async/projectではPromiseの束縛・再代入を拒否し、標準Promiseへの直接newだけを追加する。任意constructor・alias・member constructor・動的実行は開放しない |
+| REQ-ASYNC-PROMISE-003 | 維持 | 通信/Storage/親参照拒否、opaque iframe/CSP、計装の予算、timer数/遅延上限、stop/新frame失効を維持する                                                                                             |
+| REQ-ASYNC-PROMISE-004 | 維持 | currentTargetのasync/project制限、未対応/システム障害の非採点、下書き保持、Home分離を維持する                                                                                                    |
+
+これはConsole専用Runnerの証拠をDOMへ流用する変更ではない。直接のPromise constructorを既存AST policyの有限許可へ追加する候補であり、全Promiseがsettledになるまで待つ契約や任意コードの完全隔離を新設しない。遅延DOM観測は既存Scenarioの750ms上限とpreserveTimersに従う。初期Snapshotでtimerを回収する既存契約も変えない。
+
+受入は実Runnerで直接resolve/reject捕捉・timerからのresolve・async/await・再実行/stop後の古い結果抑止と、関連の拒否境界を代表Browserで確認する。初期実測ではnew Promiseがunsupportedで、既存Promise.resolve().thenのDOM更新のみ動作した。人の初心者試用・教材完成・公開はこの修正の証拠に含めない。既存性能/待機上限は維持する。
+
+PR63の独立レビューで、`const Promise = Date; new Promise()`が名前だけのconstructor検査を通る点を確認した。async/projectではPromiseを予約名として扱い、変数宣言・関数名・引数・分割代入・catch・import・代入・更新・for-in/ofの束縛先を実行前にunsupportedとして拒否する。`object.Promise`や`{ Promise: other }`のproperty名は束縛先と区別して許可する。これは教材環境の制限であり、JavaScript一般で同名の変数を禁止する説明ではない。
+
+| 改訂対象                      | 区分 | 差分                                                                     |
+| ----------------------------- | ---- | ------------------------------------------------------------------------ |
+| REQ-ASYNC-PROMISE-002         | 維持 | 標準Promiseだけを許可するため、名前の置き換えによる迂回を閉じる          |
+| REQ-ASYNC-PROMISE-001/003/004 | 維持 | executor/then/await、待機・予算・隔離・失効・下書き・chunk境界を保持する |
+
+## 操作後の実行診断（Issue #8、実測後の修正候補）
+
+実Runnerで、同期click内のthrow、await後の未捕捉拒否、timer内の予算停止を発生させたところ、初回renderだけでなく後続Interactionもdiagnostics空を返した。Bridge内部のruntimeError/budgetExhausted等をInteractionへ載せていないことと、未捕捉Promise拒否の観測がないことを確認した。失敗処理の教材を先に足すと、制限停止を課題不一致として扱う危険がある。
+
+| 要件             | 区分 | 内容                                                                                                         |
+| ---------------- | ---- | ------------------------------------------------------------------------------------------------------------ |
+| REQ-DOM-DIAG-001 | 追加 | InteractionとSnapshotの観測時に、同期/非同期の実行エラー・予算/タイマー制限を認証済みの同じframeから取得する |
+| REQ-DOM-DIAG-002 | 維持 | 型誤り/未対応/システム停止を採点履歴へ保存せず、コードエラーと課題不一致を区別する                                  |
+| REQ-DOM-DIAG-003 | 維持 | 既存のsourceWindow/session/revision/frameGeneration/一回token/strict payloadと応答上限を維持する             |
+| REQ-DOM-DIAG-004 | 維持 | 観測のためにclick/focusを合成せず、learner callbackや予算・timer・Form取消状態を変更しない                   |
+| REQ-DOM-DIAG-005 | 維持 | 750msのcheckpoint待機、既存Console量上限、停止/再実行・画面離脱による失効を保持する                          |
+
+候補は既存Interaction応答へbounded診断を追加し、同じ認証経路に副作用のない観測要求を設ける。Snapshotへその観測結果を添え、Scenarioの各観測で非採点状態を検出し、遅延Consoleも現在の内容で判定する。代案のDOM変化だけによる推測は例外と制限停止を区別できないため採用しない。全Promise settled待ち、任意ネット通信、sandbox緩和、Framework実行は非対象。未捕捉拒否の観測・偽造/古い応答拒否・遅延予算停止の非保存を実ブラウザと既存関連回帰で確かめる。
+
+応答形式はProtocol v4。古い形式や診断状態が欠けた応答は受理しない。SnapshotにはDOM観測の後に認証した診断とConsoleを添付する。二つの観測は原子的ではなく、判定成立後のすべての非同期処理を追跡するものではない。
+
+### KeyboardでPreviewへ出入りする
+
+- REQ-DOM-KEY-001: 操作可能なPreview iframeはTab順へ含め、EditorのEsc→Tabから入力・ボタンへ入れる。
+- REQ-DOM-KEY-002: iframeの末尾からTabで親の操作へ戻り、同じ実行状態と入力値を保持して判定できる。
+- REQ-DOM-KEY-003: scriptlessの読み取り専用Preview、opaque-origin sandbox、CSP、編集権の契約は維持する。強制focusや合成keyだけでKeyboard-onlyの証拠にしない。
+
+Ch11の実操作検証で、iframeのtabindex=-1が内部の操作先も通常のTab移動から除外していることを確認した。既存DOM入力教材で実キーによる入場・入力・退出・判定を回帰対象とする。
+
+2026-10-02の前提更新は、PR57の編集権再確認を含むmain `651b385cd95d2dfc3e9910ad613a7518cebeae4f`を履歴保持で候補へ取り込む。操作可能なiframeだけをTab順へ含める1行の変更を維持し、scriptlessは読み取り専用としてtabIndex=-1のままにする。最新mainのTypeScript導入・既存Lease/保存・sandbox/CSP/opaque-originを保持する。
+
+| 要件 | 区分 | 最新前提へ合わせた差分 |
+|---|---|---|
+| REQ-DOM-KEY-001〜003 | 維持 | 実Esc→Tabによる入場、入力後に親へ戻る状態保持、scriptless/安全境界を保持 |
+
+この前提更新では追加・保留・削除はない。受入は既存DOM入力教材の実Keyboard操作とiframeからの最初のReset/Preview/判定、関連Unit・型検査・Buildで確認する。人の実機/初心者試用、Ch11教材、公開昇格は非対象として別条件に残す。フォーカス復帰時のLease再確認で実行状態を失わないことを既存Gateと実Browserで確認し、Home分離/既存性能予算/公開Gateは維持する。最新HEAD独立レビューと必要CIを満たすまでmainへ統合しない。
+
+### Keyboard操作中の全体表示を保持する
+
+PR70候補をWebKitの実画面で確認した際、標準buttonでArrowRightを押すと「全体表示」の左端が切れることを検出した。iframe自体は縮小されていても、その親canvasは未縮小の1282px幅を保持しており、351pxの作業台で親scrollLeftが49pxになった。子文書のscrollLeftは0で、外側の不要な水平移動が原因だった。
+
+| 要件 | 区分 | 実測から追加した差分 |
+|---|---|---|
+| REQ-DOM-KEY-001〜003 | 維持 | Tab入場・親復帰・状態保持と安全境界を保持 |
+| REQ-DOM-KEY-004 | 追加 | 全体表示ではcanvasを表示後の寸法に合わせて未縮小iframeのoverflowを閉じ、標準キー操作後も左右端を作業台内へ収める。100%表示の水平移動と切替時の状態保持は残す |
+
+保留・削除はない。入力の既定動作をpreventDefaultしたりfocusを強制したりせず、表示側の寸法を修正する。iframeの論理Viewport、同じnode、入力/実行状態、sandbox/CSP/Leaseは変更しない。既存Ch08-l01の実Esc→Tab→標準button Enter/ArrowRight、外側scrollWidth/clientWidthと左右端、100%表示の移動、全体表示への復帰を3Browserで確認する。100%表示のscroll能力は位置の実測で、Keyboard-onlyでの移動証拠とは区別する。代表1280x720の全体/100%画像を実目視する。重い全画面Visual/性能/公開Gateは公開条件として維持し、初心者/実機/Ch11教材の完了へ拡張しない。
+
+PR70の教材候補へはPR69の固定HEAD `2416fa2800e12d2dd0538e6dfb038c5522f0af8f`を履歴保持で取り込み、上記KEY-004の修正を同じPreviewへ適用する。Ch11-l01でも実Enter/ArrowRight/Escape/Spaceの後に全体表示のscrollLeft=0と不要な水平幅がないことを確認する。Runtime Protocol/Controller/Scenario/教材sourceは前候補から不変で、既存の実Fixture・掲載例の成功証拠はその同一入力範囲で再利用する。製品表示とnative UI/Leaseは新artifactで再検証し、内容hash承認・最新HEAD独立レビュー・main統合・公開・人の受入は別条件に残す。

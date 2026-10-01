@@ -16,9 +16,14 @@ interface Props {
   readonly recordPosition?: boolean;
 }
 
-/** 明示操作だけでURLをコピーし、拒否時も選択できるURLを残す。 */
+type CopyStatus =
+  | { readonly kind: 'idle' }
+  | { readonly kind: 'copied'; readonly url: string }
+  | { readonly kind: 'selection-needed' };
+
+/** 成功案内はコピーしたURLだけに結び、拒否時は位置が変わっても現在のURL選択を案内する。 */
 function ShareLink({ path, label }: { readonly path: string; readonly label: string }) {
-  const [status, setStatus] = useState({ url: '', message: '' });
+  const [status, setStatus] = useState<CopyStatus>({ kind: 'idle' });
   const url = new URL(`${import.meta.env.BASE_URL}#${path}`, window.location.origin).href;
   return (
     <div className="tc-reading-share">
@@ -38,16 +43,22 @@ function ShareLink({ path, label }: { readonly path: string; readonly label: str
           void (async () => {
             try {
               await navigator.clipboard.writeText(url);
-              setStatus({ url, message: 'URLをコピーしました' });
+              setStatus({ kind: 'copied', url });
             } catch {
-              setStatus({ url, message: 'URLを選択してコピーしてください' });
+              setStatus({ kind: 'selection-needed' });
             }
           })();
         }}
       >
         {label}をコピー
       </button>
-      <span role="status">{status.url === url ? status.message : ''}</span>
+      <span role="status">
+        {status.kind === 'selection-needed'
+          ? 'URLを選択してコピーしてください'
+          : status.kind === 'copied' && status.url === url
+            ? 'URLをコピーしました'
+            : ''}
+      </span>
     </div>
   );
 }

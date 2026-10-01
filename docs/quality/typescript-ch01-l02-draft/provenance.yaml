@@ -1,0 +1,111 @@
+schemaVersion: 1
+defaults:
+  method: original-authored
+  createdAt: '2026-09-29'
+  creator: TsumuCode project
+  sourceUrl: none
+  license: project-original
+  modified: false
+items:
+  - { id: annotation-source-1, visibility: public, path: lesson.yaml }
+  - { id: annotation-source-2, visibility: public, path: concepts.yaml }
+  - { id: annotation-source-3, visibility: public, path: glossary.yaml }
+  - { id: annotation-source-4, visibility: public, path: slides/s01-annotation.md }
+  - { id: annotation-source-5, visibility: public, path: slides/s02-type-mismatch.md }
+  - { id: annotation-source-6, visibility: public, path: slides/s03-inference.md }
+  - { id: annotation-source-7, visibility: public, path: slides/s04-checkpoint.md }
+  - {
+      id: annotation-source-8,
+      visibility: public,
+      path: exercises/typescript-ch01-l02-e01/instructions.md,
+    }
+  - {
+      id: annotation-source-9,
+      visibility: public,
+      path: exercises/typescript-ch01-l02-e01/starter/main.ts,
+    }
+  - {
+      id: annotation-source-10,
+      visibility: public,
+      path: exercises/typescript-ch01-l02-e01/starter/index.html,
+    }
+  - {
+      id: annotation-source-11,
+      visibility: authoring,
+      path: exercises/typescript-ch01-l02-e01/solution/main.ts,
+    }
+  - {
+      id: annotation-source-12,
+      visibility: authoring,
+      path: exercises/typescript-ch01-l02-e01/solution/index.html,
+    }
+  - {
+      id: annotation-source-13,
+      visibility: authoring,
+      path: exercises/typescript-ch01-l02-e01/fixtures/index.html,
+    }
+  - {
+      id: annotation-source-14,
+      visibility: authoring,
+      path: exercises/typescript-ch01-l02-e01/fixtures/starter.ts,
+    }
+  - {
+      id: annotation-source-15,
+      visibility: authoring,
+      path: exercises/typescript-ch01-l02-e01/fixtures/solution.ts,
+    }
+  - {
+      id: annotation-source-16,
+      visibility: authoring,
+      path: exercises/typescript-ch01-l02-e01/fixtures/alternative.ts,
+    }
+  - {
+      id: annotation-source-17,
+      visibility: authoring,
+      path: exercises/typescript-ch01-l02-e01/fixtures/const.ts,
+    }
+  - {
+      id: annotation-source-18,
+      visibility: authoring,
+      path: exercises/typescript-ch01-l02-e01/fixtures/inference-only.ts,
+    }
+  - {
+      id: annotation-source-19,
+      visibility: authoring,
+      path: exercises/typescript-ch01-l02-e01/fixtures/any-escape.ts,
+    }
+  - {
+      id: annotation-source-20,
+      visibility: authoring,
+      path: exercises/typescript-ch01-l02-e01/fixtures/double-assertion.ts,
+    }
+  - {
+      id: annotation-source-21,
+      visibility: authoring,
+      path: exercises/typescript-ch01-l02-e01/fixtures/suppressed.ts,
+    }
+  - {
+      id: annotation-source-22,
+      visibility: authoring,
+      path: exercises/typescript-ch01-l02-e01/fixtures/output-only.ts,
+    }
+  - {
+      id: annotation-source-23,
+      visibility: authoring,
+      path: exercises/typescript-ch01-l02-e01/fixtures/union-escape.ts,
+    }
+  - {
+      id: annotation-source-24,
+      visibility: authoring,
+      path: exercises/typescript-ch01-l02-e01/fixtures/nocheck-escape.ts,
+    }
+  - {
+      id: annotation-source-25,
+      visibility: authoring,
+      path: exercises/typescript-ch01-l02-e01/fixtures/wrong-value.ts,
+    }
+  - {
+      id: annotation-source-26,
+      visibility: public,
+      path: exercises/typescript-ch01-l02-e01/exercise.yaml,
+    }

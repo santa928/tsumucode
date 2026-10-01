@@ -160,6 +160,11 @@ export interface PreviewNode {
 }
 
 export interface PreviewSnapshot {
+  /** 同じframeの認証済み実行器が返した最新の診断とConsole。HTML専用表示は省略する。 */
+  readonly runtimeObservation?: {
+    readonly diagnostics: readonly RunnerDiagnostic[];
+    readonly console: readonly RunnerConsoleRecord[];
+  };
   readonly exerciseSessionId: string;
   readonly executionRevision: number;
   readonly viewport: PreviewViewport;
@@ -213,7 +218,7 @@ export interface ExecutionRequest extends RunIdentity {
 }
 
 export type ExecutionStatus =
-  'succeeded' | 'code-error' | 'unsupported' | 'stopped' | 'system-error';
+  'succeeded' | 'type-error' | 'code-error' | 'unsupported' | 'stopped' | 'system-error';
 
 /** 実行終了の事実。教材の合否は含めずValidatorが別に判定する。 */
 export interface ExecutionResult extends RunnerRenderResult, RunIdentity {

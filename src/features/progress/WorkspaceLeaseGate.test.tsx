@@ -155,6 +155,42 @@ function renderGate(
 }
 
 describe('WorkspaceLeaseGate', () => {
+  it.each(['owned', 'read-only', 'abort', 'unmount'] as const)(
+    '再確認待ちは%sで確定し、後の再取得へ持ち越さない',
+    async (outcome) => {
+      const lease = createFakeLease({ status: 'owned', coordination: 'available' });
+      const { coordinator } = coordinatorHarness(lease.handle);
+      let access!: WorkspaceLeaseAccess;
+      const view = renderGate(coordinator, (current) => {
+        access = current;
+        return <p>編集画面</p>;
+      });
+      await screen.findByText('編集画面');
+      act(() => {
+        lease.setState({ status: 'yielding', revalidating: true, coordination: 'available' });
+      });
+      const abort = new AbortController();
+      const completed = vi.fn();
+      const pending = access.waitUntilWritable(abort.signal).then(completed);
+      act(() => {
+        lease.setState({ status: 'claiming', revalidating: true, coordination: 'available' });
+      });
+      await Promise.resolve();
+      expect(completed).not.toHaveBeenCalled();
+      act(() => {
+        if (outcome === 'abort') abort.abort();
+        else if (outcome === 'unmount') view.unmount();
+        else lease.setState({ status: outcome, coordination: 'available' });
+      });
+      await pending;
+      expect(completed).toHaveBeenCalledExactlyOnceWith(outcome === 'owned');
+      act(() => {
+        lease.setState({ status: 'owned', coordination: 'available' });
+      });
+      expect(completed).toHaveBeenCalledTimes(1);
+    },
+  );
+
   it('self再検証の両phaseで同じRuntimeを保持し、所有権喪失時だけ破棄する', async () => {
     const lease = createFakeLease({ status: 'owned', coordination: 'available' });
     const { coordinator } = coordinatorHarness(lease.handle);

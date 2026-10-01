@@ -50,6 +50,12 @@ test('Keyboardで開閉して、Reset後の再編集・判定・保存を保つ'
   await expect(frame.locator('#hint')).toHaveText('配列のlengthで問題数が分かります');
   await page.keyboard.press('ArrowRight');
   await expect(frame.locator('#hint')).toHaveText('配列のlengthで問題数が分かります');
+  await expect(page.getByTestId('runtime-preview-scroll')).toHaveJSProperty('scrollLeft', 0);
+  await expect
+    .poll(() =>
+      page.getByTestId('runtime-preview-scroll').evaluate((el) => el.scrollWidth - el.clientWidth),
+    )
+    .toBeLessThanOrEqual(1);
   await page.keyboard.press('Escape');
   await expect(frame.locator('#hint')).toHaveText('ヒントは閉じています');
   await page.keyboard.press('Space');
