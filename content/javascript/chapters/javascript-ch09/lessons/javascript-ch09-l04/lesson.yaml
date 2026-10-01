@@ -1,0 +1,26 @@
+id: javascript-ch09-l04
+kind: standard
+title: 元のデータを残して表示を絞る
+goal: 元のArrayと表示条件から表示用Arrayを計算し、条件を戻せば全項目へ戻せる。
+estimatedMinutes: 15
+prerequisiteLessonIds:
+  - javascript-ch09-l03
+  - javascript-ch05-l02
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/javascript-ch09-l04-e01/exercise.yaml
+reflection: 絞り込んだArrayは表示用に使う。元データと条件から毎回計算すれば、条件を戻しても項目が失われない。
+glossaryRefs:
+  - ui-state
+  - render-function
+  - array
+  - boolean
+completion:
+  kind: standard
+  finalSlideId: javascript-ch09-l04-s04
+  requiredExerciseIds:
+    - javascript-ch09-l04-e01

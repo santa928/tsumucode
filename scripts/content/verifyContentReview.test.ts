@@ -109,6 +109,16 @@ describe('verifyAllContentReviews', () => {
         'javascript-ch08-l03',
         'javascript-ch08-l04',
         'javascript-ch09-l01',
+        'javascript-ch09-l02',
+        'javascript-ch09-l03',
+        'javascript-ch09-l04',
+        'javascript-ch10-l01',
+        'javascript-ch10-l02',
+        'javascript-ch10-l03',
+        'javascript-ch10-l04',
+        'javascript-ch11-l01',
+        'javascript-ch11-l02',
+        'javascript-ch11-l03',
       ].map((lessonId) => ({
         lessonId,
         lessonDirectory: path.join(
@@ -124,7 +134,7 @@ describe('verifyAllContentReviews', () => {
     await expect(verifyAllContentReviews({ contentRoot, publicRoot, reviewRoot })).resolves.toEqual(
       {
         coursesReviewed: 2,
-        lessonsReviewed: 37,
+        lessonsReviewed: 47,
         staleHashes: 0,
         rejected: 0,
       },

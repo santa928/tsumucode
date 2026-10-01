@@ -6,10 +6,10 @@ import type {
   SubmitEvidence,
 } from '../../../../core/runtime/contracts';
 import { CONSOLE_LIMITS } from './consoleFormatter';
-import { currentTargetDiagnostics, type CurrentTargetFailure } from './currentTargetGuard';
-import { submitDiagnostics } from './submitGuard';
+import type { CurrentTargetFailure } from './currentTargetGuard';
+import { executionDiagnostics } from './executionDiagnostics';
 
-export const JAVASCRIPT_PROTOCOL_VERSION = 3 as const;
+export const JAVASCRIPT_PROTOCOL_VERSION = 4 as const;
 
 const MAX_ID_LENGTH = 256;
 const MAX_TOKEN_LENGTH = 512;
@@ -41,6 +41,9 @@ export interface JavaScriptInteractionError {
 }
 
 export interface JavaScriptInteractionPayload {
+  readonly budgetExhausted: boolean;
+  readonly timerLimitExceeded: boolean;
+  readonly runtimeError: JavaScriptRuntimeError | null;
   readonly submitEvidence: SubmitEvidence;
   readonly currentTargetFailure: CurrentTargetFailure;
   readonly error: JavaScriptInteractionError | null;
@@ -82,6 +85,7 @@ export type JavaScriptRuntimeEnvelope =
   JavaScriptExecutionEnvelope | JavaScriptTimersClearedEnvelope | JavaScriptInteractionEnvelope;
 
 export interface JavaScriptExecutionClientOptions {
+  readonly scriptFile?: string;
   readonly responseTimeoutMs?: number;
   readonly tokenFactory?: () => string;
   readonly frameGeneration?: number;
@@ -272,7 +276,18 @@ export function isJavaScriptRuntimeEnvelope(value: unknown): value is JavaScript
     const payload = value.payload;
     return (
       isRecord(payload) &&
-      hasExactKeys(payload, ['console', 'error', 'currentTargetFailure', 'submitEvidence']) &&
+      hasExactKeys(payload, [
+        'console',
+        'error',
+        'currentTargetFailure',
+        'submitEvidence',
+        'budgetExhausted',
+        'timerLimitExceeded',
+        'runtimeError',
+      ]) &&
+      typeof payload.budgetExhausted === 'boolean' &&
+      typeof payload.timerLimitExceeded === 'boolean' &&
+      (payload.runtimeError === null || isRuntimeError(payload.runtimeError)) &&
       isSubmitEvidence(payload.submitEvidence) &&
       (payload.currentTargetFailure === null ||
         payload.currentTargetFailure === 'unsupported' ||
@@ -332,6 +347,7 @@ function responseTimeout(options: JavaScriptExecutionClientOptions | undefined):
 
 /** 実行完了とtimer停止をevent.source・identity・使い捨てtokenで認証する親Client。 */
 export class JavaScriptExecutionClient {
+  readonly #scriptFile: string;
   readonly #sourceWindow: Window;
   readonly #timeoutMs: number;
   readonly #tokenFactory: () => string;
@@ -390,10 +406,7 @@ export class JavaScriptExecutionClient {
         requestId: message.requestId,
         console: message.payload.console,
         submitEvidence: message.payload.submitEvidence,
-        diagnostics: [
-          ...currentTargetDiagnostics(message.payload.currentTargetFailure),
-          ...submitDiagnostics(message.payload.submitEvidence),
-        ],
+        diagnostics: executionDiagnostics(message.payload, this.#scriptFile),
       });
       return;
     }
@@ -424,6 +437,7 @@ export class JavaScriptExecutionClient {
     const sourceWindow = frame.contentWindow;
     if (sourceWindow === null) throw new Error('JavaScript frame has no contentWindow');
     this.#sourceWindow = sourceWindow;
+    this.#scriptFile = options?.scriptFile ?? 'script.js';
     this.#timeoutMs = responseTimeout(options);
     this.#tokenFactory = options?.tokenFactory ?? (() => crypto.randomUUID());
     if (
@@ -455,6 +469,21 @@ export class JavaScriptExecutionClient {
 
   /** 現在frameへstrictなInteractionを送り、認証済み結果だけを返す。 */
   interact(request: InteractionRequest): Promise<InteractionResult> {
+    if (!isInteractionAction(request.action))
+      return Promise.reject(new Error('JavaScript interaction action is invalid'));
+    return this.#requestObservation(request, request.action);
+  }
+
+  /** 学習者操作を起こさず、同じ認証経路で最新の実行状態だけを読む。 */
+  observe(request: Omit<InteractionRequest, 'action'>): Promise<InteractionResult> {
+    return this.#requestObservation(request, null);
+  }
+
+  /** strict actionまたはnullだけを、使い捨てtokenとframe identityに結ぶ。 */
+  #requestObservation(
+    request: Omit<InteractionRequest, 'action'>,
+    action: InteractionRequest['action'] | null,
+  ): Promise<InteractionResult> {
     if (this.#disposed) return Promise.reject(new Error('JavaScript execution disposed'));
     if (this.#executionState !== 'resolved') {
       return Promise.reject(new Error('JavaScript execution is not ready'));
@@ -466,9 +495,6 @@ export class JavaScriptExecutionClient {
       request.frameGeneration !== this.#frameGeneration
     ) {
       return Promise.reject(new Error('JavaScript interaction identity mismatch'));
-    }
-    if (!isInteractionAction(request.action)) {
-      return Promise.reject(new Error('JavaScript interaction action is invalid'));
     }
     if (
       !isIdentifier(request.requestId) ||
@@ -497,13 +523,13 @@ export class JavaScriptExecutionClient {
       this.#sourceWindow.postMessage(
         {
           version: JAVASCRIPT_PROTOCOL_VERSION,
-          type: 'javascript.interact',
+          type: action === null ? 'javascript.observe' : 'javascript.interact',
           exerciseSessionId: this.exerciseSessionId,
           executionRevision: this.executionRevision,
           frameGeneration: this.#frameGeneration,
           requestId: request.requestId,
           oneTimeToken: token,
-          payload: request.action,
+          payload: action,
         },
         '*',
       );

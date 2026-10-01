@@ -1,6 +1,6 @@
 # JavaScript全Course 設計
 
-- 状態: 書面レビュー承認済み・Runtime基盤およびChapter 01〜06教材実装・Data Phaseの全品質GateとGitHub Pages β公開検証済み（Chapter 07先頭1単元は統合済み、2単元目の候補を追加。Ch07残りとCh08〜13は未実装）
+- 状態: 全Course設計は書面レビュー承認済み。Runtime基盤・Ch00〜08・Ch09先頭1単元はmainへ統合済み。Ch09の後続3単元は独立レビュー待ちの候補。Ch10〜13、全Course受入は未完。配信済み範囲とSHAはIssue #5を正本とする。
 - 承認日: 2026-08-04
 - 作成日: 2026-08-03
 - 対象: `javascript` Course Chapter 01〜13、既存Chapter 00の互換維持、全Course公開
@@ -753,3 +753,199 @@ Ch08-l01は15分/4Slide/1演習。Ch00〜07と合わせ32Lesson/128Slide/34Exerc
 | REQ-JS-STATE-006 | 維持 | Ch09後続3単元・専用render関数・Collection表示・非同期・人の試用を今回の完成範囲へ含めない |
 
 15分/4Slide/1演習。Ch09は1Lesson15分、累計36Lesson144Slide38演習580分draftの候補。独立内容レビューと必要CI前に統合せず、試用導線だけへ追加する。Runtime・安全境界・Home性能予算・公開Gateを維持する。Chapter09全体4Lesson70分の計画を削減したものではない。
+
+### Ch09-l02 state→renderの準備（2026-09-28）
+
+| 要件 | 区分 | 実装と受入条件 |
+|---|---|---|
+| REQ-JS-STATE-001〜006 | 維持 | stateと表示の区別、既習Scope/Closure、有限試用、独立レビュー条件を維持 |
+| REQ-JS-RENDER-001 | 追加 | renderを現在のstateを表示へ反映する普通のFunctionとして紹介。宣言と呼出しを区別 |
+| REQ-JS-RENDER-002 | 維持 | Object property、Function、clickを利用し、初期描画と更新→renderの順を説明 |
+| REQ-JS-RENDER-003 | 追加 | 読了数と次の冊数を同じstateから作り、2回読了→0へ戻す2回→読了を実採点 |
+| REQ-JS-RENDER-004 | 追加 | 名前付き別解・複数renderを許し、更新前描画/描画中の状態変更/Reset描画漏れ/片方だけ更新を検出 |
+| REQ-JS-RENDER-005 | 維持 | 既存ID・空移行 .9→.10、有限draft。前提PR56/57/58/59はmain統合済み。今回の内容・最新HEAD独立レビュー条件を維持 |
+| REQ-JS-RENDER-006 | 維持 | DOM全面差替え・Collection描画・Framework・非同期・実行state永続化は非対象。実Fixture/例/UI/390目視と関連静的検証で確認 |
+
+20分/4Slide/1演習。Ch09は2Lesson35分、累計37Lesson148Slide39演習600分draftの候補。renderという関数名や呼出し回数そのものを採点条件にせず、操作後の両表示の整合を確認する。人の初心者試用・実機は未実施。安全境界・Home性能予算・公開Gateを維持し、Chapter09後続2単元を完了扱いにしない。
+
+### Ch09-l03 Array stateと一覧の準備（2026-09-28）
+
+| 要件 | 状態 | 内容 |
+|---|---|---|
+| REQ-JS-LIST-001 | 追加 | Arrayをstate.itemsへ持ち、forEach/createElement/textContent/appendChildを既習として結ぶ |
+| REQ-JS-LIST-002 | 追加 | replaceChildren()で一覧の子だけを消去し、今の全項目と件数を描画する |
+| REQ-JS-LIST-003 | 維持 | state更新→render。初期1→追加2→追加3→空0→空0→追加1。空Arrayでも古い行を残さない |
+| REQ-JS-LIST-004 | 維持 | Starterの消去忘れを修正するtransform。二重render・textContent空文字の別解を振る舞いで許容する |
+| REQ-JS-LIST-005 | 維持 | 既存ID/学習保存を空移行.10→.11で維持。draft有限試用。PR56/57/58/59はmain統合済み、PR60と本PRの独立レビューは未完 |
+| REQ-JS-LIST-006 | 維持 | Framework/非同期/実行state永続化は非対象。Runtime・安全境界・性能予算・公開Gateは変更しない |
+
+20分4Slide1演習、累計38Lesson152Slide40演習620分候補。Chapter09は3Lesson55分、残り1単元15分の計画を維持。受入は掲載コードと実Fixture、編集→Reset→再編集→判定→保存再開、390px読書。人の初心者試用/実機/公開は未実施のまま区別する。
+
+### Ch09-l04 元データを残す表示絞り込み（2026-09-28）
+
+| 要件 | 状態 | 内容 |
+|---|---|---|
+| REQ-JS-FILTER-001 | 追加 | 元の本Arrayと表示条件onlyUnreadをstateに持ち、visibleはrender内で計算する |
+| REQ-JS-FILTER-002 | 維持 | 既習filter/boolean/if/Objectと一覧renderをつなぎ、条件変更→render→visible→描画を行う |
+| REQ-JS-FILTER-003 | 追加 | 全3→未読2→未読2→全3→未読2→全3を内容/順序/表示件数/全件数で確認 |
+| REQ-JS-FILTER-004 | 維持 | 元Array上書きのStarterをvisibleへの代入へ修正。関数名やコード形を固定しない |
+| REQ-JS-FILTER-005 | 維持 | .11→.12空移行。既存ID/進捗/下書き/ImportExport・有限試用を保持。PR56/57/58/59はmain統合済み、PR60/61と本PRの独立レビューは未完 |
+| REQ-JS-FILTER-006 | 維持 | 検索入力/非同期/Framework/実行state保存は非対象。Runtime/安全/性能/公開Gate不変 |
+
+15分4Slide1演習、累計39Lesson156Slide41演習635分draft候補。Ch09は4Lesson70分の原稿候補となるが、独立reviewと人試用を完了扱いにしない。受入は実Runnerの例/正誤・UI編集Reset判定保存・390px読書。Ch10/11と後続Issueは未完を維持。
+
+### Ch10-l01 Promise結果の最初の単元（2026-09-28）
+
+| 要件 | 区分 | 内容 |
+|---|---|---|
+| REQ-JS-PROMISE-001 | 追加 | Promiseと結果Arrayを区別し、thenの引数から件数と最初の問題を表示する |
+| REQ-JS-PROMISE-002 | 追加 | new Promise/resolveと既存bounded timerを使う教材用loadQuestionsを明示。実通信を発生したと教えない |
+| REQ-JS-PROMISE-003 | 維持 | 既習callback/Array/Object/DOM/clickをつなぐ。引数名・named callbackの別解を許容 |
+| REQ-JS-PROMISE-004 | 維持 | .12→.13空移行、ID/進捗/下書き/ImportExportと限定試用を維持 |
+| REQ-JS-PROMISE-005 | 維持 | async/await・失敗処理・読み込みstateは後続。実通信/公開昇格/人試用の代替は非対象 |
+| REQ-JS-PROMISE-006 | 維持 | 750msの既存Scenario観測、Home分離、安全境界を維持。最新Promise境界PR63と遅延診断PR66を候補branchに保持し、両PRと本教材の最新HEAD独立レビュー・必要CI後だけmainへ統合 |
+
+20分4Slide1演習、候補40Lesson160Slide42演習655分。Ch10計画75分のうち最初の20分であり、残り3単元55分は未完。受入は実Runner/Validatorの正誤・掲載例・編集Reset再編集判定保存・狭幅読書で確認する。候補をmain/公開完了とは扱わない。
+
+2026-10-02の前提更新では、表示絞り込みPR62 `fde451c610247682c4b44a3d3f196fe525fe40aa`、Promise境界PR63 `c1a14bd86c78802bb61434936e2721082f1dd760`、遅延診断PR66 `0ec8b6c823efde5bbac7ec949700598dfd03048b`を履歴を保持して候補branchに合わせる。前回のRuntime一時上書きは今回の検証入力に使わない。REQ-JS-PROMISE-001〜006の教材・受入・非対象・Home予算・公開Gateは維持する。実検証で判明した追加007は後述し、保留・削除はない。PR56/57/58/59はmain統合済みだが、PR60/61/62/63/66と本教材の独立レビューは未完である。新しいRuntime前提も本PRの差分へ含まれるため、教材だけの変更とは扱わない。検証とCIの実結果はPR本文へ記録し、成功しても内容hash台帳の承認、人の初心者試用・物理実機・全Course受入を完了扱いにしない。
+
+| 要件 | 区分 | 前提更新時に見つかった回帰への対応 |
+|---|---|---|
+| REQ-JS-PROMISE-001〜006 | 維持 | 教材・採点・保存・非対象・Runtime前提・性能予算・公開Gateを保持 |
+| REQ-JS-PROMISE-007 | 追加 | 読書位置URLのコピーが拒否された間にスクロールで位置が変わっても、現在の入力欄URLを選択する案内を保持する。コピー成功の案内は実際にコピーしたURLだけに結び、古いURLの成功を新しいURLへ表示しない |
+
+追加007は1280×720の既存読書操作で発見した競合の修正であり、教材内容・読み取り位置の保存方法・Clipboardへの新しい自動送信を増やさない。手動コピー1回、拒否中の位置変更、成功後の位置変更を関連componentで確認し、実Browserの拒否操作も確認する。保留・削除はない。
+
+### Ch10-l02 async/await（2026-09-28）
+
+| 要件 | 区分 | 内容 |
+|---|---|---|
+| REQ-JS-AWAIT-001 | 追加 | async関数はPromiseを返し、awaitの後に結果Arrayを受け取ってlengthを表示する |
+| REQ-JS-AWAIT-002 | 追加 | 待つのは関数の続きで、呼び出し元が先に進む順番を実例で示す |
+| REQ-JS-AWAIT-003 | 維持 | 同梱loadQuestionsを使い通信しない。PromiseのlengthがundefinedになるStarterを修正 |
+| REQ-JS-AWAIT-004 | 維持 | 引数改名/async arrow/既習thenの同じ振る舞いも許容し、コードの形を固定しない |
+| REQ-JS-AWAIT-005 | 維持 | .13→.14空移行、ID/進捗/下書き/ImportExport、限定試用、750ms観測とHome分離 |
+| REQ-JS-AWAIT-006 | 維持 | 失敗/読み込みstateは残り2単元。実通信/人試用代替/公開昇格は非対象。PR57はmain統合済み。候補の最新Runtime前提PR63/66と前教材PR64の独立レビュー条件を保持 |
+
+20分4Slide1演習、候補41Lesson164Slide43演習675分。Ch10候補40分と残り2単元35分を区別。実例の順序、実Runner正誤、編集Reset再編集判定保存、390px読書で検証する。
+
+2026-10-02のCh10-l02前提更新はPR64 `26f20bf8fc9b8c56372e0f01ae7d5416aa61c9fe`を履歴保持で取り込み、最新Promise境界・遅延診断・読書コピー拒否案内を実際の候補入力に含める。旧Runtime一時上書きは使わない。教材本文と正誤の採点契約は維持し、async/await構文だけを要求する理解評価とは扱わない。
+
+| 要件 | 区分 | 最新前提へ合わせた差分 |
+|---|---|---|
+| REQ-JS-AWAIT-001〜006 | 維持 | 教材の順序/振る舞い/別解、空移行/既存保存、有限観測、Home性能、安全境界、独立レビュー、公開Gate、非対象を保持 |
+
+追加・保留・削除はない。受入は現在の実Runner/Validatorと編集・Reset・判定・保存再開・狭幅読書で再確認し、同一入力の有効なRuntime証拠は確認範囲を示して再利用する。最新HEADの必要CIと独立内容レビュー/hash台帳を満たすまでmainへ統合しない。人の初心者試用・物理実機・全Course/正式公開受入は別条件として残す。
+
+### Ch10-l03 失敗と再試行（2026-09-28）
+
+| 要件             | 区分 | 内容                                                                                |
+| ---------------- | ---- | ----------------------------------------------------------------------------------- |
+| REQ-JS-CATCH-001 | 追加 | Promise拒否を既習try/catchとawaitで受け取り、成功結果と分けて表示する               |
+| REQ-JS-CATCH-002 | 追加 | 成功→失敗→成功を実操作し、失敗を0問や前回成功表示へ隠さず再試行できる               |
+| REQ-JS-CATCH-003 | 維持 | 同梱データの成功/失敗を明示し、ネット通信を実施しない                               |
+| REQ-JS-CATCH-004 | 維持 | 改名やthen/catchの別解を許容。DOMの振る舞い中心で採点する                           |
+| REQ-JS-CATCH-005 | 維持 | .14→.15空移行、ID/進捗/下書き/ImportExport、限定試用、750ms観測とHome分離           |
+| REQ-JS-CATCH-006 | 維持 | loading/二重操作は次単元。初心者試用・公開昇格は非対象。PR57はmain統合済み。最新Runtime前提PR63/66と前教材PR65の独立レビュー条件を保持 |
+
+15分4Slide1演習、候補42Lesson168Slide44演習690分。Ch10候補55分と残り1単元20分を区別。初期code-errorを課題不一致に隠さず、実際の捕捉と状態表示を検証する。
+
+2026-10-02のCh10-l03前提更新はPR65 `36c5ea90935b8aa18b911335ea7a36b52fcb9659`を履歴保持で取り込む。最新Promise境界・遅延診断・読書コピー案内は実際の候補入力に含まれ、旧Runtime一時上書きを使わない。Ch07〜09の3検査は同じ教材を共有して読み込む既存の集約を維持し、最新前提の準備枠30秒を共有beforeAllへ引き継ぐ。各章のassertion・Concept確認・3件の検証本体・既定5秒枠は保持する。
+
+| 要件 | 区分 | 最新前提へ合わせた差分 |
+|---|---|---|
+| REQ-JS-CATCH-001〜006 | 維持 | 失敗と再試行の教材・振る舞い・別解・空移行・保存・有限観測・Home性能・安全境界・最新HEAD独立レビュー・公開Gate・非対象を保持 |
+
+追加・保留・削除はない。実Runner/Validatorの成功→失敗→成功、掲載例、編集・Reset・再編集・判定・保存再開、狭幅読書を受入証拠とする。最新前提と一致するRuntime・読書の既存成功証拠はその範囲で再利用する。必要CI、独立内容レビュー/hash台帳を満たすまでmainへ統合しない。初心者本人試用、物理実機、全Course・正式公開受入は別条件として残す。
+
+### Ch10-l04 読み込み状態と操作回復（2026-09-28）
+
+| 要件 | 区分 | 内容 |
+|---|---|---|
+| REQ-JS-LOADING-001 | 追加 | await前に読み込み中を表示し、loadingとdisabledで二重開始を防ぐ |
+| REQ-JS-LOADING-002 | 追加 | finallyで両方のボタンを戻し、成功後・失敗後の再操作を実証する |
+| REQ-JS-LOADING-003 | 維持 | 同梱データと250msの教材用待機を明示し、実通信を行わない |
+| REQ-JS-LOADING-004 | 維持 | 改名・disabled属性の別解も許容。待機と完了のDOM状態、再試行で判定 |
+| REQ-JS-LOADING-005 | 維持 | .15→.16空移行、ID/進捗/下書き/ImportExport、有限試用、750ms観測/Home分離 |
+| REQ-JS-LOADING-006 | 維持 | Ch11/Project/人試用/独立review/公開昇格は未完。PR57はmain統合済み。最新Runtime前提PR63/66と前教材PR67の独立レビュー条件を維持 |
+
+20分4Slide1演習、候補43Lesson172Slide45演習710分。Ch10の4Lesson75分は原稿候補がそろった段階。本人の初心者試用や独立reviewを完了扱いにしない。実Runnerの正誤と待機時の操作不可/成功失敗後の復旧、Reset後再編集判定、390px読書を確認する。
+
+2026-10-02のCh10-l04前提更新はPR67 `98ef7a0a3e907cb159780a0289ae6f85247fa43e`を履歴保持で取り込む。最新Promise境界・遅延診断・読書コピー拒否案内と、Ch07〜09の全検査を保持する共有読込を実際の候補入力に含める。旧Runtime一時上書きは使わない。教材本文、250msの有限待機、正誤の振る舞い契約、既定の準備枠と検証枠は維持する。
+
+| 要件 | 区分 | 最新前提へ合わせた差分 |
+|---|---|---|
+| REQ-JS-LOADING-001〜006 | 維持 | 読み込み案内・二重開始防止・成功失敗後の再操作・別解・空移行・保存・有限観測・Home性能・安全境界・最新HEAD独立レビュー・公開Gate・非対象を保持 |
+
+追加・保留・削除はない。実Runner/Validatorの待機中と完了後の両ボタン、成功→失敗→成功、掲載例、編集・Reset・再編集・判定・保存再開、狭幅読書を受入証拠とする。一致するRuntime・読書の既存成功証拠は範囲を示して再利用する。必要CIと独立内容レビュー/hash台帳を満たすまでmainへ統合しない。Ch10原稿候補がそろっても、Ch11/Project、初心者本人試用・物理実機・全Course/正式公開受入を完了扱いにしない。
+
+### Ch11-l01 Keyboard（2026-09-28）
+
+| 要件 | 区分 | 内容 |
+|---|---|---|
+| REQ-JS-KEY-001 | 追加 | 標準buttonのTab/Enter/Spaceと追加Escape handlerを分け、二重clickを教えない |
+| REQ-JS-KEY-002 | 追加 | event.keyの条件でEscapeだけ閉じ、他キーと再操作を保持する |
+| REQ-JS-KEY-003 | 維持 | 既存Scenarioの合成keyはhandler検証。標準キー動作は実Browserキー入力で別途確認 |
+| REQ-JS-KEY-004 | 維持 | .16→.17空移行、ID/進捗/下書き/ImportExportとHome分離・能力制限 |
+| REQ-JS-KEY-005 | 維持 | Ch11残2単元/Project/本人試用/独立レビュー/公開は未完 |
+
+15分4Slide1演習、候補44Lesson176Slide46演習725分。読み取り専用HTMLは標準buttonと明確な名前、CSSはFocus枠を提供し、学習者はJavaScriptの条件へ集中する。実操作ではTabからEnter/Space/Escapeを試し、390px読書と既存保存を確認。画面全体のキー捕捉やRuntimeの合成キーをOS相当とみなす変更は行わない。
+
+2026-10-02のCh11-l01前提更新はPR68 `49d9e2995c55ec68c47de1b76940263be586a224`と、実Tab入場修正PR69 `853d7c4541163f01d770bc771f9ef052f51d647b`を履歴保持で候補へ取り込む。最新Promise境界・遅延診断・読書コピー拒否案内を含む実入力とし、旧Runtime一時上書きは使わない。標準buttonのEnter/Spaceと、追加したEscape handlerの合成Scenario検査を区別する。
+
+| 要件 | 区分 | 最新前提へ合わせた差分 |
+|---|---|---|
+| REQ-JS-KEY-001〜005 | 維持 | 標準キー動作/条件/他キー保持、実キーと合成Scenarioの証拠区別、空移行/保存、安全/有限観測/Home性能、独立レビュー/公開Gate、人の受入/後続非対象を保持 |
+
+追加・保留・削除はない。現在の実Runner/Validator、標準buttonの実Enter/Space/Escape、編集・Reset・別解再編集・判定・保存再開、狭幅読書で確認する。Tab修正と最新Runtimeを組み合わせた既存iframe復帰も実Browserで確認し、一致するRuntime・読書の有効な成功証拠は範囲を示して再利用する。前提PR63/66/69と本教材の最新HEAD独立レビュー・必要CI、内容hash台帳を満たすまでmainへ統合しない。Ch11残2単元/Project、初心者本人試用・物理実機・全Course/正式公開受入は別条件として残す。
+
+Ch11-l01の操作画面を実目視した後、全体Previewの親canvas幅によるWebKitの横ずれを検出した。PR69 `2416fa2800e12d2dd0538e6dfb038c5522f0af8f`の表示寸法修正と独立回帰を追加で取り込み、Ch11の実ArrowRight後にも左右端とscrollLeftを確認する。標準キーの既定動作/iframeの論理Viewport/同じ実行状態は維持する。
+
+| 要件 | 区分 | 横ずれ修正を取り込んだ差分 |
+|---|---|---|
+| REQ-JS-KEY-001〜005 | 維持 | 教材のキー条件/他キー保持、実キーと合成Scenarioの証拠区別、保存/能力/Home分離、残単元/人受入/Gateを保持 |
+| REQ-DOM-KEY-004 | 維持 | PR69で追加した全体表示の寸法と100%表示切替の契約を同じPreviewへ適用 |
+
+この教材側の追加・保留・削除はない。Course候補44Lesson/176Slide/46Exercise/725分とCh11残2単元35分は変わらない。新表示入力で実3Browserと代表画面を再検証し、教材/Runtime bytesが同一の実Fixture・掲載例だけを再利用する。内容hash承認、固定HEAD独立レビュー、公開前の既存性能/Release Gate、本人初心者試用・実機・正式公開受入は別条件として保持する。
+
+### Ch11-l02 Focusの往復（2026-09-28）
+
+| 要件 | 区分 | 内容 |
+|---|---|---|
+| REQ-JS-FOCUS-001 | 追加 | 開始操作で回答欄へFocusし、戻る操作で起点buttonへ復帰する |
+| REQ-JS-FOCUS-002 | 追加 | focused契約で開始・戻る・再開始を検証し、実キーでそのまま入力できることも確認 |
+| REQ-JS-FOCUS-003 | 維持 | 改名・名前付きhandlerの別解を許容。強制周期FocusやTab封鎖を教えない |
+| REQ-JS-FOCUS-004 | 維持 | .17→.18空移行と既存データ/ID/能力制限。入力消去は配布コードと実UIで確認 |
+| REQ-JS-FOCUS-005 | 維持 | PR57/63/66/69前提、Ch11残1単元/Project/人試用/独立review/公開は未完 |
+
+20分4Slide1演習、候補45Lesson180Slide47演習745分。初版で既存Schemaにないinput-value条件を指定しCompile失敗したため、Runtimeの抽象化を増やさずFocusの学習目標は既存focused契約で判定する。入力値消去は実画面で確認する。受入目標・非対象・750ms上限/Home分離は保持する。
+
+2026-10-02のFocus単元前提更新はPR70 `5760db18a9e0e385cebe4c6b908286e786a63b3b`を履歴保持で取り込み、Runtime前提63/66、編集権再確認、実Tab入場と全体Previewの寸法修正69を実際の入力へ含める。旧Docker一時Runtime上書きは使わない。教材本文とfocused契約、入力消去を実UIで確認する境界を維持する。
+
+| 要件 | 区分 | 最新前提へ合わせた差分 |
+|---|---|---|
+| REQ-JS-FOCUS-001〜005 | 維持 | 開始/入力/戻る/再開始、別解/誤解、空移行/ID/保存、安全/有限観測/Home分離、Ch11残単元/Project/人受入/独立レビュー/公開Gateを保持 |
+| REQ-DOM-KEY-001〜004 | 維持 | 実Tab入場/親復帰/同じ実行状態、安全境界と全体/100%表示の契約を引き継ぐ |
+
+追加・保留・削除はない。受入は最新の実Runner/Validatorで開始/戻る/再開始のFocus、掲載例、実Esc→Tab→Enterによる入場と直後の入力、Reset/別解再編集/判定/保存再開、390px読書の図と収まりを確認する。Scenarioのfillが入力先へFocusすることと、開始handlerのfocus()成功は別に扱い、fill前のfocused checkpointで判定する。750ms観測上限と既存Home性能/公開Gateは保持。一致するRuntime/Preview/保存/読書の成功証拠は入力範囲を示して再利用し、全件再実行とは呼ばない。最新HEAD独立レビュー・必要CI・内容hash台帳を満たすまでmainへ統合しない。Ch11残1単元15分/Project、初心者本人試用・物理実機・全Course/正式公開受入は別条件に残す。
+
+### Ch11-l03 操作名と状態（2026-09-28）
+
+| 要件 | 区分 | 内容 |
+|---|---|---|
+| REQ-JS-NAME-001 | 追加 | 明確な可視文字をAccessible Nameとし、次の操作名をstateから更新する |
+| REQ-JS-NAME-002 | 追加 | hiddenによる表示とaria-expandedを同じstateにそろえ、開閉・再開を検証 |
+| REQ-JS-NAME-003 | 維持 | textContentで安全に文字更新。標準buttonのEnter/Spaceと名前を実UIで確認 |
+| REQ-JS-NAME-004 | 維持 | .18→.19空移行、既存ID/進捗/下書き/ImportExport/有限試用とHome分離 |
+| REQ-JS-NAME-005 | 維持 | Ch07〜11原稿候補の段階。独立review/merge/人試用/Project/公開は未完 |
+
+15分4Slide1演習、候補46Lesson184Slide48演習760分。Ch11の3単元50分は候補がそろうが、#8の完了記録は独立レビューと実受入条件の確認後とする。PR57/63/66/69のRuntime前提、既存750ms観測上限と保存契約を保持する。
+
+2026-10-02の操作名単元前提更新はPR71 `4313702219ff894bfe45edf0f0e1a8b1069950ee`を履歴保持で取り込み、最新Runtime63/66、Tab入場/全体Previewの寸法修正69、Keyboard/Focus単元70/71を実際の入力へ含める。旧Docker一時Runtime上書きは使わない。教材本文と既存のtext/attribute/visible契約、標準buttonのnative Enter/Space検証を維持する。
+
+| 要件 | 区分 | 最新前提へ合わせた差分 |
+|---|---|---|
+| REQ-JS-NAME-001〜005 | 維持 | 明確な操作名、表示/aria-expanded/stateの一致、開閉/再開/別解/誤解、空移行/ID/保存/有限試用、原稿と人受入/Project/公開Gateの区別を保持 |
+| REQ-DOM-KEY-001〜004 | 維持 | Tab入場/親復帰/同じ実行状態、安全境界と全体/100%表示を引き継ぐ |
+
+追加・保留・削除はない。最新実Runner/Validatorの名前/属性/表示と再操作、掲載例、実Esc→Tab→Enter/Spaceで開く/閉じる/再開、Reset/別解再編集/判定/保存再開、390px読書の図と収まりを受入証拠とする。実BrowserのAccessible Nameと属性の検査は、スクリーンリーダー実機の読み上げや初心者本人試用の証拠と区別する。750ms観測上限/Home性能/既存公開Gateは保持し、一致するRuntime/Preview/保存/読書の成功証拠だけを範囲を示して再利用する。最新HEAD独立レビュー・必要CI・内容hash台帳を満たすまでmainへ統合しない。Ch07〜11の原稿候補、Guided Project/Capstone、初心者本人試用・物理実機・全Course/正式公開受入は未完条件として残す。

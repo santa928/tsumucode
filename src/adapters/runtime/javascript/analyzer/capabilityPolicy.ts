@@ -399,6 +399,59 @@ function reject(
   );
 }
 
+/** 宣言・代入patternの束縛先だけを検査し、標準Promiseの置き換えを拒否する。 */
+function rejectPromiseBinding(pattern: unknown, file: string): void {
+  if (!isNode(pattern)) return;
+  const current = ast(pattern);
+  if (identifierName(pattern) === 'Promise') {
+    reject(pattern, file, 'Promiseの名前を宣言や代入で置き換えることはできません', 'unsupported');
+  }
+  if (pattern.type === 'RestElement') rejectPromiseBinding(current.argument, file);
+  if (pattern.type === 'AssignmentPattern') rejectPromiseBinding(current.left, file);
+  if (pattern.type === 'ArrayPattern' && Array.isArray(current.elements)) {
+    for (const element of current.elements) rejectPromiseBinding(element, file);
+  }
+  if (pattern.type === 'ObjectPattern' && Array.isArray(current.properties)) {
+    for (const property of current.properties) {
+      if (!isNode(property)) continue;
+      const item = ast(property);
+      rejectPromiseBinding(property.type === 'RestElement' ? item.argument : item.value, file);
+    }
+  }
+}
+
+/** asyncの予約名Promiseを変更する束縛・書き込みを、各scopeとmodule importで拒否する。 */
+function inspectPromiseBindings(node: Node, file: string): void {
+  const current = ast(node);
+  if (node.type === 'VariableDeclarator') rejectPromiseBinding(current.id, file);
+  if (
+    node.type === 'FunctionDeclaration' ||
+    node.type === 'FunctionExpression' ||
+    node.type === 'ArrowFunctionExpression'
+  ) {
+    rejectPromiseBinding(current.id, file);
+    if (Array.isArray(current.params)) {
+      for (const param of current.params) rejectPromiseBinding(param, file);
+    }
+  }
+  if (node.type === 'CatchClause') rejectPromiseBinding(current.param, file);
+  if (
+    node.type === 'ImportSpecifier' ||
+    node.type === 'ImportDefaultSpecifier' ||
+    node.type === 'ImportNamespaceSpecifier'
+  ) {
+    rejectPromiseBinding(current.local, file);
+  }
+  if (
+    node.type === 'AssignmentExpression' ||
+    node.type === 'ForInStatement' ||
+    node.type === 'ForOfStatement'
+  ) {
+    rejectPromiseBinding(current.left, file);
+  }
+  if (node.type === 'UpdateExpression') rejectPromiseBinding(current.argument, file);
+}
+
 /** IdentifierがMemberExpressionの非computed property位置か確認する。 */
 function isStaticMemberProperty(node: Node, parent: Node | undefined): boolean {
   if (parent === undefined || parent.type !== 'MemberExpression') return false;
@@ -602,6 +655,7 @@ export function assertJavaScriptCapabilityPolicy(
     if (node.type === 'DebuggerStatement' || node.type === 'WithStatement') {
       reject(node, file, `この構文（${node.type}）は安全なPreviewでは使えません`);
     }
+    if (profile.allowAsync) inspectPromiseBindings(node, file);
     if (
       (node.type === 'AwaitExpression' ||
         ((node.type === 'FunctionDeclaration' ||
@@ -615,8 +669,14 @@ export function assertJavaScriptCapabilityPolicy(
     if (node.type === 'Literal' && typeof current.regex === 'object' && current.regex !== null) {
       reject(node, file, '正規表現はこの演習では使えません', 'unsupported');
     }
-    if (node.type === 'NewExpression' && identifierName(current.callee) !== 'Error') {
-      reject(node, file, 'このconstructorは安全なPreviewでは使えません', 'unsupported');
+    if (node.type === 'NewExpression') {
+      const constructorName = identifierName(current.callee);
+      // 非同期教材の標準Promiseだけを追加し、任意constructorやmember経由の生成は開放しない。
+      const supportedConstructor =
+        constructorName === 'Error' || (profile.allowAsync && constructorName === 'Promise');
+      if (!supportedConstructor) {
+        reject(node, file, 'このconstructorは安全なPreviewでは使えません', 'unsupported');
+      }
     }
 
     if (node.type === 'Identifier') {

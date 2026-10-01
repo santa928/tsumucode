@@ -1,0 +1,25 @@
+id: javascript-ch10-l02
+kind: standard
+title: awaitで結果を受け取ってから進む
+goal: async関数でPromiseの結果をawaitで受け取り、その後の行で件数を表示できる。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - javascript-ch10-l01
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/javascript-ch10-l02-e01/exercise.yaml
+reflection: awaitはasync関数の続きを結果が届くまで待たせる。画面全体を止めず、受け取った値で後続の処理を進められる。
+glossaryRefs:
+  - async-function
+  - await-expression
+  - promise
+  - promise-then
+completion:
+  kind: standard
+  finalSlideId: javascript-ch10-l02-s04
+  requiredExerciseIds:
+    - javascript-ch10-l02-e01

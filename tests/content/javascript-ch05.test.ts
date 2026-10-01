@@ -56,17 +56,17 @@ describe('javascript-ch05', () => {
     const { runtime: course } = await loadAuthoringCourse(path.resolve('content/javascript'));
 
     expect(course).toMatchObject({
-      revision: '2026-09-28.9',
-      estimatedMinutes: 580,
+      revision: '2026-09-28.19',
+      estimatedMinutes: 760,
       publicationStatus: 'draft',
       expectedTotals: {
-        chapters: 10,
-        lessons: 36,
-        conceptSlides: 144,
-        standardExercises: 38,
+        chapters: 12,
+        lessons: 46,
+        conceptSlides: 184,
+        standardExercises: 48,
         guidedProjectLessons: 0,
         capstoneLessons: 0,
-        estimatedMinutes: 580,
+        estimatedMinutes: 760,
       },
       progressMigrations: [
         {
@@ -99,6 +99,16 @@ describe('javascript-ch05', () => {
         { fromRevision: '2026-09-28.6', toRevision: '2026-09-28.7', steps: [] },
         { fromRevision: '2026-09-28.7', toRevision: '2026-09-28.8', steps: [] },
         { fromRevision: '2026-09-28.8', toRevision: '2026-09-28.9', steps: [] },
+        { fromRevision: '2026-09-28.9', toRevision: '2026-09-28.10', steps: [] },
+        { fromRevision: '2026-09-28.10', toRevision: '2026-09-28.11', steps: [] },
+        { fromRevision: '2026-09-28.11', toRevision: '2026-09-28.12', steps: [] },
+        { fromRevision: '2026-09-28.12', toRevision: '2026-09-28.13', steps: [] },
+        { fromRevision: '2026-09-28.13', toRevision: '2026-09-28.14', steps: [] },
+        { fromRevision: '2026-09-28.14', toRevision: '2026-09-28.15', steps: [] },
+        { fromRevision: '2026-09-28.15', toRevision: '2026-09-28.16', steps: [] },
+        { fromRevision: '2026-09-28.16', toRevision: '2026-09-28.17', steps: [] },
+        { fromRevision: '2026-09-28.17', toRevision: '2026-09-28.18', steps: [] },
+        { fromRevision: '2026-09-28.18', toRevision: '2026-09-28.19', steps: [] },
       ],
     });
     expect(course.phases.flatMap(({ chapters }) => chapters).map(({ id }) => id)).toEqual([
@@ -112,6 +122,8 @@ describe('javascript-ch05', () => {
       'javascript-ch07',
       'javascript-ch08',
       'javascript-ch09',
+      'javascript-ch10',
+      'javascript-ch11',
     ]);
   }, 20_000);
 

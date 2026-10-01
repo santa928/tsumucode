@@ -1,0 +1,11 @@
+id: javascript-ch10
+sequence: 10
+title: あとで届く結果を扱う
+goal: Promiseの結果を受け取り、非同期処理と画面表示をつなげる。
+estimatedMinutes: 75
+kind: standard
+lessonSources:
+  - lessons/javascript-ch10-l01/lesson.yaml
+  - lessons/javascript-ch10-l02/lesson.yaml
+  - lessons/javascript-ch10-l03/lesson.yaml
+  - lessons/javascript-ch10-l04/lesson.yaml

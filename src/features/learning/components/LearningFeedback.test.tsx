@@ -396,7 +396,7 @@ describe('PreviewFrame', () => {
     expect(scrollContainer).toHaveAccessibleName('コードのプレビュー表示領域');
     expect(scrollContainer).toHaveAttribute('tabindex', '0');
     expect(frame).toHaveClass('box-content', 'max-w-none');
-    expect(frame).toHaveAttribute('tabindex', '-1');
+    expect(frame).toHaveAttribute('tabindex', '0');
     expect(frame).toHaveAttribute('sandbox', 'allow-scripts');
     expect(frame.getAttribute('sandbox')).not.toContain('allow-same-origin');
     expect(frame).toHaveAttribute('referrerpolicy', 'no-referrer');
@@ -418,6 +418,7 @@ describe('PreviewFrame', () => {
 
     const frame = screen.getByTitle('コードのプレビュー');
     expect(frame).toHaveAttribute('sandbox', '');
+    expect(frame).toHaveAttribute('tabindex', '-1');
     expect(onReady).toHaveBeenCalledWith(frame);
 
     rerender(<PreviewFrame sandboxMode="scriptless" onReady={vi.fn()} />);

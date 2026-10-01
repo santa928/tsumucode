@@ -1,0 +1,23 @@
+id: javascript-ch11-l03
+kind: standard
+title: 操作の名前と開閉状態をそろえる
+goal: 何が起きるか分かるボタン名とaria-expandedをstateから更新し、見た目と支援技術向けの情報をそろえられる。
+estimatedMinutes: 15
+prerequisiteLessonIds:
+  - javascript-ch11-l02
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/javascript-ch11-l03-e01/exercise.yaml
+reflection: 見える名前が操作の目的を伝え、aria-expandedは今の開閉状態を伝える。同じstateから更新すれば両者がずれにくい。
+glossaryRefs:
+  - accessible-name
+  - aria-expanded
+completion:
+  kind: standard
+  finalSlideId: javascript-ch11-l03-s04
+  requiredExerciseIds:
+    - javascript-ch11-l03-e01

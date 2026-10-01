@@ -1,0 +1,343 @@
+id: javascript-ch10-l04-e01
+kind: standard
+workspaceId: javascript-ch10-l04-e01
+countsTowardStandardExerciseTotal: true
+title: 読み込み後にボタンを使える状態へ戻す
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: loading-retry-flow
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: release-controls
+    file: script.js
+    target: showQuestions内のfinallyブロック
+    starterAnchor: '    // ボタンも操作できる状態へ戻しましょう'
+    change: successとfailureのdisabledをfalseへ戻す
+    observe: 読み込み中は押せず、成功後も失敗後も次の操作ができる
+    requiresConceptIds:
+      - loading-retry-flow
+    validationRuleIds:
+      - javascript-ch10-l04-e01-r01
+      - javascript-ch10-l04-e01-r02
+      - javascript-ch10-l04-e01-r03
+files:
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: starter/styles.css
+    editable: false
+  - path: script.js
+    language: javascript
+    source: starter/script.js
+    editable: true
+solutionFiles:
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: solution/styles.css
+    editable: false
+  - path: script.js
+    language: javascript
+    source: solution/script.js
+    editable: false
+validationRules:
+  - id: javascript-ch10-l04-e01-r01
+    label: 読む前は待機
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#result'
+    assertion:
+      kind: text
+      operator: equals
+      expected: まだ読んでいません
+    feedback:
+      target: script.jsとPreview
+      expected: 読む前は待機
+      nextAction: finallyで両方のボタンを使える状態へ戻します。
+    hintId: javascript-ch10-l04-e01-h02
+    relatedSlideId: javascript-ch10-l04-s03
+  - id: javascript-ch10-l04-e01-r02
+    label: 通信しない同梱データと分かる
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#note'
+    assertion:
+      kind: text
+      operator: equals
+      expected: 同梱データの成功と失敗を試す練習です。通信はしません。
+    feedback:
+      target: script.jsとPreview
+      expected: 通信しない同梱データと分かる
+      nextAction: finallyで両方のボタンを使える状態へ戻します。
+    hintId: javascript-ch10-l04-e01-h02
+    relatedSlideId: javascript-ch10-l04-s03
+  - id: javascript-ch10-l04-e01-r03
+    label: loadQuestionsの結果を使う
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: call
+        callee: loadQuestions
+    feedback:
+      target: script.jsとPreview
+      expected: loadQuestionsの結果を使う
+      nextAction: finallyで両方のボタンを使える状態へ戻します。
+    hintId: javascript-ch10-l04-e01-h02
+    relatedSlideId: javascript-ch10-l04-s03
+hints:
+  - id: javascript-ch10-l04-e01-h01
+    level: 1
+    title: どこでボタンを止めた？
+    text: 開始時にsuccess.disabledとfailure.disabledをtrueにしています。
+    relatedSlideId: javascript-ch10-l04-s02
+  - id: javascript-ch10-l04-e01-h02
+    level: 2
+    title: 共通の後片付けへ書く
+    text: finallyは成功と失敗のどちらでも通ります。両方のdisabledをfalseに戻します。
+    relatedSlideId: javascript-ch10-l04-s03
+  - id: javascript-ch10-l04-e01-h03
+    level: 3
+    title: 2つのボタンを戻す
+    text: success.disabled = false; と failure.disabled = false; をfinallyへ加えます。
+    relatedSlideId: javascript-ch10-l04-s04
+relatedSlideIds:
+  - javascript-ch10-l04-s01
+  - javascript-ch10-l04-s02
+  - javascript-ch10-l04-s03
+  - javascript-ch10-l04-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: renamed-loading
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/renamed-loading/script.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: attribute-controls
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/attribute-controls/script.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: success-only-release
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/success-only-release/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:loading-retry:failure-ready:result
+      - interaction:loading-retry:failure-ready:success-enabled
+      - interaction:loading-retry:failure-ready:failure-enabled
+      - interaction:loading-retry:retry-loading:message
+      - interaction:loading-retry:retry-loading:success-disabled
+      - interaction:loading-retry:retry-loading:failure-disabled
+      - interaction:loading-retry:retry-ready:result
+      - interaction:loading-retry:retry-ready:success-enabled
+      - interaction:loading-retry:retry-ready:failure-enabled
+  - id: no-loading-message
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/no-loading-message/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:loading-retry:success-loading:message
+      - interaction:loading-retry:success-loading:success-disabled
+      - interaction:loading-retry:success-loading:failure-disabled
+      - interaction:loading-retry:failure-loading:message
+      - interaction:loading-retry:failure-loading:success-disabled
+      - interaction:loading-retry:failure-loading:failure-disabled
+      - interaction:loading-retry:retry-loading:message
+      - interaction:loading-retry:retry-loading:success-disabled
+      - interaction:loading-retry:retry-loading:failure-disabled
+  - id: no-disable
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/no-disable/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:loading-retry:success-loading:message
+      - interaction:loading-retry:success-loading:success-disabled
+      - interaction:loading-retry:success-loading:failure-disabled
+      - interaction:loading-retry:failure-loading:message
+      - interaction:loading-retry:failure-loading:success-disabled
+      - interaction:loading-retry:failure-loading:failure-disabled
+      - interaction:loading-retry:retry-loading:message
+      - interaction:loading-retry:retry-loading:success-disabled
+      - interaction:loading-retry:retry-loading:failure-disabled
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: async
+  primaryOutput: preview
+interactionScenarios:
+  - id: loading-retry
+    label: 待機中の操作制限と成功・失敗後の回復
+    actions:
+      - id: success
+        kind: click
+        selector: '#success'
+      - id: failure
+        kind: click
+        selector: '#failure'
+      - id: retry
+        kind: click
+        selector: '#success'
+    checkpoints:
+      - id: success-loading
+        afterActionId: success
+        expectations:
+          - id: message
+            kind: selector-text
+            selector: '#result'
+            equals: 読み込み中...
+          - id: success-disabled
+            kind: selector-exists
+            selector: '#success:disabled'
+          - id: failure-disabled
+            kind: selector-exists
+            selector: '#failure:disabled'
+      - id: success-ready
+        afterActionId: success
+        expectations:
+          - id: result
+            kind: selector-text
+            selector: '#result'
+            equals: '問題: 2'
+          - id: success-enabled
+            kind: selector-exists
+            selector: '#success:enabled'
+          - id: failure-enabled
+            kind: selector-exists
+            selector: '#failure:enabled'
+      - id: failure-loading
+        afterActionId: failure
+        expectations:
+          - id: message
+            kind: selector-text
+            selector: '#result'
+            equals: 読み込み中...
+          - id: success-disabled
+            kind: selector-exists
+            selector: '#success:disabled'
+          - id: failure-disabled
+            kind: selector-exists
+            selector: '#failure:disabled'
+      - id: failure-ready
+        afterActionId: failure
+        expectations:
+          - id: result
+            kind: selector-text
+            selector: '#result'
+            equals: 読み込めませんでした
+          - id: success-enabled
+            kind: selector-exists
+            selector: '#success:enabled'
+          - id: failure-enabled
+            kind: selector-exists
+            selector: '#failure:enabled'
+      - id: retry-loading
+        afterActionId: retry
+        expectations:
+          - id: message
+            kind: selector-text
+            selector: '#result'
+            equals: 読み込み中...
+          - id: success-disabled
+            kind: selector-exists
+            selector: '#success:disabled'
+          - id: failure-disabled
+            kind: selector-exists
+            selector: '#failure:disabled'
+      - id: retry-ready
+        afterActionId: retry
+        expectations:
+          - id: result
+            kind: selector-text
+            selector: '#result'
+            equals: '問題: 2'
+          - id: success-enabled
+            kind: selector-exists
+            selector: '#success:enabled'
+          - id: failure-enabled
+            kind: selector-exists
+            selector: '#failure:enabled'

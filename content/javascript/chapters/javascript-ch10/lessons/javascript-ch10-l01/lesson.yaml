@@ -1,0 +1,27 @@
+id: javascript-ch10-l01
+kind: standard
+title: Promiseの結果を受け取って表示する
+goal: 同梱データを返すPromiseからthenで問題Arrayを受け取り、画面へ表示できる。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - javascript-ch09-l04
+  - javascript-ch03-l01
+  - javascript-ch04-l01
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/javascript-ch10-l01-e01/exercise.yaml
+reflection: Promiseは結果を受け取るための仕組み。thenの引数で受け取ったデータを、そのcallbackの中で使う。
+glossaryRefs:
+  - promise
+  - promise-resolve
+  - promise-then
+  - array
+completion:
+  kind: standard
+  finalSlideId: javascript-ch10-l01-s04
+  requiredExerciseIds:
+    - javascript-ch10-l01-e01

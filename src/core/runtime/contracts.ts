@@ -160,6 +160,11 @@ export interface PreviewNode {
 }
 
 export interface PreviewSnapshot {
+  /** 同じframeの認証済み実行器が返した最新の診断とConsole。HTML専用表示は省略する。 */
+  readonly runtimeObservation?: {
+    readonly diagnostics: readonly RunnerDiagnostic[];
+    readonly console: readonly RunnerConsoleRecord[];
+  };
   readonly exerciseSessionId: string;
   readonly executionRevision: number;
   readonly viewport: PreviewViewport;
