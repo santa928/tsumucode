@@ -116,9 +116,12 @@ export function PreviewFrame({
   const previewCanvasStyle =
     geometry.frameWidth > 0
       ? {
-          width: `${String(geometry.frameWidth)}px`,
+          width: `${String(isFitDisplay ? geometry.frameWidth * geometry.fitScale : geometry.frameWidth)}px`,
           ...(isFitDisplay
-            ? { height: `${String(geometry.frameHeight * geometry.fitScale)}px` }
+            ? {
+                height: `${String(geometry.frameHeight * geometry.fitScale)}px`,
+                overflow: 'hidden' as const,
+              }
             : {}),
         }
       : undefined;
