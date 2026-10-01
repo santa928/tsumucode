@@ -1,5 +1,5 @@
 // @vitest-environment node
-/** 未登録の導入2教材を通常Compilerで読み、掲載例と参照を検証する。公開可否は判定しない。 */
+/** 未登録の導入教材を通常Compilerで読み、掲載例と参照を検証する。公開可否は判定しない。 */
 import { readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
@@ -33,6 +33,13 @@ for (const { lessonId, title, prerequisites, fixtureCount, errorLine } of [
     title: '型注釈',
     prerequisites: ['typescript-ch01-l01'],
     fixtureCount: 12,
+    errorLine: 1,
+  },
+  {
+    lessonId: 'typescript-ch01-l03',
+    title: '型消去と実行時失敗',
+    prerequisites: ['typescript-ch01-l02'],
+    fixtureCount: 9,
     errorLine: 1,
   },
 ]) {
@@ -73,6 +80,11 @@ for (const { lessonId, title, prerequisites, fixtureCount, errorLine } of [
               expect.arrayContaining([expect.objectContaining({ code: 2322, line: errorLine })]),
             );
             expect(result).not.toHaveProperty('files');
+          }
+          if (lessonId === 'typescript-ch01-l03' && result.status === 'ready') {
+            expect(result.files['main.js']).not.toContain(': number');
+            if (slide.id.endsWith('s03'))
+              expect(result.files['main.js']).toContain('throw new Error');
           }
         }
       });
