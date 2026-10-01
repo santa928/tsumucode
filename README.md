@@ -19,6 +19,8 @@ HTMLやCSSを初めて学ぶ人を対象にしています。スライドと進�
 
 コード演習は、幅1024 CSS px以上かつマウスまたはトラックパッドを使えるPC向けです。小画面や編集条件を満たさない端末ではEditorとRunnerを読み込まず、スライド学習、進捗確認、完了済みコードの安全なPreview、PCへ渡す演習URLと学習データの書き出しを提供します。
 
+Preview内を操作した後、編集権の再確認が必要な場合は、Preview更新・判定を「編集権を確認しています」と表示して待機し、確認後に実行します。別のタブへ編集権が移った場合は実行しません。
+
 主要FlowはChromium、Firefox、WebKitで検証します。JavaScriptが無効な環境と古いブラウザは対象外です。
 
 ## 必要なもの
@@ -83,7 +85,7 @@ GitHub Pagesへ公開した後のHTML/CSSコースの直リンクは、[スラ�
 
 HTML/CSSとDOMを使うJavaScript演習は「ブラウザで実行」と表示し、既存の隔離Previewを利用します。Closureの3演習（`javascript-ch03-l05-e01`〜`e03`）は「ブラウザで実行（Console専用）」となり、編集時に`script.js`を隔離Workerで実行します。配列・オブジェクトの変数添字と、有限のPromise・microtask処理を利用できます。HTML/CSSファイルの下書きは保持しますが、この3演習では画面描画に使いません。DOM・タイマー・外部通信・Storage・moduleには対応していません。
 
-実行できたことと教材の合格は別です。未対応・制限停止・環境障害を採点履歴へ保存しません。編集内容と前回の成功結果は保持します。Console実行は1500ms、100件・1件4KiB・合計64KiBの出力上限を設け、停止後は新しいWorkerで再試行します。DOM側の変数添字等の制約は残ります。dom / dom-form profileの`currentTarget`は同じDocumentのElementとdispatch後のnullに対応し、非Elementの取得は未対応として採点しません。Form用の`dom-form`はnative submitと学習者のpreventDefaultを操作ごとに観測します。通信・遷移は引き続き禁止し、Ch08-l03で取消と表示を確認します。詳細は[DOM実行の境界](docs/quality/browser-dom-runtime.md)を参照してください。実行方式と確認範囲は[Browser Console設計記録](docs/quality/browser-console-runtime.md)に記載しています。
+実行できたことと教材の合格は別です。未対応・制限停止・環境障害を採点履歴へ保存しません。編集内容と前回の成功結果は保持します。DOM操作後の例外と未捕捉Promise拒否も、判定中の観測でコード診断へ反映します。遅延処理の予算・タイマー上限による停止は採点しません。Console実行は1500ms、100件・1件4KiB・合計64KiBの出力上限を設け、停止後は新しいWorkerで再試行します。DOM側の変数添字等の制約は残ります。dom / dom-form profileの`currentTarget`は同じDocumentのElementとdispatch後のnullに対応し、非Elementの取得は未対応として採点しません。Form用の`dom-form`はnative submitと学習者のpreventDefaultを操作ごとに観測します。通信・遷移は引き続き禁止し、Ch08-l03で取消と表示を確認します。詳細は[DOM実行の境界](docs/quality/browser-dom-runtime.md)を参照してください。実行方式と確認範囲は[Browser Console設計記録](docs/quality/browser-console-runtime.md)に記載しています。
 
 ローカルDocker学習版では、Closureのガイド練習と任意の追加練習2件を実Node.jsで実行できます。Python、Next.js、ターミナルは未実装です。Pagesや読書画面からlocalhostを探索しません。実行portと任意DOM portの境界・制限は[Issue #27の設計記録](docs/quality/runtime-execution-boundary.md)に記載しています。
 
@@ -225,6 +227,10 @@ gh run download <run ID> -n release-report-<source SHA> --dir .release-evidence
 tag ref作成後の通信断などでRunだけが失敗表示になった場合、Workflow全体を再実行して新しい`run_attempt`やArtifactを既存tagへ結び直してはいけません。元Runの`release-report-<source SHA>`を取得し、tag message・Report・公開URLを照合してrevision別の公開後記録を作成し、その元Run evidenceから`--promote`します。既存tagを検出したRunは成功扱いにせず停止します。
 
 ## 非対象
+
+TypeScriptコースの準備として、実コンパイラ・停止可能な専用Worker・既存JavaScript安全解析・隔離プレビュー・動作採点をつなぐ[型検査境界の技術実証](docs/quality/typescript-compiler-boundary.md)を追加しています。型検査失敗は未実行・未採点として区別し、元TSと実行結果を照合します。検証用TS教材を実演習画面へ読み込み、Console・修正後の採点・元コードの保存/再読込まで確認しました。[型注釈1課題の採点契約](docs/quality/typescript-annotation-grading-contract.md)では、元TSの明示的なnumber注釈と実Consoleの結果を両方確認します。TSコースの教材全体・残りの型習得要件・公開登録は未完了です。
+
+[型推論1課題の採点契約](docs/quality/typescript-inference-grading-contract.md)では、注釈なしのletから推論された数値型と実Consoleを両方確認し、明示注釈の課題とは専用profileで区別します。`content/typescript`に導入2Lesson・8枚・30分のdraft Courseを登録し、型推論から型注釈への順序と用語の初出を統合しています。[統合の範囲と検証記録](docs/quality/typescript-draft-course-integration.md)を参照してください。Home/Pathへの掲載、コース全体の制作、公開受入は未完了です。
 
 - 初回公開版でのJavaScript、TypeScript、Reactコース
 - ログイン、Backend、Cloud DB、端末間の自動同期

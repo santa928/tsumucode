@@ -69,6 +69,9 @@ function dispatchInteraction(
         oneTimeToken,
         payload: {
           error: null,
+          budgetExhausted: false,
+          timerLimitExceeded: false,
+          runtimeError: null,
           console: [],
           currentTargetFailure: null,
           submitEvidence: 'unsupported',
@@ -698,7 +701,23 @@ describe('JavaScriptRunnerAdapter', () => {
       }),
     );
 
-    await expect(pending).resolves.toEqual(snapshot());
+    await flushMicrotasks();
+    const observationMessage = postMessage.mock.calls.at(-1)?.[0] as {
+      readonly requestId: string;
+      readonly oneTimeToken: string;
+      readonly frameGeneration: number;
+    };
+    expect(observationMessage).toMatchObject({ type: 'javascript.observe', payload: null });
+    dispatchInteraction(
+      frame,
+      observationMessage.requestId,
+      observationMessage.oneTimeToken,
+      observationMessage.frameGeneration,
+    );
+    await expect(pending).resolves.toEqual({
+      ...snapshot(),
+      runtimeObservation: { diagnostics: [], console: [] },
+    });
     await runner.dispose();
   });
 
@@ -824,7 +843,23 @@ describe('JavaScriptRunnerAdapter', () => {
       }),
     );
 
-    await expect(pendingSnapshot).resolves.toEqual(snapshot());
+    await flushMicrotasks();
+    const observationMessage = postMessage.mock.calls.at(-1)?.[0] as {
+      readonly requestId: string;
+      readonly oneTimeToken: string;
+      readonly frameGeneration: number;
+    };
+    expect(observationMessage).toMatchObject({ type: 'javascript.observe', payload: null });
+    dispatchInteraction(
+      frame,
+      observationMessage.requestId,
+      observationMessage.oneTimeToken,
+      observationMessage.frameGeneration,
+    );
+    await expect(pendingSnapshot).resolves.toEqual({
+      ...snapshot(),
+      runtimeObservation: { diagnostics: [], console: [] },
+    });
     expect(document.activeElement).toBe(returnTarget);
     await runner.dispose();
   });

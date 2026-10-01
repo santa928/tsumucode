@@ -31,9 +31,8 @@ import {
 } from './bridgeSource';
 import { createJavaScriptSrcdoc } from './createJavaScriptSrcdoc';
 import { prepareModuleGraph } from './materializeModuleGraph';
-import { JavaScriptExecutionClient, type JavaScriptExecutionPayload } from './protocol';
-import { currentTargetDiagnostics } from './currentTargetGuard';
-import { submitDiagnostics } from './submitGuard';
+import { JavaScriptExecutionClient } from './protocol';
+import { executionDiagnostics } from './executionDiagnostics';
 
 interface JavaScriptAnalyzerPort {
   analyze(input: JavaScriptAnalysisInput): Promise<JavaScriptAnalysisResult>;
@@ -201,48 +200,6 @@ function systemDiagnostic(error: unknown): RunnerDiagnostic {
   };
 }
 
-/** 実行payloadを利用者向け診断へ変換する。 */
-function executionDiagnostics(
-  payload: JavaScriptExecutionPayload,
-  scriptFile: string,
-): RunnerDiagnostic[] {
-  const diagnostics: RunnerDiagnostic[] = currentTargetDiagnostics(payload.currentTargetFailure);
-  diagnostics.push(...submitDiagnostics(payload.submitEvidence));
-  if (payload.budgetExhausted) {
-    diagnostics.push({
-      code: 'javascript-budget',
-      kind: 'system',
-      severity: 'error',
-      message: 'JavaScript execution budget exhausted',
-      learnerMessage:
-        '処理が長く続いたため安全に停止しました。繰り返しの条件や関数の呼び出しを確認してください。',
-      file: scriptFile,
-    });
-  }
-  if (payload.timerLimitExceeded) {
-    diagnostics.push({
-      code: 'javascript-timer-limit',
-      kind: 'system',
-      severity: 'error',
-      message: 'JavaScript timer limit exceeded',
-      learnerMessage: '同時に動かせるtimerは10件までです。不要なtimerを減らしてください。',
-      file: scriptFile,
-    });
-  }
-  if (payload.runtimeError !== null) {
-    diagnostics.push({
-      code: 'javascript-runtime',
-      kind: 'reference',
-      severity: 'error',
-      message: `${payload.runtimeError.name}: ${payload.runtimeError.message}`,
-      learnerMessage:
-        'JavaScriptの実行中にエラーが起きました。名前の書き間違いや対象Elementを確認してください。',
-      file: scriptFile,
-    });
-  }
-  return diagnostics;
-}
-
 /** JavaScriptをAnalyzer→opaque iframe→認証済みSnapshotの順で扱うRunner。 */
 export class JavaScriptRunnerAdapter implements RunnerAdapter {
   readonly languageId = 'javascript' as const;
@@ -333,7 +290,21 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
       if (request.preserveTimers !== true) {
         await active.execution.clearTimers(this.#uuidFactory());
       }
-      return await active.bridge.requestSnapshot(request.requestId, request.policy);
+      const snapshot = await active.bridge.requestSnapshot(request.requestId, request.policy);
+      const observation = await active.execution.observe({
+        exerciseSessionId: active.exerciseSessionId,
+        executionRevision: active.executionRevision,
+        frameGeneration: active.frameGeneration,
+        requestId: this.#uuidFactory(),
+      });
+      if (this.#active !== active) throw new Error('JavaScript observation frame is not current');
+      return {
+        ...snapshot,
+        runtimeObservation: {
+          diagnostics: observation.diagnostics ?? [],
+          console: observation.console,
+        },
+      };
     } finally {
       this.#restoreParentFocus();
     }
@@ -535,6 +506,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
         {
           responseTimeoutMs: this.#executionTimeoutMs,
           frameGeneration: operation.generation,
+          scriptFile: validated.scriptFile,
         },
       );
       operation.bridge = bridge;
@@ -643,6 +615,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
       {
         responseTimeoutMs: this.#executionTimeoutMs,
         frameGeneration: previous.frameGeneration,
+        scriptFile: previous.scriptFile,
       },
     );
     operation.bridge = bridge;
