@@ -1,5 +1,6 @@
 import type { TypeScriptCompileResult } from './compileTypeScript';
 import type { ScoreNumberAnnotationResult } from './checkScoreNumberAnnotation';
+import type { ScoreNumberInferenceResult } from './checkScoreNumberInference';
 
 export interface TypeScriptCompileInput {
   readonly sessionId: string;
@@ -15,13 +16,29 @@ interface WorkerRequestBase {
 export type CompilerWorkerRequest = WorkerRequestBase &
   (
     | { readonly kind: 'compile' }
-    | { readonly kind: 'learning-check'; readonly profile: 'score-number-annotation-v1' }
+    | {
+        readonly kind: 'learning-check';
+        readonly profile: 'score-number-annotation-v1' | 'score-number-inference-v1';
+      }
   );
 
 /** 学習check結果は有限factだけ。余分な情報や成立しないprobe成功を拒否する。 */
 export function isScoreNumberAnnotationResult(
   value: unknown,
 ): value is ScoreNumberAnnotationResult {
+  return isScoreLearningResult(value, 'explicitNumberAnnotation');
+}
+
+/** 推論専用factを要求し、注釈Lessonの応答との取り違えを拒否する。 */
+export function isScoreNumberInferenceResult(value: unknown): value is ScoreNumberInferenceResult {
+  return isScoreLearningResult(value, 'unannotatedLetDeclaration');
+}
+
+/** 2つの導入Lessonだけの有限fact構造とprobe成功の前提を検査する。 */
+function isScoreLearningResult(
+  value: unknown,
+  declarationFact: 'explicitNumberAnnotation' | 'unannotatedLetDeclaration',
+): boolean {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const result = value as Record<string, unknown>;
   if (result['status'] === 'system-error') return Object.keys(result).length === 1;
@@ -35,20 +52,20 @@ export function isScoreNumberAnnotationResult(
     return false;
   const facts = result['facts'] as Record<string, unknown>;
   const keys = [
-    'explicitNumberAnnotation',
+    declarationFact,
     'forbiddenEscapeAbsent',
     'logsScoreLast',
     'negativeProbeRejected',
     'positiveProbeAccepted',
     'programShapeAccepted',
-  ];
+  ].sort();
   if (
     Object.keys(facts).sort().join(',') !== keys.join(',') ||
     !keys.every((key) => typeof facts[key] === 'boolean')
   )
     return false;
   const eligible =
-    facts['explicitNumberAnnotation'] &&
+    facts[declarationFact] &&
     facts['forbiddenEscapeAbsent'] &&
     facts['logsScoreLast'] &&
     facts['programShapeAccepted'];
@@ -69,7 +86,8 @@ export function isCompilerWorkerRequest(value: unknown): value is CompilerWorker
     Object.keys(request).sort().join(',') === keys &&
     (request['kind'] === 'compile' ||
       (request['kind'] === 'learning-check' &&
-        request['profile'] === 'score-number-annotation-v1')) &&
+        (request['profile'] === 'score-number-annotation-v1' ||
+          request['profile'] === 'score-number-inference-v1'))) &&
     typeof request['requestId'] === 'string' &&
     request['requestId'].length > 0 &&
     request['requestId'].length <= 128 &&

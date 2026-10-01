@@ -1,10 +1,14 @@
 import {
   TypeScriptExerciseRuntimeSchema,
   TypeScriptLearningRuleDefinitionSchema,
-  TypeScriptAnnotationConsoleRuleSchema,
+  TypeScriptScoreConsoleTwoRuleSchema,
 } from '../../../core/content/schema';
 import type { ScoreNumberAnnotationResult } from '../../runtime/typescript/checkScoreNumberAnnotation';
-import { isScoreNumberAnnotationResult } from '../../runtime/typescript/workerContract';
+import type { ScoreNumberInferenceResult } from '../../runtime/typescript/checkScoreNumberInference';
+import {
+  isScoreNumberAnnotationResult,
+  isScoreNumberInferenceResult,
+} from '../../runtime/typescript/workerContract';
 import type {
   ValidationContext,
   ValidationResult,
@@ -25,6 +29,7 @@ import { JavaScriptValidator } from '../javascript/JavaScriptValidator';
 interface CompilerPort {
   compile(input: TypeScriptCompileInput): Promise<TypeScriptCompileResult>;
   learningCheck?(input: TypeScriptCompileInput): Promise<ScoreNumberAnnotationResult>;
+  inferenceCheck?(input: TypeScriptCompileInput): Promise<ScoreNumberInferenceResult>;
   dispose(): void;
 }
 interface ValidatorOptions {
@@ -82,18 +87,25 @@ export class TypeScriptValidator implements ValidatorAdapter {
     );
     const learningRule =
       learningRules[0] && TypeScriptLearningRuleDefinitionSchema.safeParse(learningRules[0]);
+    const inferenceLesson = context.exerciseId === 'typescript-ch01-l01-e01';
+    const expectedProfile = inferenceLesson
+      ? 'score-number-inference-v1'
+      : 'score-number-annotation-v1';
     if (
-      (learningRules.length > 0 || context.exerciseId === 'typescript-ch01-l02-e01') &&
+      (learningRules.length > 0 ||
+        inferenceLesson ||
+        context.exerciseId === 'typescript-ch01-l02-e01') &&
       (learningRules.length !== 1 ||
         !learningRule?.success ||
-        context.exerciseId !== 'typescript-ch01-l02-e01' ||
+        (!inferenceLesson && context.exerciseId !== 'typescript-ch01-l02-e01') ||
+        learningRule.data.assertion.profile !== expectedProfile ||
         context.rules.some(
           (rule) =>
             rule !== learningRules[0] &&
             (rule.id === learningRules[0]!.id || rule.groupId === learningRules[0]!.id),
         ) ||
         consoleRules.length !== 1 ||
-        !TypeScriptAnnotationConsoleRuleSchema.safeParse(consoleRules[0]).success)
+        !TypeScriptScoreConsoleTwoRuleSchema.safeParse(consoleRules[0]).success)
     )
       return blocked(context, 'TYPESCRIPT_LEARNING_CONTRACT');
     if (
@@ -138,10 +150,15 @@ export class TypeScriptValidator implements ValidatorAdapter {
       compiler = this.options.compilerFactory?.() ?? new TypeScriptCompilerClient();
       const compiled = await compiler.compile(input);
       if (compiled.status !== 'ready') return blocked(context, 'TYPESCRIPT_VALIDATION_COMPILE');
-      let learningResult: ScoreNumberAnnotationResult | undefined;
+      let learningResult: ScoreNumberAnnotationResult | ScoreNumberInferenceResult | undefined;
       if (learningRule?.success) {
-        learningResult = await compiler.learningCheck?.(input);
-        if (!isScoreNumberAnnotationResult(learningResult) || learningResult.status !== 'ready')
+        learningResult = inferenceLesson
+          ? await compiler.inferenceCheck?.(input)
+          : await compiler.learningCheck?.(input);
+        const isLearningResult = inferenceLesson
+          ? isScoreNumberInferenceResult
+          : isScoreNumberAnnotationResult;
+        if (!isLearningResult(learningResult) || learningResult.status !== 'ready')
           return blocked(context, 'TYPESCRIPT_LEARNING_UNAVAILABLE');
       }
       const validator =
@@ -166,6 +183,7 @@ export class TypeScriptValidator implements ValidatorAdapter {
       ) {
         const rule = learningRule.data;
         const passed = Object.values(learningResult.facts).every(Boolean);
+        const learningGoal = inferenceLesson ? '型推論' : '型注釈';
         const check = {
           ruleId: rule.id,
           requirementId: rule.id,
@@ -174,12 +192,12 @@ export class TypeScriptValidator implements ValidatorAdapter {
           passed,
           requirementPassed: passed,
           message: passed
-            ? '数値の型注釈と変数の使い方を確認できました。'
-            : '今回の型注釈とscoreの使い方を確認しましょう。',
+            ? `数値の${learningGoal}と変数の使い方を確認できました。`
+            : `今回の${learningGoal}とscoreの使い方を確認しましょう。`,
           expected: rule.feedback.expected,
           actual: passed
-            ? '型注釈と正負の型検査を確認しました。'
-            : '型注釈、型の確認を弱める書き方、最後の出力を確認してください。',
+            ? `${learningGoal}と正負の型検査を確認しました。`
+            : `${learningGoal}、型の確認を弱める書き方、最後の出力を確認してください。`,
           nextAction: rule.feedback.nextAction,
           hintId: rule.hintId,
           relatedSlideId: rule.relatedSlideId,

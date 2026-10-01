@@ -495,7 +495,7 @@ const TypeScriptLearningTargetSchema = z
 const TypeScriptLearningAssertionSchema = z
   .object({
     kind: z.literal('typescript-learning'),
-    profile: z.literal('score-number-annotation-v1'),
+    profile: z.enum(['score-number-annotation-v1', 'score-number-inference-v1']),
   })
   .strict();
 
@@ -996,7 +996,7 @@ export const JavaScriptValidationRuleDefinitionSchema = z.union([
   JavaScriptConsoleValidationRuleDefinitionSchema,
 ]);
 
-/** 型注釈1 Lesson専用。動作条件とのany結合や任意profile/fileを許可しない。 */
+/** 型推論/型注釈の導入Lesson専用。any結合や任意profile/fileを許可しない。 */
 export const TypeScriptLearningRuleDefinitionSchema = z
   .object({
     ...ValidationRuleBaseShape,
@@ -1008,8 +1008,8 @@ export const TypeScriptLearningRuleDefinitionSchema = z
   .strict()
   .refine((rule) => rule.groupId === undefined, '型習得Ruleは独立した必須要件にしてください');
 
-/** 型注釈Lessonの実Console条件を独立した必須のlog 2に固定する。 */
-export const TypeScriptAnnotationConsoleRuleSchema =
+/** scoreを使う導入2Lessonの実Console条件を独立した必須のlog 2に固定する。 */
+export const TypeScriptScoreConsoleTwoRuleSchema =
   JavaScriptConsoleValidationRuleDefinitionSchema.extend({
     required: z.literal(true),
     group: z.literal('all'),
@@ -2111,22 +2111,30 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
               rule.target.kind === 'javascript-console' ||
               rule.assertion.kind === 'javascript-console',
           );
+          const parsedLearningRule = TypeScriptLearningRuleDefinitionSchema.safeParse(
+            learningRules[0],
+          );
           if (
             (learningRules.length > 0 ||
-              lesson.id === 'typescript-ch01-l02' ||
-              exercise.id === 'typescript-ch01-l02-e01') &&
+              ['typescript-ch01-l01', 'typescript-ch01-l02'].includes(lesson.id) ||
+              ['typescript-ch01-l01-e01', 'typescript-ch01-l02-e01'].includes(exercise.id)) &&
             (course.validatorId !== 'typescript' ||
-              lesson.id !== 'typescript-ch01-l02' ||
-              exercise.id !== 'typescript-ch01-l02-e01' ||
+              !['typescript-ch01-l01', 'typescript-ch01-l02'].includes(lesson.id) ||
+              exercise.id !== `${lesson.id}-e01` ||
+              !parsedLearningRule.success ||
+              parsedLearningRule.data.assertion.profile !==
+                (lesson.id === 'typescript-ch01-l01'
+                  ? 'score-number-inference-v1'
+                  : 'score-number-annotation-v1') ||
               learningRules.length !== 1 ||
               !canonicalFilePaths.includes(canonicalPublicPath('main.ts')!) ||
               annotationConsoleRules.length !== 1 ||
-              !TypeScriptAnnotationConsoleRuleSchema.safeParse(annotationConsoleRules[0]).success)
+              !TypeScriptScoreConsoleTwoRuleSchema.safeParse(annotationConsoleRules[0]).success)
           ) {
             addIssue(
               context,
               [...exercisePath, 'validationRules'],
-              '型注釈Ruleは専用Lessonの単一必須RuleとConsole条件を指定してください',
+              '型習得Ruleは専用Lessonの単一必須RuleとConsole条件を指定してください',
             );
           }
           if (
