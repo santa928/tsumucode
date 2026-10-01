@@ -1,0 +1,25 @@
+{
+  "manifest": {
+    "name": "tsumucode-next-author-pilot",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "engines": { "node": "24.18.0" },
+    "scripts": { "dev": "next dev", "build": "next build", "start": "next start" },
+    "dependencies": { "next": "16.3.8", "react": "19.2.7", "react-dom": "19.2.7" },
+    "devDependencies": {
+      "typescript": "6.0.3",
+      "@types/node": "24.13.2",
+      "@types/react": "19.2.17",
+      "@types/react-dom": "19.2.3"
+    }
+  },
+  "files": {
+    "app/layout.tsx": "import type { ReactNode } from 'react';\nimport './globals.css';\n\n/** 作者用のpageを日本語のHTML文書へ配置する。管理UIには接続しない。 */\nexport default function RootLayout({ children }: { readonly children: ReactNode }) {\n  return <html lang=\"ja\"><body>{children}</body></html>;\n}\n",
+    "app/page.tsx": "/** 固定作者Starterのpageを表示する。回答や採点は未実装。 */\nexport default function Page() {\n  return (\n    <main>\n      <p>作者用・固定原稿の技術確認</p>\n      <h1>Next.jsの作者用Starter</h1>\n      <p>学習者向け環境や採点は未接続です。</p>\n      <a href=\"/api/question?mode=second\">Route Handlerの実HTTPを開く</a>\n    </main>\n  );\n}\n",
+    "app/globals.css": "* { box-sizing: border-box; }\nbody { margin: 0; font: 1rem/1.7 system-ui, sans-serif; color: #19352d; background: #fffaf0; }\nmain { max-width: 48rem; margin: auto; padding: 2rem; }\nh1 { font-size: 1.5rem; overflow-wrap: anywhere; }\np, a { overflow-wrap: anywhere; }\na { display: inline-block; padding: .75rem 0; }\na:focus-visible { outline: 3px solid #267153; outline-offset: 4px; }\n",
+    "app/api/question/route.ts": "/** 実リクエストのqueryに応じて固定作者データを返す。秘密・外部APIを使わない。 */\nexport function GET(request: Request): Response {\n  const second = new URL(request.url).searchParams.get('mode') === 'second';\n  return Response.json({\n    revision: 'author-1',\n    message: second ? '2つ目の実リクエスト' : '最初の実リクエスト',\n  });\n}\n",
+    "next.config.mjs": "/** 固定作者用Next設定。実サーバーを使い、static exportへ置換しない。 */\nexport default { devIndicators: false, poweredByHeader: false };\n",
+    "tsconfig.json": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"lib\": [\"dom\", \"dom.iterable\", \"esnext\"],\n    \"allowJs\": true,\n    \"skipLibCheck\": true,\n    \"strict\": true,\n    \"noEmit\": true,\n    \"esModuleInterop\": true,\n    \"module\": \"esnext\",\n    \"moduleResolution\": \"bundler\",\n    \"resolveJsonModule\": true,\n    \"isolatedModules\": true,\n    \"jsx\": \"react-jsx\",\n    \"incremental\": true,\n    \"plugins\": [{ \"name\": \"next\" }]\n  },\n  \"include\": [\"next-env.d.ts\", \"**/*.ts\", \"**/*.tsx\", \".next/types/**/*.ts\", \".next/dev/types/**/*.ts\"],\n  \"exclude\": [\"node_modules\"]\n}\n"
+  }
+}
