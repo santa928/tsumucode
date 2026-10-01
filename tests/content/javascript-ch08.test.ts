@@ -1,9 +1,15 @@
-import { expect, it } from 'vitest';
+import { beforeAll, expect, it } from 'vitest';
 import { loadAuthoringCourse } from '../../scripts/content/compileCourse';
 import { assertChapterConceptCoverage } from './concept-coverage';
 
-it('Ch08先頭は既習FunctionとDOMから操作前後を実Scenarioへ接続する', async () => {
-  const authoring = await loadAuthoringCourse('content/javascript');
+let authoring: Awaited<ReturnType<typeof loadAuthoringCourse>>;
+
+/** 全Courseの読込は準備で行い、教材契約の検証には既定の実行枠を保つ。 */
+beforeAll(async () => {
+  authoring = await loadAuthoringCourse('content/javascript');
+}, 30_000);
+
+it('Ch08先頭は既習FunctionとDOMから操作前後を実Scenarioへ接続する', () => {
   const chapter = authoring.runtime.phases
     .flatMap(({ chapters }) => chapters)
     .find(({ id }) => id === 'javascript-ch08')!;

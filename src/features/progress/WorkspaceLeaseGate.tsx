@@ -22,6 +22,7 @@ export type WorkspaceLeaseCoordinator = Pick<TabLeaseCoordinator, 'acquire'>;
 export interface WorkspaceLeaseAccess {
   readonly runFencedWrite: TabLeaseHandle['runFencedWrite'];
   readonly isWritable: () => boolean;
+  readonly waitUntilWritable: (signal: AbortSignal) => Promise<boolean>;
   readonly registerBeforeYield: (callback: BeforeYield) => () => void;
 }
 
@@ -53,6 +54,7 @@ class WorkspaceLeaseSession {
   #writeFence: TabLeaseWriteFence;
   #retained = 0;
   #releaseStarted = false;
+  readonly #releaseAbort = new AbortController();
   readonly #released: Promise<void>;
   readonly #resolveReleased: () => void;
 
@@ -89,6 +91,7 @@ class WorkspaceLeaseSession {
         const status = this.handle.getSnapshot().status;
         return status === 'owned' || status === 'local-rescue';
       },
+      waitUntilWritable: (signal: AbortSignal) => this.waitUntilWritable(signal),
       registerBeforeYield: (callback: BeforeYield) => {
         this.#beforeYieldGeneration += 1;
         const generation = this.#beforeYieldGeneration;
@@ -101,6 +104,41 @@ class WorkspaceLeaseSession {
           });
         };
       },
+    });
+  }
+
+  /** 自タブの再確認だけを待つ。離脱・解放・所有権喪失で待機を解除し、後の再取得へ持ち越さない。 */
+  private waitUntilWritable(signal: AbortSignal): Promise<boolean> {
+    return new Promise((resolve) => {
+      let unsubscribe = () => {};
+      const finish = (writable: boolean): void => {
+        unsubscribe();
+        signal.removeEventListener('abort', cancel);
+        this.#releaseAbort.signal.removeEventListener('abort', cancel);
+        resolve(writable);
+      };
+      const cancel = (): void => {
+        finish(false);
+      };
+      const check = (): void => {
+        if (signal.aborted || this.#releaseStarted) {
+          finish(false);
+          return;
+        }
+        const snapshot = this.handle.getSnapshot();
+        if (snapshot.status === 'owned' || snapshot.status === 'local-rescue') {
+          finish(true);
+        } else if (
+          !snapshot.revalidating ||
+          (snapshot.status !== 'yielding' && snapshot.status !== 'claiming')
+        ) {
+          finish(false);
+        }
+      };
+      unsubscribe = this.handle.subscribe(check);
+      signal.addEventListener('abort', cancel, { once: true });
+      this.#releaseAbort.signal.addEventListener('abort', cancel, { once: true });
+      check();
     });
   }
 
@@ -122,6 +160,7 @@ class WorkspaceLeaseSession {
       this.#retained = Math.max(0, this.#retained - 1);
       if (this.#retained > 0 || this.#releaseStarted) return;
       this.#releaseStarted = true;
+      this.#releaseAbort.abort();
       void this.handle
         .release()
         .catch(() => undefined)

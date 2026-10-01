@@ -44,3 +44,9 @@ DOM側の変数添字、未対応constructor、Profile外のmodule／async／DOM
 - [x] 性能目標: READMEのPreview／採点／lazy chunk予算を変更しない。全コース・全Browser・Lighthouseを本PRの追加目標にしない。
 
 実際の実行コマンド・結果・未検証範囲はPRに記載する。対象外の実Node・端末実機・公開URL・性能実測を検証済みとは扱わない。
+
+### Previewから親画面へ戻るときの編集権再確認
+
+- REQ-LEASE-ACTION-001（追加）: 自タブの編集権再確認中に押した手動Preview・判定は、確認中の表示で一度だけ待機し、所有権を再確認してから実行する。
+- REQ-LEASE-ACTION-002（維持）: 他タブへの所有権移動・画面離脱・後続操作で待機を取り消す。後の再取得に操作を持ち越さず、判定結果の保存は既存のfenced writeで保護する。
+- 非対象: Reset確認の契約、編集権の取得条件、保存形式、教材ID、Runnerの安全境界は変更しない。タイマーで固定時間待つ方式は使わず、既存Leaseの状態変化を購読する。

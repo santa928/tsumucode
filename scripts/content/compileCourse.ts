@@ -1,7 +1,7 @@
 /** 1 CourseのAuthoring Sourceを検証し、公開Runtime Artifactへ明示投影する。 */
 import { lstat, readdir } from 'node:fs/promises';
 import path from 'node:path';
-import { CourseManifestSchema } from '../../src/core/content/schema';
+import { CourseManifestSchema, LessonSchema } from '../../src/core/content/schema';
 import type {
   AssetRef,
   ChapterManifest,
@@ -87,7 +87,7 @@ interface CompiledExercise {
   readonly authoring: AuthoringExercise;
 }
 
-interface CompiledLesson {
+export interface CompiledLesson {
   readonly runtime: Lesson;
   readonly authoringExercises: readonly AuthoringExercise[];
 }
@@ -680,6 +680,34 @@ async function compileLesson(
     };
   }
   return { runtime, authoringExercises };
+}
+
+/** 未登録Lessonを通常Compilerで読む。Courseの依存・公開Gateを満たした証拠にはしない。 */
+export async function loadAuthoringLessonDraft(
+  lessonRoot: string,
+  courseId: string,
+): Promise<CompiledLesson> {
+  const courseRoot = path.resolve(lessonRoot);
+  await inspectSafeCourseTree(courseRoot);
+  const provenance = await readYamlFile(courseRoot, 'provenance.yaml', ProvenanceSourceSchema);
+  const validated = await validateProvenance(courseRoot, provenance);
+  const context: CompileContext = {
+    courseRoot,
+    courseId,
+    provenanceById: validated.byId,
+    provenanceByPath: validated.byPath,
+    provenanceFileByPath: validated.fileByPath,
+    consumedPaths: new Set(['provenance.yaml']),
+    assets: new Map(),
+    missingSlideMetadataIds: new Set(),
+    missingExerciseMetadataIds: new Set(),
+  };
+  const lesson = await compileLesson('lesson.yaml', context);
+  LessonSchema.parse(lesson.runtime);
+  if (context.missingSlideMetadataIds.size || context.missingExerciseMetadataIds.size) {
+    throw new Error('Draft Lessonには学習Metadataが必要です');
+  }
+  return lesson;
 }
 
 /** Chapter YAML配下のLessonを公開ChapterへCompileする。 */
