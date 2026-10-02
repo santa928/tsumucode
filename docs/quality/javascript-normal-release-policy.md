@@ -30,7 +30,7 @@
 - UIから実行・採点・Hint・誤り修正・保存 / reload / resume・Reset / 取消・制作・学習bundleのExport / Importを実操作する。
 - 全blocking0・必須未確認0、実装者別の独立コードreviewを満たす。未解消をparkして通常公開しない。
 - 受入後のみJSをpublishedへ登録し、Home / frontend PathのHTML/CSS後required Step / Library / 直接開始 / 続きからを検証する。
-- 最終source入力の生成、JSとHTML/CSS出典、内容hash review、互換、型 / Lint / 全Unit・Content、規定Browser E2E、axe / Keyboard / 対象viewport、Performance / Lighthouse、Security / Static Artifact、subpath / chunk / 全Release bindingを通す。全Gateは計画のG-01〜22を参照する。
+- 最終source入力の生成、JSとHTML/CSS出典、内容hash review、互換、型 / Lint / 全Unit・Content、規定Browser E2E、axe / Keyboard / 対象viewport、Performance / Lighthouse、Security / Static Artifact、subpath / chunk / 全Release bindingを通す。全Gateは計画のG-01〜22を参照する。G-05は変更filesのDocker Prettierと固定BASE..finalHEAD / staged差分の確認であり、全treeの`format:check`を既存公開必須Gateへ追加しない。製品の既存必須検査・閾値は維持する。
 - 同じPagesのcourse-scope JS通常candidateを配信し、新Run / Report / tag / source SHA / Artifact digest / courseId / post-deployを一致させる。公開URLで入口・開始 / 再開・採点・保存 / reload・持ち出しを確認する。
 - 旧HTML/CSSのβ配信とdraft / pending手動受入記録を通常公開済みへ変えない。対応Issueは達成したものだけcloseする。
 

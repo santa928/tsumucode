@@ -219,7 +219,7 @@ rootのlive読取では直近Pages Deploymentは`2026-09-28`の`4ea25976c95e5aa2
 | G-02 | `npm run content:provenance`、`npm exec tsx -- scripts/content/checkProvenance.ts content/javascript`       | 前者はpackage実体ではHTML/CSS固定。JSも明示実行し、全file・出典・Solution / Fixture visibilityを検査                                                                                     |
 | G-03 | `npm run content:review`                                                                                    | all-course台帳、JS全52、author別reviewer、source hash、accuracy / alignment、未説明語0 / Hint leakage0 / 例実行 / decision。通常CIのwarningを公開時は許容しない                          |
 | G-04 | `npm run lint`、`npm run typecheck`、`npm run test:run`                                                     | 最終公開前は全Unit / Component / Content。build:app内にもtypecheckがあるが独立成功証拠を区別                                                                                             |
-| G-05 | `npm run format:check`、`git diff --check`                                                                  | 新docs・教材を含む最終差分の書式。製品・閾値を変えない                                                                                                                                   |
+| G-05 | 変更filesのDocker内Prettier、`git diff --check BASE HEAD`、`git diff --cached --check`                      | 固定BASE..finalHEADとstaged差分を確認する。書式は今回変更したfilesだけを対象とし、既存pages / check:release必須Gateと区別する                                                            |
 | G-06 | `npm run build:app`、`npm run smoke:learning-chunks`                                                        | canonical dist、Editor / Runner等のlazy境界、Home漏洩禁止                                                                                                                                |
 | G-07 | `npm run check:release`                                                                                     | compile / content:review / lint / 全test / build:app / learning-chunksの既存公開aggregate。単独Gateと同じ入力の実行重複は有効証拠で説明                                                  |
 | G-08 | `npm run release:continuity`                                                                                | candidateのsource / Artifact / ID / tombstone / migration / 過去Release / 合成進捗bundle。既存実体はHTML/CSS固定、JS対応の厳格bindingが必要                                              |
@@ -237,6 +237,8 @@ rootのlive読取では直近Pages Deploymentは`2026-09-28`の`4ea25976c95e5aa2
 | G-20 | `release:report -- --hash-only`、`release:approval -- --artifact`、`release:target -- --mode candidate ...` | actual dist / Course / public provenance / visual baseline / 手動記録 / Product tree / 承認source / workflow headを厳格にbinding                                                         |
 | G-21 | 既存Pages quality job / quality Artifact、Environment保護、Deploy / Report / annotated tag                  | quality reportの必須ファイル存在、Artifact ID / digest、run / attempt。Environmentはliveでmainのみ、required reviewerなし。設定を維持し、人の独立承認取得とは呼ばない                    |
 | G-22 | 公開URL実操作、revision別post-deploy、`release:continuity -- --promote --report ...`                        | 配信SHA・Home / Path / Library・開始 / 再開 / 採点 / 保存 / reload / 持ち出し / console、Report・tag・台帳・URLの一致。既存公開履歴は保持                                                |
+
+G-05の`BASE`は本計画の固定BASE、`HEAD`は最終公開候補の40文字SHAを指定する。Prettierは同範囲で変更したdocs・教材等の対象pathだけをDocker内で指定して確認し、stage済み差分も`git diff --cached --check`で確認する。全treeの`npm run format:check`（`prettier --check .`）は、既存Pages quality / `check:release`の必須Gateには含まれない別の診断である。未変更fileの書式差を新たな公開blocking、無関係な全体整形、製品必須検査や閾値の緩和の理由にしない。
 
 ## 性能目標
 
