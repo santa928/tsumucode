@@ -13,6 +13,24 @@ const baseInput = {
 } as const;
 
 describe('Node source facts', () => {
+  it.each([
+    'const a=[[10]],i=0;console.log(a[i][i]);',
+    'let calls=0;const read=()=>{calls+=1;return [10];};const key=()=>0;console.log(read()[key()]);',
+    'const a=[10],i=0;console.log((()=>a[i])());',
+    'const a=[10],i=0;console.log(a[(i)]);',
+    'const a=[10],i=0;console.log((i,a)[(1,i)]);',
+    'const a=[10],i=0;console.log(a/*[*/[/*[*/(i)]);',
+  ])('project index readをnested/Function guardと共存する式へ変換する: %s', async (source) => {
+    const result = await analyzeJavaScriptSource({
+      ...baseInput,
+      capabilityProfile: 'project',
+      source,
+    });
+    expect(result.status).toBe('success');
+    if (result.status !== 'success') throw new Error('Project read analysis failed');
+    expect(result.instrumentedCode).toContain('__tsumuBudget.index(');
+    expect(() => parse(result.instrumentedCode, { ecmaVersion: 'latest' })).not.toThrow();
+  });
   it('計算添字とPromiseを拒否せず、sourceを変換せず同じhashと教材factを返す', async () => {
     const source =
       'const values = [10]; const i = 0; Promise.resolve(values[i]).then(value => console.log(value));';

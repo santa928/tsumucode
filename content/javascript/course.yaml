@@ -1,10 +1,10 @@
 schemaVersion: 1
 id: javascript
 title: JavaScript はじめの一歩
-description: 画面の変化から始め、値・条件分岐・Function・Array・Module・Error・DebugまでをConsoleで確かめる
+description: 画面の変化から値・制御・データ・DOM・非同期を学び、学習クイズを制作する
 audience: HTMLとCSSの役割を知り、JavaScriptを初めて学ぶ本人と身内
-estimatedMinutes: 760
-revision: 2026-10-02.2
+estimatedMinutes: 1010
+revision: 2026-10-02.3
 runnerId: javascript
 validatorId: javascript
 glossarySource: glossary.yaml
@@ -22,13 +22,13 @@ prerequisites:
   - html-css
 publicationStatus: draft
 expectedTotals:
-  chapters: 12
-  lessons: 46
-  conceptSlides: 184
+  chapters: 14
+  lessons: 52
+  conceptSlides: 202
   standardExercises: 48
-  guidedProjectLessons: 0
-  capstoneLessons: 0
-  estimatedMinutes: 760
+  guidedProjectLessons: 5
+  capstoneLessons: 1
+  estimatedMinutes: 1010
 provenanceManifestPath: provenance.yaml
 progressMigrations:
   - fromRevision: 2026-08-02.1
@@ -141,6 +141,9 @@ progressMigrations:
         action: intentionally-reset
         id: javascript-ch06-l04-e01
         reason: 指定計算とConsole利用の関係を再確認します。旧コード全体は隔離と復旧backupへ保持します。
+  - fromRevision: 2026-10-02.2
+    toRevision: 2026-10-02.3
+    steps: []
 phases:
   - id: javascript-p00-core
     title: JavaScript Core
@@ -166,3 +169,9 @@ phases:
       - chapters/javascript-ch09/chapter.yaml
       - chapters/javascript-ch10/chapter.yaml
       - chapters/javascript-ch11/chapter.yaml
+  - id: javascript-p03-project
+    title: JavaScript Project
+    description: 学習クイズを段階制作し、別のクイズを自分で設計します。
+    chapterSources:
+      - chapters/javascript-ch12/chapter.yaml
+      - chapters/javascript-ch13/chapter.yaml

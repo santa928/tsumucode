@@ -1,0 +1,1236 @@
+id: javascript-ch13-l01-e01
+kind: capstone
+projectId: javascript-quiz-capstone
+workspaceId: javascript-quiz-capstone
+countsTowardStandardExerciseTotal: false
+title: 自分で設計する学習クイズ
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: quiz-requirement-trace
+    minimumLevel: compose
+scaffoldLevel: compose
+steps:
+  - id: compose-current-step
+    file: main.js
+    target: クイズ全体のstateとrender
+    starterAnchor: '// TODO: BriefとGuideを読んでクイズを設計します'
+    change: 自分で設計する学習クイズ。既に作ったSourceを残して今回工程を足す。
+    observe: Checklistの操作をPreviewで確かめ、判定する。
+    requiresConceptIds:
+      - quiz-requirement-trace
+    validationRuleIds:
+      - javascript-ch13-l01-e01-r01
+files:
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: true
+  - path: styles.css
+    language: css
+    source: starter/styles.css
+    editable: true
+  - path: questions.js
+    language: javascript
+    source: starter/questions.js
+    editable: false
+  - path: main.js
+    language: javascript
+    source: starter/main.js
+    editable: true
+solutionFiles:
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: solution/styles.css
+    editable: false
+  - path: questions.js
+    language: javascript
+    source: solution/questions.js
+    editable: false
+  - path: main.js
+    language: javascript
+    source: solution/main.js
+    editable: false
+validationRules:
+  - id: javascript-ch13-l01-e01-r01
+    label: 同梱データのModuleを読み込む
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: main.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: module-boundary
+        boundaryKind: import
+        name: loadQuestions
+    feedback:
+      target: main.jsのimport
+      expected: 同梱questions.jsのloadQuestionsをimport
+      nextAction: Guideの提供APIからデータを読みます。
+    hintId: javascript-ch13-l01-e01-h01
+    relatedSlideId: javascript-ch13-l01-s02
+hints:
+  - id: javascript-ch13-l01-e01-h01
+    level: 1
+    title: 対象を見つける
+    text: まずカテゴリ、問題位置、得点、回答済みの状態と、必要な画面を紙に書きます。Moduleから受け取るArrayを使う場所を決めましょう。
+    relatedSlideId: javascript-ch13-l01-s01
+  - id: javascript-ch13-l01-e01-h02
+    level: 2
+    title: 状態と表示をつなぐ
+    text: filterは元のArrayを変えず表示用Arrayを返します。正解のときだけ加点し、二重回答を止めます。最後は問題がない場合を結果へ分岐します。
+    relatedSlideId: javascript-ch13-l01-s02
+  - id: javascript-ch13-l01-e01-h03
+    level: 3
+    title: 局所の例から考える
+    text: '小例: const selected = items.filter((item) => item.category === selectedValue);。native buttonのclickへ処理を登録するとEnter/Spaceでも操作できます。読み込み失敗後も操作を戻しましょう。'
+    relatedSlideId: javascript-ch13-l01-s03
+relatedSlideIds:
+  - javascript-ch13-l01-s01
+  - javascript-ch13-l01-s02
+  - javascript-ch13-l01-s03
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: alternate-name
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/alternate-name/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/alternate-name/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/alternate-name/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/alternate-name/main.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternate-branch
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/alternate-branch/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/alternate-branch/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/alternate-branch/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/alternate-branch/main.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: incomplete
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/incomplete/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/incomplete/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/incomplete/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/incomplete/main.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:cap-keyboard:again:focus
+      - interaction:cap-keyboard:again:score
+      - interaction:cap-keyboard:answered:focus
+      - interaction:cap-keyboard:answered:score
+      - interaction:cap-keyboard:loaded:choice-one
+      - interaction:cap-keyboard:loaded:choice-zero
+      - interaction:cap-keyboard:loaded:focus
+      - interaction:cap-keyboard:loaded:question
+      - interaction:cap-keyboard:loaded:visible-choice-one
+      - interaction:cap-keyboard:loaded:visible-choice-zero
+      - interaction:cap-keyboard:loaded:visible-question
+      - interaction:cap-keyboard:next:focus
+      - interaction:cap-keyboard:result:focus
+      - interaction:cap-keyboard:result:result
+      - interaction:cap-logic:loaded:progress
+      - interaction:cap-logic:loaded:question
+      - interaction:cap-logic:loaded:visible-choice-one
+      - interaction:cap-logic:loaded:visible-choice-zero
+      - interaction:cap-logic:loaded:visible-question
+      - interaction:cap-logic:result:result
+      - interaction:cap-logic:second:progress
+      - interaction:cap-logic:second:question
+      - interaction:cap-logic:second:visible-choice-one
+      - interaction:cap-logic:second:visible-choice-zero
+      - interaction:cap-logic:second:visible-question
+      - interaction:cap-recovery:failed:enabled
+      - interaction:cap-recovery:failed:message
+      - interaction:cap-recovery:first-answer:answer
+      - interaction:cap-recovery:first-answer:locked
+      - interaction:cap-recovery:first-answer:locked-one
+      - interaction:cap-recovery:first-answer:score
+      - interaction:cap-recovery:loading:blocked
+      - interaction:cap-recovery:loading:message
+      - interaction:cap-recovery:recovered:choice-one
+      - interaction:cap-recovery:recovered:choice-zero
+      - interaction:cap-recovery:recovered:question
+      - interaction:cap-recovery:recovered:visible-choice-one
+      - interaction:cap-recovery:recovered:visible-choice-zero
+      - interaction:cap-recovery:recovered:visible-question
+      - interaction:cap-recovery:repeat-answer:answer
+      - interaction:cap-recovery:repeat-answer:locked
+      - interaction:cap-recovery:repeat-answer:locked-one
+      - interaction:cap-recovery:repeat-answer:score
+      - interaction:cap-web:again-result:result
+      - interaction:cap-web:finished:answer-blocked
+      - interaction:cap-web:finished:locked-one
+      - interaction:cap-web:finished:quiz-closed
+      - interaction:cap-web:finished:result
+      - interaction:cap-web:first-answer:answer
+      - interaction:cap-web:first-answer:locked
+      - interaction:cap-web:first-answer:locked-one
+      - interaction:cap-web:first-answer:score
+      - interaction:cap-web:loaded:choice-one
+      - interaction:cap-web:loaded:choice-zero
+      - interaction:cap-web:loaded:question
+      - interaction:cap-web:loaded:visible-choice-one
+      - interaction:cap-web:loaded:visible-choice-zero
+      - interaction:cap-web:loaded:visible-question
+      - interaction:cap-web:restarted:choice-one
+      - interaction:cap-web:restarted:choice-zero
+      - interaction:cap-web:restarted:feedback
+      - interaction:cap-web:restarted:focus
+      - interaction:cap-web:restarted:question
+      - interaction:cap-web:restarted:result-closed
+      - interaction:cap-web:restarted:score
+      - interaction:cap-web:restarted:visible-choice-one
+      - interaction:cap-web:restarted:visible-choice-zero
+      - interaction:cap-web:restarted:visible-question
+      - interaction:cap-web:second-answer:answer
+      - interaction:cap-web:second-answer:score
+      - interaction:cap-web:second-question:progress
+      - interaction:cap-web:second-question:question
+      - interaction:cap-web:second-question:visible-choice-one
+      - interaction:cap-web:second-question:visible-choice-zero
+      - interaction:cap-web:second-question:visible-question
+  - id: unused-import
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/unused-import/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/unused-import/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/unused-import/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/unused-import/main.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:cap-keyboard:again:focus
+      - interaction:cap-keyboard:again:score
+      - interaction:cap-keyboard:answered:focus
+      - interaction:cap-keyboard:answered:score
+      - interaction:cap-keyboard:loaded:choice-one
+      - interaction:cap-keyboard:loaded:choice-zero
+      - interaction:cap-keyboard:loaded:focus
+      - interaction:cap-keyboard:loaded:question
+      - interaction:cap-keyboard:loaded:visible-choice-one
+      - interaction:cap-keyboard:loaded:visible-choice-zero
+      - interaction:cap-keyboard:loaded:visible-question
+      - interaction:cap-keyboard:next:focus
+      - interaction:cap-keyboard:result:focus
+      - interaction:cap-keyboard:result:result
+      - interaction:cap-logic:loaded:progress
+      - interaction:cap-logic:loaded:question
+      - interaction:cap-logic:loaded:visible-choice-one
+      - interaction:cap-logic:loaded:visible-choice-zero
+      - interaction:cap-logic:loaded:visible-question
+      - interaction:cap-logic:result:result
+      - interaction:cap-logic:second:progress
+      - interaction:cap-logic:second:question
+      - interaction:cap-logic:second:visible-choice-one
+      - interaction:cap-logic:second:visible-choice-zero
+      - interaction:cap-logic:second:visible-question
+      - interaction:cap-recovery:failed:enabled
+      - interaction:cap-recovery:failed:message
+      - interaction:cap-recovery:first-answer:answer
+      - interaction:cap-recovery:first-answer:locked
+      - interaction:cap-recovery:first-answer:locked-one
+      - interaction:cap-recovery:first-answer:score
+      - interaction:cap-recovery:loading:blocked
+      - interaction:cap-recovery:loading:message
+      - interaction:cap-recovery:repeat-answer:answer
+      - interaction:cap-recovery:repeat-answer:locked
+      - interaction:cap-recovery:repeat-answer:locked-one
+      - interaction:cap-recovery:repeat-answer:score
+      - interaction:cap-web:again-result:result
+      - interaction:cap-web:finished:answer-blocked
+      - interaction:cap-web:finished:locked-one
+      - interaction:cap-web:finished:quiz-closed
+      - interaction:cap-web:finished:result
+      - interaction:cap-web:first-answer:answer
+      - interaction:cap-web:first-answer:locked
+      - interaction:cap-web:first-answer:locked-one
+      - interaction:cap-web:first-answer:score
+      - interaction:cap-web:restarted:choice-one
+      - interaction:cap-web:restarted:choice-zero
+      - interaction:cap-web:restarted:feedback
+      - interaction:cap-web:restarted:focus
+      - interaction:cap-web:restarted:question
+      - interaction:cap-web:restarted:result-closed
+      - interaction:cap-web:restarted:score
+      - interaction:cap-web:restarted:visible-choice-one
+      - interaction:cap-web:restarted:visible-choice-zero
+      - interaction:cap-web:restarted:visible-question
+      - interaction:cap-web:second-answer:answer
+      - interaction:cap-web:second-answer:score
+      - interaction:cap-web:second-question:progress
+      - interaction:cap-web:second-question:question
+      - interaction:cap-web:second-question:visible-choice-one
+      - interaction:cap-web:second-question:visible-choice-zero
+      - interaction:cap-web:second-question:visible-question
+  - id: fixed-dom
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/fixed-dom/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/fixed-dom/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/fixed-dom/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/fixed-dom/main.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:cap-keyboard:again:focus
+      - interaction:cap-keyboard:again:score
+      - interaction:cap-keyboard:answered:focus
+      - interaction:cap-keyboard:answered:score
+      - interaction:cap-keyboard:loaded:choice-one
+      - interaction:cap-keyboard:loaded:choice-zero
+      - interaction:cap-keyboard:loaded:focus
+      - interaction:cap-keyboard:loaded:question
+      - interaction:cap-keyboard:loaded:visible-choice-one
+      - interaction:cap-keyboard:loaded:visible-choice-zero
+      - interaction:cap-keyboard:loaded:visible-question
+      - interaction:cap-keyboard:next:focus
+      - interaction:cap-keyboard:result:focus
+      - interaction:cap-keyboard:result:result
+      - interaction:cap-logic:loaded:progress
+      - interaction:cap-logic:loaded:question
+      - interaction:cap-logic:loaded:visible-choice-one
+      - interaction:cap-logic:loaded:visible-choice-zero
+      - interaction:cap-logic:loaded:visible-question
+      - interaction:cap-logic:result:result
+      - interaction:cap-logic:second:progress
+      - interaction:cap-logic:second:question
+      - interaction:cap-logic:second:visible-choice-one
+      - interaction:cap-logic:second:visible-choice-zero
+      - interaction:cap-logic:second:visible-question
+      - interaction:cap-recovery:failed:enabled
+      - interaction:cap-recovery:failed:message
+      - interaction:cap-recovery:first-answer:answer
+      - interaction:cap-recovery:first-answer:locked
+      - interaction:cap-recovery:first-answer:locked-one
+      - interaction:cap-recovery:first-answer:score
+      - interaction:cap-recovery:loading:blocked
+      - interaction:cap-recovery:loading:message
+      - interaction:cap-recovery:recovered:choice-one
+      - interaction:cap-recovery:recovered:choice-zero
+      - interaction:cap-recovery:recovered:question
+      - interaction:cap-recovery:recovered:visible-choice-one
+      - interaction:cap-recovery:recovered:visible-choice-zero
+      - interaction:cap-recovery:recovered:visible-question
+      - interaction:cap-recovery:repeat-answer:answer
+      - interaction:cap-recovery:repeat-answer:locked
+      - interaction:cap-recovery:repeat-answer:locked-one
+      - interaction:cap-recovery:repeat-answer:score
+      - interaction:cap-web:again-result:result
+      - interaction:cap-web:finished:answer-blocked
+      - interaction:cap-web:finished:locked-one
+      - interaction:cap-web:finished:quiz-closed
+      - interaction:cap-web:finished:result
+      - interaction:cap-web:first-answer:answer
+      - interaction:cap-web:first-answer:locked
+      - interaction:cap-web:first-answer:locked-one
+      - interaction:cap-web:first-answer:score
+      - interaction:cap-web:loaded:choice-one
+      - interaction:cap-web:loaded:choice-zero
+      - interaction:cap-web:loaded:question
+      - interaction:cap-web:loaded:visible-choice-one
+      - interaction:cap-web:loaded:visible-choice-zero
+      - interaction:cap-web:loaded:visible-question
+      - interaction:cap-web:restarted:choice-one
+      - interaction:cap-web:restarted:choice-zero
+      - interaction:cap-web:restarted:feedback
+      - interaction:cap-web:restarted:focus
+      - interaction:cap-web:restarted:question
+      - interaction:cap-web:restarted:result-closed
+      - interaction:cap-web:restarted:score
+      - interaction:cap-web:restarted:visible-choice-one
+      - interaction:cap-web:restarted:visible-choice-zero
+      - interaction:cap-web:restarted:visible-question
+      - interaction:cap-web:second-answer:answer
+      - interaction:cap-web:second-answer:score
+      - interaction:cap-web:second-question:progress
+      - interaction:cap-web:second-question:question
+      - interaction:cap-web:second-question:visible-choice-one
+      - interaction:cap-web:second-question:visible-choice-zero
+      - interaction:cap-web:second-question:visible-question
+  - id: syntax
+    expectedStatus: code-error
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/code-error/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/code-error/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/code-error/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/code-error/main.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: security
+    expectedStatus: code-error
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/security/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/security/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/security/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/security/main.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: system-error
+    expectedStatus: system-error
+    faultInjection: stale-source-evidence
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/system-error/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/system-error/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/system-error/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/system-error/main.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: always-correct
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/always-correct/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/always-correct/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/always-correct/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/always-correct/main.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:cap-logic:result:result
+      - interaction:cap-web:finished:answer-blocked
+      - interaction:cap-web:finished:locked-one
+      - interaction:cap-web:finished:quiz-closed
+      - interaction:cap-web:finished:result
+      - interaction:cap-web:second-answer:answer
+      - interaction:cap-web:second-answer:score
+  - id: always-score
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/always-score/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/always-score/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/always-score/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/always-score/main.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:cap-logic:result:result
+      - interaction:cap-web:finished:answer-blocked
+      - interaction:cap-web:finished:locked-one
+      - interaction:cap-web:finished:quiz-closed
+      - interaction:cap-web:finished:result
+      - interaction:cap-web:second-answer:answer
+      - interaction:cap-web:second-answer:score
+  - id: fixed-score
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/fixed-score/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/fixed-score/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/fixed-score/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/fixed-score/main.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:cap-keyboard:again:focus
+      - interaction:cap-keyboard:again:score
+      - interaction:cap-keyboard:answered:focus
+      - interaction:cap-keyboard:answered:score
+      - interaction:cap-recovery:first-answer:answer
+      - interaction:cap-recovery:first-answer:locked
+      - interaction:cap-recovery:first-answer:locked-one
+      - interaction:cap-recovery:first-answer:score
+      - interaction:cap-recovery:repeat-answer:answer
+      - interaction:cap-recovery:repeat-answer:locked
+      - interaction:cap-recovery:repeat-answer:locked-one
+      - interaction:cap-recovery:repeat-answer:score
+      - interaction:cap-web:first-answer:answer
+      - interaction:cap-web:first-answer:locked
+      - interaction:cap-web:first-answer:locked-one
+      - interaction:cap-web:first-answer:score
+      - interaction:cap-web:restarted:choice-one
+      - interaction:cap-web:restarted:choice-zero
+      - interaction:cap-web:restarted:feedback
+      - interaction:cap-web:restarted:focus
+      - interaction:cap-web:restarted:question
+      - interaction:cap-web:restarted:result-closed
+      - interaction:cap-web:restarted:score
+      - interaction:cap-web:restarted:visible-choice-one
+      - interaction:cap-web:restarted:visible-choice-zero
+      - interaction:cap-web:restarted:visible-question
+      - interaction:cap-web:second-answer:answer
+      - interaction:cap-web:second-answer:score
+  - id: missing-result
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/missing-result/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/missing-result/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/missing-result/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/missing-result/main.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:cap-keyboard:result:focus
+      - interaction:cap-keyboard:result:result
+      - interaction:cap-logic:result:result
+      - interaction:cap-web:again-result:result
+      - interaction:cap-web:finished:answer-blocked
+      - interaction:cap-web:finished:locked-one
+      - interaction:cap-web:finished:quiz-closed
+      - interaction:cap-web:finished:result
+  - id: missing-restart
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/missing-restart/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/missing-restart/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/missing-restart/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/missing-restart/main.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:cap-keyboard:again:focus
+      - interaction:cap-keyboard:again:score
+      - interaction:cap-keyboard:result:focus
+      - interaction:cap-keyboard:result:result
+      - interaction:cap-web:again-result:result
+      - interaction:cap-web:restarted:choice-one
+      - interaction:cap-web:restarted:choice-zero
+      - interaction:cap-web:restarted:feedback
+      - interaction:cap-web:restarted:focus
+      - interaction:cap-web:restarted:question
+      - interaction:cap-web:restarted:result-closed
+      - interaction:cap-web:restarted:score
+      - interaction:cap-web:restarted:visible-choice-one
+      - interaction:cap-web:restarted:visible-choice-zero
+      - interaction:cap-web:restarted:visible-question
+  - id: missing-focus
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/missing-focus/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/missing-focus/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/missing-focus/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/missing-focus/main.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:cap-keyboard:again:focus
+      - interaction:cap-keyboard:again:score
+      - interaction:cap-keyboard:answered:focus
+      - interaction:cap-keyboard:answered:score
+      - interaction:cap-keyboard:loaded:choice-one
+      - interaction:cap-keyboard:loaded:choice-zero
+      - interaction:cap-keyboard:loaded:focus
+      - interaction:cap-keyboard:loaded:question
+      - interaction:cap-keyboard:loaded:visible-choice-one
+      - interaction:cap-keyboard:loaded:visible-choice-zero
+      - interaction:cap-keyboard:loaded:visible-question
+      - interaction:cap-keyboard:next:focus
+      - interaction:cap-keyboard:result:focus
+      - interaction:cap-keyboard:result:result
+      - interaction:cap-web:restarted:choice-one
+      - interaction:cap-web:restarted:choice-zero
+      - interaction:cap-web:restarted:feedback
+      - interaction:cap-web:restarted:focus
+      - interaction:cap-web:restarted:question
+      - interaction:cap-web:restarted:result-closed
+      - interaction:cap-web:restarted:score
+      - interaction:cap-web:restarted:visible-choice-one
+      - interaction:cap-web:restarted:visible-choice-zero
+      - interaction:cap-web:restarted:visible-question
+  - id: ignores-category
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/ignores-category/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/ignores-category/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/ignores-category/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/ignores-category/main.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:cap-logic:loaded:progress
+      - interaction:cap-logic:loaded:question
+      - interaction:cap-logic:loaded:visible-choice-one
+      - interaction:cap-logic:loaded:visible-choice-zero
+      - interaction:cap-logic:loaded:visible-question
+      - interaction:cap-logic:second:progress
+      - interaction:cap-logic:second:question
+      - interaction:cap-logic:second:visible-choice-one
+      - interaction:cap-logic:second:visible-choice-zero
+      - interaction:cap-logic:second:visible-question
+  - id: fixed-progress
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/fixed-progress/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/fixed-progress/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/fixed-progress/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/fixed-progress/main.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:cap-logic:second:progress
+      - interaction:cap-logic:second:question
+      - interaction:cap-logic:second:visible-choice-one
+      - interaction:cap-logic:second:visible-choice-zero
+      - interaction:cap-logic:second:visible-question
+      - interaction:cap-web:second-question:progress
+      - interaction:cap-web:second-question:question
+      - interaction:cap-web:second-question:visible-choice-one
+      - interaction:cap-web:second-question:visible-choice-zero
+      - interaction:cap-web:second-question:visible-question
+  - id: repeat-answer
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/repeat-answer/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/repeat-answer/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/repeat-answer/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/repeat-answer/main.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:cap-recovery:first-answer:answer
+      - interaction:cap-recovery:first-answer:locked
+      - interaction:cap-recovery:first-answer:locked-one
+      - interaction:cap-recovery:first-answer:score
+      - interaction:cap-recovery:repeat-answer:answer
+      - interaction:cap-recovery:repeat-answer:locked
+      - interaction:cap-recovery:repeat-answer:locked-one
+      - interaction:cap-recovery:repeat-answer:score
+      - interaction:cap-web:finished:answer-blocked
+      - interaction:cap-web:finished:locked-one
+      - interaction:cap-web:finished:quiz-closed
+      - interaction:cap-web:finished:result
+      - interaction:cap-web:first-answer:answer
+      - interaction:cap-web:first-answer:locked
+      - interaction:cap-web:first-answer:locked-one
+      - interaction:cap-web:first-answer:score
+  - id: alternate-fieldset
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/alternate-fieldset/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/alternate-fieldset/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/alternate-fieldset/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/alternate-fieldset/main.js
+        editable: false
+    expectedFeedbackRuleIds: []
+runtime:
+  kind: javascript
+  entryFile: main.js
+  sourceType: module
+  capabilityProfile: project
+  primaryOutput: preview
+interactionScenarios:
+  - id: cap-web
+    label: Webの混合回答と再挑戦
+    actions:
+      - id: start
+        kind: click
+        selector: '#start'
+      - id: one
+        kind: click
+        selector: '#choice-0'
+      - id: next
+        kind: click
+        selector: '#next'
+      - id: two
+        kind: click
+        selector: '#choice-0'
+      - id: finish
+        kind: click
+        selector: '#next'
+      - id: restart
+        kind: click
+        selector: '#restart'
+      - id: again-one
+        kind: click
+        selector: '#choice-0'
+      - id: again-next
+        kind: click
+        selector: '#next'
+      - id: again-two
+        kind: click
+        selector: '#choice-1'
+      - id: again-finish
+        kind: click
+        selector: '#next'
+    checkpoints:
+      - id: loaded
+        afterActionId: start
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: Webページの骨組みを作るのは？
+          - id: choice-zero
+            kind: selector-text
+            selector: '#choice-0'
+            equals: HTML
+          - id: choice-one
+            kind: selector-text
+            selector: '#choice-1'
+            equals: CSS
+          - id: visible-question
+            kind: selector-visible
+            selector: '#question'
+          - id: visible-choice-zero
+            kind: selector-visible
+            selector: '#choice-0'
+          - id: visible-choice-one
+            kind: selector-visible
+            selector: '#choice-1'
+      - id: first-answer
+        afterActionId: one
+        expectations:
+          - id: answer
+            kind: selector-text
+            selector: '#feedback'
+            equals: 正解です
+          - id: locked
+            kind: selector-exists
+            selector: '#choice-0:disabled'
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '得点: 1'
+          - id: locked-one
+            kind: selector-exists
+            selector: '#choice-1:disabled'
+      - id: second-question
+        afterActionId: next
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: 見た目を整えるのは？
+          - id: progress
+            kind: selector-text
+            selector: '#progress'
+            equals: 問題2 / 2
+          - id: visible-question
+            kind: selector-visible
+            selector: '#question'
+          - id: visible-choice-zero
+            kind: selector-visible
+            selector: '#choice-0'
+          - id: visible-choice-one
+            kind: selector-visible
+            selector: '#choice-1'
+      - id: second-answer
+        afterActionId: two
+        expectations:
+          - id: answer
+            kind: selector-text
+            selector: '#feedback'
+            equals: 正解は CSS です
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '得点: 1'
+      - id: finished
+        afterActionId: finish
+        expectations:
+          - id: result
+            kind: selector-text
+            selector: '#result'
+            equals: 2問中1問正解
+          - id: quiz-closed
+            kind: selector-exists
+            selector: '#quiz[hidden]'
+          - id: answer-blocked
+            kind: selector-exists
+            selector: '#choice-0:disabled'
+          - id: locked-one
+            kind: selector-exists
+            selector: '#choice-1:disabled'
+      - id: restarted
+        afterActionId: restart
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: Webページの骨組みを作るのは？
+          - id: choice-zero
+            kind: selector-text
+            selector: '#choice-0'
+            equals: HTML
+          - id: choice-one
+            kind: selector-text
+            selector: '#choice-1'
+            equals: CSS
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '得点: 0'
+          - id: feedback
+            kind: selector-text
+            selector: '#feedback'
+            equals: ''
+          - id: result-closed
+            kind: selector-exists
+            selector: '#result[hidden]'
+          - id: focus
+            kind: focused
+            selector: '#choice-0'
+          - id: visible-question
+            kind: selector-visible
+            selector: '#question'
+          - id: visible-choice-zero
+            kind: selector-visible
+            selector: '#choice-0'
+          - id: visible-choice-one
+            kind: selector-visible
+            selector: '#choice-1'
+      - id: again-result
+        afterActionId: again-finish
+        expectations:
+          - id: result
+            kind: selector-text
+            selector: '#result'
+            equals: 2問中2問正解
+  - id: cap-logic
+    label: 別カテゴリを最後まで解く
+    actions:
+      - id: category
+        kind: select
+        selector: '#category'
+        value: logic
+      - id: start
+        kind: click
+        selector: '#start'
+      - id: one
+        kind: click
+        selector: '#choice-1'
+      - id: next
+        kind: click
+        selector: '#next'
+      - id: two
+        kind: click
+        selector: '#choice-0'
+      - id: finish
+        kind: click
+        selector: '#next'
+    checkpoints:
+      - id: loaded
+        afterActionId: start
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: 1 + 1 は？
+          - id: progress
+            kind: selector-text
+            selector: '#progress'
+            equals: 問題1 / 2
+          - id: visible-question
+            kind: selector-visible
+            selector: '#question'
+          - id: visible-choice-zero
+            kind: selector-visible
+            selector: '#choice-0'
+          - id: visible-choice-one
+            kind: selector-visible
+            selector: '#choice-1'
+      - id: second
+        afterActionId: next
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: 3 > 5 の結果は？
+          - id: progress
+            kind: selector-text
+            selector: '#progress'
+            equals: 問題2 / 2
+          - id: visible-question
+            kind: selector-visible
+            selector: '#question'
+          - id: visible-choice-zero
+            kind: selector-visible
+            selector: '#choice-0'
+          - id: visible-choice-one
+            kind: selector-visible
+            selector: '#choice-1'
+      - id: result
+        afterActionId: finish
+        expectations:
+          - id: result
+            kind: selector-text
+            selector: '#result'
+            equals: 2問中0問正解
+  - id: cap-recovery
+    label: 読み込み失敗から再開
+    actions:
+      - id: failure
+        kind: click
+        selector: '#fail-load'
+      - id: retry
+        kind: click
+        selector: '#start'
+      - id: one
+        kind: click
+        selector: '#choice-0'
+      - id: repeat-answer
+        kind: click
+        selector: '#choice-1'
+    checkpoints:
+      - id: loading
+        afterActionId: failure
+        expectations:
+          - id: message
+            kind: selector-text
+            selector: '#status'
+            equals: 読み込み中...
+          - id: blocked
+            kind: selector-exists
+            selector: '#start:disabled'
+      - id: failed
+        afterActionId: failure
+        expectations:
+          - id: message
+            kind: selector-text
+            selector: '#status'
+            equals: 読み込めませんでした。開始でやり直せます
+          - id: enabled
+            kind: selector-exists
+            selector: '#start:enabled'
+      - id: recovered
+        afterActionId: retry
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: Webページの骨組みを作るのは？
+          - id: choice-zero
+            kind: selector-text
+            selector: '#choice-0'
+            equals: HTML
+          - id: choice-one
+            kind: selector-text
+            selector: '#choice-1'
+            equals: CSS
+          - id: visible-question
+            kind: selector-visible
+            selector: '#question'
+          - id: visible-choice-zero
+            kind: selector-visible
+            selector: '#choice-0'
+          - id: visible-choice-one
+            kind: selector-visible
+            selector: '#choice-1'
+      - id: first-answer
+        afterActionId: one
+        expectations:
+          - id: answer
+            kind: selector-text
+            selector: '#feedback'
+            equals: 正解です
+          - id: locked
+            kind: selector-exists
+            selector: '#choice-0:disabled'
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '得点: 1'
+          - id: locked-one
+            kind: selector-exists
+            selector: '#choice-1:disabled'
+      - id: repeat-answer
+        afterActionId: repeat-answer
+        expectations:
+          - id: answer
+            kind: selector-text
+            selector: '#feedback'
+            equals: 正解です
+          - id: locked
+            kind: selector-exists
+            selector: '#choice-0:disabled'
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '得点: 1'
+          - id: locked-one
+            kind: selector-exists
+            selector: '#choice-1:disabled'
+  - id: cap-keyboard
+    label: キーボードで回答と再挑戦
+    actions:
+      - id: focus
+        kind: focus
+        selector: '#start'
+      - id: start
+        kind: key
+        selector: '#start'
+        key: Enter
+      - id: one
+        kind: key
+        selector: '#choice-0'
+        key: Space
+      - id: next
+        kind: key
+        selector: '#next'
+        key: Enter
+      - id: two
+        kind: key
+        selector: '#choice-1'
+        key: Enter
+      - id: finish
+        kind: key
+        selector: '#next'
+        key: Space
+      - id: restart
+        kind: key
+        selector: '#restart'
+        key: Enter
+    checkpoints:
+      - id: loaded
+        afterActionId: start
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: Webページの骨組みを作るのは？
+          - id: choice-zero
+            kind: selector-text
+            selector: '#choice-0'
+            equals: HTML
+          - id: choice-one
+            kind: selector-text
+            selector: '#choice-1'
+            equals: CSS
+          - id: focus
+            kind: focused
+            selector: '#choice-0'
+          - id: visible-question
+            kind: selector-visible
+            selector: '#question'
+          - id: visible-choice-zero
+            kind: selector-visible
+            selector: '#choice-0'
+          - id: visible-choice-one
+            kind: selector-visible
+            selector: '#choice-1'
+      - id: answered
+        afterActionId: one
+        expectations:
+          - id: focus
+            kind: focused
+            selector: '#next'
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '得点: 1'
+      - id: next
+        afterActionId: next
+        expectations:
+          - id: focus
+            kind: focused
+            selector: '#choice-0'
+      - id: result
+        afterActionId: finish
+        expectations:
+          - id: result
+            kind: selector-text
+            selector: '#result'
+            equals: 2問中2問正解
+          - id: focus
+            kind: focused
+            selector: '#restart'
+      - id: again
+        afterActionId: restart
+        expectations:
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '得点: 0'
+          - id: focus
+            kind: focused
+            selector: '#choice-0'

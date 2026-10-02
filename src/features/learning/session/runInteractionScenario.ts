@@ -14,7 +14,7 @@ import type {
 } from '../../../core/runtime/contracts';
 import { evaluateInteractionCheckpoint } from './evaluateInteractionCheckpoint';
 
-const INTERACTION_POLL_INTERVAL_MS = 50;
+const INTERACTION_POLL_INTERVAL_MS = 25;
 const INTERACTION_POLL_TIMEOUT_MS = 750;
 const MAX_INTERACTION_POLICY_ITEMS = 64;
 
@@ -25,6 +25,7 @@ export function extendSnapshotPolicyForInteractions(
 ): SnapshotPolicy {
   const selectors = new Set(policy.selectors);
   const attributes = new Set(policy.attributes);
+  const computedStyles = new Set(policy.computedStyles);
   for (const exercise of exercises) {
     for (const scenario of exercise.interactionScenarios ?? []) {
       for (const checkpoint of scenario.checkpoints) {
@@ -32,6 +33,10 @@ export function extendSnapshotPolicyForInteractions(
           if (expectation.kind === 'console-includes' || expectation.kind === 'submit-prevented')
             continue;
           selectors.add(expectation.selector);
+          if (expectation.kind === 'selector-visible') {
+            for (const property of ['display', 'visibility', 'opacity'])
+              computedStyles.add(property);
+          }
           if (expectation.kind === 'attribute') attributes.add(expectation.name);
         }
       }
@@ -39,7 +44,8 @@ export function extendSnapshotPolicyForInteractions(
   }
   if (
     selectors.size > MAX_INTERACTION_POLICY_ITEMS ||
-    attributes.size > MAX_INTERACTION_POLICY_ITEMS
+    attributes.size > MAX_INTERACTION_POLICY_ITEMS ||
+    computedStyles.size > MAX_INTERACTION_POLICY_ITEMS
   ) {
     throw new Error('Interaction Snapshot policyが上限を超えています');
   }
@@ -47,6 +53,7 @@ export function extendSnapshotPolicyForInteractions(
     ...policy,
     selectors: [...selectors],
     attributes: [...attributes],
+    computedStyles: [...computedStyles],
   };
 }
 

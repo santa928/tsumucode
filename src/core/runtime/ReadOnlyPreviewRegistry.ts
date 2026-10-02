@@ -57,6 +57,12 @@ export class ReadOnlyPreviewRegistry {
     this.#factories.set(id, factory);
   }
 
+  /** adapterを生成せず、そのRunnerに専用静的Previewが登録されているか返す。 */
+  has(id: RunnerLanguageId): boolean {
+    assertPreviewId(id);
+    return this.#factories.has(id);
+  }
+
   /** 登録済みfactoryから新しい静的Preview adapterを生成する。 */
   create(id: RunnerLanguageId): ReadOnlyPreviewAdapter {
     assertPreviewId(id);

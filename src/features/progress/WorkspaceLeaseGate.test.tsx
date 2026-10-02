@@ -3,6 +3,9 @@ import userEvent from '@testing-library/user-event';
 import { StrictMode, useEffect } from 'react';
 import { renderToString } from 'react-dom/server';
 import { MemoryRouter } from 'react-router';
+import { EditorView } from '@codemirror/view';
+import { CodeWorkspace } from '../learning/editor/CodeWorkspace';
+import { createCodeMirrorEditor } from '../learning/editor/createCodeMirrorEditor';
 import { describe, expect, it, vi } from 'vitest';
 import type {
   TabLeaseAcquireOptions,
@@ -190,6 +193,61 @@ describe('WorkspaceLeaseGate', () => {
       expect(completed).toHaveBeenCalledTimes(1);
     },
   );
+
+  it('self再確認中は同じCodeMirrorを読み取り専用にし、所有権復帰で入力を再開する', async () => {
+    const lease = createFakeLease({ status: 'owned', coordination: 'available' });
+    const { coordinator } = coordinatorHarness(lease.handle);
+    const adapter = createCodeMirrorEditor();
+    const changes = vi.fn<(path: string, content: string) => number | undefined>(() => 1);
+    let access!: WorkspaceLeaseAccess;
+    renderGate(coordinator, (current) => {
+      access = current;
+      return (
+        <CodeWorkspace
+          adapter={adapter}
+          files={{ 'main.js': 'const value = 1;' }}
+          languages={{ 'main.js': 'text' }}
+          selectedFile="main.js"
+          contentRevision={0}
+          cursors={{}}
+          diagnostics={[]}
+          readOnly={!current.isWritable()}
+          onChange={(path, content) => (current.isWritable() ? changes(path, content) : undefined)}
+          onCursorChange={() => undefined}
+          onSelectedFileChange={() => undefined}
+        />
+      );
+    });
+    const original = await screen.findByRole('textbox');
+    expect(original).toHaveAttribute('contenteditable', 'true');
+    const cm = original.closest<HTMLElement>('.cm-editor');
+    const view = cm === null ? null : EditorView.findFromDOM(cm);
+    expect(view).not.toBeNull();
+    for (const status of ['yielding', 'claiming'] as const) {
+      act(() => {
+        lease.setState({ status, revalidating: true, coordination: 'available' });
+      });
+      expect(screen.getByRole('textbox')).toBe(original);
+      expect(access.isWritable()).toBe(false);
+      expect(original).toHaveAttribute('contenteditable', 'false');
+      expect(original).toHaveAttribute('aria-readonly', 'true');
+      expect(view!.state.readOnly).toBe(true);
+      expect(original).toHaveTextContent('const value = 1;');
+      expect(original).toHaveAttribute('tabindex', '0');
+    }
+    expect(changes).not.toHaveBeenCalled();
+    act(() => {
+      lease.setState({ status: 'owned', coordination: 'available' });
+    });
+    expect(screen.getByRole('textbox')).toBe(original);
+    expect(original).toHaveAttribute('contenteditable', 'true');
+    expect(original).toHaveAttribute('aria-readonly', 'false');
+    expect(view!.state.readOnly).toBe(false);
+    act(() => {
+      view!.dispatch({ changes: { from: view!.state.doc.length, insert: '!' } });
+    });
+    expect(changes).toHaveBeenLastCalledWith('main.js', 'const value = 1;!');
+  });
 
   it('self再検証の両phaseで同じRuntimeを保持し、所有権喪失時だけ破棄する', async () => {
     const lease = createFakeLease({ status: 'owned', coordination: 'available' });

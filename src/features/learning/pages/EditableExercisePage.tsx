@@ -1040,6 +1040,7 @@ function EditableSession({
                 )}
                 selectedFile={viewState.activeFilePath}
                 contentRevision={state.executionRevision}
+                readOnly={!lease.isWritable() || operation === 'reset'}
                 cursors={state.cursors}
                 diagnostics={state.diagnostics}
                 editorFocusRequestId={viewState.editorFocusRequestId}

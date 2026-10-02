@@ -1,0 +1,88 @@
+id: javascript-ch13-l01
+kind: capstone
+title: 自分で設計する学習クイズ
+goal: Briefから必要なstateと操作を整理します。今回は2カテゴリ、各2問です。提供データを使い、Guidedとは別の作品にします。完成Sourceは配布しません。
+estimatedMinutes: 150
+prerequisiteLessonIds:
+  - javascript-ch12-l05
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/javascript-ch13-l01-e01/exercise.yaml
+reflection: 作る順序と確認順序を自分で決めます。カテゴリ、進捗、正誤、得点、結果、再挑戦、Keyboard、読み込み失敗をChecklistに沿って観測します。
+glossaryRefs:
+  - quiz-requirement-trace
+project:
+  id: javascript-quiz-capstone
+  briefSource: brief.md
+  guideSources:
+    - guide.md
+  checklist:
+    - id: javascript-ch13-l01-data
+      label: 同梱データをModuleから読む
+      required: true
+      ruleIds:
+        - javascript-ch13-l01-e01-r01
+    - id: javascript-ch13-l01-cap-web
+      label: Webの混合回答と再挑戦
+      required: true
+      ruleIds:
+        - interaction:cap-web:loaded
+        - interaction:cap-web:first-answer
+        - interaction:cap-web:second-question
+        - interaction:cap-web:second-answer
+        - interaction:cap-web:finished
+        - interaction:cap-web:restarted
+        - interaction:cap-web:again-result
+        - interaction:cap-recovery:repeat-answer
+    - id: javascript-ch13-l01-cap-logic
+      label: 別カテゴリを最後まで解く
+      required: true
+      ruleIds:
+        - interaction:cap-logic:loaded
+        - interaction:cap-logic:second
+        - interaction:cap-logic:result
+    - id: javascript-ch13-l01-cap-recovery
+      label: 読み込み失敗から再開
+      required: true
+      ruleIds:
+        - interaction:cap-recovery:loading
+        - interaction:cap-recovery:failed
+        - interaction:cap-recovery:recovered
+    - id: javascript-ch13-l01-cap-keyboard
+      label: キーボードで回答と再挑戦
+      required: true
+      ruleIds:
+        - interaction:cap-keyboard:loaded
+        - interaction:cap-keyboard:answered
+        - interaction:cap-keyboard:next
+        - interaction:cap-keyboard:result
+        - interaction:cap-keyboard:again
+completion:
+  kind: capstone
+  requiredRuleIds:
+    - javascript-ch13-l01-e01-r01
+    - interaction:cap-web:loaded
+    - interaction:cap-web:first-answer
+    - interaction:cap-web:second-question
+    - interaction:cap-web:second-answer
+    - interaction:cap-web:finished
+    - interaction:cap-web:restarted
+    - interaction:cap-web:again-result
+    - interaction:cap-logic:loaded
+    - interaction:cap-logic:second
+    - interaction:cap-logic:result
+    - interaction:cap-recovery:loading
+    - interaction:cap-recovery:failed
+    - interaction:cap-recovery:recovered
+    - interaction:cap-keyboard:loaded
+    - interaction:cap-keyboard:answered
+    - interaction:cap-keyboard:next
+    - interaction:cap-keyboard:result
+    - interaction:cap-keyboard:again
+    - interaction:cap-recovery:first-answer
+    - interaction:cap-recovery:repeat-answer
+  requiredViewportIds:
+    - desktop-1280

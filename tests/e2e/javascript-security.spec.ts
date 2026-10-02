@@ -50,7 +50,7 @@ document.querySelector('head').appendChild(script);`,
 type JavaScriptHarnessInput =
   | {
       readonly source: string;
-      readonly capabilityProfile: 'core' | 'modules' | 'dom' | 'async' | 'project';
+      readonly capabilityProfile: 'core' | 'modules' | 'dom' | 'dom-form' | 'async' | 'project';
       readonly sourceType?: 'script';
       readonly snapshotSelector?: string;
       readonly waitBeforeSnapshotMs?: number;
@@ -219,7 +219,7 @@ test.afterEach(async ({ page }) => {
   });
 });
 
-test('bounded Consoleが循環・深さ・collection・getter・Proxy・HTML文字列をplain textへ閉じ込める', async ({
+test('bounded Consoleが循環・深さ・collection・getter・HTML文字列をplain textへ閉じ込める', async ({
   page,
 }) => {
   const result = await runJavaScriptHarness(page, {
@@ -229,25 +229,53 @@ cyclic.self = cyclic;
 const deep = { a: { b: { c: { d: 'too deep' } } } };
 const collection = Array.from({ length: 51 }, (_, index) => index);
 const throwingGetter = { get value() { throw 'getter-called'; } };
-const proxy = Proxy.revocable({}, { ownKeys() { throw 'proxy-called'; } }).proxy;
 console.log(cyclic);
 console.log(deep);
 console.log(collection);
 console.log(throwingGetter);
-console.log(proxy);
 console.log('<img src=x onerror="document.body.dataset.pwned=1">');`,
   });
 
   expect(result.diagnostics).toEqual([]);
-  expect(result.console).toHaveLength(6);
+  expect(result.console).toHaveLength(5);
   expect(result.console[0]?.text).toContain('[Circular]');
   expect(result.console[1]?.text).toContain('…');
   expect(result.console[2]?.text).toContain('…');
   expect(result.console[3]?.text).toContain('[Unreadable]');
-  expect(result.console[4]?.text).toContain('[Unreadable]');
-  expect(result.console[5]?.text).toContain('<img src=x onerror=');
+  expect(result.console[4]?.text).toContain('<img src=x onerror=');
   await expect(page.locator('img[src="x"]')).toHaveCount(0);
   expect(await page.evaluate(() => document.body.dataset['pwned'] ?? null)).toBeNull();
+});
+
+test('Proxyはprojectの作成経路だけ拒否し、他Profileの既存Console隔離を維持する', async ({
+  page,
+}) => {
+  const source =
+    "const proxy = Proxy.revocable({}, { ownKeys() { throw 'proxy-called'; } }).proxy; console.log(proxy);";
+  for (const capabilityProfile of ['core', 'modules', 'dom', 'dom-form', 'async'] as const) {
+    const result = await runJavaScriptHarness(page, { capabilityProfile, source });
+    expect(result.rejection, capabilityProfile).toBeNull();
+    expect(result.diagnostics, capabilityProfile).toEqual([]);
+    expect(
+      result.console.map(({ text }) => text),
+      capabilityProfile,
+    ).toEqual(['[Unreadable]']);
+  }
+  for (const payload of [
+    source,
+    'const Error=Proxy;const a=new Error([1],{get(){return 1;}});const i=0;console.log(a[i]);',
+  ]) {
+    const result = await runJavaScriptHarness(page, {
+      capabilityProfile: 'project',
+      source: payload,
+    });
+    expect(result.rejection).toBeNull();
+    expect(result.console).toEqual([]);
+    expect(result.evidence).toEqual([]);
+    expect(result.diagnostics).toEqual([
+      expect.objectContaining({ kind: 'security', severity: 'error' }),
+    ]);
+  }
 });
 
 test('static Module graphをopaque Previewで実行し、依存Sourceとgraph証跡を結び付ける', async ({

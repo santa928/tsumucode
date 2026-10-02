@@ -28,7 +28,13 @@ import type {
   JavaScriptAnalysisInput,
   JavaScriptAnalysisResult,
   JavaScriptAnalysisSuccess,
+  JavaScriptWorkspaceAnalysisSuccess,
+  JavaScriptWorkspaceAnalysisInput,
   JavaScriptSourceFact,
+} from '../../runtime/javascript/analyzer/contracts';
+import {
+  isJavaScriptAnalysisRequest,
+  isAnalyzerWorkerResponse,
 } from '../../runtime/javascript/analyzer/contracts';
 import {
   buildJavaScriptSnapshotPolicy,
@@ -81,6 +87,37 @@ type JavaScriptSourceFactAssertion = Extract<
 
 const SOURCE_HASH_PATTERN = /^[a-f0-9]{64}$/u;
 const GUARD_IDENTIFIER_PATTERN = /^[$A-Z_a-z][$\w]*$/u;
+const MAX_ANALYSIS_CACHE_BYTES = 1024 * 1024;
+const CACHE_UTF8 = new TextEncoder();
+type CachedModuleArtifact = Pick<
+  JavaScriptWorkspaceAnalysisSuccess,
+  'entryFile' | 'graphSha256' | 'modules' | 'facts'
+>;
+interface AnalysisCacheEntry {
+  readonly key: string;
+  readonly guardIdentifier: string;
+  readonly artifactJson: string;
+}
+interface ValidationOperation {
+  readonly generation: number;
+  analysisSucceeded: boolean;
+}
+
+/** rawな全Workspaceのpath/内容と解析条件を結ぶ。正規化でunsafe aliasを合流させない。 */
+function projectAnalysisCacheKey(
+  context: ValidationContext,
+  input: JavaScriptWorkspaceAnalysisInput,
+): string {
+  return JSON.stringify([
+    1,
+    input.exerciseSessionId,
+    input.executionRevision,
+    input.entryFile,
+    input.sourceType,
+    input.capabilityProfile,
+    Object.entries(context.files).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
+  ]);
+}
 
 /** 学習者の不正解と混ぜないValidator基盤診断を作る。 */
 function systemDiagnostic(code: string, message: string): RunnerDiagnostic {
@@ -503,6 +540,8 @@ function interactionExpected(expectation: JavaScriptCheckpointExpectation): stri
       return 'submitイベントのhandlerでpreventDefaultを実行する';
     case 'selector-exists':
       return `${expectation.selector} が表示される`;
+    case 'selector-visible':
+      return `${expectation.selector} の内容が画面に表示される`;
     case 'selector-text':
       return `${expectation.selector} の文章が「${expectation.equals}」になる`;
     case 'accessible-name':
@@ -589,6 +628,8 @@ export class JavaScriptValidator implements ValidatorAdapter {
   readonly #domEngine = new ValidatorRuleEngine();
 
   #requireSourceRule: boolean;
+  #analysisGeneration = 0;
+  #analysisCache: AnalysisCacheEntry | undefined;
   constructor(options: JavaScriptValidatorOptions = {}) {
     this.#requireSourceRule = options.behaviorOnly !== true;
     this.#browserConsole = options.browserConsole === true;
@@ -605,6 +646,46 @@ export class JavaScriptValidator implements ValidatorAdapter {
 
   /** system/code境界を先に確定し、Source・Evidence・DOMを同じ評価時点へ結合する。 */
   async validate(context: ValidationContext): Promise<ValidationResult> {
+    const operation: ValidationOperation = {
+      generation: ++this.#analysisGeneration,
+      analysisSucceeded: false,
+    };
+    try {
+      return await this.#validate(context, operation);
+    } finally {
+      // 早期invalidも新世代。旧完了は後発の有効entryを登録・消去できない。
+      if (operation.generation === this.#analysisGeneration && !operation.analysisSucceeded)
+        this.#analysisCache = undefined;
+    }
+  }
+
+  /** 成功pure分析だけを有界JSONへ隔離し、Rule・観測・Resultを保持しない。 */
+  #retainAnalysis(
+    key: string,
+    guardIdentifier: string,
+    analysis: JavaScriptWorkspaceAnalysisSuccess,
+    operation: ValidationOperation,
+  ): void {
+    if (operation.generation !== this.#analysisGeneration) return;
+    const artifactJson = JSON.stringify({
+      entryFile: analysis.entryFile,
+      graphSha256: analysis.graphSha256,
+      modules: analysis.modules,
+      facts: analysis.facts,
+    });
+    const bytes =
+      CACHE_UTF8.encode(key).byteLength +
+      CACHE_UTF8.encode(guardIdentifier).byteLength +
+      CACHE_UTF8.encode(artifactJson).byteLength;
+    this.#analysisCache =
+      bytes <= MAX_ANALYSIS_CACHE_BYTES ? { key, guardIdentifier, artifactJson } : undefined;
+  }
+
+  /** cache hitでもstrict入力と現在の実行証拠・全Rule・DOM・checkpointを再評価する。 */
+  async #validate(
+    context: ValidationContext,
+    operation: ValidationOperation,
+  ): Promise<ValidationResult> {
     let rules: readonly JavaScriptValidatorRule[];
     try {
       rules = parseJavaScriptRules(context.rules, this.#requireSourceRule);
@@ -719,18 +800,30 @@ export class JavaScriptValidator implements ValidatorAdapter {
         rule.target.kind !== 'javascript-source' && rule.target.kind !== 'javascript-console',
     );
     const analyses = new Map<string, JavaScriptAnalysisSuccess>();
-    let analyzer: JavaScriptAnalyzerPort;
-    try {
-      analyzer = this.#analyzerFactory();
-    } catch (error: unknown) {
-      return blockedResult(context, 'system-error', [
-        ...context.diagnostics,
-        systemDiagnostic(
-          'JAVASCRIPT_ANALYZER_CREATE_FAILED',
-          error instanceof Error ? error.message : String(error),
-        ),
-      ]);
-    }
+    let analyzer: JavaScriptAnalyzerPort | undefined;
+    /** missまたは他profileだけ新しい解析器を作り、hitにWorker identityをreplayしない。 */
+    const analyze = async (input: JavaScriptAnalysisInput): Promise<JavaScriptAnalysisResult> => {
+      if (analyzer === undefined) {
+        try {
+          analyzer = this.#analyzerFactory();
+        } catch (error: unknown) {
+          return {
+            status: 'failure',
+            requestId: 'validator-create-failed',
+            exerciseSessionId: input.exerciseSessionId,
+            executionRevision: input.executionRevision,
+            file: 'files' in input ? input.entryFile : input.file,
+            diagnostics: [
+              systemDiagnostic(
+                'JAVASCRIPT_ANALYZER_CREATE_FAILED',
+                error instanceof Error ? error.message : String(error),
+              ),
+            ],
+          };
+        }
+      }
+      return analyzer.analyze(input);
+    };
     try {
       const sourceFiles = new Set(sourceRules.map(({ target }) => target.file));
       for (const file of sourceFiles) {
@@ -753,7 +846,7 @@ export class JavaScriptValidator implements ValidatorAdapter {
         const files = Object.fromEntries(
           Object.entries(context.files).filter(([file]) => file.toLowerCase().endsWith('.js')),
         );
-        const analysis = await analyzer.analyze({
+        const input: JavaScriptWorkspaceAnalysisInput = {
           exerciseSessionId: identity.exerciseSessionId,
           executionRevision: identity.executionRevision,
           entryFile: runtime.entryFile,
@@ -761,7 +854,65 @@ export class JavaScriptValidator implements ValidatorAdapter {
           guardIdentifier,
           sourceType: runtime.sourceType,
           capabilityProfile: runtime.capabilityProfile,
-        });
+        };
+        const cacheEligible =
+          !local && !this.#browserConsole && runtime.capabilityProfile === 'project';
+        const requestId = `validation-${crypto.randomUUID()}`;
+        // context.filesはRunnerのcanonical入力ではない。元path/bytes/guardをlookupより先に検証する。
+        if (cacheEligible && !isJavaScriptAnalysisRequest({ ...input, requestId })) {
+          return blockedResult(
+            context,
+            'code-error',
+            [
+              ...context.diagnostics,
+              {
+                code: 'javascript-analyzer-contract',
+                kind: 'security',
+                severity: 'error',
+                message: 'JavaScript analyzer request violates the strict contract',
+                learnerMessage:
+                  'JavaScriptのFile名またはModule設定が安全な形式ではありません。Workspace内の相対.js pathを確認してください。',
+                file: runtime.entryFile,
+              },
+            ],
+            identity.executionRevision,
+          );
+        }
+        const key = cacheEligible ? projectAnalysisCacheKey(context, input) : undefined;
+        const cached =
+          key !== undefined && this.#analysisCache?.key === key ? this.#analysisCache : undefined;
+        if (cached === undefined && operation.generation === this.#analysisGeneration)
+          this.#analysisCache = undefined;
+        // original guardとcollision確認済artifactを組で保持する。新guardへ古いcodeを結ばない。
+        const analysis: JavaScriptAnalysisResult =
+          cached === undefined
+            ? await analyze(input)
+            : {
+                status: 'success',
+                requestId,
+                exerciseSessionId: identity.exerciseSessionId,
+                executionRevision: identity.executionRevision,
+                file: runtime.entryFile,
+                diagnostics: [],
+                ...(JSON.parse(cached.artifactJson) as CachedModuleArtifact),
+              };
+        if (
+          cacheEligible &&
+          (!isAnalyzerWorkerResponse({ type: 'result', result: analysis }) ||
+            analysis.exerciseSessionId !== identity.exerciseSessionId ||
+            analysis.executionRevision !== identity.executionRevision ||
+            analysis.file !== runtime.entryFile ||
+            (cached !== undefined &&
+              !isJavaScriptAnalysisRequest({
+                ...input,
+                guardIdentifier: cached.guardIdentifier,
+                requestId,
+              })))
+        ) {
+          throw new Error(
+            'JavaScript project analysis violates the strict response/identity contract',
+          );
+        }
         if (analysis.status === 'failure') {
           return analysisFailureResult(context, analysis, identity.executionRevision);
         }
@@ -773,6 +924,10 @@ export class JavaScriptValidator implements ValidatorAdapter {
               'JavaScript Module validation received a single Source payload',
             ),
           ]);
+        }
+        if (cacheEligible && key !== undefined) {
+          operation.analysisSucceeded = true;
+          if (cached === undefined) this.#retainAnalysis(key, guardIdentifier, analysis, operation);
         }
         const graphHashEvidence = indexedEvidence.get(
           JSON.stringify(['javascript.module-graph-sha256', null]),
@@ -801,7 +956,7 @@ export class JavaScriptValidator implements ValidatorAdapter {
               systemDiagnostic('JAVASCRIPT_GUARD_INVALID', 'Validator guard identifier is invalid'),
             ]);
           }
-          const analysis = await analyzer.analyze({
+          const analysis = await analyze({
             exerciseSessionId: identity.exerciseSessionId,
             executionRevision: identity.executionRevision,
             file,
@@ -912,7 +1067,7 @@ export class JavaScriptValidator implements ValidatorAdapter {
         ),
       ]);
     } finally {
-      await analyzer.dispose().catch(() => undefined);
+      await analyzer?.dispose().catch(() => undefined);
     }
   }
 }

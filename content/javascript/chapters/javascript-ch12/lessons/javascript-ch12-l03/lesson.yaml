@@ -1,0 +1,72 @@
+id: javascript-ch12-l03
+kind: guided-project
+title: 正解だけ得点へ積む
+goal: 正誤案内と得点は別のstateです。正解1問は1点、誤答は0点です。answeredのguardの後で、正解のときだけscoreを増やします。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - javascript-ch12-l02
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/javascript-ch12-l03-e01/exercise.yaml
+reflection: 1問正解/1問誤答で1点、全問誤答は0点、全問正解は2点を確認します。見える得点だけ変えず、scoreから表示します。
+glossaryRefs:
+  - quiz-score-once
+nextLessonId: javascript-ch12-l04
+project:
+  id: javascript-quiz-guided
+  briefSource: brief.md
+  guideSources:
+    - guide.md
+  checklist:
+    - id: javascript-ch12-l03-data
+      label: 同梱データをModuleから読む
+      required: true
+      ruleIds:
+        - javascript-ch12-l03-e01-r01
+    - id: javascript-ch12-l03-g3-mixed
+      label: 正解だけ加点
+      required: true
+      ruleIds:
+        - interaction:g3-mixed:loaded
+        - interaction:g3-mixed:first-answer
+        - interaction:g3-mixed:second-question
+        - interaction:g3-mixed:second-answer
+        - interaction:g3-mixed:repeat-answer
+    - id: javascript-ch12-l03-g3-wrong
+      label: 誤答は0点
+      required: true
+      ruleIds:
+        - interaction:g3-wrong:loaded
+        - interaction:g3-wrong:first-answer
+        - interaction:g3-wrong:second-question
+        - interaction:g3-wrong:second-answer
+        - interaction:g3-wrong:repeat-answer
+    - id: javascript-ch12-l03-g3-correct
+      label: 全問正解の得点
+      required: true
+      ruleIds:
+        - interaction:g3-correct:loaded
+        - interaction:g3-correct:first-answer
+        - interaction:g3-correct:second-question
+        - interaction:g3-correct:second-answer
+        - interaction:g3-correct:repeat-answer
+    - id: javascript-ch12-l03-g3-recovery
+      label: 読み込み失敗から再開
+      required: true
+      ruleIds:
+        - interaction:g3-recovery:loading
+        - interaction:g3-recovery:failed
+        - interaction:g3-recovery:recovered
+completion:
+  kind: guided-project
+  requiredChecklistItemIds:
+    - javascript-ch12-l03-data
+    - javascript-ch12-l03-g3-mixed
+    - javascript-ch12-l03-g3-wrong
+    - javascript-ch12-l03-g3-correct
+    - javascript-ch12-l03-g3-recovery
+  requiredExerciseIds:
+    - javascript-ch12-l03-e01

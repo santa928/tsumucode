@@ -19,11 +19,13 @@ import {
   type ValidatedHtmlCssPreviewInput,
 } from '../../preview-kernel/prepareHtmlCssPreview';
 import { JavaScriptAnalyzerClient } from '../analyzer/JavaScriptAnalyzerClient';
-import type {
-  JavaScriptAnalysisInput,
-  JavaScriptAnalysisResult,
-  JavaScriptCapabilityProfileId,
-  JavaScriptSourceType,
+import {
+  isAnalyzerWorkerResponse,
+  type JavaScriptWorkspaceAnalysisSuccess,
+  type JavaScriptAnalysisInput,
+  type JavaScriptAnalysisResult,
+  type JavaScriptCapabilityProfileId,
+  type JavaScriptSourceType,
 } from '../analyzer/contracts';
 import {
   createJavaScriptExecutionSource,
@@ -84,7 +86,36 @@ interface ValidatedJavaScriptInput {
 }
 
 const MAX_WORKSPACE_BYTES = 300 * 1024;
+const MAX_ANALYSIS_CACHE_BYTES = 1024 * 1024;
 const UTF8 = new TextEncoder();
+
+type CachedModuleArtifact = Pick<
+  JavaScriptWorkspaceAnalysisSuccess,
+  'entryFile' | 'graphSha256' | 'modules' | 'facts'
+>;
+interface AnalysisCacheEntry {
+  readonly key: string;
+  readonly guardIdentifier: string;
+  readonly artifactJson: string;
+}
+
+/** 同instanceの全Workspaceと解析条件を完全一致で結び、hash単独をkeyにしない。 */
+function projectAnalysisCacheKey(
+  input: RunnerInput,
+  validated: ValidatedJavaScriptInput,
+): string | undefined {
+  if (validated.sourceType !== 'module' || validated.capabilityProfile !== 'project')
+    return undefined;
+  return JSON.stringify([
+    1,
+    input.exerciseSessionId,
+    input.executionRevision,
+    validated.scriptFile,
+    validated.sourceType,
+    validated.capabilityProfile,
+    [...validated.html.files].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
+  ]);
+}
 
 /** staleまたはdisposeされたrenderを同じError型へ揃える。 */
 function renderAbortError(): Error {
@@ -213,6 +244,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
   #focusReturnTarget: HTMLElement | undefined;
   #generation = 0;
   #initialSrcdocLoadPending = false;
+  #analysisCache: AnalysisCacheEntry | undefined;
 
   readonly #loadListener = (): void => {
     const frame = this.#frame;
@@ -222,6 +254,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
       return;
     }
     if (frame === undefined || active === undefined || this.#inFlight !== undefined) return;
+    this.#analysisCache = undefined;
     active.bridge.dispose();
     active.execution.dispose();
     this.#disposeResources(active.resources);
@@ -263,6 +296,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
     try {
       validated = validateJavaScriptInput(input);
     } catch (error: unknown) {
+      this.#analysisCache = undefined;
       return Promise.reject(error instanceof Error ? error : new Error(String(error)));
     }
     this.#cancelInFlight();
@@ -298,6 +332,11 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
         requestId: this.#uuidFactory(),
       });
       if (this.#active !== active) throw new Error('JavaScript observation frame is not current');
+      if (
+        this.#active === active &&
+        observation.diagnostics?.some(({ severity }) => severity === 'error')
+      )
+        this.#analysisCache = undefined;
       return {
         ...snapshot,
         runtimeObservation: {
@@ -305,6 +344,9 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
           console: observation.console,
         },
       };
+    } catch (error: unknown) {
+      if (this.#active === active) this.#analysisCache = undefined;
+      throw error;
     } finally {
       this.#restoreParentFocus();
     }
@@ -326,10 +368,21 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
       this.#captureParentFocus();
       this.#frame?.focus({ preventScroll: true });
     }
-    return active.execution.interact(request).catch((error: unknown) => {
-      this.#restoreParentFocus();
-      throw error;
-    });
+    return active.execution
+      .interact(request)
+      .then((result) => {
+        if (
+          this.#active === active &&
+          result.diagnostics?.some(({ severity }) => severity === 'error')
+        )
+          this.#analysisCache = undefined;
+        return result;
+      })
+      .catch((error: unknown) => {
+        if (this.#active === active) this.#analysisCache = undefined;
+        this.#restoreParentFocus();
+        throw error;
+      });
   }
 
   /** 旧実行・iframe・Bridge・教材Assetを解放し、解析器は次のprepare用に保持する。 */
@@ -362,32 +415,52 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
     let execution: JavaScriptExecutionClient | undefined;
     let transitionStarted = false;
     try {
-      const guardIdentifier = `__tsumuBudget_${this.#uuidFactory().replaceAll('-', '_')}`;
-      const analysis = await this.#analyzer.analyze(
-        validated.sourceType === 'module'
-          ? {
-              exerciseSessionId: input.exerciseSessionId,
-              executionRevision: input.executionRevision,
-              entryFile: validated.scriptFile,
-              files: Object.fromEntries(
-                [...validated.html.files].filter(([path]) => path.endsWith('.js')),
-              ),
-              guardIdentifier,
-              sourceType: validated.sourceType,
-              capabilityProfile: validated.capabilityProfile,
-            }
+      const cacheKey = projectAnalysisCacheKey(input, validated);
+      const cached =
+        cacheKey !== undefined && this.#analysisCache?.key === cacheKey
+          ? this.#analysisCache
+          : undefined;
+      if (cached === undefined) this.#analysisCache = undefined;
+      const guardIdentifier =
+        cached?.guardIdentifier ?? `__tsumuBudget_${this.#uuidFactory().replaceAll('-', '_')}`;
+      // 成功artifactだけを保持する。旧Workerのrequest/response identityはreplayしない。
+      const analysis: JavaScriptAnalysisResult =
+        cached === undefined
+          ? await this.#analyzer.analyze(
+              validated.sourceType === 'module'
+                ? {
+                    exerciseSessionId: input.exerciseSessionId,
+                    executionRevision: input.executionRevision,
+                    entryFile: validated.scriptFile,
+                    files: Object.fromEntries(
+                      [...validated.html.files].filter(([path]) => path.endsWith('.js')),
+                    ),
+                    guardIdentifier,
+                    sourceType: validated.sourceType,
+                    capabilityProfile: validated.capabilityProfile,
+                  }
+                : {
+                    exerciseSessionId: input.exerciseSessionId,
+                    executionRevision: input.executionRevision,
+                    file: validated.scriptFile,
+                    source: validated.scriptSource,
+                    guardIdentifier,
+                    sourceType: validated.sourceType,
+                    capabilityProfile: validated.capabilityProfile,
+                  },
+            )
           : {
+              status: 'success',
+              requestId: `cache-${this.#uuidFactory()}`,
               exerciseSessionId: input.exerciseSessionId,
               executionRevision: input.executionRevision,
               file: validated.scriptFile,
-              source: validated.scriptSource,
-              guardIdentifier,
-              sourceType: validated.sourceType,
-              capabilityProfile: validated.capabilityProfile,
-            },
-      );
+              diagnostics: [],
+              ...(JSON.parse(cached.artifactJson) as CachedModuleArtifact),
+            };
       this.#assertCurrent(frame, operation);
       if (analysis.status === 'failure') {
+        this.#analysisCache = undefined;
         if (this.#inFlight === operation) this.#inFlight = undefined;
         return {
           exerciseSessionId: input.exerciseSessionId,
@@ -413,6 +486,11 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
         analysis.file !== validated.scriptFile
       ) {
         throw new Error('JavaScript analysis identity mismatch');
+      }
+      if (cacheKey !== undefined && isModuleAnalysis) {
+        if (!isAnalyzerWorkerResponse({ type: 'result', result: analysis }))
+          throw new Error('JavaScript cached analysis violates the strict contract');
+        if (cached === undefined) this.#retainProjectAnalysis(cacheKey, guardIdentifier, analysis);
       }
       const preview = await prepareHtmlCssPreview(input, validated.html, {
         signal: operation.controller.signal,
@@ -522,6 +600,14 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
         execution.waitUntilExecuted(),
       ]);
       this.#assertCurrent(frame, operation);
+      if (
+        executionPayload.budgetExhausted ||
+        executionPayload.timerLimitExceeded ||
+        executionPayload.runtimeError !== null ||
+        executionPayload.currentTargetFailure !== null ||
+        executionPayload.submitEvidence === 'setup-error'
+      )
+        this.#analysisCache = undefined;
 
       this.#disposeResources(this.#restorable?.resources);
       this.#restorable = undefined;
@@ -580,6 +666,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
       this.#disposeResources(resources);
       unownedMaterialized?.dispose();
       if (!this.#isCurrent(frame, operation)) throw renderAbortError();
+      this.#analysisCache = undefined;
       if (transitionStarted) await this.#tryRestore(frame, operation);
       if (this.#inFlight === operation) this.#inFlight = undefined;
       return {
@@ -590,6 +677,28 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
         console: [],
       };
     }
+  }
+
+  /** keyとidentity無しのimmutable artifactを1MiBまで保持し、合法大型結果はbypassする。 */
+  #retainProjectAnalysis(
+    key: string,
+    guardIdentifier: string,
+    analysis: JavaScriptWorkspaceAnalysisSuccess,
+  ): void {
+    const artifact: CachedModuleArtifact = {
+      entryFile: analysis.entryFile,
+      graphSha256: analysis.graphSha256,
+      modules: analysis.modules,
+      facts: analysis.facts,
+    };
+    const artifactJson = JSON.stringify(artifact);
+    this.#analysisCache =
+      UTF8.encode(key).byteLength +
+        UTF8.encode(artifactJson).byteLength +
+        UTF8.encode(guardIdentifier).byteLength <=
+      MAX_ANALYSIS_CACHE_BYTES
+        ? { key, guardIdentifier, artifactJson }
+        : undefined;
   }
 
   /** 直前のready済みPreviewがあれば同じ認証条件で再読込する。 */
@@ -659,6 +768,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
   #cancelInFlight(): InFlightRender | undefined {
     const pending = this.#inFlight;
     if (pending === undefined) return undefined;
+    this.#analysisCache = undefined;
     pending.controller.abort(renderAbortError());
     pending.bridge?.dispose();
     pending.execution?.dispose();
@@ -706,6 +816,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
 
   /** prepare／stop共通で現在の処理と実行資源を閉じ、解析器は保持する。 */
   async #reset(clearFrame: boolean): Promise<void> {
+    this.#analysisCache = undefined;
     this.#restoreParentFocus();
     this.#generation += 1;
     const pending = this.#cancelInFlight();

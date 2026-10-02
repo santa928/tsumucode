@@ -1,0 +1,25 @@
+## 制作と確認の順序
+
+完成Sourceを順に写す教材ではありません。まず必要なstate、画面領域、操作から設計します。
+
+1. Briefから必要なstateと操作を整理します。今回は2カテゴリ、各2問です。提供データを使い、Guidedとは別の作品にします。完成Sourceは配布しません。
+2. 元の問題Arrayを残し、categoryが同じ問題だけfilterして表示用Arrayを作ります。問題/回答/得点/結果の状態を先に決めてから描画します。
+3. 作る順序と確認順序を自分で決めます。カテゴリ、進捗、正誤、得点、結果、再挑戦、Keyboard、読み込み失敗をChecklistに沿って観測します。
+
+## 提供APIと目印
+
+index.html/styles.cssは編集可、questions.jsは非編集です。main.jsはentryです。named importでloadQuestionsを読み、成功したArrayを使います。失敗はcatch、操作回復はfinallyへつなぎます。
+
+categoryはselect（値web/logic）、start/fail-load/choice-0/choice-1/next/restartはtype=button。question/progress/feedback/score/result/statusは表示のIDです。DOM配置やClassは自由です。
+
+元データをfilterの結果で上書きしないこと、二重回答で加点しないこと、範囲外の問題のtextやchoicesを読まないことを確認します。indexが問題数と同じなら終了と分ける方法も使えます。KeyboardではTabで移動しEnter/Spaceでbuttonを押します。標準buttonに同じkeydown処理を重ねると二重発火します。提供CSSのfocus枠を消さないでください。
+
+制作を終えたら保存後に再読み込みし、Sourceが戻ることを確認します。学習データはHomeの書き出しから持ち出せます。別の保存状態へ読み込んでSourceと判定を確認します。HTML用ZIPとは別の学習bundleです。
+
+## 提供データの扱い
+
+questions.jsは編集不要の提供Moduleです。内部でJSON文字列をArrayへ戻しますが、この章でJSONの記述は求めません。loadQuestions(shouldFail)の返すPromiseと、問題Objectのtext/choices/correctを使います。データをコードとして実行する処理はありません。
+
+カテゴリごとの問題は取得したArrayをfilterして選びます。固定の問題文だけでは別カテゴリの結果を作れません。
+
+提供HTMLのcontrolsは開始と練習用の失敗操作をまとめるfieldsetです。disabledで読み込み中の操作を止められます。score内のscore-valueは数値を表示するspanです。状態は複数の変数でもObjectやclosureでも構いません。名前や関数分割より、Checklistの操作と結果を確かめます。

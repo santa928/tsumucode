@@ -15,6 +15,11 @@ export const ProgressRuleReferenceIdSchema = z.union([
       /^interaction:[a-z0-9]+(?:-[a-z0-9]+)*:[a-z0-9]+(?:-[a-z0-9]+)*(?::[a-z0-9]+(?:-[a-z0-9]+)*)?$/u,
     ),
 ]);
+/** 制作の合格要件は宣言IDまたはcheckpoint集約ID。個別expectation履歴IDは要求できない。 */
+export const ProjectRuleReferenceIdSchema = ProgressRuleReferenceIdSchema.refine(
+  (id) => !id.startsWith('interaction:') || id.split(':').length === 3,
+  '制作要件は個別expectationではなくcheckpointを参照してください',
+);
 export const NonEmptyTextSchema = z.string().trim().min(1, '空でない文字列を指定してください');
 const NonBlankPreservedTextSchema = z
   .string()
@@ -370,6 +375,13 @@ export const JavaScriptCheckpointExpectationSchema = z.discriminatedUnion('kind'
     .object({
       id: IdSchema,
       kind: z.literal('selector-exists'),
+      selector: InteractionSelectorSchema,
+    })
+    .strict(),
+  z
+    .object({
+      id: IdSchema,
+      kind: z.literal('selector-visible'),
       selector: InteractionSelectorSchema,
     })
     .strict(),
@@ -1178,7 +1190,7 @@ const ChecklistItemSchema = z
     id: IdSchema,
     label: NonEmptyTextSchema,
     required: z.boolean(),
-    ruleIds: z.array(IdSchema).min(1),
+    ruleIds: z.array(ProjectRuleReferenceIdSchema).min(1),
   })
   .strict();
 
@@ -1243,7 +1255,7 @@ export const LessonSchema = z
         completion: z
           .object({
             kind: z.literal('capstone'),
-            requiredRuleIds: z.array(IdSchema).min(1),
+            requiredRuleIds: z.array(ProjectRuleReferenceIdSchema).min(1),
             requiredViewportIds: z.array(IdSchema).min(1),
           })
           .strict(),
@@ -1810,6 +1822,7 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
         const localRequirementIds = new Set<string>();
         const localViewportIds = new Set<string>();
         const localRulesByRequirement = new Map<string, ValidationRuleValue[]>();
+        const interactionViewportIdsByRequirement = new Map<string, readonly string[]>();
 
         for (const [slideIndex, slide] of lesson.slides.entries()) {
           const slidePath = [...lessonPath, 'slides', slideIndex] as const;
@@ -2046,6 +2059,11 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
           const groupModes = new Map<string, 'all' | 'any'>();
           for (const id of exerciseRequirementIds(exercise)) {
             if (!id.startsWith('interaction:')) continue;
+            localRequirementIds.add(id);
+            interactionViewportIdsByRequirement.set(
+              id,
+              exercise.previewViewports.map(({ id: viewportId }) => viewportId),
+            );
             const owner = interactionOwnerById.get(id);
             if (owner !== undefined && owner !== exercise.id) {
               addIssue(
@@ -2305,6 +2323,19 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
                 continue;
               }
               const rules = localRulesByRequirement.get(id) ?? [];
+              const interactionViewportIds = interactionViewportIdsByRequirement.get(id);
+              if (
+                interactionViewportIds !== undefined &&
+                !lesson.completion.requiredViewportIds.every((viewportId) =>
+                  interactionViewportIds.includes(viewportId),
+                )
+              ) {
+                addIssue(
+                  context,
+                  [...lessonPath, 'completion', 'requiredRuleIds'],
+                  `Capstone必須checkpointは全requiredViewportで操作を観測してください: ${id}`,
+                );
+              }
               if (
                 rules.some(
                   (rule) =>

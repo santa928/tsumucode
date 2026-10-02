@@ -1,5 +1,5 @@
 /** CodeMirrorの状態、File別履歴、DOM副作用をEditorAdapter内部へ閉じ込める。 */
-import { EditorSelection, EditorState } from '@codemirror/state';
+import { Compartment, EditorSelection, EditorState } from '@codemirror/state';
 import {
   EditorView,
   highlightActiveLine,
@@ -58,6 +58,14 @@ export function createCodeMirrorEditor(
   return {
     mount(input) {
       let currentPath = input.path;
+      let readOnly = input.readOnly === true;
+      const writability = new Compartment();
+      /** DOM入力とCodeMirror commandを同じ書込可否へ結び、読み取り・コピーは残す。 */
+      const writabilityExtensions = () => [
+        EditorState.readOnly.of(readOnly),
+        EditorView.editable.of(!readOnly),
+        EditorView.contentAttributes.of({ 'aria-readonly': String(readOnly) }),
+      ];
       let currentLanguage = input.language;
       let highestControlledRevision = input.contentRevision;
       let restoring = false;
@@ -106,6 +114,7 @@ export function createCodeMirrorEditor(
           ...(initialSelection ? { selection: initialSelection } : {}),
           extensions: [
             ...createEditorExperienceExtensions(),
+            writability.of(writabilityExtensions()),
             registry.extensionFor(document.language),
             lineNumbers(),
             highlightActiveLineGutter(),
@@ -136,6 +145,10 @@ export function createCodeMirrorEditor(
       return {
         setDocument(next) {
           if (destroyed) return;
+          if (next.readOnly !== undefined && next.readOnly !== readOnly) {
+            readOnly = next.readOnly;
+            view.dispatch({ effects: writability.reconfigure(writabilityExtensions()) });
+          }
           if (!shouldApplyControlledDocument(next)) return;
           const contentMatches = next.content === view.state.doc.toString();
           if (next.path === currentPath && next.language === currentLanguage && contentMatches) {
@@ -149,6 +162,7 @@ export function createCodeMirrorEditor(
             currentPath = next.path;
             currentLanguage = next.language;
             view.setState(nextState);
+            view.dispatch({ effects: writability.reconfigure(writabilityExtensions()) });
             configureEditorFocusTarget(view);
           } finally {
             restoring = false;

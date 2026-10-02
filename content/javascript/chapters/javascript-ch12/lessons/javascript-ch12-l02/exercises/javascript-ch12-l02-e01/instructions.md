@@ -1,0 +1,7 @@
+## 回答を受け取り、次の問題へ進む
+
+共有Workspaceへ今回の工程を追加します。main.jsだけ編集できます。以前の工程のSourceは残します。
+
+回答前のnextはdisabled、回答後の選択肢もdisabledにします。途中のnextはindexを1進め、answeredとfeedbackを戻してrenderします。次問の先頭へfocusを移します。
+
+判定は現在工程までの機能を確認します。Hintと「スライドを見直す」から今回の説明へ戻れます。Previewの再読み込みは実行中の問題を初期化しますが、EditorのSourceは端末へ保存されます。

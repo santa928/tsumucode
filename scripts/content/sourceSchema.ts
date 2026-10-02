@@ -10,6 +10,7 @@ import {
   MasteryLevelSchema,
   PreviewViewportSchema,
   ProgressRuleReferenceIdSchema,
+  ProjectRuleReferenceIdSchema,
   ScreenBudgetSchema,
   SlideLayoutSchema,
   ValidationRuleDefinitionSchema,
@@ -398,7 +399,7 @@ const ChecklistItemSourceSchema = z
     id: IdSchema,
     label: TextSchema,
     required: z.boolean(),
-    ruleIds: z.array(IdSchema).min(1),
+    ruleIds: z.array(ProjectRuleReferenceIdSchema).min(1),
   })
   .strict();
 
@@ -541,7 +542,7 @@ const CapstoneLessonSourceSchema = z
     completion: z
       .object({
         kind: z.literal('capstone'),
-        requiredRuleIds: z.array(IdSchema).min(1),
+        requiredRuleIds: z.array(ProjectRuleReferenceIdSchema).min(1),
         requiredViewportIds: z.array(IdSchema).min(1),
       })
       .strict(),

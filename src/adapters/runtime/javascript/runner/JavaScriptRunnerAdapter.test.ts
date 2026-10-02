@@ -1,15 +1,18 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { PREVIEW_PROTOCOL_VERSION } from '../../html-css/previewProtocol';
 import type {
+  JavaScriptAnalysisInput,
   JavaScriptAnalysisResult,
   JavaScriptWorkspaceAnalysisSuccess,
 } from '../analyzer/contracts';
+import { analyzeJavaScriptSource } from '../analyzer/instrumentJavaScript';
 import { JavaScriptRunnerAdapter } from './JavaScriptRunnerAdapter';
 import { JAVASCRIPT_PROTOCOL_VERSION } from './protocol';
 import type {
   InteractionRequest,
   PreviewSnapshot,
   RunnerInput,
+  RunnerRenderResult,
   SnapshotPolicy,
 } from '../../../../core/runtime/contracts';
 
@@ -174,14 +177,14 @@ function dispatchExecution(
 }
 
 /** 既存Snapshot Bridgeのreadyを送る。 */
-function dispatchBridgeReady(frame: HTMLIFrameElement): void {
+function dispatchBridgeReady(frame: HTMLIFrameElement, exerciseSessionId = 'session-1'): void {
   window.dispatchEvent(
     new MessageEvent('message', {
       source: frame.contentWindow,
       data: {
         version: PREVIEW_PROTOCOL_VERSION,
         type: 'bridge.ready',
-        exerciseSessionId: 'session-1',
+        exerciseSessionId,
         requestId: 'ready',
         oneTimeToken: bootstrapToken(frame),
         payload: null,
@@ -189,6 +192,403 @@ function dispatchBridgeReady(frame: HTMLIFrameElement): void {
     }),
   );
 }
+
+/** 本物のAnalyzerを接続したproject Module inputを作る。 */
+function projectModuleInput(): RunnerInput {
+  return runnerInput({
+    files: {
+      'index.html': '<main><p id="message">Module</p></main>',
+      'styles.css': '#message { color: green; }',
+      'src/main.js': "import { score } from './score.js'; console.log(score);",
+      'src/score.js': 'export const score = 1;',
+    },
+    options: {
+      runtime: {
+        kind: 'javascript',
+        entryFile: 'src/main.js',
+        sourceType: 'module',
+        capabilityProfile: 'project',
+        primaryOutput: 'preview',
+      },
+    },
+  });
+}
+
+/** 実Analyzerの結果を使い、jsdomで実行されないiframe protocolだけを補う。 */
+async function finishModuleRender(
+  runner: JavaScriptRunnerAdapter,
+  frame: HTMLIFrameElement,
+  input: RunnerInput,
+  budgetExhausted = false,
+): Promise<RunnerRenderResult> {
+  const previous = frame.srcdoc;
+  let settled: RunnerRenderResult | undefined;
+  const pending = runner.render(input);
+  void pending.then((result) => {
+    settled = result;
+  });
+  await vi.waitFor(() => {
+    expect(settled !== undefined || frame.srcdoc !== previous).toBe(true);
+  });
+  if (settled === undefined) {
+    dispatchExecution(frame, {
+      exerciseSessionId: input.exerciseSessionId,
+      executionRevision: input.executionRevision,
+      payload: {
+        executed: !budgetExhausted,
+        budgetExhausted,
+        timerLimitExceeded: false,
+        runtimeError: null,
+        currentTargetFailure: null,
+        submitEvidence: 'unsupported',
+        console: [],
+      },
+    });
+    dispatchBridgeReady(frame, input.exerciseSessionId);
+  }
+  return pending;
+}
+
+/** 有界の実解析を呼ぶspy portで、cache hitとmissを観測する。 */
+function realAnalyzerPort() {
+  return {
+    analyze: vi.fn((input: JavaScriptAnalysisInput) =>
+      analyzeJavaScriptSource({ ...input, requestId: crypto.randomUUID() }),
+    ),
+    dispose: vi.fn(async () => undefined),
+  };
+}
+
+describe('project Moduleのpure解析cache', () => {
+  it('Sourceへguardと衝突するbindingを足すと旧成功を使わずsystem診断で拒否する', async () => {
+    const analyzer = realAnalyzerPort();
+    const runner = new JavaScriptRunnerAdapter({ analyzer, uuidFactory: () => 'collision' });
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    await runner.prepare(frame);
+    const input = projectModuleInput();
+    try {
+      await finishModuleRender(runner, frame, input);
+      const files = {
+        ...input.files,
+        'src/main.js': input.files['src/main.js']! + '\nconst __tsumuBudget_collision = 1;',
+      };
+      for (let run = 0; run < 2; run += 1)
+        expect(
+          (await finishModuleRender(runner, frame, { ...input, files })).diagnostics,
+        ).toContainEqual(
+          expect.objectContaining({
+            kind: 'system',
+            code: 'javascript-analyzer-system',
+            message: '生成したbudget guard名が学習Sourceと衝突しました',
+          }),
+        );
+      expect(analyzer.analyze).toHaveBeenCalledTimes(3);
+    } finally {
+      await runner.dispose();
+    }
+  });
+
+  it('呼出し側が返却payloadを変えても保持artifactは変化しない', async () => {
+    const analyzer = realAnalyzerPort();
+    const runner = new JavaScriptRunnerAdapter({ analyzer });
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    await runner.prepare(frame);
+    try {
+      const input = projectModuleInput();
+      await finishModuleRender(runner, frame, input);
+      const response = (await analyzer.analyze.mock.results[0]!.value) as JavaScriptAnalysisResult;
+      if (response.status !== 'success' || !('modules' in response))
+        throw new Error('Module成功対照が必要です');
+      (response.modules[0] as { instrumentedCode: string }).instrumentedCode =
+        'throw new Error("mutated artifact");';
+      expect((await finishModuleRender(runner, frame, input)).diagnostics).toEqual([]);
+      expect(frame.srcdoc).not.toContain('mutated artifact');
+      expect(analyzer.analyze).toHaveBeenCalledTimes(1);
+    } finally {
+      await runner.dispose();
+    }
+  });
+  it('同入力は元guardのimmutable artifactを再利用し、frame/token/runtimeKeyと実行診断は新しく作る', async () => {
+    const analyzer = realAnalyzerPort();
+    const runner = new JavaScriptRunnerAdapter({ analyzer });
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    await runner.prepare(frame);
+    try {
+      const input = projectModuleInput();
+      const first = await finishModuleRender(runner, frame, input);
+      const firstDoc = frame.srcdoc;
+      const firstToken = bootstrapToken(frame);
+      const second = await finishModuleRender(runner, frame, {
+        ...input,
+        files: Object.fromEntries(Object.entries(input.files).reverse()),
+        viewport: { id: 'mobile', width: 390, height: 844 },
+      });
+      expect(analyzer.analyze).toHaveBeenCalledTimes(1);
+      expect(second.frameGeneration).toBeGreaterThan(first.frameGeneration!);
+      expect(bootstrapToken(frame)).not.toBe(firstToken);
+      expect(frame.srcdoc).not.toBe(firstDoc);
+      const guard = /const (__tsumuBudget_\w+)=globalThis/u.exec(firstDoc)?.[1];
+      expect(guard).toBeDefined();
+      if (guard === undefined) throw new Error('guard対照が必要です');
+      expect(frame.srcdoc).toContain(`const ${guard}=globalThis`);
+      expect(second.diagnostics).toEqual([]);
+      const stopped = await finishModuleRender(runner, frame, input, true);
+      expect(stopped.diagnostics).toContainEqual(
+        expect.objectContaining({ code: 'javascript-budget' }),
+      );
+      expect(analyzer.analyze).toHaveBeenCalledTimes(1);
+      await finishModuleRender(runner, frame, input);
+      expect(analyzer.analyze).toHaveBeenCalledTimes(2);
+    } finally {
+      await runner.dispose();
+    }
+  });
+
+  it.each([
+    'html',
+    'css',
+    'js',
+    'add-js',
+    'delete-js',
+    'import',
+    'entry',
+    'profile',
+    'type',
+    'session',
+    'revision',
+  ] as const)('完全keyの変更でmissし、旧Artifactのhashに頼らない: %s', async (kind) => {
+    const analyzer = realAnalyzerPort();
+    const runner = new JavaScriptRunnerAdapter({ analyzer });
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    await runner.prepare(frame);
+    try {
+      const input = projectModuleInput();
+      await finishModuleRender(runner, frame, input);
+      const files = { ...input.files };
+      const runtime = {
+        kind: 'javascript',
+        entryFile: 'src/main.js',
+        sourceType: 'module',
+        capabilityProfile: 'project',
+        primaryOutput: 'preview',
+      };
+      let exerciseSessionId = input.exerciseSessionId;
+      let executionRevision = input.executionRevision;
+      switch (kind) {
+        case 'html':
+          files['index.html'] = files['index.html']! + '<p>現在のHTML</p>';
+          break;
+        case 'css':
+          files['styles.css'] = files['styles.css']! + '\np {color:blue}';
+          break;
+        case 'js':
+          files['src/score.js'] = 'export const score = 2;';
+          break;
+        case 'add-js':
+          files['unused.js'] = 'export const unused = true;';
+          break;
+        case 'delete-js':
+          delete files['src/score.js'];
+          break;
+        case 'import':
+          files['src/main.js'] = "import { missing } from './missing.js'; console.log(missing);";
+          break;
+        case 'entry':
+          runtime.entryFile = 'src/score.js';
+          break;
+        case 'profile':
+          runtime.capabilityProfile = 'modules';
+          break;
+        case 'type':
+          runtime.sourceType = 'script';
+          break;
+        case 'session':
+          exerciseSessionId = 'session-2';
+          break;
+        case 'revision':
+          executionRevision = 2;
+          break;
+      }
+      await finishModuleRender(runner, frame, {
+        ...input,
+        files,
+        options: { runtime },
+        exerciseSessionId,
+        executionRevision,
+      });
+      expect(analyzer.analyze).toHaveBeenCalledTimes(2);
+      if (kind === 'profile') {
+        await finishModuleRender(runner, frame, {
+          ...input,
+          files,
+          options: { runtime },
+          exerciseSessionId,
+          executionRevision,
+        });
+        expect(analyzer.analyze).toHaveBeenCalledTimes(3);
+      }
+    } finally {
+      await runner.dispose();
+    }
+  });
+
+  it.each(['prepare', 'stop', 'dispose'] as const)(
+    'lifecycleの%sは保持を消去する',
+    async (kind) => {
+      const analyzer = realAnalyzerPort();
+      let runner = new JavaScriptRunnerAdapter({ analyzer });
+      const frame = document.createElement('iframe');
+      document.body.append(frame);
+      await runner.prepare(frame);
+      const input = projectModuleInput();
+      try {
+        await finishModuleRender(runner, frame, input);
+        if (kind === 'prepare') await runner.prepare(frame);
+        else if (kind === 'stop') {
+          await runner.stop();
+          await runner.prepare(frame);
+        } else {
+          await runner.dispose();
+          runner = new JavaScriptRunnerAdapter({ analyzer });
+          await runner.prepare(frame);
+        }
+        await finishModuleRender(runner, frame, input);
+        expect(analyzer.analyze).toHaveBeenCalledTimes(2);
+      } finally {
+        await runner.dispose();
+      }
+    },
+  );
+
+  it.each(['success', 'failure'] as const)(
+    'supersedeされた解析の遅い%sが現generationの成功cacheを消さない',
+    async (kind) => {
+      const analyzer = realAnalyzerPort();
+      let complete: ((result: JavaScriptAnalysisResult) => void) | undefined;
+      let fail: ((error: Error) => void) | undefined;
+      analyzer.analyze.mockImplementationOnce(
+        () =>
+          new Promise<JavaScriptAnalysisResult>((resolve, reject) => {
+            complete = resolve;
+            fail = reject;
+          }),
+      );
+      const runner = new JavaScriptRunnerAdapter({ analyzer });
+      const frame = document.createElement('iframe');
+      document.body.append(frame);
+      await runner.prepare(frame);
+      const input = projectModuleInput();
+      const pending = runner.render(input);
+      const rejected = expect(pending).rejects.toMatchObject({ name: 'AbortError' });
+      const latest = { ...input, executionRevision: 2 };
+      try {
+        await finishModuleRender(runner, frame, latest);
+        if (kind === 'success')
+          complete!(
+            await analyzeJavaScriptSource({
+              ...analyzer.analyze.mock.calls[0]![0],
+              requestId: 'old-result',
+            }),
+          );
+        else fail!(new Error('old-analysis-failure'));
+        await rejected;
+        await finishModuleRender(runner, frame, latest);
+        expect(analyzer.analyze).toHaveBeenCalledTimes(2);
+      } finally {
+        await runner.dispose();
+      }
+    },
+  );
+
+  it('stop後の遅い解析完了を保持せず、再prepareで新しく解析する', async () => {
+    const analyzer = realAnalyzerPort();
+    let complete: ((result: JavaScriptAnalysisResult) => void) | undefined;
+    analyzer.analyze.mockImplementationOnce(
+      () =>
+        new Promise<JavaScriptAnalysisResult>((resolve) => {
+          complete = resolve;
+        }),
+    );
+    const runner = new JavaScriptRunnerAdapter({ analyzer });
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    await runner.prepare(frame);
+    const input = projectModuleInput();
+    const pending = runner.render(input);
+    const rejected = expect(pending).rejects.toMatchObject({ name: 'AbortError' });
+    const stopping = runner.stop();
+    const request = analyzer.analyze.mock.calls[0]![0];
+    complete!(await analyzeJavaScriptSource({ ...request, requestId: 'late-result' }));
+    await rejected;
+    await stopping;
+    await runner.prepare(frame);
+    try {
+      await finishModuleRender(runner, frame, input);
+      expect(analyzer.analyze).toHaveBeenCalledTimes(2);
+    } finally {
+      await runner.dispose();
+    }
+  });
+
+  it('合法大型resultはcache保持上限だけをbypassし、新たな学習者拒否にしない', async () => {
+    const large = '/*' + 'x'.repeat(510 * 1024) + '*/';
+    const analyzer = {
+      analyze: vi.fn(async () => ({
+        ...moduleAnalysisSuccess(),
+        file: 'main.js',
+        entryFile: 'main.js',
+        modules: [
+          {
+            file: 'main.js',
+            instrumentedCode: large + '\nexport const value=1;',
+            dependencies: [],
+          },
+        ],
+      })),
+      dispose: vi.fn(async () => undefined),
+    };
+    const runner = new JavaScriptRunnerAdapter({ analyzer });
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    await runner.prepare(frame);
+    const input = projectModuleInput();
+    const content = '/*' + '"'.repeat(72 * 1024) + '*/';
+    const files = {
+      'index.html': '<main>large</main>',
+      'main.js': content,
+      'unused1.js': content,
+      'unused2.js': content,
+      'unused3.js': content,
+    };
+    try {
+      for (let i = 0; i < 2; i += 1)
+        expect(
+          (
+            await finishModuleRender(runner, frame, {
+              ...input,
+              files,
+              options: {
+                runtime: {
+                  kind: 'javascript',
+                  entryFile: 'main.js',
+                  sourceType: 'module',
+                  capabilityProfile: 'project',
+                  primaryOutput: 'preview',
+                },
+              },
+            })
+          ).diagnostics,
+        ).toEqual([]);
+      expect(analyzer.analyze).toHaveBeenCalledTimes(2);
+    } finally {
+      await runner.dispose();
+    }
+  });
+});
 
 /** Protocol schemaを通る空Snapshotを作る。 */
 function snapshot(): PreviewSnapshot {

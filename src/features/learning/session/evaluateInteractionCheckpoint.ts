@@ -19,6 +19,42 @@ function matchingNodes(snapshot: PreviewSnapshot, selector: string): readonly Pr
   return snapshot.nodes.filter(({ matchedSelectors }) => matchedSelectors.includes(selector));
 }
 
+/** 対象の実boxとCSS、認証Snapshot内の祖先だけで表示を確認する。 */
+function isNodeVisible(node: PreviewNode, byId: ReadonlyMap<number, PreviewNode>): boolean {
+  if (
+    !Number.isFinite(node.rect.width) ||
+    !Number.isFinite(node.rect.height) ||
+    node.rect.width <= 0 ||
+    node.rect.height <= 0 ||
+    node.computedStyles['visibility'] !== 'visible'
+  ) {
+    return false;
+  }
+  const visited = new Set<number>();
+  let current: PreviewNode | undefined = node;
+  while (current !== undefined) {
+    if (visited.has(current.nodeId)) return false;
+    visited.add(current.nodeId);
+    const display = current.computedStyles['display'];
+    const rawOpacity = current.computedStyles['opacity'];
+    const opacity =
+      rawOpacity === undefined || rawOpacity.trim().length === 0 ? NaN : Number(rawOpacity);
+    if (
+      display === undefined ||
+      display.length === 0 ||
+      display === 'none' ||
+      !Number.isFinite(opacity) ||
+      opacity <= 0 ||
+      opacity > 1
+    ) {
+      return false;
+    }
+    if (current.parentId === null) return true;
+    current = byId.get(current.parentId);
+  }
+  return false;
+}
+
 /** checkpointをSnapshot・非永続Console・認証Interactionの取消観測から評価する。 */
 export function evaluateInteractionCheckpoint(
   checkpoint: JavaScriptInteractionCheckpoint,
@@ -43,6 +79,16 @@ export function evaluateInteractionCheckpoint(
       };
     }
     const nodes = matchingNodes(snapshot, expectation.selector);
+    if (expectation.kind === 'selector-visible') {
+      const byId = new Map(snapshot.nodes.map((node) => [node.nodeId, node]));
+      const visible =
+        byId.size === snapshot.nodes.length && nodes.some((node) => isNodeVisible(node, byId));
+      return {
+        expectationId: expectation.id,
+        passed: visible,
+        actual: visible ? 'visible' : 'not visible',
+      };
+    }
     if (expectation.kind === 'selector-exists') {
       return {
         expectationId: expectation.id,

@@ -16,6 +16,7 @@ import {
   validationRule,
 } from '../../../../tests/fixtures/validation';
 import { JavaScriptValidator } from './JavaScriptValidator';
+import { analyzeJavaScriptSource } from '../../runtime/javascript/analyzer/instrumentJavaScript';
 
 const SOURCE_HASH = 'a'.repeat(64);
 const MODULE_GRAPH_HASH = 'b'.repeat(64);
@@ -222,6 +223,36 @@ function javascriptInteractionContext(
   scenarios: readonly JavaScriptInteractionScenario[] = [INTERACTION_SCENARIO],
 ): ValidationContext {
   return javascriptContext({ ...overrides, interactionScenarios: scenarios });
+}
+
+/** Guided prefixと同じproject/module純解析入力を作る。 */
+function projectModuleContext(overrides: Partial<ValidationContext> = {}): ValidationContext {
+  return javascriptContext({
+    runtime: {
+      kind: 'javascript',
+      entryFile: 'src/main.js',
+      sourceType: 'module',
+      capabilityProfile: 'project',
+      primaryOutput: 'preview',
+    },
+    rules: javascriptRules().map((rule) =>
+      rule.target.kind === 'javascript-source'
+        ? { ...rule, target: { ...rule.target, file: 'src/message.js' } }
+        : rule,
+    ),
+    files: {
+      'index.html': '<p id="message">変更前</p>',
+      'styles.css': 'p{}',
+      'src/main.js': "import { update } from './message.js'; update();",
+      'src/message.js': `export const update = () => { document.querySelector('#message').textContent = '${MESSAGE}'; };`,
+    },
+    evidence: [
+      { id: 'javascript.executed', value: true },
+      { id: 'javascript.module-graph-sha256', value: MODULE_GRAPH_HASH },
+      { id: 'javascript.budget-exhausted', value: false },
+    ],
+    ...overrides,
+  });
 }
 
 describe('JavaScriptValidator', () => {
@@ -457,6 +488,401 @@ describe('JavaScriptValidator', () => {
       expect.objectContaining({ sourceType: 'script', capabilityProfile: 'core' }),
     );
     expect(analyzer.dispose).toHaveBeenCalledOnce();
+  });
+
+  it('project/moduleの同一Workspaceだけpure分析を再利用し、RulesとDOMは毎回評価する', async () => {
+    const analyzer = moduleAnalyzerDouble();
+    const validator = new JavaScriptValidator({
+      analyzerFactory: () => analyzer,
+      guardIdentifierFactory: () => '_validGuard',
+    });
+    await expect(validator.validate(projectModuleContext())).resolves.toMatchObject({
+      status: 'pass',
+    });
+    const second = projectModuleContext({
+      exerciseId: 'different-prefix',
+      now: '2026-10-02T12:00:00Z',
+      snapshots: {
+        desktop: previewSnapshot({
+          nodes: [
+            previewNode({ tagName: 'p', matchedSelectors: ['#message'], text: '不正解の表示' }),
+          ],
+        }),
+      },
+    });
+    await expect(validator.validate(second)).resolves.toMatchObject({
+      status: 'incomplete',
+      exerciseId: 'different-prefix',
+      evaluatedAt: second.now,
+    });
+    expect(analyzer.analyze).toHaveBeenCalledOnce();
+    expect(analyzer.dispose).toHaveBeenCalledOnce();
+  });
+
+  it.each([
+    'html',
+    'css',
+    'js',
+    'add',
+    'delete',
+    'entry',
+    'session',
+    'revision',
+    'profile',
+    'type',
+  ] as const)(
+    'projectのcacheは%s変更でhitせず、全Workspaceと解析条件を区別する',
+    async (change) => {
+      const analyzer = moduleAnalyzerDouble();
+      const validator = new JavaScriptValidator({ analyzerFactory: () => analyzer });
+      const original = projectModuleContext({
+        files: { ...projectModuleContext().files, 'unused.js': '// available' },
+      });
+      await validator.validate(original);
+      const files = { ...original.files };
+      const runtime = { ...original.runtime! };
+      const snapshots = { ...original.snapshots };
+      if (change === 'html') files['index.html'] = files['index.html']! + ' ';
+      if (change === 'css') files['styles.css'] = files['styles.css']! + ' ';
+      if (change === 'js') files['src/main.js'] = files['src/main.js']! + ' ';
+      if (change === 'add') files['another.js'] = '// new';
+      if (change === 'delete') delete files['unused.js'];
+      if (change === 'entry') {
+        runtime.entryFile = 'src/other.js';
+        files['src/other.js'] = '// entry';
+      }
+      if (change === 'session')
+        snapshots['desktop'] = { ...snapshots['desktop']!, exerciseSessionId: 'new-session' };
+      if (change === 'revision')
+        snapshots['desktop'] = { ...snapshots['desktop']!, executionRevision: 5 };
+      if (change === 'profile') runtime.capabilityProfile = 'modules';
+      if (change === 'type') runtime.sourceType = 'script';
+      await validator.validate(projectModuleContext({ files, runtime, snapshots }));
+      expect(analyzer.analyze).toHaveBeenCalledTimes(2);
+      if (change === 'profile') {
+        await validator.validate(projectModuleContext({ files, runtime, snapshots }));
+        expect(analyzer.analyze).toHaveBeenCalledTimes(3);
+      }
+    },
+  );
+
+  it.each(['alias', 'guard', 'session', 'oversized-input'] as const)(
+    'cache lookup前にstrictな元%sを拒否し、既存entryへ合流しない',
+    async (invalid) => {
+      const analyzer = moduleAnalyzerDouble();
+      let guard = '_validGuard';
+      const validator = new JavaScriptValidator({
+        analyzerFactory: () => analyzer,
+        guardIdentifierFactory: () => guard,
+      });
+      await validator.validate(projectModuleContext());
+      const bad = projectModuleContext();
+      const files = { ...bad.files };
+      const snapshots = { ...bad.snapshots };
+      if (invalid === 'alias') files['src/./main.js'] = files['src/main.js']!;
+      if (invalid === 'guard') guard = 'not-valid-guard';
+      if (invalid === 'session')
+        snapshots['desktop'] = { ...snapshots['desktop']!, exerciseSessionId: '' };
+      if (invalid === 'oversized-input') files['src/main.js'] = 'x'.repeat(100 * 1024 + 1);
+      expect(
+        (await validator.validate(projectModuleContext({ files, snapshots }))).status,
+      ).not.toBe('pass');
+      expect(analyzer.analyze).toHaveBeenCalledOnce();
+      guard = '_validGuard';
+      await expect(validator.validate(projectModuleContext())).resolves.toMatchObject({
+        status: 'pass',
+      });
+      expect(analyzer.analyze).toHaveBeenCalledTimes(2);
+    },
+  );
+
+  it('hitでもruntime診断・snapshot identity・graph実行証拠・budgetを毎回拒否する', async () => {
+    const analyzer = moduleAnalyzerDouble();
+    const validator = new JavaScriptValidator({ analyzerFactory: () => analyzer });
+    for (const invalid of ['snapshot', 'evidence', 'budget', 'diagnostic'] as const) {
+      await expect(validator.validate(projectModuleContext())).resolves.toMatchObject({
+        status: 'pass',
+      });
+      const context = projectModuleContext();
+      const bad =
+        invalid === 'snapshot'
+          ? { ...context, snapshots: {} }
+          : invalid === 'evidence'
+            ? {
+                ...context,
+                evidence: context.evidence.map((item) =>
+                  item.id === 'javascript.module-graph-sha256'
+                    ? { ...item, value: 'c'.repeat(64) }
+                    : item,
+                ),
+              }
+            : invalid === 'budget'
+              ? {
+                  ...context,
+                  evidence: context.evidence.map((item) =>
+                    item.id === 'javascript.budget-exhausted' ? { ...item, value: true } : item,
+                  ),
+                }
+              : {
+                  ...context,
+                  diagnostics: [
+                    {
+                      code: 'unsupported',
+                      kind: 'unsupported' as const,
+                      severity: 'error' as const,
+                      message: 'unsupported',
+                      learnerMessage: '未採点',
+                    },
+                  ],
+                };
+      await expect(validator.validate(bad)).resolves.toMatchObject({
+        status: 'system-error',
+        checks: [],
+      });
+    }
+  });
+
+  it('元Analyzer payloadの後続mutationを保持JSONへ混ぜない', async () => {
+    const analyzer = moduleAnalyzerDouble();
+    let original: JavaScriptAnalysisResult | undefined;
+    const realAnalyze = analyzer.analyze.getMockImplementation()!;
+    analyzer.analyze.mockImplementation(async (input) => {
+      original = await realAnalyze(input);
+      return original;
+    });
+    const validator = new JavaScriptValidator({ analyzerFactory: () => analyzer });
+    await validator.validate(projectModuleContext());
+    if (original?.status !== 'success') throw new Error('successが必要です');
+    (original.facts as unknown[]).splice(0);
+    await expect(validator.validate(projectModuleContext())).resolves.toMatchObject({
+      status: 'pass',
+    });
+    expect(analyzer.analyze).toHaveBeenCalledOnce();
+  });
+
+  it('合法な大型成功payloadは保持1MiBを超えても拒否せず、次回だけ再解析する', async () => {
+    const analyzer = moduleAnalyzerDouble();
+    const realAnalyze = analyzer.analyze.getMockImplementation()!;
+    analyzer.analyze.mockImplementation(async (input) => {
+      const result = await realAnalyze(input);
+      if (result.status !== 'success' || !('modules' in result))
+        throw new Error('module successが必要です');
+      return {
+        ...result,
+        modules: result.modules.map((module) => ({
+          ...module,
+          instrumentedCode: module.instrumentedCode + ' '.repeat(380 * 1024),
+        })),
+      };
+    });
+    const files = {
+      ...projectModuleContext().files,
+      ...Object.fromEntries(
+        [0, 1, 2, 3].map((n) => [`extra${String(n)}.js`, '//' + 'x'.repeat(70 * 1024)]),
+      ),
+    };
+    const validator = new JavaScriptValidator({ analyzerFactory: () => analyzer });
+    await expect(validator.validate(projectModuleContext({ files }))).resolves.toMatchObject({
+      status: 'pass',
+    });
+    await expect(validator.validate(projectModuleContext({ files }))).resolves.toMatchObject({
+      status: 'pass',
+    });
+    expect(analyzer.analyze).toHaveBeenCalledTimes(2);
+  });
+
+  it.each(['success', 'failure'] as const)(
+    '古い%s解析の遅着は後発entryを登録・消去しない',
+    async (outcome) => {
+      const analyzer = moduleAnalyzerDouble();
+      const realAnalyze = analyzer.analyze.getMockImplementation()!;
+      let complete!: () => void;
+      const pending = new Promise<void>((resolve) => {
+        complete = resolve;
+      });
+      let calls = 0;
+      analyzer.analyze.mockImplementation(async (input) => {
+        calls += 1;
+        if (calls === 1) {
+          await pending;
+          if (outcome === 'failure') throw new Error('late failure');
+        }
+        return realAnalyze(input);
+      });
+      const validator = new JavaScriptValidator({ analyzerFactory: () => analyzer });
+      const old = validator.validate(
+        projectModuleContext({
+          files: { ...projectModuleContext().files, 'index.html': 'old workspace' },
+        }),
+      );
+      await expect(validator.validate(projectModuleContext())).resolves.toMatchObject({
+        status: 'pass',
+      });
+      complete();
+      await old;
+      await expect(validator.validate(projectModuleContext())).resolves.toMatchObject({
+        status: 'pass',
+      });
+      expect(analyzer.analyze).toHaveBeenCalledTimes(2);
+    },
+  );
+
+  it('早期invalidも世代を失効させ、遅い旧成功を次回hitへ登録しない', async () => {
+    const analyzer = moduleAnalyzerDouble();
+    const realAnalyze = analyzer.analyze.getMockImplementation()!;
+    let complete!: () => void;
+    const pending = new Promise<void>((resolve) => {
+      complete = resolve;
+    });
+    let calls = 0;
+    analyzer.analyze.mockImplementation(async (input) => {
+      calls += 1;
+      if (calls === 1) await pending;
+      return realAnalyze(input);
+    });
+    const validator = new JavaScriptValidator({ analyzerFactory: () => analyzer });
+    const old = validator.validate(projectModuleContext());
+    const missingRuntime = { ...projectModuleContext() };
+    delete missingRuntime.runtime;
+    await expect(validator.validate(missingRuntime)).resolves.toMatchObject({
+      status: 'system-error',
+    });
+    complete();
+    await old;
+    await validator.validate(projectModuleContext());
+    expect(analyzer.analyze).toHaveBeenCalledTimes(2);
+  });
+
+  it('hitでも現在のcheckpointを採点し、未観測checkpointを合格として再利用しない', async () => {
+    const analyzer = moduleAnalyzerDouble();
+    const validator = new JavaScriptValidator({ analyzerFactory: () => analyzer });
+    await validator.validate(projectModuleContext());
+    const failed = projectModuleContext({
+      interactionScenarios: [INTERACTION_SCENARIO],
+      interactionCheckpoints: {
+        desktop: [
+          interactionCheckpointResult({
+            expectations: [{ expectationId: 'score-text', passed: false, actual: '0点' }],
+          }),
+        ],
+      },
+    });
+    await expect(validator.validate(failed)).resolves.toMatchObject({ status: 'incomplete' });
+    expect(analyzer.analyze).toHaveBeenCalledOnce();
+    await expect(
+      validator.validate({ ...failed, interactionCheckpoints: {} }),
+    ).resolves.toMatchObject({ status: 'system-error', checks: [] });
+    expect(analyzer.analyze).toHaveBeenCalledOnce();
+  });
+
+  it('表示期待値の現在観測がfalseならincompleteと画面表示の説明を返す', async () => {
+    const analyzer = moduleAnalyzerDouble();
+    const validator = new JavaScriptValidator({ analyzerFactory: () => analyzer });
+    const scenarios: readonly JavaScriptInteractionScenario[] = [
+      {
+        ...INTERACTION_SCENARIO,
+        checkpoints: [
+          {
+            ...INTERACTION_SCENARIO.checkpoints[0]!,
+            expectations: [{ id: 'score-text', kind: 'selector-visible', selector: '#score' }],
+          },
+        ],
+      },
+    ];
+    const result = await validator.validate(
+      projectModuleContext({
+        interactionScenarios: scenarios,
+        interactionCheckpoints: {
+          desktop: [
+            interactionCheckpointResult({
+              expectations: [{ expectationId: 'score-text', passed: false, actual: 'not visible' }],
+            }),
+          ],
+        },
+      }),
+    );
+    expect(result.status).toBe('incomplete');
+    expect(
+      result.checks.find(
+        ({ ruleId }) => ruleId === 'interaction:answer-flow:score-updated:score-text',
+      ),
+    ).toMatchObject({
+      passed: false,
+      expected: '#score の内容が画面に表示される',
+      actual: 'not visible',
+    });
+  });
+
+  it.each(['identity', 'facts'] as const)(
+    '不正Worker %s成功payloadはcacheへ保存せず非合格にする',
+    async (invalid) => {
+      const analyzer = moduleAnalyzerDouble();
+      const realAnalyze = analyzer.analyze.getMockImplementation()!;
+      analyzer.analyze.mockImplementationOnce(async (input) => {
+        const result = await realAnalyze(input);
+        if (result.status !== 'success') throw new Error('successが必要です');
+        return invalid === 'identity'
+          ? { ...result, executionRevision: 99 }
+          : { ...result, facts: Array.from({ length: 257 }, () => result.facts[0]!) };
+      });
+      const validator = new JavaScriptValidator({ analyzerFactory: () => analyzer });
+      await expect(validator.validate(projectModuleContext())).resolves.toMatchObject({
+        status: 'system-error',
+        checks: [],
+      });
+      await expect(validator.validate(projectModuleContext())).resolves.toMatchObject({
+        status: 'pass',
+      });
+      expect(analyzer.analyze).toHaveBeenCalledTimes(2);
+    },
+  );
+
+  it('実Analyzerのguard衝突拒否を保持し、元guardとartifactの正答pairだけ再利用する', async () => {
+    const context = projectModuleContext();
+    let request = 0;
+    const analyzer: AnalyzerDouble = {
+      analyze: vi.fn((input) =>
+        analyzeJavaScriptSource({ ...input, requestId: `real-${String(++request)}` }),
+      ),
+      dispose: vi.fn(async () => undefined),
+    };
+    const analysis = await analyzeJavaScriptSource({
+      exerciseSessionId: 'probe',
+      executionRevision: 4,
+      entryFile: 'src/main.js',
+      files: Object.fromEntries(
+        Object.entries(context.files).filter(([file]) => file.endsWith('.js')),
+      ),
+      sourceType: 'module',
+      capabilityProfile: 'project',
+      guardIdentifier: '_validGuard',
+      requestId: 'probe',
+    });
+    if (analysis.status !== 'success' || !('graphSha256' in analysis))
+      throw new Error('実正答分析が必要です');
+    const evidence = context.evidence.map((item) =>
+      item.id === 'javascript.module-graph-sha256'
+        ? { ...item, value: analysis.graphSha256 }
+        : item,
+    );
+    const validator = new JavaScriptValidator({
+      analyzerFactory: () => analyzer,
+      guardIdentifierFactory: () => '_validGuard',
+    });
+    const collision = {
+      ...context.files,
+      'src/main.js': context.files['src/main.js']! + '\nconst _validGuard = 1;',
+    };
+    await expect(
+      validator.validate({ ...context, files: collision, evidence }),
+    ).resolves.toMatchObject({ status: 'system-error' });
+    await expect(validator.validate({ ...context, evidence })).resolves.toMatchObject({
+      status: 'pass',
+    });
+    await expect(validator.validate({ ...context, evidence })).resolves.toMatchObject({
+      status: 'pass',
+    });
+    expect(analyzer.analyze).toHaveBeenCalledTimes(2);
   });
 
   it('ModuleはWorkspaceを一度だけ解析し、Graph hashと依存FileのFactをANDでpassする', async () => {

@@ -50,13 +50,67 @@ describe('trusted JavaScript interaction executor', () => {
     expect((document.getElementById('name') as HTMLInputElement).value).toBe('つむ');
     expect((document.getElementById('level') as HTMLSelectElement).value).toBe('beginner');
     expect(document.activeElement).toBe(document.getElementById('next'));
-    expect(events).toEqual([
-      'click',
-      'input',
-      'select-input',
-      'select-change',
-      'key:Enter',
-    ]);
+    expect(events).toEqual(['click', 'input', 'select-input', 'select-change', 'key:Enter']);
+  });
+
+  it('type=buttonのEnterとSpaceは取消段階とdisabledを守ってnative clickする', () => {
+    document.body.innerHTML =
+      '<button id="button" type="button">回答</button><fieldset disabled><button id="blocked" type="button">停止</button></fieldset><button id="submit" type="submit">送信</button><div id="plain" tabindex="0"></div>';
+    const button = document.getElementById('button')!;
+    const clicks: string[] = [];
+    button.addEventListener('click', () => clicks.push('click'));
+    const execute = createTrustedInteractionExecutor(document);
+    const key = (name: string, selector = '#button') =>
+      execute({ id: name, kind: 'key', selector, key: name });
+    key('Enter');
+    key('Space');
+    expect(clicks).toHaveLength(2);
+    const cancelDown = (event: Event) => {
+      event.preventDefault();
+    };
+    const cancelUp = (event: Event) => {
+      event.preventDefault();
+    };
+    button.addEventListener('keydown', cancelDown);
+    key('Enter');
+    key('Space');
+    expect(clicks).toHaveLength(2);
+    button.removeEventListener('keydown', cancelDown);
+    button.addEventListener('keyup', cancelUp);
+    key('Enter');
+    key('Space');
+    expect(clicks).toHaveLength(3);
+    button.removeEventListener('keyup', cancelUp);
+    key('Escape');
+    key('Tab');
+    key('Enter', '#blocked');
+    key('Enter', '#submit');
+    key('Enter', '#plain');
+    expect(clicks).toHaveLength(3);
+    (button as HTMLButtonElement).disabled = true;
+    key('Enter');
+    key('Space');
+    expect(clicks).toHaveLength(3);
+  });
+
+  it('独自keydownの明示clickをnative既定動作から丸めず、取消だけで抑える', () => {
+    document.body.innerHTML = '<button id="button" type="button">回答</button>';
+    const button = document.getElementById('button') as HTMLButtonElement;
+    let count = 0;
+    let consume = false;
+    button.addEventListener('click', () => {
+      count += 1;
+    });
+    button.addEventListener('keydown', (event) => {
+      button.click();
+      if (consume) event.preventDefault();
+    });
+    const execute = createTrustedInteractionExecutor(document);
+    execute({ id: 'first', kind: 'key', selector: '#button', key: 'Enter' });
+    expect(count).toBe(2);
+    consume = true;
+    execute({ id: 'second', kind: 'key', selector: '#button', key: 'Enter' });
+    expect(count).toBe(3);
   });
 
   it('未知field・対象不在・actionと対象型の不一致をbounded errorへ変換する', () => {

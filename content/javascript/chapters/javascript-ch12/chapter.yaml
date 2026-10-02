@@ -1,0 +1,12 @@
+id: javascript-ch12
+sequence: 12
+title: 'Guided Project: 学習クイズ'
+goal: 同じSourceへ問題・回答・得点・結果・再挑戦を積み上げる
+estimatedMinutes: 100
+kind: guided-project
+lessonSources:
+  - lessons/javascript-ch12-l01/lesson.yaml
+  - lessons/javascript-ch12-l02/lesson.yaml
+  - lessons/javascript-ch12-l03/lesson.yaml
+  - lessons/javascript-ch12-l04/lesson.yaml
+  - lessons/javascript-ch12-l05/lesson.yaml

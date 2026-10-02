@@ -503,6 +503,51 @@ function hasSafeComputedProperty(node: AstNode): boolean {
   );
 }
 
+/** 非Literalのindex readはproject専用の実receiver/key guardを必要とする。 */
+export function needsGuardedIndexRead(node: Node): boolean {
+  const current = ast(node);
+  return node.type === 'MemberExpression' && !hasSafeComputedProperty(current);
+}
+
+/** computed write/call/optional accessは通常のreadと意味が異なるため対応しない。 */
+function isDirectIndexRead(node: Node, ancestors: readonly Node[]): boolean {
+  const current = ast(node);
+  if (node.type !== 'MemberExpression' || current.optional === true) return false;
+  let target: Node = node;
+  for (const ownerNode of ancestors.slice(0, -1).reverse()) {
+    const owner = ast(ownerNode);
+    if (
+      (ownerNode.type === 'AssignmentExpression' && owner.left === target) ||
+      ((ownerNode.type === 'ForOfStatement' || ownerNode.type === 'ForInStatement') &&
+        owner.left === target)
+    )
+      return false;
+    if (
+      ownerNode.type === 'ArrayPattern' ||
+      ownerNode.type === 'ObjectPattern' ||
+      (ownerNode.type === 'Property' && owner.value === target) ||
+      (ownerNode.type === 'RestElement' && owner.argument === target) ||
+      (ownerNode.type === 'AssignmentPattern' && owner.left === target)
+    ) {
+      target = ownerNode;
+      continue;
+    }
+    break;
+  }
+  const parent = ancestors.at(-2);
+  if (parent === undefined) return true;
+  const owner = ast(parent);
+  return !(
+    (parent.type === 'AssignmentExpression' && owner.left === node) ||
+    (parent.type === 'UpdateExpression' && owner.argument === node) ||
+    (parent.type === 'UnaryExpression' && owner.operator === 'delete') ||
+    (parent.type === 'CallExpression' && owner.callee === node) ||
+    (parent.type === 'NewExpression' && owner.callee === node) ||
+    (parent.type === 'TaggedTemplateExpression' && owner.tag === node) ||
+    ((parent.type === 'ForOfStatement' || parent.type === 'ForInStatement') && owner.left === node)
+  );
+}
+
 /** Call引数のLiteral文字列を返す。 */
 function literalString(value: unknown): string | undefined {
   if (typeof value !== 'object' || value === null) return undefined;
@@ -518,8 +563,9 @@ export function assertJavaScriptCapabilityPolicy(
 ): void {
   const profile = JAVASCRIPT_CAPABILITY_PROFILES[profileId];
   /** 通常memberと分割代入のproperty読取りへ、同じ能力境界を適用する。 */
-  const inspectMember = (node: Node, parent?: Node): void => {
+  const inspectMember = (node: Node, ancestors: readonly Node[] = [node]): void => {
     const current = ast(node);
+    const parent = ancestors.at(-2);
     const root = identifierName(current.object);
     const property = memberName(current);
     // dom-formの取消観測は非passive handlerだけを対象とし、aliasによるoptions検査の迂回も閉じる。
@@ -554,7 +600,10 @@ export function assertJavaScriptCapabilityPolicy(
         );
       }
     }
-    if (!hasSafeComputedProperty(current)) {
+    if (
+      !hasSafeComputedProperty(current) &&
+      !(profileId === 'project' && isDirectIndexRead(node, ancestors))
+    ) {
       reject(
         node,
         file,
@@ -562,6 +611,12 @@ export function assertJavaScriptCapabilityPolicy(
         'unsupported',
       );
     }
+    if (
+      isNode(current.object) &&
+      needsGuardedIndexRead(current.object) &&
+      (property === 'call' || property === 'apply' || property === 'bind')
+    )
+      reject(node, file, '動的indexを経由したFunction呼出しは対応していません', 'unsupported');
     if (
       root === 'Object' &&
       (property === undefined || !SAFE_OBJECT_STATIC_MEMBERS.has(property))
@@ -704,6 +759,9 @@ export function assertJavaScriptCapabilityPolicy(
       if (WORKER_IDENTIFIERS.has(name)) reject(node, file, 'Workerを作る機能は使えません');
       if (STORAGE_IDENTIFIERS.has(name)) reject(node, file, 'Storageへ触れる機能は使えません');
       if (DYNAMIC_CODE_IDENTIFIERS.has(name)) reject(node, file, '許可されていない動的実行です');
+      if (profileId === 'project' && name === 'Proxy') {
+        reject(node, file, 'projectではProxyの作成経路を許可していません');
+      }
       if (RESOURCE_IDENTIFIERS.has(name)) reject(node, file, '外部resourceを作る機能は使えません');
       if (NAVIGATION_IDENTIFIERS.has(name))
         reject(node, file, '画面遷移や親画面へ触れる機能は使えません');
@@ -713,7 +771,7 @@ export function assertJavaScriptCapabilityPolicy(
       }
     }
 
-    if (node.type === 'MemberExpression') inspectMember(node, parent);
+    if (node.type === 'MemberExpression') inspectMember(node, ancestors);
     if (node.type === 'ObjectPattern' && Array.isArray(current.properties)) {
       for (const property of current.properties) {
         if (isNode(property) && property.type === 'Property') inspectMember(property);

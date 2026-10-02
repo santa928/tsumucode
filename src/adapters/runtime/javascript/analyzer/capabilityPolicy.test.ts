@@ -12,6 +12,56 @@ function program(source: string, sourceType: 'script' | 'module' = 'script') {
 }
 
 describe('assertJavaScriptCapabilityPolicy', () => {
+  it.each(['core', 'modules', 'dom', 'dom-form', 'async'] as const)(
+    '%sは既存Proxyの静的利用を保持し、projectだけ作成経路を閉じる',
+    (profile) => {
+      const source = program(
+        "const proxy=Proxy.revocable({}, {ownKeys(){throw 'proxy-called';}}).proxy;console.log(proxy);",
+      );
+      expect(() => {
+        assertJavaScriptCapabilityPolicy(source, 'script.js', profile);
+      }).not.toThrow();
+      expect(() => {
+        assertJavaScriptCapabilityPolicy(source, 'script.js', 'project');
+      }).toThrow(/許可/u);
+    },
+  );
+  it('projectだけで数値index用の動的readをinstrumentへ渡し、write/callは拒否する', () => {
+    const read = program(
+      'const state={questions:[1],index:0};console.log(state.questions[state.index]);',
+    );
+    expect(() => {
+      assertJavaScriptCapabilityPolicy(read, 'main.js', 'project');
+    }).not.toThrow();
+    for (const profile of ['core', 'dom', 'dom-form', 'modules', 'async'] as const) {
+      expect(() => {
+        assertJavaScriptCapabilityPolicy(read, 'main.js', profile);
+      }).toThrow(/computed/u);
+    }
+    for (const source of [
+      'const a=[1],i=0;a[i]=2;',
+      'const a=[1],i=0;a[i]++;',
+      'const a=[1],i=0;delete a[i];',
+      'const a=[console.log],i=0;a[i]();',
+      'const a=[1],i=0;const {[i]:value}=a;',
+      'const i=0;document[i];',
+      'const i=0;navigator[i];',
+      'const a=[1],i=0;[a[i]]=[2];',
+      'const a=[1],i=0;({value:a[i]}={value:2});',
+      'const a=[1],i=0;for(a[i] of [2]){}',
+      'const a=[1],i=0;for(a[i] in {value:2}){}',
+      'const a=[console.log],i=0;a[i]``;',
+      'const a=[console.log],i=0;a[i]?.();',
+      'const a=[console.log],i=0;a[i].call();',
+      'const a=[console.log],i=0;a[i].apply();',
+      'const a=null,i=0;a?.[i];',
+      'const Error=Proxy;const a=new Error([1],{});const i=0;a[i];',
+    ]) {
+      expect(() => {
+        assertJavaScriptCapabilityPolicy(program(source), 'main.js', 'project');
+      }, source).toThrow();
+    }
+  });
   it('Chapter 00で使うquerySelectorとtextContent代入を許可する', () => {
     const source = 'document.querySelector("#message").textContent = "こんにちは";';
 

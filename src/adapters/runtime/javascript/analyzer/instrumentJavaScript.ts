@@ -1,8 +1,12 @@
-import { parse, type Node } from 'acorn';
+import { parse, tokenizer, type Node } from 'acorn';
 import { fullAncestor } from 'acorn-walk';
 import MagicString from 'magic-string';
 import type { RunnerDiagnostic, RunnerDiagnosticKind } from '../../../../core/runtime/contracts';
-import { JavaScriptAnalysisIssue, assertJavaScriptCapabilityPolicy } from './capabilityPolicy';
+import {
+  JavaScriptAnalysisIssue,
+  assertJavaScriptCapabilityPolicy,
+  needsGuardedIndexRead,
+} from './capabilityPolicy';
 import type {
   JavaScriptAnalysisFailure,
   JavaScriptLegacyAnalysisResult,
@@ -214,8 +218,26 @@ function instrument(
   file: string,
 ): string {
   const magic = new MagicString(source);
+  const indexOpenings: number[] = [];
+  if (nodes.some(needsGuardedIndexRead)) {
+    const tokens = tokenizer(source, { ecmaVersion: 'latest' });
+    for (let token = tokens.getToken(); token.type.label !== 'eof'; token = tokens.getToken()) {
+      if (token.type.label === '[') indexOpenings.push(token.start);
+    }
+  }
   for (const node of nodes) {
     const current = ast(node);
+    if (needsGuardedIndexRead(node) && isNode(current.object) && isNode(current.property)) {
+      // bracket tokenだけを置換し、receiver/keyの括弧・comma式・commentを保持する。
+      const receiver = current.object;
+      const key = current.property;
+      const opening = indexOpenings.find((start) => start >= receiver.end && start < key.start);
+      if (opening === undefined || source[node.end - 1] !== ']')
+        throw new JavaScriptAnalysisIssue('system', 'Index readのdelimiterを特定できません', file);
+      magic.prependLeft(node.start, `${guardIdentifier}.index(`);
+      magic.overwrite(opening, opening + 1, ',(');
+      magic.overwrite(node.end - 1, node.end, '))');
+    }
     if (FUNCTION_TYPES.has(node.type) && isNode(current.body)) {
       const body = ast(current.body);
       if (body.type === 'BlockStatement') {

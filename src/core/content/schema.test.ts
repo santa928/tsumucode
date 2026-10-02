@@ -6,6 +6,7 @@ import {
   CourseManifestSchema,
   ExerciseSchema,
   JavaScriptValidationRuleDefinitionSchema,
+  JavaScriptCheckpointExpectationSchema,
   TypeScriptExerciseRuntimeSchema,
   PreviewViewportSchema,
   SlideSchema,
@@ -20,6 +21,31 @@ import type {
 } from './types';
 
 type StandardLesson = Extract<Lesson, { kind: 'standard' }>;
+
+it('selector-visibleはbounded selectorだけを受理しSource形や表示判定の緩和を許さない', () => {
+  expect(
+    JavaScriptCheckpointExpectationSchema.parse({
+      id: 'question',
+      kind: 'selector-visible',
+      selector: '#question',
+    }),
+  ).toEqual({ id: 'question', kind: 'selector-visible', selector: '#question' });
+  expect(
+    JavaScriptCheckpointExpectationSchema.safeParse({
+      id: 'question',
+      kind: 'selector-visible',
+      selector: '#question',
+      equals: 'true',
+    }).success,
+  ).toBe(false);
+  expect(
+    JavaScriptCheckpointExpectationSchema.safeParse({
+      id: 'question',
+      kind: 'selector-visible',
+      selector: '',
+    }).success,
+  ).toBe(false);
+});
 type GuidedLesson = Extract<Lesson, { kind: 'guided-project' }>;
 type CapstoneLesson = Extract<Lesson, { kind: 'capstone' }>;
 type StandardExercise = Extract<Exercise, { kind: 'standard' }>;

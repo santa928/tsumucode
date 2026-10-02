@@ -56,6 +56,64 @@ function snapshot(): PreviewSnapshot {
 }
 
 describe('evaluateInteractionCheckpoint', () => {
+  it('実寸法とCSS・祖先を持つ認証Snapshotで表示を確認する', () => {
+    const visible: JavaScriptInteractionCheckpoint = {
+      id: 'shown',
+      afterActionId: 'start',
+      expectations: [{ id: 'question', kind: 'selector-visible', selector: '#question' }],
+    };
+    const observed = {
+      ...snapshot(),
+      nodes: [
+        previewNode({
+          nodeId: 1,
+          parentId: null,
+          computedStyles: { display: 'block', visibility: 'hidden', opacity: '1' },
+        }),
+        previewNode({
+          nodeId: 2,
+          parentId: 1,
+          matchedSelectors: ['#question'],
+          rect: { x: 0, y: 0, width: 100, height: 20 },
+          computedStyles: { display: 'block', visibility: 'visible', opacity: '1' },
+        }),
+      ],
+    };
+    expect(evaluateInteractionCheckpoint(visible, observed, [])[0]?.passed).toBe(true);
+    for (const nodes of [
+      [
+        {
+          ...observed.nodes[0]!,
+          computedStyles: { display: 'none', visibility: 'visible', opacity: '1' },
+        },
+        observed.nodes[1]!,
+      ],
+      [
+        {
+          ...observed.nodes[0]!,
+          computedStyles: { display: 'block', visibility: 'visible', opacity: '0' },
+        },
+        observed.nodes[1]!,
+      ],
+      [
+        observed.nodes[0]!,
+        {
+          ...observed.nodes[1]!,
+          computedStyles: { display: 'block', visibility: 'hidden', opacity: '1' },
+        },
+      ],
+      [observed.nodes[0]!, { ...observed.nodes[1]!, rect: { x: 0, y: 0, width: 0, height: 0 } }],
+      [observed.nodes[0]!, { ...observed.nodes[1]!, computedStyles: {} }],
+      [{ ...observed.nodes[0]!, computedStyles: {} }, observed.nodes[1]!],
+      [observed.nodes[0]!, observed.nodes[1]!, observed.nodes[1]!],
+      [{ ...observed.nodes[1]!, parentId: 99 }],
+      [{ ...observed.nodes[0]!, parentId: 2 }, observed.nodes[1]!],
+    ])
+      expect(evaluateInteractionCheckpoint(visible, { ...observed, nodes }, [])[0]?.passed).toBe(
+        false,
+      );
+  });
+
   it('DOM・属性・focus・Consoleの5種期待値を観測事実だけから評価する', () => {
     const consoleRecords: readonly RunnerConsoleRecord[] = [
       { sequence: 0, level: 'log', text: 'score=2' },

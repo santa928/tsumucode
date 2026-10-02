@@ -145,7 +145,7 @@ const runtime = vi.hoisted(() => {
       markPassed: vi.fn(),
     },
     runnerRegistry: { create: vi.fn() },
-    readOnlyPreviewRegistry: { create: vi.fn() },
+    readOnlyPreviewRegistry: { has: vi.fn(() => true), create: vi.fn() },
     validatorRegistry: { has: vi.fn(() => false), register: vi.fn(), create: vi.fn() },
     editorLanguageRegistry: {
       has: (id: string) => editorLanguageFactories.has(id),
@@ -611,6 +611,7 @@ beforeEach(() => {
   runtime.repository.putCourse.mockClear();
   runtime.runnerRegistry.create.mockReset();
   runtime.readOnlyPreviewRegistry.create.mockReset();
+  runtime.readOnlyPreviewRegistry.has.mockReset().mockReturnValue(true);
   runtime.validatorRegistry.create.mockReset();
   runtime.passFreshness.isDirty.mockReset().mockReturnValue(false);
   runtime.passFreshness.markDirty.mockClear();
@@ -2121,4 +2122,28 @@ it('型検査失敗を未実行・未採点と表示し、診断を残して修�
   hasTypeError = false;
   await userEvent.click(screen.getByRole('button', { name: 'プレビューを更新' }));
   expect(await screen.findByText('実行できました（合否は「判定する」で確認）')).toBeInTheDocument();
+});
+
+it('専用Preview未対応の完了済みJavaScriptは保存エラーにせずPC案内を維持する', async () => {
+  vi.stubEnv('BASE_URL', '/javascript-readonly-test/');
+  stubContentFetch(javascriptLearningRoutesCourse);
+  stubEditingCapability(false);
+  runtime.readOnlyPreviewRegistry.has.mockReturnValue(false);
+  runtime.readOnlyPreviewRegistry.create.mockImplementation(() => {
+    throw new Error('Read-only Preview not registered: javascript');
+  });
+  runtime.repository.getCourse.mockResolvedValue({
+    ...completedProgress(),
+    courseId: 'javascript',
+  });
+  runtime.repository.getDraft.mockResolvedValue({ ...passingDraft(), courseId: 'javascript' });
+  renderRoute('/courses/javascript/lessons/lesson-first-heading/exercises/exercise-first-heading');
+  await waitFor(() => {
+    expect(runtime.repository.getDraft).toHaveBeenCalled();
+    expect(screen.queryByText('この端末の完成状態を確認しています')).not.toBeInTheDocument();
+  });
+  expect(screen.getByRole('heading', { name: 'PCで演習を開く' })).toBeInTheDocument();
+  expect(screen.queryByText('端末の進捗を読み込めませんでした')).not.toBeInTheDocument();
+  expect(runtime.readOnlyPreviewRegistry.create).not.toHaveBeenCalled();
+  expect(runtime.runnerRegistry.create).not.toHaveBeenCalled();
 });

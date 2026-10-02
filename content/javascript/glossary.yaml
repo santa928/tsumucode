@@ -4,397 +4,651 @@ entries:
     term: HTML
     definition: Webページに見出しや文章などの内容と役割を用意する言語。
     firstSlideId: javascript-ch00-l01-s01
-    relatedIds: [css, javascript]
+    relatedIds:
+      - css
+      - javascript
   - id: css
     term: CSS
     definition: HTMLで用意した内容の色や余白など、見た目を整える言語。
     firstSlideId: javascript-ch00-l01-s01
-    relatedIds: [html, javascript]
+    relatedIds:
+      - html
+      - javascript
   - id: javascript
     term: JavaScript
     definition: Webページの内容を変化させたり、操作に反応させたりする言語。
     firstSlideId: javascript-ch00-l01-s01
-    relatedIds: [html, css, script-file]
+    relatedIds:
+      - html
+      - css
+      - script-file
   - id: script-file
     term: script.js
     definition: この教材でJavaScriptのコードを書くFile。
     firstSlideId: javascript-ch00-l01-s02
-    relatedIds: [javascript, selector, text-content]
+    relatedIds:
+      - javascript
+      - selector
+      - text-content
   - id: selector
     term: selector
     definition: JavaScriptがHTMLから変更したい場所を探すための目印。
     firstSlideId: javascript-ch00-l01-s03
-    relatedIds: [text-content, script-file]
+    relatedIds:
+      - text-content
+      - script-file
   - id: text-content
     term: textContent
     definition: 見つけたHTML要素の文字を読み書きするための名前。
     firstSlideId: javascript-ch00-l01-s03
-    relatedIds: [selector, string]
+    relatedIds:
+      - selector
+      - string
   - id: string
     term: 文字列
     definition: 引用符で囲み、コードの中でひとまとまりの文字として扱う値。
     firstSlideId: javascript-ch00-l01-s04
-    relatedIds: [text-content, value, number, boolean]
+    relatedIds:
+      - text-content
+      - value
+      - number
+      - boolean
   - id: console
     term: Console
     definition: JavaScriptが出力した値やErrorを実行順に確認する場所。
     firstSlideId: javascript-ch01-l01-s01
-    relatedIds: [javascript, value]
+    relatedIds:
+      - javascript
+      - value
   - id: value
     term: 値
     definition: JavaScriptが処理する文字列、数値、真偽値などのデータ。
     firstSlideId: javascript-ch01-l01-s01
-    relatedIds: [string, number, boolean, variable]
+    relatedIds:
+      - string
+      - number
+      - boolean
+      - variable
   - id: number
     term: 数値
     definition: 計算に使える数の値。文字列と違い、引用符で囲まない。
     firstSlideId: javascript-ch01-l01-s02
-    relatedIds: [value, string, boolean, operator]
+    relatedIds:
+      - value
+      - string
+      - boolean
+      - operator
   - id: boolean
     term: 真偽値
     definition: 正しいか違うかをtrueまたはfalseで表す値。
     firstSlideId: javascript-ch01-l01-s02
-    relatedIds: [value, string, number]
+    relatedIds:
+      - value
+      - string
+      - number
   - id: variable
     term: 変数
     definition: 値へ名前をつけ、あとからその名前で値を読み出せる仕組み。
     firstSlideId: javascript-ch01-l02-s01
-    relatedIds: [value, identifier, const, let]
+    relatedIds:
+      - value
+      - identifier
+      - const
+      - let
   - id: identifier
     term: 変数名
     definition: 変数を区別し、その値を読み出すために付ける名前。
     firstSlideId: javascript-ch01-l02-s01
-    relatedIds: [variable, const]
+    relatedIds:
+      - variable
+      - const
   - id: const
     term: const
     definition: あとで別の値へ変えない変数を宣言するためのキーワード。
     firstSlideId: javascript-ch01-l02-s02
-    relatedIds: [variable, identifier, let]
+    relatedIds:
+      - variable
+      - identifier
+      - let
   - id: operator
     term: 演算子
     definition: 足し算や掛け算など、値に対する計算を表す記号。
     firstSlideId: javascript-ch01-l03-s01
-    relatedIds: [multiplication, addition, precedence, number]
+    relatedIds:
+      - multiplication
+      - addition
+      - precedence
+      - number
   - id: multiplication
     term: 掛け算
     definition: JavaScriptではアスタリスク（*）で表す数値の演算。
     firstSlideId: javascript-ch01-l03-s01
-    relatedIds: [operator, addition, precedence]
+    relatedIds:
+      - operator
+      - addition
+      - precedence
   - id: addition
     term: 足し算
     definition: JavaScriptではプラス（+）で表す数値の演算。
     firstSlideId: javascript-ch01-l03-s02
-    relatedIds: [operator, multiplication, precedence]
+    relatedIds:
+      - operator
+      - multiplication
+      - precedence
   - id: precedence
     term: 演算の優先順位
     definition: 1つの式に複数の演算があるとき、どれを先に計算するかの決まり。
     firstSlideId: javascript-ch01-l03-s02
-    relatedIds: [operator, multiplication, addition]
+    relatedIds:
+      - operator
+      - multiplication
+      - addition
   - id: let
     term: let
     definition: あとで値を更新する変数を宣言するためのキーワード。
     firstSlideId: javascript-ch01-l04-s02
-    relatedIds: [variable, const, reassignment]
+    relatedIds:
+      - variable
+      - const
+      - reassignment
   - id: reassignment
     term: 再代入
     definition: 変数へ新しい値を入れ直して、現在の値を更新すること。
     firstSlideId: javascript-ch01-l04-s03
-    relatedIds: [let, addition-assignment]
+    relatedIds:
+      - let
+      - addition-assignment
   - id: addition-assignment
     term: 加算代入
     definition: 現在の値へ右側の値を加え、同じ変数へ入れ直す+=の書き方。
     firstSlideId: javascript-ch01-l04-s03
-    relatedIds: [let, reassignment, addition]
+    relatedIds:
+      - let
+      - reassignment
+      - addition
   - id: comparison
     term: 比較式
     definition: 2つの値を比べ、trueまたはfalseの真偽値を結果として返す式。
     firstSlideId: javascript-ch02-l01-s01
-    relatedIds: [boolean, strict-equality, strict-inequality, condition]
+    relatedIds:
+      - boolean
+      - strict-equality
+      - strict-inequality
+      - condition
   - id: strict-equality
     term: 厳密等価
     definition: 左右の値と種類が同じかを確かめる===の比較。
     firstSlideId: javascript-ch02-l01-s02
-    relatedIds: [comparison, strict-inequality, boolean]
+    relatedIds:
+      - comparison
+      - strict-inequality
+      - boolean
   - id: strict-inequality
     term: 厳密不等価
     definition: 左右の値または種類が違うかを確かめる!==の比較。
     firstSlideId: javascript-ch02-l01-s02
-    relatedIds: [comparison, strict-equality, boolean]
+    relatedIds:
+      - comparison
+      - strict-equality
+      - boolean
   - id: condition
     term: 条件
     definition: 分岐やLoopを実行するか決めるtrueまたはfalseの式。
     firstSlideId: javascript-ch02-l02-s01
-    relatedIds: [boolean, comparison, branch, loop]
+    relatedIds:
+      - boolean
+      - comparison
+      - branch
+      - loop
   - id: branch
     term: 条件分岐
     definition: 条件の結果に応じて、実行するコードの道を選ぶ仕組み。
     firstSlideId: javascript-ch02-l02-s01
-    relatedIds: [condition, if-statement, else-branch, else-if]
+    relatedIds:
+      - condition
+      - if-statement
+      - else-branch
+      - else-if
   - id: if-statement
     term: if
     definition: 丸括弧の条件がtrueのときだけ、波括弧内を実行する文。
     firstSlideId: javascript-ch02-l02-s02
-    relatedIds: [condition, branch, else-branch]
+    relatedIds:
+      - condition
+      - branch
+      - else-branch
   - id: else-branch
     term: else
     definition: 直前のifやelse ifの条件がすべてfalseだったときに実行する道。
     firstSlideId: javascript-ch02-l02-s03
-    relatedIds: [if-statement, else-if, branch]
+    relatedIds:
+      - if-statement
+      - else-if
+      - branch
   - id: else-if
     term: else if
     definition: 前の条件がfalseだったときに、次の条件を確かめる分岐。
     firstSlideId: javascript-ch02-l03-s02
-    relatedIds: [if-statement, else-branch, branch]
+    relatedIds:
+      - if-statement
+      - else-branch
+      - branch
   - id: loop
     term: Loop
     definition: 条件が成り立つ間、同じ形の処理を繰り返す仕組み。
     firstSlideId: javascript-ch02-l04-s01
-    relatedIds: [condition, for-loop, increment]
+    relatedIds:
+      - condition
+      - for-loop
+      - increment
   - id: for-loop
     term: for
     definition: 初期化、条件、更新を使い、回数の決まった処理を繰り返す文。
     firstSlideId: javascript-ch02-l04-s02
-    relatedIds: [loop, condition, increment, let]
+    relatedIds:
+      - loop
+      - condition
+      - increment
+      - let
   - id: increment
     term: インクリメント
     definition: 変数の現在値へ1を加える++の更新。
     firstSlideId: javascript-ch02-l04-s03
-    relatedIds: [for-loop, let, reassignment]
+    relatedIds:
+      - for-loop
+      - let
+      - reassignment
   - id: less-than-or-equal
     term: 以下
     definition: 左の値が右の値より小さいか同じかを確かめる<=の比較。
     firstSlideId: javascript-ch02-l04-s02
-    relatedIds: [comparison, condition, for-loop]
+    relatedIds:
+      - comparison
+      - condition
+      - for-loop
   - id: function
     term: Function
     definition: ひとまとまりの処理へ名前を付け、必要な場所から呼び出せる仕組み。
     firstSlideId: javascript-ch03-l01-s01
-    relatedIds: [function-declaration, function-call, parameter, return-value]
+    relatedIds:
+      - function-declaration
+      - function-call
+      - parameter
+      - return-value
   - id: function-declaration
     term: Function宣言
     definition: function、名前、丸括弧、波括弧を使ってFunctionの処理を用意するコード。
     firstSlideId: javascript-ch03-l01-s02
-    relatedIds: [function, function-call, arrow-function]
+    relatedIds:
+      - function
+      - function-call
+      - arrow-function
   - id: function-call
     term: Functionの呼び出し
     definition: Function名の後ろへ丸括弧を付け、用意された処理を実行すること。
     firstSlideId: javascript-ch03-l01-s03
-    relatedIds: [function, function-declaration, argument]
+    relatedIds:
+      - function
+      - function-declaration
+      - argument
   - id: parameter
     term: parameter
     definition: Functionが受け取る値へ、宣言の丸括弧内で付ける名前。
     firstSlideId: javascript-ch03-l02-s02
-    relatedIds: [function, argument, return-value]
+    relatedIds:
+      - function
+      - argument
+      - return-value
   - id: argument
     term: argument
     definition: Functionを呼び出すとき、丸括弧の中からparameterへ渡す値。
     firstSlideId: javascript-ch03-l02-s02
-    relatedIds: [function-call, parameter, value]
+    relatedIds:
+      - function-call
+      - parameter
+      - value
   - id: return-value
     term: return
     definition: Functionから呼び出し元へ結果を返し、そのFunctionの実行を終えるキーワード。
     firstSlideId: javascript-ch03-l02-s03
-    relatedIds: [function, parameter, value]
+    relatedIds:
+      - function
+      - parameter
+      - value
   - id: scope
     term: Scope
     definition: 変数やFunctionの名前を使えるコード上の範囲。
     firstSlideId: javascript-ch03-l03-s01
-    relatedIds: [variable, global-scope, local-scope, closure]
+    relatedIds:
+      - variable
+      - global-scope
+      - local-scope
+      - closure
   - id: global-scope
     term: global Scope
     definition: どのFunctionの内側でもない場所で宣言した名前を使える範囲。
     firstSlideId: javascript-ch03-l03-s02
-    relatedIds: [scope, local-scope, variable]
+    relatedIds:
+      - scope
+      - local-scope
+      - variable
   - id: local-scope
     term: local Scope
     definition: Functionなどの内側で宣言した名前を、その内側だけで使える範囲。
     firstSlideId: javascript-ch03-l03-s03
-    relatedIds: [scope, global-scope, closure]
+    relatedIds:
+      - scope
+      - global-scope
+      - closure
   - id: arrow-function
     term: Arrow Function
     definition: functionキーワードの代わりに=>を使ってFunctionを書く方法。
     firstSlideId: javascript-ch03-l04-s01
-    relatedIds: [function, function-declaration, parameter, return-value]
+    relatedIds:
+      - function
+      - function-declaration
+      - parameter
+      - return-value
   - id: closure
     term: Closure
     definition: 内側Functionが使う外側Functionの変数を、外側の処理終了後も覚える仕組み。
     firstSlideId: javascript-ch03-l05-s01
-    relatedIds: [function, local-scope, captured-variable]
+    relatedIds:
+      - function
+      - local-scope
+      - captured-variable
   - id: captured-variable
     term: 覚えられた変数
     definition: 内側Functionから参照されるため、Closureが値を保ち続ける外側Functionの変数。
     firstSlideId: javascript-ch03-l05-s03
-    relatedIds: [closure, variable, local-scope]
+    relatedIds:
+      - closure
+      - variable
+      - local-scope
   - id: array
     term: Array
     definition: 複数の値を順番つきで1つにまとめるデータの形。
     firstSlideId: javascript-ch04-l01-s01
-    relatedIds: [array-literal, element, index, object]
+    relatedIds:
+      - array-literal
+      - element
+      - index
+      - object
   - id: array-literal
     term: Array literal
     definition: 角括弧の中へ要素をカンマ区切りで並べ、Arrayを作る書き方。
     firstSlideId: javascript-ch04-l01-s02
-    relatedIds: [array, element, length]
+    relatedIds:
+      - array
+      - element
+      - length
   - id: element
     term: 要素
     definition: Arrayの中へ順番に並べた1つ1つの値。
     firstSlideId: javascript-ch04-l01-s02
-    relatedIds: [array, index, for-of]
+    relatedIds:
+      - array
+      - index
+      - for-of
   - id: length
     term: length
     definition: Arrayに入っている要素の件数を読み取るproperty。
     firstSlideId: javascript-ch04-l01-s03
-    relatedIds: [array, element, property]
+    relatedIds:
+      - array
+      - element
+      - property
   - id: index
     term: index
     definition: Arrayの要素がある位置を0から数えた番号。
     firstSlideId: javascript-ch04-l02-s01
-    relatedIds: [array, element, bracket-access, at-method]
+    relatedIds:
+      - array
+      - element
+      - bracket-access
+      - at-method
   - id: bracket-access
     term: 角括弧でのアクセス
     definition: Array名の直後の角括弧へindexを書き、目的の要素を読み取る方法。
     firstSlideId: javascript-ch04-l02-s02
-    relatedIds: [array, index, at-method]
+    relatedIds:
+      - array
+      - index
+      - at-method
   - id: at-method
     term: at
     definition: 丸括弧へindexを渡し、Arrayの目的の要素を読み取るmethod。
     firstSlideId: javascript-ch04-l02-s03
-    relatedIds: [array, index, bracket-access]
+    relatedIds:
+      - array
+      - index
+      - bracket-access
   - id: for-of
     term: for...of
     definition: Arrayの先頭から最後まで、要素を1つずつ順番に処理するLoop。
     firstSlideId: javascript-ch04-l03-s01
-    relatedIds: [array, element, iteration-variable, loop]
+    relatedIds:
+      - array
+      - element
+      - iteration-variable
+      - loop
   - id: iteration-variable
     term: 反復変数
     definition: Loopするたびに、現在処理しているArray要素を一時的に受け取る変数。
     firstSlideId: javascript-ch04-l03-s02
-    relatedIds: [for-of, array, element, variable]
+    relatedIds:
+      - for-of
+      - array
+      - element
+      - variable
   - id: object
     term: Object
     definition: 値へproperty名を付け、1つの対象が持つ複数の項目をまとめるデータの形。
     firstSlideId: javascript-ch04-l04-s01
-    relatedIds: [object-literal, property, key-value, array]
+    relatedIds:
+      - object-literal
+      - property
+      - key-value
+      - array
   - id: object-literal
     term: Object literal
     definition: 波括弧の中へproperty名と値の組を並べ、Objectを作る書き方。
     firstSlideId: javascript-ch04-l04-s02
-    relatedIds: [object, property, key-value]
+    relatedIds:
+      - object
+      - property
+      - key-value
   - id: property
     term: property
     definition: Objectの中で値の役割を示し、その値を読み取るために使う名前。
     firstSlideId: javascript-ch04-l04-s01
-    relatedIds: [object, key-value, dot-access, length]
+    relatedIds:
+      - object
+      - key-value
+      - dot-access
+      - length
   - id: key-value
     term: property名と値
     definition: Object literalでcolonの左へproperty名、右へ値を書く組。
     firstSlideId: javascript-ch04-l04-s02
-    relatedIds: [object, object-literal, property]
+    relatedIds:
+      - object
+      - object-literal
+      - property
   - id: dot-access
     term: dot access
     definition: Object名、dot、property名の順に書き、目的の値を読み取る方法。
     firstSlideId: javascript-ch04-l04-s03
-    relatedIds: [object, property, destructuring]
+    relatedIds:
+      - object
+      - property
+      - destructuring
   - id: destructuring
     term: Destructuring
     definition: ObjectやArrayの形を左辺に書き、必要な値へ一度に名前を付ける書き方。
     firstSlideId: javascript-ch04-l05-s01
-    relatedIds: [object, array, property, alias]
+    relatedIds:
+      - object
+      - array
+      - property
+      - alias
   - id: alias
     term: 別名
     definition: Object Destructuringでpropertyの値を受け取るために新しく付ける変数名。
     firstSlideId: javascript-ch04-l05-s02
-    relatedIds: [destructuring, property, variable]
+    relatedIds:
+      - destructuring
+      - property
+      - variable
   - id: method
     term: method
     definition: ArrayやObjectなどの値に結びつき、dotの後ろから呼び出すFunction。
     firstSlideId: javascript-ch05-l01-s01
-    relatedIds: [function, array, map, filter, reduce]
+    relatedIds:
+      - function
+      - array
+      - map
+      - filter
+      - reduce
   - id: callback
     term: callback
     definition: 別のFunctionへargumentとして渡し、決められた時点で呼び出してもらうFunction。
     firstSlideId: javascript-ch05-l01-s02
-    relatedIds: [function, parameter, map, filter, reduce]
+    relatedIds:
+      - function
+      - parameter
+      - map
+      - filter
+      - reduce
   - id: map
     term: map
     definition: Arrayの全要素をcallbackで変換し、同じ件数の新しいArrayを返すmethod。
     firstSlideId: javascript-ch05-l01-s01
-    relatedIds: [array, method, callback, immutable-update]
+    relatedIds:
+      - array
+      - method
+      - callback
+      - immutable-update
   - id: filter
     term: filter
     definition: callbackの条件がtrueになったArray要素だけを、新しいArrayへ残すmethod。
     firstSlideId: javascript-ch05-l02-s01
-    relatedIds: [array, method, callback, boolean]
+    relatedIds:
+      - array
+      - method
+      - callback
+      - boolean
   - id: reduce
     term: reduce
     definition: Array要素を順番に計算へ使い、accumulatorを通して1つの結果へ集計するmethod。
     firstSlideId: javascript-ch05-l03-s01
-    relatedIds: [array, method, callback, accumulator, initial-value]
+    relatedIds:
+      - array
+      - method
+      - callback
+      - accumulator
+      - initial-value
   - id: accumulator
     term: accumulator
     definition: reduceのcallbackで、それまでの計算結果を受け取り次の処理へ引き継ぐparameter。
     firstSlideId: javascript-ch05-l03-s02
-    relatedIds: [reduce, callback, parameter, initial-value]
+    relatedIds:
+      - reduce
+      - callback
+      - parameter
+      - initial-value
   - id: initial-value
     term: 初期値
     definition: reduceで最初のaccumulatorへ入れ、集計の開始地点を明示する値。
     firstSlideId: javascript-ch05-l03-s03
-    relatedIds: [reduce, accumulator, value]
+    relatedIds:
+      - reduce
+      - accumulator
+      - value
   - id: immutable-update
     term: immutable update
     definition: 元データを直接書き換えず、変更を反映した新しいデータを作る更新方法。
     firstSlideId: javascript-ch05-l04-s01
-    relatedIds: [array, object, map, spread-syntax]
+    relatedIds:
+      - array
+      - object
+      - map
+      - spread-syntax
   - id: spread-syntax
     term: spread syntax
     definition: 3つのdotでArray要素やObject propertyを新しいデータへ展開する書き方。
     firstSlideId: javascript-ch05-l04-s03
-    relatedIds: [array, object, property, immutable-update]
+    relatedIds:
+      - array
+      - object
+      - property
+      - immutable-update
   - id: module
     term: Module
     definition: JavaScriptの役割ごとにFileを分け、必要な値やFunctionだけを共有する仕組み。
     firstSlideId: javascript-ch06-l01-s01
-    relatedIds: [named-export, named-import, javascript]
+    relatedIds:
+      - named-export
+      - named-import
+      - javascript
   - id: named-export
     term: named export
     definition: exportの後ろに名前を付けた値やFunctionを書き、別Moduleへ公開する方法。
     firstSlideId: javascript-ch06-l01-s02
-    relatedIds: [module, named-import]
+    relatedIds:
+      - module
+      - named-import
   - id: named-import
     term: named import
     definition: importの波括弧へ公開名を書き、相対pathの別Moduleから受け取る方法。
     firstSlideId: javascript-ch06-l01-s03
-    relatedIds: [module, named-export, relative-path]
+    relatedIds:
+      - module
+      - named-export
+      - relative-path
   - id: relative-path
     term: 相対path
     definition: 現在のFileを基準に、同じWorkspace内のFile位置をdotとslashで示す書き方。
     firstSlideId: javascript-ch06-l01-s03
-    relatedIds: [module, named-import]
+    relatedIds:
+      - module
+      - named-import
   - id: error
     term: Error
     definition: 処理をそのまま続けられない問題と、その理由を表すJavaScriptの値。
     firstSlideId: javascript-ch06-l03-s01
-    relatedIds: [throw, try-catch, diagnostic]
+    relatedIds:
+      - throw
+      - try-catch
+      - diagnostic
   - id: throw
     term: throw
     definition: Errorを発生させ、現在の通常処理を止めて受け止める場所へ渡す構文。
     firstSlideId: javascript-ch06-l03-s02
-    relatedIds: [error, try-catch]
+    relatedIds:
+      - error
+      - try-catch
   - id: try-catch
     term: try/catch
     definition: tryで処理を試し、発生したErrorをcatchで受け止める構文。
     firstSlideId: javascript-ch06-l03-s03
-    relatedIds: [error, throw]
+    relatedIds:
+      - error
+      - throw
   - id: debug
     term: Debug
     definition: 期待値と実際値や診断位置を比べ、Bugの原因を絞って修正する作業。
     firstSlideId: javascript-ch06-l04-s01
-    relatedIds: [diagnostic, console]
+    relatedIds:
+      - diagnostic
+      - console
   - id: diagnostic
     term: 診断
     definition: Errorの種類と、確認するFile・行・位置を示す情報。
     firstSlideId: javascript-ch06-l04-s03
-    relatedIds: [debug, error]
+    relatedIds:
+      - debug
+      - error
   - id: dom
     term: DOM
     definition: ブラウザがページの要素をJavaScriptから操作できる形で持つ仕組み。
@@ -557,7 +811,6 @@ entries:
     firstSlideId: javascript-ch09-l03-s02
     relatedIds:
       - render-function
-
   - id: promise
     term: Promise
     definition: あとで得られる成功または失敗の結果を扱う仕組み。結果のデータそのものとは区別する。
@@ -650,3 +903,38 @@ entries:
     firstSlideId: javascript-ch11-l03-s03
     relatedIds:
       - accessible-name
+  - id: quiz-question-render
+    term: 問題を画面へ表示する
+    definition: 同じWorkspaceへ問題表示、回答、得点、結果、再挑戦を積み上げます。今回作るのは問題表示です。提供コードは同梱データを読み、成功/失敗を案内します。
+    firstSlideId: javascript-ch12-l01-s01
+    relatedIds: []
+  - id: quiz-answer-transition
+    term: 回答を受け取り、次の問題へ進む
+    definition: 押されたbuttonの文字を今の正解と比べます。回答前、回答済み、次の問題をstateで区別し、同じ問題を何回も回答できないようにします。
+    firstSlideId: javascript-ch12-l02-s01
+    relatedIds:
+      - quiz-question-render
+  - id: quiz-score-once
+    term: 正解だけ得点へ積む
+    definition: 正誤案内と得点は別のstateです。正解1問は1点、誤答は0点です。answeredのguardの後で、正解のときだけscoreを増やします。
+    firstSlideId: javascript-ch12-l03-s01
+    relatedIds:
+      - quiz-answer-transition
+  - id: quiz-result-transition
+    term: 全問の後に結果を出す
+    definition: 最後の問題への回答と結果表示を分けます。途中は「次の問題」、最後は「結果を見る」。最後のnextでfinishedへ進み、回答操作を閉じます。
+    firstSlideId: javascript-ch12-l04-s01
+    relatedIds:
+      - quiz-score-once
+  - id: quiz-restart-state
+    term: もう一度、最初から挑戦する
+    definition: もう一度は文字を消すだけでは足りません。index、score、answered、feedback、finishedを戻し、同じ読み込みとrenderへつなぎます。
+    firstSlideId: javascript-ch12-l05-s01
+    relatedIds:
+      - quiz-result-transition
+  - id: quiz-requirement-trace
+    term: 自分で設計する学習クイズ
+    definition: Briefから必要なstateと操作を整理します。今回は2カテゴリ、各2問です。提供データを使い、Guidedとは別の作品にします。完成Sourceは配布しません。
+    firstSlideId: javascript-ch13-l01-s01
+    relatedIds:
+      - quiz-restart-state
