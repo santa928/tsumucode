@@ -262,3 +262,53 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds: []
+  - id: redeclared-function
+    expectedStatus: incomplete
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/redeclared-function.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [
+        javascript-ch03-l04-e01-r01,
+        javascript-ch03-l04-e01-r02,
+        javascript-ch03-l04-e01-r03,
+        javascript-ch03-l04-e01-r04,
+        javascript-ch03-l04-e01-r05,
+      ]
+  - id: reassigned-function
+    expectedStatus: incomplete
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/reassigned-function.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [
+        javascript-ch03-l04-e01-r01,
+        javascript-ch03-l04-e01-r02,
+        javascript-ch03-l04-e01-r03,
+        javascript-ch03-l04-e01-r04,
+        javascript-ch03-l04-e01-r05,
+      ]
+  - id: unrelated-writes
+    expectedStatus: pass
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/unrelated-writes.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

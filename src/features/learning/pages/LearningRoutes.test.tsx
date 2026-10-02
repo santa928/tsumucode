@@ -1364,85 +1364,112 @@ describe('Learning routes', () => {
     );
   });
 
-  it('後工程合格後の前工程編集を保存すると全workspaceの現在完了を失効し過去成功を保つ', async () => {
-    stubContentFetch();
-    stubEditingCapability(true);
-    stubAdapters();
-    let storedCourse: CourseProgress | undefined = guidedStepOneProgress();
-    storedCourse = {
-      ...storedCourse,
-      currentComplete: true,
-      lessons: {
-        ...storedCourse.lessons,
-        'lesson-guided-step-2': {
-          ...storedCourse.lessons['lesson-guided-step-2']!,
-          passedExerciseIds: ['exercise-guided-step-2'],
-          passedChecklistItemIds: ['checklist-guided-step-2'],
-          passedRuleIds: ['rule-guided-step-2'],
-          passedViewportIds: ['viewport-guided-step-2'],
-          currentComplete: true,
-          firstCompletedAt: '2026-07-11T00:00:00.000Z',
+  it.each(['編集', 'Reset'] as const)(
+    '後工程合格後の前工程%sを保存すると全workspaceの現在完了を失効する',
+    async (operation) => {
+      stubContentFetch();
+      stubEditingCapability(true);
+      stubAdapters();
+      let storedCourse: CourseProgress | undefined = guidedStepOneProgress();
+      storedCourse = {
+        ...storedCourse,
+        currentComplete: true,
+        lessons: {
+          ...storedCourse.lessons,
+          'lesson-guided-step-2': {
+            ...storedCourse.lessons['lesson-guided-step-2']!,
+            passedExerciseIds: ['exercise-guided-step-2'],
+            passedChecklistItemIds: ['checklist-guided-step-2'],
+            passedRuleIds: ['rule-guided-step-2'],
+            passedViewportIds: ['viewport-guided-step-2'],
+            currentComplete: true,
+            firstCompletedAt: '2026-07-11T00:00:00.000Z',
+          },
         },
-      },
-    };
-    let storedDraft: ExerciseDraft | undefined = guidedStepOneDraft();
-    storedDraft = {
-      ...storedDraft,
-      lessonId: 'lesson-guided-step-2',
-      exerciseId: 'exercise-guided-step-2',
-      lastPassingSnapshots: {
-        ...storedDraft.lastPassingSnapshots,
-        'exercise-guided-step-2': {
-          ...storedDraft.lastPassingSnapshots['exercise-guided-step-1']!,
+      };
+      let storedDraft: ExerciseDraft | undefined = guidedStepOneDraft();
+      storedDraft = {
+        ...storedDraft,
+        lessonId: 'lesson-guided-step-2',
+        exerciseId: 'exercise-guided-step-2',
+        lastPassingSnapshots: {
+          ...storedDraft.lastPassingSnapshots,
+          'exercise-guided-step-2': {
+            ...storedDraft.lastPassingSnapshots['exercise-guided-step-1']!,
+          },
         },
-      },
-    };
-    const previousSnapshots = structuredClone(storedDraft.lastPassingSnapshots);
-    runtime.repository.getCourse.mockImplementation(async () => storedCourse);
-    runtime.repository.getDraft.mockImplementation(async () => storedDraft);
-    runtime.repository.putDraft.mockImplementation(async (draft) => {
-      storedDraft = structuredClone(draft);
-    });
-    runtime.repository.putDraftAndCourse.mockImplementation(async (draft, progress) => {
-      storedDraft = structuredClone(draft);
-      storedCourse = structuredClone(progress);
-    });
-    renderRoute('/courses/html-css/lessons/lesson-guided-step-1/exercises/exercise-guided-step-1');
-    await findCodeWorkspace();
-    const view = await waitFor(() => {
-      const element = document.querySelector<HTMLElement>('.cm-editor');
-      const candidate = element === null ? null : EditorView.findFromDOM(element);
-      if (candidate === null) throw new Error('CodeMirror viewを待機しています');
-      return candidate;
-    });
-    act(() => {
-      view.dispatch({
-        changes: { from: 0, to: view.state.doc.length, insert: '<main>工程2を壊した</main>' },
+      };
+      const previousSnapshots = structuredClone(storedDraft.lastPassingSnapshots);
+      runtime.repository.getCourse.mockImplementation(async () => storedCourse);
+      runtime.repository.getDraft.mockImplementation(async () => storedDraft);
+      runtime.repository.putDraft.mockImplementation(async (draft) => {
+        storedDraft = structuredClone(draft);
       });
-    });
-    await waitFor(() => {
-      expect(storedDraft?.files['index.html']).toBe('<main>工程2を壊した</main>');
-      expect(storedCourse?.lessons['lesson-guided-step-2']?.currentComplete).toBe(false);
-    });
-    expect(storedCourse.lessons['lesson-guided-step-1']?.currentComplete).toBe(false);
-    expect(storedCourse.lessons['lesson-guided-step-2']?.firstCompletedAt).toBe(
-      '2026-07-11T00:00:00.000Z',
-    );
-    expect(storedDraft.lastPassingSnapshots).toEqual(previousSnapshots);
-    expect(storedCourse.lessons['lesson-first-heading']?.currentComplete).toBe(true);
-    await act(async () => {
-      await router!.navigate(
-        '/courses/html-css/lessons/lesson-guided-step-2/exercises/exercise-guided-step-2/completion',
+      runtime.repository.putDraftAndCourse.mockImplementation(async (draft, progress) => {
+        storedDraft = structuredClone(draft);
+        storedCourse = structuredClone(progress);
+      });
+      renderRoute(
+        '/courses/html-css/lessons/lesson-guided-step-1/exercises/exercise-guided-step-1',
       );
-    });
-    await waitFor(() => {
-      expect(router!.state.location.pathname).toBe(
-        '/courses/html-css/lessons/lesson-guided-step-2/exercises/exercise-guided-step-2',
+      await findCodeWorkspace();
+      const view = await waitFor(() => {
+        const element = document.querySelector<HTMLElement>('.cm-editor');
+        const candidate = element === null ? null : EditorView.findFromDOM(element);
+        if (candidate === null) throw new Error('CodeMirror viewを待機しています');
+        return candidate;
+      });
+      if (operation === '編集') {
+        act(() => {
+          view.dispatch({
+            changes: { from: 0, to: view.state.doc.length, insert: '<main>工程2を壊した</main>' },
+          });
+        });
+      } else {
+        const user = userEvent.setup();
+        await user.click(screen.getByRole('button', { name: '最初に戻す' }));
+        await user.keyboard('{Escape}');
+        expect(storedCourse.lessons['lesson-guided-step-2']?.currentComplete).toBe(true);
+        expect(storedDraft.lastPassingSnapshots).toEqual(previousSnapshots);
+        await user.click(screen.getByRole('button', { name: '最初に戻す' }));
+        await user.click(
+          within(screen.getByRole('dialog', { name: '最初のコードに戻しますか？' })).getByRole(
+            'button',
+            { name: '最初のコードに戻す' },
+          ),
+        );
+      }
+      await waitFor(() => {
+        expect(storedDraft?.files['index.html']).toBe(
+          operation === '編集' ? '<main>工程2を壊した</main>' : '<main>工程1 starter</main>',
+        );
+        expect(storedCourse?.lessons['lesson-guided-step-2']?.currentComplete).toBe(false);
+      });
+      expect(storedCourse.lessons['lesson-guided-step-1']?.currentComplete).toBe(false);
+      expect(storedCourse.lessons['lesson-guided-step-2']?.firstCompletedAt).toBe(
+        '2026-07-11T00:00:00.000Z',
       );
-    });
-    expect(await findCodeWorkspace()).toBeInTheDocument();
-    expect(storedDraft.lastPassingSnapshots).toEqual(previousSnapshots);
-  }, 15_000);
+      const expectedSnapshots = operation === '編集' ? previousSnapshots : {};
+      expect(storedDraft.lastPassingSnapshots).toEqual(expectedSnapshots);
+      if (operation === 'Reset') {
+        expect(storedDraft).toMatchObject({ validationHistory: [], revealedHintIds: [] });
+      }
+      expect(storedCourse.lessons['lesson-first-heading']?.currentComplete).toBe(true);
+      await act(async () => {
+        await router!.navigate(
+          '/courses/html-css/lessons/lesson-guided-step-2/exercises/exercise-guided-step-2/completion',
+        );
+      });
+      await waitFor(() => {
+        expect(router!.state.location.pathname).toBe(
+          '/courses/html-css/lessons/lesson-guided-step-2/exercises/exercise-guided-step-2',
+        );
+      });
+      expect(await findCodeWorkspace()).toBeInTheDocument();
+      expect(storedDraft.lastPassingSnapshots).toEqual(expectedSnapshots);
+    },
+    15_000,
+  );
 
   it('Guided工程2の編集で全工程をdirty化し、同じSource・Viewport・Asset unionから原子的に再合格する', async () => {
     stubContentFetch();

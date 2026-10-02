@@ -4936,3 +4936,79 @@ items:
     visibility: authoring
     path: chapters/javascript-ch01/lessons/javascript-ch01-l03/exercises/javascript-ch01-l03-e01/fixtures/shadow-binding.js
     createdAt: '2026-10-02'
+  - id: javascript-ch01-l03-e01-redeclared-binding
+    visibility: authoring
+    path: chapters/javascript-ch01/lessons/javascript-ch01-l03/exercises/javascript-ch01-l03-e01/fixtures/redeclared-binding.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch01-l03-e01-reassigned-binding
+    visibility: authoring
+    path: chapters/javascript-ch01/lessons/javascript-ch01-l03/exercises/javascript-ch01-l03-e01/fixtures/reassigned-binding.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch01-l03-e01-switch-shadow
+    visibility: authoring
+    path: chapters/javascript-ch01/lessons/javascript-ch01-l03/exercises/javascript-ch01-l03-e01/fixtures/switch-shadow.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch01-l03-e01-for-shadow
+    visibility: authoring
+    path: chapters/javascript-ch01/lessons/javascript-ch01-l03/exercises/javascript-ch01-l03-e01/fixtures/for-shadow.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch01-l03-e01-shadow-console
+    visibility: authoring
+    path: chapters/javascript-ch01/lessons/javascript-ch01-l03/exercises/javascript-ch01-l03-e01/fixtures/shadow-console.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch01-l03-e01-const-other-scope
+    visibility: authoring
+    path: chapters/javascript-ch01/lessons/javascript-ch01-l03/exercises/javascript-ch01-l03-e01/fixtures/const-other-scope.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch01-l03-e01-scope-writes
+    visibility: authoring
+    path: chapters/javascript-ch01/lessons/javascript-ch01-l03/exercises/javascript-ch01-l03-e01/fixtures/scope-writes.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch02-l01-e01-redeclared-binding
+    visibility: authoring
+    path: chapters/javascript-ch02/lessons/javascript-ch02-l01/exercises/javascript-ch02-l01-e01/fixtures/redeclared-binding.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch02-l01-e01-reassigned-binding
+    visibility: authoring
+    path: chapters/javascript-ch02/lessons/javascript-ch02-l01/exercises/javascript-ch02-l01-e01/fixtures/reassigned-binding.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch02-l01-e01-scope-writes
+    visibility: authoring
+    path: chapters/javascript-ch02/lessons/javascript-ch02-l01/exercises/javascript-ch02-l01-e01/fixtures/scope-writes.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch03-l02-e01-redeclared-function
+    visibility: authoring
+    path: chapters/javascript-ch03/lessons/javascript-ch03-l02/exercises/javascript-ch03-l02-e01/fixtures/redeclared-function.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch03-l02-e01-reassigned-function
+    visibility: authoring
+    path: chapters/javascript-ch03/lessons/javascript-ch03-l02/exercises/javascript-ch03-l02-e01/fixtures/reassigned-function.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch03-l02-e01-unrelated-writes
+    visibility: authoring
+    path: chapters/javascript-ch03/lessons/javascript-ch03-l02/exercises/javascript-ch03-l02-e01/fixtures/unrelated-writes.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch03-l04-e01-redeclared-function
+    visibility: authoring
+    path: chapters/javascript-ch03/lessons/javascript-ch03-l04/exercises/javascript-ch03-l04-e01/fixtures/redeclared-function.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch03-l04-e01-reassigned-function
+    visibility: authoring
+    path: chapters/javascript-ch03/lessons/javascript-ch03-l04/exercises/javascript-ch03-l04-e01/fixtures/reassigned-function.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch03-l04-e01-unrelated-writes
+    visibility: authoring
+    path: chapters/javascript-ch03/lessons/javascript-ch03-l04/exercises/javascript-ch03-l04-e01/fixtures/unrelated-writes.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch06-l04-e01-redeclared-binding
+    visibility: authoring
+    path: chapters/javascript-ch06/lessons/javascript-ch06-l04/exercises/javascript-ch06-l04-e01/fixtures/redeclared-binding.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch06-l04-e01-reassigned-binding
+    visibility: authoring
+    path: chapters/javascript-ch06/lessons/javascript-ch06-l04/exercises/javascript-ch06-l04-e01/fixtures/reassigned-binding.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch06-l04-e01-scope-writes
+    visibility: authoring
+    path: chapters/javascript-ch06/lessons/javascript-ch06-l04/exercises/javascript-ch06-l04-e01/fixtures/scope-writes.js
+    createdAt: '2026-10-02'

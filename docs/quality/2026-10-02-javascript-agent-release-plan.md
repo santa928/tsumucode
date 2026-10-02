@@ -106,7 +106,7 @@ Task内の自分の記述の整合性と共有file / interfaceの組合せを事
 
 1. I-001: `javascript-ch01-l03-e01`は指定計算bindingを未修正のままConsole側だけで正答出力を作るコードが現契約で合格し得る。監査の具体負例を実Analyzer / Runner / Validatorへ通し、誤合格REDを取得する。対象bindingの初期化式とConsole参照を必要範囲で関係付け、Solution・既存正当別解・Starter・固定出力負例を維持する。完全な模範Source一致や汎用データフロー解析へ拡大しない。同型の既存教材は具体負例が成立する対象だけ調べる。
 2. 採点変更された既存Exerciseの旧合格だけを限定migrationで失効する。旧Source全文を既存隔離・復旧backupへ残す。全46Lessonの一括Reset、進捗/過去成功Sourceの消去は禁止する。
-3. I-002: 採点対象は現在工程までのprefix、編集/ResetによるcurrentComplete失効は同一Workspace全工程へ分離する。Course Indexの全Workspace outlineを用い、未来Lesson本文を先読みしたり未来工程を採点したりしない。後工程合格→前工程へ戻る→後工程要件を破壊→autosave / reload / Map / Export / Importで後工程currentCompleteが失効し、過去passing snapshot / 初回完了日時を保持することを確認する。
+3. I-002: 採点対象は現在工程までのprefix、編集/ResetによるcurrentComplete失効は同一Workspace全工程へ分離する。Course Indexの全Workspace outlineを用い、未来Lesson本文を先読みしたり未来工程を採点したりしない。後工程合格→前工程へ戻る→後工程要件を破壊→autosave / reload / Map / Export / Importで後工程currentCompleteが失効し、編集では過去passing snapshot / 初回完了日時を保持することを確認する。確定Resetは既存互換としてStarterへ戻しHint / 判定履歴 / passing snapshotを消去して全Workspace現在完了を失効し、取消はすべて保持する。
 4. Guided / Capstoneが既習`event.currentTarget`やForm取消+asyncを使う場合、固定`project` profileと既存currentTarget / submit guardを整合する。具体教材で使わないAPIは広げない。新JS専用guided schemaを複製しない。profileの許可/拒否matrix、取消後async、Keyboard/Focusを実Runtimeで検証する。
 
 **Interfaces:** 現在までのvalidation targetと全Workspace invalidation targetを別用途として公開し、Task2へhelper / schema / profileの正確な契約と検証済みAPIを渡す。source fact追加はstrict union・Source hash / Evidence結合を保つ。既存保存schema・ID・採点system error非履歴化を変えない。

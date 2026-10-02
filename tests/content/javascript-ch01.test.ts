@@ -179,6 +179,13 @@ describe('javascript-ch01', () => {
           { id: 'unrelated-computation', expectedStatus: 'incomplete' },
           { id: 'unused-function', expectedStatus: 'incomplete' },
           { id: 'shadow-binding', expectedStatus: 'incomplete' },
+          { id: 'redeclared-binding', expectedStatus: 'incomplete' },
+          { id: 'reassigned-binding', expectedStatus: 'incomplete' },
+          { id: 'switch-shadow', expectedStatus: 'incomplete' },
+          { id: 'for-shadow', expectedStatus: 'incomplete' },
+          { id: 'shadow-console', expectedStatus: 'incomplete' },
+          { id: 'const-other-scope', expectedStatus: 'incomplete' },
+          { id: 'scope-writes', expectedStatus: 'pass' },
         ]);
       } else {
         expect(exercise.fixtures).toHaveLength(5);

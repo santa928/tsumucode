@@ -65,7 +65,7 @@ validationRules:
     target: { kind: javascript-source, file: script.js }
     assertion:
       kind: javascript-source-fact
-      fact: { kind: binding, name: totalScore, declarationKind: const }
+      fact: { kind: binding, name: totalScore, declarationKind: const, scopeDepth: 0 }
     feedback:
       target: script.jsとConsole
       expected: const totalScoreの宣言
@@ -239,3 +239,83 @@ fixtures:
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds:
       [javascript-ch01-l03-e01-r01, javascript-ch01-l03-e01-r02, javascript-ch01-l03-e01-r03]
+  - id: redeclared-binding
+    expectedStatus: incomplete
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/redeclared-binding.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch01-l03-e01-r01, javascript-ch01-l03-e01-r02, javascript-ch01-l03-e01-r03]
+  - id: reassigned-binding
+    expectedStatus: incomplete
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/reassigned-binding.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch01-l03-e01-r01, javascript-ch01-l03-e01-r02, javascript-ch01-l03-e01-r03]
+  - id: switch-shadow
+    expectedStatus: incomplete
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/switch-shadow.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch01-l03-e01-r01, javascript-ch01-l03-e01-r02, javascript-ch01-l03-e01-r03]
+  - id: for-shadow
+    expectedStatus: incomplete
+    files:
+      - { path: script.js, language: javascript, source: fixtures/for-shadow.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch01-l03-e01-r01, javascript-ch01-l03-e01-r02, javascript-ch01-l03-e01-r03]
+  - id: shadow-console
+    expectedStatus: incomplete
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/shadow-console.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch01-l03-e01-r01, javascript-ch01-l03-e01-r02, javascript-ch01-l03-e01-r03]
+  - id: const-other-scope
+    expectedStatus: incomplete
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/const-other-scope.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      [javascript-ch01-l03-e01-r01, javascript-ch01-l03-e01-r02, javascript-ch01-l03-e01-r03]
+  - id: scope-writes
+    expectedStatus: pass
+    files:
+      - { path: script.js, language: javascript, source: fixtures/scope-writes.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []

@@ -96,6 +96,92 @@ describe('analyzeJavaScriptSource', () => {
     expect(result.facts.filter(({ kind }) => kind === 'computed-output')).toEqual([]);
   });
 
+  it.each([
+    [
+      '同名Function再宣言',
+      'function score(a,b){return a*b;} function score(a,b){return 30;} console.log(score(3,10));',
+    ],
+    [
+      'Function再代入',
+      'function score(a,b){return a*b;} score=function(a,b){return 30;}; console.log(score(3,10));',
+    ],
+    ['binding再宣言', 'var total=a*b; var total=30; console.log(total);'],
+    ['binding再代入', 'let total=a*b; total=30; console.log(total);'],
+    ['destructuring再代入', 'let total=a*b; [total]=[30]; console.log(total);'],
+    ['更新演算子', 'let total=a*b; total++; console.log(total);'],
+    ['既存bindingへのfor-of write', 'let total=a*b; for(total of [30]){} console.log(total);'],
+    [
+      'Function内の関連write',
+      'let total=a*b; function overwrite(){total=30;} overwrite(); console.log(total);',
+    ],
+    [
+      'switch discriminantの関連write',
+      'let total=a*b; switch(total=30){case 30: let total=0; break;} console.log(total);',
+    ],
+    [
+      'switch shadow未使用計算',
+      'const total=30; switch(0){case 0:const total=a*b;break;} console.log(total);',
+    ],
+    ['for shadow未使用計算', 'const total=30; for(let total=a*b;false;){} console.log(total);'],
+    [
+      'local Consoleが引数を無視',
+      'const print=console.log;const total=a*b;{const console={log(value){print(30);}};console.log(total);}',
+    ],
+  ])('%sを現在Consoleの計算根拠にしない', async (_label, source) => {
+    const result = await analyzeJavaScriptSource({
+      ...baseInput,
+      source: 'const a=3; const b=10;' + source,
+    });
+    expect(result.status).toBe('success');
+    if (result.status !== 'success') throw new Error('解析が成功しませんでした');
+    expect(
+      result.facts.filter((fact) => fact.kind === 'computed-output' && fact.scopeDepth === 0),
+    ).toEqual([]);
+  });
+
+  it.each([
+    'let total=a*b; console.log(total); total=0;',
+    'const total=a*b; let other=0; other=30; console.log(total);',
+    'const total=a*b; for(let total=0; total<1; total++){} console.log(total);',
+    'const total=a*b; switch(0){case 0:let total=0;total=1;break;} console.log(total);',
+    'const total=a*b; try{throw 0;}catch(total){total=1;} console.log(total);',
+    'const total=a*b; function unused(total){total=0;} console.log(total);',
+    'const total=a*b; function unused(console){console.log(0);} console.log(total);',
+    'for(var total=a*b; false;){} console.log(total);',
+    '{var total=a*b;} function unused(){var total=0;total=1;} console.log(total);',
+  ])('出力後または別lexical bindingのwriteは計算根拠を失効しない: %s', async (source) => {
+    const result = await analyzeJavaScriptSource({
+      ...baseInput,
+      source: 'const a=3; const b=10;' + source,
+    });
+    expect(result.status).toBe('success');
+    if (result.status !== 'success') throw new Error('解析が成功しませんでした');
+    expect(result.facts).toContainEqual(
+      expect.objectContaining({ kind: 'computed-output', name: 'total', scopeDepth: 0 }),
+    );
+  });
+
+  it('既存の明示scope Factを維持し、bindingはFor/Catchを含むlexical深さへ結び付ける', async () => {
+    const result = await analyzeJavaScriptSource({
+      ...baseInput,
+      source:
+        'for(let index=0;index<1;index++){const item=index;} try{throw 0;}catch(error){const caught=error;}',
+    });
+    expect(result.status).toBe('success');
+    if (result.status !== 'success') throw new Error('解析が成功しませんでした');
+    expect(result.facts.filter(({ kind }) => kind === 'scope')).toEqual([
+      expect.objectContaining({ scopeKind: 'program', depth: 0 }),
+      expect.objectContaining({ scopeKind: 'block', depth: 1 }),
+      expect.objectContaining({ scopeKind: 'block', depth: 1 }),
+      expect.objectContaining({ scopeKind: 'block', depth: 1 }),
+    ]);
+    expect(result.facts.filter(({ kind }) => kind === 'binding')).toEqual([
+      expect.objectContaining({ name: 'index', scopeDepth: 1 }),
+      expect.objectContaining({ name: 'item', scopeDepth: 2 }),
+      expect.objectContaining({ name: 'caught', scopeDepth: 2 }),
+    ]);
+  });
+
   it.each(['async'] as const)(
     '遅延currentTargetは%sでは実行前に未対応とする',
     async (capabilityProfile) => {
