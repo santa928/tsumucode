@@ -1,5 +1,7 @@
 # JavaScript Course 通常公開までの実装・検証計画
 
+> 最新実行範囲（2026-10-03 08:20/08:32 JST本人指示）: 独立レビュー・必要検証済み改善は既存Pagesへ先行配信し、JS全体の3persona受入と区別する。JS通常公開・公開後確認で全担当を停止し、TS/React/Next.jsへ進まない。旧PAUSED自動継続を再開せず、新継続も作らない。下記20:36の後続順次公開は過去決定として保持し、今回の実行は最新終了条件を優先する。差分と品質維持は[javascript-normal-release-policy](javascript-normal-release-policy.md#2026-10-03の先行配信と作業終了条件)に記録する。
+
 - 状態: `実施計画。公開受入・配信は未完了`
 - 要件正本: 2026-10-02の本人指示、[JavaScript全Course設計](2026-08-03-javascript-full-course-design.md)
 - 本計画の公開基準: [JavaScript通常公開基準](javascript-normal-release-policy.md)

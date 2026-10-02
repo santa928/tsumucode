@@ -123,7 +123,7 @@ validationRules:
     feedback:
       target: script.jsと実行結果
       expected: numberを更新するforの中で問題番号を表示する
-      nextAction: 同じ値・Function・処理から得た結果を使います。結果だけを別の固定値で表示していないか確認します。
+      nextAction: forの中でnumberを1から3まで増やし、現在のnumberを問題という文字と組み合わせてconsole.logへ渡します。繰り返しの外で3行を別に表示していないか確認します。
     hintId: javascript-ch02-l04-e01-h01
     relatedSlideId: javascript-ch02-l04-s04
 hints:

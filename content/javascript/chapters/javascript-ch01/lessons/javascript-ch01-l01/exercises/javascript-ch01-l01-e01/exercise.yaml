@@ -142,7 +142,7 @@ validationRules:
     feedback:
       target: script.jsと実行結果
       expected: 文字列・数値・真偽値をその種類のままConsoleへ渡す
-      nextAction: 同じ値・Function・処理から得た結果を使います。結果だけを別の固定値で表示していないか確認します。
+      nextAction: 文字列・数値・真偽値を、それぞれその種類のままconsole.logの丸括弧へ入れます。3とtrueに引用符が付いていないか確認します。
     hintId: javascript-ch01-l01-e01-h01
     relatedSlideId: javascript-ch01-l01-s04
 hints:
