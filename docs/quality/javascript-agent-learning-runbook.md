@@ -3,7 +3,7 @@
 - 状態: `手順初版。全52の実施記録は未取得`
 - 適用: [JS通常公開基準](javascript-normal-release-policy.md)、[実装計画](2026-10-02-javascript-agent-release-plan.md)のTask 4 / 5
 - モデル: GPT-6.1 Sol、推論high以上。今回xhigh
-- 条件: 3独立役、各自Chapter 00から全52 Lesson、別保存状態、同じ固定source / build
+- 条件: 3独立役、各自Chapter 00から全52 Lesson / 全54 Exercise（Course完了必須52＋任意Closure2）、別保存状態、同じ固定source / build
 - 証拠: `/private/tmp`または本計画のgitignored workspaceに役別に保存。教材Source・正解はこのrunbookへ転載しない
 
 ## ペルソナの復元と今回の採用
@@ -24,7 +24,11 @@
 
 ## 準備と独立性
 
+2026-10-02 20:36 JSTの本人承認により、Task2教材・追加25fixとTask3独立Gate file実装を並行に進める。Gateのschema/selector/test fixtureは先行できるが、実migration seed/revision/承認記録、統合/最終review/入力凍結は必要前提を待つ。Docker測定/開発は資源GOを守り、性能測定へ重ねない。3役の実学習開始条件は全52教材・採点・保存の承認、Gate統合/独立review、未達0と固定source/buildが揃った時点のまま維持する。
+
 rootは教材・採点・保存入力を凍結し、source SHA、Course revision、Lesson source hash一覧、production build hash、URL / subpath、Browser / viewport、開始時刻を記録する。52LessonのID / 順序と公開画面の入口だけを渡し、作者のinstructions Source / Solution / Fixture / Validator / 実装 / hidden expected / 他役報告を渡さない。
+
+draftの初回入口はHomeの「制作途中のレッスンを試す」から始める。試用目次の「一続きに読む：JavaScriptで画面の文字を変える」、Readerの可視演習リンク、演習の「← コース」を順に実観測して全52 LessonのCourse Mapへ進み、先頭Lessonから学習する。固定候補でこの導線を確認し、見えていない演習URLの直接入力や仮公開で置き換えない。公開学習パスと通常LibraryへのJS掲載は、後段の公開metadata変更で別に確認する。
 
 3役は新しい独立BrowserContextと保存領域から開始する。途中セーブを共有・複製しない。Browser操作は実UIで行い、CodeMirror入力・click・keyboard・iframe内操作を使用する。内部DB / progress / 合格状態の注入は禁止。運用担当がControllerを補助しても、回答や修正内容を教えない。
 
@@ -38,7 +42,7 @@ rootは教材・採点・保存入力を凍結し、source SHA、Course revision
 4. 誤答や説明不足があれば、教材見直しと段階Hintから修正する。Hint level、Retry、可視解説利用、既存知識の補完を区別する。
 5. 保存表示、完了/途中状態、次の学習への移動、終了時刻を記録する。system errorを不正解回数へ勝手に含めない。
 
-48標準Exerciseを含め表示された必須Exerciseをそれぞれ実施し、standard46 / guided5 / capstone1の全Lesson coverageを揃える。選択的な任意練習は実施/未実施と範囲を区別し、必須を任意に変更しない。
+48標準Exercise（完了必須46＋任意Closure2）と新制作6Exerciseを含む全54を、各役それぞれ実施する。Course完了の必須集合は52、任意集合は`javascript-ch03-l05-e02` / `javascript-ch03-l05-e03`の2問で、今回の操作coverageは両方を含む。standard46 / guided5 / capstone1の全52Lesson coverage、各Exerciseの必須/任意と実施結果を別に照合する。「54必須」と呼ばず、任意2をCourse完了条件へ書き換えたり、操作検証から外したりしない。
 
 ## 各役に必須の横断操作
 
@@ -68,12 +72,37 @@ rootは教材・採点・保存入力を凍結し、source SHA、Course revision
 | 学習限界 | Hint level、Retry、解説利用、既存知識の補完、Controllerの操作制約               |
 | 判定     | 完了 / blocking / 必須未確認、原因仮説、改善案、再検証の証拠                    |
 
-rootは役別52行、標準/制作の必須操作、証拠とReportの一致を照合する。操作数を独立test件数と呼ばない。locator / Controller timeoutを製品不具合と混同せず、実画面を読み直して結果を記録する。
+rootは役別52Lesson行・54distinct Exerciseの操作、標準/制作の必須操作、証拠とReportの一致を照合する。操作数を独立test件数と呼ばない。locator / Controller timeoutを製品不具合と混同せず、実画面を読み直して結果を記録する。
 
 ## 是正と完了条件
 
+機械記録は`scripts/release/javascriptQualityRecords.ts`のstrict schemaに従う。各役はactor/session/context/storageとpaired fresh Import contextを分離し、ordered52 Lesson ID/sourceHash/kind/現在完了、全54 Exerciseのrequired/optional・採点必須requirement・実Scenarioを実教材へ照合する。全操作に期待を記録したintentAt、completedAt、expected/actual、画像またはDOM＋原logのdigestを持ち、Export原download、別原report、独立原本照合reviewも固定する。schema生成を実操作成功へ読み替えない。private原本は別保存し、Actionsがそれを直接読んだと主張しない。S/Ddraft/input hashとP/Dfinalの5入口・再開smokeは別bindingにする。
+
 blockingや必須未確認があればReportを保持したままTask5へ渡す。是正後は対象source / hash / 変更範囲、同役の再操作、期待 / 実際 / 証拠を追加し、必要な独立reviewを受ける。学習順序や制作契約を広く変えた場合は全通しの独立証拠を取り直す。役を途中で別の役へ引き継いで全52の単独完走と呼ばない。
 
-完了は3役それぞれ52/52、全必須操作実証、全blocking0・必須未確認0と、有効な固定sourceへの結合が揃った場合だけである。技術test成功、旧部分試用、他役の合格、模擬理解の自己申告だけでは埋めない。
+完了は3役それぞれ52/52Lesson・54/54Exercise操作、全必須横断操作実証、全blocking0・必須未確認0と、有効な固定sourceへの結合が揃った場合だけである。技術test成功、旧部分試用、他役の合格、模擬理解の自己申告だけでは埋めない。
+
+## 公開前候補URLとroot観測binding
+
+S全通しとP/Dfinalのsmokeは、固定Docker候補の実`http://127.0.0.1:<owned-port>/<fixed-basePath>/`を記録する。公開前のPを既存Pagesへ配信済みと書かない。inputValidityのdraftCandidate/finalCandidateへphase、別runId、sourceCommit、canonical D、pageUrl、Source/helper-dist/manifest/config/helper hash、root観測者/時刻/原証拠digestを結合する。roleのcandidateRunIdはS、各finalSmokesはPに一致させ、root観測原本も独立照合する。3役S学習完了後にPを観測し、P smokeはその後だけ行う。
+
+公開後の開始/再開/採点/保存/Export/fresh Importは既存Pages HTTPSと実同Run/Artifactの別証拠として取得する。ローカル候補/blank成功を配信後へ転記しない。実記録と承認はまだ作成していない。
+
+| 区分 | Task3限定fixの差分                                                                              |
+| ---- | ----------------------------------------------------------------------------------------------- |
+| 維持 | 全52/54、3役独立、S/Pと最終Artifact、公開後HTTPS/Run/実操作、旧HTML、全site品質/閾値            |
+| 修正 | 実build/Compose/helper入力scope v2、JS共通literal記録集合、S/P候補の実local URL/root観測binding |
+| 保留 | 実Source/履歴/seed/記録統合、独立再review、全実操作、最終公開Gateと公開                         |
+| 削除 | 0。契約不具合修正であり、通常公開基準の緩和ではない                                             |
+
+## 2026-10-02進行順改訂の差分
+
+| 区分 | 内容                                                                                 | 理由/影響                                                                         |
+| ---- | ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| 維持 | 独立3役、全52Lesson、先読み禁止、別保存、全横断操作、未達0、入力固定、Artifact有効性 | 品質・安全・性能・受入条件の削除0                                                 |
+| 追加 | Course完了必須52＋任意2と、今回の各役全54操作scopeを明示                             | 従来48標準Exerciseに任意2が含まれていた。数値と実操作範囲を維持してラベルを正確化 |
+| 変更 | Task2/追加25fixとTask3独立Gate実装を並行、統合/最終review/入力凍結は必要前提待ち     | 20:36 JST本人承認による実行順変更。未完成入力で学習を始める許可ではない           |
+| 保留 | 実施チェック・合格・公開は実証前未達のまま                                           | 実証後だけrootが承認/Issue更新/公開を扱う                                         |
+| 削除 | なし                                                                                 | JS公開を次コース制作の完了待ちにしない                                            |
 
 Reportは「エージェントによる模擬学習検証」と明記する。実人の理解受入・自然な誤解率・物理機器 / 音声支援技術・公開配信の成功はそれぞれ別証拠である。

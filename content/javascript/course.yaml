@@ -4,7 +4,7 @@ title: JavaScript はじめの一歩
 description: 画面の変化から値・制御・データ・DOM・非同期を学び、学習クイズを制作する
 audience: HTMLとCSSの役割を知り、JavaScriptを初めて学ぶ本人と身内
 estimatedMinutes: 1010
-revision: 2026-10-02.4
+revision: 2026-10-02.5
 runnerId: javascript
 validatorId: javascript
 glossarySource: glossary.yaml
@@ -12,6 +12,7 @@ conceptsSource: concepts.yaml
 documentationSources: []
 authoringSources:
   - performance.yaml
+  - release-history.yaml
 supportedDevices:
   exercise: desktop
   study:
@@ -247,6 +248,25 @@ progressMigrations:
         action: intentionally-reset
         id: javascript-ch11-l02-e01
         reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+  - fromRevision: 2026-10-02.4
+    toRevision: 2026-10-02.5
+    steps:
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch05-l01-e01
+        reason: 配列の値とmap/filter/reduceの戻り値の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch05-l02-e01
+        reason: 配列の値とmap/filter/reduceの戻り値の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch05-l03-e01
+        reason: 配列の値とmap/filter/reduceの戻り値の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch05-l04-e01
+        reason: 配列の値とmap/filter/reduceの戻り値の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
 phases:
   - id: javascript-p00-core
     title: JavaScript Core

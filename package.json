@@ -44,6 +44,7 @@
     "release:approval": "tsx scripts/release/verifyReleaseApproval.ts",
     "release:target": "tsx scripts/release/verifyReleaseTarget.ts",
     "release:report": "tsx scripts/release/writeReleaseReport.ts",
+    "release:input": "tsx scripts/release/javascriptInputHashes.ts",
     "check": "npm run content:compile && npm run lint && npm run test:changed && npm run build:app && npm run smoke:learning-chunks",
     "check:release": "npm run content:compile && npm run content:review && npm run lint && npm run test:run && npm run build:app && npm run smoke:learning-chunks"
   },

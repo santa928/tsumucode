@@ -23,6 +23,10 @@ items:
   - id: javascript-performance
     visibility: authoring
     path: performance.yaml
+  - id: javascript-release-history-ledger
+    visibility: authoring
+    path: release-history.yaml
+    createdAt: 2026-10-02
   - id: javascript-ch00-chapter
     visibility: public
     path: chapters/javascript-ch00/chapter.yaml

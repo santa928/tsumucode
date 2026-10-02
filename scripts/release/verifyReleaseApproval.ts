@@ -1,5 +1,5 @@
 import { execFile } from 'node:child_process';
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, realpath, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { promisify } from 'node:util';
@@ -11,12 +11,19 @@ import {
   hashReleaseCandidateTree,
   type ArtifactHashes,
 } from './releaseHashes';
+import { Sha256Schema, CommitShaSchema } from './releaseSchema';
 import {
-  ReleaseApprovalSchema,
-  ReleaseHistorySchema,
-  Sha256Schema,
-  type ReleaseApproval,
-} from './releaseSchema';
+  RELEASE_HISTORY_PATHS,
+  releaseMetadataPaths,
+  resolveReleaseCourseContract,
+  type ReleaseCourseId,
+} from './releaseCourseContracts';
+import {
+  parseCourseReleaseApproval,
+  parseCourseReleaseHistory,
+  type CourseReleaseApproval,
+  type CourseReleaseHistory,
+} from './javascriptReleaseSchema';
 
 const execFileAsync = promisify(execFile);
 
@@ -28,6 +35,7 @@ export type ManualQualityRecordName =
   | 'releaseChecklist';
 
 export interface SourceApprovalResult {
+  readonly courseId?: ReleaseCourseId;
   readonly verifiedSourceCommit: string;
   readonly candidateTreeSha256: string;
   readonly canonicalDistSha256: string;
@@ -39,6 +47,7 @@ export interface SourceApprovalResult {
 export interface ApprovedQualityEvidenceOptions {
   readonly workflowHead?: string;
   readonly candidateTreeFileOverrides?: ReadonlyMap<string, Uint8Array>;
+  readonly revision?: string;
 }
 
 /** 期待hashと実測hashを名前付きで比較し、stale recordを明示する。 */
@@ -214,9 +223,12 @@ function recordBindings(
 /** draftを含まない承認済みRelease approvalを読み込む。 */
 export async function loadApprovedReleaseApproval(
   repositoryRoot: string,
-): Promise<ReleaseApproval & { readonly status: 'approved' }> {
-  const approval = ReleaseApprovalSchema.parse(
-    parse(await readFile(path.join(repositoryRoot, 'docs/quality/release-approval.yaml'), 'utf8')),
+  courseId: ReleaseCourseId = 'html-css',
+): Promise<CourseReleaseApproval & { readonly status: 'approved' }> {
+  const contract = resolveReleaseCourseContract(courseId);
+  const approval = parseCourseReleaseApproval(
+    courseId,
+    parse(await readFile(path.join(repositoryRoot, contract.approvalPath), 'utf8')),
   );
   if (
     approval.status !== 'approved' ||
@@ -231,19 +243,22 @@ export async function loadApprovedReleaseApproval(
   ) {
     throw new Error('Release approvalが承認済みの完全なbindingではありません');
   }
-  return approval as ReleaseApproval & { readonly status: 'approved' };
+  return approval as CourseReleaseApproval & { readonly status: 'approved' };
 }
 
 /** approvalとRelease Historyを読み、draftでない承認済みmetadataを返す。 */
-async function loadApprovedMetadata(repositoryRoot: string): Promise<{
-  readonly approval: ReleaseApproval & { readonly status: 'approved' };
-  readonly history: ReturnType<typeof ReleaseHistorySchema.parse>;
+async function loadApprovedMetadata(
+  repositoryRoot: string,
+  courseId: ReleaseCourseId,
+): Promise<{
+  readonly approval: CourseReleaseApproval & { readonly status: 'approved' };
+  readonly history: CourseReleaseHistory;
 }> {
-  const approval = await loadApprovedReleaseApproval(repositoryRoot);
-  const history = ReleaseHistorySchema.parse(
-    parse(
-      await readFile(path.join(repositoryRoot, 'content/html-css/release-history.yaml'), 'utf8'),
-    ),
+  const contract = resolveReleaseCourseContract(courseId);
+  const approval = await loadApprovedReleaseApproval(repositoryRoot, courseId);
+  const history = parseCourseReleaseHistory(
+    courseId,
+    parse(await readFile(path.join(repositoryRoot, contract.historyPath), 'utf8')),
   );
   return { approval, history };
 }
@@ -253,7 +268,10 @@ export async function assertProductUnchanged(
   repositoryRoot: string,
   verifiedSourceCommit: string,
   workflowHead: string,
+  courseId: ReleaseCourseId = 'html-css',
+  revision?: string,
 ): Promise<void> {
+  resolveReleaseCourseContract(courseId);
   try {
     await execFileAsync(
       'git',
@@ -264,9 +282,15 @@ export async function assertProductUnchanged(
         workflowHead,
         '--',
         '.',
-        ':(exclude)docs/superpowers/**',
-        ':(exclude)docs/quality/**',
-        ':(exclude)content/html-css/release-history.yaml',
+        ...(courseId === 'javascript'
+          ? releaseMetadataPaths(courseId, revision).map(
+              (relative) => `:(exclude,literal)${relative}`,
+            )
+          : [
+              ':(exclude)docs/superpowers/**',
+              ':(exclude)docs/quality/**',
+              ...RELEASE_HISTORY_PATHS.map((historyPath) => `:(exclude)${historyPath}`),
+            ]),
       ],
       { cwd: repositoryRoot },
     );
@@ -283,7 +307,7 @@ export async function assertProductUnchanged(
 /** 承認sourceからProductが不変で、全手動記録が同じsource/artifactへ承認済みか検証する。 */
 export async function verifyApprovedQualityEvidence(
   repositoryRoot: string,
-  approval: ReleaseApproval & { readonly status: 'approved' },
+  approval: CourseReleaseApproval & { readonly status: 'approved' },
   options: ApprovedQualityEvidenceOptions = {},
 ): Promise<void> {
   const root = path.resolve(repositoryRoot);
@@ -300,21 +324,41 @@ export async function verifyApprovedQualityEvidence(
     ['merge-base', '--is-ancestor', approval.verifiedSourceCommit, workflowHead],
     { cwd: root },
   );
-  await assertProductUnchanged(root, approval.verifiedSourceCommit, workflowHead);
+  const courseId = 'courseId' in approval ? approval.courseId : 'html-css';
+  if (courseId === 'javascript' && options.revision === undefined)
+    throw new Error('JS品質承認には選択candidateのrevisionが必要です');
+  await assertProductUnchanged(
+    root,
+    approval.verifiedSourceCommit,
+    workflowHead,
+    courseId,
+    options.revision,
+  );
   assertDigestMatch(
     'Release Candidate tree',
-    await hashReleaseCandidateTree(root, options.candidateTreeFileOverrides),
+    await hashReleaseCandidateTree(
+      root,
+      options.candidateTreeFileOverrides,
+      courseId,
+      options.revision,
+    ),
     approval.candidateTreeSha256,
   );
-  for (const recordName of Object.keys(approval.records) as ManualQualityRecordName[]) {
-    const record = approval.records[recordName];
+  const jsSources = new Map<string, string>();
+  const records: Readonly<Record<string, { readonly path: string; readonly sha256: string }>> =
+    approval.records;
+  for (const [recordName, record] of Object.entries(records)) {
     const absolute = path.resolve(root, record.path);
     if (!absolute.startsWith(`${root}${path.sep}`)) {
       throw new Error(`品質記録がRepository外を指しています: ${record.path}`);
     }
     if (record.sha256 === 'draft') throw new Error(`${recordName}のhashがdraftです`);
+    if ((await realpath(absolute)) !== absolute)
+      throw new Error('品質記録pathにsymlinkを含められません');
+    assertDigestMatch(recordName, await hashFile(absolute), record.sha256);
     const source = await readFile(absolute, 'utf8');
-    validateManualQualityRecord(recordName, source);
+    if ('courseId' in approval) jsSources.set(recordName, source);
+    else validateManualQualityRecord(recordName as ManualQualityRecordName, source);
     const bindings = recordBindings(source, path.extname(record.path));
     if (
       bindings.verifiedSourceCommit !== approval.verifiedSourceCommit ||
@@ -322,16 +366,20 @@ export async function verifyApprovedQualityEvidence(
     ) {
       throw new Error(`${recordName}の内部bindingがRelease approvalと一致しません`);
     }
-    assertDigestMatch(recordName, await hashFile(absolute), record.sha256);
+  }
+  if ('courseId' in approval) {
+    const { verifyJavascriptQualityEvidence } = await import('./verifyJavascriptQualityEvidence');
+    await verifyJavascriptQualityEvidence(root, approval, jsSources);
   }
 }
 
 /** 手動記録、candidate tree、source commitのbindingを検証する。 */
 export async function verifyReleaseSourceApproval(
   repositoryRoot: string,
+  courseId: ReleaseCourseId = 'html-css',
 ): Promise<SourceApprovalResult> {
   const root = path.resolve(repositoryRoot);
-  const { approval, history } = await loadApprovedMetadata(root);
+  const { approval, history } = await loadApprovedMetadata(root, courseId);
   const candidate = history.candidate;
   if (
     candidate.status !== 'approved' ||
@@ -343,9 +391,26 @@ export async function verifyReleaseSourceApproval(
     throw new Error('Release History candidateとRelease approvalが一致しません');
   }
 
-  await verifyApprovedQualityEvidence(root, approval);
+  await verifyApprovedQualityEvidence(root, approval, { revision: candidate.revision });
+  if ('courseId' in candidate && 'courseId' in approval) {
+    const { JavascriptAgentLearningRecordSchema } = await import('./javascriptQualityRecords');
+    const learning = JavascriptAgentLearningRecordSchema.parse(
+      parse(await readFile(path.join(root, approval.records.agentLearning.path), 'utf8')),
+    );
+    if (
+      candidate.draftSourceCommit === 'draft' ||
+      candidate.draftCanonicalDistSha256 === 'draft' ||
+      candidate.normalizedLearningInputSha256 === 'draft' ||
+      candidate.draftSourceCommit !== learning.draftSourceCommit ||
+      candidate.draftCanonicalDistSha256 !== learning.draftCanonicalDistSha256 ||
+      candidate.normalizedLearningInputSha256 !== learning.draftNormalizedInputSha256
+    ) {
+      throw new Error('candidateの学習S/Ddraft/input bindingが模擬学習記録と一致しません');
+    }
+  }
 
   return {
+    courseId,
     verifiedSourceCommit: approval.verifiedSourceCommit,
     candidateTreeSha256: approval.candidateTreeSha256,
     canonicalDistSha256: approval.canonicalDistSha256,
@@ -359,10 +424,16 @@ export async function verifyReleaseSourceApproval(
 export async function verifyReleaseArtifactApproval(
   repositoryRoot: string,
   supplied?: Partial<ArtifactHashes>,
+  courseId: ReleaseCourseId = 'html-css',
 ): Promise<ArtifactHashes> {
   const root = path.resolve(repositoryRoot);
-  const { approval } = await loadApprovedMetadata(root);
-  const actual = await calculateArtifactHashes(root);
+  const { approval } = await loadApprovedMetadata(root, courseId);
+  const actual = await calculateArtifactHashes(root, 'dist', courseId);
+  if (courseId === 'javascript' && supplied !== undefined && supplied.courseId !== courseId) {
+    throw new Error('JS actual-outputへ一致するcourse_idが必要です');
+  }
+  if (supplied?.courseId !== undefined && supplied.courseId !== courseId)
+    throw new Error('actual-outputのCourseが異なります');
   if (supplied !== undefined) {
     for (const name of [
       'artifactDigest',
@@ -385,6 +456,7 @@ export async function verifyReleaseArtifactApproval(
 /** key=value outputを改行なしのallowlist値として書き出す。 */
 async function writeGithubOutput(filePath: string, result: SourceApprovalResult): Promise<void> {
   const values = {
+    course_id: result.courseId ?? 'html-css',
     verified_source_commit: result.verifiedSourceCommit,
     candidate_tree_sha256: result.candidateTreeSha256,
     canonical_dist_sha256: result.canonicalDistSha256,
@@ -405,6 +477,14 @@ async function writeGithubOutput(filePath: string, result: SourceApprovalResult)
 
 /** release:reportのkey=value Artifact hashをstrictに読む。 */
 async function readActualOutput(filePath: string): Promise<Partial<ArtifactHashes>> {
+  const seen = new Set<string>();
+  const allowed = new Set([
+    'artifact_digest',
+    'course_hash',
+    'provenance_hash',
+    'visual_baseline_hash',
+    'course_id',
+  ]);
   const pairs = Object.fromEntries(
     (await readFile(filePath, 'utf8'))
       .trim()
@@ -413,10 +493,24 @@ async function readActualOutput(filePath: string): Promise<Partial<ArtifactHashe
       .map((line) => {
         const separator = line.indexOf('=');
         if (separator <= 0) throw new Error('actual-outputの形式が不正です');
-        return [line.slice(0, separator), line.slice(separator + 1)];
+        const key = line.slice(0, separator);
+        if (!allowed.has(key) || seen.has(key))
+          throw new Error('actual-outputの未知/重複keyを拒否します');
+        seen.add(key);
+        return [key, line.slice(separator + 1)];
       }),
   );
+  if (
+    !['artifact_digest', 'course_hash', 'provenance_hash', 'visual_baseline_hash'].every((key) =>
+      seen.has(key),
+    )
+  ) {
+    throw new Error('actual-outputに必須Artifact hashがありません');
+  }
   return {
+    ...(pairs.course_id === undefined
+      ? {}
+      : { courseId: resolveReleaseCourseContract(pairs.course_id).courseId }),
     ...(pairs.artifact_digest === undefined
       ? {}
       : { artifactDigest: Sha256Schema.parse(pairs.artifact_digest) }),
@@ -434,12 +528,30 @@ async function readActualOutput(filePath: string): Promise<Partial<ArtifactHashe
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const arguments_ = process.argv.slice(2);
+  const courseId = resolveReleaseCourseContract(argumentValue(arguments_, '--course-id')).courseId;
   const sourceOnly = arguments_.includes('--source-only');
   const artifact = arguments_.includes('--artifact');
-  if (sourceOnly === artifact)
-    throw new Error('--source-onlyまたは--artifactを1件指定してください');
-  if (sourceOnly) {
-    const result = await verifyReleaseSourceApproval(process.cwd());
+  const productOnly = arguments_.includes('--product-only');
+  if ([sourceOnly, artifact, productOnly].filter(Boolean).length !== 1)
+    throw new Error('--source-only/--artifact/--product-onlyを1件指定してください');
+  if (productOnly) {
+    const verifiedSource = CommitShaSchema.parse(
+      argumentValue(arguments_, '--verified-source-sha'),
+    );
+    const { stdout } = await execFileAsync('git', ['rev-parse', 'HEAD'], {
+      cwd: process.cwd(),
+      encoding: 'utf8',
+    });
+    await assertProductUnchanged(
+      process.cwd(),
+      verifiedSource,
+      stdout.trim(),
+      courseId,
+      argumentValue(arguments_, '--revision'),
+    );
+    console.log(`Release Product unchanged: ${verifiedSource}`);
+  } else if (sourceOnly) {
+    const result = await verifyReleaseSourceApproval(process.cwd(), courseId);
     const githubOutput = argumentValue(arguments_, '--github-output');
     if (githubOutput !== undefined) await writeGithubOutput(githubOutput, result);
     console.log(`Release source approval OK: ${result.verifiedSourceCommit}`);
@@ -448,6 +560,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     const result = await verifyReleaseArtifactApproval(
       process.cwd(),
       actualOutput === undefined ? undefined : await readActualOutput(actualOutput),
+      courseId,
     );
     console.log(`Release artifact approval OK: ${result.artifactDigest}`);
   }

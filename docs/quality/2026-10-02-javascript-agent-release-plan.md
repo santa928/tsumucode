@@ -10,37 +10,41 @@
 - Branch: `codex/javascript-course-release`
 - 元checkout: `/Users/santa/Documents/ReactStudy`、別branch `codex/fix-home-launch-target` / `24fe6e8`を保護する
 - 実装・レビュー・模擬学習: 本人指定の`GPT-6.1 Sol`、推論強度`high`以上。本計画の実行は`xhigh`
+- 進行順改訂: `2026-10-02 20:36 JST本人承認。JS最優先、完成CourseからJS→TS→React→Next.jsの順で通常公開。独立Gate/レビューは教材fixと並行`
 
 ## 目的と現状
 
-JSを最優先として、全教材、制作、独立した模擬学習、是正、通常公開、公開後操作まで完了する。PRの途中mergeや一部教材の合格を完了とは扱わない。TypeScript・React・Next.jsの追加実験は今回の作業から外し、既存変更を保持する。
+JSを最優先として、全教材、制作、独立した模擬学習、是正、通常公開、公開後操作まで完了する。PRの途中mergeや一部教材の合格を完了とは扱わない。2026-10-02 20:36 JSTの本人承認により、完成CourseからJS→TypeScript→React→Next.jsの順で通常公開する。JSの公開完了を次Course制作の完了待ちにせず、独立Gateとレビューを教材・採点fixと並行に進める。本計画の実装所有はJSのままで、後続Courseの既存変更を保持する。
 
 BASEの実体は`content/javascript/course.yaml`、12 Chapter、46 standard Lesson、184 Slide、48 standard Exercise、760分、3 Phase、`draft`。Chapter 12のGuided Projectは5 Lesson / 100分、Chapter 13のCapstoneは1 Lesson / 150分を追加する。最終合計は現行の標準教材時間を保持した場合、**1,010分（16時間50分）**となる。旧設計の1,000分との差はChapter 03が旧75分から実体85分になっている10分であり、通過目的で時間を削らない。新教材の実体が変わればLesson・Chapter・Course・表示・検査を同じ実測合計へ同期する。
 
 46 Lesson / 48 Exercise / 760分はsource fileの列挙と`estimatedMinutes`の集計、184 Slide / 12 Chapter / 3 PhaseはCourse宣言と対応sourceで確認した初期状態である。この確認はcompileやBrowser成功ではない。
 
+48標準Exerciseの内訳はLesson完了必須46＋任意Closure2。制作6を加えた最終54 Exerciseは完了必須52＋任意2となり、3役の今回の実操作scopeは各自全54を維持する。任意2をCourse完了条件に加えず、54全部を「必須」と呼ばない。以下の初期状態列は計画作成時の履歴であり、後続実証なしに完了へ更新しない。
+
 ## 要件台帳
 
-| ID          | 区分                 | 要件・受入条件                                                                                                            | 初期状態                               |
-| ----------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
-| REQ-JSR-001 | 維持                 | 52 Lesson = 46 standard + 5 guided + 1 capstone、14 Chapter、4 Phaseを完成する                                            | Guided / Capstone未作成                |
-| REQ-JSR-002 | 維持                 | 既習Conceptを制作へ接続し、直前の可視教材にない構文を必須にしない                                                         | 全52の確認は未完了                     |
-| REQ-JSR-003 | 維持                 | Guidedは`javascript-quiz-guided`の累積Workspace、Capstoneは別の`javascript-quiz-capstone`                                 | 既存schema / selectorを再利用する      |
-| REQ-JSR-004 | 維持                 | 全Lessonの説明・Hint・Solution・正負Fixture・例実行・独立source hash reviewを揃える                                       | 46件の既存記録を検査、6件追加          |
-| REQ-JSR-005 | 維持                 | 端末保存、reload / resume、Reset、旧ID / Draft / passing snapshot、HTML/CSS、Path、Library、Export / Importを回帰させない | 最終入力で確認する                     |
-| REQ-JSR-006 | 維持                 | 実Analyzer / Runner / Validator / bridgeで別解・誤答・system error・有限実行・隔離を確認する                              | Projectまでの実利用は未確認            |
-| REQ-JSR-007 | 維持                 | 既存性能・Security・a11y・Browser・Artifact・出典・内容承認の閾値と必須範囲を維持する                                     | 最終Gateは未実行                       |
-| REQ-JSR-008 | 維持（承認済み代替） | 旧REQ-JSC-033の「実在のJS完全初心者1名以上の全通し」を、3独立エージェントの模擬学習全通しに代替する                       | 今回本人が変更を承認した唯一の受入基準 |
-| REQ-JSR-009 | 追加                 | 3役が別の保存状態でそれぞれChapter 00から全52 Lessonを最後まで通す。章の分担・合算は禁止                                  | 旧105操作は部分試用であり使用不可      |
-| REQ-JSR-010 | 追加                 | 初回操作で正解・実装・Fixture・他役報告を先読みせず、可視教材とHintからUI入力・実行・採点する                             | runbookに固定                          |
-| REQ-JSR-011 | 追加                 | Lesson / Exercise / rule / checklist ID、操作、期待、実際、証拠、Hint / Retry / 保存等を記録する                          | 3×52の完走記録が必要                   |
-| REQ-JSR-012 | 維持                 | 実装者と別の独立コードレビュー、全blocking 0、必須未確認0の後に公開する                                                   | 最終HEADレビュー未実施                 |
-| REQ-JSR-013 | 維持                 | 完成後のみ`published`、Home / frontend Path / Library掲載。HTML/CSS後の`required` Step                                    | 現状JSはdraft / 非掲載                 |
-| REQ-JSR-014 | 維持                 | 最終入力の公開前全検査、source / Artifact hash binding、既存Pages・Environment保護・通常公開手順                          | HTML/CSS固定部分に対応が必要           |
-| REQ-JSR-015 | 維持                 | 配信SHA・入口・開始/再開・採点・保存・持ち出し・consoleとRelease Reportを実確認する                                       | 未実施                                 |
-| REQ-JSR-016 | 維持                 | 達成した受入に対応するIssueだけcloseする。#5全体や未完成後続Courseをcloseしない                                           | rootが判定する                         |
-| REQ-JSR-017 | 維持                 | 所要時間等をsource実体へ合わせる。旧1,000分と変更理由を記録する                                                           | 最終暫定合計1,010分                    |
-| REQ-JSR-018 | 保留（本人指示）     | TS / React / Next.jsの追加実験を停止してJSを優先する                                                                      | 既存変更を保護                         |
+| ID          | 区分                 | 要件・受入条件                                                                                                            | 初期状態                                  |
+| ----------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| REQ-JSR-001 | 維持                 | 52 Lesson = 46 standard + 5 guided + 1 capstone、14 Chapter、4 Phaseを完成する                                            | Guided / Capstone未作成                   |
+| REQ-JSR-002 | 維持                 | 既習Conceptを制作へ接続し、直前の可視教材にない構文を必須にしない                                                         | 全52の確認は未完了                        |
+| REQ-JSR-003 | 維持                 | Guidedは`javascript-quiz-guided`の累積Workspace、Capstoneは別の`javascript-quiz-capstone`                                 | 既存schema / selectorを再利用する         |
+| REQ-JSR-004 | 維持                 | 全Lessonの説明・Hint・Solution・正負Fixture・例実行・独立source hash reviewを揃える                                       | 46件の既存記録を検査、6件追加             |
+| REQ-JSR-005 | 維持                 | 端末保存、reload / resume、Reset、旧ID / Draft / passing snapshot、HTML/CSS、Path、Library、Export / Importを回帰させない | 最終入力で確認する                        |
+| REQ-JSR-006 | 維持                 | 実Analyzer / Runner / Validator / bridgeで別解・誤答・system error・有限実行・隔離を確認する                              | Projectまでの実利用は未確認               |
+| REQ-JSR-007 | 維持                 | 既存性能・Security・a11y・Browser・Artifact・出典・内容承認の閾値と必須範囲を維持する                                     | 最終Gateは未実行                          |
+| REQ-JSR-008 | 維持（承認済み代替） | 旧REQ-JSC-033の「実在のJS完全初心者1名以上の全通し」を、3独立エージェントの模擬学習全通しに代替する                       | 今回本人が変更を承認した唯一の受入基準    |
+| REQ-JSR-009 | 追加                 | 3役が別の保存状態でそれぞれChapter 00から全52 Lessonを最後まで通す。章の分担・合算は禁止                                  | 旧105操作は部分試用であり使用不可         |
+| REQ-JSR-010 | 追加                 | 初回操作で正解・実装・Fixture・他役報告を先読みせず、可視教材とHintからUI入力・実行・採点する                             | runbookに固定                             |
+| REQ-JSR-011 | 追加                 | Lesson / Exercise / rule / checklist ID、操作、期待、実際、証拠、Hint / Retry / 保存等を記録する                          | 3×52の完走記録が必要                      |
+| REQ-JSR-012 | 維持                 | 実装者と別の独立コードレビュー、全blocking 0、必須未確認0の後に公開する                                                   | 最終HEADレビュー未実施                    |
+| REQ-JSR-013 | 維持                 | 完成後のみ`published`、Home / frontend Path / Library掲載。HTML/CSS後の`required` Step                                    | 現状JSはdraft / 非掲載                    |
+| REQ-JSR-014 | 維持                 | 最終入力の公開前全検査、source / Artifact hash binding、既存Pages・Environment保護・通常公開手順                          | HTML/CSS固定部分に対応が必要              |
+| REQ-JSR-015 | 維持                 | 配信SHA・入口・開始/再開・採点・保存・持ち出し・consoleとRelease Reportを実確認する                                       | 未実施                                    |
+| REQ-JSR-016 | 維持                 | 達成した受入に対応するIssueだけcloseする。#5全体や未完成後続Courseをcloseしない                                           | rootが判定する                            |
+| REQ-JSR-017 | 維持                 | 所要時間等をsource実体へ合わせる。旧1,000分と変更理由を記録する                                                           | 最終暫定合計1,010分                       |
+| REQ-JSR-018 | 改訂（本人承認）     | JS最優先、完成CourseからJS→TS→React→Next.jsを順次通常公開。JSを次Course制作完了待ちにしない                               | 20:36 JST承認、後続Courseの既存変更を保護 |
+| REQ-JSR-019 | 追加                 | 完了必須52＋任意2と、各persona全54操作coverageを別集合で照合する                                                          | ラベル正確化、実施範囲の削減なし          |
 
 ## 要件差分
 
@@ -50,8 +54,14 @@ BASEの実体は`content/javascript/course.yaml`、12 Chapter、46 standard Less
 | 維持（承認済み代替） | 旧REQ-JSC-033の人1名の全通しを3独立persona各自全52の模擬学習へ代替                                                                       | 本人が今回明示承認。エージェントの既存知識や感情の再現限界が残る。実人の理解受入と同等には扱わない。実人観察は将来別証拠として追加できる |
 | 維持（数値同期）     | 旧1,000分をsource合計に同期。現状は760+100+150=1,010分                                                                                   | Chapter 03の+10分が差の原因。Lessonを削る代替案は採用しない。最終教材実体で再集計する                                                    |
 | 追加                 | 独立3役それぞれ全52、先読み禁止、証拠ID単位の記録、公開対象JSの厳格bindingを明示                                                         | 部分試用・他役からの回答継承・HTML/CSS記録との混同を防ぐ                                                                                 |
-| 保留                 | TS / React / Next.jsの追加実験。任意Tailwindは従来どおり非必須                                                                           | 本人のJS最優先指示。既存draft・保存済み技術証拠を保持する。JS通常公開完了後、次の本人指示で再開する                                      |
+| 改訂（本人承認）     | JS最優先を維持し、完成CourseからJS→TS→React→Next.jsを順次公開。独立Gate/レビューを教材fixと並行にする                                    | 2026-10-02 20:36 JST承認。旧保留とその理由を履歴として保持し、実行順を更新。各Courseの品質受入は省略せずJSを次Course待ちにしない         |
+| 追加（数値分類）     | 54Exercise=completion-required52＋任意Closure2、各3役の操作は全54                                                                        | Course完了と検証scopeを分離。品質・実操作の削減0                                                                                         |
+| 保留                 | 統合/最終review/入力凍結/承認/publicationは必要実体と実証を待つ。任意Tailwindは従来どおり非必須                                          | Task2/追加25fix、資源GO、統合GOを待つ条件は保持。旧3/元5/new25/native alias4 migrationと実seed/revisionは実体固定後のみ                  |
 | 削除                 | なし                                                                                                                                     | 旧基準、過去観察、未達、証拠を削除しない                                                                                                 |
+
+REQ-JSR-018の旧決定は「TS / React / Next.jsの追加実験を停止してJSを優先する」であり、「本人のJS最優先指示。既存draft・保存済み技術証拠を保持する。JS通常公開完了後、次の本人指示で再開する」を保留理由・復帰条件としていた。この旧決定を履歴として保持する。2026-10-02 20:36 JSTの本人承認を復帰指示として保留を解除し、JS最優先と既存変更の保護を維持したまま、品質を満たしたCourseからJS→TS→React→Next.jsの順で通常公開する。後続Courseの制作完了はJS公開の条件へ加えない。今回のJS受入条件・検証範囲・性能閾値の増減はない。
+
+後続Courseのコース別未確定仕様と人手受入の代替は、各Courseの根拠と本人確認を別に要する。今回JSだけに認められた3独立personaへの代替を他Courseへ自動適用せず、未完成のCourseを完成扱いにしない。開発時間は学習時間1,010分から推定しない。
 
 HTML/CSSの人観察未達と既存品質条件を今回のJS代替許可で解除しない。rootはJS専用のcourse-scope通常candidateを今回の公開に必要な最小実装と確認した。全site Artifact・安全・性能・E2EのGateを維持し、JS固有の受入記録だけを選択courseIdへ結ぶ。既存HTML/CSSのdraft / pending人手記録とβ配信状態を通常公開済みへ再ラベルしない。物理実機必須Gateは新設しない。
 
@@ -79,15 +89,15 @@ Task内の自分の記述の整合性と共有file / interfaceの組合せを事
 
 ## 所有・依存・事前整合確認
 
-| Task | 主な所有範囲                                                                                   | 前提と自己整合確認                                                        |
-| ---- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| 1    | I-001の関係付き採点・限定migration、I-002の全workspace失効、必要project profile、対象tests     | 実Runner RED→GREEN、別解・旧source保持、採点prefixと全失効を分離          |
-| 2    | JS Chapter 12 / 13の6 Lesson、Course / concepts / glossary / provenance、対象testsと内容review | 1人が全共有fileを所有。52 / 14 / 4 / 1,010分を実体同期、既存基盤を再利用  |
-| 3    | JS専用公開Gate / evidence、必要release scripts / workflow / tests                              | 全site品質を保持し、JS受入記録をcourseId / source / Artifactへ厳格binding |
-| 4    | 独立personaのread-only UI操作・私有証拠                                                        | 各役全52、同じsource / build、別の保存状態。3役の章分担禁止               |
-| 5    | 観測blocking修正、published / Home / Path / Library / README、最終独立review                   | 4のレポートを保持、受入後に公開登録。1件もpark合格しない                  |
-| 6    | 最終検証、Git / GitHub / candidate / Deploy / post-deploy台帳                                  | root所有。固定final source、全Gate、Environment保護、配信後確認を順守     |
-| 7    | 達成Issue照合・close、最終結果                                                                 | 6の配信後受入が完了した項目だけclose                                      |
+| Task | 主な所有範囲                                                                                   | 前提と自己整合確認                                                                                   |
+| ---- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| 1    | I-001の関係付き採点・限定migration、I-002の全workspace失効、必要project profile、対象tests     | 実Runner RED→GREEN、別解・旧source保持、採点prefixと全失効を分離                                     |
+| 2    | JS Chapter 12 / 13の6 Lesson、Course / concepts / glossary / provenance、対象testsと内容review | 1人が全共有fileを所有。52 / 14 / 4 / 1,010分を実体同期、既存基盤を再利用                             |
+| 3    | JS専用公開Gate / evidence、必要release scripts / workflow / tests                              | 独立fileはTask2/追加25fixと並行。実値/統合/入力凍結は承認済み実体待ち。全site品質/strict binding保持 |
+| 4    | 独立personaのread-only UI操作・私有証拠                                                        | 各役全52、同じsource / build、別の保存状態。3役の章分担禁止                                          |
+| 5    | 観測blocking修正、published / Home / Path / Library / README、最終独立review                   | 4のレポートを保持、受入後に公開登録。1件もpark合格しない                                             |
+| 6    | 最終検証、Git / GitHub / candidate / Deploy / post-deploy台帳                                  | root所有。固定final source、全Gate、Environment保護、配信後確認を順守                                |
+| 7    | 達成Issue照合・close、最終結果                                                                 | 6の配信後受入が完了した項目だけclose                                                                 |
 
 | 共有Task / interface                                 | Produce → Consume                                     | 競合対策・確認                                                               |
 | ---------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------- |
@@ -97,6 +107,8 @@ Task内の自分の記述の整合性と共有file / interfaceの組合せを事
 | 2 / 5 / 6: source reviewと公開metadata               | 全52内容承認 → published / Path → candidate binding   | Course登録後に最終hashを固定。教材変更があればstaleを解消                    |
 | 3 / 5 / 6: 公開schema・Approval・Continuity          | JS専用contract → 公開登録 → fail-closed検査           | HTML/CSSの未達をJS模擬で埋めない。全siteGateを維持                           |
 | 4 / 6: Build / storage / evidence                    | persona fixed build → final candidate / 公開後journey | 有効な同一入力証拠だけ再利用。配信の外部状態は取り直す                       |
+
+独立Gate file実装とレビューはTask2/追加25fixの完成を待たずprivateへ先行する。学習内容/Runtime/validator/editor/進捗schema/Course metadata/実migration seed/実承認recordsへ権限を広げない。Docker/生成/build/unit等は資源GO、共有worktreeへcopyback/Gitは統合GOを待ち、性能測定に重ねない。統合/最終承認/入力S凍結はTask2・25fix・Gateの必要独立reviewと未達0の後に行う。品質削除0で実行順だけを変更し、学習時間1,010分から開発時間を見積もらない。
 
 ## Task 1: 既存誤合格・全Workspace失効・制作Runtime前提を修正する
 
@@ -147,13 +159,13 @@ Task内の自分の記述の整合性と共有file / interfaceの組合せを事
 
 ## Task 3: JS専用の通常公開GateとEvidence bindingを実装する
 
-**Files:** 必要最小の`scripts/release/**`、`.github/workflows/pages.yml`、release関係tests、JS専用Approval / Checklist / 模擬学習記録schema / 台帳・公開手順。既存HTML/CSSの手動記録のstatusを変更しない。1人のsource ownerがTask2の独立review後に担当する。
+**Files:** 必要最小の`scripts/release/**`、`.github/workflows/pages.yml`、release関係tests、JS専用Approval / Checklist / 模擬学習記録schema / inputhash helper、必要package scripts / README / 公開手順。独立fileの単一ownerがTask2/追加25fixと並行にprivateで先行する。実履歴・course/provenance接続・実migration seed・承認recordsは教材fix後の別統合GOで値を固定し、それまでは編集しない。既存HTML/CSSの手動記録のstatusを変更しない。
 
 **Interfaces:** `courseId=javascript`を選択した通常candidateのtarget、Source approval、Artifact hash、Report、Release履歴、post-deploy、rollbackに同じcourseId / source SHA / Artifactを結ぶ。courseId取り違え・未承認 / stale内容hash・persona全52不足・record path差し替え・前回Run値の流用をfail-closedにする。既存HTML/CSS candidateの人手/記録/性能契約は維持する。全site dist / Security / Performance / 規定E2Eはcourse選択に関係なく検査する。
 
 既存`releaseSchema.ts` / `verifyReleaseApproval.ts`の51Lesson・5Checkpoint等はHTML/CSSの契約として保持し、JSは全52Lesson・3独立全通しと唯一の承認済み代替、旧基準・理由・限界を別のstrict recordで要求する。既存`visual-review.md`のreviewedScreens24とvalidatorのexact20の差は、記録を20へ偽装せず、対象画面集合と既存閾値の意味を確認して最小の整合を取り独立reviewする。rootが公開専用記録の有効性を確認する。
 
-**検証:** JS対象成功、HTML/CSSの既存契約維持、未知course / path / hash / 51と52混同 / persona1役欠落 / 部分試用 / 同一状態 / 必須未確認あり / stale source / Artifact不一致の負例。選択courseを保持したReport / rollback往復、全siteGateのworkflow静的契約、旧βが正式Releaseへ再ラベルされないこと。
+**検証:** JS対象成功、HTML/CSSの既存契約維持、未知course / path / hash / 51と52混同 / persona1役欠落 / 部分試用 / 同一状態 / 必須未確認あり / stale source / Artifact不一致の負例。選択courseを保持したReport / rollback往復、全siteGateのworkflow静的契約、旧βが正式Releaseへ再ラベルされないこと。初回JS履歴は`releases: []`を宣言し、未取得の承認・Report・tagを作らない。old3 / old5 / new25 / native alias4の各非empty edgeは、それぞれ独立freshな旧成功Sourceとsnapshotから検査し、最古revisionからのwhole chainと区別する。隔離時点のrevisionは実chainの最初のreset直前までの進行と照合し、全Source・snapshot・日時・履歴・非対象Lesson・他Courseの保持を検査する。純粋Service Unitと実IndexedDBのdated backup・再open・idempotenceは別証拠であり、前者だけで後者を完了としない。
 
 **完了条件:** JS専用通常candidateと最終Evidence収集のinterfaceが揃う。まだ模擬学習未完なのでJS approvalはdraftのまま、架空のapprovedを生成しない。模擬学習時の入力hashと最終公開distのbindingは別項目として検査する。Task4はdraft buildで全52、Task5はpublished / Path登録後なのでSHA / distが変わる。Lesson / 採点Runtime / 保存契約の入力hashを比較し、metadataのみの変更なら有効範囲を明記して3役の公開入口 / 再開smokeを最終候補で取り直す。教材 / 採点 / 学習UI変更は影響する後続を再検証し、広い変更は全通しを取り直す。両Artifactが同一と偽装したり、同じdistを無理に要求して契約を緩めたりしない。READMEのEnvironment記述はlive main-only policy / required reviewer未設定に合わせ、独立承認取得済みとは主張しない。新Reviewer / 権限 / 公開先は追加しない。Task3の独立spec / quality reviewを取得後、Task4の固定buildを用意する。
 
@@ -193,7 +205,7 @@ runbookに固定したJS初心者、うっかり・中断多、自力制作志�
 
 **所有:** root。必要なコード変更後は独立reviewへ戻す。
 
-最終Product入力に対し下表の全必須Gateを実行する。同一入力の有効な成功証拠を再利用するときはsource / file / Artifact hashと確認範囲を報告する。過去の通常CI成功を公開前全Gate成功へ読み替えない。日本語commit / staged秘密情報検査 / PR / 最新HEAD独立review / 必要CIの後、許可範囲内でmergeする。mergeでProductが変われば必要証拠を取り直す。
+最終Product入力に対し下表の全必須Gateを実行する。同一入力の有効な成功証拠を再利用するときはsource / file / Artifact hashと確認範囲を報告する。過去の通常CI成功を公開前全Gate成功へ読み替えない。日本語commit / staged秘密情報検査 / PR / 最新HEAD独立review / 必要CIの後、許可範囲内でmergeする。PRは`Refs #9` / `Refs #10`を使い、自動`Closes`を入れない。mergeでProductが変われば必要証拠を取り直す。
 
 既存PagesのJS course-scope `candidate`経路で承認source / Artifact / quality記録を固定し、dispatch直前のmain・入力SHA・workflow headの関係を検証する。Environmentのmain-only保護を経て実Deploy / Report / tagを確認し、required reviewer未設定のため独立Environment承認取得済みとは主張しない。配信後はhash・入口・開始 / 再開・採点・保存 / reload・持ち出し・consoleを実操作し、revision別post-deploy記録と正式台帳に同Run値を結ぶ。
 
@@ -205,7 +217,7 @@ rootのlive読取では直近Pages Deploymentは`2026-09-28`の`4ea25976c95e5aa2
 
 **所有:** root。Issue / PR / automationの操作権限はこの担当へ委譲しない。
 
-#9の5 Guided Lesson、#10のCapstone・全JS受入・通常公開、関連Issueの各チェックを本人要件と実証に照合し、実際に達成したIssueだけcloseする。#5全体、TS / React / Next / 常駐環境等は今回達成しない条件を保持する。automationは実在設定と本人の最新指示に従いrootが扱う。
+#9の5 Guided Lesson、#10のCapstone・全JS受入・通常公開、関連Issueの各チェックを本人要件と実証に照合し、公開後に達成を実証したIssueだけrootが証拠を添えてcloseする。#5全体、TS / React / Next / 常駐環境等は今回達成しない条件を保持する。automationは実在設定と本人の最新指示に従いrootが扱う。
 
 **完了条件:** 公開配信SHA・URL・最小証拠・模擬検証の限界・残る非対象を短く報告し、JS通常公開を完了とする。
 
@@ -246,7 +258,7 @@ G-05の`BASE`は本計画の固定BASE、`HEAD`は最終公開候補の40文字S
 
 ## 非対象
 
-- TS / React / Next.js / 任意Tailwind / Pythonの追加制作や新しい公開先。
+- このJS計画担当によるTS / React / Next.js教材への編集、任意Tailwind / Pythonの追加制作や新しい公開先。後続Courseは20:36 JST承認の別所有で進め、完成順の通常公開をJSの待ち条件にしない。
 - 実人の理解・感情・自然な誤解頻度の証明、物理スマホ / タッチ / VoiceOverの検証済み主張。
 - 学習コードのNetwork / Storage / navigation / dynamic code許可、費用や認証の新設。
 - HTML/CSSの未達観察をJS模擬で合格へ置換すること、Gate / 閾値 / 必須範囲の削減。

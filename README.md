@@ -58,7 +58,7 @@ Homeの「今回の学習」には、初回は目安10分で見出しと背景�
 
 現在公開している「フロントエンド学習パス」にはHTML/CSSコースだけを収録しています。JavaScript、TypeScript、Reactなどのコースは、教材と品質確認が完成してから順次このパスへ追加します。学習パスの直リンクは[`#/paths/frontend`](http://localhost:5173/#/paths/frontend)です。
 
-JavaScriptは、安全な複数ファイル実行基盤とChapter 00〜11の46 Lesson／184 Slide／48 Exercise（760分）を`draft`として品質検証中です。値・条件分岐・Function・Arrayから`map`・`filter`・`reduce`・immutable update、Module・Error・Debugと、DOMで要素を探して文字やclassを変え、新しい要素の接続と複数要素への操作を行う4単元、クリック処理の登録と実行、入力のたびに現在値を表示する操作と、Formの送信を止めて入力を使う操作と、空白を除いた入力を検証する操作、操作の間で値を保持するStateと、値から表示をそろえるrenderとArrayから一覧を作り、元のデータを残して絞り込む方法、同梱の問題データをPromiseとasync/awaitで受け取り表示し、失敗を知らせて再試行し、読み込み中の案内と操作可否をそろえる方法、標準ボタンとEscapeでヒントを操作し、開始・戻る操作に合わせてFocusを移し、操作名と開閉状態をそろえる方法を学べます。通常の公開学習パスにはまだ掲載せず、改訂済み単元をHomeの試用目次から利用できます。開発時は[最初のJavaScriptスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s01)、[Chapter 06の最初のスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch06-l01/slides/javascript-ch06-l01-s01)、[Debug演習](http://localhost:5173/#/courses/javascript/lessons/javascript-ch06-l04/exercises/javascript-ch06-l04-e01)の直接URLから確認できます。`draft`は非掲載を意味するだけで、Production Artifactへ含まれる教材を機密情報として扱うものではありません。
+JavaScriptは、安全な複数ファイル実行基盤とChapter 00〜13の52 Lesson／202 ConceptSlide／54 Exercise（Course完了必須52＋任意Closure2、推定1,010分）を`draft`として品質検証中です。既存46 Lesson／760分に、学習クイズのGuided制作5 Lesson／100分とCapstone制作1 Lesson／150分を加えています。1,010分は教材の推定所要時間の合計です。値・条件分岐・Function・Arrayから`map`・`filter`・`reduce`・immutable update、Module・Error・Debugと、DOMで要素を探して文字やclassを変え、新しい要素の接続と複数要素への操作を行う4単元、クリック処理の登録と実行、入力のたびに現在値を表示する操作と、Formの送信を止めて入力を使う操作と、空白を除いた入力を検証する操作、操作の間で値を保持するStateと、値から表示をそろえるrenderとArrayから一覧を作り、元のデータを残して絞り込む方法、同梱の問題データをPromiseとasync/awaitで受け取り表示し、失敗を知らせて再試行し、読み込み中の案内と操作可否をそろえる方法、標準ボタンとEscapeでヒントを操作し、開始・戻る操作に合わせてFocusを移し、操作名と開閉状態をそろえる方法を学べます。制作では問題表示・回答・得点・結果・再挑戦を積み上げ、Capstoneでカテゴリ選択・進捗・Keyboard操作も扱います。通常の公開学習パスにはまだ掲載せず、改訂済み単元をHomeの試用目次から利用できます。Homeの「制作途中のレッスンを試す」→試用目次の「一続きに読む：JavaScriptで画面の文字を変える」→Readerの演習リンク→演習の「← コース」で、全52 LessonのCourse Mapへ進めます。開発時は[最初のJavaScriptスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s01)、[Chapter 06の最初のスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch06-l01/slides/javascript-ch06-l01-s01)、[Debug演習](http://localhost:5173/#/courses/javascript/lessons/javascript-ch06-l04/exercises/javascript-ch06-l04-e01)の直接URLから確認できます。`draft`は非掲載を意味するだけで、Production Artifactへ含まれる教材を機密情報として扱うものではありません。
 
 学習パスの進捗は、この端末に保存された各コースの進捗からその都度計算します。学習パス専用の進捗Recordは作らないため、既存の書き出し・読み込み形式や各コースの下書きはそのまま利用できます。
 
@@ -180,7 +180,7 @@ SourceやAssetを追加したら、同じ変更で`provenance.yaml`へ登録し�
 ./scripts/docker-compose.sh run --rm -e BASE_PATH=/repository-name/ app npm run test:lighthouse
 ```
 
-主な性能予算はLCP 2,500 ms以下、CLS 0.1以下、主要操作200 ms以下、Preview p95 500 ms以下、HTML/CSS判定p95 300 ms以下、下書き永続化500 ms以下です。JavaScript縦切りは初回Preview p95 500 ms以下、再Preview p95 250 ms以下、判定p95 1,000 ms以下、JavaScript固有incremental lazy graph gzip 180,000 bytes以下を別Gateで測定します。Home初期JavaScriptはgzip 256,000 bytes以下とし、Editor、Analyzer、Runner、ValidatorをHomeやSlideで読み込みません。教材配信はCatalog v3 gzip 20,480 bytes、Course Index 40,960 bytes、各Lesson Manifest 12,288 bytes、route map追加分8,192 bytesを上限にします。予算の完全な固定値は`content/html-css/performance.yaml`、`content/javascript/performance.yaml`と独立固定テストで管理します。
+主な性能予算はLCP 2,500 ms以下、CLS 0.1以下、主要操作200 ms以下、Preview p95 500 ms以下、HTML/CSS判定p95 300 ms以下、下書き永続化500 ms以下です。JavaScript縦切りは初回Preview p95 500 ms以下、再Preview p95 250 ms以下、通常判定p95 1,000 ms以下、標準Scenario p95 1,500 ms以下、Guided累積判定p95 3,000 ms以下、JavaScript固有incremental lazy graph gzip 180,000 bytes以下を別Gateで測定します。Home初期JavaScriptはgzip 256,000 bytes以下とし、Editor、Analyzer、Runner、ValidatorをHomeやSlideで読み込みません。教材配信はCatalog v3 gzip 20,480 bytes、Course Index 40,960 bytes、各Lesson Manifest 12,288 bytes、route map追加分8,192 bytesを上限にします。予算の完全な固定値は`content/html-css/performance.yaml`、`content/javascript/performance.yaml`と独立固定テストで管理します。
 
 Home初期JSの過去版比増分20,480 bytesは警告値です。絶対上限256,000 bytesや実測性能の条件は必須のまま維持します。検証範囲・任意画像の対応表・再検証条件は[開発中の検証方針](docs/quality/development-testing.md)を参照してください。
 
@@ -199,32 +199,42 @@ Smokeは、HTMLが参照する初期Asset、教材Catalog v3、Course Index、Le
 
 ## GitHub Pagesへの公開
 
-公開は`main`へのpushだけでは始まりません。最初に`docs/quality/release-checklist.md`を公開前条件だけで承認し、全記録を`release-approval.yaml`へ固定します。その40文字の承認済みSource SHAを指定して`TsumuCode Pages` workflowを明示dispatchし、`github-pages` EnvironmentのReviewerが承認した場合だけ、検証済みArtifactをDeployします。
+公開は`main`へのpushだけでは始まりません。HTML/CSSは既存5品質記録と`docs/quality/release-approval.yaml`、JavaScriptはJS専用7記録と`docs/quality/javascript-release-approval.yaml`へ対象を固定します。JSは全52 Lesson（46 standard・5 Guided・1 Capstone、14章・4 Phase、1,010分）と各役全54 Exercise操作（完了必須52＋任意Closure2）の独立3役模擬学習を要求します。実在初心者・自然な誤解頻度・物理実機の証明ではなく、HTML/CSSの真人5Checkpoint条件を代替しません。実証前の記録はdraftです。
+
+dispatch直前に最新main SHAを固定し、承認済みProduct commit P以降に品質記録・literal履歴以外のProduct変更がないworkflow head Mを確認します。`source_sha`はP、RunのheadはMへ結びます。自分のcommit SHAを同じcommit内の記録へ埋めません。`github-pages`の既存保護はmain限定で、2026-10-02確認時はrequired reviewer未設定です。Environment通過を記録し、取得していない独立Environment人承認を主張しません。
 
 ```bash
-gh workflow run "TsumuCode Pages" --ref main -f source_sha=<40文字の承認済みSHA> -f release_mode=candidate -f deploy=true
+gh workflow run "TsumuCode Pages" --ref main -f course_id=javascript -f source_sha=<40文字の承認済みProduct_SHA> -f release_mode=candidate -f deploy=true
 ```
 
-Workflowはpush/PRのfast gateと明示dispatchの公開前gateを分離します。公開前gateはSource SHA、canonical `dist/` digest、Course/Public Provenance hash、Chromium全E2E、Firefox/WebKit代表smoke、a11y、Security、Performance、静的Artifact検査を結び付けます。公開後はEnvironmentの独立承認、Actions Release Report、annotated tag、公開URLを実確認し、同じRunの値をrevision別の`docs/quality/post-deploy/<revision>.yaml`へ記録してから公開台帳へ追記します。Environment承認を省略した直接Deployや、公開後確認を公開前に合格扱いする運用は行いません。
+`course_id`は`html-css`または`javascript`に限定し、選択で全site品質・閾値・Action pin・permissionsを減らしません。Source SHA、全canonical `dist/` digest、選択Course/Public Provenance hash、Chromium全E2E、Firefox/WebKit代表smoke、a11y、Security、Performance、静的Artifactを結び付けます。JSでも既存HTML continuityをquality-onlyで検査します。公開後はEnvironment通過、同じRunのActions Report、annotated tag、公開URLを実確認し、HTMLは`docs/quality/post-deploy/<revision>.yaml`、JSは`docs/quality/post-deploy/javascript/<revision>.yaml`へ記録してから履歴へ追記します。JSでは開始・再開・採点・保存・Export・別状態Importも個別に観測します。
+
+JSの3役は固定draft S/Ddraftで学習し、公開metadataだけを変更したP/Dfinalと区別します。Docker内の`release:input -- --source-sha <固定SHA> --output <新規path>`は入力manifestを保存し、原本を上書きしません。全JS教材・src・教材compiler・依存/build設定等をhashし、許可したCourse公開statusとfrontendへのJS required登録だけを正規化します。他の変更はaffected後続または全通し再検証が必要です。入力一致時も各役のP/DfinalでHome・Path・Library・直接開始・途中再開smokeを要求します。DdraftをDfinalへ書き換えません。private原本は公開せず、原report/操作証拠digestと独立原本照合reviewを固定します。
+
+S/Pの候補観測は公開前の実loopback HTTP URLを記録します。`inputValidity`の`draftCandidate`と`finalCandidate`へroot観測のrun/source/D/config/helper/原証拠hashを別々に固定し、各役と最終smokeの`candidateRunId`/URLを照合します。root観測原本の独立照合も必要です。未配信Pを本番HTTPS観測済みとして記録しません。公開後は従来のPages HTTPS/Run/Artifact/実操作記録を要求します。
+
+学習入力scope v2は実`compose.yaml`/`compose.learning.yaml`/Dockerfile/実行helper/固定検証設定と追加・削除も含めます。JSのP→M/candidate除外/promotion/workflowは、選択JSの7記録・approval・history・対象revisionのpostdeployという同じliteral集合へ結合します。合成bundle更新はpromotionだけに限定し、Product hashの元bundle overrideで検査します。未登録`docs/quality/`、他Course、私有raw log、`docs/superpowers/`はJSの除外にしません。HTML旧契約は維持します。
 
 身内向けβは、mainのSHAを指定して正式候補と同じ公開前gateを通したうえで、次のように明示dispatchします。
 
 ```bash
 SOURCE_SHA="$(git rev-parse origin/main)"
-gh workflow run "TsumuCode Pages" --ref main -f source_sha="$SOURCE_SHA" -f release_mode=beta -f deploy=true
+gh workflow run "TsumuCode Pages" --ref main -f course_id=html-css -f source_sha="$SOURCE_SHA" -f release_mode=beta -f deploy=true
 ```
 
 βでは初心者全コースを観察済みとは主張せず、正式Releaseのtagや公開台帳は作成しません。
 
-公開台帳へ追記するときは、対象Runの`release-report-<source SHA>` Artifactを`.release-evidence/`へ展開し、`content/html-css/release-history.yaml`の`releases`末尾へ承認済みcandidateを1件だけ移します。追記RecordにはQuality/Report Artifact IDとdigest、workflow head/run/attempt、公開URLを記録し、`candidate`はbindingと`persistentIds`を空にした`draft`へ戻して`previousReleaseTag`を最新tagへ接続します。
+初回のJS通常公開履歴は`content/javascript/release-history.yaml`の`releases: []`から始めます。旧βは登録済みの通常Releaseやrollback先へ移しません。合成進捗bundleは移行用の検証データで、純粋Serviceの検査成功を実IndexedDBの移行・dated backup・実学習の成功へ読み替えません。
+
+公開履歴は元Runの`release-report-<source SHA>` Artifactを用い、選択Courseの`content/<course_id>/release-history.yaml`へ承認済みcandidateを1件だけ移します。Quality/Report Artifact ID/digest、workflow head/run/attempt、公開URL、JSの元S/Ddraft/input hashを記録し、次candidateはbindingとIDを空にしたdraftへ戻します。rollbackは同じCourseの登録済みReleaseだけを選び、未登録βや別Courseを使いません。両Courseのtag unionとCourse別chainを検査し、未知/重複tagは停止します。
 
 ```bash
 git fetch --tags
 gh run download <run ID> -n release-report-<source SHA> --dir .release-evidence
-./scripts/docker-compose.sh run --rm app npm run release:continuity -- --promote --report /workspace/.release-evidence/release-report.md
+./scripts/docker-compose.sh run --rm app npm run release:continuity -- --course-id javascript --promote --report /workspace/.release-evidence/release-report.md
 ```
 
-`--promote`は、Deployに使ったworkflow headの台帳から既存Release prefixが変わっていないこと、追記が1件だけであること、承認source以降にProduct差分がないこと、全tagがannotated tagで正しいcommitを指すこと、tag message・Release Report・Quality/Report Artifact・公開URLが完全一致することを検証します。さらにrevision別の公開後記録が同じrevision、source、workflow head、run/attempt、Report Artifact、公開URLへ結び付き、4項目すべて`passed`で、そのpath/hashが公開台帳と一致することを必須にします。公開後も`release:continuity`が全Releaseの記録hashを再検証します。
+`--promote`は、Deployに使ったworkflow headの台帳から既存Release prefixが変わっていないこと、追記が1件だけであること、承認source以降にProduct差分がないこと、全tagがannotated tagで正しいcommitを指すこと、tag message・Release Report・Quality/Report Artifact・公開URLが完全一致することを検証します。さらにrevision別の公開後記録が同じrevision、source、workflow head、run/attempt、Report Artifact、公開URLへ結び付き、共通4項目すべて`passed`で、JSでは開始・再開・採点・保存・Export・別状態Importの6実操作も`passed`であり、そのpath/hashが公開台帳と一致することを必須にします。公開後も`release:continuity`が全Releaseの記録hashを再検証します。
 
 tag ref作成後の通信断などでRunだけが失敗表示になった場合、Workflow全体を再実行して新しい`run_attempt`やArtifactを既存tagへ結び直してはいけません。元Runの`release-report-<source SHA>`を取得し、tag message・Report・公開URLを照合してrevision別の公開後記録を作成し、その元Run evidenceから`--promote`します。既存tagを検出したRunは成功扱いにせず停止します。
 

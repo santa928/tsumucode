@@ -4,25 +4,28 @@ import path from 'node:path';
 import { promisify } from 'node:util';
 import { parse } from 'yaml';
 import { canonicalJson } from '../../src/core/persistence/canonicalJson';
-import { hashFile, SYNTHETIC_PROGRESS_BUNDLE_PATH } from './releaseHashes';
+import { hashFile } from './releaseHashes';
 import {
   loadApprovedReleaseApproval,
   verifyApprovedQualityEvidence,
 } from './verifyReleaseApproval';
+import { PostDeployVerificationSchema } from './releaseSchema';
 import {
-  PostDeployVerificationSchema,
-  ReleaseApprovalSchema,
-  ReleaseHistorySchema,
-  type PublishedRelease,
-  type ReleaseHistory,
-} from './releaseSchema';
+  resolveReleaseCourseContract,
+  isReleaseMetadataPath,
+  type ReleaseCourseId,
+} from './releaseCourseContracts';
+import {
+  parseCourseReleaseHistory,
+  parseCourseReleaseApproval,
+  JavascriptPostDeployVerificationSchema,
+  type CoursePublishedRelease,
+  type CourseReleaseHistory,
+} from './javascriptReleaseSchema';
 import { verifyPublishedTag } from './verifyReleaseTarget';
 import { parseReleaseReport, type ReleaseReportInput } from './writeReleaseReport';
 
 const execFileAsync = promisify(execFile);
-const HISTORY_PATH = 'content/html-css/release-history.yaml';
-const APPROVAL_PATH = 'docs/quality/release-approval.yaml';
-const PROMOTION_ALLOWED_FILES = new Set([HISTORY_PATH, SYNTHETIC_PROGRESS_BUNDLE_PATH]);
 
 /** 値をcanonical JSONで比較し、Release promotionの改変箇所を特定する。 */
 function assertCanonicalEqual(name: string, actual: unknown, expected: unknown): void {
@@ -32,7 +35,7 @@ function assertCanonicalEqual(name: string, actual: unknown, expected: unknown):
 }
 
 type PostDeployReleaseBinding = Pick<
-  PublishedRelease,
+  CoursePublishedRelease,
   | 'revision'
   | 'tag'
   | 'sourceCommit'
@@ -45,20 +48,30 @@ type PostDeployReleaseBinding = Pick<
   | 'postDeployVerificationPath'
   | 'postDeployVerificationSha256'
 >;
+type ScopedPostDeployReleaseBinding = PostDeployReleaseBinding & {
+  readonly courseId?: ReleaseCourseId;
+};
 
 /** Release revisionから上書き不能な公開後検証record pathを決める。 */
-export function expectedPostDeployVerificationPath(revision: string): string {
-  return `docs/quality/post-deploy/${revision}.yaml`;
+export function expectedPostDeployVerificationPath(
+  revision: string,
+  courseId: ReleaseCourseId = 'html-css',
+): string {
+  return `${resolveReleaseCourseContract(courseId).postDeployRoot}/${revision}.yaml`;
 }
 
 /** 公開後の独立確認が同じRelease evidenceへ完全に結び付くことを検証する。 */
 export function validatePostDeployVerification(
   source: unknown,
-  release: PostDeployReleaseBinding,
+  release: ScopedPostDeployReleaseBinding,
   actualSha256: string,
 ): void {
-  const verification = PostDeployVerificationSchema.parse(source);
-  const expectedPath = expectedPostDeployVerificationPath(release.revision);
+  const courseId = release.courseId ?? 'html-css';
+  const verification =
+    courseId === 'javascript'
+      ? JavascriptPostDeployVerificationSchema.parse(source)
+      : PostDeployVerificationSchema.parse(source);
+  const expectedPath = expectedPostDeployVerificationPath(release.revision, courseId);
   if (release.postDeployVerificationPath !== expectedPath) {
     throw new Error(
       `公開後検証record pathがrevision別の固定pathではありません: ${release.postDeployVerificationPath}`,
@@ -69,7 +82,9 @@ export function validatePostDeployVerification(
   }
   if (
     verification.status !== 'approved' ||
-    verification.environmentApprovalStatus !== 'passed' ||
+    ('environmentAdmissionStatus' in verification
+      ? verification.environmentAdmissionStatus
+      : verification.environmentApprovalStatus) !== 'passed' ||
     verification.pageVerificationStatus !== 'passed' ||
     verification.reportVerificationStatus !== 'passed' ||
     verification.tagVerificationStatus !== 'passed' ||
@@ -79,6 +94,20 @@ export function validatePostDeployVerification(
     throw new Error(
       '公開後検証はEnvironment・公開URL・Report・tagを確認した承認済み記録が必要です',
     );
+  }
+  if ('courseId' in verification) {
+    const operations = verification.publicSmokeOperations;
+    const expected = ['start', 'resume', 'grading', 'persistence', 'export', 'fresh-import'];
+    if (
+      verification.requiredUnconfirmed !== 0 ||
+      new Set(operations.map(({ operationId }) => operationId)).size !== expected.length ||
+      operations.length !== expected.length ||
+      operations.some(
+        ({ operationId, status }) => !expected.includes(operationId) || status !== 'passed',
+      )
+    ) {
+      throw new Error('JS公開後の開始/再開/採点/保存/持ち出し/別状態Importが未確認です');
+    }
   }
   const bindings = {
     revision: release.revision,
@@ -101,10 +130,13 @@ export function validatePostDeployVerification(
 /** 公開台帳が参照するrevision別recordの通常File・hash・内容を再検証する。 */
 export async function verifyStoredPostDeployVerification(
   repositoryRoot: string,
-  release: PublishedRelease,
+  release: CoursePublishedRelease,
 ): Promise<void> {
   const root = path.resolve(repositoryRoot);
-  const expectedPath = expectedPostDeployVerificationPath(release.revision);
+  const expectedPath = expectedPostDeployVerificationPath(
+    release.revision,
+    'courseId' in release ? release.courseId : 'html-css',
+  );
   if (release.postDeployVerificationPath !== expectedPath) {
     throw new Error('公開後検証record pathが公開Release revisionと一致しません');
   }
@@ -122,10 +154,19 @@ export async function verifyStoredPostDeployVerification(
 
 /** Release Reportが公開台帳へ追記するimmutable evidenceと一致するか検証する。 */
 export function assertReleaseReportMatches(
-  release: PublishedRelease,
+  release: CoursePublishedRelease,
   report: ReleaseReportInput,
 ): void {
   const expected = {
+    ...('courseId' in release
+      ? {
+          courseId: release.courseId,
+          revision: release.revision,
+          draftSourceCommit: release.draftSourceCommit,
+          draftCanonicalDistSha256: release.draftCanonicalDistSha256,
+          normalizedLearningInputSha256: release.normalizedLearningInputSha256,
+        }
+      : {}),
     sourceSha: release.sourceCommit,
     workflowHeadSha: release.workflowHeadCommit,
     releaseMode: 'candidate',
@@ -147,10 +188,12 @@ export function assertReleaseReportMatches(
 
 /** 承認済みcandidateが1件だけ追記され、次candidateが安全にdraftへ戻ったことを検証する。 */
 export function assertPromotionLedger(
-  approvedHistory: ReleaseHistory,
-  promotedHistory: ReleaseHistory,
+  approvedHistory: CourseReleaseHistory,
+  promotedHistory: CourseReleaseHistory,
   report: ReleaseReportInput,
-): PublishedRelease {
+): CoursePublishedRelease {
+  if ('courseId' in approvedHistory !== 'courseId' in promotedHistory)
+    throw new Error('Promotion Courseが混在しています');
   const approvedCandidate = approvedHistory.candidate;
   if (
     approvedCandidate.status !== 'approved' ||
@@ -176,6 +219,14 @@ export function assertPromotionLedger(
     throw new Error('追記Releaseのtagがcandidate revisionと一致しません');
   }
   const scalarBindings = {
+    ...('courseId' in approvedCandidate
+      ? {
+          courseId: approvedCandidate.courseId,
+          draftSourceCommit: approvedCandidate.draftSourceCommit,
+          draftCanonicalDistSha256: approvedCandidate.draftCanonicalDistSha256,
+          normalizedLearningInputSha256: approvedCandidate.normalizedLearningInputSha256,
+        }
+      : {}),
     revision: approvedCandidate.revision,
     sourceCommit: approvedCandidate.verifiedSourceCommit,
     canonicalDistSha256: approvedCandidate.canonicalDistSha256,
@@ -186,7 +237,7 @@ export function assertPromotionLedger(
     syntheticProgressBundlePath: approvedCandidate.syntheticProgressBundlePath,
   };
   for (const [key, value] of Object.entries(scalarBindings)) {
-    if (appended[key as keyof PublishedRelease] !== value) {
+    if (appended[key as keyof typeof appended] !== value) {
       throw new Error(`追記Releaseの${key}が承認済みcandidateと一致しません`);
     }
   }
@@ -196,6 +247,13 @@ export function assertPromotionLedger(
   assertReleaseReportMatches(appended, report);
 
   const next = promotedHistory.candidate;
+  if (
+    'courseId' in next &&
+    (next.draftSourceCommit !== 'draft' ||
+      next.draftCanonicalDistSha256 !== 'draft' ||
+      next.normalizedLearningInputSha256 !== 'draft')
+  )
+    throw new Error('Promotion後のJS学習bindingはdraftへ戻す必要があります');
   if (
     next.status !== 'draft' ||
     next.verifiedSourceCommit !== 'draft' ||
@@ -222,6 +280,8 @@ export function assertPromotionLedger(
 export async function assertPromotionDiff(
   repositoryRoot: string,
   sourceCommit: string,
+  courseId: ReleaseCourseId = 'html-css',
+  revision?: string,
 ): Promise<void> {
   const [{ stdout: trackedOutput }, { stdout: untrackedOutput }] = await Promise.all([
     execFileAsync('git', ['diff', '--name-only', '-z', sourceCommit, '--', '.'], {
@@ -236,11 +296,17 @@ export async function assertPromotionDiff(
   const changed = [
     ...new Set([...trackedOutput.split('\0'), ...untrackedOutput.split('\0')].filter(Boolean)),
   ];
+  const contract = resolveReleaseCourseContract(courseId);
+  const allowedFiles = new Set<string>([
+    contract.historyPath,
+    contract.syntheticProgressBundlePath,
+  ]);
   const forbidden = changed.filter(
     (relative) =>
-      !relative.startsWith('docs/superpowers/') &&
-      !relative.startsWith('docs/quality/') &&
-      !PROMOTION_ALLOWED_FILES.has(relative),
+      !(courseId === 'javascript'
+        ? isReleaseMetadataPath(relative, courseId, revision)
+        : relative.startsWith('docs/quality/') || relative.startsWith('docs/superpowers/')) &&
+      !allowedFiles.has(relative),
   );
   if (forbidden.length > 0) {
     throw new Error(`PromotionにProduct変更を含められません: ${forbidden.join(', ')}`);
@@ -250,10 +316,12 @@ export async function assertPromotionDiff(
 /** Git source、Approval、Report、台帳追記、annotated tagを一括検証する。 */
 export async function verifyReleasePromotion(
   repositoryRoot: string,
-  promotedHistory: ReleaseHistory,
+  promotedHistory: CourseReleaseHistory,
   reportPath: string,
 ): Promise<void> {
   const root = path.resolve(repositoryRoot);
+  const courseId = 'courseId' in promotedHistory ? promotedHistory.courseId : 'html-css';
+  const contract = resolveReleaseCourseContract(courseId);
   const absoluteReport = path.resolve(root, reportPath);
   if (!absoluteReport.startsWith(`${root}${path.sep}`)) {
     throw new Error('Release Report pathがRepository外を指しています');
@@ -263,17 +331,18 @@ export async function verifyReleasePromotion(
     throw new Error('Release ReportはRepository内の通常Fileである必要があります');
   }
   const report = parseReleaseReport(await readFile(absoluteReport, 'utf8'));
-  const approval = await loadApprovedReleaseApproval(root);
-  await assertPromotionDiff(root, approval.verifiedSourceCommit);
+  const approval = await loadApprovedReleaseApproval(root, courseId);
+  await assertPromotionDiff(root, approval.verifiedSourceCommit, courseId, report.revision);
   const { stdout: approvedSyntheticBundle } = await execFileAsync(
     'git',
-    ['show', `${report.workflowHeadSha}:${SYNTHETIC_PROGRESS_BUNDLE_PATH}`],
+    ['show', `${report.workflowHeadSha}:${contract.syntheticProgressBundlePath}`],
     { cwd: root, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 },
   );
   await verifyApprovedQualityEvidence(root, approval, {
     workflowHead: report.workflowHeadSha,
+    ...(report.revision === undefined ? {} : { revision: report.revision }),
     candidateTreeFileOverrides: new Map([
-      [SYNTHETIC_PROGRESS_BUNDLE_PATH, new TextEncoder().encode(approvedSyntheticBundle)],
+      [contract.syntheticProgressBundlePath, new TextEncoder().encode(approvedSyntheticBundle)],
     ]),
   });
   if (report.sourceSha !== approval.verifiedSourceCommit) {
@@ -296,20 +365,23 @@ export async function verifyReleasePromotion(
 
   const [{ stdout: approvedHistorySource }, { stdout: approvalAtWorkflowHeadSource }] =
     await Promise.all([
-      execFileAsync('git', ['show', `${report.workflowHeadSha}:${HISTORY_PATH}`], {
+      execFileAsync('git', ['show', `${report.workflowHeadSha}:${contract.historyPath}`], {
         cwd: root,
         encoding: 'utf8',
         maxBuffer: 4 * 1024 * 1024,
       }),
-      execFileAsync('git', ['show', `${report.workflowHeadSha}:${APPROVAL_PATH}`], {
+      execFileAsync('git', ['show', `${report.workflowHeadSha}:${contract.approvalPath}`], {
         cwd: root,
         encoding: 'utf8',
         maxBuffer: 1024 * 1024,
       }),
     ]);
-  const approvalAtWorkflowHead = ReleaseApprovalSchema.parse(parse(approvalAtWorkflowHeadSource));
+  const approvalAtWorkflowHead = parseCourseReleaseApproval(
+    courseId,
+    parse(approvalAtWorkflowHeadSource),
+  );
   assertCanonicalEqual('workflow head approval', approvalAtWorkflowHead, approval);
-  const approvedHistory = ReleaseHistorySchema.parse(parse(approvedHistorySource));
+  const approvedHistory = parseCourseReleaseHistory(courseId, parse(approvedHistorySource));
   if (
     approvedHistory.candidate.verifiedSourceCommit !== approval.verifiedSourceCommit ||
     approvedHistory.candidate.canonicalDistSha256 !== approval.canonicalDistSha256 ||

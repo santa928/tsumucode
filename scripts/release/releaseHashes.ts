@@ -4,8 +4,11 @@ import { lstat, readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import { canonicalJson } from '../../src/core/persistence/canonicalJson';
-import { stringifyCanonicalJson } from '../content/compileCourse';
-import { readSplitCourseArtifacts } from '../content/readSplitCourseArtifacts';
+import {
+  isReleaseMetadataPath,
+  resolveReleaseCourseContract,
+  type ReleaseCourseId,
+} from './releaseCourseContracts';
 
 const execFileAsync = promisify(execFile);
 
@@ -19,6 +22,7 @@ export interface TreeHashEntry {
 }
 
 export interface ArtifactHashes {
+  readonly courseId?: ReleaseCourseId;
   readonly artifactDigest: string;
   readonly courseHash: string;
   readonly provenanceHash: string;
@@ -83,20 +87,14 @@ export async function hashDirectory(rootDirectory: string): Promise<string> {
   return sha256Text(canonicalJson(entries));
 }
 
-/** candidate treeから意図的に除外する手動記録・計画・台帳かを判定する。 */
-function isCandidateTreeExcluded(relative: string): boolean {
-  return (
-    relative.startsWith('docs/superpowers/') ||
-    relative.startsWith('docs/quality/') ||
-    relative === 'content/html-css/release-history.yaml'
-  );
-}
-
 /** Git追跡対象Product treeを、除外規則とFile内容の両方を含めてhashする。 */
 export async function hashReleaseCandidateTree(
   repositoryRoot: string,
   fileOverrides: ReadonlyMap<string, Uint8Array> = new Map(),
+  courseId: ReleaseCourseId = 'html-css',
+  revision?: string,
 ): Promise<string> {
+  resolveReleaseCourseContract(courseId);
   const root = path.resolve(repositoryRoot);
   const { stdout } = await execFileAsync('git', ['ls-files', '-z'], {
     cwd: root,
@@ -105,7 +103,7 @@ export async function hashReleaseCandidateTree(
   });
   const tracked = stdout
     .split('\0')
-    .filter((relative) => relative !== '' && !isCandidateTreeExcluded(relative))
+    .filter((relative) => relative !== '' && !isReleaseMetadataPath(relative, courseId, revision))
     .sort((left, right) => left.localeCompare(right));
   const unusedOverrides = new Set(fileOverrides.keys());
   const entries: TreeHashEntry[] = [];
@@ -142,12 +140,21 @@ export function hashPersistentIds(ids: readonly string[]): string {
 export async function calculateArtifactHashes(
   repositoryRoot: string,
   distDirectory = 'dist',
+  courseId: ReleaseCourseId = 'html-css',
 ): Promise<ArtifactHashes> {
+  const contract = resolveReleaseCourseContract(courseId);
+  const [{ stringifyCanonicalJson }, { readSplitCourseArtifacts }] = await Promise.all([
+    import('../content/compileCourse'),
+    import('../content/readSplitCourseArtifacts'),
+  ]);
   const root = path.resolve(repositoryRoot);
   const dist = path.resolve(root, distDirectory);
-  const course = await readSplitCourseArtifacts(dist, 'html-css');
-  const provenancePath = path.join(dist, 'generated/content/courses/html-css/provenance.json');
+  const course = await readSplitCourseArtifacts(dist, contract.courseId);
+  if (course.id !== contract.courseId)
+    throw new Error('Artifact Course IDが選択Courseと一致しません');
+  const provenancePath = path.join(dist, contract.publicProvenancePath);
   return {
+    courseId: contract.courseId,
     artifactDigest: await hashDirectory(dist),
     courseHash: sha256Text(stringifyCanonicalJson(course)),
     provenanceHash: sha256Bytes(await readFile(provenancePath)),
