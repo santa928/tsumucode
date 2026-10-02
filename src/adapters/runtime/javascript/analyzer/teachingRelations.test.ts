@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { analyzeJavaScriptSource } from './instrumentJavaScript';
+import { analyzeConsoleSourceFacts, analyzeJavaScriptSource } from './instrumentJavaScript';
 import type { JavaScriptTeachingGoal } from '../../../../core/content/javascriptTeachingGoals';
 
 const request = {
@@ -292,6 +292,241 @@ describe('指定Goalの同じbinding/ownerから実sinkへ接続する', () => {
       "document.querySelector('#note').innerText='ready';function unused(){const count={textContent:''};count.innerText='ignored';}";
     expect(await relations(alias, 'promise-await')).toHaveLength(1);
     expect(await relations(unrelated, 'promise-await')).toHaveLength(1);
+  });
+
+  it.each([
+    { goal: 'question-map', method: 'map' },
+    { goal: 'html-filter', method: 'filter' },
+    { goal: 'points-reduce', method: 'reduce' },
+    { goal: 'answered-map', method: 'map' },
+  ] as const)('$goal: 一段aliasによるnative $method置換を借用しない', async ({ goal, method }) => {
+    const correct = groupTwo.find((item) => item.goal === goal)!.correct;
+    const boundary = correct.indexOf(';') + 1;
+    const source =
+      correct.slice(0, boundary) +
+      `const alias=questions;alias['${method}']=()=>[];` +
+      correct.slice(boundary);
+    expect(await relations(source, goal)).toHaveLength(0);
+  });
+
+  it('native mapを変えないreadonly alias・別receiver・別scope・別method・再代入後のwriteを保持する', async () => {
+    const correct = groupTwo.find((item) => item.goal === 'question-map')!.correct;
+    const boundary = correct.indexOf(';') + 1;
+    for (const extra of [
+      'const alias=questions;',
+      'const alias=[];alias.map=()=>[];',
+      '{const questions=[];const alias=questions;alias.map=()=>[];}',
+      'const alias=questions;alias.filter=()=>[];',
+      'const alias=questions;delete alias.map;',
+      'let alias=questions;alias=[];alias.map=()=>[];',
+      'let alias=questions;alias={};alias.map=()=>[];',
+      'let alias=[];alias.map=()=>[];alias=questions;',
+    ]) {
+      expect(
+        await relations(
+          correct.slice(0, boundary) + extra + correct.slice(boundary),
+          'question-map',
+        ),
+      ).toHaveLength(1);
+    }
+  });
+
+  it('aliasへのproducer再代入やnative置換後のdetachで過去のmethod writeを消さない', async () => {
+    const correct = groupTwo.find((item) => item.goal === 'question-map')!.correct;
+    const boundary = correct.indexOf(';') + 1;
+    for (const extra of [
+      'let alias=[];alias=questions;alias.map=()=>[];',
+      'let alias=questions;alias.map=()=>[];alias=[];',
+    ]) {
+      expect(
+        await relations(
+          correct.slice(0, boundary) + extra + correct.slice(boundary),
+          'question-map',
+        ),
+      ).toHaveLength(0);
+    }
+  });
+
+  it.each([
+    { goal: 'question-map', method: 'map' },
+    { goal: 'html-filter', method: 'filter' },
+    { goal: 'points-reduce', method: 'reduce' },
+    { goal: 'answered-map', method: 'map' },
+  ] as const)(
+    '$goal: 二段aliasのnative $method置換を両Analyzerで借用しない',
+    async ({ goal, method }) => {
+      const correct = groupTwo.find((item) => item.goal === goal)!.correct;
+      const boundary = correct.indexOf(';') + 1;
+      const source =
+        correct.slice(0, boundary) +
+        `const alias1=questions;const alias2=alias1;alias2.${method}=()=>[];` +
+        correct.slice(boundary);
+      for (const analyze of [analyzeJavaScriptSource, analyzeConsoleSourceFacts]) {
+        const result = await analyze({ ...request, source, teachingGoal: goal });
+        expect(result.status).toBe('success');
+        if (result.status === 'success')
+          expect(result.facts.filter((fact) => fact.kind === 'teaching-relation')).toHaveLength(0);
+      }
+    },
+  );
+
+  it('alias連結のcapture後の元binding detachは旧receiverのmethod置換を消さない', async () => {
+    const correct = groupTwo.find((item) => item.goal === 'question-map')!.correct;
+    const boundary = correct.indexOf(';') + 1;
+    for (const extra of [
+      'let alias1=questions;const alias2=alias1;alias1=[];alias2.map=()=>[];',
+      'let alias1=[];alias1=questions;const alias2=alias1;alias2.map=()=>[];',
+      'let alias1=questions;const alias2=alias1;alias2.map=()=>[];alias1=[];',
+      'let alias1=questions;if(false){alias1=[];}const alias2=alias1;alias2.map=()=>[];',
+      'function replacement(){return questions;}let alias1=questions;alias1=replacement();const alias2=alias1;alias2.map=()=>[];',
+      'let alias1=questions;const alias2=alias1;alias1=alias2;alias2.map=()=>[];',
+      '{const alias1=questions;const alias2=alias1;alias2.map=()=>[];}',
+    ]) {
+      expect(
+        await relations(
+          correct.slice(0, boundary) + extra + correct.slice(boundary),
+          'question-map',
+        ),
+      ).toHaveLength(0);
+    }
+  });
+
+  it('readonly連結・capture前のdetach・別receiver・別scopeを保持する', async () => {
+    const correct = groupTwo.find((item) => item.goal === 'question-map')!.correct;
+    const boundary = correct.indexOf(';') + 1;
+    for (const extra of [
+      'const alias1=questions;const alias2=alias1;',
+      'let alias1=questions;alias1=[];const alias2=alias1;alias2.map=()=>[];',
+      'const alias1=questions;let alias2=alias1;alias2=[];alias2.map=()=>[];',
+      'let alias1=[];const alias2=alias1;alias1=questions;alias2.map=()=>[];',
+      '{const questions=[];const alias1=questions;const alias2=alias1;alias2.map=()=>[];}',
+      'const alias1=questions;const alias2=alias1;const alias3=alias2;',
+    ]) {
+      expect(
+        await relations(
+          correct.slice(0, boundary) + extra + correct.slice(boundary),
+          'question-map',
+        ),
+      ).toHaveLength(1);
+    }
+  });
+
+  it('related識別子を含む不明initializerはnative証明にせず、新literal receiverは保持する', async () => {
+    const correct = groupTwo.find((item) => item.goal === 'question-map')!.correct;
+    const boundary = correct.indexOf(';') + 1;
+    for (const extra of [
+      'const alias1=questions;const alias2=true?alias1:[];alias2.map=()=>[];',
+      'const alias1=questions;const alias2=alias1||[];alias2.map=()=>[];',
+      'let alias1=[],alias2=[];alias2=alias1=questions;alias2.map=()=>[];',
+    ]) {
+      expect(
+        await relations(
+          correct.slice(0, boundary) + extra + correct.slice(boundary),
+          'question-map',
+        ),
+      ).toHaveLength(0);
+    }
+    expect(
+      await relations(
+        correct.slice(0, boundary) +
+          'const alias=[questions];alias.map=()=>[];' +
+          correct.slice(boundary),
+        'question-map',
+      ),
+    ).toHaveLength(1);
+  });
+
+  it('Call captureと未知receiverのnative method writeを両Analyzerで無関係に補完しない', async () => {
+    const correct = groupTwo.find((item) => item.goal === 'question-map')!.correct;
+    const boundary = correct.indexOf(';') + 1;
+    for (const extra of [
+      'function take(){return questions;}const alias=take();alias.map=()=>[];',
+      'function take(){return questions;}take().map=()=>[];',
+      'const take=()=>questions;take().map=()=>[];',
+      '({items:questions}).items.map=()=>[];',
+      'const {items:alias}={items:questions};alias.map=()=>[];',
+      'let previous=questions;const take=()=>previous;const alias=take();previous=[];alias.map=()=>[];',
+    ]) {
+      const source = correct.slice(0, boundary) + extra + correct.slice(boundary);
+      for (const analyze of [analyzeJavaScriptSource, analyzeConsoleSourceFacts]) {
+        const result = await analyze({ ...request, source, teachingGoal: 'question-map' });
+        expect(result.status).toBe('success');
+        if (result.status === 'success')
+          expect(result.facts.filter((fact) => fact.kind === 'teaching-relation')).toHaveLength(0);
+      }
+    }
+  });
+
+  it('readonly Callと一意な単一returnのfresh receiver、直接fresh literal書込を保持する', async () => {
+    const correct = groupTwo.find((item) => item.goal === 'question-map')!.correct;
+    const boundary = correct.indexOf(';') + 1;
+    for (const extra of [
+      'function take(){return questions;}const alias=take();',
+      'function take(){return [];}const alias=take();alias.map=()=>[];',
+      'function take(){return {};}take().map=()=>[];',
+      'const take=()=>[];take().map=()=>[];',
+      '[].map=()=>[];',
+      '({}).map=()=>[];',
+      'function unrelated(){}unrelated.map=()=>[];',
+      'let previous=questions;const take=()=>previous;previous=[];const alias=take();alias.map=()=>[];',
+    ]) {
+      expect(
+        await relations(
+          correct.slice(0, boundary) + extra + correct.slice(boundary),
+          'question-map',
+        ),
+      ).toHaveLength(1);
+    }
+  });
+
+  it('直接Programのnative変換後のalias method writeは実行済み変換を失効させない', async () => {
+    const correct = groupTwo.find((item) => item.goal === 'question-map')!.correct;
+    const boundary = correct.indexOf(';') + 1;
+    const source =
+      correct.slice(0, boundary) +
+      'const alias=questions;' +
+      correct.slice(boundary) +
+      'alias.map=()=>[];';
+    expect(await relations(source, 'question-map')).toHaveLength(1);
+  });
+
+  it('64段を超える連結のnative証明は補完せず、readonly連結は不要に解析しない', async () => {
+    const correct = groupTwo.find((item) => item.goal === 'question-map')!.correct;
+    const boundary = correct.indexOf(';') + 1;
+    const aliases = Array.from(
+      { length: 65 },
+      (_, index) =>
+        `const alias${String(index)}=${index === 0 ? 'questions' : `alias${String(index - 1)}`};`,
+    ).join('');
+    expect(
+      await relations(
+        correct.slice(0, boundary) + aliases + correct.slice(boundary),
+        'question-map',
+      ),
+    ).toHaveLength(1);
+    expect(
+      await relations(
+        correct.slice(0, boundary) + aliases + 'alias64.map=()=>[];' + correct.slice(boundary),
+        'question-map',
+      ),
+    ).toHaveLength(0);
+  });
+
+  it('動的method keyは既存Preview拒否を維持し、Console用factもnative関係にしない', async () => {
+    const correct = groupTwo.find((item) => item.goal === 'question-map')!.correct;
+    const boundary = correct.indexOf(';') + 1;
+    const source =
+      correct.slice(0, boundary) +
+      'const alias=questions;const key="map";alias[key]=()=>[];' +
+      correct.slice(boundary);
+    const input = { ...request, source, teachingGoal: 'question-map' as const };
+    expect((await analyzeJavaScriptSource(input)).status).toBe('failure');
+    const consoleFacts = await analyzeConsoleSourceFacts(input);
+    expect(consoleFacts.status).toBe('success');
+    if (consoleFacts.status === 'success')
+      expect(consoleFacts.facts.filter((fact) => fact.kind === 'teaching-relation')).toHaveLength(
+        0,
+      );
   });
 
   it('未指定Goalは正答でも新関係factを返さない', async () => {

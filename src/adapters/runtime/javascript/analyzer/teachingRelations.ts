@@ -326,7 +326,142 @@ function iteration(
   });
 }
 
-/** 指定Arrayのmap/filter/reduceから同じresult bindingを作る直接initializerを解決する。 */
+/**
+ * 既存AST上限20,000 nodes内でnative method writeだけを照合する。captureを最大64段戻り、
+ * 宣言identity/直接代入と一意な0arg/0param単一returnだけでreceiverを証明する。
+ * branch/不明式/Member/pattern/循環/上限を無関係なreceiverへ補完せず、関係を返さない。
+ * 直接ProgramのnativeCall完了後のwriteは除外し、Function呼出し順序は推測しない。
+ */
+function nativeTransformUnchanged(
+  context: TeachingRelationContext,
+  source: TeachingBinding,
+  method: 'map' | 'filter' | 'reduce',
+  nativeCall: Node,
+): boolean {
+  type Receiver = { readonly binding: TeachingBinding; readonly writes: Node[] };
+  const declarations = new Map<Node, Map<string, Receiver>>();
+  /** 同名文字列を合流せず、既存bindingの宣言nodeと名前から一意な内部recordを得る。 */
+  function receiver(binding: TeachingBinding | undefined): Receiver | undefined {
+    if (binding === undefined) return undefined;
+    let names = declarations.get(binding.declaration);
+    if (names === undefined) {
+      names = new Map<string, Receiver>();
+      declarations.set(binding.declaration, names);
+    }
+    let record = names.get(binding.name);
+    if (record === undefined) {
+      record = { binding, writes: [] };
+      names.set(binding.name, record);
+    }
+    return record;
+  }
+  for (const candidate of context.nodes) {
+    const target = writeTarget(candidate);
+    if (target?.type === 'Identifier') receiver(context.resolve(target))?.writes.push(candidate);
+  }
+  /** receiverを読む時点へ戻り、undefinedはsourceと無関係だと証明できないことを表す。 */
+  function sharesSource(
+    value: Node | undefined,
+    at: Node,
+    visited: ReadonlySet<Receiver>,
+    depth = 0,
+  ): boolean | undefined {
+    if (value === undefined || depth >= 64) return undefined;
+    if (
+      [
+        'ArrayExpression',
+        'ObjectExpression',
+        'Literal',
+        'FunctionExpression',
+        'ArrowFunctionExpression',
+      ].includes(value.type)
+    )
+      return false;
+    if (value.type === 'Identifier') {
+      const record = receiver(context.resolve(value));
+      if (record === undefined) return undefined;
+      if (same(record.binding, source)) return true;
+      if (
+        visited.has(record) ||
+        !direct(context, at, record.binding.scopeOwner) ||
+        record.writes.some((write) => !direct(context, write, record.binding.scopeOwner))
+      )
+        return undefined;
+      const previous = record.writes
+        .filter((write) => write.start < at.start)
+        .sort((left, right) => left.start - right.start)
+        .at(-1);
+      if (
+        previous !== undefined &&
+        (previous.type !== 'AssignmentExpression' || ast(previous).operator !== '=')
+      )
+        return undefined;
+      if (previous === undefined && record.binding.declaration.type === 'FunctionDeclaration')
+        return false;
+      const capture = previous ?? record.binding.declaration;
+      if (
+        capture.start >= at.start ||
+        !direct(context, capture, record.binding.scopeOwner) ||
+        (previous === undefined && !reference(context, node(ast(capture).id), record.binding))
+      )
+        return undefined;
+      const origin =
+        previous === undefined ? initializer(record.binding) : node(ast(previous).right);
+      return sharesSource(origin, capture, new Set([...visited, record]), depth + 1);
+    }
+    if (value.type === 'CallExpression') {
+      const callee = node(ast(value).callee);
+      const fn =
+        callee?.type === 'Identifier' ? functionNode(context, context.resolve(callee)) : undefined;
+      if (
+        fn === undefined ||
+        ast(fn).async === true ||
+        ast(fn).generator === true ||
+        list(ast(value).arguments).length !== 0 ||
+        list(ast(fn).params).length !== 0
+      )
+        return undefined;
+      const fnBody = body(fn);
+      const statements = fnBody?.type === 'BlockStatement' ? list(ast(fnBody).body) : [];
+      const result =
+        fnBody?.type === 'BlockStatement'
+          ? statements.length === 1 && statements[0]?.type === 'ReturnStatement'
+            ? node(ast(statements[0]).argument)
+            : undefined
+          : fnBody;
+      if (
+        result === undefined ||
+        ![
+          'Identifier',
+          'ArrayExpression',
+          'ObjectExpression',
+          'Literal',
+          'FunctionExpression',
+          'ArrowFunctionExpression',
+        ].includes(result.type)
+      )
+        return undefined;
+      // return位置ではなく実際のCall/capture時点のglobal binding値を読む。
+      return sharesSource(result, at, visited, depth + 1);
+    }
+    return undefined;
+  }
+  return !context.nodes.some((write) => {
+    if (write.type !== 'AssignmentExpression' && write.type !== 'UpdateExpression') return false;
+    // 直接Programでnative変換が完了した後のwriteは過去の変換を置き換えない。
+    if (write.start >= nativeCall.end && direct(context, write, context.program)) return false;
+    const target = writeTarget(write);
+    if (
+      target?.type !== 'MemberExpression' ||
+      (property(target) !== method &&
+        !(ast(target).computed === true && property(target) === undefined))
+    )
+      return false;
+    return sharesSource(node(ast(target).object), write, new Set()) !== false;
+  });
+}
+
+/** 指定Arrayのnative変換と安定したresultを解決し、有限alias連結によるmethod置換を拒否する。 */
 function transform(
   context: TeachingRelationContext,
   result: TeachingBinding | undefined,
@@ -343,7 +478,8 @@ function transform(
     init?.type !== 'CallExpression' ||
     property(callee) !== method ||
     !reference(context, callee === undefined ? undefined : node(ast(callee).object), source) ||
-    !direct(context, result.declaration, context.program)
+    !direct(context, result.declaration, context.program) ||
+    !nativeTransformUnchanged(context, source, method, init)
   )
     return undefined;
   const fn = callback(context, list(ast(init).arguments)[0]);
