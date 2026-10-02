@@ -1,5 +1,7 @@
 # JavaScript全Course 設計
 
+> 2026-10-02の通常公開計画は[JSエージェント検証・通常公開計画](2026-10-02-javascript-agent-release-plan.md)、[公開基準](javascript-normal-release-policy.md)、[模擬学習runbook](javascript-agent-learning-runbook.md)を参照する。本人が今回承認した受入変更は、REQ-JSC-033の実在JS初心者1名の全通しを、3独立GPT-6.1 Sol / high以上の各自全52模擬学習へ代替する1点だけである。以下の旧基準・歴史的証跡を保持し、実人の理解と同等には扱わない。所要時間は実体へ同期し、現在の標準760分 + Guided100分 + Capstone150分は1,010分（旧1,000分との差はChapter03の+10分）。その他の品質・安全・性能・全公開Gateは維持する。
+
 - 状態: 全Course設計は書面レビュー承認済み。Ch00〜11は46 Lesson/184 Slide/48演習/760分draftで、新10教材とRuntimeの独立レビュー・技術受入の統合候補がそろった。最終HEADのCI・main統合はPR記録、配信済み範囲とSHAはIssue #5を正本とする。Guided/Capstone・初心者本人試用・実機・全Course正式公開は未完。詳細: `2026-10-02-sol-integration-acceptance.md`。
 - 承認日: 2026-08-04
 - 作成日: 2026-08-03
