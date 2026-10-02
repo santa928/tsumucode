@@ -1177,7 +1177,7 @@ function EditableSession({
         onClose={closeRelatedSlide}
       >
         {relatedSlide !== undefined ? (
-          <div className="tc-exercise-related-slide">
+          <div className="tc-exercise-related-slide min-w-0 grid-cols-1">
             <p>コードと判定履歴を保ったまま、直前の説明を確認できます。</p>
             <label className="grid min-w-0 gap-2 font-bold">
               見直す説明
