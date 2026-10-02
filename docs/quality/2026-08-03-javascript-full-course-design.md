@@ -1,6 +1,6 @@
 # JavaScript全Course 設計
 
-- 状態: 全Course設計は書面レビュー承認済み。Runtime基盤・Ch00〜08・Ch09先頭1単元はmainへ統合済み。Ch09の後続3単元は独立レビュー待ちの候補。Ch10〜13、全Course受入は未完。配信済み範囲とSHAはIssue #5を正本とする。
+- 状態: 全Course設計は書面レビュー承認済み。Ch00〜11は46 Lesson/184 Slide/48演習/760分draftで、新10教材とRuntimeの独立レビュー・技術受入の統合候補がそろった。最終HEADのCI・main統合はPR記録、配信済み範囲とSHAはIssue #5を正本とする。Guided/Capstone・初心者本人試用・実機・全Course正式公開は未完。詳細: `2026-10-02-sol-integration-acceptance.md`。
 - 承認日: 2026-08-04
 - 作成日: 2026-08-03
 - 対象: `javascript` Course Chapter 01〜13、既存Chapter 00の互換維持、全Course公開

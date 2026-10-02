@@ -3,6 +3,126 @@ releaseStatus: draft
 verifiedSourceCommit: draft
 canonicalDistSha256: draft
 lessons:
+  - lessonId: javascript-ch09-l02
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-xhigh-independent-review
+    sourceHash: 9a475d86b837fb408c7fe1908cf8cce9e3839b3cf8a7ae3db59bed10d29b8829
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 2026-10-02の本人指示によりPro会話長上限時の代替としてGPT-6.1 Sol
+      xhigh独立担当が固定76679ddの原稿/Concept/Glossary/Hint/Exercise/Fixture/登録/移行とsourceHashを確認。既存同入力の実例/実Runner/PCと390px証拠を再利用し、変更3教材は新3Browserの正誤Fixtureとnative操作/Reset/別解/判定/保存再開で再確認。変更Slide4例は別の独立実Runner観測で確認。新10Lessonの内容承認であり、人の初心者/実機/全Course正式公開の承認ではない。詳細は2026-10-02-sol-integration-acceptance.md参照。
+  - lessonId: javascript-ch09-l03
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-xhigh-independent-review
+    sourceHash: 1a87bcc21e5429c11f0d29c315141f100294ce1f7364c88aece9ca4978b106be
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 2026-10-02の本人指示によりPro会話長上限時の代替としてGPT-6.1 Sol
+      xhigh独立担当が固定76679ddの原稿/Concept/Glossary/Hint/Exercise/Fixture/登録/移行とsourceHashを確認。既存同入力の実例/実Runner/PCと390px証拠を再利用し、変更3教材は新3Browserの正誤Fixtureとnative操作/Reset/別解/判定/保存再開で再確認。変更Slide4例は別の独立実Runner観測で確認。新10Lessonの内容承認であり、人の初心者/実機/全Course正式公開の承認ではない。詳細は2026-10-02-sol-integration-acceptance.md参照。
+  - lessonId: javascript-ch09-l04
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-xhigh-independent-review
+    sourceHash: 13ceeb4b21fc1cdb482b3a2067d66bb77f3bd42a0d353f0aa4287b044ad7888a
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 2026-10-02の本人指示によりPro会話長上限時の代替としてGPT-6.1 Sol
+      xhigh独立担当が固定76679ddの原稿/Concept/Glossary/Hint/Exercise/Fixture/登録/移行とsourceHashを確認。既存同入力の実例/実Runner/PCと390px証拠を再利用し、変更3教材は新3Browserの正誤Fixtureとnative操作/Reset/別解/判定/保存再開で再確認。変更Slide4例は別の独立実Runner観測で確認。新10Lessonの内容承認であり、人の初心者/実機/全Course正式公開の承認ではない。詳細は2026-10-02-sol-integration-acceptance.md参照。
+  - lessonId: javascript-ch10-l01
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-xhigh-independent-review
+    sourceHash: d59512b69f7c53de47a89e5d3b051eb7457480e614cb25776e8745deab0e5c47
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 2026-10-02の本人指示によりPro会話長上限時の代替としてGPT-6.1 Sol
+      xhigh独立担当が固定76679ddの原稿/Concept/Glossary/Hint/Exercise/Fixture/登録/移行とsourceHashを確認。既存同入力の実例/実Runner/PCと390px証拠を再利用し、変更3教材は新3Browserの正誤Fixtureとnative操作/Reset/別解/判定/保存再開で再確認。変更Slide4例は別の独立実Runner観測で確認。新10Lessonの内容承認であり、人の初心者/実機/全Course正式公開の承認ではない。詳細は2026-10-02-sol-integration-acceptance.md参照。
+  - lessonId: javascript-ch10-l02
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-xhigh-independent-review
+    sourceHash: 442cef363ae25bc93c2f41210638c90a469a867552cdfde4704b29c54b13dc14
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 2026-10-02の本人指示によりPro会話長上限時の代替としてGPT-6.1 Sol
+      xhigh独立担当が固定76679ddの原稿/Concept/Glossary/Hint/Exercise/Fixture/登録/移行とsourceHashを確認。既存同入力の実例/実Runner/PCと390px証拠を再利用し、変更3教材は新3Browserの正誤Fixtureとnative操作/Reset/別解/判定/保存再開で再確認。変更Slide4例は別の独立実Runner観測で確認。新10Lessonの内容承認であり、人の初心者/実機/全Course正式公開の承認ではない。詳細は2026-10-02-sol-integration-acceptance.md参照。
+  - lessonId: javascript-ch10-l03
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-xhigh-independent-review
+    sourceHash: 4647fc8e13502f50df9986ac4b22841b57e5c0cf9da08acaee33abab04acf4ab
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 2026-10-02の本人指示によりPro会話長上限時の代替としてGPT-6.1 Sol
+      xhigh独立担当が固定76679ddの原稿/Concept/Glossary/Hint/Exercise/Fixture/登録/移行とsourceHashを確認。既存同入力の実例/実Runner/PCと390px証拠を再利用し、変更3教材は新3Browserの正誤Fixtureとnative操作/Reset/別解/判定/保存再開で再確認。変更Slide4例は別の独立実Runner観測で確認。新10Lessonの内容承認であり、人の初心者/実機/全Course正式公開の承認ではない。詳細は2026-10-02-sol-integration-acceptance.md参照。
+  - lessonId: javascript-ch10-l04
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-xhigh-independent-review
+    sourceHash: b4158c75af875826fb7db852c5c999daff3d3e8bf0a6710535ae9cb8352d38b2
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 2026-10-02の本人指示によりPro会話長上限時の代替としてGPT-6.1 Sol
+      xhigh独立担当が固定76679ddの原稿/Concept/Glossary/Hint/Exercise/Fixture/登録/移行とsourceHashを確認。既存同入力の実例/実Runner/PCと390px証拠を再利用し、変更3教材は新3Browserの正誤Fixtureとnative操作/Reset/別解/判定/保存再開で再確認。変更Slide4例は別の独立実Runner観測で確認。新10Lessonの内容承認であり、人の初心者/実機/全Course正式公開の承認ではない。詳細は2026-10-02-sol-integration-acceptance.md参照。
+  - lessonId: javascript-ch11-l01
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-xhigh-independent-review
+    sourceHash: 0d0f91e9c318e4a254eac28c3ffafc33ba053e18fe09168de786e1d64da92046
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 2026-10-02の本人指示によりPro会話長上限時の代替としてGPT-6.1 Sol
+      xhigh独立担当が固定76679ddの原稿/Concept/Glossary/Hint/Exercise/Fixture/登録/移行とsourceHashを確認。既存同入力の実例/実Runner/PCと390px証拠を再利用し、変更3教材は新3Browserの正誤Fixtureとnative操作/Reset/別解/判定/保存再開で再確認。変更Slide4例は別の独立実Runner観測で確認。新10Lessonの内容承認であり、人の初心者/実機/全Course正式公開の承認ではない。詳細は2026-10-02-sol-integration-acceptance.md参照。
+  - lessonId: javascript-ch11-l02
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-xhigh-independent-review
+    sourceHash: 50dc6cf249491df0c028b5a51209c85fc880b8828210bade4af0574e4de0f20e
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 2026-10-02の本人指示によりPro会話長上限時の代替としてGPT-6.1 Sol
+      xhigh独立担当が固定76679ddの原稿/Concept/Glossary/Hint/Exercise/Fixture/登録/移行とsourceHashを確認。既存同入力の実例/実Runner/PCと390px証拠を再利用し、変更3教材は新3Browserの正誤Fixtureとnative操作/Reset/別解/判定/保存再開で再確認。変更Slide4例は別の独立実Runner観測で確認。新10Lessonの内容承認であり、人の初心者/実機/全Course正式公開の承認ではない。詳細は2026-10-02-sol-integration-acceptance.md参照。
+  - lessonId: javascript-ch11-l03
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-xhigh-independent-review
+    sourceHash: d7383e6fb207d03e14485dba99d7cafa62a3c7a821d1bd8f4fa383957924baf6
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 2026-10-02の本人指示によりPro会話長上限時の代替としてGPT-6.1 Sol
+      xhigh独立担当が固定76679ddの原稿/Concept/Glossary/Hint/Exercise/Fixture/登録/移行とsourceHashを確認。既存同入力の実例/実Runner/PCと390px証拠を再利用し、変更3教材は新3Browserの正誤Fixtureとnative操作/Reset/別解/判定/保存再開で再確認。変更Slide4例は別の独立実Runner観測で確認。新10Lessonの内容承認であり、人の初心者/実機/全Course正式公開の承認ではない。詳細は2026-10-02-sol-integration-acceptance.md参照。
   - lessonId: javascript-ch09-l01
     authorId: tsumucode-javascript-authoring
     reviewerId: astra-pro-independent-review
