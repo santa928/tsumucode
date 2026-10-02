@@ -6,6 +6,7 @@ runtime:
   sourceType: script
   capabilityProfile: core
   primaryOutput: console
+  teachingGoal: score-closure
 workspaceId: javascript-ch03-l05-e01
 countsTowardStandardExerciseTotal: true
 title: Closureで得点を10ずつ増やす
@@ -31,6 +32,7 @@ steps:
         javascript-ch03-l05-e01-r06,
         javascript-ch03-l05-e01-r07,
         javascript-ch03-l05-e01-r08,
+        javascript-ch03-l05-e01-r09,
       ]
 files:
   - { path: script.js, language: javascript, source: starter/script.js, editable: true }
@@ -179,6 +181,28 @@ validationRules:
       nextAction: 同じaddScoreを2回呼び、scoreへ毎回10を加えます。
     hintId: javascript-ch03-l05-e01-h03
     relatedSlideId: javascript-ch03-l05-s04
+  - id: javascript-ch03-l05-e01-r09
+    groupId: javascript-ch03-l05-e01-teaching-result
+    label: 戻されたFunctionを呼び、保持したscoreを増やして表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: teaching-relation
+        goal: score-closure
+    feedback:
+      target: script.jsと実行結果
+      expected: 戻されたFunctionを呼び、保持したscoreを増やして表示する
+      nextAction: 同じ値・Function・処理から得た結果を使います。結果だけを別の固定値で表示していないか確認します。
+    hintId: javascript-ch03-l05-e01-h01
+    relatedSlideId: javascript-ch03-l05-s04
 hints:
   - id: javascript-ch03-l05-e01-h01
     level: 1
@@ -221,14 +245,13 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds:
-      [
-        javascript-ch03-l05-e01-r01,
-        javascript-ch03-l05-e01-r02,
-        javascript-ch03-l05-e01-r03,
-        javascript-ch03-l05-e01-r04,
-        javascript-ch03-l05-e01-r07,
-        javascript-ch03-l05-e01-r08,
-      ]
+      - javascript-ch03-l05-e01-r01
+      - javascript-ch03-l05-e01-r02
+      - javascript-ch03-l05-e01-r03
+      - javascript-ch03-l05-e01-r04
+      - javascript-ch03-l05-e01-r07
+      - javascript-ch03-l05-e01-r08
+      - javascript-ch03-l05-e01-r09
   - id: global-score
     expectedStatus: incomplete
     files:
@@ -236,14 +259,13 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds:
-      [
-        javascript-ch03-l05-e01-r01,
-        javascript-ch03-l05-e01-r02,
-        javascript-ch03-l05-e01-r03,
-        javascript-ch03-l05-e01-r04,
-        javascript-ch03-l05-e01-r07,
-        javascript-ch03-l05-e01-r08,
-      ]
+      - javascript-ch03-l05-e01-r01
+      - javascript-ch03-l05-e01-r02
+      - javascript-ch03-l05-e01-r03
+      - javascript-ch03-l05-e01-r04
+      - javascript-ch03-l05-e01-r07
+      - javascript-ch03-l05-e01-r08
+      - javascript-ch03-l05-e01-r09
   - id: reset-every-call
     expectedStatus: incomplete
     files:
@@ -256,14 +278,13 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds:
-      [
-        javascript-ch03-l05-e01-r01,
-        javascript-ch03-l05-e01-r02,
-        javascript-ch03-l05-e01-r03,
-        javascript-ch03-l05-e01-r04,
-        javascript-ch03-l05-e01-r07,
-        javascript-ch03-l05-e01-r08,
-      ]
+      - javascript-ch03-l05-e01-r01
+      - javascript-ch03-l05-e01-r02
+      - javascript-ch03-l05-e01-r03
+      - javascript-ch03-l05-e01-r04
+      - javascript-ch03-l05-e01-r07
+      - javascript-ch03-l05-e01-r08
+      - javascript-ch03-l05-e01-r09
   - id: output-only
     expectedStatus: incomplete
     files:
@@ -279,6 +300,7 @@ fixtures:
       - javascript-ch03-l05-e01-r06
       - javascript-ch03-l05-e01-r07
       - javascript-ch03-l05-e01-r08
+      - javascript-ch03-l05-e01-r09
   - id: syntax-error
     expectedStatus: code-error
     files:
@@ -294,3 +316,20 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds: []
+  - id: relation-fixed-output
+    expectedStatus: incomplete
+    files:
+      - path: script.js
+        language: javascript
+        source: fixtures/relation-fixed-output.js
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch03-l05-e01-r09

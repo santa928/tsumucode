@@ -310,3 +310,20 @@ describe('PreviewBridgeClient', () => {
     await expect(client.requestSnapshot('after-dispose', policy)).rejects.toThrow('disposed');
   });
 });
+
+it('旧Snapshotを保ち、inputValueはbounded stringだけを受理する', () => {
+  const response = (node: PreviewNode) => ({
+    version: 1,
+    type: 'snapshot.response',
+    exerciseSessionId: 'session-1',
+    requestId: 'request-1',
+    oneTimeToken: 'token',
+    payload: snapshot({ nodes: [node] }),
+  });
+  expect(isPreviewResponse(response(previewNode()))).toBe(true);
+  expect(isPreviewResponse(response(previewNode({ tagName: 'input', inputValue: '' })))).toBe(true);
+  expect(
+    isPreviewResponse(response({ ...previewNode(), inputValue: 42 } as unknown as PreviewNode)),
+  ).toBe(false);
+  expect(isPreviewResponse(response(previewNode({ inputValue: 'x'.repeat(100_001) })))).toBe(false);
+});

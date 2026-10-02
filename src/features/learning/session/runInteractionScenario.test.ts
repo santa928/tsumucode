@@ -351,3 +351,29 @@ it.each(['late-budget', 'late-console'] as const)(
     expect(interact).toHaveBeenCalledTimes(1);
   },
 );
+
+it('input-value要求selectorだけをSnapshotへ接続し、旧policyには値収集を追加しない', () => {
+  const { input } = delayedScenario(0);
+  const scenario = {
+    ...input.scenario,
+    checkpoints: [
+      {
+        id: 'reopened',
+        afterActionId: 'click',
+        expectations: [
+          { id: 'empty', kind: 'input-value' as const, selector: '#answer', equals: '' },
+        ],
+      },
+    ],
+  };
+  expect(
+    extendSnapshotPolicyForInteractions(input.policy, [{ interactionScenarios: [scenario] }]),
+  ).toMatchObject({
+    selectors: ['#answer'],
+    inputValueSelectors: ['#answer'],
+  });
+  expect(extendSnapshotPolicyForInteractions(input.policy, [])).not.toHaveProperty(
+    'inputValueSelectors',
+  );
+  expect(input.policy).not.toHaveProperty('inputValueSelectors');
+});

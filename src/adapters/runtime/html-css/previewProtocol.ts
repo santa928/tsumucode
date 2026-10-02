@@ -50,6 +50,7 @@ const PreviewNodeSchema = z
     matchedSelectors: z.array(z.string().max(1_000)).max(MAX_SELECTORS),
     attributes: AttributeRecordSchema,
     text: z.string().max(MAX_TEXT_LENGTH),
+    inputValue: z.string().max(MAX_TEXT_LENGTH).optional(),
     computedStyles: ComputedStyleRecordSchema,
     focusVisibleComputedStyles: ComputedStyleRecordSchema,
     rect: z

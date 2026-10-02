@@ -1,4 +1,8 @@
 import type { RunnerDiagnostic } from '../../../../core/runtime/contracts';
+import {
+  isJavaScriptTeachingGoal,
+  type JavaScriptTeachingGoal,
+} from '../../../../core/content/javascriptTeachingGoals';
 import { isJavaScriptWorkspacePath, resolveJavaScriptModuleSpecifier } from './modulePath';
 export { isJavaScriptWorkspacePath } from './modulePath';
 
@@ -14,6 +18,7 @@ export interface JavaScriptLegacyAnalysisInput {
   readonly sourceType: JavaScriptSourceType;
   readonly capabilityProfile: JavaScriptCapabilityProfileId;
   readonly guardIdentifier: string;
+  readonly teachingGoal?: JavaScriptTeachingGoal;
 }
 
 export interface JavaScriptWorkspaceAnalysisInput {
@@ -24,6 +29,7 @@ export interface JavaScriptWorkspaceAnalysisInput {
   readonly sourceType: JavaScriptSourceType;
   readonly capabilityProfile: JavaScriptCapabilityProfileId;
   readonly guardIdentifier: string;
+  readonly teachingGoal?: JavaScriptTeachingGoal;
 }
 
 export type JavaScriptAnalysisInput =
@@ -66,6 +72,10 @@ export type JavaScriptSourceOperand =
   | { readonly kind: 'literal'; readonly value: string | number | boolean };
 
 export type JavaScriptSourceFact =
+  | (JavaScriptFactLocation & {
+      readonly kind: 'teaching-relation';
+      readonly goal: JavaScriptTeachingGoal;
+    })
   | (JavaScriptFactLocation & {
       readonly kind: 'binding';
       readonly name: string;
@@ -278,6 +288,18 @@ export function isJavaScriptAnalysisRequest(value: unknown): value is JavaScript
     'requestId',
     'sourceType',
   ].sort();
+  if ('teachingGoal' in value) {
+    if (
+      !isJavaScriptTeachingGoal(value.teachingGoal) ||
+      value.sourceType !== 'script' ||
+      !['core', 'async'].includes(String(value.capabilityProfile))
+    )
+      return false;
+    legacyKeys.push('teachingGoal');
+    workspaceKeys.push('teachingGoal');
+    legacyKeys.sort();
+    workspaceKeys.sort();
+  }
   const legacyShape = JSON.stringify(keys) === JSON.stringify(legacyKeys);
   const workspaceShape = JSON.stringify(keys) === JSON.stringify(workspaceKeys);
   if (!legacyShape && !workspaceShape) {
@@ -342,6 +364,10 @@ function isJavaScriptSourceFact(value: unknown): value is JavaScriptSourceFact {
   const bounded = (candidate: unknown): candidate is string =>
     typeof candidate === 'string' && candidate.length <= 128;
   switch (value.kind) {
+    case 'teaching-relation':
+      return (
+        hasKeys(['column', 'file', 'goal', 'kind', 'line']) && isJavaScriptTeachingGoal(value.goal)
+      );
     case 'binding':
       return (
         hasKeys(['column', 'declarationKind', 'file', 'kind', 'line', 'name', 'scopeDepth']) &&

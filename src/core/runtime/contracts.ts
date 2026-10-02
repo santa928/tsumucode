@@ -28,6 +28,8 @@ export interface ResolvedPreviewAsset {
 
 export interface SnapshotPolicy {
   readonly selectors: readonly string[];
+  /** 要求された可視native text inputだけのlive値を観測する。旧policyでは省略。 */
+  readonly inputValueSelectors?: readonly string[];
   readonly attributes: readonly string[];
   readonly computedStyles: readonly string[];
   readonly focusVisibleSelectors: readonly string[];
@@ -148,6 +150,8 @@ export interface PreviewNode {
   readonly matchedSelectors: readonly string[];
   readonly attributes: Readonly<Record<string, string>>;
   readonly text: string;
+  /** Bridgeが要求selectorの可視native text inputから取得した実値。未観測は欠落。 */
+  readonly inputValue?: string | undefined;
   readonly computedStyles: Readonly<Record<string, string>>;
   readonly focusVisibleComputedStyles: Readonly<Record<string, string>>;
   readonly rect: PreviewRect;

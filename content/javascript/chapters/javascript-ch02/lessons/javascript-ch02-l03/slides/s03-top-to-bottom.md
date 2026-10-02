@@ -29,7 +29,7 @@ if (answer === 'A') {
 ![最初にtrueになった道だけを選ぶ流れ](asset:javascript-ch02-l03-branch-order-flow)
 
 :::practice
-prompt: answerがCのときの表示を答えます。
-expectedAction: その他ですと答える
+prompt: answerがCのときに進む道を答えます。
+expectedAction: 最後のelseの道へ進むと答える
 estimatedMinutes: 1
 :::

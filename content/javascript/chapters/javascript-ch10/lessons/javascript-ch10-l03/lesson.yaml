@@ -5,6 +5,7 @@ goal: awaitしたPromiseの失敗をcatchで受け取り、成功と区別して
 estimatedMinutes: 15
 prerequisiteLessonIds:
   - javascript-ch10-l02
+  - javascript-ch06-l03
 slideSources:
   - slides/s01.md
   - slides/s02.md

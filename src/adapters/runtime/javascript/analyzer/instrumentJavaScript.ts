@@ -23,6 +23,15 @@ import type {
   JavaScriptWorkspaceAnalysisSuccess,
 } from './contracts';
 import { buildModuleGraph, JavaScriptModuleGraphError } from './moduleGraph';
+import {
+  findTeachingRelation,
+  type TeachingBinding,
+  type TeachingRelationContext,
+} from './teachingRelations';
+import {
+  isJavaScriptTeachingGoal,
+  type JavaScriptTeachingGoal,
+} from '../../../../core/content/javascriptTeachingGoals';
 
 type AstNode = Node & Readonly<Record<string, unknown>>;
 
@@ -554,6 +563,7 @@ function collectFacts(
   program: Node,
   nodes: readonly Node[],
   file: string,
+  teachingGoal?: JavaScriptTeachingGoal,
 ): readonly JavaScriptSourceFact[] {
   const facts: JavaScriptSourceFact[] = [];
   const scopesByNode = new Map<Node, ScopeInfo>();
@@ -1096,6 +1106,49 @@ function collectFacts(
       });
     }
   }
+  if (teachingGoal !== undefined) {
+    /** 一意な宣言とscopeを関係解析へ渡し、同名/未使用scopeを合流させない。 */
+    const bindingIn = (scope: ScopeInfo | undefined, name: string): TeachingBinding | undefined => {
+      const declarations = scope?.declarations.get(name);
+      const declaration = declarations?.size === 1 ? declarations.values().next().value : undefined;
+      return declaration === undefined || scope === undefined
+        ? undefined
+        : { name, declaration, scopeOwner: scope.node };
+    };
+    const context: TeachingRelationContext = {
+      program,
+      nodes: sortedNodes,
+      parent: (node) => parentByNode.get(node),
+      resolve: (node) => {
+        const name = identifierName(node);
+        return name === undefined
+          ? undefined
+          : bindingIn(resolveBinding(scopeByNode.get(node), name), name);
+      },
+      global: (name) => bindingIn(scopesByNode.get(program), name),
+      writes: (binding) => {
+        const scope = scopesByNode.get(binding.scopeOwner);
+        const directWrites = writes.get(scope!)?.get(binding.name) ?? [];
+        // Member更新も同じreceiver bindingへのwriteとして扱い、Object/Array結果の上書きを借用しない。
+        const memberWrites = sortedNodes.filter((node) => {
+          let target =
+            node.type === 'AssignmentExpression'
+              ? ast(node).left
+              : node.type === 'UpdateExpression'
+                ? ast(node).argument
+                : undefined;
+          if (!isNode(target) || target.type !== 'MemberExpression') return false;
+          while (isNode(target) && target.type === 'MemberExpression') target = ast(target).object;
+          if (!isNode(target) || identifierName(target) !== binding.name) return false;
+          return resolveBinding(scopeByNode.get(target), binding.name) === scope;
+        });
+        return [...directWrites, ...memberWrites];
+      },
+    };
+    const relation = findTeachingRelation(context, teachingGoal);
+    if (relation !== undefined)
+      addFact({ kind: 'teaching-relation', goal: teachingGoal, ...factLocation(relation, file) });
+  }
   return Object.freeze(facts);
 }
 
@@ -1145,7 +1198,7 @@ export async function analyzeConsoleSourceFacts(
       file: request.file,
       instrumentedCode: request.source,
       sourceSha256: await sha256(request.source),
-      facts: collectFacts(program, nodes, request.file),
+      facts: collectFacts(program, nodes, request.file, request.teachingGoal),
       diagnostics: [],
     };
   } catch (error: unknown) {
@@ -1162,6 +1215,19 @@ export async function analyzeConsoleSourceFacts(
 async function analyzeLegacyJavaScriptSource(
   request: JavaScriptLegacyAnalysisRequest,
 ): Promise<JavaScriptLegacyAnalysisResult> {
+  if (
+    request.teachingGoal !== undefined &&
+    (!isJavaScriptTeachingGoal(request.teachingGoal) ||
+      request.sourceType !== 'script' ||
+      !['core', 'async'].includes(request.capabilityProfile))
+  ) {
+    return failure(
+      request,
+      'security',
+      'Invalid teaching Goal',
+      '教材の判定設定を確認できませんでした。',
+    );
+  }
   if (!/^[$A-Z_a-z][$\w]*$/u.test(request.guardIdentifier)) {
     return failure(request, 'system', 'Invalid guard identifier', '実行の準備に失敗しました。');
   }
@@ -1205,7 +1271,7 @@ async function analyzeLegacyJavaScriptSource(
       );
     }
     assertJavaScriptCapabilityPolicy(program, request.file, request.capabilityProfile);
-    const facts = collectFacts(program, nodes, request.file);
+    const facts = collectFacts(program, nodes, request.file, request.teachingGoal);
     return {
       status: 'success',
       requestId: request.requestId,

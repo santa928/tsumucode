@@ -21,6 +21,7 @@ steps:
         javascript-ch05-l04-e01-r02,
         javascript-ch05-l04-e01-r03,
         javascript-ch05-l04-e01-r04,
+        javascript-ch05-l04-e01-r05,
       ]
 files:
   - { path: script.js, language: javascript, source: starter/script.js, editable: true }
@@ -102,6 +103,28 @@ validationRules:
       nextAction: 元へ代入せず、新しいObjectのansweredだけをtrueにします。
     hintId: javascript-ch05-l04-e01-h03
     relatedSlideId: javascript-ch05-l04-s04
+  - id: javascript-ch05-l04-e01-r05
+    groupId: javascript-ch05-l04-e01-teaching-result
+    label: mapで新しいObjectを作り、元と新しい配列の状態を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: teaching-relation
+        goal: answered-map
+    feedback:
+      target: script.jsと実行結果
+      expected: mapで新しいObjectを作り、元と新しい配列の状態を表示する
+      nextAction: 同じ値・Function・処理から得た結果を使います。結果だけを別の固定値で表示していないか確認します。
+    hintId: javascript-ch05-l04-e01-h01
+    relatedSlideId: javascript-ch05-l04-s04
 hints:
   - id: javascript-ch05-l04-e01-h01
     level: 1
@@ -149,12 +172,11 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds:
-      [
-        javascript-ch05-l04-e01-r01,
-        javascript-ch05-l04-e01-r02,
-        javascript-ch05-l04-e01-r03,
-        javascript-ch05-l04-e01-r04,
-      ]
+      - javascript-ch05-l04-e01-r01
+      - javascript-ch05-l04-e01-r02
+      - javascript-ch05-l04-e01-r03
+      - javascript-ch05-l04-e01-r04
+      - javascript-ch05-l04-e01-r05
   - id: property-mutation
     expectedStatus: incomplete
     files:
@@ -167,12 +189,11 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds:
-      [
-        javascript-ch05-l04-e01-r01,
-        javascript-ch05-l04-e01-r02,
-        javascript-ch05-l04-e01-r03,
-        javascript-ch05-l04-e01-r04,
-      ]
+      - javascript-ch05-l04-e01-r01
+      - javascript-ch05-l04-e01-r02
+      - javascript-ch05-l04-e01-r03
+      - javascript-ch05-l04-e01-r04
+      - javascript-ch05-l04-e01-r05
   - id: output-only
     expectedStatus: incomplete
     files:
@@ -180,12 +201,11 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds:
-      [
-        javascript-ch05-l04-e01-r01,
-        javascript-ch05-l04-e01-r02,
-        javascript-ch05-l04-e01-r03,
-        javascript-ch05-l04-e01-r04,
-      ]
+      - javascript-ch05-l04-e01-r01
+      - javascript-ch05-l04-e01-r02
+      - javascript-ch05-l04-e01-r03
+      - javascript-ch05-l04-e01-r04
+      - javascript-ch05-l04-e01-r05
   - id: syntax-error
     expectedStatus: code-error
     files:
@@ -200,3 +220,27 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds: []
+  - id: relation-fixed-output
+    expectedStatus: incomplete
+    files:
+      - path: script.js
+        language: javascript
+        source: fixtures/relation-fixed-output.js
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/relation-fixed-output/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/relation-fixed-output/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch05-l04-e01-r05
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  teachingGoal: answered-map

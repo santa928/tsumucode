@@ -1162,3 +1162,90 @@ describe('JavaScriptValidator', () => {
     }
   });
 });
+
+it('関係factとruntime GoalをANDし、未指定・別Goal・別演習の成功を補完しない', async () => {
+  const analyzer = analyzerDouble();
+  analyzer.analyze.mockImplementation(async (input) => {
+    if ('files' in input) throw new Error('classic only');
+    return {
+      status: 'success',
+      requestId: 'goal-validation',
+      exerciseSessionId: input.exerciseSessionId,
+      executionRevision: input.executionRevision,
+      file: input.file,
+      instrumentedCode: input.source,
+      sourceSha256: SOURCE_HASH,
+      diagnostics: [],
+      facts: [
+        {
+          kind: 'teaching-relation',
+          goal: 'question-binding',
+          file: input.file,
+          line: 1,
+          column: 1,
+        },
+      ],
+    };
+  });
+  const validator = new JavaScriptValidator({ analyzerFactory: () => analyzer });
+  const rules = [
+    {
+      ...validationRule(),
+      id: 'question-relation',
+      groupId: 'question-relation',
+      target: { kind: 'javascript-source' as const, file: 'script.js' },
+      assertion: {
+        kind: 'javascript-source-fact' as const,
+        fact: { kind: 'teaching-relation' as const, goal: 'question-binding' as const },
+      },
+    },
+  ];
+  const original = javascriptContext({ rules });
+  const runtime = {
+    ...original.runtime!,
+    kind: 'javascript' as const,
+    teachingGoal: 'question-binding' as const,
+  };
+  expect((await validator.validate({ ...original, runtime })).status).toBe('pass');
+  expect(
+    (
+      await validator.validate({
+        ...original,
+        exerciseId: 'another',
+        runtime: { ...runtime, teachingGoal: 'console-primitives' },
+      })
+    ).status,
+  ).toBe('incomplete');
+  expect((await validator.validate(original)).status).toBe('incomplete');
+  expect(analyzer.analyze.mock.calls.map(([input]) => input.teachingGoal)).toEqual([
+    'question-binding',
+    'console-primitives',
+    undefined,
+  ]);
+});
+
+it('同じproject WorkspaceのcacheをGoal付き不適合入力へ貸さず、失敗後の合法入力は再解析する', async () => {
+  const analyzer = moduleAnalyzerDouble();
+  const validator = new JavaScriptValidator({ analyzerFactory: () => analyzer });
+  const context = projectModuleContext();
+  expect((await validator.validate(context)).status).toBe('pass');
+  const invalid = {
+    ...context,
+    runtime: { ...context.runtime!, teachingGoal: 'question-binding' as const },
+  };
+  expect((await validator.validate(invalid)).status).toBe('code-error');
+  expect(analyzer.analyze).toHaveBeenCalledOnce();
+  expect((await validator.validate(context)).status).toBe('pass');
+  expect(analyzer.analyze).toHaveBeenCalledTimes(2);
+});
+
+it('Validatorでも未知Goalをsource fact成功へ補完せず、解析前に拒否する', async () => {
+  const analyzer = analyzerDouble();
+  const validator = new JavaScriptValidator({ analyzerFactory: () => analyzer });
+  const base = javascriptContext();
+  const runtime = { ...base.runtime!, teachingGoal: 'unknown' } as unknown as NonNullable<
+    ValidationContext['runtime']
+  >;
+  expect((await validator.validate({ ...base, runtime })).status).toBe('code-error');
+  expect(analyzer.analyze).not.toHaveBeenCalled();
+});

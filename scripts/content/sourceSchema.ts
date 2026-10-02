@@ -1,12 +1,14 @@
 /** Authoring YAMLのstrict構造と、公開Schemaへ組み立てる前のSource契約を定義する。 */
 import { z } from 'zod';
 import { interactionCheckId } from '../../src/core/content/exerciseRequirementIds';
+import { JAVASCRIPT_TEACHING_GOALS } from '../../src/core/content/javascriptTeachingGoals';
 import {
   ConceptDefinitionSchema,
   ConceptRequirementSchema,
   ContentProgressMigrationSchema,
   HintSchema,
   JavaScriptInteractionScenarioSchema,
+  JavaScriptValidationRuleDefinitionSchema,
   MasteryLevelSchema,
   PreviewViewportSchema,
   ProgressRuleReferenceIdSchema,
@@ -89,11 +91,14 @@ export const JavaScriptExerciseRuntimeSourceSchema = z
     sourceType: z.enum(['script', 'module']),
     capabilityProfile: z.enum(['core', 'modules', 'dom', 'dom-form', 'async', 'project']),
     primaryOutput: z.enum(['preview', 'console']),
+    teachingGoal: z.enum(JAVASCRIPT_TEACHING_GOALS).optional(),
   })
   .strict();
 
 /** Course追加時にkind単位で拡張するExercise Runtime authoring union。 */
-export const TypeScriptExerciseRuntimeSourceSchema = JavaScriptExerciseRuntimeSourceSchema.extend({
+export const TypeScriptExerciseRuntimeSourceSchema = JavaScriptExerciseRuntimeSourceSchema.omit({
+  teachingGoal: true,
+}).extend({
   kind: z.literal('typescript'),
   entryFile: WorkspacePathSchema.refine(
     (file) => file.endsWith('.ts') && !file.endsWith('.d.ts'),
@@ -184,6 +189,34 @@ export const ExerciseSourceSchema = z
     CapstoneExerciseSourceSchema,
   ])
   .superRefine((exercise, context) => {
+    const teachingGoal =
+      exercise.runtime?.kind === 'javascript' ? exercise.runtime.teachingGoal : undefined;
+    if (
+      teachingGoal !== undefined &&
+      (exercise.runtime?.sourceType !== 'script' ||
+        !['core', 'async'].includes(exercise.runtime.capabilityProfile))
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['runtime', 'teachingGoal'],
+        message: 'teachingGoalはcore/asyncのscript演習だけに指定できます',
+      });
+    }
+    for (const [index, rule] of exercise.validationRules.entries()) {
+      const parsedRule = JavaScriptValidationRuleDefinitionSchema.safeParse(rule);
+      if (
+        parsedRule.success &&
+        parsedRule.data.assertion.kind === 'javascript-source-fact' &&
+        parsedRule.data.assertion.fact.kind === 'teaching-relation' &&
+        parsedRule.data.assertion.fact.goal !== teachingGoal
+      ) {
+        context.addIssue({
+          code: 'custom',
+          path: ['validationRules', index, 'assertion'],
+          message: '関係Ruleとruntime teachingGoalを一致させてください',
+        });
+      }
+    }
     if (
       exercise.interactionScenarios?.some((scenario) =>
         scenario.checkpoints.some((checkpoint) =>

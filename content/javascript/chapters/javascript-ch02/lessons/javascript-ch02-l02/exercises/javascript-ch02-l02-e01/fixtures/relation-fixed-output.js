@@ -1,0 +1,7 @@
+const answer = 'A';
+const unused = answer === 'A';
+if (answer !== 'A') {
+  console.log('不正解です');
+} else {
+  console.log('正解です');
+}

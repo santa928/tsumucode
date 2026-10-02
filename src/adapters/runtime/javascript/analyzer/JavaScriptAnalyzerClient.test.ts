@@ -506,3 +506,61 @@ describe('JavaScriptAnalyzerClient', () => {
     await postMessageClient.dispose();
   });
 });
+
+it('teachingGoalはclosed enum/script core asyncだけで受理し、未知・省略値・project借用を拒否する', async () => {
+  const request = { ...input, requestId: 'goal-request', teachingGoal: 'question-binding' };
+  expect(isJavaScriptAnalysisRequest(request)).toBe(true);
+  for (const invalid of [
+    { ...request, teachingGoal: 'unknown' },
+    { ...request, teachingGoal: undefined },
+    { ...request, extra: true },
+    { ...workspaceInput, requestId: 'module-goal', teachingGoal: 'question-binding' },
+    { ...request, capabilityProfile: 'project' },
+  ])
+    expect(isJavaScriptAnalysisRequest(invalid)).toBe(false);
+  const worker = new FakeWorker();
+  const client = new JavaScriptAnalyzerClient({ workerFactory: () => worker });
+  try {
+    expect(
+      (await client.analyze({ ...input, teachingGoal: 'unknown' } as unknown as typeof input))
+        .status,
+    ).toBe('failure');
+    expect(worker.postMessage).not.toHaveBeenCalled();
+  } finally {
+    await client.dispose();
+  }
+});
+
+it('返信の関係Goalを要求と照合し、別Goalや未指定要求へfactを補完しない', async () => {
+  for (const requested of [undefined, 'question-binding'] as const) {
+    const worker = new FakeWorker();
+    const client = new JavaScriptAnalyzerClient({ workerFactory: () => worker });
+    try {
+      const pending = client.analyze({
+        ...input,
+        ...(requested === undefined ? {} : { teachingGoal: requested }),
+      });
+      const message = worker.postMessage.mock.calls[0]![0] as {
+        request: JavaScriptAnalysisRequest;
+      };
+      worker.emit({
+        type: 'result',
+        result: {
+          ...success(message.request),
+          facts: [
+            {
+              kind: 'teaching-relation',
+              goal: 'console-primitives',
+              file: 'script.js',
+              line: 1,
+              column: 1,
+            },
+          ],
+        },
+      });
+      expect((await pending).status).toBe('failure');
+    } finally {
+      await client.dispose();
+    }
+  }
+});

@@ -4,7 +4,7 @@ title: JavaScript はじめの一歩
 description: 画面の変化から値・制御・データ・DOM・非同期を学び、学習クイズを制作する
 audience: HTMLとCSSの役割を知り、JavaScriptを初めて学ぶ本人と身内
 estimatedMinutes: 1010
-revision: 2026-10-02.3
+revision: 2026-10-02.4
 runnerId: javascript
 validatorId: javascript
 glossarySource: glossary.yaml
@@ -144,6 +144,109 @@ progressMigrations:
   - fromRevision: 2026-10-02.2
     toRevision: 2026-10-02.3
     steps: []
+  - fromRevision: 2026-10-02.3
+    toRevision: 2026-10-02.4
+    steps:
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch01-l01-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch01-l02-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch01-l04-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch02-l02-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch02-l03-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch02-l04-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch03-l01-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch03-l03-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch03-l05-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch03-l05-e02
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch03-l05-e03
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch04-l01-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch04-l02-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch04-l03-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch04-l04-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch04-l05-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch05-l01-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch05-l02-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch05-l03-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch05-l04-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch06-l03-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch10-l01-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch10-l02-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch10-l03-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch11-l02-e01
+        reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
 phases:
   - id: javascript-p00-core
     title: JavaScript Core

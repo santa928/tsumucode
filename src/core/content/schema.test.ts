@@ -1697,3 +1697,40 @@ it('コード参照は同じLessonの先行コードに限定する', () => {
   target.codeReferenceSlideId = 'other-lesson-slide';
   expect(LessonSchema.safeParse(lesson).success).toBe(false);
 });
+
+it('関係Ruleとruntime Goalを一致させ、未知Goal/別Goal/未指定を受理しない', () => {
+  const base = firstStandardExercise(firstStandardLesson(cloneCourse()));
+  const rule = {
+    ...base.validationRules[0]!,
+    target: { kind: 'javascript-source', file: 'index.html' },
+    assertion: {
+      kind: 'javascript-source-fact',
+      fact: { kind: 'teaching-relation', goal: 'question-binding' },
+    },
+  };
+  const runtime = {
+    kind: 'javascript',
+    entryFile: 'index.html',
+    sourceType: 'script',
+    capabilityProfile: 'core',
+    primaryOutput: 'console',
+    teachingGoal: 'question-binding',
+  };
+  expect(ExerciseSchema.safeParse({ ...base, runtime, validationRules: [rule] }).success).toBe(
+    true,
+  );
+  for (const goal of ['unknown', 'console-primitives', undefined]) {
+    const next = { ...runtime, teachingGoal: goal };
+    if (goal === undefined) Reflect.deleteProperty(next, 'teachingGoal');
+    expect(
+      ExerciseSchema.safeParse({ ...base, runtime: next, validationRules: [rule] }).success,
+    ).toBe(false);
+  }
+  expect(
+    ExerciseSchema.safeParse({
+      ...base,
+      runtime: { ...runtime, sourceType: 'module', capabilityProfile: 'project' },
+      validationRules: [rule],
+    }).success,
+  ).toBe(false);
+});

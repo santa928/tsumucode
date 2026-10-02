@@ -410,3 +410,97 @@ it('実Bridgeは有効なaria-labelledbyを優先し、無効な参照だけaria
     frame.remove();
   }
 });
+
+it('live値は要求された可視native text inputだけから取得し、独自getterや秘密欄を読まない', async () => {
+  const frame = document.createElement('iframe');
+  document.body.append(frame);
+  const child = frame.contentWindow!;
+  const messages: unknown[] = [];
+  const send = vi.spyOn(child.parent, 'postMessage').mockImplementation((message) => {
+    messages.push(message);
+  });
+  try {
+    const source = createBridgeSource({
+      exerciseSessionId: 'live-input',
+      executionRevision: 1,
+      bootstrapToken: 'bootstrap-token',
+      viewport: { id: 'desktop', width: 1280, height: 720 },
+    });
+    child.document.open();
+    // eslint-disable-next-line @typescript-eslint/no-deprecated -- trusted Bridgeをlearnerより先に実行する隔離fixture。
+    child.document.write(
+      '<html style="opacity:1"><head><script>' +
+        source +
+        '</script></head><body style="opacity:1">' +
+        '<input id="answer" style="opacity:1;visibility:visible" value="2">' +
+        '<input id="password" type="password" value="private">' +
+        '<input id="hidden" type="hidden" value="private">' +
+        '<input id="unrequested" value="private">' +
+        '<div style="display:none;opacity:1"><input id="concealed" value="private"></div>' +
+        '</body></html>',
+    );
+    child.document.close();
+    await vi.waitFor(() => {
+      expect(messages.some((value) => (value as { type?: string }).type === 'bridge.ready')).toBe(
+        true,
+      );
+    });
+    for (const input of child.document.querySelectorAll('input')) {
+      Object.defineProperty(input, 'getBoundingClientRect', {
+        value: () => ({ x: 0, y: 0, width: 100, height: 20 }),
+      });
+    }
+    const answer = child.document.querySelector<HTMLInputElement>('#answer')!;
+    const getter = vi.fn(() => {
+      throw new Error('must not invoke learner getter');
+    });
+    Object.defineProperty(answer, 'value', { get: getter, configurable: true });
+    const request = (requestId: string, inputValueSelectors?: string[]) => {
+      child.dispatchEvent(
+        new MessageEvent('message', {
+          source: child.parent,
+          data: {
+            version: 1,
+            type: 'snapshot.request',
+            exerciseSessionId: 'live-input',
+            executionRevision: 1,
+            requestId,
+            oneTimeToken: requestId,
+            payload: {
+              selectors: ['input', '#answer', '#password', '#hidden', '#concealed'],
+              attributes: ['id'],
+              computedStyles: [],
+              focusVisibleSelectors: [],
+              focusVisibleComputedStyles: [],
+              includeAllElements: false,
+              ...(inputValueSelectors === undefined ? {} : { inputValueSelectors }),
+            },
+          },
+        }),
+      );
+    };
+    request('old-policy');
+    const old = messages.at(-1) as { payload: { nodes: { inputValue?: string }[] } };
+    expect(old.payload.nodes.every((node) => node.inputValue === undefined)).toBe(true);
+    request('requested', ['#answer', '#password', '#hidden', '#concealed']);
+    const received = messages.at(-1) as {
+      type: string;
+      payload: { nodes: { attributes: Record<string, string>; inputValue?: string }[] };
+    };
+    expect(received.type).toBe('snapshot.response');
+    const byId = new Map(received.payload.nodes.map((node) => [node.attributes.id, node]));
+    expect(byId.get('answer')?.inputValue).toBe('2');
+    expect(byId.get('unrequested')).not.toHaveProperty('inputValue');
+    for (const id of ['password', 'hidden', 'concealed'])
+      expect(byId.get(id)).not.toHaveProperty('inputValue');
+    expect(getter).not.toHaveBeenCalled();
+    request('outside', ['#unobserved']);
+    expect(messages.at(-1)).toMatchObject({
+      type: 'bridge.error',
+      payload: 'Snapshot policy schema error',
+    });
+  } finally {
+    send.mockRestore();
+    frame.remove();
+  }
+});

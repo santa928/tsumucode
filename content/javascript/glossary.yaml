@@ -938,3 +938,8 @@ entries:
     firstSlideId: javascript-ch13-l01-s01
     relatedIds:
       - quiz-restart-state
+  - id: template-literal
+    term: Template literal
+    definition: バッククォートで囲み、ドル記号に続く波括弧の場所へ値を入れられる文字列の書き方。
+    firstSlideId: javascript-ch05-l01-s04
+    relatedIds: [string]

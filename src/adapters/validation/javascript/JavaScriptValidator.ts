@@ -41,6 +41,10 @@ import {
   parseJavaScriptRules,
   type JavaScriptValidatorRule,
 } from './ruleSchema';
+import {
+  isJavaScriptTeachingGoal,
+  type JavaScriptTeachingGoal,
+} from '../../../core/content/javascriptTeachingGoals';
 
 interface JavaScriptAnalyzerPort {
   analyze(input: JavaScriptAnalysisInput): Promise<JavaScriptAnalysisResult>;
@@ -115,6 +119,7 @@ function projectAnalysisCacheKey(
     input.entryFile,
     input.sourceType,
     input.capabilityProfile,
+    input.teachingGoal ?? null,
     Object.entries(context.files).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
   ]);
 }
@@ -342,6 +347,8 @@ function sourceFactMatches(
 ): boolean {
   if (candidate.kind !== expected.kind) return false;
   switch (expected.kind) {
+    case 'teaching-relation':
+      return candidate.kind === 'teaching-relation' && candidate.goal === expected.goal;
     case 'binding':
       return (
         candidate.kind === 'binding' &&
@@ -442,6 +449,7 @@ function sourceFactMatches(
 function sourceCheck(
   rule: JavaScriptSourceRule,
   analysis: JavaScriptAnalysisSuccess,
+  teachingGoal?: JavaScriptTeachingGoal,
 ): ValidationCheck {
   const matchingFacts = analysis.facts.filter((candidate) => {
     if (candidate.file !== rule.target.file) return false;
@@ -452,6 +460,11 @@ function sourceCheck(
         candidate.value === rule.assertion.expected
       );
     }
+    if (
+      rule.assertion.fact.kind === 'teaching-relation' &&
+      rule.assertion.fact.goal !== teachingGoal
+    )
+      return false;
     return sourceFactMatches(candidate, rule.assertion.fact);
   });
   const minimumCount =
@@ -544,6 +557,10 @@ function interactionExpected(expectation: JavaScriptCheckpointExpectation): stri
       return `${expectation.selector} の内容が画面に表示される`;
     case 'selector-text':
       return `${expectation.selector} の文章が「${expectation.equals}」になる`;
+    case 'input-value':
+      return expectation.equals === ''
+        ? `${expectation.selector} の入力欄が空になる`
+        : `${expectation.selector} の入力値が「${expectation.equals}」になる`;
     case 'accessible-name':
       return `${expectation.selector} の操作名が「${expectation.equals}」になる`;
     case 'attribute':
@@ -710,6 +727,24 @@ export class JavaScriptValidator implements ValidatorAdapter {
       ]);
     }
 
+    if (
+      'teachingGoal' in runtime &&
+      (!isJavaScriptTeachingGoal(runtime.teachingGoal) ||
+        runtime.sourceType !== 'script' ||
+        !['core', 'async'].includes(runtime.capabilityProfile))
+    ) {
+      return blockedResult(context, 'code-error', [
+        ...context.diagnostics,
+        {
+          code: 'javascript-teaching-goal-invalid',
+          kind: 'security',
+          severity: 'error',
+          message: 'JavaScript teachingGoal violates the closed runtime contract',
+          learnerMessage: '教材のJavaScript設定を確認できませんでした。コードは保存されています。',
+        },
+      ]);
+    }
+
     const hasSystemError = context.diagnostics.some(
       ({ kind, severity }) => (kind === 'system' || kind === 'unsupported') && severity === 'error',
     );
@@ -854,6 +889,7 @@ export class JavaScriptValidator implements ValidatorAdapter {
           guardIdentifier,
           sourceType: runtime.sourceType,
           capabilityProfile: runtime.capabilityProfile,
+          ...(runtime.teachingGoal === undefined ? {} : { teachingGoal: runtime.teachingGoal }),
         };
         const cacheEligible =
           !local && !this.#browserConsole && runtime.capabilityProfile === 'project';
@@ -964,6 +1000,7 @@ export class JavaScriptValidator implements ValidatorAdapter {
             guardIdentifier,
             sourceType: runtime.sourceType,
             capabilityProfile: runtime.capabilityProfile,
+            ...(runtime.teachingGoal === undefined ? {} : { teachingGoal: runtime.teachingGoal }),
           });
           if (analysis.status === 'failure') {
             return analysisFailureResult(context, analysis, identity.executionRevision);
@@ -1013,7 +1050,7 @@ export class JavaScriptValidator implements ValidatorAdapter {
         domChecks = domResult.checks;
       }
       const sourceChecks = sourceRules.map((rule) =>
-        sourceCheck(rule, analyses.get(rule.target.file)!),
+        sourceCheck(rule, analyses.get(rule.target.file)!, runtime.teachingGoal),
       );
       const consoleChecks = consoleRules.map((rule) => consoleCheck(rule, context.console));
       const scenarioChecks = interactionChecks(

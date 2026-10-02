@@ -24,6 +24,7 @@ export function extendSnapshotPolicyForInteractions(
   exercises: readonly Pick<Exercise, 'interactionScenarios'>[],
 ): SnapshotPolicy {
   const selectors = new Set(policy.selectors);
+  const inputValueSelectors = new Set(policy.inputValueSelectors ?? []);
   const attributes = new Set(policy.attributes);
   const computedStyles = new Set(policy.computedStyles);
   for (const exercise of exercises) {
@@ -38,12 +39,14 @@ export function extendSnapshotPolicyForInteractions(
               computedStyles.add(property);
           }
           if (expectation.kind === 'attribute') attributes.add(expectation.name);
+          if (expectation.kind === 'input-value') inputValueSelectors.add(expectation.selector);
         }
       }
     }
   }
   if (
     selectors.size > MAX_INTERACTION_POLICY_ITEMS ||
+    inputValueSelectors.size > MAX_INTERACTION_POLICY_ITEMS ||
     attributes.size > MAX_INTERACTION_POLICY_ITEMS ||
     computedStyles.size > MAX_INTERACTION_POLICY_ITEMS
   ) {
@@ -52,6 +55,7 @@ export function extendSnapshotPolicyForInteractions(
   return {
     ...policy,
     selectors: [...selectors],
+    ...(inputValueSelectors.size === 0 ? {} : { inputValueSelectors: [...inputValueSelectors] }),
     attributes: [...attributes],
     computedStyles: [...computedStyles],
   };

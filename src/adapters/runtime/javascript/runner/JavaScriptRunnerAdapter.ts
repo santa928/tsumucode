@@ -35,6 +35,10 @@ import { createJavaScriptSrcdoc } from './createJavaScriptSrcdoc';
 import { prepareModuleGraph } from './materializeModuleGraph';
 import { JavaScriptExecutionClient } from './protocol';
 import { executionDiagnostics } from './executionDiagnostics';
+import {
+  isJavaScriptTeachingGoal,
+  type JavaScriptTeachingGoal,
+} from '../../../../core/content/javascriptTeachingGoals';
 
 interface JavaScriptAnalyzerPort {
   analyze(input: JavaScriptAnalysisInput): Promise<JavaScriptAnalysisResult>;
@@ -83,6 +87,7 @@ interface ValidatedJavaScriptInput {
   readonly scriptSource: string;
   readonly sourceType: JavaScriptSourceType;
   readonly capabilityProfile: JavaScriptCapabilityProfileId;
+  readonly teachingGoal?: JavaScriptTeachingGoal;
 }
 
 const MAX_WORKSPACE_BYTES = 300 * 1024;
@@ -113,6 +118,7 @@ function projectAnalysisCacheKey(
     validated.scriptFile,
     validated.sourceType,
     validated.capabilityProfile,
+    validated.teachingGoal ?? null,
     [...validated.html.files].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
   ]);
 }
@@ -139,6 +145,7 @@ function validateJavaScriptRuntimeOptions(input: RunnerInput): {
   readonly entryFile: string;
   readonly sourceType: JavaScriptSourceType;
   readonly capabilityProfile: JavaScriptCapabilityProfileId;
+  readonly teachingGoal?: JavaScriptTeachingGoal;
 } {
   if (Object.keys(input.options).length === 0) {
     return {
@@ -154,14 +161,24 @@ function validateJavaScriptRuntimeOptions(input: RunnerInput): {
   if (typeof runtime !== 'object' || runtime === null || Array.isArray(runtime)) {
     throw new Error('JavaScript runtime must be an object');
   }
-  const keys = Object.keys(runtime).sort();
+  const value = runtime as Readonly<Record<string, unknown>>;
+  const keys = Object.keys(runtime)
+    .filter((key) => key !== 'teachingGoal')
+    .sort();
   if (
     keys.join(',') !==
     ['capabilityProfile', 'entryFile', 'kind', 'primaryOutput', 'sourceType'].join(',')
   ) {
     throw new Error('JavaScript runtime has invalid fields');
   }
-  const value = runtime as Readonly<Record<string, unknown>>;
+  if (
+    'teachingGoal' in value &&
+    (!isJavaScriptTeachingGoal(value.teachingGoal) ||
+      value.sourceType !== 'script' ||
+      !['core', 'async'].includes(String(value.capabilityProfile)))
+  ) {
+    throw new Error('JavaScript runtime teachingGoal is invalid');
+  }
   if (value.kind !== 'javascript') throw new Error('JavaScript runtime kind is invalid');
   if (typeof value.entryFile !== 'string') {
     throw new Error('JavaScript runtime entryFile must be a string');
@@ -186,6 +203,7 @@ function validateJavaScriptRuntimeOptions(input: RunnerInput): {
     entryFile: value.entryFile,
     sourceType: value.sourceType,
     capabilityProfile: value.capabilityProfile,
+    ...(isJavaScriptTeachingGoal(value.teachingGoal) ? { teachingGoal: value.teachingGoal } : {}),
   };
 }
 
@@ -215,6 +233,7 @@ function validateJavaScriptInput(input: RunnerInput): ValidatedJavaScriptInput {
     scriptSource,
     sourceType: runtime.sourceType,
     capabilityProfile: runtime.capabilityProfile,
+    ...(runtime.teachingGoal === undefined ? {} : { teachingGoal: runtime.teachingGoal }),
   };
 }
 
@@ -438,6 +457,9 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
                     guardIdentifier,
                     sourceType: validated.sourceType,
                     capabilityProfile: validated.capabilityProfile,
+                    ...(validated.teachingGoal === undefined
+                      ? {}
+                      : { teachingGoal: validated.teachingGoal }),
                   }
                 : {
                     exerciseSessionId: input.exerciseSessionId,
@@ -447,6 +469,9 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
                     guardIdentifier,
                     sourceType: validated.sourceType,
                     capabilityProfile: validated.capabilityProfile,
+                    ...(validated.teachingGoal === undefined
+                      ? {}
+                      : { teachingGoal: validated.teachingGoal }),
                   },
             )
           : {

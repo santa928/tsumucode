@@ -197,7 +197,14 @@ export class JavaScriptAnalyzerClient {
     }
     clearTimeout(pending.timeout);
     this.#pending.delete(result.requestId);
-    pending.resolve(result);
+    pending.resolve(
+      result.status === 'success' &&
+        result.facts.some(
+          (fact) => fact.kind === 'teaching-relation' && fact.goal !== request.teachingGoal,
+        )
+        ? contractFailure(request)
+        : result,
+    );
   }
 
   /** 期限切れrequestを含むWorker全体を止め、全pendingへ再試行可能な失敗を返す。 */

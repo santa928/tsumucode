@@ -184,3 +184,29 @@ describe('evaluateInteractionCheckpoint', () => {
     });
   });
 });
+
+it('input-valueは認証済みlive値だけを比較し、属性値や未観測を空欄へ補完しない', () => {
+  const check: JavaScriptInteractionCheckpoint = {
+    id: 'reopened',
+    afterActionId: 'again',
+    expectations: [{ id: 'empty-answer', kind: 'input-value', selector: '#answer', equals: '' }],
+  };
+  const base = previewNode({
+    tagName: 'input',
+    matchedSelectors: ['#answer'],
+    attributes: { value: '' },
+  });
+  for (const value of [undefined, '2']) {
+    const observed = value === undefined ? base : { ...base, inputValue: value };
+    expect(
+      evaluateInteractionCheckpoint(check, { ...snapshot(), nodes: [observed] }, [])[0]?.passed,
+    ).toBe(false);
+  }
+  expect(
+    evaluateInteractionCheckpoint(
+      check,
+      { ...snapshot(), nodes: [{ ...base, inputValue: '' }] },
+      [],
+    )[0],
+  ).toEqual({ expectationId: 'empty-answer', passed: true, actual: '' });
+});

@@ -12,7 +12,8 @@ slideSources:
 exerciseSources:
   - exercises/javascript-ch05-l01-e01/exercise.yaml
 reflection: mapは元Arrayの各要素をcallbackで変換し、同じ件数の新しいArrayを返す。
-glossaryRefs: [javascript, console, array, element, method, callback, map, return-value]
+glossaryRefs:
+  [javascript, console, array, element, method, callback, map, return-value, template-literal]
 completion:
   kind: standard
   finalSlideId: javascript-ch05-l01-s04

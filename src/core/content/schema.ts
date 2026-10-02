@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import { exerciseReferenceIds, exerciseRequirementIds } from './exerciseRequirementIds';
 import { resolvePublicAsset } from '../../shared/lib/resolvePublicAsset';
+import { JAVASCRIPT_TEACHING_GOALS } from './javascriptTeachingGoals';
 
 export const IdSchema = z
   .string()
@@ -280,11 +281,14 @@ export const JavaScriptExerciseRuntimeSchema = z
     sourceType: z.enum(['script', 'module']),
     capabilityProfile: z.enum(['core', 'modules', 'dom', 'dom-form', 'async', 'project']),
     primaryOutput: z.enum(['preview', 'console']),
+    teachingGoal: z.enum(JAVASCRIPT_TEACHING_GOALS).optional(),
   })
   .strict();
 
 /** Course追加時にkind単位で拡張するExercise Runtime union。 */
-export const TypeScriptExerciseRuntimeSchema = JavaScriptExerciseRuntimeSchema.extend({
+export const TypeScriptExerciseRuntimeSchema = JavaScriptExerciseRuntimeSchema.omit({
+  teachingGoal: true,
+}).extend({
   kind: z.literal('typescript'),
   entryFile: RelativePathSchema.refine(
     (file) => file.endsWith('.ts') && !file.endsWith('.d.ts'),
@@ -418,6 +422,14 @@ export const JavaScriptCheckpointExpectationSchema = z.discriminatedUnion('kind'
       id: IdSchema,
       kind: z.literal('console-includes'),
       includes: InteractionLongValueSchema,
+    })
+    .strict(),
+  z
+    .object({
+      id: IdSchema,
+      kind: z.literal('input-value'),
+      selector: InteractionSelectorSchema,
+      equals: InteractionLongValueSchema,
     })
     .strict(),
 ]);
@@ -716,6 +728,9 @@ const JavaScriptSourceOperandSchema = z.discriminatedUnion('kind', [
 ]);
 
 const JavaScriptSourceFactSchema = z.discriminatedUnion('kind', [
+  z
+    .object({ kind: z.literal('teaching-relation'), goal: z.enum(JAVASCRIPT_TEACHING_GOALS) })
+    .strict(),
   z
     .object({
       kind: z.literal('computed-output'),
@@ -1148,6 +1163,34 @@ export const ExerciseSchema = z
     z.object({ ...ExerciseBaseShape, kind: z.literal('capstone'), projectId: IdSchema }).strict(),
   ])
   .superRefine((exercise, context) => {
+    const teachingGoal =
+      exercise.runtime?.kind === 'javascript' ? exercise.runtime.teachingGoal : undefined;
+    if (
+      teachingGoal !== undefined &&
+      (exercise.runtime?.sourceType !== 'script' ||
+        !['core', 'async'].includes(exercise.runtime.capabilityProfile))
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['runtime', 'teachingGoal'],
+        message: 'teachingGoalはcore/asyncのscript演習だけに指定できます',
+      });
+    }
+    for (const [index, rule] of exercise.validationRules.entries()) {
+      const parsedRule = JavaScriptValidationRuleDefinitionSchema.safeParse(rule);
+      if (
+        parsedRule.success &&
+        parsedRule.data.assertion.kind === 'javascript-source-fact' &&
+        parsedRule.data.assertion.fact.kind === 'teaching-relation' &&
+        parsedRule.data.assertion.fact.goal !== teachingGoal
+      ) {
+        context.addIssue({
+          code: 'custom',
+          path: ['validationRules', index, 'assertion'],
+          message: '関係Ruleとruntime teachingGoalを一致させてください',
+        });
+      }
+    }
     if (
       exercise.interactionScenarios?.some((scenario) =>
         scenario.checkpoints.some((checkpoint) =>

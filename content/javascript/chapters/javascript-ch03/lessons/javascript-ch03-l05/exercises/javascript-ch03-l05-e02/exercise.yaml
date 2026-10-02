@@ -6,6 +6,7 @@ runtime:
   sourceType: script
   capabilityProfile: core
   primaryOutput: console
+  teachingGoal: score-closure-three
 workspaceId: javascript-ch03-l05-e02
 countsTowardStandardExerciseTotal: true
 title: 毎回の初期化を直す
@@ -31,6 +32,7 @@ steps:
       - javascript-ch03-l05-e02-r05
       - javascript-ch03-l05-e02-r06
       - javascript-ch03-l05-e02-r07
+      - javascript-ch03-l05-e02-r08
 files:
   - path: script.js
     language: javascript
@@ -222,6 +224,28 @@ validationRules:
       nextAction: 1回目の10を覚え、次に10を加えられるか確かめます。
     hintId: javascript-ch03-l05-e02-h02
     relatedSlideId: javascript-ch03-l05-s03
+  - id: javascript-ch03-l05-e02-r08
+    groupId: javascript-ch03-l05-e02-teaching-result
+    label: 同じClosureを3回呼び、scoreを順に表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: teaching-relation
+        goal: score-closure-three
+    feedback:
+      target: script.jsと実行結果
+      expected: 同じClosureを3回呼び、scoreを順に表示する
+      nextAction: 同じ値・Function・処理から得た結果を使います。結果だけを別の固定値で表示していないか確認します。
+    hintId: javascript-ch03-l05-e02-h01
+    relatedSlideId: javascript-ch03-l05-s03
 hints:
   - id: javascript-ch03-l05-e02-h01
     level: 1
@@ -299,6 +323,7 @@ fixtures:
       - javascript-ch03-l05-e02-r01
       - javascript-ch03-l05-e02-r02
       - javascript-ch03-l05-e02-r07
+      - javascript-ch03-l05-e02-r08
   - id: shared-global
     expectedStatus: incomplete
     files:
@@ -316,6 +341,7 @@ fixtures:
         editable: false
     expectedFeedbackRuleIds:
       - javascript-ch03-l05-e02-r01
+      - javascript-ch03-l05-e02-r08
   - id: fixed-return
     expectedStatus: incomplete
     files:
@@ -333,6 +359,7 @@ fixtures:
         editable: false
     expectedFeedbackRuleIds:
       - javascript-ch03-l05-e02-r07
+      - javascript-ch03-l05-e02-r08
   - id: output-only
     expectedStatus: incomplete
     files:
@@ -355,6 +382,7 @@ fixtures:
       - javascript-ch03-l05-e02-r04
       - javascript-ch03-l05-e02-r05
       - javascript-ch03-l05-e02-r06
+      - javascript-ch03-l05-e02-r08
   - id: kept-function-fixed-output
     expectedStatus: incomplete
     files:
@@ -372,6 +400,7 @@ fixtures:
         editable: false
     expectedFeedbackRuleIds:
       - javascript-ch03-l05-e02-r06
+      - javascript-ch03-l05-e02-r08
   - id: syntax-error
     expectedStatus: code-error
     files:
@@ -388,3 +417,20 @@ fixtures:
         source: fixtures/styles.css
         editable: false
     expectedFeedbackRuleIds: []
+  - id: relation-fixed-output
+    expectedStatus: incomplete
+    files:
+      - path: script.js
+        language: javascript
+        source: fixtures/relation-fixed-output.js
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch03-l05-e02-r08

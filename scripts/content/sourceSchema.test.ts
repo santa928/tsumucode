@@ -811,3 +811,40 @@ describe('content source schema', () => {
     ).toBe(false);
   });
 });
+
+it('関係Ruleとruntime Goalを一致させ、未知Goal/別Goal/未指定を受理しない', () => {
+  const base = validExerciseSource;
+  const rule = {
+    ...base.validationRules[0]!,
+    target: { kind: 'javascript-source', file: 'index.html' },
+    assertion: {
+      kind: 'javascript-source-fact',
+      fact: { kind: 'teaching-relation', goal: 'question-binding' },
+    },
+  };
+  const runtime = {
+    kind: 'javascript',
+    entryFile: 'index.html',
+    sourceType: 'script',
+    capabilityProfile: 'core',
+    primaryOutput: 'console',
+    teachingGoal: 'question-binding',
+  };
+  expect(
+    ExerciseSourceSchema.safeParse({ ...base, runtime, validationRules: [rule] }).success,
+  ).toBe(true);
+  for (const goal of ['unknown', 'console-primitives', undefined]) {
+    const next = { ...runtime, teachingGoal: goal };
+    if (goal === undefined) Reflect.deleteProperty(next, 'teachingGoal');
+    expect(
+      ExerciseSourceSchema.safeParse({ ...base, runtime: next, validationRules: [rule] }).success,
+    ).toBe(false);
+  }
+  expect(
+    ExerciseSourceSchema.safeParse({
+      ...base,
+      runtime: { ...runtime, sourceType: 'module', capabilityProfile: 'project' },
+      validationRules: [rule],
+    }).success,
+  ).toBe(false);
+});

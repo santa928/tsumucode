@@ -1319,3 +1319,52 @@ describe('JavaScriptRunnerAdapter', () => {
     await runner.dispose();
   });
 });
+
+it('同source別GoalをAnalyzerへ送り、project cacheから関係factを借用しない', async () => {
+  const analyzer = realAnalyzerPort();
+  const runner = new JavaScriptRunnerAdapter({ analyzer });
+  const frame = document.createElement('iframe');
+  document.body.append(frame);
+  await runner.prepare(frame);
+  try {
+    const project = projectModuleInput();
+    await finishModuleRender(runner, frame, project);
+    const invalid = {
+      ...project,
+      options: {
+        runtime: {
+          ...(project.options.runtime as Record<string, unknown>),
+          teachingGoal: 'question-binding',
+        },
+      },
+    };
+    await expect(runner.render(invalid)).rejects.toThrow('teachingGoal');
+    expect(analyzer.analyze).toHaveBeenCalledOnce();
+    await finishModuleRender(runner, frame, project);
+    expect(analyzer.analyze).toHaveBeenCalledTimes(2);
+    const classic = runnerInput({
+      files: {
+        ...runnerInput().files,
+        'script.js': "const questionText='Q';console.log(questionText);",
+      },
+    });
+    for (const goal of ['question-binding', 'console-primitives']) {
+      await finishModuleRender(runner, frame, {
+        ...classic,
+        options: {
+          runtime: {
+            ...(classic.options.runtime as Record<string, unknown>),
+            primaryOutput: 'console',
+            teachingGoal: goal,
+          },
+        },
+      });
+    }
+    expect(analyzer.analyze.mock.calls.slice(2).map(([input]) => input.teachingGoal)).toEqual([
+      'question-binding',
+      'console-primitives',
+    ]);
+  } finally {
+    await runner.dispose();
+  }
+});

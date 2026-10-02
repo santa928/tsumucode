@@ -837,6 +837,7 @@ concepts:
     introducedBySlideId: javascript-ch10-l03-s02
     prerequisiteConceptIds:
       - promise-rejection
+      - try-catch
     minimumProjectLevel: read
   - id: async-failure-message
     introducedBySlideId: javascript-ch10-l03-s03
