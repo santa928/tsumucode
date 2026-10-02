@@ -22,7 +22,7 @@ test.describe.configure({ timeout: 90_000 });
 /** Homeの端末データPanelからBundleをdownloadし、テスト出力先へ保存する。 */
 async function exportBundle(page: Page, testInfo: TestInfo): Promise<string> {
   await page.goto('./#/');
-  const button = page.getByRole('button', { name: '全コースの進捗を書き出す' });
+  const button = page.getByRole('button', { name: '全コースの進捗と下書きを書き出す' });
   await expect(button).toBeEnabled();
   const download = page.waitForEvent('download');
   await button.click();
@@ -35,7 +35,7 @@ async function exportBundle(page: Page, testInfo: TestInfo): Promise<string> {
 /** Bundleを差分確認後に適用し、Homeの再読込完了まで待つ。 */
 async function importBundle(page: Page, path: string): Promise<void> {
   await page.goto('./#/');
-  await page.getByLabel('進捗Bundleを選ぶ').setInputFiles({
+  await page.getByLabel('書き出した学習データを読み込む').setInputFiles({
     name: 'progress.json',
     mimeType: 'application/json',
     buffer: await readFile(path),

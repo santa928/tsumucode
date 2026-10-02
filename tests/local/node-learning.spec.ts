@@ -71,14 +71,14 @@ test('実NodeのClosureで編集・Reset・再編集・採点・再読込をつ�
   await preview(page);
   await page.goto('/');
   const download = page.waitForEvent('download');
-  await page.getByRole('button', { name: '全コースの進捗を書き出す' }).click();
+  await page.getByRole('button', { name: '全コースの進捗と下書きを書き出す' }).click();
   const bundle = info.outputPath('node-progress.json');
   await (await download).saveAs(bundle);
   const fresh = await browser.newContext();
   const imported = await fresh.newPage();
   await imported.goto('http://127.0.0.1:4173/');
-  await expect(imported.getByLabel('進捗Bundleを選ぶ')).toBeEnabled();
-  await imported.getByLabel('進捗Bundleを選ぶ').setInputFiles({
+  await expect(imported.getByLabel('書き出した学習データを読み込む')).toBeEnabled();
+  await imported.getByLabel('書き出した学習データを読み込む').setInputFiles({
     name: 'progress.json',
     mimeType: 'application/json',
     buffer: await readFile(bundle),

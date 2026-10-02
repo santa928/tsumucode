@@ -228,6 +228,8 @@ function EditableSession({
   const resetInFlightRef = useRef(false);
   const previewFrameRef = useRef<HTMLIFrameElement | undefined>(undefined);
   const hintTriggerRef = useRef<HTMLButtonElement>(null);
+  const reviewTriggerRef = useRef<HTMLButtonElement>(null);
+  const reviewReturnFocusRef = useRef<HTMLButtonElement | null>(null);
   const feedbackTriggerRef = useRef<HTMLButtonElement>(null);
   const validateTriggerRef = useRef<HTMLButtonElement>(null);
   const resetTriggerRef = useRef<HTMLButtonElement>(null);
@@ -387,12 +389,14 @@ function EditableSession({
     relatedSlideId,
     editorFocusRequestId,
   };
-  const relatedSlide =
+  const relatedLesson =
     viewState.relatedSlideId === undefined
       ? undefined
-      : workspaceLessons
-          .flatMap(({ slides }) => slides)
-          .find(({ id }) => id === viewState.relatedSlideId);
+      : workspaceLessons.find(({ slides }) =>
+          slides.some(({ id }) => id === viewState.relatedSlideId),
+        );
+  const relatedSlide = relatedLesson?.slides.find(({ id }) => id === viewState.relatedSlideId);
+  const reviewStartSlideId = lesson.slides.at(-1)?.id;
 
   useEffect(() => {
     mountedRef.current = true;
@@ -707,9 +711,10 @@ function EditableSession({
     })();
   };
 
-  /** Feedback Drawerを閉じ、同じ画面の関連Slide Drawerへ切り替える。 */
-  const review = (slideId: string): void => {
+  /** 同じ画面で説明を開き、直接開いた場合は復帰先のボタンも保持する。 */
+  const review = (slideId: string, returnFocusTarget?: HTMLButtonElement | null): void => {
     if (!lease.isWritable()) return;
+    reviewReturnFocusRef.current = returnFocusTarget ?? null;
     setDrawerMode(undefined);
     setRelatedSlideId(slideId);
   };
@@ -730,10 +735,10 @@ function EditableSession({
     if (state.selectedFile !== step.file) controller.selectFile(step.file);
   };
 
-  /** 関連Slideを閉じた次frameでEditorへFocusを戻す。 */
+  /** 直接見直した説明はボタンへ、判定からの見直しは従来どおりEditorへ戻す。 */
   const closeRelatedSlide = (): void => {
     setRelatedSlideId(undefined);
-    setRestoreEditorFocus(true);
+    setRestoreEditorFocus(reviewReturnFocusRef.current === null);
   };
 
   /** 全Starter復元を保存・Previewへ直列化し、失敗時も復元済みstateを保持する。 */
@@ -845,6 +850,19 @@ function EditableSession({
             </p>
           ) : null}
           <div className="tc-exercise-pager-actions">
+            {reviewStartSlideId !== undefined ? (
+              <button
+                ref={reviewTriggerRef}
+                type="button"
+                disabled={busy}
+                onClick={() => {
+                  review(reviewStartSlideId, reviewTriggerRef.current);
+                }}
+                className="tc-exercise-pager-secondary"
+              >
+                説明を見直す
+              </button>
+            ) : null}
             <button
               ref={hintTriggerRef}
               type="button"
@@ -1155,11 +1173,29 @@ function EditableSession({
         open={relatedSlide !== undefined}
         title={relatedSlide === undefined ? '関連スライド' : `関連スライド：${relatedSlide.title}`}
         placement="side"
+        returnFocusRef={reviewReturnFocusRef}
         onClose={closeRelatedSlide}
       >
         {relatedSlide !== undefined ? (
-          <div className="tc-exercise-related-slide">
+          <div className="tc-exercise-related-slide min-w-0 grid-cols-1">
             <p>コードと判定履歴を保ったまま、直前の説明を確認できます。</p>
+            <label className="grid min-w-0 gap-2 font-bold">
+              見直す説明
+              <select
+                aria-label="見直す説明"
+                value={relatedSlide.id}
+                onChange={(event) => {
+                  if (lease.isWritable()) setRelatedSlideId(event.currentTarget.value);
+                }}
+                className="min-h-11 w-full min-w-0 rounded-workshop-sm border border-workshop-border bg-workshop-surface px-3 py-2"
+              >
+                {relatedLesson?.slides.map((slide, index) => (
+                  <option key={slide.id} value={slide.id}>
+                    {index + 1}. {slide.title}
+                  </option>
+                ))}
+              </select>
+            </label>
             <div>
               <SlideCodeReference
                 slide={workspaceLessons

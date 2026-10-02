@@ -409,14 +409,14 @@ test('Keyboardだけで閲覧目次、用語、前後Slide、目次復帰を操�
 
 test('Import差分と削除確認にaxe違反がなく、状態をaria-liveで伝える', async ({ page }, testInfo) => {
   await page.goto('./#/');
-  const exportButton = page.getByRole('button', { name: '全コースの進捗を書き出す' });
+  const exportButton = page.getByRole('button', { name: '全コースの進捗と下書きを書き出す' });
   const download = page.waitForEvent('download');
   await exportButton.click();
   const bundlePath = testInfo.outputPath('a11y-progress.json');
   await (await download).saveAs(bundlePath);
   await expect(page.getByRole('status')).toContainText('書き出しました');
 
-  await page.getByLabel('進捗Bundleを選ぶ').setInputFiles({
+  await page.getByLabel('書き出した学習データを読み込む').setInputFiles({
     name: 'progress.json',
     mimeType: 'application/json',
     buffer: await readFile(bundlePath),

@@ -1016,6 +1016,67 @@ describe('Learning routes', () => {
     expect(screen.getByTestId('runtime-preview-frame')).toBeInTheDocument();
   });
 
+  it('未判定の演習から説明を選んで見直し、編集・Preview・Focusを保って戻れる', async () => {
+    vi.stubEnv('BASE_URL', '/review-entry-route-test/');
+    const reviewCourse = structuredClone(fixtureCourse);
+    const reviewLesson = reviewCourse.phases[0]!.chapters[0]!.lessons[0]!;
+    reviewLesson.slides.push({
+      ...structuredClone(reviewLesson.slides[0]!),
+      id: 'slide-review-last',
+      title: '演習前に読む説明',
+    });
+    if (reviewLesson.completion.kind === 'standard') {
+      reviewLesson.completion.finalSlideId = 'slide-review-last';
+    }
+    reviewCourse.expectedTotals.conceptSlides = 2;
+    stubContentFetch(reviewCourse);
+    stubEditingCapability(true);
+    const adapters = stubAdapters();
+    const user = userEvent.setup();
+    renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
+    await findCodeWorkspace();
+    const editorView = await findEditorView();
+    const editedSource = '<main>説明往復でも残す</main>';
+    act(() => {
+      editorView.dispatch({
+        changes: {
+          from: 0,
+          to: editorView.state.doc.length,
+          insert: editedSource,
+        },
+      });
+    });
+    const review = await screen.findByRole('button', { name: '説明を見直す' });
+    await waitFor(() => {
+      expect(review).toBeEnabled();
+      expect(adapters.getLastRenderInput()?.files['index.html']).toBe(editedSource);
+    });
+    const frame = screen.getByTitle('コードのプレビュー');
+    const revision = adapters.getLastRenderInput()?.executionRevision;
+    const renderCount = adapters.render.mock.calls.length;
+
+    await user.click(review);
+    let dialog = screen.getByRole('dialog', {
+      name: '関連スライド：演習前に読む説明',
+    });
+    await user.selectOptions(
+      within(dialog).getByRole('combobox', { name: '見直す説明' }),
+      'slide-html-role',
+    );
+    dialog = screen.getByRole('dialog', {
+      name: '関連スライド：HTMLは意味を伝える',
+    });
+    expect(dialog).toHaveTextContent('HTMLはページの意味と構造を表します。');
+    await user.click(within(dialog).getByRole('button', { name: '演習へ戻る' }));
+    await waitFor(() => {
+      expect(review).toHaveFocus();
+    });
+    expect(editorView.state.doc.toString()).toBe(editedSource);
+    expect(screen.getByTitle('コードのプレビュー')).toBe(frame);
+    expect(adapters.getLastRenderInput()?.executionRevision).toBe(revision);
+    expect(adapters.render).toHaveBeenCalledTimes(renderCount);
+  }, 15_000);
+
   it('JavaScript演習はprimary outputのConsoleを初期選択し、最新recordを表示する', async () => {
     // RepositoryのCatalog cacheを既存html-css Fixtureから分離する。
     vi.stubEnv('BASE_URL', '/javascript-route-test/');

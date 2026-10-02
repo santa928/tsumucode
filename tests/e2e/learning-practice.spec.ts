@@ -46,7 +46,7 @@ async function preservedGuide(page: Page) {
 async function exportBundle(page: Page, info: TestInfo, name: string): Promise<ProgressBundle> {
   await page.goto('./#/');
   const downloading = page.waitForEvent('download');
-  await page.getByRole('button', { name: '全コースの進捗を書き出す' }).click();
+  await page.getByRole('button', { name: '全コースの進捗と下書きを書き出す' }).click();
   const file = info.outputPath(name);
   await (await downloading).saveAs(file);
   return JSON.parse(await readFile(file, 'utf8')) as ProgressBundle;
@@ -55,7 +55,7 @@ async function exportBundle(page: Page, info: TestInfo, name: string): Promise<P
 /** 差分表示の確認後にImportし、再読込完了を待つ。 */
 async function importBundle(page: Page, bundle: ProgressBundle): Promise<void> {
   await page.goto('./#/');
-  await page.getByLabel('進捗Bundleを選ぶ').setInputFiles({
+  await page.getByLabel('書き出した学習データを読み込む').setInputFiles({
     name: 'practice-progress.json',
     mimeType: 'application/json',
     buffer: Buffer.from(JSON.stringify(bundle)),
@@ -64,7 +64,7 @@ async function importBundle(page: Page, bundle: ProgressBundle): Promise<void> {
   const reloaded = page.waitForEvent('domcontentloaded');
   await page.getByRole('button', { name: 'この内容を読み込む' }).click();
   await reloaded;
-  await expect(page.getByRole('button', { name: '全コースの進捗を書き出す' })).toBeEnabled();
+  await expect(page.getByRole('button', { name: '全コースの進捗と下書きを書き出す' })).toBeEnabled();
 }
 
 /** 対象教材を実RunnerでPreview・採点する。 */

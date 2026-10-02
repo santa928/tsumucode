@@ -41,6 +41,49 @@ test.afterEach(async ({ page }) => {
   });
 });
 
+test('Promiseの説明を未判定で選び直しても選択欄が収まり、下書きとPreviewを保つ', async ({
+  page,
+}) => {
+  await openEditableJavaScriptExercise(page, {
+    lessonId: 'javascript-ch10-l01',
+    exerciseId: 'javascript-ch10-l01-e01',
+    title: '届いた問題データを表示する',
+  });
+  await page.setViewportSize({ width: 1280, height: 800 });
+  const source = `${await editorText(page)}\n// 説明を見直しても保持する`;
+  await replaceAndSave(page, source);
+  const iframe = await page.getByTestId('runtime-preview-frame').locator('iframe').elementHandle();
+  if (iframe === null) throw new Error('Preview iframeがありません');
+  const review = page.getByRole('button', { name: '説明を見直す', exact: true });
+  await review.click();
+  const dialog = page.getByRole('dialog', { name: /関連スライド/u });
+  const select = dialog.getByRole('combobox', { name: '見直す説明' });
+  await expect(select).toHaveValue('javascript-ch10-l01-s04');
+  await select.selectOption('javascript-ch10-l01-s03');
+  const fits = await select.evaluate((element) => {
+    const body = element.closest('.tc-learning-drawer-body');
+    if (!(body instanceof HTMLElement)) return false;
+    const box = element.getBoundingClientRect();
+    const container = body.getBoundingClientRect();
+    const styles = getComputedStyle(body);
+    return (
+      box.left >= container.left + Number.parseFloat(styles.paddingLeft) &&
+      box.right <= container.right - Number.parseFloat(styles.paddingRight)
+    );
+  });
+  expect(fits).toBe(true);
+  await dialog.getByRole('button', { name: '演習へ戻る' }).click();
+  await expect(review).toBeFocused();
+  await expect.poll(() => editorText(page)).toBe(source);
+  expect(
+    await iframe.evaluate(
+      (element) =>
+        element.isConnected &&
+        element === document.querySelector('[data-testid="runtime-preview-frame"] iframe'),
+    ),
+  ).toBe(true);
+});
+
 test('直接URLでscript.jsを初期選択し、JavaScriptのTokenを色分けして表示する', async ({ page }) => {
   const scriptTab = page.getByRole('tab', { name: 'script.js', exact: true });
   await expect(scriptTab).toHaveAttribute('aria-selected', 'true');

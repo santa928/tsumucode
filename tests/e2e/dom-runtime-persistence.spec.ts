@@ -196,7 +196,7 @@ test('DOM操作の未対応は履歴を保ち、修正・Export/Import・Reset�
   await page.screenshot({ path: testInfo.outputPath('dom-passed.png') });
   await page.goto(`${testBasePath()}#/`);
   const download = page.waitForEvent('download');
-  await page.getByRole('button', { name: '全コースの進捗を書き出す' }).click();
+  await page.getByRole('button', { name: '全コースの進捗と下書きを書き出す' }).click();
   const bundle = testInfo.outputPath('dom-progress.json');
   await (await download).saveAs(bundle);
   const fresh = await browser.newContext();
@@ -204,8 +204,8 @@ test('DOM操作の未対応は履歴を保ち、修正・Export/Import・Reset�
     const imported = await fresh.newPage();
     await routeDomLesson(imported);
     await imported.goto(`${testBasePath()}#/`);
-    await expect(imported.getByLabel('進捗Bundleを選ぶ')).toBeEnabled();
-    await imported.getByLabel('進捗Bundleを選ぶ').setInputFiles({
+    await expect(imported.getByLabel('書き出した学習データを読み込む')).toBeEnabled();
+    await imported.getByLabel('書き出した学習データを読み込む').setInputFiles({
       name: 'progress.json',
       mimeType: 'application/json',
       buffer: await readFile(bundle),
