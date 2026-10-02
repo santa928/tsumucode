@@ -44,7 +44,59 @@ describe('Node source facts', () => {
 });
 
 describe('analyzeJavaScriptSource', () => {
-  it.each(['async', 'project'] as const)(
+  it('指定bindingとFunction returnの計算を同じbindingのConsole利用へ結び付ける', async () => {
+    const result = await analyzeJavaScriptSource({
+      ...baseInput,
+      source:
+        'const a=3; const b=10; const total=b*a; function score(x,y){return x*y;} console.log(total); console.log(score(a,b));',
+    });
+    expect(result.status).toBe('success');
+    if (result.status !== 'success') throw new Error('解析が成功しませんでした');
+    expect(result.facts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          kind: 'computed-output',
+          ownerKind: 'binding',
+          name: 'total',
+          operator: '*',
+          operands: [
+            { kind: 'identifier', name: 'b' },
+            { kind: 'identifier', name: 'a' },
+          ],
+        }),
+        expect.objectContaining({
+          kind: 'computed-output',
+          ownerKind: 'return',
+          name: 'score',
+          operator: '*',
+        }),
+      ]),
+    );
+  });
+
+  it('表示行だけの計算と同名shadow bindingのConsole利用を計算対象へ結び付けない', async () => {
+    const result = await analyzeJavaScriptSource({
+      ...baseInput,
+      source:
+        'const a=3; const b=10; const total=a*b; {const total=30; console.log(total);} function score(x,y){return x*y;} console.log(a*b);',
+    });
+    expect(result.status).toBe('success');
+    if (result.status !== 'success') throw new Error('解析が成功しませんでした');
+    expect(result.facts.filter(({ kind }) => kind === 'computed-output')).toEqual([]);
+  });
+
+  it('未使用Functionや条件分岐内のConsoleをtop-levelの正答出力と混同しない', async () => {
+    const result = await analyzeJavaScriptSource({
+      ...baseInput,
+      source:
+        'const a=3; const b=10; const total=a+b; function unused(){const total=a*b; console.log(total);} if(false){console.log(total);} console.log(a*b);',
+    });
+    expect(result.status).toBe('success');
+    if (result.status !== 'success') throw new Error('解析が成功しませんでした');
+    expect(result.facts.filter(({ kind }) => kind === 'computed-output')).toEqual([]);
+  });
+
+  it.each(['async'] as const)(
     '遅延currentTargetは%sでは実行前に未対応とする',
     async (capabilityProfile) => {
       const source =

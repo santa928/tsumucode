@@ -18,7 +18,7 @@ async function renderForm(
   page: Page,
   script: string,
   html = HTML,
-  profile: 'dom' | 'dom-form' = 'dom-form',
+  profile: 'dom' | 'dom-form' | 'project' = 'dom-form',
 ) {
   const runnerModulePath = await loadJavaScriptRunnerModulePath();
   return page.evaluate(
@@ -99,6 +99,35 @@ test.afterEach(async ({ page }) => {
   await page.evaluate(async () => {
     await (window as FormWindow).formHarness?.runner.dispose();
   });
+});
+
+test('projectは同じElementのcurrentTargetとasyncをclick/Keyboardで再利用しDocumentは拒否する', async ({
+  page,
+}) => {
+  const html =
+    '<button id="send" type="button" data-answer="A">回答A</button><p id="result">まだ</p>';
+  const script =
+    "document.querySelector('#send').addEventListener('click',event=>{const answer=event.currentTarget.dataset.answer;Promise.resolve(answer).then(value=>{document.querySelector('#result').textContent=value;});});";
+  expect((await renderForm(page, script, html, 'project')).diagnostics).toEqual([]);
+  const child = page.frameLocator('#form-fixture');
+  await child.getByRole('button', { name: '回答A' }).click();
+  await expect(child.locator('#result')).toHaveText('A');
+  await renderForm(page, script, html, 'project');
+  await child.getByRole('button', { name: '回答A' }).focus();
+  await child.getByRole('button', { name: '回答A' }).press('Enter');
+  await expect(child.locator('#result')).toHaveText('A');
+  const unsafe =
+    "document.querySelector('#send').getRootNode().addEventListener('click',event=>{try{console.log(event.currentTarget);}catch{console.log('caught');}});";
+  expect((await renderForm(page, unsafe, html, 'project')).diagnostics).toEqual([]);
+  const result = await clickSubmit(page, 'document-current-target');
+  expect(result.diagnostics).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        code: 'javascript-current-target-unsupported',
+        kind: 'unsupported',
+      }),
+    ]),
+  );
 });
 
 test('Form専用profileでnative click/Enterが届き、取消の有無を区別して既存domへ戻せる', async ({

@@ -609,8 +609,13 @@ export function assertJavaScriptCapabilityPolicy(
     if (property === 'constructor') {
       reject(node, file, 'constructorを使った動的実行は使えません');
     }
-    if (property === 'currentTarget' && profileId !== 'dom' && profileId !== 'dom-form')
-      reject(node, file, 'currentTargetは現在のdom演習でだけ使えます', 'unsupported');
+    if (
+      property === 'currentTarget' &&
+      profileId !== 'dom' &&
+      profileId !== 'dom-form' &&
+      profileId !== 'project'
+    )
+      reject(node, file, 'currentTargetはdom、dom-form、project演習でだけ使えます', 'unsupported');
     if (property !== undefined && RUNTIME_ESCAPE_MEMBERS.has(property)) {
       reject(node, file, '実行環境へ戻るmemberは使えません');
     }

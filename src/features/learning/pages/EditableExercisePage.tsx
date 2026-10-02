@@ -13,9 +13,10 @@ import { useNavigate } from 'react-router';
 import type * as BrowserConsoleRuntimeModule from '../browserConsoleRuntime';
 import type { exerciseLoader } from '../../../app/contentLoaders';
 import type { Exercise } from '../../../core/content/types';
+import { resolveAllWorkspaceExerciseLocations } from '../../../core/content/selectors';
 import {
   findWorkspaceValidationTargets,
-  recordDraftMutationFromIndex,
+  recordWorkspaceDraftMutationFromIndex,
   recordValidationFromIndex,
 } from '../../../core/persistence/progressUpdates';
 import { LeaseFenceRejectedError } from '../../../core/persistence/contracts';
@@ -239,10 +240,13 @@ function EditableSession({
     () => findWorkspaceValidationTargets(course, workspaceLessons, exercise.id),
     [course, exercise.id, workspaceLessons],
   );
-  const allWorkspaceTargets = validationTargets;
+  const allWorkspaceLocations = useMemo(
+    () => resolveAllWorkspaceExerciseLocations(course, exercise.id),
+    [course, exercise.id],
+  );
   const resolvedWorkspaceAssets = useMemo(
-    () => resolveWorkspaceAssets(allWorkspaceTargets.map(({ exercise: target }) => target)),
-    [allWorkspaceTargets],
+    () => resolveWorkspaceAssets(validationTargets.map(({ exercise: target }) => target)),
+    [validationTargets],
   );
   const browserConsole = useMemo(
     () =>
@@ -273,7 +277,7 @@ function EditableSession({
           learningRuntimeServices.passFreshness.markDirty(
             draft.courseId,
             draft.workspaceId,
-            allWorkspaceTargets.map(({ exercise: target }) => target.id),
+            allWorkspaceLocations.map(({ exerciseId }) => exerciseId),
             draft.editRevision,
           );
         },
@@ -295,14 +299,11 @@ function EditableSession({
                 const current = await learningRuntimeServices.repository.getCourseVersioned(
                   course.id,
                 );
-                const invalidated = allWorkspaceTargets.reduce(
-                  (progress, target) =>
-                    recordDraftMutationFromIndex(progress, course, target.lesson, target.exercise, {
-                      ...draft,
-                      lessonId: target.lesson.id,
-                      exerciseId: target.exercise.id,
-                    }) ?? progress,
+                const invalidated = recordWorkspaceDraftMutationFromIndex(
                   current.progress,
+                  course,
+                  workspaceLessons,
+                  draft,
                 );
                 if (invalidated === undefined) {
                   await learningRuntimeServices.repository.putDraftFenced(draft, proof);
@@ -334,7 +335,7 @@ function EditableSession({
         now: () => new Date().toISOString(),
       }),
     [
-      allWorkspaceTargets,
+      allWorkspaceLocations,
       browserConsole,
       course,
       exercise,
@@ -343,6 +344,7 @@ function EditableSession({
       resolvedWorkspaceAssets,
       validationTargets,
       validator,
+      workspaceLessons,
     ],
   );
   const state = useLearningSession(controller);

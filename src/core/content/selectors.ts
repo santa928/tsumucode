@@ -120,3 +120,16 @@ export function resolveWorkspaceLessonIds(
     ),
   ];
 }
+
+/** 失効通知用に、未読込の未来工程も含む同一workspaceの位置をIndexだけで返す。 */
+export function resolveAllWorkspaceExerciseLocations(
+  course: CourseIndex,
+  currentExerciseId: string,
+): readonly WorkspaceExerciseLocation[] {
+  const { exercise: current } = findExerciseOwner(course, currentExerciseId);
+  return courseLessonOutlines(course).flatMap((lesson) =>
+    lesson.exercises
+      .filter(({ workspaceId }) => workspaceId === current.workspaceId)
+      .map(({ id }) => ({ lessonId: lesson.id, exerciseId: id })),
+  );
+}

@@ -518,6 +518,17 @@ describe('CourseManifestSchema 公開境界', () => {
   });
 
   it.each([
+    {
+      kind: 'computed-output',
+      ownerKind: 'binding',
+      name: 'score',
+      scopeDepth: 0,
+      operator: '*',
+      operands: [
+        { kind: 'identifier', name: 'count' },
+        { kind: 'literal', value: 10 },
+      ],
+    },
     { kind: 'collection', collectionKind: 'array', entryCount: 3 },
     { kind: 'collection-access', accessKind: 'at' },
     { kind: 'destructuring', patternKind: 'object', bindingCount: 2 },
@@ -540,6 +551,17 @@ describe('CourseManifestSchema 公開境界', () => {
   });
 
   it.each([
+    {
+      kind: 'computed-output',
+      ownerKind: 'binding',
+      name: 'score',
+      scopeDepth: 0,
+      operator: '*',
+      operands: [
+        { kind: 'identifier', name: 'count', extra: true },
+        { kind: 'literal', value: 10 },
+      ],
+    },
     { kind: 'collection', collectionKind: 'array', entryCount: 65 },
     { kind: 'destructuring', patternKind: 'object', bindingCount: -1 },
     { kind: 'collection-transform', method: 'sort', callbackParameterCount: 1 },

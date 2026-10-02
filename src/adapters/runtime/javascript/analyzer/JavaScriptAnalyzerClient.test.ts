@@ -188,6 +188,17 @@ describe('JavaScriptAnalyzerClient', () => {
     for (const fact of [
       { kind: 'literal', valueType: 'string' },
       { kind: 'binary-expression', operator: '===' },
+      {
+        kind: 'computed-output',
+        ownerKind: 'binding',
+        name: 'score',
+        scopeDepth: 0,
+        operator: '*',
+        operands: [
+          { kind: 'identifier', name: 'count' },
+          { kind: 'literal', value: 10 },
+        ],
+      },
       { kind: 'assignment', name: 'score', operator: '+=' },
       { kind: 'branch', branchKind: 'if', hasAlternate: true },
       { kind: 'return' },
@@ -214,6 +225,38 @@ describe('JavaScriptAnalyzerClient', () => {
         result: { ...result, facts: [{ ...binding, kind: 'custom' }] },
       }),
     ).toBe(false);
+    const computed = {
+      kind: 'computed-output',
+      ownerKind: 'binding',
+      name: 'score',
+      scopeDepth: 0,
+      operator: '*',
+      operands: [
+        { kind: 'identifier', name: 'count' },
+        { kind: 'literal', value: 10 },
+      ],
+      file: 'script.js',
+      line: 1,
+      column: 1,
+    };
+    for (const operands of [
+      [
+        { kind: 'identifier', name: 'count', extra: true },
+        { kind: 'literal', value: 10 },
+      ],
+      new Array<unknown>(2),
+      [
+        { kind: 'literal', value: Infinity },
+        { kind: 'literal', value: 10 },
+      ],
+    ]) {
+      expect(
+        isAnalyzerWorkerResponse({
+          type: 'result',
+          result: { ...result, facts: [{ ...computed, operands }] },
+        }),
+      ).toBe(false);
+    }
   });
 
   it('Worker responseは閉じたmodule graphだけを受理する', () => {

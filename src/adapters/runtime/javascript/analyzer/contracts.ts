@@ -60,6 +60,11 @@ export type JavaScriptAssignmentOperator = '=' | '+=' | '-=' | '++' | '--';
 
 export type JavaScriptCollectionTransformMethod = 'map' | 'filter' | 'reduce';
 
+/** 計算関係を限定する、名前またはprimitive literalのoperand。 */
+export type JavaScriptSourceOperand =
+  | { readonly kind: 'identifier'; readonly name: string }
+  | { readonly kind: 'literal'; readonly value: string | number | boolean };
+
 export type JavaScriptSourceFact =
   | (JavaScriptFactLocation & {
       readonly kind: 'binding';
@@ -74,6 +79,14 @@ export type JavaScriptSourceFact =
   | (JavaScriptFactLocation & {
       readonly kind: 'binary-expression';
       readonly operator: JavaScriptBinaryOperator;
+    })
+  | (JavaScriptFactLocation & {
+      readonly kind: 'computed-output';
+      readonly ownerKind: 'binding' | 'return';
+      readonly name: string;
+      readonly scopeDepth: number;
+      readonly operator: JavaScriptBinaryOperator;
+      readonly operands: readonly [JavaScriptSourceOperand, JavaScriptSourceOperand];
     })
   | (JavaScriptFactLocation & {
       readonly kind: 'assignment';
@@ -349,6 +362,43 @@ function isJavaScriptSourceFact(value: unknown): value is JavaScriptSourceFact {
         ['+', '-', '*', '/', '%', '===', '!==', '>', '>=', '<', '<=', '&&', '||', '??'].includes(
           String(value.operator),
         )
+      );
+    case 'computed-output':
+      return (
+        hasKeys([
+          'column',
+          'file',
+          'kind',
+          'line',
+          'name',
+          'operands',
+          'operator',
+          'ownerKind',
+          'scopeDepth',
+        ]) &&
+        bounded(value.name) &&
+        Number.isSafeInteger(value.scopeDepth) &&
+        Number(value.scopeDepth) >= 0 &&
+        Number(value.scopeDepth) <= 32 &&
+        ['binding', 'return'].includes(String(value.ownerKind)) &&
+        ['+', '-', '*', '/', '%', '===', '!==', '>', '>=', '<', '<=', '&&', '||', '??'].includes(
+          String(value.operator),
+        ) &&
+        Array.isArray(value.operands) &&
+        value.operands.length === 2 &&
+        Object.keys(value.operands).join(',') === '0,1' &&
+        value.operands.every((operand: unknown) => {
+          if (!isRecord(operand)) return false;
+          const keys = Object.keys(operand).sort().join(',');
+          return (
+            (keys === 'kind,name' && operand.kind === 'identifier' && bounded(operand.name)) ||
+            (keys === 'kind,value' &&
+              operand.kind === 'literal' &&
+              ((typeof operand.value === 'string' && operand.value.length <= 128) ||
+                typeof operand.value === 'boolean' ||
+                (typeof operand.value === 'number' && Number.isFinite(operand.value))))
+          );
+        })
       );
     case 'assignment':
       return (

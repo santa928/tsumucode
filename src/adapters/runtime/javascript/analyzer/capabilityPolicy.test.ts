@@ -67,6 +67,26 @@ describe('assertJavaScriptCapabilityPolicy', () => {
     }).not.toThrow();
   });
 
+  it('currentTargetはdom/dom-form/projectだけに限定し、projectで既習Elementとasyncを組み合わせる', () => {
+    const source = program(
+      "const button=document.querySelector('button');button.addEventListener('click',event=>{const answer=event.currentTarget.dataset.answer;Promise.resolve(answer).then(console.log);});",
+    );
+    expect(() => {
+      assertJavaScriptCapabilityPolicy(source, 'script.js', 'project');
+    }).not.toThrow();
+    const synchronous = program('function answer(event){console.log(event.currentTarget);}');
+    for (const profile of ['dom', 'dom-form', 'project'] as const) {
+      expect(() => {
+        assertJavaScriptCapabilityPolicy(synchronous, 'script.js', profile);
+      }).not.toThrow();
+    }
+    for (const profile of ['core', 'modules', 'async'] as const) {
+      expect(() => {
+        assertJavaScriptCapabilityPolicy(synchronous, 'script.js', profile);
+      }).toThrow(/currentTarget/u);
+    }
+  });
+
   it('coreでは教材用Errorだけをconstructorとして許可する', () => {
     expect(() => {
       assertJavaScriptCapabilityPolicy(
@@ -433,15 +453,15 @@ document.querySelector('head').appendChild(script);`),
 
 describe('dom-formの非passive取消観測境界', () => {
   it.each(['', ', false', ', true'])('直接の静的Event登録とcaptureを許可する: %s', (option) => {
-    expect(() =>
-      { assertJavaScriptCapabilityPolicy(
+    expect(() => {
+      assertJavaScriptCapabilityPolicy(
         program(
           `const form=document.querySelector('#form');function handler(event){event.preventDefault();}form.addEventListener('submit',handler${option});`,
         ),
         'script.js',
         'dom-form',
-      ); },
-    ).not.toThrow();
+      );
+    }).not.toThrow();
   });
   it.each([
     "form.addEventListener('submit',handler,{passive:true})",
@@ -455,17 +475,17 @@ describe('dom-formの非passive取消観測境界', () => {
     "form.addEventListener.call(form,'submit',handler)",
     "form['addEventListener']('submit',handler)",
   ])('採点意味を変えるoptionsとaliasをunsupportedにする: %s', (source) => {
-    expect(() =>
-      { assertJavaScriptCapabilityPolicy(program(source), 'script.js', 'dom-form'); },
-    ).toThrow();
+    expect(() => {
+      assertJavaScriptCapabilityPolicy(program(source), 'script.js', 'dom-form');
+    }).toThrow();
   });
   it('既存domのObject optionsを狭めない', () => {
-    expect(() =>
-      { assertJavaScriptCapabilityPolicy(
+    expect(() => {
+      assertJavaScriptCapabilityPolicy(
         program("form.addEventListener('click',handler,{once:true})"),
         'script.js',
         'dom',
-      ); },
-    ).not.toThrow();
+      );
+    }).not.toThrow();
   });
 });

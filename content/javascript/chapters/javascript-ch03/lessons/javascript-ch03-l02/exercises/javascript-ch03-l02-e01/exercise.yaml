@@ -73,7 +73,19 @@ validationRules:
     target: { kind: javascript-source, file: script.js }
     assertion:
       kind: javascript-source-fact
-      fact: { kind: binary-expression, operator: '*' }
+      fact:
+        {
+          'kind': 'computed-output',
+          'ownerKind': 'return',
+          'name': 'calculateScore',
+          'scopeDepth': 0,
+          'operator': '*',
+          'operands':
+            [
+              { 'kind': 'identifier', 'name': 'correctAnswers' },
+              { 'kind': 'identifier', 'name': 'pointsPerAnswer' },
+            ],
+        }
     feedback:
       target: returnの右側
       expected: correctAnswers * pointsPerAnswer
@@ -186,6 +198,34 @@ fixtures:
     expectedStatus: code-error
     files:
       - { path: script.js, language: javascript, source: fixtures/security.js, editable: false }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: console-side-answer
+    expectedStatus: incomplete
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/console-side-answer.js,
+          editable: false,
+        }
+      - { path: index.html, language: html, source: fixtures/index.html, editable: false }
+      - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
+    expectedFeedbackRuleIds:
+      - javascript-ch03-l02-e01-r01
+      - javascript-ch03-l02-e01-r02
+      - javascript-ch03-l02-e01-r03
+      - javascript-ch03-l02-e01-r04
+  - id: alternate-expression
+    expectedStatus: pass
+    files:
+      - {
+          path: script.js,
+          language: javascript,
+          source: fixtures/alternate-expression.js,
+          editable: false,
+        }
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds: []

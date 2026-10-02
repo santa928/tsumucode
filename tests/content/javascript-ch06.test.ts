@@ -56,7 +56,7 @@ describe('javascript-ch06', () => {
     const { runtime: course } = await loadAuthoringCourse(path.resolve('content/javascript'));
 
     expect(course).toMatchObject({
-      revision: '2026-10-02.1',
+      revision: '2026-10-02.2',
       estimatedMinutes: 760,
       publicationStatus: 'draft',
       expectedTotals: {
@@ -94,7 +94,9 @@ describe('javascript-ch06', () => {
         ],
       },
     ]);
-    expect(course.progressMigrations.at(-1)).toEqual({
+    expect(
+      course.progressMigrations.find(({ toRevision }) => toRevision === '2026-10-02.1'),
+    ).toEqual({
       fromRevision: '2026-09-28.19',
       toRevision: '2026-10-02.1',
       steps: [
@@ -120,6 +122,17 @@ describe('javascript-ch06', () => {
             '判定条件と同梱データを更新しました。旧コードは退避データと復旧バックアップに保ちます。新しい最初のコードで再確認してください。',
         },
       ],
+    });
+    expect(course.progressMigrations.at(-1)).toMatchObject({
+      fromRevision: '2026-10-02.1',
+      toRevision: '2026-10-02.2',
+      steps: [
+        'javascript-ch01-l03-e01',
+        'javascript-ch02-l01-e01',
+        'javascript-ch03-l02-e01',
+        'javascript-ch03-l04-e01',
+        'javascript-ch06-l04-e01',
+      ].map((id) => ({ action: 'intentionally-reset', entity: 'exercise', id })),
     });
   }, 20_000);
 
@@ -283,7 +296,17 @@ describe('javascript-ch06', () => {
     );
     expect(factsByExercise['javascript-ch06-l04-e01']).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ kind: 'binary-expression', operator: '*' }),
+        expect.objectContaining({
+          kind: 'computed-output',
+          ownerKind: 'binding',
+          name: 'totalScore',
+          scopeDepth: 0,
+          operator: '*',
+          operands: [
+            { kind: 'identifier', name: 'questionCount' },
+            { kind: 'identifier', name: 'pointsPerQuestion' },
+          ],
+        }),
       ]),
     );
   });

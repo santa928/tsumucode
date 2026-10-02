@@ -316,6 +316,32 @@ function sourceFactMatches(
       return candidate.kind === 'literal' && candidate.valueType === expected.valueType;
     case 'binary-expression':
       return candidate.kind === 'binary-expression' && candidate.operator === expected.operator;
+    case 'computed-output': {
+      if (
+        candidate.kind !== 'computed-output' ||
+        candidate.ownerKind !== expected.ownerKind ||
+        candidate.name !== expected.name ||
+        candidate.scopeDepth !== expected.scopeDepth ||
+        candidate.operator !== expected.operator
+      )
+        return false;
+      /** 許可された識別子／primitive値だけを比較し、式文字列へ拡張しない。 */
+      const same = (
+        left: (typeof candidate.operands)[number],
+        right: (typeof expected.operands)[number],
+      ): boolean =>
+        left.kind === right.kind &&
+        (left.kind === 'identifier' && right.kind === 'identifier'
+          ? left.name === right.name
+          : left.kind === 'literal' && right.kind === 'literal' && left.value === right.value);
+      return (
+        (same(candidate.operands[0], expected.operands[0]) &&
+          same(candidate.operands[1], expected.operands[1])) ||
+        ((expected.operator === '*' || expected.operator === '===') &&
+          same(candidate.operands[1], expected.operands[0]) &&
+          same(candidate.operands[0], expected.operands[1]))
+      );
+    }
     case 'assignment':
       return (
         candidate.kind === 'assignment' &&

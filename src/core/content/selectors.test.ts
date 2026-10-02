@@ -9,6 +9,7 @@ import {
   findSlideInCourse,
   findSlideOwner,
   resolveWorkspaceExerciseLocations,
+  resolveAllWorkspaceExerciseLocations,
   resolveWorkspaceLessonIds,
 } from './selectors';
 
@@ -101,6 +102,13 @@ describe('教材selector', () => {
     expect(resolveWorkspaceLessonIds(index, 'exercise-guided-step-2')).toEqual([
       'lesson-guided-step-1',
       'lesson-guided-step-2',
+    ]);
+    expect(resolveWorkspaceExerciseLocations(index, 'exercise-guided-step-1')).toEqual([
+      { lessonId: 'lesson-guided-step-1', exerciseId: 'exercise-guided-step-1' },
+    ]);
+    expect(resolveAllWorkspaceExerciseLocations(index, 'exercise-guided-step-1')).toEqual([
+      { lessonId: 'lesson-guided-step-1', exerciseId: 'exercise-guided-step-1' },
+      { lessonId: 'lesson-guided-step-2', exerciseId: 'exercise-guided-step-2' },
     ]);
   });
 

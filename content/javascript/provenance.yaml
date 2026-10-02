@@ -4880,3 +4880,59 @@ items:
     visibility: authoring
     path: chapters/javascript-ch11/lessons/javascript-ch11-l03/exercises/javascript-ch11-l03-e01/fixtures/stale-labelledby/script.js
     createdAt: '2026-10-02'
+  - id: javascript-ch01-l03-e01-console-side-answer
+    visibility: authoring
+    path: chapters/javascript-ch01/lessons/javascript-ch01-l03/exercises/javascript-ch01-l03-e01/fixtures/console-side-answer.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch02-l01-e01-console-side-answer
+    visibility: authoring
+    path: chapters/javascript-ch02/lessons/javascript-ch02-l01/exercises/javascript-ch02-l01-e01/fixtures/console-side-answer.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch03-l02-e01-console-side-answer
+    visibility: authoring
+    path: chapters/javascript-ch03/lessons/javascript-ch03-l02/exercises/javascript-ch03-l02-e01/fixtures/console-side-answer.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch03-l04-e01-console-side-answer
+    visibility: authoring
+    path: chapters/javascript-ch03/lessons/javascript-ch03-l04/exercises/javascript-ch03-l04-e01/fixtures/console-side-answer.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch06-l04-e01-console-side-answer
+    visibility: authoring
+    path: chapters/javascript-ch06/lessons/javascript-ch06-l04/exercises/javascript-ch06-l04-e01/fixtures/console-side-answer.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch01-l03-e01-alternate-expression
+    visibility: authoring
+    path: chapters/javascript-ch01/lessons/javascript-ch01-l03/exercises/javascript-ch01-l03-e01/fixtures/alternate-expression.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch01-l03-e01-console-literal
+    visibility: authoring
+    path: chapters/javascript-ch01/lessons/javascript-ch01-l03/exercises/javascript-ch01-l03-e01/fixtures/console-literal.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch01-l03-e01-unrelated-computation
+    visibility: authoring
+    path: chapters/javascript-ch01/lessons/javascript-ch01-l03/exercises/javascript-ch01-l03-e01/fixtures/unrelated-computation.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch01-l03-e01-unused-function
+    visibility: authoring
+    path: chapters/javascript-ch01/lessons/javascript-ch01-l03/exercises/javascript-ch01-l03-e01/fixtures/unused-function.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch02-l01-e01-alternate-expression
+    visibility: authoring
+    path: chapters/javascript-ch02/lessons/javascript-ch02-l01/exercises/javascript-ch02-l01-e01/fixtures/alternate-expression.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch03-l02-e01-alternate-expression
+    visibility: authoring
+    path: chapters/javascript-ch03/lessons/javascript-ch03-l02/exercises/javascript-ch03-l02-e01/fixtures/alternate-expression.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch03-l04-e01-alternate-expression
+    visibility: authoring
+    path: chapters/javascript-ch03/lessons/javascript-ch03-l04/exercises/javascript-ch03-l04-e01/fixtures/alternate-expression.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch06-l04-e01-alternate-expression
+    visibility: authoring
+    path: chapters/javascript-ch06/lessons/javascript-ch06-l04/exercises/javascript-ch06-l04-e01/fixtures/alternate-expression.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch01-l03-e01-shadow-binding
+    visibility: authoring
+    path: chapters/javascript-ch01/lessons/javascript-ch01-l03/exercises/javascript-ch01-l03-e01/fixtures/shadow-binding.js
+    createdAt: '2026-10-02'

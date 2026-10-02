@@ -10,6 +10,7 @@ import type {
   JavaScriptAnalysisRequest,
   JavaScriptAnalysisResult,
   JavaScriptSourceFact,
+  JavaScriptSourceOperand,
   JavaScriptAssignmentOperator,
   JavaScriptBinaryOperator,
   JavaScriptCollectionTransformMethod,
@@ -494,6 +495,22 @@ function bindingBelongsToFunction(binding: ScopeInfo, functionScope: ScopeInfo):
   return false;
 }
 
+/** 計算の両端をboundedな名前またはprimitiveへ限定し、複雑なdata flowは推測しない。 */
+function sourceOperand(value: unknown): JavaScriptSourceOperand | undefined {
+  const name = identifierName(value);
+  if (name !== undefined && name.length <= 128) return { kind: 'identifier', name };
+  if (!isNode(value) || value.type !== 'Literal') return undefined;
+  const literal = ast(value).value;
+  if (
+    (typeof literal === 'string' && literal.length <= 128) ||
+    typeof literal === 'boolean' ||
+    (typeof literal === 'number' && Number.isFinite(literal))
+  ) {
+    return { kind: 'literal', value: literal };
+  }
+  return undefined;
+}
+
 /** ValidatorがChapter 00〜06のsource構造を検証するbounded factを抽出する。 */
 function collectFacts(
   program: Node,
@@ -581,6 +598,47 @@ function collectFacts(
   const sortedNodes = [...nodes].sort(
     (left, right) => left.start - right.start || left.end - right.end,
   );
+  /** 初級変形式では、無条件top-level文のConsoleだけを計算結果の直接利用とする。 */
+  const topLevelConsole = (call: Node): boolean => {
+    const statement = parentByNode.get(call);
+    if (statement?.type !== 'ExpressionStatement' || ast(statement).expression !== call)
+      return false;
+    let owner = parentByNode.get(statement);
+    while (owner?.type === 'BlockStatement') owner = parentByNode.get(owner);
+    return owner?.type === 'Program';
+  };
+  /** 同じlexical bindingまたはFunction結果をConsoleへ直接渡す利用だけを受理する。 */
+  const outputUses = (
+    name: string,
+    ownerScope: ScopeInfo,
+    ownerKind: 'binding' | 'return',
+  ): boolean =>
+    sortedNodes.some((call) => {
+      if (
+        call.type !== 'CallExpression' ||
+        callName(ast(call).callee) !== 'console.log' ||
+        !topLevelConsole(call)
+      )
+        return false;
+      const args = ast(call).arguments;
+      return (
+        Array.isArray(args) &&
+        args.some((argument: unknown) => {
+          if (!isNode(argument)) return false;
+          const reference =
+            ownerKind === 'binding'
+              ? argument
+              : argument.type === 'CallExpression'
+                ? ast(argument).callee
+                : undefined;
+          return (
+            isNode(reference) &&
+            identifierName(reference) === name &&
+            resolveBinding(scopeByNode.get(reference), name) === ownerScope
+          );
+        })
+      );
+    });
   const closureKeys = new Set<string>();
   for (const node of sortedNodes) {
     const current = ast(node);
@@ -676,6 +734,72 @@ function collectFacts(
     if (node.type === 'BinaryExpression' || node.type === 'LogicalExpression') {
       const operator = binaryFactOperator(current.operator);
       if (operator !== undefined) addFact({ kind: 'binary-expression', operator, ...location });
+      const operands = [sourceOperand(current.left), sourceOperand(current.right)] as const;
+      const parent = parentByNode.get(node);
+      let ownerKind: 'binding' | 'return' = 'binding';
+      let owner: Node | undefined;
+      let ownerScope: ScopeInfo | undefined;
+      if (parent?.type === 'VariableDeclarator' && ast(parent).init === node) {
+        owner = parent;
+        const kind = declarationKindByNode.get(parent);
+        const scope = scopeByNode.get(parent);
+        if (kind !== undefined && scope !== undefined) ownerScope = declarationScope(scope, kind);
+      } else if (parent?.type === 'ReturnStatement' && ast(parent).argument === node) {
+        ownerKind = 'return';
+        let ancestor = parentByNode.get(parent);
+        while (ancestor !== undefined && !FUNCTION_TYPES.has(ancestor.type))
+          ancestor = parentByNode.get(ancestor);
+        // 単一の無条件returnだけを扱い、未到達・別branchの式を結果として推測しない。
+        const functionBody = ancestor === undefined ? undefined : ast(ancestor).body;
+        const returns =
+          ancestor === undefined
+            ? []
+            : sortedNodes.filter((candidate) => {
+                if (candidate.type !== 'ReturnStatement') return false;
+                let enclosing = parentByNode.get(candidate);
+                while (enclosing !== undefined && !FUNCTION_TYPES.has(enclosing.type))
+                  enclosing = parentByNode.get(enclosing);
+                return enclosing === ancestor;
+              });
+        if (
+          ancestor !== undefined &&
+          parentByNode.get(parent) === functionBody &&
+          returns.length === 1
+        ) {
+          if (ancestor.type === 'FunctionDeclaration') {
+            owner = ancestor;
+            ownerScope = scopesByNode.get(ancestor)?.parent;
+          } else {
+            const declaration = parentByNode.get(ancestor);
+            if (declaration?.type === 'VariableDeclarator') {
+              owner = declaration;
+              const kind = declarationKindByNode.get(declaration);
+              const scope = scopeByNode.get(declaration);
+              if (kind !== undefined && scope !== undefined)
+                ownerScope = declarationScope(scope, kind);
+            }
+          }
+        }
+      }
+      const name = owner === undefined ? undefined : identifierName(ast(owner).id);
+      if (
+        operator !== undefined &&
+        operands[0] !== undefined &&
+        operands[1] !== undefined &&
+        name !== undefined &&
+        ownerScope !== undefined &&
+        outputUses(name, ownerScope, ownerKind)
+      ) {
+        addFact({
+          kind: 'computed-output',
+          ownerKind,
+          name: boundedFactText(name, file),
+          operator,
+          scopeDepth: teachingScopeDepth(ownerScope),
+          operands: [operands[0], operands[1]],
+          ...location,
+        });
+      }
     }
 
     if (node.type === 'AssignmentExpression') {

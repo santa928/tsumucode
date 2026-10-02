@@ -1,5 +1,9 @@
 /** CourseProgressへSlide閲覧・判定・共有workspace編集を純粋に反映する。 */
-import { findLessonOutline, resolveWorkspaceExerciseLocations } from '../content/selectors';
+import {
+  findLessonOutline,
+  resolveAllWorkspaceExerciseLocations,
+  resolveWorkspaceExerciseLocations,
+} from '../content/selectors';
 import { exerciseRequirementIds } from '../content/exerciseRequirementIds';
 import type {
   CourseIndex,
@@ -358,6 +362,77 @@ export function recordDraftMutationFromIndex(
     },
     draft.updatedAt,
   );
+}
+
+/** 採点prefixを広げず、Indexの全workspace所有Lessonの現在evidenceだけを失効する。 */
+export function recordWorkspaceDraftMutationFromIndex(
+  current: CourseProgress | undefined,
+  course: CourseIndex,
+  loadedLessons: readonly Lesson[],
+  draft: ExerciseDraft,
+): CourseProgress | undefined {
+  assertProgressIdentity(current, course);
+  const locations = resolveAllWorkspaceExerciseLocations(course, draft.exerciseId);
+  const owner = findLessonOutline(course, draft.lessonId);
+  const exercise = owner.exercises.find(({ id }) => id === draft.exerciseId);
+  if (
+    draft.courseId !== course.id ||
+    draft.contentRevision !== course.revision ||
+    exercise?.workspaceId !== draft.workspaceId
+  ) {
+    throw new Error('DraftがCourse Index、Lesson、Exerciseまたはworkspaceに一致しません');
+  }
+  if (current === undefined) return undefined;
+  let progress = current;
+  for (const location of locations) {
+    if (progress.lessons[location.lessonId] === undefined) continue;
+    const snapshot = draft.lastPassingSnapshots[location.exerciseId];
+    if (
+      snapshot?.contentRevision === draft.contentRevision &&
+      snapshot.editRevision === draft.editRevision
+    )
+      continue;
+    const loaded = loadedLessons.find(({ id }) => id === location.lessonId);
+    const loadedExercise = loaded?.exercises.find(({ id }) => id === location.exerciseId);
+    if (loaded !== undefined && loadedExercise === undefined) {
+      throw new Error(`Workspace Exerciseが読込済みLessonにありません: ${location.exerciseId}`);
+    }
+    if (loaded !== undefined && loadedExercise !== undefined) {
+      progress =
+        recordDraftMutationFromIndex(progress, course, loaded, loadedExercise, {
+          ...draft,
+          lessonId: location.lessonId,
+          exerciseId: location.exerciseId,
+        }) ?? progress;
+      continue;
+    }
+    const outline = findLessonOutline(course, location.lessonId);
+    // 検証済みprojectは1つのworkspaceを所有する。別workspaceのevidenceは触れない。
+    if (!outline.exercises.every(({ workspaceId }) => workspaceId === draft.workspaceId)) {
+      throw new Error(`未読込Lessonが複数workspaceを所有しています: ${outline.id}`);
+    }
+    const state = lessonState(outline.id, progress.lessons[outline.id]);
+    progress = recalculateFromIndex(
+      progress,
+      course,
+      outline,
+      {
+        ...state,
+        passedExerciseIds: [],
+        passedChecklistItemIds: [],
+        passedRuleIds: [],
+        passedViewportIds: [],
+      },
+      draft.updatedAt,
+    );
+  }
+  return {
+    ...progress,
+    currentLessonId: draft.lessonId,
+    currentChapterId: course.phases
+      .flatMap(({ chapters }) => chapters)
+      .find(({ lessons }) => lessons.some(({ id }) => id === draft.lessonId))!.id,
+  };
 }
 
 /** 単一Exerciseの判定結果を所属Lessonへ反映して完了状態を再計算する。 */

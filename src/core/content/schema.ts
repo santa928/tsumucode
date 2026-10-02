@@ -693,7 +693,42 @@ const QuerySelectorTextContentAssignmentAssertionSchema = z
   })
   .strict();
 
+const JavaScriptSourceOperandSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('identifier'), name: NonEmptyTextSchema.max(128) }).strict(),
+  z
+    .object({
+      kind: z.literal('literal'),
+      value: z.union([z.string().max(128), z.number(), z.boolean()]),
+    })
+    .strict(),
+]);
+
 const JavaScriptSourceFactSchema = z.discriminatedUnion('kind', [
+  z
+    .object({
+      kind: z.literal('computed-output'),
+      ownerKind: z.enum(['binding', 'return']),
+      name: NonEmptyTextSchema.max(128),
+      scopeDepth: z.number().int().min(0).max(32),
+      operator: z.enum([
+        '+',
+        '-',
+        '*',
+        '/',
+        '%',
+        '===',
+        '!==',
+        '>',
+        '>=',
+        '<',
+        '<=',
+        '&&',
+        '||',
+        '??',
+      ]),
+      operands: z.tuple([JavaScriptSourceOperandSchema, JavaScriptSourceOperandSchema]),
+    })
+    .strict(),
   z
     .object({
       kind: z.literal('binding'),

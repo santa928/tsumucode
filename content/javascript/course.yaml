@@ -4,7 +4,7 @@ title: JavaScript はじめの一歩
 description: 画面の変化から始め、値・条件分岐・Function・Array・Module・Error・DebugまでをConsoleで確かめる
 audience: HTMLとCSSの役割を知り、JavaScriptを初めて学ぶ本人と身内
 estimatedMinutes: 760
-revision: 2026-10-02.1
+revision: 2026-10-02.2
 runnerId: javascript
 validatorId: javascript
 glossarySource: glossary.yaml
@@ -118,6 +118,29 @@ progressMigrations:
         entity: exercise
         id: javascript-ch11-l03-e01
         reason: 判定条件と同梱データを更新しました。旧コードは退避データと復旧バックアップに保ちます。新しい最初のコードで再確認してください。
+  - fromRevision: 2026-10-02.1
+    toRevision: 2026-10-02.2
+    steps:
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch01-l03-e01
+        reason: 指定計算とConsole利用の関係を再確認します。旧コード全体は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch02-l01-e01
+        reason: 指定計算とConsole利用の関係を再確認します。旧コード全体は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch03-l02-e01
+        reason: 指定計算とConsole利用の関係を再確認します。旧コード全体は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch03-l04-e01
+        reason: 指定計算とConsole利用の関係を再確認します。旧コード全体は隔離と復旧backupへ保持します。
+      - entity: exercise
+        action: intentionally-reset
+        id: javascript-ch06-l04-e01
+        reason: 指定計算とConsole利用の関係を再確認します。旧コード全体は隔離と復旧backupへ保持します。
 phases:
   - id: javascript-p00-core
     title: JavaScript Core
