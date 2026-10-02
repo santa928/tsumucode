@@ -118,7 +118,7 @@ describe('ProgressTransferPanel', () => {
     );
 
     await user.upload(
-      screen.getByLabelText('進捗Bundleを選ぶ'),
+      screen.getByLabelText('書き出した学習データを読み込む'),
       new File(['{}'], 'progress.json', { type: 'application/json' }),
     );
 
@@ -150,7 +150,7 @@ describe('ProgressTransferPanel', () => {
         ready={Promise.resolve()}
       />,
     );
-    const input = screen.getByLabelText('進捗Bundleを選ぶ');
+    const input = screen.getByLabelText('書き出した学習データを読み込む');
     const file = new File(['{}'], 'same.json', { type: 'application/json' });
 
     await user.upload(input, file);
@@ -180,7 +180,7 @@ describe('ProgressTransferPanel', () => {
     const oversized = new File(['x'], 'large.json', { type: 'application/json' });
     Object.defineProperty(oversized, 'size', { value: 10 * 1024 * 1024 + 1 });
 
-    await user.upload(screen.getByLabelText('進捗Bundleを選ぶ'), oversized);
+    await user.upload(screen.getByLabelText('書き出した学習データを読み込む'), oversized);
 
     expect(await screen.findByRole('alert')).toHaveTextContent('10MiB以下');
     expect(transfer.prepareImport).not.toHaveBeenCalled();
@@ -205,9 +205,9 @@ describe('ProgressTransferPanel', () => {
       />,
     );
 
-    const exportButton = screen.getByRole('button', { name: '全コースの進捗を書き出す' });
+    const exportButton = screen.getByRole('button', { name: '全コースの進捗と下書きを書き出す' });
     expect(exportButton).toBeEnabled();
-    expect(screen.getByLabelText('進捗Bundleを選ぶ')).toBeDisabled();
+    expect(screen.getByLabelText('書き出した学習データを読み込む')).toBeDisabled();
     expect(screen.getByRole('button', { name: 'この端末の学習データを削除' })).toBeDisabled();
 
     await user.click(exportButton);
@@ -218,7 +218,7 @@ describe('ProgressTransferPanel', () => {
     act(() => {
       health.publish({ kind: 'healthy', hasUnsavedChanges: false });
     });
-    expect(screen.getByLabelText('進捗Bundleを選ぶ')).toBeEnabled();
+    expect(screen.getByLabelText('書き出した学習データを読み込む')).toBeEnabled();
   });
 
   it('Snapshotから学習の続きLinkを表示し、backup作成後だけ空Snapshotへ置換する', async () => {
@@ -348,7 +348,7 @@ describe('ProgressTransferPanel', () => {
       />,
     );
     await user.upload(
-      screen.getByLabelText('進捗Bundleを選ぶ'),
+      screen.getByLabelText('書き出した学習データを読み込む'),
       new File(['{}'], 'progress.json', { type: 'application/json' }),
     );
 
@@ -382,7 +382,7 @@ describe('ProgressTransferPanel', () => {
       />,
     );
 
-    await user.click(screen.getByRole('button', { name: '全コースの進捗を書き出す' }));
+    await user.click(screen.getByRole('button', { name: '全コースの進捗と下書きを書き出す' }));
     expect(transfer.exportAll).toHaveBeenCalledOnce();
     unmount();
     await act(async () => {
@@ -410,7 +410,7 @@ describe('ProgressTransferPanel', () => {
       />,
     );
     await user.upload(
-      screen.getByLabelText('進捗Bundleを選ぶ'),
+      screen.getByLabelText('書き出した学習データを読み込む'),
       new File(['{}'], 'progress.json', { type: 'application/json' }),
     );
     await user.click(await screen.findByRole('button', { name: 'この内容を読み込む' }));
@@ -496,7 +496,7 @@ describe('ProgressTransferPanel', () => {
 
       if (phase === 'persist') expect(storageManager.estimate).not.toHaveBeenCalled();
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
-      expect(screen.getByRole('button', { name: '全コースの進捗を書き出す' })).toBeEnabled();
+      expect(screen.getByRole('button', { name: '全コースの進捗と下書きを書き出す' })).toBeEnabled();
     },
   );
 

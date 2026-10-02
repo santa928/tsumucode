@@ -424,7 +424,7 @@ function canonicalStoredSnapshot(stored: Awaited<ReturnType<typeof readStoredPro
 /** Homeの端末データPanelからBundleをdownloadし、test出力先へ保存する。 */
 async function exportBundle(page: Page, testInfo: TestInfo, filename: string): Promise<string> {
   await page.goto(`${testBasePath()}#/`);
-  const exportButton = page.getByRole('button', { name: '全コースの進捗を書き出す' });
+  const exportButton = page.getByRole('button', { name: '全コースの進捗と下書きを書き出す' });
   await expect(exportButton).toBeEnabled();
   const download = page.waitForEvent('download');
   await exportButton.click();
@@ -437,7 +437,7 @@ async function exportBundle(page: Page, testInfo: TestInfo, filename: string): P
 
 /** Import操作が有効になるまで待ち、実際の利用者操作と同じ条件でfileを選ぶ。 */
 async function selectBundle(page: Page, path: string): Promise<void> {
-  const input = page.getByLabel('進捗Bundleを選ぶ');
+  const input = page.getByLabel('書き出した学習データを読み込む');
   await expect(input).toBeEnabled();
   await input.setInputFiles({
     name: 'progress.json',
@@ -1101,7 +1101,7 @@ test('suspend/expiry後に待機tabが実IndexedDBをclaimし、旧tabのstale a
   expect(stored).toContain('切替前の正本');
   expect(stored).not.toContain('期限切れ後に救済する編集');
   await page.getByRole('link', { name: '救済用に端末データを書き出す' }).click();
-  const exportButton = page.getByRole('button', { name: '全コースの進捗を書き出す' });
+  const exportButton = page.getByRole('button', { name: '全コースの進捗と下書きを書き出す' });
   await expect(exportButton).toBeEnabled();
   const download = page.waitForEvent('download');
   await exportButton.click();
@@ -1298,7 +1298,7 @@ for (const viewport of [
     await page.getByRole('link', { name: '端末データを書き出す' }).click();
     const heading = page.getByRole('heading', { name: 'この端末の学習データ' });
     await expect(heading).toBeFocused();
-    await expect(page.getByRole('button', { name: '全コースの進捗を書き出す' })).toBeVisible();
+    await expect(page.getByRole('button', { name: '全コースの進捗と下書きを書き出す' })).toBeVisible();
     expect(await readRuntimeErrors(page)).toEqual({
       pageErrors: [],
       unhandledRejections: [],

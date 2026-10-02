@@ -33,7 +33,7 @@ for (const width of [1280, 390]) {
       await section.getByRole('button', { name: 'ほかの教材を選ぶ' }).press('Enter');
       await expect(page).toHaveURL(/#\/$/u);
       await expect(page.getByRole('heading', { name: '個別コースを選ぶ' })).toBeFocused();
-      await expect(page.getByRole('button', { name: '全コースの進捗を書き出す' })).toBeAttached();
+      await expect(page.getByRole('button', { name: '全コースの進捗と下書きを書き出す' })).toBeAttached();
 
       const reading = section.getByRole('link', {
         name: width < 1024 ? '解説を読む' : '解説だけ読む',

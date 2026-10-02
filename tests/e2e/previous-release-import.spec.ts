@@ -17,7 +17,7 @@ test('前回Releaseの合成Bundleを実Importし、mapと連続resetをIndexedD
   page,
 }) => {
   await page.goto('./#/');
-  const input = page.getByLabel('進捗Bundleを選ぶ');
+  const input = page.getByLabel('書き出した学習データを読み込む');
   await expect(input).toBeEnabled();
   await input.setInputFiles({
     name: 'previous-release-bundle.json',

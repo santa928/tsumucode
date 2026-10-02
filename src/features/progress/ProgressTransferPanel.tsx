@@ -278,6 +278,9 @@ export function ProgressTransferPanel({
       <p className="mt-3 text-workshop-muted">
         ログインはありません。進捗と下書きはこのブラウザの端末領域へ保存されます。
       </p>
+      <p className="mt-2 text-workshop-muted">
+        書き出すJSONには、全コースの進捗と編集中のコードが含まれます。別のPCでは、このJSONを選んで読み込んでください。
+      </p>
       <p className="mt-3 border-l-4 border-workshop-learning pl-4 font-bold">
         公開URLが変わる前に必ず書き出してください。OwnerやCustom
         DomainなどでOriginが変わると、端末データは自動移行できません。
@@ -323,10 +326,10 @@ export function ProgressTransferPanel({
           }}
           className="inline-flex min-h-11 items-center rounded-workshop-md bg-workshop-primary px-4 py-2 font-bold text-workshop-on-primary disabled:opacity-60"
         >
-          全コースの進捗を書き出す
+          全コースの進捗と下書きを書き出す
         </button>
         <label className="inline-flex min-h-11 cursor-pointer items-center rounded-workshop-md border-2 border-workshop-primary px-4 py-2 font-bold focus-within:outline-[var(--tc-focus-width)] focus-within:outline-offset-[var(--tc-focus-offset)] focus-within:outline-[var(--tc-color-focus)] has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-60">
-          進捗Bundleを選ぶ
+          書き出した学習データを読み込む
           <input
             type="file"
             accept="application/json,.json"

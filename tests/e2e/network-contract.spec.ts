@@ -244,10 +244,10 @@ test('公開Courseの主要状態が外部APIと外部subresourceを要求しな
 
   await page.goto('./#/');
   const download = page.waitForEvent('download');
-  await page.getByRole('button', { name: '全コースの進捗を書き出す' }).click();
+  await page.getByRole('button', { name: '全コースの進捗と下書きを書き出す' }).click();
   const bundlePath = testInfo.outputPath('network-progress.json');
   await (await download).saveAs(bundlePath);
-  await page.getByLabel('進捗Bundleを選ぶ').setInputFiles({
+  await page.getByLabel('書き出した学習データを読み込む').setInputFiles({
     name: 'progress.json',
     mimeType: 'application/json',
     buffer: await readFile(bundlePath),
