@@ -1,0 +1,51 @@
+schemaVersion: 1
+entries:
+  - id: type-annotation
+    term: 型注釈
+    definition: 変数名の後ろに受け取る型を書くこと。
+    firstSlideId: typescript-ch01-l03-s01
+    relatedIds:
+      - type-erasure
+      - number
+  - id: type-erasure
+    term: 型消去
+    definition: 型注釈など、型のための情報が生成されたJavaScriptから取り除かれること。実行する処理を消す意味ではない。
+    firstSlideId: typescript-ch01-l03-s01
+    relatedIds:
+      - type-annotation
+      - javascript
+  - id: javascript
+    term: JavaScript
+    definition: ブラウザが実行する言語。この教材ではTypeScriptから生成されたJavaScriptを実行する。
+    firstSlideId: typescript-ch01-l03-s01
+    relatedIds:
+      - type-erasure
+  - id: number
+    term: number
+    definition: 数値を表す型。
+    firstSlideId: typescript-ch01-l03-s01
+    relatedIds:
+      - string
+  - id: string
+    term: string
+    definition: 文字列を表す型。引用符で囲んだ2も文字列。
+    firstSlideId: typescript-ch01-l03-s02
+    relatedIds:
+      - number
+  - id: console
+    term: Console
+    definition: console.logで表示した値を確認する場所。
+    firstSlideId: typescript-ch01-l03-s01
+    relatedIds: []
+  - id: throw
+    term: throw
+    definition: 例外を投げて、通常の処理を中断するJavaScriptの構文。
+    firstSlideId: typescript-ch01-l03-s03
+    relatedIds:
+      - error
+  - id: error
+    term: Error
+    definition: JavaScriptで失敗を知らせる内容を持つ標準のオブジェクト。new Errorで作り、throwで投げられる。
+    firstSlideId: typescript-ch01-l03-s03
+    relatedIds:
+      - throw

@@ -1,0 +1,253 @@
+id: javascript-ch11-l02-e01
+kind: standard
+workspaceId: javascript-ch11-l02-e01
+countsTowardStandardExerciseTotal: true
+title: 開始時は回答欄へ、戻る時は開始ボタンへ
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: focus-round-trip
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: move-focus
+    file: script.js
+    target: 開始handlerと戻るhandlerの最後
+    starterAnchor: '  // 回答欄へFocusを移す'
+    change: 開始時はanswer.focus()、戻る時はstart.focus()を呼ぶ
+    observe: 開始後すぐ入力でき、戻ったら開始ボタンからやり直せる
+    requiresConceptIds:
+      - focus-round-trip
+    validationRuleIds:
+      - javascript-ch11-l02-e01-r01
+      - javascript-ch11-l02-e01-r03
+files:
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: starter/styles.css
+    editable: false
+  - path: script.js
+    language: javascript
+    source: starter/script.js
+    editable: true
+solutionFiles:
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: solution/styles.css
+    editable: false
+  - path: script.js
+    language: javascript
+    source: solution/script.js
+    editable: false
+validationRules:
+  - id: javascript-ch11-l02-e01-r01
+    label: 開始前は説明が見える
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#question'
+    assertion:
+      kind: text
+      operator: equals
+      expected: 始めると問題が出ます
+    feedback:
+      target: script.jsの開始・戻るhandler
+      expected: 表示に続けてFocusを移す
+      nextAction: 開始時のanswer.focus()と戻る時のstart.focus()を確認します。
+    hintId: javascript-ch11-l02-e01-h02
+    relatedSlideId: javascript-ch11-l02-s04
+  - id: javascript-ch11-l02-e01-r03
+    label: 要素を取得して使う
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: call
+        callee: document.querySelector
+    feedback:
+      target: script.jsの開始・戻るhandler
+      expected: 表示に続けてFocusを移す
+      nextAction: 開始時のanswer.focus()と戻る時のstart.focus()を確認します。
+    hintId: javascript-ch11-l02-e01-h01
+    relatedSlideId: javascript-ch11-l02-s03
+hints:
+  - id: javascript-ch11-l02-e01-h01
+    level: 1
+    title: どこへ入力したい？
+    text: script.jsの開始handlerで回答欄answerを操作先にします。
+    relatedSlideId: javascript-ch11-l02-s01
+  - id: javascript-ch11-l02-e01-h02
+    level: 2
+    title: focus()を使う
+    text: 開始handlerの最後にanswer.focus()、戻るhandlerの最後にstart.focus()を書きます。
+    relatedSlideId: javascript-ch11-l02-s03
+  - id: javascript-ch11-l02-e01-h03
+    level: 3
+    title: 両方向を試す
+    text: answer.focus(); と start.focus(); は別のhandlerの最後へ置き、戻ってから開き直してください。
+    relatedSlideId: javascript-ch11-l02-s04
+relatedSlideIds:
+  - javascript-ch11-l02-s01
+  - javascript-ch11-l02-s02
+  - javascript-ch11-l02-s03
+  - javascript-ch11-l02-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: renamed-controls
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/renamed-controls/script.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: named-handler
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/named-handler/script.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: wrong-target
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/wrong-target/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:focus-flow:answer-ready:question
+      - interaction:focus-flow:answer-ready:focus
+      - interaction:focus-flow:again-ready:focus
+  - id: no-return
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/no-return/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:focus-flow:back-ready:question
+      - interaction:focus-flow:back-ready:focus
+  - id: one-time-focus
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/one-time-focus/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:focus-flow:again-ready:focus
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: dom
+  primaryOutput: preview
+interactionScenarios:
+  - id: focus-flow
+    label: 開始・入力・戻る・再開始
+    actions:
+      - id: begin
+        kind: click
+        selector: '#start'
+      - id: answer
+        kind: fill
+        selector: '#answer'
+        value: '2'
+      - id: back
+        kind: click
+        selector: '#back'
+      - id: again
+        kind: click
+        selector: '#start'
+    checkpoints:
+      - id: answer-ready
+        afterActionId: begin
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: 1 + 1 は？
+          - id: focus
+            kind: focused
+            selector: '#answer'
+      - id: back-ready
+        afterActionId: back
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: 始めると問題が出ます
+          - id: focus
+            kind: focused
+            selector: '#start'
+      - id: again-ready
+        afterActionId: again
+        expectations:
+          - id: focus
+            kind: focused
+            selector: '#answer'

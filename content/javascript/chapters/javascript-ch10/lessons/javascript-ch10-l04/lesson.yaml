@@ -1,0 +1,25 @@
+id: javascript-ch10-l04
+kind: standard
+title: 読み込み中を知らせ、終わったら操作を戻す
+goal: 読み込み中の案内と操作制限を理解し、成功・失敗のどちらでもfinallyで再試行できる状態へ戻せる。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - javascript-ch10-l03
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/javascript-ch10-l04-e01/exercise.yaml
+reflection: 待機中は読み込み中と知らせて二重開始を防ぐ。finallyで操作を戻せば、成功後も失敗後も利用者が次を試せる。
+glossaryRefs:
+  - loading-state
+  - disabled-control
+  - finally-block
+  - try-catch
+completion:
+  kind: standard
+  finalSlideId: javascript-ch10-l04-s04
+  requiredExerciseIds:
+    - javascript-ch10-l04-e01

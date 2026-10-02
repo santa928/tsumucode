@@ -13,15 +13,19 @@ const annotationFixtures = JSON.parse(
   readFileSync(new URL('../fixtures/typescript-annotation-pilot.json', import.meta.url), 'utf8'),
 ) as { id: string; source: string }[];
 
-for (const learningMode of ['annotation', 'inference'] as const) {
-  test(`${learningMode}の製品採点は元TSの型条件と実ConsoleをANDで判定する`, async ({
-    page,
-  }, testInfo) => {
+for (const learningMode of ['annotation', 'inference', 'erasure'] as const) {
+  const contract =
+    learningMode === 'erasure'
+      ? '型検査・実行時診断・Consoleの契約を区別する'
+      : '元TSの型条件と実ConsoleをANDで判定する';
+  test(`${learningMode}の製品採点は${contract}`, async ({ page }, testInfo) => {
     test.setTimeout(120_000);
     const draft = await loadAuthoringLessonDraft(
-      learningMode === 'inference'
-        ? 'docs/quality/typescript-ch01-l01-draft'
-        : 'docs/quality/typescript-ch01-l02-draft',
+      learningMode === 'erasure'
+        ? 'docs/quality/typescript-ch01-l03-draft'
+        : learningMode === 'inference'
+          ? 'docs/quality/typescript-ch01-l01-draft'
+          : 'docs/quality/typescript-ch01-l02-draft',
       'typescript',
     );
     const exercise = draft.authoringExercises[0]!;
@@ -145,7 +149,7 @@ for (const learningMode of ['annotation', 'inference'] as const) {
           .sort(),
         row.id,
       ).toEqual([...fixture.expectedFeedbackRuleIds].sort());
-      if (row.id === 'wrong-value') {
+      if (row.id === 'wrong-value' && learningMode !== 'erasure') {
         expect(row.checks.find(({ ruleId }) => ruleId === exercise.id + '-r01')?.passed).toBe(true);
         expect(row.checks.find(({ ruleId }) => ruleId === exercise.id + '-r02')?.passed).toBe(
           false,

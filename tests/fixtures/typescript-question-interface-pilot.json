@@ -1,0 +1,152 @@
+[
+  {
+    "id": "solution",
+    "source": "interface Question { prompt: string; choices: string[]; correctIndex: number; }\nconst question: Question = { prompt: \"2+1は？\", choices: [\"3\", \"4\"], correctIndex: 0 };\nconsole.log(question.prompt);\n",
+    "compileStatus": "ready",
+    "interfaceAnnotation": true,
+    "anyType": false,
+    "rejectedRelations": [
+      "missing-prompt",
+      "missing-choices",
+      "missing-index",
+      "wrong-prompt",
+      "wrong-choice",
+      "wrong-index"
+    ]
+  },
+  {
+    "id": "renamed-interface",
+    "source": "interface QuizQuestion { prompt: string; choices: string[]; correctIndex: number; }\nconst question: QuizQuestion = { prompt: \"2+1は？\", choices: [\"3\", \"4\"], correctIndex: 0 };\nconsole.log(question.prompt);\n",
+    "compileStatus": "ready",
+    "interfaceAnnotation": true,
+    "anyType": false,
+    "rejectedRelations": [
+      "missing-prompt",
+      "missing-choices",
+      "missing-index",
+      "wrong-prompt",
+      "wrong-choice",
+      "wrong-index"
+    ]
+  },
+  {
+    "id": "type-alias",
+    "source": "type Question = { prompt: string; choices: string[]; correctIndex: number; };\nconst question: Question = { prompt: \"2+1は？\", choices: [\"3\", \"4\"], correctIndex: 0 };\nconsole.log(question.prompt);\n",
+    "compileStatus": "ready",
+    "interfaceAnnotation": false,
+    "anyType": false,
+    "rejectedRelations": [
+      "missing-prompt",
+      "missing-choices",
+      "missing-index",
+      "wrong-prompt",
+      "wrong-choice",
+      "wrong-index"
+    ]
+  },
+  {
+    "id": "inference-only",
+    "source": "const question = { prompt: \"2+1は？\", choices: [\"3\", \"4\"], correctIndex: 0 };\nconsole.log(question.prompt);\n",
+    "compileStatus": "ready",
+    "interfaceAnnotation": false,
+    "anyType": false,
+    "rejectedRelations": [
+      "missing-prompt",
+      "missing-choices",
+      "missing-index",
+      "wrong-prompt",
+      "wrong-choice",
+      "wrong-index"
+    ]
+  },
+  {
+    "id": "any-escape",
+    "source": "type Question = any;\nconst question: Question = { prompt: \"2+1は？\", choices: [\"3\", \"4\"], correctIndex: 0 };\nconsole.log(question.prompt);\n",
+    "compileStatus": "ready",
+    "interfaceAnnotation": false,
+    "anyType": true,
+    "rejectedRelations": []
+  },
+  {
+    "id": "optional-index",
+    "source": "interface Question { prompt: string; choices: string[]; correctIndex?: number; }\nconst question: Question = { prompt: \"2+1は？\", choices: [\"3\", \"4\"], correctIndex: 0 };\nconsole.log(question.prompt);\n",
+    "compileStatus": "ready",
+    "interfaceAnnotation": true,
+    "anyType": false,
+    "rejectedRelations": [
+      "missing-prompt",
+      "missing-choices",
+      "wrong-prompt",
+      "wrong-choice",
+      "wrong-index"
+    ]
+  },
+  {
+    "id": "wide-index",
+    "source": "interface Question { prompt: string; choices: string[]; correctIndex: number | string; }\nconst question: Question = { prompt: \"2+1は？\", choices: [\"3\", \"4\"], correctIndex: 0 };\nconsole.log(question.prompt);\n",
+    "compileStatus": "ready",
+    "interfaceAnnotation": true,
+    "anyType": false,
+    "rejectedRelations": [
+      "missing-prompt",
+      "missing-choices",
+      "missing-index",
+      "wrong-prompt",
+      "wrong-choice"
+    ]
+  },
+  {
+    "id": "out-of-range",
+    "source": "interface Question { prompt: string; choices: string[]; correctIndex: number; }\nconst question: Question = { prompt: \"2+1は？\", choices: [\"3\", \"4\"], correctIndex: 10 };\nconsole.log(question.prompt);\n",
+    "compileStatus": "ready",
+    "interfaceAnnotation": true,
+    "anyType": false,
+    "rejectedRelations": [
+      "missing-prompt",
+      "missing-choices",
+      "missing-index",
+      "wrong-prompt",
+      "wrong-choice",
+      "wrong-index"
+    ]
+  },
+  {
+    "id": "wrong-value",
+    "source": "interface Question { prompt: string; choices: string[]; correctIndex: number; }\nconst question: Question = { prompt: \"違う問題\", choices: [\"3\", \"4\"], correctIndex: 0 };\nconsole.log(question.prompt);\n",
+    "compileStatus": "ready",
+    "interfaceAnnotation": true,
+    "anyType": false,
+    "rejectedRelations": [
+      "missing-prompt",
+      "missing-choices",
+      "missing-index",
+      "wrong-prompt",
+      "wrong-choice",
+      "wrong-index"
+    ]
+  },
+  {
+    "id": "missing-index",
+    "source": "interface Question { prompt: string; choices: string[]; correctIndex: number; }\nconst question: Question = { prompt: \"2+1は？\", choices: [\"3\", \"4\"] };\nconsole.log(question.prompt);\n",
+    "compileStatus": "type-error",
+    "diagnosticCode": 2741,
+    "interfaceAnnotation": true,
+    "anyType": false
+  },
+  {
+    "id": "wrong-index",
+    "source": "interface Question { prompt: string; choices: string[]; correctIndex: number; }\nconst question: Question = { prompt: \"2+1は？\", choices: [\"3\", \"4\"], correctIndex: \"0\" };\nconsole.log(question.prompt);\n",
+    "compileStatus": "type-error",
+    "diagnosticCode": 2322,
+    "interfaceAnnotation": true,
+    "anyType": false
+  },
+  {
+    "id": "wrong-choice",
+    "source": "interface Question { prompt: string; choices: string[]; correctIndex: number; }\nconst question: Question = { prompt: \"2+1は？\", choices: [123], correctIndex: 0 };\nconsole.log(question.prompt);\n",
+    "compileStatus": "type-error",
+    "diagnosticCode": 2322,
+    "interfaceAnnotation": true,
+    "anyType": false
+  }
+]

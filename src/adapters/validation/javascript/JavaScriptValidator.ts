@@ -479,6 +479,8 @@ function interactionExpected(expectation: JavaScriptCheckpointExpectation): stri
       return `${expectation.selector} が表示される`;
     case 'selector-text':
       return `${expectation.selector} の文章が「${expectation.equals}」になる`;
+    case 'accessible-name':
+      return `${expectation.selector} の操作名が「${expectation.equals}」になる`;
     case 'attribute':
       return `${expectation.selector} の ${expectation.name} 属性が「${expectation.equals}」になる`;
     case 'focused':

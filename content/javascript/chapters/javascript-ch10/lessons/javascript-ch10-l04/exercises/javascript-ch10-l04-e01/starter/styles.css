@@ -1,0 +1,34 @@
+body {
+  font-family: sans-serif;
+  padding: 24px;
+  color: #19352b;
+  background: #f5faf7;
+}
+main {
+  max-width: 520px;
+}
+button {
+  padding: 12px 20px;
+  color: white;
+  background: #16764b;
+  border: 0;
+  border-radius: 8px;
+  font-size: 18px;
+}
+button:focus-visible {
+  outline: 3px solid #19352b;
+  outline-offset: 4px;
+}
+#result {
+  padding: 16px;
+  background: white;
+}
+
+button {
+  margin: 0 8px 8px 0;
+}
+
+button:disabled {
+  background: #64756b;
+  cursor: wait;
+}

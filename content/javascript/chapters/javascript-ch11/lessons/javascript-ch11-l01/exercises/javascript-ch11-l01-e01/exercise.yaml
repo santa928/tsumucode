@@ -1,0 +1,266 @@
+id: javascript-ch11-l01-e01
+kind: standard
+workspaceId: javascript-ch11-l01-e01
+countsTowardStandardExerciseTotal: true
+title: Escapeだけでヒントを閉じる
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: keyboard-hint-retry
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: escape-only
+    file: script.js
+    target: keydown handler内のcloseHint呼出し
+    starterAnchor: '  closeHint();'
+    change: event.keyがEscapeのときだけcloseHintを呼ぶ
+    observe: 右矢印では開いたまま、Escapeで閉じ、EnterやSpaceで再び開ける
+    requiresConceptIds:
+      - keyboard-hint-retry
+    validationRuleIds:
+      - javascript-ch11-l01-e01-r01
+      - javascript-ch11-l01-e01-r03
+files:
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: starter/styles.css
+    editable: false
+  - path: script.js
+    language: javascript
+    source: starter/script.js
+    editable: true
+solutionFiles:
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: solution/styles.css
+    editable: false
+  - path: script.js
+    language: javascript
+    source: solution/script.js
+    editable: false
+validationRules:
+  - id: javascript-ch11-l01-e01-r01
+    label: 操作前はヒントが閉じている
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#hint'
+    assertion:
+      kind: text
+      operator: equals
+      expected: ヒントは閉じています
+    feedback:
+      target: script.jsのkeydown handler
+      expected: Escapeのときだけ閉じる
+      nextAction: event.keyをEscapeと比較し、条件の内側でcloseHintを呼びます。
+    hintId: javascript-ch11-l01-e01-h02
+    relatedSlideId: javascript-ch11-l01-s04
+  - id: javascript-ch11-l01-e01-r03
+    label: 要素を取得して使う
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: call
+        callee: document.querySelector
+    feedback:
+      target: script.jsのkeydown handler
+      expected: Escapeのときだけ閉じる
+      nextAction: event.keyをEscapeと比較し、条件の内側でcloseHintを呼びます。
+    hintId: javascript-ch11-l01-e01-h01
+    relatedSlideId: javascript-ch11-l01-s03
+hints:
+  - id: javascript-ch11-l01-e01-h01
+    level: 1
+    title: 押されたキーを読む
+    text: script.jsのkeydown handlerが受け取るevent.keyを使います。
+    relatedSlideId: javascript-ch11-l01-s02
+  - id: javascript-ch11-l01-e01-h02
+    level: 2
+    title: Escapeだけ選ぶ
+    text: if (event.key === 'Escape') の内側にcloseHintを置きます。
+    relatedSlideId: javascript-ch11-l01-s03
+  - id: javascript-ch11-l01-e01-h03
+    level: 3
+    title: 他のキーでは何もしない
+    text: if (event.key === 'Escape') { closeHint(); } とし、外側の無条件呼出しは残しません。
+    relatedSlideId: javascript-ch11-l01-s04
+relatedSlideIds:
+  - javascript-ch11-l01-s01
+  - javascript-ch11-l01-s02
+  - javascript-ch11-l01-s03
+  - javascript-ch11-l01-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: renamed-event
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/renamed-event/script.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: early-return
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/early-return/script.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: wrong-key
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/wrong-key/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:keyboard-hint:closed:hint
+      - interaction:keyboard-hint:closed-again:hint
+  - id: no-close
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/no-close/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:keyboard-hint:closed:hint
+      - interaction:keyboard-hint:closed-again:hint
+  - id: close-other-key
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/close-other-key/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:keyboard-hint:kept:hint
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: dom
+  primaryOutput: preview
+interactionScenarios:
+  - id: keyboard-hint
+    label: 開く・別のキー・Escape・再試行
+    actions:
+      - id: open
+        kind: click
+        selector: '#open'
+      - id: other
+        kind: key
+        selector: '#open'
+        key: ArrowRight
+      - id: escape
+        kind: key
+        selector: '#open'
+        key: Escape
+      - id: reopen
+        kind: click
+        selector: '#open'
+      - id: escape-again
+        kind: key
+        selector: '#open'
+        key: Escape
+    checkpoints:
+      - id: opened
+        afterActionId: open
+        expectations:
+          - id: hint
+            kind: selector-text
+            selector: '#hint'
+            equals: 配列のlengthで問題数が分かります
+      - id: kept
+        afterActionId: other
+        expectations:
+          - id: hint
+            kind: selector-text
+            selector: '#hint'
+            equals: 配列のlengthで問題数が分かります
+      - id: closed
+        afterActionId: escape
+        expectations:
+          - id: hint
+            kind: selector-text
+            selector: '#hint'
+            equals: ヒントは閉じています
+      - id: reopened
+        afterActionId: reopen
+        expectations:
+          - id: hint
+            kind: selector-text
+            selector: '#hint'
+            equals: 配列のlengthで問題数が分かります
+      - id: closed-again
+        afterActionId: escape-again
+        expectations:
+          - id: hint
+            kind: selector-text
+            selector: '#hint'
+            equals: ヒントは閉じています

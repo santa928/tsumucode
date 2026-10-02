@@ -384,6 +384,14 @@ export const JavaScriptCheckpointExpectationSchema = z.discriminatedUnion('kind'
   z
     .object({
       id: IdSchema,
+      kind: z.literal('accessible-name'),
+      selector: InteractionSelectorSchema,
+      equals: InteractionLongValueSchema,
+    })
+    .strict(),
+  z
+    .object({
+      id: IdSchema,
       kind: z.literal('attribute'),
       selector: InteractionSelectorSchema,
       name: InteractionSelectorSchema,

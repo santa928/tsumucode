@@ -226,6 +226,46 @@ describe('compileContent output safety', () => {
             lessonId: 'javascript-ch09-l01',
             target: { kind: 'slide', targetId: 'javascript-ch09-l01-s01' },
           },
+          {
+            lessonId: 'javascript-ch09-l02',
+            target: { kind: 'slide', targetId: 'javascript-ch09-l02-s01' },
+          },
+          {
+            lessonId: 'javascript-ch09-l03',
+            target: { kind: 'slide', targetId: 'javascript-ch09-l03-s01' },
+          },
+          {
+            lessonId: 'javascript-ch09-l04',
+            target: { kind: 'slide', targetId: 'javascript-ch09-l04-s01' },
+          },
+          {
+            lessonId: 'javascript-ch10-l01',
+            target: { kind: 'slide', targetId: 'javascript-ch10-l01-s01' },
+          },
+          {
+            lessonId: 'javascript-ch10-l02',
+            target: { kind: 'slide', targetId: 'javascript-ch10-l02-s01' },
+          },
+          {
+            lessonId: 'javascript-ch10-l03',
+            target: { kind: 'slide', targetId: 'javascript-ch10-l03-s01' },
+          },
+          {
+            lessonId: 'javascript-ch10-l04',
+            target: { kind: 'slide', targetId: 'javascript-ch10-l04-s01' },
+          },
+          {
+            lessonId: 'javascript-ch11-l01',
+            target: { kind: 'slide', targetId: 'javascript-ch11-l01-s01' },
+          },
+          {
+            lessonId: 'javascript-ch11-l02',
+            target: { kind: 'slide', targetId: 'javascript-ch11-l02-s01' },
+          },
+          {
+            lessonId: 'javascript-ch11-l03',
+            target: { kind: 'slide', targetId: 'javascript-ch11-l03-s01' },
+          },
         ],
       });
       expect(publishedPathCourseIds).not.toContain('javascript');
@@ -248,13 +288,13 @@ describe('compileContent output safety', () => {
         };
       };
       expect(javaScriptIndex).toMatchObject({
-        estimatedMinutes: 580,
+        estimatedMinutes: 760,
         expectedTotals: {
-          chapters: 10,
-          lessons: 36,
-          conceptSlides: 144,
-          standardExercises: 38,
-          estimatedMinutes: 580,
+          chapters: 12,
+          lessons: 46,
+          conceptSlides: 184,
+          standardExercises: 48,
+          estimatedMinutes: 760,
         },
       });
     },

@@ -145,10 +145,12 @@ export async function runInteractionScenario(
         ) {
           throw new Error('Interaction Snapshot identityが要求と一致しません');
         }
+        const observed = snapshot.runtimeObservation;
+        if (observed !== undefined) input.assertGradable({ ...interaction, ...observed });
         const expectations = evaluateInteractionCheckpoint(
           checkpoint,
           snapshot,
-          interaction.console,
+          observed?.console ?? interaction.console,
           interaction.submitEvidence,
         );
         if (expectations.every(({ passed }) => passed) || Date.now() >= deadline) {

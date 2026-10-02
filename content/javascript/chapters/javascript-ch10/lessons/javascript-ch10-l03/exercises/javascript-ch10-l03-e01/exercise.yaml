@@ -1,0 +1,263 @@
+id: javascript-ch10-l03-e01
+kind: standard
+workspaceId: javascript-ch10-l03-e01
+countsTowardStandardExerciseTotal: true
+title: 失敗を知らせ、もう一度読み込む
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: async-retry-success
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: catch-result
+    file: script.js
+    target: showQuestions内のcatchブロック
+    starterAnchor: '    // 失敗を受け取っていますが、表示していません'
+    change: catchで失敗を知らせる文をresultへ表示する
+    observe: '失敗時には案内を出し、次の成功時には問題: 2へ戻る'
+    requiresConceptIds:
+      - async-retry-success
+    validationRuleIds:
+      - javascript-ch10-l03-e01-r01
+      - javascript-ch10-l03-e01-r02
+      - javascript-ch10-l03-e01-r03
+files:
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: starter/styles.css
+    editable: false
+  - path: script.js
+    language: javascript
+    source: starter/script.js
+    editable: true
+solutionFiles:
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: solution/styles.css
+    editable: false
+  - path: script.js
+    language: javascript
+    source: solution/script.js
+    editable: false
+validationRules:
+  - id: javascript-ch10-l03-e01-r01
+    label: 読む前は待機
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#result'
+    assertion:
+      kind: text
+      operator: equals
+      expected: まだ読んでいません
+    feedback:
+      target: script.jsとPreview
+      expected: 読む前は待機
+      nextAction: 成功はtry内の表示、失敗はcatch内の表示で知らせ、次の操作も試します。
+    hintId: javascript-ch10-l03-e01-h02
+    relatedSlideId: javascript-ch10-l03-s03
+  - id: javascript-ch10-l03-e01-r02
+    label: 通信しない同梱データと分かる
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#note'
+    assertion:
+      kind: text
+      operator: equals
+      expected: 同梱データの成功と失敗を試す練習です。通信はしません。
+    feedback:
+      target: script.jsとPreview
+      expected: 通信しない同梱データと分かる
+      nextAction: 成功はtry内の表示、失敗はcatch内の表示で知らせ、次の操作も試します。
+    hintId: javascript-ch10-l03-e01-h02
+    relatedSlideId: javascript-ch10-l03-s03
+  - id: javascript-ch10-l03-e01-r03
+    label: loadQuestionsの結果を使う
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: call
+        callee: loadQuestions
+    feedback:
+      target: script.jsとPreview
+      expected: loadQuestionsの結果を使う
+      nextAction: 成功はtry内の表示、失敗はcatch内の表示で知らせ、次の操作も試します。
+    hintId: javascript-ch10-l03-e01-h02
+    relatedSlideId: javascript-ch10-l03-s03
+hints:
+  - id: javascript-ch10-l03-e01-h01
+    level: 1
+    title: 失敗したらどこへ進む？
+    text: awaitしたPromiseの失敗はcatchへ進みます。空のままでは画面に伝わりません。
+    relatedSlideId: javascript-ch10-l03-s02
+  - id: javascript-ch10-l03-e01-h02
+    level: 2
+    title: 結果の要素に案内を入れる
+    text: catchの中でresult.textContentへ失敗を知らせる文を代入します。
+    relatedSlideId: javascript-ch10-l03-s03
+  - id: javascript-ch10-l03-e01-h03
+    level: 3
+    title: 成功とは違う案内を出す
+    text: result.textContent = '読み込めませんでした'; をcatchに書き、成功→失敗→成功を確かめます。
+    relatedSlideId: javascript-ch10-l03-s04
+relatedSlideIds:
+  - javascript-ch10-l03-s01
+  - javascript-ch10-l03-s02
+  - javascript-ch10-l03-s03
+  - javascript-ch10-l03-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: renamed-result
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/renamed-result/script.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: promise-catch
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/promise-catch/script.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: zero-as-failure
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/zero-as-failure/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:catch-retry:failure:result
+  - id: always-fails
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/always-fails/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:catch-retry:success:result
+      - interaction:catch-retry:retry:result
+  - id: no-recovery
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/no-recovery/script.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:catch-retry:retry:result
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: async
+  primaryOutput: preview
+interactionScenarios:
+  - id: catch-retry
+    label: 成功と失敗を区別し再試行する
+    actions:
+      - id: success
+        kind: click
+        selector: '#success'
+      - id: failure
+        kind: click
+        selector: '#failure'
+      - id: retry
+        kind: click
+        selector: '#success'
+    checkpoints:
+      - id: success
+        afterActionId: success
+        expectations:
+          - id: result
+            kind: selector-text
+            selector: '#result'
+            equals: '問題: 2'
+      - id: failure
+        afterActionId: failure
+        expectations:
+          - id: result
+            kind: selector-text
+            selector: '#result'
+            equals: 読み込めませんでした
+      - id: retry
+        afterActionId: retry
+        expectations:
+          - id: result
+            kind: selector-text
+            selector: '#result'
+            equals: '問題: 2'

@@ -257,21 +257,25 @@ function bridgeRuntime(config: BridgeConfig): void {
     return ['button', 'input', 'select', 'textarea'].includes(tag);
   };
 
+  /** 有効なlabelledbyをlabelより優先し、無効な参照は既存の名前候補へ戻す。 */
   const accessibleName = (element: Element): string => {
-    const ariaLabel = element.getAttribute('aria-label');
-    if (ariaLabel !== null) return normalizeText(ariaLabel);
     const labelledBy = element.getAttribute('aria-labelledby');
     if (labelledBy !== null) {
-      const label = labelledBy
+      const labels = labelledBy
         .split(/\s+/u)
         .filter(Boolean)
         .map((id) => document.getElementById(id))
-        .filter((node): node is HTMLElement => node !== null && document.body.contains(node))
-        .map((node) => node.textContent)
-        .join(' ')
-        .trim();
-      if (label.length > 0) return normalizeText(label);
+        .filter((node): node is HTMLElement => node !== null && document.body.contains(node));
+      if (labels.length > 0) {
+        return normalizeText(
+          labels
+            .map((node) => node.getAttribute('aria-label')?.trim() || node.textContent)
+            .join(' '),
+        );
+      }
     }
+    const ariaLabel = element.getAttribute('aria-label');
+    if (ariaLabel !== null && ariaLabel.trim().length > 0) return normalizeText(ariaLabel);
     if (element instanceof HTMLImageElement) return normalizeText(element.alt);
     if (
       element instanceof HTMLInputElement ||

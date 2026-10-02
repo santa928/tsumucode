@@ -1,0 +1,28 @@
+id: javascript-ch09-l03
+kind: standard
+title: 状態の配列から一覧を作り直す
+goal: Arrayのstateから一覧と件数を描画し、繰り返し描画や空のArrayでも古い項目を残さない。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - javascript-ch09-l02
+  - javascript-ch07-l03
+  - javascript-ch05-l04
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/javascript-ch09-l03-e01/exercise.yaml
+reflection: 一覧は今のArrayから作る。古い子要素を消してから描画すれば、繰り返しても重複せず、空のArrayも0件になる。
+glossaryRefs:
+  - ui-state
+  - render-function
+  - replace-children
+  - array
+  - spread-syntax
+completion:
+  kind: standard
+  finalSlideId: javascript-ch09-l03-s04
+  requiredExerciseIds:
+    - javascript-ch09-l03-e01

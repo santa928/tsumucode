@@ -1,0 +1,29 @@
+{
+  "component": "import type { ReactElement } from 'react';\n\nexport interface Question {\n  readonly prompt: string;\n  readonly choices: readonly string[];\n  readonly correctIndex: number;\n}\n\n/** 作者が渡した問題データを、回答操作のないカードとして表示する。 */\nexport function QuestionCard({ question }: { readonly question: Question }): ReactElement {\n  return (\n    <section aria-labelledby=\"question-prompt\">\n      <h1 id=\"question-prompt\">{question.prompt}</h1>\n      <ol>{question.choices.map((choice) => <li key={choice}>{choice}</li>)}</ol>\n      <p>選択肢は{question.choices.length}個です</p>\n    </section>\n  );\n}\n",
+  "fixtures": [
+    {
+      "id": "starter",
+      "source": "import { createRoot } from 'react-dom/client';\nimport { QuestionCard, type Question } from './QuestionCard';\n\nconst question: Question = {\n  prompt: '問題文をここに書く',\n  choices: ['選択肢A', '選択肢B'],\n  correctIndex: 0,\n};\nconst container = document.getElementById('root');\nif (container === null) throw new Error('表示先がありません');\ncreateRoot(container).render(<QuestionCard question={question} />);\n",
+      "expectedPrompt": "問題文をここに書く",
+      "expectedChoices": ["選択肢A", "選択肢B"],
+      "diagnostics": []
+    },
+    {
+      "id": "solution",
+      "source": "import { createRoot } from 'react-dom/client';\nimport { QuestionCard, type Question } from './QuestionCard';\n\nconst question: Question = {\n  prompt: 'HTMLが受け持つものは？',\n  choices: ['内容', '見た目'],\n  correctIndex: 0,\n};\nconst container = document.getElementById('root');\nif (container === null) throw new Error('表示先がありません');\ncreateRoot(container).render(<QuestionCard question={question} />);\n",
+      "expectedPrompt": "HTMLが受け持つものは？",
+      "expectedChoices": ["内容", "見た目"],
+      "diagnostics": []
+    },
+    {
+      "id": "wrong-prop",
+      "source": "import { createRoot } from 'react-dom/client';\nimport { QuestionCard, type Question } from './QuestionCard';\n\nconst question: Question = {\n  prompt: 42,\n  choices: ['内容', '見た目'],\n  correctIndex: 0,\n};\nconst container = document.getElementById('root');\nif (container === null) throw new Error('表示先がありません');\ncreateRoot(container).render(<QuestionCard question={question} />);\n",
+      "diagnostics": [{ "file": "main.tsx", "line": 5, "column": 3, "code": 2322 }]
+    },
+    {
+      "id": "missing-prop",
+      "source": "import { createRoot } from 'react-dom/client';\nimport { QuestionCard, type Question } from './QuestionCard';\n\nconst question: Question = {\n  prompt: 'HTMLが受け持つものは？',\n  choices: ['内容', '見た目'],\n};\nconst container = document.getElementById('root');\nif (container === null) throw new Error('表示先がありません');\ncreateRoot(container).render(<QuestionCard question={question} />);\n",
+      "diagnostics": [{ "file": "main.tsx", "line": 4, "column": 7, "code": 2741 }]
+    }
+  ]
+}

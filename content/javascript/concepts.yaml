@@ -620,3 +620,203 @@ concepts:
     prerequisiteConceptIds:
       - state-to-display
     minimumProjectLevel: transform
+  - id: render-function-purpose
+    introducedBySlideId: javascript-ch09-l02-s01
+    prerequisiteConceptIds:
+      - state-retain-between-events
+    minimumProjectLevel: read
+  - id: initial-state-render
+    introducedBySlideId: javascript-ch09-l02-s02
+    prerequisiteConceptIds:
+      - render-function-purpose
+    minimumProjectLevel: read
+  - id: update-then-render
+    introducedBySlideId: javascript-ch09-l02-s03
+    prerequisiteConceptIds:
+      - initial-state-render
+    minimumProjectLevel: read
+  - id: shared-render-reset
+    introducedBySlideId: javascript-ch09-l02-s04
+    prerequisiteConceptIds:
+      - update-then-render
+    minimumProjectLevel: transform
+  - id: array-ui-state
+    introducedBySlideId: javascript-ch09-l03-s01
+    prerequisiteConceptIds:
+      - shared-render-reset
+    minimumProjectLevel: read
+  - id: render-replace-children
+    introducedBySlideId: javascript-ch09-l03-s02
+    prerequisiteConceptIds:
+      - array-ui-state
+    minimumProjectLevel: read
+  - id: render-array-items
+    introducedBySlideId: javascript-ch09-l03-s03
+    prerequisiteConceptIds:
+      - render-replace-children
+    minimumProjectLevel: read
+  - id: array-render-empty
+    introducedBySlideId: javascript-ch09-l03-s04
+    prerequisiteConceptIds:
+      - render-array-items
+    minimumProjectLevel: transform
+  - id: source-and-view-state
+    introducedBySlideId: javascript-ch09-l04-s01
+    prerequisiteConceptIds:
+      - array-render-empty
+    minimumProjectLevel: read
+  - id: derived-visible-items
+    introducedBySlideId: javascript-ch09-l04-s02
+    prerequisiteConceptIds:
+      - source-and-view-state
+    minimumProjectLevel: read
+  - id: filter-state-render
+    introducedBySlideId: javascript-ch09-l04-s03
+    prerequisiteConceptIds:
+      - derived-visible-items
+    minimumProjectLevel: read
+  - id: preserve-source-on-filter
+    introducedBySlideId: javascript-ch09-l04-s04
+    prerequisiteConceptIds:
+      - filter-state-render
+    minimumProjectLevel: transform
+  - id: promise-result
+    introducedBySlideId: javascript-ch10-l01-s01
+    prerequisiteConceptIds:
+      - preserve-source-on-filter
+    minimumProjectLevel: read
+  - id: promise-producer
+    introducedBySlideId: javascript-ch10-l01-s02
+    prerequisiteConceptIds:
+      - promise-result
+    minimumProjectLevel: read
+  - id: then-result-callback
+    introducedBySlideId: javascript-ch10-l01-s03
+    prerequisiteConceptIds:
+      - promise-producer
+    minimumProjectLevel: read
+  - id: promise-data-display
+    introducedBySlideId: javascript-ch10-l01-s04
+    prerequisiteConceptIds:
+      - then-result-callback
+    minimumProjectLevel: transform
+  - id: async-function-promise
+    introducedBySlideId: javascript-ch10-l02-s01
+    prerequisiteConceptIds:
+      - promise-data-display
+    minimumProjectLevel: read
+  - id: await-result-value
+    introducedBySlideId: javascript-ch10-l02-s02
+    prerequisiteConceptIds:
+      - async-function-promise
+    minimumProjectLevel: read
+  - id: await-function-pause
+    introducedBySlideId: javascript-ch10-l02-s03
+    prerequisiteConceptIds:
+      - await-result-value
+    minimumProjectLevel: read
+  - id: await-question-count
+    introducedBySlideId: javascript-ch10-l02-s04
+    prerequisiteConceptIds:
+      - await-function-pause
+    minimumProjectLevel: transform
+  - id: promise-rejection
+    introducedBySlideId: javascript-ch10-l03-s01
+    prerequisiteConceptIds:
+      - await-question-count
+    minimumProjectLevel: read
+  - id: await-try-catch
+    introducedBySlideId: javascript-ch10-l03-s02
+    prerequisiteConceptIds:
+      - promise-rejection
+    minimumProjectLevel: read
+  - id: async-failure-message
+    introducedBySlideId: javascript-ch10-l03-s03
+    prerequisiteConceptIds:
+      - await-try-catch
+    minimumProjectLevel: read
+  - id: async-retry-success
+    introducedBySlideId: javascript-ch10-l03-s04
+    prerequisiteConceptIds:
+      - async-failure-message
+    minimumProjectLevel: transform
+  - id: loading-state-display
+    introducedBySlideId: javascript-ch10-l04-s01
+    prerequisiteConceptIds:
+      - async-retry-success
+    minimumProjectLevel: read
+  - id: disabled-during-loading
+    introducedBySlideId: javascript-ch10-l04-s02
+    prerequisiteConceptIds:
+      - loading-state-display
+    minimumProjectLevel: read
+  - id: finally-release-controls
+    introducedBySlideId: javascript-ch10-l04-s03
+    prerequisiteConceptIds:
+      - disabled-during-loading
+    minimumProjectLevel: read
+  - id: loading-retry-flow
+    introducedBySlideId: javascript-ch10-l04-s04
+    prerequisiteConceptIds:
+      - finally-release-controls
+    minimumProjectLevel: transform
+  - id: native-button-keyboard
+    introducedBySlideId: javascript-ch11-l01-s01
+    prerequisiteConceptIds:
+      - loading-retry-flow
+    minimumProjectLevel: read
+  - id: keyboard-event-key
+    introducedBySlideId: javascript-ch11-l01-s02
+    prerequisiteConceptIds:
+      - native-button-keyboard
+    minimumProjectLevel: read
+  - id: escape-key-condition
+    introducedBySlideId: javascript-ch11-l01-s03
+    prerequisiteConceptIds:
+      - keyboard-event-key
+    minimumProjectLevel: read
+  - id: keyboard-hint-retry
+    introducedBySlideId: javascript-ch11-l01-s04
+    prerequisiteConceptIds:
+      - escape-key-condition
+    minimumProjectLevel: transform
+  - id: focus-next-control
+    introducedBySlideId: javascript-ch11-l02-s01
+    prerequisiteConceptIds:
+      - keyboard-hint-retry
+    minimumProjectLevel: read
+  - id: element-focus-method
+    introducedBySlideId: javascript-ch11-l02-s02
+    prerequisiteConceptIds:
+      - focus-next-control
+    minimumProjectLevel: read
+  - id: focus-return-trigger
+    introducedBySlideId: javascript-ch11-l02-s03
+    prerequisiteConceptIds:
+      - element-focus-method
+    minimumProjectLevel: read
+  - id: focus-round-trip
+    introducedBySlideId: javascript-ch11-l02-s04
+    prerequisiteConceptIds:
+      - focus-return-trigger
+    minimumProjectLevel: transform
+  - id: accessible-control-name
+    introducedBySlideId: javascript-ch11-l03-s01
+    prerequisiteConceptIds:
+      - focus-round-trip
+    minimumProjectLevel: read
+  - id: safe-label-text
+    introducedBySlideId: javascript-ch11-l03-s02
+    prerequisiteConceptIds:
+      - accessible-control-name
+    minimumProjectLevel: read
+  - id: expanded-state-attribute
+    introducedBySlideId: javascript-ch11-l03-s03
+    prerequisiteConceptIds:
+      - safe-label-text
+    minimumProjectLevel: read
+  - id: control-name-state-sync
+    introducedBySlideId: javascript-ch11-l03-s04
+    prerequisiteConceptIds:
+      - expanded-state-attribute
+    minimumProjectLevel: transform

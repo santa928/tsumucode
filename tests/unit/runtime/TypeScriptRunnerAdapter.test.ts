@@ -150,4 +150,77 @@ describe('TypeScriptRunnerAdapter', () => {
     });
     expect(f.runner.dispose).toHaveBeenCalledOnce();
   });
+
+  it('Snapshotの遅延診断も元TSへ戻し、Consoleと実行identityを保持する', async () => {
+    const compiled: TypeScriptCompileResult = {
+      ...ready,
+      sourceMaps: {
+        'main.js': JSON.stringify({
+          version: 3,
+          file: 'main.js',
+          sourceRoot: '',
+          sources: ['main.ts'],
+          names: [],
+          mappings: 'AAAA',
+        }),
+      },
+    };
+    const f = fixture(vi.fn<() => Promise<TypeScriptCompileResult>>().mockResolvedValue(compiled));
+    await f.adapter.prepare(document.createElement('iframe'));
+    await f.adapter.render(input);
+    const diagnostic = {
+      code: 'late-error',
+      kind: 'reference' as const,
+      severity: 'error' as const,
+      message: '遅延エラー',
+      learnerMessage: '遅延エラー',
+      file: 'main.js',
+      line: 1,
+      column: 1,
+    };
+    const observation = {
+      diagnostics: [diagnostic],
+      console: [{ sequence: 1, level: 'log' as const, text: '保持' }],
+    };
+    const snapshot = {
+      exerciseSessionId: 'ts-runner',
+      executionRevision: 1,
+      viewport: input.viewport,
+      nodes: [],
+      documentOverflow: {
+        x: false,
+        y: false,
+        scrollWidth: 800,
+        scrollHeight: 600,
+        clientWidth: 800,
+        clientHeight: 600,
+      },
+      runtimeObservation: observation,
+    };
+    f.runner.requestSnapshot.mockResolvedValue(snapshot);
+    const result = await f.adapter.requestSnapshot({
+      exerciseSessionId: 'ts-runner',
+      executionRevision: 1,
+      requestId: 'snapshot-1',
+      policy: {
+        selectors: [],
+        attributes: [],
+        computedStyles: [],
+        focusVisibleSelectors: [],
+        focusVisibleComputedStyles: [],
+        includeAllElements: false,
+      },
+      preserveTimers: true,
+    });
+    expect(result).toEqual({
+      ...snapshot,
+      runtimeObservation: {
+        ...observation,
+        diagnostics: [{ ...diagnostic, file: 'main.ts', line: 1, column: 1 }],
+      },
+    });
+    expect(result.runtimeObservation?.console).toBe(observation.console);
+    expect(snapshot.runtimeObservation.diagnostics[0]?.file).toBe('main.js');
+    await f.adapter.dispose();
+  });
 });

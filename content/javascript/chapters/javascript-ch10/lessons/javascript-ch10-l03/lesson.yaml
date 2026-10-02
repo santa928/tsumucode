@@ -1,0 +1,25 @@
+id: javascript-ch10-l03
+kind: standard
+title: 失敗を受け取り、もう一度試す
+goal: awaitしたPromiseの失敗をcatchで受け取り、成功と区別して表示し、再試行できる。
+estimatedMinutes: 15
+prerequisiteLessonIds:
+  - javascript-ch10-l02
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/javascript-ch10-l03-e01/exercise.yaml
+reflection: 成功の結果はtryの続きへ、失敗はcatchへ進む。失敗を隠さず知らせ、もう一度操作したときは新しい結果を表示する。
+glossaryRefs:
+  - promise-reject
+  - try-catch
+  - await-expression
+  - promise
+completion:
+  kind: standard
+  finalSlideId: javascript-ch10-l03-s04
+  requiredExerciseIds:
+    - javascript-ch10-l03-e01

@@ -1,0 +1,24 @@
+id: javascript-ch11-l01
+kind: standard
+title: キーボードで開き、Escapeで閉じる
+goal: 標準buttonをEnter・Spaceで操作し、event.keyを調べてEscapeだけでヒントを閉じられる。
+estimatedMinutes: 15
+prerequisiteLessonIds:
+  - javascript-ch10-l04
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/javascript-ch11-l01-e01/exercise.yaml
+reflection: 標準buttonはEnter・Spaceにもclickを発生させる。追加したEscape処理は押されたキーを調べ、他の操作を妨げない。
+glossaryRefs:
+  - keyboard-focus
+  - keydown-event
+  - event-key
+completion:
+  kind: standard
+  finalSlideId: javascript-ch11-l01-s04
+  requiredExerciseIds:
+    - javascript-ch11-l01-e01

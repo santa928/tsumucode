@@ -3988,3 +3988,895 @@ items:
     visibility: public
     path: chapters/javascript-ch09/chapter.yaml
     createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-0
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/exercises/javascript-ch09-l02-e01/exercise.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-1
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/exercises/javascript-ch09-l02-e01/fixtures/double-render/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-2
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/exercises/javascript-ch09-l02-e01/fixtures/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-3
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/exercises/javascript-ch09-l02-e01/fixtures/named-handler/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-4
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/exercises/javascript-ch09-l02-e01/fixtures/one-display/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-5
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/exercises/javascript-ch09-l02-e01/fixtures/render-before-update/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-6
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/exercises/javascript-ch09-l02-e01/fixtures/render-mutates/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-7
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/exercises/javascript-ch09-l02-e01/fixtures/reset-missing-render/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-8
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/exercises/javascript-ch09-l02-e01/fixtures/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-9
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/exercises/javascript-ch09-l02-e01/fixtures/wrong-reset/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-10
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/exercises/javascript-ch09-l02-e01/instructions.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-11
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/exercises/javascript-ch09-l02-e01/solution/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-12
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/exercises/javascript-ch09-l02-e01/solution/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-13
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/exercises/javascript-ch09-l02-e01/solution/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-14
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/exercises/javascript-ch09-l02-e01/starter/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-15
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/exercises/javascript-ch09-l02-e01/starter/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-16
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/exercises/javascript-ch09-l02-e01/starter/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-17
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/lesson.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-diagram-original
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/slides/assets/render-flow.svg
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-19
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/slides/s01.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-20
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/slides/s02.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-21
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/slides/s03.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l02-original-22
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l02/slides/s04.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-0
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/exercises/javascript-ch09-l03-e01/exercise.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-1
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/exercises/javascript-ch09-l03-e01/fixtures/clear-after/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-2
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/exercises/javascript-ch09-l03-e01/fixtures/double-render/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-3
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/exercises/javascript-ch09-l03-e01/fixtures/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-4
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/exercises/javascript-ch09-l03-e01/fixtures/missing-update-render/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-5
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/exercises/javascript-ch09-l03-e01/fixtures/skip-empty/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-6
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/exercises/javascript-ch09-l03-e01/fixtures/stale-count/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-7
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/exercises/javascript-ch09-l03-e01/fixtures/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-8
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/exercises/javascript-ch09-l03-e01/fixtures/text-clear/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-9
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/exercises/javascript-ch09-l03-e01/instructions.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-10
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/exercises/javascript-ch09-l03-e01/solution/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-11
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/exercises/javascript-ch09-l03-e01/solution/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-12
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/exercises/javascript-ch09-l03-e01/solution/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-13
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/exercises/javascript-ch09-l03-e01/starter/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-14
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/exercises/javascript-ch09-l03-e01/starter/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-15
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/exercises/javascript-ch09-l03-e01/starter/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-16
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/lesson.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-diagram-original
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/slides/assets/list-flow.svg
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-18
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/slides/s01.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-19
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/slides/s02.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-20
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/slides/s03.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l03-original-21
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l03/slides/s04.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-0
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/exercise.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-1
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/fixtures/always-all/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-2
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/fixtures/always-unread/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-3
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/fixtures/block-filter/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-4
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/fixtures/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-5
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/fixtures/missing-render/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-6
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/fixtures/stale-count/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-7
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/fixtures/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-8
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/fixtures/text-clear/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-9
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/fixtures/wrong-filter/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-10
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/instructions.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-11
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/solution/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-12
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/solution/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-13
+    visibility: authoring
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/solution/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-14
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/starter/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-15
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/starter/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-16
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/exercises/javascript-ch09-l04-e01/starter/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-17
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/lesson.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-diagram-original
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/slides/assets/filter-flow.svg
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-19
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/slides/s01.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-20
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/slides/s02.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-21
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/slides/s03.md
+    createdAt: 2026-09-28
+  - id: javascript-ch09-l04-original-22
+    visibility: public
+    path: chapters/javascript-ch09/lessons/javascript-ch09-l04/slides/s04.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-0
+    visibility: public
+    path: chapters/javascript-ch10/chapter.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-1
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/exercises/javascript-ch10-l01-e01/exercise.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-2
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/exercises/javascript-ch10-l01-e01/fixtures/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-3
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/exercises/javascript-ch10-l01-e01/fixtures/named-callback/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-4
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/exercises/javascript-ch10-l01-e01/fixtures/no-load/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-5
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/exercises/javascript-ch10-l01-e01/fixtures/no-resolve/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-6
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/exercises/javascript-ch10-l01-e01/fixtures/renamed-result/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-7
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/exercises/javascript-ch10-l01-e01/fixtures/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-8
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/exercises/javascript-ch10-l01-e01/fixtures/wrong-count/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-9
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/exercises/javascript-ch10-l01-e01/fixtures/wrong-question/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-10
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/exercises/javascript-ch10-l01-e01/instructions.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-11
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/exercises/javascript-ch10-l01-e01/solution/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-12
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/exercises/javascript-ch10-l01-e01/solution/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-13
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/exercises/javascript-ch10-l01-e01/solution/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-14
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/exercises/javascript-ch10-l01-e01/starter/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-15
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/exercises/javascript-ch10-l01-e01/starter/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-16
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/exercises/javascript-ch10-l01-e01/starter/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-17
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/lesson.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-diagram-original
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/slides/assets/promise-flow.svg
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-19
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/slides/s01.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-20
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/slides/s02.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-21
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/slides/s03.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-original-22
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/slides/s04.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-0
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/exercises/javascript-ch10-l02-e01/exercise.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-1
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/exercises/javascript-ch10-l02-e01/fixtures/arrow-async/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-2
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/exercises/javascript-ch10-l02-e01/fixtures/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-3
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/exercises/javascript-ch10-l02-e01/fixtures/no-resolve/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-4
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/exercises/javascript-ch10-l02-e01/fixtures/renamed-result/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-5
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/exercises/javascript-ch10-l02-e01/fixtures/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-6
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/exercises/javascript-ch10-l02-e01/fixtures/then-equivalent/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-7
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/exercises/javascript-ch10-l02-e01/fixtures/wrong-await-target/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-8
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/exercises/javascript-ch10-l02-e01/fixtures/wrong-count/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-9
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/exercises/javascript-ch10-l02-e01/instructions.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-10
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/exercises/javascript-ch10-l02-e01/solution/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-11
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/exercises/javascript-ch10-l02-e01/solution/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-12
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/exercises/javascript-ch10-l02-e01/solution/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-13
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/exercises/javascript-ch10-l02-e01/starter/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-14
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/exercises/javascript-ch10-l02-e01/starter/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-15
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/exercises/javascript-ch10-l02-e01/starter/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-16
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/lesson.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-diagram-original
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/slides/assets/await-flow.svg
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-18
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/slides/s01.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-19
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/slides/s02.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-20
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/slides/s03.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l02-original-21
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/slides/s04.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-original-0
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/exercises/javascript-ch10-l03-e01/exercise.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-original-1
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/exercises/javascript-ch10-l03-e01/fixtures/always-fails/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-original-2
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/exercises/javascript-ch10-l03-e01/fixtures/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-original-3
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/exercises/javascript-ch10-l03-e01/fixtures/no-recovery/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-original-4
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/exercises/javascript-ch10-l03-e01/fixtures/promise-catch/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-original-5
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/exercises/javascript-ch10-l03-e01/fixtures/renamed-result/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-original-6
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/exercises/javascript-ch10-l03-e01/fixtures/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-original-7
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/exercises/javascript-ch10-l03-e01/fixtures/zero-as-failure/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-original-8
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/exercises/javascript-ch10-l03-e01/instructions.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-original-9
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/exercises/javascript-ch10-l03-e01/solution/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-original-10
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/exercises/javascript-ch10-l03-e01/solution/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-original-11
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/exercises/javascript-ch10-l03-e01/solution/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-original-12
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/exercises/javascript-ch10-l03-e01/starter/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-original-13
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/exercises/javascript-ch10-l03-e01/starter/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-original-14
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/exercises/javascript-ch10-l03-e01/starter/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-original-15
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/lesson.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-diagram-original
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/slides/assets/error-retry-flow.svg
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-original-17
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/slides/s01.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-original-18
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/slides/s02.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-original-19
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/slides/s03.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l03-original-20
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l03/slides/s04.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-original-0
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/exercises/javascript-ch10-l04-e01/exercise.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-original-1
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/exercises/javascript-ch10-l04-e01/fixtures/attribute-controls/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-original-2
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/exercises/javascript-ch10-l04-e01/fixtures/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-original-3
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/exercises/javascript-ch10-l04-e01/fixtures/no-disable/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-original-4
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/exercises/javascript-ch10-l04-e01/fixtures/no-loading-message/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-original-5
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/exercises/javascript-ch10-l04-e01/fixtures/renamed-loading/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-original-6
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/exercises/javascript-ch10-l04-e01/fixtures/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-original-7
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/exercises/javascript-ch10-l04-e01/fixtures/success-only-release/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-original-8
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/exercises/javascript-ch10-l04-e01/instructions.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-original-9
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/exercises/javascript-ch10-l04-e01/solution/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-original-10
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/exercises/javascript-ch10-l04-e01/solution/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-original-11
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/exercises/javascript-ch10-l04-e01/solution/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-original-12
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/exercises/javascript-ch10-l04-e01/starter/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-original-13
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/exercises/javascript-ch10-l04-e01/starter/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-original-14
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/exercises/javascript-ch10-l04-e01/starter/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-original-15
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/lesson.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-diagram-original
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/slides/assets/loading-flow.svg
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-original-17
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/slides/s01.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-original-18
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/slides/s02.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-original-19
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/slides/s03.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l04-original-20
+    visibility: public
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l04/slides/s04.md
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-original-0
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/exercises/javascript-ch11-l01-e01/exercise.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-original-1
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/exercises/javascript-ch11-l01-e01/fixtures/close-other-key/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-original-2
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/exercises/javascript-ch11-l01-e01/fixtures/early-return/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-original-3
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/exercises/javascript-ch11-l01-e01/fixtures/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-original-4
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/exercises/javascript-ch11-l01-e01/fixtures/no-close/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-original-5
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/exercises/javascript-ch11-l01-e01/fixtures/renamed-event/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-original-6
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/exercises/javascript-ch11-l01-e01/fixtures/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-original-7
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/exercises/javascript-ch11-l01-e01/fixtures/wrong-key/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-original-8
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/exercises/javascript-ch11-l01-e01/instructions.md
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-original-9
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/exercises/javascript-ch11-l01-e01/solution/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-original-10
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/exercises/javascript-ch11-l01-e01/solution/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-original-11
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/exercises/javascript-ch11-l01-e01/solution/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-original-12
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/exercises/javascript-ch11-l01-e01/starter/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-original-13
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/exercises/javascript-ch11-l01-e01/starter/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-original-14
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/exercises/javascript-ch11-l01-e01/starter/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-original-15
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/lesson.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-diagram-original
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/slides/assets/keyboard-flow.svg
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-original-17
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/slides/s01.md
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-original-18
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/slides/s02.md
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-original-19
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/slides/s03.md
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l01-original-20
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l01/slides/s04.md
+    createdAt: 2026-09-28
+  - id: javascript-ch11-chapter-original
+    visibility: public
+    path: chapters/javascript-ch11/chapter.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-original-0
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/exercises/javascript-ch11-l02-e01/exercise.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-original-1
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/exercises/javascript-ch11-l02-e01/fixtures/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-original-2
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/exercises/javascript-ch11-l02-e01/fixtures/one-time-focus/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-original-3
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/exercises/javascript-ch11-l02-e01/fixtures/named-handler/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-original-4
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/exercises/javascript-ch11-l02-e01/fixtures/no-return/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-original-5
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/exercises/javascript-ch11-l02-e01/fixtures/renamed-controls/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-original-6
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/exercises/javascript-ch11-l02-e01/fixtures/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-original-7
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/exercises/javascript-ch11-l02-e01/fixtures/wrong-target/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-original-8
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/exercises/javascript-ch11-l02-e01/instructions.md
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-original-9
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/exercises/javascript-ch11-l02-e01/solution/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-original-10
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/exercises/javascript-ch11-l02-e01/solution/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-original-11
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/exercises/javascript-ch11-l02-e01/solution/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-original-12
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/exercises/javascript-ch11-l02-e01/starter/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-original-13
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/exercises/javascript-ch11-l02-e01/starter/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-original-14
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/exercises/javascript-ch11-l02-e01/starter/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-original-15
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/lesson.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-diagram-original
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/slides/assets/focus-flow.svg
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-original-17
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/slides/s01.md
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-original-18
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/slides/s02.md
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-original-19
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/slides/s03.md
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l02-original-20
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l02/slides/s04.md
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-original-0
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/exercises/javascript-ch11-l03-e01/exercise.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-original-1
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/exercises/javascript-ch11-l03-e01/fixtures/branch-labels/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-original-2
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/exercises/javascript-ch11-l03-e01/fixtures/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-original-3
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/exercises/javascript-ch11-l03-e01/fixtures/label-only/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-original-4
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/exercises/javascript-ch11-l03-e01/fixtures/renamed-state/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-original-5
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/exercises/javascript-ch11-l03-e01/fixtures/stale-close-name/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-original-6
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/exercises/javascript-ch11-l03-e01/fixtures/state-only/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-original-7
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/exercises/javascript-ch11-l03-e01/fixtures/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-original-8
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/exercises/javascript-ch11-l03-e01/instructions.md
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-original-9
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/exercises/javascript-ch11-l03-e01/solution/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-original-10
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/exercises/javascript-ch11-l03-e01/solution/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-original-11
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/exercises/javascript-ch11-l03-e01/solution/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-original-12
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/exercises/javascript-ch11-l03-e01/starter/index.html
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-original-13
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/exercises/javascript-ch11-l03-e01/starter/script.js
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-original-14
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/exercises/javascript-ch11-l03-e01/starter/styles.css
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-original-15
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/lesson.yaml
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-diagram-original
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/slides/assets/control-flow.svg
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-original-17
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/slides/s01.md
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-original-18
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/slides/s02.md
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-original-19
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/slides/s03.md
+    createdAt: 2026-09-28
+  - id: javascript-ch11-l03-original-20
+    visibility: public
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/slides/s04.md
+    createdAt: 2026-09-28
+  - id: javascript-ch10-l01-e01-discard-result-script
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l01/exercises/javascript-ch10-l01-e01/fixtures/discard-result/script.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch10-l02-e01-discard-result-script
+    visibility: authoring
+    path: chapters/javascript-ch10/lessons/javascript-ch10-l02/exercises/javascript-ch10-l02-e01/fixtures/discard-result/script.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch11-l03-e01-stale-aria-name-script
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/exercises/javascript-ch11-l03-e01/fixtures/stale-aria-name/script.js
+    createdAt: '2026-10-02'
+  - id: javascript-ch11-l03-e01-stale-labelledby-script
+    visibility: authoring
+    path: chapters/javascript-ch11/lessons/javascript-ch11-l03/exercises/javascript-ch11-l03-e01/fixtures/stale-labelledby/script.js
+    createdAt: '2026-10-02'
