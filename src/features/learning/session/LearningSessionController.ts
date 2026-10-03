@@ -368,6 +368,7 @@ export class LearningSessionController {
   readonly #starterSelectedFile: string;
   #operationTail: Promise<void> = Promise.resolve();
   #previewTimer: ReturnType<typeof setTimeout> | undefined;
+  #previewViewportId: string | undefined;
   #lastPassingSnapshots: ExerciseDraft['lastPassingSnapshots'] = {};
   #lastValidationBatch: readonly WorkspaceValidationItem[] = [];
   #lastValidationDraft: ExerciseDraft | undefined;
@@ -818,13 +819,22 @@ export class LearningSessionController {
     }
   }
 
+  /** 表示幅は保存データと分離し、同じControllerの再描画で維持する。 */
+  getPreviewViewportId(): string | undefined {
+    return this.#previewViewportId ?? this.input.exercise.previewViewports[0]?.id;
+  }
+
   /** debounceを待たず、現在viewportのpreviewをRunner queueで更新する。 */
-  async previewNow(): Promise<void> {
+  async previewNow(viewportId = this.#previewViewportId): Promise<void> {
+    const viewport =
+      viewportId === undefined
+        ? this.input.exercise.previewViewports[0]
+        : this.input.exercise.previewViewports.find(({ id }) => id === viewportId);
+    if (viewport === undefined) throw new Error('指定されたPreviewViewportがありません');
+    this.#previewViewportId = viewport.id;
     this.#clearPreviewTimer();
     this.#executionGeneration += 1;
     const execution = this.#captureExecution();
-    const viewport = this.input.exercise.previewViewports[0];
-    if (viewport === undefined) throw new Error('ExerciseにPreviewViewportがありません');
     return this.#enqueue(() =>
       this.#measure('preview-update', async () => {
         await this.#render(execution, viewport, true);
@@ -1093,7 +1103,9 @@ export class LearningSessionController {
     }
 
     let committedState = candidateState;
-    const displayViewport = this.input.exercise.previewViewports[0];
+    const displayViewport =
+      this.input.exercise.previewViewports.find(({ id }) => id === this.#previewViewportId) ??
+      this.input.exercise.previewViewports[0];
     if (displayViewport !== undefined) {
       let displayResult: ExecutionResult;
       if (

@@ -485,7 +485,7 @@ function sourceCheck(
     expected: rule.feedback.expected,
     actual:
       firstFact === undefined
-        ? `${rule.target.file}: 一致するSource Fact 0件`
+        ? `${rule.target.file}: この条件を満たす記述を確認できませんでした`
         : `${firstFact.file}:${String(firstFact.line)}:${String(firstFact.column)}（${String(matchingFacts.length)}件）`,
     nextAction: rule.feedback.nextAction,
     hintId: rule.hintId,

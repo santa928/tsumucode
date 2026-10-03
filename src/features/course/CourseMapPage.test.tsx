@@ -51,6 +51,11 @@ function renderCourseMap(course = fixtureCourse) {
 }
 
 describe('CourseMapPage', () => {
+  it('著者の章番号を加算せず表示する', async () => {
+    renderCourseMap();
+    expect(await screen.findByText(/CHAPTER 00/u)).toBeInTheDocument();
+  });
+
   beforeEach(() => {
     useCourseProgress.mockReturnValue({
       status: 'ready',

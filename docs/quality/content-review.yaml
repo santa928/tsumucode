@@ -510,16 +510,22 @@ lessons:
     decision: approved
     notes: 「Profile Siteの設計図を作る」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
   - lessonId: html-css-ch12-l02
-    authorId: tsumucode-content-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: a78b401fb872571af81905f6dbdde437257f11f2d30b8ee06258e02be9f0de36
+    authorId: tsumucode-dot-wording-author
+    reviewerId: tsumucode-independent-ai-review-2026-10-04
+    sourceHash: 05520d78c5a5d2a4bae43143e86085354b57fa494fd2a7fe0ed54dad8f3b8038
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 「HeaderとHeroを組み立てる」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+    notes: >-
+      2026-10-04: #102の手順と素材案内の2ファイルのみ独立AI差分レビュー。
+      accuracy/alignment承認、新規未説明用語0、意図しないhint leakage0。
+      asset:profile-avatarとdata-profile-avatarのコード例は公開版Chromiumへ実入力し画像表示とAvatar未達の解消を確認、画像を独立レビューした。
+      旧hash a78b401fb872571af81905f6dbdde437257f11f2d30b8ee06258e02be9f0de36 のSolution/Starter/Fixture/assetsはbyte不変。
+      それらの3ブラウザ実行結果は従来の履歴として保持し、今回再実行したとは扱わない。
+      新コード例のFirefox/WebKit、実在初心者観察、修正UI全体の実ブラウザ確認は未実施。
   - lessonId: html-css-ch12-l03
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification

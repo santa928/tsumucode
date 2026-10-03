@@ -32,7 +32,7 @@ steps:
     file: index.html
     target: main内の最初のsection
     starterAnchor: '<section aria-labelledby="intro-title">'
-    change: 説明的なaltを持つAvatar、h1、Worksへ進むPrimary LinkをHeroへまとめる
+    change: src="asset:profile-avatar"とdata-profile-avatarを持つimgにaltを付け、h1、Worksへ進むPrimary LinkとHeroへまとめる
     observe: 最初の画面で誰のページかと次の行動が伝わる
     requiresConceptIds: [hero]
     validationRuleIds:

@@ -106,7 +106,7 @@ export function CourseMapPage() {
                         <div className="flex flex-wrap items-start justify-between gap-4">
                           <div>
                             <p className="text-sm font-black text-workshop-complete">
-                              CHAPTER {String(chapter.sequence + 1).padStart(2, '0')}・
+                              CHAPTER {String(chapter.sequence).padStart(2, '0')}・
                               {KIND_LABEL[chapter.kind]}
                             </p>
                             <h3

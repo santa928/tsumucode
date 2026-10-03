@@ -493,6 +493,70 @@ describe('LearningSessionController', () => {
     await controller.dispose();
   });
 
+  it('幅変更の描画中に編集しても、次の描画は選んだ幅を使う', async () => {
+    const runtime = runnerHarness();
+    const entered = deferred<undefined>();
+    const release = deferred<undefined>();
+    let holdMobile = true;
+    const current = exercise({
+      previewViewports: [
+        { id: 'desktop', width: 1280, height: 720 },
+        { id: 'mobile', width: 390, height: 844 },
+      ],
+    });
+    const controller = new LearningSessionController(
+      controllerInput({
+        exercise: current,
+        runner: {
+          ...runtime.runner,
+          render: async (input) => {
+            if (input.viewport.id === 'mobile' && holdMobile) {
+              entered.resolve(undefined);
+              await release.promise;
+            }
+            return runtime.runner.render(input);
+          },
+        },
+      }),
+    );
+    await controller.previewNow();
+    const changing = controller.previewNow('mobile');
+    const stale = expect(changing).rejects.toThrow(StaleExecutionError);
+    await entered.promise;
+    controller.edit('index.html', '<main><h1>編集中</h1></main>');
+    holdMobile = false;
+    release.resolve(undefined);
+    await stale;
+    await controller.previewNow();
+    expect(runtime.render.mock.calls.at(-1)?.[0].viewport.id).toBe('mobile');
+    await controller.dispose();
+  });
+
+  it('選んだ表示幅を再描画と全幅判定の後も保ち、コードを変えない', async () => {
+    const runtime = runnerHarness();
+    const current = exercise({
+      previewViewports: [
+        { id: 'desktop', width: 1280, height: 720 },
+        { id: 'mobile', width: 390, height: 844 },
+      ],
+    });
+    const controller = new LearningSessionController(
+      controllerInput({ exercise: current, runner: runtime.runner }),
+    );
+    const before = controller.getSnapshot().files;
+    expect(controller.getPreviewViewportId()).toBe('desktop');
+    await controller.previewNow('mobile');
+    expect(controller.getPreviewViewportId()).toBe('mobile');
+    expect(runtime.render.mock.calls.at(-1)?.[0].viewport.id).toBe('mobile');
+    await controller.previewNow();
+    expect(runtime.render.mock.calls.at(-1)?.[0].viewport.id).toBe('mobile');
+    await controller.validateNow();
+    expect(runtime.render.mock.calls.at(-1)?.[0].viewport.id).toBe('mobile');
+    expect(controller.getSnapshot().files).toEqual(before);
+    await expect(controller.previewNow('unknown')).rejects.toThrow('Viewport');
+    await controller.dispose();
+  });
+
   it('先行保存→全viewport render/snapshot→判定保存→表示viewport復元を同revisionで直列実行する', async () => {
     const events: string[] = [];
     const current = exercise({

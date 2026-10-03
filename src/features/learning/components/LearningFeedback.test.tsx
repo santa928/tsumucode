@@ -372,6 +372,34 @@ describe('HintPanel', () => {
 });
 
 describe('PreviewFrame', () => {
+  it('描画幅と作業台拡大を別の操作として提供し、iframeを保持する', async () => {
+    const user = userEvent.setup();
+    const onViewportChange = vi.fn();
+    const onExpandedChange = vi.fn();
+    render(
+      <PreviewFrame
+        onReady={vi.fn()}
+        viewports={[
+          { id: 'desktop', width: 1280, height: 720 },
+          { id: 'mobile', width: 390, height: 844 },
+        ]}
+        selectedViewportId="desktop"
+        onViewportChange={onViewportChange}
+        expanded={false}
+        onExpandedChange={onExpandedChange}
+      />,
+    );
+    const frame = screen.getByTitle('コードのプレビュー');
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'プレビューの画面幅' }),
+      'mobile',
+    );
+    expect(onViewportChange).toHaveBeenCalledWith('mobile');
+    await user.click(screen.getByRole('button', { name: 'プレビューを広く表示' }));
+    expect(onExpandedChange).toHaveBeenCalledWith(true);
+    expect(screen.getByTitle('コードのプレビュー')).toBe(frame);
+  });
+
   it('固定幅Previewが作業台より十分広いときだけ、全体表示の縮尺を返す', () => {
     expect(previewFitScale(1280, 600)).toBeCloseTo(0.46875);
     expect(previewFitScale(602, 600)).toBe(1);
