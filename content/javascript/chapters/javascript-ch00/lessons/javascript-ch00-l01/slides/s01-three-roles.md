@@ -20,6 +20,6 @@ assets: []
 
 :::practice
 prompt: 文章を用意する、色を変える、表示中の文字を変化させる役割を分けます。
-expectedAction: 順にHTML、CSS、JavaScriptを選ぶ
+expectedAction: 3つの役割を、HTML・CSS・JavaScriptに頭の中で振り分ける
 estimatedMinutes: 1
 :::

@@ -4,20 +4,16 @@ verifiedSourceCommit: draft
 canonicalDistSha256: draft
 lessons:
   - lessonId: javascript-ch00-l01
-    authorId: tsumucode-javascript-authoring
-    reviewerId: gpt-6.1-sol-independent-js52-content-review
-    sourceHash: bbc6d3ad5e9c99568defdb92b148212a900376bfa4cc3258963bba147122c189
+    authorId: gpt-6.1-sol-js-entry-author
+    reviewerId: gpt-6.1-sol-independent-js-entry-review
+    sourceHash: a004b43c4ce9f4880f6422ca4fd36e36d984620640c3e5f52dbdfc5cb729487d
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '開始Slideの役割確認を頭の中で行う案内へ限定修正し、静的Practiceとの整合を非作者レビュー。Exercise・Rule・掲載実例の実行入力は同byteのため既存実証を範囲付き再利用。3persona全通し・JS通常公開・実人の学習/時間は未承認、metadataはdraft。'
   - lessonId: javascript-ch01-l01
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
