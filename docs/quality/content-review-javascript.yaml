@@ -1,7 +1,7 @@
 schemaVersion: 1
-releaseStatus: draft
-verifiedSourceCommit: draft
-canonicalDistSha256: draft
+releaseStatus: approved
+verifiedSourceCommit: 5ac6e3a1572c0b14ff796f939282d9121ebece69
+canonicalDistSha256: 2cac445ab57ac6310c920f18e841097df13f22cb07fab51685a09bcbcba53e1f
 lessons:
   - lessonId: javascript-ch00-l01
     authorId: gpt-6.1-sol-js-entry-author
@@ -13,7 +13,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: '開始Slideの役割確認を頭の中で行う案内へ限定修正し、静的Practiceとの整合を非作者レビュー。Exercise・Rule・掲載実例の実行入力は同byteのため既存実証を範囲付き再利用。3persona全通し・JS通常公開・実人の学習/時間は未承認、metadataはdraft。'
+    notes: 開始Slideの役割確認を頭の中で行う案内へ限定修正し、静的Practiceとの整合を非作者レビュー。Exercise・Rule・掲載実例の実行入力は同byteのため既存実証を範囲付き再利用。3persona全通し・JS通常公開・実人の学習/時間は未承認、metadataはdraft。
   - lessonId: javascript-ch01-l01
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -24,15 +24,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。 本Lessonを含む初出前案内6件は現候補の実iframe
-      Snapshot/採点で正答6pass・反例6incomplete、診断0、Source認証/新文言一致。証拠SHA256
-      55ae2d8e375c87ea77449b6b7323e62a86561e22505c45de11a019e0f8ff509d。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 本Lessonを含む初出前案内6件は現候補の実iframe Snapshot/採点で正答6pass・反例6incomplete、診断0、Source認証/新文言一致。証拠SHA256 55ae2d8e375c87ea77449b6b7323e62a86561e22505c45de11a019e0f8ff509d。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch01-l02
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -43,15 +35,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。 本Lessonを含む初出前案内6件は現候補の実iframe
-      Snapshot/採点で正答6pass・反例6incomplete、診断0、Source認証/新文言一致。証拠SHA256
-      55ae2d8e375c87ea77449b6b7323e62a86561e22505c45de11a019e0f8ff509d。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 本Lessonを含む初出前案内6件は現候補の実iframe Snapshot/採点で正答6pass・反例6incomplete、診断0、Source認証/新文言一致。証拠SHA256 55ae2d8e375c87ea77449b6b7323e62a86561e22505c45de11a019e0f8ff509d。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch01-l03
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -62,13 +46,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch01-l04
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -79,15 +57,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。 本Lessonを含む初出前案内6件は現候補の実iframe
-      Snapshot/採点で正答6pass・反例6incomplete、診断0、Source認証/新文言一致。証拠SHA256
-      55ae2d8e375c87ea77449b6b7323e62a86561e22505c45de11a019e0f8ff509d。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 本Lessonを含む初出前案内6件は現候補の実iframe Snapshot/採点で正答6pass・反例6incomplete、診断0、Source認証/新文言一致。証拠SHA256 55ae2d8e375c87ea77449b6b7323e62a86561e22505c45de11a019e0f8ff509d。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch02-l01
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -98,13 +68,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch02-l02
     authorId: gpt-6.1-sol-root-diagram-author
     reviewerId: gpt-6.1-sol-independent-diagram-review
@@ -115,15 +79,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '2026-10-03図修正の限定独立レビュー：if単独のs02専用図へ分離し、false側は表示なし。s03のelse図とコードは保持。最終レビューSHA256 aae83c27c43f0330b2760eee31fb251127a9baa209973c999d1f8299aa97f113。可視コード・Rule・Fixtureは同byteで既存実行証拠を限定再利用。旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。 本Lessonを含む初出前案内6件は現候補の実iframe
-      Snapshot/採点で正答6pass・反例6incomplete、診断0、Source認証/新文言一致。証拠SHA256
-      55ae2d8e375c87ea77449b6b7323e62a86561e22505c45de11a019e0f8ff509d。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '2026-10-03図修正の限定独立レビュー：if単独のs02専用図へ分離し、false側は表示なし。s03のelse図とコードは保持。最終レビューSHA256 aae83c27c43f0330b2760eee31fb251127a9baa209973c999d1f8299aa97f113。可視コード・Rule・Fixtureは同byteで既存実行証拠を限定再利用。旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 本Lessonを含む初出前案内6件は現候補の実iframe Snapshot/採点で正答6pass・反例6incomplete、診断0、Source認証/新文言一致。証拠SHA256 55ae2d8e375c87ea77449b6b7323e62a86561e22505c45de11a019e0f8ff509d。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch02-l03
     authorId: gpt-6.1-sol-root-diagram-author
     reviewerId: gpt-6.1-sol-independent-diagram-review
@@ -134,15 +90,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '2026-10-03図修正の限定独立レビュー：AがfalseのときだけBを確かめ、Bもfalseのときだけelseへ進む図へ修正。選択済み出力から別出力へ接続しない。最終レビューSHA256 aae83c27c43f0330b2760eee31fb251127a9baa209973c999d1f8299aa97f113。可視コード・Rule・Fixtureは同byteで既存実行証拠を限定再利用。旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。 本Lessonを含む初出前案内6件は現候補の実iframe
-      Snapshot/採点で正答6pass・反例6incomplete、診断0、Source認証/新文言一致。証拠SHA256
-      55ae2d8e375c87ea77449b6b7323e62a86561e22505c45de11a019e0f8ff509d。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '2026-10-03図修正の限定独立レビュー：AがfalseのときだけBを確かめ、Bもfalseのときだけelseへ進む図へ修正。選択済み出力から別出力へ接続しない。最終レビューSHA256 aae83c27c43f0330b2760eee31fb251127a9baa209973c999d1f8299aa97f113。可視コード・Rule・Fixtureは同byteで既存実行証拠を限定再利用。旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 本Lessonを含む初出前案内6件は現候補の実iframe Snapshot/採点で正答6pass・反例6incomplete、診断0、Source認証/新文言一致。証拠SHA256 55ae2d8e375c87ea77449b6b7323e62a86561e22505c45de11a019e0f8ff509d。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch02-l04
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -153,15 +101,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。 本Lessonを含む初出前案内6件は現候補の実iframe
-      Snapshot/採点で正答6pass・反例6incomplete、診断0、Source認証/新文言一致。証拠SHA256
-      55ae2d8e375c87ea77449b6b7323e62a86561e22505c45de11a019e0f8ff509d。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 本Lessonを含む初出前案内6件は現候補の実iframe Snapshot/採点で正答6pass・反例6incomplete、診断0、Source認証/新文言一致。証拠SHA256 55ae2d8e375c87ea77449b6b7323e62a86561e22505c45de11a019e0f8ff509d。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch03-l01
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -172,13 +112,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch03-l02
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -189,13 +123,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch03-l03
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -206,13 +134,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch03-l04
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -223,13 +145,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch03-l05
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -240,13 +156,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch04-l01
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -257,13 +167,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch04-l02
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -274,13 +178,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch04-l03
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -291,13 +189,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch04-l04
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -308,13 +200,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch04-l05
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -325,13 +211,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch05-l01
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -342,15 +222,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      native変換4Goalは固定alias修正の別非作者Analyzer50＋境界5と既存3engine75のhash照合、統合2byte一致を条件に整合を承認。証拠SHA256
-      f2cdc0bda4ee8f740a255a10271c1c7c0485d54c0f572105e280a84785ee9b51。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 native変換4Goalは固定alias修正の別非作者Analyzer50＋境界5と既存3engine75のhash照合、統合2byte一致を条件に整合を承認。証拠SHA256 f2cdc0bda4ee8f740a255a10271c1c7c0485d54c0f572105e280a84785ee9b51。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch05-l02
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -361,15 +233,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      native変換4Goalは固定alias修正の別非作者Analyzer50＋境界5と既存3engine75のhash照合、統合2byte一致を条件に整合を承認。証拠SHA256
-      f2cdc0bda4ee8f740a255a10271c1c7c0485d54c0f572105e280a84785ee9b51。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 native変換4Goalは固定alias修正の別非作者Analyzer50＋境界5と既存3engine75のhash照合、統合2byte一致を条件に整合を承認。証拠SHA256 f2cdc0bda4ee8f740a255a10271c1c7c0485d54c0f572105e280a84785ee9b51。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch05-l03
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -380,15 +244,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      native変換4Goalは固定alias修正の別非作者Analyzer50＋境界5と既存3engine75のhash照合、統合2byte一致を条件に整合を承認。証拠SHA256
-      f2cdc0bda4ee8f740a255a10271c1c7c0485d54c0f572105e280a84785ee9b51。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 native変換4Goalは固定alias修正の別非作者Analyzer50＋境界5と既存3engine75のhash照合、統合2byte一致を条件に整合を承認。証拠SHA256 f2cdc0bda4ee8f740a255a10271c1c7c0485d54c0f572105e280a84785ee9b51。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch05-l04
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -399,15 +255,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      native変換4Goalは固定alias修正の別非作者Analyzer50＋境界5と既存3engine75のhash照合、統合2byte一致を条件に整合を承認。証拠SHA256
-      f2cdc0bda4ee8f740a255a10271c1c7c0485d54c0f572105e280a84785ee9b51。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 native変換4Goalは固定alias修正の別非作者Analyzer50＋境界5と既存3engine75のhash照合、統合2byte一致を条件に整合を承認。証拠SHA256 f2cdc0bda4ee8f740a255a10271c1c7c0485d54c0f572105e280a84785ee9b51。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch06-l01
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -418,11 +266,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch06-l02
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -433,11 +277,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch06-l03
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -448,13 +288,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch06-l04
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -465,13 +299,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch07-l01
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -482,11 +310,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch07-l02
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -497,11 +321,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch07-l03
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -512,11 +332,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch07-l04
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -527,11 +343,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch08-l01
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -542,11 +354,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch08-l02
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -557,11 +365,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch08-l03
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -572,11 +376,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch08-l04
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -587,11 +387,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch09-l01
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -602,11 +398,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch09-l02
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -617,11 +409,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch09-l03
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -632,11 +420,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch09-l04
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -647,11 +431,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch10-l01
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -662,13 +442,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch10-l02
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -679,13 +453,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch10-l03
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -696,13 +464,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch10-l04
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -713,11 +475,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch11-l01
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -728,11 +486,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch11-l02
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -743,13 +497,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch11-l03
     authorId: tsumucode-javascript-authoring
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -760,11 +508,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch12-l01
     authorId: js_course_projects
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -775,13 +519,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch12-l02
     authorId: js_course_projects
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -792,13 +530,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch12-l03
     authorId: js_course_projects
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -809,13 +541,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch12-l04
     authorId: js_course_projects
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -826,13 +552,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch12-l05
     authorId: js_course_projects
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -843,13 +563,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch13-l01
     authorId: js_course_projects
     reviewerId: gpt-6.1-sol-independent-js52-content-review
@@ -860,10 +574,4 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
-      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
-      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
-      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
-      javascript-project-course-contract.md。固定教材/Rule binding SHA256
-      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+    notes: '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394 Fixture＋累積prefix10（対象36演習）の原実測を再利用。 内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md / javascript-project-course-contract.md。固定教材/Rule binding SHA256 f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'

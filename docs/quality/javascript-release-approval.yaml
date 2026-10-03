@@ -1,0 +1,33 @@
+schemaVersion: 2
+status: approved
+verifiedSourceCommit: 5ac6e3a1572c0b14ff796f939282d9121ebece69
+candidateTreeSha256: 2a79985c4f645f46d57aa3da274ca87a6e809feb4f783ae033b27f1d0ab37e60
+canonicalDistSha256: 2cac445ab57ac6310c920f18e841097df13f22cb07fab51685a09bcbcba53e1f
+courseManifestSha256: 2f760cc90579624542cf95f1033832f9b85a850fff91cd7190971338cf779fb9
+publicProvenanceSha256: 3e492b33eca7d99a2e4c5b9ad70ed00824d443b30b127c5707f0af4ad397b6c4
+visualBaselineSha256: c81b65b719e9429241672ceff5c002a463ea71de9802147e8301550d911b1e2f
+records:
+  contentReview:
+    path: docs/quality/content-review-javascript.yaml
+    sha256: ee0f94207e642b8d52d490fc86ffcc2bff13fd8dff899c85f3180970d33dd326
+  visualReview:
+    path: docs/quality/javascript-visual-review.yaml
+    sha256: 24b5ce0934c2f3b8ad2442a54341b116c8cf3d5a1706ad73f50a207b57828357
+  accessibilityManual:
+    path: docs/quality/javascript-a11y-manual.yaml
+    sha256: 0f927c4af57f07c3432bbdafdc8292bebf22d267aaebfb5e9b7823e5b38b335b
+  agentLearning:
+    path: docs/quality/javascript-agent-learning.yaml
+    sha256: 9dbda4e01ebbc03b1347c37a6b7912a634e3d78b09cd720feff242d4d0a8a1af
+  inputValidity:
+    path: docs/quality/javascript-input-validity.yaml
+    sha256: 30b2e633681a85b700d4a0b6f2f1c7feed03a0e2794bfdf0612d8e7845594114
+  releaseChecklist:
+    path: docs/quality/javascript-release-checklist.yaml
+    sha256: 265a0bd17079035125d3ed01bb838c02ce0fea9dfd3e4e069dbac634d3a97a6e
+  finalCodeReview:
+    path: docs/quality/javascript-final-code-review.yaml
+    sha256: 962c7ecb8fca4c0843421a72b6b30bcf9688d3da1ae1943ea845920a2e463ac6
+approvedBy: tsumucode-js-release-root-after-independent-quality-and-code-review
+approvedAt: 2026-10-03T11:42:35.005Z
+courseId: javascript

@@ -1,0 +1,427 @@
+schemaVersion: 2
+courseId: javascript
+releaseStatus: approved
+verifiedSourceCommit: 5ac6e3a1572c0b14ff796f939282d9121ebece69
+canonicalDistSha256: 2cac445ab57ac6310c920f18e841097df13f22cb07fab51685a09bcbcba53e1f
+finalArtifactReviewed: true
+reviewedScreens:
+  - screenId: home@1280x720
+    viewport:
+      width: 1280
+      height: 720
+    reviewedBy: gpt-6.1-sol-independent-js52-content-review
+    operation:
+      operationId: js-final-root-p52126f1-20261003-home-1280x720
+      intentAt: 2026-10-03T09:54:17.758Z
+      completedAt: 2026-10-03T09:54:18.749Z
+      expected: 通常公開候補のhome画面と可視title・reflowを確認
+      actual: 原DOM/PNGに実URL・可視内容を保存
+      status: passed
+      evidence:
+        - evidenceId: js-final-root-p52126f1-20261003-home-1280x720-dom
+          kind: dom
+          sha256: c1bf29beaeb93e876e472c69cb72f784c2ba0c4b774480fbef8561e89608b4b0
+          bytes: 4951
+        - evidenceId: js-final-root-p52126f1-20261003-home-1280x720-png
+          kind: screenshot
+          sha256: 82f03392e60ef0fb15eb42555d6c518a8ccc484cd6be598aa6d20f373a10a956
+          bytes: 97311
+        - evidenceId: js-final-root-first-16-original-capture-log
+          kind: log
+          sha256: af5069793274034c45298c64d66a57e28e99b8246ba69dfa715c2a4135c769b3
+          bytes: 11299
+  - screenId: frontend-path@1280x720
+    viewport:
+      width: 1280
+      height: 720
+    reviewedBy: gpt-6.1-sol-independent-js52-content-review
+    operation:
+      operationId: js-final-root-p52126f1-20261003-frontend-path-1280x720
+      intentAt: 2026-10-03T09:54:18.836Z
+      completedAt: 2026-10-03T09:54:19.855Z
+      expected: 通常公開候補のfrontend-path画面と可視title・reflowを確認
+      actual: 原DOM/PNGに実URL・可視内容を保存
+      status: passed
+      evidence:
+        - evidenceId: js-final-root-p52126f1-20261003-frontend-path-1280x720-dom
+          kind: dom
+          sha256: 192c68dcdb395df263f7617eff13f82f4a129f0e15d83eef28dfe46f58fe1c43
+          bytes: 2804
+        - evidenceId: js-final-root-p52126f1-20261003-frontend-path-1280x720-png
+          kind: screenshot
+          sha256: 42168fdd8fac5467786cd9d132848a09b1601ccca82415837bfcf1664fb2c316
+          bytes: 103128
+        - evidenceId: js-final-root-first-16-original-capture-log
+          kind: log
+          sha256: af5069793274034c45298c64d66a57e28e99b8246ba69dfa715c2a4135c769b3
+          bytes: 11299
+  - screenId: javascript-map@1280x720
+    viewport:
+      width: 1280
+      height: 720
+    reviewedBy: gpt-6.1-sol-independent-js52-content-review
+    operation:
+      operationId: js-final-root-p52126f1-20261003-javascript-map-1280x720
+      intentAt: 2026-10-03T09:54:19.934Z
+      completedAt: 2026-10-03T09:54:21.035Z
+      expected: 通常公開候補のjavascript-map画面と可視title・reflowを確認
+      actual: 原DOM/PNGに実URL・可視内容を保存
+      status: passed
+      evidence:
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-map-1280x720-dom
+          kind: dom
+          sha256: 321299ca37c74e16c42c92775043fdcf222146cc57d37a4affd8925dbb3a4d39
+          bytes: 26910
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-map-1280x720-png
+          kind: screenshot
+          sha256: fde726ecc419911c2e248cf424ad1f6ffb9bba7cee7a691d007c1faa53d89314
+          bytes: 77396
+        - evidenceId: js-final-root-first-16-original-capture-log
+          kind: log
+          sha256: af5069793274034c45298c64d66a57e28e99b8246ba69dfa715c2a4135c769b3
+          bytes: 11299
+  - screenId: javascript-slide@1280x720
+    viewport:
+      width: 1280
+      height: 720
+    reviewedBy: gpt-6.1-sol-independent-js52-content-review
+    operation:
+      operationId: js-final-root-p52126f1-20261003-javascript-slide-1280x720
+      intentAt: 2026-10-03T09:54:21.122Z
+      completedAt: 2026-10-03T09:54:22.137Z
+      expected: 通常公開候補のjavascript-slide画面と可視title・reflowを確認
+      actual: 原DOM/PNGに実URL・可視内容を保存
+      status: passed
+      evidence:
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-slide-1280x720-dom
+          kind: dom
+          sha256: 9ff54b3762f3858c57af6561058c5936d477fb4a19bf29ac749ce8778f05baaa
+          bytes: 2666
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-slide-1280x720-png
+          kind: screenshot
+          sha256: c34604d10607bf3799d2cc46e7da11d85c2a38cd02074a5fefc09cd72ad9d5e6
+          bytes: 106104
+        - evidenceId: js-final-root-first-16-original-capture-log
+          kind: log
+          sha256: af5069793274034c45298c64d66a57e28e99b8246ba69dfa715c2a4135c769b3
+          bytes: 11299
+  - screenId: javascript-exercise@1280x720
+    viewport:
+      width: 1280
+      height: 720
+    reviewedBy: gpt-6.1-sol-independent-js52-content-review
+    operation:
+      operationId: js-final-root-p52126f1-20261003-javascript-exercise-1280x720
+      intentAt: 2026-10-03T09:54:22.219Z
+      completedAt: 2026-10-03T09:54:24.015Z
+      expected: 通常公開候補のjavascript-exercise画面と可視title・reflowを確認
+      actual: 原DOM/PNGに実URL・可視内容を保存
+      status: passed
+      evidence:
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-exercise-1280x720-dom
+          kind: dom
+          sha256: 8ff8142071f47fc712bf9797f0f7525defa07c6f17832e61cdd2905cbb88f954
+          bytes: 2107
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-exercise-1280x720-png
+          kind: screenshot
+          sha256: 8ae582499bd3134a2bcd8f4f1ecd077bf838f355be5b909c2605813a25159fae
+          bytes: 126571
+        - evidenceId: js-final-root-first-16-original-capture-log
+          kind: log
+          sha256: af5069793274034c45298c64d66a57e28e99b8246ba69dfa715c2a4135c769b3
+          bytes: 11299
+  - screenId: javascript-library@1280x720
+    viewport:
+      width: 1280
+      height: 720
+    reviewedBy: gpt-6.1-sol-independent-js52-content-review
+    operation:
+      operationId: js-final-root-p52126f1-20261003-javascript-library-1280x720
+      intentAt: 2026-10-03T09:54:24.105Z
+      completedAt: 2026-10-03T09:54:25.174Z
+      expected: 通常公開候補のjavascript-library画面と可視title・reflowを確認
+      actual: 原DOM/PNGに実URL・可視内容を保存
+      status: passed
+      evidence:
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-library-1280x720-dom
+          kind: dom
+          sha256: fa72577d65277dd45c071d3dbd8fddf0b30fa236d879e9ae02697aedf12ac063
+          bytes: 36952
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-library-1280x720-png
+          kind: screenshot
+          sha256: 185ea93324d10fd591b556b321e7c38c58e8d6806faf57ec7efa42bec8e39586
+          bytes: 112172
+        - evidenceId: js-final-root-first-16-original-capture-log
+          kind: log
+          sha256: af5069793274034c45298c64d66a57e28e99b8246ba69dfa715c2a4135c769b3
+          bytes: 11299
+  - screenId: javascript-guided-project@1280x720
+    viewport:
+      width: 1280
+      height: 720
+    reviewedBy: gpt-6.1-sol-independent-js52-content-review
+    operation:
+      operationId: js-final-root-p52126f1-20261003-javascript-guided-project-1280x720
+      intentAt: 2026-10-03T09:54:25.262Z
+      completedAt: 2026-10-03T09:54:27.067Z
+      expected: 通常公開候補のjavascript-guided-project画面と可視title・reflowを確認
+      actual: 原DOM/PNGに実URL・可視内容を保存
+      status: passed
+      evidence:
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-guided-project-1280x720-dom
+          kind: dom
+          sha256: 4858e883798dfacd13df72b90565367b5cf2376b7a511b8b53ffeb2e54a2d904
+          bytes: 4372
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-guided-project-1280x720-png
+          kind: screenshot
+          sha256: 4700c5e281333488f98c0216162bb96493b3cfed898f73ccc5d979ca56fc8a3f
+          bytes: 204576
+        - evidenceId: js-final-root-first-16-original-capture-log
+          kind: log
+          sha256: af5069793274034c45298c64d66a57e28e99b8246ba69dfa715c2a4135c769b3
+          bytes: 11299
+  - screenId: javascript-capstone@1280x720
+    viewport:
+      width: 1280
+      height: 720
+    reviewedBy: gpt-6.1-sol-independent-js52-content-review
+    operation:
+      operationId: js-final-root-p52126f1-20261003-javascript-capstone-1280x720
+      intentAt: 2026-10-03T09:54:27.191Z
+      completedAt: 2026-10-03T09:54:28.964Z
+      expected: 通常公開候補のjavascript-capstone画面と可視title・reflowを確認
+      actual: 原DOM/PNGに実URL・可視内容を保存
+      status: passed
+      evidence:
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-capstone-1280x720-dom
+          kind: dom
+          sha256: 59794be04157502721e3f9dd98244ddc184bca2a803c007066ff2ccafa7d6d24
+          bytes: 2564
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-capstone-1280x720-png
+          kind: screenshot
+          sha256: 48318c5e8966c33bb12f67d6c593a6360ef28d1a75b156bd0754028eafe0a379
+          bytes: 148172
+        - evidenceId: js-final-root-first-16-original-capture-log
+          kind: log
+          sha256: af5069793274034c45298c64d66a57e28e99b8246ba69dfa715c2a4135c769b3
+          bytes: 11299
+  - screenId: home@390x844
+    viewport:
+      width: 390
+      height: 844
+    reviewedBy: gpt-6.1-sol-independent-js52-content-review
+    operation:
+      operationId: js-final-root-p52126f1-20261003-home-390x844
+      intentAt: 2026-10-03T09:54:29.055Z
+      completedAt: 2026-10-03T09:54:30.078Z
+      expected: 通常公開候補のhome画面と可視title・reflowを確認
+      actual: 原DOM/PNGに実URL・可視内容を保存
+      status: passed
+      evidence:
+        - evidenceId: js-final-root-p52126f1-20261003-home-390x844-dom
+          kind: dom
+          sha256: 223beb170d07f1e49410d9d6d0d2c77db6deb5a68a09faf25855e8bfcb989960
+          bytes: 4895
+        - evidenceId: js-final-root-p52126f1-20261003-home-390x844-png
+          kind: screenshot
+          sha256: c7696d452b6f449b1b88b590e882ff34efe669ce131be0e39e2c70478c737287
+          bytes: 89435
+        - evidenceId: js-final-root-first-16-original-capture-log
+          kind: log
+          sha256: af5069793274034c45298c64d66a57e28e99b8246ba69dfa715c2a4135c769b3
+          bytes: 11299
+  - screenId: frontend-path@390x844
+    viewport:
+      width: 390
+      height: 844
+    reviewedBy: gpt-6.1-sol-independent-js52-content-review
+    operation:
+      operationId: js-final-root-p52126f1-20261003-frontend-path-390x844
+      intentAt: 2026-10-03T09:54:30.154Z
+      completedAt: 2026-10-03T09:54:31.154Z
+      expected: 通常公開候補のfrontend-path画面と可視title・reflowを確認
+      actual: 原DOM/PNGに実URL・可視内容を保存
+      status: passed
+      evidence:
+        - evidenceId: js-final-root-p52126f1-20261003-frontend-path-390x844-dom
+          kind: dom
+          sha256: 82f5c90c90dabada1b50f6bfed6774a4df65336b92ab0baa0756df9bdb8c0d3b
+          bytes: 2802
+        - evidenceId: js-final-root-p52126f1-20261003-frontend-path-390x844-png
+          kind: screenshot
+          sha256: e231ee42eeb22163c0262573e5020234622ee8d948791e6496fb9132261a0a04
+          bytes: 74586
+        - evidenceId: js-final-root-first-16-original-capture-log
+          kind: log
+          sha256: af5069793274034c45298c64d66a57e28e99b8246ba69dfa715c2a4135c769b3
+          bytes: 11299
+  - screenId: javascript-map@390x844
+    viewport:
+      width: 390
+      height: 844
+    reviewedBy: gpt-6.1-sol-independent-js52-content-review
+    operation:
+      operationId: js-final-root-p52126f1-20261003-javascript-map-390x844
+      intentAt: 2026-10-03T09:54:31.222Z
+      completedAt: 2026-10-03T09:54:32.308Z
+      expected: 通常公開候補のjavascript-map画面と可視title・reflowを確認
+      actual: 原DOM/PNGに実URL・可視内容を保存
+      status: passed
+      evidence:
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-map-390x844-dom
+          kind: dom
+          sha256: 8044501623459e8e16850cc73453de053e20957b53681ccea510f908d123630c
+          bytes: 26908
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-map-390x844-png
+          kind: screenshot
+          sha256: ecf3d6460817ba9935a3b1b32f2466ed4e546d02755aa029346a3de524b90895
+          bytes: 57131
+        - evidenceId: js-final-root-first-16-original-capture-log
+          kind: log
+          sha256: af5069793274034c45298c64d66a57e28e99b8246ba69dfa715c2a4135c769b3
+          bytes: 11299
+  - screenId: javascript-slide@390x844
+    viewport:
+      width: 390
+      height: 844
+    reviewedBy: gpt-6.1-sol-independent-js52-content-review
+    operation:
+      operationId: js-final-root-p52126f1-20261003-javascript-slide-390x844
+      intentAt: 2026-10-03T09:54:32.381Z
+      completedAt: 2026-10-03T09:54:33.421Z
+      expected: 通常公開候補のjavascript-slide画面と可視title・reflowを確認
+      actual: 原DOM/PNGに実URL・可視内容を保存
+      status: passed
+      evidence:
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-slide-390x844-dom
+          kind: dom
+          sha256: 1ce9122afd2ec2ded1d138187d358a95c729ff65b2052c30408b3598c6a0fb8f
+          bytes: 2590
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-slide-390x844-png
+          kind: screenshot
+          sha256: 769b19a8b6ad88e83b06caf452eb51bbb124a5c304814bb8ead590d815a7086d
+          bytes: 92863
+        - evidenceId: js-final-root-first-16-original-capture-log
+          kind: log
+          sha256: af5069793274034c45298c64d66a57e28e99b8246ba69dfa715c2a4135c769b3
+          bytes: 11299
+  - screenId: javascript-exercise@390x844
+    viewport:
+      width: 390
+      height: 844
+    reviewedBy: gpt-6.1-sol-independent-js52-content-review
+    operation:
+      operationId: js-final-root-p52126f1-20261003-javascript-exercise-390x844
+      intentAt: 2026-10-03T09:54:33.490Z
+      completedAt: 2026-10-03T09:54:34.508Z
+      expected: 通常公開候補のjavascript-exercise画面と可視title・reflowを確認
+      actual: 原DOM/PNGに実URL・可視内容を保存
+      status: passed
+      evidence:
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-exercise-390x844-dom
+          kind: dom
+          sha256: be81da53a178d2097c6d498dc3ab1d16b266ca24d54b2fe5d6467b0e1ee501ca
+          bytes: 1184
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-exercise-390x844-png
+          kind: screenshot
+          sha256: 21223a86e0449db9393f389c2a5e1327321411b16a2246fb76ee25d85772f51b
+          bytes: 55340
+        - evidenceId: js-final-root-first-16-original-capture-log
+          kind: log
+          sha256: af5069793274034c45298c64d66a57e28e99b8246ba69dfa715c2a4135c769b3
+          bytes: 11299
+  - screenId: javascript-library@390x844
+    viewport:
+      width: 390
+      height: 844
+    reviewedBy: gpt-6.1-sol-independent-js52-content-review
+    operation:
+      operationId: js-final-root-p52126f1-20261003-javascript-library-390x844
+      intentAt: 2026-10-03T09:54:34.572Z
+      completedAt: 2026-10-03T09:54:35.601Z
+      expected: 通常公開候補のjavascript-library画面と可視title・reflowを確認
+      actual: 原DOM/PNGに実URL・可視内容を保存
+      status: passed
+      evidence:
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-library-390x844-dom
+          kind: dom
+          sha256: 915cb987ef63e2bba7564272b46549e3adb2596250c294db702ff3da3facf644
+          bytes: 36950
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-library-390x844-png
+          kind: screenshot
+          sha256: 7e157115e3c68b38deffda698994dda0fdaad355f5628514e92547f4e69183ab
+          bytes: 81912
+        - evidenceId: js-final-root-first-16-original-capture-log
+          kind: log
+          sha256: af5069793274034c45298c64d66a57e28e99b8246ba69dfa715c2a4135c769b3
+          bytes: 11299
+  - screenId: javascript-guided-project@390x844
+    viewport:
+      width: 390
+      height: 844
+    reviewedBy: gpt-6.1-sol-independent-js52-content-review
+    operation:
+      operationId: js-final-root-p52126f1-20261003-javascript-guided-project-390x844
+      intentAt: 2026-10-03T09:54:35.685Z
+      completedAt: 2026-10-03T09:54:36.738Z
+      expected: 通常公開候補のjavascript-guided-project画面と可視title・reflowを確認
+      actual: 原DOM/PNGに実URL・可視内容を保存
+      status: passed
+      evidence:
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-guided-project-390x844-dom
+          kind: dom
+          sha256: be17b5d12856d58912b69752146aa9fcaa337111c674851c58d0bdd47e7e4dfc
+          bytes: 1183
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-guided-project-390x844-png
+          kind: screenshot
+          sha256: 3a4c539400b7b74c419050f9d21371ad04dd4068f21536bcd2cba37bf64bedb4
+          bytes: 54398
+        - evidenceId: js-final-root-first-16-original-capture-log
+          kind: log
+          sha256: af5069793274034c45298c64d66a57e28e99b8246ba69dfa715c2a4135c769b3
+          bytes: 11299
+  - screenId: javascript-capstone@390x844
+    viewport:
+      width: 390
+      height: 844
+    reviewedBy: gpt-6.1-sol-independent-js52-content-review
+    operation:
+      operationId: js-final-root-p52126f1-20261003-javascript-capstone-390x844
+      intentAt: 2026-10-03T09:54:36.803Z
+      completedAt: 2026-10-03T09:54:37.804Z
+      expected: 通常公開候補のjavascript-capstone画面と可視title・reflowを確認
+      actual: 原DOM/PNGに実URL・可視内容を保存
+      status: passed
+      evidence:
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-capstone-390x844-dom
+          kind: dom
+          sha256: 7377177d628f521d57e681463a6bfdd926916bcd2cae02bc12b7d8ff99ec0d54
+          bytes: 1180
+        - evidenceId: js-final-root-p52126f1-20261003-javascript-capstone-390x844-png
+          kind: screenshot
+          sha256: 2dc461095ebf77eed5afd8b9282c3483828f80c85fa3b40b047a9f4ae30dbfea
+          bytes: 54075
+        - evidenceId: js-final-root-first-16-original-capture-log
+          kind: log
+          sha256: af5069793274034c45298c64d66a57e28e99b8246ba69dfa715c2a4135c769b3
+          bytes: 11299
+requiredScreenIds:
+  - home@1280x720
+  - frontend-path@1280x720
+  - javascript-map@1280x720
+  - javascript-slide@1280x720
+  - javascript-exercise@1280x720
+  - javascript-library@1280x720
+  - javascript-guided-project@1280x720
+  - javascript-capstone@1280x720
+  - home@390x844
+  - frontend-path@390x844
+  - javascript-map@390x844
+  - javascript-slide@390x844
+  - javascript-exercise@390x844
+  - javascript-library@390x844
+  - javascript-guided-project@390x844
+  - javascript-capstone@390x844
+unresolvedCritical: 0
+unresolvedImportant: 0
+requiredUnconfirmed: 0
