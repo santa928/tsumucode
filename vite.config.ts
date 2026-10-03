@@ -22,6 +22,18 @@ export default defineConfig(({ mode }) => {
       manifest: true,
       modulePreload: false,
       rolldownOptions: {
+        output: {
+          codeSplitting: {
+            groups: [
+              {
+                name: 'codemirror-core',
+                test: /[\\/]node_modules[\\/]@codemirror[\\/](?:state|view|language|commands|autocomplete|lang-html|lang-css)[\\/]/,
+                entriesAware: false,
+                includeDependenciesRecursively: true,
+              },
+            ],
+          },
+        },
         input: {
           index: fileURLToPath(new URL('./index.html', import.meta.url)),
           library: fileURLToPath(new URL('./src/app/libraryEntry.tsx', import.meta.url)),
