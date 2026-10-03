@@ -1,0 +1,26 @@
+schemaVersion: 2
+courseId: javascript
+releaseStatus: approved
+verifiedSourceCommit: 5ac6e3a1572c0b14ff796f939282d9121ebece69
+canonicalDistSha256: 2cac445ab57ac6310c920f18e841097df13f22cb07fab51685a09bcbcba53e1f
+baseCommit: 08d36570950870896d3eeca8ce134340e98eb527
+productTreeSha256: 2a79985c4f645f46d57aa3da274ca87a6e809feb4f783ae033b27f1d0ab37e60
+implementerIds:
+  - tsumucode-js-release-root
+  - gpt-6.1-sol-js-functional-author
+  - gpt-6.1-sol-release-gate-author
+  - tsumucode-javascript-authoring
+  - gpt-6.1-sol-js-entry-author
+  - gpt-6.1-sol-root-diagram-author
+  - js_course_projects
+reviewerId: gpt-6.1-sol-js-a-final-code-reviewer
+reviewedAt: 2026-10-03T11:37:52Z
+status: passed
+originalReview:
+  evidenceId: authorized-final-whole-product-independent-code-review
+  kind: report
+  sha256: 087d088c6a9de3a98e25c62e6f92c19f568c329e13f55cdcc49365049b108ba3
+  bytes: 8834
+unresolvedCritical: 0
+unresolvedImportant: 0
+requiredUnconfirmed: 0

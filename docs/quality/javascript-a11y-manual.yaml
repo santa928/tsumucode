@@ -1,0 +1,166 @@
+schemaVersion: 2
+courseId: javascript
+releaseStatus: approved
+verifiedSourceCommit: 5ac6e3a1572c0b14ff796f939282d9121ebece69
+canonicalDistSha256: 2cac445ab57ac6310c920f18e841097df13f22cb07fab51685a09bcbcba53e1f
+voiceOverStatus: not-required
+journeys:
+  - journeyId: hint-repair
+    operation:
+      operationId: js-authorized-final-p-5ac6e3a-20261003-hint-repair-r3
+      intentAt: 2026-10-03T10:58:17.053Z
+      completedAt: 2026-10-03T10:58:21.287Z
+      expected: 未完feedbackとHintを経てRoot作者FixtureをUI入力し実採点合格を確認。persona評価ではない
+      actual: 原DOM/PNGと実操作条件を確認
+      status: passed
+      evidence:
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-hint-repair-r3-dom
+          kind: dom
+          sha256: d04bfbf1210f702158316785b3a55f21ae7e815bd263db5a0a4fba8702684717
+          bytes: 1734
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-hint-repair-r3-png
+          kind: screenshot
+          sha256: 731932edd2a9e73e6c18942f79b04c7c0817b207c0d7e4fd54be8d945baf3a4d
+          bytes: 137731
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-hint-repair-r3-log
+          kind: log
+          sha256: 92908fda688b55a61a942b9187623aec43ebfe26046a40aab1d4d9086b49f240
+          bytes: 8702
+  - journeyId: reload-resume
+    operation:
+      operationId: js-authorized-final-p-5ac6e3a-20261003-reload-resume-r3
+      intentAt: 2026-10-03T10:58:21.438Z
+      completedAt: 2026-10-03T10:58:27.883Z
+      expected: 保存したSourceと採点結果を実reload後の表示で照合
+      actual: 原DOM/PNGと実操作条件を確認
+      status: passed
+      evidence:
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-reload-resume-r3-dom
+          kind: dom
+          sha256: 96622357aa100c2c60af91b7cac0982be2eb5d6336e201e86cfe00442201adf9
+          bytes: 1740
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-reload-resume-r3-png
+          kind: screenshot
+          sha256: f1485ad67aecb5b6fde286a60498f2cb220f830917b4b6b3fe78c8ff8ae06bfb
+          bytes: 137741
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-reload-resume-r3-log
+          kind: log
+          sha256: 92908fda688b55a61a942b9187623aec43ebfe26046a40aab1d4d9086b49f240
+          bytes: 8702
+  - journeyId: reset-cancel-confirm-edit
+    operation:
+      operationId: js-authorized-final-p-5ac6e3a-20261003-reset-cancel-confirm-edit-r3
+      intentAt: 2026-10-03T10:58:28.030Z
+      completedAt: 2026-10-03T10:58:30.808Z
+      expected: Reset取消で保存状態不変、確定でStarterへ復元、再編集後に実採点できる
+      actual: 原DOM/PNGと実操作条件を確認
+      status: passed
+      evidence:
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-reset-cancel-confirm-edit-r3-dom
+          kind: dom
+          sha256: 50140712611aee29a64e0dbd09fd1f3024fc534bfab85af768ede16fa11ae516
+          bytes: 1734
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-reset-cancel-confirm-edit-r3-png
+          kind: screenshot
+          sha256: 731932edd2a9e73e6c18942f79b04c7c0817b207c0d7e4fd54be8d945baf3a4d
+          bytes: 137731
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-reset-cancel-confirm-edit-r3-log
+          kind: log
+          sha256: 92908fda688b55a61a942b9187623aec43ebfe26046a40aab1d4d9086b49f240
+          bytes: 8702
+  - journeyId: guided-invalidation-history
+    operation:
+      operationId: js-authorized-final-p-5ac6e3a-20261003-guided-invalidation-history-r4
+      intentAt: 2026-10-03T11:02:42.329Z
+      completedAt: 2026-10-03T11:02:50.347Z
+      expected: RootのGuided最終作者FixtureをUIでgradeし、編集で全5工程の現在合格失効・過去Snapshot保持を読取照合
+      actual: 原DOM/PNGと実操作条件を確認
+      status: passed
+      evidence:
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-guided-invalidation-history-r4-dom
+          kind: dom
+          sha256: e0b8f41c3f3d14f5d012d0ec98090533847292bc99a1b5a5e0ebe7d936465b96
+          bytes: 5119
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-guided-invalidation-history-r4-png
+          kind: screenshot
+          sha256: abe014dc0bd7f49096c2ee1f5b89b2b00323375d52c0443385adbe58b5adc159
+          bytes: 189638
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-guided-invalidation-history-r4-log
+          kind: log
+          sha256: 92908fda688b55a61a942b9187623aec43ebfe26046a40aab1d4d9086b49f240
+          bytes: 8702
+  - journeyId: capstone-separate-workspace
+    operation:
+      operationId: js-authorized-final-p-5ac6e3a-20261003-capstone-separate-workspace-r4
+      intentAt: 2026-10-03T11:02:50.417Z
+      completedAt: 2026-10-03T11:02:52.607Z
+      expected: Capstone通常編集は別Workspaceへ保存され、Guidedの本人編集済みSourceを保持する
+      actual: 原DOM/PNGと実操作条件を確認
+      status: passed
+      evidence:
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-capstone-separate-workspace-r4-dom
+          kind: dom
+          sha256: 5936cdc30f760dc7ece567eaddd95324019c7e7654a805d2b8e2c44c7e249495
+          bytes: 1955
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-capstone-separate-workspace-r4-png
+          kind: screenshot
+          sha256: de82c2641f4faec7606dc6b92f183987d073f9a6a77bea14f4c04f7050e766cc
+          bytes: 150991
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-capstone-separate-workspace-r4-log
+          kind: log
+          sha256: 92908fda688b55a61a942b9187623aec43ebfe26046a40aab1d4d9086b49f240
+          bytes: 8702
+  - journeyId: keyboard-mobile-reading
+    operation:
+      operationId: js-authorized-final-p-5ac6e3a-20261003-keyboard-mobile-reading-r6
+      intentAt: 2026-10-03T11:09:51.581Z
+      completedAt: 2026-10-03T11:09:58.724Z
+      expected: Guided Previewへ実Tab/Enterで入り採点し、390px読書の4節・末尾画像・横overflowなしを確認
+      actual: 原DOM/PNGと実操作条件を確認
+      status: passed
+      evidence:
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-keyboard-mobile-reading-r6-dom
+          kind: dom
+          sha256: b2b33131340db156e7c0f9dd86457de7bfecc1a86ab1a13eb734e7c7e324f1b1
+          bytes: 5370
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-keyboard-mobile-reading-r6-png
+          kind: screenshot
+          sha256: 08028fdac7df647e4c21dde9b7887e18796807b6530a0dbeb017359364a17540
+          bytes: 95263
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-keyboard-mobile-reading-r6-log
+          kind: log
+          sha256: 92908fda688b55a61a942b9187623aec43ebfe26046a40aab1d4d9086b49f240
+          bytes: 8702
+  - journeyId: export-fresh-import-resume
+    operation:
+      operationId: js-authorized-final-p-5ac6e3a-20261003-export-fresh-import-resume-r6
+      intentAt: 2026-10-03T11:09:58.773Z
+      completedAt: 2026-10-03T11:10:03.598Z
+      expected: 通常UIで本人全コースbundleを書出し、新physical contextへ同byteを読み込み、Guided Sourceと合格履歴を確認
+      actual: 原DOM/PNGと実操作条件を確認
+      status: passed
+      evidence:
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-export-fresh-import-resume-r6-dom
+          kind: dom
+          sha256: 59ca173a36436c03cd2d13f157efba481e3b70706416cfa13dbf597ce0dd761d
+          bytes: 3736
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-export-fresh-import-resume-r6-png
+          kind: screenshot
+          sha256: 2a8098d7d4acb63b0c0d288b55288e70dc7179acdc706d40d61615eb9c647a36
+          bytes: 203819
+        - evidenceId: js-authorized-final-p-5ac6e3a-20261003-export-fresh-import-resume-r6-log
+          kind: log
+          sha256: 92908fda688b55a61a942b9187623aec43ebfe26046a40aab1d4d9086b49f240
+          bytes: 8702
+requiredJourneyIds:
+  - hint-repair
+  - reload-resume
+  - reset-cancel-confirm-edit
+  - guided-invalidation-history
+  - capstone-separate-workspace
+  - export-fresh-import-resume
+  - keyboard-mobile-reading
+unperformedChecks: 0
+unresolvedCritical: 0
+unresolvedImportant: 0
+requiredUnconfirmed: 0
