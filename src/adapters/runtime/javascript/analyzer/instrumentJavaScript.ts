@@ -564,6 +564,7 @@ function collectFacts(
   nodes: readonly Node[],
   file: string,
   teachingGoal?: JavaScriptTeachingGoal,
+  moduleBoundaryOnly = false,
 ): readonly JavaScriptSourceFact[] {
   const facts: JavaScriptSourceFact[] = [];
   const scopesByNode = new Map<Node, ScopeInfo>();
@@ -580,6 +581,8 @@ function collectFacts(
   };
 
   const addFact = (fact: JavaScriptSourceFact): void => {
+    // ProjectのSource要件はModule境界。安全検査は省略せず、消費しない教材factだけ保存しない。
+    if (moduleBoundaryOnly && fact.kind !== 'module-boundary') return;
     facts.push(fact);
     if (facts.length > MAX_FACTS) {
       throw new JavaScriptAnalysisIssue('system', 'Source fact数が上限を超えました', file);
@@ -1271,7 +1274,13 @@ async function analyzeLegacyJavaScriptSource(
       );
     }
     assertJavaScriptCapabilityPolicy(program, request.file, request.capabilityProfile);
-    const facts = collectFacts(program, nodes, request.file, request.teachingGoal);
+    const facts = collectFacts(
+      program,
+      nodes,
+      request.file,
+      request.teachingGoal,
+      request.capabilityProfile === 'project' && request.teachingGoal === undefined,
+    );
     return {
       status: 'success',
       requestId: request.requestId,

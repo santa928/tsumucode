@@ -365,3 +365,65 @@ describe('JavaScriptExecutionClient interaction identity', () => {
     },
   );
 });
+
+describe('authenticated Preview interaction readiness', () => {
+  it('真偽値だけをexact responseとして受理し任意値/余剰fieldを拒否する', () => {
+    const envelope = (payload: unknown) => ({
+      ...(interactionEnvelope() as Record<string, unknown>),
+      type: 'javascript.preview-interaction-complete',
+      payload,
+    });
+    expect(isJavaScriptRuntimeEnvelope(envelope(true))).toBe(true);
+    expect(isJavaScriptRuntimeEnvelope(envelope(false))).toBe(true);
+    for (const value of ['true', 1, {}, null, undefined])
+      expect(isJavaScriptRuntimeEnvelope(envelope(value))).toBe(false);
+    expect(isJavaScriptRuntimeEnvelope({ ...envelope(true), focused: true })).toBe(false);
+  });
+
+  it('偽造source/token/identity/旧世代と異種responseを無視し正しい応答だけを返す', async () => {
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    const client = new JavaScriptExecutionClient(frame, 'session-1', 1, 'token-1', {
+      frameGeneration: 7,
+      tokenFactory: () => 'readiness-token',
+    });
+    dispatchExecutionReady(frame);
+    const pending = client.checkPreviewInteractionReady({
+      exerciseSessionId: 'session-1',
+      executionRevision: 1,
+      frameGeneration: 7,
+      requestId: 'ready-1',
+    });
+    const response = {
+      ...(interactionEnvelope() as Record<string, unknown>),
+      type: 'javascript.preview-interaction-complete',
+      requestId: 'ready-1',
+      oneTimeToken: 'readiness-token',
+      payload: true,
+    };
+    const resolved = vi.fn();
+    void pending.then(resolved);
+    const send = (data: unknown, source: MessageEventSource | null = frame.contentWindow) =>
+      window.dispatchEvent(new MessageEvent('message', { source, data }));
+    send(response, window);
+    for (const changes of [
+      { oneTimeToken: 'forged' },
+      { exerciseSessionId: 'other' },
+      { executionRevision: 2 },
+      { frameGeneration: 6 },
+      { payload: 'true' },
+      { type: 'javascript.interaction-complete' },
+    ])
+      send({ ...response, ...changes });
+    send({
+      ...(interactionEnvelope() as Record<string, unknown>),
+      requestId: 'ready-1',
+      oneTimeToken: 'readiness-token',
+    });
+    await Promise.resolve();
+    expect(resolved).not.toHaveBeenCalled();
+    send(response);
+    await expect(pending).resolves.toBe(true);
+    client.dispose();
+  });
+});

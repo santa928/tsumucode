@@ -274,6 +274,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
     }
     if (frame === undefined || active === undefined || this.#inFlight !== undefined) return;
     this.#analysisCache = undefined;
+    this.#previewInteractionReady = false;
     active.bridge.dispose();
     active.execution.dispose();
     this.#disposeResources(active.resources);
@@ -290,8 +291,33 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
     }
   }
 
+  #previewInteractionReady = false;
+
+  /** 認証した操作履歴を同iframeだけに保持し、採点中のsrcdoc交換では失わない。 */
+  async checkPreviewInteractionReady(): Promise<boolean> {
+    const frame = this.#frame;
+    const active = this.#active;
+    if (frame === undefined || active === undefined) return false;
+    if (!frame.isConnected) {
+      this.#previewInteractionReady = false;
+      return false;
+    }
+    if (this.#previewInteractionReady) return true;
+    const ready = await active.execution.checkPreviewInteractionReady({
+      exerciseSessionId: active.exerciseSessionId,
+      executionRevision: active.executionRevision,
+      frameGeneration: active.frameGeneration,
+      requestId: `preview-interaction-${this.#uuidFactory()}`,
+    });
+    if (this.#frame !== frame || this.#active !== active)
+      throw new Error('Preview interaction is stale');
+    this.#previewInteractionReady = ready;
+    return ready;
+  }
+
   /** 旧処理を解放し、opaque-origin用属性を固定する。 */
   async prepare(frame: HTMLIFrameElement): Promise<void> {
+    if (this.#frame !== frame) this.#previewInteractionReady = false;
     const previousFrame = this.#frame;
     await this.#reset(false);
     if (previousFrame !== undefined && previousFrame !== frame) {
@@ -406,6 +432,7 @@ export class JavaScriptRunnerAdapter implements RunnerAdapter {
 
   /** 旧実行・iframe・Bridge・教材Assetを解放し、解析器は次のprepare用に保持する。 */
   async stop(): Promise<void> {
+    this.#previewInteractionReady = false;
     const frame = this.#frame;
     await this.#reset(true);
     if (frame !== undefined) {
