@@ -19,7 +19,7 @@ import {
   recordWorkspaceDraftMutationFromIndex,
   recordValidationFromIndex,
 } from '../../../core/persistence/progressUpdates';
-import { LeaseFenceRejectedError, type CourseProgress } from '../../../core/persistence/contracts';
+import { LeaseFenceRejectedError } from '../../../core/persistence/contracts';
 import type { ResolvedPreviewAsset } from '../../../core/runtime/contracts';
 import { BrowserExecutionService } from '../../../core/runtime/BrowserExecutionService';
 import { localRuntime } from '@/features/learning/localRuntime';
@@ -61,6 +61,14 @@ interface RuntimePreparation {
 }
 type OperationState = 'idle' | 'preview' | 'validate' | 'reset';
 
+interface ExerciseViewState {
+  readonly activeFilePath: string;
+  readonly activeStepId: string | undefined;
+  readonly drawerMode: 'feedback' | 'hint' | undefined;
+  readonly relatedSlideId: string | undefined;
+  readonly editorFocusRequestId: number;
+}
+
 interface EditableSessionProps extends ExerciseLoaderData {
   readonly consoleRuntime: BrowserConsoleRuntime | undefined;
   readonly lease: WorkspaceLeaseAccess;
@@ -90,6 +98,16 @@ function resolveWorkspaceAssets(exercises: readonly Exercise[]): readonly Resolv
     byId.set(asset.id, resolved);
   }
   return [...byId.values()];
+}
+
+/** 非同期操作の種別を学習者が次に行える操作へ変換する。 */
+function operationErrorMessage(operation: Exclude<OperationState, 'idle' | 'reset'>): string {
+  switch (operation) {
+    case 'preview':
+      return 'プレビューを更新できませんでした。少し待ってからもう一度試してください。';
+    case 'validate':
+      return '判定を完了できませんでした。編集内容は残っています。もう一度試してください。';
+  }
 }
 
 /** iframe初期化失敗と描画失敗を区別し、必要な復旧操作を具体的に案内する。 */
@@ -366,11 +384,20 @@ function EditableSession({
   );
   const result = state.validationHistory.at(-1);
   const busy = operation !== 'idle';
+  const viewState: ExerciseViewState = {
+    activeFilePath: state.selectedFile,
+    activeStepId,
+    drawerMode,
+    relatedSlideId,
+    editorFocusRequestId,
+  };
   const relatedLesson =
-    relatedSlideId === undefined
+    viewState.relatedSlideId === undefined
       ? undefined
-      : workspaceLessons.find(({ slides }) => slides.some(({ id }) => id === relatedSlideId));
-  const relatedSlide = relatedLesson?.slides.find(({ id }) => id === relatedSlideId);
+      : workspaceLessons.find(({ slides }) =>
+          slides.some(({ id }) => id === viewState.relatedSlideId),
+        );
+  const relatedSlide = relatedLesson?.slides.find(({ id }) => id === viewState.relatedSlideId);
   const reviewStartSlideId = lesson.slides.at(-1)?.id;
 
   useEffect(() => {
@@ -506,7 +533,7 @@ function EditableSession({
               setOperationError(
                 error instanceof ExecutionNotGradableError
                   ? error.message
-                  : 'プレビューを更新できませんでした。少し待ってからもう一度試してください。',
+                  : operationErrorMessage('preview'),
               );
             }
           }
@@ -597,19 +624,23 @@ function EditableSession({
                   },
                 };
               });
-              const updated = progressBatch.reduce<CourseProgress | undefined>(
-                (progress, target) =>
-                  recordValidationFromIndex(
-                    progress,
-                    course,
-                    target.lesson,
-                    target.exercise,
-                    target.result,
-                  ),
+              const firstTarget = progressBatch[0];
+              if (firstTarget === undefined) throw new Error('Workspace判定対象がありません');
+              let updated = recordValidationFromIndex(
                 current.progress,
+                course,
+                firstTarget.lesson,
+                firstTarget.exercise,
+                firstTarget.result,
               );
-              if (progressBatch.length === 0 || updated === undefined) {
-                throw new Error('Workspace判定対象がありません');
+              for (const target of progressBatch.slice(1)) {
+                updated = recordValidationFromIndex(
+                  updated,
+                  course,
+                  target.lesson,
+                  target.exercise,
+                  target.result,
+                );
               }
               const draft = controller.getLastValidationDraft(executionRevision);
               const passedIds = progressBatch
@@ -673,7 +704,7 @@ function EditableSession({
               ? '編集中の内容が変わりました。最新のコードでもう一度判定してください。'
               : error instanceof ExecutionNotGradableError
                 ? error.message
-                : '判定を完了できませんでした。編集内容は残っています。もう一度試してください。',
+                : operationErrorMessage('validate'),
           );
         }
       } finally {
@@ -983,7 +1014,7 @@ function EditableSession({
             ) : null}
             <ExerciseInstructionPane
               steps={exercise.steps}
-              activeStepId={activeStepId}
+              activeStepId={viewState.activeStepId}
               onStepChange={selectStep}
               fallbackInstructions={exercise.instructions}
               fallbackAssets={exercise.assets}
@@ -1007,12 +1038,12 @@ function EditableSession({
                 languages={Object.fromEntries(
                   exercise.files.map(({ path, language }) => [path, language]),
                 )}
-                selectedFile={state.selectedFile}
+                selectedFile={viewState.activeFilePath}
                 contentRevision={state.executionRevision}
                 readOnly={!lease.isWritable() || operation === 'reset'}
                 cursors={state.cursors}
                 diagnostics={state.diagnostics}
-                editorFocusRequestId={editorFocusRequestId}
+                editorFocusRequestId={viewState.editorFocusRequestId}
                 headerAction={
                   <button
                     ref={resetTriggerRef}
@@ -1080,7 +1111,7 @@ function EditableSession({
 
       <div data-testid="validation-feedback">
         <ExerciseStatusDrawer
-          mode={drawerMode}
+          mode={viewState.drawerMode}
           result={result}
           hints={exercise.hints}
           revealedHintIds={state.revealedHintIds}
