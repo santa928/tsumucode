@@ -838,7 +838,20 @@ describe('JavaScriptValidator', () => {
   );
 
   it('実Analyzerのguard衝突拒否を保持し、元guardとartifactの正答pairだけ再利用する', async () => {
-    const context = projectModuleContext();
+    // ProjectはModule境界をSource証拠とする。現在のDOM観測とのANDは保持する。
+    const context = projectModuleContext({
+      rules: projectModuleContext().rules.map((rule) =>
+        rule.target.kind === 'javascript-source'
+          ? {
+              ...rule,
+              assertion: {
+                kind: 'javascript-source-fact',
+                fact: { kind: 'module-boundary', boundaryKind: 'export', name: 'update' },
+              },
+            }
+          : rule,
+      ),
+    });
     let request = 0;
     const analyzer: AnalyzerDouble = {
       analyze: vi.fn((input) =>
@@ -860,6 +873,14 @@ describe('JavaScriptValidator', () => {
     });
     if (analysis.status !== 'success' || !('graphSha256' in analysis))
       throw new Error('実正答分析が必要です');
+    expect(analysis.facts).toContainEqual(
+      expect.objectContaining({
+        kind: 'module-boundary',
+        boundaryKind: 'export',
+        name: 'update',
+        file: 'src/message.js',
+      }),
+    );
     const evidence = context.evidence.map((item) =>
       item.id === 'javascript.module-graph-sha256'
         ? { ...item, value: analysis.graphSha256 }
