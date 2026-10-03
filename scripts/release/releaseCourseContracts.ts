@@ -46,6 +46,15 @@ const javascriptContract = {
   optionalExerciseIds: ['javascript-ch03-l05-e02', 'javascript-ch03-l05-e03'],
   evaluatedExerciseCount: 54,
   learningEvidenceKind: 'agent-simulated-learning',
+  // 2026-10-03 19:13 JST本人承認: 今回の教材受入は新規6教材だけ。
+  personaAcceptanceLessonIds: [
+    'javascript-ch12-l01',
+    'javascript-ch12-l02',
+    'javascript-ch12-l03',
+    'javascript-ch12-l04',
+    'javascript-ch12-l05',
+    'javascript-ch13-l01',
+  ],
   records: {
     contentReview: 'docs/quality/content-review-javascript.yaml',
     visualReview: 'docs/quality/javascript-visual-review.yaml',

@@ -163,6 +163,16 @@ export const JavascriptAgentLearningRecordSchema = z
         physicalDevice: z.literal('not-demonstrated'),
       })
       .strict(),
+    acceptanceScope: z
+      .object({
+        authorizationReference: TextSchema,
+        requiredLessonIds: z.array(TextSchema).min(1),
+        pendingOutsideScope: z.array(
+          z.object({ lessonId: TextSchema, missingRoleIds: z.array(RoleIdSchema).min(1) }).strict(),
+        ),
+      })
+      .strict()
+      .optional(),
     lessonEvaluations: z.array(JavascriptLessonEvaluationSchema),
     finalSmokes: z.array(
       z
@@ -250,7 +260,8 @@ export const JavascriptReleaseChecklistSchema = z
     ...BindingShape,
     checklistScope: z.literal('pre-deploy'),
     postDeployVerificationPolicy: z.literal('revision-record'),
-    automatedGatesStatus: OutcomeSchema,
+    automatedGatesStatus: z.enum(['pending', 'passed', 'preflight-passed-final-ci-required']),
+    finalAutomatedGatePolicy: z.literal('required-pages-quality-before-deploy').optional(),
     manualGatesStatus: OutcomeSchema,
     pendingItems: z.number().int().nonnegative(),
     failedItems: z.number().int().nonnegative(),
@@ -283,7 +294,14 @@ export interface JavascriptLearningExpectations {
   readonly lessons: readonly {
     readonly lessonId: string;
     readonly learnerContentSha256: string;
+    /** 旧v1原行は教材全Source hashと旧指紋の両方が同じ場合だけ再利用する。 */
+    readonly legacyFingerprint?: {
+      readonly sourceLessonHash: string;
+      readonly learnerContentSha256: string;
+    };
   }[];
+  /** 呼出し側の固定公開契約。記録自身に必須教材を選ばせない。 */
+  readonly requiredLessonIds?: readonly string[];
 }
 
 /** 数だけの承認、重複での数合わせ、分担合算を拒否する。順序付き集合には順序も要求する。 */
@@ -381,7 +399,10 @@ export function getJavascriptLessonEvaluationCoverage(
         (row) =>
           row.lessonId === lesson.lessonId &&
           row.roleId === roleId &&
-          row.learnerContentSha256 === lesson.learnerContentSha256 &&
+          (row.learnerContentSha256 === lesson.learnerContentSha256 ||
+            (lesson.legacyFingerprint !== undefined &&
+              row.sourceLessonHash === lesson.legacyFingerprint.sourceLessonHash &&
+              row.learnerContentSha256 === lesson.legacyFingerprint.learnerContentSha256)) &&
           observedOperation(row.reading) &&
           observedOperation(row.interaction) &&
           row.unresolvedCritical === 0 &&
@@ -416,14 +437,45 @@ export function validateJavascriptAgentLearning(
     throw new Error('JS教材評価台帳の現公開候補bindingが不一致です');
   noBlocking('教材評価', record);
   const coverage = getJavascriptLessonEvaluationCoverage(record, expected.lessons);
-  if (coverage.pending.length)
+  const requiredLessonIds =
+    expected.requiredLessonIds ?? expected.lessons.map(({ lessonId }) => lessonId);
+  if (
+    new Set(requiredLessonIds).size !== requiredLessonIds.length ||
+    requiredLessonIds.some((id) => !expected.lessons.some(({ lessonId }) => lessonId === id))
+  )
+    throw new Error('教材受入の必須ID集合が不正です');
+  if (expected.requiredLessonIds !== undefined) {
+    if (!record.acceptanceScope)
+      throw new Error('今回の教材受入範囲と対象外の未確認記録がありません');
+    exactIds('教材受入範囲', record.acceptanceScope.requiredLessonIds, requiredLessonIds);
+    const outside = coverage.pending.filter(
+      ({ lessonId }) => !requiredLessonIds.includes(lessonId),
+    );
+    exactIds(
+      '対象外の未確認教材',
+      record.acceptanceScope.pendingOutsideScope.map(({ lessonId }) => lessonId),
+      outside.map(({ lessonId }) => lessonId),
+    );
+    for (const row of outside) {
+      const declared = record.acceptanceScope.pendingOutsideScope.find(
+        ({ lessonId }) => lessonId === row.lessonId,
+      )!;
+      exactIds('対象外の未確認persona', declared.missingRoleIds, row.missingRoleIds);
+    }
+  }
+  const requiredPending = coverage.pending.filter(({ lessonId }) =>
+    requiredLessonIds.includes(lessonId),
+  );
+  if (requiredPending.length)
     throw new Error(
       '未確認/新規教材の3persona評価が残っています: ' +
-        coverage.pending
+        requiredPending
           .map(({ lessonId, missingRoleIds }) => lessonId + ':' + missingRoleIds.join(','))
           .join(';'),
     );
-  for (const lesson of expected.lessons) {
+  for (const lesson of expected.lessons.filter(({ lessonId }) =>
+    requiredLessonIds.includes(lessonId),
+  )) {
     const rows = coverage.evaluations.filter(({ lessonId }) => lessonId === lesson.lessonId);
     for (const key of ['actorId', 'sessionId', 'browserContextId', 'storageNamespace'] as const)
       if (new Set(rows.map(({ identity }) => identity[key])).size !== 3)
@@ -566,7 +618,11 @@ export function validateJavascriptManualRecord(
     if (
       record.pendingItems !== 0 ||
       record.failedItems !== 0 ||
-      record.automatedGatesStatus !== 'passed' ||
+      (record.automatedGatesStatus !== 'passed' &&
+        !(
+          record.automatedGatesStatus === 'preflight-passed-final-ci-required' &&
+          record.finalAutomatedGatePolicy === 'required-pages-quality-before-deploy'
+        )) ||
       record.manualGatesStatus !== 'passed'
     )
       throw new Error('release checklistに未達があります');

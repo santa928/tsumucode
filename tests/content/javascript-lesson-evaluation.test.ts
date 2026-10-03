@@ -2,7 +2,10 @@
 import path from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { compileCourse, type CompiledCourseArtifacts } from '../../scripts/content/compileCourse';
-import { javascriptLearnerContentSha256 } from '../../scripts/release/javascriptLessonEvaluation';
+import {
+  javascriptLearnerContentSha256,
+  javascriptLearnerContentSha256V1,
+} from '../../scripts/release/javascriptLessonEvaluation';
 import type { Lesson } from '../../src/core/content/types';
 
 let course: CompiledCourseArtifacts;
@@ -52,11 +55,50 @@ describe('初学者評価の教材入力', () => {
   });
   it('Runtime/採点内部の変更を初学者教材評価の再開始条件にしない', () => {
     const changed = structuredClone(lesson);
-    changed.exercises[0]!.validationRules[0]!.required =
-      !changed.exercises[0]!.validationRules[0]!.required;
+    const runtime = changed.exercises[0]!.runtime;
+    if (runtime?.kind !== 'javascript') throw new Error('JavaScript Runtimeが必要です');
+    runtime.primaryOutput = runtime.primaryOutput === 'preview' ? 'console' : 'preview';
     expect(javascriptLearnerContentSha256(changed, course.runtime.glossary, course.assets)).toBe(
       javascriptLearnerContentSha256(lesson, course.runtime.glossary, course.assets),
     );
+  });
+  it('必須と任意の課題が入れ替われば可視区分のhashを更新する', () => {
+    const original = course.runtime.phases
+      .flatMap(({ chapters }) => chapters.flatMap(({ lessons }) => lessons))
+      .find((lesson) => lesson.kind === 'standard' && lesson.exercises.length > 1)!;
+    if (original.completion.kind !== 'standard') throw new Error('Standard Lessonが必要です');
+    const changed = structuredClone(original);
+    if (changed.completion.kind !== 'standard') throw new Error('Standard Lessonが必要です');
+    const requiredIds = original.completion.requiredExerciseIds;
+    const optional = original.exercises.find(({ id }) => !requiredIds.includes(id));
+    if (!optional) throw new Error('任意Exerciseが必要です');
+    changed.completion.requiredExerciseIds = [optional.id];
+    expect(
+      javascriptLearnerContentSha256(changed, course.runtime.glossary, course.assets),
+    ).not.toBe(javascriptLearnerContentSha256(original, course.runtime.glossary, course.assets));
+    expect(javascriptLearnerContentSha256V1(changed, course.runtime.glossary, course.assets)).toBe(
+      javascriptLearnerContentSha256V1(original, course.runtime.glossary, course.assets),
+    );
+  });
+  it('可視feedbackの必須判定が変わればhashを更新する', () => {
+    const changed = structuredClone(lesson);
+    changed.exercises[0]!.validationRules[0]!.required =
+      !changed.exercises[0]!.validationRules[0]!.required;
+    expect(
+      javascriptLearnerContentSha256(changed, course.runtime.glossary, course.assets),
+    ).not.toBe(javascriptLearnerContentSha256(lesson, course.runtime.glossary, course.assets));
+  });
+  it('旧v1単独ではrequired変更を検出しないため移行時は元Source hashも必要になる', () => {
+    const changed = structuredClone(lesson);
+    changed.exercises[0]!.validationRules[0]!.required =
+      !changed.exercises[0]!.validationRules[0]!.required;
+    expect(javascriptLearnerContentSha256V1(changed, course.runtime.glossary, course.assets)).toBe(
+      javascriptLearnerContentSha256V1(lesson, course.runtime.glossary, course.assets),
+    );
+    changed.goal += ' 新しい可視説明';
+    expect(
+      javascriptLearnerContentSha256V1(changed, course.runtime.glossary, course.assets),
+    ).not.toBe(javascriptLearnerContentSha256V1(lesson, course.runtime.glossary, course.assets));
   });
   it('説明/課題/Hint/可視feedbackの変更は対象教材だけの未確認要因にする', () => {
     for (const field of ['goal', 'instructions', 'hint', 'feedback']) {
