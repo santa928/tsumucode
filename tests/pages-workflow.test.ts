@@ -37,6 +37,41 @@ function workflow(): { readonly source: string; readonly parsed: PagesWorkflow }
 }
 
 describe('TsumuCode Pages workflow', () => {
+  it('同じRelease buildのbundle/static失敗を全Browser開始前に返す', () => {
+    const steps = workflow().parsed.jobs?.quality?.steps ?? [];
+    const index = (name: string) => steps.findIndex((step) => step.name === name);
+    const bundle = index('Bundle artifact preflight');
+    const artifact = index('Static artifact gate');
+    expect(bundle).toBeGreaterThan(index('Release quality'));
+    expect(artifact).toBeGreaterThan(bundle);
+    for (const name of [
+      'Chromium full and cross-browser smoke',
+      'Performance budgets',
+      'Lighthouse budgets',
+    ]) {
+      expect(index(name)).toBeGreaterThan(artifact);
+    }
+    for (const step of steps.slice(bundle, artifact + 1)) {
+      expect(step.if).toBeUndefined();
+      expect(step['continue-on-error']).not.toBe(true);
+    }
+    expect(steps[bundle]?.run).toContain('npm run test:bundle');
+    expect(steps[artifact]?.run).toContain('release:check -- --course-id "$RELEASE_COURSE_ID"');
+    expect(steps[index('Performance budgets')]?.run).toContain('test:performance:browser');
+    expect(
+      steps.slice(bundle + 1).some(({ run }) => /npm run (build|check:release)/u.test(run ?? '')),
+    ).toBe(false);
+    const { scripts } = JSON.parse(
+      readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
+    ) as { scripts: Record<string, string> };
+    expect(scripts['test:performance']).toBe(
+      'npm run test:bundle && npm run test:performance:browser',
+    );
+    expect(scripts['test:bundle']).toBe('vitest run --config vitest.bundle.config.ts');
+    expect(scripts['test:performance:browser']).toBe(
+      'playwright test --config=playwright.performance.config.ts',
+    );
+  });
   it('教材承認待ちは通常の動作検証を止めず、公開前には必須として検査する', () => {
     const { scripts } = JSON.parse(
       readFileSync(new URL('../package.json', import.meta.url), 'utf8'),

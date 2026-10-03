@@ -10,7 +10,7 @@ import {
   verifyReviewLedger,
 } from '../content/verifyContentReview';
 import { canonicalJson } from '../../src/core/persistence/canonicalJson';
-import { exerciseRequirementIds } from '../../src/core/content/exerciseRequirementIds';
+import { javascriptLearnerContentSha256 } from './javascriptLessonEvaluation';
 import { resolveReleaseCourseContract } from './releaseCourseContracts';
 import { readJavascriptLearningInput } from './javascriptInputHashes';
 import {
@@ -67,7 +67,9 @@ export async function verifyJavascriptQualityEvidence(
     if (source === undefined) throw new Error(`JS品質記録がありません: ${name}`);
     return parse(source) as unknown;
   };
-  const { runtime: course } = await compileCourse(path.join(repositoryRoot, contract.sourceRoot));
+  const { runtime: course, assets } = await compileCourse(
+    path.join(repositoryRoot, contract.sourceRoot),
+  );
   const chapters = course.phases.flatMap(({ chapters }) => chapters);
   const lessons = chapters.flatMap(({ lessons }) => lessons);
   if (
@@ -115,34 +117,13 @@ export async function verifyJavascriptQualityEvidence(
   const expected: JavascriptLearningExpectations = {
     sourceCommit: approval.verifiedSourceCommit,
     canonicalDistSha256: approval.canonicalDistSha256,
-    revision: course.revision,
-    normalizedInputSha256: validity.finalInput.normalizedInputSha256,
-    draftCandidate: validity.draftCandidate,
     finalCandidate: validity.finalCandidate,
     lessons: lessons.map((lesson) => ({
       lessonId: lesson.id,
-      sourceHash: hashes.get(lesson.id) ?? '',
-      lessonKind: lesson.kind,
-      exercises: lesson.exercises.map((exercise) => ({
-        exerciseId: exercise.id,
-        completionRequirement:
-          lesson.completion.kind === 'capstone' ||
-          lesson.completion.requiredExerciseIds.includes(exercise.id)
-            ? 'required'
-            : 'optional',
-        requiredRequirementIds: exerciseRequirementIds(exercise),
-        scenarioIds: exercise.interactionScenarios?.map(({ id }) => id) ?? [],
-      })),
+      learnerContentSha256: javascriptLearnerContentSha256(lesson, course.glossary, assets),
     })),
   };
-  const learning = validateJavascriptAgentLearning(record('agentLearning'), expected);
-  if (
-    learning.draftSourceCommit !== validity.draftInput.sourceCommit ||
-    learning.draftCanonicalDistSha256 !== validity.draftCanonicalDistSha256 ||
-    learning.draftNormalizedInputSha256 !== validity.draftInput.normalizedInputSha256
-  ) {
-    throw new Error('模擬学習S/Ddraftとinput validityが一致しません');
-  }
+  validateJavascriptAgentLearning(record('agentLearning'), expected);
   validateJavascriptManualRecord(
     'visualReview',
     record('visualReview'),

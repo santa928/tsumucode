@@ -162,6 +162,8 @@ SourceやAssetを追加したら、同じ変更で`provenance.yaml`へ登録し�
 
 ## 品質ゲート
 
+新規セッションでJavaScript教材を扱う担当は、[通常公開基準（正本）](docs/quality/javascript-normal-release-policy.md)と[3ペルソナ評価runbook](docs/quality/javascript-agent-learning-runbook.md)を確認します。教材別台帳の保存先は`docs/quality/javascript-agent-learning.yaml`（現treeでは未作成）です。実記録があればrunbookの`release:learning-coverage`手順で確認済み／未確認を区別します。新規・未確認教材だけ3人で一度評価し、確認済み評価・原証拠・本人checkpointは新しいセッションでも引き継ぎます。
+
 作業中とpush/PRの`check`は、教材Compile、Lint、変更関連test、型検査を含むProduction Build、学習用Chunk分離を実行します。教材Reviewは通常Actionsの別ステップで警告・Summaryへ記録し、承認待ちでも動作検証を進めます。通常CIの成功は教材承認を意味せず、公開前の`check:release`ではReview失敗を必ず停止条件にします。testはGit差分とVitestのimport依存関係で選び、教材変更では動的読込のContent testも補います。依存・共通test設定の変更時だけ全Unit/Component/Content testへ拡大します。ローカルの差分基準は`HEAD`、CIではpush前のSHAまたはPRのbase SHAです。
 
 通常Actionsはブラウザ未導入のDocker stageを使い、5分以内を目標、8分を上限とします。新しいpushで古い開発Runを取消し、公開Runとは待ち行列を分離します。詳しい選択基準と削除したtestは[開発中の検証方針](docs/quality/development-testing.md)に記載しています。
@@ -173,10 +175,14 @@ SourceやAssetを追加したら、同じ変更で`provenance.yaml`へ登録し�
 
 明示deployの`check:release`では教材Reviewと全Unit/Component/Content testを実行します。Chromiumの機能E2Eと代表画像比較、Firefox/WebKitの代表cross-browser smoke、固定演習の実ブラウザ性能、配信量、Lighthouse Mobileもこの公開Runで実行します。重複する画像比較17ケースは`npm run test:visual:extended`で対象変更時に明示実行します。画像比較の自動retryは行いません。Runtime、Security、Browser互換性へ触れた変更では、作業中に変更面の代表Browser検証を追加します。
 
+公開Runは同じProduction buildのbundle容量/manifest/subpathとStatic Artifactを先に検査し、成功後にBrowser E2E・操作性能・Lighthouseへ進みます。単独の`test:performance`もbundle検査を先に行います。静的検査済みの公開Runでは`test:performance:browser`で重複を避けます。
+
 ```bash
 ./scripts/docker-compose.sh run --rm -e BASE_PATH=/repository-name/ app npm run build
+./scripts/docker-compose.sh run --rm -e BASE_PATH=/repository-name/ app npm run test:bundle
+./scripts/docker-compose.sh run --rm app npm run release:check -- --course-id html-css
 ./scripts/docker-compose.sh run --rm -e BASE_PATH=/repository-name/ app npm run test:e2e
-./scripts/docker-compose.sh run --rm -e BASE_PATH=/repository-name/ app npm run test:performance
+./scripts/docker-compose.sh run --rm -e BASE_PATH=/repository-name/ app npm run test:performance:browser
 ./scripts/docker-compose.sh run --rm -e BASE_PATH=/repository-name/ app npm run test:lighthouse
 ```
 
@@ -199,7 +205,7 @@ Smokeは、HTMLが参照する初期Asset、教材Catalog v3、Course Index、Le
 
 ## GitHub Pagesへの公開
 
-公開は`main`へのpushだけでは始まりません。HTML/CSSは既存5品質記録と`docs/quality/release-approval.yaml`、JavaScriptはJS専用7記録と`docs/quality/javascript-release-approval.yaml`へ対象を固定します。JSは全52 Lesson（46 standard・5 Guided・1 Capstone、14章・4 Phase、1,010分）と各役全54 Exercise操作（完了必須52＋任意Closure2）の独立3役模擬学習を要求します。実在初心者・自然な誤解頻度・物理実機の証明ではなく、HTML/CSSの真人5Checkpoint条件を代替しません。実証前の記録はdraftです。
+公開は`main`へのpushだけでは始まりません。HTML/CSSは既存5品質記録と`docs/quality/release-approval.yaml`、JavaScriptはJS専用7記録と`docs/quality/javascript-release-approval.yaml`へ対象を固定します。JSの全52 Lesson（46 standard・5 Guided・1 Capstone、14章・4 Phase、1,010分）の教材評価は、新規・未確認Lessonだけ独立3役で一度実施し、確認済みは保持します。実在初心者・自然な誤解頻度・物理実機の証明ではなく、HTML/CSSの真人5Checkpoint条件を代替しません。実証前の記録はdraftです。
 
 dispatch直前に最新main SHAを固定し、承認済みProduct commit P以降に品質記録・literal履歴以外のProduct変更がないworkflow head Mを確認します。`source_sha`はP、RunのheadはMへ結びます。自分のcommit SHAを同じcommit内の記録へ埋めません。`github-pages`の既存保護はmain限定で、2026-10-02確認時はrequired reviewer未設定です。Environment通過を記録し、取得していない独立Environment人承認を主張しません。
 
@@ -209,9 +215,9 @@ gh workflow run "TsumuCode Pages" --ref main -f course_id=javascript -f source_s
 
 `course_id`は`html-css`または`javascript`に限定し、選択で全site品質・閾値・Action pin・permissionsを減らしません。Source SHA、全canonical `dist/` digest、選択Course/Public Provenance hash、Chromium全E2E、Firefox/WebKit代表smoke、a11y、Security、Performance、静的Artifactを結び付けます。JSでも既存HTML continuityをquality-onlyで検査します。公開後はEnvironment通過、同じRunのActions Report、annotated tag、公開URLを実確認し、HTMLは`docs/quality/post-deploy/<revision>.yaml`、JSは`docs/quality/post-deploy/javascript/<revision>.yaml`へ記録してから履歴へ追記します。JSでは開始・再開・採点・保存・Export・別状態Importも個別に観測します。
 
-JSの3役は固定draft S/Ddraftで学習し、公開metadataだけを変更したP/Dfinalと区別します。Docker内の`release:input -- --source-sha <固定SHA> --output <新規path>`は入力manifestを保存し、原本を上書きしません。全JS教材・src・教材compiler・依存/build設定等をhashし、許可したCourse公開statusとfrontendへのJS required登録だけを正規化します。他の変更はaffected後続または全通し再検証が必要です。入力一致時も各役のP/DfinalでHome・Path・Library・直接開始・途中再開smokeを要求します。DdraftをDfinalへ書き換えません。private原本は公開せず、原report/操作証拠digestと独立原本照合reviewを固定します。
+JSの教材別評価は観測時の元Sourceと原証拠を保持し、全体commit/hash・test・設定・容量変更や新規セッションを理由に全コース再学習しません。可視教材内容が変わった場合は対象Lessonだけ未確認へ戻します。Docker内の`release:input -- --source-sha <固定SHA> --output <新規path>`は公開入力監査のmanifestを保存し、原本を上書きしません。最終候補のHome・Path・Library・直接開始・途中再開smokeは公開担当が一度実施し、現在のP/Dfinalへ別に結びます。private原本は公開せず、原report/操作証拠digestと独立原本照合reviewを固定します。詳細は[教材別台帳と公開binding](docs/quality/javascript-agent-learning-runbook.md#台帳と公開binding)を参照してください。
 
-S/Pの候補観測は公開前の実loopback HTTP URLを記録します。`inputValidity`の`draftCandidate`と`finalCandidate`へroot観測のrun/source/D/config/helper/原証拠hashを別々に固定し、各役と最終smokeの`candidateRunId`/URLを照合します。root観測原本の独立照合も必要です。未配信Pを本番HTTPS観測済みとして記録しません。公開後は従来のPages HTTPS/Run/Artifact/実操作記録を要求します。
+S/Pの候補観測は公開前の実loopback HTTP URLを記録します。`inputValidity`の`draftCandidate`と`finalCandidate`へroot観測のrun/source/D/config/helper/原証拠hashを別々に固定し、最終smokeの`candidateRunId`/URLを照合します。root観測原本の独立照合も必要です。未配信Pを本番HTTPS観測済みとして記録しません。公開後は従来のPages HTTPS/Run/Artifact/実操作記録を要求します。
 
 学習入力scope v2は実`compose.yaml`/`compose.learning.yaml`/Dockerfile/実行helper/固定検証設定と追加・削除も含めます。JSのP→M/candidate除外/promotion/workflowは、選択JSの7記録・approval・history・対象revisionのpostdeployという同じliteral集合へ結合します。合成bundle更新はpromotionだけに限定し、Product hashの元bundle overrideで検査します。未登録`docs/quality/`、他Course、私有raw log、`docs/superpowers/`はJSの除外にしません。HTML旧契約は維持します。
 

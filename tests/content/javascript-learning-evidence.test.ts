@@ -7,12 +7,12 @@ import {
 } from '../../scripts/release/javascriptInputHashes';
 import {
   JAVASCRIPT_FINAL_SMOKES,
-  JAVASCRIPT_REQUIRED_JOURNEYS,
   validateJavascriptAgentLearning,
   validateJavascriptInputValidity,
   type JavascriptAgentLearningRecord,
   type JavascriptLearningExpectations,
   type JavascriptCandidateObservation,
+  getJavascriptLessonEvaluationCoverage,
 } from '../../scripts/release/javascriptQualityRecords';
 
 const source = 'a'.repeat(40);
@@ -61,169 +61,110 @@ function candidate(phase: 'draft-learning' | 'final-candidate'): JavascriptCandi
   };
 }
 
-/** unit専用の52/54 exact集合はactual compiled Courseからの取得を別に検証する。 */
+/** 教材単位の小さいUnit集合。実Courseの52教材数は公開Gateで別に検査する。 */
 function expectations(): JavascriptLearningExpectations {
   return {
     sourceCommit: finalSource,
     canonicalDistSha256: finalDist,
-    draftCandidate: candidate('draft-learning'),
     finalCandidate: candidate('final-candidate'),
-    revision: '2026-10-02.99',
-    normalizedInputSha256: draftInput.normalizedInputSha256,
-    lessons: Array.from({ length: 52 }, (_, index) => ({
-      lessonId: `lesson-${String(index)}`,
-      sourceHash: hash,
-      lessonKind:
-        index < 46
-          ? ('standard' as const)
-          : index < 51
-            ? ('guided-project' as const)
-            : ('capstone' as const),
-      exercises: [
-        {
-          exerciseId: `exercise-${String(index)}`,
-          completionRequirement: 'required' as const,
-          requiredRequirementIds: [`requirement-${String(index)}`],
-          scenarioIds: index === 51 ? ['scenario-1', 'scenario-2', 'scenario-3', 'scenario-4'] : [],
-        },
-        ...(index === 0
-          ? ['javascript-ch03-l05-e02', 'javascript-ch03-l05-e03'].map((exerciseId) => ({
-              exerciseId,
-              completionRequirement: 'optional' as const,
-              requiredRequirementIds: [exerciseId + '-rule'],
-              scenarioIds: [],
-            }))
-          : []),
-      ],
-    })),
+    lessons: [
+      { lessonId: 'lesson-one', learnerContentSha256: hash },
+      { lessonId: 'lesson-two', learnerContentSha256: hash },
+    ],
   };
 }
 
-/** private原本を模したunit fixture。fake approvedはこのtest内だけに閉じる。 */
+/** 元の異なるSource/途中保存状態の原本を模すUnit fixture。実承認へ転用しない。 */
 function record(): JavascriptAgentLearningRecord {
-  const expected = expectations();
-  const operation = (id: string, download = false) => ({
+  const operation = (id: string, final = false) => ({
     operationId: id,
-    intentAt: '2026-10-02T10:00:00Z',
-    completedAt: '2026-10-02T10:00:01Z',
-    expected: '操作前の期待',
-    actual: '実際の観測',
+    intentAt: final ? '2026-10-02T11:00:02Z' : '2026-10-01T10:00:00Z',
+    completedAt: final ? '2026-10-02T11:00:03Z' : '2026-10-01T10:00:01Z',
+    expected: '表示教材から予測した内容',
+    actual: '読解/操作の実観測',
     status: 'passed' as const,
     evidence: [
-      { evidenceId: `${id}-dom`, kind: 'dom' as const, sha256: hash, bytes: 10 },
-      { evidenceId: `${id}-log`, kind: 'log' as const, sha256: hash, bytes: 10 },
-      ...(download
-        ? [{ evidenceId: `${id}-download`, kind: 'download' as const, sha256: hash, bytes: 10 }]
-        : []),
+      { evidenceId: id + '-dom', kind: 'dom' as const, sha256: hash, bytes: 10 },
+      { evidenceId: id + '-log', kind: 'log' as const, sha256: hash, bytes: 10 },
     ],
   });
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     courseId: 'javascript',
     releaseStatus: 'approved',
     verifiedSourceCommit: finalSource,
     canonicalDistSha256: finalDist,
     evaluationKind: 'agent-simulated-learning',
-    previousAcceptance: 'one-real-javascript-beginner-entire-course',
-    replacementAcceptance: 'three-independent-agents-each-entire-52-lessons-all-54-exercises',
-    authorizationReference: 'unit-only',
-    replacementReason: 'unit-only',
+    replacementAcceptance: 'three-independent-personas-once-per-new-lesson',
+    authorizationReference: '2026-10-03T15:57+09:00-unit-only',
     limits: {
       realHumanNovice: 'not-demonstrated',
       naturalMisunderstandingFrequency: 'not-demonstrated',
       physicalDevice: 'not-demonstrated',
     },
-    draftSourceCommit: source,
-    draftCanonicalDistSha256: hash,
-    draftCourseRevision: expected.revision,
-    draftNormalizedInputSha256: expected.normalizedInputSha256,
-    completionRequiredExerciseCount: 52,
-    optionalExerciseCount: 2,
-    evaluatedExerciseCountPerRole: 54,
-    roles: (['JS-A', 'JS-B', 'JS-C'] as const).map((roleId, roleIndex) => ({
-      roleId,
-      persona: roleId,
-      identity: {
-        actorId: `${roleId}-actor`,
-        sessionId: `${roleId}-session`,
-        browserContextId: `${roleId}-context`,
-        storageNamespace: `${roleId}-storage`,
-        freshImportContextId: `${roleId}-import`,
-        model: 'gpt-6.1-sol',
-        reasoningEffort: 'high',
-        startedEmpty: true,
-        copiedState: false,
-        solutionImplementationFixturePeekBeforeFirstAttempt: false,
-        otherActorReportPeekBeforeCompletion: false,
-        injectedPassingState: false,
-      },
-      startedAt: '2026-10-02T10:00:00Z',
-      completedAt: '2026-10-02T11:00:00Z',
-      browser: 'Chromium',
-      viewport: { width: 1280, height: 720 },
-      pageUrl,
-      candidateRunId: expected.draftCandidate.runId,
-      originalReport: {
-        evidenceId: `${roleId}-report`,
-        kind: 'report',
-        sha256: String(roleIndex + 1).repeat(64),
-        bytes: 10,
-      },
-      lessons: expected.lessons.map((lesson) => ({
+    lessonEvaluations: expectations().lessons.flatMap((lesson) =>
+      (['JS-A', 'JS-B', 'JS-C'] as const).map((roleId, index) => ({
+        evaluationId: roleId + '-' + lesson.lessonId,
         lessonId: lesson.lessonId,
-        sourceHash: lesson.sourceHash,
-        lessonKind: lesson.lessonKind,
-        currentComplete: true,
-        reading: operation(`${roleId}-${lesson.lessonId}-read`),
-        exercises: lesson.exercises.map((exercise) => ({
-          exerciseId: exercise.exerciseId,
-          completionRequirement: exercise.completionRequirement,
-          gradingResult: 'pass',
-          passedRequirementIds: [...exercise.requiredRequirementIds],
-          executedScenarioIds: [...exercise.scenarioIds],
-          operation: operation(`${roleId}-${exercise.exerciseId}`),
-        })),
-      })),
-      journeys: JAVASCRIPT_REQUIRED_JOURNEYS.map((journeyId) => ({
-        journeyId,
-        operation: operation(`${roleId}-${journeyId}`, journeyId === 'export-fresh-import-resume'),
-      })),
-      finalSmokes: JAVASCRIPT_FINAL_SMOKES.map((smokeId) => ({
-        smokeId,
-        sourceCommit: finalSource,
-        canonicalDistSha256: finalDist,
-        pageUrl,
-        candidateRunId: expected.finalCandidate.runId,
-        operation: {
-          ...operation(`${roleId}-${smokeId}`),
-          intentAt: '2026-10-02T11:00:01Z',
-          completedAt: '2026-10-02T11:00:02Z',
+        roleId,
+        persona: roleId,
+        sourceCommit: source,
+        sourceLessonHash: hash,
+        learnerContentSha256: lesson.learnerContentSha256,
+        identity: {
+          actorId: roleId + '-actor',
+          sessionId: roleId + '-session',
+          browserContextId: roleId + '-context',
+          storageNamespace: roleId + '-storage',
+          model: 'gpt-6.1-sol' as const,
+          reasoningEffort: 'high' as const,
+          copiedState: false as const,
+          solutionImplementationFixturePeekBeforeFirstAttempt: false as const,
+          otherActorReportPeekBeforeCompletion: false as const,
+          injectedPassingState: false as const,
         },
+        reading: operation(roleId + '-' + lesson.lessonId + '-reading'),
+        interaction: operation(roleId + '-' + lesson.lessonId + '-interaction'),
+        originalReport: {
+          evidenceId: roleId + '-report',
+          kind: 'report' as const,
+          sha256: String(index + 1).repeat(64),
+          bytes: 10,
+        },
+        checkpoint: {
+          evidenceId: roleId + '-checkpoint',
+          kind: 'download' as const,
+          sha256: hash,
+          bytes: 10,
+        },
+        unresolvedCritical: 0,
+        unresolvedImportant: 0,
+        requiredUnconfirmed: 0,
       })),
-      unresolvedCritical: 0,
-      unresolvedImportant: 0,
-      requiredUnconfirmed: 0,
+    ),
+    finalSmokes: JAVASCRIPT_FINAL_SMOKES.map((smokeId) => ({
+      smokeId,
+      performedBy: 'release-operator-unit-only',
+      sourceCommit: finalSource,
+      canonicalDistSha256: finalDist,
+      pageUrl,
+      candidateRunId: candidate('final-candidate').runId,
+      operation: operation(smokeId, true),
     })),
     independentOriginalEvidenceReview: {
       reviewerId: 'independent-reviewer',
       reviewedAt: '2026-10-02T12:00:00Z',
       status: 'passed',
       originalDigestsVerified: true,
-      identitiesAndFreshStatesVerified: true,
+      learnerContentVerified: true,
+      identitiesVerified: true,
       intentActualEvidenceVerified: true,
-      candidateRootObservationDigestsVerified: true,
-      candidateObservations: [expected.draftCandidate, expected.finalCandidate].map(
-        ({ phase, runId, rootObservationEvidenceSha256 }) => ({
-          phase,
-          runId,
-          sha256: rootObservationEvidenceSha256,
-        }),
-      ),
-      roleReports: ['JS-A', 'JS-B', 'JS-C'].map((roleId, index) => ({
-        roleId: roleId as 'JS-A' | 'JS-B' | 'JS-C',
-        sha256: String(index + 1).repeat(64),
-      })),
+      reviewedReportSha256s: ['1', '2', '3'].map((digit) => digit.repeat(64)),
+      finalCandidateObservationSha256: hash,
     },
+    unresolvedCritical: 0,
+    unresolvedImportant: 0,
+    requiredUnconfirmed: 0,
   };
 }
 
@@ -281,115 +222,111 @@ describe('JS draft/final learning input', () => {
   });
 });
 
-describe('JS independent all-course evidence', () => {
-  it('各役52/54と全横断・final smoke・別原本reviewを受理するunit fixture', () => {
-    expect(validateJavascriptAgentLearning(record(), expectations()).roles).toHaveLength(3);
+describe('JS教材単位の3persona評価', () => {
+  it('古い別Source/保存状態の確認済み教材を全体hash/distの違いで再開始しない', () => {
+    const input = record();
+    expect(validateJavascriptAgentLearning(input, expectations()).lessonEvaluations).toHaveLength(
+      6,
+    );
+    expect(input.lessonEvaluations[0]!.sourceCommit).not.toBe(input.verifiedSourceCommit);
+    expect(input.lessonEvaluations[0]!.checkpoint).toBeDefined();
+    expect(getJavascriptLessonEvaluationCoverage(input, expectations().lessons).pending).toEqual(
+      [],
+    );
+  });
+  it('新教材を追加すると既存教材を保全し、新教材3役だけを未確認として返す', () => {
+    const input = record();
+    const lessons = [
+      ...expectations().lessons,
+      { lessonId: 'new-lesson', learnerContentSha256: finalDist },
+    ];
+    expect(getJavascriptLessonEvaluationCoverage(input, lessons)).toMatchObject({
+      confirmedLessonIds: ['lesson-one', 'lesson-two'],
+      pending: [{ lessonId: 'new-lesson', missingRoleIds: ['JS-A', 'JS-B', 'JS-C'] }],
+    });
+    expect(input.lessonEvaluations).toHaveLength(6);
+    expect(() => validateJavascriptAgentLearning(input, { ...expectations(), lessons })).toThrow(
+      '新規教材',
+    );
+  });
+  it('部分記録を実施済みの行だけ再利用し、未操作を成功へ補完しない', () => {
+    const input = record();
+    input.releaseStatus = 'draft';
+    input.lessonEvaluations[1]!.interaction.status = 'pending';
+    input.lessonEvaluations = input.lessonEvaluations.slice(0, 3);
+    expect(getJavascriptLessonEvaluationCoverage(input, expectations().lessons).pending).toEqual([
+      { lessonId: 'lesson-one', missingRoleIds: ['JS-B'] },
+      { lessonId: 'lesson-two', missingRoleIds: ['JS-A', 'JS-B', 'JS-C'] },
+    ]);
+  });
+  it('教材内容が変わった対象だけ未確認へ戻し、古い原本も保持する', () => {
+    const input = record();
+    const lessons = expectations().lessons.map((lesson, index) => ({
+      ...lesson,
+      learnerContentSha256: index === 0 ? finalDist : hash,
+    }));
+    expect(getJavascriptLessonEvaluationCoverage(input, lessons)).toMatchObject({
+      confirmedLessonIds: ['lesson-two'],
+      pending: [{ lessonId: 'lesson-one', missingRoleIds: ['JS-A', 'JS-B', 'JS-C'] }],
+    });
+    expect(input.lessonEvaluations[0]!.learnerContentSha256).toBe(hash);
   });
   it.each([
     'missing-role',
-    'duplicate-lesson',
-    'missing-optional',
-    'stale-hash',
-    'copied-state',
-    'shared-context',
-    'missing-journey',
-    'missing-download',
-    'wrong-final',
+    'shared-actor',
+    'shared-storage',
+    'same-report',
     'missing-log',
+    'unreviewed',
+    'reviewer-is-actor',
+    'missing-report-binding',
+    'old-final-smoke',
+    'missing-final-smoke',
     'unconfirmed',
-    'unreviewed-original',
-    'draft',
-    'missing-scenario',
-    'missing-requirement',
-    'incomplete-lesson',
-    'pending-grade',
-    'wrong-draft-url',
-    'wrong-draft-run',
-    'wrong-final-run',
-    'public-url-before-deploy',
-    'unreviewed-root-candidate',
-    'stale-root-candidate-digest',
-  ])('%sを完了に数えない', (failure) => {
+    'duplicate-evaluation',
+    'wrong-candidate',
+    'late-intent',
+    'early-review',
+    'copied-operation',
+    'conflicting-evidence',
+    'smoke-self-review',
+    'unverified-learner-content',
+  ])('%sを教材評価合格へ読み替えない', (fault) => {
     const input = record();
-    const role = input.roles[0]!;
-    switch (failure) {
-      case 'missing-role':
-        input.roles.pop();
-        break;
-      case 'duplicate-lesson':
-        role.lessons[1]!.lessonId = role.lessons[0]!.lessonId;
-        break;
-      case 'missing-optional':
-        role.lessons[0]!.exercises.pop();
-        break;
-      case 'stale-hash':
-        role.lessons[0]!.sourceHash = finalDist;
-        break;
-      case 'copied-state':
-        role.identity.copiedState = true;
-        break;
-      case 'shared-context':
-        role.identity.freshImportContextId = input.roles[1]!.identity.browserContextId;
-        break;
-      case 'missing-journey':
-        role.journeys.pop();
-        break;
-      case 'missing-download':
-        role.journeys
-          .find(({ journeyId }) => journeyId === 'export-fresh-import-resume')!
-          .operation.evidence.pop();
-        break;
-      case 'wrong-final':
-        role.finalSmokes[0]!.sourceCommit = source;
-        break;
-      case 'missing-log':
-        role.lessons[0]!.reading.evidence.pop();
-        break;
-      case 'unconfirmed':
-        role.requiredUnconfirmed = 1;
-        break;
-      case 'unreviewed-original':
-        input.independentOriginalEvidenceReview.originalDigestsVerified = false;
-        break;
-      case 'draft':
-        input.releaseStatus = 'draft';
-        break;
-      case 'missing-scenario':
-        role.lessons[51]!.exercises[0]!.executedScenarioIds.pop();
-        break;
-      case 'missing-requirement':
-        role.lessons[0]!.exercises[0]!.passedRequirementIds.pop();
-        break;
-      case 'incomplete-lesson':
-        role.lessons[0]!.currentComplete = false;
-        break;
-      case 'pending-grade':
-        role.lessons[0]!.exercises[0]!.gradingResult = 'pending';
-        break;
-      case 'wrong-draft-url':
-        role.pageUrl = 'http://127.0.0.1:4214/tsumucode/';
-        break;
-      case 'wrong-draft-run':
-        role.candidateRunId = 'other-run';
-        break;
-      case 'wrong-final-run':
-        role.finalSmokes[0]!.candidateRunId = 'other-run';
-        break;
-      case 'public-url-before-deploy':
-        role.finalSmokes[0]!.pageUrl = 'https://santa928.github.io/tsumucode/';
-        break;
-      case 'unreviewed-root-candidate':
-        input.independentOriginalEvidenceReview.candidateRootObservationDigestsVerified = false;
-        break;
-      case 'stale-root-candidate-digest':
-        input.independentOriginalEvidenceReview.candidateObservations[0]!.sha256 = finalDist;
-        break;
+    const row = input.lessonEvaluations[0]!;
+    if (fault === 'missing-role') input.lessonEvaluations.splice(0, 1);
+    if (fault === 'copied-operation')
+      input.lessonEvaluations[3]!.reading = structuredClone(row.reading);
+    if (fault === 'conflicting-evidence') {
+      input.lessonEvaluations[3]!.reading.evidence[0]!.evidenceId =
+        row.reading.evidence[0]!.evidenceId;
+      input.lessonEvaluations[3]!.reading.evidence[0]!.sha256 = finalDist;
     }
-    expect(() => validateJavascriptAgentLearning(input, expectations())).toThrow();
-  });
-  it('操作後に期待を後付けした記録を拒否する', () => {
-    const input = record();
-    input.roles[0]!.lessons[0]!.reading.intentAt = '2026-10-02T12:00:00Z';
+    if (fault === 'smoke-self-review')
+      input.independentOriginalEvidenceReview.reviewerId = input.finalSmokes[0]!.performedBy;
+    if (fault === 'unverified-learner-content')
+      input.independentOriginalEvidenceReview.learnerContentVerified = false;
+    if (fault === 'shared-actor')
+      row.identity.actorId = input.lessonEvaluations[1]!.identity.actorId;
+    if (fault === 'shared-storage')
+      row.identity.storageNamespace = input.lessonEvaluations[1]!.identity.storageNamespace;
+    if (fault === 'same-report')
+      row.originalReport.sha256 = input.lessonEvaluations[1]!.originalReport.sha256;
+    if (fault === 'missing-log') row.interaction.evidence = row.interaction.evidence.slice(0, 1);
+    if (fault === 'unreviewed')
+      input.independentOriginalEvidenceReview.originalDigestsVerified = false;
+    if (fault === 'reviewer-is-actor')
+      input.independentOriginalEvidenceReview.reviewerId = row.identity.actorId;
+    if (fault === 'missing-report-binding')
+      input.independentOriginalEvidenceReview.reviewedReportSha256s = [];
+    if (fault === 'old-final-smoke') input.finalSmokes[0]!.sourceCommit = source;
+    if (fault === 'missing-final-smoke') input.finalSmokes.pop();
+    if (fault === 'unconfirmed') row.requiredUnconfirmed = 1;
+    if (fault === 'duplicate-evaluation') input.lessonEvaluations.push(structuredClone(row));
+    if (fault === 'wrong-candidate') input.verifiedSourceCommit = source;
+    if (fault === 'late-intent') row.reading.intentAt = '2026-10-03T12:00:00Z';
+    if (fault === 'early-review')
+      input.independentOriginalEvidenceReview.reviewedAt = '2026-10-02T10:00:00Z';
     expect(() => validateJavascriptAgentLearning(input, expectations())).toThrow();
   });
   it('input validityはS/DdraftとP/Dfinalを別に結ぶ', () => {
@@ -415,44 +352,6 @@ describe('JS independent all-course evidence', () => {
     expect(() => validateJavascriptInputValidity({ ...input, metadataChanges: [] })).toThrow();
     expect(() =>
       validateJavascriptInputValidity({ ...input, verifiedSourceCommit: source }),
-    ).toThrow();
-  });
-
-  it('S/P実local URLはroot観測bindingと一致したときだけ受理し本番HTTPSとは分ける', () => {
-    const input = record();
-    const expected = expectations();
-    for (const role of input.roles) role.pageUrl = 'http://127.0.0.1:4214/tsumucode/';
-    expect(() => validateJavascriptAgentLearning(input, expected)).toThrow();
-    const actualDraftCandidate = {
-      ...expected.draftCandidate,
-      pageUrl: 'http://127.0.0.1:4214/tsumucode/',
-    };
-    expect(() =>
-      validateJavascriptAgentLearning(input, { ...expected, draftCandidate: actualDraftCandidate }),
-    ).not.toThrow();
-    for (const role of input.roles)
-      for (const smoke of role.finalSmokes) smoke.pageUrl = 'http://127.0.0.1:4292/tsumucode/';
-    expect(() =>
-      validateJavascriptAgentLearning(input, { ...expected, draftCandidate: actualDraftCandidate }),
-    ).toThrow();
-    expect(() =>
-      validateJavascriptAgentLearning(input, {
-        ...expected,
-        draftCandidate: actualDraftCandidate,
-        finalCandidate: { ...expected.finalCandidate, pageUrl: 'http://127.0.0.1:4292/tsumucode/' },
-      }),
-    ).not.toThrow();
-    expect(() =>
-      validateJavascriptAgentLearning(record(), {
-        ...expected,
-        finalCandidate: { ...expected.finalCandidate, sourceCommit: source },
-      }),
-    ).toThrow();
-    expect(() =>
-      validateJavascriptAgentLearning(record(), {
-        ...expected,
-        finalCandidate: { ...expected.finalCandidate, observedAt: '2026-10-02T10:00:00Z' },
-      }),
     ).toThrow();
   });
 });
