@@ -10,7 +10,10 @@ import {
   verifyReviewLedger,
 } from '../content/verifyContentReview';
 import { canonicalJson } from '../../src/core/persistence/canonicalJson';
-import { javascriptLearnerContentSha256 } from './javascriptLessonEvaluation';
+import {
+  javascriptLearnerContentSha256,
+  javascriptLearnerContentSha256V1,
+} from './javascriptLessonEvaluation';
 import { resolveReleaseCourseContract } from './releaseCourseContracts';
 import { readJavascriptLearningInput } from './javascriptInputHashes';
 import {
@@ -18,6 +21,7 @@ import {
   validateJavascriptInputValidity,
   validateJavascriptManualRecord,
   JavascriptFinalCodeReviewSchema,
+  JavascriptReleaseChecklistSchema,
   JAVASCRIPT_REQUIRED_JOURNEYS,
   type JavascriptLearningExpectations,
 } from './javascriptQualityRecords';
@@ -35,6 +39,78 @@ export const JAVASCRIPT_REQUIRED_VISUAL_SCREENS = [
   'javascript-guided-project',
   'javascript-capstone',
 ].flatMap((screen) => ['1280x720', '390x844'].map((viewport) => `${screen}@${viewport}`));
+
+/** 事前検査済みの記録でも、既存全品質CI成功前の配信を許さない。 */
+export function assertJavascriptFinalQualityWorkflow(source: string): void {
+  const workflow = parse(source) as {
+    jobs?: Record<
+      string,
+      {
+        needs?: unknown;
+        if?: unknown;
+        'continue-on-error'?: unknown;
+        steps?: { name?: string; run?: string; if?: unknown; 'continue-on-error'?: unknown }[];
+      }
+    >;
+  };
+  const required = new Map([
+    [
+      'Release quality',
+      './scripts/docker-compose.sh run --rm -e BASE_PATH app npm run check:release',
+    ],
+    [
+      'Bundle artifact preflight',
+      './scripts/docker-compose.sh run --rm -e BASE_PATH app npm run test:bundle',
+    ],
+    [
+      'Static artifact gate',
+      './scripts/docker-compose.sh run --rm app npm run release:check -- --course-id "$RELEASE_COURSE_ID"',
+    ],
+    [
+      'Chromium full and cross-browser smoke',
+      './scripts/docker-compose.sh run --rm -e BASE_PATH app npm run test:e2e',
+    ],
+    [
+      'Performance budgets',
+      './scripts/docker-compose.sh run --rm -e BASE_PATH app npm run test:performance:browser',
+    ],
+    [
+      'Lighthouse budgets',
+      './scripts/docker-compose.sh run --rm -e BASE_PATH app npm run test:lighthouse',
+    ],
+    [
+      'Bind candidate Artifact to approval',
+      './scripts/docker-compose.sh run --rm app npm run release:approval -- --artifact --course-id "$RELEASE_COURSE_ID" --actual-output /workspace/.release-hashes',
+    ],
+  ]);
+  const quality = workflow.jobs?.quality;
+  const deploy = workflow.jobs?.deploy;
+  const dispatch =
+    "github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'";
+  if (
+    !quality ||
+    !deploy ||
+    quality.if !== dispatch ||
+    deploy.if !== dispatch ||
+    quality['continue-on-error'] !== undefined
+  )
+    throw new Error('最終品質CIとmain配信条件が不正です');
+  if (!Array.isArray(deploy.needs) || !deploy.needs.includes('quality'))
+    throw new Error('最終品質CI前の配信を許可できません');
+  for (const [name, command] of required) {
+    const step = quality.steps?.find((step) => step.name === name);
+    if (
+      step?.run?.trim().replace(/\s+/gu, ' ') !== command ||
+      step['continue-on-error'] !== undefined ||
+      (step.if !== undefined &&
+        !(
+          name === 'Bind candidate Artifact to approval' &&
+          step.if === "needs.resolve.outputs.release_mode == 'candidate'"
+        ))
+    )
+      throw new Error('必須の最終品質CIが不正です: ' + name);
+  }
+}
 
 /** compileで消費した実Lesson directoryをID/hash集合へ結び、未読/staleを拒否する。 */
 async function lessonSourceHashes(courseRoot: string): Promise<ReadonlyMap<string, string>> {
@@ -118,9 +194,14 @@ export async function verifyJavascriptQualityEvidence(
     sourceCommit: approval.verifiedSourceCommit,
     canonicalDistSha256: approval.canonicalDistSha256,
     finalCandidate: validity.finalCandidate,
+    requiredLessonIds: contract.personaAcceptanceLessonIds,
     lessons: lessons.map((lesson) => ({
       lessonId: lesson.id,
       learnerContentSha256: javascriptLearnerContentSha256(lesson, course.glossary, assets),
+      legacyFingerprint: {
+        sourceLessonHash: hashes.get(lesson.id)!,
+        learnerContentSha256: javascriptLearnerContentSha256V1(lesson, course.glossary, assets),
+      },
     })),
   };
   validateJavascriptAgentLearning(record('agentLearning'), expected);
@@ -135,6 +216,12 @@ export async function verifyJavascriptQualityEvidence(
     JAVASCRIPT_REQUIRED_JOURNEYS,
   );
   validateJavascriptManualRecord('releaseChecklist', record('releaseChecklist'));
+  const checklist = JavascriptReleaseChecklistSchema.parse(record('releaseChecklist'));
+  if (checklist.automatedGatesStatus === 'preflight-passed-final-ci-required') {
+    assertJavascriptFinalQualityWorkflow(
+      await readFile(path.join(repositoryRoot, '.github/workflows/pages.yml'), 'utf8'),
+    );
+  }
   validateJavascriptManualRecord('finalCodeReview', record('finalCodeReview'));
   const codeReview = JavascriptFinalCodeReviewSchema.parse(record('finalCodeReview'));
   if (codeReview.productTreeSha256 !== approval.candidateTreeSha256)

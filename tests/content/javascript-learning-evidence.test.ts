@@ -1,5 +1,8 @@
 // @vitest-environment node
+import { readFile } from 'node:fs/promises';
+import { parse, stringify } from 'yaml';
 import { describe, expect, it } from 'vitest';
+import { assertJavascriptFinalQualityWorkflow } from '../../scripts/release/verifyJavascriptQualityEvidence';
 import {
   createJavascriptInputManifest,
   compareJavascriptLearningInputs,
@@ -13,6 +16,7 @@ import {
   type JavascriptLearningExpectations,
   type JavascriptCandidateObservation,
   getJavascriptLessonEvaluationCoverage,
+  validateJavascriptManualRecord,
 } from '../../scripts/release/javascriptQualityRecords';
 
 const source = 'a'.repeat(40);
@@ -271,6 +275,52 @@ describe('JS教材単位の3persona評価', () => {
     });
     expect(input.lessonEvaluations[0]!.learnerContentSha256).toBe(hash);
   });
+  it('本人承認の対象だけ必須にし、対象外の未確認を正確に保持する', () => {
+    const input = record();
+    const expected = expectations();
+    input.lessonEvaluations = input.lessonEvaluations.slice(0, 3);
+    input.acceptanceScope = {
+      authorizationReference: '2026-10-03T19:13+09:00-unit-only',
+      requiredLessonIds: ['lesson-one'],
+      pendingOutsideScope: [{ lessonId: 'lesson-two', missingRoleIds: ['JS-A', 'JS-B', 'JS-C'] }],
+    };
+    const scoped = { ...expected, requiredLessonIds: ['lesson-one'] };
+    expect(validateJavascriptAgentLearning(input, scoped).lessonEvaluations).toHaveLength(3);
+    expect(() => validateJavascriptAgentLearning(input, expected)).toThrow('新規教材');
+    input.acceptanceScope.pendingOutsideScope = [];
+    expect(() => validateJavascriptAgentLearning(input, scoped)).toThrow('対象外');
+  });
+  it('記録が必須対象を削ったり、必須3役を省いたりしても通さない', () => {
+    const input = record();
+    const scoped = { ...expectations(), requiredLessonIds: ['lesson-one'] };
+    expect(() => validateJavascriptAgentLearning(input, scoped)).toThrow('受入範囲');
+    input.acceptanceScope = {
+      authorizationReference: 'unit-only',
+      requiredLessonIds: ['lesson-two'],
+      pendingOutsideScope: [],
+    };
+    expect(() => validateJavascriptAgentLearning(input, scoped)).toThrow('受入範囲');
+    input.acceptanceScope.requiredLessonIds = ['lesson-one'];
+    input.lessonEvaluations.splice(0, 1);
+    expect(() => validateJavascriptAgentLearning(input, scoped)).toThrow('新規教材');
+  });
+  it('旧指紋は元教材全Sourceと旧projectionが両方同じときだけ保持する', () => {
+    const input = record();
+    const lessons = expectations().lessons.map((lesson) => ({
+      ...lesson,
+      learnerContentSha256: finalDist,
+      legacyFingerprint: { sourceLessonHash: hash, learnerContentSha256: hash },
+    }));
+    expect(getJavascriptLessonEvaluationCoverage(input, lessons).pending).toEqual([]);
+    lessons[0]!.legacyFingerprint.sourceLessonHash = finalDist;
+    expect(getJavascriptLessonEvaluationCoverage(input, lessons).pending).toEqual([
+      { lessonId: 'lesson-one', missingRoleIds: ['JS-A', 'JS-B', 'JS-C'] },
+    ]);
+    lessons[0]!.legacyFingerprint.sourceLessonHash = hash;
+    lessons[0]!.legacyFingerprint.learnerContentSha256 = finalDist;
+    expect(getJavascriptLessonEvaluationCoverage(input, lessons).pending).toHaveLength(1);
+    expect(input.lessonEvaluations[0]!.learnerContentSha256).toBe(hash);
+  });
   it.each([
     'missing-role',
     'shared-actor',
@@ -354,4 +404,94 @@ describe('JS教材単位の3persona評価', () => {
       validateJavascriptInputValidity({ ...input, verifiedSourceCommit: source }),
     ).toThrow();
   });
+});
+
+describe('配信前の自動検査状態の正直な区別', () => {
+  it('事前検査済みの宣言は最終Pages品質CI必須policyを伴い、pendingは通さない', () => {
+    const input = {
+      schemaVersion: 2,
+      courseId: 'javascript',
+      releaseStatus: 'approved',
+      verifiedSourceCommit: finalSource,
+      canonicalDistSha256: finalDist,
+      checklistScope: 'pre-deploy',
+      postDeployVerificationPolicy: 'revision-record',
+      automatedGatesStatus: 'preflight-passed-final-ci-required',
+      finalAutomatedGatePolicy: 'required-pages-quality-before-deploy',
+      manualGatesStatus: 'passed',
+      pendingItems: 0,
+      failedItems: 0,
+      allSiteQualityScope: 'unchanged',
+      thresholds: 'unchanged',
+      htmlHumanAcceptance: 'separate-not-substituted',
+      unresolvedCritical: 0,
+      unresolvedImportant: 0,
+      requiredUnconfirmed: 0,
+    };
+    expect(() => {
+      validateJavascriptManualRecord('releaseChecklist', input);
+    }).not.toThrow();
+    expect(() => {
+      validateJavascriptManualRecord('releaseChecklist', {
+        ...input,
+        finalAutomatedGatePolicy: undefined,
+      });
+    }).toThrow();
+    expect(() => {
+      validateJavascriptManualRecord('releaseChecklist', {
+        ...input,
+        automatedGatesStatus: 'pending',
+      });
+    }).toThrow();
+  });
+});
+
+it('実workflowの必須品質Gateの省略・失敗許容・deploy依存削除を拒否する', async () => {
+  const source = await readFile('.github/workflows/pages.yml', 'utf8');
+  expect(() => {
+    assertJavascriptFinalQualityWorkflow(source);
+  }).not.toThrow();
+  const workflow = parse(source) as {
+    jobs: {
+      quality: { steps: { name: string; run?: string; 'continue-on-error'?: boolean }[] };
+      deploy: { needs: string[] };
+    };
+  };
+  const skipped = structuredClone(workflow);
+  skipped.jobs.quality.steps = skipped.jobs.quality.steps.filter(
+    ({ name }) => name !== 'Chromium full and cross-browser smoke',
+  );
+  expect(() => {
+    assertJavascriptFinalQualityWorkflow(stringify(skipped));
+  }).toThrow('必須');
+  const allowed = structuredClone(workflow);
+  allowed.jobs.quality.steps.find(({ name }) => name === 'Release quality')!['continue-on-error'] =
+    true;
+  expect(() => {
+    assertJavascriptFinalQualityWorkflow(stringify(allowed));
+  }).toThrow('必須');
+  const premature = structuredClone(workflow);
+  premature.jobs.deploy.needs = ['resolve'];
+  expect(() => {
+    assertJavascriptFinalQualityWorkflow(stringify(premature));
+  }).toThrow('品質CI前');
+});
+
+it('同名stepのecho・失敗握り潰し・Artifact検査の差し替えを拒否する', async () => {
+  const source = await readFile('.github/workflows/pages.yml', 'utf8');
+  const original = parse(source) as {
+    jobs: { quality: { steps: { name: string; run: string }[] } };
+  };
+  for (const fault of ['echo', 'ignore-failure', 'product-only']) {
+    const changed = structuredClone(original);
+    const name =
+      fault === 'product-only' ? 'Bind candidate Artifact to approval' : 'Lighthouse budgets';
+    const step = changed.jobs.quality.steps.find((step) => step.name === name)!;
+    if (fault === 'echo') step.run = "echo 'npm run test:lighthouse'";
+    if (fault === 'ignore-failure') step.run += ' || true';
+    if (fault === 'product-only') step.run = step.run.replace('--artifact', '--product-only');
+    expect(() => {
+      assertJavascriptFinalQualityWorkflow(stringify(changed));
+    }).toThrow('必須');
+  }
 });

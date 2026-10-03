@@ -6,16 +6,18 @@ import { parse } from 'yaml';
 import { canonicalJson } from '../../src/core/persistence/canonicalJson';
 import type { CourseManifest, Lesson } from '../../src/core/content/types';
 import { compileCourse } from '../content/compileCourse';
+import { computeLessonSourceHash } from '../content/verifyContentReview';
+import { resolveReleaseCourseContract } from './releaseCourseContracts';
 import { getJavascriptLessonEvaluationCoverage } from './javascriptQualityRecords';
 
 /** 初学者が読む/操作する教材だけを固定する。採点内部・Runtime・配信予算は技術Gateで検証する。 */
-export function javascriptLearnerContentSha256(
+function learnerContentSha256(
   lesson: Lesson,
   glossary: CourseManifest['glossary'],
   assets: ReadonlyMap<string, Uint8Array>,
+  includeRequired: boolean,
 ): string {
   const { completion, nextLessonId, prerequisiteLessonIds, ...learnerLesson } = lesson;
-  void completion;
   void nextLessonId;
   void prerequisiteLessonIds;
   const visible = {
@@ -44,11 +46,18 @@ export function javascriptLearnerContentSha256(
         void countsTowardStandardExerciseTotal;
         return {
           ...exercise,
+          ...(includeRequired && completion.kind !== 'capstone'
+            ? { requiredForCompletion: completion.requiredExerciseIds.includes(exercise.id) }
+            : {}),
           steps: exercise.steps.map(({ validationRuleIds, ...step }) => {
             void validationRuleIds;
             return step;
           }),
-          validationFeedback: validationRules.map(({ label, feedback }) => ({ label, feedback })),
+          validationFeedback: validationRules.map(({ label, required, feedback }) => ({
+            label,
+            ...(includeRequired ? { required } : {}),
+            feedback,
+          })),
         };
       },
     ),
@@ -69,6 +78,24 @@ export function javascriptLearnerContentSha256(
   return createHash('sha256').update(canonicalJson(visible)).digest('hex');
 }
 
+/** 必須/任意の可視区分とfeedbackの必須判定を含む現行教材projection。 */
+export function javascriptLearnerContentSha256(
+  lesson: Lesson,
+  glossary: CourseManifest['glossary'],
+  assets: ReadonlyMap<string, Uint8Array>,
+): string {
+  return learnerContentSha256(lesson, glossary, assets, true);
+}
+
+/** 移行専用の旧v1 projection。単独で現行教材の確認済判定に使わない。 */
+export function javascriptLearnerContentSha256V1(
+  lesson: Lesson,
+  glossary: CourseManifest['glossary'],
+  assets: ReadonlyMap<string, Uint8Array>,
+): string {
+  return learnerContentSha256(lesson, glossary, assets, false);
+}
+
 /** draftの部分記録から済/未済を読み取り報告する。実績や承認ファイルを生成しない。 */
 async function main(args: readonly string[]): Promise<void> {
   const recordIndex = args.indexOf('--record');
@@ -82,12 +109,39 @@ async function main(args: readonly string[]): Promise<void> {
   const record: unknown = parse(await readFile(recordPath, 'utf8'));
   const { confirmedLessonIds, pending } = getJavascriptLessonEvaluationCoverage(
     record,
-    lessons.map((lesson) => ({
-      lessonId: lesson.id,
-      learnerContentSha256: javascriptLearnerContentSha256(lesson, runtime.glossary, assets),
-    })),
+    await Promise.all(
+      lessons.map(async (lesson) => ({
+        lessonId: lesson.id,
+        learnerContentSha256: javascriptLearnerContentSha256(lesson, runtime.glossary, assets),
+        legacyFingerprint: {
+          sourceLessonHash: await computeLessonSourceHash(
+            path.resolve(
+              'content/javascript/chapters',
+              lesson.id.slice(0, -4),
+              'lessons',
+              lesson.id,
+            ),
+          ),
+          learnerContentSha256: javascriptLearnerContentSha256V1(lesson, runtime.glossary, assets),
+        },
+      })),
+    ),
   );
-  console.log(JSON.stringify({ confirmedLessonIds, pending }, null, 2));
+  const required = resolveReleaseCourseContract('javascript')
+    .personaAcceptanceLessonIds as readonly string[];
+  console.log(
+    JSON.stringify(
+      {
+        confirmedLessonIds,
+        pending,
+        requiredLessonIds: required,
+        requiredPending: pending.filter(({ lessonId }) => required.includes(lessonId)),
+        pendingOutsideScope: pending.filter(({ lessonId }) => !required.includes(lessonId)),
+      },
+      null,
+      2,
+    ),
+  );
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

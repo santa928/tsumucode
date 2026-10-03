@@ -122,3 +122,21 @@ Source512のinstrumented 512KiB、workspace 768KiB、raw source、AST/解析の�
 | 追加 | 旧理想目標と現公開上限を区別する正本と記録                           |
 | 保留 | 未達の理想性能改善。今回のJS通常公開をその改善待ちにしない           |
 | 削除 | 今回不要になった性能改善案の実装。過去の失敗証拠は削除しない         |
+
+## 2026-10-03 19:13 JSTの今回受入範囲の本人承認
+
+18:41 JSTの質問は「新しく追加した6教材だけ3人で確認し、既存31個の追加評価は公開を止める条件にしない。既存分を確認済みとは扱わず、通常のコード検証は維持する」であり、本人は19:13 JSTに「いいよ」と承認した（質問 Sentinel_c5c282e015d081918d5fd587c7235e55、返答 Sentinel_053775f98d2481919177dfd5dcaa8e47）。今回の教材受入必須集合はGuidedのjavascript-ch12-l01〜l05とCapstoneのjavascript-ch13-l01の6教材とする。全52の独立内容reviewと通常コード安全・採点・保存・互換・最終品質CI、16:39 JST承認の非機能上限は保持する。
+
+既存教材の3役共通完了は15教材、今回新6の完了を合わせ21教材。既存31は3役の未確認状態を教材/role別に保持し、今回の公開blockingへ加えない。acceptanceScope.requiredLessonIdsはコード側の固定6集合へ一致させ、pendingOutsideScopeを全52の実coverageへ照合する。未確認を完了へ変更しない。requiredUnconfirmed=0は今回必須6と公開技術Gateに対してのみ表し、全52の3役完了を意味しない。
+
+| 区分 | 最新差分                                                                                                                        |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------- |
+| 維持 | 原Source/report/checkpoint、未確認の正直な記録、独立内容/コードreview、通常安全・採点・保存検証、承認済み非機能上限、公開後停止 |
+| 変更 | 今回の教材受入必須集合を新6へ限定                                                                                               |
+| 追加 | コード固定6集合と台帳の対象外未確認のexact照合                                                                                  |
+| 保留 | 既存31の追加3persona評価。今回のJS公開を待たせず、本人の次の指示まで実施しない                                                  |
+| 削除 | 既存31の追加3persona評価を今回公開必須へ加える条件。旧実績・失敗原本は削除しない                                                |
+
+必須/任意の演習区分とvalidationRules.requiredは可視教材指紋へ含める。旧v1指紋の原行は改名せず、元sourceLessonHashと現在の教材全Source hashの一致、旧v1 projectionの一致の両方で、実教材が同じ場合だけ再利用する。必須区分やrequired flagが変われば全Source hashが変わるため、この移行経路は拒否する。図版/用語の変更も旧projectionが検出する。新しいハッシュ関数を理由に同じ教材を再学習しない。
+
+配信前checklistの `preflight-passed-final-ci-required` は事前の関連検査成功だけを表し、最終全品質CIの実施済みを主張しない。`required-pages-quality-before-deploy`を伴う場合に限り、検証器は現workflowのUnit/build・bundle・static・全規定Browser・Performance・Lighthouse・Artifact approvalを失敗許容なしで実行し、deployがqualityに依存することを検査する。最終CI失敗時は配信せず、原失敗を保持する。公開後記録に最終Runの実結果を保存する。これは技術Gateを省く条件ではなく、同じ全検査を事前・配信時に二重実行することを避けるための状態区別である。

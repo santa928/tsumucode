@@ -61,23 +61,12 @@ test('Pathの順序と必須Courseを表示し、既存Courseへロックなし�
   ).toBeVisible();
 
   const steps = page.getByRole('list', { name: '学習パスのコース順' }).getByRole('listitem');
-  await expect(steps).toHaveCount(2);
+  await expect(steps).toHaveCount(1);
   await expect(steps.first().getByText('必須', { exact: true })).toBeVisible();
   const courseLink = steps.first().getByRole('link', {
     name: 'HTML/CSS はじめの一歩を始める',
   });
   await expect(courseLink).toBeEnabled();
-  const javascriptStep = steps.nth(1);
-  await expect(javascriptStep.getByText('必須', { exact: true })).toBeVisible();
-  const javascriptLink = javascriptStep.getByRole('link', {
-    name: 'JavaScript はじめの一歩を始める',
-    exact: true,
-  });
-  await expect(javascriptLink).toBeEnabled();
-  await expect(javascriptLink).toHaveAttribute(
-    'href',
-    '#/courses/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s01',
-  );
 
   await page
     .getByRole('link', {
@@ -107,7 +96,7 @@ test('CourseProgressをPathへ再利用し、Path専用recordを保存しない'
   ).toBeVisible();
   await expect(page.getByRole('progressbar', { name: '必須コースの進捗' })).toHaveAttribute(
     'aria-valuetext',
-    '0 / 2 ピース完了',
+    '0 / 1 ピース完了',
   );
   await expect(
     page.getByRole('progressbar', { name: 'HTML/CSS はじめの一歩の進捗' }),

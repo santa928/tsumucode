@@ -58,7 +58,7 @@ describe('javascript-ch06', () => {
     expect(course).toMatchObject({
       revision: '2026-10-02.5',
       estimatedMinutes: 1010,
-      publicationStatus: 'published',
+      publicationStatus: 'draft',
       expectedTotals: {
         chapters: 14,
         lessons: 52,

@@ -57,7 +57,7 @@ describe('javascript-ch04', () => {
   it('Chapter 04追加時の空MigrationとChapter接続を後続追加後も保持する', async () => {
     const { runtime: course } = await loadAuthoringCourse(path.resolve('content/javascript'));
 
-    expect(course.publicationStatus).toBe('published');
+    expect(course.publicationStatus).toBe('draft');
     expect(course.progressMigrations).toEqual(
       expect.arrayContaining([
         {

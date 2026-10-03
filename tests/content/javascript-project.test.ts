@@ -23,7 +23,7 @@ beforeAll(async () => {
 
 it('既存標準46を保持し、Guided5・Capstone1を独立Workspaceへ接続する', () => {
   const course = authoring.runtime;
-  expect(course.publicationStatus).toBe('published');
+  expect(course.publicationStatus).toBe('draft');
   expect(course.estimatedMinutes).toBe(1010);
   expect(course.phases).toHaveLength(4);
   const chapters = course.phases.flatMap(({ chapters }) => chapters);
