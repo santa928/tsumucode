@@ -56,17 +56,17 @@ describe('javascript-ch06', () => {
     const { runtime: course } = await loadAuthoringCourse(path.resolve('content/javascript'));
 
     expect(course).toMatchObject({
-      revision: '2026-10-02.2',
-      estimatedMinutes: 760,
+      revision: '2026-10-02.5',
+      estimatedMinutes: 1010,
       publicationStatus: 'draft',
       expectedTotals: {
-        chapters: 12,
-        lessons: 46,
-        conceptSlides: 184,
+        chapters: 14,
+        lessons: 52,
+        conceptSlides: 202,
         standardExercises: 48,
-        guidedProjectLessons: 0,
-        capstoneLessons: 0,
-        estimatedMinutes: 760,
+        guidedProjectLessons: 5,
+        capstoneLessons: 1,
+        estimatedMinutes: 1010,
       },
     });
     expect(
@@ -93,6 +93,7 @@ describe('javascript-ch06', () => {
           'javascript-ch11',
         ],
       },
+      { id: 'javascript-p03-project', chapterIds: ['javascript-ch12', 'javascript-ch13'] },
     ]);
     expect(
       course.progressMigrations.find(({ toRevision }) => toRevision === '2026-10-02.1'),
@@ -123,7 +124,12 @@ describe('javascript-ch06', () => {
         },
       ],
     });
-    expect(course.progressMigrations.at(-1)).toMatchObject({
+    expect(
+      course.progressMigrations.find(
+        ({ fromRevision, toRevision }) =>
+          fromRevision === '2026-10-02.1' && toRevision === '2026-10-02.2',
+      ),
+    ).toMatchObject({
       fromRevision: '2026-10-02.1',
       toRevision: '2026-10-02.2',
       steps: [
@@ -210,15 +216,15 @@ describe('javascript-ch06', () => {
       { path: 'index.html', editable: false },
       { path: 'styles.css', editable: false },
     ]);
-    for (const exercise of [errorLesson, debugLesson]) {
-      expect(exercise?.runtime).toEqual({
-        kind: 'javascript',
-        entryFile: 'script.js',
-        sourceType: 'script',
-        capabilityProfile: 'core',
-        primaryOutput: 'console',
-      });
-    }
+    const scriptRuntime = {
+      kind: 'javascript',
+      entryFile: 'script.js',
+      sourceType: 'script',
+      capabilityProfile: 'core',
+      primaryOutput: 'console',
+    };
+    expect(errorLesson?.runtime).toEqual({ ...scriptRuntime, teachingGoal: 'caught-error' });
+    expect(debugLesson?.runtime).toEqual(scriptRuntime);
   });
 
   it('各Exerciseへ3 Hint・Solution・5 Fixture以上と診断code付きcode-errorを持たせる', async () => {

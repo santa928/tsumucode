@@ -26,6 +26,16 @@ it.each(
       ],
       stableId: 'javascript-ch00-l01',
     },
+    {
+      oldRevision: '2026-10-02.4',
+      resetIds: [
+        'javascript-ch05-l01',
+        'javascript-ch05-l02',
+        'javascript-ch05-l03',
+        'javascript-ch05-l04',
+      ],
+      stableId: 'javascript-ch00-l01',
+    },
   ].flatMap((entry) => ['edge', 'whole-chain'].map((scope) => ({ ...entry, scope }))),
 )(
   '$oldRevisionの$scopeで変更演習だけ旧合格を失効し、旧コード全体とbackupを保つ',
@@ -161,148 +171,169 @@ it.each(
   20_000,
 );
 
-it('追加25演習だけを末尾edgeで失効し、旧source/snapshot/日時のbackupと別Courseを保つ', async () => {
-  const { runtime: course } = await loadAuthoringCourse(path.resolve('content/javascript'));
-  const resetIds = [
-    'javascript-ch01-l01-e01',
-    'javascript-ch01-l02-e01',
-    'javascript-ch01-l04-e01',
-    'javascript-ch02-l02-e01',
-    'javascript-ch02-l03-e01',
-    'javascript-ch02-l04-e01',
-    'javascript-ch03-l01-e01',
-    'javascript-ch03-l03-e01',
-    'javascript-ch03-l05-e01',
-    'javascript-ch03-l05-e02',
-    'javascript-ch03-l05-e03',
-    'javascript-ch04-l01-e01',
-    'javascript-ch04-l02-e01',
-    'javascript-ch04-l03-e01',
-    'javascript-ch04-l04-e01',
-    'javascript-ch04-l05-e01',
-    'javascript-ch05-l01-e01',
-    'javascript-ch05-l02-e01',
-    'javascript-ch05-l03-e01',
-    'javascript-ch05-l04-e01',
-    'javascript-ch06-l03-e01',
-    'javascript-ch10-l01-e01',
-    'javascript-ch10-l02-e01',
-    'javascript-ch10-l03-e01',
-    'javascript-ch11-l02-e01',
-  ];
-  const edge = course.progressMigrations.at(-1)!;
-  expect(edge.fromRevision).toBe('2026-10-02.3');
-  expect(edge.toRevision).toBe(course.revision);
-  expect(
-    edge.steps.map((step) => (step.action === 'map-to' ? step.fromId : step.id)).sort(),
-  ).toEqual([...resetIds].sort());
-  expect(
-    edge.steps.every((step) => step.entity === 'exercise' && step.action === 'intentionally-reset'),
-  ).toBe(true);
-  const stable = 'javascript-ch00-l01-e01',
-    ids = [...resetIds, stable];
-  const lessons: Record<string, RepositorySnapshot['courses'][string]['lessons'][string]> = {};
-  const drafts: Record<string, ExerciseDraft> = {};
-  for (const exerciseId of ids) {
-    const lessonId = exerciseId.replace(/-e\d+$/u, '');
-    const prior = lessons[lessonId];
-    lessons[lessonId] = {
-      lessonId,
-      viewedSlideIds: [lessonId + '-s01'],
-      currentSlideId: lessonId + '-s01',
-      passedExerciseIds: [...(prior?.passedExerciseIds ?? []), exerciseId],
-      passedChecklistItemIds: [],
-      passedRuleIds: [...(prior?.passedRuleIds ?? []), exerciseId + '-r01'],
-      passedViewportIds: ['desktop-1280'],
-      currentComplete: true,
-      firstCompletedAt: '2026-10-01T00:00:00Z',
-    };
-    const files = { 'script.js': '// 学習者全文: ' + exerciseId + '\nconst saved = "before";' };
-    drafts['javascript:' + exerciseId] = {
-      courseId: 'javascript',
-      lessonId,
-      exerciseId,
-      workspaceId: exerciseId,
-      contentRevision: '2026-10-02.3',
-      editRevision: 7,
-      files,
-      selectedFile: 'script.js',
-      cursors: {},
-      validationHistory: [],
-      revealedHintIds: [exerciseId + '-h01'],
-      lastPassingSnapshots: {
-        [exerciseId]: {
-          editRevision: 7,
-          contentRevision: '2026-10-02.3',
-          files,
-          evaluatedAt: '2026-10-01T00:00:00Z',
-        },
-      },
-      updatedAt: '2026-10-01T00:00:00Z',
-    };
-  }
-  const js = {
-    courseId: 'javascript',
-    contentRevision: '2026-10-02.3',
-    lessons,
-    currentComplete: true,
-    firstCompletedAt: '2026-10-01T00:00:00Z',
-    updatedAt: '2026-10-01T00:00:00Z',
-  };
-  const other = { ...structuredClone(js), courseId: 'other' };
-  const input: RepositorySnapshot = {
-    schemaVersion: 2,
-    courses: { javascript: js, other },
-    drafts,
-    quarantined: [],
-  };
-  let stored = structuredClone(input);
-  let backup: RepositorySnapshot | undefined;
-  let replacements = 0;
-  const repository = {
-    snapshot: async () => stored,
-    replaceSnapshotWithBackup: async (value: RepositorySnapshot) => {
-      backup = structuredClone(stored);
-      stored = structuredClone(value);
-      replacements += 1;
-    },
-  } as unknown as ProgressRepository;
-  const service = new ContentProgressMigrationService(repository);
-  await service.ensureStoredCourse(course);
-  expect(backup).toEqual(input);
-  expect(replacements).toBe(1);
-  for (const exerciseId of resetIds) {
-    const lessonId = exerciseId.replace(/-e\d+$/u, '');
-    expect(stored.courses.javascript!.lessons[lessonId]).toMatchObject({
-      currentComplete: false,
-      viewedSlideIds: [lessonId + '-s01'],
-      currentSlideId: lessonId + '-s01',
-    });
-    expect(stored.courses.javascript!.lessons[lessonId]).not.toHaveProperty('firstCompletedAt');
-    expect(stored.drafts['javascript:' + exerciseId]).toBeUndefined();
+it.each(['edge', 'whole-chain'] as const)(
+  '追加25演習だけを%sで失効し、旧source/snapshot/日時のbackupと別Courseを保つ',
+  async (scope) => {
+    const { runtime: currentCourse } = await loadAuthoringCourse(
+      path.resolve('content/javascript'),
+    );
+    const edgeIndex = currentCourse.progressMigrations.findIndex(
+      ({ fromRevision, toRevision }) =>
+        fromRevision === '2026-10-02.3' && toRevision === '2026-10-02.4',
+    );
+    expect(edgeIndex).toBeGreaterThanOrEqual(0);
+    const edge = currentCourse.progressMigrations[edgeIndex]!;
+    const course =
+      scope === 'edge'
+        ? {
+            ...currentCourse,
+            revision: edge.toRevision,
+            progressMigrations: currentCourse.progressMigrations.slice(0, edgeIndex + 1),
+          }
+        : currentCourse;
+    const resetIds = [
+      'javascript-ch01-l01-e01',
+      'javascript-ch01-l02-e01',
+      'javascript-ch01-l04-e01',
+      'javascript-ch02-l02-e01',
+      'javascript-ch02-l03-e01',
+      'javascript-ch02-l04-e01',
+      'javascript-ch03-l01-e01',
+      'javascript-ch03-l03-e01',
+      'javascript-ch03-l05-e01',
+      'javascript-ch03-l05-e02',
+      'javascript-ch03-l05-e03',
+      'javascript-ch04-l01-e01',
+      'javascript-ch04-l02-e01',
+      'javascript-ch04-l03-e01',
+      'javascript-ch04-l04-e01',
+      'javascript-ch04-l05-e01',
+      'javascript-ch05-l01-e01',
+      'javascript-ch05-l02-e01',
+      'javascript-ch05-l03-e01',
+      'javascript-ch05-l04-e01',
+      'javascript-ch06-l03-e01',
+      'javascript-ch10-l01-e01',
+      'javascript-ch10-l02-e01',
+      'javascript-ch10-l03-e01',
+      'javascript-ch11-l02-e01',
+    ];
+    expect(edge.fromRevision).toBe('2026-10-02.3');
+    expect(edge.toRevision).toBe('2026-10-02.4');
     expect(
-      stored.quarantined.some(
-        (q) => JSON.stringify(q.raw) === JSON.stringify(input.drafts['javascript:' + exerciseId]),
+      edge.steps.map((step) => (step.action === 'map-to' ? step.fromId : step.id)).sort(),
+    ).toEqual([...resetIds].sort());
+    expect(
+      edge.steps.every(
+        (step) => step.entity === 'exercise' && step.action === 'intentionally-reset',
       ),
     ).toBe(true);
-    expect(backup!.drafts['javascript:' + exerciseId]!.lastPassingSnapshots).toEqual(
-      input.drafts['javascript:' + exerciseId]!.lastPassingSnapshots,
+    const stable = 'javascript-ch00-l01-e01',
+      ids = [...resetIds, stable];
+    const lessons: Record<string, RepositorySnapshot['courses'][string]['lessons'][string]> = {};
+    const drafts: Record<string, ExerciseDraft> = {};
+    for (const exerciseId of ids) {
+      const lessonId = exerciseId.replace(/-e\d+$/u, '');
+      const prior = lessons[lessonId];
+      lessons[lessonId] = {
+        lessonId,
+        viewedSlideIds: [lessonId + '-s01'],
+        currentSlideId: lessonId + '-s01',
+        passedExerciseIds: [...(prior?.passedExerciseIds ?? []), exerciseId],
+        passedChecklistItemIds: [],
+        passedRuleIds: [...(prior?.passedRuleIds ?? []), exerciseId + '-r01'],
+        passedViewportIds: ['desktop-1280'],
+        currentComplete: true,
+        firstCompletedAt: '2026-10-01T00:00:00Z',
+      };
+      const files = { 'script.js': '// 学習者全文: ' + exerciseId + '\nconst saved = "before";' };
+      drafts['javascript:' + exerciseId] = {
+        courseId: 'javascript',
+        lessonId,
+        exerciseId,
+        workspaceId: exerciseId,
+        contentRevision: '2026-10-02.3',
+        editRevision: 7,
+        files,
+        selectedFile: 'script.js',
+        cursors: {},
+        validationHistory: [],
+        revealedHintIds: [exerciseId + '-h01'],
+        lastPassingSnapshots: {
+          [exerciseId]: {
+            editRevision: 7,
+            contentRevision: '2026-10-02.3',
+            files,
+            evaluatedAt: '2026-10-01T00:00:00Z',
+          },
+        },
+        updatedAt: '2026-10-01T00:00:00Z',
+      };
+    }
+    const js = {
+      courseId: 'javascript',
+      contentRevision: '2026-10-02.3',
+      lessons,
+      currentComplete: true,
+      firstCompletedAt: '2026-10-01T00:00:00Z',
+      updatedAt: '2026-10-01T00:00:00Z',
+    };
+    const other = { ...structuredClone(js), courseId: 'other' };
+    const input: RepositorySnapshot = {
+      schemaVersion: 2,
+      courses: { javascript: js, other },
+      drafts,
+      quarantined: [],
+    };
+    let stored = structuredClone(input);
+    let backup: RepositorySnapshot | undefined;
+    let replacements = 0;
+    const repository = {
+      snapshot: async () => stored,
+      replaceSnapshotWithBackup: async (value: RepositorySnapshot) => {
+        backup = structuredClone(stored);
+        stored = structuredClone(value);
+        replacements += 1;
+      },
+    } as unknown as ProgressRepository;
+    const service = new ContentProgressMigrationService(repository);
+    await service.ensureStoredCourse(course);
+    expect(backup).toEqual(input);
+    expect(replacements).toBe(1);
+    for (const exerciseId of resetIds) {
+      const lessonId = exerciseId.replace(/-e\d+$/u, '');
+      expect(stored.courses.javascript!.lessons[lessonId]).toMatchObject({
+        currentComplete: false,
+        viewedSlideIds: [lessonId + '-s01'],
+        currentSlideId: lessonId + '-s01',
+      });
+      expect(stored.courses.javascript!.lessons[lessonId]).not.toHaveProperty('firstCompletedAt');
+      expect(stored.drafts['javascript:' + exerciseId]).toBeUndefined();
+      expect(
+        stored.quarantined.some(
+          (q) => JSON.stringify(q.raw) === JSON.stringify(input.drafts['javascript:' + exerciseId]),
+        ),
+      ).toBe(true);
+      expect(backup!.drafts['javascript:' + exerciseId]!.lastPassingSnapshots).toEqual(
+        input.drafts['javascript:' + exerciseId]!.lastPassingSnapshots,
+      );
+      expect(backup!.courses.javascript!.lessons[lessonId]!.firstCompletedAt).toBe(
+        '2026-10-01T00:00:00Z',
+      );
+    }
+    const stableLesson = stable.replace(/-e\d+$/u, '');
+    expect(stored.courses.javascript!.lessons[stableLesson]).toEqual(
+      input.courses.javascript!.lessons[stableLesson],
     );
-    expect(backup!.courses.javascript!.lessons[lessonId]!.firstCompletedAt).toBe(
-      '2026-10-01T00:00:00Z',
+    expect(stored.drafts['javascript:' + stable]!.files).toEqual(
+      input.drafts['javascript:' + stable]!.files,
     );
-  }
-  const stableLesson = stable.replace(/-e\d+$/u, '');
-  expect(stored.courses.javascript!.lessons[stableLesson]).toEqual(
-    input.courses.javascript!.lessons[stableLesson],
-  );
-  expect(stored.drafts['javascript:' + stable]!.files).toEqual(
-    input.drafts['javascript:' + stable]!.files,
-  );
-  expect(stored.courses.other).toEqual(other);
-  expect(input.courses.javascript!.currentComplete).toBe(true);
-  const after = structuredClone(stored);
-  await service.ensureStoredCourse(course);
-  expect(stored).toEqual(after);
-  expect(replacements).toBe(1);
-}, 20_000);
+    expect(stored.courses.other).toEqual(other);
+    expect(input.courses.javascript!.currentComplete).toBe(true);
+    const after = structuredClone(stored);
+    await service.ensureStoredCourse(course);
+    expect(stored).toEqual(after);
+    expect(replacements).toBe(1);
+  },
+  20_000,
+);

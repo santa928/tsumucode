@@ -119,6 +119,7 @@ describe('javascript-ch01', () => {
           'javascript-ch01-l01-e01-r03',
           'javascript-ch01-l01-e01-r04',
           'javascript-ch01-l01-e01-r05',
+          'javascript-ch01-l01-e01-r06',
         ],
       ],
       [
@@ -127,6 +128,7 @@ describe('javascript-ch01', () => {
           'javascript-ch01-l02-e01-r01',
           'javascript-ch01-l02-e01-r02',
           'javascript-ch01-l02-e01-r03',
+          'javascript-ch01-l02-e01-r04',
         ],
       ],
       [
@@ -143,6 +145,7 @@ describe('javascript-ch01', () => {
           'javascript-ch01-l04-e01-r01',
           'javascript-ch01-l04-e01-r02',
           'javascript-ch01-l04-e01-r03',
+          'javascript-ch01-l04-e01-r04',
         ],
       ],
     ]);
@@ -188,7 +191,9 @@ describe('javascript-ch01', () => {
           { id: 'scope-writes', expectedStatus: 'pass' },
         ]);
       } else {
-        expect(exercise.fixtures).toHaveLength(5);
+        expect(
+          exercise.fixtures.slice(5).map(({ id, expectedStatus }) => ({ id, expectedStatus })),
+        ).toEqual([{ id: 'relation-fixed-output', expectedStatus: 'incomplete' }]);
       }
     }
   });

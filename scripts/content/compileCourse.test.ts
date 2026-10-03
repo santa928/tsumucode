@@ -992,25 +992,25 @@ assets:`,
 });
 
 describe('JavaScript draft Course compilation', () => {
-  it('Chapter 06を含むrevisionとCourse累計をauthoring／公開Artifactで一致させる', async () => {
+  it('全52 Lessonを含むrevisionとCourse累計をauthoring／公開Artifactで一致させる', async () => {
     const courseRoot = path.resolve('content/javascript');
     const authoring = await loadAuthoringCourse(courseRoot);
     const compilation = await compileCourse(courseRoot);
 
     for (const course of [authoring.runtime, compilation.runtime]) {
       expect(course).toMatchObject({
-        revision: '2026-10-02.1',
-        estimatedMinutes: 760,
+        revision: '2026-10-02.5',
+        estimatedMinutes: 1010,
         expectedTotals: {
-          chapters: 12,
-          lessons: 46,
-          conceptSlides: 184,
+          chapters: 14,
+          lessons: 52,
+          conceptSlides: 202,
           standardExercises: 48,
-          estimatedMinutes: 760,
+          estimatedMinutes: 1010,
         },
       });
     }
-    expect(authoring.exercises).toHaveLength(48);
+    expect(authoring.exercises).toHaveLength(54);
   }, 30_000);
 
   it('Chapter 00 Fixtureの期待statusを保持しauthoring dataを公開Lessonへ混入させない', async () => {
