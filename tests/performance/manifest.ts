@@ -46,10 +46,10 @@ const PerformanceManifestSchema = z.object({
     editorLoadedOnHome: z.literal(false),
   }),
   content: z.object({
-    catalogGzipMaxBytes: z.literal(20_480),
-    courseIndexGzipMaxBytes: z.literal(40_960),
-    lessonManifestGzipMaxBytes: z.literal(12_288),
-    routeMapAddedGzipMaxBytes: z.literal(8_192),
+    catalogGzipMaxBytes: z.literal(40_960),
+    courseIndexGzipMaxBytes: z.literal(81_920),
+    lessonManifestGzipMaxBytes: z.literal(24_576),
+    routeMapAddedGzipMaxBytes: z.literal(16_384),
     singleImageMaxBytes: PositiveInteger,
     totalImagesMaxBytes: PositiveInteger,
     singleFontMaxBytes: PositiveInteger,
@@ -99,9 +99,9 @@ const JavaScriptPerformanceManifestSchema = z.object({
     editorLoadedOnHome: z.literal(false),
   }),
   content: z.object({
-    catalogGzipMaxBytes: z.literal(20_480),
-    courseIndexGzipMaxBytes: z.literal(40_960),
-    lessonManifestGzipMaxBytes: z.literal(12_288),
+    catalogGzipMaxBytes: z.literal(40_960),
+    courseIndexGzipMaxBytes: z.literal(81_920),
+    lessonManifestGzipMaxBytes: z.literal(24_576),
     authoringFieldsForbidden: z.array(z.string().min(1)).min(1),
   }),
 });

@@ -1,0 +1,81 @@
+schemaVersion: 1
+status: advisory-ideal-targets
+authorization: User 2026-10-03 16:39 JST
+html-css:
+  schemaVersion: 1
+  browser: chromium
+  runsPerExercise: 20
+  warmupRuns: 3
+  previewP95Ms: 500
+  validationP95Ms: 300
+  exercises:
+    - { id: html-css-ch00-l02-e01, category: simple }
+    - { id: html-css-ch01-l02-e01, category: simple }
+    - { id: html-css-ch03-l03-e01, category: median }
+    - { id: html-css-ch04-l03-e01, category: median }
+    - { id: html-css-ch05-l05-e01, category: geometry }
+    - { id: html-css-ch08-l04-e01, category: layout }
+    - { id: html-css-ch09-l03-e01, category: layout }
+    - { id: html-css-ch10-l02-e01, category: responsive }
+    - { id: html-css-ch11-l04-e01, category: accessibility }
+    - { id: html-css-ch13-l01-e01, category: capstone }
+  webVitals:
+    viewport: { width: 390, height: 844 }
+    cpuSlowdownMultiplier: 4
+    downloadKbps: 1600
+    uploadKbps: 750
+    rttMs: 150
+    lcpMaxMs: 2500
+    clsMax: 0.1
+    interactionMaxMs: 200
+  bundle:
+    baselineCommit: 7e739754710138aa3433bfa085f7dd0479d9ca62
+    baselineEditorIncrementalJavaScriptGzipBytes: 177635
+    homeInitialJavaScriptGzipMaxBytes: 256000
+    editorIncrementalJavaScriptGzipMaxBytes: 256000
+    editorLoadedOnHome: false
+  content:
+    catalogGzipMaxBytes: 20480
+    courseIndexGzipMaxBytes: 40960
+    lessonManifestGzipMaxBytes: 12288
+    routeMapAddedGzipMaxBytes: 8192
+    singleImageMaxBytes: 204800
+    totalImagesMaxBytes: 2097152
+    singleFontMaxBytes: 153600
+    totalFontsMaxBytes: 307200
+    authoringFieldsForbidden: [solutionFiles, fixtures]
+  draftPersistenceMaxMs: 500
+  starterReset:
+    drawerReadyMaxMs: 100
+    previewVisibleMaxMs: 1000
+    addedJavaScriptGzipMaxBytes: 5120
+  slideLibrary:
+    baselineCommit: 3ccb9f48dc939db209852bd6c10b9f53012184af
+    baselineHomeInitialJavaScriptGzipBytes: 158062
+    addedHomeInitialJavaScriptGzipMaxBytes: 20480
+    interactionMaxMs: 200
+  learningPath:
+    baselineCommit: 98fde1bcbd290436b3298437567848fe33491059
+    addedHomeInitialJavaScriptGzipMaxBytes: 20480
+    interactionMaxMs: 200
+javascript:
+  schemaVersion: 1
+  browser: chromium
+  runsPerExercise: 20
+  warmupRuns: 3
+  previewP95Ms: 500
+  repeatPreviewP95Ms: 250
+  validationP95Ms: 1000
+  scenarioP95Ms: 1500
+  guidedScenarioBatchMaxMs: 3000
+  exercises:
+    - { id: javascript-ch00-l01-e01, category: simple }
+  bundle:
+    homeInitialJavaScriptGzipMaxBytes: 256000
+    incrementalJavaScriptGzipMaxBytes: 180000
+    editorLoadedOnHome: false
+  content:
+    catalogGzipMaxBytes: 20480
+    courseIndexGzipMaxBytes: 40960
+    lessonManifestGzipMaxBytes: 12288
+    authoringFieldsForbidden: [solutionFiles, fixtures]

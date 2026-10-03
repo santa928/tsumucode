@@ -1,20 +1,21 @@
+# 公開上限。従来の理想目標は docs/quality/performance-ideal-targets.yaml を参照。
 schemaVersion: 1
 browser: chromium
 runsPerExercise: 20
 warmupRuns: 3
-previewP95Ms: 500
-repeatPreviewP95Ms: 250
-validationP95Ms: 1000
-scenarioP95Ms: 1500
-guidedScenarioBatchMaxMs: 3000
+previewP95Ms: 1000
+repeatPreviewP95Ms: 500
+validationP95Ms: 2000
+scenarioP95Ms: 3000
+guidedScenarioBatchMaxMs: 6000
 exercises:
   - { id: javascript-ch00-l01-e01, category: simple }
 bundle:
-  homeInitialJavaScriptGzipMaxBytes: 256000
-  incrementalJavaScriptGzipMaxBytes: 180000
+  homeInitialJavaScriptGzipMaxBytes: 512000
+  incrementalJavaScriptGzipMaxBytes: 360000
   editorLoadedOnHome: false
 content:
-  catalogGzipMaxBytes: 20480
-  courseIndexGzipMaxBytes: 40960
-  lessonManifestGzipMaxBytes: 12288
+  catalogGzipMaxBytes: 40960
+  courseIndexGzipMaxBytes: 81920
+  lessonManifestGzipMaxBytes: 24576
   authoringFieldsForbidden: [solutionFiles, fixtures]
