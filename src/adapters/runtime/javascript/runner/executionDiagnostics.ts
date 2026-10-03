@@ -16,6 +16,17 @@ export function executionDiagnostics(
   scriptFile: string,
 ): RunnerDiagnostic[] {
   const diagnostics: RunnerDiagnostic[] = currentTargetDiagnostics(payload.currentTargetFailure);
+  if (payload.runtimeError?.name === 'JavaScriptIndexUnsupported') {
+    diagnostics.push({
+      code: 'javascript-index-unsupported',
+      kind: 'unsupported',
+      severity: 'error',
+      message: payload.runtimeError.message,
+      learnerMessage:
+        'この環境の動的indexはArrayか文字列の非負整数の読み取りだけ対応しています。採点せず、編集内容と過去の成功を保持します。',
+      file: scriptFile,
+    });
+  }
   diagnostics.push(...submitDiagnostics(payload.submitEvidence));
   if (payload.budgetExhausted) {
     diagnostics.push({
@@ -38,7 +49,7 @@ export function executionDiagnostics(
       file: scriptFile,
     });
   }
-  if (payload.runtimeError !== null) {
+  if (payload.runtimeError !== null && payload.runtimeError.name !== 'JavaScriptIndexUnsupported') {
     diagnostics.push({
       code: 'javascript-runtime',
       kind: 'reference',

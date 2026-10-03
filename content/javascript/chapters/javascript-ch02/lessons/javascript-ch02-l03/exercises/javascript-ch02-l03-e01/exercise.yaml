@@ -21,6 +21,7 @@ steps:
         javascript-ch02-l03-e01-r02,
         javascript-ch02-l03-e01-r03,
         javascript-ch02-l03-e01-r04,
+        javascript-ch02-l03-e01-r05,
       ]
 files:
   - { path: script.js, language: javascript, source: starter/script.js, editable: true }
@@ -104,6 +105,28 @@ validationRules:
       nextAction: else ifでanswerとBを比較します。
     hintId: javascript-ch02-l03-e01-h03
     relatedSlideId: javascript-ch02-l03-s04
+  - id: javascript-ch02-l03-e01-r05
+    groupId: javascript-ch02-l03-e01-teaching-result
+    label: 同じanswerの条件分岐でA・B・その他を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: teaching-relation
+        goal: answer-chain
+    feedback:
+      target: script.jsと実行結果
+      expected: 同じanswerの条件分岐でA・B・その他を表示する
+      nextAction: answerをA、Bの順に比較し、if、else if、elseのそれぞれの中に対応するconsole.logを置きます。分岐の外で結果だけを表示していないか確認します。
+    hintId: javascript-ch02-l03-e01-h01
+    relatedSlideId: javascript-ch02-l03-s04
 hints:
   - id: javascript-ch02-l03-e01-h01
     level: 1
@@ -145,6 +168,7 @@ fixtures:
       - javascript-ch02-l03-e01-r02
       - javascript-ch02-l03-e01-r03
       - javascript-ch02-l03-e01-r04
+      - javascript-ch02-l03-e01-r05
   - id: output-only
     expectedStatus: incomplete
     files:
@@ -156,6 +180,7 @@ fixtures:
       - javascript-ch02-l03-e01-r02
       - javascript-ch02-l03-e01-r03
       - javascript-ch02-l03-e01-r04
+      - javascript-ch02-l03-e01-r05
   - id: missing-else
     expectedStatus: incomplete
     files:
@@ -167,6 +192,7 @@ fixtures:
       - javascript-ch02-l03-e01-r02
       - javascript-ch02-l03-e01-r03
       - javascript-ch02-l03-e01-r04
+      - javascript-ch02-l03-e01-r05
   - id: syntax-error
     expectedStatus: code-error
     files:
@@ -181,3 +207,27 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds: []
+  - id: relation-fixed-output
+    expectedStatus: incomplete
+    files:
+      - path: script.js
+        language: javascript
+        source: fixtures/relation-fixed-output.js
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch02-l03-e01-r05
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  teachingGoal: answer-chain

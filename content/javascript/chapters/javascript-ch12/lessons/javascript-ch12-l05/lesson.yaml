@@ -1,0 +1,75 @@
+id: javascript-ch12-l05
+kind: guided-project
+title: もう一度、最初から挑戦する
+goal: もう一度は文字を消すだけでは足りません。index、score、answeredを初期化し、案内と結果を消して、同じ読み込みとrenderへつなぎます。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - javascript-ch12-l04
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/javascript-ch12-l05-e01/exercise.yaml
+reflection: 1回目を1点で終え、もう一度で0点と問題1に戻った後、2回目を2点で終えます。結果と誤答案内を残さず、最初の回答へfocusを戻します。
+glossaryRefs:
+  - quiz-restart-state
+nextLessonId: javascript-ch13-l01
+project:
+  id: javascript-quiz-guided
+  briefSource: brief.md
+  guideSources:
+    - guide.md
+  checklist:
+    - id: javascript-ch12-l05-data
+      label: 同梱データをModuleから読む
+      required: true
+      ruleIds:
+        - javascript-ch12-l05-e01-r01
+    - id: javascript-ch12-l05-g5-restart
+      label: 前の得点を残さず再挑戦
+      required: true
+      ruleIds:
+        - interaction:g5-restart:loaded
+        - interaction:g5-restart:first-answer
+        - interaction:g5-restart:second-question
+        - interaction:g5-restart:second-answer
+        - interaction:g5-restart:finished
+        - interaction:g5-restart:restarted
+        - interaction:g5-restart:again-result
+    - id: javascript-ch12-l05-g5-wrong
+      label: 誤答の結果
+      required: true
+      ruleIds:
+        - interaction:g5-wrong:loaded
+        - interaction:g5-wrong:first-answer
+        - interaction:g5-wrong:second-question
+        - interaction:g5-wrong:second-answer
+        - interaction:g5-wrong:finished
+        - interaction:g5-wrong:repeat-answer
+    - id: javascript-ch12-l05-g5-recovery
+      label: 読み込み失敗から再開
+      required: true
+      ruleIds:
+        - interaction:g5-recovery:loading
+        - interaction:g5-recovery:failed
+        - interaction:g5-recovery:recovered
+    - id: javascript-ch12-l05-g5-keyboard
+      label: キーボードで回答と再挑戦
+      required: true
+      ruleIds:
+        - interaction:g5-keyboard:loaded
+        - interaction:g5-keyboard:answered
+        - interaction:g5-keyboard:next
+        - interaction:g5-keyboard:result
+        - interaction:g5-keyboard:again
+completion:
+  kind: guided-project
+  requiredChecklistItemIds:
+    - javascript-ch12-l05-data
+    - javascript-ch12-l05-g5-restart
+    - javascript-ch12-l05-g5-wrong
+    - javascript-ch12-l05-g5-recovery
+    - javascript-ch12-l05-g5-keyboard
+  requiredExerciseIds:
+    - javascript-ch12-l05-e01

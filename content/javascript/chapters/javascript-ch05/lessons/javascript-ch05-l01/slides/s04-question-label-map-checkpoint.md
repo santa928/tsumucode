@@ -17,6 +17,8 @@ assets:
 
 演習ではcallbackの`return`だけを直し、3つの問題文を表示用ラベルへ変換します。
 
+文字列をバッククォートで囲む書き方をTemplate literalと呼びます。ドル記号に続く波括弧で囲んだquestionの場所へ、その値を入れます。`'問題: ' + question`と同じ組み合わせです。
+
 ```js
 const labels = questions.map((question) => {
   return `問題: ${question}`;

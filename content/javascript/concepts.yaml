@@ -6,431 +6,539 @@ concepts:
     minimumProjectLevel: read
   - id: script-file-connection
     introducedBySlideId: javascript-ch00-l01-s02
-    prerequisiteConceptIds: [web-page-three-roles]
+    prerequisiteConceptIds:
+      - web-page-three-roles
     minimumProjectLevel: read
   - id: query-selector-text-content
     introducedBySlideId: javascript-ch00-l01-s03
-    prerequisiteConceptIds: [script-file-connection]
+    prerequisiteConceptIds:
+      - script-file-connection
     minimumProjectLevel: read
   - id: string-literal-edit
     introducedBySlideId: javascript-ch00-l01-s04
-    prerequisiteConceptIds: [query-selector-text-content]
+    prerequisiteConceptIds:
+      - query-selector-text-content
     minimumProjectLevel: transform
   - id: javascript-value
     introducedBySlideId: javascript-ch01-l01-s01
-    prerequisiteConceptIds: [string-literal-edit]
+    prerequisiteConceptIds:
+      - string-literal-edit
     minimumProjectLevel: read
   - id: javascript-primitive-types
     introducedBySlideId: javascript-ch01-l01-s02
-    prerequisiteConceptIds: [javascript-value]
+    prerequisiteConceptIds:
+      - javascript-value
     minimumProjectLevel: read
   - id: console-log
     introducedBySlideId: javascript-ch01-l01-s03
-    prerequisiteConceptIds: [javascript-primitive-types]
+    prerequisiteConceptIds:
+      - javascript-primitive-types
     minimumProjectLevel: read
   - id: console-log-values
     introducedBySlideId: javascript-ch01-l01-s04
-    prerequisiteConceptIds: [console-log]
+    prerequisiteConceptIds:
+      - console-log
     minimumProjectLevel: transform
   - id: javascript-variable
     introducedBySlideId: javascript-ch01-l02-s01
-    prerequisiteConceptIds: [console-log-values]
+    prerequisiteConceptIds:
+      - console-log-values
     minimumProjectLevel: read
   - id: const-binding
     introducedBySlideId: javascript-ch01-l02-s02
-    prerequisiteConceptIds: [javascript-variable]
+    prerequisiteConceptIds:
+      - javascript-variable
     minimumProjectLevel: read
   - id: identifier-reference
     introducedBySlideId: javascript-ch01-l02-s03
-    prerequisiteConceptIds: [const-binding]
+    prerequisiteConceptIds:
+      - const-binding
     minimumProjectLevel: read
   - id: const-console-output
     introducedBySlideId: javascript-ch01-l02-s04
-    prerequisiteConceptIds: [identifier-reference]
+    prerequisiteConceptIds:
+      - identifier-reference
     minimumProjectLevel: transform
   - id: arithmetic-expression
     introducedBySlideId: javascript-ch01-l03-s01
-    prerequisiteConceptIds: [const-console-output]
+    prerequisiteConceptIds:
+      - const-console-output
     minimumProjectLevel: read
   - id: operator-precedence
     introducedBySlideId: javascript-ch01-l03-s02
-    prerequisiteConceptIds: [arithmetic-expression]
+    prerequisiteConceptIds:
+      - arithmetic-expression
     minimumProjectLevel: read
   - id: calculated-binding
     introducedBySlideId: javascript-ch01-l03-s03
-    prerequisiteConceptIds: [operator-precedence]
+    prerequisiteConceptIds:
+      - operator-precedence
     minimumProjectLevel: read
   - id: score-calculation
     introducedBySlideId: javascript-ch01-l03-s04
-    prerequisiteConceptIds: [calculated-binding]
+    prerequisiteConceptIds:
+      - calculated-binding
     minimumProjectLevel: transform
   - id: mutable-value
     introducedBySlideId: javascript-ch01-l04-s01
-    prerequisiteConceptIds: [score-calculation]
+    prerequisiteConceptIds:
+      - score-calculation
     minimumProjectLevel: read
   - id: let-binding
     introducedBySlideId: javascript-ch01-l04-s02
-    prerequisiteConceptIds: [mutable-value]
+    prerequisiteConceptIds:
+      - mutable-value
     minimumProjectLevel: read
   - id: addition-assignment
     introducedBySlideId: javascript-ch01-l04-s03
-    prerequisiteConceptIds: [let-binding]
+    prerequisiteConceptIds:
+      - let-binding
     minimumProjectLevel: read
   - id: let-score-update
     introducedBySlideId: javascript-ch01-l04-s04
-    prerequisiteConceptIds: [addition-assignment]
+    prerequisiteConceptIds:
+      - addition-assignment
     minimumProjectLevel: transform
   - id: comparison-expression
     introducedBySlideId: javascript-ch02-l01-s01
-    prerequisiteConceptIds: [let-score-update]
+    prerequisiteConceptIds:
+      - let-score-update
     minimumProjectLevel: read
   - id: strict-equality
     introducedBySlideId: javascript-ch02-l01-s02
-    prerequisiteConceptIds: [comparison-expression]
+    prerequisiteConceptIds:
+      - comparison-expression
     minimumProjectLevel: read
   - id: strict-inequality
     introducedBySlideId: javascript-ch02-l01-s02
-    prerequisiteConceptIds: [comparison-expression]
+    prerequisiteConceptIds:
+      - comparison-expression
     minimumProjectLevel: read
   - id: boolean-comparison
     introducedBySlideId: javascript-ch02-l01-s03
-    prerequisiteConceptIds: [strict-equality, strict-inequality]
+    prerequisiteConceptIds:
+      - strict-equality
+      - strict-inequality
     minimumProjectLevel: transform
   - id: conditional-branch
     introducedBySlideId: javascript-ch02-l02-s01
-    prerequisiteConceptIds: [boolean-comparison]
+    prerequisiteConceptIds:
+      - boolean-comparison
     minimumProjectLevel: read
   - id: if-statement
     introducedBySlideId: javascript-ch02-l02-s02
-    prerequisiteConceptIds: [conditional-branch]
+    prerequisiteConceptIds:
+      - conditional-branch
     minimumProjectLevel: read
   - id: else-branch
     introducedBySlideId: javascript-ch02-l02-s03
-    prerequisiteConceptIds: [if-statement]
+    prerequisiteConceptIds:
+      - if-statement
     minimumProjectLevel: read
   - id: if-else-output
     introducedBySlideId: javascript-ch02-l02-s03
-    prerequisiteConceptIds: [else-branch]
+    prerequisiteConceptIds:
+      - else-branch
     minimumProjectLevel: transform
   - id: multiple-branches
     introducedBySlideId: javascript-ch02-l03-s01
-    prerequisiteConceptIds: [if-else-output]
+    prerequisiteConceptIds:
+      - if-else-output
     minimumProjectLevel: read
   - id: else-if-branch
     introducedBySlideId: javascript-ch02-l03-s02
-    prerequisiteConceptIds: [multiple-branches]
+    prerequisiteConceptIds:
+      - multiple-branches
     minimumProjectLevel: read
   - id: branch-order
     introducedBySlideId: javascript-ch02-l03-s03
-    prerequisiteConceptIds: [else-if-branch]
+    prerequisiteConceptIds:
+      - else-if-branch
     minimumProjectLevel: read
   - id: three-way-classification
     introducedBySlideId: javascript-ch02-l03-s03
-    prerequisiteConceptIds: [branch-order]
+    prerequisiteConceptIds:
+      - branch-order
     minimumProjectLevel: transform
   - id: counted-loop
     introducedBySlideId: javascript-ch02-l04-s01
-    prerequisiteConceptIds: [three-way-classification]
+    prerequisiteConceptIds:
+      - three-way-classification
     minimumProjectLevel: read
   - id: for-statement
     introducedBySlideId: javascript-ch02-l04-s02
-    prerequisiteConceptIds: [counted-loop]
+    prerequisiteConceptIds:
+      - counted-loop
     minimumProjectLevel: read
   - id: increment-operator
     introducedBySlideId: javascript-ch02-l04-s03
-    prerequisiteConceptIds: [for-statement]
+    prerequisiteConceptIds:
+      - for-statement
     minimumProjectLevel: read
   - id: problem-number-loop
     introducedBySlideId: javascript-ch02-l04-s03
-    prerequisiteConceptIds: [increment-operator]
+    prerequisiteConceptIds:
+      - increment-operator
     minimumProjectLevel: transform
   - id: function-purpose
     introducedBySlideId: javascript-ch03-l01-s01
-    prerequisiteConceptIds: [problem-number-loop]
+    prerequisiteConceptIds:
+      - problem-number-loop
     minimumProjectLevel: read
   - id: function-declaration
     introducedBySlideId: javascript-ch03-l01-s02
-    prerequisiteConceptIds: [function-purpose]
+    prerequisiteConceptIds:
+      - function-purpose
     minimumProjectLevel: read
   - id: function-call
     introducedBySlideId: javascript-ch03-l01-s03
-    prerequisiteConceptIds: [function-declaration]
+    prerequisiteConceptIds:
+      - function-declaration
     minimumProjectLevel: read
   - id: show-question-function
     introducedBySlideId: javascript-ch03-l01-s04
-    prerequisiteConceptIds: [function-call]
+    prerequisiteConceptIds:
+      - function-call
     minimumProjectLevel: transform
   - id: function-input-output
     introducedBySlideId: javascript-ch03-l02-s01
-    prerequisiteConceptIds: [show-question-function]
+    prerequisiteConceptIds:
+      - show-question-function
     minimumProjectLevel: read
   - id: function-parameter
     introducedBySlideId: javascript-ch03-l02-s02
-    prerequisiteConceptIds: [function-input-output]
+    prerequisiteConceptIds:
+      - function-input-output
     minimumProjectLevel: read
   - id: return-value
     introducedBySlideId: javascript-ch03-l02-s03
-    prerequisiteConceptIds: [function-parameter]
+    prerequisiteConceptIds:
+      - function-parameter
     minimumProjectLevel: read
   - id: score-function
     introducedBySlideId: javascript-ch03-l02-s04
-    prerequisiteConceptIds: [return-value]
+    prerequisiteConceptIds:
+      - return-value
     minimumProjectLevel: transform
   - id: variable-scope
     introducedBySlideId: javascript-ch03-l03-s01
-    prerequisiteConceptIds: [score-function]
+    prerequisiteConceptIds:
+      - score-function
     minimumProjectLevel: read
   - id: global-scope
     introducedBySlideId: javascript-ch03-l03-s02
-    prerequisiteConceptIds: [variable-scope]
+    prerequisiteConceptIds:
+      - variable-scope
     minimumProjectLevel: read
   - id: local-scope
     introducedBySlideId: javascript-ch03-l03-s03
-    prerequisiteConceptIds: [global-scope]
+    prerequisiteConceptIds:
+      - global-scope
     minimumProjectLevel: read
   - id: scoped-labels
     introducedBySlideId: javascript-ch03-l03-s04
-    prerequisiteConceptIds: [local-scope]
+    prerequisiteConceptIds:
+      - local-scope
     minimumProjectLevel: transform
   - id: arrow-function
     introducedBySlideId: javascript-ch03-l04-s01
-    prerequisiteConceptIds: [scoped-labels]
+    prerequisiteConceptIds:
+      - scoped-labels
     minimumProjectLevel: read
   - id: arrow-parameter
     introducedBySlideId: javascript-ch03-l04-s02
-    prerequisiteConceptIds: [arrow-function]
+    prerequisiteConceptIds:
+      - arrow-function
     minimumProjectLevel: read
   - id: arrow-return
     introducedBySlideId: javascript-ch03-l04-s03
-    prerequisiteConceptIds: [arrow-parameter]
+    prerequisiteConceptIds:
+      - arrow-parameter
     minimumProjectLevel: read
   - id: answer-format-function
     introducedBySlideId: javascript-ch03-l04-s04
-    prerequisiteConceptIds: [arrow-return]
+    prerequisiteConceptIds:
+      - arrow-return
     minimumProjectLevel: transform
   - id: closure-memory
     introducedBySlideId: javascript-ch03-l05-s01
-    prerequisiteConceptIds: [answer-format-function]
+    prerequisiteConceptIds:
+      - answer-format-function
     minimumProjectLevel: read
   - id: outer-inner-function
     introducedBySlideId: javascript-ch03-l05-s02
-    prerequisiteConceptIds: [closure-memory]
+    prerequisiteConceptIds:
+      - closure-memory
     minimumProjectLevel: read
   - id: captured-binding
     introducedBySlideId: javascript-ch03-l05-s03
-    prerequisiteConceptIds: [outer-inner-function]
+    prerequisiteConceptIds:
+      - outer-inner-function
     minimumProjectLevel: read
   - id: score-closure
     introducedBySlideId: javascript-ch03-l05-s04
-    prerequisiteConceptIds: [captured-binding]
+    prerequisiteConceptIds:
+      - captured-binding
     minimumProjectLevel: transform
   - id: array-purpose
     introducedBySlideId: javascript-ch04-l01-s01
-    prerequisiteConceptIds: [score-closure]
+    prerequisiteConceptIds:
+      - score-closure
     minimumProjectLevel: read
   - id: array-literal
     introducedBySlideId: javascript-ch04-l01-s02
-    prerequisiteConceptIds: [array-purpose]
+    prerequisiteConceptIds:
+      - array-purpose
     minimumProjectLevel: read
   - id: array-length
     introducedBySlideId: javascript-ch04-l01-s03
-    prerequisiteConceptIds: [array-literal]
+    prerequisiteConceptIds:
+      - array-literal
     minimumProjectLevel: read
   - id: question-array
     introducedBySlideId: javascript-ch04-l01-s04
-    prerequisiteConceptIds: [array-length]
+    prerequisiteConceptIds:
+      - array-length
     minimumProjectLevel: transform
   - id: zero-based-index
     introducedBySlideId: javascript-ch04-l02-s01
-    prerequisiteConceptIds: [question-array]
+    prerequisiteConceptIds:
+      - question-array
     minimumProjectLevel: read
   - id: bracket-access
     introducedBySlideId: javascript-ch04-l02-s02
-    prerequisiteConceptIds: [zero-based-index]
+    prerequisiteConceptIds:
+      - zero-based-index
     minimumProjectLevel: read
   - id: array-at-method
     introducedBySlideId: javascript-ch04-l02-s03
-    prerequisiteConceptIds: [bracket-access]
+    prerequisiteConceptIds:
+      - bracket-access
     minimumProjectLevel: read
   - id: question-order-access
     introducedBySlideId: javascript-ch04-l02-s04
-    prerequisiteConceptIds: [array-at-method]
+    prerequisiteConceptIds:
+      - array-at-method
     minimumProjectLevel: transform
   - id: for-of-purpose
     introducedBySlideId: javascript-ch04-l03-s01
-    prerequisiteConceptIds: [question-order-access]
+    prerequisiteConceptIds:
+      - question-order-access
     minimumProjectLevel: read
   - id: for-of-statement
     introducedBySlideId: javascript-ch04-l03-s02
-    prerequisiteConceptIds: [for-of-purpose]
+    prerequisiteConceptIds:
+      - for-of-purpose
     minimumProjectLevel: read
   - id: for-of-item
     introducedBySlideId: javascript-ch04-l03-s03
-    prerequisiteConceptIds: [for-of-statement]
+    prerequisiteConceptIds:
+      - for-of-statement
     minimumProjectLevel: read
   - id: question-list-loop
     introducedBySlideId: javascript-ch04-l03-s04
-    prerequisiteConceptIds: [for-of-item]
+    prerequisiteConceptIds:
+      - for-of-item
     minimumProjectLevel: transform
   - id: object-purpose
     introducedBySlideId: javascript-ch04-l04-s01
-    prerequisiteConceptIds: [question-list-loop]
+    prerequisiteConceptIds:
+      - question-list-loop
     minimumProjectLevel: read
   - id: object-literal
     introducedBySlideId: javascript-ch04-l04-s02
-    prerequisiteConceptIds: [object-purpose]
+    prerequisiteConceptIds:
+      - object-purpose
     minimumProjectLevel: read
   - id: property-access
     introducedBySlideId: javascript-ch04-l04-s03
-    prerequisiteConceptIds: [object-literal]
+    prerequisiteConceptIds:
+      - object-literal
     minimumProjectLevel: read
   - id: question-object
     introducedBySlideId: javascript-ch04-l04-s04
-    prerequisiteConceptIds: [property-access]
+    prerequisiteConceptIds:
+      - property-access
     minimumProjectLevel: transform
   - id: destructuring-purpose
     introducedBySlideId: javascript-ch04-l05-s01
-    prerequisiteConceptIds: [question-object]
+    prerequisiteConceptIds:
+      - question-object
     minimumProjectLevel: read
   - id: object-destructuring
     introducedBySlideId: javascript-ch04-l05-s02
-    prerequisiteConceptIds: [destructuring-purpose]
+    prerequisiteConceptIds:
+      - destructuring-purpose
     minimumProjectLevel: read
   - id: array-destructuring
     introducedBySlideId: javascript-ch04-l05-s03
-    prerequisiteConceptIds: [object-destructuring]
+    prerequisiteConceptIds:
+      - object-destructuring
     minimumProjectLevel: read
   - id: question-destructuring
     introducedBySlideId: javascript-ch04-l05-s04
-    prerequisiteConceptIds: [array-destructuring]
+    prerequisiteConceptIds:
+      - array-destructuring
     minimumProjectLevel: transform
   - id: map-purpose
     introducedBySlideId: javascript-ch05-l01-s01
-    prerequisiteConceptIds: [question-destructuring]
+    prerequisiteConceptIds:
+      - question-destructuring
     minimumProjectLevel: read
   - id: map-callback
     introducedBySlideId: javascript-ch05-l01-s02
-    prerequisiteConceptIds: [map-purpose]
+    prerequisiteConceptIds:
+      - map-purpose
     minimumProjectLevel: read
   - id: map-result-array
     introducedBySlideId: javascript-ch05-l01-s03
-    prerequisiteConceptIds: [map-callback]
+    prerequisiteConceptIds:
+      - map-callback
     minimumProjectLevel: read
   - id: question-label-map
     introducedBySlideId: javascript-ch05-l01-s04
-    prerequisiteConceptIds: [map-result-array]
+    prerequisiteConceptIds:
+      - map-result-array
     minimumProjectLevel: transform
   - id: filter-purpose
     introducedBySlideId: javascript-ch05-l02-s01
-    prerequisiteConceptIds: [question-label-map]
+    prerequisiteConceptIds:
+      - question-label-map
     minimumProjectLevel: read
   - id: filter-condition
     introducedBySlideId: javascript-ch05-l02-s02
-    prerequisiteConceptIds: [filter-purpose]
+    prerequisiteConceptIds:
+      - filter-purpose
     minimumProjectLevel: read
   - id: filter-result-array
     introducedBySlideId: javascript-ch05-l02-s03
-    prerequisiteConceptIds: [filter-condition]
+    prerequisiteConceptIds:
+      - filter-condition
     minimumProjectLevel: read
   - id: question-category-filter
     introducedBySlideId: javascript-ch05-l02-s04
-    prerequisiteConceptIds: [filter-result-array]
+    prerequisiteConceptIds:
+      - filter-result-array
     minimumProjectLevel: transform
   - id: reduce-purpose
     introducedBySlideId: javascript-ch05-l03-s01
-    prerequisiteConceptIds: [question-category-filter]
+    prerequisiteConceptIds:
+      - question-category-filter
     minimumProjectLevel: read
   - id: reduce-accumulator
     introducedBySlideId: javascript-ch05-l03-s02
-    prerequisiteConceptIds: [reduce-purpose]
+    prerequisiteConceptIds:
+      - reduce-purpose
     minimumProjectLevel: read
   - id: reduce-initial-value
     introducedBySlideId: javascript-ch05-l03-s03
-    prerequisiteConceptIds: [reduce-accumulator]
+    prerequisiteConceptIds:
+      - reduce-accumulator
     minimumProjectLevel: read
   - id: question-score-total
     introducedBySlideId: javascript-ch05-l03-s04
-    prerequisiteConceptIds: [reduce-initial-value]
+    prerequisiteConceptIds:
+      - reduce-initial-value
     minimumProjectLevel: transform
   - id: immutable-update-purpose
     introducedBySlideId: javascript-ch05-l04-s01
-    prerequisiteConceptIds: [question-score-total]
+    prerequisiteConceptIds:
+      - question-score-total
     minimumProjectLevel: read
   - id: array-map-update
     introducedBySlideId: javascript-ch05-l04-s02
-    prerequisiteConceptIds: [immutable-update-purpose]
+    prerequisiteConceptIds:
+      - immutable-update-purpose
     minimumProjectLevel: read
   - id: object-spread-update
     introducedBySlideId: javascript-ch05-l04-s03
-    prerequisiteConceptIds: [array-map-update]
+    prerequisiteConceptIds:
+      - array-map-update
     minimumProjectLevel: read
   - id: question-answer-state
     introducedBySlideId: javascript-ch05-l04-s04
-    prerequisiteConceptIds: [object-spread-update]
+    prerequisiteConceptIds:
+      - object-spread-update
     minimumProjectLevel: transform
   - id: module-purpose
     introducedBySlideId: javascript-ch06-l01-s01
-    prerequisiteConceptIds: [question-answer-state]
+    prerequisiteConceptIds:
+      - question-answer-state
     minimumProjectLevel: read
   - id: named-export
     introducedBySlideId: javascript-ch06-l01-s02
-    prerequisiteConceptIds: [module-purpose]
+    prerequisiteConceptIds:
+      - module-purpose
     minimumProjectLevel: read
   - id: named-import
     introducedBySlideId: javascript-ch06-l01-s03
-    prerequisiteConceptIds: [named-export]
+    prerequisiteConceptIds:
+      - named-export
     minimumProjectLevel: read
   - id: question-data-module
     introducedBySlideId: javascript-ch06-l01-s04
-    prerequisiteConceptIds: [named-import]
+    prerequisiteConceptIds:
+      - named-import
     minimumProjectLevel: transform
   - id: function-module-purpose
     introducedBySlideId: javascript-ch06-l02-s01
-    prerequisiteConceptIds: [question-data-module]
+    prerequisiteConceptIds:
+      - question-data-module
     minimumProjectLevel: read
   - id: named-function-export
     introducedBySlideId: javascript-ch06-l02-s02
-    prerequisiteConceptIds: [function-module-purpose]
+    prerequisiteConceptIds:
+      - function-module-purpose
     minimumProjectLevel: read
   - id: relative-function-import
     introducedBySlideId: javascript-ch06-l02-s03
-    prerequisiteConceptIds: [named-function-export]
+    prerequisiteConceptIds:
+      - named-function-export
     minimumProjectLevel: read
   - id: score-function-module
     introducedBySlideId: javascript-ch06-l02-s04
-    prerequisiteConceptIds: [relative-function-import]
+    prerequisiteConceptIds:
+      - relative-function-import
     minimumProjectLevel: transform
   - id: error-purpose
     introducedBySlideId: javascript-ch06-l03-s01
-    prerequisiteConceptIds: [score-function-module]
+    prerequisiteConceptIds:
+      - score-function-module
     minimumProjectLevel: read
   - id: throw-error
     introducedBySlideId: javascript-ch06-l03-s02
-    prerequisiteConceptIds: [error-purpose]
+    prerequisiteConceptIds:
+      - error-purpose
     minimumProjectLevel: read
   - id: try-catch
     introducedBySlideId: javascript-ch06-l03-s03
-    prerequisiteConceptIds: [throw-error]
+    prerequisiteConceptIds:
+      - throw-error
     minimumProjectLevel: read
   - id: question-text-error
     introducedBySlideId: javascript-ch06-l03-s04
-    prerequisiteConceptIds: [try-catch]
+    prerequisiteConceptIds:
+      - try-catch
     minimumProjectLevel: transform
   - id: debug-purpose
     introducedBySlideId: javascript-ch06-l04-s01
-    prerequisiteConceptIds: [question-text-error]
+    prerequisiteConceptIds:
+      - question-text-error
     minimumProjectLevel: read
   - id: expected-actual-value
     introducedBySlideId: javascript-ch06-l04-s02
-    prerequisiteConceptIds: [debug-purpose]
+    prerequisiteConceptIds:
+      - debug-purpose
     minimumProjectLevel: read
   - id: diagnostic-location
     introducedBySlideId: javascript-ch06-l04-s03
-    prerequisiteConceptIds: [expected-actual-value]
+    prerequisiteConceptIds:
+      - expected-actual-value
     minimumProjectLevel: read
   - id: score-calculation-debug
     introducedBySlideId: javascript-ch06-l04-s04
-    prerequisiteConceptIds: [diagnostic-location]
+    prerequisiteConceptIds:
+      - diagnostic-location
     minimumProjectLevel: transform
   - id: dom-element-reference
     introducedBySlideId: javascript-ch07-l01-s01
@@ -729,6 +837,7 @@ concepts:
     introducedBySlideId: javascript-ch10-l03-s02
     prerequisiteConceptIds:
       - promise-rejection
+      - try-catch
     minimumProjectLevel: read
   - id: async-failure-message
     introducedBySlideId: javascript-ch10-l03-s03
@@ -820,3 +929,42 @@ concepts:
     prerequisiteConceptIds:
       - expanded-state-attribute
     minimumProjectLevel: transform
+  - id: quiz-question-render
+    introducedBySlideId: javascript-ch12-l01-s01
+    prerequisiteConceptIds:
+      - loading-retry-flow
+      - array-render-empty
+    minimumProjectLevel: compose
+  - id: quiz-answer-transition
+    introducedBySlideId: javascript-ch12-l02-s01
+    prerequisiteConceptIds:
+      - quiz-question-render
+      - event-current-target
+      - focus-round-trip
+    minimumProjectLevel: compose
+  - id: quiz-score-once
+    introducedBySlideId: javascript-ch12-l03-s01
+    prerequisiteConceptIds:
+      - quiz-answer-transition
+      - score-function-module
+    minimumProjectLevel: compose
+  - id: quiz-result-transition
+    introducedBySlideId: javascript-ch12-l04-s01
+    prerequisiteConceptIds:
+      - quiz-score-once
+      - control-name-state-sync
+    minimumProjectLevel: compose
+  - id: quiz-restart-state
+    introducedBySlideId: javascript-ch12-l05-s01
+    prerequisiteConceptIds:
+      - quiz-result-transition
+      - shared-render-reset
+    minimumProjectLevel: compose
+  - id: quiz-requirement-trace
+    introducedBySlideId: javascript-ch13-l01-s01
+    prerequisiteConceptIds:
+      - quiz-restart-state
+      - preserve-source-on-filter
+      - loading-retry-flow
+      - focus-round-trip
+    minimumProjectLevel: compose

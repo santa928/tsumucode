@@ -109,7 +109,7 @@ describe('javascript-ch01', () => {
     );
   }, 60_000);
 
-  it('各Exerciseを3段階Hint・Solution・5境界Fixture・SourceとConsoleのAND判定で固定する', () => {
+  it('各Exerciseの既存5境界Fixtureと計算結果の関係付き採点を固定する', () => {
     const expectedConceptFixtureFeedback = new Map([
       [
         'javascript-ch01-l01-e01',
@@ -119,6 +119,7 @@ describe('javascript-ch01', () => {
           'javascript-ch01-l01-e01-r03',
           'javascript-ch01-l01-e01-r04',
           'javascript-ch01-l01-e01-r05',
+          'javascript-ch01-l01-e01-r06',
         ],
       ],
       [
@@ -127,6 +128,7 @@ describe('javascript-ch01', () => {
           'javascript-ch01-l02-e01-r01',
           'javascript-ch01-l02-e01-r02',
           'javascript-ch01-l02-e01-r03',
+          'javascript-ch01-l02-e01-r04',
         ],
       ],
       [
@@ -143,6 +145,7 @@ describe('javascript-ch01', () => {
           'javascript-ch01-l04-e01-r01',
           'javascript-ch01-l04-e01-r02',
           'javascript-ch01-l04-e01-r03',
+          'javascript-ch01-l04-e01-r04',
         ],
       ],
     ]);
@@ -155,8 +158,7 @@ describe('javascript-ch01', () => {
       ]);
       expect(exercise.solutionFiles).toHaveLength(3);
       expect(exercise.hints.map(({ level }) => level)).toEqual([1, 2, 3]);
-      expect(exercise.fixtures).toHaveLength(5);
-      expect(exercise.fixtures.map(({ expectedStatus }) => expectedStatus)).toEqual([
+      expect(exercise.fixtures.slice(0, 5).map(({ expectedStatus }) => expectedStatus)).toEqual([
         'pass',
         'incomplete',
         'incomplete',
@@ -170,6 +172,29 @@ describe('javascript-ch01', () => {
       expect(exercise.fixtures[2]?.expectedFeedbackRuleIds).toEqual(
         expectedConceptFixtureFeedback.get(exercise.id),
       );
+      if (exercise.id === 'javascript-ch01-l03-e01') {
+        expect(
+          exercise.fixtures.slice(5).map(({ id, expectedStatus }) => ({ id, expectedStatus })),
+        ).toEqual([
+          { id: 'console-side-answer', expectedStatus: 'incomplete' },
+          { id: 'alternate-expression', expectedStatus: 'pass' },
+          { id: 'console-literal', expectedStatus: 'incomplete' },
+          { id: 'unrelated-computation', expectedStatus: 'incomplete' },
+          { id: 'unused-function', expectedStatus: 'incomplete' },
+          { id: 'shadow-binding', expectedStatus: 'incomplete' },
+          { id: 'redeclared-binding', expectedStatus: 'incomplete' },
+          { id: 'reassigned-binding', expectedStatus: 'incomplete' },
+          { id: 'switch-shadow', expectedStatus: 'incomplete' },
+          { id: 'for-shadow', expectedStatus: 'incomplete' },
+          { id: 'shadow-console', expectedStatus: 'incomplete' },
+          { id: 'const-other-scope', expectedStatus: 'incomplete' },
+          { id: 'scope-writes', expectedStatus: 'pass' },
+        ]);
+      } else {
+        expect(
+          exercise.fixtures.slice(5).map(({ id, expectedStatus }) => ({ id, expectedStatus })),
+        ).toEqual([{ id: 'relation-fixed-output', expectedStatus: 'incomplete' }]);
+      }
     }
   });
 });

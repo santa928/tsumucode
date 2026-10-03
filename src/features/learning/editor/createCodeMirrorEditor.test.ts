@@ -1,4 +1,4 @@
-import { undo } from '@codemirror/commands';
+import { insertNewlineAndIndent, undo } from '@codemirror/commands';
 import { EditorView } from '@codemirror/view';
 import { describe, expect, it, vi } from 'vitest';
 import { EditorLanguageRegistry } from './EditorLanguageRegistry';
@@ -35,6 +35,61 @@ describe('EditorLanguageRegistry', () => {
 });
 
 describe('createCodeMirrorEditor', () => {
+  it('遅いSource echoやFile復元でも書込可否を先に適用し、読取・履歴・復帰を保つ', () => {
+    const parent = document.createElement('div');
+    document.body.append(parent);
+    const onChange = vi.fn<(content: string) => number>(() => 2);
+    const handle = createCodeMirrorEditor().mount({
+      parent,
+      path: 'main.js',
+      language: 'text',
+      content: 'first',
+      contentRevision: 1,
+      diagnostics: [],
+      onChange,
+      onCursorChange: () => undefined,
+    });
+    const view = findView(parent);
+    view.dispatch({ changes: { from: 5, insert: '!' }, selection: { anchor: 1, head: 4 } });
+    handle.setDocument({
+      path: 'main.js',
+      language: 'text',
+      content: 'first',
+      contentRevision: 1,
+      diagnostics: [],
+      readOnly: true,
+    });
+    expect(view.state.doc.toString()).toBe('first!');
+    expect(view.state.selection.main).toMatchObject({ anchor: 1, head: 4 });
+    expect(view.state.readOnly).toBe(true);
+    expect(insertNewlineAndIndent(view)).toBe(false);
+    expect(view.state.doc.toString()).toBe('first!');
+    expect(onChange).toHaveBeenCalledExactlyOnceWith('first!');
+    handle.setDocument({
+      path: 'other.js',
+      language: 'text',
+      content: 'second',
+      contentRevision: 2,
+      diagnostics: [],
+      readOnly: true,
+    });
+    handle.setDocument({
+      path: 'main.js',
+      language: 'text',
+      content: 'first!',
+      contentRevision: 2,
+      diagnostics: [],
+      readOnly: false,
+    });
+    expect(view.state.readOnly).toBe(false);
+    expect(view.contentDOM).toHaveAttribute('contenteditable', 'true');
+    expect(view.state.doc.toString()).toBe('first!');
+    expect(undo(view)).toBe(true);
+    expect(view.state.doc.toString()).toBe('first');
+    handle.destroy();
+    parent.remove();
+  });
+
   it('利用者編集とcursorだけを通知し、復元操作はcallbackを発火しない', () => {
     const parent = document.createElement('div');
     document.body.append(parent);

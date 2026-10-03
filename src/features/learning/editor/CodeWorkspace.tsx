@@ -19,6 +19,8 @@ export interface CodeWorkspaceProps {
   readonly selectedFile: string;
   /** filesを最後に受理したSession revision。 */
   readonly contentRevision: number;
+  /** 同じEditorを保ち、Sourceを変更できない間は読み取り・選択だけを許す。 */
+  readonly readOnly?: boolean;
   readonly cursors: Readonly<Record<string, EditorCursor>>;
   readonly diagnostics: readonly RunnerDiagnostic[];
   /** 値が変わるたび、履歴を保持した既存EditorへFocusを戻す要求ID。 */
@@ -84,6 +86,7 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
       language: initial.languages[initial.selectedFile] ?? 'text',
       content: initial.files[initial.selectedFile] ?? '',
       contentRevision: initial.contentRevision,
+      readOnly: initial.readOnly === true,
       descriptionId: editorHelpId,
       ...(initialCursor ? { cursor: initialCursor } : {}),
       diagnostics: initial.diagnostics,
@@ -112,6 +115,7 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
       language: props.languages[props.selectedFile] ?? 'text',
       content: props.files[props.selectedFile] ?? '',
       contentRevision: props.contentRevision,
+      readOnly: props.readOnly === true,
       diagnostics: props.diagnostics,
     });
     handle.setSelection(props.cursors[props.selectedFile]);
@@ -120,6 +124,7 @@ export function CodeWorkspace(props: CodeWorkspaceProps) {
     props.files,
     props.languages,
     props.contentRevision,
+    props.readOnly,
     props.cursors,
     props.diagnostics,
   ]);

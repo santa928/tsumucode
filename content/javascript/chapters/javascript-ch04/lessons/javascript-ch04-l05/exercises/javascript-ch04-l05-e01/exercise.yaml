@@ -23,7 +23,8 @@ steps:
     change: '[]をchoicesへ置き換える'
     observe: Consoleへ問題文、その次に先頭の選択肢3が表示される
     requiresConceptIds: [question-destructuring]
-    validationRuleIds: [javascript-ch04-l05-e01-r02, javascript-ch04-l05-e01-r03]
+    validationRuleIds:
+      [javascript-ch04-l05-e01-r02, javascript-ch04-l05-e01-r03, javascript-ch04-l05-e01-r04]
 files:
   - { path: script.js, language: javascript, source: starter/script.js, editable: true }
   - { path: index.html, language: html, source: starter/index.html, editable: false }
@@ -87,6 +88,28 @@ validationRules:
       nextAction: 1段目をquiz、2段目をchoicesからDestructuringします。
     hintId: javascript-ch04-l05-e01-h03
     relatedSlideId: javascript-ch04-l05-s04
+  - id: javascript-ch04-l05-e01-r04
+    groupId: javascript-ch04-l05-e01-teaching-result
+    label: quizから分割代入で取り出した値を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: teaching-relation
+        goal: quiz-destructuring
+    feedback:
+      target: script.jsと実行結果
+      expected: quizから分割代入で取り出した値を表示する
+      nextAction: 同じ値・Function・処理から得た結果を使います。結果だけを別の固定値で表示していないか確認します。
+    hintId: javascript-ch04-l05-e01-h01
+    relatedSlideId: javascript-ch04-l05-s04
 hints:
   - id: javascript-ch04-l05-e01-h01
     level: 1
@@ -122,7 +145,10 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds:
-      [javascript-ch04-l05-e01-r01, javascript-ch04-l05-e01-r02, javascript-ch04-l05-e01-r03]
+      - javascript-ch04-l05-e01-r01
+      - javascript-ch04-l05-e01-r02
+      - javascript-ch04-l05-e01-r03
+      - javascript-ch04-l05-e01-r04
   - id: no-destructuring
     expectedStatus: incomplete
     files:
@@ -135,7 +161,10 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds:
-      [javascript-ch04-l05-e01-r01, javascript-ch04-l05-e01-r02, javascript-ch04-l05-e01-r03]
+      - javascript-ch04-l05-e01-r01
+      - javascript-ch04-l05-e01-r02
+      - javascript-ch04-l05-e01-r03
+      - javascript-ch04-l05-e01-r04
   - id: output-only
     expectedStatus: incomplete
     files:
@@ -143,7 +172,10 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds:
-      [javascript-ch04-l05-e01-r01, javascript-ch04-l05-e01-r02, javascript-ch04-l05-e01-r03]
+      - javascript-ch04-l05-e01-r01
+      - javascript-ch04-l05-e01-r02
+      - javascript-ch04-l05-e01-r03
+      - javascript-ch04-l05-e01-r04
   - id: syntax-error
     expectedStatus: code-error
     files:
@@ -158,3 +190,27 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds: []
+  - id: relation-fixed-output
+    expectedStatus: incomplete
+    files:
+      - path: script.js
+        language: javascript
+        source: fixtures/relation-fixed-output.js
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/relation-fixed-output/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/relation-fixed-output/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch04-l05-e01-r04
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  teachingGoal: quiz-destructuring

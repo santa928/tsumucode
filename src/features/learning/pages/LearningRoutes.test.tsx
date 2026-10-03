@@ -145,7 +145,7 @@ const runtime = vi.hoisted(() => {
       markPassed: vi.fn(),
     },
     runnerRegistry: { create: vi.fn() },
-    readOnlyPreviewRegistry: { create: vi.fn() },
+    readOnlyPreviewRegistry: { has: vi.fn(() => true), create: vi.fn() },
     validatorRegistry: { has: vi.fn(() => false), register: vi.fn(), create: vi.fn() },
     editorLanguageRegistry: {
       has: (id: string) => editorLanguageFactories.has(id),
@@ -611,6 +611,7 @@ beforeEach(() => {
   runtime.repository.putCourse.mockClear();
   runtime.runnerRegistry.create.mockReset();
   runtime.readOnlyPreviewRegistry.create.mockReset();
+  runtime.readOnlyPreviewRegistry.has.mockReset().mockReturnValue(true);
   runtime.validatorRegistry.create.mockReset();
   runtime.passFreshness.isDirty.mockReset().mockReturnValue(false);
   runtime.passFreshness.markDirty.mockClear();
@@ -1364,6 +1365,113 @@ describe('Learning routes', () => {
     );
   });
 
+  it.each(['編集', 'Reset'] as const)(
+    '後工程合格後の前工程%sを保存すると全workspaceの現在完了を失効する',
+    async (operation) => {
+      stubContentFetch();
+      stubEditingCapability(true);
+      stubAdapters();
+      let storedCourse: CourseProgress | undefined = guidedStepOneProgress();
+      storedCourse = {
+        ...storedCourse,
+        currentComplete: true,
+        lessons: {
+          ...storedCourse.lessons,
+          'lesson-guided-step-2': {
+            ...storedCourse.lessons['lesson-guided-step-2']!,
+            passedExerciseIds: ['exercise-guided-step-2'],
+            passedChecklistItemIds: ['checklist-guided-step-2'],
+            passedRuleIds: ['rule-guided-step-2'],
+            passedViewportIds: ['viewport-guided-step-2'],
+            currentComplete: true,
+            firstCompletedAt: '2026-07-11T00:00:00.000Z',
+          },
+        },
+      };
+      let storedDraft: ExerciseDraft | undefined = guidedStepOneDraft();
+      storedDraft = {
+        ...storedDraft,
+        lessonId: 'lesson-guided-step-2',
+        exerciseId: 'exercise-guided-step-2',
+        lastPassingSnapshots: {
+          ...storedDraft.lastPassingSnapshots,
+          'exercise-guided-step-2': {
+            ...storedDraft.lastPassingSnapshots['exercise-guided-step-1']!,
+          },
+        },
+      };
+      const previousSnapshots = structuredClone(storedDraft.lastPassingSnapshots);
+      runtime.repository.getCourse.mockImplementation(async () => storedCourse);
+      runtime.repository.getDraft.mockImplementation(async () => storedDraft);
+      runtime.repository.putDraft.mockImplementation(async (draft) => {
+        storedDraft = structuredClone(draft);
+      });
+      runtime.repository.putDraftAndCourse.mockImplementation(async (draft, progress) => {
+        storedDraft = structuredClone(draft);
+        storedCourse = structuredClone(progress);
+      });
+      renderRoute(
+        '/courses/html-css/lessons/lesson-guided-step-1/exercises/exercise-guided-step-1',
+      );
+      await findCodeWorkspace();
+      const view = await waitFor(() => {
+        const element = document.querySelector<HTMLElement>('.cm-editor');
+        const candidate = element === null ? null : EditorView.findFromDOM(element);
+        if (candidate === null) throw new Error('CodeMirror viewを待機しています');
+        return candidate;
+      });
+      if (operation === '編集') {
+        act(() => {
+          view.dispatch({
+            changes: { from: 0, to: view.state.doc.length, insert: '<main>工程2を壊した</main>' },
+          });
+        });
+      } else {
+        const user = userEvent.setup();
+        await user.click(screen.getByRole('button', { name: '最初に戻す' }));
+        await user.keyboard('{Escape}');
+        expect(storedCourse.lessons['lesson-guided-step-2']?.currentComplete).toBe(true);
+        expect(storedDraft.lastPassingSnapshots).toEqual(previousSnapshots);
+        await user.click(screen.getByRole('button', { name: '最初に戻す' }));
+        await user.click(
+          within(screen.getByRole('dialog', { name: '最初のコードに戻しますか？' })).getByRole(
+            'button',
+            { name: '最初のコードに戻す' },
+          ),
+        );
+      }
+      await waitFor(() => {
+        expect(storedDraft?.files['index.html']).toBe(
+          operation === '編集' ? '<main>工程2を壊した</main>' : '<main>工程1 starter</main>',
+        );
+        expect(storedCourse?.lessons['lesson-guided-step-2']?.currentComplete).toBe(false);
+      });
+      expect(storedCourse.lessons['lesson-guided-step-1']?.currentComplete).toBe(false);
+      expect(storedCourse.lessons['lesson-guided-step-2']?.firstCompletedAt).toBe(
+        '2026-07-11T00:00:00.000Z',
+      );
+      const expectedSnapshots = operation === '編集' ? previousSnapshots : {};
+      expect(storedDraft.lastPassingSnapshots).toEqual(expectedSnapshots);
+      if (operation === 'Reset') {
+        expect(storedDraft).toMatchObject({ validationHistory: [], revealedHintIds: [] });
+      }
+      expect(storedCourse.lessons['lesson-first-heading']?.currentComplete).toBe(true);
+      await act(async () => {
+        await router!.navigate(
+          '/courses/html-css/lessons/lesson-guided-step-2/exercises/exercise-guided-step-2/completion',
+        );
+      });
+      await waitFor(() => {
+        expect(router!.state.location.pathname).toBe(
+          '/courses/html-css/lessons/lesson-guided-step-2/exercises/exercise-guided-step-2',
+        );
+      });
+      expect(await findCodeWorkspace()).toBeInTheDocument();
+      expect(storedDraft.lastPassingSnapshots).toEqual(expectedSnapshots);
+    },
+    15_000,
+  );
+
   it('Guided工程2の編集で全工程をdirty化し、同じSource・Viewport・Asset unionから原子的に再合格する', async () => {
     stubContentFetch();
     stubEditingCapability(true);
@@ -2014,4 +2122,28 @@ it('型検査失敗を未実行・未採点と表示し、診断を残して修�
   hasTypeError = false;
   await userEvent.click(screen.getByRole('button', { name: 'プレビューを更新' }));
   expect(await screen.findByText('実行できました（合否は「判定する」で確認）')).toBeInTheDocument();
+});
+
+it('専用Preview未対応の完了済みJavaScriptは保存エラーにせずPC案内を維持する', async () => {
+  vi.stubEnv('BASE_URL', '/javascript-readonly-test/');
+  stubContentFetch(javascriptLearningRoutesCourse);
+  stubEditingCapability(false);
+  runtime.readOnlyPreviewRegistry.has.mockReturnValue(false);
+  runtime.readOnlyPreviewRegistry.create.mockImplementation(() => {
+    throw new Error('Read-only Preview not registered: javascript');
+  });
+  runtime.repository.getCourse.mockResolvedValue({
+    ...completedProgress(),
+    courseId: 'javascript',
+  });
+  runtime.repository.getDraft.mockResolvedValue({ ...passingDraft(), courseId: 'javascript' });
+  renderRoute('/courses/javascript/lessons/lesson-first-heading/exercises/exercise-first-heading');
+  await waitFor(() => {
+    expect(runtime.repository.getDraft).toHaveBeenCalled();
+    expect(screen.queryByText('この端末の完成状態を確認しています')).not.toBeInTheDocument();
+  });
+  expect(screen.getByRole('heading', { name: 'PCで演習を開く' })).toBeInTheDocument();
+  expect(screen.queryByText('端末の進捗を読み込めませんでした')).not.toBeInTheDocument();
+  expect(runtime.readOnlyPreviewRegistry.create).not.toHaveBeenCalled();
+  expect(runtime.runnerRegistry.create).not.toHaveBeenCalled();
 });

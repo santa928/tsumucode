@@ -12,7 +12,13 @@ import type { ProgressBundle, ProgressRepository } from '../../src/core/persiste
 import { compileCourse, stringifyCanonicalJson } from '../content/compileCourse';
 import { projectCourseForSplitDelivery } from '../content/splitContentDelivery';
 import { hashPersistentIds, sha256Text } from './releaseHashes';
-import { ReleaseHistorySchema, type ReleaseHistory } from './releaseSchema';
+import {
+  resolveReleaseCourseContract,
+  SITE_RELEASE_COURSE_IDS,
+  type ReleaseCourseId,
+} from './releaseCourseContracts';
+import { parseCourseReleaseHistory, type CourseReleaseHistory } from './javascriptReleaseSchema';
+import { verifyJavascriptSyntheticProgressBundle } from './javascriptSyntheticContinuity';
 import {
   verifyReleasePromotion,
   verifyStoredPostDeployVerification,
@@ -31,7 +37,7 @@ export interface ReleaseCourseMetadata {
 }
 
 export interface ReleaseMetadataInput {
-  readonly history: ReleaseHistory;
+  readonly history: CourseReleaseHistory;
   readonly course: ReleaseCourseMetadata;
   readonly currentCourseManifestSha256: string;
   readonly currentPersistentIds: readonly string[];
@@ -69,15 +75,22 @@ function migrationSourceId(step: ContentProgressMigration['steps'][number]): str
 /** migration source IDからactionを一意に引けるMapを作る。 */
 function migrationActions(
   migrations: readonly ContentProgressMigration[],
+  distinctEdges = false,
 ): ReadonlyMap<string, readonly ContentProgressMigration['steps'][number][]> {
   const actions = new Map<string, readonly ContentProgressMigration['steps'][number][]>();
   for (const migration of migrations) {
+    const edgeIds = new Set<string>();
     for (const step of migration.steps) {
       const sourceId = migrationSourceId(step);
       const existing = actions.get(sourceId) ?? [];
-      if (existing.some(({ entity }) => entity === step.entity)) {
+      const edgeKey = `${step.entity}:${sourceId}`;
+      if (
+        edgeIds.has(edgeKey) ||
+        (!distinctEdges && existing.some(({ entity }) => entity === step.entity))
+      ) {
         throw new Error(`移行宣言のsource IDが重複しています: ${step.entity}:${sourceId}`);
       }
+      edgeIds.add(edgeKey);
       actions.set(sourceId, [...existing, step]);
     }
   }
@@ -119,12 +132,12 @@ function requiresTombstone(
 }
 
 /** 公開済みReleaseの順序、一意性、tag chain、ID hashとmigration契約を検証する。 */
-function validatePublishedReleaseChain(history: ReleaseHistory): void {
+function validatePublishedReleaseChain(history: CourseReleaseHistory): void {
   const revisions = new Set<string>();
   const tags = new Set<string>();
   const sources = new Set<string>();
   const cumulativeTombstones = new Set<string>();
-  let previous: ReleaseHistory['releases'][number] | undefined;
+  let previous: CourseReleaseHistory['releases'][number] | undefined;
 
   for (const release of history.releases) {
     if (
@@ -158,7 +171,7 @@ function validatePublishedReleaseChain(history: ReleaseHistory): void {
     const reused = release.persistentIds.find((id) => cumulativeTombstones.has(id));
     if (reused !== undefined)
       throw new Error(`公開Releaseがtombstone IDを再利用しています: ${reused}`);
-    for (const [sourceId, steps] of migrationActions(release.migrations)) {
+    for (const [sourceId, steps] of migrationActions(release.migrations, 'courseId' in release)) {
       for (const step of steps) {
         if (
           requiresTombstone(sourceId, step, release.persistentIds) &&
@@ -201,7 +214,7 @@ export function validateReleaseMetadata(input: ReleaseMetadataInput): void {
   const reused = currentIds.find((id) => cumulativeTombstones.has(id));
   if (reused !== undefined) throw new Error(`tombstone IDを再利用しています: ${reused}`);
 
-  const actions = migrationActions(candidate.migrations);
+  const actions = migrationActions(candidate.migrations, 'courseId' in candidate);
   for (const [sourceId, steps] of actions) {
     for (const step of steps) {
       if (
@@ -421,17 +434,46 @@ async function listReleaseTags(repositoryRoot: string): Promise<readonly string[
     .sort((left, right) => left.localeCompare(right));
 }
 
+/** 全登録Courseのtag unionを固定する。未知tagやCourse間重複を免除しない。 */
+export function assertReleaseTagUnion(
+  histories: readonly CourseReleaseHistory[],
+  actualTags: readonly string[],
+): void {
+  const tags = histories.flatMap(({ releases }) => releases.map(({ tag }) => tag));
+  if (new Set(tags).size !== tags.length || new Set(actualTags).size !== actualTags.length) {
+    throw new Error('Course間または取得tagの重複があります');
+  }
+  if (tags.length !== actualTags.length || tags.some((tag) => !actualTags.includes(tag))) {
+    throw new Error('Release tagの登録unionに未知/欠落があります');
+  }
+}
+
 /** RepositoryのRelease History、Course、合成Bundleを同時に検証する。 */
 export async function checkReleaseContinuity(
   repositoryRoot: string,
   mode: ContinuityMode,
   promotionReportPath?: string,
+  courseId: ReleaseCourseId = 'html-css',
 ): Promise<ContinuityReport> {
   const root = path.resolve(repositoryRoot);
-  const history = ReleaseHistorySchema.parse(
-    parse(await readFile(path.join(root, 'content/html-css/release-history.yaml'), 'utf8')),
+  const contract = resolveReleaseCourseContract(courseId);
+  const histories = await Promise.all(
+    SITE_RELEASE_COURSE_IDS.map(async (id) =>
+      parseCourseReleaseHistory(
+        id,
+        parse(
+          await readFile(path.join(root, resolveReleaseCourseContract(id).historyPath), 'utf8'),
+        ),
+      ),
+    ),
   );
-  const compilation = await compileCourse(path.join(root, 'content/html-css'));
+  assertReleaseTagUnion(histories, await listReleaseTags(root));
+  for (const registered of histories) validatePublishedReleaseChain(registered);
+  const history = histories.find(
+    (item) => ('courseId' in item ? item.courseId : 'html-css') === contract.courseId,
+  );
+  if (history === undefined) throw new Error('選択Courseの履歴がありません');
+  const compilation = await compileCourse(path.join(root, contract.sourceRoot));
   const course = projectCourseForSplitDelivery(compilation.runtime);
   const persistentIds = collectPersistentIds(course);
   const courseHash = sha256Text(stringifyCanonicalJson(course));
@@ -440,10 +482,10 @@ export async function checkReleaseContinuity(
     course,
     currentCourseManifestSha256: courseHash,
     currentPersistentIds: persistentIds,
-    releaseTags: await listReleaseTags(root),
+    releaseTags: history.releases.map(({ tag }) => tag),
     mode,
   });
-  for (const release of history.releases) {
+  for (const release of histories.flatMap(({ releases }) => releases)) {
     await verifyPublishedTag(root, release);
     await verifyStoredPostDeployVerification(root, release);
   }
@@ -476,7 +518,10 @@ export async function checkReleaseContinuity(
     throw new Error('合成Bundle pathがRepository外を指しています');
   }
   const bundle: unknown = JSON.parse(await readFile(bundlePath, 'utf8'));
-  const migration = await verifySyntheticProgressBundle(course, bundle);
+  const migration =
+    contract.courseId === 'javascript'
+      ? await verifyJavascriptSyntheticProgressBundle(course, bundle)
+      : await verifySyntheticProgressBundle(course, bundle);
   return {
     revision: course.revision,
     persistentIds: persistentIds.length,
@@ -510,6 +555,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     process.cwd(),
     modeFromArguments(arguments_),
     argumentValue(arguments_, '--report'),
+    resolveReleaseCourseContract(argumentValue(arguments_, '--course-id')).courseId,
   );
   console.log(
     `Release continuity OK: revision=${report.revision} ids=${String(report.persistentIds)} courses=${String(report.migratedCourses)} drafts=${String(report.migratedDrafts)} notices=${String(report.resetNotices)}`,

@@ -140,7 +140,7 @@ export function ReadOnlyExercisePage({
         if (abortController.signal.aborted || lifecycleGenerationRef.current !== generation) {
           return;
         }
-        if (!completed) {
+        if (!completed || !learningRuntimeServices.readOnlyPreviewRegistry.has(course.runnerId)) {
           setState({ kind: 'guide' });
           return;
         }

@@ -5,18 +5,20 @@ import { pathToFileURL } from 'node:url';
 import { promisify } from 'node:util';
 import { parse } from 'yaml';
 import { verifyReleaseSourceApproval } from './verifyReleaseApproval';
+import { CommitShaSchema } from './releaseSchema';
+import { resolveReleaseCourseContract, type ReleaseCourseId } from './releaseCourseContracts';
 import {
-  CommitShaSchema,
-  ReleaseHistorySchema,
-  type PublishedRelease,
-  type ReleaseHistory,
-} from './releaseSchema';
+  parseCourseReleaseHistory,
+  type CoursePublishedRelease,
+  type CourseReleaseHistory,
+} from './javascriptReleaseSchema';
 
 const execFileAsync = promisify(execFile);
 
 export type ReleaseMode = 'candidate' | 'beta' | 'rollback';
 
 export interface ResolvedReleaseTarget {
+  readonly courseId?: ReleaseCourseId;
   readonly checkoutSha: string;
   readonly verifiedSourceCommit: string;
   readonly releaseMode: ReleaseMode;
@@ -24,6 +26,9 @@ export interface ResolvedReleaseTarget {
   readonly canonicalDistSha256: string;
   readonly courseManifestSha256: string;
   readonly publicProvenanceSha256: string;
+  readonly draftSourceCommit?: string;
+  readonly draftCanonicalDistSha256?: string;
+  readonly normalizedLearningInputSha256?: string;
 }
 
 /** 最新main、workflow、checkoutが同一のβSourceだけをDeploy対象へ変換する。 */
@@ -31,6 +36,7 @@ export function resolveBetaTarget(
   sourceShaInput: string,
   workflowHeadShaInput: string,
   checkoutHeadShaInput: string,
+  courseId: ReleaseCourseId = 'html-css',
 ): ResolvedReleaseTarget {
   const sourceSha = CommitShaSchema.parse(sourceShaInput);
   const workflowHeadSha = CommitShaSchema.parse(workflowHeadShaInput);
@@ -42,6 +48,7 @@ export function resolveBetaTarget(
     throw new Error('beta checkout SHAがworkflow SHAと一致しません');
   }
   return {
+    courseId: resolveReleaseCourseContract(courseId).courseId,
     checkoutSha: sourceSha,
     verifiedSourceCommit: sourceSha,
     releaseMode: 'beta',
@@ -54,9 +61,9 @@ export function resolveBetaTarget(
 
 /** 登録済み公開Releaseからrollback対象SHAを一意に解決する。 */
 export function resolveRollbackRelease(
-  history: ReleaseHistory,
+  history: CourseReleaseHistory,
   sourceSha: string,
-): PublishedRelease {
+): CoursePublishedRelease {
   const matches = history.releases.filter(({ sourceCommit }) => sourceCommit === sourceSha);
   if (matches.length === 0) {
     throw new Error(`rollback SHAが公開台帳へ登録されていません: ${sourceSha}`);
@@ -68,7 +75,7 @@ export function resolveRollbackRelease(
 }
 
 /** annotated tag messageの公開台帳bindingをkey単位で完全一致検証する。 */
-export function assertPublishedTagMessage(release: PublishedRelease, message: string): void {
+export function assertPublishedTagMessage(release: CoursePublishedRelease, message: string): void {
   const bindings = new Map<string, string>();
   for (const token of message.trim().split(/\s+/u)) {
     const separator = token.indexOf('=');
@@ -83,6 +90,15 @@ export function assertPublishedTagMessage(release: PublishedRelease, message: st
   }
 
   const expected = {
+    ...('courseId' in release
+      ? {
+          course_id: release.courseId,
+          revision: release.revision,
+          draft_source: release.draftSourceCommit,
+          draft_dist: release.draftCanonicalDistSha256,
+          learning_input: release.normalizedLearningInputSha256,
+        }
+      : {}),
     source: release.sourceCommit,
     head: release.workflowHeadCommit,
     dist: release.canonicalDistSha256,
@@ -116,7 +132,7 @@ function requiredArgument(arguments_: readonly string[], flag: string): string {
 /** annotated tagの型、target、message bindingをGit object databaseで検証する。 */
 export async function verifyPublishedTag(
   repositoryRoot: string,
-  release: PublishedRelease,
+  release: CoursePublishedRelease,
 ): Promise<void> {
   const { stdout: typeOutput } = await execFileAsync('git', ['cat-file', '-t', release.tag], {
     cwd: repositoryRoot,
@@ -145,8 +161,10 @@ export async function verifyReleaseTarget(options: {
   readonly mode: ReleaseMode;
   readonly sourceSha: string;
   readonly workflowHeadSha: string;
+  readonly courseId?: ReleaseCourseId;
 }): Promise<ResolvedReleaseTarget> {
   const root = path.resolve(options.repositoryRoot);
+  const contract = resolveReleaseCourseContract(options.courseId ?? 'html-css');
   const sourceSha = CommitShaSchema.parse(options.sourceSha);
   const workflowHeadSha = CommitShaSchema.parse(options.workflowHeadSha);
   const { stdout: checkoutHeadShaOutput } = await execFileAsync('git', ['rev-parse', 'HEAD'], {
@@ -154,14 +172,22 @@ export async function verifyReleaseTarget(options: {
     encoding: 'utf8',
   });
   if (options.mode === 'beta') {
-    return resolveBetaTarget(sourceSha, workflowHeadSha, checkoutHeadShaOutput.trim());
+    return resolveBetaTarget(
+      sourceSha,
+      workflowHeadSha,
+      checkoutHeadShaOutput.trim(),
+      contract.courseId,
+    );
   }
-  const history = ReleaseHistorySchema.parse(
-    parse(await readFile(path.join(root, 'content/html-css/release-history.yaml'), 'utf8')),
+  if (checkoutHeadShaOutput.trim() !== workflowHeadSha)
+    throw new Error('target checkout HEADがworkflow HEADと一致しません');
+  const history = parseCourseReleaseHistory(
+    contract.courseId,
+    parse(await readFile(path.join(root, contract.historyPath), 'utf8')),
   );
 
   if (options.mode === 'candidate') {
-    const approval = await verifyReleaseSourceApproval(root);
+    const approval = await verifyReleaseSourceApproval(root, contract.courseId);
     if (sourceSha !== approval.verifiedSourceCommit) {
       throw new Error('dispatch source SHAが承認済みcandidateと一致しません');
     }
@@ -171,6 +197,14 @@ export async function verifyReleaseTarget(options: {
       { cwd: root },
     );
     return {
+      courseId: contract.courseId,
+      ...('courseId' in history.candidate
+        ? {
+            draftSourceCommit: history.candidate.draftSourceCommit,
+            draftCanonicalDistSha256: history.candidate.draftCanonicalDistSha256,
+            normalizedLearningInputSha256: history.candidate.normalizedLearningInputSha256,
+          }
+        : {}),
       checkoutSha: workflowHeadSha,
       verifiedSourceCommit: approval.verifiedSourceCommit,
       releaseMode: 'candidate',
@@ -184,6 +218,14 @@ export async function verifyReleaseTarget(options: {
   const release = resolveRollbackRelease(history, sourceSha);
   await verifyPublishedTag(root, release);
   return {
+    courseId: contract.courseId,
+    ...('courseId' in release
+      ? {
+          draftSourceCommit: release.draftSourceCommit,
+          draftCanonicalDistSha256: release.draftCanonicalDistSha256,
+          normalizedLearningInputSha256: release.normalizedLearningInputSha256,
+        }
+      : {}),
     checkoutSha: release.sourceCommit,
     verifiedSourceCommit: release.sourceCommit,
     releaseMode: 'rollback',
@@ -197,6 +239,14 @@ export async function verifyReleaseTarget(options: {
 /** 改行を許さないallowlist済みtargetをGitHub output形式へ変換する。 */
 export function serializeReleaseTargetOutput(target: ResolvedReleaseTarget): string {
   const values = {
+    course_id: target.courseId ?? 'html-css',
+    ...(target.courseId === 'javascript'
+      ? {
+          draft_source_commit: target.draftSourceCommit ?? 'draft',
+          draft_canonical_dist_sha256: target.draftCanonicalDistSha256 ?? 'draft',
+          normalized_learning_input_sha256: target.normalizedLearningInputSha256 ?? 'draft',
+        }
+      : {}),
     checkout_sha: target.checkoutSha,
     verified_source_commit: target.verifiedSourceCommit,
     release_mode: target.releaseMode,
@@ -229,6 +279,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     mode,
     sourceSha: requiredArgument(arguments_, '--source-sha'),
     workflowHeadSha: requiredArgument(arguments_, '--workflow-head-sha'),
+    courseId: resolveReleaseCourseContract(requiredArgument(arguments_, '--course-id')).courseId,
   });
   await writeTargetOutput(requiredArgument(arguments_, '--github-output'), target);
   console.log(`Release target OK: ${target.releaseMode}/${target.verifiedSourceCommit}`);

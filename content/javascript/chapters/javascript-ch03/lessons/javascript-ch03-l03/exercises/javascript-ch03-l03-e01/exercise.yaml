@@ -22,6 +22,7 @@ steps:
         javascript-ch03-l03-e01-r03,
         javascript-ch03-l03-e01-r04,
         javascript-ch03-l03-e01-r05,
+        javascript-ch03-l03-e01-r06,
       ]
 files:
   - { path: script.js, language: javascript, source: starter/script.js, editable: true }
@@ -118,6 +119,28 @@ validationRules:
       nextAction: 2つのconsole.logの順番と参照する変数名を確認します。
     hintId: javascript-ch03-l03-e01-h03
     relatedSlideId: javascript-ch03-l03-s04
+  - id: javascript-ch03-l03-e01-r06
+    groupId: javascript-ch03-l03-e01-teaching-result
+    label: 呼び出したshowLabels内で外側と内側の名前を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: teaching-relation
+        goal: label-scope
+    feedback:
+      target: script.jsと実行結果
+      expected: 呼び出したshowLabels内で外側と内側の名前を表示する
+      nextAction: 同じ値・Function・処理から得た結果を使います。結果だけを別の固定値で表示していないか確認します。
+    hintId: javascript-ch03-l03-e01-h01
+    relatedSlideId: javascript-ch03-l03-s04
 hints:
   - id: javascript-ch03-l03-e01-h01
     level: 1
@@ -153,13 +176,12 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds:
-      [
-        javascript-ch03-l03-e01-r01,
-        javascript-ch03-l03-e01-r02,
-        javascript-ch03-l03-e01-r03,
-        javascript-ch03-l03-e01-r04,
-        javascript-ch03-l03-e01-r05,
-      ]
+      - javascript-ch03-l03-e01-r01
+      - javascript-ch03-l03-e01-r02
+      - javascript-ch03-l03-e01-r03
+      - javascript-ch03-l03-e01-r04
+      - javascript-ch03-l03-e01-r05
+      - javascript-ch03-l03-e01-r06
   - id: output-only
     expectedStatus: incomplete
     files:
@@ -167,13 +189,12 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds:
-      [
-        javascript-ch03-l03-e01-r01,
-        javascript-ch03-l03-e01-r02,
-        javascript-ch03-l03-e01-r03,
-        javascript-ch03-l03-e01-r04,
-        javascript-ch03-l03-e01-r05,
-      ]
+      - javascript-ch03-l03-e01-r01
+      - javascript-ch03-l03-e01-r02
+      - javascript-ch03-l03-e01-r03
+      - javascript-ch03-l03-e01-r04
+      - javascript-ch03-l03-e01-r05
+      - javascript-ch03-l03-e01-r06
   - id: wrong-order
     expectedStatus: incomplete
     files:
@@ -202,3 +223,27 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds: []
+  - id: relation-fixed-output
+    expectedStatus: incomplete
+    files:
+      - path: script.js
+        language: javascript
+        source: fixtures/relation-fixed-output.js
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch03-l03-e01-r06
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  teachingGoal: label-scope

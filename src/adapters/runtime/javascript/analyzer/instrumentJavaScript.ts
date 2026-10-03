@@ -1,8 +1,12 @@
-import { parse, type Node } from 'acorn';
+import { parse, tokenizer, type Node } from 'acorn';
 import { fullAncestor } from 'acorn-walk';
 import MagicString from 'magic-string';
 import type { RunnerDiagnostic, RunnerDiagnosticKind } from '../../../../core/runtime/contracts';
-import { JavaScriptAnalysisIssue, assertJavaScriptCapabilityPolicy } from './capabilityPolicy';
+import {
+  JavaScriptAnalysisIssue,
+  assertJavaScriptCapabilityPolicy,
+  needsGuardedIndexRead,
+} from './capabilityPolicy';
 import type {
   JavaScriptAnalysisFailure,
   JavaScriptLegacyAnalysisResult,
@@ -10,6 +14,7 @@ import type {
   JavaScriptAnalysisRequest,
   JavaScriptAnalysisResult,
   JavaScriptSourceFact,
+  JavaScriptSourceOperand,
   JavaScriptAssignmentOperator,
   JavaScriptBinaryOperator,
   JavaScriptCollectionTransformMethod,
@@ -18,6 +23,15 @@ import type {
   JavaScriptWorkspaceAnalysisSuccess,
 } from './contracts';
 import { buildModuleGraph, JavaScriptModuleGraphError } from './moduleGraph';
+import {
+  findTeachingRelation,
+  type TeachingBinding,
+  type TeachingRelationContext,
+} from './teachingRelations';
+import {
+  isJavaScriptTeachingGoal,
+  type JavaScriptTeachingGoal,
+} from '../../../../core/content/javascriptTeachingGoals';
 
 type AstNode = Node & Readonly<Record<string, unknown>>;
 
@@ -213,8 +227,26 @@ function instrument(
   file: string,
 ): string {
   const magic = new MagicString(source);
+  const indexOpenings: number[] = [];
+  if (nodes.some(needsGuardedIndexRead)) {
+    const tokens = tokenizer(source, { ecmaVersion: 'latest' });
+    for (let token = tokens.getToken(); token.type.label !== 'eof'; token = tokens.getToken()) {
+      if (token.type.label === '[') indexOpenings.push(token.start);
+    }
+  }
   for (const node of nodes) {
     const current = ast(node);
+    if (needsGuardedIndexRead(node) && isNode(current.object) && isNode(current.property)) {
+      // bracket tokenだけを置換し、receiver/keyの括弧・comma式・commentを保持する。
+      const receiver = current.object;
+      const key = current.property;
+      const opening = indexOpenings.find((start) => start >= receiver.end && start < key.start);
+      if (opening === undefined || source[node.end - 1] !== ']')
+        throw new JavaScriptAnalysisIssue('system', 'Index readのdelimiterを特定できません', file);
+      magic.prependLeft(node.start, `${guardIdentifier}.index(`);
+      magic.overwrite(opening, opening + 1, ',(');
+      magic.overwrite(node.end - 1, node.end, '))');
+    }
     if (FUNCTION_TYPES.has(node.type) && isNode(current.body)) {
       const body = ast(current.body);
       if (body.type === 'BlockStatement') {
@@ -330,6 +362,7 @@ interface ScopeInfo {
   readonly depth: number;
   readonly parent?: ScopeInfo;
   readonly bindings: Set<string>;
+  readonly declarations: Map<string, Set<Node>>;
 }
 
 /** Factへ共通する1-based source位置を返す。 */
@@ -375,11 +408,26 @@ function patternIdentifiers(value: unknown): readonly Node[] {
   return [];
 }
 
-/** AST nodeが新しいlexical scopeを開始するかを返す。 */
-function scopeKind(node: Node): ScopeInfo['kind'] | undefined {
+/** 既存教材が公開Factとして数えてきた明示Scopeだけを返す。 */
+function teachingScopeKind(node: Node): ScopeInfo['kind'] | undefined {
   if (node.type === 'Program') return 'program';
   if (FUNCTION_TYPES.has(node.type)) return 'function';
   if (node.type === 'BlockStatement') return 'block';
+  return undefined;
+}
+
+/** 計算利用のbinding照合へ必要な暗黙lexical環境も内部Scopeとして扱う。 */
+function scopeKind(node: Node): ScopeInfo['kind'] | undefined {
+  const teachingKind = teachingScopeKind(node);
+  if (teachingKind !== undefined) return teachingKind;
+  if (
+    node.type === 'SwitchStatement' ||
+    node.type === 'ForStatement' ||
+    node.type === 'ForInStatement' ||
+    node.type === 'ForOfStatement' ||
+    node.type === 'CatchClause'
+  )
+    return 'block';
   return undefined;
 }
 
@@ -391,7 +439,7 @@ function declarationScope(scope: ScopeInfo, kind: 'const' | 'let' | 'var'): Scop
   return current;
 }
 
-/** Function本体の波括弧を重複Scopeとして数えず、教材上のlexical深さへ正規化する。 */
+/** bindingのlexical深さへ正規化する。Function本体の波括弧は重複Scopeとして数えない。 */
 function teachingScopeDepth(scope: ScopeInfo): number {
   let depth = 0;
   let current = scope;
@@ -494,11 +542,28 @@ function bindingBelongsToFunction(binding: ScopeInfo, functionScope: ScopeInfo):
   return false;
 }
 
+/** 計算の両端をboundedな名前またはprimitiveへ限定し、複雑なdata flowは推測しない。 */
+function sourceOperand(value: unknown): JavaScriptSourceOperand | undefined {
+  const name = identifierName(value);
+  if (name !== undefined && name.length <= 128) return { kind: 'identifier', name };
+  if (!isNode(value) || value.type !== 'Literal') return undefined;
+  const literal = ast(value).value;
+  if (
+    (typeof literal === 'string' && literal.length <= 128) ||
+    typeof literal === 'boolean' ||
+    (typeof literal === 'number' && Number.isFinite(literal))
+  ) {
+    return { kind: 'literal', value: literal };
+  }
+  return undefined;
+}
+
 /** ValidatorがChapter 00〜06のsource構造を検証するbounded factを抽出する。 */
 function collectFacts(
   program: Node,
   nodes: readonly Node[],
   file: string,
+  teachingGoal?: JavaScriptTeachingGoal,
 ): readonly JavaScriptSourceFact[] {
   const facts: JavaScriptSourceFact[] = [];
   const scopesByNode = new Map<Node, ScopeInfo>();
@@ -506,6 +571,13 @@ function collectFacts(
   const parentByNode = new Map<Node, Node | undefined>();
   const declarationKindByNode = new Map<Node, 'const' | 'let' | 'var'>();
   const declarationIdentifiers = new Set<Node>();
+  /** 一つのlexical bindingを作った宣言nodeを保持し、同名再宣言を同一計算と扱わない。 */
+  const declareBinding = (scope: ScopeInfo, name: string, declaration: Node): void => {
+    scope.bindings.add(name);
+    const declarations = scope.declarations.get(name) ?? new Set<Node>();
+    declarations.add(declaration);
+    scope.declarations.set(name, declarations);
+  };
 
   const addFact = (fact: JavaScriptSourceFact): void => {
     facts.push(fact);
@@ -517,6 +589,12 @@ function collectFacts(
   fullAncestor(program, (node: Node, _state: unknown, ancestors: Node[]) => {
     let activeScope: ScopeInfo | undefined;
     for (const ancestor of ancestors) {
+      // Switchのdiscriminantはcase用lexical環境を作る前に外側で評価される。
+      if (
+        ancestor.type === 'SwitchStatement' &&
+        ancestors[ancestors.indexOf(ancestor) + 1] === ast(ancestor).discriminant
+      )
+        continue;
       const kind = scopeKind(ancestor);
       if (kind === undefined) continue;
       let scope = scopesByNode.get(ancestor);
@@ -527,6 +605,7 @@ function collectFacts(
           depth: activeScope === undefined ? 0 : activeScope.depth + 1,
           ...(activeScope === undefined ? {} : { parent: activeScope }),
           bindings: new Set<string>(),
+          declarations: new Map<string, Set<Node>>(),
         };
         scopesByNode.set(ancestor, scope);
       }
@@ -547,7 +626,8 @@ function collectFacts(
         for (const identifier of patternIdentifiers(current.id)) {
           declarationIdentifiers.add(identifier);
           const name = identifierName(identifier);
-          if (name !== undefined) declarationScope(activeScope, declarationKind).bindings.add(name);
+          if (name !== undefined)
+            declareBinding(declarationScope(activeScope, declarationKind), name, node);
         }
       }
     }
@@ -559,7 +639,7 @@ function collectFacts(
           for (const identifier of patternIdentifiers(parameter)) {
             declarationIdentifiers.add(identifier);
             const name = identifierName(identifier);
-            if (name !== undefined) functionScope.bindings.add(name);
+            if (name !== undefined) declareBinding(functionScope, name, identifier);
           }
         }
       }
@@ -567,27 +647,126 @@ function collectFacts(
         declarationIdentifiers.add(current.id);
         const name = identifierName(current.id);
         const owner = node.type === 'FunctionDeclaration' ? functionScope?.parent : functionScope;
-        if (name !== undefined) owner?.bindings.add(name);
+        if (name !== undefined && owner !== undefined) declareBinding(owner, name, node);
       }
     }
 
     if (node.type.startsWith('Import') && isNode(current.local) && activeScope !== undefined) {
       declarationIdentifiers.add(current.local);
       const name = identifierName(current.local);
-      if (name !== undefined) activeScope.bindings.add(name);
+      if (name !== undefined) declareBinding(activeScope, name, node);
+    }
+    if (node.type === 'CatchClause' && activeScope !== undefined) {
+      for (const identifier of patternIdentifiers(current.param)) {
+        declarationIdentifiers.add(identifier);
+        const name = identifierName(identifier);
+        if (name !== undefined) declareBinding(activeScope, name, identifier);
+      }
     }
   });
 
   const sortedNodes = [...nodes].sort(
     (left, right) => left.start - right.start || left.end - right.end,
   );
+  const writes = new Map<ScopeInfo, Map<string, Node[]>>();
+  for (const node of sortedNodes) {
+    const current = ast(node);
+    const target =
+      node.type === 'AssignmentExpression'
+        ? current.left
+        : node.type === 'UpdateExpression'
+          ? current.argument
+          : (node.type === 'ForInStatement' || node.type === 'ForOfStatement') &&
+              isNode(current.left) &&
+              current.left.type !== 'VariableDeclaration'
+            ? current.left
+            : undefined;
+    for (const identifier of patternIdentifiers(target)) {
+      const name = identifierName(identifier);
+      const scope =
+        name === undefined ? undefined : resolveBinding(scopeByNode.get(identifier), name);
+      if (name === undefined || scope === undefined) continue;
+      const scopeWrites = writes.get(scope) ?? new Map<string, Node[]>();
+      const bindingWrites = scopeWrites.get(name) ?? [];
+      bindingWrites.push(node);
+      scopeWrites.set(name, bindingWrites);
+      writes.set(scope, scopeWrites);
+    }
+  }
+  /** Consoleより前の関連writeと呼出順を推測できないFunction内writeだけを拒否する。 */
+  const stableAtOutput = (scope: ScopeInfo, name: string, call: Node): boolean =>
+    scope.declarations.get(name)?.size === 1 &&
+    !(writes.get(scope)?.get(name) ?? []).some((write) => {
+      let owner = parentByNode.get(write);
+      while (owner !== undefined) {
+        if (FUNCTION_TYPES.has(owner.type)) return true;
+        owner = parentByNode.get(owner);
+      }
+      return write.start < call.end;
+    });
+  /** 初級変形式では、無条件top-level文のConsoleだけを計算結果の直接利用とする。 */
+  const topLevelConsole = (call: Node): boolean => {
+    const statement = parentByNode.get(call);
+    if (statement?.type !== 'ExpressionStatement' || ast(statement).expression !== call)
+      return false;
+    let owner = parentByNode.get(statement);
+    while (owner?.type === 'BlockStatement') owner = parentByNode.get(owner);
+    return owner?.type === 'Program';
+  };
+  /** 同じlexical bindingまたはFunction結果をConsoleへ直接渡す利用だけを受理する。 */
+  const outputUses = (
+    name: string,
+    ownerScope: ScopeInfo,
+    ownerKind: 'binding' | 'return',
+  ): boolean =>
+    sortedNodes.some((call) => {
+      if (
+        call.type !== 'CallExpression' ||
+        callName(ast(call).callee) !== 'console.log' ||
+        !topLevelConsole(call)
+      )
+        return false;
+      const callee = ast(call).callee;
+      const consoleObject = isNode(callee) ? ast(callee).object : undefined;
+      // 同名local objectのlogはnative Consoleの計算利用を証明しない。
+      if (
+        !isNode(consoleObject) ||
+        resolveBinding(scopeByNode.get(consoleObject), 'console') !== undefined
+      )
+        return false;
+      const args = ast(call).arguments;
+      return (
+        Array.isArray(args) &&
+        args.some((argument: unknown) => {
+          if (!isNode(argument)) return false;
+          const reference =
+            ownerKind === 'binding'
+              ? argument
+              : argument.type === 'CallExpression'
+                ? ast(argument).callee
+                : undefined;
+          return (
+            isNode(reference) &&
+            identifierName(reference) === name &&
+            resolveBinding(scopeByNode.get(reference), name) === ownerScope &&
+            stableAtOutput(ownerScope, name, call)
+          );
+        })
+      );
+    });
   const closureKeys = new Set<string>();
   for (const node of sortedNodes) {
     const current = ast(node);
     const location = factLocation(node, file);
     const scope = scopesByNode.get(node);
-    if (scope !== undefined) {
-      addFact({ kind: 'scope', scopeKind: scope.kind, depth: scope.depth, ...location });
+    if (scope !== undefined && teachingScopeKind(node) !== undefined) {
+      let depth = 0;
+      let ancestor = scope.parent;
+      while (ancestor !== undefined) {
+        if (teachingScopeKind(ancestor.node) !== undefined) depth += 1;
+        ancestor = ancestor.parent;
+      }
+      addFact({ kind: 'scope', scopeKind: scope.kind, depth, ...location });
     }
 
     if (node.type === 'VariableDeclarator') {
@@ -676,6 +855,72 @@ function collectFacts(
     if (node.type === 'BinaryExpression' || node.type === 'LogicalExpression') {
       const operator = binaryFactOperator(current.operator);
       if (operator !== undefined) addFact({ kind: 'binary-expression', operator, ...location });
+      const operands = [sourceOperand(current.left), sourceOperand(current.right)] as const;
+      const parent = parentByNode.get(node);
+      let ownerKind: 'binding' | 'return' = 'binding';
+      let owner: Node | undefined;
+      let ownerScope: ScopeInfo | undefined;
+      if (parent?.type === 'VariableDeclarator' && ast(parent).init === node) {
+        owner = parent;
+        const kind = declarationKindByNode.get(parent);
+        const scope = scopeByNode.get(parent);
+        if (kind !== undefined && scope !== undefined) ownerScope = declarationScope(scope, kind);
+      } else if (parent?.type === 'ReturnStatement' && ast(parent).argument === node) {
+        ownerKind = 'return';
+        let ancestor = parentByNode.get(parent);
+        while (ancestor !== undefined && !FUNCTION_TYPES.has(ancestor.type))
+          ancestor = parentByNode.get(ancestor);
+        // 単一の無条件returnだけを扱い、未到達・別branchの式を結果として推測しない。
+        const functionBody = ancestor === undefined ? undefined : ast(ancestor).body;
+        const returns =
+          ancestor === undefined
+            ? []
+            : sortedNodes.filter((candidate) => {
+                if (candidate.type !== 'ReturnStatement') return false;
+                let enclosing = parentByNode.get(candidate);
+                while (enclosing !== undefined && !FUNCTION_TYPES.has(enclosing.type))
+                  enclosing = parentByNode.get(enclosing);
+                return enclosing === ancestor;
+              });
+        if (
+          ancestor !== undefined &&
+          parentByNode.get(parent) === functionBody &&
+          returns.length === 1
+        ) {
+          if (ancestor.type === 'FunctionDeclaration') {
+            owner = ancestor;
+            ownerScope = scopesByNode.get(ancestor)?.parent;
+          } else {
+            const declaration = parentByNode.get(ancestor);
+            if (declaration?.type === 'VariableDeclarator') {
+              owner = declaration;
+              const kind = declarationKindByNode.get(declaration);
+              const scope = scopeByNode.get(declaration);
+              if (kind !== undefined && scope !== undefined)
+                ownerScope = declarationScope(scope, kind);
+            }
+          }
+        }
+      }
+      const name = owner === undefined ? undefined : identifierName(ast(owner).id);
+      if (
+        operator !== undefined &&
+        operands[0] !== undefined &&
+        operands[1] !== undefined &&
+        name !== undefined &&
+        ownerScope !== undefined &&
+        outputUses(name, ownerScope, ownerKind)
+      ) {
+        addFact({
+          kind: 'computed-output',
+          ownerKind,
+          name: boundedFactText(name, file),
+          operator,
+          scopeDepth: teachingScopeDepth(ownerScope),
+          operands: [operands[0], operands[1]],
+          ...location,
+        });
+      }
     }
 
     if (node.type === 'AssignmentExpression') {
@@ -861,6 +1106,49 @@ function collectFacts(
       });
     }
   }
+  if (teachingGoal !== undefined) {
+    /** 一意な宣言とscopeを関係解析へ渡し、同名/未使用scopeを合流させない。 */
+    const bindingIn = (scope: ScopeInfo | undefined, name: string): TeachingBinding | undefined => {
+      const declarations = scope?.declarations.get(name);
+      const declaration = declarations?.size === 1 ? declarations.values().next().value : undefined;
+      return declaration === undefined || scope === undefined
+        ? undefined
+        : { name, declaration, scopeOwner: scope.node };
+    };
+    const context: TeachingRelationContext = {
+      program,
+      nodes: sortedNodes,
+      parent: (node) => parentByNode.get(node),
+      resolve: (node) => {
+        const name = identifierName(node);
+        return name === undefined
+          ? undefined
+          : bindingIn(resolveBinding(scopeByNode.get(node), name), name);
+      },
+      global: (name) => bindingIn(scopesByNode.get(program), name),
+      writes: (binding) => {
+        const scope = scopesByNode.get(binding.scopeOwner);
+        const directWrites = writes.get(scope!)?.get(binding.name) ?? [];
+        // Member更新も同じreceiver bindingへのwriteとして扱い、Object/Array結果の上書きを借用しない。
+        const memberWrites = sortedNodes.filter((node) => {
+          let target =
+            node.type === 'AssignmentExpression'
+              ? ast(node).left
+              : node.type === 'UpdateExpression'
+                ? ast(node).argument
+                : undefined;
+          if (!isNode(target) || target.type !== 'MemberExpression') return false;
+          while (isNode(target) && target.type === 'MemberExpression') target = ast(target).object;
+          if (!isNode(target) || identifierName(target) !== binding.name) return false;
+          return resolveBinding(scopeByNode.get(target), binding.name) === scope;
+        });
+        return [...directWrites, ...memberWrites];
+      },
+    };
+    const relation = findTeachingRelation(context, teachingGoal);
+    if (relation !== undefined)
+      addFact({ kind: 'teaching-relation', goal: teachingGoal, ...factLocation(relation, file) });
+  }
   return Object.freeze(facts);
 }
 
@@ -910,7 +1198,7 @@ export async function analyzeConsoleSourceFacts(
       file: request.file,
       instrumentedCode: request.source,
       sourceSha256: await sha256(request.source),
-      facts: collectFacts(program, nodes, request.file),
+      facts: collectFacts(program, nodes, request.file, request.teachingGoal),
       diagnostics: [],
     };
   } catch (error: unknown) {
@@ -927,6 +1215,19 @@ export async function analyzeConsoleSourceFacts(
 async function analyzeLegacyJavaScriptSource(
   request: JavaScriptLegacyAnalysisRequest,
 ): Promise<JavaScriptLegacyAnalysisResult> {
+  if (
+    request.teachingGoal !== undefined &&
+    (!isJavaScriptTeachingGoal(request.teachingGoal) ||
+      request.sourceType !== 'script' ||
+      !['core', 'async'].includes(request.capabilityProfile))
+  ) {
+    return failure(
+      request,
+      'security',
+      'Invalid teaching Goal',
+      '教材の判定設定を確認できませんでした。',
+    );
+  }
   if (!/^[$A-Z_a-z][$\w]*$/u.test(request.guardIdentifier)) {
     return failure(request, 'system', 'Invalid guard identifier', '実行の準備に失敗しました。');
   }
@@ -970,7 +1271,7 @@ async function analyzeLegacyJavaScriptSource(
       );
     }
     assertJavaScriptCapabilityPolicy(program, request.file, request.capabilityProfile);
-    const facts = collectFacts(program, nodes, request.file);
+    const facts = collectFacts(program, nodes, request.file, request.teachingGoal);
     return {
       status: 'success',
       requestId: request.requestId,

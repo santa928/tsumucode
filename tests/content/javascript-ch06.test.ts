@@ -56,17 +56,17 @@ describe('javascript-ch06', () => {
     const { runtime: course } = await loadAuthoringCourse(path.resolve('content/javascript'));
 
     expect(course).toMatchObject({
-      revision: '2026-10-02.1',
-      estimatedMinutes: 760,
+      revision: '2026-10-02.5',
+      estimatedMinutes: 1010,
       publicationStatus: 'draft',
       expectedTotals: {
-        chapters: 12,
-        lessons: 46,
-        conceptSlides: 184,
+        chapters: 14,
+        lessons: 52,
+        conceptSlides: 202,
         standardExercises: 48,
-        guidedProjectLessons: 0,
-        capstoneLessons: 0,
-        estimatedMinutes: 760,
+        guidedProjectLessons: 5,
+        capstoneLessons: 1,
+        estimatedMinutes: 1010,
       },
     });
     expect(
@@ -93,8 +93,11 @@ describe('javascript-ch06', () => {
           'javascript-ch11',
         ],
       },
+      { id: 'javascript-p03-project', chapterIds: ['javascript-ch12', 'javascript-ch13'] },
     ]);
-    expect(course.progressMigrations.at(-1)).toEqual({
+    expect(
+      course.progressMigrations.find(({ toRevision }) => toRevision === '2026-10-02.1'),
+    ).toEqual({
       fromRevision: '2026-09-28.19',
       toRevision: '2026-10-02.1',
       steps: [
@@ -120,6 +123,22 @@ describe('javascript-ch06', () => {
             '判定条件と同梱データを更新しました。旧コードは退避データと復旧バックアップに保ちます。新しい最初のコードで再確認してください。',
         },
       ],
+    });
+    expect(
+      course.progressMigrations.find(
+        ({ fromRevision, toRevision }) =>
+          fromRevision === '2026-10-02.1' && toRevision === '2026-10-02.2',
+      ),
+    ).toMatchObject({
+      fromRevision: '2026-10-02.1',
+      toRevision: '2026-10-02.2',
+      steps: [
+        'javascript-ch01-l03-e01',
+        'javascript-ch02-l01-e01',
+        'javascript-ch03-l02-e01',
+        'javascript-ch03-l04-e01',
+        'javascript-ch06-l04-e01',
+      ].map((id) => ({ action: 'intentionally-reset', entity: 'exercise', id })),
     });
   }, 20_000);
 
@@ -197,15 +216,15 @@ describe('javascript-ch06', () => {
       { path: 'index.html', editable: false },
       { path: 'styles.css', editable: false },
     ]);
-    for (const exercise of [errorLesson, debugLesson]) {
-      expect(exercise?.runtime).toEqual({
-        kind: 'javascript',
-        entryFile: 'script.js',
-        sourceType: 'script',
-        capabilityProfile: 'core',
-        primaryOutput: 'console',
-      });
-    }
+    const scriptRuntime = {
+      kind: 'javascript',
+      entryFile: 'script.js',
+      sourceType: 'script',
+      capabilityProfile: 'core',
+      primaryOutput: 'console',
+    };
+    expect(errorLesson?.runtime).toEqual({ ...scriptRuntime, teachingGoal: 'caught-error' });
+    expect(debugLesson?.runtime).toEqual(scriptRuntime);
   });
 
   it('各Exerciseへ3 Hint・Solution・5 Fixture以上と診断code付きcode-errorを持たせる', async () => {
@@ -283,7 +302,17 @@ describe('javascript-ch06', () => {
     );
     expect(factsByExercise['javascript-ch06-l04-e01']).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ kind: 'binary-expression', operator: '*' }),
+        expect.objectContaining({
+          kind: 'computed-output',
+          ownerKind: 'binding',
+          name: 'totalScore',
+          scopeDepth: 0,
+          operator: '*',
+          operands: [
+            { kind: 'identifier', name: 'questionCount' },
+            { kind: 'identifier', name: 'pointsPerQuestion' },
+          ],
+        }),
       ]),
     );
   });

@@ -56,88 +56,99 @@ describe('javascript-ch05', () => {
     const { runtime: course } = await loadAuthoringCourse(path.resolve('content/javascript'));
 
     expect(course).toMatchObject({
-      revision: '2026-10-02.1',
-      estimatedMinutes: 760,
+      revision: '2026-10-02.5',
+      estimatedMinutes: 1010,
       publicationStatus: 'draft',
       expectedTotals: {
-        chapters: 12,
-        lessons: 46,
-        conceptSlides: 184,
+        chapters: 14,
+        lessons: 52,
+        conceptSlides: 202,
         standardExercises: 48,
-        guidedProjectLessons: 0,
-        capstoneLessons: 0,
-        estimatedMinutes: 760,
+        guidedProjectLessons: 5,
+        capstoneLessons: 1,
+        estimatedMinutes: 1010,
       },
-      progressMigrations: [
-        {
-          fromRevision: '2026-08-02.1',
-          toRevision: '2026-08-09.1',
-          steps: [],
-        },
-        {
-          fromRevision: '2026-08-09.1',
-          toRevision: '2026-08-10.1',
-          steps: [],
-        },
-        {
-          fromRevision: '2026-08-10.1',
-          toRevision: '2026-08-10.2',
-          steps: [],
-        },
-        {
-          fromRevision: '2026-08-10.2',
-          toRevision: '2026-08-10.3',
-          steps: [],
-        },
-        { fromRevision: '2026-08-10.3', toRevision: '2026-09-27.1', steps: [] },
-        { fromRevision: '2026-09-27.1', toRevision: '2026-09-28.1', steps: [] },
-        { fromRevision: '2026-09-28.1', toRevision: '2026-09-28.2', steps: [] },
-        { fromRevision: '2026-09-28.2', toRevision: '2026-09-28.3', steps: [] },
-        { fromRevision: '2026-09-28.3', toRevision: '2026-09-28.4', steps: [] },
-        { fromRevision: '2026-09-28.4', toRevision: '2026-09-28.5', steps: [] },
-        { fromRevision: '2026-09-28.5', toRevision: '2026-09-28.6', steps: [] },
-        { fromRevision: '2026-09-28.6', toRevision: '2026-09-28.7', steps: [] },
-        { fromRevision: '2026-09-28.7', toRevision: '2026-09-28.8', steps: [] },
-        { fromRevision: '2026-09-28.8', toRevision: '2026-09-28.9', steps: [] },
-        { fromRevision: '2026-09-28.9', toRevision: '2026-09-28.10', steps: [] },
-        { fromRevision: '2026-09-28.10', toRevision: '2026-09-28.11', steps: [] },
-        { fromRevision: '2026-09-28.11', toRevision: '2026-09-28.12', steps: [] },
-        { fromRevision: '2026-09-28.12', toRevision: '2026-09-28.13', steps: [] },
-        { fromRevision: '2026-09-28.13', toRevision: '2026-09-28.14', steps: [] },
-        { fromRevision: '2026-09-28.14', toRevision: '2026-09-28.15', steps: [] },
-        { fromRevision: '2026-09-28.15', toRevision: '2026-09-28.16', steps: [] },
-        { fromRevision: '2026-09-28.16', toRevision: '2026-09-28.17', steps: [] },
-        { fromRevision: '2026-09-28.17', toRevision: '2026-09-28.18', steps: [] },
-        { fromRevision: '2026-09-28.18', toRevision: '2026-09-28.19', steps: [] },
-        {
-          fromRevision: '2026-09-28.19',
-          toRevision: '2026-10-02.1',
-          steps: [
-            {
-              action: 'intentionally-reset',
-              entity: 'exercise',
-              id: 'javascript-ch10-l01-e01',
-              reason:
-                '判定条件と同梱データを更新しました。旧コードは退避データと復旧バックアップに保ちます。新しい最初のコードで再確認してください。',
-            },
-            {
-              action: 'intentionally-reset',
-              entity: 'exercise',
-              id: 'javascript-ch10-l02-e01',
-              reason:
-                '判定条件と同梱データを更新しました。旧コードは退避データと復旧バックアップに保ちます。新しい最初のコードで再確認してください。',
-            },
-            {
-              action: 'intentionally-reset',
-              entity: 'exercise',
-              id: 'javascript-ch11-l03-e01',
-              reason:
-                '判定条件と同梱データを更新しました。旧コードは退避データと復旧バックアップに保ちます。新しい最初のコードで再確認してください。',
-            },
-          ],
-        },
-      ],
     });
+    const legacyMigrations = [
+      {
+        fromRevision: '2026-08-02.1',
+        toRevision: '2026-08-09.1',
+        steps: [],
+      },
+      {
+        fromRevision: '2026-08-09.1',
+        toRevision: '2026-08-10.1',
+        steps: [],
+      },
+      {
+        fromRevision: '2026-08-10.1',
+        toRevision: '2026-08-10.2',
+        steps: [],
+      },
+      {
+        fromRevision: '2026-08-10.2',
+        toRevision: '2026-08-10.3',
+        steps: [],
+      },
+      { fromRevision: '2026-08-10.3', toRevision: '2026-09-27.1', steps: [] },
+      { fromRevision: '2026-09-27.1', toRevision: '2026-09-28.1', steps: [] },
+      { fromRevision: '2026-09-28.1', toRevision: '2026-09-28.2', steps: [] },
+      { fromRevision: '2026-09-28.2', toRevision: '2026-09-28.3', steps: [] },
+      { fromRevision: '2026-09-28.3', toRevision: '2026-09-28.4', steps: [] },
+      { fromRevision: '2026-09-28.4', toRevision: '2026-09-28.5', steps: [] },
+      { fromRevision: '2026-09-28.5', toRevision: '2026-09-28.6', steps: [] },
+      { fromRevision: '2026-09-28.6', toRevision: '2026-09-28.7', steps: [] },
+      { fromRevision: '2026-09-28.7', toRevision: '2026-09-28.8', steps: [] },
+      { fromRevision: '2026-09-28.8', toRevision: '2026-09-28.9', steps: [] },
+      { fromRevision: '2026-09-28.9', toRevision: '2026-09-28.10', steps: [] },
+      { fromRevision: '2026-09-28.10', toRevision: '2026-09-28.11', steps: [] },
+      { fromRevision: '2026-09-28.11', toRevision: '2026-09-28.12', steps: [] },
+      { fromRevision: '2026-09-28.12', toRevision: '2026-09-28.13', steps: [] },
+      { fromRevision: '2026-09-28.13', toRevision: '2026-09-28.14', steps: [] },
+      { fromRevision: '2026-09-28.14', toRevision: '2026-09-28.15', steps: [] },
+      { fromRevision: '2026-09-28.15', toRevision: '2026-09-28.16', steps: [] },
+      { fromRevision: '2026-09-28.16', toRevision: '2026-09-28.17', steps: [] },
+      { fromRevision: '2026-09-28.17', toRevision: '2026-09-28.18', steps: [] },
+      { fromRevision: '2026-09-28.18', toRevision: '2026-09-28.19', steps: [] },
+      {
+        fromRevision: '2026-09-28.19',
+        toRevision: '2026-10-02.1',
+        steps: [
+          {
+            action: 'intentionally-reset',
+            entity: 'exercise',
+            id: 'javascript-ch10-l01-e01',
+            reason:
+              '判定条件と同梱データを更新しました。旧コードは退避データと復旧バックアップに保ちます。新しい最初のコードで再確認してください。',
+          },
+          {
+            action: 'intentionally-reset',
+            entity: 'exercise',
+            id: 'javascript-ch10-l02-e01',
+            reason:
+              '判定条件と同梱データを更新しました。旧コードは退避データと復旧バックアップに保ちます。新しい最初のコードで再確認してください。',
+          },
+          {
+            action: 'intentionally-reset',
+            entity: 'exercise',
+            id: 'javascript-ch11-l03-e01',
+            reason:
+              '判定条件と同梱データを更新しました。旧コードは退避データと復旧バックアップに保ちます。新しい最初のコードで再確認してください。',
+          },
+        ],
+      },
+    ];
+    expect(course.progressMigrations.slice(0, legacyMigrations.length)).toEqual(legacyMigrations);
+    expect(
+      course.progressMigrations
+        .slice(legacyMigrations.length)
+        .map(({ fromRevision, toRevision }) => ({ fromRevision, toRevision })),
+    ).toEqual([
+      { fromRevision: '2026-10-02.1', toRevision: '2026-10-02.2' },
+      { fromRevision: '2026-10-02.2', toRevision: '2026-10-02.3' },
+      { fromRevision: '2026-10-02.3', toRevision: '2026-10-02.4' },
+      { fromRevision: '2026-10-02.4', toRevision: '2026-10-02.5' },
+    ]);
     expect(course.phases.flatMap(({ chapters }) => chapters).map(({ id }) => id)).toEqual([
       'javascript-ch00',
       'javascript-ch01',
@@ -151,6 +162,8 @@ describe('javascript-ch05', () => {
       'javascript-ch09',
       'javascript-ch10',
       'javascript-ch11',
+      'javascript-ch12',
+      'javascript-ch13',
     ]);
   }, 20_000);
 

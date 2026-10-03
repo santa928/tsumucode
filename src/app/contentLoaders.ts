@@ -1,6 +1,7 @@
 /** Routeごとに必要最小限の分割教材だけを取得して画面契約へ変換する。 */
 import { redirect, type LoaderFunctionArgs } from 'react-router';
 import { courseContentRepository } from '../core/content/CourseContentRepository';
+import { exerciseRequirementIds } from '../core/content/exerciseRequirementIds';
 import {
   loadCourseCatalog,
   loadCourseIndex,
@@ -222,7 +223,7 @@ function exerciseById(lesson: Lesson, exerciseId: string): Exercise | undefined 
 /** requirement IDを所有する一意なExerciseへ解決し、欠落・複数所有を拒否する。 */
 function exerciseByRequirement(lesson: Lesson, requirementId: string): Exercise | undefined {
   const matches = lesson.exercises.filter((exercise) =>
-    exercise.validationRules.some(({ groupId, id }) => (groupId ?? id) === requirementId),
+    exerciseRequirementIds(exercise).includes(requirementId),
   );
   return matches.length === 1 ? matches[0] : undefined;
 }

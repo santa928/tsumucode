@@ -1,0 +1,255 @@
+schemaVersion: 2
+courseId: javascript
+releases: []
+candidate:
+  courseId: javascript
+  draftSourceCommit: draft
+  draftCanonicalDistSha256: draft
+  normalizedLearningInputSha256: draft
+  revision: 2026-10-02.5
+  status: draft
+  verifiedSourceCommit: draft
+  canonicalDistSha256: draft
+  courseManifestSha256: draft
+  publicProvenanceSha256: draft
+  persistentIdsSha256: draft
+  persistentIds: []
+  previousReleaseTag: null
+  tombstonedIds: []
+  migrations:
+    - fromRevision: 2026-08-02.1
+      toRevision: 2026-08-09.1
+      steps: []
+    - fromRevision: 2026-08-09.1
+      toRevision: 2026-08-10.1
+      steps: []
+    - fromRevision: 2026-08-10.1
+      toRevision: 2026-08-10.2
+      steps: []
+    - fromRevision: 2026-08-10.2
+      toRevision: 2026-08-10.3
+      steps: []
+    - fromRevision: 2026-08-10.3
+      toRevision: 2026-09-27.1
+      steps: []
+    - fromRevision: 2026-09-27.1
+      toRevision: 2026-09-28.1
+      steps: []
+    - fromRevision: 2026-09-28.1
+      toRevision: 2026-09-28.2
+      steps: []
+    - fromRevision: 2026-09-28.2
+      toRevision: 2026-09-28.3
+      steps: []
+    - fromRevision: 2026-09-28.3
+      toRevision: 2026-09-28.4
+      steps: []
+    - fromRevision: 2026-09-28.4
+      toRevision: 2026-09-28.5
+      steps: []
+    - fromRevision: 2026-09-28.5
+      toRevision: 2026-09-28.6
+      steps: []
+    - fromRevision: 2026-09-28.6
+      toRevision: 2026-09-28.7
+      steps: []
+    - fromRevision: 2026-09-28.7
+      toRevision: 2026-09-28.8
+      steps: []
+    - fromRevision: 2026-09-28.8
+      toRevision: 2026-09-28.9
+      steps: []
+    - fromRevision: 2026-09-28.9
+      toRevision: 2026-09-28.10
+      steps: []
+    - fromRevision: 2026-09-28.10
+      toRevision: 2026-09-28.11
+      steps: []
+    - fromRevision: 2026-09-28.11
+      toRevision: 2026-09-28.12
+      steps: []
+    - fromRevision: 2026-09-28.12
+      toRevision: 2026-09-28.13
+      steps: []
+    - fromRevision: 2026-09-28.13
+      toRevision: 2026-09-28.14
+      steps: []
+    - fromRevision: 2026-09-28.14
+      toRevision: 2026-09-28.15
+      steps: []
+    - fromRevision: 2026-09-28.15
+      toRevision: 2026-09-28.16
+      steps: []
+    - fromRevision: 2026-09-28.16
+      toRevision: 2026-09-28.17
+      steps: []
+    - fromRevision: 2026-09-28.17
+      toRevision: 2026-09-28.18
+      steps: []
+    - fromRevision: 2026-09-28.18
+      toRevision: 2026-09-28.19
+      steps: []
+    - fromRevision: 2026-09-28.19
+      toRevision: 2026-10-02.1
+      steps:
+        - action: intentionally-reset
+          entity: exercise
+          id: javascript-ch10-l01-e01
+          reason: 判定条件と同梱データを更新しました。旧コードは退避データと復旧バックアップに保ちます。新しい最初のコードで再確認してください。
+        - action: intentionally-reset
+          entity: exercise
+          id: javascript-ch10-l02-e01
+          reason: 判定条件と同梱データを更新しました。旧コードは退避データと復旧バックアップに保ちます。新しい最初のコードで再確認してください。
+        - action: intentionally-reset
+          entity: exercise
+          id: javascript-ch11-l03-e01
+          reason: 判定条件と同梱データを更新しました。旧コードは退避データと復旧バックアップに保ちます。新しい最初のコードで再確認してください。
+    - fromRevision: 2026-10-02.1
+      toRevision: 2026-10-02.2
+      steps:
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch01-l03-e01
+          reason: 指定計算とConsole利用の関係を再確認します。旧コード全体は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch02-l01-e01
+          reason: 指定計算とConsole利用の関係を再確認します。旧コード全体は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch03-l02-e01
+          reason: 指定計算とConsole利用の関係を再確認します。旧コード全体は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch03-l04-e01
+          reason: 指定計算とConsole利用の関係を再確認します。旧コード全体は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch06-l04-e01
+          reason: 指定計算とConsole利用の関係を再確認します。旧コード全体は隔離と復旧backupへ保持します。
+    - fromRevision: 2026-10-02.2
+      toRevision: 2026-10-02.3
+      steps: []
+    - fromRevision: 2026-10-02.3
+      toRevision: 2026-10-02.4
+      steps:
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch01-l01-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch01-l02-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch01-l04-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch02-l02-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch02-l03-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch02-l04-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch03-l01-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch03-l03-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch03-l05-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch03-l05-e02
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch03-l05-e03
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch04-l01-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch04-l02-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch04-l03-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch04-l04-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch04-l05-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch05-l01-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch05-l02-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch05-l03-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch05-l04-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch06-l03-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch10-l01-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch10-l02-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch10-l03-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch11-l02-e01
+          reason: 学んだ値・処理と実行結果の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+    - fromRevision: 2026-10-02.4
+      toRevision: 2026-10-02.5
+      steps:
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch05-l01-e01
+          reason: 配列の値とmap/filter/reduceの戻り値の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch05-l02-e01
+          reason: 配列の値とmap/filter/reduceの戻り値の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch05-l03-e01
+          reason: 配列の値とmap/filter/reduceの戻り値の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+        - entity: exercise
+          action: intentionally-reset
+          id: javascript-ch05-l04-e01
+          reason: 配列の値とmap/filter/reduceの戻り値の関係を再確認します。旧コード・合格Snapshot・日時は隔離と復旧backupへ保持します。
+  syntheticProgressBundlePath: tests/fixtures/progress/javascript-previous-release-bundle.json

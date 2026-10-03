@@ -1,0 +1,19 @@
+# JavaScriptの計算関係と共有Workspaceの現在完了
+
+初級の計算・比較・Function returnの演習では、指定対象を直さず表示行だけで正答を作るコードを合格にしない。`computed-output` factは指定bindingの初期化式、または指定Functionの単一・無条件returnの二項計算と、同じlexical bindingを無条件top-levelのbuiltin `console.log`へ直接渡す関係を記録する。対象bindingは宣言が一意で、Console出力までの再代入・更新がないことを確認する。Function内の関連writeは呼出順を推測せず採用しない。別lexical bindingへのwriteや出力後のtop-level writeは除外しない。
+
+Operandは名前またはprimitive literalに限定する。掛け算と厳密等価比較は両端の逆順を受理し、文字列連結は順序を保持する。括弧、空白、引用符の違い、既存のFunction外形の別解はSource全文一致で制限しない。未使用Function、同名shadow binding、別の計算式、固定値だけの表示を指定対象の計算結果と扱わない。汎用の別名追跡やdata flow解析を追加する契約ではない。
+
+対象は`javascript-ch01-l03-e01`、`javascript-ch02-l01-e01`、`javascript-ch03-l02-e01`、`javascript-ch03-l04-e01`、`javascript-ch06-l04-e01`。教材revision `2026-10-02.1`から`2026-10-02.2`へ進む際、この5演習だけ旧合格を失効する。旧Draft全文と過去成功Sourceは既存の隔離・復旧backupへ保持し、他演習の合格やSlide閲覧を保つ。
+
+共有Workspaceの採点対象は現在工程までのprefixを維持する。編集・Resetの失効対象はCourse Indexの全Workspace所有Exerciseとし、未読込の未来Lessonの本文を読む必要はない。編集は現在の採点evidenceだけを取り消し、過去passing snapshot、初回完了日時、閲覧位置を保つ。確定Resetは既存互換としてStarterへ戻し、開示Hint・判定履歴・passing snapshotを消去して全Workspaceの現在完了を取り消す。Reset取消はすべて保持する。保存・Map・再読込・Export/Importはこの同じ現在完了状態を使用する。
+
+`project` capability profileでは、既習の同じ画面のElementに登録したEventの`currentTarget`と既存asyncを組み合わせられる。既存native getter guardを使用し、Documentなどの非Element currentTargetはcatchしても非採点のunsupported診断にする。Form送信取消の採点は既存`dom-form`契約を維持する。
+
+制作の`state.questions[state.index]`、`question.choices[index]`はprojectだけで動的readを実guardへ接続する。receiver/keyを一度だけ評価し、実Arrayまたはprimitive Stringの非負safe-integer keyからown data descriptorのvalueだけを読む。holeはundefinedを返し、prototype・accessorは呼ばない。動的write / update / delete / pattern target / call / optional accessは未対応であり、一般Object・Function・Document・NodeList等の動的readも許可しない。静的Literal accessと他profileの範囲は維持する。
+
+projectではGlobal Proxyの作成経路をAnalyzerで拒否する。Array.isArrayだけではProxy(Array)を区別できないため、新しい動的readの境界はこの閉じた能力policyと併用する。projectのProxy識別子は同名のuser-local bindingも拒否する制約がある。他profileの既存の静的Proxy利用とbounded Consoleの例外隔離は維持し、動的readを追加しない。数値型検査前のkey coercion、Array accessor/prototypeの評価を行わず、捕捉済みintrinsicを使う。guard拒否はstickyな内部flagを既存有限runtimeError payloadの専用nameへ反映し、try/catch後や後続操作でもunsupportedとして非採点にする。任意user Errorが同じ専用nameを名乗るとunsupportedへ分類される限界があり、合格を与える経路にはならない。一般保存schemaとprotocol field/versionは増やさない。
+
+教材revision `2026-10-02.3`から`2026-10-02.4`では、実測で結果と学習処理の接続不足が確認された25演習だけを既存backup-first移行で再確認する。24演習は閉じた`teachingGoal`をruntimeへ指定し、同じlexical bindingの値・分岐・Loop・Function・Closure・Array変換・Error・Promise結果がbuiltin Consoleまたは指定DOM表示へ届く関係を1件の`teaching-relation` factで確認する。指定のない演習には新factを発行せず、未指定・別Goal・未知Goalを関係成立へ補完しない。再宣言・関連write・shadow・未使用owner・return後の処理を別の結果へ借用しない。既存の正当なoperand逆順、callback名、Function/Arrow外形、thenによる同等な結果処理を保持する。
+
+残る1演習の再開始時空欄は、`input-value` checkpointが要求するselectorの可視native text inputだけからlive値を取得する。捕捉済みnative getterを使い、独自getter・password・hidden・非可視・別document・ホストDOMは読まない。旧Snapshotはこのoptional fieldの欠落を受理するが、未観測を空文字へ補完して合格にしない。一般DOM property読取や保存schemaの拡張は行わない。

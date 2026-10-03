@@ -21,6 +21,7 @@ steps:
         javascript-ch02-l04-e01-r02,
         javascript-ch02-l04-e01-r03,
         javascript-ch02-l04-e01-r04,
+        javascript-ch02-l04-e01-r05,
       ]
 files:
   - { path: script.js, language: javascript, source: starter/script.js, editable: true }
@@ -103,6 +104,28 @@ validationRules:
       nextAction: 開始値を1、条件をnumber <= 3にします。
     hintId: javascript-ch02-l04-e01-h03
     relatedSlideId: javascript-ch02-l04-s04
+  - id: javascript-ch02-l04-e01-r05
+    groupId: javascript-ch02-l04-e01-teaching-result
+    label: numberを更新するforの中で問題番号を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: teaching-relation
+        goal: question-loop
+    feedback:
+      target: script.jsと実行結果
+      expected: numberを更新するforの中で問題番号を表示する
+      nextAction: forの中でnumberを1から3まで増やし、現在のnumberを問題という文字と組み合わせてconsole.logへ渡します。繰り返しの外で3行を別に表示していないか確認します。
+    hintId: javascript-ch02-l04-e01-h01
+    relatedSlideId: javascript-ch02-l04-s04
 hints:
   - id: javascript-ch02-l04-e01-h01
     level: 1
@@ -144,6 +167,7 @@ fixtures:
       - javascript-ch02-l04-e01-r02
       - javascript-ch02-l04-e01-r03
       - javascript-ch02-l04-e01-r04
+      - javascript-ch02-l04-e01-r05
   - id: off-by-one
     expectedStatus: incomplete
     files:
@@ -155,6 +179,7 @@ fixtures:
       - javascript-ch02-l04-e01-r02
       - javascript-ch02-l04-e01-r03
       - javascript-ch02-l04-e01-r04
+      - javascript-ch02-l04-e01-r05
   - id: unrolled-output
     expectedStatus: incomplete
     files:
@@ -171,6 +196,7 @@ fixtures:
       - javascript-ch02-l04-e01-r02
       - javascript-ch02-l04-e01-r03
       - javascript-ch02-l04-e01-r04
+      - javascript-ch02-l04-e01-r05
   - id: infinite-loop
     expectedStatus: system-error
     files:
@@ -197,3 +223,27 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds: []
+  - id: relation-fixed-output
+    expectedStatus: incomplete
+    files:
+      - path: script.js
+        language: javascript
+        source: fixtures/relation-fixed-output.js
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch02-l04-e01-r05
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  teachingGoal: question-loop

@@ -1,0 +1,48 @@
+id: javascript-ch12-l01
+kind: guided-project
+title: 問題を画面へ表示する
+goal: 同じWorkspaceへ問題表示、回答、得点、結果、再挑戦を積み上げます。今回作るのは問題表示です。提供コードは同梱データを読み、成功/失敗を案内します。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - javascript-ch11-l03
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/javascript-ch12-l01-e01/exercise.yaml
+reflection: 開始で骨組みの問題とHTML/CSSの2択が出ることを確認します。失敗を試してから開始で戻れることも確かめます。得点や回答は次の工程です。
+glossaryRefs:
+  - quiz-question-render
+nextLessonId: javascript-ch12-l02
+project:
+  id: javascript-quiz-guided
+  briefSource: brief.md
+  guideSources:
+    - guide.md
+  checklist:
+    - id: javascript-ch12-l01-data
+      label: 同梱データをModuleから読む
+      required: true
+      ruleIds:
+        - javascript-ch12-l01-e01-r01
+    - id: javascript-ch12-l01-g1-show
+      label: 最初の問題を読む
+      required: true
+      ruleIds:
+        - interaction:g1-show:loaded
+    - id: javascript-ch12-l01-g1-recovery
+      label: 読み込み失敗から再開
+      required: true
+      ruleIds:
+        - interaction:g1-recovery:loading
+        - interaction:g1-recovery:failed
+        - interaction:g1-recovery:recovered
+completion:
+  kind: guided-project
+  requiredChecklistItemIds:
+    - javascript-ch12-l01-data
+    - javascript-ch12-l01-g1-show
+    - javascript-ch12-l01-g1-recovery
+  requiredExerciseIds:
+    - javascript-ch12-l01-e01

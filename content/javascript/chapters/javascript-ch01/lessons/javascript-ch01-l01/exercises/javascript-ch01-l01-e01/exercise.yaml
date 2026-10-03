@@ -22,6 +22,7 @@ steps:
         javascript-ch01-l01-e01-r03,
         javascript-ch01-l01-e01-r04,
         javascript-ch01-l01-e01-r05,
+        javascript-ch01-l01-e01-r06,
       ]
 files:
   - { path: script.js, language: javascript, source: starter/script.js, editable: true }
@@ -122,6 +123,28 @@ validationRules:
       nextAction: 3行を上から順に見直します。
     hintId: javascript-ch01-l01-e01-h03
     relatedSlideId: javascript-ch01-l01-s04
+  - id: javascript-ch01-l01-e01-r06
+    groupId: javascript-ch01-l01-e01-teaching-result
+    label: 文字列・数値・真偽値をその種類のままConsoleへ渡す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: teaching-relation
+        goal: console-primitives
+    feedback:
+      target: script.jsと実行結果
+      expected: 文字列・数値・真偽値をその種類のままConsoleへ渡す
+      nextAction: 文字列・数値・真偽値を、それぞれその種類のままconsole.logの丸括弧へ入れます。3とtrueに引用符が付いていないか確認します。
+    hintId: javascript-ch01-l01-e01-h01
+    relatedSlideId: javascript-ch01-l01-s04
 hints:
   - id: javascript-ch01-l01-e01-h01
     level: 1
@@ -176,6 +199,7 @@ fixtures:
       - javascript-ch01-l01-e01-r03
       - javascript-ch01-l01-e01-r04
       - javascript-ch01-l01-e01-r05
+      - javascript-ch01-l01-e01-r06
   - id: syntax-error
     expectedStatus: code-error
     files:
@@ -190,3 +214,27 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds: []
+  - id: relation-fixed-output
+    expectedStatus: incomplete
+    files:
+      - path: script.js
+        language: javascript
+        source: fixtures/relation-fixed-output.js
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch01-l01-e01-r06
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  teachingGoal: console-primitives

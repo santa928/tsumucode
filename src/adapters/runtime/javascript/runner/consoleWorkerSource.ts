@@ -1,6 +1,6 @@
 import { CONSOLE_LIMITS, createConsoleFormatter, type ConsoleLimits } from './consoleFormatter';
 
-/** 学習scriptとは別の閉じたscopeでnative参照・結果・専用portを所有する。 */
+/** 学習scriptとは別のscopeでnative参照とportを所有し、認証済み内部通知だけをhandledにする。 */
 function initializeWorker(
   formatFactory: typeof createConsoleFormatter,
   limits: ConsoleLimits,
@@ -24,6 +24,8 @@ function initializeWorker(
   const promise = Object.getOwnPropertyDescriptor(PromiseRejectionEvent.prototype, 'promise')?.get;
   // eslint-disable-next-line @typescript-eslint/unbound-method -- 捕捉したnative関数を固定receiverへapplyする。
   const errorMessage = Object.getOwnPropertyDescriptor(ErrorEvent.prototype, 'message')?.get;
+  // eslint-disable-next-line @typescript-eslint/unbound-method -- 秘密markerだけをreceiverにする。
+  const promiseThen = Promise.prototype.then;
   if (ports === undefined || promise === undefined || errorMessage === undefined)
     throw new Error('Worker intrinsic unavailable');
 
@@ -51,6 +53,8 @@ function initializeWorker(
   const marker = new Promise((_resolve, reject) => {
     rejectMarker = reject;
   });
+  // native thenが学習者のPromise.prototype.constructor/species getterを参照しない。
+  void define(marker, 'constructor', { value: undefined, writable: false, configurable: false });
   const send = (): void => {
     if (port === undefined || !finished || settled) return;
     settled = true;
@@ -103,6 +107,8 @@ function initializeWorker(
         return;
       }
       if (armed && rejected === marker && !settled) {
+        // 認証した内部通知だけをhandledへする。学習者の拒否は下のfaultに残す。
+        void apply(promiseThen, marker, [undefined, () => undefined]);
         finished = true;
         send();
       } else fault = 'Unhandled Promise rejection';
@@ -222,9 +228,18 @@ function initializeWorker(
     send();
     return false;
   }
-  // 初期scriptとfinite microtasksの後の別taskで、秘密markerを同じ拒否通知queueに置く。
+  // 秘密markerを事前にhandledへし、拒否callbackの次taskまで学習者の拒否通知を収集する。
   schedule(() => {
     armed = true;
+    void apply(promiseThen, marker, [
+      undefined,
+      () => {
+        schedule(() => {
+          finished = true;
+          send();
+        }, 0);
+      },
+    ]);
     rejectMarker(null);
   }, 0);
   return true;

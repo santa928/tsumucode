@@ -1,0 +1,75 @@
+id: javascript-ch12-l04
+kind: guided-project
+title: 全問の後に結果を出す
+goal: 最後の問題への回答と結果表示を分けます。途中は「次の問題」、最後は「結果を見る」。最後のnextで全問の後へ進み、回答操作を閉じます。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - javascript-ch12-l03
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/javascript-ch12-l04-e01/exercise.yaml
+reflection: 今の問題があるかで問題領域と結果の表示を切り替えます。結果は「2問中1問正解」の形です。全問正解/全問誤答も最後まで試します。
+glossaryRefs:
+  - quiz-result-transition
+nextLessonId: javascript-ch12-l05
+project:
+  id: javascript-quiz-guided
+  briefSource: brief.md
+  guideSources:
+    - guide.md
+  checklist:
+    - id: javascript-ch12-l04-data
+      label: 同梱データをModuleから読む
+      required: true
+      ruleIds:
+        - javascript-ch12-l04-e01-r01
+    - id: javascript-ch12-l04-g4-mixed
+      label: 混合回答の結果
+      required: true
+      ruleIds:
+        - interaction:g4-mixed:loaded
+        - interaction:g4-mixed:first-answer
+        - interaction:g4-mixed:second-question
+        - interaction:g4-mixed:second-answer
+        - interaction:g4-mixed:finished
+        - interaction:g4-mixed:repeat-answer
+    - id: javascript-ch12-l04-g4-wrong
+      label: 全問誤答の結果
+      required: true
+      ruleIds:
+        - interaction:g4-wrong:loaded
+        - interaction:g4-wrong:first-answer
+        - interaction:g4-wrong:second-question
+        - interaction:g4-wrong:second-answer
+        - interaction:g4-wrong:finished
+        - interaction:g4-wrong:repeat-answer
+    - id: javascript-ch12-l04-g4-correct
+      label: 全問正解の結果
+      required: true
+      ruleIds:
+        - interaction:g4-correct:loaded
+        - interaction:g4-correct:first-answer
+        - interaction:g4-correct:second-question
+        - interaction:g4-correct:second-answer
+        - interaction:g4-correct:finished
+        - interaction:g4-correct:repeat-answer
+    - id: javascript-ch12-l04-g4-recovery
+      label: 読み込み失敗から再開
+      required: true
+      ruleIds:
+        - interaction:g4-recovery:loading
+        - interaction:g4-recovery:failed
+        - interaction:g4-recovery:recovered
+completion:
+  kind: guided-project
+  requiredChecklistItemIds:
+    - javascript-ch12-l04-data
+    - javascript-ch12-l04-g4-mixed
+    - javascript-ch12-l04-g4-wrong
+    - javascript-ch12-l04-g4-correct
+    - javascript-ch12-l04-g4-recovery
+  requiredExerciseIds:
+    - javascript-ch12-l04-e01

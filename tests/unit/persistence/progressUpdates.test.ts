@@ -10,7 +10,13 @@ import type {
   CourseProgress,
   ExerciseDraft,
   LessonProgress,
+  ProgressRepository,
+  RepositorySnapshot,
 } from '../../../src/core/persistence/contracts';
+import { ContentProgressMigrationService } from '../../../src/core/persistence/contentProgressMigration';
+import { TransferService } from '../../../src/core/persistence/transferService';
+import { buildCourseMap } from '../../../src/core/content/courseMap';
+import { applyCourseProgress } from '../../../src/features/progress/courseMapProgress';
 import {
   findWorkspaceTargets,
   findWorkspaceValidationTargets,
@@ -21,6 +27,7 @@ import {
   recordValidation,
   recordValidationFromIndex,
   recordWorkspaceDraftMutation,
+  recordWorkspaceDraftMutationFromIndex,
   recordWorkspaceValidation,
   type WorkspaceValidationTarget,
 } from '../../../src/core/persistence/progressUpdates';
@@ -554,6 +561,84 @@ describe('progress updates', () => {
       firstCompletedAt: '2026-07-05T00:00:00.000Z',
       updatedAt: EDITED_AT,
     });
+  });
+
+  it('工程1へ戻った編集をIndexだけで全工程失効し、Mapと新repository Importにも過去成功を保つ', async () => {
+    const course = createSharedWorkspaceCourse();
+    const index = createCourseIndex(course);
+    const lesson = course.phases[0]!.chapters[0]!.lessons[0]!;
+    const draft: ExerciseDraft = {
+      ...createEditedDraft(course),
+      lessonId: lesson.id,
+      exerciseId: lesson.exercises[0]!.id,
+    };
+    const previousSnapshots = structuredClone(draft.lastPassingSnapshots);
+    const invalidated = recordWorkspaceDraftMutationFromIndex(
+      createCompletedSharedProgress(course),
+      index,
+      [lesson],
+      draft,
+    )!;
+    expect(
+      findWorkspaceValidationTargets(index, [lesson], draft.exerciseId).map(
+        ({ exercise }) => exercise.id,
+      ),
+    ).toEqual(['exercise-step-1']);
+    expect(
+      Object.values(invalidated.lessons).map(({ currentComplete }) => currentComplete),
+    ).toEqual([false, false, false, false, false]);
+    expect(invalidated.lessons['lesson-step-5']).toMatchObject({
+      viewedSlideIds: ['slide-html-role'],
+      currentComplete: false,
+      firstCompletedAt: '2026-07-05T00:00:00.000Z',
+      passedExerciseIds: [],
+      passedChecklistItemIds: [],
+      passedRuleIds: [],
+      passedViewportIds: [],
+    });
+    expect(invalidated.currentLessonId).toBe('lesson-step-1');
+    expect(
+      applyCourseProgress(buildCourseMap(index), invalidated, course.revision).completedLessons,
+    ).toBe(0);
+    expect(draft.lastPassingSnapshots).toEqual(previousSnapshots);
+    const snapshot: RepositorySnapshot = {
+      schemaVersion: 2,
+      courses: { [course.id]: invalidated },
+      drafts: { [course.id + ':' + draft.workspaceId]: draft },
+      quarantined: [],
+    };
+    const source = { snapshot: async () => snapshot } as ProgressRepository;
+    const sourceMigrations = new ContentProgressMigrationService(source);
+    sourceMigrations.registerCourse(course);
+    const raw = await new TransferService(source, sourceMigrations, {
+      appVersion: '1.0.0',
+      now: () => EDITED_AT,
+    }).exportAll();
+    let imported: RepositorySnapshot = {
+      schemaVersion: 2,
+      courses: {},
+      drafts: {},
+      quarantined: [],
+    };
+    const destination = {
+      snapshot: async () => imported,
+      replaceSnapshotWithBackup: async (value: RepositorySnapshot) => {
+        imported = structuredClone(value);
+      },
+    } as unknown as ProgressRepository;
+    const migrations = new ContentProgressMigrationService(destination);
+    migrations.registerCourse(course);
+    const transfer = new TransferService(destination, migrations, {
+      appVersion: '1.0.0',
+      now: () => EDITED_AT,
+    });
+    const preview = await transfer.prepareImport(raw);
+    await transfer.applyImport(preview.id);
+    expect(imported.courses[course.id]?.lessons['lesson-step-5']?.currentComplete).toBe(false);
+    expect(imported.drafts[course.id + ':' + draft.workspaceId]?.lastPassingSnapshots).toEqual(
+      previousSnapshots,
+    );
+    expect(imported.drafts[course.id + ':' + draft.workspaceId]?.files).toEqual(draft.files);
   });
 
   it('同一snapshotの再判定batchで現在工程までのGuided evidenceだけを復帰する', () => {

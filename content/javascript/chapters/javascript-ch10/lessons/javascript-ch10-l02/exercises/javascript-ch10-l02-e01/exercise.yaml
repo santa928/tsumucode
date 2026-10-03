@@ -21,6 +21,7 @@ steps:
       - javascript-ch10-l02-e01-r01
       - javascript-ch10-l02-e01-r02
       - javascript-ch10-l02-e01-r03
+      - javascript-ch10-l02-e01-r04
 files:
   - path: index.html
     language: html
@@ -108,6 +109,28 @@ validationRules:
       expected: 同梱データの取得元を呼ぶ
       nextAction: async関数の中で、loadQuestions()の結果を受け取ってから件数を表示します。
     hintId: javascript-ch10-l02-e01-h02
+    relatedSlideId: javascript-ch10-l02-s03
+  - id: javascript-ch10-l02-e01-r04
+    groupId: javascript-ch10-l02-e01-teaching-result
+    label: loadQuestionsから受け取った問題の件数を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: teaching-relation
+        goal: promise-await
+    feedback:
+      target: script.jsと実行結果
+      expected: loadQuestionsから受け取った問題の件数を表示する
+      nextAction: 同じ値・Function・処理から得た結果を使います。結果だけを別の固定値で表示していないか確認します。
+    hintId: javascript-ch10-l02-e01-h01
     relatedSlideId: javascript-ch10-l02-s03
 hints:
   - id: javascript-ch10-l02-e01-h01
@@ -200,10 +223,11 @@ fixtures:
         source: fixtures/wrong-count/script.js
         editable: false
     expectedFeedbackRuleIds:
-      - interaction:await-count:load:count
-      - interaction:await-count:load:note
       - interaction:await-count:again:count
       - interaction:await-count:again:note
+      - interaction:await-count:load:count
+      - interaction:await-count:load:note
+      - javascript-ch10-l02-e01-r04
   - id: wrong-await-target
     expectedStatus: incomplete
     files:
@@ -220,11 +244,12 @@ fixtures:
         source: fixtures/wrong-await-target/script.js
         editable: false
     expectedFeedbackRuleIds:
-      - javascript-ch10-l02-e01-r03
-      - interaction:await-count:load:count
-      - interaction:await-count:load:note
       - interaction:await-count:again:count
       - interaction:await-count:again:note
+      - interaction:await-count:load:count
+      - interaction:await-count:load:note
+      - javascript-ch10-l02-e01-r03
+      - javascript-ch10-l02-e01-r04
   - id: no-resolve
     expectedStatus: incomplete
     files:
@@ -263,12 +288,31 @@ fixtures:
     expectedFeedbackRuleIds:
       - interaction:await-count:again:count
       - interaction:await-count:again:note
+      - javascript-ch10-l02-e01-r04
+  - id: relation-fixed-output
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: script.js
+        language: javascript
+        source: fixtures/relation-fixed-output.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch10-l02-e01-r04
 runtime:
   kind: javascript
   entryFile: script.js
   sourceType: script
   capabilityProfile: async
   primaryOutput: preview
+  teachingGoal: promise-await
 interactionScenarios:
   - id: await-count
     label: 結果を待ち件数を繰り返し表示する

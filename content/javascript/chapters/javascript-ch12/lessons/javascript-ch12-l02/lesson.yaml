@@ -1,0 +1,59 @@
+id: javascript-ch12-l02
+kind: guided-project
+title: 回答を受け取り、次の問題へ進む
+goal: 押されたbuttonの文字を今の正解と比べます。回答前、回答済み、次の問題をstateで区別し、同じ問題を何回も回答できないようにします。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - javascript-ch12-l01
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/javascript-ch12-l02-e01/exercise.yaml
+reflection: 回答前のnextはdisabled、回答後の選択肢もdisabledにします。途中のnextはindexを1進め、answeredとfeedbackを戻してrenderします。次問の先頭へfocusを移します。
+glossaryRefs:
+  - quiz-answer-transition
+nextLessonId: javascript-ch12-l03
+project:
+  id: javascript-quiz-guided
+  briefSource: brief.md
+  guideSources:
+    - guide.md
+  checklist:
+    - id: javascript-ch12-l02-data
+      label: 同梱データをModuleから読む
+      required: true
+      ruleIds:
+        - javascript-ch12-l02-e01-r01
+    - id: javascript-ch12-l02-g2-answer
+      label: 正誤と次問
+      required: true
+      ruleIds:
+        - interaction:g2-answer:loaded
+        - interaction:g2-answer:first-answer
+        - interaction:g2-answer:second-question
+        - interaction:g2-answer:second-answer
+        - interaction:g2-answer:repeat-answer
+    - id: javascript-ch12-l02-g2-before-answer
+      label: 回答前に進めない
+      required: true
+      ruleIds:
+        - interaction:g2-before-answer:loaded
+        - interaction:g2-before-answer:stays
+    - id: javascript-ch12-l02-g2-recovery
+      label: 読み込み失敗から再開
+      required: true
+      ruleIds:
+        - interaction:g2-recovery:loading
+        - interaction:g2-recovery:failed
+        - interaction:g2-recovery:recovered
+completion:
+  kind: guided-project
+  requiredChecklistItemIds:
+    - javascript-ch12-l02-data
+    - javascript-ch12-l02-g2-answer
+    - javascript-ch12-l02-g2-before-answer
+    - javascript-ch12-l02-g2-recovery
+  requiredExerciseIds:
+    - javascript-ch12-l02-e01

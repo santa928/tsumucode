@@ -16,7 +16,12 @@ steps:
     observe: Consoleに正解ですだけが表示される
     requiresConceptIds: [if-else-output]
     validationRuleIds:
-      [javascript-ch02-l02-e01-r01, javascript-ch02-l02-e01-r02, javascript-ch02-l02-e01-r03]
+      [
+        javascript-ch02-l02-e01-r01,
+        javascript-ch02-l02-e01-r02,
+        javascript-ch02-l02-e01-r03,
+        javascript-ch02-l02-e01-r04,
+      ]
 files:
   - { path: script.js, language: javascript, source: starter/script.js, editable: true }
   - { path: index.html, language: html, source: starter/index.html, editable: false }
@@ -79,6 +84,28 @@ validationRules:
       nextAction: answerがAのときにif側へ進む条件か確認します。
     hintId: javascript-ch02-l02-e01-h03
     relatedSlideId: javascript-ch02-l02-s04
+  - id: javascript-ch02-l02-e01-r04
+    groupId: javascript-ch02-l02-e01-teaching-result
+    label: answerを条件に使い、分岐内で結果を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: teaching-relation
+        goal: answer-branch
+    feedback:
+      target: script.jsと実行結果
+      expected: answerを条件に使い、分岐内で結果を表示する
+      nextAction: answerをAと比較し、ifとelseのそれぞれの中に対応するconsole.logを置きます。分岐の外で結果だけを表示していないか確認します。
+    hintId: javascript-ch02-l02-e01-h01
+    relatedSlideId: javascript-ch02-l02-s04
 hints:
   - id: javascript-ch02-l02-e01-h01
     level: 1
@@ -119,6 +146,7 @@ fixtures:
       - javascript-ch02-l02-e01-r01
       - javascript-ch02-l02-e01-r02
       - javascript-ch02-l02-e01-r03
+      - javascript-ch02-l02-e01-r04
   - id: output-only
     expectedStatus: incomplete
     files:
@@ -129,6 +157,7 @@ fixtures:
       - javascript-ch02-l02-e01-r01
       - javascript-ch02-l02-e01-r02
       - javascript-ch02-l02-e01-r03
+      - javascript-ch02-l02-e01-r04
   - id: missing-else
     expectedStatus: incomplete
     files:
@@ -139,6 +168,7 @@ fixtures:
       - javascript-ch02-l02-e01-r01
       - javascript-ch02-l02-e01-r02
       - javascript-ch02-l02-e01-r03
+      - javascript-ch02-l02-e01-r04
   - id: inverted-condition
     expectedStatus: incomplete
     files:
@@ -154,6 +184,7 @@ fixtures:
       - javascript-ch02-l02-e01-r01
       - javascript-ch02-l02-e01-r02
       - javascript-ch02-l02-e01-r03
+      - javascript-ch02-l02-e01-r04
   - id: syntax-error
     expectedStatus: code-error
     files:
@@ -168,3 +199,27 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds: []
+  - id: relation-fixed-output
+    expectedStatus: incomplete
+    files:
+      - path: script.js
+        language: javascript
+        source: fixtures/relation-fixed-output.js
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch02-l02-e01-r04
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  teachingGoal: answer-branch

@@ -1,4 +1,8 @@
 import type { RunnerDiagnostic } from '../../../../core/runtime/contracts';
+import {
+  isJavaScriptTeachingGoal,
+  type JavaScriptTeachingGoal,
+} from '../../../../core/content/javascriptTeachingGoals';
 import { isJavaScriptWorkspacePath, resolveJavaScriptModuleSpecifier } from './modulePath';
 export { isJavaScriptWorkspacePath } from './modulePath';
 
@@ -14,6 +18,7 @@ export interface JavaScriptLegacyAnalysisInput {
   readonly sourceType: JavaScriptSourceType;
   readonly capabilityProfile: JavaScriptCapabilityProfileId;
   readonly guardIdentifier: string;
+  readonly teachingGoal?: JavaScriptTeachingGoal;
 }
 
 export interface JavaScriptWorkspaceAnalysisInput {
@@ -24,6 +29,7 @@ export interface JavaScriptWorkspaceAnalysisInput {
   readonly sourceType: JavaScriptSourceType;
   readonly capabilityProfile: JavaScriptCapabilityProfileId;
   readonly guardIdentifier: string;
+  readonly teachingGoal?: JavaScriptTeachingGoal;
 }
 
 export type JavaScriptAnalysisInput =
@@ -60,7 +66,16 @@ export type JavaScriptAssignmentOperator = '=' | '+=' | '-=' | '++' | '--';
 
 export type JavaScriptCollectionTransformMethod = 'map' | 'filter' | 'reduce';
 
+/** 計算関係を限定する、名前またはprimitive literalのoperand。 */
+export type JavaScriptSourceOperand =
+  | { readonly kind: 'identifier'; readonly name: string }
+  | { readonly kind: 'literal'; readonly value: string | number | boolean };
+
 export type JavaScriptSourceFact =
+  | (JavaScriptFactLocation & {
+      readonly kind: 'teaching-relation';
+      readonly goal: JavaScriptTeachingGoal;
+    })
   | (JavaScriptFactLocation & {
       readonly kind: 'binding';
       readonly name: string;
@@ -74,6 +89,14 @@ export type JavaScriptSourceFact =
   | (JavaScriptFactLocation & {
       readonly kind: 'binary-expression';
       readonly operator: JavaScriptBinaryOperator;
+    })
+  | (JavaScriptFactLocation & {
+      readonly kind: 'computed-output';
+      readonly ownerKind: 'binding' | 'return';
+      readonly name: string;
+      readonly scopeDepth: number;
+      readonly operator: JavaScriptBinaryOperator;
+      readonly operands: readonly [JavaScriptSourceOperand, JavaScriptSourceOperand];
     })
   | (JavaScriptFactLocation & {
       readonly kind: 'assignment';
@@ -265,6 +288,18 @@ export function isJavaScriptAnalysisRequest(value: unknown): value is JavaScript
     'requestId',
     'sourceType',
   ].sort();
+  if ('teachingGoal' in value) {
+    if (
+      !isJavaScriptTeachingGoal(value.teachingGoal) ||
+      value.sourceType !== 'script' ||
+      !['core', 'async'].includes(String(value.capabilityProfile))
+    )
+      return false;
+    legacyKeys.push('teachingGoal');
+    workspaceKeys.push('teachingGoal');
+    legacyKeys.sort();
+    workspaceKeys.sort();
+  }
   const legacyShape = JSON.stringify(keys) === JSON.stringify(legacyKeys);
   const workspaceShape = JSON.stringify(keys) === JSON.stringify(workspaceKeys);
   if (!legacyShape && !workspaceShape) {
@@ -329,6 +364,10 @@ function isJavaScriptSourceFact(value: unknown): value is JavaScriptSourceFact {
   const bounded = (candidate: unknown): candidate is string =>
     typeof candidate === 'string' && candidate.length <= 128;
   switch (value.kind) {
+    case 'teaching-relation':
+      return (
+        hasKeys(['column', 'file', 'goal', 'kind', 'line']) && isJavaScriptTeachingGoal(value.goal)
+      );
     case 'binding':
       return (
         hasKeys(['column', 'declarationKind', 'file', 'kind', 'line', 'name', 'scopeDepth']) &&
@@ -349,6 +388,43 @@ function isJavaScriptSourceFact(value: unknown): value is JavaScriptSourceFact {
         ['+', '-', '*', '/', '%', '===', '!==', '>', '>=', '<', '<=', '&&', '||', '??'].includes(
           String(value.operator),
         )
+      );
+    case 'computed-output':
+      return (
+        hasKeys([
+          'column',
+          'file',
+          'kind',
+          'line',
+          'name',
+          'operands',
+          'operator',
+          'ownerKind',
+          'scopeDepth',
+        ]) &&
+        bounded(value.name) &&
+        Number.isSafeInteger(value.scopeDepth) &&
+        Number(value.scopeDepth) >= 0 &&
+        Number(value.scopeDepth) <= 32 &&
+        ['binding', 'return'].includes(String(value.ownerKind)) &&
+        ['+', '-', '*', '/', '%', '===', '!==', '>', '>=', '<', '<=', '&&', '||', '??'].includes(
+          String(value.operator),
+        ) &&
+        Array.isArray(value.operands) &&
+        value.operands.length === 2 &&
+        Object.keys(value.operands).join(',') === '0,1' &&
+        value.operands.every((operand: unknown) => {
+          if (!isRecord(operand)) return false;
+          const keys = Object.keys(operand).sort().join(',');
+          return (
+            (keys === 'kind,name' && operand.kind === 'identifier' && bounded(operand.name)) ||
+            (keys === 'kind,value' &&
+              operand.kind === 'literal' &&
+              ((typeof operand.value === 'string' && operand.value.length <= 128) ||
+                typeof operand.value === 'boolean' ||
+                (typeof operand.value === 'number' && Number.isFinite(operand.value))))
+          );
+        })
       );
     case 'assignment':
       return (

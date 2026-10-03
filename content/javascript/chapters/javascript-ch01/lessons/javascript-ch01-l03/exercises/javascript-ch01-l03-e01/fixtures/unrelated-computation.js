@@ -1,0 +1,5 @@
+const questionCount = 3;
+const pointPerQuestion = 10;
+const totalScore = questionCount + pointPerQuestion;
+const unused = questionCount * pointPerQuestion;
+console.log(30);

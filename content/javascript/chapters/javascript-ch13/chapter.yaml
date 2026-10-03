@@ -1,0 +1,8 @@
+id: javascript-ch13
+sequence: 13
+title: 'Capstone: 自分で設計するクイズ'
+goal: カテゴリ・進捗・得点・結果・再挑戦・Keyboardを独力で結ぶ
+estimatedMinutes: 150
+kind: capstone
+lessonSources:
+  - lessons/javascript-ch13-l01/lesson.yaml

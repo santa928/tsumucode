@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import { exerciseReferenceIds, exerciseRequirementIds } from './exerciseRequirementIds';
 import { resolvePublicAsset } from '../../shared/lib/resolvePublicAsset';
+import { JAVASCRIPT_TEACHING_GOALS } from './javascriptTeachingGoals';
 
 export const IdSchema = z
   .string()
@@ -15,6 +16,11 @@ export const ProgressRuleReferenceIdSchema = z.union([
       /^interaction:[a-z0-9]+(?:-[a-z0-9]+)*:[a-z0-9]+(?:-[a-z0-9]+)*(?::[a-z0-9]+(?:-[a-z0-9]+)*)?$/u,
     ),
 ]);
+/** 制作の合格要件は宣言IDまたはcheckpoint集約ID。個別expectation履歴IDは要求できない。 */
+export const ProjectRuleReferenceIdSchema = ProgressRuleReferenceIdSchema.refine(
+  (id) => !id.startsWith('interaction:') || id.split(':').length === 3,
+  '制作要件は個別expectationではなくcheckpointを参照してください',
+);
 export const NonEmptyTextSchema = z.string().trim().min(1, '空でない文字列を指定してください');
 const NonBlankPreservedTextSchema = z
   .string()
@@ -275,11 +281,14 @@ export const JavaScriptExerciseRuntimeSchema = z
     sourceType: z.enum(['script', 'module']),
     capabilityProfile: z.enum(['core', 'modules', 'dom', 'dom-form', 'async', 'project']),
     primaryOutput: z.enum(['preview', 'console']),
+    teachingGoal: z.enum(JAVASCRIPT_TEACHING_GOALS).optional(),
   })
   .strict();
 
 /** Course追加時にkind単位で拡張するExercise Runtime union。 */
-export const TypeScriptExerciseRuntimeSchema = JavaScriptExerciseRuntimeSchema.extend({
+export const TypeScriptExerciseRuntimeSchema = JavaScriptExerciseRuntimeSchema.omit({
+  teachingGoal: true,
+}).extend({
   kind: z.literal('typescript'),
   entryFile: RelativePathSchema.refine(
     (file) => file.endsWith('.ts') && !file.endsWith('.d.ts'),
@@ -376,6 +385,13 @@ export const JavaScriptCheckpointExpectationSchema = z.discriminatedUnion('kind'
   z
     .object({
       id: IdSchema,
+      kind: z.literal('selector-visible'),
+      selector: InteractionSelectorSchema,
+    })
+    .strict(),
+  z
+    .object({
+      id: IdSchema,
       kind: z.literal('selector-text'),
       selector: InteractionSelectorSchema,
       equals: InteractionLongValueSchema,
@@ -406,6 +422,14 @@ export const JavaScriptCheckpointExpectationSchema = z.discriminatedUnion('kind'
       id: IdSchema,
       kind: z.literal('console-includes'),
       includes: InteractionLongValueSchema,
+    })
+    .strict(),
+  z
+    .object({
+      id: IdSchema,
+      kind: z.literal('input-value'),
+      selector: InteractionSelectorSchema,
+      equals: InteractionLongValueSchema,
     })
     .strict(),
 ]);
@@ -693,7 +717,45 @@ const QuerySelectorTextContentAssignmentAssertionSchema = z
   })
   .strict();
 
+const JavaScriptSourceOperandSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('identifier'), name: NonEmptyTextSchema.max(128) }).strict(),
+  z
+    .object({
+      kind: z.literal('literal'),
+      value: z.union([z.string().max(128), z.number(), z.boolean()]),
+    })
+    .strict(),
+]);
+
 const JavaScriptSourceFactSchema = z.discriminatedUnion('kind', [
+  z
+    .object({ kind: z.literal('teaching-relation'), goal: z.enum(JAVASCRIPT_TEACHING_GOALS) })
+    .strict(),
+  z
+    .object({
+      kind: z.literal('computed-output'),
+      ownerKind: z.enum(['binding', 'return']),
+      name: NonEmptyTextSchema.max(128),
+      scopeDepth: z.number().int().min(0).max(32),
+      operator: z.enum([
+        '+',
+        '-',
+        '*',
+        '/',
+        '%',
+        '===',
+        '!==',
+        '>',
+        '>=',
+        '<',
+        '<=',
+        '&&',
+        '||',
+        '??',
+      ]),
+      operands: z.tuple([JavaScriptSourceOperandSchema, JavaScriptSourceOperandSchema]),
+    })
+    .strict(),
   z
     .object({
       kind: z.literal('binding'),
@@ -1101,6 +1163,34 @@ export const ExerciseSchema = z
     z.object({ ...ExerciseBaseShape, kind: z.literal('capstone'), projectId: IdSchema }).strict(),
   ])
   .superRefine((exercise, context) => {
+    const teachingGoal =
+      exercise.runtime?.kind === 'javascript' ? exercise.runtime.teachingGoal : undefined;
+    if (
+      teachingGoal !== undefined &&
+      (exercise.runtime?.sourceType !== 'script' ||
+        !['core', 'async'].includes(exercise.runtime.capabilityProfile))
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['runtime', 'teachingGoal'],
+        message: 'teachingGoalはcore/asyncのscript演習だけに指定できます',
+      });
+    }
+    for (const [index, rule] of exercise.validationRules.entries()) {
+      const parsedRule = JavaScriptValidationRuleDefinitionSchema.safeParse(rule);
+      if (
+        parsedRule.success &&
+        parsedRule.data.assertion.kind === 'javascript-source-fact' &&
+        parsedRule.data.assertion.fact.kind === 'teaching-relation' &&
+        parsedRule.data.assertion.fact.goal !== teachingGoal
+      ) {
+        context.addIssue({
+          code: 'custom',
+          path: ['validationRules', index, 'assertion'],
+          message: '関係Ruleとruntime teachingGoalを一致させてください',
+        });
+      }
+    }
     if (
       exercise.interactionScenarios?.some((scenario) =>
         scenario.checkpoints.some((checkpoint) =>
@@ -1143,7 +1233,7 @@ const ChecklistItemSchema = z
     id: IdSchema,
     label: NonEmptyTextSchema,
     required: z.boolean(),
-    ruleIds: z.array(IdSchema).min(1),
+    ruleIds: z.array(ProjectRuleReferenceIdSchema).min(1),
   })
   .strict();
 
@@ -1208,7 +1298,7 @@ export const LessonSchema = z
         completion: z
           .object({
             kind: z.literal('capstone'),
-            requiredRuleIds: z.array(IdSchema).min(1),
+            requiredRuleIds: z.array(ProjectRuleReferenceIdSchema).min(1),
             requiredViewportIds: z.array(IdSchema).min(1),
           })
           .strict(),
@@ -1775,6 +1865,7 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
         const localRequirementIds = new Set<string>();
         const localViewportIds = new Set<string>();
         const localRulesByRequirement = new Map<string, ValidationRuleValue[]>();
+        const interactionViewportIdsByRequirement = new Map<string, readonly string[]>();
 
         for (const [slideIndex, slide] of lesson.slides.entries()) {
           const slidePath = [...lessonPath, 'slides', slideIndex] as const;
@@ -2011,6 +2102,11 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
           const groupModes = new Map<string, 'all' | 'any'>();
           for (const id of exerciseRequirementIds(exercise)) {
             if (!id.startsWith('interaction:')) continue;
+            localRequirementIds.add(id);
+            interactionViewportIdsByRequirement.set(
+              id,
+              exercise.previewViewports.map(({ id: viewportId }) => viewportId),
+            );
             const owner = interactionOwnerById.get(id);
             if (owner !== undefined && owner !== exercise.id) {
               addIssue(
@@ -2270,6 +2366,19 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
                 continue;
               }
               const rules = localRulesByRequirement.get(id) ?? [];
+              const interactionViewportIds = interactionViewportIdsByRequirement.get(id);
+              if (
+                interactionViewportIds !== undefined &&
+                !lesson.completion.requiredViewportIds.every((viewportId) =>
+                  interactionViewportIds.includes(viewportId),
+                )
+              ) {
+                addIssue(
+                  context,
+                  [...lessonPath, 'completion', 'requiredRuleIds'],
+                  `Capstone必須checkpointは全requiredViewportで操作を観測してください: ${id}`,
+                );
+              }
               if (
                 rules.some(
                   (rule) =>

@@ -210,6 +210,7 @@ describe('CodeWorkspace', () => {
       language: 'css',
       content: 'main{}',
       contentRevision: 0,
+      readOnly: false,
       diagnostics,
     });
     expect(editor.setSelection).toHaveBeenLastCalledWith({ anchor: 4, head: 4 });

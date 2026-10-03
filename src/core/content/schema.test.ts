@@ -6,6 +6,7 @@ import {
   CourseManifestSchema,
   ExerciseSchema,
   JavaScriptValidationRuleDefinitionSchema,
+  JavaScriptCheckpointExpectationSchema,
   TypeScriptExerciseRuntimeSchema,
   PreviewViewportSchema,
   SlideSchema,
@@ -20,6 +21,31 @@ import type {
 } from './types';
 
 type StandardLesson = Extract<Lesson, { kind: 'standard' }>;
+
+it('selector-visibleはbounded selectorだけを受理しSource形や表示判定の緩和を許さない', () => {
+  expect(
+    JavaScriptCheckpointExpectationSchema.parse({
+      id: 'question',
+      kind: 'selector-visible',
+      selector: '#question',
+    }),
+  ).toEqual({ id: 'question', kind: 'selector-visible', selector: '#question' });
+  expect(
+    JavaScriptCheckpointExpectationSchema.safeParse({
+      id: 'question',
+      kind: 'selector-visible',
+      selector: '#question',
+      equals: 'true',
+    }).success,
+  ).toBe(false);
+  expect(
+    JavaScriptCheckpointExpectationSchema.safeParse({
+      id: 'question',
+      kind: 'selector-visible',
+      selector: '',
+    }).success,
+  ).toBe(false);
+});
 type GuidedLesson = Extract<Lesson, { kind: 'guided-project' }>;
 type CapstoneLesson = Extract<Lesson, { kind: 'capstone' }>;
 type StandardExercise = Extract<Exercise, { kind: 'standard' }>;
@@ -518,6 +544,17 @@ describe('CourseManifestSchema 公開境界', () => {
   });
 
   it.each([
+    {
+      kind: 'computed-output',
+      ownerKind: 'binding',
+      name: 'score',
+      scopeDepth: 0,
+      operator: '*',
+      operands: [
+        { kind: 'identifier', name: 'count' },
+        { kind: 'literal', value: 10 },
+      ],
+    },
     { kind: 'collection', collectionKind: 'array', entryCount: 3 },
     { kind: 'collection-access', accessKind: 'at' },
     { kind: 'destructuring', patternKind: 'object', bindingCount: 2 },
@@ -540,6 +577,17 @@ describe('CourseManifestSchema 公開境界', () => {
   });
 
   it.each([
+    {
+      kind: 'computed-output',
+      ownerKind: 'binding',
+      name: 'score',
+      scopeDepth: 0,
+      operator: '*',
+      operands: [
+        { kind: 'identifier', name: 'count', extra: true },
+        { kind: 'literal', value: 10 },
+      ],
+    },
     { kind: 'collection', collectionKind: 'array', entryCount: 65 },
     { kind: 'destructuring', patternKind: 'object', bindingCount: -1 },
     { kind: 'collection-transform', method: 'sort', callbackParameterCount: 1 },
@@ -1648,4 +1696,41 @@ it('コード参照は同じLessonの先行コードに限定する', () => {
   expect(LessonSchema.safeParse(lesson).success).toBe(false);
   target.codeReferenceSlideId = 'other-lesson-slide';
   expect(LessonSchema.safeParse(lesson).success).toBe(false);
+});
+
+it('関係Ruleとruntime Goalを一致させ、未知Goal/別Goal/未指定を受理しない', () => {
+  const base = firstStandardExercise(firstStandardLesson(cloneCourse()));
+  const rule = {
+    ...base.validationRules[0]!,
+    target: { kind: 'javascript-source', file: 'index.html' },
+    assertion: {
+      kind: 'javascript-source-fact',
+      fact: { kind: 'teaching-relation', goal: 'question-binding' },
+    },
+  };
+  const runtime = {
+    kind: 'javascript',
+    entryFile: 'index.html',
+    sourceType: 'script',
+    capabilityProfile: 'core',
+    primaryOutput: 'console',
+    teachingGoal: 'question-binding',
+  };
+  expect(ExerciseSchema.safeParse({ ...base, runtime, validationRules: [rule] }).success).toBe(
+    true,
+  );
+  for (const goal of ['unknown', 'console-primitives', undefined]) {
+    const next = { ...runtime, teachingGoal: goal };
+    if (goal === undefined) Reflect.deleteProperty(next, 'teachingGoal');
+    expect(
+      ExerciseSchema.safeParse({ ...base, runtime: next, validationRules: [rule] }).success,
+    ).toBe(false);
+  }
+  expect(
+    ExerciseSchema.safeParse({
+      ...base,
+      runtime: { ...runtime, sourceType: 'module', capabilityProfile: 'project' },
+      validationRules: [rule],
+    }).success,
+  ).toBe(false);
 });

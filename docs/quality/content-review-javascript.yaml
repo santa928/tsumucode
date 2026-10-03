@@ -3,228 +3,9 @@ releaseStatus: draft
 verifiedSourceCommit: draft
 canonicalDistSha256: draft
 lessons:
-  - lessonId: javascript-ch09-l02
-    authorId: tsumucode-javascript-authoring
-    reviewerId: gpt-6.1-sol-xhigh-independent-review
-    sourceHash: 9a475d86b837fb408c7fe1908cf8cce9e3839b3cf8a7ae3db59bed10d29b8829
-    accuracy: approved
-    goalExerciseAlignment: approved
-    unexplainedTerms: 0
-    hintLeakage: 0
-    examplesExecuted: true
-    decision: approved
-    notes: 2026-10-02の本人指示によりPro会話長上限時の代替としてGPT-6.1 Sol
-      xhigh独立担当が固定76679ddの原稿/Concept/Glossary/Hint/Exercise/Fixture/登録/移行とsourceHashを確認。既存同入力の実例/実Runner/PCと390px証拠を再利用し、変更3教材は新3Browserの正誤Fixtureとnative操作/Reset/別解/判定/保存再開で再確認。変更Slide4例は別の独立実Runner観測で確認。新10Lessonの内容承認であり、人の初心者/実機/全Course正式公開の承認ではない。詳細は2026-10-02-sol-integration-acceptance.md参照。
-  - lessonId: javascript-ch09-l03
-    authorId: tsumucode-javascript-authoring
-    reviewerId: gpt-6.1-sol-xhigh-independent-review
-    sourceHash: 1a87bcc21e5429c11f0d29c315141f100294ce1f7364c88aece9ca4978b106be
-    accuracy: approved
-    goalExerciseAlignment: approved
-    unexplainedTerms: 0
-    hintLeakage: 0
-    examplesExecuted: true
-    decision: approved
-    notes: 2026-10-02の本人指示によりPro会話長上限時の代替としてGPT-6.1 Sol
-      xhigh独立担当が固定76679ddの原稿/Concept/Glossary/Hint/Exercise/Fixture/登録/移行とsourceHashを確認。既存同入力の実例/実Runner/PCと390px証拠を再利用し、変更3教材は新3Browserの正誤Fixtureとnative操作/Reset/別解/判定/保存再開で再確認。変更Slide4例は別の独立実Runner観測で確認。新10Lessonの内容承認であり、人の初心者/実機/全Course正式公開の承認ではない。詳細は2026-10-02-sol-integration-acceptance.md参照。
-  - lessonId: javascript-ch09-l04
-    authorId: tsumucode-javascript-authoring
-    reviewerId: gpt-6.1-sol-xhigh-independent-review
-    sourceHash: 13ceeb4b21fc1cdb482b3a2067d66bb77f3bd42a0d353f0aa4287b044ad7888a
-    accuracy: approved
-    goalExerciseAlignment: approved
-    unexplainedTerms: 0
-    hintLeakage: 0
-    examplesExecuted: true
-    decision: approved
-    notes: 2026-10-02の本人指示によりPro会話長上限時の代替としてGPT-6.1 Sol
-      xhigh独立担当が固定76679ddの原稿/Concept/Glossary/Hint/Exercise/Fixture/登録/移行とsourceHashを確認。既存同入力の実例/実Runner/PCと390px証拠を再利用し、変更3教材は新3Browserの正誤Fixtureとnative操作/Reset/別解/判定/保存再開で再確認。変更Slide4例は別の独立実Runner観測で確認。新10Lessonの内容承認であり、人の初心者/実機/全Course正式公開の承認ではない。詳細は2026-10-02-sol-integration-acceptance.md参照。
-  - lessonId: javascript-ch10-l01
-    authorId: tsumucode-javascript-authoring
-    reviewerId: gpt-6.1-sol-xhigh-independent-review
-    sourceHash: d59512b69f7c53de47a89e5d3b051eb7457480e614cb25776e8745deab0e5c47
-    accuracy: approved
-    goalExerciseAlignment: approved
-    unexplainedTerms: 0
-    hintLeakage: 0
-    examplesExecuted: true
-    decision: approved
-    notes: 2026-10-02の本人指示によりPro会話長上限時の代替としてGPT-6.1 Sol
-      xhigh独立担当が固定76679ddの原稿/Concept/Glossary/Hint/Exercise/Fixture/登録/移行とsourceHashを確認。既存同入力の実例/実Runner/PCと390px証拠を再利用し、変更3教材は新3Browserの正誤Fixtureとnative操作/Reset/別解/判定/保存再開で再確認。変更Slide4例は別の独立実Runner観測で確認。新10Lessonの内容承認であり、人の初心者/実機/全Course正式公開の承認ではない。詳細は2026-10-02-sol-integration-acceptance.md参照。
-  - lessonId: javascript-ch10-l02
-    authorId: tsumucode-javascript-authoring
-    reviewerId: gpt-6.1-sol-xhigh-independent-review
-    sourceHash: 442cef363ae25bc93c2f41210638c90a469a867552cdfde4704b29c54b13dc14
-    accuracy: approved
-    goalExerciseAlignment: approved
-    unexplainedTerms: 0
-    hintLeakage: 0
-    examplesExecuted: true
-    decision: approved
-    notes: 2026-10-02の本人指示によりPro会話長上限時の代替としてGPT-6.1 Sol
-      xhigh独立担当が固定76679ddの原稿/Concept/Glossary/Hint/Exercise/Fixture/登録/移行とsourceHashを確認。既存同入力の実例/実Runner/PCと390px証拠を再利用し、変更3教材は新3Browserの正誤Fixtureとnative操作/Reset/別解/判定/保存再開で再確認。変更Slide4例は別の独立実Runner観測で確認。新10Lessonの内容承認であり、人の初心者/実機/全Course正式公開の承認ではない。詳細は2026-10-02-sol-integration-acceptance.md参照。
-  - lessonId: javascript-ch10-l03
-    authorId: tsumucode-javascript-authoring
-    reviewerId: gpt-6.1-sol-xhigh-independent-review
-    sourceHash: 4647fc8e13502f50df9986ac4b22841b57e5c0cf9da08acaee33abab04acf4ab
-    accuracy: approved
-    goalExerciseAlignment: approved
-    unexplainedTerms: 0
-    hintLeakage: 0
-    examplesExecuted: true
-    decision: approved
-    notes: 2026-10-02の本人指示によりPro会話長上限時の代替としてGPT-6.1 Sol
-      xhigh独立担当が固定76679ddの原稿/Concept/Glossary/Hint/Exercise/Fixture/登録/移行とsourceHashを確認。既存同入力の実例/実Runner/PCと390px証拠を再利用し、変更3教材は新3Browserの正誤Fixtureとnative操作/Reset/別解/判定/保存再開で再確認。変更Slide4例は別の独立実Runner観測で確認。新10Lessonの内容承認であり、人の初心者/実機/全Course正式公開の承認ではない。詳細は2026-10-02-sol-integration-acceptance.md参照。
-  - lessonId: javascript-ch10-l04
-    authorId: tsumucode-javascript-authoring
-    reviewerId: gpt-6.1-sol-xhigh-independent-review
-    sourceHash: b4158c75af875826fb7db852c5c999daff3d3e8bf0a6710535ae9cb8352d38b2
-    accuracy: approved
-    goalExerciseAlignment: approved
-    unexplainedTerms: 0
-    hintLeakage: 0
-    examplesExecuted: true
-    decision: approved
-    notes: 2026-10-02の本人指示によりPro会話長上限時の代替としてGPT-6.1 Sol
-      xhigh独立担当が固定76679ddの原稿/Concept/Glossary/Hint/Exercise/Fixture/登録/移行とsourceHashを確認。既存同入力の実例/実Runner/PCと390px証拠を再利用し、変更3教材は新3Browserの正誤Fixtureとnative操作/Reset/別解/判定/保存再開で再確認。変更Slide4例は別の独立実Runner観測で確認。新10Lessonの内容承認であり、人の初心者/実機/全Course正式公開の承認ではない。詳細は2026-10-02-sol-integration-acceptance.md参照。
-  - lessonId: javascript-ch11-l01
-    authorId: tsumucode-javascript-authoring
-    reviewerId: gpt-6.1-sol-xhigh-independent-review
-    sourceHash: 0d0f91e9c318e4a254eac28c3ffafc33ba053e18fe09168de786e1d64da92046
-    accuracy: approved
-    goalExerciseAlignment: approved
-    unexplainedTerms: 0
-    hintLeakage: 0
-    examplesExecuted: true
-    decision: approved
-    notes: 2026-10-02の本人指示によりPro会話長上限時の代替としてGPT-6.1 Sol
-      xhigh独立担当が固定76679ddの原稿/Concept/Glossary/Hint/Exercise/Fixture/登録/移行とsourceHashを確認。既存同入力の実例/実Runner/PCと390px証拠を再利用し、変更3教材は新3Browserの正誤Fixtureとnative操作/Reset/別解/判定/保存再開で再確認。変更Slide4例は別の独立実Runner観測で確認。新10Lessonの内容承認であり、人の初心者/実機/全Course正式公開の承認ではない。詳細は2026-10-02-sol-integration-acceptance.md参照。
-  - lessonId: javascript-ch11-l02
-    authorId: tsumucode-javascript-authoring
-    reviewerId: gpt-6.1-sol-xhigh-independent-review
-    sourceHash: 50dc6cf249491df0c028b5a51209c85fc880b8828210bade4af0574e4de0f20e
-    accuracy: approved
-    goalExerciseAlignment: approved
-    unexplainedTerms: 0
-    hintLeakage: 0
-    examplesExecuted: true
-    decision: approved
-    notes: 2026-10-02の本人指示によりPro会話長上限時の代替としてGPT-6.1 Sol
-      xhigh独立担当が固定76679ddの原稿/Concept/Glossary/Hint/Exercise/Fixture/登録/移行とsourceHashを確認。既存同入力の実例/実Runner/PCと390px証拠を再利用し、変更3教材は新3Browserの正誤Fixtureとnative操作/Reset/別解/判定/保存再開で再確認。変更Slide4例は別の独立実Runner観測で確認。新10Lessonの内容承認であり、人の初心者/実機/全Course正式公開の承認ではない。詳細は2026-10-02-sol-integration-acceptance.md参照。
-  - lessonId: javascript-ch11-l03
-    authorId: tsumucode-javascript-authoring
-    reviewerId: gpt-6.1-sol-xhigh-independent-review
-    sourceHash: d7383e6fb207d03e14485dba99d7cafa62a3c7a821d1bd8f4fa383957924baf6
-    accuracy: approved
-    goalExerciseAlignment: approved
-    unexplainedTerms: 0
-    hintLeakage: 0
-    examplesExecuted: true
-    decision: approved
-    notes: 2026-10-02の本人指示によりPro会話長上限時の代替としてGPT-6.1 Sol
-      xhigh独立担当が固定76679ddの原稿/Concept/Glossary/Hint/Exercise/Fixture/登録/移行とsourceHashを確認。既存同入力の実例/実Runner/PCと390px証拠を再利用し、変更3教材は新3Browserの正誤Fixtureとnative操作/Reset/別解/判定/保存再開で再確認。変更Slide4例は別の独立実Runner観測で確認。新10Lessonの内容承認であり、人の初心者/実機/全Course正式公開の承認ではない。詳細は2026-10-02-sol-integration-acceptance.md参照。
-  - lessonId: javascript-ch09-l01
-    authorId: tsumucode-javascript-authoring
-    reviewerId: astra-pro-independent-review
-    sourceHash: 8121e7dc209587a04d66450ce1b7c87695844d03bf6b9ec037a0f5691dd28c43
-    accuracy: approved
-    goalExerciseAlignment: approved
-    unexplainedTerms: 0
-    hintLeakage: 0
-    examplesExecuted: true
-    decision: approved
-    notes: PR59の同一Pro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEADdfae2f603b88471649321edc601ff2ea93ca80d2の原文4枚・Exercise/Fixture・Concept/Glossary/Provenance・試用導線・集計/移行を独立確認し内容承認。stateとDOM表示、handler内の毎回初期化と外側bindingの保持、変数更新と表示更新、実行stateとDraft保存の区別が整合。Codexが同じLesson source hashの掲載4例を実Runnerで確認済み。最新main統合後はRuntime一時差し替えなしで製品Runner/Validatorの7ケース、実Chromiumの3回click・再Preview・Reset・別解・最初の判定・保存再開・390px通読を確認し、PCと390pxの3画像を実目視、hashを再計算。ProによるDocker再実行・hash独立再計算・画像再目視、人の初心者試用/実機確認を意味しない。初回コードレビューの依存状態記録1件の必須修正と、このLesson内容承認は区別する。Ch09後続・全JavaScript完成・公開承認ではない。
-  - lessonId: javascript-ch08-l04
-    authorId: tsumucode-javascript-authoring
-    reviewerId: astra-pro-independent-review
-    sourceHash: 60b7297634eec34f92324f7df91e829371e6d4d528f8ba9d68ac5cb2c0e425f7
-    accuracy: approved
-    goalExerciseAlignment: approved
-    unexplainedTerms: 0
-    hintLeakage: 0
-    examplesExecuted: true
-    decision: approved
-    notes: PR58の同一Pro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEAD6c07caf9ede6e72aafe48e242dc108003762f180の原文4枚・図の意味・Hint・Exercise/Scenario/Fixture・前提/用語・集計を独立確認し内容承認。trimの戻り値と元入力不変、空文字と空白だけの区別、if/elseによる案内と登録の分離、無効時の登録済み保持が整合。CodexがDocker製品Runnerで掲載4例と演習8ケースを実行し、最新main統合後の実Chromiumで空白拒否・保持・Reset・別解・Enter・初回判定・保存・390px通読を確認、上記hashを再計算。Proによるhash独立再計算・Docker実行・画像承認、人の初心者試用や実機確認を意味しない。全JavaScriptコース完成や公開承認ではない。
-  - lessonId: javascript-ch08-l03
-    authorId: tsumucode-javascript-authoring
-    reviewerId: astra-pro-independent-review
-    sourceHash: 7c8cdce7af85999231df04305061ee1143c049570f943350ac0e23cfaf52e4c6
-    accuracy: approved
-    goalExerciseAlignment: approved
-    unexplainedTerms: 0
-    hintLeakage: 0
-    examplesExecuted: true
-    decision: approved
-    notes: PR56の同一Pro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEAD54ca4df882b9f06727740a837622ccb2dcd8892dの原文4枚・採点・Fixture・Hint・集計を独立確認し内容承認。Formとsubmit登録先、preventDefaultと後続処理、入力中と送信時の現在値を段階接続し、安全装置の取消と学習者自身の取消を区別。名前付きhandler別解、未取消・未到達・click取消・固定値・対象外変更の拒否が整合。CodexがDocker製品Runnerで掲載4例と演習7ケースを実行し上記hashを計算。Proによるhash独立再計算・実行・画像承認、人の初心者試用や実機確認を意味しない。
-  - lessonId: javascript-ch08-l02
-    authorId: tsumucode-javascript-authoring
-    reviewerId: astra-pro-independent-review
-    sourceHash: 1b68729df5a494286ed7de30787fcb046ccfd77bb2e4259b5f23127b3cd8b659
-    accuracy: approved
-    goalExerciseAlignment: approved
-    unexplainedTerms: 0
-    hintLeakage: 0
-    examplesExecuted: true
-    decision: approved
-    notes: PR54の同一Pro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEADc2120cfe6e16321fe4e62a80d92b79d79c9579a1の教材原文・採点・Fixture・既習導線・集計を独立確認し内容承認。input通知からEvent/currentTarget/value、値を読む時点、空への戻しまで段階接続し、field.value別解とchange-only誤答が実Scenarioと整合。CodexがDocker製品Runnerで掲載4例と演習7ケースを実行し上記hashを計算。Proのhash独立再計算・実行・画像承認、人の初心者試用や実機確認を意味しない。FormとEvent章後続は未完成。
-  - lessonId: javascript-ch08-l01
-    authorId: tsumucode-javascript-authoring
-    reviewerId: astra-pro-independent-review
-    sourceHash: 5ddfc82d994002956a7cbc66995e81a109ec58b219115a45f426c582ab162439
-    accuracy: approved
-    goalExerciseAlignment: approved
-    unexplainedTerms: 0
-    hintLeakage: 0
-    examplesExecuted: true
-    decision: approved
-    notes: PR52の同一Pro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEADe0483c64fe5f30d6f906d018a8da93741cafb75aの教材原文・採点・Fixture・導線を独立確認し、未説明語undefinedの指摘を修正したHEADfa5bae9ff83998756f42eff30463908dd2ac69a2で内容承認。Functionを渡す時点と呼ぶ時点、初期状態とclick後の変化、名前付きhandler別解が整合。CodexがDocker製品Runnerで掲載4例と演習7ケースを実行し上記hashを計算。Proのhash独立再計算・実行・画像承認、人の初心者試用や実機確認を意味しない。Event章後続とFormは未完成。
-  - lessonId: javascript-ch07-l04
-    authorId: tsumucode-javascript-authoring
-    reviewerId: astra-pro-independent-review
-    sourceHash: 3aa895336ad0d37264c2b3de5cff8e68dd48201953312816b10756283c3623e4
-    accuracy: approved
-    goalExerciseAlignment: approved
-    unexplainedTerms: 0
-    hintLeakage: 0
-    examplesExecuted: true
-    decision: approved
-    notes: PR48の同一Pro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEADa4e8dc41fef7460bb1e9bf1ab95fa80e64aee3d3の教材原文・採点・Fixture・既習リンクを独立確認し内容承認。static NodeList、forEach初出説明とmapとの差、3冊の状態変更と対象外保持が整合。CodexがDocker製品Runnerで掲載4例と演習9ケースを実行し上記hashを計算。Proのhash独立再計算・実行・画像承認、人の初心者や実機確認を意味しない。querySelectorAllの返り値が変更に使われたかのデータフロー追跡は行わない。
-  - lessonId: javascript-ch07-l03
-    authorId: tsumucode-javascript-authoring
-    reviewerId: astra-pro-independent-review
-    sourceHash: cfee2512f97e5e73cb3ea7076c605881d66984f57850ec5bcc5b8cf702557770
-    accuracy: approved
-    goalExerciseAlignment: approved
-    unexplainedTerms: 0
-    hintLeakage: 0
-    examplesExecuted: true
-    decision: approved
-    notes: PR47の同一Pro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEAD2a2a5f422abb6bb3e804ac00e3826d1d5aeccccdの教材原文・採点・Fixture・導線を独立確認し内容承認。生成と接続の区別、既存子保持、文字設定、実DOMを主条件とする別名/順序別解が整合。CodexがDocker製品Runnerで掲載4例と演習9ケースを実行し上記hashを計算。Proによるhash独立再計算・実行・新画面画像承認、人の初心者試用や物理実機確認を意味しない。createElementと接続対象の同一性を追跡するデータフロー解析は行わない。
-  - lessonId: javascript-ch07-l02
-    authorId: tsumucode-javascript-authoring
-    reviewerId: astra-pro-independent-review
-    sourceHash: e16d120de369d1fbce9accc2ca45ce196f6f21d0b7b1c634703eb79ef5a44d1c
-    accuracy: approved
-    goalExerciseAlignment: approved
-    unexplainedTerms: 0
-    hintLeakage: 0
-    examplesExecuted: true
-    decision: approved
-    notes: PR46の同一Pro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEAD095968db7b32a23e64bc87e1fbcd39c6dfe5afa9の教材原文・採点・Fixture・試用導線を独立確認して内容承認。共通classと状態classの区別、add/remove、別解を許す実DOM判定と段階Hintが整合。CodexがDocker製品Runnerで掲載4例と演習8ケースを実行して上記hashを計算。Proによるhash再計算・実行・既習リンク先原文の独立承認・新画面画像承認や人の初心者試用/実機確認を意味しない。Course phase案内文の件数は別途同期。
-  - lessonId: javascript-ch07-l01
-    authorId: tsumucode-javascript-authoring
-    reviewerId: astra-pro-independent-review
-    sourceHash: 7951acb742e1c0f796a0d442a6e1be4cfbc5fb8cc19c3170ada695d5136fbd2a
-    accuracy: approved
-    goalExerciseAlignment: approved
-    unexplainedTerms: 0
-    hintLeakage: 0
-    examplesExecuted: true
-    decision: approved
-    notes: PR45の同一Pro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEAD623d8f55aa22dfac80ee423cd987819b153265ebの教材原文とif前提修正を独立確認し承認。参照・最初の一致・null・文字変更の4Slideと振る舞い中心の演習、3段階Hintを確認。CodexがDocker製品DOM Runnerで4Slide例とSolution/Starter/代表Fixture7件を実行し、上記sourceHashを計算。Proによるhash独立再計算・実行・新演習画像承認や、人の初心者試用・実機確認を意味しない。
   - lessonId: javascript-ch00-l01
-    authorId: tsumucode-content-authoring
-    reviewerId: astra-pro-independent-review
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
     sourceHash: bbc6d3ad5e9c99568defdb92b148212a900376bfa4cc3258963bba147122c189
     accuracy: approved
     goalExerciseAlignment: approved
@@ -232,252 +13,408 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: PR36独立Proレビュー対象539dc46fe056f1b46dba57a29b1cfc41b0ffd602。全4Slide/既存演習照合による前回承認を維持し、宣言済みHTML/CSS前提の範囲で正確性・整合・未説明語0・現行ガイド設計内の漏洩0・decisionを承認（issuecomment-5856275050）。CodexがDocker Chromiumで教材DOM例3件を実行照合し、computeLessonSourceHashでLesson全通常fileを計算。Proの独立実行/hash再計算・3ブラウザ全Fixture再検証・初心者観察を意味しない。
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch01-l01
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: 270034cb192a47c0748db4169bbbc301502ca7403f1045f9e33e6a58c4093347
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 92acbef8ca5eeb599ecadcda91018edaf76adf5aec43966640061e8370d460c5
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 文字列・数値・真偽値をConsoleへ順番に出す4枚のSlideとExerciseを照合。Source FactとConsole完全一致のAND判定、3段階Hint、Solution、pass／incomplete／型違い／syntax／securityの5 Fixtureを実Browser Runner／Validatorで確認。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。 本Lessonを含む初出前案内6件は現候補の実iframe
+      Snapshot/採点で正答6pass・反例6incomplete、診断0、Source認証/新文言一致。証拠SHA256
+      55ae2d8e375c87ea77449b6b7323e62a86561e22505c45de11a019e0f8ff509d。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch01-l02
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: 894b6d67246d9925c61e72b869724b88827c9659a18146fcd566c5c3efd22431
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 9cabce1df359599907d3146d4318f088487914a42333e84a74ef64510b85771d
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: constによる名前付けと参照を4枚のSlideからExerciseへ段階接続。宣言Fact・参照Fact・Console完全一致のAND判定、3段階Hint、Solution、5 Fixtureを実Browser Runner／Validatorで確認。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。 本Lessonを含む初出前案内6件は現候補の実iframe
+      Snapshot/採点で正答6pass・反例6incomplete、診断0、Source認証/新文言一致。証拠SHA256
+      55ae2d8e375c87ea77449b6b7323e62a86561e22505c45de11a019e0f8ff509d。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch01-l03
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: e3b3ac28ab4696feba04bd6c094292d9280513ffb090164b1c82834791e7b027
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 63abe3c1fed6f638ef47509455d678db9f93d8bd902efda3e88f387a7aaf58f3
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 四則演算のうち加算を既習のconstと組み合わせ、計算式をConsoleへ出す4枚のSlideとExerciseを照合。二項演算Fact・Console完全一致、3段階Hint、Solution、5 Fixtureを実Browser Runner／Validatorで確認。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch01-l04
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: 46db3154565082f9d7cc6d17fc0dbd000ddc36fb7dad89e72e77d556420fca19
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 0ee42360cc469eafed7255c1c4ac03bc3830e23d0fd20622ead79cecbbc4514f
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: letの宣言・再代入・最終値を4枚のSlideからExerciseへ接続。宣言Fact・代入Fact・Console完全一致のAND判定、3段階Hint、Solution、5 Fixtureを実Browser Runner／Validatorで確認。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。 本Lessonを含む初出前案内6件は現候補の実iframe
+      Snapshot/採点で正答6pass・反例6incomplete、診断0、Source認証/新文言一致。証拠SHA256
+      55ae2d8e375c87ea77449b6b7323e62a86561e22505c45de11a019e0f8ff509d。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch02-l01
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: 80f5190f5abc159c125744a36290ab1b233eff0934d7a030beefe6448a91b1d5
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: e124b38485734e2e78ec7b50f02eef637a280a5ef711c02e2ed682fdf0173514
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: ===と!==の比較結果をbooleanとして読む4枚のSlideから、!==を===へ直すExerciseへ段階接続。二項演算Fact・Console完全一致のAND判定、3段階Hint、Solution、pass／incomplete／hardcoded boolean／syntax／securityの5 Fixtureを実Browser Runner／Validatorで確認。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch02-l02
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: 85fa975ce54ee31328adf9b05f4850d119630168f8f0a68340b50bf711dcd085
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: bf2e66991b890cefa2bf8092a9d44f17812c8041aed60fe50efefb6988d6385c
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: ifとelseがtrue／falseの片方だけを選ぶ4枚のSlideから、条件記号だけを直すExerciseへ段階接続。分岐Fact・厳密等価Fact・Console完全一致のAND判定、3段階Hint、Solution、7 Fixtureを実Browser Runner／Validatorで確認。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。 本Lessonを含む初出前案内6件は現候補の実iframe
+      Snapshot/採点で正答6pass・反例6incomplete、診断0、Source認証/新文言一致。証拠SHA256
+      55ae2d8e375c87ea77449b6b7323e62a86561e22505c45de11a019e0f8ff509d。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch02-l03
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: 8a841b42bf4dbb063aa665228ce7818fc8eb48d694b24ccdf0313dab429dda9e
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 923aede8b78be618d01e729625a2f8b23c588c9271ebe6509fd4db43f1b25eaa
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: else ifでA／B／そのほかを上から判定する4枚のSlideから、2つ目の比較値だけを直すExerciseへ段階接続。2件以上の比較Fact・3件のConsole call・Console完全一致のAND判定、3段階Hint、Solution、6 Fixtureを実Browser Runner／Validatorで確認。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。 本Lessonを含む初出前案内6件は現候補の実iframe
+      Snapshot/採点で正答6pass・反例6incomplete、診断0、Source認証/新文言一致。証拠SHA256
+      55ae2d8e375c87ea77449b6b7323e62a86561e22505c45de11a019e0f8ff509d。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch02-l04
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: af1d3221da9fc3648fea37fbaf4b01c7a8eda4e76634995c0216122c6dc6eede
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 87c32a25fc7640224b095af9adfca9ed22d4e30148794942268643dec7734068
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: forの初期化・条件・更新を読む4枚のSlideから、3を含む条件へ直すExerciseへ段階接続。for loop・number++・<=・Console完全一致のAND判定、3段階Hint、Solution、off-by-one／unrolled output／無限loopを含む7 Fixtureを実Browser Runner／Validatorで確認。全16 Slideを1280x720と390x844で実寸確認済み。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。 本Lessonを含む初出前案内6件は現候補の実iframe
+      Snapshot/採点で正答6pass・反例6incomplete、診断0、Source認証/新文言一致。証拠SHA256
+      55ae2d8e375c87ea77449b6b7323e62a86561e22505c45de11a019e0f8ff509d。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch03-l01
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: 4a8f3d0c86423e8274784f3324b377e7ec04a0a270072d36fabc352aa0d18400
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: e3dd0e25dc0dd6496aa27c6528e5f79bb470c92db72953d0cef73a89804075c9
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Function宣言・本体・呼び出しの順を4枚のSlideから、既存Functionを1回呼び出すExerciseへ段階接続。Function宣言Fact・呼び出しFact・Console完全一致のAND判定、3段階Hint、Solution、pass／incomplete／output-only／syntax／securityの5 Fixtureを実Browser Runner／Validatorで確認。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch03-l02
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: 4bcda2f7b295e1b50ea141b813cad124ac0010e60f452c07fddc7ec91d242aec
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 6778f2476c0a1343bb3506efc9ee1da56c338dddce7b5495f3ac759bc136ee8c
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Parameter・Argument・returnを4枚のSlideから、priceとcountを掛けて30を返すExerciseへ段階接続。Parameter・return・乗算・呼び出し・Console完全一致のAND判定、3段階Hint、Solution、hardcoded outputを含む6 Fixtureを実Browser Runner／Validatorで確認。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch03-l03
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: f68142787fbbc57cdecf19a50d83a3c7bf46fb0631b18d113f781a7c281e346f
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 3de97dec92f1b5d107f4ae62e692a6e97887a5f5cca3e56fa488af3a808aeedd
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Global ScopeとLocal Scopeを4枚のSlideから、lessonNameをFunction内へ移すExerciseへ段階接続。courseNameのGlobal宣言・lessonNameのscopeDepth 1・Console順序のAND判定、3段階Hint、Solution、global-scope偽装を含む6 Fixtureを実Browser Runner／Validatorで確認。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch03-l04
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: 303364ef401d532ebf06350b2bebdf2ddb110d1319bf6b24522f1c246df54b00
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: c86625029c7bc700d9c9dd465e107b5ddb9fac4ac26ae069e0f79efd629f73e9
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Arrow FunctionのParameterと短いreturnを4枚のSlideから、回答へ接頭辞を加えるExerciseへ段階接続。Arrow Function・Parameter・return・呼び出し・Console完全一致のAND判定、3段階Hint、Solution、ordinary function／hardcoded outputを含む7 Fixtureを実Browser Runner／Validatorで確認。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch03-l05
     authorId: tsumucode-javascript-authoring
-    reviewerId: astra-pro-independent-review
-    sourceHash: 848c0835a3f357a7acd043bd19edcee4b0b1f9a2b7d45b1f2a247692729cf850
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 96c8cf7c286677c6e69bc509dc33e12d8d8d67dc54c074a786652478ccea9a8e
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: PR38初回92b73f04864805216fa115739e466b70e5ae6044とb5b91efeaf84bc7977a5d29ee479f85cce4e465bの限定Proレビューを維持。PR42の92eff44c848e48afa68e9fb46f81d8758d7640bfではClosure全60原本とtree3088ebaa79760472931f0b8fc8232a81b78448acをProが照合し、Pythonで現行と同じpath順/path+NUL+bytesのsourceHashを独立計算、runtime明示とevalのunsupported診断に限定したfixture変更を承認。教材decisionとRuntime採用・画像の目視承認は別。製品Browser3engine・対象fixture実行はCodexのDocker実施記録でありProの再実行ではない。PR38の計10画像目視承認は今回の比較画像承認へ流用しない。代表誤解と妥当別解の学習用判定で、故意の欺瞞耐性や初心者の実学習効果を証明しない。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch04-l01
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: 75c3d707fe5ae2ff27ed78543da0bb2d58946086d6e0932b205d6724f8fbef71
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 0f8b1ab85ccf406660b19f8cac03cd4ddabab7025dcf0f1454908bf6e8d476f6
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Arrayの目的・literal・lengthを4枚のSlideから、3問目を末尾へ加えるExerciseへ段階接続。collection FactとConsole完全一致のAND判定、3段階Hint、Solution、wrong-count／output-only／syntax／securityを含む6 Fixtureを実Browser Runner／Validatorで確認。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch04-l02
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: 1b941721d682c4b650dda888dc35358ff7c16dd05b93a07cdae8ea422a75904f
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 343fac27a2cfe954f724772a20d4d9d006686283a57a60ca1e0af1b6677dd6ed
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: zero-based index・角括弧access・atを4枚のSlideから、1問目と2問目を順に表示するExerciseへ段階接続。index Fact・at Fact・Console完全一致のAND判定、3段階Hint、Solution、off-by-one／output-only／syntax／securityを含む6 Fixtureを実Browser Runner／Validatorで確認。Issue #31では変数添字の既存security Fixtureだけをunsupported診断による採点停止へ合わせ、Solution・Starter・全Fixtureを再実行。教材本文・採点規則・安全制約は変更なし。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch04-l03
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: ce02d0a3cd48599021fcbf8fd87664cc733f1255b074c3c8ca9291bc435ab9bf
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 53c2395d88e9eb7df8c965d0add77c49b3a1040d1153b8f1d8c8ca7ac70956ee
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: for ofがArrayを1件ずつ読む流れを4枚のSlideから、空のArrayをquestionsへ置き換えるExerciseへ段階接続。for-of FactとConsole完全一致のAND判定、3段階Hint、Solution、output-only／syntax／securityを含む5 Fixtureを実Browser Runner／Validatorで確認。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch04-l04
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: 175ba10748d9fbe69a0b3b8285aeeed6393748c2160b0eb596557b5195b2c896
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 67aa05a806d8443d34f82e2845132e8852024c75aa7eca483aa2593b11a57e51
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Objectの目的・literal・dot property accessを4枚のSlideから、answerの値だけを直すExerciseへ段階接続。object Fact・property access Fact・Console完全一致のAND判定、3段階Hint、Solution、wrong-property／output-only／syntax／securityを含む6 Fixtureを実Browser Runner／Validatorで確認。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch04-l05
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: 8d6dded9177a48ab1a05c28494a5487bd7612c7018f5d1d7c30ee17d29f7b206
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: faaa5bc33779f37029bf9fc29da02fe250ffb4d05d5c2ca2579be60b4dd42ef0
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: ObjectとArrayのDestructuringを4枚のSlideから、quizとchoicesを2段階で分けるExerciseへ接続。object／array destructuring FactとConsole完全一致のAND判定、3段階Hint、Solution、no-destructuring／output-only／syntax／securityを含む6 Fixtureを実Browser Runner／Validatorで確認。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch05-l01
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: 6c7128d784430a64d5a4a22c059f9c5085b498420affd8a80c6ee2f061c98483
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 96f0b1c559da13a46f69502023aa83166f116c1517c9b37c22241ad4ecaf6bb8
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: mapの目的・callback・新しいArrayを4枚のSlideから、問題Objectをlabelへ変換するExerciseへ段階接続。mapのcollection-transform FactとConsole完全一致のAND判定、3段階Hint、Solution、for-loop／output-only／syntax／securityを含む6 Fixtureを実Browser Runner／Validatorで確認。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      native変換4Goalは固定alias修正の別非作者Analyzer50＋境界5と既存3engine75のhash照合、統合2byte一致を条件に整合を承認。証拠SHA256
+      f2cdc0bda4ee8f740a255a10271c1c7c0485d54c0f572105e280a84785ee9b51。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch05-l02
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: d8391a3f373cf11338ec8948b1cf67ebc0e8e15e9fe79d00b06cd5ca8256670a
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 7d4a7133808a22450856bee56ca74bff3a6343a0a170330e387b4c10cc46bf44
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: filterの目的・boolean条件・元の順序を保つ新しいArrayを4枚のSlideから、HTML categoryだけを残すExerciseへ段階接続。filterのcollection-transform FactとConsole完全一致のAND判定、3段階Hint、Solution、wrong-condition／for-loop／output-only／syntax／securityを含む6 Fixtureを実Browser Runner／Validatorで確認。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      native変換4Goalは固定alias修正の別非作者Analyzer50＋境界5と既存3engine75のhash照合、統合2byte一致を条件に整合を承認。証拠SHA256
+      f2cdc0bda4ee8f740a255a10271c1c7c0485d54c0f572105e280a84785ee9b51。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch05-l03
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: 287c38e6dff47b44cd86b12ccbb120a312bb094916f0ee60546e82d0bc64a648
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 45e04bf76fddbc380989c4c7d5b7f476e44e190d87ce579504422528d48856ab
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: reduceのaccumulator・currentValue・initial valueを4枚のSlideから、10・20・30を0から合計するExerciseへ段階接続。reduceのcollection-transform Fact・加算Fact・Console完全一致のAND判定、3段階Hint、Solution、initial value欠落／for-loop／output-only／syntax／securityを含む6 Fixtureを実Browser Runner／Validatorで確認。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      native変換4Goalは固定alias修正の別非作者Analyzer50＋境界5と既存3engine75のhash照合、統合2byte一致を条件に整合を承認。証拠SHA256
+      f2cdc0bda4ee8f740a255a10271c1c7c0485d54c0f572105e280a84785ee9b51。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch05-l04
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: 0ccd7e126462611868f8bb80037d9de87e7576fad20b379152d11c63f27718d3
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 06eb2d07c3c84b7a64a38a8cf0bf8f3d1f46b19a92b430b84df7e7bc4728849b
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: immutable update・Array map・Object spreadを4枚のSlideから、元のquestionsを保ち回答済みの新しいArrayを作るExerciseへ段階接続。array-map／object-spread FactとConsole完全一致のAND判定、3段階Hint、Solution、Function expression／property mutation／output-only／syntax／securityを含む7 Fixtureを実Browser Runner／Validatorで確認。丸括弧付きObject literalを返すArrow Functionの実行器回帰もUnitと実Browserで確認。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      native変換4Goalは固定alias修正の別非作者Analyzer50＋境界5と既存3engine75のhash照合、統合2byte一致を条件に整合を承認。証拠SHA256
+      f2cdc0bda4ee8f740a255a10271c1c7c0485d54c0f572105e280a84785ee9b51。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch06-l01
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
     sourceHash: e30719650fd8b90383f3d52f64a3fbc989fbac12537bbc9f3e0fab72794bfcf4
     accuracy: approved
     goalExerciseAlignment: approved
@@ -485,10 +422,14 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Moduleの目的・named export・named import・相対pathを4枚のSlideから、questions.jsのconstへexportを加えるExerciseへ段階接続。module boundary FactとConsole完全一致のAND判定、3段階Hint、Solution、bare／dynamic import・path escape・unknown file・cycleを含む9 Fixtureを実Browser Runner／Validatorで確認。File切替・診断元への復帰・Resetも実Browserで確認。
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch06-l02
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
     sourceHash: d0581a9647a6a92a2fb2fe08a7205b98cdb2709a3096d89d117aaaf7c738e72a
     accuracy: approved
     goalExerciseAlignment: approved
@@ -496,26 +437,437 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: FunctionをModuleへ分ける目的・named export・相対importを4枚のSlideから、scoreAnswerをmain.jsへimportするExerciseへ段階接続。module boundary・Function呼び出しFactとConsole完全一致のAND判定、3段階Hint、Solution、network／storage／eval拒否を含む7 Fixtureを実Browser Runner／Validatorで確認。
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch06-l03
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: 497297adbc571f501e149ce4a20b82513df6c7f67de42bc9508aa86cb7f4383e
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 63a8970e38929613fa04038d6346ef50ac627a7cd2e99bf755b98f430adac323
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Errorの目的・throw new Error・try/catchを4枚のSlideから、空問題のError messageだけを直すExerciseへ段階接続。throw／catch FactとConsole完全一致のAND判定、3段階Hint、Solution、uncaught runtime・network／storage／eval拒否を含む8 Fixtureを実Browser Runner／Validatorで確認。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch06-l04
     authorId: tsumucode-javascript-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: 83de42d8064941a96da3d87036c96e0314be83f142f4a38b6ca02d4ba313b28f
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 132bb5d5a68f3db029d81a249dcff313c6ff1b125c8ada05a26a594d70704960
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Debugの期待値／実際値・File／lineの診断位置を4枚のSlideから、questionCountを2から3へ直すExerciseへ段階接続。乗算FactとConsole完全一致のAND判定、3段階Hint、Solution、output-only・syntax・eval／storage拒否を含む6 Fixtureを実Browser Runner／Validatorで確認。1280x720のExerciseと390x844のSlideで重大なaxe違反0件、Documentの縦横overflowなしを実寸確認済み。
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch07-l01
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 7951acb742e1c0f796a0d442a6e1be4cfbc5fb8cc19c3170ada695d5136fbd2a
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch07-l02
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: e16d120de369d1fbce9accc2ca45ce196f6f21d0b7b1c634703eb79ef5a44d1c
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch07-l03
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: cfee2512f97e5e73cb3ea7076c605881d66984f57850ec5bcc5b8cf702557770
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch07-l04
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 3aa895336ad0d37264c2b3de5cff8e68dd48201953312816b10756283c3623e4
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch08-l01
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 5ddfc82d994002956a7cbc66995e81a109ec58b219115a45f426c582ab162439
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch08-l02
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 1b68729df5a494286ed7de30787fcb046ccfd77bb2e4259b5f23127b3cd8b659
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch08-l03
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 7c8cdce7af85999231df04305061ee1143c049570f943350ac0e23cfaf52e4c6
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch08-l04
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 60b7297634eec34f92324f7df91e829371e6d4d528f8ba9d68ac5cb2c0e425f7
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch09-l01
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 8121e7dc209587a04d66450ce1b7c87695844d03bf6b9ec037a0f5691dd28c43
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch09-l02
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 9a475d86b837fb408c7fe1908cf8cce9e3839b3cf8a7ae3db59bed10d29b8829
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch09-l03
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 1a87bcc21e5429c11f0d29c315141f100294ce1f7364c88aece9ca4978b106be
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch09-l04
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 13ceeb4b21fc1cdb482b3a2067d66bb77f3bd42a0d353f0aa4287b044ad7888a
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch10-l01
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 6c04af4b89dd2400d6eeb87099379028f497ebdc6200a762b45c8c67cf30fb02
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch10-l02
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: aee546b7643307f20c698fab7b3a0dca7fd0dce246d2629dda8025b53ba90186
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch10-l03
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 912a05432abfce484fd534826257e29f37741f3bc1a2402217d8e2efc0345543
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch10-l04
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: b4158c75af875826fb7db852c5c999daff3d3e8bf0a6710535ae9cb8352d38b2
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch11-l01
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 0d0f91e9c318e4a254eac28c3ffafc33ba053e18fe09168de786e1d64da92046
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch11-l02
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 7dbb74f3eda57c84b9d743772f637d17c88d3864fa92c4ee4812f682e6b014e4
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch11-l03
+    authorId: tsumucode-javascript-authoring
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: d7383e6fb207d03e14485dba99d7cafa62a3c7a821d1bd8f4fa383957924baf6
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: '同Lesson hashの既存独立内容承認と掲載例/演習実行を範囲付き再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch12-l01
+    authorId: js_course_projects
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 7a7fedc3670ade4bcffc44b468cf7b5a6a517a5d05ca629162cc39de721989be
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch12-l02
+    authorId: js_course_projects
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: dc64853679f1a1e31346277cdd433678eca248cf7e0631106ceaeba294d53cee
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch12-l03
+    authorId: js_course_projects
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 5d8ad79260eff785eb4a7431014b7d319a4a05f290ad74e6039e68b02b5fd4f5
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch12-l04
+    authorId: js_course_projects
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: e904fae74b7b2fecb402ffcf35050cc28b320081ed7427fe546329529f974573
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch12-l05
+    authorId: js_course_projects
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 015b474265448ab68393e13dea6b9be04e259517f9dd6f5b7d1b2b469a1b0b71
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
+  - lessonId: javascript-ch13-l01
+    authorId: js_course_projects
+    reviewerId: gpt-6.1-sol-independent-js52-content-review
+    sourceHash: 203722a005ce32aeee7bccfddebb9ba3a0c2236f05e1736e9a8bb470ae8fcfc9
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes:
+      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      Fixture＋累積prefix10（対象36演習）の原実測を再利用。
+      内容52Lesson/54Exerciseの技術承認であり、3persona全通し・JS通常公開・実人の学習/時間は未承認。Course/release
+      metadataはdraftを維持。掲載例の新実行と旧実測再利用を区別する。参照: 2026-10-02-sol-integration-acceptance.md /
+      javascript-project-course-contract.md。固定教材/Rule binding SHA256
+      f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'

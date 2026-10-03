@@ -16,7 +16,12 @@ steps:
     observe: Consoleに問題2を始めますと表示される
     requiresConceptIds: [const-console-output]
     validationRuleIds:
-      [javascript-ch01-l02-e01-r01, javascript-ch01-l02-e01-r02, javascript-ch01-l02-e01-r03]
+      [
+        javascript-ch01-l02-e01-r01,
+        javascript-ch01-l02-e01-r02,
+        javascript-ch01-l02-e01-r03,
+        javascript-ch01-l02-e01-r04,
+      ]
 files:
   - { path: script.js, language: javascript, source: starter/script.js, editable: true }
   - { path: index.html, language: html, source: starter/index.html, editable: false }
@@ -79,6 +84,28 @@ validationRules:
       nextAction: 1行目の引用符内を見直します。
     hintId: javascript-ch01-l02-e01-h03
     relatedSlideId: javascript-ch01-l02-s04
+  - id: javascript-ch01-l02-e01-r04
+    groupId: javascript-ch01-l02-e01-teaching-result
+    label: questionTextの値をConsoleへ渡す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: script.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: teaching-relation
+        goal: question-binding
+    feedback:
+      target: script.jsと実行結果
+      expected: questionTextの値をConsoleへ渡す
+      nextAction: constで用意したquestionTextをconsole.logの丸括弧へ入れます。表示する文字を別に書き直していないか確認します。
+    hintId: javascript-ch01-l02-e01-h01
+    relatedSlideId: javascript-ch01-l02-s04
 hints:
   - id: javascript-ch01-l02-e01-h01
     level: 1
@@ -129,6 +156,7 @@ fixtures:
       - javascript-ch01-l02-e01-r01
       - javascript-ch01-l02-e01-r02
       - javascript-ch01-l02-e01-r03
+      - javascript-ch01-l02-e01-r04
   - id: syntax-error
     expectedStatus: code-error
     files:
@@ -143,3 +171,27 @@ fixtures:
       - { path: index.html, language: html, source: fixtures/index.html, editable: false }
       - { path: styles.css, language: css, source: fixtures/styles.css, editable: false }
     expectedFeedbackRuleIds: []
+  - id: relation-fixed-output
+    expectedStatus: incomplete
+    files:
+      - path: script.js
+        language: javascript
+        source: fixtures/relation-fixed-output.js
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - javascript-ch01-l02-e01-r04
+runtime:
+  kind: javascript
+  entryFile: script.js
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  teachingGoal: question-binding

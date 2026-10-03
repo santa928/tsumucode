@@ -1,5 +1,15 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import catalogSource from '../../public/generated/content/catalog-v3.json?raw';
+import indexSource from '../../public/generated/content/courses/javascript/index.json?raw';
+import guidedSource from '../../public/generated/content/courses/javascript/lessons/javascript-ch12-l01.json?raw';
+import capstoneSource from '../../public/generated/content/courses/javascript/lessons/javascript-ch13-l01.json?raw';
+import {
+  CourseCatalogV3Schema,
+  CourseIndexSchema,
+  LessonManifestSchema,
+} from '../core/content/deliverySchema';
+import { exerciseRequirementIds } from '../core/content/exerciseRequirementIds';
 import {
   fixtureCatalog,
   fixtureCourseIndex,
@@ -73,6 +83,66 @@ beforeEach(() => {
   runtime.repository.getDraft.mockReset().mockResolvedValue(undefined);
   runtime.passFreshness.isDirty.mockReset().mockReturnValue(false);
 });
+
+/** 実制作教材のcheckpoint参照とfresh snapshotで完了loaderの最小入力を準備する。 */
+async function checkpointCompletionFixture(kind: 'guided-project' | 'capstone') {
+  const lessonId = kind === 'guided-project' ? 'javascript-ch12-l01' : 'javascript-ch13-l01';
+  const manifest = LessonManifestSchema.parse(
+    JSON.parse(kind === 'guided-project' ? guidedSource : capstoneSource),
+  );
+  const index = CourseIndexSchema.parse(JSON.parse(indexSource));
+  const catalog = CourseCatalogV3Schema.parse(JSON.parse(catalogSource));
+  const lesson = manifest.lesson;
+  const exercise = lesson.exercises[0]!;
+  const now = '2026-10-02T00:00:00.000Z';
+  const files = Object.fromEntries(exercise.files.map(({ path, content }) => [path, content]));
+  const draft: ExerciseDraft = {
+    courseId: index.id,
+    lessonId,
+    exerciseId: exercise.id,
+    workspaceId: exercise.workspaceId,
+    contentRevision: index.revision,
+    editRevision: 1,
+    files,
+    selectedFile: 'main.js',
+    cursors: {},
+    validationHistory: [],
+    revealedHintIds: [],
+    lastPassingSnapshots: {
+      [exercise.id]: { editRevision: 1, contentRevision: index.revision, files, evaluatedAt: now },
+    },
+    updatedAt: now,
+  };
+  const progress: CourseProgress = {
+    courseId: index.id,
+    contentRevision: index.revision,
+    lessons: {
+      [lessonId]: {
+        lessonId,
+        viewedSlideIds: [],
+        passedExerciseIds: [exercise.id],
+        passedChecklistItemIds:
+          lesson.kind === 'guided-project' ? lesson.completion.requiredChecklistItemIds : [],
+        passedRuleIds: exerciseRequirementIds(exercise),
+        passedViewportIds: exercise.previewViewports.map(({ id }) => id),
+        currentComplete: true,
+      },
+    },
+    currentComplete: false,
+    updatedAt: now,
+  };
+  content.loadCourseCatalog.mockResolvedValue(catalog);
+  content.loadCourseIndex.mockResolvedValue(index);
+  content.loadWorkspaceLessons.mockResolvedValue([manifest]);
+  runtime.repository.getCourse.mockResolvedValue(progress);
+  runtime.repository.getDraft.mockResolvedValue(draft);
+  return {
+    lesson,
+    exercise,
+    draft,
+    params: { courseId: index.id, lessonId, exerciseId: exercise.id },
+  };
+}
 
 describe('Catalog route loaders', () => {
   it('Catalog loaderはCatalog v3をそのまま返す', async () => {
@@ -187,6 +257,43 @@ describe('分割教材 route loaders', () => {
 });
 
 describe('completionLoader', () => {
+  it.each(['guided-project', 'capstone'] as const)(
+    '実%sの宣言済みcheckpoint所有者をfresh snapshotへ解決する',
+    async (kind) => {
+      const { exercise, params } = await checkpointCompletionFixture(kind);
+      await expect(completionLoader({ params })).resolves.toMatchObject({
+        exercise: { id: exercise.id },
+      });
+    },
+  );
+
+  it.each([
+    'unknown',
+    'expectation',
+    'duplicate-owner',
+    'stale-snapshot',
+    'dirty-draft',
+    'revision-mismatch',
+  ] as const)('制作checkpointでも%sを完了画面へ通さない', async (failure) => {
+    const { lesson, exercise, draft, params } = await checkpointCompletionFixture('guided-project');
+    if (lesson.kind !== 'guided-project') throw new Error('Guided fixtureがありません');
+    if (failure === 'unknown')
+      lesson.project.checklist[1]!.ruleIds = ['interaction:missing:checkpoint'];
+    if (failure === 'expectation')
+      lesson.project.checklist[1]!.ruleIds = ['interaction:g1-show:loaded:question'];
+    if (failure === 'duplicate-owner')
+      lesson.exercises.push({ ...structuredClone(exercise), id: 'javascript-ch12-l01-e02' });
+    if (failure === 'stale-snapshot')
+      runtime.repository.getDraft.mockResolvedValue({ ...draft, editRevision: 2 });
+    if (failure === 'dirty-draft') runtime.passFreshness.isDirty.mockReturnValue(true);
+    if (failure === 'revision-mismatch')
+      runtime.repository.getDraft.mockResolvedValue({
+        ...draft,
+        contentRevision: 'different-revision',
+      });
+    await expectRouteStatus(completionLoader({ params }), 302);
+  });
+
   it('現在Lessonの完了・合格・fresh snapshotが揃う場合だけ完了画面へ入れる', async () => {
     const lesson = fixtureLessonManifest.lesson;
     const exercise = lesson.exercises[0]!;

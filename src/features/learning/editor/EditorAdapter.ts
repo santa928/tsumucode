@@ -9,6 +9,8 @@ export interface EditorMountInput {
   readonly content: string;
   /** 親が受理したDocument更新を識別する単調増加revision。 */
   readonly contentRevision: number;
+  /** 編集権の再確認中はSource・履歴を保ったまま文字変更だけを閉じる。 */
+  readonly readOnly?: boolean;
   /** CodeMirror入力面へ関連付ける操作説明要素のID。 */
   readonly descriptionId?: string;
   readonly cursor?: EditorCursor;
@@ -23,7 +25,7 @@ export interface EditorHandle {
   setDocument(
     input: Pick<
       EditorMountInput,
-      'path' | 'language' | 'content' | 'contentRevision' | 'diagnostics'
+      'path' | 'language' | 'content' | 'contentRevision' | 'diagnostics' | 'readOnly'
     >,
   ): void;
   /** 親が保持するcursorを現在documentの有効範囲へ復元する。 */

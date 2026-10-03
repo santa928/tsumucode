@@ -1,0 +1,1070 @@
+id: javascript-ch12-l04-e01
+kind: guided-project
+projectId: javascript-quiz-guided
+workspaceId: javascript-quiz-guided
+countsTowardStandardExerciseTotal: false
+title: 全問の後に結果を出す
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: quiz-result-transition
+    minimumLevel: compose
+scaffoldLevel: compose
+steps:
+  - id: compose-current-step
+    file: main.js
+    target: 全問の後に結果を出すのTODO
+    starterAnchor: '// TODO: 最後の問題の後に結果を出す'
+    change: 全問の後に結果を出す。既に作ったSourceを残して今回工程を足す。
+    observe: Checklistの操作をPreviewで確かめ、判定する。
+    requiresConceptIds:
+      - quiz-result-transition
+    validationRuleIds:
+      - javascript-ch12-l04-e01-r01
+files:
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: starter/styles.css
+    editable: false
+  - path: questions.js
+    language: javascript
+    source: starter/questions.js
+    editable: false
+  - path: main.js
+    language: javascript
+    source: starter/main.js
+    editable: true
+solutionFiles:
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: solution/styles.css
+    editable: false
+  - path: questions.js
+    language: javascript
+    source: solution/questions.js
+    editable: false
+  - path: main.js
+    language: javascript
+    source: solution/main.js
+    editable: false
+validationRules:
+  - id: javascript-ch12-l04-e01-r01
+    label: 同梱データのModuleを読み込む
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-source
+      file: main.js
+    assertion:
+      kind: javascript-source-fact
+      fact:
+        kind: module-boundary
+        boundaryKind: import
+        name: loadQuestions
+    feedback:
+      target: main.jsのimport
+      expected: 同梱questions.jsのloadQuestionsをimport
+      nextAction: Guideの提供APIからデータを読みます。
+    hintId: javascript-ch12-l04-e01-h01
+    relatedSlideId: javascript-ch12-l04-s02
+hints:
+  - id: javascript-ch12-l04-e01-h01
+    level: 1
+    title: 対象を見つける
+    text: renderで今の問題がある場合と、全問の後を分けます。失敗後の再試行は順が変わるので取得データを使います。
+    relatedSlideId: javascript-ch12-l04-s01
+  - id: javascript-ch12-l04-e01-h02
+    level: 2
+    title: 状態と表示をつなぐ
+    text: 最後の問題はlength - 1です。最後のnextでindexがlengthへ進むと今の問題はundefinedです。プロパティを読まず結果へ分岐します。再試行の順もArrayから読みます。
+    relatedSlideId: javascript-ch12-l04-s02
+  - id: javascript-ch12-l04-e01-h03
+    level: 3
+    title: 局所の例から考える
+    text: '小例: if (item) { 表示する(); } else { 結果を出す(); }。再試行で順が変わっても問題数と正解数から結果を作り、回答操作を閉じます。'
+    relatedSlideId: javascript-ch12-l04-s03
+relatedSlideIds:
+  - javascript-ch12-l04-s01
+  - javascript-ch12-l04-s02
+  - javascript-ch12-l04-s03
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: alternate-name
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/alternate-name/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/alternate-name/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/alternate-name/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/alternate-name/main.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternate-branch
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/alternate-branch/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/alternate-branch/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/alternate-branch/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/alternate-branch/main.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: incomplete
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/incomplete/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/incomplete/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/incomplete/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/incomplete/main.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:g4-correct:finished:answer-blocked
+      - interaction:g4-correct:finished:locked-one
+      - interaction:g4-correct:finished:quiz-closed
+      - interaction:g4-correct:finished:result
+      - interaction:g4-mixed:finished:answer-blocked
+      - interaction:g4-mixed:finished:locked-one
+      - interaction:g4-mixed:finished:quiz-closed
+      - interaction:g4-mixed:finished:result
+      - interaction:g4-wrong:finished:answer-blocked
+      - interaction:g4-wrong:finished:locked-one
+      - interaction:g4-wrong:finished:quiz-closed
+      - interaction:g4-wrong:finished:result
+  - id: unused-import
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/unused-import/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/unused-import/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/unused-import/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/unused-import/main.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:g4-correct:finished:answer-blocked
+      - interaction:g4-correct:finished:locked-one
+      - interaction:g4-correct:finished:quiz-closed
+      - interaction:g4-correct:finished:result
+      - interaction:g4-correct:first-answer:answer
+      - interaction:g4-correct:first-answer:locked
+      - interaction:g4-correct:first-answer:locked-one
+      - interaction:g4-correct:first-answer:score
+      - interaction:g4-correct:repeat-answer:answer
+      - interaction:g4-correct:repeat-answer:locked
+      - interaction:g4-correct:repeat-answer:locked-one
+      - interaction:g4-correct:repeat-answer:score
+      - interaction:g4-correct:second-answer:answer
+      - interaction:g4-correct:second-answer:score
+      - interaction:g4-correct:second-question:question
+      - interaction:g4-correct:second-question:visible-choice-one
+      - interaction:g4-correct:second-question:visible-choice-zero
+      - interaction:g4-correct:second-question:visible-question
+      - interaction:g4-mixed:finished:answer-blocked
+      - interaction:g4-mixed:finished:locked-one
+      - interaction:g4-mixed:finished:quiz-closed
+      - interaction:g4-mixed:finished:result
+      - interaction:g4-mixed:first-answer:answer
+      - interaction:g4-mixed:first-answer:locked
+      - interaction:g4-mixed:first-answer:locked-one
+      - interaction:g4-mixed:first-answer:score
+      - interaction:g4-mixed:repeat-answer:answer
+      - interaction:g4-mixed:repeat-answer:locked
+      - interaction:g4-mixed:repeat-answer:locked-one
+      - interaction:g4-mixed:repeat-answer:score
+      - interaction:g4-mixed:second-answer:answer
+      - interaction:g4-mixed:second-answer:score
+      - interaction:g4-mixed:second-question:question
+      - interaction:g4-mixed:second-question:visible-choice-one
+      - interaction:g4-mixed:second-question:visible-choice-zero
+      - interaction:g4-mixed:second-question:visible-question
+      - interaction:g4-recovery:failed:enabled
+      - interaction:g4-recovery:failed:message
+      - interaction:g4-recovery:loading:blocked
+      - interaction:g4-recovery:loading:message
+      - interaction:g4-recovery:recovered:choice-one
+      - interaction:g4-recovery:recovered:choice-zero
+      - interaction:g4-recovery:recovered:question
+      - interaction:g4-recovery:recovered:visible-choice-one
+      - interaction:g4-recovery:recovered:visible-choice-zero
+      - interaction:g4-recovery:recovered:visible-question
+      - interaction:g4-wrong:finished:answer-blocked
+      - interaction:g4-wrong:finished:locked-one
+      - interaction:g4-wrong:finished:quiz-closed
+      - interaction:g4-wrong:finished:result
+      - interaction:g4-wrong:first-answer:answer
+      - interaction:g4-wrong:first-answer:locked
+      - interaction:g4-wrong:first-answer:locked-one
+      - interaction:g4-wrong:first-answer:score
+      - interaction:g4-wrong:repeat-answer:answer
+      - interaction:g4-wrong:repeat-answer:locked
+      - interaction:g4-wrong:repeat-answer:locked-one
+      - interaction:g4-wrong:repeat-answer:score
+      - interaction:g4-wrong:second-answer:answer
+      - interaction:g4-wrong:second-answer:score
+      - interaction:g4-wrong:second-question:question
+      - interaction:g4-wrong:second-question:visible-choice-one
+      - interaction:g4-wrong:second-question:visible-choice-zero
+      - interaction:g4-wrong:second-question:visible-question
+  - id: fixed-dom
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/fixed-dom/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/fixed-dom/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/fixed-dom/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/fixed-dom/main.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:g4-correct:finished:answer-blocked
+      - interaction:g4-correct:finished:locked-one
+      - interaction:g4-correct:finished:quiz-closed
+      - interaction:g4-correct:finished:result
+      - interaction:g4-correct:first-answer:answer
+      - interaction:g4-correct:first-answer:locked
+      - interaction:g4-correct:first-answer:locked-one
+      - interaction:g4-correct:first-answer:score
+      - interaction:g4-correct:loaded:choice-one
+      - interaction:g4-correct:loaded:choice-zero
+      - interaction:g4-correct:loaded:question
+      - interaction:g4-correct:loaded:visible-choice-one
+      - interaction:g4-correct:loaded:visible-choice-zero
+      - interaction:g4-correct:loaded:visible-question
+      - interaction:g4-correct:repeat-answer:answer
+      - interaction:g4-correct:repeat-answer:locked
+      - interaction:g4-correct:repeat-answer:locked-one
+      - interaction:g4-correct:repeat-answer:score
+      - interaction:g4-correct:second-answer:answer
+      - interaction:g4-correct:second-answer:score
+      - interaction:g4-correct:second-question:question
+      - interaction:g4-correct:second-question:visible-choice-one
+      - interaction:g4-correct:second-question:visible-choice-zero
+      - interaction:g4-correct:second-question:visible-question
+      - interaction:g4-mixed:finished:answer-blocked
+      - interaction:g4-mixed:finished:locked-one
+      - interaction:g4-mixed:finished:quiz-closed
+      - interaction:g4-mixed:finished:result
+      - interaction:g4-mixed:first-answer:answer
+      - interaction:g4-mixed:first-answer:locked
+      - interaction:g4-mixed:first-answer:locked-one
+      - interaction:g4-mixed:first-answer:score
+      - interaction:g4-mixed:loaded:choice-one
+      - interaction:g4-mixed:loaded:choice-zero
+      - interaction:g4-mixed:loaded:question
+      - interaction:g4-mixed:loaded:visible-choice-one
+      - interaction:g4-mixed:loaded:visible-choice-zero
+      - interaction:g4-mixed:loaded:visible-question
+      - interaction:g4-mixed:repeat-answer:answer
+      - interaction:g4-mixed:repeat-answer:locked
+      - interaction:g4-mixed:repeat-answer:locked-one
+      - interaction:g4-mixed:repeat-answer:score
+      - interaction:g4-mixed:second-answer:answer
+      - interaction:g4-mixed:second-answer:score
+      - interaction:g4-mixed:second-question:question
+      - interaction:g4-mixed:second-question:visible-choice-one
+      - interaction:g4-mixed:second-question:visible-choice-zero
+      - interaction:g4-mixed:second-question:visible-question
+      - interaction:g4-recovery:failed:enabled
+      - interaction:g4-recovery:failed:message
+      - interaction:g4-recovery:loading:blocked
+      - interaction:g4-recovery:loading:message
+      - interaction:g4-recovery:recovered:choice-one
+      - interaction:g4-recovery:recovered:choice-zero
+      - interaction:g4-recovery:recovered:question
+      - interaction:g4-recovery:recovered:visible-choice-one
+      - interaction:g4-recovery:recovered:visible-choice-zero
+      - interaction:g4-recovery:recovered:visible-question
+      - interaction:g4-wrong:finished:answer-blocked
+      - interaction:g4-wrong:finished:locked-one
+      - interaction:g4-wrong:finished:quiz-closed
+      - interaction:g4-wrong:finished:result
+      - interaction:g4-wrong:first-answer:answer
+      - interaction:g4-wrong:first-answer:locked
+      - interaction:g4-wrong:first-answer:locked-one
+      - interaction:g4-wrong:first-answer:score
+      - interaction:g4-wrong:loaded:choice-one
+      - interaction:g4-wrong:loaded:choice-zero
+      - interaction:g4-wrong:loaded:question
+      - interaction:g4-wrong:loaded:visible-choice-one
+      - interaction:g4-wrong:loaded:visible-choice-zero
+      - interaction:g4-wrong:loaded:visible-question
+      - interaction:g4-wrong:repeat-answer:answer
+      - interaction:g4-wrong:repeat-answer:locked
+      - interaction:g4-wrong:repeat-answer:locked-one
+      - interaction:g4-wrong:repeat-answer:score
+      - interaction:g4-wrong:second-answer:answer
+      - interaction:g4-wrong:second-answer:score
+      - interaction:g4-wrong:second-question:question
+      - interaction:g4-wrong:second-question:visible-choice-one
+      - interaction:g4-wrong:second-question:visible-choice-zero
+      - interaction:g4-wrong:second-question:visible-question
+  - id: syntax
+    expectedStatus: code-error
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/code-error/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/code-error/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/code-error/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/code-error/main.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: security
+    expectedStatus: code-error
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/security/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/security/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/security/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/security/main.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: system-error
+    expectedStatus: system-error
+    faultInjection: stale-source-evidence
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/system-error/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/system-error/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/system-error/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/system-error/main.js
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: always-correct
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/always-correct/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/always-correct/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/always-correct/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/always-correct/main.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:g4-mixed:finished:answer-blocked
+      - interaction:g4-mixed:finished:locked-one
+      - interaction:g4-mixed:finished:quiz-closed
+      - interaction:g4-mixed:finished:result
+      - interaction:g4-mixed:second-answer:answer
+      - interaction:g4-mixed:second-answer:score
+      - interaction:g4-wrong:finished:answer-blocked
+      - interaction:g4-wrong:finished:locked-one
+      - interaction:g4-wrong:finished:quiz-closed
+      - interaction:g4-wrong:finished:result
+      - interaction:g4-wrong:first-answer:answer
+      - interaction:g4-wrong:first-answer:locked
+      - interaction:g4-wrong:first-answer:locked-one
+      - interaction:g4-wrong:first-answer:score
+      - interaction:g4-wrong:repeat-answer:answer
+      - interaction:g4-wrong:repeat-answer:locked
+      - interaction:g4-wrong:repeat-answer:locked-one
+      - interaction:g4-wrong:repeat-answer:score
+      - interaction:g4-wrong:second-answer:answer
+      - interaction:g4-wrong:second-answer:score
+  - id: always-score
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/always-score/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/always-score/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/always-score/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/always-score/main.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:g4-mixed:finished:answer-blocked
+      - interaction:g4-mixed:finished:locked-one
+      - interaction:g4-mixed:finished:quiz-closed
+      - interaction:g4-mixed:finished:result
+      - interaction:g4-mixed:second-answer:answer
+      - interaction:g4-mixed:second-answer:score
+      - interaction:g4-wrong:finished:answer-blocked
+      - interaction:g4-wrong:finished:locked-one
+      - interaction:g4-wrong:finished:quiz-closed
+      - interaction:g4-wrong:finished:result
+      - interaction:g4-wrong:first-answer:answer
+      - interaction:g4-wrong:first-answer:locked
+      - interaction:g4-wrong:first-answer:locked-one
+      - interaction:g4-wrong:first-answer:score
+      - interaction:g4-wrong:repeat-answer:answer
+      - interaction:g4-wrong:repeat-answer:locked
+      - interaction:g4-wrong:repeat-answer:locked-one
+      - interaction:g4-wrong:repeat-answer:score
+      - interaction:g4-wrong:second-answer:answer
+      - interaction:g4-wrong:second-answer:score
+  - id: fixed-score
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/fixed-score/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/fixed-score/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/fixed-score/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/fixed-score/main.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:g4-correct:first-answer:answer
+      - interaction:g4-correct:first-answer:locked
+      - interaction:g4-correct:first-answer:locked-one
+      - interaction:g4-correct:first-answer:score
+      - interaction:g4-correct:repeat-answer:answer
+      - interaction:g4-correct:repeat-answer:locked
+      - interaction:g4-correct:repeat-answer:locked-one
+      - interaction:g4-correct:repeat-answer:score
+      - interaction:g4-mixed:first-answer:answer
+      - interaction:g4-mixed:first-answer:locked
+      - interaction:g4-mixed:first-answer:locked-one
+      - interaction:g4-mixed:first-answer:score
+      - interaction:g4-mixed:repeat-answer:answer
+      - interaction:g4-mixed:repeat-answer:locked
+      - interaction:g4-mixed:repeat-answer:locked-one
+      - interaction:g4-mixed:repeat-answer:score
+      - interaction:g4-mixed:second-answer:answer
+      - interaction:g4-mixed:second-answer:score
+      - interaction:g4-wrong:first-answer:answer
+      - interaction:g4-wrong:first-answer:locked
+      - interaction:g4-wrong:first-answer:locked-one
+      - interaction:g4-wrong:first-answer:score
+      - interaction:g4-wrong:repeat-answer:answer
+      - interaction:g4-wrong:repeat-answer:locked
+      - interaction:g4-wrong:repeat-answer:locked-one
+      - interaction:g4-wrong:repeat-answer:score
+      - interaction:g4-wrong:second-answer:answer
+      - interaction:g4-wrong:second-answer:score
+  - id: missing-result
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/missing-result/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/missing-result/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/missing-result/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/missing-result/main.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:g4-correct:finished:answer-blocked
+      - interaction:g4-correct:finished:locked-one
+      - interaction:g4-correct:finished:quiz-closed
+      - interaction:g4-correct:finished:result
+      - interaction:g4-mixed:finished:answer-blocked
+      - interaction:g4-mixed:finished:locked-one
+      - interaction:g4-mixed:finished:quiz-closed
+      - interaction:g4-mixed:finished:result
+      - interaction:g4-wrong:finished:answer-blocked
+      - interaction:g4-wrong:finished:locked-one
+      - interaction:g4-wrong:finished:quiz-closed
+      - interaction:g4-wrong:finished:result
+  - id: repeat-answer
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/repeat-answer/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/repeat-answer/styles.css
+        editable: false
+      - path: questions.js
+        language: javascript
+        source: fixtures/repeat-answer/questions.js
+        editable: false
+      - path: main.js
+        language: javascript
+        source: fixtures/repeat-answer/main.js
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:g4-correct:finished:answer-blocked
+      - interaction:g4-correct:finished:locked-one
+      - interaction:g4-correct:finished:quiz-closed
+      - interaction:g4-correct:finished:result
+      - interaction:g4-correct:first-answer:answer
+      - interaction:g4-correct:first-answer:locked
+      - interaction:g4-correct:first-answer:locked-one
+      - interaction:g4-correct:first-answer:score
+      - interaction:g4-correct:repeat-answer:answer
+      - interaction:g4-correct:repeat-answer:locked
+      - interaction:g4-correct:repeat-answer:locked-one
+      - interaction:g4-correct:repeat-answer:score
+      - interaction:g4-mixed:finished:answer-blocked
+      - interaction:g4-mixed:finished:locked-one
+      - interaction:g4-mixed:finished:quiz-closed
+      - interaction:g4-mixed:finished:result
+      - interaction:g4-mixed:first-answer:answer
+      - interaction:g4-mixed:first-answer:locked
+      - interaction:g4-mixed:first-answer:locked-one
+      - interaction:g4-mixed:first-answer:score
+      - interaction:g4-mixed:repeat-answer:answer
+      - interaction:g4-mixed:repeat-answer:locked
+      - interaction:g4-mixed:repeat-answer:locked-one
+      - interaction:g4-mixed:repeat-answer:score
+      - interaction:g4-wrong:finished:answer-blocked
+      - interaction:g4-wrong:finished:locked-one
+      - interaction:g4-wrong:finished:quiz-closed
+      - interaction:g4-wrong:finished:result
+      - interaction:g4-wrong:first-answer:answer
+      - interaction:g4-wrong:first-answer:locked
+      - interaction:g4-wrong:first-answer:locked-one
+      - interaction:g4-wrong:first-answer:score
+      - interaction:g4-wrong:repeat-answer:answer
+      - interaction:g4-wrong:repeat-answer:locked
+      - interaction:g4-wrong:repeat-answer:locked-one
+      - interaction:g4-wrong:repeat-answer:score
+runtime:
+  kind: javascript
+  entryFile: main.js
+  sourceType: module
+  capabilityProfile: project
+  primaryOutput: preview
+interactionScenarios:
+  - id: g4-mixed
+    label: 混合回答の結果
+    actions:
+      - id: start
+        kind: click
+        selector: '#start'
+      - id: one
+        kind: click
+        selector: '#choice-0'
+      - id: repeat-answer
+        kind: click
+        selector: '#choice-1'
+      - id: next
+        kind: click
+        selector: '#next'
+      - id: two
+        kind: click
+        selector: '#choice-0'
+      - id: finish
+        kind: click
+        selector: '#next'
+    checkpoints:
+      - id: loaded
+        afterActionId: start
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: Webページの骨組みを作るのは？
+          - id: choice-zero
+            kind: selector-text
+            selector: '#choice-0'
+            equals: HTML
+          - id: choice-one
+            kind: selector-text
+            selector: '#choice-1'
+            equals: CSS
+          - id: visible-question
+            kind: selector-visible
+            selector: '#question'
+          - id: visible-choice-zero
+            kind: selector-visible
+            selector: '#choice-0'
+          - id: visible-choice-one
+            kind: selector-visible
+            selector: '#choice-1'
+      - id: first-answer
+        afterActionId: one
+        expectations:
+          - id: answer
+            kind: selector-text
+            selector: '#feedback'
+            equals: 正解です
+          - id: locked
+            kind: selector-exists
+            selector: '#choice-0:disabled'
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '得点: 1'
+          - id: locked-one
+            kind: selector-exists
+            selector: '#choice-1:disabled'
+      - id: repeat-answer
+        afterActionId: repeat-answer
+        expectations:
+          - id: answer
+            kind: selector-text
+            selector: '#feedback'
+            equals: 正解です
+          - id: locked
+            kind: selector-exists
+            selector: '#choice-0:disabled'
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '得点: 1'
+          - id: locked-one
+            kind: selector-exists
+            selector: '#choice-1:disabled'
+      - id: second-question
+        afterActionId: next
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: 見た目を整えるのは？
+          - id: visible-question
+            kind: selector-visible
+            selector: '#question'
+          - id: visible-choice-zero
+            kind: selector-visible
+            selector: '#choice-0'
+          - id: visible-choice-one
+            kind: selector-visible
+            selector: '#choice-1'
+      - id: second-answer
+        afterActionId: two
+        expectations:
+          - id: answer
+            kind: selector-text
+            selector: '#feedback'
+            equals: 正解は CSS です
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '得点: 1'
+      - id: finished
+        afterActionId: finish
+        expectations:
+          - id: result
+            kind: selector-text
+            selector: '#result'
+            equals: 2問中1問正解
+          - id: quiz-closed
+            kind: selector-exists
+            selector: '#quiz[hidden]'
+          - id: answer-blocked
+            kind: selector-exists
+            selector: '#choice-0:disabled'
+          - id: locked-one
+            kind: selector-exists
+            selector: '#choice-1:disabled'
+  - id: g4-wrong
+    label: 全問誤答の結果
+    actions:
+      - id: start
+        kind: click
+        selector: '#start'
+      - id: one
+        kind: click
+        selector: '#choice-1'
+      - id: repeat-answer
+        kind: click
+        selector: '#choice-1'
+      - id: next
+        kind: click
+        selector: '#next'
+      - id: two
+        kind: click
+        selector: '#choice-0'
+      - id: finish
+        kind: click
+        selector: '#next'
+    checkpoints:
+      - id: loaded
+        afterActionId: start
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: Webページの骨組みを作るのは？
+          - id: choice-zero
+            kind: selector-text
+            selector: '#choice-0'
+            equals: HTML
+          - id: choice-one
+            kind: selector-text
+            selector: '#choice-1'
+            equals: CSS
+          - id: visible-question
+            kind: selector-visible
+            selector: '#question'
+          - id: visible-choice-zero
+            kind: selector-visible
+            selector: '#choice-0'
+          - id: visible-choice-one
+            kind: selector-visible
+            selector: '#choice-1'
+      - id: first-answer
+        afterActionId: one
+        expectations:
+          - id: answer
+            kind: selector-text
+            selector: '#feedback'
+            equals: 正解は HTML です
+          - id: locked
+            kind: selector-exists
+            selector: '#choice-0:disabled'
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '得点: 0'
+          - id: locked-one
+            kind: selector-exists
+            selector: '#choice-1:disabled'
+      - id: repeat-answer
+        afterActionId: repeat-answer
+        expectations:
+          - id: answer
+            kind: selector-text
+            selector: '#feedback'
+            equals: 正解は HTML です
+          - id: locked
+            kind: selector-exists
+            selector: '#choice-0:disabled'
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '得点: 0'
+          - id: locked-one
+            kind: selector-exists
+            selector: '#choice-1:disabled'
+      - id: second-question
+        afterActionId: next
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: 見た目を整えるのは？
+          - id: visible-question
+            kind: selector-visible
+            selector: '#question'
+          - id: visible-choice-zero
+            kind: selector-visible
+            selector: '#choice-0'
+          - id: visible-choice-one
+            kind: selector-visible
+            selector: '#choice-1'
+      - id: second-answer
+        afterActionId: two
+        expectations:
+          - id: answer
+            kind: selector-text
+            selector: '#feedback'
+            equals: 正解は CSS です
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '得点: 0'
+      - id: finished
+        afterActionId: finish
+        expectations:
+          - id: result
+            kind: selector-text
+            selector: '#result'
+            equals: 2問中0問正解
+          - id: quiz-closed
+            kind: selector-exists
+            selector: '#quiz[hidden]'
+          - id: answer-blocked
+            kind: selector-exists
+            selector: '#choice-0:disabled'
+          - id: locked-one
+            kind: selector-exists
+            selector: '#choice-1:disabled'
+  - id: g4-correct
+    label: 全問正解の結果
+    actions:
+      - id: start
+        kind: click
+        selector: '#start'
+      - id: one
+        kind: click
+        selector: '#choice-0'
+      - id: repeat-answer
+        kind: click
+        selector: '#choice-1'
+      - id: next
+        kind: click
+        selector: '#next'
+      - id: two
+        kind: click
+        selector: '#choice-1'
+      - id: finish
+        kind: click
+        selector: '#next'
+    checkpoints:
+      - id: loaded
+        afterActionId: start
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: Webページの骨組みを作るのは？
+          - id: choice-zero
+            kind: selector-text
+            selector: '#choice-0'
+            equals: HTML
+          - id: choice-one
+            kind: selector-text
+            selector: '#choice-1'
+            equals: CSS
+          - id: visible-question
+            kind: selector-visible
+            selector: '#question'
+          - id: visible-choice-zero
+            kind: selector-visible
+            selector: '#choice-0'
+          - id: visible-choice-one
+            kind: selector-visible
+            selector: '#choice-1'
+      - id: first-answer
+        afterActionId: one
+        expectations:
+          - id: answer
+            kind: selector-text
+            selector: '#feedback'
+            equals: 正解です
+          - id: locked
+            kind: selector-exists
+            selector: '#choice-0:disabled'
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '得点: 1'
+          - id: locked-one
+            kind: selector-exists
+            selector: '#choice-1:disabled'
+      - id: repeat-answer
+        afterActionId: repeat-answer
+        expectations:
+          - id: answer
+            kind: selector-text
+            selector: '#feedback'
+            equals: 正解です
+          - id: locked
+            kind: selector-exists
+            selector: '#choice-0:disabled'
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '得点: 1'
+          - id: locked-one
+            kind: selector-exists
+            selector: '#choice-1:disabled'
+      - id: second-question
+        afterActionId: next
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: 見た目を整えるのは？
+          - id: visible-question
+            kind: selector-visible
+            selector: '#question'
+          - id: visible-choice-zero
+            kind: selector-visible
+            selector: '#choice-0'
+          - id: visible-choice-one
+            kind: selector-visible
+            selector: '#choice-1'
+      - id: second-answer
+        afterActionId: two
+        expectations:
+          - id: answer
+            kind: selector-text
+            selector: '#feedback'
+            equals: 正解です
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '得点: 2'
+      - id: finished
+        afterActionId: finish
+        expectations:
+          - id: result
+            kind: selector-text
+            selector: '#result'
+            equals: 2問中2問正解
+          - id: quiz-closed
+            kind: selector-exists
+            selector: '#quiz[hidden]'
+          - id: answer-blocked
+            kind: selector-exists
+            selector: '#choice-0:disabled'
+          - id: locked-one
+            kind: selector-exists
+            selector: '#choice-1:disabled'
+  - id: g4-recovery
+    label: 読み込み失敗から再開
+    actions:
+      - id: failure
+        kind: click
+        selector: '#fail-load'
+      - id: retry
+        kind: click
+        selector: '#start'
+    checkpoints:
+      - id: loading
+        afterActionId: failure
+        expectations:
+          - id: message
+            kind: selector-text
+            selector: '#status'
+            equals: 読み込み中...
+          - id: blocked
+            kind: selector-exists
+            selector: '#start:disabled'
+      - id: failed
+        afterActionId: failure
+        expectations:
+          - id: message
+            kind: selector-text
+            selector: '#status'
+            equals: 読み込めませんでした。開始でやり直せます
+          - id: enabled
+            kind: selector-exists
+            selector: '#start:enabled'
+      - id: recovered
+        afterActionId: retry
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: 見た目を整えるのは？
+          - id: choice-zero
+            kind: selector-text
+            selector: '#choice-0'
+            equals: JavaScript
+          - id: choice-one
+            kind: selector-text
+            selector: '#choice-1'
+            equals: CSS
+          - id: visible-question
+            kind: selector-visible
+            selector: '#question'
+          - id: visible-choice-zero
+            kind: selector-visible
+            selector: '#choice-0'
+          - id: visible-choice-one
+            kind: selector-visible
+            selector: '#choice-1'

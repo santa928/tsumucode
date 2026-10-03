@@ -1,6 +1,7 @@
 import { access, readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { resolveReleaseCourseContract, type ReleaseCourseId } from './releaseCourseContracts';
 
 const ALLOWED_EXTENSIONS = new Set([
   '.html',
@@ -85,7 +86,11 @@ export interface StaticArtifactReport {
 }
 
 /** Pages Artifactを再帰検査し、Server File、秘密、開発URL、Root Asset漏れを拒否する。 */
-export async function checkStaticArtifact(distDir: string): Promise<StaticArtifactReport> {
+export async function checkStaticArtifact(
+  distDir: string,
+  courseId: ReleaseCourseId = 'html-css',
+): Promise<StaticArtifactReport> {
+  const contract = resolveReleaseCourseContract(courseId);
   const root = path.resolve(distDir);
   const files = await collectFiles(root);
 
@@ -120,11 +125,26 @@ export async function checkStaticArtifact(distDir: string): Promise<StaticArtifa
   if (!lessons.some((lesson) => lesson.endsWith('.json'))) {
     throw new Error('公開Lesson Artifactがありません: html-css');
   }
+  if (contract.courseId === 'javascript') {
+    const { readSplitCourseArtifacts } = await import('../content/readSplitCourseArtifacts');
+    const course = await readSplitCourseArtifacts(root, contract.courseId);
+    const lessonCount = course.phases.flatMap(({ chapters }) =>
+      chapters.flatMap(({ lessons }) => lessons),
+    ).length;
+    if (course.id !== contract.courseId || lessonCount !== contract.lessonCount)
+      throw new Error('JS公開ArtifactのCourse/52 Lessonが不一致です');
+    await access(path.join(root, contract.publicProvenancePath));
+  }
 
   return { files: files.length };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const report = await checkStaticArtifact(process.argv[2] ?? 'dist');
+  const arguments_ = process.argv.slice(2);
+  const index = arguments_.indexOf('--course-id');
+  const courseId = resolveReleaseCourseContract(
+    index < 0 ? undefined : arguments_[index + 1],
+  ).courseId;
+  const report = await checkStaticArtifact(arguments_[0] ?? 'dist', courseId);
   console.log(`Static artifact OK: ${String(report.files)} files`);
 }

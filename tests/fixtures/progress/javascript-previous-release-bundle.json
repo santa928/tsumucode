@@ -1,0 +1,2309 @@
+{
+  "schemaVersion": 2,
+  "courses": {
+    "javascript": {
+      "courseId": "javascript",
+      "contentRevision": "2026-08-02.1",
+      "lessons": {
+        "javascript-ch10-l01": {
+          "lessonId": "javascript-ch10-l01",
+          "viewedSlideIds": [
+            "javascript-ch10-l01-s01",
+            "javascript-ch10-l01-s02",
+            "javascript-ch10-l01-s03",
+            "javascript-ch10-l01-s04"
+          ],
+          "currentSlideId": "javascript-ch10-l01-s04",
+          "passedExerciseIds": ["javascript-ch10-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch10-l01-e01-r01",
+            "javascript-ch10-l01-e01-r02",
+            "javascript-ch10-l01-e01-r03",
+            "javascript-ch10-l01-e01-r04",
+            "javascript-ch10-l01-e01-teaching-result",
+            "interaction:promise-data:load",
+            "interaction:promise-data:again"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch10-l02": {
+          "lessonId": "javascript-ch10-l02",
+          "viewedSlideIds": [
+            "javascript-ch10-l02-s01",
+            "javascript-ch10-l02-s02",
+            "javascript-ch10-l02-s03",
+            "javascript-ch10-l02-s04"
+          ],
+          "currentSlideId": "javascript-ch10-l02-s04",
+          "passedExerciseIds": ["javascript-ch10-l02-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch10-l02-e01-r01",
+            "javascript-ch10-l02-e01-r02",
+            "javascript-ch10-l02-e01-r03",
+            "javascript-ch10-l02-e01-teaching-result",
+            "interaction:await-count:load",
+            "interaction:await-count:again"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch11-l03": {
+          "lessonId": "javascript-ch11-l03",
+          "viewedSlideIds": [
+            "javascript-ch11-l03-s01",
+            "javascript-ch11-l03-s02",
+            "javascript-ch11-l03-s03",
+            "javascript-ch11-l03-s04"
+          ],
+          "currentSlideId": "javascript-ch11-l03-s04",
+          "passedExerciseIds": ["javascript-ch11-l03-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch11-l03-e01-r01",
+            "javascript-ch11-l03-e01-r03",
+            "interaction:control-sync:opened",
+            "interaction:control-sync:closed",
+            "interaction:control-sync:reopened"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch01-l03": {
+          "lessonId": "javascript-ch01-l03",
+          "viewedSlideIds": [
+            "javascript-ch01-l03-s01",
+            "javascript-ch01-l03-s02",
+            "javascript-ch01-l03-s03",
+            "javascript-ch01-l03-s04"
+          ],
+          "currentSlideId": "javascript-ch01-l03-s04",
+          "passedExerciseIds": ["javascript-ch01-l03-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["javascript-ch01-l03-e01-result"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch02-l01": {
+          "lessonId": "javascript-ch02-l01",
+          "viewedSlideIds": [
+            "javascript-ch02-l01-s01",
+            "javascript-ch02-l01-s02",
+            "javascript-ch02-l01-s03",
+            "javascript-ch02-l01-s04"
+          ],
+          "currentSlideId": "javascript-ch02-l01-s04",
+          "passedExerciseIds": ["javascript-ch02-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["javascript-ch02-l01-e01-result"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch03-l02": {
+          "lessonId": "javascript-ch03-l02",
+          "viewedSlideIds": [
+            "javascript-ch03-l02-s01",
+            "javascript-ch03-l02-s02",
+            "javascript-ch03-l02-s03",
+            "javascript-ch03-l02-s04"
+          ],
+          "currentSlideId": "javascript-ch03-l02-s04",
+          "passedExerciseIds": ["javascript-ch03-l02-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["javascript-ch03-l02-e01-result"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch03-l04": {
+          "lessonId": "javascript-ch03-l04",
+          "viewedSlideIds": [
+            "javascript-ch03-l04-s01",
+            "javascript-ch03-l04-s02",
+            "javascript-ch03-l04-s03",
+            "javascript-ch03-l04-s04"
+          ],
+          "currentSlideId": "javascript-ch03-l04-s04",
+          "passedExerciseIds": ["javascript-ch03-l04-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["javascript-ch03-l04-e01-result"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch06-l04": {
+          "lessonId": "javascript-ch06-l04",
+          "viewedSlideIds": [
+            "javascript-ch06-l04-s01",
+            "javascript-ch06-l04-s02",
+            "javascript-ch06-l04-s03",
+            "javascript-ch06-l04-s04"
+          ],
+          "currentSlideId": "javascript-ch06-l04-s04",
+          "passedExerciseIds": ["javascript-ch06-l04-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["javascript-ch06-l04-e01-result"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch01-l01": {
+          "lessonId": "javascript-ch01-l01",
+          "viewedSlideIds": [
+            "javascript-ch01-l01-s01",
+            "javascript-ch01-l01-s02",
+            "javascript-ch01-l01-s03",
+            "javascript-ch01-l01-s04"
+          ],
+          "currentSlideId": "javascript-ch01-l01-s04",
+          "passedExerciseIds": ["javascript-ch01-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch01-l01-e01-result",
+            "javascript-ch01-l01-e01-teaching-result"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch01-l02": {
+          "lessonId": "javascript-ch01-l02",
+          "viewedSlideIds": [
+            "javascript-ch01-l02-s01",
+            "javascript-ch01-l02-s02",
+            "javascript-ch01-l02-s03",
+            "javascript-ch01-l02-s04"
+          ],
+          "currentSlideId": "javascript-ch01-l02-s04",
+          "passedExerciseIds": ["javascript-ch01-l02-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch01-l02-e01-result",
+            "javascript-ch01-l02-e01-teaching-result"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch01-l04": {
+          "lessonId": "javascript-ch01-l04",
+          "viewedSlideIds": [
+            "javascript-ch01-l04-s01",
+            "javascript-ch01-l04-s02",
+            "javascript-ch01-l04-s03",
+            "javascript-ch01-l04-s04"
+          ],
+          "currentSlideId": "javascript-ch01-l04-s04",
+          "passedExerciseIds": ["javascript-ch01-l04-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch01-l04-e01-result",
+            "javascript-ch01-l04-e01-teaching-result"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch02-l02": {
+          "lessonId": "javascript-ch02-l02",
+          "viewedSlideIds": [
+            "javascript-ch02-l02-s01",
+            "javascript-ch02-l02-s02",
+            "javascript-ch02-l02-s03",
+            "javascript-ch02-l02-s04"
+          ],
+          "currentSlideId": "javascript-ch02-l02-s04",
+          "passedExerciseIds": ["javascript-ch02-l02-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch02-l02-e01-result",
+            "javascript-ch02-l02-e01-teaching-result"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch02-l03": {
+          "lessonId": "javascript-ch02-l03",
+          "viewedSlideIds": [
+            "javascript-ch02-l03-s01",
+            "javascript-ch02-l03-s02",
+            "javascript-ch02-l03-s03",
+            "javascript-ch02-l03-s04"
+          ],
+          "currentSlideId": "javascript-ch02-l03-s04",
+          "passedExerciseIds": ["javascript-ch02-l03-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch02-l03-e01-result",
+            "javascript-ch02-l03-e01-teaching-result"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch02-l04": {
+          "lessonId": "javascript-ch02-l04",
+          "viewedSlideIds": [
+            "javascript-ch02-l04-s01",
+            "javascript-ch02-l04-s02",
+            "javascript-ch02-l04-s03",
+            "javascript-ch02-l04-s04"
+          ],
+          "currentSlideId": "javascript-ch02-l04-s04",
+          "passedExerciseIds": ["javascript-ch02-l04-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch02-l04-e01-result",
+            "javascript-ch02-l04-e01-teaching-result"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch03-l01": {
+          "lessonId": "javascript-ch03-l01",
+          "viewedSlideIds": [
+            "javascript-ch03-l01-s01",
+            "javascript-ch03-l01-s02",
+            "javascript-ch03-l01-s03",
+            "javascript-ch03-l01-s04"
+          ],
+          "currentSlideId": "javascript-ch03-l01-s04",
+          "passedExerciseIds": ["javascript-ch03-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch03-l01-e01-result",
+            "javascript-ch03-l01-e01-teaching-result"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch03-l03": {
+          "lessonId": "javascript-ch03-l03",
+          "viewedSlideIds": [
+            "javascript-ch03-l03-s01",
+            "javascript-ch03-l03-s02",
+            "javascript-ch03-l03-s03",
+            "javascript-ch03-l03-s04"
+          ],
+          "currentSlideId": "javascript-ch03-l03-s04",
+          "passedExerciseIds": ["javascript-ch03-l03-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch03-l03-e01-result",
+            "javascript-ch03-l03-e01-teaching-result"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch03-l05": {
+          "lessonId": "javascript-ch03-l05",
+          "viewedSlideIds": [
+            "javascript-ch03-l05-s01",
+            "javascript-ch03-l05-s02",
+            "javascript-ch03-l05-s03",
+            "javascript-ch03-l05-s04"
+          ],
+          "currentSlideId": "javascript-ch03-l05-s04",
+          "passedExerciseIds": [
+            "javascript-ch03-l05-e01",
+            "javascript-ch03-l05-e02",
+            "javascript-ch03-l05-e03"
+          ],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch03-l05-e01-result",
+            "javascript-ch03-l05-e01-function-form",
+            "javascript-ch03-l05-e01-teaching-result",
+            "javascript-ch03-l05-e02-check-1",
+            "javascript-ch03-l05-e02-check-2",
+            "javascript-ch03-l05-e02-update",
+            "javascript-ch03-l05-e02-check-5",
+            "javascript-ch03-l05-e02-check-6",
+            "javascript-ch03-l05-e02-check-7",
+            "javascript-ch03-l05-e02-teaching-result",
+            "javascript-ch03-l05-e03-check-1",
+            "javascript-ch03-l05-e03-check-2",
+            "javascript-ch03-l05-e03-update",
+            "javascript-ch03-l05-e03-check-5",
+            "javascript-ch03-l05-e03-check-6",
+            "javascript-ch03-l05-e03-check-7",
+            "javascript-ch03-l05-e03-check-8",
+            "javascript-ch03-l05-e03-check-9",
+            "javascript-ch03-l05-e03-teaching-result"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch04-l01": {
+          "lessonId": "javascript-ch04-l01",
+          "viewedSlideIds": [
+            "javascript-ch04-l01-s01",
+            "javascript-ch04-l01-s02",
+            "javascript-ch04-l01-s03",
+            "javascript-ch04-l01-s04"
+          ],
+          "currentSlideId": "javascript-ch04-l01-s04",
+          "passedExerciseIds": ["javascript-ch04-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch04-l01-e01-result",
+            "javascript-ch04-l01-e01-teaching-result"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch04-l02": {
+          "lessonId": "javascript-ch04-l02",
+          "viewedSlideIds": [
+            "javascript-ch04-l02-s01",
+            "javascript-ch04-l02-s02",
+            "javascript-ch04-l02-s03",
+            "javascript-ch04-l02-s04"
+          ],
+          "currentSlideId": "javascript-ch04-l02-s04",
+          "passedExerciseIds": ["javascript-ch04-l02-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch04-l02-e01-result",
+            "javascript-ch04-l02-e01-teaching-result"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch04-l03": {
+          "lessonId": "javascript-ch04-l03",
+          "viewedSlideIds": [
+            "javascript-ch04-l03-s01",
+            "javascript-ch04-l03-s02",
+            "javascript-ch04-l03-s03",
+            "javascript-ch04-l03-s04"
+          ],
+          "currentSlideId": "javascript-ch04-l03-s04",
+          "passedExerciseIds": ["javascript-ch04-l03-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch04-l03-e01-result",
+            "javascript-ch04-l03-e01-teaching-result"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch04-l04": {
+          "lessonId": "javascript-ch04-l04",
+          "viewedSlideIds": [
+            "javascript-ch04-l04-s01",
+            "javascript-ch04-l04-s02",
+            "javascript-ch04-l04-s03",
+            "javascript-ch04-l04-s04"
+          ],
+          "currentSlideId": "javascript-ch04-l04-s04",
+          "passedExerciseIds": ["javascript-ch04-l04-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch04-l04-e01-result",
+            "javascript-ch04-l04-e01-teaching-result"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch04-l05": {
+          "lessonId": "javascript-ch04-l05",
+          "viewedSlideIds": [
+            "javascript-ch04-l05-s01",
+            "javascript-ch04-l05-s02",
+            "javascript-ch04-l05-s03",
+            "javascript-ch04-l05-s04"
+          ],
+          "currentSlideId": "javascript-ch04-l05-s04",
+          "passedExerciseIds": ["javascript-ch04-l05-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch04-l05-e01-result",
+            "javascript-ch04-l05-e01-teaching-result"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch05-l01": {
+          "lessonId": "javascript-ch05-l01",
+          "viewedSlideIds": [
+            "javascript-ch05-l01-s01",
+            "javascript-ch05-l01-s02",
+            "javascript-ch05-l01-s03",
+            "javascript-ch05-l01-s04"
+          ],
+          "currentSlideId": "javascript-ch05-l01-s04",
+          "passedExerciseIds": ["javascript-ch05-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch05-l01-e01-result",
+            "javascript-ch05-l01-e01-teaching-result"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch05-l02": {
+          "lessonId": "javascript-ch05-l02",
+          "viewedSlideIds": [
+            "javascript-ch05-l02-s01",
+            "javascript-ch05-l02-s02",
+            "javascript-ch05-l02-s03",
+            "javascript-ch05-l02-s04"
+          ],
+          "currentSlideId": "javascript-ch05-l02-s04",
+          "passedExerciseIds": ["javascript-ch05-l02-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch05-l02-e01-result",
+            "javascript-ch05-l02-e01-teaching-result"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch05-l03": {
+          "lessonId": "javascript-ch05-l03",
+          "viewedSlideIds": [
+            "javascript-ch05-l03-s01",
+            "javascript-ch05-l03-s02",
+            "javascript-ch05-l03-s03",
+            "javascript-ch05-l03-s04"
+          ],
+          "currentSlideId": "javascript-ch05-l03-s04",
+          "passedExerciseIds": ["javascript-ch05-l03-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch05-l03-e01-result",
+            "javascript-ch05-l03-e01-teaching-result"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch05-l04": {
+          "lessonId": "javascript-ch05-l04",
+          "viewedSlideIds": [
+            "javascript-ch05-l04-s01",
+            "javascript-ch05-l04-s02",
+            "javascript-ch05-l04-s03",
+            "javascript-ch05-l04-s04"
+          ],
+          "currentSlideId": "javascript-ch05-l04-s04",
+          "passedExerciseIds": ["javascript-ch05-l04-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch05-l04-e01-result",
+            "javascript-ch05-l04-e01-teaching-result"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch06-l03": {
+          "lessonId": "javascript-ch06-l03",
+          "viewedSlideIds": [
+            "javascript-ch06-l03-s01",
+            "javascript-ch06-l03-s02",
+            "javascript-ch06-l03-s03",
+            "javascript-ch06-l03-s04"
+          ],
+          "currentSlideId": "javascript-ch06-l03-s04",
+          "passedExerciseIds": ["javascript-ch06-l03-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch06-l03-e01-result",
+            "javascript-ch06-l03-e01-teaching-result"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch10-l03": {
+          "lessonId": "javascript-ch10-l03",
+          "viewedSlideIds": [
+            "javascript-ch10-l03-s01",
+            "javascript-ch10-l03-s02",
+            "javascript-ch10-l03-s03",
+            "javascript-ch10-l03-s04"
+          ],
+          "currentSlideId": "javascript-ch10-l03-s04",
+          "passedExerciseIds": ["javascript-ch10-l03-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch10-l03-e01-r01",
+            "javascript-ch10-l03-e01-r02",
+            "javascript-ch10-l03-e01-r03",
+            "javascript-ch10-l03-e01-teaching-result",
+            "interaction:catch-retry:success",
+            "interaction:catch-retry:failure",
+            "interaction:catch-retry:retry"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch11-l02": {
+          "lessonId": "javascript-ch11-l02",
+          "viewedSlideIds": [
+            "javascript-ch11-l02-s01",
+            "javascript-ch11-l02-s02",
+            "javascript-ch11-l02-s03",
+            "javascript-ch11-l02-s04"
+          ],
+          "currentSlideId": "javascript-ch11-l02-s04",
+          "passedExerciseIds": ["javascript-ch11-l02-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "javascript-ch11-l02-e01-r01",
+            "javascript-ch11-l02-e01-r03",
+            "interaction:focus-flow:answer-ready",
+            "interaction:focus-flow:back-ready",
+            "interaction:focus-flow:again-ready"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        },
+        "javascript-ch00-l01": {
+          "lessonId": "javascript-ch00-l01",
+          "viewedSlideIds": [
+            "javascript-ch00-l01-s01",
+            "javascript-ch00-l01-s02",
+            "javascript-ch00-l01-s03",
+            "javascript-ch00-l01-s04"
+          ],
+          "currentSlideId": "javascript-ch00-l01-s04",
+          "passedExerciseIds": ["javascript-ch00-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["javascript-ch00-l01-e01-message"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        }
+      },
+      "currentLessonId": "javascript-ch00-l01",
+      "currentChapterId": "javascript-ch00",
+      "currentComplete": true,
+      "firstCompletedAt": "2026-08-01T09:00:00.000Z",
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "html-css": {
+      "courseId": "html-css",
+      "contentRevision": "2026-07-29.1",
+      "lessons": {
+        "html-css-ch00-l01": {
+          "lessonId": "html-css-ch00-l01",
+          "viewedSlideIds": ["html-css-ch00-l01-s04"],
+          "currentSlideId": "html-css-ch00-l01-s04",
+          "passedExerciseIds": ["html-css-ch00-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["html-css-ch00-l01-e01-r01", "html-css-ch00-l01-e01-r02"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-08-01T09:00:00.000Z"
+        }
+      },
+      "currentLessonId": "html-css-ch00-l01",
+      "currentChapterId": "html-css-ch00",
+      "currentComplete": false,
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    }
+  },
+  "drafts": {
+    "javascript:javascript-ch10-l01-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch10-l01",
+      "exerciseId": "javascript-ch10-l01-e01",
+      "workspaceId": "javascript-ch10-l01-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n<head><meta charset=\"UTF-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>問題データを受け取る</title><link rel=\"stylesheet\" href=\"styles.css\" /></head>\n<body><main><h1>問題を読んでみよう</h1>\n<button id=\"load\" type=\"button\">問題を読む</button>\n<p id=\"count\">問題: 0</p>\n<p id=\"question\">まだありません</p><p id=\"note\">同梱の問題を読む練習です。通信はしません。</p>\n</main><script src=\"script.js\"></script></body></html>\n",
+        "styles.css": "body {\n  font-family: sans-serif;\n  padding: 24px;\n  color: #19352b;\n  background: #f5faf7;\n}\nmain {\n  max-width: 520px;\n}\nbutton {\n  padding: 12px 20px;\n  color: white;\n  background: #16764b;\n  border: 0;\n  border-radius: 8px;\n  font-size: 18px;\n}\nbutton:focus-visible {\n  outline: 3px solid #19352b;\n  outline-offset: 4px;\n}\n#status {\n  padding: 16px;\n  background: white;\n}\n",
+        "script.js": "let reads = 0;\n/** 同梱データを読み、2回目以降は別の3件を返す教材用取得元。 */\nfunction loadQuestions() {\n  reads += 1;\n  const questions =\n    reads === 1\n      ? [{ text: '空は何色？' }, { text: '海は何色？' }]\n      : [{ text: '草は何色？' }, { text: '雲は何色？' }, { text: '雪は何色？' }];\n  return new Promise((resolve) => {\n    setTimeout(() => {\n      resolve(questions);\n    }, 80);\n  });\n}\nconst count = document.querySelector('#count');\nconst question = document.querySelector('#question');\ndocument.querySelector('#load').addEventListener('click', () => {\n  loadQuestions().then((questions) => {\n    count.textContent = '問題: 0';\n    question.textContent = 'まだありません';\n  });\n});\n\n// synthetic previous draft: javascript-ch10-l01-e01\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch10-l01-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch10-l01-e01-r01",
+            "javascript-ch10-l01-e01-r02",
+            "javascript-ch10-l01-e01-r03",
+            "javascript-ch10-l01-e01-r04",
+            "javascript-ch10-l01-e01-teaching-result",
+            "interaction:promise-data:load",
+            "interaction:promise-data:again"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch10-l01-e01-h01"],
+      "reviewSlideId": "javascript-ch10-l01-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch10-l01-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n<head><meta charset=\"UTF-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>問題データを受け取る</title><link rel=\"stylesheet\" href=\"styles.css\" /></head>\n<body><main><h1>問題を読んでみよう</h1>\n<button id=\"load\" type=\"button\">問題を読む</button>\n<p id=\"count\">問題: 0</p>\n<p id=\"question\">まだありません</p><p id=\"note\">同梱の問題を読む練習です。通信はしません。</p>\n</main><script src=\"script.js\"></script></body></html>\n",
+            "styles.css": "body {\n  font-family: sans-serif;\n  padding: 24px;\n  color: #19352b;\n  background: #f5faf7;\n}\nmain {\n  max-width: 520px;\n}\nbutton {\n  padding: 12px 20px;\n  color: white;\n  background: #16764b;\n  border: 0;\n  border-radius: 8px;\n  font-size: 18px;\n}\nbutton:focus-visible {\n  outline: 3px solid #19352b;\n  outline-offset: 4px;\n}\n#status {\n  padding: 16px;\n  background: white;\n}\n",
+            "script.js": "let reads = 0;\n/** 同梱データを読み、2回目以降は別の3件を返す教材用取得元。 */\nfunction loadQuestions() {\n  reads += 1;\n  const questions =\n    reads === 1\n      ? [{ text: '空は何色？' }, { text: '海は何色？' }]\n      : [{ text: '草は何色？' }, { text: '雲は何色？' }, { text: '雪は何色？' }];\n  return new Promise((resolve) => {\n    setTimeout(() => {\n      resolve(questions);\n    }, 80);\n  });\n}\nconst count = document.querySelector('#count');\nconst question = document.querySelector('#question');\ndocument.querySelector('#load').addEventListener('click', () => {\n  loadQuestions().then((questions) => {\n    count.textContent = '問題: ' + questions.length;\n    question.textContent = questions[0].text;\n  });\n});\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch10-l02-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch10-l02",
+      "exerciseId": "javascript-ch10-l02-e01",
+      "workspaceId": "javascript-ch10-l02-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n<head><meta charset=\"UTF-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>結果を待って件数を読む</title><link rel=\"stylesheet\" href=\"styles.css\" /></head>\n<body><main><h1>問題を読んでみよう</h1>\n<button id=\"load\" type=\"button\">問題を読む</button>\n<p id=\"count\">問題: 0</p>\n<p id=\"note\">同梱の問題を読む練習です。通信はしません。</p>\n</main><script src=\"script.js\"></script></body></html>\n",
+        "styles.css": "body {\n  font-family: sans-serif;\n  padding: 24px;\n  color: #19352b;\n  background: #f5faf7;\n}\nmain {\n  max-width: 520px;\n}\nbutton {\n  padding: 12px 20px;\n  color: white;\n  background: #16764b;\n  border: 0;\n  border-radius: 8px;\n  font-size: 18px;\n}\nbutton:focus-visible {\n  outline: 3px solid #19352b;\n  outline-offset: 4px;\n}\n#status {\n  padding: 16px;\n  background: white;\n}\n",
+        "script.js": "let reads = 0;\n/** 同梱データを読み、2回目以降は別の3件を返す教材用取得元。 */\nfunction loadQuestions() {\n  reads += 1;\n  const questions =\n    reads === 1\n      ? [{ text: '空は何色？' }, { text: '海は何色？' }]\n      : [{ text: '草は何色？' }, { text: '雲は何色？' }, { text: '雪は何色？' }];\n  return new Promise((resolve) => {\n    setTimeout(() => {\n      resolve(questions);\n    }, 80);\n  });\n}\nconst count = document.querySelector('#count');\nasync function showCount() {\n  const questions = loadQuestions();\n  count.textContent = '問題: ' + questions.length;\n}\ndocument.querySelector('#load').addEventListener('click', showCount);\n\n// synthetic previous draft: javascript-ch10-l02-e01\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch10-l02-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch10-l02-e01-r01",
+            "javascript-ch10-l02-e01-r02",
+            "javascript-ch10-l02-e01-r03",
+            "javascript-ch10-l02-e01-teaching-result",
+            "interaction:await-count:load",
+            "interaction:await-count:again"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch10-l02-e01-h01"],
+      "reviewSlideId": "javascript-ch10-l02-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch10-l02-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n<head><meta charset=\"UTF-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>結果を待って件数を読む</title><link rel=\"stylesheet\" href=\"styles.css\" /></head>\n<body><main><h1>問題を読んでみよう</h1>\n<button id=\"load\" type=\"button\">問題を読む</button>\n<p id=\"count\">問題: 0</p>\n<p id=\"note\">同梱の問題を読む練習です。通信はしません。</p>\n</main><script src=\"script.js\"></script></body></html>\n",
+            "styles.css": "body {\n  font-family: sans-serif;\n  padding: 24px;\n  color: #19352b;\n  background: #f5faf7;\n}\nmain {\n  max-width: 520px;\n}\nbutton {\n  padding: 12px 20px;\n  color: white;\n  background: #16764b;\n  border: 0;\n  border-radius: 8px;\n  font-size: 18px;\n}\nbutton:focus-visible {\n  outline: 3px solid #19352b;\n  outline-offset: 4px;\n}\n#status {\n  padding: 16px;\n  background: white;\n}\n",
+            "script.js": "let reads = 0;\n/** 同梱データを読み、2回目以降は別の3件を返す教材用取得元。 */\nfunction loadQuestions() {\n  reads += 1;\n  const questions =\n    reads === 1\n      ? [{ text: '空は何色？' }, { text: '海は何色？' }]\n      : [{ text: '草は何色？' }, { text: '雲は何色？' }, { text: '雪は何色？' }];\n  return new Promise((resolve) => {\n    setTimeout(() => {\n      resolve(questions);\n    }, 80);\n  });\n}\nconst count = document.querySelector('#count');\nasync function showCount() {\n  const questions = await loadQuestions();\n  count.textContent = '問題: ' + questions.length;\n}\ndocument.querySelector('#load').addEventListener('click', showCount);\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch11-l03-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch11-l03",
+      "exerciseId": "javascript-ch11-l03-e01",
+      "workspaceId": "javascript-ch11-l03-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>名前と状態をそろえる</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main>\n      <h1>問題のヒント</h1>\n      <button id=\"toggle\" type=\"button\" aria-controls=\"hint\" aria-expanded=\"false\">\n        ヒントを開く\n      </button>\n      <p id=\"hint\" hidden>配列のlengthで問題数が分かります</p>\n      <p>開く・閉じる・もう一度開くを試します。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": "body {\n  margin: 0;\n  padding: 32px;\n  color: #19352b;\n  background: #f4faf6;\n  font: 18px/1.6 sans-serif;\n}\nmain {\n  max-width: 640px;\n}\nbutton {\n  min-height: 48px;\n  padding: 8px 20px;\n  color: white;\n  background: #17624d;\n  border: 0;\n  border-radius: 8px;\n  font: inherit;\n}\nbutton:focus-visible {\n  outline: 4px solid #945400;\n  outline-offset: 4px;\n}\n#hint {\n  background: white;\n  padding: 16px;\n}\n",
+        "script.js": "const button = document.querySelector('#toggle');\nconst hint = document.querySelector('#hint');\nlet opened = false;\nfunction render() {\n  if (opened) {\n    hint.removeAttribute('hidden');\n  } else {\n    hint.setAttribute('hidden', '');\n  }\n  button.textContent = '切り替え';\n  button.setAttribute('aria-expanded', 'false');\n}\nbutton.addEventListener('click', () => {\n  opened = !opened;\n  render();\n});\nrender();\n\n// synthetic previous draft: javascript-ch11-l03-e01\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch11-l03-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch11-l03-e01-r01",
+            "javascript-ch11-l03-e01-r03",
+            "interaction:control-sync:opened",
+            "interaction:control-sync:closed",
+            "interaction:control-sync:reopened"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch11-l03-e01-h01"],
+      "reviewSlideId": "javascript-ch11-l03-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch11-l03-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>名前と状態をそろえる</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main>\n      <h1>問題のヒント</h1>\n      <button id=\"toggle\" type=\"button\" aria-controls=\"hint\" aria-expanded=\"false\">\n        ヒントを開く\n      </button>\n      <p id=\"hint\" hidden>配列のlengthで問題数が分かります</p>\n      <p>開く・閉じる・もう一度開くを試します。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": "body {\n  margin: 0;\n  padding: 32px;\n  color: #19352b;\n  background: #f4faf6;\n  font: 18px/1.6 sans-serif;\n}\nmain {\n  max-width: 640px;\n}\nbutton {\n  min-height: 48px;\n  padding: 8px 20px;\n  color: white;\n  background: #17624d;\n  border: 0;\n  border-radius: 8px;\n  font: inherit;\n}\nbutton:focus-visible {\n  outline: 4px solid #945400;\n  outline-offset: 4px;\n}\n#hint {\n  background: white;\n  padding: 16px;\n}\n",
+            "script.js": "const button = document.querySelector('#toggle');\nconst hint = document.querySelector('#hint');\nlet opened = false;\nfunction render() {\n  if (opened) {\n    hint.removeAttribute('hidden');\n  } else {\n    hint.setAttribute('hidden', '');\n  }\n  button.textContent = opened ? 'ヒントを閉じる' : 'ヒントを開く';\n  button.setAttribute('aria-expanded', String(opened));\n}\nbutton.addEventListener('click', () => {\n  opened = !opened;\n  render();\n});\nrender();\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch01-l03-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch01-l03",
+      "exerciseId": "javascript-ch01-l03-e01",
+      "workspaceId": "javascript-ch01-l03-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "const questionCount = 3;\nconst pointPerQuestion = 10;\nconst totalScore = questionCount + pointPerQuestion;\nconsole.log(totalScore);\n\n// synthetic previous draft: javascript-ch01-l03-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Console練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Consoleで結果を確かめよう</h1>\n      <p>script.jsを実行した結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\n\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch01-l03-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["javascript-ch01-l03-e01-result"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch01-l03-e01-h01"],
+      "reviewSlideId": "javascript-ch01-l03-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch01-l03-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "const questionCount = 3;\nconst pointPerQuestion = 10;\nconst totalScore = questionCount * pointPerQuestion;\nconsole.log(totalScore);\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Console練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Consoleで結果を確かめよう</h1>\n      <p>script.jsを実行した結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\n\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch02-l01-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch02-l01",
+      "exerciseId": "javascript-ch02-l01-e01",
+      "workspaceId": "javascript-ch02-l01-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "const answer = 'A';\nconst isCorrect = answer !== 'A';\nconsole.log(isCorrect);\n\n// synthetic previous draft: javascript-ch02-l01-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript 条件とLoopの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Consoleで流れを確かめよう</h1>\n      <p>script.jsを実行した結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\n\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch02-l01-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["javascript-ch02-l01-e01-result"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch02-l01-e01-h01"],
+      "reviewSlideId": "javascript-ch02-l01-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch02-l01-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "const answer = 'A';\nconst isCorrect = answer === 'A';\nconsole.log(isCorrect);\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript 条件とLoopの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Consoleで流れを確かめよう</h1>\n      <p>script.jsを実行した結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\n\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch03-l02-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch03-l02",
+      "exerciseId": "javascript-ch03-l02-e01",
+      "workspaceId": "javascript-ch03-l02-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "function calculateScore(correctAnswers, pointsPerAnswer) {\n  return 0;\n}\n\nconsole.log(calculateScore(3, 10));\n\n// synthetic previous draft: javascript-ch03-l02-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Functionの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Functionの結果を確かめよう</h1>\n      <p>script.jsの実行結果は学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch03-l02-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["javascript-ch03-l02-e01-result"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch03-l02-e01-h01"],
+      "reviewSlideId": "javascript-ch03-l02-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch03-l02-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "function calculateScore(correctAnswers, pointsPerAnswer) {\n  return correctAnswers * pointsPerAnswer;\n}\n\nconsole.log(calculateScore(3, 10));\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Functionの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Functionの結果を確かめよう</h1>\n      <p>script.jsの実行結果は学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch03-l04-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch03-l04",
+      "exerciseId": "javascript-ch03-l04-e01",
+      "workspaceId": "javascript-ch03-l04-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "const formatAnswer = (answer) => {\n  return answer;\n};\n\nconsole.log(formatAnswer('B'));\n\n// synthetic previous draft: javascript-ch03-l04-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Arrow Functionの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Arrow Functionを確かめよう</h1>\n      <p>script.jsの実行結果は学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch03-l04-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["javascript-ch03-l04-e01-result"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch03-l04-e01-h01"],
+      "reviewSlideId": "javascript-ch03-l04-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch03-l04-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "const formatAnswer = (answer) => {\n  return '回答: ' + answer;\n};\n\nconsole.log(formatAnswer('B'));\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Arrow Functionの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Arrow Functionを確かめよう</h1>\n      <p>script.jsの実行結果は学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch06-l04-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch06-l04",
+      "exerciseId": "javascript-ch06-l04-e01",
+      "workspaceId": "javascript-ch06-l04-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "const questionCount = 2;\nconst pointsPerQuestion = 10;\nconst totalScore = questionCount * pointsPerQuestion;\n\nconsole.log('期待値:', 30);\nconsole.log('実際値:', totalScore);\n\n// synthetic previous draft: javascript-ch06-l04-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>Debugの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Debug</p>\n      <h1>期待値と実際値をそろえよう</h1>\n      <p>script.jsの点数計算は学習画面のConsoleで確認します。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch06-l04-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["javascript-ch06-l04-e01-result"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch06-l04-e01-h01"],
+      "reviewSlideId": "javascript-ch06-l04-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch06-l04-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "const questionCount = 3;\nconst pointsPerQuestion = 10;\nconst totalScore = questionCount * pointsPerQuestion;\n\nconsole.log('期待値:', 30);\nconsole.log('実際値:', totalScore);\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>Debugの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Debug</p>\n      <h1>期待値と実際値をそろえよう</h1>\n      <p>script.jsの点数計算は学習画面のConsoleで確認します。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch01-l01-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch01-l01",
+      "exerciseId": "javascript-ch01-l01-e01",
+      "workspaceId": "javascript-ch01-l01-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "console.log('ここを問題1に変える');\nconsole.log(0);\nconsole.log(false);\n\n// synthetic previous draft: javascript-ch01-l01-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Console練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Consoleで結果を確かめよう</h1>\n      <p>script.jsを実行した結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\n\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch01-l01-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch01-l01-e01-result",
+            "javascript-ch01-l01-e01-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch01-l01-e01-h01"],
+      "reviewSlideId": "javascript-ch01-l01-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch01-l01-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "console.log('問題1');\nconsole.log(3);\nconsole.log(true);\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Console練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Consoleで結果を確かめよう</h1>\n      <p>script.jsを実行した結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\n\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch01-l02-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch01-l02",
+      "exerciseId": "javascript-ch01-l02-e01",
+      "workspaceId": "javascript-ch01-l02-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "const questionText = 'ここを書き換えます';\nconsole.log(questionText);\n\n// synthetic previous draft: javascript-ch01-l02-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Console練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Consoleで結果を確かめよう</h1>\n      <p>script.jsを実行した結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\n\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch01-l02-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch01-l02-e01-result",
+            "javascript-ch01-l02-e01-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch01-l02-e01-h01"],
+      "reviewSlideId": "javascript-ch01-l02-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch01-l02-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "const questionText = '問題2を始めます';\nconsole.log(questionText);\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Console練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Consoleで結果を確かめよう</h1>\n      <p>script.jsを実行した結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\n\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch01-l04-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch01-l04",
+      "exerciseId": "javascript-ch01-l04-e01",
+      "workspaceId": "javascript-ch01-l04-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "let score = 10;\nscore += 0;\nconsole.log(score);\n\n// synthetic previous draft: javascript-ch01-l04-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Console練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Consoleで結果を確かめよう</h1>\n      <p>script.jsを実行した結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\n\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch01-l04-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch01-l04-e01-result",
+            "javascript-ch01-l04-e01-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch01-l04-e01-h01"],
+      "reviewSlideId": "javascript-ch01-l04-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch01-l04-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "let score = 10;\nscore += 5;\nconsole.log(score);\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Console練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Consoleで結果を確かめよう</h1>\n      <p>script.jsを実行した結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\n\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch02-l02-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch02-l02",
+      "exerciseId": "javascript-ch02-l02-e01",
+      "workspaceId": "javascript-ch02-l02-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "const answer = 'A';\nif (answer !== 'A') {\n  console.log('正解です');\n} else {\n  console.log('不正解です');\n}\n\n// synthetic previous draft: javascript-ch02-l02-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript 条件とLoopの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Consoleで流れを確かめよう</h1>\n      <p>script.jsを実行した結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\n\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch02-l02-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch02-l02-e01-result",
+            "javascript-ch02-l02-e01-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch02-l02-e01-h01"],
+      "reviewSlideId": "javascript-ch02-l02-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch02-l02-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "const answer = 'A';\nif (answer === 'A') {\n  console.log('正解です');\n} else {\n  console.log('不正解です');\n}\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript 条件とLoopの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Consoleで流れを確かめよう</h1>\n      <p>script.jsを実行した結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\n\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch02-l03-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch02-l03",
+      "exerciseId": "javascript-ch02-l03-e01",
+      "workspaceId": "javascript-ch02-l03-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "const answer = 'B';\nif (answer === 'A') {\n  console.log('Aです');\n} else if (answer === 'A') {\n  console.log('Bです');\n} else {\n  console.log('その他です');\n}\n\n// synthetic previous draft: javascript-ch02-l03-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript 条件とLoopの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Consoleで流れを確かめよう</h1>\n      <p>script.jsを実行した結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\n\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch02-l03-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch02-l03-e01-result",
+            "javascript-ch02-l03-e01-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch02-l03-e01-h01"],
+      "reviewSlideId": "javascript-ch02-l03-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch02-l03-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "const answer = 'B';\nif (answer === 'A') {\n  console.log('Aです');\n} else if (answer === 'B') {\n  console.log('Bです');\n} else {\n  console.log('その他です');\n}\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript 条件とLoopの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Consoleで流れを確かめよう</h1>\n      <p>script.jsを実行した結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\n\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch02-l04-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch02-l04",
+      "exerciseId": "javascript-ch02-l04-e01",
+      "workspaceId": "javascript-ch02-l04-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "for (let number = 1; number < 3; number++) {\n  console.log('問題' + number);\n}\n\n// synthetic previous draft: javascript-ch02-l04-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript 条件とLoopの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Consoleで流れを確かめよう</h1>\n      <p>script.jsを実行した結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\n\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch02-l04-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch02-l04-e01-result",
+            "javascript-ch02-l04-e01-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch02-l04-e01-h01"],
+      "reviewSlideId": "javascript-ch02-l04-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch02-l04-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "for (let number = 1; number <= 3; number++) {\n  console.log('問題' + number);\n}\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript 条件とLoopの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Consoleで流れを確かめよう</h1>\n      <p>script.jsを実行した結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\n\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch03-l01-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch03-l01",
+      "exerciseId": "javascript-ch03-l01-e01",
+      "workspaceId": "javascript-ch03-l01-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "function showQuestion() {\n  console.log('問題1: 2 + 3 は？');\n}\n\n// この下でshowQuestionを呼び出します\n\n// synthetic previous draft: javascript-ch03-l01-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Functionの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>FunctionをConsoleで確かめよう</h1>\n      <p>script.jsを実行した結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\n\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch03-l01-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch03-l01-e01-result",
+            "javascript-ch03-l01-e01-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch03-l01-e01-h01"],
+      "reviewSlideId": "javascript-ch03-l01-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch03-l01-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "function showQuestion() {\n  console.log('問題1: 2 + 3 は？');\n}\n\nshowQuestion();\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Functionの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>FunctionをConsoleで確かめよう</h1>\n      <p>script.jsを実行した結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\n\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch03-l03-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch03-l03",
+      "exerciseId": "javascript-ch03-l03-e01",
+      "workspaceId": "javascript-ch03-l03-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "const courseName = 'JavaScript';\nconst lessonName = 'Scope';\n\nfunction showLabels() {\n  console.log(courseName);\n  console.log(lessonName);\n}\n\nshowLabels();\n\n// synthetic previous draft: javascript-ch03-l03-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Scopeの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>ScopeをConsoleで確かめよう</h1>\n      <p>script.jsの実行結果は学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch03-l03-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch03-l03-e01-result",
+            "javascript-ch03-l03-e01-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch03-l03-e01-h01"],
+      "reviewSlideId": "javascript-ch03-l03-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch03-l03-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "const courseName = 'JavaScript';\n\nfunction showLabels() {\n  const lessonName = 'Scope';\n  console.log(courseName);\n  console.log(lessonName);\n}\n\nshowLabels();\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Scopeの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>ScopeをConsoleで確かめよう</h1>\n      <p>script.jsの実行結果は学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch03-l05-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch03-l05",
+      "exerciseId": "javascript-ch03-l05-e01",
+      "workspaceId": "javascript-ch03-l05-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "function createScoreCounter() {\n  let score = 0;\n  const addScore = function () {\n    score += 0;\n    return score;\n  };\n  return addScore;\n}\n\nconst addScore = createScoreCounter();\nconsole.log(addScore());\nconsole.log(addScore());\n\n// synthetic previous draft: javascript-ch03-l05-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Closureの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Closureの記憶を確かめよう</h1>\n      <p>script.jsの実行結果は学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch03-l05-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch03-l05-e01-result",
+            "javascript-ch03-l05-e01-function-form",
+            "javascript-ch03-l05-e01-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch03-l05-e01-h01"],
+      "reviewSlideId": "javascript-ch03-l05-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch03-l05-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "function createScoreCounter() {\n  let score = 0;\n  const addScore = function () {\n    score += 10;\n    return score;\n  };\n  return addScore;\n}\n\nconst addScore = createScoreCounter();\nconsole.log(addScore());\nconsole.log(addScore());\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Closureの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Closureの記憶を確かめよう</h1>\n      <p>script.jsの実行結果は学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch03-l05-e02": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch03-l05",
+      "exerciseId": "javascript-ch03-l05-e02",
+      "workspaceId": "javascript-ch03-l05-e02",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "function createScoreCounter() {\n  return function () {\n    let score = 0;\n    score += 10;\n    return score;\n  };\n}\n\nconst addScore = createScoreCounter();\nconsole.log(addScore());\nconsole.log(addScore());\nconsole.log(addScore());\n\n// synthetic previous draft: javascript-ch03-l05-e02\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Closureの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Closureの記憶を確かめよう</h1>\n      <p>script.jsの実行結果は学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch03-l05-e02",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch03-l05-e02-check-1",
+            "javascript-ch03-l05-e02-check-2",
+            "javascript-ch03-l05-e02-update",
+            "javascript-ch03-l05-e02-check-5",
+            "javascript-ch03-l05-e02-check-6",
+            "javascript-ch03-l05-e02-check-7",
+            "javascript-ch03-l05-e02-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch03-l05-e02-h01"],
+      "reviewSlideId": "javascript-ch03-l05-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch03-l05-e02": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "function createScoreCounter() {\n  let score = 0;\n  return function () {\n    score += 10;\n    return score;\n  };\n}\n\nconst addScore = createScoreCounter();\nconsole.log(addScore());\nconsole.log(addScore());\nconsole.log(addScore());\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Closureの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Closureの記憶を確かめよう</h1>\n      <p>script.jsの実行結果は学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch03-l05-e03": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch03-l05",
+      "exerciseId": "javascript-ch03-l05-e03",
+      "workspaceId": "javascript-ch03-l05-e03",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "function createScoreCounter(step) {\n  let score = 0;\n  return function () {\n    score += 10;\n    return score;\n  };\n}\n\nconst a = createScoreCounter(2);\nconst b = createScoreCounter(5);\nconsole.log(a());\nconsole.log(b());\nconsole.log(a());\nconsole.log(b());\nconsole.log(a());\n\n// synthetic previous draft: javascript-ch03-l05-e03\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Closureの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Closureの記憶を確かめよう</h1>\n      <p>script.jsの実行結果は学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch03-l05-e03",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch03-l05-e03-check-1",
+            "javascript-ch03-l05-e03-check-2",
+            "javascript-ch03-l05-e03-update",
+            "javascript-ch03-l05-e03-check-5",
+            "javascript-ch03-l05-e03-check-6",
+            "javascript-ch03-l05-e03-check-7",
+            "javascript-ch03-l05-e03-check-8",
+            "javascript-ch03-l05-e03-check-9",
+            "javascript-ch03-l05-e03-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch03-l05-e03-h01"],
+      "reviewSlideId": "javascript-ch03-l05-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch03-l05-e03": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "function createScoreCounter(step) {\n  let score = 0;\n  return function () {\n    score += step;\n    return score;\n  };\n}\n\nconst a = createScoreCounter(2);\nconst b = createScoreCounter(5);\nconsole.log(a());\nconsole.log(b());\nconsole.log(a());\nconsole.log(b());\nconsole.log(a());\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Closureの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Core</p>\n      <h1>Closureの記憶を確かめよう</h1>\n      <p>script.jsの実行結果は学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch04-l01-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch04-l01",
+      "exerciseId": "javascript-ch04-l01-e01",
+      "workspaceId": "javascript-ch04-l01-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "const questions = [\n  'HTMLの役割は？',\n  'CSSの役割は？',\n  // この行へ3問目を追加します\n];\n\nconsole.log(questions);\nconsole.log(questions.length);\n\n// synthetic previous draft: javascript-ch04-l01-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Arrayの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Data</p>\n      <h1>問題文をArrayへ並べよう</h1>\n      <p>script.jsの実行結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\n\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch04-l01-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch04-l01-e01-result",
+            "javascript-ch04-l01-e01-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch04-l01-e01-h01"],
+      "reviewSlideId": "javascript-ch04-l01-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch04-l01-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "const questions = ['HTMLの役割は？', 'CSSの役割は？', 'JavaScriptの役割は？'];\n\nconsole.log(questions);\nconsole.log(questions.length);\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Arrayの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Data</p>\n      <h1>問題文をArrayへ並べよう</h1>\n      <p>script.jsの実行結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\n\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch04-l02-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch04-l02",
+      "exerciseId": "javascript-ch04-l02-e01",
+      "workspaceId": "javascript-ch04-l02-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "const questions = ['HTMLの役割は？', 'CSSの役割は？', 'JavaScriptの役割は？'];\n\nconsole.log(questions[1]);\nconsole.log(questions.at(1));\n\n// synthetic previous draft: javascript-ch04-l02-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Array indexの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Data</p>\n      <h1>番号で問題文を取り出そう</h1>\n      <p>script.jsの実行結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch04-l02-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch04-l02-e01-result",
+            "javascript-ch04-l02-e01-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch04-l02-e01-h01"],
+      "reviewSlideId": "javascript-ch04-l02-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch04-l02-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "const questions = ['HTMLの役割は？', 'CSSの役割は？', 'JavaScriptの役割は？'];\n\nconsole.log(questions[0]);\nconsole.log(questions.at(1));\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Array indexの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Data</p>\n      <h1>番号で問題文を取り出そう</h1>\n      <p>script.jsの実行結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch04-l03-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch04-l03",
+      "exerciseId": "javascript-ch04-l03-e01",
+      "workspaceId": "javascript-ch04-l03-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "const questions = ['HTMLの役割は？', 'CSSの役割は？', 'JavaScriptの役割は？'];\n\nfor (const question of []) {\n  console.log(question);\n}\n\n// synthetic previous draft: javascript-ch04-l03-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript for...ofの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Data</p>\n      <h1>全問題を順番に読もう</h1>\n      <p>script.jsの実行結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch04-l03-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch04-l03-e01-result",
+            "javascript-ch04-l03-e01-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch04-l03-e01-h01"],
+      "reviewSlideId": "javascript-ch04-l03-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch04-l03-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "const questions = ['HTMLの役割は？', 'CSSの役割は？', 'JavaScriptの役割は？'];\n\nfor (const question of questions) {\n  console.log(question);\n}\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript for...ofの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Data</p>\n      <h1>全問題を順番に読もう</h1>\n      <p>script.jsの実行結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch04-l04-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch04-l04",
+      "exerciseId": "javascript-ch04-l04-e01",
+      "workspaceId": "javascript-ch04-l04-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "const quiz = {\n  question: '2 + 3 は？',\n  answer: 0,\n};\n\nconsole.log(quiz.question);\nconsole.log(quiz.answer);\n\n// synthetic previous draft: javascript-ch04-l04-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Objectの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Data</p>\n      <h1>1問をObjectへまとめよう</h1>\n      <p>script.jsの実行結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch04-l04-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch04-l04-e01-result",
+            "javascript-ch04-l04-e01-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch04-l04-e01-h01"],
+      "reviewSlideId": "javascript-ch04-l04-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch04-l04-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "const quiz = {\n  question: '2 + 3 は？',\n  answer: 5,\n};\n\nconsole.log(quiz.question);\nconsole.log(quiz.answer);\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Objectの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Data</p>\n      <h1>1問をObjectへまとめよう</h1>\n      <p>script.jsの実行結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch04-l05-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch04-l05",
+      "exerciseId": "javascript-ch04-l05-e01",
+      "workspaceId": "javascript-ch04-l05-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "const quiz = {\n  text: '2 + 3 は？',\n  choices: ['3', '5', '7'],\n};\n\nconst { text: prompt, choices } = {};\nconst [firstChoice] = [];\n\nconsole.log(prompt);\nconsole.log(firstChoice);\n\n// synthetic previous draft: javascript-ch04-l05-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Destructuringの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Data</p>\n      <h1>必要な値を分けて受け取ろう</h1>\n      <p>script.jsの実行結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch04-l05-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch04-l05-e01-result",
+            "javascript-ch04-l05-e01-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch04-l05-e01-h01"],
+      "reviewSlideId": "javascript-ch04-l05-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch04-l05-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "const quiz = {\n  text: '2 + 3 は？',\n  choices: ['3', '5', '7'],\n};\n\nconst { text: prompt, choices } = quiz;\nconst [firstChoice] = choices;\n\nconsole.log(prompt);\nconsole.log(firstChoice);\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript Destructuringの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Data</p>\n      <h1>必要な値を分けて受け取ろう</h1>\n      <p>script.jsの実行結果は、学習画面のConsoleに表示されます。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch05-l01-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch05-l01",
+      "exerciseId": "javascript-ch05-l01-e01",
+      "workspaceId": "javascript-ch05-l01-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "const questions = ['HTMLとは？', 'CSSとは？', 'JavaScriptとは？'];\n\nconst labels = questions.map((question) => {\n  return question;\n});\n\nfor (const label of labels) {\n  console.log(label);\n}\n\n// synthetic previous draft: javascript-ch05-l01-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript mapの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Array Method</p>\n      <h1>問題文をラベルへ変換しよう</h1>\n      <p>script.jsの結果は学習画面のConsoleで確認します。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch05-l01-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch05-l01-e01-result",
+            "javascript-ch05-l01-e01-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch05-l01-e01-h01"],
+      "reviewSlideId": "javascript-ch05-l01-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch05-l01-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "const questions = ['HTMLとは？', 'CSSとは？', 'JavaScriptとは？'];\n\nconst labels = questions.map((question) => {\n  return `問題: ${question}`;\n});\n\nfor (const label of labels) {\n  console.log(label);\n}\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript mapの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Array Method</p>\n      <h1>問題文をラベルへ変換しよう</h1>\n      <p>script.jsの結果は学習画面のConsoleで確認します。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch05-l02-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch05-l02",
+      "exerciseId": "javascript-ch05-l02-e01",
+      "workspaceId": "javascript-ch05-l02-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "const questions = [\n  { category: 'HTML', text: 'HTMLの役割は？' },\n  { category: 'CSS', text: '文字色を変えるpropertyは？' },\n  { category: 'HTML', text: '見出しを作る要素は？' },\n];\n\nconst htmlQuestions = questions.filter((question) => {\n  return question.category !== 'HTML';\n});\n\nfor (const question of htmlQuestions) {\n  console.log(question.text);\n}\n\n// synthetic previous draft: javascript-ch05-l02-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript filterの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Array Method</p>\n      <h1>HTMLの問題だけを選ぼう</h1>\n      <p>script.jsの結果は学習画面のConsoleで確認します。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch05-l02-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch05-l02-e01-result",
+            "javascript-ch05-l02-e01-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch05-l02-e01-h01"],
+      "reviewSlideId": "javascript-ch05-l02-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch05-l02-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "const questions = [\n  { category: 'HTML', text: 'HTMLの役割は？' },\n  { category: 'CSS', text: '文字色を変えるpropertyは？' },\n  { category: 'HTML', text: '見出しを作る要素は？' },\n];\n\nconst htmlQuestions = questions.filter((question) => {\n  return question.category === 'HTML';\n});\n\nfor (const question of htmlQuestions) {\n  console.log(question.text);\n}\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript filterの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Array Method</p>\n      <h1>HTMLの問題だけを選ぼう</h1>\n      <p>script.jsの結果は学習画面のConsoleで確認します。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch05-l03-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch05-l03",
+      "exerciseId": "javascript-ch05-l03-e01",
+      "workspaceId": "javascript-ch05-l03-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "const questions = [{ points: 10 }, { points: 20 }, { points: 30 }];\n\nconst total = questions.reduce((sum, question) => {\n  return sum + question.points;\n});\n\nconsole.log(total);\n\n// synthetic previous draft: javascript-ch05-l03-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript reduceの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Array Method</p>\n      <h1>問題のpointを合計しよう</h1>\n      <p>script.jsの結果は学習画面のConsoleで確認します。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch05-l03-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch05-l03-e01-result",
+            "javascript-ch05-l03-e01-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch05-l03-e01-h01"],
+      "reviewSlideId": "javascript-ch05-l03-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch05-l03-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "const questions = [{ points: 10 }, { points: 20 }, { points: 30 }];\n\nconst total = questions.reduce((sum, question) => {\n  return sum + question.points;\n}, 0);\n\nconsole.log(total);\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript reduceの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Array Method</p>\n      <h1>問題のpointを合計しよう</h1>\n      <p>script.jsの結果は学習画面のConsoleで確認します。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch05-l04-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch05-l04",
+      "exerciseId": "javascript-ch05-l04-e01",
+      "workspaceId": "javascript-ch05-l04-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "const questions = [\n  { text: 'HTMLの役割は？', answered: false },\n  { text: 'CSSの役割は？', answered: false },\n];\n\nconst answeredQuestions = questions.map((question) => ({\n  ...question,\n  answered: false,\n}));\n\nconsole.log(questions[0].answered);\nconsole.log(answeredQuestions[0].answered);\n\n// synthetic previous draft: javascript-ch05-l04-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript immutable updateの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript State</p>\n      <h1>回答済みの新しいArrayを作ろう</h1>\n      <p>script.jsの結果は学習画面のConsoleで確認します。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch05-l04-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch05-l04-e01-result",
+            "javascript-ch05-l04-e01-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch05-l04-e01-h01"],
+      "reviewSlideId": "javascript-ch05-l04-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch05-l04-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "const questions = [\n  { text: 'HTMLの役割は？', answered: false },\n  { text: 'CSSの役割は？', answered: false },\n];\n\nconst answeredQuestions = questions.map((question) => ({\n  ...question,\n  answered: true,\n}));\n\nconsole.log(questions[0].answered);\nconsole.log(answeredQuestions[0].answered);\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScript immutable updateの練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript State</p>\n      <h1>回答済みの新しいArrayを作ろう</h1>\n      <p>script.jsの結果は学習画面のConsoleで確認します。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch06-l03-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch06-l03",
+      "exerciseId": "javascript-ch06-l03-e01",
+      "workspaceId": "javascript-ch06-l03-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "script.js": "function readQuestion(question) {\n  if (question.text === '') {\n    throw new Error('ここを書き換えます');\n  }\n  return question.text;\n}\n\ntry {\n  console.log(readQuestion({ text: '' }));\n} catch (error) {\n  console.log(error.message);\n}\n\n// synthetic previous draft: javascript-ch06-l03-e01\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>Error処理の練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Error</p>\n      <h1>空問題の理由を伝えよう</h1>\n      <p>script.jsのError messageは学習画面のConsoleで確認します。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch06-l03-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch06-l03-e01-result",
+            "javascript-ch06-l03-e01-teaching-result"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch06-l03-e01-h01"],
+      "reviewSlideId": "javascript-ch06-l03-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch06-l03-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "script.js": "function readQuestion(question) {\n  if (question.text === '') {\n    throw new Error('問題文がありません');\n  }\n  return question.text;\n}\n\ntry {\n  console.log(readQuestion({ text: '' }));\n} catch (error) {\n  console.log(error.message);\n}\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>Error処理の練習</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"console-guide\">\n      <p class=\"eyebrow\">JavaScript Error</p>\n      <h1>空問題の理由を伝えよう</h1>\n      <p>script.jsのError messageは学習画面のConsoleで確認します。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n.console-guide {\n  width: min(36rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #fff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\nh1 {\n  margin: 0 0 1rem;\n  font-size: clamp(2rem, 6vw, 3.5rem);\n  line-height: 1.1;\n}\np {\n  line-height: 1.7;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch10-l03-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch10-l03",
+      "exerciseId": "javascript-ch10-l03-e01",
+      "workspaceId": "javascript-ch10-l03-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>失敗からやり直す</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main>\n      <h1>成功と失敗を試そう</h1>\n      <button id=\"success\" type=\"button\">成功を試す</button>\n      <button id=\"failure\" type=\"button\">失敗を試す</button>\n      <p id=\"result\" role=\"status\">まだ読んでいません</p>\n      <p id=\"note\">同梱データの成功と失敗を試す練習です。通信はしません。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": "body {\n  font-family: sans-serif;\n  padding: 24px;\n  color: #19352b;\n  background: #f5faf7;\n}\nmain {\n  max-width: 520px;\n}\nbutton {\n  padding: 12px 20px;\n  color: white;\n  background: #16764b;\n  border: 0;\n  border-radius: 8px;\n  font-size: 18px;\n}\nbutton:focus-visible {\n  outline: 3px solid #19352b;\n  outline-offset: 4px;\n}\n#result {\n  padding: 16px;\n  background: white;\n}\n\nbutton {\n  margin: 0 8px 8px 0;\n}\n",
+        "script.js": "// 同梱の2問を使う教材用関数です。通信はしません。\nfunction loadQuestions(shouldFail) {\n  return new Promise((resolve, reject) => {\n    setTimeout(() => {\n      if (shouldFail) {\n        reject(new Error('教材用の失敗'));\n      } else {\n        resolve([{ text: '空は何色？' }, { text: '海は何色？' }]);\n      }\n    }, 80);\n  });\n}\nconst result = document.querySelector('#result');\nasync function showQuestions(shouldFail) {\n  try {\n    const questions = await loadQuestions(shouldFail);\n    result.textContent = '問題: ' + questions.length;\n  } catch (error) {\n    // 失敗を受け取っていますが、表示していません\n  }\n}\ndocument.querySelector('#success').addEventListener('click', () => showQuestions(false));\ndocument.querySelector('#failure').addEventListener('click', () => showQuestions(true));\n\n// synthetic previous draft: javascript-ch10-l03-e01\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch10-l03-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch10-l03-e01-r01",
+            "javascript-ch10-l03-e01-r02",
+            "javascript-ch10-l03-e01-r03",
+            "javascript-ch10-l03-e01-teaching-result",
+            "interaction:catch-retry:success",
+            "interaction:catch-retry:failure",
+            "interaction:catch-retry:retry"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch10-l03-e01-h01"],
+      "reviewSlideId": "javascript-ch10-l03-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch10-l03-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>失敗からやり直す</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main>\n      <h1>成功と失敗を試そう</h1>\n      <button id=\"success\" type=\"button\">成功を試す</button>\n      <button id=\"failure\" type=\"button\">失敗を試す</button>\n      <p id=\"result\" role=\"status\">まだ読んでいません</p>\n      <p id=\"note\">同梱データの成功と失敗を試す練習です。通信はしません。</p>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": "body {\n  font-family: sans-serif;\n  padding: 24px;\n  color: #19352b;\n  background: #f5faf7;\n}\nmain {\n  max-width: 520px;\n}\nbutton {\n  padding: 12px 20px;\n  color: white;\n  background: #16764b;\n  border: 0;\n  border-radius: 8px;\n  font-size: 18px;\n}\nbutton:focus-visible {\n  outline: 3px solid #19352b;\n  outline-offset: 4px;\n}\n#result {\n  padding: 16px;\n  background: white;\n}\n\nbutton {\n  margin: 0 8px 8px 0;\n}\n",
+            "script.js": "// 同梱の2問を使う教材用関数です。通信はしません。\nfunction loadQuestions(shouldFail) {\n  return new Promise((resolve, reject) => {\n    setTimeout(() => {\n      if (shouldFail) {\n        reject(new Error('教材用の失敗'));\n      } else {\n        resolve([{ text: '空は何色？' }, { text: '海は何色？' }]);\n      }\n    }, 80);\n  });\n}\nconst result = document.querySelector('#result');\nasync function showQuestions(shouldFail) {\n  try {\n    const questions = await loadQuestions(shouldFail);\n    result.textContent = '問題: ' + questions.length;\n  } catch (error) {\n    result.textContent = '読み込めませんでした';\n  }\n}\ndocument.querySelector('#success').addEventListener('click', () => showQuestions(false));\ndocument.querySelector('#failure').addEventListener('click', () => showQuestions(true));\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch11-l02-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch11-l02",
+      "exerciseId": "javascript-ch11-l02-e01",
+      "workspaceId": "javascript-ch11-l02-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>回答先へ移る</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main>\n      <h1>小さな問題</h1>\n      <button id=\"start\" type=\"button\">問題を始める</button>\n      <p id=\"question\" role=\"status\">始めると問題が出ます</p>\n      <label for=\"answer\">答え</label><input id=\"answer\" /><button id=\"back\" type=\"button\">\n        説明へ戻る\n      </button>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+        "styles.css": "body {\n  margin: 0;\n  padding: 32px;\n  color: #19352b;\n  background: #f4faf6;\n  font: 18px/1.6 sans-serif;\n}\nmain {\n  max-width: 640px;\n}\nbutton {\n  min-height: 48px;\n  padding: 8px 20px;\n  color: white;\n  background: #17624d;\n  border: 0;\n  border-radius: 8px;\n  font: inherit;\n}\nbutton:focus-visible {\n  outline: 4px solid #945400;\n  outline-offset: 4px;\n}\n#hint {\n  background: white;\n  padding: 16px;\n}\n\ninput {\n  font: inherit;\n  padding: 8px;\n  display: block;\n  margin: 8px 0 20px;\n  border: 2px solid #64756b;\n  border-radius: 6px;\n}\ninput:focus-visible {\n  outline: 4px solid #945400;\n  outline-offset: 4px;\n}\n",
+        "script.js": "const start = document.querySelector('#start');\nconst answer = document.querySelector('#answer');\nconst back = document.querySelector('#back');\nconst question = document.querySelector('#question');\nstart.addEventListener('click', () => {\n  question.textContent = '1 + 1 は？';\n  answer.value = '';\n  // 回答欄へFocusを移す\n});\nback.addEventListener('click', () => {\n  question.textContent = '始めると問題が出ます';\n  answer.value = '';\n  // 開始ボタンへFocusを戻す\n});\n\n// synthetic previous draft: javascript-ch11-l02-e01\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch11-l02-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch11-l02-e01-r01",
+            "javascript-ch11-l02-e01-r03",
+            "interaction:focus-flow:answer-ready",
+            "interaction:focus-flow:back-ready",
+            "interaction:focus-flow:again-ready"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch11-l02-e01-h01"],
+      "reviewSlideId": "javascript-ch11-l02-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch11-l02-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>回答先へ移る</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main>\n      <h1>小さな問題</h1>\n      <button id=\"start\" type=\"button\">問題を始める</button>\n      <p id=\"question\" role=\"status\">始めると問題が出ます</p>\n      <label for=\"answer\">答え</label><input id=\"answer\" /><button id=\"back\" type=\"button\">\n        説明へ戻る\n      </button>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": "body {\n  margin: 0;\n  padding: 32px;\n  color: #19352b;\n  background: #f4faf6;\n  font: 18px/1.6 sans-serif;\n}\nmain {\n  max-width: 640px;\n}\nbutton {\n  min-height: 48px;\n  padding: 8px 20px;\n  color: white;\n  background: #17624d;\n  border: 0;\n  border-radius: 8px;\n  font: inherit;\n}\nbutton:focus-visible {\n  outline: 4px solid #945400;\n  outline-offset: 4px;\n}\n#hint {\n  background: white;\n  padding: 16px;\n}\n\ninput {\n  font: inherit;\n  padding: 8px;\n  display: block;\n  margin: 8px 0 20px;\n  border: 2px solid #64756b;\n  border-radius: 6px;\n}\ninput:focus-visible {\n  outline: 4px solid #945400;\n  outline-offset: 4px;\n}\n",
+            "script.js": "const start = document.querySelector('#start');\nconst answer = document.querySelector('#answer');\nconst back = document.querySelector('#back');\nconst question = document.querySelector('#question');\nstart.addEventListener('click', () => {\n  question.textContent = '1 + 1 は？';\n  answer.value = '';\n  answer.focus();\n});\nback.addEventListener('click', () => {\n  question.textContent = '始めると問題が出ます';\n  answer.value = '';\n  start.focus();\n});\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "javascript:javascript-ch00-l01-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch00-l01",
+      "exerciseId": "javascript-ch00-l01-e01",
+      "workspaceId": "javascript-ch00-l01-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScriptの最初のページ</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"message-card\">\n      <p class=\"eyebrow\">JavaScript はじめの一歩</p>\n      <h1 id=\"message\">読み込み前の文字</h1>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n\n<!-- synthetic previous draft: javascript-ch00-l01-e01 -->\n",
+        "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.message-card {\n  width: min(32rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #ffffff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0;\n  font-size: clamp(2rem, 7vw, 4rem);\n  line-height: 1.1;\n}\n",
+        "script.js": "document.querySelector('#message').textContent = 'ここを書き換えます';\n"
+      },
+      "selectedFile": "index.html",
+      "cursors": {
+        "index.html": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch00-l01-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["javascript-ch00-l01-e01-message"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch00-l01-e01-h01"],
+      "reviewSlideId": "javascript-ch00-l01-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch00-l01-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>JavaScriptの最初のページ</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"message-card\">\n      <p class=\"eyebrow\">JavaScript はじめの一歩</p>\n      <h1 id=\"message\">読み込み前の文字</h1>\n    </main>\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  color: #173f35;\n  background: #fffaf0;\n  font-family: system-ui, sans-serif;\n}\n\nbody {\n  min-height: 100vh;\n  margin: 0;\n  display: grid;\n  place-items: center;\n}\n\n.message-card {\n  width: min(32rem, calc(100% - 3rem));\n  padding: 2.5rem;\n  border: 2px solid #1d6b55;\n  border-radius: 1.5rem;\n  background: #ffffff;\n  box-shadow: 0.5rem 0.5rem 0 #f2c94c;\n}\n\n.eyebrow {\n  margin: 0 0 0.75rem;\n  color: #1d6b55;\n  font-weight: 700;\n}\n\nh1 {\n  margin: 0;\n  font-size: clamp(2rem, 7vw, 4rem);\n  line-height: 1.1;\n}\n",
+            "script.js": "document.querySelector('#message').textContent = 'JavaScriptで文字を変えました';\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    },
+    "html-css:html-css-ch00-l01-e01": {
+      "courseId": "html-css",
+      "lessonId": "html-css-ch00-l01",
+      "exerciseId": "html-css-ch00-l01-e01",
+      "workspaceId": "html-css-ch00-l01-e01",
+      "contentRevision": "2026-07-29.1",
+      "editRevision": 7,
+      "files": {
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>最初のWebページ</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"learning-note\">\n      <h1>ここを書き換えます</h1>\n      <p>HTMLは内容、CSSは見た目を受け持ちます。</p>\n    </main>\n  </body>\n</html>\n\n<!-- synthetic previous draft: html-css-ch00-l01-e01 -->\n",
+        "styles.css": "body {\n  margin: 0;\n  min-height: 100vh;\n  background-color: #ffffff;\n  color: #19352d;\n  font-family: system-ui, sans-serif;\n}\n\n.learning-note {\n  max-width: 42rem;\n  margin: 0 auto;\n  padding: 4rem 2rem;\n}\n"
+      },
+      "selectedFile": "index.html",
+      "cursors": {
+        "index.html": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "html-css-ch00-l01-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["html-css-ch00-l01-e01-r01", "html-css-ch00-l01-e01-r02"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["html-css-ch00-l01-e01-h01"],
+      "reviewSlideId": "html-css-ch00-l01-s04",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "html-css-ch00-l01-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-07-29.1",
+          "files": {
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>最初のWebページ</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"learning-note\">\n      <h1>わたしの学習ノート</h1>\n      <p>HTMLは内容、CSSは見た目を受け持ちます。</p>\n    </main>\n  </body>\n</html>\n",
+            "styles.css": "body {\n  margin: 0;\n  min-height: 100vh;\n  background-color: #fffaf0;\n  color: #19352d;\n  font-family: system-ui, sans-serif;\n}\n\n.learning-note {\n  max-width: 42rem;\n  margin: 0 auto;\n  padding: 4rem 2rem;\n}\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    }
+  },
+  "quarantined": [
+    {
+      "id": "synthetic-existing-quarantine",
+      "reason": "synthetic fixture only; preserve existing quarantine",
+      "quarantinedAt": "2026-08-01T08:00:00.000Z",
+      "raw": {
+        "kind": "synthetic-existing-record",
+        "note": "not historical learner data"
+      }
+    }
+  ],
+  "appVersion": "synthetic-task3-preparation-not-learning-evidence",
+  "exportedAt": "2026-08-01T09:30:00.000Z",
+  "integrity": {
+    "algorithm": "SHA-256",
+    "digest": "51baa99b2f0c506c39b9ec44f86abcf61fc125715e93bad4a782ad3f0bf9cb8c"
+  }
+}

@@ -71,6 +71,14 @@ export function createTrustedInteractionExecutor(
   const ElementConstructor = view.Element;
   const InputConstructor = view.HTMLInputElement;
   const SelectConstructor = view.HTMLSelectElement;
+  const ButtonConstructor = view.HTMLButtonElement;
+  // eslint-disable-next-line @typescript-eslint/unbound-method -- learner変更前の実DOM brand/disabledを読む。
+  const nativeMatches = ElementConstructor.prototype.matches;
+  // eslint-disable-next-line @typescript-eslint/unbound-method -- 実Buttonのtype getterを捕捉する。
+  const nativeButtonType = Object.getOwnPropertyDescriptor(
+    ButtonConstructor.prototype,
+    'type',
+  )?.get;
   // eslint-disable-next-line @typescript-eslint/unbound-method -- 捕捉済みreceiverへReflect.applyする。
   const nativeClick = HTMLElementConstructor.prototype.click;
   // eslint-disable-next-line @typescript-eslint/unbound-method -- 捕捉済みreceiverへReflect.applyする。
@@ -107,9 +115,15 @@ export function createTrustedInteractionExecutor(
     typeof value === 'string' && value.length > 0 && value.length <= maximum;
   const isBoundedValue = (value: unknown, maximum: number): value is string =>
     typeof value === 'string' && value.length <= maximum;
-  const dispatch = (element: Element, event: Event): void => {
+  const dispatch = (element: Element, event: Event): boolean =>
     applyFunction(nativeDispatchEvent, element, [event]);
-  };
+  /** type=buttonだけの既定activation。submit/他要素は既存key handlerへ渡す。 */
+  const isNativeButton = (element: Element): boolean =>
+    element instanceof ButtonConstructor &&
+    nativeButtonType !== undefined &&
+    applyFunction(nativeButtonType, element, []) === 'button';
+  const isDisabled = (element: Element): boolean =>
+    applyFunction(nativeMatches, element, [':disabled']);
 
   return (action: unknown): TrustedInteractionExecutionResult => {
     if (typeof action !== 'object' || action === null || Array.isArray(action)) {
@@ -210,14 +224,24 @@ export function createTrustedInteractionExecutor(
       }
       const key = value['key'] === 'Space' ? ' ' : String(value['key']);
       const code = value['key'] === 'Space' ? 'Space' : String(value['key']);
-      dispatch(
+      const nativeButton = isNativeButton(element);
+      if (nativeButton && isDisabled(element)) return { error: null };
+      const keydownAccepted = dispatch(
         element,
         new KeyboardEventConstructor('keydown', { bubbles: true, cancelable: true, key, code }),
       );
-      dispatch(
+      // Enterはkeydownの既定動作。後のkeyup取消で過去のclickを取り消さない。
+      if (nativeButton && key === 'Enter' && keydownAccepted && !isDisabled(element)) {
+        applyFunction(nativeClick, element, []);
+      }
+      const keyupAccepted = dispatch(
         element,
         new KeyboardEventConstructor('keyup', { bubbles: true, cancelable: true, key, code }),
       );
+      // Spaceは両段階が消費されなかった場合のkeyupでactivationする。
+      if (nativeButton && key === ' ' && keydownAccepted && keyupAccepted && !isDisabled(element)) {
+        applyFunction(nativeClick, element, []);
+      }
       return { error: null };
     } catch {
       return { error: { code: 'action-failed', message: 'Interaction action could not run' } };
@@ -310,6 +334,9 @@ function createRuntimeState(
   const nativeRemoveEventListener = EventTarget.prototype.removeEventListener;
   const applyFunction = Reflect.apply.bind(Reflect);
   const objectKeys = Object.keys.bind(Object);
+  const isArray = Array.isArray.bind(Array);
+  const isSafeInteger = Number.isSafeInteger.bind(Number);
+  const ownDescriptor = Object.getOwnPropertyDescriptor.bind(Object);
   const executeInteraction = createInteractionExecutor(
     document,
     `tsumucode-focus-${config.bootstrapToken}`,
@@ -336,6 +363,11 @@ function createRuntimeState(
   let budgetExhausted = false;
   let timerLimitExceeded = false;
   let runtimeError: { readonly name: string; readonly message: string } | null = null;
+  let indexFailure = false;
+  const indexError = {
+    name: 'JavaScriptIndexUnsupported',
+    message: '動的indexはArrayまたは文字列の非負整数のown data読み取りだけ対応しています',
+  };
   let currentTargetFailure: CurrentTargetFailure = null;
   const currentTargetReady = installCurrentTarget(document, () => {
     if (currentTargetFailure === null) currentTargetFailure = 'unsupported';
@@ -743,7 +775,7 @@ function createRuntimeState(
           error: result.error,
           budgetExhausted,
           timerLimitExceeded,
-          runtimeError,
+          runtimeError: indexFailure ? indexError : runtimeError,
           console: copyConsoleRecords(),
           currentTargetFailure,
           submitEvidence,
@@ -760,6 +792,26 @@ function createRuntimeState(
   });
 
   return Object.freeze({
+    /** projectの動的readは実Array/primitive Stringの非負整数indexだけへ限定する。 */
+    index(receiver: unknown, key: unknown): unknown {
+      if (
+        typeof key !== 'number' ||
+        !isSafeInteger(key) ||
+        key < 0 ||
+        (!isArray(receiver) && typeof receiver !== 'string')
+      ) {
+        indexFailure = true;
+        throw new TypeError(indexError.message);
+      }
+      // Arrayのholeはundefinedとし、prototype・getter・setterへ処理を渡さない。
+      const descriptor = ownDescriptor(receiver, key);
+      if (descriptor === undefined) return undefined;
+      if (!('value' in descriptor)) {
+        indexFailure = true;
+        throw new TypeError(indexError.message);
+      }
+      return descriptor.value as unknown;
+    },
     checkLoop(): boolean {
       return hasBudget();
     },
@@ -785,12 +837,13 @@ function createRuntimeState(
         learnerExecutionDepth = Math.max(0, learnerExecutionDepth - 1);
       }
       send('javascript.execution-complete', 'execution', config.bootstrapToken, {
-        executed: currentTargetFailure === null && submitReady && runtimeError === null,
+        executed:
+          !indexFailure && currentTargetFailure === null && submitReady && runtimeError === null,
         submitEvidence,
         currentTargetFailure,
         budgetExhausted,
         timerLimitExceeded,
-        runtimeError,
+        runtimeError: indexFailure ? indexError : runtimeError,
         console: copyConsoleRecords(),
       });
     },
@@ -810,12 +863,16 @@ function createRuntimeState(
             // runtime globalの後片付け失敗は学習コードの成否へ混ぜない。
           }
           send('javascript.execution-complete', 'execution', config.bootstrapToken, {
-            executed: currentTargetFailure === null && submitReady && runtimeError === null,
+            executed:
+              !indexFailure &&
+              currentTargetFailure === null &&
+              submitReady &&
+              runtimeError === null,
             submitEvidence,
             currentTargetFailure,
             budgetExhausted,
             timerLimitExceeded,
-            runtimeError,
+            runtimeError: indexFailure ? indexError : runtimeError,
             console: copyConsoleRecords(),
           });
         });

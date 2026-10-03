@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       deploy:
-        description: 保護Environment承認後にmainの検証済みArtifactを公開する
+        description: main限定の保護Environmentを経由し検証済みArtifactを公開する
         type: boolean
         required: true
         default: false
@@ -18,6 +18,12 @@ on:
         options: [candidate, beta, rollback]
         required: true
         default: candidate
+      course_id:
+        description: 承認履歴と証拠を照合するCourse（品質検証は全site）
+        type: choice
+        options: [html-css, javascript]
+        required: true
+        default: html-css
       source_sha:
         description: candidate承認、身内向けβ、または公開済みReleaseに登録された40文字SHA
         type: string
@@ -37,6 +43,10 @@ jobs:
     permissions:
       contents: read
     outputs:
+      course_id: ${{ steps.target.outputs.course_id || 'html-css' }}
+      draft_source_commit: ${{ steps.target.outputs.draft_source_commit || 'draft' }}
+      draft_dist_hash: ${{ steps.target.outputs.draft_canonical_dist_sha256 || 'draft' }}
+      learning_input_hash: ${{ steps.target.outputs.normalized_learning_input_sha256 || 'draft' }}
       checkout_sha: ${{ steps.target.outputs.checkout_sha || steps.default_target.outputs.checkout_sha }}
       verified_source_commit: ${{ steps.target.outputs.verified_source_commit || steps.default_target.outputs.verified_source_commit }}
       release_mode: ${{ steps.target.outputs.release_mode || 'quality-only' }}
@@ -69,11 +79,13 @@ jobs:
           RELEASE_MODE: ${{ inputs.release_mode }}
           SOURCE_SHA: ${{ inputs.source_sha }}
           WORKFLOW_HEAD_SHA: ${{ github.sha }}
+          RELEASE_COURSE_ID: ${{ inputs.course_id }}
         run: >-
           ./scripts/docker-compose.sh run --rm app npm run release:target --
           --mode "$RELEASE_MODE"
           --source-sha "$SOURCE_SHA"
           --workflow-head-sha "$WORKFLOW_HEAD_SHA"
+          --course-id "$RELEASE_COURSE_ID"
           --github-output /workspace/.release-target
       - name: Export resolved target
         if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'
@@ -118,6 +130,8 @@ jobs:
     if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'
     needs: resolve
     runs-on: ubuntu-24.04
+    env:
+      RELEASE_COURSE_ID: ${{ needs.resolve.outputs.course_id }}
     permissions:
       contents: read
       pages: read
@@ -140,11 +154,11 @@ jobs:
         if: needs.resolve.outputs.release_mode == 'candidate'
         env:
           VERIFIED_SOURCE_COMMIT: ${{ needs.resolve.outputs.verified_source_commit }}
+          RELEASE_REVISION: ${{ needs.resolve.outputs.revision }}
         run: >-
-          git diff --exit-code "$VERIFIED_SOURCE_COMMIT" HEAD -- .
-          ':(exclude)docs/superpowers/**'
-          ':(exclude)docs/quality/**'
-          ':(exclude)content/html-css/release-history.yaml'
+          ./scripts/docker-compose.sh run --rm app npm run release:approval --
+          --product-only --verified-source-sha "$VERIFIED_SOURCE_COMMIT"
+          --course-id "$RELEASE_COURSE_ID" --revision "$RELEASE_REVISION"
       - name: Content provenance
         run: ./scripts/docker-compose.sh run --rm app npm run content:provenance
       - name: Release quality
@@ -153,10 +167,13 @@ jobs:
         run: ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run check:release
       - name: Release continuity for deploy candidate
         if: needs.resolve.outputs.release_mode == 'candidate'
-        run: ./scripts/docker-compose.sh run --rm app npm run release:continuity
+        run: ./scripts/docker-compose.sh run --rm app npm run release:continuity -- --course-id "$RELEASE_COURSE_ID"
       - name: Release continuity for beta deploy
         if: needs.resolve.outputs.release_mode == 'beta'
-        run: ./scripts/docker-compose.sh run --rm app npm run release:continuity -- --quality-only
+        run: ./scripts/docker-compose.sh run --rm app npm run release:continuity -- --quality-only --course-id "$RELEASE_COURSE_ID"
+      - name: Keep existing HTML continuity in the all-site gate
+        if: needs.resolve.outputs.course_id == 'javascript' && needs.resolve.outputs.release_mode != 'rollback'
+        run: ./scripts/docker-compose.sh run --rm app npm run release:continuity -- --quality-only --course-id html-css
       - name: Confirm rollback checkout
         if: needs.resolve.outputs.release_mode == 'rollback'
         env:
@@ -175,11 +192,12 @@ jobs:
           BASE_PATH: /${{ github.event.repository.name }}/
         run: ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run test:lighthouse
       - name: Static artifact gate
-        run: ./scripts/docker-compose.sh run --rm app npm run release:check
+        run: ./scripts/docker-compose.sh run --rm app npm run release:check -- --course-id "$RELEASE_COURSE_ID"
       - name: Record artifact hashes
         run: >-
           ./scripts/docker-compose.sh run --rm app npm run release:report --
           --hash-only
+          --course-id "$RELEASE_COURSE_ID"
           --github-output /workspace/.release-hashes
       - name: Export artifact hash outputs
         id: artifact_hash
@@ -189,6 +207,7 @@ jobs:
         run: >-
           ./scripts/docker-compose.sh run --rm app npm run release:approval --
           --artifact
+          --course-id "$RELEASE_COURSE_ID"
           --actual-output /workspace/.release-hashes
       - name: Bind rollback Artifact to release ledger
         if: needs.resolve.outputs.release_mode == 'rollback'
@@ -209,6 +228,7 @@ jobs:
         run: >-
           ./scripts/docker-compose.sh run --rm app npm run release:report --
           --quality-summary
+          --course-id "$RELEASE_COURSE_ID"
           --source-sha "$VERIFIED_SOURCE_COMMIT"
           --output /workspace/release-quality.json
       - name: Normalize quality evidence permissions
@@ -319,9 +339,19 @@ jobs:
           WORKFLOW_RUN_ID: ${{ github.run_id }}
           WORKFLOW_RUN_ATTEMPT: ${{ github.run_attempt }}
           PAGE_URL: ${{ needs.deploy.outputs.page_url }}
+          RELEASE_COURSE_ID: ${{ needs.resolve.outputs.course_id }}
+          RELEASE_REVISION: ${{ needs.resolve.outputs.revision }}
+          DRAFT_SOURCE_SHA: ${{ needs.resolve.outputs.draft_source_commit }}
+          DRAFT_DIST_HASH: ${{ needs.resolve.outputs.draft_dist_hash }}
+          LEARNING_INPUT_HASH: ${{ needs.resolve.outputs.learning_input_hash }}
         run: >-
           ./scripts/docker-compose.sh run --rm app npm run release:report --
           --source-sha "$VERIFIED_SOURCE_COMMIT"
+          --course-id "$RELEASE_COURSE_ID"
+          --revision "$RELEASE_REVISION"
+          --draft-source-sha "$DRAFT_SOURCE_SHA"
+          --draft-dist-hash "$DRAFT_DIST_HASH"
+          --learning-input-hash "$LEARNING_INPUT_HASH"
           --workflow-head-sha "$WORKFLOW_HEAD_SHA"
           --release-mode "$RELEASE_MODE"
           --artifact-digest "$ARTIFACT_DIGEST"
@@ -364,8 +394,16 @@ jobs:
           REPORT_ARTIFACT_DIGEST: sha256:${{ needs.report.outputs.report_artifact_digest }}
           WORKFLOW_RUN: ${{ github.run_id }}-${{ github.run_attempt }}
           PAGE_URL: ${{ needs.deploy.outputs.page_url }}
+          RELEASE_COURSE_ID: ${{ needs.resolve.outputs.course_id }}
+          RELEASE_REVISION: ${{ needs.resolve.outputs.revision }}
+          DRAFT_SOURCE_SHA: ${{ needs.resolve.outputs.draft_source_commit }}
+          DRAFT_DIST_HASH: ${{ needs.resolve.outputs.draft_dist_hash }}
+          LEARNING_INPUT_HASH: ${{ needs.resolve.outputs.learning_input_hash }}
         run: |
           EXPECTED_MESSAGE="source=$TARGET_SHA head=$WORKFLOW_HEAD_SHA dist=$DIST_DIGEST course=$COURSE_DIGEST provenance=$PROVENANCE_DIGEST quality_id=$QUALITY_ARTIFACT_ID quality_digest=$QUALITY_ARTIFACT_DIGEST report_id=$REPORT_ARTIFACT_ID report_digest=$REPORT_ARTIFACT_DIGEST workflow=$WORKFLOW_RUN page_url=$PAGE_URL"
+          if [ "$RELEASE_COURSE_ID" = javascript ]; then
+            EXPECTED_MESSAGE="course_id=javascript revision=$RELEASE_REVISION draft_source=$DRAFT_SOURCE_SHA draft_dist=$DRAFT_DIST_HASH learning_input=$LEARNING_INPUT_HASH $EXPECTED_MESSAGE"
+          fi
           if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG_NAME" >/dev/null 2>&1; then
             echo "::error::Release tag $TAG_NAME は既に存在するため、新しいRun evidenceで成功扱いにできません"
             echo "::error::元RunのRelease Reportからpromotionしてください"

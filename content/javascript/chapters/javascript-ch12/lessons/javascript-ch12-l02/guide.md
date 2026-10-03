@@ -1,0 +1,23 @@
+## 制作と確認の順序
+
+前工程で作ったSourceを残し、今回のTODOから変更します。前の工程を壊したら、その工程へ戻って説明を見直せます。
+
+1. 押されたbuttonの文字を今の正解と比べます。回答前、回答済み、次の問題をstateで区別し、同じ問題を何回も回答できないようにします。
+2. currentTargetはhandlerを登録したbuttonです。押された文字と今のcorrectを比較し、正誤をfeedbackへ表示します。answeredで回答を1回にします。
+3. 回答前のnextはdisabled、回答後の選択肢もdisabledにします。途中のnextはindexを1進め、answeredとfeedbackを戻してrenderします。次問の先頭へfocusを移します。
+
+## 提供APIと目印
+
+index.html/styles.cssは提供済み、questions.jsは非編集です。main.jsはentryです。named importでloadQuestionsを読み、成功したArrayを使います。失敗はcatch、操作回復はfinallyへつなぎます。
+
+KeyboardではTabで移動しEnter/Spaceでbuttonを押します。標準buttonに同じkeydown処理を重ねると二重発火します。提供CSSのfocus枠を消さないでください。
+
+制作を終えたら保存後に再読み込みし、Sourceが戻ることを確認します。学習データはHomeの書き出しから持ち出せます。別の保存状態へ読み込んでSourceと判定を確認します。HTML用ZIPとは別の学習bundleです。
+
+## 提供データの扱い
+
+questions.jsは編集不要の提供Moduleです。内部でJSON文字列をArrayへ戻しますが、この章でJSONの記述は求めません。loadQuestions(shouldFail)の返すPromiseと、問題Objectのtext/choices/correctを使います。データをコードとして実行する処理はありません。
+
+練習Loaderは「読み込み失敗を試す」の後の再試行で問題順を入れ替えます。固定の文章ではなく、今回受け取ったArrayから問題と選択肢を描画してください。
+
+提供HTMLのcontrolsは開始と練習用の失敗操作をまとめるfieldsetです。disabledで読み込み中の操作を止められます。score内のscore-valueは数値を表示するspanです。状態は複数の変数でもObjectやclosureでも構いません。名前や関数分割より、Checklistの操作と結果を確かめます。

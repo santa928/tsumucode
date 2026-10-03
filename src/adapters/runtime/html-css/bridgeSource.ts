@@ -73,6 +73,15 @@ function bridgeRuntime(config: BridgeConfig): void {
   // eslint-disable-next-line @typescript-eslint/unbound-method -- native receiverをapplyで明示する。
   const nativePreventDefault = Event.prototype.preventDefault;
   const applyNative = Reflect.apply.bind(Reflect);
+  // eslint-disable-next-line @typescript-eslint/unbound-method -- 捕捉getterをReflect.applyでnative inputへ適用する。
+  const nativeInputValue = Object.getOwnPropertyDescriptor(
+    HTMLInputElement.prototype,
+    'value',
+  )?.get;
+  // eslint-disable-next-line @typescript-eslint/unbound-method -- 捕捉getterをReflect.applyでnative inputへ適用する。
+  const nativeInputType = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'type')?.get;
+  const NativeInput = HTMLInputElement;
+  const nativeComputedStyle = window.getComputedStyle.bind(window);
   const version = 1;
   const maxSelectors = 64;
   const maxAttributes = 64;
@@ -158,6 +167,9 @@ function bridgeRuntime(config: BridgeConfig): void {
 
   const parsePolicy = (value: Record<string, unknown>) => {
     const selectors = value.selectors;
+    const inputValueSelectors = objectKeys(value).includes('inputValueSelectors')
+      ? value.inputValueSelectors
+      : [];
     const attributes = value.attributes;
     const computedStyles = value.computedStyles;
     const focusVisibleSelectors = value.focusVisibleSelectors;
@@ -171,8 +183,13 @@ function bridgeRuntime(config: BridgeConfig): void {
         'focusVisibleSelectors',
         'focusVisibleComputedStyles',
         'includeAllElements',
+        ...(Object.prototype.hasOwnProperty.call(value, 'inputValueSelectors')
+          ? ['inputValueSelectors']
+          : []),
       ]) ||
       !boundedStringArray(selectors, maxSelectors) ||
+      !boundedStringArray(inputValueSelectors, maxSelectors) ||
+      !inputValueSelectors.every((selector) => selectors.includes(selector)) ||
       !boundedStringArray(attributes, maxAttributes) ||
       !boundedStringArray(computedStyles, maxComputedStyles) ||
       !boundedStringArray(focusVisibleSelectors, maxSelectors) ||
@@ -183,6 +200,7 @@ function bridgeRuntime(config: BridgeConfig): void {
     }
     return {
       selectors,
+      inputValueSelectors,
       attributes,
       computedStyles,
       focusVisibleSelectors,
@@ -397,6 +415,40 @@ function bridgeRuntime(config: BridgeConfig): void {
     };
   };
 
+  /** 収集要求のあるPreview内の可視native text inputだけを捕捉getterで読む。 */
+  const visibleInputValue = (
+    element: Element,
+    selectors: readonly string[],
+  ): string | undefined => {
+    if (
+      selectors.length === 0 ||
+      !(element instanceof NativeInput) ||
+      element.ownerDocument !== document ||
+      !document.body.contains(element) ||
+      nativeInputValue === undefined ||
+      nativeInputType === undefined ||
+      applyNative(nativeInputType, element, []) !== 'text' ||
+      !selectors.some((selector) => element.matches(selector))
+    )
+      return undefined;
+    const rect = element.getBoundingClientRect();
+    if (
+      rect.width <= 0 ||
+      rect.height <= 0 ||
+      nativeComputedStyle(element).visibility !== 'visible'
+    )
+      return undefined;
+    let current: Element | null = element;
+    while (current !== null) {
+      const style = nativeComputedStyle(current);
+      const opacity = Number(style.opacity);
+      if (style.display === 'none' || !Number.isFinite(opacity) || opacity <= 0) return undefined;
+      current = current.parentElement;
+    }
+    const value: unknown = applyNative(nativeInputValue, element, []);
+    return typeof value === 'string' ? value : undefined;
+  };
+
   const closestAnchor = (target: EventTarget | null): Element | null => {
     if (target instanceof Element) return target.closest('a');
     if (target instanceof Node) return target.parentElement?.closest('a') ?? null;
@@ -570,7 +622,11 @@ function bridgeRuntime(config: BridgeConfig): void {
         matchedSelectors.forEach((selector) => {
           outputString(selector, 'selector', 1_000);
         });
+        const inputValue = visibleInputValue(element, policy.inputValueSelectors);
         return {
+          ...(inputValue === undefined
+            ? {}
+            : { inputValue: outputString(inputValue, 'input value') }),
           nodeId: ids.get(element)!,
           parentId: ids.get(element.parentElement as Element) ?? null,
           documentOrder: index,
