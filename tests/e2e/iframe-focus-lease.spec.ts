@@ -97,6 +97,8 @@ test('KeyboardだけでPreviewへ入り入力し、親へ戻って判定する',
   await page.keyboard.insertText('キーボードで読書');
   await expect(iframe.contentFrame().locator('#status')).toHaveText('読みたい本: キーボードで読書');
   await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: '説明を見直す', exact: true })).toBeFocused();
+  await page.keyboard.press('Tab');
   await expect(page.getByRole('button', { name: 'ヒントを見る', exact: true })).toBeFocused();
   expect(await original?.evaluate((el) => el.isConnected)).toBe(true);
   await expect(field).toHaveValue('キーボードで読書');

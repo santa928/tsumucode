@@ -94,8 +94,8 @@ async function readPreviewGeometry(page: Page): Promise<PreviewGeometry> {
         overflowX: getComputedStyle(wrapper).overflowX,
       },
       iframe: {
-        outerWidth: iframe.offsetWidth,
-        outerHeight: iframe.offsetHeight,
+        outerWidth: iframeRect.width,
+        outerHeight: iframeRect.height,
         rightInScrollContent: iframeRect.right - wrapperRect.left + wrapper.scrollLeft,
         bottomInScrollContent: iframeRect.bottom - wrapperRect.top + wrapper.scrollTop,
       },

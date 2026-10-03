@@ -106,9 +106,9 @@ lessons:
       javascript-project-course-contract.md。固定教材/Rule binding SHA256
       f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch02-l02
-    authorId: tsumucode-javascript-authoring
-    reviewerId: gpt-6.1-sol-independent-js52-content-review
-    sourceHash: bf2e66991b890cefa2bf8092a9d44f17812c8041aed60fe50efefb6988d6385c
+    authorId: gpt-6.1-sol-root-diagram-author
+    reviewerId: gpt-6.1-sol-independent-diagram-review
+    sourceHash: 110a6b6d7524266042ee1be14562c18e398c6635b632190f7d7b80afc71a3803
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -116,7 +116,7 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      '2026-10-03図修正の限定独立レビュー：if単独のs02専用図へ分離し、false側は表示なし。s03のelse図とコードは保持。最終レビューSHA256 aae83c27c43f0330b2760eee31fb251127a9baa209973c999d1f8299aa97f113。可視コード・Rule・Fixtureは同byteで既存実行証拠を限定再利用。旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
       Fixture＋累積prefix10（対象36演習）の原実測を再利用。 本Lessonを含む初出前案内6件は現候補の実iframe
       Snapshot/採点で正答6pass・反例6incomplete、診断0、Source認証/新文言一致。証拠SHA256
       55ae2d8e375c87ea77449b6b7323e62a86561e22505c45de11a019e0f8ff509d。
@@ -125,9 +125,9 @@ lessons:
       javascript-project-course-contract.md。固定教材/Rule binding SHA256
       f9b4b742513f47e79dd39b96e3f4eb893ae736ef2922c03250803c0ab64084a1。'
   - lessonId: javascript-ch02-l03
-    authorId: tsumucode-javascript-authoring
-    reviewerId: gpt-6.1-sol-independent-js52-content-review
-    sourceHash: 923aede8b78be618d01e729625a2f8b23c588c9271ebe6509fd4db43f1b25eaa
+    authorId: gpt-6.1-sol-root-diagram-author
+    reviewerId: gpt-6.1-sol-independent-diagram-review
+    sourceHash: ff33f2d52a4cadcb6e0b26cccc6b07b20fd60fe3a3c8233bdaa69be4173a3c66
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -135,7 +135,7 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes:
-      '旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
+      '2026-10-03図修正の限定独立レビュー：AがfalseのときだけBを確かめ、Bもfalseのときだけelseへ進む図へ修正。選択済み出力から別出力へ接続しない。最終レビューSHA256 aae83c27c43f0330b2760eee31fb251127a9baa209973c999d1f8299aa97f113。可視コード・Rule・Fixtureは同byteで既存実行証拠を限定再利用。旧46独立読解と新6固定承認を、同byte本文/Hint/Starter/Solution、現在のRule/Goalへ結合。既存394
       Fixture＋累積prefix10（対象36演習）の原実測を再利用。 本Lessonを含む初出前案内6件は現候補の実iframe
       Snapshot/採点で正答6pass・反例6incomplete、診断0、Source認証/新文言一致。証拠SHA256
       55ae2d8e375c87ea77449b6b7323e62a86561e22505c45de11a019e0f8ff509d。

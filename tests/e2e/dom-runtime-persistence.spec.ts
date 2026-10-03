@@ -130,7 +130,11 @@ for (const profile of ['async', 'project'] as const) {
     await waitForStoredDraftContent(page, source);
     const before = await readStoredProgress(page);
     await page.getByRole('button', { name: '判定する', exact: true }).click();
-    await expect(page.getByRole('alert')).toContainText('この環境では未対応');
+    await expect(page.getByRole('alert')).toContainText(
+      profile === 'project'
+        ? 'この環境のcurrentTargetは、同じ画面のElementに登録したイベントだけに対応しています。今回の判定は保存しません。'
+        : 'この環境では未対応',
+    );
     await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled();
     const after = await readStoredProgress(page);
     expect(after.courses).toEqual(before.courses);
