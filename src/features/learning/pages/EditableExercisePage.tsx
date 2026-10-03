@@ -220,6 +220,7 @@ function EditableSession({
   const [operation, setOperation] = useState<OperationState>('idle');
   const [operationError, setOperationError] = useState<string>();
   const [previewNeedsPrepare, setPreviewNeedsPrepare] = useState(false);
+  const [previewExpanded, setPreviewExpanded] = useState(false);
   const [waitingForLease, setWaitingForLease] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
   const [activeStepId, setActiveStepId] = useState<string | undefined>(exercise.steps[0]?.id);
@@ -507,7 +508,12 @@ function EditableSession({
 
   /** 必要なら同じiframeを再初期化し、描画までを一つのbusy/error境界で実行する。 */
   const executePreview = useCallback(
-    (frame: HTMLIFrameElement | undefined, shouldPrepare: boolean, waitForLease = false): void => {
+    (
+      frame: HTMLIFrameElement | undefined,
+      shouldPrepare: boolean,
+      waitForLease = false,
+      viewportId?: string,
+    ): void => {
       const generation = beginOperation();
       setOperation('preview');
       setOperationError(undefined);
@@ -527,7 +533,7 @@ function EditableSession({
             }
           }
           try {
-            await controller.previewNow();
+            await controller.previewNow(viewportId);
             if (isCurrentOperation(generation)) {
               setPreviewNeedsPrepare(false);
               learningRuntimeServices.notices.dismiss('error:exercise-preview');
@@ -959,7 +965,9 @@ function EditableSession({
       }
     >
       <div className="tc-exercise-stage-stack">
-        <div className="tc-exercise-workspace">
+        <div
+          className={`tc-exercise-workspace${previewExpanded ? ' tc-exercise-workspace-preview-expanded' : ''}`}
+        >
           <aside className="tc-exercise-instructions" aria-label="工程票" tabIndex={0}>
             <header className="tc-exercise-instruction-title">
               <p>コード演習</p>
@@ -1109,6 +1117,15 @@ function EditableSession({
                   <PreviewFrame
                     key={`${course.id}:${exercise.id}`}
                     onReady={preparePreview}
+                    viewports={exercise.previewViewports}
+                    selectedViewportId={controller.getPreviewViewportId()}
+                    controlsDisabled={busy}
+                    onViewportChange={(id) => {
+                      if (busy) return;
+                      executePreview(previewFrameRef.current, previewNeedsPrepare, true, id);
+                    }}
+                    expanded={previewExpanded}
+                    onExpandedChange={setPreviewExpanded}
                     consoleEnabled={exercise.runtime !== undefined}
                     primaryOutput={exercise.runtime?.primaryOutput ?? 'preview'}
                     consoleRecords={state.runtimeOutput?.console ?? []}

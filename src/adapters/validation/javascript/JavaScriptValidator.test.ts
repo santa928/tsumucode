@@ -970,6 +970,10 @@ describe('JavaScriptValidator', () => {
     );
 
     expect(result.status).toBe('incomplete');
+    const actual = result.checks.find(({ ruleId }) => ruleId === 'message-source')?.actual;
+    expect(actual).toContain('script.js');
+    expect(actual).toContain('確認できません');
+    expect(actual).not.toContain('Source Fact');
     expect(result.checks.find(({ ruleId }) => ruleId === 'message-source')).toMatchObject({
       passed: false,
       requirementPassed: false,

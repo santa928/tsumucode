@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
-import type { RunnerConsoleRecord } from '../../../core/runtime/contracts';
+import type { RunnerConsoleRecord, PreviewViewport } from '../../../core/runtime/contracts';
 import { StackedCard } from '../../../design-system/components/StackedCard';
 import { previewFitScale } from './previewSizing';
 import { RuntimeConsole, type ConsoleFreshness } from './RuntimeConsole';
@@ -12,6 +12,12 @@ export interface PreviewFrameProps {
   readonly consoleRecords?: readonly RunnerConsoleRecord[];
   readonly consoleFreshness?: ConsoleFreshness;
   readonly consoleUpdateSequence?: number;
+  readonly viewports?: readonly PreviewViewport[];
+  readonly selectedViewportId?: string | undefined;
+  readonly onViewportChange?: (id: string) => void;
+  readonly controlsDisabled?: boolean;
+  readonly expanded?: boolean;
+  readonly onExpandedChange?: (expanded: boolean) => void;
 }
 
 interface PreviewGeometry {
@@ -29,6 +35,12 @@ export function PreviewFrame({
   consoleRecords = [],
   consoleFreshness = 'current',
   consoleUpdateSequence,
+  viewports = [],
+  selectedViewportId,
+  onViewportChange,
+  controlsDisabled = false,
+  expanded = false,
+  onExpandedChange,
 }: PreviewFrameProps) {
   const preparedFrame = useRef<HTMLIFrameElement | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -147,6 +159,39 @@ export function PreviewFrame({
       className="tc-runtime-output-card"
     >
       <div className="tc-runtime-output-header">
+        {activeOutput === 'preview' && onViewportChange !== undefined && viewports.length > 0 ? (
+          <label className="text-sm font-bold">
+            画面幅
+            <select
+              aria-label="プレビューの画面幅"
+              value={selectedViewportId ?? viewports[0]?.id}
+              disabled={controlsDisabled}
+              className="ml-2 min-h-11 rounded-workshop-sm border border-workshop-border bg-workshop-surface px-2"
+              onChange={(event) => {
+                onViewportChange(event.target.value);
+              }}
+            >
+              {viewports.map((viewport) => (
+                <option key={viewport.id} value={viewport.id}>
+                  {viewport.width}px × {viewport.height}px
+                </option>
+              ))}
+            </select>
+            <span className="block text-xs font-normal">幅を変えるとコードを再実行します</span>
+          </label>
+        ) : null}
+        {onExpandedChange !== undefined ? (
+          <button
+            type="button"
+            aria-pressed={expanded}
+            className="inline-flex min-h-11 items-center rounded-workshop-sm border-2 border-workshop-primary bg-workshop-surface px-3 py-2 text-sm font-black text-workshop-primary"
+            onClick={() => {
+              onExpandedChange(!expanded);
+            }}
+          >
+            {expanded ? '編集画面に戻す' : 'プレビューを広く表示'}
+          </button>
+        ) : null}
         {consoleEnabled ? (
           <>
             <h2 className="sr-only">実行結果</h2>
