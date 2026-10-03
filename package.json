@@ -29,7 +29,9 @@
     "test:changed": "tsx scripts/testChanged.ts",
     "test:e2e": "playwright test --grep-invert @visual-extended",
     "test:visual:extended": "playwright test visual-regression.spec.ts --project=chromium --grep @visual-extended",
-    "test:performance": "playwright test --config=playwright.performance.config.ts && vitest run --config vitest.bundle.config.ts",
+    "test:bundle": "vitest run --config vitest.bundle.config.ts",
+    "test:performance:browser": "playwright test --config=playwright.performance.config.ts",
+    "test:performance": "npm run test:bundle && npm run test:performance:browser",
     "test:lighthouse": "lhci autorun --config=lighthouserc.cjs",
     "typecheck": "tsc -b",
     "lint": "eslint .",
@@ -45,6 +47,7 @@
     "release:target": "tsx scripts/release/verifyReleaseTarget.ts",
     "release:report": "tsx scripts/release/writeReleaseReport.ts",
     "release:input": "tsx scripts/release/javascriptInputHashes.ts",
+    "release:learning-coverage": "tsx scripts/release/javascriptLessonEvaluation.ts",
     "check": "npm run content:compile && npm run lint && npm run test:changed && npm run build:app && npm run smoke:learning-chunks",
     "check:release": "npm run content:compile && npm run content:review && npm run lint && npm run test:run && npm run build:app && npm run smoke:learning-chunks"
   },

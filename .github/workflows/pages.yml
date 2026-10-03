@@ -165,6 +165,12 @@ jobs:
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
         run: ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run check:release
+      - name: Bundle artifact preflight
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+        run: ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run test:bundle
+      - name: Static artifact gate
+        run: ./scripts/docker-compose.sh run --rm app npm run release:check -- --course-id "$RELEASE_COURSE_ID"
       - name: Release continuity for deploy candidate
         if: needs.resolve.outputs.release_mode == 'candidate'
         run: ./scripts/docker-compose.sh run --rm app npm run release:continuity -- --course-id "$RELEASE_COURSE_ID"
@@ -186,13 +192,11 @@ jobs:
       - name: Performance budgets
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
-        run: ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run test:performance
+        run: ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run test:performance:browser
       - name: Lighthouse budgets
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
         run: ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run test:lighthouse
-      - name: Static artifact gate
-        run: ./scripts/docker-compose.sh run --rm app npm run release:check -- --course-id "$RELEASE_COURSE_ID"
       - name: Record artifact hashes
         run: >-
           ./scripts/docker-compose.sh run --rm app npm run release:report --
