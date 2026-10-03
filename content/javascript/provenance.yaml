@@ -516,6 +516,10 @@ items:
   - id: javascript-ch02-source-039
     visibility: public
     path: chapters/javascript-ch02/lessons/javascript-ch02-l02/lesson.yaml
+  - id: javascript-ch02-l02-if-only-flow-original
+    visibility: public
+    path: chapters/javascript-ch02/lessons/javascript-ch02-l02/slides/assets/if-only-flow.svg
+    createdAt: 2026-10-03
   - id: javascript-ch02-l02-if-else-flow-original
     visibility: public
     path: chapters/javascript-ch02/lessons/javascript-ch02-l02/slides/assets/if-else-flow.svg
@@ -585,6 +589,7 @@ items:
   - id: javascript-ch02-l03-branch-flow-original
     visibility: public
     path: chapters/javascript-ch02/lessons/javascript-ch02-l03/slides/assets/branch-flow.svg
+    modified: true
   - id: javascript-ch02-source-061
     visibility: public
     path: chapters/javascript-ch02/lessons/javascript-ch02-l03/slides/s01-more-than-two-paths.md

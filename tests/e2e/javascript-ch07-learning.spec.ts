@@ -57,7 +57,9 @@ test('DOMの誤selectorを直し、Reset後も再編集・Preview・判定でき
   await expect.poll(() => editorText(page)).toBe(source);
 });
 
-test('試用目次からDOMの4枚を狭幅で読み、未完成Lessonを先読みしない', async ({ page }, testInfo) => {
+test('試用目次からDOMの4枚を狭幅で読み、別Lessonを先読みせず試用対象外へ進まない', async ({
+  page,
+}, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   const lessonRequests: string[] = [];
   page.on('request', (request) => {
@@ -75,7 +77,13 @@ test('試用目次からDOMの4枚を狭幅で読み、未完成Lessonを先読�
   await expect(last.getByRole('img')).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
   expect(lessonRequests.filter((url) => /javascript-ch07-l0[3-9]/u.test(url))).toEqual([]);
+  expect(lessonRequests.filter((url) => /javascript-ch08-l01/u.test(url))).toEqual([]);
   await page.screenshot({ path: testInfo.outputPath('dom-reading-mobile.png') });
   await page.goto(`${PILOT}/javascript/lessons/javascript-ch08-l01/read`);
+  await expect(page.locator('[data-reading-section]')).toHaveCount(4);
+  await expect(page).toHaveURL(
+    /#\/library\/pilot\/javascript\/lessons\/javascript-ch08-l01\/read$/u,
+  );
+  await page.goto(`${PILOT}/javascript/lessons/javascript-ch12-l01/read`);
   await expect(page).toHaveURL(/#\/library\/pilot$/u);
 });

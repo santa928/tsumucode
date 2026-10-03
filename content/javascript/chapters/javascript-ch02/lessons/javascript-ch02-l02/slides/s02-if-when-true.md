@@ -9,10 +9,10 @@ masteryTarget: read
 screenBudget: { maxTextCharacters: 280, maxCodeLines: 3, maxVisuals: 1 }
 assets:
   - id: javascript-ch02-l02-if-flow
-    source: assets/if-else-flow.svg
+    source: assets/if-only-flow.svg
     mediaType: image
-    alt: 条件がtrueなら正解ですへ進むifの図
-    provenanceId: javascript-ch02-l02-if-else-flow-original
+    alt: trueなら正解ですを表示し、falseなら表示しないifの図
+    provenanceId: javascript-ch02-l02-if-only-flow-original
 ---
 
 ifは、丸括弧の条件が`true`のときだけ波括弧の中を実行します。

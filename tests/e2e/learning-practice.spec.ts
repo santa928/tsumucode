@@ -64,7 +64,9 @@ async function importBundle(page: Page, bundle: ProgressBundle): Promise<void> {
   const reloaded = page.waitForEvent('domcontentloaded');
   await page.getByRole('button', { name: 'この内容を読み込む' }).click();
   await reloaded;
-  await expect(page.getByRole('button', { name: '全コースの進捗と下書きを書き出す' })).toBeEnabled();
+  await expect(
+    page.getByRole('button', { name: '全コースの進捗と下書きを書き出す' }),
+  ).toBeEnabled();
 }
 
 /** 対象教材を実RunnerでPreview・採点する。 */
@@ -111,7 +113,7 @@ async function grade(page: Page, n: number, solution: boolean): Promise<void> {
   }
 }
 
-test('旧版の合成完了Bundleを移行し、予測・任意課題・Reset・往復Importでもガイドを保持する', async ({
+test('旧版の合成完了Bundleを失効・再確認し、予測・任意課題・Reset・往復Importでもガイドを保持する', async ({
   page,
   browser,
 }, info) => {
@@ -124,7 +126,7 @@ test('旧版の合成完了Bundleを移行し、予測・任意課題・Reset・
   const before = await preservedGuide(page);
   expect(before.firstCompletedAt).toEqual(expect.any(String));
   const exported = await exportBundle(page, info, 'before.json');
-  // e01の契約は不変。現行UIで得た実データを旧教材版へ戻した合成Bundleで移行を検査する。
+  // e01も追加25の再確認対象。旧版へ戻した合成Bundleの合格を失効し、旧コードを退避する。
   const { integrity, ...unsigned } = exported;
   expect(integrity.algorithm).toBe('SHA-256');
   const legacy = {
@@ -158,7 +160,45 @@ test('旧版の合成完了Bundleを移行し、予測・任意課題・Reset・
   const migrated = await context.newPage();
   try {
     await importBundle(migrated, legacyBundle);
-    expect(await preservedGuide(migrated)).toEqual(before);
+    expect(await preservedGuide(migrated)).toEqual({
+      complete: false,
+      firstCompletedAt: undefined,
+      files: undefined,
+    });
+    const imported = await readStoredProgress(migrated);
+    const oldDraft = Object.values(legacyBundle.drafts).find(
+      (draft) => draft.workspaceId === `${LESSON}-e01`,
+    );
+    expect(oldDraft).toBeDefined();
+    const archived = imported.quarantined
+      .map((record) => record['raw'])
+      .find(
+        (raw) =>
+          typeof raw === 'object' &&
+          raw !== null &&
+          'workspaceId' in raw &&
+          raw['workspaceId'] === `${LESSON}-e01`,
+      );
+    expect(archived).toMatchObject({
+      files: oldDraft!.files,
+      validationHistory: oldDraft!.validationHistory,
+      updatedAt: oldDraft!.updatedAt,
+    });
+    const savedSnapshots = (archived as Record<string, unknown>)['lastPassingSnapshots'] as Record<
+      string,
+      unknown
+    >;
+    expect(savedSnapshots[`${LESSON}-e01`]).toMatchObject({
+      files: oldDraft!.lastPassingSnapshots[`${LESSON}-e01`]!.files,
+      editRevision: oldDraft!.lastPassingSnapshots[`${LESSON}-e01`]!.editRevision,
+      evaluatedAt: oldDraft!.lastPassingSnapshots[`${LESSON}-e01`]!.evaluatedAt,
+    });
+    await migrated.goto(`${BASE}/slides/${LESSON}-s04`);
+    await grade(migrated, 1, true);
+    await expect.poll(async () => (await preservedGuide(migrated)).complete).toBe(true);
+    const currentGuide = await preservedGuide(migrated);
+    expect(currentGuide.files).toEqual(before.files);
+    expect(currentGuide.firstCompletedAt).toEqual(expect.any(String));
     await migrated.goto(`${BASE}/slides/${LESSON}-s03`);
     const answer = migrated.getByText('aは30、bは20を返します。', { exact: true });
     await expect(answer).not.toBeVisible();
@@ -180,10 +220,10 @@ test('旧版の合成完了Bundleを移行し、予測・任意課題・Reset・
       .getByRole('button', { name: '最初のコードに戻す', exact: true })
       .click();
     await expect.poll(() => editorText(migrated)).toBe(source);
-    expect(await preservedGuide(migrated)).toEqual(before);
+    expect(await preservedGuide(migrated)).toEqual(currentGuide);
     await grade(migrated, 2, true);
     await grade(migrated, 3, true);
-    expect(await preservedGuide(migrated)).toEqual(before);
+    expect(await preservedGuide(migrated)).toEqual(currentGuide);
     const roundtrip = await exportBundle(migrated, info, 'after.json');
     const restoredContext = await browser.newContext({
       viewport: { width: 1280, height: 800 },
@@ -192,7 +232,7 @@ test('旧版の合成完了Bundleを移行し、予測・任意課題・Reset・
     try {
       const restored = await restoredContext.newPage();
       await importBundle(restored, roundtrip);
-      expect(await preservedGuide(restored)).toEqual(before);
+      expect(await preservedGuide(restored)).toEqual(currentGuide);
       await restored.goto(`${BASE}/slides/${LESSON}-s03`);
       await expect(
         restored.getByText('aは30、bは20を返します。', { exact: true }),
