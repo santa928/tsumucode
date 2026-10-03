@@ -21,7 +21,7 @@ supportedDevices:
     - mobile
 prerequisites:
   - html-css
-publicationStatus: draft
+publicationStatus: published
 expectedTotals:
   chapters: 14
   lessons: 52

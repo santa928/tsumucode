@@ -7,3 +7,6 @@ steps:
   - courseId: html-css
     role: required
     prerequisiteCourseIds: []
+  - courseId: javascript
+    role: required
+    prerequisiteCourseIds: [html-css]
