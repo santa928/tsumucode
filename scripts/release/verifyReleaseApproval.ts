@@ -393,19 +393,19 @@ export async function verifyReleaseSourceApproval(
 
   await verifyApprovedQualityEvidence(root, approval, { revision: candidate.revision });
   if ('courseId' in candidate && 'courseId' in approval) {
-    const { JavascriptAgentLearningRecordSchema } = await import('./javascriptQualityRecords');
-    const learning = JavascriptAgentLearningRecordSchema.parse(
-      parse(await readFile(path.join(root, approval.records.agentLearning.path), 'utf8')),
+    const { JavascriptInputValidityRecordSchema } = await import('./javascriptQualityRecords');
+    const validity = JavascriptInputValidityRecordSchema.parse(
+      parse(await readFile(path.join(root, approval.records.inputValidity.path), 'utf8')),
     );
     if (
       candidate.draftSourceCommit === 'draft' ||
       candidate.draftCanonicalDistSha256 === 'draft' ||
       candidate.normalizedLearningInputSha256 === 'draft' ||
-      candidate.draftSourceCommit !== learning.draftSourceCommit ||
-      candidate.draftCanonicalDistSha256 !== learning.draftCanonicalDistSha256 ||
-      candidate.normalizedLearningInputSha256 !== learning.draftNormalizedInputSha256
+      candidate.draftSourceCommit !== validity.draftInput.sourceCommit ||
+      candidate.draftCanonicalDistSha256 !== validity.draftCanonicalDistSha256 ||
+      candidate.normalizedLearningInputSha256 !== validity.draftInput.normalizedInputSha256
     ) {
-      throw new Error('candidateの学習S/Ddraft/input bindingが模擬学習記録と一致しません');
+      throw new Error('candidateの公開入力監査bindingがinput validityと一致しません');
     }
   }
 

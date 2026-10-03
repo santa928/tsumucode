@@ -173,10 +173,14 @@ SourceやAssetを追加したら、同じ変更で`provenance.yaml`へ登録し�
 
 明示deployの`check:release`では教材Reviewと全Unit/Component/Content testを実行します。Chromiumの機能E2Eと代表画像比較、Firefox/WebKitの代表cross-browser smoke、固定演習の実ブラウザ性能、配信量、Lighthouse Mobileもこの公開Runで実行します。重複する画像比較17ケースは`npm run test:visual:extended`で対象変更時に明示実行します。画像比較の自動retryは行いません。Runtime、Security、Browser互換性へ触れた変更では、作業中に変更面の代表Browser検証を追加します。
 
+公開Runは同じProduction buildのbundle容量/manifest/subpathとStatic Artifactを先に検査し、成功後にBrowser E2E・操作性能・Lighthouseへ進みます。単独の`test:performance`もbundle検査を先に行います。静的検査済みの公開Runでは`test:performance:browser`で重複を避けます。
+
 ```bash
 ./scripts/docker-compose.sh run --rm -e BASE_PATH=/repository-name/ app npm run build
+./scripts/docker-compose.sh run --rm -e BASE_PATH=/repository-name/ app npm run test:bundle
+./scripts/docker-compose.sh run --rm app npm run release:check -- --course-id html-css
 ./scripts/docker-compose.sh run --rm -e BASE_PATH=/repository-name/ app npm run test:e2e
-./scripts/docker-compose.sh run --rm -e BASE_PATH=/repository-name/ app npm run test:performance
+./scripts/docker-compose.sh run --rm -e BASE_PATH=/repository-name/ app npm run test:performance:browser
 ./scripts/docker-compose.sh run --rm -e BASE_PATH=/repository-name/ app npm run test:lighthouse
 ```
 
