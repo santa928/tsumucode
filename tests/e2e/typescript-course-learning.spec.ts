@@ -15,6 +15,8 @@ const ROOT = 'content/typescript/chapters/typescript-ch01/lessons';
 test('通常Courseで型推論から型注釈へ進み、両課題の型条件と保存を区別する', async ({
   page,
 }, testInfo) => {
+  // 2 Lessonの全工程を1ケースで通す。個別操作の上限は変更しない。
+  test.setTimeout(60_000);
   await page.setViewportSize({ width: 1280, height: 900 });
   const compilerRequests: string[] = [];
   page.on('request', (request) => {
