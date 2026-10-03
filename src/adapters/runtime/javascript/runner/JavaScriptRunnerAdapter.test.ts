@@ -1368,3 +1368,72 @@ it('同source別GoalをAnalyzerへ送り、project cacheから関係factを借�
     await runner.dispose();
   }
 });
+
+describe('Preview interaction readiness lifecycle', () => {
+  it('同iframeのsrcdoc再描画に操作確認を保持し、交換・stopでは破棄する', async () => {
+    const analyzer = {
+      analyze: vi.fn(async () => analysisSuccess()),
+      dispose: vi.fn(async () => undefined),
+    };
+    const runner = new JavaScriptRunnerAdapter({ analyzer });
+    const first = document.createElement('iframe');
+    const second = document.createElement('iframe');
+    document.body.append(first, second);
+    const firstPost = vi
+      .spyOn(first.contentWindow!, 'postMessage')
+      .mockImplementation(() => undefined);
+    const secondPost = vi
+      .spyOn(second.contentWindow!, 'postMessage')
+      .mockImplementation(() => undefined);
+    const render = async (frame: HTMLIFrameElement) => {
+      const previous = frame.srcdoc;
+      const pending = runner.render(runnerInput());
+      await vi.waitFor(() => {
+        expect(frame.srcdoc).not.toBe('');
+        expect(frame.srcdoc).not.toBe(previous);
+      });
+      dispatchExecution(frame);
+      dispatchBridgeReady(frame);
+      await pending;
+    };
+    const reply = (
+      source: HTMLIFrameElement,
+      request: Record<string, unknown>,
+      payload: boolean,
+    ) => {
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          source: source.contentWindow,
+          data: { ...request, type: 'javascript.preview-interaction-complete', payload },
+        }),
+      );
+    };
+    await runner.prepare(first);
+    await render(first);
+    const ready = runner.checkPreviewInteractionReady();
+    const request = firstPost.mock.calls.at(-1)![0] as Record<string, unknown>;
+    expect(request['type']).toBe('javascript.preview-interaction');
+    reply(first, request, true);
+    await expect(ready).resolves.toBe(true);
+    await render(first);
+    const calls = firstPost.mock.calls.length;
+    await expect(runner.checkPreviewInteractionReady()).resolves.toBe(true);
+    expect(firstPost).toHaveBeenCalledTimes(calls);
+    first.remove();
+    await expect(runner.checkPreviewInteractionReady()).resolves.toBe(false);
+    await runner.prepare(second);
+    await render(second);
+    const next = runner.checkPreviewInteractionReady();
+    const secondRequest = secondPost.mock.calls.at(-1)![0] as Record<string, unknown>;
+    const resolved = vi.fn();
+    void next.then(resolved);
+    reply(first, secondRequest, true);
+    await Promise.resolve();
+    expect(resolved).not.toHaveBeenCalled();
+    reply(second, secondRequest, false);
+    await expect(next).resolves.toBe(false);
+    await runner.stop();
+    await expect(runner.checkPreviewInteractionReady()).resolves.toBe(false);
+    await runner.dispose();
+  });
+});

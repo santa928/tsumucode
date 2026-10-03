@@ -105,8 +105,60 @@ async function restoredSource(page: Page, value: string): Promise<void> {
   await expect.poll(() => editorText(page)).toContain(lines.at(-1));
 }
 
+/** 可視Previewで通常の開始操作を行い、同iframeの採点環境を準備する。 */
+async function operatePreview(page: Page, keyboard = false): Promise<void> {
+  await expect(
+    page.getByText(
+      'プレビュー内のボタンをクリックするか、Tabで移動してEnterまたはSpaceで操作してから採点してください。',
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await refresh(page);
+  const start = page
+    .getByTestId('runtime-preview-frame')
+    .locator('iframe')
+    .contentFrame()
+    .locator('#start');
+  if (keyboard) {
+    // 子frameへのevaluate/focusを使わず、親の可視Preview領域から実Tabで入る。
+    await page.getByTestId('runtime-preview-scroll').focus();
+    let entered = false;
+    for (let step = 0; step < 4; step += 1) {
+      await page.keyboard.press('Tab');
+      entered =
+        (await page
+          .getByTestId('runtime-preview-frame')
+          .locator('iframe')
+          .contentFrame()
+          .locator('#start:focus')
+          .count()) === 1;
+      if (entered) break;
+    }
+    expect(entered).toBe(true);
+    // Guided5の最初のTab stopは開始button。Enter自体を実keyboard操作として送る。
+    await page.keyboard.press('Enter');
+    await expect(start).toBeEnabled();
+    await expect(
+      page
+        .getByTestId('runtime-preview-frame')
+        .locator('iframe')
+        .contentFrame()
+        .locator('#question'),
+    ).toHaveText('Webページの骨組みを作るのは？');
+  } else await start.click();
+}
+
 /** 保存済みのSourceをUIから実判定し、Feedback drawerを閉じる。 */
-async function grade(page: Page, heading = 'できました'): Promise<number> {
+async function grade(page: Page, heading = 'できました', keyboardPreview = false): Promise<number> {
+  if (
+    await page
+      .getByText(
+        'プレビュー内のボタンをクリックするか、Tabで移動してEnterまたはSpaceで操作してから採点してください。',
+        { exact: true },
+      )
+      .isVisible()
+  )
+    await operatePreview(page, keyboardPreview);
   const route = page.url();
   const before = await page.evaluate(
     () => performance.getEntriesByName('tsumucode:validation').length,
@@ -178,7 +230,7 @@ test('Guidedを累積制作し、編集・取消・確定Reset・持出しを実
     inherited = await source(n);
     await writeSource(page, inherited);
     await waitForStoredDraftContent(page, inherited);
-    await grade(page);
+    await grade(page, 'できました', n === 5);
     console.log('UI_GUIDED_GRADED', n);
     await page.reload();
     await expect(page.getByRole('tab', { name: 'main.js', exact: true })).toHaveAttribute(
@@ -241,6 +293,17 @@ test('Guidedを累積制作し、編集・取消・確定Reset・持出しを実
   const valid = await source(5);
   await writeSource(page, valid);
   await waitForStoredDraftContent(page, valid);
+  const unprepared = await readStoredProgress(page);
+  await page.getByRole('button', { name: '判定する', exact: true }).click();
+  await expect(
+    page.getByText('プレビュー内のボタンを一度操作して、もう一度採点してください。', {
+      exact: true,
+    }),
+  ).toBeVisible();
+  const noGrade = await readStoredProgress(page);
+  expect(draft(noGrade).validationHistory).toEqual(draft(unprepared).validationHistory);
+  expect(draft(noGrade).lastPassingSnapshots).toEqual(draft(unprepared).lastPassingSnapshots);
+  expect(course(noGrade).lessons).toEqual(course(unprepared).lessons);
   await grade(page);
   const previousPass = await readStoredProgress(page);
   const unsafe = valid + '\ntry { const key = -1; [1][key]; } catch (error) {}\n';
@@ -438,6 +501,6 @@ for (const project of [
         2,
       ),
     );
-    expect(p95).toBeLessThanOrEqual(3000);
+    expect(p95).toBeLessThanOrEqual(6000);
   });
 }

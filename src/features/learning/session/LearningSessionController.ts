@@ -187,6 +187,27 @@ export class ExecutionNotGradableError extends Error {
   }
 }
 
+/** native focusを採点するJS workspaceだけがPreview実操作を必要とする。 */
+export function requiresPreviewInteraction(exercises: readonly Exercise[]): boolean {
+  return exercises.some(
+    (exercise) =>
+      exercise.runtime?.kind === 'javascript' &&
+      exercise.interactionScenarios?.some((scenario) =>
+        scenario.checkpoints.some((checkpoint) =>
+          checkpoint.expectations.some((expectation) => expectation.kind === 'focused'),
+        ),
+      ) === true,
+  );
+}
+
+/** Preview未操作を不正解や保存済み判定へ変換しないための準備案内。 */
+export class PreviewInteractionRequiredError extends Error {
+  constructor() {
+    super('プレビュー内のボタンを一度操作して、もう一度採点してください。');
+    this.name = 'PreviewInteractionRequiredError';
+  }
+}
+
 /** 同値diagnosticを初出順で一度だけ残す。 */
 function dedupeDiagnostics(diagnostics: readonly RunnerDiagnostic[]): readonly RunnerDiagnostic[] {
   const seen = new Set<string>();
@@ -937,9 +958,14 @@ export class LearningSessionController {
   /** 同revisionの全viewport Snapshotを集め、判定結果を保存成功後にcommitする。 */
   async #validate(execution: ExecutionInput): Promise<ValidationResult> {
     this.#assertFresh(execution);
+    const plan = createValidationPlan(this.input.exercise, this.input.validationExercises);
+    if (requiresPreviewInteraction(plan.exercises)) {
+      const ready = await this.#execution.dom?.checkPreviewInteractionReady?.();
+      this.#assertFresh(execution);
+      if (ready !== true) throw new PreviewInteractionRequiredError();
+    }
     await this.#autosave.flush();
     this.#assertFresh(execution);
-    const plan = createValidationPlan(this.input.exercise, this.input.validationExercises);
     const policy = extendSnapshotPolicyForInteractions(
       this.input.validator.buildSnapshotPolicy(
         plan.exercises.flatMap(({ validationRules }) => validationRules),

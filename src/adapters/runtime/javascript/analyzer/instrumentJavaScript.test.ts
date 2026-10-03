@@ -768,3 +768,195 @@ describe('analyzeJavaScriptSource', () => {
     expect(result.diagnostics[0]?.learnerMessage.length).toBeGreaterThan(0);
   });
 });
+
+describe('project module-boundary fact collection', () => {
+  it('77行のObject stateとDOM描画を不要な教材fact件数で拒否せずmodule証拠を保持する', async () => {
+    // Independent representative input; no learner source is copied into this test.
+    const lines = [
+      "import { readItems } from './items.js';",
+      "const state = { points: 0, items: [], message: '', loading: false };",
+      'function draw() {',
+      ...Array.from(
+        { length: 53 },
+        (_, index) =>
+          `  document.getElementById('metric-${String(index)}').textContent = state.points;`,
+      ),
+      '}',
+      'async function begin() {',
+      '  if (state.loading) return;',
+      '  state.loading = true;',
+      '  draw();',
+      '  try {',
+      '    state.items = await readItems();',
+      "    state.message = 'ready';",
+      '  } catch (error) {',
+      "    state.message = 'retry';",
+      '  } finally {',
+      '    state.loading = false;',
+      '    draw();',
+      '  }',
+      '}',
+      "document.getElementById('start').addEventListener('click', begin);",
+      "document.getElementById('clear').addEventListener('click', () => {",
+      '  state.points = 0;',
+      '  draw();',
+      '});',
+      'draw();',
+    ];
+    expect(lines).toHaveLength(77);
+    const result = await analyzeJavaScriptSource({
+      ...baseInput,
+      source: lines.join('\n'),
+      sourceType: 'module',
+      capabilityProfile: 'project',
+    });
+    expect(result.status).toBe('success');
+    if (result.status !== 'success') throw new Error('Project analysis failed');
+    expect(result.facts).toEqual([
+      expect.objectContaining({
+        kind: 'module-boundary',
+        boundaryKind: 'import',
+        name: 'readItems',
+      }),
+    ]);
+    expect(result.instrumentedCode).toContain('__tsumuBudget');
+    expect(() =>
+      parse(result.instrumentedCode, { ecmaVersion: 'latest', sourceType: 'module' }),
+    ).not.toThrow();
+  });
+
+  it.each([256, 257])('本物のmodule fact %i件を既存上限どおり扱う', async (count) => {
+    const source = Array.from(
+      { length: count },
+      (_, index) => `export const value${String(index)} = ${String(index)};`,
+    ).join('\n');
+    const result = await analyzeJavaScriptSource({
+      ...baseInput,
+      source,
+      sourceType: 'module',
+      capabilityProfile: 'project',
+    });
+    if (count === 256) {
+      expect(result.status).toBe('success');
+      if (result.status !== 'success') throw new Error('Module boundary analysis failed');
+      expect(result.facts).toHaveLength(256);
+      expect(result.facts.every((fact) => fact.kind === 'module-boundary')).toBe(true);
+    } else {
+      expect(result).toMatchObject({
+        status: 'failure',
+        diagnostics: [
+          expect.objectContaining({ kind: 'system', message: 'Source fact数が上限を超えました' }),
+        ],
+      });
+    }
+  });
+
+  it('各moduleが上限内でもworkspace合計257件を切り捨てず拒否する', async () => {
+    const result = await analyzeJavaScriptSource({
+      requestId: baseInput.requestId,
+      exerciseSessionId: baseInput.exerciseSessionId,
+      executionRevision: baseInput.executionRevision,
+      guardIdentifier: baseInput.guardIdentifier,
+      sourceType: 'module',
+      capabilityProfile: 'project',
+      entryFile: 'main.js',
+      files: {
+        'main.js': "import { value0 } from './items.js';\nconsole.log(value0);",
+        'items.js': Array.from(
+          { length: 256 },
+          (_, index) => `export const value${String(index)} = ${String(index)};`,
+        ).join('\n'),
+      },
+    });
+    expect(result).toMatchObject({
+      status: 'failure',
+      diagnostics: [
+        expect.objectContaining({
+          kind: 'system',
+          message: 'Workspace source fact count exceeds limit',
+        }),
+      ],
+    });
+  });
+
+  it.each(['core', 'async'] as const)(
+    '%sのteachingGoal付き解析はbinding/literal/関係factを保持する',
+    async (capabilityProfile) => {
+      const result = await analyzeJavaScriptSource({
+        ...baseInput,
+        capabilityProfile,
+        teachingGoal: 'question-binding',
+        source: "const questionText='問題2を始めます'; console.log(questionText);",
+      });
+      expect(result.status).toBe('success');
+      if (result.status !== 'success') throw new Error('Teaching analysis failed');
+      expect(result.facts).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ kind: 'binding', name: 'questionText' }),
+          expect.objectContaining({ kind: 'literal', valueType: 'string' }),
+          expect.objectContaining({ kind: 'teaching-relation', goal: 'question-binding' }),
+        ]),
+      );
+    },
+  );
+
+  it('modulesの標準解析はmodule以外の教材factも保持する', async () => {
+    const result = await analyzeJavaScriptSource({
+      ...baseInput,
+      capabilityProfile: 'modules',
+      source: 'const value = 3; console.log(value);',
+    });
+    expect(result.status).toBe('success');
+    if (result.status !== 'success') throw new Error('Modules analysis failed');
+    expect(result.facts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ kind: 'binding', name: 'value' }),
+        expect.objectContaining({ kind: 'literal', valueType: 'number' }),
+      ]),
+    );
+  });
+
+  it.each(['modules', 'project'] as const)(
+    '%sの未対応teachingGoal組合せは従来どおり拒否する',
+    async (capabilityProfile) => {
+      expect(
+        await analyzeJavaScriptSource({
+          ...baseInput,
+          capabilityProfile,
+          teachingGoal: 'question-binding',
+          source: "const questionText='問題2を始めます'; console.log(questionText);",
+        }),
+      ).toMatchObject({
+        status: 'failure',
+        diagnostics: [
+          expect.objectContaining({ kind: 'security', message: 'Invalid teaching Goal' }),
+        ],
+      });
+    },
+  );
+
+  it('projectのConsole解析は従来の教材factを保持する', async () => {
+    const result = await analyzeConsoleSourceFacts({
+      ...baseInput,
+      capabilityProfile: 'project',
+      source: 'const value = 3; console.log(value);',
+    });
+    expect(result.status).toBe('success');
+    if (result.status !== 'success') throw new Error('Console analysis failed');
+    expect(result.facts).toContainEqual(
+      expect.objectContaining({ kind: 'binding', name: 'value' }),
+    );
+  });
+
+  it.each([
+    ['fetch("https://example.com")', 'security'],
+    [
+      `function many(${Array.from({ length: 33 }, (_, index) => `arg${String(index)}`).join(',')}) {}`,
+      'system',
+    ],
+  ])('projectでも安全policy/引数上限を維持する: %s', async (source, kind) => {
+    expect(
+      await analyzeJavaScriptSource({ ...baseInput, capabilityProfile: 'project', source }),
+    ).toMatchObject({ status: 'failure', diagnostics: [expect.objectContaining({ kind })] });
+  });
+});

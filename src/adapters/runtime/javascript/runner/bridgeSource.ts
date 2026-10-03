@@ -54,6 +54,35 @@ export interface TrustedInteractionExecutionResult {
   readonly error: TrustedInteractionError | null;
 }
 
+/** learner開始前にnative getterとreceiverを固定し、偽造navigator/Eventを読まない。 */
+export function createPreviewInteractionReader(target: Document): () => boolean {
+  'use strict';
+  const view = target.defaultView;
+  if (view === null) return () => false;
+  const descriptor = Object.getOwnPropertyDescriptor.bind(Object);
+  const prototype = Object.getPrototypeOf.bind(Object);
+  const apply = Reflect.apply.bind(Reflect);
+  // eslint-disable-next-line @typescript-eslint/unbound-method -- native getterを固定し捕捉済みreceiverへReflect.applyする。
+  const activationGetter = descriptor(view.Navigator.prototype, 'userActivation')?.get;
+  if (activationGetter === undefined) return () => false;
+  try {
+    const activation: unknown = apply(activationGetter, view.navigator, []);
+    if (typeof activation !== 'object' || activation === null) return () => false;
+    // eslint-disable-next-line @typescript-eslint/unbound-method -- native getterを固定し捕捉済みreceiverへReflect.applyする。
+    const hasBeenActive = descriptor(prototype(activation), 'hasBeenActive')?.get;
+    if (hasBeenActive === undefined) return () => false;
+    return () => {
+      try {
+        return apply(hasBeenActive, activation, []) === true;
+      } catch {
+        return false;
+      }
+    };
+  } catch {
+    return () => false;
+  }
+}
+
 /** learner codeより先に捕捉したDOM APIだけでboundedな教材操作を実行する。 */
 export function createTrustedInteractionExecutor(
   target: Document,
@@ -311,9 +340,11 @@ function createRuntimeState(
   ) => (action: unknown) => TrustedInteractionExecutionResult,
   installCurrentTarget: (target: Document, onUnsupported: () => void) => boolean,
   installSubmit: (target: Document, isLearnerExecuting: () => boolean) => SubmitObservation | null,
+  createInteractionReader: (target: Document) => () => boolean,
 ) {
   'use strict';
   const version = config.protocolVersion;
+  const readPreviewInteraction = createInteractionReader(document);
   const maximumCheckpoints = 100_000;
   const maximumDurationMs = 250;
   const maximumFunctionDepth = 32;
@@ -734,7 +765,8 @@ function createRuntimeState(
     ];
     const isInteraction = message.type === 'javascript.interact';
     const isObservation = message.type === 'javascript.observe';
-    const reportsState = isInteraction || isObservation;
+    const isReadiness = message.type === 'javascript.preview-interaction';
+    const reportsState = isInteraction || isObservation || isReadiness;
     const expected = (
       reportsState ? [...expectedCommon, 'frameGeneration'] : expectedCommon
     ).sort();
@@ -756,6 +788,19 @@ function createRuntimeState(
       usedRequestIds.has(message.requestId) ||
       usedTokens.has(message.oneTimeToken)
     ) {
+      return;
+    }
+    if (isReadiness) {
+      usedRequestIds.add(message.requestId);
+      usedTokens.add(message.oneTimeToken);
+      if (usedRequestIds.size > maximumUsedRequests) return;
+      send(
+        'javascript.preview-interaction-complete',
+        message.requestId,
+        message.oneTimeToken,
+        readPreviewInteraction(),
+        true,
+      );
       return;
     }
     if (reportsState) {
@@ -908,7 +953,7 @@ export function createJavaScriptExecutionSource(
   return [
     '(function(){"use strict";',
     `(${scrubJavaScriptBootstrapSecrets.toString()})(document);`,
-    `const ${input.guardIdentifier}=(${createRuntimeState.toString()})(${config},(${createConsoleFormatter.toString()})(${consoleLimits}),${consoleLimits},(${createTrustedInteractionExecutor.toString()}),(${installCurrentTargetGuard.toString()}),(${installSubmitGuard.toString()}));`,
+    `const ${input.guardIdentifier}=(${createRuntimeState.toString()})(${config},(${createConsoleFormatter.toString()})(${consoleLimits}),${consoleLimits},(${createTrustedInteractionExecutor.toString()}),(${installCurrentTargetGuard.toString()}),(${installSubmitGuard.toString()}),(${createPreviewInteractionReader.toString()}));`,
     `(${lockDownJavaScriptDynamicCodeCapabilities.toString()})(globalThis);`,
     `${input.guardIdentifier}.run(function(){"use strict";`,
     input.instrumentedCode,
@@ -946,7 +991,7 @@ export function createJavaScriptModuleExecutionSource(
   return [
     '(function(){"use strict";',
     `(${scrubJavaScriptBootstrapSecrets.toString()})(document);`,
-    `const runtime=(${createRuntimeState.toString()})(${config},(${createConsoleFormatter.toString()})(${consoleLimits}),${consoleLimits},(${createTrustedInteractionExecutor.toString()}),(${installCurrentTargetGuard.toString()}),(${installSubmitGuard.toString()}));`,
+    `const runtime=(${createRuntimeState.toString()})(${config},(${createConsoleFormatter.toString()})(${consoleLimits}),${consoleLimits},(${createTrustedInteractionExecutor.toString()}),(${installCurrentTargetGuard.toString()}),(${installSubmitGuard.toString()}),(${createPreviewInteractionReader.toString()}));`,
     `Object.defineProperty(globalThis,${runtimeKey},{configurable:true,enumerable:false,writable:false,value:runtime});`,
     `const plan=${modulePlan};`,
     'const NativeBlob=Blob;',

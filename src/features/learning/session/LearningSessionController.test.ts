@@ -1702,3 +1702,87 @@ describe('LearningSessionController', () => {
     expect(second).toHaveBeenCalledOnce();
   });
 });
+
+describe('JavaScript Preview interaction readiness', () => {
+  function focusExercise(): Exercise {
+    return exercise({
+      runtime: {
+        kind: 'javascript',
+        entryFile: 'main.js',
+        sourceType: 'script',
+        capabilityProfile: 'core',
+        primaryOutput: 'preview',
+      },
+      interactionScenarios: [
+        {
+          id: 'native-focus',
+          label: 'native focus',
+          actions: [{ id: 'start', kind: 'click', selector: '#start' }],
+          checkpoints: [
+            {
+              id: 'focused',
+              afterActionId: 'start',
+              expectations: [{ id: 'focus', kind: 'focused', selector: '#next' }],
+            },
+          ],
+        },
+      ],
+    });
+  }
+
+  it('未準備は学習判定と履歴を一切書かず、実操作後のretryは通常判定へ進む', async () => {
+    const runtime = runnerHarness();
+    const readiness = vi.fn().mockResolvedValue(false);
+    const persistence = repositoryHarness();
+    const validation = validatorHarness();
+    const controller = new LearningSessionController(
+      controllerInput({
+        exercise: focusExercise(),
+        runner: {
+          ...runtime.runner,
+          languageId: 'javascript',
+          checkPreviewInteractionReady: readiness,
+        },
+        repository: persistence.repository,
+        validator: validation.validator,
+      }),
+    );
+    await expect(controller.validateNow()).rejects.toThrow('プレビュー内');
+    expect(runtime.render).not.toHaveBeenCalled();
+    expect(validation.validate).not.toHaveBeenCalled();
+    expect(persistence.putDraft).not.toHaveBeenCalled();
+    expect(controller.getLastValidationBatch()).toEqual([]);
+    expect(controller.getSnapshot().validationHistory).toEqual([]);
+    readiness.mockResolvedValue(true);
+    await expect(controller.validateNow()).resolves.toMatchObject({ status: 'pass' });
+    expect(validation.validate).toHaveBeenCalledTimes(1);
+    expect(persistence.putDraft).toHaveBeenCalled();
+    await controller.dispose();
+  });
+
+  it('focus要求がないJS課題ではPreview実操作を要求しない', async () => {
+    const runtime = runnerHarness();
+    const readiness = vi.fn().mockResolvedValue(false);
+    const controller = new LearningSessionController(
+      controllerInput({
+        exercise: exercise({
+          runtime: {
+            kind: 'javascript',
+            entryFile: 'main.js',
+            sourceType: 'script',
+            capabilityProfile: 'core',
+            primaryOutput: 'preview',
+          },
+        }),
+        runner: {
+          ...runtime.runner,
+          languageId: 'javascript',
+          checkPreviewInteractionReady: readiness,
+        },
+      }),
+    );
+    await expect(controller.validateNow()).resolves.toMatchObject({ status: 'pass' });
+    expect(readiness).not.toHaveBeenCalled();
+    await controller.dispose();
+  });
+});

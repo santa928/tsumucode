@@ -29,9 +29,24 @@ test('Focusを往復して、Reset後の再編集・判定・保存を保つ', a
     exerciseId: 'javascript-ch11-l02-e01',
     title: '開始時は回答欄へ、戻る時は開始ボタンへ',
   });
+  const beforeReadiness = await readStoredProgress(page);
   await page.getByRole('button', { name: '判定する', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'あと一歩', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: '閉じる', exact: true }).click();
+  await expect(
+    page.getByText('プレビュー内のボタンを一度操作して、もう一度採点してください。', {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'あと一歩', exact: true })).toHaveCount(0);
+  const afterReadiness = await readStoredProgress(page);
+  expect(afterReadiness.drafts.map((draft) => draft['validationHistory'])).toEqual(
+    beforeReadiness.drafts.map((draft) => draft['validationHistory']),
+  );
+  expect(afterReadiness.drafts.map((draft) => draft['lastPassingSnapshots'])).toEqual(
+    beforeReadiness.drafts.map((draft) => draft['lastPassingSnapshots']),
+  );
+  expect(afterReadiness.courses.map((course) => course['lessons'])).toEqual(
+    beforeReadiness.courses.map((course) => course['lessons']),
+  );
   const source = await readFile(ROOT + '/solution/script.js', 'utf8');
   await replaceAndSave(page, source);
   await refreshPreview(page);

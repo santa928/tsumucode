@@ -185,6 +185,8 @@ export interface RunnerAdapter {
   render(input: RunnerInput): Promise<RunnerRenderResult>;
   /** 対応Runnerだけが現在の同一frameへbounded Interactionを1件適用する。 */
   interact?(request: InteractionRequest): Promise<InteractionResult>;
+  /** 現在iframeの本物の利用者操作を確認する。採点値は変更しない。 */
+  checkPreviewInteractionReady?(): Promise<boolean>;
   /** 描画済みの同一 session・revision を前提に DOM を観測し、学習コードを変更せず snapshot を返す。 */
   requestSnapshot(request: SnapshotRequest): Promise<PreviewSnapshot>;
   /** 旧実行を中断しframe・通信・実行資源を解放する。解析器など再利用資源は残し、次回はprepareを行う。 */
@@ -235,6 +237,8 @@ export interface DomObservationPort {
   prepare(frame: HTMLIFrameElement): Promise<void>;
   requestSnapshot(request: SnapshotRequest): Promise<PreviewSnapshot>;
   interact?(request: InteractionRequest): Promise<InteractionResult>;
+  /** 現在iframeの本物の利用者操作を確認する。採点値は変更しない。 */
+  checkPreviewInteractionReady?(): Promise<boolean>;
 }
 
 /** DOMを持たない実行Adapterも実装可能な最小port。 */

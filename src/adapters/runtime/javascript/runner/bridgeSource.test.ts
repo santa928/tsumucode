@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   createTrustedInteractionExecutor,
+  createPreviewInteractionReader,
   createJavaScriptModuleExecutionSource,
   createJavaScriptExecutionSource,
   lockDownJavaScriptDynamicCodeCapabilities,
@@ -223,5 +224,23 @@ describe('JavaScript Module Blob lifecycle', () => {
     expect(source).toContain('functionDepth > maximumFunctionDepth');
     expect(source).toContain('const objectKeys = Object.keys.bind(Object);');
     expect(source).toContain('const keys = objectKeys(message).sort();');
+  });
+});
+
+describe('native Preview activation reader', () => {
+  it('learnerのnavigator own getterとsynthetic click/keyboardを操作事実にしない', () => {
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    const child = frame.contentDocument!;
+    const read = createPreviewInteractionReader(child);
+    Object.defineProperty(child.defaultView!.navigator, 'userActivation', {
+      configurable: true,
+      get: () => ({ hasBeenActive: true }),
+    });
+    child.body.innerHTML = '<button id="start">start</button>';
+    const button = child.getElementById('start') as HTMLButtonElement;
+    button.click();
+    button.dispatchEvent(new child.defaultView!.KeyboardEvent('keydown', { key: 'Enter' }));
+    expect(read()).toBe(false);
   });
 });

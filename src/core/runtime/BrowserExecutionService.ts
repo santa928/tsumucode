@@ -56,6 +56,9 @@ export class BrowserExecutionService implements ExecutionService {
       },
       requestSnapshot: runner.requestSnapshot.bind(runner),
       ...(runner.interact === undefined ? {} : { interact: runner.interact.bind(runner) }),
+      ...(runner.checkPreviewInteractionReady === undefined
+        ? {}
+        : { checkPreviewInteractionReady: runner.checkPreviewInteractionReady.bind(runner) }),
     };
   }
 

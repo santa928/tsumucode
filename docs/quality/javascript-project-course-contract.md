@@ -35,3 +35,9 @@ Validator hitは実行・採点成功を意味しない。Ruleparse、diagnostic
 編集権の自己再確認中（yielding／claiming＋revalidating）は、既存の再確認statusと同じ条件でCodeMirrorをreadOnlyへ接続する。同じdocument・selection・File別履歴と読取/コピーのfocusを保持し、所有権復帰後に入力を再開する。CodeMirrorのDOM contenteditable、aria-readonly、state.readOnlyを一致させ、onChangeの書込guardとlease取得/喪失の契約は維持する。この境界の補正は、以前の全UI入力失敗の実原因が確定したという主張ではない。
 
 小画面ではJavaScript作品の編集・Script実行を開始せず、完成済みでも既存の「PCで演習を開く」案内とURLコピー・端末データ持出し導線を維持する。専用read-only Previewの登録有無を生成前に確認し、未対応を端末保存の読込エラーへ誤変換しない。登録済みHTML/CSSのscriptless完成Previewと保存済みSource・Snapshot・履歴・完成状態は変えない。
+
+## Previewの操作準備と制作Sourceの解析
+
+native focusを確認する制作課題では、採点前に可視Previewのボタンを一度クリックするか、Tabで移動してEnter/Spaceで操作する。未操作なら準備案内を表示し、採点結果・完了状態・採点履歴は書き込まない。通常の編集保存は続ける。同じiframeの再描画は確認済み操作を保持し、iframe交換・切断・停止・予期しない遷移では準備を再確認する。DOMの偽イベントや学習コードの自己申告を準備完了と扱わない。
+
+制作課題のproject profileは、Source要件で使うnamed import/exportのmodule-boundary factを収集する。通常のObject stateやDOM描画の参照を、消費しない初期教材向けfactの件数に加えて拒否しない。現6制作課題が必要とするloadQuestions importの証拠と、本物のmodule factの各file/全workspace256件上限を保持する。標準教材・Consoleの教材fact、構文とAST/安全policy、実行guard、解析期限、Source512とworkspaceのサイズ上限は変更しない。

@@ -9,7 +9,7 @@ import { CONSOLE_LIMITS } from './consoleFormatter';
 import type { CurrentTargetFailure } from './currentTargetGuard';
 import { executionDiagnostics } from './executionDiagnostics';
 
-export const JAVASCRIPT_PROTOCOL_VERSION = 4 as const;
+export const JAVASCRIPT_PROTOCOL_VERSION = 5 as const;
 
 const MAX_ID_LENGTH = 256;
 const MAX_TOKEN_LENGTH = 512;
@@ -81,8 +81,22 @@ interface JavaScriptInteractionEnvelope {
   readonly payload: JavaScriptInteractionPayload;
 }
 
+interface JavaScriptPreviewInteractionEnvelope {
+  readonly version: typeof JAVASCRIPT_PROTOCOL_VERSION;
+  readonly type: 'javascript.preview-interaction-complete';
+  readonly exerciseSessionId: string;
+  readonly executionRevision: number;
+  readonly frameGeneration: number;
+  readonly requestId: string;
+  readonly oneTimeToken: string;
+  readonly payload: boolean;
+}
+
 export type JavaScriptRuntimeEnvelope =
-  JavaScriptExecutionEnvelope | JavaScriptTimersClearedEnvelope | JavaScriptInteractionEnvelope;
+  | JavaScriptExecutionEnvelope
+  | JavaScriptTimersClearedEnvelope
+  | JavaScriptInteractionEnvelope
+  | JavaScriptPreviewInteractionEnvelope;
 
 export interface JavaScriptExecutionClientOptions {
   readonly scriptFile?: string;
@@ -98,9 +112,12 @@ interface PendingTimerClear {
   readonly timeout: ReturnType<typeof setTimeout>;
 }
 
+type ObservationResult = InteractionResult & { readonly previewInteractionReady?: boolean };
+
 interface PendingInteraction {
+  readonly readiness: boolean;
   readonly token: string;
-  readonly resolve: (result: InteractionResult) => void;
+  readonly resolve: (result: ObservationResult) => void;
   readonly reject: (error: Error) => void;
   readonly timeout: ReturnType<typeof setTimeout>;
 }
@@ -256,7 +273,10 @@ export function isJavaScriptRuntimeEnvelope(value: unknown): value is JavaScript
   ) {
     return false;
   }
-  if (value.type === 'javascript.interaction-complete') {
+  if (
+    value.type === 'javascript.interaction-complete' ||
+    value.type === 'javascript.preview-interaction-complete'
+  ) {
     if (
       !hasExactKeys(value, [
         'exerciseSessionId',
@@ -273,6 +293,8 @@ export function isJavaScriptRuntimeEnvelope(value: unknown): value is JavaScript
     ) {
       return false;
     }
+    if (value.type === 'javascript.preview-interaction-complete')
+      return typeof value.payload === 'boolean';
     const payload = value.payload;
     return (
       isRecord(payload) &&
@@ -385,12 +407,31 @@ export class JavaScriptExecutionClient {
       this.#executionReject = undefined;
       return;
     }
-    if (message.type === 'javascript.interaction-complete') {
+    if (
+      message.type === 'javascript.interaction-complete' ||
+      message.type === 'javascript.preview-interaction-complete'
+    ) {
       if (message.frameGeneration !== this.#frameGeneration) return;
       const pending = this.#pendingInteractions.get(message.requestId);
-      if (pending === undefined || pending.token !== message.oneTimeToken) return;
+      if (
+        pending === undefined ||
+        pending.token !== message.oneTimeToken ||
+        pending.readiness !== (message.type === 'javascript.preview-interaction-complete')
+      )
+        return;
       clearTimeout(pending.timeout);
       this.#pendingInteractions.delete(message.requestId);
+      if (message.type === 'javascript.preview-interaction-complete') {
+        pending.resolve({
+          exerciseSessionId: this.exerciseSessionId,
+          executionRevision: this.executionRevision,
+          frameGeneration: message.frameGeneration,
+          requestId: message.requestId,
+          console: [],
+          previewInteractionReady: message.payload,
+        });
+        return;
+      }
       if (message.payload.error !== null) {
         pending.reject(
           new Error(
@@ -479,11 +520,19 @@ export class JavaScriptExecutionClient {
     return this.#requestObservation(request, null);
   }
 
+  /** 本物のPreview操作だけを、採点操作なしで認証済み観測として読む。 */
+  async checkPreviewInteractionReady(
+    request: Omit<InteractionRequest, 'action'>,
+  ): Promise<boolean> {
+    return (await this.#requestObservation(request, null, true)).previewInteractionReady === true;
+  }
+
   /** strict actionまたはnullだけを、使い捨てtokenとframe identityに結ぶ。 */
   #requestObservation(
     request: Omit<InteractionRequest, 'action'>,
     action: InteractionRequest['action'] | null,
-  ): Promise<InteractionResult> {
+    readiness = false,
+  ): Promise<ObservationResult> {
     if (this.#disposed) return Promise.reject(new Error('JavaScript execution disposed'));
     if (this.#executionState !== 'resolved') {
       return Promise.reject(new Error('JavaScript execution is not ready'));
@@ -510,20 +559,24 @@ export class JavaScriptExecutionClient {
     }
     this.#usedTokens.add(token);
     let pending!: PendingInteraction;
-    const promise = new Promise<InteractionResult>((resolve, reject) => {
+    const promise = new Promise<ObservationResult>((resolve, reject) => {
       const timeout = setTimeout(() => {
         if (this.#pendingInteractions.get(request.requestId) !== pending) return;
         this.#pendingInteractions.delete(request.requestId);
         reject(new Error('Interaction response timeout'));
       }, this.#timeoutMs);
-      pending = { token, resolve, reject, timeout };
+      pending = { token, resolve, reject, timeout, readiness };
       this.#pendingInteractions.set(request.requestId, pending);
     });
     try {
       this.#sourceWindow.postMessage(
         {
           version: JAVASCRIPT_PROTOCOL_VERSION,
-          type: action === null ? 'javascript.observe' : 'javascript.interact',
+          type: readiness
+            ? 'javascript.preview-interaction'
+            : action === null
+              ? 'javascript.observe'
+              : 'javascript.interact',
           exerciseSessionId: this.exerciseSessionId,
           executionRevision: this.executionRevision,
           frameGeneration: this.#frameGeneration,

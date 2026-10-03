@@ -40,7 +40,11 @@ import { createCodeMirrorEditor } from '../editor/createCodeMirrorEditor';
 import { LearningToolRail } from '../layout/LearningToolRail';
 import { LearningViewportShell } from '../layout/LearningViewportShell';
 import { LearningSessionController, StaleExecutionError, useLearningSession } from '../session';
-import { ExecutionNotGradableError } from '../session/LearningSessionController';
+import {
+  ExecutionNotGradableError,
+  PreviewInteractionRequiredError,
+  requiresPreviewInteraction,
+} from '../session/LearningSessionController';
 import { learningRuntimeServices } from '../runtimeServices';
 import { useAdjacentLessonPrefetch } from '../useAdjacentLessonPrefetch';
 import { PortableHtmlExport } from '../portable/PortableHtmlExport';
@@ -531,7 +535,8 @@ function EditableSession({
           } catch (error: unknown) {
             if (isCurrentOperation(generation) && !(error instanceof StaleExecutionError)) {
               setOperationError(
-                error instanceof ExecutionNotGradableError
+                error instanceof ExecutionNotGradableError ||
+                  error instanceof PreviewInteractionRequiredError
                   ? error.message
                   : operationErrorMessage('preview'),
               );
@@ -702,7 +707,8 @@ function EditableSession({
           setOperationError(
             error instanceof StaleExecutionError
               ? '編集中の内容が変わりました。最新のコードでもう一度判定してください。'
-              : error instanceof ExecutionNotGradableError
+              : error instanceof ExecutionNotGradableError ||
+                  error instanceof PreviewInteractionRequiredError
                 ? error.message
                 : operationErrorMessage('validate'),
           );
@@ -1092,17 +1098,26 @@ function EditableSession({
                   ) : null}
                 </div>
               ) : (
-                <PreviewFrame
-                  key={`${course.id}:${exercise.id}`}
-                  onReady={preparePreview}
-                  consoleEnabled={exercise.runtime !== undefined}
-                  primaryOutput={exercise.runtime?.primaryOutput ?? 'preview'}
-                  consoleRecords={state.runtimeOutput?.console ?? []}
-                  consoleFreshness={state.runtimeOutput?.freshness ?? 'current'}
-                  {...(state.runtimeOutput === undefined
-                    ? {}
-                    : { consoleUpdateSequence: state.runtimeOutput.updateSequence })}
-                />
+                <>
+                  {requiresPreviewInteraction(
+                    validationTargets.map(({ exercise: target }) => target),
+                  ) ? (
+                    <p>
+                      プレビュー内のボタンをクリックするか、Tabで移動してEnterまたはSpaceで操作してから採点してください。
+                    </p>
+                  ) : null}
+                  <PreviewFrame
+                    key={`${course.id}:${exercise.id}`}
+                    onReady={preparePreview}
+                    consoleEnabled={exercise.runtime !== undefined}
+                    primaryOutput={exercise.runtime?.primaryOutput ?? 'preview'}
+                    consoleRecords={state.runtimeOutput?.console ?? []}
+                    consoleFreshness={state.runtimeOutput?.freshness ?? 'current'}
+                    {...(state.runtimeOutput === undefined
+                      ? {}
+                      : { consoleUpdateSequence: state.runtimeOutput.updateSequence })}
+                  />
+                </>
               )}
             </div>
           </div>
