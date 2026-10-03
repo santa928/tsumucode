@@ -70,6 +70,20 @@ describe('compileContent output safety', () => {
       await cp(path.resolve('content/javascript'), path.join(sourceRoot, 'javascript'), {
         recursive: true,
       });
+      // draft境界のFixtureを、実教材の公開状態から独立させる。
+      const draftCoursePath = path.join(sourceRoot, 'javascript/course.yaml');
+      const draftCourseSource = await readFile(draftCoursePath, 'utf8');
+      expect(draftCourseSource.match(/^publicationStatus: (?:draft|published)$/gmu)).toHaveLength(
+        1,
+      );
+      await writeFile(
+        draftCoursePath,
+        draftCourseSource.replace(
+          /^publicationStatus: (?:draft|published)$/mu,
+          'publicationStatus: draft',
+        ),
+        'utf8',
+      );
 
       const summary = await compileContent({ sourceRoot, outputRoot, checkOnly: false });
       const javaScriptEntry = summary.catalog.courses.find(({ id }) => id === 'javascript');
