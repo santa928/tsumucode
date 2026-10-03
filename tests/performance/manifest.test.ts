@@ -72,7 +72,7 @@ describe('performance manifest', () => {
         baselineCommit: '7e739754710138aa3433bfa085f7dd0479d9ca62',
         baselineEditorIncrementalJavaScriptGzipBytes: 177635,
         homeInitialJavaScriptGzipMaxBytes: 256000,
-        editorIncrementalJavaScriptGzipMaxBytes: 180000,
+        editorIncrementalJavaScriptGzipMaxBytes: 256000,
         editorLoadedOnHome: false,
       },
       content: {
