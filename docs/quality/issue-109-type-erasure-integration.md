@@ -1,6 +1,6 @@
 # 型消去・実行時失敗Lessonの通常draft接続
 
-2026-10-05。対象はIssue #109。基点はmain `eee05c3`（PR #105統合後）。PR #79の原稿を通常Lessonへ登録するローカル実装で、独立内容/コードレビュー・統合・公開の完了記録ではない。
+2026-10-05。対象はIssue #109。基点はmain `eee05c3`（PR #105統合後）。PR #79の原稿を通常Lessonへ登録するローカル実装と独立内容/コードレビューを完了した。統合・公開の完了記録ではない。
 
 ## 登録と保持する契約
 
@@ -28,16 +28,24 @@ revisionを`2026-10-01.1`から`2026-10-05.1`へ移行する。既存IDと教材
 
 初回登録検査は次Lesson参照の欠落とcode-preview図の不足を検出し、実装へ補った。Browser検証では操作日時の不変・実行時失敗の履歴不変を誤って期待したテストが失敗し、製品の進捗/診断保存契約を確認して上記の検証へ修正した。これらの途中失敗を最終成功として数えていない。
 
-## レビュー・統合前に残る条件
+## 独立内容・コードレビューと統合前の条件
+
+Reviewer `review_issue109`が固定HEAD `c60a25b1e08b123e2b104a7e3fb904fc4370bbe1` / base `eee05c3`の全差分・対象教材原文・関連schema/既存実行保存経路を独立レビューし、内容・コードを承認した。必須指摘0件。01-01の登録順序/集計への影響、01-02の次Lesson参照追加、01-03の全Slide/練習・演習/Hint・Starter/Solution/9Fixture・追加図・通常登録が対象。
+
+各範囲のaccuracy/goalExerciseAlignment/decisionはapproved、unexplainedTerms/hintLeakageは0。03の固定表示/推論の合格を動作確認に限定する条件を含めて目標整合を承認した。ReviewerはExercise bytes一致と既存画像3点（PC s01、390px図全体、390px s03練習欄）を確認し、Docker実行は上記の有効証拠に依拠した。Reviewerによる再実行・hash再計算・初心者理解/実機観察ではない。追加の全Content/全Browser再実行は要求していない。
 
 Lesson directory hash（既存`computeLessonSourceHash`でDocker算出）:
 
 | Lesson | hash                                                               | レビュー状態                                 |
 | ------ | ------------------------------------------------------------------ | -------------------------------------------- |
 | 01-01  | `b37eaea98f0d48c57403ec2137c5781c69f2127d6666f23a2321fbcef5eb052c` | 既存内容承認と一致                           |
-| 01-02  | `847997ca34137403b0f1463f40044f06dca69c4a0bfa5fdf72500b1e89eed56b` | 次Lesson参照追加の限定レビュー待ち           |
-| 01-03  | `3daee5efafaadc32264122a4c3ed320d2d26dc99a1b2426ef84225ff8f4d42ce` | 通常登録・原稿内容・追加図の独立レビュー待ち |
+| 01-02  | `847997ca34137403b0f1463f40044f06dca69c4a0bfa5fdf72500b1e89eed56b` | 次Lesson参照追加の限定レビュー承認           |
+| 01-03  | `3daee5efafaadc32264122a4c3ed320d2d26dc99a1b2426ef84225ff8f4d42ce` | 原稿内容・追加図・通常登録の独立レビュー承認 |
 
-既存Review Gateを確認し、02のstale hashと03のReview欠落で停止することを確認した。内容承認を捏造せず、`content-review-typescript.yaml`は変更していない。統合前には今回の教材/コード差分の独立レビュー、適切な台帳更新と必要CIを回収する。リモートCIは未実行、PRは未作成。main push/merge・Issue投稿/close・公開は今回の許可対象外で、実施していない。
+最初のReview Gateは02のstale hashと03のReview欠落で停止した。上記の独立承認を得てから02のhashとReviewer/根拠を更新し、03のReviewを追加した。01-01の既存承認は変更せず、releaseStatus/verifiedSourceCommit/canonicalDistSha256はdraftのまま保持する。
+
+台帳更新後の既存`npm run content:review`は成功（3Course・106Lesson、stale hashes 0、rejected 0）。これは既存承認とSourceの整合検査であり、106Lessonの新たな独立レビューや学習操作の再実行ではない。Reviewerは台帳と本記録の差分も確認し、実質的な誤記0件で承認した。
+
+通常CIの必須境界では上記のcompile・対象TS test・型/build/chunks・TS出典成功を再利用し、未確認だった全体Lintと変更したTS1章のchapter検査を追加して成功した。`npm run check`を単一コマンドで再実行した結果ではなく、通常の`test:changed`が教材差分に補う全Contentの選択を今回新たに全走した結果でもない。ユーザー指定に沿って変更関連の成功証拠を保持し、未変更の全コース学習・全Browser・性能・公開Gateは追加していない。リモートCIは未実行、PRは未作成で、統合前の必要CIと最終HEAD確認を残す。main push/merge・Issue投稿/close・公開は今回の許可対象外で、実施していない。
 
 #109の受入チェックを完了済みへ更新していない。次の実装候補は#110のQuestion/interface型条件で、別タスクとする。全TS制作/受入、Local実toolchainの完成、Home/Path公開、初心者/実機の観察、全公開Gateは未完として保持する。

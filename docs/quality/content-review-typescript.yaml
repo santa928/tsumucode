@@ -16,12 +16,31 @@ lessons:
     notes: PR78の同じPro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEAD694adabc94fa7316d15d0eaf769a574ab3fed1deの教材原文・Course順序/前提/初版進捗・用語初出/概念前提・s03追加図・推論profile・配信境界を独立確認し内容承認。CodexのPR77による通常13fixture/掲載例と、同一Exercise bytesを使ったPR78の実Chromium連続UI/保存・2幅画像目視の成功記録に基づくexamplesExecuted。Proによる実行/画像再目視/hash独立再計算、人の初心者試用/実機/全Course完成/公開受入を意味しない。releaseStatusとverifiedSourceCommitはdraftのまま保持する。
   - lessonId: typescript-ch01-l02
     authorId: tsumucode-typescript-authoring
-    reviewerId: astra-pro-independent-review
-    sourceHash: c2fc69f06c7cd24cbdb0ccc7b462097856f5aa47001ff79c3f6caec186022f8a
+    reviewerId: review_issue109
+    sourceHash: 847997ca34137403b0f1463f40044f06dca69c4a0bfa5fdf72500b1e89eed56b
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: PR78の同じPro Chat（6ab86f95-74c8-83e8-b981-907f01982792）でHEAD694adabc94fa7316d15d0eaf769a574ab3fed1deの教材原文・01-01前提への接続・型注釈の初出/概念・s01追加図・注釈profile・配信境界を独立確認し内容承認。CodexのPR75による通常12fixture/掲載例と、同一Exercise bytesを使ったPR78の実Chromium連続UI/保存・2幅画像目視の成功記録に基づくexamplesExecuted。Proによる実行/画像再目視/hash独立再計算、人の初心者試用/実機/全Course完成/公開受入を意味しない。releaseStatusとverifiedSourceCommitはdraftのまま保持する。
+    notes: >-
+      PR78のPro Chat（6ab86f95-74c8-83e8-b981-907f01982792）によるHEAD694adabc94fa7316d15d0eaf769a574ab3fed1deの教材原文・前提・型注釈初出/概念・s01図・注釈profile・配信境界の承認を保持。
+      Reviewer review_issue109がbase eee05c3 / HEAD c60a25b1e08b123e2b104a7e3fb904fc4370bbe1で01-02の次Lesson参照追加と03への接続、通常登録・順序/前提・集計/revision移行・用語/概念・配信境界を独立レビューし承認。
+      既存PR75の12fixture/掲載例、同一Exercise bytesのPR78の通常UI/保存に加え、#109の通常01→02操作/合格/再読込成功に基づくexamplesExecuted。
+      Reviewerによる再実行/hash再計算、初心者/実機/全TS完成/公開受入を意味しない。releaseStatusとverifiedSourceCommitはdraftのまま保持する。
+  - lessonId: typescript-ch01-l03
+    authorId: tsumucode-typescript-authoring
+    reviewerId: review_issue109
+    sourceHash: 3daee5efafaadc32264122a4c3ed320d2d26dc99a1b2426ef84225ff8f4d42ce
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: >-
+      Reviewer review_issue109がbase eee05c3 / HEAD c60a25b1e08b123e2b104a7e3fb904fc4370bbe1で01-03の全Slide/練習・Exercise/Hint・Starter/Solution/9Fixture・追加図・通常登録を独立レビューし承認。
+      型推論/注釈からの前提、型注釈の消去と代入/表示/throwの保持、型と実行失敗の区別、固定表示の合格を動作確認に限定する目標整合を確認。全15トピックの後続対応、未承認の全量/TS予算案、現行性能上限と非対象を維持。
+      掲載例の既存Docker15件、原稿とbyte一致の9Fixture実Worker/Runner/Validator証拠、#109の通常UIで型失敗未採点・表示後throw不合格・未達・Reset・修正後合格/保存再読込、axe/Keyboardと画像目視成功に基づくexamplesExecuted。
+      Reviewerは差分/原文/既存実行保存経路を読解し、Exercise bytes一致と画像3点を確認。ReviewerによるDocker再実行/hash再計算、初心者/実機/全TS完成/公開受入を意味しない。03の動作合格を型理解の証明へ拡張せず、releaseStatusとverifiedSourceCommitはdraftのまま保持する。
