@@ -4,27 +4,36 @@ entries:
     term: interface
     definition: オブジェクトのプロパティの名前と型を書き、形に名前を付ける書き方。値を作るものではない。
     firstSlideId: typescript-ch02-l01-s01
-    relatedIds: [property, type-annotation, type-alias]
+    relatedIds:
+      - property
+      - type-annotation
+      - type-alias
   - id: string-array
     term: string[]
     definition: 文字列を要素に持つ配列の型。配列の長さや正答位置の範囲を保証するものではない。
     firstSlideId: typescript-ch02-l01-s01
-    relatedIds: [string, interface]
+    relatedIds:
+      - string
+      - interface
   - id: property
     term: プロパティ
     definition: オブジェクトの中の項目。ここでは問題文・選択肢・正答位置の名前と値を持つ。
     firstSlideId: typescript-ch02-l01-s01
-    relatedIds: [interface]
+    relatedIds:
+      - interface
   - id: type-alias
     term: type alias
     definition: typeを使って型に名前を付ける書き方。interfaceと同じオブジェクトの形も表せる。
     firstSlideId: typescript-ch02-l01-s01
-    relatedIds: [interface]
+    relatedIds:
+      - interface
   - id: array-at
     term: .at()
     definition: 配列の指定した位置の要素を読むメソッド。ここでは0から数える整数の位置を使い、該当する要素がないとundefinedになる。
     firstSlideId: typescript-ch02-l01-s04
-    relatedIds: [string-array, number]
+    relatedIds:
+      - string-array
+      - number
   - id: typescript
     term: TypeScript
     definition: JavaScriptに型の確認を加えた言語。
@@ -101,3 +110,49 @@ entries:
     firstSlideId: typescript-ch01-l03-s03
     relatedIds:
       - throw
+  - id: union
+    term: union
+    definition: 複数の型のどれかを受け取る型。|でつなぎ、どの形か確認して使う。
+    firstSlideId: typescript-ch03-l01-s01
+    relatedIds:
+      - literal
+      - narrowing
+  - id: literal
+    term: literal
+    definition: 文字列などの特定の値を、そのまま型として限定する書き方。
+    firstSlideId: typescript-ch03-l01-s01
+    relatedIds:
+      - union
+  - id: narrowing
+    term: narrowing
+    definition: 条件で値を確認し、その場所で扱える型を狭めること。
+    firstSlideId: typescript-ch03-l01-s03
+    relatedIds:
+      - union
+      - optional
+  - id: parameter-annotation
+    term: 引数の型注釈
+    definition: 関数が受け取る引数の名前の後ろに型を書くこと。
+    firstSlideId: typescript-ch03-l01-s02
+    relatedIds:
+      - type-annotation
+  - id: optional
+    term: optional
+    definition: 項目を省略できること。項目名の後ろに?を書く。
+    firstSlideId: typescript-ch03-l02-s01
+    relatedIds:
+      - undefined
+      - interface
+  - id: undefined
+    term: undefined
+    definition: ここでは省略された項目を読んだときの値。文字列の空文字とは異なる。
+    firstSlideId: typescript-ch03-l02-s01
+    relatedIds:
+      - optional
+  - id: string-length
+    term: .length
+    definition: 文字列の長さを読むプロパティ。この教材の「見る」は2、空文字は0。
+    firstSlideId: typescript-ch03-l02-s02
+    relatedIds:
+      - string
+      - property

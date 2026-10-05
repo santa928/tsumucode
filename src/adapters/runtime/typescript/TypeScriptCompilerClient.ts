@@ -2,12 +2,17 @@ import type { TypeScriptCompileResult } from './compileTypeScript';
 import type { ScoreNumberAnnotationResult } from './checkScoreNumberAnnotation';
 import type { ScoreNumberInferenceResult } from './checkScoreNumberInference';
 import type { QuestionInterfaceResult } from './checkQuestionInterface';
+import type {
+  ConditionalLearningProfile,
+  ConditionalLearningResult,
+} from './checkConditionalLearning';
 import {
   isTypeScriptCompileInput,
   isTypeScriptCompileResult,
   isScoreNumberAnnotationResult,
   isScoreNumberInferenceResult,
   isQuestionInterfaceResult,
+  isConditionalLearningResult,
   type CompilerWorkerRequest,
   type TypeScriptCompileInput,
 } from './workerContract';
@@ -96,6 +101,19 @@ export class TypeScriptCompilerClient {
     }));
   }
 
+  /** union/optionalの元TSを同世代で検査し、要求したprofileの結果だけを受け取る。 */
+  conditionalCheck(
+    input: TypeScriptCompileInput,
+    profile: ConditionalLearningProfile,
+  ): Promise<ConditionalLearningResult> {
+    return this.#request(
+      input,
+      profile,
+      (value): value is ConditionalLearningResult => isConditionalLearningResult(value, profile),
+      () => ({ status: 'system-error' }),
+    );
+  }
+
   /** 共通の期限・停止機構を維持し、操作ごとの厳密な結果guardだけを切り替える。 */
   #request<T>(
     input: TypeScriptCompileInput,
@@ -103,7 +121,8 @@ export class TypeScriptCompilerClient {
       | 'compile'
       | 'score-number-annotation-v1'
       | 'score-number-inference-v1'
-      | 'question-interface-v1',
+      | 'question-interface-v1'
+      | ConditionalLearningProfile,
     isResult: (value: unknown, snapshot: TypeScriptCompileInput) => value is T,
     failure: () => T,
     invalidInput: () => T = failure,

@@ -1,0 +1,29 @@
+id: typescript-ch03-l02
+kind: standard
+title: ないかもしれない値を確認する
+goal: optional項目を読む前にundefinedを確認し、値がある場合とない場合を分けられる。空文字を欠落と混同しない。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - typescript-ch03-l01
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/typescript-ch03-l02-e01/exercise.yaml
+reflection: 省略された項目とある空文字は別の値。undefinedを確認して読む場所を分け、3例の動作も確かめる。
+glossaryRefs:
+  - optional
+  - undefined
+  - string-length
+  - narrowing
+  - parameter-annotation
+  - interface
+  - property
+  - string
+completion:
+  kind: standard
+  finalSlideId: typescript-ch03-l02-s04
+  requiredExerciseIds:
+    - typescript-ch03-l02-e01

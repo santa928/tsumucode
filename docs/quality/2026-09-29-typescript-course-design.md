@@ -28,7 +28,7 @@ JavaScript最終作品の学習クイズを、型のあるデータ、状態、�
 
 ## 再開時の子タスク対応（2026-10-05）
 
-Issue #109で導入03を接続し、#110でQuestion/interfaceの小教材を追加する登録範囲は2Chapter・4Lesson・16枚・65分のdraftだけ。interfaceの有限型条件と動作のANDを採用し、type aliasも形に名前を付けられることを読む練習で扱う。以下は全15トピックを残タスクへ対応付けた索引であり、27Lesson/595分案やTS固有性能予算の新たな承認を意味しない。
+Issue #109で導入03、#110でQuestion/interface、#111でunion/literalとnarrowing・optional/undefinedの独立2Lessonを接続する登録範囲は3Chapter・6Lesson・24枚・105分のdraft。有限な元TS条件と実動作のANDを採用し、type aliasの役割は読む練習、union/optionalは引数を確認して値を使う練習で扱う。以下は全15トピックを残タスクへ対応付けた索引であり、27Lesson/595分案やTS固有性能予算の新たな承認を意味しない。
 
 | 子Issue | 学習目標と順序                                                                      |
 | ------- | ----------------------------------------------------------------------------------- |

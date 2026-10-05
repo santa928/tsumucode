@@ -1,0 +1,353 @@
+id: typescript-ch03-l02-e01
+kind: standard
+workspaceId: typescript-ch03-l02-e01
+countsTowardStandardExerciseTotal: true
+title: ないかもしれない値を確認する
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: typescript-optional-value
+    minimumLevel: transform
+scaffoldLevel: transform
+runtime:
+  kind: typescript
+  entryFile: main.ts
+  sourceType: module
+  capabilityProfile: core
+  primaryOutput: console
+steps:
+  - id: add-value-guard
+    file: main.ts
+    target: 値を読む前の確認
+    starterAnchor: return feedback.hint.length;
+    change: hintの有無を確認し、あるときだけ長さを読む
+    observe: 型の案内が消え、Consoleに2・ヒントなし・0が順に表示される
+    requiresConceptIds:
+      - typescript-optional-value
+    validationRuleIds:
+      - typescript-ch03-l02-e01-r01
+      - typescript-ch03-l02-e01-r02
+files:
+  - path: main.ts
+    language: typescript
+    source: starter/main.ts
+    editable: true
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+solutionFiles:
+  - path: main.ts
+    language: typescript
+    source: solution/main.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: typescript-ch03-l02-e01-r01
+    label: 型の形と引数の注釈を保ち、分岐で値を取り出す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: typescript-learning
+      file: main.ts
+    assertion:
+      kind: typescript-learning
+      profile: optional-hint-v1
+    feedback:
+      target: 型の形・引数・分岐
+      expected: 引数の値を確認して、それぞれの値を返す
+      nextAction: 型の形と引数の注釈を保ち、値を読める分岐で取り出します。
+    hintId: typescript-ch03-l02-e01-h01
+    relatedSlideId: typescript-ch03-l02-s01
+  - id: typescript-ch03-l02-e01-r02
+    label: すべての実行例で期待した値を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-console
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - level: log
+          text: '2'
+        - level: log
+          text: ヒントなし
+        - level: log
+          text: '0'
+    feedback:
+      target: Consoleのすべての結果
+      expected: 2・ヒントなし・0
+      nextAction: 各実行例がどの分岐を通るかを確認し、固定の値でなく引数の値を使います。
+    hintId: typescript-ch03-l02-e01-h02
+    relatedSlideId: typescript-ch03-l02-s04
+hints:
+  - id: typescript-ch03-l02-e01-h01
+    level: 1
+    title: 確認する値を見つける
+    text: hintがないオブジェクトからhintを読むと、値はundefinedになります。
+    relatedSlideId: typescript-ch03-l02-s01
+  - id: typescript-ch03-l02-e01-h02
+    level: 2
+    title: 読む場所を分ける
+    text: hintがundefinedでない分岐だけでlengthを読み、ない側では案内を返します。空文字はundefinedではありません。
+    relatedSlideId: typescript-ch03-l02-s02
+  - id: typescript-ch03-l02-e01-h03
+    level: 3
+    title: 分岐と戻り値を残す
+    text: if (feedback.hint !==
+      undefined)の中でfeedback.hint.lengthをreturnし、elseで'ヒントなし'をreturnします。
+    relatedSlideId: typescript-ch03-l02-s03
+relatedSlideIds:
+  - typescript-ch03-l02-s01
+  - typescript-ch03-l02-s02
+  - typescript-ch03-l02-s03
+  - typescript-ch03-l02-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: starter
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - typescript-type-error-18048
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/starter.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: solution
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/solution.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: reversed
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/reversed.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: early-return
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/early-return.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: conditional-expression
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/conditional-expression.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: renamed
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/renamed.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: any-escape
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/any-escape.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch03-l02-e01-r01
+  - id: nocheck-escape
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/nocheck-escape.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch03-l02-e01-r01
+  - id: suppressed
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/suppressed.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch03-l02-e01-r01
+  - id: annotation-removed
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - typescript-type-error-7006
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/annotation-removed.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: output-only
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/output-only.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch03-l02-e01-r01
+  - id: fixed-returns
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/fixed-returns.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch03-l02-e01-r01
+      - typescript-ch03-l02-e01-r02
+  - id: assertion
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/assertion.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch03-l02-e01-r01
+  - id: error-after-output
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - javascript-runtime
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/error-after-output.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: truthy-check
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/truthy-check.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch03-l02-e01-r02
+  - id: in-guard
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/in-guard.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: undefined-assignment
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - typescript-type-error-2379
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/undefined-assignment.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: wrong-hint-type
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - typescript-type-error-2322
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/wrong-hint-type.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []

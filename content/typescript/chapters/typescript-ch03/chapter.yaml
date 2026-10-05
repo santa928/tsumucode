@@ -1,0 +1,9 @@
+id: typescript-ch03
+sequence: 2
+title: 状態と値を確認する
+goal: unionの状態とoptional値を確認し、使える値を分岐で取り出せる。
+estimatedMinutes: 40
+kind: standard
+lessonSources:
+  - lessons/typescript-ch03-l01/lesson.yaml
+  - lessons/typescript-ch03-l02/lesson.yaml

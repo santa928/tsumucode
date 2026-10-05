@@ -56,6 +56,44 @@ describe('TypeScriptCompilerClient', () => {
     negativeProbeRejected: true,
   };
 
+  it.each(['union-result-v1', 'optional-hint-v1'] as const)(
+    '分岐の%sで世代と応答profileを照合する',
+    async (profile) => {
+      const worker = new FakeWorker();
+      const client = new TypeScriptCompilerClient({ workerFactory: () => worker });
+      const facts = {
+        typeShapeAccepted: true,
+        parameterAnnotationAccepted: true,
+        branchesUseValue: true,
+        callsAccepted: true,
+        forbiddenEscapeAbsent: true,
+        positiveProbeAccepted: true,
+        negativeProbesRejected: true,
+      };
+      const result = client.conditionalCheck({ ...input, revision: 2 }, profile);
+      expect(worker.request).toMatchObject({
+        kind: 'learning-check',
+        profile,
+        input: { revision: 2 },
+      });
+      expect(isCompilerWorkerRequest(worker.request)).toBe(true);
+      worker.respond({ revision: 1, result: { status: 'ready', profile, facts } });
+      expect(worker.terminate).not.toHaveBeenCalled();
+      worker.respond({ result: { status: 'ready', profile, facts } });
+      await expect(result).resolves.toEqual({ status: 'ready', profile, facts });
+      const other = client.conditionalCheck({ ...input, revision: 3 }, profile);
+      worker.respond({
+        result: {
+          status: 'ready',
+          profile: profile === 'union-result-v1' ? 'optional-hint-v1' : 'union-result-v1',
+          facts,
+        },
+      });
+      await expect(other).resolves.toEqual({ status: 'system-error' });
+      client.dispose();
+    },
+  );
+
   it('Question専用profileで古い世代を無視し、別profileのfactを拒否する', async () => {
     const worker = new FakeWorker();
     const client = new TypeScriptCompilerClient({ workerFactory: () => worker });
