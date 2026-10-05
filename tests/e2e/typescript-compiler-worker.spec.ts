@@ -7,27 +7,34 @@ import type { RunnerInput } from '../../src/core/runtime/contracts';
 import type { ValidationContext } from '../../src/core/validation/contracts';
 import { testServerUrl } from './helpers/testBasePath';
 import { readFileSync } from 'node:fs';
-import { loadAuthoringLessonDraft } from '../../scripts/content/compileCourse';
+import { loadAuthoringCourse, loadAuthoringLessonDraft } from '../../scripts/content/compileCourse';
 
 const annotationFixtures = JSON.parse(
   readFileSync(new URL('../fixtures/typescript-annotation-pilot.json', import.meta.url), 'utf8'),
 ) as { id: string; source: string }[];
 
-for (const learningMode of ['annotation', 'inference', 'erasure'] as const) {
+for (const learningMode of ['annotation', 'inference', 'erasure', 'question'] as const) {
   const contract =
     learningMode === 'erasure'
       ? '型検査・実行時診断・Consoleの契約を区別する'
       : '元TSの型条件と実ConsoleをANDで判定する';
   test(`${learningMode}の製品採点は${contract}`, async ({ page }, testInfo) => {
     test.setTimeout(120_000);
-    const draft = await loadAuthoringLessonDraft(
-      learningMode === 'erasure'
-        ? 'docs/quality/typescript-ch01-l03-draft'
-        : learningMode === 'inference'
-          ? 'docs/quality/typescript-ch01-l01-draft'
-          : 'docs/quality/typescript-ch01-l02-draft',
-      'typescript',
-    );
+    const draft =
+      learningMode === 'question'
+        ? {
+            authoringExercises: (await loadAuthoringCourse('content/typescript')).exercises.filter(
+              ({ id }) => id === 'typescript-ch02-l01-e01',
+            ),
+          }
+        : await loadAuthoringLessonDraft(
+            learningMode === 'erasure'
+              ? 'docs/quality/typescript-ch01-l03-draft'
+              : learningMode === 'inference'
+                ? 'docs/quality/typescript-ch01-l01-draft'
+                : 'docs/quality/typescript-ch01-l02-draft',
+            'typescript',
+          );
     const exercise = draft.authoringExercises[0]!;
     if (exercise.runtime?.kind !== 'typescript') throw new Error('TypeScript runtimeが必要です');
     const harness = new URL('__typescript-annotation-grading', testServerUrl(4174)).href;

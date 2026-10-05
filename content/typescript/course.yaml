@@ -1,10 +1,10 @@
 schemaVersion: 1
 id: typescript
 title: TypeScript はじめの一歩
-description: 型推論と型注釈を得点の更新で確かめ、型の確認と実行時の失敗を区別する導入3教材。
+description: 型推論・型注釈・型消去から、問題データのinterfaceと実行結果を確かめる導入4教材。
 audience: JavaScriptのlet・数値・文字列・Consoleを学んだTypeScript初学者
-estimatedMinutes: 45
-revision: 2026-10-05.1
+estimatedMinutes: 65
+revision: 2026-10-05.2
 runnerId: typescript
 validatorId: typescript
 glossarySource: glossary.yaml
@@ -21,17 +21,20 @@ prerequisites:
   - javascript
 publicationStatus: draft
 expectedTotals:
-  chapters: 1
-  lessons: 3
-  conceptSlides: 10
-  standardExercises: 3
+  chapters: 2
+  lessons: 4
+  conceptSlides: 13
+  standardExercises: 4
   guidedProjectLessons: 0
   capstoneLessons: 0
-  estimatedMinutes: 45
+  estimatedMinutes: 65
 provenanceManifestPath: provenance.yaml
 progressMigrations:
   - fromRevision: 2026-10-01.1
     toRevision: 2026-10-05.1
+    steps: []
+  - fromRevision: 2026-10-05.1
+    toRevision: 2026-10-05.2
     steps: []
 phases:
   - id: typescript-p01-types
@@ -39,3 +42,4 @@ phases:
     description: 型推論と型注釈を試し、型が合っていても実行は失敗し得ることを確かめます。
     chapterSources:
       - chapters/typescript-ch01/chapter.yaml
+      - chapters/typescript-ch02/chapter.yaml

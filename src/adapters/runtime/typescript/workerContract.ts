@@ -1,6 +1,7 @@
 import type { TypeScriptCompileResult } from './compileTypeScript';
 import type { ScoreNumberAnnotationResult } from './checkScoreNumberAnnotation';
 import type { ScoreNumberInferenceResult } from './checkScoreNumberInference';
+import type { QuestionInterfaceResult } from './checkQuestionInterface';
 
 export interface TypeScriptCompileInput {
   readonly sessionId: string;
@@ -18,7 +19,8 @@ export type CompilerWorkerRequest = WorkerRequestBase &
     | { readonly kind: 'compile' }
     | {
         readonly kind: 'learning-check';
-        readonly profile: 'score-number-annotation-v1' | 'score-number-inference-v1';
+        readonly profile:
+          'score-number-annotation-v1' | 'score-number-inference-v1' | 'question-interface-v1';
       }
   );
 
@@ -32,6 +34,42 @@ export function isScoreNumberAnnotationResult(
 /** 推論専用factを要求し、注釈Lessonの応答との取り違えを拒否する。 */
 export function isScoreNumberInferenceResult(value: unknown): value is ScoreNumberInferenceResult {
   return isScoreLearningResult(value, 'unannotatedLetDeclaration');
+}
+
+/** Question専用の有限factだけを受け取り、成立しない正負検査の成功を拒否する。 */
+export function isQuestionInterfaceResult(value: unknown): value is QuestionInterfaceResult {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const result = value as Record<string, unknown>;
+  if (result['status'] === 'system-error') return Object.keys(result).length === 1;
+  if (
+    result['status'] !== 'ready' ||
+    Object.keys(result).sort().join(',') !== 'facts,status' ||
+    !result['facts'] ||
+    typeof result['facts'] !== 'object' ||
+    Array.isArray(result['facts'])
+  )
+    return false;
+  const facts = result['facts'] as Record<string, unknown>;
+  const prerequisites = [
+    'programShapeAccepted',
+    'interfaceAnnotationAccepted',
+    'requiredFieldsAccepted',
+    'dataValuesAccepted',
+    'forbiddenEscapeAbsent',
+    'logsIndexedChoiceLast',
+  ];
+  const keys = [...prerequisites, 'positiveProbeAccepted', 'negativeProbesRejected'].sort();
+  if (
+    Object.keys(facts).sort().join(',') !== keys.join(',') ||
+    !keys.every((key) => typeof facts[key] === 'boolean')
+  )
+    return false;
+  const eligible = prerequisites.every((key) => facts[key] === true);
+  return (
+    facts['positiveProbeAccepted'] === eligible &&
+    facts['negativeProbesRejected'] === eligible &&
+    (!facts['programShapeAccepted'] || facts['logsIndexedChoiceLast'] === true)
+  );
 }
 
 /** 2つの導入Lessonだけの有限fact構造とprobe成功の前提を検査する。 */
@@ -87,7 +125,8 @@ export function isCompilerWorkerRequest(value: unknown): value is CompilerWorker
     (request['kind'] === 'compile' ||
       (request['kind'] === 'learning-check' &&
         (request['profile'] === 'score-number-annotation-v1' ||
-          request['profile'] === 'score-number-inference-v1'))) &&
+          request['profile'] === 'score-number-inference-v1' ||
+          request['profile'] === 'question-interface-v1'))) &&
     typeof request['requestId'] === 'string' &&
     request['requestId'].length > 0 &&
     request['requestId'].length <= 128 &&

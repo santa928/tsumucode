@@ -1,5 +1,13 @@
 schemaVersion: 1
 concepts:
+  - id: typescript-question-interface
+    introducedBySlideId: typescript-ch02-l01-s01
+    prerequisiteConceptIds: [typescript-type-erasure]
+    minimumProjectLevel: transform
+  - id: typescript-type-alias-role
+    introducedBySlideId: typescript-ch02-l01-s01
+    prerequisiteConceptIds: [typescript-type-erasure]
+    minimumProjectLevel: read
   - id: typescript-number-inference
     introducedBySlideId: typescript-ch01-l01-s01
     prerequisiteConceptIds: []

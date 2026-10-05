@@ -1,0 +1,8 @@
+id: typescript-ch02
+sequence: 1
+title: オブジェクトの形を表す
+goal: 問題データの必須項目と型をinterfaceで表し、型の形と値の正しさを別に確認できる。
+estimatedMinutes: 20
+kind: standard
+lessonSources:
+  - lessons/typescript-ch02-l01/lesson.yaml

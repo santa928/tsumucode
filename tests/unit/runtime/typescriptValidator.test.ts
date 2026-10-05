@@ -93,6 +93,87 @@ describe('TypeScriptValidator', () => {
     },
   };
 
+  it('Questionの型条件と動作をANDで判定し、新コードと古い証拠を組み合わせない', async () => {
+    const original = await contextFixture();
+    const f = fixture();
+    const facts = {
+      programShapeAccepted: true,
+      interfaceAnnotationAccepted: true,
+      requiredFieldsAccepted: true,
+      dataValuesAccepted: true,
+      forbiddenEscapeAbsent: true,
+      logsIndexedChoiceLast: true,
+      positiveProbeAccepted: true,
+      negativeProbesRejected: true,
+    };
+    const compiler = {
+      ...f.compiler,
+      questionCheck: vi.fn().mockResolvedValue({ status: 'ready', facts }),
+    };
+    const validator = new TypeScriptValidator({
+      compilerFactory: () => compiler,
+      validatorFactory: () => ({ validate: f.validate, buildSnapshotPolicy: vi.fn() }),
+    });
+    const context = {
+      ...original,
+      exerciseId: 'typescript-ch02-l01-e01',
+      rules: [
+        {
+          ...learningRule,
+          assertion: { kind: 'typescript-learning', profile: 'question-interface-v1' },
+        },
+        {
+          ...consoleRule,
+          assertion: {
+            kind: 'javascript-console',
+            operator: 'equals',
+            expected: [{ level: 'log', text: '内容' }],
+          },
+        },
+      ],
+    };
+    expect((await validator.validate(context)).status).toBe('incomplete');
+    expect(compiler.questionCheck).toHaveBeenCalledWith({
+      sessionId: 'session-1',
+      revision: 4,
+      files: { 'main.ts': original.files['main.ts'] },
+    });
+    f.validate.mockResolvedValue({
+      exerciseId: context.exerciseId,
+      executionRevision: 4,
+      status: 'pass',
+      checks: [],
+      passedRequirementIds: [],
+      diagnostics: [],
+      evaluatedAt: 'now',
+    });
+    expect((await validator.validate(context)).status).toBe('pass');
+    compiler.questionCheck.mockResolvedValue({
+      status: 'ready',
+      facts: {
+        ...facts,
+        interfaceAnnotationAccepted: false,
+        positiveProbeAccepted: false,
+        negativeProbesRejected: false,
+      },
+    });
+    expect((await validator.validate(context)).status).toBe('incomplete');
+    compiler.questionCheck.mockClear();
+    const stale = await validator.validate({
+      ...context,
+      files: { ...context.files, 'main.ts': 'console.log("内容");' },
+    });
+    expect(stale.status).toBe('system-error');
+    expect(stale.diagnostics.map(({ code }) => code)).toContain('TYPESCRIPT_SOURCE_HASH_MISMATCH');
+    expect(compiler.questionCheck).not.toHaveBeenCalled();
+    expect((await validator.validate({ ...context, rules: [context.rules[1]!] })).status).toBe(
+      'system-error',
+    );
+    expect((await validator.validate({ ...context, exerciseId: 'other-lesson-e01' })).status).toBe(
+      'system-error',
+    );
+  });
+
   it('型推論は専用profileで同一原文を検査し、動作条件とANDで合格させる', async () => {
     const original = await contextFixture();
     const f = fixture();

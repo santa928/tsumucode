@@ -16,6 +16,7 @@ export default tseslint.config(
       'docs/quality/typescript-ch01-l01-draft/exercises/**/*.ts',
       'docs/quality/typescript-ch01-l03-draft/exercises/**/*.ts',
       'content/typescript/chapters/typescript-ch01/lessons/*/exercises/**/*.ts',
+      'content/typescript/chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/**/*.ts',
       'playwright-report',
       'playwright-performance-report',
       'test-results',

@@ -32,7 +32,7 @@ lessons:
   - lessonId: typescript-ch01-l03
     authorId: tsumucode-typescript-authoring
     reviewerId: review_issue109
-    sourceHash: 3daee5efafaadc32264122a4c3ed320d2d26dc99a1b2426ef84225ff8f4d42ce
+    sourceHash: b354866c0f28cbfb8fbdbe49ec6ba032a57240c3d0d9c85b5d5925471008c125
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -44,3 +44,20 @@ lessons:
       型推論/注釈からの前提、型注釈の消去と代入/表示/throwの保持、型と実行失敗の区別、固定表示の合格を動作確認に限定する目標整合を確認。全15トピックの後続対応、未承認の全量/TS予算案、現行性能上限と非対象を維持。
       掲載例の既存Docker15件、原稿とbyte一致の9Fixture実Worker/Runner/Validator証拠、#109の通常UIで型失敗未採点・表示後throw不合格・未達・Reset・修正後合格/保存再読込、axe/Keyboardと画像目視成功に基づくexamplesExecuted。
       Reviewerは差分/原文/既存実行保存経路を読解し、Exercise bytes一致と画像3点を確認。ReviewerによるDocker再実行/hash再計算、初心者/実機/全TS完成/公開受入を意味しない。03の動作合格を型理解の証明へ拡張せず、releaseStatusとverifiedSourceCommitはdraftのまま保持する。
+      #110のHEAD70da7ac3e9805ae8718a0faed09f634a93e6942cでReviewer review_issue109が次Lesson参照追加だけを限定承認。03の教材/動作条件/既存実行証拠は保持し、新規02-01との前提と接続を確認した。
+  - lessonId: typescript-ch02-l01
+    authorId: tsumucode-typescript-authoring
+    reviewerId: review_issue109
+    sourceHash: 5292f41257dd269883924b2f5ffebcdf9d10b2f27074011f339f60d0dbf18f28
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: >-
+      Reviewer review_issue109がbase3553c54 / HEAD70da7ac3e9805ae8718a0faed09f634a93e6942cの55file差分・全教材原文/Hint/18Fixture/図・関連判定経路を独立レビューし、内容・コードを承認。必須修正0件。
+      interfaceの必須項目/型/注釈、有限な改名・配列表記の別解、型と実ConsoleのAND、非emit正負probe、条件回避/負数/小数/範囲外、source/session/revisionと保存・停止境界を確認。
+      通常教材の.at()適応は既存Preview安全制約を維持し、interfaceへ渡す値を直す目標と型/値の境界に整合。用語/概念/前提・旧進捗移行・出典・非配信を確認した。
+      作者の実Compiler/掲載例/登録と移行11件、既存CompilerClient/Validator37件、修正後実Chromium18Fixtureと通常修正/保存/Reset・390px・既存01-02の4case成功証拠に基づくexamplesExecuted。
+      ReviewerはPC s04・390px s04本文/練習欄・形と値の図の4画像を実見し、既存実行ログとdiff checkを確認。ReviewerによるDocker再実行/hash再計算、初心者理解/物理実機/TS性能予算/全TS完成/正式公開の確認ではない。releaseStatus/verifiedSourceCommit/canonicalDistSha256はdraftを保持する。

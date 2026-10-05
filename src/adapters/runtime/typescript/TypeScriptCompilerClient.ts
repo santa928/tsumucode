@@ -1,11 +1,13 @@
 import type { TypeScriptCompileResult } from './compileTypeScript';
 import type { ScoreNumberAnnotationResult } from './checkScoreNumberAnnotation';
 import type { ScoreNumberInferenceResult } from './checkScoreNumberInference';
+import type { QuestionInterfaceResult } from './checkQuestionInterface';
 import {
   isTypeScriptCompileInput,
   isTypeScriptCompileResult,
   isScoreNumberAnnotationResult,
   isScoreNumberInferenceResult,
+  isQuestionInterfaceResult,
   type CompilerWorkerRequest,
   type TypeScriptCompileInput,
 } from './workerContract';
@@ -87,10 +89,21 @@ export class TypeScriptCompilerClient {
     }));
   }
 
+  /** Questionの形とinterfaceの練習条件を、同じ原文・世代で検査する。 */
+  questionCheck(input: TypeScriptCompileInput): Promise<QuestionInterfaceResult> {
+    return this.#request(input, 'question-interface-v1', isQuestionInterfaceResult, () => ({
+      status: 'system-error',
+    }));
+  }
+
   /** 共通の期限・停止機構を維持し、操作ごとの厳密な結果guardだけを切り替える。 */
   #request<T>(
     input: TypeScriptCompileInput,
-    operation: 'compile' | 'score-number-annotation-v1' | 'score-number-inference-v1',
+    operation:
+      | 'compile'
+      | 'score-number-annotation-v1'
+      | 'score-number-inference-v1'
+      | 'question-interface-v1',
     isResult: (value: unknown, snapshot: TypeScriptCompileInput) => value is T,
     failure: () => T,
     invalidInput: () => T = failure,
