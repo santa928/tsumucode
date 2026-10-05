@@ -1,0 +1,30 @@
+id: typescript-ch03-l01
+kind: standard
+title: 状態に合わせて型を絞る
+goal: unionとliteralで状態を表し、kindを確認してその状態の値を取り出せる。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - typescript-ch02-l01
+nextLessonId: typescript-ch03-l02
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/typescript-ch03-l01-e01/exercise.yaml
+reflection: unionの片方だけにある項目は、状態を確認した分岐で読む。型が通っても両方の結果を実行で確かめる。
+glossaryRefs:
+  - union
+  - literal
+  - narrowing
+  - parameter-annotation
+  - type-alias
+  - property
+  - number
+  - string
+completion:
+  kind: standard
+  finalSlideId: typescript-ch03-l01-s04
+  requiredExerciseIds:
+    - typescript-ch03-l01-e01

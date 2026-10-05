@@ -2,6 +2,10 @@ import type { TypeScriptCompileResult } from './compileTypeScript';
 import type { ScoreNumberAnnotationResult } from './checkScoreNumberAnnotation';
 import type { ScoreNumberInferenceResult } from './checkScoreNumberInference';
 import type { QuestionInterfaceResult } from './checkQuestionInterface';
+import type {
+  ConditionalLearningProfile,
+  ConditionalLearningResult,
+} from './checkConditionalLearning';
 
 export interface TypeScriptCompileInput {
   readonly sessionId: string;
@@ -20,7 +24,10 @@ export type CompilerWorkerRequest = WorkerRequestBase &
     | {
         readonly kind: 'learning-check';
         readonly profile:
-          'score-number-annotation-v1' | 'score-number-inference-v1' | 'question-interface-v1';
+          | 'score-number-annotation-v1'
+          | 'score-number-inference-v1'
+          | 'question-interface-v1'
+          | ConditionalLearningProfile;
       }
   );
 
@@ -69,6 +76,43 @@ export function isQuestionInterfaceResult(value: unknown): value is QuestionInte
     facts['positiveProbeAccepted'] === eligible &&
     facts['negativeProbesRejected'] === eligible &&
     (!facts['programShapeAccepted'] || facts['logsIndexedChoiceLast'] === true)
+  );
+}
+
+/** 2課題をprofileで区別し、余分なpayloadや前提と不整合なprobe成功を拒否する。 */
+export function isConditionalLearningResult(
+  value: unknown,
+  profile: ConditionalLearningProfile,
+): value is ConditionalLearningResult {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const result = value as Record<string, unknown>;
+  if (result['status'] === 'system-error') return Object.keys(result).length === 1;
+  if (
+    result['status'] !== 'ready' ||
+    result['profile'] !== profile ||
+    Object.keys(result).sort().join(',') !== 'facts,profile,status' ||
+    !result['facts'] ||
+    typeof result['facts'] !== 'object' ||
+    Array.isArray(result['facts'])
+  )
+    return false;
+  const facts = result['facts'] as Record<string, unknown>;
+  const prerequisites = [
+    'typeShapeAccepted',
+    'parameterAnnotationAccepted',
+    'branchesUseValue',
+    'callsAccepted',
+    'forbiddenEscapeAbsent',
+  ];
+  const keys = [...prerequisites, 'positiveProbeAccepted', 'negativeProbesRejected'].sort();
+  if (
+    Object.keys(facts).sort().join(',') !== keys.join(',') ||
+    !keys.every((key) => typeof facts[key] === 'boolean')
+  )
+    return false;
+  const eligible = prerequisites.every((key) => facts[key] === true);
+  return (
+    facts['positiveProbeAccepted'] === eligible && facts['negativeProbesRejected'] === eligible
   );
 }
 
@@ -126,7 +170,9 @@ export function isCompilerWorkerRequest(value: unknown): value is CompilerWorker
       (request['kind'] === 'learning-check' &&
         (request['profile'] === 'score-number-annotation-v1' ||
           request['profile'] === 'score-number-inference-v1' ||
-          request['profile'] === 'question-interface-v1'))) &&
+          request['profile'] === 'question-interface-v1' ||
+          request['profile'] === 'union-result-v1' ||
+          request['profile'] === 'optional-hint-v1'))) &&
     typeof request['requestId'] === 'string' &&
     request['requestId'].length > 0 &&
     request['requestId'].length <= 128 &&

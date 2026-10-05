@@ -531,6 +531,8 @@ const TypeScriptLearningAssertionSchema = z
       'score-number-annotation-v1',
       'score-number-inference-v1',
       'question-interface-v1',
+      'union-result-v1',
+      'optional-hint-v1',
     ]),
   })
   .strict();
@@ -1113,6 +1115,27 @@ export const TypeScriptQuestionConsoleRuleSchema =
         rule.assertion.expected[0].text === '内容',
       'Question LessonのConsole期待値はlog 内容だけにしてください',
     );
+
+/** 分岐課題の有限な全実行例を、独立したConsole要件に固定する。 */
+function conditionalConsoleRule(expected: readonly string[]) {
+  return JavaScriptConsoleValidationRuleDefinitionSchema.extend({
+    required: z.literal(true),
+    group: z.literal('all'),
+    viewportMode: z.literal('all'),
+  })
+    .refine((rule) => rule.groupId === undefined, 'Console条件は独立した必須要件にしてください')
+    .refine(
+      (rule) =>
+        rule.assertion.expected.length === expected.length &&
+        rule.assertion.expected.every(
+          (value, index) => value.level === 'log' && value.text === expected[index],
+        ),
+      '分岐課題のConsole期待値をすべて指定してください',
+    );
+}
+
+export const TypeScriptUnionConsoleRuleSchema = conditionalConsoleRule(['2', 'もう一度']);
+export const TypeScriptOptionalConsoleRuleSchema = conditionalConsoleRule(['2', 'ヒントなし', '0']);
 
 export const ValidationRuleDefinitionSchema = z
   .object({
@@ -2240,33 +2263,51 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
           );
           if (
             (learningRules.length > 0 ||
-              ['typescript-ch01-l01', 'typescript-ch01-l02', 'typescript-ch02-l01'].includes(
-                lesson.id,
-              ) ||
+              [
+                'typescript-ch01-l01',
+                'typescript-ch01-l02',
+                'typescript-ch02-l01',
+                'typescript-ch03-l01',
+                'typescript-ch03-l02',
+              ].includes(lesson.id) ||
               [
                 'typescript-ch01-l01-e01',
                 'typescript-ch01-l02-e01',
                 'typescript-ch02-l01-e01',
+                'typescript-ch03-l01-e01',
+                'typescript-ch03-l02-e01',
               ].includes(exercise.id)) &&
             (course.validatorId !== 'typescript' ||
-              !['typescript-ch01-l01', 'typescript-ch01-l02', 'typescript-ch02-l01'].includes(
-                lesson.id,
-              ) ||
+              ![
+                'typescript-ch01-l01',
+                'typescript-ch01-l02',
+                'typescript-ch02-l01',
+                'typescript-ch03-l01',
+                'typescript-ch03-l02',
+              ].includes(lesson.id) ||
               exercise.id !== `${lesson.id}-e01` ||
               !parsedLearningRule.success ||
               parsedLearningRule.data.assertion.profile !==
-                (lesson.id === 'typescript-ch02-l01'
-                  ? 'question-interface-v1'
-                  : lesson.id === 'typescript-ch01-l01'
-                    ? 'score-number-inference-v1'
-                    : 'score-number-annotation-v1') ||
+                (lesson.id === 'typescript-ch03-l01'
+                  ? 'union-result-v1'
+                  : lesson.id === 'typescript-ch03-l02'
+                    ? 'optional-hint-v1'
+                    : lesson.id === 'typescript-ch02-l01'
+                      ? 'question-interface-v1'
+                      : lesson.id === 'typescript-ch01-l01'
+                        ? 'score-number-inference-v1'
+                        : 'score-number-annotation-v1') ||
               learningRules.length !== 1 ||
               !canonicalFilePaths.includes(canonicalPublicPath('main.ts')!) ||
               annotationConsoleRules.length !== 1 ||
               !(
-                lesson.id === 'typescript-ch02-l01'
-                  ? TypeScriptQuestionConsoleRuleSchema
-                  : TypeScriptScoreConsoleTwoRuleSchema
+                lesson.id === 'typescript-ch03-l01'
+                  ? TypeScriptUnionConsoleRuleSchema
+                  : lesson.id === 'typescript-ch03-l02'
+                    ? TypeScriptOptionalConsoleRuleSchema
+                    : lesson.id === 'typescript-ch02-l01'
+                      ? TypeScriptQuestionConsoleRuleSchema
+                      : TypeScriptScoreConsoleTwoRuleSchema
               ).safeParse(annotationConsoleRules[0]).success)
           ) {
             addIssue(

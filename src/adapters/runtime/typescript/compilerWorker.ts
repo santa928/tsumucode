@@ -5,6 +5,7 @@ import { isCompilerWorkerRequest } from './workerContract';
 import { checkScoreNumberAnnotation } from './checkScoreNumberAnnotation';
 import { checkScoreNumberInference } from './checkScoreNumberInference';
 import { checkQuestionInterface } from './checkQuestionInterface';
+import { checkConditionalLearning } from './checkConditionalLearning';
 
 // 標準libとcompilerはこのWorkerだけが読む。学習者指定URLや外部CDNは使わない。
 const librarySources = import.meta.glob<string>('/node_modules/typescript/lib/lib.*.d.ts', {
@@ -31,10 +32,12 @@ self.onmessage = (event: MessageEvent<unknown>): void => {
     result:
       value.kind === 'compile'
         ? compileTypeScript(value.input.files, libraries)
-        : value.profile === 'question-interface-v1'
-          ? checkQuestionInterface(value.input.files, libraries)
-          : value.profile === 'score-number-inference-v1'
-            ? checkScoreNumberInference(value.input.files, libraries)
-            : checkScoreNumberAnnotation(value.input.files, libraries),
+        : value.profile === 'union-result-v1' || value.profile === 'optional-hint-v1'
+          ? checkConditionalLearning(value.input.files, libraries, value.profile)
+          : value.profile === 'question-interface-v1'
+            ? checkQuestionInterface(value.input.files, libraries)
+            : value.profile === 'score-number-inference-v1'
+              ? checkScoreNumberInference(value.input.files, libraries)
+              : checkScoreNumberAnnotation(value.input.files, libraries),
   });
 };

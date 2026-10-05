@@ -2,11 +2,13 @@ schemaVersion: 1
 concepts:
   - id: typescript-question-interface
     introducedBySlideId: typescript-ch02-l01-s01
-    prerequisiteConceptIds: [typescript-type-erasure]
+    prerequisiteConceptIds:
+      - typescript-type-erasure
     minimumProjectLevel: transform
   - id: typescript-type-alias-role
     introducedBySlideId: typescript-ch02-l01-s01
-    prerequisiteConceptIds: [typescript-type-erasure]
+    prerequisiteConceptIds:
+      - typescript-type-erasure
     minimumProjectLevel: read
   - id: typescript-number-inference
     introducedBySlideId: typescript-ch01-l01-s01
@@ -21,4 +23,14 @@ concepts:
     introducedBySlideId: typescript-ch01-l03-s01
     prerequisiteConceptIds:
       - typescript-number-annotation
+    minimumProjectLevel: transform
+  - id: typescript-union-narrowing
+    introducedBySlideId: typescript-ch03-l01-s01
+    prerequisiteConceptIds:
+      - typescript-question-interface
+    minimumProjectLevel: transform
+  - id: typescript-optional-value
+    introducedBySlideId: typescript-ch03-l02-s01
+    prerequisiteConceptIds:
+      - typescript-union-narrowing
     minimumProjectLevel: transform

@@ -23,23 +23,26 @@ describe('TypeScript導入draft Course', () => {
     expect(course.prerequisites).toEqual(['javascript']);
     expect(course.progressMigrations).toEqual([
       { fromRevision: '2026-10-01.1', toRevision: '2026-10-05.1', steps: [] },
-      { fromRevision: '2026-10-05.1', toRevision: course.revision, steps: [] },
+      { fromRevision: '2026-10-05.1', toRevision: '2026-10-05.2', steps: [] },
+      { fromRevision: '2026-10-05.2', toRevision: course.revision, steps: [] },
     ]);
     expect(course.expectedTotals).toEqual({
-      chapters: 2,
-      lessons: 4,
-      conceptSlides: 13,
-      standardExercises: 4,
+      chapters: 3,
+      lessons: 6,
+      conceptSlides: 19,
+      standardExercises: 6,
       guidedProjectLessons: 0,
       capstoneLessons: 0,
-      estimatedMinutes: 65,
+      estimatedMinutes: 105,
     });
-    expect(lessons.flatMap(({ slides }) => slides)).toHaveLength(16);
+    expect(lessons.flatMap(({ slides }) => slides)).toHaveLength(24);
     expect(lessons.map(({ id }) => id)).toEqual([
       'typescript-ch01-l01',
       'typescript-ch01-l02',
       'typescript-ch01-l03',
       'typescript-ch02-l01',
+      'typescript-ch03-l01',
+      'typescript-ch03-l02',
     ]);
     expect(lessons[1]!.prerequisiteLessonIds).toEqual([lessons[0]!.id]);
     expect(lessons[0]!.nextLessonId).toBe(lessons[1]!.id);
@@ -47,6 +50,10 @@ describe('TypeScript導入draft Course', () => {
     expect(lessons[1]!.nextLessonId).toBe(lessons[2]!.id);
     expect(lessons[2]!.nextLessonId).toBe(lessons[3]!.id);
     expect(lessons[3]!.prerequisiteLessonIds).toEqual([lessons[2]!.id]);
+    expect(lessons[3]!.nextLessonId).toBe(lessons[4]!.id);
+    expect(lessons[4]!.prerequisiteLessonIds).toEqual([lessons[3]!.id]);
+    expect(lessons[4]!.nextLessonId).toBe(lessons[5]!.id);
+    expect(lessons[5]!.prerequisiteLessonIds).toEqual([lessons[4]!.id]);
     expect(course.glossary.find(({ id }) => id === 'interface')?.firstSlideId).toBe(
       'typescript-ch02-l01-s01',
     );
@@ -101,23 +108,36 @@ describe('TypeScript導入draft Course', () => {
       } else {
         expect(learningRule?.assertion).toEqual({
           kind: 'typescript-learning',
-          profile: 'question-interface-v1',
+          profile:
+            index === 3
+              ? 'question-interface-v1'
+              : index === 4
+                ? 'union-result-v1'
+                : 'optional-hint-v1',
         });
         expect(exercise.validationRules[1]?.assertion).toEqual({
           kind: 'javascript-console',
           operator: 'equals',
-          expected: [{ level: 'log', text: '内容' }],
+          expected: (index === 3
+            ? ['内容']
+            : index === 4
+              ? ['2', 'もう一度']
+              : ['2', 'ヒントなし', '0']
+          ).map((text) => ({ level: 'log', text })),
         });
       }
       expect(exercise).not.toHaveProperty('solutionFiles');
       expect(exercise).not.toHaveProperty('fixtures');
     }
-    expect(authoring.exercises.map(({ fixtures }) => fixtures.length)).toEqual([13, 12, 9, 18]);
+    expect(authoring.exercises.map(({ fixtures }) => fixtures.length)).toEqual([
+      13, 12, 9, 18, 17, 18,
+    ]);
   });
 
   it.each([
     { count: 2, revision: '2026-10-01.1' },
     { count: 3, revision: '2026-10-05.1' },
+    { count: 4, revision: '2026-10-05.2' },
   ])(
     '旧$count Lessonの合格と元TS・採点履歴を保持して新Lessonを開始できる',
     async ({ count, revision }) => {
@@ -230,7 +250,8 @@ describe('TypeScript導入draft Course', () => {
       expect(next.lessons[lessons[0]!.id]).toEqual(oldLessons[lessons[0]!.id]);
       expect(next.lessons[lessons[1]!.id]).toEqual(oldLessons[lessons[1]!.id]);
       expect(next.currentComplete).toBe(false);
-      if (count === 3) expect(next.lessons[lessons[2]!.id]).toEqual(oldLessons[lessons[2]!.id]);
+      for (const lesson of lessons.slice(0, count))
+        expect(next.lessons[lesson.id]).toEqual(oldLessons[lesson.id]);
       expect(next.lessons[lessons[count]!.id]?.currentComplete).toBe(false);
     },
   );
