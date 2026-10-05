@@ -1,0 +1,30 @@
+id: typescript-ch04-l01
+kind: standard
+title: 関数の入出力とcallbackを型付けする
+goal: 引数と戻り値を数値とする関数型を使い、処理をcallbackとして渡して値を計算できる。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - typescript-ch03-l02
+nextLessonId: typescript-ch04-l02
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/typescript-ch04-l01-e01/exercise.yaml
+reflection: 引数と戻り値を数値とする関数型を使い、処理をcallbackとして渡して値を計算できる。
+glossaryRefs:
+  - return-annotation
+  - function-type
+  - callback
+  - contextual-inference
+  - arrow-function
+  - parameter-annotation
+  - type-alias
+  - number
+completion:
+  kind: standard
+  finalSlideId: typescript-ch04-l01-s04
+  requiredExerciseIds:
+    - typescript-ch04-l01-e01

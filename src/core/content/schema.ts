@@ -533,6 +533,9 @@ const TypeScriptLearningAssertionSchema = z
       'question-interface-v1',
       'union-result-v1',
       'optional-hint-v1',
+      'number-callback-v1',
+      'generic-identity-v1',
+      'readonly-copy-v1',
     ]),
   })
   .strict();
@@ -1117,7 +1120,7 @@ export const TypeScriptQuestionConsoleRuleSchema =
     );
 
 /** 分岐課題の有限な全実行例を、独立したConsole要件に固定する。 */
-function conditionalConsoleRule(expected: readonly string[]) {
+function learningConsoleRule(expected: readonly string[]) {
   return JavaScriptConsoleValidationRuleDefinitionSchema.extend({
     required: z.literal(true),
     group: z.literal('all'),
@@ -1130,12 +1133,59 @@ function conditionalConsoleRule(expected: readonly string[]) {
         rule.assertion.expected.every(
           (value, index) => value.level === 'log' && value.text === expected[index],
         ),
-      '分岐課題のConsole期待値をすべて指定してください',
+      '型学習課題のConsole期待値をすべて指定してください',
     );
 }
 
-export const TypeScriptUnionConsoleRuleSchema = conditionalConsoleRule(['2', 'もう一度']);
-export const TypeScriptOptionalConsoleRuleSchema = conditionalConsoleRule(['2', 'ヒントなし', '0']);
+export const TypeScriptUnionConsoleRuleSchema = learningConsoleRule(['2', 'もう一度']);
+export const TypeScriptOptionalConsoleRuleSchema = learningConsoleRule(['2', 'ヒントなし', '0']);
+export const TypeScriptCallbackConsoleRuleSchema = learningConsoleRule(['6', '10']);
+export const TypeScriptGenericConsoleRuleSchema = learningConsoleRule(['2', '型のクイズ']);
+export const TypeScriptReadonlyConsoleRuleSchema = learningConsoleRule(['1,2,4', '1,2,3']);
+
+/** 型習得を判定する既存8課題だけの対応。一般のprofile指定は受け付けない。 */
+export const TypeScriptLearningContracts = [
+  {
+    lessonId: 'typescript-ch01-l01',
+    profile: 'score-number-inference-v1',
+    consoleRuleSchema: TypeScriptScoreConsoleTwoRuleSchema,
+  },
+  {
+    lessonId: 'typescript-ch01-l02',
+    profile: 'score-number-annotation-v1',
+    consoleRuleSchema: TypeScriptScoreConsoleTwoRuleSchema,
+  },
+  {
+    lessonId: 'typescript-ch02-l01',
+    profile: 'question-interface-v1',
+    consoleRuleSchema: TypeScriptQuestionConsoleRuleSchema,
+  },
+  {
+    lessonId: 'typescript-ch03-l01',
+    profile: 'union-result-v1',
+    consoleRuleSchema: TypeScriptUnionConsoleRuleSchema,
+  },
+  {
+    lessonId: 'typescript-ch03-l02',
+    profile: 'optional-hint-v1',
+    consoleRuleSchema: TypeScriptOptionalConsoleRuleSchema,
+  },
+  {
+    lessonId: 'typescript-ch04-l01',
+    profile: 'number-callback-v1',
+    consoleRuleSchema: TypeScriptCallbackConsoleRuleSchema,
+  },
+  {
+    lessonId: 'typescript-ch04-l02',
+    profile: 'generic-identity-v1',
+    consoleRuleSchema: TypeScriptGenericConsoleRuleSchema,
+  },
+  {
+    lessonId: 'typescript-ch04-l03',
+    profile: 'readonly-copy-v1',
+    consoleRuleSchema: TypeScriptReadonlyConsoleRuleSchema,
+  },
+] as const;
 
 export const ValidationRuleDefinitionSchema = z
   .object({
@@ -2261,54 +2311,24 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
           const parsedLearningRule = TypeScriptLearningRuleDefinitionSchema.safeParse(
             learningRules[0],
           );
+          const learningContract = TypeScriptLearningContracts.find(
+            (contract) => contract.lessonId === lesson.id,
+          );
           if (
             (learningRules.length > 0 ||
-              [
-                'typescript-ch01-l01',
-                'typescript-ch01-l02',
-                'typescript-ch02-l01',
-                'typescript-ch03-l01',
-                'typescript-ch03-l02',
-              ].includes(lesson.id) ||
-              [
-                'typescript-ch01-l01-e01',
-                'typescript-ch01-l02-e01',
-                'typescript-ch02-l01-e01',
-                'typescript-ch03-l01-e01',
-                'typescript-ch03-l02-e01',
-              ].includes(exercise.id)) &&
+              learningContract ||
+              TypeScriptLearningContracts.some(
+                (contract) => exercise.id === `${contract.lessonId}-e01`,
+              )) &&
             (course.validatorId !== 'typescript' ||
-              ![
-                'typescript-ch01-l01',
-                'typescript-ch01-l02',
-                'typescript-ch02-l01',
-                'typescript-ch03-l01',
-                'typescript-ch03-l02',
-              ].includes(lesson.id) ||
+              !learningContract ||
               exercise.id !== `${lesson.id}-e01` ||
               !parsedLearningRule.success ||
-              parsedLearningRule.data.assertion.profile !==
-                (lesson.id === 'typescript-ch03-l01'
-                  ? 'union-result-v1'
-                  : lesson.id === 'typescript-ch03-l02'
-                    ? 'optional-hint-v1'
-                    : lesson.id === 'typescript-ch02-l01'
-                      ? 'question-interface-v1'
-                      : lesson.id === 'typescript-ch01-l01'
-                        ? 'score-number-inference-v1'
-                        : 'score-number-annotation-v1') ||
+              parsedLearningRule.data.assertion.profile !== learningContract.profile ||
               learningRules.length !== 1 ||
               !canonicalFilePaths.includes(canonicalPublicPath('main.ts')!) ||
               annotationConsoleRules.length !== 1 ||
-              !(
-                lesson.id === 'typescript-ch03-l01'
-                  ? TypeScriptUnionConsoleRuleSchema
-                  : lesson.id === 'typescript-ch03-l02'
-                    ? TypeScriptOptionalConsoleRuleSchema
-                    : lesson.id === 'typescript-ch02-l01'
-                      ? TypeScriptQuestionConsoleRuleSchema
-                      : TypeScriptScoreConsoleTwoRuleSchema
-              ).safeParse(annotationConsoleRules[0]).success)
+              !learningContract.consoleRuleSchema.safeParse(annotationConsoleRules[0]).success)
           ) {
             addIssue(
               context,

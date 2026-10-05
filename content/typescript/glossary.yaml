@@ -156,3 +156,78 @@ entries:
     relatedIds:
       - string
       - property
+  - id: return-annotation
+    term: 戻り値の型注釈
+    definition: 関数の括弧の後ろへ、returnする値の型を書くこと。
+    firstSlideId: typescript-ch04-l01-s01
+    relatedIds:
+      - parameter-annotation
+  - id: function-type
+    term: 関数型
+    definition: 関数が受け取る引数の型と、返す値の型を表す型。
+    firstSlideId: typescript-ch04-l01-s02
+    relatedIds:
+      - callback
+      - type-alias
+  - id: callback
+    term: callback
+    definition: 別の関数へ渡し、その中から呼び出してもらう関数。
+    firstSlideId: typescript-ch04-l01-s02
+    relatedIds:
+      - function-type
+  - id: contextual-inference
+    term: 文脈による推論
+    definition: 関数型など周囲の型から、関数の引数の型を推論すること。
+    firstSlideId: typescript-ch04-l01-s03
+    relatedIds:
+      - type-inference
+      - function-type
+  - id: arrow-function
+    term: arrow関数
+    definition: =>で処理を書くJavaScriptの関数式。型の=>とは役割が異なる。
+    firstSlideId: typescript-ch04-l01-s03
+    relatedIds:
+      - function-type
+  - id: generic
+    term: generic
+    definition: 型を受け取り、同じ型の関係を保って再利用する仕組み。
+    firstSlideId: typescript-ch04-l02-s02
+    relatedIds:
+      - type-parameter
+  - id: type-parameter
+    term: 型パラメータ
+    definition: genericの宣言で受け取る型に付ける名前。Tなどを使う。
+    firstSlideId: typescript-ch04-l02-s02
+    relatedIds:
+      - generic
+      - type-argument
+  - id: type-argument
+    term: 型引数
+    definition: genericを呼び出すときに渡す型。値からの推論か明記で選ぶ。
+    firstSlideId: typescript-ch04-l02-s03
+    relatedIds:
+      - type-parameter
+  - id: readonly
+    term: readonly
+    definition: その型の参照からの書込みを型検査で制限する指定。実行時の凍結ではない。
+    firstSlideId: typescript-ch04-l03-s01
+    relatedIds:
+      - readonly-array
+  - id: readonly-array
+    term: 読み取り専用配列
+    definition: その型の参照から要素の代入やpushができない配列型。readonly number[]など。
+    firstSlideId: typescript-ch04-l03-s01
+    relatedIds:
+      - readonly
+  - id: array-spread
+    term: 配列のspread
+    definition: ...で元の配列の要素を新しい配列などへ展開する書き方。深い複写や凍結ではない。
+    firstSlideId: typescript-ch04-l03-s02
+    relatedIds:
+      - readonly-array
+  - id: array-join
+    term: .join
+    definition: 配列の要素を指定した区切り文字でつなぎ、文字列にする処理。
+    firstSlideId: typescript-ch04-l03-s04
+    relatedIds:
+      - string

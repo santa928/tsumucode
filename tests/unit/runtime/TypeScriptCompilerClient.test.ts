@@ -94,6 +94,44 @@ describe('TypeScriptCompilerClient', () => {
     },
   );
 
+  it.each(['number-callback-v1', 'generic-identity-v1', 'readonly-copy-v1'] as const)(
+    '再利用の%sで世代と応答profileを照合する',
+    async (profile) => {
+      const worker = new FakeWorker();
+      const client = new TypeScriptCompilerClient({ workerFactory: () => worker });
+      const facts = {
+        programShapeAccepted: true,
+        typeContractAccepted: true,
+        usesInputValue: true,
+        callsAccepted: true,
+        forbiddenEscapeAbsent: true,
+        positiveProbeAccepted: true,
+        negativeProbesRejected: true,
+      };
+      const result = client.reusableCheck({ ...input, revision: 2 }, profile);
+      expect(worker.request).toMatchObject({
+        kind: 'learning-check',
+        profile,
+        input: { revision: 2 },
+      });
+      expect(isCompilerWorkerRequest(worker.request)).toBe(true);
+      worker.respond({ revision: 1, result: { status: 'ready', profile, facts } });
+      expect(worker.terminate).not.toHaveBeenCalled();
+      worker.respond({ result: { status: 'ready', profile, facts } });
+      await expect(result).resolves.toEqual({ status: 'ready', profile, facts });
+      const other = client.reusableCheck({ ...input, revision: 3 }, profile);
+      worker.respond({
+        result: {
+          status: 'ready',
+          profile: profile === 'number-callback-v1' ? 'generic-identity-v1' : 'number-callback-v1',
+          facts,
+        },
+      });
+      await expect(other).resolves.toEqual({ status: 'system-error' });
+      client.dispose();
+    },
+  );
+
   it('Question専用profileで古い世代を無視し、別profileのfactを拒否する', async () => {
     const worker = new FakeWorker();
     const client = new TypeScriptCompilerClient({ workerFactory: () => worker });

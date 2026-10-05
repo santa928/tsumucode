@@ -34,3 +34,18 @@ concepts:
     prerequisiteConceptIds:
       - typescript-union-narrowing
     minimumProjectLevel: transform
+  - id: typescript-function-callback
+    introducedBySlideId: typescript-ch04-l01-s01
+    prerequisiteConceptIds:
+      - typescript-optional-value
+    minimumProjectLevel: transform
+  - id: typescript-generic-identity
+    introducedBySlideId: typescript-ch04-l02-s01
+    prerequisiteConceptIds:
+      - typescript-function-callback
+    minimumProjectLevel: transform
+  - id: typescript-readonly-copy
+    introducedBySlideId: typescript-ch04-l03-s01
+    prerequisiteConceptIds:
+      - typescript-generic-identity
+    minimumProjectLevel: transform

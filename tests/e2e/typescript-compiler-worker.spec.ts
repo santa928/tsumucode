@@ -20,6 +20,9 @@ for (const learningMode of [
   'question',
   'union',
   'optional',
+  'callback',
+  'generic',
+  'readonly',
 ] as const) {
   const contract =
     learningMode === 'erasure'
@@ -27,7 +30,9 @@ for (const learningMode of [
       : '元TSの型条件と実ConsoleをANDで判定する';
   test(`${learningMode}の製品採点は${contract}`, async ({ page }, testInfo) => {
     test.setTimeout(120_000);
-    const draft = ['question', 'union', 'optional'].includes(learningMode)
+    const draft = ['question', 'union', 'optional', 'callback', 'generic', 'readonly'].includes(
+      learningMode,
+    )
       ? {
           authoringExercises: (await loadAuthoringCourse('content/typescript')).exercises.filter(
             ({ id }) =>
@@ -36,7 +41,13 @@ for (const learningMode of [
                 ? 'typescript-ch03-l01-e01'
                 : learningMode === 'optional'
                   ? 'typescript-ch03-l02-e01'
-                  : 'typescript-ch02-l01-e01'),
+                  : learningMode === 'callback'
+                    ? 'typescript-ch04-l01-e01'
+                    : learningMode === 'generic'
+                      ? 'typescript-ch04-l02-e01'
+                      : learningMode === 'readonly'
+                        ? 'typescript-ch04-l03-e01'
+                        : 'typescript-ch02-l01-e01'),
           ),
         }
       : await loadAuthoringLessonDraft(

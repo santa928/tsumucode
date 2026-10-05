@@ -1,0 +1,334 @@
+id: typescript-ch04-l01-e01
+kind: standard
+workspaceId: typescript-ch04-l01-e01
+countsTowardStandardExerciseTotal: true
+title: 関数の入出力とcallbackを型付けする
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: typescript-function-callback
+    minimumLevel: transform
+scaffoldLevel: transform
+runtime:
+  kind: typescript
+  entryFile: main.ts
+  sourceType: module
+  capabilityProfile: core
+  primaryOutput: console
+steps:
+  - id: keep-type-contract
+    file: main.ts
+    target: 関数の入出力とcallbackを型付けする
+    starterAnchor: 'type Operation = (value: string) => number;'
+    change: 関数型の引数を、渡す数値に合わせる
+    observe: 型の案内が消え、Consoleに6・10が表示される
+    requiresConceptIds:
+      - typescript-function-callback
+    validationRuleIds:
+      - typescript-ch04-l01-e01-r01
+      - typescript-ch04-l01-e01-r02
+files:
+  - path: main.ts
+    language: typescript
+    source: starter/main.ts
+    editable: true
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+solutionFiles:
+  - path: main.ts
+    language: typescript
+    source: solution/main.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: typescript-ch04-l01-e01-r01
+    label: 型の契約を保ち、受け取った値から結果を作る
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: typescript-learning
+      file: main.ts
+    assertion:
+      kind: typescript-learning
+      profile: number-callback-v1
+    feedback:
+      target: 関数の入出力とcallbackを型付けする
+      expected: 引数と戻り値を数値とする関数型を使い、処理をcallbackとして渡して値を計算できる。
+      nextAction: 型の宣言と注釈を保ち、受け取った値を使う処理を確認します。
+    hintId: typescript-ch04-l01-e01-h01
+    relatedSlideId: typescript-ch04-l01-s01
+  - id: typescript-ch04-l01-e01-r02
+    label: すべての実行例で期待した値を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-console
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - level: log
+          text: '6'
+        - level: log
+          text: '10'
+    feedback:
+      target: Consoleのすべての結果
+      expected: 6・10
+      nextAction: 実行例を保ち、元の値と戻った値の両方を確認します。
+    hintId: typescript-ch04-l01-e01-h02
+    relatedSlideId: typescript-ch04-l01-s04
+hints:
+  - id: typescript-ch04-l01-e01-h01
+    level: 1
+    title: 型と値の受渡しを比べる
+    text: applyへ渡している値は3と5です。どちらも数値です。
+    relatedSlideId: typescript-ch04-l01-s01
+  - id: typescript-ch04-l01-e01-h02
+    level: 2
+    title: 型の関係を保つ
+    text: Operationの引数型と戻り値型を、doubleとapplyで受け渡す値に合わせます。
+    relatedSlideId: typescript-ch04-l01-s02
+  - id: typescript-ch04-l01-e01-h03
+    level: 3
+    title: 処理と確認を残す
+    text: 'type Operation = (value: number) => number;に直し、operation(value)とvalue *
+      2を保ちます。'
+    relatedSlideId: typescript-ch04-l01-s03
+relatedSlideIds:
+  - typescript-ch04-l01-s01
+  - typescript-ch04-l01-s02
+  - typescript-ch04-l01-s03
+  - typescript-ch04-l01-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: starter
+    expectedStatus: code-error
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/starter.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: solution
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/solution.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: renamed
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/renamed.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: nocheck-escape
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/nocheck-escape.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch04-l01-e01-r01
+  - id: suppressed
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/suppressed.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch04-l01-e01-r01
+  - id: output-only
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/output-only.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch04-l01-e01-r01
+  - id: error-after-output
+    expectedStatus: code-error
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/error-after-output.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: function-declaration
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/function-declaration.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: function-expression
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/function-expression.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: addition
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/addition.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: copied-return
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/copied-return.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: any-escape
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/any-escape.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch04-l01-e01-r01
+  - id: fixed-returns
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/fixed-returns.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch04-l01-e01-r01
+      - typescript-ch04-l01-e01-r02
+  - id: fixed-argument
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/fixed-argument.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch04-l01-e01-r01
+      - typescript-ch04-l01-e01-r02
+  - id: wrong-result
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/wrong-result.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch04-l01-e01-r02
+  - id: wrong-argument
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - typescript-type-error-2345
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/wrong-argument.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: wrong-return
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - typescript-type-error-2322
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/wrong-return.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []

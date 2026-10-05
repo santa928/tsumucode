@@ -2,6 +2,7 @@ import type { TypeScriptCompileResult } from './compileTypeScript';
 import type { ScoreNumberAnnotationResult } from './checkScoreNumberAnnotation';
 import type { ScoreNumberInferenceResult } from './checkScoreNumberInference';
 import type { QuestionInterfaceResult } from './checkQuestionInterface';
+import type { ReusableLearningProfile, ReusableLearningResult } from './checkReusableLearning';
 import type {
   ConditionalLearningProfile,
   ConditionalLearningResult,
@@ -27,7 +28,8 @@ export type CompilerWorkerRequest = WorkerRequestBase &
           | 'score-number-annotation-v1'
           | 'score-number-inference-v1'
           | 'question-interface-v1'
-          | ConditionalLearningProfile;
+          | ConditionalLearningProfile
+          | ReusableLearningProfile;
       }
   );
 
@@ -116,6 +118,43 @@ export function isConditionalLearningResult(
   );
 }
 
+/** 再利用の3課題では要求profileと有限factを照合し、成立しないprobe成功を拒否する。 */
+export function isReusableLearningResult(
+  value: unknown,
+  profile: ReusableLearningProfile,
+): value is ReusableLearningResult {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const result = value as Record<string, unknown>;
+  if (result['status'] === 'system-error') return Object.keys(result).length === 1;
+  if (
+    result['status'] !== 'ready' ||
+    result['profile'] !== profile ||
+    Object.keys(result).sort().join(',') !== 'facts,profile,status' ||
+    !result['facts'] ||
+    typeof result['facts'] !== 'object' ||
+    Array.isArray(result['facts'])
+  )
+    return false;
+  const facts = result['facts'] as Record<string, unknown>;
+  const prerequisites = [
+    'programShapeAccepted',
+    'typeContractAccepted',
+    'usesInputValue',
+    'callsAccepted',
+    'forbiddenEscapeAbsent',
+  ];
+  const keys = [...prerequisites, 'positiveProbeAccepted', 'negativeProbesRejected'].sort();
+  if (
+    Object.keys(facts).sort().join(',') !== keys.join(',') ||
+    !keys.every((key) => typeof facts[key] === 'boolean')
+  )
+    return false;
+  const eligible = prerequisites.every((key) => facts[key] === true);
+  return (
+    facts['positiveProbeAccepted'] === eligible && facts['negativeProbesRejected'] === eligible
+  );
+}
+
 /** 2つの導入Lessonだけの有限fact構造とprobe成功の前提を検査する。 */
 function isScoreLearningResult(
   value: unknown,
@@ -172,7 +211,10 @@ export function isCompilerWorkerRequest(value: unknown): value is CompilerWorker
           request['profile'] === 'score-number-inference-v1' ||
           request['profile'] === 'question-interface-v1' ||
           request['profile'] === 'union-result-v1' ||
-          request['profile'] === 'optional-hint-v1'))) &&
+          request['profile'] === 'optional-hint-v1' ||
+          request['profile'] === 'number-callback-v1' ||
+          request['profile'] === 'generic-identity-v1' ||
+          request['profile'] === 'readonly-copy-v1'))) &&
     typeof request['requestId'] === 'string' &&
     request['requestId'].length > 0 &&
     request['requestId'].length <= 128 &&

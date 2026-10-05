@@ -24,18 +24,19 @@ describe('TypeScript導入draft Course', () => {
     expect(course.progressMigrations).toEqual([
       { fromRevision: '2026-10-01.1', toRevision: '2026-10-05.1', steps: [] },
       { fromRevision: '2026-10-05.1', toRevision: '2026-10-05.2', steps: [] },
-      { fromRevision: '2026-10-05.2', toRevision: course.revision, steps: [] },
+      { fromRevision: '2026-10-05.2', toRevision: '2026-10-05.3', steps: [] },
+      { fromRevision: '2026-10-05.3', toRevision: course.revision, steps: [] },
     ]);
     expect(course.expectedTotals).toEqual({
-      chapters: 3,
-      lessons: 6,
-      conceptSlides: 19,
-      standardExercises: 6,
+      chapters: 4,
+      lessons: 9,
+      conceptSlides: 28,
+      standardExercises: 9,
       guidedProjectLessons: 0,
       capstoneLessons: 0,
-      estimatedMinutes: 105,
+      estimatedMinutes: 165,
     });
-    expect(lessons.flatMap(({ slides }) => slides)).toHaveLength(24);
+    expect(lessons.flatMap(({ slides }) => slides)).toHaveLength(36);
     expect(lessons.map(({ id }) => id)).toEqual([
       'typescript-ch01-l01',
       'typescript-ch01-l02',
@@ -43,6 +44,9 @@ describe('TypeScript導入draft Course', () => {
       'typescript-ch02-l01',
       'typescript-ch03-l01',
       'typescript-ch03-l02',
+      'typescript-ch04-l01',
+      'typescript-ch04-l02',
+      'typescript-ch04-l03',
     ]);
     expect(lessons[1]!.prerequisiteLessonIds).toEqual([lessons[0]!.id]);
     expect(lessons[0]!.nextLessonId).toBe(lessons[1]!.id);
@@ -113,7 +117,13 @@ describe('TypeScript導入draft Course', () => {
               ? 'question-interface-v1'
               : index === 4
                 ? 'union-result-v1'
-                : 'optional-hint-v1',
+                : index === 5
+                  ? 'optional-hint-v1'
+                  : index === 6
+                    ? 'number-callback-v1'
+                    : index === 7
+                      ? 'generic-identity-v1'
+                      : 'readonly-copy-v1',
         });
         expect(exercise.validationRules[1]?.assertion).toEqual({
           kind: 'javascript-console',
@@ -122,7 +132,13 @@ describe('TypeScript導入draft Course', () => {
             ? ['内容']
             : index === 4
               ? ['2', 'もう一度']
-              : ['2', 'ヒントなし', '0']
+              : index === 5
+                ? ['2', 'ヒントなし', '0']
+                : index === 6
+                  ? ['6', '10']
+                  : index === 7
+                    ? ['2', '型のクイズ']
+                    : ['1,2,4', '1,2,3']
           ).map((text) => ({ level: 'log', text })),
         });
       }
@@ -130,7 +146,7 @@ describe('TypeScript導入draft Course', () => {
       expect(exercise).not.toHaveProperty('fixtures');
     }
     expect(authoring.exercises.map(({ fixtures }) => fixtures.length)).toEqual([
-      13, 12, 9, 18, 17, 18,
+      13, 12, 9, 18, 17, 18, 17, 16, 18,
     ]);
   });
 
@@ -138,6 +154,7 @@ describe('TypeScript導入draft Course', () => {
     { count: 2, revision: '2026-10-01.1' },
     { count: 3, revision: '2026-10-05.1' },
     { count: 4, revision: '2026-10-05.2' },
+    { count: 6, revision: '2026-10-05.3' },
   ])(
     '旧$count Lessonの合格と元TS・採点履歴を保持して新Lessonを開始できる',
     async ({ count, revision }) => {

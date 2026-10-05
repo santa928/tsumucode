@@ -202,6 +202,116 @@ describe('TypeScriptValidator', () => {
     },
   );
 
+  it.each([
+    ['typescript-ch04-l01-e01', 'number-callback-v1', ['6', '10']],
+    ['typescript-ch04-l02-e01', 'generic-identity-v1', ['2', '型のクイズ']],
+    ['typescript-ch04-l03-e01', 'readonly-copy-v1', ['1,2,4', '1,2,3']],
+  ] as const)(
+    '%sの再利用条件と動作をANDにし、profile・Rule・世代不一致を閉じる',
+    async (exerciseId, profile, outputs) => {
+      const original = await contextFixture();
+      const f = fixture();
+      const facts = {
+        programShapeAccepted: true,
+        typeContractAccepted: true,
+        usesInputValue: true,
+        callsAccepted: true,
+        forbiddenEscapeAbsent: true,
+        positiveProbeAccepted: true,
+        negativeProbesRejected: true,
+      };
+      const compiler = {
+        ...f.compiler,
+        reusableCheck: vi.fn().mockResolvedValue({ status: 'ready', profile, facts }),
+      };
+      const validator = new TypeScriptValidator({
+        compilerFactory: () => compiler,
+        validatorFactory: () => ({ validate: f.validate, buildSnapshotPolicy: vi.fn() }),
+      });
+      const context: ValidationContext = {
+        ...original,
+        exerciseId,
+        rules: [
+          { ...learningRule, assertion: { kind: 'typescript-learning', profile } },
+          {
+            ...consoleRule,
+            assertion: {
+              kind: 'javascript-console',
+              operator: 'equals',
+              expected: outputs.map((text) => ({ level: 'log', text })),
+            },
+          },
+        ],
+      };
+      expect((await validator.validate(context)).status).toBe('incomplete');
+      expect(compiler.reusableCheck).toHaveBeenCalledWith(
+        { sessionId: 'session-1', revision: 4, files: { 'main.ts': original.files['main.ts'] } },
+        profile,
+      );
+      f.validate.mockResolvedValue({
+        exerciseId,
+        executionRevision: 4,
+        status: 'pass',
+        checks: [],
+        passedRequirementIds: [],
+        diagnostics: [],
+        evaluatedAt: 'now',
+      });
+      expect((await validator.validate(context)).status).toBe('pass');
+      compiler.reusableCheck.mockResolvedValue({
+        status: 'ready',
+        profile,
+        facts: {
+          ...facts,
+          usesInputValue: false,
+          positiveProbeAccepted: false,
+          negativeProbesRejected: false,
+        },
+      });
+      expect((await validator.validate(context)).status).toBe('incomplete');
+      compiler.reusableCheck.mockResolvedValue({
+        status: 'ready',
+        profile: profile === 'number-callback-v1' ? 'generic-identity-v1' : 'number-callback-v1',
+        facts,
+      });
+      expect((await validator.validate(context)).status).toBe('system-error');
+      expect((await validator.validate({ ...context, rules: [context.rules[1]!] })).status).toBe(
+        'system-error',
+      );
+      expect((await validator.validate({ ...context, exerciseId: 'other-e01' })).status).toBe(
+        'system-error',
+      );
+      expect(
+        (
+          await validator.validate({
+            ...context,
+            rules: [
+              context.rules[0]!,
+              {
+                ...context.rules[1]!,
+                assertion: {
+                  kind: 'javascript-console',
+                  operator: 'equals',
+                  expected: [{ level: 'log', text: outputs[0] }],
+                },
+              },
+            ],
+          })
+        ).status,
+      ).toBe('system-error');
+      compiler.reusableCheck.mockClear();
+      expect(
+        (
+          await validator.validate({
+            ...context,
+            files: { ...context.files, 'main.ts': 'console.log(2);' },
+          })
+        ).status,
+      ).toBe('system-error');
+      expect(compiler.reusableCheck).not.toHaveBeenCalled();
+    },
+  );
+
   it('Questionの型条件と動作をANDで判定し、新コードと古い証拠を組み合わせない', async () => {
     const original = await contextFixture();
     const f = fixture();

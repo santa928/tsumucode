@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 300" role="img" aria-labelledby="title desc">
+  <title id="title">関数の入出力とcallbackを型付けする</title>
+  <desc id="desc">関数型と実際の処理。Operation: number → number。型は入出力、計算はdoubleに書く。apply(3, double) → 6。apply(5, double) → 10</desc>
+  <rect width="420" height="300" rx="18" fill="#fffaf0" stroke="#b6c8bd"/>
+  <text x="24" y="38" font-family="sans-serif" font-size="20" fill="#173b32">関数型と実際の処理</text>
+  <rect x="24" y="58" width="372" height="88" rx="12" fill="#e1f3ff" stroke="#087ac4"/>
+  <text x="38" y="87" font-family="sans-serif" font-size="19" fill="#162735">Operation: number → number</text>
+  <text x="38" y="119" font-family="sans-serif" font-size="17" fill="#162735">型は入出力、計算はdoubleに書く</text>
+  <rect x="24" y="164" width="372" height="88" rx="12" fill="#fff3cd" stroke="#d97a00"/>
+  <text x="38" y="195" font-family="sans-serif" font-size="18" fill="#162735">apply(3, double) → 6</text>
+  <text x="38" y="228" font-family="sans-serif" font-size="18" fill="#162735">apply(5, double) → 10</text>
+  <text x="24" y="279" font-family="sans-serif" font-size="17" fill="#173b32">型の確認と、実際の結果を両方確かめる</text>
+  </svg>
