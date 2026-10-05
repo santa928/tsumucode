@@ -1,5 +1,30 @@
 schemaVersion: 1
 entries:
+  - id: interface
+    term: interface
+    definition: オブジェクトのプロパティの名前と型を書き、形に名前を付ける書き方。値を作るものではない。
+    firstSlideId: typescript-ch02-l01-s01
+    relatedIds: [property, type-annotation, type-alias]
+  - id: string-array
+    term: string[]
+    definition: 文字列を要素に持つ配列の型。配列の長さや正答位置の範囲を保証するものではない。
+    firstSlideId: typescript-ch02-l01-s01
+    relatedIds: [string, interface]
+  - id: property
+    term: プロパティ
+    definition: オブジェクトの中の項目。ここでは問題文・選択肢・正答位置の名前と値を持つ。
+    firstSlideId: typescript-ch02-l01-s01
+    relatedIds: [interface]
+  - id: type-alias
+    term: type alias
+    definition: typeを使って型に名前を付ける書き方。interfaceと同じオブジェクトの形も表せる。
+    firstSlideId: typescript-ch02-l01-s01
+    relatedIds: [interface]
+  - id: array-at
+    term: .at()
+    definition: 配列の指定した位置の要素を読むメソッド。ここでは0から数える整数の位置を使い、該当する要素がないとundefinedになる。
+    firstSlideId: typescript-ch02-l01-s04
+    relatedIds: [string-array, number]
   - id: typescript
     term: TypeScript
     definition: JavaScriptに型の確認を加えた言語。

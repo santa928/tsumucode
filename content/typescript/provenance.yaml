@@ -240,3 +240,131 @@ items:
   - id: erasure-source-23
     visibility: public
     path: chapters/typescript-ch01/lessons/typescript-ch01-l03/exercises/typescript-ch01-l03-e01/exercise.yaml
+  - id: typescript-question-source-1
+    visibility: public
+    path: chapters/typescript-ch02/chapter.yaml
+    createdAt: 2026-10-05
+  - id: typescript-question-source-2
+    visibility: public
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/exercise.yaml
+    createdAt: 2026-10-05
+  - id: typescript-question-source-3
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/fixtures/any-escape.ts
+    createdAt: 2026-10-05
+  - id: typescript-question-source-4
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/fixtures/assertion.ts
+    createdAt: 2026-10-05
+  - id: typescript-question-source-5
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/fixtures/error-after-output.ts
+    createdAt: 2026-10-05
+  - id: typescript-question-source-6
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/fixtures/index.html
+    createdAt: 2026-10-05
+  - id: typescript-question-source-7
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/fixtures/inference-only.ts
+    createdAt: 2026-10-05
+  - id: typescript-question-source-8
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/fixtures/missing-index.ts
+    createdAt: 2026-10-05
+  - id: typescript-question-source-9
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/fixtures/nocheck-escape.ts
+    createdAt: 2026-10-05
+  - id: typescript-question-source-10
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/fixtures/out-of-range.ts
+    createdAt: 2026-10-05
+  - id: typescript-question-source-11
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/fixtures/output-only.ts
+    createdAt: 2026-10-05
+  - id: typescript-question-source-12
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/fixtures/renamed-interface.ts
+    createdAt: 2026-10-05
+  - id: typescript-question-source-13
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/fixtures/solution.ts
+    createdAt: 2026-10-05
+  - id: typescript-question-source-14
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/fixtures/starter.ts
+    createdAt: 2026-10-05
+  - id: typescript-question-source-15
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/fixtures/suppressed.ts
+    createdAt: 2026-10-05
+  - id: typescript-question-source-16
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/fixtures/type-alias.ts
+    createdAt: 2026-10-05
+  - id: typescript-question-source-17
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/fixtures/wrong-choice-type.ts
+    createdAt: 2026-10-05
+  - id: typescript-question-source-18
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/fixtures/wrong-prompt.ts
+    createdAt: 2026-10-05
+  - id: typescript-question-source-19
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/fixtures/wrong-value.ts
+    createdAt: 2026-10-05
+  - id: typescript-question-source-20
+    visibility: public
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/instructions.md
+    createdAt: 2026-10-05
+  - id: typescript-question-source-21
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/solution/index.html
+    createdAt: 2026-10-05
+  - id: typescript-question-source-22
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/solution/main.ts
+    createdAt: 2026-10-05
+  - id: typescript-question-source-23
+    visibility: public
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/starter/index.html
+    createdAt: 2026-10-05
+  - id: typescript-question-source-24
+    visibility: public
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/starter/main.ts
+    createdAt: 2026-10-05
+  - id: typescript-question-source-25
+    visibility: public
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/lesson.yaml
+    createdAt: 2026-10-05
+  - id: typescript-ch02-l01-shape-value-original
+    visibility: public
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/slides/assets/shape-value.svg
+    createdAt: 2026-10-05
+  - id: typescript-question-source-27
+    visibility: public
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/slides/s01-shape.md
+    createdAt: 2026-10-05
+  - id: typescript-question-source-28
+    visibility: public
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/slides/s02-required.md
+    createdAt: 2026-10-05
+  - id: typescript-question-source-29
+    visibility: public
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/slides/s03-field-type.md
+    createdAt: 2026-10-05
+  - id: typescript-question-source-30
+    visibility: public
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/slides/s04-runtime-boundary.md
+    createdAt: 2026-10-05
+  - id: typescript-question-chapters-typescript-ch02-lessons-typescript-ch02-l01-exercises-typescript-ch02-l01-e01-fixtures-fraction-position-ts
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/fixtures/fraction-position.ts
+    createdAt: 2026-10-05
+  - id: typescript-question-chapters-typescript-ch02-lessons-typescript-ch02-l01-exercises-typescript-ch02-l01-e01-fixtures-negative-position-ts
+    visibility: authoring
+    path: chapters/typescript-ch02/lessons/typescript-ch02-l01/exercises/typescript-ch02-l01-e01/fixtures/negative-position.ts
+    createdAt: 2026-10-05

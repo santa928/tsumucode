@@ -1,0 +1,20 @@
+id: typescript-ch02-l01
+kind: standard
+title: 問題の形と値を合わせる
+goal: interfaceで必須項目の形を表し、正答の位置を数値へ直して選択肢を表示できる。type aliasも形に名前を付けられると説明できる。
+estimatedMinutes: 20
+prerequisiteLessonIds: [typescript-ch01-l03]
+slideSources:
+  - slides/s01-shape.md
+  - slides/s02-required.md
+  - slides/s03-field-type.md
+  - slides/s04-runtime-boundary.md
+exerciseSources:
+  - exercises/typescript-ch02-l01-e01/exercise.yaml
+reflection: interfaceは値を作らず、型の形が合っても配列の範囲や内容の正しさは実行と別の確認が必要。
+glossaryRefs:
+  [interface, string-array, property, type-alias, array-at, number, string, type-annotation]
+completion:
+  kind: standard
+  finalSlideId: typescript-ch02-l01-s04
+  requiredExerciseIds: [typescript-ch02-l01-e01]

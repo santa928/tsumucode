@@ -56,6 +56,36 @@ describe('TypeScriptCompilerClient', () => {
     negativeProbeRejected: true,
   };
 
+  it('Question専用profileで古い世代を無視し、別profileのfactを拒否する', async () => {
+    const worker = new FakeWorker();
+    const client = new TypeScriptCompilerClient({ workerFactory: () => worker });
+    const questionFacts = {
+      programShapeAccepted: true,
+      interfaceAnnotationAccepted: true,
+      requiredFieldsAccepted: true,
+      dataValuesAccepted: true,
+      forbiddenEscapeAbsent: true,
+      logsIndexedChoiceLast: true,
+      positiveProbeAccepted: true,
+      negativeProbesRejected: true,
+    };
+    const result = client.questionCheck({ ...input, revision: 2 });
+    expect(worker.request).toMatchObject({
+      kind: 'learning-check',
+      profile: 'question-interface-v1',
+      input: { revision: 2 },
+    });
+    expect(isCompilerWorkerRequest(worker.request)).toBe(true);
+    worker.respond({ revision: 1, result: { status: 'ready', facts: questionFacts } });
+    expect(worker.terminate).not.toHaveBeenCalled();
+    worker.respond({ result: { status: 'ready', facts: questionFacts } });
+    await expect(result).resolves.toEqual({ status: 'ready', facts: questionFacts });
+    const next = client.questionCheck({ ...input, revision: 3 });
+    worker.respond({ result: { status: 'ready', facts } });
+    await expect(next).resolves.toEqual({ status: 'system-error' });
+    client.dispose();
+  });
+
   it('型推論profileを送信し、型注釈の応答を受け入れない', async () => {
     const worker = new FakeWorker();
     const client = new TypeScriptCompilerClient({ workerFactory: () => worker });

@@ -1,0 +1,350 @@
+id: typescript-ch02-l01-e01
+kind: standard
+workspaceId: typescript-ch02-l01-e01
+countsTowardStandardExerciseTotal: true
+title: 問題の形と正答位置を合わせる
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: typescript-question-interface
+    minimumLevel: transform
+scaffoldLevel: transform
+runtime:
+  kind: typescript
+  entryFile: main.ts
+  sourceType: module
+  capabilityProfile: core
+  primaryOutput: console
+steps:
+  - id: fix-index-value
+    file: main.ts
+    target: 正答位置の値
+    starterAnchor: "correctIndex: '0'"
+    change: interfaceの形を保ち、正答位置を数値へ直す
+    observe: 型の案内が消え、Consoleに内容が1回表示される
+    requiresConceptIds:
+      - typescript-question-interface
+    validationRuleIds:
+      - typescript-ch02-l01-e01-r01
+      - typescript-ch02-l01-e01-r02
+files:
+  - path: main.ts
+    language: typescript
+    source: starter/main.ts
+    editable: true
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+solutionFiles:
+  - path: main.ts
+    language: typescript
+    source: solution/main.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: typescript-ch02-l01-e01-r01
+    label: interfaceの必須項目と型を保ち、問題の選択肢を正答位置で選ぶ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: typescript-learning
+      file: main.ts
+    assertion:
+      kind: typescript-learning
+      profile: question-interface-v1
+    feedback:
+      target: main.tsの問題の形と値
+      expected: interfaceの3つの必須項目・注釈と、選択肢を正答位置で選ぶ表示
+      nextAction: 形の型と問題の値を保ち、注釈したオブジェクトの選択肢を正答位置で表示します。
+    hintId: typescript-ch02-l01-e01-h01
+    relatedSlideId: typescript-ch02-l01-s01
+  - id: typescript-ch02-l01-e01-r02
+    label: Consoleに正答の内容だけを表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-console
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - level: log
+          text: 内容
+    feedback:
+      target: Consoleと正答位置
+      expected: 内容が1回表示される
+      nextAction: 最初の選択肢を選ぶ数値の位置0を用意し、最後の表示で選択肢を取り出します。
+    hintId: typescript-ch02-l01-e01-h02
+    relatedSlideId: typescript-ch02-l01-s04
+hints:
+  - id: typescript-ch02-l01-e01-h01
+    level: 1
+    title: 形の型と値を比べる
+    text: 正答位置の型と、オブジェクトで渡した値の型を比べます。
+    relatedSlideId: typescript-ch02-l01-s02
+  - id: typescript-ch02-l01-e01-h02
+    level: 2
+    title: 位置だけを数値にする
+    text: 引用符で囲んだ0は文字列です。問題文と選択肢は文字列のまま、位置の値だけを数値にします。
+    relatedSlideId: typescript-ch02-l01-s03
+  - id: typescript-ch02-l01-e01-h03
+    level: 3
+    title: 注釈と選択肢の表示を残す
+    text: 'correctIndex: 0に直します。interfaceの3項目、型注釈と最後の選択肢の表示を残します。'
+    relatedSlideId: typescript-ch02-l01-s04
+relatedSlideIds:
+  - typescript-ch02-l01-s01
+  - typescript-ch02-l01-s02
+  - typescript-ch02-l01-s03
+  - typescript-ch02-l01-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: starter
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - typescript-type-error-2322
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/starter.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: solution
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/solution.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: renamed-interface
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/renamed-interface.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: missing-index
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - typescript-type-error-2741
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/missing-index.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: wrong-choice-type
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - typescript-type-error-2322
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/wrong-choice-type.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: any-escape
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/any-escape.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch02-l01-e01-r01
+  - id: nocheck-escape
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/nocheck-escape.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch02-l01-e01-r01
+  - id: suppressed
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/suppressed.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch02-l01-e01-r01
+  - id: assertion
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/assertion.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch02-l01-e01-r01
+  - id: type-alias
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/type-alias.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch02-l01-e01-r01
+  - id: inference-only
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/inference-only.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch02-l01-e01-r01
+  - id: output-only
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/output-only.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch02-l01-e01-r01
+  - id: wrong-prompt
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/wrong-prompt.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch02-l01-e01-r01
+  - id: out-of-range
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/out-of-range.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch02-l01-e01-r02
+  - id: wrong-value
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/wrong-value.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch02-l01-e01-r02
+  - id: negative-position
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/negative-position.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch02-l01-e01-r01
+  - id: fraction-position
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/fraction-position.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch02-l01-e01-r01
+  - id: error-after-output
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - javascript-runtime
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/error-after-output.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []

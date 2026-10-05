@@ -1,4 +1,5 @@
 id: typescript-ch01-l03
+nextLessonId: typescript-ch02-l01
 kind: standard
 title: 型の確認と実行の失敗を分ける
 goal: 型注釈が生成されたJavaScriptでは消えることを説明し、型の誤りと実行時の失敗を区別して得点を表示できる。
