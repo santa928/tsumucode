@@ -1,4 +1,5 @@
 id: typescript-ch01-l02
+nextLessonId: typescript-ch01-l03
 kind: standard
 title: 得点に数値の型を書く
 goal: scoreにnumberの型注釈を残して数値2を表示し、型注釈と値の変換の違いを説明できる。

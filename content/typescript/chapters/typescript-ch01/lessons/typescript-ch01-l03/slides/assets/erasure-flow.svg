@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" role="img" aria-labelledby="title desc">
+  <title id="title">型注釈の消去と残る処理</title>
+  <desc id="desc">TypeScriptから型注釈だけを取り除き、JavaScriptに残った代入と表示を実行するとConsoleに2が出る。</desc>
+  <rect width="400" height="240" rx="12" fill="#f8fafc" />
+  <g font-family="sans-serif" text-anchor="middle" fill="#0f172a">
+    <rect x="16" y="12" width="368" height="52" rx="8" fill="#dbeafe" />
+    <text x="200" y="34" font-size="16">書いたTypeScript</text>
+    <text x="200" y="55" font-size="19">let score: number = 2;</text>
+    <path d="M200 68v29m-6-6 6 6 6-6" fill="none" stroke="#475569" stroke-width="2" />
+    <text x="200" y="88" font-size="16" dx="94">型注釈を消去</text>
+    <rect x="16" y="104" width="368" height="52" rx="8" fill="#e0e7ff" />
+    <text x="200" y="126" font-size="16">実行するJavaScript</text>
+    <text x="200" y="147" font-size="19">let score = 2;</text>
+    <path d="M200 160v29m-6-6 6 6 6-6" fill="none" stroke="#475569" stroke-width="2" />
+    <text x="200" y="180" font-size="16" dx="94">表示処理は残る</text>
+    <rect x="16" y="196" width="368" height="32" rx="8" fill="#dcfce7" />
+    <text x="200" y="219" font-size="19">Console → 2</text>
+  </g>
+</svg>

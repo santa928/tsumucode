@@ -1,0 +1,29 @@
+id: typescript-ch01-l03
+kind: standard
+title: 型の確認と実行の失敗を分ける
+goal: 型注釈が生成されたJavaScriptでは消えることを説明し、型の誤りと実行時の失敗を区別して得点を表示できる。
+estimatedMinutes: 15
+prerequisiteLessonIds:
+  - typescript-ch01-l02
+slideSources:
+  - slides/s01-erasure.md
+  - slides/s02-type-error.md
+  - slides/s03-runtime-error.md
+  - slides/s04-checkpoint.md
+exerciseSources:
+  - exercises/typescript-ch01-l03-e01/exercise.yaml
+reflection: 型の確認を通っても実行は別に失敗し得る。型注釈が消えても、throwなどの処理は残る。
+glossaryRefs:
+  - type-annotation
+  - type-erasure
+  - javascript
+  - number
+  - string
+  - console
+  - throw
+  - error
+completion:
+  kind: standard
+  finalSlideId: typescript-ch01-l03-s04
+  requiredExerciseIds:
+    - typescript-ch01-l03-e01
