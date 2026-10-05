@@ -248,7 +248,7 @@ tag ref作成後の通信断などでRunだけが失敗表示になった場合�
 
 TypeScriptコースの準備として、実コンパイラ・停止可能な専用Worker・既存JavaScript安全解析・隔離プレビュー・動作採点をつなぐ[型検査境界の技術実証](docs/quality/typescript-compiler-boundary.md)を追加しています。型検査失敗は未実行・未採点として区別し、元TSと実行結果を照合します。検証用TS教材を実演習画面へ読み込み、Console・修正後の採点・元コードの保存/再読込まで確認しました。[型注釈1課題の採点契約](docs/quality/typescript-annotation-grading-contract.md)では、元TSの明示的なnumber注釈と実Consoleの結果を両方確認します。TSコースの教材全体・残りの型習得要件・公開登録は未完了です。
 
-[型推論1課題の採点契約](docs/quality/typescript-inference-grading-contract.md)では、注釈なしのletから推論された数値型と実Consoleを両方確認し、明示注釈の課題とは専用profileで区別します。`content/typescript`に導入2Lesson・8枚・30分のdraft Courseを登録し、型推論から型注釈への順序と用語の初出を統合しています。[統合の範囲と検証記録](docs/quality/typescript-draft-course-integration.md)を参照してください。Home/Pathへの掲載、コース全体の制作、公開受入は未完了です。
+[型推論1課題の採点契約](docs/quality/typescript-inference-grading-contract.md)では、注釈なしのletから推論された数値型と実Consoleを両方確認し、明示注釈の課題とは専用profileで区別します。`content/typescript`に導入3Lesson・12枚・45分のdraft Courseを登録し、型推論→型注釈→型消去・実行時失敗の順序と用語の初出を統合しています。型消去の課題は実行の成功とConsoleの動作を判定し、型の理解そのものを合格の証拠にはしません。[初回2Lessonの統合記録](docs/quality/typescript-draft-course-integration.md)と[#109の接続範囲・検証・未確認事項](docs/quality/issue-109-type-erasure-integration.md)を参照してください。Home/Pathへの掲載、コース全体の制作、公開受入は未完了です。
 
 [型消去と実行時失敗の次教材原稿](docs/quality/typescript-ch01-l03-draft/AUTHORING.md)は、型注釈が生成JSから消えることと、型が通ってもthrowで実行が止まることを4枚・15分・9Fixtureで扱います。動作課題としてConsoleを判定し、型注釈の有無は採点条件にしていません。独立内容レビューと通常Courseへの登録は未完了です。
 

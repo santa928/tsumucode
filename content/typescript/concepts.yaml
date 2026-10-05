@@ -9,3 +9,8 @@ concepts:
     prerequisiteConceptIds:
       - typescript-number-inference
     minimumProjectLevel: transform
+  - id: typescript-type-erasure
+    introducedBySlideId: typescript-ch01-l03-s01
+    prerequisiteConceptIds:
+      - typescript-number-annotation
+    minimumProjectLevel: transform

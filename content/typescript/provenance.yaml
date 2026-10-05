@@ -172,3 +172,71 @@ items:
   - id: typescript-source-55
     visibility: public
     path: glossary.yaml
+  - id: erasure-source-1
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/lesson.yaml
+  - id: erasure-source-4
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/slides/s01-erasure.md
+    modified: true
+  - id: typescript-ch01-l03-erasure-flow-original
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/slides/assets/erasure-flow.svg
+    createdAt: 2026-10-05
+  - id: erasure-source-5
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/slides/s02-type-error.md
+  - id: erasure-source-6
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/slides/s03-runtime-error.md
+  - id: erasure-source-7
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/slides/s04-checkpoint.md
+  - id: erasure-source-8
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/exercises/typescript-ch01-l03-e01/instructions.md
+  - id: erasure-source-9
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/exercises/typescript-ch01-l03-e01/starter/index.html
+  - id: erasure-source-10
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/exercises/typescript-ch01-l03-e01/starter/main.ts
+  - id: erasure-source-11
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/exercises/typescript-ch01-l03-e01/solution/index.html
+  - id: erasure-source-12
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/exercises/typescript-ch01-l03-e01/solution/main.ts
+  - id: erasure-source-13
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/exercises/typescript-ch01-l03-e01/fixtures/index.html
+  - id: erasure-source-14
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/exercises/typescript-ch01-l03-e01/fixtures/starter.ts
+  - id: erasure-source-15
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/exercises/typescript-ch01-l03-e01/fixtures/solution.ts
+  - id: erasure-source-16
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/exercises/typescript-ch01-l03-e01/fixtures/alternative.ts
+  - id: erasure-source-17
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/exercises/typescript-ch01-l03-e01/fixtures/inference.ts
+  - id: erasure-source-18
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/exercises/typescript-ch01-l03-e01/fixtures/output-only.ts
+  - id: erasure-source-19
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/exercises/typescript-ch01-l03-e01/fixtures/type-error.ts
+  - id: erasure-source-20
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/exercises/typescript-ch01-l03-e01/fixtures/error-after-output.ts
+  - id: erasure-source-21
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/exercises/typescript-ch01-l03-e01/fixtures/wrong-value.ts
+  - id: erasure-source-22
+    visibility: authoring
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/exercises/typescript-ch01-l03-e01/fixtures/no-output.ts
+  - id: erasure-source-23
+    visibility: public
+    path: chapters/typescript-ch01/lessons/typescript-ch01-l03/exercises/typescript-ch01-l03-e01/exercise.yaml

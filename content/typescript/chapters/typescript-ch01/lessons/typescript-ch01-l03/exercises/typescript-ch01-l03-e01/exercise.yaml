@@ -1,0 +1,210 @@
+id: typescript-ch01-l03-e01
+kind: standard
+workspaceId: typescript-ch01-l03-e01
+countsTowardStandardExerciseTotal: true
+title: 表示へ到達するまで直す
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: typescript-type-erasure
+    minimumLevel: transform
+scaffoldLevel: transform
+runtime:
+  kind: typescript
+  entryFile: main.ts
+  sourceType: module
+  capabilityProfile: core
+  primaryOutput: console
+steps:
+  - id: reach-console
+    file: main.ts
+    target: 表示の途中のthrow
+    starterAnchor: throw new Error
+    change: 練習用throwを除いて表示へ到達させる
+    observe: 型と実行の診断がなく、Consoleに2が1回出る
+    requiresConceptIds:
+      - typescript-type-erasure
+    validationRuleIds:
+      - typescript-ch01-l03-e01-r01
+files:
+  - path: main.ts
+    language: typescript
+    source: starter/main.ts
+    editable: true
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+solutionFiles:
+  - path: main.ts
+    language: typescript
+    source: solution/main.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: typescript-ch01-l03-e01-r01
+    label: 失敗せずConsoleに2だけを表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-console
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - level: log
+          text: '2'
+    feedback:
+      target: Consoleと表示へ進む処理
+      expected: 実行の診断がなく2が1回表示される
+      nextAction: 練習用throwの行を除き、得点2を1回表示します。
+    hintId: typescript-ch01-l03-e01-h02
+    relatedSlideId: typescript-ch01-l03-s04
+hints:
+  - id: typescript-ch01-l03-e01-h01
+    level: 1
+    title: 型と処理を分ける
+    text: 数値2はnumberに合っています。表示へ進む前に、通常の処理を中断する行があります。
+    relatedSlideId: typescript-ch01-l03-s03
+  - id: typescript-ch01-l03-e01-h02
+    level: 2
+    title: 中断する行を見つける
+    text: throwは通常の処理を中断します。今回は表示の途中に置いた練習用のthrowの行を除きます。
+    relatedSlideId: typescript-ch01-l03-s04
+  - id: typescript-ch01-l03-e01-h03
+    level: 3
+    title: 代入と表示を残す
+    text: 'let score: number = 2;とconsole.log(score);の2行を残します。'
+    relatedSlideId: typescript-ch01-l03-s04
+relatedSlideIds:
+  - typescript-ch01-l03-s01
+  - typescript-ch01-l03-s02
+  - typescript-ch01-l03-s03
+  - typescript-ch01-l03-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: starter
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - javascript-runtime
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/starter.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: solution
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/solution.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternative
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/alternative.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: inference
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/inference.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: output-only
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/output-only.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: type-error
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - typescript-type-error-2322
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/type-error.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: error-after-output
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - javascript-runtime
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/error-after-output.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: wrong-value
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/wrong-value.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch01-l03-e01-r01
+  - id: no-output
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/no-output.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch01-l03-e01-r01
