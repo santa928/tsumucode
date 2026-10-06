@@ -1,11 +1,28 @@
 // @vitest-environment node
-import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { checkStaticArtifact } from '../../scripts/release/checkStaticArtifact';
+import { compileCourse } from '../../scripts/content/compileCourse';
+import {
+  buildSplitContentDelivery,
+  writeSplitContentDeliveryTree,
+} from '../../scripts/content/splitContentDelivery';
+import { resolveReleaseCourseContract } from '../../scripts/release/releaseCourseContracts';
 
 const temporaryRoots: string[] = [];
+
+/** 実TS教材を公開用に分割し、既存の必須HTML Artifactと合わせる。 */
+async function typescriptArtifact(): Promise<string> {
+  const root = await artifact('extra.json', '{}');
+  const compilation = await compileCourse('content/typescript');
+  await writeSplitContentDeliveryTree(
+    path.join(root, 'generated/content'),
+    buildSplitContentDelivery([compilation], []),
+  );
+  return root;
+}
 
 /** 最小の正常Artifactへ検査対象Fileを1件加える。 */
 async function artifact(extraName: string, extraContent: string): Promise<string> {
@@ -33,6 +50,35 @@ afterEach(async () => {
 });
 
 describe('static artifact', () => {
+  it('実TSの15 Lessonを技術検査できても正式公開の許可にはしない', async () => {
+    const report = await checkStaticArtifact(await typescriptArtifact(), 'typescript');
+    expect(report.files).toBeGreaterThan(20);
+    expect(() => resolveReleaseCourseContract('typescript')).toThrow();
+  });
+
+  it.each(['index.json', 'lessons/typescript-ch01-l01.json'])(
+    'TSの%sの公開bytes改変を拒否する',
+    async (relative) => {
+      const root = await typescriptArtifact();
+      const file = path.join(root, 'generated/content/courses/typescript', relative);
+      await writeFile(file, `${await readFile(file, 'utf8')} `);
+      await expect(checkStaticArtifact(root, 'typescript')).rejects.toThrow(/SHA/u);
+    },
+  );
+
+  it('TSの欠落LessonとProvenanceを拒否する', async () => {
+    const root = await typescriptArtifact();
+    const provenance = path.join(root, 'generated/content/courses/typescript/provenance.json');
+    const bytes = await readFile(provenance);
+    await rm(provenance);
+    await expect(checkStaticArtifact(root, 'typescript')).rejects.toThrow();
+    await writeFile(provenance, bytes);
+    await rm(
+      path.join(root, 'generated/content/courses/typescript/lessons/typescript-ch01-l01.json'),
+    );
+    await expect(checkStaticArtifact(root, 'typescript')).rejects.toThrow(/不足/u);
+  });
+
   it('許可された静的Fileと必須Artifactだけなら受理する', async () => {
     await expect(checkStaticArtifact(await artifact('extra.json', '{}'))).resolves.toEqual({
       files: 6,

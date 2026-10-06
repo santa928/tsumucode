@@ -106,6 +106,10 @@ IDは `typescript-chNN-lNN`。同一章内は記載順、章先頭は前章末�
 | 操作中の案内           |             100 ms | 検査中/停止可能が描画されるまで。操作を受けた時刻から計測                      |
 | 停止時の待機解除       |             300 ms | compile中の停止操作から待機解除まで。遅れた結果が反映されないことも確認        |
 
+TSの独立した技術検査には `npm run release:check -- --course-id typescript` を使う。これは静的Artifactの漏洩検査と、採用済み15 LessonのCatalog Schema・Index/Lessonのbytes SHAとSchema・Provenance存在を確認する検査であり、正式公開の承認ではない。通常公開のCourse allowlistとDeploy dispatchはHTML/CSS・JavaScriptの既存契約を維持し、TSの初心者評価方式・性能予算・公開条件の合意前には拡張しない。
+
+`typescript-release-smoke.spec.ts` は実TSのDOM演習についてChromium・Firefox・WebKitで、型失敗、Preview/判定のcompile中停止、修正後の合格、保存再開、キーボード操作、親画面のaxe、実Previewの隔離を確認する。操作時間は信頼されたclickのcapture listenerから、停止可能なbusy表示または停止後の判定ボタン再有効化が次の描画機会を経て維持されるまでを観測する。停止は実Workerへのcompile送信後かつ応答前であることと、元TS・採点履歴の保持も確認する。ブラウザの実画面の物理的な表示時刻や実機性能を測定したとは扱わず、合意前の100ms/300msを新たな合否閾値にしない。代表smokeの成功を全Lesson・初心者受入・正式Release Gate全体の通過へ広げない。
+
 Chromium、実行OS/CPU、browser version、Artifact SHA、cache、通信/CPU制限の有無を記録する。CI実測を低速実機の保証へ読み替えない。低速通信/端末の観察では待機案内・操作可能性・再試行も記録し、p95が未達なら読込範囲/再利用戦略を検討する。承認なしに上限を緩めない。非同期Scenarioは既存のbounded待機契約を維持し、この予算を理由にsleepや待機上限を伸ばさない。
 
 作業中は変更対象の型情報/Worker契約テスト、該当正負Fixture、代表Chromium操作を優先する。公開前は既存公開Gate、3 Browser、Security/保存/Keyboard/axe、subpath、初期chunk、代表性能と必要viewportを実行する。同じ入力の成功証拠は再利用する。人の初心者通し試用はJS修了相当・TS初学者を対象に、詰まり、用語、Hint使用、誤概念、作品の自力説明を記録し、未実施を合格扱いにしない。
