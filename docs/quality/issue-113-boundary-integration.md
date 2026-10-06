@@ -28,8 +28,14 @@ Sourceの固定3課題でInteraction条件を丸ごと省略する場合と、ru
 
 限定Browser設定の作業directory未指定でserver起動timeoutが1回発生した。repo directoryを明示して限定1例は成功した。設定の失敗を教材や採点の成功へ加えない。
 
+最終型検査、全公開ソースLint、公開差分のPrettierとdiff checkは成功した。Lintが指摘したFixture testの冗長条件を削除し、診断配列の厳密照合を残した対象3件は成功（不変の10件は選択対象外）。成功数へ再実行分を足さない。実承認を反映したContent reviewは3Course・115Lesson、stale hashes 0・rejected 0で成功した。
+
 ## 承認と統合の現在地
 
-この記録作成時点では、修正したBrowserの対象再検証と独立内容/コードレビューを実行中または待機中。承認台帳の更新、PR、CI、merge/Issue closeは未実施。完了と承認の証拠を確認してからこの節を更新する。
+コード・教材は固定HEAD `616e003cf49edc8926cbdaaaec2b5328b64f5021`でReviewer `review_issue109`が独立承認した。117file差分と全教材/47Fixture/採点境界/保存互換を読解し、accuracy・goalExerciseAlignment・decisionは3Lessonともapproved、unexplainedTerms・hintLeakageは0。作者は代表画像9枚、Reviewerは最終PC5枚・390px9枚の計14枚を実見した。ReviewerのexamplesExecuted判定は上述の作者証拠へ依拠し、独自のDocker再実行やhash再計算を意味しない。
+
+追加の関連回帰は99file・1,026件が成功した。実行コマンド全体は私用Playwright specをVitestが取り込んだ1suiteで失敗しており、これを成功と記録しない。製品側の失敗はなく、成功した99fileの入力は再利用する。私用検証ファイルはGit除外済みでPRへ含めない。承認台帳の4hashを更新して、正式なCIで私用ファイルを含まないheadの品質とContent reviewを確認する。
+
+この記録はPR作成前の固定実装とレビュー証拠を記す。PR/headのCIとmerge/Issue close、main CIの結果はGitHubのPR・workflow実体と最終引継ぎで確認する。通常のmerge許可は得ているが、教材と承認台帳のdraftを正式公開へ変更しない。
 
 初心者の通し試用、物理実機、全TS制作、TS固有性能予算、正式公開受入は未確認。Home/Pathへの掲載やdeployは行わない。後続#114の制作と#115の受入を、この小さい3Lessonや通常CIで代替しない。

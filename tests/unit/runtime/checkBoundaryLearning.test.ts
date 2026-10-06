@@ -54,7 +54,7 @@ for (const [id, profile] of [
           fixture.expectedDiagnosticCodes?.some((code) => code.startsWith('typescript-'))
         ) {
           expect(compiled.status, fixture.id).toBe('type-error');
-          if (compiled.status !== 'ready' && fixture.expectedDiagnosticCodes)
+          if (compiled.status !== 'ready')
             expect(
               compiled.diagnostics.map(({ code }) => `typescript-type-error-${String(code)}`),
               fixture.id,

@@ -127,7 +127,7 @@ lessons:
   - lessonId: typescript-ch04-l03
     authorId: tsumucode-typescript-authoring
     reviewerId: review_issue109
-    sourceHash: 8e9cf66925d71336493801ed678ea92bedfcac375101f2893062fd86876c2008
+    sourceHash: ed9781d9f85ea846b6d1609b7f93c56e462513b203d85780fa440b6baf4ca050
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -140,3 +140,49 @@ lessons:
       型形/実値/呼出しと非emit正負probe、有限別解、any/assertion/診断抑制/固定表示等の回避拒否、source/session/revisionと保存/Reset/配信境界を確認。型条件と実ConsoleのANDを汎用TS理解の証明へ拡張しない。
       examplesExecutedは作者core-testsの65種類、固定契約共有後Validator/Course31再確認、真の括弧3Compiler回帰、修正Workerの不変51例と真の括弧3例、初回UI7成功へ依拠する。最初のWorker3失敗、括弧が除去された重複入力、private検証起動timeoutは成功証拠へ加えない。
       Reviewerは3Lesson合計PC3枚・390px図/本文/練習欄9枚の計12画像を実見。独自の再実行/hash再計算、初心者理解/物理実機/汎用TS文法/TS性能予算/全TS完成/正式公開の確認ではない。Course/ReviewのreleaseStatus/verifiedSourceCommit/canonicalDistSha256はdraftを保持する。
+      #113のHEAD616e003cf49edc8926cbdaaaec2b5328b64f5021でReviewer review_issue109が次Lesson参照追加のみ限定承認。旧教材・採点・実行証拠を保持し、DOM/Eventへの接続を確認した。
+  - lessonId: typescript-ch05-l01
+    authorId: tsumucode-typescript-authoring
+    reviewerId: review_issue109
+    sourceHash: 9f95a448f61ad10fb3ee8095ea96bbaf3f88d0bb9db2ea9895d4822f1402f340
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: >-
+      Reviewer review_issue109がbase86faf55 / HEAD616e003cf49edc8926cbdaaaec2b5328b64f5021の117file差分、3Lessonの全12Slide・練習・Hint・Starter/Solution・47Fixture・登録と保存互換を独立確認し、コード/教材を承認。必須修正0件。
+      DOMの対象nullとEvent.currentTargetの種類確認、実datasetの使用と目標整合、前提・概念・用語を確認。固定3課題のruntime/scenario閉鎖、元TSの有限ASTと非emit正負probe、profilefactと実DOM操作のAND、型弱化/固定表示/操作省略の拒否、source/session/revisionと旧9Lesson進捗互換を読解した。
+      examplesExecutedは作者の成功した固有unit145件、本文指定文脈での掲載12例の実Compiler確認（unknown導入例は18046を期待）、実Chromiumの不変46Fixtureとno-await限定1例、通常UI・停止再試行・旧結果拒否・既存導線の証拠へ依拠する。初回失敗と重複実行を成功数へ加えない。
+      ReviewerはPC5枚・390px9枚の計14画像を実見。独自のDocker再実行/hash再計算は行っていない。初心者の実測/物理実機/汎用TS文法/全TS制作/TS性能予算/正式公開の承認へ拡張せず、releaseStatus/verifiedSourceCommit/canonicalDistSha256はdraftを保持する。
+  - lessonId: typescript-ch05-l02
+    authorId: tsumucode-typescript-authoring
+    reviewerId: review_issue109
+    sourceHash: 4b8035ec89a99a3396cf6816c673683393197451e24ddae4aa3794c5d83abb27
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: >-
+      Reviewer review_issue109がbase86faf55 / HEAD616e003cf49edc8926cbdaaaec2b5328b64f5021の117file差分、3Lessonの全12Slide・練習・Hint・Starter/Solution・47Fixture・登録と保存互換を独立確認し、コード/教材を承認。必須修正0件。
+      unknownのobject・非null・項目存在・number確認、確認後の実値使用と目標整合、前提・概念・用語を確認。固定3課題のruntime/scenario閉鎖、元TSの有限ASTと非emit正負probe、profilefactと実DOM操作のAND、型弱化/固定表示/操作省略の拒否、source/session/revisionと旧9Lesson進捗互換を読解した。
+      examplesExecutedは作者の成功した固有unit145件、本文指定文脈での掲載12例の実Compiler確認（unknown導入例は18046を期待）、実Chromiumの不変46Fixtureとno-await限定1例、通常UI・停止再試行・旧結果拒否・既存導線の証拠へ依拠する。初回失敗と重複実行を成功数へ加えない。
+      ReviewerはPC5枚・390px9枚の計14画像を実見。独自のDocker再実行/hash再計算は行っていない。初心者の実測/物理実機/汎用TS文法/全TS制作/TS性能予算/正式公開の承認へ拡張せず、releaseStatus/verifiedSourceCommit/canonicalDistSha256はdraftを保持する。
+  - lessonId: typescript-ch05-l03
+    authorId: tsumucode-typescript-authoring
+    reviewerId: review_issue109
+    sourceHash: 1a15632266904fc3832d83d5d058a1fc809dfc55bcdbc6d96b0fd923bdb62c20
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: >-
+      Reviewer review_issue109がbase86faf55 / HEAD616e003cf49edc8926cbdaaaec2b5328b64f5021の117file差分、3Lessonの全12Slide・練習・Hint・Starter/Solution・47Fixture・登録と保存互換を独立確認し、コード/教材を承認。必須修正0件。
+      Promiseのunknownとawait後の検証、catchのunknownからErrorの実message使用と目標整合、前提・概念・用語を確認。固定3課題のruntime/scenario閉鎖、元TSの有限ASTと非emit正負probe、profilefactと実DOM操作のAND、型弱化/固定表示/操作省略の拒否、source/session/revisionと旧9Lesson進捗互換を読解した。
+      examplesExecutedは作者の成功した固有unit145件、本文指定文脈での掲載12例の実Compiler確認（unknown導入例は18046を期待）、実Chromiumの不変46Fixtureとno-await限定1例、通常UI・停止再試行・旧結果拒否・既存導線の証拠へ依拠する。初回失敗と重複実行を成功数へ加えない。
+      ReviewerはPC5枚・390px9枚の計14画像を実見。独自のDocker再実行/hash再計算は行っていない。初心者の実測/物理実機/汎用TS文法/全TS制作/TS性能予算/正式公開の承認へ拡張せず、releaseStatus/verifiedSourceCommit/canonicalDistSha256はdraftを保持する。
