@@ -1,3 +1,8 @@
+import {
+  TypeScriptBoundaryContracts,
+  acceptsTypeScriptBoundaryScenarios,
+  acceptsTypeScriptBoundaryRuntime,
+} from './typeScriptBoundaryContract';
 /** 公開教材payloadの構造、Course内参照、宣言集計、進捗移行chainを検証する。 */
 import { z } from 'zod';
 import { exerciseReferenceIds, exerciseRequirementIds } from './exerciseRequirementIds';
@@ -536,6 +541,9 @@ const TypeScriptLearningAssertionSchema = z
       'number-callback-v1',
       'generic-identity-v1',
       'readonly-copy-v1',
+      'dom-event-v1',
+      'unknown-points-v1',
+      'async-unknown-v1',
     ]),
   })
   .strict();
@@ -1142,8 +1150,9 @@ export const TypeScriptOptionalConsoleRuleSchema = learningConsoleRule(['2', '�
 export const TypeScriptCallbackConsoleRuleSchema = learningConsoleRule(['6', '10']);
 export const TypeScriptGenericConsoleRuleSchema = learningConsoleRule(['2', '型のクイズ']);
 export const TypeScriptReadonlyConsoleRuleSchema = learningConsoleRule(['1,2,4', '1,2,3']);
+export const TypeScriptBoundaryConsoleRuleSchema = learningConsoleRule(['準備できました']);
 
-/** 型習得を判定する既存8課題だけの対応。一般のprofile指定は受け付けない。 */
+/** 型習得を判定する既存11課題だけの対応。一般のprofile指定は受け付けない。 */
 export const TypeScriptLearningContracts = [
   {
     lessonId: 'typescript-ch01-l01',
@@ -1185,6 +1194,11 @@ export const TypeScriptLearningContracts = [
     profile: 'readonly-copy-v1',
     consoleRuleSchema: TypeScriptReadonlyConsoleRuleSchema,
   },
+  ...TypeScriptBoundaryContracts.map(({ lessonId, profile }) => ({
+    lessonId,
+    profile,
+    consoleRuleSchema: TypeScriptBoundaryConsoleRuleSchema,
+  })),
 ] as const;
 
 export const ValidationRuleDefinitionSchema = z
@@ -2314,6 +2328,23 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
           const learningContract = TypeScriptLearningContracts.find(
             (contract) => contract.lessonId === lesson.id,
           );
+          const boundaryContract = TypeScriptBoundaryContracts.find(
+            (contract) => contract.lessonId === lesson.id,
+          );
+          if (
+            boundaryContract &&
+            (!acceptsTypeScriptBoundaryScenarios(
+              boundaryContract.profile,
+              exercise.interactionScenarios,
+            ) ||
+              !acceptsTypeScriptBoundaryRuntime(boundaryContract.profile, exercise.runtime))
+          ) {
+            addIssue(
+              context,
+              [...exercisePath, 'interactionScenarios'],
+              '境界課題の既存DOM Runtimeと必須操作・表示を保ってください',
+            );
+          }
           if (
             (learningRules.length > 0 ||
               learningContract ||

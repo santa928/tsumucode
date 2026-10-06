@@ -1,4 +1,11 @@
 import {
+  TypeScriptBoundaryContracts,
+  acceptsTypeScriptBoundaryScenarios,
+  acceptsTypeScriptBoundaryRuntime,
+  type TypeScriptBoundaryProfile,
+} from '../../../core/content/typeScriptBoundaryContract';
+import type { BoundaryLearningResult } from '../../runtime/typescript/checkBoundaryLearning';
+import {
   TypeScriptExerciseRuntimeSchema,
   TypeScriptLearningRuleDefinitionSchema,
   TypeScriptLearningContracts,
@@ -20,6 +27,7 @@ import {
   isQuestionInterfaceResult,
   isConditionalLearningResult,
   isReusableLearningResult,
+  isBoundaryLearningResult,
 } from '../../runtime/typescript/workerContract';
 import type {
   ValidationContext,
@@ -39,6 +47,10 @@ import {
 import { JavaScriptValidator } from '../javascript/JavaScriptValidator';
 
 interface CompilerPort {
+  boundaryCheck?(
+    input: TypeScriptCompileInput,
+    profile: TypeScriptBoundaryProfile,
+  ): Promise<BoundaryLearningResult>;
   compile(input: TypeScriptCompileInput): Promise<TypeScriptCompileResult>;
   learningCheck?(input: TypeScriptCompileInput): Promise<ScoreNumberAnnotationResult>;
   inferenceCheck?(input: TypeScriptCompileInput): Promise<ScoreNumberInferenceResult>;
@@ -111,6 +123,16 @@ export class TypeScriptValidator implements ValidatorAdapter {
     const learningContract = TypeScriptLearningContracts.find(
       (contract) => context.exerciseId === `${contract.lessonId}-e01`,
     );
+    const boundaryContract = TypeScriptBoundaryContracts.find(
+      (contract) => context.exerciseId === `${contract.lessonId}-e01`,
+    );
+    const boundaryProfile = boundaryContract?.profile;
+    if (
+      boundaryProfile &&
+      (!acceptsTypeScriptBoundaryScenarios(boundaryProfile, context.interactionScenarios) ||
+        !acceptsTypeScriptBoundaryRuntime(boundaryProfile, context.runtime))
+    )
+      return blocked(context, 'TYPESCRIPT_BOUNDARY_CONTRACT');
     const inferenceLesson = context.exerciseId === 'typescript-ch01-l01-e01';
     const questionLesson = context.exerciseId === 'typescript-ch02-l01-e01';
     const conditionalProfile =
@@ -190,28 +212,34 @@ export class TypeScriptValidator implements ValidatorAdapter {
         | QuestionInterfaceResult
         | ConditionalLearningResult
         | ReusableLearningResult
+        | BoundaryLearningResult
         | undefined;
       if (learningRule?.success) {
-        learningResult = reusableProfile
-          ? await compiler.reusableCheck?.(input, reusableProfile)
-          : conditionalProfile
-            ? await compiler.conditionalCheck?.(input, conditionalProfile)
-            : questionLesson
-              ? await compiler.questionCheck?.(input)
-              : inferenceLesson
-                ? await compiler.inferenceCheck?.(input)
-                : await compiler.learningCheck?.(input);
-        const isLearningResult = reusableProfile
-          ? (value: unknown): value is ReusableLearningResult =>
-              isReusableLearningResult(value, reusableProfile)
-          : conditionalProfile
-            ? (value: unknown): value is ConditionalLearningResult =>
-                isConditionalLearningResult(value, conditionalProfile)
-            : questionLesson
-              ? isQuestionInterfaceResult
-              : inferenceLesson
-                ? isScoreNumberInferenceResult
-                : isScoreNumberAnnotationResult;
+        learningResult = boundaryProfile
+          ? await compiler.boundaryCheck?.(input, boundaryProfile)
+          : reusableProfile
+            ? await compiler.reusableCheck?.(input, reusableProfile)
+            : conditionalProfile
+              ? await compiler.conditionalCheck?.(input, conditionalProfile)
+              : questionLesson
+                ? await compiler.questionCheck?.(input)
+                : inferenceLesson
+                  ? await compiler.inferenceCheck?.(input)
+                  : await compiler.learningCheck?.(input);
+        const isLearningResult = boundaryProfile
+          ? (value: unknown): value is BoundaryLearningResult =>
+              isBoundaryLearningResult(value, boundaryProfile)
+          : reusableProfile
+            ? (value: unknown): value is ReusableLearningResult =>
+                isReusableLearningResult(value, reusableProfile)
+            : conditionalProfile
+              ? (value: unknown): value is ConditionalLearningResult =>
+                  isConditionalLearningResult(value, conditionalProfile)
+              : questionLesson
+                ? isQuestionInterfaceResult
+                : inferenceLesson
+                  ? isScoreNumberInferenceResult
+                  : isScoreNumberAnnotationResult;
         if (!isLearningResult(learningResult) || learningResult.status !== 'ready')
           return blocked(context, 'TYPESCRIPT_LEARNING_UNAVAILABLE');
       }
@@ -238,21 +266,27 @@ export class TypeScriptValidator implements ValidatorAdapter {
         const rule = learningRule.data;
         const passed = Object.values(learningResult.facts).every(Boolean);
         const learningGoal =
-          reusableProfile === 'number-callback-v1'
-            ? '関数とcallbackの型'
-            : reusableProfile === 'generic-identity-v1'
-              ? 'genericの入出力関係'
-              : reusableProfile === 'readonly-copy-v1'
-                ? 'readonlyの入力と別の配列'
-                : conditionalProfile === 'union-result-v1'
-                  ? 'unionの絞り込み'
-                  : conditionalProfile === 'optional-hint-v1'
-                    ? 'optional値の確認'
-                    : questionLesson
-                      ? 'interface'
-                      : inferenceLesson
-                        ? '型推論'
-                        : '型注釈';
+          boundaryProfile === 'dom-event-v1'
+            ? 'EventとDOMの対象確認'
+            : boundaryProfile === 'unknown-points-v1'
+              ? 'unknownの実検証'
+              : boundaryProfile === 'async-unknown-v1'
+                ? '非同期のunknownと失敗処理'
+                : reusableProfile === 'number-callback-v1'
+                  ? '関数とcallbackの型'
+                  : reusableProfile === 'generic-identity-v1'
+                    ? 'genericの入出力関係'
+                    : reusableProfile === 'readonly-copy-v1'
+                      ? 'readonlyの入力と別の配列'
+                      : conditionalProfile === 'union-result-v1'
+                        ? 'unionの絞り込み'
+                        : conditionalProfile === 'optional-hint-v1'
+                          ? 'optional値の確認'
+                          : questionLesson
+                            ? 'interface'
+                            : inferenceLesson
+                              ? '型推論'
+                              : '型注釈';
         const check = {
           ruleId: rule.id,
           requirementId: rule.id,
@@ -260,37 +294,45 @@ export class TypeScriptValidator implements ValidatorAdapter {
           required: true,
           passed,
           requirementPassed: passed,
-          message: reusableProfile
+          message: boundaryProfile
             ? passed
-              ? `${learningGoal}と引数の値を使う処理を確認できました。`
-              : `${learningGoal}を保ち、引数から結果を作る処理を確認しましょう。`
-            : conditionalProfile
+              ? `${learningGoal}と、受け取った値から表示へ届く処理を確認できました。`
+              : `${learningGoal}と、確認した値を使う処理を見直しましょう。`
+            : reusableProfile
               ? passed
-                ? `${learningGoal}と分岐で読む値を確認できました。`
-                : `${learningGoal}と、引数から値を取り出す分岐を確認しましょう。`
-              : questionLesson
+                ? `${learningGoal}と引数の値を使う処理を確認できました。`
+                : `${learningGoal}を保ち、引数から結果を作る処理を確認しましょう。`
+              : conditionalProfile
                 ? passed
-                  ? 'interfaceの必須項目・型と選択肢の使い方を確認できました。'
-                  : '問題の形と値を保ち、interfaceの注釈と選択肢の表示を確認しましょう。'
-                : passed
-                  ? `数値の${learningGoal}と変数の使い方を確認できました。`
-                  : `今回の${learningGoal}とscoreの使い方を確認しましょう。`,
+                  ? `${learningGoal}と分岐で読む値を確認できました。`
+                  : `${learningGoal}と、引数から値を取り出す分岐を確認しましょう。`
+                : questionLesson
+                  ? passed
+                    ? 'interfaceの必須項目・型と選択肢の使い方を確認できました。'
+                    : '問題の形と値を保ち、interfaceの注釈と選択肢の表示を確認しましょう。'
+                  : passed
+                    ? `数値の${learningGoal}と変数の使い方を確認できました。`
+                    : `今回の${learningGoal}とscoreの使い方を確認しましょう。`,
           expected: rule.feedback.expected,
-          actual: reusableProfile
+          actual: boundaryProfile
             ? passed
-              ? '型の契約と正負の型検査を確認しました。'
-              : '型の契約・型の確認を弱める書き方・引数を使う処理を確認してください。'
-            : conditionalProfile
+              ? `${learningGoal}と正負の型検査を確認しました。`
+              : '型の契約、値の確認と操作から表示への接続を確認してください。'
+            : reusableProfile
               ? passed
-                ? '分岐で読む値と形の正負検査を確認しました。'
-                : '型の形、引数の注釈、分岐で読む値、実行例を確認してください。'
-              : questionLesson
+                ? '型の契約と正負の型検査を確認しました。'
+                : '型の契約・型の確認を弱める書き方・引数を使う処理を確認してください。'
+              : conditionalProfile
                 ? passed
-                  ? 'interfaceの注釈と形の正負検査を確認しました。'
-                  : '必須項目の型、問題の値、注釈、最後の選択肢の表示を確認してください。'
-                : passed
-                  ? `${learningGoal}と正負の型検査を確認しました。`
-                  : `${learningGoal}、型の確認を弱める書き方、最後の出力を確認してください。`,
+                  ? '分岐で読む値と形の正負検査を確認しました。'
+                  : '型の形、引数の注釈、分岐で読む値、実行例を確認してください。'
+                : questionLesson
+                  ? passed
+                    ? 'interfaceの注釈と形の正負検査を確認しました。'
+                    : '必須項目の型、問題の値、注釈、最後の選択肢の表示を確認してください。'
+                  : passed
+                    ? `${learningGoal}と正負の型検査を確認しました。`
+                    : `${learningGoal}、型の確認を弱める書き方、最後の出力を確認してください。`,
           nextAction: rule.feedback.nextAction,
           hintId: rule.hintId,
           relatedSlideId: rule.relatedSlideId,

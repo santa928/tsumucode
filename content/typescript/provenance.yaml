@@ -992,3 +992,363 @@ items:
     visibility: authoring
     path: chapters/typescript-ch04/lessons/typescript-ch04-l03/exercises/typescript-ch04-l03-e01/fixtures/parenthesized.ts
     createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-chapter-yaml
+    visibility: public
+    path: chapters/typescript-ch05/chapter.yaml
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-exercise-yaml
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/exercise.yaml
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-any-escape-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/any-escape.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-arrow-function-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/arrow-function.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-assertion-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/assertion.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-different-target-html
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/different-target.html
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-different-target-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/different-target.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-early-return-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/early-return.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-error-after-output-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/error-after-output.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-event-target-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/event-target.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-fixed-return-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/fixed-return.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-index-html
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/index.html
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-missing-output-html
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/missing-output.html
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-missing-output-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/missing-output.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-nocheck-escape-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/nocheck-escape.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-non-null-assertion-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/non-null-assertion.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-parenthesized-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/parenthesized.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-renamed-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/renamed.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-solution-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/solution.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-starter-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/starter.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-suppressed-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/suppressed.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-wrong-result-html
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/wrong-result.html
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-fixtures-wrong-result-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/fixtures/wrong-result.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-instructions-md
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/instructions.md
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-solution-index-html
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/solution/index.html
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-solution-main-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/solution/main.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-starter-index-html
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/starter/index.html
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-exercises-typescript-ch05-l01-e01-starter-main-ts
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/exercises/typescript-ch05-l01-e01/starter/main.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-lesson-yaml
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/lesson.yaml
+    createdAt: 2026-10-06
+  - id: typescript-ch05-l01-relation-original
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/slides/assets/relation.svg
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-slides-s01-md
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/slides/s01.md
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-slides-s02-md
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/slides/s02.md
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-slides-s03-md
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/slides/s03.md
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l01-slides-s04-md
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l01/slides/s04.md
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-exercise-yaml
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/exercise.yaml
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-fixtures-any-escape-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/fixtures/any-escape.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-fixtures-arrow-function-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/fixtures/arrow-function.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-fixtures-assertion-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/fixtures/assertion.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-fixtures-early-return-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/fixtures/early-return.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-fixtures-error-after-output-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/fixtures/error-after-output.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-fixtures-fixed-return-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/fixtures/fixed-return.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-fixtures-index-html
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/fixtures/index.html
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-fixtures-missing-field-type-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/fixtures/missing-field-type.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-fixtures-nocheck-escape-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/fixtures/nocheck-escape.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-fixtures-parenthesized-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/fixtures/parenthesized.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-fixtures-renamed-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/fixtures/renamed.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-fixtures-solution-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/fixtures/solution.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-fixtures-starter-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/fixtures/starter.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-fixtures-suppressed-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/fixtures/suppressed.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-fixtures-wrong-result-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/fixtures/wrong-result.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-instructions-md
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/instructions.md
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-solution-index-html
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/solution/index.html
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-solution-main-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/solution/main.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-starter-index-html
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/starter/index.html
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-exercises-typescript-ch05-l02-e01-starter-main-ts
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/exercises/typescript-ch05-l02-e01/starter/main.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-lesson-yaml
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/lesson.yaml
+    createdAt: 2026-10-06
+  - id: typescript-ch05-l02-relation-original
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/slides/assets/relation.svg
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-slides-s01-md
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/slides/s01.md
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-slides-s02-md
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/slides/s02.md
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-slides-s03-md
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/slides/s03.md
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l02-slides-s04-md
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l02/slides/s04.md
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-exercise-yaml
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/exercise.yaml
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-fixtures-any-escape-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/fixtures/any-escape.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-fixtures-arrow-function-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/fixtures/arrow-function.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-fixtures-assertion-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/fixtures/assertion.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-fixtures-delayed-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/fixtures/delayed.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-fixtures-early-return-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/fixtures/early-return.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-fixtures-empty-catch-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/fixtures/empty-catch.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-fixtures-error-after-output-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/fixtures/error-after-output.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-fixtures-fixed-display-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/fixtures/fixed-display.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-fixtures-index-html
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/fixtures/index.html
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-fixtures-no-await-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/fixtures/no-await.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-fixtures-nocheck-escape-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/fixtures/nocheck-escape.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-fixtures-parenthesized-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/fixtures/parenthesized.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-fixtures-renamed-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/fixtures/renamed.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-fixtures-solution-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/fixtures/solution.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-fixtures-starter-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/fixtures/starter.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-fixtures-suppressed-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/fixtures/suppressed.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-fixtures-wrong-result-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/fixtures/wrong-result.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-instructions-md
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/instructions.md
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-solution-index-html
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/solution/index.html
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-solution-main-ts
+    visibility: authoring
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/solution/main.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-starter-index-html
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/starter/index.html
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-exercises-typescript-ch05-l03-e01-starter-main-ts
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/exercises/typescript-ch05-l03-e01/starter/main.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-lesson-yaml
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/lesson.yaml
+    createdAt: 2026-10-06
+  - id: typescript-ch05-l03-relation-original
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/slides/assets/relation.svg
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-slides-s01-md
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/slides/s01.md
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-slides-s02-md
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/slides/s02.md
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-slides-s03-md
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/slides/s03.md
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch05-lessons-typescript-ch05-l03-slides-s04-md
+    visibility: public
+    path: chapters/typescript-ch05/lessons/typescript-ch05-l03/slides/s04.md
+    createdAt: 2026-10-06

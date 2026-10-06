@@ -1,0 +1,1 @@
+readAnswerのEvent注釈とstringの戻り値を保ち、currentTargetがHTMLButtonElementか実際に確認します。buttonならdataset.answer、値がないときは未指定、button以外なら対象が違いますと返します。querySelectorのnull確認を残し、回答を確かめるボタンで2を表示します。as・any・非null assertionや固定表示は今回の合格にしません。

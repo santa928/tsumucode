@@ -231,3 +231,93 @@ entries:
     firstSlideId: typescript-ch04-l03-s04
     relatedIds:
       - string
+  - id: 'null'
+    term: 'null'
+    definition: 値がないことを示す値とその型。見つからないDOMや未知のデータで明示的に確認する。
+    firstSlideId: typescript-ch05-l01-s01
+    relatedIds: []
+  - id: nullish-coalescing
+    term: ??
+    definition: 左がnullまたはundefinedのときだけ右を選ぶ演算子。空文字や0はそのまま使う。
+    firstSlideId: typescript-ch05-l01-s02
+    relatedIds: []
+  - id: any
+    term: any
+    definition: 値の型を確認せずに項目を読めてしまう型。学習対象の数値注釈の代わりにしない。
+    firstSlideId: typescript-ch01-l02-s03
+    relatedIds: []
+  - id: dom-query-selector
+    term: querySelector
+    definition: 指定した要素を探し、見つからないとnullを返すDOMの操作。
+    firstSlideId: typescript-ch05-l01-s01
+    relatedIds: []
+  - id: dom-event
+    term: Event
+    definition: ブラウザの出来事を表す値の型。出来事とその対象を分けて確認する。
+    firstSlideId: typescript-ch05-l01-s02
+    relatedIds: []
+  - id: event-current-target
+    term: currentTarget
+    definition: handlerを登録した対象。種類は未確認でnullもあり、handler実行中に確認して読む。
+    firstSlideId: typescript-ch05-l01-s02
+    relatedIds: []
+  - id: html-button-element
+    term: HTMLButtonElement
+    definition: ブラウザのbutton要素の種類。instanceofで実際の種類を確認できる。
+    firstSlideId: typescript-ch05-l01-s02
+    relatedIds: []
+  - id: instanceof
+    term: instanceof
+    definition: 値が指定した種類のインスタンスかを実際に調べ、型を絞る演算子。
+    firstSlideId: typescript-ch05-l01-s02
+    relatedIds: []
+  - id: dom-dataset
+    term: dataset
+    definition: HTMLのdata-*属性を文字列で読む要素の項目。data-answerはdataset.answerで読む。
+    firstSlideId: typescript-ch05-l01-s02
+    relatedIds: []
+  - id: unknown
+    term: unknown
+    definition: 形がまだ分からない値の型。何でも受け取れるが、読む前に実際の確認が必要。
+    firstSlideId: typescript-ch05-l02-s01
+    relatedIds: []
+  - id: typeof-value
+    term: typeof
+    definition: 実行時の値の種類を文字列で調べる演算子。typeof nullはobjectになる。
+    firstSlideId: typescript-ch05-l02-s02
+    relatedIds: []
+  - id: property-in
+    term: in
+    definition: その名前の項目が対象にあるかを実際に確認する演算子。項目の型までは保証しない。
+    firstSlideId: typescript-ch05-l02-s02
+    relatedIds: []
+  - id: string-conversion
+    term: String
+    definition: 値を表示用の文字列へ変換する関数。元の項目の型確認とは別の処理。
+    firstSlideId: typescript-ch05-l02-s03
+    relatedIds: []
+  - id: promise-result
+    term: Promise
+    definition: 後で成功や拒否が決まる結果。Promiseの型引数は成功時の結果型を表す。
+    firstSlideId: typescript-ch05-l03-s01
+    relatedIds: []
+  - id: async-function
+    term: async
+    definition: 関数を非同期関数にし、Promiseを返す修飾子。
+    firstSlideId: typescript-ch05-l03-s01
+    relatedIds: []
+  - id: await-result
+    term: await
+    definition: Promiseの結果を待つ式。拒否はtry内で受け止めるとcatchへ進む。
+    firstSlideId: typescript-ch05-l03-s02
+    relatedIds: []
+  - id: try-catch
+    term: try/catch
+    definition: tryの処理で失敗した値をcatchで受け止める構文。型確認と失敗処理を分ける。
+    firstSlideId: typescript-ch05-l03-s03
+    relatedIds: []
+  - id: void-expression
+    term: void
+    definition: 値を呼出し側へ返さない型や、式の戻り値をここでは使わない演算子。処理を停止する意味ではない。
+    firstSlideId: typescript-ch05-l03-s02
+    relatedIds: []

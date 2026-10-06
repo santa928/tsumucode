@@ -1,0 +1,10 @@
+id: typescript-ch05
+sequence: 4
+title: DOMと未知の値の境界を確かめる
+goal: DOMの対象と未知のデータ・失敗を実確認し、型と表示の境界を保つ。
+estimatedMinutes: 60
+kind: standard
+lessonSources:
+  - lessons/typescript-ch05-l01/lesson.yaml
+  - lessons/typescript-ch05-l02/lesson.yaml
+  - lessons/typescript-ch05-l03/lesson.yaml

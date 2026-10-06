@@ -1,5 +1,10 @@
 /** Authoring YAMLのstrict構造と、公開Schemaへ組み立てる前のSource契約を定義する。 */
 import { z } from 'zod';
+import {
+  TypeScriptBoundaryContracts,
+  acceptsTypeScriptBoundaryRuntime,
+  acceptsTypeScriptBoundaryScenarios,
+} from '../../src/core/content/typeScriptBoundaryContract';
 import { interactionCheckId } from '../../src/core/content/exerciseRequirementIds';
 import { JAVASCRIPT_TEACHING_GOALS } from '../../src/core/content/javascriptTeachingGoals';
 import {
@@ -241,15 +246,20 @@ export const ExerciseSourceSchema = z
         message: 'Interaction Scenario IDが重複しています',
       });
     }
-    if (
-      exercise.interactionScenarios !== undefined &&
-      (exercise.runtime?.kind !== 'javascript' ||
-        !['dom', 'dom-form', 'async', 'project'].includes(exercise.runtime.capabilityProfile))
-    ) {
+    const boundaryContract = TypeScriptBoundaryContracts.find(
+      (contract) => exercise.id === `${contract.lessonId}-e01`,
+    );
+    const acceptsInteractions = boundaryContract
+      ? acceptsTypeScriptBoundaryRuntime(boundaryContract.profile, exercise.runtime) &&
+        acceptsTypeScriptBoundaryScenarios(boundaryContract.profile, exercise.interactionScenarios)
+      : exercise.runtime?.kind === 'javascript' &&
+        ['dom', 'dom-form', 'async', 'project'].includes(exercise.runtime.capabilityProfile);
+    if ((exercise.interactionScenarios !== undefined || boundaryContract) && !acceptsInteractions) {
       context.addIssue({
         code: 'custom',
         path: ['interactionScenarios'],
-        message: 'Interaction Scenarioはdom、dom-form、async、project profileで指定してください',
+        message:
+          'Interaction Scenarioは既存JSのDOM/async profileか固定TS境界課題で指定してください',
       });
     }
     const ruleIds = exercise.validationRules.map(({ id }) => id);

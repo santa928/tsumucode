@@ -12,6 +12,7 @@ import {
 } from '../../../src/core/content/schema';
 import { TypeScriptValidator } from '../../../src/adapters/validation/typescript/TypeScriptValidator';
 import { typeScriptSourceHash } from '../../../src/adapters/runtime/typescript/typeScriptSourceHash';
+import { TypeScriptBoundaryContracts } from '../../../src/core/content/typeScriptBoundaryContract';
 import { validationContext, validationRule } from '../../fixtures/validation';
 
 const runtime: TypeScriptExerciseRuntime = {
@@ -309,6 +310,155 @@ describe('TypeScriptValidator', () => {
         ).status,
       ).toBe('system-error');
       expect(compiler.reusableCheck).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each(
+    TypeScriptBoundaryContracts.map(
+      ({ lessonId, profile, actions, scenarioId }) =>
+        [
+          `${lessonId}-e01`,
+          profile,
+          ['準備できました'],
+          {
+            id: scenarioId,
+            label: '境界の確認',
+            actions: actions.map(([id, selector]) => ({ id, kind: 'click' as const, selector })),
+            checkpoints: actions.map(([id, , equals]) => ({
+              id,
+              afterActionId: id,
+              expectations: [
+                { id: 'output', kind: 'selector-text' as const, selector: '#output', equals },
+              ],
+            })),
+          },
+        ] as const,
+    ),
+  )(
+    '%sの境界条件と動作をANDにし、profile・Rule・世代不一致を閉じる',
+    async (exerciseId, profile, outputs, scenario) => {
+      const original = await contextFixture();
+      const f = fixture();
+      const facts = {
+        programShapeAccepted: true,
+        typeContractAccepted: true,
+        usesInputValue: true,
+        callsAccepted: true,
+        forbiddenEscapeAbsent: true,
+        positiveProbeAccepted: true,
+        negativeProbesRejected: true,
+      };
+      const compiler = {
+        ...f.compiler,
+        boundaryCheck: vi.fn().mockResolvedValue({ status: 'ready', profile, facts }),
+      };
+      const validator = new TypeScriptValidator({
+        compilerFactory: () => compiler,
+        validatorFactory: () => ({ validate: f.validate, buildSnapshotPolicy: vi.fn() }),
+      });
+      const context: ValidationContext = {
+        ...original,
+        exerciseId,
+        runtime: {
+          ...runtime,
+          capabilityProfile: profile === 'async-unknown-v1' ? 'project' : 'dom',
+        },
+        interactionScenarios: [scenario],
+        rules: [
+          { ...learningRule, assertion: { kind: 'typescript-learning', profile } },
+          {
+            ...consoleRule,
+            assertion: {
+              kind: 'javascript-console',
+              operator: 'equals',
+              expected: outputs.map((text) => ({ level: 'log', text })),
+            },
+          },
+        ],
+      };
+      const proof = await typeScriptSourceHash(
+        context.files,
+        { ...runtime, capabilityProfile: profile === 'async-unknown-v1' ? 'project' : 'dom' },
+        'session-1',
+        4,
+      );
+      const contextWithProof = {
+        ...context,
+        evidence: [{ id: 'typescript.source-sha256', value: proof }],
+      };
+      Object.assign(context, contextWithProof);
+      expect((await validator.validate(context)).status).toBe('incomplete');
+      expect(compiler.boundaryCheck).toHaveBeenCalledWith(
+        { sessionId: 'session-1', revision: 4, files: { 'main.ts': original.files['main.ts'] } },
+        profile,
+      );
+      f.validate.mockResolvedValue({
+        exerciseId,
+        executionRevision: 4,
+        status: 'pass',
+        checks: [],
+        passedRequirementIds: [],
+        diagnostics: [],
+        evaluatedAt: 'now',
+      });
+      expect((await validator.validate(context)).status).toBe('pass');
+      compiler.boundaryCheck.mockResolvedValue({
+        status: 'ready',
+        profile,
+        facts: {
+          ...facts,
+          usesInputValue: false,
+          positiveProbeAccepted: false,
+          negativeProbesRejected: false,
+        },
+      });
+      expect((await validator.validate(context)).status).toBe('incomplete');
+      compiler.boundaryCheck.mockResolvedValue({
+        status: 'ready',
+        profile: profile === 'dom-event-v1' ? 'unknown-points-v1' : 'dom-event-v1',
+        facts,
+      });
+      expect((await validator.validate(context)).status).toBe('system-error');
+      expect((await validator.validate({ ...context, rules: [context.rules[1]!] })).status).toBe(
+        'system-error',
+      );
+      expect((await validator.validate({ ...context, exerciseId: 'other-e01' })).status).toBe(
+        'system-error',
+      );
+      expect(
+        (
+          await validator.validate({
+            ...context,
+            rules: [
+              context.rules[0]!,
+              {
+                ...context.rules[1]!,
+                assertion: {
+                  kind: 'javascript-console',
+                  operator: 'equals',
+                  expected: [{ level: 'log', text: '省略した出力' }],
+                },
+              },
+            ],
+          })
+        ).status,
+      ).toBe('system-error');
+      for (const broken of [
+        { ...context, interactionScenarios: [] },
+        { ...context, interactionScenarios: [{ ...scenario, checkpoints: [] }] },
+        { ...context, runtime: { ...runtime, capabilityProfile: 'core' as const } },
+      ])
+        expect((await validator.validate(broken)).status).toBe('system-error');
+      compiler.boundaryCheck.mockClear();
+      expect(
+        (
+          await validator.validate({
+            ...context,
+            files: { ...context.files, 'main.ts': 'console.log(2);' },
+          })
+        ).status,
+      ).toBe('system-error');
+      expect(compiler.boundaryCheck).not.toHaveBeenCalled();
     },
   );
 

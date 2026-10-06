@@ -1,0 +1,1 @@
+既習のformatPointsを残し、loadが返すunknownの結果を持つPromiseをawaitで受け取って検証して表示します。catchのunknownがErrorなら実際のmessageを表示し、他の値なら理由が不明ですと表示します。正常・不正データ・拒否の3ボタンと拒否後の再試行を試します。外部通信やサーバーは使いません。

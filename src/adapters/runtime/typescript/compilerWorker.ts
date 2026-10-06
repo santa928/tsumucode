@@ -7,6 +7,7 @@ import { checkScoreNumberInference } from './checkScoreNumberInference';
 import { checkQuestionInterface } from './checkQuestionInterface';
 import { checkConditionalLearning } from './checkConditionalLearning';
 import { checkReusableLearning } from './checkReusableLearning';
+import { checkBoundaryLearning } from './checkBoundaryLearning';
 
 // 標準libとcompilerはこのWorkerだけが読む。学習者指定URLや外部CDNは使わない。
 const librarySources = import.meta.glob<string>('/node_modules/typescript/lib/lib.*.d.ts', {
@@ -33,16 +34,20 @@ self.onmessage = (event: MessageEvent<unknown>): void => {
     result:
       value.kind === 'compile'
         ? compileTypeScript(value.input.files, libraries)
-        : value.profile === 'number-callback-v1' ||
-            value.profile === 'generic-identity-v1' ||
-            value.profile === 'readonly-copy-v1'
-          ? checkReusableLearning(value.input.files, libraries, value.profile)
-          : value.profile === 'union-result-v1' || value.profile === 'optional-hint-v1'
-            ? checkConditionalLearning(value.input.files, libraries, value.profile)
-            : value.profile === 'question-interface-v1'
-              ? checkQuestionInterface(value.input.files, libraries)
-              : value.profile === 'score-number-inference-v1'
-                ? checkScoreNumberInference(value.input.files, libraries)
-                : checkScoreNumberAnnotation(value.input.files, libraries),
+        : value.profile === 'dom-event-v1' ||
+            value.profile === 'unknown-points-v1' ||
+            value.profile === 'async-unknown-v1'
+          ? checkBoundaryLearning(value.input.files, libraries, value.profile)
+          : value.profile === 'number-callback-v1' ||
+              value.profile === 'generic-identity-v1' ||
+              value.profile === 'readonly-copy-v1'
+            ? checkReusableLearning(value.input.files, libraries, value.profile)
+            : value.profile === 'union-result-v1' || value.profile === 'optional-hint-v1'
+              ? checkConditionalLearning(value.input.files, libraries, value.profile)
+              : value.profile === 'question-interface-v1'
+                ? checkQuestionInterface(value.input.files, libraries)
+                : value.profile === 'score-number-inference-v1'
+                  ? checkScoreNumberInference(value.input.files, libraries)
+                  : checkScoreNumberAnnotation(value.input.files, libraries),
   });
 };
