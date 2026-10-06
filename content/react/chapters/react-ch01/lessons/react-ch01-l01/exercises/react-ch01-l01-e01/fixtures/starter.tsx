@@ -1,0 +1,11 @@
+import { createRoot } from 'react-dom/client';
+import { QuestionCard, type Question } from './QuestionCard';
+
+const question: Question = {
+  prompt: 42,
+  choices: ['内容', '見た目'],
+  correctIndex: 0,
+};
+const container = document.getElementById('root');
+if (container === null) throw new Error('表示先がありません');
+createRoot(container).render(<QuestionCard question={question} />);

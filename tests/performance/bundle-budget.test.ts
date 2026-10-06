@@ -175,6 +175,47 @@ function collectForbiddenJsonKeys(
 }
 
 describe('production bundle budget', () => {
+  it('React演習を初期graphから分離し、Editorと演習のJS増分を既存予算内に保つ', async () => {
+    const manifest = (await readJsonObject('.vite/manifest.json')) as Readonly<
+      Record<string, ViteChunk>
+    >;
+    const initial = collectStaticChunkKeys(manifest, homeInitialRootKeys(manifest));
+    const reactRoots = [
+      'src/adapters/runtime/react/ReactRunnerAdapter.ts',
+      'src/adapters/validation/react/ReactValidator.ts',
+      'src/features/learning/editor/reactEditorLanguage.ts',
+    ];
+    for (const key of reactRoots) {
+      expect(manifest[key], key).toBeDefined();
+      expect(initial.has(key), key).toBe(false);
+    }
+    expect(
+      [...initial].filter((key) =>
+        /runtime\/react|validation\/react|compilerWorker|reactEditorLanguage/u.test(key),
+      ),
+    ).toEqual([]);
+    const exercise = collectStaticChunkKeys(manifest, [
+      ...reactRoots,
+      'src/features/learning/pages/EditableExercisePage.tsx',
+      'src/features/learning/editor/CodeWorkspace.tsx',
+      'src/features/learning/javascriptRuntimeServices.ts',
+    ]);
+    const files = [
+      ...new Set(
+        [...exercise].filter((key) => !initial.has(key)).map((key) => manifest[key]!.file),
+      ),
+    ];
+    const bytes = await totalGzipBytes(files);
+    expect(bytes).toBeLessThanOrEqual(
+      performanceManifest.bundle.editorIncrementalJavaScriptGzipMaxBytes,
+    );
+    console.info(
+      JSON.stringify({
+        reactExerciseJavaScriptIncrementalGzipBytes: bytes,
+        breakdown: await gzipBytesByFile(files),
+      }),
+    );
+  });
   it('Starter復元で追加したEditor増分JS gzipをbaselineとの差分として計算する', () => {
     expect(calculateAddedJavaScriptGzipBytes(178_641)).toBe(1_006);
   });

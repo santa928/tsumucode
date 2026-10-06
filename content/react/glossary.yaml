@@ -1,0 +1,17 @@
+schemaVersion: 1
+entries:
+  - id: component
+    term: Component
+    definition: ここではデータを受け取り、Reactで表示する内容を返す関数。名前は大文字から始める。
+    firstSlideId: react-ch01-l01-s01
+    relatedIds: [jsx, props]
+  - id: jsx
+    term: JSX
+    definition: JavaScript内で表示を書く構文。HTML文字列ではなく、型検査と変換を経てReactへ渡す。
+    firstSlideId: react-ch01-l01-s02
+    relatedIds: [component]
+  - id: props
+    term: Props
+    definition: 呼び出し元からComponentへ渡す値。ここではquestionという名前で問題オブジェクトを渡す。
+    firstSlideId: react-ch01-l01-s03
+    relatedIds: [component, jsx]

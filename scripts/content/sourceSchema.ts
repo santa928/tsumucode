@@ -117,10 +117,23 @@ export const TypeScriptExerciseRuntimeSourceSchema = JavaScriptExerciseRuntimeSo
   sourceType: z.literal('module'),
 });
 
-/** JavaScriptとTypeScriptの通常Authoring Sourceを同じ読込経路へ渡す。 */
+/** 最初のReact課題のauthoring設定も公開Schemaと同じ固定契約にする。 */
+export const ReactExerciseRuntimeSourceSchema = z
+  .object({
+    kind: z.literal('react'),
+    entryFile: z.literal('main.tsx'),
+    sourceType: z.literal('module'),
+    capabilityProfile: z.literal('dom'),
+    primaryOutput: z.literal('preview'),
+    profile: z.literal('props-card-v1'),
+  })
+  .strict();
+
+/** 通常Authoring Sourceを同じ読込経路へ渡す。 */
 export const ExerciseRuntimeSourceSchema = z.discriminatedUnion('kind', [
   JavaScriptExerciseRuntimeSourceSchema,
   TypeScriptExerciseRuntimeSourceSchema,
+  ReactExerciseRuntimeSourceSchema,
 ]);
 
 export const FixtureSourceSchema = z

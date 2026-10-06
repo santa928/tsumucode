@@ -1,0 +1,101 @@
+import { ReactExerciseRuntimeSchema } from '../../../core/content/schema';
+import type { SnapshotPolicy } from '../../../core/runtime/contracts';
+import type {
+  ValidationContext,
+  ValidationResult,
+  ValidatorAdapter,
+  ValidatorRule,
+} from '../../../core/validation/contracts';
+import { createReactCompilerClient } from '../../runtime/react/ReactCompilerClient';
+import { prepareReactModules, ReactModuleAnalyzer } from '../../runtime/react/ReactModuleAnalyzer';
+import { reactSourceHash } from '../../runtime/react/reactSourceHash';
+import { isPropsWorkspace } from '../../runtime/react/propsCardScaffold';
+import { JavaScriptValidator } from '../javascript/JavaScriptValidator';
+
+/** 同世代の型検査済みTSXと実DOMだけを採点し、型成功だけで合格にしない。 */
+export class ReactValidator implements ValidatorAdapter {
+  buildSnapshotPolicy(rules: readonly ValidatorRule[]): SnapshotPolicy {
+    return new JavaScriptValidator({ behaviorOnly: true }).buildSnapshotPolicy(rules);
+  }
+
+  async validate(context: ValidationContext): Promise<ValidationResult> {
+    const parsed = ReactExerciseRuntimeSchema.safeParse(context.runtime);
+    const execution = context.execution;
+    const blocked = (): ValidationResult => ({
+      exerciseId: context.exerciseId,
+      executionRevision: execution?.executionRevision ?? null,
+      status: 'system-error',
+      checks: [],
+      passedRequirementIds: [],
+      evaluatedAt: context.now,
+      diagnostics: [
+        ...context.diagnostics,
+        {
+          code: 'react-source-mismatch',
+          kind: 'system',
+          severity: 'error',
+          message: 'React source identity mismatch',
+          learnerMessage:
+            '型を確認したコードと描画結果が一致しません。コードを保持して、もう一度実行してください。',
+        },
+      ],
+    });
+    // 型・描画の失敗時には成功証拠がない。既存の診断分類だけを評価する。
+    if (
+      !parsed.success ||
+      !execution ||
+      execution.backend !== 'browser' ||
+      !isPropsWorkspace(context.files)
+    )
+      return blocked();
+    const sourceEvidence = context.evidence.filter((item) => item.id === 'react.source-sha256');
+    if (!context.diagnostics.some((item) => item.severity === 'error')) {
+      if (
+        execution.status !== 'succeeded' ||
+        sourceEvidence.length !== 1 ||
+        sourceEvidence[0]?.value !==
+          (await reactSourceHash(
+            context.files,
+            parsed.data,
+            execution.exerciseSessionId,
+            execution.executionRevision,
+          ))
+      )
+        return blocked();
+    }
+    let files = context.files;
+    const compiler = createReactCompilerClient();
+    try {
+      if (!context.diagnostics.some((item) => item.severity === 'error')) {
+        const compiled = await compiler.compile({
+          sessionId: execution.exerciseSessionId,
+          revision: execution.executionRevision,
+          files: Object.fromEntries(
+            Object.entries(context.files).filter(([file]) => /\.tsx?$/u.test(file)),
+          ),
+        });
+        if (compiled.status !== 'ready') return blocked();
+        files = prepareReactModules(compiled.files);
+      }
+      return await new JavaScriptValidator({
+        behaviorOnly: true,
+        analyzerFactory: () => new ReactModuleAnalyzer(),
+      }).validate({
+        ...context,
+        files,
+        runtime: {
+          kind: 'javascript',
+          entryFile: 'main.js',
+          sourceType: 'module',
+          capabilityProfile: 'dom',
+          primaryOutput: 'preview',
+        },
+        evidence: context.evidence.filter((item) => item.id !== 'react.source-sha256'),
+      });
+    } catch {
+      return blocked();
+    } finally {
+      compiler.dispose();
+    }
+  }
+}

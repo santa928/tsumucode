@@ -1,0 +1,15 @@
+id: react-ch01-l01
+kind: standard
+title: 問題データをPropsへ渡す
+goal: 問題文の型と値を直し、QuestionCardへ渡したPropsが画面に表示されることを確かめられる。
+estimatedMinutes: 20
+prerequisiteLessonIds: []
+slideSources:
+  [slides/s01-component.md, slides/s02-jsx.md, slides/s03-props.md, slides/s04-checkpoint.md]
+exerciseSources: [exercises/react-ch01-l01-e01/exercise.yaml]
+reflection: Componentは表示を返す関数、JSXは表示を書く構文、Propsは呼び出し元から渡す値。型検査と実表示は別に確かめる。
+glossaryRefs: [component, jsx, props]
+completion:
+  kind: standard
+  finalSlideId: react-ch01-l01-s04
+  requiredExerciseIds: [react-ch01-l01-e01]

@@ -307,10 +307,23 @@ export const TypeScriptExerciseRuntimeSchema = JavaScriptExerciseRuntimeSchema.o
   sourceType: z.literal('module'),
 });
 
+/** 最初のReact課題は固定TSX入口とProps表示だけへ制限する。 */
+export const ReactExerciseRuntimeSchema = z
+  .object({
+    kind: z.literal('react'),
+    entryFile: z.literal('main.tsx'),
+    sourceType: z.literal('module'),
+    capabilityProfile: z.literal('dom'),
+    primaryOutput: z.literal('preview'),
+    profile: z.literal('props-card-v1'),
+  })
+  .strict();
+
 /** Courseごとの実行設定をkindで識別する。 */
 export const ExerciseRuntimeSchema = z.discriminatedUnion('kind', [
   JavaScriptExerciseRuntimeSchema,
   TypeScriptExerciseRuntimeSchema,
+  ReactExerciseRuntimeSchema,
 ]);
 
 /** selectorへ制御文字が混入していないことを文字コードで判定する。 */
@@ -2042,7 +2055,7 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
           currentIds.workspace.add(exercise.workspaceId);
 
           if (
-            ['javascript', 'typescript'].includes(course.runnerId) &&
+            ['javascript', 'typescript', 'react'].includes(course.runnerId) &&
             exercise.runtime?.kind !== course.runnerId
           ) {
             addIssue(
@@ -2069,9 +2082,7 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
               addIssue(
                 context,
                 [...exercisePath, 'runtime', 'entryFile'],
-                exercise.runtime.kind === 'javascript'
-                  ? 'JavaScript Runtime entryFileはjavascript Fileを参照してください'
-                  : 'TypeScript Runtime entryFileはtypescript Fileを参照してください',
+                `Runtime entryFileは${exercise.runtime.kind} Fileを参照してください`,
               );
             }
           }

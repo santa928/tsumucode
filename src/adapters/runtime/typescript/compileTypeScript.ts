@@ -54,6 +54,34 @@ export function compileTypeScript(
   return processTypeScript(files, standardLibraries, true);
 }
 
+/** React専用Workerから、固定した型定義だけでTSXを検査・変換する。 */
+export function compileReactTypeScript(
+  files: Readonly<Record<string, string>>,
+  standardLibraries: Readonly<Record<string, string>>,
+  reactLibraries: Readonly<Record<string, string>>,
+): TypeScriptCompileResult {
+  const required = [
+    'react/index.d.ts',
+    'react/global.d.ts',
+    'react/jsx-runtime.d.ts',
+    'react-dom/index.d.ts',
+    'react-dom/client.d.ts',
+    'csstype/index.d.ts',
+  ];
+  if (required.some((name) => !reactLibraries[name]))
+    return {
+      status: 'environment-error',
+      diagnostics: [
+        {
+          code: 0,
+          message:
+            '固定したReactの型定義を読み込めませんでした。コードを保持して再試行してください。',
+        },
+      ],
+    };
+  return processTypeScript(files, standardLibraries, true, undefined, reactLibraries);
+}
+
 /** 信頼側の型関係検査専用。成功時もJS・source mapを生成せず、Runnerへ渡せる結果を返さない。 */
 export function checkTypeScript(
   files: Readonly<Record<string, string>>,
@@ -83,6 +111,7 @@ function processTypeScript(
   standardLibraries: Readonly<Record<string, string>>,
   emitJavaScript: boolean,
   request?: ProbeRequest,
+  reactLibraries?: Readonly<Record<string, string>>,
 ): TypeScriptCompileResult {
   const entries = Object.entries(files);
   if (
@@ -91,7 +120,11 @@ function processTypeScript(
     entries.some(
       ([name, source]) =>
         name.length > 256 ||
-        !/^(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.ts$/u.test(name) ||
+        !(
+          reactLibraries
+            ? /^(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.tsx?$/u
+            : /^(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.ts$/u
+        ).test(name) ||
         typeof source !== 'string',
     ) ||
     entries.reduce((size, [, source]) => size + source.length, 0) > MAX_SOURCE_UNITS
@@ -119,8 +152,19 @@ function processTypeScript(
       .filter(([name]) => /^lib\.[a-z0-9.]+\.d\.ts$/u.test(name))
       .map(([name, source]) => [LIB_ROOT + name, source]),
   );
-  const virtualFiles = new Map([...libraries, ...sources]);
+  const reactPackages: Readonly<Record<string, string>> = {
+    react: '/types/react/index.d.ts',
+    'react/jsx-runtime': '/types/react/jsx-runtime.d.ts',
+    'react-dom': '/types/react-dom/index.d.ts',
+    'react-dom/client': '/types/react-dom/client.d.ts',
+    csstype: '/types/csstype/index.d.ts',
+  };
+  const typeLibraries = new Map(
+    Object.entries(reactLibraries ?? {}).map(([name, source]) => ['/types/' + name, source]),
+  );
+  const virtualFiles = new Map([...libraries, ...typeLibraries, ...sources]);
   const options: ts.CompilerOptions = {
+    ...(reactLibraries ? { jsx: ts.JsxEmit.ReactJSX } : {}),
     target: ts.ScriptTarget.ES2023,
     module: ts.ModuleKind.ESNext,
     moduleResolution: ts.ModuleResolutionKind.Bundler,
@@ -169,11 +213,19 @@ function processTypeScript(
         );
     },
     resolveModuleNames: (names, containingFile) =>
-      names.map((name) =>
-        /^\.\.?\//u.test(name)
+      names.map((name) => {
+        const fixed =
+          reactLibraries && Object.hasOwn(reactPackages, name) ? reactPackages[name] : undefined;
+        if (fixed)
+          return {
+            resolvedFileName: fixed,
+            extension: ts.Extension.Dts,
+            isExternalLibraryImport: true,
+          };
+        return /^\.\.?\//u.test(name)
           ? ts.resolveModuleName(name, containingFile, options, host).resolvedModule
-          : undefined,
-      ),
+          : undefined;
+      }),
   };
 
   try {
@@ -219,7 +271,9 @@ function processTypeScript(
       return { status: 'environment-error', diagnostics: diagnosticsForLearner(environment) };
     }
     const syntax = program.getSyntacticDiagnostics();
-    const librarySyntax = syntax.filter((item) => item.file.fileName.startsWith(LIB_ROOT));
+    const librarySyntax = syntax.filter(
+      (item) => item.file.fileName.startsWith(LIB_ROOT) || item.file.fileName.startsWith('/types/'),
+    );
     if (librarySyntax.length) {
       return { status: 'environment-error', diagnostics: diagnosticsForLearner(librarySyntax) };
     }
@@ -229,7 +283,10 @@ function processTypeScript(
     const semantic = builder
       ? ts.sortAndDeduplicateDiagnostics(builder.getSemanticDiagnostics())
       : program.getSemanticDiagnostics();
-    const libraryErrors = semantic.filter((item) => item.file?.fileName.startsWith(LIB_ROOT));
+    const libraryErrors = semantic.filter(
+      (item) =>
+        item.file?.fileName.startsWith(LIB_ROOT) || item.file?.fileName.startsWith('/types/'),
+    );
     if (libraryErrors.length) {
       return { status: 'environment-error', diagnostics: diagnosticsForLearner(libraryErrors) };
     }

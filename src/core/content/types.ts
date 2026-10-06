@@ -26,6 +26,7 @@ import type {
   HtmlCssValidationRuleDefinitionSchema,
   JavaScriptExerciseRuntimeSchema,
   TypeScriptExerciseRuntimeSchema,
+  ReactExerciseRuntimeSchema,
   JavaScriptCheckpointExpectationSchema,
   JavaScriptInteractionActionSchema,
   JavaScriptInteractionCheckpointSchema,
@@ -93,3 +94,5 @@ export type HtmlCssValidationRuleDefinition = z.infer<typeof HtmlCssValidationRu
 export type JavaScriptValidationRuleDefinition = z.infer<
   typeof JavaScriptValidationRuleDefinitionSchema
 >;
+
+export type ReactExerciseRuntime = z.infer<typeof ReactExerciseRuntimeSchema>;
