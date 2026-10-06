@@ -20,7 +20,7 @@ supportedDevices:
     - mobile
 prerequisites:
   - javascript
-publicationStatus: draft
+publicationStatus: published
 expectedTotals:
   chapters: 6
   lessons: 15
