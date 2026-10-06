@@ -230,7 +230,7 @@ lessons:
   - lessonId: typescript-ch06-l03
     authorId: tsumucode-typescript-authoring
     reviewerId: review_issue109
-    sourceHash: 8a86fb15411d27f9df052248b8c5a458f16aca1434c9ad416b59a42255685af6
+    sourceHash: bb2363d81551f736cb89c653cba935686104a2eff91ec12d1c8f67f55adbb569
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -247,3 +247,6 @@ lessons:
       Reviewerは代表PC/390px/図の画像を実見し、原文とログを確認。
       Reviewerによる再実行/hash再計算、初心者理解/物理実機/汎用TS構文/TS固有性能予算達成/正式公開の承認ではない。
       採用15Lesson/60Slide/320分draftの内容承認で、releaseStatus/verifiedSourceCommit/canonicalDistSha256をdraftのまま保持する。
+      #115のbase71fa44397e07055c08067bec406fa17a991b6e3eから、Reviewer review_issue109がch06-l03 Guide/instructionsの単件検証→全件配列構築の補足と、分割early return・単一returnブロック・Error条件式の有限別解を限定承認。
+      14確認項目・値の接続・invalid/failedの区別を保持し、accuracy/goalExerciseAlignment/decisionはapproved、未説明用語/意図しないHint漏洩は0を維持。作者の15回帰と追加Guide例の実Compiler/実JS1件成功に基づくexamplesExecuted。
+      独自実行/hash再計算、45personaの独立原証拠/性能/新Gateの最終承認/正式公開を含まない。draft各値を保持する。

@@ -1671,6 +1671,7 @@ items:
   - id: typescript-source-433
     visibility: public
     path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/instructions.md
+    modified: true
     createdAt: 2026-10-06
   - id: typescript-source-434
     visibility: authoring
@@ -1699,6 +1700,7 @@ items:
   - id: typescript-source-440
     visibility: public
     path: chapters/typescript-ch06/lessons/typescript-ch06-l03/guide.md
+    modified: true
     createdAt: 2026-10-06
   - id: typescript-source-441
     visibility: public

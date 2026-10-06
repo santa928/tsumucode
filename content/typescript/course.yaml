@@ -4,7 +4,7 @@ title: TypeScript はじめの一歩
 description: 型推論・注釈からDOM・unknownの境界へ進み、同じ学習クイズを段階的に型安全化する15教材。
 audience: JavaScriptの変数・関数・条件分岐・DOM/Event・Promise/try/catchを学んだTypeScript初学者
 estimatedMinutes: 320
-revision: 2026-10-06.3
+revision: 2026-10-06.4
 runnerId: typescript
 validatorId: typescript
 glossarySource: glossary.yaml
@@ -47,6 +47,9 @@ progressMigrations:
     steps: []
   - fromRevision: 2026-10-06.2
     toRevision: 2026-10-06.3
+    steps: []
+  - fromRevision: 2026-10-06.3
+    toRevision: 2026-10-06.4
     steps: []
 phases:
   - id: typescript-p01-types

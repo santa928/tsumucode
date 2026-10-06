@@ -932,7 +932,9 @@ function EditableSession({
                   : '判定しています'
                 : '判定する'}
             </button>
-            {controller.environment.mode === 'console' && busy ? (
+            {(controller.environment.mode === 'console' && busy) ||
+            (exercise.runtime?.kind === 'typescript' &&
+              (operation === 'preview' || operation === 'validate')) ? (
               <button
                 type="button"
                 className="tc-exercise-pager-secondary"

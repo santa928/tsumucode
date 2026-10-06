@@ -85,12 +85,26 @@ export interface StaticArtifactReport {
   readonly files: number;
 }
 
+type StaticArtifactCourseId = ReleaseCourseId | 'typescript';
+
+/** TSの技術検査だけを許可する。正式公開のCourse allowlistは拡張しない。 */
+function resolveArtifactCourse(courseId: unknown) {
+  if (courseId === 'typescript') {
+    return {
+      courseId,
+      lessonCount: 15,
+      publicProvenancePath: 'generated/content/courses/typescript/provenance.json',
+    } as const;
+  }
+  return resolveReleaseCourseContract(courseId);
+}
+
 /** Pages Artifactを再帰検査し、Server File、秘密、開発URL、Root Asset漏れを拒否する。 */
 export async function checkStaticArtifact(
   distDir: string,
-  courseId: ReleaseCourseId = 'html-css',
+  courseId: StaticArtifactCourseId = 'html-css',
 ): Promise<StaticArtifactReport> {
-  const contract = resolveReleaseCourseContract(courseId);
+  const contract = resolveArtifactCourse(courseId);
   const root = path.resolve(distDir);
   const files = await collectFiles(root);
 
@@ -125,14 +139,16 @@ export async function checkStaticArtifact(
   if (!lessons.some((lesson) => lesson.endsWith('.json'))) {
     throw new Error('公開Lesson Artifactがありません: html-css');
   }
-  if (contract.courseId === 'javascript') {
+  if (contract.courseId !== 'html-css') {
     const { readSplitCourseArtifacts } = await import('../content/readSplitCourseArtifacts');
     const course = await readSplitCourseArtifacts(root, contract.courseId);
     const lessonCount = course.phases.flatMap(({ chapters }) =>
       chapters.flatMap(({ lessons }) => lessons),
     ).length;
     if (course.id !== contract.courseId || lessonCount !== contract.lessonCount)
-      throw new Error('JS公開ArtifactのCourse/52 Lessonが不一致です');
+      throw new Error(
+        `${contract.courseId} ArtifactのCourse/${String(contract.lessonCount)} Lessonが不一致です`,
+      );
     await access(path.join(root, contract.publicProvenancePath));
   }
 
@@ -142,9 +158,7 @@ export async function checkStaticArtifact(
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const arguments_ = process.argv.slice(2);
   const index = arguments_.indexOf('--course-id');
-  const courseId = resolveReleaseCourseContract(
-    index < 0 ? undefined : arguments_[index + 1],
-  ).courseId;
+  const courseId = resolveArtifactCourse(index < 0 ? undefined : arguments_[index + 1]).courseId;
   const report = await checkStaticArtifact(arguments_[0] ?? 'dist', courseId);
   console.log(`Static artifact OK: ${String(report.files)} files`);
 }
