@@ -35,6 +35,7 @@ for (const [id, profile] of [
       const source = exercise.fixtures
         .find((fixture) => fixture.id === 'parenthesized')!
         .files.find((file) => file.path === 'main.ts')!.content;
+      expect(source).toMatch(/\(\((?:value|2|original)\)\)/u);
       const files = { 'main.ts': source };
       expect(compileTypeScript(files, libraries).status).toBe('ready');
       const result = checkReusableLearning(files, libraries, profile);

@@ -1,8 +1,15 @@
 function addPoint(points: readonly number[]): number[] {
-  return [...points, 3];
+  // 括弧を残し、式の受け入れを確認する。
+  // prettier-ignore
+  return [...(points), (3)];
 }
-const original = [1, 2];
-const updated = addPoint(original);
-original.push(4);
-console.log(original.join(','));
-console.log(updated.join(','));
+// prettier-ignore
+const original = ([1, 2]);
+// prettier-ignore
+const updated = addPoint((original));
+// prettier-ignore
+original.push((4));
+// prettier-ignore
+console.log(original.join((',')));
+// prettier-ignore
+console.log(updated.join((',')));
