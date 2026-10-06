@@ -22,6 +22,7 @@ import {
   type CoursePublishedRelease,
   type CourseReleaseHistory,
 } from './javascriptReleaseSchema';
+import { TypescriptPostDeployVerificationSchema } from './typescriptReleaseSchema';
 import { verifyPublishedTag } from './verifyReleaseTarget';
 import { parseReleaseReport, type ReleaseReportInput } from './writeReleaseReport';
 
@@ -68,9 +69,11 @@ export function validatePostDeployVerification(
 ): void {
   const courseId = release.courseId ?? 'html-css';
   const verification =
-    courseId === 'javascript'
-      ? JavascriptPostDeployVerificationSchema.parse(source)
-      : PostDeployVerificationSchema.parse(source);
+    courseId === 'typescript'
+      ? TypescriptPostDeployVerificationSchema.parse(source)
+      : courseId === 'javascript'
+        ? JavascriptPostDeployVerificationSchema.parse(source)
+        : PostDeployVerificationSchema.parse(source);
   const expectedPath = expectedPostDeployVerificationPath(release.revision, courseId);
   if (release.postDeployVerificationPath !== expectedPath) {
     throw new Error(
@@ -303,7 +306,7 @@ export async function assertPromotionDiff(
   ]);
   const forbidden = changed.filter(
     (relative) =>
-      !(courseId === 'javascript'
+      !(courseId !== 'html-css'
         ? isReleaseMetadataPath(relative, courseId, revision)
         : relative.startsWith('docs/quality/') || relative.startsWith('docs/superpowers/')) &&
       !allowedFiles.has(relative),

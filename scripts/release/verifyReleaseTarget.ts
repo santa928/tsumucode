@@ -4,6 +4,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { promisify } from 'node:util';
 import { parse } from 'yaml';
+import { z } from 'zod';
 import { verifyReleaseSourceApproval } from './verifyReleaseApproval';
 import { CommitShaSchema } from './releaseSchema';
 import { resolveReleaseCourseContract, type ReleaseCourseId } from './releaseCourseContracts';
@@ -31,6 +32,22 @@ export interface ResolvedReleaseTarget {
   readonly normalizedLearningInputSha256?: string;
 }
 
+/** 全site Artifactへ公開TSを含めるbetaは、選択Courseによらず拒否する。TS draftと旧Sourceは維持する。 */
+export async function verifyBetaSitePublication(repositoryRoot: string): Promise<void> {
+  let source: string;
+  try {
+    source = await readFile(path.join(repositoryRoot, 'content/typescript/course.yaml'), 'utf8');
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return;
+    throw error;
+  }
+  const typescript = z
+    .object({ id: z.literal('typescript'), publicationStatus: z.enum(['draft', 'published']) })
+    .parse(parse(source));
+  if (typescript.publicationStatus === 'published')
+    throw new Error('公開TSを含む全site betaはCourse選択によらず許可しません');
+}
+
 /** 最新main、workflow、checkoutが同一のβSourceだけをDeploy対象へ変換する。 */
 export function resolveBetaTarget(
   sourceShaInput: string,
@@ -38,6 +55,8 @@ export function resolveBetaTarget(
   checkoutHeadShaInput: string,
   courseId: ReleaseCourseId = 'html-css',
 ): ResolvedReleaseTarget {
+  if (courseId === 'typescript')
+    throw new Error('TSのbeta配信は公開承認を省略するため許可しません');
   const sourceSha = CommitShaSchema.parse(sourceShaInput);
   const workflowHeadSha = CommitShaSchema.parse(workflowHeadShaInput);
   const checkoutHeadSha = CommitShaSchema.parse(checkoutHeadShaInput);
@@ -171,7 +190,10 @@ export async function verifyReleaseTarget(options: {
     cwd: root,
     encoding: 'utf8',
   });
+  if (contract.courseId === 'typescript' && options.mode === 'beta')
+    throw new Error('TSのbeta配信は公開承認を省略するため許可しません');
   if (options.mode === 'beta') {
+    await verifyBetaSitePublication(root);
     return resolveBetaTarget(
       sourceSha,
       workflowHeadSha,
@@ -240,7 +262,7 @@ export async function verifyReleaseTarget(options: {
 export function serializeReleaseTargetOutput(target: ResolvedReleaseTarget): string {
   const values = {
     course_id: target.courseId ?? 'html-css',
-    ...(target.courseId === 'javascript'
+    ...(target.courseId !== undefined && target.courseId !== 'html-css'
       ? {
           draft_source_commit: target.draftSourceCommit ?? 'draft',
           draft_canonical_dist_sha256: target.draftCanonicalDistSha256 ?? 'draft',

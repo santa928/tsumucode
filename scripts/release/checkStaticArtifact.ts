@@ -85,26 +85,12 @@ export interface StaticArtifactReport {
   readonly files: number;
 }
 
-type StaticArtifactCourseId = ReleaseCourseId | 'typescript';
-
-/** TSの技術検査だけを許可する。正式公開のCourse allowlistは拡張しない。 */
-function resolveArtifactCourse(courseId: unknown) {
-  if (courseId === 'typescript') {
-    return {
-      courseId,
-      lessonCount: 15,
-      publicProvenancePath: 'generated/content/courses/typescript/provenance.json',
-    } as const;
-  }
-  return resolveReleaseCourseContract(courseId);
-}
-
 /** Pages Artifactを再帰検査し、Server File、秘密、開発URL、Root Asset漏れを拒否する。 */
 export async function checkStaticArtifact(
   distDir: string,
-  courseId: StaticArtifactCourseId = 'html-css',
+  courseId: ReleaseCourseId = 'html-css',
 ): Promise<StaticArtifactReport> {
-  const contract = resolveArtifactCourse(courseId);
+  const contract = resolveReleaseCourseContract(courseId);
   const root = path.resolve(distDir);
   const files = await collectFiles(root);
 
@@ -158,7 +144,9 @@ export async function checkStaticArtifact(
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const arguments_ = process.argv.slice(2);
   const index = arguments_.indexOf('--course-id');
-  const courseId = resolveArtifactCourse(index < 0 ? undefined : arguments_[index + 1]).courseId;
+  const courseId = resolveReleaseCourseContract(
+    index < 0 ? undefined : arguments_[index + 1],
+  ).courseId;
   const report = await checkStaticArtifact(arguments_[0] ?? 'dist', courseId);
   console.log(`Static artifact OK: ${String(report.files)} files`);
 }

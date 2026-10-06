@@ -169,6 +169,7 @@ items:
   - id: typescript-source-54
     visibility: public
     path: course.yaml
+    modified: true
   - id: typescript-source-55
     visibility: public
     path: glossary.yaml
@@ -1825,4 +1826,8 @@ items:
   - id: typescript-source-473
     visibility: authoring
     path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/wrong-logic-choice.ts
+    createdAt: 2026-10-06
+  - id: typescript-release-history
+    visibility: authoring
+    path: release-history.yaml
     createdAt: 2026-10-06

@@ -282,7 +282,7 @@ export async function assertProductUnchanged(
         workflowHead,
         '--',
         '.',
-        ...(courseId === 'javascript'
+        ...(courseId !== 'html-css'
           ? releaseMetadataPaths(courseId, revision).map(
               (relative) => `:(exclude,literal)${relative}`,
             )
@@ -325,8 +325,8 @@ export async function verifyApprovedQualityEvidence(
     { cwd: root },
   );
   const courseId = 'courseId' in approval ? approval.courseId : 'html-css';
-  if (courseId === 'javascript' && options.revision === undefined)
-    throw new Error('JS品質承認には選択candidateのrevisionが必要です');
+  if (courseId !== 'html-css' && options.revision === undefined)
+    throw new Error('JS/TS品質承認には選択candidateのrevisionが必要です');
   await assertProductUnchanged(
     root,
     approval.verifiedSourceCommit,
@@ -344,7 +344,7 @@ export async function verifyApprovedQualityEvidence(
     ),
     approval.candidateTreeSha256,
   );
-  const jsSources = new Map<string, string>();
+  const qualitySources = new Map<string, string>();
   const records: Readonly<Record<string, { readonly path: string; readonly sha256: string }>> =
     approval.records;
   for (const [recordName, record] of Object.entries(records)) {
@@ -357,7 +357,7 @@ export async function verifyApprovedQualityEvidence(
       throw new Error('品質記録pathにsymlinkを含められません');
     assertDigestMatch(recordName, await hashFile(absolute), record.sha256);
     const source = await readFile(absolute, 'utf8');
-    if ('courseId' in approval) jsSources.set(recordName, source);
+    if ('courseId' in approval) qualitySources.set(recordName, source);
     else validateManualQualityRecord(recordName as ManualQualityRecordName, source);
     const bindings = recordBindings(source, path.extname(record.path));
     if (
@@ -367,9 +367,12 @@ export async function verifyApprovedQualityEvidence(
       throw new Error(`${recordName}の内部bindingがRelease approvalと一致しません`);
     }
   }
-  if ('courseId' in approval) {
+  if ('courseId' in approval && approval.courseId === 'typescript') {
+    const { verifyTypescriptQualityEvidence } = await import('./verifyTypescriptQualityEvidence');
+    await verifyTypescriptQualityEvidence(root, approval, qualitySources);
+  } else if ('courseId' in approval) {
     const { verifyJavascriptQualityEvidence } = await import('./verifyJavascriptQualityEvidence');
-    await verifyJavascriptQualityEvidence(root, approval, jsSources);
+    await verifyJavascriptQualityEvidence(root, approval, qualitySources);
   }
 }
 
@@ -392,7 +395,28 @@ export async function verifyReleaseSourceApproval(
   }
 
   await verifyApprovedQualityEvidence(root, approval, { revision: candidate.revision });
-  if ('courseId' in candidate && 'courseId' in approval) {
+  if (
+    'courseId' in candidate &&
+    candidate.courseId === 'typescript' &&
+    'courseId' in approval &&
+    approval.courseId === 'typescript'
+  ) {
+    const { TypescriptReleaseEvidenceSchema } = await import('./verifyTypescriptQualityEvidence');
+    const validity = TypescriptReleaseEvidenceSchema.parse(
+      parse(await readFile(path.join(root, approval.records.technicalAcceptance.path), 'utf8')),
+    );
+    if (
+      candidate.draftSourceCommit !== validity.draftInput.sourceCommit ||
+      candidate.draftCanonicalDistSha256 !== validity.draftCanonicalDistSha256 ||
+      candidate.normalizedLearningInputSha256 !== validity.normalizedLearningInputSha256
+    )
+      throw new Error('TS candidateと公開入力照合のbindingが一致しません');
+  } else if (
+    'courseId' in candidate &&
+    candidate.courseId === 'javascript' &&
+    'courseId' in approval &&
+    approval.courseId === 'javascript'
+  ) {
     const { JavascriptInputValidityRecordSchema } = await import('./javascriptQualityRecords');
     const validity = JavascriptInputValidityRecordSchema.parse(
       parse(await readFile(path.join(root, approval.records.inputValidity.path), 'utf8')),
@@ -429,8 +453,13 @@ export async function verifyReleaseArtifactApproval(
   const root = path.resolve(repositoryRoot);
   const { approval } = await loadApprovedMetadata(root, courseId);
   const actual = await calculateArtifactHashes(root, 'dist', courseId);
-  if (courseId === 'javascript' && supplied !== undefined && supplied.courseId !== courseId) {
-    throw new Error('JS actual-outputへ一致するcourse_idが必要です');
+  if (courseId === 'typescript') {
+    const { measureTypescriptLazyJavaScript } = await import('./verifyTypescriptAcceptance');
+    const bytes = await measureTypescriptLazyJavaScript(path.join(root, 'dist'));
+    if (bytes > 2_500_000) throw new Error('TS初回遅延JSの公開予算を超過しています');
+  }
+  if (courseId !== 'html-css' && supplied !== undefined && supplied.courseId !== courseId) {
+    throw new Error('JS/TS actual-outputへ一致するcourse_idが必要です');
   }
   if (supplied?.courseId !== undefined && supplied.courseId !== courseId)
     throw new Error('actual-outputのCourseが異なります');

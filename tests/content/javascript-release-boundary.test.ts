@@ -762,7 +762,9 @@ describe('JS immutable release bindings', () => {
       ({ name }) => name === 'Keep existing HTML continuity in the all-site gate',
     );
     expect(html?.run).toContain('--quality-only --course-id html-css');
-    expect(html?.if).toContain("course_id == 'javascript'");
+    expect(html?.if).toBe(
+      "needs.resolve.outputs.course_id != 'html-css' && needs.resolve.outputs.release_mode != 'rollback'",
+    );
     expect(workflow.jobs.deploy.permissions).toEqual({ pages: 'write', 'id-token': 'write' });
   });
 });

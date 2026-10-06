@@ -98,11 +98,11 @@ function measurement(kind: TypescriptPerformanceEvidence['kind']): TypescriptPer
 }
 
 describe('TS専用の模擬受入契約', () => {
-  it('15教材×3役を照合しても正式公開のCourse allowlistへ追加しない', () => {
+  it('15教材×3役の照合を正式公開の本人許可へ読み替えない', () => {
     expect(() => {
       checkTypescriptPersonaCoverage(record(), learnerHashes);
     }).not.toThrow();
-    expect(ReleaseCourseIdSchema.safeParse('typescript').success).toBe(false);
+    expect(ReleaseCourseIdSchema.safeParse('typescript').success).toBe(true);
     expect(record().publicationApproval).toBe('pending');
   });
 

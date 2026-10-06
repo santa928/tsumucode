@@ -1,0 +1,921 @@
+{
+  "schemaVersion": 2,
+  "courses": {
+    "html-css": {
+      "courseId": "html-css",
+      "contentRevision": "2026-07-16.3",
+      "lessons": {},
+      "currentComplete": false,
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "javascript": {
+      "courseId": "javascript",
+      "contentRevision": "2026-10-02.5",
+      "lessons": {},
+      "currentComplete": false,
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript": {
+      "courseId": "typescript",
+      "contentRevision": "2026-10-06.3",
+      "lessons": {
+        "typescript-ch01-l01": {
+          "lessonId": "typescript-ch01-l01",
+          "viewedSlideIds": [
+            "typescript-ch01-l01-s01",
+            "typescript-ch01-l01-s02",
+            "typescript-ch01-l01-s03",
+            "typescript-ch01-l01-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch01-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["typescript-ch01-l01-e01-r01", "typescript-ch01-l01-e01-r02"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch01-l02": {
+          "lessonId": "typescript-ch01-l02",
+          "viewedSlideIds": [
+            "typescript-ch01-l02-s01",
+            "typescript-ch01-l02-s02",
+            "typescript-ch01-l02-s03",
+            "typescript-ch01-l02-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch01-l02-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["typescript-ch01-l02-e01-r01", "typescript-ch01-l02-e01-r02"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch01-l03": {
+          "lessonId": "typescript-ch01-l03",
+          "viewedSlideIds": [
+            "typescript-ch01-l03-s01",
+            "typescript-ch01-l03-s02",
+            "typescript-ch01-l03-s03",
+            "typescript-ch01-l03-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch01-l03-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["typescript-ch01-l03-e01-r01"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch02-l01": {
+          "lessonId": "typescript-ch02-l01",
+          "viewedSlideIds": [
+            "typescript-ch02-l01-s01",
+            "typescript-ch02-l01-s02",
+            "typescript-ch02-l01-s03",
+            "typescript-ch02-l01-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch02-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["typescript-ch02-l01-e01-r01", "typescript-ch02-l01-e01-r02"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch03-l01": {
+          "lessonId": "typescript-ch03-l01",
+          "viewedSlideIds": [
+            "typescript-ch03-l01-s01",
+            "typescript-ch03-l01-s02",
+            "typescript-ch03-l01-s03",
+            "typescript-ch03-l01-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch03-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["typescript-ch03-l01-e01-r01", "typescript-ch03-l01-e01-r02"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch03-l02": {
+          "lessonId": "typescript-ch03-l02",
+          "viewedSlideIds": [
+            "typescript-ch03-l02-s01",
+            "typescript-ch03-l02-s02",
+            "typescript-ch03-l02-s03",
+            "typescript-ch03-l02-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch03-l02-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["typescript-ch03-l02-e01-r01", "typescript-ch03-l02-e01-r02"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch04-l01": {
+          "lessonId": "typescript-ch04-l01",
+          "viewedSlideIds": [
+            "typescript-ch04-l01-s01",
+            "typescript-ch04-l01-s02",
+            "typescript-ch04-l01-s03",
+            "typescript-ch04-l01-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch04-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["typescript-ch04-l01-e01-r01", "typescript-ch04-l01-e01-r02"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch04-l02": {
+          "lessonId": "typescript-ch04-l02",
+          "viewedSlideIds": [
+            "typescript-ch04-l02-s01",
+            "typescript-ch04-l02-s02",
+            "typescript-ch04-l02-s03",
+            "typescript-ch04-l02-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch04-l02-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["typescript-ch04-l02-e01-r01", "typescript-ch04-l02-e01-r02"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch04-l03": {
+          "lessonId": "typescript-ch04-l03",
+          "viewedSlideIds": [
+            "typescript-ch04-l03-s01",
+            "typescript-ch04-l03-s02",
+            "typescript-ch04-l03-s03",
+            "typescript-ch04-l03-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch04-l03-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["typescript-ch04-l03-e01-r01", "typescript-ch04-l03-e01-r02"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch05-l01": {
+          "lessonId": "typescript-ch05-l01",
+          "viewedSlideIds": [
+            "typescript-ch05-l01-s01",
+            "typescript-ch05-l01-s02",
+            "typescript-ch05-l01-s03",
+            "typescript-ch05-l01-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch05-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "typescript-ch05-l01-e01-r01",
+            "typescript-ch05-l01-e01-r02",
+            "typescript-ch05-l01-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch05-l02": {
+          "lessonId": "typescript-ch05-l02",
+          "viewedSlideIds": [
+            "typescript-ch05-l02-s01",
+            "typescript-ch05-l02-s02",
+            "typescript-ch05-l02-s03",
+            "typescript-ch05-l02-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch05-l02-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "typescript-ch05-l02-e01-r01",
+            "typescript-ch05-l02-e01-r02",
+            "typescript-ch05-l02-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch05-l03": {
+          "lessonId": "typescript-ch05-l03",
+          "viewedSlideIds": [
+            "typescript-ch05-l03-s01",
+            "typescript-ch05-l03-s02",
+            "typescript-ch05-l03-s03",
+            "typescript-ch05-l03-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch05-l03-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "typescript-ch05-l03-e01-r01",
+            "typescript-ch05-l03-e01-r02",
+            "typescript-ch05-l03-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch06-l01": {
+          "lessonId": "typescript-ch06-l01",
+          "viewedSlideIds": [
+            "typescript-ch06-l01-s01",
+            "typescript-ch06-l01-s02",
+            "typescript-ch06-l01-s03",
+            "typescript-ch06-l01-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch06-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "typescript-ch06-l01-e01-r01",
+            "typescript-ch06-l01-e01-r02",
+            "typescript-ch06-l01-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch06-l02": {
+          "lessonId": "typescript-ch06-l02",
+          "viewedSlideIds": [
+            "typescript-ch06-l02-s01",
+            "typescript-ch06-l02-s02",
+            "typescript-ch06-l02-s03",
+            "typescript-ch06-l02-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch06-l02-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "typescript-ch06-l02-e01-r01",
+            "typescript-ch06-l02-e01-r02",
+            "typescript-ch06-l02-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch06-l03": {
+          "lessonId": "typescript-ch06-l03",
+          "viewedSlideIds": [
+            "typescript-ch06-l03-s01",
+            "typescript-ch06-l03-s02",
+            "typescript-ch06-l03-s03",
+            "typescript-ch06-l03-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch06-l03-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "typescript-ch06-l03-e01-r01",
+            "typescript-ch06-l03-e01-r02",
+            "typescript-ch06-l03-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "currentComplete": true,
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    }
+  },
+  "drafts": {
+    "typescript:typescript-ch01-l01-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch01-l01",
+      "exerciseId": "typescript-ch01-l01-e01",
+      "workspaceId": "typescript-ch01-l01-e01",
+      "contentRevision": "2026-10-06.3",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "let score = 0;\nscore = '2';\nconsole.log(score);\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <meta charset=\"utf-8\" /><title>数値の得点</title>\n  <body>\n    <p>Consoleで得点を確認しましょう。</p>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch01-l01-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["typescript-ch01-l01-e01-r01", "typescript-ch01-l01-e01-r02"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch01-l01-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch01-l01-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.3",
+          "files": {
+            "main.ts": "let score = 0;\nscore = '2';\nconsole.log(score);\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <meta charset=\"utf-8\" /><title>数値の得点</title>\n  <body>\n    <p>Consoleで得点を確認しましょう。</p>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch01-l02-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch01-l02",
+      "exerciseId": "typescript-ch01-l02-e01",
+      "workspaceId": "typescript-ch01-l02-e01",
+      "contentRevision": "2026-10-06.3",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "let score: number = '2';\nconsole.log(score);\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <meta charset=\"utf-8\" /><title>数値の得点</title>\n  <body>\n    <p>Consoleで得点を確認しましょう。</p>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch01-l02-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["typescript-ch01-l02-e01-r01", "typescript-ch01-l02-e01-r02"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch01-l02-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch01-l02-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.3",
+          "files": {
+            "main.ts": "let score: number = '2';\nconsole.log(score);\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <meta charset=\"utf-8\" /><title>数値の得点</title>\n  <body>\n    <p>Consoleで得点を確認しましょう。</p>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch01-l03-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch01-l03",
+      "exerciseId": "typescript-ch01-l03-e01",
+      "workspaceId": "typescript-ch01-l03-e01",
+      "contentRevision": "2026-10-06.3",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "let score: number = 2;\nthrow new Error('表示の途中で止まりました');\nconsole.log(score);\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <meta charset=\"utf-8\" /><title>型と実行の確認</title>\n  <body>\n    <p>Consoleで得点を確認しましょう。</p>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch01-l03-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["typescript-ch01-l03-e01-r01"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch01-l03-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch01-l03-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.3",
+          "files": {
+            "main.ts": "let score: number = 2;\nthrow new Error('表示の途中で止まりました');\nconsole.log(score);\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <meta charset=\"utf-8\" /><title>型と実行の確認</title>\n  <body>\n    <p>Consoleで得点を確認しましょう。</p>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch02-l01-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch02-l01",
+      "exerciseId": "typescript-ch02-l01-e01",
+      "workspaceId": "typescript-ch02-l01-e01",
+      "contentRevision": "2026-10-06.3",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "interface Question {\n  prompt: string;\n  choices: string[];\n  correctIndex: number;\n}\nconst question: Question = {\n  prompt: 'HTMLが受け持つものは？',\n  choices: ['内容', '見た目'],\n  correctIndex: '0',\n};\nconsole.log(question.choices.at(question.correctIndex));\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <meta charset=\"utf-8\" /><title>数値の得点</title>\n  <body>\n    <p>Consoleで得点を確認しましょう。</p>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch02-l01-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["typescript-ch02-l01-e01-r01", "typescript-ch02-l01-e01-r02"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch02-l01-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch02-l01-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.3",
+          "files": {
+            "main.ts": "interface Question {\n  prompt: string;\n  choices: string[];\n  correctIndex: number;\n}\nconst question: Question = {\n  prompt: 'HTMLが受け持つものは？',\n  choices: ['内容', '見た目'],\n  correctIndex: '0',\n};\nconsole.log(question.choices.at(question.correctIndex));\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <meta charset=\"utf-8\" /><title>数値の得点</title>\n  <body>\n    <p>Consoleで得点を確認しましょう。</p>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch03-l01-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch03-l01",
+      "exerciseId": "typescript-ch03-l01-e01",
+      "workspaceId": "typescript-ch03-l01-e01",
+      "contentRevision": "2026-10-06.3",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "type Result = { kind: 'correct'; points: number } | { kind: 'incorrect'; message: string };\nfunction label(result: Result) {\n  return result.points;\n}\nconsole.log(label({ kind: 'correct', points: 2 }));\nconsole.log(label({ kind: 'incorrect', message: 'もう一度' }));\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>状態に合わせて型を絞る</title>\n  </head>\n  <body>\n    <p>Consoleで分岐の結果を確認しましょう。</p>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch03-l01-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["typescript-ch03-l01-e01-r01", "typescript-ch03-l01-e01-r02"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch03-l01-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch03-l01-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.3",
+          "files": {
+            "main.ts": "type Result = { kind: 'correct'; points: number } | { kind: 'incorrect'; message: string };\nfunction label(result: Result) {\n  return result.points;\n}\nconsole.log(label({ kind: 'correct', points: 2 }));\nconsole.log(label({ kind: 'incorrect', message: 'もう一度' }));\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>状態に合わせて型を絞る</title>\n  </head>\n  <body>\n    <p>Consoleで分岐の結果を確認しましょう。</p>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch03-l02-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch03-l02",
+      "exerciseId": "typescript-ch03-l02-e01",
+      "workspaceId": "typescript-ch03-l02-e01",
+      "contentRevision": "2026-10-06.3",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "interface Feedback {\n  hint?: string;\n}\nfunction hintLength(feedback: Feedback) {\n  return feedback.hint.length;\n}\nconsole.log(hintLength({ hint: '見る' }));\nconsole.log(hintLength({}));\nconsole.log(hintLength({ hint: '' }));\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>ないかもしれない値を確認する</title>\n  </head>\n  <body>\n    <p>Consoleで分岐の結果を確認しましょう。</p>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch03-l02-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["typescript-ch03-l02-e01-r01", "typescript-ch03-l02-e01-r02"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch03-l02-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch03-l02-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.3",
+          "files": {
+            "main.ts": "interface Feedback {\n  hint?: string;\n}\nfunction hintLength(feedback: Feedback) {\n  return feedback.hint.length;\n}\nconsole.log(hintLength({ hint: '見る' }));\nconsole.log(hintLength({}));\nconsole.log(hintLength({ hint: '' }));\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>ないかもしれない値を確認する</title>\n  </head>\n  <body>\n    <p>Consoleで分岐の結果を確認しましょう。</p>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch04-l01-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch04-l01",
+      "exerciseId": "typescript-ch04-l01-e01",
+      "workspaceId": "typescript-ch04-l01-e01",
+      "contentRevision": "2026-10-06.3",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "type Operation = (value: string) => number;\nfunction apply(value: number, operation: Operation): number {\n  return operation(value);\n}\nconst double: Operation = (value) => value * 2;\nconsole.log(apply(3, double));\nconsole.log(apply(5, double));\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>関数の入出力とcallbackを型付けする</title>\n  </head>\n  <body>\n    <p>Consoleで受け取った値と処理結果を確認しましょう。</p>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch04-l01-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["typescript-ch04-l01-e01-r01", "typescript-ch04-l01-e01-r02"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch04-l01-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch04-l01-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.3",
+          "files": {
+            "main.ts": "type Operation = (value: string) => number;\nfunction apply(value: number, operation: Operation): number {\n  return operation(value);\n}\nconst double: Operation = (value) => value * 2;\nconsole.log(apply(3, double));\nconsole.log(apply(5, double));\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>関数の入出力とcallbackを型付けする</title>\n  </head>\n  <body>\n    <p>Consoleで受け取った値と処理結果を確認しましょう。</p>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch04-l02-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch04-l02",
+      "exerciseId": "typescript-ch04-l02-e01",
+      "workspaceId": "typescript-ch04-l02-e01",
+      "contentRevision": "2026-10-06.3",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "function keep(value: number): number {\n  return value;\n}\nconst points: number = keep(2);\nconst title: string = keep('型のクイズ');\nconsole.log(points);\nconsole.log(title);\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>genericで入出力の型をつなぐ</title>\n  </head>\n  <body>\n    <p>Consoleで受け取った値と処理結果を確認しましょう。</p>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch04-l02-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["typescript-ch04-l02-e01-r01", "typescript-ch04-l02-e01-r02"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch04-l02-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch04-l02-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.3",
+          "files": {
+            "main.ts": "function keep(value: number): number {\n  return value;\n}\nconst points: number = keep(2);\nconst title: string = keep('型のクイズ');\nconsole.log(points);\nconsole.log(title);\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>genericで入出力の型をつなぐ</title>\n  </head>\n  <body>\n    <p>Consoleで受け取った値と処理結果を確認しましょう。</p>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch04-l03-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch04-l03",
+      "exerciseId": "typescript-ch04-l03-e01",
+      "workspaceId": "typescript-ch04-l03-e01",
+      "contentRevision": "2026-10-06.3",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "function addPoint(points: readonly number[]): number[] {\n  points.push(3);\n  return [...points];\n}\nconst original = [1, 2];\nconst updated = addPoint(original);\noriginal.push(4);\nconsole.log(original.join(','));\nconsole.log(updated.join(','));\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>readonlyの入力から別の配列を作る</title>\n  </head>\n  <body>\n    <p>Consoleで受け取った値と処理結果を確認しましょう。</p>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch04-l03-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["typescript-ch04-l03-e01-r01", "typescript-ch04-l03-e01-r02"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch04-l03-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch04-l03-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.3",
+          "files": {
+            "main.ts": "function addPoint(points: readonly number[]): number[] {\n  points.push(3);\n  return [...points];\n}\nconst original = [1, 2];\nconst updated = addPoint(original);\noriginal.push(4);\nconsole.log(original.join(','));\nconsole.log(updated.join(','));\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>readonlyの入力から別の配列を作る</title>\n  </head>\n  <body>\n    <p>Consoleで受け取った値と処理結果を確認しましょう。</p>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch05-l01-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch05-l01",
+      "exerciseId": "typescript-ch05-l01-e01",
+      "workspaceId": "typescript-ch05-l01-e01",
+      "contentRevision": "2026-10-06.3",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "function readAnswer(event: Event): string {\n  const target = event.currentTarget;\n  return target.dataset.answer ?? '未指定';\n}\nconst output = document.querySelector('#output');\nconst answer = document.querySelector('#answer');\nif (output !== null && answer !== null) {\n  answer.addEventListener('click', (event: Event) => {\n    output.textContent = readAnswer(event);\n  });\n}\nconsole.log('準備できました');\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>DOMとEventの対象を確認して読む</title>\n  </head>\n  <body>\n    <main>\n      <h1>DOMとEventの対象を確認して読む</h1>\n      <p>同梱した値を確認する練習です。外部通信はしません。</p>\n      <button id=\"answer\" type=\"button\" data-answer=\"2\"><span>回答を確かめる</span></button>\n      <p id=\"output\" aria-live=\"polite\">待機</p>\n    </main>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch05-l01-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "typescript-ch05-l01-e01-r01",
+            "typescript-ch05-l01-e01-r02",
+            "typescript-ch05-l01-e01-r03"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch05-l01-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch05-l01-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.3",
+          "files": {
+            "main.ts": "function readAnswer(event: Event): string {\n  const target = event.currentTarget;\n  return target.dataset.answer ?? '未指定';\n}\nconst output = document.querySelector('#output');\nconst answer = document.querySelector('#answer');\nif (output !== null && answer !== null) {\n  answer.addEventListener('click', (event: Event) => {\n    output.textContent = readAnswer(event);\n  });\n}\nconsole.log('準備できました');\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>DOMとEventの対象を確認して読む</title>\n  </head>\n  <body>\n    <main>\n      <h1>DOMとEventの対象を確認して読む</h1>\n      <p>同梱した値を確認する練習です。外部通信はしません。</p>\n      <button id=\"answer\" type=\"button\" data-answer=\"2\"><span>回答を確かめる</span></button>\n      <p id=\"output\" aria-live=\"polite\">待機</p>\n    </main>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch05-l02-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch05-l02",
+      "exerciseId": "typescript-ch05-l02-e01",
+      "workspaceId": "typescript-ch05-l02-e01",
+      "contentRevision": "2026-10-06.3",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "function formatPoints(value: unknown): string {\n  return String(value.points);\n}\nconst output = document.querySelector('#output');\nconst valid = document.querySelector('#valid');\nconst invalid = document.querySelector('#invalid');\nconst missing = document.querySelector('#missing');\nif (output !== null && valid !== null && invalid !== null && missing !== null) {\n  valid.addEventListener('click', () => {\n    output.textContent = formatPoints({ points: 2 });\n  });\n  invalid.addEventListener('click', () => {\n    output.textContent = formatPoints({ points: 'wrong' });\n  });\n  missing.addEventListener('click', () => {\n    output.textContent = formatPoints(null);\n  });\n}\nconsole.log('準備できました');\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>unknownの値を実行時に確かめる</title>\n  </head>\n  <body>\n    <main>\n      <h1>unknownの値を実行時に確かめる</h1>\n      <p>同梱した値を確認する練習です。外部通信はしません。</p>\n      <button id=\"valid\" type=\"button\">数値のデータ</button>\n      <button id=\"invalid\" type=\"button\">項目が文字列</button>\n      <button id=\"missing\" type=\"button\">nullのデータ</button>\n      <p id=\"output\" aria-live=\"polite\">待機</p>\n    </main>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch05-l02-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "typescript-ch05-l02-e01-r01",
+            "typescript-ch05-l02-e01-r02",
+            "typescript-ch05-l02-e01-r03"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch05-l02-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch05-l02-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.3",
+          "files": {
+            "main.ts": "function formatPoints(value: unknown): string {\n  return String(value.points);\n}\nconst output = document.querySelector('#output');\nconst valid = document.querySelector('#valid');\nconst invalid = document.querySelector('#invalid');\nconst missing = document.querySelector('#missing');\nif (output !== null && valid !== null && invalid !== null && missing !== null) {\n  valid.addEventListener('click', () => {\n    output.textContent = formatPoints({ points: 2 });\n  });\n  invalid.addEventListener('click', () => {\n    output.textContent = formatPoints({ points: 'wrong' });\n  });\n  missing.addEventListener('click', () => {\n    output.textContent = formatPoints(null);\n  });\n}\nconsole.log('準備できました');\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>unknownの値を実行時に確かめる</title>\n  </head>\n  <body>\n    <main>\n      <h1>unknownの値を実行時に確かめる</h1>\n      <p>同梱した値を確認する練習です。外部通信はしません。</p>\n      <button id=\"valid\" type=\"button\">数値のデータ</button>\n      <button id=\"invalid\" type=\"button\">項目が文字列</button>\n      <button id=\"missing\" type=\"button\">nullのデータ</button>\n      <p id=\"output\" aria-live=\"polite\">待機</p>\n    </main>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch05-l03-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch05-l03",
+      "exerciseId": "typescript-ch05-l03-e01",
+      "workspaceId": "typescript-ch05-l03-e01",
+      "contentRevision": "2026-10-06.3",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "type LoadMode = 'success' | 'invalid' | 'failure';\nasync function load(mode: LoadMode): Promise<unknown> {\n  if (mode === 'failure') throw new Error('再試行できます');\n  if (mode === 'invalid') return { points: 'wrong' };\n  return { points: 2 };\n}\nfunction formatPoints(value: unknown): string {\n  if (\n    typeof value === 'object' &&\n    value !== null &&\n    'points' in value &&\n    typeof value.points === 'number'\n  ) {\n    return String(value.points);\n  }\n  return '不正なデータ';\n}\nasync function show(mode: LoadMode): Promise<void> {\n  const output = document.querySelector('#output');\n  if (output === null) return;\n  try {\n    const data: unknown = await load(mode);\n    output.textContent = formatPoints(data);\n  } catch (error: unknown) {\n    output.textContent = error.message;\n  }\n}\nconst success = document.querySelector('#success');\nconst invalid = document.querySelector('#invalid');\nconst failure = document.querySelector('#failure');\nif (success !== null && invalid !== null && failure !== null) {\n  success.addEventListener('click', () => {\n    void show('success');\n  });\n  invalid.addEventListener('click', () => {\n    void show('invalid');\n  });\n  failure.addEventListener('click', () => {\n    void show('failure');\n  });\n}\nconsole.log('準備できました');\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>非同期のunknownと失敗を受け止める</title>\n  </head>\n  <body>\n    <main>\n      <h1>非同期のunknownと失敗を受け止める</h1>\n      <p>同梱した値を確認する練習です。外部通信はしません。</p>\n      <button id=\"success\" type=\"button\">正常なデータ</button>\n      <button id=\"invalid\" type=\"button\">不正なデータ</button>\n      <button id=\"failure\" type=\"button\">取得を拒否</button>\n      <p id=\"output\" aria-live=\"polite\">待機</p>\n    </main>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch05-l03-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "typescript-ch05-l03-e01-r01",
+            "typescript-ch05-l03-e01-r02",
+            "typescript-ch05-l03-e01-r03"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch05-l03-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch05-l03-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.3",
+          "files": {
+            "main.ts": "type LoadMode = 'success' | 'invalid' | 'failure';\nasync function load(mode: LoadMode): Promise<unknown> {\n  if (mode === 'failure') throw new Error('再試行できます');\n  if (mode === 'invalid') return { points: 'wrong' };\n  return { points: 2 };\n}\nfunction formatPoints(value: unknown): string {\n  if (\n    typeof value === 'object' &&\n    value !== null &&\n    'points' in value &&\n    typeof value.points === 'number'\n  ) {\n    return String(value.points);\n  }\n  return '不正なデータ';\n}\nasync function show(mode: LoadMode): Promise<void> {\n  const output = document.querySelector('#output');\n  if (output === null) return;\n  try {\n    const data: unknown = await load(mode);\n    output.textContent = formatPoints(data);\n  } catch (error: unknown) {\n    output.textContent = error.message;\n  }\n}\nconst success = document.querySelector('#success');\nconst invalid = document.querySelector('#invalid');\nconst failure = document.querySelector('#failure');\nif (success !== null && invalid !== null && failure !== null) {\n  success.addEventListener('click', () => {\n    void show('success');\n  });\n  invalid.addEventListener('click', () => {\n    void show('invalid');\n  });\n  failure.addEventListener('click', () => {\n    void show('failure');\n  });\n}\nconsole.log('準備できました');\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>非同期のunknownと失敗を受け止める</title>\n  </head>\n  <body>\n    <main>\n      <h1>非同期のunknownと失敗を受け止める</h1>\n      <p>同梱した値を確認する練習です。外部通信はしません。</p>\n      <button id=\"success\" type=\"button\">正常なデータ</button>\n      <button id=\"invalid\" type=\"button\">不正なデータ</button>\n      <button id=\"failure\" type=\"button\">取得を拒否</button>\n      <p id=\"output\" aria-live=\"polite\">待機</p>\n    </main>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-quiz-guided": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch06-l01",
+      "exerciseId": "typescript-ch06-l01-e01",
+      "workspaceId": "typescript-quiz-guided",
+      "contentRevision": "2026-10-06.3",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "import { mountQuiz } from './quiz-ui.js';\nimport { loadQuestions } from './questions.js';\n\nexport type Category = 'web' | 'logic';\nexport type LoadMode = 'success' | 'invalid' | 'failure';\n// 工程1: 問題の形を配列へ適用する\nexport interface Question {\n  category: Category;\n  text: string;\n  choices: string;\n  correct: string;\n}\nexport interface QuizState {\n  readonly index: number;\n  readonly score: number;\n  readonly answered: boolean;\n}\nexport type LoadResult =\n  | { kind: 'ready'; questions: readonly Question[] }\n  | { kind: 'invalid' }\n  | { kind: 'failed'; message: string };\n\nconst questions: readonly Question[] = [\n  {\n    category: 'web',\n    text: 'Webページの骨組みを作るのは？',\n    choices: ['HTML', 'CSS'],\n    correct: 'HTML',\n  },\n  { category: 'web', text: '見た目を整えるのは？', choices: ['JavaScript', 'CSS'], correct: 'CSS' },\n  { category: 'logic', text: '1 + 1 は？', choices: ['2', '3'], correct: '2' },\n  { category: 'logic', text: '3 > 5 の結果は？', choices: ['true', 'false'], correct: 'false' },\n];\n\n// 工程2: 正誤と回答済みを使って状態を更新する\n\n/** 前の回答を引き継がない初期状態を作る。 */\nfunction createState(): QuizState {\n  return { index: 0, score: 0, answered: false };\n}\n\n/** 回答済みなら状態を保ち、正解だけ得点へ加える。 */\nfunction answer(state: QuizState, question: Question, choice: string): QuizState {\n  return state;\n}\n\n/** 回答した後だけ次の問題へ進む。 */\nfunction advance(state: QuizState): QuizState {\n  return state;\n}\n\n// 工程3: unknownを検証し非同期の結果と失敗を区別する\n\n/** unknownの各項目と2つの選択肢を確認してから問題を作る。 */\nfunction decodeQuestion(value: unknown): Question | undefined {\n  return undefined;\n}\n\n/** 成功後の実検証と、拒否時の実messageを区別してUIへ渡す。 */\nasync function readQuestions(mode: LoadMode): Promise<LoadResult> {\n  return { kind: 'ready', questions };\n}\n\n/** Eventが示す操作対象を確認して返す。 */\nfunction readButton(event: Event): HTMLButtonElement | undefined {\n  const target = event.currentTarget;\n  return target instanceof HTMLButtonElement ? target : undefined;\n}\n\nmountQuiz({ questions, createState, answer, advance, load: readQuestions, readButton });\nconsole.log('準備できました');\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />\n    <title>型を確かめる学習クイズ</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main>\n      <p class=\"eyebrow\">ひとつずつ、確かめよう</p>\n      <h1>型を確かめる学習クイズ</h1>\n      <fieldset id=\"controls\">\n        <legend>問題を選んで開始する</legend>\n        <label for=\"category\">問題のカテゴリ</label\n        ><select id=\"category\">\n          <option value=\"web\">Webの役割</option>\n          <option value=\"logic\">値と条件</option>\n        </select>\n        <div class=\"actions\">\n          <button id=\"invalid-load\" type=\"button\">不正データを試す（練習用）</button>\n          <button id=\"start\" type=\"button\">開始</button\n          ><button id=\"fail-load\" type=\"button\">読み込み失敗を試す（練習用）</button>\n        </div>\n      </fieldset>\n      <p id=\"status\" role=\"status\">開始すると問題が出ます</p>\n      <section id=\"quiz\" aria-label=\"問題\" hidden>\n        <p id=\"progress\">問題1 / 2</p>\n        <h2 id=\"question\">開始すると問題が出ます</h2>\n        <div id=\"choices\">\n          <button id=\"choice-0\" type=\"button\">選択肢1</button\n          ><button id=\"choice-1\" type=\"button\">選択肢2</button>\n        </div>\n        <p id=\"feedback\" role=\"status\"></p>\n        <button id=\"next\" type=\"button\" disabled>次の問題</button>\n      </section>\n      <p id=\"score\">得点: <span id=\"score-value\">0</span></p>\n      <p id=\"result\" tabindex=\"-1\" role=\"status\" hidden></p>\n      <button id=\"restart\" type=\"button\" hidden>もう一度</button>\n      <p class=\"note\">\n        同梱データを使います。通信はしません。再読み込みするとクイズは最初から始まります。\n      </p>\n    </main>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  font-family: system-ui, sans-serif;\n  color: #193b2d;\n  background: #eaf0f3;\n}\n* {\n  box-sizing: border-box;\n}\nbody {\n  margin: 0;\n  padding: 20px;\n}\nmain {\n  max-width: 680px;\n  margin: auto;\n  padding: 24px;\n  border: 2px solid #193b2d;\n  border-radius: 16px;\n  background: #fffdf7;\n}\nh1 {\n  font-size: 1.6rem;\n  margin-top: 4px;\n}\nh2 {\n  font-size: 1.25rem;\n}\n.eyebrow,\n.note {\n  font-size: 0.9rem;\n}\n.note {\n  line-height: 1.6;\n}\n.actions,\n#choices {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 12px;\n  margin: 16px 0;\n}\nbutton,\nselect {\n  font: inherit;\n  padding: 12px 16px;\n  min-height: 44px;\n  max-width: 100%;\n  color: #193b2d;\n  background: #f0eadc;\n  border: 2px solid #193b2d;\n  border-radius: 8px;\n  cursor: pointer;\n}\nbutton:disabled {\n  cursor: default;\n  color: #415448;\n  background: #e1e5df;\n}\nbutton:focus-visible,\nselect:focus-visible {\n  outline: 3px solid #8b351c;\n  outline-offset: 3px;\n}\n[hidden] {\n  display: none !important;\n}\n#score,\n#result {\n  font-weight: 700;\n}\nlabel {\n  display: block;\n  margin-bottom: 8px;\n}\n\n/* 読み込み操作のまとまり。native fieldsetのdisabledで子の操作を止める。 */\n#controls {\n  border: 0;\n  margin: 0;\n  padding: 0;\n}\n",
+        "quiz-ui.ts": "import type { LoadMode, LoadResult, Question, QuizState } from './main.js';\n\ninterface QuizPorts {\n  readonly questions: readonly Question[];\n  readonly createState: () => QuizState;\n  readonly answer: (state: QuizState, question: Question, choice: string) => QuizState;\n  readonly advance: (state: QuizState) => QuizState;\n  readonly load: (mode: LoadMode) => Promise<LoadResult>;\n  readonly readButton: (event: Event) => HTMLButtonElement | undefined;\n}\n\n/** 提供HTMLの要素を確認する。学習者の関数以外へ判断を代行しない。 */\nfunction element(selector: string): HTMLElement {\n  const node = document.querySelector(selector);\n  if (!(node instanceof HTMLElement)) throw new Error('提供HTMLの要素がありません');\n  return node;\n}\n\nfunction button(selector: string): HTMLButtonElement {\n  const node = document.querySelector(selector);\n  if (!(node instanceof HTMLButtonElement)) throw new Error('提供HTMLのbuttonがありません');\n  return node;\n}\n\n/** 具体的なtagのquery結果を確認し、callbackにも非nullの参照を渡す。 */\nfunction controlsElement(): HTMLFieldSetElement {\n  const controls = document.querySelector('fieldset');\n  if (controls === null) throw new Error('提供HTMLの操作欄がありません');\n  return controls;\n}\n\nfunction categoryElement(): HTMLSelectElement {\n  const category = document.querySelector('select');\n  if (category === null) throw new Error('提供HTMLのカテゴリ欄がありません');\n  return category;\n}\n\n/** 学習者の型付きデータと状態・境界関数を、既存クイズと同じ表示/操作へ接続する。 */\nexport function mountQuiz(ports: QuizPorts): void {\n  const controls = controlsElement();\n  const category = categoryElement();\n  const quiz = element('#quiz');\n  const questionText = element('#question');\n  const progress = element('#progress');\n  const feedback = element('#feedback');\n  const score = element('#score-value');\n  const result = element('#result');\n  const status = element('#status');\n  const next = button('#next');\n  const restart = button('#restart');\n  const choices = [button('#choice-0'), button('#choice-1')];\n  let questions = ports.questions;\n  let state = ports.createState();\n\n  /** 状態に対応する実際の問題、回答済みの操作可否と結果を表示する。 */\n  function render(): void {\n    const question = questions[state.index];\n    score.textContent = String(state.score);\n    quiz.hidden = question === undefined;\n    result.hidden = question !== undefined;\n    restart.hidden = question !== undefined;\n    if (question !== undefined) {\n      questionText.textContent = question.text;\n      progress.textContent = '問題' + (state.index + 1) + ' / ' + questions.length;\n      feedback.textContent = '';\n      choices.forEach((choice, index) => {\n        choice.textContent = question.choices[index] ?? '';\n        choice.disabled = state.answered;\n      });\n      next.disabled = !state.answered;\n      next.textContent = state.index === questions.length - 1 ? '結果を見る' : '次の問題';\n      if (!state.answered) choices[0]?.focus();\n    } else {\n      result.textContent = questions.length + '問中' + state.score + '問正解';\n      restart.focus();\n    }\n  }\n\n  /** 受け取ったEventの確認を学習者へ渡し、その返した対象だけを扱う。 */\n  async function handleAction(event: Event): Promise<void> {\n    const target = ports.readButton(event);\n    if (target === undefined) return;\n    if (\n      target.id === 'start' ||\n      target === restart ||\n      target.id === 'fail-load' ||\n      target.id === 'invalid-load'\n    ) {\n      controls.disabled = true;\n      status.textContent = '読み込み中...';\n      const mode =\n        target.id === 'fail-load'\n          ? 'failure'\n          : target.id === 'invalid-load'\n            ? 'invalid'\n            : 'success';\n      const loaded = await ports.load(mode);\n      controls.disabled = false;\n      if (loaded.kind === 'failed') {\n        status.textContent = loaded.message;\n        return;\n      }\n      if (loaded.kind === 'invalid') {\n        status.textContent = '不正なデータです。開始でやり直せます';\n        return;\n      }\n      questions = loaded.questions.filter((question) => question.category === category.value);\n      state = ports.createState();\n      status.textContent = '';\n      render();\n    } else if (target === next) {\n      state = ports.advance(state);\n      render();\n    } else if (choices.includes(target)) {\n      const question = questions[state.index];\n      if (question === undefined || state.answered) return;\n      const selected = target.textContent ?? '';\n      state = ports.answer(state, question, selected);\n      score.textContent = String(state.score);\n      feedback.textContent =\n        selected === question.correct ? '正解です' : '正解は ' + question.correct + ' です';\n      choices.forEach((choice) => {\n        choice.disabled = state.answered;\n      });\n      next.disabled = !state.answered;\n      if (state.answered) next.focus();\n    }\n  }\n\n  document.querySelectorAll('button').forEach((control) => {\n    control.addEventListener('click', handleAction);\n  });\n}\n",
+        "questions.ts": "import type { LoadMode } from './main.js';\n\nconst records: readonly unknown[] = [\n  {\n    category: 'web',\n    text: 'Webページの骨組みを作るのは？',\n    choices: ['HTML', 'CSS'],\n    correct: 'HTML',\n  },\n  { category: 'web', text: '見た目を整えるのは？', choices: ['JavaScript', 'CSS'], correct: 'CSS' },\n  { category: 'logic', text: '1 + 1 は？', choices: ['2', '3'], correct: '2' },\n  { category: 'logic', text: '3 > 5 の結果は？', choices: ['true', 'false'], correct: 'false' },\n];\nlet afterFailure = false;\n\n/** 通信せず同梱の値を返す。成功しても各要素の形はunknown。 */\nexport async function loadQuestions(mode: LoadMode): Promise<readonly unknown[]> {\n  await new Promise<void>((resolve) => {\n    setTimeout(resolve, 80);\n  });\n  if (mode === 'failure') {\n    afterFailure = true;\n    throw new Error('読み込めませんでした。開始でやり直せます');\n  }\n  if (mode === 'invalid')\n    return [{ category: 'web', text: 2, choices: ['HTML', 'CSS'], correct: 'HTML' }];\n  return afterFailure ? [records[1], records[0], records[2], records[3]] : records;\n}\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch06-l01-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "typescript-ch06-l01-e01-r01",
+            "typescript-ch06-l01-e01-r02",
+            "typescript-ch06-l01-e01-r03"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch06-l01-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch06-l01-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.3",
+          "files": {
+            "main.ts": "import { mountQuiz } from './quiz-ui.js';\nimport { loadQuestions } from './questions.js';\n\nexport type Category = 'web' | 'logic';\nexport type LoadMode = 'success' | 'invalid' | 'failure';\n// 工程1: 問題の形を配列へ適用する\nexport interface Question {\n  category: Category;\n  text: string;\n  choices: string;\n  correct: string;\n}\nexport interface QuizState {\n  readonly index: number;\n  readonly score: number;\n  readonly answered: boolean;\n}\nexport type LoadResult =\n  | { kind: 'ready'; questions: readonly Question[] }\n  | { kind: 'invalid' }\n  | { kind: 'failed'; message: string };\n\nconst questions: readonly Question[] = [\n  {\n    category: 'web',\n    text: 'Webページの骨組みを作るのは？',\n    choices: ['HTML', 'CSS'],\n    correct: 'HTML',\n  },\n  { category: 'web', text: '見た目を整えるのは？', choices: ['JavaScript', 'CSS'], correct: 'CSS' },\n  { category: 'logic', text: '1 + 1 は？', choices: ['2', '3'], correct: '2' },\n  { category: 'logic', text: '3 > 5 の結果は？', choices: ['true', 'false'], correct: 'false' },\n];\n\n// 工程2: 正誤と回答済みを使って状態を更新する\n\n/** 前の回答を引き継がない初期状態を作る。 */\nfunction createState(): QuizState {\n  return { index: 0, score: 0, answered: false };\n}\n\n/** 回答済みなら状態を保ち、正解だけ得点へ加える。 */\nfunction answer(state: QuizState, question: Question, choice: string): QuizState {\n  return state;\n}\n\n/** 回答した後だけ次の問題へ進む。 */\nfunction advance(state: QuizState): QuizState {\n  return state;\n}\n\n// 工程3: unknownを検証し非同期の結果と失敗を区別する\n\n/** unknownの各項目と2つの選択肢を確認してから問題を作る。 */\nfunction decodeQuestion(value: unknown): Question | undefined {\n  return undefined;\n}\n\n/** 成功後の実検証と、拒否時の実messageを区別してUIへ渡す。 */\nasync function readQuestions(mode: LoadMode): Promise<LoadResult> {\n  return { kind: 'ready', questions };\n}\n\n/** Eventが示す操作対象を確認して返す。 */\nfunction readButton(event: Event): HTMLButtonElement | undefined {\n  const target = event.currentTarget;\n  return target instanceof HTMLButtonElement ? target : undefined;\n}\n\nmountQuiz({ questions, createState, answer, advance, load: readQuestions, readButton });\nconsole.log('準備できました');\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />\n    <title>型を確かめる学習クイズ</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main>\n      <p class=\"eyebrow\">ひとつずつ、確かめよう</p>\n      <h1>型を確かめる学習クイズ</h1>\n      <fieldset id=\"controls\">\n        <legend>問題を選んで開始する</legend>\n        <label for=\"category\">問題のカテゴリ</label\n        ><select id=\"category\">\n          <option value=\"web\">Webの役割</option>\n          <option value=\"logic\">値と条件</option>\n        </select>\n        <div class=\"actions\">\n          <button id=\"invalid-load\" type=\"button\">不正データを試す（練習用）</button>\n          <button id=\"start\" type=\"button\">開始</button\n          ><button id=\"fail-load\" type=\"button\">読み込み失敗を試す（練習用）</button>\n        </div>\n      </fieldset>\n      <p id=\"status\" role=\"status\">開始すると問題が出ます</p>\n      <section id=\"quiz\" aria-label=\"問題\" hidden>\n        <p id=\"progress\">問題1 / 2</p>\n        <h2 id=\"question\">開始すると問題が出ます</h2>\n        <div id=\"choices\">\n          <button id=\"choice-0\" type=\"button\">選択肢1</button\n          ><button id=\"choice-1\" type=\"button\">選択肢2</button>\n        </div>\n        <p id=\"feedback\" role=\"status\"></p>\n        <button id=\"next\" type=\"button\" disabled>次の問題</button>\n      </section>\n      <p id=\"score\">得点: <span id=\"score-value\">0</span></p>\n      <p id=\"result\" tabindex=\"-1\" role=\"status\" hidden></p>\n      <button id=\"restart\" type=\"button\" hidden>もう一度</button>\n      <p class=\"note\">\n        同梱データを使います。通信はしません。再読み込みするとクイズは最初から始まります。\n      </p>\n    </main>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  font-family: system-ui, sans-serif;\n  color: #193b2d;\n  background: #eaf0f3;\n}\n* {\n  box-sizing: border-box;\n}\nbody {\n  margin: 0;\n  padding: 20px;\n}\nmain {\n  max-width: 680px;\n  margin: auto;\n  padding: 24px;\n  border: 2px solid #193b2d;\n  border-radius: 16px;\n  background: #fffdf7;\n}\nh1 {\n  font-size: 1.6rem;\n  margin-top: 4px;\n}\nh2 {\n  font-size: 1.25rem;\n}\n.eyebrow,\n.note {\n  font-size: 0.9rem;\n}\n.note {\n  line-height: 1.6;\n}\n.actions,\n#choices {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 12px;\n  margin: 16px 0;\n}\nbutton,\nselect {\n  font: inherit;\n  padding: 12px 16px;\n  min-height: 44px;\n  max-width: 100%;\n  color: #193b2d;\n  background: #f0eadc;\n  border: 2px solid #193b2d;\n  border-radius: 8px;\n  cursor: pointer;\n}\nbutton:disabled {\n  cursor: default;\n  color: #415448;\n  background: #e1e5df;\n}\nbutton:focus-visible,\nselect:focus-visible {\n  outline: 3px solid #8b351c;\n  outline-offset: 3px;\n}\n[hidden] {\n  display: none !important;\n}\n#score,\n#result {\n  font-weight: 700;\n}\nlabel {\n  display: block;\n  margin-bottom: 8px;\n}\n\n/* 読み込み操作のまとまり。native fieldsetのdisabledで子の操作を止める。 */\n#controls {\n  border: 0;\n  margin: 0;\n  padding: 0;\n}\n",
+            "quiz-ui.ts": "import type { LoadMode, LoadResult, Question, QuizState } from './main.js';\n\ninterface QuizPorts {\n  readonly questions: readonly Question[];\n  readonly createState: () => QuizState;\n  readonly answer: (state: QuizState, question: Question, choice: string) => QuizState;\n  readonly advance: (state: QuizState) => QuizState;\n  readonly load: (mode: LoadMode) => Promise<LoadResult>;\n  readonly readButton: (event: Event) => HTMLButtonElement | undefined;\n}\n\n/** 提供HTMLの要素を確認する。学習者の関数以外へ判断を代行しない。 */\nfunction element(selector: string): HTMLElement {\n  const node = document.querySelector(selector);\n  if (!(node instanceof HTMLElement)) throw new Error('提供HTMLの要素がありません');\n  return node;\n}\n\nfunction button(selector: string): HTMLButtonElement {\n  const node = document.querySelector(selector);\n  if (!(node instanceof HTMLButtonElement)) throw new Error('提供HTMLのbuttonがありません');\n  return node;\n}\n\n/** 具体的なtagのquery結果を確認し、callbackにも非nullの参照を渡す。 */\nfunction controlsElement(): HTMLFieldSetElement {\n  const controls = document.querySelector('fieldset');\n  if (controls === null) throw new Error('提供HTMLの操作欄がありません');\n  return controls;\n}\n\nfunction categoryElement(): HTMLSelectElement {\n  const category = document.querySelector('select');\n  if (category === null) throw new Error('提供HTMLのカテゴリ欄がありません');\n  return category;\n}\n\n/** 学習者の型付きデータと状態・境界関数を、既存クイズと同じ表示/操作へ接続する。 */\nexport function mountQuiz(ports: QuizPorts): void {\n  const controls = controlsElement();\n  const category = categoryElement();\n  const quiz = element('#quiz');\n  const questionText = element('#question');\n  const progress = element('#progress');\n  const feedback = element('#feedback');\n  const score = element('#score-value');\n  const result = element('#result');\n  const status = element('#status');\n  const next = button('#next');\n  const restart = button('#restart');\n  const choices = [button('#choice-0'), button('#choice-1')];\n  let questions = ports.questions;\n  let state = ports.createState();\n\n  /** 状態に対応する実際の問題、回答済みの操作可否と結果を表示する。 */\n  function render(): void {\n    const question = questions[state.index];\n    score.textContent = String(state.score);\n    quiz.hidden = question === undefined;\n    result.hidden = question !== undefined;\n    restart.hidden = question !== undefined;\n    if (question !== undefined) {\n      questionText.textContent = question.text;\n      progress.textContent = '問題' + (state.index + 1) + ' / ' + questions.length;\n      feedback.textContent = '';\n      choices.forEach((choice, index) => {\n        choice.textContent = question.choices[index] ?? '';\n        choice.disabled = state.answered;\n      });\n      next.disabled = !state.answered;\n      next.textContent = state.index === questions.length - 1 ? '結果を見る' : '次の問題';\n      if (!state.answered) choices[0]?.focus();\n    } else {\n      result.textContent = questions.length + '問中' + state.score + '問正解';\n      restart.focus();\n    }\n  }\n\n  /** 受け取ったEventの確認を学習者へ渡し、その返した対象だけを扱う。 */\n  async function handleAction(event: Event): Promise<void> {\n    const target = ports.readButton(event);\n    if (target === undefined) return;\n    if (\n      target.id === 'start' ||\n      target === restart ||\n      target.id === 'fail-load' ||\n      target.id === 'invalid-load'\n    ) {\n      controls.disabled = true;\n      status.textContent = '読み込み中...';\n      const mode =\n        target.id === 'fail-load'\n          ? 'failure'\n          : target.id === 'invalid-load'\n            ? 'invalid'\n            : 'success';\n      const loaded = await ports.load(mode);\n      controls.disabled = false;\n      if (loaded.kind === 'failed') {\n        status.textContent = loaded.message;\n        return;\n      }\n      if (loaded.kind === 'invalid') {\n        status.textContent = '不正なデータです。開始でやり直せます';\n        return;\n      }\n      questions = loaded.questions.filter((question) => question.category === category.value);\n      state = ports.createState();\n      status.textContent = '';\n      render();\n    } else if (target === next) {\n      state = ports.advance(state);\n      render();\n    } else if (choices.includes(target)) {\n      const question = questions[state.index];\n      if (question === undefined || state.answered) return;\n      const selected = target.textContent ?? '';\n      state = ports.answer(state, question, selected);\n      score.textContent = String(state.score);\n      feedback.textContent =\n        selected === question.correct ? '正解です' : '正解は ' + question.correct + ' です';\n      choices.forEach((choice) => {\n        choice.disabled = state.answered;\n      });\n      next.disabled = !state.answered;\n      if (state.answered) next.focus();\n    }\n  }\n\n  document.querySelectorAll('button').forEach((control) => {\n    control.addEventListener('click', handleAction);\n  });\n}\n",
+            "questions.ts": "import type { LoadMode } from './main.js';\n\nconst records: readonly unknown[] = [\n  {\n    category: 'web',\n    text: 'Webページの骨組みを作るのは？',\n    choices: ['HTML', 'CSS'],\n    correct: 'HTML',\n  },\n  { category: 'web', text: '見た目を整えるのは？', choices: ['JavaScript', 'CSS'], correct: 'CSS' },\n  { category: 'logic', text: '1 + 1 は？', choices: ['2', '3'], correct: '2' },\n  { category: 'logic', text: '3 > 5 の結果は？', choices: ['true', 'false'], correct: 'false' },\n];\nlet afterFailure = false;\n\n/** 通信せず同梱の値を返す。成功しても各要素の形はunknown。 */\nexport async function loadQuestions(mode: LoadMode): Promise<readonly unknown[]> {\n  await new Promise<void>((resolve) => {\n    setTimeout(resolve, 80);\n  });\n  if (mode === 'failure') {\n    afterFailure = true;\n    throw new Error('読み込めませんでした。開始でやり直せます');\n  }\n  if (mode === 'invalid')\n    return [{ category: 'web', text: 2, choices: ['HTML', 'CSS'], correct: 'HTML' }];\n  return afterFailure ? [records[1], records[0], records[2], records[3]] : records;\n}\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "javascript:javascript-ch10-l01-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch10-l01",
+      "exerciseId": "javascript-ch10-l01-e01",
+      "workspaceId": "javascript-ch10-l01-e01",
+      "contentRevision": "2026-08-02.1",
+      "editRevision": 7,
+      "files": {
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n<head><meta charset=\"UTF-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>問題データを受け取る</title><link rel=\"stylesheet\" href=\"styles.css\" /></head>\n<body><main><h1>問題を読んでみよう</h1>\n<button id=\"load\" type=\"button\">問題を読む</button>\n<p id=\"count\">問題: 0</p>\n<p id=\"question\">まだありません</p><p id=\"note\">同梱の問題を読む練習です。通信はしません。</p>\n</main><script src=\"script.js\"></script></body></html>\n",
+        "styles.css": "body {\n  font-family: sans-serif;\n  padding: 24px;\n  color: #19352b;\n  background: #f5faf7;\n}\nmain {\n  max-width: 520px;\n}\nbutton {\n  padding: 12px 20px;\n  color: white;\n  background: #16764b;\n  border: 0;\n  border-radius: 8px;\n  font-size: 18px;\n}\nbutton:focus-visible {\n  outline: 3px solid #19352b;\n  outline-offset: 4px;\n}\n#status {\n  padding: 16px;\n  background: white;\n}\n",
+        "script.js": "let reads = 0;\n/** 同梱データを読み、2回目以降は別の3件を返す教材用取得元。 */\nfunction loadQuestions() {\n  reads += 1;\n  const questions =\n    reads === 1\n      ? [{ text: '空は何色？' }, { text: '海は何色？' }]\n      : [{ text: '草は何色？' }, { text: '雲は何色？' }, { text: '雪は何色？' }];\n  return new Promise((resolve) => {\n    setTimeout(() => {\n      resolve(questions);\n    }, 80);\n  });\n}\nconst count = document.querySelector('#count');\nconst question = document.querySelector('#question');\ndocument.querySelector('#load').addEventListener('click', () => {\n  loadQuestions().then((questions) => {\n    count.textContent = '問題: 0';\n    question.textContent = 'まだありません';\n  });\n});\n\n// synthetic previous draft: javascript-ch10-l01-e01\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch10-l01-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch10-l01-e01-r01",
+            "javascript-ch10-l01-e01-r02",
+            "javascript-ch10-l01-e01-r03",
+            "javascript-ch10-l01-e01-r04",
+            "javascript-ch10-l01-e01-teaching-result",
+            "interaction:promise-data:load",
+            "interaction:promise-data:again"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch10-l01-e01-h01"],
+      "reviewSlideId": "javascript-ch10-l01-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch10-l01-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-08-02.1",
+          "files": {
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n<head><meta charset=\"UTF-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>問題データを受け取る</title><link rel=\"stylesheet\" href=\"styles.css\" /></head>\n<body><main><h1>問題を読んでみよう</h1>\n<button id=\"load\" type=\"button\">問題を読む</button>\n<p id=\"count\">問題: 0</p>\n<p id=\"question\">まだありません</p><p id=\"note\">同梱の問題を読む練習です。通信はしません。</p>\n</main><script src=\"script.js\"></script></body></html>\n",
+            "styles.css": "body {\n  font-family: sans-serif;\n  padding: 24px;\n  color: #19352b;\n  background: #f5faf7;\n}\nmain {\n  max-width: 520px;\n}\nbutton {\n  padding: 12px 20px;\n  color: white;\n  background: #16764b;\n  border: 0;\n  border-radius: 8px;\n  font-size: 18px;\n}\nbutton:focus-visible {\n  outline: 3px solid #19352b;\n  outline-offset: 4px;\n}\n#status {\n  padding: 16px;\n  background: white;\n}\n",
+            "script.js": "let reads = 0;\n/** 同梱データを読み、2回目以降は別の3件を返す教材用取得元。 */\nfunction loadQuestions() {\n  reads += 1;\n  const questions =\n    reads === 1\n      ? [{ text: '空は何色？' }, { text: '海は何色？' }]\n      : [{ text: '草は何色？' }, { text: '雲は何色？' }, { text: '雪は何色？' }];\n  return new Promise((resolve) => {\n    setTimeout(() => {\n      resolve(questions);\n    }, 80);\n  });\n}\nconst count = document.querySelector('#count');\nconst question = document.querySelector('#question');\ndocument.querySelector('#load').addEventListener('click', () => {\n  loadQuestions().then((questions) => {\n    count.textContent = '問題: ' + questions.length;\n    question.textContent = questions[0].text;\n  });\n});\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    }
+  },
+  "quarantined": [],
+  "appVersion": "synthetic-ts-release-not-learning-evidence",
+  "exportedAt": "2026-10-06T00:00:00.000Z",
+  "integrity": {
+    "algorithm": "SHA-256",
+    "digest": "5e3a06399f6ff520a9a058efe12637836288b7539aa968f93a03668840e1403a"
+  }
+}
