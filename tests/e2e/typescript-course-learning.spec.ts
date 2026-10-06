@@ -1,4 +1,4 @@
-/** 生成済みdraft教材を通常Routeで通し、Lessonの順序・採点・保存を実UIで確認する。 */
+/** 生成済み教材を通常Routeで通し、Lessonの順序・採点・保存を実UIで確認する。 */
 import { readFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
@@ -10,8 +10,12 @@ import {
 } from './helpers/progress';
 import { expectStoredViewedSlide } from './helpers/releaseCourse';
 import { testBasePath } from './helpers/testBasePath';
+import { loadAuthoringCourse } from '../../scripts/content/compileCourse';
 
 const ROOT = 'content/typescript/chapters/typescript-ch01/lessons';
+const { runtime: course } = await loadAuthoringCourse('content/typescript');
+const firstSlideRoute =
+  '/courses/typescript/lessons/typescript-ch01-l01/slides/typescript-ch01-l01-s01';
 
 test('通常Courseで型推論から型注釈へ進み、両課題の型条件と保存を区別する', async ({
   page,
@@ -26,10 +30,16 @@ test('通常Courseで型推論から型注釈へ進み、両課題の型条件�
   });
   await page.goto(`${testBasePath()}#/`);
   await expect(page.getByRole('heading', { level: 1, name: '学びたいピースを選ぶ' })).toBeVisible();
-  await expect(page.getByRole('link', { name: /TypeScript はじめの一歩/u })).toHaveCount(0);
-  await page.goto(
-    `${testBasePath()}#/courses/typescript/lessons/typescript-ch01-l01/slides/typescript-ch01-l01-s01`,
-  );
+  const courseCard = page.getByRole('article', { name: course.title, exact: true });
+  if (course.publicationStatus === 'published') {
+    await expect(courseCard).toBeVisible();
+    await expect(
+      courseCard.getByRole('link', { name: `${course.title}：最初のピースを置く`, exact: true }),
+    ).toHaveAttribute('href', `#${firstSlideRoute}`);
+  } else {
+    await expect(courseCard).toHaveCount(0);
+  }
+  await page.goto(`${testBasePath()}#${firstSlideRoute}`);
   for (const [index, suffix] of ['01', '02'].entries()) {
     const lessonId = `typescript-ch01-l${suffix}`;
     const exerciseId = `${lessonId}-e01`;
@@ -109,7 +119,7 @@ test('通常Courseで型推論から型注釈へ進み、両課題の型条件�
     )
     .toMatchObject({
       courseId: 'typescript',
-      contentRevision: '2026-10-06.3',
+      contentRevision: course.revision,
       currentComplete: false,
       lessons: {
         'typescript-ch01-l01': {

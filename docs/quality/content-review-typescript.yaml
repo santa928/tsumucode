@@ -1,7 +1,7 @@
 schemaVersion: 1
 releaseStatus: approved
-verifiedSourceCommit: e2d0d361e58ddddee57050d0bd625f132e5d0b15
-canonicalDistSha256: 9bce7d57a630338ea09d1d2abb560a7aee2e03ac75f09faa8207dfc7771433c7
+verifiedSourceCommit: e54797029e8d6a37cffc517b9c312454f9944f52
+canonicalDistSha256: 0f26d35cadbf4c6bccc682b85fcc710b1b359d9ee06c383197358f85072df12e
 lessons:
   - lessonId: typescript-ch01-l01
     authorId: tsumucode-typescript-authoring

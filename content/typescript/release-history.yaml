@@ -5,8 +5,8 @@ candidate:
   courseId: typescript
   revision: 2026-10-06.4
   status: approved
-  verifiedSourceCommit: e2d0d361e58ddddee57050d0bd625f132e5d0b15
-  canonicalDistSha256: 9bce7d57a630338ea09d1d2abb560a7aee2e03ac75f09faa8207dfc7771433c7
+  verifiedSourceCommit: e54797029e8d6a37cffc517b9c312454f9944f52
+  canonicalDistSha256: 0f26d35cadbf4c6bccc682b85fcc710b1b359d9ee06c383197358f85072df12e
   courseManifestSha256: 2a5609a2d288be5d76585642d3115e6c88e5ff4cd6aad248f4d0bfdf24385c22
   publicProvenanceSha256: befa0e54ccc10aa054ea24d65141a7fcaec606ededf1765e7f9f58aaae2938c9
   persistentIdsSha256: f6f61236687903e0324905c22d4c4d9dea40cd3236302e18ca105b089d144c31
@@ -228,6 +228,6 @@ candidate:
       toRevision: 2026-10-06.4
       steps: []
   syntheticProgressBundlePath: tests/fixtures/progress/typescript-previous-release-bundle.json
-  draftSourceCommit: 64a5e93d264a6194a11cadf8478c98894111b14f
-  draftCanonicalDistSha256: e14f5513173fe2e6cc9763eef8a6b9fb0118ea001816d068b92e813f3db17a6e
-  normalizedLearningInputSha256: 775187787b520b65c80567de8bfe49b347e430f74cb701a8683150ff86f01b0b
+  draftSourceCommit: 6667cc4ed46b7c3636e061e60b703ad4ff9dd2dc
+  draftCanonicalDistSha256: 95f9a5e599ead2dc0b109a69bea3ad63b0fc61736b5e65deaf72a565399eacc5
+  normalizedLearningInputSha256: cbb44acd8ea60c28d6597b43c88d95af103924bee8a97dcf1922b8247d3dcaed

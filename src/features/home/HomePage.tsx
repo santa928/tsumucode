@@ -56,7 +56,7 @@ function CourseShelfCard({ course }: { readonly course: CourseCatalogEntry }) {
     <StackedCard
       as="article"
       aria-labelledby={titleId}
-      className="flex h-full flex-col overflow-hidden bg-workshop-raised p-0"
+      className="flex h-full min-w-0 flex-col overflow-hidden bg-workshop-raised p-0 wrap-anywhere"
     >
       <div aria-hidden="true" className="flex h-4 gap-1 bg-workshop-workbench p-1">
         <span className="w-1/4 rounded-workshop-piece bg-workshop-learning" />
@@ -76,7 +76,7 @@ function CourseShelfCard({ course }: { readonly course: CourseCatalogEntry }) {
           {course.title}
         </h3>
         <p className="mt-3 text-workshop-muted">{course.description}</p>
-        <dl className="mt-5 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 border-t border-workshop-border pt-5">
+        <dl className="mt-5 grid grid-cols-1 gap-x-4 gap-y-2 border-t border-workshop-border pt-5 sm:grid-cols-[auto_minmax(0,1fr)]">
           <dt className="font-bold">対象</dt>
           <dd>{course.audience}</dd>
           <dt className="font-bold">進め方</dt>
@@ -233,7 +233,7 @@ export function HomePage() {
             <p className="mt-2 text-workshop-muted">新しいピースが整うまで、少しお待ちください。</p>
           </StackedCard>
         ) : (
-          <ul className="mt-5 grid list-none gap-7 p-0 lg:grid-cols-2">
+          <ul className="mt-5 grid grid-cols-1 list-none gap-7 p-0 lg:grid-cols-2">
             {publishedCourses.map((course) => {
               return (
                 <li key={course.id}>
