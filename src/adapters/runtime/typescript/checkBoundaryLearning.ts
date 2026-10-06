@@ -1,6 +1,6 @@
 /** DOM・unknown・非同期の固定課題だけで、型と値の関係を非emit検査する。 */
 import ts from 'typescript';
-import { checkTypeScript } from './compileTypeScript';
+import { checkTypeScript, createTypeScriptProbeChecker } from './compileTypeScript';
 import { inspectBoundaryLearning } from './inspectBoundaryLearning';
 import type { TypeScriptBoundaryProfile } from '../../../core/content/typeScriptBoundaryContract';
 
@@ -117,14 +117,15 @@ export function checkBoundaryLearning(
       profile === 'async-unknown-v1'
         ? 'import { __tsumucode_load, __tsumucode_show } from "./main.js";\n'
         : 'import { __tsumucode_value } from "./main.js";\n';
-    const positive = checkTypeScript(
+    const checkProbe = createTypeScriptProbeChecker();
+    const positive = checkProbe(
       {
         'main.ts': copy,
         '__tsumucode_positive.ts': prefix + inspection.positiveLines.join('\n') + '\n',
       },
       libraries,
     );
-    const negative = checkTypeScript(
+    const negative = checkProbe(
       {
         'main.ts': copy,
         '__tsumucode_negative.ts':
