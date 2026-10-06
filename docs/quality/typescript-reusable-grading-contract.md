@@ -10,7 +10,7 @@
 | ch04-l02 / generic-identity-v1 | 無制約の型パラメータ1つを引数/戻り値へ使い、数値と文字列の受取先に注釈 | 受け取った値をそのまま返す                                  | 2・型のクイズ |
 | ch04-l03 / readonly-copy-v1    | readonly number[]の入力、number[]の出力                                | 元の要素から別配列を作る。呼出し元は元配列へ後から4を追加   | 1,2,4・1,2,3  |
 
-名前・引用符・括弧の違い、関数宣言と変数のarrow/function式、ローカルへ1回複写してreturnする別解を扱う。callback計算役はOperation注釈による引数の推論か明記を使い、掛け算/足し算で引数から計算する。型の契約は2倍の正しさを決めないので、3倍の誤例は型条件が成立してもConsole条件で未達とする。
+名前・引用符・式を包む括弧の違い、関数宣言と変数のarrow/function式、ローカルへ1回複写してreturnする別解を扱う。callback計算役はOperation注釈による引数の推論か明記を使い、掛け算/足し算で引数から計算する。型の契約は2倍の正しさを決めないので、3倍の誤例は型条件が成立してもConsole条件で未達とする。
 
 genericは呼出しからの推論とnumber/stringの型引数明記を扱う。readonlyはreadonly number[]/ReadonlyArray<number>、戻り値のnumber[]/Array<number>、spread/concatによる別配列を扱う。異なる追加値の例は型と元値を使う条件が成立しても実出力で未達となる。型の契約だけを満たす誤動作を、学習合格へ広げない。
 

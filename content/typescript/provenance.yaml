@@ -980,3 +980,15 @@ items:
     visibility: public
     path: chapters/typescript-ch04/lessons/typescript-ch04-l03/slides/s04.md
     createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch04-lessons-typescript-ch04-l01-exercises-typescript-ch04-l01-e01-fixtures-parenthesized-ts
+    visibility: authoring
+    path: chapters/typescript-ch04/lessons/typescript-ch04-l01/exercises/typescript-ch04-l01-e01/fixtures/parenthesized.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch04-lessons-typescript-ch04-l02-exercises-typescript-ch04-l02-e01-fixtures-parenthesized-ts
+    visibility: authoring
+    path: chapters/typescript-ch04/lessons/typescript-ch04-l02/exercises/typescript-ch04-l02-e01/fixtures/parenthesized.ts
+    createdAt: 2026-10-06
+  - id: typescript-chapters-typescript-ch04-lessons-typescript-ch04-l03-exercises-typescript-ch04-l03-e01-fixtures-parenthesized-ts
+    visibility: authoring
+    path: chapters/typescript-ch04/lessons/typescript-ch04-l03/exercises/typescript-ch04-l03-e01/fixtures/parenthesized.ts
+    createdAt: 2026-10-06

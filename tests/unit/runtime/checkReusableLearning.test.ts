@@ -30,6 +30,20 @@ for (const [id, profile] of [
   ['typescript-ch04-l03-e01', 'readonly-copy-v1'],
 ] as const) {
   describe(`${profile}の有限な型条件`, () => {
+    it('式の括弧を付けた合法な別解でも型と値の関係を保つ', () => {
+      const exercise = exercises.find((exercise) => exercise.id === id)!;
+      const source = exercise.fixtures
+        .find((fixture) => fixture.id === 'parenthesized')!
+        .files.find((file) => file.path === 'main.ts')!.content;
+      const files = { 'main.ts': source };
+      expect(compileTypeScript(files, libraries).status).toBe('ready');
+      const result = checkReusableLearning(files, libraries, profile);
+      expect(isReusableLearningResult(result, profile)).toBe(true);
+      expect(result.status).toBe('ready');
+      if (result.status === 'ready') expect(Object.values(result.facts).every(Boolean)).toBe(true);
+      expect(files['main.ts']).toBe(source);
+    }, 20_000);
+
     it('通常Fixtureの型診断と、再利用・別解・条件回避の学習条件を区別する', () => {
       const exercise = exercises.find((exercise) => exercise.id === id)!;
       for (const fixture of exercise.fixtures) {

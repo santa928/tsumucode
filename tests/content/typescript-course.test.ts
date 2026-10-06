@@ -146,7 +146,7 @@ describe('TypeScript導入draft Course', () => {
       expect(exercise).not.toHaveProperty('fixtures');
     }
     expect(authoring.exercises.map(({ fixtures }) => fixtures.length)).toEqual([
-      13, 12, 9, 18, 17, 18, 17, 16, 18,
+      13, 12, 9, 18, 17, 18, 18, 17, 19,
     ]);
   });
 

@@ -39,6 +39,7 @@ function unwrap(node: ts.Expression): ts.Expression {
 }
 
 function identifier(node: ts.Node | undefined, name: string): boolean {
+  if (node && ts.isParenthesizedExpression(node)) return identifier(node.expression, name);
   return !!node && ts.isIdentifier(node) && node.text === name;
 }
 
@@ -56,9 +57,15 @@ function typeReference(node: ts.TypeNode | undefined, name: string): boolean {
 }
 
 function numeric(node: ts.Node | undefined, value?: number): boolean {
+  if (node && ts.isParenthesizedExpression(node)) return numeric(node.expression, value);
   return (
     !!node && ts.isNumericLiteral(node) && (value === undefined || Number(node.text) === value)
   );
+}
+
+function text(node: ts.Node | undefined, value: string): boolean {
+  if (node && ts.isParenthesizedExpression(node)) return text(node.expression, value);
+  return !!node && ts.isStringLiteral(node) && node.text === value;
 }
 
 function arrayType(node: ts.TypeNode | undefined, readonly: boolean): boolean {
@@ -342,9 +349,7 @@ function generic(file: ts.SourceFile): Inspection {
               (index === 0 ? ts.SyntaxKind.NumberKeyword : ts.SyntaxKind.StringKeyword))) &&
         entry.type?.kind ===
           (index === 0 ? ts.SyntaxKind.NumberKeyword : ts.SyntaxKind.StringKeyword) &&
-        (index === 0
-          ? numeric(argument, 2)
-          : !!argument && ts.isStringLiteral(argument) && argument.text === '型のクイズ') &&
+        (index === 0 ? numeric(argument, 2) : text(argument, '型のクイズ')) &&
         identifier(consoleValue(file.statements[index + 3]), nameOf(entry.name))
       );
     }),
@@ -379,7 +384,7 @@ function readonlyCopy(file: ts.SourceFile): Inspection {
     ) &&
     output.elements.some((element) => numeric(element));
   const appendCall = call(updated?.initializer, append?.name ?? '', 1);
-  const sourceArray = original?.initializer;
+  const sourceArray = original?.initializer && unwrap(original.initializer);
   const pushStatement = file.statements[3];
   const push =
     pushStatement && ts.isExpressionStatement(pushStatement)
@@ -409,12 +414,7 @@ function readonlyCopy(file: ts.SourceFile): Inspection {
       numeric(push.arguments[0], 4) &&
       [originalName, updatedName].every((name, index) => {
         const join = method(consoleValue(file.statements[index + 4]), name, 'join', 1);
-        return (
-          !!join &&
-          !!join.arguments[0] &&
-          ts.isStringLiteral(join.arguments[0]) &&
-          join.arguments[0].text === ','
-        );
+        return !!join && text(join.arguments[0], ',');
       }),
     exportSource: `export { ${append?.name ?? ''} as __tsumucode_function };`,
     positiveLines: [

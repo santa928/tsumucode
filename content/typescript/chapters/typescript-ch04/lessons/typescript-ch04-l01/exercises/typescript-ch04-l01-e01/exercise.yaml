@@ -117,6 +117,9 @@ assets: []
 fixtures:
   - id: starter
     expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - typescript-type-error-2345
+      - typescript-type-error-2362
     files:
       - path: main.ts
         language: typescript
@@ -133,6 +136,18 @@ fixtures:
       - path: main.ts
         language: typescript
         source: fixtures/solution.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: parenthesized
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/parenthesized.ts
         editable: false
       - path: index.html
         language: html
@@ -192,6 +207,8 @@ fixtures:
       - typescript-ch04-l01-e01-r01
   - id: error-after-output
     expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - javascript-runtime
     files:
       - path: main.ts
         language: typescript
