@@ -201,6 +201,8 @@ function statements(role: FunctionRole | undefined): readonly ts.Statement[] {
 }
 
 function returned(statement: ts.Statement | undefined): ts.Expression | undefined {
+  if (statement && ts.isBlock(statement) && statement.statements.length === 1)
+    return returned(statement.statements[0]);
   return statement && ts.isReturnStatement(statement) && statement.expression
     ? unwrap(statement.expression)
     : undefined;
@@ -441,11 +443,10 @@ function clauses(node: ts.Expression, operator: ts.SyntaxKind): readonly ts.Expr
     : [value];
 }
 
-function conditions(
-  node: ts.Expression,
+function matchesConditions(
+  values: readonly ts.Expression[],
   tests: readonly ((node: ts.Expression) => boolean)[],
 ): boolean {
-  const values = clauses(node, ts.SyntaxKind.BarBarToken);
   const used = new Set<number>();
   return (
     values.length === tests.length &&
@@ -485,16 +486,26 @@ function wrongType(
   );
 }
 
-function invalidReturn(
-  statement: ts.Statement | undefined,
+/** 同じ失敗条件を連続したearly returnへ分ける別解を扱い、余分な処理は拒否する。 */
+function invalidReturns(
+  guards: readonly ts.Statement[],
   tests: readonly ((node: ts.Expression) => boolean)[],
 ): boolean {
-  return (
-    !!statement &&
-    ts.isIfStatement(statement) &&
-    !statement.elseStatement &&
-    conditions(statement.expression, tests) &&
-    id(returned(statement.thenStatement), 'undefined')
+  if (
+    guards.length === 0 ||
+    guards.some(
+      (statement) =>
+        !ts.isIfStatement(statement) ||
+        statement.elseStatement ||
+        !id(returned(statement.thenStatement), 'undefined'),
+    )
+  )
+    return false;
+  return matchesConditions(
+    guards.flatMap((statement) =>
+      clauses((statement as ts.IfStatement).expression, ts.SyntaxKind.BarBarToken),
+    ),
+    tests,
   );
 }
 
@@ -502,9 +513,19 @@ function decode(role: FunctionRole | undefined): boolean {
   if (!role) return false;
   const value = role.params[0];
   const body = statements(role);
-  if (!value || body.length !== 5) return false;
-  const first = local(body[1]);
-  const second = local(body[2]);
+  const firstIndex = body.findIndex((statement) => !!local(statement));
+  if (!value || firstIndex < 1) return false;
+  const first = local(body[firstIndex]);
+  const second = local(body[firstIndex + 1]);
+  const beforeChoices = body.slice(0, firstIndex);
+  const afterChoices = body.slice(firstIndex + 2, -1);
+  const wrongLength = (node: ts.Expression) =>
+    binary(
+      node,
+      ts.SyntaxKind.ExclamationEqualsEqualsToken,
+      (operand) => access(operand, value, 'choices', 'length'),
+      (operand) => numeric(operand, 2),
+    );
   if (
     !first?.initializer ||
     !second?.initializer ||
@@ -523,87 +544,82 @@ function decode(role: FunctionRole | undefined): boolean {
   if (!choice(first.initializer, 0) || !choice(second.initializer, 1)) return false;
   const a = (first.name as ts.Identifier).text;
   const b = (second.name as ts.Identifier).text;
-  if (
-    !invalidReturn(body[0], [
-      (node) => wrongType(node, (operand) => id(operand, value), 'object'),
-      (node) =>
-        binary(
-          node,
-          ts.SyntaxKind.EqualsEqualsEqualsToken,
-          (operand) => id(operand, value),
-          (operand) => keyword(operand, ts.SyntaxKind.NullKeyword),
-        ),
-      (node) => missing(node, 'category', value),
-      (node) => {
-        const values = clauses(node, ts.SyntaxKind.AmpersandAmpersandToken);
-        return (
-          values.length === 2 &&
-          ['web', 'logic'].every((category) =>
-            values.some((valueNode) =>
-              binary(
-                valueNode,
-                ts.SyntaxKind.ExclamationEqualsEqualsToken,
-                (operand) => access(operand, value, 'category'),
-                (operand) => text(operand, category),
-              ),
+  const beforeTests: readonly ((node: ts.Expression) => boolean)[] = [
+    (node) => wrongType(node, (operand) => id(operand, value), 'object'),
+    (node) =>
+      binary(
+        node,
+        ts.SyntaxKind.EqualsEqualsEqualsToken,
+        (operand) => id(operand, value),
+        (operand) => keyword(operand, ts.SyntaxKind.NullKeyword),
+      ),
+    (node) => missing(node, 'category', value),
+    (node) => {
+      const values = clauses(node, ts.SyntaxKind.AmpersandAmpersandToken);
+      return (
+        values.length === 2 &&
+        ['web', 'logic'].every((category) =>
+          values.some((valueNode) =>
+            binary(
+              valueNode,
+              ts.SyntaxKind.ExclamationEqualsEqualsToken,
+              (operand) => access(operand, value, 'category'),
+              (operand) => text(operand, category),
             ),
-          )
-        );
-      },
-      (node) => missing(node, 'text', value),
-      (node) => wrongType(node, (operand) => access(operand, value, 'text'), 'string'),
-      (node) => missing(node, 'choices', value),
-      (node) => {
-        const expression = unwrap(node);
-        if (
-          !ts.isPrefixUnaryExpression(expression) ||
-          expression.operator !== ts.SyntaxKind.ExclamationToken
+          ),
         )
-          return false;
-        const called = unwrap(expression.operand);
-        return (
-          ts.isCallExpression(called) &&
-          access(called.expression, 'Array', 'isArray') &&
-          called.arguments.length === 1 &&
-          access(called.arguments[0], value, 'choices')
-        );
-      },
-      (node) => missing(node, 'correct', value),
-      (node) => wrongType(node, (operand) => access(operand, value, 'correct'), 'string'),
-    ])
-  )
-    return false;
-  if (
-    !invalidReturn(body[3], [
-      (node) => wrongType(node, (operand) => id(operand, a), 'string'),
-      (node) => wrongType(node, (operand) => id(operand, b), 'string'),
-      (node) =>
-        binary(
-          node,
-          ts.SyntaxKind.ExclamationEqualsEqualsToken,
-          (operand) => access(operand, value, 'choices', 'length'),
-          (operand) => numeric(operand, 2),
-        ),
-      (node) => {
-        const values = clauses(node, ts.SyntaxKind.AmpersandAmpersandToken);
-        return (
-          values.length === 2 &&
-          [a, b].every((choice) =>
-            values.some((valueNode) =>
-              binary(
-                valueNode,
-                ts.SyntaxKind.ExclamationEqualsEqualsToken,
-                (operand) => access(operand, value, 'correct'),
-                (operand) => id(operand, choice),
-              ),
+      );
+    },
+    (node) => missing(node, 'text', value),
+    (node) => wrongType(node, (operand) => access(operand, value, 'text'), 'string'),
+    (node) => missing(node, 'choices', value),
+    (node) => {
+      const expression = unwrap(node);
+      if (
+        !ts.isPrefixUnaryExpression(expression) ||
+        expression.operator !== ts.SyntaxKind.ExclamationToken
+      )
+        return false;
+      const called = unwrap(expression.operand);
+      return (
+        ts.isCallExpression(called) &&
+        access(called.expression, 'Array', 'isArray') &&
+        called.arguments.length === 1 &&
+        access(called.arguments[0], value, 'choices')
+      );
+    },
+    (node) => missing(node, 'correct', value),
+    (node) => wrongType(node, (operand) => access(operand, value, 'correct'), 'string'),
+  ];
+  const afterTests: readonly ((node: ts.Expression) => boolean)[] = [
+    (node) => wrongType(node, (operand) => id(operand, a), 'string'),
+    (node) => wrongType(node, (operand) => id(operand, b), 'string'),
+    (node) => {
+      const values = clauses(node, ts.SyntaxKind.AmpersandAmpersandToken);
+      return (
+        values.length === 2 &&
+        [a, b].every((choice) =>
+          values.some((valueNode) =>
+            binary(
+              valueNode,
+              ts.SyntaxKind.ExclamationEqualsEqualsToken,
+              (operand) => access(operand, value, 'correct'),
+              (operand) => id(operand, choice),
             ),
-          )
-        );
-      },
-    ])
-  )
+          ),
+        )
+      );
+    },
+  ];
+  // 配列長の確認は要素を読む前後のどちらでも同じ失敗条件を保つ。
+  if (!(
+    (invalidReturns(beforeChoices, beforeTests) &&
+      invalidReturns(afterChoices, [...afterTests, wrongLength])) ||
+    (invalidReturns(beforeChoices, [...beforeTests, wrongLength]) &&
+      invalidReturns(afterChoices, afterTests))
+  ))
     return false;
-  const fields = properties(returned(body[4]));
+  const fields = properties(returned(body.at(-1)));
   const choices = fields?.get('choices');
   const array = choices && unwrap(choices);
   return (
@@ -712,17 +728,32 @@ function load(role: FunctionRole | undefined): boolean {
   const error = attempt.catchClause.variableDeclaration.name.text;
   const catchBody = attempt.catchClause.block.statements;
   const errorGuard = catchBody[0];
+  const isError = (node: ts.Expression) =>
+    binary(
+      node,
+      ts.SyntaxKind.InstanceOfKeyword,
+      (operand) => id(operand, error),
+      (operand) => id(operand, 'Error'),
+    );
+  if (catchBody.length === 1)
+    return resultObject(returned(catchBody[0]), 'failed', [
+      'message',
+      (node) => {
+        const message = unwrap(node);
+        return (
+          ts.isConditionalExpression(message) &&
+          isError(message.condition) &&
+          access(message.whenTrue, error, 'message') &&
+          text(message.whenFalse, '不明な失敗です')
+        );
+      },
+    ]);
   return (
     catchBody.length === 2 &&
     !!errorGuard &&
     ts.isIfStatement(errorGuard) &&
     !errorGuard.elseStatement &&
-    binary(
-      errorGuard.expression,
-      ts.SyntaxKind.InstanceOfKeyword,
-      (operand) => id(operand, error),
-      (operand) => id(operand, 'Error'),
-    ) &&
+    isError(errorGuard.expression) &&
     resultObject(returned(errorGuard.thenStatement), 'failed', [
       'message',
       (node) => access(node, error, 'message'),

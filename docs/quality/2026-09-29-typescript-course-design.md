@@ -1,6 +1,6 @@
 # TypeScript Course設計案（Issue #11）
 
-状態: レビュー前の提案。2026-09-29。本人指定の到達点はTypeScript・React・Next.jsまで。以下のLesson数・時間・新しい性能予算・採点契約は未承認であり、既決事項と区別する。教材本文の全量制作・published昇格の承認記録には使わない。
+状態: レビュー前の提案。2026-09-29。本人指定の到達点はTypeScript・React・Next.jsまで。当初の27Lesson/595分案は未承認であり、現在の15Lesson採用範囲と、後述のTS専用受入方式・性能予算の承認を区別する。教材本文の全量制作・published昇格の承認記録には使わない。
 
 ## 到達点と前提
 
@@ -28,7 +28,7 @@ JavaScript最終作品の学習クイズを、型のあるデータ、状態、�
 
 ## 再開時の子タスク対応（2026-10-05）
 
-Issue #109で導入03、#110でQuestion/interface、#111でunion/literalとnarrowing・optional/undefinedの独立2Lessonを接続する登録範囲を、#112で関数型/callback・generic・readonlyの3小単元を接続し、#113でDOM Event・unknown・非同期の3課題まで接続し、#114で同じクイズの型付きデータ・状態・非同期境界を共有Workspaceで積み上げる3制作工程を加えた採用範囲は6Chapter・15Lesson・60枚・320分のdraft（2026-10-06.3）。時間は見積りで、初心者の実測ではない。有限な元TS条件と実動作のANDを採用し、type aliasの役割は読む練習、union/optionalは引数を確認して値を使う練習で扱う。以下は全15トピックを残タスクへ対応付けた索引であり、27Lesson/595分案やTS固有性能予算の新たな承認を意味しない。
+Issue #109で導入03、#110でQuestion/interface、#111でunion/literalとnarrowing・optional/undefinedの独立2Lessonを接続する登録範囲を、#112で関数型/callback・generic・readonlyの3小単元を接続し、#113でDOM Event・unknown・非同期の3課題まで接続し、#114で同じクイズの型付きデータ・状態・非同期境界を共有Workspaceで積み上げる3制作工程を加えた採用範囲は6Chapter・15Lesson・60枚・320分のdraft（2026-10-06.4）。時間は見積りで、初心者の実測ではない。有限な元TS条件と実動作のANDを採用し、type aliasの役割は読む練習、union/optionalは引数を確認して値を使う練習で扱う。以下は全15トピックを残タスクへ対応付けた索引であり、27Lesson/595分案やTS専用性能予算の承認は後述の受入契約で別に記録する。
 
 | 子Issue | 学習目標と順序                                                                      |
 | ------- | ----------------------------------------------------------------------------------- |
@@ -93,11 +93,11 @@ IDは `typescript-chNN-lNN`。同一章内は記載順、章先頭は前章末�
 
 最初の実証は01-02の「得点の注釈」に絞る。正解/合法な別解/型だけ削除/any化/二重assertion/診断抑制/表示固定/型誤り/検査故障の各責務を区別する。結果が整合してからinterface、union、generic、readonlyへ拡張する。正負の型ケースを学習者に秘密の制約として課さず、必要な公開境界と理由を課題に明示する。
 
-## 性能予算案と検証の分け方
+## TS専用の承認済み受入方式と性能予算
 
-共通Home初期JSとEditorの公開上限は2026-10-03承認によりgzip 512000 bytesで、従来の256000 bytesは理想目標の記録に残る。遅延読込条件を維持する。現Compiler Worker約7.28MBは非gzipで、転送量やp95の達成証拠ではない。以下のTS予算は提案値であり、承認済み公開上限や既存JS予算を変更しない。
+共通Home初期JSとEditorの公開上限は2026-10-03承認によりgzip 512000 bytesで、従来の256000 bytesは理想目標の記録に残る。遅延読込条件を維持する。現Compiler Worker約7.28MBは非gzipで、転送量やp95の達成証拠ではない。2026-10-06に本人が、TS専用の3独立初心者役による模擬受入と以下の6予算を承認した。承認対象は採用済み15Lessonと、Chromium 149 / Linux arm64 / 10 logical CPU / local static HTTP・subpath / network・CPU throttleなしの基準環境である。CPU機種は未確認で、低性能実機の保証ではない。JSの過去承認を流用せず、教材作成者の解答・Fixture・採点内部を見ない3役の詰まり・Hint使用・誤概念・自力説明と独自原文の実UI結果を記録する。実人の初心者試用・物理実機は未確認のまま残す。この承認は正式公開の許可を含まない。
 
-| 対象                   |           提案上限 | 測り方                                                                         |
+| 対象                   |       承認済み上限 | 測り方                                                                         |
 | ---------------------- | -----------------: | ------------------------------------------------------------------------------ |
 | TS専用初回遅延取得合計 | gzip 2500000 bytes | Compiler/標準lib/TS Runner/Validator/Editorと共通分との差分を生成graphから合算 |
 | 初回Preview p95        |            5000 ms | 初回TS演習、cold cacheの新規context 20回、型検査開始から表示結果まで           |
@@ -106,9 +106,11 @@ IDは `typescript-chNN-lNN`。同一章内は記載順、章先頭は前章末�
 | 操作中の案内           |             100 ms | 検査中/停止可能が描画されるまで。操作を受けた時刻から計測                      |
 | 停止時の待機解除       |             300 ms | compile中の停止操作から待機解除まで。遅れた結果が反映されないことも確認        |
 
-TSの独立した技術検査には `npm run release:check -- --course-id typescript` を使う。これは静的Artifactの漏洩検査と、採用済み15 LessonのCatalog Schema・Index/Lessonのbytes SHAとSchema・Provenance存在を確認する検査であり、正式公開の承認ではない。通常公開のCourse allowlistとDeploy dispatchはHTML/CSS・JavaScriptの既存契約を維持し、TSの初心者評価方式・性能予算・公開条件の合意前には拡張しない。
+TSの独立した技術検査には `npm run release:check -- --course-id typescript` を使う。これは静的Artifactの漏洩検査と、採用済み15 LessonのCatalog Schema・Index/Lessonのbytes SHAとSchema・Provenance存在を確認する検査であり、正式公開の承認ではない。通常公開のCourse allowlistとDeploy dispatchはHTML/CSS・JavaScriptの既存契約を維持し、TSの正式公開条件と公開許可が揃うまでは拡張しない。
 
-`typescript-release-smoke.spec.ts` は実TSのDOM演習についてChromium・Firefox・WebKitで、型失敗、Preview/判定のcompile中停止、修正後の合格、保存再開、キーボード操作、親画面のaxe、実Previewの隔離を確認する。操作時間は信頼されたclickのcapture listenerから、停止可能なbusy表示または停止後の判定ボタン再有効化が次の描画機会を経て維持されるまでを観測する。停止は実Workerへのcompile送信後かつ応答前であることと、元TS・採点履歴の保持も確認する。ブラウザの実画面の物理的な表示時刻や実機性能を測定したとは扱わず、合意前の100ms/300msを新たな合否閾値にしない。代表smokeの成功を全Lesson・初心者受入・正式Release Gate全体の通過へ広げない。
+公開前のTS専用記録は `npm exec tsx scripts/release/verifyTypescriptAcceptance.ts -- <record.json> <dist> <source-commit>` で照合する。採用15教材×3役の固定集合・役間の評価者/Session/Browser context隔離・可視教材hash・独自原文と実UI保存/完了履歴・現在Artifactを確認する。生の計測値からp95（nearest-rank）を再計算し、busy/停止は全観測の最大値を使う。初回遅延JSは固定graphとWorkerを現在Artifactから再計算する。過去性能証拠には元commit/manifestとraw証拠hashを残し、capture時のsrc全ツリー・固定依存lock・対象課題ツリー・計測harnessのhash一致と再利用理由が必要である。rawは固定指標/課題/環境のstrict schemaで照合し、任意のsample pointerを受け付けない。Preview/判定の既存Controller区間にはroute/chunk/services初期load・queue・次frameを含めず、その範囲を明示する。操作案内/停止の100ms/300msには信頼されたclickからのqueue/frameを含める。この検査の成功は模擬受入と6予算の照合であり、既存正式Release Gate全体や公開許可の成功へ読み替えない。記録の実施者による申告を、機械検査が実人の存在や読解を証明する仕組みとは呼ばない。作業中のraw記録は公開pushへ含めない。
+
+`typescript-release-smoke.spec.ts` は実TSのDOM演習についてChromium・Firefox・WebKitで、型失敗、Preview/判定のcompile中停止、修正後の合格、保存再開、キーボード操作、親画面のaxe、実Previewの隔離を確認する。操作時間は信頼されたclickのcapture listenerから、停止可能なbusy表示または停止後の判定ボタン再有効化が次の描画機会を経て維持されるまでを観測する。停止は実Workerへのcompile送信後かつ応答前であることと、元TS・採点履歴の保持も確認する。ブラウザの実画面の物理的な表示時刻や実機性能を測定したとは扱わず、承認済み100ms/300msはChromium基準環境の観測値へ適用し、queueと次の描画機会までの待ちを除外しない。代表smokeの成功を全Lesson・初心者受入・正式Release Gate全体の通過へ広げない。
 
 Chromium、実行OS/CPU、browser version、Artifact SHA、cache、通信/CPU制限の有無を記録する。CI実測を低速実機の保証へ読み替えない。低速通信/端末の観察では待機案内・操作可能性・再試行も記録し、p95が未達なら読込範囲/再利用戦略を検討する。承認なしに上限を緩めない。非同期Scenarioは既存のbounded待機契約を維持し、この予算を理由にsleepや待機上限を伸ばさない。
 
