@@ -106,7 +106,7 @@ IDは `typescript-chNN-lNN`。同一章内は記載順、章先頭は前章末�
 | 操作中の案内           |             100 ms | 検査中/停止可能が描画されるまで。操作を受けた時刻から計測                      |
 | 停止時の待機解除       |             300 ms | compile中の停止操作から待機解除まで。遅れた結果が反映されないことも確認        |
 
-TSの独立した技術検査には `npm run release:check -- --course-id typescript` を使う。これは静的Artifactの漏洩検査と、採用済み15 LessonのCatalog Schema・Index/Lessonのbytes SHAとSchema・Provenance存在を確認する検査であり、正式公開の承認ではない。通常公開のCourse allowlistとDeploy dispatchはHTML/CSS・JavaScriptの既存契約を維持し、TSの正式公開条件と公開許可が揃うまでは拡張しない。
+TSの独立した技術検査には `npm run release:check -- --course-id typescript` を使う。これは静的Artifactの漏洩検査と、採用済み15 LessonのCatalog Schema・Index/Lessonのbytes SHAとSchema・Provenance存在を確認する検査であり、正式公開の承認ではない。正式ReleaseのTS専用契約は[公開方針](typescript-normal-release-policy.md)へ接続する。TSはdraftの専用承認・履歴から開始し、公開Source/Artifact/品質記録と本人の公開許可が揃わなければcandidate配信を拒否する。TSのbetaによる迂回は許可しない。
 
 公開前のTS専用記録は `npm exec tsx scripts/release/verifyTypescriptAcceptance.ts -- <record.json> <dist> <source-commit>` で照合する。採用15教材×3役の固定集合・役間の評価者/Session/Browser context隔離・可視教材hash・独自原文と実UI保存/完了履歴・現在Artifactを確認する。生の計測値からp95（nearest-rank）を再計算し、busy/停止は全観測の最大値を使う。初回遅延JSは固定graphとWorkerを現在Artifactから再計算する。過去性能証拠には元commit/manifestとraw証拠hashを残し、capture時のsrc全ツリー・固定依存lock・対象課題ツリー・計測harnessのhash一致と再利用理由が必要である。rawは固定指標/課題/環境のstrict schemaで照合し、任意のsample pointerを受け付けない。Preview/判定の既存Controller区間にはroute/chunk/services初期load・queue・次frameを含めず、その範囲を明示する。操作案内/停止の100ms/300msには信頼されたclickからのqueue/frameを含める。この検査の成功は模擬受入と6予算の照合であり、既存正式Release Gate全体や公開許可の成功へ読み替えない。記録の実施者による申告を、機械検査が実人の存在や読解を証明する仕組みとは呼ばない。作業中のraw記録は公開pushへ含めない。
 

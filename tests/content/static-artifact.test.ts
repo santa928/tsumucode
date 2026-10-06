@@ -50,10 +50,10 @@ afterEach(async () => {
 });
 
 describe('static artifact', () => {
-  it('実TSの15 Lessonを技術検査できても正式公開の許可にはしない', async () => {
+  it('TSの技術検査を正式契約の15 Lessonへ合わせ、公開承認は専用Gateへ委ねる', async () => {
     const report = await checkStaticArtifact(await typescriptArtifact(), 'typescript');
     expect(report.files).toBeGreaterThan(20);
-    expect(() => resolveReleaseCourseContract('typescript')).toThrow();
+    expect(resolveReleaseCourseContract('typescript').lessonCount).toBe(15);
   });
 
   it.each(['index.json', 'lessons/typescript-ch01-l01.json'])(

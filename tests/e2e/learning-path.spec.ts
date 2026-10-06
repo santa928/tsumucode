@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { parse } from 'yaml';
+import { z } from 'zod';
 import { expect, test, type Page } from '@playwright/test';
 import { readStoredProgress, seedCompletedProgress } from './helpers/progress';
 import {
@@ -6,6 +9,13 @@ import {
   STANDARD_LESSON_ID,
   exerciseRoute,
 } from './helpers/releaseCourse';
+
+const typescriptPublished =
+  z
+    .object({ publicationStatus: z.enum(['draft', 'published']) })
+    .parse(parse(readFileSync('content/typescript/course.yaml', 'utf8'))).publicationStatus ===
+  'published';
+const expectedRequiredCourses = typescriptPublished ? 3 : 2;
 
 const HOME_ROUTE = './#/';
 const PATH_ROUTE = './#/paths/frontend';
@@ -61,7 +71,7 @@ test('Pathの順序と必須Courseを表示し、既存Courseへロックなし�
   ).toBeVisible();
 
   const steps = page.getByRole('list', { name: '学習パスのコース順' }).getByRole('listitem');
-  await expect(steps).toHaveCount(2);
+  await expect(steps).toHaveCount(expectedRequiredCourses);
   await expect(steps.first().getByText('必須', { exact: true })).toBeVisible();
   const courseLink = steps.first().getByRole('link', {
     name: 'HTML/CSS はじめの一歩を始める',
@@ -78,6 +88,17 @@ test('Pathの順序と必須Courseを表示し、既存Courseへロックなし�
     'href',
     '#/courses/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s01',
   );
+
+  if (typescriptPublished) {
+    const typescriptStep = steps.nth(2);
+    await expect(typescriptStep.getByText('必須', { exact: true })).toBeVisible();
+    await expect(
+      typescriptStep.getByRole('link', { name: 'TypeScript はじめの一歩を始める', exact: true }),
+    ).toHaveAttribute(
+      'href',
+      '#/courses/typescript/lessons/typescript-ch01-l01/slides/typescript-ch01-l01-s01',
+    );
+  }
 
   await page
     .getByRole('link', {
@@ -107,7 +128,7 @@ test('CourseProgressをPathへ再利用し、Path専用recordを保存しない'
   ).toBeVisible();
   await expect(page.getByRole('progressbar', { name: '必須コースの進捗' })).toHaveAttribute(
     'aria-valuetext',
-    '0 / 2 ピース完了',
+    `0 / ${String(expectedRequiredCourses)} ピース完了`,
   );
   await expect(
     page.getByRole('progressbar', { name: 'HTML/CSS はじめの一歩の進捗' }),

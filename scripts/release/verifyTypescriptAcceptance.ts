@@ -228,6 +228,29 @@ export function checkTypescriptEvaluationReceipt(
     throw new Error('TS最終作品の自力説明が未確認です');
 }
 
+/** capture時の固定Gitから計測harnessの3依存を照合し、観測区間の変更を再利用で隠さない。 */
+export async function verifyTypescriptPerformanceImports(
+  root: string,
+  capturedSource: string,
+): Promise<void> {
+  const execute = promisify(execFile);
+  for (const relative of [
+    'tests/e2e/helpers/progress.ts',
+    'tests/e2e/helpers/testBasePath.ts',
+    'tests/e2e/helpers/typescriptOperationProbe.ts',
+  ]) {
+    const { stdout } = await execute('git', ['-C', root, 'show', `${capturedSource}:${relative}`], {
+      encoding: 'buffer',
+    });
+    const { createHash } = await import('node:crypto');
+    if (
+      createHash('sha256').update(stdout).digest('hex') !==
+      (await hashFile(path.join(root, relative)))
+    )
+      throw new Error(`TS capture時の計測依存が変更されています: ${relative}`);
+  }
+}
+
 /** 記録・原文・実UI履歴・現在Artifactを照合する、公開前の専用検査。 */
 export async function verifyTypescriptAcceptance(
   input: unknown,
@@ -380,6 +403,7 @@ export async function verifyTypescriptAcceptance(
     )
       throw new Error(`TS性能証拠の再利用条件がありません: ${metric.kind}`);
     await verifyReference(metric.harness);
+    await verifyTypescriptPerformanceImports(root, metric.sourceCommit);
     const lesson = metric.exerciseId.slice(0, -4);
     const chapter = lesson.slice(0, -4);
     if (

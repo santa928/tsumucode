@@ -10,7 +10,8 @@ validatorId: typescript
 glossarySource: glossary.yaml
 conceptsSource: concepts.yaml
 documentationSources: []
-authoringSources: []
+authoringSources:
+  - release-history.yaml
 supportedDevices:
   exercise: desktop
   study:

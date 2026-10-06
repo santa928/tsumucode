@@ -21,7 +21,7 @@ on:
       course_id:
         description: 承認履歴と証拠を照合するCourse（品質検証は全site）
         type: choice
-        options: [html-css, javascript]
+        options: [html-css, javascript, typescript]
         required: true
         default: html-css
       source_sha:
@@ -178,8 +178,11 @@ jobs:
         if: needs.resolve.outputs.release_mode == 'beta'
         run: ./scripts/docker-compose.sh run --rm app npm run release:continuity -- --quality-only --course-id "$RELEASE_COURSE_ID"
       - name: Keep existing HTML continuity in the all-site gate
-        if: needs.resolve.outputs.course_id == 'javascript' && needs.resolve.outputs.release_mode != 'rollback'
+        if: needs.resolve.outputs.course_id != 'html-css' && needs.resolve.outputs.release_mode != 'rollback'
         run: ./scripts/docker-compose.sh run --rm app npm run release:continuity -- --quality-only --course-id html-css
+      - name: Keep existing JavaScript continuity in the all-site gate
+        if: needs.resolve.outputs.course_id == 'typescript' && needs.resolve.outputs.release_mode != 'rollback'
+        run: ./scripts/docker-compose.sh run --rm app npm run release:continuity -- --quality-only --course-id javascript
       - name: Confirm rollback checkout
         if: needs.resolve.outputs.release_mode == 'rollback'
         env:
@@ -405,8 +408,8 @@ jobs:
           LEARNING_INPUT_HASH: ${{ needs.resolve.outputs.learning_input_hash }}
         run: |
           EXPECTED_MESSAGE="source=$TARGET_SHA head=$WORKFLOW_HEAD_SHA dist=$DIST_DIGEST course=$COURSE_DIGEST provenance=$PROVENANCE_DIGEST quality_id=$QUALITY_ARTIFACT_ID quality_digest=$QUALITY_ARTIFACT_DIGEST report_id=$REPORT_ARTIFACT_ID report_digest=$REPORT_ARTIFACT_DIGEST workflow=$WORKFLOW_RUN page_url=$PAGE_URL"
-          if [ "$RELEASE_COURSE_ID" = javascript ]; then
-            EXPECTED_MESSAGE="course_id=javascript revision=$RELEASE_REVISION draft_source=$DRAFT_SOURCE_SHA draft_dist=$DRAFT_DIST_HASH learning_input=$LEARNING_INPUT_HASH $EXPECTED_MESSAGE"
+          if [ "$RELEASE_COURSE_ID" != html-css ]; then
+            EXPECTED_MESSAGE="course_id=$RELEASE_COURSE_ID revision=$RELEASE_REVISION draft_source=$DRAFT_SOURCE_SHA draft_dist=$DRAFT_DIST_HASH learning_input=$LEARNING_INPUT_HASH $EXPECTED_MESSAGE"
           fi
           if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG_NAME" >/dev/null 2>&1; then
             echo "::error::Release tag $TAG_NAME は既に存在するため、新しいRun evidenceで成功扱いにできません"

@@ -32,7 +32,9 @@ function optionalArgument(arguments_: readonly string[], flag: string): string |
 /** Artifact hashをGitHub output互換のallowlist key=valueへ変換する。 */
 export function formatArtifactHashOutput(hashes: ArtifactHashes): string {
   return `${[
-    ...(hashes.courseId === 'javascript' ? ['course_id=javascript'] : []),
+    ...(hashes.courseId !== undefined && hashes.courseId !== 'html-css'
+      ? [`course_id=${hashes.courseId}`]
+      : []),
     `artifact_digest=${hashes.artifactDigest}`,
     `course_hash=${hashes.courseHash}`,
     `provenance_hash=${hashes.provenanceHash}`,
@@ -60,7 +62,7 @@ export function buildQualitySummary(
 ): ReleaseQualitySummary {
   return {
     schemaVersion: 1,
-    ...(courseId === 'javascript'
+    ...(courseId !== 'html-css'
       ? {
           courseId: resolveReleaseCourseContract(courseId).courseId,
           qualityScope: 'all-site' as const,
@@ -128,7 +130,7 @@ export function parseReleaseReport(source: string): ReleaseReportInput {
     'workflowRunAttempt',
     'pageUrl',
   ] as const;
-  const jsKeys = [
+  const scopedCourseKeys = [
     'courseId',
     'revision',
     'draftSourceCommit',
@@ -137,8 +139,9 @@ export function parseReleaseReport(source: string): ReleaseReportInput {
     'acceptanceEvidenceKind',
     'acceptanceLimit',
   ] as const;
-  const isJs = metadata.get('courseId') === 'javascript';
-  const keys = isJs ? [...baseKeys, ...jsKeys] : baseKeys;
+  const selectedCourse = metadata.get('courseId');
+  const isScopedCourse = selectedCourse === 'javascript' || selectedCourse === 'typescript';
+  const keys = isScopedCourse ? [...baseKeys, ...scopedCourseKeys] : baseKeys;
   if (metadata.size !== keys.length || keys.some((key) => !metadata.has(key))) {
     throw new Error('Release Report metadataに未知または欠落したkeyがあります');
   }
@@ -148,9 +151,9 @@ export function parseReleaseReport(source: string): ReleaseReportInput {
     return resolved;
   };
   const input: ReleaseReportInput = {
-    ...(isJs
+    ...(isScopedCourse
       ? {
-          courseId: 'javascript' as const,
+          courseId: resolveReleaseCourseContract(selectedCourse).courseId,
           revision: value('revision'),
           draftSourceCommit: value('draftSourceCommit'),
           draftCanonicalDistSha256: value('draftCanonicalDistSha256'),
@@ -170,12 +173,12 @@ export function parseReleaseReport(source: string): ReleaseReportInput {
     pageUrl: value('pageUrl'),
   };
   if (
-    isJs &&
+    isScopedCourse &&
     (metadata.get('acceptanceEvidenceKind') !==
       (input.releaseMode === 'beta' ? 'not-accepted-beta' : 'agent-simulated-learning') ||
       metadata.get('acceptanceLimit') !== 'agent-simulation-only-not-real-human-or-physical-device')
   ) {
-    throw new Error('JS Reportの模擬学習/限界の区別が不正です');
+    throw new Error('JS/TS Reportの模擬学習/限界の区別が不正です');
   }
   buildReleaseReport(input);
   return input;
@@ -195,8 +198,8 @@ export function buildReleaseReport(input: ReleaseReportInput): string {
   const workflowRunId = PositiveIntegerTextSchema.parse(input.workflowRunId);
   const workflowRunAttempt = PositiveIntegerTextSchema.parse(input.workflowRunAttempt);
   const pageUrl = PageUrlSchema.parse(input.pageUrl);
-  let jsMetadata = '';
-  if (courseId === 'javascript') {
+  let learningMetadata = '';
+  if (courseId !== 'html-css') {
     const revision =
       releaseMode === 'beta'
         ? z.literal('beta').parse(input.revision)
@@ -213,14 +216,14 @@ export function buildReleaseReport(input: ReleaseReportInput): string {
       releaseMode === 'beta'
         ? z.literal('draft').parse(input.normalizedLearningInputSha256)
         : Sha256Schema.parse(input.normalizedLearningInputSha256);
-    jsMetadata = `- courseId: \`javascript\`\n- revision: \`${revision}\`\n- draftSourceCommit: \`${draftSource}\`\n- draftCanonicalDistSha256: \`${draftDist}\`\n- normalizedLearningInputSha256: \`${learningInput}\`\n- acceptanceEvidenceKind: \`${releaseMode === 'beta' ? 'not-accepted-beta' : 'agent-simulated-learning'}\`\n- acceptanceLimit: \`agent-simulation-only-not-real-human-or-physical-device\`\n`;
+    learningMetadata = `- courseId: \`${courseId}\`\n- revision: \`${revision}\`\n- draftSourceCommit: \`${draftSource}\`\n- draftCanonicalDistSha256: \`${draftDist}\`\n- normalizedLearningInputSha256: \`${learningInput}\`\n- acceptanceEvidenceKind: \`${releaseMode === 'beta' ? 'not-accepted-beta' : 'agent-simulated-learning'}\`\n- acceptanceLimit: \`agent-simulation-only-not-real-human-or-physical-device\`\n`;
   } else if (
     input.revision !== undefined ||
     input.draftSourceCommit !== undefined ||
     input.draftCanonicalDistSha256 !== undefined ||
     input.normalizedLearningInputSha256 !== undefined
   ) {
-    throw new Error('HTML ReportへJS学習bindingを混在させられません');
+    throw new Error('HTML ReportへJS/TS学習bindingを混在させられません');
   }
 
   return `# TsumuCode Release Report
@@ -236,7 +239,7 @@ export function buildReleaseReport(input: ReleaseReportInput): string {
 - workflowRunId: \`${workflowRunId}\`
 - workflowRunAttempt: \`${workflowRunAttempt}\`
 - pageUrl: ${pageUrl}
-${jsMetadata}
+${learningMetadata}
 
 Quality evidenceはContent provenance、独立Lesson review、Compile、Continuity、Lint、Typecheck、Unit/Content、3 Engine E2E、axe、Performance、Lighthouse、Static Artifactの全suiteが末尾まで成功した後にだけ作成されたActions artifactです。
 `;
@@ -272,7 +275,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     const output = path.resolve(requiredArgument(arguments_, '--output'));
     const report = buildReleaseReport({
       courseId,
-      ...(courseId === 'javascript'
+      ...(courseId !== 'html-css'
         ? {
             revision: requiredArgument(arguments_, '--revision'),
             draftSourceCommit: requiredArgument(arguments_, '--draft-source-sha'),
