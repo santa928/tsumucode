@@ -27,7 +27,8 @@ describe('TypeScript導入draft Course', () => {
       { fromRevision: '2026-10-05.2', toRevision: '2026-10-05.3', steps: [] },
       { fromRevision: '2026-10-05.3', toRevision: '2026-10-06.1', steps: [] },
       { fromRevision: '2026-10-06.1', toRevision: '2026-10-06.2', steps: [] },
-      { fromRevision: '2026-10-06.2', toRevision: course.revision, steps: [] },
+      { fromRevision: '2026-10-06.2', toRevision: '2026-10-06.3', steps: [] },
+      { fromRevision: '2026-10-06.3', toRevision: course.revision, steps: [] },
     ]);
     expect(course.expectedTotals).toEqual({
       chapters: 6,
