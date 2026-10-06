@@ -1,6 +1,6 @@
 schemaVersion: 1
 releaseStatus: approved
-verifiedSourceCommit: 1e90dd94b9e1c8f545dfbb7f4aac39f2e75d02a9
+verifiedSourceCommit: e2d0d361e58ddddee57050d0bd625f132e5d0b15
 canonicalDistSha256: 9bce7d57a630338ea09d1d2abb560a7aee2e03ac75f09faa8207dfc7771433c7
 lessons:
   - lessonId: typescript-ch01-l01
