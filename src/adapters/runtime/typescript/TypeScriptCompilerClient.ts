@@ -1,3 +1,6 @@
+import type { TypeScriptQuizProjectProfile } from '../../../core/content/typeScriptQuizProjectContract';
+import type { QuizProjectResult } from './checkQuizProject';
+import { isQuizProjectResult } from './workerContract';
 import type { TypeScriptBoundaryProfile } from '../../../core/content/typeScriptBoundaryContract';
 import type { BoundaryLearningResult } from './checkBoundaryLearning';
 import type { TypeScriptCompileResult } from './compileTypeScript';
@@ -145,6 +148,19 @@ export class TypeScriptCompilerClient {
     );
   }
 
+  /** 固定クイズ工程の元TSを、既存の期限・世代照合・停止機構で検査する。 */
+  quizProjectCheck(
+    input: TypeScriptCompileInput,
+    profile: TypeScriptQuizProjectProfile,
+  ): Promise<QuizProjectResult> {
+    return this.#request(
+      input,
+      profile,
+      (value): value is QuizProjectResult => isQuizProjectResult(value, profile),
+      () => ({ status: 'system-error' }),
+    );
+  }
+
   /** 共通の期限・停止機構を維持し、操作ごとの厳密な結果guardだけを切り替える。 */
   #request<T>(
     input: TypeScriptCompileInput,
@@ -155,7 +171,8 @@ export class TypeScriptCompilerClient {
       | 'question-interface-v1'
       | ConditionalLearningProfile
       | ReusableLearningProfile
-      | TypeScriptBoundaryProfile,
+      | TypeScriptBoundaryProfile
+      | TypeScriptQuizProjectProfile,
     isResult: (value: unknown, snapshot: TypeScriptCompileInput) => value is T,
     failure: () => T,
     invalidInput: () => T = failure,

@@ -1,0 +1,1020 @@
+id: typescript-ch06-l02-e01
+kind: guided-project
+projectId: typescript-quiz-guided
+workspaceId: typescript-quiz-guided
+countsTowardStandardExerciseTotal: false
+title: 回答と得点を型付き状態へつなぐ
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: typescript-quiz-state
+    minimumLevel: compose
+scaffoldLevel: compose
+runtime:
+  kind: typescript
+  entryFile: main.ts
+  sourceType: module
+  capabilityProfile: project
+  primaryOutput: preview
+steps:
+  - id: compose-current-step
+    file: main.ts
+    target: 回答と得点を型付き状態へつなぐ
+    starterAnchor: '// 工程2: 正誤と回答済みを使って状態を更新する'
+    change: readonlyのQuizStateを関数へ渡し、実際の正誤で得点を作り、回答後の次問とカテゴリを保つ再挑戦へつなぐ。
+    observe: 今回のChecklistと実DOMを確認し、原文を保存して次の工程へ進む。
+    requiresConceptIds:
+      - typescript-quiz-state
+    validationRuleIds:
+      - typescript-ch06-l02-e01-r01
+      - typescript-ch06-l02-e01-r02
+      - typescript-ch06-l02-e01-r03
+files:
+  - path: main.ts
+    language: typescript
+    source: starter/main.ts
+    editable: true
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: starter/styles.css
+    editable: false
+  - path: quiz-ui.ts
+    language: typescript
+    source: starter/quiz-ui.ts
+    editable: false
+  - path: questions.ts
+    language: typescript
+    source: starter/questions.ts
+    editable: false
+solutionFiles:
+  - path: main.ts
+    language: typescript
+    source: solution/main.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: solution/styles.css
+    editable: false
+  - path: quiz-ui.ts
+    language: typescript
+    source: solution/quiz-ui.ts
+    editable: false
+  - path: questions.ts
+    language: typescript
+    source: solution/questions.ts
+    editable: false
+validationRules:
+  - id: typescript-ch06-l02-e01-r01
+    label: 回答と得点を型付き状態へつなぐ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: typescript-learning
+      file: main.ts
+    assertion:
+      kind: typescript-learning
+      profile: quiz-state-v1
+    feedback:
+      target: 今回の型と値の接続
+      expected: readonlyのQuizStateを関数へ渡し、実際の正誤で得点を作り、回答後の次問とカテゴリを保つ再挑戦へつなぐ。
+      nextAction: 型の決めつけで代用せず、今回の工程のデータと関数を保ちます。
+    hintId: typescript-ch06-l02-e01-h01
+    relatedSlideId: typescript-ch06-l02-s01
+  - id: typescript-ch06-l02-e01-r02
+    label: クイズの操作を準備した
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-console
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - level: log
+          text: 準備できました
+    feedback:
+      target: 準備の案内
+      expected: 準備できました
+      nextAction: 準備の表示に加え、クイズの実操作を確認します。
+    hintId: typescript-ch06-l02-e01-h02
+    relatedSlideId: typescript-ch06-l02-s04
+  - id: typescript-ch06-l02-e01-r03
+    label: 提供HTMLの問題欄がある
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#question'
+    assertion:
+      kind: exists
+    feedback:
+      target: 問題表示の欄
+      expected: 問題欄の存在
+      nextAction: 提供HTMLを保ち、操作後の問題表示を確かめます。
+    hintId: typescript-ch06-l02-e01-h02
+    relatedSlideId: typescript-ch06-l02-s04
+hints:
+  - id: typescript-ch06-l02-e01-h01
+    level: 1
+    title: 確認する場所
+    text: answerとadvanceの引数・戻り値の型を保ちます。readonlyの入力を書き換えず、新しいQuizStateを返します。
+    relatedSlideId: typescript-ch06-l02-s01
+  - id: typescript-ch06-l02-e01-h02
+    level: 2
+    title: 値とのつながり
+    text: answerは回答済みならそのstateを保ち、choiceとquestion.correctの比較を得点へつなぎます。advanceは回答済みのときだけindexを進めます。
+    relatedSlideId: typescript-ch06-l02-s02
+  - id: typescript-ch06-l02-e01-h03
+    level: 3
+    title: 局所の例
+    text: '局所の例: function next(value: number): number { return value + 1;
+      }。今回は数値だけでなく、他の項目も持つ新しい状態を返します。'
+    relatedSlideId: typescript-ch06-l02-s03
+relatedSlideIds:
+  - typescript-ch06-l02-s01
+  - typescript-ch06-l02-s02
+  - typescript-ch06-l02-s03
+  - typescript-ch06-l02-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: starter
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/starter.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: quiz-ui.ts
+        language: typescript
+        source: fixtures/quiz-ui.ts
+        editable: false
+      - path: questions.ts
+        language: typescript
+        source: fixtures/questions.ts
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:quiz-logic:c3:focus
+      - interaction:quiz-logic:c3:score-value
+      - interaction:quiz-logic:c4:choice-0
+      - interaction:quiz-logic:c4:choice-1
+      - interaction:quiz-logic:c4:progress
+      - interaction:quiz-logic:c4:question
+      - interaction:quiz-logic:c5:feedback
+      - interaction:quiz-logic:c5:focus
+      - interaction:quiz-logic:c5:score-value
+      - interaction:quiz-logic:c6:focus
+      - interaction:quiz-logic:c6:result
+      - interaction:quiz-web:c10:focus
+      - interaction:quiz-web:c10:result
+      - interaction:quiz-web:c2:focus
+      - interaction:quiz-web:c2:score-value
+      - interaction:quiz-web:c3:choice-0
+      - interaction:quiz-web:c3:progress
+      - interaction:quiz-web:c3:question
+      - interaction:quiz-web:c4:feedback
+      - interaction:quiz-web:c4:focus
+      - interaction:quiz-web:c4:score-value
+      - interaction:quiz-web:c5:focus
+      - interaction:quiz-web:c5:result
+      - interaction:quiz-web:c7:focus
+      - interaction:quiz-web:c7:score-value
+      - interaction:quiz-web:c8:question
+      - interaction:quiz-web:c9:focus
+      - interaction:quiz-web:c9:score-value
+      - typescript-ch06-l02-e01-r01
+  - id: solution
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/solution.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: quiz-ui.ts
+        language: typescript
+        source: fixtures/quiz-ui.ts
+        editable: false
+      - path: questions.ts
+        language: typescript
+        source: fixtures/questions.ts
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: array-generic
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/array-generic.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: quiz-ui.ts
+        language: typescript
+        source: fixtures/quiz-ui.ts
+        editable: false
+      - path: questions.ts
+        language: typescript
+        source: fixtures/questions.ts
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: parameter-rename
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/parameter-rename.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: quiz-ui.ts
+        language: typescript
+        source: fixtures/quiz-ui.ts
+        editable: false
+      - path: questions.ts
+        language: typescript
+        source: fixtures/questions.ts
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: arrow-functions
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/arrow-functions.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: quiz-ui.ts
+        language: typescript
+        source: fixtures/quiz-ui.ts
+        editable: false
+      - path: questions.ts
+        language: typescript
+        source: fixtures/questions.ts
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: parenthesized
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/parenthesized.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: quiz-ui.ts
+        language: typescript
+        source: fixtures/quiz-ui.ts
+        editable: false
+      - path: questions.ts
+        language: typescript
+        source: fixtures/questions.ts
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: any-escape
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/any-escape.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: quiz-ui.ts
+        language: typescript
+        source: fixtures/quiz-ui.ts
+        editable: false
+      - path: questions.ts
+        language: typescript
+        source: fixtures/questions.ts
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch06-l02-e01-r01
+  - id: nocheck-escape
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/nocheck-escape.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: quiz-ui.ts
+        language: typescript
+        source: fixtures/quiz-ui.ts
+        editable: false
+      - path: questions.ts
+        language: typescript
+        source: fixtures/questions.ts
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch06-l02-e01-r01
+  - id: disconnected-mount
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/disconnected-mount.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: quiz-ui.ts
+        language: typescript
+        source: fixtures/quiz-ui.ts
+        editable: false
+      - path: questions.ts
+        language: typescript
+        source: fixtures/questions.ts
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:quiz-logic:c2:choice-0
+      - interaction:quiz-logic:c2:choice-1
+      - interaction:quiz-logic:c2:focus
+      - interaction:quiz-logic:c2:question
+      - interaction:quiz-logic:c3:feedback
+      - interaction:quiz-logic:c3:focus
+      - interaction:quiz-logic:c3:score-value
+      - interaction:quiz-logic:c4:choice-0
+      - interaction:quiz-logic:c4:choice-1
+      - interaction:quiz-logic:c4:focus
+      - interaction:quiz-logic:c4:progress
+      - interaction:quiz-logic:c4:question
+      - interaction:quiz-logic:c5:feedback
+      - interaction:quiz-logic:c5:focus
+      - interaction:quiz-logic:c5:score-value
+      - interaction:quiz-logic:c6:focus
+      - interaction:quiz-logic:c6:result
+      - interaction:quiz-logic:c7:choice-0
+      - interaction:quiz-logic:c7:choice-1
+      - interaction:quiz-logic:c7:focus
+      - interaction:quiz-logic:c7:question
+      - interaction:quiz-web:c10:focus
+      - interaction:quiz-web:c10:result
+      - interaction:quiz-web:c1:choice-0
+      - interaction:quiz-web:c1:choice-1
+      - interaction:quiz-web:c1:focus
+      - interaction:quiz-web:c1:question
+      - interaction:quiz-web:c2:feedback
+      - interaction:quiz-web:c2:focus
+      - interaction:quiz-web:c2:score-value
+      - interaction:quiz-web:c3:choice-0
+      - interaction:quiz-web:c3:choice-1
+      - interaction:quiz-web:c3:focus
+      - interaction:quiz-web:c3:progress
+      - interaction:quiz-web:c3:question
+      - interaction:quiz-web:c4:feedback
+      - interaction:quiz-web:c4:focus
+      - interaction:quiz-web:c4:score-value
+      - interaction:quiz-web:c5:focus
+      - interaction:quiz-web:c5:result
+      - interaction:quiz-web:c6:choice-0
+      - interaction:quiz-web:c6:choice-1
+      - interaction:quiz-web:c6:focus
+      - interaction:quiz-web:c6:question
+      - interaction:quiz-web:c7:focus
+      - interaction:quiz-web:c7:score-value
+      - interaction:quiz-web:c8:focus
+      - interaction:quiz-web:c8:question
+      - interaction:quiz-web:c9:focus
+      - interaction:quiz-web:c9:score-value
+      - typescript-ch06-l02-e01-r01
+  - id: error-after-ready
+    expectedStatus: code-error
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/error-after-ready.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: quiz-ui.ts
+        language: typescript
+        source: fixtures/quiz-ui.ts
+        editable: false
+      - path: questions.ts
+        language: typescript
+        source: fixtures/questions.ts
+        editable: false
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - javascript-runtime
+  - id: wrong-score
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/wrong-score.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: quiz-ui.ts
+        language: typescript
+        source: fixtures/quiz-ui.ts
+        editable: false
+      - path: questions.ts
+        language: typescript
+        source: fixtures/questions.ts
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:quiz-web:c4:score-value
+      - interaction:quiz-web:c5:result
+      - typescript-ch06-l02-e01-r01
+  - id: wrong-answer
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/wrong-answer.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: quiz-ui.ts
+        language: typescript
+        source: fixtures/quiz-ui.ts
+        editable: false
+      - path: questions.ts
+        language: typescript
+        source: fixtures/questions.ts
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:quiz-logic:c3:score-value
+      - interaction:quiz-logic:c5:score-value
+      - interaction:quiz-logic:c6:result
+      - interaction:quiz-web:c10:result
+      - interaction:quiz-web:c2:score-value
+      - interaction:quiz-web:c7:score-value
+      - interaction:quiz-web:c9:score-value
+      - typescript-ch06-l02-e01-r01
+  - id: wrong-next
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/wrong-next.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: quiz-ui.ts
+        language: typescript
+        source: fixtures/quiz-ui.ts
+        editable: false
+      - path: questions.ts
+        language: typescript
+        source: fixtures/questions.ts
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:quiz-logic:c4:choice-0
+      - interaction:quiz-logic:c4:choice-1
+      - interaction:quiz-logic:c4:focus
+      - interaction:quiz-logic:c4:progress
+      - interaction:quiz-logic:c4:question
+      - interaction:quiz-logic:c5:focus
+      - interaction:quiz-logic:c5:score-value
+      - interaction:quiz-logic:c6:result
+      - interaction:quiz-web:c10:result
+      - interaction:quiz-web:c3:choice-0
+      - interaction:quiz-web:c3:focus
+      - interaction:quiz-web:c3:progress
+      - interaction:quiz-web:c3:question
+      - interaction:quiz-web:c4:feedback
+      - interaction:quiz-web:c4:focus
+      - interaction:quiz-web:c8:focus
+      - interaction:quiz-web:c8:question
+      - interaction:quiz-web:c9:focus
+      - interaction:quiz-web:c9:score-value
+      - typescript-ch06-l02-e01-r01
+  - id: wrong-restart
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/wrong-restart.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: quiz-ui.ts
+        language: typescript
+        source: fixtures/quiz-ui.ts
+        editable: false
+      - path: questions.ts
+        language: typescript
+        source: fixtures/questions.ts
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:quiz-logic:c2:score-value
+      - interaction:quiz-logic:c3:score-value
+      - interaction:quiz-logic:c5:score-value
+      - interaction:quiz-logic:c6:result
+      - interaction:quiz-logic:c7:score-value
+      - interaction:quiz-web:c10:result
+      - interaction:quiz-web:c1:score-value
+      - interaction:quiz-web:c2:score-value
+      - interaction:quiz-web:c4:score-value
+      - interaction:quiz-web:c5:result
+      - interaction:quiz-web:c6:score-value
+      - interaction:quiz-web:c7:score-value
+      - interaction:quiz-web:c9:score-value
+      - typescript-ch06-l02-e01-r01
+  - id: readonly-write
+    expectedStatus: code-error
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/readonly-write.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: quiz-ui.ts
+        language: typescript
+        source: fixtures/quiz-ui.ts
+        editable: false
+      - path: questions.ts
+        language: typescript
+        source: fixtures/questions.ts
+        editable: false
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - typescript-type-error-2540
+  - id: wrong-logic-choice
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/wrong-logic-choice.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/styles.css
+        editable: false
+      - path: quiz-ui.ts
+        language: typescript
+        source: fixtures/quiz-ui.ts
+        editable: false
+      - path: questions.ts
+        language: typescript
+        source: fixtures/questions.ts
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:quiz-logic:c4:choice-0
+interactionScenarios:
+  - id: quiz-web
+    label: 混合回答と再挑戦
+    actions:
+      - id: a1
+        kind: click
+        selector: '#start'
+      - id: a2
+        kind: click
+        selector: '#choice-0'
+      - id: a3
+        kind: click
+        selector: '#next'
+      - id: a4
+        kind: click
+        selector: '#choice-0'
+      - id: a5
+        kind: click
+        selector: '#next'
+      - id: a6
+        kind: click
+        selector: '#restart'
+      - id: a7
+        kind: click
+        selector: '#choice-0'
+      - id: a8
+        kind: click
+        selector: '#next'
+      - id: a9
+        kind: click
+        selector: '#choice-1'
+      - id: a10
+        kind: click
+        selector: '#next'
+    checkpoints:
+      - id: c1
+        afterActionId: a1
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: Webページの骨組みを作るのは？
+          - id: choice-0
+            kind: selector-text
+            selector: '#choice-0'
+            equals: HTML
+          - id: choice-1
+            kind: selector-text
+            selector: '#choice-1'
+            equals: CSS
+          - id: progress
+            kind: selector-text
+            selector: '#progress'
+            equals: 問題1 / 2
+          - id: score-value
+            kind: selector-text
+            selector: '#score-value'
+            equals: '0'
+          - id: focus
+            kind: focused
+            selector: '#choice-0'
+      - id: c2
+        afterActionId: a2
+        expectations:
+          - id: score-value
+            kind: selector-text
+            selector: '#score-value'
+            equals: '1'
+          - id: feedback
+            kind: selector-text
+            selector: '#feedback'
+            equals: 正解です
+          - id: focus
+            kind: focused
+            selector: '#next'
+      - id: c3
+        afterActionId: a3
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: 見た目を整えるのは？
+          - id: choice-0
+            kind: selector-text
+            selector: '#choice-0'
+            equals: JavaScript
+          - id: choice-1
+            kind: selector-text
+            selector: '#choice-1'
+            equals: CSS
+          - id: progress
+            kind: selector-text
+            selector: '#progress'
+            equals: 問題2 / 2
+          - id: focus
+            kind: focused
+            selector: '#choice-0'
+      - id: c4
+        afterActionId: a4
+        expectations:
+          - id: score-value
+            kind: selector-text
+            selector: '#score-value'
+            equals: '1'
+          - id: feedback
+            kind: selector-text
+            selector: '#feedback'
+            equals: 正解は CSS です
+          - id: focus
+            kind: focused
+            selector: '#next'
+      - id: c5
+        afterActionId: a5
+        expectations:
+          - id: result
+            kind: selector-text
+            selector: '#result'
+            equals: 2問中1問正解
+          - id: focus
+            kind: focused
+            selector: '#restart'
+      - id: c6
+        afterActionId: a6
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: Webページの骨組みを作るのは？
+          - id: choice-0
+            kind: selector-text
+            selector: '#choice-0'
+            equals: HTML
+          - id: choice-1
+            kind: selector-text
+            selector: '#choice-1'
+            equals: CSS
+          - id: progress
+            kind: selector-text
+            selector: '#progress'
+            equals: 問題1 / 2
+          - id: score-value
+            kind: selector-text
+            selector: '#score-value'
+            equals: '0'
+          - id: focus
+            kind: focused
+            selector: '#choice-0'
+          - id: feedback
+            kind: selector-text
+            selector: '#feedback'
+            equals: ''
+      - id: c7
+        afterActionId: a7
+        expectations:
+          - id: score-value
+            kind: selector-text
+            selector: '#score-value'
+            equals: '1'
+          - id: focus
+            kind: focused
+            selector: '#next'
+      - id: c8
+        afterActionId: a8
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: 見た目を整えるのは？
+          - id: focus
+            kind: focused
+            selector: '#choice-0'
+      - id: c9
+        afterActionId: a9
+        expectations:
+          - id: score-value
+            kind: selector-text
+            selector: '#score-value'
+            equals: '2'
+          - id: focus
+            kind: focused
+            selector: '#next'
+      - id: c10
+        afterActionId: a10
+        expectations:
+          - id: result
+            kind: selector-text
+            selector: '#result'
+            equals: 2問中2問正解
+          - id: focus
+            kind: focused
+            selector: '#restart'
+  - id: quiz-logic
+    label: カテゴリとキーボード
+    actions:
+      - id: a1
+        kind: select
+        selector: '#category'
+        value: logic
+      - id: a2
+        kind: click
+        selector: '#start'
+      - id: a3
+        kind: key
+        selector: '#choice-0'
+        key: Enter
+      - id: a4
+        kind: key
+        selector: '#next'
+        key: Enter
+      - id: a5
+        kind: key
+        selector: '#choice-1'
+        key: Enter
+      - id: a6
+        kind: key
+        selector: '#next'
+        key: Enter
+      - id: a7
+        kind: key
+        selector: '#restart'
+        key: Enter
+    checkpoints:
+      - id: c1
+        afterActionId: a1
+        expectations:
+          - id: status
+            kind: selector-text
+            selector: '#status'
+            equals: 開始すると問題が出ます
+      - id: c2
+        afterActionId: a2
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: 1 + 1 は？
+          - id: choice-0
+            kind: selector-text
+            selector: '#choice-0'
+            equals: '2'
+          - id: choice-1
+            kind: selector-text
+            selector: '#choice-1'
+            equals: '3'
+          - id: progress
+            kind: selector-text
+            selector: '#progress'
+            equals: 問題1 / 2
+          - id: score-value
+            kind: selector-text
+            selector: '#score-value'
+            equals: '0'
+          - id: focus
+            kind: focused
+            selector: '#choice-0'
+      - id: c3
+        afterActionId: a3
+        expectations:
+          - id: score-value
+            kind: selector-text
+            selector: '#score-value'
+            equals: '1'
+          - id: feedback
+            kind: selector-text
+            selector: '#feedback'
+            equals: 正解です
+          - id: focus
+            kind: focused
+            selector: '#next'
+      - id: c4
+        afterActionId: a4
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: 3 > 5 の結果は？
+          - id: choice-0
+            kind: selector-text
+            selector: '#choice-0'
+            equals: 'true'
+          - id: choice-1
+            kind: selector-text
+            selector: '#choice-1'
+            equals: 'false'
+          - id: progress
+            kind: selector-text
+            selector: '#progress'
+            equals: 問題2 / 2
+          - id: focus
+            kind: focused
+            selector: '#choice-0'
+      - id: c5
+        afterActionId: a5
+        expectations:
+          - id: score-value
+            kind: selector-text
+            selector: '#score-value'
+            equals: '2'
+          - id: feedback
+            kind: selector-text
+            selector: '#feedback'
+            equals: 正解です
+          - id: focus
+            kind: focused
+            selector: '#next'
+      - id: c6
+        afterActionId: a6
+        expectations:
+          - id: result
+            kind: selector-text
+            selector: '#result'
+            equals: 2問中2問正解
+          - id: focus
+            kind: focused
+            selector: '#restart'
+      - id: c7
+        afterActionId: a7
+        expectations:
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: 1 + 1 は？
+          - id: choice-0
+            kind: selector-text
+            selector: '#choice-0'
+            equals: '2'
+          - id: choice-1
+            kind: selector-text
+            selector: '#choice-1'
+            equals: '3'
+          - id: progress
+            kind: selector-text
+            selector: '#progress'
+            equals: 問題1 / 2
+          - id: score-value
+            kind: selector-text
+            selector: '#score-value'
+            equals: '0'
+          - id: focus
+            kind: focused
+            selector: '#choice-0'
+          - id: category
+            kind: selector-text
+            selector: '#category option:checked'
+            equals: 値と条件

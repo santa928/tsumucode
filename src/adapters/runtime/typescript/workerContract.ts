@@ -1,3 +1,5 @@
+import type { TypeScriptQuizProjectProfile } from '../../../core/content/typeScriptQuizProjectContract';
+import type { QuizProjectResult } from './checkQuizProject';
 import type { TypeScriptBoundaryProfile } from '../../../core/content/typeScriptBoundaryContract';
 import type { BoundaryLearningResult } from './checkBoundaryLearning';
 import type { TypeScriptCompileResult } from './compileTypeScript';
@@ -32,7 +34,8 @@ export type CompilerWorkerRequest = WorkerRequestBase &
           | 'question-interface-v1'
           | ConditionalLearningProfile
           | ReusableLearningProfile
-          | TypeScriptBoundaryProfile;
+          | TypeScriptBoundaryProfile
+          | TypeScriptQuizProjectProfile;
       }
   );
 
@@ -257,7 +260,10 @@ export function isCompilerWorkerRequest(value: unknown): value is CompilerWorker
           request['profile'] === 'readonly-copy-v1' ||
           request['profile'] === 'dom-event-v1' ||
           request['profile'] === 'unknown-points-v1' ||
-          request['profile'] === 'async-unknown-v1'))) &&
+          request['profile'] === 'async-unknown-v1' ||
+          request['profile'] === 'quiz-data-v1' ||
+          request['profile'] === 'quiz-state-v1' ||
+          request['profile'] === 'quiz-boundary-v1'))) &&
     typeof request['requestId'] === 'string' &&
     request['requestId'].length > 0 &&
     request['requestId'].length <= 128 &&
@@ -352,4 +358,40 @@ export function isTypeScriptCompileResult(
       )
     );
   });
+}
+
+/** Project専用の有限factとprofileを照合し、probe/原文をpayloadへ含めさせない。 */
+export function isQuizProjectResult(
+  value: unknown,
+  profile: TypeScriptQuizProjectProfile,
+): value is QuizProjectResult {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const result = value as Record<string, unknown>;
+  if (result['status'] === 'system-error') return Object.keys(result).length === 1;
+  if (
+    result['status'] !== 'ready' ||
+    result['profile'] !== profile ||
+    Object.keys(result).sort().join(',') !== 'facts,profile,status' ||
+    !result['facts'] ||
+    typeof result['facts'] !== 'object' ||
+    Array.isArray(result['facts'])
+  )
+    return false;
+  const facts = result['facts'] as Record<string, unknown>;
+  const prerequisites = [
+    'programShapeAccepted',
+    'typeContractAccepted',
+    'usesLearningValues',
+    'forbiddenEscapeAbsent',
+  ];
+  const keys = [...prerequisites, 'positiveProbeAccepted', 'negativeProbesRejected'].sort();
+  if (
+    Object.keys(facts).sort().join(',') !== keys.join(',') ||
+    !keys.every((key) => typeof facts[key] === 'boolean')
+  )
+    return false;
+  const eligible = prerequisites.every((key) => facts[key] === true);
+  return (
+    facts['positiveProbeAccepted'] === eligible && facts['negativeProbesRejected'] === eligible
+  );
 }

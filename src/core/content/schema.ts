@@ -1,4 +1,9 @@
 import {
+  TypeScriptQuizProjectContracts,
+  acceptsTypeScriptQuizProjectRuntime,
+  acceptsTypeScriptQuizProjectScenarios,
+} from './typeScriptQuizProjectContract';
+import {
   TypeScriptBoundaryContracts,
   acceptsTypeScriptBoundaryScenarios,
   acceptsTypeScriptBoundaryRuntime,
@@ -544,6 +549,9 @@ const TypeScriptLearningAssertionSchema = z
       'dom-event-v1',
       'unknown-points-v1',
       'async-unknown-v1',
+      'quiz-data-v1',
+      'quiz-state-v1',
+      'quiz-boundary-v1',
     ]),
   })
   .strict();
@@ -1152,7 +1160,7 @@ export const TypeScriptGenericConsoleRuleSchema = learningConsoleRule(['2', '型
 export const TypeScriptReadonlyConsoleRuleSchema = learningConsoleRule(['1,2,4', '1,2,3']);
 export const TypeScriptBoundaryConsoleRuleSchema = learningConsoleRule(['準備できました']);
 
-/** 型習得を判定する既存11課題だけの対応。一般のprofile指定は受け付けない。 */
+/** 型習得を判定する固定14課題だけの対応。一般のprofile指定は受け付けない。 */
 export const TypeScriptLearningContracts = [
   {
     lessonId: 'typescript-ch01-l01',
@@ -1194,6 +1202,11 @@ export const TypeScriptLearningContracts = [
     profile: 'readonly-copy-v1',
     consoleRuleSchema: TypeScriptReadonlyConsoleRuleSchema,
   },
+  ...TypeScriptQuizProjectContracts.map(({ lessonId, profile }) => ({
+    lessonId,
+    profile,
+    consoleRuleSchema: TypeScriptBoundaryConsoleRuleSchema,
+  })),
   ...TypeScriptBoundaryContracts.map(({ lessonId, profile }) => ({
     lessonId,
     profile,
@@ -2331,6 +2344,26 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
           const boundaryContract = TypeScriptBoundaryContracts.find(
             (contract) => contract.lessonId === lesson.id,
           );
+          const quizContract = TypeScriptQuizProjectContracts.find(
+            (contract) => contract.lessonId === lesson.id,
+          );
+          if (
+            quizContract &&
+            (exercise.kind !== 'guided-project' ||
+              exercise.projectId !== 'typescript-quiz-guided' ||
+              exercise.workspaceId !== 'typescript-quiz-guided' ||
+              !acceptsTypeScriptQuizProjectRuntime(exercise.runtime) ||
+              !acceptsTypeScriptQuizProjectScenarios(
+                quizContract.profile,
+                exercise.interactionScenarios,
+              ))
+          ) {
+            addIssue(
+              context,
+              [...exercisePath, 'interactionScenarios'],
+              '固定クイズ工程のWorkspace・Project・実操作条件を保ってください',
+            );
+          }
           if (
             boundaryContract &&
             (!acceptsTypeScriptBoundaryScenarios(

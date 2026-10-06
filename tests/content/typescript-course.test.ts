@@ -26,18 +26,19 @@ describe('TypeScript導入draft Course', () => {
       { fromRevision: '2026-10-05.1', toRevision: '2026-10-05.2', steps: [] },
       { fromRevision: '2026-10-05.2', toRevision: '2026-10-05.3', steps: [] },
       { fromRevision: '2026-10-05.3', toRevision: '2026-10-06.1', steps: [] },
-      { fromRevision: '2026-10-06.1', toRevision: course.revision, steps: [] },
+      { fromRevision: '2026-10-06.1', toRevision: '2026-10-06.2', steps: [] },
+      { fromRevision: '2026-10-06.2', toRevision: course.revision, steps: [] },
     ]);
     expect(course.expectedTotals).toEqual({
-      chapters: 5,
-      lessons: 12,
-      conceptSlides: 37,
+      chapters: 6,
+      lessons: 15,
+      conceptSlides: 46,
       standardExercises: 12,
-      guidedProjectLessons: 0,
+      guidedProjectLessons: 3,
       capstoneLessons: 0,
-      estimatedMinutes: 225,
+      estimatedMinutes: 320,
     });
-    expect(lessons.flatMap(({ slides }) => slides)).toHaveLength(48);
+    expect(lessons.flatMap(({ slides }) => slides)).toHaveLength(60);
     expect(lessons.map(({ id }) => id)).toEqual([
       'typescript-ch01-l01',
       'typescript-ch01-l02',
@@ -51,6 +52,9 @@ describe('TypeScript導入draft Course', () => {
       'typescript-ch05-l01',
       'typescript-ch05-l02',
       'typescript-ch05-l03',
+      'typescript-ch06-l01',
+      'typescript-ch06-l02',
+      'typescript-ch06-l03',
     ]);
     expect(lessons[1]!.prerequisiteLessonIds).toEqual([lessons[0]!.id]);
     expect(lessons[0]!.nextLessonId).toBe(lessons[1]!.id);
@@ -133,7 +137,13 @@ describe('TypeScript導入draft Course', () => {
                           ? 'dom-event-v1'
                           : index === 10
                             ? 'unknown-points-v1'
-                            : 'async-unknown-v1',
+                            : index === 11
+                              ? 'async-unknown-v1'
+                              : index === 12
+                                ? 'quiz-data-v1'
+                                : index === 13
+                                  ? 'quiz-state-v1'
+                                  : 'quiz-boundary-v1',
         });
         expect(exercise.validationRules[1]?.assertion).toEqual({
           kind: 'javascript-console',
@@ -158,7 +168,7 @@ describe('TypeScript導入draft Course', () => {
       expect(exercise).not.toHaveProperty('fixtures');
     }
     expect(authoring.exercises.map(({ fixtures }) => fixtures.length)).toEqual([
-      13, 12, 9, 18, 17, 18, 18, 17, 19, 17, 14, 16,
+      13, 12, 9, 18, 17, 18, 18, 17, 19, 17, 14, 16, 13, 16, 16,
     ]);
   });
 
@@ -168,6 +178,7 @@ describe('TypeScript導入draft Course', () => {
     { count: 4, revision: '2026-10-05.2' },
     { count: 6, revision: '2026-10-05.3' },
     { count: 9, revision: '2026-10-06.1' },
+    { count: 12, revision: '2026-10-06.2' },
   ])(
     '旧$count Lessonの合格と元TS・採点履歴を保持して新Lessonを開始できる',
     async ({ count, revision }) => {

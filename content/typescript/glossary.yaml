@@ -321,3 +321,28 @@ entries:
     definition: 値を呼出し側へ返さない型や、式の戻り値をここでは使わない演算子。処理を停止する意味ではない。
     firstSlideId: typescript-ch05-l03-s02
     relatedIds: []
+  - id: type-export
+    term: 型を別Moduleへ公開する
+    definition: export interfaceやexport typeは別Moduleが読む型名を公開する。import typeは型だけを読む。これらの型は実行JSへ残らず、実データの検証とは別。
+    firstSlideId: typescript-ch06-l01-s03
+    relatedIds: []
+  - id: project-workspace
+    term: 工程で共有するWorkspace
+    definition: 同じ作品のSourceを複数Lessonへ引き継ぐ保存単位。TS作品とJS作品は別Course/Workspace。Resetは共有するTS作品の全SourceをStarterへ戻す。
+    firstSlideId: typescript-ch06-l01-s04
+    relatedIds: []
+  - id: readonly-field
+    term: readonlyの項目
+    definition: この型の参照から代入を許さない項目。新しいObjectを返して次の状態へ渡せる。実行時freezeや、状態の値の正しさを自動で保証する処理ではない。
+    firstSlideId: typescript-ch06-l02-s01
+    relatedIds: []
+  - id: quiz-state-function
+    term: 状態を受け取り状態を返す関数
+    definition: 型付きの現在状態と実入力から次の状態を作る関数。入力を変えず新しい状態を返し、型条件と実得点の両方を確認する。
+    firstSlideId: typescript-ch06-l02-s01
+    relatedIds: []
+  - id: checked-array-elements
+    term: 配列と各要素の確認
+    definition: Array.isArrayは配列か調べる。各要素の型や必要な長さは別に確認する。要素をunknownとして取り出し、typeof等で絞ってから使う。
+    firstSlideId: typescript-ch06-l03-s02
+    relatedIds: []

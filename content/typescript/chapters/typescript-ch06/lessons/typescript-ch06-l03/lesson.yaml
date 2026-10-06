@@ -1,0 +1,86 @@
+id: typescript-ch06-l03
+kind: guided-project
+title: unknownと失敗を完成クイズへつなぐ
+goal: 同梱Promiseのunknownを各問題の項目と選択肢から検証し、実Errorのmessageと再試行を、Event対象確認を保った完成クイズへ接続する。
+estimatedMinutes: 40
+prerequisiteLessonIds:
+  - typescript-ch06-l02
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/typescript-ch06-l03-e01/exercise.yaml
+reflection: 同梱Promiseのunknownを各問題の項目と選択肢から検証し、実Errorのmessageと再試行を、Event対象確認を保った完成クイズへ接続する。
+glossaryRefs:
+  - checked-array-elements
+  - unknown
+  - await-result
+  - error
+  - type-export
+  - project-workspace
+project:
+  id: typescript-quiz-guided
+  briefSource: brief.md
+  guideSources:
+    - guide.md
+  checklist:
+    - id: typescript-ch06-l03-types
+      label: 今回の型と値の条件
+      required: true
+      ruleIds:
+        - typescript-ch06-l03-e01-r01
+        - typescript-ch06-l03-e01-r02
+        - typescript-ch06-l03-e01-r03
+    - id: typescript-ch06-l03-boundary-quiz-web
+      label: 混合回答と再挑戦
+      required: true
+      ruleIds:
+        - interaction:boundary-quiz-web:c1
+        - interaction:boundary-quiz-web:c2
+        - interaction:boundary-quiz-web:c3
+        - interaction:boundary-quiz-web:c4
+        - interaction:boundary-quiz-web:c5
+        - interaction:boundary-quiz-web:c6
+        - interaction:boundary-quiz-web:c7
+        - interaction:boundary-quiz-web:c8
+        - interaction:boundary-quiz-web:c9
+        - interaction:boundary-quiz-web:c10
+    - id: typescript-ch06-l03-boundary-quiz-logic
+      label: カテゴリとキーボード
+      required: true
+      ruleIds:
+        - interaction:boundary-quiz-logic:c1
+        - interaction:boundary-quiz-logic:c2
+        - interaction:boundary-quiz-logic:c3
+        - interaction:boundary-quiz-logic:c4
+        - interaction:boundary-quiz-logic:c5
+        - interaction:boundary-quiz-logic:c6
+        - interaction:boundary-quiz-logic:c7
+    - id: typescript-ch06-l03-boundary-quiz-invalid
+      label: 不正データから復帰
+      required: true
+      ruleIds:
+        - interaction:boundary-quiz-invalid:c1
+        - interaction:boundary-quiz-invalid:c2
+    - id: typescript-ch06-l03-boundary-quiz-recovery
+      label: 拒否から順序が変わる復帰
+      required: true
+      ruleIds:
+        - interaction:boundary-quiz-recovery:c1
+        - interaction:boundary-quiz-recovery:c2
+        - interaction:boundary-quiz-recovery:c3
+        - interaction:boundary-quiz-recovery:c4
+        - interaction:boundary-quiz-recovery:c5
+        - interaction:boundary-quiz-recovery:c6
+completion:
+  kind: guided-project
+  requiredChecklistItemIds:
+    - typescript-ch06-l03-types
+    - typescript-ch06-l03-boundary-quiz-web
+    - typescript-ch06-l03-boundary-quiz-logic
+    - typescript-ch06-l03-boundary-quiz-invalid
+    - typescript-ch06-l03-boundary-quiz-recovery
+  requiredExerciseIds:
+    - typescript-ch06-l03-e01

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>型を確かめる学習クイズ</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">ひとつずつ、確かめよう</p>
+      <h1>型を確かめる学習クイズ</h1>
+      <fieldset id="controls">
+        <legend>問題を選んで開始する</legend>
+        <label for="category">問題のカテゴリ</label
+        ><select id="category">
+          <option value="web">Webの役割</option>
+          <option value="logic">値と条件</option>
+        </select>
+        <div class="actions">
+          <button id="invalid-load" type="button">不正データを試す（練習用）</button>
+          <button id="start" type="button">開始</button
+          ><button id="fail-load" type="button">読み込み失敗を試す（練習用）</button>
+        </div>
+      </fieldset>
+      <p id="status" role="status">開始すると問題が出ます</p>
+      <section id="quiz" aria-label="問題" hidden>
+        <p id="progress">問題1 / 2</p>
+        <h2 id="question">開始すると問題が出ます</h2>
+        <div id="choices">
+          <button id="choice-0" type="button">選択肢1</button
+          ><button id="choice-1" type="button">選択肢2</button>
+        </div>
+        <p id="feedback" role="status"></p>
+        <button id="next" type="button" disabled>次の問題</button>
+      </section>
+      <p id="score">得点: <span id="score-value">0</span></p>
+      <p id="result" tabindex="-1" role="status" hidden></p>
+      <button id="restart" type="button" hidden>もう一度</button>
+      <p class="note">
+        同梱データを使います。通信はしません。再読み込みするとクイズは最初から始まります。
+      </p>
+    </main>
+  </body>
+</html>
