@@ -1,0 +1,361 @@
+id: typescript-ch04-l03-e01
+kind: standard
+workspaceId: typescript-ch04-l03-e01
+countsTowardStandardExerciseTotal: true
+title: readonlyの入力から別の配列を作る
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: typescript-readonly-copy
+    minimumLevel: transform
+scaffoldLevel: transform
+runtime:
+  kind: typescript
+  entryFile: main.ts
+  sourceType: module
+  capabilityProfile: core
+  primaryOutput: console
+steps:
+  - id: keep-type-contract
+    file: main.ts
+    target: readonlyの入力から別の配列を作る
+    starterAnchor: points.push(3);
+    change: 引数へ追加せず、3を追加した新しい配列を返す
+    observe: 型の案内が消え、Consoleに1,2,4・1,2,3が表示される
+    requiresConceptIds:
+      - typescript-readonly-copy
+    validationRuleIds:
+      - typescript-ch04-l03-e01-r01
+      - typescript-ch04-l03-e01-r02
+files:
+  - path: main.ts
+    language: typescript
+    source: starter/main.ts
+    editable: true
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+solutionFiles:
+  - path: main.ts
+    language: typescript
+    source: solution/main.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: typescript-ch04-l03-e01-r01
+    label: 型の契約を保ち、受け取った値から結果を作る
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: typescript-learning
+      file: main.ts
+    assertion:
+      kind: typescript-learning
+      profile: readonly-copy-v1
+    feedback:
+      target: readonlyの入力から別の配列を作る
+      expected: 読み取り専用の引数を変更せず新しい配列を作り、readonlyは実行時の凍結ではないと区別できる。
+      nextAction: 型の宣言と注釈を保ち、受け取った値を使う処理を確認します。
+    hintId: typescript-ch04-l03-e01-h01
+    relatedSlideId: typescript-ch04-l03-s01
+  - id: typescript-ch04-l03-e01-r02
+    label: すべての実行例で期待した値を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-console
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - level: log
+          text: 1,2,4
+        - level: log
+          text: 1,2,3
+    feedback:
+      target: Consoleのすべての結果
+      expected: 1,2,4・1,2,3
+      nextAction: 実行例を保ち、元の値と戻った値の両方を確認します。
+    hintId: typescript-ch04-l03-e01-h02
+    relatedSlideId: typescript-ch04-l03-s04
+hints:
+  - id: typescript-ch04-l03-e01-h01
+    level: 1
+    title: 型と値の受渡しを比べる
+    text: points.push(3)は引数の配列を変更します。readonlyの参照からは変更できません。
+    relatedSlideId: typescript-ch04-l03-s01
+  - id: typescript-ch04-l03-e01-h02
+    level: 2
+    title: 型の関係を保つ
+    text: 入力のreadonlyを消すのではなく、新しい配列へ元の値と追加する3を入れます。
+    relatedSlideId: typescript-ch04-l03-s02
+  - id: typescript-ch04-l03-e01-h03
+    level: 3
+    title: 処理と確認を残す
+    text: return [...points, 3];なら元の配列を変えず、新しい配列を返します。
+    relatedSlideId: typescript-ch04-l03-s03
+relatedSlideIds:
+  - typescript-ch04-l03-s01
+  - typescript-ch04-l03-s02
+  - typescript-ch04-l03-s03
+  - typescript-ch04-l03-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: starter
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - typescript-type-error-2339
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/starter.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: solution
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/solution.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: parenthesized
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/parenthesized.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: renamed
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/renamed.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: nocheck-escape
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/nocheck-escape.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch04-l03-e01-r01
+  - id: suppressed
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/suppressed.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch04-l03-e01-r01
+  - id: output-only
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/output-only.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch04-l03-e01-r01
+  - id: error-after-output
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - javascript-runtime
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/error-after-output.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: readonly-array
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/readonly-array.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: concat
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/concat.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: arrow-function
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/arrow-function.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: copied-return
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/copied-return.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: mutable-input
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/mutable-input.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch04-l03-e01-r01
+  - id: any-escape
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/any-escape.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch04-l03-e01-r01
+  - id: fixed-returns
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/fixed-returns.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch04-l03-e01-r01
+  - id: wrong-result
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/wrong-result.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch04-l03-e01-r02
+  - id: changes-input
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/changes-input.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch04-l03-e01-r01
+      - typescript-ch04-l03-e01-r02
+  - id: writes-index
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - typescript-type-error-2542
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/writes-index.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: wrong-argument
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - typescript-type-error-2322
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/wrong-argument.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []

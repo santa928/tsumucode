@@ -1,0 +1,28 @@
+id: typescript-ch04-l03
+kind: standard
+title: readonlyの入力から別の配列を作る
+goal: 読み取り専用の引数を変更せず新しい配列を作り、readonlyは実行時の凍結ではないと区別できる。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - typescript-ch04-l02
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/typescript-ch04-l03-e01/exercise.yaml
+reflection: 読み取り専用の引数を変更せず新しい配列を作り、readonlyは実行時の凍結ではないと区別できる。
+glossaryRefs:
+  - readonly
+  - readonly-array
+  - array-spread
+  - array-join
+  - return-annotation
+  - property
+  - number
+completion:
+  kind: standard
+  finalSlideId: typescript-ch04-l03-s04
+  requiredExerciseIds:
+    - typescript-ch04-l03-e01

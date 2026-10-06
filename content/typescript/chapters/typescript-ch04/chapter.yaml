@@ -1,0 +1,10 @@
+id: typescript-ch04
+sequence: 3
+title: 処理を型でつないで再利用する
+goal: 関数の入出力・genericの型関係・readonlyの参照を確認し、値を使う処理を再利用できる。
+estimatedMinutes: 60
+kind: standard
+lessonSources:
+  - lessons/typescript-ch04-l01/lesson.yaml
+  - lessons/typescript-ch04-l02/lesson.yaml
+  - lessons/typescript-ch04-l03/lesson.yaml

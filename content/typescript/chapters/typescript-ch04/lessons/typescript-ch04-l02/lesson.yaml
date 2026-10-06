@@ -1,0 +1,29 @@
+id: typescript-ch04-l02
+kind: standard
+title: genericで入出力の型をつなぐ
+goal: 型パラメータを引数と戻り値へ使い、数値と文字列を同じ関数で型を保って返せる。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - typescript-ch04-l01
+nextLessonId: typescript-ch04-l03
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/typescript-ch04-l02-e01/exercise.yaml
+reflection: 型パラメータを引数と戻り値へ使い、数値と文字列を同じ関数で型を保って返せる。
+glossaryRefs:
+  - generic
+  - type-parameter
+  - type-argument
+  - return-annotation
+  - parameter-annotation
+  - number
+  - string
+completion:
+  kind: standard
+  finalSlideId: typescript-ch04-l02-s04
+  requiredExerciseIds:
+    - typescript-ch04-l02-e01

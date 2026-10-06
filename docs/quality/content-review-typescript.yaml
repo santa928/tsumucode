@@ -80,7 +80,7 @@ lessons:
   - lessonId: typescript-ch03-l02
     authorId: tsumucode-typescript-authoring
     reviewerId: review_issue109
-    sourceHash: 8c44c1b4a7352117a5a0966d527a65799ab9da53d4d0030bfbbfac615d6c36b9
+    sourceHash: 20131580cf43dd476637119ca7eef9b3546a495ebf859827a17539f79e60d2c7
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -91,3 +91,52 @@ lessons:
       Reviewer review_issue109がbase29613fe / HEAD70b9f208075fe49e8bfb41d072701137797f1a91の84file差分と既存E2E revision期待値1行を独立承認。全4Slide・図・練習/Hint・Starter/Solution・18Fixture、optional/undefined/lengthの前提と用語、空文字と欠落の区別を確認。必須修正0件。
       有限AST・通常Compiler・ConsoleのAND、未確認アクセス、真偽だけの確認で空文字を落とす誤解、実値を返す分岐と別解、固定return/型弱化/診断抑制の拒否、非emit正負probe、profile/source/session/revisionと保存/Reset/配信境界を読解した。
       examplesExecutedは03-01と同じ作者実行ログへ依拠。Reviewerによる実行/hash再計算はない。PC/390px計8画像は2Lessonで実見し、accuracy/goalExerciseAlignment/decisionはapproved、未説明用語と意図しないHint漏洩は0。初心者理解/実機/汎用TS文法/TS性能予算/全TS完成/正式公開の確認ではない。有限な対象Lesson内の型形・分岐・実動作だけの承認で、draft各値を保持する。
+      #112のHEAD e8861edc5d0c7287580491ed3ccbc2fd548a5d61でReviewer review_issue109が次Lesson参照追加のみ限定承認。旧教材・採点・実行証拠を保持し、関数型への接続を確認した。
+  - lessonId: typescript-ch04-l01
+    authorId: tsumucode-typescript-authoring
+    reviewerId: review_issue109
+    sourceHash: fb54d002217ff1eea7e4bb5bf34e2fc32b2a78ef7abe2ce62b81231b99750d40
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: >-
+      Reviewer review_issue109がbase265ebd6 / initial HEAD e7759e93dd47a92dfd66391c2176760d447e0c20の114file差分・全教材原文と有限判定経路を独立確認。4Slide・図・Hint/Solution・最終18Fixture、引数/戻り値とcallback型、渡された値の利用と計算、前提/用語/概念と目標整合を承認。
+      修正HEAD e8861edc5d0c7287580491ed3ccbc2fd548a5d61への限定差分で括弧受け入れ、Starter/throwの診断metadataと括弧Fixture保持を確認し、残る必須指摘0でコード/内容を承認。
+      型形/実値/呼出しと非emit正負probe、有限別解、any/assertion/診断抑制/固定表示等の回避拒否、source/session/revisionと保存/Reset/配信境界を確認。型条件と実ConsoleのANDを汎用TS理解の証明へ拡張しない。
+      examplesExecutedは作者core-testsの65種類、固定契約共有後Validator/Course31再確認、真の括弧3Compiler回帰、修正Workerの不変51例と真の括弧3例、初回UI7成功へ依拠する。最初のWorker3失敗、括弧が除去された重複入力、private検証起動timeoutは成功証拠へ加えない。
+      Reviewerは3Lesson合計PC3枚・390px図/本文/練習欄9枚の計12画像を実見。独自の再実行/hash再計算、初心者理解/物理実機/汎用TS文法/TS性能予算/全TS完成/正式公開の確認ではない。Course/ReviewのreleaseStatus/verifiedSourceCommit/canonicalDistSha256はdraftを保持する。
+  - lessonId: typescript-ch04-l02
+    authorId: tsumucode-typescript-authoring
+    reviewerId: review_issue109
+    sourceHash: 396e9ae97aa27e0eff4c70b1da415e2acdbd0f65912b5ea0753f035400b5e168
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: >-
+      Reviewer review_issue109がbase265ebd6 / initial HEAD e7759e93dd47a92dfd66391c2176760d447e0c20の114file差分・全教材原文と有限判定経路を独立確認。4Slide・図・Hint/Solution・最終17Fixture、genericの単一型パラメータによる入出力関係と値の保持、前提/用語/概念と目標整合を承認。
+      修正HEAD e8861edc5d0c7287580491ed3ccbc2fd548a5d61への限定差分で括弧受け入れ、Starter/throwの診断metadataと括弧Fixture保持を確認し、残る必須指摘0でコード/内容を承認。
+      型形/実値/呼出しと非emit正負probe、有限別解、any/assertion/診断抑制/固定表示等の回避拒否、source/session/revisionと保存/Reset/配信境界を確認。型条件と実ConsoleのANDを汎用TS理解の証明へ拡張しない。
+      examplesExecutedは作者core-testsの65種類、固定契約共有後Validator/Course31再確認、真の括弧3Compiler回帰、修正Workerの不変51例と真の括弧3例、初回UI7成功へ依拠する。最初のWorker3失敗、括弧が除去された重複入力、private検証起動timeoutは成功証拠へ加えない。
+      Reviewerは3Lesson合計PC3枚・390px図/本文/練習欄9枚の計12画像を実見。独自の再実行/hash再計算、初心者理解/物理実機/汎用TS文法/TS性能予算/全TS完成/正式公開の確認ではない。Course/ReviewのreleaseStatus/verifiedSourceCommit/canonicalDistSha256はdraftを保持する。
+  - lessonId: typescript-ch04-l03
+    authorId: tsumucode-typescript-authoring
+    reviewerId: review_issue109
+    sourceHash: 8e9cf66925d71336493801ed678ea92bedfcac375101f2893062fd86876c2008
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: >-
+      Reviewer review_issue109がbase265ebd6 / initial HEAD e7759e93dd47a92dfd66391c2176760d447e0c20の114file差分・全教材原文と有限判定経路を独立確認。4Slide・図・Hint/Solution・最終19Fixture、readonly入力の書込禁止と別配列作成、実行時freezeとの区別、前提/用語/概念と目標整合を承認。
+      修正HEAD e8861edc5d0c7287580491ed3ccbc2fd548a5d61への限定差分で括弧受け入れ、Starter/throwの診断metadataと括弧Fixture保持を確認し、残る必須指摘0でコード/内容を承認。
+      型形/実値/呼出しと非emit正負probe、有限別解、any/assertion/診断抑制/固定表示等の回避拒否、source/session/revisionと保存/Reset/配信境界を確認。型条件と実ConsoleのANDを汎用TS理解の証明へ拡張しない。
+      examplesExecutedは作者core-testsの65種類、固定契約共有後Validator/Course31再確認、真の括弧3Compiler回帰、修正Workerの不変51例と真の括弧3例、初回UI7成功へ依拠する。最初のWorker3失敗、括弧が除去された重複入力、private検証起動timeoutは成功証拠へ加えない。
+      Reviewerは3Lesson合計PC3枚・390px図/本文/練習欄9枚の計12画像を実見。独自の再実行/hash再計算、初心者理解/物理実機/汎用TS文法/TS性能予算/全TS完成/正式公開の確認ではない。Course/ReviewのreleaseStatus/verifiedSourceCommit/canonicalDistSha256はdraftを保持する。

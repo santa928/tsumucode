@@ -1,10 +1,10 @@
 schemaVersion: 1
 id: typescript
 title: TypeScript はじめの一歩
-description: 型推論・型注釈・型消去から、interface・状態のunion・optional値を確かめる導入6教材。
+description: 型推論・型注釈・型消去、interface・union・optionalから関数型・generic・readonlyを確かめる導入9教材。
 audience: JavaScriptの変数・関数/return・条件分岐・オブジェクト・Consoleを学んだTypeScript初学者
-estimatedMinutes: 105
-revision: 2026-10-05.3
+estimatedMinutes: 165
+revision: 2026-10-06.1
 runnerId: typescript
 validatorId: typescript
 glossarySource: glossary.yaml
@@ -21,13 +21,13 @@ prerequisites:
   - javascript
 publicationStatus: draft
 expectedTotals:
-  chapters: 3
-  lessons: 6
-  conceptSlides: 19
-  standardExercises: 6
+  chapters: 4
+  lessons: 9
+  conceptSlides: 28
+  standardExercises: 9
   guidedProjectLessons: 0
   capstoneLessons: 0
-  estimatedMinutes: 105
+  estimatedMinutes: 165
 provenanceManifestPath: provenance.yaml
 progressMigrations:
   - fromRevision: 2026-10-01.1
@@ -39,6 +39,9 @@ progressMigrations:
   - fromRevision: 2026-10-05.2
     toRevision: 2026-10-05.3
     steps: []
+  - fromRevision: 2026-10-05.3
+    toRevision: 2026-10-06.1
+    steps: []
 phases:
   - id: typescript-p01-types
     title: 型を使って値を確かめる
@@ -47,3 +50,4 @@ phases:
       - chapters/typescript-ch01/chapter.yaml
       - chapters/typescript-ch02/chapter.yaml
       - chapters/typescript-ch03/chapter.yaml
+      - chapters/typescript-ch04/chapter.yaml

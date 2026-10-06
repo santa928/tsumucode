@@ -2,6 +2,7 @@ import type { TypeScriptCompileResult } from './compileTypeScript';
 import type { ScoreNumberAnnotationResult } from './checkScoreNumberAnnotation';
 import type { ScoreNumberInferenceResult } from './checkScoreNumberInference';
 import type { QuestionInterfaceResult } from './checkQuestionInterface';
+import type { ReusableLearningProfile, ReusableLearningResult } from './checkReusableLearning';
 import type {
   ConditionalLearningProfile,
   ConditionalLearningResult,
@@ -13,6 +14,7 @@ import {
   isScoreNumberInferenceResult,
   isQuestionInterfaceResult,
   isConditionalLearningResult,
+  isReusableLearningResult,
   type CompilerWorkerRequest,
   type TypeScriptCompileInput,
 } from './workerContract';
@@ -114,6 +116,19 @@ export class TypeScriptCompilerClient {
     );
   }
 
+  /** 関数型・generic・readonlyの元TSを、同じ期限と世代照合で検査する。 */
+  reusableCheck(
+    input: TypeScriptCompileInput,
+    profile: ReusableLearningProfile,
+  ): Promise<ReusableLearningResult> {
+    return this.#request(
+      input,
+      profile,
+      (value): value is ReusableLearningResult => isReusableLearningResult(value, profile),
+      () => ({ status: 'system-error' }),
+    );
+  }
+
   /** 共通の期限・停止機構を維持し、操作ごとの厳密な結果guardだけを切り替える。 */
   #request<T>(
     input: TypeScriptCompileInput,
@@ -122,7 +137,8 @@ export class TypeScriptCompilerClient {
       | 'score-number-annotation-v1'
       | 'score-number-inference-v1'
       | 'question-interface-v1'
-      | ConditionalLearningProfile,
+      | ConditionalLearningProfile
+      | ReusableLearningProfile,
     isResult: (value: unknown, snapshot: TypeScriptCompileInput) => value is T,
     failure: () => T,
     invalidInput: () => T = failure,
