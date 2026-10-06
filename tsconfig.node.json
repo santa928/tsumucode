@@ -22,6 +22,7 @@
     "playwright.local.config.ts",
     "playwright.performance.config.ts",
     "scripts",
+    "src/adapters/runtime/react/virtual.d.ts",
     "tests"
   ]
 }

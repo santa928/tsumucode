@@ -1,0 +1,81 @@
+schemaVersion: 1
+defaults:
+  method: original-authored
+  createdAt: 2026-10-06
+  creator: TsumuCode project
+  sourceUrl: none
+  license: project-original
+  modified: false
+items:
+  - id: react-original-3
+    visibility: public
+    path: chapters/react-ch01/chapter.yaml
+  - id: react-original-8
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l01/exercises/react-ch01-l01-e01/exercise.yaml
+  - id: react-original-10
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l01/exercises/react-ch01-l01-e01/fixtures/QuestionCard.tsx
+  - id: react-original-11
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l01/exercises/react-ch01-l01-e01/fixtures/alternative.tsx
+  - id: react-original-12
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l01/exercises/react-ch01-l01-e01/fixtures/index.html
+  - id: react-original-13
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l01/exercises/react-ch01-l01-e01/fixtures/missing-prop.tsx
+  - id: react-original-14
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l01/exercises/react-ch01-l01-e01/fixtures/solution.tsx
+  - id: react-original-15
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l01/exercises/react-ch01-l01-e01/fixtures/starter.tsx
+  - id: react-original-16
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l01/exercises/react-ch01-l01-e01/fixtures/wrong-display.tsx
+  - id: react-original-17
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l01/exercises/react-ch01-l01-e01/instructions.md
+  - id: react-original-19
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l01/exercises/react-ch01-l01-e01/solution/QuestionCard.tsx
+  - id: react-original-20
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l01/exercises/react-ch01-l01-e01/solution/index.html
+  - id: react-original-21
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l01/exercises/react-ch01-l01-e01/solution/main.tsx
+  - id: react-original-23
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l01/exercises/react-ch01-l01-e01/starter/QuestionCard.tsx
+  - id: react-original-24
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l01/exercises/react-ch01-l01-e01/starter/index.html
+  - id: react-original-25
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l01/exercises/react-ch01-l01-e01/starter/main.tsx
+  - id: react-original-26
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l01/lesson.yaml
+  - id: react-original-28
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l01/slides/s01-component.md
+  - id: react-original-29
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l01/slides/s02-jsx.md
+  - id: react-original-30
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l01/slides/s03-props.md
+  - id: react-original-31
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l01/slides/s04-checkpoint.md
+  - id: react-original-32
+    visibility: public
+    path: concepts.yaml
+  - id: react-original-33
+    visibility: public
+    path: course.yaml
+  - id: react-original-34
+    visibility: public
+    path: glossary.yaml

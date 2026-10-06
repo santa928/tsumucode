@@ -2,7 +2,11 @@ import { originalPositionFor, TraceMap } from '@jridgewell/trace-mapping';
 import type { RunnerDiagnostic } from '../../../core/runtime/contracts';
 
 /** 固定compilerの単一source mapだけを読む。外部URLや任意sourceRootは解決しない。 */
-function readCompilerMap(text: string | undefined, file: string): TraceMap | undefined {
+function readCompilerMap(
+  text: string | undefined,
+  file: string,
+  originalFile: string,
+): TraceMap | undefined {
   if (!text || text.length > 4_194_304) return undefined;
   try {
     const value: unknown = JSON.parse(text);
@@ -15,7 +19,7 @@ function readCompilerMap(text: string | undefined, file: string): TraceMap | und
       map['sourceRoot'] !== '' ||
       !Array.isArray(map['sources']) ||
       map['sources'].length !== 1 ||
-      map['sources'][0] !== basename.replace(/\.js$/u, '.ts') ||
+      map['sources'][0] !== originalFile.slice(originalFile.lastIndexOf('/') + 1) ||
       !Array.isArray(map['names']) ||
       !map['names'].every((name) => typeof name === 'string') ||
       typeof map['mappings'] !== 'string'
@@ -42,9 +46,10 @@ export function mapTypeScriptDiagnostics(
   return diagnostics.map((diagnostic) => {
     const { file, line, column, ...detail } = diagnostic;
     if (!file?.endsWith('.js')) return diagnostic;
-    const originalFile = file.replace(/\.js$/u, '.ts');
+    const tsFile = file.replace(/\.js$/u, '.ts');
+    const originalFile = Object.hasOwn(sources, tsFile) ? tsFile : tsFile + 'x';
     if (!Object.hasOwn(sources, originalFile)) return detail;
-    if (!maps.has(file)) maps.set(file, readCompilerMap(sourceMaps[file], file));
+    if (!maps.has(file)) maps.set(file, readCompilerMap(sourceMaps[file], file, originalFile));
     const map = maps.get(file);
     if (!map) return detail;
     if (line === undefined || column === undefined) return { ...detail, file: originalFile };

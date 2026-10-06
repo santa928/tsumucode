@@ -36,6 +36,12 @@ export interface CompilerWorkerPort {
 interface CompilerClientOptions {
   readonly workerFactory?: () => CompilerWorkerPort;
   readonly deadlineMs?: number;
+  /** React専用Workerの閉じたTSX契約。Lesson検査には使わない。 */
+  readonly compileInputGuard?: (value: unknown) => value is TypeScriptCompileInput;
+  readonly compileResultGuard?: (
+    value: unknown,
+    input: TypeScriptCompileInput,
+  ) => value is TypeScriptCompileResult;
 }
 
 interface PendingCompile {
@@ -65,7 +71,7 @@ export class TypeScriptCompilerClient {
   #sequence = 0;
   #disposed = false;
 
-  constructor(options: CompilerClientOptions = {}) {
+  constructor(private readonly options: CompilerClientOptions = {}) {
     this.#workerFactory =
       options.workerFactory ??
       (() => new Worker(new URL('./compilerWorker.ts', import.meta.url), { type: 'module' }));
@@ -77,10 +83,16 @@ export class TypeScriptCompilerClient {
 
   /** 新要求で旧計算を中止。入力を複写して呼出し後の編集と応答照合を分離する。 */
   compile(input: TypeScriptCompileInput): Promise<TypeScriptCompileResult> {
-    return this.#request(input, 'compile', isTypeScriptCompileResult, environmentFailure, () => ({
-      status: 'invalid-input',
-      diagnostics: [{ code: 0, message: '型検査するファイルと編集状態を確認してください。' }],
-    }));
+    return this.#request(
+      input,
+      'compile',
+      this.options.compileResultGuard ?? isTypeScriptCompileResult,
+      environmentFailure,
+      () => ({
+        status: 'invalid-input',
+        diagnostics: [{ code: 0, message: '型検査するファイルと編集状態を確認してください。' }],
+      }),
+    );
   }
 
   /** 原文を同世代の専用操作で調べる。probe診断やASTは受け取らない。 */
@@ -180,7 +192,11 @@ export class TypeScriptCompilerClient {
     const kind = operation === 'compile' ? 'compile' : 'learning-check';
     if (this.#disposed) return Promise.reject(new DOMException('Compiler disposed', 'AbortError'));
     this.cancel();
-    if (!isTypeScriptCompileInput(input)) return Promise.resolve(invalidInput());
+    const inputGuard =
+      operation === 'compile'
+        ? (this.options.compileInputGuard ?? isTypeScriptCompileInput)
+        : isTypeScriptCompileInput;
+    if (!inputGuard(input)) return Promise.resolve(invalidInput());
     const snapshot = { ...input, files: { ...input.files } };
     let worker: CompilerWorkerPort;
     try {

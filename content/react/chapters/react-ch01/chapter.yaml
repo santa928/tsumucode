@@ -1,0 +1,7 @@
+id: react-ch01
+sequence: 0
+title: 型付きの問題カードを表示する
+goal: Component・JSX・Propsを区別し、型に合うデータを渡して実DOM表示を確かめる。
+estimatedMinutes: 20
+kind: standard
+lessonSources: [lessons/react-ch01-l01/lesson.yaml]

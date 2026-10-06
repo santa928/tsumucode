@@ -1,4 +1,5 @@
 /** 任意のBASE_PATHを前提に、React／Tailwind／alias設定を副作用なくexportする。 */
+import { reactPreviewSourcePlugin } from './scripts/build/reactPreviewSourcePlugin.ts';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
@@ -15,7 +16,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
   return {
     base: normalizeBasePath(env.BASE_PATH),
-    plugins: [react(), tailwindcss()],
+    plugins: [react(), tailwindcss(), reactPreviewSourcePlugin()],
     test: { maxWorkers: 2 },
     build: {
       cssCodeSplit: false,

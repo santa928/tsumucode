@@ -17,6 +17,11 @@ export interface CourseRuntimeServices {
 export type CourseRuntimeDescriptor = Pick<CourseIndex, 'id' | 'runnerId' | 'validatorId'>;
 
 export interface CourseRuntimeLoaders {
+  loadReactRunner?(): Promise<{ readonly create: () => RunnerAdapter }>;
+  loadReactValidator?(): Promise<{ readonly create: () => ValidatorAdapter }>;
+  loadReactEditor?(): Promise<{
+    readonly register: (registry: EditorLanguageRegistry) => Promise<void>;
+  }>;
   loadTypeScriptRunner(): Promise<{ readonly create: () => RunnerAdapter }>;
   loadTypeScriptValidator(): Promise<{ readonly create: () => ValidatorAdapter }>;
   loadTypeScriptEditor(): Promise<{
@@ -29,7 +34,19 @@ export interface CourseRuntimeLoaders {
   }>;
 }
 
-const defaultLoaders: CourseRuntimeLoaders = {
+const defaultLoaders = {
+  async loadReactRunner() {
+    const { ReactRunnerAdapter } = await import('../../adapters/runtime/react/ReactRunnerAdapter');
+    return { create: () => new ReactRunnerAdapter() };
+  },
+  async loadReactValidator() {
+    const { ReactValidator } = await import('../../adapters/validation/react/ReactValidator');
+    return { create: () => new ReactValidator() };
+  },
+  async loadReactEditor() {
+    const { registerReactEditorLanguage } = await import('./editor/reactEditorLanguage');
+    return { register: registerReactEditorLanguage };
+  },
   /** TypeScript実行実装を演習到達時に読み、Compiler Worker自体は初回compileまで生成しない。 */
   async loadTypeScriptRunner() {
     const { TypeScriptRunnerAdapter } =
@@ -111,6 +128,21 @@ export function createCourseRuntimeEnsurer(
         if (!services.validatorRegistry.has('javascript')) {
           services.validatorRegistry.register('javascript', validator.create);
         }
+        await editor.register(services.editorLanguageRegistry);
+        return;
+      }
+      case 'react': {
+        assertCourseRuntimeIds(course, 'react', 'react');
+        const [runner, validator, editor] = await Promise.all([
+          (loaders.loadReactRunner ?? defaultLoaders.loadReactRunner)(),
+          (loaders.loadReactValidator ?? defaultLoaders.loadReactValidator)(),
+          (loaders.loadReactEditor ?? defaultLoaders.loadReactEditor)(),
+        ]);
+        if (!services.runnerRegistry.has('react'))
+          services.runnerRegistry.register('react', runner.create);
+        if (!services.validatorRegistry.has('react'))
+          services.validatorRegistry.register('react', validator.create);
+        registerHtmlCssEditorLanguages(services.editorLanguageRegistry);
         await editor.register(services.editorLanguageRegistry);
         return;
       }

@@ -1,0 +1,14 @@
+schemaVersion: 1
+concepts:
+  - id: react-component-role
+    introducedBySlideId: react-ch01-l01-s01
+    prerequisiteConceptIds: []
+    minimumProjectLevel: read
+  - id: react-jsx-role
+    introducedBySlideId: react-ch01-l01-s02
+    prerequisiteConceptIds: [react-component-role]
+    minimumProjectLevel: read
+  - id: react-props-data
+    introducedBySlideId: react-ch01-l01-s03
+    prerequisiteConceptIds: [react-jsx-role]
+    minimumProjectLevel: transform

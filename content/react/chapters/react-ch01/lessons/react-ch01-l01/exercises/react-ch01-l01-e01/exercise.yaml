@@ -1,0 +1,252 @@
+id: react-ch01-l01-e01
+kind: standard
+workspaceId: react-ch01-l01-e01
+countsTowardStandardExerciseTotal: true
+title: 型付きの問題文をカードへ渡す
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: react-props-data
+    minimumLevel: transform
+scaffoldLevel: transform
+runtime:
+  kind: react
+  entryFile: main.tsx
+  sourceType: module
+  capabilityProfile: dom
+  primaryOutput: preview
+  profile: props-card-v1
+steps:
+  - id: fix-prompt
+    file: main.tsx
+    target: 問題文promptの値
+    starterAnchor: 'prompt: 42'
+    change: 問題文を指定の文字列へ直す
+    observe: 型の案内が消え、問題カードの見出しに反映される
+    requiresConceptIds:
+      - react-props-data
+    validationRuleIds:
+      - react-ch01-l01-e01-r01
+      - react-ch01-l01-e01-r02
+      - react-ch01-l01-e01-r03
+      - react-ch01-l01-e01-r04
+files:
+  - path: main.tsx
+    language: react
+    source: starter/main.tsx
+    editable: true
+  - path: QuestionCard.tsx
+    language: react
+    source: starter/QuestionCard.tsx
+    editable: false
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+solutionFiles:
+  - path: main.tsx
+    language: react
+    source: solution/main.tsx
+    editable: false
+  - path: QuestionCard.tsx
+    language: react
+    source: solution/QuestionCard.tsx
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: react-ch01-l01-e01-r01
+    label: 問題文をPropsから表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#question-prompt'
+    assertion:
+      kind: text
+      operator: equals
+      expected: HTMLが受け持つものは？
+    feedback:
+      target: main.tsxの問題データとPreview
+      expected: 問題文をPropsから表示する
+      nextAction: Questionの型を残し、渡した問題文と選択肢を実際の表示と比べます。
+    hintId: react-ch01-l01-e01-h02
+    relatedSlideId: react-ch01-l01-s03
+  - id: react-ch01-l01-e01-r02
+    label: 最初の選択肢を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: li:nth-child(1)
+    assertion:
+      kind: text
+      operator: equals
+      expected: 内容
+    feedback:
+      target: main.tsxの問題データとPreview
+      expected: 最初の選択肢を表示する
+      nextAction: Questionの型を残し、渡した問題文と選択肢を実際の表示と比べます。
+    hintId: react-ch01-l01-e01-h02
+    relatedSlideId: react-ch01-l01-s03
+  - id: react-ch01-l01-e01-r03
+    label: 二つ目の選択肢を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: li:nth-child(2)
+    assertion:
+      kind: text
+      operator: equals
+      expected: 見た目
+    feedback:
+      target: main.tsxの問題データとPreview
+      expected: 二つ目の選択肢を表示する
+      nextAction: Questionの型を残し、渡した問題文と選択肢を実際の表示と比べます。
+    hintId: react-ch01-l01-e01-h02
+    relatedSlideId: react-ch01-l01-s03
+  - id: react-ch01-l01-e01-r04
+    label: 選択肢の個数を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: section p
+    assertion:
+      kind: text
+      operator: equals
+      expected: 選択肢は2個です
+    feedback:
+      target: main.tsxの問題データとPreview
+      expected: 選択肢の個数を表示する
+      nextAction: Questionの型を残し、渡した問題文と選択肢を実際の表示と比べます。
+    hintId: react-ch01-l01-e01-h02
+    relatedSlideId: react-ch01-l01-s03
+hints:
+  - id: react-ch01-l01-e01-h01
+    level: 1
+    title: Propsの型と値を比べる
+    text: QuestionCard.tsxのQuestion型を読み、promptの型とmain.tsxの値を比べます。
+    relatedSlideId: react-ch01-l01-s03
+  - id: react-ch01-l01-e01-h02
+    level: 2
+    title: 問題文を文字列で渡す
+    text: promptはstringです。数値42の代わりに、問題文を引用符で囲みます。
+    relatedSlideId: react-ch01-l01-s03
+  - id: react-ch01-l01-e01-h03
+    level: 3
+    title: 指定の問題文を渡す
+    text: "prompt: 'HTMLが受け持つものは？' に直し、実際の見出し・選択肢・個数を確認します。"
+    relatedSlideId: react-ch01-l01-s03
+relatedSlideIds:
+  - react-ch01-l01-s01
+  - react-ch01-l01-s02
+  - react-ch01-l01-s03
+  - react-ch01-l01-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: starter
+    expectedStatus: code-error
+    files:
+      - path: main.tsx
+        language: react
+        source: fixtures/starter.tsx
+        editable: false
+      - path: QuestionCard.tsx
+        language: react
+        source: fixtures/QuestionCard.tsx
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-2322
+  - id: solution
+    expectedStatus: pass
+    files:
+      - path: main.tsx
+        language: react
+        source: fixtures/solution.tsx
+        editable: false
+      - path: QuestionCard.tsx
+        language: react
+        source: fixtures/QuestionCard.tsx
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternative
+    expectedStatus: pass
+    files:
+      - path: main.tsx
+        language: react
+        source: fixtures/alternative.tsx
+        editable: false
+      - path: QuestionCard.tsx
+        language: react
+        source: fixtures/QuestionCard.tsx
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: missing-prop
+    expectedStatus: code-error
+    files:
+      - path: main.tsx
+        language: react
+        source: fixtures/missing-prop.tsx
+        editable: false
+      - path: QuestionCard.tsx
+        language: react
+        source: fixtures/QuestionCard.tsx
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-2741
+  - id: wrong-display
+    expectedStatus: incomplete
+    files:
+      - path: main.tsx
+        language: react
+        source: fixtures/wrong-display.tsx
+        editable: false
+      - path: QuestionCard.tsx
+        language: react
+        source: fixtures/QuestionCard.tsx
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - react-ch01-l01-e01-r01
+      - react-ch01-l01-e01-r02
+      - react-ch01-l01-e01-r03

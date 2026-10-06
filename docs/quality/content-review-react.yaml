@@ -1,0 +1,22 @@
+schemaVersion: 1
+releaseStatus: draft
+verifiedSourceCommit: draft
+canonicalDistSha256: draft
+lessons:
+  - lessonId: react-ch01-l01
+    authorId: tsumucode-react-authoring
+    reviewerId: review_issue109
+    sourceHash: 2279b9ba4c15d34e4118e2826aa0ed39f1180294ecefbbc598ab723769fd5010
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: >-
+      Reviewer review_issue109がComponent/JSX/Propsの全4Slide・Exercise・段階Hint・Starter/Solution・5FixtureとRuntime差分を独立読解し、内容の正確さと目標整合を承認。
+      TSXの初出説明を補い、未説明語と意図しないHint漏洩は0。型成功と指定の実表示を区別し、map/key/createRootを用意済みの足場として扱う。
+      読み取り専用Componentの型弱化と固定表示による採点迂回を指摘し、固定ASTとHTML/File集合照合の修正後に解消確認。追加必須指摘なし。
+      examplesExecutedは作者の実Compiler/Runner/Validatorを通す5Fixture、描画例外と復帰、Source不一致、足場改変拒否、通常UIの型修正/実DOM/採点/保存/再読込/Resetの成功証拠に基づく。
+      Reviewerは初回PC画像2点と原成功報告を実見した。Reviewerの独自再実行、人の初心者理解、物理実機、全React Course完成、正式公開の受入を意味しない。
+      Courseとこの台帳のreleaseStatus、verifiedSourceCommit、canonicalDistSha256はdraftを維持する。

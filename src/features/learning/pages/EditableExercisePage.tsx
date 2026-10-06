@@ -183,6 +183,12 @@ export function EditableExercisePage({ lease, ...data }: EditableExercisePagePro
         <button
           type="button"
           onClick={() => {
+            // 失敗したnative importを保持するブラウザでは、同じdocumentの再importで復帰しない。
+            // 環境準備前は編集UIがなく、下書きを保持したまま同じURLから読み直せる。
+            if (data.course.id === 'react') {
+              window.location.reload();
+              return;
+            }
             setAttempt((current) => current + 1);
           }}
           className="mt-4 inline-flex min-h-11 items-center rounded-workshop-md bg-workshop-primary px-5 py-3 font-bold text-workshop-on-primary"
@@ -933,7 +939,7 @@ function EditableSession({
                 : '判定する'}
             </button>
             {(controller.environment.mode === 'console' && busy) ||
-            (exercise.runtime?.kind === 'typescript' &&
+            (['typescript', 'react'].includes(exercise.runtime?.kind ?? '') &&
               (operation === 'preview' || operation === 'validate')) ? (
               <button
                 type="button"
