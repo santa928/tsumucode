@@ -48,7 +48,7 @@ describe('TsumuCode Pages workflow', () => {
     expect(compile).toBeDefined();
     expect(resolve).toBeDefined();
     expect(steps.indexOf(compile!)).toBeLessThan(steps.indexOf(resolve!));
-    expect(compile?.if).toBe(`${resolve?.if} && inputs.course_id == 'typescript'`);
+    expect(compile?.if).toBe(`${resolve?.if ?? ''} && inputs.course_id == 'typescript'`);
     expect(compile?.run).toBe('./scripts/docker-compose.sh run --rm app npm run content:compile');
     expect(compile?.['continue-on-error']).not.toBe(true);
   });
