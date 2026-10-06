@@ -37,6 +37,22 @@ function workflow(): { readonly source: string; readonly parsed: PagesWorkflow }
 }
 
 describe('TsumuCode Pages workflow', () => {
+  it('新規checkoutのTS承認検証にはcontent生成を先に成功させる', () => {
+    const steps = workflow().parsed.jobs?.resolve?.steps ?? [];
+    const compile = steps.find(
+      ({ name }) => name === 'Compile TypeScript candidate content for source review',
+    );
+    const resolve = steps.find(
+      ({ name }) => name === 'Resolve candidate, beta, or registered rollback',
+    );
+    expect(compile).toBeDefined();
+    expect(resolve).toBeDefined();
+    expect(steps.indexOf(compile!)).toBeLessThan(steps.indexOf(resolve!));
+    expect(compile?.if).toBe(`${resolve?.if ?? ''} && inputs.course_id == 'typescript'`);
+    expect(compile?.run).toBe('./scripts/docker-compose.sh run --rm app npm run content:compile');
+    expect(compile?.['continue-on-error']).not.toBe(true);
+  });
+
   it('同じRelease buildのbundle/static失敗を全Browser開始前に返す', () => {
     const steps = workflow().parsed.jobs?.quality?.steps ?? [];
     const index = (name: string) => steps.findIndex((step) => step.name === name);

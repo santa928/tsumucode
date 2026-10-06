@@ -1,15 +1,15 @@
 schemaVersion: 1
 courseId: typescript
 status: preflight-passed-final-ci-required
-verifiedSourceCommit: 0abea1ee4a28071f28f485b40b776cc9637f226a
+verifiedSourceCommit: e2d0d361e58ddddee57050d0bd625f132e5d0b15
 canonicalDistSha256: 9bce7d57a630338ea09d1d2abb560a7aee2e03ac75f09faa8207dfc7771433c7
-candidateTreeSha256: ae0f72010762701e16a9327bc98e248b08d4b36c87d810e12d1f80201a896ad6
+candidateTreeSha256: 97e9860693b9cb8d59849cb0bc08ce858267895ac63ba9d50882437cc174a76b
 draftCanonicalDistSha256: e14f5513173fe2e6cc9763eef8a6b9fb0118ea001816d068b92e813f3db17a6e
-normalizedLearningInputSha256: 8301550b9e28f19d0ca3e268d5fa6dfe0a42615214af933640e361065f9f04db
+normalizedLearningInputSha256: 775187787b520b65c80567de8bfe49b347e430f74cb701a8683150ff86f01b0b
 draftInput:
   schemaVersion: 1
   courseId: typescript
-  sourceCommit: b39dc98c5c9ebb061c15749e4841a95dfbaf3e07
+  sourceCommit: 64a5e93d264a6194a11cadf8478c98894111b14f
   scope: typescript-learning-input-v2
   publicationMetadata:
     coursePublicationStatus: draft
@@ -24,9 +24,9 @@ draftInput:
       normalizedSha256: 0ce42ea2978cead13d5367a85c9152ec9e183a5a702f2a01e14debbc7fc9f61d
       normalizedBytes: 365
     - path: .github/workflows/pages.yml
-      rawSha256: fb18b8468ae33719c33f8bebcbceb36090e9304841d602e32b89b728969ce2ad
-      normalizedSha256: fb18b8468ae33719c33f8bebcbceb36090e9304841d602e32b89b728969ce2ad
-      normalizedBytes: 21441
+      rawSha256: d9240aa8dca4b9a2c6b175db3a486e513c56692fd53bb05b2dde9a18139be7fc
+      normalizedSha256: d9240aa8dca4b9a2c6b175db3a486e513c56692fd53bb05b2dde9a18139be7fc
+      normalizedBytes: 21737
     - path: .prettierignore
       rawSha256: 07ba3492dd8c961706cb3831c360a0f8551b536f830b73f02d4210eb0e1970b9
       normalizedSha256: 07ba3492dd8c961706cb3831c360a0f8551b536f830b73f02d4210eb0e1970b9
@@ -13715,11 +13715,11 @@ draftInput:
       rawSha256: f7a6f125e43454746a5c24b856cd8977a637bd21bebb3b84d400d9423233577d
       normalizedSha256: f7a6f125e43454746a5c24b856cd8977a637bd21bebb3b84d400d9423233577d
       normalizedBytes: 714
-  normalizedInputSha256: 8301550b9e28f19d0ca3e268d5fa6dfe0a42615214af933640e361065f9f04db
+  normalizedInputSha256: 775187787b520b65c80567de8bfe49b347e430f74cb701a8683150ff86f01b0b
 finalInput:
   schemaVersion: 1
   courseId: typescript
-  sourceCommit: 0abea1ee4a28071f28f485b40b776cc9637f226a
+  sourceCommit: e2d0d361e58ddddee57050d0bd625f132e5d0b15
   scope: typescript-learning-input-v2
   publicationMetadata:
     coursePublicationStatus: published
@@ -13734,9 +13734,9 @@ finalInput:
       normalizedSha256: 0ce42ea2978cead13d5367a85c9152ec9e183a5a702f2a01e14debbc7fc9f61d
       normalizedBytes: 365
     - path: .github/workflows/pages.yml
-      rawSha256: fb18b8468ae33719c33f8bebcbceb36090e9304841d602e32b89b728969ce2ad
-      normalizedSha256: fb18b8468ae33719c33f8bebcbceb36090e9304841d602e32b89b728969ce2ad
-      normalizedBytes: 21441
+      rawSha256: d9240aa8dca4b9a2c6b175db3a486e513c56692fd53bb05b2dde9a18139be7fc
+      normalizedSha256: d9240aa8dca4b9a2c6b175db3a486e513c56692fd53bb05b2dde9a18139be7fc
+      normalizedBytes: 21737
     - path: .prettierignore
       rawSha256: 07ba3492dd8c961706cb3831c360a0f8551b536f830b73f02d4210eb0e1970b9
       normalizedSha256: 07ba3492dd8c961706cb3831c360a0f8551b536f830b73f02d4210eb0e1970b9
@@ -27425,7 +27425,7 @@ finalInput:
       rawSha256: f7a6f125e43454746a5c24b856cd8977a637bd21bebb3b84d400d9423233577d
       normalizedSha256: f7a6f125e43454746a5c24b856cd8977a637bd21bebb3b84d400d9423233577d
       normalizedBytes: 714
-  normalizedInputSha256: 8301550b9e28f19d0ca3e268d5fa6dfe0a42615214af933640e361065f9f04db
+  normalizedInputSha256: 775187787b520b65c80567de8bfe49b347e430f74cb701a8683150ff86f01b0b
 acceptance:
   schemaVersion: 1
   courseId: typescript
@@ -27434,7 +27434,7 @@ acceptance:
   publicationApproval: pending
   realHumanTrial: unverified
   lowEndPhysicalDevice: unverified
-  sourceCommit: b39dc98c5c9ebb061c15749e4841a95dfbaf3e07
+  sourceCommit: 64a5e93d264a6194a11cadf8478c98894111b14f
   manifestSha256: 607daf51a4e9881d0bf5a62e7b56cc77d103c7cd3874303da419b9b86c9037a7
   artifactSha256: e14f5513173fe2e6cc9763eef8a6b9fb0118ea001816d068b92e813f3db17a6e
   environment:
@@ -28002,50 +28002,50 @@ acceptance:
         sha256: a0f4482a41f20828623b5b781b978e65cf3862b783609cb2ab113a1428fff21f
       reuseReason:
         capture89のsrc・固定lock・課題・harnessと固定Gitの3依存は現在も同一。差分は公開Gate/承認履歴のauthoring
-        metadata・公開一覧/PathのGolden画像。実src/lock/課題/計測harnessは同一。
+        metadata・公開一覧/PathのGolden画像・Source確認前のcatalog生成順。実src/lock/課題/計測harnessは同一。
     - kind: warm
       rawEvidence:
         path: .release-issue115/performance-warm.json
         sha256: 7695e67899157792ac52324beab8d528d095a378d71ae9288b07a71b27cd4242
       reuseReason:
         capture89のsrc・固定lock・課題・harnessと固定Gitの3依存は現在も同一。差分は公開Gate/承認履歴のauthoring
-        metadata・公開一覧/PathのGolden画像。実src/lock/課題/計測harnessは同一。
+        metadata・公開一覧/PathのGolden画像・Source確認前のcatalog生成順。実src/lock/課題/計測harnessは同一。
     - kind: simple
       rawEvidence:
         path: .release-issue115/performance-simple.json
         sha256: f5f71be81c0e8573c31a2f063739070ab32ada4768f0762f791e63c230ed1b44
       reuseReason:
         capture89のsrc・固定lock・課題・harnessと固定Gitの3依存は現在も同一。差分は公開Gate/承認履歴のauthoring
-        metadata・公開一覧/PathのGolden画像。実src/lock/課題/計測harnessは同一。
+        metadata・公開一覧/PathのGolden画像・Source確認前のcatalog生成順。実src/lock/課題/計測harnessは同一。
     - kind: dom
       rawEvidence:
         path: .release-issue115/performance-dom.json
         sha256: ee06144fc796a3edd2d176baef0d0dabd064d26bc267f43e530e9e3d647a10f7
       reuseReason:
         capture89のsrc・固定lock・課題・harnessと固定Gitの3依存は現在も同一。差分は公開Gate/承認履歴のauthoring
-        metadata・公開一覧/PathのGolden画像。実src/lock/課題/計測harnessは同一。
+        metadata・公開一覧/PathのGolden画像・Source確認前のcatalog生成順。実src/lock/課題/計測harnessは同一。
     - kind: async
       rawEvidence:
         path: .release-issue115/performance-async.json
         sha256: a761d2be73eec364a0cdd5236bc85f424b70e054ce5a67b60efca3216ac625f0
       reuseReason:
         capture89のsrc・固定lock・課題・harnessと固定Gitの3依存は現在も同一。差分は公開Gate/承認履歴のauthoring
-        metadata・公開一覧/PathのGolden画像。実src/lock/課題/計測harnessは同一。
+        metadata・公開一覧/PathのGolden画像・Source確認前のcatalog生成順。実src/lock/課題/計測harnessは同一。
     - kind: busy
       rawEvidence:
         path: .release-issue115/performance-busy.json
         sha256: 99a1ced452fde549d995f64e13fa4dd0746ac6d3ab03db3bfe121ac42128f836
       reuseReason:
         capture89のsrc・固定lock・課題・harnessと固定Gitの3依存は現在も同一。差分は公開Gate/承認履歴のauthoring
-        metadata・公開一覧/PathのGolden画像。実src/lock/課題/計測harnessは同一。
+        metadata・公開一覧/PathのGolden画像・Source確認前のcatalog生成順。実src/lock/課題/計測harnessは同一。
     - kind: stop
       rawEvidence:
         path: .release-issue115/performance-stop.json
         sha256: 1516e08187205d411116bbf64566877518ba4d3c54f4d1ad2034256f4bf5bfe3
       reuseReason:
         capture89のsrc・固定lock・課題・harnessと固定Gitの3依存は現在も同一。差分は公開Gate/承認履歴のauthoring
-        metadata・公開一覧/PathのGolden画像。実src/lock/課題/計測harnessは同一。
-acceptanceSha256: bdd10cbe6d2a245229ce4d2e4d61b00c96276817426429868817ce2c1f954922
+        metadata・公開一覧/PathのGolden画像・Source確認前のcatalog生成順。実src/lock/課題/計測harnessは同一。
+acceptanceSha256: 3e4e103477a69242c93243f938430d41359103e0a936e37b54ea19cadc866561
 lazyGzipBytes: 1888159
 performanceEvidence:
   - kind: cold
@@ -28397,28 +28397,28 @@ browserMatrix:
     skippedTests: 0
     reportSha256: 25e7658595e3caef7bc89727e4f83983fca9b00e6ee840be3fb9f9b5cb27a59f
     testSourceSha256: 1d4c3fc46778c2eef89166d055075f1d8383f40dd8b1721de7ebd7c2888ac2d1
-    normalizedLearningInputSha256: 8301550b9e28f19d0ca3e268d5fa6dfe0a42615214af933640e361065f9f04db
+    normalizedLearningInputSha256: 775187787b520b65c80567de8bfe49b347e430f74cb701a8683150ff86f01b0b
   - engine: firefox
     passedTests: 2
     failedTests: 0
     skippedTests: 0
     reportSha256: 25e7658595e3caef7bc89727e4f83983fca9b00e6ee840be3fb9f9b5cb27a59f
     testSourceSha256: 1d4c3fc46778c2eef89166d055075f1d8383f40dd8b1721de7ebd7c2888ac2d1
-    normalizedLearningInputSha256: 8301550b9e28f19d0ca3e268d5fa6dfe0a42615214af933640e361065f9f04db
+    normalizedLearningInputSha256: 775187787b520b65c80567de8bfe49b347e430f74cb701a8683150ff86f01b0b
   - engine: webkit
     passedTests: 2
     failedTests: 0
     skippedTests: 0
     reportSha256: 25e7658595e3caef7bc89727e4f83983fca9b00e6ee840be3fb9f9b5cb27a59f
     testSourceSha256: 1d4c3fc46778c2eef89166d055075f1d8383f40dd8b1721de7ebd7c2888ac2d1
-    normalizedLearningInputSha256: 8301550b9e28f19d0ca3e268d5fa6dfe0a42615214af933640e361065f9f04db
+    normalizedLearningInputSha256: 775187787b520b65c80567de8bfe49b347e430f74cb701a8683150ff86f01b0b
 independenceReview:
   author: root
   reviewer: review_issue109
   decision: approved
   privateOriginalsChecked: true
-  productTreeSha256: ae0f72010762701e16a9327bc98e248b08d4b36c87d810e12d1f80201a896ad6
-  evidenceSha256: 8ea452deb947bad18b6408843857c0ce60dd123df7ec4c3c7b5dfe57837387e5
+  productTreeSha256: 97e9860693b9cb8d59849cb0bc08ce858267895ac63ba9d50882437cc174a76b
+  evidenceSha256: 0aa8df510df2a21896a95f2311fdda639933f99fce6b73dd78251eb75913ad6a
   evaluationReceiptSha256s:
     - 344080e8163c616ef77785e7d5b42efc8e5716ac31311f1af13f1e613b7d6bc4
     - 2c70192b219faa91bd6d53b835b0df11e9b20b24cfca74f822acd55c5bfa59c0

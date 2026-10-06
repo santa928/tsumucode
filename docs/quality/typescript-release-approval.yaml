@@ -1,7 +1,7 @@
 schemaVersion: 2
 status: approved
-verifiedSourceCommit: 0abea1ee4a28071f28f485b40b776cc9637f226a
-candidateTreeSha256: ae0f72010762701e16a9327bc98e248b08d4b36c87d810e12d1f80201a896ad6
+verifiedSourceCommit: e2d0d361e58ddddee57050d0bd625f132e5d0b15
+candidateTreeSha256: 97e9860693b9cb8d59849cb0bc08ce858267895ac63ba9d50882437cc174a76b
 canonicalDistSha256: 9bce7d57a630338ea09d1d2abb560a7aee2e03ac75f09faa8207dfc7771433c7
 courseManifestSha256: 2a5609a2d288be5d76585642d3115e6c88e5ff4cd6aad248f4d0bfdf24385c22
 publicProvenanceSha256: befa0e54ccc10aa054ea24d65141a7fcaec606ededf1765e7f9f58aaae2938c9
@@ -9,11 +9,11 @@ visualBaselineSha256: 6e196b49c21f1670b17577964e646093288b19c6ff198d68de9cd1d19f
 records:
   contentReview:
     path: docs/quality/content-review-typescript.yaml
-    sha256: d69c9465abc469117d8f1829305dc4f1e21e95982fc01228b50d1142fa3886fd
+    sha256: 704fa8c22dc0710b98992030927107f5979ded03fbc1f4607c93abd32e7a2bf1
   technicalAcceptance:
     path: docs/quality/typescript-release-acceptance.yaml
-    sha256: fc205dbab0f73c846ee3af4cc99771fa7cf97e97f10ab3a8cb4c77164649326e
+    sha256: f17b6ade8baeb5d339b96777c96ca48107d1b3a838ec630b2f69f795972ee5de
 approvedBy: repository-owner santa928 / parent-thread 01a10b91-1aa7-7475-a007-c3fb4bce8017 /
   Sentinel_63f9a2fed9248191b84e0d843ce58f51
-approvedAt: 2026-10-06T09:15:40.830Z
+approvedAt: 2026-10-06T09:51:20.534Z
 courseId: typescript
