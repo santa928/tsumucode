@@ -1,0 +1,45 @@
+schemaVersion: 2
+status: approved
+revision: 2026-10-06.4
+tag: tsumucode-release-2026-10-06.4
+sourceCommit: e54797029e8d6a37cffc517b9c312454f9944f52
+workflowHeadCommit: b2e22331796351fa9b4afc9578ae267ff46e50dd
+workflowRunId: '37461649679'
+workflowRunAttempt: 1
+reportArtifactId: '11416932718'
+reportArtifactDigest: sha256:aadda60e08091ec26ef3c6363644318ba07d2f8c3fec9811cbc5adb7a8b92bf8
+pageUrl: https://santa928.github.io/tsumucode/
+pageVerificationStatus: passed
+reportVerificationStatus: passed
+tagVerificationStatus: passed
+verifiedBy: tsumucode-ts-release-root-public-ui-and-immutable-artifact-verification
+verifiedAt: 2026-10-06T13:45:59.134Z
+courseId: typescript
+environmentAdmissionStatus: passed
+independentEnvironmentApproval: not-configured
+publicSmokeOperations:
+  - operationId: start
+    status: passed
+    evidenceSha256: 19b2a3f09fe70333e8369e1b1c76ff2f409173c875b173d8d7fb36e32abbfc95
+    observedAt: 2026-10-06T13:42:30.558Z
+  - operationId: grading
+    status: passed
+    evidenceSha256: 940ba8e7d2df1825cf95358f712926a5258855ae4056efe7151ee8208b7a963b
+    observedAt: 2026-10-06T13:42:37.699Z
+  - operationId: persistence
+    status: passed
+    evidenceSha256: 0f3cf8c35e2cda8a18d737f6828ddf54da98a0c1ced2b5e1dae536e0012c9f4f
+    observedAt: 2026-10-06T13:42:38.821Z
+  - operationId: resume
+    status: passed
+    evidenceSha256: 8a97f854b1154c7a43a2c53358389b4ce67842da881b71413f04111d34b34896
+    observedAt: 2026-10-06T13:42:38.965Z
+  - operationId: export
+    status: passed
+    evidenceSha256: e844aee2bdf7b66ed4296dec716f2665c82e6646da608afc619ad6821aabf431
+    observedAt: 2026-10-06T13:42:40.042Z
+  - operationId: fresh-import
+    status: passed
+    evidenceSha256: fd994e0ef0eb6cac1a51500e4ca99c6064361a3fcfa78ae8afc69fa89b23b7f8
+    observedAt: 2026-10-06T13:42:43.349Z
+requiredUnconfirmed: 0
