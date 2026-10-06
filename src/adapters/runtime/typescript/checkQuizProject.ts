@@ -1,7 +1,7 @@
 /** Projectの原文確認と非emit型probeだけを実行し、Runner用JSやASTを返さない。 */
 import ts from 'typescript';
 import type { TypeScriptQuizProjectProfile } from '../../../core/content/typeScriptQuizProjectContract';
-import { checkTypeScript } from './compileTypeScript';
+import { createTypeScriptProbeChecker } from './compileTypeScript';
 import { inspectQuizProject, type QuizProjectInspection } from './inspectQuizProject';
 
 export interface QuizProjectFacts extends QuizProjectInspection {
@@ -73,6 +73,7 @@ export function checkQuizProject(
     inspected.typeContractAccepted &&
     inspected.usesLearningValues
   ) {
+    const checkProbe = createTypeScriptProbeChecker();
     const positive = [
       `const ${PREFIX}question: Question = { category: 'web', text: '別の問題', choices: ['a', 'b'], correct: 'b' };`,
       `const ${PREFIX}state: QuizState = answer(createState(), ${PREFIX}question, 'b');`,
@@ -83,14 +84,14 @@ export function checkQuizProject(
     ].join('\n');
     const positiveSource = `${original}\n${positive}\n`;
     positiveProbeAccepted =
-      checkTypeScript({ ...files, 'main.ts': positiveSource }, libraries).status === 'valid';
+      checkProbe({ ...files, 'main.ts': positiveSource }, libraries).status === 'valid';
     if (positiveProbeAccepted) {
       const negative = [
         `readQuestions('other');`,
         `answer(createState(), ${PREFIX}question, 2);`,
         `${PREFIX}state.score = 2;`,
       ];
-      const result = checkTypeScript(
+      const result = checkProbe(
         { ...files, 'main.ts': `${positiveSource}${negative.join('\n')}\n` },
         libraries,
       );

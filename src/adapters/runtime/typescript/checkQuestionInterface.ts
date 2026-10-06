@@ -1,6 +1,6 @@
 /** Questionの初回演習だけを対象に、元TSの有限構文と形の正負検査を確認する。 */
 import ts from 'typescript';
-import { checkTypeScript } from './compileTypeScript';
+import { checkTypeScript, createTypeScriptProbeChecker } from './compileTypeScript';
 
 export interface QuestionInterfaceFacts {
   readonly programShapeAccepted: boolean;
@@ -274,7 +274,8 @@ export function checkQuestionInterface(
     if (checkTypeScript(files, libraries).status !== 'valid') return { status: 'system-error' };
     const copy = `${source}\nexport { ${variable} as __tsumucode_question };\n`;
     const prefix = 'import type { __tsumucode_question } from "./main.js";\n\n';
-    const positive = checkTypeScript(
+    const checkProbe = createTypeScriptProbeChecker();
+    const positive = checkProbe(
       {
         'main.ts': copy,
         '__tsumucode_positive.ts':
@@ -320,7 +321,7 @@ export function checkQuestionInterface(
         property: 'correctIndex:',
       },
     ];
-    const negative = checkTypeScript(
+    const negative = checkProbe(
       {
         'main.ts': copy,
         '__tsumucode_negative.ts': prefix + negatives.map(({ source }) => source).join('\n') + '\n',

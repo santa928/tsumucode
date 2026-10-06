@@ -37,9 +37,16 @@ if (fullSuite) {
   runTests(['run']);
 } else {
   const selected = new Set(files);
-  const dynamicDirectories = files.some((file) => /^(content\/|scripts\/content\/)/u.test(file))
-    ? ['tests/content', 'scripts/content']
-    : [];
+  const compilerChanged = files.some((file) => /^src\/adapters\/runtime\/typescript\//u.test(file));
+  const dynamicDirectories =
+    compilerChanged || files.some((file) => /^(content\/|scripts\/content\/)/u.test(file))
+      ? ['tests/content', 'scripts/content']
+      : [];
+  if (compilerChanged) {
+    // Workerの動的読込で切れる依存を、呼出側と教材契約の両方から補う。
+    selected.add('src/adapters/runtime/typescript/TypeScriptCompilerClient.ts');
+    selected.add('src/core/content/schema.ts');
+  }
   if (dynamicDirectories.length > 0) {
     const tracked = execFileSync('git', ['ls-files', ...dynamicDirectories], {
       encoding: 'utf8',

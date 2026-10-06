@@ -3,7 +3,11 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { compileTypeScript } from '../../../src/adapters/runtime/typescript/compileTypeScript';
+import {
+  checkTypeScript,
+  compileTypeScript,
+  createTypeScriptProbeChecker,
+} from '../../../src/adapters/runtime/typescript/compileTypeScript';
 
 const require = createRequire(import.meta.url);
 const libraryDirectory = path.dirname(require.resolve('typescript'));
@@ -101,4 +105,62 @@ describe('TypeScriptの型検査境界', () => {
       ).status,
     ).toBe('invalid-input');
   });
+
+  it('正負probeの変更・復帰を独立検査と同じ診断で返し、入力を変更しない', () => {
+    const checkProbe = createTypeScriptProbeChecker();
+    const files = {
+      'score.ts': 'export function twice(value: number): number { return value * 2; }',
+      'main.ts': 'import { twice } from "./score.js"; export const result = twice(3);',
+    };
+    const original = structuredClone(files);
+    for (const input of [
+      files,
+      { ...files, 'main.ts': files['main.ts'].replace('twice(3)', 'twice("3")') },
+      files,
+      { ...files, 'score.ts': files['score.ts'].replace('value: number', 'value: string') },
+      files,
+      { 'main.ts': files['main.ts'] },
+      files,
+    ]) {
+      expect(checkProbe(input, libraries)).toEqual(checkTypeScript(input, libraries));
+    }
+    expect(files).toEqual(original);
+    expect(checkProbe(files, libraries)).toEqual({ status: 'valid' });
+    expect(checkProbe(files, {})).toEqual(checkTypeScript(files, {}));
+    expect(checkProbe(files, libraries)).toEqual({ status: 'valid' });
+  }, 20_000);
+
+  it('global型と標準libの変更・削除後に古い診断やpropertyを再利用しない', () => {
+    const checkProbe = createTypeScriptProbeChecker();
+    const safe = { 'main.ts': 'export const value: number = 1;' };
+    expect(checkProbe(safe, libraries)).toEqual({ status: 'valid' });
+    const brokenGlobal = {
+      'main.ts': safe['main.ts'] + 'declare global { interface HTMLElement { id: number; } }',
+    };
+    const broken = checkTypeScript(brokenGlobal, libraries);
+    expect(broken.status).toBe('environment-error');
+    expect(checkProbe(brokenGlobal, libraries)).toEqual(broken);
+    expect(checkProbe(safe, libraries)).toEqual({ status: 'valid' });
+
+    const augmented = {
+      'main.ts': 'export {}; declare global { interface HTMLElement { __probeProperty: number; } }',
+    };
+    expect(checkProbe(augmented, libraries)).toEqual({ status: 'valid' });
+    const removed = {
+      'main.ts': "export const value: number = document.createElement('span').__probeProperty;",
+    };
+    const absent = checkTypeScript(removed, libraries);
+    expect(absent.status).toBe('type-error');
+    expect(checkProbe(removed, libraries)).toEqual(absent);
+
+    const customLibraries = { ...libraries };
+    customLibraries['lib.dom.d.ts'] = libraries['lib.dom.d.ts']!.replace(
+      /interface HTMLElement\b[^{]*\{/u,
+      '$&\n readonly __probeProperty: number;\n',
+    );
+    expect(customLibraries['lib.dom.d.ts']).not.toBe(libraries['lib.dom.d.ts']);
+    expect(checkProbe(removed, customLibraries)).toEqual({ status: 'valid' });
+    expect(checkProbe(removed, libraries)).toEqual(absent);
+    expect(createTypeScriptProbeChecker()(removed, libraries)).toEqual(absent);
+  }, 20_000);
 });

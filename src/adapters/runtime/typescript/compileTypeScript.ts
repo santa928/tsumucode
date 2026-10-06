@@ -63,11 +63,26 @@ export function checkTypeScript(
   return result.status === 'ready' ? { status: 'valid' } : result;
 }
 
+interface ProbeRequest {
+  builder?: ts.SemanticDiagnosticsBuilderProgram;
+}
+
+/** 正負probeの1回の検査内だけで再利用する。通常変換・別requestへ状態を共有しない。 */
+export function createTypeScriptProbeChecker(): typeof checkTypeScript {
+  const request: ProbeRequest = {};
+  return (files, libraries) => {
+    const result = processTypeScript(files, libraries, false, request);
+    if (result.status === 'environment-error') delete request.builder;
+    return result.status === 'ready' ? { status: 'valid' } : result;
+  };
+}
+
 /** 通常変換と型検査専用経路で、仮想Fileと診断の安全境界を共有する。 */
 function processTypeScript(
   files: Readonly<Record<string, string>>,
   standardLibraries: Readonly<Record<string, string>>,
   emitJavaScript: boolean,
+  request?: ProbeRequest,
 ): TypeScriptCompileResult {
   const entries = Object.entries(files);
   if (
@@ -120,10 +135,19 @@ function processTypeScript(
   };
   const output: Record<string, string> = {};
   const sourceMaps: Record<string, string> = {};
+  let projectSources: Map<string, ts.SourceFile> | undefined;
+  let reusableRequest: ProbeRequest | undefined;
   const host: ts.CompilerHost = {
-    getSourceFile: (name, languageVersion) => {
+    getSourceFile: (name, languageVersion, _onError, shouldCreateNewSourceFile) => {
       const source = virtualFiles.get(name);
-      return source === undefined ? undefined : ts.createSourceFile(name, source, languageVersion);
+      if (source === undefined) return undefined;
+      const project = projectSources?.get(name);
+      if (project && !shouldCreateNewSourceFile) return project;
+      const cached = reusableRequest?.builder?.getProgram().getSourceFile(name);
+      if (!shouldCreateNewSourceFile && cached?.text === source) return cached;
+      const parsed = ts.createSourceFile(name, source, languageVersion);
+      if (reusableRequest) Reflect.set(parsed, 'version', source);
+      return parsed;
     },
     getDefaultLibFileName: () => LIB_ROOT + DEFAULT_LIB,
     getCurrentDirectory: () => SOURCE_ROOT.slice(0, -1),
@@ -153,7 +177,43 @@ function processTypeScript(
   };
 
   try {
-    const program = ts.createProgram([...sources.keys()], options, host);
+    if (request) {
+      // projectのASTは毎回新規解析する。global型が変わる入力は独立検査へ戻す。
+      projectSources = new Map(
+        [...sources].map(([name, text]) => {
+          const parsed = ts.createSourceFile(name, text, ts.ScriptTarget.ES2023);
+          Reflect.set(parsed, 'version', text);
+          return [name, parsed];
+        }),
+      );
+      const moduleOnly = [...projectSources.values()].every(
+        (source) =>
+          ts.isExternalModule(source) &&
+          !source.statements.some(
+            (statement) =>
+              ts.isModuleDeclaration(statement) || ts.isNamespaceExportDeclaration(statement),
+          ),
+      );
+      const libraryChanged = request.builder
+        ?.getProgram()
+        .getSourceFiles()
+        .some(
+          (source) =>
+            source.fileName.startsWith(LIB_ROOT) && libraries.get(source.fileName) !== source.text,
+        );
+      if (!moduleOnly || libraryChanged) delete request.builder;
+      if (moduleOnly) reusableRequest = request;
+    }
+    const builder = reusableRequest
+      ? ts.createSemanticDiagnosticsBuilderProgram(
+          [...sources.keys()],
+          options,
+          host,
+          reusableRequest.builder,
+        )
+      : undefined;
+    const program = builder?.getProgram() ?? ts.createProgram([...sources.keys()], options, host);
+    if (reusableRequest && builder) reusableRequest.builder = builder;
     const environment = [...program.getOptionsDiagnostics(), ...program.getGlobalDiagnostics()];
     if (environment.length) {
       return { status: 'environment-error', diagnostics: diagnosticsForLearner(environment) };
@@ -166,7 +226,9 @@ function processTypeScript(
     if (syntax.length) {
       return { status: 'syntax-error', diagnostics: diagnosticsForLearner(syntax) };
     }
-    const semantic = program.getSemanticDiagnostics();
+    const semantic = builder
+      ? ts.sortAndDeduplicateDiagnostics(builder.getSemanticDiagnostics())
+      : program.getSemanticDiagnostics();
     const libraryErrors = semantic.filter((item) => item.file?.fileName.startsWith(LIB_ROOT));
     if (libraryErrors.length) {
       return { status: 'environment-error', diagnostics: diagnosticsForLearner(libraryErrors) };

@@ -1,6 +1,6 @@
 /** 関数型・generic・readonlyの初回課題だけを、有限な構文と非emit型検査で確認する。 */
 import ts from 'typescript';
-import { checkTypeScript } from './compileTypeScript';
+import { checkTypeScript, createTypeScriptProbeChecker } from './compileTypeScript';
 
 export type ReusableLearningProfile =
   'number-callback-v1' | 'generic-identity-v1' | 'readonly-copy-v1';
@@ -528,14 +528,15 @@ export function checkReusableLearning(
       profile === 'number-callback-v1'
         ? 'import { __tsumucode_function, type __tsumucode_operation } from "./main.js";\n'
         : 'import { __tsumucode_function } from "./main.js";\n';
-    const positive = checkTypeScript(
+    const checkProbe = createTypeScriptProbeChecker();
+    const positive = checkProbe(
       {
         'main.ts': copy,
         '__tsumucode_positive.ts': prefix + inspection.positiveLines.join('\n') + '\n',
       },
       libraries,
     );
-    const negative = checkTypeScript(
+    const negative = checkProbe(
       {
         'main.ts': copy,
         '__tsumucode_negative.ts':

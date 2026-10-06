@@ -1,6 +1,6 @@
 /** 初回のunion/optional課題だけを対象に、分岐で読む値と型関係を確認する。 */
 import ts from 'typescript';
-import { checkTypeScript } from './compileTypeScript';
+import { checkTypeScript, createTypeScriptProbeChecker } from './compileTypeScript';
 
 export type ConditionalLearningProfile = 'union-result-v1' | 'optional-hint-v1';
 
@@ -376,11 +376,12 @@ export function checkConditionalLearning(
         .map((value, index) => `const probe${String(index)}: __tsumucode_shape = ${value};`)
         .join('\n') +
       '\n';
-    const positive = checkTypeScript(
+    const checkProbe = createTypeScriptProbeChecker();
+    const positive = checkProbe(
       { 'main.ts': copy, '__tsumucode_positive.ts': declarations(positives) },
       libraries,
     );
-    const negative = checkTypeScript(
+    const negative = checkProbe(
       {
         'main.ts': copy,
         '__tsumucode_negative.ts': declarations(negatives.map(({ value }) => value)),
