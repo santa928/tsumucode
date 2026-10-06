@@ -1,0 +1,10 @@
+id: typescript-ch06
+sequence: 5
+title: 同じクイズを型安全に組み直す
+goal: データの形、状態の関数、DOMと非同期の境界を同じ作品へ積み上げる。
+estimatedMinutes: 95
+kind: guided-project
+lessonSources:
+  - lessons/typescript-ch06-l01/lesson.yaml
+  - lessons/typescript-ch06-l02/lesson.yaml
+  - lessons/typescript-ch06-l03/lesson.yaml

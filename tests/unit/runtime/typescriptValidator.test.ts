@@ -12,6 +12,10 @@ import {
 } from '../../../src/core/content/schema';
 import { TypeScriptValidator } from '../../../src/adapters/validation/typescript/TypeScriptValidator';
 import { typeScriptSourceHash } from '../../../src/adapters/runtime/typescript/typeScriptSourceHash';
+import {
+  TypeScriptQuizProjectContracts,
+  createTypeScriptQuizProjectScenarios,
+} from '../../../src/core/content/typeScriptQuizProjectContract';
 import { TypeScriptBoundaryContracts } from '../../../src/core/content/typeScriptBoundaryContract';
 import { validationContext, validationRule } from '../../fixtures/validation';
 
@@ -459,6 +463,96 @@ describe('TypeScriptValidator', () => {
         ).status,
       ).toBe('system-error');
       expect(compiler.boundaryCheck).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each(TypeScriptQuizProjectContracts)(
+    '$profileの型条件と実操作をANDにし、契約省略と古い原文証拠を拒否する',
+    async ({ lessonId, profile }) => {
+      const original = await contextFixture();
+      const f = fixture();
+      const facts = {
+        programShapeAccepted: true,
+        typeContractAccepted: true,
+        usesLearningValues: true,
+        forbiddenEscapeAbsent: true,
+        positiveProbeAccepted: true,
+        negativeProbesRejected: true,
+      };
+      const compiler = {
+        ...f.compiler,
+        quizProjectCheck: vi.fn().mockResolvedValue({ status: 'ready', profile, facts }),
+      };
+      const validator = new TypeScriptValidator({
+        compilerFactory: () => compiler,
+        validatorFactory: () => ({ validate: f.validate, buildSnapshotPolicy: vi.fn() }),
+      });
+      const projectRuntime: TypeScriptExerciseRuntime = {
+        ...runtime,
+        capabilityProfile: 'project',
+      };
+      const context: ValidationContext = {
+        ...original,
+        exerciseId: `${lessonId}-e01`,
+        runtime: projectRuntime,
+        interactionScenarios: createTypeScriptQuizProjectScenarios(profile),
+        rules: [
+          { ...learningRule, assertion: { kind: 'typescript-learning', profile } },
+          {
+            ...consoleRule,
+            assertion: {
+              kind: 'javascript-console',
+              operator: 'equals',
+              expected: [{ level: 'log', text: '準備できました' }],
+            },
+          },
+        ],
+        evidence: [
+          {
+            id: 'typescript.source-sha256',
+            value: await typeScriptSourceHash(original.files, projectRuntime, 'session-1', 4),
+          },
+        ],
+      };
+      expect((await validator.validate(context)).status).toBe('incomplete');
+      f.validate.mockResolvedValue({
+        exerciseId: context.exerciseId,
+        executionRevision: 4,
+        status: 'pass',
+        checks: [],
+        passedRequirementIds: [],
+        diagnostics: [],
+        evaluatedAt: 'now',
+      });
+      expect((await validator.validate(context)).status).toBe('pass');
+      compiler.quizProjectCheck.mockResolvedValue({
+        status: 'ready',
+        profile,
+        facts: {
+          ...facts,
+          usesLearningValues: false,
+          positiveProbeAccepted: false,
+          negativeProbesRejected: false,
+        },
+      });
+      expect((await validator.validate(context)).status).toBe('incomplete');
+      compiler.quizProjectCheck.mockClear();
+      for (const broken of [
+        { ...context, rules: [context.rules[1]!] },
+        { ...context, interactionScenarios: [] },
+        { ...context, interactionScenarios: context.interactionScenarios.slice(1) },
+        { ...context, runtime },
+        { ...context, files: { ...context.files, 'main.ts': 'console.log(2);' } },
+        {
+          ...context,
+          interactionScenarios: context.interactionScenarios.map((scenario) => ({
+            ...scenario,
+            checkpoints: [],
+          })),
+        },
+      ])
+        expect((await validator.validate(broken)).status).toBe('system-error');
+      expect(compiler.quizProjectCheck).not.toHaveBeenCalled();
     },
   );
 

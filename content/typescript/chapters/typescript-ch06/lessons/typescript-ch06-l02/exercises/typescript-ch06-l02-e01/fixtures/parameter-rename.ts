@@ -1,0 +1,77 @@
+import { mountQuiz } from './quiz-ui.js';
+import { loadQuestions } from './questions.js';
+
+export type Category = 'web' | 'logic';
+export type LoadMode = 'success' | 'invalid' | 'failure';
+// 工程1: 問題の形を配列へ適用する
+export interface Question {
+  category: Category;
+  text: string;
+  choices: readonly string[];
+  correct: string;
+}
+export interface QuizState {
+  readonly index: number;
+  readonly score: number;
+  readonly answered: boolean;
+}
+export type LoadResult =
+  | { kind: 'ready'; questions: readonly Question[] }
+  | { kind: 'invalid' }
+  | { kind: 'failed'; message: string };
+
+const questions: readonly Question[] = [
+  {
+    category: 'web',
+    text: 'Webページの骨組みを作るのは？',
+    choices: ['HTML', 'CSS'],
+    correct: 'HTML',
+  },
+  { category: 'web', text: '見た目を整えるのは？', choices: ['JavaScript', 'CSS'], correct: 'CSS' },
+  { category: 'logic', text: '1 + 1 は？', choices: ['2', '3'], correct: '2' },
+  { category: 'logic', text: '3 > 5 の結果は？', choices: ['true', 'false'], correct: 'false' },
+];
+
+// 工程2: 正誤と回答済みを使って状態を更新する
+
+/** 前の回答を引き継がない初期状態を作る。 */
+function createState(): QuizState {
+  return { index: 0, score: 0, answered: false };
+}
+
+/** 回答済みなら状態を保ち、正解だけ得点へ加える。 */
+function answer(current: QuizState, item: Question, selected: string): QuizState {
+  if (current.answered) return current;
+  return {
+    index: current.index,
+    score: current.score + (selected === item.correct ? 1 : 0),
+    answered: true,
+  };
+}
+
+/** 回答した後だけ次の問題へ進む。 */
+function advance(current: QuizState): QuizState {
+  if (!current.answered) return current;
+  return { index: current.index + 1, score: current.score, answered: false };
+}
+
+// 工程3: unknownを検証し非同期の結果と失敗を区別する
+
+/** unknownの各項目と2つの選択肢を確認してから問題を作る。 */
+function decodeQuestion(input: unknown): Question | undefined {
+  return undefined;
+}
+
+/** 成功後の実検証と、拒否時の実messageを区別してUIへ渡す。 */
+async function readQuestions(request: LoadMode): Promise<LoadResult> {
+  return { kind: 'ready', questions };
+}
+
+/** Eventが示す操作対象を確認して返す。 */
+function readButton(event: Event): HTMLButtonElement | undefined {
+  const button = event.currentTarget;
+  return button instanceof HTMLButtonElement ? button : undefined;
+}
+
+mountQuiz({ questions, createState, answer, advance, load: readQuestions, readButton });
+console.log('準備できました');

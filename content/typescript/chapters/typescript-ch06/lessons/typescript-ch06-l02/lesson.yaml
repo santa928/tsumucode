@@ -1,0 +1,66 @@
+id: typescript-ch06-l02
+kind: guided-project
+title: 回答と得点を型付き状態へつなぐ
+goal: readonlyのQuizStateを関数へ渡し、実際の正誤で得点を作り、回答後の次問とカテゴリを保つ再挑戦へつなぐ。
+estimatedMinutes: 30
+prerequisiteLessonIds:
+  - typescript-ch06-l01
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/typescript-ch06-l02-e01/exercise.yaml
+reflection: readonlyのQuizStateを関数へ渡し、実際の正誤で得点を作り、回答後の次問とカテゴリを保つ再挑戦へつなぐ。
+glossaryRefs:
+  - readonly-field
+  - quiz-state-function
+  - project-workspace
+nextLessonId: typescript-ch06-l03
+project:
+  id: typescript-quiz-guided
+  briefSource: brief.md
+  guideSources:
+    - guide.md
+  checklist:
+    - id: typescript-ch06-l02-types
+      label: 今回の型と値の条件
+      required: true
+      ruleIds:
+        - typescript-ch06-l02-e01-r01
+        - typescript-ch06-l02-e01-r02
+        - typescript-ch06-l02-e01-r03
+    - id: typescript-ch06-l02-quiz-web
+      label: 混合回答と再挑戦
+      required: true
+      ruleIds:
+        - interaction:quiz-web:c1
+        - interaction:quiz-web:c2
+        - interaction:quiz-web:c3
+        - interaction:quiz-web:c4
+        - interaction:quiz-web:c5
+        - interaction:quiz-web:c6
+        - interaction:quiz-web:c7
+        - interaction:quiz-web:c8
+        - interaction:quiz-web:c9
+        - interaction:quiz-web:c10
+    - id: typescript-ch06-l02-quiz-logic
+      label: カテゴリとキーボード
+      required: true
+      ruleIds:
+        - interaction:quiz-logic:c1
+        - interaction:quiz-logic:c2
+        - interaction:quiz-logic:c3
+        - interaction:quiz-logic:c4
+        - interaction:quiz-logic:c5
+        - interaction:quiz-logic:c6
+        - interaction:quiz-logic:c7
+completion:
+  kind: guided-project
+  requiredChecklistItemIds:
+    - typescript-ch06-l02-types
+    - typescript-ch06-l02-quiz-web
+    - typescript-ch06-l02-quiz-logic
+  requiredExerciseIds:
+    - typescript-ch06-l02-e01

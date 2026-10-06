@@ -1,0 +1,53 @@
+id: typescript-ch06-l01
+kind: guided-project
+title: 問題の型をクイズへつなぐ
+goal: Questionの必須項目とreadonlyの選択肢を定め、2カテゴリ各2問の型付きデータを実際の表示へ渡す。
+estimatedMinutes: 25
+prerequisiteLessonIds:
+  - typescript-ch05-l03
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/typescript-ch06-l01-e01/exercise.yaml
+reflection: Questionの必須項目とreadonlyの選択肢を定め、2カテゴリ各2問の型付きデータを実際の表示へ渡す。
+glossaryRefs:
+  - type-export
+  - project-workspace
+  - readonly-array
+  - interface
+nextLessonId: typescript-ch06-l02
+project:
+  id: typescript-quiz-guided
+  briefSource: brief.md
+  guideSources:
+    - guide.md
+  checklist:
+    - id: typescript-ch06-l01-types
+      label: 今回の型と値の条件
+      required: true
+      ruleIds:
+        - typescript-ch06-l01-e01-r01
+        - typescript-ch06-l01-e01-r02
+        - typescript-ch06-l01-e01-r03
+    - id: typescript-ch06-l01-model-web
+      label: Webの問題データ
+      required: true
+      ruleIds:
+        - interaction:model-web:c1
+    - id: typescript-ch06-l01-model-logic
+      label: Logicの問題データ
+      required: true
+      ruleIds:
+        - interaction:model-logic:c1
+        - interaction:model-logic:c2
+completion:
+  kind: guided-project
+  requiredChecklistItemIds:
+    - typescript-ch06-l01-types
+    - typescript-ch06-l01-model-web
+    - typescript-ch06-l01-model-logic
+  requiredExerciseIds:
+    - typescript-ch06-l01-e01

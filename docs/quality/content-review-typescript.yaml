@@ -174,7 +174,7 @@ lessons:
   - lessonId: typescript-ch05-l03
     authorId: tsumucode-typescript-authoring
     reviewerId: review_issue109
-    sourceHash: 1a15632266904fc3832d83d5d058a1fc809dfc55bcdbc6d96b0fd923bdb62c20
+    sourceHash: 7b805d8f8a5c5cfcae1b967e62bc2f8c9ceb65db1328dc93c8dd7289c79fc0a0
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -186,3 +186,64 @@ lessons:
       Promiseのunknownとawait後の検証、catchのunknownからErrorの実message使用と目標整合、前提・概念・用語を確認。固定3課題のruntime/scenario閉鎖、元TSの有限ASTと非emit正負probe、profilefactと実DOM操作のAND、型弱化/固定表示/操作省略の拒否、source/session/revisionと旧9Lesson進捗互換を読解した。
       examplesExecutedは作者の成功した固有unit145件、本文指定文脈での掲載12例の実Compiler確認（unknown導入例は18046を期待）、実Chromiumの不変46Fixtureとno-await限定1例、通常UI・停止再試行・旧結果拒否・既存導線の証拠へ依拠する。初回失敗と重複実行を成功数へ加えない。
       ReviewerはPC5枚・390px9枚の計14画像を実見。独自のDocker再実行/hash再計算は行っていない。初心者の実測/物理実機/汎用TS文法/全TS制作/TS性能予算/正式公開の承認へ拡張せず、releaseStatus/verifiedSourceCommit/canonicalDistSha256はdraftを保持する。
+      #114のHEAD16f724d801312bb4fdcd1b4a69e8273ca2f895c9でReviewer review_issue109がch06-l01へのnextLesson参照追加のみ限定承認。旧教材・動作条件・実行証拠を保持する。
+  - lessonId: typescript-ch06-l01
+    authorId: tsumucode-typescript-authoring
+    reviewerId: review_issue109
+    sourceHash: e26a876c32a071f6341c2fc152b278080e9c11df39b064236acb712c4894dd02
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: >-
+      Reviewer review_issue109がbase5ca2975 / HEAD16f724d801312bb4fdcd1b4a69e8273ca2f895c9の新3Lessonの全Slide/Brief/Guide/Hint/Starter/段階Solution/最終45Fixture/図と固定契約・Worker/Validator差分を独立承認。
+      必須指摘3件（括弧の受入/保持、Logic第2問の選択肢、型弱化テスト入力）と実DOM取得に合わせた選択中option照合を是正し、必須指摘0。
+      データ型→readonly状態と関数→unknown/await/Errorの実境界を共有workspaceへ積み上げ、現在工程までの型条件と実Console/DOMをANDで確認する。
+      作者の既存Compiler/Client/Validator/教材と移行の84種類、掲載9例、文字列/await等の括弧と予算上限拒否の追加確認、実Chromium45Fixtureの固定status/診断集合/意図した失敗Rule一致（15pass/22incomplete/8code-error）、通常UI3工程の完成/Source再読込/型と実行失敗から修正/共有ResetとJS原文保護、390px全12Slideとaxeの成功証拠に基づくexamplesExecuted。
+      初回7失敗、c7 selectのinput-value未観測、JSタブ誤指定による中断は成功証拠へ加えない。
+      同じ不変data12件の有効なBrowser証拠を再利用し、変更33件は実Browserで再検証した。
+      Reviewerは代表PC/390px/図の画像を実見し、原文とログを確認。
+      Reviewerによる再実行/hash再計算、初心者理解/物理実機/汎用TS構文/TS固有性能予算達成/正式公開の承認ではない。
+      採用15Lesson/60Slide/320分draftの内容承認で、releaseStatus/verifiedSourceCommit/canonicalDistSha256をdraftのまま保持する。
+  - lessonId: typescript-ch06-l02
+    authorId: tsumucode-typescript-authoring
+    reviewerId: review_issue109
+    sourceHash: 54e4aca9c2443e933e04a1ed5e9e3f9684ec32eda9125af3dcb7ce2dbfdd8795
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: >-
+      Reviewer review_issue109がbase5ca2975 / HEAD16f724d801312bb4fdcd1b4a69e8273ca2f895c9の新3Lessonの全Slide/Brief/Guide/Hint/Starter/段階Solution/最終45Fixture/図と固定契約・Worker/Validator差分を独立承認。
+      必須指摘3件（括弧の受入/保持、Logic第2問の選択肢、型弱化テスト入力）と実DOM取得に合わせた選択中option照合を是正し、必須指摘0。
+      データ型→readonly状態と関数→unknown/await/Errorの実境界を共有workspaceへ積み上げ、現在工程までの型条件と実Console/DOMをANDで確認する。
+      作者の既存Compiler/Client/Validator/教材と移行の84種類、掲載9例、文字列/await等の括弧と予算上限拒否の追加確認、実Chromium45Fixtureの固定status/診断集合/意図した失敗Rule一致（15pass/22incomplete/8code-error）、通常UI3工程の完成/Source再読込/型と実行失敗から修正/共有ResetとJS原文保護、390px全12Slideとaxeの成功証拠に基づくexamplesExecuted。
+      初回7失敗、c7 selectのinput-value未観測、JSタブ誤指定による中断は成功証拠へ加えない。
+      同じ不変data12件の有効なBrowser証拠を再利用し、変更33件は実Browserで再検証した。
+      Reviewerは代表PC/390px/図の画像を実見し、原文とログを確認。
+      Reviewerによる再実行/hash再計算、初心者理解/物理実機/汎用TS構文/TS固有性能予算達成/正式公開の承認ではない。
+      採用15Lesson/60Slide/320分draftの内容承認で、releaseStatus/verifiedSourceCommit/canonicalDistSha256をdraftのまま保持する。
+  - lessonId: typescript-ch06-l03
+    authorId: tsumucode-typescript-authoring
+    reviewerId: review_issue109
+    sourceHash: 8a86fb15411d27f9df052248b8c5a458f16aca1434c9ad416b59a42255685af6
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: >-
+      Reviewer review_issue109がbase5ca2975 / HEAD16f724d801312bb4fdcd1b4a69e8273ca2f895c9の新3Lessonの全Slide/Brief/Guide/Hint/Starter/段階Solution/最終45Fixture/図と固定契約・Worker/Validator差分を独立承認。
+      必須指摘3件（括弧の受入/保持、Logic第2問の選択肢、型弱化テスト入力）と実DOM取得に合わせた選択中option照合を是正し、必須指摘0。
+      データ型→readonly状態と関数→unknown/await/Errorの実境界を共有workspaceへ積み上げ、現在工程までの型条件と実Console/DOMをANDで確認する。
+      作者の既存Compiler/Client/Validator/教材と移行の84種類、掲載9例、文字列/await等の括弧と予算上限拒否の追加確認、実Chromium45Fixtureの固定status/診断集合/意図した失敗Rule一致（15pass/22incomplete/8code-error）、通常UI3工程の完成/Source再読込/型と実行失敗から修正/共有ResetとJS原文保護、390px全12Slideとaxeの成功証拠に基づくexamplesExecuted。
+      初回7失敗、c7 selectのinput-value未観測、JSタブ誤指定による中断は成功証拠へ加えない。
+      同じ不変data12件の有効なBrowser証拠を再利用し、変更33件は実Browserで再検証した。
+      Reviewerは代表PC/390px/図の画像を実見し、原文とログを確認。
+      Reviewerによる再実行/hash再計算、初心者理解/物理実機/汎用TS構文/TS固有性能予算達成/正式公開の承認ではない。
+      採用15Lesson/60Slide/320分draftの内容承認で、releaseStatus/verifiedSourceCommit/canonicalDistSha256をdraftのまま保持する。

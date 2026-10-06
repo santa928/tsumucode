@@ -109,7 +109,7 @@ test('通常Courseで型推論から型注釈へ進み、両課題の型条件�
     )
     .toMatchObject({
       courseId: 'typescript',
-      contentRevision: '2026-10-06.2',
+      contentRevision: '2026-10-06.3',
       currentComplete: false,
       lessons: {
         'typescript-ch01-l01': {

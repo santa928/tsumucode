@@ -23,7 +23,11 @@ const fullSuite = files.some((file) =>
 
 /** npm execでtestを実行し、失敗を呼び出し元へそのまま返す。 */
 function runTests(args: readonly string[]): void {
-  const result = spawnSync('npm', ['exec', '--', 'vitest', ...args], { stdio: 'inherit' });
+  const result = spawnSync(
+    'npm',
+    ['exec', '--', 'vitest', ...args, '--config', 'scripts/vitestChanged.config.ts'],
+    { stdio: 'inherit' },
+  );
   if (result.error) throw result.error;
   if (result.status !== 0) process.exit(result.status ?? 1);
 }

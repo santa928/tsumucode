@@ -1,10 +1,10 @@
 schemaVersion: 1
 id: typescript
 title: TypeScript はじめの一歩
-description: 型推論・注釈からinterface・分岐・関数型を経て、DOM・unknown・非同期の境界を確かめる導入12教材。
+description: 型推論・注釈からDOM・unknownの境界へ進み、同じ学習クイズを段階的に型安全化する15教材。
 audience: JavaScriptの変数・関数・条件分岐・DOM/Event・Promise/try/catchを学んだTypeScript初学者
-estimatedMinutes: 225
-revision: 2026-10-06.2
+estimatedMinutes: 320
+revision: 2026-10-06.3
 runnerId: typescript
 validatorId: typescript
 glossarySource: glossary.yaml
@@ -21,13 +21,13 @@ prerequisites:
   - javascript
 publicationStatus: draft
 expectedTotals:
-  chapters: 5
-  lessons: 12
-  conceptSlides: 37
+  chapters: 6
+  lessons: 15
+  conceptSlides: 46
   standardExercises: 12
-  guidedProjectLessons: 0
+  guidedProjectLessons: 3
   capstoneLessons: 0
-  estimatedMinutes: 225
+  estimatedMinutes: 320
 provenanceManifestPath: provenance.yaml
 progressMigrations:
   - fromRevision: 2026-10-01.1
@@ -45,6 +45,9 @@ progressMigrations:
   - fromRevision: 2026-10-06.1
     toRevision: 2026-10-06.2
     steps: []
+  - fromRevision: 2026-10-06.2
+    toRevision: 2026-10-06.3
+    steps: []
 phases:
   - id: typescript-p01-types
     title: 型を使って値を確かめる
@@ -55,3 +58,8 @@ phases:
       - chapters/typescript-ch03/chapter.yaml
       - chapters/typescript-ch04/chapter.yaml
       - chapters/typescript-ch05/chapter.yaml
+  - id: typescript-p02-project
+    title: 型を作品へつなぐ
+    description: JSのクイズを題材に、データ型・状態・非同期の境界を段階的に型安全化します。
+    chapterSources:
+      - chapters/typescript-ch06/chapter.yaml

@@ -1,3 +1,8 @@
+import {
+  TypeScriptQuizProjectContracts,
+  acceptsTypeScriptQuizProjectRuntime,
+  acceptsTypeScriptQuizProjectScenarios,
+} from '../../src/core/content/typeScriptQuizProjectContract';
 /** Authoring YAMLのstrict構造と、公開Schemaへ組み立てる前のSource契約を定義する。 */
 import { z } from 'zod';
 import {
@@ -249,17 +254,32 @@ export const ExerciseSourceSchema = z
     const boundaryContract = TypeScriptBoundaryContracts.find(
       (contract) => exercise.id === `${contract.lessonId}-e01`,
     );
-    const acceptsInteractions = boundaryContract
-      ? acceptsTypeScriptBoundaryRuntime(boundaryContract.profile, exercise.runtime) &&
-        acceptsTypeScriptBoundaryScenarios(boundaryContract.profile, exercise.interactionScenarios)
-      : exercise.runtime?.kind === 'javascript' &&
-        ['dom', 'dom-form', 'async', 'project'].includes(exercise.runtime.capabilityProfile);
-    if ((exercise.interactionScenarios !== undefined || boundaryContract) && !acceptsInteractions) {
+    const quizContract = TypeScriptQuizProjectContracts.find(
+      (contract) => exercise.id === `${contract.lessonId}-e01`,
+    );
+    const acceptsInteractions = quizContract
+      ? exercise.kind === 'guided-project' &&
+        exercise.projectId === 'typescript-quiz-guided' &&
+        exercise.workspaceId === 'typescript-quiz-guided' &&
+        acceptsTypeScriptQuizProjectRuntime(exercise.runtime) &&
+        acceptsTypeScriptQuizProjectScenarios(quizContract.profile, exercise.interactionScenarios)
+      : boundaryContract
+        ? acceptsTypeScriptBoundaryRuntime(boundaryContract.profile, exercise.runtime) &&
+          acceptsTypeScriptBoundaryScenarios(
+            boundaryContract.profile,
+            exercise.interactionScenarios,
+          )
+        : exercise.runtime?.kind === 'javascript' &&
+          ['dom', 'dom-form', 'async', 'project'].includes(exercise.runtime.capabilityProfile);
+    if (
+      (exercise.interactionScenarios !== undefined || boundaryContract || quizContract) &&
+      !acceptsInteractions
+    ) {
       context.addIssue({
         code: 'custom',
         path: ['interactionScenarios'],
         message:
-          'Interaction Scenarioは既存JSのDOM/async profileか固定TS境界課題で指定してください',
+          'Interaction Scenarioは既存JSのDOM/async profileか固定TS境界/クイズ工程で指定してください',
       });
     }
     const ruleIds = exercise.validationRules.map(({ id }) => id);

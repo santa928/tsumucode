@@ -1352,3 +1352,475 @@ items:
     visibility: public
     path: chapters/typescript-ch05/lessons/typescript-ch05-l03/slides/s04.md
     createdAt: 2026-10-06
+  - id: typescript-source-356
+    visibility: public
+    path: chapters/typescript-ch06/chapter.yaml
+    createdAt: 2026-10-06
+  - id: typescript-source-357
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/brief.md
+    createdAt: 2026-10-06
+  - id: typescript-source-358
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/exercise.yaml
+    createdAt: 2026-10-06
+  - id: typescript-source-359
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/fixtures/any-escape.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-360
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/fixtures/array-generic.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-361
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/fixtures/arrow-functions.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-362
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/fixtures/assertion-escape.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-363
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/fixtures/disconnected-mount.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-364
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/fixtures/error-after-ready.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-365
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/fixtures/nocheck-escape.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-366
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/fixtures/parameter-rename.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-367
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/fixtures/parenthesized.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-368
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/fixtures/solution.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-369
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/fixtures/starter.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-370
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/fixtures/wrong-category-type.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-371
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/fixtures/wrong-text.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-372
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/instructions.md
+    createdAt: 2026-10-06
+  - id: typescript-source-373
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/solution/main.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-374
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/starter/index.html
+    createdAt: 2026-10-06
+  - id: typescript-source-375
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/starter/main.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-376
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/starter/questions.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-377
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/starter/quiz-ui.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-378
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/starter/styles.css
+    createdAt: 2026-10-06
+  - id: typescript-source-379
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/guide.md
+    createdAt: 2026-10-06
+  - id: typescript-source-380
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/lesson.yaml
+    createdAt: 2026-10-06
+  - id: typescript-ch06-l01-relation-original
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/slides/assets/relation.svg
+    createdAt: 2026-10-06
+  - id: typescript-source-381
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/slides/s01.md
+    createdAt: 2026-10-06
+  - id: typescript-source-382
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/slides/s02.md
+    createdAt: 2026-10-06
+  - id: typescript-source-383
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/slides/s03.md
+    createdAt: 2026-10-06
+  - id: typescript-source-384
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/slides/s04.md
+    createdAt: 2026-10-06
+  - id: typescript-source-385
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/brief.md
+    createdAt: 2026-10-06
+  - id: typescript-source-386
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/exercise.yaml
+    createdAt: 2026-10-06
+  - id: typescript-source-387
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/any-escape.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-388
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/array-generic.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-389
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/arrow-functions.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-390
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/disconnected-mount.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-391
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/error-after-ready.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-392
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/nocheck-escape.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-393
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/parameter-rename.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-394
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/parenthesized.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-395
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/readonly-write.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-396
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/solution.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-397
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/starter.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-398
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/wrong-answer.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-399
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/wrong-next.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-400
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/wrong-restart.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-401
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/wrong-score.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-402
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/instructions.md
+    createdAt: 2026-10-06
+  - id: typescript-source-403
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/solution/main.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-404
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/starter/index.html
+    createdAt: 2026-10-06
+  - id: typescript-source-405
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/starter/main.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-406
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/starter/questions.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-407
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/starter/quiz-ui.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-408
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/starter/styles.css
+    createdAt: 2026-10-06
+  - id: typescript-source-409
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/guide.md
+    createdAt: 2026-10-06
+  - id: typescript-source-410
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/lesson.yaml
+    createdAt: 2026-10-06
+  - id: typescript-ch06-l02-relation-original
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/slides/assets/relation.svg
+    createdAt: 2026-10-06
+  - id: typescript-source-411
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/slides/s01.md
+    createdAt: 2026-10-06
+  - id: typescript-source-412
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/slides/s02.md
+    createdAt: 2026-10-06
+  - id: typescript-source-413
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/slides/s03.md
+    createdAt: 2026-10-06
+  - id: typescript-source-414
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/slides/s04.md
+    createdAt: 2026-10-06
+  - id: typescript-source-415
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/brief.md
+    createdAt: 2026-10-06
+  - id: typescript-source-416
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/exercise.yaml
+    createdAt: 2026-10-06
+  - id: typescript-source-417
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/fixtures/any-escape.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-418
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/fixtures/array-generic.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-419
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/fixtures/arrow-functions.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-420
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/fixtures/assertion-only.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-421
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/fixtures/disconnected-mount.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-422
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/fixtures/error-after-ready.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-423
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/fixtures/fixed-error.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-424
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/fixtures/no-await.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-425
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/fixtures/nocheck-escape.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-426
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/fixtures/parameter-rename.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-427
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/fixtures/parenthesized.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-428
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/fixtures/skip-invalid.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-429
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/fixtures/solution.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-430
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/fixtures/starter.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-431
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/fixtures/unchecked-error.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-432
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/fixtures/wrong-score.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-433
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/instructions.md
+    createdAt: 2026-10-06
+  - id: typescript-source-434
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/solution/main.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-435
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/starter/index.html
+    createdAt: 2026-10-06
+  - id: typescript-source-436
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/starter/main.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-437
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/starter/questions.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-438
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/starter/quiz-ui.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-439
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/starter/styles.css
+    createdAt: 2026-10-06
+  - id: typescript-source-440
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/guide.md
+    createdAt: 2026-10-06
+  - id: typescript-source-441
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/lesson.yaml
+    createdAt: 2026-10-06
+  - id: typescript-ch06-l03-relation-original
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/slides/assets/relation.svg
+    createdAt: 2026-10-06
+  - id: typescript-source-442
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/slides/s01.md
+    createdAt: 2026-10-06
+  - id: typescript-source-443
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/slides/s02.md
+    createdAt: 2026-10-06
+  - id: typescript-source-444
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/slides/s03.md
+    createdAt: 2026-10-06
+  - id: typescript-source-445
+    visibility: public
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/slides/s04.md
+    createdAt: 2026-10-06
+  - id: typescript-source-449
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/fixtures/index.html
+    createdAt: 2026-10-06
+  - id: typescript-source-450
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/fixtures/questions.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-451
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/fixtures/quiz-ui.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-452
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/fixtures/styles.css
+    createdAt: 2026-10-06
+  - id: typescript-source-453
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/solution/index.html
+    createdAt: 2026-10-06
+  - id: typescript-source-454
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/solution/questions.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-455
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/solution/quiz-ui.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-456
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l01/exercises/typescript-ch06-l01-e01/solution/styles.css
+    createdAt: 2026-10-06
+  - id: typescript-source-457
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/index.html
+    createdAt: 2026-10-06
+  - id: typescript-source-458
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/questions.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-459
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/quiz-ui.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-460
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/styles.css
+    createdAt: 2026-10-06
+  - id: typescript-source-461
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/solution/index.html
+    createdAt: 2026-10-06
+  - id: typescript-source-462
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/solution/questions.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-463
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/solution/quiz-ui.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-464
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/solution/styles.css
+    createdAt: 2026-10-06
+  - id: typescript-source-465
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/fixtures/index.html
+    createdAt: 2026-10-06
+  - id: typescript-source-466
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/fixtures/questions.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-467
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/fixtures/quiz-ui.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-468
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/fixtures/styles.css
+    createdAt: 2026-10-06
+  - id: typescript-source-469
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/solution/index.html
+    createdAt: 2026-10-06
+  - id: typescript-source-470
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/solution/questions.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-471
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/solution/quiz-ui.ts
+    createdAt: 2026-10-06
+  - id: typescript-source-472
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l03/exercises/typescript-ch06-l03-e01/solution/styles.css
+    createdAt: 2026-10-06
+  - id: typescript-source-473
+    visibility: authoring
+    path: chapters/typescript-ch06/lessons/typescript-ch06-l02/exercises/typescript-ch06-l02-e01/fixtures/wrong-logic-choice.ts
+    createdAt: 2026-10-06

@@ -64,3 +64,18 @@ concepts:
     minimumProjectLevel: transform
     prerequisiteConceptIds:
       - typescript-unknown-points
+  - id: typescript-quiz-model
+    introducedBySlideId: typescript-ch06-l01-s01
+    prerequisiteConceptIds:
+      - typescript-async-unknown
+    minimumProjectLevel: compose
+  - id: typescript-quiz-state
+    introducedBySlideId: typescript-ch06-l02-s01
+    prerequisiteConceptIds:
+      - typescript-quiz-model
+    minimumProjectLevel: compose
+  - id: typescript-quiz-boundary
+    introducedBySlideId: typescript-ch06-l03-s01
+    prerequisiteConceptIds:
+      - typescript-quiz-state
+    minimumProjectLevel: compose
