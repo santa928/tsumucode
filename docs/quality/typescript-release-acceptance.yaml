@@ -1,15 +1,15 @@
 schemaVersion: 1
 courseId: typescript
 status: preflight-passed-final-ci-required
-verifiedSourceCommit: e2d0d361e58ddddee57050d0bd625f132e5d0b15
-canonicalDistSha256: 9bce7d57a630338ea09d1d2abb560a7aee2e03ac75f09faa8207dfc7771433c7
-candidateTreeSha256: 97e9860693b9cb8d59849cb0bc08ce858267895ac63ba9d50882437cc174a76b
-draftCanonicalDistSha256: e14f5513173fe2e6cc9763eef8a6b9fb0118ea001816d068b92e813f3db17a6e
-normalizedLearningInputSha256: 775187787b520b65c80567de8bfe49b347e430f74cb701a8683150ff86f01b0b
+verifiedSourceCommit: e54797029e8d6a37cffc517b9c312454f9944f52
+canonicalDistSha256: 0f26d35cadbf4c6bccc682b85fcc710b1b359d9ee06c383197358f85072df12e
+candidateTreeSha256: 160399381000a89e6be238411351e3aad7e46e0fa11a41833e6d0db7572c3cca
+draftCanonicalDistSha256: 95f9a5e599ead2dc0b109a69bea3ad63b0fc61736b5e65deaf72a565399eacc5
+normalizedLearningInputSha256: cbb44acd8ea60c28d6597b43c88d95af103924bee8a97dcf1922b8247d3dcaed
 draftInput:
   schemaVersion: 1
   courseId: typescript
-  sourceCommit: 64a5e93d264a6194a11cadf8478c98894111b14f
+  sourceCommit: 6667cc4ed46b7c3636e061e60b703ad4ff9dd2dc
   scope: typescript-learning-input-v2
   publicationMetadata:
     coursePublicationStatus: draft
@@ -12544,9 +12544,9 @@ draftInput:
       normalizedSha256: 84e386bc6aafa657d7b6a87d064e1c587d3ecf71c013182c17073bbd2a0a254b
       normalizedBytes: 9743
     - path: src/features/home/HomePage.tsx
-      rawSha256: c24055fd7fff0f9d0979eca27d4b9e20e7643eebccf01ead31320079280f8be5
-      normalizedSha256: c24055fd7fff0f9d0979eca27d4b9e20e7643eebccf01ead31320079280f8be5
-      normalizedBytes: 11781
+      rawSha256: 404c4a28259c1cd8ccd7c8d648c99f67eb83e37649ba684aa43be24d4b0fd066
+      normalizedSha256: 404c4a28259c1cd8ccd7c8d648c99f67eb83e37649ba684aa43be24d4b0fd066
+      normalizedBytes: 11840
     - path: src/features/home/firstActivity.ts
       rawSha256: 0001900fde0a9786779251ad8812072e2d2ce54ce62f03febc902fce680e0ead
       normalizedSha256: 0001900fde0a9786779251ad8812072e2d2ce54ce62f03febc902fce680e0ead
@@ -13356,9 +13356,9 @@ draftInput:
       normalizedSha256: 30e1024e34a857d483856ee9782b0a532fd79d6047b283363076924394e9632e
       normalizedBytes: 6925
     - path: tests/e2e/typescript-course-learning.spec.ts
-      rawSha256: 171c42c00ee890845fd932c9de445e23b387d5c022b284b33a39bb2db4943895
-      normalizedSha256: 171c42c00ee890845fd932c9de445e23b387d5c022b284b33a39bb2db4943895
-      normalizedBytes: 14483
+      rawSha256: 6c4cd7f48ffd31f42d62b568fe1789a770fe3374ce6ebce1136b82d3ea94b305
+      normalizedSha256: 6c4cd7f48ffd31f42d62b568fe1789a770fe3374ce6ebce1136b82d3ea94b305
+      normalizedBytes: 14990
     - path: tests/e2e/typescript-exercise-ui.spec.ts
       rawSha256: 2fd002f0f3e6389d070fb770423af5dea9af09b0e58b2b5f7fd11053089d2a01
       normalizedSha256: 2fd002f0f3e6389d070fb770423af5dea9af09b0e58b2b5f7fd11053089d2a01
@@ -13368,9 +13368,9 @@ draftInput:
       normalizedSha256: 75b2f9e6b8c32d6f050e52623aa8df4b4766043b1b7d2d7c8d8f60d416b7fdd3
       normalizedBytes: 7744
     - path: tests/e2e/typescript-quiz-project-grading.spec.ts
-      rawSha256: ca29aba774a99e4ad9d602f2b402d296bab1ecc5e872dfbdccf1a4106c2cab99
-      normalizedSha256: ca29aba774a99e4ad9d602f2b402d296bab1ecc5e872dfbdccf1a4106c2cab99
-      normalizedBytes: 8820
+      rawSha256: c9166f6308152daef4f6af937eca667850b7387c438cac4dc0283958b7c471ca
+      normalizedSha256: c9166f6308152daef4f6af937eca667850b7387c438cac4dc0283958b7c471ca
+      normalizedBytes: 9352
     - path: tests/e2e/typescript-quiz-project-learning.spec.ts
       rawSha256: 866f5e3e5007e90bd0097d3a115b050524137e985e1abdd89905caaff64f87fa
       normalizedSha256: 866f5e3e5007e90bd0097d3a115b050524137e985e1abdd89905caaff64f87fa
@@ -13715,11 +13715,11 @@ draftInput:
       rawSha256: f7a6f125e43454746a5c24b856cd8977a637bd21bebb3b84d400d9423233577d
       normalizedSha256: f7a6f125e43454746a5c24b856cd8977a637bd21bebb3b84d400d9423233577d
       normalizedBytes: 714
-  normalizedInputSha256: 775187787b520b65c80567de8bfe49b347e430f74cb701a8683150ff86f01b0b
+  normalizedInputSha256: cbb44acd8ea60c28d6597b43c88d95af103924bee8a97dcf1922b8247d3dcaed
 finalInput:
   schemaVersion: 1
   courseId: typescript
-  sourceCommit: e2d0d361e58ddddee57050d0bd625f132e5d0b15
+  sourceCommit: e54797029e8d6a37cffc517b9c312454f9944f52
   scope: typescript-learning-input-v2
   publicationMetadata:
     coursePublicationStatus: published
@@ -26254,9 +26254,9 @@ finalInput:
       normalizedSha256: 84e386bc6aafa657d7b6a87d064e1c587d3ecf71c013182c17073bbd2a0a254b
       normalizedBytes: 9743
     - path: src/features/home/HomePage.tsx
-      rawSha256: c24055fd7fff0f9d0979eca27d4b9e20e7643eebccf01ead31320079280f8be5
-      normalizedSha256: c24055fd7fff0f9d0979eca27d4b9e20e7643eebccf01ead31320079280f8be5
-      normalizedBytes: 11781
+      rawSha256: 404c4a28259c1cd8ccd7c8d648c99f67eb83e37649ba684aa43be24d4b0fd066
+      normalizedSha256: 404c4a28259c1cd8ccd7c8d648c99f67eb83e37649ba684aa43be24d4b0fd066
+      normalizedBytes: 11840
     - path: src/features/home/firstActivity.ts
       rawSha256: 0001900fde0a9786779251ad8812072e2d2ce54ce62f03febc902fce680e0ead
       normalizedSha256: 0001900fde0a9786779251ad8812072e2d2ce54ce62f03febc902fce680e0ead
@@ -27066,9 +27066,9 @@ finalInput:
       normalizedSha256: 30e1024e34a857d483856ee9782b0a532fd79d6047b283363076924394e9632e
       normalizedBytes: 6925
     - path: tests/e2e/typescript-course-learning.spec.ts
-      rawSha256: 171c42c00ee890845fd932c9de445e23b387d5c022b284b33a39bb2db4943895
-      normalizedSha256: 171c42c00ee890845fd932c9de445e23b387d5c022b284b33a39bb2db4943895
-      normalizedBytes: 14483
+      rawSha256: 6c4cd7f48ffd31f42d62b568fe1789a770fe3374ce6ebce1136b82d3ea94b305
+      normalizedSha256: 6c4cd7f48ffd31f42d62b568fe1789a770fe3374ce6ebce1136b82d3ea94b305
+      normalizedBytes: 14990
     - path: tests/e2e/typescript-exercise-ui.spec.ts
       rawSha256: 2fd002f0f3e6389d070fb770423af5dea9af09b0e58b2b5f7fd11053089d2a01
       normalizedSha256: 2fd002f0f3e6389d070fb770423af5dea9af09b0e58b2b5f7fd11053089d2a01
@@ -27078,9 +27078,9 @@ finalInput:
       normalizedSha256: 75b2f9e6b8c32d6f050e52623aa8df4b4766043b1b7d2d7c8d8f60d416b7fdd3
       normalizedBytes: 7744
     - path: tests/e2e/typescript-quiz-project-grading.spec.ts
-      rawSha256: ca29aba774a99e4ad9d602f2b402d296bab1ecc5e872dfbdccf1a4106c2cab99
-      normalizedSha256: ca29aba774a99e4ad9d602f2b402d296bab1ecc5e872dfbdccf1a4106c2cab99
-      normalizedBytes: 8820
+      rawSha256: c9166f6308152daef4f6af937eca667850b7387c438cac4dc0283958b7c471ca
+      normalizedSha256: c9166f6308152daef4f6af937eca667850b7387c438cac4dc0283958b7c471ca
+      normalizedBytes: 9352
     - path: tests/e2e/typescript-quiz-project-learning.spec.ts
       rawSha256: 866f5e3e5007e90bd0097d3a115b050524137e985e1abdd89905caaff64f87fa
       normalizedSha256: 866f5e3e5007e90bd0097d3a115b050524137e985e1abdd89905caaff64f87fa
@@ -27425,7 +27425,7 @@ finalInput:
       rawSha256: f7a6f125e43454746a5c24b856cd8977a637bd21bebb3b84d400d9423233577d
       normalizedSha256: f7a6f125e43454746a5c24b856cd8977a637bd21bebb3b84d400d9423233577d
       normalizedBytes: 714
-  normalizedInputSha256: 775187787b520b65c80567de8bfe49b347e430f74cb701a8683150ff86f01b0b
+  normalizedInputSha256: cbb44acd8ea60c28d6597b43c88d95af103924bee8a97dcf1922b8247d3dcaed
 acceptance:
   schemaVersion: 1
   courseId: typescript
@@ -27434,9 +27434,9 @@ acceptance:
   publicationApproval: pending
   realHumanTrial: unverified
   lowEndPhysicalDevice: unverified
-  sourceCommit: 64a5e93d264a6194a11cadf8478c98894111b14f
-  manifestSha256: 607daf51a4e9881d0bf5a62e7b56cc77d103c7cd3874303da419b9b86c9037a7
-  artifactSha256: e14f5513173fe2e6cc9763eef8a6b9fb0118ea001816d068b92e813f3db17a6e
+  sourceCommit: 6667cc4ed46b7c3636e061e60b703ad4ff9dd2dc
+  manifestSha256: d96bf2b7a8831c41bf8a26b4bf1ad0a344e52177ee367da03862cb621c04e80c
+  artifactSha256: 95f9a5e599ead2dc0b109a69bea3ad63b0fc61736b5e65deaf72a565399eacc5
   environment:
     browserMajor: 149
     os: linux
@@ -27999,54 +27999,40 @@ acceptance:
     - kind: cold
       rawEvidence:
         path: .release-issue115/performance-cold.json
-        sha256: a0f4482a41f20828623b5b781b978e65cf3862b783609cb2ab113a1428fff21f
-      reuseReason:
-        capture89のsrc・固定lock・課題・harnessと固定Gitの3依存は現在も同一。差分は公開Gate/承認履歴のauthoring
-        metadata・公開一覧/PathのGolden画像・Source確認前のcatalog生成順。実src/lock/課題/計測harnessは同一。
+        sha256: c8b8180b146b35c90a1c9b43f0865419c645e0d73ea6cc6718e3856d1cda4b9b
+      reuseReason: 今回の修正Sourceで7指標を再計測。準備Sから最終Pへ変わるのは公開statusとPath登録のみ。src・固定lock・課題・harnessと固定Gitの3依存はS/Pで同一。
     - kind: warm
       rawEvidence:
         path: .release-issue115/performance-warm.json
-        sha256: 7695e67899157792ac52324beab8d528d095a378d71ae9288b07a71b27cd4242
-      reuseReason:
-        capture89のsrc・固定lock・課題・harnessと固定Gitの3依存は現在も同一。差分は公開Gate/承認履歴のauthoring
-        metadata・公開一覧/PathのGolden画像・Source確認前のcatalog生成順。実src/lock/課題/計測harnessは同一。
+        sha256: a07cc951966df44479a8fa2528050cbebfa2c6a9baaa9ebbd9c6734f2f0cec6e
+      reuseReason: 今回の修正Sourceで7指標を再計測。準備Sから最終Pへ変わるのは公開statusとPath登録のみ。src・固定lock・課題・harnessと固定Gitの3依存はS/Pで同一。
     - kind: simple
       rawEvidence:
         path: .release-issue115/performance-simple.json
-        sha256: f5f71be81c0e8573c31a2f063739070ab32ada4768f0762f791e63c230ed1b44
-      reuseReason:
-        capture89のsrc・固定lock・課題・harnessと固定Gitの3依存は現在も同一。差分は公開Gate/承認履歴のauthoring
-        metadata・公開一覧/PathのGolden画像・Source確認前のcatalog生成順。実src/lock/課題/計測harnessは同一。
+        sha256: 12e6c5e67762492f7441c597c1afbf2ede2c87c2b14b95ac3372a37f4a46972a
+      reuseReason: 今回の修正Sourceで7指標を再計測。準備Sから最終Pへ変わるのは公開statusとPath登録のみ。src・固定lock・課題・harnessと固定Gitの3依存はS/Pで同一。
     - kind: dom
       rawEvidence:
         path: .release-issue115/performance-dom.json
-        sha256: ee06144fc796a3edd2d176baef0d0dabd064d26bc267f43e530e9e3d647a10f7
-      reuseReason:
-        capture89のsrc・固定lock・課題・harnessと固定Gitの3依存は現在も同一。差分は公開Gate/承認履歴のauthoring
-        metadata・公開一覧/PathのGolden画像・Source確認前のcatalog生成順。実src/lock/課題/計測harnessは同一。
+        sha256: 1939217880b3459ca43c31dee265aa26645707f17155e7dea646f25d87e4b6c7
+      reuseReason: 今回の修正Sourceで7指標を再計測。準備Sから最終Pへ変わるのは公開statusとPath登録のみ。src・固定lock・課題・harnessと固定Gitの3依存はS/Pで同一。
     - kind: async
       rawEvidence:
         path: .release-issue115/performance-async.json
-        sha256: a761d2be73eec364a0cdd5236bc85f424b70e054ce5a67b60efca3216ac625f0
-      reuseReason:
-        capture89のsrc・固定lock・課題・harnessと固定Gitの3依存は現在も同一。差分は公開Gate/承認履歴のauthoring
-        metadata・公開一覧/PathのGolden画像・Source確認前のcatalog生成順。実src/lock/課題/計測harnessは同一。
+        sha256: d958db8a4af4f220fc0cc5c5d23255d34f2c6445b4bcea49ff0f37f6326c32f5
+      reuseReason: 今回の修正Sourceで7指標を再計測。準備Sから最終Pへ変わるのは公開statusとPath登録のみ。src・固定lock・課題・harnessと固定Gitの3依存はS/Pで同一。
     - kind: busy
       rawEvidence:
         path: .release-issue115/performance-busy.json
-        sha256: 99a1ced452fde549d995f64e13fa4dd0746ac6d3ab03db3bfe121ac42128f836
-      reuseReason:
-        capture89のsrc・固定lock・課題・harnessと固定Gitの3依存は現在も同一。差分は公開Gate/承認履歴のauthoring
-        metadata・公開一覧/PathのGolden画像・Source確認前のcatalog生成順。実src/lock/課題/計測harnessは同一。
+        sha256: 124c787ee905270b2c953f4b7fbf13f9c15f86c5e0bc3ffb5973d6b41208e4c8
+      reuseReason: 今回の修正Sourceで7指標を再計測。準備Sから最終Pへ変わるのは公開statusとPath登録のみ。src・固定lock・課題・harnessと固定Gitの3依存はS/Pで同一。
     - kind: stop
       rawEvidence:
         path: .release-issue115/performance-stop.json
-        sha256: 1516e08187205d411116bbf64566877518ba4d3c54f4d1ad2034256f4bf5bfe3
-      reuseReason:
-        capture89のsrc・固定lock・課題・harnessと固定Gitの3依存は現在も同一。差分は公開Gate/承認履歴のauthoring
-        metadata・公開一覧/PathのGolden画像・Source確認前のcatalog生成順。実src/lock/課題/計測harnessは同一。
-acceptanceSha256: 3e4e103477a69242c93243f938430d41359103e0a936e37b54ea19cadc866561
-lazyGzipBytes: 1888159
+        sha256: d3d1e61b595a6f43db657ce07d05318b0a7ac2b8b421811934b5cfd351295e40
+      reuseReason: 今回の修正Sourceで7指標を再計測。準備Sから最終Pへ変わるのは公開statusとPath登録のみ。src・固定lock・課題・harnessと固定Gitの3依存はS/Pで同一。
+acceptanceSha256: 8380c418b2dc48c001c53cd02153cbd20cbe590853fc630445b19363bc87c6ac
+lazyGzipBytes: 1888171
 performanceEvidence:
   - kind: cold
     raw: |
@@ -28054,8 +28040,8 @@ performanceEvidence:
         "schemaVersion": 1,
         "courseId": "typescript",
         "kind": "cold",
-        "sourceCommit": "89af6602bb2d382158737a7746cf85b587d2568b",
-        "manifestSha256": "607daf51a4e9881d0bf5a62e7b56cc77d103c7cd3874303da419b9b86c9037a7",
+        "sourceCommit": "6667cc4ed46b7c3636e061e60b703ad4ff9dd2dc",
+        "manifestSha256": "d96bf2b7a8831c41bf8a26b4bf1ad0a344e52177ee367da03862cb621c04e80c",
         "environment": {
           "browserMajor": 149,
           "os": "linux",
@@ -28067,7 +28053,7 @@ performanceEvidence:
           "cpuThrottle": false
         },
         "exerciseId": "typescript-ch06-l02-e01",
-        "applicationSourceSha256": "a02f1a47edd5525677eddb556e9b91c59f59f63a34f8e912550a534cbe7ad98b",
+        "applicationSourceSha256": "26b5e08557837bdfb9c5eee4411bfc3dba5538b2b43f0a309c42f755726a5f6b",
         "dependencyLockSha256": "65c2ce25a2c639fabe3e8f6baf3eaa2a8fef7177b5d243322fca85f1cbba79fd",
         "workloadSourceSha256": "ab09b2761c4c8b46ae4c9121f164b2a2a9cccd0e1a2008e268dfa63df17c600f",
         "harness": {
@@ -28075,29 +28061,29 @@ performanceEvidence:
           "sha256": "0ec587edc55d68f160347816d5e038b206b5b547d244d6a90d824a5990559f73"
         },
         "samplesMs": [
-          1050.3999999761581,
-          1048.7000000476837,
-          1046.2000000476837,
-          1043,
-          1040.9000000953674,
-          1035.7999999523163,
-          1061.5,
-          1058.8000000715256,
-          1045.7000000476837,
-          1050.3000000715256,
-          1048.6000000238419,
-          1173.6000000238419,
           1056,
-          1047.6000000238419,
-          1049.4000000953674,
-          1052.1000000238419,
-          1050.5,
-          1044.2000000476837,
-          1045.8999999761581,
-          1044.3999999761581
+          1036.7000000476837,
+          1066.2000000476837,
+          1053.3000000715256,
+          1056.5,
+          1059.7999999523163,
+          1046.3999999761581,
+          1065.1000000238419,
+          1048.2000000476837,
+          1049.6000000238419,
+          1043.8000000715256,
+          1052.3999999761581,
+          1072.3999999761581,
+          1048.8000000715256,
+          1063.3000000715256,
+          1056.0999999046326,
+          1048.8999999761581,
+          1072.8999999761581,
+          1046.9000000953674,
+          1063.2000000476837
         ],
         "warmup": 0,
-        "reportedValueMs": 1061.5,
+        "reportedValueMs": 1072.3999999761581,
         "timingScope": "controller-preview",
         "includesQueueAndFrame": false,
         "lateResultsRejected": false
@@ -28108,8 +28094,8 @@ performanceEvidence:
         "schemaVersion": 1,
         "courseId": "typescript",
         "kind": "warm",
-        "sourceCommit": "89af6602bb2d382158737a7746cf85b587d2568b",
-        "manifestSha256": "607daf51a4e9881d0bf5a62e7b56cc77d103c7cd3874303da419b9b86c9037a7",
+        "sourceCommit": "6667cc4ed46b7c3636e061e60b703ad4ff9dd2dc",
+        "manifestSha256": "d96bf2b7a8831c41bf8a26b4bf1ad0a344e52177ee367da03862cb621c04e80c",
         "environment": {
           "browserMajor": 149,
           "os": "linux",
@@ -28121,7 +28107,7 @@ performanceEvidence:
           "cpuThrottle": false
         },
         "exerciseId": "typescript-ch06-l02-e01",
-        "applicationSourceSha256": "a02f1a47edd5525677eddb556e9b91c59f59f63a34f8e912550a534cbe7ad98b",
+        "applicationSourceSha256": "26b5e08557837bdfb9c5eee4411bfc3dba5538b2b43f0a309c42f755726a5f6b",
         "dependencyLockSha256": "65c2ce25a2c639fabe3e8f6baf3eaa2a8fef7177b5d243322fca85f1cbba79fd",
         "workloadSourceSha256": "ab09b2761c4c8b46ae4c9121f164b2a2a9cccd0e1a2008e268dfa63df17c600f",
         "harness": {
@@ -28129,29 +28115,29 @@ performanceEvidence:
           "sha256": "0ec587edc55d68f160347816d5e038b206b5b547d244d6a90d824a5990559f73"
         },
         "samplesMs": [
-          856.7999999523163,
-          837.8000000715256,
-          840.9000000953674,
-          847.4000000953674,
-          838,
-          856.2999999523163,
-          845.2000000476837,
-          849.9000000953674,
-          875.3999999761581,
-          859.1000000238419,
-          850.3999999761581,
-          844.7999999523163,
-          842.5,
-          844.3999999761581,
-          851.7999999523163,
-          878.6000000238419,
-          881.6999999284744,
-          856.1999999284744,
-          852.6000000238419,
-          872.1999999284744
+          860.2999999523163,
+          849,
+          858.5,
+          841.6000000238419,
+          842.3999999761581,
+          840.6000000238419,
+          845.3999999761581,
+          838.8999999761581,
+          876.5,
+          850.7000000476837,
+          860.1000000238419,
+          851.2000000476837,
+          850.1000000238419,
+          843.8999999761581,
+          847.2999999523163,
+          840.7999999523163,
+          840.6999999284744,
+          850.4000000953674,
+          841.5,
+          844.2000000476837
         ],
         "warmup": 3,
-        "reportedValueMs": 878.6000000238419,
+        "reportedValueMs": 860.2999999523163,
         "timingScope": "controller-preview",
         "includesQueueAndFrame": false,
         "lateResultsRejected": false
@@ -28162,8 +28148,8 @@ performanceEvidence:
         "schemaVersion": 1,
         "courseId": "typescript",
         "kind": "simple",
-        "sourceCommit": "89af6602bb2d382158737a7746cf85b587d2568b",
-        "manifestSha256": "607daf51a4e9881d0bf5a62e7b56cc77d103c7cd3874303da419b9b86c9037a7",
+        "sourceCommit": "6667cc4ed46b7c3636e061e60b703ad4ff9dd2dc",
+        "manifestSha256": "d96bf2b7a8831c41bf8a26b4bf1ad0a344e52177ee367da03862cb621c04e80c",
         "environment": {
           "browserMajor": 149,
           "os": "linux",
@@ -28175,7 +28161,7 @@ performanceEvidence:
           "cpuThrottle": false
         },
         "exerciseId": "typescript-ch01-l02-e01",
-        "applicationSourceSha256": "a02f1a47edd5525677eddb556e9b91c59f59f63a34f8e912550a534cbe7ad98b",
+        "applicationSourceSha256": "26b5e08557837bdfb9c5eee4411bfc3dba5538b2b43f0a309c42f755726a5f6b",
         "dependencyLockSha256": "65c2ce25a2c639fabe3e8f6baf3eaa2a8fef7177b5d243322fca85f1cbba79fd",
         "workloadSourceSha256": "c848a87a3a61bedbb8267937c11b46a2a1dd349855257212858bf7a48edc71ed",
         "harness": {
@@ -28183,29 +28169,29 @@ performanceEvidence:
           "sha256": "0ec587edc55d68f160347816d5e038b206b5b547d244d6a90d824a5990559f73"
         },
         "samplesMs": [
-          3303.399999976158,
-          3369.7999999523163,
-          3311.7999999523163,
-          3394.600000023842,
-          3384.600000023842,
-          3335.5,
-          3302.899999976158,
-          3376.3000000715256,
-          3429,
-          3321.5,
-          3298.399999976158,
-          3309.7000000476837,
-          3352.100000023842,
-          3398,
-          3423.7000000476837,
-          3324.2000000476837,
-          3453.100000023842,
-          3457.899999976158,
-          3306.6999999284744,
-          3302.399999976158
+          3295.2999999523163,
+          3318.399999976158,
+          3328.7000000476837,
+          3273.6999999284744,
+          3304.7000000476837,
+          3324.600000023842,
+          3299,
+          3307.7999999523163,
+          3400.600000023842,
+          3318.3000000715256,
+          3283.100000023842,
+          3341.5,
+          3293,
+          3279.2999999523163,
+          3408.2999999523163,
+          3276.0999999046326,
+          3301.5,
+          3331.7000000476837,
+          3278.5,
+          3314.1999999284744
         ],
         "warmup": 3,
-        "reportedValueMs": 3453.100000023842,
+        "reportedValueMs": 3400.600000023842,
         "timingScope": "controller-validation",
         "includesQueueAndFrame": false,
         "lateResultsRejected": false
@@ -28216,8 +28202,8 @@ performanceEvidence:
         "schemaVersion": 1,
         "courseId": "typescript",
         "kind": "dom",
-        "sourceCommit": "89af6602bb2d382158737a7746cf85b587d2568b",
-        "manifestSha256": "607daf51a4e9881d0bf5a62e7b56cc77d103c7cd3874303da419b9b86c9037a7",
+        "sourceCommit": "6667cc4ed46b7c3636e061e60b703ad4ff9dd2dc",
+        "manifestSha256": "d96bf2b7a8831c41bf8a26b4bf1ad0a344e52177ee367da03862cb621c04e80c",
         "environment": {
           "browserMajor": 149,
           "os": "linux",
@@ -28229,7 +28215,7 @@ performanceEvidence:
           "cpuThrottle": false
         },
         "exerciseId": "typescript-ch05-l01-e01",
-        "applicationSourceSha256": "a02f1a47edd5525677eddb556e9b91c59f59f63a34f8e912550a534cbe7ad98b",
+        "applicationSourceSha256": "26b5e08557837bdfb9c5eee4411bfc3dba5538b2b43f0a309c42f755726a5f6b",
         "dependencyLockSha256": "65c2ce25a2c639fabe3e8f6baf3eaa2a8fef7177b5d243322fca85f1cbba79fd",
         "workloadSourceSha256": "c4ecff5a86d95bd384a763fb954421d70f08a1fcb58e840a530a9da0accc9e9e",
         "harness": {
@@ -28237,29 +28223,29 @@ performanceEvidence:
           "sha256": "0ec587edc55d68f160347816d5e038b206b5b547d244d6a90d824a5990559f73"
         },
         "samplesMs": [
-          4548.200000047684,
-          4550.599999904633,
-          4577.100000023842,
-          4566.300000071526,
-          4535.600000023842,
-          4530.900000095367,
-          4545.299999952316,
-          4547.399999976158,
-          4594.599999904633,
-          4517.899999976158,
-          4564.5,
-          4512.5,
-          4509,
-          4624.100000023842,
+          4501.800000071526,
+          4540.700000047684,
+          4521.399999976158,
+          4538.5,
+          4498.899999976158,
+          4611.899999976158,
+          4532.099999904633,
+          4492.600000023842,
+          4528.5,
+          4508.899999976158,
+          4599.100000023842,
+          4558.800000071526,
+          4506,
+          4553.399999976158,
+          4525.099999904633,
+          4506.600000023842,
           4517.799999952316,
-          4544.5,
-          4542.399999976158,
-          4513.899999976158,
-          4547,
-          4517.5
+          4585.5,
+          4526.200000047684,
+          4497.100000023842
         ],
         "warmup": 3,
-        "reportedValueMs": 4594.599999904633,
+        "reportedValueMs": 4599.100000023842,
         "timingScope": "controller-validation",
         "includesQueueAndFrame": false,
         "lateResultsRejected": false
@@ -28270,8 +28256,8 @@ performanceEvidence:
         "schemaVersion": 1,
         "courseId": "typescript",
         "kind": "async",
-        "sourceCommit": "89af6602bb2d382158737a7746cf85b587d2568b",
-        "manifestSha256": "607daf51a4e9881d0bf5a62e7b56cc77d103c7cd3874303da419b9b86c9037a7",
+        "sourceCommit": "6667cc4ed46b7c3636e061e60b703ad4ff9dd2dc",
+        "manifestSha256": "d96bf2b7a8831c41bf8a26b4bf1ad0a344e52177ee367da03862cb621c04e80c",
         "environment": {
           "browserMajor": 149,
           "os": "linux",
@@ -28283,7 +28269,7 @@ performanceEvidence:
           "cpuThrottle": false
         },
         "exerciseId": "typescript-ch05-l03-e01",
-        "applicationSourceSha256": "a02f1a47edd5525677eddb556e9b91c59f59f63a34f8e912550a534cbe7ad98b",
+        "applicationSourceSha256": "26b5e08557837bdfb9c5eee4411bfc3dba5538b2b43f0a309c42f755726a5f6b",
         "dependencyLockSha256": "65c2ce25a2c639fabe3e8f6baf3eaa2a8fef7177b5d243322fca85f1cbba79fd",
         "workloadSourceSha256": "41b3c0f9573cf4c5ea9591222f73a41d8a12dea13bed5caf7f5c557291f5df6d",
         "harness": {
@@ -28291,29 +28277,29 @@ performanceEvidence:
           "sha256": "0ec587edc55d68f160347816d5e038b206b5b547d244d6a90d824a5990559f73"
         },
         "samplesMs": [
-          4546,
-          4601,
-          4578.899999976158,
-          4570.600000023842,
-          4554.899999976158,
-          4617.299999952316,
-          4586.5,
-          4572.399999976158,
-          4611.199999928474,
-          4596.700000047684,
-          4559.399999976158,
-          4594.099999904633,
-          4565.800000071526,
-          4612.899999976158,
-          4560.5,
-          4583.200000047684,
-          4576.600000023842,
-          4700.899999976158,
-          4617.799999952316,
-          4667.5
+          4582.200000047684,
+          4557.400000095367,
+          4567.5,
+          4558.799999952316,
+          4531.800000071526,
+          4536.799999952316,
+          4566,
+          4527.400000095367,
+          4575.799999952316,
+          4553.700000047684,
+          4557.100000023842,
+          4554.300000071526,
+          4566,
+          4570.200000047684,
+          4572.299999952316,
+          4571.699999928474,
+          4546.200000047684,
+          4524.600000023842,
+          4594.900000095367,
+          4537.399999976158
         ],
         "warmup": 3,
-        "reportedValueMs": 4667.5,
+        "reportedValueMs": 4582.200000047684,
         "timingScope": "controller-validation",
         "includesQueueAndFrame": false,
         "lateResultsRejected": false
@@ -28324,8 +28310,8 @@ performanceEvidence:
         "schemaVersion": 1,
         "courseId": "typescript",
         "kind": "busy",
-        "sourceCommit": "89af6602bb2d382158737a7746cf85b587d2568b",
-        "manifestSha256": "607daf51a4e9881d0bf5a62e7b56cc77d103c7cd3874303da419b9b86c9037a7",
+        "sourceCommit": "6667cc4ed46b7c3636e061e60b703ad4ff9dd2dc",
+        "manifestSha256": "d96bf2b7a8831c41bf8a26b4bf1ad0a344e52177ee367da03862cb621c04e80c",
         "environment": {
           "browserMajor": 149,
           "os": "linux",
@@ -28337,7 +28323,7 @@ performanceEvidence:
           "cpuThrottle": false
         },
         "exerciseId": "typescript-ch05-l03-e01",
-        "applicationSourceSha256": "a02f1a47edd5525677eddb556e9b91c59f59f63a34f8e912550a534cbe7ad98b",
+        "applicationSourceSha256": "26b5e08557837bdfb9c5eee4411bfc3dba5538b2b43f0a309c42f755726a5f6b",
         "dependencyLockSha256": "65c2ce25a2c639fabe3e8f6baf3eaa2a8fef7177b5d243322fca85f1cbba79fd",
         "workloadSourceSha256": "41b3c0f9573cf4c5ea9591222f73a41d8a12dea13bed5caf7f5c557291f5df6d",
         "harness": {
@@ -28345,11 +28331,11 @@ performanceEvidence:
           "sha256": "0ec587edc55d68f160347816d5e038b206b5b547d244d6a90d824a5990559f73"
         },
         "samplesMs": [
-          17.899999976158142,
-          27.600000023841858
+          23.800000071525574,
+          24.100000023841858
         ],
         "warmup": 0,
-        "reportedValueMs": 27.600000023841858,
+        "reportedValueMs": 24.100000023841858,
         "timingScope": "trusted-click-next-frame",
         "includesQueueAndFrame": true,
         "lateResultsRejected": false
@@ -28360,8 +28346,8 @@ performanceEvidence:
         "schemaVersion": 1,
         "courseId": "typescript",
         "kind": "stop",
-        "sourceCommit": "89af6602bb2d382158737a7746cf85b587d2568b",
-        "manifestSha256": "607daf51a4e9881d0bf5a62e7b56cc77d103c7cd3874303da419b9b86c9037a7",
+        "sourceCommit": "6667cc4ed46b7c3636e061e60b703ad4ff9dd2dc",
+        "manifestSha256": "d96bf2b7a8831c41bf8a26b4bf1ad0a344e52177ee367da03862cb621c04e80c",
         "environment": {
           "browserMajor": 149,
           "os": "linux",
@@ -28373,7 +28359,7 @@ performanceEvidence:
           "cpuThrottle": false
         },
         "exerciseId": "typescript-ch05-l03-e01",
-        "applicationSourceSha256": "a02f1a47edd5525677eddb556e9b91c59f59f63a34f8e912550a534cbe7ad98b",
+        "applicationSourceSha256": "26b5e08557837bdfb9c5eee4411bfc3dba5538b2b43f0a309c42f755726a5f6b",
         "dependencyLockSha256": "65c2ce25a2c639fabe3e8f6baf3eaa2a8fef7177b5d243322fca85f1cbba79fd",
         "workloadSourceSha256": "41b3c0f9573cf4c5ea9591222f73a41d8a12dea13bed5caf7f5c557291f5df6d",
         "harness": {
@@ -28381,11 +28367,11 @@ performanceEvidence:
           "sha256": "0ec587edc55d68f160347816d5e038b206b5b547d244d6a90d824a5990559f73"
         },
         "samplesMs": [
-          33.60000002384186,
-          21.699999928474426
+          25.899999976158142,
+          22.5
         ],
         "warmup": 0,
-        "reportedValueMs": 33.60000002384186,
+        "reportedValueMs": 25.899999976158142,
         "timingScope": "trusted-click-next-frame",
         "includesQueueAndFrame": true,
         "lateResultsRejected": true
@@ -28395,30 +28381,30 @@ browserMatrix:
     passedTests: 2
     failedTests: 0
     skippedTests: 0
-    reportSha256: 25e7658595e3caef7bc89727e4f83983fca9b00e6ee840be3fb9f9b5cb27a59f
+    reportSha256: a18f681ff021c23d9673a8713a7931a0915f7aa663c209b0ff93f9b312174361
     testSourceSha256: 1d4c3fc46778c2eef89166d055075f1d8383f40dd8b1721de7ebd7c2888ac2d1
-    normalizedLearningInputSha256: 775187787b520b65c80567de8bfe49b347e430f74cb701a8683150ff86f01b0b
+    normalizedLearningInputSha256: cbb44acd8ea60c28d6597b43c88d95af103924bee8a97dcf1922b8247d3dcaed
   - engine: firefox
     passedTests: 2
     failedTests: 0
     skippedTests: 0
-    reportSha256: 25e7658595e3caef7bc89727e4f83983fca9b00e6ee840be3fb9f9b5cb27a59f
+    reportSha256: a18f681ff021c23d9673a8713a7931a0915f7aa663c209b0ff93f9b312174361
     testSourceSha256: 1d4c3fc46778c2eef89166d055075f1d8383f40dd8b1721de7ebd7c2888ac2d1
-    normalizedLearningInputSha256: 775187787b520b65c80567de8bfe49b347e430f74cb701a8683150ff86f01b0b
+    normalizedLearningInputSha256: cbb44acd8ea60c28d6597b43c88d95af103924bee8a97dcf1922b8247d3dcaed
   - engine: webkit
     passedTests: 2
     failedTests: 0
     skippedTests: 0
-    reportSha256: 25e7658595e3caef7bc89727e4f83983fca9b00e6ee840be3fb9f9b5cb27a59f
+    reportSha256: a18f681ff021c23d9673a8713a7931a0915f7aa663c209b0ff93f9b312174361
     testSourceSha256: 1d4c3fc46778c2eef89166d055075f1d8383f40dd8b1721de7ebd7c2888ac2d1
-    normalizedLearningInputSha256: 775187787b520b65c80567de8bfe49b347e430f74cb701a8683150ff86f01b0b
+    normalizedLearningInputSha256: cbb44acd8ea60c28d6597b43c88d95af103924bee8a97dcf1922b8247d3dcaed
 independenceReview:
   author: root
   reviewer: review_issue109
   decision: approved
   privateOriginalsChecked: true
-  productTreeSha256: 97e9860693b9cb8d59849cb0bc08ce858267895ac63ba9d50882437cc174a76b
-  evidenceSha256: 0aa8df510df2a21896a95f2311fdda639933f99fce6b73dd78251eb75913ad6a
+  productTreeSha256: 160399381000a89e6be238411351e3aad7e46e0fa11a41833e6d0db7572c3cca
+  evidenceSha256: 1e232fdf299f5864b956e13cac5c5cf2c305593c7fb0d7127e37659b44fb7001
   evaluationReceiptSha256s:
     - 344080e8163c616ef77785e7d5b42efc8e5716ac31311f1af13f1e613b7d6bc4
     - 2c70192b219faa91bd6d53b835b0df11e9b20b24cfca74f822acd55c5bfa59c0
