@@ -1,3 +1,5 @@
+import type { TypeScriptBoundaryProfile } from '../../../core/content/typeScriptBoundaryContract';
+import type { BoundaryLearningResult } from './checkBoundaryLearning';
 import type { TypeScriptCompileResult } from './compileTypeScript';
 import type { ScoreNumberAnnotationResult } from './checkScoreNumberAnnotation';
 import type { ScoreNumberInferenceResult } from './checkScoreNumberInference';
@@ -15,6 +17,7 @@ import {
   isQuestionInterfaceResult,
   isConditionalLearningResult,
   isReusableLearningResult,
+  isBoundaryLearningResult,
   type CompilerWorkerRequest,
   type TypeScriptCompileInput,
 } from './workerContract';
@@ -129,6 +132,19 @@ export class TypeScriptCompilerClient {
     );
   }
 
+  /** DOM・未知データ・非同期の初回課題を既存の期限と停止機構で検査する。 */
+  boundaryCheck(
+    input: TypeScriptCompileInput,
+    profile: TypeScriptBoundaryProfile,
+  ): Promise<BoundaryLearningResult> {
+    return this.#request(
+      input,
+      profile,
+      (value): value is BoundaryLearningResult => isBoundaryLearningResult(value, profile),
+      () => ({ status: 'system-error' }),
+    );
+  }
+
   /** 共通の期限・停止機構を維持し、操作ごとの厳密な結果guardだけを切り替える。 */
   #request<T>(
     input: TypeScriptCompileInput,
@@ -138,7 +154,8 @@ export class TypeScriptCompilerClient {
       | 'score-number-inference-v1'
       | 'question-interface-v1'
       | ConditionalLearningProfile
-      | ReusableLearningProfile,
+      | ReusableLearningProfile
+      | TypeScriptBoundaryProfile,
     isResult: (value: unknown, snapshot: TypeScriptCompileInput) => value is T,
     failure: () => T,
     invalidInput: () => T = failure,

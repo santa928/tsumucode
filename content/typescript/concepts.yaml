@@ -49,3 +49,18 @@ concepts:
     prerequisiteConceptIds:
       - typescript-generic-identity
     minimumProjectLevel: transform
+  - id: typescript-dom-event
+    introducedBySlideId: typescript-ch05-l01-s01
+    minimumProjectLevel: transform
+    prerequisiteConceptIds:
+      - typescript-readonly-copy
+  - id: typescript-unknown-points
+    introducedBySlideId: typescript-ch05-l02-s01
+    minimumProjectLevel: transform
+    prerequisiteConceptIds:
+      - typescript-dom-event
+  - id: typescript-async-unknown
+    introducedBySlideId: typescript-ch05-l03-s01
+    minimumProjectLevel: transform
+    prerequisiteConceptIds:
+      - typescript-unknown-points

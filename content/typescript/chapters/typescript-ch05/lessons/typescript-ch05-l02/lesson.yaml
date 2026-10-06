@@ -1,0 +1,28 @@
+id: typescript-ch05-l02
+kind: standard
+title: unknownの値を実行時に確かめる
+goal: unknownの値をobject・null・項目の存在・項目の型で確認し、実値か不正データの案内を表示できる。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - typescript-ch05-l01
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/typescript-ch05-l02-e01/exercise.yaml
+reflection: unknownの値をobject・null・項目の存在・項目の型で確認し、実値か不正データの案内を表示できる。
+glossaryRefs:
+  - unknown
+  - typeof-value
+  - property-in
+  - string-conversion
+  - 'null'
+  - any
+completion:
+  kind: standard
+  finalSlideId: typescript-ch05-l02-s04
+  requiredExerciseIds:
+    - typescript-ch05-l02-e01
+nextLessonId: typescript-ch05-l03

@@ -28,7 +28,7 @@ JavaScript最終作品の学習クイズを、型のあるデータ、状態、�
 
 ## 再開時の子タスク対応（2026-10-05）
 
-Issue #109で導入03、#110でQuestion/interface、#111でunion/literalとnarrowing・optional/undefinedの独立2Lessonを接続する登録範囲を、#112で関数型/callback・generic・readonlyの3小単元まで接続した範囲は4Chapter・9Lesson・36枚・165分のdraft。有限な元TS条件と実動作のANDを採用し、type aliasの役割は読む練習、union/optionalは引数を確認して値を使う練習で扱う。以下は全15トピックを残タスクへ対応付けた索引であり、27Lesson/595分案やTS固有性能予算の新たな承認を意味しない。
+Issue #109で導入03、#110でQuestion/interface、#111でunion/literalとnarrowing・optional/undefinedの独立2Lessonを接続する登録範囲を、#112で関数型/callback・generic・readonlyの3小単元を接続し、#113でDOM Event・unknown・非同期の3課題まで接続した範囲は5Chapter・12Lesson・48枚・225分のdraft。有限な元TS条件と実動作のANDを採用し、type aliasの役割は読む練習、union/optionalは引数を確認して値を使う練習で扱う。以下は全15トピックを残タスクへ対応付けた索引であり、27Lesson/595分案やTS固有性能予算の新たな承認を意味しない。
 
 | 子Issue | 学習目標と順序                                                                      |
 | ------- | ----------------------------------------------------------------------------------- |

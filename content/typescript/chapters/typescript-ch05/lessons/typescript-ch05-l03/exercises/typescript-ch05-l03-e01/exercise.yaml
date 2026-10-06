@@ -1,0 +1,388 @@
+id: typescript-ch05-l03-e01
+kind: standard
+workspaceId: typescript-ch05-l03-e01
+countsTowardStandardExerciseTotal: true
+title: 非同期のunknownと失敗を受け止める
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: typescript-async-unknown
+    minimumLevel: transform
+scaffoldLevel: transform
+runtime:
+  kind: typescript
+  entryFile: main.ts
+  sourceType: module
+  capabilityProfile: project
+  primaryOutput: preview
+steps:
+  - id: check-boundary
+    file: main.ts
+    target: 非同期のunknownと失敗を受け止める
+    starterAnchor: output.textContent = error.message;
+    change: unknownの失敗をErrorか確認してから案内を読む
+    observe: 型の案内が消え、ボタンの実DOM表示が各結果に変わる
+    requiresConceptIds:
+      - typescript-async-unknown
+    validationRuleIds:
+      - typescript-ch05-l03-e01-r01
+      - typescript-ch05-l03-e01-r02
+      - typescript-ch05-l03-e01-r03
+files:
+  - path: main.ts
+    language: typescript
+    source: starter/main.ts
+    editable: true
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+solutionFiles:
+  - path: main.ts
+    language: typescript
+    source: solution/main.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: typescript-ch05-l03-e01-r01
+    label: 型と実際の値の確認を保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: typescript-learning
+      file: main.ts
+    assertion:
+      kind: typescript-learning
+      profile: async-unknown-v1
+    feedback:
+      target: 非同期のunknownと失敗を受け止める
+      expected: 非同期結果をunknownから検証し、unknownの失敗をError確認して表示し、拒否後も再試行できる。
+      nextAction: 決めつける型を書かず、実際の値を確認してから表示へ渡します。
+    hintId: typescript-ch05-l03-e01-h01
+    relatedSlideId: typescript-ch05-l03-s01
+  - id: typescript-ch05-l03-e01-r02
+    label: 操作の準備ができた
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-console
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - level: log
+          text: 準備できました
+    feedback:
+      target: Consoleの準備案内
+      expected: 準備できました
+      nextAction: 登録コードを保ち、実DOMの操作も確かめます。
+    hintId: typescript-ch05-l03-e01-h02
+    relatedSlideId: typescript-ch05-l03-s04
+  - id: typescript-ch05-l03-e01-r03
+    label: 操作前は待機
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#output'
+    assertion:
+      kind: text
+      operator: equals
+      expected: 待機
+    feedback:
+      target: '#output'
+      expected: 待機
+      nextAction: 操作の前と後の表示を分けます。
+    hintId: typescript-ch05-l03-e01-h02
+    relatedSlideId: typescript-ch05-l03-s04
+hints:
+  - id: typescript-ch05-l03-e01-h01
+    level: 1
+    title: 値を読む前の確認
+    text: 非同期の成功はtryへ、awaitしたPromiseの拒否はcatchへ進みます。catchにはError以外も入り得ます。
+    relatedSlideId: typescript-ch05-l03-s01
+  - id: typescript-ch05-l03-e01-h02
+    level: 2
+    title: 型と実行を分ける
+    text: catchのerrorはunknownです。instanceof Errorで確認した側だけmessageを読みます。
+    relatedSlideId: typescript-ch05-l03-s02
+  - id: typescript-ch05-l03-e01-h03
+    level: 3
+    title: 処理の形を確かめる
+    text: "error instanceof Error ? error.message : '理由が不明です'で案内を分け、次の正常操作も残します。"
+    relatedSlideId: typescript-ch05-l03-s03
+relatedSlideIds:
+  - typescript-ch05-l03-s01
+  - typescript-ch05-l03-s02
+  - typescript-ch05-l03-s03
+  - typescript-ch05-l03-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: starter
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - typescript-type-error-18046
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/starter.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: solution
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/solution.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: renamed
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/renamed.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: parenthesized
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/parenthesized.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: early-return
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/early-return.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: arrow-function
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/arrow-function.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: nocheck-escape
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/nocheck-escape.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch05-l03-e01-r01
+  - id: suppressed
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/suppressed.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch05-l03-e01-r01
+  - id: any-escape
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/any-escape.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch05-l03-e01-r01
+  - id: assertion
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/assertion.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch05-l03-e01-r01
+  - id: error-after-output
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - javascript-runtime
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/error-after-output.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: wrong-result
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/wrong-result.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:async-points:success:output
+      - interaction:async-points:retry:output
+  - id: no-await
+    expectedStatus: code-error
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/no-await.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - javascript-runtime
+  - id: empty-catch
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/empty-catch.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch05-l03-e01-r01
+      - interaction:async-points:failure:output
+  - id: fixed-display
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/fixed-display.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch05-l03-e01-r01
+      - interaction:async-points:invalid:output
+  - id: delayed
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/delayed.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+interactionScenarios:
+  - id: async-points
+    label: 非同期のunknownと失敗を受け止める
+    actions:
+      - id: success
+        kind: click
+        selector: '#success'
+      - id: invalid
+        kind: click
+        selector: '#invalid'
+      - id: failure
+        kind: click
+        selector: '#failure'
+      - id: retry
+        kind: click
+        selector: '#success'
+    checkpoints:
+      - id: success
+        afterActionId: success
+        expectations:
+          - id: output
+            kind: selector-text
+            selector: '#output'
+            equals: '2'
+      - id: invalid
+        afterActionId: invalid
+        expectations:
+          - id: output
+            kind: selector-text
+            selector: '#output'
+            equals: 不正なデータ
+      - id: failure
+        afterActionId: failure
+        expectations:
+          - id: output
+            kind: selector-text
+            selector: '#output'
+            equals: 再試行できます
+      - id: retry
+        afterActionId: retry
+        expectations:
+          - id: output
+            kind: selector-text
+            selector: '#output'
+            equals: '2'

@@ -1,0 +1,1 @@
+formatPointsのunknown引数とstring戻り値を保ちます。object・nullではない・pointsがある・pointsがnumberの4つを確認した側で実際のpointsをStringで表示し、他は不正なデータと返します。3つのボタンで数値、文字列の項目、nullを確かめます。asは実行時の検証ではありません。

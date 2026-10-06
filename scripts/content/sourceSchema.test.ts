@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { parse } from 'yaml';
 /** Authoring YAMLのstrict構造と安全なSource path契約を検証する。 */
 import { describe, expect, it } from 'vitest';
 import {
@@ -847,4 +849,56 @@ it('関係Ruleとruntime Goalを一致させ、未知Goal/別Goal/未指定を�
       validationRules: [rule],
     }).success,
   ).toBe(false);
+});
+
+/** 固定3課題だけでTSの実DOM操作を許可し、従来の能力制限を維持する。 */
+describe('TypeScript境界課題のAuthoring契約', () => {
+  it.each(['01', '02', '03'])(
+    'ch05-l%sの操作省略・能力変更・別課題への流用を拒否する',
+    (suffix) => {
+      const id = `typescript-ch05-l${suffix}`;
+      const source = parse(
+        readFileSync(
+          `content/typescript/chapters/typescript-ch05/lessons/${id}/exercises/${id}-e01/exercise.yaml`,
+          'utf8',
+        ),
+      ) as Record<string, unknown>;
+      expect(ExerciseSourceSchema.safeParse(source).success).toBe(true);
+      expect(
+        ExerciseSourceSchema.safeParse({ ...source, id: 'typescript-other-e01' }).success,
+      ).toBe(false);
+      const omitted = { ...source };
+      delete omitted['interactionScenarios'];
+      expect(ExerciseSourceSchema.safeParse(omitted).success).toBe(false);
+      const runtime = source['runtime'] as Record<string, unknown>;
+      expect(
+        ExerciseSourceSchema.safeParse({
+          ...source,
+          runtime: { ...runtime, capabilityProfile: 'core' },
+        }).success,
+      ).toBe(false);
+
+      expect(
+        ExerciseSourceSchema.safeParse({
+          ...source,
+          runtime: { ...runtime, kind: 'javascript', entryFile: 'main.js' },
+        }).success,
+      ).toBe(false);
+      const altered = structuredClone(source);
+      const scenario = (
+        altered['interactionScenarios'] as {
+          checkpoints: { expectations: { equals: string }[] }[];
+        }[]
+      )[0]!;
+      scenario.checkpoints[0]!.expectations[0]!.equals = '省略した期待値';
+      expect(ExerciseSourceSchema.safeParse(altered).success).toBe(false);
+      const scenarios = source['interactionScenarios'] as Record<string, unknown>[];
+      expect(
+        ExerciseSourceSchema.safeParse({
+          ...source,
+          interactionScenarios: [{ ...scenarios[0], checkpoints: [] }],
+        }).success,
+      ).toBe(false);
+    },
+  );
 });

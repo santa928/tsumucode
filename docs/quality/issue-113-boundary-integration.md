@@ -1,0 +1,35 @@
+# Issue #113: DOM・unknown・非同期の初回課題
+
+基準mainは`86faf551d5b3a37e648da368315a730f756cdd9f`（#112完了）。#111/#112の依存を満たした状態で、既存checkoutを保護する専用worktreeへ実装した。Courseはdraftを維持する。
+
+## 教材と採点
+
+Chapter 05の3LessonはDOMとEventの対象確認→unknownの実検証→非同期結果と失敗処理の順に進む。各20分・4Slide・1Exercise。累計5Chapter・12Lesson・48枚（37概念Slide）・12演習・225分。時間は見積りで、初心者の実測ではない。旧9Lessonからの空step移行で元TS、閲覧、Hint、合格、履歴とpassing snapshotを保持する。
+
+DOM課題はquerySelectorのnullとcurrentTargetの種類を確認し、実datasetを表示する。unknown課題はobject・非null・項目の存在・項目のnumberを確認して実値を使う。非同期課題は同梱した3結果をPromiseのunknownとして受け取り、await後に検証し、catchのunknownをErrorへ絞り実messageを表示する。外部APIや常駐サーバーは追加しない。
+
+[固定3課題の契約](typescript-boundary-grading-contract.md)に有限な受入形式と制限を記す。元TSの学習条件、実Compiler、初期Console/DOM、実click後のDOM checkpointをANDで判定する。型を弱める書き方や固定表示で学習条件を代用しない。DOM/Eventとunknownの2課題は既存dom、非同期課題は既存project能力を使い、Runtimeの安全制約を広げていない。Source authoringのInteraction登録だけを固定3Exerciseのruntime/scenario契約へ拡張した。
+
+## 検証と途中の失敗
+
+専用Docker `tsumucode-issue113-check`、Node 24.18.0 / TypeScript 6.0.3 / Playwright 1.61.1 / Chromium 149.0.7827.55 / Linux arm64。既存イメージと依存を専用volumeで再利用した。ホスト依存・設定や他checkoutを変更していない。
+
+教材3Courseのcompile、型検査、buildとCSS inline、Chapter 05の構造、出典355files/355itemsは成功。関連unit144件（Compiler境界12、Client25、Validator28、Source schema72、Course7）と、12枚のコードを本文指定の文脈で実Compilerへ通す別1件が成功した。unknownの初回例は型診断18046を期待する。DOMの実行をNodeで代用しない。
+
+最初のunit1件は括弧Fixtureのsingle括弧をdouble括弧だけのtest正規表現で調べたため失敗した。実際の括弧を確認するassertへ修正して対象12件は成功した。掲載例のtestでundefinedを明示していないLint指摘は、コード欠落を明示的なエラーにして解消した。
+
+最初のChromium10件は3件成功・7件失敗。390pxの3Lesson各4枚でページ横はみ出しなし、前提コード、図と練習欄への到達、axe違反0を確認した。並行した全体Lint/Compiler検証で専用containerのOOM killが3件記録され、Worker基盤エラーとBrowser crashが出た。以後、重い検証は逐次実行する。DOM課題のConsoleがtab内にあることと、読み取り専用HTMLに変更を持つFixtureをTSだけUIへ入力したことによるテスト誤用も修正した。旧結果拒否のUI検証では、CodeMirrorの仮想描画を全文とみなした問題、再読込後に新しい保存イベントを要求した問題、Slide未閲覧の直リンクでLesson完了を要求した問題を、保存原文・表示の両端・演習合格の確認へ修正した。成功済み入力は影響範囲を確認して再利用し、失敗や重複実行を成功数へ加えない。
+
+逐次実行ではDOM17・unknown14のFixtureと、3Lessonの通常UIが成功した。非同期16例の実観測ではawaitを省いた例が拒否時に未処理のPromiseエラーとなり、仮のincomplete期待値と不一致だった。実際のjavascript-runtime診断とcode-errorへmetadataを合わせ、元TSと厳密な診断/Rule照合を保った限定1例の実Browser再検証は成功した。不変の15例を再利用し、再実行を追加のFixture数として数えない。実Promise待機中のclickを停止した旧checkpointはAbortErrorとなり、同じTSを保持してfresh frameの4操作を再試行できた。
+
+旧採点中の編集は新ソースへ合格を保存せず、元TSを再読込できた。再試行後の履歴は未達と合格の2件だけで、passing snapshotは最新Solutionの原文と一致した。演習直リンクのこの検証でSlide未閲覧のLesson完了は要求せず、全Slide閲覧後のLesson完了は通常UIの3件で確認した。
+
+Sourceの固定3課題でInteraction条件を丸ごと省略する場合と、runtimeをJSへ置換する場合も拒否するよう補強した。改変した期待値の拒否とあわせた対象unit3件、非同期のFixture metadataを照合するunit1件は成功した。型検査の予算やRuntimeの能力を緩めていない。
+
+限定Browser設定の作業directory未指定でserver起動timeoutが1回発生した。repo directoryを明示して限定1例は成功した。設定の失敗を教材や採点の成功へ加えない。
+
+## 承認と統合の現在地
+
+この記録作成時点では、修正したBrowserの対象再検証と独立内容/コードレビューを実行中または待機中。承認台帳の更新、PR、CI、merge/Issue closeは未実施。完了と承認の証拠を確認してからこの節を更新する。
+
+初心者の通し試用、物理実機、全TS制作、TS固有性能予算、正式公開受入は未確認。Home/Pathへの掲載やdeployは行わない。後続#114の制作と#115の受入を、この小さい3Lessonや通常CIで代替しない。

@@ -1,0 +1,371 @@
+id: typescript-ch05-l01-e01
+kind: standard
+workspaceId: typescript-ch05-l01-e01
+countsTowardStandardExerciseTotal: true
+title: DOMとEventの対象を確認して読む
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: typescript-dom-event
+    minimumLevel: transform
+scaffoldLevel: transform
+runtime:
+  kind: typescript
+  entryFile: main.ts
+  sourceType: module
+  capabilityProfile: dom
+  primaryOutput: preview
+steps:
+  - id: check-boundary
+    file: main.ts
+    target: DOMとEventの対象を確認して読む
+    starterAnchor: return target.dataset.answer ?? '未指定';
+    change: currentTargetがbuttonかを確認してからdatasetを読む
+    observe: 型の案内が消え、ボタンの実DOM表示が各結果に変わる
+    requiresConceptIds:
+      - typescript-dom-event
+    validationRuleIds:
+      - typescript-ch05-l01-e01-r01
+      - typescript-ch05-l01-e01-r02
+      - typescript-ch05-l01-e01-r03
+files:
+  - path: main.ts
+    language: typescript
+    source: starter/main.ts
+    editable: true
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+solutionFiles:
+  - path: main.ts
+    language: typescript
+    source: solution/main.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: typescript-ch05-l01-e01-r01
+    label: 型と実際の値の確認を保つ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: typescript-learning
+      file: main.ts
+    assertion:
+      kind: typescript-learning
+      profile: dom-event-v1
+    feedback:
+      target: DOMとEventの対象を確認して読む
+      expected: DOMが見つからない場合とEventの対象が違う場合を分け、確認したbuttonの値を表示できる。
+      nextAction: 決めつける型を書かず、実際の値を確認してから表示へ渡します。
+    hintId: typescript-ch05-l01-e01-h01
+    relatedSlideId: typescript-ch05-l01-s01
+  - id: typescript-ch05-l01-e01-r02
+    label: 操作の準備ができた
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: javascript-console
+    assertion:
+      kind: javascript-console
+      operator: equals
+      expected:
+        - level: log
+          text: 準備できました
+    feedback:
+      target: Consoleの準備案内
+      expected: 準備できました
+      nextAction: 登録コードを保ち、実DOMの操作も確かめます。
+    hintId: typescript-ch05-l01-e01-h02
+    relatedSlideId: typescript-ch05-l01-s04
+  - id: typescript-ch05-l01-e01-r03
+    label: 操作前は待機
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#output'
+    assertion:
+      kind: text
+      operator: equals
+      expected: 待機
+    feedback:
+      target: '#output'
+      expected: 待機
+      nextAction: 操作の前と後の表示を分けます。
+    hintId: typescript-ch05-l01-e01-h02
+    relatedSlideId: typescript-ch05-l01-s04
+hints:
+  - id: typescript-ch05-l01-e01-h01
+    level: 1
+    title: 値を読む前の確認
+    text: EventのcurrentTargetは登録先ですが、Elementの特定種類とは限りません。nullや別の対象を含みます。
+    relatedSlideId: typescript-ch05-l01-s01
+  - id: typescript-ch05-l01-e01-h02
+    level: 2
+    title: 型と実行を分ける
+    text: instanceofでHTMLButtonElementかを確認した側でdatasetを読み、違う側もstringを返します。
+    relatedSlideId: typescript-ch05-l01-s02
+  - id: typescript-ch05-l01-e01-h03
+    level: 3
+    title: 処理の形を確かめる
+    text: if (target instanceof HTMLButtonElement)の中でtarget.dataset.answer ??
+      '未指定'を返し、他の対象には対象が違いますと返します。
+    relatedSlideId: typescript-ch05-l01-s03
+relatedSlideIds:
+  - typescript-ch05-l01-s01
+  - typescript-ch05-l01-s02
+  - typescript-ch05-l01-s03
+  - typescript-ch05-l01-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: starter
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - typescript-type-error-18047
+      - typescript-type-error-2339
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/starter.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: solution
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/solution.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: renamed
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/renamed.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: parenthesized
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/parenthesized.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: early-return
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/early-return.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: arrow-function
+    expectedStatus: pass
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/arrow-function.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: nocheck-escape
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/nocheck-escape.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch05-l01-e01-r01
+  - id: suppressed
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/suppressed.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch05-l01-e01-r01
+  - id: any-escape
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/any-escape.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch05-l01-e01-r01
+  - id: assertion
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/assertion.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch05-l01-e01-r01
+  - id: error-after-output
+    expectedStatus: code-error
+    expectedDiagnosticCodes:
+      - javascript-runtime
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/error-after-output.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: fixed-return
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/fixed-return.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch05-l01-e01-r01
+  - id: non-null-assertion
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/non-null-assertion.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch05-l01-e01-r01
+  - id: event-target
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/event-target.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch05-l01-e01-r01
+  - id: different-target
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/different-target.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/different-target.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:dom-answer:answer:output
+  - id: missing-output
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/missing-output.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/missing-output.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - typescript-ch05-l01-e01-r03
+      - interaction:dom-answer:answer:output
+  - id: wrong-result
+    expectedStatus: incomplete
+    files:
+      - path: main.ts
+        language: typescript
+        source: fixtures/wrong-result.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/wrong-result.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - interaction:dom-answer:answer:output
+interactionScenarios:
+  - id: dom-answer
+    label: DOMとEventの対象を確認して読む
+    actions:
+      - id: answer
+        kind: click
+        selector: '#answer'
+    checkpoints:
+      - id: answer
+        afterActionId: answer
+        expectations:
+          - id: output
+            kind: selector-text
+            selector: '#output'
+            equals: '2'
