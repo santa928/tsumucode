@@ -4,9 +4,9 @@
 
 ## 現在の状態
 
-教材とRelease candidateはdraft、公開承認はpending。Deployを実行していない。TSのcandidate dispatchは本人承認済みのSource/Artifact/品質記録が揃わなければ失敗する。TSのbetaは公開承認を省略できるため許可しない。公開TSを含むmainはHTML/CSSやJavaScriptを選んでもbetaを拒否し、TS draft時の既存betaだけを維持する。HTML/CSSとJavaScriptの既存契約は保持する。
+2026-10-06に本人がTS15教材の正式公開・一覧とJavaScript後のrequired Path追加・全site品質CIと配信後検証を明示承認した。承認根拠は親thread `01a10b91-1aa7-7475-a007-c3fb4bce8017` の公開確認 `Sentinel_9c7e92428d608191a1d8b5a112869db3` と本人返信 `Sentinel_63f9a2fed9248191b84e0d843ce58f51`。この許可だけで品質CIや配信後確認をpassedへ変えない。公開Source/Artifact/品質記録と実Deploy/公開後検証を別々に固定する。TSのcandidate dispatchは本人承認済みのSource/Artifact/品質記録が揃わなければ失敗する。TSのbetaは公開承認を省略できるため許可しない。公開TSを含むmainはHTML/CSSやJavaScriptを選んでもbetaを拒否し、TS draft時の既存betaだけを維持する。HTML/CSSとJavaScriptの既存契約は保持する。
 
-承認済みの代替受入は3独立初心者役の模擬評価であり、実人の初心者試用と低速物理実機は未確認。性能はChromium 149 / Linux arm64 / 10 logical CPU / local HTTP subpath / throttleなしの基準環境に限定し、CPU機種と物理画面の表示時刻は未確認。予算と区間は[設計書](2026-09-29-typescript-course-design.md#ts専用の承認済み受入方式と性能予算)を参照する。
+承認済みの代替受入は3独立初心者役の模擬評価であり、実人の初心者試用と低速物理実機は未確認。本人はcomputer-use/agentによる受入を採用し、追加の実人試用を公開の必須条件にしないと明示した。模擬45件を実人や物理実機の検証とは扱わず、既存の安全・性能・a11y・Browser・内容review・公開Gateを維持する。性能はChromium 149 / Linux arm64 / 10 logical CPU / local HTTP subpath / throttleなしの基準環境に限定し、CPU機種と物理画面の表示時刻は未確認。予算と区間は[設計書](2026-09-29-typescript-course-design.md#ts専用の承認済み受入方式と性能予算)を参照する。
 
 ## 品質照合
 
@@ -18,11 +18,11 @@
 
 正式公開の品質jobは既存の全site Compile/Review/Lint/Unit/Type/Bundle/3 Engine/axe/Performance/Lighthouse/Static Artifactを末尾まで要求し、失敗時はDeployしない。TS選択時もHTML/CSSとJavaScriptの公開履歴/tag連鎖を保持する。合成Bundleは全15教材の進捗と13Workspaceの元TS・履歴・成功snapshot・カーソル、および他Courseを実migratorで保持し、実学習の証拠として数えない。
 
-## 本人承認後に必要な公開差分
+## 承認された正式公開の差分と検証
 
 1. TS publicationStatusをpublishedにし、frontendへJavaScript直後のrequired TS Stepを追加する。Lesson ID/本文/元TS/採点契約を変えない。
 2. 専用のContentReview公開metadata、Release candidate、公開用技術記録とApprovalを実Source/最終Artifact/Product hashへ固定する。`approvedBy`/`approvedAt`を本人の公開許可へ結び、draftの値を残さない。
 3. 正確な公開Sourceの独立レビュー、通常CI、正式candidateの全site品質CIとArtifact照合を完了してから承認済みのDeployを実行する。
 4. 公開後は開始・再開・採点・保存・Export・fresh Import、URL/Report/tagを確認し、revision専用の記録を残す。未確認をpassedへ変えない。公開履歴を追記してから#115/#11の完了可否を判断する。
 
-復旧には公開済みのannotated tagと全bindingが一致するrollbackを使う。現時点ではTSの公開履歴が空のためTS rollback対象は存在しない。
+復旧には公開済みのannotated tagと全bindingが一致するrollbackを使う。初公開前はTSの公開履歴が空のためTS rollback対象は存在しない。公開後は同じReleaseのReport・annotated tag・post-deploy記録を照合して専用履歴へ追記し、以後のrollback対象を確定する。

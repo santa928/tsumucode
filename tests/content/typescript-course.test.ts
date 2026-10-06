@@ -12,14 +12,14 @@ import type {
   RepositorySnapshot,
 } from '../../src/core/persistence/contracts';
 
-describe('TypeScript導入draft Course', () => {
+describe('TypeScript導入Course', () => {
   it('型推論・型注釈・型消去からinterfaceへ進み、用語と概念の初出を一本化する', async () => {
     const authoring = await loadAuthoringCourse(path.resolve('content/typescript'));
     const course = authoring.runtime;
     const lessons = course.phases.flatMap(({ chapters }) =>
       chapters.flatMap(({ lessons }) => lessons),
     );
-    expect(course.publicationStatus).toBe('draft');
+    expect(course.publicationStatus).toBe('published');
     expect(course.prerequisites).toEqual(['javascript']);
     expect(course.progressMigrations).toEqual([
       { fromRevision: '2026-10-01.1', toRevision: '2026-10-05.1', steps: [] },
@@ -99,7 +99,7 @@ describe('TypeScript導入draft Course', () => {
   it('推論・注釈の型条件と型消去の動作条件を分け、解答・fixtureを配信しない', async () => {
     const authoring = await loadAuthoringCourse(path.resolve('content/typescript'));
     const artifacts = splitCourseArtifacts(authoring.runtime);
-    expect(artifacts.index.publicationStatus).toBe('draft');
+    expect(artifacts.index.publicationStatus).toBe('published');
     for (const [index, lesson] of artifacts.lessons.entries()) {
       const exercise = lesson.lesson.exercises[0]!;
       expect(exercise.runtime?.kind).toBe('typescript');
