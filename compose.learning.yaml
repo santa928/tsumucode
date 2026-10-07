@@ -1,4 +1,11 @@
 services:
+  project:
+    image: ${TSUMUCODE_LOCAL_OWNER:?Use scripts/learn.sh}-project:local
+    build:
+      context: .
+      dockerfile: Dockerfile.learning
+      target: project
+    profiles: [build-project]
   web:
     build:
       context: .
@@ -23,11 +30,15 @@ services:
     security_opt: ['no-new-privileges:true']
     environment:
       TSUMUCODE_LOCAL_OWNER: ${TSUMUCODE_LOCAL_OWNER:?Use scripts/learn.sh}
+      TSUMUCODE_LOCAL_PROJECT_IMAGE: ${TSUMUCODE_LOCAL_OWNER:?Use scripts/learn.sh}-project:local
     volumes:
       - ${TSUMUCODE_LOCAL_SOCKET:?Use scripts/learn.sh}:/var/run/docker.sock
+      - source:/var/lib/tsumucode/workspaces
     networks: [learning]
     stop_grace_period: 30s
 networks:
   web: {}
   learning:
     internal: true
+volumes:
+  source: {}

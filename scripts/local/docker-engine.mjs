@@ -11,8 +11,9 @@ const child=cp.spawn(process.execPath,['/workspace/script.js'],{cwd:'/workspace'
 child.on('error',()=>process.exit(125));child.on('exit',(code,signal)=>process.exit(code??(signal?137:125)));`;
 
 /** 固定Unix socketだけへHTTP要求し、応答をboundedに読む。 */
-export function docker(method, path, body, timeout = 20000) {
+export function docker(method, path, body, timeout = 20000, raw = false) {
   return new Promise((resolve, reject) => {
+    let deadline;
     const payload = body === undefined ? undefined : Buffer.from(JSON.stringify(body));
     const req = request(
       {
@@ -42,7 +43,7 @@ export function docker(method, path, body, timeout = 20000) {
             reject(error);
           } else {
             try {
-              resolve(data.length ? JSON.parse(data.toString()) : undefined);
+              resolve(raw ? data : data.length ? JSON.parse(data.toString()) : undefined);
             } catch (error) {
               reject(error);
             }
@@ -51,6 +52,8 @@ export function docker(method, path, body, timeout = 20000) {
       },
     );
     req.setTimeout(timeout, () => req.destroy(new Error('Docker API timeout')));
+    deadline = setTimeout(() => req.destroy(new Error('Docker API deadline exceeded')), timeout);
+    req.on('close', () => clearTimeout(deadline));
     req.on('error', reject);
     req.end(payload);
   });
@@ -97,7 +100,7 @@ export function containerConfig(files, owner) {
 }
 
 /** Docker multiplex framingを解き、stdout/stderrの総量を外側で制限する。 */
-export function followOutput(id, onRecord, onLimit) {
+export function followOutput(id, onRecord, onLimit, duration = LIMITS.wallMs + 10000) {
   let req;
   let res;
   let deadline;
@@ -112,7 +115,7 @@ export function followOutput(id, onRecord, onLimit) {
       reject(new Error('Docker output deadline exceeded'));
       res?.destroy();
       req?.destroy();
-    }, LIMITS.wallMs + 10000);
+    }, duration);
     req = request(
       {
         socketPath: '/var/run/docker.sock',
