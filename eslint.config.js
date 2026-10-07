@@ -15,6 +15,8 @@ export default tseslint.config(
       'content/react/chapters/react-ch01/lessons/react-ch01-l01/exercises/**/*.tsx',
       'content/react/chapters/react-ch01/lessons/react-ch01-l02/exercises/**/*.{ts,tsx}',
       'content/react/chapters/react-ch01/lessons/react-ch01-l03/exercises/**/*.{ts,tsx}',
+      'content/react/chapters/react-ch01/lessons/react-ch01-l04/exercises/**/*.{ts,tsx}',
+      'content/react/chapters/react-ch01/lessons/react-ch01-l05/exercises/**/*.{ts,tsx}',
       // 型誤り・any・抑制指示を含む教材は専用Compilerと製品採点で検証する。
       'docs/quality/typescript-ch01-l02-draft/exercises/**/*.ts',
       'docs/quality/typescript-ch01-l01-draft/exercises/**/*.ts',

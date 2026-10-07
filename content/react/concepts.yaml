@@ -34,3 +34,23 @@ concepts:
     prerequisiteConceptIds:
       - react-composition
     minimumProjectLevel: transform
+  - id: react-state-event
+    introducedBySlideId: react-ch01-l04-s01
+    prerequisiteConceptIds:
+      - react-children-slot
+    minimumProjectLevel: transform
+  - id: react-state-updater
+    introducedBySlideId: react-ch01-l04-s02
+    prerequisiteConceptIds:
+      - react-state-event
+    minimumProjectLevel: transform
+  - id: react-immutable-list
+    introducedBySlideId: react-ch01-l05-s01
+    prerequisiteConceptIds:
+      - react-state-updater
+    minimumProjectLevel: transform
+  - id: react-list-key
+    introducedBySlideId: react-ch01-l05-s02
+    prerequisiteConceptIds:
+      - react-immutable-list
+    minimumProjectLevel: transform

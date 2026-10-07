@@ -149,7 +149,7 @@ export class ReactRunnerAdapter implements RunnerAdapter {
           ...Object.fromEntries(
             Object.entries(snapshot.files).filter(([file]) => !/\.tsx?$/u.test(file)),
           ),
-          ...prepareReactModules(compiled.files),
+          ...prepareReactModules(compiled.files, runtime.data.runtime.profile),
         },
         options: {
           runtime: {

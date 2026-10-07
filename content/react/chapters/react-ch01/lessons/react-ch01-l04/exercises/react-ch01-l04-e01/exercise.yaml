@@ -1,0 +1,362 @@
+id: react-ch01-l04-e01
+kind: standard
+workspaceId: react-ch01-l04-e01
+countsTowardStandardExerciseTotal: true
+title: EventでStateを複数回更新する
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: react-state-event
+    minimumLevel: transform
+  - conceptId: react-state-updater
+    minimumLevel: transform
+scaffoldLevel: transform
+runtime:
+  kind: react
+  entryFile: main.tsx
+  sourceType: module
+  capabilityProfile: dom
+  primaryOutput: preview
+  profile: interactive-state-v1
+  learningGoal: counter
+steps:
+  - id: update-state
+    file: components.tsx
+    target: twiceの更新方法
+    starterAnchor: function twice()
+    change: まとめて更新する箇所へ更新関数を渡す
+    observe: 通常2回の後、2増やすで4になる
+    requiresConceptIds:
+      - react-state-event
+      - react-state-updater
+    validationRuleIds:
+      - react-ch01-l04-e01-r01
+      - react-ch01-l04-e01-r02
+      - react-ch01-l04-e01-r03
+files:
+  - path: components.tsx
+    language: react
+    source: starter/components.tsx
+    editable: true
+  - path: main.tsx
+    language: react
+    source: starter/main.tsx
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: starter/types.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+solutionFiles:
+  - path: components.tsx
+    language: react
+    source: solution/components.tsx
+    editable: false
+  - path: main.tsx
+    language: react
+    source: solution/main.tsx
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: solution/types.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: react-ch01-l04-e01-r01
+    label: カウンターの見出し
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: h1
+    assertion:
+      kind: text
+      operator: equals
+      expected: カウンター
+    feedback:
+      target: components.tsxとPreview
+      expected: カウンターの見出し
+      nextAction: Stateの更新関数と表示位置を読み比べ、実際に操作して確かめます。
+    hintId: react-ch01-l04-e01-h02
+    relatedSlideId: react-ch01-l04-s02
+  - id: react-ch01-l04-e01-r02
+    label: 最初のStateは0
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#count'
+    assertion:
+      kind: text
+      operator: equals
+      expected: '0'
+    feedback:
+      target: components.tsxとPreview
+      expected: 最初のStateは0
+      nextAction: Stateの更新関数と表示位置を読み比べ、実際に操作して確かめます。
+    hintId: react-ch01-l04-e01-h02
+    relatedSlideId: react-ch01-l04-s02
+  - id: react-ch01-l04-e01-r03
+    label: EventからStateへつなぎ、updater2回で更新する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: react-learning
+      file: components.tsx
+    assertion:
+      kind: react-learning
+      goal: counter
+    feedback:
+      target: components.tsxとPreview
+      expected: EventからStateへつなぎ、updater2回で更新する
+      nextAction: Stateの更新関数と表示位置を読み比べ、実際に操作して確かめます。
+    hintId: react-ch01-l04-e01-h02
+    relatedSlideId: react-ch01-l04-s02
+interactionScenarios:
+  - id: counter-updates
+    label: 操作を繰り返し、更新をまとめる
+    actions:
+      - id: increment-once
+        kind: click
+        selector: '#increment'
+      - id: increment-again
+        kind: click
+        selector: '#increment'
+      - id: twice
+        kind: click
+        selector: '#twice'
+    checkpoints:
+      - id: after-increment-once
+        afterActionId: increment-once
+        expectations:
+          - id: display
+            kind: selector-text
+            selector: '#count'
+            equals: '1'
+      - id: after-increment-again
+        afterActionId: increment-again
+        expectations:
+          - id: display
+            kind: selector-text
+            selector: '#count'
+            equals: '2'
+      - id: after-twice
+        afterActionId: twice
+        expectations:
+          - id: display
+            kind: selector-text
+            selector: '#count'
+            equals: '4'
+hints:
+  - id: react-ch01-l04-e01-h01
+    level: 1
+    title: 修正位置を探す
+    text: twiceの中には、同じ描画で覚えたcountを使う更新が2回あります。クリック前に2回の結果を予測しましょう。
+    relatedSlideId: react-ch01-l04-s02
+  - id: react-ch01-l04-e01-h02
+    level: 2
+    title: 考え方を確かめる
+    text: 数値を渡す更新は次の値への置換です。前の更新結果を受け取りたいときは、次の値を返す更新関数を渡します。
+    relatedSlideId: react-ch01-l04-s02
+  - id: react-ch01-l04-e01-h03
+    level: 3
+    title: 書き方を確かめる
+    text: twiceの2か所をsetCount(current => current + 1)へ変えます。通常2回の後に「2増やす」で4になるか確認します。
+    relatedSlideId: react-ch01-l04-s02
+relatedSlideIds:
+  - react-ch01-l04-s01
+  - react-ch01-l04-s02
+  - react-ch01-l04-s03
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: starter
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l04-e01-r03
+      - interaction:counter-updates:after-twice:display
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/starter.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: solution
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/solution.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: alternative
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/alternative.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: fixed-display
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l04-e01-r03
+      - interaction:counter-updates:after-increment-once:display
+      - interaction:counter-updates:after-increment-again:display
+      - interaction:counter-updates:after-twice:display
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/fixed-display.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: fixed-update
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l04-e01-r03
+      - interaction:counter-updates:after-increment-again:display
+      - interaction:counter-updates:after-twice:display
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/fixed-update.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: event-error
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - javascript-runtime
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/event-error.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: single-add-two
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l04-e01-r03
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/single-add-two.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: fixed-four
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l04-e01-r03
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/fixed-four.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false

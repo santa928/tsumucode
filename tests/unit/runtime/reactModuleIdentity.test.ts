@@ -1,0 +1,76 @@
+// @vitest-environment node
+import { expect, it, vi } from 'vitest';
+import type {
+  JavaScriptAnalysisInput,
+  JavaScriptWorkspaceAnalysisSuccess,
+} from '../../../src/adapters/runtime/javascript/analyzer/contracts';
+
+vi.mock('virtual:tsumucode-react-preview-source', () => ({ default: 'export function jsx() {}' }));
+vi.mock('../../../src/adapters/runtime/javascript/analyzer/JavaScriptAnalyzerClient', () => ({
+  JavaScriptAnalyzerClient: class {
+    async analyze(input: JavaScriptAnalysisInput): Promise<JavaScriptWorkspaceAnalysisSuccess> {
+      if (!('files' in input)) throw new Error('Module入力が必要です');
+      return {
+        status: 'success',
+        requestId: 'identity',
+        exerciseSessionId: input.exerciseSessionId,
+        executionRevision: input.executionRevision,
+        file: input.entryFile,
+        entryFile: input.entryFile,
+        graphSha256: 'a'.repeat(64),
+        facts: [],
+        diagnostics: [],
+        modules: Object.entries(input.files).map(([file, source]) => ({
+          file,
+          instrumentedCode: source,
+          dependencies: [],
+        })),
+      };
+    }
+    async dispose(): Promise<void> {}
+  },
+}));
+import {
+  ReactModuleAnalyzer,
+  prepareReactModules,
+  REACT_MODULE_FILE,
+} from '../../../src/adapters/runtime/react/ReactModuleAnalyzer';
+
+it('新profileだけuseStateを許可し、任意React exportは開放しない', () => {
+  const files = { 'main.js': "import {useState} from 'react';" };
+  expect(() => prepareReactModules(files)).toThrow();
+  expect(prepareReactModules(files, 'interactive-state-v1')['main.js']).toContain(
+    REACT_MODULE_FILE,
+  );
+  expect(() =>
+    prepareReactModules({ 'main.js': "import {useEffect} from 'react';" }, 'interactive-state-v1'),
+  ).toThrow();
+});
+
+it('毎回変わるguard名を実moduleへ結び、同じSourceの認証hashを変えない', async () => {
+  const analyzer = new ReactModuleAnalyzer();
+  const input = {
+    exerciseSessionId: 'identity',
+    executionRevision: 1,
+    entryFile: 'main.js',
+    sourceType: 'module' as const,
+    capabilityProfile: 'dom' as const,
+    files: prepareReactModules({ 'main.js': 'export const value = 1;' }),
+  };
+  const first = await analyzer.analyze({ ...input, guardIdentifier: 'guardFirst' });
+  const second = await analyzer.analyze({ ...input, guardIdentifier: 'guardSecond' });
+  if (
+    first.status !== 'success' ||
+    !('modules' in first) ||
+    second.status !== 'success' ||
+    !('modules' in second)
+  )
+    throw new Error('Module解析が必要です');
+  expect(first.graphSha256).toBe(second.graphSha256);
+  expect(
+    first.modules.find((module) => module.file === REACT_MODULE_FILE)?.instrumentedCode,
+  ).toContain('guardFirst.reportError(error)');
+  expect(
+    second.modules.find((module) => module.file === REACT_MODULE_FILE)?.instrumentedCode,
+  ).toContain('guardSecond.reportError(error)');
+});

@@ -1,0 +1,26 @@
+import { useState } from 'react';
+
+export function App() {
+  const [count, setCount] = useState(0);
+
+  function increment() {
+    setCount((current) => current + 1);
+  }
+
+  function twice() {
+    setCount(count + 2);
+  }
+
+  return (
+    <section>
+      <h1>カウンター</h1>
+      <p id="count">{count}</p>
+      <button id="increment" onClick={increment}>
+        1増やす
+      </button>
+      <button id="twice" onClick={twice}>
+        2増やす
+      </button>
+    </section>
+  );
+}

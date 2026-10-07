@@ -226,3 +226,156 @@ items:
   - id: react-original-swapped-3
     visibility: authoring
     path: chapters/react-ch01/lessons/react-ch01-l03/exercises/react-ch01-l03-e01/fixtures/swapped-roles.tsx
+  - id: react-state-original-74
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/exercise.yaml
+  - id: react-state-original-75
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/fixtures/alternative.tsx
+  - id: react-state-original-76
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/fixtures/event-error.tsx
+  - id: react-state-original-77
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/fixtures/fixed-display.tsx
+  - id: react-state-original-78
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/fixtures/fixed-update.tsx
+  - id: react-state-original-79
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/fixtures/index.html
+  - id: react-state-original-80
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/fixtures/main.tsx
+  - id: react-state-original-81
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/fixtures/solution.tsx
+  - id: react-state-original-82
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/fixtures/starter.tsx
+  - id: react-state-original-83
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/fixtures/types.ts
+  - id: react-state-original-84
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/instructions.md
+  - id: react-state-original-85
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/solution/components.tsx
+  - id: react-state-original-86
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/solution/index.html
+  - id: react-state-original-87
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/solution/main.tsx
+  - id: react-state-original-88
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/solution/types.ts
+  - id: react-state-original-89
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/starter/components.tsx
+  - id: react-state-original-90
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/starter/index.html
+  - id: react-state-original-91
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/starter/main.tsx
+  - id: react-state-original-92
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/starter/types.ts
+  - id: react-state-original-93
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l04/lesson.yaml
+  - id: react-state-original-94
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l04/slides/s01.md
+  - id: react-state-original-95
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l04/slides/s02.md
+  - id: react-state-original-96
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l04/slides/s03.md
+  - id: react-state-original-97
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/exercise.yaml
+  - id: react-state-original-98
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/fixtures/alternative.tsx
+  - id: react-state-original-99
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/fixtures/duplicate-id.tsx
+  - id: react-state-original-100
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/fixtures/fixed-list.tsx
+  - id: react-state-original-101
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/fixtures/index-key.tsx
+  - id: react-state-original-102
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/fixtures/index.html
+  - id: react-state-original-103
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/fixtures/main.tsx
+  - id: react-state-original-104
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/fixtures/missing-key.tsx
+  - id: react-state-original-105
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/fixtures/mutation.tsx
+  - id: react-state-original-106
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/fixtures/solution.tsx
+  - id: react-state-original-107
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/fixtures/starter.tsx
+  - id: react-state-original-108
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/fixtures/types.ts
+  - id: react-state-original-109
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/instructions.md
+  - id: react-state-original-110
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/solution/components.tsx
+  - id: react-state-original-111
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/solution/index.html
+  - id: react-state-original-112
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/solution/main.tsx
+  - id: react-state-original-113
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/solution/types.ts
+  - id: react-state-original-114
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/starter/components.tsx
+  - id: react-state-original-115
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/starter/index.html
+  - id: react-state-original-116
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/starter/main.tsx
+  - id: react-state-original-117
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l05/exercises/react-ch01-l05-e01/starter/types.ts
+  - id: react-state-original-118
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l05/lesson.yaml
+  - id: react-state-original-119
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l05/slides/s01.md
+  - id: react-state-original-120
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l05/slides/s02.md
+  - id: react-state-original-121
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l05/slides/s03.md
+  - id: react-state-original-122
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l05/slides/s04.md
+  - id: react-state-original-123
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/fixtures/single-add-two.tsx
+  - id: react-state-original-124
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/fixtures/fixed-four.tsx

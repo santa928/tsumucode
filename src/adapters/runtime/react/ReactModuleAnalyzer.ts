@@ -15,6 +15,7 @@ export const Fragment = null;
 export function jsx() {}
 export function jsxs() {}
 export function createRoot() {}
+export function useState() {}
 `;
 const PACKAGES: Readonly<Record<string, readonly string[]>> = {
   'react/jsx-runtime': ['jsx', 'jsxs', 'Fragment'],
@@ -24,6 +25,7 @@ const PACKAGES: Readonly<Record<string, readonly string[]>> = {
 /** bare importを固定exportへ閉じ、相対TSX参照をemit済みJSへ結ぶ。動的importは許可しない。 */
 export function prepareReactModules(
   files: Readonly<Record<string, string>>,
+  profile: 'props-card-v1' | 'static-components-v1' | 'interactive-state-v1' = 'props-card-v1',
 ): Readonly<Record<string, string>> {
   if (Object.hasOwn(files, REACT_MODULE_FILE)) throw new Error('React予約Fileと衝突しています');
   const output: Record<string, string> = {};
@@ -43,7 +45,12 @@ export function prepareReactModules(
       if (!value.source) return;
       const specifier = value.source.value;
       if (typeof specifier !== 'string') throw new Error('Module参照が不正です');
-      const fixed = Object.hasOwn(PACKAGES, specifier) ? PACKAGES[specifier] : undefined;
+      const fixed =
+        specifier === 'react' && profile === 'interactive-state-v1'
+          ? ['useState']
+          : Object.hasOwn(PACKAGES, specifier)
+            ? PACKAGES[specifier]
+            : undefined;
       let resolved: string | undefined;
       if (fixed) {
         if (
@@ -55,7 +62,7 @@ export function prepareReactModules(
               !fixed.includes(String(item.imported?.name ?? item.imported?.value)),
           )
         )
-          throw new Error('この課題のReact importはJSXとcreateRootの固定exportだけです');
+          throw new Error('この課題で指定した固定React exportだけをimportできます');
         resolved = REACT_MODULE_FILE;
       } else {
         const jsSpecifier = /\.tsx?$/u.test(specifier)
@@ -96,12 +103,19 @@ export class ReactModuleAnalyzer {
     const reserved = result.modules.filter((item) => item.file === REACT_MODULE_FILE);
     if (reserved.length !== 1 || reserved[0]?.dependencies.length)
       throw new Error('React固定moduleの解析境界が一致しません');
+    // 固定module内のlexical通知だけを結ぶ。hashは実行ごとのguard名を除いた同一意味のtemplateを含む。
+    // lockDownしたwindow APIや通知をLearner向けexportへ開放しない。
+    const trustedNotification =
+      'const __tsumucodeReportReactError = error => $GUARD.reportError(error);\n';
+    const trustedCode =
+      trustedNotification.replace('$GUARD', input.guardIdentifier) + trustedSource;
     const modules = result.modules.map((item) =>
-      item.file === REACT_MODULE_FILE ? { ...item, instrumentedCode: trustedSource } : item,
+      item.file === REACT_MODULE_FILE ? { ...item, instrumentedCode: trustedCode } : item,
     );
     const source = JSON.stringify([
       'tsumucode-react-module-graph-v1',
       result.graphSha256,
+      trustedNotification,
       trustedSource,
     ]);
     const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(source));

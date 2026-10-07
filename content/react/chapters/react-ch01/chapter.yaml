@@ -1,10 +1,12 @@
 id: react-ch01
 sequence: 0
-title: PropsからComponentの組み合わせへ
-goal: 型と表示を区別し、異なるPropsでComponentを再利用して、childrenで枠と中身を組み合わせる。
-estimatedMinutes: 60
+title: Propsから操作で変わる表示へ
+goal: Props・childrenで表示を組み合わせ、EventでStateを更新し、配列の新しい値と項目IDのKeyを一覧へつなぐ。
+estimatedMinutes: 115
 kind: standard
 lessonSources:
   - lessons/react-ch01-l01/lesson.yaml
   - lessons/react-ch01-l02/lesson.yaml
   - lessons/react-ch01-l03/lesson.yaml
+  - lessons/react-ch01-l04/lesson.yaml
+  - lessons/react-ch01-l05/lesson.yaml

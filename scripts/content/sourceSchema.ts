@@ -1,3 +1,4 @@
+import { acceptsReactStateScenarios } from '../../src/core/content/reactStateInteractions';
 import {
   TypeScriptQuizProjectContracts,
   acceptsTypeScriptQuizProjectRuntime,
@@ -125,15 +126,17 @@ export const ReactExerciseRuntimeSourceSchema = z
     sourceType: z.literal('module'),
     capabilityProfile: z.literal('dom'),
     primaryOutput: z.literal('preview'),
-    profile: z.enum(['props-card-v1', 'static-components-v1']),
-    learningGoal: z.enum(['reuse', 'composition']).optional(),
+    profile: z.enum(['props-card-v1', 'static-components-v1', 'interactive-state-v1']),
+    learningGoal: z.enum(['reuse', 'composition', 'counter', 'immutable-list']).optional(),
   })
   .strict()
   .refine(
     (runtime) =>
       runtime.profile === 'static-components-v1'
-        ? runtime.learningGoal !== undefined
-        : runtime.learningGoal === undefined,
+        ? ['reuse', 'composition'].includes(runtime.learningGoal ?? '')
+        : runtime.profile === 'interactive-state-v1'
+          ? ['counter', 'immutable-list'].includes(runtime.learningGoal ?? '')
+          : runtime.learningGoal === undefined,
     { message: '静的Component課題の学習目標をprofileに合わせて指定してください' },
   );
 
@@ -290,8 +293,10 @@ export const ExerciseSourceSchema = z
             boundaryContract.profile,
             exercise.interactionScenarios,
           )
-        : exercise.runtime?.kind === 'javascript' &&
-          ['dom', 'dom-form', 'async', 'project'].includes(exercise.runtime.capabilityProfile);
+        : (exercise.runtime?.kind === 'react' &&
+            exercise.runtime.profile === 'interactive-state-v1') ||
+          (exercise.runtime?.kind === 'javascript' &&
+            ['dom', 'dom-form', 'async', 'project'].includes(exercise.runtime.capabilityProfile));
     if (
       (exercise.interactionScenarios !== undefined || boundaryContract || quizContract) &&
       !acceptsInteractions
@@ -301,6 +306,17 @@ export const ExerciseSourceSchema = z
         path: ['interactionScenarios'],
         message:
           'Interaction Scenarioは既存JSのDOM/async profileか固定TS境界/クイズ工程で指定してください',
+      });
+    }
+    if (
+      exercise.runtime?.kind === 'react' &&
+      exercise.runtime.profile === 'interactive-state-v1' &&
+      !acceptsReactStateScenarios(exercise.runtime.learningGoal, exercise.interactionScenarios)
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['interactionScenarios'],
+        message: 'State教材には指定の複数更新・配列操作Scenarioが必要です',
       });
     }
     const ruleIds = exercise.validationRules.map(({ id }) => id);

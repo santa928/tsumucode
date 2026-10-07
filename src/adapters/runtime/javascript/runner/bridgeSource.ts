@@ -537,6 +537,12 @@ function createRuntimeState(
     }
   };
 
+  // React等が内部で捕捉してwindowへ報告した例外も、同世代の診断に結ぶ。
+  addWindowListener('error', (event: ErrorEvent) => {
+    runtimeError = errorRecord(event.error ?? event.message);
+    event.preventDefault();
+  });
+
   // 学習者にwindow listenerを開放せず、未捕捉拒否を同じbounded error状態へ記録する。
   addWindowListener('unhandledrejection', (event: PromiseRejectionEvent) => {
     runtimeError = errorRecord(event.reason);
@@ -856,6 +862,10 @@ function createRuntimeState(
         throw new TypeError(indexError.message);
       }
       return descriptor.value as unknown;
+    },
+    /** 信頼側Reactの捕捉例外を失敗状態へ記録する。成功や権限を追加する機能は持たない。 */
+    reportError(error: unknown): void {
+      runtimeError = errorRecord(error);
     },
     checkLoop(): boolean {
       return hasBudget();

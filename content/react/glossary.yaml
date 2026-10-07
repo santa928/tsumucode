@@ -34,3 +34,35 @@ entries:
     relatedIds:
       - props
       - composition
+  - id: event-handler
+    term: Event handler
+    definition: クリックなどの操作時に動く関数。onClickには呼出し結果ではなく関数を渡す。
+    firstSlideId: react-ch01-l04-s01
+    relatedIds:
+      - state
+  - id: state
+    term: State
+    definition: Reactが描画をまたいで覚える値。useStateというHookで値とsetter（Stateを更新する関数）を受け取り、更新を次の描画へ反映する。
+    firstSlideId: react-ch01-l04-s01
+    relatedIds:
+      - event-handler
+      - updater
+  - id: updater
+    term: updater（次の値を計算する関数）
+    definition: 前の更新結果を受け取り、次の値を返す純粋な関数。1操作内で複数回更新するときも順に反映できる。
+    firstSlideId: react-ch01-l04-s02
+    relatedIds:
+      - state
+  - id: immutable-update
+    term: immutable update
+    definition: 元の値を直接変えず、新しい値へ置き換える更新。配列はspread・filter・toReversedなどで新しく作る。
+    firstSlideId: react-ch01-l05-s01
+    relatedIds:
+      - state
+      - key
+  - id: key
+    term: Key
+    definition: 一覧内で項目の同一性をReactへ伝える値。同じ項目では保ち、同じ親の一覧全体で一意にする。ここでは項目IDを使う。
+    firstSlideId: react-ch01-l05-s02
+    relatedIds:
+      - immutable-update
