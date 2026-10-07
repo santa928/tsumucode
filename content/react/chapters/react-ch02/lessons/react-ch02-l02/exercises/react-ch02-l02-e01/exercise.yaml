@@ -1,0 +1,605 @@
+id: react-ch02-l02-e01
+kind: guided-project
+projectId: react-quiz-guided
+workspaceId: react-quiz-guided
+countsTowardStandardExerciseTotal: false
+title: クイズStateを純粋な関数で更新する
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: react-quiz-state
+    minimumLevel: compose
+scaffoldLevel: compose
+runtime:
+  kind: react
+  entryFile: main.tsx
+  sourceType: module
+  capabilityProfile: dom
+  primaryOutput: preview
+  profile: quiz-workshop-v1
+  learningGoal: quiz-state
+steps:
+  - id: compose-current-step
+    file: quizState.ts
+    target: クイズStateを純粋な関数で更新する
+    starterAnchor: 'score: state.score'
+    change: answerに回答済みのguardと実正誤による加点を加え、次問と再挑戦を確かめる
+    observe: 未回答の次問・正誤混合・重複拒否・結果・名前を保つ再挑戦を確認する
+    requiresConceptIds:
+      - react-quiz-state
+    validationRuleIds:
+      - react-ch02-l02-e01-r01
+      - react-ch02-l02-e01-r02
+      - react-ch02-l02-e01-r03
+files:
+  - path: QuestionCard.tsx
+    language: react
+    source: starter/QuestionCard.tsx
+    editable: true
+  - path: quizState.ts
+    language: typescript
+    source: starter/quizState.ts
+    editable: true
+  - path: main.tsx
+    language: react
+    source: starter/main.tsx
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: starter/types.ts
+    editable: false
+  - path: data.ts
+    language: typescript
+    source: starter/data.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+solutionFiles:
+  - path: QuestionCard.tsx
+    language: react
+    source: solution/QuestionCard.tsx
+    editable: false
+  - path: quizState.ts
+    language: typescript
+    source: solution/quizState.ts
+    editable: false
+  - path: main.tsx
+    language: react
+    source: solution/main.tsx
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: solution/types.ts
+    editable: false
+  - path: data.ts
+    language: typescript
+    source: solution/data.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: react-ch02-l02-e01-r01
+    label: クイズの見出し
+    target:
+      kind: selector
+      selector: h1
+    assertion:
+      kind: text
+      operator: equals
+      expected: 練習クイズ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    feedback:
+      target: quizState.ts
+      expected: 練習クイズ
+      nextAction: answerに回答済みのguardと実正誤による加点を加え、次問と再挑戦を確かめる
+    hintId: react-ch02-l02-e01-h02
+    relatedSlideId: react-ch02-l02-s02
+  - id: react-ch02-l02-e01-r02
+    label: 初期得点
+    target:
+      kind: selector
+      selector: '#score'
+    assertion:
+      kind: text
+      operator: equals
+      expected: '0'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    feedback:
+      target: quizState.ts
+      expected: '0'
+      nextAction: answerに回答済みのguardと実正誤による加点を加え、次問と再挑戦を確かめる
+    hintId: react-ch02-l02-e01-h02
+    relatedSlideId: react-ch02-l02-s02
+  - id: react-ch02-l02-e01-r03
+    label: 今回の元Sourceと値のつながり
+    target:
+      kind: react-learning
+      file: quizState.ts
+    assertion:
+      kind: react-learning
+      goal: quiz-state
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    feedback:
+      target: quizState.ts
+      expected: 現在のStateと実正誤から次Stateを返し、重複得点を防ぎ、結果と名前を保つ再挑戦へつなぐ。
+      nextAction: answerに回答済みのguardと実正誤による加点を加え、次問と再挑戦を確かめる
+    hintId: react-ch02-l02-e01-h02
+    relatedSlideId: react-ch02-l02-s02
+hints:
+  - id: react-ch02-l02-e01-h01
+    level: 1
+    title: 修正位置を探す
+    text: answerの前のStateと、正解の選択肢を示すquestion.correctIdを確認します。
+    relatedSlideId: react-ch02-l02-s02
+  - id: react-ch02-l02-e01-h02
+    level: 2
+    title: Briefと値をつなぐ
+    text: 回答済みを先に確認し、正誤に応じた0か1を前の得点へ加えます。advanceとcreateStateは提供済みの接続も読みます。
+    relatedSlideId: react-ch02-l02-s02
+  - id: react-ch02-l02-e01-h03
+    level: 3
+    title: 別の対象の局所例
+    text: '別の例なら、const next = {...previous, count: previous.count +
+      delta};。元の値を変えず次の値を返す考え方を使います。'
+    relatedSlideId: react-ch02-l02-s02
+relatedSlideIds:
+  - react-ch02-l02-s01
+  - react-ch02-l02-s02
+  - react-ch02-l02-s03
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+interactionScenarios:
+  - id: quiz-guided-flow
+    label: 混合回答と重複拒否、結果と再挑戦
+    actions:
+      - id: name
+        kind: fill
+        selector: '#name'
+        value: Ada
+      - id: early-next
+        kind: click
+        selector: '#next'
+      - id: correct
+        kind: click
+        selector: '[id="HTML"]'
+      - id: duplicate
+        kind: click
+        selector: '#HTML'
+      - id: next
+        kind: click
+        selector: '#next'
+      - id: wrong
+        kind: click
+        selector: '[id="JavaScript"]'
+      - id: result
+        kind: click
+        selector: '#next'
+      - id: retry
+        kind: click
+        selector: '#retry'
+    checkpoints:
+      - id: name
+        afterActionId: name
+        expectations:
+          - id: name
+            kind: input-value
+            selector: '#name'
+            equals: Ada
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '0'
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: ページの骨組みを作る言語は？
+      - id: early-next
+        afterActionId: early-next
+        expectations:
+          - id: name
+            kind: input-value
+            selector: '#name'
+            equals: Ada
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '0'
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: ページの骨組みを作る言語は？
+      - id: correct
+        afterActionId: correct
+        expectations:
+          - id: name
+            kind: input-value
+            selector: '#name'
+            equals: Ada
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '1'
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: ページの骨組みを作る言語は？
+          - id: received
+            kind: selector-text
+            selector: '#received'
+            equals: HTML
+      - id: duplicate
+        afterActionId: duplicate
+        expectations:
+          - id: name
+            kind: input-value
+            selector: '#name'
+            equals: Ada
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '1'
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: ページの骨組みを作る言語は？
+          - id: received
+            kind: selector-text
+            selector: '#received'
+            equals: HTML
+      - id: next
+        afterActionId: next
+        expectations:
+          - id: name
+            kind: input-value
+            selector: '#name'
+            equals: Ada
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '1'
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: 見た目を整える言語は？
+      - id: wrong
+        afterActionId: wrong
+        expectations:
+          - id: name
+            kind: input-value
+            selector: '#name'
+            equals: Ada
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '1'
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: 見た目を整える言語は？
+          - id: received
+            kind: selector-text
+            selector: '#received'
+            equals: JavaScript
+      - id: result
+        afterActionId: result
+        expectations:
+          - id: name
+            kind: input-value
+            selector: '#name'
+            equals: Ada
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '1'
+          - id: result
+            kind: selector-text
+            selector: '#result'
+            equals: 全問終了
+      - id: retry
+        afterActionId: retry
+        expectations:
+          - id: name
+            kind: input-value
+            selector: '#name'
+            equals: Ada
+          - id: score
+            kind: selector-text
+            selector: '#score'
+            equals: '0'
+          - id: question
+            kind: selector-text
+            selector: '#question'
+            equals: ページの骨組みを作る言語は？
+          - id: received
+            kind: selector-text
+            selector: '#received'
+            equals: 未回答
+fixtures:
+  - id: starter
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch02-l02-e01-r03
+      - interaction:quiz-guided-flow:correct:score
+      - interaction:quiz-guided-flow:duplicate:score
+      - interaction:quiz-guided-flow:next:score
+      - interaction:quiz-guided-flow:wrong:score
+      - interaction:quiz-guided-flow:result:score
+    files:
+      - path: QuestionCard.tsx
+        language: react
+        source: fixtures/starter-QuestionCard.tsx
+        editable: false
+      - path: quizState.ts
+        language: typescript
+        source: fixtures/starter-quizState.ts
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: solution
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: QuestionCard.tsx
+        language: react
+        source: fixtures/solution-QuestionCard.tsx
+        editable: false
+      - path: quizState.ts
+        language: typescript
+        source: fixtures/solution-quizState.ts
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: alternative
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: QuestionCard.tsx
+        language: react
+        source: fixtures/alternative-QuestionCard.tsx
+        editable: false
+      - path: quizState.ts
+        language: typescript
+        source: fixtures/alternative-quizState.ts
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: alias
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: QuestionCard.tsx
+        language: react
+        source: fixtures/alias-QuestionCard.tsx
+        editable: false
+      - path: quizState.ts
+        language: typescript
+        source: fixtures/alias-quizState.ts
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: missing-guard
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch02-l02-e01-r03
+    files:
+      - path: QuestionCard.tsx
+        language: react
+        source: fixtures/missing-guard-QuestionCard.tsx
+        editable: false
+      - path: quizState.ts
+        language: typescript
+        source: fixtures/missing-guard-quizState.ts
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: fixed-score
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch02-l02-e01-r03
+      - interaction:quiz-guided-flow:correct:score
+      - interaction:quiz-guided-flow:duplicate:score
+      - interaction:quiz-guided-flow:next:score
+      - interaction:quiz-guided-flow:wrong:score
+      - interaction:quiz-guided-flow:result:score
+    files:
+      - path: QuestionCard.tsx
+        language: react
+        source: fixtures/fixed-score-QuestionCard.tsx
+        editable: false
+      - path: quizState.ts
+        language: typescript
+        source: fixtures/fixed-score-quizState.ts
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: fixed-label
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch02-l02-e01-r03
+    files:
+      - path: QuestionCard.tsx
+        language: react
+        source: fixtures/fixed-label-QuestionCard.tsx
+        editable: false
+      - path: quizState.ts
+        language: typescript
+        source: fixtures/fixed-label-quizState.ts
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: side-effect
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-0
+    files:
+      - path: QuestionCard.tsx
+        language: react
+        source: fixtures/side-effect-QuestionCard.tsx
+        editable: false
+      - path: quizState.ts
+        language: typescript
+        source: fixtures/side-effect-quizState.ts
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: wrong-type
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-2322
+    files:
+      - path: QuestionCard.tsx
+        language: react
+        source: fixtures/solution-QuestionCard.tsx
+        editable: false
+      - path: quizState.ts
+        language: typescript
+        source: fixtures/wrong-type-quizState.ts
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false

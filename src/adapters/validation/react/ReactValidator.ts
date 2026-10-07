@@ -1,3 +1,4 @@
+import { acceptsReactQuizScenarios } from '../../../core/content/reactQuizInteractions';
 import { acceptsReactHookScenarios } from '../../../core/content/reactHookInteractions';
 import { acceptsReactReducerContextScenarios } from '../../../core/content/reactReducerContextInteractions';
 import { acceptsReactFormScenarios } from '../../../core/content/reactFormInteractions';
@@ -24,6 +25,17 @@ function hookFeedback(
   goal: string | undefined,
   learned: boolean,
 ): { message: string; actual: string } | undefined {
+  if (['quiz-card', 'quiz-state', 'quiz-capstone'].includes(goal ?? ''))
+    return learned
+      ? {
+          message: '選択肢のKeyと親Callback、今回のクイズStateのつながりを確認できました。',
+          actual: '元Sourceの値の由来と、実際のクイズ操作を確認しました。',
+        }
+      : {
+          message:
+            '同じ選択肢をKeyと親Callbackへ渡し、今回のBriefに合う純粋なState更新を確かめましょう。',
+          actual: '問題表示・選択肢と、今回の得点・回答済み・次問の条件を見直します。',
+        };
   if (goal === 'ref-focus')
     return learned
       ? {
@@ -152,6 +164,27 @@ export class ReactValidator implements ValidatorAdapter {
             (parsed.data.learningGoal === 'counter'
               ? compiled.facts.queuesTwoIncrements
               : compiled.facts.usesImmutableUpdates && compiled.facts.usesStableItemKeys);
+        }
+        if (
+          parsed.data.profile === 'quiz-workshop-v1' ||
+          parsed.data.profile === 'quiz-capstone-v1'
+        ) {
+          if (
+            !compiled.facts ||
+            !('rendersQuestion' in compiled.facts) ||
+            !acceptsReactQuizScenarios(parsed.data.learningGoal, context.interactionScenarios)
+          )
+            return blocked();
+          learned =
+            compiled.facts.rendersQuestion &&
+            compiled.facts.usesStableChoiceKeys &&
+            compiled.facts.forwardsSelectedChoice &&
+            (parsed.data.learningGoal === 'quiz-card' ||
+              (compiled.facts.createsInitialState &&
+                compiled.facts.scoresActualAnswer &&
+                compiled.facts.guardsRepeatedAnswer &&
+                compiled.facts.advancesAnsweredQuestion &&
+                compiled.facts.usesPureStateFunctions));
         }
         if (parsed.data.profile === 'ref-focus-v1') {
           if (

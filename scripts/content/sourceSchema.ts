@@ -1,3 +1,4 @@
+import { acceptsReactQuizScenarios } from '../../src/core/content/reactQuizInteractions';
 import { acceptsReactHookScenarios } from '../../src/core/content/reactHookInteractions';
 import { acceptsReactReducerContextScenarios } from '../../src/core/content/reactReducerContextInteractions';
 import { acceptsReactFormScenarios } from '../../src/core/content/reactFormInteractions';
@@ -139,6 +140,8 @@ export const ReactExerciseRuntimeSourceSchema = z
       'ref-focus-v1',
       'effect-sync-v1',
       'custom-source-hook-v1',
+      'quiz-workshop-v1',
+      'quiz-capstone-v1',
     ]),
     learningGoal: z
       .enum([
@@ -153,29 +156,36 @@ export const ReactExerciseRuntimeSourceSchema = z
         'ref-focus',
         'external-sync',
         'source-hook',
+        'quiz-card',
+        'quiz-state',
+        'quiz-capstone',
       ])
       .optional(),
   })
   .strict()
   .refine(
     (runtime) =>
-      runtime.profile === 'static-components-v1'
-        ? ['reuse', 'composition'].includes(runtime.learningGoal ?? '')
-        : runtime.profile === 'interactive-state-v1'
-          ? ['counter', 'immutable-list'].includes(runtime.learningGoal ?? '')
-          : runtime.profile === 'controlled-form-v1'
-            ? ['controlled-form', 'shared-state'].includes(runtime.learningGoal ?? '')
-            : runtime.profile === 'reducer-form-v1'
-              ? runtime.learningGoal === 'reducer-form'
-              : runtime.profile === 'context-sharing-v1'
-                ? runtime.learningGoal === 'context-sharing'
-                : runtime.profile === 'ref-focus-v1'
-                  ? runtime.learningGoal === 'ref-focus'
-                  : runtime.profile === 'effect-sync-v1'
-                    ? runtime.learningGoal === 'external-sync'
-                    : runtime.profile === 'custom-source-hook-v1'
-                      ? runtime.learningGoal === 'source-hook'
-                      : runtime.learningGoal === undefined,
+      runtime.profile === 'quiz-workshop-v1'
+        ? ['quiz-card', 'quiz-state'].includes(runtime.learningGoal ?? '')
+        : runtime.profile === 'quiz-capstone-v1'
+          ? runtime.learningGoal === 'quiz-capstone'
+          : runtime.profile === 'static-components-v1'
+            ? ['reuse', 'composition'].includes(runtime.learningGoal ?? '')
+            : runtime.profile === 'interactive-state-v1'
+              ? ['counter', 'immutable-list'].includes(runtime.learningGoal ?? '')
+              : runtime.profile === 'controlled-form-v1'
+                ? ['controlled-form', 'shared-state'].includes(runtime.learningGoal ?? '')
+                : runtime.profile === 'reducer-form-v1'
+                  ? runtime.learningGoal === 'reducer-form'
+                  : runtime.profile === 'context-sharing-v1'
+                    ? runtime.learningGoal === 'context-sharing'
+                    : runtime.profile === 'ref-focus-v1'
+                      ? runtime.learningGoal === 'ref-focus'
+                      : runtime.profile === 'effect-sync-v1'
+                        ? runtime.learningGoal === 'external-sync'
+                        : runtime.profile === 'custom-source-hook-v1'
+                          ? runtime.learningGoal === 'source-hook'
+                          : runtime.learningGoal === undefined,
     { message: 'React課題の学習目標をprofileに合わせて指定してください' },
   );
 
@@ -350,6 +360,8 @@ export const ExerciseSourceSchema = z
               'ref-focus-v1',
               'effect-sync-v1',
               'custom-source-hook-v1',
+              'quiz-workshop-v1',
+              'quiz-capstone-v1',
             ].includes(exercise.runtime.profile)) ||
           (exercise.runtime?.kind === 'javascript' &&
             ['dom', 'dom-form', 'async', 'project'].includes(exercise.runtime.capabilityProfile));
@@ -362,6 +374,17 @@ export const ExerciseSourceSchema = z
         path: ['interactionScenarios'],
         message:
           'Interaction Scenarioは既存JSのDOM/async profileか固定TS境界/クイズ工程で指定してください',
+      });
+    }
+    if (
+      exercise.runtime?.kind === 'react' &&
+      ['quiz-workshop-v1', 'quiz-capstone-v1'].includes(exercise.runtime.profile) &&
+      !acceptsReactQuizScenarios(exercise.runtime.learningGoal, exercise.interactionScenarios)
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['interactionScenarios'],
+        message: 'クイズ教材には指定の全実操作Scenarioが必要です',
       });
     }
     if (

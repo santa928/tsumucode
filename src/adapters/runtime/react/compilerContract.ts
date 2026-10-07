@@ -1,3 +1,4 @@
+import type { QuizFacts } from './checkQuizSource';
 import {
   isTypeScriptCompileInput,
   isTypeScriptCompileResult,
@@ -21,7 +22,9 @@ export type ReactProfile =
   | 'context-sharing-v1'
   | 'ref-focus-v1'
   | 'effect-sync-v1'
-  | 'custom-source-hook-v1';
+  | 'custom-source-hook-v1'
+  | 'quiz-workshop-v1'
+  | 'quiz-capstone-v1';
 export interface ReactCompileInput extends TypeScriptCompileInput {
   readonly profile?: ReactProfile;
 }
@@ -35,7 +38,8 @@ export type ReactCompileResult =
         | ReducerFacts
         | ContextFacts
         | RefFacts
-        | ExternalSourceFacts;
+        | ExternalSourceFacts
+        | QuizFacts;
     });
 
 /** 既存の容量・identity上限を保ち、TSXだけを追加する。予約moduleは入力できない。 */
@@ -55,7 +59,9 @@ export function isReactCompileInput(value: unknown): value is ReactCompileInput 
     input['profile'] !== 'context-sharing-v1' &&
     input['profile'] !== 'ref-focus-v1' &&
     input['profile'] !== 'effect-sync-v1' &&
-    input['profile'] !== 'custom-source-hook-v1'
+    input['profile'] !== 'custom-source-hook-v1' &&
+    input['profile'] !== 'quiz-workshop-v1' &&
+    input['profile'] !== 'quiz-capstone-v1'
   )
     return false;
   if (!input.files || typeof input.files !== 'object' || Array.isArray(input.files)) return false;
@@ -81,6 +87,10 @@ export function isReactCompileResult(
 ): value is ReactCompileResult {
   let compiled = value;
   const expectedFacts: Partial<Record<ReactProfile, string>> = {
+    'quiz-workshop-v1':
+      'advancesAnsweredQuestion,createsInitialState,forwardsSelectedChoice,guardsRepeatedAnswer,rendersQuestion,scoresActualAnswer,usesPureStateFunctions,usesStableChoiceKeys',
+    'quiz-capstone-v1':
+      'advancesAnsweredQuestion,createsInitialState,forwardsSelectedChoice,guardsRepeatedAnswer,rendersQuestion,scoresActualAnswer,usesPureStateFunctions,usesStableChoiceKeys',
     'static-components-v1':
       'rendersAssignedPairs,rendersReceivedChildren,reusesCardWithDistinctProps',
     'interactive-state-v1':

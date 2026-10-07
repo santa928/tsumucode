@@ -1,3 +1,4 @@
+import { isQuizWorkspace } from './quizScaffold';
 import { isInteractiveStateWorkspace } from './interactiveStateScaffold';
 import { isPropsWorkspace } from './propsCardScaffold';
 import { isStaticComponentsWorkspace } from './staticComponentsScaffold';
@@ -10,6 +11,8 @@ export function isReactWorkspace(
   files: Readonly<Record<string, string>>,
   profile: unknown,
 ): boolean {
+  if (profile === 'quiz-workshop-v1' || profile === 'quiz-capstone-v1')
+    return isQuizWorkspace(files, profile);
   if (
     profile === 'ref-focus-v1' ||
     profile === 'effect-sync-v1' ||

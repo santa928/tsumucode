@@ -117,3 +117,31 @@ it('Ref/Effectは新しい課題の編集責務だけへ開放する', () => {
     }
   }
 });
+
+it('クイズは固定親のuseStateと小さい予約stubへ閉じ、他Fileや未使用APIを開放しない', () => {
+  const old = prepareReactModules({ 'main.js': 'export const value = 1;' });
+  for (const profile of ['quiz-workshop-v1', 'quiz-capstone-v1'] as const) {
+    const files = prepareReactModules({ 'main.js': "import { useState } from 'react';" }, profile);
+    expect(files[REACT_MODULE_FILE]).toContain('export function useState()');
+    expect(files[REACT_MODULE_FILE]).not.toContain('useEffect');
+    expect(files[REACT_MODULE_FILE]).not.toContain('useReducer');
+    expect(files[REACT_MODULE_FILE]).not.toEqual(old[REACT_MODULE_FILE]);
+    for (const file of ['QuestionCard.js', 'quizState.js', 'extra.js']) {
+      expect(() =>
+        prepareReactModules({ [file]: "import { useState } from 'react';" }, profile),
+      ).toThrow();
+    }
+    for (const api of ['useEffect', 'useReducer', 'useRef', 'createContext', 'useContext']) {
+      expect(() =>
+        prepareReactModules({ 'main.js': `import { ${api} } from 'react';` }, profile),
+      ).toThrow();
+    }
+    expect(() =>
+      prepareReactModules(
+        { 'main.js': "import { useState } from './tsumucode-react-runtime.js';" },
+        profile,
+      ),
+    ).toThrow();
+  }
+  expect(old[REACT_MODULE_FILE]).toContain('useEffect');
+});

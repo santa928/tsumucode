@@ -1,0 +1,48 @@
+id: react-ch02-l01
+kind: guided-project
+title: 型付きの問題をComponentへ渡す
+goal: 型付きPropsから選択肢の一覧を作り、一意なKeyと同じ選択肢のCallbackを親へつなぐ。
+estimatedMinutes: 40
+prerequisiteLessonIds:
+  - react-ch01-l05
+  - react-ch01-l07
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/react-ch02-l01-e01/exercise.yaml
+reflection: 型付きPropsから選択肢の一覧を作り、一意なKeyと同じ選択肢のCallbackを親へつなぐ。
+glossaryRefs:
+  - quiz-workspace
+  - props
+  - state
+  - key
+project:
+  id: react-quiz-guided
+  briefSource: brief.md
+  guideSources:
+    - guide.md
+  checklist:
+    - id: react-ch02-l01-source
+      label: 今回の元Sourceと型
+      required: true
+      ruleIds:
+        - react-ch02-l01-e01-r01
+        - react-ch02-l01-e01-r02
+        - react-ch02-l01-e01-r03
+    - id: react-ch02-l01-behavior
+      label: 実操作と保存への接続
+      required: true
+      ruleIds:
+        - interaction:quiz-card-callback:initial
+        - interaction:quiz-card-callback:name
+        - interaction:quiz-card-callback:selected
+completion:
+  kind: guided-project
+  requiredChecklistItemIds:
+    - react-ch02-l01-source
+    - react-ch02-l01-behavior
+  requiredExerciseIds:
+    - react-ch02-l01-e01
+nextLessonId: react-ch02-l02

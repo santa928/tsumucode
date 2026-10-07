@@ -1,0 +1,8 @@
+id: react-ch03
+sequence: 2
+title: 'Capstone: 再回答できる練習クイズ'
+goal: Briefから型付きの表示・純粋State・実操作を責務ごとにつなぐ
+estimatedMinutes: 60
+kind: capstone
+lessonSources:
+  - lessons/react-ch03-l01/lesson.yaml

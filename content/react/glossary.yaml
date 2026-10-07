@@ -150,3 +150,18 @@ entries:
     definition: Hookを使う処理をまとめたuseで始まる関数。処理を再利用しても、内部のStateは呼出しごとに独立する。
     firstSlideId: react-ch01-l12-s01
     relatedIds: []
+  - id: quiz-workspace
+    term: 共有Workspace
+    definition: Guidedの複数工程が同じ編集原文と合格時Snapshotを引き継ぐ作業領域。判定履歴とHintは工程ごと。
+    firstSlideId: react-ch02-l01-s01
+    relatedIds: []
+  - id: quiz-pure-state
+    term: 純粋なState関数
+    definition: 前のStateと入力だけから次のStateを返し、元の値を書き換えず外部へ副作用を起こさない関数。
+    firstSlideId: react-ch02-l02-s01
+    relatedIds: []
+  - id: brief-transfer
+    term: 別Briefへの応用
+    definition: 既習の処理を別の制作要件へ合わせて選び直すこと。ここでは誤答後の再回答と累積得点の保持。
+    firstSlideId: react-ch03-l01-s01
+    relatedIds: []

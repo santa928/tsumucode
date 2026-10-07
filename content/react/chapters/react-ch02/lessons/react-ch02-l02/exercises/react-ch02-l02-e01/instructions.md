@@ -1,0 +1,7 @@
+## クイズStateを純粋な関数で更新する
+
+answerに回答済みのguardと実正誤による加点を加え、次問と再挑戦を確かめる。先に操作後の表示と得点を予測してください。編集できるのはQuestionCard.tsxとquizState.tsです。今回の主な修正先はquizState.tsです。main.tsx・types.ts・data.ts・index.htmlは固定の足場です。
+
+現在のStateと実正誤から次Stateを返し、重複得点を防ぎ、結果と名前を保つ再挑戦へつなぐ。
+
+2工程は同じWorkspaceを共有します。前工程で保存したCardとState関数を引き継ぎ、戻った工程でも同じ2Fileを編集できます。3段階HintとChecklistで修正位置・値の由来・実操作を確かめます。正解例は制作を終えた後の比較に使い、別Briefとの差を説明してください。

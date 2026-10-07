@@ -1,11 +1,10 @@
 schemaVersion: 1
 id: react
 title: React はじめの一歩
-description: Propsから入力・共有State・Reducer/Contextへ進み、Ref・外部同期のEffect/cleanup・Custom
-  Hookを責務ごとに学ぶReact導入教材。後続Projectは制作中。
+description: Props・State・FormからRef/Effect/Custom Hookの責務を学び、既存クイズ題材のGuided 2工程と別BriefのCapstoneへ進むReact教材。
 audience: TypeScriptのinterface・関数・readonlyとJavaScriptのDOMを学んだReact初学者
-estimatedMinutes: 345
-revision: 2026-10-07.5
+estimatedMinutes: 490
+revision: 2026-10-07.6
 runnerId: react
 validatorId: react
 glossarySource: glossary.yaml
@@ -23,13 +22,13 @@ prerequisites:
   - typescript
 publicationStatus: draft
 expectedTotals:
-  chapters: 1
-  lessons: 12
-  conceptSlides: 27
+  chapters: 3
+  lessons: 15
+  conceptSlides: 30
   standardExercises: 12
-  guidedProjectLessons: 0
-  capstoneLessons: 0
-  estimatedMinutes: 345
+  guidedProjectLessons: 2
+  capstoneLessons: 1
+  estimatedMinutes: 490
 provenanceManifestPath: provenance.yaml
 progressMigrations:
   - fromRevision: 2026-10-06.1
@@ -47,9 +46,18 @@ progressMigrations:
   - fromRevision: 2026-10-07.4
     toRevision: 2026-10-07.5
     steps: []
+  - fromRevision: 2026-10-07.5
+    toRevision: 2026-10-07.6
+    steps: []
 phases:
   - id: react-p01-component
     title: データを表示と操作へつなぐ
     description: Props・childrenで表示を組み合わせ、EventとStateで表示を更新し、配列とKeyを一覧へつなげます。
     chapterSources:
       - chapters/react-ch01/chapter.yaml
+  - id: react-p02-project
+    title: 型付きクイズを制作する
+    description: 工程の引継ぎと別Briefへの応用を、独立したWorkspaceで確かめる。
+    chapterSources:
+      - chapters/react-ch02/chapter.yaml
+      - chapters/react-ch03/chapter.yaml
