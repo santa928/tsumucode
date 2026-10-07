@@ -15,7 +15,7 @@ import {
 
 it('Ref・Effect・Custom Hookの3単元に実操作を必須とし、公開とauthoringの両方で省略・改ざんを拒否する', async () => {
   const { runtime: course, exercises } = await loadAuthoringCourse('content/react');
-  expect(course.publicationStatus).toBe('draft');
+  expect(course.publicationStatus).toBe('published');
   for (const n of [10, 11, 12]) {
     const id = `react-ch01-l${String(n)}-e01`;
     const exercise = exercises.find((exercise) => exercise.id === id)!;
