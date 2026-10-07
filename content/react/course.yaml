@@ -1,10 +1,10 @@
 schemaVersion: 1
 id: react
 title: React はじめの一歩
-description: Props・childrenからEventとState、元の配列を保つ更新とList/Keyを学ぶReact導入教材。後続教材は制作中。
+description: Props・children、Event/Stateと一覧、入力Formと共通の親Stateを学ぶReact導入教材。後続教材は制作中。
 audience: TypeScriptのinterface・関数・readonlyとJavaScriptのDOMを学んだReact初学者
-estimatedMinutes: 115
-revision: 2026-10-07.2
+estimatedMinutes: 180
+revision: 2026-10-07.3
 runnerId: react
 validatorId: react
 glossarySource: glossary.yaml
@@ -23,12 +23,12 @@ prerequisites:
 publicationStatus: draft
 expectedTotals:
   chapters: 1
-  lessons: 5
-  conceptSlides: 12
-  standardExercises: 5
+  lessons: 7
+  conceptSlides: 17
+  standardExercises: 7
   guidedProjectLessons: 0
   capstoneLessons: 0
-  estimatedMinutes: 115
+  estimatedMinutes: 180
 provenanceManifestPath: provenance.yaml
 progressMigrations:
   - fromRevision: 2026-10-06.1
@@ -36,6 +36,9 @@ progressMigrations:
     steps: []
   - fromRevision: 2026-10-07.1
     toRevision: 2026-10-07.2
+    steps: []
+  - fromRevision: 2026-10-07.2
+    toRevision: 2026-10-07.3
     steps: []
 phases:
   - id: react-p01-component

@@ -1,0 +1,23 @@
+id: react-ch01-l07
+kind: standard
+title: 親のStateを兄弟Componentへ共有する
+goal: 共通の親に1つのStateを持ち、値と更新callbackをPropsで兄弟へ渡して表示を同期できる。
+estimatedMinutes: 30
+prerequisiteLessonIds:
+  - react-ch01-l06
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/react-ch01-l07-e01/exercise.yaml
+reflection: 共通の親に1つのStateを持ち、値と更新callbackをPropsで兄弟へ渡して表示を同期できる。
+glossaryRefs:
+  - lifting-state
+  - derived-value
+  - props-callback
+completion:
+  kind: standard
+  finalSlideId: react-ch01-l07-s03
+  requiredExerciseIds:
+    - react-ch01-l07-e01

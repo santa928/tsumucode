@@ -66,3 +66,37 @@ entries:
     firstSlideId: react-ch01-l05-s02
     relatedIds:
       - immutable-update
+  - id: controlled-input
+    term: controlled input
+    definition: valueをStateから渡し、onChangeでその値を更新する入力欄。入力欄とStateを同じ値へつなぐ。
+    firstSlideId: react-ch01-l06-s01
+    relatedIds:
+      - state
+      - event-handler
+  - id: submit-handler
+    term: onSubmitとpreventDefault
+    definition: onSubmitはForm送信時のhandler。preventDefaultはそのEventの既定動作を取り消すメソッド。
+    firstSlideId: react-ch01-l06-s02
+    relatedIds:
+      - event-handler
+  - id: derived-value
+    term: 派生値
+    definition: 今あるStateやPropsから計算する値。文字数や検証表示を別Stateへ複製せず、描画時に導く。
+    firstSlideId: react-ch01-l06-s03
+    relatedIds:
+      - state
+      - props
+  - id: lifting-state
+    term: lifting state up
+    definition: 同じ値を使うComponentの共通の親へStateを置き、値と更新関数を子へ渡すこと。
+    firstSlideId: react-ch01-l07-s01
+    relatedIds:
+      - state
+      - props
+  - id: props-callback
+    term: Propsのcallback
+    definition: 子が呼ぶために親から渡す関数。入力の文字列を親の更新関数へ渡して、共有Stateを変える。
+    firstSlideId: react-ch01-l07-s02
+    relatedIds:
+      - props
+      - lifting-state

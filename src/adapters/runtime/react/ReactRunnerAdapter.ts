@@ -155,7 +155,8 @@ export class ReactRunnerAdapter implements RunnerAdapter {
           runtime: {
             kind: 'javascript',
             sourceType: 'module',
-            capabilityProfile: 'dom',
+            capabilityProfile:
+              runtime.data.runtime.profile === 'controlled-form-v1' ? 'dom-form' : 'dom',
             primaryOutput: 'preview',
             entryFile: runtime.data.runtime.entryFile.replace(/\.tsx?$/u, '.js'),
           },

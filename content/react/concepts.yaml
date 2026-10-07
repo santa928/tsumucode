@@ -54,3 +54,28 @@ concepts:
     prerequisiteConceptIds:
       - react-immutable-list
     minimumProjectLevel: transform
+  - id: react-controlled-input
+    introducedBySlideId: react-ch01-l06-s01
+    prerequisiteConceptIds:
+      - react-state-event
+    minimumProjectLevel: transform
+  - id: react-form-submit
+    introducedBySlideId: react-ch01-l06-s02
+    prerequisiteConceptIds:
+      - react-controlled-input
+    minimumProjectLevel: transform
+  - id: react-derived-state
+    introducedBySlideId: react-ch01-l06-s03
+    prerequisiteConceptIds:
+      - react-form-submit
+    minimumProjectLevel: transform
+  - id: react-shared-state-parent
+    introducedBySlideId: react-ch01-l07-s01
+    prerequisiteConceptIds:
+      - react-derived-state
+    minimumProjectLevel: transform
+  - id: react-state-props-callback
+    introducedBySlideId: react-ch01-l07-s02
+    prerequisiteConceptIds:
+      - react-shared-state-parent
+    minimumProjectLevel: transform

@@ -1,0 +1,505 @@
+id: react-ch01-l07-e01
+kind: standard
+workspaceId: react-ch01-l07-e01
+countsTowardStandardExerciseTotal: true
+title: 親のStateを兄弟Componentへ共有する
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: react-shared-state-parent
+    minimumLevel: transform
+  - conceptId: react-state-props-callback
+    minimumLevel: transform
+scaffoldLevel: transform
+runtime:
+  kind: react
+  entryFile: main.tsx
+  sourceType: module
+  capabilityProfile: dom
+  primaryOutput: preview
+  profile: controlled-form-v1
+  learningGoal: shared-state
+steps:
+  - id: connect-state
+    file: components.tsx
+    target: AppからNameSummaryへ渡すvalue
+    starterAnchor: <NameSummary
+    change: 固定文字列を共通の親Stateへつなぐ
+    observe: 入力欄・要約・文字数が繰り返し入力とやり直しで一致する
+    requiresConceptIds:
+      - react-shared-state-parent
+      - react-state-props-callback
+    validationRuleIds:
+      - react-ch01-l07-e01-r01
+      - react-ch01-l07-e01-r02
+      - react-ch01-l07-e01-r03
+files:
+  - path: components.tsx
+    language: react
+    source: starter/components.tsx
+    editable: true
+  - path: main.tsx
+    language: react
+    source: starter/main.tsx
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: starter/types.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+solutionFiles:
+  - path: components.tsx
+    language: react
+    source: solution/components.tsx
+    editable: false
+  - path: main.tsx
+    language: react
+    source: solution/main.tsx
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: solution/types.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: react-ch01-l07-e01-r01
+    label: 見出し
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: h1
+    assertion:
+      kind: text
+      operator: equals
+      expected: 共有する名前
+    feedback:
+      target: components.tsxとPreview
+      expected: 共有する名前
+      nextAction: 入力欄・要約・文字数が繰り返し入力とやり直しで一致する
+    hintId: react-ch01-l07-e01-h02
+    relatedSlideId: react-ch01-l07-s02
+  - id: react-ch01-l07-e01-r02
+    label: 初期の文字数
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#length'
+    assertion:
+      kind: text
+      operator: equals
+      expected: '0'
+    feedback:
+      target: components.tsxとPreview
+      expected: '0'
+      nextAction: 入力欄・要約・文字数が繰り返し入力とやり直しで一致する
+    hintId: react-ch01-l07-e01-h02
+    relatedSlideId: react-ch01-l07-s02
+  - id: react-ch01-l07-e01-r03
+    label: 共通の親Stateから兄弟へ値と更新callbackを渡す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: react-learning
+      file: components.tsx
+    assertion:
+      kind: react-learning
+      goal: shared-state
+    feedback:
+      target: components.tsx
+      expected: 共通の親に1つのStateを持ち、値と更新callbackをPropsで兄弟へ渡して表示を同期できる。
+      nextAction: 入力欄・要約・文字数が繰り返し入力とやり直しで一致する
+    hintId: react-ch01-l07-e01-h02
+    relatedSlideId: react-ch01-l07-s02
+interactionScenarios:
+  - id: shared-state-input-reset
+    label: 親Stateを兄弟の入力・要約へ共有する
+    actions:
+      - id: short-name
+        kind: fill
+        selector: '#name'
+        value: Ada
+      - id: long-name
+        kind: fill
+        selector: '#name'
+        value: TypeScript
+      - id: spaces
+        kind: fill
+        selector: '#name'
+        value: '   '
+      - id: clear
+        kind: fill
+        selector: '#name'
+        value: ''
+      - id: another-name
+        kind: fill
+        selector: '#name'
+        value: React
+      - id: reset
+        kind: click
+        selector: '#reset'
+    checkpoints:
+      - id: after-short-name
+        afterActionId: short-name
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: Ada
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '3'
+          - id: summary
+            kind: selector-text
+            selector: '#name-summary'
+            equals: Ada
+      - id: after-long-name
+        afterActionId: long-name
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: TypeScript
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '10'
+          - id: summary
+            kind: selector-text
+            selector: '#name-summary'
+            equals: TypeScript
+      - id: after-spaces
+        afterActionId: spaces
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: '   '
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '3'
+          - id: summary
+            kind: selector-text
+            selector: '#name-summary'
+            equals: ''
+      - id: after-clear
+        afterActionId: clear
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: ''
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '0'
+          - id: summary
+            kind: selector-text
+            selector: '#name-summary'
+            equals: ''
+      - id: after-another-name
+        afterActionId: another-name
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: React
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '5'
+          - id: summary
+            kind: selector-text
+            selector: '#name-summary'
+            equals: React
+      - id: after-reset
+        afterActionId: reset
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: ''
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '0'
+          - id: summary
+            kind: selector-text
+            selector: '#name-summary'
+            equals: ''
+hints:
+  - id: react-ch01-l07-e01-h01
+    level: 1
+    title: 修正位置を探す
+    text: AppのNameSummaryへ渡すvalueを見ます。入力欄へ渡す値と同じでしょうか。
+    relatedSlideId: react-ch01-l07-s02
+  - id: react-ch01-l07-e01-h02
+    level: 2
+    title: 値と操作の経路を追う
+    text: Stateは共通の親Appにあります。子で新しいStateを作らず、受け取るPropsをたどります。
+    relatedSlideId: react-ch01-l07-s02
+  - id: react-ch01-l07-e01-h03
+    level: 3
+    title: 操作後の一致を確かめる
+    text: NameFieldの更新callbackが親Stateを変えます。NameSummaryもその同じ値を受け取り、文字数を描画時に導出する経路をつなぎます。
+    relatedSlideId: react-ch01-l07-s02
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+fixtures:
+  - id: starter
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l07-e01-r03
+      - react-ch01-l07-e01-r02
+      - interaction:shared-state-input-reset:after-short-name:length
+      - interaction:shared-state-input-reset:after-short-name:summary
+      - interaction:shared-state-input-reset:after-long-name:length
+      - interaction:shared-state-input-reset:after-long-name:summary
+      - interaction:shared-state-input-reset:after-spaces:length
+      - interaction:shared-state-input-reset:after-spaces:summary
+      - interaction:shared-state-input-reset:after-clear:length
+      - interaction:shared-state-input-reset:after-clear:summary
+      - interaction:shared-state-input-reset:after-another-name:summary
+      - interaction:shared-state-input-reset:after-reset:length
+      - interaction:shared-state-input-reset:after-reset:summary
+    files:
+      - path: components.tsx
+        source: fixtures/starter.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: solution
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        source: fixtures/solution.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: alternative
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        source: fixtures/alternative.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: fixed-length
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l07-e01-r03
+      - react-ch01-l07-e01-r02
+      - interaction:shared-state-input-reset:after-long-name:length
+      - interaction:shared-state-input-reset:after-clear:length
+      - interaction:shared-state-input-reset:after-another-name:length
+      - interaction:shared-state-input-reset:after-reset:length
+    files:
+      - path: components.tsx
+        source: fixtures/fixed-length.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: stale-input
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l07-e01-r03
+      - interaction:shared-state-input-reset:after-short-name:input
+      - interaction:shared-state-input-reset:after-long-name:input
+      - interaction:shared-state-input-reset:after-spaces:input
+      - interaction:shared-state-input-reset:after-clear:input
+      - interaction:shared-state-input-reset:after-another-name:input
+      - interaction:shared-state-input-reset:after-reset:input
+    files:
+      - path: components.tsx
+        source: fixtures/stale-input.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: duplicate-state
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-0
+    files:
+      - path: components.tsx
+        source: fixtures/duplicate-state.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: effect-sync
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-0
+    files:
+      - path: components.tsx
+        source: fixtures/effect-sync.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: event-error
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - javascript-runtime
+    files:
+      - path: components.tsx
+        source: fixtures/event-error.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: trim-summary
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        source: fixtures/trim-summary.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: empty-children-parent-display
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l07-e01-r03
+    files:
+      - path: components.tsx
+        source: fixtures/empty-children-parent-display.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+relatedSlideIds:
+  - react-ch01-l07-s01
+  - react-ch01-l07-s02
+  - react-ch01-l07-s03
+assets: []

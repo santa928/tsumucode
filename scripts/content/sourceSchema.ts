@@ -1,3 +1,4 @@
+import { acceptsReactFormScenarios } from '../../src/core/content/reactFormInteractions';
 import { acceptsReactStateScenarios } from '../../src/core/content/reactStateInteractions';
 import {
   TypeScriptQuizProjectContracts,
@@ -126,8 +127,22 @@ export const ReactExerciseRuntimeSourceSchema = z
     sourceType: z.literal('module'),
     capabilityProfile: z.literal('dom'),
     primaryOutput: z.literal('preview'),
-    profile: z.enum(['props-card-v1', 'static-components-v1', 'interactive-state-v1']),
-    learningGoal: z.enum(['reuse', 'composition', 'counter', 'immutable-list']).optional(),
+    profile: z.enum([
+      'props-card-v1',
+      'static-components-v1',
+      'interactive-state-v1',
+      'controlled-form-v1',
+    ]),
+    learningGoal: z
+      .enum([
+        'reuse',
+        'composition',
+        'counter',
+        'immutable-list',
+        'controlled-form',
+        'shared-state',
+      ])
+      .optional(),
   })
   .strict()
   .refine(
@@ -136,8 +151,10 @@ export const ReactExerciseRuntimeSourceSchema = z
         ? ['reuse', 'composition'].includes(runtime.learningGoal ?? '')
         : runtime.profile === 'interactive-state-v1'
           ? ['counter', 'immutable-list'].includes(runtime.learningGoal ?? '')
-          : runtime.learningGoal === undefined,
-    { message: '静的Component課題の学習目標をprofileに合わせて指定してください' },
+          : runtime.profile === 'controlled-form-v1'
+            ? ['controlled-form', 'shared-state'].includes(runtime.learningGoal ?? '')
+            : runtime.learningGoal === undefined,
+    { message: 'React課題の学習目標をprofileに合わせて指定してください' },
   );
 
 /** 通常Authoring Sourceを同じ読込経路へ渡す。 */
@@ -257,7 +274,14 @@ export const ExerciseSourceSchema = z
           checkpoint.expectations.some((expectation) => expectation.kind === 'submit-prevented'),
         ),
       ) &&
-      (exercise.runtime?.kind !== 'javascript' || exercise.runtime.capabilityProfile !== 'dom-form')
+      !(
+        exercise.runtime?.kind === 'javascript' && exercise.runtime.capabilityProfile === 'dom-form'
+      ) &&
+      !(
+        exercise.runtime?.kind === 'react' &&
+        exercise.runtime.profile === 'controlled-form-v1' &&
+        exercise.runtime.learningGoal === 'controlled-form'
+      )
     ) {
       context.addIssue({
         code: 'custom',
@@ -294,7 +318,7 @@ export const ExerciseSourceSchema = z
             exercise.interactionScenarios,
           )
         : (exercise.runtime?.kind === 'react' &&
-            exercise.runtime.profile === 'interactive-state-v1') ||
+            ['interactive-state-v1', 'controlled-form-v1'].includes(exercise.runtime.profile)) ||
           (exercise.runtime?.kind === 'javascript' &&
             ['dom', 'dom-form', 'async', 'project'].includes(exercise.runtime.capabilityProfile));
     if (
@@ -306,6 +330,17 @@ export const ExerciseSourceSchema = z
         path: ['interactionScenarios'],
         message:
           'Interaction Scenarioは既存JSのDOM/async profileか固定TS境界/クイズ工程で指定してください',
+      });
+    }
+    if (
+      exercise.runtime?.kind === 'react' &&
+      exercise.runtime.profile === 'controlled-form-v1' &&
+      !acceptsReactFormScenarios(exercise.runtime.learningGoal, exercise.interactionScenarios)
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['interactionScenarios'],
+        message: '入力・共有State教材には指定の実入力・送信取消・やり直しScenarioが必要です',
       });
     }
     if (

@@ -1,0 +1,5 @@
+## 親のStateを兄弟Componentへ共有する
+
+NameFieldは親からvalueと更新関数onNameChangeを受け取り、NameSummaryはvalueから要約と文字数を描画します。AppのNameSummaryへ渡す固定文字列を、同じ親Stateへつないでください。Ada、TypeScript、空白、空値、Reactで両兄弟を確かめ、やり直しでも一致を確認します。子へStateを複製したりEffectで同期したりしません。
+
+用意済みのmain.tsx・types.ts・index.htmlは変更せず、components.tsxを修正します。Hintは段階的に開けます。
