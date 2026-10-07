@@ -3,11 +3,11 @@ courseId: react
 releases: []
 candidate:
   revision: 2026-10-07.7
-  status: draft
-  verifiedSourceCommit: draft
-  canonicalDistSha256: draft
-  courseManifestSha256: draft
-  publicProvenanceSha256: draft
+  status: approved
+  verifiedSourceCommit: 2ea19d1ff3f4469f67c1d0fc68c22603e3482107
+  canonicalDistSha256: 5711cccfac1a0239a8771e8a0e3decd1db098b79d574d507f03aef70e7414ff9
+  courseManifestSha256: 844dc9fb84757ce08f735ed978336c2f954f23d9c6f861327765db9281588284
+  publicProvenanceSha256: b1915a7574036c3bb09ae84c66771d7c384c5971a1d32606a4c1df7f227ea0fb
   persistentIdsSha256: 59f9a0838cce3f5430d0fe35fa5d724b59e35be30e07e06c683e9a72ab872794
   persistentIds:
     - desktop-1280
@@ -210,28 +210,28 @@ candidate:
   tombstonedIds: []
   migrations:
     - fromRevision: 2026-10-06.1
-      steps: []
       toRevision: 2026-10-07.1
+      steps: []
     - fromRevision: 2026-10-07.1
-      steps: []
       toRevision: 2026-10-07.2
+      steps: []
     - fromRevision: 2026-10-07.2
-      steps: []
       toRevision: 2026-10-07.3
+      steps: []
     - fromRevision: 2026-10-07.3
-      steps: []
       toRevision: 2026-10-07.4
+      steps: []
     - fromRevision: 2026-10-07.4
-      steps: []
       toRevision: 2026-10-07.5
+      steps: []
     - fromRevision: 2026-10-07.5
-      steps: []
       toRevision: 2026-10-07.6
-    - fromRevision: 2026-10-07.6
       steps: []
+    - fromRevision: 2026-10-07.6
       toRevision: 2026-10-07.7
+      steps: []
   syntheticProgressBundlePath: tests/fixtures/progress/react-previous-release-bundle.json
-  draftSourceCommit: draft
-  draftCanonicalDistSha256: draft
-  normalizedLearningInputSha256: draft
+  draftSourceCommit: 315061b8ba5590fc388ef76c0572b0a2af41957f
+  draftCanonicalDistSha256: d76c3bdcb6850dd1dc66b91238de87b6a35edc55ceedfffda002c1adae85c753
+  normalizedLearningInputSha256: aec5970e0dbd711b07617bbfb7e991c7cd989326a91d45e43db4b818c6c2bcc0
   courseId: react
