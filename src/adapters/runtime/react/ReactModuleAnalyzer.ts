@@ -8,6 +8,7 @@ import type {
 } from '../javascript/analyzer/contracts';
 import { resolveJavaScriptModuleSpecifier } from '../javascript/analyzer/modulePath';
 import trustedSource from 'virtual:tsumucode-react-preview-source';
+import type { ReactProfile } from './compilerContract';
 
 export const REACT_MODULE_FILE = 'tsumucode-react-runtime.js';
 const STUB = `
@@ -25,7 +26,7 @@ const PACKAGES: Readonly<Record<string, readonly string[]>> = {
 /** bare importを固定exportへ閉じ、相対TSX参照をemit済みJSへ結ぶ。動的importは許可しない。 */
 export function prepareReactModules(
   files: Readonly<Record<string, string>>,
-  profile: 'props-card-v1' | 'static-components-v1' | 'interactive-state-v1' = 'props-card-v1',
+  profile: ReactProfile = 'props-card-v1',
 ): Readonly<Record<string, string>> {
   if (Object.hasOwn(files, REACT_MODULE_FILE)) throw new Error('React予約Fileと衝突しています');
   const output: Record<string, string> = {};
@@ -46,7 +47,7 @@ export function prepareReactModules(
       const specifier = value.source.value;
       if (typeof specifier !== 'string') throw new Error('Module参照が不正です');
       const fixed =
-        specifier === 'react' && profile === 'interactive-state-v1'
+        specifier === 'react' && ['interactive-state-v1', 'controlled-form-v1'].includes(profile)
           ? ['useState']
           : Object.hasOwn(PACKAGES, specifier)
             ? PACKAGES[specifier]

@@ -1,0 +1,5 @@
+## 入力と送信を1つのStateへつなぐ
+
+submitは用意済みの型付きEventを受け取ります。既定の送信を取り消す処理を追加してください。空値と空白、AdaとTypeScriptを入力し、送信・やり直しを繰り返して入力・文字数・案内を確かめます。nameとattemptedは異なる事実で、messageとmissingは同じStateから導出します。別StateやEffectでコピーしません。
+
+用意済みのmain.tsx・types.ts・index.htmlは変更せず、components.tsxを修正します。Hintは段階的に開けます。

@@ -2,7 +2,7 @@ id: react-ch01
 sequence: 0
 title: Propsから操作で変わる表示へ
 goal: Props・childrenで表示を組み合わせ、EventでStateを更新し、配列の新しい値と項目IDのKeyを一覧へつなぐ。
-estimatedMinutes: 115
+estimatedMinutes: 180
 kind: standard
 lessonSources:
   - lessons/react-ch01-l01/lesson.yaml
@@ -10,3 +10,5 @@ lessonSources:
   - lessons/react-ch01-l03/lesson.yaml
   - lessons/react-ch01-l04/lesson.yaml
   - lessons/react-ch01-l05/lesson.yaml
+  - lessons/react-ch01-l06/lesson.yaml
+  - lessons/react-ch01-l07/lesson.yaml

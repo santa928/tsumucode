@@ -11,20 +11,21 @@ declare const __tsumucodeReportReactError: (error: unknown) => void;
 function guardedProps(props: unknown): unknown {
   if (!props || typeof props !== 'object') return props;
   const values = props as Readonly<Record<string, unknown>>;
-  const callback = values['onClick'];
-  if (typeof callback !== 'function') return props;
-  const click = callback as (...args: unknown[]) => unknown;
-  return {
-    ...values,
-    onClick(...args: unknown[]): unknown {
+  const guarded = { ...values };
+  for (const name of ['onClick', 'onChange', 'onSubmit']) {
+    const callback = values[name];
+    if (typeof callback !== 'function') continue;
+    const handler = callback as (...args: unknown[]) => unknown;
+    guarded[name] = (...args: unknown[]): unknown => {
       try {
-        return click(...args);
+        return handler(...args);
       } catch (error: unknown) {
         __tsumucodeReportReactError(error);
         return undefined;
       }
-    },
-  };
+    };
+  }
+  return guarded;
 }
 
 export const Fragment = JSXRuntime.Fragment;

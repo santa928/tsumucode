@@ -379,3 +379,215 @@ items:
   - id: react-state-original-124
     visibility: authoring
     path: chapters/react-ch01/lessons/react-ch01-l04/exercises/react-ch01-l04-e01/fixtures/fixed-four.tsx
+  - id: react-form-original-125
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/exercise.yaml
+    createdAt: 2026-10-07
+  - id: react-form-original-126
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/fixtures/alternative.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-127
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/fixtures/duplicate-state.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-128
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/fixtures/event-error.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-129
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/fixtures/event-in-updater.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-130
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/fixtures/fixed-message.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-131
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/fixtures/index.html
+    createdAt: 2026-10-07
+  - id: react-form-original-132
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/fixtures/main.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-133
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/fixtures/solution.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-134
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/fixtures/stale-input.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-135
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/fixtures/starter.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-136
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/fixtures/types.ts
+    createdAt: 2026-10-07
+  - id: react-form-original-137
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/instructions.md
+    createdAt: 2026-10-07
+  - id: react-form-original-138
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/solution/components.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-139
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/solution/index.html
+    createdAt: 2026-10-07
+  - id: react-form-original-140
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/solution/main.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-141
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/solution/types.ts
+    createdAt: 2026-10-07
+  - id: react-form-original-142
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/starter/components.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-143
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/starter/index.html
+    createdAt: 2026-10-07
+  - id: react-form-original-144
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/starter/main.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-145
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l06/exercises/react-ch01-l06-e01/starter/types.ts
+    createdAt: 2026-10-07
+  - id: react-form-original-146
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l06/lesson.yaml
+    createdAt: 2026-10-07
+  - id: react-form-original-147
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l06/slides/s01.md
+    createdAt: 2026-10-07
+  - id: react-form-original-148
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l06/slides/s02.md
+    createdAt: 2026-10-07
+  - id: react-form-original-149
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l06/slides/s03.md
+    createdAt: 2026-10-07
+  - id: react-form-original-150
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l06/slides/s04.md
+    createdAt: 2026-10-07
+  - id: react-form-original-151
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/exercise.yaml
+    createdAt: 2026-10-07
+  - id: react-form-original-152
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/fixtures/alternative.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-153
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/fixtures/duplicate-state.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-154
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/fixtures/effect-sync.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-155
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/fixtures/event-error.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-156
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/fixtures/fixed-length.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-157
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/fixtures/index.html
+    createdAt: 2026-10-07
+  - id: react-form-original-158
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/fixtures/main.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-159
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/fixtures/solution.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-160
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/fixtures/stale-input.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-161
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/fixtures/starter.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-162
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/fixtures/types.ts
+    createdAt: 2026-10-07
+  - id: react-form-original-163
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/instructions.md
+    createdAt: 2026-10-07
+  - id: react-form-original-164
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/solution/components.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-165
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/solution/index.html
+    createdAt: 2026-10-07
+  - id: react-form-original-166
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/solution/main.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-167
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/solution/types.ts
+    createdAt: 2026-10-07
+  - id: react-form-original-168
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/starter/components.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-169
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/starter/index.html
+    createdAt: 2026-10-07
+  - id: react-form-original-170
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/starter/main.tsx
+    createdAt: 2026-10-07
+  - id: react-form-original-171
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/starter/types.ts
+    createdAt: 2026-10-07
+  - id: react-form-original-172
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l07/lesson.yaml
+    createdAt: 2026-10-07
+  - id: react-form-original-173
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l07/slides/s01.md
+    createdAt: 2026-10-07
+  - id: react-form-original-174
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l07/slides/s02.md
+    createdAt: 2026-10-07
+  - id: react-form-original-175
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l07/slides/s03.md
+    createdAt: 2026-10-07
+  - id: react-form-regression-trim-summary
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/fixtures/trim-summary.tsx
+    createdAt: 2026-10-07
+  - id: react-form-regression-empty-children-parent-display
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/fixtures/empty-children-parent-display.tsx
+    createdAt: 2026-10-07

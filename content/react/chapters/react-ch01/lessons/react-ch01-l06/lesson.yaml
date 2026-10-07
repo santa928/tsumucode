@@ -1,0 +1,24 @@
+id: react-ch01-l06
+kind: standard
+title: 入力と送信を1つのStateへつなぐ
+goal: 入力値と送信操作の事実を1つのStateに持ち、表示を導出して送信を明示的に取り消せる。
+estimatedMinutes: 35
+prerequisiteLessonIds:
+  - react-ch01-l05
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/react-ch01-l06-e01/exercise.yaml
+reflection: 入力値と送信操作の事実を1つのStateに持ち、表示を導出して送信を明示的に取り消せる。
+glossaryRefs:
+  - controlled-input
+  - derived-value
+  - submit-handler
+completion:
+  kind: standard
+  finalSlideId: react-ch01-l06-s04
+  requiredExerciseIds:
+    - react-ch01-l06-e01
