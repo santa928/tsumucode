@@ -1,7 +1,7 @@
 schemaVersion: 2
 status: approved
-verifiedSourceCommit: 2ea19d1ff3f4469f67c1d0fc68c22603e3482107
-candidateTreeSha256: ae409da22bdc7c2c8d86c579dc2a11ffe60e078ec9bd091a2cb45b4d0f7b8504
+verifiedSourceCommit: 018f23d70474ce7535e3ccf8652f589b339838ee
+candidateTreeSha256: be8077e49830411aa1e75e6651b50a9cb241bca43b5e00e2af6569349f8e28f4
 canonicalDistSha256: 5711cccfac1a0239a8771e8a0e3decd1db098b79d574d507f03aef70e7414ff9
 courseManifestSha256: 844dc9fb84757ce08f735ed978336c2f954f23d9c6f861327765db9281588284
 publicProvenanceSha256: b1915a7574036c3bb09ae84c66771d7c384c5971a1d32606a4c1df7f227ea0fb
@@ -9,10 +9,10 @@ visualBaselineSha256: a8edbde5ab208193e372446ad490802d5e7569328b65de12c3d32c105b
 records:
   contentReview:
     path: docs/quality/content-review-react.yaml
-    sha256: 1086e2717399dc6de3ac51557523f717029b505747f6b275b91b6c760be0a2d7
+    sha256: ed1624129ce96f4ff89d32b6d326f2cc6978de6378a37cff41b5b58fb44fd19c
   technicalAcceptance:
     path: docs/quality/react-release-acceptance.yaml
-    sha256: e94e3b677a52e9c65ae3d8f08afefb84a36ac62782db7a30e937a200fcd18bd9
+    sha256: c37553c962b5cb204f93e7a90e0bde68ae2166526811766efb6e7bab32154d95
 approvedBy: repository-owner santa928 / parent-thread 01a10b91-1aa7-7475-a007-c3fb4bce8017 / user
   reply 2026-10-07T09:32:00.222350Z
 approvedAt: 2026-10-07T09:32:00.222350Z

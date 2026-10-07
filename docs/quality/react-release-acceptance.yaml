@@ -7,14 +7,14 @@ publicationApprovalReference: repository-owner santa928 / parent-thread
   01a10b91-1aa7-7475-a007-c3fb4bce8017 / user reply 2026-10-07T09:32:00.222350Z
 realHumanTrial: unverified
 lowEndPhysicalDevice: unverified
-verifiedSourceCommit: 2ea19d1ff3f4469f67c1d0fc68c22603e3482107
+verifiedSourceCommit: 018f23d70474ce7535e3ccf8652f589b339838ee
 canonicalDistSha256: 5711cccfac1a0239a8771e8a0e3decd1db098b79d574d507f03aef70e7414ff9
-candidateTreeSha256: ae409da22bdc7c2c8d86c579dc2a11ffe60e078ec9bd091a2cb45b4d0f7b8504
+candidateTreeSha256: be8077e49830411aa1e75e6651b50a9cb241bca43b5e00e2af6569349f8e28f4
 draftCanonicalDistSha256: d76c3bdcb6850dd1dc66b91238de87b6a35edc55ceedfffda002c1adae85c753
 draftInput:
   schemaVersion: 1
   courseId: react
-  sourceCommit: 315061b8ba5590fc388ef76c0572b0a2af41957f
+  sourceCommit: fde8d31fdb39fe64d853614706e5cd85cf5a5022
   scope: react-learning-input-v1
   publicationMetadata:
     coursePublicationStatus: draft
@@ -14865,9 +14865,9 @@ draftInput:
       normalizedSha256: 4b6a405f2109ef5dcaab9b85254570b6b9a593455ab635964f51131e962213c8
       normalizedBytes: 18759
     - path: src/features/learning/session/LearningSessionController.test.ts
-      rawSha256: 327ea1a2e9c77fc3591e1a248c114d7d33340ca13a6ee01e9949ab28c3956849
-      normalizedSha256: 327ea1a2e9c77fc3591e1a248c114d7d33340ca13a6ee01e9949ab28c3956849
-      normalizedBytes: 68823
+      rawSha256: 2175e10e0ac9abe5a3f556cb17b8eda929044014cbcf68bd6d6b30fd12f29b41
+      normalizedSha256: 2175e10e0ac9abe5a3f556cb17b8eda929044014cbcf68bd6d6b30fd12f29b41
+      normalizedBytes: 69941
     - path: src/features/learning/session/LearningSessionController.ts
       rawSha256: d2a73ef427687a5b70ab403e073d87188e08436bb7b2dbee379baffd48aa6b09
       normalizedSha256: d2a73ef427687a5b70ab403e073d87188e08436bb7b2dbee379baffd48aa6b09
@@ -15829,14 +15829,14 @@ draftInput:
       normalizedSha256: 9a137ce2b39b4fa1b222cf7d404fdbd801fcb5dbaf03d65ee9c46aa6bd80b9c8
       normalizedBytes: 271
     - path: vitest.config.ts
-      rawSha256: f7a6f125e43454746a5c24b856cd8977a637bd21bebb3b84d400d9423233577d
-      normalizedSha256: f7a6f125e43454746a5c24b856cd8977a637bd21bebb3b84d400d9423233577d
-      normalizedBytes: 714
-  normalizedInputSha256: aec5970e0dbd711b07617bbfb7e991c7cd989326a91d45e43db4b818c6c2bcc0
+      rawSha256: 3b8e26cf90cbe78637c96523a6a8583b0ce32f260c441d0c071b2f0725e9f4f4
+      normalizedSha256: 3b8e26cf90cbe78637c96523a6a8583b0ce32f260c441d0c071b2f0725e9f4f4
+      normalizedBytes: 753
+  normalizedInputSha256: e2c0805ff32ded7afefd6388aa9c46ee931f65a167dce5f3af053137e7ca37b3
 finalInput:
   schemaVersion: 1
   courseId: react
-  sourceCommit: 2ea19d1ff3f4469f67c1d0fc68c22603e3482107
+  sourceCommit: 018f23d70474ce7535e3ccf8652f589b339838ee
   scope: react-learning-input-v1
   publicationMetadata:
     coursePublicationStatus: published
@@ -30687,9 +30687,9 @@ finalInput:
       normalizedSha256: 4b6a405f2109ef5dcaab9b85254570b6b9a593455ab635964f51131e962213c8
       normalizedBytes: 18759
     - path: src/features/learning/session/LearningSessionController.test.ts
-      rawSha256: 327ea1a2e9c77fc3591e1a248c114d7d33340ca13a6ee01e9949ab28c3956849
-      normalizedSha256: 327ea1a2e9c77fc3591e1a248c114d7d33340ca13a6ee01e9949ab28c3956849
-      normalizedBytes: 68823
+      rawSha256: 2175e10e0ac9abe5a3f556cb17b8eda929044014cbcf68bd6d6b30fd12f29b41
+      normalizedSha256: 2175e10e0ac9abe5a3f556cb17b8eda929044014cbcf68bd6d6b30fd12f29b41
+      normalizedBytes: 69941
     - path: src/features/learning/session/LearningSessionController.ts
       rawSha256: d2a73ef427687a5b70ab403e073d87188e08436bb7b2dbee379baffd48aa6b09
       normalizedSha256: d2a73ef427687a5b70ab403e073d87188e08436bb7b2dbee379baffd48aa6b09
@@ -31651,11 +31651,11 @@ finalInput:
       normalizedSha256: 9a137ce2b39b4fa1b222cf7d404fdbd801fcb5dbaf03d65ee9c46aa6bd80b9c8
       normalizedBytes: 271
     - path: vitest.config.ts
-      rawSha256: f7a6f125e43454746a5c24b856cd8977a637bd21bebb3b84d400d9423233577d
-      normalizedSha256: f7a6f125e43454746a5c24b856cd8977a637bd21bebb3b84d400d9423233577d
-      normalizedBytes: 714
-  normalizedInputSha256: aec5970e0dbd711b07617bbfb7e991c7cd989326a91d45e43db4b818c6c2bcc0
-applicationSourceSha256: a3d12d08e0b3af79e6d020765c031a25b7d139088ded6204771c7f0484da0842
+      rawSha256: 3b8e26cf90cbe78637c96523a6a8583b0ce32f260c441d0c071b2f0725e9f4f4
+      normalizedSha256: 3b8e26cf90cbe78637c96523a6a8583b0ce32f260c441d0c071b2f0725e9f4f4
+      normalizedBytes: 753
+  normalizedInputSha256: e2c0805ff32ded7afefd6388aa9c46ee931f65a167dce5f3af053137e7ca37b3
+applicationSourceSha256: dae49b713ea86c9ada9964476b12585b3c7073c2c0d95bccd252a41fb6c3f3e7
 dependencyLockSha256: 65c2ce25a2c639fabe3e8f6baf3eaa2a8fef7177b5d243322fca85f1cbba79fd
 personas:
   - role: A
@@ -32053,9 +32053,9 @@ performance:
     raw: >-
       {
         "captureBinding": {
-          "sourceCommit": "315061b8ba5590fc388ef76c0572b0a2af41957f",
+          "sourceCommit": "fde8d31fdb39fe64d853614706e5cd85cf5a5022",
           "canonicalDistSha256": "d76c3bdcb6850dd1dc66b91238de87b6a35edc55ceedfffda002c1adae85c753",
-          "applicationSourceSha256": "a3d12d08e0b3af79e6d020765c031a25b7d139088ded6204771c7f0484da0842",
+          "applicationSourceSha256": "dae49b713ea86c9ada9964476b12585b3c7073c2c0d95bccd252a41fb6c3f3e7",
           "dependencyLockSha256": "65c2ce25a2c639fabe3e8f6baf3eaa2a8fef7177b5d243322fca85f1cbba79fd",
           "harnessSha256": "f030b698cf48a62e0fcd83f24d18d8f17c13868ef4e04258c21f8e6fe3e28b55",
           "workloadSourceSha256": "00e901ace4d367618ed6d8063628b52280d5e0a17fab68cec98cee865632a307"
@@ -32074,172 +32074,7 @@ performance:
         "initialOutcome": "rendered",
         "cold": [
           {
-            "elapsedMs": 8683,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 7904,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 7947,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 7087,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 7108,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 7102,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 7268,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 7067,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 7052,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 7701,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 7055,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 7116,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 7068,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 7090,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 7050,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 7032,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 7094,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 7068,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 7087,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 7063,
-            "status": "pass"
-          }
-        ],
-        "preview": [
-          1815.6000000238419,
-          1754.2000000476837,
-          1795.8999999761581,
-          1730.4000000953674,
-          1729.5999999046326,
-          1737.6000000238419,
-          1717.3000000715256,
-          1730.3999999761581,
-          1736,
-          1748.1000000238419,
-          1731.8999999761581,
-          1760.1000000238419,
-          1762.5,
-          1770.1000000238419,
-          1756.7000000476837,
-          1751.9000000953674,
-          1724.1999999284744,
-          1771.6999999284744,
-          1720,
-          1721.9000000953674
-        ],
-        "validation": [
-          8657.399999976158,
-          8487.699999928474,
-          8543.100000023842,
-          8571.300000071526,
-          8521.799999952316,
-          8511.699999928474,
-          8456.599999904633,
-          8571.699999928474,
-          8533.899999976158,
-          8456.200000047684,
-          9151.600000023842,
-          8606.200000047684,
-          8511.299999952316,
-          8483.699999928474,
-          8559.699999928474,
-          8450.600000023842,
-          8796.200000047684,
-          8464.5,
-          8610,
-          8472.700000047684
-        ],
-        "failures": [],
-        "warmupRuns": 1,
-        "plannedRuns": 20,
-        "coldP95Ms": 7947,
-        "coldMaxMs": 8683,
-        "previewP95Ms": 1795.8999999761581,
-        "validationP95Ms": 8796.200000047684,
-        "scope": "Desktop Docker CDP。物理実機・実人は未確認。初回はnavigationからStarter結果、操作はController完了まで。Compilerは各実行で再作成。失敗とtimeoutを保持する。"
-      }
-    sha256: fbfc7cefb4bb13e7df4e014f6ff0ec86f902ce076405641287a928f3ee2d3cb1
-    harnessSha256: f030b698cf48a62e0fcd83f24d18d8f17c13868ef4e04258c21f8e6fe3e28b55
-    workloadSourceSha256: 00e901ace4d367618ed6d8063628b52280d5e0a17fab68cec98cee865632a307
-  - exerciseId: react-ch01-l01-e01
-    raw: >-
-      {
-        "captureBinding": {
-          "sourceCommit": "315061b8ba5590fc388ef76c0572b0a2af41957f",
-          "canonicalDistSha256": "d76c3bdcb6850dd1dc66b91238de87b6a35edc55ceedfffda002c1adae85c753",
-          "applicationSourceSha256": "a3d12d08e0b3af79e6d020765c031a25b7d139088ded6204771c7f0484da0842",
-          "dependencyLockSha256": "65c2ce25a2c639fabe3e8f6baf3eaa2a8fef7177b5d243322fca85f1cbba79fd",
-          "harnessSha256": "f030b698cf48a62e0fcd83f24d18d8f17c13868ef4e04258c21f8e6fe3e28b55",
-          "workloadSourceSha256": "67ce1d44db59bdfdf2cfb2d5248a202af64c449127f4c21bb4506a8f361d755b"
-        },
-        "exerciseId": "react-ch01-l01-e01",
-        "browser": "149.0.7827.0",
-        "viewport": {
-          "width": 1280,
-          "height": 720
-        },
-        "cpuSlowdown": 4,
-        "rttMs": 150,
-        "downloadBitsPerSecond": 1600000,
-        "uploadBitsPerSecond": 750000,
-        "cache": "HTTP cache disabled; cold Context/IndexedDB fresh; warm same Context",
-        "initialOutcome": "type-error",
-        "cold": [
-          {
-            "elapsedMs": 7034,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 6896,
+            "elapsedMs": 7006,
             "status": "pass"
           },
           {
@@ -32247,137 +32082,141 @@ performance:
             "status": "pass"
           },
           {
-            "elapsedMs": 6964,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 6829,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 6418,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 6461,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 6467,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 6399,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 6396,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 6984,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 6436,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 6924,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 6968,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 6947,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 6973,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 6917,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 6944,
-            "status": "pass"
-          },
-          {
-            "elapsedMs": 6919,
+            "elapsedMs": 7008,
             "status": "pass"
           },
           {
             "elapsedMs": 6946,
             "status": "pass"
+          },
+          {
+            "elapsedMs": 6993,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6992,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6981,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6931,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 7001,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6979,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6985,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6974,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 7004,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6994,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 7036,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6992,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6987,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6988,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 7020,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6987,
+            "status": "pass"
           }
         ],
         "preview": [
-          1693.8000000715256,
-          1674.1000000238419,
-          1663.7000000476837,
-          1695.7000000476837,
-          1704.1000000238419,
-          1692.3999999761581,
-          1682.7999999523163,
-          1728.6000000238419,
-          1690.5,
-          1680.5999999046326,
-          1846.6999999284744,
-          1695.1999999284744,
-          1689,
-          1684.2000000476837,
-          1682.6999999284744,
-          1688.2999999523163,
-          1695.9000000953674,
-          1679.7999999523163,
-          1685.6000000238419,
-          1672.8000000715256
+          1702.2999999523163,
+          1868.3999999761581,
+          1704.2999999523163,
+          1704.3999999761581,
+          1731.3999999761581,
+          1696.6999999284744,
+          1678.8999999761581,
+          1704.6000000238419,
+          1694.8000000715256,
+          1698.1000000238419,
+          1759,
+          1759.5999999046326,
+          1694.7000000476837,
+          1724.2999999523163,
+          1706.1000000238419,
+          1696.7999999523163,
+          1709.1000000238419,
+          1725.4000000953674,
+          1729.1999999284744,
+          1696.2999999523163
         ],
         "validation": [
-          3072.2000000476837,
-          3052.100000023842,
-          3273.8000000715256,
-          3041.2000000476837,
-          3079,
-          3070.899999976158,
-          3132,
-          3178.8000000715256,
-          3058.2999999523163,
-          3099.2000000476837,
-          3035.399999976158,
-          3052,
-          3163.5,
-          3110.7999999523163,
-          3093,
-          3068.9000000953674,
-          3074.8000000715256,
-          3025.100000023842,
-          3067.600000023842,
-          3134.3000000715256
+          8321.200000047684,
+          8461.900000095367,
+          8402.799999952316,
+          8263.5,
+          8291.5,
+          8318.900000095367,
+          8331.100000023842,
+          8272.799999952316,
+          8260.899999976158,
+          8545.799999952316,
+          8710,
+          8411.399999976158,
+          8311,
+          8312.099999904633,
+          8333.600000023842,
+          8414.399999976158,
+          8310.5,
+          8282.5,
+          8297.400000095367,
+          8354.100000023842
         ],
         "failures": [],
         "warmupRuns": 1,
         "plannedRuns": 20,
-        "coldP95Ms": 6994,
-        "coldMaxMs": 7034,
-        "previewP95Ms": 1728.6000000238419,
-        "validationP95Ms": 3178.8000000715256,
+        "coldP95Ms": 7020,
+        "coldMaxMs": 7036,
+        "previewP95Ms": 1759.5999999046326,
+        "validationP95Ms": 8545.799999952316,
         "scope": "Desktop Docker CDP。物理実機・実人は未確認。初回はnavigationからStarter結果、操作はController完了まで。Compilerは各実行で再作成。失敗とtimeoutを保持する。"
       }
-    sha256: e26723204d506cb601e4d1fceadc2660bfa7f3d22fdd489a10562357ea3254bf
+    sha256: 61221cda78cc5175049f43f013b021b93d39c6daca94c1c21a8d6fb9fa602677
     harnessSha256: f030b698cf48a62e0fcd83f24d18d8f17c13868ef4e04258c21f8e6fe3e28b55
-    workloadSourceSha256: 67ce1d44db59bdfdf2cfb2d5248a202af64c449127f4c21bb4506a8f361d755b
+    workloadSourceSha256: 00e901ace4d367618ed6d8063628b52280d5e0a17fab68cec98cee865632a307
   - exerciseId: react-ch01-l11-e01
     raw: >-
       {
         "captureBinding": {
-          "sourceCommit": "315061b8ba5590fc388ef76c0572b0a2af41957f",
+          "sourceCommit": "fde8d31fdb39fe64d853614706e5cd85cf5a5022",
           "canonicalDistSha256": "d76c3bdcb6850dd1dc66b91238de87b6a35edc55ceedfffda002c1adae85c753",
-          "applicationSourceSha256": "a3d12d08e0b3af79e6d020765c031a25b7d139088ded6204771c7f0484da0842",
+          "applicationSourceSha256": "dae49b713ea86c9ada9964476b12585b3c7073c2c0d95bccd252a41fb6c3f3e7",
           "dependencyLockSha256": "65c2ce25a2c639fabe3e8f6baf3eaa2a8fef7177b5d243322fca85f1cbba79fd",
           "harnessSha256": "f030b698cf48a62e0fcd83f24d18d8f17c13868ef4e04258c21f8e6fe3e28b55",
           "workloadSourceSha256": "968a2715fe5f52a3890caa29c65c7bfd81f2f382ec28660442378e3a8ff7daf6"
@@ -32396,142 +32235,303 @@ performance:
         "initialOutcome": "rendered",
         "cold": [
           {
-            "elapsedMs": 7065,
+            "elapsedMs": 6987,
             "status": "pass"
           },
           {
-            "elapsedMs": 6977,
+            "elapsedMs": 6942,
             "status": "pass"
           },
           {
-            "elapsedMs": 7007,
+            "elapsedMs": 6962,
             "status": "pass"
           },
           {
-            "elapsedMs": 7040,
+            "elapsedMs": 6956,
             "status": "pass"
           },
           {
-            "elapsedMs": 7046,
+            "elapsedMs": 6996,
             "status": "pass"
           },
           {
-            "elapsedMs": 7101,
+            "elapsedMs": 6942,
             "status": "pass"
           },
           {
-            "elapsedMs": 7062,
+            "elapsedMs": 6943,
             "status": "pass"
           },
           {
-            "elapsedMs": 7016,
+            "elapsedMs": 6944,
             "status": "pass"
           },
           {
-            "elapsedMs": 7024,
+            "elapsedMs": 6934,
             "status": "pass"
           },
           {
-            "elapsedMs": 7098,
+            "elapsedMs": 6970,
             "status": "pass"
           },
           {
-            "elapsedMs": 7014,
+            "elapsedMs": 6959,
             "status": "pass"
           },
           {
-            "elapsedMs": 6982,
+            "elapsedMs": 6943,
             "status": "pass"
           },
           {
-            "elapsedMs": 7569,
+            "elapsedMs": 6911,
             "status": "pass"
           },
           {
-            "elapsedMs": 7044,
+            "elapsedMs": 6961,
             "status": "pass"
           },
           {
-            "elapsedMs": 7650,
+            "elapsedMs": 6967,
             "status": "pass"
           },
           {
-            "elapsedMs": 7058,
+            "elapsedMs": 6933,
             "status": "pass"
           },
           {
-            "elapsedMs": 7001,
+            "elapsedMs": 6933,
             "status": "pass"
           },
           {
-            "elapsedMs": 7290,
+            "elapsedMs": 6927,
             "status": "pass"
           },
           {
-            "elapsedMs": 7070,
+            "elapsedMs": 6948,
             "status": "pass"
           },
           {
-            "elapsedMs": 7050,
+            "elapsedMs": 6951,
             "status": "pass"
           }
         ],
         "preview": [
-          1764.5,
-          1705.5,
-          1719.7000000476837,
-          1730.5,
-          1773.3999999761581,
-          1787.2000000476837,
-          1741.1000000238419,
-          1736.7999999523163,
-          1733.5,
-          1733.1000000238419,
-          1706.7000000476837,
-          1745.3000000715256,
-          1748.2999999523163,
-          2119.600000023842,
-          1735.1000000238419,
-          1719.1000000238419,
-          1726,
-          1749.5,
-          1758.5999999046326,
-          1735.3999999761581
+          1685.1000000238419,
+          1711.8999999761581,
+          1693.5,
+          1702.0999999046326,
+          1672.7999999523163,
+          1689.3000000715256,
+          1717.1000000238419,
+          1700.5,
+          1708.3000000715256,
+          1710.0999999046326,
+          1697.5999999046326,
+          1693.9000000953674,
+          1688.5,
+          1689.4000000953674,
+          1696.5,
+          1691.1999999284744,
+          1697.3999999761581,
+          1676.2000000476837,
+          1671.1000000238419,
+          1705.7000000476837
         ],
         "validation": [
-          6760.199999928474,
-          6689.899999976158,
-          6675.5,
-          6684.300000071526,
-          6635.100000023842,
-          6586.299999952316,
-          6719.199999928474,
-          6618.199999928474,
-          6666.300000071526,
-          6602.299999952316,
-          6631.399999976158,
-          6615.5,
-          6687.199999928474,
-          6862.099999904633,
-          6653,
-          6694.400000095367,
-          6685,
-          6635.5,
-          6671.799999952316,
-          6988
+          6872.199999928474,
+          6556.199999928474,
+          6641.899999976158,
+          6534.400000095367,
+          6488.299999952316,
+          6497.299999952316,
+          6473.799999952316,
+          6484.5,
+          6521.299999952316,
+          6517.5,
+          6549.5,
+          6460.100000023842,
+          6544.300000071526,
+          6501.200000047684,
+          6473.800000071526,
+          6597.299999952316,
+          6518.199999928474,
+          6469.399999976158,
+          6528.700000047684,
+          6481.300000071526
         ],
         "failures": [],
         "warmupRuns": 1,
         "plannedRuns": 20,
-        "coldP95Ms": 7569,
-        "coldMaxMs": 7650,
-        "previewP95Ms": 1787.2000000476837,
-        "validationP95Ms": 6862.099999904633,
+        "coldP95Ms": 6987,
+        "coldMaxMs": 6996,
+        "previewP95Ms": 1711.8999999761581,
+        "validationP95Ms": 6641.899999976158,
         "scope": "Desktop Docker CDP。物理実機・実人は未確認。初回はnavigationからStarter結果、操作はController完了まで。Compilerは各実行で再作成。失敗とtimeoutを保持する。"
       }
-    sha256: c12faffc1336e72146167dbf81f22fd23281943a60c083105f02e3cd629dc2c3
+    sha256: c41c66c5ab401a668010092fc689bf4280bb27e835b2737c892bfbc20e7f2bd8
     harnessSha256: f030b698cf48a62e0fcd83f24d18d8f17c13868ef4e04258c21f8e6fe3e28b55
     workloadSourceSha256: 968a2715fe5f52a3890caa29c65c7bfd81f2f382ec28660442378e3a8ff7daf6
+  - exerciseId: react-ch01-l01-e01
+    raw: >-
+      {
+        "captureBinding": {
+          "sourceCommit": "fde8d31fdb39fe64d853614706e5cd85cf5a5022",
+          "canonicalDistSha256": "d76c3bdcb6850dd1dc66b91238de87b6a35edc55ceedfffda002c1adae85c753",
+          "applicationSourceSha256": "dae49b713ea86c9ada9964476b12585b3c7073c2c0d95bccd252a41fb6c3f3e7",
+          "dependencyLockSha256": "65c2ce25a2c639fabe3e8f6baf3eaa2a8fef7177b5d243322fca85f1cbba79fd",
+          "harnessSha256": "f030b698cf48a62e0fcd83f24d18d8f17c13868ef4e04258c21f8e6fe3e28b55",
+          "workloadSourceSha256": "67ce1d44db59bdfdf2cfb2d5248a202af64c449127f4c21bb4506a8f361d755b"
+        },
+        "exerciseId": "react-ch01-l01-e01",
+        "browser": "149.0.7827.0",
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "cpuSlowdown": 4,
+        "rttMs": 150,
+        "downloadBitsPerSecond": 1600000,
+        "uploadBitsPerSecond": 750000,
+        "cache": "HTTP cache disabled; cold Context/IndexedDB fresh; warm same Context",
+        "initialOutcome": "type-error",
+        "cold": [
+          {
+            "elapsedMs": 6983,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6353,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6339,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6378,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6373,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6346,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6339,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6360,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6376,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6329,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 8400,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6346,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6378,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6332,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6858,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6351,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6333,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6307,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6353,
+            "status": "pass"
+          },
+          {
+            "elapsedMs": 6351,
+            "status": "pass"
+          }
+        ],
+        "preview": [
+          1673.5999999046326,
+          1696.8999999761581,
+          1661.2999999523163,
+          1639.3000000715256,
+          1649,
+          1647.3999999761581,
+          1677.9000000953674,
+          1643.3999999761581,
+          1670,
+          1646.8000000715256,
+          1666.5999999046326,
+          1657,
+          1649.5999999046326,
+          1641.7999999523163,
+          1669.1999999284744,
+          1658.1000000238419,
+          1660,
+          1664.2999999523163,
+          1646.1000000238419,
+          1648.3999999761581
+        ],
+        "validation": [
+          2967.399999976158,
+          3038.6999999284744,
+          2981.4000000953674,
+          3004.100000023842,
+          2992.7999999523163,
+          3009.3000000715256,
+          2993.8000000715256,
+          3006.100000023842,
+          2986.1999999284744,
+          2998.6999999284744,
+          3001.2000000476837,
+          3007.100000023842,
+          3004.5,
+          3003.2999999523163,
+          2995.5,
+          3002.399999976158,
+          2979.899999976158,
+          3004.3000000715256,
+          2981.899999976158,
+          2980.9000000953674
+        ],
+        "failures": [],
+        "warmupRuns": 1,
+        "plannedRuns": 20,
+        "coldP95Ms": 6983,
+        "coldMaxMs": 8400,
+        "previewP95Ms": 1677.9000000953674,
+        "validationP95Ms": 3009.3000000715256,
+        "scope": "Desktop Docker CDP。物理実機・実人は未確認。初回はnavigationからStarter結果、操作はController完了まで。Compilerは各実行で再作成。失敗とtimeoutを保持する。"
+      }
+    sha256: 34b2c352258a75aaff7d1d66c18b65c8e635eec6854a742426b8ac3df5574c68
+    harnessSha256: f030b698cf48a62e0fcd83f24d18d8f17c13868ef4e04258c21f8e6fe3e28b55
+    workloadSourceSha256: 67ce1d44db59bdfdf2cfb2d5248a202af64c449127f4c21bb4506a8f361d755b
 browserMatrix:
   - engine: chromium
     passedLessons: 15
@@ -32539,22 +32539,22 @@ browserMatrix:
     generalLessons: 14
     refUiLessons: 1
     reportSha256s:
-      - 30fd575a66cb27ceefafe44bbdb2b1ef8fb172a0c301591de957046342a1475c
-      - 4d0da5edea84df045043f8ffade44c83f8ef313bfd0ac58cf03ee122faa75c4d
-      - cfbb6a3b6258dedd025ca63953eecd34514be02b8b1a155223b6f9466f47d3f9
-      - 34f309ac7a25b65111dc4000268022dd5c2e9eadd95ebf25ab2adeab15fd35e5
-      - c93b3169ffc4d4b527f08d016f24cadfb30b8fef8e66de3e4c925b49829d1e94
-      - 7439cbf57f29c334496c4121ea9a86bea1535e774578857ebb5583d55f02a72d
-      - 49b195485e2d63a130d94845e2367cce327220d1529b8de9856d934abc41e6e0
-      - 398da729bb1f66f4b60dc426dbbb29a96ab9b3c47b9a2da4aea6de50c6c61ed4
-      - adaa88fe2d232adeebad68d68a97a704f120037613bc510e29c3a098586833c8
-      - 40bcdbd7a51e890ec0b2e430fbc20027e192e064a835edb62b98b7b36b3399eb
-      - cb4ed6aa512879fc441513cac5ff8816c1d6b594fc04aaa57dfd2041987eaf23
-      - dbd29bb320ce3bbec6147c329d4ed0518d4d0cfbc134843f5bc254c9ea6457e2
-      - 9bdcfec0b62aaa58f9ffaf6f4040f6ccfb767d9ae01c7d8c5140021f12ea7e60
-      - 8eadc2072fca08508477fc4f781bfab78429d93def27819aba4a8650f76f9707
-      - 6f230d39cf47180817c1b62774404643dab1ea3eddde30cedf32f1ff40da7f89
-    sourceCommit: 315061b8ba5590fc388ef76c0572b0a2af41957f
+      - 4f65c3103081e5a875deb8f028aedf23757f635a4ca1861a1f718dd89d98fab8
+      - f11f745f550abd6b7f6648fee2928c2d149540f865dea1c026694d6c3687f7ec
+      - 15dd32c4025898178334117fad85ae807670931ec906effdcab4d819233d1e2d
+      - eaaee4cba57e7076c81cef13d86e55b3e735973986406af42eefcce9d092eb3b
+      - b7ca7c2f1b8c0345a362f0a08c8ca41dfba778b02c3927257c85656601fc3fb6
+      - aafa5a6952078e5fe424f22117b5d36db7eb582a818df9a70d16bdcfcfa7df7b
+      - 30d0cec6d66dcb5890732f9c13ab9d0851ea385b39dcbdf3b1d4fbbdebe87ac2
+      - 83e10766ab75efdb96600b25879c620738846490a581ca34822eb9085feed26e
+      - c7a81f64d4031fd68689bca769e6ea6fea3f4f58362ebc38da2cdca0b9244e2d
+      - 92badd4bd2a3730bd0e40abc45b2502765a108465671ace8d840f02975c256ba
+      - 3ce1e51f64dec2bfe0c3a482c1cff8a113045c616e4c65827f5f2778e15f562a
+      - 43606feb4c29d9f217d63c185679f1612347d758be055d9758718e474f78007e
+      - 2d9a159ba591e25602cea8d0ce98a012d900ba24655c549dd8fb48d000ccc66c
+      - 11df4abf4e386198f72ed0285c7a7746d447a0f4c17241423c4c74770c2b04c7
+      - 55acd8aa9182f7cb7bf29c7ec5435151c6499424864e86865c14c66b1759a395
+    sourceCommit: fde8d31fdb39fe64d853614706e5cd85cf5a5022
     canonicalDistSha256: d76c3bdcb6850dd1dc66b91238de87b6a35edc55ceedfffda002c1adae85c753
     harnessSha256: 03a921bc675f8d7a97803cd0915b2f5ec2c139447bb75d985a2b0db0db38e888
     refHarnessSha256: f46edc57850cc9907ce824129a60f91c5b477189449d88b786a3161c0e1452a3
@@ -32564,22 +32564,22 @@ browserMatrix:
     generalLessons: 14
     refUiLessons: 1
     reportSha256s:
-      - 11f111b05a4f793cc19b97beab8e082c84d2ad9dde021f00c49edae41fe4c712
-      - 960ad237257dc27a6d2f5034890611f2e66f1c75a64154200206d47fad7aada4
-      - 09c31b6d74f3476a41ea2c6e7ac8c4f8cf77cae53acb154d5642cba18d19bb5a
-      - 096384cbaa263bc939a7c4ada6698019c30f2d5563579ce8c0f581c32cbbb1f5
-      - 8858ece4cbc99baf62f5221f55c037c8b7dba465460ec2edb9d7a3039b0febfb
-      - 66267abc4700b7a8d81f64f3aa1cd498e77fa14dc39efa84d1f97f1466a05f9f
-      - ea5b31ff0429754ea29eafc5e1fbe9914ade24f539d1571d856e040a3876e74a
-      - dff04cef1fcbfe82fa3f508592baf295cccd476cd90ecf6eb0d88cf1ef6183f4
-      - 66438df7db812fe97758d19939ed5de3f21e43cd7981f8717722cfd19e8cccda
-      - 1631ae239548385a5be591c40513982d2f9d7b7706ce4247807040ca591965e8
-      - 16b6766bef17ef49b2797dac6245beb15a7b02282fabb02616b9c8d76c29a4a0
-      - 167ae09c103e339e9417137abd32447e484aa75feec1d2d85dc383c46f61315f
-      - b9a90d7bfeab145545e32f8e5ed16e952cd3732f8b61fc7ad08895b10326644e
-      - f5773ef73786621fab9c1e36d01888312976731b6a7b52bea3e0170c59f1d02e
-      - 619194dcd678a434e41981f3242d3ebb29826e77f9dba7428ec5082304bc3ad2
-    sourceCommit: 315061b8ba5590fc388ef76c0572b0a2af41957f
+      - 34835f6070611fc383456fc5101390b985b1a1e1c5a831af749ae365d27d6d8b
+      - d3dc3186820cf67c7bfd6dddc59f52457a049d0ee8936a16abdea2cf8f63797f
+      - d0e0d1fd1f5b3b4c5462133c4c2a103901a4ceecfc5f976d81b7184e82d84dac
+      - ede8c6bf607979d262dd1d36d3a73d817aaac58125a42d441b93964835276c92
+      - f84d3c8364643f6fdb7b821a0dec2a1d3a6f68020581e31dedadc40e2651af0b
+      - 9ac2e380bedb217eb365d7acfba5636f6a227f44d0d68f7778505889bbf7cafb
+      - 71c90f6cf44eab6e37c8b8ef54cea7495b1f082881750847793155dc611608b5
+      - 2213bf5e646d0fced77219398eae3a286e155e8e001605ca35b8e9fdb45475a4
+      - 637aacf8f5c74b3413a381a1b0356595a1fe6f07666b10c487b52755e57a4c4d
+      - b529ab9743b8679e23b4f6bdd27987b89c8a4d0a1533dca68ec8e01073977ed6
+      - 81cb92f50b71ffb7886f3724309b79a629973d27fdcedf756181925a6ca7448f
+      - 3d4cb1f08ba979d02eecec7238d1d374fc8795f21a4a2fdc886fbb1dfaf49124
+      - 486f4c344654cefd42eec7c46ed0e94d8264b7dcd47a62f58c1843fe6f689607
+      - f3f388b9b5dcbd037d327688b01a63a54d7086d583c58ea90997185a9b947364
+      - 7c5faeff812dfa6856f08d2dc0a1122584cba1fb80a5d02e9de2ec2aa0aab750
+    sourceCommit: fde8d31fdb39fe64d853614706e5cd85cf5a5022
     canonicalDistSha256: d76c3bdcb6850dd1dc66b91238de87b6a35edc55ceedfffda002c1adae85c753
     harnessSha256: 03a921bc675f8d7a97803cd0915b2f5ec2c139447bb75d985a2b0db0db38e888
     refHarnessSha256: f46edc57850cc9907ce824129a60f91c5b477189449d88b786a3161c0e1452a3
@@ -32589,28 +32589,28 @@ browserMatrix:
     generalLessons: 14
     refUiLessons: 1
     reportSha256s:
-      - 2753c5a11bc0fcede42986064ef55ef351f7058d2ea558d80b8889a31a74c65c
-      - 4758027a1889292ef068fd7bf40fe30978ef50aa72006d19189a76710c9ae109
-      - 2c3f0cb00eb943f1cfd8ad46d5778dbfbfdd636130f8c47c9e6bb7ef22a05de9
-      - a8c182fd2120898a6c67c90a1332496fec1c9c60b21015a8dcf5ec9763f3c885
-      - 279ef62fce837a16173f8211dcea33f2fef448e4fe3eeca3d3c15d711d261e51
-      - e6af7a4480f04645294d9844374c508bddcbbb072461bb0dbd86e704ec5d0539
-      - fb582b847a0204bca7f3d7439e59f7b7c495afc7c84609e4d80f33b8618e5386
-      - aa28d1689654fc22e0fcfb828ecafb0ddd98477d1a98359b99e2726b0056df2c
-      - ec2bef2a691ac06de541b60d2ded59f9dee6c1e3134530eef741aa64b28080ca
-      - f2632c245007d53484c43e805019af4735f018bd3641a0d287803745fcaaaa31
-      - 5becb66b169d42c6965f8431be95205db44f382cd6146589bcc626d653c86761
-      - 0bb614a0e55e397b40343a2827b8a57fafac92534f18c8efcfcef4b72edc3f12
-      - e0a5423eced2dbed5dbc61933250847c7e3f55ca1ede2f49938874156032c5b1
-      - 0be01b6df3c6192a854d145168068dea561afd4e83860e0232ae83cfd05bd849
-      - a817bffe15edb0b03fcaae84d58139d46bef8d662fa18e80658a4cd0b5812747
-    sourceCommit: 315061b8ba5590fc388ef76c0572b0a2af41957f
+      - 07b9afbe0ec32d7a8d8847fa4fca1d6835deebd31d2245f7e588d4bc68f798de
+      - 47fa4989d889697cc47016f390eed1c21ae0a742a04d560fd42995813b322e5a
+      - 2456fafb15e64ff416d5beeef3f1c81bed02b9e1f732b40fa6d4743f61fd10b3
+      - 01c63846d283f22350be9bbbc8179921dabd5fd07fa7712b6f688bbcdf77a8da
+      - f333e7233f47822deb61ab4413c06d2050006f70618ab884792e76d2da45ddf0
+      - ca19aa791db48d24f481f2fd7b930d3cf725e3819749105dea86ff3703e6cf4b
+      - 2321ed8c73a30d9f6ca6615dd32cb9191bba86bf8c19e8ff03e155e89378f486
+      - fc564a2713805cdb2398e4a5018197b158f859a6c0ee0f2b206c3f8df3c6bf63
+      - 9e5cae768261eeb23995bd88965522c0e1d038491ecf0dfb60af17732115e8a8
+      - 465d0a43047dc4cdc2395bcf32a0a5c2a7670b93fbe27c0d5f4c0407098676ba
+      - f4c9bc9464cc93e84516c74e356f2b6db10025e63e2140ea864185f43418d6fe
+      - 9e217cf2f02b4ae873106a35323dca828571fb44b43c69775feccece1a6084bd
+      - af71b25fc36c4723d1dc1ef81c8c908330af43bda5b395e2aa2b542b0dc54d22
+      - 70c8a592e6c64ff441970d76c8fde40031310f9f2c4b3a8be3188fa1b8c7318b
+      - 2e796e6b5f33ae2d5ca61e873ad9ad3c73730548c7aa71acb60ee5b5d4cfcd61
+    sourceCommit: fde8d31fdb39fe64d853614706e5cd85cf5a5022
     canonicalDistSha256: d76c3bdcb6850dd1dc66b91238de87b6a35edc55ceedfffda002c1adae85c753
     harnessSha256: 03a921bc675f8d7a97803cd0915b2f5ec2c139447bb75d985a2b0db0db38e888
     refHarnessSha256: f46edc57850cc9907ce824129a60f91c5b477189449d88b786a3161c0e1452a3
 progressRoundTrip:
-  path: .release-issue123/chromium-quality-first-results/react-acceptance-artifacts/react-progress-Reactの合格済みG-3e778-oneを実Export-Importで保持し修正できる-chromium/react-progress-observation.json
-  sha256: 89000723eb01fddbd94c6284a967590e9743e07b0206ef0ebb5339eb96b958b9
+  path: .release-issue123/final-input2-reading-progress-results/react-acceptance-artifacts/react-progress-Reactの合格済みG-3e778-oneを実Export-Importで保持し修正できる-chromium/react-progress-observation.json
+  sha256: bb67a2b7ee49006e39e33f41249ca302361e11be85030dae9999b9a02ca31d69
 reading:
   codePreviewSlides: 25
   viewports:
@@ -32618,15 +32618,15 @@ reading:
     - 390
   axeViolations: 0
   report:
-    path: .release-issue123/chromium-quality-first-results/react-acceptance-summary.json
-    sha256: 86e1402265450f70439962f3fae7cadef1e53709e5317de3a88a1d8fa6a970f0
+    path: .release-issue123/final-input2-reading-progress-results/react-acceptance-summary.json
+    sha256: 5074885080209b6be7c2b6eeb7c0e3a2def6c81b4f05505bf40f16c8ea26dea1
 independenceReview:
   author: root
   reviewer: review_issue109
   decision: approved
   privateOriginalsChecked: true
-  productTreeSha256: ae409da22bdc7c2c8d86c579dc2a11ffe60e078ec9bd091a2cb45b4d0f7b8504
-  evidenceSha256: 3307caf46bd8f2207e9687015fd84167a5664934206f597a5dea277fe073cb43
+  productTreeSha256: be8077e49830411aa1e75e6651b50a9cb241bca43b5e00e2af6569349f8e28f4
+  evidenceSha256: c9530f413ac9e16e86de4a9f6bfe45f9c78b0f85d860e50a83f500616cf9aab8
   reportSha256s:
     - ec9951f6924c2f104f4e5d3bef10777c40c586d9b86292973cbcec6eb962b328
     - dd4c7e30eb9142da027e909f6cd49ea86ff75913e03749925ee7c6ec500b08e7

@@ -1,6 +1,6 @@
 schemaVersion: 1
 releaseStatus: approved
-verifiedSourceCommit: 2ea19d1ff3f4469f67c1d0fc68c22603e3482107
+verifiedSourceCommit: 018f23d70474ce7535e3ccf8652f589b339838ee
 canonicalDistSha256: 5711cccfac1a0239a8771e8a0e3decd1db098b79d574d507f03aef70e7414ff9
 lessons:
   - lessonId: react-ch01-l01
