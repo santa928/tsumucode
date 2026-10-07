@@ -20,11 +20,48 @@ export function useState() {}
 export function useReducer() {}
 export function createContext() {}
 export function useContext() {}
+export function useRef() {}
+export function useEffect() {}
 `;
 const PACKAGES: Readonly<Record<string, readonly string[]>> = {
   'react/jsx-runtime': ['jsx', 'jsxs', 'Fragment'],
   'react-dom/client': ['createRoot'],
 };
+
+/** 課題とFileの責務に対応するHookだけを許可し、旧profileへ新APIを開放しない。 */
+function reactExports(profile: ReactProfile, file: string): readonly string[] | undefined {
+  switch (profile) {
+    case 'ref-focus-v1':
+      return file === 'components.js' ? ['useRef', 'useState'] : undefined;
+    case 'effect-sync-v1':
+      return file === 'components.js'
+        ? ['useEffect', 'useState']
+        : file === 'main.js'
+          ? ['useState']
+          : undefined;
+    case 'custom-source-hook-v1':
+      return file === 'sourceHook.js'
+        ? ['useEffect', 'useState']
+        : file === 'main.js'
+          ? ['useState']
+          : undefined;
+    case 'reducer-form-v1':
+      return file === 'components.js' ? ['useReducer'] : undefined;
+    case 'context-sharing-v1':
+      return file === 'nameContext.js'
+        ? ['createContext']
+        : file === 'main.js'
+          ? ['useState']
+          : file === 'components.js'
+            ? ['useContext']
+            : undefined;
+    case 'interactive-state-v1':
+    case 'controlled-form-v1':
+      return ['useState'];
+    default:
+      return undefined;
+  }
+}
 
 /** bare importを固定exportへ閉じ、相対TSX参照をemit済みJSへ結ぶ。動的importは許可しない。 */
 export function prepareReactModules(
@@ -51,19 +88,7 @@ export function prepareReactModules(
       if (typeof specifier !== 'string') throw new Error('Module参照が不正です');
       const fixed =
         specifier === 'react'
-          ? profile === 'reducer-form-v1' && file === 'components.js'
-            ? ['useReducer']
-            : profile === 'context-sharing-v1'
-              ? file === 'nameContext.js'
-                ? ['createContext']
-                : file === 'main.js'
-                  ? ['useState']
-                  : file === 'components.js'
-                    ? ['useContext']
-                    : undefined
-              : ['interactive-state-v1', 'controlled-form-v1'].includes(profile)
-                ? ['useState']
-                : undefined
+          ? reactExports(profile, file)
           : Object.hasOwn(PACKAGES, specifier)
             ? PACKAGES[specifier]
             : undefined;

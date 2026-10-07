@@ -37,6 +37,8 @@ export const useState = React.useState;
 export const useReducer = React.useReducer;
 export const createContext = React.createContext;
 export const useContext = React.useContext;
+export const useRef = React.useRef;
+export const useEffect = React.useEffect;
 
 interface BoundaryProps {
   readonly children: ReactNode;

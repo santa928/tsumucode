@@ -1,3 +1,4 @@
+import { acceptsReactHookScenarios } from '../../src/core/content/reactHookInteractions';
 import { acceptsReactReducerContextScenarios } from '../../src/core/content/reactReducerContextInteractions';
 import { acceptsReactFormScenarios } from '../../src/core/content/reactFormInteractions';
 import { acceptsReactStateScenarios } from '../../src/core/content/reactStateInteractions';
@@ -135,6 +136,9 @@ export const ReactExerciseRuntimeSourceSchema = z
       'controlled-form-v1',
       'reducer-form-v1',
       'context-sharing-v1',
+      'ref-focus-v1',
+      'effect-sync-v1',
+      'custom-source-hook-v1',
     ]),
     learningGoal: z
       .enum([
@@ -146,6 +150,9 @@ export const ReactExerciseRuntimeSourceSchema = z
         'shared-state',
         'reducer-form',
         'context-sharing',
+        'ref-focus',
+        'external-sync',
+        'source-hook',
       ])
       .optional(),
   })
@@ -162,7 +169,13 @@ export const ReactExerciseRuntimeSourceSchema = z
               ? runtime.learningGoal === 'reducer-form'
               : runtime.profile === 'context-sharing-v1'
                 ? runtime.learningGoal === 'context-sharing'
-                : runtime.learningGoal === undefined,
+                : runtime.profile === 'ref-focus-v1'
+                  ? runtime.learningGoal === 'ref-focus'
+                  : runtime.profile === 'effect-sync-v1'
+                    ? runtime.learningGoal === 'external-sync'
+                    : runtime.profile === 'custom-source-hook-v1'
+                      ? runtime.learningGoal === 'source-hook'
+                      : runtime.learningGoal === undefined,
     { message: 'React課題の学習目標をprofileに合わせて指定してください' },
   );
 
@@ -334,6 +347,9 @@ export const ExerciseSourceSchema = z
               'controlled-form-v1',
               'reducer-form-v1',
               'context-sharing-v1',
+              'ref-focus-v1',
+              'effect-sync-v1',
+              'custom-source-hook-v1',
             ].includes(exercise.runtime.profile)) ||
           (exercise.runtime?.kind === 'javascript' &&
             ['dom', 'dom-form', 'async', 'project'].includes(exercise.runtime.capabilityProfile));
@@ -346,6 +362,19 @@ export const ExerciseSourceSchema = z
         path: ['interactionScenarios'],
         message:
           'Interaction Scenarioは既存JSのDOM/async profileか固定TS境界/クイズ工程で指定してください',
+      });
+    }
+    if (
+      exercise.runtime?.kind === 'react' &&
+      ['ref-focus-v1', 'effect-sync-v1', 'custom-source-hook-v1'].includes(
+        exercise.runtime.profile,
+      ) &&
+      !acceptsReactHookScenarios(exercise.runtime.learningGoal, exercise.interactionScenarios)
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['interactionScenarios'],
+        message: 'Ref・外部同期・Custom Hook教材には指定の全実操作Scenarioが必要です',
       });
     }
     if (

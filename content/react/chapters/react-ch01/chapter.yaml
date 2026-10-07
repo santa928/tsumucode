@@ -1,8 +1,8 @@
 id: react-ch01
 sequence: 0
 title: Propsから操作で変わる表示へ
-goal: Propsから入力・共有Stateへ進み、Reducerの更新とContextの取得の責務を分ける。
-estimatedMinutes: 245
+goal: PropsとStateの表示から、参照・外部同期・処理の再利用へ進み、責務を分ける。
+estimatedMinutes: 345
 kind: standard
 lessonSources:
   - lessons/react-ch01-l01/lesson.yaml
@@ -14,3 +14,6 @@ lessonSources:
   - lessons/react-ch01-l07/lesson.yaml
   - lessons/react-ch01-l08/lesson.yaml
   - lessons/react-ch01-l09/lesson.yaml
+  - lessons/react-ch01-l10/lesson.yaml
+  - lessons/react-ch01-l11/lesson.yaml
+  - lessons/react-ch01-l12/lesson.yaml

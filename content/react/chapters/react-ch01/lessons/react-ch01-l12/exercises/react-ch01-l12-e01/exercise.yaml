@@ -1,0 +1,607 @@
+id: react-ch01-l12-e01
+kind: standard
+workspaceId: react-ch01-l12-e01
+countsTowardStandardExerciseTotal: true
+title: 同期処理をCustom Hookへ抽出する
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: react-custom-hook-extraction
+    minimumLevel: transform
+  - conceptId: react-hook-instance-state
+    minimumLevel: transform
+scaffoldLevel: transform
+runtime:
+  kind: react
+  entryFile: main.tsx
+  sourceType: module
+  capabilityProfile: dom
+  primaryOutput: preview
+  profile: custom-source-hook-v1
+  learningGoal: source-hook
+steps:
+  - id: connect-responsibility
+    file: sourceHook.ts
+    target: useSourceValueの返す値
+    starterAnchor: return '';
+    change: 購読できても固定の空文字を表示するHookの返す値を直す
+    observe: 入力Aだけの更新、Aの非表示中の通知停止、入力Bと再表示の独立した値を確かめる
+    requiresConceptIds:
+      - react-custom-hook-extraction
+      - react-hook-instance-state
+    validationRuleIds:
+      - react-ch01-l12-e01-r01
+      - react-ch01-l12-e01-r02
+      - react-ch01-l12-e01-r03
+files:
+  - path: sourceHook.ts
+    language: typescript
+    source: starter/sourceHook.ts
+    editable: true
+  - path: main.tsx
+    language: react
+    source: starter/main.tsx
+    editable: false
+  - path: components.tsx
+    language: react
+    source: starter/components.tsx
+    editable: false
+  - path: source.ts
+    language: typescript
+    source: starter/source.ts
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: starter/types.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+solutionFiles:
+  - path: main.tsx
+    language: react
+    source: solution/main.tsx
+    editable: false
+  - path: components.tsx
+    language: react
+    source: solution/components.tsx
+    editable: false
+  - path: source.ts
+    language: typescript
+    source: solution/source.ts
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: solution/types.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+  - path: sourceHook.ts
+    language: typescript
+    source: solution/sourceHook.ts
+    editable: false
+validationRules:
+  - id: react-ch01-l12-e01-r01
+    label: 見出し
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: h1
+    assertion:
+      kind: text
+      operator: equals
+      expected: 外部入力の同期
+    feedback:
+      target: sourceHook.tsとPreview
+      expected: 外部入力の同期
+      nextAction: 入力Aだけの更新、Aの非表示中の通知停止、入力Bと再表示の独立した値を確かめる
+    hintId: react-ch01-l12-e01-h02
+    relatedSlideId: react-ch01-l12-s02
+  - id: react-ch01-l12-e01-r02
+    label: 初期の文字数
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#length-a'
+    assertion:
+      kind: text
+      operator: equals
+      expected: '3'
+    feedback:
+      target: sourceHook.tsとPreview
+      expected: '3'
+      nextAction: 入力Aだけの更新、Aの非表示中の通知停止、入力Bと再表示の独立した値を確かめる
+    hintId: react-ch01-l12-e01-h02
+    relatedSlideId: react-ch01-l12-s02
+  - id: react-ch01-l12-e01-r03
+    label: 同期処理をCustom Hookへまとめ、返すStateの値と各呼出しの状態の独立性を説明できる。
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: react-learning
+      file: sourceHook.ts
+    assertion:
+      kind: react-learning
+      goal: source-hook
+    feedback:
+      target: sourceHook.tsとPreview
+      expected: 同期処理をCustom Hookへまとめ、返すStateの値と各呼出しの状態の独立性を説明できる。
+      nextAction: 入力Aだけの更新、Aの非表示中の通知停止、入力Bと再表示の独立した値を確かめる
+    hintId: react-ch01-l12-e01-h02
+    relatedSlideId: react-ch01-l12-s02
+interactionScenarios:
+  - id: custom-hook-instance-lifecycle
+    label: 同じHookの処理を使い、各instanceの状態を独立させる
+    actions:
+      - id: initial
+        kind: focus
+        selector: '#source-a'
+      - id: first-a
+        kind: fill
+        selector: '#source-a'
+        value: Aだけ更新
+      - id: unmount-a
+        kind: click
+        selector: '#toggle'
+      - id: hidden-a
+        kind: fill
+        selector: '#source-a'
+        value: Aの非表示中の値
+      - id: current-b
+        kind: fill
+        selector: '#source-b'
+        value: Bだけ更新
+      - id: remount-a
+        kind: click
+        selector: '#toggle'
+    checkpoints:
+      - id: after-initial
+        afterActionId: initial
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '2'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '0'
+          - id: value-b
+            kind: selector-text
+            selector: '#observed-b'
+            equals: 初期B
+          - id: length-b
+            kind: selector-text
+            selector: '#length-b'
+            equals: '3'
+          - id: value-a
+            kind: selector-text
+            selector: '#observed-a'
+            equals: 初期A
+          - id: length-a
+            kind: selector-text
+            selector: '#length-a'
+            equals: '3'
+      - id: after-first-a
+        afterActionId: first-a
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '2'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '1'
+          - id: value-b
+            kind: selector-text
+            selector: '#observed-b'
+            equals: 初期B
+          - id: length-b
+            kind: selector-text
+            selector: '#length-b'
+            equals: '3'
+          - id: value-a
+            kind: selector-text
+            selector: '#observed-a'
+            equals: Aだけ更新
+          - id: length-a
+            kind: selector-text
+            selector: '#length-a'
+            equals: '5'
+      - id: after-unmount-a
+        afterActionId: unmount-a
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '1'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '1'
+          - id: value-b
+            kind: selector-text
+            selector: '#observed-b'
+            equals: 初期B
+          - id: length-b
+            kind: selector-text
+            selector: '#length-b'
+            equals: '3'
+      - id: after-hidden-a
+        afterActionId: hidden-a
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '1'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '1'
+          - id: value-b
+            kind: selector-text
+            selector: '#observed-b'
+            equals: 初期B
+          - id: length-b
+            kind: selector-text
+            selector: '#length-b'
+            equals: '3'
+      - id: after-current-b
+        afterActionId: current-b
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '1'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '2'
+          - id: value-b
+            kind: selector-text
+            selector: '#observed-b'
+            equals: Bだけ更新
+          - id: length-b
+            kind: selector-text
+            selector: '#length-b'
+            equals: '5'
+      - id: after-remount-a
+        afterActionId: remount-a
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '2'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '2'
+          - id: value-b
+            kind: selector-text
+            selector: '#observed-b'
+            equals: Bだけ更新
+          - id: length-b
+            kind: selector-text
+            selector: '#length-b'
+            equals: '5'
+          - id: value-a
+            kind: selector-text
+            selector: '#observed-a'
+            equals: Aの非表示中の値
+          - id: length-a
+            kind: selector-text
+            selector: '#length-a'
+            equals: '8'
+hints:
+  - id: react-ch01-l12-e01-h01
+    level: 1
+    title: 修正位置を探す
+    text: sourceHook.tsが最後に返す値と、用意済み2つの表示Componentを見比べます。
+    relatedSlideId: react-ch01-l12-s02
+  - id: react-ch01-l12-e01-h02
+    level: 2
+    title: 値と処理の由来を追う
+    text: useStateとEffectの同期処理はこのHook内にあります。処理をまとめても、呼出しごとのStateは別です。
+    relatedSlideId: react-ch01-l12-s02
+  - id: react-ch01-l12-e01-h03
+    level: 3
+    title: 責務と実操作をつなぐ
+    text: 購読で更新されたStateを呼出し元へ返します。共有したい状態は親やContextの責務で、Hookを同じ名前で呼ぶだけでは共有しません。
+    relatedSlideId: react-ch01-l12-s02
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+fixtures:
+  - id: starter
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l12-e01-r02
+      - react-ch01-l12-e01-r03
+      - interaction:custom-hook-instance-lifecycle:after-initial:value-a
+      - interaction:custom-hook-instance-lifecycle:after-initial:length-a
+      - interaction:custom-hook-instance-lifecycle:after-first-a:value-a
+      - interaction:custom-hook-instance-lifecycle:after-first-a:length-a
+      - interaction:custom-hook-instance-lifecycle:after-remount-a:value-a
+      - interaction:custom-hook-instance-lifecycle:after-remount-a:length-a
+      - interaction:custom-hook-instance-lifecycle:after-initial:value-b
+      - interaction:custom-hook-instance-lifecycle:after-initial:length-b
+      - interaction:custom-hook-instance-lifecycle:after-first-a:value-b
+      - interaction:custom-hook-instance-lifecycle:after-first-a:length-b
+      - interaction:custom-hook-instance-lifecycle:after-unmount-a:value-b
+      - interaction:custom-hook-instance-lifecycle:after-unmount-a:length-b
+      - interaction:custom-hook-instance-lifecycle:after-hidden-a:value-b
+      - interaction:custom-hook-instance-lifecycle:after-hidden-a:length-b
+      - interaction:custom-hook-instance-lifecycle:after-current-b:value-b
+      - interaction:custom-hook-instance-lifecycle:after-current-b:length-b
+      - interaction:custom-hook-instance-lifecycle:after-remount-a:value-b
+      - interaction:custom-hook-instance-lifecycle:after-remount-a:length-b
+    files:
+      - path: sourceHook.ts
+        source: fixtures/starter.ts
+        language: typescript
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: components.tsx
+        source: fixtures/components.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: solution
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: sourceHook.ts
+        source: fixtures/solution.ts
+        language: typescript
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: components.tsx
+        source: fixtures/components.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: alternative
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: sourceHook.ts
+        source: fixtures/alternative.ts
+        language: typescript
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: components.tsx
+        source: fixtures/components.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: alias
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: sourceHook.ts
+        source: fixtures/alias.ts
+        language: typescript
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: components.tsx
+        source: fixtures/components.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: missing-cleanup
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l12-e01-r03
+      - interaction:custom-hook-instance-lifecycle:after-unmount-a:active
+      - interaction:custom-hook-instance-lifecycle:after-hidden-a:active
+      - interaction:custom-hook-instance-lifecycle:after-hidden-a:notifications
+      - interaction:custom-hook-instance-lifecycle:after-current-b:active
+      - interaction:custom-hook-instance-lifecycle:after-current-b:notifications
+      - interaction:custom-hook-instance-lifecycle:after-remount-a:active
+      - interaction:custom-hook-instance-lifecycle:after-remount-a:notifications
+    files:
+      - path: sourceHook.ts
+        source: fixtures/missing-cleanup.ts
+        language: typescript
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: components.tsx
+        source: fixtures/components.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: fixed-source
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l12-e01-r03
+      - interaction:custom-hook-instance-lifecycle:after-initial:value-b
+      - interaction:custom-hook-instance-lifecycle:after-first-a:notifications
+      - interaction:custom-hook-instance-lifecycle:after-first-a:value-b
+      - interaction:custom-hook-instance-lifecycle:after-first-a:length-b
+      - interaction:custom-hook-instance-lifecycle:after-unmount-a:notifications
+      - interaction:custom-hook-instance-lifecycle:after-unmount-a:value-b
+      - interaction:custom-hook-instance-lifecycle:after-unmount-a:length-b
+      - interaction:custom-hook-instance-lifecycle:after-hidden-a:notifications
+      - interaction:custom-hook-instance-lifecycle:after-hidden-a:value-b
+      - interaction:custom-hook-instance-lifecycle:after-hidden-a:length-b
+      - interaction:custom-hook-instance-lifecycle:after-current-b:notifications
+      - interaction:custom-hook-instance-lifecycle:after-current-b:value-b
+      - interaction:custom-hook-instance-lifecycle:after-current-b:length-b
+      - interaction:custom-hook-instance-lifecycle:after-remount-a:notifications
+      - interaction:custom-hook-instance-lifecycle:after-remount-a:value-b
+      - interaction:custom-hook-instance-lifecycle:after-remount-a:length-b
+    files:
+      - path: sourceHook.ts
+        source: fixtures/fixed-source.ts
+        language: typescript
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: components.tsx
+        source: fixtures/components.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: global-state
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-0
+    files:
+      - path: sourceHook.ts
+        source: fixtures/global-state.ts
+        language: typescript
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: components.tsx
+        source: fixtures/components.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: side-effect
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-0
+    files:
+      - path: sourceHook.ts
+        source: fixtures/side-effect.ts
+        language: typescript
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: components.tsx
+        source: fixtures/components.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+relatedSlideIds:
+  - react-ch01-l12-s01
+  - react-ch01-l12-s02
+  - react-ch01-l12-s03
+assets: []

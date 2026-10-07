@@ -1,0 +1,577 @@
+id: react-ch01-l11-e01
+kind: standard
+workspaceId: react-ch01-l11-e01
+countsTowardStandardExerciseTotal: true
+title: 外部入力をEffectで同期しcleanupする
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: react-effect-external-sync
+    minimumLevel: transform
+  - conceptId: react-effect-cleanup
+    minimumLevel: transform
+scaffoldLevel: transform
+runtime:
+  kind: react
+  entryFile: main.tsx
+  sourceType: module
+  capabilityProfile: dom
+  primaryOutput: preview
+  profile: effect-sync-v1
+  learningGoal: external-sync
+steps:
+  - id: connect-responsibility
+    file: components.tsx
+    target: useEffectの依存配列
+    starterAnchor: '}, []);'
+    change: 対象Bへ切り替えても古い値を表示する同期を直す
+    observe: 切替直後の現在値、古い入力の通知停止、解除と再表示後の値を確かめる
+    requiresConceptIds:
+      - react-effect-external-sync
+      - react-effect-cleanup
+    validationRuleIds:
+      - react-ch01-l11-e01-r01
+      - react-ch01-l11-e01-r02
+      - react-ch01-l11-e01-r03
+files:
+  - path: components.tsx
+    language: react
+    source: starter/components.tsx
+    editable: true
+  - path: main.tsx
+    language: react
+    source: starter/main.tsx
+    editable: false
+  - path: source.ts
+    language: typescript
+    source: starter/source.ts
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: starter/types.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+solutionFiles:
+  - path: main.tsx
+    language: react
+    source: solution/main.tsx
+    editable: false
+  - path: source.ts
+    language: typescript
+    source: solution/source.ts
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: solution/types.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+  - path: components.tsx
+    language: react
+    source: solution/components.tsx
+    editable: false
+validationRules:
+  - id: react-ch01-l11-e01-r01
+    label: 見出し
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: h1
+    assertion:
+      kind: text
+      operator: equals
+      expected: 外部入力の同期
+    feedback:
+      target: components.tsxとPreview
+      expected: 外部入力の同期
+      nextAction: 切替直後の現在値、古い入力の通知停止、解除と再表示後の値を確かめる
+    hintId: react-ch01-l11-e01-h02
+    relatedSlideId: react-ch01-l11-s02
+  - id: react-ch01-l11-e01-r02
+    label: 初期の文字数
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#length'
+    assertion:
+      kind: text
+      operator: equals
+      expected: '3'
+    feedback:
+      target: components.tsxとPreview
+      expected: '3'
+      nextAction: 切替直後の現在値、古い入力の通知停止、解除と再表示後の値を確かめる
+    hintId: react-ch01-l11-e01-h02
+    relatedSlideId: react-ch01-l11-s02
+  - id: react-ch01-l11-e01-r03
+    label: 外部入力の現在値を同期し、対象変更と表示終了で同じ購読を解除できる。導出値にEffectが不要な理由を説明できる。
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: react-learning
+      file: components.tsx
+    assertion:
+      kind: react-learning
+      goal: external-sync
+    feedback:
+      target: components.tsxとPreview
+      expected: 外部入力の現在値を同期し、対象変更と表示終了で同じ購読を解除できる。導出値にEffectが不要な理由を説明できる。
+      nextAction: 切替直後の現在値、古い入力の通知停止、解除と再表示後の値を確かめる
+    hintId: react-ch01-l11-e01-h02
+    relatedSlideId: react-ch01-l11-s02
+interactionScenarios:
+  - id: effect-subscription-lifecycle
+    label: 対象の現在値を同期し、古い購読をcleanupする
+    actions:
+      - id: initial
+        kind: focus
+        selector: '#source-a'
+      - id: first-a
+        kind: fill
+        selector: '#source-a'
+        value: Aの通知
+      - id: prepare-b
+        kind: fill
+        selector: '#source-b'
+        value: Bの現在値
+      - id: target-b
+        kind: click
+        selector: '#target-b'
+      - id: late-a
+        kind: fill
+        selector: '#source-a'
+        value: 旧Aの通知
+      - id: current-b
+        kind: fill
+        selector: '#source-b'
+        value: Bの通知
+      - id: unmount
+        kind: click
+        selector: '#toggle'
+      - id: hidden-b
+        kind: fill
+        selector: '#source-b'
+        value: 非表示中の現在値
+      - id: remount
+        kind: click
+        selector: '#toggle'
+    checkpoints:
+      - id: after-initial
+        afterActionId: initial
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '1'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '0'
+          - id: value
+            kind: selector-text
+            selector: '#observed'
+            equals: 初期A
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '3'
+      - id: after-first-a
+        afterActionId: first-a
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '1'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '1'
+          - id: value
+            kind: selector-text
+            selector: '#observed'
+            equals: Aの通知
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '4'
+      - id: after-prepare-b
+        afterActionId: prepare-b
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '1'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '1'
+          - id: value
+            kind: selector-text
+            selector: '#observed'
+            equals: Aの通知
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '4'
+      - id: after-target-b
+        afterActionId: target-b
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '1'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '1'
+          - id: value
+            kind: selector-text
+            selector: '#observed'
+            equals: Bの現在値
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '5'
+      - id: after-late-a
+        afterActionId: late-a
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '1'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '1'
+          - id: value
+            kind: selector-text
+            selector: '#observed'
+            equals: Bの現在値
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '5'
+      - id: after-current-b
+        afterActionId: current-b
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '1'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '2'
+          - id: value
+            kind: selector-text
+            selector: '#observed'
+            equals: Bの通知
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '4'
+      - id: after-unmount
+        afterActionId: unmount
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '0'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '2'
+      - id: after-hidden-b
+        afterActionId: hidden-b
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '0'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '2'
+      - id: after-remount
+        afterActionId: remount
+        expectations:
+          - id: active
+            kind: selector-text
+            selector: '#active'
+            equals: '1'
+          - id: notifications
+            kind: selector-text
+            selector: '#notifications'
+            equals: '2'
+          - id: value
+            kind: selector-text
+            selector: '#observed'
+            equals: 非表示中の現在値
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '8'
+hints:
+  - id: react-ch01-l11-e01-h01
+    level: 1
+    title: 修正位置を探す
+    text: Bに値を入力してから「Bを選ぶ」を押し、表示値と依存配列を見比べます。
+    relatedSlideId: react-ch01-l11-s02
+  - id: react-ch01-l11-e01-h02
+    level: 2
+    title: 値と処理の由来を追う
+    text: Effect内で使うtargetが変わった時に、古い購読のcleanupと新しい対象へのsetupが必要です。
+    relatedSlideId: react-ch01-l11-s02
+  - id: react-ch01-l11-e01-h03
+    level: 3
+    title: 責務と実操作をつなぐ
+    text: 用意済みsubscribeは現在値を渡し、同じlistenerを外す関数を返します。依存値と返すcleanupを対象に結び、文字数は表示時に計算します。
+    relatedSlideId: react-ch01-l11-s02
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+fixtures:
+  - id: starter
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l11-e01-r03
+      - interaction:effect-subscription-lifecycle:after-target-b:value
+      - interaction:effect-subscription-lifecycle:after-target-b:length
+      - interaction:effect-subscription-lifecycle:after-late-a:value
+      - interaction:effect-subscription-lifecycle:after-late-a:notifications
+      - interaction:effect-subscription-lifecycle:after-current-b:value
+      - interaction:effect-subscription-lifecycle:after-current-b:length
+    files:
+      - path: components.tsx
+        source: fixtures/starter.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: solution
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        source: fixtures/solution.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: alternative
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        source: fixtures/alternative.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: alias
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        source: fixtures/alias.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: missing-cleanup
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l11-e01-r03
+      - interaction:effect-subscription-lifecycle:after-target-b:active
+      - interaction:effect-subscription-lifecycle:after-late-a:active
+      - interaction:effect-subscription-lifecycle:after-late-a:notifications
+      - interaction:effect-subscription-lifecycle:after-late-a:value
+      - interaction:effect-subscription-lifecycle:after-current-b:active
+      - interaction:effect-subscription-lifecycle:after-current-b:notifications
+      - interaction:effect-subscription-lifecycle:after-unmount:active
+      - interaction:effect-subscription-lifecycle:after-unmount:notifications
+      - interaction:effect-subscription-lifecycle:after-hidden-b:active
+      - interaction:effect-subscription-lifecycle:after-hidden-b:notifications
+      - interaction:effect-subscription-lifecycle:after-remount:active
+      - interaction:effect-subscription-lifecycle:after-remount:notifications
+    files:
+      - path: components.tsx
+        source: fixtures/missing-cleanup.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: fixed-length
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l11-e01-r03
+      - interaction:effect-subscription-lifecycle:after-first-a:length
+      - interaction:effect-subscription-lifecycle:after-prepare-b:length
+      - interaction:effect-subscription-lifecycle:after-target-b:length
+      - interaction:effect-subscription-lifecycle:after-late-a:length
+      - interaction:effect-subscription-lifecycle:after-current-b:length
+      - interaction:effect-subscription-lifecycle:after-remount:length
+    files:
+      - path: components.tsx
+        source: fixtures/fixed-length.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: extra-state
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-0
+    files:
+      - path: components.tsx
+        source: fixtures/extra-state.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: side-effect
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-0
+    files:
+      - path: components.tsx
+        source: fixtures/side-effect.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: source.ts
+        source: fixtures/source.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+relatedSlideIds:
+  - react-ch01-l11-s01
+  - react-ch01-l11-s02
+  - react-ch01-l11-s03
+assets: []

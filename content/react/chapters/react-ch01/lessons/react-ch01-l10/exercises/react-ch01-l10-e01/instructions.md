@@ -1,0 +1,5 @@
+## Refで入力へフォーカスを移す
+
+入力へ移らないボタンのEvent処理を直す前に、何が起こるか予測してください。components.tsxだけを編集します。DOM参照のRefと表示値のStateを区別し、Eventから入力へnull安全にfocusできる。
+
+入力へフォーカスが移り、入力後の要約と文字数がStateに追従する。固定SourceとHTMLを変えず、3段階Hintで修正位置と値の由来を追えます。正解例はSolutionで確認します。

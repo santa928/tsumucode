@@ -120,3 +120,33 @@ entries:
     definition: 特定Contextの値を子へ提供する境界。consumerはその値を使うComponent。
     firstSlideId: react-ch01-l09-s01
     relatedIds: []
+  - id: ref
+    term: Ref
+    definition: 再描画を起こさず参照を保つ入れ物。useRefで作り、currentから現在の参照を読む。表示値はStateで持つ。
+    firstSlideId: react-ch01-l10-s01
+    relatedIds: []
+  - id: effect
+    term: Effect
+    definition: Componentの外の仕組みとの同期処理。useEffectでsetupとcleanupを定義する。導出値を表示するだけなら不要。
+    firstSlideId: react-ch01-l11-s01
+    relatedIds: []
+  - id: effect-dependency
+    term: 依存配列
+    definition: Effectで読む値を列挙する配列。値の変更に応じて古いcleanupの後に新しいsetupを行う。
+    firstSlideId: react-ch01-l11-s01
+    relatedIds: []
+  - id: cleanup
+    term: cleanup
+    definition: Effectが返す後片付け関数。開始した同じ購読を、対象変更や表示終了時に解除する。
+    firstSlideId: react-ch01-l11-s02
+    relatedIds: []
+  - id: mount
+    term: mount・unmount
+    definition: Componentの表示を開始することをmount、取り外すことをunmountという。再表示では新たに現在値を同期する。
+    firstSlideId: react-ch01-l11-s02
+    relatedIds: []
+  - id: custom-hook
+    term: Custom Hook
+    definition: Hookを使う処理をまとめたuseで始まる関数。処理を再利用しても、内部のStateは呼出しごとに独立する。
+    firstSlideId: react-ch01-l12-s01
+    relatedIds: []

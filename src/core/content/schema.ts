@@ -1,3 +1,4 @@
+import { acceptsReactHookScenarios } from './reactHookInteractions';
 import { acceptsReactReducerContextScenarios } from './reactReducerContextInteractions';
 import { acceptsReactFormScenarios } from './reactFormInteractions';
 import { acceptsReactStateScenarios } from './reactStateInteractions';
@@ -325,6 +326,9 @@ export const ReactExerciseRuntimeSchema = z
       'controlled-form-v1',
       'reducer-form-v1',
       'context-sharing-v1',
+      'ref-focus-v1',
+      'effect-sync-v1',
+      'custom-source-hook-v1',
     ]),
     learningGoal: z
       .enum([
@@ -336,6 +340,9 @@ export const ReactExerciseRuntimeSchema = z
         'shared-state',
         'reducer-form',
         'context-sharing',
+        'ref-focus',
+        'external-sync',
+        'source-hook',
       ])
       .optional(),
   })
@@ -352,7 +359,13 @@ export const ReactExerciseRuntimeSchema = z
               ? runtime.learningGoal === 'reducer-form'
               : runtime.profile === 'context-sharing-v1'
                 ? runtime.learningGoal === 'context-sharing'
-                : runtime.learningGoal === undefined,
+                : runtime.profile === 'ref-focus-v1'
+                  ? runtime.learningGoal === 'ref-focus'
+                  : runtime.profile === 'effect-sync-v1'
+                    ? runtime.learningGoal === 'external-sync'
+                    : runtime.profile === 'custom-source-hook-v1'
+                      ? runtime.learningGoal === 'source-hook'
+                      : runtime.learningGoal === undefined,
     { message: 'React課題の学習目標をprofileに合わせて指定してください' },
   );
 
@@ -1097,7 +1110,10 @@ export const ReactLearningRuleDefinitionSchema = z
     group: z.literal('all'),
     viewportMode: z.literal('all'),
     target: z
-      .object({ kind: z.literal('react-learning'), file: z.enum(['components.tsx', 'reducer.ts']) })
+      .object({
+        kind: z.literal('react-learning'),
+        file: z.enum(['components.tsx', 'reducer.ts', 'sourceHook.ts']),
+      })
       .strict(),
     assertion: z
       .object({
@@ -1111,6 +1127,9 @@ export const ReactLearningRuleDefinitionSchema = z
           'shared-state',
           'reducer-form',
           'context-sharing',
+          'ref-focus',
+          'external-sync',
+          'source-hook',
         ]),
       })
       .strict(),
@@ -1120,7 +1139,11 @@ export const ReactLearningRuleDefinitionSchema = z
   .refine(
     (rule) =>
       rule.target.file ===
-      (rule.assertion.goal === 'reducer-form' ? 'reducer.ts' : 'components.tsx'),
+      (rule.assertion.goal === 'reducer-form'
+        ? 'reducer.ts'
+        : rule.assertion.goal === 'source-hook'
+          ? 'sourceHook.ts'
+          : 'components.tsx'),
     '学習目標と編集責務のFileを一致させてください',
   );
 
@@ -1426,6 +1449,19 @@ export const ExerciseSchema = z
         code: 'custom',
         path: ['interactionScenarios'],
         message: 'submit-preventedはdom-form profileで指定してください',
+      });
+    }
+    if (
+      exercise.runtime?.kind === 'react' &&
+      ['ref-focus-v1', 'effect-sync-v1', 'custom-source-hook-v1'].includes(
+        exercise.runtime.profile,
+      ) &&
+      !acceptsReactHookScenarios(exercise.runtime.learningGoal, exercise.interactionScenarios)
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['interactionScenarios'],
+        message: 'Ref・外部同期・Custom Hook教材には指定の全実操作Scenarioが必要です',
       });
     }
     if (

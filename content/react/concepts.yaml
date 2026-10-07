@@ -99,3 +99,33 @@ concepts:
     prerequisiteConceptIds:
       - react-context-provider
     minimumProjectLevel: transform
+  - id: react-ref-dom
+    introducedBySlideId: react-ch01-l10-s01
+    prerequisiteConceptIds:
+      - react-state-event
+    minimumProjectLevel: transform
+  - id: react-ref-state
+    introducedBySlideId: react-ch01-l10-s02
+    prerequisiteConceptIds:
+      - react-ref-dom
+    minimumProjectLevel: transform
+  - id: react-effect-external-sync
+    introducedBySlideId: react-ch01-l11-s01
+    prerequisiteConceptIds:
+      - react-state-event
+    minimumProjectLevel: transform
+  - id: react-effect-cleanup
+    introducedBySlideId: react-ch01-l11-s02
+    prerequisiteConceptIds:
+      - react-effect-external-sync
+    minimumProjectLevel: transform
+  - id: react-custom-hook-extraction
+    introducedBySlideId: react-ch01-l12-s01
+    prerequisiteConceptIds:
+      - react-effect-cleanup
+    minimumProjectLevel: transform
+  - id: react-hook-instance-state
+    introducedBySlideId: react-ch01-l12-s02
+    prerequisiteConceptIds:
+      - react-custom-hook-extraction
+    minimumProjectLevel: transform

@@ -5,7 +5,7 @@ import { ContentProgressMigrationService } from '../../src/core/persistence/cont
 import { recordSlideView } from '../../src/core/persistence/progressUpdates';
 import type { ProgressRepository, RepositorySnapshot } from '../../src/core/persistence/contracts';
 
-it.each(['2026-10-06.1', '2026-10-07.1', '2026-10-07.2', '2026-10-07.3'])(
+it.each(['2026-10-06.1', '2026-10-07.1', '2026-10-07.2', '2026-10-07.3', '2026-10-07.4'])(
   '旧revision %sから保存TSX・履歴・passingSnapshotを保って教材追加へ移行する',
   async (previous) => {
     const { runtime: course, exercises } = await loadAuthoringCourse('content/react');
