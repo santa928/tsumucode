@@ -37,7 +37,14 @@ function QuizShell() {
       >
         次の問題
       </button>
-      <button id="retry" type="button" onClick={() => setState(createState())}>
+      <button
+        id="retry"
+        type="button"
+        onClick={() => {
+          document.getElementById('received')?.replaceChildren('未回答');
+          setState(createState());
+        }}
+      >
         再挑戦
       </button>
     </section>

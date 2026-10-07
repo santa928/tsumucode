@@ -64,6 +64,7 @@ async function reset(page: Page): Promise<void> {
     .getByRole('button', { name: '最初のコードに戻す', exact: true })
     .click();
   await expect(page.getByRole('dialog', { name: '最初のコードに戻しますか？' })).toBeHidden();
+  await waitForDraftSaved(page);
 }
 
 test('Guidedの工程別合格を引き継ぎ、型から復帰し、独立CapstoneとResetを保護する', async ({
@@ -161,6 +162,7 @@ test('Guidedの工程別合格を引き継ぎ、型から復帰し、独立Capst
   await frame.locator('#next').click();
   await expect(frame.locator('#result')).toHaveText('全問終了');
   await frame.locator('#retry').click();
+  await expect(frame.locator('#received')).toHaveText('未回答');
   await expect(frame.locator('#score')).toHaveText('0');
   await expect(frame.getByRole('textbox', { name: '名前', exact: true })).toHaveValue('学習者');
   await page.screenshot({ path: info.outputPath(`${second}-real-dom.png`), fullPage: true });
@@ -203,6 +205,7 @@ test('Guidedの工程別合格を引き継ぎ、型から復帰し、独立Capst
   await expect(frame.locator('#result')).toHaveText('全問終了');
   await frame.locator('#retry').focus();
   await page.keyboard.press('Enter');
+  await expect(frame.locator('#received')).toHaveText('未回答');
   await expect(frame.locator('#score')).toHaveText('0');
   await expect(frame.getByRole('textbox', { name: '名前', exact: true })).toHaveValue('練習者');
   await page.screenshot({ path: info.outputPath(`${capstone}-real-dom.png`), fullPage: true });

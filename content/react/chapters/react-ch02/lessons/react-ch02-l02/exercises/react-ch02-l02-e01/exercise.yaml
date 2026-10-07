@@ -154,7 +154,8 @@ hints:
   - id: react-ch02-l02-e01-h03
     level: 3
     title: 別の対象の局所例
-    text: '別の例なら、const next = {...previous, count: previous.count + delta};。元の値を変えず次の値を返す考え方を使います。'
+    text: '別の例なら、const next = {...previous, count: previous.count +
+      delta};。元の値を変えず次の値を返す考え方を使います。'
     relatedSlideId: react-ch02-l02-s02
 relatedSlideIds:
   - react-ch02-l02-s01
@@ -327,6 +328,10 @@ interactionScenarios:
             kind: selector-text
             selector: '#question'
             equals: ページの骨組みを作る言語は？
+          - id: received
+            kind: selector-text
+            selector: '#received'
+            equals: 未回答
 fixtures:
   - id: starter
     expectedStatus: incomplete

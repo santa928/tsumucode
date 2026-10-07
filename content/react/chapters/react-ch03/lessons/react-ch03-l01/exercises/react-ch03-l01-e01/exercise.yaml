@@ -353,6 +353,10 @@ interactionScenarios:
             kind: selector-text
             selector: '#question'
             equals: 1 + 1 の結果は？
+          - id: received
+            kind: selector-text
+            selector: '#received'
+            equals: 未回答
   - id: quiz-practice-wrong-next
     label: 誤答では次問へ進まず同じ問題を続ける
     actions:

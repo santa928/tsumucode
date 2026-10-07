@@ -76,6 +76,7 @@ export function reactQuizScenarios(goal: string | undefined): JavaScriptInteract
     duplicate: practice ? correctSecond : right,
     wrong,
     'second-correct': correctSecond,
+    retry: '未回答',
   };
   const scenario: JavaScriptInteractionScenario = {
     id: practice ? 'quiz-practice-flow' : 'quiz-guided-flow',
