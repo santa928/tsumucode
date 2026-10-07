@@ -12,6 +12,7 @@ output
 test-results
 *.tsbuildinfo
 .git
+.release-*
 .superpowers
 progress.md
 .env

@@ -105,6 +105,11 @@ Dockerを起動し、リポジトリ直下で次を実行します。初回は�
 
 学習用webと信頼controllerは開発用appから分離しています。**controllerだけがDocker管理socketを持ち、これはホスト管理に相当する強い権限です。** 学習コードは別の使い捨てコンテナへ渡し、非root・read-only・ネットワークなし・host mountなしで実行します。同時1件、5秒、256 MiB、PID 64、出力64 KiBが上限です。第三者の敵対コードを安全に実行する公開サービスではありません。詳細とAPI仕様は[Local Node設計・検証記録](docs/quality/local-node-runtime.md)にあります。
 
+作者用の固定Vite Projectは、controller専用volumeへSourceを保存して常駐runを起動・停止できます。
+現段階ではAPIだけで、Preview隔離と学習画面への接続は後続Issueで扱います。
+保存・Resetの確認範囲と制約は[常駐Workspace設計・検証記録](docs/quality/local-resident-workspace.md)にあります。
+通常の停止・再起動・`down`はSource volumeを保持します。`down --volumes`やvolume pruneは行わないでください。
+
 停止は起動Terminalで`Ctrl+C`、サービスと専用networkの片付けは次のコマンドです。再起動はもう一度`./scripts/learn.sh`を実行します。
 
 ```bash

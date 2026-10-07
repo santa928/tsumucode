@@ -1,10 +1,19 @@
-FROM node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5 AS build
+FROM node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5 AS dependencies
 WORKDIR /workspace
 ENV NPM_CONFIG_STRICT_ALLOW_SCRIPTS=true
 COPY package.json package-lock.json ./
 RUN npm ci
+
+FROM dependencies AS build
 COPY . .
 RUN VITE_LOCAL_LEARNING=1 BASE_PATH=/ npm run build
+
+FROM node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5 AS project
+WORKDIR /opt
+COPY --from=dependencies /workspace/node_modules ./node_modules
+COPY scripts/local/project-bootstrap.mjs ./
+USER 1000:1000
+CMD ["node", "/opt/project-bootstrap.mjs"]
 
 FROM node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5 AS web
 WORKDIR /app
@@ -16,4 +25,5 @@ FROM node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f
 WORKDIR /app
 COPY --from=build /workspace/public/generated/content/courses/javascript/index.json ./course-index.json
 COPY scripts/local/controller.mjs scripts/local/protocol.mjs scripts/local/docker-engine.mjs ./
+COPY scripts/local/project-protocol.mjs scripts/local/workspace-store.mjs scripts/local/project-engine.mjs scripts/local/resident-workspace.mjs ./
 CMD ["node", "controller.mjs"]

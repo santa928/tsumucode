@@ -1,0 +1,77 @@
+name: Local Runtime boundary
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/local/**
+      - scripts/learn.sh
+      - Dockerfile.learning
+      - compose.learning.yaml
+      - package.json
+      - package-lock.json
+      - .dockerignore
+      - .github/workflows/local-runtime.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/local/**
+      - scripts/learn.sh
+      - Dockerfile.learning
+      - compose.learning.yaml
+      - package.json
+      - package-lock.json
+      - .dockerignore
+      - .github/workflows/local-runtime.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: local-runtime-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  boundary:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      TSUMUCODE_LOCAL_OWNER: tsumucode-learning-ci
+      TSUMUCODE_LOCAL_SOCKET: /var/run/docker.sock
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+      - name: Prepare fixed one-shot Node image
+        run: docker pull node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5
+      - name: Build fixed learner and trusted services
+        run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml --profile build-project build
+      - name: Start isolated learning stack
+        run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml up --no-build -d web controller
+      - name: Verify resident workspace and existing Node execution
+        run: |
+          controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
+          docker exec -i "$controller" node --input-type=module < scripts/local/resident-acceptance.mjs
+          docker exec -i "$controller" node --input-type=module < scripts/local/acceptance.mjs
+      - name: Verify normal controller restart
+        run: |
+          controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
+          docker exec -i -e TSUMUCODE_RESTART_PHASE=prepare -e TSUMUCODE_RESTART_MODE=normal "$controller" node --input-type=module < scripts/local/resident-restart-acceptance.mjs
+          ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml restart controller
+          docker exec -i -e TSUMUCODE_RESTART_PHASE=verify -e TSUMUCODE_RESTART_MODE=normal "$controller" node --input-type=module < scripts/local/resident-restart-acceptance.mjs
+      - name: Verify abnormal controller restart
+        run: |
+          controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
+          docker exec -i -e TSUMUCODE_RESTART_PHASE=prepare -e TSUMUCODE_RESTART_MODE=abnormal "$controller" node --input-type=module < scripts/local/resident-restart-acceptance.mjs
+          docker kill --signal KILL "$controller"
+          ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml start controller
+          docker exec -i -e TSUMUCODE_RESTART_PHASE=verify -e TSUMUCODE_RESTART_MODE=abnormal "$controller" node --input-type=module < scripts/local/resident-restart-acceptance.mjs
+      - name: Verify output failure and preparation shutdown at HTTP boundary
+        run: >-
+          docker run --rm -i --init --network none --cpus 1 --memory 256m --pids-limit 64
+          --cap-drop ALL --security-opt no-new-privileges:true
+          --entrypoint node "$TSUMUCODE_LOCAL_OWNER-controller"
+          --input-type=module < scripts/local/output-fault-acceptance.mjs
+      - name: Stop only this learning stack and preserve Source volume
+        if: always()
+        run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml down

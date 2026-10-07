@@ -25,6 +25,15 @@ import {
   cleanupOwned,
   removeContainer,
 } from './docker-engine.mjs';
+import { WorkspaceStore } from './workspace-store.mjs';
+import { ResidentWorkspace } from './resident-workspace.mjs';
+import {
+  PROJECT_PROFILE,
+  PROJECT_LIMITS,
+  STARTER_FILES,
+  workspaceId,
+  exact,
+} from './project-protocol.mjs';
 
 const owner = process.env.TSUMUCODE_LOCAL_OWNER;
 if (!owner || !/^[a-z0-9-]{1,80}$/u.test(owner)) throw new Error('Installation owner is required');
@@ -34,6 +43,27 @@ const results = new Map();
 let active;
 let recoveryNeeded = true;
 let readyOperation;
+let closing = false;
+const store = new WorkspaceStore('/var/lib/tsumucode/workspaces');
+const resident = new ResidentWorkspace({
+  store,
+  owner,
+  image: process.env.TSUMUCODE_LOCAL_PROJECT_IMAGE,
+  slot: {
+    acquire(run) {
+      if (closing) throw new RequestError(503, '学習環境を停止しています。');
+      if (active) throw new RequestError(409, '実行中です。停止後にもう一度実行してください。');
+      active = run;
+    },
+    release(run) {
+      if (active === run) active = undefined;
+    },
+    ready,
+    recoveryNeeded() {
+      recoveryNeeded = true;
+    },
+  },
+});
 
 /** Docker切断・controller再起動後も、自身の孤児runだけを実行前に回収する。 */
 async function ready() {
@@ -41,6 +71,9 @@ async function ready() {
     readyOperation = (async () => {
       if (recoveryNeeded) {
         await cleanupOwned(owner);
+        // 固定Projectを有効にしたcontrollerだけが永続Sourceを管理する。
+        if (process.env.TSUMUCODE_LOCAL_PROJECT_IMAGE) await store.recover();
+        if (process.env.TSUMUCODE_LOCAL_PROJECT_IMAGE) await resident.recovered();
         recoveryNeeded = false;
       }
       await docker('GET', `/images/${encodeURIComponent(NODE_IMAGE)}/json`);
@@ -86,6 +119,7 @@ async function execute(run) {
   let errorMessage;
   let cleanupSucceeded = false;
   try {
+    if (run.reason) return;
     const container = await docker(
       'POST',
       '/containers/create',
@@ -246,8 +280,10 @@ async function handle(req, res) {
     if (req.method !== 'POST') throw new RequestError(405, 'POSTが必要です。');
     authorize(req.headers, token, req.url === '/api/session');
     const input = await body(req);
+    if (closing) throw new RequestError(503, '学習環境を停止しています。');
     if (
       req.url !== '/api/runs' &&
+      !req.url?.startsWith('/api/workspaces/') &&
       (!input ||
         Array.isArray(input) ||
         typeof input !== 'object' ||
@@ -257,7 +293,45 @@ async function handle(req, res) {
     }
     let value;
     if (req.url === '/api/session') value = { apiVersion: API_VERSION, token };
-    else if (req.url === '/api/capabilities') {
+    else if (req.url === '/api/workspaces/capabilities') {
+      exact(input, []);
+      value = {
+        apiVersion: API_VERSION,
+        profile: PROJECT_PROFILE,
+        limits: PROJECT_LIMITS,
+        starterFiles: STARTER_FILES,
+        available: Boolean(process.env.TSUMUCODE_LOCAL_PROJECT_IMAGE),
+      };
+    } else if (req.url?.startsWith('/api/workspaces/')) {
+      if (!process.env.TSUMUCODE_LOCAL_PROJECT_IMAGE)
+        throw new RequestError(503, '固定Projectはこのcontrollerで有効ではありません。');
+      const matched =
+        /^\/api\/workspaces\/([a-z0-9-]+)(?:\/(source|start|stop|reset|activity))?$/u.exec(req.url);
+      if (!matched) throw new RequestError(404, 'Workspace APIがありません。');
+      const id = workspaceId(matched[1]);
+      switch (matched[2]) {
+        case 'source':
+          value = await resident.save(id, input);
+          break;
+        case 'start':
+          value = await resident.start(id, input);
+          if (closing) throw new RequestError(503, '学習環境を停止しています。');
+          res.statusCode = 202;
+          break;
+        case 'stop':
+          value = await resident.stop(id, input);
+          break;
+        case 'reset':
+          value = await resident.reset(id, input);
+          break;
+        case 'activity':
+          value = resident.activity(id, input);
+          break;
+        default:
+          exact(input, []);
+          value = await resident.status(id);
+      }
+    } else if (req.url === '/api/capabilities') {
       if (!active) await ready();
       value = {
         apiVersion: API_VERSION,
@@ -276,16 +350,31 @@ async function handle(req, res) {
       // readyのawait中も別create要求を受け付けない。
       const run = { input: validated };
       active = run;
+      const preparation = ready();
+      // 準備中のshutdownもdoneを待てるよう、awaitより前に終了promiseを確定する。
+      run.done = preparation.then(
+        () => {
+          if (closing) run.reason ??= 'cancelled';
+          return execute(run);
+        },
+        () => {
+          run.reason = 'system-error';
+          recoveryNeeded = true;
+          return execute(run);
+        },
+      );
       try {
-        await ready();
+        await preparation;
       } catch (error) {
-        active = undefined;
-        recoveryNeeded = true;
+        await run.done;
         throw error;
+      }
+      if (closing) {
+        await run.done;
+        throw new RequestError(503, '学習環境を停止しています。');
       }
       while (results.size >= 32) results.delete(results.keys().next().value);
       results.set(validated.runId, run);
-      run.done = execute(run);
       value = { ...identity(validated), state: 'running' };
       res.statusCode = 202;
     } else {
@@ -326,11 +415,15 @@ try {
 server.listen(4174, '0.0.0.0');
 /** 正常終了では進行中runを止め、所有する孤児を回収してから終了する。 */
 async function shutdown() {
+  closing = true;
   server.close();
   try {
     if (active) {
-      await cancel(active, 'cancelled');
-      await active?.done;
+      if (active.workspaceId) await resident.shutdown();
+      else {
+        await cancel(active, 'cancelled');
+        await active?.done;
+      }
     }
     await cleanupOwned(owner);
   } finally {
