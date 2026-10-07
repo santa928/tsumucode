@@ -12,7 +12,7 @@ import { reactQuizScenarios } from '../../src/core/content/reactQuizInteractions
 const lessonIds = ['react-ch02-l01', 'react-ch02-l02', 'react-ch03-l01'];
 it('Guided2工程の編集責務を共有し、Capstoneの保存/Reset/Progress契約を分ける', async () => {
   const { runtime: course, exercises } = await loadAuthoringCourse('content/react');
-  expect(course.publicationStatus).toBe('draft');
+  expect(course.publicationStatus).toBe('published');
   const targets = lessonIds.map((lesson) => exercises.find(({ id }) => id === `${lesson}-e01`)!);
   expect(targets.map((item) => item.workspaceId)).toEqual([
     'react-quiz-guided',

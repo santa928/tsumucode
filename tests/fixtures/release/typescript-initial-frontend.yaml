@@ -1,0 +1,12 @@
+schemaVersion: 1
+id: frontend
+title: フロントエンド学習パス
+description: TypeScript初公開前の固定テスト用学習パス。
+publicationStatus: published
+steps:
+  - courseId: html-css
+    role: required
+    prerequisiteCourseIds: []
+  - courseId: javascript
+    role: required
+    prerequisiteCourseIds: [html-css]

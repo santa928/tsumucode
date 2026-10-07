@@ -4,14 +4,15 @@ title: React はじめの一歩
 description: Props・State・FormからRef/Effect/Custom Hookの責務を学び、既存クイズ題材のGuided 2工程と別BriefのCapstoneへ進むReact教材。
 audience: TypeScriptのinterface・関数・readonlyとJavaScriptのDOMを学んだReact初学者
 estimatedMinutes: 490
-revision: 2026-10-07.6
+revision: 2026-10-07.7
 runnerId: react
 validatorId: react
 glossarySource: glossary.yaml
 conceptsSource: concepts.yaml
 documentationSources:
   - references/react-official.md
-authoringSources: []
+authoringSources:
+  - release-history.yaml
 supportedDevices:
   exercise: desktop
   study:
@@ -20,7 +21,7 @@ supportedDevices:
     - mobile
 prerequisites:
   - typescript
-publicationStatus: draft
+publicationStatus: published
 expectedTotals:
   chapters: 3
   lessons: 15
@@ -48,6 +49,9 @@ progressMigrations:
     steps: []
   - fromRevision: 2026-10-07.5
     toRevision: 2026-10-07.6
+    steps: []
+  - fromRevision: 2026-10-07.6
+    toRevision: 2026-10-07.7
     steps: []
 phases:
   - id: react-p01-component

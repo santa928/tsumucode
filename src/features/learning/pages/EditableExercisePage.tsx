@@ -225,6 +225,7 @@ function EditableSession({
   const navigate = useNavigate();
   const [operation, setOperation] = useState<OperationState>('idle');
   const [operationError, setOperationError] = useState<string>();
+  const [executionFailure, setExecutionFailure] = useState<ExecutionNotGradableError>();
   const [previewNeedsPrepare, setPreviewNeedsPrepare] = useState(false);
   const [previewExpanded, setPreviewExpanded] = useState(false);
   const [waitingForLease, setWaitingForLease] = useState(false);
@@ -359,6 +360,11 @@ function EditableSession({
     ],
   );
   const state = useLearningSession(controller);
+  // 実行失敗の案内はその実行結果だけに結び付け、自動再描画での復帰後に残さない。
+  // 保存・Resetなど別操作の失敗は従来のoperationErrorとして保持する。
+  const displayedOperationError =
+    operationError ??
+    (executionFailure?.result === state.executionResult ? executionFailure?.message : undefined);
   const initializationChain = useRef<
     | {
         controller: LearningSessionController;
@@ -523,6 +529,7 @@ function EditableSession({
       const generation = beginOperation();
       setOperation('preview');
       setOperationError(undefined);
+      setExecutionFailure(undefined);
       void (async () => {
         try {
           if (waitForLease && !(await waitForOperationLease(generation))) return;
@@ -546,12 +553,13 @@ function EditableSession({
             }
           } catch (error: unknown) {
             if (isCurrentOperation(generation) && !(error instanceof StaleExecutionError)) {
-              setOperationError(
-                error instanceof ExecutionNotGradableError ||
+              if (error instanceof ExecutionNotGradableError) setExecutionFailure(error);
+              else
+                setOperationError(
                   error instanceof PreviewInteractionRequiredError
-                  ? error.message
-                  : operationErrorMessage('preview'),
-              );
+                    ? error.message
+                    : operationErrorMessage('preview'),
+                );
             }
           }
         } finally {
@@ -716,14 +724,15 @@ function EditableSession({
       } catch (error: unknown) {
         if (isCurrentOperation(generation)) {
           if (error instanceof StaleExecutionError) setDrawerMode(undefined);
-          setOperationError(
-            error instanceof StaleExecutionError
-              ? '編集中の内容が変わりました。最新のコードでもう一度判定してください。'
-              : error instanceof ExecutionNotGradableError ||
-                  error instanceof PreviewInteractionRequiredError
-                ? error.message
-                : operationErrorMessage('validate'),
-          );
+          if (error instanceof ExecutionNotGradableError) setExecutionFailure(error);
+          else
+            setOperationError(
+              error instanceof StaleExecutionError
+                ? '編集中の内容が変わりました。最新のコードでもう一度判定してください。'
+                : error instanceof PreviewInteractionRequiredError
+                  ? error.message
+                  : operationErrorMessage('validate'),
+            );
         }
       } finally {
         if (isCurrentOperation(generation)) setOperation('idle');
@@ -864,9 +873,9 @@ function EditableSession({
       }
       pager={
         <div className="tc-exercise-pager">
-          {operationError !== undefined ? (
+          {displayedOperationError !== undefined ? (
             <p role="alert" className="tc-exercise-operation-error">
-              {operationError}
+              {displayedOperationError}
             </p>
           ) : null}
           <div className="tc-exercise-pager-actions">

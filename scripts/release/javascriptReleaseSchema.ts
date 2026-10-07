@@ -18,6 +18,14 @@ import {
   type TypescriptPublishedRelease,
 } from './typescriptReleaseSchema';
 
+import {
+  ReactReleaseApprovalSchema,
+  ReactReleaseHistorySchema,
+  type ReactReleaseApproval,
+  type ReactReleaseHistory,
+  type ReactPublishedRelease,
+} from './reactReleaseSchema';
+
 const jsContract = resolveReleaseCourseContract('javascript');
 const HashBindingSchema = z.union([Sha256Schema, z.literal('draft')]);
 const LearningBindingShape = {
@@ -106,11 +114,20 @@ export type JavascriptReleaseApproval = z.infer<typeof JavascriptReleaseApproval
 export type JavascriptReleaseHistory = z.infer<typeof JavascriptReleaseHistorySchema>;
 export type JavascriptPublishedRelease = z.infer<typeof JavascriptPublishedReleaseSchema>;
 export type CourseReleaseApproval =
-  z.infer<typeof ReleaseApprovalSchema> | JavascriptReleaseApproval | TypescriptReleaseApproval;
+  | z.infer<typeof ReleaseApprovalSchema>
+  | JavascriptReleaseApproval
+  | TypescriptReleaseApproval
+  | ReactReleaseApproval;
 export type CourseReleaseHistory =
-  z.infer<typeof ReleaseHistorySchema> | JavascriptReleaseHistory | TypescriptReleaseHistory;
+  | z.infer<typeof ReleaseHistorySchema>
+  | JavascriptReleaseHistory
+  | TypescriptReleaseHistory
+  | ReactReleaseHistory;
 export type CoursePublishedRelease =
-  z.infer<typeof PublishedReleaseSchema> | JavascriptPublishedRelease | TypescriptPublishedRelease;
+  | z.infer<typeof PublishedReleaseSchema>
+  | JavascriptPublishedRelease
+  | TypescriptPublishedRelease
+  | ReactPublishedRelease;
 
 /** selected Courseのstrict schemaだけで承認を読む。混在/legacy JSを拒否する。 */
 export function parseCourseReleaseApproval(
@@ -126,6 +143,7 @@ export function parseCourseReleaseApproval(
   input: unknown,
 ): CourseReleaseApproval {
   const contract = resolveReleaseCourseContract(courseId);
+  if (contract.courseId === 'react') return ReactReleaseApprovalSchema.parse(input);
   if (contract.courseId === 'typescript') return TypescriptReleaseApprovalSchema.parse(input);
   return contract.courseId === 'javascript'
     ? JavascriptReleaseApprovalSchema.parse(input)
@@ -146,6 +164,7 @@ export function parseCourseReleaseHistory(
   input: unknown,
 ): CourseReleaseHistory {
   const contract = resolveReleaseCourseContract(courseId);
+  if (contract.courseId === 'react') return ReactReleaseHistorySchema.parse(input);
   if (contract.courseId === 'typescript') return TypescriptReleaseHistorySchema.parse(input);
   return contract.courseId === 'javascript'
     ? JavascriptReleaseHistorySchema.parse(input)

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const ReleaseCourseIdSchema = z.enum(['html-css', 'javascript', 'typescript']);
+export const ReleaseCourseIdSchema = z.enum(['html-css', 'javascript', 'typescript', 'react']);
 export type ReleaseCourseId = z.infer<typeof ReleaseCourseIdSchema>;
 
 const htmlCssContract = {
@@ -90,32 +90,63 @@ const typescriptContract = {
   },
 } as const;
 
+const reactContract = {
+  courseId: 'react',
+  sourceRoot: 'content/react',
+  historyPath: 'content/react/release-history.yaml',
+  approvalPath: 'docs/quality/react-release-approval.yaml',
+  manifestRoot: 'generated/content/courses/react',
+  publicProvenancePath: 'generated/content/courses/react/provenance.json',
+  syntheticProgressBundlePath: 'tests/fixtures/progress/react-previous-release-bundle.json',
+  postDeployRoot: 'docs/quality/post-deploy/react',
+  schemaVersion: 2,
+  lessonCount: 15,
+  standardLessonCount: 12,
+  guidedLessonCount: 2,
+  capstoneLessonCount: 1,
+  chapterCount: 3,
+  phaseCount: 2,
+  estimatedMinutes: 490,
+  learningEvidenceKind: 'agent-simulated-learning',
+  records: {
+    contentReview: 'docs/quality/content-review-react.yaml',
+    technicalAcceptance: 'docs/quality/react-release-acceptance.yaml',
+  },
+} as const;
+
 export type ReleaseCourseContract =
-  typeof htmlCssContract | typeof javascriptContract | typeof typescriptContract;
+  | typeof htmlCssContract
+  | typeof javascriptContract
+  | typeof typescriptContract
+  | typeof reactContract;
 
 export function resolveReleaseCourseContract(courseId: 'html-css'): typeof htmlCssContract;
 export function resolveReleaseCourseContract(courseId: 'javascript'): typeof javascriptContract;
 export function resolveReleaseCourseContract(courseId: 'typescript'): typeof typescriptContract;
+export function resolveReleaseCourseContract(courseId: 'react'): typeof reactContract;
 export function resolveReleaseCourseContract(courseId: unknown): ReleaseCourseContract;
 /** 明示allowlistだけから固定pathと品質契約を解決し、未知Courseを拒否する。 */
 export function resolveReleaseCourseContract(courseId: unknown): ReleaseCourseContract {
   const selected = ReleaseCourseIdSchema.parse(courseId);
   if (selected === 'html-css') return htmlCssContract;
-  return selected === 'javascript' ? javascriptContract : typescriptContract;
+  if (selected === 'javascript') return javascriptContract;
+  return selected === 'typescript' ? typescriptContract : reactContract;
 }
 
-/** JSにも必要なHTMLの存在を保持する、site全体の公開台帳集合（TSの空履歴は公開を意味しない）を返す。 */
+/** JSにも必要なHTMLの存在を保持する、site全体の公開台帳集合（未公開Courseの空履歴は公開を意味しない）を返す。 */
 export const SITE_RELEASE_COURSE_IDS: readonly ReleaseCourseId[] = [
   'html-css',
   'javascript',
   'typescript',
+  'react',
 ];
 
-/** Productから除外する履歴は既知のliteral3fileだけに限定する。 */
+/** Productから除外する履歴は既知のliteral4fileだけに限定する。 */
 export const RELEASE_HISTORY_PATHS: readonly string[] = [
   htmlCssContract.historyPath,
   javascriptContract.historyPath,
   typescriptContract.historyPath,
+  reactContract.historyPath,
 ];
 
 /** JSのP→Mとcandidate除外へ同じ宣言済みliteral記録集合を提供する。revision以外をpattern化しない。 */
@@ -134,7 +165,7 @@ export function releaseMetadataPaths(
   ];
 }
 
-/** HTML旧除外を保ち、JS/TSだけは宣言literal以外をProductとして検査する。 */
+/** HTML旧除外を保ち、JS/TS/Reactだけは宣言literal以外をProductとして検査する。 */
 export function isReleaseMetadataPath(
   relative: string,
   courseId: ReleaseCourseId = 'html-css',

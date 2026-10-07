@@ -73,7 +73,7 @@ describe('Course別通常公開の固定契約', () => {
     expect(js.historyPath).toBe('content/javascript/release-history.yaml');
   });
 
-  it.each([undefined, null, '', 'react', 'HTML-CSS', '../javascript', {}])(
+  it.each([undefined, null, '', 'nextjs', 'HTML-CSS', '../javascript', {}])(
     '未知Course %j をHTMLへfallbackしない',
     (courseId) => {
       expect(() => resolveReleaseCourseContract(courseId)).toThrow();

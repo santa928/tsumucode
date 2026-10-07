@@ -15,7 +15,12 @@ const typescriptPublished =
     .object({ publicationStatus: z.enum(['draft', 'published']) })
     .parse(parse(readFileSync('content/typescript/course.yaml', 'utf8'))).publicationStatus ===
   'published';
-const expectedRequiredCourses = typescriptPublished ? 3 : 2;
+const reactPublished =
+  z
+    .object({ publicationStatus: z.enum(['draft', 'published']) })
+    .parse(parse(readFileSync('content/react/course.yaml', 'utf8'))).publicationStatus ===
+  'published';
+const expectedRequiredCourses = reactPublished ? 4 : typescriptPublished ? 3 : 2;
 
 const HOME_ROUTE = './#/';
 const PATH_ROUTE = './#/paths/frontend';
@@ -98,6 +103,14 @@ test('Pathの順序と必須Courseを表示し、既存Courseへロックなし�
       'href',
       '#/courses/typescript/lessons/typescript-ch01-l01/slides/typescript-ch01-l01-s01',
     );
+  }
+
+  if (reactPublished) {
+    const reactStep = steps.nth(3);
+    await expect(reactStep.getByText('必須', { exact: true })).toBeVisible();
+    await expect(
+      reactStep.getByRole('link', { name: 'React はじめの一歩を始める', exact: true }),
+    ).toHaveAttribute('href', '#/courses/react/lessons/react-ch01-l01/slides/react-ch01-l01-s01');
   }
 
   await page

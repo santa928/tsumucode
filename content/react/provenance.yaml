@@ -1593,3 +1593,81 @@ items:
     createdAt: 2026-10-07
     visibility: authoring
     path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/wrong-type-quizState.ts
+  - id: react-ch01-l01-s03-props-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l01/slides/assets/s03-props-reading-flow.svg
+  - id: react-ch01-l02-s01-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l02/slides/assets/s01-reading-flow.svg
+  - id: react-ch01-l03-s02-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l03/slides/assets/s02-reading-flow.svg
+  - id: react-ch01-l04-s01-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l04/slides/assets/s01-reading-flow.svg
+  - id: react-ch01-l04-s02-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l04/slides/assets/s02-reading-flow.svg
+  - id: react-ch01-l05-s01-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l05/slides/assets/s01-reading-flow.svg
+  - id: react-ch01-l05-s02-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l05/slides/assets/s02-reading-flow.svg
+  - id: react-ch01-l06-s01-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l06/slides/assets/s01-reading-flow.svg
+  - id: react-ch01-l06-s02-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l06/slides/assets/s02-reading-flow.svg
+  - id: react-ch01-l06-s03-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l06/slides/assets/s03-reading-flow.svg
+  - id: react-ch01-l07-s01-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l07/slides/assets/s01-reading-flow.svg
+  - id: react-ch01-l07-s02-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l07/slides/assets/s02-reading-flow.svg
+  - id: react-ch01-l08-s01-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l08/slides/assets/s01-reading-flow.svg
+  - id: react-ch01-l08-s02-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l08/slides/assets/s02-reading-flow.svg
+  - id: react-ch01-l09-s01-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l09/slides/assets/s01-reading-flow.svg
+  - id: react-ch01-l09-s02-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l09/slides/assets/s02-reading-flow.svg
+  - id: react-ch01-l10-s01-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l10/slides/assets/s01-reading-flow.svg
+  - id: react-ch01-l10-s02-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l10/slides/assets/s02-reading-flow.svg
+  - id: react-ch01-l11-s01-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l11/slides/assets/s01-reading-flow.svg
+  - id: react-ch01-l11-s02-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l11/slides/assets/s02-reading-flow.svg
+  - id: react-ch01-l12-s01-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l12/slides/assets/s01-reading-flow.svg
+  - id: react-ch01-l12-s02-reading-flow-original
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l12/slides/assets/s02-reading-flow.svg
+  - id: react-ch02-l01-s01-reading-flow-original
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l01/slides/assets/s01-reading-flow.svg
+  - id: react-ch02-l02-s01-reading-flow-original
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l02/slides/assets/s01-reading-flow.svg
+  - id: react-ch03-l01-s01-reading-flow-original
+    visibility: public
+    path: chapters/react-ch03/lessons/react-ch03-l01/slides/assets/s01-reading-flow.svg
+  - id: react-release-history-authoring
+    visibility: authoring
+    path: release-history.yaml

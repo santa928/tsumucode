@@ -140,7 +140,10 @@ export function parseReleaseReport(source: string): ReleaseReportInput {
     'acceptanceLimit',
   ] as const;
   const selectedCourse = metadata.get('courseId');
-  const isScopedCourse = selectedCourse === 'javascript' || selectedCourse === 'typescript';
+  const isScopedCourse =
+    selectedCourse === 'javascript' ||
+    selectedCourse === 'typescript' ||
+    selectedCourse === 'react';
   const keys = isScopedCourse ? [...baseKeys, ...scopedCourseKeys] : baseKeys;
   if (metadata.size !== keys.length || keys.some((key) => !metadata.has(key))) {
     throw new Error('Release Report metadataに未知または欠落したkeyがあります');

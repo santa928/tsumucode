@@ -32,20 +32,22 @@ export interface ResolvedReleaseTarget {
   readonly normalizedLearningInputSha256?: string;
 }
 
-/** 全site Artifactへ公開TSを含めるbetaは、選択Courseによらず拒否する。TS draftと旧Sourceは維持する。 */
+/** 全site Artifactへ公開TS/Reactを含めるbetaは、選択Courseによらず拒否する。未公開Courseと旧Sourceは維持する。 */
 export async function verifyBetaSitePublication(repositoryRoot: string): Promise<void> {
-  let source: string;
-  try {
-    source = await readFile(path.join(repositoryRoot, 'content/typescript/course.yaml'), 'utf8');
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return;
-    throw error;
+  for (const courseId of ['typescript', 'react'] as const) {
+    let source: string;
+    try {
+      source = await readFile(path.join(repositoryRoot, `content/${courseId}/course.yaml`), 'utf8');
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') continue;
+      throw error;
+    }
+    const course = z
+      .object({ id: z.literal(courseId), publicationStatus: z.enum(['draft', 'published']) })
+      .parse(parse(source));
+    if (course.publicationStatus === 'published')
+      throw new Error(`公開${courseId}を含む全site betaはCourse選択によらず許可しません`);
   }
-  const typescript = z
-    .object({ id: z.literal('typescript'), publicationStatus: z.enum(['draft', 'published']) })
-    .parse(parse(source));
-  if (typescript.publicationStatus === 'published')
-    throw new Error('公開TSを含む全site betaはCourse選択によらず許可しません');
 }
 
 /** 最新main、workflow、checkoutが同一のβSourceだけをDeploy対象へ変換する。 */
@@ -55,8 +57,8 @@ export function resolveBetaTarget(
   checkoutHeadShaInput: string,
   courseId: ReleaseCourseId = 'html-css',
 ): ResolvedReleaseTarget {
-  if (courseId === 'typescript')
-    throw new Error('TSのbeta配信は公開承認を省略するため許可しません');
+  if (courseId === 'typescript' || courseId === 'react')
+    throw new Error('TS/Reactのbeta配信は公開承認を省略するため許可しません');
   const sourceSha = CommitShaSchema.parse(sourceShaInput);
   const workflowHeadSha = CommitShaSchema.parse(workflowHeadShaInput);
   const checkoutHeadSha = CommitShaSchema.parse(checkoutHeadShaInput);
@@ -190,8 +192,11 @@ export async function verifyReleaseTarget(options: {
     cwd: root,
     encoding: 'utf8',
   });
-  if (contract.courseId === 'typescript' && options.mode === 'beta')
-    throw new Error('TSのbeta配信は公開承認を省略するため許可しません');
+  if (
+    (contract.courseId === 'typescript' || contract.courseId === 'react') &&
+    options.mode === 'beta'
+  )
+    throw new Error('TS/Reactのbeta配信は公開承認を省略するため許可しません');
   if (options.mode === 'beta') {
     await verifyBetaSitePublication(root);
     return resolveBetaTarget(

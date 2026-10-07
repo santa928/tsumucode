@@ -51,7 +51,14 @@ beforeAll(async () => {
         'content/learning-paths/frontend.yaml',
         'package.json',
         'package-lock.json',
-      ].map(async (file) => [file, new Uint8Array(await readFile(file))] as const),
+      ].map(async (file) => {
+        // TS初公開時のPathを固定し、後続Courseの公開状態から独立させる。
+        const source =
+          file === 'content/learning-paths/frontend.yaml'
+            ? 'tests/fixtures/release/typescript-initial-frontend.yaml'
+            : file;
+        return [file, new Uint8Array(await readFile(source))] as const;
+      }),
     ),
   );
   // 公開済み環境でも独立したdraft→published fixtureを作り、現在の公開状態を変えない。
@@ -63,17 +70,6 @@ beforeAll(async () => {
       decoder
         .decode(files.get('content/typescript/course.yaml'))
         .replace(/^publicationStatus: (draft|published)$/gmu, 'publicationStatus: draft'),
-    ),
-  );
-  files.set(
-    'content/learning-paths/frontend.yaml',
-    encoder.encode(
-      decoder
-        .decode(files.get('content/learning-paths/frontend.yaml'))
-        .replace(
-          /^ {2}- courseId: typescript\r?\n {4}role: required\r?\n {4}prerequisiteCourseIds: \[javascript\](?:\r?\n|$)/gmu,
-          '',
-        ),
     ),
   );
   course = (await compileCourse('content/typescript')).runtime;
@@ -143,12 +139,13 @@ describe('TypeScript正式Releaseの隔離された契約', () => {
       'html-css',
       'javascript',
       'typescript',
+      'react',
     ]);
     const step = workflow.jobs.quality.steps.find(
       ({ name }) => name === 'Keep existing JavaScript continuity in the all-site gate',
     );
     expect(step?.if).toBe(
-      "needs.resolve.outputs.course_id == 'typescript' && needs.resolve.outputs.release_mode != 'rollback'",
+      "(needs.resolve.outputs.course_id == 'typescript' || needs.resolve.outputs.course_id == 'react') && needs.resolve.outputs.release_mode != 'rollback'",
     );
     expect(step?.run).toContain('--quality-only --course-id javascript');
   });
