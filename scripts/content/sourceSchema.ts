@@ -1,3 +1,4 @@
+import { acceptsReactReducerContextScenarios } from '../../src/core/content/reactReducerContextInteractions';
 import { acceptsReactFormScenarios } from '../../src/core/content/reactFormInteractions';
 import { acceptsReactStateScenarios } from '../../src/core/content/reactStateInteractions';
 import {
@@ -132,6 +133,8 @@ export const ReactExerciseRuntimeSourceSchema = z
       'static-components-v1',
       'interactive-state-v1',
       'controlled-form-v1',
+      'reducer-form-v1',
+      'context-sharing-v1',
     ]),
     learningGoal: z
       .enum([
@@ -141,6 +144,8 @@ export const ReactExerciseRuntimeSourceSchema = z
         'immutable-list',
         'controlled-form',
         'shared-state',
+        'reducer-form',
+        'context-sharing',
       ])
       .optional(),
   })
@@ -153,7 +158,11 @@ export const ReactExerciseRuntimeSourceSchema = z
           ? ['counter', 'immutable-list'].includes(runtime.learningGoal ?? '')
           : runtime.profile === 'controlled-form-v1'
             ? ['controlled-form', 'shared-state'].includes(runtime.learningGoal ?? '')
-            : runtime.learningGoal === undefined,
+            : runtime.profile === 'reducer-form-v1'
+              ? runtime.learningGoal === 'reducer-form'
+              : runtime.profile === 'context-sharing-v1'
+                ? runtime.learningGoal === 'context-sharing'
+                : runtime.learningGoal === undefined,
     { message: 'React課題の学習目標をprofileに合わせて指定してください' },
   );
 
@@ -279,8 +288,10 @@ export const ExerciseSourceSchema = z
       ) &&
       !(
         exercise.runtime?.kind === 'react' &&
-        exercise.runtime.profile === 'controlled-form-v1' &&
-        exercise.runtime.learningGoal === 'controlled-form'
+        ((exercise.runtime.profile === 'controlled-form-v1' &&
+          exercise.runtime.learningGoal === 'controlled-form') ||
+          (exercise.runtime.profile === 'reducer-form-v1' &&
+            exercise.runtime.learningGoal === 'reducer-form'))
       )
     ) {
       context.addIssue({
@@ -318,7 +329,12 @@ export const ExerciseSourceSchema = z
             exercise.interactionScenarios,
           )
         : (exercise.runtime?.kind === 'react' &&
-            ['interactive-state-v1', 'controlled-form-v1'].includes(exercise.runtime.profile)) ||
+            [
+              'interactive-state-v1',
+              'controlled-form-v1',
+              'reducer-form-v1',
+              'context-sharing-v1',
+            ].includes(exercise.runtime.profile)) ||
           (exercise.runtime?.kind === 'javascript' &&
             ['dom', 'dom-form', 'async', 'project'].includes(exercise.runtime.capabilityProfile));
     if (
@@ -330,6 +346,20 @@ export const ExerciseSourceSchema = z
         path: ['interactionScenarios'],
         message:
           'Interaction Scenarioは既存JSのDOM/async profileか固定TS境界/クイズ工程で指定してください',
+      });
+    }
+    if (
+      exercise.runtime?.kind === 'react' &&
+      ['reducer-form-v1', 'context-sharing-v1'].includes(exercise.runtime.profile) &&
+      !acceptsReactReducerContextScenarios(
+        exercise.runtime.learningGoal,
+        exercise.interactionScenarios,
+      )
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['interactionScenarios'],
+        message: 'Reducer・Context教材には指定の全実操作Scenarioが必要です',
       });
     }
     if (

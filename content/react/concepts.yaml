@@ -79,3 +79,23 @@ concepts:
     prerequisiteConceptIds:
       - react-shared-state-parent
     minimumProjectLevel: transform
+  - id: react-reducer-action
+    introducedBySlideId: react-ch01-l08-s01
+    prerequisiteConceptIds:
+      - react-shared-state-parent
+    minimumProjectLevel: transform
+  - id: react-pure-reducer
+    introducedBySlideId: react-ch01-l08-s02
+    prerequisiteConceptIds:
+      - react-reducer-action
+    minimumProjectLevel: transform
+  - id: react-context-provider
+    introducedBySlideId: react-ch01-l09-s01
+    prerequisiteConceptIds:
+      - react-shared-state-parent
+    minimumProjectLevel: transform
+  - id: react-context-consumer
+    introducedBySlideId: react-ch01-l09-s02
+    prerequisiteConceptIds:
+      - react-context-provider
+    minimumProjectLevel: transform

@@ -1,3 +1,4 @@
+import { acceptsReactReducerContextScenarios } from './reactReducerContextInteractions';
 import { acceptsReactFormScenarios } from './reactFormInteractions';
 import { acceptsReactStateScenarios } from './reactStateInteractions';
 import {
@@ -322,6 +323,8 @@ export const ReactExerciseRuntimeSchema = z
       'static-components-v1',
       'interactive-state-v1',
       'controlled-form-v1',
+      'reducer-form-v1',
+      'context-sharing-v1',
     ]),
     learningGoal: z
       .enum([
@@ -331,6 +334,8 @@ export const ReactExerciseRuntimeSchema = z
         'immutable-list',
         'controlled-form',
         'shared-state',
+        'reducer-form',
+        'context-sharing',
       ])
       .optional(),
   })
@@ -343,7 +348,11 @@ export const ReactExerciseRuntimeSchema = z
           ? ['counter', 'immutable-list'].includes(runtime.learningGoal ?? '')
           : runtime.profile === 'controlled-form-v1'
             ? ['controlled-form', 'shared-state'].includes(runtime.learningGoal ?? '')
-            : runtime.learningGoal === undefined,
+            : runtime.profile === 'reducer-form-v1'
+              ? runtime.learningGoal === 'reducer-form'
+              : runtime.profile === 'context-sharing-v1'
+                ? runtime.learningGoal === 'context-sharing'
+                : runtime.learningGoal === undefined,
     { message: 'React課題の学習目標をprofileに合わせて指定してください' },
   );
 
@@ -1088,7 +1097,7 @@ export const ReactLearningRuleDefinitionSchema = z
     group: z.literal('all'),
     viewportMode: z.literal('all'),
     target: z
-      .object({ kind: z.literal('react-learning'), file: z.literal('components.tsx') })
+      .object({ kind: z.literal('react-learning'), file: z.enum(['components.tsx', 'reducer.ts']) })
       .strict(),
     assertion: z
       .object({
@@ -1100,12 +1109,20 @@ export const ReactLearningRuleDefinitionSchema = z
           'immutable-list',
           'controlled-form',
           'shared-state',
+          'reducer-form',
+          'context-sharing',
         ]),
       })
       .strict(),
   })
   .strict()
-  .refine((rule) => rule.groupId === undefined, 'Componentの学習条件は独立した必須要件にします');
+  .refine((rule) => rule.groupId === undefined, 'Componentの学習条件は独立した必須要件にします')
+  .refine(
+    (rule) =>
+      rule.target.file ===
+      (rule.assertion.goal === 'reducer-form' ? 'reducer.ts' : 'components.tsx'),
+    '学習目標と編集責務のFileを一致させてください',
+  );
 
 export const HtmlCssValidationRuleDefinitionSchema = z
   .object({
@@ -1399,14 +1416,30 @@ export const ExerciseSchema = z
       exercise.runtime?.capabilityProfile !== 'dom-form' &&
       !(
         exercise.runtime?.kind === 'react' &&
-        exercise.runtime.profile === 'controlled-form-v1' &&
-        exercise.runtime.learningGoal === 'controlled-form'
+        ((exercise.runtime.profile === 'controlled-form-v1' &&
+          exercise.runtime.learningGoal === 'controlled-form') ||
+          (exercise.runtime.profile === 'reducer-form-v1' &&
+            exercise.runtime.learningGoal === 'reducer-form'))
       )
     ) {
       context.addIssue({
         code: 'custom',
         path: ['interactionScenarios'],
         message: 'submit-preventedはdom-form profileで指定してください',
+      });
+    }
+    if (
+      exercise.runtime?.kind === 'react' &&
+      ['reducer-form-v1', 'context-sharing-v1'].includes(exercise.runtime.profile) &&
+      !acceptsReactReducerContextScenarios(
+        exercise.runtime.learningGoal,
+        exercise.interactionScenarios,
+      )
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['interactionScenarios'],
+        message: 'Reducer・Context教材には指定の全実操作Scenarioが必要です',
       });
     }
     if (

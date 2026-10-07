@@ -74,3 +74,24 @@ it('毎回変わるguard名を実moduleへ結び、同じSourceの認証hashを�
     second.modules.find((module) => module.file === REACT_MODULE_FILE)?.instrumentedCode,
   ).toContain('guardSecond.reportError(error)');
 });
+
+it('新APIをprofileとFileに限定し、旧profileへ開放しない', () => {
+  for (const [profile, file, api] of [
+    ['reducer-form-v1', 'components.js', 'useReducer'],
+    ['context-sharing-v1', 'nameContext.js', 'createContext'],
+    ['context-sharing-v1', 'components.js', 'useContext'],
+    ['context-sharing-v1', 'main.js', 'useState'],
+  ] as const) {
+    const files = { [file]: `import {${api}} from 'react';` };
+    expect(prepareReactModules(files, profile)[file]).toContain(REACT_MODULE_FILE);
+    expect(() => prepareReactModules({ 'extra.js': files[file]! }, profile)).toThrow();
+    expect(() => prepareReactModules(files, 'props-card-v1')).toThrow();
+  }
+  for (const profile of ['interactive-state-v1', 'controlled-form-v1'] as const) {
+    for (const api of ['useReducer', 'createContext', 'useContext']) {
+      expect(() =>
+        prepareReactModules({ 'main.js': `import {${api}} from 'react';` }, profile),
+      ).toThrow();
+    }
+  }
+});

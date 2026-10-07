@@ -1,0 +1,543 @@
+id: react-ch01-l09-e01
+kind: standard
+workspaceId: react-ch01-l09-e01
+countsTowardStandardExerciseTotal: true
+title: Contextで親の値を受け取る
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: react-context-provider
+    minimumLevel: transform
+  - conceptId: react-context-consumer
+    minimumLevel: transform
+scaffoldLevel: transform
+runtime:
+  kind: react
+  entryFile: main.tsx
+  sourceType: module
+  capabilityProfile: dom
+  primaryOutput: preview
+  profile: context-sharing-v1
+  learningGoal: context-sharing
+steps:
+  - id: connect-responsibility
+    file: components.tsx
+    target: NameSummaryの要約表示
+    starterAnchor: 最初の名前
+    change: 固定表示を同じProviderから受け取った値へ結ぶ
+    observe: 入力欄・要約・文字数が同じ親Stateの更新とやり直しに追従する
+    requiresConceptIds:
+      - react-context-provider
+      - react-context-consumer
+    validationRuleIds:
+      - react-ch01-l09-e01-r01
+      - react-ch01-l09-e01-r02
+      - react-ch01-l09-e01-r03
+files:
+  - path: components.tsx
+    language: react
+    source: starter/components.tsx
+    editable: true
+  - path: main.tsx
+    language: react
+    source: starter/main.tsx
+    editable: false
+  - path: nameContext.ts
+    language: typescript
+    source: starter/nameContext.ts
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: starter/types.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+solutionFiles:
+  - path: components.tsx
+    language: react
+    source: solution/components.tsx
+    editable: false
+  - path: main.tsx
+    language: react
+    source: solution/main.tsx
+    editable: false
+  - path: nameContext.ts
+    language: typescript
+    source: solution/nameContext.ts
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: solution/types.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: react-ch01-l09-e01-r01
+    label: 見出し
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: h1
+    assertion:
+      kind: text
+      operator: equals
+      expected: Contextで共有する名前
+    feedback:
+      target: components.tsxとPreview
+      expected: Contextで共有する名前
+      nextAction: 入力欄・要約・文字数が同じ親Stateの更新とやり直しに追従する
+    hintId: react-ch01-l09-e01-h02
+    relatedSlideId: react-ch01-l09-s02
+  - id: react-ch01-l09-e01-r02
+    label: 初期の文字数
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#length'
+    assertion:
+      kind: text
+      operator: equals
+      expected: '0'
+    feedback:
+      target: components.tsxとPreview
+      expected: '0'
+      nextAction: 入力欄・要約・文字数が同じ親Stateの更新とやり直しに追従する
+    hintId: react-ch01-l09-e01-h02
+    relatedSlideId: react-ch01-l09-s02
+  - id: react-ch01-l09-e01-r03
+    label: ContextをStateと区別し、2つのconsumerが同じProviderの値と更新callbackへ接続する理由を説明できる。
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: react-learning
+      file: components.tsx
+    assertion:
+      kind: react-learning
+      goal: context-sharing
+    feedback:
+      target: components.tsxとPreview
+      expected: ContextをStateと区別し、2つのconsumerが同じProviderの値と更新callbackへ接続する理由を説明できる。
+      nextAction: 入力欄・要約・文字数が同じ親Stateの更新とやり直しに追従する
+    hintId: react-ch01-l09-e01-h02
+    relatedSlideId: react-ch01-l09-s02
+interactionScenarios:
+  - id: context-sharing-input-reset
+    label: 親Stateを兄弟の入力・要約へ共有する
+    actions:
+      - id: short-name
+        kind: fill
+        selector: '#name'
+        value: Ada
+      - id: long-name
+        kind: fill
+        selector: '#name'
+        value: TypeScript
+      - id: spaces
+        kind: fill
+        selector: '#name'
+        value: '   '
+      - id: clear
+        kind: fill
+        selector: '#name'
+        value: ''
+      - id: another-name
+        kind: fill
+        selector: '#name'
+        value: React
+      - id: reset
+        kind: click
+        selector: '#reset'
+    checkpoints:
+      - id: after-short-name
+        afterActionId: short-name
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: Ada
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '3'
+          - id: summary
+            kind: selector-text
+            selector: '#name-summary'
+            equals: Ada
+      - id: after-long-name
+        afterActionId: long-name
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: TypeScript
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '10'
+          - id: summary
+            kind: selector-text
+            selector: '#name-summary'
+            equals: TypeScript
+      - id: after-spaces
+        afterActionId: spaces
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: '   '
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '3'
+          - id: summary
+            kind: selector-text
+            selector: '#name-summary'
+            equals: ''
+      - id: after-clear
+        afterActionId: clear
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: ''
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '0'
+          - id: summary
+            kind: selector-text
+            selector: '#name-summary'
+            equals: ''
+      - id: after-another-name
+        afterActionId: another-name
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: React
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '5'
+          - id: summary
+            kind: selector-text
+            selector: '#name-summary'
+            equals: React
+      - id: after-reset
+        afterActionId: reset
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: ''
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '0'
+          - id: summary
+            kind: selector-text
+            selector: '#name-summary'
+            equals: ''
+hints:
+  - id: react-ch01-l09-e01-h01
+    level: 1
+    title: 修正位置を探す
+    text: components.tsxのNameSummaryが表示する文字列に注目します。
+    relatedSlideId: react-ch01-l09-s02
+  - id: react-ch01-l09-e01-h02
+    level: 2
+    title: 値の由来を追う
+    text: useContextが返す値は親Providerのvalueです。新しいStateを子に作る必要はありません。
+    relatedSlideId: react-ch01-l09-s02
+  - id: react-ch01-l09-e01-h03
+    level: 3
+    title: 責務と操作後の一致を確かめる
+    text: 入力欄と要約が同じContextを読んでも、要約が固定文字列なら更新は表示されません。受け取った値から要約と文字数を描画します。
+    relatedSlideId: react-ch01-l09-s02
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+fixtures:
+  - id: starter
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l09-e01-r03
+      - interaction:context-sharing-input-reset:after-short-name:summary
+      - interaction:context-sharing-input-reset:after-long-name:summary
+      - interaction:context-sharing-input-reset:after-spaces:summary
+      - interaction:context-sharing-input-reset:after-clear:summary
+      - interaction:context-sharing-input-reset:after-another-name:summary
+      - interaction:context-sharing-input-reset:after-reset:summary
+    files:
+      - path: components.tsx
+        source: fixtures/starter.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: nameContext.ts
+        source: fixtures/nameContext.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: solution
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        source: fixtures/solution.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: nameContext.ts
+        source: fixtures/nameContext.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: alternative
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        source: fixtures/alternative.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: nameContext.ts
+        source: fixtures/nameContext.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: trim-summary
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        source: fixtures/trim-summary.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: nameContext.ts
+        source: fixtures/nameContext.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: fixed-length
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l09-e01-r02
+      - react-ch01-l09-e01-r03
+      - interaction:context-sharing-input-reset:after-long-name:length
+      - interaction:context-sharing-input-reset:after-clear:length
+      - interaction:context-sharing-input-reset:after-another-name:length
+      - interaction:context-sharing-input-reset:after-reset:length
+    files:
+      - path: components.tsx
+        source: fixtures/fixed-length.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: nameContext.ts
+        source: fixtures/nameContext.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: guard-side-effect
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-0
+    files:
+      - path: components.tsx
+        source: fixtures/guard-side-effect.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: nameContext.ts
+        source: fixtures/nameContext.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: extra-state
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-0
+    files:
+      - path: components.tsx
+        source: fixtures/extra-state.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: nameContext.ts
+        source: fixtures/nameContext.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: shadow-context
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-0
+    files:
+      - path: components.tsx
+        source: fixtures/shadow-context.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: nameContext.ts
+        source: fixtures/nameContext.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: wrong-type
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-2322
+    files:
+      - path: components.tsx
+        source: fixtures/wrong-type.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: nameContext.ts
+        source: fixtures/nameContext.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: event-error
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        source: fixtures/event-error.tsx
+        language: react
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: nameContext.ts
+        source: fixtures/nameContext.ts
+        language: typescript
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+    expectedDiagnosticCodes:
+      - javascript-runtime
+relatedSlideIds:
+  - react-ch01-l09-s01
+  - react-ch01-l09-s02
+  - react-ch01-l09-s03
+assets: []

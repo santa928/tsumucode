@@ -34,6 +34,9 @@ export const jsx: typeof JSXRuntime.jsx = (type, props, key) =>
 export const jsxs: typeof JSXRuntime.jsxs = (type, props, key) =>
   JSXRuntime.jsxs(type, guardedProps(props), key);
 export const useState = React.useState;
+export const useReducer = React.useReducer;
+export const createContext = React.createContext;
+export const useContext = React.useContext;
 
 interface BoundaryProps {
   readonly children: ReactNode;

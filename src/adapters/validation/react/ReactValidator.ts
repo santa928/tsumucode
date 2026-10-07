@@ -1,3 +1,4 @@
+import { acceptsReactReducerContextScenarios } from '../../../core/content/reactReducerContextInteractions';
 import { acceptsReactFormScenarios } from '../../../core/content/reactFormInteractions';
 import { acceptsReactStateScenarios } from '../../../core/content/reactStateInteractions';
 import {
@@ -121,6 +122,38 @@ export class ReactValidator implements ValidatorAdapter {
               ? compiled.facts.queuesTwoIncrements
               : compiled.facts.usesImmutableUpdates && compiled.facts.usesStableItemKeys);
         }
+        if (parsed.data.profile === 'reducer-form-v1') {
+          if (
+            !compiled.facts ||
+            !('usesPureReducer' in compiled.facts) ||
+            !acceptsReactReducerContextScenarios(
+              parsed.data.learningGoal,
+              context.interactionScenarios,
+            )
+          )
+            return blocked();
+          learned =
+            compiled.facts.usesPureReducer &&
+            compiled.facts.changesNameFromAction &&
+            compiled.facts.submitsCurrentName &&
+            compiled.facts.resetsInitialState &&
+            compiled.facts.returnsFreshState;
+        }
+        if (parsed.data.profile === 'context-sharing-v1') {
+          if (
+            !compiled.facts ||
+            !('readsSameProvidedValue' in compiled.facts) ||
+            !acceptsReactReducerContextScenarios(
+              parsed.data.learningGoal,
+              context.interactionScenarios,
+            )
+          )
+            return blocked();
+          learned =
+            compiled.facts.readsSameProvidedValue &&
+            compiled.facts.forwardsProvidedUpdate &&
+            compiled.facts.derivesFromProvidedValue;
+        }
         if (parsed.data.profile === 'controlled-form-v1') {
           if (
             !compiled.facts ||
@@ -149,7 +182,9 @@ export class ReactValidator implements ValidatorAdapter {
           kind: 'javascript',
           entryFile: 'main.js',
           sourceType: 'module',
-          capabilityProfile: parsed.data.profile === 'controlled-form-v1' ? 'dom-form' : 'dom',
+          capabilityProfile: ['controlled-form-v1', 'reducer-form-v1'].includes(parsed.data.profile)
+            ? 'dom-form'
+            : 'dom',
           primaryOutput: 'preview',
         },
         evidence: context.evidence.filter((item) => item.id !== 'react.source-sha256'),
@@ -173,35 +208,51 @@ export class ReactValidator implements ValidatorAdapter {
               passed: learned,
               requirementPassed: learned,
               message: learned
-                ? parsed.data.profile === 'controlled-form-v1'
-                  ? '入力から同じ親Stateと派生表示へのつながりを確認できました。'
-                  : parsed.data.profile === 'interactive-state-v1'
-                    ? 'Stateの更新と表示へのつながりを確認できました。'
-                    : '受け取ったPropsから表示へのつながりを確認できました。'
-                : parsed.data.profile === 'controlled-form-v1'
-                  ? parsed.data.learningGoal === 'controlled-form'
-                    ? '入力値を1つのStateへ更新し、表示・文字数を導き、送信を明示的に取り消しましょう。'
-                    : '共通の親Stateを兄弟へ渡し、入力から親の更新callbackと子の要約・文字数へつなげましょう。'
-                  : parsed.data.profile === 'interactive-state-v1'
-                    ? parsed.data.learningGoal === 'counter'
-                      ? '「2増やす」では、前の値から1増やす純粋updaterを同じhandler内で2回渡しましょう。'
-                      : 'EventからStateを新しい配列へ更新し、項目の安定したIDをKeyにしましょう。'
-                    : '固定表示で済ませず、受け取ったPropsとchildrenから表示へつなげましょう。',
+                ? parsed.data.profile === 'reducer-form-v1'
+                  ? '3つのactionから純粋な次Stateへのつながりを確認できました。'
+                  : parsed.data.profile === 'context-sharing-v1'
+                    ? '同じProviderから2consumerへの値と更新経路を確認できました。'
+                    : parsed.data.profile === 'controlled-form-v1'
+                      ? '入力から同じ親Stateと派生表示へのつながりを確認できました。'
+                      : parsed.data.profile === 'interactive-state-v1'
+                        ? 'Stateの更新と表示へのつながりを確認できました。'
+                        : '受け取ったPropsから表示へのつながりを確認できました。'
+                : parsed.data.profile === 'reducer-form-v1'
+                  ? '入力actionの新しい名前、送信時の現在の名前、やり直しの初期値から新しいStateを返しましょう。'
+                  : parsed.data.profile === 'context-sharing-v1'
+                    ? '同じContextの値と親callbackを入力欄・要約・文字数へつなげましょう。'
+                    : parsed.data.profile === 'controlled-form-v1'
+                      ? parsed.data.learningGoal === 'controlled-form'
+                        ? '入力値を1つのStateへ更新し、表示・文字数を導き、送信を明示的に取り消しましょう。'
+                        : '共通の親Stateを兄弟へ渡し、入力から親の更新callbackと子の要約・文字数へつなげましょう。'
+                      : parsed.data.profile === 'interactive-state-v1'
+                        ? parsed.data.learningGoal === 'counter'
+                          ? '「2増やす」では、前の値から1増やす純粋updaterを同じhandler内で2回渡しましょう。'
+                          : 'EventからStateを新しい配列へ更新し、項目の安定したIDをKeyにしましょう。'
+                        : '固定表示で済ませず、受け取ったPropsとchildrenから表示へつなげましょう。',
               expected: rule.feedback.expected,
               actual:
-                parsed.data.profile === 'controlled-form-v1'
+                parsed.data.profile === 'reducer-form-v1'
                   ? learned
-                    ? '入力・親State・表示のつながりを確認しました。'
-                    : '共通の親Stateと入力・派生表示への経路を見直します。'
-                  : parsed.data.profile === 'interactive-state-v1'
+                    ? '3actionの値の由来と純粋な更新を確認しました。'
+                    : 'Reducerの3actionと新しいStateの返却を見直します。'
+                  : parsed.data.profile === 'context-sharing-v1'
                     ? learned
-                      ? 'Stateの更新と表示のつながりを確認しました。'
-                      : parsed.data.learningGoal === 'counter'
-                        ? '同じStateの表示と、1操作内のupdater2回を見直します。'
-                        : '新配列への更新と、描画項目のID由来のKeyを見直します。'
-                    : learned
-                      ? 'Propsと表示のつながりを確認しました。'
-                      : 'Componentの再利用・渡す値・childrenの表示を見直します。',
+                      ? '同Providerの値とcallbackから2consumerへの接続を確認しました。'
+                      : 'Contextの取得元と入力・派生表示への接続を見直します。'
+                    : parsed.data.profile === 'controlled-form-v1'
+                      ? learned
+                        ? '入力・親State・表示のつながりを確認しました。'
+                        : '共通の親Stateと入力・派生表示への経路を見直します。'
+                      : parsed.data.profile === 'interactive-state-v1'
+                        ? learned
+                          ? 'Stateの更新と表示のつながりを確認しました。'
+                          : parsed.data.learningGoal === 'counter'
+                            ? '同じStateの表示と、1操作内のupdater2回を見直します。'
+                            : '新配列への更新と、描画項目のID由来のKeyを見直します。'
+                        : learned
+                          ? 'Propsと表示のつながりを確認しました。'
+                          : 'Componentの再利用・渡す値・childrenの表示を見直します。',
               nextAction: rule.feedback.nextAction,
               hintId: rule.hintId,
               relatedSlideId: rule.relatedSlideId,

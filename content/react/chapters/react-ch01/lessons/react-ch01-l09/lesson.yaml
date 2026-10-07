@@ -1,0 +1,22 @@
+id: react-ch01-l09
+kind: standard
+title: Contextで親の値を受け取る
+goal: ContextをStateと区別し、2つのconsumerが同じProviderの値と更新callbackへ接続する理由を説明できる。
+estimatedMinutes: 30
+prerequisiteLessonIds:
+  - react-ch01-l08
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/react-ch01-l09-e01/exercise.yaml
+reflection: ContextをStateと区別し、2つのconsumerが同じProviderの値と更新callbackへ接続する理由を説明できる。
+glossaryRefs:
+  - context
+  - provider
+completion:
+  kind: standard
+  finalSlideId: react-ch01-l09-s03
+  requiredExerciseIds:
+    - react-ch01-l09-e01

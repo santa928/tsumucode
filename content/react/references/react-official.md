@@ -21,3 +21,7 @@
 ## Form・State配置（Issue #119）
 
 2026-10-07に[入力とlabel](https://react.dev/reference/react-dom/components/input)、[共通の親State](https://react.dev/learn/sharing-state-between-components)、[State構造](https://react.dev/learn/choosing-the-state-structure)、[不要なEffectを避ける](https://react.dev/learn/you-might-not-need-an-effect)を照合。説明・課題・Hintは独自制作。サイト表示は19.3、実行と型はlockのReact19.2.7/@types19.2.17を維持する。固定Event型のSubmitEventを使い、deprecatedのFormEventを学習者の修正対象へ増やさない。
+
+## Reducer・Context（Issue #120）
+
+2026-10-07に[useReducer](https://react.dev/reference/react/useReducer)、[ReducerとContextの責務](https://react.dev/learn/scaling-up-with-reducer-and-context)、[createContext](https://react.dev/reference/react/createContext)、[useContext](https://react.dev/reference/react/useContext)を照合。説明・例・課題は独自制作。サイト表示19.3、lockのReact19.2.7と型を維持。3actionの純粋な更新と、同じProviderの取得経路を別単元にし、Propsも適切な選択として保つ。
