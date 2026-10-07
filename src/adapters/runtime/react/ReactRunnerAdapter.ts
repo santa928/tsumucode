@@ -13,12 +13,11 @@ import type {
 import { JavaScriptRunnerAdapter } from '../javascript/runner/JavaScriptRunnerAdapter';
 import { createReactCompilerClient } from './ReactCompilerClient';
 import { prepareReactModules, ReactModuleAnalyzer } from './ReactModuleAnalyzer';
-import type { TypeScriptCompileResult } from '../typescript/compileTypeScript';
 import { mapTypeScriptDiagnostics } from '../typescript/mapTypeScriptDiagnostics';
 import type { TypeScriptCompileInput } from '../typescript/workerContract';
-import { isReactCompileInput } from './compilerContract';
+import { isReactCompileInput, type ReactCompileResult } from './compilerContract';
 import { reactSourceHash } from './reactSourceHash';
-import { isPropsWorkspace } from './propsCardScaffold';
+import { isReactWorkspace } from './reactWorkspace';
 
 const optionsSchema = z
   .object({
@@ -26,7 +25,7 @@ const optionsSchema = z
   })
   .strict();
 interface CompilerPort {
-  compile(input: TypeScriptCompileInput): Promise<TypeScriptCompileResult>;
+  compile(input: TypeScriptCompileInput): Promise<ReactCompileResult>;
   dispose(): void;
 }
 interface RunnerOptions {
@@ -87,11 +86,12 @@ export class ReactRunnerAdapter implements RunnerAdapter {
         sessionId: snapshot.exerciseSessionId,
         revision: snapshot.executionRevision,
         files,
+        ...(runtime.success ? { profile: runtime.data.runtime.profile } : {}),
       };
       if (
         snapshot.languageId !== this.languageId ||
-        !isPropsWorkspace(snapshot.files) ||
         !runtime.success ||
+        !isReactWorkspace(snapshot.files, runtime.data.runtime.profile) ||
         !isReactCompileInput(compileInput) ||
         !Object.hasOwn(files, runtime.data.runtime.entryFile) ||
         Object.keys(snapshot.files).some((file) => !/\.(?:tsx?|html|css)$/u.test(file))

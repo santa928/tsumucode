@@ -307,7 +307,7 @@ export const TypeScriptExerciseRuntimeSchema = JavaScriptExerciseRuntimeSchema.o
   sourceType: z.literal('module'),
 });
 
-/** 最初のReact課題は固定TSX入口とProps表示だけへ制限する。 */
+/** React導入課題を固定TSX入口と有限のProps・Composition表示へ制限する。 */
 export const ReactExerciseRuntimeSchema = z
   .object({
     kind: z.literal('react'),
@@ -315,9 +315,17 @@ export const ReactExerciseRuntimeSchema = z
     sourceType: z.literal('module'),
     capabilityProfile: z.literal('dom'),
     primaryOutput: z.literal('preview'),
-    profile: z.literal('props-card-v1'),
+    profile: z.enum(['props-card-v1', 'static-components-v1']),
+    learningGoal: z.enum(['reuse', 'composition']).optional(),
   })
-  .strict();
+  .strict()
+  .refine(
+    (runtime) =>
+      runtime.profile === 'static-components-v1'
+        ? runtime.learningGoal !== undefined
+        : runtime.learningGoal === undefined,
+    { message: '静的Component課題の学習目標をprofileに合わせて指定してください' },
+  );
 
 /** Courseごとの実行設定をkindで識別する。 */
 export const ExerciseRuntimeSchema = z.discriminatedUnion('kind', [
@@ -1052,6 +1060,23 @@ const ValidationRuleBaseShape = {
   relatedSlideId: IdSchema,
 };
 
+/** 純粋Component課題の学習条件をDOM条件とは別の必須要件にする。 */
+export const ReactLearningRuleDefinitionSchema = z
+  .object({
+    ...ValidationRuleBaseShape,
+    required: z.literal(true),
+    group: z.literal('all'),
+    viewportMode: z.literal('all'),
+    target: z
+      .object({ kind: z.literal('react-learning'), file: z.literal('components.tsx') })
+      .strict(),
+    assertion: z
+      .object({ kind: z.literal('react-learning'), goal: z.enum(['reuse', 'composition']) })
+      .strict(),
+  })
+  .strict()
+  .refine((rule) => rule.groupId === undefined, 'Componentの学習条件は独立した必須要件にします');
+
 export const HtmlCssValidationRuleDefinitionSchema = z
   .object({
     ...ValidationRuleBaseShape,
@@ -1235,6 +1260,17 @@ export const ValidationRuleDefinitionSchema = z
   })
   .strict()
   .superRefine((rule, context) => {
+    if (
+      (rule.target.kind === 'react-learning' || rule.assertion.kind === 'react-learning') &&
+      !ReactLearningRuleDefinitionSchema.safeParse(rule).success
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['target'],
+        message: 'React学習Ruleの組合せが不正です',
+      });
+    }
+
     if (
       (rule.target.kind === 'typescript-learning' ||
         rule.assertion.kind === 'typescript-learning') &&

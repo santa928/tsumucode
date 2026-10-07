@@ -2,6 +2,8 @@
 import { compileReactTypeScript } from '../typescript/compileTypeScript';
 import { checkPropsSource } from './checkPropsSource';
 import { isReactCompileInput } from './compilerContract';
+import { analyzeStaticComponents } from './checkStaticComponentsSource';
+import { isStaticComponentsScaffold } from './staticComponentsScaffold';
 
 // 固定lockのlibだけを読む。学習者のURLやnpm指定を受け付けない。
 const sources = import.meta.glob<string>('/node_modules/typescript/lib/lib.*.d.ts', {
@@ -40,17 +42,30 @@ self.onmessage = (event: MessageEvent<unknown>): void => {
     typeof value.requestId !== 'string' ||
     !value.requestId ||
     value.requestId.length > 128 ||
-    !isReactCompileInput(value.input)
+    !isReactCompileInput(value.input) ||
+    !value.input.profile
   )
     return;
-  const diagnostics = checkPropsSource(value.input.files);
+  const input = value.input;
+  const analysis =
+    input.profile === 'static-components-v1'
+      ? analyzeStaticComponents(input.files['components.tsx'] ?? '')
+      : undefined;
+  const diagnostics = analysis
+    ? Object.keys(input.files).sort().join(',') === 'components.tsx,main.tsx,types.ts' &&
+      isStaticComponentsScaffold(input.files)
+      ? analysis.diagnostics
+      : [{ code: 0, message: '読み取り専用の起動処理と型定義を元に戻してください。' }]
+    : checkPropsSource(input.files);
+  const compiled = diagnostics.length
+    ? { status: 'type-error', diagnostics }
+    : compileReactTypeScript(input.files, libraries, reactLibraries);
   self.postMessage({
     kind: 'compile',
     requestId: value.requestId,
     sessionId: value.input.sessionId,
     revision: value.input.revision,
-    result: diagnostics.length
-      ? { status: 'type-error', diagnostics }
-      : compileReactTypeScript(value.input.files, libraries, reactLibraries),
+    result:
+      compiled.status === 'ready' && analysis ? { ...compiled, facts: analysis.facts } : compiled,
   });
 };

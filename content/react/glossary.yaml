@@ -4,14 +4,33 @@ entries:
     term: Component
     definition: ここではデータを受け取り、Reactで表示する内容を返す関数。名前は大文字から始める。
     firstSlideId: react-ch01-l01-s01
-    relatedIds: [jsx, props]
+    relatedIds:
+      - jsx
+      - props
   - id: jsx
     term: JSX
     definition: JavaScript内で表示を書く構文。HTML文字列ではなく、型検査と変換を経てReactへ渡す。
     firstSlideId: react-ch01-l01-s02
-    relatedIds: [component]
+    relatedIds:
+      - component
   - id: props
     term: Props
     definition: 呼び出し元からComponentへ渡す値。ここではquestionという名前で問題オブジェクトを渡す。
     firstSlideId: react-ch01-l01-s03
-    relatedIds: [component, jsx]
+    relatedIds:
+      - component
+      - jsx
+  - id: composition
+    term: Composition
+    definition: Componentを組み合わせて表示を作ること。ここでは呼び出し元が枠と中身をJSXで組み合わせる。
+    firstSlideId: react-ch01-l03-s01
+    relatedIds:
+      - component
+      - children
+  - id: children
+    term: children
+    definition: Componentの開始タグと終了タグの間に置いた内容を受け取るProps。ここでは用意済みの型で1つのJSXを受け取る。
+    firstSlideId: react-ch01-l03-s01
+    relatedIds:
+      - props
+      - composition

@@ -1,0 +1,409 @@
+id: react-ch01-l03-e01
+kind: standard
+workspaceId: react-ch01-l03-e01
+countsTowardStandardExerciseTotal: true
+title: childrenで表示を組み合わせる
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: react-children-slot
+    minimumLevel: transform
+scaffoldLevel: transform
+runtime:
+  kind: react
+  entryFile: main.tsx
+  sourceType: module
+  capabilityProfile: dom
+  primaryOutput: preview
+  profile: static-components-v1
+  learningGoal: composition
+steps:
+  - id: render-children
+    file: components.tsx
+    target: 枠の中身を表示する位置
+    starterAnchor: <p>中身を後で表示</p>
+    change: 受け取ったchildrenを波括弧で表示する
+    observe: 呼び出し元で組み合わせた2つのカードが枠の内側に現れる
+    requiresConceptIds:
+      - react-children-slot
+    validationRuleIds:
+      - react-ch01-l03-e01-r01
+      - react-ch01-l03-e01-r02
+      - react-ch01-l03-e01-r03
+      - react-ch01-l03-e01-r04
+      - react-ch01-l03-e01-r05
+      - react-ch01-l03-e01-r06
+      - react-ch01-l03-e01-r07
+      - react-ch01-l03-e01-r08
+files:
+  - path: components.tsx
+    language: react
+    source: starter/components.tsx
+    editable: true
+  - path: main.tsx
+    language: react
+    source: starter/main.tsx
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: starter/types.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+solutionFiles:
+  - path: components.tsx
+    language: react
+    source: solution/components.tsx
+    editable: false
+  - path: main.tsx
+    language: react
+    source: solution/main.tsx
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: solution/types.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: react-ch01-l03-e01-r01
+    label: 学習テーマの見出し
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: h1
+    assertion:
+      kind: text
+      operator: equals
+      expected: 学習テーマ
+    feedback:
+      target: components.tsxとPreview
+      expected: 学習テーマの見出し
+      nextAction: 渡すPropsと受け取る側のJSXを読み比べ、テーマ名と説明を確認します。
+    hintId: react-ch01-l03-e01-h02
+    relatedSlideId: react-ch01-l03-s02
+  - id: react-ch01-l03-e01-r02
+    label: 2つのテーマ見出し
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: h2
+    assertion:
+      kind: count
+      operator: equals
+      expected: 2
+    feedback:
+      target: components.tsxとPreview
+      expected: 2つのテーマ見出し
+      nextAction: 渡すPropsと受け取る側のJSXを読み比べ、テーマ名と説明を確認します。
+    hintId: react-ch01-l03-e01-h02
+    relatedSlideId: react-ch01-l03-s02
+  - id: react-ch01-l03-e01-r03
+    label: HTMLのテーマ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#root'
+    assertion:
+      kind: text
+      operator: contains
+      expected: HTML
+    feedback:
+      target: components.tsxとPreview
+      expected: HTMLのテーマ
+      nextAction: 渡すPropsと受け取る側のJSXを読み比べ、テーマ名と説明を確認します。
+    hintId: react-ch01-l03-e01-h02
+    relatedSlideId: react-ch01-l03-s02
+  - id: react-ch01-l03-e01-r04
+    label: CSSのテーマ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#root'
+    assertion:
+      kind: text
+      operator: contains
+      expected: CSS
+    feedback:
+      target: components.tsxとPreview
+      expected: CSSのテーマ
+      nextAction: 渡すPropsと受け取る側のJSXを読み比べ、テーマ名と説明を確認します。
+    hintId: react-ch01-l03-e01-h02
+    relatedSlideId: react-ch01-l03-s02
+  - id: react-ch01-l03-e01-r05
+    label: HTMLの説明
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#root'
+    assertion:
+      kind: text
+      operator: contains
+      expected: 内容を組み立てる
+    feedback:
+      target: components.tsxとPreview
+      expected: HTMLの説明
+      nextAction: 渡すPropsと受け取る側のJSXを読み比べ、テーマ名と説明を確認します。
+    hintId: react-ch01-l03-e01-h02
+    relatedSlideId: react-ch01-l03-s02
+  - id: react-ch01-l03-e01-r06
+    label: CSSの説明
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#root'
+    assertion:
+      kind: text
+      operator: contains
+      expected: 見た目を整える
+    feedback:
+      target: components.tsxとPreview
+      expected: CSSの説明
+      nextAction: 渡すPropsと受け取る側のJSXを読み比べ、テーマ名と説明を確認します。
+    hintId: react-ch01-l03-e01-h02
+    relatedSlideId: react-ch01-l03-s02
+  - id: react-ch01-l03-e01-r07
+    label: 受け取ったchildrenへ表示Componentを組み合わせる
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: react-learning
+      file: components.tsx
+    assertion:
+      kind: react-learning
+      goal: composition
+    feedback:
+      target: components.tsxの引数とreturn
+      expected: 枠のComponentが受け取ったchildrenを表示し、呼び出し元で組み合わせたJSXを枠の中へ届けられる。
+      nextAction: タグの内側に置いたJSXはchildrenというPropsになります。枠の関数が受け取っても、return内で表示しなければ現れません。
+    hintId: react-ch01-l03-e01-h02
+    relatedSlideId: react-ch01-l03-s02
+  - id: react-ch01-l03-e01-r08
+    label: 枠の中へ2つのカードを配置する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: section section h2
+    assertion:
+      kind: count
+      operator: equals
+      expected: 2
+    feedback:
+      target: LearningPanelのchildrenとPreview
+      expected: 枠の中へ2つのカードを配置する
+      nextAction: カードを枠のタグの内側へ渡し、枠でchildrenを表示します。内部名や補助Componentの数は自由です。
+    hintId: react-ch01-l03-e01-h02
+    relatedSlideId: react-ch01-l03-s02
+hints:
+  - id: react-ch01-l03-e01-h01
+    level: 1
+    title: 渡す側と受け取る側を探す
+    text: 呼び出し元のLearningPanelの開始タグと終了タグ、その間のJSX、受け取る側の引数を見比べます。
+    relatedSlideId: react-ch01-l03-s02
+  - id: react-ch01-l03-e01-h02
+    level: 2
+    title: Propsから表示へつなぐ
+    text: タグの内側に置いたJSXはchildrenというPropsになります。枠の関数が受け取っても、return内で表示しなければ現れません。
+    relatedSlideId: react-ch01-l03-s02
+  - id: react-ch01-l03-e01-h03
+    level: 3
+    title: 修正位置を確かめる
+    text: LearningPanelの固定pを{children}へ置き換えます。2つのカードを呼び出し元に残し、枠の中で表示を確認します。
+    relatedSlideId: react-ch01-l03-s02
+relatedSlideIds:
+  - react-ch01-l03-s01
+  - react-ch01-l03-s02
+  - react-ch01-l03-s03
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: starter
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l03-e01-r02
+      - react-ch01-l03-e01-r03
+      - react-ch01-l03-e01-r04
+      - react-ch01-l03-e01-r05
+      - react-ch01-l03-e01-r06
+      - react-ch01-l03-e01-r07
+      - react-ch01-l03-e01-r08
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/starter.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: solution
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/solution.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: alternative
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/alternative.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: missing-prop
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-2741
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/missing-prop.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: wrong-display
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l03-e01-r06
+      - react-ch01-l03-e01-r07
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/wrong-display.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: static-only
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l03-e01-r07
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/static-only.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
+  - id: swapped-roles
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l03-e01-r07
+    files:
+      - path: components.tsx
+        language: react
+        source: fixtures/swapped-roles.tsx
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/types.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index.html
+        editable: false
