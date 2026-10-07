@@ -21,7 +21,7 @@ supportedDevices:
     - mobile
 prerequisites:
   - typescript
-publicationStatus: draft
+publicationStatus: published
 expectedTotals:
   chapters: 3
   lessons: 15
