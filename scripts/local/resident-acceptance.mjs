@@ -128,10 +128,61 @@ try {
   assert.deepEqual(inspected.HostConfig.CapDrop, ['ALL']);
   assert.equal(
     inspected.Mounts.filter((mount) => ['bind', 'volume'].includes(mount.Type)).length,
-    0,
+    1,
   );
+  assert.equal(inspected.Mounts[0].Destination, '/transport');
+  assert.equal(inspected.Mounts[0].Name, `${owner}_transport`);
+  assert.equal(inspected.HostConfig.Mounts[0].VolumeOptions.Subpath, started.value.runId);
   assert.ok(inspected.Config.Env.every((entry) => !/TOKEN|SECRET|SOCKET|TSUMUCODE/iu.test(entry)));
   assert.equal(await probeProject(learner.Id), true);
+  const controller = await docker('GET', `/containers/${process.env.HOSTNAME}/json`);
+  const network = Object.values(controller.NetworkSettings.Networks)[0];
+  const boundary = await docker('POST', `/containers/${learner.Id}/exec`, {
+    User: '1000:1000',
+    AttachStdout: true,
+    AttachStderr: true,
+    Cmd: [
+      'node',
+      '--input-type=module',
+      '-e',
+      `import assert from 'node:assert/strict';
+import { lstat, unlink, rename, symlink, chmod, access } from 'node:fs/promises';
+import { createConnection } from 'node:net';
+const parent = await lstat('/transport');
+assert.equal(parent.uid, 0);
+assert.equal(parent.gid, 1000);
+assert.equal(parent.mode & 0o777, 0o550);
+assert.equal((await lstat('/transport/http.sock')).isSocket(), true);
+for (const operation of [
+  () => unlink('/transport/http.sock'),
+  () => rename('/transport/http.sock', '/transport/replaced'),
+  () => symlink('/var/run/docker.sock', '/transport/escape'),
+  () => chmod('/transport', 0o770),
+]) await assert.rejects(operation(), (error) => ['EACCES', 'EPERM'].includes(error.code));
+for (const path of ['/var/run/docker.sock', '/var/run/tsumucode-preview/control.sock',
+  '/var/lib/tsumucode/workspaces', '/var/lib/tsumucode/preview-transport',
+  '/workspace/.env', '/workspace/.git', '/root/.aws']) {
+  await assert.rejects(access(path));
+}
+for (const [host, port] of ${JSON.stringify([
+        [network.IPAddress, 4174],
+        [network.Gateway, 4173],
+        ['1.1.1.1', 443],
+        ['host.docker.internal', 4173],
+      ])}) {
+  await new Promise((resolve, reject) => {
+    const socket = createConnection({ host, port });
+    const timeout = setTimeout(() => socket.destroy(new Error('bounded-network-denial')), 500);
+    socket.once('connect', () => { clearTimeout(timeout); socket.destroy(); reject(new Error('network escaped')); });
+    socket.once('error', () => { clearTimeout(timeout); resolve(); });
+  });
+}
+console.log('sealed-transport-and-network-denial');`,
+    ],
+  });
+  await docker('POST', `/exec/${boundary.Id}/start`, { Detach: false, Tty: false }, 5000, true);
+  assert.equal((await docker('GET', `/exec/${boundary.Id}/json`)).ExitCode, 0);
+  passed.push('real-sealed-socket-tamper-secret-mount-and-network-denials');
   // trusted診断execで子プロセスを作り、run停止がcontainer全体を回収することを確認する。
   const child = await docker('POST', `/containers/${learner.Id}/exec`, {
     User: '1000:1000',

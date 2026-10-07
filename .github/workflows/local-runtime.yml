@@ -34,7 +34,7 @@ concurrency:
 jobs:
   boundary:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 20
     env:
       TSUMUCODE_LOCAL_OWNER: tsumucode-learning-ci
       TSUMUCODE_LOCAL_SOCKET: /var/run/docker.sock
@@ -47,7 +47,11 @@ jobs:
       - name: Build fixed learner and trusted services
         run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml --profile build-project build
       - name: Start isolated learning stack
-        run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml up --no-build -d web controller
+        run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml up --no-build -d web controller preview
+      - name: Verify real Browser HTTP, HMR and Preview boundary
+        run: |
+          docker build --file Dockerfile.learning --target browser-checks --tag "$TSUMUCODE_LOCAL_OWNER-browser-checks" .
+          docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256 --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-browser-checks"
       - name: Verify resident workspace and existing Node execution
         run: |
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)

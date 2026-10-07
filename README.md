@@ -106,7 +106,9 @@ Dockerを起動し、リポジトリ直下で次を実行します。初回は�
 学習用webと信頼controllerは開発用appから分離しています。**controllerだけがDocker管理socketを持ち、これはホスト管理に相当する強い権限です。** 学習コードは別の使い捨てコンテナへ渡し、非root・read-only・ネットワークなし・host mountなしで実行します。同時1件、5秒、256 MiB、PID 64、出力64 KiBが上限です。第三者の敵対コードを安全に実行する公開サービスではありません。詳細とAPI仕様は[Local Node設計・検証記録](docs/quality/local-node-runtime.md)にあります。
 
 作者用の固定Vite Projectは、controller専用volumeへSourceを保存して常駐runを起動・停止できます。
-現段階ではAPIだけで、Preview隔離と学習画面への接続は後続Issueで扱います。
+APIの実Previewはrun専用hostの4175番へ分離し、保存した変更をHMRへ反映できます。
+学習画面と採点への接続は後続 #126 で扱います。Origin、Cookie、許可経路とNextの未対応条件は
+[Preview境界の契約](docs/quality/local-preview-boundary.md)にあります。
 保存・Resetの確認範囲と制約は[常駐Workspace設計・検証記録](docs/quality/local-resident-workspace.md)にあります。
 通常の停止・再起動・`down`はSource volumeを保持します。`down --volumes`やvolume pruneは行わないでください。
 
@@ -116,7 +118,7 @@ Dockerを起動し、リポジトリ直下で次を実行します。初回は�
 ./scripts/learn.sh down
 ```
 
-4173番の競合で起動できない場合は、既に起動した学習モードを確認し、他の作業のサービスを勝手に停止せず競合を解消してください。Host/Originの安全確認があるためportだけを変更しないでください。Docker切断時はDockerと学習モードを起動し直して、画面の「プレビューを更新」または「判定する」で再試行します。Browserへの自動切替はありません。
+4173番または4175番の競合で起動できない場合は、既に起動した学習モードを確認し、他の作業のサービスを勝手に停止せず競合を解消してください。Host/Originの安全確認があるためportだけを変更しないでください。Docker切断時はDockerと学習モードを起動し直して、画面の「プレビューを更新」または「判定する」で再試行します。Browserへの自動切替はありません。
 
 PagesとLocalはOriginが異なり、IndexedDBは自動同期しません。移行元HomeからJSONを書き出し、移行先Homeで読み込み差分を確認して反映します。教材ID・進捗・下書き・採点履歴の形式は共通です。
 

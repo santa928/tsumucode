@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
 import { request } from 'node:http';
 import { Buffer } from 'node:buffer';
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, readdir } from 'node:fs/promises';
 import { setTimeout as delay } from 'node:timers/promises';
 import process from 'node:process';
 import { ORIGIN } from './protocol.mjs';
 import { STARTER_FILES } from './project-protocol.mjs';
 import { docker, removeContainer } from './docker-engine.mjs';
 import { projectImage, projectConfig } from './project-engine.mjs';
+import { CONTROL_SOCKET, TRANSPORT_ROOT } from './preview-contract.mjs';
 
 // 専用controllerの再起動前後に実行する。再起動操作は外側のComposeが担当する。
 const owner = process.env.TSUMUCODE_LOCAL_OWNER;
@@ -131,6 +132,16 @@ if (process.env.TSUMUCODE_RESTART_PHASE === 'prepare') {
       JSON.stringify({ label: [`app.tsumucode.owner=${owner}`, 'app.tsumucode.role=learner'] }),
     );
     assert.equal((await docker('GET', `/containers/json?all=1&filters=${filters}`)).length, 0);
+    assert.deepEqual(await readdir(TRANSPORT_ROOT), []);
+    const previewState = await new Promise((resolve, reject) => {
+      const req = request({ socketPath: CONTROL_SOCKET, path: '/active' }, (res) => {
+        res.resume();
+        res.once('end', () => resolve(res.statusCode));
+      });
+      req.on('error', reject);
+      req.end();
+    });
+    assert.equal(previewState, 503);
     assert.equal(
       (await docker('GET', `/containers/${expected.sentinel}/json`)).State.Running,
       true,
