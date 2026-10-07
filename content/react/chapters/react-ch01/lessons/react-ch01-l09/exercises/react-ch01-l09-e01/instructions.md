@@ -1,0 +1,7 @@
+## Contextで親の値を受け取る
+
+まず、固定表示を同じProviderから受け取った値へ結ぶ前に何が起こるか予測してください。components.tsxだけを編集します。ContextをStateと区別し、2つのconsumerが同じProviderの値と更新callbackへ接続する理由を説明できる。
+
+入力欄・要約・文字数が同じ親Stateの更新とやり直しに追従する。固定の型・起動処理・HTMLを変えず、用意済みの3段階Hintを使えます。正解例はSolutionで確認できます。
+
+ContextはProviderから値を取得する責務です。固定表示と子の新しいStateは共有の条件を満たしません。前単元のPropsも適切な選択です。

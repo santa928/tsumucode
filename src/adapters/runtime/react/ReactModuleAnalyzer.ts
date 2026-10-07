@@ -17,6 +17,9 @@ export function jsx() {}
 export function jsxs() {}
 export function createRoot() {}
 export function useState() {}
+export function useReducer() {}
+export function createContext() {}
+export function useContext() {}
 `;
 const PACKAGES: Readonly<Record<string, readonly string[]>> = {
   'react/jsx-runtime': ['jsx', 'jsxs', 'Fragment'],
@@ -47,8 +50,20 @@ export function prepareReactModules(
       const specifier = value.source.value;
       if (typeof specifier !== 'string') throw new Error('Module参照が不正です');
       const fixed =
-        specifier === 'react' && ['interactive-state-v1', 'controlled-form-v1'].includes(profile)
-          ? ['useState']
+        specifier === 'react'
+          ? profile === 'reducer-form-v1' && file === 'components.js'
+            ? ['useReducer']
+            : profile === 'context-sharing-v1'
+              ? file === 'nameContext.js'
+                ? ['createContext']
+                : file === 'main.js'
+                  ? ['useState']
+                  : file === 'components.js'
+                    ? ['useContext']
+                    : undefined
+              : ['interactive-state-v1', 'controlled-form-v1'].includes(profile)
+                ? ['useState']
+                : undefined
           : Object.hasOwn(PACKAGES, specifier)
             ? PACKAGES[specifier]
             : undefined;

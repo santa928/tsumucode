@@ -591,3 +591,177 @@ items:
     visibility: authoring
     path: chapters/react-ch01/lessons/react-ch01-l07/exercises/react-ch01-l07-e01/fixtures/empty-children-parent-display.tsx
     createdAt: 2026-10-07
+  - id: react-reducer-context-original-1
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/exercise.yaml
+  - id: react-reducer-context-original-2
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/fixtures/alias.ts
+  - id: react-reducer-context-original-3
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/fixtures/alternative.ts
+  - id: react-reducer-context-original-4
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/fixtures/components.tsx
+  - id: react-reducer-context-original-5
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/fixtures/index.html
+  - id: react-reducer-context-original-6
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/fixtures/main.tsx
+  - id: react-reducer-context-original-7
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/fixtures/mutation.ts
+  - id: react-reducer-context-original-8
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/fixtures/side-effect.ts
+  - id: react-reducer-context-original-9
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/fixtures/solution.ts
+  - id: react-reducer-context-original-10
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/fixtures/stale-reset.ts
+  - id: react-reducer-context-original-11
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/fixtures/starter.ts
+  - id: react-reducer-context-original-12
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/fixtures/types.ts
+  - id: react-reducer-context-original-13
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/fixtures/wrong-type.ts
+  - id: react-reducer-context-original-14
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/instructions.md
+  - id: react-reducer-context-original-15
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/solution/components.tsx
+  - id: react-reducer-context-original-16
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/solution/index.html
+  - id: react-reducer-context-original-17
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/solution/main.tsx
+  - id: react-reducer-context-original-18
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/solution/reducer.ts
+  - id: react-reducer-context-original-19
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/solution/types.ts
+  - id: react-reducer-context-original-20
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/starter/components.tsx
+  - id: react-reducer-context-original-21
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/starter/index.html
+  - id: react-reducer-context-original-22
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/starter/main.tsx
+  - id: react-reducer-context-original-23
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/starter/reducer.ts
+  - id: react-reducer-context-original-24
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l08/exercises/react-ch01-l08-e01/starter/types.ts
+  - id: react-reducer-context-original-25
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l08/lesson.yaml
+  - id: react-reducer-context-original-26
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l08/slides/s01.md
+  - id: react-reducer-context-original-27
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l08/slides/s02.md
+  - id: react-reducer-context-original-28
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l08/slides/s03.md
+  - id: react-reducer-context-original-29
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/exercise.yaml
+  - id: react-reducer-context-original-30
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/fixtures/alternative.tsx
+  - id: react-reducer-context-original-31
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/fixtures/extra-state.tsx
+  - id: react-reducer-context-original-32
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/fixtures/fixed-length.tsx
+  - id: react-reducer-context-original-33
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/fixtures/guard-side-effect.tsx
+  - id: react-reducer-context-original-34
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/fixtures/index.html
+  - id: react-reducer-context-original-35
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/fixtures/main.tsx
+  - id: react-reducer-context-original-36
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/fixtures/nameContext.ts
+  - id: react-reducer-context-original-37
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/fixtures/shadow-context.tsx
+  - id: react-reducer-context-original-38
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/fixtures/solution.tsx
+  - id: react-reducer-context-original-39
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/fixtures/starter.tsx
+  - id: react-reducer-context-original-40
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/fixtures/trim-summary.tsx
+  - id: react-reducer-context-original-41
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/fixtures/types.ts
+  - id: react-reducer-context-original-42
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/fixtures/wrong-type.tsx
+  - id: react-reducer-context-original-43
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/instructions.md
+  - id: react-reducer-context-original-44
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/solution/components.tsx
+  - id: react-reducer-context-original-45
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/solution/index.html
+  - id: react-reducer-context-original-46
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/solution/main.tsx
+  - id: react-reducer-context-original-47
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/solution/nameContext.ts
+  - id: react-reducer-context-original-48
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/solution/types.ts
+  - id: react-reducer-context-original-49
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/starter/components.tsx
+  - id: react-reducer-context-original-50
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/starter/index.html
+  - id: react-reducer-context-original-51
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/starter/main.tsx
+  - id: react-reducer-context-original-52
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/starter/nameContext.ts
+  - id: react-reducer-context-original-53
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/starter/types.ts
+  - id: react-reducer-context-original-54
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l09/lesson.yaml
+  - id: react-reducer-context-original-55
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l09/slides/s01.md
+  - id: react-reducer-context-original-56
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l09/slides/s02.md
+  - id: react-reducer-context-original-57
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l09/slides/s03.md
+  - id: react-context-event-error-original
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/fixtures/event-error.tsx

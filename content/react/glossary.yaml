@@ -100,3 +100,23 @@ entries:
     relatedIds:
       - props
       - lifting-state
+  - id: reducer
+    term: reducer
+    definition: 現在のStateとactionから、元Stateを変えずに次のStateを返す関数。
+    firstSlideId: react-ch01-l08-s01
+    relatedIds: []
+  - id: dispatch
+    term: dispatch
+    definition: actionをReactへ渡してReducerによる更新を要求する関数。
+    firstSlideId: react-ch01-l08-s01
+    relatedIds: []
+  - id: context
+    term: Context
+    definition: 親Providerから提供された値を子Componentが取得する仕組み。State自体ではない。
+    firstSlideId: react-ch01-l09-s01
+    relatedIds: []
+  - id: provider
+    term: Provider
+    definition: 特定Contextの値を子へ提供する境界。consumerはその値を使うComponent。
+    firstSlideId: react-ch01-l09-s01
+    relatedIds: []

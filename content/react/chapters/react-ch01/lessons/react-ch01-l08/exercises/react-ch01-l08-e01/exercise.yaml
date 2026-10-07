@@ -1,0 +1,591 @@
+id: react-ch01-l08-e01
+kind: standard
+workspaceId: react-ch01-l08-e01
+countsTowardStandardExerciseTotal: true
+title: Reducerへ更新のルールをまとめる
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: react-reducer-action
+    minimumLevel: transform
+  - conceptId: react-pure-reducer
+    minimumLevel: transform
+scaffoldLevel: transform
+runtime:
+  kind: react
+  entryFile: main.tsx
+  sourceType: module
+  capabilityProfile: dom
+  primaryOutput: preview
+  profile: reducer-form-v1
+  learningGoal: reducer-form
+steps:
+  - id: connect-responsibility
+    file: reducer.ts
+    target: submitted actionの次State
+    starterAnchor: action.type === 'submitted'
+    change: 送信後も入力中になる更新ルールを直す
+    observe: 入力・送信・やり直し後の文字数と検証案内を確かめる
+    requiresConceptIds:
+      - react-reducer-action
+      - react-pure-reducer
+    validationRuleIds:
+      - react-ch01-l08-e01-r01
+      - react-ch01-l08-e01-r02
+      - react-ch01-l08-e01-r03
+      - react-ch01-l08-e01-r04
+files:
+  - path: reducer.ts
+    language: typescript
+    source: starter/reducer.ts
+    editable: true
+  - path: main.tsx
+    language: react
+    source: starter/main.tsx
+    editable: false
+  - path: components.tsx
+    language: react
+    source: starter/components.tsx
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: starter/types.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: false
+solutionFiles:
+  - path: reducer.ts
+    language: typescript
+    source: solution/reducer.ts
+    editable: false
+  - path: main.tsx
+    language: react
+    source: solution/main.tsx
+    editable: false
+  - path: components.tsx
+    language: react
+    source: solution/components.tsx
+    editable: false
+  - path: types.ts
+    language: typescript
+    source: solution/types.ts
+    editable: false
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: react-ch01-l08-e01-r01
+    label: 見出し
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: h1
+    assertion:
+      kind: text
+      operator: equals
+      expected: 名前のForm
+    feedback:
+      target: reducer.tsとPreview
+      expected: 名前のForm
+      nextAction: 入力・送信・やり直し後の文字数と検証案内を確かめる
+    hintId: react-ch01-l08-e01-h02
+    relatedSlideId: react-ch01-l08-s02
+  - id: react-ch01-l08-e01-r02
+    label: 初期の文字数
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#length'
+    assertion:
+      kind: text
+      operator: equals
+      expected: '0'
+    feedback:
+      target: reducer.tsとPreview
+      expected: '0'
+      nextAction: 入力・送信・やり直し後の文字数と検証案内を確かめる
+    hintId: react-ch01-l08-e01-h02
+    relatedSlideId: react-ch01-l08-s02
+  - id: react-ch01-l08-e01-r03
+    label: 初期の案内
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: selector
+      selector: '#message'
+    assertion:
+      kind: text
+      operator: equals
+      expected: 入力中
+    feedback:
+      target: reducer.tsとPreview
+      expected: 入力中
+      nextAction: 入力・送信・やり直し後の文字数と検証案内を確かめる
+    hintId: react-ch01-l08-e01-h02
+    relatedSlideId: react-ch01-l08-s02
+  - id: react-ch01-l08-e01-r04
+    label: 入力・送信・やり直しのactionから純粋な次Stateを返し、dispatchと更新ルールの役割を説明できる。
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: react-learning
+      file: reducer.ts
+    assertion:
+      kind: react-learning
+      goal: reducer-form
+    feedback:
+      target: reducer.tsとPreview
+      expected: 入力・送信・やり直しのactionから純粋な次Stateを返し、dispatchと更新ルールの役割を説明できる。
+      nextAction: 入力・送信・やり直し後の文字数と検証案内を確かめる
+    hintId: react-ch01-l08-e01-h02
+    relatedSlideId: react-ch01-l08-s02
+interactionScenarios:
+  - id: reducer-form-input-submit-reset
+    label: 1つのStateから入力・検証表示を導く
+    actions:
+      - id: empty-submit
+        kind: click
+        selector: '#submit'
+      - id: spaces
+        kind: fill
+        selector: '#name'
+        value: '   '
+      - id: spaces-submit
+        kind: click
+        selector: '#submit'
+      - id: short-name
+        kind: fill
+        selector: '#name'
+        value: Ada
+      - id: valid-submit
+        kind: click
+        selector: '#submit'
+      - id: long-name
+        kind: fill
+        selector: '#name'
+        value: TypeScript
+      - id: resubmit
+        kind: click
+        selector: '#submit'
+      - id: reset
+        kind: click
+        selector: '#reset'
+    checkpoints:
+      - id: after-empty-submit
+        afterActionId: empty-submit
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: ''
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '0'
+          - id: message
+            kind: selector-text
+            selector: '#message'
+            equals: 名前を入力してください
+          - id: invalid
+            kind: attribute
+            selector: '#name'
+            name: aria-invalid
+            equals: 'true'
+          - id: canceled
+            kind: submit-prevented
+      - id: after-spaces
+        afterActionId: spaces
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: '   '
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '3'
+          - id: message
+            kind: selector-text
+            selector: '#message'
+            equals: 入力中
+          - id: invalid
+            kind: attribute
+            selector: '#name'
+            name: aria-invalid
+            equals: 'false'
+      - id: after-spaces-submit
+        afterActionId: spaces-submit
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: '   '
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '3'
+          - id: message
+            kind: selector-text
+            selector: '#message'
+            equals: 名前を入力してください
+          - id: invalid
+            kind: attribute
+            selector: '#name'
+            name: aria-invalid
+            equals: 'true'
+          - id: canceled
+            kind: submit-prevented
+      - id: after-short-name
+        afterActionId: short-name
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: Ada
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '3'
+          - id: message
+            kind: selector-text
+            selector: '#message'
+            equals: 入力中
+          - id: invalid
+            kind: attribute
+            selector: '#name'
+            name: aria-invalid
+            equals: 'false'
+      - id: after-valid-submit
+        afterActionId: valid-submit
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: Ada
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '3'
+          - id: message
+            kind: selector-text
+            selector: '#message'
+            equals: 送信を受け付けました
+          - id: invalid
+            kind: attribute
+            selector: '#name'
+            name: aria-invalid
+            equals: 'false'
+          - id: canceled
+            kind: submit-prevented
+      - id: after-long-name
+        afterActionId: long-name
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: TypeScript
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '10'
+          - id: message
+            kind: selector-text
+            selector: '#message'
+            equals: 入力中
+          - id: invalid
+            kind: attribute
+            selector: '#name'
+            name: aria-invalid
+            equals: 'false'
+      - id: after-resubmit
+        afterActionId: resubmit
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: TypeScript
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '10'
+          - id: message
+            kind: selector-text
+            selector: '#message'
+            equals: 送信を受け付けました
+          - id: invalid
+            kind: attribute
+            selector: '#name'
+            name: aria-invalid
+            equals: 'false'
+          - id: canceled
+            kind: submit-prevented
+      - id: after-reset
+        afterActionId: reset
+        expectations:
+          - id: input
+            kind: input-value
+            selector: '#name'
+            equals: ''
+          - id: length
+            kind: selector-text
+            selector: '#length'
+            equals: '0'
+          - id: message
+            kind: selector-text
+            selector: '#message'
+            equals: 入力中
+          - id: invalid
+            kind: attribute
+            selector: '#name'
+            name: aria-invalid
+            equals: 'false'
+hints:
+  - id: react-ch01-l08-e01-h01
+    level: 1
+    title: 修正位置を探す
+    text: reducer.tsのsubmitted分岐と送信直後の表示を見比べます。
+    relatedSlideId: react-ch01-l08-s02
+  - id: react-ch01-l08-e01-h02
+    level: 2
+    title: 値の由来を追う
+    text: 入力変更と送信は別actionです。Stateの名前と送信を試したかを表すフラグを分けて追います。
+    relatedSlideId: react-ch01-l08-s02
+  - id: react-ch01-l08-e01-h03
+    level: 3
+    title: 責務と操作後の一致を確かめる
+    text: 送信actionでは入力済みの名前を保ち、送信を試したかを表すフラグを更新します。元Stateへの代入は不要です。
+    relatedSlideId: react-ch01-l08-s02
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+fixtures:
+  - id: starter
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l08-e01-r04
+      - interaction:reducer-form-input-submit-reset:after-empty-submit:message
+      - interaction:reducer-form-input-submit-reset:after-empty-submit:invalid
+      - interaction:reducer-form-input-submit-reset:after-spaces-submit:message
+      - interaction:reducer-form-input-submit-reset:after-spaces-submit:invalid
+      - interaction:reducer-form-input-submit-reset:after-valid-submit:message
+      - interaction:reducer-form-input-submit-reset:after-resubmit:message
+    files:
+      - path: reducer.ts
+        source: fixtures/starter.ts
+        language: typescript
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: components.tsx
+        source: fixtures/components.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: solution
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: reducer.ts
+        source: fixtures/solution.ts
+        language: typescript
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: components.tsx
+        source: fixtures/components.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: alternative
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: reducer.ts
+        source: fixtures/alternative.ts
+        language: typescript
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: components.tsx
+        source: fixtures/components.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: alias
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: reducer.ts
+        source: fixtures/alias.ts
+        language: typescript
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: components.tsx
+        source: fixtures/components.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: stale-reset
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch01-l08-e01-r04
+      - interaction:reducer-form-input-submit-reset:after-reset:input
+      - interaction:reducer-form-input-submit-reset:after-reset:length
+    files:
+      - path: reducer.ts
+        source: fixtures/stale-reset.ts
+        language: typescript
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: components.tsx
+        source: fixtures/components.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: mutation
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-0
+    files:
+      - path: reducer.ts
+        source: fixtures/mutation.ts
+        language: typescript
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: components.tsx
+        source: fixtures/components.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: side-effect
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-0
+    files:
+      - path: reducer.ts
+        source: fixtures/side-effect.ts
+        language: typescript
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: components.tsx
+        source: fixtures/components.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+  - id: wrong-type
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    expectedDiagnosticCodes:
+      - react-type-error-2322
+    files:
+      - path: reducer.ts
+        source: fixtures/wrong-type.ts
+        language: typescript
+        editable: false
+      - path: main.tsx
+        source: fixtures/main.tsx
+        language: react
+        editable: false
+      - path: components.tsx
+        source: fixtures/components.tsx
+        language: react
+        editable: false
+      - path: types.ts
+        source: fixtures/types.ts
+        language: typescript
+        editable: false
+      - path: index.html
+        source: fixtures/index.html
+        language: html
+        editable: false
+relatedSlideIds:
+  - react-ch01-l08-s01
+  - react-ch01-l08-s02
+  - react-ch01-l08-s03
+assets: []

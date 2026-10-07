@@ -132,3 +132,33 @@ lessons:
       Reviewer review_issue109が7Slide・予測/修正課題・3段階Hint・Starter/Solution・18正負Fixtureと有限Runtimeの原稿/コードを独立読解し、正確性と目標整合を承認。空の子と親DOMによる共有fact迂回、trim別解の誤拒否、aria-invalid未説明の3必須指摘を修正し、解消を確認した。最終追加必須指摘0。唯一の親Stateから実入力と兄弟の要約/文字数へ結び、Formの送信取消と派生表示を実操作で確認する。未説明語と意図しないHint漏洩0。
       examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorを通した18正負Fixtureの期待一致、Source不一致/固定型改変拒否、元Event例外messageと次run復帰のretry0成功証拠に依拠する。初回runの前半2失敗は成功に数えず、後半の通常UI3件成功と、Fixtureのみの再検証2件成功を区別する。固定Adaと同値の入力によるstale表示、固定5文字とReactの偶然一致は実挙動と因果を確認してFixtureの期待誤りを修正し、判定Ruleや予算を緩めていない。同位置/同文言の禁止Event読取り診断だけを一意化し、拒否を保つ。
       通常UIでは実input Enter送信、Keyboard Hint/focus復帰、label/エラー案内、採点、全文Source保存・再読込・Resetと一時Stateの初期化、390pxの7Slide/PC案内を確認。ReviewerはPC通常2・390px8・100%拡大2の計12画像を実見。axeはSlide/案内とiframeを除く親画面の範囲。Reviewerの独自実行・hash再計算、断片例の独立実行、実人試用、物理実機、全React教材完成、正式公開の承認へ読み替えない。Courseと台帳のreleaseStatus/verifiedSourceCommit/canonicalDistSha256はdraftを維持する。
+  - lessonId: react-ch01-l08
+    authorId: tsumucode-react-reducer-context-authoring
+    reviewerId: review_issue109
+    sourceHash: 3cbe18bee8ddc1be9a7e86cbf3c80c07779fbf678b465bb72050c49179895c49
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: |-
+      Reviewer review_issue109が6Slide・予測/修正課題・3段階Hint・Starter/Solution・18正負Fixtureと有限Runtimeを独立読解し、accuracy/alignmentを承認。元arrow wrapperの検査後正規化、switch内local scope、goal別feedbackの3コードP2を修正確認。ContextのProvider不在時の既定値と、attemptedが送信を試したかを示す説明も修正確認し、追加の意味上・安全境界上の必須指摘0。未説明語と意図しないHint漏洩0。Propsも適切な判断であり、過剰なContext化を要求しない。
+      examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorで18Fixtureのstatus・診断・失敗Rule IDが一致した2test、Source不一致/固定型改変拒否、Context入力の元例外と次run回復のretry0成功に依拠する。初回通常PC2testは検証側に旧Hint文が残って失敗し、新Hint全文へ修正後の通常UI3test成功を区別して記録する。判定Rule・timeout・期待を弱めていない。
+      通常UIはlabel/native input Enter/送信取消/aria-invalid、Keyboard Hintとfocus復帰、全文Source保存・再読込・採点・Resetと一時State初期化を確認。390pxの新6SlideとPC案内も確認。Reviewerはmobile6・PC案内1・通常PC2・100%拡大2の計11画像を実見し、必須表示問題0で承認。axeはSlide/案内とiframeを除く親画面の範囲。
+      この記録は内容/コード/画像の読解承認であり、残る最終関連検証Gateの成功を代行しない。初回Lintと過剰並列による関連検証の失敗を成功へ数えない。Reviewerの独自実行・hash再計算、Slide断片の単独全実行、実人試用、物理実機、全React完成、正式公開の承認へ読み替えない。Courseと台帳のreleaseStatus/verifiedSourceCommit/canonicalDistSha256はdraftを維持する。
+  - lessonId: react-ch01-l09
+    authorId: tsumucode-react-reducer-context-authoring
+    reviewerId: review_issue109
+    sourceHash: 9f3da3f1856d91d1c15dbc8cb88480fd1e8f591ded7f613ff1c951b49ecea52a
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: |-
+      Reviewer review_issue109が6Slide・予測/修正課題・3段階Hint・Starter/Solution・18正負Fixtureと有限Runtimeを独立読解し、accuracy/alignmentを承認。元arrow wrapperの検査後正規化、switch内local scope、goal別feedbackの3コードP2を修正確認。ContextのProvider不在時の既定値と、attemptedが送信を試したかを示す説明も修正確認し、追加の意味上・安全境界上の必須指摘0。未説明語と意図しないHint漏洩0。Propsも適切な判断であり、過剰なContext化を要求しない。
+      examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorで18Fixtureのstatus・診断・失敗Rule IDが一致した2test、Source不一致/固定型改変拒否、Context入力の元例外と次run回復のretry0成功に依拠する。初回通常PC2testは検証側に旧Hint文が残って失敗し、新Hint全文へ修正後の通常UI3test成功を区別して記録する。判定Rule・timeout・期待を弱めていない。
+      通常UIはlabel/native input Enter/送信取消/aria-invalid、Keyboard Hintとfocus復帰、全文Source保存・再読込・採点・Resetと一時State初期化を確認。390pxの新6SlideとPC案内も確認。Reviewerはmobile6・PC案内1・通常PC2・100%拡大2の計11画像を実見し、必須表示問題0で承認。axeはSlide/案内とiframeを除く親画面の範囲。
+      この記録は内容/コード/画像の読解承認であり、残る最終関連検証Gateの成功を代行しない。初回Lintと過剰並列による関連検証の失敗を成功へ数えない。Reviewerの独自実行・hash再計算、Slide断片の単独全実行、実人試用、物理実機、全React完成、正式公開の承認へ読み替えない。Courseと台帳のreleaseStatus/verifiedSourceCommit/canonicalDistSha256はdraftを維持する。

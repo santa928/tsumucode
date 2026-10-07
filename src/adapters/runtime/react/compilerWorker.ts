@@ -4,6 +4,9 @@ import { analyzeInteractiveState } from './checkInteractiveStateSource';
 import { isInteractiveStateScaffold } from './interactiveStateScaffold';
 import { analyzeControlledForm } from './checkControlledFormSource';
 import { isControlledFormScaffold } from './controlledFormScaffold';
+import { analyzeReducer } from './checkReducerSource';
+import { analyzeContext } from './checkContextSource';
+import { isReducerContextScaffold } from './reducerContextScaffold';
 import { checkPropsSource } from './checkPropsSource';
 import { isReactCompileInput } from './compilerContract';
 import { analyzeStaticComponents } from './checkStaticComponentsSource';
@@ -51,21 +54,33 @@ self.onmessage = (event: MessageEvent<unknown>): void => {
   )
     return;
   const input = value.input;
+  const profile = value.input.profile;
   const analysis =
-    input.profile === 'controlled-form-v1'
-      ? analyzeControlledForm(input.files['components.tsx'] ?? '')
-      : input.profile === 'static-components-v1'
-        ? analyzeStaticComponents(input.files['components.tsx'] ?? '')
-        : input.profile === 'interactive-state-v1'
-          ? analyzeInteractiveState(input.files['components.tsx'] ?? '')
-          : undefined;
+    profile === 'reducer-form-v1'
+      ? analyzeReducer(input.files['reducer.ts'] ?? '')
+      : profile === 'context-sharing-v1'
+        ? analyzeContext(input.files['components.tsx'] ?? '')
+        : profile === 'controlled-form-v1'
+          ? analyzeControlledForm(input.files['components.tsx'] ?? '')
+          : profile === 'static-components-v1'
+            ? analyzeStaticComponents(input.files['components.tsx'] ?? '')
+            : profile === 'interactive-state-v1'
+              ? analyzeInteractiveState(input.files['components.tsx'] ?? '')
+              : undefined;
   const diagnostics = analysis
-    ? Object.keys(input.files).sort().join(',') === 'components.tsx,main.tsx,types.ts' &&
-      (input.profile === 'controlled-form-v1'
-        ? isControlledFormScaffold(input.files)
-        : input.profile === 'interactive-state-v1'
-          ? isInteractiveStateScaffold(input.files)
-          : isStaticComponentsScaffold(input.files))
+    ? Object.keys(input.files).sort().join(',') ===
+        (profile === 'reducer-form-v1'
+          ? 'components.tsx,main.tsx,reducer.ts,types.ts'
+          : profile === 'context-sharing-v1'
+            ? 'components.tsx,main.tsx,nameContext.ts,types.ts'
+            : 'components.tsx,main.tsx,types.ts') &&
+      (['reducer-form-v1', 'context-sharing-v1'].includes(profile)
+        ? isReducerContextScaffold(input.files, profile)
+        : profile === 'controlled-form-v1'
+          ? isControlledFormScaffold(input.files)
+          : profile === 'interactive-state-v1'
+            ? isInteractiveStateScaffold(input.files)
+            : isStaticComponentsScaffold(input.files))
       ? analysis.diagnostics
       : [{ code: 0, message: '読み取り専用の起動処理と型定義を元に戻してください。' }]
     : checkPropsSource(input.files);

@@ -1,0 +1,22 @@
+id: react-ch01-l08
+kind: standard
+title: Reducerへ更新のルールをまとめる
+goal: 入力・送信・やり直しのactionから純粋な次Stateを返し、dispatchと更新ルールの役割を説明できる。
+estimatedMinutes: 35
+prerequisiteLessonIds:
+  - react-ch01-l07
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/react-ch01-l08-e01/exercise.yaml
+reflection: 入力・送信・やり直しのactionから純粋な次Stateを返し、dispatchと更新ルールの役割を説明できる。
+glossaryRefs:
+  - reducer
+  - dispatch
+completion:
+  kind: standard
+  finalSlideId: react-ch01-l08-s03
+  requiredExerciseIds:
+    - react-ch01-l08-e01
