@@ -51,3 +51,19 @@ TypeScript前提を持つReact未経験者の3役を、解答や作者ソース�
 3役の全45組、20標本の性能、独立レビュー、必要CI、React専用公開Gateの照合を完了する。正式公開許可は親thread `01a10b91-1aa7-7475-a007-c3fb4bce8017` の2026-10-07T09:32:00.222350Z本人返信に基づく。公開差分はReactのpublishedと既存frontendへのrequired/[typescript]の末尾Stepのみ。別Courseの承認を流用しない。公開前後の学習入力manifestはこの2箇所だけを正規化し、教材・採点・依存・UI・harnessの差し替えを拒否する。
 
 公開の際は検証済みsource/tree/dist、exact SHA/Run、全site品質CI、配信後のProps/State/Effect/Project・開始/再開/採点/保存/Export/fresh Importを記録する。問題があれば直前の承認済み公開へ戻し、保存済みSourceの扱いを確認する。#123と親 #12 は全条件が揃うまでOpenとする。
+
+## 最終入力の観測と制約
+
+CIで見つかったUnit/Browser収集の混在を修正し、安全停止後のSource・成功履歴保持と正常再採点への復帰を回帰で確認した。Gateの入力scope・履歴条件は維持し、修正後のdraft Source `fde8d31fdb39fe64d853614706e5cd85cf5a5022` でBrowser45件、3代表の各20初回・20Preview・20採点、PC/390pxの読書と実Export/Importを再取得した。Browser45件はretry0・全判定成功。性能は全代表でfailure0、従来予算内だった。
+
+| 代表     | 初回最大 | Preview p95 | 採点 p95 |
+| -------- | -------: | ----------: | -------: |
+| Props    |   8400ms |    1677.9ms | 3009.3ms |
+| Effect   |   6996ms |    1711.9ms | 6641.9ms |
+| Capstone |   7036ms |    1759.6ms | 8545.8ms |
+
+以前のSourceでEffectの暖機測定中に `javascript-budget` が発生した。初回20件・操作16組後の未完原本と、同条件の非正式診断24組48操作で再現しなかった原本を保存した。失敗当時の超過時間・checkpoint数・depthがなく、原因は未確定である。module読み込み待機や遅延更新を含む可能性はあるが、今回の成功を原因解消の証明へ広げない。閾値・実行予算・有限文法は変更していない。
+
+実Compiler後のテスト用portにだけ有限負荷を注入する技術確認では、実Analyzer/Runner/opaque Bridgeの `javascript-budget`・system診断と予算超過を観測し、同じRunnerの新revisionで正常描画・Snapshotへ復帰した。この故障注入は旧失敗原因の再現や性能合格とは別範囲である。保存保護はController回帰で停止中のSource・既存履歴・passing snapshot保持と復帰後の合格1件を確認した。
+
+3役のAI模擬受入は全15教材の可視入力hashが同一で、既存Gateが認める条件で原本を再利用する。実人・物理実機は未確認のままである。Guided/Capstoneの説明にある内部実装語は任意改善の観測として引き継ぐ。正式CI、承認Sourceの祖先条件、実公開と配信後主要操作は公開承認・release台帳・post-deploy記録に対応付ける。

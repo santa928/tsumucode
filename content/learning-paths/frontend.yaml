@@ -13,3 +13,6 @@ steps:
   - courseId: typescript
     role: required
     prerequisiteCourseIds: [javascript]
+  - courseId: react
+    role: required
+    prerequisiteCourseIds: [typescript]
