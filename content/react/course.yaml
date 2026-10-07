@@ -1,33 +1,42 @@
 schemaVersion: 1
 id: react
 title: React はじめの一歩
-description: TypeScriptの問題データをPropsとして渡し、実Reactで問題カードを表示する導入教材。後続教材は制作中。
+description: 型付きPropsの導入から、同じComponentの再利用とchildrenによるCompositionを学ぶReact導入教材。後続教材は制作中。
 audience: TypeScriptのinterface・関数・readonlyとJavaScriptのDOMを学んだReact初学者
-estimatedMinutes: 20
-revision: 2026-10-06.1
+estimatedMinutes: 60
+revision: 2026-10-07.1
 runnerId: react
 validatorId: react
 glossarySource: glossary.yaml
 conceptsSource: concepts.yaml
-documentationSources: []
+documentationSources:
+  - references/react-official.md
 authoringSources: []
 supportedDevices:
   exercise: desktop
-  study: [desktop, tablet, mobile]
-prerequisites: [typescript]
+  study:
+    - desktop
+    - tablet
+    - mobile
+prerequisites:
+  - typescript
 publicationStatus: draft
 expectedTotals:
   chapters: 1
-  lessons: 1
-  conceptSlides: 3
-  standardExercises: 1
+  lessons: 3
+  conceptSlides: 7
+  standardExercises: 3
   guidedProjectLessons: 0
   capstoneLessons: 0
-  estimatedMinutes: 20
+  estimatedMinutes: 60
 provenanceManifestPath: provenance.yaml
-progressMigrations: []
+progressMigrations:
+  - fromRevision: 2026-10-06.1
+    toRevision: 2026-10-07.1
+    steps: []
 phases:
   - id: react-p01-component
     title: データを表示へ渡す
-    description: Component・JSX・Propsの役割を分け、型と実際の表示を確認します。
-    chapterSources: [chapters/react-ch01/chapter.yaml]
+    description: Propsの導入から、Componentの再利用とchildrenを使う組み合わせを段階的に学びます。
+    chapterSources:
+      - chapters/react-ch01/chapter.yaml

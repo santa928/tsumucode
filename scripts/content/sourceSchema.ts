@@ -117,7 +117,7 @@ export const TypeScriptExerciseRuntimeSourceSchema = JavaScriptExerciseRuntimeSo
   sourceType: z.literal('module'),
 });
 
-/** 最初のReact課題のauthoring設定も公開Schemaと同じ固定契約にする。 */
+/** React導入課題のauthoring設定も公開Schemaと同じ固定契約にする。 */
 export const ReactExerciseRuntimeSourceSchema = z
   .object({
     kind: z.literal('react'),
@@ -125,9 +125,17 @@ export const ReactExerciseRuntimeSourceSchema = z
     sourceType: z.literal('module'),
     capabilityProfile: z.literal('dom'),
     primaryOutput: z.literal('preview'),
-    profile: z.literal('props-card-v1'),
+    profile: z.enum(['props-card-v1', 'static-components-v1']),
+    learningGoal: z.enum(['reuse', 'composition']).optional(),
   })
-  .strict();
+  .strict()
+  .refine(
+    (runtime) =>
+      runtime.profile === 'static-components-v1'
+        ? runtime.learningGoal !== undefined
+        : runtime.learningGoal === undefined,
+    { message: '静的Component課題の学習目標をprofileに合わせて指定してください' },
+  );
 
 /** 通常Authoring Sourceを同じ読込経路へ渡す。 */
 export const ExerciseRuntimeSourceSchema = z.discriminatedUnion('kind', [

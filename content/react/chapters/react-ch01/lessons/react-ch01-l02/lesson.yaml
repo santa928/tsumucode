@@ -1,0 +1,23 @@
+id: react-ch01-l02
+kind: standard
+title: 同じComponentへ異なるPropsを渡す
+goal: 呼び出し元と受け取る側を区別し、同じComponentへ渡した異なるPropsがそれぞれの表示になるよう修正できる。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - react-ch01-l01
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/react-ch01-l02-e01/exercise.yaml
+reflection: Componentの定義は1つでも、呼び出し元が異なるPropsを渡せば表示が変わる。渡す側の値と受け取る側の表示を分けて考える。
+glossaryRefs:
+  - component
+  - jsx
+  - props
+completion:
+  kind: standard
+  finalSlideId: react-ch01-l02-s03
+  requiredExerciseIds:
+    - react-ch01-l02-e01

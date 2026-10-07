@@ -53,7 +53,9 @@ Home/Path/Slideの初期graphへReact演習bundle、Compiler Worker、TSX Editor
 
 入力上限16files/131072 UTF-16 code units、Compiler deadline 10000ms、Analyzer deadline 500ms、DOM/module経路の同期guard 250ms・Runner全体1500ms、source map上限4194304 unitsを維持する。今回の静的profileの測定はDocker Chromiumでの技術観察で、低速実機の性能保証ではない。
 
-最新buildのHome初期JSはgzip 181767 bytes、React演習の静的graph増分（共通Editor込み、Compiler Worker別）は338184 bytesで、既存上限内。旧baseline比のHome増分23705 bytesは20480 bytesの注意目安を超え、既存のwarningとして記録する。硬い上限512000 bytesを緩和しない。
+#116完了時のbuildではHome初期JSはgzip 181767 bytes、React演習の静的graph増分（共通Editor込み、Compiler Worker別）は338184 bytesで、既存上限内。旧baseline比のHome増分23705 bytesは20480 bytesの注意目安を超え、既存のwarningとして記録する。硬い上限512000 bytesを緩和しない。
+
+後続の純粋Component再利用・childrenの契約は[Component・Composition導入](react-component-composition-contract.md)を参照する。このprops-card-v1の受付範囲は維持する。
 
 ## 検証の範囲
 

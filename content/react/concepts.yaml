@@ -6,9 +6,31 @@ concepts:
     minimumProjectLevel: read
   - id: react-jsx-role
     introducedBySlideId: react-ch01-l01-s02
-    prerequisiteConceptIds: [react-component-role]
+    prerequisiteConceptIds:
+      - react-component-role
     minimumProjectLevel: read
   - id: react-props-data
     introducedBySlideId: react-ch01-l01-s03
-    prerequisiteConceptIds: [react-jsx-role]
+    prerequisiteConceptIds:
+      - react-jsx-role
+    minimumProjectLevel: transform
+  - id: react-component-reuse
+    introducedBySlideId: react-ch01-l02-s01
+    prerequisiteConceptIds:
+      - react-props-data
+    minimumProjectLevel: transform
+  - id: react-props-render
+    introducedBySlideId: react-ch01-l02-s02
+    prerequisiteConceptIds:
+      - react-component-reuse
+    minimumProjectLevel: transform
+  - id: react-composition
+    introducedBySlideId: react-ch01-l03-s01
+    prerequisiteConceptIds:
+      - react-props-render
+    minimumProjectLevel: transform
+  - id: react-children-slot
+    introducedBySlideId: react-ch01-l03-s02
+    prerequisiteConceptIds:
+      - react-composition
     minimumProjectLevel: transform

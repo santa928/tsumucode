@@ -1,0 +1,24 @@
+id: react-ch01-l03
+kind: standard
+title: childrenで表示を組み合わせる
+goal: 枠のComponentが受け取ったchildrenを表示し、呼び出し元で組み合わせたJSXを枠の中へ届けられる。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - react-ch01-l02
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/react-ch01-l03-e01/exercise.yaml
+reflection: Compositionは表示Componentを組み合わせること。枠はchildrenの具体的なComponent名を知らなくても、受け取ったJSXを表示できる。
+glossaryRefs:
+  - component
+  - props
+  - composition
+  - children
+completion:
+  kind: standard
+  finalSlideId: react-ch01-l03-s03
+  requiredExerciseIds:
+    - react-ch01-l03-e01

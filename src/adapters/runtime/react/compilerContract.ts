@@ -4,12 +4,31 @@ import {
   type TypeScriptCompileInput,
 } from '../typescript/workerContract';
 import type { TypeScriptCompileResult } from '../typescript/compileTypeScript';
+import type { StaticComponentFacts } from './checkStaticComponentsSource';
+
+export type ReactProfile = 'props-card-v1' | 'static-components-v1';
+export interface ReactCompileInput extends TypeScriptCompileInput {
+  readonly profile?: ReactProfile;
+}
+export type ReactCompileResult =
+  | Exclude<TypeScriptCompileResult, { status: 'ready' }>
+  | (Extract<TypeScriptCompileResult, { status: 'ready' }> & {
+      readonly facts?: StaticComponentFacts;
+    });
 
 /** 既存の容量・identity上限を保ち、TSXだけを追加する。予約moduleは入力できない。 */
-export function isReactCompileInput(value: unknown): value is TypeScriptCompileInput {
+export function isReactCompileInput(value: unknown): value is ReactCompileInput {
   if (!value || typeof value !== 'object') return false;
   const input = value as Record<string, unknown>;
-  if (Object.keys(input).sort().join(',') !== 'files,revision,sessionId') return false;
+  const keys = Object.keys(input).sort().join(',');
+  if (keys !== 'files,revision,sessionId' && keys !== 'files,profile,revision,sessionId')
+    return false;
+  if (
+    Object.hasOwn(input, 'profile') &&
+    input['profile'] !== 'props-card-v1' &&
+    input['profile'] !== 'static-components-v1'
+  )
+    return false;
   if (!input.files || typeof input.files !== 'object' || Array.isArray(input.files)) return false;
   const entries = Object.entries(input.files as Record<string, unknown>);
   if (entries.some(([name]) => !/^(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.tsx?$/u.test(name)))
@@ -19,16 +38,42 @@ export function isReactCompileInput(value: unknown): value is TypeScriptCompileI
     source,
   ]);
   if (new Set(normalized.map(([name]) => name)).size !== entries.length) return false;
-  return isTypeScriptCompileInput({ ...input, files: Object.fromEntries<unknown>(normalized) });
+  return isTypeScriptCompileInput({
+    sessionId: input['sessionId'],
+    revision: input['revision'],
+    files: Object.fromEntries<unknown>(normalized),
+  });
 }
 
 /** TSXの出力名を既存のstrict結果guardへ対応させ、余分なemitを拒否する。 */
 export function isReactCompileResult(
   value: unknown,
-  input: TypeScriptCompileInput,
-): value is TypeScriptCompileResult {
-  return isTypeScriptCompileResult(value, {
-    ...input,
+  input: ReactCompileInput,
+): value is ReactCompileResult {
+  let compiled = value;
+  if (input.profile === 'static-components-v1' && value && typeof value === 'object') {
+    const result = value as Record<string, unknown>;
+    if (result['status'] === 'ready') {
+      if (Object.keys(result).sort().join(',') !== 'facts,files,sourceMaps,status') return false;
+      const facts = result['facts'];
+      if (!facts || typeof facts !== 'object' || Array.isArray(facts)) return false;
+      const fields = facts as Record<string, unknown>;
+      if (
+        Object.keys(fields).sort().join(',') !==
+          'rendersAssignedPairs,rendersReceivedChildren,reusesCardWithDistinctProps' ||
+        !Object.values(fields).every((field) => typeof field === 'boolean')
+      )
+        return false;
+      compiled = {
+        status: result['status'],
+        files: result['files'],
+        sourceMaps: result['sourceMaps'],
+      };
+    }
+  }
+  return isTypeScriptCompileResult(compiled, {
+    sessionId: input.sessionId,
+    revision: input.revision,
     files: Object.fromEntries(
       Object.entries(input.files).map(([name, source]) => [name.replace(/\.tsx$/u, '.ts'), source]),
     ),
