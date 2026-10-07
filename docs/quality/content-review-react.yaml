@@ -55,3 +55,39 @@ lessons:
       Reviewerは390pxの新6Slide・PC案内・PCの実表示2点の計9画像を実見し、読みやすさとコード横スクロール、PC案内を承認。未説明語と意図しないHint漏洩は0。
       旧revisionからの空steps移行edgeとSource・履歴・Hint・cursor・passingSnapshot保持の実Migration検証も確認した。PCでの実描画・採点・完了ページ・演習の再読込・全文Source保存・Reset・Keyboard Hintの成功報告と最終コードを確認し、実装も承認。追加必須指摘0。
       Reviewerの独自実行・hash再計算、人の初心者理解、物理実機、全React Course完成、正式公開の承認には読み替えない。Courseと台帳はdraftを維持する。
+  - lessonId: react-ch01-l04
+    authorId: tsumucode-react-state-authoring
+    reviewerId: review_issue109
+    sourceHash: eab3fb14498ba782a4b62b17e7135fe25360441d81c8bff07b16a2e274492f99
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: >-
+      Reviewer review_issue109が全Slide・予測/修正課題・3段階Hint・Solution・8正負Fixtureと有限Runtime契約を独立読解し、内容の正確さと到達目標の整合を承認。
+      Setterと純粋updaterを区別し、1操作内のupdater2回、新配列の更新、一覧全体で一意な項目ID由来のKeyを学習条件と実操作へ結ぶ。未説明語と意図しないHint漏洩は0。
+      単一+2/固定4の迂回、lockDownで使用できない通知API、setter/updaterの説明、Keyの一意性の4必須指摘を修正し、Reviewerが解消を確認。最終の追加必須指摘は0。
+      examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorを通した16正負Fixtureの期待一致、Source不一致・足場改変拒否、元のEvent例外と更新描画例外・次run復帰・停止後応答の成功証拠に基づく。
+      作者のChromium 6件・retry0ではPCの実click/Keyboard操作・Hintのfocus復帰・判定・全文Source保存/再読込/Reset、一時Stateの初期化、390pxの7SlideとPC案内・axeを確認。Reviewerは通常PC2点・390px8点・100%拡大2点の計12画像を実見した。
+      関連117File/1342Testの成功証拠集約と型/Lint/整形/build/subpath/chunk/出典の原ログを確認。並列実行の既存2Fileのtimeoutとworker終了は予算と期待値を変えず単独29件で解消し、最初の実行自体を成功とは記録しない。
+      Reviewerの独自再実行・hash再計算、人の初心者理解、物理実機、全React Course完成、正式公開の承認を意味しない。Courseとこの台帳のreleaseStatus・verifiedSourceCommit・canonicalDistSha256はdraftを維持する。
+  - lessonId: react-ch01-l05
+    authorId: tsumucode-react-state-authoring
+    reviewerId: review_issue109
+    sourceHash: 0ffe71c4d800997d8561a3c38e1e3432207b41e5bf5570a6d306a8174e1df36c
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: >-
+      Reviewer review_issue109が全Slide・予測/修正課題・3段階Hint・Solution・8正負Fixtureと有限Runtime契約を独立読解し、内容の正確さと到達目標の整合を承認。
+      Setterと純粋updaterを区別し、1操作内のupdater2回、新配列の更新、一覧全体で一意な項目ID由来のKeyを学習条件と実操作へ結ぶ。未説明語と意図しないHint漏洩は0。
+      単一+2/固定4の迂回、lockDownで使用できない通知API、setter/updaterの説明、Keyの一意性の4必須指摘を修正し、Reviewerが解消を確認。最終の追加必須指摘は0。
+      examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorを通した16正負Fixtureの期待一致、Source不一致・足場改変拒否、元のEvent例外と更新描画例外・次run復帰・停止後応答の成功証拠に基づく。
+      作者のChromium 6件・retry0ではPCの実click/Keyboard操作・Hintのfocus復帰・判定・全文Source保存/再読込/Reset、一時Stateの初期化、390pxの7SlideとPC案内・axeを確認。Reviewerは通常PC2点・390px8点・100%拡大2点の計12画像を実見した。
+      関連117File/1342Testの成功証拠集約と型/Lint/整形/build/subpath/chunk/出典の原ログを確認。並列実行の既存2Fileのtimeoutとworker終了は予算と期待値を変えず単独29件で解消し、最初の実行自体を成功とは記録しない。
+      Reviewerの独自再実行・hash再計算、人の初心者理解、物理実機、全React Course完成、正式公開の承認を意味しない。Courseとこの台帳のreleaseStatus・verifiedSourceCommit・canonicalDistSha256はdraftを維持する。

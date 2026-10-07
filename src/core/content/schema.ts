@@ -1,3 +1,4 @@
+import { acceptsReactStateScenarios } from './reactStateInteractions';
 import {
   TypeScriptQuizProjectContracts,
   acceptsTypeScriptQuizProjectRuntime,
@@ -307,7 +308,7 @@ export const TypeScriptExerciseRuntimeSchema = JavaScriptExerciseRuntimeSchema.o
   sourceType: z.literal('module'),
 });
 
-/** React導入課題を固定TSX入口と有限のProps・Composition表示へ制限する。 */
+/** React課題を固定TSX入口とprofile別の有限表示・State操作へ制限する。 */
 export const ReactExerciseRuntimeSchema = z
   .object({
     kind: z.literal('react'),
@@ -315,15 +316,17 @@ export const ReactExerciseRuntimeSchema = z
     sourceType: z.literal('module'),
     capabilityProfile: z.literal('dom'),
     primaryOutput: z.literal('preview'),
-    profile: z.enum(['props-card-v1', 'static-components-v1']),
-    learningGoal: z.enum(['reuse', 'composition']).optional(),
+    profile: z.enum(['props-card-v1', 'static-components-v1', 'interactive-state-v1']),
+    learningGoal: z.enum(['reuse', 'composition', 'counter', 'immutable-list']).optional(),
   })
   .strict()
   .refine(
     (runtime) =>
       runtime.profile === 'static-components-v1'
-        ? runtime.learningGoal !== undefined
-        : runtime.learningGoal === undefined,
+        ? ['reuse', 'composition'].includes(runtime.learningGoal ?? '')
+        : runtime.profile === 'interactive-state-v1'
+          ? ['counter', 'immutable-list'].includes(runtime.learningGoal ?? '')
+          : runtime.learningGoal === undefined,
     { message: '静的Component課題の学習目標をprofileに合わせて指定してください' },
   );
 
@@ -1060,7 +1063,7 @@ const ValidationRuleBaseShape = {
   relatedSlideId: IdSchema,
 };
 
-/** 純粋Component課題の学習条件をDOM条件とは別の必須要件にする。 */
+/** ReactのSource学習条件をDOM・操作条件とは別の必須要件にする。 */
 export const ReactLearningRuleDefinitionSchema = z
   .object({
     ...ValidationRuleBaseShape,
@@ -1071,7 +1074,10 @@ export const ReactLearningRuleDefinitionSchema = z
       .object({ kind: z.literal('react-learning'), file: z.literal('components.tsx') })
       .strict(),
     assertion: z
-      .object({ kind: z.literal('react-learning'), goal: z.enum(['reuse', 'composition']) })
+      .object({
+        kind: z.literal('react-learning'),
+        goal: z.enum(['reuse', 'composition', 'counter', 'immutable-list']),
+      })
       .strict(),
   })
   .strict()
@@ -1372,6 +1378,17 @@ export const ExerciseSchema = z
         code: 'custom',
         path: ['interactionScenarios'],
         message: 'submit-preventedはdom-form profileで指定してください',
+      });
+    }
+    if (
+      exercise.runtime?.kind === 'react' &&
+      exercise.runtime.profile === 'interactive-state-v1' &&
+      !acceptsReactStateScenarios(exercise.runtime.learningGoal, exercise.interactionScenarios)
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['interactionScenarios'],
+        message: 'State教材には指定の複数更新・配列操作Scenarioが必要です',
       });
     }
     if (

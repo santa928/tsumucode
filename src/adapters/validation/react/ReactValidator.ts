@@ -1,3 +1,4 @@
+import { acceptsReactStateScenarios } from '../../../core/content/reactStateInteractions';
 import {
   ReactExerciseRuntimeSchema,
   ReactLearningRuleDefinitionSchema,
@@ -60,7 +61,7 @@ export class ReactValidator implements ValidatorAdapter {
     );
     const learningRule = ReactLearningRuleDefinitionSchema.safeParse(learningRules[0]);
     if (
-      parsed.data.profile === 'static-components-v1'
+      parsed.data.profile !== 'props-card-v1'
         ? learningRules.length !== 1 ||
           !learningRule.success ||
           learningRule.data.assertion.goal !== parsed.data.learningGoal
@@ -98,13 +99,28 @@ export class ReactValidator implements ValidatorAdapter {
         });
         if (compiled.status !== 'ready') return blocked();
         if (parsed.data.profile === 'static-components-v1') {
-          if (!compiled.facts) return blocked();
+          if (!compiled.facts || !('reusesCardWithDistinctProps' in compiled.facts))
+            return blocked();
           learned =
             compiled.facts.reusesCardWithDistinctProps &&
             compiled.facts.rendersAssignedPairs &&
             (parsed.data.learningGoal !== 'composition' || compiled.facts.rendersReceivedChildren);
         }
-        files = prepareReactModules(compiled.files);
+        if (parsed.data.profile === 'interactive-state-v1') {
+          if (
+            !compiled.facts ||
+            !('usesState' in compiled.facts) ||
+            !acceptsReactStateScenarios(parsed.data.learningGoal, context.interactionScenarios)
+          )
+            return blocked();
+          learned =
+            compiled.facts.usesState &&
+            compiled.facts.updatesStateFromEvent &&
+            (parsed.data.learningGoal === 'counter'
+              ? compiled.facts.queuesTwoIncrements
+              : compiled.facts.usesImmutableUpdates && compiled.facts.usesStableItemKeys);
+        }
+        files = prepareReactModules(compiled.files, parsed.data.profile);
       }
       const result = await new JavaScriptValidator({
         behaviorOnly: true,
@@ -141,12 +157,25 @@ export class ReactValidator implements ValidatorAdapter {
               passed: learned,
               requirementPassed: learned,
               message: learned
-                ? '受け取ったPropsから表示へのつながりを確認できました。'
-                : '固定表示で済ませず、受け取ったPropsとchildrenから表示へつなげましょう。',
+                ? parsed.data.profile === 'interactive-state-v1'
+                  ? 'Stateの更新と表示へのつながりを確認できました。'
+                  : '受け取ったPropsから表示へのつながりを確認できました。'
+                : parsed.data.profile === 'interactive-state-v1'
+                  ? parsed.data.learningGoal === 'counter'
+                    ? '「2増やす」では、前の値から1増やす純粋updaterを同じhandler内で2回渡しましょう。'
+                    : 'EventからStateを新しい配列へ更新し、項目の安定したIDをKeyにしましょう。'
+                  : '固定表示で済ませず、受け取ったPropsとchildrenから表示へつなげましょう。',
               expected: rule.feedback.expected,
-              actual: learned
-                ? 'Propsと表示のつながりを確認しました。'
-                : 'Componentの再利用・渡す値・childrenの表示を見直します。',
+              actual:
+                parsed.data.profile === 'interactive-state-v1'
+                  ? learned
+                    ? 'Stateの更新と表示のつながりを確認しました。'
+                    : parsed.data.learningGoal === 'counter'
+                      ? '同じStateの表示と、1操作内のupdater2回を見直します。'
+                      : '新配列への更新と、描画項目のID由来のKeyを見直します。'
+                  : learned
+                    ? 'Propsと表示のつながりを確認しました。'
+                    : 'Componentの再利用・渡す値・childrenの表示を見直します。',
               nextAction: rule.feedback.nextAction,
               hintId: rule.hintId,
               relatedSlideId: rule.relatedSlideId,

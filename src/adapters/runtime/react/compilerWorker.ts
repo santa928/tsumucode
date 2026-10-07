@@ -1,5 +1,7 @@
 /// <reference lib="webworker" />
 import { compileReactTypeScript } from '../typescript/compileTypeScript';
+import { analyzeInteractiveState } from './checkInteractiveStateSource';
+import { isInteractiveStateScaffold } from './interactiveStateScaffold';
 import { checkPropsSource } from './checkPropsSource';
 import { isReactCompileInput } from './compilerContract';
 import { analyzeStaticComponents } from './checkStaticComponentsSource';
@@ -50,10 +52,14 @@ self.onmessage = (event: MessageEvent<unknown>): void => {
   const analysis =
     input.profile === 'static-components-v1'
       ? analyzeStaticComponents(input.files['components.tsx'] ?? '')
-      : undefined;
+      : input.profile === 'interactive-state-v1'
+        ? analyzeInteractiveState(input.files['components.tsx'] ?? '')
+        : undefined;
   const diagnostics = analysis
     ? Object.keys(input.files).sort().join(',') === 'components.tsx,main.tsx,types.ts' &&
-      isStaticComponentsScaffold(input.files)
+      (input.profile === 'interactive-state-v1'
+        ? isInteractiveStateScaffold(input.files)
+        : isStaticComponentsScaffold(input.files))
       ? analysis.diagnostics
       : [{ code: 0, message: '読み取り専用の起動処理と型定義を元に戻してください。' }]
     : checkPropsSource(input.files);

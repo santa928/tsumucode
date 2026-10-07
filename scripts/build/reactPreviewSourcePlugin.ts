@@ -41,7 +41,7 @@ export function reactPreviewSourcePlugin(): Plugin {
           chunks.length !== 1 ||
           chunk.imports.length ||
           chunk.dynamicImports.length ||
-          chunk.exports.sort().join(',') !== 'Fragment,createRoot,jsx,jsxs'
+          chunk.exports.sort().join(',') !== 'Fragment,createRoot,jsx,jsxs,useState'
         )
           throw new Error('React bundleは固定exportだけの自己完結moduleである必要があります');
         return chunk.code;

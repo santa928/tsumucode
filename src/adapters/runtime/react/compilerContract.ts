@@ -4,16 +4,17 @@ import {
   type TypeScriptCompileInput,
 } from '../typescript/workerContract';
 import type { TypeScriptCompileResult } from '../typescript/compileTypeScript';
+import type { InteractiveStateFacts } from './checkInteractiveStateSource';
 import type { StaticComponentFacts } from './checkStaticComponentsSource';
 
-export type ReactProfile = 'props-card-v1' | 'static-components-v1';
+export type ReactProfile = 'props-card-v1' | 'static-components-v1' | 'interactive-state-v1';
 export interface ReactCompileInput extends TypeScriptCompileInput {
   readonly profile?: ReactProfile;
 }
 export type ReactCompileResult =
   | Exclude<TypeScriptCompileResult, { status: 'ready' }>
   | (Extract<TypeScriptCompileResult, { status: 'ready' }> & {
-      readonly facts?: StaticComponentFacts;
+      readonly facts?: StaticComponentFacts | InteractiveStateFacts;
     });
 
 /** 既存の容量・identity上限を保ち、TSXだけを追加する。予約moduleは入力できない。 */
@@ -26,7 +27,8 @@ export function isReactCompileInput(value: unknown): value is ReactCompileInput 
   if (
     Object.hasOwn(input, 'profile') &&
     input['profile'] !== 'props-card-v1' &&
-    input['profile'] !== 'static-components-v1'
+    input['profile'] !== 'static-components-v1' &&
+    input['profile'] !== 'interactive-state-v1'
   )
     return false;
   if (!input.files || typeof input.files !== 'object' || Array.isArray(input.files)) return false;
@@ -51,7 +53,11 @@ export function isReactCompileResult(
   input: ReactCompileInput,
 ): value is ReactCompileResult {
   let compiled = value;
-  if (input.profile === 'static-components-v1' && value && typeof value === 'object') {
+  if (
+    ['static-components-v1', 'interactive-state-v1'].includes(input.profile ?? '') &&
+    value &&
+    typeof value === 'object'
+  ) {
     const result = value as Record<string, unknown>;
     if (result['status'] === 'ready') {
       if (Object.keys(result).sort().join(',') !== 'facts,files,sourceMaps,status') return false;
@@ -60,7 +66,9 @@ export function isReactCompileResult(
       const fields = facts as Record<string, unknown>;
       if (
         Object.keys(fields).sort().join(',') !==
-          'rendersAssignedPairs,rendersReceivedChildren,reusesCardWithDistinctProps' ||
+          (input.profile === 'interactive-state-v1'
+            ? 'queuesTwoIncrements,updatesStateFromEvent,usesImmutableUpdates,usesStableItemKeys,usesState'
+            : 'rendersAssignedPairs,rendersReceivedChildren,reusesCardWithDistinctProps') ||
         !Object.values(fields).every((field) => typeof field === 'boolean')
       )
         return false;

@@ -1,0 +1,23 @@
+id: react-ch01-l04
+kind: standard
+title: EventでStateを複数回更新する
+goal: EventでStateを更新し、更新関数を使って1操作内の複数更新を予測・修正できる。
+estimatedMinutes: 25
+prerequisiteLessonIds:
+  - react-ch01-l03
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/react-ch01-l04-e01/exercise.yaml
+reflection: 今のStateはその描画の値。前の更新結果を受け取る更新関数と、固定の値への置換を区別する。
+glossaryRefs:
+  - event-handler
+  - state
+  - updater
+completion:
+  kind: standard
+  finalSlideId: react-ch01-l04-s03
+  requiredExerciseIds:
+    - react-ch01-l04-e01
