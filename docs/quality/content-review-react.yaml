@@ -162,3 +162,48 @@ lessons:
       examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorで18Fixtureのstatus・診断・失敗Rule IDが一致した2test、Source不一致/固定型改変拒否、Context入力の元例外と次run回復のretry0成功に依拠する。初回通常PC2testは検証側に旧Hint文が残って失敗し、新Hint全文へ修正後の通常UI3test成功を区別して記録する。判定Rule・timeout・期待を弱めていない。
       通常UIはlabel/native input Enter/送信取消/aria-invalid、Keyboard Hintとfocus復帰、全文Source保存・再読込・採点・Resetと一時State初期化を確認。390pxの新6SlideとPC案内も確認。Reviewerはmobile6・PC案内1・通常PC2・100%拡大2の計11画像を実見し、必須表示問題0で承認。axeはSlide/案内とiframeを除く親画面の範囲。
       この記録は内容/コード/画像の読解承認であり、残る最終関連検証Gateの成功を代行しない。初回Lintと過剰並列による関連検証の失敗を成功へ数えない。Reviewerの独自実行・hash再計算、Slide断片の単独全実行、実人試用、物理実機、全React完成、正式公開の承認へ読み替えない。Courseと台帳のreleaseStatus/verifiedSourceCommit/canonicalDistSha256はdraftを維持する。
+  - lessonId: react-ch01-l10
+    authorId: tsumucode-react-hook-authoring
+    reviewerId: review_issue109
+    sourceHash: f71fa1b44163a10fa139531daa00415cc0d3fae8c32c171d7f0a15334f0a8a40
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: |-
+      Reviewer review_issue109が9Slide・予測/修正課題・3段階Hint・Starter/Solution・24正負Fixtureと有限Runtimeを独立読解し、accuracy/alignmentを承認。sourceHook.tsの学習Rule契約、初出setup/listener/通常の補助関数の説明、括弧付きJSXの同じ純粋検査への接続、固定表示の共通化を確認し、追加必須指摘0。Refは指定inputのnull安全focusに閉じ、表示はStateから導く。Effect不要の導出文字数を正例とし、Custom Hookの処理再利用と各instanceのState独立性を区別する。
+      examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorで各8Fixtureのstatus・診断・失敗Ruleが一致した証拠に依拠する。Refは初回、Effectは括弧修正後、Hookは最終48秒/retry0の成功を区別する。Ref/Effectの旧payloadは現存せず成功ログに依拠し、Hookの最終原JSONを確認した。固定購読の変更・Source不一致を拒否する。Hookのreadonly表示を共通化して231〜236Factへ縮小し、既存256上限を保った。fixed-sourceのB誤値がA非表示直後も残る2失敗Ruleの期待漏れを補い、判定/Scenarioを弱めていない。失敗runを成功には数えない。
+      通常UI3単元の未完判定→dialogをKeyboardで閉じる→修正→実DOM→採点→Source保存往復/reload→Resetを確認。Refの実focus、Effectの切替直後の現在値/古いDOM Event無視/cleanup/非表示中の値変更/再mount、HookのA/B独立更新を確認。390pxの9Slide/PC案内・進捗・外側overflowなしとaxe、親PC画面のaxeを確認（iframeはaxe範囲外）。ReviewerはPC通常3・100%拡大3・mobile9・案内1の実画像16枚を確認し、必須表示問題0。
+      後着通知は解除後の旧DOM入力Eventであり、通信やキュー済callbackの検証ではない。Reviewer独自実行/hash再計算、Slide抜粋の単独全実行、説明能力の実測、人間受入・物理実機・全React完成・正式公開の承認へ読み替えない。最終関連Gateは別途確認する。Course/台帳の公開状態と公開SHA/hashはdraftを維持する。
+  - lessonId: react-ch01-l11
+    authorId: tsumucode-react-hook-authoring
+    reviewerId: review_issue109
+    sourceHash: f490a7ce09d64cbdd3cabee8c84fd1bd91162d19d95cc219e9a6bf31e1099e8e
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: |-
+      Reviewer review_issue109が9Slide・予測/修正課題・3段階Hint・Starter/Solution・24正負Fixtureと有限Runtimeを独立読解し、accuracy/alignmentを承認。sourceHook.tsの学習Rule契約、初出setup/listener/通常の補助関数の説明、括弧付きJSXの同じ純粋検査への接続、固定表示の共通化を確認し、追加必須指摘0。Refは指定inputのnull安全focusに閉じ、表示はStateから導く。Effect不要の導出文字数を正例とし、Custom Hookの処理再利用と各instanceのState独立性を区別する。
+      examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorで各8Fixtureのstatus・診断・失敗Ruleが一致した証拠に依拠する。Refは初回、Effectは括弧修正後、Hookは最終48秒/retry0の成功を区別する。Ref/Effectの旧payloadは現存せず成功ログに依拠し、Hookの最終原JSONを確認した。固定購読の変更・Source不一致を拒否する。Hookのreadonly表示を共通化して231〜236Factへ縮小し、既存256上限を保った。fixed-sourceのB誤値がA非表示直後も残る2失敗Ruleの期待漏れを補い、判定/Scenarioを弱めていない。失敗runを成功には数えない。
+      通常UI3単元の未完判定→dialogをKeyboardで閉じる→修正→実DOM→採点→Source保存往復/reload→Resetを確認。Refの実focus、Effectの切替直後の現在値/古いDOM Event無視/cleanup/非表示中の値変更/再mount、HookのA/B独立更新を確認。390pxの9Slide/PC案内・進捗・外側overflowなしとaxe、親PC画面のaxeを確認（iframeはaxe範囲外）。ReviewerはPC通常3・100%拡大3・mobile9・案内1の実画像16枚を確認し、必須表示問題0。
+      後着通知は解除後の旧DOM入力Eventであり、通信やキュー済callbackの検証ではない。Reviewer独自実行/hash再計算、Slide抜粋の単独全実行、説明能力の実測、人間受入・物理実機・全React完成・正式公開の承認へ読み替えない。最終関連Gateは別途確認する。Course/台帳の公開状態と公開SHA/hashはdraftを維持する。
+  - lessonId: react-ch01-l12
+    authorId: tsumucode-react-hook-authoring
+    reviewerId: review_issue109
+    sourceHash: e9b447d964b88e0924b5c17afb74db49f19c15bb3a789f50e747b144fc81a7bf
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: |-
+      Reviewer review_issue109が9Slide・予測/修正課題・3段階Hint・Starter/Solution・24正負Fixtureと有限Runtimeを独立読解し、accuracy/alignmentを承認。sourceHook.tsの学習Rule契約、初出setup/listener/通常の補助関数の説明、括弧付きJSXの同じ純粋検査への接続、固定表示の共通化を確認し、追加必須指摘0。Refは指定inputのnull安全focusに閉じ、表示はStateから導く。Effect不要の導出文字数を正例とし、Custom Hookの処理再利用と各instanceのState独立性を区別する。
+      examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorで各8Fixtureのstatus・診断・失敗Ruleが一致した証拠に依拠する。Refは初回、Effectは括弧修正後、Hookは最終48秒/retry0の成功を区別する。Ref/Effectの旧payloadは現存せず成功ログに依拠し、Hookの最終原JSONを確認した。固定購読の変更・Source不一致を拒否する。Hookのreadonly表示を共通化して231〜236Factへ縮小し、既存256上限を保った。fixed-sourceのB誤値がA非表示直後も残る2失敗Ruleの期待漏れを補い、判定/Scenarioを弱めていない。失敗runを成功には数えない。
+      通常UI3単元の未完判定→dialogをKeyboardで閉じる→修正→実DOM→採点→Source保存往復/reload→Resetを確認。Refの実focus、Effectの切替直後の現在値/古いDOM Event無視/cleanup/非表示中の値変更/再mount、HookのA/B独立更新を確認。390pxの9Slide/PC案内・進捗・外側overflowなしとaxe、親PC画面のaxeを確認（iframeはaxe範囲外）。ReviewerはPC通常3・100%拡大3・mobile9・案内1の実画像16枚を確認し、必須表示問題0。
+      後着通知は解除後の旧DOM入力Eventであり、通信やキュー済callbackの検証ではない。Reviewer独自実行/hash再計算、Slide抜粋の単独全実行、説明能力の実測、人間受入・物理実機・全React完成・正式公開の承認へ読み替えない。最終関連Gateは別途確認する。Course/台帳の公開状態と公開SHA/hashはdraftを維持する。

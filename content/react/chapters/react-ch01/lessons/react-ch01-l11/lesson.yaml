@@ -1,0 +1,24 @@
+id: react-ch01-l11
+kind: standard
+title: 外部入力をEffectで同期しcleanupする
+goal: 外部入力の現在値を同期し、対象変更と表示終了で同じ購読を解除できる。導出値にEffectが不要な理由を説明できる。
+estimatedMinutes: 40
+prerequisiteLessonIds:
+  - react-ch01-l07
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/react-ch01-l11-e01/exercise.yaml
+reflection: 外部入力の現在値を同期し、対象変更と表示終了で同じ購読を解除できる。導出値にEffectが不要な理由を説明できる。
+glossaryRefs:
+  - effect
+  - effect-dependency
+  - cleanup
+  - mount
+completion:
+  kind: standard
+  finalSlideId: react-ch01-l11-s03
+  requiredExerciseIds:
+    - react-ch01-l11-e01

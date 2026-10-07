@@ -1,0 +1,23 @@
+id: react-ch01-l12
+kind: standard
+title: 同期処理をCustom Hookへ抽出する
+goal: 同期処理をCustom Hookへまとめ、返すStateの値と各呼出しの状態の独立性を説明できる。
+estimatedMinutes: 35
+prerequisiteLessonIds:
+  - react-ch01-l11
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/react-ch01-l12-e01/exercise.yaml
+reflection: 同期処理をCustom Hookへまとめ、返すStateの値と各呼出しの状態の独立性を説明できる。
+glossaryRefs:
+  - custom-hook
+  - effect
+  - cleanup
+completion:
+  kind: standard
+  finalSlideId: react-ch01-l12-s03
+  requiredExerciseIds:
+    - react-ch01-l12-e01

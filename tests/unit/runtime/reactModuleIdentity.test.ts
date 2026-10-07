@@ -95,3 +95,25 @@ it('新APIをprofileとFileに限定し、旧profileへ開放しない', () => {
     }
   }
 });
+
+it('Ref/Effectは新しい課題の編集責務だけへ開放する', () => {
+  for (const [profile, file, api] of [
+    ['ref-focus-v1', 'components.js', 'useRef'],
+    ['effect-sync-v1', 'components.js', 'useEffect'],
+    ['custom-source-hook-v1', 'sourceHook.js', 'useEffect'],
+  ] as const) {
+    const code = `import {${api}} from 'react';`;
+    expect(prepareReactModules({ [file]: code }, profile)[file]).toContain(REACT_MODULE_FILE);
+    expect(() => prepareReactModules({ 'extra.js': code }, profile)).toThrow();
+    for (const old of [
+      'props-card-v1',
+      'static-components-v1',
+      'interactive-state-v1',
+      'controlled-form-v1',
+      'reducer-form-v1',
+      'context-sharing-v1',
+    ] as const) {
+      expect(() => prepareReactModules({ [file]: code }, old)).toThrow();
+    }
+  }
+});

@@ -765,3 +765,339 @@ items:
   - id: react-context-event-error-original
     visibility: authoring
     path: chapters/react-ch01/lessons/react-ch01-l09/exercises/react-ch01-l09-e01/fixtures/event-error.tsx
+  - id: react-hooks-original-1
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/exercise.yaml
+  - id: react-hooks-original-2
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/fixtures/alias.tsx
+  - id: react-hooks-original-3
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/fixtures/alternative.tsx
+  - id: react-hooks-original-4
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/fixtures/dom-escape.tsx
+  - id: react-hooks-original-5
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/fixtures/fixed-length.tsx
+  - id: react-hooks-original-6
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/fixtures/index.html
+  - id: react-hooks-original-7
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/fixtures/main.tsx
+  - id: react-hooks-original-8
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/fixtures/render-focus.tsx
+  - id: react-hooks-original-9
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/fixtures/solution.tsx
+  - id: react-hooks-original-10
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/fixtures/starter.tsx
+  - id: react-hooks-original-11
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/fixtures/types.ts
+  - id: react-hooks-original-12
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/fixtures/wrong-type.tsx
+  - id: react-hooks-original-13
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/instructions.md
+  - id: react-hooks-original-14
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/solution/components.tsx
+  - id: react-hooks-original-15
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/solution/index.html
+  - id: react-hooks-original-16
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/solution/main.tsx
+  - id: react-hooks-original-17
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/solution/types.ts
+  - id: react-hooks-original-18
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/starter/components.tsx
+  - id: react-hooks-original-19
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/starter/index.html
+  - id: react-hooks-original-20
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/starter/main.tsx
+  - id: react-hooks-original-21
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l10/exercises/react-ch01-l10-e01/starter/types.ts
+  - id: react-hooks-original-22
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l10/lesson.yaml
+  - id: react-hooks-original-23
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l10/slides/s01.md
+  - id: react-hooks-original-24
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l10/slides/s02.md
+  - id: react-hooks-original-25
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l10/slides/s03.md
+  - id: react-hooks-original-26
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/exercise.yaml
+  - id: react-hooks-original-27
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/fixtures/alias.tsx
+  - id: react-hooks-original-28
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/fixtures/alternative.tsx
+  - id: react-hooks-original-29
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/fixtures/extra-state.tsx
+  - id: react-hooks-original-30
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/fixtures/fixed-length.tsx
+  - id: react-hooks-original-31
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/fixtures/index.html
+  - id: react-hooks-original-32
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/fixtures/main.tsx
+  - id: react-hooks-original-33
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/fixtures/missing-cleanup.tsx
+  - id: react-hooks-original-34
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/fixtures/side-effect.tsx
+  - id: react-hooks-original-35
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/fixtures/solution.tsx
+  - id: react-hooks-original-36
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/fixtures/source.ts
+  - id: react-hooks-original-37
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/fixtures/starter.tsx
+  - id: react-hooks-original-38
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/fixtures/types.ts
+  - id: react-hooks-original-39
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/instructions.md
+  - id: react-hooks-original-40
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/solution/components.tsx
+  - id: react-hooks-original-41
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/solution/index.html
+  - id: react-hooks-original-42
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/solution/main.tsx
+  - id: react-hooks-original-43
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/solution/source.ts
+  - id: react-hooks-original-44
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/solution/types.ts
+  - id: react-hooks-original-45
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/starter/components.tsx
+  - id: react-hooks-original-46
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/starter/index.html
+  - id: react-hooks-original-47
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/starter/main.tsx
+  - id: react-hooks-original-48
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/starter/source.ts
+  - id: react-hooks-original-49
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l11/exercises/react-ch01-l11-e01/starter/types.ts
+  - id: react-hooks-original-50
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l11/lesson.yaml
+  - id: react-hooks-original-51
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l11/slides/s01.md
+  - id: react-hooks-original-52
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l11/slides/s02.md
+  - id: react-hooks-original-53
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l11/slides/s03.md
+  - id: react-hooks-original-54
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/exercise.yaml
+  - id: react-hooks-original-55
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/fixtures/alias.ts
+  - id: react-hooks-original-56
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/fixtures/alternative.ts
+  - id: react-hooks-original-57
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/fixtures/components.tsx
+  - id: react-hooks-original-58
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/fixtures/fixed-source.ts
+  - id: react-hooks-original-59
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/fixtures/global-state.ts
+  - id: react-hooks-original-60
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/fixtures/index.html
+  - id: react-hooks-original-61
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/fixtures/main.tsx
+  - id: react-hooks-original-62
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/fixtures/missing-cleanup.ts
+  - id: react-hooks-original-63
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/fixtures/side-effect.ts
+  - id: react-hooks-original-64
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/fixtures/solution.ts
+  - id: react-hooks-original-65
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/fixtures/source.ts
+  - id: react-hooks-original-66
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/fixtures/starter.ts
+  - id: react-hooks-original-67
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/fixtures/types.ts
+  - id: react-hooks-original-68
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/instructions.md
+  - id: react-hooks-original-69
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/solution/components.tsx
+  - id: react-hooks-original-70
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/solution/index.html
+  - id: react-hooks-original-71
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/solution/main.tsx
+  - id: react-hooks-original-72
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/solution/source.ts
+  - id: react-hooks-original-73
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/solution/sourceHook.ts
+  - id: react-hooks-original-74
+    createdAt: 2026-10-07
+    visibility: authoring
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/solution/types.ts
+  - id: react-hooks-original-75
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/starter/components.tsx
+  - id: react-hooks-original-76
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/starter/index.html
+  - id: react-hooks-original-77
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/starter/main.tsx
+  - id: react-hooks-original-78
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/starter/source.ts
+  - id: react-hooks-original-79
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/starter/sourceHook.ts
+  - id: react-hooks-original-80
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l12/exercises/react-ch01-l12-e01/starter/types.ts
+  - id: react-hooks-original-81
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l12/lesson.yaml
+  - id: react-hooks-original-82
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l12/slides/s01.md
+  - id: react-hooks-original-83
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l12/slides/s02.md
+  - id: react-hooks-original-84
+    createdAt: 2026-10-07
+    visibility: public
+    path: chapters/react-ch01/lessons/react-ch01-l12/slides/s03.md

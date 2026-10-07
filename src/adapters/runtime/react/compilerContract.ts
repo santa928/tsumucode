@@ -9,6 +9,8 @@ import type { StaticComponentFacts } from './checkStaticComponentsSource';
 import type { ControlledFormFacts } from './checkControlledFormSource';
 import type { ReducerFacts } from './checkReducerSource';
 import type { ContextFacts } from './checkContextSource';
+import type { RefFacts } from './checkRefSource';
+import type { ExternalSourceFacts } from './checkExternalSource';
 
 export type ReactProfile =
   | 'props-card-v1'
@@ -16,7 +18,10 @@ export type ReactProfile =
   | 'interactive-state-v1'
   | 'controlled-form-v1'
   | 'reducer-form-v1'
-  | 'context-sharing-v1';
+  | 'context-sharing-v1'
+  | 'ref-focus-v1'
+  | 'effect-sync-v1'
+  | 'custom-source-hook-v1';
 export interface ReactCompileInput extends TypeScriptCompileInput {
   readonly profile?: ReactProfile;
 }
@@ -28,7 +33,9 @@ export type ReactCompileResult =
         | InteractiveStateFacts
         | ControlledFormFacts
         | ReducerFacts
-        | ContextFacts;
+        | ContextFacts
+        | RefFacts
+        | ExternalSourceFacts;
     });
 
 /** 既存の容量・identity上限を保ち、TSXだけを追加する。予約moduleは入力できない。 */
@@ -45,7 +52,10 @@ export function isReactCompileInput(value: unknown): value is ReactCompileInput 
     input['profile'] !== 'interactive-state-v1' &&
     input['profile'] !== 'controlled-form-v1' &&
     input['profile'] !== 'reducer-form-v1' &&
-    input['profile'] !== 'context-sharing-v1'
+    input['profile'] !== 'context-sharing-v1' &&
+    input['profile'] !== 'ref-focus-v1' &&
+    input['profile'] !== 'effect-sync-v1' &&
+    input['profile'] !== 'custom-source-hook-v1'
   )
     return false;
   if (!input.files || typeof input.files !== 'object' || Array.isArray(input.files)) return false;
@@ -70,17 +80,24 @@ export function isReactCompileResult(
   input: ReactCompileInput,
 ): value is ReactCompileResult {
   let compiled = value;
-  if (
-    [
-      'static-components-v1',
-      'interactive-state-v1',
-      'controlled-form-v1',
-      'reducer-form-v1',
-      'context-sharing-v1',
-    ].includes(input.profile ?? '') &&
-    value &&
-    typeof value === 'object'
-  ) {
+  const expectedFacts: Partial<Record<ReactProfile, string>> = {
+    'static-components-v1':
+      'rendersAssignedPairs,rendersReceivedChildren,reusesCardWithDistinctProps',
+    'interactive-state-v1':
+      'queuesTwoIncrements,updatesStateFromEvent,usesImmutableUpdates,usesStableItemKeys,usesState',
+    'controlled-form-v1':
+      'derivesFromSameState,preventsSubmit,sharesParentState,usesControlledInput,usesSingleState',
+    'reducer-form-v1':
+      'changesNameFromAction,resetsInitialState,returnsFreshState,submitsCurrentName,usesPureReducer',
+    'context-sharing-v1': 'derivesFromProvidedValue,forwardsProvidedUpdate,readsSameProvidedValue',
+    'ref-focus-v1': 'focusesFromEvent,keepsStateForDisplay,usesInputRef',
+    'effect-sync-v1':
+      'cleansSameSubscription,derivesDuringRender,returnsReceivedValue,tracksSelectedSource,usesExternalEffect',
+    'custom-source-hook-v1':
+      'cleansSameSubscription,derivesDuringRender,returnsReceivedValue,tracksSelectedSource,usesExternalEffect',
+  };
+  const expected = expectedFacts[input.profile ?? 'props-card-v1'];
+  if (expected && value && typeof value === 'object') {
     const result = value as Record<string, unknown>;
     if (result['status'] === 'ready') {
       if (Object.keys(result).sort().join(',') !== 'facts,files,sourceMaps,status') return false;
@@ -88,16 +105,7 @@ export function isReactCompileResult(
       if (!facts || typeof facts !== 'object' || Array.isArray(facts)) return false;
       const fields = facts as Record<string, unknown>;
       if (
-        Object.keys(fields).sort().join(',') !==
-          (input.profile === 'reducer-form-v1'
-            ? 'changesNameFromAction,resetsInitialState,returnsFreshState,submitsCurrentName,usesPureReducer'
-            : input.profile === 'context-sharing-v1'
-              ? 'derivesFromProvidedValue,forwardsProvidedUpdate,readsSameProvidedValue'
-              : input.profile === 'controlled-form-v1'
-                ? 'derivesFromSameState,preventsSubmit,sharesParentState,usesControlledInput,usesSingleState'
-                : input.profile === 'interactive-state-v1'
-                  ? 'queuesTwoIncrements,updatesStateFromEvent,usesImmutableUpdates,usesStableItemKeys,usesState'
-                  : 'rendersAssignedPairs,rendersReceivedChildren,reusesCardWithDistinctProps') ||
+        Object.keys(fields).sort().join(',') !== expected ||
         !Object.values(fields).every((field) => typeof field === 'boolean')
       )
         return false;

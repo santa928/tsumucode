@@ -1,0 +1,21 @@
+id: react-ch01-l10
+kind: standard
+title: Refで入力へフォーカスを移す
+goal: DOM参照のRefと表示値のStateを区別し、Eventから入力へnull安全にfocusできる。
+estimatedMinutes: 25
+prerequisiteLessonIds:
+  - react-ch01-l07
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/react-ch01-l10-e01/exercise.yaml
+reflection: DOM参照のRefと表示値のStateを区別し、Eventから入力へnull安全にfocusできる。
+glossaryRefs:
+  - ref
+completion:
+  kind: standard
+  finalSlideId: react-ch01-l10-s03
+  requiredExerciseIds:
+    - react-ch01-l10-e01

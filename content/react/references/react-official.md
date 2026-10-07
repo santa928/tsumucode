@@ -25,3 +25,7 @@
 ## Reducer・Context（Issue #120）
 
 2026-10-07に[useReducer](https://react.dev/reference/react/useReducer)、[ReducerとContextの責務](https://react.dev/learn/scaling-up-with-reducer-and-context)、[createContext](https://react.dev/reference/react/createContext)、[useContext](https://react.dev/reference/react/useContext)を照合。説明・例・課題は独自制作。サイト表示19.3、lockのReact19.2.7と型を維持。3actionの純粋な更新と、同じProviderの取得経路を別単元にし、Propsも適切な選択として保つ。
+
+## Ref・Effect・Custom Hook（Issue #121）
+
+2026-10-07に[useRef](https://react.dev/reference/react/useRef)、[useEffect](https://react.dev/reference/react/useEffect)、[Custom Hookの処理再利用](https://react.dev/learn/reusing-logic-with-custom-hooks)を照合。独自の日本語説明・DOM外部入力・課題を制作。Refは描画Stateと分け、Effectは外部同期と同じ購読のcleanup、Custom Hookは処理再利用とinstanceの独立性に絞る。サイト19.3、lock19.2.7と型pinは維持。後着DOM EventをNetwork応答やキュー済callbackへ読み替えない。

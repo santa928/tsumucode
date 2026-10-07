@@ -1,3 +1,4 @@
+import { acceptsReactHookScenarios } from '../../../core/content/reactHookInteractions';
 import { acceptsReactReducerContextScenarios } from '../../../core/content/reactReducerContextInteractions';
 import { acceptsReactFormScenarios } from '../../../core/content/reactFormInteractions';
 import { acceptsReactStateScenarios } from '../../../core/content/reactStateInteractions';
@@ -17,6 +18,36 @@ import { prepareReactModules, ReactModuleAnalyzer } from '../../runtime/react/Re
 import { reactSourceHash } from '../../runtime/react/reactSourceHash';
 import { isReactWorkspace } from '../../runtime/react/reactWorkspace';
 import { JavaScriptValidator } from '../javascript/JavaScriptValidator';
+
+/** 新Hook課題の検査結果を、その課題の操作へ結び付けて説明する。 */
+function hookFeedback(
+  goal: string | undefined,
+  learned: boolean,
+): { message: string; actual: string } | undefined {
+  if (goal === 'ref-focus')
+    return learned
+      ? {
+          message: 'Refから入力へのfocusと、Stateから表示へのつながりを確認できました。',
+          actual: '指定入力のRef・Event・表示Stateを確認しました。',
+        }
+      : {
+          message:
+            '入力のrefを結び、null安全なfocusをEventから呼び、表示値はStateから導きましょう。',
+          actual: '入力のRefとfocus、表示Stateへの経路を見直します。',
+        };
+  if (goal === 'external-sync' || goal === 'source-hook')
+    return learned
+      ? {
+          message: '選んだ外部入力・Effectの依存値・同じ購読のcleanupを確認できました。',
+          actual: '現在値・対象切替・解除・再mountへの経路を確認しました。',
+        }
+      : {
+          message:
+            'targetを依存値にし、受け取った値をStateへ渡し、同じ購読のcleanupを返しましょう。',
+          actual: '外部入力とState、依存値、返すcleanupを見直します。',
+        };
+  return undefined;
+}
 
 /** 同世代の型検査済みTSXと実DOMだけを採点し、型成功だけで合格にしない。 */
 export class ReactValidator implements ValidatorAdapter {
@@ -122,6 +153,35 @@ export class ReactValidator implements ValidatorAdapter {
               ? compiled.facts.queuesTwoIncrements
               : compiled.facts.usesImmutableUpdates && compiled.facts.usesStableItemKeys);
         }
+        if (parsed.data.profile === 'ref-focus-v1') {
+          if (
+            !compiled.facts ||
+            !('usesInputRef' in compiled.facts) ||
+            !acceptsReactHookScenarios(parsed.data.learningGoal, context.interactionScenarios)
+          )
+            return blocked();
+          learned =
+            compiled.facts.usesInputRef &&
+            compiled.facts.focusesFromEvent &&
+            compiled.facts.keepsStateForDisplay;
+        }
+        if (
+          parsed.data.profile === 'effect-sync-v1' ||
+          parsed.data.profile === 'custom-source-hook-v1'
+        ) {
+          if (
+            !compiled.facts ||
+            !('usesExternalEffect' in compiled.facts) ||
+            !acceptsReactHookScenarios(parsed.data.learningGoal, context.interactionScenarios)
+          )
+            return blocked();
+          learned =
+            compiled.facts.usesExternalEffect &&
+            compiled.facts.tracksSelectedSource &&
+            compiled.facts.cleansSameSubscription &&
+            compiled.facts.returnsReceivedValue &&
+            compiled.facts.derivesDuringRender;
+        }
         if (parsed.data.profile === 'reducer-form-v1') {
           if (
             !compiled.facts ||
@@ -195,6 +255,7 @@ export class ReactValidator implements ValidatorAdapter {
         (result.status === 'pass' || result.status === 'incomplete')
       ) {
         const rule = learningRule.data;
+        const specialized = hookFeedback(parsed.data.learningGoal, learned);
         return {
           ...result,
           status: learned && result.status === 'pass' ? 'pass' : 'incomplete',
@@ -207,32 +268,35 @@ export class ReactValidator implements ValidatorAdapter {
               required: true,
               passed: learned,
               requirementPassed: learned,
-              message: learned
-                ? parsed.data.profile === 'reducer-form-v1'
-                  ? '3つのactionから純粋な次Stateへのつながりを確認できました。'
-                  : parsed.data.profile === 'context-sharing-v1'
-                    ? '同じProviderから2consumerへの値と更新経路を確認できました。'
-                    : parsed.data.profile === 'controlled-form-v1'
-                      ? '入力から同じ親Stateと派生表示へのつながりを確認できました。'
-                      : parsed.data.profile === 'interactive-state-v1'
-                        ? 'Stateの更新と表示へのつながりを確認できました。'
-                        : '受け取ったPropsから表示へのつながりを確認できました。'
-                : parsed.data.profile === 'reducer-form-v1'
-                  ? '入力actionの新しい名前、送信時の現在の名前、やり直しの初期値から新しいStateを返しましょう。'
-                  : parsed.data.profile === 'context-sharing-v1'
-                    ? '同じContextの値と親callbackを入力欄・要約・文字数へつなげましょう。'
-                    : parsed.data.profile === 'controlled-form-v1'
-                      ? parsed.data.learningGoal === 'controlled-form'
-                        ? '入力値を1つのStateへ更新し、表示・文字数を導き、送信を明示的に取り消しましょう。'
-                        : '共通の親Stateを兄弟へ渡し、入力から親の更新callbackと子の要約・文字数へつなげましょう。'
-                      : parsed.data.profile === 'interactive-state-v1'
-                        ? parsed.data.learningGoal === 'counter'
-                          ? '「2増やす」では、前の値から1増やす純粋updaterを同じhandler内で2回渡しましょう。'
-                          : 'EventからStateを新しい配列へ更新し、項目の安定したIDをKeyにしましょう。'
-                        : '固定表示で済ませず、受け取ったPropsとchildrenから表示へつなげましょう。',
+              message:
+                specialized?.message ??
+                (learned
+                  ? parsed.data.profile === 'reducer-form-v1'
+                    ? '3つのactionから純粋な次Stateへのつながりを確認できました。'
+                    : parsed.data.profile === 'context-sharing-v1'
+                      ? '同じProviderから2consumerへの値と更新経路を確認できました。'
+                      : parsed.data.profile === 'controlled-form-v1'
+                        ? '入力から同じ親Stateと派生表示へのつながりを確認できました。'
+                        : parsed.data.profile === 'interactive-state-v1'
+                          ? 'Stateの更新と表示へのつながりを確認できました。'
+                          : '受け取ったPropsから表示へのつながりを確認できました。'
+                  : parsed.data.profile === 'reducer-form-v1'
+                    ? '入力actionの新しい名前、送信時の現在の名前、やり直しの初期値から新しいStateを返しましょう。'
+                    : parsed.data.profile === 'context-sharing-v1'
+                      ? '同じContextの値と親callbackを入力欄・要約・文字数へつなげましょう。'
+                      : parsed.data.profile === 'controlled-form-v1'
+                        ? parsed.data.learningGoal === 'controlled-form'
+                          ? '入力値を1つのStateへ更新し、表示・文字数を導き、送信を明示的に取り消しましょう。'
+                          : '共通の親Stateを兄弟へ渡し、入力から親の更新callbackと子の要約・文字数へつなげましょう。'
+                        : parsed.data.profile === 'interactive-state-v1'
+                          ? parsed.data.learningGoal === 'counter'
+                            ? '「2増やす」では、前の値から1増やす純粋updaterを同じhandler内で2回渡しましょう。'
+                            : 'EventからStateを新しい配列へ更新し、項目の安定したIDをKeyにしましょう。'
+                          : '固定表示で済ませず、受け取ったPropsとchildrenから表示へつなげましょう。'),
               expected: rule.feedback.expected,
               actual:
-                parsed.data.profile === 'reducer-form-v1'
+                specialized?.actual ??
+                (parsed.data.profile === 'reducer-form-v1'
                   ? learned
                     ? '3actionの値の由来と純粋な更新を確認しました。'
                     : 'Reducerの3actionと新しいStateの返却を見直します。'
@@ -252,7 +316,7 @@ export class ReactValidator implements ValidatorAdapter {
                             : '新配列への更新と、描画項目のID由来のKeyを見直します。'
                         : learned
                           ? 'Propsと表示のつながりを確認しました。'
-                          : 'Componentの再利用・渡す値・childrenの表示を見直します。',
+                          : 'Componentの再利用・渡す値・childrenの表示を見直します。'),
               nextAction: rule.feedback.nextAction,
               hintId: rule.hintId,
               relatedSlideId: rule.relatedSlideId,
