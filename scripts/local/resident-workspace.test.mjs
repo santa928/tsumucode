@@ -245,6 +245,38 @@ test.each(['ready', 'image'])(
   },
 );
 
+test('起動応答前の接続切断は準備を中止し、未通知runを作成しない', async () => {
+  await fixture(async ({ manager, engine, isActive }) => {
+    let entered;
+    let release;
+    const paused = new Promise((resolve) => {
+      entered = resolve;
+    });
+    engine.projectImage = () =>
+      new Promise((resolve) => {
+        release = resolve;
+        entered();
+      });
+    let created = 0;
+    const original = engine.docker;
+    engine.docker = (...args) => {
+      if (args[1] === '/containers/create') created++;
+      return original(...args);
+    };
+    const cancellation = new globalThis.AbortController();
+    const starting = manager.start('one', { expectedSourceRevision: 1 }, cancellation.signal);
+    await paused;
+    cancellation.abort();
+    release('fixed-image');
+    await assert.rejects(starting, { status: 408 });
+    const record = await state(manager, 'stopped');
+    assert.equal(created, 0);
+    assert.equal(isActive(), false);
+    assert.equal(record.lastRun.reason, 'client-disconnected');
+    assert.deepEqual(record.files, STARTER_FILES);
+  });
+});
+
 test('status pollはidleを延長しない（短縮された内部診断期限）', async () => {
   await fixture(async ({ store, slot, engine }) => {
     const manager = new ResidentWorkspace({

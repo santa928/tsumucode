@@ -313,11 +313,19 @@ async function handle(req, res) {
         case 'source':
           value = await resident.save(id, input);
           break;
-        case 'start':
-          value = await resident.start(id, input);
+        case 'start': {
+          const cancellation = new globalThis.AbortController();
+          const disconnected = () => {
+            if (!res.writableEnded) cancellation.abort();
+          };
+          // proxyの待機期限やBrowser切断後に、IDを渡せないrunを起動し続けない。
+          res.once('close', disconnected);
+          res.once('finish', () => res.off('close', disconnected));
+          value = await resident.start(id, input, cancellation.signal);
           if (closing) throw new RequestError(503, '学習環境を停止しています。');
           res.statusCode = 202;
           break;
+        }
         case 'stop':
           value = await resident.stop(id, input);
           break;

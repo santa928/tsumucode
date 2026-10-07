@@ -39,12 +39,22 @@ const server = createServer(async (req, res) => {
         },
       },
       (response) => {
+        if (res.destroyed) {
+          response.destroy();
+          return;
+        }
         res.writeHead(response.statusCode ?? 503, response.headers);
         response.pipe(res);
       },
     );
+    const disconnected = () => {
+      if (!res.writableEnded) proxy.destroy();
+    };
+    res.once('close', disconnected);
+    res.once('finish', () => res.off('close', disconnected));
     proxy.setTimeout(15000, () => proxy.destroy());
     proxy.on('error', () => {
+      if (res.destroyed) return;
       if (!res.headersSent) res.writeHead(503, { 'content-type': 'application/json' });
       res.end(
         JSON.stringify({ error: '実行環境へ接続できません。学習モードを確認してください。' }),

@@ -110,6 +110,8 @@ ViteのHTTP portは固定し、UI originへ直接配信しない。#125でCookie
 次の実行前に永続記録の修復を試みる。旧readyを成功として返さない。
 Sourceが壊れた場合や保存に失敗した場合、既存SourceをStarterで黙って上書きしない。
 起動準備中の正常shutdownも終了promiseを待ち、新しいcreateを行わない。
+web proxyの15秒timeoutや早いBrowser切断はcontrollerへ伝え、未完了応答の起動を
+`client-disconnected` で中止・回収する。通常202のfinish後にrunを中止しない。
 
 Viteの `strictPort`、明示した `allowedHosts`、`cors: false`、固定filesystem範囲を使う。
 設定の根拠は[公式server options](https://vite.dev/config/server-options)を参照。
@@ -135,24 +137,31 @@ Viteの `strictPort`、明示した `allowedHosts`、`cors: false`、固定files
 
 2026-10-07、専用owner `tsumucode-learning-issue124` のarm64 Dockerで確認。
 実行Sourceはcontroller image内の7 moduleとworktreeのhashを照合した。
-controllerの最終Source hashは `13fe193c393e1e40fbb2de98eacd148bbda7a1350b6a8012a3a6a85f602126dc`。
+resident/Node/再起動の先行実測に使ったcontroller Source hashは `13fe193c393e1e40fbb2de98eacd148bbda7a1350b6a8012a3a6a85f602126dc`。
 
-| 検証                 | 結果・範囲                                                                                                                                                                   |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 対象Unit             | 16件成功（既存14件と、residentの回収/image準備中shutdown 2件）。Source CAS/上限/symlink/保存障害、旧run終了と保存、停止/probe競合、回収失敗/Reset、idle、旧ID、readiness期限 |
-| 実resident           | 代表6項目成功。実HTTP/fixed inspect、共有枠、保存版とrun版、子プロセスを含む停止、異常終了、確認Reset、他Workspace/owner、起動中断                                           |
-| 実idle               | 同じEngine/profileで内部診断idleを2秒へ短縮し、ready→idleと実体回収/Source保持を確認。製品10分の通し待機は未実施                                                             |
-| 正常controller再起動 | Source全文/版/hash保持、終了理由controller-stopped、自己孤児回収、別owner sentinel保持                                                                                       |
-| 強制controller再起動 | KILL/start後に同じSource保持、controller-restartedで古いready無効化、自己孤児回収、別owner sentinel保持                                                                      |
-| 既存Node             | 実Docker12項目成功。auth/Closure/computed promise/syntax/isolation/共有枠/5秒timeout/cancel/output/memory/child/cleanup                                                      |
-| HTTP障害境界         | Docker HTTP doubleで実controllerの出力障害を15.1秒で確定し、次run成功・準備中shutdownのcreate防止。learner証拠とは区別                                                       |
-| 静的確認             | 関連Lint、対象format、shell構文、diff check成功。固定Dockerfile buildで型確認・学習用production build成功                                                                    |
+| 検証                 | 結果・範囲                                                                                                                                                                                          |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 対象Unit             | 17件成功（保存/Engine/protocol 8件、resident 9件）。Source CAS/上限/symlink/保存障害、旧run終了と保存、停止/probe競合、回収失敗/Reset、idle、旧ID、readiness期限                                    |
+| 実resident           | 代表6項目成功。実HTTP/fixed inspect、共有枠、保存版とrun版、子プロセスを含む停止、異常終了、確認Reset、他Workspace/owner、起動中断                                                                  |
+| 実idle               | 同じEngine/profileで内部診断idleを2秒へ短縮し、ready→idleと実体回収/Source保持を確認。製品10分の通し待機は未実施                                                                                    |
+| 正常controller再起動 | Source全文/版/hash保持、終了理由controller-stopped、自己孤児回収、別owner sentinel保持                                                                                                              |
+| 強制controller再起動 | KILL/start後に同じSource保持、controller-restartedで古いready無効化、自己孤児回収、別owner sentinel保持                                                                                             |
+| 既存Node             | 実Docker12項目成功。auth/Closure/computed promise/syntax/isolation/共有枠/5秒timeout/cancel/output/memory/child/cleanup                                                                             |
+| HTTP障害境界         | Docker HTTP doubleと実web/controllerで出力障害15.073秒、proxy timeout15.013秒、早期client切断を確認。未通知runのcreate防止・Source保持・次run成功・準備中shutdown/遅いbody拒否。learner証拠とは区別 |
+| 静的確認             | 関連Lint、対象format、shell構文、diff check成功。固定Dockerfile buildで型確認・学習用production build成功                                                                                           |
 
-使用image（このarm64実測のIDであり、他platformの配布digestではない）:
+resident/Node/再起動の先行実測image（arm64実測のIDであり、他platformの配布digestではない）:
 
 - controller: `sha256:564f5f4970b84026ad48727c967ddffa6bf12969f77453dbb2bd734a239f11c3`
 - project: `sha256:c327453540329a988ffc8f9e3942deac270d4d69e94cb3ed9d5e7ee1c8cf23f8`
 - web: `sha256:d0cf059c1d782d580ca8f12f9a01871ffcc16583d72e6052340820b0a6b0508a`
+
+GitHubの追加レビューで指摘されたproxy切断を修正し、独立再レビューは mandatory 0。
+追加HTTP診断のcontroller imageは `sha256:307fc4d3a3e4132d2079040f35fb27ceac693643e9c2a4139a6a133d8e88436c`、
+controller Source hashは `54240ceeb0fec4f518645da7cf22e8ec3ac6c2b18fefc8150b15baa123a81267`。
+read-only診断mountから起動した実web Source hashは
+`9986e6c4019deaafd0518ff8553ab0c7ad7511cd37989df02e797935f5bc9e36`。
+先行imageの成功記録と追加修正の成功記録を区別し、最終PR HEADのCIで全境界を確認する。
 
 環境上のcredential helper待ちを空の作業用CLI設定で回避し、診断だけ旧builderを使用した。
 自動subnet枠不足は非公開の専用Compose overrideで未使用subnetを指定した。

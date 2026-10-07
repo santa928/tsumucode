@@ -64,9 +64,10 @@ export class ResidentWorkspace {
     return this.#store.reset(id, input.expectedSourceRevision);
   }
 
-  async start(id, input) {
+  async start(id, input, signal) {
     exact(input, ['expectedSourceRevision']);
     expectedRevision(input.expectedSourceRevision);
+    if (signal?.aborted) throw new RequestError(408, '起動要求の接続が切れました。');
     const run = {
       workspaceId: id,
       activityAt: Date.now(),
@@ -86,8 +87,15 @@ export class ResidentWorkspace {
     const prepared = new Promise((resolve, reject) => {
       run.prepared = { resolve, reject };
     });
-    run.done = this.#execute(run, input.expectedSourceRevision);
+    const disconnected = () => {
+      void this.#cancel(run, 'client-disconnected');
+    };
+    signal?.addEventListener('abort', disconnected, { once: true });
+    run.done = this.#execute(run, input.expectedSourceRevision).finally(() => {
+      signal?.removeEventListener('abort', disconnected);
+    });
     await prepared;
+    if (signal?.aborted) throw new RequestError(408, '起動要求の接続が切れました。');
     return run.record;
   }
 
@@ -97,6 +105,12 @@ export class ResidentWorkspace {
     const run = this.#current;
     if (!run || run.workspaceId !== id || run.record.runId !== input.runId)
       throw new RequestError(409, '対象runは実行中ではありません。状態を再取得してください。');
+    await this.#cancel(run, reason);
+    await run.done;
+    return this.status(id);
+  }
+
+  async #cancel(run, reason) {
     run.reason ??= reason;
     run.record.state = 'stopping';
     if (run.containerId) {
@@ -106,8 +120,6 @@ export class ResidentWorkspace {
         if (error.status !== 404 && error.status !== 409) this.#slot.recoveryNeeded();
       }
     }
-    await run.done;
-    return this.status(id);
   }
 
   activity(id, input) {
@@ -222,7 +234,7 @@ export class ResidentWorkspace {
       finalRecord.state =
         run.reason === 'idle'
           ? 'idle'
-          : ['stopped', 'controller-stopped'].includes(run.reason)
+          : ['stopped', 'controller-stopped', 'client-disconnected'].includes(run.reason)
             ? 'stopped'
             : 'failed';
       finalRecord.reason = run.reason;
