@@ -6,108 +6,72 @@ lessons:
   - lessonId: react-ch01-l01
     authorId: tsumucode-react-authoring
     reviewerId: review_issue109
-    sourceHash: 2279b9ba4c15d34e4118e2826aa0ed39f1180294ecefbbc598ab723769fd5010
+    sourceHash: c29b4cc17da0953d4bfc0d2857dcb1676b07a1c4b55b6b05e34ea4a9d7bf0dd0
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Reviewer
-      review_issue109がComponent/JSX/Propsの全4Slide・Exercise・段階Hint・Starter/Solution・5FixtureとRuntime差分を独立読解し、内容の正確さと目標整合を承認。
-      TSXの初出説明を補い、未説明語と意図しないHint漏洩は0。型成功と指定の実表示を区別し、map/key/createRootを用意済みの足場として扱う。
-      読み取り専用Componentの型弱化と固定表示による採点迂回を指摘し、固定ASTとHTML/File集合照合の修正後に解消確認。追加必須指摘なし。
-      examplesExecutedは作者の実Compiler/Runner/Validatorを通す5Fixture、描画例外と復帰、Source不一致、足場改変拒否、通常UIの型修正/実DOM/採点/保存/再読込/Resetの成功証拠に基づく。
-      Reviewerは初回PC画像2点と追加7点（390pxの4Slide、PC案内、Keyboard演習、拡大React表示）の計9画像と原成功報告を実見した。
-      最終のReact環境読込cacheからの同URL復帰、保存Source保持、PC要件、台帳と契約文書も限定確認し、実装・教材とも必須指摘0で承認。Reviewerの独自再実行、人の初心者理解、物理実機、全React
-      Course完成、正式公開の受入を意味しない。
-      Courseとこの台帳のreleaseStatus、verifiedSourceCommit、canonicalDistSha256はdraftを維持する。
+    notes: |-
+      Reviewer review_issue109がComponent/JSX/Propsの全4Slide・Exercise・段階Hint・Starter/Solution・5FixtureとRuntime差分を独立読解し、内容の正確さと目標整合を承認。 TSXの初出説明を補い、未説明語と意図しないHint漏洩は0。型成功と指定の実表示を区別し、map/key/createRootを用意済みの足場として扱う。 読み取り専用Componentの型弱化と固定表示による採点迂回を指摘し、固定ASTとHTML/File集合照合の修正後に解消確認。追加必須指摘なし。 examplesExecutedは作者の実Compiler/Runner/Validatorを通す5Fixture、描画例外と復帰、Source不一致、足場改変拒否、通常UIの型修正/実DOM/採点/保存/再読込/Resetの成功証拠に基づく。 Reviewerは初回PC画像2点と追加7点（390pxの4Slide、PC案内、Keyboard演習、拡大React表示）の計9画像と原成功報告を実見した。 最終のReact環境読込cacheからの同URL復帰、保存Source保持、PC要件、台帳と契約文書も限定確認し、実装・教材とも必須指摘0で承認。Reviewerの独自再実行、人の初心者理解、物理実機、全React Course完成、正式公開の受入を意味しない。 Courseとこの台帳のreleaseStatus、verifiedSourceCommit、canonicalDistSha256はdraftを維持する。
+      2026-10-07.7: Reviewer review_issue109が追加25コード・概念図と説明を独立読解し、390px全25画像とPC代表5画像の計30画像を実見して変更15Lessonを再承認。accuracy/goalExerciseAlignmentはapproved、新たな未説明語・解答漏洩・追加必須指摘は各0。作者の追加4掲載例strictTS/実React・JSDOM成功と既存の有効な演習実行をexamplesExecutedの根拠とし、独自実行・hash再計算はしていない。25SlideのPC/390px表示・画像読込・axe・横overflow・末尾Scroll/Pagerの2テストretry0成功を原JSON確認。WebKit Refの未解決フォーカス判定、Course全体の受入、人の初心者理解、物理実機、正式公開は承認に含まない。Course/台帳はdraftを維持する。
   - lessonId: react-ch01-l02
     authorId: tsumucode-react-composition-authoring
     reviewerId: review_issue109
-    sourceHash: 605830acec9ab638f16e46d4e250e018f96805fa0c025017338e4ec623949ea8
+    sourceHash: c03293d7f5216ae5eebb28e7084571e7629a4e30867c97e7a4050b381b99cea4
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Reviewer
-      review_issue109がSlide・予測問題・Exercise・3段階Hint・Solution・7正負Fixtureと有限Runtime契約を独立読解し、内容の正確さと目標整合を承認。
-      改名・引数の別表記・補助Component分割・export
-      aliasを受け入れ、固定表示と見出し/説明の交換はDOM条件が通っても学習Ruleで不合格になる。
-      examplesExecutedは作者の実Worker/Compiler/React
-      Runner/Validatorを通す7Fixtureの期待一致、Source不一致と固定型改変拒否のretry0成功証拠に基づく。
-      Reviewerは390pxの新6Slide・PC案内・PCの実表示2点の計9画像を実見し、読みやすさとコード横スクロール、PC案内を承認。未説明語と意図しないHint漏洩は0。
-      旧revisionからの空steps移行edgeとSource・履歴・Hint・cursor・passingSnapshot保持の実Migration検証も確認した。PCでの実描画・採点・完了ページ・演習の再読込・全文Source保存・Reset・Keyboard
-      Hintの成功報告と最終コードを確認し、実装も承認。追加必須指摘0。
-      Reviewerの独自実行・hash再計算、人の初心者理解、物理実機、全React
-      Course完成、正式公開の承認には読み替えない。Courseと台帳はdraftを維持する。
+    notes: |-
+      Reviewer review_issue109がSlide・予測問題・Exercise・3段階Hint・Solution・7正負Fixtureと有限Runtime契約を独立読解し、内容の正確さと目標整合を承認。 改名・引数の別表記・補助Component分割・export aliasを受け入れ、固定表示と見出し/説明の交換はDOM条件が通っても学習Ruleで不合格になる。 examplesExecutedは作者の実Worker/Compiler/React Runner/Validatorを通す7Fixtureの期待一致、Source不一致と固定型改変拒否のretry0成功証拠に基づく。 Reviewerは390pxの新6Slide・PC案内・PCの実表示2点の計9画像を実見し、読みやすさとコード横スクロール、PC案内を承認。未説明語と意図しないHint漏洩は0。 旧revisionからの空steps移行edgeとSource・履歴・Hint・cursor・passingSnapshot保持の実Migration検証も確認した。PCでの実描画・採点・完了ページ・演習の再読込・全文Source保存・Reset・Keyboard Hintの成功報告と最終コードを確認し、実装も承認。追加必須指摘0。 Reviewerの独自実行・hash再計算、人の初心者理解、物理実機、全React Course完成、正式公開の承認には読み替えない。Courseと台帳はdraftを維持する。
+      2026-10-07.7: Reviewer review_issue109が追加25コード・概念図と説明を独立読解し、390px全25画像とPC代表5画像の計30画像を実見して変更15Lessonを再承認。accuracy/goalExerciseAlignmentはapproved、新たな未説明語・解答漏洩・追加必須指摘は各0。作者の追加4掲載例strictTS/実React・JSDOM成功と既存の有効な演習実行をexamplesExecutedの根拠とし、独自実行・hash再計算はしていない。25SlideのPC/390px表示・画像読込・axe・横overflow・末尾Scroll/Pagerの2テストretry0成功を原JSON確認。WebKit Refの未解決フォーカス判定、Course全体の受入、人の初心者理解、物理実機、正式公開は承認に含まない。Course/台帳はdraftを維持する。
   - lessonId: react-ch01-l03
     authorId: tsumucode-react-composition-authoring
     reviewerId: review_issue109
-    sourceHash: b88bf935c7f3441b3bff9f85b82b0c2dea8a5191b57a15f29a04e0f91ee1e746
+    sourceHash: 43eb2d7f858658205958a286a35054572937f113654b5d76f84148ed658b4c3c
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Reviewer
-      review_issue109がSlide・予測問題・Exercise・3段階Hint・Solution・7正負Fixtureと有限Runtime契約を独立読解し、内容の正確さと目標整合を承認。
-      改名・引数の別表記・補助Component分割・export
-      aliasを受け入れ、固定表示と見出し/説明の交換はDOM条件が通っても学習Ruleで不合格になる。
-      examplesExecutedは作者の実Worker/Compiler/React
-      Runner/Validatorを通す7Fixtureの期待一致、Source不一致と固定型改変拒否のretry0成功証拠に基づく。
-      Reviewerは390pxの新6Slide・PC案内・PCの実表示2点の計9画像を実見し、読みやすさとコード横スクロール、PC案内を承認。未説明語と意図しないHint漏洩は0。
-      旧revisionからの空steps移行edgeとSource・履歴・Hint・cursor・passingSnapshot保持の実Migration検証も確認した。PCでの実描画・採点・完了ページ・演習の再読込・全文Source保存・Reset・Keyboard
-      Hintの成功報告と最終コードを確認し、実装も承認。追加必須指摘0。
-      Reviewerの独自実行・hash再計算、人の初心者理解、物理実機、全React
-      Course完成、正式公開の承認には読み替えない。Courseと台帳はdraftを維持する。
+    notes: |-
+      Reviewer review_issue109がSlide・予測問題・Exercise・3段階Hint・Solution・7正負Fixtureと有限Runtime契約を独立読解し、内容の正確さと目標整合を承認。 改名・引数の別表記・補助Component分割・export aliasを受け入れ、固定表示と見出し/説明の交換はDOM条件が通っても学習Ruleで不合格になる。 examplesExecutedは作者の実Worker/Compiler/React Runner/Validatorを通す7Fixtureの期待一致、Source不一致と固定型改変拒否のretry0成功証拠に基づく。 Reviewerは390pxの新6Slide・PC案内・PCの実表示2点の計9画像を実見し、読みやすさとコード横スクロール、PC案内を承認。未説明語と意図しないHint漏洩は0。 旧revisionからの空steps移行edgeとSource・履歴・Hint・cursor・passingSnapshot保持の実Migration検証も確認した。PCでの実描画・採点・完了ページ・演習の再読込・全文Source保存・Reset・Keyboard Hintの成功報告と最終コードを確認し、実装も承認。追加必須指摘0。 Reviewerの独自実行・hash再計算、人の初心者理解、物理実機、全React Course完成、正式公開の承認には読み替えない。Courseと台帳はdraftを維持する。
+      2026-10-07.7: Reviewer review_issue109が追加25コード・概念図と説明を独立読解し、390px全25画像とPC代表5画像の計30画像を実見して変更15Lessonを再承認。accuracy/goalExerciseAlignmentはapproved、新たな未説明語・解答漏洩・追加必須指摘は各0。作者の追加4掲載例strictTS/実React・JSDOM成功と既存の有効な演習実行をexamplesExecutedの根拠とし、独自実行・hash再計算はしていない。25SlideのPC/390px表示・画像読込・axe・横overflow・末尾Scroll/Pagerの2テストretry0成功を原JSON確認。WebKit Refの未解決フォーカス判定、Course全体の受入、人の初心者理解、物理実機、正式公開は承認に含まない。Course/台帳はdraftを維持する。
   - lessonId: react-ch01-l04
     authorId: tsumucode-react-state-authoring
     reviewerId: review_issue109
-    sourceHash: eab3fb14498ba782a4b62b17e7135fe25360441d81c8bff07b16a2e274492f99
+    sourceHash: 033d510b0bfcd850d2015adf4a101127bd2d85b20c898b78d76cb9e69c855de5
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Reviewer
-      review_issue109が全Slide・予測/修正課題・3段階Hint・Solution・8正負Fixtureと有限Runtime契約を独立読解し、内容の正確さと到達目標の整合を承認。
-      Setterと純粋updaterを区別し、1操作内のupdater2回、新配列の更新、一覧全体で一意な項目ID由来のKeyを学習条件と実操作へ結ぶ。未説明語と意図しないHint漏洩は0。
-      単一+2/固定4の迂回、lockDownで使用できない通知API、setter/updaterの説明、Keyの一意性の4必須指摘を修正し、Reviewerが解消を確認。最終の追加必須指摘は0。
-      examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorを通した16正負Fixtureの期待一致、Source不一致・足場改変拒否、元のEvent例外と更新描画例外・次run復帰・停止後応答の成功証拠に基づく。
-      作者のChromium
-      6件・retry0ではPCの実click/Keyboard操作・Hintのfocus復帰・判定・全文Source保存/再読込/Reset、一時Stateの初期化、390pxの7SlideとPC案内・axeを確認。Reviewerは通常PC2点・390px8点・100%拡大2点の計12画像を実見した。
-      関連117File/1342Testの成功証拠集約と型/Lint/整形/build/subpath/chunk/出典の原ログを確認。並列実行の既存2Fileのtimeoutとworker終了は予算と期待値を変えず単独29件で解消し、最初の実行自体を成功とは記録しない。
-      Reviewerの独自再実行・hash再計算、人の初心者理解、物理実機、全React
-      Course完成、正式公開の承認を意味しない。Courseとこの台帳のreleaseStatus・verifiedSourceCommit・canonicalDistSha256はdraftを維持する。
+    notes: |-
+      Reviewer review_issue109が全Slide・予測/修正課題・3段階Hint・Solution・8正負Fixtureと有限Runtime契約を独立読解し、内容の正確さと到達目標の整合を承認。 Setterと純粋updaterを区別し、1操作内のupdater2回、新配列の更新、一覧全体で一意な項目ID由来のKeyを学習条件と実操作へ結ぶ。未説明語と意図しないHint漏洩は0。 単一+2/固定4の迂回、lockDownで使用できない通知API、setter/updaterの説明、Keyの一意性の4必須指摘を修正し、Reviewerが解消を確認。最終の追加必須指摘は0。 examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorを通した16正負Fixtureの期待一致、Source不一致・足場改変拒否、元のEvent例外と更新描画例外・次run復帰・停止後応答の成功証拠に基づく。 作者のChromium 6件・retry0ではPCの実click/Keyboard操作・Hintのfocus復帰・判定・全文Source保存/再読込/Reset、一時Stateの初期化、390pxの7SlideとPC案内・axeを確認。Reviewerは通常PC2点・390px8点・100%拡大2点の計12画像を実見した。 関連117File/1342Testの成功証拠集約と型/Lint/整形/build/subpath/chunk/出典の原ログを確認。並列実行の既存2Fileのtimeoutとworker終了は予算と期待値を変えず単独29件で解消し、最初の実行自体を成功とは記録しない。 Reviewerの独自再実行・hash再計算、人の初心者理解、物理実機、全React Course完成、正式公開の承認を意味しない。Courseとこの台帳のreleaseStatus・verifiedSourceCommit・canonicalDistSha256はdraftを維持する。
+      2026-10-07.7: Reviewer review_issue109が追加25コード・概念図と説明を独立読解し、390px全25画像とPC代表5画像の計30画像を実見して変更15Lessonを再承認。accuracy/goalExerciseAlignmentはapproved、新たな未説明語・解答漏洩・追加必須指摘は各0。作者の追加4掲載例strictTS/実React・JSDOM成功と既存の有効な演習実行をexamplesExecutedの根拠とし、独自実行・hash再計算はしていない。25SlideのPC/390px表示・画像読込・axe・横overflow・末尾Scroll/Pagerの2テストretry0成功を原JSON確認。WebKit Refの未解決フォーカス判定、Course全体の受入、人の初心者理解、物理実機、正式公開は承認に含まない。Course/台帳はdraftを維持する。
   - lessonId: react-ch01-l05
     authorId: tsumucode-react-state-authoring
     reviewerId: review_issue109
-    sourceHash: 0ffe71c4d800997d8561a3c38e1e3432207b41e5bf5570a6d306a8174e1df36c
+    sourceHash: 57ecdee0a5a84461315066ce8a0b11ec06cf7343b71a2f61979ad94aeed5346a
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Reviewer
-      review_issue109が全Slide・予測/修正課題・3段階Hint・Solution・8正負Fixtureと有限Runtime契約を独立読解し、内容の正確さと到達目標の整合を承認。
-      Setterと純粋updaterを区別し、1操作内のupdater2回、新配列の更新、一覧全体で一意な項目ID由来のKeyを学習条件と実操作へ結ぶ。未説明語と意図しないHint漏洩は0。
-      単一+2/固定4の迂回、lockDownで使用できない通知API、setter/updaterの説明、Keyの一意性の4必須指摘を修正し、Reviewerが解消を確認。最終の追加必須指摘は0。
-      examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorを通した16正負Fixtureの期待一致、Source不一致・足場改変拒否、元のEvent例外と更新描画例外・次run復帰・停止後応答の成功証拠に基づく。
-      作者のChromium
-      6件・retry0ではPCの実click/Keyboard操作・Hintのfocus復帰・判定・全文Source保存/再読込/Reset、一時Stateの初期化、390pxの7SlideとPC案内・axeを確認。Reviewerは通常PC2点・390px8点・100%拡大2点の計12画像を実見した。
-      関連117File/1342Testの成功証拠集約と型/Lint/整形/build/subpath/chunk/出典の原ログを確認。並列実行の既存2Fileのtimeoutとworker終了は予算と期待値を変えず単独29件で解消し、最初の実行自体を成功とは記録しない。
-      Reviewerの独自再実行・hash再計算、人の初心者理解、物理実機、全React
-      Course完成、正式公開の承認を意味しない。Courseとこの台帳のreleaseStatus・verifiedSourceCommit・canonicalDistSha256はdraftを維持する。
+    notes: |-
+      Reviewer review_issue109が全Slide・予測/修正課題・3段階Hint・Solution・8正負Fixtureと有限Runtime契約を独立読解し、内容の正確さと到達目標の整合を承認。 Setterと純粋updaterを区別し、1操作内のupdater2回、新配列の更新、一覧全体で一意な項目ID由来のKeyを学習条件と実操作へ結ぶ。未説明語と意図しないHint漏洩は0。 単一+2/固定4の迂回、lockDownで使用できない通知API、setter/updaterの説明、Keyの一意性の4必須指摘を修正し、Reviewerが解消を確認。最終の追加必須指摘は0。 examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorを通した16正負Fixtureの期待一致、Source不一致・足場改変拒否、元のEvent例外と更新描画例外・次run復帰・停止後応答の成功証拠に基づく。 作者のChromium 6件・retry0ではPCの実click/Keyboard操作・Hintのfocus復帰・判定・全文Source保存/再読込/Reset、一時Stateの初期化、390pxの7SlideとPC案内・axeを確認。Reviewerは通常PC2点・390px8点・100%拡大2点の計12画像を実見した。 関連117File/1342Testの成功証拠集約と型/Lint/整形/build/subpath/chunk/出典の原ログを確認。並列実行の既存2Fileのtimeoutとworker終了は予算と期待値を変えず単独29件で解消し、最初の実行自体を成功とは記録しない。 Reviewerの独自再実行・hash再計算、人の初心者理解、物理実機、全React Course完成、正式公開の承認を意味しない。Courseとこの台帳のreleaseStatus・verifiedSourceCommit・canonicalDistSha256はdraftを維持する。
+      2026-10-07.7: Reviewer review_issue109が追加25コード・概念図と説明を独立読解し、390px全25画像とPC代表5画像の計30画像を実見して変更15Lessonを再承認。accuracy/goalExerciseAlignmentはapproved、新たな未説明語・解答漏洩・追加必須指摘は各0。作者の追加4掲載例strictTS/実React・JSDOM成功と既存の有効な演習実行をexamplesExecutedの根拠とし、独自実行・hash再計算はしていない。25SlideのPC/390px表示・画像読込・axe・横overflow・末尾Scroll/Pagerの2テストretry0成功を原JSON確認。WebKit Refの未解決フォーカス判定、Course全体の受入、人の初心者理解、物理実機、正式公開は承認に含まない。Course/台帳はdraftを維持する。
   - lessonId: react-ch01-l06
     authorId: tsumucode-react-form-authoring
     reviewerId: review_issue109
-    sourceHash: df752d3e5f6abbddd8e3335ba3c8ddb9d760d0f497525fa067ae3c6d656d4bd7
+    sourceHash: feb92fe96ac461a0a3f0a0fa7615a8f844113bf146489bb38ff3ceb2a2759690
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -118,10 +82,11 @@ lessons:
       Reviewer review_issue109が7Slide・予測/修正課題・3段階Hint・Starter/Solution・18正負Fixtureと有限Runtimeの原稿/コードを独立読解し、正確性と目標整合を承認。空の子と親DOMによる共有fact迂回、trim別解の誤拒否、aria-invalid未説明の3必須指摘を修正し、解消を確認した。最終追加必須指摘0。唯一の親Stateから実入力と兄弟の要約/文字数へ結び、Formの送信取消と派生表示を実操作で確認する。未説明語と意図しないHint漏洩0。
       examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorを通した18正負Fixtureの期待一致、Source不一致/固定型改変拒否、元Event例外messageと次run復帰のretry0成功証拠に依拠する。初回runの前半2失敗は成功に数えず、後半の通常UI3件成功と、Fixtureのみの再検証2件成功を区別する。固定Adaと同値の入力によるstale表示、固定5文字とReactの偶然一致は実挙動と因果を確認してFixtureの期待誤りを修正し、判定Ruleや予算を緩めていない。同位置/同文言の禁止Event読取り診断だけを一意化し、拒否を保つ。
       通常UIでは実input Enter送信、Keyboard Hint/focus復帰、label/エラー案内、採点、全文Source保存・再読込・Resetと一時Stateの初期化、390pxの7Slide/PC案内を確認。ReviewerはPC通常2・390px8・100%拡大2の計12画像を実見。axeはSlide/案内とiframeを除く親画面の範囲。Reviewerの独自実行・hash再計算、断片例の独立実行、実人試用、物理実機、全React教材完成、正式公開の承認へ読み替えない。Courseと台帳のreleaseStatus/verifiedSourceCommit/canonicalDistSha256はdraftを維持する。
+      2026-10-07.7: Reviewer review_issue109が追加25コード・概念図と説明を独立読解し、390px全25画像とPC代表5画像の計30画像を実見して変更15Lessonを再承認。accuracy/goalExerciseAlignmentはapproved、新たな未説明語・解答漏洩・追加必須指摘は各0。作者の追加4掲載例strictTS/実React・JSDOM成功と既存の有効な演習実行をexamplesExecutedの根拠とし、独自実行・hash再計算はしていない。25SlideのPC/390px表示・画像読込・axe・横overflow・末尾Scroll/Pagerの2テストretry0成功を原JSON確認。WebKit Refの未解決フォーカス判定、Course全体の受入、人の初心者理解、物理実機、正式公開は承認に含まない。Course/台帳はdraftを維持する。
   - lessonId: react-ch01-l07
     authorId: tsumucode-react-form-authoring
     reviewerId: review_issue109
-    sourceHash: 1d1ff950a1df405da52ab30b7bf4902a54748eb76db2bff36df948b5760077f7
+    sourceHash: cf60a11b7a3e3d94c4979483e6f3a1d84898872129b648814e1197c6b723fae8
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -132,10 +97,11 @@ lessons:
       Reviewer review_issue109が7Slide・予測/修正課題・3段階Hint・Starter/Solution・18正負Fixtureと有限Runtimeの原稿/コードを独立読解し、正確性と目標整合を承認。空の子と親DOMによる共有fact迂回、trim別解の誤拒否、aria-invalid未説明の3必須指摘を修正し、解消を確認した。最終追加必須指摘0。唯一の親Stateから実入力と兄弟の要約/文字数へ結び、Formの送信取消と派生表示を実操作で確認する。未説明語と意図しないHint漏洩0。
       examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorを通した18正負Fixtureの期待一致、Source不一致/固定型改変拒否、元Event例外messageと次run復帰のretry0成功証拠に依拠する。初回runの前半2失敗は成功に数えず、後半の通常UI3件成功と、Fixtureのみの再検証2件成功を区別する。固定Adaと同値の入力によるstale表示、固定5文字とReactの偶然一致は実挙動と因果を確認してFixtureの期待誤りを修正し、判定Ruleや予算を緩めていない。同位置/同文言の禁止Event読取り診断だけを一意化し、拒否を保つ。
       通常UIでは実input Enter送信、Keyboard Hint/focus復帰、label/エラー案内、採点、全文Source保存・再読込・Resetと一時Stateの初期化、390pxの7Slide/PC案内を確認。ReviewerはPC通常2・390px8・100%拡大2の計12画像を実見。axeはSlide/案内とiframeを除く親画面の範囲。Reviewerの独自実行・hash再計算、断片例の独立実行、実人試用、物理実機、全React教材完成、正式公開の承認へ読み替えない。Courseと台帳のreleaseStatus/verifiedSourceCommit/canonicalDistSha256はdraftを維持する。
+      2026-10-07.7: Reviewer review_issue109が追加25コード・概念図と説明を独立読解し、390px全25画像とPC代表5画像の計30画像を実見して変更15Lessonを再承認。accuracy/goalExerciseAlignmentはapproved、新たな未説明語・解答漏洩・追加必須指摘は各0。作者の追加4掲載例strictTS/実React・JSDOM成功と既存の有効な演習実行をexamplesExecutedの根拠とし、独自実行・hash再計算はしていない。25SlideのPC/390px表示・画像読込・axe・横overflow・末尾Scroll/Pagerの2テストretry0成功を原JSON確認。WebKit Refの未解決フォーカス判定、Course全体の受入、人の初心者理解、物理実機、正式公開は承認に含まない。Course/台帳はdraftを維持する。
   - lessonId: react-ch01-l08
     authorId: tsumucode-react-reducer-context-authoring
     reviewerId: review_issue109
-    sourceHash: 3cbe18bee8ddc1be9a7e86cbf3c80c07779fbf678b465bb72050c49179895c49
+    sourceHash: 1fb4cc278c6a6bd2a78227b5efc419f56263fec7de73bb82cda3dc7d1421a954
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -147,10 +113,11 @@ lessons:
       examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorで18Fixtureのstatus・診断・失敗Rule IDが一致した2test、Source不一致/固定型改変拒否、Context入力の元例外と次run回復のretry0成功に依拠する。初回通常PC2testは検証側に旧Hint文が残って失敗し、新Hint全文へ修正後の通常UI3test成功を区別して記録する。判定Rule・timeout・期待を弱めていない。
       通常UIはlabel/native input Enter/送信取消/aria-invalid、Keyboard Hintとfocus復帰、全文Source保存・再読込・採点・Resetと一時State初期化を確認。390pxの新6SlideとPC案内も確認。Reviewerはmobile6・PC案内1・通常PC2・100%拡大2の計11画像を実見し、必須表示問題0で承認。axeはSlide/案内とiframeを除く親画面の範囲。
       この記録は内容/コード/画像の読解承認であり、残る最終関連検証Gateの成功を代行しない。初回Lintと過剰並列による関連検証の失敗を成功へ数えない。Reviewerの独自実行・hash再計算、Slide断片の単独全実行、実人試用、物理実機、全React完成、正式公開の承認へ読み替えない。Courseと台帳のreleaseStatus/verifiedSourceCommit/canonicalDistSha256はdraftを維持する。
+      2026-10-07.7: Reviewer review_issue109が追加25コード・概念図と説明を独立読解し、390px全25画像とPC代表5画像の計30画像を実見して変更15Lessonを再承認。accuracy/goalExerciseAlignmentはapproved、新たな未説明語・解答漏洩・追加必須指摘は各0。作者の追加4掲載例strictTS/実React・JSDOM成功と既存の有効な演習実行をexamplesExecutedの根拠とし、独自実行・hash再計算はしていない。25SlideのPC/390px表示・画像読込・axe・横overflow・末尾Scroll/Pagerの2テストretry0成功を原JSON確認。WebKit Refの未解決フォーカス判定、Course全体の受入、人の初心者理解、物理実機、正式公開は承認に含まない。Course/台帳はdraftを維持する。
   - lessonId: react-ch01-l09
     authorId: tsumucode-react-reducer-context-authoring
     reviewerId: review_issue109
-    sourceHash: 9f3da3f1856d91d1c15dbc8cb88480fd1e8f591ded7f613ff1c951b49ecea52a
+    sourceHash: 9fa9d8ee3486081d96b230123aebce1220fcf9a33a4111367fc00d7ebf4da2ee
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -162,10 +129,11 @@ lessons:
       examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorで18Fixtureのstatus・診断・失敗Rule IDが一致した2test、Source不一致/固定型改変拒否、Context入力の元例外と次run回復のretry0成功に依拠する。初回通常PC2testは検証側に旧Hint文が残って失敗し、新Hint全文へ修正後の通常UI3test成功を区別して記録する。判定Rule・timeout・期待を弱めていない。
       通常UIはlabel/native input Enter/送信取消/aria-invalid、Keyboard Hintとfocus復帰、全文Source保存・再読込・採点・Resetと一時State初期化を確認。390pxの新6SlideとPC案内も確認。Reviewerはmobile6・PC案内1・通常PC2・100%拡大2の計11画像を実見し、必須表示問題0で承認。axeはSlide/案内とiframeを除く親画面の範囲。
       この記録は内容/コード/画像の読解承認であり、残る最終関連検証Gateの成功を代行しない。初回Lintと過剰並列による関連検証の失敗を成功へ数えない。Reviewerの独自実行・hash再計算、Slide断片の単独全実行、実人試用、物理実機、全React完成、正式公開の承認へ読み替えない。Courseと台帳のreleaseStatus/verifiedSourceCommit/canonicalDistSha256はdraftを維持する。
+      2026-10-07.7: Reviewer review_issue109が追加25コード・概念図と説明を独立読解し、390px全25画像とPC代表5画像の計30画像を実見して変更15Lessonを再承認。accuracy/goalExerciseAlignmentはapproved、新たな未説明語・解答漏洩・追加必須指摘は各0。作者の追加4掲載例strictTS/実React・JSDOM成功と既存の有効な演習実行をexamplesExecutedの根拠とし、独自実行・hash再計算はしていない。25SlideのPC/390px表示・画像読込・axe・横overflow・末尾Scroll/Pagerの2テストretry0成功を原JSON確認。WebKit Refの未解決フォーカス判定、Course全体の受入、人の初心者理解、物理実機、正式公開は承認に含まない。Course/台帳はdraftを維持する。
   - lessonId: react-ch01-l10
     authorId: tsumucode-react-hook-authoring
     reviewerId: review_issue109
-    sourceHash: f71fa1b44163a10fa139531daa00415cc0d3fae8c32c171d7f0a15334f0a8a40
+    sourceHash: d5c378da4de9f8dd6039f8bceb6ee9ba5456f1041e1232ce2fd3aa9c26036535
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -177,10 +145,11 @@ lessons:
       examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorで各8Fixtureのstatus・診断・失敗Ruleが一致した証拠に依拠する。Refは初回、Effectは括弧修正後、Hookは最終48秒/retry0の成功を区別する。Ref/Effectの旧payloadは現存せず成功ログに依拠し、Hookの最終原JSONを確認した。固定購読の変更・Source不一致を拒否する。Hookのreadonly表示を共通化して231〜236Factへ縮小し、既存256上限を保った。fixed-sourceのB誤値がA非表示直後も残る2失敗Ruleの期待漏れを補い、判定/Scenarioを弱めていない。失敗runを成功には数えない。
       通常UI3単元の未完判定→dialogをKeyboardで閉じる→修正→実DOM→採点→Source保存往復/reload→Resetを確認。Refの実focus、Effectの切替直後の現在値/古いDOM Event無視/cleanup/非表示中の値変更/再mount、HookのA/B独立更新を確認。390pxの9Slide/PC案内・進捗・外側overflowなしとaxe、親PC画面のaxeを確認（iframeはaxe範囲外）。ReviewerはPC通常3・100%拡大3・mobile9・案内1の実画像16枚を確認し、必須表示問題0。
       後着通知は解除後の旧DOM入力Eventであり、通信やキュー済callbackの検証ではない。Reviewer独自実行/hash再計算、Slide抜粋の単独全実行、説明能力の実測、人間受入・物理実機・全React完成・正式公開の承認へ読み替えない。最終関連Gateは別途確認する。Course/台帳の公開状態と公開SHA/hashはdraftを維持する。
+      2026-10-07.7: Reviewer review_issue109が追加25コード・概念図と説明を独立読解し、390px全25画像とPC代表5画像の計30画像を実見して変更15Lessonを再承認。accuracy/goalExerciseAlignmentはapproved、新たな未説明語・解答漏洩・追加必須指摘は各0。作者の追加4掲載例strictTS/実React・JSDOM成功と既存の有効な演習実行をexamplesExecutedの根拠とし、独自実行・hash再計算はしていない。25SlideのPC/390px表示・画像読込・axe・横overflow・末尾Scroll/Pagerの2テストretry0成功を原JSON確認。WebKit Refの未解決フォーカス判定、Course全体の受入、人の初心者理解、物理実機、正式公開は承認に含まない。Course/台帳はdraftを維持する。
   - lessonId: react-ch01-l11
     authorId: tsumucode-react-hook-authoring
     reviewerId: review_issue109
-    sourceHash: f490a7ce09d64cbdd3cabee8c84fd1bd91162d19d95cc219e9a6bf31e1099e8e
+    sourceHash: 8f789d9ecc675038bc75db472f3909305e307ad99860031c4ccaec067b6da252
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -192,10 +161,11 @@ lessons:
       examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorで各8Fixtureのstatus・診断・失敗Ruleが一致した証拠に依拠する。Refは初回、Effectは括弧修正後、Hookは最終48秒/retry0の成功を区別する。Ref/Effectの旧payloadは現存せず成功ログに依拠し、Hookの最終原JSONを確認した。固定購読の変更・Source不一致を拒否する。Hookのreadonly表示を共通化して231〜236Factへ縮小し、既存256上限を保った。fixed-sourceのB誤値がA非表示直後も残る2失敗Ruleの期待漏れを補い、判定/Scenarioを弱めていない。失敗runを成功には数えない。
       通常UI3単元の未完判定→dialogをKeyboardで閉じる→修正→実DOM→採点→Source保存往復/reload→Resetを確認。Refの実focus、Effectの切替直後の現在値/古いDOM Event無視/cleanup/非表示中の値変更/再mount、HookのA/B独立更新を確認。390pxの9Slide/PC案内・進捗・外側overflowなしとaxe、親PC画面のaxeを確認（iframeはaxe範囲外）。ReviewerはPC通常3・100%拡大3・mobile9・案内1の実画像16枚を確認し、必須表示問題0。
       後着通知は解除後の旧DOM入力Eventであり、通信やキュー済callbackの検証ではない。Reviewer独自実行/hash再計算、Slide抜粋の単独全実行、説明能力の実測、人間受入・物理実機・全React完成・正式公開の承認へ読み替えない。最終関連Gateは別途確認する。Course/台帳の公開状態と公開SHA/hashはdraftを維持する。
+      2026-10-07.7: Reviewer review_issue109が追加25コード・概念図と説明を独立読解し、390px全25画像とPC代表5画像の計30画像を実見して変更15Lessonを再承認。accuracy/goalExerciseAlignmentはapproved、新たな未説明語・解答漏洩・追加必須指摘は各0。作者の追加4掲載例strictTS/実React・JSDOM成功と既存の有効な演習実行をexamplesExecutedの根拠とし、独自実行・hash再計算はしていない。25SlideのPC/390px表示・画像読込・axe・横overflow・末尾Scroll/Pagerの2テストretry0成功を原JSON確認。WebKit Refの未解決フォーカス判定、Course全体の受入、人の初心者理解、物理実機、正式公開は承認に含まない。Course/台帳はdraftを維持する。
   - lessonId: react-ch01-l12
     authorId: tsumucode-react-hook-authoring
     reviewerId: review_issue109
-    sourceHash: e9b447d964b88e0924b5c17afb74db49f19c15bb3a789f50e747b144fc81a7bf
+    sourceHash: 20a21bd2d479bd0a2adb84839ad96aafecb876ca0b425b1a9b363eae37000e48
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -207,10 +177,11 @@ lessons:
       examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorで各8Fixtureのstatus・診断・失敗Ruleが一致した証拠に依拠する。Refは初回、Effectは括弧修正後、Hookは最終48秒/retry0の成功を区別する。Ref/Effectの旧payloadは現存せず成功ログに依拠し、Hookの最終原JSONを確認した。固定購読の変更・Source不一致を拒否する。Hookのreadonly表示を共通化して231〜236Factへ縮小し、既存256上限を保った。fixed-sourceのB誤値がA非表示直後も残る2失敗Ruleの期待漏れを補い、判定/Scenarioを弱めていない。失敗runを成功には数えない。
       通常UI3単元の未完判定→dialogをKeyboardで閉じる→修正→実DOM→採点→Source保存往復/reload→Resetを確認。Refの実focus、Effectの切替直後の現在値/古いDOM Event無視/cleanup/非表示中の値変更/再mount、HookのA/B独立更新を確認。390pxの9Slide/PC案内・進捗・外側overflowなしとaxe、親PC画面のaxeを確認（iframeはaxe範囲外）。ReviewerはPC通常3・100%拡大3・mobile9・案内1の実画像16枚を確認し、必須表示問題0。
       後着通知は解除後の旧DOM入力Eventであり、通信やキュー済callbackの検証ではない。Reviewer独自実行/hash再計算、Slide抜粋の単独全実行、説明能力の実測、人間受入・物理実機・全React完成・正式公開の承認へ読み替えない。最終関連Gateは別途確認する。Course/台帳の公開状態と公開SHA/hashはdraftを維持する。
+      2026-10-07.7: Reviewer review_issue109が追加25コード・概念図と説明を独立読解し、390px全25画像とPC代表5画像の計30画像を実見して変更15Lessonを再承認。accuracy/goalExerciseAlignmentはapproved、新たな未説明語・解答漏洩・追加必須指摘は各0。作者の追加4掲載例strictTS/実React・JSDOM成功と既存の有効な演習実行をexamplesExecutedの根拠とし、独自実行・hash再計算はしていない。25SlideのPC/390px表示・画像読込・axe・横overflow・末尾Scroll/Pagerの2テストretry0成功を原JSON確認。WebKit Refの未解決フォーカス判定、Course全体の受入、人の初心者理解、物理実機、正式公開は承認に含まない。Course/台帳はdraftを維持する。
   - lessonId: react-ch02-l01
     authorId: tsumucode-react-quiz-authoring
     reviewerId: review_issue109
-    sourceHash: 63d03364654cff39129c99ff8387137b12494b507148740c8794b99348b04b82
+    sourceHash: e84c1104dcc20719bfb93ea9f1b5d76146d4bda5b768ea7620cb47c22164ad58
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -221,10 +192,11 @@ lessons:
       Reviewer review_issue109が9Slide・Guided工程票・独立Capstone Brief・3段階Hint・Starter/Solution・25正負Fixture・有限Runtimeを独立読解し、accuracy/alignmentを承認、未説明語/Hint漏洩/必須指摘0。Keyと実Callback、純粋な更新、回答済みguard、誤答後の累積得点保持を課題と対応づけた。固定ラベルのFact抜けと負例のKey誤置換を修正し、表示Factだけがfalseで診断0となる回帰を確認。不要なEffect/Context/Ref/Reducerは要求しない。
       examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorを通した25Fixtureのstatus・診断・失敗Rule ID一致、2322・固定表示・Guided丸写し・Source不一致・固定足場変更拒否の成功証拠に依拠する。実行可能21Fixtureは237〜247Factで既存256上限を維持。通常UIの型失敗→原文保存/reload→修正復帰、工程1合格/工程2未達→両工程合格、共有Snapshot/工程往復、混合正誤/重複回答/名前保持/結果/再挑戦、独立Workspaceの相互ResetによるDraft全文と進捗保持を確認。共有workshopだけgoalをSourceHashから除き、専用domainと全File/session/revision/profileを保ち、Goal/Scenario/Factsは個別に厳密照合する。
       ReviewerはPC通常3・未完結果1・100%拡大1、Mobile9Slide・PC案内1の実画像計15枚を確認し必須表示問題0。Keyboard/Focus、390pxの外側overflowなし、親PCとMobileのaxeを確認（iframeはaxe範囲外）。初回Hintの起動待機漏れと採点完了前の履歴読取りはtest側で修正し、判定条件を弱めず最終PC1test/1.2min/retry0とMobile1test成功を区別する。関連120File1441test成功。remote P2で再挑戦後のroot外回答表示の残存を指摘され、固定足場9コピーと両retry Scenarioを同期して未回答へ戻す。修正に関係する36test、25FixtureとPC再検証の成功・実画像を別途確認して再承認し、旧headのCI成功を新headへ流用しない。Reviewer独自実行/hash再計算、Slide抜粋全実行、説明能力の実測、実人受入/物理実機/正式公開承認には読み替えない。Course/台帳の公開状態と公開SHA/hashはdraftを維持する。
+      2026-10-07.7: Reviewer review_issue109が追加25コード・概念図と説明を独立読解し、390px全25画像とPC代表5画像の計30画像を実見して変更15Lessonを再承認。accuracy/goalExerciseAlignmentはapproved、新たな未説明語・解答漏洩・追加必須指摘は各0。作者の追加4掲載例strictTS/実React・JSDOM成功と既存の有効な演習実行をexamplesExecutedの根拠とし、独自実行・hash再計算はしていない。25SlideのPC/390px表示・画像読込・axe・横overflow・末尾Scroll/Pagerの2テストretry0成功を原JSON確認。WebKit Refの未解決フォーカス判定、Course全体の受入、人の初心者理解、物理実機、正式公開は承認に含まない。Course/台帳はdraftを維持する。
   - lessonId: react-ch02-l02
     authorId: tsumucode-react-quiz-authoring
     reviewerId: review_issue109
-    sourceHash: 5cd2fbe6c2d5660bde022dc881994673ffd13a2ca3d9be54348bac3488d6e20d
+    sourceHash: 82a4ab69c5fc5da3f26253447ce63cac90d742c2735a587f8d3da71f872e11c4
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -235,10 +207,11 @@ lessons:
       Reviewer review_issue109が9Slide・Guided工程票・独立Capstone Brief・3段階Hint・Starter/Solution・25正負Fixture・有限Runtimeを独立読解し、accuracy/alignmentを承認、未説明語/Hint漏洩/必須指摘0。Keyと実Callback、純粋な更新、回答済みguard、誤答後の累積得点保持を課題と対応づけた。固定ラベルのFact抜けと負例のKey誤置換を修正し、表示Factだけがfalseで診断0となる回帰を確認。不要なEffect/Context/Ref/Reducerは要求しない。
       examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorを通した25Fixtureのstatus・診断・失敗Rule ID一致、2322・固定表示・Guided丸写し・Source不一致・固定足場変更拒否の成功証拠に依拠する。実行可能21Fixtureは237〜247Factで既存256上限を維持。通常UIの型失敗→原文保存/reload→修正復帰、工程1合格/工程2未達→両工程合格、共有Snapshot/工程往復、混合正誤/重複回答/名前保持/結果/再挑戦、独立Workspaceの相互ResetによるDraft全文と進捗保持を確認。共有workshopだけgoalをSourceHashから除き、専用domainと全File/session/revision/profileを保ち、Goal/Scenario/Factsは個別に厳密照合する。
       ReviewerはPC通常3・未完結果1・100%拡大1、Mobile9Slide・PC案内1の実画像計15枚を確認し必須表示問題0。Keyboard/Focus、390pxの外側overflowなし、親PCとMobileのaxeを確認（iframeはaxe範囲外）。初回Hintの起動待機漏れと採点完了前の履歴読取りはtest側で修正し、判定条件を弱めず最終PC1test/1.2min/retry0とMobile1test成功を区別する。関連120File1441test成功。remote P2で再挑戦後のroot外回答表示の残存を指摘され、固定足場9コピーと両retry Scenarioを同期して未回答へ戻す。修正に関係する36test、25FixtureとPC再検証の成功・実画像を別途確認して再承認し、旧headのCI成功を新headへ流用しない。Reviewer独自実行/hash再計算、Slide抜粋全実行、説明能力の実測、実人受入/物理実機/正式公開承認には読み替えない。Course/台帳の公開状態と公開SHA/hashはdraftを維持する。
+      2026-10-07.7: Reviewer review_issue109が追加25コード・概念図と説明を独立読解し、390px全25画像とPC代表5画像の計30画像を実見して変更15Lessonを再承認。accuracy/goalExerciseAlignmentはapproved、新たな未説明語・解答漏洩・追加必須指摘は各0。作者の追加4掲載例strictTS/実React・JSDOM成功と既存の有効な演習実行をexamplesExecutedの根拠とし、独自実行・hash再計算はしていない。25SlideのPC/390px表示・画像読込・axe・横overflow・末尾Scroll/Pagerの2テストretry0成功を原JSON確認。WebKit Refの未解決フォーカス判定、Course全体の受入、人の初心者理解、物理実機、正式公開は承認に含まない。Course/台帳はdraftを維持する。
   - lessonId: react-ch03-l01
     authorId: tsumucode-react-quiz-authoring
     reviewerId: review_issue109
-    sourceHash: 000ad34e81c54cf7fb45890a2c6dbbef2ac3e5faa50f46125cf8afd8eb2db1d2
+    sourceHash: 565c0d6dba1cb542f88bc2c76291d0c1f716d9eec6c1ec00fe3ed6f793faeaa3
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -249,3 +222,4 @@ lessons:
       Reviewer review_issue109が9Slide・Guided工程票・独立Capstone Brief・3段階Hint・Starter/Solution・25正負Fixture・有限Runtimeを独立読解し、accuracy/alignmentを承認、未説明語/Hint漏洩/必須指摘0。Keyと実Callback、純粋な更新、回答済みguard、誤答後の累積得点保持を課題と対応づけた。固定ラベルのFact抜けと負例のKey誤置換を修正し、表示Factだけがfalseで診断0となる回帰を確認。不要なEffect/Context/Ref/Reducerは要求しない。
       examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorを通した25Fixtureのstatus・診断・失敗Rule ID一致、2322・固定表示・Guided丸写し・Source不一致・固定足場変更拒否の成功証拠に依拠する。実行可能21Fixtureは237〜247Factで既存256上限を維持。通常UIの型失敗→原文保存/reload→修正復帰、工程1合格/工程2未達→両工程合格、共有Snapshot/工程往復、混合正誤/重複回答/名前保持/結果/再挑戦、独立Workspaceの相互ResetによるDraft全文と進捗保持を確認。共有workshopだけgoalをSourceHashから除き、専用domainと全File/session/revision/profileを保ち、Goal/Scenario/Factsは個別に厳密照合する。
       ReviewerはPC通常3・未完結果1・100%拡大1、Mobile9Slide・PC案内1の実画像計15枚を確認し必須表示問題0。Keyboard/Focus、390pxの外側overflowなし、親PCとMobileのaxeを確認（iframeはaxe範囲外）。初回Hintの起動待機漏れと採点完了前の履歴読取りはtest側で修正し、判定条件を弱めず最終PC1test/1.2min/retry0とMobile1test成功を区別する。関連120File1441test成功。remote P2で再挑戦後のroot外回答表示の残存を指摘され、固定足場9コピーと両retry Scenarioを同期して未回答へ戻す。修正に関係する36test、25FixtureとPC再検証の成功・実画像を別途確認して再承認し、旧headのCI成功を新headへ流用しない。Reviewer独自実行/hash再計算、Slide抜粋全実行、説明能力の実測、実人受入/物理実機/正式公開承認には読み替えない。Course/台帳の公開状態と公開SHA/hashはdraftを維持する。
+      2026-10-07.7: Reviewer review_issue109が追加25コード・概念図と説明を独立読解し、390px全25画像とPC代表5画像の計30画像を実見して変更15Lessonを再承認。accuracy/goalExerciseAlignmentはapproved、新たな未説明語・解答漏洩・追加必須指摘は各0。作者の追加4掲載例strictTS/実React・JSDOM成功と既存の有効な演習実行をexamplesExecutedの根拠とし、独自実行・hash再計算はしていない。25SlideのPC/390px表示・画像読込・axe・横overflow・末尾Scroll/Pagerの2テストretry0成功を原JSON確認。WebKit Refの未解決フォーカス判定、Course全体の受入、人の初心者理解、物理実機、正式公開は承認に含まない。Course/台帳はdraftを維持する。
