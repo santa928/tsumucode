@@ -1,3 +1,4 @@
+import { acceptsReactQuizScenarios } from './reactQuizInteractions';
 import { acceptsReactHookScenarios } from './reactHookInteractions';
 import { acceptsReactReducerContextScenarios } from './reactReducerContextInteractions';
 import { acceptsReactFormScenarios } from './reactFormInteractions';
@@ -329,6 +330,8 @@ export const ReactExerciseRuntimeSchema = z
       'ref-focus-v1',
       'effect-sync-v1',
       'custom-source-hook-v1',
+      'quiz-workshop-v1',
+      'quiz-capstone-v1',
     ]),
     learningGoal: z
       .enum([
@@ -343,29 +346,36 @@ export const ReactExerciseRuntimeSchema = z
         'ref-focus',
         'external-sync',
         'source-hook',
+        'quiz-card',
+        'quiz-state',
+        'quiz-capstone',
       ])
       .optional(),
   })
   .strict()
   .refine(
     (runtime) =>
-      runtime.profile === 'static-components-v1'
-        ? ['reuse', 'composition'].includes(runtime.learningGoal ?? '')
-        : runtime.profile === 'interactive-state-v1'
-          ? ['counter', 'immutable-list'].includes(runtime.learningGoal ?? '')
-          : runtime.profile === 'controlled-form-v1'
-            ? ['controlled-form', 'shared-state'].includes(runtime.learningGoal ?? '')
-            : runtime.profile === 'reducer-form-v1'
-              ? runtime.learningGoal === 'reducer-form'
-              : runtime.profile === 'context-sharing-v1'
-                ? runtime.learningGoal === 'context-sharing'
-                : runtime.profile === 'ref-focus-v1'
-                  ? runtime.learningGoal === 'ref-focus'
-                  : runtime.profile === 'effect-sync-v1'
-                    ? runtime.learningGoal === 'external-sync'
-                    : runtime.profile === 'custom-source-hook-v1'
-                      ? runtime.learningGoal === 'source-hook'
-                      : runtime.learningGoal === undefined,
+      runtime.profile === 'quiz-workshop-v1'
+        ? ['quiz-card', 'quiz-state'].includes(runtime.learningGoal ?? '')
+        : runtime.profile === 'quiz-capstone-v1'
+          ? runtime.learningGoal === 'quiz-capstone'
+          : runtime.profile === 'static-components-v1'
+            ? ['reuse', 'composition'].includes(runtime.learningGoal ?? '')
+            : runtime.profile === 'interactive-state-v1'
+              ? ['counter', 'immutable-list'].includes(runtime.learningGoal ?? '')
+              : runtime.profile === 'controlled-form-v1'
+                ? ['controlled-form', 'shared-state'].includes(runtime.learningGoal ?? '')
+                : runtime.profile === 'reducer-form-v1'
+                  ? runtime.learningGoal === 'reducer-form'
+                  : runtime.profile === 'context-sharing-v1'
+                    ? runtime.learningGoal === 'context-sharing'
+                    : runtime.profile === 'ref-focus-v1'
+                      ? runtime.learningGoal === 'ref-focus'
+                      : runtime.profile === 'effect-sync-v1'
+                        ? runtime.learningGoal === 'external-sync'
+                        : runtime.profile === 'custom-source-hook-v1'
+                          ? runtime.learningGoal === 'source-hook'
+                          : runtime.learningGoal === undefined,
     { message: 'React課題の学習目標をprofileに合わせて指定してください' },
   );
 
@@ -1112,7 +1122,13 @@ export const ReactLearningRuleDefinitionSchema = z
     target: z
       .object({
         kind: z.literal('react-learning'),
-        file: z.enum(['components.tsx', 'reducer.ts', 'sourceHook.ts']),
+        file: z.enum([
+          'components.tsx',
+          'reducer.ts',
+          'sourceHook.ts',
+          'QuestionCard.tsx',
+          'quizState.ts',
+        ]),
       })
       .strict(),
     assertion: z
@@ -1130,6 +1146,9 @@ export const ReactLearningRuleDefinitionSchema = z
           'ref-focus',
           'external-sync',
           'source-hook',
+          'quiz-card',
+          'quiz-state',
+          'quiz-capstone',
         ]),
       })
       .strict(),
@@ -1139,11 +1158,15 @@ export const ReactLearningRuleDefinitionSchema = z
   .refine(
     (rule) =>
       rule.target.file ===
-      (rule.assertion.goal === 'reducer-form'
-        ? 'reducer.ts'
-        : rule.assertion.goal === 'source-hook'
-          ? 'sourceHook.ts'
-          : 'components.tsx'),
+      (rule.assertion.goal === 'quiz-card'
+        ? 'QuestionCard.tsx'
+        : ['quiz-state', 'quiz-capstone'].includes(rule.assertion.goal)
+          ? 'quizState.ts'
+          : rule.assertion.goal === 'reducer-form'
+            ? 'reducer.ts'
+            : rule.assertion.goal === 'source-hook'
+              ? 'sourceHook.ts'
+              : 'components.tsx'),
     '学習目標と編集責務のFileを一致させてください',
   );
 
@@ -1449,6 +1472,17 @@ export const ExerciseSchema = z
         code: 'custom',
         path: ['interactionScenarios'],
         message: 'submit-preventedはdom-form profileで指定してください',
+      });
+    }
+    if (
+      exercise.runtime?.kind === 'react' &&
+      ['quiz-workshop-v1', 'quiz-capstone-v1'].includes(exercise.runtime.profile) &&
+      !acceptsReactQuizScenarios(exercise.runtime.learningGoal, exercise.interactionScenarios)
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['interactionScenarios'],
+        message: 'クイズ教材には指定の全実操作Scenarioが必要です',
       });
     }
     if (

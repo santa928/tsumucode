@@ -207,3 +207,45 @@ lessons:
       examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorで各8Fixtureのstatus・診断・失敗Ruleが一致した証拠に依拠する。Refは初回、Effectは括弧修正後、Hookは最終48秒/retry0の成功を区別する。Ref/Effectの旧payloadは現存せず成功ログに依拠し、Hookの最終原JSONを確認した。固定購読の変更・Source不一致を拒否する。Hookのreadonly表示を共通化して231〜236Factへ縮小し、既存256上限を保った。fixed-sourceのB誤値がA非表示直後も残る2失敗Ruleの期待漏れを補い、判定/Scenarioを弱めていない。失敗runを成功には数えない。
       通常UI3単元の未完判定→dialogをKeyboardで閉じる→修正→実DOM→採点→Source保存往復/reload→Resetを確認。Refの実focus、Effectの切替直後の現在値/古いDOM Event無視/cleanup/非表示中の値変更/再mount、HookのA/B独立更新を確認。390pxの9Slide/PC案内・進捗・外側overflowなしとaxe、親PC画面のaxeを確認（iframeはaxe範囲外）。ReviewerはPC通常3・100%拡大3・mobile9・案内1の実画像16枚を確認し、必須表示問題0。
       後着通知は解除後の旧DOM入力Eventであり、通信やキュー済callbackの検証ではない。Reviewer独自実行/hash再計算、Slide抜粋の単独全実行、説明能力の実測、人間受入・物理実機・全React完成・正式公開の承認へ読み替えない。最終関連Gateは別途確認する。Course/台帳の公開状態と公開SHA/hashはdraftを維持する。
+  - lessonId: react-ch02-l01
+    authorId: tsumucode-react-quiz-authoring
+    reviewerId: review_issue109
+    sourceHash: 63426fb59d721b4abaa435214b8d987e29490fbfa10fbefda15f74f6f1e42c3c
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: |-
+      Reviewer review_issue109が9Slide・Guided工程票・独立Capstone Brief・3段階Hint・Starter/Solution・25正負Fixture・有限Runtimeを独立読解し、accuracy/alignmentを承認、未説明語/Hint漏洩/必須指摘0。Keyと実Callback、純粋な更新、回答済みguard、誤答後の累積得点保持を課題と対応づけた。固定ラベルのFact抜けと負例のKey誤置換を修正し、表示Factだけがfalseで診断0となる回帰を確認。不要なEffect/Context/Ref/Reducerは要求しない。
+      examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorを通した25Fixtureのstatus・診断・失敗Rule ID一致、2322・固定表示・Guided丸写し・Source不一致・固定足場変更拒否の成功証拠に依拠する。実行可能21Fixtureは233〜243Factで既存256上限を維持。通常UIの型失敗→原文保存/reload→修正復帰、工程1合格/工程2未達→両工程合格、共有Snapshot/工程往復、混合正誤/重複回答/名前保持/結果/再挑戦、独立Workspaceの相互ResetによるDraft全文と進捗保持を確認。共有workshopだけgoalをSourceHashから除き、専用domainと全File/session/revision/profileを保ち、Goal/Scenario/Factsは個別に厳密照合する。
+      ReviewerはPC通常3・未完結果1・100%拡大1、Mobile9Slide・PC案内1の実画像計15枚を確認し必須表示問題0。Keyboard/Focus、390pxの外側overflowなし、親PCとMobileのaxeを確認（iframeはaxe範囲外）。初回Hintの起動待機漏れと採点完了前の履歴読取りはtest側で修正し、判定条件を弱めず最終PC1test/1.2min/retry0とMobile1test成功を区別する。関連120File1441test成功。Reviewer独自実行/hash再計算、Slide抜粋全実行、説明能力の実測、実人受入/物理実機/正式公開承認には読み替えない。Course/台帳の公開状態と公開SHA/hashはdraftを維持する。
+  - lessonId: react-ch02-l02
+    authorId: tsumucode-react-quiz-authoring
+    reviewerId: review_issue109
+    sourceHash: 54be9666647e4cf8b79d22533688b797b29a9d35b408b018d7223722e28b3ac2
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: |-
+      Reviewer review_issue109が9Slide・Guided工程票・独立Capstone Brief・3段階Hint・Starter/Solution・25正負Fixture・有限Runtimeを独立読解し、accuracy/alignmentを承認、未説明語/Hint漏洩/必須指摘0。Keyと実Callback、純粋な更新、回答済みguard、誤答後の累積得点保持を課題と対応づけた。固定ラベルのFact抜けと負例のKey誤置換を修正し、表示Factだけがfalseで診断0となる回帰を確認。不要なEffect/Context/Ref/Reducerは要求しない。
+      examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorを通した25Fixtureのstatus・診断・失敗Rule ID一致、2322・固定表示・Guided丸写し・Source不一致・固定足場変更拒否の成功証拠に依拠する。実行可能21Fixtureは233〜243Factで既存256上限を維持。通常UIの型失敗→原文保存/reload→修正復帰、工程1合格/工程2未達→両工程合格、共有Snapshot/工程往復、混合正誤/重複回答/名前保持/結果/再挑戦、独立Workspaceの相互ResetによるDraft全文と進捗保持を確認。共有workshopだけgoalをSourceHashから除き、専用domainと全File/session/revision/profileを保ち、Goal/Scenario/Factsは個別に厳密照合する。
+      ReviewerはPC通常3・未完結果1・100%拡大1、Mobile9Slide・PC案内1の実画像計15枚を確認し必須表示問題0。Keyboard/Focus、390pxの外側overflowなし、親PCとMobileのaxeを確認（iframeはaxe範囲外）。初回Hintの起動待機漏れと採点完了前の履歴読取りはtest側で修正し、判定条件を弱めず最終PC1test/1.2min/retry0とMobile1test成功を区別する。関連120File1441test成功。Reviewer独自実行/hash再計算、Slide抜粋全実行、説明能力の実測、実人受入/物理実機/正式公開承認には読み替えない。Course/台帳の公開状態と公開SHA/hashはdraftを維持する。
+  - lessonId: react-ch03-l01
+    authorId: tsumucode-react-quiz-authoring
+    reviewerId: review_issue109
+    sourceHash: a90f4a445e7ecb261a7565f8474893ba166bbf09331a9f60702749b906cf39b6
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: |-
+      Reviewer review_issue109が9Slide・Guided工程票・独立Capstone Brief・3段階Hint・Starter/Solution・25正負Fixture・有限Runtimeを独立読解し、accuracy/alignmentを承認、未説明語/Hint漏洩/必須指摘0。Keyと実Callback、純粋な更新、回答済みguard、誤答後の累積得点保持を課題と対応づけた。固定ラベルのFact抜けと負例のKey誤置換を修正し、表示Factだけがfalseで診断0となる回帰を確認。不要なEffect/Context/Ref/Reducerは要求しない。
+      examplesExecutedは作者の実Worker/Compiler/React/Scenario/Validatorを通した25Fixtureのstatus・診断・失敗Rule ID一致、2322・固定表示・Guided丸写し・Source不一致・固定足場変更拒否の成功証拠に依拠する。実行可能21Fixtureは233〜243Factで既存256上限を維持。通常UIの型失敗→原文保存/reload→修正復帰、工程1合格/工程2未達→両工程合格、共有Snapshot/工程往復、混合正誤/重複回答/名前保持/結果/再挑戦、独立Workspaceの相互ResetによるDraft全文と進捗保持を確認。共有workshopだけgoalをSourceHashから除き、専用domainと全File/session/revision/profileを保ち、Goal/Scenario/Factsは個別に厳密照合する。
+      ReviewerはPC通常3・未完結果1・100%拡大1、Mobile9Slide・PC案内1の実画像計15枚を確認し必須表示問題0。Keyboard/Focus、390pxの外側overflowなし、親PCとMobileのaxeを確認（iframeはaxe範囲外）。初回Hintの起動待機漏れと採点完了前の履歴読取りはtest側で修正し、判定条件を弱めず最終PC1test/1.2min/retry0とMobile1test成功を区別する。関連120File1441test成功。Reviewer独自実行/hash再計算、Slide抜粋全実行、説明能力の実測、実人受入/物理実機/正式公開承認には読み替えない。Course/台帳の公開状態と公開SHA/hashはdraftを維持する。

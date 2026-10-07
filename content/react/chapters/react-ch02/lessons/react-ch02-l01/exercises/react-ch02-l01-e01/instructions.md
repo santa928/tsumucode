@@ -1,0 +1,7 @@
+## 型付きの問題をComponentへ渡す
+
+選択肢からKeyと表示を作り、クリックした同じ値をonAnswerへ渡す。先に操作後の表示と得点を予測してください。編集できるのはQuestionCard.tsxとquizState.tsです。今回の主な修正先はQuestionCard.tsxです。main.tsx・types.ts・data.ts・index.htmlは固定の足場です。
+
+型付きPropsから選択肢の一覧を作り、一意なKeyと同じ選択肢のCallbackを親へつなぐ。
+
+2工程は同じWorkspaceを共有します。前工程で保存したCardとState関数を引き継ぎ、戻った工程でも同じ2Fileを編集できます。3段階HintとChecklistで修正位置・値の由来・実操作を確かめます。正解例は制作を終えた後の比較に使い、別Briefとの差を説明してください。

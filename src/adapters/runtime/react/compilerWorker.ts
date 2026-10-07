@@ -7,6 +7,8 @@ import { isControlledFormScaffold } from './controlledFormScaffold';
 import { analyzeReducer } from './checkReducerSource';
 import { analyzeContext } from './checkContextSource';
 import { isReducerContextScaffold } from './reducerContextScaffold';
+import { analyzeQuizSource } from './checkQuizSource';
+import { isQuizScaffold } from './quizScaffold';
 import { isHookScaffold } from './hookScaffold';
 import { analyzeRef } from './checkRefSource';
 import { analyzeExternalSource } from './checkExternalSource';
@@ -60,6 +62,9 @@ self.onmessage = (event: MessageEvent<unknown>): void => {
   const profile = value.input.profile;
   const analysis = (() => {
     switch (profile) {
+      case 'quiz-workshop-v1':
+      case 'quiz-capstone-v1':
+        return analyzeQuizSource(input.files, profile === 'quiz-capstone-v1');
       case 'ref-focus-v1':
         return analyzeRef(input.files['components.tsx'] ?? '');
       case 'effect-sync-v1':
@@ -81,21 +86,24 @@ self.onmessage = (event: MessageEvent<unknown>): void => {
     }
   })();
   const hooks = ['ref-focus-v1', 'effect-sync-v1', 'custom-source-hook-v1'].includes(profile);
-  const fixed = hooks
-    ? isHookScaffold(input.files, profile)
-    : Object.keys(input.files).sort().join(',') ===
-        (profile === 'reducer-form-v1'
-          ? 'components.tsx,main.tsx,reducer.ts,types.ts'
-          : profile === 'context-sharing-v1'
-            ? 'components.tsx,main.tsx,nameContext.ts,types.ts'
-            : 'components.tsx,main.tsx,types.ts') &&
-      (['reducer-form-v1', 'context-sharing-v1'].includes(profile)
-        ? isReducerContextScaffold(input.files, profile)
-        : profile === 'controlled-form-v1'
-          ? isControlledFormScaffold(input.files)
-          : profile === 'interactive-state-v1'
-            ? isInteractiveStateScaffold(input.files)
-            : isStaticComponentsScaffold(input.files));
+  const quiz = profile === 'quiz-workshop-v1' || profile === 'quiz-capstone-v1';
+  const fixed = quiz
+    ? isQuizScaffold(input.files, profile)
+    : hooks
+      ? isHookScaffold(input.files, profile)
+      : Object.keys(input.files).sort().join(',') ===
+          (profile === 'reducer-form-v1'
+            ? 'components.tsx,main.tsx,reducer.ts,types.ts'
+            : profile === 'context-sharing-v1'
+              ? 'components.tsx,main.tsx,nameContext.ts,types.ts'
+              : 'components.tsx,main.tsx,types.ts') &&
+        (['reducer-form-v1', 'context-sharing-v1'].includes(profile)
+          ? isReducerContextScaffold(input.files, profile)
+          : profile === 'controlled-form-v1'
+            ? isControlledFormScaffold(input.files)
+            : profile === 'interactive-state-v1'
+              ? isInteractiveStateScaffold(input.files)
+              : isStaticComponentsScaffold(input.files));
   const diagnostics = analysis
     ? fixed
       ? analysis.diagnostics

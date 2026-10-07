@@ -7,11 +7,14 @@ export async function reactSourceHash(
   sessionId: string,
   revision: number,
 ): Promise<string> {
+  // 同じ実行profileのGuided工程は実行証拠を共有し、学習目標はValidatorで個別に照合する。
+  const sharedQuiz = runtime.profile === 'quiz-workshop-v1';
+  const identity = sharedQuiz ? { ...runtime, learningGoal: undefined } : runtime;
   const source = JSON.stringify([
-    'tsumucode-react-source-v1',
+    sharedQuiz ? 'tsumucode-react-quiz-source-v1' : 'tsumucode-react-source-v1',
     sessionId,
     revision,
-    runtime,
+    identity,
     Object.keys(files)
       .sort()
       .map((file) => [file, files[file]]),

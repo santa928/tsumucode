@@ -23,6 +23,13 @@ export function useContext() {}
 export function useRef() {}
 export function useEffect() {}
 `;
+// クイズは新APIを使わないため、予約stubも許可済みの4exportだけに閉じる。
+const QUIZ_STUB = `
+export function jsx() {}
+export function jsxs() {}
+export function createRoot() {}
+export function useState() {}
+`;
 const PACKAGES: Readonly<Record<string, readonly string[]>> = {
   'react/jsx-runtime': ['jsx', 'jsxs', 'Fragment'],
   'react-dom/client': ['createRoot'],
@@ -31,6 +38,9 @@ const PACKAGES: Readonly<Record<string, readonly string[]>> = {
 /** 課題とFileの責務に対応するHookだけを許可し、旧profileへ新APIを開放しない。 */
 function reactExports(profile: ReactProfile, file: string): readonly string[] | undefined {
   switch (profile) {
+    case 'quiz-workshop-v1':
+    case 'quiz-capstone-v1':
+      return file === 'main.js' ? ['useState'] : undefined;
     case 'ref-focus-v1':
       return file === 'components.js' ? ['useRef', 'useState'] : undefined;
     case 'effect-sync-v1':
@@ -125,7 +135,11 @@ export function prepareReactModules(
     });
     output[file] = edited.toString();
   }
-  return { ...output, [REACT_MODULE_FILE]: STUB };
+  return {
+    ...output,
+    [REACT_MODULE_FILE]:
+      profile === 'quiz-workshop-v1' || profile === 'quiz-capstone-v1' ? QUIZ_STUB : STUB,
+  };
 }
 
 /** 全learner moduleを通常Analyzerで検査し、信頼側の予約stubだけ固定bundleへ差し替える。 */
@@ -136,7 +150,7 @@ export class ReactModuleAnalyzer {
     if (
       !('files' in input) ||
       input.sourceType !== 'module' ||
-      input.files[REACT_MODULE_FILE] !== STUB
+      (input.files[REACT_MODULE_FILE] !== STUB && input.files[REACT_MODULE_FILE] !== QUIZ_STUB)
     )
       throw new Error('React Analyzer入力の予約moduleが一致しません');
     const result = await this.#client.analyze(input);

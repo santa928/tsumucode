@@ -1,0 +1,52 @@
+id: react-ch02-l02
+kind: guided-project
+title: クイズStateを純粋な関数で更新する
+goal: 現在のStateと実正誤から次Stateを返し、重複得点を防ぎ、結果と名前を保つ再挑戦へつなぐ。
+estimatedMinutes: 45
+prerequisiteLessonIds:
+  - react-ch02-l01
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/react-ch02-l02-e01/exercise.yaml
+reflection: 現在のStateと実正誤から次Stateを返し、重複得点を防ぎ、結果と名前を保つ再挑戦へつなぐ。
+glossaryRefs:
+  - quiz-pure-state
+  - props
+  - state
+  - key
+project:
+  id: react-quiz-guided
+  briefSource: brief.md
+  guideSources:
+    - guide.md
+  checklist:
+    - id: react-ch02-l02-source
+      label: 今回の元Sourceと型
+      required: true
+      ruleIds:
+        - react-ch02-l02-e01-r01
+        - react-ch02-l02-e01-r02
+        - react-ch02-l02-e01-r03
+    - id: react-ch02-l02-behavior
+      label: 実操作と保存への接続
+      required: true
+      ruleIds:
+        - interaction:quiz-guided-flow:name
+        - interaction:quiz-guided-flow:early-next
+        - interaction:quiz-guided-flow:correct
+        - interaction:quiz-guided-flow:duplicate
+        - interaction:quiz-guided-flow:next
+        - interaction:quiz-guided-flow:wrong
+        - interaction:quiz-guided-flow:result
+        - interaction:quiz-guided-flow:retry
+completion:
+  kind: guided-project
+  requiredChecklistItemIds:
+    - react-ch02-l02-source
+    - react-ch02-l02-behavior
+  requiredExerciseIds:
+    - react-ch02-l02-e01
+nextLessonId: react-ch03-l01

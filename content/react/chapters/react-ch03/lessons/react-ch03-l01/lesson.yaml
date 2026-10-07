@@ -1,0 +1,66 @@
+id: react-ch03-l01
+kind: capstone
+title: 誤答から再回答できる練習クイズ
+goal: 別Briefから必要な更新を選び、誤答でも累積得点を保って同じ問題へ再回答し、独立した作品を完成する。
+estimatedMinutes: 60
+prerequisiteLessonIds:
+  - react-ch02-l02
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/react-ch03-l01-e01/exercise.yaml
+reflection: 別Briefから必要な更新を選び、誤答でも累積得点を保って同じ問題へ再回答し、独立した作品を完成する。
+glossaryRefs:
+  - brief-transfer
+  - props
+  - state
+  - key
+project:
+  id: react-quiz-capstone
+  briefSource: brief.md
+  guideSources:
+    - guide.md
+  checklist:
+    - id: react-ch03-l01-source
+      label: 今回の元Sourceと型
+      required: true
+      ruleIds:
+        - react-ch03-l01-e01-r01
+        - react-ch03-l01-e01-r02
+        - react-ch03-l01-e01-r03
+    - id: react-ch03-l01-behavior
+      label: 実操作と保存への接続
+      required: true
+      ruleIds:
+        - interaction:quiz-practice-flow:name
+        - interaction:quiz-practice-flow:early-next
+        - interaction:quiz-practice-flow:correct
+        - interaction:quiz-practice-flow:next
+        - interaction:quiz-practice-flow:wrong
+        - interaction:quiz-practice-flow:second-correct
+        - interaction:quiz-practice-flow:duplicate
+        - interaction:quiz-practice-flow:result
+        - interaction:quiz-practice-flow:retry
+        - interaction:quiz-practice-wrong-next:wrong
+        - interaction:quiz-practice-wrong-next:next
+completion:
+  kind: capstone
+  requiredRuleIds:
+    - react-ch03-l01-e01-r01
+    - react-ch03-l01-e01-r02
+    - react-ch03-l01-e01-r03
+    - interaction:quiz-practice-flow:name
+    - interaction:quiz-practice-flow:early-next
+    - interaction:quiz-practice-flow:correct
+    - interaction:quiz-practice-flow:next
+    - interaction:quiz-practice-flow:wrong
+    - interaction:quiz-practice-flow:second-correct
+    - interaction:quiz-practice-flow:duplicate
+    - interaction:quiz-practice-flow:result
+    - interaction:quiz-practice-flow:retry
+    - interaction:quiz-practice-wrong-next:wrong
+    - interaction:quiz-practice-wrong-next:next
+  requiredViewportIds:
+    - desktop-1280
