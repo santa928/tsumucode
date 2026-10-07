@@ -51,6 +51,17 @@ test('Propsの型修正を実React描画・判定・保存・Resetへ接続す�
   const solution = await readFile(`${root}/solution/main.tsx`, 'utf8');
   await replaceEditorText(page, solution);
   await waitForStoredDraftContent(page, solution);
+  // 編集後の自動再描画だけで復帰し、前の型失敗のalertを残さない。
+  await expect(
+    page
+      .frameLocator('iframe[title="Reactコードのプレビュー"]')
+      .getByRole('heading', { name: 'HTMLが受け持つものは？' }),
+  ).toBeVisible({ timeout: 20_000 });
+  await expect(
+    page
+      .getByRole('alert')
+      .filter({ hasText: "Type 'number' is not assignable to type 'string'." }),
+  ).toHaveCount(0);
   await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
   const preview = page.frameLocator('iframe[title="Reactコードのプレビュー"]');
   await expect(preview.getByRole('heading', { name: 'HTMLが受け持つものは？' })).toBeVisible({

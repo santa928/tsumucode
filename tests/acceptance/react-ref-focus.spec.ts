@@ -1,7 +1,10 @@
+import { captureReactAcceptance } from './reactCaptureBinding';
 import { readFile, writeFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import { readStoredProgress, waitForDraftSaved } from '../e2e/helpers/progress';
 import { testServerUrl } from '../e2e/helpers/testBasePath';
+
+const captureBinding = await captureReactAcceptance('tests/acceptance/react-ref-focus.spec.ts');
 
 test('Refの実クリックによるfocusと通常UIの採点を比較する', async ({ page }, info) => {
   const id = 'react-ch01-l10-e01';
@@ -48,7 +51,10 @@ test('Refの実クリックによるfocusと通常UIの採点を比較する', a
     })
     .toBeGreaterThan(0);
   const stored = await readStoredProgress(page);
-  await writeFile(info.outputPath('ref-ui-observation.json'), JSON.stringify(stored, null, 2));
+  await writeFile(
+    info.outputPath('ref-ui-observation.json'),
+    JSON.stringify({ captureBinding, ...stored }, null, 2),
+  );
   const draft = stored.drafts.find((draft) => draft['exerciseId'] === id);
   const history = draft?.['validationHistory'] as
     { status: string; diagnostics: unknown[]; checks: { passed: boolean }[] }[] | undefined;

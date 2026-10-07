@@ -1,0 +1,18 @@
+schemaVersion: 2
+courseId: react
+status: draft
+verifiedSourceCommit: draft
+candidateTreeSha256: draft
+canonicalDistSha256: draft
+courseManifestSha256: draft
+publicProvenanceSha256: draft
+visualBaselineSha256: draft
+records:
+  contentReview:
+    path: docs/quality/content-review-react.yaml
+    sha256: draft
+  technicalAcceptance:
+    path: docs/quality/react-release-acceptance.yaml
+    sha256: draft
+approvedBy: draft
+approvedAt: draft

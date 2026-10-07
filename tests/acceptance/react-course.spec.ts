@@ -1,3 +1,4 @@
+import { captureReactAcceptance } from './reactCaptureBinding';
 import { writeFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import { loadAuthoringCourse } from '../../scripts/content/compileCourse';
@@ -6,6 +7,7 @@ import type * as RunnerModule from '../../src/adapters/runtime/react/ReactRunner
 import type * as ValidatorModule from '../../src/adapters/validation/react/ReactValidator';
 import type * as InteractionModule from '../../src/features/learning/session/runInteractionScenario';
 
+const captureBinding = await captureReactAcceptance('tests/acceptance/react-course.spec.ts');
 const { exercises } = await loadAuthoringCourse('content/react');
 
 // Refのnative focusは実クリックと通常UI採点をreact-ref-focus.spec.tsで3Browser確認する。
@@ -136,7 +138,7 @@ for (const exercise of exercises.filter((exercise) => exercise.id !== 'react-ch0
     }, exercise);
     await writeFile(
       info.outputPath('react-acceptance-observation.json'),
-      JSON.stringify(observation, null, 2),
+      JSON.stringify({ captureBinding, ...observation }, null, 2),
     );
     expect(observation.result.status).toBe('pass');
     expect(observation.result.diagnostics).toEqual([]);

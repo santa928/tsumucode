@@ -143,12 +143,13 @@ describe('TypeScript正式Releaseの隔離された契約', () => {
       'html-css',
       'javascript',
       'typescript',
+      'react',
     ]);
     const step = workflow.jobs.quality.steps.find(
       ({ name }) => name === 'Keep existing JavaScript continuity in the all-site gate',
     );
     expect(step?.if).toBe(
-      "needs.resolve.outputs.course_id == 'typescript' && needs.resolve.outputs.release_mode != 'rollback'",
+      "(needs.resolve.outputs.course_id == 'typescript' || needs.resolve.outputs.course_id == 'react') && needs.resolve.outputs.release_mode != 'rollback'",
     );
     expect(step?.run).toContain('--quality-only --course-id javascript');
   });

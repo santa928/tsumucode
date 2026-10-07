@@ -22,6 +22,7 @@ import {
   type CoursePublishedRelease,
   type CourseReleaseHistory,
 } from './javascriptReleaseSchema';
+import { ReactPostDeployVerificationSchema } from './reactReleaseSchema';
 import { TypescriptPostDeployVerificationSchema } from './typescriptReleaseSchema';
 import { verifyPublishedTag } from './verifyReleaseTarget';
 import { parseReleaseReport, type ReleaseReportInput } from './writeReleaseReport';
@@ -69,11 +70,13 @@ export function validatePostDeployVerification(
 ): void {
   const courseId = release.courseId ?? 'html-css';
   const verification =
-    courseId === 'typescript'
-      ? TypescriptPostDeployVerificationSchema.parse(source)
-      : courseId === 'javascript'
-        ? JavascriptPostDeployVerificationSchema.parse(source)
-        : PostDeployVerificationSchema.parse(source);
+    courseId === 'react'
+      ? ReactPostDeployVerificationSchema.parse(source)
+      : courseId === 'typescript'
+        ? TypescriptPostDeployVerificationSchema.parse(source)
+        : courseId === 'javascript'
+          ? JavascriptPostDeployVerificationSchema.parse(source)
+          : PostDeployVerificationSchema.parse(source);
   const expectedPath = expectedPostDeployVerificationPath(release.revision, courseId);
   if (release.postDeployVerificationPath !== expectedPath) {
     throw new Error(

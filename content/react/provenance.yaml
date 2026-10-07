@@ -1668,3 +1668,6 @@ items:
   - id: react-ch03-l01-s01-reading-flow-original
     visibility: public
     path: chapters/react-ch03/lessons/react-ch03-l01/slides/assets/s01-reading-flow.svg
+  - id: react-release-history-authoring
+    visibility: authoring
+    path: release-history.yaml

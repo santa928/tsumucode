@@ -11,7 +11,8 @@ glossarySource: glossary.yaml
 conceptsSource: concepts.yaml
 documentationSources:
   - references/react-official.md
-authoringSources: []
+authoringSources:
+  - release-history.yaml
 supportedDevices:
   exercise: desktop
   study:

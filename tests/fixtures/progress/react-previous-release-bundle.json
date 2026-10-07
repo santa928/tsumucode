@@ -1,0 +1,1924 @@
+{
+  "schemaVersion": 2,
+  "courses": {
+    "html-css": {
+      "courseId": "html-css",
+      "contentRevision": "2026-07-16.3",
+      "lessons": {},
+      "currentComplete": false,
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "javascript": {
+      "courseId": "javascript",
+      "contentRevision": "2026-10-02.5",
+      "lessons": {},
+      "currentComplete": false,
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "react": {
+      "courseId": "react",
+      "contentRevision": "2026-10-07.6",
+      "lessons": {
+        "react-ch01-l01": {
+          "lessonId": "react-ch01-l01",
+          "viewedSlideIds": [
+            "react-ch01-l01-s01",
+            "react-ch01-l01-s02",
+            "react-ch01-l01-s03",
+            "react-ch01-l01-s04"
+          ],
+          "passedExerciseIds": ["react-ch01-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "react-ch01-l01-e01-r01",
+            "react-ch01-l01-e01-r02",
+            "react-ch01-l01-e01-r03",
+            "react-ch01-l01-e01-r04"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-07T00:00:00.000Z"
+        },
+        "react-ch01-l02": {
+          "lessonId": "react-ch01-l02",
+          "viewedSlideIds": ["react-ch01-l02-s01", "react-ch01-l02-s02", "react-ch01-l02-s03"],
+          "passedExerciseIds": ["react-ch01-l02-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "react-ch01-l02-e01-r01",
+            "react-ch01-l02-e01-r02",
+            "react-ch01-l02-e01-r03",
+            "react-ch01-l02-e01-r04",
+            "react-ch01-l02-e01-r05",
+            "react-ch01-l02-e01-r06",
+            "react-ch01-l02-e01-r07"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-07T00:00:00.000Z"
+        },
+        "react-ch01-l03": {
+          "lessonId": "react-ch01-l03",
+          "viewedSlideIds": ["react-ch01-l03-s01", "react-ch01-l03-s02", "react-ch01-l03-s03"],
+          "passedExerciseIds": ["react-ch01-l03-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "react-ch01-l03-e01-r01",
+            "react-ch01-l03-e01-r02",
+            "react-ch01-l03-e01-r03",
+            "react-ch01-l03-e01-r04",
+            "react-ch01-l03-e01-r05",
+            "react-ch01-l03-e01-r06",
+            "react-ch01-l03-e01-r07",
+            "react-ch01-l03-e01-r08"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-07T00:00:00.000Z"
+        },
+        "react-ch01-l04": {
+          "lessonId": "react-ch01-l04",
+          "viewedSlideIds": ["react-ch01-l04-s01", "react-ch01-l04-s02", "react-ch01-l04-s03"],
+          "passedExerciseIds": ["react-ch01-l04-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "react-ch01-l04-e01-r01",
+            "react-ch01-l04-e01-r02",
+            "react-ch01-l04-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-07T00:00:00.000Z"
+        },
+        "react-ch01-l05": {
+          "lessonId": "react-ch01-l05",
+          "viewedSlideIds": [
+            "react-ch01-l05-s01",
+            "react-ch01-l05-s02",
+            "react-ch01-l05-s03",
+            "react-ch01-l05-s04"
+          ],
+          "passedExerciseIds": ["react-ch01-l05-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "react-ch01-l05-e01-r01",
+            "react-ch01-l05-e01-r02",
+            "react-ch01-l05-e01-r03",
+            "react-ch01-l05-e01-r04"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-07T00:00:00.000Z"
+        },
+        "react-ch01-l06": {
+          "lessonId": "react-ch01-l06",
+          "viewedSlideIds": [
+            "react-ch01-l06-s01",
+            "react-ch01-l06-s02",
+            "react-ch01-l06-s03",
+            "react-ch01-l06-s04"
+          ],
+          "passedExerciseIds": ["react-ch01-l06-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "react-ch01-l06-e01-r01",
+            "react-ch01-l06-e01-r02",
+            "react-ch01-l06-e01-r03",
+            "react-ch01-l06-e01-r04"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-07T00:00:00.000Z"
+        },
+        "react-ch01-l07": {
+          "lessonId": "react-ch01-l07",
+          "viewedSlideIds": ["react-ch01-l07-s01", "react-ch01-l07-s02", "react-ch01-l07-s03"],
+          "passedExerciseIds": ["react-ch01-l07-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "react-ch01-l07-e01-r01",
+            "react-ch01-l07-e01-r02",
+            "react-ch01-l07-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-07T00:00:00.000Z"
+        },
+        "react-ch01-l08": {
+          "lessonId": "react-ch01-l08",
+          "viewedSlideIds": ["react-ch01-l08-s01", "react-ch01-l08-s02", "react-ch01-l08-s03"],
+          "passedExerciseIds": ["react-ch01-l08-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "react-ch01-l08-e01-r01",
+            "react-ch01-l08-e01-r02",
+            "react-ch01-l08-e01-r03",
+            "react-ch01-l08-e01-r04"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-07T00:00:00.000Z"
+        },
+        "react-ch01-l09": {
+          "lessonId": "react-ch01-l09",
+          "viewedSlideIds": ["react-ch01-l09-s01", "react-ch01-l09-s02", "react-ch01-l09-s03"],
+          "passedExerciseIds": ["react-ch01-l09-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "react-ch01-l09-e01-r01",
+            "react-ch01-l09-e01-r02",
+            "react-ch01-l09-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-07T00:00:00.000Z"
+        },
+        "react-ch01-l10": {
+          "lessonId": "react-ch01-l10",
+          "viewedSlideIds": ["react-ch01-l10-s01", "react-ch01-l10-s02", "react-ch01-l10-s03"],
+          "passedExerciseIds": ["react-ch01-l10-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "react-ch01-l10-e01-r01",
+            "react-ch01-l10-e01-r02",
+            "react-ch01-l10-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-07T00:00:00.000Z"
+        },
+        "react-ch01-l11": {
+          "lessonId": "react-ch01-l11",
+          "viewedSlideIds": ["react-ch01-l11-s01", "react-ch01-l11-s02", "react-ch01-l11-s03"],
+          "passedExerciseIds": ["react-ch01-l11-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "react-ch01-l11-e01-r01",
+            "react-ch01-l11-e01-r02",
+            "react-ch01-l11-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-07T00:00:00.000Z"
+        },
+        "react-ch01-l12": {
+          "lessonId": "react-ch01-l12",
+          "viewedSlideIds": ["react-ch01-l12-s01", "react-ch01-l12-s02", "react-ch01-l12-s03"],
+          "passedExerciseIds": ["react-ch01-l12-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "react-ch01-l12-e01-r01",
+            "react-ch01-l12-e01-r02",
+            "react-ch01-l12-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-07T00:00:00.000Z"
+        },
+        "react-ch02-l01": {
+          "lessonId": "react-ch02-l01",
+          "viewedSlideIds": ["react-ch02-l01-s01", "react-ch02-l01-s02", "react-ch02-l01-s03"],
+          "passedExerciseIds": ["react-ch02-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "react-ch02-l01-e01-r01",
+            "react-ch02-l01-e01-r02",
+            "react-ch02-l01-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-07T00:00:00.000Z"
+        },
+        "react-ch02-l02": {
+          "lessonId": "react-ch02-l02",
+          "viewedSlideIds": ["react-ch02-l02-s01", "react-ch02-l02-s02", "react-ch02-l02-s03"],
+          "passedExerciseIds": ["react-ch02-l02-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "react-ch02-l02-e01-r01",
+            "react-ch02-l02-e01-r02",
+            "react-ch02-l02-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-07T00:00:00.000Z"
+        },
+        "react-ch03-l01": {
+          "lessonId": "react-ch03-l01",
+          "viewedSlideIds": ["react-ch03-l01-s01", "react-ch03-l01-s02", "react-ch03-l01-s03"],
+          "passedExerciseIds": ["react-ch03-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "react-ch03-l01-e01-r01",
+            "react-ch03-l01-e01-r02",
+            "react-ch03-l01-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-07T00:00:00.000Z"
+        }
+      },
+      "currentComplete": true,
+      "firstCompletedAt": "2026-10-07T00:00:00.000Z",
+      "updatedAt": "2026-10-07T00:00:00.000Z"
+    },
+    "typescript": {
+      "courseId": "typescript",
+      "contentRevision": "2026-10-06.4",
+      "lessons": {
+        "typescript-ch01-l01": {
+          "lessonId": "typescript-ch01-l01",
+          "viewedSlideIds": [
+            "typescript-ch01-l01-s01",
+            "typescript-ch01-l01-s02",
+            "typescript-ch01-l01-s03",
+            "typescript-ch01-l01-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch01-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["typescript-ch01-l01-e01-r01", "typescript-ch01-l01-e01-r02"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch01-l02": {
+          "lessonId": "typescript-ch01-l02",
+          "viewedSlideIds": [
+            "typescript-ch01-l02-s01",
+            "typescript-ch01-l02-s02",
+            "typescript-ch01-l02-s03",
+            "typescript-ch01-l02-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch01-l02-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["typescript-ch01-l02-e01-r01", "typescript-ch01-l02-e01-r02"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch01-l03": {
+          "lessonId": "typescript-ch01-l03",
+          "viewedSlideIds": [
+            "typescript-ch01-l03-s01",
+            "typescript-ch01-l03-s02",
+            "typescript-ch01-l03-s03",
+            "typescript-ch01-l03-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch01-l03-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["typescript-ch01-l03-e01-r01"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch02-l01": {
+          "lessonId": "typescript-ch02-l01",
+          "viewedSlideIds": [
+            "typescript-ch02-l01-s01",
+            "typescript-ch02-l01-s02",
+            "typescript-ch02-l01-s03",
+            "typescript-ch02-l01-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch02-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["typescript-ch02-l01-e01-r01", "typescript-ch02-l01-e01-r02"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch03-l01": {
+          "lessonId": "typescript-ch03-l01",
+          "viewedSlideIds": [
+            "typescript-ch03-l01-s01",
+            "typescript-ch03-l01-s02",
+            "typescript-ch03-l01-s03",
+            "typescript-ch03-l01-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch03-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["typescript-ch03-l01-e01-r01", "typescript-ch03-l01-e01-r02"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch03-l02": {
+          "lessonId": "typescript-ch03-l02",
+          "viewedSlideIds": [
+            "typescript-ch03-l02-s01",
+            "typescript-ch03-l02-s02",
+            "typescript-ch03-l02-s03",
+            "typescript-ch03-l02-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch03-l02-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["typescript-ch03-l02-e01-r01", "typescript-ch03-l02-e01-r02"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch04-l01": {
+          "lessonId": "typescript-ch04-l01",
+          "viewedSlideIds": [
+            "typescript-ch04-l01-s01",
+            "typescript-ch04-l01-s02",
+            "typescript-ch04-l01-s03",
+            "typescript-ch04-l01-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch04-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["typescript-ch04-l01-e01-r01", "typescript-ch04-l01-e01-r02"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch04-l02": {
+          "lessonId": "typescript-ch04-l02",
+          "viewedSlideIds": [
+            "typescript-ch04-l02-s01",
+            "typescript-ch04-l02-s02",
+            "typescript-ch04-l02-s03",
+            "typescript-ch04-l02-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch04-l02-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["typescript-ch04-l02-e01-r01", "typescript-ch04-l02-e01-r02"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch04-l03": {
+          "lessonId": "typescript-ch04-l03",
+          "viewedSlideIds": [
+            "typescript-ch04-l03-s01",
+            "typescript-ch04-l03-s02",
+            "typescript-ch04-l03-s03",
+            "typescript-ch04-l03-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch04-l03-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["typescript-ch04-l03-e01-r01", "typescript-ch04-l03-e01-r02"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch05-l01": {
+          "lessonId": "typescript-ch05-l01",
+          "viewedSlideIds": [
+            "typescript-ch05-l01-s01",
+            "typescript-ch05-l01-s02",
+            "typescript-ch05-l01-s03",
+            "typescript-ch05-l01-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch05-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "typescript-ch05-l01-e01-r01",
+            "typescript-ch05-l01-e01-r02",
+            "typescript-ch05-l01-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch05-l02": {
+          "lessonId": "typescript-ch05-l02",
+          "viewedSlideIds": [
+            "typescript-ch05-l02-s01",
+            "typescript-ch05-l02-s02",
+            "typescript-ch05-l02-s03",
+            "typescript-ch05-l02-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch05-l02-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "typescript-ch05-l02-e01-r01",
+            "typescript-ch05-l02-e01-r02",
+            "typescript-ch05-l02-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch05-l03": {
+          "lessonId": "typescript-ch05-l03",
+          "viewedSlideIds": [
+            "typescript-ch05-l03-s01",
+            "typescript-ch05-l03-s02",
+            "typescript-ch05-l03-s03",
+            "typescript-ch05-l03-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch05-l03-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "typescript-ch05-l03-e01-r01",
+            "typescript-ch05-l03-e01-r02",
+            "typescript-ch05-l03-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch06-l01": {
+          "lessonId": "typescript-ch06-l01",
+          "viewedSlideIds": [
+            "typescript-ch06-l01-s01",
+            "typescript-ch06-l01-s02",
+            "typescript-ch06-l01-s03",
+            "typescript-ch06-l01-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch06-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "typescript-ch06-l01-e01-r01",
+            "typescript-ch06-l01-e01-r02",
+            "typescript-ch06-l01-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch06-l02": {
+          "lessonId": "typescript-ch06-l02",
+          "viewedSlideIds": [
+            "typescript-ch06-l02-s01",
+            "typescript-ch06-l02-s02",
+            "typescript-ch06-l02-s03",
+            "typescript-ch06-l02-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch06-l02-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "typescript-ch06-l02-e01-r01",
+            "typescript-ch06-l02-e01-r02",
+            "typescript-ch06-l02-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        },
+        "typescript-ch06-l03": {
+          "lessonId": "typescript-ch06-l03",
+          "viewedSlideIds": [
+            "typescript-ch06-l03-s01",
+            "typescript-ch06-l03-s02",
+            "typescript-ch06-l03-s03",
+            "typescript-ch06-l03-s04"
+          ],
+          "passedExerciseIds": ["typescript-ch06-l03-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "typescript-ch06-l03-e01-r01",
+            "typescript-ch06-l03-e01-r02",
+            "typescript-ch06-l03-e01-r03"
+          ],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "currentComplete": true,
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    }
+  },
+  "drafts": {
+    "react:react-ch01-l01-e01": {
+      "courseId": "react",
+      "lessonId": "react-ch01-l01",
+      "exerciseId": "react-ch01-l01-e01",
+      "workspaceId": "react-ch01-l01-e01",
+      "contentRevision": "2026-10-07.6",
+      "editRevision": 3,
+      "files": {
+        "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { QuestionCard, type Question } from './QuestionCard';\n\nconst question: Question = {\n  prompt: 42,\n  choices: ['内容', '見た目'],\n  correctIndex: 0,\n};\nconst container = document.getElementById('root');\nif (container === null) throw new Error('表示先がありません');\ncreateRoot(container).render(<QuestionCard question={question} />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+        "QuestionCard.tsx": "import type { ReactElement } from 'react';\n\nexport interface Question {\n  readonly prompt: string;\n  readonly choices: readonly string[];\n  readonly correctIndex: number;\n}\n\n/** 作者が渡した問題データを、回答操作のないカードとして表示する。 */\nexport function QuestionCard({ question }: { readonly question: Question }): ReactElement {\n  return (\n    <section aria-labelledby=\"question-prompt\">\n      <h1 id=\"question-prompt\">{question.prompt}</h1>\n      <ol>\n        {question.choices.map((choice) => (\n          <li key={choice}>{choice}</li>\n        ))}\n      </ol>\n      <p>選択肢は{question.choices.length}個です</p>\n    </section>\n  );\n}\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>型付きの問題カード</title>\n    <style>\n      body {\n        margin: 0;\n        padding: 24px;\n        font-family: sans-serif;\n        line-height: 1.7;\n      }\n      section {\n        max-width: 40rem;\n        padding: 20px;\n        border: 1px solid #666;\n        overflow-wrap: anywhere;\n      }\n      h1 {\n        margin-top: 0;\n        font-size: 1.4rem;\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.tsx",
+      "cursors": {
+        "main.tsx": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "react-ch01-l01-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "react-ch01-l01-e01-r01",
+            "react-ch01-l01-e01-r02",
+            "react-ch01-l01-e01-r03",
+            "react-ch01-l01-e01-r04"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["react-ch01-l01-e01-h01"],
+      "lastPassingSnapshots": {
+        "react-ch01-l01-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-07.6",
+          "files": {
+            "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { QuestionCard, type Question } from './QuestionCard';\n\nconst question: Question = {\n  prompt: 42,\n  choices: ['内容', '見た目'],\n  correctIndex: 0,\n};\nconst container = document.getElementById('root');\nif (container === null) throw new Error('表示先がありません');\ncreateRoot(container).render(<QuestionCard question={question} />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+            "QuestionCard.tsx": "import type { ReactElement } from 'react';\n\nexport interface Question {\n  readonly prompt: string;\n  readonly choices: readonly string[];\n  readonly correctIndex: number;\n}\n\n/** 作者が渡した問題データを、回答操作のないカードとして表示する。 */\nexport function QuestionCard({ question }: { readonly question: Question }): ReactElement {\n  return (\n    <section aria-labelledby=\"question-prompt\">\n      <h1 id=\"question-prompt\">{question.prompt}</h1>\n      <ol>\n        {question.choices.map((choice) => (\n          <li key={choice}>{choice}</li>\n        ))}\n      </ol>\n      <p>選択肢は{question.choices.length}個です</p>\n    </section>\n  );\n}\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>型付きの問題カード</title>\n    <style>\n      body {\n        margin: 0;\n        padding: 24px;\n        font-family: sans-serif;\n        line-height: 1.7;\n      }\n      section {\n        max-width: 40rem;\n        padding: 20px;\n        border: 1px solid #666;\n        overflow-wrap: anywhere;\n      }\n      h1 {\n        margin-top: 0;\n        font-size: 1.4rem;\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-07T00:00:00.000Z"
+    },
+    "react:react-ch01-l02-e01": {
+      "courseId": "react",
+      "lessonId": "react-ch01-l02",
+      "exerciseId": "react-ch01-l02-e01",
+      "workspaceId": "react-ch01-l02-e01",
+      "contentRevision": "2026-10-07.6",
+      "editRevision": 3,
+      "files": {
+        "components.tsx": "import type { CardProps } from './types';\n\n/** 受け取ったテーマの見出しと説明を表示する。 */\nfunction TopicCard({ title, summary }: CardProps) {\n  return (\n    <section>\n      <h2>{title}</h2>\n      <p>あとで直す</p>\n    </section>\n  );\n}\n\n/** 同じ表示Componentへ、テーマごとに異なるPropsを渡す。 */\nexport function App() {\n  return (\n    <div>\n      <h1>学習テーマ</h1>\n      <TopicCard title=\"HTML\" summary=\"内容を組み立てる\" />\n      <TopicCard title={42} summary=\"見た目を整える\" />\n    </div>\n  );\n}\n",
+        "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { App } from './components';\n\nconst container = document.getElementById('root');\nif (container === null) throw new Error('表示先がありません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+        "types.ts": "import type { ReactElement } from 'react';\n\nexport type { ReactElement };\n\nexport interface CardProps {\n  readonly title: string;\n  readonly summary: string;\n}\n\nexport interface PanelProps {\n  readonly children: ReactElement;\n}\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>Componentの組み合わせ</title>\n    <style>\n      body {\n        margin: 0;\n        padding: 24px;\n        font-family: sans-serif;\n        line-height: 1.7;\n      }\n      section {\n        margin: 16px 0;\n        padding: 16px;\n        border: 1px solid #666;\n        overflow-wrap: anywhere;\n      }\n      h1 {\n        font-size: 1.4rem;\n      }\n      h2 {\n        font-size: 1.2rem;\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.tsx",
+      "cursors": {
+        "main.tsx": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "react-ch01-l02-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "react-ch01-l02-e01-r01",
+            "react-ch01-l02-e01-r02",
+            "react-ch01-l02-e01-r03",
+            "react-ch01-l02-e01-r04",
+            "react-ch01-l02-e01-r05",
+            "react-ch01-l02-e01-r06",
+            "react-ch01-l02-e01-r07"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["react-ch01-l02-e01-h01"],
+      "lastPassingSnapshots": {
+        "react-ch01-l02-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-07.6",
+          "files": {
+            "components.tsx": "import type { CardProps } from './types';\n\n/** 受け取ったテーマの見出しと説明を表示する。 */\nfunction TopicCard({ title, summary }: CardProps) {\n  return (\n    <section>\n      <h2>{title}</h2>\n      <p>あとで直す</p>\n    </section>\n  );\n}\n\n/** 同じ表示Componentへ、テーマごとに異なるPropsを渡す。 */\nexport function App() {\n  return (\n    <div>\n      <h1>学習テーマ</h1>\n      <TopicCard title=\"HTML\" summary=\"内容を組み立てる\" />\n      <TopicCard title={42} summary=\"見た目を整える\" />\n    </div>\n  );\n}\n",
+            "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { App } from './components';\n\nconst container = document.getElementById('root');\nif (container === null) throw new Error('表示先がありません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+            "types.ts": "import type { ReactElement } from 'react';\n\nexport type { ReactElement };\n\nexport interface CardProps {\n  readonly title: string;\n  readonly summary: string;\n}\n\nexport interface PanelProps {\n  readonly children: ReactElement;\n}\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>Componentの組み合わせ</title>\n    <style>\n      body {\n        margin: 0;\n        padding: 24px;\n        font-family: sans-serif;\n        line-height: 1.7;\n      }\n      section {\n        margin: 16px 0;\n        padding: 16px;\n        border: 1px solid #666;\n        overflow-wrap: anywhere;\n      }\n      h1 {\n        font-size: 1.4rem;\n      }\n      h2 {\n        font-size: 1.2rem;\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-07T00:00:00.000Z"
+    },
+    "react:react-ch01-l03-e01": {
+      "courseId": "react",
+      "lessonId": "react-ch01-l03",
+      "exerciseId": "react-ch01-l03-e01",
+      "workspaceId": "react-ch01-l03-e01",
+      "contentRevision": "2026-10-07.6",
+      "editRevision": 3,
+      "files": {
+        "components.tsx": "import type { CardProps, PanelProps } from './types';\n\n/** 受け取ったテーマの見出しと説明を表示する。 */\nfunction TopicCard({ title, summary }: CardProps) {\n  return (\n    <section>\n      <h2>{title}</h2>\n      <p>{summary}</p>\n    </section>\n  );\n}\n\n/** 呼び出し元が組み立てたJSXを枠の中に表示する。 */\nfunction LearningPanel({ children }: PanelProps) {\n  return (\n    <section>\n      <h1>学習テーマ</h1>\n      <p>中身を後で表示</p>\n    </section>\n  );\n}\n\n/** 枠とテーマカードをJSXのネストで組み合わせる。 */\nexport function App() {\n  return (\n    <LearningPanel>\n      <div>\n        <TopicCard title=\"HTML\" summary=\"内容を組み立てる\" />\n        <TopicCard title=\"CSS\" summary=\"見た目を整える\" />\n      </div>\n    </LearningPanel>\n  );\n}\n",
+        "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { App } from './components';\n\nconst container = document.getElementById('root');\nif (container === null) throw new Error('表示先がありません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+        "types.ts": "import type { ReactElement } from 'react';\n\nexport type { ReactElement };\n\nexport interface CardProps {\n  readonly title: string;\n  readonly summary: string;\n}\n\nexport interface PanelProps {\n  readonly children: ReactElement;\n}\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>Componentの組み合わせ</title>\n    <style>\n      body {\n        margin: 0;\n        padding: 24px;\n        font-family: sans-serif;\n        line-height: 1.7;\n      }\n      section {\n        margin: 16px 0;\n        padding: 16px;\n        border: 1px solid #666;\n        overflow-wrap: anywhere;\n      }\n      h1 {\n        font-size: 1.4rem;\n      }\n      h2 {\n        font-size: 1.2rem;\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.tsx",
+      "cursors": {
+        "main.tsx": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "react-ch01-l03-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "react-ch01-l03-e01-r01",
+            "react-ch01-l03-e01-r02",
+            "react-ch01-l03-e01-r03",
+            "react-ch01-l03-e01-r04",
+            "react-ch01-l03-e01-r05",
+            "react-ch01-l03-e01-r06",
+            "react-ch01-l03-e01-r07",
+            "react-ch01-l03-e01-r08"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["react-ch01-l03-e01-h01"],
+      "lastPassingSnapshots": {
+        "react-ch01-l03-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-07.6",
+          "files": {
+            "components.tsx": "import type { CardProps, PanelProps } from './types';\n\n/** 受け取ったテーマの見出しと説明を表示する。 */\nfunction TopicCard({ title, summary }: CardProps) {\n  return (\n    <section>\n      <h2>{title}</h2>\n      <p>{summary}</p>\n    </section>\n  );\n}\n\n/** 呼び出し元が組み立てたJSXを枠の中に表示する。 */\nfunction LearningPanel({ children }: PanelProps) {\n  return (\n    <section>\n      <h1>学習テーマ</h1>\n      <p>中身を後で表示</p>\n    </section>\n  );\n}\n\n/** 枠とテーマカードをJSXのネストで組み合わせる。 */\nexport function App() {\n  return (\n    <LearningPanel>\n      <div>\n        <TopicCard title=\"HTML\" summary=\"内容を組み立てる\" />\n        <TopicCard title=\"CSS\" summary=\"見た目を整える\" />\n      </div>\n    </LearningPanel>\n  );\n}\n",
+            "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { App } from './components';\n\nconst container = document.getElementById('root');\nif (container === null) throw new Error('表示先がありません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+            "types.ts": "import type { ReactElement } from 'react';\n\nexport type { ReactElement };\n\nexport interface CardProps {\n  readonly title: string;\n  readonly summary: string;\n}\n\nexport interface PanelProps {\n  readonly children: ReactElement;\n}\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>Componentの組み合わせ</title>\n    <style>\n      body {\n        margin: 0;\n        padding: 24px;\n        font-family: sans-serif;\n        line-height: 1.7;\n      }\n      section {\n        margin: 16px 0;\n        padding: 16px;\n        border: 1px solid #666;\n        overflow-wrap: anywhere;\n      }\n      h1 {\n        font-size: 1.4rem;\n      }\n      h2 {\n        font-size: 1.2rem;\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-07T00:00:00.000Z"
+    },
+    "react:react-ch01-l04-e01": {
+      "courseId": "react",
+      "lessonId": "react-ch01-l04",
+      "exerciseId": "react-ch01-l04-e01",
+      "workspaceId": "react-ch01-l04-e01",
+      "contentRevision": "2026-10-07.6",
+      "editRevision": 3,
+      "files": {
+        "components.tsx": "import { useState } from 'react';\n\nexport function App() {\n  const [count, setCount] = useState(0);\n\n  function increment() {\n    setCount(count + 1);\n  }\n\n  function twice() {\n    setCount(count + 1);\n    setCount(count + 1);\n  }\n\n  return (\n    <section>\n      <h1>カウンター</h1>\n      <p id=\"count\">{count}</p>\n      <button id=\"increment\" onClick={increment}>\n        1増やす\n      </button>\n      <button id=\"twice\" onClick={twice}>\n        2増やす\n      </button>\n    </section>\n  );\n}\n",
+        "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { App } from './components';\n\nconst container = document.getElementById('root');\nif (container === null) throw new Error('表示先がありません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+        "types.ts": "export interface Topic {\n  readonly id: string;\n  readonly label: string;\n}\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>操作でStateを更新する</title>\n    <style>\n      body {\n        margin: 0;\n        padding: 24px;\n        font-family: sans-serif;\n        line-height: 1.7;\n      }\n      button {\n        margin: 8px;\n        padding: 12px;\n        font: inherit;\n      }\n      button:focus-visible {\n        outline: 3px solid #165dcc;\n        outline-offset: 2px;\n      }\n      h1 {\n        font-size: 1.4rem;\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.tsx",
+      "cursors": {
+        "main.tsx": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "react-ch01-l04-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "react-ch01-l04-e01-r01",
+            "react-ch01-l04-e01-r02",
+            "react-ch01-l04-e01-r03"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["react-ch01-l04-e01-h01"],
+      "lastPassingSnapshots": {
+        "react-ch01-l04-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-07.6",
+          "files": {
+            "components.tsx": "import { useState } from 'react';\n\nexport function App() {\n  const [count, setCount] = useState(0);\n\n  function increment() {\n    setCount(count + 1);\n  }\n\n  function twice() {\n    setCount(count + 1);\n    setCount(count + 1);\n  }\n\n  return (\n    <section>\n      <h1>カウンター</h1>\n      <p id=\"count\">{count}</p>\n      <button id=\"increment\" onClick={increment}>\n        1増やす\n      </button>\n      <button id=\"twice\" onClick={twice}>\n        2増やす\n      </button>\n    </section>\n  );\n}\n",
+            "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { App } from './components';\n\nconst container = document.getElementById('root');\nif (container === null) throw new Error('表示先がありません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+            "types.ts": "export interface Topic {\n  readonly id: string;\n  readonly label: string;\n}\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>操作でStateを更新する</title>\n    <style>\n      body {\n        margin: 0;\n        padding: 24px;\n        font-family: sans-serif;\n        line-height: 1.7;\n      }\n      button {\n        margin: 8px;\n        padding: 12px;\n        font: inherit;\n      }\n      button:focus-visible {\n        outline: 3px solid #165dcc;\n        outline-offset: 2px;\n      }\n      h1 {\n        font-size: 1.4rem;\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-07T00:00:00.000Z"
+    },
+    "react:react-ch01-l05-e01": {
+      "courseId": "react",
+      "lessonId": "react-ch01-l05",
+      "exerciseId": "react-ch01-l05-e01",
+      "workspaceId": "react-ch01-l05-e01",
+      "contentRevision": "2026-10-07.6",
+      "editRevision": 3,
+      "files": {
+        "components.tsx": "import { useState } from 'react';\nimport type { Topic } from './types';\n\nexport function App() {\n  const [topics, setTopics] = useState<readonly Topic[]>([\n    { id: 'html', label: 'HTML' },\n    { id: 'css', label: 'CSS' },\n  ]);\n\n  function add() {\n    setTopics((current) => current);\n  }\n\n  function remove() {\n    setTopics((current) => current.filter((item) => item.id !== 'html'));\n  }\n\n  function reverse() {\n    setTopics((current) => current.toReversed());\n  }\n\n  function removeJS() {\n    setTopics((current) => current.filter((item) => item.id !== 'js'));\n  }\n\n  return (\n    <section>\n      <h1>学習テーマ</h1>\n      <button id=\"add\" onClick={add}>\n        JSを追加\n      </button>\n      <button id=\"remove\" onClick={remove}>\n        HTMLを削除\n      </button>\n      <button id=\"reverse\" onClick={reverse}>\n        逆順にする\n      </button>\n      <button id=\"remove-js\" onClick={removeJS}>\n        JSを削除\n      </button>\n      <ul id=\"topics\">\n        {topics.map((item, index) => (\n          <li key={index} data-id={item.id}>\n            {item.label}\n          </li>\n        ))}\n      </ul>\n    </section>\n  );\n}\n",
+        "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { App } from './components';\n\nconst container = document.getElementById('root');\nif (container === null) throw new Error('表示先がありません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+        "types.ts": "export interface Topic {\n  readonly id: string;\n  readonly label: string;\n}\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>操作でStateを更新する</title>\n    <style>\n      body {\n        margin: 0;\n        padding: 24px;\n        font-family: sans-serif;\n        line-height: 1.7;\n      }\n      button {\n        margin: 8px;\n        padding: 12px;\n        font: inherit;\n      }\n      button:focus-visible {\n        outline: 3px solid #165dcc;\n        outline-offset: 2px;\n      }\n      h1 {\n        font-size: 1.4rem;\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.tsx",
+      "cursors": {
+        "main.tsx": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "react-ch01-l05-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "react-ch01-l05-e01-r01",
+            "react-ch01-l05-e01-r02",
+            "react-ch01-l05-e01-r03",
+            "react-ch01-l05-e01-r04"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["react-ch01-l05-e01-h01"],
+      "lastPassingSnapshots": {
+        "react-ch01-l05-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-07.6",
+          "files": {
+            "components.tsx": "import { useState } from 'react';\nimport type { Topic } from './types';\n\nexport function App() {\n  const [topics, setTopics] = useState<readonly Topic[]>([\n    { id: 'html', label: 'HTML' },\n    { id: 'css', label: 'CSS' },\n  ]);\n\n  function add() {\n    setTopics((current) => current);\n  }\n\n  function remove() {\n    setTopics((current) => current.filter((item) => item.id !== 'html'));\n  }\n\n  function reverse() {\n    setTopics((current) => current.toReversed());\n  }\n\n  function removeJS() {\n    setTopics((current) => current.filter((item) => item.id !== 'js'));\n  }\n\n  return (\n    <section>\n      <h1>学習テーマ</h1>\n      <button id=\"add\" onClick={add}>\n        JSを追加\n      </button>\n      <button id=\"remove\" onClick={remove}>\n        HTMLを削除\n      </button>\n      <button id=\"reverse\" onClick={reverse}>\n        逆順にする\n      </button>\n      <button id=\"remove-js\" onClick={removeJS}>\n        JSを削除\n      </button>\n      <ul id=\"topics\">\n        {topics.map((item, index) => (\n          <li key={index} data-id={item.id}>\n            {item.label}\n          </li>\n        ))}\n      </ul>\n    </section>\n  );\n}\n",
+            "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { App } from './components';\n\nconst container = document.getElementById('root');\nif (container === null) throw new Error('表示先がありません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+            "types.ts": "export interface Topic {\n  readonly id: string;\n  readonly label: string;\n}\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>操作でStateを更新する</title>\n    <style>\n      body {\n        margin: 0;\n        padding: 24px;\n        font-family: sans-serif;\n        line-height: 1.7;\n      }\n      button {\n        margin: 8px;\n        padding: 12px;\n        font: inherit;\n      }\n      button:focus-visible {\n        outline: 3px solid #165dcc;\n        outline-offset: 2px;\n      }\n      h1 {\n        font-size: 1.4rem;\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-07T00:00:00.000Z"
+    },
+    "react:react-ch01-l06-e01": {
+      "courseId": "react",
+      "lessonId": "react-ch01-l06",
+      "exerciseId": "react-ch01-l06-e01",
+      "workspaceId": "react-ch01-l06-e01",
+      "contentRevision": "2026-10-07.6",
+      "editRevision": 3,
+      "files": {
+        "components.tsx": "import { useState } from 'react';\nimport type { FormState, InputChangeEvent, FormSubmitEvent } from './types';\nexport function App() {\n  const [form, setForm] = useState<FormState>({ name: '', attempted: false });\n  const missing = form.name.trim().length === 0;\n  const message = form.attempted\n    ? missing\n      ? '名前を入力してください'\n      : '送信を受け付けました'\n    : '入力中';\n  function change(event: InputChangeEvent) {\n    const next = event.currentTarget.value;\n    setForm({ name: next, attempted: false });\n  }\n  function submit(event: FormSubmitEvent) {\n    setForm((current) => ({ ...current, attempted: true }));\n  }\n  return (\n    <section>\n      <h1>名前のForm</h1>\n      <form id=\"name-form\" onSubmit={submit}>\n        <label htmlFor=\"name\">名前</label>\n        <input\n          id=\"name\"\n          value={form.name}\n          onChange={change}\n          aria-describedby=\"message\"\n          aria-invalid={form.attempted && missing}\n        />\n        <p id=\"length\">{form.name.length}</p>\n        <p id=\"message\" role=\"status\">\n          {message}\n        </p>\n        <button id=\"submit\" type=\"submit\">\n          送信\n        </button>\n        <button id=\"reset\" type=\"button\" onClick={() => setForm({ name: '', attempted: false })}>\n          やり直し\n        </button>\n      </form>\n    </section>\n  );\n}\n",
+        "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { App } from './components';\n\nconst container = document.getElementById('root');\nif (container === null) throw new Error('表示先がありません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+        "types.ts": "import type { ChangeEvent, SubmitEvent } from 'react';\n\nexport type InputChangeEvent = ChangeEvent<HTMLInputElement>;\nexport type FormSubmitEvent = SubmitEvent<HTMLFormElement>;\n\nexport interface FormState {\n  readonly name: string;\n  readonly attempted: boolean;\n}\n\nexport interface NameFieldProps {\n  readonly value: string;\n  readonly onNameChange: (next: string) => void;\n}\n\nexport interface NameSummaryProps {\n  readonly value: string;\n}\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>入力と共有Stateを確かめる</title>\n    <style>\n      body {\n        margin: 0;\n        padding: 24px;\n        font-family: sans-serif;\n        line-height: 1.7;\n      }\n      button,\n      input {\n        margin: 8px;\n        padding: 12px;\n        font: inherit;\n      }\n      button:focus-visible {\n        outline: 3px solid #165dcc;\n        outline-offset: 2px;\n      }\n      h1 {\n        font-size: 1.4rem;\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.tsx",
+      "cursors": {
+        "main.tsx": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "react-ch01-l06-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "react-ch01-l06-e01-r01",
+            "react-ch01-l06-e01-r02",
+            "react-ch01-l06-e01-r03",
+            "react-ch01-l06-e01-r04"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["react-ch01-l06-e01-h01"],
+      "lastPassingSnapshots": {
+        "react-ch01-l06-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-07.6",
+          "files": {
+            "components.tsx": "import { useState } from 'react';\nimport type { FormState, InputChangeEvent, FormSubmitEvent } from './types';\nexport function App() {\n  const [form, setForm] = useState<FormState>({ name: '', attempted: false });\n  const missing = form.name.trim().length === 0;\n  const message = form.attempted\n    ? missing\n      ? '名前を入力してください'\n      : '送信を受け付けました'\n    : '入力中';\n  function change(event: InputChangeEvent) {\n    const next = event.currentTarget.value;\n    setForm({ name: next, attempted: false });\n  }\n  function submit(event: FormSubmitEvent) {\n    setForm((current) => ({ ...current, attempted: true }));\n  }\n  return (\n    <section>\n      <h1>名前のForm</h1>\n      <form id=\"name-form\" onSubmit={submit}>\n        <label htmlFor=\"name\">名前</label>\n        <input\n          id=\"name\"\n          value={form.name}\n          onChange={change}\n          aria-describedby=\"message\"\n          aria-invalid={form.attempted && missing}\n        />\n        <p id=\"length\">{form.name.length}</p>\n        <p id=\"message\" role=\"status\">\n          {message}\n        </p>\n        <button id=\"submit\" type=\"submit\">\n          送信\n        </button>\n        <button id=\"reset\" type=\"button\" onClick={() => setForm({ name: '', attempted: false })}>\n          やり直し\n        </button>\n      </form>\n    </section>\n  );\n}\n",
+            "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { App } from './components';\n\nconst container = document.getElementById('root');\nif (container === null) throw new Error('表示先がありません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+            "types.ts": "import type { ChangeEvent, SubmitEvent } from 'react';\n\nexport type InputChangeEvent = ChangeEvent<HTMLInputElement>;\nexport type FormSubmitEvent = SubmitEvent<HTMLFormElement>;\n\nexport interface FormState {\n  readonly name: string;\n  readonly attempted: boolean;\n}\n\nexport interface NameFieldProps {\n  readonly value: string;\n  readonly onNameChange: (next: string) => void;\n}\n\nexport interface NameSummaryProps {\n  readonly value: string;\n}\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>入力と共有Stateを確かめる</title>\n    <style>\n      body {\n        margin: 0;\n        padding: 24px;\n        font-family: sans-serif;\n        line-height: 1.7;\n      }\n      button,\n      input {\n        margin: 8px;\n        padding: 12px;\n        font: inherit;\n      }\n      button:focus-visible {\n        outline: 3px solid #165dcc;\n        outline-offset: 2px;\n      }\n      h1 {\n        font-size: 1.4rem;\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-07T00:00:00.000Z"
+    },
+    "react:react-ch01-l07-e01": {
+      "courseId": "react",
+      "lessonId": "react-ch01-l07",
+      "exerciseId": "react-ch01-l07-e01",
+      "workspaceId": "react-ch01-l07-e01",
+      "contentRevision": "2026-10-07.6",
+      "editRevision": 3,
+      "files": {
+        "components.tsx": "import { useState } from 'react';\nimport type { NameFieldProps, NameSummaryProps, InputChangeEvent } from './types';\nfunction NameField({ value, onNameChange }: NameFieldProps) {\n  function change(event: InputChangeEvent) {\n    onNameChange(event.currentTarget.value);\n  }\n  return (\n    <div>\n      <label htmlFor=\"name\">名前</label>\n      <input id=\"name\" value={value} onChange={change} />\n    </div>\n  );\n}\nfunction NameSummary(props: NameSummaryProps) {\n  return (\n    <section>\n      <p id=\"name-summary\">{props.value}</p>\n      <p id=\"length\">{props.value.length}</p>\n    </section>\n  );\n}\nexport function App() {\n  const [name, setName] = useState('');\n  return (\n    <section>\n      <h1>共有する名前</h1>\n      <NameField value={name} onNameChange={setName} />\n      <NameSummary value=\"最初の名前\" />\n      <button id=\"reset\" type=\"button\" onClick={() => setName('')}>\n        やり直し\n      </button>\n    </section>\n  );\n}\n",
+        "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { App } from './components';\n\nconst container = document.getElementById('root');\nif (container === null) throw new Error('表示先がありません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+        "types.ts": "import type { ChangeEvent, SubmitEvent } from 'react';\n\nexport type InputChangeEvent = ChangeEvent<HTMLInputElement>;\nexport type FormSubmitEvent = SubmitEvent<HTMLFormElement>;\n\nexport interface FormState {\n  readonly name: string;\n  readonly attempted: boolean;\n}\n\nexport interface NameFieldProps {\n  readonly value: string;\n  readonly onNameChange: (next: string) => void;\n}\n\nexport interface NameSummaryProps {\n  readonly value: string;\n}\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>入力と共有Stateを確かめる</title>\n    <style>\n      body {\n        margin: 0;\n        padding: 24px;\n        font-family: sans-serif;\n        line-height: 1.7;\n      }\n      button,\n      input {\n        margin: 8px;\n        padding: 12px;\n        font: inherit;\n      }\n      button:focus-visible {\n        outline: 3px solid #165dcc;\n        outline-offset: 2px;\n      }\n      h1 {\n        font-size: 1.4rem;\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.tsx",
+      "cursors": {
+        "main.tsx": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "react-ch01-l07-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "react-ch01-l07-e01-r01",
+            "react-ch01-l07-e01-r02",
+            "react-ch01-l07-e01-r03"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["react-ch01-l07-e01-h01"],
+      "lastPassingSnapshots": {
+        "react-ch01-l07-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-07.6",
+          "files": {
+            "components.tsx": "import { useState } from 'react';\nimport type { NameFieldProps, NameSummaryProps, InputChangeEvent } from './types';\nfunction NameField({ value, onNameChange }: NameFieldProps) {\n  function change(event: InputChangeEvent) {\n    onNameChange(event.currentTarget.value);\n  }\n  return (\n    <div>\n      <label htmlFor=\"name\">名前</label>\n      <input id=\"name\" value={value} onChange={change} />\n    </div>\n  );\n}\nfunction NameSummary(props: NameSummaryProps) {\n  return (\n    <section>\n      <p id=\"name-summary\">{props.value}</p>\n      <p id=\"length\">{props.value.length}</p>\n    </section>\n  );\n}\nexport function App() {\n  const [name, setName] = useState('');\n  return (\n    <section>\n      <h1>共有する名前</h1>\n      <NameField value={name} onNameChange={setName} />\n      <NameSummary value=\"最初の名前\" />\n      <button id=\"reset\" type=\"button\" onClick={() => setName('')}>\n        やり直し\n      </button>\n    </section>\n  );\n}\n",
+            "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { App } from './components';\n\nconst container = document.getElementById('root');\nif (container === null) throw new Error('表示先がありません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+            "types.ts": "import type { ChangeEvent, SubmitEvent } from 'react';\n\nexport type InputChangeEvent = ChangeEvent<HTMLInputElement>;\nexport type FormSubmitEvent = SubmitEvent<HTMLFormElement>;\n\nexport interface FormState {\n  readonly name: string;\n  readonly attempted: boolean;\n}\n\nexport interface NameFieldProps {\n  readonly value: string;\n  readonly onNameChange: (next: string) => void;\n}\n\nexport interface NameSummaryProps {\n  readonly value: string;\n}\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>入力と共有Stateを確かめる</title>\n    <style>\n      body {\n        margin: 0;\n        padding: 24px;\n        font-family: sans-serif;\n        line-height: 1.7;\n      }\n      button,\n      input {\n        margin: 8px;\n        padding: 12px;\n        font: inherit;\n      }\n      button:focus-visible {\n        outline: 3px solid #165dcc;\n        outline-offset: 2px;\n      }\n      h1 {\n        font-size: 1.4rem;\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-07T00:00:00.000Z"
+    },
+    "react:react-ch01-l08-e01": {
+      "courseId": "react",
+      "lessonId": "react-ch01-l08",
+      "exerciseId": "react-ch01-l08-e01",
+      "workspaceId": "react-ch01-l08-e01",
+      "contentRevision": "2026-10-07.6",
+      "editRevision": 3,
+      "files": {
+        "reducer.ts": "import type { FormState, FormAction } from './types';\n\nexport function reduceForm(state: FormState, action: FormAction): FormState {\n  if (action.type === 'nameChanged') {\n    return { name: action.nextName, attempted: false };\n  }\n  if (action.type === 'submitted') {\n    return { ...state, attempted: false };\n  }\n  return { name: '', attempted: false };\n}\n",
+        "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { App } from './components';\n\nconst container = document.getElementById('root');\nif (container === null) throw new Error('表示先がありません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+        "components.tsx": "import { useReducer } from 'react';\nimport type { InputChangeEvent, FormSubmitEvent } from './types';\nimport { reduceForm } from './reducer';\nexport function App() {\n  const [form, dispatch] = useReducer(reduceForm, { name: '', attempted: false });\n  const missing = form.name.trim().length === 0;\n  const message = form.attempted\n    ? missing\n      ? '名前を入力してください'\n      : '送信を受け付けました'\n    : '入力中';\n  function change(event: InputChangeEvent) {\n    const next = event.currentTarget.value;\n    dispatch({ type: 'nameChanged', nextName: next });\n  }\n  function submit(event: FormSubmitEvent) {\n    event.preventDefault();\n    dispatch({ type: 'submitted' });\n  }\n  return (\n    <section>\n      <h1>名前のForm</h1>\n      <form id=\"name-form\" onSubmit={submit}>\n        <label htmlFor=\"name\">名前</label>\n        <input\n          id=\"name\"\n          value={form.name}\n          onChange={change}\n          aria-describedby=\"message\"\n          aria-invalid={form.attempted && missing}\n        />\n        <p id=\"length\">{form.name.length}</p>\n        <p id=\"message\" role=\"status\">\n          {message}\n        </p>\n        <button id=\"submit\" type=\"submit\">\n          送信\n        </button>\n        <button id=\"reset\" type=\"button\" onClick={() => dispatch({ type: 'reset' })}>\n          やり直し\n        </button>\n      </form>\n    </section>\n  );\n}\n",
+        "types.ts": "import type { ChangeEvent, SubmitEvent } from 'react';\n\nexport type InputChangeEvent = ChangeEvent<HTMLInputElement>;\nexport type FormSubmitEvent = SubmitEvent<HTMLFormElement>;\n\nexport interface FormState {\n  readonly name: string;\n  readonly attempted: boolean;\n}\n\nexport type FormAction =\n  | { readonly type: 'nameChanged'; readonly nextName: string }\n  | { readonly type: 'submitted' }\n  | { readonly type: 'reset' };\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>入力と共有Stateを確かめる</title>\n    <style>\n      body {\n        margin: 0;\n        padding: 24px;\n        font-family: sans-serif;\n        line-height: 1.7;\n      }\n      button,\n      input {\n        margin: 8px;\n        padding: 12px;\n        font: inherit;\n      }\n      button:focus-visible {\n        outline: 3px solid #165dcc;\n        outline-offset: 2px;\n      }\n      h1 {\n        font-size: 1.4rem;\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.tsx",
+      "cursors": {
+        "main.tsx": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "react-ch01-l08-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "react-ch01-l08-e01-r01",
+            "react-ch01-l08-e01-r02",
+            "react-ch01-l08-e01-r03",
+            "react-ch01-l08-e01-r04"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["react-ch01-l08-e01-h01"],
+      "lastPassingSnapshots": {
+        "react-ch01-l08-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-07.6",
+          "files": {
+            "reducer.ts": "import type { FormState, FormAction } from './types';\n\nexport function reduceForm(state: FormState, action: FormAction): FormState {\n  if (action.type === 'nameChanged') {\n    return { name: action.nextName, attempted: false };\n  }\n  if (action.type === 'submitted') {\n    return { ...state, attempted: false };\n  }\n  return { name: '', attempted: false };\n}\n",
+            "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { App } from './components';\n\nconst container = document.getElementById('root');\nif (container === null) throw new Error('表示先がありません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+            "components.tsx": "import { useReducer } from 'react';\nimport type { InputChangeEvent, FormSubmitEvent } from './types';\nimport { reduceForm } from './reducer';\nexport function App() {\n  const [form, dispatch] = useReducer(reduceForm, { name: '', attempted: false });\n  const missing = form.name.trim().length === 0;\n  const message = form.attempted\n    ? missing\n      ? '名前を入力してください'\n      : '送信を受け付けました'\n    : '入力中';\n  function change(event: InputChangeEvent) {\n    const next = event.currentTarget.value;\n    dispatch({ type: 'nameChanged', nextName: next });\n  }\n  function submit(event: FormSubmitEvent) {\n    event.preventDefault();\n    dispatch({ type: 'submitted' });\n  }\n  return (\n    <section>\n      <h1>名前のForm</h1>\n      <form id=\"name-form\" onSubmit={submit}>\n        <label htmlFor=\"name\">名前</label>\n        <input\n          id=\"name\"\n          value={form.name}\n          onChange={change}\n          aria-describedby=\"message\"\n          aria-invalid={form.attempted && missing}\n        />\n        <p id=\"length\">{form.name.length}</p>\n        <p id=\"message\" role=\"status\">\n          {message}\n        </p>\n        <button id=\"submit\" type=\"submit\">\n          送信\n        </button>\n        <button id=\"reset\" type=\"button\" onClick={() => dispatch({ type: 'reset' })}>\n          やり直し\n        </button>\n      </form>\n    </section>\n  );\n}\n",
+            "types.ts": "import type { ChangeEvent, SubmitEvent } from 'react';\n\nexport type InputChangeEvent = ChangeEvent<HTMLInputElement>;\nexport type FormSubmitEvent = SubmitEvent<HTMLFormElement>;\n\nexport interface FormState {\n  readonly name: string;\n  readonly attempted: boolean;\n}\n\nexport type FormAction =\n  | { readonly type: 'nameChanged'; readonly nextName: string }\n  | { readonly type: 'submitted' }\n  | { readonly type: 'reset' };\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>入力と共有Stateを確かめる</title>\n    <style>\n      body {\n        margin: 0;\n        padding: 24px;\n        font-family: sans-serif;\n        line-height: 1.7;\n      }\n      button,\n      input {\n        margin: 8px;\n        padding: 12px;\n        font: inherit;\n      }\n      button:focus-visible {\n        outline: 3px solid #165dcc;\n        outline-offset: 2px;\n      }\n      h1 {\n        font-size: 1.4rem;\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-07T00:00:00.000Z"
+    },
+    "react:react-ch01-l09-e01": {
+      "courseId": "react",
+      "lessonId": "react-ch01-l09",
+      "exerciseId": "react-ch01-l09-e01",
+      "workspaceId": "react-ch01-l09-e01",
+      "contentRevision": "2026-10-07.6",
+      "editRevision": 3,
+      "files": {
+        "components.tsx": "import { useContext } from 'react';\nimport { NameContext } from './nameContext';\nimport type { InputChangeEvent } from './types';\n\nexport function NameField() {\n  const provided = useContext(NameContext);\n  if (provided === null) return <p>Providerが必要です</p>;\n  const change = (event: InputChangeEvent) => {\n    provided.onNameChange(event.currentTarget.value);\n  };\n  return (\n    <div>\n      <label htmlFor=\"name\">名前</label>\n      <input id=\"name\" value={provided.value} onChange={change} />\n    </div>\n  );\n}\n\nexport function NameSummary() {\n  const provided = useContext(NameContext);\n  if (provided === null) return <p>Providerが必要です</p>;\n  return (\n    <section>\n      <p id=\"name-summary\">最初の名前</p>\n      <p id=\"length\">{provided.value.length}</p>\n    </section>\n  );\n}\n",
+        "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { useState } from 'react';\nimport { NameContext } from './nameContext';\nimport { NameField, NameSummary } from './components';\n\nfunction App() {\n  const [name, setName] = useState('');\n  return (\n    <section>\n      <h1>Contextで共有する名前</h1>\n      <NameContext.Provider value={{ value: name, onNameChange: setName }}>\n        <NameField />\n        <NameSummary />\n      </NameContext.Provider>\n      <button id=\"reset\" type=\"button\" onClick={() => setName('')}>\n        やり直し\n      </button>\n    </section>\n  );\n}\n\nconst container = document.getElementById('root');\nif (!container) throw new Error('表示先が見つかりません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+        "nameContext.ts": "import { createContext } from 'react';\nimport type { NameContextValue } from './types';\n\nexport const NameContext = createContext<NameContextValue | null>(null);\n",
+        "types.ts": "import type { ChangeEvent } from 'react';\n\nexport type InputChangeEvent = ChangeEvent<HTMLInputElement>;\n\nexport interface NameContextValue {\n  readonly value: string;\n  readonly onNameChange: (next: string) => void;\n}\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>入力と共有Stateを確かめる</title>\n    <style>\n      body {\n        margin: 0;\n        padding: 24px;\n        font-family: sans-serif;\n        line-height: 1.7;\n      }\n      button,\n      input {\n        margin: 8px;\n        padding: 12px;\n        font: inherit;\n      }\n      button:focus-visible {\n        outline: 3px solid #165dcc;\n        outline-offset: 2px;\n      }\n      h1 {\n        font-size: 1.4rem;\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.tsx",
+      "cursors": {
+        "main.tsx": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "react-ch01-l09-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "react-ch01-l09-e01-r01",
+            "react-ch01-l09-e01-r02",
+            "react-ch01-l09-e01-r03"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["react-ch01-l09-e01-h01"],
+      "lastPassingSnapshots": {
+        "react-ch01-l09-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-07.6",
+          "files": {
+            "components.tsx": "import { useContext } from 'react';\nimport { NameContext } from './nameContext';\nimport type { InputChangeEvent } from './types';\n\nexport function NameField() {\n  const provided = useContext(NameContext);\n  if (provided === null) return <p>Providerが必要です</p>;\n  const change = (event: InputChangeEvent) => {\n    provided.onNameChange(event.currentTarget.value);\n  };\n  return (\n    <div>\n      <label htmlFor=\"name\">名前</label>\n      <input id=\"name\" value={provided.value} onChange={change} />\n    </div>\n  );\n}\n\nexport function NameSummary() {\n  const provided = useContext(NameContext);\n  if (provided === null) return <p>Providerが必要です</p>;\n  return (\n    <section>\n      <p id=\"name-summary\">最初の名前</p>\n      <p id=\"length\">{provided.value.length}</p>\n    </section>\n  );\n}\n",
+            "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { useState } from 'react';\nimport { NameContext } from './nameContext';\nimport { NameField, NameSummary } from './components';\n\nfunction App() {\n  const [name, setName] = useState('');\n  return (\n    <section>\n      <h1>Contextで共有する名前</h1>\n      <NameContext.Provider value={{ value: name, onNameChange: setName }}>\n        <NameField />\n        <NameSummary />\n      </NameContext.Provider>\n      <button id=\"reset\" type=\"button\" onClick={() => setName('')}>\n        やり直し\n      </button>\n    </section>\n  );\n}\n\nconst container = document.getElementById('root');\nif (!container) throw new Error('表示先が見つかりません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+            "nameContext.ts": "import { createContext } from 'react';\nimport type { NameContextValue } from './types';\n\nexport const NameContext = createContext<NameContextValue | null>(null);\n",
+            "types.ts": "import type { ChangeEvent } from 'react';\n\nexport type InputChangeEvent = ChangeEvent<HTMLInputElement>;\n\nexport interface NameContextValue {\n  readonly value: string;\n  readonly onNameChange: (next: string) => void;\n}\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>入力と共有Stateを確かめる</title>\n    <style>\n      body {\n        margin: 0;\n        padding: 24px;\n        font-family: sans-serif;\n        line-height: 1.7;\n      }\n      button,\n      input {\n        margin: 8px;\n        padding: 12px;\n        font: inherit;\n      }\n      button:focus-visible {\n        outline: 3px solid #165dcc;\n        outline-offset: 2px;\n      }\n      h1 {\n        font-size: 1.4rem;\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-07T00:00:00.000Z"
+    },
+    "react:react-ch01-l10-e01": {
+      "courseId": "react",
+      "lessonId": "react-ch01-l10",
+      "exerciseId": "react-ch01-l10-e01",
+      "workspaceId": "react-ch01-l10-e01",
+      "contentRevision": "2026-10-07.6",
+      "editRevision": 3,
+      "files": {
+        "components.tsx": "import { useRef, useState } from 'react';\nimport type { InputChangeEvent } from './types';\nexport function App() {\n  const inputRef = useRef<HTMLInputElement>(null);\n  const [name, setName] = useState('');\n  function change(event: InputChangeEvent) {\n    setName(event.currentTarget.value);\n  }\n  function focusInput() {}\n  return (\n    <section>\n      <h1>Refで入力へ移る</h1>\n      <label htmlFor=\"name\">名前</label>\n      <input id=\"name\" ref={inputRef} value={name} onChange={change} />\n      <button id=\"focus\" type=\"button\" onClick={focusInput}>\n        入力へ移る\n      </button>\n      <p id=\"name-summary\">{name}</p>\n      <p id=\"length\">{name.length}</p>\n    </section>\n  );\n}\n",
+        "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { App } from './components';\nconst container = document.getElementById('root');\nif (!container) throw new Error('表示先がありません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+        "types.ts": "import type { ChangeEvent } from 'react';\nexport type InputChangeEvent = ChangeEvent<HTMLInputElement>;\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>入力と共有Stateを確かめる</title>\n    <style>\n      body {\n        margin: 0;\n        padding: 24px;\n        font-family: sans-serif;\n        line-height: 1.7;\n      }\n      button,\n      input {\n        margin: 8px;\n        padding: 12px;\n        font: inherit;\n      }\n      button:focus-visible {\n        outline: 3px solid #165dcc;\n        outline-offset: 2px;\n      }\n      h1 {\n        font-size: 1.4rem;\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.tsx",
+      "cursors": {
+        "main.tsx": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "react-ch01-l10-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "react-ch01-l10-e01-r01",
+            "react-ch01-l10-e01-r02",
+            "react-ch01-l10-e01-r03"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["react-ch01-l10-e01-h01"],
+      "lastPassingSnapshots": {
+        "react-ch01-l10-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-07.6",
+          "files": {
+            "components.tsx": "import { useRef, useState } from 'react';\nimport type { InputChangeEvent } from './types';\nexport function App() {\n  const inputRef = useRef<HTMLInputElement>(null);\n  const [name, setName] = useState('');\n  function change(event: InputChangeEvent) {\n    setName(event.currentTarget.value);\n  }\n  function focusInput() {}\n  return (\n    <section>\n      <h1>Refで入力へ移る</h1>\n      <label htmlFor=\"name\">名前</label>\n      <input id=\"name\" ref={inputRef} value={name} onChange={change} />\n      <button id=\"focus\" type=\"button\" onClick={focusInput}>\n        入力へ移る\n      </button>\n      <p id=\"name-summary\">{name}</p>\n      <p id=\"length\">{name.length}</p>\n    </section>\n  );\n}\n",
+            "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { App } from './components';\nconst container = document.getElementById('root');\nif (!container) throw new Error('表示先がありません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+            "types.ts": "import type { ChangeEvent } from 'react';\nexport type InputChangeEvent = ChangeEvent<HTMLInputElement>;\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>入力と共有Stateを確かめる</title>\n    <style>\n      body {\n        margin: 0;\n        padding: 24px;\n        font-family: sans-serif;\n        line-height: 1.7;\n      }\n      button,\n      input {\n        margin: 8px;\n        padding: 12px;\n        font: inherit;\n      }\n      button:focus-visible {\n        outline: 3px solid #165dcc;\n        outline-offset: 2px;\n      }\n      h1 {\n        font-size: 1.4rem;\n      }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-07T00:00:00.000Z"
+    },
+    "react:react-ch01-l11-e01": {
+      "courseId": "react",
+      "lessonId": "react-ch01-l11",
+      "exerciseId": "react-ch01-l11-e01",
+      "workspaceId": "react-ch01-l11-e01",
+      "contentRevision": "2026-10-07.6",
+      "editRevision": 3,
+      "files": {
+        "components.tsx": "import { useEffect, useState } from 'react';\nimport { subscribe } from './source';\nimport type { SourcePanelProps } from './types';\nexport function SourcePanel({ target }: SourcePanelProps) {\n  const [value, setValue] = useState('');\n  useEffect(() => {\n    const stop = subscribe(target, setValue);\n    return stop;\n  }, []);\n  return (\n    <section>\n      <p id=\"observed\">{value}</p>\n      <p id=\"length\">{value.length}</p>\n    </section>\n  );\n}\n",
+        "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { useState } from 'react';\nimport { SourcePanel } from './components';\nimport type { SourceId } from './types';\nfunction App() {\n  const [target, setTarget] = useState<SourceId>('source-a');\n  const [visible, setVisible] = useState(true);\n  return (\n    <section>\n      <button id=\"target-a\" onClick={() => setTarget('source-a')}>\n        Aを選ぶ\n      </button>\n      <button id=\"target-b\" onClick={() => setTarget('source-b')}>\n        Bを選ぶ\n      </button>\n      <button id=\"toggle\" onClick={() => setVisible((previous) => !previous)}>\n        表示を切り替える\n      </button>\n      {visible && <SourcePanel target={target} />}\n    </section>\n  );\n}\nconst container = document.getElementById('root');\nif (!container) throw new Error('表示先がありません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+        "source.ts": "import type { SourceId } from './types';\nlet active = 0;\nlet notifications = 0;\nfunction paint() {\n  const activeNode = document.getElementById('active');\n  const notificationNode = document.getElementById('notifications');\n  if (activeNode) activeNode.textContent = String(active);\n  if (notificationNode) notificationNode.textContent = String(notifications);\n}\n/** 固定の外部DOM入力に購読し、同じlistenerを外すcleanupを返す。 */\nexport function subscribe(target: SourceId, receive: (value: string) => void) {\n  const element = document.querySelector<HTMLInputElement>('#' + target);\n  if (!element) throw new Error('外部入力がありません');\n  active += 1;\n  paint();\n  const notify = () => {\n    notifications += 1;\n    paint();\n    receive(element.value);\n  };\n  element.addEventListener('input', notify);\n  receive(element.value);\n  return () => {\n    element.removeEventListener('input', notify);\n    active -= 1;\n    paint();\n  };\n}\n",
+        "types.ts": "export type SourceId = 'source-a' | 'source-b';\nexport interface SourcePanelProps {\n  readonly target: SourceId;\n}\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>外部入力の同期</title>\n  </head>\n  <body>\n    <h1>外部入力の同期</h1>\n    <section aria-label=\"外部入力\">\n      <label for=\"source-a\">外部入力A</label><input id=\"source-a\" value=\"初期A\" />\n      <label for=\"source-b\">外部入力B</label><input id=\"source-b\" value=\"初期B\" />\n      <p>購読中: <span id=\"active\">0</span></p>\n      <p>入力通知: <span id=\"notifications\">0</span></p>\n    </section>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.tsx",
+      "cursors": {
+        "main.tsx": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "react-ch01-l11-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "react-ch01-l11-e01-r01",
+            "react-ch01-l11-e01-r02",
+            "react-ch01-l11-e01-r03"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["react-ch01-l11-e01-h01"],
+      "lastPassingSnapshots": {
+        "react-ch01-l11-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-07.6",
+          "files": {
+            "components.tsx": "import { useEffect, useState } from 'react';\nimport { subscribe } from './source';\nimport type { SourcePanelProps } from './types';\nexport function SourcePanel({ target }: SourcePanelProps) {\n  const [value, setValue] = useState('');\n  useEffect(() => {\n    const stop = subscribe(target, setValue);\n    return stop;\n  }, []);\n  return (\n    <section>\n      <p id=\"observed\">{value}</p>\n      <p id=\"length\">{value.length}</p>\n    </section>\n  );\n}\n",
+            "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { useState } from 'react';\nimport { SourcePanel } from './components';\nimport type { SourceId } from './types';\nfunction App() {\n  const [target, setTarget] = useState<SourceId>('source-a');\n  const [visible, setVisible] = useState(true);\n  return (\n    <section>\n      <button id=\"target-a\" onClick={() => setTarget('source-a')}>\n        Aを選ぶ\n      </button>\n      <button id=\"target-b\" onClick={() => setTarget('source-b')}>\n        Bを選ぶ\n      </button>\n      <button id=\"toggle\" onClick={() => setVisible((previous) => !previous)}>\n        表示を切り替える\n      </button>\n      {visible && <SourcePanel target={target} />}\n    </section>\n  );\n}\nconst container = document.getElementById('root');\nif (!container) throw new Error('表示先がありません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+            "source.ts": "import type { SourceId } from './types';\nlet active = 0;\nlet notifications = 0;\nfunction paint() {\n  const activeNode = document.getElementById('active');\n  const notificationNode = document.getElementById('notifications');\n  if (activeNode) activeNode.textContent = String(active);\n  if (notificationNode) notificationNode.textContent = String(notifications);\n}\n/** 固定の外部DOM入力に購読し、同じlistenerを外すcleanupを返す。 */\nexport function subscribe(target: SourceId, receive: (value: string) => void) {\n  const element = document.querySelector<HTMLInputElement>('#' + target);\n  if (!element) throw new Error('外部入力がありません');\n  active += 1;\n  paint();\n  const notify = () => {\n    notifications += 1;\n    paint();\n    receive(element.value);\n  };\n  element.addEventListener('input', notify);\n  receive(element.value);\n  return () => {\n    element.removeEventListener('input', notify);\n    active -= 1;\n    paint();\n  };\n}\n",
+            "types.ts": "export type SourceId = 'source-a' | 'source-b';\nexport interface SourcePanelProps {\n  readonly target: SourceId;\n}\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>外部入力の同期</title>\n  </head>\n  <body>\n    <h1>外部入力の同期</h1>\n    <section aria-label=\"外部入力\">\n      <label for=\"source-a\">外部入力A</label><input id=\"source-a\" value=\"初期A\" />\n      <label for=\"source-b\">外部入力B</label><input id=\"source-b\" value=\"初期B\" />\n      <p>購読中: <span id=\"active\">0</span></p>\n      <p>入力通知: <span id=\"notifications\">0</span></p>\n    </section>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-07T00:00:00.000Z"
+    },
+    "react:react-ch01-l12-e01": {
+      "courseId": "react",
+      "lessonId": "react-ch01-l12",
+      "exerciseId": "react-ch01-l12-e01",
+      "workspaceId": "react-ch01-l12-e01",
+      "contentRevision": "2026-10-07.6",
+      "editRevision": 3,
+      "files": {
+        "sourceHook.ts": "import { useEffect, useState } from 'react';\nimport { subscribe } from './source';\nimport type { SourceId } from './types';\n/** 外部入力の現在値を、このHook呼出し固有のStateとして返す。 */\nexport function useSourceValue(target: SourceId) {\n  const [value, setValue] = useState('');\n  useEffect(() => {\n    const stop = subscribe(target, setValue);\n    return stop;\n  }, [target]);\n  return '';\n}\n",
+        "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { useState } from 'react';\nimport { SourcePanel } from './components';\nfunction App() {\n  const [visible, setVisible] = useState(true);\n  return (\n    <section>\n      <button id=\"toggle\" onClick={() => setVisible((previous) => !previous)}>\n        Aの表示を切り替える\n      </button>\n      {visible && <SourcePanel target=\"source-a\" />}\n      <SourcePanel target=\"source-b\" />\n    </section>\n  );\n}\nconst container = document.getElementById('root');\nif (!container) throw new Error('表示先がありません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+        "components.tsx": "import { useSourceValue } from './sourceHook';\nimport type { SourcePanelProps } from './types';\nexport function SourcePanel({ target }: SourcePanelProps) {\n  const value = useSourceValue(target);\n  const isA = target === 'source-a';\n  return (\n    <section>\n      <h2>{isA ? '入力Aの表示' : '入力Bの表示'}</h2>\n      <p id={isA ? 'observed-a' : 'observed-b'} role=\"status\">\n        {value}\n      </p>\n      <p id={isA ? 'length-a' : 'length-b'}>{value.length}</p>\n    </section>\n  );\n}\n",
+        "source.ts": "import type { SourceId } from './types';\nlet active = 0;\nlet notifications = 0;\nfunction paint() {\n  const activeNode = document.getElementById('active');\n  const notificationNode = document.getElementById('notifications');\n  if (activeNode) activeNode.textContent = String(active);\n  if (notificationNode) notificationNode.textContent = String(notifications);\n}\n/** 固定の外部DOM入力に購読し、同じlistenerを外すcleanupを返す。 */\nexport function subscribe(target: SourceId, receive: (value: string) => void) {\n  const element = document.querySelector<HTMLInputElement>('#' + target);\n  if (!element) throw new Error('外部入力がありません');\n  active += 1;\n  paint();\n  const notify = () => {\n    notifications += 1;\n    paint();\n    receive(element.value);\n  };\n  element.addEventListener('input', notify);\n  receive(element.value);\n  return () => {\n    element.removeEventListener('input', notify);\n    active -= 1;\n    paint();\n  };\n}\n",
+        "types.ts": "export type SourceId = 'source-a' | 'source-b';\nexport interface SourcePanelProps {\n  readonly target: SourceId;\n}\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>外部入力の同期</title>\n  </head>\n  <body>\n    <h1>外部入力の同期</h1>\n    <section aria-label=\"外部入力\">\n      <label for=\"source-a\">外部入力A</label><input id=\"source-a\" value=\"初期A\" />\n      <label for=\"source-b\">外部入力B</label><input id=\"source-b\" value=\"初期B\" />\n      <p>購読中: <span id=\"active\">0</span></p>\n      <p>入力通知: <span id=\"notifications\">0</span></p>\n    </section>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.tsx",
+      "cursors": {
+        "main.tsx": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "react-ch01-l12-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "react-ch01-l12-e01-r01",
+            "react-ch01-l12-e01-r02",
+            "react-ch01-l12-e01-r03"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["react-ch01-l12-e01-h01"],
+      "lastPassingSnapshots": {
+        "react-ch01-l12-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-07.6",
+          "files": {
+            "sourceHook.ts": "import { useEffect, useState } from 'react';\nimport { subscribe } from './source';\nimport type { SourceId } from './types';\n/** 外部入力の現在値を、このHook呼出し固有のStateとして返す。 */\nexport function useSourceValue(target: SourceId) {\n  const [value, setValue] = useState('');\n  useEffect(() => {\n    const stop = subscribe(target, setValue);\n    return stop;\n  }, [target]);\n  return '';\n}\n",
+            "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { useState } from 'react';\nimport { SourcePanel } from './components';\nfunction App() {\n  const [visible, setVisible] = useState(true);\n  return (\n    <section>\n      <button id=\"toggle\" onClick={() => setVisible((previous) => !previous)}>\n        Aの表示を切り替える\n      </button>\n      {visible && <SourcePanel target=\"source-a\" />}\n      <SourcePanel target=\"source-b\" />\n    </section>\n  );\n}\nconst container = document.getElementById('root');\nif (!container) throw new Error('表示先がありません');\ncreateRoot(container).render(<App />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+            "components.tsx": "import { useSourceValue } from './sourceHook';\nimport type { SourcePanelProps } from './types';\nexport function SourcePanel({ target }: SourcePanelProps) {\n  const value = useSourceValue(target);\n  const isA = target === 'source-a';\n  return (\n    <section>\n      <h2>{isA ? '入力Aの表示' : '入力Bの表示'}</h2>\n      <p id={isA ? 'observed-a' : 'observed-b'} role=\"status\">\n        {value}\n      </p>\n      <p id={isA ? 'length-a' : 'length-b'}>{value.length}</p>\n    </section>\n  );\n}\n",
+            "source.ts": "import type { SourceId } from './types';\nlet active = 0;\nlet notifications = 0;\nfunction paint() {\n  const activeNode = document.getElementById('active');\n  const notificationNode = document.getElementById('notifications');\n  if (activeNode) activeNode.textContent = String(active);\n  if (notificationNode) notificationNode.textContent = String(notifications);\n}\n/** 固定の外部DOM入力に購読し、同じlistenerを外すcleanupを返す。 */\nexport function subscribe(target: SourceId, receive: (value: string) => void) {\n  const element = document.querySelector<HTMLInputElement>('#' + target);\n  if (!element) throw new Error('外部入力がありません');\n  active += 1;\n  paint();\n  const notify = () => {\n    notifications += 1;\n    paint();\n    receive(element.value);\n  };\n  element.addEventListener('input', notify);\n  receive(element.value);\n  return () => {\n    element.removeEventListener('input', notify);\n    active -= 1;\n    paint();\n  };\n}\n",
+            "types.ts": "export type SourceId = 'source-a' | 'source-b';\nexport interface SourcePanelProps {\n  readonly target: SourceId;\n}\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>外部入力の同期</title>\n  </head>\n  <body>\n    <h1>外部入力の同期</h1>\n    <section aria-label=\"外部入力\">\n      <label for=\"source-a\">外部入力A</label><input id=\"source-a\" value=\"初期A\" />\n      <label for=\"source-b\">外部入力B</label><input id=\"source-b\" value=\"初期B\" />\n      <p>購読中: <span id=\"active\">0</span></p>\n      <p>入力通知: <span id=\"notifications\">0</span></p>\n    </section>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-07T00:00:00.000Z"
+    },
+    "react:react-quiz-guided": {
+      "courseId": "react",
+      "lessonId": "react-ch02-l02",
+      "exerciseId": "react-ch02-l02-e01",
+      "workspaceId": "react-quiz-guided",
+      "contentRevision": "2026-10-07.6",
+      "editRevision": 3,
+      "files": {
+        "QuestionCard.tsx": "import type { QuestionCardProps } from './types';\nexport function QuestionCard({ question, answered, onAnswer }: QuestionCardProps) {\n  return (\n    <section>\n      <h2 id=\"question\">{question.text}</h2>\n      {question.choices.map((choice) => (\n        <button\n          key={choice}\n          id={choice}\n          type=\"button\"\n          disabled={answered}\n          onClick={() => onAnswer(choice)}\n        >\n          {choice}\n        </button>\n      ))}\n    </section>\n  );\n}\n",
+        "quizState.ts": "import type { QuizState, Question } from './types';\nexport function createState(): QuizState {\n  return { index: 0, score: 0, answered: false };\n}\nexport function answer(state: QuizState, question: Question, choice: string): QuizState {\n  return {\n    ...state,\n    score: state.score,\n    answered: true,\n  };\n}\nexport function advance(state: QuizState): QuizState {\n  if (!state.answered) return state;\n  return { ...state, index: state.index + 1, answered: false };\n}\n",
+        "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { useState } from 'react';\nimport type { ChangeEvent } from 'react';\nimport { QuestionCard } from './QuestionCard';\nimport { questions } from './data';\nimport { createState, answer, advance } from './quizState';\nfunction QuizShell() {\n  const [state, setState] = useState(createState);\n  const [name, setName] = useState('');\n  const question = questions.at(state.index);\n  function receive(choice: string) {\n    document.getElementById('received')?.replaceChildren(choice);\n    if (question) setState((previous) => answer(previous, question, choice));\n  }\n  function change(event: ChangeEvent<HTMLInputElement>) {\n    setName(event.currentTarget.value);\n  }\n  return (\n    <section>\n      <label htmlFor=\"name\">名前</label>\n      <input id=\"name\" value={name} onChange={change} />\n      <p>\n        得点: <output id=\"score\">{state.score}</output>\n      </p>\n      {question ? (\n        <QuestionCard question={question} answered={state.answered} onAnswer={receive} />\n      ) : (\n        <p id=\"result\" role=\"status\">\n          全問終了\n        </p>\n      )}\n      <button\n        id=\"next\"\n        type=\"button\"\n        disabled={!state.answered || !question}\n        onClick={() => setState((previous) => advance(previous))}\n      >\n        次の問題\n      </button>\n      <button\n        id=\"retry\"\n        type=\"button\"\n        onClick={() => {\n          document.getElementById('received')?.replaceChildren('未回答');\n          setState(createState());\n        }}\n      >\n        再挑戦\n      </button>\n    </section>\n  );\n}\nconst root = document.getElementById('root');\nif (!root) throw new Error('表示先がありません');\ncreateRoot(root).render(<QuizShell />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+        "types.ts": "export interface Question {\n  readonly text: string;\n  readonly choices: readonly string[];\n  readonly correctId: string;\n}\nexport interface QuizState {\n  readonly index: number;\n  readonly score: number;\n  readonly answered: boolean;\n}\nexport interface QuestionCardProps {\n  readonly question: Question;\n  readonly answered: boolean;\n  readonly onAnswer: (choice: string) => void;\n}\n",
+        "data.ts": "import type { Question } from './types';\nexport const questions: readonly Question[] = [\n  {\n    text: 'ページの骨組みを作る言語は？',\n    correctId: 'HTML',\n    choices: ['HTML', 'CSS'],\n  },\n  {\n    text: '見た目を整える言語は？',\n    correctId: 'CSS',\n    choices: ['JavaScript', 'CSS'],\n  },\n];\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>練習クイズ</title>\n  </head>\n  <body>\n    <h1>練習クイズ</h1>\n    <p role=\"status\">選んだ回答: <span id=\"received\">未回答</span></p>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.tsx",
+      "cursors": {
+        "main.tsx": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "react-ch02-l02-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "react-ch02-l02-e01-r01",
+            "react-ch02-l02-e01-r02",
+            "react-ch02-l02-e01-r03"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["react-ch02-l01-e01-h01"],
+      "lastPassingSnapshots": {
+        "react-ch02-l01-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-07.6",
+          "files": {
+            "QuestionCard.tsx": "import type { QuestionCardProps } from './types';\nexport function QuestionCard({ question, answered, onAnswer }: QuestionCardProps) {\n  return (\n    <section>\n      <h2 id=\"question\">{question.text}</h2>\n      {question.choices.map((choice, index) => (\n        <button\n          key={index}\n          id={choice}\n          type=\"button\"\n          disabled={answered}\n          onClick={() => onAnswer('HTML')}\n        >\n          {choice}\n        </button>\n      ))}\n    </section>\n  );\n}\n",
+            "quizState.ts": "import type { QuizState, Question } from './types';\nexport function createState(): QuizState {\n  return { index: 0, score: 0, answered: false };\n}\nexport function answer(state: QuizState, question: Question, choice: string): QuizState {\n  return {\n    ...state,\n    score: state.score,\n    answered: true,\n  };\n}\nexport function advance(state: QuizState): QuizState {\n  if (!state.answered) return state;\n  return { ...state, index: state.index + 1, answered: false };\n}\n",
+            "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { useState } from 'react';\nimport type { ChangeEvent } from 'react';\nimport { QuestionCard } from './QuestionCard';\nimport { questions } from './data';\nimport { createState, answer, advance } from './quizState';\nfunction QuizShell() {\n  const [state, setState] = useState(createState);\n  const [name, setName] = useState('');\n  const question = questions.at(state.index);\n  function receive(choice: string) {\n    document.getElementById('received')?.replaceChildren(choice);\n    if (question) setState((previous) => answer(previous, question, choice));\n  }\n  function change(event: ChangeEvent<HTMLInputElement>) {\n    setName(event.currentTarget.value);\n  }\n  return (\n    <section>\n      <label htmlFor=\"name\">名前</label>\n      <input id=\"name\" value={name} onChange={change} />\n      <p>\n        得点: <output id=\"score\">{state.score}</output>\n      </p>\n      {question ? (\n        <QuestionCard question={question} answered={state.answered} onAnswer={receive} />\n      ) : (\n        <p id=\"result\" role=\"status\">\n          全問終了\n        </p>\n      )}\n      <button\n        id=\"next\"\n        type=\"button\"\n        disabled={!state.answered || !question}\n        onClick={() => setState((previous) => advance(previous))}\n      >\n        次の問題\n      </button>\n      <button\n        id=\"retry\"\n        type=\"button\"\n        onClick={() => {\n          document.getElementById('received')?.replaceChildren('未回答');\n          setState(createState());\n        }}\n      >\n        再挑戦\n      </button>\n    </section>\n  );\n}\nconst root = document.getElementById('root');\nif (!root) throw new Error('表示先がありません');\ncreateRoot(root).render(<QuizShell />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+            "types.ts": "export interface Question {\n  readonly text: string;\n  readonly choices: readonly string[];\n  readonly correctId: string;\n}\nexport interface QuizState {\n  readonly index: number;\n  readonly score: number;\n  readonly answered: boolean;\n}\nexport interface QuestionCardProps {\n  readonly question: Question;\n  readonly answered: boolean;\n  readonly onAnswer: (choice: string) => void;\n}\n",
+            "data.ts": "import type { Question } from './types';\nexport const questions: readonly Question[] = [\n  {\n    text: 'ページの骨組みを作る言語は？',\n    correctId: 'HTML',\n    choices: ['HTML', 'CSS'],\n  },\n  {\n    text: '見た目を整える言語は？',\n    correctId: 'CSS',\n    choices: ['JavaScript', 'CSS'],\n  },\n];\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>練習クイズ</title>\n  </head>\n  <body>\n    <h1>練習クイズ</h1>\n    <p role=\"status\">選んだ回答: <span id=\"received\">未回答</span></p>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        },
+        "react-ch02-l02-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-07.6",
+          "files": {
+            "QuestionCard.tsx": "import type { QuestionCardProps } from './types';\nexport function QuestionCard({ question, answered, onAnswer }: QuestionCardProps) {\n  return (\n    <section>\n      <h2 id=\"question\">{question.text}</h2>\n      {question.choices.map((choice) => (\n        <button\n          key={choice}\n          id={choice}\n          type=\"button\"\n          disabled={answered}\n          onClick={() => onAnswer(choice)}\n        >\n          {choice}\n        </button>\n      ))}\n    </section>\n  );\n}\n",
+            "quizState.ts": "import type { QuizState, Question } from './types';\nexport function createState(): QuizState {\n  return { index: 0, score: 0, answered: false };\n}\nexport function answer(state: QuizState, question: Question, choice: string): QuizState {\n  return {\n    ...state,\n    score: state.score,\n    answered: true,\n  };\n}\nexport function advance(state: QuizState): QuizState {\n  if (!state.answered) return state;\n  return { ...state, index: state.index + 1, answered: false };\n}\n",
+            "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { useState } from 'react';\nimport type { ChangeEvent } from 'react';\nimport { QuestionCard } from './QuestionCard';\nimport { questions } from './data';\nimport { createState, answer, advance } from './quizState';\nfunction QuizShell() {\n  const [state, setState] = useState(createState);\n  const [name, setName] = useState('');\n  const question = questions.at(state.index);\n  function receive(choice: string) {\n    document.getElementById('received')?.replaceChildren(choice);\n    if (question) setState((previous) => answer(previous, question, choice));\n  }\n  function change(event: ChangeEvent<HTMLInputElement>) {\n    setName(event.currentTarget.value);\n  }\n  return (\n    <section>\n      <label htmlFor=\"name\">名前</label>\n      <input id=\"name\" value={name} onChange={change} />\n      <p>\n        得点: <output id=\"score\">{state.score}</output>\n      </p>\n      {question ? (\n        <QuestionCard question={question} answered={state.answered} onAnswer={receive} />\n      ) : (\n        <p id=\"result\" role=\"status\">\n          全問終了\n        </p>\n      )}\n      <button\n        id=\"next\"\n        type=\"button\"\n        disabled={!state.answered || !question}\n        onClick={() => setState((previous) => advance(previous))}\n      >\n        次の問題\n      </button>\n      <button\n        id=\"retry\"\n        type=\"button\"\n        onClick={() => {\n          document.getElementById('received')?.replaceChildren('未回答');\n          setState(createState());\n        }}\n      >\n        再挑戦\n      </button>\n    </section>\n  );\n}\nconst root = document.getElementById('root');\nif (!root) throw new Error('表示先がありません');\ncreateRoot(root).render(<QuizShell />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+            "types.ts": "export interface Question {\n  readonly text: string;\n  readonly choices: readonly string[];\n  readonly correctId: string;\n}\nexport interface QuizState {\n  readonly index: number;\n  readonly score: number;\n  readonly answered: boolean;\n}\nexport interface QuestionCardProps {\n  readonly question: Question;\n  readonly answered: boolean;\n  readonly onAnswer: (choice: string) => void;\n}\n",
+            "data.ts": "import type { Question } from './types';\nexport const questions: readonly Question[] = [\n  {\n    text: 'ページの骨組みを作る言語は？',\n    correctId: 'HTML',\n    choices: ['HTML', 'CSS'],\n  },\n  {\n    text: '見た目を整える言語は？',\n    correctId: 'CSS',\n    choices: ['JavaScript', 'CSS'],\n  },\n];\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>練習クイズ</title>\n  </head>\n  <body>\n    <h1>練習クイズ</h1>\n    <p role=\"status\">選んだ回答: <span id=\"received\">未回答</span></p>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-07T00:00:00.000Z"
+    },
+    "react:react-quiz-capstone": {
+      "courseId": "react",
+      "lessonId": "react-ch03-l01",
+      "exerciseId": "react-ch03-l01-e01",
+      "workspaceId": "react-quiz-capstone",
+      "contentRevision": "2026-10-07.6",
+      "editRevision": 3,
+      "files": {
+        "QuestionCard.tsx": "import type { QuestionCardProps } from './types';\nexport function QuestionCard({ question, answered, onAnswer }: QuestionCardProps) {\n  return (\n    <section>\n      <h2 id=\"question\">{question.text}</h2>\n      {question.choices.map((choice, index) => (\n        <button\n          key={index}\n          id={choice}\n          type=\"button\"\n          disabled={answered}\n          onClick={() => onAnswer(choice)}\n        >\n          {choice}\n        </button>\n      ))}\n    </section>\n  );\n}\n",
+        "quizState.ts": "import type { QuizState, Question } from './types';\nexport function createState(): QuizState {\n  return { index: 0, score: 0, answered: false };\n}\nexport function answer(state: QuizState, question: Question, choice: string): QuizState {\n  return {\n    ...state,\n    score: state.score,\n    answered: choice === question.correctId,\n  };\n}\nexport function advance(state: QuizState): QuizState {\n  if (!state.answered) return state;\n  return { ...state, index: state.index + 1, answered: false };\n}\n",
+        "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { useState } from 'react';\nimport type { ChangeEvent } from 'react';\nimport { QuestionCard } from './QuestionCard';\nimport { questions } from './data';\nimport { createState, answer, advance } from './quizState';\nfunction QuizShell() {\n  const [state, setState] = useState(createState);\n  const [name, setName] = useState('');\n  const question = questions.at(state.index);\n  function receive(choice: string) {\n    document.getElementById('received')?.replaceChildren(choice);\n    if (question) setState((previous) => answer(previous, question, choice));\n  }\n  function change(event: ChangeEvent<HTMLInputElement>) {\n    setName(event.currentTarget.value);\n  }\n  return (\n    <section>\n      <label htmlFor=\"name\">名前</label>\n      <input id=\"name\" value={name} onChange={change} />\n      <p>\n        得点: <output id=\"score\">{state.score}</output>\n      </p>\n      {question ? (\n        <QuestionCard question={question} answered={state.answered} onAnswer={receive} />\n      ) : (\n        <p id=\"result\" role=\"status\">\n          全問終了\n        </p>\n      )}\n      <button\n        id=\"next\"\n        type=\"button\"\n        disabled={!state.answered || !question}\n        onClick={() => setState((previous) => advance(previous))}\n      >\n        次の問題\n      </button>\n      <button\n        id=\"retry\"\n        type=\"button\"\n        onClick={() => {\n          document.getElementById('received')?.replaceChildren('未回答');\n          setState(createState());\n        }}\n      >\n        再挑戦\n      </button>\n    </section>\n  );\n}\nconst root = document.getElementById('root');\nif (!root) throw new Error('表示先がありません');\ncreateRoot(root).render(<QuizShell />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+        "types.ts": "export interface Question {\n  readonly text: string;\n  readonly choices: readonly string[];\n  readonly correctId: string;\n}\nexport interface QuizState {\n  readonly index: number;\n  readonly score: number;\n  readonly answered: boolean;\n}\nexport interface QuestionCardProps {\n  readonly question: Question;\n  readonly answered: boolean;\n  readonly onAnswer: (choice: string) => void;\n}\n",
+        "data.ts": "import type { Question } from './types';\nexport const questions: readonly Question[] = [\n  {\n    text: '1 + 1 の結果は？',\n    correctId: '2',\n    choices: ['2', '3'],\n  },\n  {\n    text: '3 > 5 の結果は？',\n    correctId: 'false',\n    choices: ['true', 'false'],\n  },\n];\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>練習クイズ</title>\n  </head>\n  <body>\n    <h1>練習クイズ</h1>\n    <p role=\"status\">選んだ回答: <span id=\"received\">未回答</span></p>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.tsx",
+      "cursors": {
+        "main.tsx": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "react-ch03-l01-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "react-ch03-l01-e01-r01",
+            "react-ch03-l01-e01-r02",
+            "react-ch03-l01-e01-r03"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["react-ch03-l01-e01-h01"],
+      "lastPassingSnapshots": {
+        "react-ch03-l01-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-07.6",
+          "files": {
+            "QuestionCard.tsx": "import type { QuestionCardProps } from './types';\nexport function QuestionCard({ question, answered, onAnswer }: QuestionCardProps) {\n  return (\n    <section>\n      <h2 id=\"question\">{question.text}</h2>\n      {question.choices.map((choice, index) => (\n        <button\n          key={index}\n          id={choice}\n          type=\"button\"\n          disabled={answered}\n          onClick={() => onAnswer(choice)}\n        >\n          {choice}\n        </button>\n      ))}\n    </section>\n  );\n}\n",
+            "quizState.ts": "import type { QuizState, Question } from './types';\nexport function createState(): QuizState {\n  return { index: 0, score: 0, answered: false };\n}\nexport function answer(state: QuizState, question: Question, choice: string): QuizState {\n  return {\n    ...state,\n    score: state.score,\n    answered: choice === question.correctId,\n  };\n}\nexport function advance(state: QuizState): QuizState {\n  if (!state.answered) return state;\n  return { ...state, index: state.index + 1, answered: false };\n}\n",
+            "main.tsx": "import { createRoot } from 'react-dom/client';\nimport { useState } from 'react';\nimport type { ChangeEvent } from 'react';\nimport { QuestionCard } from './QuestionCard';\nimport { questions } from './data';\nimport { createState, answer, advance } from './quizState';\nfunction QuizShell() {\n  const [state, setState] = useState(createState);\n  const [name, setName] = useState('');\n  const question = questions.at(state.index);\n  function receive(choice: string) {\n    document.getElementById('received')?.replaceChildren(choice);\n    if (question) setState((previous) => answer(previous, question, choice));\n  }\n  function change(event: ChangeEvent<HTMLInputElement>) {\n    setName(event.currentTarget.value);\n  }\n  return (\n    <section>\n      <label htmlFor=\"name\">名前</label>\n      <input id=\"name\" value={name} onChange={change} />\n      <p>\n        得点: <output id=\"score\">{state.score}</output>\n      </p>\n      {question ? (\n        <QuestionCard question={question} answered={state.answered} onAnswer={receive} />\n      ) : (\n        <p id=\"result\" role=\"status\">\n          全問終了\n        </p>\n      )}\n      <button\n        id=\"next\"\n        type=\"button\"\n        disabled={!state.answered || !question}\n        onClick={() => setState((previous) => advance(previous))}\n      >\n        次の問題\n      </button>\n      <button\n        id=\"retry\"\n        type=\"button\"\n        onClick={() => {\n          document.getElementById('received')?.replaceChildren('未回答');\n          setState(createState());\n        }}\n      >\n        再挑戦\n      </button>\n    </section>\n  );\n}\nconst root = document.getElementById('root');\nif (!root) throw new Error('表示先がありません');\ncreateRoot(root).render(<QuizShell />);\n\n// 合成保持検査用。学習合格の証拠ではありません。\n",
+            "types.ts": "export interface Question {\n  readonly text: string;\n  readonly choices: readonly string[];\n  readonly correctId: string;\n}\nexport interface QuizState {\n  readonly index: number;\n  readonly score: number;\n  readonly answered: boolean;\n}\nexport interface QuestionCardProps {\n  readonly question: Question;\n  readonly answered: boolean;\n  readonly onAnswer: (choice: string) => void;\n}\n",
+            "data.ts": "import type { Question } from './types';\nexport const questions: readonly Question[] = [\n  {\n    text: '1 + 1 の結果は？',\n    correctId: '2',\n    choices: ['2', '3'],\n  },\n  {\n    text: '3 > 5 の結果は？',\n    correctId: 'false',\n    choices: ['true', 'false'],\n  },\n];\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>練習クイズ</title>\n  </head>\n  <body>\n    <h1>練習クイズ</h1>\n    <p role=\"status\">選んだ回答: <span id=\"received\">未回答</span></p>\n    <div id=\"root\"></div>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-07T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-07T00:00:00.000Z"
+    },
+    "typescript:typescript-ch01-l01-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch01-l01",
+      "exerciseId": "typescript-ch01-l01-e01",
+      "workspaceId": "typescript-ch01-l01-e01",
+      "contentRevision": "2026-10-06.4",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "let score = 0;\nscore = '2';\nconsole.log(score);\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <meta charset=\"utf-8\" /><title>数値の得点</title>\n  <body>\n    <p>Consoleで得点を確認しましょう。</p>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch01-l01-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["typescript-ch01-l01-e01-r01", "typescript-ch01-l01-e01-r02"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch01-l01-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch01-l01-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.4",
+          "files": {
+            "main.ts": "let score = 0;\nscore = '2';\nconsole.log(score);\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <meta charset=\"utf-8\" /><title>数値の得点</title>\n  <body>\n    <p>Consoleで得点を確認しましょう。</p>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch01-l02-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch01-l02",
+      "exerciseId": "typescript-ch01-l02-e01",
+      "workspaceId": "typescript-ch01-l02-e01",
+      "contentRevision": "2026-10-06.4",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "let score: number = '2';\nconsole.log(score);\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <meta charset=\"utf-8\" /><title>数値の得点</title>\n  <body>\n    <p>Consoleで得点を確認しましょう。</p>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch01-l02-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["typescript-ch01-l02-e01-r01", "typescript-ch01-l02-e01-r02"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch01-l02-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch01-l02-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.4",
+          "files": {
+            "main.ts": "let score: number = '2';\nconsole.log(score);\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <meta charset=\"utf-8\" /><title>数値の得点</title>\n  <body>\n    <p>Consoleで得点を確認しましょう。</p>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch01-l03-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch01-l03",
+      "exerciseId": "typescript-ch01-l03-e01",
+      "workspaceId": "typescript-ch01-l03-e01",
+      "contentRevision": "2026-10-06.4",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "let score: number = 2;\nthrow new Error('表示の途中で止まりました');\nconsole.log(score);\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <meta charset=\"utf-8\" /><title>型と実行の確認</title>\n  <body>\n    <p>Consoleで得点を確認しましょう。</p>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch01-l03-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["typescript-ch01-l03-e01-r01"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch01-l03-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch01-l03-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.4",
+          "files": {
+            "main.ts": "let score: number = 2;\nthrow new Error('表示の途中で止まりました');\nconsole.log(score);\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <meta charset=\"utf-8\" /><title>型と実行の確認</title>\n  <body>\n    <p>Consoleで得点を確認しましょう。</p>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch02-l01-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch02-l01",
+      "exerciseId": "typescript-ch02-l01-e01",
+      "workspaceId": "typescript-ch02-l01-e01",
+      "contentRevision": "2026-10-06.4",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "interface Question {\n  prompt: string;\n  choices: string[];\n  correctIndex: number;\n}\nconst question: Question = {\n  prompt: 'HTMLが受け持つものは？',\n  choices: ['内容', '見た目'],\n  correctIndex: '0',\n};\nconsole.log(question.choices.at(question.correctIndex));\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <meta charset=\"utf-8\" /><title>数値の得点</title>\n  <body>\n    <p>Consoleで得点を確認しましょう。</p>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch02-l01-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["typescript-ch02-l01-e01-r01", "typescript-ch02-l01-e01-r02"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch02-l01-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch02-l01-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.4",
+          "files": {
+            "main.ts": "interface Question {\n  prompt: string;\n  choices: string[];\n  correctIndex: number;\n}\nconst question: Question = {\n  prompt: 'HTMLが受け持つものは？',\n  choices: ['内容', '見た目'],\n  correctIndex: '0',\n};\nconsole.log(question.choices.at(question.correctIndex));\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <meta charset=\"utf-8\" /><title>数値の得点</title>\n  <body>\n    <p>Consoleで得点を確認しましょう。</p>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch03-l01-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch03-l01",
+      "exerciseId": "typescript-ch03-l01-e01",
+      "workspaceId": "typescript-ch03-l01-e01",
+      "contentRevision": "2026-10-06.4",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "type Result = { kind: 'correct'; points: number } | { kind: 'incorrect'; message: string };\nfunction label(result: Result) {\n  return result.points;\n}\nconsole.log(label({ kind: 'correct', points: 2 }));\nconsole.log(label({ kind: 'incorrect', message: 'もう一度' }));\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>状態に合わせて型を絞る</title>\n  </head>\n  <body>\n    <p>Consoleで分岐の結果を確認しましょう。</p>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch03-l01-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["typescript-ch03-l01-e01-r01", "typescript-ch03-l01-e01-r02"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch03-l01-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch03-l01-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.4",
+          "files": {
+            "main.ts": "type Result = { kind: 'correct'; points: number } | { kind: 'incorrect'; message: string };\nfunction label(result: Result) {\n  return result.points;\n}\nconsole.log(label({ kind: 'correct', points: 2 }));\nconsole.log(label({ kind: 'incorrect', message: 'もう一度' }));\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>状態に合わせて型を絞る</title>\n  </head>\n  <body>\n    <p>Consoleで分岐の結果を確認しましょう。</p>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch03-l02-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch03-l02",
+      "exerciseId": "typescript-ch03-l02-e01",
+      "workspaceId": "typescript-ch03-l02-e01",
+      "contentRevision": "2026-10-06.4",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "interface Feedback {\n  hint?: string;\n}\nfunction hintLength(feedback: Feedback) {\n  return feedback.hint.length;\n}\nconsole.log(hintLength({ hint: '見る' }));\nconsole.log(hintLength({}));\nconsole.log(hintLength({ hint: '' }));\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>ないかもしれない値を確認する</title>\n  </head>\n  <body>\n    <p>Consoleで分岐の結果を確認しましょう。</p>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch03-l02-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["typescript-ch03-l02-e01-r01", "typescript-ch03-l02-e01-r02"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch03-l02-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch03-l02-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.4",
+          "files": {
+            "main.ts": "interface Feedback {\n  hint?: string;\n}\nfunction hintLength(feedback: Feedback) {\n  return feedback.hint.length;\n}\nconsole.log(hintLength({ hint: '見る' }));\nconsole.log(hintLength({}));\nconsole.log(hintLength({ hint: '' }));\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>ないかもしれない値を確認する</title>\n  </head>\n  <body>\n    <p>Consoleで分岐の結果を確認しましょう。</p>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch04-l01-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch04-l01",
+      "exerciseId": "typescript-ch04-l01-e01",
+      "workspaceId": "typescript-ch04-l01-e01",
+      "contentRevision": "2026-10-06.4",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "type Operation = (value: string) => number;\nfunction apply(value: number, operation: Operation): number {\n  return operation(value);\n}\nconst double: Operation = (value) => value * 2;\nconsole.log(apply(3, double));\nconsole.log(apply(5, double));\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>関数の入出力とcallbackを型付けする</title>\n  </head>\n  <body>\n    <p>Consoleで受け取った値と処理結果を確認しましょう。</p>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch04-l01-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["typescript-ch04-l01-e01-r01", "typescript-ch04-l01-e01-r02"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch04-l01-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch04-l01-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.4",
+          "files": {
+            "main.ts": "type Operation = (value: string) => number;\nfunction apply(value: number, operation: Operation): number {\n  return operation(value);\n}\nconst double: Operation = (value) => value * 2;\nconsole.log(apply(3, double));\nconsole.log(apply(5, double));\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>関数の入出力とcallbackを型付けする</title>\n  </head>\n  <body>\n    <p>Consoleで受け取った値と処理結果を確認しましょう。</p>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch04-l02-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch04-l02",
+      "exerciseId": "typescript-ch04-l02-e01",
+      "workspaceId": "typescript-ch04-l02-e01",
+      "contentRevision": "2026-10-06.4",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "function keep(value: number): number {\n  return value;\n}\nconst points: number = keep(2);\nconst title: string = keep('型のクイズ');\nconsole.log(points);\nconsole.log(title);\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>genericで入出力の型をつなぐ</title>\n  </head>\n  <body>\n    <p>Consoleで受け取った値と処理結果を確認しましょう。</p>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch04-l02-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["typescript-ch04-l02-e01-r01", "typescript-ch04-l02-e01-r02"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch04-l02-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch04-l02-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.4",
+          "files": {
+            "main.ts": "function keep(value: number): number {\n  return value;\n}\nconst points: number = keep(2);\nconst title: string = keep('型のクイズ');\nconsole.log(points);\nconsole.log(title);\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>genericで入出力の型をつなぐ</title>\n  </head>\n  <body>\n    <p>Consoleで受け取った値と処理結果を確認しましょう。</p>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch04-l03-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch04-l03",
+      "exerciseId": "typescript-ch04-l03-e01",
+      "workspaceId": "typescript-ch04-l03-e01",
+      "contentRevision": "2026-10-06.4",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "function addPoint(points: readonly number[]): number[] {\n  points.push(3);\n  return [...points];\n}\nconst original = [1, 2];\nconst updated = addPoint(original);\noriginal.push(4);\nconsole.log(original.join(','));\nconsole.log(updated.join(','));\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>readonlyの入力から別の配列を作る</title>\n  </head>\n  <body>\n    <p>Consoleで受け取った値と処理結果を確認しましょう。</p>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch04-l03-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": ["typescript-ch04-l03-e01-r01", "typescript-ch04-l03-e01-r02"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch04-l03-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch04-l03-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.4",
+          "files": {
+            "main.ts": "function addPoint(points: readonly number[]): number[] {\n  points.push(3);\n  return [...points];\n}\nconst original = [1, 2];\nconst updated = addPoint(original);\noriginal.push(4);\nconsole.log(original.join(','));\nconsole.log(updated.join(','));\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>readonlyの入力から別の配列を作る</title>\n  </head>\n  <body>\n    <p>Consoleで受け取った値と処理結果を確認しましょう。</p>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch05-l01-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch05-l01",
+      "exerciseId": "typescript-ch05-l01-e01",
+      "workspaceId": "typescript-ch05-l01-e01",
+      "contentRevision": "2026-10-06.4",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "function readAnswer(event: Event): string {\n  const target = event.currentTarget;\n  return target.dataset.answer ?? '未指定';\n}\nconst output = document.querySelector('#output');\nconst answer = document.querySelector('#answer');\nif (output !== null && answer !== null) {\n  answer.addEventListener('click', (event: Event) => {\n    output.textContent = readAnswer(event);\n  });\n}\nconsole.log('準備できました');\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>DOMとEventの対象を確認して読む</title>\n  </head>\n  <body>\n    <main>\n      <h1>DOMとEventの対象を確認して読む</h1>\n      <p>同梱した値を確認する練習です。外部通信はしません。</p>\n      <button id=\"answer\" type=\"button\" data-answer=\"2\"><span>回答を確かめる</span></button>\n      <p id=\"output\" aria-live=\"polite\">待機</p>\n    </main>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch05-l01-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "typescript-ch05-l01-e01-r01",
+            "typescript-ch05-l01-e01-r02",
+            "typescript-ch05-l01-e01-r03"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch05-l01-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch05-l01-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.4",
+          "files": {
+            "main.ts": "function readAnswer(event: Event): string {\n  const target = event.currentTarget;\n  return target.dataset.answer ?? '未指定';\n}\nconst output = document.querySelector('#output');\nconst answer = document.querySelector('#answer');\nif (output !== null && answer !== null) {\n  answer.addEventListener('click', (event: Event) => {\n    output.textContent = readAnswer(event);\n  });\n}\nconsole.log('準備できました');\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>DOMとEventの対象を確認して読む</title>\n  </head>\n  <body>\n    <main>\n      <h1>DOMとEventの対象を確認して読む</h1>\n      <p>同梱した値を確認する練習です。外部通信はしません。</p>\n      <button id=\"answer\" type=\"button\" data-answer=\"2\"><span>回答を確かめる</span></button>\n      <p id=\"output\" aria-live=\"polite\">待機</p>\n    </main>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch05-l02-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch05-l02",
+      "exerciseId": "typescript-ch05-l02-e01",
+      "workspaceId": "typescript-ch05-l02-e01",
+      "contentRevision": "2026-10-06.4",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "function formatPoints(value: unknown): string {\n  return String(value.points);\n}\nconst output = document.querySelector('#output');\nconst valid = document.querySelector('#valid');\nconst invalid = document.querySelector('#invalid');\nconst missing = document.querySelector('#missing');\nif (output !== null && valid !== null && invalid !== null && missing !== null) {\n  valid.addEventListener('click', () => {\n    output.textContent = formatPoints({ points: 2 });\n  });\n  invalid.addEventListener('click', () => {\n    output.textContent = formatPoints({ points: 'wrong' });\n  });\n  missing.addEventListener('click', () => {\n    output.textContent = formatPoints(null);\n  });\n}\nconsole.log('準備できました');\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>unknownの値を実行時に確かめる</title>\n  </head>\n  <body>\n    <main>\n      <h1>unknownの値を実行時に確かめる</h1>\n      <p>同梱した値を確認する練習です。外部通信はしません。</p>\n      <button id=\"valid\" type=\"button\">数値のデータ</button>\n      <button id=\"invalid\" type=\"button\">項目が文字列</button>\n      <button id=\"missing\" type=\"button\">nullのデータ</button>\n      <p id=\"output\" aria-live=\"polite\">待機</p>\n    </main>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch05-l02-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "typescript-ch05-l02-e01-r01",
+            "typescript-ch05-l02-e01-r02",
+            "typescript-ch05-l02-e01-r03"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch05-l02-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch05-l02-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.4",
+          "files": {
+            "main.ts": "function formatPoints(value: unknown): string {\n  return String(value.points);\n}\nconst output = document.querySelector('#output');\nconst valid = document.querySelector('#valid');\nconst invalid = document.querySelector('#invalid');\nconst missing = document.querySelector('#missing');\nif (output !== null && valid !== null && invalid !== null && missing !== null) {\n  valid.addEventListener('click', () => {\n    output.textContent = formatPoints({ points: 2 });\n  });\n  invalid.addEventListener('click', () => {\n    output.textContent = formatPoints({ points: 'wrong' });\n  });\n  missing.addEventListener('click', () => {\n    output.textContent = formatPoints(null);\n  });\n}\nconsole.log('準備できました');\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>unknownの値を実行時に確かめる</title>\n  </head>\n  <body>\n    <main>\n      <h1>unknownの値を実行時に確かめる</h1>\n      <p>同梱した値を確認する練習です。外部通信はしません。</p>\n      <button id=\"valid\" type=\"button\">数値のデータ</button>\n      <button id=\"invalid\" type=\"button\">項目が文字列</button>\n      <button id=\"missing\" type=\"button\">nullのデータ</button>\n      <p id=\"output\" aria-live=\"polite\">待機</p>\n    </main>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-ch05-l03-e01": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch05-l03",
+      "exerciseId": "typescript-ch05-l03-e01",
+      "workspaceId": "typescript-ch05-l03-e01",
+      "contentRevision": "2026-10-06.4",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "type LoadMode = 'success' | 'invalid' | 'failure';\nasync function load(mode: LoadMode): Promise<unknown> {\n  if (mode === 'failure') throw new Error('再試行できます');\n  if (mode === 'invalid') return { points: 'wrong' };\n  return { points: 2 };\n}\nfunction formatPoints(value: unknown): string {\n  if (\n    typeof value === 'object' &&\n    value !== null &&\n    'points' in value &&\n    typeof value.points === 'number'\n  ) {\n    return String(value.points);\n  }\n  return '不正なデータ';\n}\nasync function show(mode: LoadMode): Promise<void> {\n  const output = document.querySelector('#output');\n  if (output === null) return;\n  try {\n    const data: unknown = await load(mode);\n    output.textContent = formatPoints(data);\n  } catch (error: unknown) {\n    output.textContent = error.message;\n  }\n}\nconst success = document.querySelector('#success');\nconst invalid = document.querySelector('#invalid');\nconst failure = document.querySelector('#failure');\nif (success !== null && invalid !== null && failure !== null) {\n  success.addEventListener('click', () => {\n    void show('success');\n  });\n  invalid.addEventListener('click', () => {\n    void show('invalid');\n  });\n  failure.addEventListener('click', () => {\n    void show('failure');\n  });\n}\nconsole.log('準備できました');\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>非同期のunknownと失敗を受け止める</title>\n  </head>\n  <body>\n    <main>\n      <h1>非同期のunknownと失敗を受け止める</h1>\n      <p>同梱した値を確認する練習です。外部通信はしません。</p>\n      <button id=\"success\" type=\"button\">正常なデータ</button>\n      <button id=\"invalid\" type=\"button\">不正なデータ</button>\n      <button id=\"failure\" type=\"button\">取得を拒否</button>\n      <p id=\"output\" aria-live=\"polite\">待機</p>\n    </main>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch05-l03-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "typescript-ch05-l03-e01-r01",
+            "typescript-ch05-l03-e01-r02",
+            "typescript-ch05-l03-e01-r03"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch05-l03-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch05-l03-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.4",
+          "files": {
+            "main.ts": "type LoadMode = 'success' | 'invalid' | 'failure';\nasync function load(mode: LoadMode): Promise<unknown> {\n  if (mode === 'failure') throw new Error('再試行できます');\n  if (mode === 'invalid') return { points: 'wrong' };\n  return { points: 2 };\n}\nfunction formatPoints(value: unknown): string {\n  if (\n    typeof value === 'object' &&\n    value !== null &&\n    'points' in value &&\n    typeof value.points === 'number'\n  ) {\n    return String(value.points);\n  }\n  return '不正なデータ';\n}\nasync function show(mode: LoadMode): Promise<void> {\n  const output = document.querySelector('#output');\n  if (output === null) return;\n  try {\n    const data: unknown = await load(mode);\n    output.textContent = formatPoints(data);\n  } catch (error: unknown) {\n    output.textContent = error.message;\n  }\n}\nconst success = document.querySelector('#success');\nconst invalid = document.querySelector('#invalid');\nconst failure = document.querySelector('#failure');\nif (success !== null && invalid !== null && failure !== null) {\n  success.addEventListener('click', () => {\n    void show('success');\n  });\n  invalid.addEventListener('click', () => {\n    void show('invalid');\n  });\n  failure.addEventListener('click', () => {\n    void show('failure');\n  });\n}\nconsole.log('準備できました');\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>非同期のunknownと失敗を受け止める</title>\n  </head>\n  <body>\n    <main>\n      <h1>非同期のunknownと失敗を受け止める</h1>\n      <p>同梱した値を確認する練習です。外部通信はしません。</p>\n      <button id=\"success\" type=\"button\">正常なデータ</button>\n      <button id=\"invalid\" type=\"button\">不正なデータ</button>\n      <button id=\"failure\" type=\"button\">取得を拒否</button>\n      <p id=\"output\" aria-live=\"polite\">待機</p>\n    </main>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript:typescript-quiz-guided": {
+      "courseId": "typescript",
+      "lessonId": "typescript-ch06-l01",
+      "exerciseId": "typescript-ch06-l01-e01",
+      "workspaceId": "typescript-quiz-guided",
+      "contentRevision": "2026-10-06.4",
+      "editRevision": 3,
+      "files": {
+        "main.ts": "import { mountQuiz } from './quiz-ui.js';\nimport { loadQuestions } from './questions.js';\n\nexport type Category = 'web' | 'logic';\nexport type LoadMode = 'success' | 'invalid' | 'failure';\n// 工程1: 問題の形を配列へ適用する\nexport interface Question {\n  category: Category;\n  text: string;\n  choices: string;\n  correct: string;\n}\nexport interface QuizState {\n  readonly index: number;\n  readonly score: number;\n  readonly answered: boolean;\n}\nexport type LoadResult =\n  | { kind: 'ready'; questions: readonly Question[] }\n  | { kind: 'invalid' }\n  | { kind: 'failed'; message: string };\n\nconst questions: readonly Question[] = [\n  {\n    category: 'web',\n    text: 'Webページの骨組みを作るのは？',\n    choices: ['HTML', 'CSS'],\n    correct: 'HTML',\n  },\n  { category: 'web', text: '見た目を整えるのは？', choices: ['JavaScript', 'CSS'], correct: 'CSS' },\n  { category: 'logic', text: '1 + 1 は？', choices: ['2', '3'], correct: '2' },\n  { category: 'logic', text: '3 > 5 の結果は？', choices: ['true', 'false'], correct: 'false' },\n];\n\n// 工程2: 正誤と回答済みを使って状態を更新する\n\n/** 前の回答を引き継がない初期状態を作る。 */\nfunction createState(): QuizState {\n  return { index: 0, score: 0, answered: false };\n}\n\n/** 回答済みなら状態を保ち、正解だけ得点へ加える。 */\nfunction answer(state: QuizState, question: Question, choice: string): QuizState {\n  return state;\n}\n\n/** 回答した後だけ次の問題へ進む。 */\nfunction advance(state: QuizState): QuizState {\n  return state;\n}\n\n// 工程3: unknownを検証し非同期の結果と失敗を区別する\n\n/** unknownの各項目と2つの選択肢を確認してから問題を作る。 */\nfunction decodeQuestion(value: unknown): Question | undefined {\n  return undefined;\n}\n\n/** 成功後の実検証と、拒否時の実messageを区別してUIへ渡す。 */\nasync function readQuestions(mode: LoadMode): Promise<LoadResult> {\n  return { kind: 'ready', questions };\n}\n\n/** Eventが示す操作対象を確認して返す。 */\nfunction readButton(event: Event): HTMLButtonElement | undefined {\n  const target = event.currentTarget;\n  return target instanceof HTMLButtonElement ? target : undefined;\n}\n\nmountQuiz({ questions, createState, answer, advance, load: readQuestions, readButton });\nconsole.log('準備できました');\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />\n    <title>型を確かめる学習クイズ</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main>\n      <p class=\"eyebrow\">ひとつずつ、確かめよう</p>\n      <h1>型を確かめる学習クイズ</h1>\n      <fieldset id=\"controls\">\n        <legend>問題を選んで開始する</legend>\n        <label for=\"category\">問題のカテゴリ</label\n        ><select id=\"category\">\n          <option value=\"web\">Webの役割</option>\n          <option value=\"logic\">値と条件</option>\n        </select>\n        <div class=\"actions\">\n          <button id=\"invalid-load\" type=\"button\">不正データを試す（練習用）</button>\n          <button id=\"start\" type=\"button\">開始</button\n          ><button id=\"fail-load\" type=\"button\">読み込み失敗を試す（練習用）</button>\n        </div>\n      </fieldset>\n      <p id=\"status\" role=\"status\">開始すると問題が出ます</p>\n      <section id=\"quiz\" aria-label=\"問題\" hidden>\n        <p id=\"progress\">問題1 / 2</p>\n        <h2 id=\"question\">開始すると問題が出ます</h2>\n        <div id=\"choices\">\n          <button id=\"choice-0\" type=\"button\">選択肢1</button\n          ><button id=\"choice-1\" type=\"button\">選択肢2</button>\n        </div>\n        <p id=\"feedback\" role=\"status\"></p>\n        <button id=\"next\" type=\"button\" disabled>次の問題</button>\n      </section>\n      <p id=\"score\">得点: <span id=\"score-value\">0</span></p>\n      <p id=\"result\" tabindex=\"-1\" role=\"status\" hidden></p>\n      <button id=\"restart\" type=\"button\" hidden>もう一度</button>\n      <p class=\"note\">\n        同梱データを使います。通信はしません。再読み込みするとクイズは最初から始まります。\n      </p>\n    </main>\n  </body>\n</html>\n",
+        "styles.css": ":root {\n  font-family: system-ui, sans-serif;\n  color: #193b2d;\n  background: #eaf0f3;\n}\n* {\n  box-sizing: border-box;\n}\nbody {\n  margin: 0;\n  padding: 20px;\n}\nmain {\n  max-width: 680px;\n  margin: auto;\n  padding: 24px;\n  border: 2px solid #193b2d;\n  border-radius: 16px;\n  background: #fffdf7;\n}\nh1 {\n  font-size: 1.6rem;\n  margin-top: 4px;\n}\nh2 {\n  font-size: 1.25rem;\n}\n.eyebrow,\n.note {\n  font-size: 0.9rem;\n}\n.note {\n  line-height: 1.6;\n}\n.actions,\n#choices {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 12px;\n  margin: 16px 0;\n}\nbutton,\nselect {\n  font: inherit;\n  padding: 12px 16px;\n  min-height: 44px;\n  max-width: 100%;\n  color: #193b2d;\n  background: #f0eadc;\n  border: 2px solid #193b2d;\n  border-radius: 8px;\n  cursor: pointer;\n}\nbutton:disabled {\n  cursor: default;\n  color: #415448;\n  background: #e1e5df;\n}\nbutton:focus-visible,\nselect:focus-visible {\n  outline: 3px solid #8b351c;\n  outline-offset: 3px;\n}\n[hidden] {\n  display: none !important;\n}\n#score,\n#result {\n  font-weight: 700;\n}\nlabel {\n  display: block;\n  margin-bottom: 8px;\n}\n\n/* 読み込み操作のまとまり。native fieldsetのdisabledで子の操作を止める。 */\n#controls {\n  border: 0;\n  margin: 0;\n  padding: 0;\n}\n",
+        "quiz-ui.ts": "import type { LoadMode, LoadResult, Question, QuizState } from './main.js';\n\ninterface QuizPorts {\n  readonly questions: readonly Question[];\n  readonly createState: () => QuizState;\n  readonly answer: (state: QuizState, question: Question, choice: string) => QuizState;\n  readonly advance: (state: QuizState) => QuizState;\n  readonly load: (mode: LoadMode) => Promise<LoadResult>;\n  readonly readButton: (event: Event) => HTMLButtonElement | undefined;\n}\n\n/** 提供HTMLの要素を確認する。学習者の関数以外へ判断を代行しない。 */\nfunction element(selector: string): HTMLElement {\n  const node = document.querySelector(selector);\n  if (!(node instanceof HTMLElement)) throw new Error('提供HTMLの要素がありません');\n  return node;\n}\n\nfunction button(selector: string): HTMLButtonElement {\n  const node = document.querySelector(selector);\n  if (!(node instanceof HTMLButtonElement)) throw new Error('提供HTMLのbuttonがありません');\n  return node;\n}\n\n/** 具体的なtagのquery結果を確認し、callbackにも非nullの参照を渡す。 */\nfunction controlsElement(): HTMLFieldSetElement {\n  const controls = document.querySelector('fieldset');\n  if (controls === null) throw new Error('提供HTMLの操作欄がありません');\n  return controls;\n}\n\nfunction categoryElement(): HTMLSelectElement {\n  const category = document.querySelector('select');\n  if (category === null) throw new Error('提供HTMLのカテゴリ欄がありません');\n  return category;\n}\n\n/** 学習者の型付きデータと状態・境界関数を、既存クイズと同じ表示/操作へ接続する。 */\nexport function mountQuiz(ports: QuizPorts): void {\n  const controls = controlsElement();\n  const category = categoryElement();\n  const quiz = element('#quiz');\n  const questionText = element('#question');\n  const progress = element('#progress');\n  const feedback = element('#feedback');\n  const score = element('#score-value');\n  const result = element('#result');\n  const status = element('#status');\n  const next = button('#next');\n  const restart = button('#restart');\n  const choices = [button('#choice-0'), button('#choice-1')];\n  let questions = ports.questions;\n  let state = ports.createState();\n\n  /** 状態に対応する実際の問題、回答済みの操作可否と結果を表示する。 */\n  function render(): void {\n    const question = questions[state.index];\n    score.textContent = String(state.score);\n    quiz.hidden = question === undefined;\n    result.hidden = question !== undefined;\n    restart.hidden = question !== undefined;\n    if (question !== undefined) {\n      questionText.textContent = question.text;\n      progress.textContent = '問題' + (state.index + 1) + ' / ' + questions.length;\n      feedback.textContent = '';\n      choices.forEach((choice, index) => {\n        choice.textContent = question.choices[index] ?? '';\n        choice.disabled = state.answered;\n      });\n      next.disabled = !state.answered;\n      next.textContent = state.index === questions.length - 1 ? '結果を見る' : '次の問題';\n      if (!state.answered) choices[0]?.focus();\n    } else {\n      result.textContent = questions.length + '問中' + state.score + '問正解';\n      restart.focus();\n    }\n  }\n\n  /** 受け取ったEventの確認を学習者へ渡し、その返した対象だけを扱う。 */\n  async function handleAction(event: Event): Promise<void> {\n    const target = ports.readButton(event);\n    if (target === undefined) return;\n    if (\n      target.id === 'start' ||\n      target === restart ||\n      target.id === 'fail-load' ||\n      target.id === 'invalid-load'\n    ) {\n      controls.disabled = true;\n      status.textContent = '読み込み中...';\n      const mode =\n        target.id === 'fail-load'\n          ? 'failure'\n          : target.id === 'invalid-load'\n            ? 'invalid'\n            : 'success';\n      const loaded = await ports.load(mode);\n      controls.disabled = false;\n      if (loaded.kind === 'failed') {\n        status.textContent = loaded.message;\n        return;\n      }\n      if (loaded.kind === 'invalid') {\n        status.textContent = '不正なデータです。開始でやり直せます';\n        return;\n      }\n      questions = loaded.questions.filter((question) => question.category === category.value);\n      state = ports.createState();\n      status.textContent = '';\n      render();\n    } else if (target === next) {\n      state = ports.advance(state);\n      render();\n    } else if (choices.includes(target)) {\n      const question = questions[state.index];\n      if (question === undefined || state.answered) return;\n      const selected = target.textContent ?? '';\n      state = ports.answer(state, question, selected);\n      score.textContent = String(state.score);\n      feedback.textContent =\n        selected === question.correct ? '正解です' : '正解は ' + question.correct + ' です';\n      choices.forEach((choice) => {\n        choice.disabled = state.answered;\n      });\n      next.disabled = !state.answered;\n      if (state.answered) next.focus();\n    }\n  }\n\n  document.querySelectorAll('button').forEach((control) => {\n    control.addEventListener('click', handleAction);\n  });\n}\n",
+        "questions.ts": "import type { LoadMode } from './main.js';\n\nconst records: readonly unknown[] = [\n  {\n    category: 'web',\n    text: 'Webページの骨組みを作るのは？',\n    choices: ['HTML', 'CSS'],\n    correct: 'HTML',\n  },\n  { category: 'web', text: '見た目を整えるのは？', choices: ['JavaScript', 'CSS'], correct: 'CSS' },\n  { category: 'logic', text: '1 + 1 は？', choices: ['2', '3'], correct: '2' },\n  { category: 'logic', text: '3 > 5 の結果は？', choices: ['true', 'false'], correct: 'false' },\n];\nlet afterFailure = false;\n\n/** 通信せず同梱の値を返す。成功しても各要素の形はunknown。 */\nexport async function loadQuestions(mode: LoadMode): Promise<readonly unknown[]> {\n  await new Promise<void>((resolve) => {\n    setTimeout(resolve, 80);\n  });\n  if (mode === 'failure') {\n    afterFailure = true;\n    throw new Error('読み込めませんでした。開始でやり直せます');\n  }\n  if (mode === 'invalid')\n    return [{ category: 'web', text: 2, choices: ['HTML', 'CSS'], correct: 'HTML' }];\n  return afterFailure ? [records[1], records[0], records[2], records[3]] : records;\n}\n"
+      },
+      "selectedFile": "main.ts",
+      "cursors": {
+        "main.ts": {
+          "anchor": 2,
+          "head": 2
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "typescript-ch06-l01-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "typescript-ch06-l01-e01-r01",
+            "typescript-ch06-l01-e01-r02",
+            "typescript-ch06-l01-e01-r03"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["typescript-ch06-l01-e01-h01"],
+      "lastPassingSnapshots": {
+        "typescript-ch06-l01-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-06.4",
+          "files": {
+            "main.ts": "import { mountQuiz } from './quiz-ui.js';\nimport { loadQuestions } from './questions.js';\n\nexport type Category = 'web' | 'logic';\nexport type LoadMode = 'success' | 'invalid' | 'failure';\n// 工程1: 問題の形を配列へ適用する\nexport interface Question {\n  category: Category;\n  text: string;\n  choices: string;\n  correct: string;\n}\nexport interface QuizState {\n  readonly index: number;\n  readonly score: number;\n  readonly answered: boolean;\n}\nexport type LoadResult =\n  | { kind: 'ready'; questions: readonly Question[] }\n  | { kind: 'invalid' }\n  | { kind: 'failed'; message: string };\n\nconst questions: readonly Question[] = [\n  {\n    category: 'web',\n    text: 'Webページの骨組みを作るのは？',\n    choices: ['HTML', 'CSS'],\n    correct: 'HTML',\n  },\n  { category: 'web', text: '見た目を整えるのは？', choices: ['JavaScript', 'CSS'], correct: 'CSS' },\n  { category: 'logic', text: '1 + 1 は？', choices: ['2', '3'], correct: '2' },\n  { category: 'logic', text: '3 > 5 の結果は？', choices: ['true', 'false'], correct: 'false' },\n];\n\n// 工程2: 正誤と回答済みを使って状態を更新する\n\n/** 前の回答を引き継がない初期状態を作る。 */\nfunction createState(): QuizState {\n  return { index: 0, score: 0, answered: false };\n}\n\n/** 回答済みなら状態を保ち、正解だけ得点へ加える。 */\nfunction answer(state: QuizState, question: Question, choice: string): QuizState {\n  return state;\n}\n\n/** 回答した後だけ次の問題へ進む。 */\nfunction advance(state: QuizState): QuizState {\n  return state;\n}\n\n// 工程3: unknownを検証し非同期の結果と失敗を区別する\n\n/** unknownの各項目と2つの選択肢を確認してから問題を作る。 */\nfunction decodeQuestion(value: unknown): Question | undefined {\n  return undefined;\n}\n\n/** 成功後の実検証と、拒否時の実messageを区別してUIへ渡す。 */\nasync function readQuestions(mode: LoadMode): Promise<LoadResult> {\n  return { kind: 'ready', questions };\n}\n\n/** Eventが示す操作対象を確認して返す。 */\nfunction readButton(event: Event): HTMLButtonElement | undefined {\n  const target = event.currentTarget;\n  return target instanceof HTMLButtonElement ? target : undefined;\n}\n\nmountQuiz({ questions, createState, answer, advance, load: readQuestions, readButton });\nconsole.log('準備できました');\n\n// 合成Bundleの保持検査用。学習合格の証拠ではありません。\n",
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />\n    <title>型を確かめる学習クイズ</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main>\n      <p class=\"eyebrow\">ひとつずつ、確かめよう</p>\n      <h1>型を確かめる学習クイズ</h1>\n      <fieldset id=\"controls\">\n        <legend>問題を選んで開始する</legend>\n        <label for=\"category\">問題のカテゴリ</label\n        ><select id=\"category\">\n          <option value=\"web\">Webの役割</option>\n          <option value=\"logic\">値と条件</option>\n        </select>\n        <div class=\"actions\">\n          <button id=\"invalid-load\" type=\"button\">不正データを試す（練習用）</button>\n          <button id=\"start\" type=\"button\">開始</button\n          ><button id=\"fail-load\" type=\"button\">読み込み失敗を試す（練習用）</button>\n        </div>\n      </fieldset>\n      <p id=\"status\" role=\"status\">開始すると問題が出ます</p>\n      <section id=\"quiz\" aria-label=\"問題\" hidden>\n        <p id=\"progress\">問題1 / 2</p>\n        <h2 id=\"question\">開始すると問題が出ます</h2>\n        <div id=\"choices\">\n          <button id=\"choice-0\" type=\"button\">選択肢1</button\n          ><button id=\"choice-1\" type=\"button\">選択肢2</button>\n        </div>\n        <p id=\"feedback\" role=\"status\"></p>\n        <button id=\"next\" type=\"button\" disabled>次の問題</button>\n      </section>\n      <p id=\"score\">得点: <span id=\"score-value\">0</span></p>\n      <p id=\"result\" tabindex=\"-1\" role=\"status\" hidden></p>\n      <button id=\"restart\" type=\"button\" hidden>もう一度</button>\n      <p class=\"note\">\n        同梱データを使います。通信はしません。再読み込みするとクイズは最初から始まります。\n      </p>\n    </main>\n  </body>\n</html>\n",
+            "styles.css": ":root {\n  font-family: system-ui, sans-serif;\n  color: #193b2d;\n  background: #eaf0f3;\n}\n* {\n  box-sizing: border-box;\n}\nbody {\n  margin: 0;\n  padding: 20px;\n}\nmain {\n  max-width: 680px;\n  margin: auto;\n  padding: 24px;\n  border: 2px solid #193b2d;\n  border-radius: 16px;\n  background: #fffdf7;\n}\nh1 {\n  font-size: 1.6rem;\n  margin-top: 4px;\n}\nh2 {\n  font-size: 1.25rem;\n}\n.eyebrow,\n.note {\n  font-size: 0.9rem;\n}\n.note {\n  line-height: 1.6;\n}\n.actions,\n#choices {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 12px;\n  margin: 16px 0;\n}\nbutton,\nselect {\n  font: inherit;\n  padding: 12px 16px;\n  min-height: 44px;\n  max-width: 100%;\n  color: #193b2d;\n  background: #f0eadc;\n  border: 2px solid #193b2d;\n  border-radius: 8px;\n  cursor: pointer;\n}\nbutton:disabled {\n  cursor: default;\n  color: #415448;\n  background: #e1e5df;\n}\nbutton:focus-visible,\nselect:focus-visible {\n  outline: 3px solid #8b351c;\n  outline-offset: 3px;\n}\n[hidden] {\n  display: none !important;\n}\n#score,\n#result {\n  font-weight: 700;\n}\nlabel {\n  display: block;\n  margin-bottom: 8px;\n}\n\n/* 読み込み操作のまとまり。native fieldsetのdisabledで子の操作を止める。 */\n#controls {\n  border: 0;\n  margin: 0;\n  padding: 0;\n}\n",
+            "quiz-ui.ts": "import type { LoadMode, LoadResult, Question, QuizState } from './main.js';\n\ninterface QuizPorts {\n  readonly questions: readonly Question[];\n  readonly createState: () => QuizState;\n  readonly answer: (state: QuizState, question: Question, choice: string) => QuizState;\n  readonly advance: (state: QuizState) => QuizState;\n  readonly load: (mode: LoadMode) => Promise<LoadResult>;\n  readonly readButton: (event: Event) => HTMLButtonElement | undefined;\n}\n\n/** 提供HTMLの要素を確認する。学習者の関数以外へ判断を代行しない。 */\nfunction element(selector: string): HTMLElement {\n  const node = document.querySelector(selector);\n  if (!(node instanceof HTMLElement)) throw new Error('提供HTMLの要素がありません');\n  return node;\n}\n\nfunction button(selector: string): HTMLButtonElement {\n  const node = document.querySelector(selector);\n  if (!(node instanceof HTMLButtonElement)) throw new Error('提供HTMLのbuttonがありません');\n  return node;\n}\n\n/** 具体的なtagのquery結果を確認し、callbackにも非nullの参照を渡す。 */\nfunction controlsElement(): HTMLFieldSetElement {\n  const controls = document.querySelector('fieldset');\n  if (controls === null) throw new Error('提供HTMLの操作欄がありません');\n  return controls;\n}\n\nfunction categoryElement(): HTMLSelectElement {\n  const category = document.querySelector('select');\n  if (category === null) throw new Error('提供HTMLのカテゴリ欄がありません');\n  return category;\n}\n\n/** 学習者の型付きデータと状態・境界関数を、既存クイズと同じ表示/操作へ接続する。 */\nexport function mountQuiz(ports: QuizPorts): void {\n  const controls = controlsElement();\n  const category = categoryElement();\n  const quiz = element('#quiz');\n  const questionText = element('#question');\n  const progress = element('#progress');\n  const feedback = element('#feedback');\n  const score = element('#score-value');\n  const result = element('#result');\n  const status = element('#status');\n  const next = button('#next');\n  const restart = button('#restart');\n  const choices = [button('#choice-0'), button('#choice-1')];\n  let questions = ports.questions;\n  let state = ports.createState();\n\n  /** 状態に対応する実際の問題、回答済みの操作可否と結果を表示する。 */\n  function render(): void {\n    const question = questions[state.index];\n    score.textContent = String(state.score);\n    quiz.hidden = question === undefined;\n    result.hidden = question !== undefined;\n    restart.hidden = question !== undefined;\n    if (question !== undefined) {\n      questionText.textContent = question.text;\n      progress.textContent = '問題' + (state.index + 1) + ' / ' + questions.length;\n      feedback.textContent = '';\n      choices.forEach((choice, index) => {\n        choice.textContent = question.choices[index] ?? '';\n        choice.disabled = state.answered;\n      });\n      next.disabled = !state.answered;\n      next.textContent = state.index === questions.length - 1 ? '結果を見る' : '次の問題';\n      if (!state.answered) choices[0]?.focus();\n    } else {\n      result.textContent = questions.length + '問中' + state.score + '問正解';\n      restart.focus();\n    }\n  }\n\n  /** 受け取ったEventの確認を学習者へ渡し、その返した対象だけを扱う。 */\n  async function handleAction(event: Event): Promise<void> {\n    const target = ports.readButton(event);\n    if (target === undefined) return;\n    if (\n      target.id === 'start' ||\n      target === restart ||\n      target.id === 'fail-load' ||\n      target.id === 'invalid-load'\n    ) {\n      controls.disabled = true;\n      status.textContent = '読み込み中...';\n      const mode =\n        target.id === 'fail-load'\n          ? 'failure'\n          : target.id === 'invalid-load'\n            ? 'invalid'\n            : 'success';\n      const loaded = await ports.load(mode);\n      controls.disabled = false;\n      if (loaded.kind === 'failed') {\n        status.textContent = loaded.message;\n        return;\n      }\n      if (loaded.kind === 'invalid') {\n        status.textContent = '不正なデータです。開始でやり直せます';\n        return;\n      }\n      questions = loaded.questions.filter((question) => question.category === category.value);\n      state = ports.createState();\n      status.textContent = '';\n      render();\n    } else if (target === next) {\n      state = ports.advance(state);\n      render();\n    } else if (choices.includes(target)) {\n      const question = questions[state.index];\n      if (question === undefined || state.answered) return;\n      const selected = target.textContent ?? '';\n      state = ports.answer(state, question, selected);\n      score.textContent = String(state.score);\n      feedback.textContent =\n        selected === question.correct ? '正解です' : '正解は ' + question.correct + ' です';\n      choices.forEach((choice) => {\n        choice.disabled = state.answered;\n      });\n      next.disabled = !state.answered;\n      if (state.answered) next.focus();\n    }\n  }\n\n  document.querySelectorAll('button').forEach((control) => {\n    control.addEventListener('click', handleAction);\n  });\n}\n",
+            "questions.ts": "import type { LoadMode } from './main.js';\n\nconst records: readonly unknown[] = [\n  {\n    category: 'web',\n    text: 'Webページの骨組みを作るのは？',\n    choices: ['HTML', 'CSS'],\n    correct: 'HTML',\n  },\n  { category: 'web', text: '見た目を整えるのは？', choices: ['JavaScript', 'CSS'], correct: 'CSS' },\n  { category: 'logic', text: '1 + 1 は？', choices: ['2', '3'], correct: '2' },\n  { category: 'logic', text: '3 > 5 の結果は？', choices: ['true', 'false'], correct: 'false' },\n];\nlet afterFailure = false;\n\n/** 通信せず同梱の値を返す。成功しても各要素の形はunknown。 */\nexport async function loadQuestions(mode: LoadMode): Promise<readonly unknown[]> {\n  await new Promise<void>((resolve) => {\n    setTimeout(resolve, 80);\n  });\n  if (mode === 'failure') {\n    afterFailure = true;\n    throw new Error('読み込めませんでした。開始でやり直せます');\n  }\n  if (mode === 'invalid')\n    return [{ category: 'web', text: 2, choices: ['HTML', 'CSS'], correct: 'HTML' }];\n  return afterFailure ? [records[1], records[0], records[2], records[3]] : records;\n}\n"
+          },
+          "evaluatedAt": "2026-10-06T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "javascript:javascript-ch10-l01-e01": {
+      "courseId": "javascript",
+      "lessonId": "javascript-ch10-l01",
+      "exerciseId": "javascript-ch10-l01-e01",
+      "workspaceId": "javascript-ch10-l01-e01",
+      "contentRevision": "2026-10-06.4",
+      "editRevision": 7,
+      "files": {
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n<head><meta charset=\"UTF-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>問題データを受け取る</title><link rel=\"stylesheet\" href=\"styles.css\" /></head>\n<body><main><h1>問題を読んでみよう</h1>\n<button id=\"load\" type=\"button\">問題を読む</button>\n<p id=\"count\">問題: 0</p>\n<p id=\"question\">まだありません</p><p id=\"note\">同梱の問題を読む練習です。通信はしません。</p>\n</main><script src=\"script.js\"></script></body></html>\n",
+        "styles.css": "body {\n  font-family: sans-serif;\n  padding: 24px;\n  color: #19352b;\n  background: #f5faf7;\n}\nmain {\n  max-width: 520px;\n}\nbutton {\n  padding: 12px 20px;\n  color: white;\n  background: #16764b;\n  border: 0;\n  border-radius: 8px;\n  font-size: 18px;\n}\nbutton:focus-visible {\n  outline: 3px solid #19352b;\n  outline-offset: 4px;\n}\n#status {\n  padding: 16px;\n  background: white;\n}\n",
+        "script.js": "let reads = 0;\n/** 同梱データを読み、2回目以降は別の3件を返す教材用取得元。 */\nfunction loadQuestions() {\n  reads += 1;\n  const questions =\n    reads === 1\n      ? [{ text: '空は何色？' }, { text: '海は何色？' }]\n      : [{ text: '草は何色？' }, { text: '雲は何色？' }, { text: '雪は何色？' }];\n  return new Promise((resolve) => {\n    setTimeout(() => {\n      resolve(questions);\n    }, 80);\n  });\n}\nconst count = document.querySelector('#count');\nconst question = document.querySelector('#question');\ndocument.querySelector('#load').addEventListener('click', () => {\n  loadQuestions().then((questions) => {\n    count.textContent = '問題: 0';\n    question.textContent = 'まだありません';\n  });\n});\n\n// synthetic previous draft: javascript-ch10-l01-e01\n"
+      },
+      "selectedFile": "script.js",
+      "cursors": {
+        "script.js": {
+          "anchor": 2,
+          "head": 7
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "javascript-ch10-l01-e01",
+          "executionRevision": 7,
+          "status": "pass",
+          "checks": [],
+          "passedRequirementIds": [
+            "javascript-ch10-l01-e01-r01",
+            "javascript-ch10-l01-e01-r02",
+            "javascript-ch10-l01-e01-r03",
+            "javascript-ch10-l01-e01-r04",
+            "javascript-ch10-l01-e01-teaching-result",
+            "interaction:promise-data:load",
+            "interaction:promise-data:again"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["javascript-ch10-l01-e01-h01"],
+      "reviewSlideId": "javascript-ch10-l01-s01",
+      "reviewScrollOffset": 27,
+      "lastPassingSnapshots": {
+        "javascript-ch10-l01-e01": {
+          "editRevision": 7,
+          "contentRevision": "2026-10-06.4",
+          "files": {
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n<head><meta charset=\"UTF-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>問題データを受け取る</title><link rel=\"stylesheet\" href=\"styles.css\" /></head>\n<body><main><h1>問題を読んでみよう</h1>\n<button id=\"load\" type=\"button\">問題を読む</button>\n<p id=\"count\">問題: 0</p>\n<p id=\"question\">まだありません</p><p id=\"note\">同梱の問題を読む練習です。通信はしません。</p>\n</main><script src=\"script.js\"></script></body></html>\n",
+            "styles.css": "body {\n  font-family: sans-serif;\n  padding: 24px;\n  color: #19352b;\n  background: #f5faf7;\n}\nmain {\n  max-width: 520px;\n}\nbutton {\n  padding: 12px 20px;\n  color: white;\n  background: #16764b;\n  border: 0;\n  border-radius: 8px;\n  font-size: 18px;\n}\nbutton:focus-visible {\n  outline: 3px solid #19352b;\n  outline-offset: 4px;\n}\n#status {\n  padding: 16px;\n  background: white;\n}\n",
+            "script.js": "let reads = 0;\n/** 同梱データを読み、2回目以降は別の3件を返す教材用取得元。 */\nfunction loadQuestions() {\n  reads += 1;\n  const questions =\n    reads === 1\n      ? [{ text: '空は何色？' }, { text: '海は何色？' }]\n      : [{ text: '草は何色？' }, { text: '雲は何色？' }, { text: '雪は何色？' }];\n  return new Promise((resolve) => {\n    setTimeout(() => {\n      resolve(questions);\n    }, 80);\n  });\n}\nconst count = document.querySelector('#count');\nconst question = document.querySelector('#question');\ndocument.querySelector('#load').addEventListener('click', () => {\n  loadQuestions().then((questions) => {\n    count.textContent = '問題: ' + questions.length;\n    question.textContent = questions[0].text;\n  });\n});\n"
+          },
+          "evaluatedAt": "2026-08-01T09:10:00.000Z"
+        }
+      },
+      "updatedAt": "2026-08-01T09:20:00.000Z"
+    }
+  },
+  "quarantined": [],
+  "appVersion": "synthetic-ts-release-not-learning-evidence",
+  "exportedAt": "2026-10-07T00:00:00.000Z",
+  "integrity": {
+    "algorithm": "SHA-256",
+    "digest": "b40fc788bea0aacdc0b21d4244cff198089ebce9a4b21e191872a9c5efa61e13"
+  }
+}
