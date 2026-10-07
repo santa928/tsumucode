@@ -292,6 +292,8 @@ describe('LearningSessionController', () => {
       await controller.initialize();
       await controller.previewNow();
       const before = controller.getSnapshot();
+      const renderNormally = runtime.render.getMockImplementation();
+      if (!renderNormally) throw new Error('正常な再描画fixtureがありません');
       runtime.render.mockImplementation(async (input) => ({
         exerciseSessionId: input.exerciseSessionId,
         executionRevision: input.executionRevision,
@@ -325,6 +327,23 @@ describe('LearningSessionController', () => {
         lastPassingSnapshots: storedDraft().lastPassingSnapshots,
       });
       expect(persistence.putDraft.mock.calls.at(-1)?.[0]).not.toHaveProperty('executionResult');
+      if (kind === 'limit') {
+        runtime.render.mockImplementation(renderNormally);
+        await controller.previewNow();
+        await expect(controller.validateNow()).resolves.toMatchObject({ status: 'pass' });
+        await controller.flush();
+        const recovered = controller.getSnapshot();
+        expect(recovered.files['index.html']).toBe('<main>保持する下書き</main>');
+        expect(recovered.validationHistory).toHaveLength(before.validationHistory.length + 1);
+        expect(recovered.validationHistory.slice(0, -1)).toEqual(before.validationHistory);
+        expect(validation.validate).toHaveBeenCalledTimes(1);
+        expect(persistence.putDraft.mock.calls.at(-1)?.[0]).toMatchObject({
+          files: { 'index.html': '<main>保持する下書き</main>' },
+          lastPassingSnapshots: {
+            [baseExercise.id]: { files: { 'index.html': '<main>保持する下書き</main>' } },
+          },
+        });
+      }
       await controller.dispose();
     },
   );
