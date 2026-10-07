@@ -37,7 +37,7 @@ function workflow(): { readonly source: string; readonly parsed: PagesWorkflow }
 }
 
 describe('TsumuCode Pages workflow', () => {
-  it('新規checkoutのTS承認検証にはcontent生成を先に成功させる', () => {
+  it('新規checkoutのTS・React承認検証にはcontent生成を先に成功させる', () => {
     const steps = workflow().parsed.jobs?.resolve?.steps ?? [];
     const compile = steps.find(
       ({ name }) => name === 'Compile TypeScript candidate content for source review',
@@ -48,7 +48,9 @@ describe('TsumuCode Pages workflow', () => {
     expect(compile).toBeDefined();
     expect(resolve).toBeDefined();
     expect(steps.indexOf(compile!)).toBeLessThan(steps.indexOf(resolve!));
-    expect(compile?.if).toBe(`${resolve?.if ?? ''} && inputs.course_id == 'typescript'`);
+    expect(compile?.if).toBe(
+      `${resolve?.if ?? ''} && (inputs.course_id == 'typescript' || inputs.course_id == 'react')`,
+    );
     expect(compile?.run).toBe('./scripts/docker-compose.sh run --rm app npm run content:compile');
     expect(compile?.['continue-on-error']).not.toBe(true);
   });
