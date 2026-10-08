@@ -1,3 +1,4 @@
+import { nextWorkspace } from '../../../scripts/local/next-project-protocol.mjs';
 import { acceptsReactQuizScenarios } from './reactQuizInteractions';
 import { acceptsReactHookScenarios } from './reactHookInteractions';
 import { acceptsReactReducerContextScenarios } from './reactReducerContextInteractions';
@@ -1367,7 +1368,10 @@ export const NextPageHttpRuleSchema = z
     viewportMode: z.literal('all'),
     target: z.object({ kind: z.literal('next-page-http') }).strict(),
     assertion: z
-      .object({ kind: z.literal('next-page-http'), goal: z.literal('page-route-query') })
+      .object({
+        kind: z.literal('next-page-http'),
+        goal: z.enum(['page-route-query', 'nested-dynamic-navigation', 'server-client-counter']),
+      })
       .strict(),
   })
   .strict()
@@ -2289,26 +2293,24 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
           currentIds.workspace.add(exercise.workspaceId);
 
           if (exercise.runtime?.kind === 'next') {
-            const paths = [
-              'app/layout.tsx',
-              'app/page.tsx',
-              'app/globals.css',
-              'app/api/question/route.ts',
-            ];
+            const contract = nextWorkspace(exercise.workspaceId);
+            const paths = contract ? Object.keys(contract.files) : [];
             if (
               course.id !== 'next' ||
-              lesson.id !== 'next-ch01-l01' ||
-              exercise.id !== 'next-ch01-l01-e01' ||
-              exercise.workspaceId !== 'next-ch01-l01-e01' ||
+              !contract ||
+              exercise.id !== exercise.workspaceId ||
+              exercise.id !== `${lesson.id}-e01` ||
               exercise.files.length !== paths.length ||
               paths.some((path) => !exercise.files.some((file) => file.path === path)) ||
               exercise.validationRules.length !== 1 ||
-              !NextPageHttpRuleSchema.safeParse(exercise.validationRules[0]).success
+              !NextPageHttpRuleSchema.safeParse(exercise.validationRules[0]).success ||
+              exercise.validationRules[0]?.assertion.kind !== 'next-page-http' ||
+              exercise.validationRules[0].assertion.goal !== contract.goal
             ) {
               addIssue(
                 context,
                 [...exercisePath, 'runtime'],
-                'Nextの最初の固定page/Route課題とSource/Ruleを一致させてください',
+                'Nextの固定教材WorkspaceとSource/Ruleを一致させてください',
               );
             }
           }

@@ -1,0 +1,9 @@
+id: next-ch02
+sequence: 1
+title: App RouterとServer/Client境界
+goal: URLとlayoutを対応させ、Serverの値をClientのイベントへつなぐ。
+estimatedMinutes: 60
+kind: standard
+lessonSources:
+  - lessons/next-ch02-l01/lesson.yaml
+  - lessons/next-ch02-l02/lesson.yaml

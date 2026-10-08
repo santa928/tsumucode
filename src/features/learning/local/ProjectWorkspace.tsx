@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+import { nextWorkspace } from '../../../../scripts/local/next-project-protocol.mjs';
 import { LearningViewportShell } from '../layout/LearningViewportShell';
 import { LearningToolRail } from '../layout/LearningToolRail';
 import type { ExerciseLoaderData } from '../../../app/contentLoaders';
@@ -198,6 +199,7 @@ function ProjectEditor({
   readonly access: WorkspaceLeaseAccess;
 }) {
   const [previewPath, setPreviewPath] = useState('');
+  const previewContract = lessonData ? nextWorkspace(identity.workspaceId) : undefined;
   const snapshot = useSyncExternalStore(session.subscribe, session.getSnapshot);
   const adapter = useMemo(() => createCodeMirrorEditor(services.editorLanguageRegistry), []);
   const editing = useEditingCapability() && access.isWritable();
@@ -425,9 +427,11 @@ function ProjectEditor({
                   setPreviewPath(event.currentTarget.value);
                 }}
               >
-                <option value="">pageの表示</option>
-                <option value="api/question">JSON応答: queryなし</option>
-                <option value="api/question?mode=second">JSON応答: mode=second</option>
+                {previewContract?.pages.map((path, index) => (
+                  <option key={path} value={path}>
+                    {previewContract.previewLabels[index]}
+                  </option>
+                ))}
               </select>
             </label>
           ) : null}

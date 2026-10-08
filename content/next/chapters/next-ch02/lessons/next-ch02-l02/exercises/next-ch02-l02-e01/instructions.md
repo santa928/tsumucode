@@ -1,0 +1,7 @@
+## Serverの値をClientの操作へ渡す
+
+最初はCounterのuseStateにServer側の診断が出ます。Counterのファイル先頭へuse clientを置いて復旧し、Serverのpageから渡す初期値を2にして、Clientのボタンを押すたびに1増やします。初期2→1回目3→2回目4を確認します。
+
+Nodeのbasenameとasync処理はServerに残します。Counterの先頭のuse client、useState、onClickはClientに置きます。境界を渡すのはnumber/stringです。文書を再読込すると初期値2に戻ります。
+
+起動前に、use clientがないCounterと、page全体をClientにする対処を比べて予測します。診断のファイルを確認し、asyncとNode処理を持つpageはServerに残してCounterだけを直します。復旧後の表示と予測との差を説明してください。

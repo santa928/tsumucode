@@ -45,7 +45,7 @@ export class WorkspaceStore {
         record.profile !== workspaceProfile(id) ||
         record.workspaceId !== id ||
         expectedRevision(record.sourceRevision) === 0 ||
-        projectHash(validateFiles(record.files, record.profile), record.profile) !==
+        projectHash(validateFiles(record.files, record.profile, id), record.profile, id) !==
           record.sourceHash
       )
         throw new Error('Invalid Source record');
@@ -96,7 +96,7 @@ export class WorkspaceStore {
     workspaceId(id);
     expectedRevision(revision);
     const profile = workspaceProfile(id);
-    const source = validateFiles(files, profile);
+    const source = validateFiles(files, profile, id);
     return this.#serial(async () => {
       await this.#prepare();
       const previous = await this.#read(id);
@@ -115,7 +115,7 @@ export class WorkspaceStore {
         profile,
         workspaceId: id,
         sourceRevision: revision + 1,
-        sourceHash: projectHash(source, profile),
+        sourceHash: projectHash(source, profile, id),
         files: source,
         lastRun: previous?.lastRun ?? null,
       });
@@ -124,7 +124,7 @@ export class WorkspaceStore {
 
   reset(id, revision) {
     if (revision === 0) throw new RequestError(404, 'Workspaceがありません。');
-    return this.save(id, revision, starterFiles(workspaceProfile(id)));
+    return this.save(id, revision, starterFiles(workspaceProfile(id), id));
   }
 
   /** 起動の版検査とrun記録を不可分にし、途中の保存を古い版で起動しない。 */

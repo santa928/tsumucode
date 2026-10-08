@@ -1,38 +1,42 @@
-{
-  'schemaVersion': 1,
-  'id': 'next',
-  'title': 'Next.js 実サーバーの第一歩',
-  'description': 'Localの固定Next環境でpageとquery別のRoute Handlerを確認する未公開の最初の通常Lesson。',
-  'audience': 'TypeScriptとReactを学んだ初学者',
-  'estimatedMinutes': 25,
-  'revision': '2026-10-08.1',
-  'runnerId': 'next',
-  'validatorId': 'next',
-  'glossarySource': 'glossary.yaml',
-  'conceptsSource': 'concepts.yaml',
-  'documentationSources': ['references/next-official.md'],
-  'supportedDevices': { 'exercise': 'desktop', 'study': ['desktop', 'tablet', 'mobile'] },
-  'prerequisites': ['react'],
-  'publicationStatus': 'draft',
-  'expectedTotals':
-    {
-      'chapters': 1,
-      'lessons': 1,
-      'conceptSlides': 3,
-      'standardExercises': 1,
-      'guidedProjectLessons': 0,
-      'capstoneLessons': 0,
-      'estimatedMinutes': 25,
-    },
-  'provenanceManifestPath': 'provenance.yaml',
-  'progressMigrations': [],
-  'phases':
-    [
-      {
-        'id': 'next-p01-server',
-        'title': '実サーバーの応答を確かめる',
-        'description': 'pageとRoute Handlerを区別し、queryを変えて実HTTPを観察する。',
-        'chapterSources': ['chapters/next-ch01/chapter.yaml'],
-      },
-    ],
-}
+schemaVersion: 1
+id: next
+title: Next.js 実サーバーの第一歩
+description: Localの固定Next環境で実HTTP、App RouterとServer/Client境界を学ぶ未公開教材。
+audience: TypeScriptとReactを学んだ初学者
+estimatedMinutes: 85
+revision: 2026-10-08.2
+runnerId: next
+validatorId: next
+glossarySource: glossary.yaml
+conceptsSource: concepts.yaml
+documentationSources:
+  - references/next-official.md
+supportedDevices:
+  exercise: desktop
+  study:
+    - desktop
+    - tablet
+    - mobile
+prerequisites:
+  - react
+publicationStatus: draft
+expectedTotals:
+  chapters: 2
+  lessons: 3
+  conceptSlides: 9
+  standardExercises: 3
+  guidedProjectLessons: 0
+  capstoneLessons: 0
+  estimatedMinutes: 85
+provenanceManifestPath: provenance.yaml
+progressMigrations:
+  - fromRevision: 2026-10-08.1
+    toRevision: 2026-10-08.2
+    steps: []
+phases:
+  - id: next-p01-server
+    title: 実サーバーの応答を確かめる
+    description: pageとRoute Handlerを区別し、queryを変えて実HTTPを観察する。
+    chapterSources:
+      - chapters/next-ch01/chapter.yaml
+      - chapters/next-ch02/chapter.yaml

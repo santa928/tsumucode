@@ -1,0 +1,315 @@
+id: next-ch02-l02-e01
+kind: standard
+workspaceId: next-ch02-l02-e01
+countsTowardStandardExerciseTotal: true
+title: Serverの値をClientの操作へ渡す
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: next-client
+    minimumLevel: transform
+  - conceptId: next-props
+    minimumLevel: transform
+  - conceptId: next-server-node
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: next-ch02-l02-e01-step03
+    file: app/Counter.tsx
+    starterAnchor: import { useState } from 'react';
+    requiresConceptIds:
+      - next-client
+      - next-server-node
+    validationRuleIds:
+      - next-ch02-l02-e01-r01
+    target: Client境界の修復
+    change: Counterのファイル先頭へuse clientを追加します。async/Node処理を持つpageはServerに残します。
+    observe: 起動前に診断を予測し、実診断のファイルを確認します。復旧後、ブラウザでclickできることを確かめます。
+  - id: next-ch02-l02-e01-step01
+    file: app/page.tsx
+    starterAnchor: initial={0}
+    requiresConceptIds:
+      - next-props
+    validationRuleIds:
+      - next-ch02-l02-e01-r01
+    target: Serverで用意する初期値
+    change: Serverで用意する初期値を指定どおりに修正します。
+    observe: Serverで用意した初期値2が、Counterの最初の表示へ渡ることを確認します。
+  - id: next-ch02-l02-e01-step02
+    file: app/Counter.tsx
+    starterAnchor: setCount(count)
+    requiresConceptIds:
+      - next-client
+    validationRuleIds:
+      - next-ch02-l02-e01-r01
+    target: Clientのclickによる増加
+    change: Clientのclickによる増加を指定どおりに修正します。
+    observe: click前2、1回目3、2回目4、再読込後2を比べます。
+runtime:
+  kind: next
+  entryFile: app/page.tsx
+  sourceType: module
+  capabilityProfile: project
+  primaryOutput: preview
+  profile: next-project-v1
+files:
+  - path: app/layout.tsx
+    language: next
+    source: starter/app/layout.tsx
+    editable: false
+  - path: app/globals.css
+    language: css
+    source: starter/app/globals.css
+    editable: false
+  - path: app/page.tsx
+    language: next
+    source: starter/app/page.tsx
+    editable: true
+  - path: app/Counter.tsx
+    language: next
+    source: starter/app/Counter.tsx
+    editable: true
+solutionFiles:
+  - path: app/layout.tsx
+    language: next
+    source: solution/app/layout.tsx
+    editable: false
+  - path: app/globals.css
+    language: css
+    source: solution/app/globals.css
+    editable: false
+  - path: app/page.tsx
+    language: next
+    source: solution/app/page.tsx
+    editable: false
+  - path: app/Counter.tsx
+    language: next
+    source: solution/app/Counter.tsx
+    editable: false
+validationRules:
+  - id: next-ch02-l02-e01-r01
+    label: 実NextのURL・境界の動作
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: next-page-http
+    assertion:
+      kind: next-page-http
+      goal: server-client-counter
+    feedback:
+      target: Serverの値をClientの操作へ渡す
+      expected: Node処理と直列化できるpropsをServerに置き、Clientで状態とイベントを動かせる。
+      nextAction: 指定のファイルを直し、保存・反映後に再判定します。
+    hintId: next-ch02-l02-e01-h01
+    relatedSlideId: next-ch02-l02-s03
+hints:
+  - id: next-ch02-l02-e01-h01
+    level: 1
+    title: 値と操作を分ける
+    text: 診断が指すCounterの境界を確認します。初期値はServerのpage、押した後の変化はClientのCounterを見ます。
+    relatedSlideId: next-ch02-l02-s03
+  - id: next-ch02-l02-e01-h02
+    level: 2
+    title: 更新式を読む
+    text: Counterだけをuse clientで区切ります。Serverから渡すinitialを2にし、onClickの更新式を確認します。
+    relatedSlideId: next-ch02-l02-s03
+  - id: next-ch02-l02-e01-h03
+    level: 3
+    title: 初期値と加算を揃える
+    text: Counterの先頭へuse clientを置き、pageのinitialを2、更新をsetCount(count + 1)にします。
+    relatedSlideId: next-ch02-l02-s03
+relatedSlideIds:
+  - next-ch02-l02-s01
+  - next-ch02-l02-s02
+  - next-ch02-l02-s03
+  - next-ch02-l02-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: starter
+    expectedStatus: code-error
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/starter/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/starter/app/globals.css
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/starter/app/page.tsx
+        editable: false
+      - path: app/Counter.tsx
+        language: next
+        source: fixtures/starter/app/Counter.tsx
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: solution
+    expectedStatus: pass
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/solution/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/solution/app/globals.css
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/solution/app/page.tsx
+        editable: false
+      - path: app/Counter.tsx
+        language: next
+        source: fixtures/solution/app/Counter.tsx
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternative
+    expectedStatus: pass
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/alternative/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/alternative/app/globals.css
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/alternative/app/page.tsx
+        editable: false
+      - path: app/Counter.tsx
+        language: next
+        source: fixtures/alternative/app/Counter.tsx
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: wrong-initial
+    expectedStatus: incomplete
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/wrong-initial/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/wrong-initial/app/globals.css
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/wrong-initial/app/page.tsx
+        editable: false
+      - path: app/Counter.tsx
+        language: next
+        source: fixtures/wrong-initial/app/Counter.tsx
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch02-l02-e01-r01
+  - id: wrong-event
+    expectedStatus: incomplete
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/wrong-event/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/wrong-event/app/globals.css
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/wrong-event/app/page.tsx
+        editable: false
+      - path: app/Counter.tsx
+        language: next
+        source: fixtures/wrong-event/app/Counter.tsx
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch02-l02-e01-r01
+  - id: code-error
+    expectedStatus: code-error
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/code-error/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/code-error/app/globals.css
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/code-error/app/page.tsx
+        editable: false
+      - path: app/Counter.tsx
+        language: next
+        source: fixtures/code-error/app/Counter.tsx
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: server-hook
+    expectedStatus: code-error
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/server-hook/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/server-hook/app/globals.css
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/server-hook/app/page.tsx
+        editable: false
+      - path: app/Counter.tsx
+        language: next
+        source: fixtures/server-hook/app/Counter.tsx
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: client-node
+    expectedStatus: code-error
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/client-node/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/client-node/app/globals.css
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/client-node/app/page.tsx
+        editable: false
+      - path: app/Counter.tsx
+        language: next
+        source: fixtures/client-node/app/Counter.tsx
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: function-prop
+    expectedStatus: code-error
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/function-prop/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/function-prop/app/globals.css
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/function-prop/app/page.tsx
+        editable: false
+      - path: app/Counter.tsx
+        language: next
+        source: fixtures/function-prop/app/Counter.tsx
+        editable: false
+    expectedFeedbackRuleIds: []

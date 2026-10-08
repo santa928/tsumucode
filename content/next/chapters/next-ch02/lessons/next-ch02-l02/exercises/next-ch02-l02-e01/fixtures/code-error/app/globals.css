@@ -1,0 +1,10 @@
+body {
+  font-family: sans-serif;
+  margin: 2rem;
+}
+
+a, button {
+  display: inline-block;
+  margin: 0.5rem;
+  padding: 0.75rem;
+}

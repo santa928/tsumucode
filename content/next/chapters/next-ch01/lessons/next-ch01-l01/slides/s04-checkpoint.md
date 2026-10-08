@@ -15,8 +15,8 @@ assets: []
 4. 編集後は保存して実行へ反映し、判定します。
 5. 停止・再起動しても、保存したSourceから再開できることを確認します。
 
-:::practice
-prompt: pageの表示とRoute HandlerのJSONは同じものですか。
-expectedAction: 別の経路へのHTTP応答だと説明する
-estimatedMinutes: 1
+:::prediction
+prompt: "pageの表示とRoute HandlerのJSONは同じものですか。"
+answer: "別の経路へ要求したHTTP応答です。"
+explanation: "pageはHTML、Route HandlerはJSONを返し、実際の応答で比較します。"
 :::

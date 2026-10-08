@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { request } from 'node:http';
 import { setTimeout as delay } from 'node:timers/promises';
 import { docker } from './docker-engine.mjs';
-import { NEXT_PROFILE, NEXT_WORKSPACE, NEXT_STARTER_FILES } from './next-project-protocol.mjs';
+import { NEXT_PROFILE, NEXT_WORKSPACE, nextWorkspace } from './next-project-protocol.mjs';
 import { ORIGIN } from './protocol.mjs';
 
 // controller内の作者検証。外側の固定Fixture packetはshell経由で実行せずSourceとしてAPIへ保存する。
@@ -17,10 +17,14 @@ for await (const chunk of process.stdin) {
   chunks.push(chunk);
 }
 const fixtures = JSON.parse(Buffer.concat(chunks).toString());
-assert.equal(fixtures.length, 6);
+const workspace = process.env.TSUMUCODE_NEXT_WORKSPACE ?? NEXT_WORKSPACE;
+const contract = nextWorkspace(workspace);
+assert.ok(contract);
+const expectedCount = { [NEXT_WORKSPACE]: 6, 'next-ch02-l01-e01': 8, 'next-ch02-l02-e01': 9 };
+assert.equal(fixtures.length, expectedCount[workspace]);
 const owner = process.env.TSUMUCODE_LOCAL_OWNER;
 assert.ok(owner);
-const path = `/api/workspaces/${NEXT_WORKSPACE}`;
+const path = `/api/workspaces/${workspace}`;
 let token;
 let saved;
 let run;
@@ -144,7 +148,8 @@ async function start() {
 
 try {
   token = (await api('/api/session')).value.token;
-  const capability = (await api('/api/workspaces/next-capabilities')).value;
+  const capability = (await api('/api/workspaces/next-capabilities', { workspaceId: workspace }))
+    .value;
   assert.equal(capability.profile, NEXT_PROFILE);
   assert.equal(capability.gradingAvailable, true);
   saved = (await api(path)).value;
@@ -156,7 +161,7 @@ try {
     (
       await api(`${path}/source`, {
         expectedSourceRevision: saved?.sourceRevision ?? 0,
-        files: { ...NEXT_STARTER_FILES, 'next.config.mjs': 'export default {}' },
+        files: { ...contract.files, 'next.config.mjs': 'export default {}' },
       })
     ).status,
     400,
@@ -191,7 +196,7 @@ try {
       fixture.expectedStatus,
       JSON.stringify({ fixture: fixture.id, grade: graded.value }),
     );
-    for (const [key, value] of Object.entries({ workspaceId: NEXT_WORKSPACE, ...identity() })) {
+    for (const [key, value] of Object.entries({ workspaceId: workspace, ...identity() })) {
       const field =
         key === 'expectedSourceRevision'
           ? 'sourceRevision'
@@ -234,7 +239,7 @@ try {
   assert.equal((await api(`${path}/stop`, { runId: run.runId })).status, 200);
   run = undefined;
   assert.equal((await owned()).length, 0);
-  await save(NEXT_STARTER_FILES);
+  await save(contract.files);
   console.log(
     JSON.stringify({
       passed,

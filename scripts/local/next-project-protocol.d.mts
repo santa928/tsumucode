@@ -8,3 +8,11 @@ export const NEXT_STARTER_FILES: Readonly<
   >
 >;
 export function workspaceProfile(id: string): 'next-project-v1' | 'vite-project-v1';
+export interface NextWorkspaceContract {
+  readonly files: Readonly<Record<string, string>>;
+  readonly goal: 'page-route-query' | 'nested-dynamic-navigation' | 'server-client-counter';
+  readonly pages: readonly string[];
+  readonly previewLabels: readonly string[];
+}
+export const NEXT_WORKSPACES: Readonly<Record<string, NextWorkspaceContract>>;
+export function nextWorkspace(id: string): NextWorkspaceContract | undefined;

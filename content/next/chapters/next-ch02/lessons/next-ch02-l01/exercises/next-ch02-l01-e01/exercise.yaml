@@ -1,0 +1,376 @@
+id: next-ch02-l01-e01
+kind: standard
+workspaceId: next-ch02-l01-e01
+countsTowardStandardExerciseTotal: true
+title: URLとnested layoutをつなぐ
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: next-layout
+    minimumLevel: transform
+  - conceptId: next-dynamic
+    minimumLevel: transform
+  - conceptId: next-navigation
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: next-ch02-l01-e01-step01
+    file: app/trips/layout.tsx
+    starterAnchor: 旅行エリア
+    requiresConceptIds:
+      - next-layout
+    validationRuleIds:
+      - next-ch02-l01-e01-r01
+    target: 共通layoutの見出し
+    change: 共通layoutの見出しを指定どおりに修正します。
+    observe: 一覧/森/海に共通見出しが出て、入口には出ないことを確認します。
+  - id: next-ch02-l01-e01-step02
+    file: app/trips/page.tsx
+    starterAnchor: href="./trips/forest">海
+    requiresConceptIds:
+      - next-navigation
+    validationRuleIds:
+      - next-ch02-l01-e01-r01
+    target: 海リンクのURL
+    change: 海リンクのURLを指定どおりに修正します。
+    observe: 海リンクを開き、実URLとslugがseaになることを確認します。
+  - id: next-ch02-l01-e01-step03
+    file: app/trips/[slug]/page.tsx
+    starterAnchor: <p id="trip-slug">未設定
+    requiresConceptIds:
+      - next-dynamic
+    validationRuleIds:
+      - next-ch02-l01-e01-r01
+    target: URL由来のslug
+    change: URL由来のslugを指定どおりに修正します。
+    observe: 森と海の詳細を直接開き、slugがforest/seaと切り替わることを確認します。
+runtime:
+  kind: next
+  entryFile: app/page.tsx
+  sourceType: module
+  capabilityProfile: project
+  primaryOutput: preview
+  profile: next-project-v1
+files:
+  - path: app/layout.tsx
+    language: next
+    source: starter/app/layout.tsx
+    editable: false
+  - path: app/globals.css
+    language: css
+    source: starter/app/globals.css
+    editable: false
+  - path: app/page.tsx
+    language: next
+    source: starter/app/page.tsx
+    editable: false
+  - path: app/trips/layout.tsx
+    language: next
+    source: starter/app/trips/layout.tsx
+    editable: true
+  - path: app/trips/page.tsx
+    language: next
+    source: starter/app/trips/page.tsx
+    editable: true
+  - path: app/trips/[slug]/page.tsx
+    language: next
+    source: starter/app/trips/[slug]/page.tsx
+    editable: true
+solutionFiles:
+  - path: app/layout.tsx
+    language: next
+    source: solution/app/layout.tsx
+    editable: false
+  - path: app/globals.css
+    language: css
+    source: solution/app/globals.css
+    editable: false
+  - path: app/page.tsx
+    language: next
+    source: solution/app/page.tsx
+    editable: false
+  - path: app/trips/layout.tsx
+    language: next
+    source: solution/app/trips/layout.tsx
+    editable: false
+  - path: app/trips/page.tsx
+    language: next
+    source: solution/app/trips/page.tsx
+    editable: false
+  - path: app/trips/[slug]/page.tsx
+    language: next
+    source: solution/app/trips/[slug]/page.tsx
+    editable: false
+validationRules:
+  - id: next-ch02-l01-e01-r01
+    label: 実NextのURL・境界の動作
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: next-page-http
+    assertion:
+      kind: next-page-http
+      goal: nested-dynamic-navigation
+    feedback:
+      target: URLとnested layoutをつなぐ
+      expected: 固定URLの一覧と2つの詳細を開き、共通layoutとslugの反映を確認できる。
+      nextAction: 指定のファイルを直し、保存・反映後に再判定します。
+    hintId: next-ch02-l01-e01-h01
+    relatedSlideId: next-ch02-l01-s03
+hints:
+  - id: next-ch02-l01-e01-h01
+    level: 1
+    title: まず表示を比べる
+    text: layoutの見出しは一覧と両詳細に共通です。URLごとにslugとリンク先を予測します。
+    relatedSlideId: next-ch02-l01-s03
+  - id: next-ch02-l01-e01-h02
+    level: 2
+    title: URLとファイルを対応させる
+    text: trips/[slug]/page.tsxのparamsをawaitし、slugを表示します。海リンクはseaのURLへ向けます。
+    relatedSlideId: next-ch02-l01-s03
+  - id: next-ch02-l01-e01-h03
+    level: 3
+    title: 編集箇所を揃える
+    text: layoutの見出しを旅行ノート、海hrefを./trips/sea、trip-slugの中身を{slug}にします。
+    relatedSlideId: next-ch02-l01-s03
+relatedSlideIds:
+  - next-ch02-l01-s01
+  - next-ch02-l01-s02
+  - next-ch02-l01-s03
+  - next-ch02-l01-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: starter
+    expectedStatus: incomplete
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/starter/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/starter/app/globals.css
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/starter/app/page.tsx
+        editable: false
+      - path: app/trips/layout.tsx
+        language: next
+        source: fixtures/starter/app/trips/layout.tsx
+        editable: false
+      - path: app/trips/page.tsx
+        language: next
+        source: fixtures/starter/app/trips/page.tsx
+        editable: false
+      - path: app/trips/[slug]/page.tsx
+        language: next
+        source: fixtures/starter/app/trips/[slug]/page.tsx
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch02-l01-e01-r01
+  - id: solution
+    expectedStatus: pass
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/solution/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/solution/app/globals.css
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/solution/app/page.tsx
+        editable: false
+      - path: app/trips/layout.tsx
+        language: next
+        source: fixtures/solution/app/trips/layout.tsx
+        editable: false
+      - path: app/trips/page.tsx
+        language: next
+        source: fixtures/solution/app/trips/page.tsx
+        editable: false
+      - path: app/trips/[slug]/page.tsx
+        language: next
+        source: fixtures/solution/app/trips/[slug]/page.tsx
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternative
+    expectedStatus: pass
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/alternative/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/alternative/app/globals.css
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/alternative/app/page.tsx
+        editable: false
+      - path: app/trips/layout.tsx
+        language: next
+        source: fixtures/alternative/app/trips/layout.tsx
+        editable: false
+      - path: app/trips/page.tsx
+        language: next
+        source: fixtures/alternative/app/trips/page.tsx
+        editable: false
+      - path: app/trips/[slug]/page.tsx
+        language: next
+        source: fixtures/alternative/app/trips/[slug]/page.tsx
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: wrong-layout
+    expectedStatus: incomplete
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/wrong-layout/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/wrong-layout/app/globals.css
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/wrong-layout/app/page.tsx
+        editable: false
+      - path: app/trips/layout.tsx
+        language: next
+        source: fixtures/wrong-layout/app/trips/layout.tsx
+        editable: false
+      - path: app/trips/page.tsx
+        language: next
+        source: fixtures/wrong-layout/app/trips/page.tsx
+        editable: false
+      - path: app/trips/[slug]/page.tsx
+        language: next
+        source: fixtures/wrong-layout/app/trips/[slug]/page.tsx
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch02-l01-e01-r01
+  - id: wrong-link
+    expectedStatus: incomplete
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/wrong-link/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/wrong-link/app/globals.css
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/wrong-link/app/page.tsx
+        editable: false
+      - path: app/trips/layout.tsx
+        language: next
+        source: fixtures/wrong-link/app/trips/layout.tsx
+        editable: false
+      - path: app/trips/page.tsx
+        language: next
+        source: fixtures/wrong-link/app/trips/page.tsx
+        editable: false
+      - path: app/trips/[slug]/page.tsx
+        language: next
+        source: fixtures/wrong-link/app/trips/[slug]/page.tsx
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch02-l01-e01-r01
+  - id: wrong-slug
+    expectedStatus: incomplete
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/wrong-slug/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/wrong-slug/app/globals.css
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/wrong-slug/app/page.tsx
+        editable: false
+      - path: app/trips/layout.tsx
+        language: next
+        source: fixtures/wrong-slug/app/trips/layout.tsx
+        editable: false
+      - path: app/trips/page.tsx
+        language: next
+        source: fixtures/wrong-slug/app/trips/page.tsx
+        editable: false
+      - path: app/trips/[slug]/page.tsx
+        language: next
+        source: fixtures/wrong-slug/app/trips/[slug]/page.tsx
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch02-l01-e01-r01
+  - id: code-error
+    expectedStatus: code-error
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/code-error/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/code-error/app/globals.css
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/code-error/app/page.tsx
+        editable: false
+      - path: app/trips/layout.tsx
+        language: next
+        source: fixtures/code-error/app/trips/layout.tsx
+        editable: false
+      - path: app/trips/page.tsx
+        language: next
+        source: fixtures/code-error/app/trips/page.tsx
+        editable: false
+      - path: app/trips/[slug]/page.tsx
+        language: next
+        source: fixtures/code-error/app/trips/[slug]/page.tsx
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: detail-error
+    expectedStatus: code-error
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/detail-error/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/detail-error/app/globals.css
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/detail-error/app/page.tsx
+        editable: false
+      - path: app/trips/layout.tsx
+        language: next
+        source: fixtures/detail-error/app/trips/layout.tsx
+        editable: false
+      - path: app/trips/page.tsx
+        language: next
+        source: fixtures/detail-error/app/trips/page.tsx
+        editable: false
+      - path: app/trips/[slug]/page.tsx
+        language: next
+        source: fixtures/detail-error/app/trips/[slug]/page.tsx
+        editable: false
+    expectedFeedbackRuleIds: []

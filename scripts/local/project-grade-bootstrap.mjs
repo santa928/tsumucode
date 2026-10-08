@@ -6,6 +6,8 @@ import process from 'node:process';
 import { setTimeout, clearTimeout } from 'node:timers';
 import { URL } from 'node:url';
 import { chromium } from '@playwright/test';
+import { nextWorkspace } from './next-project-protocol.mjs';
+import { NextLessonObservationError, observeNextLesson } from './next-project-observations.mjs';
 import {
   previewBase,
   previewOrigin,
@@ -216,7 +218,7 @@ try {
   // Viteの反映に伴う再読込も含め、実HTTP資源が静止してから同じ文書のDOMを読む。
   await page.waitForLoadState('networkidle', { timeout: 3000 });
   assert.equal(new URL(page.url()).origin, origin);
-  const documentNavigation = navigations;
+  let documentNavigation = navigations;
   const heading = page.locator('h1#message');
   const count = await heading.count();
   const visible = count === 1 && (await heading.isVisible());
@@ -224,7 +226,18 @@ try {
   const next = metadata.profile === 'next-project-v1';
   let httpMatches = true;
   const httpActual = [];
-  if (next) {
+  const contract = next ? nextWorkspace(metadata.workspaceId) : undefined;
+  let lessonObservation;
+  if (contract && contract.goal !== 'page-route-query' && !diagnostics.length) {
+    try {
+      lessonObservation = await observeNextLesson(page, origin, base, contract.goal);
+    } catch (error) {
+      if (!(error instanceof NextLessonObservationError)) throw error;
+      diagnostic(error.message);
+    }
+    documentNavigation = navigations;
+  }
+  if (next && contract?.goal === 'page-route-query') {
     for (const [path, expected] of [
       ['api/question', '最初の実リクエスト'],
       ['api/question?mode=second', '2つ目の実リクエスト'],
@@ -254,12 +267,18 @@ try {
       ...metadata,
       status: diagnostics.length
         ? 'code-error'
-        : visible &&
-            actual === (next ? 'こんにちは、Next.js！' : 'こんにちは、実サーバー！') &&
-            httpMatches
+        : (
+              lessonObservation
+                ? lessonObservation.passed
+                : visible &&
+                  actual === (next ? 'こんにちは、Next.js！' : 'こんにちは、実サーバー！') &&
+                  httpMatches
+            )
           ? 'pass'
           : 'incomplete',
-      actual: next ? `${actual} / ${httpActual.join(' / ')}`.slice(0, 512) : actual,
+      actual:
+        lessonObservation?.actual ??
+        (next ? `${actual} / ${httpActual.join(' / ')}`.slice(0, 512) : actual),
       diagnostics,
       // Consoleは合否の入力にせず、失敗時の原因をboundedに観察する情報だけとする。
       observation: { count, visible, navigations, consoleErrors },
