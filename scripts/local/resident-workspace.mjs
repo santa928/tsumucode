@@ -13,6 +13,7 @@ import {
 import { docker, followOutput, cleanupOwned, removeContainer } from './docker-engine.mjs';
 import { projectImage, projectConfig, probeProject, applyProject } from './project-engine.mjs';
 import { previewBase, previewOrigin } from './preview-contract.mjs';
+import { gradeProject } from './project-grade-engine.mjs';
 
 /** 常駐runの排他・期限・回収を扱う。Sourceの更新とHTTP認証は各担当へ委譲する。 */
 export class ResidentWorkspace {
@@ -25,14 +26,25 @@ export class ResidentWorkspace {
   #engine;
   #limits;
   #transport;
+  #graderImage;
 
-  constructor({ store, owner, image, slot, engine, transport, limits = PROJECT_LIMITS }) {
+  constructor({
+    store,
+    owner,
+    image,
+    graderImage,
+    slot,
+    engine,
+    transport,
+    limits = PROJECT_LIMITS,
+  }) {
     this.#store = store;
     this.#owner = owner;
     this.#image = image;
     this.#slot = slot;
     this.#limits = limits;
     this.#transport = transport;
+    this.#graderImage = graderImage;
     this.#engine = engine ?? {
       docker,
       followOutput,
@@ -42,6 +54,7 @@ export class ResidentWorkspace {
       projectConfig,
       probeProject,
       applyProject,
+      gradeProject,
     };
   }
 
@@ -136,6 +149,7 @@ export class ResidentWorkspace {
       run.workspaceId !== id ||
       run.record.runId !== input.runId ||
       run.record.state !== 'ready' ||
+      run.grading ||
       run.reason
     )
       throw new RequestError(409, '対象runは反映できる状態ではありません。');
@@ -172,8 +186,86 @@ export class ResidentWorkspace {
     }
   }
 
+  /** trusted Browserで同じrunの可視DOMを観測し、前後の保存/反映版も一致した時だけ採点する。 */
+  async grade(id, input, signal) {
+    exact(input, ['runId', 'expectedSourceRevision', 'expectedSourceHash']);
+    runId(input.runId);
+    expectedRevision(input.expectedSourceRevision);
+    if (!/^[a-f0-9]{64}$/u.test(input.expectedSourceHash))
+      throw new RequestError(400, 'Source hashが不正です。');
+    const run = this.#current;
+    if (
+      !this.#graderImage ||
+      !run?.socket ||
+      run.workspaceId !== id ||
+      run.record.runId !== input.runId ||
+      run.record.state !== 'ready' ||
+      run.grading ||
+      run.reason
+    )
+      throw new RequestError(409, '対象runは採点できる状態ではありません。');
+    const matches = (source) =>
+      source.sourceRevision === input.expectedSourceRevision &&
+      source.sourceHash === input.expectedSourceHash &&
+      run.record.sourceRevision === source.sourceRevision &&
+      run.record.sourceHash === source.sourceHash;
+    const cancellation = new globalThis.AbortController();
+    const cancelled = () => cancellation.abort();
+    signal?.addEventListener('abort', cancelled, { once: true });
+    if (signal?.aborted) cancellation.abort();
+    run.grading = true;
+    run.gradeAbort = cancellation;
+    let finish;
+    run.gradeDone = new Promise((resolve) => {
+      finish = resolve;
+    });
+    try {
+      const source = await this.#store.read(id);
+      if (!matches(source) || run.reason || cancellation.signal.aborted)
+        throw new RequestError(409, '保存版と反映版が一致しません。再反映してください。');
+      const result = await this.#engine.gradeProject({
+        owner: this.#owner,
+        image: this.#graderImage,
+        source,
+        runId: run.record.runId,
+        socket: run.socket,
+        signal: cancellation.signal,
+      });
+      const current = await this.#store.read(id);
+      if (
+        this.#current !== run ||
+        run.reason ||
+        run.record.state !== 'ready' ||
+        cancellation.signal.aborted ||
+        !matches(current)
+      )
+        throw new RequestError(409, '採点中に実行またはSourceが変わりました。採点していません。');
+      for (const [key, value] of Object.entries({
+        workspaceId: id,
+        runId: run.record.runId,
+        sourceRevision: source.sourceRevision,
+        sourceHash: source.sourceHash,
+      }))
+        if (result[key] !== value) throw new Error('Grade identity mismatch');
+      run.activityAt = Date.now();
+      return result;
+    } catch (error) {
+      if (!(error instanceof RequestError)) {
+        this.#slot.recoveryNeeded();
+        await this.#cancel(run, 'grade-failed');
+      }
+      throw error;
+    } finally {
+      run.grading = false;
+      run.gradeAbort = undefined;
+      signal?.removeEventListener('abort', cancelled);
+      finish();
+    }
+  }
+
   async #cancel(run, reason) {
     run.reason ??= reason;
+    run.gradeAbort?.abort();
     run.record.state = 'stopping';
     if (run.containerId) {
       try {
@@ -307,6 +399,7 @@ export class ResidentWorkspace {
       output?.close();
       try {
         await run.applyDone;
+        await run.gradeDone;
         if (run.containerId) await this.#engine.removeContainer(run.containerId);
         // create成功の応答だけ失われた場合もowner labelで実体を回収する。
         else if (createAttempted) await this.#engine.cleanupOwned(this.#owner);

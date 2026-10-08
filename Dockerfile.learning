@@ -27,6 +27,7 @@ COPY --from=build /workspace/public/generated/content/courses/javascript/index.j
 COPY scripts/local/controller.mjs scripts/local/protocol.mjs scripts/local/docker-engine.mjs ./
 COPY scripts/local/project-protocol.mjs scripts/local/workspace-store.mjs scripts/local/project-engine.mjs scripts/local/resident-workspace.mjs ./
 COPY scripts/local/preview-contract.mjs scripts/local/preview-control.mjs scripts/local/preview-transport.mjs ./
+COPY scripts/local/project-grade-engine.mjs ./
 CMD ["node", "controller.mjs"]
 
 FROM node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5 AS preview
@@ -34,12 +35,14 @@ WORKDIR /app
 COPY scripts/local/preview-proxy.mjs scripts/local/preview-contract.mjs scripts/local/protocol.mjs ./
 CMD ["node", "preview-proxy.mjs"]
 
-# 作者/CI専用。Browserと依存を固定し、製品imageへBrowserを含めない。
+# trusted採点/作者/CI用。Browserを固定し、learner・web・controller imageへ含めない。
 FROM mcr.microsoft.com/playwright:v1.61.1-noble@sha256:5b8f294aff9041b7191c34a4bab3ac270157a28774d4b0660e9743297b697e48 AS browser-checks
 WORKDIR /workspace
 COPY --from=dependencies /usr/local/bin/node /usr/local/bin/node
 COPY --from=dependencies /workspace/node_modules/@playwright/test ./node_modules/@playwright/test
 COPY --from=dependencies /workspace/node_modules/playwright ./node_modules/playwright
 COPY --from=dependencies /workspace/node_modules/playwright-core ./node_modules/playwright-core
+COPY --from=dependencies /workspace/node_modules/@axe-core/playwright ./node_modules/@axe-core/playwright
+COPY --from=dependencies /workspace/node_modules/axe-core ./node_modules/axe-core
 COPY scripts/local ./scripts/local
 CMD ["node", "scripts/local/preview-browser-acceptance.mjs"]

@@ -15,7 +15,8 @@ import type {
 import type { WorkspaceLeaseProof } from '../../core/persistence/contracts';
 import { StackedCard } from '../../design-system/components/StackedCard';
 
-type BeforeYield = () => void | Promise<void>;
+/** focus等の再検証では保存だけを行い、実際の譲渡時の停止と区別する。 */
+type BeforeYield = (context: { readonly revalidating: boolean }) => void | Promise<void>;
 
 export type WorkspaceLeaseCoordinator = Pick<TabLeaseCoordinator, 'acquire'>;
 
@@ -75,7 +76,9 @@ class WorkspaceLeaseSession {
       beforeYield: async (yieldFence) => {
         this.#writeFence = yieldFence;
         try {
-          await this.#beforeYield();
+          await this.#beforeYield({
+            revalidating: this.handle.getSnapshot().revalidating === true,
+          });
         } finally {
           this.#writeFence = regularFence;
         }

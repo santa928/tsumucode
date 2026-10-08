@@ -73,6 +73,7 @@ async function fixture(operation, preview = false, limits = PROJECT_LIMITS) {
     store,
     owner: 'owner',
     image: 'fixed',
+    graderImage: 'fixed-grader',
     slot,
     engine,
     transport,
@@ -103,6 +104,109 @@ async function state(manager, expected) {
   }
   throw new Error(`Missing state ${expected}`);
 }
+
+function gradeInput(workspace) {
+  return {
+    runId: workspace.lastRun.runId,
+    expectedSourceRevision: workspace.sourceRevision,
+    expectedSourceHash: workspace.sourceHash,
+  };
+}
+
+test('採点は保存/反映版を前後に確認し、採点中の保存と別runの結果を合格にしない', async () => {
+  await fixture(async ({ manager, engine }) => {
+    await manager.start('one', { expectedSourceRevision: 1 });
+    const ready = await state(manager, 'ready');
+    let entered;
+    let finish;
+    const started = new Promise((resolve) => {
+      entered = resolve;
+    });
+    engine.gradeProject = async ({ source, runId }) => {
+      entered();
+      await new Promise((resolve) => {
+        finish = resolve;
+      });
+      return {
+        workspaceId: source.workspaceId,
+        runId,
+        sourceRevision: source.sourceRevision,
+        sourceHash: source.sourceHash,
+        status: 'pass',
+      };
+    };
+    const grading = manager.grade('one', gradeInput(ready));
+    const rejected = assert.rejects(grading, { status: 409 });
+    await started;
+    await assert.rejects(manager.grade('one', gradeInput(ready)), { status: 409 });
+    await assert.rejects(manager.apply('one', gradeInput(ready)), { status: 409 });
+    await manager.save('one', {
+      expectedSourceRevision: 1,
+      files: { ...STARTER_FILES, 'message.js': 'new' },
+    });
+    finish();
+    await rejected;
+    await assert.rejects(manager.grade('one', gradeInput(ready)), { status: 409 });
+    assert.equal((await manager.status('one')).lastRun.state, 'ready');
+  }, true);
+});
+
+test('採点中の停止はgraderの中断/回収を待ち、後着の合格を返さない', async () => {
+  await fixture(async ({ manager, engine, removed, isActive }) => {
+    await manager.start('one', { expectedSourceRevision: 1 });
+    const ready = await state(manager, 'ready');
+    let entered;
+    let aborted;
+    let finish;
+    const started = new Promise((resolve) => {
+      entered = resolve;
+    });
+    const cancellation = new Promise((resolve) => {
+      aborted = resolve;
+    });
+    engine.gradeProject = async ({ source, runId, signal }) => {
+      signal.addEventListener('abort', aborted, { once: true });
+      entered();
+      await new Promise((resolve) => {
+        finish = resolve;
+      });
+      return {
+        workspaceId: source.workspaceId,
+        runId,
+        sourceRevision: source.sourceRevision,
+        sourceHash: source.sourceHash,
+        status: 'pass',
+      };
+    };
+    const rejected = assert.rejects(manager.grade('one', gradeInput(ready)), { status: 409 });
+    await started;
+    const stopping = manager.stop('one', { runId: ready.lastRun.runId });
+    await cancellation;
+    await delay(100);
+    assert.equal(isActive(), true);
+    assert.equal(removed.includes('learner'), false);
+    finish();
+    await Promise.all([rejected, stopping]);
+    assert.equal(isActive(), false);
+    assert.equal((await manager.status('one')).lastRun.state, 'stopped');
+  }, true);
+});
+
+test('graderの回収不明は停止し、次の起動前にowner回収barrierを通す', async () => {
+  await fixture(async ({ manager, engine, recovery, removed }) => {
+    await manager.start('one', { expectedSourceRevision: 1 });
+    const ready = await state(manager, 'ready');
+    engine.gradeProject = async () => {
+      throw new Error('grader removal uncertain');
+    };
+    await assert.rejects(manager.grade('one', gradeInput(ready)), /removal uncertain/u);
+    await state(manager, 'failed');
+    assert.equal(recovery(), true);
+    await manager.start('one', { expectedSourceRevision: 1 });
+    await state(manager, 'ready');
+    assert.equal(removed.includes('owner'), true);
+  }, true);
+});
 
 test('起動中も共有枠を占有し、停止と保存の競合・古い停止を安全に扱う', async () => {
   await fixture(async ({ manager, store, isActive }) => {

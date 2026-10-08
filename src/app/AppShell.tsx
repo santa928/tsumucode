@@ -94,6 +94,7 @@ export function AppShell() {
         </section>
       ) : null}
       <main
+        aria-label="TsumuCodeの学習画面"
         id="main-content"
         tabIndex={-1}
         className={`tc-content-frame mx-auto w-full max-w-[var(--tc-content-max)] flex-1 ${

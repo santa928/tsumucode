@@ -284,6 +284,7 @@ describe('createLearningRuntimeServices', () => {
     const services = createLearningRuntimeServices({
       repository,
       contentMigrations: {
+        registerCourseDescriptor: vi.fn(),
         registerCourse: vi.fn(),
         ensureStoredCourse: vi.fn().mockResolvedValue([]),
       } as unknown as ContentProgressMigrationService,
@@ -316,6 +317,7 @@ describe('createLearningRuntimeServices', () => {
     const services = createLearningRuntimeServices({
       repository,
       contentMigrations: {
+        registerCourseDescriptor: vi.fn(),
         registerCourse: vi.fn(),
         ensureStoredCourse: vi.fn().mockResolvedValue([]),
       } as unknown as ContentProgressMigrationService,
@@ -344,6 +346,7 @@ describe('createLearningRuntimeServices', () => {
     const services = createLearningRuntimeServices({
       repository,
       contentMigrations: {
+        registerCourseDescriptor: vi.fn(),
         registerCourse: vi.fn(),
         ensureStoredCourse: vi.fn().mockResolvedValue([]),
       } as unknown as ContentProgressMigrationService,
@@ -386,7 +389,7 @@ describe('createLearningRuntimeServices', () => {
         services.ensureCourseIndex(fixtureCourseIndex),
       ]),
     ).resolves.toEqual([[notice], [notice]]);
-    expect(registerCourseDescriptor).toHaveBeenCalledOnce();
+    expect(registerCourseDescriptor).toHaveBeenCalledTimes(2);
     expect(ensureStoredCourseDescriptor).toHaveBeenCalledOnce();
     expect(addMigrationNotices).toHaveBeenCalledWith([notice]);
   });
@@ -434,7 +437,7 @@ describe('createLearningRuntimeServices', () => {
     await services.ensureCourseIndex(nextRevision);
 
     expect(ensureStoredCourseDescriptor).toHaveBeenCalledTimes(2);
-    expect(registerCourseDescriptor).toHaveBeenNthCalledWith(2, nextRevision);
+    expect(registerCourseDescriptor).toHaveBeenNthCalledWith(3, nextRevision);
   });
 
   it('同一Courseのread-modify-writeを直列化し、並行Mutationでも更新を失わない', async () => {
@@ -442,6 +445,7 @@ describe('createLearningRuntimeServices', () => {
     const services = createLearningRuntimeServices({
       repository,
       contentMigrations: {
+        registerCourseDescriptor: vi.fn(),
         registerCourse: vi.fn(),
         ensureStoredCourse: vi.fn().mockResolvedValue([]),
       } as unknown as ContentProgressMigrationService,
@@ -482,6 +486,7 @@ describe('createLearningRuntimeServices', () => {
     const services = createLearningRuntimeServices({
       repository,
       contentMigrations: {
+        registerCourseDescriptor: vi.fn(),
         registerCourse: vi.fn(),
         ensureStoredCourse: vi.fn().mockResolvedValue([]),
       } as unknown as ContentProgressMigrationService,
@@ -504,6 +509,7 @@ describe('createLearningRuntimeServices', () => {
     const services = createLearningRuntimeServices({
       repository,
       contentMigrations: {
+        registerCourseDescriptor: vi.fn(),
         registerCourse: vi.fn(),
         ensureStoredCourse: vi.fn().mockResolvedValue([]),
       } as unknown as ContentProgressMigrationService,
