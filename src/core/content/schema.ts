@@ -379,11 +379,24 @@ export const ReactExerciseRuntimeSchema = z
     { message: 'React課題の学習目標をprofileに合わせて指定してください' },
   );
 
+/** Nextの最初の実page/Route演習だけを固定Local profileへ接続する。 */
+export const NextExerciseRuntimeSchema = z
+  .object({
+    kind: z.literal('next'),
+    entryFile: z.literal('app/page.tsx'),
+    sourceType: z.literal('module'),
+    capabilityProfile: z.literal('project'),
+    primaryOutput: z.literal('preview'),
+    profile: z.literal('next-project-v1'),
+  })
+  .strict();
+
 /** Courseごとの実行設定をkindで識別する。 */
 export const ExerciseRuntimeSchema = z.discriminatedUnion('kind', [
   JavaScriptExerciseRuntimeSchema,
   TypeScriptExerciseRuntimeSchema,
   ReactExerciseRuntimeSchema,
+  NextExerciseRuntimeSchema,
 ]);
 
 /** selectorへ制御文字が混入していないことを文字コードで判定する。 */
@@ -1345,6 +1358,21 @@ export const TypeScriptLearningContracts = [
   })),
 ] as const;
 
+/** 見出しとquery別JSONの3観測を、固定独立graderの必須条件に揃える。 */
+export const NextPageHttpRuleSchema = z
+  .object({
+    ...ValidationRuleBaseShape,
+    required: z.literal(true),
+    group: z.literal('all'),
+    viewportMode: z.literal('all'),
+    target: z.object({ kind: z.literal('next-page-http') }).strict(),
+    assertion: z
+      .object({ kind: z.literal('next-page-http'), goal: z.literal('page-route-query') })
+      .strict(),
+  })
+  .strict()
+  .refine((rule) => rule.groupId === undefined, 'Nextの3観測を独立した必須要件にします');
+
 export const ValidationRuleDefinitionSchema = z
   .object({
     ...ValidationRuleBaseShape,
@@ -1353,6 +1381,16 @@ export const ValidationRuleDefinitionSchema = z
   })
   .strict()
   .superRefine((rule, context) => {
+    if (
+      (rule.target.kind === 'next-page-http' || rule.assertion.kind === 'next-page-http') &&
+      !NextPageHttpRuleSchema.safeParse(rule).success
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['target'],
+        message: 'Nextの実page/HTTP固定条件と一致しません',
+      });
+    }
     if (
       (rule.target.kind === 'react-learning' || rule.assertion.kind === 'react-learning') &&
       !ReactLearningRuleDefinitionSchema.safeParse(rule).success
@@ -2250,8 +2288,33 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
           localExerciseIds.add(exercise.id);
           currentIds.workspace.add(exercise.workspaceId);
 
+          if (exercise.runtime?.kind === 'next') {
+            const paths = [
+              'app/layout.tsx',
+              'app/page.tsx',
+              'app/globals.css',
+              'app/api/question/route.ts',
+            ];
+            if (
+              course.id !== 'next' ||
+              lesson.id !== 'next-ch01-l01' ||
+              exercise.id !== 'next-ch01-l01-e01' ||
+              exercise.workspaceId !== 'next-ch01-l01-e01' ||
+              exercise.files.length !== paths.length ||
+              paths.some((path) => !exercise.files.some((file) => file.path === path)) ||
+              exercise.validationRules.length !== 1 ||
+              !NextPageHttpRuleSchema.safeParse(exercise.validationRules[0]).success
+            ) {
+              addIssue(
+                context,
+                [...exercisePath, 'runtime'],
+                'Nextの最初の固定page/Route課題とSource/Ruleを一致させてください',
+              );
+            }
+          }
+
           if (
-            ['javascript', 'typescript', 'react'].includes(course.runnerId) &&
+            ['javascript', 'typescript', 'react', 'next'].includes(course.runnerId) &&
             exercise.runtime?.kind !== course.runnerId
           ) {
             addIssue(

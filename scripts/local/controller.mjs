@@ -37,6 +37,8 @@ import {
   exact,
 } from './project-protocol.mjs';
 
+import { NEXT_PROFILE, NEXT_STARTER_FILES } from './next-project-protocol.mjs';
+
 const owner = process.env.TSUMUCODE_LOCAL_OWNER;
 if (!owner || !/^[a-z0-9-]{1,80}$/u.test(owner)) throw new Error('Installation owner is required');
 const revision = JSON.parse(await readFile('/app/course-index.json', 'utf8')).revision;
@@ -53,6 +55,7 @@ const resident = new ResidentWorkspace({
   owner,
   image: process.env.TSUMUCODE_LOCAL_PROJECT_IMAGE,
   graderImage: process.env.TSUMUCODE_LOCAL_GRADER_IMAGE,
+  nextImage: process.env.TSUMUCODE_LOCAL_NEXT_IMAGE,
   transport,
   slot: {
     acquire(run) {
@@ -299,14 +302,19 @@ async function handle(req, res) {
     }
     let value;
     if (req.url === '/api/session') value = { apiVersion: API_VERSION, token };
-    else if (req.url === '/api/workspaces/capabilities') {
+    else if (
+      ['/api/workspaces/capabilities', '/api/workspaces/next-capabilities'].includes(req.url)
+    ) {
       exact(input, []);
+      const next = req.url === '/api/workspaces/next-capabilities';
       value = {
         apiVersion: API_VERSION,
-        profile: PROJECT_PROFILE,
+        profile: next ? NEXT_PROFILE : PROJECT_PROFILE,
         limits: PROJECT_LIMITS,
-        starterFiles: STARTER_FILES,
-        available: Boolean(process.env.TSUMUCODE_LOCAL_PROJECT_IMAGE),
+        starterFiles: next ? NEXT_STARTER_FILES : STARTER_FILES,
+        available: Boolean(
+          next ? process.env.TSUMUCODE_LOCAL_NEXT_IMAGE : process.env.TSUMUCODE_LOCAL_PROJECT_IMAGE,
+        ),
         gradingAvailable: Boolean(process.env.TSUMUCODE_LOCAL_GRADER_IMAGE && transport),
       };
     } else if (req.url?.startsWith('/api/workspaces/')) {

@@ -1,0 +1,20 @@
+schemaVersion: 1
+releaseStatus: draft
+verifiedSourceCommit: draft
+canonicalDistSha256: draft
+lessons:
+  - lessonId: next-ch01-l01
+    authorId: tsumucode-next-first-lesson-authoring
+    reviewerId: review_issue125_final
+    sourceHash: b1165db09e989b33014d0977382f4223d53dba292f43f8108abdefa55a7c7428
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: >-
+      説明4スライド、演習目標、3段階Hint、Solutionと正負6Fixtureを独立読解し、内容と目標整合を承認。
+      Server Componentの初出説明を補足した1文も再確認し、未説明語0、意図しないHint漏洩0と判定。
+      実行は作者の固定Next 16.3.8/Node24.18.0/Chromium149による実HTTP6Fixtureの期待一致を根拠とする。
+      Reviewerの独自実行、実人の初心者理解、全Next Course、正式公開の承認には読み替えない。

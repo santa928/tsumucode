@@ -18,6 +18,7 @@ import {
 import { interactionCheckId } from '../../src/core/content/exerciseRequirementIds';
 import { JAVASCRIPT_TEACHING_GOALS } from '../../src/core/content/javascriptTeachingGoals';
 import {
+  NextExerciseRuntimeSchema,
   ConceptDefinitionSchema,
   ConceptRequirementSchema,
   ContentProgressMigrationSchema,
@@ -194,6 +195,7 @@ export const ExerciseRuntimeSourceSchema = z.discriminatedUnion('kind', [
   JavaScriptExerciseRuntimeSourceSchema,
   TypeScriptExerciseRuntimeSourceSchema,
   ReactExerciseRuntimeSourceSchema,
+  NextExerciseRuntimeSchema,
 ]);
 
 export const FixtureSourceSchema = z

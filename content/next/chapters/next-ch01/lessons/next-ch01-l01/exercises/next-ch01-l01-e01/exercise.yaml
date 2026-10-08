@@ -1,0 +1,344 @@
+{
+  'id': 'next-ch01-l01-e01',
+  'kind': 'standard',
+  'workspaceId': 'next-ch01-l01-e01',
+  'countsTowardStandardExerciseTotal': true,
+  'title': 'pageの見出しとquery別のJSONを変える',
+  'instructionsSource': 'instructions.md',
+  'requiresConcepts':
+    [
+      { 'conceptId': 'next-page', 'minimumLevel': 'transform' },
+      { 'conceptId': 'next-route', 'minimumLevel': 'transform' },
+    ],
+  'scaffoldLevel': 'transform',
+  'steps':
+    [
+      {
+        'id': 'next-ch01-l01-e01-step01',
+        'file': 'app/page.tsx',
+        'starterAnchor': 'こんにちは、Starter！',
+        'requiresConceptIds': ['next-page'],
+        'validationRuleIds': ['next-ch01-l01-e01-r01'],
+        'target': '見出しを変える',
+        'change': 'h1の文字を指定の見出しに変更します。',
+        'observe': '実pageとquery別のJSONを確認してから判定します。',
+      },
+      {
+        'id': 'next-ch01-l01-e01-step02',
+        'file': 'app/api/question/route.ts',
+        'starterAnchor': 'message: second ?',
+        'requiresConceptIds': ['next-route'],
+        'validationRuleIds': ['next-ch01-l01-e01-r01'],
+        'target': 'queryを分岐する',
+        'change': 'secondのときに2つ目のmessageを返します。',
+        'observe': '実pageとquery別のJSONを確認してから判定します。',
+      },
+    ],
+  'runtime':
+    {
+      'kind': 'next',
+      'entryFile': 'app/page.tsx',
+      'sourceType': 'module',
+      'capabilityProfile': 'project',
+      'primaryOutput': 'preview',
+      'profile': 'next-project-v1',
+    },
+  'files':
+    [
+      {
+        'path': 'app/layout.tsx',
+        'language': 'react',
+        'source': 'starter/app/layout.tsx',
+        'editable': false,
+      },
+      {
+        'path': 'app/page.tsx',
+        'language': 'next',
+        'source': 'starter/app/page.tsx',
+        'editable': true,
+      },
+      {
+        'path': 'app/globals.css',
+        'language': 'css',
+        'source': 'starter/app/globals.css',
+        'editable': false,
+      },
+      {
+        'path': 'app/api/question/route.ts',
+        'language': 'typescript',
+        'source': 'starter/app/api/question/route.ts',
+        'editable': true,
+      },
+    ],
+  'solutionFiles':
+    [
+      {
+        'path': 'app/layout.tsx',
+        'language': 'react',
+        'source': 'solution/app/layout.tsx',
+        'editable': false,
+      },
+      {
+        'path': 'app/page.tsx',
+        'language': 'next',
+        'source': 'solution/app/page.tsx',
+        'editable': false,
+      },
+      {
+        'path': 'app/globals.css',
+        'language': 'css',
+        'source': 'solution/app/globals.css',
+        'editable': false,
+      },
+      {
+        'path': 'app/api/question/route.ts',
+        'language': 'typescript',
+        'source': 'solution/app/api/question/route.ts',
+        'editable': false,
+      },
+    ],
+  'validationRules':
+    [
+      {
+        'id': 'next-ch01-l01-e01-r01',
+        'label': '見出しとquery別の実HTTP応答',
+        'required': true,
+        'group': 'all',
+        'viewportMode': 'all',
+        'viewportIds': ['desktop-1280'],
+        'target': { 'kind': 'next-page-http' },
+        'assertion': { 'kind': 'next-page-http', 'goal': 'page-route-query' },
+        'feedback':
+          {
+            'target': '実pageとRoute HandlerのJSON',
+            'expected': '指定見出しとquery別2message',
+            'nextAction': '見出しとsecondの分岐を直し、保存・反映後に再判定します。',
+          },
+        'hintId': 'next-ch01-l01-e01-h01',
+        'relatedSlideId': 'next-ch01-l01-s03',
+      },
+    ],
+  'hints':
+    [
+      {
+        'id': 'next-ch01-l01-e01-h01',
+        'level': 1,
+        'title': '2つのファイルを比べる',
+        'text': 'pageの見出しとrouteのmessageは別の応答です。まずpageを直します。',
+        'relatedSlideId': 'next-ch01-l01-s03',
+      },
+      {
+        'id': 'next-ch01-l01-e01-h02',
+        'level': 2,
+        'title': 'secondの値を読む',
+        'text': 'mode=secondのときsecondはtrueです。三項演算子のtrue側を直します。',
+        'relatedSlideId': 'next-ch01-l01-s03',
+      },
+      {
+        'id': 'next-ch01-l01-e01-h03',
+        'level': 3,
+        'title': 'JSONの期待値を揃える',
+        'text': "message: second ? '2つ目の実リクエスト' : '最初の実リクエスト' にします。",
+        'relatedSlideId': 'next-ch01-l01-s03',
+      },
+    ],
+  'relatedSlideIds':
+    ['next-ch01-l01-s01', 'next-ch01-l01-s02', 'next-ch01-l01-s03', 'next-ch01-l01-s04'],
+  'previewViewports': [{ 'id': 'desktop-1280', 'width': 1280, 'height': 720 }],
+  'assets': [],
+  'fixtures':
+    [
+      {
+        'id': 'starter',
+        'expectedStatus': 'incomplete',
+        'files':
+          [
+            {
+              'path': 'app/layout.tsx',
+              'language': 'react',
+              'source': 'fixtures/starter/app/layout.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/starter/app/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/globals.css',
+              'language': 'css',
+              'source': 'fixtures/starter/app/globals.css',
+              'editable': false,
+            },
+            {
+              'path': 'app/api/question/route.ts',
+              'language': 'typescript',
+              'source': 'fixtures/starter/app/api/question/route.ts',
+              'editable': false,
+            },
+          ],
+        'expectedFeedbackRuleIds': ['next-ch01-l01-e01-r01'],
+      },
+      {
+        'id': 'solution',
+        'expectedStatus': 'pass',
+        'files':
+          [
+            {
+              'path': 'app/layout.tsx',
+              'language': 'react',
+              'source': 'fixtures/solution/app/layout.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/solution/app/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/globals.css',
+              'language': 'css',
+              'source': 'fixtures/solution/app/globals.css',
+              'editable': false,
+            },
+            {
+              'path': 'app/api/question/route.ts',
+              'language': 'typescript',
+              'source': 'fixtures/solution/app/api/question/route.ts',
+              'editable': false,
+            },
+          ],
+        'expectedFeedbackRuleIds': [],
+      },
+      {
+        'id': 'alternative',
+        'expectedStatus': 'pass',
+        'files':
+          [
+            {
+              'path': 'app/layout.tsx',
+              'language': 'react',
+              'source': 'fixtures/alternative/app/layout.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/alternative/app/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/globals.css',
+              'language': 'css',
+              'source': 'fixtures/alternative/app/globals.css',
+              'editable': false,
+            },
+            {
+              'path': 'app/api/question/route.ts',
+              'language': 'typescript',
+              'source': 'fixtures/alternative/app/api/question/route.ts',
+              'editable': false,
+            },
+          ],
+        'expectedFeedbackRuleIds': [],
+      },
+      {
+        'id': 'wrong-page',
+        'expectedStatus': 'incomplete',
+        'files':
+          [
+            {
+              'path': 'app/layout.tsx',
+              'language': 'react',
+              'source': 'fixtures/wrong-page/app/layout.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/wrong-page/app/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/globals.css',
+              'language': 'css',
+              'source': 'fixtures/wrong-page/app/globals.css',
+              'editable': false,
+            },
+            {
+              'path': 'app/api/question/route.ts',
+              'language': 'typescript',
+              'source': 'fixtures/wrong-page/app/api/question/route.ts',
+              'editable': false,
+            },
+          ],
+        'expectedFeedbackRuleIds': ['next-ch01-l01-e01-r01'],
+      },
+      {
+        'id': 'wrong-query',
+        'expectedStatus': 'incomplete',
+        'files':
+          [
+            {
+              'path': 'app/layout.tsx',
+              'language': 'react',
+              'source': 'fixtures/wrong-query/app/layout.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/wrong-query/app/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/globals.css',
+              'language': 'css',
+              'source': 'fixtures/wrong-query/app/globals.css',
+              'editable': false,
+            },
+            {
+              'path': 'app/api/question/route.ts',
+              'language': 'typescript',
+              'source': 'fixtures/wrong-query/app/api/question/route.ts',
+              'editable': false,
+            },
+          ],
+        'expectedFeedbackRuleIds': ['next-ch01-l01-e01-r01'],
+      },
+      {
+        'id': 'code-error',
+        'expectedStatus': 'code-error',
+        'files':
+          [
+            {
+              'path': 'app/layout.tsx',
+              'language': 'react',
+              'source': 'fixtures/code-error/app/layout.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/code-error/app/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/globals.css',
+              'language': 'css',
+              'source': 'fixtures/code-error/app/globals.css',
+              'editable': false,
+            },
+            {
+              'path': 'app/api/question/route.ts',
+              'language': 'typescript',
+              'source': 'fixtures/code-error/app/api/question/route.ts',
+              'editable': false,
+            },
+          ],
+        'expectedFeedbackRuleIds': [],
+      },
+    ],
+}

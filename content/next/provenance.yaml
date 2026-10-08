@@ -1,0 +1,218 @@
+{
+  'schemaVersion': 1,
+  'defaults':
+    {
+      'method': 'original-authored',
+      'createdAt': '2026-10-08',
+      'creator': 'TsumuCode project',
+      'sourceUrl': 'none',
+      'license': 'project-original',
+      'modified': false,
+    },
+  'items':
+    [
+      {
+        'id': 'next-original-2',
+        'visibility': 'public',
+        'path': 'chapters/next-ch01/chapter.yaml',
+      },
+      {
+        'id': 'next-original-7',
+        'visibility': 'public',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/exercise.yaml',
+      },
+      {
+        'id': 'next-original-13',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/alternative/app/api/question/route.ts',
+      },
+      {
+        'id': 'next-original-14',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/alternative/app/globals.css',
+      },
+      {
+        'id': 'next-original-15',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/alternative/app/layout.tsx',
+      },
+      {
+        'id': 'next-original-16',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/alternative/app/page.tsx',
+      },
+      {
+        'id': 'next-original-21',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/code-error/app/api/question/route.ts',
+      },
+      {
+        'id': 'next-original-22',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/code-error/app/globals.css',
+      },
+      {
+        'id': 'next-original-23',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/code-error/app/layout.tsx',
+      },
+      {
+        'id': 'next-original-24',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/code-error/app/page.tsx',
+      },
+      {
+        'id': 'next-original-29',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/solution/app/api/question/route.ts',
+      },
+      {
+        'id': 'next-original-30',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/solution/app/globals.css',
+      },
+      {
+        'id': 'next-original-31',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/solution/app/layout.tsx',
+      },
+      {
+        'id': 'next-original-32',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/solution/app/page.tsx',
+      },
+      {
+        'id': 'next-original-37',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/starter/app/api/question/route.ts',
+      },
+      {
+        'id': 'next-original-38',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/starter/app/globals.css',
+      },
+      {
+        'id': 'next-original-39',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/starter/app/layout.tsx',
+      },
+      {
+        'id': 'next-original-40',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/starter/app/page.tsx',
+      },
+      {
+        'id': 'next-original-45',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/wrong-page/app/api/question/route.ts',
+      },
+      {
+        'id': 'next-original-46',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/wrong-page/app/globals.css',
+      },
+      {
+        'id': 'next-original-47',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/wrong-page/app/layout.tsx',
+      },
+      {
+        'id': 'next-original-48',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/wrong-page/app/page.tsx',
+      },
+      {
+        'id': 'next-original-53',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/wrong-query/app/api/question/route.ts',
+      },
+      {
+        'id': 'next-original-54',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/wrong-query/app/globals.css',
+      },
+      {
+        'id': 'next-original-55',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/wrong-query/app/layout.tsx',
+      },
+      {
+        'id': 'next-original-56',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/fixtures/wrong-query/app/page.tsx',
+      },
+      {
+        'id': 'next-original-57',
+        'visibility': 'public',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/instructions.md',
+      },
+      {
+        'id': 'next-original-62',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/solution/app/api/question/route.ts',
+      },
+      {
+        'id': 'next-original-63',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/solution/app/globals.css',
+      },
+      {
+        'id': 'next-original-64',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/solution/app/layout.tsx',
+      },
+      {
+        'id': 'next-original-65',
+        'visibility': 'authoring',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/solution/app/page.tsx',
+      },
+      {
+        'id': 'next-original-70',
+        'visibility': 'public',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/starter/app/api/question/route.ts',
+      },
+      {
+        'id': 'next-original-71',
+        'visibility': 'public',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/starter/app/globals.css',
+      },
+      {
+        'id': 'next-original-72',
+        'visibility': 'public',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/starter/app/layout.tsx',
+      },
+      {
+        'id': 'next-original-73',
+        'visibility': 'public',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/exercises/next-ch01-l01-e01/starter/app/page.tsx',
+      },
+      {
+        'id': 'next-original-74',
+        'visibility': 'public',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/lesson.yaml',
+      },
+      {
+        'id': 'next-original-76',
+        'visibility': 'public',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/slides/s01-server.md',
+      },
+      {
+        'id': 'next-original-77',
+        'visibility': 'public',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/slides/s02-page.md',
+      },
+      {
+        'id': 'next-original-78',
+        'visibility': 'public',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/slides/s03-route.md',
+      },
+      {
+        'id': 'next-original-79',
+        'visibility': 'public',
+        'path': 'chapters/next-ch01/lessons/next-ch01-l01/slides/s04-checkpoint.md',
+      },
+      { 'id': 'next-original-80', 'visibility': 'public', 'path': 'concepts.yaml' },
+      { 'id': 'next-original-82', 'visibility': 'public', 'path': 'glossary.yaml' },
+      { 'id': 'next-original-84', 'visibility': 'public', 'path': 'references/next-official.md' },
+    ],
+}

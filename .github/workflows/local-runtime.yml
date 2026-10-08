@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
     paths:
+      - content/next/**
+      - scripts/content/fixtures/next-author-pilot*
+      - scripts/content/sourceSchema.ts
+      - src/core/content/schema.ts
+      - src/features/learning/pages/ExercisePage.tsx
       - scripts/local/**
       - src/features/learning/local/**
       - src/adapters/runtime/local/LocalWorkspaceClient*
@@ -24,6 +29,11 @@ on:
   pull_request:
     branches: [main]
     paths:
+      - content/next/**
+      - scripts/content/fixtures/next-author-pilot*
+      - scripts/content/sourceSchema.ts
+      - src/core/content/schema.ts
+      - src/features/learning/pages/ExercisePage.tsx
       - scripts/local/**
       - src/features/learning/local/**
       - src/adapters/runtime/local/LocalWorkspaceClient*
@@ -82,6 +92,16 @@ jobs:
           docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256
           --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-browser-checks"
           node scripts/local/project-browser-acceptance.mjs
+      - name: Verify Next real page, query HTTP, resources and recovery
+        run: |
+          docker build --file Dockerfile.learning --target next-browser-checks --tag "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" .
+          controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
+          docker run --rm --network none "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" node scripts/local/next-fixture-packet.mjs |
+            docker exec -i "$controller" node next-project-acceptance.mjs
+      - name: Verify Next normal Lesson learning UI
+        run: >-
+          docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256
+          --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-next-browser-checks"
       - name: Verify normal controller restart
         run: |
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)

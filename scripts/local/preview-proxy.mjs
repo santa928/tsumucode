@@ -15,6 +15,8 @@ import {
   previewBase,
   previewHeaders,
   previewRoute,
+  previewResponseLimit,
+  previewWebSocketProtocol,
 } from './preview-contract.mjs';
 
 const websocketConnections = new Set();
@@ -39,6 +41,7 @@ function lookup() {
           previewRunId(target.runId);
           if (
             !/^[a-z0-9-]{1,64}$/u.test(target.workspaceId) ||
+            !['vite-project-v1', 'next-project-v1'].includes(target.profile) ||
             !Number.isSafeInteger(target.dev) ||
             !Number.isSafeInteger(target.ino)
           )
@@ -90,7 +93,7 @@ function permitted(req, target, websocket = false) {
       req.method === 'GET' &&
       req.headers.origin === previewOrigin(target.runId) &&
       req.headers.upgrade?.toLowerCase() === 'websocket' &&
-      req.headers['sec-websocket-protocol'] === 'vite-hmr'
+      req.headers['sec-websocket-protocol'] === previewWebSocketProtocol(target.profile)
     );
   }
   if (req.method === 'GET' || req.method === 'HEAD') return true;
@@ -121,7 +124,7 @@ function errorResponse(res, status, target) {
   res
     .writeHead(status, {
       ...(target
-        ? previewHeaders(target.runId)
+        ? previewHeaders(target.runId, target.profile)
         : { 'content-security-policy': "default-src 'none'; sandbox" }),
       'content-type': 'text/plain; charset=utf-8',
     })
@@ -158,7 +161,7 @@ const server = createServer(async (req, res) => {
         let bytes = 0;
         upstream.on('data', (chunk) => {
           bytes += chunk.length;
-          if (bytes > PREVIEW_LIMITS.responseBytes)
+          if (bytes > previewResponseLimit(req.url, target))
             upstream.destroy(new Error('Preview response limit'));
           else chunks.push(chunk);
         });
@@ -171,7 +174,7 @@ const server = createServer(async (req, res) => {
             return;
           }
           res.writeHead(upstream.statusCode ?? 502, {
-            ...previewHeaders(target.runId),
+            ...previewHeaders(target.runId, target.profile),
             'content-type': upstream.headers['content-type'] ?? 'application/octet-stream',
           });
           res.end(req.method === 'HEAD' ? undefined : Buffer.concat(chunks));
@@ -248,7 +251,9 @@ server.on('upgrade', async (req, client, head) => {
         upgrade: 'websocket',
         'sec-websocket-key': req.headers['sec-websocket-key'],
         'sec-websocket-version': '13',
-        'sec-websocket-protocol': 'vite-hmr',
+        ...(previewWebSocketProtocol(target.profile)
+          ? { 'sec-websocket-protocol': previewWebSocketProtocol(target.profile) }
+          : {}),
       },
     });
     proxy.on('error', close);
@@ -257,7 +262,7 @@ server.on('upgrade', async (req, client, head) => {
       if (
         client.destroyed ||
         response.statusCode !== 101 ||
-        response.headers['sec-websocket-protocol'] !== 'vite-hmr'
+        response.headers['sec-websocket-protocol'] !== previewWebSocketProtocol(target.profile)
       ) {
         socket.destroy();
         close();
@@ -269,7 +274,7 @@ server.on('upgrade', async (req, client, head) => {
       upstream.on('error', close);
       upstream.once('close', close);
       client.write(
-        `HTTP/1.1 101 Switching Protocols\r\nConnection: Upgrade\r\nUpgrade: websocket\r\nSec-WebSocket-Accept: ${response.headers['sec-websocket-accept']}\r\nSec-WebSocket-Protocol: vite-hmr\r\n\r\n`,
+        `HTTP/1.1 101 Switching Protocols\r\nConnection: Upgrade\r\nUpgrade: websocket\r\nSec-WebSocket-Accept: ${response.headers['sec-websocket-accept']}\r\n${previewWebSocketProtocol(target.profile) ? 'Sec-WebSocket-Protocol: vite-hmr\r\n' : ''}\r\n`,
       );
       let sent = head.length;
       let received = upgradeHead.length;

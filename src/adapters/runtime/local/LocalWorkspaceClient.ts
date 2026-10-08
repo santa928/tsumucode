@@ -1,7 +1,8 @@
 /** Local専用画面のSource・runを検証する。管理tokenはinstanceのメモリだけに保持する。 */
 import { z } from 'zod';
 
-const profile = z.literal('vite-project-v1');
+const profile = z.enum(['vite-project-v1', 'next-project-v1']);
+export type WorkspaceProfile = z.infer<typeof profile>;
 const revision = z.number().int().positive();
 const hash = z.string().regex(/^[a-f0-9]{64}$/u);
 const workspaceId = z.string().regex(/^[a-z0-9-]{1,64}$/u);
@@ -21,6 +22,33 @@ export const workspaceFilesSchema = z
     'Sourceは合計100 KiB以下にしてください。',
   );
 
+export const nextWorkspaceFilesSchema = z
+  .object({
+    'app/layout.tsx': source,
+    'app/page.tsx': source,
+    'app/globals.css': source,
+    'app/api/question/route.ts': source,
+  })
+  .strict()
+  .refine(
+    (files) =>
+      Object.values(files).reduce(
+        (size, text) => size + new TextEncoder().encode(text).length,
+        0,
+      ) <=
+      100 * 1024,
+    'Sourceは合計100 KiB以下にしてください。',
+  );
+
+export function parseWorkspaceFiles(
+  input: unknown,
+  kind: WorkspaceProfile = 'vite-project-v1',
+): WorkspaceFiles {
+  return (kind === 'next-project-v1' ? nextWorkspaceFilesSchema : workspaceFilesSchema).parse(
+    input,
+  );
+}
+
 const workspaceRunSchema = z.object({
   workspaceId,
   profile,
@@ -39,7 +67,7 @@ const workspaceSchema = z.object({
   workspaceId,
   sourceRevision: revision,
   sourceHash: hash,
-  files: workspaceFilesSchema,
+  files: z.union([workspaceFilesSchema, nextWorkspaceFilesSchema]),
   lastRun: workspaceRunSchema.nullable(),
 });
 
@@ -48,10 +76,10 @@ const capabilitiesSchema = z.object({
   profile,
   available: z.boolean(),
   gradingAvailable: z.literal(true),
-  starterFiles: workspaceFilesSchema,
+  starterFiles: z.union([workspaceFilesSchema, nextWorkspaceFilesSchema]),
 });
 
-export type WorkspaceFiles = z.infer<typeof workspaceFilesSchema>;
+export type WorkspaceFiles = Readonly<Record<string, string>>;
 export type WorkspaceRun = z.infer<typeof workspaceRunSchema>;
 export type LocalWorkspace = z.infer<typeof workspaceSchema>;
 
@@ -92,7 +120,10 @@ export class LocalWorkspaceClient {
   #token: string | undefined;
   readonly #path: string;
 
-  constructor(readonly id: string) {
+  constructor(
+    readonly id: string,
+    readonly profile: WorkspaceProfile = 'vite-project-v1',
+  ) {
     workspaceId.parse(id);
     this.#path = `/api/workspaces/${id}`;
   }
@@ -125,7 +156,11 @@ export class LocalWorkspaceClient {
 
   #run(input: unknown, expectedRunId?: string): WorkspaceRun {
     const run = workspaceRunSchema.parse(input);
-    if (run.workspaceId !== this.id || (expectedRunId !== undefined && run.runId !== expectedRunId))
+    if (
+      run.profile !== this.profile ||
+      run.workspaceId !== this.id ||
+      (expectedRunId !== undefined && run.runId !== expectedRunId)
+    )
       throw new Error('別Workspaceまたは古い実行の応答を受信しました。');
     workspacePreviewUrl(run);
     return run;
@@ -133,7 +168,9 @@ export class LocalWorkspaceClient {
 
   #workspace(input: unknown, expectedRunId?: string): LocalWorkspace {
     const workspace = workspaceSchema.parse(input);
-    if (workspace.workspaceId !== this.id) throw new Error('別Workspaceの応答を受信しました。');
+    parseWorkspaceFiles(workspace.files, this.profile);
+    if (workspace.profile !== this.profile || workspace.workspaceId !== this.id)
+      throw new Error('別Workspaceの応答を受信しました。');
     if (expectedRunId !== undefined && workspace.lastRun?.runId !== expectedRunId)
       throw new Error('古い実行の応答を受信しました。');
     if (workspace.lastRun !== null) this.#run(workspace.lastRun, expectedRunId);
@@ -147,8 +184,14 @@ export class LocalWorkspaceClient {
       .object({ apiVersion: z.literal(1), token: z.string().regex(/^[a-f0-9]{64}$/u) })
       .parse(await this.#request('/api/session')).token;
     const capabilities = capabilitiesSchema.parse(
-      await this.#request('/api/workspaces/capabilities'),
+      await this.#request(
+        this.profile === 'next-project-v1'
+          ? '/api/workspaces/next-capabilities'
+          : '/api/workspaces/capabilities',
+      ),
     );
+    parseWorkspaceFiles(capabilities.starterFiles, this.profile);
+    if (capabilities.profile !== this.profile) throw new Error('Project profileが一致しません。');
     if (!capabilities.available) throw new Error('この環境では固定Projectを起動できません。');
     return capabilities;
   }
@@ -164,7 +207,7 @@ export class LocalWorkspaceClient {
 
   async save(expectedSourceRevision: number, files: WorkspaceFiles): Promise<LocalWorkspace> {
     z.number().int().nonnegative().parse(expectedSourceRevision);
-    workspaceFilesSchema.parse(files);
+    parseWorkspaceFiles(files, this.profile);
     return this.#workspace(
       await this.#request(`${this.#path}/source`, { expectedSourceRevision, files }),
     );
@@ -212,6 +255,7 @@ export class LocalWorkspaceClient {
       }),
     );
     if (
+      result.profile !== this.profile ||
       result.workspaceId !== this.id ||
       result.runId !== run.runId ||
       result.sourceRevision !== saved.sourceRevision ||

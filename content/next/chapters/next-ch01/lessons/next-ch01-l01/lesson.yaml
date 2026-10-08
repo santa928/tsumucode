@@ -1,0 +1,24 @@
+{
+  'id': 'next-ch01-l01',
+  'kind': 'standard',
+  'title': 'pageとquery別のJSON応答',
+  'goal': 'pageの見出しとRoute Handlerのquery分岐を編集し、実HTTPで確認して停止・再開できる。',
+  'estimatedMinutes': 25,
+  'prerequisiteLessonIds': [],
+  'slideSources':
+    [
+      'slides/s01-server.md',
+      'slides/s02-page.md',
+      'slides/s03-route.md',
+      'slides/s04-checkpoint.md',
+    ],
+  'exerciseSources': ['exercises/next-ch01-l01-e01/exercise.yaml'],
+  'reflection': 'pageのHTMLとRoute HandlerのJSONは別の応答。開発serverでの確認、build時の事前生成、Pagesの静的表示を区別する。',
+  'glossaryRefs': ['page', 'route-handler', 'query'],
+  'completion':
+    {
+      'kind': 'standard',
+      'finalSlideId': 'next-ch01-l01-s04',
+      'requiredExerciseIds': ['next-ch01-l01-e01'],
+    },
+}

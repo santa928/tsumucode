@@ -1,0 +1,27 @@
+{
+  'schemaVersion': 1,
+  'entries':
+    [
+      {
+        'id': 'page',
+        'term': 'page',
+        'definition': 'URLの場所に対応する表示を返すファイル。',
+        'firstSlideId': 'next-ch01-l01-s02',
+        'relatedIds': [],
+      },
+      {
+        'id': 'route-handler',
+        'term': 'Route Handler',
+        'definition': 'HTTP requestを受け取りResponseを返す関数。',
+        'firstSlideId': 'next-ch01-l01-s03',
+        'relatedIds': [],
+      },
+      {
+        'id': 'query',
+        'term': 'query',
+        'definition': 'URLの?以降にある値。今回のmodeで応答を分岐する。',
+        'firstSlideId': 'next-ch01-l01-s03',
+        'relatedIds': [],
+      },
+    ],
+}

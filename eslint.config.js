@@ -11,6 +11,9 @@ export default tseslint.config(
       'coverage',
       'public/generated/content',
       'content/**/*.js',
+      // Next原稿は固定Nextの実compileと正負Fixtureで検証する。
+      'content/next/chapters/next-ch01/lessons/next-ch01-l01/exercises/**/*.{ts,tsx}',
+      '.release-*',
       // 誤型を含むReact原稿は実TSX Compiler・Fixture検証へ渡す。
       'content/react/chapters/react-ch01/lessons/react-ch01-l01/exercises/**/*.tsx',
       'content/react/chapters/react-ch01/lessons/react-ch01-l02/exercises/**/*.{ts,tsx}',

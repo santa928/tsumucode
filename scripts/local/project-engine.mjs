@@ -1,5 +1,7 @@
 import { Buffer } from 'node:buffer';
+import { setTimeout as delay } from 'node:timers/promises';
 import { docker, containerConfig } from './docker-engine.mjs';
+import { NEXT_PROFILE } from './next-project-protocol.mjs';
 import { PROJECT_LIMITS, PROJECT_PROFILE } from './project-protocol.mjs';
 
 const PROBE = `const http = require('node:http');
@@ -13,7 +15,7 @@ const req = http.get('http://127.0.0.1:5173/__tsumucode_ready', (res) => {
   res.on('end', () => {
     try {
       const marker = JSON.parse(data);
-      const ready = res.statusCode === 200 && marker.profile === 'vite-project-v1' &&
+      const ready = res.statusCode === 200 && ['vite-project-v1', 'next-project-v1'].includes(marker.profile) &&
         Object.entries(expected).every(([key, value]) => marker[key] === value);
       process.exit(ready ? 0 : 1);
     } catch {
@@ -26,7 +28,7 @@ req.setTimeout(1500, () => req.destroy());`;
 
 /** trusted Composeのimageを実IDへ解決し、要求からimage/command/mountを選ばせない。 */
 export async function projectImage(image) {
-  if (!image || !/^tsumucode-learning-[a-z0-9-]+-project:local$/u.test(image))
+  if (!image || !/^tsumucode-learning-[a-z0-9-]+-(?:next-)?project:local$/u.test(image))
     throw new Error('Project image is not configured');
   const inspected = await docker('GET', `/images/${encodeURIComponent(image)}/json`);
   return inspected.Id;
@@ -37,7 +39,9 @@ export function projectConfig(record, owner, runId, imageId, preview = false) {
   config.Image = imageId;
   config.Entrypoint = ['node'];
   config.Cmd = [
-    '/opt/project-bootstrap.mjs',
+    record.profile === NEXT_PROFILE
+      ? '/opt/next-project-bootstrap.mjs'
+      : '/opt/project-bootstrap.mjs',
     ...Buffer.from(
       JSON.stringify({ files: record.files, metadata: projectMetadata(record, runId), preview }),
     )
@@ -48,8 +52,19 @@ export function projectConfig(record, owner, runId, imageId, preview = false) {
     ...config.Labels,
     'app.tsumucode.workspace': record.workspaceId,
     'app.tsumucode.run': runId,
-    'app.tsumucode.profile': PROJECT_PROFILE,
+    'app.tsumucode.profile': record.profile ?? PROJECT_PROFILE,
   };
+  if (record.profile === NEXT_PROFILE) {
+    // Next CLIが生成する孫processもDocker initへ回収させる。
+    config.HostConfig.Init = true;
+    config.HostConfig.Memory = 512 * 1024 * 1024;
+    config.HostConfig.MemorySwap = config.HostConfig.Memory;
+    config.HostConfig.Tmpfs = {
+      '/opt/workspace': 'rw,noexec,nosuid,nodev,size=64m,uid=1000,gid=1000,mode=0700',
+      '/tmp': 'rw,noexec,nosuid,nodev,size=64m,uid=1000,gid=1000,mode=0700',
+    };
+    config.WorkingDir = '/opt/workspace';
+  }
   if (preview)
     config.HostConfig.Mounts = [
       {
@@ -64,7 +79,7 @@ export function projectConfig(record, owner, runId, imageId, preview = false) {
 
 export function projectMetadata(record, runId) {
   return {
-    profile: PROJECT_PROFILE,
+    profile: record.profile ?? PROJECT_PROFILE,
     workspaceId: record.workspaceId,
     runId,
     sourceRevision: record.sourceRevision,
@@ -90,12 +105,18 @@ export async function applyProject(id, record, runId) {
           .match(/.{1,16384}/gu),
       ],
     },
-    5000,
+    record.profile === NEXT_PROFILE ? 10000 : 5000,
   );
   await docker('POST', `/exec/${execution.Id}/start`, { Detach: false, Tty: false }, 5000, true);
   const inspected = await docker('GET', `/exec/${execution.Id}/json`, undefined, 2000);
-  if (inspected.Running || inspected.ExitCode !== 0 || !(await probeProject(id, metadata)))
-    throw new Error('Project apply failed');
+  if (inspected.Running || inspected.ExitCode !== 0) throw new Error('Project apply failed');
+  const deadline = Date.now() + (record.profile === NEXT_PROFILE ? 8000 : 0);
+  do {
+    if (await probeProject(id, metadata)) return;
+    if (Date.now() >= deadline) break;
+    await delay(100);
+  } while (Date.now() < deadline);
+  throw new Error('Project apply failed');
 }
 
 /** learner内部の本物のHTTPを固定execで確認する。stdoutや固定sleepは成功証拠にしない。 */

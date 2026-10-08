@@ -1,5 +1,6 @@
 import { RequestError } from './protocol.mjs';
 import { URLSearchParams } from 'node:url';
+import { NEXT_PROFILE } from './next-project-protocol.mjs';
 
 export const CONTROL_SOCKET = '/var/run/tsumucode-preview/control.sock';
 export const TRANSPORT_ROOT = '/var/lib/tsumucode/preview-transport';
@@ -48,7 +49,7 @@ export function previewRequestOrigin(req, target, websocket = false) {
 }
 
 /** learnerのHTML・meta・上流ヘッダーでは緩和できないBrowser境界を固定する。 */
-export function previewHeaders(runId) {
+export function previewHeaders(runId, profile = 'vite-project-v1') {
   return {
     'cache-control': 'no-store',
     'x-content-type-options': 'nosniff',
@@ -56,7 +57,7 @@ export function previewHeaders(runId) {
     'content-security-policy': [
       'sandbox allow-scripts allow-same-origin allow-forms',
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
+      `script-src 'self' 'unsafe-inline'${profile === NEXT_PROFILE ? " 'unsafe-eval'" : ''}`,
       "style-src 'self' 'unsafe-inline'",
       `connect-src 'self' ${previewOrigin(runId).replace('http:', 'ws:')}`,
       "form-action 'self'",
@@ -71,6 +72,7 @@ export function previewHeaders(runId) {
 
 /** decodeやURL正規化の前にraw pathを検査し、固定Viteの必要経路だけを許可する。 */
 export function previewRoute(raw, target, websocket = false) {
+  if (target.profile === NEXT_PROFILE) return nextPreviewRoute(raw, target, websocket);
   if (typeof raw !== 'string' || raw.length > 2048 || /[%\\#\s]/u.test(raw)) return false;
   const [pathname, query = ''] = raw.split('?');
   if (
@@ -112,4 +114,43 @@ export function previewRoute(raw, target, websocket = false) {
     return false;
   }
   return true;
+}
+
+/** 固定Nextのpage/query/chunk/HMRだけを許可する。内部APIや任意percent decodeは認めない。 */
+function nextPreviewRoute(raw, target, websocket) {
+  if (typeof raw !== 'string' || raw.length > 2048 || /[\\#\s]/u.test(raw)) return false;
+  const parts = raw.split('?');
+  if (parts.length > 2) return false;
+  const [pathname, query = ''] = parts;
+  const base = previewBase(target.workspaceId, target.runId);
+  if (!pathname.startsWith(base) || pathname.includes('..')) return false;
+  const file = pathname.slice(base.length);
+  const parameters = new URLSearchParams(query);
+  if (websocket) {
+    return (
+      file === '_next/hmr' &&
+      parameters.size === 1 &&
+      /^[a-zA-Z0-9._-]{1,128}$/u.test(parameters.get('id') ?? '') &&
+      !query.includes('%')
+    );
+  }
+  if (file === '') return query === '';
+  if (file === 'api/question') return query === '' || query === 'mode=second';
+  if (query !== '') return false;
+  return /^_next\/static\/chunks\/(?:[a-zA-Z0-9_.-]|%5Bturbopack%5D|%40swc){1,180}\.(?:js|css)$/u.test(
+    file,
+  );
+}
+
+/** 上流Content-Typeではなく、trusted profileと検査済み固定chunk経路で上限を選ぶ。 */
+export function previewResponseLimit(raw, target) {
+  return target.profile === NEXT_PROFILE &&
+    previewRoute(raw, target) &&
+    raw.startsWith(`${previewBase(target.workspaceId, target.runId)}_next/static/chunks/`)
+    ? 2 * 1024 * 1024
+    : PREVIEW_LIMITS.responseBytes;
+}
+
+export function previewWebSocketProtocol(profile) {
+  return profile === NEXT_PROFILE ? undefined : 'vite-hmr';
 }

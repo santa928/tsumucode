@@ -1,6 +1,7 @@
 import { Buffer } from 'node:buffer';
 import { createHash } from 'node:crypto';
 import { RequestError, LIMITS } from './protocol.mjs';
+import { NEXT_PROFILE, NEXT_STARTER_FILES } from './next-project-protocol.mjs';
 
 export const PROJECT_PROFILE = 'vite-project-v1';
 export const PROJECT_LIMITS = Object.freeze({
@@ -70,8 +71,14 @@ export function runId(value) {
   return value;
 }
 
-export function validateFiles(files) {
-  exact(files, Object.keys(STARTER_FILES));
+export function starterFiles(profile = PROJECT_PROFILE) {
+  if (profile === PROJECT_PROFILE) return STARTER_FILES;
+  if (profile === NEXT_PROFILE) return NEXT_STARTER_FILES;
+  throw new RequestError(400, '未対応のProject profileです。');
+}
+
+export function validateFiles(files, profile = PROJECT_PROFILE) {
+  exact(files, Object.keys(starterFiles(profile)));
   let size = 0;
   for (const value of Object.values(files)) {
     if (typeof value !== 'string') throw new RequestError(400, 'Sourceは文字列が必要です。');
@@ -82,8 +89,8 @@ export function validateFiles(files) {
 }
 
 /** file順序に依存せず、起動時Sourceと保存済みSourceを照合できるhashを返す。 */
-export function projectHash(files) {
+export function projectHash(files, profile = PROJECT_PROFILE) {
   return createHash('sha256')
-    .update(JSON.stringify(Object.keys(STARTER_FILES).map((name) => [name, files[name]])))
+    .update(JSON.stringify(Object.keys(starterFiles(profile)).map((name) => [name, files[name]])))
     .digest('hex');
 }

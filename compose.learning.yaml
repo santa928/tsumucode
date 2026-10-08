@@ -6,6 +6,13 @@ services:
       dockerfile: Dockerfile.learning
       target: project
     profiles: [build-project]
+  next-project:
+    image: ${TSUMUCODE_LOCAL_OWNER:?Use scripts/learn.sh}-next-project:local
+    build:
+      context: .
+      dockerfile: Dockerfile.learning
+      target: next-project
+    profiles: [build-project]
   grader:
     image: ${TSUMUCODE_LOCAL_OWNER:?Use scripts/learn.sh}-grader:local
     build:
@@ -39,6 +46,7 @@ services:
     environment:
       TSUMUCODE_LOCAL_OWNER: ${TSUMUCODE_LOCAL_OWNER:?Use scripts/learn.sh}
       TSUMUCODE_LOCAL_PROJECT_IMAGE: ${TSUMUCODE_LOCAL_OWNER:?Use scripts/learn.sh}-project:local
+      TSUMUCODE_LOCAL_NEXT_IMAGE: ${TSUMUCODE_LOCAL_OWNER:?Use scripts/learn.sh}-next-project:local
       TSUMUCODE_LOCAL_PREVIEW: '1'
       TSUMUCODE_LOCAL_GRADER_IMAGE: ${TSUMUCODE_LOCAL_OWNER:?Use scripts/learn.sh}-grader:local
     volumes:
