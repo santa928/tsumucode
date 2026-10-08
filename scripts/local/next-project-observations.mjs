@@ -64,7 +64,7 @@ export async function observeNextLesson(page, origin, base, goal) {
       throw new NextLessonObservationError(
         `固定pageのHTTP応答が失敗しました（${response?.status() ?? '応答なし'}）。`,
       );
-    await page.waitForLoadState('networkidle', { timeout: 2000 });
+    // load済みの実文書と遷移数を照合する。各遷移に追加の静止時間を課さない。
     if (navigations !== before + changes || documentRequests !== beforeRequests + 1)
       throw new NextLessonObservationError('予定した文書遷移以外が発生しました。');
     beginPhase();
@@ -104,7 +104,6 @@ export async function observeNextLesson(page, origin, base, goal) {
         `リンク先のHTTP応答が失敗しました（${response?.status() ?? '応答なし'}）。`,
       );
     }
-    await page.waitForLoadState('networkidle', { timeout: 2000 });
     if (navigations !== before + changes || documentRequests !== beforeRequests + 1)
       throw new NextLessonObservationError('リンク操作中に予定外の文書遷移が発生しました。');
     beginPhase();
