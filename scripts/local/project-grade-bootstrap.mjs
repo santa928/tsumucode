@@ -179,17 +179,41 @@ try {
   });
   const page = await browser.newPage();
   const diagnostics = [];
+  const consoleErrors = [];
+  let navigations = 0;
+  page.on('framenavigated', (frame) => {
+    if (frame === page.mainFrame()) navigations++;
+  });
+  page.on('console', (message) => {
+    if (message.type() === 'error' && consoleErrors.length < 8)
+      consoleErrors.push(message.text().slice(0, 512));
+  });
+  const diagnostic = (message) => {
+    if (diagnostics.length < 8) diagnostics.push(message.slice(0, 512));
+  };
   page.on('pageerror', (error) => {
-    if (diagnostics.length < 8) diagnostics.push(error.message.slice(0, 512));
+    diagnostic(error.message);
+  });
+  page.on('response', (response) => {
+    if (response.status() >= 400) diagnostic(`HTTP resource failed: ${response.status()}`);
+  });
+  page.on('requestfailed', (request) => {
+    const error = request.failure()?.errorText ?? 'unknown';
+    if (error !== 'net::ERR_ABORTED') diagnostic(`HTTP resource failed: ${error}`);
   });
   const response = await page.goto(origin + base, { waitUntil: 'load', timeout: 5000 });
   assert.equal(response.status(), 200);
+  // Viteの反映に伴う再読込も含め、実HTTP資源が静止してから同じ文書のDOMを読む。
+  await page.waitForLoadState('networkidle', { timeout: 3000 });
   assert.equal(new URL(page.url()).origin, origin);
+  const documentNavigation = navigations;
   const heading = page.locator('h1#message');
   const count = await heading.count();
   const visible = count === 1 && (await heading.isVisible());
   const actual = count === 1 ? ((await heading.textContent()) ?? '').trim().slice(0, 512) : '';
   await marker();
+  if (documentNavigation !== navigations)
+    diagnostic('採点中に文書が切り替わりました。もう一度判定してください。');
   process.stdout.write(
     JSON.stringify({
       ...metadata,
@@ -200,6 +224,8 @@ try {
           : 'incomplete',
       actual,
       diagnostics,
+      // Consoleは合否の入力にせず、失敗時の原因をboundedに観察する情報だけとする。
+      observation: { count, visible, navigations, consoleErrors },
       engineVersion: browser.version(),
       evaluatedAt: new Date().toISOString(),
     }) + '\n',
