@@ -105,9 +105,18 @@ try {
     } else {
       await expect(preview().locator('#server-note')).toHaveText('server-note.txt');
       await expect(preview().locator('#count')).toHaveText('2');
+      // SSRの初期値だけではClient操作の準備完了を意味しない。
+      const handle = await page.getByTitle('Next.jsの実サーバーPreview').elementHandle();
+      assert.ok(handle);
+      const frame = await handle.contentFrame();
+      assert.ok(frame);
+      await frame.waitForLoadState('networkidle', { timeout: 15000 });
+      await handle.dispose();
       for (const count of ['3', '4']) {
-        await preview().getByRole('button', { name: '数を増やす', exact: true }).focus();
-        await page.keyboard.press('Enter');
+        const button = preview().getByRole('button', { name: '数を増やす', exact: true });
+        await button.focus();
+        await expect(button).toBeFocused();
+        await button.press('Enter');
         await expect(preview().locator('#count')).toHaveText(count);
       }
     }
