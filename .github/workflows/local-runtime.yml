@@ -114,7 +114,7 @@ jobs:
             "$TSUMUCODE_LOCAL_OWNER-next-content-checks"
       - name: Verify trusted Next observations reject fake navigation
         run: >-
-          docker run --rm --init --network none --read-only --cpus 2 --memory 768m --pids-limit 128
+          docker run --rm --init --user 1000:1000 --network none --read-only --cpus 2 --memory 768m --pids-limit 128
           --cap-drop ALL --security-opt no-new-privileges:true
           --tmpfs /tmp:rw,noexec,nosuid,nodev,size=256m,uid=1000,gid=1000,mode=0700
           "$TSUMUCODE_LOCAL_OWNER-next-browser-checks"
