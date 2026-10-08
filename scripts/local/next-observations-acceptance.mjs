@@ -2,7 +2,11 @@ import assert from 'node:assert/strict';
 import console from 'node:console';
 import { createServer } from 'node:http';
 import { chromium } from '@playwright/test';
-import { NextLessonObservationError, observeNextLesson } from './next-project-observations.mjs';
+import {
+  NextLessonObservationError,
+  observeNextLesson,
+  watchDocumentVersion,
+} from './next-project-observations.mjs';
 
 // 採点器のHTTP契約を実Browserで検証する。Next教材の実行証拠とは別に扱う。
 let mode = 'native';
@@ -74,6 +78,27 @@ try {
     headless: true,
     args: ['--no-sandbox', '--disable-dev-shm-usage'],
   });
+  const identityPage = await browser.newPage();
+  try {
+    const version = watchDocumentVersion(identityPage);
+    await identityPage.goto(origin + '/', { waitUntil: 'load' });
+    const loaded = version();
+    await identityPage.evaluate(() =>
+      globalThis.history.replaceState(null, '', globalThis.location.href),
+    );
+    assert.equal(version(), loaded);
+    await identityPage.reload({ waitUntil: 'load' });
+    assert.ok(version() > loaded);
+    const reloaded = version();
+    await identityPage.evaluate(() => {
+      globalThis.history.pushState(null, '', '/temporary');
+      globalThis.history.replaceState(null, '', '/');
+    });
+    assert.ok(version() > reloaded);
+    console.log('same-url history / reload / URL roundtrip: PASS');
+  } finally {
+    await identityPage.close();
+  }
   for (const selected of ['native', 'history-only', 'event-navigation']) {
     mode = selected;
     const page = await browser.newPage();

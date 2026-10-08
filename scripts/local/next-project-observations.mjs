@@ -3,6 +3,22 @@ import { URL } from 'node:url';
 import { NextLessonObservationError } from './next-observation-error.mjs';
 export { NextLessonObservationError } from './next-observation-error.mjs';
 
+/** Pageの寿命内で実文書要求とURL変更を数え、同一URLの履歴更新を除外する。 */
+export function watchDocumentVersion(page) {
+  let version = 0;
+  let url = page.url();
+  page.on('request', (request) => {
+    if (request.isNavigationRequest() && request.frame() === page.mainFrame()) version++;
+  });
+  page.on('framenavigated', (frame) => {
+    if (frame === page.mainFrame() && frame.url() !== url) {
+      url = frame.url();
+      version++;
+    }
+  });
+  return () => version;
+}
+
 /** #133の固定URLと操作をtrusted Browserで読む。教材の自己申告は採用しない。 */
 export async function observeNextLesson(page, origin, base, goal) {
   let navigations = 0;
@@ -64,7 +80,7 @@ export async function observeNextLesson(page, origin, base, goal) {
       throw new NextLessonObservationError(
         `固定pageのHTTP応答が失敗しました（${response?.status() ?? '応答なし'}）。`,
       );
-    await page.waitForLoadState('networkidle', { timeout: 2000 });
+    // load済みの実文書と遷移数を照合する。各遷移に追加の静止時間を課さない。
     if (navigations !== before + changes || documentRequests !== beforeRequests + 1)
       throw new NextLessonObservationError('予定した文書遷移以外が発生しました。');
     beginPhase();
@@ -104,7 +120,6 @@ export async function observeNextLesson(page, origin, base, goal) {
         `リンク先のHTTP応答が失敗しました（${response?.status() ?? '応答なし'}）。`,
       );
     }
-    await page.waitForLoadState('networkidle', { timeout: 2000 });
     if (navigations !== before + changes || documentRequests !== beforeRequests + 1)
       throw new NextLessonObservationError('リンク操作中に予定外の文書遷移が発生しました。');
     beginPhase();

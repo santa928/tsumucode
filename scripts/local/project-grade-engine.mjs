@@ -15,6 +15,7 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
   let attempted = false;
   let stopping;
   let aborted = signal?.aborted;
+  let cancelledError = new Error('Grade cancelled');
   let rejectCancelled;
   const cancellation = new Promise((resolve, reject) => {
     rejectCancelled = reject;
@@ -22,14 +23,20 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
   // create/inspect中に中断しても、その応答を待って実体を回収する。
   const cancel = () => {
     aborted = true;
-    rejectCancelled(new Error('Grade cancelled'));
+    rejectCancelled(cancelledError);
     if (id) stopping = removeContainer(id).catch(() => {});
   };
   cancellation.catch(() => {});
-  const timer = setTimeout(cancel, 10000);
+  const timer = setTimeout(() => {
+    cancelledError = new RequestError(
+      503,
+      '採点の全体期限10秒を超えました。実行を開始し直して判定してください。',
+    );
+    cancel();
+  }, 10000);
   signal?.addEventListener('abort', cancel, { once: true });
   const active = () => {
-    if (aborted) throw new Error('Grade cancelled');
+    if (aborted) throw cancelledError;
   };
   try {
     const inspected = await docker('GET', `/images/${encodeURIComponent(image)}/json`);
@@ -92,7 +99,16 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
         .match(
           /TSUMUCODE_GRADE_PHASE:(marker-before|browser-launch|initial-navigation|initial-idle|observations|marker-after)\n/u,
         )?.[1];
-      throw new RequestError(503, `採点用Browserが終了しました（段階: ${phase ?? '未確認'}）。`);
+      const reason = diagnostic
+        .subarray(0, 16 * 1024)
+        .toString()
+        .match(
+          /TSUMUCODE_GRADE_FAILURE:(http-deadline|http-connection|document-context|browser-closed|dom-contract|identity|unknown)\n/u,
+        )?.[1];
+      throw new RequestError(
+        503,
+        `採点用Browserが終了しました（段階: ${phase ?? '未確認'} / 分類: ${reason ?? '未確認'}）。`,
+      );
     }
     const output = await docker(
       'GET',

@@ -110,7 +110,7 @@ function ensureLatest() {
           ...(controlledData
             ? {
                 TSUMUCODE_NEXT_BASE_PATH: base,
-                NODE_OPTIONS: '--max-old-space-size=192',
+                NODE_OPTIONS: '--max-old-space-size=128 --max-semi-space-size=4',
                 MALLOC_ARENA_MAX: '2',
                 RAYON_NUM_THREADS: '1',
                 TOKIO_WORKER_THREADS: '1',

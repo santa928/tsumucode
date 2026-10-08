@@ -51,6 +51,11 @@ metadata対応、表示・操作・リンク、異常後の修正、停止/再�
 生ログ・画像・作業記録は作者用の非公開保存先へ置き、公開pushに含めない。
 
 採点器は実HTTP200の文書応答、直接アクセス、実reload、操作結果を観測する。
+各文書はload完了後にURL・mainFrame・文書要求数・遷移数を照合し、遷移ごとの
+追加networkidle待機は課さない。全体10秒の期限と異常終了時のrun回収は維持する。
+全体期限超過は基盤503として区別し、実行の開始し直しを案内する。
+採点後のmarker確認中も実文書要求とURL変更を監視し、同一URLのreplaceStateは
+切替に数えない。同じURLへのreloadや、別URLへ移って戻る操作は切替として検出する。
 予定した遷移が完了した時だけ文書phaseを更新し、DOM読取やclickの間の文書切替は
 採用しない。詳細pageの500・操作期限超過は教材の `code-error` として返す。
 Nextの同URLへの履歴更新と、実文書の再読込は別々に検出する。
@@ -62,3 +67,6 @@ CIでは作者用imageの実行UIDを1000へ指定し、専用tmpfsの所有UID�
 readonly rootfsとnetwork:noneのまま、Browserの一時領域だけを書き込める。
 
 各予測は答えと理由を折り畳み、予測してから開示・実測と比較する。境界Lessonはuse clientがないCounterの診断から修復し、pageのasync/Node処理をServerへ残す。境界修復後に初期値とclickを直す。
+
+採点Browserの異常終了は固定の段階と分類だけを返す。例外本文・教材Sourceは
+公開診断へ含めず、HTTP通信・期限、文書context、Browser終了、DOM契約、版照合を区別する。

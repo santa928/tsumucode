@@ -11,7 +11,11 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { URL } from 'node:url';
 import { chromium } from '@playwright/test';
 import { nextWorkspace } from './next-project-protocol.mjs';
-import { NextLessonObservationError, observeNextLesson } from './next-project-observations.mjs';
+import {
+  NextLessonObservationError,
+  observeNextLesson,
+  watchDocumentVersion,
+} from './next-project-observations.mjs';
 import {
   previewBase,
   previewOrigin,
@@ -240,6 +244,7 @@ try {
   const diagnostics = [];
   const consoleErrors = [];
   let navigations = 0;
+  const documentVersion = watchDocumentVersion(page);
   page.on('framenavigated', (frame) => {
     if (frame === page.mainFrame()) navigations++;
   });
@@ -287,7 +292,7 @@ try {
   phase = 'initial-idle';
   await page.waitForLoadState('networkidle', { timeout: 3000 });
   assert.equal(new URL(page.url()).origin, origin);
-  let documentNavigation = navigations;
+  let documentNavigation = documentVersion();
   const heading = page.locator('h1#message');
   const count = await heading.count();
   const visible = count === 1 && (await heading.isVisible());
@@ -309,7 +314,7 @@ try {
       if (!(error instanceof NextLessonObservationError)) throw error;
       diagnostic(error.message);
     }
-    documentNavigation = navigations;
+    documentNavigation = documentVersion();
   }
   if (next && contract?.goal === 'page-route-query') {
     for (const [path, expected] of [
@@ -335,7 +340,8 @@ try {
   }
   phase = 'marker-after';
   await marker();
-  if (documentNavigation !== navigations)
+  // Nextの同一URLへのreplaceStateは文書切替ではない。実reloadと別URLは拒否する。
+  if (documentNavigation !== documentVersion())
     diagnostic('採点中に文書が切り替わりました。もう一度判定してください。');
   process.stdout.write(
     JSON.stringify({
@@ -364,6 +370,23 @@ try {
 } catch (error) {
   // 失敗段階だけを固定語彙で返し、learnerのSourceや例外本文を公開しない。
   process.stderr.write(`TSUMUCODE_GRADE_PHASE:${phase}\n`);
+  // 例外本文は出さず、基盤障害と文書・DOM観測の失敗を固定分類で区別する。
+  const message = error instanceof Error ? error.message : '';
+  const reason =
+    message === 'Grade HTTP deadline'
+      ? 'http-deadline'
+      : /ECONNRESET|ECONNREFUSED|EPIPE|socket hang up/u.test(message)
+        ? 'http-connection'
+        : /Execution context was destroyed|Cannot find context with specified id/u.test(message)
+          ? 'document-context'
+          : /Target page, context or browser has been closed/u.test(message)
+            ? 'browser-closed'
+            : /strict mode violation/u.test(message)
+              ? 'dom-contract'
+              : error?.code === 'ERR_ASSERTION'
+                ? 'identity'
+                : 'unknown';
+  process.stderr.write(`TSUMUCODE_GRADE_FAILURE:${reason}\n`);
   throw error;
 } finally {
   await browser?.close();

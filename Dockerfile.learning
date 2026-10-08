@@ -21,7 +21,8 @@ COPY scripts/content/fixtures/next-author-pilot.json scripts/content/fixtures/ne
 RUN node --input-type=module -e "import fs from 'node:fs'; const pilot = JSON.parse(fs.readFileSync('next-author-pilot.json')); fs.writeFileSync('package.json', JSON.stringify(pilot.manifest)); fs.copyFileSync('next-author-pilot.lock.json', 'package-lock.json'); fs.writeFileSync('tsconfig.json', pilot.files['tsconfig.json']);" \
     && npm ci --ignore-scripts --no-audit --no-fund --userconfig /dev/null
 WORKDIR /opt
-COPY scripts/local/next-project-bootstrap.mjs scripts/local/next-data-backend.mjs scripts/local/project-apply.mjs scripts/local/next-project-protocol.mjs scripts/local/next-routing-source.mjs scripts/local/next-data-source.mjs ./
+COPY scripts/local/next-project-bootstrap.mjs scripts/local/next-data-backend.mjs scripts/local/next-data-backend-build.mjs scripts/local/project-apply.mjs scripts/local/next-project-protocol.mjs scripts/local/next-routing-source.mjs scripts/local/next-data-source.mjs ./
+RUN node /opt/next-data-backend-build.mjs
 USER 1000:1000
 CMD ["node", "/opt/next-project-bootstrap.mjs"]
 
