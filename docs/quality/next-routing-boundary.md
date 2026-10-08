@@ -58,5 +58,7 @@ Nextの同URLへの履歴更新と、実文書の再読込は別々に検出す�
 `next-observations-acceptance.mjs` は作者用HTTPを実Browserで開き、通常文書遷移の
 合格、historyだけの偽遷移の不合格、イベント中の文書切替の拒否を検査する。
 これは採点器の負例検証であり、Next教材そのものの実行証拠には代用しない。
+CIでは作者用imageの実行UIDを1000へ指定し、専用tmpfsの所有UIDと揃える。
+readonly rootfsとnetwork:noneのまま、Browserの一時領域だけを書き込める。
 
 各予測は答えと理由を折り畳み、予測してから開示・実測と比較する。境界Lessonはuse clientがないCounterの診断から修復し、pageのasync/Node処理をServerへ残す。境界修復後に初期値とclickを直す。
