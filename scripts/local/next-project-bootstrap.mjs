@@ -107,10 +107,13 @@ function ensureLatest() {
           HOME: root,
           LANG: 'C.UTF-8',
           NEXT_TELEMETRY_DISABLED: '1',
+          // 固定RAM内でClientのcompileエラーも返せるよう、全Next childのheapを抑える。
+          NODE_OPTIONS: controlledData
+            ? '--max-old-space-size=128 --max-semi-space-size=4'
+            : '--max-old-space-size=160 --max-semi-space-size=4',
           ...(controlledData
             ? {
                 TSUMUCODE_NEXT_BASE_PATH: base,
-                NODE_OPTIONS: '--max-old-space-size=128 --max-semi-space-size=4',
                 MALLOC_ARENA_MAX: '2',
                 RAYON_NUM_THREADS: '1',
                 TOKIO_WORKER_THREADS: '1',
@@ -211,7 +214,7 @@ async function resources() {
 }
 
 function handle(req, res) {
-  if (controlledData && req.url === '/__tsumucode_resources' && req.method === 'GET') {
+  if (req.url === '/__tsumucode_resources' && req.method === 'GET') {
     void resources().then(
       (observed) => {
         res.setHeader('content-type', 'application/json');

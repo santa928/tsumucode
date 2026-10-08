@@ -96,6 +96,19 @@ describe('Next専用の境界', () => {
     expect(config.HostConfig.ReadonlyRootfs).toBe(true);
   });
 
+  it.each([
+    NEXT_WORKSPACE,
+    'next-ch02-l01-e01',
+    'next-ch02-l02-e01',
+    'next-ch03-l01-e01',
+    'next-ch03-l02-e01',
+  ])('Workspace %s の内部制御をPreviewへ公開しない', (workspaceId) => {
+    const current = { ...target, workspaceId };
+    for (const path of ['__tsumucode_ready', '__tsumucode_resources']) {
+      expect(previewRoute(`${previewBase(workspaceId, target.runId)}${path}`, current)).toBe(false);
+    }
+  });
+
   it('unsafe-evalと2MiB応答をNextの固定chunkにだけ限定する', () => {
     expect(previewHeaders(target.runId, NEXT_PROFILE)['content-security-policy']).toContain(
       "'unsafe-eval'",

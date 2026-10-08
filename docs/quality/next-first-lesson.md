@@ -58,3 +58,23 @@ GET `api/question` の2応答を実測する。期待値はtrusted graderに固�
 `next-project-browser-acceptance.mjs`は通常Lesson、編集/反映/保存、Hint、小画面、keyboard/axeを確認する。
 両診断はLocal Runtime CIで実行し、PR HEADとmerge後mainを照合する。
 診断ログ・スクリーンショット・作業記録は非公開の作者保存先へ置く。
+
+旧Client教材のcompileエラー負例で512 MiBのOOM終了を検出したため、
+旧3教材のNext childにNode heap160 MiB・semi-space4 MiBを設定する。
+新2は既存のheap128 MiB、旧3教材のRAMは512 MiBを維持する。
+採点期限や期待判定は緩めない。資源計測は固定socketの
+内部HTTPへ統一し、learnerへ追加Nodeを起動しない。この経路はPreviewへ公開しない。
+
+sealed socketがあるNextの反映確認も内部HTTPへ統一する。
+既存の反映確認ループ8秒・個別要求2秒の設定を維持し、compile中に追加Node probeを重ねない。
+起動時の未seal socketとViteの確認は既存の固定execを維持する。
+
+旧3でheap128 MiBを試した際は、OOMイベント0でもNextのメモリ閾値再起動と
+反映503を確認した。再起動との関連はあるが、API例外の直接分類は未確定のまま保持する。
+固定版のCLIは未指定時にホスト総RAMからheapを選ぶため、
+Dockerの上限内で動くよう明示的に抑える。自動再起動の保護は無効化しない。
+
+heap160 MiBの作者環境でClient9例→旧Lesson6例→routing8例を連続実行し、
+全23例が成功した。native監視のpeakは約434/433/474 MiB、上限までの差は
+約78/79/38 MiBだった。全教材でmax/oom/oomKillとZombieは0、PIDとtmpfsも
+上限内だった。これらは作者環境の観測であり、全環境の保証にはしない。

@@ -87,3 +87,12 @@ seal済みsocketでの固定HTTP確認を追加した。運用Reviewerが指摘�
 Zombie1だったrunについて、削除前に0へ戻ったとは認定しない。全体の正式受入は
 新しい上限到達/OOM拒否検査を含むexact HEADとmerge後mainのCI成功が条件となる。
 Reviewerの独自実行ではなく、作者の生監視・成功ログ・画像との照合である。
+
+最初の576 MiB候補のHEAD CIは、旧Client教材の負例で512 MiBのOOM終了を検出し、
+新2教材へ到達する前に失敗した。旧3教材のRAMは増やさず、Next childのheapを
+160 MiBへ限定し、資源計測とseal後の反映確認を追加Node不要の内部HTTPへ統一する。
+新2教材のheap128 MiB、採点期限、目標、期待値、SourceとPreviewの境界は維持する。
+作者の旧23 Fixture連続実行は成功し、上限到達/OOMとZombieは0だった。
+3 Reviewerは最終差分と作者証拠を照合し、必須修正0件と確認した。
+Routingのpeakは定期監視と採点直後の最大値を合わせ、約474 MiB・余裕約38 MiBとした。
+正式受入にはこの修正を含むexact HEADとmerge後mainの成功が引き続き必要となる。

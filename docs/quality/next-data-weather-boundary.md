@@ -59,8 +59,8 @@ Weatherの起動warmupと判定前には作者用内部APIで初回失敗条件�
 通常LessonのBrowser検証は予測開閉、編集/反映/判定、keyboard、失敗修復、合格版失効、
 停止/reload/再起動、狭い画面、axe、JSONのDraft/合格export/importを対象とする。
 Fixture・Solutionは作者用imageだけに含め、learner/web/graderへ配布しない。
-新2教材の資源計測は内部socketの固定経路で行い、追加Nodeを起動しない。
-memory.eventsのoom_kill、Zombie、PID、tmpfsを確認し、この経路はPreviewへ公開しない。
+5教材の資源計測は内部socketの固定経路で行い、追加Nodeを起動しない。
+memory.eventsのmax/oom/oom_kill、Zombie、PID、tmpfsを確認し、この経路はPreviewへ公開しない。
 採点基盤の異常終了は固定checkerの失敗段階だけを返し、例外本文やSourceは公開しない。
 作者用production buildの資源はlearnerとは別であり、その成功をlearnerのbuild保証にしない。
 実RSCの結果到着前にSource反映・停止を行い、部分応答の切断、旧版gradeの409、

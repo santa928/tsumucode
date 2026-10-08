@@ -146,6 +146,7 @@ async function nextControl(applied, socket, path, expected, headers = {}) {
 /** 固定execでSourceを配置し、終了codeと実HTTP反映markerの両方を確認する。 */
 export async function applyProject(id, record, runId, transport) {
   const metadata = projectMetadata(record, runId);
+  const nativeNext = record.profile === NEXT_PROFILE && Boolean(transport);
   const controlledData =
     record.profile === NEXT_PROFILE &&
     ['data-cache-revalidation', 'loading-error-not-found'].includes(
@@ -189,12 +190,13 @@ export async function applyProject(id, record, runId, transport) {
   const deadline = Date.now() + (record.profile === NEXT_PROFILE ? 8000 : 0);
   do {
     try {
-      const ready = controlledData
+      // sealed socketがあるNextは、compile中に追加Node probeを重ねない。
+      const ready = nativeNext
         ? await nextControl(transport.applied, transport.socket, '/__tsumucode_ready', metadata)
         : await probeProject(id, metadata);
       if (ready) return;
     } catch (error) {
-      if (!controlledData || error.message !== 'Next control deadline') throw error;
+      if (!nativeNext || error.message !== 'Next control deadline') throw error;
     }
     if (Date.now() >= deadline) break;
     await delay(100);
