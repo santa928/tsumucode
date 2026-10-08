@@ -36,7 +36,7 @@ Weather採点の教材エラーに含めず、その他の資源失敗は診断�
 
 learnerのCPU1、RAM/swap512 MiB、PID64、tmpfs各64 MiB、nonroot、readonly、
 network:none、cap dropを変更しない。新2教材だけdevのTurbopackファイルcacheを
-無効にし、dev validationは追加workerではなく同じprocessで行う。Node heapは192 MiBへ抑える。Source反映時は生成物の`.next`だけを初期化する。Draftは保持する。
+無効にし、dev validationは追加workerではなく同じprocessで行う。Node heapは128 MiB、semi-spaceは4 MiBへ抑える。固定APIのTypeScript変換はimage作成時に行い、learnerで変換器を常駐させない。readonly正本から生成したfactoryを使い、各保存版で状態を初期化する。Source反映時は生成物の`.next`だけを初期化する。Draftは保持する。
 新2教材の内部allocatorはarena2、Rayon/Tokioのworker設定は各1へ抑える。
 CPU・RAM・PID・tmpfsの上限や採点期限は変更しない。
 反映時はseal済みのsocketで旧Nextを先に停止してから固定execでSourceを配置する。

@@ -1,5 +1,5 @@
 import { Buffer } from 'node:buffer';
-import { stripTypeScriptTypes } from 'node:module';
+import { readFile } from 'node:fs/promises';
 import { URL } from 'node:url';
 import { nextWorkspace } from './next-project-protocol.mjs';
 
@@ -13,11 +13,11 @@ export async function nextDataBackend(workspaceId, base) {
         ? 'weather'
         : undefined;
   if (!kind) throw new Error('Controlled data workspace required');
-  // 学習者の実行時ファイルは読み込まない。readonly原稿と同じ正本を重複実装せず使う。
-  const fixed = contract.files[`app/api/${kind}/route.ts`];
-  const factory =
-    'export function createBackend() {\n' + fixed.replace(/^export /gmu, '') + '\nreturn GET;\n}';
-  const source = stripTypeScriptTypes(factory);
+  // readonly image作成時に正本から変換する。実行時にTS変換器を常駐させない。
+  const compiled = JSON.parse(
+    await readFile(new URL('./next-data-api.json', import.meta.url), 'utf8'),
+  );
+  const source = compiled[workspaceId];
   const module = await import(
     'data:text/javascript;base64,' + Buffer.from(source).toString('base64')
   );

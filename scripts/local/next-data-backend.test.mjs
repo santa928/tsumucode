@@ -1,7 +1,16 @@
-import { test } from 'vitest';
+import { test, vi } from 'vitest';
+import { readFile } from 'node:fs/promises';
+import { compileNextDataBackends } from './next-data-backend-build.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { nextDataBackend } from './next-data-backend.mjs';
+
+vi.mock('node:fs/promises', async (importOriginal) => {
+  const original = await importOriginal();
+  const mocked = { ...original, readFile: vi.fn() };
+  return { ...mocked, default: mocked };
+});
+vi.mocked(readFile).mockResolvedValue(JSON.stringify(compileNextDataBackends()));
 
 const base = '/w/lesson/run';
 async function serverFor(backend, accepted = () => {}) {
