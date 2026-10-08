@@ -38,6 +38,37 @@ describe('Nextのルーティングと境界教材', () => {
     }
   });
 
+  it('データ・失敗教材の固定データと編集対象を区別し、正負Fixtureを用意する', async () => {
+    const course = await loadAuthoringCourse('content/next');
+    const chapter = course.runtime.phases[0]!.chapters[2]!;
+    expect(chapter.lessons.map(({ id }) => id)).toEqual(['next-ch03-l01', 'next-ch03-l02']);
+    for (const lesson of chapter.lessons) {
+      const exercise = course.exercises.find(({ id }) => id === `${lesson.id}-e01`)!;
+      const contract = nextWorkspace(exercise.workspaceId)!;
+      expect(
+        Object.fromEntries(exercise.files.map(({ path, content }) => [path, content])),
+      ).toEqual(contract.files);
+      expect(
+        exercise.files
+          .filter(({ editable }) => !editable)
+          .map(({ path }) => path)
+          .sort(),
+      ).toEqual([...contract.readonlyFiles!].sort());
+      expect(exercise.fixtures).toHaveLength(lesson.id === 'next-ch03-l01' ? 8 : 9);
+      for (const fixture of exercise.fixtures) {
+        const files = Object.fromEntries(fixture.files.map(({ path, content }) => [path, content]));
+        for (const path of contract.readonlyFiles!) expect(files[path]).toBe(contract.files[path]);
+      }
+      expect(exercise.fixtures.find(({ id }) => id === 'static-display')?.expectedStatus).toBe(
+        'incomplete',
+      );
+      expect(exercise.validationRules[0]!.assertion).toEqual({
+        kind: 'next-page-http',
+        goal: contract.goal,
+      });
+    }
+  });
+
   it('別教材のSourceや採点目標を指定したpayloadを拒否する', async () => {
     const { runtime } = await loadAuthoringCourse('content/next');
     const changed = structuredClone(runtime);

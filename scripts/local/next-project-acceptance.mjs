@@ -3,10 +3,12 @@ import console from 'node:console';
 import { Buffer } from 'node:buffer';
 import assert from 'node:assert/strict';
 import { request } from 'node:http';
+import { join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { docker } from './docker-engine.mjs';
 import { NEXT_PROFILE, NEXT_WORKSPACE, nextWorkspace } from './next-project-protocol.mjs';
 import { ORIGIN } from './protocol.mjs';
+import { TRANSPORT_ROOT } from './preview-contract.mjs';
 
 // controller内の作者検証。外側の固定Fixture packetはshell経由で実行せずSourceとしてAPIへ保存する。
 const chunks = [];
@@ -20,7 +22,13 @@ const fixtures = JSON.parse(Buffer.concat(chunks).toString());
 const workspace = process.env.TSUMUCODE_NEXT_WORKSPACE ?? NEXT_WORKSPACE;
 const contract = nextWorkspace(workspace);
 assert.ok(contract);
-const expectedCount = { [NEXT_WORKSPACE]: 6, 'next-ch02-l01-e01': 8, 'next-ch02-l02-e01': 9 };
+const expectedCount = {
+  [NEXT_WORKSPACE]: 6,
+  'next-ch02-l01-e01': 8,
+  'next-ch02-l02-e01': 9,
+  'next-ch03-l01-e01': 8,
+  'next-ch03-l02-e01': 9,
+};
 assert.equal(fixtures.length, expectedCount[workspace]);
 const owner = process.env.TSUMUCODE_LOCAL_OWNER;
 assert.ok(owner);
@@ -74,6 +82,43 @@ async function owned() {
   );
 }
 async function resources(id) {
+  if (['data-cache-revalidation', 'loading-error-not-found'].includes(contract.goal)) {
+    const measured = await new Promise((resolve, reject) => {
+      const req = request(
+        {
+          socketPath: join(TRANSPORT_ROOT, run.runId, 'http.sock'),
+          path: '/__tsumucode_resources',
+        },
+        (res) => {
+          const chunks = [];
+          let bytes = 0;
+          res.on('data', (chunk) => {
+            bytes += chunk.length;
+            if (bytes > 1024) res.destroy(new Error('Resource response limit'));
+            else chunks.push(chunk);
+          });
+          res.on('error', reject);
+          res.on('end', () => {
+            try {
+              assert.equal(res.statusCode, 200);
+              resolve(JSON.parse(Buffer.concat(chunks).toString()));
+            } catch (error) {
+              reject(error);
+            }
+          });
+        },
+      );
+      req.setTimeout(2000, () => req.destroy(new Error('Resource deadline')));
+      req.on('error', reject);
+      req.end();
+    });
+    assert.equal(measured.zombies, 0, JSON.stringify(measured));
+    assert.equal(measured.memoryEvents.oomKill, 0, JSON.stringify(measured));
+    assert.ok(measured.pids <= 64);
+    assert.ok(measured.workspaceBytes <= 64 * 1024 * 1024);
+    assert.ok(measured.temporaryBytes <= 64 * 1024 * 1024);
+    return measured;
+  }
   const script = `const fs = require('node:fs');
 const value = (name) => Number(fs.readFileSync('/sys/fs/cgroup/' + name, 'utf8').trim());
 const usage = (path) => {
@@ -190,7 +235,28 @@ try {
     assert.equal(config.Mounts.length, 1);
     assert.equal(config.Mounts[0].Destination, '/transport');
     const graded = await api(`${path}/grade`, identity());
-    assert.equal(graded.status, 200, JSON.stringify(graded.value));
+    if (graded.status !== 200) {
+      const lastRun = (await api(path)).value.lastRun;
+      const inspected = await docker('GET', `/containers/${learner.Id}/json`).catch(
+        () => undefined,
+      );
+      const measured = await resources(learner.Id).catch(() => undefined);
+      assert.fail(
+        JSON.stringify({
+          fixture: fixture.id,
+          grade: graded.value,
+          run: { state: lastRun?.state, reason: lastRun?.reason, exitCode: lastRun?.exitCode },
+          learner: inspected
+            ? {
+                running: inspected.State.Running,
+                oomKilled: inspected.State.OOMKilled,
+                exitCode: inspected.State.ExitCode,
+              }
+            : 'removed',
+          measured,
+        }),
+      );
+    }
     assert.equal(
       graded.value.status,
       fixture.expectedStatus,

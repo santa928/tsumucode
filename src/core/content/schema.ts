@@ -1370,7 +1370,13 @@ export const NextPageHttpRuleSchema = z
     assertion: z
       .object({
         kind: z.literal('next-page-http'),
-        goal: z.enum(['page-route-query', 'nested-dynamic-navigation', 'server-client-counter']),
+        goal: z.enum([
+          'page-route-query',
+          'nested-dynamic-navigation',
+          'server-client-counter',
+          'data-cache-revalidation',
+          'loading-error-not-found',
+        ]),
       })
       .strict(),
   })

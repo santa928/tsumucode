@@ -54,3 +54,25 @@ lessons:
       next_learner_persona, next_learning_design_persona,
       next_runtime_safety_persona。独自実行は作者で、Reviewerはその実行証拠を確認する。実人の初心者受講テスト、全Co\
       urse、正式公開完了とは扱わない。詳細はnext-persona-review.md。"
+  - lessonId: next-ch03-l01
+    authorId: tsumucode-next-data-weather-authoring
+    reviewerId: next_learning_design_persona
+    sourceHash: 8fd3235515e187cc804aeee38005f8332192f9a6d6a6f46a24b4004b848c9dc4
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: '4 Slideの予測、再要求の対象→入口→対象操作、Server fetchの取得・保持・期限後更新を3 AIペルソナで独立読解。作者の固定Next16.3.8/512MiBの固定API分離試作8FixtureとSource保持/restart、正式整理後の通常UIで修復/合格版失効/keyboard/狭幅/axe0/JSON移送を確認。固定表示は不合格。 Reviewer IDs: next_learner_persona, next_learning_design_persona, next_runtime_safety_persona。独自実行は作者で、Reviewerはログと画像を照合。実人受講、全Course、正式公開完了とは扱わない。詳細はnext-persona-review.md。'
+  - lessonId: next-ch03-l02
+    authorId: tsumucode-next-data-weather-authoring
+    reviewerId: next_learning_design_persona
+    sourceHash: c16a7725be599d2a5992cc6dba34669121f6ae7f329fc05e14c6269582eff324
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: '4 Slideの予測、待機→結果、retryによる実再取得、API404とstream済みpage200の区別を3 AIペルソナで独立読解。作者の固定Next16.3.8/512MiBの固定API分離試作9Fixture（常時status負例を含む）と、正式通常UIの修復/停止復旧/keyboard/狭幅/axe0/JSON移送を確認。実RSC途中のSource反映/停止の切断、旧版grade409、新版/再起動passを確認。 Reviewer IDs: next_learner_persona, next_learning_design_persona, next_runtime_safety_persona。独自実行は作者で、Reviewerはログと画像を照合。実人受講、全Course、正式公開完了とは扱わない。詳細はnext-persona-review.md。'

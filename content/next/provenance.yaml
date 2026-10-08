@@ -493,3 +493,525 @@ items:
   - id: next-routing-original-162
     visibility: authoring
     path: chapters/next-ch02/lessons/next-ch02-l01/exercises/next-ch02-l01-e01/fixtures/detail-error/app/trips/[slug]/page.tsx
+  - id: next-data-original-1
+    visibility: public
+    path: chapters/next-ch03/chapter.yaml
+  - id: next-data-original-6
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/exercise.yaml
+  - id: next-data-original-12
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/alternative/app/api/sample/route.ts
+  - id: next-data-original-15
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/alternative/app/data/[mode]/page.tsx
+  - id: next-data-original-16
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/alternative/app/data-url.ts
+  - id: next-data-original-17
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/alternative/app/globals.css
+  - id: next-data-original-18
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/alternative/app/layout.tsx
+  - id: next-data-original-19
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/alternative/app/page.tsx
+  - id: next-data-original-24
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/code-error/app/api/sample/route.ts
+  - id: next-data-original-27
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/code-error/app/data/[mode]/page.tsx
+  - id: next-data-original-28
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/code-error/app/data-url.ts
+  - id: next-data-original-29
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/code-error/app/globals.css
+  - id: next-data-original-30
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/code-error/app/layout.tsx
+  - id: next-data-original-31
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/code-error/app/page.tsx
+  - id: next-data-original-36
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/solution/app/api/sample/route.ts
+  - id: next-data-original-39
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/solution/app/data/[mode]/page.tsx
+  - id: next-data-original-40
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/solution/app/data-url.ts
+  - id: next-data-original-41
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/solution/app/globals.css
+  - id: next-data-original-42
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/solution/app/layout.tsx
+  - id: next-data-original-43
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/solution/app/page.tsx
+  - id: next-data-original-48
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/starter/app/api/sample/route.ts
+  - id: next-data-original-51
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/starter/app/data/[mode]/page.tsx
+  - id: next-data-original-52
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/starter/app/data-url.ts
+  - id: next-data-original-53
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/starter/app/globals.css
+  - id: next-data-original-54
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/starter/app/layout.tsx
+  - id: next-data-original-55
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/starter/app/page.tsx
+  - id: next-data-original-60
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/static-display/app/api/sample/route.ts
+  - id: next-data-original-63
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/static-display/app/data/[mode]/page.tsx
+  - id: next-data-original-64
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/static-display/app/data-url.ts
+  - id: next-data-original-65
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/static-display/app/globals.css
+  - id: next-data-original-66
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/static-display/app/layout.tsx
+  - id: next-data-original-67
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/static-display/app/page.tsx
+  - id: next-data-original-72
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/wrong-cached/app/api/sample/route.ts
+  - id: next-data-original-75
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/wrong-cached/app/data/[mode]/page.tsx
+  - id: next-data-original-76
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/wrong-cached/app/data-url.ts
+  - id: next-data-original-77
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/wrong-cached/app/globals.css
+  - id: next-data-original-78
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/wrong-cached/app/layout.tsx
+  - id: next-data-original-79
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/wrong-cached/app/page.tsx
+  - id: next-data-original-84
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/wrong-fresh/app/api/sample/route.ts
+  - id: next-data-original-87
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/wrong-fresh/app/data/[mode]/page.tsx
+  - id: next-data-original-88
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/wrong-fresh/app/data-url.ts
+  - id: next-data-original-89
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/wrong-fresh/app/globals.css
+  - id: next-data-original-90
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/wrong-fresh/app/layout.tsx
+  - id: next-data-original-91
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/wrong-fresh/app/page.tsx
+  - id: next-data-original-96
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/wrong-revalidate/app/api/sample/route.ts
+  - id: next-data-original-99
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/wrong-revalidate/app/data/[mode]/page.tsx
+  - id: next-data-original-100
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/wrong-revalidate/app/data-url.ts
+  - id: next-data-original-101
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/wrong-revalidate/app/globals.css
+  - id: next-data-original-102
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/wrong-revalidate/app/layout.tsx
+  - id: next-data-original-103
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/fixtures/wrong-revalidate/app/page.tsx
+  - id: next-data-original-104
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/instructions.md
+  - id: next-data-original-109
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/solution/app/api/sample/route.ts
+  - id: next-data-original-112
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/solution/app/data/[mode]/page.tsx
+  - id: next-data-original-113
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/solution/app/data-url.ts
+  - id: next-data-original-114
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/solution/app/globals.css
+  - id: next-data-original-115
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/solution/app/layout.tsx
+  - id: next-data-original-116
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/solution/app/page.tsx
+  - id: next-data-original-121
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/starter/app/api/sample/route.ts
+  - id: next-data-original-124
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/starter/app/data/[mode]/page.tsx
+  - id: next-data-original-125
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/starter/app/data-url.ts
+  - id: next-data-original-126
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/starter/app/globals.css
+  - id: next-data-original-127
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/starter/app/layout.tsx
+  - id: next-data-original-128
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l01/exercises/next-ch03-l01-e01/starter/app/page.tsx
+  - id: next-data-original-129
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l01/lesson.yaml
+  - id: next-data-original-131
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l01/slides/s01-foundation.md
+  - id: next-data-original-132
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l01/slides/s02-values.md
+  - id: next-data-original-133
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l01/slides/s03-observe.md
+  - id: next-data-original-134
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l01/slides/s04-checkpoint.md
+  - id: next-data-original-138
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/exercise.yaml
+  - id: next-data-original-144
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/alternative/app/api/weather/route.ts
+  - id: next-data-original-145
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/alternative/app/data-url.ts
+  - id: next-data-original-146
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/alternative/app/globals.css
+  - id: next-data-original-147
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/alternative/app/layout.tsx
+  - id: next-data-original-148
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/alternative/app/page.tsx
+  - id: next-data-original-151
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/alternative/app/weather/[state]/error.tsx
+  - id: next-data-original-152
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/alternative/app/weather/[state]/loading.tsx
+  - id: next-data-original-153
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/alternative/app/weather/[state]/not-found.tsx
+  - id: next-data-original-154
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/alternative/app/weather/[state]/page.tsx
+  - id: next-data-original-159
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/code-error/app/api/weather/route.ts
+  - id: next-data-original-160
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/code-error/app/data-url.ts
+  - id: next-data-original-161
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/code-error/app/globals.css
+  - id: next-data-original-162
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/code-error/app/layout.tsx
+  - id: next-data-original-163
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/code-error/app/page.tsx
+  - id: next-data-original-166
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/code-error/app/weather/[state]/error.tsx
+  - id: next-data-original-167
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/code-error/app/weather/[state]/loading.tsx
+  - id: next-data-original-168
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/code-error/app/weather/[state]/not-found.tsx
+  - id: next-data-original-169
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/code-error/app/weather/[state]/page.tsx
+  - id: next-data-original-174
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/solution/app/api/weather/route.ts
+  - id: next-data-original-175
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/solution/app/data-url.ts
+  - id: next-data-original-176
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/solution/app/globals.css
+  - id: next-data-original-177
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/solution/app/layout.tsx
+  - id: next-data-original-178
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/solution/app/page.tsx
+  - id: next-data-original-181
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/solution/app/weather/[state]/error.tsx
+  - id: next-data-original-182
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/solution/app/weather/[state]/loading.tsx
+  - id: next-data-original-183
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/solution/app/weather/[state]/not-found.tsx
+  - id: next-data-original-184
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/solution/app/weather/[state]/page.tsx
+  - id: next-data-original-189
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/starter/app/api/weather/route.ts
+  - id: next-data-original-190
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/starter/app/data-url.ts
+  - id: next-data-original-191
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/starter/app/globals.css
+  - id: next-data-original-192
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/starter/app/layout.tsx
+  - id: next-data-original-193
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/starter/app/page.tsx
+  - id: next-data-original-196
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/starter/app/weather/[state]/error.tsx
+  - id: next-data-original-197
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/starter/app/weather/[state]/loading.tsx
+  - id: next-data-original-198
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/starter/app/weather/[state]/not-found.tsx
+  - id: next-data-original-199
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/starter/app/weather/[state]/page.tsx
+  - id: next-data-original-204
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/static-display/app/api/weather/route.ts
+  - id: next-data-original-205
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/static-display/app/data-url.ts
+  - id: next-data-original-206
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/static-display/app/globals.css
+  - id: next-data-original-207
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/static-display/app/layout.tsx
+  - id: next-data-original-208
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/static-display/app/page.tsx
+  - id: next-data-original-211
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/static-display/app/weather/[state]/error.tsx
+  - id: next-data-original-212
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/static-display/app/weather/[state]/loading.tsx
+  - id: next-data-original-213
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/static-display/app/weather/[state]/not-found.tsx
+  - id: next-data-original-214
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/static-display/app/weather/[state]/page.tsx
+  - id: next-data-original-219
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-loading/app/api/weather/route.ts
+  - id: next-data-original-220
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-loading/app/data-url.ts
+  - id: next-data-original-221
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-loading/app/globals.css
+  - id: next-data-original-222
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-loading/app/layout.tsx
+  - id: next-data-original-223
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-loading/app/page.tsx
+  - id: next-data-original-226
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-loading/app/weather/[state]/error.tsx
+  - id: next-data-original-227
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-loading/app/weather/[state]/loading.tsx
+  - id: next-data-original-228
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-loading/app/weather/[state]/not-found.tsx
+  - id: next-data-original-229
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-loading/app/weather/[state]/page.tsx
+  - id: next-data-original-234
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-not-found/app/api/weather/route.ts
+  - id: next-data-original-235
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-not-found/app/data-url.ts
+  - id: next-data-original-236
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-not-found/app/globals.css
+  - id: next-data-original-237
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-not-found/app/layout.tsx
+  - id: next-data-original-238
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-not-found/app/page.tsx
+  - id: next-data-original-241
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-not-found/app/weather/[state]/error.tsx
+  - id: next-data-original-242
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-not-found/app/weather/[state]/loading.tsx
+  - id: next-data-original-243
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-not-found/app/weather/[state]/not-found.tsx
+  - id: next-data-original-244
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-not-found/app/weather/[state]/page.tsx
+  - id: next-data-original-249
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-retry/app/api/weather/route.ts
+  - id: next-data-original-250
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-retry/app/data-url.ts
+  - id: next-data-original-251
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-retry/app/globals.css
+  - id: next-data-original-252
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-retry/app/layout.tsx
+  - id: next-data-original-253
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-retry/app/page.tsx
+  - id: next-data-original-256
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-retry/app/weather/[state]/error.tsx
+  - id: next-data-original-257
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-retry/app/weather/[state]/loading.tsx
+  - id: next-data-original-258
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-retry/app/weather/[state]/not-found.tsx
+  - id: next-data-original-259
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/wrong-retry/app/weather/[state]/page.tsx
+  - id: next-data-original-260
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/instructions.md
+  - id: next-data-original-265
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/solution/app/api/weather/route.ts
+  - id: next-data-original-266
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/solution/app/data-url.ts
+  - id: next-data-original-267
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/solution/app/globals.css
+  - id: next-data-original-268
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/solution/app/layout.tsx
+  - id: next-data-original-269
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/solution/app/page.tsx
+  - id: next-data-original-272
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/solution/app/weather/[state]/error.tsx
+  - id: next-data-original-273
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/solution/app/weather/[state]/loading.tsx
+  - id: next-data-original-274
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/solution/app/weather/[state]/not-found.tsx
+  - id: next-data-original-275
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/solution/app/weather/[state]/page.tsx
+  - id: next-data-original-280
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/starter/app/api/weather/route.ts
+  - id: next-data-original-281
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/starter/app/data-url.ts
+  - id: next-data-original-282
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/starter/app/globals.css
+  - id: next-data-original-283
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/starter/app/layout.tsx
+  - id: next-data-original-284
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/starter/app/page.tsx
+  - id: next-data-original-287
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/starter/app/weather/[state]/error.tsx
+  - id: next-data-original-288
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/starter/app/weather/[state]/loading.tsx
+  - id: next-data-original-289
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/starter/app/weather/[state]/not-found.tsx
+  - id: next-data-original-290
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/starter/app/weather/[state]/page.tsx
+  - id: next-data-original-291
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l02/lesson.yaml
+  - id: next-data-original-293
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l02/slides/s01-foundation.md
+  - id: next-data-original-294
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l02/slides/s02-values.md
+  - id: next-data-original-295
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l02/slides/s03-observe.md
+  - id: next-data-original-296
+    visibility: public
+    path: chapters/next-ch03/lessons/next-ch03-l02/slides/s04-checkpoint.md
+  - id: next-weather-permanent-status-0
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/permanent-status/app/api/weather/route.ts
+  - id: next-weather-permanent-status-1
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/permanent-status/app/data-url.ts
+  - id: next-weather-permanent-status-2
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/permanent-status/app/globals.css
+  - id: next-weather-permanent-status-3
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/permanent-status/app/layout.tsx
+  - id: next-weather-permanent-status-4
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/permanent-status/app/page.tsx
+  - id: next-weather-permanent-status-5
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/permanent-status/app/weather/[state]/error.tsx
+  - id: next-weather-permanent-status-6
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/permanent-status/app/weather/[state]/loading.tsx
+  - id: next-weather-permanent-status-7
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/permanent-status/app/weather/[state]/not-found.tsx
+  - id: next-weather-permanent-status-8
+    visibility: authoring
+    path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/permanent-status/app/weather/[state]/page.tsx

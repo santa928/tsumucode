@@ -79,6 +79,11 @@ export function starterFiles(profile = PROJECT_PROFILE, id = NEXT_WORKSPACE) {
 
 export function validateFiles(files, profile = PROJECT_PROFILE, id = NEXT_WORKSPACE) {
   exact(files, Object.keys(starterFiles(profile, id)));
+  for (const path of (profile === NEXT_PROFILE ? nextWorkspace(id)?.readonlyFiles : undefined) ??
+    []) {
+    if (files[path] !== starterFiles(profile, id)[path])
+      throw new RequestError(400, '制御データと固定ファイルは変更できません。');
+  }
   let size = 0;
   for (const value of Object.values(files)) {
     if (typeof value !== 'string') throw new RequestError(400, 'Sourceは文字列が必要です。');

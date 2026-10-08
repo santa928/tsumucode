@@ -1,0 +1,24 @@
+{
+  'id': 'next-ch03-l02',
+  'kind': 'standard',
+  'title': '待機・失敗・対象なしを分ける',
+  'goal': '実際の待機と初回失敗を観測し、再取得による復旧と対象なしを区別できる。',
+  'estimatedMinutes': 35,
+  'prerequisiteLessonIds': ['next-ch03-l01'],
+  'slideSources':
+    [
+      'slides/s01-foundation.md',
+      'slides/s02-values.md',
+      'slides/s03-observe.md',
+      'slides/s04-checkpoint.md',
+    ],
+  'exerciseSources': ['exercises/next-ch03-l02-e01/exercise.yaml'],
+  'reflection': '実際の待機と初回失敗を観測し、再取得による復旧と対象なしを区別できる。',
+  'glossaryRefs': ['loading', 'retry', 'not-found'],
+  'completion':
+    {
+      'kind': 'standard',
+      'finalSlideId': 'next-ch03-l02-s04',
+      'requiredExerciseIds': ['next-ch03-l02-e01'],
+    },
+}

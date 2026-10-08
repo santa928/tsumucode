@@ -3,6 +3,7 @@ import { Buffer } from 'node:buffer';
 import { setTimeout, clearTimeout } from 'node:timers';
 import { docker, containerConfig, removeContainer } from './docker-engine.mjs';
 import { projectMetadata } from './project-engine.mjs';
+import { RequestError } from './protocol.mjs';
 
 /** API入力からimage/command/権限を選ばず、固定Browserだけで現在runを観測する。 */
 export async function gradeProject({ owner, image, source, runId, socket, signal }) {
@@ -75,7 +76,24 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
       cancellation,
     ]);
     active();
-    if (ended.StatusCode !== 0) throw new Error('Grade Browser failed');
+    if (ended.StatusCode !== 0) {
+      const diagnostic = await docker(
+        'GET',
+        `/containers/${id}/logs?stdout=0&stderr=1&tail=20`,
+        undefined,
+        2000,
+        true,
+      );
+      active();
+      // Dockerの診断から固定checker自身の段階だけを採用する。
+      const phase = diagnostic
+        .subarray(0, 16 * 1024)
+        .toString()
+        .match(
+          /TSUMUCODE_GRADE_PHASE:(marker-before|browser-launch|initial-navigation|initial-idle|observations|marker-after)\n/u,
+        )?.[1];
+      throw new RequestError(503, `採点用Browserが終了しました（段階: ${phase ?? '未確認'}）。`);
+    }
     const output = await docker(
       'GET',
       `/containers/${id}/logs?stdout=1&stderr=0`,

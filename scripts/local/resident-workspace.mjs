@@ -130,11 +130,14 @@ export class ResidentWorkspace {
     const run = this.#current;
     if (!run?.socket || run.reason || !['ready', 'applying'].includes(run.record.state))
       return undefined;
+    const streaming = run.workspaceId === 'next-ch03-l02-e01';
+    if (streaming && run.record.state !== 'ready') return undefined;
     return {
       workspaceId: run.workspaceId,
       runId: run.record.runId,
       profile: run.record.profile,
       ...run.socket,
+      ...(streaming ? { sourceRevision: run.record.sourceRevision } : {}),
     };
   }
 
@@ -171,7 +174,10 @@ export class ResidentWorkspace {
       if (run.reason) throw new RequestError(409, '対象runを停止しています。');
       await this.#store.updateRun(id, run.record);
       if (run.reason) throw new RequestError(409, '対象runを停止しています。');
-      await this.#engine.applyProject(run.containerId, source, run.record.runId);
+      await this.#engine.applyProject(run.containerId, source, run.record.runId, {
+        socket: run.socket,
+        applied: { ...run.record },
+      });
       if (run.reason) throw new RequestError(409, '対象runを停止しています。');
       run.record.sourceRevision = source.sourceRevision;
       run.record.sourceHash = source.sourceHash;
@@ -253,7 +259,7 @@ export class ResidentWorkspace {
       run.activityAt = Date.now();
       return result;
     } catch (error) {
-      if (!(error instanceof RequestError)) {
+      if (!(error instanceof RequestError) || error.status >= 500) {
         this.#slot.recoveryNeeded();
         await this.#cancel(run, 'grade-failed');
       }

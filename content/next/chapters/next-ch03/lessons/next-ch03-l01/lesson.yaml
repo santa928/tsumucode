@@ -1,0 +1,24 @@
+{
+  'id': 'next-ch03-l01',
+  'kind': 'standard',
+  'title': '取得する値をいつ更新するか',
+  'goal': '複数の実HTTP要求で取得・保持・期限後の更新を確かめられる。',
+  'estimatedMinutes': 35,
+  'prerequisiteLessonIds': ['next-ch02-l02'],
+  'slideSources':
+    [
+      'slides/s01-foundation.md',
+      'slides/s02-values.md',
+      'slides/s03-observe.md',
+      'slides/s04-checkpoint.md',
+    ],
+  'exerciseSources': ['exercises/next-ch03-l01-e01/exercise.yaml'],
+  'reflection': '複数の実HTTP要求で取得・保持・期限後の更新を確かめられる。',
+  'glossaryRefs': ['server-fetch', 'data-cache', 'revalidation'],
+  'completion':
+    {
+      'kind': 'standard',
+      'finalSlideId': 'next-ch03-l01-s04',
+      'requiredExerciseIds': ['next-ch03-l01-e01'],
+    },
+}

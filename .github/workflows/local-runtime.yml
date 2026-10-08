@@ -123,7 +123,7 @@ jobs:
         run: |
           set -euo pipefail
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
-          for workspace in next-ch02-l01-e01 next-ch02-l02-e01; do
+          for workspace in next-ch02-l01-e01 next-ch02-l02-e01 next-ch03-l01-e01 next-ch03-l02-e01; do
             docker run --rm --network none "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" node scripts/local/next-fixture-packet.mjs "$workspace" |
               docker exec -i -e TSUMUCODE_NEXT_WORKSPACE="$workspace" "$controller" node next-project-acceptance.mjs
           done
@@ -132,6 +132,17 @@ jobs:
           docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256
           --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-next-browser-checks"
           node scripts/local/next-routing-browser-acceptance.mjs
+      - name: Verify Next data and Weather normal Lessons and JSON transfer
+        run: >-
+          docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256
+          --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-next-browser-checks"
+          node scripts/local/next-routing-browser-acceptance.mjs next-ch03
+      - name: Verify Weather RSC cancellation on Source apply and stop
+        run: |
+          set -euo pipefail
+          preview=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q preview)
+          docker run --rm --network none "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" node scripts/local/next-fixture-packet.mjs next-ch03-l02-e01 |
+            docker exec -i "$preview" node --input-type=module -e "$(cat scripts/local/next-weather-stream-acceptance.mjs)"
       - name: Verify normal controller restart
         run: |
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)

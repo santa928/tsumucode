@@ -1,12 +1,7 @@
 import { URL } from 'node:url';
 
-/** 教材のHTTP/表示/操作失敗を、採点基盤の障害と区別する。 */
-export class NextLessonObservationError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = 'NextLessonObservationError';
-  }
-}
+import { NextLessonObservationError } from './next-observation-error.mjs';
+export { NextLessonObservationError } from './next-observation-error.mjs';
 
 /** #133の固定URLと操作をtrusted Browserで読む。教材の自己申告は採用しない。 */
 export async function observeNextLesson(page, origin, base, goal) {

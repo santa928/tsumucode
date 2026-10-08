@@ -1,8 +1,14 @@
 import { Buffer } from 'node:buffer';
+import { randomUUID } from 'node:crypto';
+import { lstat } from 'node:fs/promises';
+import { request } from 'node:http';
+import { join } from 'node:path';
+import { setTimeout, clearTimeout } from 'node:timers';
 import { setTimeout as delay } from 'node:timers/promises';
 import { docker, containerConfig } from './docker-engine.mjs';
-import { NEXT_PROFILE } from './next-project-protocol.mjs';
+import { NEXT_PROFILE, nextWorkspace } from './next-project-protocol.mjs';
 import { PROJECT_LIMITS, PROJECT_PROFILE } from './project-protocol.mjs';
+import { TRANSPORT_ROOT, previewRunId } from './preview-contract.mjs';
 
 const PROBE = `const http = require('node:http');
 const expected = JSON.parse(Buffer.from(process.argv[1], 'base64').toString('utf8'));
@@ -87,9 +93,75 @@ export function projectMetadata(record, runId) {
   };
 }
 
+/** seal済みsocketで固定制御HTTPを確認し、learnerへ追加Node processを起動しない。 */
+async function nextControl(applied, socket, path, expected, headers = {}) {
+  const directory = join(TRANSPORT_ROOT, previewRunId(applied.runId));
+  const socketPath = join(directory, 'http.sock');
+  const [parent, current] = await Promise.all([lstat(directory), lstat(socketPath)]);
+  if (
+    !parent.isDirectory() ||
+    parent.uid !== 0 ||
+    parent.gid !== 1000 ||
+    parent.mode & 0o222 ||
+    !current.isSocket() ||
+    current.uid !== 1000 ||
+    current.gid !== 1000 ||
+    current.dev !== socket?.dev ||
+    current.ino !== socket?.ino
+  )
+    throw new Error('Invalid sealed Next control socket');
+  return new Promise((resolve, reject) => {
+    const req = request({ socketPath, method: 'GET', path, headers }, (res) => {
+      const chunks = [];
+      let bytes = 0;
+      res.on('data', (chunk) => {
+        bytes += chunk.length;
+        if (bytes > 1024) res.destroy(new Error('Next control response limit'));
+        else chunks.push(chunk);
+      });
+      res.on('error', reject);
+      res.on('end', () => {
+        try {
+          const marker = JSON.parse(Buffer.concat(chunks).toString());
+          resolve(
+            res.statusCode === 200 &&
+              Object.entries(expected).every(([key, value]) => marker[key] === value),
+          );
+        } catch {
+          resolve(false);
+        }
+      });
+    });
+    const timer = setTimeout(() => req.destroy(new Error('Next control deadline')), 2000);
+    req.on('close', () => clearTimeout(timer));
+    req.on('error', reject);
+    req.end();
+  });
+}
+
 /** 固定execでSourceを配置し、終了codeと実HTTP反映markerの両方を確認する。 */
-export async function applyProject(id, record, runId) {
+export async function applyProject(id, record, runId, transport) {
   const metadata = projectMetadata(record, runId);
+  const controlledData =
+    record.profile === NEXT_PROFILE &&
+    ['data-cache-revalidation', 'loading-error-not-found'].includes(
+      nextWorkspace(record.workspaceId)?.goal,
+    );
+  if (controlledData) {
+    // 同じSourceの再反映でも、固定execのmarker更新前に旧Nextを再起動させない。
+    metadata.applyId = randomUUID();
+    if (
+      !transport ||
+      !(await nextControl(
+        transport.applied,
+        transport.socket,
+        '/__tsumucode_pause',
+        projectMetadata(transport.applied, runId),
+        { 'x-tsumucode-apply-id': metadata.applyId },
+      ))
+    )
+      throw new Error('Next pause failed');
+  }
   const execution = await docker(
     'POST',
     `/containers/${id}/exec`,
@@ -112,7 +184,14 @@ export async function applyProject(id, record, runId) {
   if (inspected.Running || inspected.ExitCode !== 0) throw new Error('Project apply failed');
   const deadline = Date.now() + (record.profile === NEXT_PROFILE ? 8000 : 0);
   do {
-    if (await probeProject(id, metadata)) return;
+    try {
+      const ready = controlledData
+        ? await nextControl(transport.applied, transport.socket, '/__tsumucode_ready', metadata)
+        : await probeProject(id, metadata);
+      if (ready) return;
+    } catch (error) {
+      if (!controlledData || error.message !== 'Next control deadline') throw error;
+    }
     if (Date.now() >= deadline) break;
     await delay(100);
   } while (Date.now() < deadline);
