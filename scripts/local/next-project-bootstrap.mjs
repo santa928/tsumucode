@@ -101,7 +101,13 @@ function ensureLatest() {
           LANG: 'C.UTF-8',
           NEXT_TELEMETRY_DISABLED: '1',
           ...(controlledData
-            ? { TSUMUCODE_NEXT_BASE_PATH: base, NODE_OPTIONS: '--max-old-space-size=192' }
+            ? {
+                TSUMUCODE_NEXT_BASE_PATH: base,
+                NODE_OPTIONS: '--max-old-space-size=192',
+                MALLOC_ARENA_MAX: '2',
+                RAYON_NUM_THREADS: '1',
+                TOKIO_WORKER_THREADS: '1',
+              }
             : {}),
         },
         stdio: ['ignore', 'inherit', 'inherit'],
