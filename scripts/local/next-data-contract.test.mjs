@@ -41,6 +41,7 @@ test('固定7pageのGET/HEADだけを追加し、内部APIと他Workspaceを公�
       'api/weather?control=inspect',
       '__tsumucode_pause',
       '__tsumucode_ready',
+      '__tsumucode_resources',
       'weather/unknown',
       'data/unknown',
       '../data/fresh',

@@ -113,6 +113,26 @@ function gradeInput(workspace) {
   };
 }
 
+test('採点基盤の503は診断を返してもrunを回収し、次回起動前に清掃する', async () => {
+  await fixture(async ({ manager, engine, removed, recovery, isActive }) => {
+    await manager.start('one', { expectedSourceRevision: 1 });
+    const ready = await state(manager, 'ready');
+    engine.gradeProject = async () => {
+      throw new RequestError(503, '採点用Browserが終了しました。');
+    };
+    await assert.rejects(manager.grade('one', gradeInput(ready)), { status: 503 });
+    const stopped = await state(manager, 'failed');
+    assert.equal(stopped.lastRun.reason, 'grade-failed');
+    assert.equal(isActive(), false);
+    assert.equal(recovery(), true);
+    assert.ok(removed.includes('learner'));
+    await manager.start('one', { expectedSourceRevision: 1 });
+    await state(manager, 'ready');
+    assert.ok(removed.includes('owner'));
+    assert.equal(recovery(), false);
+  }, true);
+});
+
 test('採点は保存/反映版を前後に確認し、採点中の保存と別runの結果を合格にしない', async () => {
   await fixture(async ({ manager, engine }) => {
     await manager.start('one', { expectedSourceRevision: 1 });

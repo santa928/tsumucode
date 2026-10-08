@@ -228,8 +228,10 @@ await new Promise((resolve, reject) => {
   bridge.listen(4175, '127.0.0.1', resolve);
 });
 let browser;
+let phase = 'marker-before';
 try {
   await marker();
+  phase = 'browser-launch';
   browser = await chromium.launch({
     headless: true,
     args: ['--no-sandbox', '--disable-dev-shm-usage'],
@@ -278,9 +280,11 @@ try {
     const error = request.failure()?.errorText ?? 'unknown';
     if (error !== 'net::ERR_ABORTED') diagnostic(`HTTP resource failed: ${error}`);
   });
+  phase = 'initial-navigation';
   const response = await page.goto(origin + base, { waitUntil: 'load', timeout: 5000 });
   if (response.status() !== 200) diagnostic(`HTTP page failed: ${response.status()}`);
   // Viteの反映に伴う再読込も含め、実HTTP資源が静止してから同じ文書のDOMを読む。
+  phase = 'initial-idle';
   await page.waitForLoadState('networkidle', { timeout: 3000 });
   assert.equal(new URL(page.url()).origin, origin);
   let documentNavigation = navigations;
@@ -295,6 +299,7 @@ try {
     contract?.goal,
   );
   let lessonObservation;
+  phase = 'observations';
   if (contract && contract.goal !== 'page-route-query' && !diagnostics.length) {
     try {
       lessonObservation = controlledData
@@ -328,6 +333,7 @@ try {
       }
     }
   }
+  phase = 'marker-after';
   await marker();
   if (documentNavigation !== navigations)
     diagnostic('採点中に文書が切り替わりました。もう一度判定してください。');
@@ -355,6 +361,10 @@ try {
       evaluatedAt: new Date().toISOString(),
     }) + '\n',
   );
+} catch (error) {
+  // 失敗段階だけを固定語彙で返し、learnerのSourceや例外本文を公開しない。
+  process.stderr.write(`TSUMUCODE_GRADE_PHASE:${phase}\n`);
+  throw error;
 } finally {
   await browser?.close();
   websockets.forEach((close) => close());

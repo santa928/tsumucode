@@ -259,7 +259,7 @@ export class ResidentWorkspace {
       run.activityAt = Date.now();
       return result;
     } catch (error) {
-      if (!(error instanceof RequestError)) {
+      if (!(error instanceof RequestError) || error.status >= 500) {
         this.#slot.recoveryNeeded();
         await this.#cancel(run, 'grade-failed');
       }

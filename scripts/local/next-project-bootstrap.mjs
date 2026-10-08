@@ -1,7 +1,7 @@
 import process from 'node:process';
 import { Buffer } from 'node:buffer';
 import { setTimeout, clearTimeout } from 'node:timers';
-import { mkdir, readFile, writeFile, symlink, chmod, rm } from 'node:fs/promises';
+import { mkdir, readFile, writeFile, symlink, chmod, rm, readdir, statfs } from 'node:fs/promises';
 import { createServer, request } from 'node:http';
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
@@ -171,7 +171,56 @@ function ensureLatest() {
   return updating;
 }
 
+/** 固定隔離の資源だけを読む。作者計測のために追加Node processを起動しない。 */
+async function resources() {
+  const value = async (name) => Number((await readFile(`/sys/fs/cgroup/${name}`, 'utf8')).trim());
+  const usage = async (path) => {
+    const stat = await statfs(path);
+    return (stat.blocks - stat.bfree) * stat.bsize;
+  };
+  const states = await Promise.all(
+    (await readdir('/proc'))
+      .filter((name) => /^\d+$/u.test(name))
+      .map(async (name) => {
+        const stat = await readFile(`/proc/${name}/stat`, 'utf8').catch((error) => {
+          if (error.code !== 'ENOENT') throw error;
+          return '';
+        });
+        return stat.slice(stat.lastIndexOf(')') + 2).startsWith('Z');
+      }),
+  );
+  const events = Object.fromEntries(
+    (await readFile('/sys/fs/cgroup/memory.events', 'utf8'))
+      .trim()
+      .split('\n')
+      .map((line) => line.split(' ')),
+  );
+  return {
+    zombies: states.filter(Boolean).length,
+    memoryPeak: await value('memory.peak'),
+    memoryCurrent: await value('memory.current'),
+    memoryEvents: {
+      max: Number(events.max),
+      oom: Number(events.oom),
+      oomKill: Number(events.oom_kill),
+    },
+    pids: await value('pids.current'),
+    workspaceBytes: await usage(root),
+    temporaryBytes: await usage('/tmp'),
+  };
+}
+
 function handle(req, res) {
+  if (controlledData && req.url === '/__tsumucode_resources' && req.method === 'GET') {
+    void resources().then(
+      (observed) => {
+        res.setHeader('content-type', 'application/json');
+        res.end(JSON.stringify(observed));
+      },
+      () => res.writeHead(503).end('{}'),
+    );
+    return;
+  }
   if (controlledData && req.url === '/__tsumucode_pause' && req.method === 'GET') {
     const applyId = req.headers['x-tsumucode-apply-id'];
     if (
