@@ -370,6 +370,23 @@ try {
 } catch (error) {
   // 失敗段階だけを固定語彙で返し、learnerのSourceや例外本文を公開しない。
   process.stderr.write(`TSUMUCODE_GRADE_PHASE:${phase}\n`);
+  // 例外本文は出さず、基盤障害と文書・DOM観測の失敗を固定分類で区別する。
+  const message = error instanceof Error ? error.message : '';
+  const reason =
+    message === 'Grade HTTP deadline'
+      ? 'http-deadline'
+      : /ECONNRESET|ECONNREFUSED|EPIPE|socket hang up/u.test(message)
+        ? 'http-connection'
+        : /Execution context was destroyed|Cannot find context with specified id/u.test(message)
+          ? 'document-context'
+          : /Target page, context or browser has been closed/u.test(message)
+            ? 'browser-closed'
+            : /strict mode violation/u.test(message)
+              ? 'dom-contract'
+              : error?.code === 'ERR_ASSERTION'
+                ? 'identity'
+                : 'unknown';
+  process.stderr.write(`TSUMUCODE_GRADE_FAILURE:${reason}\n`);
   throw error;
 } finally {
   await browser?.close();

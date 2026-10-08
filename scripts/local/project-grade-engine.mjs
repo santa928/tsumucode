@@ -99,7 +99,16 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
         .match(
           /TSUMUCODE_GRADE_PHASE:(marker-before|browser-launch|initial-navigation|initial-idle|observations|marker-after)\n/u,
         )?.[1];
-      throw new RequestError(503, `採点用Browserが終了しました（段階: ${phase ?? '未確認'}）。`);
+      const reason = diagnostic
+        .subarray(0, 16 * 1024)
+        .toString()
+        .match(
+          /TSUMUCODE_GRADE_FAILURE:(http-deadline|http-connection|document-context|browser-closed|dom-contract|identity|unknown)\n/u,
+        )?.[1];
+      throw new RequestError(
+        503,
+        `採点用Browserが終了しました（段階: ${phase ?? '未確認'} / 分類: ${reason ?? '未確認'}）。`,
+      );
     }
     const output = await docker(
       'GET',

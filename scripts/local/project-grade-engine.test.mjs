@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { Buffer } from 'node:buffer';
 import { afterEach, test, vi } from 'vitest';
 
 const engine = vi.hoisted(() => ({ docker: vi.fn(), removeContainer: vi.fn() }));
@@ -47,3 +48,35 @@ test('全体10秒で固定graderを回収し、基盤503として期限超過を
   await rejected;
   assert.ok(engine.removeContainer.mock.calls.some(([id]) => id === 'grader'));
 });
+
+for (const [reported, expected] of [
+  ['http-deadline', 'http-deadline'],
+  ['private-learner-text', '未確認'],
+]) {
+  test(`異常終了の固定分類 ${reported} を照合し、例外本文を返さない`, async () => {
+    engine.removeContainer.mockResolvedValue(undefined);
+    engine.docker.mockImplementation(async (method, path) => {
+      if (path.startsWith('/images/')) return { Id: 'fixed-image' };
+      if (path.startsWith('/containers/create')) return { Id: 'grader' };
+      if (path.endsWith('/wait')) return { StatusCode: 1 };
+      if (path.includes('/logs?'))
+        return Buffer.from(
+          `TSUMUCODE_GRADE_PHASE:observations\nTSUMUCODE_GRADE_FAILURE:${reported}\nprivate-learner-text`,
+        );
+    });
+    await assert.rejects(
+      gradeProject({
+        owner: 'tsumucode-learning-test',
+        image: 'tsumucode-learning-test-grader:local',
+        source: { workspaceId: 'one', sourceRevision: 1, sourceHash: 'fixed-source' },
+        runId: '00000000-0000-4000-8000-000000000001',
+        socket: { dev: 1, ino: 2 },
+      }),
+      {
+        status: 503,
+        message: `採点用Browserが終了しました（段階: observations / 分類: ${expected}）。`,
+      },
+    );
+    assert.ok(engine.removeContainer.mock.calls.some(([id]) => id === 'grader'));
+  });
+}

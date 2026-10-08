@@ -67,3 +67,6 @@ CIでは作者用imageの実行UIDを1000へ指定し、専用tmpfsの所有UID�
 readonly rootfsとnetwork:noneのまま、Browserの一時領域だけを書き込める。
 
 各予測は答えと理由を折り畳み、予測してから開示・実測と比較する。境界Lessonはuse clientがないCounterの診断から修復し、pageのasync/Node処理をServerへ残す。境界修復後に初期値とclickを直す。
+
+採点Browserの異常終了は固定の段階と分類だけを返す。例外本文・教材Sourceは
+公開診断へ含めず、HTTP通信・期限、文書context、Browser終了、DOM契約、版照合を区別する。
