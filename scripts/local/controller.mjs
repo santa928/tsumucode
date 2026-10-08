@@ -27,6 +27,8 @@ import {
 } from './docker-engine.mjs';
 import { WorkspaceStore } from './workspace-store.mjs';
 import { ResidentWorkspace } from './resident-workspace.mjs';
+import { PreviewTransport } from './preview-transport.mjs';
+import { startPreviewControl } from './preview-control.mjs';
 import {
   PROJECT_PROFILE,
   PROJECT_LIMITS,
@@ -45,10 +47,12 @@ let recoveryNeeded = true;
 let readyOperation;
 let closing = false;
 const store = new WorkspaceStore('/var/lib/tsumucode/workspaces');
+const transport = process.env.TSUMUCODE_LOCAL_PREVIEW === '1' ? new PreviewTransport() : undefined;
 const resident = new ResidentWorkspace({
   store,
   owner,
   image: process.env.TSUMUCODE_LOCAL_PROJECT_IMAGE,
+  transport,
   slot: {
     acquire(run) {
       if (closing) throw new RequestError(503, '学習環境を停止しています。');
@@ -71,6 +75,7 @@ async function ready() {
     readyOperation = (async () => {
       if (recoveryNeeded) {
         await cleanupOwned(owner);
+        if (transport) await transport.recover();
         // 固定Projectを有効にしたcontrollerだけが永続Sourceを管理する。
         if (process.env.TSUMUCODE_LOCAL_PROJECT_IMAGE) await store.recover();
         if (process.env.TSUMUCODE_LOCAL_PROJECT_IMAGE) await resident.recovered();
@@ -306,7 +311,9 @@ async function handle(req, res) {
       if (!process.env.TSUMUCODE_LOCAL_PROJECT_IMAGE)
         throw new RequestError(503, '固定Projectはこのcontrollerで有効ではありません。');
       const matched =
-        /^\/api\/workspaces\/([a-z0-9-]+)(?:\/(source|start|stop|reset|activity))?$/u.exec(req.url);
+        /^\/api\/workspaces\/([a-z0-9-]+)(?:\/(source|start|stop|reset|activity|apply))?$/u.exec(
+          req.url,
+        );
       if (!matched) throw new RequestError(404, 'Workspace APIがありません。');
       const id = workspaceId(matched[1]);
       switch (matched[2]) {
@@ -328,6 +335,9 @@ async function handle(req, res) {
         }
         case 'stop':
           value = await resident.stop(id, input);
+          break;
+        case 'apply':
+          value = await resident.apply(id, input);
           break;
         case 'reset':
           value = await resident.reset(id, input);
@@ -421,10 +431,14 @@ try {
   recoveryNeeded = true;
 }
 server.listen(4174, '0.0.0.0');
+const previewControl = transport
+  ? await startPreviewControl(() => resident.previewTarget())
+  : undefined;
 /** 正常終了では進行中runを止め、所有する孤児を回収してから終了する。 */
 async function shutdown() {
   closing = true;
   server.close();
+  previewControl?.close();
   try {
     if (active) {
       if (active.workspaceId) await resident.shutdown();

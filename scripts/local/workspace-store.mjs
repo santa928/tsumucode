@@ -165,7 +165,7 @@ export class WorkspaceStore {
         if (!/^[a-z0-9-]+\.json$/u.test(name)) continue;
         const record = await this.#read(name.slice(0, -5));
         if (
-          ['starting', 'ready', 'stopping'].includes(record.lastRun?.state) ||
+          ['starting', 'ready', 'applying', 'stopping'].includes(record.lastRun?.state) ||
           record.lastRun?.cleanupPending
         )
           await this.#write({

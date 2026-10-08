@@ -25,20 +25,48 @@ services:
       dockerfile: Dockerfile.learning
       target: controller
     init: true
+    user: '0:1000'
     read_only: true
     cap_drop: [ALL]
     security_opt: ['no-new-privileges:true']
     environment:
       TSUMUCODE_LOCAL_OWNER: ${TSUMUCODE_LOCAL_OWNER:?Use scripts/learn.sh}
       TSUMUCODE_LOCAL_PROJECT_IMAGE: ${TSUMUCODE_LOCAL_OWNER:?Use scripts/learn.sh}-project:local
+      TSUMUCODE_LOCAL_PREVIEW: '1'
     volumes:
       - ${TSUMUCODE_LOCAL_SOCKET:?Use scripts/learn.sh}:/var/run/docker.sock
       - source:/var/lib/tsumucode/workspaces
+      - control:/var/run/tsumucode-preview
+      - transport:/var/lib/tsumucode/preview-transport
     networks: [learning]
     stop_grace_period: 30s
+  preview:
+    build:
+      context: .
+      dockerfile: Dockerfile.learning
+      target: preview
+    init: true
+    user: '1000:1000'
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
+    ports: ['127.0.0.1:4175:4175']
+    networks: [web]
+    volumes:
+      - control:/var/run/tsumucode-preview:ro
+      - transport:/var/lib/tsumucode/preview-transport:ro
+    depends_on: [controller]
 networks:
   web: {}
   learning:
     internal: true
 volumes:
   source: {}
+  control: {}
+  transport:
+    name: ${TSUMUCODE_LOCAL_OWNER:?Use scripts/learn.sh}_transport
+    driver: local
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+      o: size=8m,uid=0,gid=1000,mode=0750

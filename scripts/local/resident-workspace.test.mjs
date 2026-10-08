@@ -9,7 +9,7 @@ import { ResidentWorkspace } from './resident-workspace.mjs';
 import { STARTER_FILES, PROJECT_LIMITS } from './project-protocol.mjs';
 import { RequestError } from './protocol.mjs';
 
-async function fixture(operation) {
+async function fixture(operation, preview = false, limits = PROJECT_LIMITS) {
   const directory = await mkdtemp(join(tmpdir(), 'resident-test-'));
   const store = new WorkspaceStore(directory);
   await store.save('one', 0, STARTER_FILES);
@@ -27,6 +27,7 @@ async function fixture(operation) {
       if (path === '/containers/create') return { Id: 'learner' };
       if (path.endsWith('/json')) return { State: { Running: true } };
     },
+    async applyProject() {},
     async probeProject() {
       return true;
     },
@@ -59,7 +60,24 @@ async function fixture(operation) {
       recovery = true;
     },
   };
-  const manager = new ResidentWorkspace({ store, owner: 'owner', image: 'fixed', slot, engine });
+  const transport = preview
+    ? {
+        async prepare() {},
+        async seal() {
+          return { dev: 1, ino: 2 };
+        },
+        async remove() {},
+      }
+    : undefined;
+  const manager = new ResidentWorkspace({
+    store,
+    owner: 'owner',
+    image: 'fixed',
+    slot,
+    engine,
+    transport,
+    limits,
+  });
   try {
     await operation({
       manager,
@@ -67,6 +85,7 @@ async function fixture(operation) {
       engine,
       slot,
       removed,
+      transport,
       isActive: () => Boolean(active),
       recovery: () => recovery,
     });
@@ -292,4 +311,186 @@ test('status pollはidleを延長しない（短縮された内部診断期限�
     assert.equal(result.lastRun.reason, 'idle');
     assert.equal(result.sourceRevision, 1);
   });
+});
+
+test('反映は保存版/hash/runを照合し、反映中の保存でも反映版を巻き戻さない', async () => {
+  await fixture(async ({ manager, engine }) => {
+    const started = await manager.start('one', { expectedSourceRevision: 1 });
+    await state(manager, 'ready');
+    const saved = await manager.save('one', {
+      expectedSourceRevision: 1,
+      files: { ...STARTER_FILES, 'message.js': 'second' },
+    });
+    await assert.rejects(
+      manager.apply('one', {
+        runId: started.runId,
+        expectedSourceRevision: 1,
+        expectedSourceHash: saved.sourceHash,
+      }),
+      { status: 409 },
+    );
+    let entered;
+    let release;
+    const waiting = new Promise((resolve) => {
+      entered = resolve;
+    });
+    engine.applyProject = () =>
+      new Promise((resolve) => {
+        entered();
+        release = resolve;
+      });
+    const apply = manager.apply('one', {
+      runId: started.runId,
+      expectedSourceRevision: 2,
+      expectedSourceHash: saved.sourceHash,
+    });
+    await waiting;
+    assert.equal((await manager.status('one')).lastRun.state, 'applying');
+    await assert.rejects(
+      manager.apply('one', {
+        runId: started.runId,
+        expectedSourceRevision: 2,
+        expectedSourceHash: saved.sourceHash,
+      }),
+      { status: 409 },
+    );
+    await manager.save('one', {
+      expectedSourceRevision: 2,
+      files: { ...STARTER_FILES, 'message.js': 'third' },
+    });
+    release();
+    const result = await apply;
+    assert.equal(result.sourceRevision, 3);
+    assert.equal(result.lastRun.sourceRevision, 2);
+    assert.equal(result.lastRun.sourceHash, saved.sourceHash);
+    await manager.stop('one', { runId: started.runId });
+    assert.equal(manager.previewTarget(), undefined);
+  }, true);
+});
+
+test('反映中の停止と反映失敗はreadyに復帰せずSourceを保持する', async () => {
+  await fixture(async ({ manager, engine }) => {
+    const started = await manager.start('one', { expectedSourceRevision: 1 });
+    const ready = await state(manager, 'ready');
+    let entered;
+    let release;
+    const waiting = new Promise((resolve) => {
+      entered = resolve;
+    });
+    engine.applyProject = () =>
+      new Promise((resolve) => {
+        entered();
+        release = resolve;
+      });
+    const apply = manager.apply('one', {
+      runId: started.runId,
+      expectedSourceRevision: 1,
+      expectedSourceHash: ready.sourceHash,
+    });
+    await waiting;
+    const rejected = assert.rejects(apply, { status: 409 });
+    const stopped = manager.stop('one', { runId: started.runId });
+    release();
+    await rejected;
+    assert.equal((await stopped).lastRun.state, 'stopped');
+    const second = await manager.start('one', { expectedSourceRevision: 1 });
+    await state(manager, 'ready');
+    engine.applyProject = async () => {
+      throw new Error('exec failure');
+    };
+    await assert.rejects(
+      manager.apply('one', {
+        runId: second.runId,
+        expectedSourceRevision: 1,
+        expectedSourceHash: ready.sourceHash,
+      }),
+    );
+    const failed = await state(manager, 'failed');
+    assert.equal(failed.lastRun.reason, 'apply-failed');
+    assert.deepEqual(failed.files, STARTER_FILES);
+  }, true);
+});
+
+test('反映記録の保存待ちで停止した場合は固定execを呼ばない', async () => {
+  await fixture(async ({ manager, store, engine }) => {
+    const started = await manager.start('one', { expectedSourceRevision: 1 });
+    const ready = await state(manager, 'ready');
+    const original = store.updateRun.bind(store);
+    let enter;
+    let release;
+    const entered = new Promise((resolve) => {
+      enter = resolve;
+    });
+    store.updateRun = async (id, run) => {
+      if (run.state === 'applying') {
+        enter();
+        await new Promise((resolve) => {
+          release = resolve;
+        });
+      }
+      return original(id, run);
+    };
+    let calls = 0;
+    engine.applyProject = async () => {
+      calls++;
+    };
+    const applying = manager.apply('one', {
+      runId: started.runId,
+      expectedSourceRevision: 1,
+      expectedSourceHash: ready.sourceHash,
+    });
+    await entered;
+    const rejected = assert.rejects(applying, { status: 409 });
+    const stopped = manager.stop('one', { runId: started.runId });
+    release();
+    await rejected;
+    assert.equal((await stopped).lastRun.state, 'stopped');
+    assert.equal(calls, 0);
+  }, true);
+});
+
+test('prepareの途中失敗は自身のtransportも回収し、回収失敗はbarrierへ残す', async () => {
+  await fixture(async ({ manager, transport, recovery, engine }) => {
+    let removed = 0;
+    let created = 0;
+    const original = engine.docker;
+    engine.docker = async (...args) => {
+      if (args[1] === '/containers/create') created++;
+      return original(...args);
+    };
+    transport.prepare = async () => {
+      throw new Error('chmod failed after mkdir');
+    };
+    transport.remove = async () => {
+      removed++;
+    };
+    await manager.start('one', { expectedSourceRevision: 1 });
+    await state(manager, 'failed');
+    assert.equal(removed, 1);
+    assert.equal(created, 0);
+    transport.remove = async () => {
+      throw new Error('cleanup failed');
+    };
+    await manager.start('one', { expectedSourceRevision: 1 });
+    const failed = await state(manager, 'failed');
+    assert.equal(failed.lastRun.cleanupPending, true);
+    assert.equal(recovery(), true);
+  }, true);
+});
+
+test('sealが起動期限を越えた場合はreadyとPreviewを公開しない', async () => {
+  await fixture(
+    async ({ manager, transport }) => {
+      transport.seal = async () => {
+        await delay(70);
+        return { dev: 1, ino: 2 };
+      };
+      await manager.start('one', { expectedSourceRevision: 1 });
+      const failed = await state(manager, 'failed');
+      assert.equal(failed.lastRun.reason, 'startup-timeout');
+      assert.equal(manager.previewTarget(), undefined);
+    },
+    true,
+    { ...PROJECT_LIMITS, startMs: 50 },
+  );
 });

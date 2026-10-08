@@ -11,7 +11,8 @@ import {
   runId,
 } from './project-protocol.mjs';
 import { docker, followOutput, cleanupOwned, removeContainer } from './docker-engine.mjs';
-import { projectImage, projectConfig, probeProject } from './project-engine.mjs';
+import { projectImage, projectConfig, probeProject, applyProject } from './project-engine.mjs';
+import { previewBase, previewOrigin } from './preview-contract.mjs';
 
 /** 常駐runの排他・期限・回収を扱う。Sourceの更新とHTTP認証は各担当へ委譲する。 */
 export class ResidentWorkspace {
@@ -23,13 +24,15 @@ export class ResidentWorkspace {
   #current;
   #engine;
   #limits;
+  #transport;
 
-  constructor({ store, owner, image, slot, engine, limits = PROJECT_LIMITS }) {
+  constructor({ store, owner, image, slot, engine, transport, limits = PROJECT_LIMITS }) {
     this.#store = store;
     this.#owner = owner;
     this.#image = image;
     this.#slot = slot;
     this.#limits = limits;
+    this.#transport = transport;
     this.#engine = engine ?? {
       docker,
       followOutput,
@@ -38,6 +41,7 @@ export class ResidentWorkspace {
       projectImage,
       projectConfig,
       probeProject,
+      applyProject,
     };
   }
 
@@ -110,6 +114,64 @@ export class ResidentWorkspace {
     return this.status(id);
   }
 
+  /** 現在runだけの固定socket identityを返す。Sourceや管理資格情報を含めない。 */
+  previewTarget() {
+    const run = this.#current;
+    if (!run?.socket || run.reason || !['ready', 'applying'].includes(run.record.state))
+      return undefined;
+    return { workspaceId: run.workspaceId, runId: run.record.runId, ...run.socket };
+  }
+
+  /** 保存版と反映版を区別し、停止・同時反映・古い要求を現在runへ混ぜない。 */
+  async apply(id, input) {
+    exact(input, ['runId', 'expectedSourceRevision', 'expectedSourceHash']);
+    runId(input.runId);
+    expectedRevision(input.expectedSourceRevision);
+    if (!/^[a-f0-9]{64}$/u.test(input.expectedSourceHash))
+      throw new RequestError(400, 'Source hashが不正です。');
+    const run = this.#current;
+    if (
+      !this.#transport ||
+      !run ||
+      run.workspaceId !== id ||
+      run.record.runId !== input.runId ||
+      run.record.state !== 'ready' ||
+      run.reason
+    )
+      throw new RequestError(409, '対象runは反映できる状態ではありません。');
+    run.record.state = 'applying';
+    let finish;
+    run.applyDone = new Promise((resolve) => {
+      finish = resolve;
+    });
+    try {
+      const source = await this.#store.read(id);
+      if (
+        source.sourceRevision !== input.expectedSourceRevision ||
+        source.sourceHash !== input.expectedSourceHash
+      )
+        throw new RequestError(409, 'Source版が更新されています。再取得してください。');
+      if (run.reason) throw new RequestError(409, '対象runを停止しています。');
+      await this.#store.updateRun(id, run.record);
+      if (run.reason) throw new RequestError(409, '対象runを停止しています。');
+      await this.#engine.applyProject(run.containerId, source, run.record.runId);
+      if (run.reason) throw new RequestError(409, '対象runを停止しています。');
+      run.record.sourceRevision = source.sourceRevision;
+      run.record.sourceHash = source.sourceHash;
+      run.record.state = 'ready';
+      run.activityAt = Date.now();
+      await this.#store.updateRun(id, run.record);
+      return this.status(id);
+    } catch (error) {
+      if (!(error instanceof RequestError)) await this.#cancel(run, 'apply-failed');
+      else if (!run.reason) run.record.state = 'ready';
+      throw error;
+    } finally {
+      finish();
+      run.applyDone = undefined;
+    }
+  }
+
   async #cancel(run, reason) {
     run.reason ??= reason;
     run.record.state = 'stopping';
@@ -166,11 +228,23 @@ export class ResidentWorkspace {
       run.prepared.resolve();
       // 準備待ちの間に停止した場合は、確認済みSource/run記録だけを確定しcreateしない。
       if (run.reason) return;
+      if (this.#transport) {
+        // prepareの途中で失敗しても、作成を試みた自身のrunディレクトリを回収する。
+        run.transportPrepared = true;
+        await this.#transport.prepare(run.record.runId);
+        if (run.reason) return;
+      }
       createAttempted = true;
       const container = await this.#engine.docker(
         'POST',
         '/containers/create',
-        this.#engine.projectConfig(source, this.#owner, run.record.runId, image),
+        this.#engine.projectConfig(
+          source,
+          this.#owner,
+          run.record.runId,
+          image,
+          Boolean(this.#transport),
+        ),
       );
       run.containerId = container.Id;
       if (!run.reason) {
@@ -205,6 +279,17 @@ export class ResidentWorkspace {
               if (Date.now() - run.startedAt >= this.#limits.startMs)
                 run.reason = 'startup-timeout';
               else {
+                if (this.#transport) {
+                  run.socket = await this.#transport.seal(run.record.runId);
+                  if (run.reason) break;
+                  if (Date.now() - run.startedAt >= this.#limits.startMs) {
+                    run.reason = 'startup-timeout';
+                    break;
+                  }
+                  run.record.previewUrl =
+                    previewOrigin(run.record.runId) +
+                    previewBase(run.workspaceId, run.record.runId);
+                }
                 run.record.state = 'ready';
                 await this.#store.updateRun(run.workspaceId, run.record);
               }
@@ -221,9 +306,11 @@ export class ResidentWorkspace {
       closing = true;
       output?.close();
       try {
+        await run.applyDone;
         if (run.containerId) await this.#engine.removeContainer(run.containerId);
         // create成功の応答だけ失われた場合もowner labelで実体を回収する。
         else if (createAttempted) await this.#engine.cleanupOwned(this.#owner);
+        if (run.transportPrepared) await this.#transport.remove(run.record.runId);
       } catch {
         run.reason = 'cleanup-failed';
         run.record.cleanupPending = true;
