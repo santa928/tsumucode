@@ -174,7 +174,10 @@ export class ResidentWorkspace {
       if (run.reason) throw new RequestError(409, '対象runを停止しています。');
       await this.#store.updateRun(id, run.record);
       if (run.reason) throw new RequestError(409, '対象runを停止しています。');
-      await this.#engine.applyProject(run.containerId, source, run.record.runId);
+      await this.#engine.applyProject(run.containerId, source, run.record.runId, {
+        socket: run.socket,
+        applied: { ...run.record },
+      });
       if (run.reason) throw new RequestError(409, '対象runを停止しています。');
       run.record.sourceRevision = source.sourceRevision;
       run.record.sourceHash = source.sourceHash;

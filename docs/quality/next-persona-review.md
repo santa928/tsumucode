@@ -60,6 +60,12 @@ Weatherは待機中の結果非表示・完了後のstatus消失も判定し、�
 正負APIの試作証拠と正式UI/stream証拠を区別し、Reviewer独自実行や実人受講とは扱わない。
 RAM/swap512MiBなどのlearner上限は維持し、768MiB案は採用していない。
 
+反映時に旧Nextと追加Node processを重ねないよう、新2教材の反映前停止と
+seal済みsocketでの固定HTTP確認を追加した。運用Reviewerが指摘したpause中の
+旧marker再起動は、反映識別子と停止完了を照合するまで再開しない形に修正した。
+実HTTP受入に同じSourceの再反映、pause後の並行ready拒否、停止・Source保持と
+再起動を含める。原稿・UI・採点目標は変わらず、3 Reviewerの前回確認は継続適用する。
+
 このレビューの対象は現在の5 Lessonである。Courseはdraftを維持する。
 正式公開には#135のForm/Action、#136のProject・独立復元・無Hintの転移課題、
 #137のCourse全体の受入と公開手順の完了が必要であり、この記録で代替しない。

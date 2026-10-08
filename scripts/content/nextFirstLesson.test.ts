@@ -7,7 +7,7 @@ describe('Next最初の通常Lesson', () => {
   it('初期Sourceと固定実行契約を揃え、正負Fixtureと説明を通常Lessonへ接続する', async () => {
     const compiled = await loadAuthoringCourse('content/next');
     expect(compiled.runtime.publicationStatus).toBe('draft');
-    expect(compiled.runtime.expectedTotals.standardExercises).toBe(3);
+    expect(compiled.runtime.expectedTotals.standardExercises).toBe(5);
     const lesson = compiled.runtime.phases[0]!.chapters[0]!.lessons[0]!;
     expect(lesson.kind).toBe('standard');
     expect(lesson.slides).toHaveLength(4);

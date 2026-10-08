@@ -438,8 +438,13 @@ test('反映は保存版/hash/runを照合し、反映中の保存でも反映�
     const waiting = new Promise((resolve) => {
       entered = resolve;
     });
-    engine.applyProject = () =>
+    engine.applyProject = (id, source, runId, transport) =>
       new Promise((resolve) => {
+        assert.equal(id, 'learner');
+        assert.equal(source.sourceRevision, 2);
+        assert.equal(runId, started.runId);
+        assert.deepEqual(transport.socket, { dev: 1, ino: 2 });
+        assert.equal(transport.applied.sourceRevision, 1);
         entered();
         release = resolve;
       });

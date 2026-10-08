@@ -39,6 +39,11 @@ network:none、cap dropを変更しない。新2教材だけdevのTurbopackフ�
 無効にし、dev validationは追加workerではなく同じprocessで行う。Node heapは192 MiBへ抑える。Source反映時は生成物の`.next`だけを初期化する。Draftは保持する。
 新2教材の内部allocatorはarena2、Rayon/Tokioのworker設定は各1へ抑える。
 CPU・RAM・PID・tmpfsの上限や採点期限は変更しない。
+反映時はseal済みのsocketで旧Nextを先に停止してから固定execでSourceを配置する。
+反映確認もcontrollerから同じsocketへの固定HTTPで行い、compile中のlearnerへ
+追加のNode probeを起動しない。制御用pause/ready経路はPreviewへ公開しない。
+反映ごとの識別子を固定execのmarkerへ渡し、pause中はその更新と旧Nextの
+停止完了を確認するまでready要求から再起動しない。同じSourceの再反映も区別する。
 固定データAPIはbootstrapのloopback 5174で処理し、Nextは5175で起動する。
 これにより固定APIの追加compileを避ける。学習者の実行時ファイルは読み込まず、
 image内のreadonly API原稿と同じ正本をNode 24の型除去で実行する。

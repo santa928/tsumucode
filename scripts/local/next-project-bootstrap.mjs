@@ -45,6 +45,7 @@ let active;
 let updating;
 let stopping = false;
 let dataBackend;
+let paused;
 
 if (controlledData) {
   // 固定APIは同じ隔離のloopbackで処理し、Nextの追加compileを避ける。
@@ -76,6 +77,12 @@ function ensureLatest() {
   if (updating) return updating;
   updating = (async () => {
     const desired = await readFile('/tmp/applied.json', 'utf8');
+    if (paused) {
+      const pause = paused;
+      await pause.stopped;
+      if (JSON.parse(desired).applyId !== pause.applyId) throw new Error('Next apply pending');
+      paused = undefined;
+    }
     if (desired === active && child) return JSON.parse(active);
     dataBackend?.retire();
     await stopChild();
@@ -165,6 +172,32 @@ function ensureLatest() {
 }
 
 function handle(req, res) {
+  if (controlledData && req.url === '/__tsumucode_pause' && req.method === 'GET') {
+    const applyId = req.headers['x-tsumucode-apply-id'];
+    if (
+      updating ||
+      paused ||
+      stopping ||
+      !active ||
+      typeof applyId !== 'string' ||
+      !/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/u.test(applyId)
+    ) {
+      res.writeHead(409).end('{}');
+      return;
+    }
+    const previous = active;
+    active = undefined;
+    dataBackend?.retire();
+    paused = { applyId, stopped: stopChild() };
+    void paused.stopped.then(
+      () => {
+        res.setHeader('content-type', 'application/json');
+        res.end(previous);
+      },
+      () => res.writeHead(503).end('{}'),
+    );
+    return;
+  }
   if (req.url === '/__tsumucode_ready' && req.method === 'GET') {
     void ensureLatest().then(
       (current) => {

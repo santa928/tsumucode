@@ -2,13 +2,14 @@ import process from 'node:process';
 import console from 'node:console';
 import { Buffer } from 'node:buffer';
 import assert from 'node:assert/strict';
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { request } from 'node:http';
+import { join } from 'node:path';
 import { setTimeout, clearTimeout } from 'node:timers';
 import { setTimeout as delay } from 'node:timers/promises';
 import { ORIGIN } from './protocol.mjs';
 import { nextWorkspace } from './next-project-protocol.mjs';
-import { previewBase, previewOrigin } from './preview-contract.mjs';
+import { TRANSPORT_ROOT, previewBase, previewOrigin } from './preview-contract.mjs';
 
 // 作者/CI専用。Preview container内で、実RSCの途中に反映・停止を行う。
 const chunks = [];
@@ -90,6 +91,37 @@ async function start() {
   assert.fail('Ready deadline');
 }
 
+/** 作者だけが固定内部HTTPを操作し、exec前のreadyで旧Nextを再起動しないことを確認する。 */
+function control(path, headers = {}) {
+  return new Promise((resolve, reject) => {
+    const req = request(
+      {
+        socketPath: join(TRANSPORT_ROOT, run.runId, 'http.sock'),
+        method: 'GET',
+        path,
+        headers,
+      },
+      (res) => {
+        const chunks = [];
+        let bytes = 0;
+        res.on('data', (chunk) => {
+          bytes += chunk.length;
+          if (bytes > 1024) res.destroy(new Error('Control response limit'));
+          else chunks.push(chunk);
+        });
+        res.on('error', reject);
+        res.on('end', () =>
+          resolve({ status: res.statusCode, value: JSON.parse(Buffer.concat(chunks).toString()) }),
+        );
+      },
+    );
+    const timer = setTimeout(() => req.destroy(new Error('Control deadline')), 10000);
+    req.on('close', () => clearTimeout(timer));
+    req.on('error', reject);
+    req.end();
+  });
+}
+
 function slowStream() {
   let observed;
   let failed;
@@ -158,6 +190,29 @@ try {
     assert.equal((await api(`${path}/stop`, { runId: saved.lastRun.runId })).status, 200);
   await save(solution.files);
   await start();
+  // 変更しないSourceも新しい反映markerで再開できる。古いmarkerだけでは再開しない。
+  const sameSource = await api(`${path}/apply`, identity());
+  assert.equal(sameSource.status, 200, JSON.stringify(sameSource.value));
+  saved = sameSource.value;
+  run = saved.lastRun;
+  assert.equal(
+    (await control('/__tsumucode_pause', { 'x-tsumucode-apply-id': randomUUID() })).status,
+    200,
+  );
+  const pendingReady = await Promise.all([
+    control('/__tsumucode_ready'),
+    control('/__tsumucode_ready'),
+  ]);
+  assert.deepEqual(
+    pendingReady.map(({ status }) => status),
+    [503, 503],
+  );
+  assert.equal((await api(`${path}/stop`, { runId: run.runId })).status, 200);
+  run = undefined;
+  const pausedSource = (await api(path)).value;
+  assert.equal(pausedSource.sourceHash, saved.sourceHash);
+  assert.deepEqual(pausedSource.files, saved.files);
+  await start();
   const previous = identity();
   const changing = slowStream();
   const waiting = await changing.started;
@@ -197,6 +252,9 @@ try {
   console.log(
     JSON.stringify({
       passed: [
+        '同じSourceの再反映',
+        'pause後の並行readyは旧markerで再開しない',
+        'pause中の停止・Source保持・再起動',
         '実RSCの結果到着前にSource反映・切断',
         '旧版grade409',
         '新保存版pass',
