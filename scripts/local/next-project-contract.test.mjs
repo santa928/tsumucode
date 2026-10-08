@@ -75,6 +75,27 @@ describe('Next専用の境界', () => {
     expect(vite.HostConfig.Tmpfs['/workspace']).toContain('size=8m');
   });
 
+  it.each([
+    [NEXT_WORKSPACE, 512],
+    ['next-ch02-l01-e01', 512],
+    ['next-ch02-l02-e01', 512],
+    ['next-ch03-l01-e01', 576],
+    ['next-ch03-l02-e01', 576],
+  ])('Workspace %s の固定メモリ上限だけを設定する', (workspaceId, memoryMiB) => {
+    const config = projectConfig(
+      { ...target, workspaceId, files: NEXT_STARTER_FILES },
+      'tsumucode-learning-test',
+      target.runId,
+      'sha256:fixed',
+    );
+    expect(config.HostConfig.Memory).toBe(memoryMiB * 1024 * 1024);
+    expect(config.HostConfig.MemorySwap).toBe(config.HostConfig.Memory);
+    expect(config.HostConfig.NanoCpus).toBe(1e9);
+    expect(config.HostConfig.PidsLimit).toBe(64);
+    expect(config.HostConfig.NetworkMode).toBe('none');
+    expect(config.HostConfig.ReadonlyRootfs).toBe(true);
+  });
+
   it('unsafe-evalと2MiB応答をNextの固定chunkにだけ限定する', () => {
     expect(previewHeaders(target.runId, NEXT_PROFILE)['content-security-policy']).toContain(
       "'unsafe-eval'",

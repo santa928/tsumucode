@@ -113,6 +113,8 @@ async function resources(id) {
       req.end();
     });
     assert.equal(measured.zombies, 0, JSON.stringify(measured));
+    assert.equal(measured.memoryEvents.max, 0, JSON.stringify(measured));
+    assert.equal(measured.memoryEvents.oom, 0, JSON.stringify(measured));
     assert.equal(measured.memoryEvents.oomKill, 0, JSON.stringify(measured));
     assert.ok(measured.pids <= 64);
     assert.ok(measured.workspaceBytes <= 64 * 1024 * 1024);
@@ -227,8 +229,12 @@ try {
     const config = await docker('GET', `/containers/${learner.Id}/json`);
     assert.equal(config.Config.User, '1000:1000');
     assert.equal(config.HostConfig.Init, true);
-    assert.equal(config.HostConfig.Memory, 512 * 1024 * 1024);
+    const expectedMemoryMiB = ['next-ch03-l01-e01', 'next-ch03-l02-e01'].includes(workspace)
+      ? 576
+      : 512;
+    assert.equal(config.HostConfig.Memory, expectedMemoryMiB * 1024 * 1024);
     assert.equal(config.HostConfig.MemorySwap, config.HostConfig.Memory);
+    assert.equal(config.HostConfig.NanoCpus, 1e9);
     assert.equal(config.HostConfig.PidsLimit, 64);
     assert.equal(config.HostConfig.NetworkMode, 'none');
     assert.equal(config.HostConfig.ReadonlyRootfs, true);

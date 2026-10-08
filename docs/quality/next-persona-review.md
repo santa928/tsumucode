@@ -33,7 +33,8 @@ iframeから親Stageへ戻るときは既存の編集権再確認を待ってか
 
 固定Next 16.3.8の製品実採点APIで、旧Lesson6例・routing8例・境界9例を確認する。
 初期境界エラー、詳細pageの500、修復後合格、Source再開、古いhash拒否を含む。
-learnerのCPU1、RAM/swap512 MiB、PID64、tmpfs各64 MiB、network:noneを維持する。
+旧3教材のlearnerはCPU1、RAM/swap512 MiB、PID64、tmpfs各64 MiB、network:noneを維持する。
+新2教材の承認済み576 MiB変更と追加受入は、下記Issue #134の追加確認に記す。
 
 通常の製品画面で12 Slideの答え開閉、3 Lessonの編集・反映・採点、停止・再開、
 keyboard操作、狭幅表示、axe検査と進捗/DraftのJSON移送を確認する。
@@ -72,3 +73,17 @@ seal済みsocketでの固定HTTP確認を追加した。運用Reviewerが指摘�
 3 Reviewerはこの診断差分にも既存レビューを適用し、必須修正0と確認した。
 正式公開には#135のForm/Action、#136のProject・独立復元・無Hintの転移課題、
 #137のCourse全体の受入と公開手順の完了が必要であり、この記録で代替しない。
+
+512 MiBでの作者連続成功後も、merge後mainのWeather負例がOOM終了した。
+運用Reviewerは現構成を受入不可と判断し、Issue #134はOPEN、Courseはdraftを維持した。
+2026-10-08の本人承認により、新2 WorkspaceだけRAM/MemorySwapを576 MiBへ変更する。
+追加swapや他の境界、旧3教材の上限は変更しない。差分を3 Reviewerが独立読解し、
+教材目標と前回の内容レビューを継続適用できること、必須修正0件を確認した。
+安定性の最終判断は新しい連続実測と正確なHEAD・main CIがそろうまで保留する。
+
+576 MiBの作者連続検証を3 Reviewerが読み取りで照合し、必須修正0件と判断した。
+運用Reviewerの判断は条件付きGOであり、Data約61 MiB・Weather約51 MiBの観測余裕、
+上限到達/OOMイベント0、終了後のコンテナ回収を根拠とする。最後の生存sampleが
+Zombie1だったrunについて、削除前に0へ戻ったとは認定しない。全体の正式受入は
+新しい上限到達/OOM拒否検査を含むexact HEADとmerge後mainのCI成功が条件となる。
+Reviewerの独自実行ではなく、作者の生監視・成功ログ・画像との照合である。

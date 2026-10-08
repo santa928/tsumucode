@@ -34,11 +34,13 @@ trusted bridgeはRSC URLを最大16件記録し、転送が上限内で最後ま
 devのfont GETとstack-frame POSTは引き続き403で拒否する。この2つの固定診断要求は
 Weather採点の教材エラーに含めず、その他の資源失敗は診断する。
 
-learnerのCPU1、RAM/swap512 MiB、PID64、tmpfs各64 MiB、nonroot、readonly、
-network:none、cap dropを変更しない。新2教材だけdevのTurbopackファイルcacheを
+2026-10-08の追加承認により、新2教材のRAMを576 MiBへ変更する。
+MemorySwapも576 MiBとして追加swapを許可せず、旧3教材は512 MiBを維持する。
+CPU1、PID64、tmpfs各64 MiB、nonroot、readonly、network:none、cap dropを維持する。
+新2教材だけdevのTurbopackファイルcacheを
 無効にし、dev validationは追加workerではなく同じprocessで行う。Node heapは128 MiB、semi-spaceは4 MiBへ抑える。固定APIのTypeScript変換はimage作成時に行い、learnerで変換器を常駐させない。readonly正本から生成したfactoryを使い、各保存版で状態を初期化する。Source反映時は生成物の`.next`だけを初期化する。Draftは保持する。
 新2教材の内部allocatorはarena2、Rayon/Tokioのworker設定は各1へ抑える。
-CPU・RAM・PID・tmpfsの上限や採点期限は変更しない。
+RAM以外の資源上限と採点期限は変更しない。
 反映時はseal済みのsocketで旧Nextを先に停止してから固定execでSourceを配置する。
 反映確認もcontrollerから同じsocketへの固定HTTPで行い、compile中のlearnerへ
 追加のNode probeを起動しない。制御用pause/ready経路はPreviewへ公開しない。
@@ -65,3 +67,16 @@ memory.eventsのoom_kill、Zombie、PID、tmpfsを確認し、この経路はPre
 新保存版の合格、Source保持後の再起動を確認する。作者の手作りqueryによるredirectを
 成功証拠には使わず、固定Next16.3.8と同じヘッダーからqueryを生成する。
 生ログ・画像・作業記録は非公開`.release-issue134`へ置く。
+
+512 MiBでは対策後もmain CIのWeather負例がOOM終了したため、受入を保留した。
+576 MiBは各実行64 MiB増の承認済み候補であり、十分な余裕は連続動作の実測と
+独立レビュー、正確なHEADとmerge後mainのCIがそろうまで確定しない。
+測定はtrusted controllerから行うが、そのCPU/I/O負荷は成功証拠の制約として残す。
+
+576 MiBの作者環境では、17 Fixture→通常2 UI→実RSCの反映・停止を一度連続実行し、
+全工程が成功した。native監視の786 sample/11 runでDataのpeakは515.47 MiB、
+Weatherは525.16 MiB、上限までの差は約61/51 MiBだった。max/oom/oomKillは全runで0、
+PIDは最大53、tmpfsは各上限内。反映・停止中の一時Zombie1と、削除前の最後のsampleが
+1だったrunも記録した。終了後のlearner/graderコンテナは停止済みを含め0件だった。
+この観測を全環境での保証や最小必要容量の証明へ広げない。新2教材の実受入では
+OOMだけでなくメモリ上限到達も拒否し、正確なHEADとmerge後mainのCIで確認する。
