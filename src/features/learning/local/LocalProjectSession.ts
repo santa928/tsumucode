@@ -64,7 +64,7 @@ export class LocalProjectSession {
         draft.contentRevision !== identity.revision
       )
         throw new Error('保存された下書きとLocal課題が一致しません。');
-      parseWorkspaceFiles(draft.files, this.identity.profile);
+      parseWorkspaceFiles(draft.files, this.identity.profile, this.identity.workspaceId);
       if (!Object.hasOwn(draft.files, draft.selectedFile))
         draft = { ...draft, selectedFile: identity.selectedFile ?? 'message.js' };
     }
@@ -218,7 +218,7 @@ export class LocalProjectSession {
       const draft =
         this.#snapshot.draft ??
         projectDraft(saved?.files ?? capabilities.starterFiles, this.identity);
-      parseWorkspaceFiles(draft.files, this.identity.profile);
+      parseWorkspaceFiles(draft.files, this.identity.profile, this.identity.workspaceId);
       this.#set({
         draft,
         saved,
@@ -233,7 +233,11 @@ export class LocalProjectSession {
   async #saveSource(generation: number): Promise<LocalWorkspace | undefined> {
     const draft = this.#snapshot.draft;
     if (!draft || !this.#snapshot.connected || this.#snapshot.conflict) return undefined;
-    const files = parseWorkspaceFiles(draft.files, this.identity.profile);
+    const files = parseWorkspaceFiles(
+      draft.files,
+      this.identity.profile,
+      this.identity.workspaceId,
+    );
     await this.flushDraft();
     if (!this.#current(generation)) return undefined;
     const saved = await this.client.save(this.#snapshot.saved?.sourceRevision ?? 0, files);
@@ -290,7 +294,7 @@ export class LocalProjectSession {
       this.#set({
         message:
           this.identity.profile === 'next-project-v1'
-            ? '固定Browserで実pageとquery別のHTTP応答を確認しています。'
+            ? '固定BrowserでこのLessonの実URLと動作を確認しています。'
             : '固定Browserで実サーバーの見出しを確認しています。',
       });
       const grade = await this.client.grade(run, saved);
@@ -334,7 +338,7 @@ export class LocalProjectSession {
         message:
           grade.status === 'pass'
             ? this.identity.profile === 'next-project-v1'
-              ? '合格です。実pageとquery別のHTTP応答を確認しました。'
+              ? '合格です。このLessonの実URLと動作を確認しました。'
               : '合格です。実サーバーの見出しを確認しました。'
             : grade.status === 'code-error'
               ? 'コードにエラーがあります。'

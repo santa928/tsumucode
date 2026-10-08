@@ -5,16 +5,52 @@ canonicalDistSha256: draft
 lessons:
   - lessonId: next-ch01-l01
     authorId: tsumucode-next-first-lesson-authoring
-    reviewerId: review_issue125_final
-    sourceHash: b1165db09e989b33014d0977382f4223d53dba292f43f8108abdefa55a7c7428
+    reviewerId: next_learning_design_persona
+    sourceHash: 2452c86555b5a84436041d7d88fd8633d33c00380ed404eaca31e2f446ce2896
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: >-
-      説明4スライド、演習目標、3段階Hint、Solutionと正負6Fixtureを独立読解し、内容と目標整合を承認。
-      Server Componentの初出説明を補足した1文も再確認し、未説明語0、意図しないHint漏洩0と判定。
-      実行は作者の固定Next 16.3.8/Node24.18.0/Chromium149による実HTTP6Fixtureの期待一致を根拠とする。
-      Reviewerの独自実行、実人の初心者理解、全Next Course、正式公開の承認には読み替えない。
+    notes: "4 Slideの提示コードからの予測、pageとquery別HTTPの区別、工程・Hint・Solutionを3
+      AIペルソナで独立読解。作者の固定Next16.3.8で6Fixture、実画面の予測keyboard開閉、page/JSON変更、実例外の修復、\
+      停止/Source再開、狭幅/axe0、JSON移送を確認。 Reviewer IDs: next_learner_persona,
+      next_learning_design_persona,
+      next_runtime_safety_persona。独自実行は作者で、Reviewerはその実行証拠を確認する。実人の初心者受講テスト、全Co\
+      urse、正式公開完了とは扱わない。詳細はnext-persona-review.md。"
+  - lessonId: next-ch02-l01
+    authorId: tsumucode-next-routing-authoring
+    reviewerId: next_learning_design_persona
+    sourceHash: fe61f25a4890aef4efd2c27a06a00ed4f3088b5a94823e4f161107d0768b7b0f
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: "4 Slideの予測、page/layout/params、工程・Hint・Solutionを3
+      AIペルソナで独立読解。作者の固定Next16.3.8で8Fixture、実URL直接アクセス/reload/文書リンク、layout/2slug\
+      、詳細page500、修復/Source再開を確認。Next Linkのsoft
+      navigationやlayout状態保持は対象外。実画面のkeyboard/狭幅/axe0とJSON移送を確認。 Reviewer IDs:
+      next_learner_persona, next_learning_design_persona,
+      next_runtime_safety_persona。独自実行は作者で、Reviewerはその実行証拠を確認する。実人の初心者受講テスト、全Co\
+      urse、正式公開完了とは扱わない。詳細はnext-persona-review.md。"
+  - lessonId: next-ch02-l02
+    authorId: tsumucode-next-routing-authoring
+    reviewerId: next_learning_design_persona
+    sourceHash: 66d5a701dce8575a8eb512d1f045c0e6c2ddae844ebf131ea5b1857d213c9c8f
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: "4 Slideの予測、CounterだけのClient境界修復、Server
+      async/Nodeと数値・文字列props、工程・Hint・Solutionを3
+      AIペルソナで独立読解。作者の固定Next16.3.8で9Fixture、Starterのuse
+      client不足診断、修復後2→3→4/実reload2、Node依存/関数propsのdev診断とbuild失敗を確認。function-pro\
+      pのbuildはTS2322で先に失敗。実画面のkeyboard/狭幅/axe0とJSON移送を確認。 Reviewer IDs:
+      next_learner_persona, next_learning_design_persona,
+      next_runtime_safety_persona。独自実行は作者で、Reviewerはその実行証拠を確認する。実人の初心者受講テスト、全Co\
+      urse、正式公開完了とは扱わない。詳細はnext-persona-review.md。"

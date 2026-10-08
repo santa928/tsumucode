@@ -1,0 +1,24 @@
+{
+  'id': 'next-ch02-l02',
+  'kind': 'standard',
+  'title': 'Serverの値をClientの操作へ渡す',
+  'goal': 'Node処理と直列化できるpropsをServerに置き、Clientで状態とイベントを動かせる。',
+  'estimatedMinutes': 30,
+  'prerequisiteLessonIds': ['next-ch02-l01'],
+  'slideSources':
+    [
+      'slides/s01-foundation.md',
+      'slides/s02-values.md',
+      'slides/s03-observe.md',
+      'slides/s04-checkpoint.md',
+    ],
+  'exerciseSources': ['exercises/next-ch02-l02-e01/exercise.yaml'],
+  'reflection': '実NextのURL・表示・診断を読み、Serverの処理とClientのイベントを区別する。',
+  'glossaryRefs': ['client-component', 'serializable-props'],
+  'completion':
+    {
+      'kind': 'standard',
+      'finalSlideId': 'next-ch02-l02-s04',
+      'requiredExerciseIds': ['next-ch02-l02-e01'],
+    },
+}

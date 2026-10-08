@@ -1,4 +1,5 @@
 import { afterEach, expect, it, vi } from 'vitest';
+import { nextWorkspace } from '../../../../scripts/local/next-project-protocol.mjs';
 import {
   LocalWorkspaceClient,
   workspaceFilesSchema,
@@ -154,4 +155,54 @@ it('未知fileとUTF-8合計上限の迂回をAPI送信前に拒否する', () =
   expect(
     workspaceFilesSchema.safeParse({ ...files, 'message.js': 'あ'.repeat(40000) }).success,
   ).toBe(false);
+});
+
+it.each(['next-ch02-l01-e01', 'next-ch02-l02-e01'])(
+  'Nextの初期Sourceを要求するWorkspaceへ対応させる: %s',
+  async (id) => {
+    const contract = nextWorkspace(id)!;
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (path: string, init: RequestInit) => {
+        if (path === '/api/session')
+          return new Response(JSON.stringify({ apiVersion: 1, token: 'a'.repeat(64) }));
+        expect(path).toBe('/api/workspaces/next-capabilities');
+        expect(init.body).toBe(JSON.stringify({ workspaceId: id }));
+        return new Response(
+          JSON.stringify({
+            apiVersion: 1,
+            profile: 'next-project-v1',
+            available: true,
+            gradingAvailable: true,
+            starterFiles: contract.files,
+          }),
+        );
+      }),
+    );
+    const capability = await new LocalWorkspaceClient(id, 'next-project-v1').connect();
+    expect(capability.starterFiles).toEqual(contract.files);
+  },
+);
+
+it('HTTP成功でも別Next教材の固定ファイルをSourceへ採用しない', async () => {
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            schema: 1,
+            profile: 'next-project-v1',
+            workspaceId: 'next-ch02-l01-e01',
+            sourceRevision: 1,
+            sourceHash: 'a'.repeat(64),
+            files: nextWorkspace('next-ch02-l02-e01')!.files,
+            lastRun: null,
+          }),
+        ),
+    ),
+  );
+  await expect(
+    new LocalWorkspaceClient('next-ch02-l01-e01', 'next-project-v1').status(),
+  ).rejects.toThrow();
 });

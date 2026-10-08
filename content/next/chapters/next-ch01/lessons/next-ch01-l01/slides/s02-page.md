@@ -20,8 +20,8 @@ export default function Page() {
 
 この短いコードは役割の説明例です。演習ではmainと説明文を用意済みです。h1の文字を編集し、保存・反映した後に、実際のPreviewで確かめます。
 
-:::practice
-prompt: pageを保存しただけで、実行中の表示は更新済みですか。
-expectedAction: 実行へ反映してからPreviewで確認すると答える
-estimatedMinutes: 1
+:::prediction
+prompt: "pageを保存しただけで、実行中の表示は更新済みですか。"
+answer: "保存後、実行へ反映してからPreviewで確認します。"
+explanation: "下書きの保存と、実行中のSourceへの反映は別の操作です。"
 :::

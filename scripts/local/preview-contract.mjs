@@ -1,6 +1,6 @@
 import { RequestError } from './protocol.mjs';
 import { URLSearchParams } from 'node:url';
-import { NEXT_PROFILE } from './next-project-protocol.mjs';
+import { NEXT_PROFILE, nextWorkspace } from './next-project-protocol.mjs';
 
 export const CONTROL_SOCKET = '/var/run/tsumucode-preview/control.sock';
 export const TRANSPORT_ROOT = '/var/lib/tsumucode/preview-transport';
@@ -118,6 +118,8 @@ export function previewRoute(raw, target, websocket = false) {
 
 /** 固定Nextのpage/query/chunk/HMRだけを許可する。内部APIや任意percent decodeは認めない。 */
 function nextPreviewRoute(raw, target, websocket) {
+  const contract = nextWorkspace(target.workspaceId);
+  if (!contract) return false;
   if (typeof raw !== 'string' || raw.length > 2048 || /[\\#\s]/u.test(raw)) return false;
   const parts = raw.split('?');
   if (parts.length > 2) return false;
@@ -134,9 +136,9 @@ function nextPreviewRoute(raw, target, websocket) {
       !query.includes('%')
     );
   }
-  if (file === '') return query === '';
-  if (file === 'api/question') return query === '' || query === 'mode=second';
-  if (query !== '') return false;
+  // 同じrunでも別教材のpage/APIは開かず、固定契約のraw URLだけを通す。
+  if (contract.pages.includes(file + (parts.length > 1 ? `?${query}` : ''))) return true;
+  if (parts.length > 1) return false;
   return /^_next\/static\/chunks\/(?:[a-zA-Z0-9_.-]|%5Bturbopack%5D|%40swc){1,180}\.(?:js|css)$/u.test(
     file,
   );

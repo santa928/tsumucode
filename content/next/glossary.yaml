@@ -1,27 +1,42 @@
-{
-  'schemaVersion': 1,
-  'entries':
-    [
-      {
-        'id': 'page',
-        'term': 'page',
-        'definition': 'URLの場所に対応する表示を返すファイル。',
-        'firstSlideId': 'next-ch01-l01-s02',
-        'relatedIds': [],
-      },
-      {
-        'id': 'route-handler',
-        'term': 'Route Handler',
-        'definition': 'HTTP requestを受け取りResponseを返す関数。',
-        'firstSlideId': 'next-ch01-l01-s03',
-        'relatedIds': [],
-      },
-      {
-        'id': 'query',
-        'term': 'query',
-        'definition': 'URLの?以降にある値。今回のmodeで応答を分岐する。',
-        'firstSlideId': 'next-ch01-l01-s03',
-        'relatedIds': [],
-      },
-    ],
-}
+schemaVersion: 1
+entries:
+  - id: page
+    term: page
+    definition: URLの場所に対応する表示を返すファイル。
+    firstSlideId: next-ch01-l01-s02
+    relatedIds: []
+  - id: route-handler
+    term: Route Handler
+    definition: HTTP requestを受け取りResponseを返す関数。
+    firstSlideId: next-ch01-l01-s03
+    relatedIds: []
+  - id: query
+    term: query
+    definition: URLの?以降にある値。今回のmodeで応答を分岐する。
+    firstSlideId: next-ch01-l01-s03
+    relatedIds: []
+  - id: layout
+    term: layout
+    definition: childrenへ内側のpageやlayoutを入れる共通表示。
+    firstSlideId: next-ch02-l01-s01
+    relatedIds: []
+  - id: dynamic-route
+    term: dynamic route
+    definition: 角括弧のフォルダーがURLの値を受け取り、paramsへ渡す経路。
+    firstSlideId: next-ch02-l01-s02
+    relatedIds: []
+  - id: document-navigation
+    term: 文書遷移
+    definition: リンク先の文書を取り直す移動。今回のaによる遷移。
+    firstSlideId: next-ch02-l01-s03
+    relatedIds: []
+  - id: client-component
+    term: Client Component
+    definition: use clientで境界を宣言し、ブラウザの状態やイベントを扱うComponent。
+    firstSlideId: next-ch02-l02-s02
+    relatedIds: []
+  - id: serializable-props
+    term: 直列化できるprops
+    definition: ServerからClientへ通信できる形で渡せる値。今回のnumberとstring。
+    firstSlideId: next-ch02-l02-s03
+    relatedIds: []

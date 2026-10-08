@@ -1,0 +1,24 @@
+{
+  'id': 'next-ch02-l01',
+  'kind': 'standard',
+  'title': 'URLとnested layoutをつなぐ',
+  'goal': '固定URLの一覧と2つの詳細を開き、共通layoutとslugの反映を確認できる。',
+  'estimatedMinutes': 30,
+  'prerequisiteLessonIds': ['next-ch01-l01'],
+  'slideSources':
+    [
+      'slides/s01-foundation.md',
+      'slides/s02-values.md',
+      'slides/s03-observe.md',
+      'slides/s04-checkpoint.md',
+    ],
+  'exerciseSources': ['exercises/next-ch02-l01-e01/exercise.yaml'],
+  'reflection': 'URLごとのpage、共通nested layout、paramsのslug、aによる文書遷移を対応させる。',
+  'glossaryRefs': ['layout', 'dynamic-route', 'document-navigation'],
+  'completion':
+    {
+      'kind': 'standard',
+      'finalSlideId': 'next-ch02-l01-s04',
+      'requiredExerciseIds': ['next-ch02-l01-e01'],
+    },
+}

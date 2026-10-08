@@ -19,10 +19,10 @@ const second = mode === 'second';
 
 通常のURLと`?mode=second`のURLを別々に要求し、messageを比べます。両方を同じ値にすると、queryの分岐を確認できません。
 
-このLessonはGETだけです。CookieやServer Actions、外部APIは扱いません。以下の文字列は期待値の説明で、採点は実serverの応答を読みます。
+このLessonはGETだけです。CookieやServer Actions、外部APIは扱いません。採点は実serverの応答を読みます。
 
-:::practice
-prompt: mode=secondのとき、messageには何を返しますか。
-expectedAction: 2つ目の実リクエストと答える
-estimatedMinutes: 1
+:::prediction
+prompt: "queryがmode=secondのとき、コードのsecondはtrueとfalseのどちらですか。"
+answer: "secondはtrueになります。"
+explanation: "queryから取った文字列がsecondと一致するためです。messageの分岐は次の修正課題で確かめます。"
 :::

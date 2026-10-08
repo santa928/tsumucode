@@ -79,22 +79,20 @@ export function projectValidation(
         ruleId: identity.ruleId,
         requirementId: identity.requirementId,
         label:
-          identity.profile === 'next-project-v1'
-            ? 'pageとquery別の実HTTP応答'
-            : '実サーバーの見出し',
+          identity.profile === 'next-project-v1' ? 'このLessonの実URLと動作' : '実サーバーの見出し',
         required: true,
         passed,
         requirementPassed: passed,
         message: passed
           ? identity.profile === 'next-project-v1'
-            ? '実pageの見出しと、query別のJSON応答を確認しました。'
+            ? 'このLessonの実URLと動作を確認しました。'
             : '実サーバーで見出しを確認しました。'
           : identity.profile === 'next-project-v1'
-            ? 'pageの見出し、Route Handlerのquery分岐、実行エラーを確認してください。'
+            ? 'このLessonの工程票、Previewの表示・操作、実行エラーを確認してください。'
             : '可視の h1#message とJavaScriptのエラーを確認してください。',
         expected:
           identity.profile === 'next-project-v1'
-            ? 'こんにちは、Next.js！ / 最初の実リクエスト / 2つ目の実リクエスト'
+            ? '工程票に指定された実URLと動作'
             : 'こんにちは、実サーバー！',
         actual: grade.actual,
         nextAction: passed

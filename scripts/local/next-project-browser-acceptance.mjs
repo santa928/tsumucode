@@ -46,8 +46,20 @@ try {
   await page.goto(
     'http://127.0.0.1:4173/#/courses/next/lessons/next-ch01-l01/slides/next-ch01-l01-s01',
   );
-  for (let index = 0; index < 3; index += 1) {
-    await page.getByRole('link', { name: '次のスライドへ →', exact: true }).click();
+  for (let index = 0; index < 4; index += 1) {
+    // URL更新後も前のSlideが残るため、表示中のSlide IDまで待つ。
+    await expect(page.getByTestId('slide-stage')).toHaveAttribute(
+      'data-slide-id',
+      `${'next-ch01-l01'}-s0${index + 1}`,
+    );
+    const prediction = page.getByRole('region', { name: '結果を予測する', exact: true });
+    await expect(prediction.locator('details')).not.toHaveAttribute('open', '');
+    await prediction.locator('summary').focus();
+    await page.keyboard.press('Enter');
+    await expect(prediction.locator('details')).toHaveAttribute('open', '');
+    await page.keyboard.press('Enter');
+    await expect(prediction.locator('details')).not.toHaveAttribute('open', '');
+    if (index < 3) await page.getByRole('link', { name: '次のスライドへ →', exact: true }).click();
   }
   await page.getByRole('link', { name: /のコード演習を始める/u }).click();
   await expect(
@@ -169,7 +181,8 @@ try {
   await download.saveAs(transferPath);
   const raw = await readFile(transferPath, 'utf8');
   const bundle = JSON.parse(raw);
-  assert.equal(bundle.courses.next.currentComplete, true);
+  assert.equal(bundle.courses.next.lessons['next-ch01-l01'].currentComplete, true);
+  assert.equal(bundle.courses.next.currentComplete, false);
   assert.equal(bundle.drafts['next:next-ch01-l01-e01'].files['app/page.tsx'], solutionPage);
   assert.equal(
     bundle.drafts['next:next-ch01-l01-e01'].files['app/api/question/route.ts'],

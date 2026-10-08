@@ -1,7 +1,7 @@
 import { Buffer } from 'node:buffer';
 import { createHash } from 'node:crypto';
 import { RequestError, LIMITS } from './protocol.mjs';
-import { NEXT_PROFILE, NEXT_STARTER_FILES } from './next-project-protocol.mjs';
+import { NEXT_PROFILE, NEXT_WORKSPACE, nextWorkspace } from './next-project-protocol.mjs';
 
 export const PROJECT_PROFILE = 'vite-project-v1';
 export const PROJECT_LIMITS = Object.freeze({
@@ -71,14 +71,14 @@ export function runId(value) {
   return value;
 }
 
-export function starterFiles(profile = PROJECT_PROFILE) {
+export function starterFiles(profile = PROJECT_PROFILE, id = NEXT_WORKSPACE) {
   if (profile === PROJECT_PROFILE) return STARTER_FILES;
-  if (profile === NEXT_PROFILE) return NEXT_STARTER_FILES;
+  if (profile === NEXT_PROFILE && nextWorkspace(id)) return nextWorkspace(id).files;
   throw new RequestError(400, '未対応のProject profileです。');
 }
 
-export function validateFiles(files, profile = PROJECT_PROFILE) {
-  exact(files, Object.keys(starterFiles(profile)));
+export function validateFiles(files, profile = PROJECT_PROFILE, id = NEXT_WORKSPACE) {
+  exact(files, Object.keys(starterFiles(profile, id)));
   let size = 0;
   for (const value of Object.values(files)) {
     if (typeof value !== 'string') throw new RequestError(400, 'Sourceは文字列が必要です。');
@@ -89,8 +89,10 @@ export function validateFiles(files, profile = PROJECT_PROFILE) {
 }
 
 /** file順序に依存せず、起動時Sourceと保存済みSourceを照合できるhashを返す。 */
-export function projectHash(files, profile = PROJECT_PROFILE) {
+export function projectHash(files, profile = PROJECT_PROFILE, id = NEXT_WORKSPACE) {
   return createHash('sha256')
-    .update(JSON.stringify(Object.keys(starterFiles(profile)).map((name) => [name, files[name]])))
+    .update(
+      JSON.stringify(Object.keys(starterFiles(profile, id)).map((name) => [name, files[name]])),
+    )
     .digest('hex');
 }

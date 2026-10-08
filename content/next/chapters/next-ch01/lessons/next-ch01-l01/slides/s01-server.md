@@ -16,8 +16,8 @@ Pagesが配るHTML・JSは静的ファイルです。Pagesの説明用表示を�
 
 本番用のbuildでは、pageをビルド時に事前生成できる場合もあります。今回の開発serverの観察だけで、全pageが毎回serverで処理されるとは結論づけません。
 
-:::practice
-prompt: この演習をPagesの静的表示だけで採点できますか。
-expectedAction: 実HTTPが必要なのでLocalのDocker環境を使うと答える
-estimatedMinutes: 1
+:::prediction
+prompt: "この演習をPagesの静的表示だけで採点できますか。"
+answer: "LocalのDocker環境で実HTTPを確認します。"
+explanation: "Pagesは静的配信で、リクエストを処理するNextサーバーは動かしません。"
 :::

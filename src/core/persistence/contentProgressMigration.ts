@@ -280,7 +280,7 @@ function migrateCourseStep(
     lessons,
     ...(currentLessonId === undefined ? {} : { currentLessonId }),
     ...(currentChapterId === undefined ? {} : { currentChapterId }),
-    currentComplete: completionInvalidated ? false : progress.currentComplete,
+    currentComplete: !completionInvalidated && progress.currentComplete,
     ...(completionInvalidated || progress.firstCompletedAt === undefined
       ? {}
       : { firstCompletedAt: progress.firstCompletedAt }),
@@ -559,6 +559,18 @@ export class ContentProgressMigrationService {
           quarantine: quarantineFor(courseId),
         };
         migrated = migrateCourseStep(migrated, migration, context, course);
+      }
+      // 全revisionのmap後に、追加Lessonを含む現在の完了条件だけ見直す。
+      if (original.contentRevision !== course.revision) {
+        const allCurrentLessonsComplete = course.phases.every(({ chapters }) =>
+          chapters.every(({ lessons }) =>
+            lessons.every(({ id }) => migrated.lessons[id]?.currentComplete === true),
+          ),
+        );
+        migrated = {
+          ...migrated,
+          currentComplete: migrated.currentComplete && allCurrentLessonsComplete,
+        };
       }
       courses[courseId] = migrated;
     }

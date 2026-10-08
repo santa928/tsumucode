@@ -1,5 +1,6 @@
 /** Local専用画面のSource・runを検証する。管理tokenはinstanceのメモリだけに保持する。 */
 import { z } from 'zod';
+import { NEXT_WORKSPACE, nextWorkspace } from '../../../../scripts/local/next-project-protocol.mjs';
 
 const profile = z.enum(['vite-project-v1', 'next-project-v1']);
 export type WorkspaceProfile = z.infer<typeof profile>;
@@ -43,10 +44,21 @@ export const nextWorkspaceFilesSchema = z
 export function parseWorkspaceFiles(
   input: unknown,
   kind: WorkspaceProfile = 'vite-project-v1',
+  id: string = NEXT_WORKSPACE,
 ): WorkspaceFiles {
-  return (kind === 'next-project-v1' ? nextWorkspaceFilesSchema : workspaceFilesSchema).parse(
-    input,
-  );
+  if (kind !== 'next-project-v1') return workspaceFilesSchema.parse(input);
+  const contract = nextWorkspace(id);
+  if (!contract) throw new Error('未対応のNext Workspaceです。');
+  const files = z
+    .object(Object.fromEntries(Object.keys(contract.files).map((name) => [name, source])))
+    .strict()
+    .parse(input);
+  if (
+    Object.values(files).reduce((size, text) => size + new TextEncoder().encode(text).length, 0) >
+    100 * 1024
+  )
+    throw new Error('Sourceは合計100 KiB以下にしてください。');
+  return files;
 }
 
 const workspaceRunSchema = z.object({
@@ -67,7 +79,7 @@ const workspaceSchema = z.object({
   workspaceId,
   sourceRevision: revision,
   sourceHash: hash,
-  files: z.union([workspaceFilesSchema, nextWorkspaceFilesSchema]),
+  files: z.record(z.string(), source),
   lastRun: workspaceRunSchema.nullable(),
 });
 
@@ -76,7 +88,7 @@ const capabilitiesSchema = z.object({
   profile,
   available: z.boolean(),
   gradingAvailable: z.literal(true),
-  starterFiles: z.union([workspaceFilesSchema, nextWorkspaceFilesSchema]),
+  starterFiles: z.record(z.string(), source),
 });
 
 export type WorkspaceFiles = Readonly<Record<string, string>>;
@@ -168,7 +180,7 @@ export class LocalWorkspaceClient {
 
   #workspace(input: unknown, expectedRunId?: string): LocalWorkspace {
     const workspace = workspaceSchema.parse(input);
-    parseWorkspaceFiles(workspace.files, this.profile);
+    parseWorkspaceFiles(workspace.files, this.profile, this.id);
     if (workspace.profile !== this.profile || workspace.workspaceId !== this.id)
       throw new Error('別Workspaceの応答を受信しました。');
     if (expectedRunId !== undefined && workspace.lastRun?.runId !== expectedRunId)
@@ -188,9 +200,10 @@ export class LocalWorkspaceClient {
         this.profile === 'next-project-v1'
           ? '/api/workspaces/next-capabilities'
           : '/api/workspaces/capabilities',
+        this.profile === 'next-project-v1' ? { workspaceId: this.id } : {},
       ),
     );
-    parseWorkspaceFiles(capabilities.starterFiles, this.profile);
+    parseWorkspaceFiles(capabilities.starterFiles, this.profile, this.id);
     if (capabilities.profile !== this.profile) throw new Error('Project profileが一致しません。');
     if (!capabilities.available) throw new Error('この環境では固定Projectを起動できません。');
     return capabilities;
@@ -207,7 +220,7 @@ export class LocalWorkspaceClient {
 
   async save(expectedSourceRevision: number, files: WorkspaceFiles): Promise<LocalWorkspace> {
     z.number().int().nonnegative().parse(expectedSourceRevision);
-    parseWorkspaceFiles(files, this.profile);
+    parseWorkspaceFiles(files, this.profile, this.id);
     return this.#workspace(
       await this.#request(`${this.#path}/source`, { expectedSourceRevision, files }),
     );

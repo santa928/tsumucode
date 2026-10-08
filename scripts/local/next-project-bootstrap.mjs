@@ -6,7 +6,7 @@ import { createServer, request } from 'node:http';
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { setTimeout as delay } from 'node:timers/promises';
-import { NEXT_STARTER_FILES } from './next-project-protocol.mjs';
+import { nextWorkspace } from './next-project-protocol.mjs';
 
 // 固定設定・依存だけで起動する。編集可能なserver moduleも非rootの同じ隔離内で実行する。
 const { files, metadata, preview } = JSON.parse(
@@ -14,7 +14,7 @@ const { files, metadata, preview } = JSON.parse(
 );
 const root = '/opt/workspace';
 const base = preview ? `/w/${metadata.workspaceId}/${metadata.runId}` : '';
-for (const name of Object.keys(NEXT_STARTER_FILES)) {
+for (const name of Object.keys(nextWorkspace(metadata.workspaceId).files)) {
   await mkdir(`${root}/${name.slice(0, name.lastIndexOf('/'))}`, { recursive: true });
   await writeFile(`${root}/${name}`, files[name], { flag: 'wx', mode: 0o600 });
 }
@@ -97,9 +97,9 @@ function ensureLatest() {
     ) {
       try {
         // 構文エラーの500も実serverの応答として扱い、採点側でcode-errorにする。
-        for (const path of ['/', '/api/question', '/api/question?mode=second']) {
+        for (const page of nextWorkspace(metadata.workspaceId).pages) {
           const reply = await globalThis.fetch(
-            `http://127.0.0.1:5174${path === '/' ? base || '/' : base + path}`,
+            `http://127.0.0.1:5174${page === '' ? base || '/' : base + '/' + page}`,
             {
               signal: globalThis.AbortSignal.timeout(2000),
               redirect: 'manual',

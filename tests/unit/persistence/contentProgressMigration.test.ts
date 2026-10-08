@@ -346,6 +346,29 @@ function mockMethod(
 }
 
 describe('ContentProgressMigrationService', () => {
+  it('resetなしの複数revision map後も現CourseとLessonの完了を保持する', async () => {
+    const input = oldSnapshot();
+    const service = new ContentProgressMigrationService(repositoryFor(input));
+    service.registerCourse({
+      ...migratingCourse,
+      progressMigrations: migratingCourse.progressMigrations.map((migration) => ({
+        ...migration,
+        steps: migration.steps.filter(({ action }) => action !== 'intentionally-reset'),
+      })),
+    });
+    const result = await service.migrateSnapshot(input);
+    expect(result.courses['html-css']).toMatchObject({
+      contentRevision: 'rev-3',
+      currentComplete: true,
+      firstCompletedAt: input.courses['html-css']!.firstCompletedAt,
+      lessons: {
+        'lesson-first-heading': { lessonId: 'lesson-first-heading', currentComplete: true },
+      },
+    });
+    expect(result.quarantined).toEqual([]);
+    expect(await service.migrateSnapshot(result)).toEqual(result);
+  });
+
   it('2 revisionを連続適用し、全参照を移してreset断片を隔離する', async () => {
     const service = new ContentProgressMigrationService(repositoryFor(oldSnapshot()), {
       now: () => now,

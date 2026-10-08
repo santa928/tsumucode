@@ -119,4 +119,44 @@ describe('Next専用の境界', () => {
       previewRoute(`${base}_next/hmr?id=0.123`, { ...target, profile: 'vite-project-v1' }, true),
     ).toBe(false);
   });
+
+  it('ルーティングの固定3経路をそのWorkspaceだけに限定する', () => {
+    const routing = { ...target, workspaceId: 'next-ch02-l01-e01' };
+    const routingBase = previewBase(routing.workspaceId, routing.runId);
+    for (const path of ['trips', 'trips/forest', 'trips/sea']) {
+      expect(previewRoute(routingBase + path, routing), path).toBe(true);
+      expect(previewResponseLimit(routingBase + path, routing)).toBe(512 * 1024);
+      expect(previewRoute(base + path, target), path).toBe(false);
+      const boundary = { ...target, workspaceId: 'next-ch02-l02-e01' };
+      expect(previewRoute(previewBase(boundary.workspaceId, boundary.runId) + path, boundary)).toBe(
+        false,
+      );
+    }
+    for (const path of [
+      'trips/',
+      'trips/mountain',
+      'trips/forest?x=1',
+      'trips/forest?',
+      'trips/forest?_rsc=abc',
+      'trips/sea?mode=second',
+      'trips/%66orest',
+      'trips/%2e%2e/forest',
+      'trips/forest/extra',
+      'api/question',
+      'api/question?mode=second',
+    ])
+      expect(previewRoute(routingBase + path, routing), path).toBe(false);
+    expect(previewRoute(base + 'trips', routing)).toBe(false);
+  });
+
+  it('未知Next Workspaceとquery空マーカーを固定page/chunkにも採用しない', () => {
+    const unknown = { ...target, workspaceId: 'toString' };
+    for (const path of ['', '_next/static/chunks/a.js', '_next/hmr?id=1']) {
+      expect(previewRoute(previewBase(unknown.workspaceId, unknown.runId) + path, unknown)).toBe(
+        false,
+      );
+    }
+    expect(previewRoute(base + '?', target)).toBe(false);
+    expect(previewRoute(base + '_next/static/chunks/a.js?', target)).toBe(false);
+  });
 });

@@ -13,6 +13,7 @@ on:
       - src/features/learning/local/**
       - src/adapters/runtime/local/LocalWorkspaceClient*
       - src/core/persistence/localProjectDescriptor.ts
+      - src/core/persistence/contentProgressMigration.ts
       - src/features/progress/WorkspaceLeaseGate.tsx
       - src/features/progress/ProgressTransferPanel.tsx
       - src/features/learning/runtimeServices.ts
@@ -38,6 +39,7 @@ on:
       - src/features/learning/local/**
       - src/adapters/runtime/local/LocalWorkspaceClient*
       - src/core/persistence/localProjectDescriptor.ts
+      - src/core/persistence/contentProgressMigration.ts
       - src/features/progress/WorkspaceLeaseGate.tsx
       - src/features/progress/ProgressTransferPanel.tsx
       - src/features/learning/runtimeServices.ts
@@ -62,7 +64,7 @@ concurrency:
 jobs:
   boundary:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 30
     env:
       TSUMUCODE_LOCAL_OWNER: tsumucode-learning-ci
       TSUMUCODE_LOCAL_SOCKET: /var/run/docker.sock
@@ -102,6 +104,34 @@ jobs:
         run: >-
           docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256
           --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-next-browser-checks"
+      - name: Verify Next production build and Server Client diagnostics
+        run: |
+          docker build --file Dockerfile.learning --target next-content-checks --tag "$TSUMUCODE_LOCAL_OWNER-next-content-checks" .
+          docker run --rm --init --network none --read-only --cpus 2 --memory 2g --memory-swap 2g --pids-limit 256 \
+            --cap-drop ALL --security-opt no-new-privileges:true \
+            --tmpfs /opt/workspace:rw,noexec,nosuid,nodev,size=128m,uid=1000,gid=1000,mode=0700 \
+            --tmpfs /tmp:rw,noexec,nosuid,nodev,size=64m,uid=1000,gid=1000,mode=0700 \
+            "$TSUMUCODE_LOCAL_OWNER-next-content-checks"
+      - name: Verify trusted Next observations reject fake navigation
+        run: >-
+          docker run --rm --init --network none --read-only --cpus 2 --memory 768m --pids-limit 128
+          --cap-drop ALL --security-opt no-new-privileges:true
+          --tmpfs /tmp:rw,noexec,nosuid,nodev,size=256m,uid=1000,gid=1000,mode=0700
+          "$TSUMUCODE_LOCAL_OWNER-next-browser-checks"
+          node scripts/local/next-observations-acceptance.mjs
+      - name: Verify Next nested routing and Client interaction fixtures
+        run: |
+          set -euo pipefail
+          controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
+          for workspace in next-ch02-l01-e01 next-ch02-l02-e01; do
+            docker run --rm --network none "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" node scripts/local/next-fixture-packet.mjs "$workspace" |
+              docker exec -i -e TSUMUCODE_NEXT_WORKSPACE="$workspace" "$controller" node next-project-acceptance.mjs
+          done
+      - name: Verify Next routing and boundary normal Lessons and JSON transfer
+        run: >-
+          docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256
+          --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-next-browser-checks"
+          node scripts/local/next-routing-browser-acceptance.mjs
       - name: Verify normal controller restart
         run: |
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)

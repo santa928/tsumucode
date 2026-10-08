@@ -1,24 +1,46 @@
-{
-  'schemaVersion': 1,
-  'concepts':
-    [
-      {
-        'id': 'next-server',
-        'introducedBySlideId': 'next-ch01-l01-s01',
-        'prerequisiteConceptIds': [],
-        'minimumProjectLevel': 'transform',
-      },
-      {
-        'id': 'next-page',
-        'introducedBySlideId': 'next-ch01-l01-s02',
-        'prerequisiteConceptIds': ['next-server'],
-        'minimumProjectLevel': 'transform',
-      },
-      {
-        'id': 'next-route',
-        'introducedBySlideId': 'next-ch01-l01-s03',
-        'prerequisiteConceptIds': ['next-page'],
-        'minimumProjectLevel': 'transform',
-      },
-    ],
-}
+schemaVersion: 1
+concepts:
+  - id: next-server
+    introducedBySlideId: next-ch01-l01-s01
+    prerequisiteConceptIds: []
+    minimumProjectLevel: transform
+  - id: next-page
+    introducedBySlideId: next-ch01-l01-s02
+    prerequisiteConceptIds:
+      - next-server
+    minimumProjectLevel: transform
+  - id: next-route
+    introducedBySlideId: next-ch01-l01-s03
+    prerequisiteConceptIds:
+      - next-page
+    minimumProjectLevel: transform
+  - id: next-layout
+    introducedBySlideId: next-ch02-l01-s01
+    prerequisiteConceptIds:
+      - next-page
+    minimumProjectLevel: transform
+  - id: next-dynamic
+    introducedBySlideId: next-ch02-l01-s02
+    prerequisiteConceptIds:
+      - next-layout
+    minimumProjectLevel: transform
+  - id: next-navigation
+    introducedBySlideId: next-ch02-l01-s03
+    prerequisiteConceptIds:
+      - next-dynamic
+    minimumProjectLevel: transform
+  - id: next-server-node
+    introducedBySlideId: next-ch02-l02-s01
+    prerequisiteConceptIds:
+      - next-server
+    minimumProjectLevel: transform
+  - id: next-client
+    introducedBySlideId: next-ch02-l02-s02
+    prerequisiteConceptIds:
+      - next-server-node
+    minimumProjectLevel: transform
+  - id: next-props
+    introducedBySlideId: next-ch02-l02-s03
+    prerequisiteConceptIds:
+      - next-client
+    minimumProjectLevel: transform

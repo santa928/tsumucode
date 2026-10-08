@@ -37,7 +37,7 @@ import {
   exact,
 } from './project-protocol.mjs';
 
-import { NEXT_PROFILE, NEXT_STARTER_FILES } from './next-project-protocol.mjs';
+import { NEXT_PROFILE, NEXT_WORKSPACE, nextWorkspace } from './next-project-protocol.mjs';
 
 const owner = process.env.TSUMUCODE_LOCAL_OWNER;
 if (!owner || !/^[a-z0-9-]{1,80}$/u.test(owner)) throw new Error('Installation owner is required');
@@ -305,13 +305,17 @@ async function handle(req, res) {
     else if (
       ['/api/workspaces/capabilities', '/api/workspaces/next-capabilities'].includes(req.url)
     ) {
-      exact(input, []);
       const next = req.url === '/api/workspaces/next-capabilities';
+      const requestedId =
+        next && Object.hasOwn(input, 'workspaceId') ? input.workspaceId : NEXT_WORKSPACE;
+      exact(input, next && Object.hasOwn(input, 'workspaceId') ? ['workspaceId'] : []);
+      const contract = next ? nextWorkspace(requestedId) : undefined;
+      if (next && !contract) throw new RequestError(400, '未対応のNext Workspaceです。');
       value = {
         apiVersion: API_VERSION,
         profile: next ? NEXT_PROFILE : PROJECT_PROFILE,
         limits: PROJECT_LIMITS,
-        starterFiles: next ? NEXT_STARTER_FILES : STARTER_FILES,
+        starterFiles: next ? contract.files : STARTER_FILES,
         available: Boolean(
           next ? process.env.TSUMUCODE_LOCAL_NEXT_IMAGE : process.env.TSUMUCODE_LOCAL_PROJECT_IMAGE,
         ),
