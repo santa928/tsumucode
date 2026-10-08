@@ -6,7 +6,14 @@ import process from 'node:process';
 import { setTimeout, clearTimeout } from 'node:timers';
 import { URL } from 'node:url';
 import { chromium } from '@playwright/test';
-import { previewBase, previewOrigin, previewRoute, previewHeaders } from './preview-contract.mjs';
+import {
+  previewBase,
+  previewOrigin,
+  previewRoute,
+  previewHeaders,
+  previewResponseLimit,
+  previewWebSocketProtocol,
+} from './preview-contract.mjs';
 
 // 固定imageのtrusted checkerだけが実DOMを読む。learnerのpostMessage/Consoleを採点結果にしない。
 const { metadata, socket } = JSON.parse(Buffer.from(process.argv[2], 'base64').toString('utf8'));
@@ -33,7 +40,8 @@ function readHttp(path) {
         let bytes = 0;
         res.on('data', (chunk) => {
           bytes += chunk.length;
-          if (bytes > 512 * 1024) res.destroy(new Error('Grade response limit'));
+          if (bytes > previewResponseLimit(path, metadata))
+            res.destroy(new Error('Grade response limit'));
           else chunks.push(chunk);
         });
         res.on('error', reject);
@@ -77,7 +85,7 @@ const bridge = createServer((req, res) => {
       if ((reply.status ?? 500) >= 300 && (reply.status ?? 500) < 400)
         throw new Error('Grade redirect denied');
       res.writeHead(reply.status ?? 502, {
-        ...previewHeaders(metadata.runId),
+        ...previewHeaders(metadata.runId, metadata.profile),
         'content-type': reply.type ?? 'application/octet-stream',
       });
       res.end(reply.body);
@@ -107,7 +115,7 @@ bridge.on('upgrade', (req, client, head) => {
     req.method !== 'GET' ||
     req.headers.host !== new URL(origin).host ||
     req.headers.origin !== origin ||
-    req.headers['sec-websocket-protocol'] !== 'vite-hmr' ||
+    req.headers['sec-websocket-protocol'] !== previewWebSocketProtocol(metadata.profile) ||
     !previewRoute(req.url, metadata, true)
   ) {
     close();
@@ -125,7 +133,9 @@ bridge.on('upgrade', (req, client, head) => {
       upgrade: 'websocket',
       'sec-websocket-key': req.headers['sec-websocket-key'],
       'sec-websocket-version': '13',
-      'sec-websocket-protocol': 'vite-hmr',
+      ...(previewWebSocketProtocol(metadata.profile)
+        ? { 'sec-websocket-protocol': previewWebSocketProtocol(metadata.profile) }
+        : {}),
     },
   });
   proxy.on('error', close);
@@ -134,7 +144,7 @@ bridge.on('upgrade', (req, client, head) => {
     if (
       client.destroyed ||
       reply.statusCode !== 101 ||
-      reply.headers['sec-websocket-protocol'] !== 'vite-hmr'
+      reply.headers['sec-websocket-protocol'] !== previewWebSocketProtocol(metadata.profile)
     ) {
       socket.destroy();
       close();
@@ -144,7 +154,7 @@ bridge.on('upgrade', (req, client, head) => {
     upstream.on('error', close);
     upstream.once('close', close);
     client.write(
-      `HTTP/1.1 101 Switching Protocols\r\nConnection: Upgrade\r\nUpgrade: websocket\r\nSec-WebSocket-Accept: ${reply.headers['sec-websocket-accept']}\r\nSec-WebSocket-Protocol: vite-hmr\r\n\r\n`,
+      `HTTP/1.1 101 Switching Protocols\r\nConnection: Upgrade\r\nUpgrade: websocket\r\nSec-WebSocket-Accept: ${reply.headers['sec-websocket-accept']}\r\n${previewWebSocketProtocol(metadata.profile) ? 'Sec-WebSocket-Protocol: vite-hmr\r\n' : ''}\r\n`,
     );
     let sent = head.length;
     let received = pending.length;
@@ -202,7 +212,7 @@ try {
     if (error !== 'net::ERR_ABORTED') diagnostic(`HTTP resource failed: ${error}`);
   });
   const response = await page.goto(origin + base, { waitUntil: 'load', timeout: 5000 });
-  assert.equal(response.status(), 200);
+  if (response.status() !== 200) diagnostic(`HTTP page failed: ${response.status()}`);
   // Viteの反映に伴う再読込も含め、実HTTP資源が静止してから同じ文書のDOMを読む。
   await page.waitForLoadState('networkidle', { timeout: 3000 });
   assert.equal(new URL(page.url()).origin, origin);
@@ -211,6 +221,31 @@ try {
   const count = await heading.count();
   const visible = count === 1 && (await heading.isVisible());
   const actual = count === 1 ? ((await heading.textContent()) ?? '').trim().slice(0, 512) : '';
+  const next = metadata.profile === 'next-project-v1';
+  let httpMatches = true;
+  const httpActual = [];
+  if (next) {
+    for (const [path, expected] of [
+      ['api/question', '最初の実リクエスト'],
+      ['api/question?mode=second', '2つ目の実リクエスト'],
+    ]) {
+      try {
+        const reply = await readHttp(`${base}${path}`);
+        if (reply.status !== 200 || !reply.type?.startsWith('application/json')) {
+          diagnostic(`Route Handler HTTP failed: ${reply.status}`);
+          httpMatches = false;
+          continue;
+        }
+        const observed = JSON.parse(reply.body.toString());
+        const message = typeof observed.message === 'string' ? observed.message.slice(0, 128) : '';
+        httpActual.push(message);
+        if (message !== expected) httpMatches = false;
+      } catch {
+        diagnostic('Route HandlerのJSON応答を確認できません。');
+        httpMatches = false;
+      }
+    }
+  }
   await marker();
   if (documentNavigation !== navigations)
     diagnostic('採点中に文書が切り替わりました。もう一度判定してください。');
@@ -219,10 +254,12 @@ try {
       ...metadata,
       status: diagnostics.length
         ? 'code-error'
-        : visible && actual === 'こんにちは、実サーバー！'
+        : visible &&
+            actual === (next ? 'こんにちは、Next.js！' : 'こんにちは、実サーバー！') &&
+            httpMatches
           ? 'pass'
           : 'incomplete',
-      actual,
+      actual: next ? `${actual} / ${httpActual.join(' / ')}`.slice(0, 512) : actual,
       diagnostics,
       // Consoleは合否の入力にせず、失敗時の原因をboundedに観察する情報だけとする。
       observation: { count, visible, navigations, consoleErrors },

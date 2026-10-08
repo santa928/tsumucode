@@ -4,6 +4,7 @@ import type {
   WorkspaceGrade,
 } from '../../../adapters/runtime/local/LocalWorkspaceClient';
 import type { CourseProgress, ExerciseDraft } from '../../../core/persistence/contracts';
+import type { WorkspaceProfile } from '../../../adapters/runtime/local/LocalWorkspaceClient';
 import { LOCAL_PROJECT } from '../../../core/persistence/localProjectDescriptor';
 import type { ValidationResult } from '../../../core/validation/contracts';
 
@@ -11,24 +12,37 @@ export function sameProjectFiles(
   left: Readonly<Record<string, string>>,
   right: Readonly<Record<string, string>>,
 ): boolean {
-  const paths = ['index.html', 'main.js', 'message.js', 'styles.css'];
+  const paths = Object.keys(left);
   return (
-    Object.keys(left).length === 4 &&
-    Object.keys(right).length === 4 &&
-    paths.every((path) => left[path] === right[path])
+    paths.length === Object.keys(right).length && paths.every((path) => left[path] === right[path])
   );
 }
 
-export function projectDraft(files: WorkspaceFiles): ExerciseDraft {
+export interface ProjectIdentity {
+  readonly courseId: string;
+  readonly lessonId: string;
+  readonly exerciseId: string;
+  readonly workspaceId: string;
+  readonly ruleId: string;
+  readonly requirementId: string;
+  readonly revision: string;
+  readonly selectedFile?: string;
+  readonly profile?: WorkspaceProfile;
+}
+
+export function projectDraft(
+  files: WorkspaceFiles,
+  identity: ProjectIdentity = LOCAL_PROJECT,
+): ExerciseDraft {
   return {
-    courseId: LOCAL_PROJECT.courseId,
-    lessonId: LOCAL_PROJECT.lessonId,
-    exerciseId: LOCAL_PROJECT.exerciseId,
-    workspaceId: LOCAL_PROJECT.workspaceId,
-    contentRevision: LOCAL_PROJECT.revision,
+    courseId: identity.courseId,
+    lessonId: identity.lessonId,
+    exerciseId: identity.exerciseId,
+    workspaceId: identity.workspaceId,
+    contentRevision: identity.revision,
     editRevision: 1,
     files,
-    selectedFile: 'message.js',
+    selectedFile: identity.selectedFile ?? 'message.js',
     cursors: {},
     validationHistory: [],
     revealedHintIds: [],
@@ -37,40 +51,58 @@ export function projectDraft(files: WorkspaceFiles): ExerciseDraft {
   };
 }
 
-export function projectIsComplete(draft: ExerciseDraft): boolean {
-  const passed = draft.lastPassingSnapshots[LOCAL_PROJECT.exerciseId];
+export function projectIsComplete(
+  draft: ExerciseDraft,
+  identity: ProjectIdentity = LOCAL_PROJECT,
+): boolean {
+  const passed = draft.lastPassingSnapshots[identity.exerciseId];
   return (
     passed !== undefined &&
-    passed.contentRevision === LOCAL_PROJECT.revision &&
+    (identity.profile !== 'next-project-v1' || passed.editRevision === draft.editRevision) &&
+    passed.contentRevision === identity.revision &&
     sameProjectFiles(passed.files, draft.files)
   );
 }
 
-export function projectValidation(grade: WorkspaceGrade, editRevision: number): ValidationResult {
+export function projectValidation(
+  grade: WorkspaceGrade,
+  editRevision: number,
+  identity: ProjectIdentity = LOCAL_PROJECT,
+): ValidationResult {
   const passed = grade.status === 'pass';
   return {
-    exerciseId: LOCAL_PROJECT.exerciseId,
+    exerciseId: identity.exerciseId,
     executionRevision: editRevision,
     status: grade.status,
     checks: [
       {
-        ruleId: LOCAL_PROJECT.ruleId,
-        requirementId: LOCAL_PROJECT.requirementId,
-        label: '実サーバーの見出し',
+        ruleId: identity.ruleId,
+        requirementId: identity.requirementId,
+        label:
+          identity.profile === 'next-project-v1'
+            ? 'pageとquery別の実HTTP応答'
+            : '実サーバーの見出し',
         required: true,
         passed,
         requirementPassed: passed,
         message: passed
-          ? '実サーバーで見出しを確認しました。'
-          : '可視の h1#message とJavaScriptのエラーを確認してください。',
-        expected: 'こんにちは、実サーバー！',
+          ? identity.profile === 'next-project-v1'
+            ? '実pageの見出しと、query別のJSON応答を確認しました。'
+            : '実サーバーで見出しを確認しました。'
+          : identity.profile === 'next-project-v1'
+            ? 'pageの見出し、Route Handlerのquery分岐、実行エラーを確認してください。'
+            : '可視の h1#message とJavaScriptのエラーを確認してください。',
+        expected:
+          identity.profile === 'next-project-v1'
+            ? 'こんにちは、Next.js！ / 最初の実リクエスト / 2つ目の実リクエスト'
+            : 'こんにちは、実サーバー！',
         actual: grade.actual,
         nextAction: passed
           ? '停止しても下書きと合格記録は残ります。'
           : '編集して保存し、実行へ反映してからもう一度判定してください。',
       },
     ],
-    passedRequirementIds: passed ? [LOCAL_PROJECT.requirementId] : [],
+    passedRequirementIds: passed ? [identity.requirementId] : [],
     diagnostics: grade.diagnostics.map((message) => ({
       code: 'local-project-javascript',
       kind: 'reference' as const,

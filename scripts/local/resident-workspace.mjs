@@ -3,16 +3,11 @@ import { randomUUID } from 'node:crypto';
 import { TextDecoder } from 'node:util';
 import { setTimeout as delay } from 'node:timers/promises';
 import { RequestError, LIMITS } from './protocol.mjs';
-import {
-  PROJECT_LIMITS,
-  PROJECT_PROFILE,
-  exact,
-  expectedRevision,
-  runId,
-} from './project-protocol.mjs';
+import { PROJECT_LIMITS, exact, expectedRevision, runId } from './project-protocol.mjs';
 import { docker, followOutput, cleanupOwned, removeContainer } from './docker-engine.mjs';
 import { projectImage, projectConfig, probeProject, applyProject } from './project-engine.mjs';
 import { previewBase, previewOrigin } from './preview-contract.mjs';
+import { NEXT_PROFILE, workspaceProfile } from './next-project-protocol.mjs';
 import { gradeProject } from './project-grade-engine.mjs';
 
 /** 常駐runの排他・期限・回収を扱う。Sourceの更新とHTTP認証は各担当へ委譲する。 */
@@ -27,12 +22,14 @@ export class ResidentWorkspace {
   #limits;
   #transport;
   #graderImage;
+  #nextImage;
 
   constructor({
     store,
     owner,
     image,
     graderImage,
+    nextImage,
     slot,
     engine,
     transport,
@@ -45,6 +42,7 @@ export class ResidentWorkspace {
     this.#limits = limits;
     this.#transport = transport;
     this.#graderImage = graderImage;
+    this.#nextImage = nextImage;
     this.#engine = engine ?? {
       docker,
       followOutput,
@@ -91,7 +89,7 @@ export class ResidentWorkspace {
       reason: undefined,
       record: {
         workspaceId: id,
-        profile: PROJECT_PROFILE,
+        profile: workspaceProfile(id),
         // IDはcontrollerが発行する。履歴を打ち切っても旧stopを新runへ一致させない。
         runId: randomUUID(),
         state: 'starting',
@@ -132,7 +130,12 @@ export class ResidentWorkspace {
     const run = this.#current;
     if (!run?.socket || run.reason || !['ready', 'applying'].includes(run.record.state))
       return undefined;
-    return { workspaceId: run.workspaceId, runId: run.record.runId, ...run.socket };
+    return {
+      workspaceId: run.workspaceId,
+      runId: run.record.runId,
+      profile: run.record.profile,
+      ...run.socket,
+    };
   }
 
   /** 保存版と反映版を区別し、停止・同時反映・古い要求を現在runへ混ぜない。 */
@@ -313,7 +316,9 @@ export class ResidentWorkspace {
     const records = [];
     try {
       await this.#slot.ready();
-      const image = await this.#engine.projectImage(this.#image);
+      const image = await this.#engine.projectImage(
+        run.record.profile === NEXT_PROFILE ? this.#nextImage : this.#image,
+      );
       const source = await this.#store.claimRun(run.workspaceId, revision, run.record);
       run.record = source.lastRun;
       claimed = true;
@@ -367,7 +372,16 @@ export class ResidentWorkspace {
           else if (now - run.activityAt >= this.#limits.idleMs) run.reason = 'idle';
           else if (run.record.state === 'starting') {
             if (now - run.startedAt >= this.#limits.startMs) run.reason = 'startup-timeout';
-            else if ((await this.#engine.probeProject(container.Id)) && !run.reason) {
+            else if (
+              (await this.#engine.probeProject(container.Id, {
+                profile: source.profile,
+                workspaceId: source.workspaceId,
+                runId: run.record.runId,
+                sourceRevision: source.sourceRevision,
+                sourceHash: source.sourceHash,
+              })) &&
+              !run.reason
+            ) {
               if (Date.now() - run.startedAt >= this.#limits.startMs)
                 run.reason = 'startup-timeout';
               else {

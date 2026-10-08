@@ -1,6 +1,6 @@
 import {
   LocalWorkspaceApiError,
-  workspaceFilesSchema,
+  parseWorkspaceFiles,
   type LocalWorkspace,
   type LocalWorkspaceClient,
   type WorkspaceRun,
@@ -8,7 +8,12 @@ import {
 import type { EditorCursor, ExerciseDraft } from '../../../core/persistence/contracts';
 import { LOCAL_PROJECT } from '../../../core/persistence/localProjectDescriptor';
 import type { ValidationResult } from '../../../core/validation/contracts';
-import { projectDraft, projectValidation, sameProjectFiles } from './localProjectProgress';
+import {
+  projectDraft,
+  projectValidation,
+  sameProjectFiles,
+  type ProjectIdentity,
+} from './localProjectProgress';
 
 type Operation = 'connect' | 'save' | 'start' | 'apply' | 'grade' | 'stop';
 export interface LocalProjectSnapshot {
@@ -48,19 +53,20 @@ export class LocalProjectSession {
     private readonly persist: (draft: ExerciseDraft) => Promise<void>,
     private readonly writable: () => boolean,
     draft?: ExerciseDraft,
+    private readonly identity: ProjectIdentity = LOCAL_PROJECT,
   ) {
     if (draft) {
       if (
-        draft.courseId !== LOCAL_PROJECT.courseId ||
-        draft.lessonId !== LOCAL_PROJECT.lessonId ||
-        draft.exerciseId !== LOCAL_PROJECT.exerciseId ||
-        draft.workspaceId !== LOCAL_PROJECT.workspaceId ||
-        draft.contentRevision !== LOCAL_PROJECT.revision
+        draft.courseId !== identity.courseId ||
+        draft.lessonId !== identity.lessonId ||
+        draft.exerciseId !== identity.exerciseId ||
+        draft.workspaceId !== identity.workspaceId ||
+        draft.contentRevision !== identity.revision
       )
         throw new Error('保存された下書きとLocal課題が一致しません。');
-      workspaceFilesSchema.parse(draft.files);
+      parseWorkspaceFiles(draft.files, this.identity.profile);
       if (!Object.hasOwn(draft.files, draft.selectedFile))
-        draft = { ...draft, selectedFile: 'message.js' };
+        draft = { ...draft, selectedFile: identity.selectedFile ?? 'message.js' };
     }
     this.#snapshot = {
       ...(draft ? { draft } : {}),
@@ -151,13 +157,20 @@ export class LocalProjectSession {
 
   select(path: string): void {
     const draft = this.#snapshot.draft;
-    if (draft && Object.hasOwn(draft.files, path))
+    if (draft && this.writable() && !this.#disposed && Object.hasOwn(draft.files, path))
       this.#draftChanged({ ...draft, selectedFile: path });
   }
 
   cursor(path: string, cursor: EditorCursor): void {
     const draft = this.#snapshot.draft;
-    if (draft) this.#draftChanged({ ...draft, cursors: { ...draft.cursors, [path]: cursor } });
+    if (draft && this.writable() && !this.#disposed)
+      this.#draftChanged({ ...draft, cursors: { ...draft.cursors, [path]: cursor } });
+  }
+
+  revealHint(id: string): void {
+    const draft = this.#snapshot.draft;
+    if (!draft || !this.writable() || this.#disposed || draft.revealedHintIds.includes(id)) return;
+    this.#draftChanged({ ...draft, revealedHintIds: [...draft.revealedHintIds, id] });
   }
 
   canGrade(): boolean {
@@ -202,8 +215,10 @@ export class LocalProjectSession {
       const capabilities = await this.client.connect();
       const saved = await this.client.status();
       if (!this.#current(generation)) return;
-      const draft = this.#snapshot.draft ?? projectDraft(saved?.files ?? capabilities.starterFiles);
-      workspaceFilesSchema.parse(draft.files);
+      const draft =
+        this.#snapshot.draft ??
+        projectDraft(saved?.files ?? capabilities.starterFiles, this.identity);
+      parseWorkspaceFiles(draft.files, this.identity.profile);
       this.#set({
         draft,
         saved,
@@ -218,7 +233,7 @@ export class LocalProjectSession {
   async #saveSource(generation: number): Promise<LocalWorkspace | undefined> {
     const draft = this.#snapshot.draft;
     if (!draft || !this.#snapshot.connected || this.#snapshot.conflict) return undefined;
-    const files = workspaceFilesSchema.parse(draft.files);
+    const files = parseWorkspaceFiles(draft.files, this.identity.profile);
     await this.flushDraft();
     if (!this.#current(generation)) return undefined;
     const saved = await this.client.save(this.#snapshot.saved?.sourceRevision ?? 0, files);
@@ -272,7 +287,12 @@ export class LocalProjectSession {
     const { draft, saved, run } = this.#snapshot;
     if (!draft || !saved || !run) return;
     await this.#operation('grade', async (generation) => {
-      this.#set({ message: '固定Browserで実サーバーの見出しを確認しています。' });
+      this.#set({
+        message:
+          this.identity.profile === 'next-project-v1'
+            ? '固定Browserで実pageとquery別のHTTP応答を確認しています。'
+            : '固定Browserで実サーバーの見出しを確認しています。',
+      });
       const grade = await this.client.grade(run, saved);
       if (!this.#current(generation)) return;
       if (!this.writable()) {
@@ -293,16 +313,16 @@ export class LocalProjectSession {
         });
         return;
       }
-      const result = projectValidation(grade, draft.editRevision);
+      const result = projectValidation(grade, draft.editRevision, this.identity);
       const snapshots = { ...current.draft.lastPassingSnapshots };
       if (grade.status === 'pass')
-        snapshots[LOCAL_PROJECT.exerciseId] = {
+        snapshots[this.identity.exerciseId] = {
           files: draft.files,
           editRevision: draft.editRevision,
           contentRevision: draft.contentRevision,
           evaluatedAt: grade.evaluatedAt,
         };
-      else Reflect.deleteProperty(snapshots, LOCAL_PROJECT.exerciseId);
+      else Reflect.deleteProperty(snapshots, this.identity.exerciseId);
       this.#draftChanged({
         ...current.draft,
         validationHistory: [...current.draft.validationHistory, result].slice(-20),
@@ -313,7 +333,9 @@ export class LocalProjectSession {
         result,
         message:
           grade.status === 'pass'
-            ? '合格です。実サーバーの見出しを確認しました。'
+            ? this.identity.profile === 'next-project-v1'
+              ? '合格です。実pageとquery別のHTTP応答を確認しました。'
+              : '合格です。実サーバーの見出しを確認しました。'
             : grade.status === 'code-error'
               ? 'コードにエラーがあります。'
               : 'まだ合格条件に届いていません。',

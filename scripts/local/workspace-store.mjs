@@ -3,14 +3,14 @@ import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { RequestError } from './protocol.mjs';
 import {
-  PROJECT_PROFILE,
   PROJECT_LIMITS,
-  STARTER_FILES,
+  starterFiles,
   workspaceId,
   expectedRevision,
   validateFiles,
   projectHash,
 } from './project-protocol.mjs';
+import { workspaceProfile } from './next-project-protocol.mjs';
 
 /** controller専用directoryへSourceを保存する。全更新を同じ列で直列化し、CASを守る。 */
 export class WorkspaceStore {
@@ -42,10 +42,11 @@ export class WorkspaceStore {
       const record = JSON.parse(await readFile(path, 'utf8'));
       if (
         record.schema !== 1 ||
-        record.profile !== PROJECT_PROFILE ||
+        record.profile !== workspaceProfile(id) ||
         record.workspaceId !== id ||
         expectedRevision(record.sourceRevision) === 0 ||
-        projectHash(validateFiles(record.files)) !== record.sourceHash
+        projectHash(validateFiles(record.files, record.profile), record.profile) !==
+          record.sourceHash
       )
         throw new Error('Invalid Source record');
       return record;
@@ -94,7 +95,8 @@ export class WorkspaceStore {
   save(id, revision, files) {
     workspaceId(id);
     expectedRevision(revision);
-    const source = validateFiles(files);
+    const profile = workspaceProfile(id);
+    const source = validateFiles(files, profile);
     return this.#serial(async () => {
       await this.#prepare();
       const previous = await this.#read(id);
@@ -110,10 +112,10 @@ export class WorkspaceStore {
       }
       return this.#write({
         schema: 1,
-        profile: PROJECT_PROFILE,
+        profile,
         workspaceId: id,
         sourceRevision: revision + 1,
-        sourceHash: projectHash(source),
+        sourceHash: projectHash(source, profile),
         files: source,
         lastRun: previous?.lastRun ?? null,
       });
@@ -122,7 +124,7 @@ export class WorkspaceStore {
 
   reset(id, revision) {
     if (revision === 0) throw new RequestError(404, 'Workspaceがありません。');
-    return this.save(id, revision, STARTER_FILES);
+    return this.save(id, revision, starterFiles(workspaceProfile(id)));
   }
 
   /** 起動の版検査とrun記録を不可分にし、途中の保存を古い版で起動しない。 */

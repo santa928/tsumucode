@@ -1,0 +1,9 @@
+{
+  'id': 'next-ch01',
+  'sequence': 0,
+  'title': 'pageとRoute Handler',
+  'goal': '表示とJSONを別のHTTP応答として確かめる。',
+  'estimatedMinutes': 25,
+  'kind': 'standard',
+  'lessonSources': ['lessons/next-ch01-l01/lesson.yaml'],
+}

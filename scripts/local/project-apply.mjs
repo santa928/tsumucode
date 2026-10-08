@@ -2,12 +2,17 @@ import { lstat, open, readFile, rename, unlink } from 'node:fs/promises';
 import { Buffer } from 'node:buffer';
 import { randomUUID } from 'node:crypto';
 import process from 'node:process';
+import { NEXT_PROFILE, NEXT_STARTER_FILES } from './next-project-protocol.mjs';
 
 // controllerが検査した固定4fileだけを、shellを介さずrunのtmpfsへ反映する。
 const { files, metadata } = JSON.parse(
   Buffer.from(process.argv.slice(2).join(''), 'base64').toString('utf8'),
 );
-const names = ['index.html', 'main.js', 'message.js', 'styles.css'];
+const next = metadata.profile === NEXT_PROFILE;
+const root = next ? '/opt/workspace' : '/workspace';
+const names = next
+  ? Object.keys(NEXT_STARTER_FILES)
+  : ['index.html', 'main.js', 'message.js', 'styles.css'];
 if (
   Object.keys(files).length !== names.length ||
   names.some((name) => typeof files[name] !== 'string')
@@ -36,6 +41,6 @@ async function replace(path, content) {
   }
 }
 
-for (const name of names) await replace(`/workspace/${name}`, files[name]);
+for (const name of names) await replace(`${root}/${name}`, files[name]);
 // 4file全体の原子性は主張しない。管理側はこのmarker一致までapplyingを保つ。
 await replace('/tmp/applied.json', JSON.stringify(metadata));

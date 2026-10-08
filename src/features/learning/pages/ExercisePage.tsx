@@ -1,12 +1,16 @@
 /** 端末能力に応じて編集Runtimeまたは閲覧専用画面だけを遅延読込する。 */
 import { lazy, Suspense, useSyncExternalStore } from 'react';
-import { useLoaderData } from 'react-router';
+import { Link, useLoaderData } from 'react-router';
 import type { exerciseLoader } from '../../../app/contentLoaders';
 import { WorkspaceLeaseGate } from '../../progress/WorkspaceLeaseGate';
 import { WorkshopNotice } from '../../../design-system/components/WorkshopNotice';
 import { useEditingCapability } from '../../../shared/device/editingCapability';
 import { learningRuntimeServices } from '../runtimeServices';
 import { ReadOnlyExercisePage } from './ReadOnlyExercisePage';
+
+const LazyProjectWorkspace = lazy(() =>
+  import('../local/ProjectWorkspace').then((module) => ({ default: module.ProjectWorkspace })),
+);
 
 const LazyEditableExercisePage = lazy(() =>
   import('./EditableExercisePage').then((module) => ({
@@ -37,6 +41,20 @@ export function ExercisePage() {
   const showCoordinationWarning =
     persistenceHealth.kind === 'initializing' || persistenceHealth.kind === 'healthy';
   const sessionKey = `${data.course.id}:${data.course.revision}:${data.exercise.id}:${data.exercise.workspaceId}`;
+  if (data.exercise.runtime?.kind === 'next' && import.meta.env.VITE_LOCAL_LEARNING !== '1') {
+    return (
+      <section>
+        <Link to="/" className="inline-flex min-h-11 items-center font-bold underline">
+          学習一覧へ戻る
+        </Link>
+        <h1>{data.exercise.title}</h1>
+        <WorkshopNotice tone="neutral" title="この演習はLocal学習環境で実行します">
+          Next.jsのpageとRoute
+          HandlerはDocker内の実サーバーで確認します。Pagesの静的表示では実行・採点できません。端末データを書き出してLocal環境へ移行してください。
+        </WorkshopNotice>
+      </section>
+    );
+  }
   if (!canEdit) {
     return (
       <div data-exercise-mode="read-only">
@@ -55,7 +73,11 @@ export function ExercisePage() {
       >
         {(lease) => (
           <Suspense fallback={<ExerciseLoadingNotice />}>
-            <LazyEditableExercisePage {...data} lease={lease} />
+            {data.exercise.runtime?.kind === 'next' ? (
+              <LazyProjectWorkspace lessonData={data} access={lease} />
+            ) : (
+              <LazyEditableExercisePage {...data} lease={lease} />
+            )}
           </Suspense>
         )}
       </WorkspaceLeaseGate>
