@@ -5,6 +5,15 @@ on:
     branches: [main]
     paths:
       - scripts/local/**
+      - src/features/learning/local/**
+      - src/adapters/runtime/local/LocalWorkspaceClient*
+      - src/core/persistence/localProjectDescriptor.ts
+      - src/features/progress/WorkspaceLeaseGate.tsx
+      - src/features/progress/ProgressTransferPanel.tsx
+      - src/features/learning/runtimeServices.ts
+      - src/app/AppShell.tsx
+      - src/app/router.tsx
+      - src/features/home/HomePage.tsx
       - scripts/learn.sh
       - Dockerfile.learning
       - compose.learning.yaml
@@ -16,6 +25,15 @@ on:
     branches: [main]
     paths:
       - scripts/local/**
+      - src/features/learning/local/**
+      - src/adapters/runtime/local/LocalWorkspaceClient*
+      - src/core/persistence/localProjectDescriptor.ts
+      - src/features/progress/WorkspaceLeaseGate.tsx
+      - src/features/progress/ProgressTransferPanel.tsx
+      - src/features/learning/runtimeServices.ts
+      - src/app/AppShell.tsx
+      - src/app/router.tsx
+      - src/features/home/HomePage.tsx
       - scripts/learn.sh
       - Dockerfile.learning
       - compose.learning.yaml
@@ -38,6 +56,7 @@ jobs:
     env:
       TSUMUCODE_LOCAL_OWNER: tsumucode-learning-ci
       TSUMUCODE_LOCAL_SOCKET: /var/run/docker.sock
+      COMPOSE_PARALLEL_LIMIT: 1
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
@@ -55,8 +74,14 @@ jobs:
       - name: Verify resident workspace and existing Node execution
         run: |
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
+          docker exec -i "$controller" node --input-type=module < scripts/local/project-grade-acceptance.mjs
           docker exec -i "$controller" node --input-type=module < scripts/local/resident-acceptance.mjs
           docker exec -i "$controller" node --input-type=module < scripts/local/acceptance.mjs
+      - name: Verify representative production learning UI and storage
+        run: >-
+          docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256
+          --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-browser-checks"
+          node scripts/local/project-browser-acceptance.mjs
       - name: Verify normal controller restart
         run: |
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)

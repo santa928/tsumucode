@@ -12,6 +12,7 @@ for (const [name, source] of Object.entries(files))
   await writeFile(`/workspace/${name}`, source, { flag: 'wx', mode: 0o600 });
 await symlink('/opt/node_modules', '/workspace/node_modules');
 let server;
+let observedMarker;
 const transport = preview
   ? createHttpServer((req, res) => server.middlewares(req, res))
   : undefined;
@@ -54,10 +55,17 @@ server = await createServer({
             res.writeHead(405).end('{}');
             return;
           }
-          void readFile('/tmp/applied.json', 'utf8').then(
-            (data) => res.end(data),
-            () => res.writeHead(503).end('{}'),
-          );
+          void readFile('/tmp/applied.json', 'utf8')
+            .then((data) => {
+              JSON.parse(data);
+              if (data !== observedMarker) {
+                // 反映確認を返す前に、watcher通知より先に旧transformを無効化する。
+                vite.environments.client.moduleGraph.invalidateAll();
+                observedMarker = data;
+              }
+              res.end(data);
+            })
+            .catch(() => res.writeHead(503).end('{}'));
         });
         if (preview)
           vite.middlewares.use(`${base}api/echo`, (req, res) => {

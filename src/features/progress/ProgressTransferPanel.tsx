@@ -14,6 +14,7 @@ import {
   type RepositorySnapshot,
 } from '../../core/persistence/contracts';
 import type { ImportPreview } from '../../core/persistence/transferService';
+import { LOCAL_PROJECT } from '../../core/persistence/localProjectDescriptor';
 import { StackedCard } from '../../design-system/components/StackedCard';
 import { learningRuntimeServices } from '../learning/runtimeServices';
 import { downloadProgressJson } from './progressDownload';
@@ -296,9 +297,21 @@ export function ProgressTransferPanel({
               ).length;
               return (
                 <li key={course.courseId}>
-                  <Link className="font-bold underline" to={`/courses/${course.courseId}`}>
-                    {course.courseId}のコースマップから続ける
-                  </Link>{' '}
+                  {course.courseId === LOCAL_PROJECT.courseId ? (
+                    import.meta.env.VITE_LOCAL_LEARNING === '1' ? (
+                      <Link className="font-bold underline" to="/local/project">
+                        実サーバーの見出し課題から続ける
+                      </Link>
+                    ) : (
+                      <span>
+                        Local課題の保存記録です。JSONを書き出してLocal版へ移行してください。
+                      </span>
+                    )
+                  ) : (
+                    <Link className="font-bold underline" to={`/courses/${course.courseId}`}>
+                      {course.courseId}のコースマップから続ける
+                    </Link>
+                  )}{' '}
                   <span className="text-workshop-muted">（{completed}レッスン完了）</span>
                 </li>
               );

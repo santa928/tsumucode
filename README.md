@@ -93,7 +93,7 @@ HTML/CSSとDOMを使うJavaScript演習は「ブラウザで実行」と表示�
 
 ## ローカルNode.js学習
 
-Dockerを起動し、リポジトリ直下で次を実行します。初回は固定Nodeイメージの取得と学習画面のbuildを行います。ホストへのNode/npm導入は不要です。
+Dockerを起動し、リポジトリ直下で次を実行します。初回は固定Node/Chromiumイメージの取得と学習画面のbuildを行います。ホストへのNode/npm導入は不要です。
 
 ```bash
 ./scripts/learn.sh
@@ -105,9 +105,13 @@ Dockerを起動し、リポジトリ直下で次を実行します。初回は�
 
 学習用webと信頼controllerは開発用appから分離しています。**controllerだけがDocker管理socketを持ち、これはホスト管理に相当する強い権限です。** 学習コードは別の使い捨てコンテナへ渡し、非root・read-only・ネットワークなし・host mountなしで実行します。同時1件、5秒、256 MiB、PID 64、出力64 KiBが上限です。第三者の敵対コードを安全に実行する公開サービスではありません。詳細とAPI仕様は[Local Node設計・検証記録](docs/quality/local-node-runtime.md)にあります。
 
-作者用の固定Vite Projectは、controller専用volumeへSourceを保存して常駐runを起動・停止できます。
-APIの実Previewはrun専用hostの4175番へ分離し、保存した変更をHMRへ反映できます。
-学習画面と採点への接続は後続 #126 で扱います。Origin、Cookie、許可経路とNextの未対応条件は
+学習一覧の「実サーバーで見出しを変更する」では、Local専用の固定Vite Projectを
+編集→保存→起動→実HTTP Preview→変更反映→判定→停止/再開できます。
+`message.js` の文字列を `こんにちは、実サーバー！` に変更し、可視の見出しへ表示します。
+run専用hostの4175番にPreviewを分離し、保存版と反映版が一致した時だけ固定Browserで採点します。
+端末の下書き/進捗とcontrollerのSource volumeは別の保存先です。
+Pages/Local間の下書き/進捗は既存の端末データJSONで移行できます。管理tokenやrunは移行しません。
+手順・保存/採点の境界は[Workspace学習の契約](docs/quality/local-workspace-learning.md)、Origin、Cookie、許可経路とNextの未対応条件は
 [Preview境界の契約](docs/quality/local-preview-boundary.md)にあります。
 保存・Resetの確認範囲と制約は[常駐Workspace設計・検証記録](docs/quality/local-resident-workspace.md)にあります。
 通常の停止・再起動・`down`はSource volumeを保持します。`down --volumes`やvolume pruneは行わないでください。

@@ -159,14 +159,20 @@ export function HomePage() {
 
       {import.meta.env.VITE_LOCAL_LEARNING === '1' ? (
         <section className="mt-6" aria-label="ローカル学習">
-          <h2 className="text-xl font-bold">ローカルNode.jsを試す</h2>
-          <p>Closure演習をDocker内で実行できます。ほかの演習はブラウザで動作します。</p>
+          <h2 className="text-xl font-bold">ローカル実行を試す</h2>
+          <p>Closure演習のNode.jsとVite ProjectをDocker内で実行できます。</p>
           <Link
             className="font-bold underline"
             to="/courses/javascript/lessons/javascript-ch03-l05/exercises/javascript-ch03-l05-e01"
           >
             ClosureをNode.jsで実行する
           </Link>
+          <p className="mt-3">
+            <Link className="font-bold underline" to="/local/project">
+              実サーバーで見出しを変更する
+            </Link>{' '}
+            — Vite Projectを編集・起動・反映・判定できます。
+          </p>
         </section>
       ) : null}
 

@@ -52,6 +52,7 @@ const resident = new ResidentWorkspace({
   store,
   owner,
   image: process.env.TSUMUCODE_LOCAL_PROJECT_IMAGE,
+  graderImage: process.env.TSUMUCODE_LOCAL_GRADER_IMAGE,
   transport,
   slot: {
     acquire(run) {
@@ -306,12 +307,13 @@ async function handle(req, res) {
         limits: PROJECT_LIMITS,
         starterFiles: STARTER_FILES,
         available: Boolean(process.env.TSUMUCODE_LOCAL_PROJECT_IMAGE),
+        gradingAvailable: Boolean(process.env.TSUMUCODE_LOCAL_GRADER_IMAGE && transport),
       };
     } else if (req.url?.startsWith('/api/workspaces/')) {
       if (!process.env.TSUMUCODE_LOCAL_PROJECT_IMAGE)
         throw new RequestError(503, '固定Projectはこのcontrollerで有効ではありません。');
       const matched =
-        /^\/api\/workspaces\/([a-z0-9-]+)(?:\/(source|start|stop|reset|activity|apply))?$/u.exec(
+        /^\/api\/workspaces\/([a-z0-9-]+)(?:\/(source|start|stop|reset|activity|apply|grade))?$/u.exec(
           req.url,
         );
       if (!matched) throw new RequestError(404, 'Workspace APIがありません。');
@@ -339,6 +341,16 @@ async function handle(req, res) {
         case 'apply':
           value = await resident.apply(id, input);
           break;
+        case 'grade': {
+          const cancellation = new globalThis.AbortController();
+          const disconnected = () => {
+            if (!res.writableEnded) cancellation.abort();
+          };
+          res.once('close', disconnected);
+          res.once('finish', () => res.off('close', disconnected));
+          value = await resident.grade(id, input, cancellation.signal);
+          break;
+        }
         case 'reset':
           value = await resident.reset(id, input);
           break;

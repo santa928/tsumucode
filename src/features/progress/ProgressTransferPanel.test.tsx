@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import type { PersistenceHealthSnapshot } from '../../core/persistence/ResilientProgressService';
 import type { RepositorySnapshot } from '../../core/persistence/contracts';
+import { LOCAL_PROJECT } from '../../core/persistence/localProjectDescriptor';
 import { renderWithRouter } from '../../test/renderWithRouter';
 import {
   ProgressTransferPanel,
@@ -101,6 +102,49 @@ function createPorts() {
 }
 
 describe('ProgressTransferPanel', () => {
+  it.each(['0', '1'])('Local保存記録はbuild設定%sに合った続き先だけを表示する', async (local) => {
+    vi.stubEnv('VITE_LOCAL_LEARNING', local);
+    try {
+      const { transfer, repository } = createPorts();
+      repository.snapshot.mockResolvedValue({
+        ...EMPTY_SNAPSHOT,
+        courses: {
+          [LOCAL_PROJECT.courseId]: {
+            courseId: LOCAL_PROJECT.courseId,
+            contentRevision: LOCAL_PROJECT.revision,
+            lessons: {},
+            currentComplete: false,
+            updatedAt: '2026-10-08T00:00:00.000Z',
+          },
+        },
+      });
+      renderWithRouter(
+        <ProgressTransferPanel
+          transfer={transfer}
+          repository={repository}
+          progressHealth={createHealthStore().store}
+          ready={Promise.resolve()}
+        />,
+      );
+      await screen.findByRole('heading', { name: '学習のつづき' });
+      expect(
+        screen.queryByRole('link', { name: /local-vite-workspaceのコースマップ/u }),
+      ).toBeNull();
+      if (local === '1') {
+        expect(
+          screen.getByRole('link', { name: '実サーバーの見出し課題から続ける' }),
+        ).toHaveAttribute('href', '/local/project');
+      } else {
+        expect(
+          screen.getByText('Local課題の保存記録です。JSONを書き出してLocal版へ移行してください。'),
+        ).toBeInTheDocument();
+        expect(screen.queryByRole('link', { name: '実サーバーの見出し課題から続ける' })).toBeNull();
+      }
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
   it('Catalog検証後にImport差分とreset理由を見せ、明示確認までmutationしない', async () => {
     const { transfer, repository } = createPorts();
     const prepareTransferCatalog = vi.fn(async () => undefined);
@@ -496,7 +540,9 @@ describe('ProgressTransferPanel', () => {
 
       if (phase === 'persist') expect(storageManager.estimate).not.toHaveBeenCalled();
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
-      expect(screen.getByRole('button', { name: '全コースの進捗と下書きを書き出す' })).toBeEnabled();
+      expect(
+        screen.getByRole('button', { name: '全コースの進捗と下書きを書き出す' }),
+      ).toBeEnabled();
     },
   );
 

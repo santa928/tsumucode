@@ -1,0 +1,212 @@
+import assert from 'node:assert/strict';
+import { createServer, request } from 'node:http';
+import { lstat } from 'node:fs/promises';
+import { Buffer } from 'node:buffer';
+import process from 'node:process';
+import { setTimeout, clearTimeout } from 'node:timers';
+import { URL } from 'node:url';
+import { chromium } from '@playwright/test';
+import { previewBase, previewOrigin, previewRoute, previewHeaders } from './preview-contract.mjs';
+
+// 固定imageのtrusted checkerだけが実DOMを読む。learnerのpostMessage/Consoleを採点結果にしない。
+const { metadata, socket } = JSON.parse(Buffer.from(process.argv[2], 'base64').toString('utf8'));
+const origin = previewOrigin(metadata.runId);
+const base = previewBase(metadata.workspaceId, metadata.runId);
+const parent = await lstat('/transport');
+const endpoint = await lstat('/transport/http.sock');
+assert.equal(parent.uid, 0);
+assert.equal(parent.gid, 1000);
+assert.equal(parent.mode & 0o777, 0o550);
+assert.ok(endpoint.isSocket());
+assert.equal(endpoint.uid, 1000);
+assert.equal(endpoint.gid, 1000);
+assert.equal(endpoint.dev, socket.dev);
+assert.equal(endpoint.ino, socket.ino);
+
+/** 認証情報を持たない固定HTTP bridge。実Viteの応答だけをboundedに渡す。 */
+function readHttp(path) {
+  return new Promise((resolve, reject) => {
+    const req = request(
+      { socketPath: '/transport/http.sock', path, headers: { host: new URL(origin).host } },
+      (res) => {
+        const chunks = [];
+        let bytes = 0;
+        res.on('data', (chunk) => {
+          bytes += chunk.length;
+          if (bytes > 512 * 1024) res.destroy(new Error('Grade response limit'));
+          else chunks.push(chunk);
+        });
+        res.on('error', reject);
+        res.on('end', () =>
+          resolve({
+            status: res.statusCode,
+            type: res.headers['content-type'],
+            body: Buffer.concat(chunks),
+          }),
+        );
+      },
+    );
+    req.setTimeout(3000, () => req.destroy(new Error('Grade HTTP deadline')));
+    req.on('error', reject);
+    req.end();
+  });
+}
+
+async function marker() {
+  const reply = await readHttp('/__tsumucode_ready');
+  assert.equal(reply.status, 200);
+  const observed = JSON.parse(reply.body.toString());
+  for (const [key, value] of Object.entries(metadata)) assert.equal(observed[key], value);
+}
+
+let requests = 0;
+const bridge = createServer((req, res) => {
+  if (
+    requests >= 8 ||
+    req.method !== 'GET' ||
+    req.headers.host !== new URL(origin).host ||
+    !previewRoute(req.url, metadata) ||
+    req.url.split('?')[0] === `${base}api/echo`
+  ) {
+    res.writeHead(403).end();
+    return;
+  }
+  requests++;
+  void readHttp(req.url)
+    .then((reply) => {
+      if ((reply.status ?? 500) >= 300 && (reply.status ?? 500) < 400)
+        throw new Error('Grade redirect denied');
+      res.writeHead(reply.status ?? 502, {
+        ...previewHeaders(metadata.runId),
+        'content-type': reply.type ?? 'application/octet-stream',
+      });
+      res.end(reply.body);
+    })
+    .catch(() => res.writeHead(503).end())
+    .finally(() => {
+      requests--;
+    });
+});
+// Vite自身のHMR clientが正常に起動するための固定WS。採点中の2枠/2 MiBだけを許可する。
+const websockets = new Set();
+bridge.on('upgrade', (req, client, head) => {
+  let upstream;
+  let proxy;
+  let timer;
+  const close = () => {
+    clearTimeout(timer);
+    client.destroy();
+    upstream?.destroy();
+    proxy?.destroy();
+    websockets.delete(close);
+  };
+  client.on('error', close);
+  client.once('close', close);
+  if (
+    websockets.size >= 2 ||
+    req.method !== 'GET' ||
+    req.headers.host !== new URL(origin).host ||
+    req.headers.origin !== origin ||
+    req.headers['sec-websocket-protocol'] !== 'vite-hmr' ||
+    !previewRoute(req.url, metadata, true)
+  ) {
+    close();
+    return;
+  }
+  websockets.add(close);
+  proxy = request({
+    socketPath: '/transport/http.sock',
+    method: 'GET',
+    path: req.url,
+    headers: {
+      host: new URL(origin).host,
+      origin,
+      connection: 'Upgrade',
+      upgrade: 'websocket',
+      'sec-websocket-key': req.headers['sec-websocket-key'],
+      'sec-websocket-version': '13',
+      'sec-websocket-protocol': 'vite-hmr',
+    },
+  });
+  proxy.on('error', close);
+  proxy.on('response', close);
+  proxy.on('upgrade', (reply, socket, pending) => {
+    if (
+      client.destroyed ||
+      reply.statusCode !== 101 ||
+      reply.headers['sec-websocket-protocol'] !== 'vite-hmr'
+    ) {
+      socket.destroy();
+      close();
+      return;
+    }
+    upstream = socket;
+    upstream.on('error', close);
+    upstream.once('close', close);
+    client.write(
+      `HTTP/1.1 101 Switching Protocols\r\nConnection: Upgrade\r\nUpgrade: websocket\r\nSec-WebSocket-Accept: ${reply.headers['sec-websocket-accept']}\r\nSec-WebSocket-Protocol: vite-hmr\r\n\r\n`,
+    );
+    let sent = head.length;
+    let received = pending.length;
+    client.on('data', (data) => {
+      sent += data.length;
+      if (sent > 2 * 1024 * 1024) close();
+    });
+    upstream.on('data', (data) => {
+      received += data.length;
+      if (received > 2 * 1024 * 1024) close();
+    });
+    if (head.length) upstream.write(head);
+    if (pending.length) client.write(pending);
+    client.pipe(upstream).pipe(client);
+  });
+  timer = setTimeout(close, 10000);
+  proxy.end();
+});
+bridge.requestTimeout = 10000;
+bridge.headersTimeout = 10000;
+bridge.maxHeadersCount = 32;
+await new Promise((resolve, reject) => {
+  bridge.once('error', reject);
+  bridge.listen(4175, '127.0.0.1', resolve);
+});
+let browser;
+try {
+  await marker();
+  browser = await chromium.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-dev-shm-usage'],
+  });
+  const page = await browser.newPage();
+  const diagnostics = [];
+  page.on('pageerror', (error) => {
+    if (diagnostics.length < 8) diagnostics.push(error.message.slice(0, 512));
+  });
+  const response = await page.goto(origin + base, { waitUntil: 'load', timeout: 5000 });
+  assert.equal(response.status(), 200);
+  assert.equal(new URL(page.url()).origin, origin);
+  const heading = page.locator('h1#message');
+  const count = await heading.count();
+  const visible = count === 1 && (await heading.isVisible());
+  const actual = count === 1 ? ((await heading.textContent()) ?? '').trim().slice(0, 512) : '';
+  await marker();
+  process.stdout.write(
+    JSON.stringify({
+      ...metadata,
+      status: diagnostics.length
+        ? 'code-error'
+        : visible && actual === 'こんにちは、実サーバー！'
+          ? 'pass'
+          : 'incomplete',
+      actual,
+      diagnostics,
+      engineVersion: browser.version(),
+      evaluatedAt: new Date().toISOString(),
+    }) + '\n',
+  );
+} finally {
+  await browser?.close();
+  websockets.forEach((close) => close());
+  bridge.closeAllConnections();
+  bridge.close();
+}

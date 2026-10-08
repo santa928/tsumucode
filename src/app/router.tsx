@@ -63,6 +63,17 @@ function renderRouterShellLoadingPage() {
 /** 通常学習の子Routeを、初期modeに応じて同期または遅延moduleから構成する。 */
 function normalLearningChildren(options: AppRouterOptions): RouteObject[] {
   return [
+    ...(import.meta.env.VITE_LOCAL_LEARNING === '1'
+      ? [
+          {
+            path: 'local/project',
+            lazy: async () => ({
+              Component: (await import('../features/learning/local/LocalProjectPage'))
+                .LocalProjectPage,
+            }),
+          },
+        ]
+      : []),
     {
       index: true,
       HydrateFallback: ContentLoadingPage,

@@ -2,7 +2,7 @@
 
 固定profile `vite-project-v1`（Node 24.18.0 / Vite 8.2.0）のHTTPとHMRを実サーバーへ接続する。
 Source保存と常駐runの前提は [常駐Workspace](local-resident-workspace.md) を参照。
-一般学習画面と採点への接続は #126 が担当する。Pages版へlocalhostの自動探索は追加しない。
+Local専用代表課題の画面・採点への接続は [Workspace学習の契約](local-workspace-learning.md) に記載する。Pages版へlocalhostの自動探索は追加しない。
 
 ## Originと資格情報
 
@@ -64,7 +64,7 @@ Preview/HMRはapplying中も表示されるが、採点可能と扱わない。
 HMRのDOM反映確認とサーバーのmetadata一致は別の証拠である。
 
 反映中の保存は新しいSource版を作れるため、保存版とrun反映版は一致しない場合がある。
-#126は編集版・保存版・反映版・run ID・Workspaceを照合してから採点を許可する必要がある。
+Localの学習画面は編集版・保存版・反映版・run ID・Workspaceを照合してから採点を許可する。
 停止はapply完了とコンテナ/transportの回収を待つ。途中失敗ではrunを失敗として回収し、
 Sourceを保持する。保存待ち中の停止、readiness期限後のseal、部分prepareの回収失敗を回帰で確認する。
 

@@ -7,6 +7,7 @@ import {
   type ContentMigrationNotice,
 } from '../../core/persistence/contentProgressMigration';
 import { PassFreshnessRegistry } from '../../core/persistence/PassFreshnessRegistry';
+import { localProjectDescriptor } from '../../core/persistence/localProjectDescriptor';
 import { TabLeaseCoordinator } from '../../core/persistence/TabLeaseCoordinator';
 import {
   ResilientProgressService,
@@ -300,6 +301,8 @@ export function createLearningRuntimeServices(
     new ContentProgressMigrationService(repository, { id: migrationId });
   const transferService =
     options.transferService ?? new LazyTransferService(repository, contentMigrations);
+  // Pagesにも識別子だけを登録する。Local APIや実行moduleは読み込まない。
+  contentMigrations.registerCourseDescriptor(localProjectDescriptor);
   const leaseCoordinator =
     options.leaseCoordinator ?? new TabLeaseCoordinator({ leasePersistence: progressService });
   const loadTransferCourseIndexes =

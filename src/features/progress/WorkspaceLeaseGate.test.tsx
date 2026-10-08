@@ -121,7 +121,7 @@ function stickyCoordinatorHarness(handle: TabLeaseHandle): GateHarness {
 
 interface RegisteredSessionProps {
   readonly access: WorkspaceLeaseAccess;
-  readonly beforeYield: () => Promise<void>;
+  readonly beforeYield: Parameters<WorkspaceLeaseAccess['registerBeforeYield']>[0];
   readonly onRegistered?: () => void;
 }
 
@@ -158,6 +158,41 @@ function renderGate(
 }
 
 describe('WorkspaceLeaseGate', () => {
+  it('保存callbackへfocus再検証と実際の譲渡を区別して渡す', async () => {
+    const lease = createFakeLease({ status: 'owned', coordination: 'available' });
+    const harness = coordinatorHarness(lease.handle);
+    const callback = vi.fn(async (context: { readonly revalidating: boolean }) => {
+      expect(typeof context.revalidating).toBe('boolean');
+      await Promise.resolve();
+    });
+    const registered = vi.fn();
+    render(
+      <MemoryRouter>
+        <WorkspaceLeaseGate
+          courseId="html-css"
+          workspaceId="workspace-first-heading"
+          coordinator={harness.coordinator}
+        >
+          {(access) => (
+            <RegisteredSession access={access} beforeYield={callback} onRegistered={registered} />
+          )}
+        </WorkspaceLeaseGate>
+      </MemoryRouter>,
+    );
+    await waitFor(() => {
+      expect(registered).toHaveBeenCalled();
+    });
+    await act(async () => {
+      lease.setState({ status: 'yielding', coordination: 'available', revalidating: true });
+      await harness.getAcquireOptions()?.beforeYield(lease.runFencedWrite);
+    });
+    expect(callback).toHaveBeenLastCalledWith({ revalidating: true });
+    await act(async () => {
+      lease.setState({ status: 'owned', coordination: 'available' });
+      await harness.getAcquireOptions()?.beforeYield(lease.runFencedWrite);
+    });
+    expect(callback).toHaveBeenLastCalledWith({ revalidating: false });
+  });
   it.each(['owned', 'read-only', 'abort', 'unmount'] as const)(
     '再確認待ちは%sで確定し、後の再取得へ持ち越さない',
     async (outcome) => {
