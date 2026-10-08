@@ -3,6 +3,22 @@ import { URL } from 'node:url';
 import { NextLessonObservationError } from './next-observation-error.mjs';
 export { NextLessonObservationError } from './next-observation-error.mjs';
 
+/** Pageの寿命内で実文書要求とURL変更を数え、同一URLの履歴更新を除外する。 */
+export function watchDocumentVersion(page) {
+  let version = 0;
+  let url = page.url();
+  page.on('request', (request) => {
+    if (request.isNavigationRequest() && request.frame() === page.mainFrame()) version++;
+  });
+  page.on('framenavigated', (frame) => {
+    if (frame === page.mainFrame() && frame.url() !== url) {
+      url = frame.url();
+      version++;
+    }
+  });
+  return () => version;
+}
+
 /** #133の固定URLと操作をtrusted Browserで読む。教材の自己申告は採用しない。 */
 export async function observeNextLesson(page, origin, base, goal) {
   let navigations = 0;
