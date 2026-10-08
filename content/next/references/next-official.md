@@ -14,3 +14,14 @@ Next16.3.8 / Node24.18.0 / React・ReactDOM19.2.7 / TypeScript6.0.3。PR83の固
 - [Layouts and Pages](https://nextjs.org/docs/app/getting-started/layouts-and-pages): page/layout、nested route、Promiseのparams。
 - [Server and Client Components](https://nextjs.org/docs/app/getting-started/server-and-client-components): use clientの境界、直列化できるprops、状態とイベント。
 - [Linking and Navigating](https://nextjs.org/docs/app/getting-started/linking-and-navigating): Next Linkのprefetch/soft navigationと文書遷移の区別。今回は通常aの実動作を検証する。
+
+## データと失敗画面（固定実測版16.3.8）
+
+- [fetch](https://nextjs.org/docs/app/api-reference/functions/fetch)：no-store/force-cache/next.revalidate、dev HMRとno-cacheの例外。
+- [Caching Previous Model](https://nextjs.org/docs/app/guides/caching-without-cache-components)：Data Cacheと期限後の背景更新。
+- [loading](https://nextjs.org/docs/app/api-reference/file-conventions/loading)：待機中の区間とLink後の表示。
+- [error](https://nextjs.org/docs/app/api-reference/file-conventions/error)：retryは再取得、resetは再描画のみ。retryの安定化は16.3.0。
+- [not-found](https://nextjs.org/docs/app/api-reference/file-conventions/not-found)：送信開始後はHTTP200のまま対象なしのUIを返す場合がある。
+- [Turbopack disk cache](https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopackFileSystemCache)：本教材ではdev disk cacheを無効にし、固定tmpfs内で動かす。fetchのData Cacheとは別。
+
+公式サイトの現表示16.4.0と実測版16.3.8を同一視しない。公開前は固定版の実Fixtureと実画面の結果を正とする。

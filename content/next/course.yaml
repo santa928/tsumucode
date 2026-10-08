@@ -1,10 +1,10 @@
 schemaVersion: 1
 id: next
 title: Next.js 実サーバーの第一歩
-description: Localの固定Next環境で実HTTP、App RouterとServer/Client境界を学ぶ未公開教材。
+description: Localの固定Next環境で実HTTP、App Router、Server/Client境界、データ保持と失敗回復を学ぶ未公開教材。
 audience: TypeScriptとReactを学んだ初学者
-estimatedMinutes: 85
-revision: 2026-10-08.2
+estimatedMinutes: 155
+revision: 2026-10-08.3
 runnerId: next
 validatorId: next
 glossarySource: glossary.yaml
@@ -21,17 +21,20 @@ prerequisites:
   - react
 publicationStatus: draft
 expectedTotals:
-  chapters: 2
-  lessons: 3
-  conceptSlides: 9
-  standardExercises: 3
+  chapters: 3
+  lessons: 5
+  conceptSlides: 15
+  standardExercises: 5
   guidedProjectLessons: 0
   capstoneLessons: 0
-  estimatedMinutes: 85
+  estimatedMinutes: 155
 provenanceManifestPath: provenance.yaml
 progressMigrations:
   - fromRevision: 2026-10-08.1
     toRevision: 2026-10-08.2
+    steps: []
+  - fromRevision: 2026-10-08.2
+    toRevision: 2026-10-08.3
     steps: []
 phases:
   - id: next-p01-server
@@ -40,3 +43,4 @@ phases:
     chapterSources:
       - chapters/next-ch01/chapter.yaml
       - chapters/next-ch02/chapter.yaml
+      - chapters/next-ch03/chapter.yaml

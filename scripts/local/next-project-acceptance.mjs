@@ -20,7 +20,13 @@ const fixtures = JSON.parse(Buffer.concat(chunks).toString());
 const workspace = process.env.TSUMUCODE_NEXT_WORKSPACE ?? NEXT_WORKSPACE;
 const contract = nextWorkspace(workspace);
 assert.ok(contract);
-const expectedCount = { [NEXT_WORKSPACE]: 6, 'next-ch02-l01-e01': 8, 'next-ch02-l02-e01': 9 };
+const expectedCount = {
+  [NEXT_WORKSPACE]: 6,
+  'next-ch02-l01-e01': 8,
+  'next-ch02-l02-e01': 9,
+  'next-ch03-l01-e01': 8,
+  'next-ch03-l02-e01': 9,
+};
 assert.equal(fixtures.length, expectedCount[workspace]);
 const owner = process.env.TSUMUCODE_LOCAL_OWNER;
 assert.ok(owner);

@@ -10,8 +10,14 @@ export const NEXT_STARTER_FILES: Readonly<
 export function workspaceProfile(id: string): 'next-project-v1' | 'vite-project-v1';
 export interface NextWorkspaceContract {
   readonly files: Readonly<Record<string, string>>;
-  readonly goal: 'page-route-query' | 'nested-dynamic-navigation' | 'server-client-counter';
+  readonly goal:
+    | 'page-route-query'
+    | 'nested-dynamic-navigation'
+    | 'server-client-counter'
+    | 'data-cache-revalidation'
+    | 'loading-error-not-found';
   readonly pages: readonly string[];
+  readonly readonlyFiles?: readonly string[];
   readonly previewLabels: readonly string[];
 }
 export const NEXT_WORKSPACES: Readonly<Record<string, NextWorkspaceContract>>;

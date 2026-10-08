@@ -130,11 +130,14 @@ export class ResidentWorkspace {
     const run = this.#current;
     if (!run?.socket || run.reason || !['ready', 'applying'].includes(run.record.state))
       return undefined;
+    const streaming = run.workspaceId === 'next-ch03-l02-e01';
+    if (streaming && run.record.state !== 'ready') return undefined;
     return {
       workspaceId: run.workspaceId,
       runId: run.record.runId,
       profile: run.record.profile,
       ...run.socket,
+      ...(streaming ? { sourceRevision: run.record.sourceRevision } : {}),
     };
   }
 

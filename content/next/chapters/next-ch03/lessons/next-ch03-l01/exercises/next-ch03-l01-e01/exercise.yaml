@@ -1,0 +1,539 @@
+{
+  'id': 'next-ch03-l01-e01',
+  'kind': 'standard',
+  'workspaceId': 'next-ch03-l01-e01',
+  'countsTowardStandardExerciseTotal': true,
+  'title': '取得する値をいつ更新するか',
+  'instructionsSource': 'instructions.md',
+  'requiresConcepts':
+    [
+      { 'conceptId': 'next-data-fetch', 'minimumLevel': 'transform' },
+      { 'conceptId': 'next-cache', 'minimumLevel': 'transform' },
+      { 'conceptId': 'next-revalidate', 'minimumLevel': 'transform' },
+    ],
+  'scaffoldLevel': 'transform',
+  'steps':
+    [
+      {
+        'id': 'next-ch03-l01-e01-step01',
+        'file': 'app/data/[mode]/page.tsx',
+        'starterAnchor': "? { cache: 'force-cache' as const }",
+        'requiresConceptIds': ['next-data-fetch'],
+        'validationRuleIds': ['next-ch03-l01-e01-r01'],
+        'target': '毎回の実取得',
+        'change': 'freshの保持設定を修正します。',
+        'observe': '同じ保存版の2要求で取得番号が変わることを確認します。',
+      },
+      {
+        'id': 'next-ch03-l01-e01-step02',
+        'file': 'app/data/[mode]/page.tsx',
+        'starterAnchor': "? { cache: 'no-store' as const }",
+        'requiresConceptIds': ['next-cache'],
+        'validationRuleIds': ['next-ch03-l01-e01-r01'],
+        'target': '保持した応答',
+        'change': 'cachedの保持設定を修正します。',
+        'observe': '同じ要求では番号と値が保持され、再取得が増えないことを確認します。',
+      },
+      {
+        'id': 'next-ch03-l01-e01-step03',
+        'file': 'app/data/[mode]/page.tsx',
+        'starterAnchor': 'revalidate: 30',
+        'requiresConceptIds': ['next-revalidate'],
+        'validationRuleIds': ['next-ch03-l01-e01-r01'],
+        'target': '期限後の更新',
+        'change': '期限を教材の1秒に修正します。',
+        'observe': '期限内の保持と、期限後の複数要求で更新されることを確認します。',
+      },
+    ],
+  'runtime':
+    {
+      'kind': 'next',
+      'entryFile': 'app/page.tsx',
+      'sourceType': 'module',
+      'capabilityProfile': 'project',
+      'primaryOutput': 'preview',
+      'profile': 'next-project-v1',
+    },
+  'files':
+    [
+      {
+        'path': 'app/globals.css',
+        'language': 'css',
+        'source': 'starter/app/globals.css',
+        'editable': false,
+      },
+      {
+        'path': 'app/layout.tsx',
+        'language': 'next',
+        'source': 'starter/app/layout.tsx',
+        'editable': false,
+      },
+      {
+        'path': 'app/data-url.ts',
+        'language': 'next',
+        'source': 'starter/app/data-url.ts',
+        'editable': false,
+      },
+      {
+        'path': 'app/page.tsx',
+        'language': 'next',
+        'source': 'starter/app/page.tsx',
+        'editable': false,
+      },
+      {
+        'path': 'app/data/[mode]/page.tsx',
+        'language': 'next',
+        'source': 'starter/app/data/[mode]/page.tsx',
+        'editable': true,
+      },
+      {
+        'path': 'app/api/sample/route.ts',
+        'language': 'next',
+        'source': 'starter/app/api/sample/route.ts',
+        'editable': false,
+      },
+    ],
+  'solutionFiles':
+    [
+      {
+        'path': 'app/globals.css',
+        'language': 'css',
+        'source': 'solution/app/globals.css',
+        'editable': false,
+      },
+      {
+        'path': 'app/layout.tsx',
+        'language': 'next',
+        'source': 'solution/app/layout.tsx',
+        'editable': false,
+      },
+      {
+        'path': 'app/data-url.ts',
+        'language': 'next',
+        'source': 'solution/app/data-url.ts',
+        'editable': false,
+      },
+      {
+        'path': 'app/page.tsx',
+        'language': 'next',
+        'source': 'solution/app/page.tsx',
+        'editable': false,
+      },
+      {
+        'path': 'app/data/[mode]/page.tsx',
+        'language': 'next',
+        'source': 'solution/app/data/[mode]/page.tsx',
+        'editable': false,
+      },
+      {
+        'path': 'app/api/sample/route.ts',
+        'language': 'next',
+        'source': 'solution/app/api/sample/route.ts',
+        'editable': false,
+      },
+    ],
+  'validationRules':
+    [
+      {
+        'id': 'next-ch03-l01-e01-r01',
+        'label': '実Nextの取得・状態変化',
+        'required': true,
+        'group': 'all',
+        'viewportMode': 'all',
+        'viewportIds': ['desktop-1280'],
+        'target': { 'kind': 'next-page-http' },
+        'assertion': { 'kind': 'next-page-http', 'goal': 'data-cache-revalidation' },
+        'feedback':
+          {
+            'target': '取得する値をいつ更新するか',
+            'expected': '複数の実HTTP要求で取得・保持・期限後の更新を確かめられる。',
+            'nextAction': '対応するファイルを直し、保存・反映後に再判定します。',
+          },
+        'hintId': 'next-ch03-l01-e01-h01',
+        'relatedSlideId': 'next-ch03-l01-s03',
+      },
+    ],
+  'hints':
+    [
+      {
+        'id': 'next-ch03-l01-e01-h01',
+        'level': 1,
+        'title': '取得と描画を分ける',
+        'text': 'pageは要求ごとに描きます。fresh/cached/revalidateのfetch設定と取得番号を比較します。',
+        'relatedSlideId': 'next-ch03-l01-s03',
+      },
+      {
+        'id': 'next-ch03-l01-e01-h02',
+        'level': 2,
+        'title': '保持する場所を確認する',
+        'text': 'freshはno-store、cachedはforce-cacheを使います。revalidateは秒数を指定します。',
+        'relatedSlideId': 'next-ch03-l01-s03',
+      },
+      {
+        'id': 'next-ch03-l01-e01-h03',
+        'level': 3,
+        'title': '3条件を揃える',
+        'text': 'freshをno-store、cachedをforce-cache、next.revalidateを1にします。期限後の最初は古い値の場合もあります。',
+        'relatedSlideId': 'next-ch03-l01-s03',
+      },
+    ],
+  'relatedSlideIds':
+    ['next-ch03-l01-s01', 'next-ch03-l01-s02', 'next-ch03-l01-s03', 'next-ch03-l01-s04'],
+  'previewViewports': [{ 'id': 'desktop-1280', 'width': 1280, 'height': 720 }],
+  'assets': [],
+  'fixtures':
+    [
+      {
+        'id': 'starter',
+        'expectedStatus': 'incomplete',
+        'files':
+          [
+            {
+              'path': 'app/globals.css',
+              'language': 'css',
+              'source': 'fixtures/starter/app/globals.css',
+              'editable': false,
+            },
+            {
+              'path': 'app/layout.tsx',
+              'language': 'next',
+              'source': 'fixtures/starter/app/layout.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/data-url.ts',
+              'language': 'next',
+              'source': 'fixtures/starter/app/data-url.ts',
+              'editable': false,
+            },
+            {
+              'path': 'app/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/starter/app/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/data/[mode]/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/starter/app/data/[mode]/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/api/sample/route.ts',
+              'language': 'next',
+              'source': 'fixtures/starter/app/api/sample/route.ts',
+              'editable': false,
+            },
+          ],
+        'expectedFeedbackRuleIds': ['next-ch03-l01-e01-r01'],
+      },
+      {
+        'id': 'solution',
+        'expectedStatus': 'pass',
+        'files':
+          [
+            {
+              'path': 'app/globals.css',
+              'language': 'css',
+              'source': 'fixtures/solution/app/globals.css',
+              'editable': false,
+            },
+            {
+              'path': 'app/layout.tsx',
+              'language': 'next',
+              'source': 'fixtures/solution/app/layout.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/data-url.ts',
+              'language': 'next',
+              'source': 'fixtures/solution/app/data-url.ts',
+              'editable': false,
+            },
+            {
+              'path': 'app/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/solution/app/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/data/[mode]/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/solution/app/data/[mode]/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/api/sample/route.ts',
+              'language': 'next',
+              'source': 'fixtures/solution/app/api/sample/route.ts',
+              'editable': false,
+            },
+          ],
+        'expectedFeedbackRuleIds': [],
+      },
+      {
+        'id': 'alternative',
+        'expectedStatus': 'pass',
+        'files':
+          [
+            {
+              'path': 'app/globals.css',
+              'language': 'css',
+              'source': 'fixtures/alternative/app/globals.css',
+              'editable': false,
+            },
+            {
+              'path': 'app/layout.tsx',
+              'language': 'next',
+              'source': 'fixtures/alternative/app/layout.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/data-url.ts',
+              'language': 'next',
+              'source': 'fixtures/alternative/app/data-url.ts',
+              'editable': false,
+            },
+            {
+              'path': 'app/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/alternative/app/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/data/[mode]/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/alternative/app/data/[mode]/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/api/sample/route.ts',
+              'language': 'next',
+              'source': 'fixtures/alternative/app/api/sample/route.ts',
+              'editable': false,
+            },
+          ],
+        'expectedFeedbackRuleIds': [],
+      },
+      {
+        'id': 'wrong-fresh',
+        'expectedStatus': 'incomplete',
+        'files':
+          [
+            {
+              'path': 'app/globals.css',
+              'language': 'css',
+              'source': 'fixtures/wrong-fresh/app/globals.css',
+              'editable': false,
+            },
+            {
+              'path': 'app/layout.tsx',
+              'language': 'next',
+              'source': 'fixtures/wrong-fresh/app/layout.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/data-url.ts',
+              'language': 'next',
+              'source': 'fixtures/wrong-fresh/app/data-url.ts',
+              'editable': false,
+            },
+            {
+              'path': 'app/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/wrong-fresh/app/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/data/[mode]/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/wrong-fresh/app/data/[mode]/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/api/sample/route.ts',
+              'language': 'next',
+              'source': 'fixtures/wrong-fresh/app/api/sample/route.ts',
+              'editable': false,
+            },
+          ],
+        'expectedFeedbackRuleIds': ['next-ch03-l01-e01-r01'],
+      },
+      {
+        'id': 'wrong-cached',
+        'expectedStatus': 'incomplete',
+        'files':
+          [
+            {
+              'path': 'app/globals.css',
+              'language': 'css',
+              'source': 'fixtures/wrong-cached/app/globals.css',
+              'editable': false,
+            },
+            {
+              'path': 'app/layout.tsx',
+              'language': 'next',
+              'source': 'fixtures/wrong-cached/app/layout.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/data-url.ts',
+              'language': 'next',
+              'source': 'fixtures/wrong-cached/app/data-url.ts',
+              'editable': false,
+            },
+            {
+              'path': 'app/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/wrong-cached/app/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/data/[mode]/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/wrong-cached/app/data/[mode]/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/api/sample/route.ts',
+              'language': 'next',
+              'source': 'fixtures/wrong-cached/app/api/sample/route.ts',
+              'editable': false,
+            },
+          ],
+        'expectedFeedbackRuleIds': ['next-ch03-l01-e01-r01'],
+      },
+      {
+        'id': 'wrong-revalidate',
+        'expectedStatus': 'incomplete',
+        'files':
+          [
+            {
+              'path': 'app/globals.css',
+              'language': 'css',
+              'source': 'fixtures/wrong-revalidate/app/globals.css',
+              'editable': false,
+            },
+            {
+              'path': 'app/layout.tsx',
+              'language': 'next',
+              'source': 'fixtures/wrong-revalidate/app/layout.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/data-url.ts',
+              'language': 'next',
+              'source': 'fixtures/wrong-revalidate/app/data-url.ts',
+              'editable': false,
+            },
+            {
+              'path': 'app/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/wrong-revalidate/app/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/data/[mode]/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/wrong-revalidate/app/data/[mode]/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/api/sample/route.ts',
+              'language': 'next',
+              'source': 'fixtures/wrong-revalidate/app/api/sample/route.ts',
+              'editable': false,
+            },
+          ],
+        'expectedFeedbackRuleIds': ['next-ch03-l01-e01-r01'],
+      },
+      {
+        'id': 'static-display',
+        'expectedStatus': 'incomplete',
+        'files':
+          [
+            {
+              'path': 'app/globals.css',
+              'language': 'css',
+              'source': 'fixtures/static-display/app/globals.css',
+              'editable': false,
+            },
+            {
+              'path': 'app/layout.tsx',
+              'language': 'next',
+              'source': 'fixtures/static-display/app/layout.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/data-url.ts',
+              'language': 'next',
+              'source': 'fixtures/static-display/app/data-url.ts',
+              'editable': false,
+            },
+            {
+              'path': 'app/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/static-display/app/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/data/[mode]/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/static-display/app/data/[mode]/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/api/sample/route.ts',
+              'language': 'next',
+              'source': 'fixtures/static-display/app/api/sample/route.ts',
+              'editable': false,
+            },
+          ],
+        'expectedFeedbackRuleIds': ['next-ch03-l01-e01-r01'],
+      },
+      {
+        'id': 'code-error',
+        'expectedStatus': 'code-error',
+        'files':
+          [
+            {
+              'path': 'app/globals.css',
+              'language': 'css',
+              'source': 'fixtures/code-error/app/globals.css',
+              'editable': false,
+            },
+            {
+              'path': 'app/layout.tsx',
+              'language': 'next',
+              'source': 'fixtures/code-error/app/layout.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/data-url.ts',
+              'language': 'next',
+              'source': 'fixtures/code-error/app/data-url.ts',
+              'editable': false,
+            },
+            {
+              'path': 'app/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/code-error/app/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/data/[mode]/page.tsx',
+              'language': 'next',
+              'source': 'fixtures/code-error/app/data/[mode]/page.tsx',
+              'editable': false,
+            },
+            {
+              'path': 'app/api/sample/route.ts',
+              'language': 'next',
+              'source': 'fixtures/code-error/app/api/sample/route.ts',
+              'editable': false,
+            },
+          ],
+        'expectedFeedbackRuleIds': [],
+      },
+    ],
+}

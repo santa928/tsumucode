@@ -1,3 +1,4 @@
+import { weatherRscRoute } from './next-data-preview.mjs';
 import { RequestError } from './protocol.mjs';
 import { URLSearchParams } from 'node:url';
 import { NEXT_PROFILE, nextWorkspace } from './next-project-protocol.mjs';
@@ -138,7 +139,7 @@ function nextPreviewRoute(raw, target, websocket) {
   }
   // 同じrunでも別教材のpage/APIは開かず、固定契約のraw URLだけを通す。
   if (contract.pages.includes(file + (parts.length > 1 ? `?${query}` : ''))) return true;
-  if (parts.length > 1) return false;
+  if (parts.length > 1) return weatherRscRoute(file, query, target.workspaceId);
   return /^_next\/static\/chunks\/(?:[a-zA-Z0-9_.-]|%5Bturbopack%5D|%40swc){1,180}\.(?:js|css)$/u.test(
     file,
   );

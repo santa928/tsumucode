@@ -44,3 +44,27 @@ concepts:
     prerequisiteConceptIds:
       - next-client
     minimumProjectLevel: transform
+  - id: next-data-fetch
+    introducedBySlideId: next-ch03-l01-s01
+    prerequisiteConceptIds: ['next-props']
+    minimumProjectLevel: transform
+  - id: next-cache
+    introducedBySlideId: next-ch03-l01-s02
+    prerequisiteConceptIds: ['next-data-fetch']
+    minimumProjectLevel: transform
+  - id: next-revalidate
+    introducedBySlideId: next-ch03-l01-s03
+    prerequisiteConceptIds: ['next-cache']
+    minimumProjectLevel: transform
+  - id: next-loading
+    introducedBySlideId: next-ch03-l02-s01
+    prerequisiteConceptIds: ['next-data-fetch', 'next-navigation']
+    minimumProjectLevel: transform
+  - id: next-retry
+    introducedBySlideId: next-ch03-l02-s02
+    prerequisiteConceptIds: ['next-loading', 'next-client']
+    minimumProjectLevel: transform
+  - id: next-not-found
+    introducedBySlideId: next-ch03-l02-s03
+    prerequisiteConceptIds: ['next-retry']
+    minimumProjectLevel: transform

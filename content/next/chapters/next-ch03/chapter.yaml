@@ -1,0 +1,9 @@
+{
+  'id': 'next-ch03',
+  'sequence': 2,
+  'title': 'データの保持と失敗からの復旧',
+  'goal': '実取得の変化を読み、待機・失敗・対象なしを適切な画面へ分ける。',
+  'estimatedMinutes': 70,
+  'kind': 'standard',
+  'lessonSources': ['lessons/next-ch03-l01/lesson.yaml', 'lessons/next-ch03-l02/lesson.yaml'],
+}

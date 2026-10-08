@@ -40,3 +40,33 @@ entries:
     definition: ServerからClientへ通信できる形で渡せる値。今回のnumberとstring。
     firstSlideId: next-ch02-l02-s03
     relatedIds: []
+  - id: server-fetch
+    term: Serverでのfetch
+    definition: Server Componentからデータを取得して、応答を待つ処理。
+    firstSlideId: next-ch03-l01-s01
+    relatedIds: []
+  - id: data-cache
+    term: Data Cache
+    definition: fetchの取得結果を保持する仕組み。page全体の描画とは別。
+    firstSlideId: next-ch03-l01-s02
+    relatedIds: []
+  - id: revalidation
+    term: 再検証
+    definition: 期限後などに保持したデータを再取得して更新する処理。
+    firstSlideId: next-ch03-l01-s03
+    relatedIds: []
+  - id: loading
+    term: loading
+    definition: pageが待機している間に表示する区間の案内。
+    firstSlideId: next-ch03-l02-s01
+    relatedIds: []
+  - id: retry
+    term: retry
+    definition: 採用したNext版で、失敗したデータを再取得して再描画するerror境界の操作。
+    firstSlideId: next-ch03-l02-s02
+    relatedIds: []
+  - id: not-found
+    term: not-found
+    definition: notFoundの呼出しに対応する対象なしの表示。取得失敗の表示とは分ける。
+    firstSlideId: next-ch03-l02-s03
+    relatedIds: []

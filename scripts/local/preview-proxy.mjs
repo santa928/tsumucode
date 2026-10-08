@@ -1,3 +1,5 @@
+import { nextPreviewRequest } from './next-data-preview.mjs';
+import { forwardPreviewResponse } from './preview-http-response.mjs';
 import { createServer, request } from 'node:http';
 import { lstat } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -84,7 +86,8 @@ async function socketPath(target) {
 function permitted(req, target, websocket = false) {
   if (
     req.headers.host !== new URL(previewOrigin(target.runId)).host ||
-    !previewRoute(req.url, target, websocket)
+    !previewRoute(req.url, target, websocket) ||
+    (!websocket && !nextPreviewRequest(req, target))
   )
     return false;
   if (!previewRequestOrigin(req, target, websocket)) return false;
@@ -106,17 +109,18 @@ function permitted(req, target, websocket = false) {
   );
 }
 
-function upstreamHeaders(req) {
+function upstreamHeaders(req, target) {
   // Cookie/Authorization/token/Forwarded等を自動転送しない。
   return {
     host: req.headers.host,
+    ...nextPreviewRequest(req, target)?.headers,
     ...(req.headers.origin ? { origin: req.headers.origin } : {}),
     ...(req.headers['content-type'] ? { 'content-type': req.headers['content-type'] } : {}),
   };
 }
 
 function errorResponse(res, status, target) {
-  if (res.destroyed) return;
+  if (res.destroyed || res.writableEnded) return;
   if (res.headersSent) {
     res.destroy();
     return;
@@ -155,29 +159,19 @@ const server = createServer(async (req, res) => {
     const path = await socketPath(target);
     if (res.destroyed) return;
     proxy = request(
-      { socketPath: path, path: req.url, method: req.method, headers: upstreamHeaders(req) },
+      {
+        socketPath: path,
+        path: req.url,
+        method: req.method,
+        headers: upstreamHeaders(req, target),
+      },
       (upstream) => {
-        const chunks = [];
-        let bytes = 0;
-        upstream.on('data', (chunk) => {
-          bytes += chunk.length;
-          if (bytes > previewResponseLimit(req.url, target))
-            upstream.destroy(new Error('Preview response limit'));
-          else chunks.push(chunk);
-        });
-        upstream.on('error', () => errorResponse(res, 502, target));
-        upstream.on('end', () => {
-          if (res.destroyed) return;
-          // learnerからのredirect/Set-Cookie/CORS/CSPを通さず、固定の応答境界を強制する。
-          if ((upstream.statusCode ?? 500) >= 300 && (upstream.statusCode ?? 500) < 400) {
-            errorResponse(res, 502, target);
-            return;
-          }
-          res.writeHead(upstream.statusCode ?? 502, {
-            ...previewHeaders(target.runId, target.profile),
-            'content-type': upstream.headers['content-type'] ?? 'application/octet-stream',
-          });
-          res.end(req.method === 'HEAD' ? undefined : Buffer.concat(chunks));
+        forwardPreviewResponse(upstream, res, {
+          method: req.method,
+          headers: previewHeaders(target.runId, target.profile),
+          limit: previewResponseLimit(req.url, target),
+          stream: nextPreviewRequest(req, target).stream,
+          fail: () => errorResponse(res, 502, target),
         });
       },
     );
@@ -190,7 +184,12 @@ const server = createServer(async (req, res) => {
     monitoring = setInterval(() => {
       void lookup().then(
         (current) => {
-          if (current.runId !== target.runId || current.ino !== target.ino) proxy.destroy();
+          if (
+            current.runId !== target.runId ||
+            current.ino !== target.ino ||
+            current.sourceRevision !== target.sourceRevision
+          )
+            proxy.destroy();
         },
         () => proxy.destroy(),
       );
@@ -246,7 +245,7 @@ server.on('upgrade', async (req, client, head) => {
       method: 'GET',
       path: req.url,
       headers: {
-        ...upstreamHeaders(req),
+        ...upstreamHeaders(req, target),
         connection: 'Upgrade',
         upgrade: 'websocket',
         'sec-websocket-key': req.headers['sec-websocket-key'],
@@ -294,7 +293,12 @@ server.on('upgrade', async (req, client, head) => {
     timer = setTimeout(close, 5000);
     monitoring = setInterval(() => {
       void lookup().then((current) => {
-        if (current.runId !== target.runId || current.ino !== target.ino) close();
+        if (
+          current.runId !== target.runId ||
+          current.ino !== target.ino ||
+          current.sourceRevision !== target.sourceRevision
+        )
+          close();
       }, close);
     }, 500);
     proxy.end();

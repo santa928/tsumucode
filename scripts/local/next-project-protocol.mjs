@@ -1,5 +1,6 @@
 // 固定Next教材だけを扱う。APIからprofileや設定を自由に選ばせない。
 import { ROUTING_STARTER_FILES, BOUNDARY_STARTER_FILES } from './next-routing-source.mjs';
+import { DATA_STARTER_FILES, WEATHER_STARTER_FILES } from './next-data-source.mjs';
 export const NEXT_PROFILE = 'next-project-v1';
 export const NEXT_WORKSPACE = 'next-ch01-l01-e01';
 export const NEXT_STARTER_FILES = Object.freeze({
@@ -58,6 +59,33 @@ export const NEXT_WORKSPACES = Object.freeze({
     goal: 'server-client-counter',
     pages: [''],
     previewLabels: ['ServerとClientの表示'],
+  },
+  'next-ch03-l01-e01': {
+    files: DATA_STARTER_FILES,
+    goal: 'data-cache-revalidation',
+    pages: ['', 'data/fresh', 'data/cached', 'data/revalidate'],
+    previewLabels: ['取得と保持の入口', '毎回取得', '保持した値', '期限後の更新'],
+    readonlyFiles: [
+      'app/globals.css',
+      'app/layout.tsx',
+      'app/data-url.ts',
+      'app/page.tsx',
+      'app/api/sample/route.ts',
+    ],
+  },
+  'next-ch03-l02-e01': {
+    files: WEATHER_STARTER_FILES,
+    goal: 'loading-error-not-found',
+    pages: ['', 'weather/clear', 'weather/slow', 'weather/flaky', 'weather/missing'],
+    previewLabels: ['状態の入口', '正常な応答', '遅い応答', '一度失敗', '対象なし'],
+    readonlyFiles: [
+      'app/globals.css',
+      'app/layout.tsx',
+      'app/data-url.ts',
+      'app/page.tsx',
+      'app/api/weather/route.ts',
+      'app/weather/[state]/not-found.tsx',
+    ],
   },
 });
 

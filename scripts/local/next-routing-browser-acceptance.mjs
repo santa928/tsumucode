@@ -12,7 +12,15 @@ const bridges = [await bridge(4173, 'web'), await bridge(4175, 'preview')];
 const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
 const context = await browser.newContext({ viewport: { width: 1280, height: 960 } });
 const page = await context.newPage();
-const directory = process.env.TSUMUCODE_NEXT_EVIDENCE ?? '.release-issue133';
+const chapter = process.argv[2] ?? 'next-ch02';
+assert.ok(['next-ch02', 'next-ch03'].includes(chapter));
+const chapterLessons = [`${chapter}-l01`, `${chapter}-l02`];
+const selectedLesson = process.argv[3];
+assert.ok(!selectedLesson || chapterLessons.includes(selectedLesson));
+const lessons = selectedLesson ? [selectedLesson] : chapterLessons;
+const directory =
+  process.env.TSUMUCODE_NEXT_EVIDENCE ??
+  (chapter === 'next-ch03' ? '.release-issue134' : '.release-issue133');
 await mkdir(directory, { recursive: true });
 const errors = [];
 page.on('pageerror', (error) => errors.push(error.message));
@@ -46,9 +54,9 @@ async function grade(name) {
   });
 }
 try {
-  for (const lesson of ['next-ch02-l01', 'next-ch02-l02']) {
+  for (const lesson of lessons) {
     const workspace = `${lesson}-e01`;
-    const root = `content/next/chapters/next-ch02/lessons/${lesson}/exercises/${workspace}`;
+    const root = `content/next/chapters/${chapter}/lessons/${lesson}/exercises/${workspace}`;
     const exercise = parse(await readFile(`${root}/exercise.yaml`, 'utf8'));
     await page.goto(`http://127.0.0.1:4173/#/courses/next/lessons/${lesson}/slides/${lesson}-s01`);
     for (let index = 0; index < 4; index++) {
@@ -102,7 +110,7 @@ try {
       await expect(page.getByLabel('表示する応答')).toHaveValue('trips/forest');
       await expect(preview().locator('#trip-slug')).toHaveText('forest');
       await page.getByLabel('表示する応答').selectOption('');
-    } else {
+    } else if (lesson === 'next-ch02-l02') {
       await expect(preview().locator('#server-note')).toHaveText('server-note.txt');
       await expect(preview().locator('#count')).toHaveText('2');
       // SSRの初期値だけではClient操作の準備完了を意味しない。
@@ -119,6 +127,46 @@ try {
         await button.press('Enter');
         await expect(preview().locator('#count')).toHaveText(count);
       }
+    } else if (lesson === 'next-ch03-l01') {
+      await page.getByLabel('表示する応答').selectOption('data/fresh');
+      const first = await preview().locator('#read-id').textContent();
+      await page.getByLabel('表示する応答').selectOption('');
+      await page.getByLabel('表示する応答').selectOption('data/fresh');
+      await expect(preview().locator('#read-id')).not.toHaveText(first);
+      await page.getByLabel('表示する応答').selectOption('data/cached');
+      const cached = await preview().locator('#read-id').textContent();
+      await page.getByLabel('表示する応答').selectOption('');
+      await page.getByLabel('表示する応答').selectOption('data/cached');
+      await expect(preview().locator('#read-id')).toHaveText(cached);
+      await page.getByLabel('表示する応答').selectOption('');
+    } else {
+      const handle = await page.getByTitle('Next.jsの実サーバーPreview').elementHandle();
+      const frame = await handle.contentFrame();
+      await frame.waitForLoadState('networkidle', { timeout: 15000 });
+      const slow = preview().getByRole('link', { name: '遅い応答', exact: true });
+      await slow.focus();
+      await slow.press('Enter');
+      await expect(preview().getByRole('status')).toHaveText('応答を待っています');
+      await expect(preview().locator('#weather')).toHaveText('遅延後の晴れ');
+      await page.getByLabel('表示する応答').selectOption('weather/clear');
+      await expect(preview().locator('#weather')).toHaveText('晴れ');
+      await page.getByLabel('表示する応答').selectOption('');
+      await frame.waitForLoadState('networkidle', { timeout: 15000 });
+      const flaky = preview().getByRole('link', { name: '一度失敗', exact: true });
+      await flaky.focus();
+      await flaky.press('Enter');
+      const retry = preview().getByRole('button', { name: '再試行', exact: true });
+      await expect(retry).toBeVisible();
+      await frame.waitForLoadState('networkidle', { timeout: 15000 });
+      await retry.focus();
+      await retry.press('Enter');
+      await expect(preview().locator('#weather')).toHaveText('再試行後の晴れ');
+      await page.getByLabel('表示する応答').selectOption('weather/missing');
+      await expect(
+        preview().getByRole('heading', { name: '対象が見つかりません', exact: true }),
+      ).toBeVisible();
+      await page.getByLabel('表示する応答').selectOption('');
+      await handle.dispose();
     }
     await grade('合格');
     const file = writable.at(-1);
@@ -179,11 +227,11 @@ try {
   const downloaded = page.waitForEvent('download');
   await page.getByRole('button', { name: '全コースの進捗と下書きを書き出す', exact: true }).click();
   const download = await downloaded;
-  const path = `${directory}/next-routing-progress.json`;
+  const path = `${directory}/${chapter}-progress.json`;
   await download.saveAs(path);
   const raw = await readFile(path, 'utf8');
   const bundle = JSON.parse(raw);
-  for (const lesson of ['next-ch02-l01', 'next-ch02-l02']) {
+  for (const lesson of lessons) {
     assert.equal(bundle.courses.next.lessons[lesson].currentComplete, true);
     assert.ok(bundle.drafts[`next:${lesson}-e01`]);
   }
@@ -203,7 +251,7 @@ try {
     await expect(
       importedPage.getByRole('region', { name: '読み込み差分', exact: true }),
     ).toHaveCount(0);
-    for (const lesson of ['next-ch02-l01', 'next-ch02-l02']) {
+    for (const lesson of lessons) {
       await importedPage.goto(
         `http://127.0.0.1:4173/#/courses/next/lessons/${lesson}/exercises/${lesson}-e01`,
       );
@@ -218,7 +266,7 @@ try {
       passed,
       browser: browser.version(),
       pageErrors: errors,
-      transfer: '両Lesson下書き/合格記録export/import、管理token/run非含有',
+      transfer: '検証対象Lessonの下書き/合格記録export/import、管理token/run非含有',
     }),
   );
 } catch (error) {

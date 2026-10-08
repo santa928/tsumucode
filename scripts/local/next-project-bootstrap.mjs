@@ -1,12 +1,13 @@
 import process from 'node:process';
 import { Buffer } from 'node:buffer';
 import { setTimeout, clearTimeout } from 'node:timers';
-import { mkdir, readFile, writeFile, symlink, chmod } from 'node:fs/promises';
+import { mkdir, readFile, writeFile, symlink, chmod, rm } from 'node:fs/promises';
 import { createServer, request } from 'node:http';
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { setTimeout as delay } from 'node:timers/promises';
 import { nextWorkspace } from './next-project-protocol.mjs';
+import { nextDataBackend } from './next-data-backend.mjs';
 
 // 固定設定・依存だけで起動する。編集可能なserver moduleも非rootの同じ隔離内で実行する。
 const { files, metadata, preview } = JSON.parse(
@@ -14,6 +15,9 @@ const { files, metadata, preview } = JSON.parse(
 );
 const root = '/opt/workspace';
 const base = preview ? `/w/${metadata.workspaceId}/${metadata.runId}` : '';
+const goal = nextWorkspace(metadata.workspaceId).goal;
+const controlledData = ['data-cache-revalidation', 'loading-error-not-found'].includes(goal);
+const nextPort = controlledData ? 5175 : 5174;
 for (const name of Object.keys(nextWorkspace(metadata.workspaceId).files)) {
   await mkdir(`${root}/${name.slice(0, name.lastIndexOf('/'))}`, { recursive: true });
   await writeFile(`${root}/${name}`, files[name], { flag: 'wx', mode: 0o600 });
@@ -30,6 +34,7 @@ await writeFile(
   basePath: ${JSON.stringify(base)},
   allowedDevOrigins: [${JSON.stringify(`${metadata.runId}.localhost`)}],
   turbopack: { root: '/opt' },
+  ${controlledData ? 'experimental: { turbopackFileSystemCacheForDev: false, devValidationWorker: false, reactDebugChannel: false },' : ''}
 };
 `,
 );
@@ -39,6 +44,18 @@ let child;
 let active;
 let updating;
 let stopping = false;
+let dataBackend;
+
+if (controlledData) {
+  // 固定APIは同じ隔離のloopbackで処理し、Nextの追加compileを避ける。
+  const backend = createServer((req, res) => {
+    if (!dataBackend?.handle(req, res)) res.writeHead(404).end();
+  });
+  await new Promise((resolve, reject) => {
+    backend.once('error', reject);
+    backend.listen(5174, '127.0.0.1', resolve);
+  });
+}
 
 async function stopChild() {
   const previous = child;
@@ -60,7 +77,11 @@ function ensureLatest() {
   updating = (async () => {
     const desired = await readFile('/tmp/applied.json', 'utf8');
     if (desired === active && child) return JSON.parse(active);
+    dataBackend?.retire();
     await stopChild();
+    if (controlledData) dataBackend = await nextDataBackend(metadata.workspaceId, base);
+    // 新教材では保存版ごとに制御データとfetch cacheを同じ初期条件へ戻す。
+    if (controlledData) await rm(`${root}/.next`, { recursive: true, force: true });
     if (stopping) throw new Error('Next is stopping');
     child = spawn(
       process.execPath,
@@ -70,7 +91,7 @@ function ensureLatest() {
         '--hostname',
         '127.0.0.1',
         '--port',
-        '5174',
+        String(nextPort),
       ],
       {
         cwd: root,
@@ -79,6 +100,9 @@ function ensureLatest() {
           HOME: root,
           LANG: 'C.UTF-8',
           NEXT_TELEMETRY_DISABLED: '1',
+          ...(controlledData
+            ? { TSUMUCODE_NEXT_BASE_PATH: base, NODE_OPTIONS: '--max-old-space-size=192' }
+            : {}),
         },
         stdio: ['ignore', 'inherit', 'inherit'],
       },
@@ -99,7 +123,7 @@ function ensureLatest() {
         // 構文エラーの500も実serverの応答として扱い、採点側でcode-errorにする。
         for (const page of nextWorkspace(metadata.workspaceId).pages) {
           const reply = await globalThis.fetch(
-            `http://127.0.0.1:5174${page === '' ? base || '/' : base + '/' + page}`,
+            `http://127.0.0.1:${nextPort}${page === '' ? base || '/' : base + '/' + page}`,
             {
               signal: globalThis.AbortSignal.timeout(2000),
               redirect: 'manual',
@@ -110,6 +134,17 @@ function ensureLatest() {
         }
         if ((await readFile('/tmp/applied.json', 'utf8')) !== desired)
           throw new Error('Source changed');
+        if (goal === 'loading-error-not-found') {
+          // warmupで初回失敗を消費しても、学習者の最初の操作は失敗から始める。
+          const reset = await globalThis.fetch(
+            `http://127.0.0.1:5174${base}/api/weather?control=reset`,
+            {
+              signal: globalThis.AbortSignal.timeout(2000),
+            },
+          );
+          if (reset.status !== 200 || (await reset.json()).reset !== true)
+            throw new Error('Weather reset failed');
+        }
         active = desired;
         return JSON.parse(active);
       } catch {
@@ -134,6 +169,7 @@ function handle(req, res) {
     );
     return;
   }
+  if (dataBackend?.handle(req, res)) return;
   if (!active || !child) {
     res.writeHead(503).end();
     return;
@@ -141,7 +177,7 @@ function handle(req, res) {
   const proxy = request(
     {
       host: '127.0.0.1',
-      port: 5174,
+      port: nextPort,
       method: req.method,
       path: base && req.url === `${base}/` ? base : req.url,
       headers: req.headers,
@@ -162,7 +198,7 @@ function handle(req, res) {
 function upgrade(req, client, head) {
   const proxy = request({
     host: '127.0.0.1',
-    port: 5174,
+    port: nextPort,
     method: 'GET',
     path: req.url,
     headers: req.headers,
@@ -201,6 +237,7 @@ if (preview) {
 for (const signal of ['SIGTERM', 'SIGINT']) {
   process.once(signal, () => {
     stopping = true;
+    dataBackend?.retire();
     void stopChild().finally(() => process.exit());
   });
 }

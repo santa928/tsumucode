@@ -1,9 +1,13 @@
+import { nextPreviewRequest } from './next-data-preview.mjs';
+import { forwardPreviewResponse } from './preview-http-response.mjs';
+import { observeNextData } from './next-data-observations.mjs';
 import assert from 'node:assert/strict';
 import { createServer, request } from 'node:http';
 import { lstat } from 'node:fs/promises';
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
 import { setTimeout, clearTimeout } from 'node:timers';
+import { setTimeout as delay } from 'node:timers/promises';
 import { URL } from 'node:url';
 import { chromium } from '@playwright/test';
 import { nextWorkspace } from './next-project-protocol.mjs';
@@ -70,32 +74,73 @@ async function marker() {
 }
 
 let requests = 0;
+// 同じtrusted bridgeが全量送信したRSCだけを、部分応答と区別する。
+const completedResponses = new Map();
+async function completedResponse(response) {
+  for (let attempt = 0; attempt < 20; attempt++) {
+    if (
+      completedResponses.get(new URL(response.url()).pathname + new URL(response.url()).search) ===
+      true
+    )
+      return true;
+    await delay(25);
+  }
+  return false;
+}
 const bridge = createServer((req, res) => {
   if (
     requests >= 8 ||
     req.method !== 'GET' ||
     req.headers.host !== new URL(origin).host ||
     !previewRoute(req.url, metadata) ||
+    !nextPreviewRequest(req, metadata) ||
     req.url.split('?')[0] === `${base}api/echo`
   ) {
     res.writeHead(403).end();
     return;
   }
+  if (req.headers.rsc === '1') {
+    if (completedResponses.has(req.url) || completedResponses.size >= 16) {
+      res.writeHead(403).end();
+      return;
+    }
+    completedResponses.set(req.url, false);
+  }
   requests++;
-  void readHttp(req.url)
-    .then((reply) => {
-      if ((reply.status ?? 500) >= 300 && (reply.status ?? 500) < 400)
-        throw new Error('Grade redirect denied');
-      res.writeHead(reply.status ?? 502, {
-        ...previewHeaders(metadata.runId, metadata.profile),
-        'content-type': reply.type ?? 'application/octet-stream',
-      });
-      res.end(reply.body);
-    })
-    .catch(() => res.writeHead(503).end())
-    .finally(() => {
-      requests--;
-    });
+  const policy = nextPreviewRequest(req, metadata);
+  let timer;
+  const fail = () => {
+    if (res.destroyed || res.writableEnded) return;
+    if (res.headersSent) res.destroy();
+    else res.writeHead(503).end();
+  };
+  const upstream = request(
+    {
+      socketPath: '/transport/http.sock',
+      path: req.url,
+      method: req.method,
+      headers: { host: new URL(origin).host, ...policy.headers },
+    },
+    (reply) =>
+      forwardPreviewResponse(reply, res, {
+        method: req.method,
+        headers: previewHeaders(metadata.runId, metadata.profile),
+        limit: previewResponseLimit(req.url, metadata),
+        stream: policy.stream,
+        fail,
+        complete: () => {
+          if (req.headers.rsc === '1') completedResponses.set(req.url, true);
+        },
+      }),
+  );
+  res.once('close', () => {
+    clearTimeout(timer);
+    requests--;
+    upstream.destroy();
+  });
+  timer = setTimeout(() => upstream.destroy(new Error('Grade HTTP deadline')), 10000);
+  upstream.on('error', fail);
+  upstream.end();
 });
 // Vite自身のHMR clientが正常に起動するための固定WS。採点中の2枠/2 MiBだけを許可する。
 const websockets = new Set();
@@ -203,11 +248,31 @@ try {
   const diagnostic = (message) => {
     if (diagnostics.length < 8) diagnostics.push(message.slice(0, 512));
   };
+  const contract = nextWorkspace(metadata.workspaceId);
+  const weather = contract?.goal === 'loading-error-not-found';
   page.on('pageerror', (error) => {
+    // 制御データの予定された初回失敗は、error画面と実再取得を別途観測する。
+    if (weather && error.message === '教材データの読み込み失敗') return;
     diagnostic(error.message);
   });
   page.on('response', (response) => {
-    if (response.status() >= 400) diagnostic(`HTTP resource failed: ${response.status()}`);
+    const url = new URL(response.url());
+    // 意図したerror画面のdev診断は拒否したまま、教材の取得失敗と区別する。
+    const diagnosticDenied =
+      weather &&
+      response.status() === 403 &&
+      url.origin === origin &&
+      url.search === '' &&
+      ((response.request().method() === 'GET' &&
+        url.pathname === '/__nextjs_font/geist-latin.woff2') ||
+        (response.request().method() === 'POST' &&
+          url.pathname === '/__nextjs_original-stack-frames'));
+    const missing =
+      weather &&
+      new URL(response.url()).pathname === base + 'weather/missing' &&
+      response.status() === 404;
+    if (response.status() >= 400 && !missing && !diagnosticDenied)
+      diagnostic(`HTTP resource failed: ${response.status()}`);
   });
   page.on('requestfailed', (request) => {
     const error = request.failure()?.errorText ?? 'unknown';
@@ -226,11 +291,15 @@ try {
   const next = metadata.profile === 'next-project-v1';
   let httpMatches = true;
   const httpActual = [];
-  const contract = next ? nextWorkspace(metadata.workspaceId) : undefined;
+  const controlledData = ['data-cache-revalidation', 'loading-error-not-found'].includes(
+    contract?.goal,
+  );
   let lessonObservation;
   if (contract && contract.goal !== 'page-route-query' && !diagnostics.length) {
     try {
-      lessonObservation = await observeNextLesson(page, origin, base, contract.goal);
+      lessonObservation = controlledData
+        ? await observeNextData(page, origin, base, contract.goal, readHttp, completedResponse)
+        : await observeNextLesson(page, origin, base, contract.goal);
     } catch (error) {
       if (!(error instanceof NextLessonObservationError)) throw error;
       diagnostic(error.message);

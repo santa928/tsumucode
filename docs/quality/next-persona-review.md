@@ -1,6 +1,7 @@
-# Nextの3 LessonのAIペルソナレビュー
+# Nextの5 LessonのAIペルソナレビュー
 
-対象はIssue #132/#133の`next-ch01-l01`、`next-ch02-l01`、`next-ch02-l02`。
+対象はIssue #132/#133の`next-ch01-l01`、`next-ch02-l01`、`next-ch02-l02`と、
+Issue #134の`next-ch03-l01`、`next-ch03-l02`。
 2026-10-08に、実装担当とは別の3つのAIエージェントが読み取り専用でレビューした。
 実人の初心者による受講テストとは区別する。
 
@@ -42,6 +43,23 @@ keyboard操作、狭幅表示、axe検査と進捗/DraftのJSON移送を確認�
 具体的な原稿hashとLesson別結果は`content-review-next.yaml`に記録する。
 生ログ・スクリーンショット・学習データは非公開の作者記録へ保管する。
 
-このレビューの対象は現在の3 Lessonである。Courseはdraftを維持する。
-正式公開には#134/#135のdata・Form/Action、#136のProject・独立復元・無Hintの転移課題、
+## Issue #134の追加確認
+
+新2 Lessonの8 Slide、工程、Hint、Solution、正負Fixtureを同じ3 AIペルソナが独立読解した。
+再要求の操作を「対象→入口→対象」と具体化し、同じ選択肢を選ぶだけでは再要求しないことを説明した。
+教材APIの404とstream済みpageの200を別のHTTP応答として説明した。
+Weatherは待機中の結果非表示・完了後のstatus消失も判定し、常時statusを表示する負例を追加した。
+
+固定APIを同じ隔離のbootstrapへ分離した512MiB試作で、Data8例・Weather9例、古いhash拒否、
+停止時のSource保持と再起動が成功した。正式整理後の通常UIで編集・反映・合格、構文エラー修復、
+合格版失効、停止/reload/再起動、keyboard、狭幅、axe違反0、両LessonのDraft・合格JSON移送を確認した。
+実RSCの結果到着前にSource反映・停止を行い、部分応答の切断、旧版grade409、新版合格と再起動も確認した。
+固定APIの版分離・未知query拒否・遅延応答破棄と転送契約の関連12テストが成功した。
+
+3 Reviewerは作者の成功ログと通常/狭幅4画像の画像自体を照合し、必須修正0と判定した。
+正負APIの試作証拠と正式UI/stream証拠を区別し、Reviewer独自実行や実人受講とは扱わない。
+RAM/swap512MiBなどのlearner上限は維持し、768MiB案は採用していない。
+
+このレビューの対象は現在の5 Lessonである。Courseはdraftを維持する。
+正式公開には#135のForm/Action、#136のProject・独立復元・無Hintの転移課題、
 #137のCourse全体の受入と公開手順の完了が必要であり、この記録で代替しない。
