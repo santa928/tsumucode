@@ -20,6 +20,7 @@ const base = preview ? `/w/${metadata.workspaceId}/${metadata.runId}` : '';
 const goal = nextWorkspace(metadata.workspaceId).goal;
 const controlledData = ['data-cache-revalidation', 'loading-error-not-found'].includes(goal);
 const controlledForm = isNextForm(metadata.workspaceId);
+const productionProject = Boolean(nextWorkspace(metadata.workspaceId).ruleGoals);
 const nextPort = controlledData || controlledForm ? 5175 : 5174;
 for (const name of Object.keys(nextWorkspace(metadata.workspaceId).files)) {
   await mkdir(`${root}/${name.slice(0, name.lastIndexOf('/'))}`, { recursive: true });
@@ -119,16 +120,17 @@ function ensureLatest() {
           NEXT_TELEMETRY_DISABLED: '1',
           // 固定RAM内でClientのcompileエラーも返せるよう、全Next childのheapを抑える。
           NODE_OPTIONS:
-            controlledData || goal === 'nested-dynamic-navigation'
+            controlledData || productionProject || goal === 'nested-dynamic-navigation'
               ? '--max-old-space-size=128 --max-semi-space-size=4'
               : '--max-old-space-size=160 --max-semi-space-size=4',
           // CPU1の隔離内でallocatorと追加workerの資源を限定する。
           MALLOC_ARENA_MAX: '2',
           RAYON_NUM_THREADS: '1',
           TOKIO_WORKER_THREADS: '1',
-          ...(controlledData || controlledForm
+          ...(controlledData || controlledForm || productionProject
             ? {
                 TSUMUCODE_NEXT_BASE_PATH: base,
+                ...(productionProject ? { PORT: String(nextPort) } : {}),
               }
             : {}),
         },

@@ -1,3 +1,4 @@
+import { downloadArchive } from './downloadArchive';
 /** 代表HTML/CSSの表示中ソースだけを、サイト外で開く固定構成のZIPへまとめる。 */
 import { strToU8, zipSync } from 'fflate';
 
@@ -52,24 +53,7 @@ export function createPortableHtmlArchive(
   );
 }
 
-/** ZIP用Anchorを一時設置し、Browserへ渡した後のタスクでObject URLを解放する。 */
+/** HTML/CSSの固定ファイル名でBrowserへ渡す。 */
 export function downloadPortableHtmlArchive(archive: Uint8Array<ArrayBuffer>): void {
-  const url = URL.createObjectURL(new Blob([archive], { type: 'application/zip' }));
-  let anchor: HTMLAnchorElement | undefined;
-  try {
-    anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = 'tsumucode-html-intro.zip';
-    document.body.append(anchor);
-    anchor.click();
-  } finally {
-    try {
-      anchor?.remove();
-    } finally {
-      // 即時revokeによるBrowserごとのdownload取消を避ける。
-      setTimeout(() => {
-        URL.revokeObjectURL(url);
-      }, 0);
-    }
-  }
+  downloadArchive(archive, 'tsumucode-html-intro.zip');
 }

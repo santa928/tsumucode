@@ -8,7 +8,13 @@ import {
 import type { ExerciseDraft } from '../../../core/persistence/contracts';
 import { LOCAL_PROJECT } from '../../../core/persistence/localProjectDescriptor';
 import { LocalProjectSession } from './LocalProjectSession';
-import { projectCourseProgress, projectDraft, projectIsComplete } from './localProjectProgress';
+import {
+  projectCourseProgress,
+  projectDraft,
+  projectIsComplete,
+  projectValidation,
+  type ProjectIdentity,
+} from './localProjectProgress';
 
 const files = {
   'index.html': '<h1 id="message"></h1>',
@@ -52,7 +58,7 @@ function deferred<T>() {
   return { promise, resolve };
 }
 
-async function fixture() {
+async function fixture(identity: ProjectIdentity = LOCAL_PROJECT) {
   const persist = vi.fn(async (draft: ExerciseDraft) => {
     expect(draft.workspaceId).toBe(LOCAL_PROJECT.workspaceId);
   });
@@ -76,7 +82,13 @@ async function fixture() {
     })),
     activity: vi.fn(async () => {}),
   };
-  const session = new LocalProjectSession(client, persist, writable, projectDraft(files));
+  const session = new LocalProjectSession(
+    client,
+    persist,
+    writable,
+    projectDraft(files, identity),
+    identity,
+  );
   sessions.push(session);
   await session.connect();
   return { session, persist, client, writable };
@@ -251,4 +263,69 @@ it('保存失敗でも離脱は停止完了を待ち、停止後に保存エラ�
   expect(disposed).toBe(true);
   // finallyで同じdispose Promiseを返すため、後続cleanupもエラーを扱う。
   sessions.splice(sessions.indexOf(session), 1);
+});
+
+const projectIdentity: ProjectIdentity = {
+  ...LOCAL_PROJECT,
+  requirements: ['project-structure', 'project-filter', 'project-presentation'].map(
+    (goal, index) => ({
+      goal,
+      ruleId: `project-rule-${String(index + 1)}`,
+      requirementId: `project-rule-${String(index + 1)}`,
+      label: goal,
+      expected: 'Briefの実動作',
+      nextAction: 'Briefと現在の実動作を比べます。',
+    }),
+  ),
+};
+
+it('制作の途中結果を工程IDへ対応させ、後工程で壊した前工程の合格を戻さない', () => {
+  const grade: WorkspaceGrade = {
+    ...pass,
+    status: 'incomplete',
+    projectChecks: [
+      { goal: 'project-presentation', passed: false, actual: '画像がありません。' },
+      { goal: 'project-filter', passed: true, actual: '絞り込みを確認しました。' },
+      { goal: 'project-structure', passed: true, actual: '一覧と詳細を確認しました。' },
+    ],
+  };
+  const partial = projectValidation(grade, 3, projectIdentity);
+  expect(partial.status).toBe('incomplete');
+  expect(partial.passedRequirementIds).toEqual(['project-rule-1', 'project-rule-2']);
+  expect(partial.checks[0]?.actual).toBe('一覧と詳細を確認しました。');
+  const broken = projectValidation(
+    {
+      ...grade,
+      projectChecks: grade.projectChecks!.map((check) => ({
+        ...check,
+        passed: check.goal !== 'project-structure',
+      })),
+    },
+    4,
+    projectIdentity,
+  );
+  expect(broken.passedRequirementIds).toEqual(['project-rule-2', 'project-rule-3']);
+  expect(broken.checks[0]?.requirementPassed).toBe(false);
+});
+
+it('制作工程が欠落した古いgraderのpassを合格Snapshotへ保存しない', async () => {
+  const { session } = await fixture(projectIdentity);
+  await session.grade();
+  expect(session.getSnapshot().result?.status).toBe('incomplete');
+  expect(session.getSnapshot().draft?.lastPassingSnapshots).toEqual({});
+  expect(projectIsComplete(session.getSnapshot().draft!, projectIdentity)).toBe(false);
+});
+
+it('コードエラーの制作結果は工程の自己申告がtrueでも採用しない', () => {
+  const grade: WorkspaceGrade = {
+    ...pass,
+    status: 'code-error',
+    diagnostics: ['HTTP resource failed'],
+    projectChecks: [
+      { goal: 'project-structure', passed: true, actual: '一覧' },
+      { goal: 'project-filter', passed: true, actual: '絞り込み' },
+      { goal: 'project-presentation', passed: true, actual: '表示' },
+    ],
+  };
+  expect(projectValidation(grade, 2, projectIdentity).passedRequirementIds).toEqual([]);
 });

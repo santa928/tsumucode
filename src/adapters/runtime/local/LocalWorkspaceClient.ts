@@ -104,6 +104,16 @@ const gradeSchema = z.object({
   status: z.enum(['pass', 'incomplete', 'code-error']),
   actual: z.string().max(512),
   diagnostics: z.array(z.string().max(512)).max(8),
+  projectChecks: z
+    .array(
+      z.object({
+        goal: z.enum(['project-structure', 'project-filter', 'project-presentation']),
+        passed: z.boolean(),
+        actual: z.string().max(160),
+      }),
+    )
+    .length(3)
+    .optional(),
   engineVersion: z.string().max(80),
   evaluatedAt: z.iso.datetime(),
 });
