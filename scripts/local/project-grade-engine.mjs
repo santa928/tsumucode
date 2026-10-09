@@ -31,7 +31,7 @@ function gradeOutput(output, limit = 64 * 1024) {
 function gradeProgress(stderr) {
   return [
     ...stderr.matchAll(
-      /^TSUMUCODE_GRADE_STEP:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|project-structure|project-filter|project-presentation|form-invalid|form-first-send|form-retry|form-inspect|form-response-headers|form-response-body|form-response-dom|marker-after|browser-close|form-release):(\d{1,6})\n/gmu,
+      /^TSUMUCODE_GRADE_STEP:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|project-structure|project-filter|project-presentation|form-invalid|form-first-send|form-retry|form-inspect|form-response-headers|form-response-body|form-response-dom|form-reset-before|form-reset-after|marker-after|browser-close|form-release):(\d{1,6})\n/gmu,
     ),
   ]
     .slice(-32)
@@ -42,7 +42,7 @@ function gradeProgress(stderr) {
 function formResponses(stderr) {
   return [
     ...stderr.matchAll(
-      /^TSUMUCODE_FORM_RESPONSE:([1-8]):(request-start|upstream-end|downstream-finished|closed-before-finish):(\d{1,6})\n/gmu,
+      /^TSUMUCODE_FORM_RESPONSE:([1-8]):(request-start|upstream-end|downstream-finished|closed-before-finish|browser-response|browser-finished|browser-aborted|browser-failed):(\d{1,6})\n/gmu,
     ),
   ]
     .slice(-24)
@@ -187,7 +187,7 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
       // Dockerの診断から固定checker自身の段階だけを採用する。
       const { stderr } = gradeOutput(diagnostic, 16 * 1024);
       const phase = stderr.match(
-        /^TSUMUCODE_GRADE_PHASE:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|project-structure|project-filter|project-presentation|form-invalid|form-first-send|form-retry|form-inspect|form-response-headers|form-response-body|form-response-dom|marker-after|browser-close|form-release)\n/mu,
+        /^TSUMUCODE_GRADE_PHASE:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|project-structure|project-filter|project-presentation|form-invalid|form-first-send|form-retry|form-inspect|form-response-headers|form-response-body|form-response-dom|form-reset-before|form-reset-after|marker-after|browser-close|form-release)\n/mu,
       )?.[1];
       const reason = stderr.match(
         /^TSUMUCODE_GRADE_FAILURE:(form-busy|http-deadline|http-connection|document-context|browser-closed|dom-contract|identity|unknown)\n/mu,

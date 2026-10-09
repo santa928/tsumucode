@@ -86,7 +86,9 @@ export async function observeNextForm(
       (await count.count()) === 1 &&
       (await count.textContent())?.trim() === 'このメモの保存回数: 1' &&
       passed;
+    step('form-reset-before');
     await input.fill('別のメモ', { timeout: 1000 });
+    step('form-reset-after');
     passed =
       (await count.count()) === 0 && (await result.getAttribute('data-state')) === 'idle' && passed;
     return { passed, actual: observations.join(' / ') };

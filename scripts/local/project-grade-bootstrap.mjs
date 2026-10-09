@@ -350,6 +350,14 @@ try {
   const diagnostic = (message) => {
     if (diagnostics.length < 8) diagnostics.push(message.slice(0, 512));
   };
+  const browserFormRequests = new WeakMap();
+  const browserFormEvent = (request, event) => {
+    const sequence = browserFormRequests.get(request);
+    if (sequence)
+      process.stderr.write(
+        `TSUMUCODE_FORM_RESPONSE:${sequence}:${event}:${Date.now() - started}\n`,
+      );
+  };
   const contract = nextWorkspace(metadata.workspaceId);
   const weather = contract?.goal === 'loading-error-not-found';
   page.on('pageerror', (error) => {
@@ -359,6 +367,11 @@ try {
   });
   page.on('response', (response) => {
     const url = new URL(response.url());
+    const sequence = response.headers()['x-tsumucode-form-response'];
+    if (action && /^[1-8]$/u.test(sequence ?? '')) {
+      browserFormRequests.set(response.request(), Number(sequence));
+      browserFormEvent(response.request(), 'browser-response');
+    }
     // 意図したerror画面のdev診断は拒否したまま、教材の取得失敗と区別する。
     const diagnosticDenied =
       weather &&
@@ -384,6 +397,7 @@ try {
     if (response.status() >= 400 && !missing && !diagnosticDenied && !expectedFormFailure)
       diagnostic(`HTTP resource failed: ${response.status()}`);
   });
+  page.on('requestfinished', (request) => browserFormEvent(request, 'browser-finished'));
   page.on('requestfailed', (request) => {
     const error = request.failure()?.errorText ?? 'unknown';
     const url = new URL(request.url());
@@ -393,6 +407,7 @@ try {
       url.origin === origin &&
       [base.slice(0, -1), base].includes(url.pathname) &&
       url.search === '';
+    browserFormEvent(request, error === 'net::ERR_ABORTED' ? 'browser-aborted' : 'browser-failed');
     if (error !== 'net::ERR_ABORTED' || actionPost) diagnostic(`HTTP resource failed: ${error}`);
   });
   step('initial-navigation');

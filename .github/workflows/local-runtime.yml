@@ -96,9 +96,14 @@ jobs:
           docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256
           --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-browser-checks"
           node scripts/local/project-browser-acceptance.mjs
-      - name: Verify Next real page, query HTTP, resources and recovery
+      - name: Verify Next Action response completion, resources and recovery
         run: |
           docker build --file Dockerfile.learning --target next-browser-checks --tag "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" .
+          controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
+          docker run --rm --network none "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" node scripts/local/next-fixture-packet.mjs next-ch04-l02-e01 |
+            docker exec -i -e TSUMUCODE_NEXT_WORKSPACE=next-ch04-l02-e01 "$controller" node next-project-acceptance.mjs
+      - name: Verify Next real page, query HTTP, resources and recovery
+        run: |
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
           docker run --rm --network none "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" node scripts/local/next-fixture-packet.mjs |
             docker exec -i "$controller" node next-project-acceptance.mjs
@@ -125,7 +130,7 @@ jobs:
         run: |
           set -euo pipefail
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
-          for workspace in next-ch02-l01-e01 next-ch02-l02-e01 next-ch03-l01-e01 next-ch03-l02-e01 next-ch04-l01-e01 next-ch04-l02-e01; do
+          for workspace in next-ch02-l01-e01 next-ch02-l02-e01 next-ch03-l01-e01 next-ch03-l02-e01 next-ch04-l01-e01; do
             docker run --rm --network none "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" node scripts/local/next-fixture-packet.mjs "$workspace" |
               docker exec -i -e TSUMUCODE_NEXT_WORKSPACE="$workspace" "$controller" node next-project-acceptance.mjs
           done

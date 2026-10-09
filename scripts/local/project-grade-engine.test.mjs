@@ -49,6 +49,10 @@ test('全体10秒で固定graderを回収し、基盤503として期限超過を
           'TSUMUCODE_FORM_RESPONSE:1:upstream-end:8050\n' +
           'TSUMUCODE_FORM_RESPONSE:1:downstream-finished:8060\n' +
           'TSUMUCODE_FORM_RESPONSE:2:request-start:8200\n' +
+          'TSUMUCODE_FORM_RESPONSE:2:browser-response:8210\n' +
+          'TSUMUCODE_FORM_RESPONSE:2:browser-aborted:8220\n' +
+          'TSUMUCODE_GRADE_STEP:form-reset-before:8230\n' +
+          'TSUMUCODE_GRADE_STEP:form-reset-after:8240\n' +
           'TSUMUCODE_FORM_RESPONSE:9:request-start:8300\n' +
           'TSUMUCODE_FORM_RESPONSE:2:private-token:8300\n' +
           'TSUMUCODE_FORM_RESPONSE:2:upstream-end:private-source\nprivate-token',
@@ -75,13 +79,15 @@ test('全体10秒で固定graderを回収し、基盤503として期限超過を
       'Next grade deadline',
       JSON.stringify({
         enginePhase: 'container-wait',
-        phase: 'observations',
-        elapsedMs: 7900,
+        phase: 'form-reset-after',
+        elapsedMs: 8240,
         responses: [
           { request: 1, event: 'request-start', elapsedMs: 8000 },
           { request: 1, event: 'upstream-end', elapsedMs: 8050 },
           { request: 1, event: 'downstream-finished', elapsedMs: 8060 },
           { request: 2, event: 'request-start', elapsedMs: 8200 },
+          { request: 2, event: 'browser-response', elapsedMs: 8210 },
+          { request: 2, event: 'browser-aborted', elapsedMs: 8220 },
         ],
       }),
     ],
