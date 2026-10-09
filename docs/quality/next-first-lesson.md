@@ -60,8 +60,8 @@ GET `api/question` の2応答を実測する。期待値はtrusted graderに固�
 診断ログ・スクリーンショット・作業記録は非公開の作者保存先へ置く。
 
 旧Client教材のcompileエラー負例で512 MiBのOOM終了を検出したため、
-旧3教材のNext childにNode heap160 MiB・semi-space4 MiBを設定する。
-新2は既存のheap128 MiB、旧3教材のRAMは512 MiBを維持する。
+First/ClientのNext childにNode heap160 MiB・semi-space4 MiBを設定する。
+Routingと新2はheap128 MiB、旧3教材のRAMは512 MiBを維持する。
 採点期限や期待判定は緩めない。資源計測は固定socketの
 内部HTTPへ統一し、learnerへ追加Nodeを起動しない。この経路はPreviewへ公開しない。
 
@@ -89,3 +89,8 @@ max=0だけでは安定性を受入できず、反映前停止と生成物初期
 max/oom/oomKillとZombieは0、PIDとtmpfsは上限内。終了後のlearner/graderは停止済みも含め0件。
 作者環境とCIの資源差は残るため、全環境の保証にはしない。
 正確なHEADとmerge後mainの成功を正式受入の条件とする。
+
+反映前停止後も旧RoutingのHEAD CIでmax=1が再発したため、Routingだけheap128 MiBへ限定する。
+作者のRouting8例は修復・Source保持・再起動まで成功したが、peak約461 MiBは160 MiB候補と
+ほぼ同じであり、削減効果を証明したとは扱わない。他教材の条件は変更しない。
+定期監視の一時Zombie1、採点直後と各run最後の0、終了後のコンテナ0件を区別する。
