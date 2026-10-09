@@ -202,19 +202,31 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
     ]);
     active();
     if (ended.StatusCode !== 0) {
-      const diagnostic = await docker(
-        'GET',
-        `/containers/${id}/logs?stdout=0&stderr=1&tail=20`,
-        undefined,
-        2000,
-        true,
-      );
+      const remaining = Math.max(1, 10000 - (Date.now() - started));
+      const [diagnostic, inspected] = await Promise.allSettled([
+        docker(
+          'GET',
+          `/containers/${id}/logs?stdout=0&stderr=1&tail=100`,
+          undefined,
+          Math.min(2000, remaining),
+          true,
+        ),
+        docker('GET', `/containers/${id}/json`, undefined, Math.min(500, remaining)),
+      ]);
       active();
       // Dockerの診断から固定checker自身の段階だけを採用する。
-      const { stderr } = gradeOutput(diagnostic, 16 * 1024);
-      const phase = stderr.match(
-        /^TSUMUCODE_GRADE_PHASE:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|project-structure|project-filter|project-presentation|form-invalid|form-first-send|form-retry|form-inspect|form-response-headers|form-response-body|form-response-dom|form-reset-before|form-reset-after|form-document-unchanged|form-document-changed|marker-after|browser-close|form-release)\n/mu,
-      )?.[1];
+      let stderr = '';
+      if (diagnostic.status === 'fulfilled') {
+        try {
+          stderr = gradeOutput(diagnostic.value).stderr;
+        } catch {
+          // 診断未取得でも異常終了を拒否し、元の失敗と所有graderの回収を維持する。
+        }
+      }
+      const phase =
+        stderr.match(
+          /^TSUMUCODE_GRADE_PHASE:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|project-structure|project-filter|project-presentation|form-invalid|form-first-send|form-retry|form-inspect|form-response-headers|form-response-body|form-response-dom|form-reset-before|form-reset-after|form-document-unchanged|form-document-changed|marker-after|browser-close|form-release)\n/mu,
+        )?.[1] ?? gradeProgress(stderr).at(-1)?.phase;
       const reason = stderr.match(
         /^TSUMUCODE_GRADE_FAILURE:(form-busy|http-deadline|http-connection|document-context|browser-closed|dom-contract|identity|unknown)\n/mu,
       )?.[1];
@@ -227,6 +239,26 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
           409,
           'Preview送信中または採点予約中です。送信完了後にもう一度判定してください。',
         );
+      // learner回収後のexitと区別し、grader自身の終了状態だけを有限値で残す。
+      const state = inspected.status === 'fulfilled' ? inspected.value : undefined;
+      const exitCode = (value) =>
+        Number.isInteger(value) && value >= 0 && value <= 255 ? value : 'unknown';
+      console.error(
+        'Next grade failure',
+        JSON.stringify({
+          enginePhase,
+          phase: phase ?? 'unknown',
+          reason: reason ?? 'unknown',
+          waitExitCode: exitCode(ended.StatusCode),
+          graderExitCode: exitCode(state?.State?.ExitCode),
+          graderOOMKilled:
+            typeof state?.State?.OOMKilled === 'boolean' ? state.State.OOMKilled : 'unknown',
+          graderRunning:
+            typeof state?.State?.Running === 'boolean' ? state.State.Running : 'unknown',
+          graderErrorPresent:
+            typeof state?.State?.Error === 'string' ? state.State.Error.length > 0 : 'unknown',
+        }),
+      );
       throw new RequestError(
         503,
         `採点用Browserが終了しました（段階: ${phase ?? '未確認'} / 分類: ${reason ?? '未確認'}）。`,

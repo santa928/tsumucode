@@ -128,11 +128,14 @@ for (const [reported, expected] of [
   ['private-learner-text', '未確認'],
 ]) {
   test(`異常終了の固定分類 ${reported} を照合し、例外本文を返さない`, async () => {
+    const diagnostic = vi.spyOn(console, 'error').mockImplementation(() => {});
     engine.removeContainer.mockResolvedValue(undefined);
     engine.docker.mockImplementation(async (method, path) => {
       if (path.startsWith('/images/')) return { Id: 'fixed-image' };
       if (path.startsWith('/containers/create')) return { Id: 'grader' };
       if (path.endsWith('/wait')) return { StatusCode: 1 };
+      if (path.endsWith('/json'))
+        return { State: { ExitCode: 1, OOMKilled: false, Error: 'private-docker-error' } };
       if (path.includes('/logs?'))
         return frame(
           2,
@@ -153,6 +156,61 @@ for (const [reported, expected] of [
       },
     );
     assert.ok(engine.removeContainer.mock.calls.some(([id]) => id === 'grader'));
+    assert.deepEqual(diagnostic.mock.calls, [
+      [
+        'Next grade failure',
+        JSON.stringify({
+          enginePhase: 'container-wait',
+          phase: 'observations',
+          reason: expected === '未確認' ? 'unknown' : expected,
+          waitExitCode: 1,
+          graderExitCode: 1,
+          graderOOMKilled: false,
+          graderRunning: 'unknown',
+          graderErrorPresent: true,
+        }),
+      ],
+    ]);
+    assert.equal(JSON.stringify(diagnostic.mock.calls).includes('private'), false);
+    diagnostic.mockRestore();
+  });
+}
+
+for (const available of [false, true]) {
+  test(`Browser起動前の終了とgrader状態未取得=${!available}も拒否し、回収する`, async () => {
+    const diagnostic = vi.spyOn(console, 'error').mockImplementation(() => {});
+    engine.removeContainer.mockResolvedValue(undefined);
+    engine.docker.mockImplementation(async (_method, path) => {
+      if (path.startsWith('/images/')) return { Id: 'fixed-image' };
+      if (path.startsWith('/containers/create')) return { Id: 'grader' };
+      if (path.endsWith('/wait')) return { StatusCode: 137 };
+      if (path.includes('/logs?')) {
+        if (!available) throw new Error('private-log-error');
+        return frame(2, 'TSUMUCODE_GRADE_STEP:project-filter:200\nprivate-source');
+      }
+      if (path.endsWith('/json')) {
+        if (!available) throw new Error('private-docker-error');
+        return { State: { ExitCode: 137, OOMKilled: true, Error: '' } };
+      }
+    });
+    await assert.rejects(
+      gradeProject({
+        owner: 'tsumucode-learning-test',
+        image: 'tsumucode-learning-test-grader:local',
+        source: { workspaceId: 'one', sourceRevision: 1, sourceHash: 'fixed-source' },
+        runId: '00000000-0000-4000-8000-000000000001',
+        socket: { dev: 1, ino: 2 },
+      }),
+      { status: 503 },
+    );
+    const result = JSON.parse(diagnostic.mock.calls[0][1]);
+    assert.equal(result.waitExitCode, 137);
+    assert.equal(result.graderExitCode, available ? 137 : 'unknown');
+    assert.equal(result.graderOOMKilled, available ? true : 'unknown');
+    assert.equal(result.phase, available ? 'project-filter' : 'unknown');
+    assert.equal(JSON.stringify(diagnostic.mock.calls).includes('private'), false);
+    assert.ok(engine.removeContainer.mock.calls.some(([id]) => id === 'grader'));
+    diagnostic.mockRestore();
   });
 }
 

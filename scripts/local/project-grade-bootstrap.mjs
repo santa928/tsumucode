@@ -37,16 +37,22 @@ import {
 const { metadata, socket } = JSON.parse(Buffer.from(process.argv[2], 'base64').toString('utf8'));
 const origin = previewOrigin(metadata.runId);
 const base = previewBase(metadata.workspaceId, metadata.runId);
-const parent = await lstat('/transport');
-const endpoint = await lstat('/transport/http.sock');
-assert.equal(parent.uid, 0);
-assert.equal(parent.gid, 1000);
-assert.equal(parent.mode & 0o777, 0o550);
-assert.ok(endpoint.isSocket());
-assert.equal(endpoint.uid, 1000);
-assert.equal(endpoint.gid, 1000);
-assert.equal(endpoint.dev, socket.dev);
-assert.equal(endpoint.ino, socket.ino);
+try {
+  const parent = await lstat('/transport');
+  const endpoint = await lstat('/transport/http.sock');
+  assert.equal(parent.uid, 0);
+  assert.equal(parent.gid, 1000);
+  assert.equal(parent.mode & 0o777, 0o550);
+  assert.ok(endpoint.isSocket());
+  assert.equal(endpoint.uid, 1000);
+  assert.equal(endpoint.gid, 1000);
+  assert.equal(endpoint.dev, socket.dev);
+  assert.equal(endpoint.ino, socket.ino);
+} catch {
+  // Browser起動前のidentity検証失敗も固定分類で残し、pathや実inode値は出さない。
+  process.stderr.write('TSUMUCODE_GRADE_PHASE:marker-before\nTSUMUCODE_GRADE_FAILURE:identity\n');
+  throw new Error('Grade transport identity could not be verified');
+}
 
 /** 認証情報を持たない固定HTTP bridge。実Viteの応答だけをboundedに渡す。 */
 function readHttp(path) {
