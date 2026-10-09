@@ -25,7 +25,7 @@ Server Hook、Client Node依存、普通の関数propsの負Fixtureを実build/�
 
 ## 実行境界
 
-learnerは#132承認済みのCPU1、RAM/swap512 MiB、PID64、tmpfs各64 MiB、
+learnerはCPU1、ClientのRAM/swap512 MiB、RoutingのRAM/swap576 MiB、PID64、tmpfs各64 MiB、
 nonroot、readonly rootfs、network:none、cap dropを維持する。
 管理/ViteのCSPや資源は変更しない。Next限定unsafe-evalと固定chunk2 MiBを維持する。
 

@@ -67,7 +67,7 @@ Routingと新2はheap128 MiBとする。RAM/MemorySwapはFirst/Clientが512 MiB�
 内部HTTPへ統一し、learnerへ追加Nodeを起動しない。この経路はPreviewへ公開しない。
 
 sealed socketがあるNextの反映確認も内部HTTPへ統一する。
-既存の反映確認ループ8秒・個別要求2秒の設定を維持し、compile中に追加Node probeを重ねない。
+反映確認ループ20秒・個別要求2秒の現行設定で、compile中に追加Node probeを重ねない。
 起動時の未seal socketとViteの確認は既存の固定execを維持する。
 反映前に旧Nextを停止し、反映識別子が一致するまで並行readyで再起動しない。
 保存版ごとに生成物の`.next`を初期化し、編集したSourceを保持する。
