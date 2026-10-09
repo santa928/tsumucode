@@ -1,0 +1,24 @@
+id: next-ch04-l02
+kind: standard
+title: Server Actionの結果と待機を扱う
+goal: Server Actionの返す状態を読み、入力保持とpendingを使って安全に再試行できる。
+estimatedMinutes: 35
+prerequisiteLessonIds:
+  - next-ch04-l01
+slideSources:
+  - slides/s01-foundation.md
+  - slides/s02-values.md
+  - slides/s03-observe.md
+  - slides/s04-checkpoint.md
+exerciseSources:
+  - exercises/next-ch04-l02-e01/exercise.yaml
+reflection: Server Actionの返す状態を読み、入力保持とpendingを使って安全に再試行できる。
+glossaryRefs:
+  - server-action
+  - action-state
+  - pending
+completion:
+  kind: standard
+  finalSlideId: next-ch04-l02-s04
+  requiredExerciseIds:
+    - next-ch04-l02-e01

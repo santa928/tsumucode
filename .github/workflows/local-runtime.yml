@@ -123,7 +123,7 @@ jobs:
         run: |
           set -euo pipefail
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
-          for workspace in next-ch02-l01-e01 next-ch02-l02-e01 next-ch03-l01-e01 next-ch03-l02-e01; do
+          for workspace in next-ch02-l01-e01 next-ch02-l02-e01 next-ch03-l01-e01 next-ch03-l02-e01 next-ch04-l01-e01 next-ch04-l02-e01; do
             docker run --rm --network none "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" node scripts/local/next-fixture-packet.mjs "$workspace" |
               docker exec -i -e TSUMUCODE_NEXT_WORKSPACE="$workspace" "$controller" node next-project-acceptance.mjs
           done
@@ -137,6 +137,17 @@ jobs:
           docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256
           --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-next-browser-checks"
           node scripts/local/next-routing-browser-acceptance.mjs next-ch03
+      - name: Verify Next Form and Action normal Lessons and JSON transfer
+        run: >-
+          docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256
+          --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-next-browser-checks"
+          node scripts/local/next-routing-browser-acceptance.mjs next-ch04
+      - name: Verify Next Form POST boundaries and grading contention
+        run: |
+          set -euo pipefail
+          preview=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q preview)
+          docker run --rm --network none "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" node scripts/local/next-fixture-packet.mjs next-ch04-l01-e01 |
+            docker exec -i "$preview" node --input-type=module -e "$(cat scripts/local/next-form-http-acceptance.mjs)"
       - name: Verify Weather RSC cancellation on Source apply and stop
         run: |
           set -euo pipefail
@@ -164,6 +175,13 @@ jobs:
           --mount type=bind,src="$PWD/scripts/local",dst=/checks,readonly
           --entrypoint node "$TSUMUCODE_LOCAL_OWNER-controller"
           --input-type=module < scripts/local/output-fault-acceptance.mjs
+      - name: Show bounded Source apply failure diagnostics
+        if: failure()
+        run: |
+          controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
+          if [ -n "$controller" ]; then
+            docker logs "$controller" 2>&1 | rg '^Next (Source apply failure|grade (deadline|slow)) ' || true
+          fi
       - name: Stop only this learning stack and preserve Source volume
         if: always()
         run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml down

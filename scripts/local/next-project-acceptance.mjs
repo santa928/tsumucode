@@ -28,6 +28,8 @@ const expectedCount = {
   'next-ch02-l02-e01': 9,
   'next-ch03-l01-e01': 8,
   'next-ch03-l02-e01': 9,
+  'next-ch04-l01-e01': 9,
+  'next-ch04-l02-e01': 9,
 };
 assert.equal(fixtures.length, expectedCount[workspace]);
 const owner = process.env.TSUMUCODE_LOCAL_OWNER;
@@ -64,7 +66,9 @@ function api(path, input = {}) {
         );
       },
     );
-    req.setTimeout(15000, () => req.destroy(new Error('Next API deadline')));
+    req.setTimeout(path.endsWith('/apply') ? 25000 : 15000, () =>
+      req.destroy(new Error('Next API deadline')),
+    );
     req.on('error', reject);
     req.end(body);
   });

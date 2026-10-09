@@ -13,14 +13,18 @@ const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] }
 const context = await browser.newContext({ viewport: { width: 1280, height: 960 } });
 const page = await context.newPage();
 const chapter = process.argv[2] ?? 'next-ch02';
-assert.ok(['next-ch02', 'next-ch03'].includes(chapter));
+assert.ok(['next-ch02', 'next-ch03', 'next-ch04'].includes(chapter));
 const chapterLessons = [`${chapter}-l01`, `${chapter}-l02`];
 const selectedLesson = process.argv[3];
 assert.ok(!selectedLesson || chapterLessons.includes(selectedLesson));
 const lessons = selectedLesson ? [selectedLesson] : chapterLessons;
 const directory =
   process.env.TSUMUCODE_NEXT_EVIDENCE ??
-  (chapter === 'next-ch03' ? '.release-issue134' : '.release-issue133');
+  (chapter === 'next-ch04'
+    ? '.release-issue135'
+    : chapter === 'next-ch03'
+      ? '.release-issue134'
+      : '.release-issue133');
 await mkdir(directory, { recursive: true });
 const errors = [];
 page.on('pageerror', (error) => errors.push(error.message));
@@ -139,6 +143,39 @@ try {
       await page.getByLabel('表示する応答').selectOption('data/cached');
       await expect(preview().locator('#read-id')).toHaveText(cached);
       await page.getByLabel('表示する応答').selectOption('');
+    } else if (chapter === 'next-ch04') {
+      const handle = await page.getByTitle('Next.jsの実サーバーPreview').elementHandle();
+      const frame = await handle.contentFrame();
+      await frame.waitForLoadState('networkidle', { timeout: 15000 });
+      const input = preview().getByLabel('メモ', { exact: true });
+      const button = () => preview().getByRole('button', { name: '保存する', exact: true });
+      for (const [value, expected] of [
+        ['   ', 'invalid'],
+        ['手動で試すメモ', 'failed'],
+        ['手動で試すメモ', 'saved'],
+      ]) {
+        await input.fill(value);
+        await button().focus();
+        await button().press('Enter');
+        if (expected !== 'invalid') {
+          await expect(input).toBeDisabled();
+          await expect(
+            preview().getByRole('button', { name: '送信中…', exact: true }),
+          ).toBeDisabled();
+        }
+        await expect(preview().locator('#note-result')).toHaveAttribute('data-state', expected);
+        await expect(input).toHaveValue(value);
+        await expect(input).toBeEnabled();
+      }
+      await expect(preview().locator('#saved-count')).toHaveText('このメモの保存回数: 1');
+      await grade('合格');
+      // 採点はPreviewで保存したメモの履歴を消さない。
+      await button().click();
+      await expect(preview().locator('#saved-count')).toHaveText('このメモの保存回数: 2');
+      await input.fill('別の内容');
+      await expect(preview().locator('#saved-count')).toHaveCount(0);
+      await expect(preview().locator('#note-result')).toHaveAttribute('data-state', 'idle');
+      await handle.dispose();
     } else {
       const handle = await page.getByTitle('Next.jsの実サーバーPreview').elementHandle();
       const frame = await handle.contentFrame();

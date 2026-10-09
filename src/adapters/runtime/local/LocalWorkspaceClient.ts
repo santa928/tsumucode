@@ -151,7 +151,9 @@ export class LocalWorkspaceClient {
         ...(this.#token === undefined ? {} : { 'x-tsumucode-token': this.#token }),
       },
       body: JSON.stringify(body),
-      signal: AbortSignal.timeout(12000),
+      signal: AbortSignal.timeout(
+        this.profile === 'next-project-v1' && path === `${this.#path}/apply` ? 25000 : 12000,
+      ),
     });
     const text = await response.text();
     if (text.length > 1024 * 1024) throw new Error('Workspace応答が大きすぎます。');

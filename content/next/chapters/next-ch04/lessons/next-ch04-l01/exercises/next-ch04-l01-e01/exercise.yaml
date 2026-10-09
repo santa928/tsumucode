@@ -1,0 +1,451 @@
+id: next-ch04-l01-e01
+kind: standard
+workspaceId: next-ch04-l01-e01
+countsTowardStandardExerciseTotal: true
+title: Formの入力をServerで検証する
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: next-form-validation
+    minimumLevel: transform
+  - conceptId: next-form-response
+    minimumLevel: transform
+  - conceptId: next-form-retry
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: next-ch04-l01-e01-step01
+    file: app/api/note/route.ts
+    starterAnchor: "const input = typeof raw === 'string' ? raw : '';"
+    target: Server validation
+    change: Serverで前後の空白を除き、3〜40文字かを検証してから保存します。
+    observe: 空白3文字の送信では検証エラーになり、保存しません。
+    requiresConceptIds:
+      - next-form-validation
+    validationRuleIds:
+      - next-ch04-l01-e01-r01
+  - id: next-ch04-l01-e01-step02
+    file: app/note-form.tsx
+    starterAnchor: disabled={false}
+    target: 送信中の入力保持
+    change: 送信中は入力もpendingで無効にします。
+    observe: 送信中は入力と送信の両方が無効になり、失敗後は同じ入力が残ります。
+    requiresConceptIds:
+      - next-form-retry
+    validationRuleIds:
+      - next-ch04-l01-e01-r01
+  - id: next-ch04-l01-e01-step03
+    file: app/note-form.tsx
+    starterAnchor: const visible = state;
+    target: 現在のメモに対応する結果
+    change: state.inputと現在のinputが一致するときだけ結果を表示し、異なるときはinitialStateを使います。
+    observe: 保存後に別のメモへ入力を変えると、前の保存回数を新しい結果として表示しません。
+    requiresConceptIds:
+      - next-form-response
+    validationRuleIds:
+      - next-ch04-l01-e01-r01
+runtime:
+  kind: next
+  entryFile: app/page.tsx
+  sourceType: module
+  capabilityProfile: project
+  primaryOutput: preview
+  profile: next-project-v1
+files:
+  - path: app/layout.tsx
+    language: next
+    source: starter/app/layout.tsx
+    editable: false
+  - path: app/globals.css
+    language: css
+    source: starter/app/globals.css
+    editable: false
+  - path: app/note-state.ts
+    language: next
+    source: starter/app/note-state.ts
+    editable: false
+  - path: app/note-store.ts
+    language: next
+    source: starter/app/note-store.ts
+    editable: false
+  - path: app/page.tsx
+    language: next
+    source: starter/app/page.tsx
+    editable: false
+  - path: app/note-form.tsx
+    language: next
+    source: starter/app/note-form.tsx
+    editable: true
+  - path: app/api/note/route.ts
+    language: next
+    source: starter/app/api/note/route.ts
+    editable: true
+solutionFiles:
+  - path: app/layout.tsx
+    language: next
+    source: solution/app/layout.tsx
+    editable: false
+  - path: app/globals.css
+    language: css
+    source: solution/app/globals.css
+    editable: false
+  - path: app/note-state.ts
+    language: next
+    source: solution/app/note-state.ts
+    editable: false
+  - path: app/note-store.ts
+    language: next
+    source: solution/app/note-store.ts
+    editable: false
+  - path: app/page.tsx
+    language: next
+    source: solution/app/page.tsx
+    editable: false
+  - path: app/note-form.tsx
+    language: next
+    source: solution/app/note-form.tsx
+    editable: false
+  - path: app/api/note/route.ts
+    language: next
+    source: solution/app/api/note/route.ts
+    editable: false
+validationRules:
+  - id: next-ch04-l01-e01-r01
+    label: 実POST・状態・保存履歴
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: next-page-http
+    assertion:
+      kind: next-page-http
+      goal: form-route-validation
+    feedback:
+      target: Formの入力をServerで検証する
+      expected: 実POSTの入力をServerで検証し、失敗後も入力を保持して再試行できる。
+      nextAction: 検証・入力保持・pending・結果の対応を直し、保存・反映して再判定します。
+    hintId: next-ch04-l01-e01-h01
+    relatedSlideId: next-ch04-l01-s03
+hints:
+  - id: next-ch04-l01-e01-h01
+    level: 1
+    title: ClientとServerの検証を分ける
+    text: requiredやminLengthだけでは、空白だけの入力をServerで拒否できません。Server側のrawとtrim後のinputを比べます。
+    relatedSlideId: next-ch04-l01-s03
+  - id: next-ch04-l01-e01-h02
+    level: 2
+    title: 待機中の同じ入力を守る
+    text: buttonだけでなくinputもdisabled={pending}にします。失敗後もcontrolled inputの値を消しません。
+    relatedSlideId: next-ch04-l01-s03
+  - id: next-ch04-l01-e01-h03
+    level: 3
+    title: 返信と現在の値を対応させる
+    text: 'state.input === input ? state :
+      initialStateで、別のメモへの変更後は以前の保存結果を表示しません。Serverの文字列にはraw.trim()を使います。'
+    relatedSlideId: next-ch04-l01-s03
+relatedSlideIds:
+  - next-ch04-l01-s01
+  - next-ch04-l01-s02
+  - next-ch04-l01-s03
+  - next-ch04-l01-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: starter
+    expectedStatus: incomplete
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/starter/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/starter/app/globals.css
+        editable: false
+      - path: app/note-state.ts
+        language: next
+        source: fixtures/starter/app/note-state.ts
+        editable: false
+      - path: app/note-store.ts
+        language: next
+        source: fixtures/starter/app/note-store.ts
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/starter/app/page.tsx
+        editable: false
+      - path: app/note-form.tsx
+        language: next
+        source: fixtures/starter/app/note-form.tsx
+        editable: false
+      - path: app/api/note/route.ts
+        language: next
+        source: fixtures/starter/app/api/note/route.ts
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch04-l01-e01-r01
+  - id: solution
+    expectedStatus: pass
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/solution/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/solution/app/globals.css
+        editable: false
+      - path: app/note-state.ts
+        language: next
+        source: fixtures/solution/app/note-state.ts
+        editable: false
+      - path: app/note-store.ts
+        language: next
+        source: fixtures/solution/app/note-store.ts
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/solution/app/page.tsx
+        editable: false
+      - path: app/note-form.tsx
+        language: next
+        source: fixtures/solution/app/note-form.tsx
+        editable: false
+      - path: app/api/note/route.ts
+        language: next
+        source: fixtures/solution/app/api/note/route.ts
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternative
+    expectedStatus: pass
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/alternative/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/alternative/app/globals.css
+        editable: false
+      - path: app/note-state.ts
+        language: next
+        source: fixtures/alternative/app/note-state.ts
+        editable: false
+      - path: app/note-store.ts
+        language: next
+        source: fixtures/alternative/app/note-store.ts
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/alternative/app/page.tsx
+        editable: false
+      - path: app/note-form.tsx
+        language: next
+        source: fixtures/alternative/app/note-form.tsx
+        editable: false
+      - path: app/api/note/route.ts
+        language: next
+        source: fixtures/alternative/app/api/note/route.ts
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: missing-validation
+    expectedStatus: incomplete
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/missing-validation/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/missing-validation/app/globals.css
+        editable: false
+      - path: app/note-state.ts
+        language: next
+        source: fixtures/missing-validation/app/note-state.ts
+        editable: false
+      - path: app/note-store.ts
+        language: next
+        source: fixtures/missing-validation/app/note-store.ts
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/missing-validation/app/page.tsx
+        editable: false
+      - path: app/note-form.tsx
+        language: next
+        source: fixtures/missing-validation/app/note-form.tsx
+        editable: false
+      - path: app/api/note/route.ts
+        language: next
+        source: fixtures/missing-validation/app/api/note/route.ts
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch04-l01-e01-r01
+  - id: fake-success
+    expectedStatus: incomplete
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/fake-success/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/fake-success/app/globals.css
+        editable: false
+      - path: app/note-state.ts
+        language: next
+        source: fixtures/fake-success/app/note-state.ts
+        editable: false
+      - path: app/note-store.ts
+        language: next
+        source: fixtures/fake-success/app/note-store.ts
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/fake-success/app/page.tsx
+        editable: false
+      - path: app/note-form.tsx
+        language: next
+        source: fixtures/fake-success/app/note-form.tsx
+        editable: false
+      - path: app/api/note/route.ts
+        language: next
+        source: fixtures/fake-success/app/api/note/route.ts
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch04-l01-e01-r01
+  - id: drop-input
+    expectedStatus: incomplete
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/drop-input/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/drop-input/app/globals.css
+        editable: false
+      - path: app/note-state.ts
+        language: next
+        source: fixtures/drop-input/app/note-state.ts
+        editable: false
+      - path: app/note-store.ts
+        language: next
+        source: fixtures/drop-input/app/note-store.ts
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/drop-input/app/page.tsx
+        editable: false
+      - path: app/note-form.tsx
+        language: next
+        source: fixtures/drop-input/app/note-form.tsx
+        editable: false
+      - path: app/api/note/route.ts
+        language: next
+        source: fixtures/drop-input/app/api/note/route.ts
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch04-l01-e01-r01
+  - id: no-pending
+    expectedStatus: incomplete
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/no-pending/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/no-pending/app/globals.css
+        editable: false
+      - path: app/note-state.ts
+        language: next
+        source: fixtures/no-pending/app/note-state.ts
+        editable: false
+      - path: app/note-store.ts
+        language: next
+        source: fixtures/no-pending/app/note-store.ts
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/no-pending/app/page.tsx
+        editable: false
+      - path: app/note-form.tsx
+        language: next
+        source: fixtures/no-pending/app/note-form.tsx
+        editable: false
+      - path: app/api/note/route.ts
+        language: next
+        source: fixtures/no-pending/app/api/note/route.ts
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch04-l01-e01-r01
+  - id: stale-result
+    expectedStatus: incomplete
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/stale-result/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/stale-result/app/globals.css
+        editable: false
+      - path: app/note-state.ts
+        language: next
+        source: fixtures/stale-result/app/note-state.ts
+        editable: false
+      - path: app/note-store.ts
+        language: next
+        source: fixtures/stale-result/app/note-store.ts
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/stale-result/app/page.tsx
+        editable: false
+      - path: app/note-form.tsx
+        language: next
+        source: fixtures/stale-result/app/note-form.tsx
+        editable: false
+      - path: app/api/note/route.ts
+        language: next
+        source: fixtures/stale-result/app/api/note/route.ts
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch04-l01-e01-r01
+  - id: code-error
+    expectedStatus: code-error
+    files:
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/code-error/app/layout.tsx
+        editable: false
+      - path: app/globals.css
+        language: css
+        source: fixtures/code-error/app/globals.css
+        editable: false
+      - path: app/note-state.ts
+        language: next
+        source: fixtures/code-error/app/note-state.ts
+        editable: false
+      - path: app/note-store.ts
+        language: next
+        source: fixtures/code-error/app/note-store.ts
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/code-error/app/page.tsx
+        editable: false
+      - path: app/note-form.tsx
+        language: next
+        source: fixtures/code-error/app/note-form.tsx
+        editable: false
+      - path: app/api/note/route.ts
+        language: next
+        source: fixtures/code-error/app/api/note/route.ts
+        editable: false
+    expectedFeedbackRuleIds: []

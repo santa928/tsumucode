@@ -1,0 +1,21 @@
+body {
+  font-family: sans-serif;
+  margin: 2rem;
+}
+main {
+  max-width: 36rem;
+}
+label,
+input,
+button {
+  display: block;
+  margin-block: 0.75rem;
+}
+input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.5rem;
+}
+button {
+  padding: 0.5rem 1rem;
+}

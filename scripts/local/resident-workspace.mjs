@@ -1,3 +1,4 @@
+import { isNextForm } from './next-form-preview.mjs';
 import { Buffer } from 'node:buffer';
 import { randomUUID } from 'node:crypto';
 import { TextDecoder } from 'node:util';
@@ -131,13 +132,15 @@ export class ResidentWorkspace {
     if (!run?.socket || run.reason || !['ready', 'applying'].includes(run.record.state))
       return undefined;
     const streaming = run.workspaceId === 'next-ch03-l02-e01';
-    if (streaming && run.record.state !== 'ready') return undefined;
+    const form = isNextForm(run.workspaceId);
+    if ((streaming || form) && run.record.state !== 'ready') return undefined;
     return {
       workspaceId: run.workspaceId,
       runId: run.record.runId,
       profile: run.record.profile,
       ...run.socket,
-      ...(streaming ? { sourceRevision: run.record.sourceRevision } : {}),
+      ...(streaming || form ? { sourceRevision: run.record.sourceRevision } : {}),
+      ...(form ? { grading: run.grading === true } : {}),
     };
   }
 

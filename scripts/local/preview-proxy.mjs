@@ -1,3 +1,4 @@
+import { readPreviewBody, PreviewBodyError } from './preview-body.mjs';
 import { nextPreviewRequest } from './next-data-preview.mjs';
 import { forwardPreviewResponse } from './preview-http-response.mjs';
 import { createServer, request } from 'node:http';
@@ -100,6 +101,7 @@ function permitted(req, target, websocket = false) {
     );
   }
   if (req.method === 'GET' || req.method === 'HEAD') return true;
+  if (nextPreviewRequest(req, target)?.post) return true;
   return (
     req.method === 'POST' &&
     req.url === `${previewBase(target.workspaceId, target.runId)}api/echo` &&
@@ -140,16 +142,24 @@ const server = createServer(async (req, res) => {
   let proxy;
   let timer;
   let monitoring;
+  const cancellation = new globalThis.AbortController();
   if (httpConnections >= PREVIEW_LIMITS.httpConnections) {
     errorResponse(res, 429);
     return;
   }
   httpConnections++;
   res.once('close', () => {
+    cancellation.abort();
+    if (!req.complete) req.destroy();
     clearTimeout(timer);
     clearInterval(monitoring);
     httpConnections--;
   });
+  timer = setTimeout(() => {
+    errorResponse(res, 504, target);
+    cancellation.abort();
+    proxy?.destroy();
+  }, PREVIEW_LIMITS.httpMs);
   try {
     target = await lookup();
     if (!permitted(req, target)) {
@@ -157,7 +167,28 @@ const server = createServer(async (req, res) => {
       return;
     }
     const path = await socketPath(target);
-    if (res.destroyed) return;
+    const policy = nextPreviewRequest(req, target);
+    const body = policy.post
+      ? await readPreviewBody(req, {
+          limit: PREVIEW_LIMITS.bodyBytes,
+          timeoutMs: PREVIEW_LIMITS.httpMs,
+          signal: cancellation.signal,
+        })
+      : undefined;
+    if (res.destroyed || res.writableEnded) return;
+    // 全量受信中に採点・反映が始まった場合も、上流へ送らない。
+    if (policy.post) {
+      const current = await lookup();
+      if (
+        current.runId !== target.runId ||
+        current.ino !== target.ino ||
+        current.sourceRevision !== target.sourceRevision ||
+        current.grading
+      ) {
+        errorResponse(res, 409, target);
+        return;
+      }
+    }
     proxy = request(
       {
         socketPath: path,
@@ -170,7 +201,7 @@ const server = createServer(async (req, res) => {
           method: req.method,
           headers: previewHeaders(target.runId, target.profile),
           limit: previewResponseLimit(req.url, target),
-          stream: nextPreviewRequest(req, target).stream,
+          stream: policy.stream,
           fail: () => errorResponse(res, 502, target),
         });
       },
@@ -180,7 +211,6 @@ const server = createServer(async (req, res) => {
     };
     res.once('close', disconnected);
     res.once('finish', () => res.off('close', disconnected));
-    timer = setTimeout(() => proxy.destroy(new Error('Preview deadline')), PREVIEW_LIMITS.httpMs);
     monitoring = setInterval(() => {
       void lookup().then(
         (current) => {
@@ -195,6 +225,10 @@ const server = createServer(async (req, res) => {
       );
     }, 500);
     proxy.on('error', () => errorResponse(res, 503, target));
+    if (policy.post) {
+      proxy.end(body);
+      return;
+    }
     let bytes = 0;
     req.on('data', (chunk) => {
       bytes += chunk.length;
@@ -205,9 +239,9 @@ const server = createServer(async (req, res) => {
     });
     req.on('error', () => proxy.destroy());
     req.pipe(proxy);
-  } catch {
+  } catch (error) {
     proxy?.destroy();
-    errorResponse(res, 503, target);
+    errorResponse(res, error instanceof PreviewBodyError ? error.status : 503, target);
   }
 });
 

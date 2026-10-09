@@ -1015,3 +1015,510 @@ items:
   - id: next-weather-permanent-status-8
     visibility: authoring
     path: chapters/next-ch03/lessons/next-ch03-l02/exercises/next-ch03-l02-e01/fixtures/permanent-status/app/weather/[state]/page.tsx
+  - id: next-form-original-337
+    visibility: public
+    path: chapters/next-ch04/chapter.yaml
+  - id: next-form-original-338
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l02/lesson.yaml
+  - id: next-form-original-339
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l02/slides/s01-foundation.md
+  - id: next-form-original-340
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l02/slides/s02-values.md
+  - id: next-form-original-341
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l02/slides/s03-observe.md
+  - id: next-form-original-342
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l02/slides/s04-checkpoint.md
+  - id: next-form-original-343
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/exercise.yaml
+  - id: next-form-original-344
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/instructions.md
+  - id: next-form-original-345
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/starter/app/actions.ts
+  - id: next-form-original-346
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/starter/app/globals.css
+  - id: next-form-original-347
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/starter/app/layout.tsx
+  - id: next-form-original-348
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/starter/app/note-form.tsx
+  - id: next-form-original-349
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/starter/app/note-state.ts
+  - id: next-form-original-350
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/starter/app/note-store.ts
+  - id: next-form-original-351
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/starter/app/page.tsx
+  - id: next-form-original-352
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/solution/app/actions.ts
+  - id: next-form-original-353
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/solution/app/globals.css
+  - id: next-form-original-354
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/solution/app/layout.tsx
+  - id: next-form-original-355
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/solution/app/note-form.tsx
+  - id: next-form-original-356
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/solution/app/note-state.ts
+  - id: next-form-original-357
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/solution/app/note-store.ts
+  - id: next-form-original-358
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/solution/app/page.tsx
+  - id: next-form-original-359
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/starter/app/actions.ts
+  - id: next-form-original-360
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/starter/app/globals.css
+  - id: next-form-original-361
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/starter/app/layout.tsx
+  - id: next-form-original-362
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/starter/app/note-form.tsx
+  - id: next-form-original-363
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/starter/app/note-state.ts
+  - id: next-form-original-364
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/starter/app/note-store.ts
+  - id: next-form-original-365
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/starter/app/page.tsx
+  - id: next-form-original-366
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/stale-result/app/actions.ts
+  - id: next-form-original-367
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/stale-result/app/globals.css
+  - id: next-form-original-368
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/stale-result/app/layout.tsx
+  - id: next-form-original-369
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/stale-result/app/note-form.tsx
+  - id: next-form-original-370
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/stale-result/app/note-state.ts
+  - id: next-form-original-371
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/stale-result/app/note-store.ts
+  - id: next-form-original-372
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/stale-result/app/page.tsx
+  - id: next-form-original-373
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/solution/app/actions.ts
+  - id: next-form-original-374
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/solution/app/globals.css
+  - id: next-form-original-375
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/solution/app/layout.tsx
+  - id: next-form-original-376
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/solution/app/note-form.tsx
+  - id: next-form-original-377
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/solution/app/note-state.ts
+  - id: next-form-original-378
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/solution/app/note-store.ts
+  - id: next-form-original-379
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/solution/app/page.tsx
+  - id: next-form-original-380
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/no-pending/app/actions.ts
+  - id: next-form-original-381
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/no-pending/app/globals.css
+  - id: next-form-original-382
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/no-pending/app/layout.tsx
+  - id: next-form-original-383
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/no-pending/app/note-form.tsx
+  - id: next-form-original-384
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/no-pending/app/note-state.ts
+  - id: next-form-original-385
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/no-pending/app/note-store.ts
+  - id: next-form-original-386
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/no-pending/app/page.tsx
+  - id: next-form-original-387
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/missing-validation/app/actions.ts
+  - id: next-form-original-388
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/missing-validation/app/globals.css
+  - id: next-form-original-389
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/missing-validation/app/layout.tsx
+  - id: next-form-original-390
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/missing-validation/app/note-form.tsx
+  - id: next-form-original-391
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/missing-validation/app/note-state.ts
+  - id: next-form-original-392
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/missing-validation/app/note-store.ts
+  - id: next-form-original-393
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/missing-validation/app/page.tsx
+  - id: next-form-original-394
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/fake-success/app/actions.ts
+  - id: next-form-original-395
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/fake-success/app/globals.css
+  - id: next-form-original-396
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/fake-success/app/layout.tsx
+  - id: next-form-original-397
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/fake-success/app/note-form.tsx
+  - id: next-form-original-398
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/fake-success/app/note-state.ts
+  - id: next-form-original-399
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/fake-success/app/note-store.ts
+  - id: next-form-original-400
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/fake-success/app/page.tsx
+  - id: next-form-original-401
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/drop-input/app/actions.ts
+  - id: next-form-original-402
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/drop-input/app/globals.css
+  - id: next-form-original-403
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/drop-input/app/layout.tsx
+  - id: next-form-original-404
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/drop-input/app/note-form.tsx
+  - id: next-form-original-405
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/drop-input/app/note-state.ts
+  - id: next-form-original-406
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/drop-input/app/note-store.ts
+  - id: next-form-original-407
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/drop-input/app/page.tsx
+  - id: next-form-original-408
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/code-error/app/actions.ts
+  - id: next-form-original-409
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/code-error/app/globals.css
+  - id: next-form-original-410
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/code-error/app/layout.tsx
+  - id: next-form-original-411
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/code-error/app/note-form.tsx
+  - id: next-form-original-412
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/code-error/app/note-state.ts
+  - id: next-form-original-413
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/code-error/app/note-store.ts
+  - id: next-form-original-414
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/code-error/app/page.tsx
+  - id: next-form-original-415
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/alternative/app/actions.ts
+  - id: next-form-original-416
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/alternative/app/globals.css
+  - id: next-form-original-417
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/alternative/app/layout.tsx
+  - id: next-form-original-418
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/alternative/app/note-form.tsx
+  - id: next-form-original-419
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/alternative/app/note-state.ts
+  - id: next-form-original-420
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/alternative/app/note-store.ts
+  - id: next-form-original-421
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l02/exercises/next-ch04-l02-e01/fixtures/alternative/app/page.tsx
+  - id: next-form-original-422
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l01/lesson.yaml
+  - id: next-form-original-423
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l01/slides/s01-foundation.md
+  - id: next-form-original-424
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l01/slides/s02-values.md
+  - id: next-form-original-425
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l01/slides/s03-observe.md
+  - id: next-form-original-426
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l01/slides/s04-checkpoint.md
+  - id: next-form-original-427
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/exercise.yaml
+  - id: next-form-original-428
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/instructions.md
+  - id: next-form-original-429
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/starter/app/globals.css
+  - id: next-form-original-430
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/starter/app/layout.tsx
+  - id: next-form-original-431
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/starter/app/note-form.tsx
+  - id: next-form-original-432
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/starter/app/note-state.ts
+  - id: next-form-original-433
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/starter/app/note-store.ts
+  - id: next-form-original-434
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/starter/app/page.tsx
+  - id: next-form-original-435
+    visibility: public
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/starter/app/api/note/route.ts
+  - id: next-form-original-436
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/solution/app/globals.css
+  - id: next-form-original-437
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/solution/app/layout.tsx
+  - id: next-form-original-438
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/solution/app/note-form.tsx
+  - id: next-form-original-439
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/solution/app/note-state.ts
+  - id: next-form-original-440
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/solution/app/note-store.ts
+  - id: next-form-original-441
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/solution/app/page.tsx
+  - id: next-form-original-442
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/solution/app/api/note/route.ts
+  - id: next-form-original-443
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/starter/app/globals.css
+  - id: next-form-original-444
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/starter/app/layout.tsx
+  - id: next-form-original-445
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/starter/app/note-form.tsx
+  - id: next-form-original-446
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/starter/app/note-state.ts
+  - id: next-form-original-447
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/starter/app/note-store.ts
+  - id: next-form-original-448
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/starter/app/page.tsx
+  - id: next-form-original-449
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/starter/app/api/note/route.ts
+  - id: next-form-original-450
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/stale-result/app/globals.css
+  - id: next-form-original-451
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/stale-result/app/layout.tsx
+  - id: next-form-original-452
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/stale-result/app/note-form.tsx
+  - id: next-form-original-453
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/stale-result/app/note-state.ts
+  - id: next-form-original-454
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/stale-result/app/note-store.ts
+  - id: next-form-original-455
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/stale-result/app/page.tsx
+  - id: next-form-original-456
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/stale-result/app/api/note/route.ts
+  - id: next-form-original-457
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/solution/app/globals.css
+  - id: next-form-original-458
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/solution/app/layout.tsx
+  - id: next-form-original-459
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/solution/app/note-form.tsx
+  - id: next-form-original-460
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/solution/app/note-state.ts
+  - id: next-form-original-461
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/solution/app/note-store.ts
+  - id: next-form-original-462
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/solution/app/page.tsx
+  - id: next-form-original-463
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/solution/app/api/note/route.ts
+  - id: next-form-original-464
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/no-pending/app/globals.css
+  - id: next-form-original-465
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/no-pending/app/layout.tsx
+  - id: next-form-original-466
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/no-pending/app/note-form.tsx
+  - id: next-form-original-467
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/no-pending/app/note-state.ts
+  - id: next-form-original-468
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/no-pending/app/note-store.ts
+  - id: next-form-original-469
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/no-pending/app/page.tsx
+  - id: next-form-original-470
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/no-pending/app/api/note/route.ts
+  - id: next-form-original-471
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/missing-validation/app/globals.css
+  - id: next-form-original-472
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/missing-validation/app/layout.tsx
+  - id: next-form-original-473
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/missing-validation/app/note-form.tsx
+  - id: next-form-original-474
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/missing-validation/app/note-state.ts
+  - id: next-form-original-475
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/missing-validation/app/note-store.ts
+  - id: next-form-original-476
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/missing-validation/app/page.tsx
+  - id: next-form-original-477
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/missing-validation/app/api/note/route.ts
+  - id: next-form-original-478
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/fake-success/app/globals.css
+  - id: next-form-original-479
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/fake-success/app/layout.tsx
+  - id: next-form-original-480
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/fake-success/app/note-form.tsx
+  - id: next-form-original-481
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/fake-success/app/note-state.ts
+  - id: next-form-original-482
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/fake-success/app/note-store.ts
+  - id: next-form-original-483
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/fake-success/app/page.tsx
+  - id: next-form-original-484
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/fake-success/app/api/note/route.ts
+  - id: next-form-original-485
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/drop-input/app/globals.css
+  - id: next-form-original-486
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/drop-input/app/layout.tsx
+  - id: next-form-original-487
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/drop-input/app/note-form.tsx
+  - id: next-form-original-488
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/drop-input/app/note-state.ts
+  - id: next-form-original-489
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/drop-input/app/note-store.ts
+  - id: next-form-original-490
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/drop-input/app/page.tsx
+  - id: next-form-original-491
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/drop-input/app/api/note/route.ts
+  - id: next-form-original-492
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/code-error/app/globals.css
+  - id: next-form-original-493
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/code-error/app/layout.tsx
+  - id: next-form-original-494
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/code-error/app/note-form.tsx
+  - id: next-form-original-495
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/code-error/app/note-state.ts
+  - id: next-form-original-496
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/code-error/app/note-store.ts
+  - id: next-form-original-497
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/code-error/app/page.tsx
+  - id: next-form-original-498
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/code-error/app/api/note/route.ts
+  - id: next-form-original-499
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/alternative/app/globals.css
+  - id: next-form-original-500
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/alternative/app/layout.tsx
+  - id: next-form-original-501
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/alternative/app/note-form.tsx
+  - id: next-form-original-502
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/alternative/app/note-state.ts
+  - id: next-form-original-503
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/alternative/app/note-store.ts
+  - id: next-form-original-504
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/alternative/app/page.tsx
+  - id: next-form-original-505
+    visibility: authoring
+    path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/alternative/app/api/note/route.ts

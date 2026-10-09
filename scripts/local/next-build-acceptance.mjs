@@ -17,13 +17,19 @@ const cases = [
   ['next-ch02-l02', 'function-prop', /not assignable|Functions cannot be passed/u],
   ['next-ch03-l01', 'solution', undefined],
   ['next-ch03-l02', 'solution', undefined],
+  ['next-ch04-l01', 'solution', undefined],
+  ['next-ch04-l02', 'solution', undefined],
 ];
+const selectedChapter = process.argv[2];
+assert.ok(!selectedChapter || ['next-ch02', 'next-ch03', 'next-ch04'].includes(selectedChapter));
 const root = '/opt/workspace';
-for (const [lesson, fixtureId, expectedDiagnostic] of cases) {
+for (const [lesson, fixtureId, expectedDiagnostic] of cases.filter(
+  ([lesson]) => !selectedChapter || lesson.startsWith(selectedChapter),
+)) {
   // 自分の作者用tmpfsの内容だけを更新し、hostやlearnerのSourceには触れない。
   for (const name of ['app', '.next', 'node_modules', 'next-env.d.ts', 'tsconfig.tsbuildinfo'])
     await rm(join(root, name), { recursive: true, force: true });
-  const sourcePath = `content/next/chapters/${lesson.startsWith('next-ch03') ? 'next-ch03' : 'next-ch02'}/lessons/${lesson}/exercises/${lesson}-e01/exercise.yaml`;
+  const sourcePath = `content/next/chapters/${lesson.slice(0, -4)}/lessons/${lesson}/exercises/${lesson}-e01/exercise.yaml`;
   const exercise = parse(await readFile(sourcePath, 'utf8'));
   const fixture = exercise.fixtures.find(({ id }) => id === fixtureId);
   assert.ok(fixture);

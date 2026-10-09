@@ -1,3 +1,4 @@
+import { nextFormPostRoute } from './next-form-preview.mjs';
 import { weatherRscRoute } from './next-data-preview.mjs';
 import { RequestError } from './protocol.mjs';
 import { URLSearchParams } from 'node:url';
@@ -126,6 +127,7 @@ function nextPreviewRoute(raw, target, websocket) {
   if (parts.length > 2) return false;
   const [pathname, query = ''] = parts;
   const base = previewBase(target.workspaceId, target.runId);
+  if (!websocket && nextFormPostRoute(raw, target)) return true;
   if (!pathname.startsWith(base) || pathname.includes('..')) return false;
   const file = pathname.slice(base.length);
   const parameters = new URLSearchParams(query);

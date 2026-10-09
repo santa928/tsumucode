@@ -8,6 +8,7 @@ import { WorkspaceStore } from './workspace-store.mjs';
 import { ResidentWorkspace } from './resident-workspace.mjs';
 import { STARTER_FILES, PROJECT_LIMITS } from './project-protocol.mjs';
 import { RequestError } from './protocol.mjs';
+import { ProjectApplyError } from './project-engine.mjs';
 
 async function fixture(operation, preview = false, limits = PROJECT_LIMITS) {
   const directory = await mkdtemp(join(tmpdir(), 'resident-test-'));
@@ -112,6 +113,21 @@ function gradeInput(workspace) {
     expectedSourceHash: workspace.sourceHash,
   };
 }
+
+test('採点予約の409は正常runとPreviewを保持する', async () => {
+  await fixture(async ({ manager, engine, removed, recovery, isActive }) => {
+    await manager.start('one', { expectedSourceRevision: 1 });
+    const ready = await state(manager, 'ready');
+    engine.gradeProject = async () => {
+      throw new RequestError(409, '予約中');
+    };
+    await assert.rejects(manager.grade('one', gradeInput(ready)), { status: 409 });
+    assert.equal((await manager.status('one')).lastRun.state, 'ready');
+    assert.equal(isActive(), true);
+    assert.equal(recovery(), false);
+    assert.equal(removed.includes('learner'), false);
+  }, true);
+});
 
 test('採点基盤の503は診断を返してもrunを回収し、次回起動前に清掃する', async () => {
   await fixture(async ({ manager, engine, removed, recovery, isActive }) => {
@@ -525,7 +541,7 @@ test('反映中の停止と反映失敗はreadyに復帰せずSourceを保持す
     const second = await manager.start('one', { expectedSourceRevision: 1 });
     await state(manager, 'ready');
     engine.applyProject = async () => {
-      throw new Error('exec failure');
+      throw new ProjectApplyError('exec-start', 'deadline');
     };
     await assert.rejects(
       manager.apply('one', {

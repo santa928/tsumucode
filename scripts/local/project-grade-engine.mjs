@@ -1,3 +1,4 @@
+import console from 'node:console';
 import { randomUUID } from 'node:crypto';
 import { Buffer } from 'node:buffer';
 import { setTimeout, clearTimeout } from 'node:timers';
@@ -5,13 +6,46 @@ import { docker, containerConfig, removeContainer } from './docker-engine.mjs';
 import { projectMetadata } from './project-engine.mjs';
 import { RequestError } from './protocol.mjs';
 
+// Dockerの多重化ヘッダーを検証し、分割されたstderr行も一度だけ連結する。
+function gradeOutput(output, limit = 64 * 1024) {
+  if (!Buffer.isBuffer(output) || output.length > limit) throw new Error('Grade output limit');
+  const streams = { 1: [], 2: [] };
+  let offset = 0;
+  while (offset < output.length) {
+    if (output.length - offset < 8) throw new Error('Invalid grade output');
+    const channel = output[offset];
+    if (!streams[channel] || output.readUIntBE(offset + 1, 3) !== 0)
+      throw new Error('Invalid grade output channel');
+    const length = output.readUInt32BE(offset + 4);
+    if (offset + 8 + length > output.length) throw new Error('Invalid grade output');
+    streams[channel].push(output.subarray(offset + 8, offset + 8 + length));
+    offset += 8 + length;
+  }
+  return {
+    stdout: Buffer.concat(streams[1]).toString(),
+    stderr: Buffer.concat(streams[2]).toString(),
+  };
+}
+
+function gradeProgress(stderr) {
+  return [
+    ...stderr.matchAll(
+      /^TSUMUCODE_GRADE_STEP:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|form-invalid|form-first-send|form-retry|form-inspect|form-response-headers|form-response-body|form-response-dom|marker-after|browser-close|form-release):(\d{1,6})\n/gmu,
+    ),
+  ]
+    .slice(-32)
+    .map((match) => ({ phase: match[1], elapsedMs: Number(match[2]) }));
+}
+
 /** API入力からimage/command/権限を選ばず、固定Browserだけで現在runを観測する。 */
 export async function gradeProject({ owner, image, source, runId, socket, signal }) {
   if (!image || !/^tsumucode-learning-[a-z0-9-]+-grader:local$/u.test(image))
     throw new Error('Grader image is not configured');
+  const started = Date.now();
   const name = `${owner}-grade-${randomUUID()}`;
   const metadata = projectMetadata(source, runId);
   let id;
+  let enginePhase = 'image-inspect';
   let attempted = false;
   let stopping;
   let aborted = signal?.aborted;
@@ -21,10 +55,45 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
     rejectCancelled = reject;
   });
   // create/inspect中に中断しても、その応答を待って実体を回収する。
-  const cancel = () => {
+  const cancel = (deadline = false) => {
     aborted = true;
     rejectCancelled(cancelledError);
-    if (id) stopping = removeContainer(id).catch(() => {});
+    if (deadline && !id)
+      console.error(
+        'Next grade deadline',
+        JSON.stringify({ enginePhase, phase: 'unknown', elapsedMs: null }),
+      );
+    if (id)
+      stopping = (async () => {
+        try {
+          if (deadline) {
+            const output = await docker(
+              'GET',
+              `/containers/${id}/logs?stdout=0&stderr=1&tail=20`,
+              undefined,
+              200,
+              true,
+            );
+            const last = gradeProgress(gradeOutput(output, 16 * 1024).stderr).at(-1);
+            console.error(
+              'Next grade deadline',
+              JSON.stringify({
+                enginePhase,
+                phase: last?.phase ?? 'unknown',
+                elapsedMs: last?.elapsedMs ?? null,
+              }),
+            );
+          }
+        } catch {
+          if (deadline)
+            console.error(
+              'Next grade deadline',
+              JSON.stringify({ enginePhase, phase: 'unknown', elapsedMs: null }),
+            );
+        } finally {
+          await removeContainer(id).catch(() => {});
+        }
+      })();
   };
   cancellation.catch(() => {});
   const timer = setTimeout(() => {
@@ -32,9 +101,10 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
       503,
       '採点の全体期限10秒を超えました。実行を開始し直して判定してください。',
     );
-    cancel();
+    cancel(true);
   }, 10000);
-  signal?.addEventListener('abort', cancel, { once: true });
+  const disconnected = () => cancel();
+  signal?.addEventListener('abort', disconnected, { once: true });
   const active = () => {
     if (aborted) throw cancelledError;
   };
@@ -72,12 +142,15 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
         VolumeOptions: { NoCopy: true, Subpath: runId },
       },
     ];
+    enginePhase = 'container-create';
     attempted = true;
     const created = await docker('POST', `/containers/create?name=${name}`, config);
     id = created.Id;
     active();
+    enginePhase = 'container-start';
     await docker('POST', `/containers/${id}/start`);
     active();
+    enginePhase = 'container-wait';
     const ended = await Promise.race([
       docker('POST', `/containers/${id}/wait`, undefined, 10000),
       cancellation,
@@ -93,42 +166,39 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
       );
       active();
       // Dockerの診断から固定checker自身の段階だけを採用する。
-      const phase = diagnostic
-        .subarray(0, 16 * 1024)
-        .toString()
-        .match(
-          /TSUMUCODE_GRADE_PHASE:(marker-before|browser-launch|initial-navigation|initial-idle|observations|marker-after)\n/u,
-        )?.[1];
-      const reason = diagnostic
-        .subarray(0, 16 * 1024)
-        .toString()
-        .match(
-          /TSUMUCODE_GRADE_FAILURE:(http-deadline|http-connection|document-context|browser-closed|dom-contract|identity|unknown)\n/u,
-        )?.[1];
+      const { stderr } = gradeOutput(diagnostic, 16 * 1024);
+      const phase = stderr.match(
+        /^TSUMUCODE_GRADE_PHASE:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|form-invalid|form-first-send|form-retry|form-inspect|form-response-headers|form-response-body|form-response-dom|marker-after|browser-close|form-release)\n/mu,
+      )?.[1];
+      const reason = stderr.match(
+        /^TSUMUCODE_GRADE_FAILURE:(form-busy|http-deadline|http-connection|document-context|browser-closed|dom-contract|identity|unknown)\n/mu,
+      )?.[1];
+      if (
+        phase === 'form-reserve' &&
+        reason === 'form-busy' &&
+        ['next-ch04-l01-e01', 'next-ch04-l02-e01'].includes(source.workspaceId)
+      )
+        throw new RequestError(
+          409,
+          'Preview送信中または採点予約中です。送信完了後にもう一度判定してください。',
+        );
       throw new RequestError(
         503,
         `採点用Browserが終了しました（段階: ${phase ?? '未確認'} / 分類: ${reason ?? '未確認'}）。`,
       );
     }
+    enginePhase = 'result-read';
     const output = await docker(
       'GET',
-      `/containers/${id}/logs?stdout=1&stderr=0`,
+      `/containers/${id}/logs?stdout=1&stderr=1`,
       undefined,
       2000,
       true,
     );
     active();
-    let offset = 0;
-    const chunks = [];
-    while (offset < output.length) {
-      if (output.length - offset < 8) throw new Error('Invalid grade output');
-      const length = output.readUInt32BE(offset + 4);
-      if (offset + 8 + length > output.length || output.length > 64 * 1024)
-        throw new Error('Grade output limit');
-      chunks.push(output.subarray(offset + 8, offset + 8 + length));
-      offset += 8 + length;
-    }
-    const result = JSON.parse(Buffer.concat(chunks).toString());
+    const { stdout, stderr } = gradeOutput(output);
+    const progress = gradeProgress(stderr);
+    const result = JSON.parse(stdout);
     for (const [key, value] of Object.entries(metadata))
       if (result[key] !== value) throw new Error('Grade identity mismatch');
     if (
@@ -139,10 +209,15 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
       result.diagnostics.length > 8
     )
       throw new Error('Invalid grade result');
+    if (Date.now() - started >= 8000)
+      console.error(
+        'Next grade slow',
+        JSON.stringify({ engineElapsedMs: Date.now() - started, progress }),
+      );
     return result;
   } finally {
     clearTimeout(timer);
-    signal?.removeEventListener('abort', cancel);
+    signal?.removeEventListener('abort', disconnected);
     await stopping;
     if (attempted) await removeContainer(id ?? name);
   }

@@ -1,0 +1,24 @@
+id: next-ch04-l01
+kind: standard
+title: Formの入力をServerで検証する
+goal: 実POSTの入力をServerで検証し、失敗後も入力を保持して再試行できる。
+estimatedMinutes: 30
+prerequisiteLessonIds:
+  - next-ch03-l02
+slideSources:
+  - slides/s01-foundation.md
+  - slides/s02-values.md
+  - slides/s03-observe.md
+  - slides/s04-checkpoint.md
+exerciseSources:
+  - exercises/next-ch04-l01-e01/exercise.yaml
+reflection: 実POSTの入力をServerで検証し、失敗後も入力を保持して再試行できる。
+glossaryRefs:
+  - server-validation
+  - post-response
+  - controlled-input
+completion:
+  kind: standard
+  finalSlideId: next-ch04-l01-s04
+  requiredExerciseIds:
+    - next-ch04-l01-e01
