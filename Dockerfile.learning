@@ -11,7 +11,7 @@ RUN VITE_LOCAL_LEARNING=1 BASE_PATH=/ npm run build
 FROM node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5 AS project
 WORKDIR /opt
 COPY --from=dependencies /workspace/node_modules ./node_modules
-COPY scripts/local/project-bootstrap.mjs scripts/local/project-apply.mjs scripts/local/next-project-protocol.mjs scripts/local/next-routing-source.mjs scripts/local/next-data-source.mjs ./
+COPY scripts/local/project-bootstrap.mjs scripts/local/project-apply.mjs scripts/local/next-project-protocol.mjs scripts/local/next-routing-source.mjs scripts/local/next-data-source.mjs scripts/local/next-form-source.mjs ./
 USER 1000:1000
 CMD ["node", "/opt/project-bootstrap.mjs"]
 
@@ -21,7 +21,7 @@ COPY scripts/content/fixtures/next-author-pilot.json scripts/content/fixtures/ne
 RUN node --input-type=module -e "import fs from 'node:fs'; const pilot = JSON.parse(fs.readFileSync('next-author-pilot.json')); fs.writeFileSync('package.json', JSON.stringify(pilot.manifest)); fs.copyFileSync('next-author-pilot.lock.json', 'package-lock.json'); fs.writeFileSync('tsconfig.json', pilot.files['tsconfig.json']);" \
     && npm ci --ignore-scripts --no-audit --no-fund --userconfig /dev/null
 WORKDIR /opt
-COPY scripts/local/next-project-bootstrap.mjs scripts/local/next-data-backend.mjs scripts/local/next-data-backend-build.mjs scripts/local/project-apply.mjs scripts/local/next-project-protocol.mjs scripts/local/next-routing-source.mjs scripts/local/next-data-source.mjs ./
+COPY scripts/local/next-project-bootstrap.mjs scripts/local/next-data-backend.mjs scripts/local/next-form-backend.mjs scripts/local/next-form-preview.mjs scripts/local/preview-body.mjs scripts/local/next-data-backend-build.mjs scripts/local/project-apply.mjs scripts/local/next-project-protocol.mjs scripts/local/next-routing-source.mjs scripts/local/next-data-source.mjs scripts/local/next-form-source.mjs ./
 RUN node /opt/next-data-backend-build.mjs
 USER 1000:1000
 CMD ["node", "/opt/next-project-bootstrap.mjs"]
@@ -37,13 +37,13 @@ WORKDIR /app
 COPY --from=build /workspace/public/generated/content/courses/javascript/index.json ./course-index.json
 COPY scripts/local/controller.mjs scripts/local/protocol.mjs scripts/local/docker-engine.mjs ./
 COPY scripts/local/project-protocol.mjs scripts/local/workspace-store.mjs scripts/local/project-engine.mjs scripts/local/resident-workspace.mjs ./
-COPY scripts/local/preview-contract.mjs scripts/local/next-data-preview.mjs scripts/local/preview-control.mjs scripts/local/preview-transport.mjs ./
-COPY scripts/local/project-grade-engine.mjs scripts/local/next-project-protocol.mjs scripts/local/next-routing-source.mjs scripts/local/next-data-source.mjs scripts/local/next-project-acceptance.mjs ./
+COPY scripts/local/preview-contract.mjs scripts/local/next-data-preview.mjs scripts/local/next-form-preview.mjs scripts/local/preview-control.mjs scripts/local/preview-transport.mjs ./
+COPY scripts/local/project-grade-engine.mjs scripts/local/next-project-protocol.mjs scripts/local/next-routing-source.mjs scripts/local/next-data-source.mjs scripts/local/next-form-source.mjs scripts/local/next-project-acceptance.mjs ./
 CMD ["node", "controller.mjs"]
 
 FROM node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5 AS preview
 WORKDIR /app
-COPY scripts/local/preview-proxy.mjs scripts/local/preview-http-response.mjs scripts/local/preview-contract.mjs scripts/local/next-data-preview.mjs scripts/local/protocol.mjs scripts/local/next-project-protocol.mjs scripts/local/next-routing-source.mjs scripts/local/next-data-source.mjs ./
+COPY scripts/local/preview-proxy.mjs scripts/local/preview-body.mjs scripts/local/preview-http-response.mjs scripts/local/preview-contract.mjs scripts/local/next-data-preview.mjs scripts/local/next-form-preview.mjs scripts/local/protocol.mjs scripts/local/next-project-protocol.mjs scripts/local/next-routing-source.mjs scripts/local/next-data-source.mjs scripts/local/next-form-source.mjs ./
 CMD ["node", "preview-proxy.mjs"]
 
 # trusted採点/作者/CI用。Browserを固定し、learner・web・controller imageへ含めない。

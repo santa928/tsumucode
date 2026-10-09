@@ -15,7 +15,9 @@ export interface NextWorkspaceContract {
     | 'nested-dynamic-navigation'
     | 'server-client-counter'
     | 'data-cache-revalidation'
-    | 'loading-error-not-found';
+    | 'loading-error-not-found'
+    | 'form-route-validation'
+    | 'server-action-validation';
   readonly pages: readonly string[];
   readonly readonlyFiles?: readonly string[];
   readonly previewLabels: readonly string[];

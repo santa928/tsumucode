@@ -1,3 +1,7 @@
+import { randomUUID } from 'node:crypto';
+import { isNextForm } from './next-form-preview.mjs';
+import { readPreviewBody } from './preview-body.mjs';
+import { observeNextForm } from './next-form-observations.mjs';
 import { nextPreviewRequest } from './next-data-preview.mjs';
 import { forwardPreviewResponse } from './preview-http-response.mjs';
 import { observeNextData } from './next-data-observations.mjs';
@@ -8,7 +12,7 @@ import { Buffer } from 'node:buffer';
 import process from 'node:process';
 import { setTimeout, clearTimeout } from 'node:timers';
 import { setTimeout as delay } from 'node:timers/promises';
-import { URL } from 'node:url';
+import { URL, URLSearchParams } from 'node:url';
 import { chromium } from '@playwright/test';
 import { nextWorkspace } from './next-project-protocol.mjs';
 import {
@@ -77,6 +81,23 @@ async function marker() {
   for (const [key, value] of Object.entries(metadata)) assert.equal(observed[key], value);
 }
 
+const form = isNextForm(metadata.workspaceId);
+let formLease;
+const formMemo = `memo-${randomUUID().slice(0, 8)}`;
+async function formControl(op) {
+  const parameters = new URLSearchParams({
+    op,
+    leaseId: formLease,
+    runId: metadata.runId,
+    sourceRevision: String(metadata.sourceRevision),
+    sourceHash: metadata.sourceHash,
+    ...(op === 'reserve' ? { memo: formMemo } : {}),
+  });
+  const reply = await readHttp(`/__tsumucode_note?${parameters}`);
+  if (op === 'reserve' && reply.status === 409) throw new Error('Form reservation busy');
+  assert.equal(reply.status, 200);
+  return JSON.parse(reply.body.toString());
+}
 let requests = 0;
 // 同じtrusted bridgeが全量送信したRSCだけを、部分応答と区別する。
 const completedResponses = new Map();
@@ -91,10 +112,10 @@ async function completedResponse(response) {
   }
   return false;
 }
-const bridge = createServer((req, res) => {
+const bridge = createServer(async (req, res) => {
   if (
     requests >= 8 ||
-    req.method !== 'GET' ||
+    !(req.method === 'GET' || (form && nextPreviewRequest(req, metadata)?.post)) ||
     req.headers.host !== new URL(origin).host ||
     !previewRoute(req.url, metadata) ||
     !nextPreviewRequest(req, metadata) ||
@@ -113,17 +134,55 @@ const bridge = createServer((req, res) => {
   requests++;
   const policy = nextPreviewRequest(req, metadata);
   let timer;
+  let upstream;
+  const cancellation = new globalThis.AbortController();
+  res.once('close', () => {
+    cancellation.abort();
+    if (!req.complete) req.destroy();
+    clearTimeout(timer);
+    requests--;
+    upstream?.destroy();
+  });
   const fail = () => {
     if (res.destroyed || res.writableEnded) return;
     if (res.headersSent) res.destroy();
     else res.writeHead(503).end();
   };
-  const upstream = request(
+  timer = setTimeout(() => {
+    fail();
+    cancellation.abort();
+    upstream?.destroy();
+  }, 10000);
+  let body;
+  if (policy.post) {
+    try {
+      body = await readPreviewBody(req, {
+        limit: 64 * 1024,
+        timeoutMs: 10000,
+        signal: cancellation.signal,
+      });
+    } catch {
+      fail();
+      return;
+    }
+  }
+  if (res.destroyed || res.writableEnded) return;
+  upstream = request(
     {
       socketPath: '/transport/http.sock',
       path: req.url,
       method: req.method,
-      headers: { host: new URL(origin).host, ...policy.headers },
+      headers: {
+        host: new URL(origin).host,
+        ...policy.headers,
+        ...(policy.post
+          ? {
+              origin,
+              'content-type': req.headers['content-type'],
+              'x-tsumucode-note-lease': formLease,
+            }
+          : {}),
+      },
     },
     (reply) =>
       forwardPreviewResponse(reply, res, {
@@ -137,14 +196,8 @@ const bridge = createServer((req, res) => {
         },
       }),
   );
-  res.once('close', () => {
-    clearTimeout(timer);
-    requests--;
-    upstream.destroy();
-  });
-  timer = setTimeout(() => upstream.destroy(new Error('Grade HTTP deadline')), 10000);
   upstream.on('error', fail);
-  upstream.end();
+  upstream.end(body);
 });
 // Vite自身のHMR clientが正常に起動するための固定WS。採点中の2枠/2 MiBだけを許可する。
 const websockets = new Set();
@@ -235,6 +288,11 @@ let browser;
 let phase = 'marker-before';
 try {
   await marker();
+  if (form) {
+    phase = 'form-reserve';
+    formLease = randomUUID();
+    await formControl('reserve');
+  }
   phase = 'browser-launch';
   browser = await chromium.launch({
     headless: true,
@@ -278,7 +336,15 @@ try {
       weather &&
       new URL(response.url()).pathname === base + 'weather/missing' &&
       response.status() === 404;
-    if (response.status() >= 400 && !missing && !diagnosticDenied)
+    const expectedFormFailure =
+      form &&
+      metadata.workspaceId === 'next-ch04-l01-e01' &&
+      url.origin === origin &&
+      url.pathname === `${base}api/note` &&
+      url.search === '' &&
+      response.request().method() === 'POST' &&
+      [400, 503].includes(response.status());
+    if (response.status() >= 400 && !missing && !diagnosticDenied && !expectedFormFailure)
       diagnostic(`HTTP resource failed: ${response.status()}`);
   });
   page.on('requestfailed', (request) => {
@@ -307,9 +373,11 @@ try {
   phase = 'observations';
   if (contract && contract.goal !== 'page-route-query' && !diagnostics.length) {
     try {
-      lessonObservation = controlledData
-        ? await observeNextData(page, origin, base, contract.goal, readHttp, completedResponse)
-        : await observeNextLesson(page, origin, base, contract.goal);
+      lessonObservation = form
+        ? await observeNextForm(page, origin, base, contract.goal, formMemo, formControl)
+        : controlledData
+          ? await observeNextData(page, origin, base, contract.goal, readHttp, completedResponse)
+          : await observeNextLesson(page, origin, base, contract.goal);
     } catch (error) {
       if (!(error instanceof NextLessonObservationError)) throw error;
       diagnostic(error.message);
@@ -373,23 +441,26 @@ try {
   // 例外本文は出さず、基盤障害と文書・DOM観測の失敗を固定分類で区別する。
   const message = error instanceof Error ? error.message : '';
   const reason =
-    message === 'Grade HTTP deadline'
-      ? 'http-deadline'
-      : /ECONNRESET|ECONNREFUSED|EPIPE|socket hang up/u.test(message)
-        ? 'http-connection'
-        : /Execution context was destroyed|Cannot find context with specified id/u.test(message)
-          ? 'document-context'
-          : /Target page, context or browser has been closed/u.test(message)
-            ? 'browser-closed'
-            : /strict mode violation/u.test(message)
-              ? 'dom-contract'
-              : error?.code === 'ERR_ASSERTION'
-                ? 'identity'
-                : 'unknown';
+    message === 'Form reservation busy'
+      ? 'form-busy'
+      : message === 'Grade HTTP deadline'
+        ? 'http-deadline'
+        : /ECONNRESET|ECONNREFUSED|EPIPE|socket hang up/u.test(message)
+          ? 'http-connection'
+          : /Execution context was destroyed|Cannot find context with specified id/u.test(message)
+            ? 'document-context'
+            : /Target page, context or browser has been closed/u.test(message)
+              ? 'browser-closed'
+              : /strict mode violation/u.test(message)
+                ? 'dom-contract'
+                : error?.code === 'ERR_ASSERTION'
+                  ? 'identity'
+                  : 'unknown';
   process.stderr.write(`TSUMUCODE_GRADE_FAILURE:${reason}\n`);
   throw error;
 } finally {
   await browser?.close();
+  if (formLease) await formControl('release').catch(() => {});
   websockets.forEach((close) => close());
   bridge.closeAllConnections();
   bridge.close();

@@ -1,0 +1,9 @@
+id: next-ch04
+sequence: 3
+title: FormとServer Actionの入力・再試行
+goal: 実送信の入力検証と応答状態を読み、同じ内容を安全に再試行する。
+estimatedMinutes: 65
+kind: standard
+lessonSources:
+  - lessons/next-ch04-l01/lesson.yaml
+  - lessons/next-ch04-l02/lesson.yaml

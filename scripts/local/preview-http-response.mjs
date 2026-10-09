@@ -1,6 +1,6 @@
 import { Buffer } from 'node:buffer';
 
-/** 固定ヘッダーとbyte上限を保ち、承認済みWeatherだけをbackpressure付きで逐次送る。 */
+/** 固定ヘッダーとbyte上限を保ち、承認済みWeather/Actionだけをbackpressure付きで逐次送る。 */
 export function forwardPreviewResponse(
   upstream,
   res,

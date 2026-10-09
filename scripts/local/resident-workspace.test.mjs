@@ -113,6 +113,21 @@ function gradeInput(workspace) {
   };
 }
 
+test('採点予約の409は正常runとPreviewを保持する', async () => {
+  await fixture(async ({ manager, engine, removed, recovery, isActive }) => {
+    await manager.start('one', { expectedSourceRevision: 1 });
+    const ready = await state(manager, 'ready');
+    engine.gradeProject = async () => {
+      throw new RequestError(409, '予約中');
+    };
+    await assert.rejects(manager.grade('one', gradeInput(ready)), { status: 409 });
+    assert.equal((await manager.status('one')).lastRun.state, 'ready');
+    assert.equal(isActive(), true);
+    assert.equal(recovery(), false);
+    assert.equal(removed.includes('learner'), false);
+  }, true);
+});
+
 test('採点基盤の503は診断を返してもrunを回収し、次回起動前に清掃する', async () => {
   await fixture(async ({ manager, engine, removed, recovery, isActive }) => {
     await manager.start('one', { expectedSourceRevision: 1 });

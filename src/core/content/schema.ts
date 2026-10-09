@@ -1376,6 +1376,8 @@ export const NextPageHttpRuleSchema = z
           'server-client-counter',
           'data-cache-revalidation',
           'loading-error-not-found',
+          'form-route-validation',
+          'server-action-validation',
         ]),
       })
       .strict(),

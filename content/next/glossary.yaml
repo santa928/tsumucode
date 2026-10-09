@@ -70,3 +70,33 @@ entries:
     definition: notFoundの呼出しに対応する対象なしの表示。取得失敗の表示とは分ける。
     firstSlideId: next-ch03-l02-s03
     relatedIds: []
+  - id: server-validation
+    term: Server validation
+    definition: 実送信の入力をServer側で検査すること。Clientの入力制約だけに頼らない。
+    firstSlideId: next-ch04-l01-s01
+    relatedIds: []
+  - id: post-response
+    term: POSTの応答
+    definition: Serverが返したHTTPと本文の状態。入力不正・一時失敗・保存を区別する。
+    firstSlideId: next-ch04-l01-s02
+    relatedIds: []
+  - id: controlled-input
+    term: controlled input
+    definition: Reactのstateをvalueに渡す入力。失敗後の値の保持と、現在の値に対応した結果表示に使う。
+    firstSlideId: next-ch04-l01-s03
+    relatedIds: []
+  - id: server-action
+    term: Server Action
+    definition: use serverで宣言するServer側の非同期処理。formDataを検証して状態を返す。
+    firstSlideId: next-ch04-l02-s01
+    relatedIds: []
+  - id: action-state
+    term: useActionState
+    definition: Actionに対応するstate、formAction、pendingを返すReact hook。Actionの引数とは区別する。
+    firstSlideId: next-ch04-l02-s02
+    relatedIds: []
+  - id: pending
+    term: pending
+    definition: Actionの送信が完了するまでの待機状態。入力と送信の無効化に使う。
+    firstSlideId: next-ch04-l02-s03
+    relatedIds: []

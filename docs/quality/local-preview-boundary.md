@@ -70,12 +70,11 @@ Sourceを保持する。保存待ち中の停止、readiness期限後のseal、�
 
 ## Next教材 #14 への引継ぎ
 
-[Issue #14](https://github.com/santa928/tsumucode/issues/14) のCookie/Server Actionは未対応・未実証。
-現在の固定4file、Cookie非転送、Set-Cookie/redirect抑止、echoだけのPOST許可では対応を主張できない。
-Next専用の固定image/command、必要なHTTP経路とbody上限、Server ActionのOrigin/Host/資格情報検査、
-host-only Cookieの寿命/消去、forwarded headerの扱い、CSPを保った実フォームとAction通信を先に定義する。
-管理token/Source/controlを共有せず、他runへCookieを渡さない実Browser/サーバー検証が必要である。
-この条件が確定するまで、一般的なPOST/任意proxy/管理資格情報転送へ許可範囲を広げない。
+当初のVite echoだけのPOST契約に加え、Nextの固定教材ごとに必要なGET/RSCを定義する。
+FormとServer Actionの公開POSTは、本人承認済みの2教材に限定する。
+Cookie・管理tokenを渡さず、現在runのHost/Origin・形式・本文/応答上限を検査する。
+一般的なPOSTや任意proxyを許可したとは扱わない。
+詳細は[Form/Actionの固定契約](next-form-action-boundary.md)を参照する。
 
 ## 検証と再現
 

@@ -7,6 +7,8 @@ import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { setTimeout as delay } from 'node:timers/promises';
 import { nextWorkspace } from './next-project-protocol.mjs';
+import { nextFormBackend } from './next-form-backend.mjs';
+import { isNextForm, nextFormPostRoute } from './next-form-preview.mjs';
 import { nextDataBackend } from './next-data-backend.mjs';
 
 // 固定設定・依存だけで起動する。編集可能なserver moduleも非rootの同じ隔離内で実行する。
@@ -17,7 +19,8 @@ const root = '/opt/workspace';
 const base = preview ? `/w/${metadata.workspaceId}/${metadata.runId}` : '';
 const goal = nextWorkspace(metadata.workspaceId).goal;
 const controlledData = ['data-cache-revalidation', 'loading-error-not-found'].includes(goal);
-const nextPort = controlledData ? 5175 : 5174;
+const controlledForm = isNextForm(metadata.workspaceId);
+const nextPort = controlledData || controlledForm ? 5175 : 5174;
 for (const name of Object.keys(nextWorkspace(metadata.workspaceId).files)) {
   await mkdir(`${root}/${name.slice(0, name.lastIndexOf('/'))}`, { recursive: true });
   await writeFile(`${root}/${name}`, files[name], { flag: 'wx', mode: 0o600 });
@@ -49,12 +52,13 @@ let active;
 let updating;
 let stopping = false;
 let dataBackend;
+let formBackend;
 let paused;
 
-if (controlledData) {
+if (controlledData || controlledForm) {
   // 固定APIは同じ隔離のloopbackで処理し、Nextの追加compileを避ける。
   const backend = createServer((req, res) => {
-    if (!dataBackend?.handle(req, res)) res.writeHead(404).end();
+    if (!dataBackend?.handle(req, res) && !formBackend?.handle(req, res)) res.writeHead(404).end();
   });
   await new Promise((resolve, reject) => {
     backend.once('error', reject);
@@ -89,8 +93,10 @@ function ensureLatest() {
     }
     if (desired === active && child) return JSON.parse(active);
     dataBackend?.retire();
+    formBackend?.retire();
     await stopChild();
     if (controlledData) dataBackend = await nextDataBackend(metadata.workspaceId, base);
+    if (controlledForm) formBackend = nextFormBackend(base, JSON.parse(desired));
     // 保存版ごとに生成物を初期化する。編集したSourceは保持する。
     await rm(`${root}/.next`, { recursive: true, force: true });
     if (stopping) throw new Error('Next is stopping');
@@ -120,7 +126,7 @@ function ensureLatest() {
           MALLOC_ARENA_MAX: '2',
           RAYON_NUM_THREADS: '1',
           TOKIO_WORKER_THREADS: '1',
-          ...(controlledData
+          ...(controlledData || controlledForm
             ? {
                 TSUMUCODE_NEXT_BASE_PATH: base,
               }
@@ -246,6 +252,7 @@ function handle(req, res) {
     const previous = active;
     active = undefined;
     dataBackend?.retire();
+    formBackend?.retire();
     paused = { applyId, stopped: stopChild() };
     void paused.stopped.then(
       () => {
@@ -266,10 +273,13 @@ function handle(req, res) {
     );
     return;
   }
-  if (dataBackend?.handle(req, res)) return;
+  if (dataBackend?.handle(req, res) || formBackend?.handle(req, res)) return;
   if (!active || !child) {
     res.writeHead(503).end();
     return;
+  }
+  if (controlledForm && req.method === 'POST' && nextFormPostRoute(req.url, metadata)) {
+    if (!formBackend.authorizePost(req, res)) return;
   }
   const proxy = request(
     {
@@ -285,8 +295,9 @@ function handle(req, res) {
     },
   );
   proxy.on('error', () => {
-    if (!res.headersSent) res.writeHead(503);
-    res.end();
+    if (res.destroyed || res.writableEnded) return;
+    if (res.headersSent) res.destroy();
+    else res.writeHead(503).end();
   });
   req.pipe(proxy);
   res.once('close', () => proxy.destroy());
@@ -335,6 +346,7 @@ for (const signal of ['SIGTERM', 'SIGINT']) {
   process.once(signal, () => {
     stopping = true;
     dataBackend?.retire();
+    formBackend?.retire();
     void stopChild().finally(() => process.exit());
   });
 }

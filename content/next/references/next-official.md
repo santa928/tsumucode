@@ -25,3 +25,11 @@ Next16.3.8 / Node24.18.0 / React・ReactDOM19.2.7 / TypeScript6.0.3。PR83の固
 - [Turbopack disk cache](https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopackFileSystemCache)：本教材ではdev disk cacheを無効にし、固定tmpfs内で動かす。fetchのData Cacheとは別。
 
 公式サイトの現表示16.4.0と実測版16.3.8を同一視しない。公開前は固定版の実Fixtureと実画面の結果を正とする。
+
+## FormとServer Action
+
+2026-10-09に[Next Forms](https://nextjs.org/docs/app/guides/forms)、[React form](https://react.dev/reference/react-dom/components/form)、[Server Actions設定](https://nextjs.org/docs/app/api-reference/config/next-config-js/serverActions)を確認しました。公式Next文書は16.4.0の表示ですが、教材と実行imageは16.3.8を固定しています。
+
+ClientのHTML制約とServer側validationを区別し、useActionStateの戻り値とAction引数を分けて説明します。非制御入力のリセットに依存せず、失敗後の入力はcontrolled inputで保持します。FormのHTTP400/503/200と、HTTP200にも結果状態を含むServer Actionを区別します。
+
+限定2教材のPOSTは現在runのHost/Originを照合し、JSON API1経路または固定Action rootだけを許可します。documentの末尾slash付きrootとcanonical rootの2表記を同じpageとして扱い、queryや他のpathは許可しません。Cookie・Authorization・管理tokenは転送しません。本文64KiBは全量受信後に送信し、応答512KiB・30秒を維持します。練習用履歴は同じlearner内だけに保持され、Source反映と停止再開で初期化されます。採点専用の短命な相関IDはServer helperへだけ渡し、Previewの履歴を消さずに採点します。制御APIをBrowserへ公開しません。同じlearnerの編集可能なServerコードが自分のloopbackへ接続できる境界は変わりません。

@@ -97,14 +97,23 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
         .subarray(0, 16 * 1024)
         .toString()
         .match(
-          /TSUMUCODE_GRADE_PHASE:(marker-before|browser-launch|initial-navigation|initial-idle|observations|marker-after)\n/u,
+          /TSUMUCODE_GRADE_PHASE:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|marker-after)\n/u,
         )?.[1];
       const reason = diagnostic
         .subarray(0, 16 * 1024)
         .toString()
         .match(
-          /TSUMUCODE_GRADE_FAILURE:(http-deadline|http-connection|document-context|browser-closed|dom-contract|identity|unknown)\n/u,
+          /TSUMUCODE_GRADE_FAILURE:(form-busy|http-deadline|http-connection|document-context|browser-closed|dom-contract|identity|unknown)\n/u,
         )?.[1];
+      if (
+        phase === 'form-reserve' &&
+        reason === 'form-busy' &&
+        ['next-ch04-l01-e01', 'next-ch04-l02-e01'].includes(source.workspaceId)
+      )
+        throw new RequestError(
+          409,
+          'Preview送信中または採点予約中です。送信完了後にもう一度判定してください。',
+        );
       throw new RequestError(
         503,
         `採点用Browserが終了しました（段階: ${phase ?? '未確認'} / 分類: ${reason ?? '未確認'}）。`,
