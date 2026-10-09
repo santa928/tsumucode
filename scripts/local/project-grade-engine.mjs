@@ -31,7 +31,7 @@ function gradeOutput(output, limit = 64 * 1024) {
 function gradeProgress(stderr) {
   return [
     ...stderr.matchAll(
-      /^TSUMUCODE_GRADE_STEP:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|project-structure|project-filter|project-presentation|form-invalid|form-first-send|form-retry|form-inspect|form-response-headers|form-response-body|form-response-dom|form-reset-before|form-reset-after|marker-after|browser-close|form-release):(\d{1,6})\n/gmu,
+      /^TSUMUCODE_GRADE_STEP:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|project-structure|project-filter|project-presentation|form-invalid|form-first-send|form-retry|form-inspect|form-response-headers|form-response-body|form-response-dom|form-reset-before|form-reset-after|form-document-unchanged|form-document-changed|marker-after|browser-close|form-release):(\d{1,6})\n/gmu,
     ),
   ]
     .slice(-32)
@@ -50,6 +50,30 @@ function formResponses(stderr) {
       request: Number(match[1]),
       event: match[2],
       elapsedMs: Number(match[3]),
+    }));
+}
+
+/** CDPから得た有限な受信量だけを採用し、URL・本文・未知分類を出さない。 */
+function formReceipts(stderr) {
+  return [
+    ...stderr.matchAll(
+      /^TSUMUCODE_FORM_RECEIPT:([1-8]):([1-8]|unknown):([1-5]\d{2}|unknown):(\d{1,6}|unknown):(\d{1,6}):(finished|aborted|failed|open):(plain|encoded|unknown)\n/gmu,
+    ),
+  ]
+    .filter(
+      (match) =>
+        (match[4] === 'unknown' || Number(match[4]) <= 512 * 1024) &&
+        Number(match[5]) <= 512 * 1024 + 1,
+    )
+    .slice(-8)
+    .map((match) => ({
+      request: Number(match[1]),
+      bridgeRequest: match[2] === 'unknown' ? 'unknown' : Number(match[2]),
+      status: match[3] === 'unknown' ? 'unknown' : Number(match[3]),
+      expectedBytes: match[4] === 'unknown' ? 'unknown' : Number(match[4]),
+      receivedBytes: Number(match[5]),
+      state: match[6],
+      encoding: match[7],
     }));
 }
 
@@ -93,6 +117,7 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
             const { stderr } = gradeOutput(output, 16 * 1024);
             const last = gradeProgress(stderr).at(-1);
             const responses = formResponses(stderr);
+            const receipts = formReceipts(stderr);
             console.error(
               'Next grade deadline',
               JSON.stringify({
@@ -100,6 +125,7 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
                 phase: last?.phase ?? 'unknown',
                 elapsedMs: last?.elapsedMs ?? null,
                 ...(responses.length ? { responses } : {}),
+                ...(receipts.length ? { receipts } : {}),
               }),
             );
           }
@@ -187,7 +213,7 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
       // Dockerの診断から固定checker自身の段階だけを採用する。
       const { stderr } = gradeOutput(diagnostic, 16 * 1024);
       const phase = stderr.match(
-        /^TSUMUCODE_GRADE_PHASE:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|project-structure|project-filter|project-presentation|form-invalid|form-first-send|form-retry|form-inspect|form-response-headers|form-response-body|form-response-dom|form-reset-before|form-reset-after|marker-after|browser-close|form-release)\n/mu,
+        /^TSUMUCODE_GRADE_PHASE:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|project-structure|project-filter|project-presentation|form-invalid|form-first-send|form-retry|form-inspect|form-response-headers|form-response-body|form-response-dom|form-reset-before|form-reset-after|form-document-unchanged|form-document-changed|marker-after|browser-close|form-release)\n/mu,
       )?.[1];
       const reason = stderr.match(
         /^TSUMUCODE_GRADE_FAILURE:(form-busy|http-deadline|http-connection|document-context|browser-closed|dom-contract|identity|unknown)\n/mu,
@@ -218,6 +244,7 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
     const { stdout, stderr } = gradeOutput(output);
     const progress = gradeProgress(stderr);
     const responses = formResponses(stderr);
+    const receipts = formReceipts(stderr);
     const result = JSON.parse(stdout);
     for (const [key, value] of Object.entries(metadata))
       if (result[key] !== value) throw new Error('Grade identity mismatch');
@@ -253,13 +280,23 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
     if (engineElapsedMs >= 8000)
       console.error(
         'Next grade slow',
-        JSON.stringify({ engineElapsedMs, progress, ...(responses.length ? { responses } : {}) }),
+        JSON.stringify({
+          engineElapsedMs,
+          progress,
+          ...(responses.length ? { responses } : {}),
+          ...(receipts.length ? { receipts } : {}),
+        }),
       );
     else if (['next-ch04-l01-e01', 'next-ch04-l02-e01'].includes(source.workspaceId))
       // 再起動後の期限調査用。Sourceや入力を出さず、固定段階と時間だけを残す。
       console.error(
         'Next grade timing',
-        JSON.stringify({ engineElapsedMs, progress, ...(responses.length ? { responses } : {}) }),
+        JSON.stringify({
+          engineElapsedMs,
+          progress,
+          ...(responses.length ? { responses } : {}),
+          ...(receipts.length ? { receipts } : {}),
+        }),
       );
     return result;
   } finally {

@@ -53,6 +53,14 @@ test('全体10秒で固定graderを回収し、基盤503として期限超過を
           'TSUMUCODE_FORM_RESPONSE:2:browser-aborted:8220\n' +
           'TSUMUCODE_GRADE_STEP:form-reset-before:8230\n' +
           'TSUMUCODE_GRADE_STEP:form-reset-after:8240\n' +
+          'TSUMUCODE_GRADE_STEP:form-document-changed:8250\n' +
+          'TSUMUCODE_FORM_RECEIPT:1:1:200:4:4:finished:plain\n' +
+          'TSUMUCODE_FORM_RECEIPT:2:unknown:unknown:unknown:2:aborted:unknown\n' +
+          'TSUMUCODE_FORM_RECEIPT:3:3:200:524289:1:finished:plain\n' +
+          'TSUMUCODE_FORM_RECEIPT:3:3:200:1:524290:finished:plain\n' +
+          'TSUMUCODE_FORM_RECEIPT:9:1:200:1:1:finished:plain\n' +
+          'TSUMUCODE_FORM_RECEIPT:3:3:200:1:1:private-token:plain\n' +
+          'TSUMUCODE_FORM_RECEIPT:3:3:200:1:1:finished:private-source\n' +
           'TSUMUCODE_FORM_RESPONSE:9:request-start:8300\n' +
           'TSUMUCODE_FORM_RESPONSE:2:private-token:8300\n' +
           'TSUMUCODE_FORM_RESPONSE:2:upstream-end:private-source\nprivate-token',
@@ -79,8 +87,8 @@ test('全体10秒で固定graderを回収し、基盤503として期限超過を
       'Next grade deadline',
       JSON.stringify({
         enginePhase: 'container-wait',
-        phase: 'form-reset-after',
-        elapsedMs: 8240,
+        phase: 'form-document-changed',
+        elapsedMs: 8250,
         responses: [
           { request: 1, event: 'request-start', elapsedMs: 8000 },
           { request: 1, event: 'upstream-end', elapsedMs: 8050 },
@@ -88,6 +96,26 @@ test('全体10秒で固定graderを回収し、基盤503として期限超過を
           { request: 2, event: 'request-start', elapsedMs: 8200 },
           { request: 2, event: 'browser-response', elapsedMs: 8210 },
           { request: 2, event: 'browser-aborted', elapsedMs: 8220 },
+        ],
+        receipts: [
+          {
+            request: 1,
+            bridgeRequest: 1,
+            status: 200,
+            expectedBytes: 4,
+            receivedBytes: 4,
+            state: 'finished',
+            encoding: 'plain',
+          },
+          {
+            request: 2,
+            bridgeRequest: 'unknown',
+            status: 'unknown',
+            expectedBytes: 'unknown',
+            receivedBytes: 2,
+            state: 'aborted',
+            encoding: 'unknown',
+          },
         ],
       }),
     ],

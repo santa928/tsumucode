@@ -4,6 +4,7 @@ import { readPreviewBody } from './preview-body.mjs';
 import { observeNextProduction } from './next-production-observations.mjs';
 import { observeNextForm } from './next-form-observations.mjs';
 import { createNextFormResponses } from './next-form-response.mjs';
+import { watchNextFormReceipts } from './next-form-receipts.mjs';
 import { nextPreviewRequest } from './next-data-preview.mjs';
 import { forwardPreviewResponse } from './preview-http-response.mjs';
 import { observeNextData } from './next-data-observations.mjs';
@@ -316,6 +317,11 @@ await new Promise((resolve, reject) => {
   bridge.listen(4175, '127.0.0.1', resolve);
 });
 let browser;
+let formReceipts = () => [];
+const emitFormReceipt = (receipt) =>
+  process.stderr.write(
+    `TSUMUCODE_FORM_RECEIPT:${receipt.request}:${receipt.bridgeRequest}:${receipt.status}:${receipt.expectedBytes}:${receipt.receivedBytes}:${receipt.state}:${receipt.encoding}\n`,
+  );
 let phase;
 const started = Date.now();
 function step(value) {
@@ -336,6 +342,7 @@ try {
     args: ['--no-sandbox', '--disable-dev-shm-usage'],
   });
   const page = await browser.newPage();
+  if (action) formReceipts = await watchNextFormReceipts(page, origin, base, emitFormReceipt);
   const diagnostics = [];
   const consoleErrors = [];
   let navigations = 0;
@@ -453,7 +460,14 @@ try {
       if (!(error instanceof NextLessonObservationError)) throw error;
       diagnostic(error.message);
     }
-    documentNavigation = documentVersion();
+    if (form)
+      step(
+        documentNavigation === documentVersion()
+          ? 'form-document-unchanged'
+          : 'form-document-changed',
+      );
+    // Form/Actionは同じ文書のまま送信する。観測中のreloadを基準更新で消さない。
+    if (!form) documentNavigation = documentVersion();
   }
   if (next && contract?.goal === 'page-route-query') {
     for (const [path, expected] of [
@@ -541,6 +555,7 @@ try {
   process.stderr.write(`TSUMUCODE_GRADE_FAILURE:${reason}\n`);
   throw error;
 } finally {
+  formReceipts().forEach(emitFormReceipt);
   step('browser-close');
   await browser?.close();
   step('form-release');
