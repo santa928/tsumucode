@@ -3,6 +3,7 @@ import { isNextForm } from './next-form-preview.mjs';
 import { readPreviewBody } from './preview-body.mjs';
 import { observeNextProduction } from './next-production-observations.mjs';
 import { observeNextForm } from './next-form-observations.mjs';
+import { createNextFormResponses } from './next-form-response.mjs';
 import { nextPreviewRequest } from './next-data-preview.mjs';
 import { forwardPreviewResponse } from './preview-http-response.mjs';
 import { observeNextData } from './next-data-observations.mjs';
@@ -83,6 +84,7 @@ async function marker() {
 }
 
 const form = isNextForm(metadata.workspaceId);
+const action = nextWorkspace(metadata.workspaceId)?.goal === 'server-action-validation';
 let formLease;
 const formMemo = `memo-${randomUUID().slice(0, 8)}`;
 async function formControl(op) {
@@ -101,6 +103,7 @@ async function formControl(op) {
 }
 let requests = 0;
 let formRequestNumber = 0;
+const formResponses = createNextFormResponses(origin);
 // 同じtrusted bridgeが全量送信したRSCだけを、部分応答と区別する。
 const completedResponses = new Map();
 async function completedResponse(response) {
@@ -135,6 +138,7 @@ const bridge = createServer(async (req, res) => {
   }
   requests++;
   const policy = nextPreviewRequest(req, metadata);
+  const formResponse = policy.post && action ? formResponses.begin(req.method, req.url) : undefined;
   const formRequest = policy.post ? ++formRequestNumber : 0;
   // 同じURLへの連続POSTを区別する。本文・URL・入力・予約IDは診断に含めない。
   const formResponseEvent = (event) => {
@@ -148,7 +152,11 @@ const bridge = createServer(async (req, res) => {
   let timer;
   let upstream;
   const cancellation = new globalThis.AbortController();
+  req.once('aborted', () => {
+    if (formResponse) formResponse.failed = true;
+  });
   res.once('close', () => {
+    if (formResponse && !res.writableFinished) formResponse.failed = true;
     if (!res.writableFinished) formResponseEvent('closed-before-finish');
     cancellation.abort();
     if (!req.complete) req.destroy();
@@ -157,6 +165,7 @@ const bridge = createServer(async (req, res) => {
     upstream?.destroy();
   });
   const fail = () => {
+    if (formResponse) formResponse.failed = true;
     if (res.destroyed || res.writableEnded) return;
     if (res.headersSent) res.destroy();
     else res.writeHead(503).end();
@@ -198,14 +207,19 @@ const bridge = createServer(async (req, res) => {
       },
     },
     (reply) => {
+      if (formResponse) formResponse.status = reply.statusCode;
       reply.once('end', () => formResponseEvent('upstream-end'));
       forwardPreviewResponse(reply, res, {
         method: req.method,
-        headers: previewHeaders(metadata.runId, metadata.profile),
+        headers: {
+          ...previewHeaders(metadata.runId, metadata.profile),
+          ...(formResponse ? { 'x-tsumucode-form-response': String(formRequest) } : {}),
+        },
         limit: previewResponseLimit(req.url, metadata),
         stream: policy.stream,
         fail,
         complete: () => {
+          if (formResponse && !formResponse.failed) formResponse.complete = true;
           if (req.headers.rsc === '1') completedResponses.set(req.url, true);
         },
       });
@@ -370,7 +384,14 @@ try {
   });
   page.on('requestfailed', (request) => {
     const error = request.failure()?.errorText ?? 'unknown';
-    if (error !== 'net::ERR_ABORTED') diagnostic(`HTTP resource failed: ${error}`);
+    const url = new URL(request.url());
+    const actionPost =
+      action &&
+      request.method() === 'POST' &&
+      url.origin === origin &&
+      [base.slice(0, -1), base].includes(url.pathname) &&
+      url.search === '';
+    if (error !== 'net::ERR_ABORTED' || actionPost) diagnostic(`HTTP resource failed: ${error}`);
   });
   step('initial-navigation');
   const response = await page.goto(origin + base, { waitUntil: 'load', timeout: 5000 });
@@ -396,7 +417,16 @@ try {
   if (contract && contract.goal !== 'page-route-query' && !diagnostics.length) {
     try {
       lessonObservation = form
-        ? await observeNextForm(page, origin, base, contract.goal, formMemo, formControl, step)
+        ? await observeNextForm(
+            page,
+            origin,
+            base,
+            contract.goal,
+            formMemo,
+            formControl,
+            step,
+            formResponses.completed,
+          )
         : contract.ruleGoals
           ? await observeNextProduction(page, origin, base, contract.goal, step)
           : controlledData

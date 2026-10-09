@@ -43,6 +43,10 @@ CSP・no-store・nosniff・Set-Cookie/redirect抑止・sealed socketとinode照�
 
 trusted Browserは空白の検証エラー→初回一時失敗→同じメモの保存を実際に送信し、
 HTTP全量完了・可視DOM・保存履歴を照合する。固定成功表示やHTTP200だけでは合格にしない。
+Actionの完了はtrusted bridgeが付ける送信連番1→2→3と、実ResponseのURL・method・statusを
+厳密に対応させる。正常な上流EOF・下流送信完了に加え、対応するDOMとreadonly履歴を要求する。
+これはBrowserの全byte受領を独立に証明するものではない。部分stream・旧送信の完了・
+切断・上限超過・対象POSTのBrowser中断を成功として扱わない。
 全体10秒の採点期限を維持し、前後のrun/revision/hashと文書版を一致させる。
 
 readonly native backendで、exactメモ・ランダムlease ID・run・Source版を結び付ける。

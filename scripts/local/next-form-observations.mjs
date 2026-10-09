@@ -1,7 +1,16 @@
 import { URL } from 'node:url';
 
 /** 実POST・可視状態・readonly保存履歴を照合する。固定文字列だけでは合格にしない。 */
-export async function observeNextForm(page, origin, base, goal, memo, control, step) {
+export async function observeNextForm(
+  page,
+  origin,
+  base,
+  goal,
+  memo,
+  control,
+  step,
+  completedActionResponse,
+) {
   const action = goal === 'server-action-validation';
   const path = action ? base.slice(0, -1) : `${base}api/note`;
   const input = page.getByLabel('メモ', { exact: true });
@@ -9,7 +18,9 @@ export async function observeNextForm(page, origin, base, goal, memo, control, s
   const result = page.locator('#note-result');
   const observations = [];
   let passed = true;
+  let submission = 0;
   const submit = async (value, expected, status, checkPending) => {
+    const request = ++submission;
     await input.fill(value, { timeout: 1000 });
     const received = page
       .waitForResponse(
@@ -36,7 +47,12 @@ export async function observeNextForm(page, origin, base, goal, memo, control, s
     const response = await received;
     if (!response) return false;
     step('form-response-body');
-    if ((await response.finished()) !== null) return false;
+    if (
+      action
+        ? !(await completedActionResponse(response, request))
+        : (await response.finished()) !== null
+    )
+      return false;
     passed = response.status() === status && passed;
     step('form-response-dom');
     await result
