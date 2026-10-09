@@ -1,10 +1,10 @@
 import { Buffer } from 'node:buffer';
 
-/** 固定ヘッダーとbyte上限を保ち、承認済みWeather/Actionだけをbackpressure付きで逐次送る。 */
+/** 固定ヘッダー・byte上限・応答型を保つ。採点用Actionだけは全量受信後に送れる。 */
 export function forwardPreviewResponse(
   upstream,
   res,
-  { method, headers, limit, stream, fail, complete },
+  { method, headers, limit, stream, bufferStream = false, fail, complete },
 ) {
   let failed = false;
   const reject = () => {
@@ -28,7 +28,8 @@ export function forwardPreviewResponse(
   }
   const chunks = [];
   let bytes = 0;
-  if (stream) res.writeHead(status, { ...headers, 'content-type': type });
+  const streaming = stream && !bufferStream;
+  if (streaming) res.writeHead(status, { ...headers, 'content-type': type });
   upstream.on('data', (chunk) => {
     bytes += chunk.length;
     if (failed || res.destroyed) return;
@@ -36,7 +37,7 @@ export function forwardPreviewResponse(
       reject();
       return;
     }
-    if (!stream) chunks.push(chunk);
+    if (!streaming) chunks.push(chunk);
     else if (method !== 'HEAD' && !res.write(chunk)) {
       upstream.pause();
       res.once('drain', () => upstream.resume());
@@ -44,8 +45,13 @@ export function forwardPreviewResponse(
   });
   upstream.on('end', () => {
     if (failed || res.destroyed) return;
-    if (!stream) res.writeHead(status, { ...headers, 'content-type': type });
-    res.end(method === 'HEAD' || stream ? undefined : Buffer.concat(chunks), () => {
+    if (!streaming)
+      res.writeHead(status, {
+        ...headers,
+        'content-type': type,
+        ...(bufferStream ? { 'content-length': bytes } : {}),
+      });
+    res.end(method === 'HEAD' || streaming ? undefined : Buffer.concat(chunks), () => {
       if (res.writableFinished && !failed) complete?.();
     });
   });

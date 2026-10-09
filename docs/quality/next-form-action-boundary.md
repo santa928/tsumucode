@@ -47,6 +47,8 @@ Actionの完了はtrusted bridgeが付ける送信連番1→2→3と、実Respon
 厳密に対応させる。正常な上流EOF・下流送信完了に加え、対応するDOMとreadonly履歴を要求する。
 これはBrowserの全byte受領を独立に証明するものではない。部分stream・旧送信の完了・
 切断・上限超過・対象POSTのBrowser中断を成功として扱わない。
+採点器内のAction POSTだけは、512KiB以内のRSCを正常EOFまで受信し、Content-Length付きで
+Browserへ渡す。公開Proxyの逐次送信と、固定350msの保存待ち・pending検査は維持する。
 全体10秒の採点期限を維持し、前後のrun/revision/hashと文書版を一致させる。
 
 readonly native backendで、exactメモ・ランダムlease ID・run・Source版を結び付ける。

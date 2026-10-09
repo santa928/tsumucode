@@ -217,6 +217,8 @@ const bridge = createServer(async (req, res) => {
         },
         limit: previewResponseLimit(req.url, metadata),
         stream: policy.stream,
+        // 採点ではActionの有限RSC全量を固定長で渡す。公開Proxyの逐次応答は変更しない。
+        bufferStream: action && policy.post,
         fail,
         complete: () => {
           if (formResponse && !formResponse.failed) formResponse.complete = true;
