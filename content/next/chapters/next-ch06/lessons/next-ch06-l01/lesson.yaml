@@ -1,0 +1,46 @@
+id: next-ch06-l01
+kind: capstone
+title: 読書会の案内を独力で作る
+goal: 残席の条件を一覧と詳細へ対応させ、独立した案内サイトを完成して持ち出す。
+estimatedMinutes: 70
+prerequisiteLessonIds:
+  - next-ch05-l01
+slideSources:
+  - slides/g01-structure.md
+  - slides/g02-filter.md
+  - slides/g03-export.md
+exerciseSources:
+  - exercises/next-ch06-l01-e01/exercise.yaml
+reflection: 旅行の条件をそのままコピーすると、残席0の案内が誤るのはなぜですか。
+glossaryRefs:
+  - project-transfer
+  - source-export
+project:
+  id: next-bookclub-capstone
+  briefSource: brief.md
+  guideSources:
+    - guide.md
+  checklist:
+    - id: next-bookclub-capstone-check01
+      label: 構造と2つの詳細
+      required: true
+      ruleIds:
+        - next-ch06-l01-e01-r01
+    - id: next-bookclub-capstone-check02
+      label: GET選択と不正値からの回復
+      required: true
+      ruleIds:
+        - next-ch06-l01-e01-r02
+    - id: next-bookclub-capstone-check03
+      label: metadataと画像・読み順
+      required: true
+      ruleIds:
+        - next-ch06-l01-e01-r03
+completion:
+  kind: capstone
+  requiredRuleIds:
+    - next-ch06-l01-e01-r01
+    - next-ch06-l01-e01-r02
+    - next-ch06-l01-e01-r03
+  requiredViewportIds:
+    - desktop-1280

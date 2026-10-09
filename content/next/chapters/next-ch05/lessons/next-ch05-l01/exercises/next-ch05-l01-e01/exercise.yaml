@@ -1,0 +1,665 @@
+id: next-ch05-l01-e01
+kind: guided-project
+projectId: next-travel-guided
+workspaceId: next-ch05-l01-e01
+countsTowardStandardExerciseTotal: false
+title: 小さな旅の案内を工程ごとに作る
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: next-project-structure
+    minimumLevel: compose
+  - conceptId: next-project-filter
+    minimumLevel: compose
+  - conceptId: next-project-presentation
+    minimumLevel: compose
+scaffoldLevel: compose
+steps:
+  - id: next-ch05-l01-e01-step01
+    file: app/trips/[id]/page.tsx
+    target: 構造と別々の詳細
+    starterAnchor: const item = items[0];
+    change: paramsのidに対応するデータを選びます。
+    observe: 2つの実URLで異なる題名と条件を確認します。
+    requiresConceptIds:
+      - next-project-structure
+    validationRuleIds:
+      - next-ch05-l01-e01-r01
+  - id: next-ch05-l01-e01-step02
+    file: app/trips/page.tsx
+    target: GET選択と回復
+    starterAnchor: const shown = items;
+    change: GETの有限値を検証し、一覧と回復案内を切り替えます。
+    observe: 2種類の選択と不正値からの回復を確認します。
+    requiresConceptIds:
+      - next-project-filter
+    validationRuleIds:
+      - next-ch05-l01-e01-r02
+  - id: next-ch05-l01-e01-step03
+    file: app/page.tsx
+    target: metadataと固定画像
+    starterAnchor: "title: '制作途中'"
+    change: 文書metadataと画像の意味・寸法をBriefに対応させます。
+    observe: title/description・画像の実表示・Tab/Enterを確認します。
+    requiresConceptIds:
+      - next-project-presentation
+    validationRuleIds:
+      - next-ch05-l01-e01-r03
+runtime:
+  kind: next
+  entryFile: app/page.tsx
+  sourceType: module
+  capabilityProfile: project
+  primaryOutput: preview
+  profile: next-project-v1
+files:
+  - path: app/globals.css
+    language: css
+    source: starter/app/globals.css
+    editable: false
+  - path: app/layout.tsx
+    language: next
+    source: starter/app/layout.tsx
+    editable: false
+  - path: app/data.ts
+    language: next
+    source: starter/app/data.ts
+    editable: false
+  - path: app/catalog.ts
+    language: next
+    source: starter/app/catalog.ts
+    editable: false
+  - path: app/api/catalog/route.ts
+    language: next
+    source: starter/app/api/catalog/route.ts
+    editable: false
+  - path: public/banner.svg
+    language: next
+    source: starter/public/banner.svg
+    editable: false
+  - path: app/page.tsx
+    language: next
+    source: starter/app/page.tsx
+    editable: true
+  - path: app/trips/page.tsx
+    language: next
+    source: starter/app/trips/page.tsx
+    editable: true
+  - path: app/trips/[id]/page.tsx
+    language: next
+    source: starter/app/trips/[id]/page.tsx
+    editable: true
+solutionFiles:
+  - path: app/globals.css
+    language: css
+    source: solution/app/globals.css
+    editable: false
+  - path: app/layout.tsx
+    language: next
+    source: solution/app/layout.tsx
+    editable: false
+  - path: app/data.ts
+    language: next
+    source: solution/app/data.ts
+    editable: false
+  - path: app/catalog.ts
+    language: next
+    source: solution/app/catalog.ts
+    editable: false
+  - path: app/api/catalog/route.ts
+    language: next
+    source: solution/app/api/catalog/route.ts
+    editable: false
+  - path: public/banner.svg
+    language: next
+    source: solution/public/banner.svg
+    editable: false
+  - path: app/page.tsx
+    language: next
+    source: solution/app/page.tsx
+    editable: false
+  - path: app/trips/page.tsx
+    language: next
+    source: solution/app/trips/page.tsx
+    editable: false
+  - path: app/trips/[id]/page.tsx
+    language: next
+    source: solution/app/trips/[id]/page.tsx
+    editable: false
+validationRules:
+  - id: next-ch05-l01-e01-r01
+    label: 構造と別々の詳細
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: next-page-http
+    assertion:
+      kind: next-page-http
+      goal: project-structure
+    feedback:
+      target: 構造と別々の詳細
+      expected: 構造と2つの詳細
+      nextAction: Briefの条件とPreviewの実URL・操作を比較し、保存・反映して再判定します。
+    hintId: next-ch05-l01-e01-h01
+    relatedSlideId: next-ch05-l01-g01
+  - id: next-ch05-l01-e01-r02
+    label: GET選択と回復
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: next-page-http
+    assertion:
+      kind: next-page-http
+      goal: project-filter
+    feedback:
+      target: GET選択と回復
+      expected: GET選択と不正値からの回復
+      nextAction: Briefの条件とPreviewの実URL・操作を比較し、保存・反映して再判定します。
+    hintId: next-ch05-l01-e01-h02
+    relatedSlideId: next-ch05-l01-g02
+  - id: next-ch05-l01-e01-r03
+    label: metadataと固定画像
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: next-page-http
+    assertion:
+      kind: next-page-http
+      goal: project-presentation
+    feedback:
+      target: metadataと固定画像
+      expected: metadataと画像・読み順
+      nextAction: Briefの条件とPreviewの実URL・操作を比較し、保存・反映して再判定します。
+    hintId: next-ch05-l01-e01-h03
+    relatedSlideId: next-ch05-l01-g03
+hints:
+  - id: next-ch05-l01-e01-h01
+    level: 1
+    title: 構造と別々の詳細
+    text: items.findでparamsのidに対応する項目を選びます。
+    relatedSlideId: next-ch05-l01-g01
+  - id: next-ch05-l01-e01-h02
+    level: 2
+    title: GET選択と回復
+    text: allは全項目、outdoor/indoorはareaで絞り、未知の値では案内を返します。
+    relatedSlideId: next-ch05-l01-g02
+  - id: next-ch05-l01-e01-h03
+    level: 3
+    title: metadataと固定画像
+    text: metadataのtitle/description、Imageのaltと320×160をBriefへ対応させます。
+    relatedSlideId: next-ch05-l01-g03
+relatedSlideIds:
+  - next-ch05-l01-g01
+  - next-ch05-l01-g02
+  - next-ch05-l01-g03
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: starter
+    expectedStatus: incomplete
+    files:
+      - path: app/globals.css
+        language: css
+        source: fixtures/starter/app/globals.css
+        editable: false
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/starter/app/layout.tsx
+        editable: false
+      - path: app/data.ts
+        language: next
+        source: fixtures/starter/app/data.ts
+        editable: false
+      - path: app/catalog.ts
+        language: next
+        source: fixtures/starter/app/catalog.ts
+        editable: false
+      - path: app/api/catalog/route.ts
+        language: next
+        source: fixtures/starter/app/api/catalog/route.ts
+        editable: false
+      - path: public/banner.svg
+        language: next
+        source: fixtures/starter/public/banner.svg
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/starter/app/page.tsx
+        editable: false
+      - path: app/trips/page.tsx
+        language: next
+        source: fixtures/starter/app/trips/page.tsx
+        editable: false
+      - path: app/trips/[id]/page.tsx
+        language: next
+        source: fixtures/starter/app/trips/[id]/page.tsx
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch05-l01-e01-r01
+      - next-ch05-l01-e01-r02
+      - next-ch05-l01-e01-r03
+  - id: solution
+    expectedStatus: pass
+    files:
+      - path: app/globals.css
+        language: css
+        source: fixtures/solution/app/globals.css
+        editable: false
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/solution/app/layout.tsx
+        editable: false
+      - path: app/data.ts
+        language: next
+        source: fixtures/solution/app/data.ts
+        editable: false
+      - path: app/catalog.ts
+        language: next
+        source: fixtures/solution/app/catalog.ts
+        editable: false
+      - path: app/api/catalog/route.ts
+        language: next
+        source: fixtures/solution/app/api/catalog/route.ts
+        editable: false
+      - path: public/banner.svg
+        language: next
+        source: fixtures/solution/public/banner.svg
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/solution/app/page.tsx
+        editable: false
+      - path: app/trips/page.tsx
+        language: next
+        source: fixtures/solution/app/trips/page.tsx
+        editable: false
+      - path: app/trips/[id]/page.tsx
+        language: next
+        source: fixtures/solution/app/trips/[id]/page.tsx
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternative
+    expectedStatus: pass
+    files:
+      - path: app/globals.css
+        language: css
+        source: fixtures/alternative/app/globals.css
+        editable: false
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/alternative/app/layout.tsx
+        editable: false
+      - path: app/data.ts
+        language: next
+        source: fixtures/alternative/app/data.ts
+        editable: false
+      - path: app/catalog.ts
+        language: next
+        source: fixtures/alternative/app/catalog.ts
+        editable: false
+      - path: app/api/catalog/route.ts
+        language: next
+        source: fixtures/alternative/app/api/catalog/route.ts
+        editable: false
+      - path: public/banner.svg
+        language: next
+        source: fixtures/alternative/public/banner.svg
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/alternative/app/page.tsx
+        editable: false
+      - path: app/trips/page.tsx
+        language: next
+        source: fixtures/alternative/app/trips/page.tsx
+        editable: false
+      - path: app/trips/[id]/page.tsx
+        language: next
+        source: fixtures/alternative/app/trips/[id]/page.tsx
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: structure-only
+    expectedStatus: incomplete
+    files:
+      - path: app/globals.css
+        language: css
+        source: fixtures/structure-only/app/globals.css
+        editable: false
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/structure-only/app/layout.tsx
+        editable: false
+      - path: app/data.ts
+        language: next
+        source: fixtures/structure-only/app/data.ts
+        editable: false
+      - path: app/catalog.ts
+        language: next
+        source: fixtures/structure-only/app/catalog.ts
+        editable: false
+      - path: app/api/catalog/route.ts
+        language: next
+        source: fixtures/structure-only/app/api/catalog/route.ts
+        editable: false
+      - path: public/banner.svg
+        language: next
+        source: fixtures/structure-only/public/banner.svg
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/structure-only/app/page.tsx
+        editable: false
+      - path: app/trips/page.tsx
+        language: next
+        source: fixtures/structure-only/app/trips/page.tsx
+        editable: false
+      - path: app/trips/[id]/page.tsx
+        language: next
+        source: fixtures/structure-only/app/trips/[id]/page.tsx
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch05-l01-e01-r02
+      - next-ch05-l01-e01-r03
+  - id: filter-only
+    expectedStatus: incomplete
+    files:
+      - path: app/globals.css
+        language: css
+        source: fixtures/filter-only/app/globals.css
+        editable: false
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/filter-only/app/layout.tsx
+        editable: false
+      - path: app/data.ts
+        language: next
+        source: fixtures/filter-only/app/data.ts
+        editable: false
+      - path: app/catalog.ts
+        language: next
+        source: fixtures/filter-only/app/catalog.ts
+        editable: false
+      - path: app/api/catalog/route.ts
+        language: next
+        source: fixtures/filter-only/app/api/catalog/route.ts
+        editable: false
+      - path: public/banner.svg
+        language: next
+        source: fixtures/filter-only/public/banner.svg
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/filter-only/app/page.tsx
+        editable: false
+      - path: app/trips/page.tsx
+        language: next
+        source: fixtures/filter-only/app/trips/page.tsx
+        editable: false
+      - path: app/trips/[id]/page.tsx
+        language: next
+        source: fixtures/filter-only/app/trips/[id]/page.tsx
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch05-l01-e01-r01
+      - next-ch05-l01-e01-r03
+  - id: wrong-metadata
+    expectedStatus: incomplete
+    files:
+      - path: app/globals.css
+        language: css
+        source: fixtures/wrong-metadata/app/globals.css
+        editable: false
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/wrong-metadata/app/layout.tsx
+        editable: false
+      - path: app/data.ts
+        language: next
+        source: fixtures/wrong-metadata/app/data.ts
+        editable: false
+      - path: app/catalog.ts
+        language: next
+        source: fixtures/wrong-metadata/app/catalog.ts
+        editable: false
+      - path: app/api/catalog/route.ts
+        language: next
+        source: fixtures/wrong-metadata/app/api/catalog/route.ts
+        editable: false
+      - path: public/banner.svg
+        language: next
+        source: fixtures/wrong-metadata/public/banner.svg
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/wrong-metadata/app/page.tsx
+        editable: false
+      - path: app/trips/page.tsx
+        language: next
+        source: fixtures/wrong-metadata/app/trips/page.tsx
+        editable: false
+      - path: app/trips/[id]/page.tsx
+        language: next
+        source: fixtures/wrong-metadata/app/trips/[id]/page.tsx
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch05-l01-e01-r03
+  - id: missing-image
+    expectedStatus: incomplete
+    files:
+      - path: app/globals.css
+        language: css
+        source: fixtures/missing-image/app/globals.css
+        editable: false
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/missing-image/app/layout.tsx
+        editable: false
+      - path: app/data.ts
+        language: next
+        source: fixtures/missing-image/app/data.ts
+        editable: false
+      - path: app/catalog.ts
+        language: next
+        source: fixtures/missing-image/app/catalog.ts
+        editable: false
+      - path: app/api/catalog/route.ts
+        language: next
+        source: fixtures/missing-image/app/api/catalog/route.ts
+        editable: false
+      - path: public/banner.svg
+        language: next
+        source: fixtures/missing-image/public/banner.svg
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/missing-image/app/page.tsx
+        editable: false
+      - path: app/trips/page.tsx
+        language: next
+        source: fixtures/missing-image/app/trips/page.tsx
+        editable: false
+      - path: app/trips/[id]/page.tsx
+        language: next
+        source: fixtures/missing-image/app/trips/[id]/page.tsx
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch05-l01-e01-r03
+  - id: wrong-label
+    expectedStatus: incomplete
+    files:
+      - path: app/globals.css
+        language: css
+        source: fixtures/wrong-label/app/globals.css
+        editable: false
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/wrong-label/app/layout.tsx
+        editable: false
+      - path: app/data.ts
+        language: next
+        source: fixtures/wrong-label/app/data.ts
+        editable: false
+      - path: app/catalog.ts
+        language: next
+        source: fixtures/wrong-label/app/catalog.ts
+        editable: false
+      - path: app/api/catalog/route.ts
+        language: next
+        source: fixtures/wrong-label/app/api/catalog/route.ts
+        editable: false
+      - path: public/banner.svg
+        language: next
+        source: fixtures/wrong-label/public/banner.svg
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/wrong-label/app/page.tsx
+        editable: false
+      - path: app/trips/page.tsx
+        language: next
+        source: fixtures/wrong-label/app/trips/page.tsx
+        editable: false
+      - path: app/trips/[id]/page.tsx
+        language: next
+        source: fixtures/wrong-label/app/trips/[id]/page.tsx
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch05-l01-e01-r02
+  - id: later-break
+    expectedStatus: incomplete
+    files:
+      - path: app/globals.css
+        language: css
+        source: fixtures/later-break/app/globals.css
+        editable: false
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/later-break/app/layout.tsx
+        editable: false
+      - path: app/data.ts
+        language: next
+        source: fixtures/later-break/app/data.ts
+        editable: false
+      - path: app/catalog.ts
+        language: next
+        source: fixtures/later-break/app/catalog.ts
+        editable: false
+      - path: app/api/catalog/route.ts
+        language: next
+        source: fixtures/later-break/app/api/catalog/route.ts
+        editable: false
+      - path: public/banner.svg
+        language: next
+        source: fixtures/later-break/public/banner.svg
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/later-break/app/page.tsx
+        editable: false
+      - path: app/trips/page.tsx
+        language: next
+        source: fixtures/later-break/app/trips/page.tsx
+        editable: false
+      - path: app/trips/[id]/page.tsx
+        language: next
+        source: fixtures/later-break/app/trips/[id]/page.tsx
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch05-l01-e01-r01
+  - id: fake-navigation
+    expectedStatus: code-error
+    files:
+      - path: app/globals.css
+        language: css
+        source: fixtures/fake-navigation/app/globals.css
+        editable: false
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/fake-navigation/app/layout.tsx
+        editable: false
+      - path: app/data.ts
+        language: next
+        source: fixtures/fake-navigation/app/data.ts
+        editable: false
+      - path: app/catalog.ts
+        language: next
+        source: fixtures/fake-navigation/app/catalog.ts
+        editable: false
+      - path: app/api/catalog/route.ts
+        language: next
+        source: fixtures/fake-navigation/app/api/catalog/route.ts
+        editable: false
+      - path: public/banner.svg
+        language: next
+        source: fixtures/fake-navigation/public/banner.svg
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/fake-navigation/app/page.tsx
+        editable: false
+      - path: app/trips/page.tsx
+        language: next
+        source: fixtures/fake-navigation/app/trips/page.tsx
+        editable: false
+      - path: app/trips/[id]/page.tsx
+        language: next
+        source: fixtures/fake-navigation/app/trips/[id]/page.tsx
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch05-l01-e01-r01
+      - next-ch05-l01-e01-r02
+      - next-ch05-l01-e01-r03
+  - id: code-error
+    expectedStatus: code-error
+    files:
+      - path: app/globals.css
+        language: css
+        source: fixtures/code-error/app/globals.css
+        editable: false
+      - path: app/layout.tsx
+        language: next
+        source: fixtures/code-error/app/layout.tsx
+        editable: false
+      - path: app/data.ts
+        language: next
+        source: fixtures/code-error/app/data.ts
+        editable: false
+      - path: app/catalog.ts
+        language: next
+        source: fixtures/code-error/app/catalog.ts
+        editable: false
+      - path: app/api/catalog/route.ts
+        language: next
+        source: fixtures/code-error/app/api/catalog/route.ts
+        editable: false
+      - path: public/banner.svg
+        language: next
+        source: fixtures/code-error/public/banner.svg
+        editable: false
+      - path: app/page.tsx
+        language: next
+        source: fixtures/code-error/app/page.tsx
+        editable: false
+      - path: app/trips/page.tsx
+        language: next
+        source: fixtures/code-error/app/trips/page.tsx
+        editable: false
+      - path: app/trips/[id]/page.tsx
+        language: next
+        source: fixtures/code-error/app/trips/[id]/page.tsx
+        editable: false
+    expectedFeedbackRuleIds:
+      - next-ch05-l01-e01-r01
+      - next-ch05-l01-e01-r02
+      - next-ch05-l01-e01-r03

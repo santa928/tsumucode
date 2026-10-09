@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { isNextForm } from './next-form-preview.mjs';
 import { readPreviewBody } from './preview-body.mjs';
+import { observeNextProduction } from './next-production-observations.mjs';
 import { observeNextForm } from './next-form-observations.mjs';
 import { nextPreviewRequest } from './next-data-preview.mjs';
 import { forwardPreviewResponse } from './preview-http-response.mjs';
@@ -382,9 +383,11 @@ try {
     try {
       lessonObservation = form
         ? await observeNextForm(page, origin, base, contract.goal, formMemo, formControl, step)
-        : controlledData
-          ? await observeNextData(page, origin, base, contract.goal, readHttp, completedResponse)
-          : await observeNextLesson(page, origin, base, contract.goal);
+        : contract.ruleGoals
+          ? await observeNextProduction(page, origin, base, contract.goal, step)
+          : controlledData
+            ? await observeNextData(page, origin, base, contract.goal, readHttp, completedResponse)
+            : await observeNextLesson(page, origin, base, contract.goal);
     } catch (error) {
       if (!(error instanceof NextLessonObservationError)) throw error;
       diagnostic(error.message);
@@ -436,6 +439,17 @@ try {
         lessonObservation?.actual ??
         (next ? `${actual} / ${httpActual.join(' / ')}`.slice(0, 512) : actual),
       diagnostics,
+      ...(contract?.ruleGoals
+        ? {
+            projectChecks:
+              (diagnostics.length ? undefined : lessonObservation?.projectChecks) ??
+              contract.ruleGoals.map((goal) => ({
+                goal,
+                passed: false,
+                actual: '工程の実観測を完了できません。',
+              })),
+          }
+        : {}),
       // Consoleは合否の入力にせず、失敗時の原因をboundedに観察する情報だけとする。
       observation: { count, visible, navigations, consoleErrors },
       engineVersion: browser.version(),

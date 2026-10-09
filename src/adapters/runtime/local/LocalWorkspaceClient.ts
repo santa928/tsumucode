@@ -113,6 +113,9 @@ const gradeSchema = z.object({
       }),
     )
     .length(3)
+    .refine((checks) => new Set(checks.map(({ goal }) => goal)).size === 3, {
+      message: '工程の重複は採用できません。',
+    })
     .optional(),
   engineVersion: z.string().max(80),
   evaluatedAt: z.iso.datetime(),

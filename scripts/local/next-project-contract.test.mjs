@@ -83,6 +83,8 @@ describe('Next専用の境界', () => {
     ['next-ch03-l02-e01', 576],
     ['next-ch04-l01-e01', 512],
     ['next-ch04-l02-e01', 512],
+    ['next-ch05-l01-e01', 576],
+    ['next-ch06-l01-e01', 576],
   ])('Workspace %s の固定メモリ上限だけを設定する', (workspaceId, memoryMiB) => {
     const config = projectConfig(
       { ...target, workspaceId, files: NEXT_STARTER_FILES },

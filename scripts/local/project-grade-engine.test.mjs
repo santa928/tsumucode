@@ -221,3 +221,58 @@ for (const invalid of ['channel', 'truncated', 'limit']) {
     assert.ok(engine.removeContainer.mock.calls.some(([id]) => id === 'grader'));
   });
 }
+
+for (const [name, status, checks, accepted] of [
+  ['部分達成', 'incomplete', [true, false, false], true],
+  ['全体達成', 'pass', [true, true, true], true],
+  ['工程欠落', 'pass', undefined, false],
+  ['工程重複', 'pass', [true, true, true], false],
+  ['偽の全体合格', 'pass', [true, false, true], false],
+  ['コードエラーの旧工程', 'code-error', [true, false, false], false],
+]) {
+  test(`制作の実工程結果 ${name} の受理を管理側で照合する`, async () => {
+    engine.removeContainer.mockResolvedValue(undefined);
+    const source = {
+      profile: 'next-project-v1',
+      workspaceId: 'next-ch05-l01-e01',
+      sourceRevision: 1,
+      sourceHash: 'fixed-source',
+    };
+    const runId = '00000000-0000-4000-8000-000000000001';
+    const goals = ['project-structure', 'project-filter', 'project-presentation'];
+    engine.docker.mockImplementation(async (_method, path) => {
+      if (path.startsWith('/images/')) return { Id: 'fixed-image' };
+      if (path.startsWith('/containers/create')) return { Id: 'grader' };
+      if (path.endsWith('/wait')) return { StatusCode: 0 };
+      if (path.includes('/logs?stdout=1'))
+        return frame(
+          1,
+          JSON.stringify({
+            ...projectMetadata(source, runId),
+            status,
+            actual: '実工程',
+            diagnostics: [],
+            ...(checks
+              ? {
+                  projectChecks: checks.map((passed, index) => ({
+                    goal: name === '工程重複' ? goals[0] : goals[index],
+                    passed,
+                    actual: '実観測',
+                  })),
+                }
+              : {}),
+          }),
+        );
+    });
+    const grading = gradeProject({
+      owner: 'tsumucode-learning-test',
+      image: 'tsumucode-learning-test-grader:local',
+      source,
+      runId,
+      socket: { dev: 1, ino: 2 },
+    });
+    if (accepted) assert.equal((await grading).status, status);
+    else await assert.rejects(grading, /Invalid project grade checks/u);
+    assert.ok(engine.removeContainer.mock.calls.some(([id]) => id === 'grader'));
+  });
+}

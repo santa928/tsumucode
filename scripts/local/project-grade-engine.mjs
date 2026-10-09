@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { Buffer } from 'node:buffer';
 import { setTimeout, clearTimeout } from 'node:timers';
 import { docker, containerConfig, removeContainer } from './docker-engine.mjs';
+import { nextWorkspace } from './next-project-protocol.mjs';
 import { projectMetadata } from './project-engine.mjs';
 import { RequestError } from './protocol.mjs';
 
@@ -30,7 +31,7 @@ function gradeOutput(output, limit = 64 * 1024) {
 function gradeProgress(stderr) {
   return [
     ...stderr.matchAll(
-      /^TSUMUCODE_GRADE_STEP:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|form-invalid|form-first-send|form-retry|form-inspect|form-response-headers|form-response-body|form-response-dom|marker-after|browser-close|form-release):(\d{1,6})\n/gmu,
+      /^TSUMUCODE_GRADE_STEP:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|project-structure|project-filter|project-presentation|form-invalid|form-first-send|form-retry|form-inspect|form-response-headers|form-response-body|form-response-dom|marker-after|browser-close|form-release):(\d{1,6})\n/gmu,
     ),
   ]
     .slice(-32)
@@ -168,7 +169,7 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
       // Dockerの診断から固定checker自身の段階だけを採用する。
       const { stderr } = gradeOutput(diagnostic, 16 * 1024);
       const phase = stderr.match(
-        /^TSUMUCODE_GRADE_PHASE:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|form-invalid|form-first-send|form-retry|form-inspect|form-response-headers|form-response-body|form-response-dom|marker-after|browser-close|form-release)\n/mu,
+        /^TSUMUCODE_GRADE_PHASE:(marker-before|form-reserve|browser-launch|initial-navigation|initial-idle|observations|project-structure|project-filter|project-presentation|form-invalid|form-first-send|form-retry|form-inspect|form-response-headers|form-response-body|form-response-dom|marker-after|browser-close|form-release)\n/mu,
       )?.[1];
       const reason = stderr.match(
         /^TSUMUCODE_GRADE_FAILURE:(form-busy|http-deadline|http-connection|document-context|browser-closed|dom-contract|identity|unknown)\n/mu,
@@ -209,6 +210,26 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
       result.diagnostics.length > 8
     )
       throw new Error('Invalid grade result');
+    const goals = nextWorkspace(source.workspaceId)?.ruleGoals;
+    if (goals) {
+      const checks = result.projectChecks;
+      if (
+        !Array.isArray(checks) ||
+        checks.length !== goals.length ||
+        checks.some(
+          (check, index) =>
+            !check ||
+            check.goal !== goals[index] ||
+            typeof check.passed !== 'boolean' ||
+            typeof check.actual !== 'string' ||
+            check.actual.length > 160,
+        ) ||
+        (result.status === 'pass') !==
+          (!result.diagnostics.length && checks.every((check) => check.passed)) ||
+        (result.status === 'code-error' && checks.some((check) => check.passed))
+      )
+        throw new Error('Invalid project grade checks');
+    }
     if (Date.now() - started >= 8000)
       console.error(
         'Next grade slow',

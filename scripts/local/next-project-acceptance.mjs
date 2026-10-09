@@ -30,6 +30,8 @@ const expectedCount = {
   'next-ch03-l02-e01': 9,
   'next-ch04-l01-e01': 9,
   'next-ch04-l02-e01': 9,
+  'next-ch05-l01-e01': 11,
+  'next-ch06-l01-e01': 12,
 };
 assert.equal(fixtures.length, expectedCount[workspace]);
 const owner = process.env.TSUMUCODE_LOCAL_OWNER;
@@ -86,7 +88,7 @@ async function owned() {
   );
 }
 /** learnerへ追加Nodeを作らず、固定socketから資源の実値を読む。 */
-async function resources() {
+async function resources(verify = true) {
   const measured = await new Promise((resolve, reject) => {
     const req = request(
       {
@@ -116,13 +118,15 @@ async function resources() {
     req.on('error', reject);
     req.end();
   });
-  assert.equal(measured.zombies, 0, JSON.stringify(measured));
-  assert.equal(measured.memoryEvents.max, 0, JSON.stringify(measured));
-  assert.equal(measured.memoryEvents.oom, 0, JSON.stringify(measured));
-  assert.equal(measured.memoryEvents.oomKill, 0, JSON.stringify(measured));
-  assert.ok(measured.pids <= 64);
-  assert.ok(measured.workspaceBytes <= 64 * 1024 * 1024);
-  assert.ok(measured.temporaryBytes <= 64 * 1024 * 1024);
+  if (verify) {
+    assert.equal(measured.zombies, 0, JSON.stringify(measured));
+    assert.equal(measured.memoryEvents.max, 0, JSON.stringify(measured));
+    assert.equal(measured.memoryEvents.oom, 0, JSON.stringify(measured));
+    assert.equal(measured.memoryEvents.oomKill, 0, JSON.stringify(measured));
+    assert.ok(measured.pids <= 64);
+    assert.ok(measured.workspaceBytes <= 64 * 1024 * 1024);
+    assert.ok(measured.temporaryBytes <= 64 * 1024 * 1024);
+  }
   return measured;
 }
 
@@ -189,6 +193,8 @@ try {
       'next-ch02-l01-e01',
       'next-ch03-l01-e01',
       'next-ch03-l02-e01',
+      'next-ch05-l01-e01',
+      'next-ch06-l01-e01',
     ].includes(workspace)
       ? 576
       : 512;
@@ -223,11 +229,47 @@ try {
         }),
       );
     }
+    if (graded.value.status !== fixture.expectedStatus) {
+      // 作者の失敗時だけ有限分類と実資源を残す。通常の資源検査は弱めない。
+      const state = await docker('GET', `/containers/${learner.Id}/json`).catch(() => undefined);
+      const logs = await docker(
+        'GET',
+        `/containers/${learner.Id}/logs?stdout=0&stderr=1&tail=100`,
+        undefined,
+        2000,
+        true,
+      ).catch(() => undefined);
+      const text = logs?.subarray(-64 * 1024).toString() ?? '';
+      console.error(
+        JSON.stringify({
+          fixture: fixture.id,
+          failureResources: await resources(false).catch(() => 'unavailable'),
+          learner: state
+            ? {
+                running: state.State.Running,
+                oomKilled: state.State.OOMKilled,
+                exitCode: state.State.ExitCode,
+              }
+            : 'removed',
+          nativeFailure: /heap out of memory|Reached heap limit/u.test(text)
+            ? 'heap-limit'
+            : /ENOSPC|No space left on device/u.test(text)
+              ? 'tmpfs-full'
+              : 'unknown',
+        }),
+      );
+    }
     assert.equal(
       graded.value.status,
       fixture.expectedStatus,
       JSON.stringify({ fixture: fixture.id, grade: graded.value }),
     );
+    if (contract.ruleGoals)
+      assert.deepEqual(
+        graded.value.projectChecks.map(({ goal, passed }) => ({ goal, passed })),
+        fixture.expectedChecks,
+        JSON.stringify({ fixture: fixture.id, grade: graded.value }),
+      );
     for (const [key, value] of Object.entries({ workspaceId: workspace, ...identity() })) {
       const field =
         key === 'expectedSourceRevision'

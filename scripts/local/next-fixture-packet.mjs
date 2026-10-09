@@ -17,6 +17,18 @@ for (const fixture of exercise.fixtures) {
   for (const file of fixture.files) {
     files[file.path] = await readFile(join(dirname(path), file.source), 'utf8');
   }
-  fixtures.push({ id: fixture.id, expectedStatus: fixture.expectedStatus, files });
+  fixtures.push({
+    id: fixture.id,
+    expectedStatus: fixture.expectedStatus,
+    files,
+    ...(nextWorkspace(workspace).ruleGoals
+      ? {
+          expectedChecks: exercise.validationRules.map((rule) => ({
+            goal: rule.assertion.goal,
+            passed: !fixture.expectedFeedbackRuleIds.includes(rule.id),
+          })),
+        }
+      : {}),
+  });
 }
 process.stdout.write(JSON.stringify(fixtures));
