@@ -79,3 +79,7 @@ CIでは既存教材を含む標準の全ケースを通す。
 NextのSource反映はpause・固定exec・実HTTPの版確認を合わせて既存startup上限20秒以内で行う。各段階は同じ絶対期限の残りを使用する。Browserとwebの対象apply APIのみ25秒待ち、採点10秒と公開POST30秒、RAM・隔離・版の照合は維持する。
 
 反映失敗はrunを回収し、保存Sourceを保持する。controllerは固定phase（pause/exec-create/exec-start/exec-inspect/ready）とreason（deadline/socket/HTTP/identity/exit/unknown）のみを記録する。Source・例外本文・資格情報は出力しない。過去のWeather反映503の原因は未確定であり、再実行成功だけを原因解消の証拠としない。
+
+採点の期限診断では、10秒で結果の受理を禁止してから、所有graderの固定phase進捗を最大200msで採取して回収する。200msは診断取得の上限であり、採点期限を延長しない。コンテナ回収は既存のDocker API期限内で行い、200ms以内の完了を保証しない。実POSTのheaders/body/DOM、Browser終了と予約解放を区別するが、本文・メモ・header・予約ID・Source・例外本文は記録しない。停止やSource変更の通常cancelには診断待ちを追加しない。
+
+Form採点は実POSTの全量完了・可視state・保存履歴で準備と結果を確認するため、networkidleの固定500ms待機を重ねない。他教材の文書静止契約は維持する。8秒以上の採点ではDocker起動を含む全体時間と固定phase進捗だけを記録し、10秒への余裕を判断できるようにする。過去Action UIの超過段階は未確定で、今回の変更だけで原因解消と断定しない。

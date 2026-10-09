@@ -1,7 +1,7 @@
 import { URL } from 'node:url';
 
 /** 実POST・可視状態・readonly保存履歴を照合する。固定文字列だけでは合格にしない。 */
-export async function observeNextForm(page, origin, base, goal, memo, control) {
+export async function observeNextForm(page, origin, base, goal, memo, control, step) {
   const action = goal === 'server-action-validation';
   const path = action ? base.slice(0, -1) : `${base}api/note`;
   const input = page.getByLabel('メモ', { exact: true });
@@ -32,10 +32,13 @@ export async function observeNextForm(page, origin, base, goal, memo, control) {
         passed;
       if ((await sending.count()) === 1) await sending.evaluate((element) => element.click());
     }
+    step('form-response-headers');
     const response = await received;
     if (!response) return false;
+    step('form-response-body');
     if ((await response.finished()) !== null) return false;
     passed = response.status() === status && passed;
+    step('form-response-dom');
     await result
       .locator(`xpath=self::*[@data-state="${expected}"]`)
       .waitFor({ state: 'visible', timeout: 1000 });
@@ -45,13 +48,19 @@ export async function observeNextForm(page, origin, base, goal, memo, control) {
   };
   try {
     if ((await input.count()) !== 1 || (await button.count()) !== 1) return incomplete();
+    step('form-invalid');
     if (!(await submit('   ', 'invalid', action ? 200 : 400, false))) return incomplete();
+    step('form-inspect');
     let state = await control('inspect');
     passed = state.invalidCalls === 0 && state.attempts === 0 && state.saved === 0 && passed;
+    step('form-first-send');
     if (!(await submit(memo, 'failed', action ? 200 : 503, true))) return incomplete();
+    step('form-inspect');
     state = await control('inspect');
     passed = state.invalidCalls === 0 && state.attempts === 1 && state.saved === 0 && passed;
+    step('form-retry');
     if (!(await submit(memo, 'saved', 200, true))) return incomplete();
+    step('form-inspect');
     state = await control('inspect');
     const count = page.locator('#saved-count');
     passed =

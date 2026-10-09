@@ -285,15 +285,21 @@ await new Promise((resolve, reject) => {
   bridge.listen(4175, '127.0.0.1', resolve);
 });
 let browser;
-let phase = 'marker-before';
+let phase;
+const started = Date.now();
+function step(value) {
+  phase = value;
+  process.stderr.write(`TSUMUCODE_GRADE_STEP:${phase}:${Date.now() - started}\n`);
+}
+step('marker-before');
 try {
   await marker();
   if (form) {
-    phase = 'form-reserve';
+    step('form-reserve');
     formLease = randomUUID();
     await formControl('reserve');
   }
-  phase = 'browser-launch';
+  step('browser-launch');
   browser = await chromium.launch({
     headless: true,
     args: ['--no-sandbox', '--disable-dev-shm-usage'],
@@ -351,12 +357,13 @@ try {
     const error = request.failure()?.errorText ?? 'unknown';
     if (error !== 'net::ERR_ABORTED') diagnostic(`HTTP resource failed: ${error}`);
   });
-  phase = 'initial-navigation';
+  step('initial-navigation');
   const response = await page.goto(origin + base, { waitUntil: 'load', timeout: 5000 });
   if (response.status() !== 200) diagnostic(`HTTP page failed: ${response.status()}`);
-  // Viteの反映に伴う再読込も含め、実HTTP資源が静止してから同じ文書のDOMを読む。
-  phase = 'initial-idle';
-  await page.waitForLoadState('networkidle', { timeout: 3000 });
+  // Formは後続の実POST全量完了・DOM・保存履歴で準備を確認する。
+  // 固定500msのnetworkidle待ちを重ねず、他教材の文書静止契約は維持する。
+  step('initial-idle');
+  if (!form) await page.waitForLoadState('networkidle', { timeout: 3000 });
   assert.equal(new URL(page.url()).origin, origin);
   let documentNavigation = documentVersion();
   const heading = page.locator('h1#message');
@@ -370,11 +377,11 @@ try {
     contract?.goal,
   );
   let lessonObservation;
-  phase = 'observations';
+  step('observations');
   if (contract && contract.goal !== 'page-route-query' && !diagnostics.length) {
     try {
       lessonObservation = form
-        ? await observeNextForm(page, origin, base, contract.goal, formMemo, formControl)
+        ? await observeNextForm(page, origin, base, contract.goal, formMemo, formControl, step)
         : controlledData
           ? await observeNextData(page, origin, base, contract.goal, readHttp, completedResponse)
           : await observeNextLesson(page, origin, base, contract.goal);
@@ -406,7 +413,7 @@ try {
       }
     }
   }
-  phase = 'marker-after';
+  step('marker-after');
   await marker();
   // Nextの同一URLへのreplaceStateは文書切替ではない。実reloadと別URLは拒否する。
   if (documentNavigation !== documentVersion())
@@ -459,7 +466,9 @@ try {
   process.stderr.write(`TSUMUCODE_GRADE_FAILURE:${reason}\n`);
   throw error;
 } finally {
+  step('browser-close');
   await browser?.close();
+  step('form-release');
   if (formLease) await formControl('release').catch(() => {});
   websockets.forEach((close) => close());
   bridge.closeAllConnections();
