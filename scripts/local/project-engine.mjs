@@ -63,7 +63,13 @@ export function projectConfig(record, owner, runId, imageId, preview = false) {
   if (record.profile === NEXT_PROFILE) {
     // Next CLIが生成する孫processもDocker initへ回収させる。
     config.HostConfig.Init = true;
-    config.HostConfig.Memory = 512 * 1024 * 1024;
+    // Routing・データ取得・失敗画面の3教材だけに限定し、要求から資源上限を選ばせない。
+    const memoryMiB = ['next-ch02-l01-e01', 'next-ch03-l01-e01', 'next-ch03-l02-e01'].includes(
+      record.workspaceId,
+    )
+      ? 576
+      : 512;
+    config.HostConfig.Memory = memoryMiB * 1024 * 1024;
     config.HostConfig.MemorySwap = config.HostConfig.Memory;
     config.HostConfig.Tmpfs = {
       '/opt/workspace': 'rw,noexec,nosuid,nodev,size=64m,uid=1000,gid=1000,mode=0700',
@@ -142,12 +148,13 @@ async function nextControl(applied, socket, path, expected, headers = {}) {
 /** 固定execでSourceを配置し、終了codeと実HTTP反映markerの両方を確認する。 */
 export async function applyProject(id, record, runId, transport) {
   const metadata = projectMetadata(record, runId);
+  const nativeNext = record.profile === NEXT_PROFILE && Boolean(transport);
   const controlledData =
     record.profile === NEXT_PROFILE &&
     ['data-cache-revalidation', 'loading-error-not-found'].includes(
       nextWorkspace(record.workspaceId)?.goal,
     );
-  if (controlledData) {
+  if (nativeNext || controlledData) {
     // 同じSourceの再反映でも、固定execのmarker更新前に旧Nextを再起動させない。
     metadata.applyId = randomUUID();
     if (
@@ -185,12 +192,13 @@ export async function applyProject(id, record, runId, transport) {
   const deadline = Date.now() + (record.profile === NEXT_PROFILE ? 8000 : 0);
   do {
     try {
-      const ready = controlledData
+      // sealed socketがあるNextは、compile中に追加Node probeを重ねない。
+      const ready = nativeNext
         ? await nextControl(transport.applied, transport.socket, '/__tsumucode_ready', metadata)
         : await probeProject(id, metadata);
       if (ready) return;
     } catch (error) {
-      if (!controlledData || error.message !== 'Next control deadline') throw error;
+      if (!nativeNext || error.message !== 'Next control deadline') throw error;
     }
     if (Date.now() >= deadline) break;
     await delay(100);

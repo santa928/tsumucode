@@ -58,3 +58,54 @@ GET `api/question` の2応答を実測する。期待値はtrusted graderに固�
 `next-project-browser-acceptance.mjs`は通常Lesson、編集/反映/保存、Hint、小画面、keyboard/axeを確認する。
 両診断はLocal Runtime CIで実行し、PR HEADとmerge後mainを照合する。
 診断ログ・スクリーンショット・作業記録は非公開の作者保存先へ置く。
+
+旧Client教材のcompileエラー負例で512 MiBのOOM終了を検出したため、
+First/ClientのNext childにNode heap160 MiB・semi-space4 MiBを設定する。
+Routingと新2はheap128 MiBとする。RAM/MemorySwapはFirst/Clientが512 MiB、
+本人承認済みのRoutingと新2が576 MiBで、追加swapを許可しない。
+採点期限や期待判定は緩めない。資源計測は固定socketの
+内部HTTPへ統一し、learnerへ追加Nodeを起動しない。この経路はPreviewへ公開しない。
+
+sealed socketがあるNextの反映確認も内部HTTPへ統一する。
+既存の反映確認ループ8秒・個別要求2秒の設定を維持し、compile中に追加Node probeを重ねない。
+起動時の未seal socketとViteの確認は既存の固定execを維持する。
+反映前に旧Nextを停止し、反映識別子が一致するまで並行readyで再起動しない。
+保存版ごとに生成物の`.next`を初期化し、編集したSourceを保持する。
+
+旧3でheap128 MiBを試した際は、OOMイベント0でもNextのメモリ閾値再起動と
+反映503を確認した。再起動との関連はあるが、API例外の直接分類は未確定のまま保持する。
+固定版のCLIは未指定時にホスト総RAMからheapを選ぶため、
+Dockerの上限内で動くよう明示的に抑える。自動再起動の保護は無効化しない。
+
+旧Routingはこのheap設定だけではHEAD CIで上限到達max=1を検出した。
+RAMや検査を緩めず、新2と同じallocator上限と並列処理設定を全Next childへ適用する。
+MALLOC_ARENA_MAXは2、RAYON_NUM_THREADSとTOKIO_WORKER_THREADSは1とし、
+dev filesystem cache・追加validation worker・React debug channelを無効にする。
+設定値1を実worker数1の証明とは扱わず、実PIDとメモリで確認する。
+
+並列制限までの候補はHEAD CIに成功したが、Routingのpeakは511.99 MiBで余裕が約12 KiBだった。
+max=0だけでは安定性を受入できず、反映前停止と生成物初期化を旧3にも適用する。
+この候補の作者環境でClient9例→旧Lesson6例→routing8例を一度連続成功した。
+監視と採点直後のpeakは約411/401/460 MiB、上限までの差は約101/111/52 MiBだった。
+max/oom/oomKillとZombieは0、PIDとtmpfsは上限内。終了後のlearner/graderは停止済みも含め0件。
+作者環境とCIの資源差は残るため、全環境の保証にはしない。
+正確なHEADとmerge後mainの成功を正式受入の条件とする。
+
+反映前停止後も旧RoutingのHEAD CIでmax=1が再発したため、Routingだけheap128 MiBへ限定する。
+作者のRouting8例は修復・Source保持・再起動まで成功したが、peak約461 MiBは160 MiB候補と
+ほぼ同じであり、削減効果を証明したとは扱わない。他教材の条件は変更しない。
+定期監視の一時Zombie1、採点直後と各run最後の0、終了後のコンテナ0件を区別する。
+
+## Routingの承認済み576 MiB候補
+
+2026-10-09にRoutingだけRAM/MemorySwapを576 MiBへ増やす本人承認を得た。
+512 MiB候補はHEAD CIが成功しても余裕約2.49 MiBで、運用レビューは受入を保留した。
+追加swapを許可せず、heap128 MiB・その他の権限/資源/期限を維持する。
+
+変更後の作者連続検証はRouting8例→通常Routing/Client UI→反映・停止・再起動が成功した。
+500 msのnative監視と採点直後の値を合わせたRouting peakは494.94 MiB、余裕81.06 MiB。
+max/oom/oomKillは0、採点直後Zombie0、PID最大52、tmpfs各上限内。
+監視中の一時Zombie1と、1 runの削除前最後の生存sample1は保持し、終了後コンテナ0件と区別する。
+通常UIではkeyboard/narrow/axe0、下書きと合格記録のJSON移送、エラー修復とSource保持を確認した。
+同一Source再反映、別nonceでのpause後に並行readyを拒否、停止後files/hash保持、再起動passも成功した。
+作者環境の成功を全環境の保証とせず、正確なHEADとmerge後mainのCI・実測・レビューを受入条件とする。

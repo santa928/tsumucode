@@ -81,87 +81,41 @@ async function owned() {
     `/containers/json?all=1&filters=${encodeURIComponent(JSON.stringify({ label: [`app.tsumucode.owner=${owner}`, 'app.tsumucode.role=learner'] }))}`,
   );
 }
-async function resources(id) {
-  if (['data-cache-revalidation', 'loading-error-not-found'].includes(contract.goal)) {
-    const measured = await new Promise((resolve, reject) => {
-      const req = request(
-        {
-          socketPath: join(TRANSPORT_ROOT, run.runId, 'http.sock'),
-          path: '/__tsumucode_resources',
-        },
-        (res) => {
-          const chunks = [];
-          let bytes = 0;
-          res.on('data', (chunk) => {
-            bytes += chunk.length;
-            if (bytes > 1024) res.destroy(new Error('Resource response limit'));
-            else chunks.push(chunk);
-          });
-          res.on('error', reject);
-          res.on('end', () => {
-            try {
-              assert.equal(res.statusCode, 200);
-              resolve(JSON.parse(Buffer.concat(chunks).toString()));
-            } catch (error) {
-              reject(error);
-            }
-          });
-        },
-      );
-      req.setTimeout(2000, () => req.destroy(new Error('Resource deadline')));
-      req.on('error', reject);
-      req.end();
-    });
-    assert.equal(measured.zombies, 0, JSON.stringify(measured));
-    assert.equal(measured.memoryEvents.oomKill, 0, JSON.stringify(measured));
-    assert.ok(measured.pids <= 64);
-    assert.ok(measured.workspaceBytes <= 64 * 1024 * 1024);
-    assert.ok(measured.temporaryBytes <= 64 * 1024 * 1024);
-    return measured;
-  }
-  const script = `const fs = require('node:fs');
-const value = (name) => Number(fs.readFileSync('/sys/fs/cgroup/' + name, 'utf8').trim());
-const usage = (path) => {
-  const stat = fs.statfsSync(path);
-  return (stat.blocks - stat.bfree) * stat.bsize;
-};
-const zombies = fs.readdirSync('/proc')
-  .filter((name) => /^\\d+$/.test(name))
-  .filter((name) => {
-    try {
-      return /\\) Z /.test(fs.readFileSync('/proc/' + name + '/stat', 'utf8'));
-    } catch {
-      return false;
-    }
-  }).length;
-process.stdout.write(JSON.stringify({
-  zombies,
-  memoryPeak: value('memory.peak'),
-  pids: value('pids.current'),
-  workspaceBytes: usage('/opt/workspace'),
-  temporaryBytes: usage('/tmp')
-}));`;
-  const execution = await docker('POST', `/containers/${id}/exec`, {
-    User: '1000:1000',
-    AttachStdout: true,
-    AttachStderr: true,
-    Cmd: ['node', '-e', script],
+/** learnerへ追加Nodeを作らず、固定socketから資源の実値を読む。 */
+async function resources() {
+  const measured = await new Promise((resolve, reject) => {
+    const req = request(
+      {
+        socketPath: join(TRANSPORT_ROOT, run.runId, 'http.sock'),
+        path: '/__tsumucode_resources',
+      },
+      (res) => {
+        const chunks = [];
+        let bytes = 0;
+        res.on('data', (chunk) => {
+          bytes += chunk.length;
+          if (bytes > 1024) res.destroy(new Error('Resource response limit'));
+          else chunks.push(chunk);
+        });
+        res.on('error', reject);
+        res.on('end', () => {
+          try {
+            assert.equal(res.statusCode, 200);
+            resolve(JSON.parse(Buffer.concat(chunks).toString()));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      },
+    );
+    req.setTimeout(2000, () => req.destroy(new Error('Resource deadline')));
+    req.on('error', reject);
+    req.end();
   });
-  const output = await docker(
-    'POST',
-    `/exec/${execution.Id}/start`,
-    { Detach: false, Tty: false },
-    3000,
-    true,
-  );
-  const chunks = [];
-  for (let offset = 0; offset < output.length;) {
-    const length = output.readUInt32BE(offset + 4);
-    chunks.push(output.subarray(offset + 8, offset + 8 + length));
-    offset += 8 + length;
-  }
-  const measured = JSON.parse(Buffer.concat(chunks).toString());
   assert.equal(measured.zombies, 0, JSON.stringify(measured));
+  assert.equal(measured.memoryEvents.max, 0, JSON.stringify(measured));
+  assert.equal(measured.memoryEvents.oom, 0, JSON.stringify(measured));
+  assert.equal(measured.memoryEvents.oomKill, 0, JSON.stringify(measured));
   assert.ok(measured.pids <= 64);
   assert.ok(measured.workspaceBytes <= 64 * 1024 * 1024);
   assert.ok(measured.temporaryBytes <= 64 * 1024 * 1024);
@@ -227,8 +181,16 @@ try {
     const config = await docker('GET', `/containers/${learner.Id}/json`);
     assert.equal(config.Config.User, '1000:1000');
     assert.equal(config.HostConfig.Init, true);
-    assert.equal(config.HostConfig.Memory, 512 * 1024 * 1024);
+    const expectedMemoryMiB = [
+      'next-ch02-l01-e01',
+      'next-ch03-l01-e01',
+      'next-ch03-l02-e01',
+    ].includes(workspace)
+      ? 576
+      : 512;
+    assert.equal(config.HostConfig.Memory, expectedMemoryMiB * 1024 * 1024);
     assert.equal(config.HostConfig.MemorySwap, config.HostConfig.Memory);
+    assert.equal(config.HostConfig.NanoCpus, 1e9);
     assert.equal(config.HostConfig.PidsLimit, 64);
     assert.equal(config.HostConfig.NetworkMode, 'none');
     assert.equal(config.HostConfig.ReadonlyRootfs, true);
@@ -240,7 +202,7 @@ try {
       const inspected = await docker('GET', `/containers/${learner.Id}/json`).catch(
         () => undefined,
       );
-      const measured = await resources(learner.Id).catch(() => undefined);
+      const measured = await resources().catch(() => undefined);
       assert.fail(
         JSON.stringify({
           fixture: fixture.id,
@@ -276,7 +238,7 @@ try {
       0,
     );
     assert.equal((await docker('GET', `/containers/${learner.Id}/json`)).State.OOMKilled, false);
-    const measured = await resources(learner.Id);
+    const measured = await resources();
     passed.push(fixture.id);
     console.log(
       JSON.stringify({

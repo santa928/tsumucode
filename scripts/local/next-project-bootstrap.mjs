@@ -34,7 +34,11 @@ await writeFile(
   basePath: ${JSON.stringify(base)},
   allowedDevOrigins: [${JSON.stringify(`${metadata.runId}.localhost`)}],
   turbopack: { root: '/opt' },
-  ${controlledData ? 'experimental: { turbopackFileSystemCacheForDev: false, devValidationWorker: false, reactDebugChannel: false },' : ''}
+  experimental: {
+    turbopackFileSystemCacheForDev: false,
+    devValidationWorker: false,
+    reactDebugChannel: false,
+  },
 };
 `,
 );
@@ -87,8 +91,8 @@ function ensureLatest() {
     dataBackend?.retire();
     await stopChild();
     if (controlledData) dataBackend = await nextDataBackend(metadata.workspaceId, base);
-    // 新教材では保存版ごとに制御データとfetch cacheを同じ初期条件へ戻す。
-    if (controlledData) await rm(`${root}/.next`, { recursive: true, force: true });
+    // 保存版ごとに生成物を初期化する。編集したSourceは保持する。
+    await rm(`${root}/.next`, { recursive: true, force: true });
     if (stopping) throw new Error('Next is stopping');
     child = spawn(
       process.execPath,
@@ -107,13 +111,18 @@ function ensureLatest() {
           HOME: root,
           LANG: 'C.UTF-8',
           NEXT_TELEMETRY_DISABLED: '1',
+          // 固定RAM内でClientのcompileエラーも返せるよう、全Next childのheapを抑える。
+          NODE_OPTIONS:
+            controlledData || goal === 'nested-dynamic-navigation'
+              ? '--max-old-space-size=128 --max-semi-space-size=4'
+              : '--max-old-space-size=160 --max-semi-space-size=4',
+          // CPU1の隔離内でallocatorと追加workerの資源を限定する。
+          MALLOC_ARENA_MAX: '2',
+          RAYON_NUM_THREADS: '1',
+          TOKIO_WORKER_THREADS: '1',
           ...(controlledData
             ? {
                 TSUMUCODE_NEXT_BASE_PATH: base,
-                NODE_OPTIONS: '--max-old-space-size=128 --max-semi-space-size=4',
-                MALLOC_ARENA_MAX: '2',
-                RAYON_NUM_THREADS: '1',
-                TOKIO_WORKER_THREADS: '1',
               }
             : {}),
         },
@@ -211,7 +220,7 @@ async function resources() {
 }
 
 function handle(req, res) {
-  if (controlledData && req.url === '/__tsumucode_resources' && req.method === 'GET') {
+  if (req.url === '/__tsumucode_resources' && req.method === 'GET') {
     void resources().then(
       (observed) => {
         res.setHeader('content-type', 'application/json');
@@ -221,7 +230,7 @@ function handle(req, res) {
     );
     return;
   }
-  if (controlledData && req.url === '/__tsumucode_pause' && req.method === 'GET') {
+  if (req.url === '/__tsumucode_pause' && req.method === 'GET') {
     const applyId = req.headers['x-tsumucode-apply-id'];
     if (
       updating ||

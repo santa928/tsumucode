@@ -33,7 +33,9 @@ iframeから親Stageへ戻るときは既存の編集権再確認を待ってか
 
 固定Next 16.3.8の製品実採点APIで、旧Lesson6例・routing8例・境界9例を確認する。
 初期境界エラー、詳細pageの500、修復後合格、Source再開、古いhash拒否を含む。
-learnerのCPU1、RAM/swap512 MiB、PID64、tmpfs各64 MiB、network:noneを維持する。
+learnerはCPU1、PID64、tmpfs各64 MiB、network:noneを維持する。
+RAM/MemorySwapはFirst/Clientが512 MiB、本人承認済みのRoutingと新2が576 MiBで、追加swapなし。
+新2教材の承認済み576 MiB変更と追加受入は、下記Issue #134の追加確認に記す。
 
 通常の製品画面で12 Slideの答え開閉、3 Lessonの編集・反映・採点、停止・再開、
 keyboard操作、狭幅表示、axe検査と進捗/DraftのJSON移送を確認する。
@@ -72,3 +74,46 @@ seal済みsocketでの固定HTTP確認を追加した。運用Reviewerが指摘�
 3 Reviewerはこの診断差分にも既存レビューを適用し、必須修正0と確認した。
 正式公開には#135のForm/Action、#136のProject・独立復元・無Hintの転移課題、
 #137のCourse全体の受入と公開手順の完了が必要であり、この記録で代替しない。
+
+512 MiBでの作者連続成功後も、merge後mainのWeather負例がOOM終了した。
+運用Reviewerは現構成を受入不可と判断し、Issue #134はOPEN、Courseはdraftを維持した。
+2026-10-08の本人承認により、新2 WorkspaceだけRAM/MemorySwapを576 MiBへ変更する。
+追加swapや他の境界、旧3教材の上限は変更しない。差分を3 Reviewerが独立読解し、
+教材目標と前回の内容レビューを継続適用できること、必須修正0件を確認した。
+安定性の最終判断は新しい連続実測と正確なHEAD・main CIがそろうまで保留する。
+
+576 MiBの作者連続検証を3 Reviewerが読み取りで照合し、必須修正0件と判断した。
+運用Reviewerの判断は条件付きGOであり、Data約61 MiB・Weather約51 MiBの観測余裕、
+上限到達/OOMイベント0、終了後のコンテナ回収を根拠とする。最後の生存sampleが
+Zombie1だったrunについて、削除前に0へ戻ったとは認定しない。全体の正式受入は
+新しい上限到達/OOM拒否検査を含むexact HEADとmerge後mainのCI成功が条件となる。
+Reviewerの独自実行ではなく、作者の生監視・成功ログ・画像との照合である。
+
+最初の576 MiB候補のHEAD CIは、旧Client教材の負例で512 MiBのOOM終了を検出し、
+新2教材へ到達する前に失敗した。旧3教材のRAMは増やさず、Next childのheapを
+160 MiBへ限定し、資源計測とseal後の反映確認を追加Node不要の内部HTTPへ統一する。
+新2教材のheap128 MiB、採点期限、目標、期待値、SourceとPreviewの境界は維持する。
+最初のheap限定候補のHEAD CIでは旧Routingのmax=1を検出したため、
+新2で使うallocator・並列処理設定と追加dev worker抑制を旧3にも適用した。
+そのHEAD CIは全工程を通過したが、Routingのpeak511.99 MiB・余裕約12 KiBでは受入できず、
+マージを保留した。反映前停止・反映識別子照合・生成物初期化を旧3にも適用する。
+作者の旧23例は成功し、peak約411/401/460 MiB、max/oom/oomKillとZombieは0だった。
+中間候補の定期監視では一時Zombie1も観測したが、この候補で全期間0を保証する意味にはしない。
+正式受入にはこの修正を含むexact HEADとmerge後mainの成功が引き続き必要となる。
+
+反映前停止後も旧RoutingのHEAD CIでmax=1が再発した。Routingのheapだけ128 MiBへ限定し、
+他教材の実行条件を維持する。作者のRouting8例は成功したが、ARM環境のpeakは
+160 MiB候補とほぼ同じで、CIの上限接近が解消した証拠にはしない。運用レビューは
+必須修正0件、正式GO保留とし、新HEAD/mainの成功と実測余裕を確認する。
+
+## Routingの追加承認と限定再検証
+
+512 MiB候補はexact HEAD CIが成功しても余裕約2.49 MiBで、運用Reviewerが受入を保留した。
+2026-10-09に本人がRoutingだけMemory/MemorySwap576 MiB（追加swapなし）を承認した。
+First/Client512 MiB、新2の576 MiB、heapと他制約は維持する。
+変更後のRouting8例・通常UI・反映/停止/再起動の作者連続検証は成功し、
+Routing peak494.94 MiB・余裕81.06 MiB、max/oom/oomKill0、checkpoint Zombie0だった。
+監視一時Zombie1と削除前最後の生存sample1を隠さず、終了後のlearner/grader0件を別に記録した。
+教材の先行3ペルソナレビューは入力不変の範囲で継続適用し、今回の資源差分と新実測は
+独立運用Reviewerが生ログを再集計し、必須修正0件・条件付きGOと判断した。
+正式受入にはexact HEAD/main CIと実測余裕の確認を必要とする。
