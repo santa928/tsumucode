@@ -74,7 +74,19 @@ sealed socketがあるNextの反映確認も内部HTTPへ統一する。
 固定版のCLIは未指定時にホスト総RAMからheapを選ぶため、
 Dockerの上限内で動くよう明示的に抑える。自動再起動の保護は無効化しない。
 
-heap160 MiBの作者環境でClient9例→旧Lesson6例→routing8例を連続実行し、
+旧Routingはこのheap設定だけではHEAD CIで上限到達max=1を検出した。
+RAMや検査を緩めず、新2と同じallocator上限と並列処理設定を全Next childへ適用する。
+MALLOC_ARENA_MAXは2、RAYON_NUM_THREADSとTOKIO_WORKER_THREADSは1とし、
+dev filesystem cache・追加validation worker・React debug channelを無効にする。
+設定値1を実worker数1の証明とは扱わず、実PIDとメモリで確認する。
+
+内部並列制限を広げる前のheap160 MiBの作者環境でClient9例→旧Lesson6例→routing8例を連続実行し、
 全23例が成功した。native監視のpeakは約434/433/474 MiB、上限までの差は
 約78/79/38 MiBだった。全教材でmax/oom/oomKillとZombieは0、PIDとtmpfsも
 上限内だった。これらは作者環境の観測であり、全環境の保証にはしない。
+
+並列制限を広げた最終候補でも同じ23例を一度連続成功した。peakは約418/402/459 MiB、
+上限までの差は約94/110/53 MiBだった。全max/oom/oomKillは0、採点直後のZombieは0。
+定期監視ではRoutingの反映・停止中に一時Zombie1を記録し、全runの最後のsampleは0だった。
+終了後のlearner/graderは停止済みを含め0件。作者環境とCIの資源差は残るため、
+正確なHEADとmerge後mainの成功を正式受入の条件とする。

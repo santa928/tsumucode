@@ -34,7 +34,11 @@ await writeFile(
   basePath: ${JSON.stringify(base)},
   allowedDevOrigins: [${JSON.stringify(`${metadata.runId}.localhost`)}],
   turbopack: { root: '/opt' },
-  ${controlledData ? 'experimental: { turbopackFileSystemCacheForDev: false, devValidationWorker: false, reactDebugChannel: false },' : ''}
+  experimental: {
+    turbopackFileSystemCacheForDev: false,
+    devValidationWorker: false,
+    reactDebugChannel: false,
+  },
 };
 `,
 );
@@ -111,12 +115,13 @@ function ensureLatest() {
           NODE_OPTIONS: controlledData
             ? '--max-old-space-size=128 --max-semi-space-size=4'
             : '--max-old-space-size=160 --max-semi-space-size=4',
+          // CPU1の隔離内でallocatorと追加workerの資源を限定する。
+          MALLOC_ARENA_MAX: '2',
+          RAYON_NUM_THREADS: '1',
+          TOKIO_WORKER_THREADS: '1',
           ...(controlledData
             ? {
                 TSUMUCODE_NEXT_BASE_PATH: base,
-                MALLOC_ARENA_MAX: '2',
-                RAYON_NUM_THREADS: '1',
-                TOKIO_WORKER_THREADS: '1',
               }
             : {}),
         },

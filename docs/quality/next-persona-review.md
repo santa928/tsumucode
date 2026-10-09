@@ -94,5 +94,9 @@ Reviewerの独自実行ではなく、作者の生監視・成功ログ・画像
 新2教材のheap128 MiB、採点期限、目標、期待値、SourceとPreviewの境界は維持する。
 作者の旧23 Fixture連続実行は成功し、上限到達/OOMとZombieは0だった。
 3 Reviewerは最終差分と作者証拠を照合し、必須修正0件と確認した。
-Routingのpeakは定期監視と採点直後の最大値を合わせ、約474 MiB・余裕約38 MiBとした。
+内部並列制限を広げる前のRoutingのpeakは定期監視と採点直後の最大値を合わせ、
+約474 MiB・余裕約38 MiBとした。その候補のHEAD CIでは旧Routingのmax=1を検出したため、
+新2で使うallocator・並列処理設定と追加dev worker抑制を旧3にも適用した。
+同じ旧23例が成功し、最終候補のpeakは約418/402/459 MiB、max/oom/oomKillは0だった。
+監視中のRoutingの一時Zombie1は全runの最後のsampleでは0となり、終了後のコンテナも0件だった。
 正式受入にはこの修正を含むexact HEADとmerge後mainの成功が引き続き必要となる。
