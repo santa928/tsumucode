@@ -99,8 +99,33 @@ export function projectMetadata(record, runId) {
   };
 }
 
+/** 失敗段階と理由だけを保持し、SourceやDocker例外の本文を診断へ含めない。 */
+export class ProjectApplyError extends Error {
+  constructor(phase, reason) {
+    super('Project apply failed');
+    this.phase = phase;
+    this.reason = reason;
+  }
+}
+
+function applyReason(error) {
+  if (['deadline', 'socket', 'HTTP', 'identity', 'exit'].includes(error?.applyReason))
+    return error.applyReason;
+  if (['Docker API timeout', 'Docker API deadline exceeded'].includes(error?.message))
+    return 'deadline';
+  if (typeof error?.status === 'number') return 'HTTP';
+  if (['ENOENT', 'ECONNREFUSED', 'ECONNRESET', 'EPIPE'].includes(error?.code)) return 'socket';
+  return 'unknown';
+}
+
+function controlFailure(reason) {
+  const error = new Error('Next control failed');
+  error.applyReason = reason;
+  return error;
+}
+
 /** seal済みsocketで固定制御HTTPを確認し、learnerへ追加Node processを起動しない。 */
-async function nextControl(applied, socket, path, expected, headers = {}) {
+async function nextControl(applied, socket, path, expected, headers = {}, timeout = 2000) {
   const directory = join(TRANSPORT_ROOT, previewRunId(applied.runId));
   const socketPath = join(directory, 'http.sock');
   const [parent, current] = await Promise.all([lstat(directory), lstat(socketPath)]);
@@ -115,100 +140,130 @@ async function nextControl(applied, socket, path, expected, headers = {}) {
     current.dev !== socket?.dev ||
     current.ino !== socket?.ino
   )
-    throw new Error('Invalid sealed Next control socket');
+    throw controlFailure('identity');
   return new Promise((resolve, reject) => {
     const req = request({ socketPath, method: 'GET', path, headers }, (res) => {
       const chunks = [];
       let bytes = 0;
       res.on('data', (chunk) => {
         bytes += chunk.length;
-        if (bytes > 1024) res.destroy(new Error('Next control response limit'));
+        if (bytes > 1024) res.destroy(controlFailure('HTTP'));
         else chunks.push(chunk);
       });
       res.on('error', reject);
       res.on('end', () => {
+        if (res.statusCode !== 200) {
+          reject(controlFailure('HTTP'));
+          return;
+        }
         try {
           const marker = JSON.parse(Buffer.concat(chunks).toString());
-          resolve(
-            res.statusCode === 200 &&
-              Object.entries(expected).every(([key, value]) => marker[key] === value),
-          );
+          if (Object.entries(expected).every(([key, value]) => marker[key] === value))
+            resolve(true);
+          else reject(controlFailure('identity'));
         } catch {
-          resolve(false);
+          reject(controlFailure('identity'));
         }
       });
     });
-    const timer = setTimeout(() => req.destroy(new Error('Next control deadline')), 2000);
+    const timer = setTimeout(() => req.destroy(controlFailure('deadline')), timeout);
     req.on('close', () => clearTimeout(timer));
     req.on('error', reject);
     req.end();
   });
 }
 
-/** 固定execでSourceを配置し、終了codeと実HTTP反映markerの両方を確認する。 */
+/** Source配置から実HTTP反映までを単一期限で確認し、失敗したrunは呼び出し側で回収する。 */
 export async function applyProject(id, record, runId, transport) {
-  const metadata = projectMetadata(record, runId);
-  const nativeNext = record.profile === NEXT_PROFILE && Boolean(transport);
-  const controlledData =
-    record.profile === NEXT_PROFILE &&
-    ['data-cache-revalidation', 'loading-error-not-found'].includes(
-      nextWorkspace(record.workspaceId)?.goal,
-    );
-  if (nativeNext || controlledData) {
-    // 同じSourceの再反映でも、固定execのmarker更新前に旧Nextを再起動させない。
-    metadata.applyId = randomUUID();
-    if (
-      !transport ||
-      !(await nextControl(
+  const next = record.profile === NEXT_PROFILE;
+  const deadline = Date.now() + (next ? PROJECT_LIMITS.startMs : 14000);
+  let phase = 'pause';
+  const remaining = (maximum) => {
+    const value = deadline - Date.now();
+    if (value <= 0) throw controlFailure('deadline');
+    return Math.min(value, maximum);
+  };
+  try {
+    const metadata = projectMetadata(record, runId);
+    const nativeNext = next && Boolean(transport);
+    const controlledData =
+      next &&
+      ['data-cache-revalidation', 'loading-error-not-found'].includes(
+        nextWorkspace(record.workspaceId)?.goal,
+      );
+    if (nativeNext || controlledData) {
+      // 同じSourceの再反映でも、固定execのmarker更新前に旧Nextを再起動させない。
+      metadata.applyId = randomUUID();
+      if (!transport) throw controlFailure('identity');
+      await nextControl(
         transport.applied,
         transport.socket,
         '/__tsumucode_pause',
         projectMetadata(transport.applied, runId),
         { 'x-tsumucode-apply-id': metadata.applyId },
-      ))
-    )
-      throw new Error('Next pause failed');
-  }
-  const execution = await docker(
-    'POST',
-    `/containers/${id}/exec`,
-    {
-      User: '1000:1000',
-      AttachStdout: true,
-      AttachStderr: true,
-      Cmd: [
-        'node',
-        '/opt/project-apply.mjs',
-        ...Buffer.from(JSON.stringify({ files: record.files, metadata }))
-          .toString('base64')
-          .match(/.{1,16384}/gu),
-      ],
-    },
-    record.profile === NEXT_PROFILE ? 10000 : 5000,
-  );
-  await docker('POST', `/exec/${execution.Id}/start`, { Detach: false, Tty: false }, 5000, true);
-  const inspected = await docker('GET', `/exec/${execution.Id}/json`, undefined, 2000);
-  if (inspected.Running || inspected.ExitCode !== 0) throw new Error('Project apply failed');
-  const deadline = Date.now() + (record.profile === NEXT_PROFILE ? 8000 : 0);
-  do {
-    try {
-      // sealed socketがあるNextは、compile中に追加Node probeを重ねない。
-      const ready = nativeNext
-        ? await nextControl(transport.applied, transport.socket, '/__tsumucode_ready', metadata)
-        : await probeProject(id, metadata);
-      if (ready) return;
-    } catch (error) {
-      if (!nativeNext || error.message !== 'Next control deadline') throw error;
+        remaining(2000),
+      );
     }
-    if (Date.now() >= deadline) break;
-    await delay(100);
-  } while (Date.now() < deadline);
-  throw new Error('Project apply failed');
+    phase = 'exec-create';
+    const execution = await docker(
+      'POST',
+      `/containers/${id}/exec`,
+      {
+        User: '1000:1000',
+        AttachStdout: true,
+        AttachStderr: true,
+        Cmd: [
+          'node',
+          '/opt/project-apply.mjs',
+          ...Buffer.from(JSON.stringify({ files: record.files, metadata }))
+            .toString('base64')
+            .match(/.{1,16384}/gu),
+        ],
+      },
+      remaining(next ? 10000 : 5000),
+    );
+    phase = 'exec-start';
+    await docker(
+      'POST',
+      `/exec/${execution.Id}/start`,
+      { Detach: false, Tty: false },
+      remaining(5000),
+      true,
+    );
+    phase = 'exec-inspect';
+    const inspected = await docker('GET', `/exec/${execution.Id}/json`, undefined, remaining(2000));
+    if (inspected.Running || inspected.ExitCode !== 0) throw controlFailure('exit');
+    phase = 'ready';
+    do {
+      try {
+        // sealed socketがあるNextは、compile中に追加Node probeを重ねない。
+        const ready = nativeNext
+          ? await nextControl(
+              transport.applied,
+              transport.socket,
+              '/__tsumucode_ready',
+              metadata,
+              {},
+              remaining(2000),
+            )
+          : await probeProject(id, metadata, remaining(PROJECT_LIMITS.probeMs));
+        if (ready && Date.now() <= deadline) return;
+      } catch (error) {
+        // compile中の制御HTTPだけを再試行する。sealやsocketの破損は直ちに回収する。
+        if (!nativeNext || !['deadline', 'HTTP'].includes(applyReason(error))) throw error;
+      }
+      if (!next) throw controlFailure('identity');
+      await delay(remaining(100));
+    } while (Date.now() < deadline);
+    throw controlFailure('deadline');
+  } catch (error) {
+    throw new ProjectApplyError(phase, applyReason(error));
+  }
 }
 
 /** learner内部の本物のHTTPを固定execで確認する。stdoutや固定sleepは成功証拠にしない。 */
-export async function probeProject(id, expected = {}) {
-  const deadline = Date.now() + PROJECT_LIMITS.probeMs;
+export async function probeProject(id, expected = {}, timeout = PROJECT_LIMITS.probeMs) {
+  const deadline = Date.now() + Math.min(timeout, PROJECT_LIMITS.probeMs);
   const remaining = () => {
     const value = deadline - Date.now();
     if (value <= 0) throw new Error('HTTP probe deadline exceeded');
