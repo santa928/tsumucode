@@ -120,7 +120,10 @@ function ensureLatest() {
           NEXT_TELEMETRY_DISABLED: '1',
           // 固定RAM内でClientのcompileエラーも返せるよう、全Next childのheapを抑える。
           NODE_OPTIONS:
-            controlledData || productionProject || goal === 'nested-dynamic-navigation'
+            controlledData ||
+            controlledForm ||
+            productionProject ||
+            goal === 'nested-dynamic-navigation'
               ? '--max-old-space-size=128 --max-semi-space-size=4'
               : '--max-old-space-size=160 --max-semi-space-size=4',
           // CPU1の隔離内でallocatorと追加workerの資源を限定する。

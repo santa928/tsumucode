@@ -195,7 +195,7 @@ jobs:
         run: |
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
           if [ -n "$controller" ]; then
-            docker logs "$controller" 2>&1 | rg '^Next (Source apply failure|grade (deadline|slow)) ' || true
+            docker logs "$controller" 2>&1 | grep -E '^Next (Source apply failure|grade (deadline|slow|timing)) ' || true
           fi
       - name: Stop only this learning stack and preserve Source volume
         if: always()

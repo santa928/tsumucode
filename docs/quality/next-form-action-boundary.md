@@ -62,6 +62,8 @@ storeへの要求開始時に一致したleaseオブジェクトへ帰属させ�
 固定Node24.18.0・Next16.3.8・React19.2.7を再利用する。新2教材のRAM/MemorySwapは512MiB、
 CPU1・PID64・tmpfs各64MiB・network:none・非root・readonlyを維持し、追加swapは許可しない。
 保存先は常駐bootstrap内で処理し、追加learner Nodeを起動しない。
+Form/ActionのNext childはheap128MiB・semi-space4MiBに限定する。
+採点診断は固定段階と経過時間だけを記録し、Sourceや入力内容を出力しない。
 
 `next-project-acceptance.mjs`は各9正負Fixture、Source409、停止・再開、grader回収、native資源を確認する。
 `next-routing-browser-acceptance.mjs next-ch04`は通常Slide・編集・実送信・Keyboard・入力保持・

@@ -38,6 +38,21 @@ function gradeProgress(stderr) {
     .map((match) => ({ phase: match[1], elapsedMs: Number(match[2]) }));
 }
 
+/** 同じURLへの各POSTの終端を、固定連番・分類・時間だけで区別する。 */
+function formResponses(stderr) {
+  return [
+    ...stderr.matchAll(
+      /^TSUMUCODE_FORM_RESPONSE:([1-8]):(request-start|upstream-end|downstream-finished|closed-before-finish):(\d{1,6})\n/gmu,
+    ),
+  ]
+    .slice(-24)
+    .map((match) => ({
+      request: Number(match[1]),
+      event: match[2],
+      elapsedMs: Number(match[3]),
+    }));
+}
+
 /** API入力からimage/command/権限を選ばず、固定Browserだけで現在runを観測する。 */
 export async function gradeProject({ owner, image, source, runId, socket, signal }) {
   if (!image || !/^tsumucode-learning-[a-z0-9-]+-grader:local$/u.test(image))
@@ -75,13 +90,16 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
               200,
               true,
             );
-            const last = gradeProgress(gradeOutput(output, 16 * 1024).stderr).at(-1);
+            const { stderr } = gradeOutput(output, 16 * 1024);
+            const last = gradeProgress(stderr).at(-1);
+            const responses = formResponses(stderr);
             console.error(
               'Next grade deadline',
               JSON.stringify({
                 enginePhase,
                 phase: last?.phase ?? 'unknown',
                 elapsedMs: last?.elapsedMs ?? null,
+                ...(responses.length ? { responses } : {}),
               }),
             );
           }
@@ -199,6 +217,7 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
     active();
     const { stdout, stderr } = gradeOutput(output);
     const progress = gradeProgress(stderr);
+    const responses = formResponses(stderr);
     const result = JSON.parse(stdout);
     for (const [key, value] of Object.entries(metadata))
       if (result[key] !== value) throw new Error('Grade identity mismatch');
@@ -230,10 +249,17 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
       )
         throw new Error('Invalid project grade checks');
     }
-    if (Date.now() - started >= 8000)
+    const engineElapsedMs = Date.now() - started;
+    if (engineElapsedMs >= 8000)
       console.error(
         'Next grade slow',
-        JSON.stringify({ engineElapsedMs: Date.now() - started, progress }),
+        JSON.stringify({ engineElapsedMs, progress, ...(responses.length ? { responses } : {}) }),
+      );
+    else if (['next-ch04-l01-e01', 'next-ch04-l02-e01'].includes(source.workspaceId))
+      // 再起動後の期限調査用。Sourceや入力を出さず、固定段階と時間だけを残す。
+      console.error(
+        'Next grade timing',
+        JSON.stringify({ engineElapsedMs, progress, ...(responses.length ? { responses } : {}) }),
       );
     return result;
   } finally {

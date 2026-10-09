@@ -44,7 +44,14 @@ test('全体10秒で固定graderを回収し、基盤503として期限超過を
     if (path.includes('/logs?'))
       return frame(
         2,
-        'private-source\nTSUMUCODE_GRADE_STEP:browser-launch:20\nTSUMUCODE_GRADE_STEP:observations:7900\nprivate-token',
+        'private-source\nTSUMUCODE_GRADE_STEP:browser-launch:20\nTSUMUCODE_GRADE_STEP:observations:7900\n' +
+          'TSUMUCODE_FORM_RESPONSE:1:request-start:8000\n' +
+          'TSUMUCODE_FORM_RESPONSE:1:upstream-end:8050\n' +
+          'TSUMUCODE_FORM_RESPONSE:1:downstream-finished:8060\n' +
+          'TSUMUCODE_FORM_RESPONSE:2:request-start:8200\n' +
+          'TSUMUCODE_FORM_RESPONSE:9:request-start:8300\n' +
+          'TSUMUCODE_FORM_RESPONSE:2:private-token:8300\n' +
+          'TSUMUCODE_FORM_RESPONSE:2:upstream-end:private-source\nprivate-token',
       );
   });
   const grading = gradeProject({
@@ -66,7 +73,17 @@ test('全体10秒で固定graderを回収し、基盤503として期限超過を
   assert.deepEqual(diagnostic.mock.calls, [
     [
       'Next grade deadline',
-      JSON.stringify({ enginePhase: 'container-wait', phase: 'observations', elapsedMs: 7900 }),
+      JSON.stringify({
+        enginePhase: 'container-wait',
+        phase: 'observations',
+        elapsedMs: 7900,
+        responses: [
+          { request: 1, event: 'request-start', elapsedMs: 8000 },
+          { request: 1, event: 'upstream-end', elapsedMs: 8050 },
+          { request: 1, event: 'downstream-finished', elapsedMs: 8060 },
+          { request: 2, event: 'request-start', elapsedMs: 8200 },
+        ],
+      }),
     ],
   ]);
   diagnostic.mockRestore();

@@ -100,6 +100,7 @@ async function formControl(op) {
   return JSON.parse(reply.body.toString());
 }
 let requests = 0;
+let formRequestNumber = 0;
 // 同じtrusted bridgeが全量送信したRSCだけを、部分応答と区別する。
 const completedResponses = new Map();
 async function completedResponse(response) {
@@ -134,10 +135,21 @@ const bridge = createServer(async (req, res) => {
   }
   requests++;
   const policy = nextPreviewRequest(req, metadata);
+  const formRequest = policy.post ? ++formRequestNumber : 0;
+  // 同じURLへの連続POSTを区別する。本文・URL・入力・予約IDは診断に含めない。
+  const formResponseEvent = (event) => {
+    if (formRequest >= 1 && formRequest <= 8)
+      process.stderr.write(
+        `TSUMUCODE_FORM_RESPONSE:${formRequest}:${event}:${Date.now() - started}\n`,
+      );
+  };
+  formResponseEvent('request-start');
+  res.once('finish', () => formResponseEvent('downstream-finished'));
   let timer;
   let upstream;
   const cancellation = new globalThis.AbortController();
   res.once('close', () => {
+    if (!res.writableFinished) formResponseEvent('closed-before-finish');
     cancellation.abort();
     if (!req.complete) req.destroy();
     clearTimeout(timer);
@@ -185,7 +197,8 @@ const bridge = createServer(async (req, res) => {
           : {}),
       },
     },
-    (reply) =>
+    (reply) => {
+      reply.once('end', () => formResponseEvent('upstream-end'));
       forwardPreviewResponse(reply, res, {
         method: req.method,
         headers: previewHeaders(metadata.runId, metadata.profile),
@@ -195,7 +208,8 @@ const bridge = createServer(async (req, res) => {
         complete: () => {
           if (req.headers.rsc === '1') completedResponses.set(req.url, true);
         },
-      }),
+      });
+    },
   );
   upstream.on('error', fail);
   upstream.end(body);
