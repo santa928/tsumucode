@@ -1,3 +1,4 @@
+import console from 'node:console';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { randomBytes } from 'node:crypto';
@@ -26,6 +27,7 @@ import {
   removeContainer,
 } from './docker-engine.mjs';
 import { WorkspaceStore } from './workspace-store.mjs';
+import { ProjectApplyError } from './project-engine.mjs';
 import { ResidentWorkspace } from './resident-workspace.mjs';
 import { PreviewTransport } from './preview-transport.mjs';
 import { startPreviewControl } from './preview-control.mjs';
@@ -432,13 +434,20 @@ async function handle(req, res) {
     }
     res.end(JSON.stringify(value));
   } catch (error) {
+    if (error instanceof ProjectApplyError)
+      console.error(
+        'Next Source apply failure',
+        JSON.stringify({ phase: error.phase, reason: error.reason }),
+      );
     res.statusCode = error instanceof RequestError ? error.status : 503;
     res.end(
       JSON.stringify({
         error:
           error instanceof RequestError
             ? error.message
-            : 'Dockerへ接続できません。学習モードを確認して再試行してください。',
+            : error instanceof ProjectApplyError
+              ? 'Sourceを反映できませんでした。保存したSourceを確認し、再起動してください。'
+              : 'Dockerへ接続できません。学習モードを確認して再試行してください。',
       }),
     );
   }

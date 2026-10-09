@@ -73,3 +73,9 @@ CIでは既存教材を含む標準の全ケースを通す。
 
 #136の持ち出しProjectと#137の全Course公開は別ゲート。今回のdev実行を正式公開や
 外部DBへの永続保存の証拠にはしない。
+
+## Source反映の期限と診断
+
+NextのSource反映はpause・固定exec・実HTTPの版確認を合わせて既存startup上限20秒以内で行う。各段階は同じ絶対期限の残りを使用する。Browserとwebの対象apply APIのみ25秒待ち、採点10秒と公開POST30秒、RAM・隔離・版の照合は維持する。
+
+反映失敗はrunを回収し、保存Sourceを保持する。controllerは固定phase（pause/exec-create/exec-start/exec-inspect/ready）とreason（deadline/socket/HTTP/identity/exit/unknown）のみを記録する。Source・例外本文・資格情報は出力しない。過去のWeather反映503の原因は未確定であり、再実行成功だけを原因解消の証拠としない。

@@ -52,7 +52,9 @@ const server = createServer(async (req, res) => {
     };
     res.once('close', disconnected);
     res.once('finish', () => res.off('close', disconnected));
-    proxy.setTimeout(15000, () => proxy.destroy());
+    // 反映全体20秒と回収・応答の余裕を、限定Workspace APIだけへ与える。
+    const apply = /^\/api\/workspaces\/next-[a-z0-9-]+\/apply$/u.test(req.url);
+    proxy.setTimeout(apply ? 25000 : 15000, () => proxy.destroy());
     proxy.on('error', () => {
       if (res.destroyed) return;
       if (!res.headersSent) res.writeHead(503, { 'content-type': 'application/json' });

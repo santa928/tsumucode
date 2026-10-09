@@ -66,7 +66,9 @@ function api(path, input = {}) {
         );
       },
     );
-    req.setTimeout(15000, () => req.destroy(new Error('Next API deadline')));
+    req.setTimeout(path.endsWith('/apply') ? 25000 : 15000, () =>
+      req.destroy(new Error('Next API deadline')),
+    );
     req.on('error', reject);
     req.end(body);
   });
