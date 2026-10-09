@@ -45,11 +45,17 @@ trusted Browserは空白の検証エラー→初回一時失敗→同じメモ�
 HTTP全量完了・可視DOM・保存履歴を照合する。固定成功表示やHTTP200だけでは合格にしない。
 Actionの完了はtrusted bridgeが付ける送信連番1→2→3と、実ResponseのURL・method・statusを
 厳密に対応させる。正常な上流EOF・下流送信完了に加え、対応するDOMとreadonly履歴を要求する。
-これはBrowserの全byte受領を独立に証明するものではない。部分stream・旧送信の完了・
-切断・上限超過・対象POSTのBrowser中断を成功として扱わない。
+部分stream・旧送信の完了・切断・上限超過・対象POSTのBrowser中断を成功として扱わない。
 採点器内のAction POSTだけは、512KiB以内のRSCを正常EOFまで受信し、Content-Length付きで
-Browserへ渡す。公開Proxyの逐次送信と、固定350msの保存待ち・pending検査は維持する。
+Browserへ渡す。Browser側でも固定Action POSTのResponseのcloneを正常EOFまで読み、
+実byte数とContent-Lengthを照合してから、元ResponseをNextのdecoderへ渡す。
+元ResponseのURL・type・redirected・未消費body、fetchの引数・signalを保持し、再試行しない。
+公開Proxyの逐次送信と、固定350msの保存待ち・pending検査は維持する。
 全体10秒の採点期限を維持し、前後のrun/revision/hashと文書版を一致させる。
+Form観測中の文書版を基準更新で消さず、同URLのreplaceStateは許可し、実reloadは拒否する。
+最大8POSTのCDP受信量は診断だけに使う。header欠落はunknownとして残し、本文・URL・入力値を
+保持しない。Browser側とtrusted bridge側の連番を区別し、raw headerの到着順が変わっても
+byte数と終端状態を維持する。終端時とBrowser終了前に出す同じrequestの記録は最新値として読む。
 
 readonly native backendで、exactメモ・ランダムlease ID・run・Source版を結び付ける。
 inspect/releaseも同じID・版を要求し、古いfinallyが新しい予約を消さない。
@@ -76,6 +82,8 @@ Form/ActionのNext childはheap128MiB・semi-space4MiBに限定する。
 Preview履歴保持・修正回復・版失効・a11y・narrow・下書き・端末JSON移送を確認する。
 `next-form-http-acceptance.mjs`は実ProxyのOrigin/資格情報/本文・応答・期限・
 送信中採点409・Source反映/停止の中断を確認する。
+`next-form-drain-acceptance.mjs`は実HTTPでBrowserの512KiB正常EOF、部分切断・signal中断の拒否、
+不正応答の拒否、元Responseとfetch入力の保持、対象外GET/queryを変更しないことを確認する。
 production buildは`next-build-acceptance.mjs next-ch04`で新2教材だけを選んで確認できる。
 CIでは既存教材を含む標準の全ケースを通す。
 

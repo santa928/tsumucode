@@ -5,6 +5,7 @@ import { observeNextProduction } from './next-production-observations.mjs';
 import { observeNextForm } from './next-form-observations.mjs';
 import { createNextFormResponses } from './next-form-response.mjs';
 import { watchNextFormReceipts } from './next-form-receipts.mjs';
+import { installNextActionBodyDrain } from './next-form-drain.mjs';
 import { nextPreviewRequest } from './next-data-preview.mjs';
 import { forwardPreviewResponse } from './preview-http-response.mjs';
 import { observeNextData } from './next-data-observations.mjs';
@@ -342,6 +343,7 @@ try {
     args: ['--no-sandbox', '--disable-dev-shm-usage'],
   });
   const page = await browser.newPage();
+  if (action) await page.addInitScript(installNextActionBodyDrain, { origin, base });
   if (action) formReceipts = await watchNextFormReceipts(page, origin, base, emitFormReceipt);
   const diagnostics = [];
   const consoleErrors = [];

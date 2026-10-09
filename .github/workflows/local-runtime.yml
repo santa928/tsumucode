@@ -66,7 +66,7 @@ concurrency:
 jobs:
   boundary:
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       TSUMUCODE_LOCAL_OWNER: tsumucode-learning-ci
       TSUMUCODE_LOCAL_SOCKET: /var/run/docker.sock
@@ -126,6 +126,13 @@ jobs:
           --tmpfs /tmp:rw,noexec,nosuid,nodev,size=256m,uid=1000,gid=1000,mode=0700
           "$TSUMUCODE_LOCAL_OWNER-next-browser-checks"
           node scripts/local/next-observations-acceptance.mjs
+      - name: Verify trusted Action body completion rejects partial and canceled responses
+        run: >-
+          docker run --rm --init --user 1000:1000 --network none --read-only --cpus 2 --memory 768m --memory-swap 768m --pids-limit 128
+          --cap-drop ALL --security-opt no-new-privileges:true
+          --tmpfs /tmp:rw,noexec,nosuid,nodev,size=256m,uid=1000,gid=1000,mode=0700
+          "$TSUMUCODE_LOCAL_OWNER-next-browser-checks"
+          node scripts/local/next-form-drain-acceptance.mjs
       - name: Verify Next nested routing and Client interaction fixtures
         run: |
           set -euo pipefail
