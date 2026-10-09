@@ -68,6 +68,8 @@ GET `api/question` の2応答を実測する。期待値はtrusted graderに固�
 sealed socketがあるNextの反映確認も内部HTTPへ統一する。
 既存の反映確認ループ8秒・個別要求2秒の設定を維持し、compile中に追加Node probeを重ねない。
 起動時の未seal socketとViteの確認は既存の固定execを維持する。
+反映前に旧Nextを停止し、反映識別子が一致するまで並行readyで再起動しない。
+保存版ごとに生成物の`.next`を初期化し、編集したSourceを保持する。
 
 旧3でheap128 MiBを試した際は、OOMイベント0でもNextのメモリ閾値再起動と
 反映503を確認した。再起動との関連はあるが、API例外の直接分類は未確定のまま保持する。
@@ -80,13 +82,10 @@ MALLOC_ARENA_MAXは2、RAYON_NUM_THREADSとTOKIO_WORKER_THREADSは1とし、
 dev filesystem cache・追加validation worker・React debug channelを無効にする。
 設定値1を実worker数1の証明とは扱わず、実PIDとメモリで確認する。
 
-内部並列制限を広げる前のheap160 MiBの作者環境でClient9例→旧Lesson6例→routing8例を連続実行し、
-全23例が成功した。native監視のpeakは約434/433/474 MiB、上限までの差は
-約78/79/38 MiBだった。全教材でmax/oom/oomKillとZombieは0、PIDとtmpfsも
-上限内だった。これらは作者環境の観測であり、全環境の保証にはしない。
-
-並列制限を広げた最終候補でも同じ23例を一度連続成功した。peakは約418/402/459 MiB、
-上限までの差は約94/110/53 MiBだった。全max/oom/oomKillは0、採点直後のZombieは0。
-定期監視ではRoutingの反映・停止中に一時Zombie1を記録し、全runの最後のsampleは0だった。
-終了後のlearner/graderは停止済みを含め0件。作者環境とCIの資源差は残るため、
+並列制限までの候補はHEAD CIに成功したが、Routingのpeakは511.99 MiBで余裕が約12 KiBだった。
+max=0だけでは安定性を受入できず、反映前停止と生成物初期化を旧3にも適用する。
+この候補の作者環境でClient9例→旧Lesson6例→routing8例を一度連続成功した。
+監視と採点直後のpeakは約411/401/460 MiB、上限までの差は約101/111/52 MiBだった。
+max/oom/oomKillとZombieは0、PIDとtmpfsは上限内。終了後のlearner/graderは停止済みも含め0件。
+作者環境とCIの資源差は残るため、全環境の保証にはしない。
 正確なHEADとmerge後mainの成功を正式受入の条件とする。

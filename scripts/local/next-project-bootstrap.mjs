@@ -91,8 +91,8 @@ function ensureLatest() {
     dataBackend?.retire();
     await stopChild();
     if (controlledData) dataBackend = await nextDataBackend(metadata.workspaceId, base);
-    // 新教材では保存版ごとに制御データとfetch cacheを同じ初期条件へ戻す。
-    if (controlledData) await rm(`${root}/.next`, { recursive: true, force: true });
+    // 保存版ごとに生成物を初期化する。編集したSourceは保持する。
+    await rm(`${root}/.next`, { recursive: true, force: true });
     if (stopping) throw new Error('Next is stopping');
     child = spawn(
       process.execPath,
@@ -229,7 +229,7 @@ function handle(req, res) {
     );
     return;
   }
-  if (controlledData && req.url === '/__tsumucode_pause' && req.method === 'GET') {
+  if (req.url === '/__tsumucode_pause' && req.method === 'GET') {
     const applyId = req.headers['x-tsumucode-apply-id'];
     if (
       updating ||

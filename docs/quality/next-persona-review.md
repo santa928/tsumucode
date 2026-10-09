@@ -92,11 +92,10 @@ Reviewerの独自実行ではなく、作者の生監視・成功ログ・画像
 新2教材へ到達する前に失敗した。旧3教材のRAMは増やさず、Next childのheapを
 160 MiBへ限定し、資源計測とseal後の反映確認を追加Node不要の内部HTTPへ統一する。
 新2教材のheap128 MiB、採点期限、目標、期待値、SourceとPreviewの境界は維持する。
-作者の旧23 Fixture連続実行は成功し、上限到達/OOMとZombieは0だった。
-3 Reviewerは最終差分と作者証拠を照合し、必須修正0件と確認した。
-内部並列制限を広げる前のRoutingのpeakは定期監視と採点直後の最大値を合わせ、
-約474 MiB・余裕約38 MiBとした。その候補のHEAD CIでは旧Routingのmax=1を検出したため、
+最初のheap限定候補のHEAD CIでは旧Routingのmax=1を検出したため、
 新2で使うallocator・並列処理設定と追加dev worker抑制を旧3にも適用した。
-同じ旧23例が成功し、最終候補のpeakは約418/402/459 MiB、max/oom/oomKillは0だった。
-監視中のRoutingの一時Zombie1は全runの最後のsampleでは0となり、終了後のコンテナも0件だった。
+そのHEAD CIは全工程を通過したが、Routingのpeak511.99 MiB・余裕約12 KiBでは受入できず、
+マージを保留した。反映前停止・反映識別子照合・生成物初期化を旧3にも適用する。
+作者の旧23例は成功し、peak約411/401/460 MiB、max/oom/oomKillとZombieは0だった。
+中間候補の定期監視では一時Zombie1も観測したが、この候補で全期間0を保証する意味にはしない。
 正式受入にはこの修正を含むexact HEADとmerge後mainの成功が引き続き必要となる。

@@ -104,7 +104,7 @@ describe('Next専用の境界', () => {
     'next-ch03-l02-e01',
   ])('Workspace %s の内部制御をPreviewへ公開しない', (workspaceId) => {
     const current = { ...target, workspaceId };
-    for (const path of ['__tsumucode_ready', '__tsumucode_resources']) {
+    for (const path of ['__tsumucode_ready', '__tsumucode_resources', '__tsumucode_pause']) {
       expect(previewRoute(`${previewBase(workspaceId, target.runId)}${path}`, current)).toBe(false);
     }
   });

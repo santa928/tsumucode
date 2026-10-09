@@ -152,7 +152,7 @@ export async function applyProject(id, record, runId, transport) {
     ['data-cache-revalidation', 'loading-error-not-found'].includes(
       nextWorkspace(record.workspaceId)?.goal,
     );
-  if (controlledData) {
+  if (nativeNext || controlledData) {
     // 同じSourceの再反映でも、固定execのmarker更新前に旧Nextを再起動させない。
     metadata.applyId = randomUUID();
     if (
