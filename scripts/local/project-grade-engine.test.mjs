@@ -1,3 +1,4 @@
+import console from 'node:console';
 import assert from 'node:assert/strict';
 import { Buffer } from 'node:buffer';
 import { afterEach, test, vi } from 'vitest';
@@ -16,7 +17,16 @@ vi.mock('node:timers', async (importOriginal) => {
   };
   return { ...timers, default: timers };
 });
+import { projectMetadata } from './project-engine.mjs';
 import { gradeProject } from './project-grade-engine.mjs';
+
+function frame(channel, text) {
+  const data = Buffer.from(text);
+  const header = Buffer.alloc(8);
+  header[0] = channel;
+  header.writeUInt32BE(data.length, 4);
+  return Buffer.concat([header, data]);
+}
 
 afterEach(() => {
   vi.useRealTimers();
@@ -26,10 +36,16 @@ afterEach(() => {
 test('全体10秒で固定graderを回収し、基盤503として期限超過を返す', async () => {
   vi.useFakeTimers();
   engine.removeContainer.mockResolvedValue(undefined);
+  const diagnostic = vi.spyOn(console, 'error').mockImplementation(() => {});
   engine.docker.mockImplementation(async (method, path) => {
     if (path.startsWith('/images/')) return { Id: 'fixed-image' };
     if (path.startsWith('/containers/create')) return { Id: 'grader' };
     if (path.endsWith('/wait')) return new Promise(() => {});
+    if (path.includes('/logs?'))
+      return frame(
+        2,
+        'private-source\nTSUMUCODE_GRADE_STEP:browser-launch:20\nTSUMUCODE_GRADE_STEP:observations:7900\nprivate-token',
+      );
   });
   const grading = gradeProject({
     owner: 'tsumucode-learning-test',
@@ -47,6 +63,13 @@ test('全体10秒で固定graderを回収し、基盤503として期限超過を
   await vi.advanceTimersByTimeAsync(1);
   await rejected;
   assert.ok(engine.removeContainer.mock.calls.some(([id]) => id === 'grader'));
+  assert.deepEqual(diagnostic.mock.calls, [
+    [
+      'Next grade deadline',
+      JSON.stringify({ enginePhase: 'container-wait', phase: 'observations', elapsedMs: 7900 }),
+    ],
+  ]);
+  diagnostic.mockRestore();
 });
 
 for (const [reported, expected] of [
@@ -60,7 +83,8 @@ for (const [reported, expected] of [
       if (path.startsWith('/containers/create')) return { Id: 'grader' };
       if (path.endsWith('/wait')) return { StatusCode: 1 };
       if (path.includes('/logs?'))
-        return Buffer.from(
+        return frame(
+          2,
           `TSUMUCODE_GRADE_PHASE:observations\nTSUMUCODE_GRADE_FAILURE:${reported}\nprivate-learner-text`,
         );
     });
@@ -76,6 +100,123 @@ for (const [reported, expected] of [
         status: 503,
         message: `採点用Browserが終了しました（段階: observations / 分類: ${expected}）。`,
       },
+    );
+    assert.ok(engine.removeContainer.mock.calls.some(([id]) => id === 'grader'));
+  });
+}
+
+for (const unavailable of [false, true]) {
+  test(`期限後のexit0を受理せず、診断取得失敗=${unavailable}でも所有graderを回収する`, async () => {
+    vi.useFakeTimers();
+    const diagnostic = vi.spyOn(console, 'error').mockImplementation(() => {});
+    let complete;
+    engine.removeContainer.mockResolvedValue(undefined);
+    engine.docker.mockImplementation(async (_method, path) => {
+      if (path.startsWith('/images/')) return { Id: 'fixed-image' };
+      if (path.startsWith('/containers/create')) return { Id: 'grader' };
+      if (path.endsWith('/wait'))
+        return new Promise((resolve) => {
+          complete = resolve;
+        });
+      if (path.includes('/logs?stdout=0')) {
+        if (unavailable) throw new Error('private diagnostic failure');
+        return frame(2, 'TSUMUCODE_GRADE_STEP:marker-after:9999\n');
+      }
+      if (path.includes('/logs?stdout=1')) throw new Error('期限後のresult-readは禁止');
+    });
+    const grading = gradeProject({
+      owner: 'tsumucode-learning-test',
+      image: 'tsumucode-learning-test-grader:local',
+      source: { workspaceId: 'one', sourceRevision: 1, sourceHash: 'fixed-source' },
+      runId: '00000000-0000-4000-8000-000000000001',
+      socket: { dev: 1, ino: 2 },
+    });
+    const rejected = assert.rejects(grading, { status: 503 });
+    await vi.advanceTimersByTimeAsync(10000);
+    complete({ StatusCode: 0 });
+    await rejected;
+    assert.ok(engine.removeContainer.mock.calls.some(([id]) => id === 'grader'));
+    assert.equal(
+      engine.docker.mock.calls.some(([, path]) => path.includes('/logs?stdout=1')),
+      false,
+    );
+    assert.equal(diagnostic.mock.calls.length, 1);
+    assert.equal(JSON.stringify(diagnostic.mock.calls).includes('private'), false);
+    diagnostic.mockRestore();
+  });
+}
+
+test('stdoutの実判定と分割stderrを分離し、遅延診断には固定段階だけを採用する', async () => {
+  vi.useFakeTimers();
+  const diagnostic = vi.spyOn(console, 'error').mockImplementation(() => {});
+  engine.removeContainer.mockResolvedValue(undefined);
+  const source = { workspaceId: 'one', sourceRevision: 1, sourceHash: 'fixed-source' };
+  const runId = '00000000-0000-4000-8000-000000000001';
+  engine.docker.mockImplementation(async (_method, path) => {
+    if (path.startsWith('/images/')) return { Id: 'fixed-image' };
+    if (path.startsWith('/containers/create')) return { Id: 'grader' };
+    if (path.endsWith('/wait')) {
+      await vi.advanceTimersByTimeAsync(8000);
+      return { StatusCode: 0 };
+    }
+    if (path.includes('/logs?stdout=1'))
+      return Buffer.concat([
+        frame(2, 'private-token\nTSUMUCODE_GRADE_STEP:marker-'),
+        frame(
+          1,
+          JSON.stringify({
+            ...projectMetadata(source, runId),
+            status: 'pass',
+            actual: 'ok',
+            diagnostics: [],
+          }),
+        ),
+        frame(2, 'after:7900\nTSUMUCODE_GRADE_STEP:private-source:7999\n'),
+      ]);
+  });
+  const result = await gradeProject({
+    owner: 'tsumucode-learning-test',
+    image: 'tsumucode-learning-test-grader:local',
+    source,
+    runId,
+    socket: { dev: 1, ino: 2 },
+  });
+  assert.equal(result.status, 'pass');
+  assert.deepEqual(diagnostic.mock.calls, [
+    [
+      'Next grade slow',
+      JSON.stringify({
+        engineElapsedMs: 8000,
+        progress: [{ phase: 'marker-after', elapsedMs: 7900 }],
+      }),
+    ],
+  ]);
+  assert.ok(engine.removeContainer.mock.calls.some(([id]) => id === 'grader'));
+  diagnostic.mockRestore();
+});
+
+for (const invalid of ['channel', 'truncated', 'limit']) {
+  test(`成功exitでも不正Docker出力 ${invalid} を採用せず回収する`, async () => {
+    engine.removeContainer.mockResolvedValue(undefined);
+    engine.docker.mockImplementation(async (_method, path) => {
+      if (path.startsWith('/images/')) return { Id: 'fixed-image' };
+      if (path.startsWith('/containers/create')) return { Id: 'grader' };
+      if (path.endsWith('/wait')) return { StatusCode: 0 };
+      if (path.includes('/logs?stdout=1')) {
+        if (invalid === 'channel') return frame(3, 'private');
+        if (invalid === 'truncated') return frame(1, '{}').subarray(0, 9);
+        return frame(2, 'x'.repeat(64 * 1024));
+      }
+    });
+    await assert.rejects(
+      gradeProject({
+        owner: 'tsumucode-learning-test',
+        image: 'tsumucode-learning-test-grader:local',
+        source: { workspaceId: 'one', sourceRevision: 1, sourceHash: 'fixed-source' },
+        runId: '00000000-0000-4000-8000-000000000001',
+        socket: { dev: 1, ino: 2 },
+      }),
+      /grade output/iu,
     );
     assert.ok(engine.removeContainer.mock.calls.some(([id]) => id === 'grader'));
   });
