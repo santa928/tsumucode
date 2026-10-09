@@ -88,12 +88,13 @@ async function owned() {
   );
 }
 /** learnerへ追加Nodeを作らず、固定socketから資源の実値を読む。 */
-async function resources(verify = true) {
+async function resources(verify = true, learnerId, timeout = 2000) {
   const measured = await new Promise((resolve, reject) => {
     const req = request(
       {
         socketPath: join(TRANSPORT_ROOT, run.runId, 'http.sock'),
         path: '/__tsumucode_resources',
+        signal: globalThis.AbortSignal.timeout(timeout),
       },
       (res) => {
         const chunks = [];
@@ -114,11 +115,12 @@ async function resources(verify = true) {
         });
       },
     );
-    req.setTimeout(2000, () => req.destroy(new Error('Resource deadline')));
+    req.setTimeout(timeout, () => req.destroy(new Error('Resource deadline')));
     req.on('error', reject);
     req.end();
   });
   if (verify) {
+    if (measured.zombies > 0 && learnerId) await zombieDiagnostic(learnerId, measured);
     assert.equal(measured.zombies, 0, JSON.stringify(measured));
     assert.equal(measured.memoryEvents.max, 0, JSON.stringify(measured));
     assert.equal(measured.memoryEvents.oom, 0, JSON.stringify(measured));
@@ -128,6 +130,69 @@ async function resources(verify = true) {
     assert.ok(measured.temporaryBytes <= 64 * 1024 * 1024);
   }
   return measured;
+}
+
+/** 最初の失敗を保持し、同じlearnerの回収推移だけを1.5秒以内で観測する。 */
+async function zombieDiagnostic(learnerId, first) {
+  const started = Date.now();
+  const remaining = () => Math.max(1, 1500 - (Date.now() - started));
+  const [top, inspected] = await Promise.allSettled([
+    docker(
+      'GET',
+      `/containers/${learnerId}/top?ps_args=${encodeURIComponent('-eo pid,ppid,stat')}`,
+      undefined,
+      Math.min(500, remaining()),
+    ),
+    docker('GET', `/containers/${learnerId}/json`, undefined, Math.min(500, remaining())),
+  ]);
+  const pid = (value, parent = false) => {
+    const number =
+      typeof value === 'number'
+        ? value
+        : typeof value === 'string' && /^\d{1,10}$/u.test(value)
+          ? Number(value)
+          : NaN;
+    return Number.isInteger(number) && number >= (parent ? 0 : 1) && number <= 2147483647
+      ? number
+      : 'unknown';
+  };
+  const table = top.status === 'fulfilled' ? top.value : undefined;
+  const valid =
+    JSON.stringify(table?.Titles) === JSON.stringify(['PID', 'PPID', 'STAT']) &&
+    Array.isArray(table.Processes) &&
+    table.Processes.length <= 64 &&
+    table.Processes.every(
+      (row) =>
+        Array.isArray(row) &&
+        row.length === 3 &&
+        pid(row[0]) !== 'unknown' &&
+        pid(row[1], true) !== 'unknown' &&
+        typeof row[2] === 'string' &&
+        row[2].length <= 8 &&
+        /^[RSDZTtWXI][<NLsl+]*$/u.test(row[2]),
+    );
+  const samples = [{ elapsedMs: 0, measured: first }];
+  for (let index = 0; index < 3 && Date.now() - started < 1400; index++) {
+    await delay(100);
+    const measured = await resources(false, undefined, Math.min(500, remaining())).catch(
+      () => 'unavailable',
+    );
+    samples.push({ elapsedMs: Date.now() - started, measured });
+  }
+  console.error(
+    JSON.stringify({
+      resourceFailure: 'zombie',
+      initPid: inspected.status === 'fulfilled' ? pid(inspected.value?.State?.Pid) : 'unknown',
+      processes: valid
+        ? table.Processes.map(([processId, parentId, state]) => ({
+            pid: pid(processId),
+            ppid: pid(parentId, true),
+            state,
+          }))
+        : 'unavailable',
+      samples,
+    }),
+  );
 }
 
 async function save(files) {
@@ -281,7 +346,7 @@ try {
       0,
     );
     assert.equal((await docker('GET', `/containers/${learner.Id}/json`)).State.OOMKilled, false);
-    const measured = await resources();
+    const measured = await resources(true, learner.Id);
     passed.push(fixture.id);
     console.log(
       JSON.stringify({
