@@ -189,17 +189,14 @@ try {
     const config = await docker('GET', `/containers/${learner.Id}/json`);
     assert.equal(config.Config.User, '1000:1000');
     assert.equal(config.HostConfig.Init, true);
-    const expectedMemoryMiB = [
-      'next-ch02-l01-e01',
-      'next-ch03-l01-e01',
-      'next-ch03-l02-e01',
-      'next-ch05-l01-e01',
-      'next-ch06-l01-e01',
-    ].includes(workspace)
-      ? 576
-      : 512;
+    const expectedMemoryMiB = ['next-ch05-l01-e01', 'next-ch06-l01-e01'].includes(workspace)
+      ? 896
+      : ['next-ch02-l01-e01', 'next-ch03-l01-e01', 'next-ch03-l02-e01'].includes(workspace)
+        ? 576
+        : 512;
     assert.equal(config.HostConfig.Memory, expectedMemoryMiB * 1024 * 1024);
     assert.equal(config.HostConfig.MemorySwap, config.HostConfig.Memory);
+    assert.ok(config.HostConfig.Memory <= 1_000_000_000);
     assert.equal(config.HostConfig.NanoCpus, 1e9);
     assert.equal(config.HostConfig.PidsLimit, 64);
     assert.equal(config.HostConfig.NetworkMode, 'none');

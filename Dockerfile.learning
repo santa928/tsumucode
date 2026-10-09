@@ -61,6 +61,7 @@ CMD ["node", "scripts/local/preview-browser-acceptance.mjs"]
 # 正負Fixtureと通常Lessonの作者検証専用。learner/web/graderへ原稿を含めない。
 FROM browser-checks AS next-browser-checks
 COPY --from=dependencies /workspace/node_modules/yaml ./node_modules/yaml
+COPY --from=dependencies /workspace/node_modules/fflate ./node_modules/fflate
 COPY content/next ./content/next
 CMD ["node", "scripts/local/next-project-browser-acceptance.mjs"]
 

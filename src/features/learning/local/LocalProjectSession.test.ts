@@ -6,6 +6,7 @@ import {
   type WorkspaceRun,
 } from '../../../adapters/runtime/local/LocalWorkspaceClient';
 import type { ExerciseDraft } from '../../../core/persistence/contracts';
+import { migrateRepositorySnapshot } from '../../../adapters/persistence/indexeddb/migrateProgress';
 import { LOCAL_PROJECT } from '../../../core/persistence/localProjectDescriptor';
 import { LocalProjectSession } from './LocalProjectSession';
 import {
@@ -278,6 +279,45 @@ const projectIdentity: ProjectIdentity = {
     }),
   ),
 };
+
+it('制作の採点履歴と合格SnapshotをJSON契約で読み直しても保持する', () => {
+  const result = projectValidation(
+    {
+      ...pass,
+      projectChecks: (['project-structure', 'project-filter', 'project-presentation'] as const).map(
+        (goal) => ({
+          goal,
+          passed: true,
+          actual: '実動作を確認しました。',
+        }),
+      ),
+    },
+    1,
+    projectIdentity,
+  );
+  const draft = {
+    ...projectDraft(files, projectIdentity),
+    validationHistory: [result],
+    lastPassingSnapshots: {
+      [projectIdentity.exerciseId]: {
+        files,
+        editRevision: 1,
+        contentRevision: projectIdentity.revision,
+        evaluatedAt: pass.evaluatedAt,
+      },
+    },
+  };
+  const key = `${draft.courseId}:${draft.workspaceId}`;
+  const restored = migrateRepositorySnapshot(
+    JSON.parse(
+      JSON.stringify({ schemaVersion: 2, courses: {}, drafts: { [key]: draft }, quarantined: [] }),
+    ),
+    pass.evaluatedAt,
+  );
+  expect(restored.quarantined).toEqual([]);
+  expect(restored.drafts[key]).toEqual(draft);
+  expect(projectIsComplete(restored.drafts[key]!, projectIdentity)).toBe(true);
+});
 
 it('制作の途中結果を工程IDへ対応させ、後工程で壊した前工程の合格を戻さない', () => {
   const grade: WorkspaceGrade = {

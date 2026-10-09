@@ -84,7 +84,11 @@ export function projectValidation(
       const observation = grade.projectChecks?.find(({ goal }) => goal === requirement.goal);
       const complete = grade.status !== 'code-error' && observation?.passed === true;
       return {
-        ...requirement,
+        ruleId: requirement.ruleId,
+        requirementId: requirement.requirementId,
+        label: requirement.label,
+        expected: requirement.expected,
+        nextAction: requirement.nextAction,
         required: true,
         passed: complete,
         requirementPassed: complete,
