@@ -77,7 +77,7 @@ describe('Next専用の境界', () => {
 
   it.each([
     [NEXT_WORKSPACE, 512],
-    ['next-ch02-l01-e01', 512],
+    ['next-ch02-l01-e01', 576],
     ['next-ch02-l02-e01', 512],
     ['next-ch03-l01-e01', 576],
     ['next-ch03-l02-e01', 576],

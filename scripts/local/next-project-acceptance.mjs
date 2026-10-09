@@ -181,7 +181,11 @@ try {
     const config = await docker('GET', `/containers/${learner.Id}/json`);
     assert.equal(config.Config.User, '1000:1000');
     assert.equal(config.HostConfig.Init, true);
-    const expectedMemoryMiB = ['next-ch03-l01-e01', 'next-ch03-l02-e01'].includes(workspace)
+    const expectedMemoryMiB = [
+      'next-ch02-l01-e01',
+      'next-ch03-l01-e01',
+      'next-ch03-l02-e01',
+    ].includes(workspace)
       ? 576
       : 512;
     assert.equal(config.HostConfig.Memory, expectedMemoryMiB * 1024 * 1024);

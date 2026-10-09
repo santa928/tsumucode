@@ -33,7 +33,8 @@ iframeから親Stageへ戻るときは既存の編集権再確認を待ってか
 
 固定Next 16.3.8の製品実採点APIで、旧Lesson6例・routing8例・境界9例を確認する。
 初期境界エラー、詳細pageの500、修復後合格、Source再開、古いhash拒否を含む。
-旧3教材のlearnerはCPU1、RAM/swap512 MiB、PID64、tmpfs各64 MiB、network:noneを維持する。
+learnerはCPU1、PID64、tmpfs各64 MiB、network:noneを維持する。
+RAM/MemorySwapはFirst/Clientが512 MiB、本人承認済みのRoutingと新2が576 MiBで、追加swapなし。
 新2教材の承認済み576 MiB変更と追加受入は、下記Issue #134の追加確認に記す。
 
 通常の製品画面で12 Slideの答え開閉、3 Lessonの編集・反映・採点、停止・再開、
@@ -104,3 +105,15 @@ Reviewerの独自実行ではなく、作者の生監視・成功ログ・画像
 他教材の実行条件を維持する。作者のRouting8例は成功したが、ARM環境のpeakは
 160 MiB候補とほぼ同じで、CIの上限接近が解消した証拠にはしない。運用レビューは
 必須修正0件、正式GO保留とし、新HEAD/mainの成功と実測余裕を確認する。
+
+## Routingの追加承認と限定再検証
+
+512 MiB候補はexact HEAD CIが成功しても余裕約2.49 MiBで、運用Reviewerが受入を保留した。
+2026-10-09に本人がRoutingだけMemory/MemorySwap576 MiB（追加swapなし）を承認した。
+First/Client512 MiB、新2の576 MiB、heapと他制約は維持する。
+変更後のRouting8例・通常UI・反映/停止/再起動の作者連続検証は成功し、
+Routing peak494.94 MiB・余裕81.06 MiB、max/oom/oomKill0、checkpoint Zombie0だった。
+監視一時Zombie1と削除前最後の生存sample1を隠さず、終了後のlearner/grader0件を別に記録した。
+教材の先行3ペルソナレビューは入力不変の範囲で継続適用し、今回の資源差分と新実測は
+独立運用Reviewerが生ログを再集計し、必須修正0件・条件付きGOと判断した。
+正式受入にはexact HEAD/main CIと実測余裕の確認を必要とする。

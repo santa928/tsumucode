@@ -35,7 +35,8 @@ devのfont GETとstack-frame POSTは引き続き403で拒否する。この2つ�
 Weather採点の教材エラーに含めず、その他の資源失敗は診断する。
 
 2026-10-08の追加承認により、新2教材のRAMを576 MiBへ変更する。
-MemorySwapも576 MiBとして追加swapを許可せず、旧3教材は512 MiBを維持する。
+MemorySwapも576 MiBとして追加swapを許可しない。2026-10-09の追加承認により
+Routingも576 MiBとし、First/Clientは512 MiBを維持する。
 CPU1、PID64、tmpfs各64 MiB、nonroot、readonly、network:none、cap dropを維持する。
 新2教材だけdevのTurbopackファイルcacheを
 無効にし、dev validationは追加workerではなく同じprocessで行う。Node heapは128 MiB、semi-spaceは4 MiBへ抑える。固定APIのTypeScript変換はimage作成時に行い、learnerで変換器を常駐させない。readonly正本から生成したfactoryを使い、各保存版で状態を初期化する。Source反映時は生成物の`.next`だけを初期化する。Draftは保持する。
