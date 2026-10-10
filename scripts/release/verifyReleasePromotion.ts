@@ -74,12 +74,12 @@ export function validatePostDeployVerification(
     courseId === 'next'
       ? NextPostDeployVerificationSchema.parse(source)
       : courseId === 'react'
-      ? ReactPostDeployVerificationSchema.parse(source)
-      : courseId === 'typescript'
-        ? TypescriptPostDeployVerificationSchema.parse(source)
-        : courseId === 'javascript'
-          ? JavascriptPostDeployVerificationSchema.parse(source)
-          : PostDeployVerificationSchema.parse(source);
+        ? ReactPostDeployVerificationSchema.parse(source)
+        : courseId === 'typescript'
+          ? TypescriptPostDeployVerificationSchema.parse(source)
+          : courseId === 'javascript'
+            ? JavascriptPostDeployVerificationSchema.parse(source)
+            : PostDeployVerificationSchema.parse(source);
   const expectedPath = expectedPostDeployVerificationPath(release.revision, courseId);
   if (release.postDeployVerificationPath !== expectedPath) {
     throw new Error(
@@ -107,7 +107,8 @@ export function validatePostDeployVerification(
   if ('courseId' in verification) {
     const operations = verification.publicSmokeOperations;
     const expected = ['start', 'resume', 'grading', 'persistence', 'export', 'fresh-import'];
-    if (courseId === 'next') expected.push('pages-static-study', 'local-real-http', 'local-source-zip');
+    if (courseId === 'next')
+      expected.push('pages-static-study', 'local-real-http', 'local-source-zip');
     if (
       verification.requiredUnconfirmed !== 0 ||
       new Set(operations.map(({ operationId }) => operationId)).size !== expected.length ||

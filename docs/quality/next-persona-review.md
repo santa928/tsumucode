@@ -1,4 +1,4 @@
-# Nextの5 LessonのAIペルソナレビュー
+# Nextの9教材のAIペルソナレビュー
 
 対象はIssue #132/#133の`next-ch01-l01`、`next-ch02-l01`、`next-ch02-l02`と、
 Issue #134の`next-ch03-l01`、`next-ch03-l02`。
@@ -150,3 +150,21 @@ JSON再読み込み時に内部goalが保存Schemaへ混入する問題を発見
 Courseとレビュー台帳はdraftを維持する。全9教材の原稿hash・各実行証拠・3レビューを
 最終候補へ結び、正確なHEAD/main CI、公開導線/Pages静的学習とLocal実操作のsmoke、
 既存公開承認・Artifact/配信後の確認が揃うまで公開完了にしない。
+
+## 公開導線とゲートの独立レビュー（Issue137）
+
+2026-10-10、`next137_learner_publication_review`、
+`next137_learning_publication_review`、`next137_runtime_publication_review`が
+隔離ブランチの公開準備を読み取り専用で確認した。
+初心者・学習設計は9教材の案内、PagesからLocalへのJSON移行手順、
+Cookie・認証・Cookie保存未対応と親Issue14の留保を確認し、今回の本文修正の必須残件は0。
+運用レビューで見つかった公開承認状態と原本照合bindingの欠落を修正し、再レビューで必須残件0。
+これは原稿・実装の査読であり、Reviewerの独自Browser実行や実人受講の成功記録ではない。
+
+公開品質記録はNext専用の9教材・9Workspace・81FixtureとPages静的学習を使用し、
+既存React等のBrowserや性能記録をNextの成功へ差し替えない。
+既存4コースの継続性と全site品質検査を維持し、公開直前にはPからProductが不変な
+main SHAのLocal Runtime CI成功・必須step・資源証拠Artifactを公開APIで確認する。
+独立原本照合の承認は、実際の原本を確認してから品質記録全体hashと対象SHAへ結ぶ。
+最終の候補・CI・配信後の結果は`next-release-acceptance.yaml`、Release台帳、
+revision別の公開後記録を正とする。人間受講と実低性能端末は未確認として残す。

@@ -1,6 +1,12 @@
 import { z } from 'zod';
 
-export const ReleaseCourseIdSchema = z.enum(['html-css', 'javascript', 'typescript', 'react', 'next']);
+export const ReleaseCourseIdSchema = z.enum([
+  'html-css',
+  'javascript',
+  'typescript',
+  'react',
+  'next',
+]);
 export type ReleaseCourseId = z.infer<typeof ReleaseCourseIdSchema>;
 
 const htmlCssContract = {

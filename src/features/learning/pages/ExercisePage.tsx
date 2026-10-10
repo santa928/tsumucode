@@ -43,11 +43,11 @@ export function ExercisePage() {
   const sessionKey = `${data.course.id}:${data.course.revision}:${data.exercise.id}:${data.exercise.workspaceId}`;
   if (data.exercise.runtime?.kind === 'next' && import.meta.env.VITE_LOCAL_LEARNING !== '1') {
     return (
-      <section>
+      <section className="mx-auto max-w-3xl px-4 py-6">
         <Link to="/" className="inline-flex min-h-11 items-center font-bold underline">
           学習一覧へ戻る
         </Link>
-        <h1>{data.exercise.title}</h1>
+        <h1 className="my-4 text-2xl font-black">{data.exercise.title}</h1>
         <WorkshopNotice tone="neutral" title="この演習はLocal学習環境で実行します">
           Next.jsのpageとRoute
           HandlerはDocker内の実サーバーで確認します。Pagesでは説明と読書を提供し、実行・採点にはLocal学習環境が必要です。
