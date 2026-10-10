@@ -22,6 +22,7 @@ export function createPlaywrightConfig(basePath = process.env['BASE_PATH']) {
     workers: process.env.CI ? 1 : 2,
     retries: process.env.CI ? 2 : 0,
     reporter: [
+      ['list'],
       ['html', { outputFolder: 'playwright-report', open: 'never' }],
       ['json', { outputFile: 'test-results/e2e-summary.json' }],
     ],

@@ -208,6 +208,7 @@ jobs:
           VERIFIED_SOURCE_COMMIT: ${{ needs.resolve.outputs.verified_source_commit }}
         run: test "$(git rev-parse HEAD)" = "$VERIFIED_SOURCE_COMMIT"
       - name: Chromium full and cross-browser smoke
+        timeout-minutes: 120
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
         run: ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run test:e2e
