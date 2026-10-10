@@ -9,3 +9,5 @@ useActionState(saveNote, initialState)は[state, formAction, pending]を返し�
 ラベルから入力し、Tab・Enterでも送信してください。案内はlive regionに表示されます。同じ内容で再試行し、「このメモの保存回数: 1」を確認したら、別の内容へ入力を変えて以前の結果が消えることも確かめます。
 
 保存・反映したSource版を判定します。判定は専用のメモを使うため、Previewで試したメモの履歴を消しません。判定中はPreviewの送信を待ってください。停止後もコードの下書きは残ります。
+
+Cookie・認証・Cookieによる保存は未対応です。親Issue #14で扱う残タスクです。この教材の練習用履歴はSource反映や停止再開で初期化されます。

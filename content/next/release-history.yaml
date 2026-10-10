@@ -1,0 +1,32 @@
+schemaVersion: 2
+courseId: next
+releases: []
+candidate:
+  courseId: next
+  revision: 2026-10-09.2
+  status: draft
+  verifiedSourceCommit: draft
+  canonicalDistSha256: draft
+  courseManifestSha256: draft
+  publicProvenanceSha256: draft
+  persistentIdsSha256: draft
+  persistentIds: []
+  previousReleaseTag: null
+  tombstonedIds: []
+  migrations:
+    - fromRevision: 2026-10-08.1
+      toRevision: 2026-10-08.2
+      steps: []
+    - fromRevision: 2026-10-08.2
+      toRevision: 2026-10-08.3
+      steps: []
+    - fromRevision: 2026-10-08.3
+      toRevision: 2026-10-09.1
+      steps: []
+    - fromRevision: 2026-10-09.1
+      toRevision: 2026-10-09.2
+      steps: []
+  syntheticProgressBundlePath: tests/fixtures/progress/next-previous-release-bundle.json
+  draftSourceCommit: draft
+  draftCanonicalDistSha256: draft
+  normalizedLearningInputSha256: draft

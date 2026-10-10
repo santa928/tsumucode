@@ -23,6 +23,7 @@ import {
   type CourseReleaseHistory,
 } from './javascriptReleaseSchema';
 import { ReactPostDeployVerificationSchema } from './reactReleaseSchema';
+import { NextPostDeployVerificationSchema } from './nextReleaseSchema';
 import { TypescriptPostDeployVerificationSchema } from './typescriptReleaseSchema';
 import { verifyPublishedTag } from './verifyReleaseTarget';
 import { parseReleaseReport, type ReleaseReportInput } from './writeReleaseReport';
@@ -70,7 +71,9 @@ export function validatePostDeployVerification(
 ): void {
   const courseId = release.courseId ?? 'html-css';
   const verification =
-    courseId === 'react'
+    courseId === 'next'
+      ? NextPostDeployVerificationSchema.parse(source)
+      : courseId === 'react'
       ? ReactPostDeployVerificationSchema.parse(source)
       : courseId === 'typescript'
         ? TypescriptPostDeployVerificationSchema.parse(source)
@@ -104,6 +107,7 @@ export function validatePostDeployVerification(
   if ('courseId' in verification) {
     const operations = verification.publicSmokeOperations;
     const expected = ['start', 'resume', 'grading', 'persistence', 'export', 'fresh-import'];
+    if (courseId === 'next') expected.push('pages-static-study', 'local-real-http', 'local-source-zip');
     if (
       verification.requiredUnconfirmed !== 0 ||
       new Set(operations.map(({ operationId }) => operationId)).size !== expected.length ||

@@ -34,7 +34,7 @@ export interface ResolvedReleaseTarget {
 
 /** 全site Artifactへ公開TS/Reactを含めるbetaは、選択Courseによらず拒否する。未公開Courseと旧Sourceは維持する。 */
 export async function verifyBetaSitePublication(repositoryRoot: string): Promise<void> {
-  for (const courseId of ['typescript', 'react'] as const) {
+  for (const courseId of ['typescript', 'react', 'next'] as const) {
     let source: string;
     try {
       source = await readFile(path.join(repositoryRoot, `content/${courseId}/course.yaml`), 'utf8');
@@ -57,7 +57,7 @@ export function resolveBetaTarget(
   checkoutHeadShaInput: string,
   courseId: ReleaseCourseId = 'html-css',
 ): ResolvedReleaseTarget {
-  if (courseId === 'typescript' || courseId === 'react')
+  if (courseId === 'typescript' || courseId === 'react' || courseId === 'next')
     throw new Error('TS/Reactのbeta配信は公開承認を省略するため許可しません');
   const sourceSha = CommitShaSchema.parse(sourceShaInput);
   const workflowHeadSha = CommitShaSchema.parse(workflowHeadShaInput);
@@ -193,7 +193,7 @@ export async function verifyReleaseTarget(options: {
     encoding: 'utf8',
   });
   if (
-    (contract.courseId === 'typescript' || contract.courseId === 'react') &&
+    (contract.courseId === 'typescript' || contract.courseId === 'react' || contract.courseId === 'next') &&
     options.mode === 'beta'
   )
     throw new Error('TS/Reactのbeta配信は公開承認を省略するため許可しません');

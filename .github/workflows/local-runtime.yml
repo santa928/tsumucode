@@ -27,6 +27,8 @@ on:
       - package.json
       - package-lock.json
       - .dockerignore
+      - scripts/release/**
+      - tests/unit/release/**
       - .github/workflows/local-runtime.yml
   pull_request:
     branches: [main]
@@ -54,6 +56,8 @@ on:
       - package.json
       - package-lock.json
       - .dockerignore
+      - scripts/release/**
+      - tests/unit/release/**
       - .github/workflows/local-runtime.yml
 
 permissions:
@@ -68,6 +72,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
+      TSUMUCODE_NEXT_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       TSUMUCODE_LOCAL_OWNER: tsumucode-learning-ci
       TSUMUCODE_LOCAL_SOCKET: /var/run/docker.sock
       COMPOSE_PARALLEL_LIMIT: 1
@@ -75,6 +80,7 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Prepare fixed one-shot Node image
         run: docker pull node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5
       - name: Build fixed learner and trusted services
@@ -96,25 +102,29 @@ jobs:
           docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256
           --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-browser-checks"
           node scripts/local/project-browser-acceptance.mjs
+      - name: Prepare bounded Next resource evidence
+        run: mkdir -p .release-next-native-ci
       - name: Verify Next Action response completion, resources and recovery
         run: |
+          set -euo pipefail
           docker build --file Dockerfile.learning --target next-browser-checks --tag "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" .
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
           docker run --rm --network none "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" node scripts/local/next-fixture-packet.mjs next-ch04-l02-e01 |
-            docker exec -i -e TSUMUCODE_NEXT_WORKSPACE=next-ch04-l02-e01 "$controller" node next-project-acceptance.mjs
+            docker exec -i -e TSUMUCODE_NEXT_WORKSPACE=next-ch04-l02-e01 "$controller" node next-project-acceptance.mjs | tee -a .release-next-native-ci/fixtures.log
       - name: Verify Next production Project stages and resources
         run: |
           set -euo pipefail
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
           for workspace in next-ch05-l01-e01 next-ch06-l01-e01; do
             docker run --rm --network none "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" node scripts/local/next-fixture-packet.mjs "$workspace" |
-              docker exec -i -e TSUMUCODE_NEXT_WORKSPACE="$workspace" "$controller" node next-project-acceptance.mjs
+              docker exec -i -e TSUMUCODE_NEXT_WORKSPACE="$workspace" "$controller" node next-project-acceptance.mjs | tee -a .release-next-native-ci/fixtures.log
           done
       - name: Verify Next real page, query HTTP, resources and recovery
         run: |
+          set -euo pipefail
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
           docker run --rm --network none "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" node scripts/local/next-fixture-packet.mjs |
-            docker exec -i "$controller" node next-project-acceptance.mjs
+            docker exec -i "$controller" node next-project-acceptance.mjs | tee -a .release-next-native-ci/fixtures.log
       - name: Verify Next normal Lesson learning UI
         run: >-
           docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256
@@ -147,7 +157,7 @@ jobs:
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
           for workspace in next-ch02-l01-e01 next-ch02-l02-e01 next-ch03-l01-e01 next-ch03-l02-e01 next-ch04-l01-e01; do
             docker run --rm --network none "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" node scripts/local/next-fixture-packet.mjs "$workspace" |
-              docker exec -i -e TSUMUCODE_NEXT_WORKSPACE="$workspace" "$controller" node next-project-acceptance.mjs
+              docker exec -i -e TSUMUCODE_NEXT_WORKSPACE="$workspace" "$controller" node next-project-acceptance.mjs | tee -a .release-next-native-ci/fixtures.log
           done
       - name: Verify Next routing and boundary normal Lessons and JSON transfer
         run: >-
@@ -209,6 +219,22 @@ jobs:
           if [ -n "$controller" ]; then
             docker logs "$controller" 2>&1 | grep -E '^Next (Source apply failure|grade (deadline|slow|timing|failure)) ' || true
           fi
+      - name: Collect exact Next native resource evidence
+        run: >-
+          docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges:true
+          -e TSUMUCODE_NEXT_SOURCE_SHA -e GITHUB_RUN_ID -e GITHUB_RUN_ATTEMPT
+          --mount type=bind,src="$PWD",dst=/workspace
+          --workdir /workspace
+          node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5
+          node scripts/release/nextNativeEvidence.mjs .release-next-native-ci/fixtures.log .release-next-native-ci/evidence.json
+      - name: Upload exact Next native resource evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: next-native-evidence-${{ github.event.pull_request.head.sha || github.sha }}
+          path: .release-next-native-ci/evidence.json
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 30
       - name: Stop only this learning stack and preserve Source volume
         if: always()
         run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml down

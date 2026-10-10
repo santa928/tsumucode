@@ -9,7 +9,7 @@ Next16.3.8 / Node24.18.0 / React・ReactDOM19.2.7 / TypeScript6.0.3。PR83の固
 
 最初のLessonはpage表示・GETのquery別JSONだけ。Nodeのserver moduleは固定Docker内で動き、外部通信・ホストmount・依存導入・Cookie・POST・Terminalは提供しない。開発Previewだけunsafe-evalを許可し、管理画面とViteの契約を保つ。
 
-以降は#133 App Router/Link/layout、#134 rendering/data、#135 Action/Cookie、#136 styling、#137品質確認の依存順。初回の目標3つは説明3画面、2編集工程、固定独立Browser/HTTPの合成必須Ruleへ対応する。build時の事前生成とrequest時の処理を区別し、Pages staticをserver処理と呼ばない。今回の採点は実DOM/HTTPとruntime errorを対象にし、TypeScriptの静的型検査の合格を主張しない。
+以降は#133 App Router/Link/layout、#134 rendering/data、#135 Form/Action、#136 styling、#137品質確認の依存順。初回の目標3つは説明3画面、2編集工程、固定独立Browser/HTTPの合成必須Ruleへ対応する。build時の事前生成とrequest時の処理を区別し、Pages staticをserver処理と呼ばない。今回の採点は実DOM/HTTPとruntime errorを対象にし、TypeScriptの静的型検査の合格を主張しない。
 
 - [Layouts and Pages](https://nextjs.org/docs/app/getting-started/layouts-and-pages): page/layout、nested route、Promiseのparams。
 - [Server and Client Components](https://nextjs.org/docs/app/getting-started/server-and-client-components): use clientの境界、直列化できるprops、状態とイベント。
@@ -40,4 +40,4 @@ ClientのHTML制約とServer側validationを区別し、useActionStateの戻り�
 - [Image](https://nextjs.org/docs/app/api-reference/components/image)：alt、寸法、unoptimized。本教材は固定SVGを元画像のまま表示します。
 - [page](https://nextjs.org/docs/app/api-reference/file-conventions/page)：Promiseのparams/searchParamsとGET選択。
 
-公式サイトの最新版表示は16.4.0ですが、教材のmanifest/lockは16.3.8を維持します。制作2教材はGET選択だけで、保存や新しいActionを追加しません。固定SVGと9Sourceだけを持ち出し、端末JSONの進捗移送と分けます。学習用Nativeの固定5教材は承認済み576MiB/追加swapなし、持ち出しproductionは同梱Composeの512MiBです。Courseはdraftを維持します。
+公式サイトの最新版表示は16.4.0ですが、教材のmanifest/lockは16.3.8を維持します。制作2教材はGET選択だけで、保存や新しいActionを追加しません。固定SVGと9Sourceだけを持ち出し、端末JSONの進捗移送と分けます。学習用Nativeの9教材は、First/Client/Form/Actionが512MiB、Routing/Data/Weatherが576MiB、Guided Project/Capstoneが896MiBです。追加swapなし・CPU1・PID64を維持します。持ち出しproductionは同梱Composeの512MiBです。Pagesでは説明と読書を提供し、実行・採点はLocal Docker環境で行います。Cookie・認証・Cookieによる保存は未対応で、親Issue #14の残タスクです。

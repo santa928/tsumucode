@@ -39,7 +39,7 @@ async function stop() {
 
 try {
   await page.goto('http://127.0.0.1:4173/#/');
-  await page.getByRole('link', { name: 'Next.jsの最初のLessonを開く' }).click();
+  await page.getByRole('link', { name: 'Next.jsの9教材を開く' }).click();
   await expect(
     page.getByRole('heading', { name: 'Next.js 実サーバーの第一歩', exact: true }),
   ).toBeVisible();

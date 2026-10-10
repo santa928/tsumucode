@@ -13,8 +13,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      "全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。\
+    notes: "全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。\
       公開candidate/配信SHAの受入は未完。詳細はnext-persona-review.md。以前の教材別実測は同記録に保持する。
       以前の作者証拠（当時の条件）: 4 Slideの提示コードからの予測、pageとquery別HTTPの区別、工程・Hint・Solutionを3
       AIペルソナで独立読解。作者の固定Next16.3.8で6Fixture、実画面の予測keyboard開閉、page/JSON変更、実例外の修復、\
@@ -32,8 +31,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      "全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。\
+    notes: "全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。\
       公開candidate/配信SHAの受入は未完。詳細はnext-persona-review.md。以前の教材別実測は同記録に保持する。
       以前の作者証拠（当時の条件）: 4 Slideの予測、page/layout/params、工程・Hint・Solutionを3
       AIペルソナで独立読解。作者の固定Next16.3.8で8Fixture、実URL直接アクセス/reload/文書リンク、layout/2slug\
@@ -52,8 +50,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      "全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。\
+    notes: "全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。\
       公開candidate/配信SHAの受入は未完。詳細はnext-persona-review.md。以前の教材別実測は同記録に保持する。
       以前の作者証拠（当時の条件）: 4 Slideの予測、CounterだけのClient境界修復、Server
       async/Nodeと数値・文字列props、工程・Hint・Solutionを3
@@ -73,8 +70,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      "全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。\
+    notes: "全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。\
       公開candidate/配信SHAの受入は未完。詳細はnext-persona-review.md。以前の教材別実測は同記録に保持する。
       以前の作者証拠（当時の条件）: 4 Slideの予測、再要求の対象→入口→対象操作、Server fetchの取得・保持・期限後更新を3
       AIペルソナで独立読解。作者の固定Next16.3.8/512MiBの固定API分離試作8FixtureとSource保持/restart、正式整\
@@ -92,8 +88,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      "全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。\
+    notes: "全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。\
       公開candidate/配信SHAの受入は未完。詳細はnext-persona-review.md。以前の教材別実測は同記録に保持する。
       以前の作者証拠（当時の条件）: 4 Slideの予測、待機→結果、retryによる実再取得、API404とstream済みpage200の区別を3
       AIペルソナで独立読解。作者の固定Next16.3.8/512MiBの固定API分離試作9Fixture（常時status負例を含む）と、正式通常\
@@ -104,8 +99,8 @@ lessons:
       了とは扱わない。詳細はnext-persona-review.md。"
   - lessonId: next-ch04-l01
     authorId: tsumucode-next-course-authoring
-    reviewerId: next136_learning_review
-    sourceHash: 6039113d56e9c510cabd315a569cfd4c3779423feb9c98e6585cfb46083378e8
+    reviewerId: next137_learning_publication_review
+    sourceHash: 34587c4ef1abb0f472224843385a4c40c93bb7703847185b5e40709330be23d3
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -113,10 +108,11 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes: 全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。公開candidate/配信SHAの受入は未完。詳細はnext-persona-review.md。
+      2026-10-10の教材独立読解でCookie・認証・Cookie保存未対応と親Issue14留保の追記を確認、必須残件0。公開成功・人間受講・独自Browser実行は確認範囲に含まない。
   - lessonId: next-ch04-l02
     authorId: tsumucode-next-course-authoring
-    reviewerId: next136_learning_review
-    sourceHash: 766661180317835a51a32a733e21383302b7bd792bf8f28081ac0087da646d92
+    reviewerId: next137_learning_publication_review
+    sourceHash: d96aaa2f0e53498de38a6d0b68dcb26bf55f6058c916cc3d80747d47afdb815a
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -124,6 +120,7 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes: 全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。公開candidate/配信SHAの受入は未完。詳細はnext-persona-review.md。
+      2026-10-10の教材独立読解でCookie・認証・Cookie保存未対応と親Issue14留保の追記を確認、必須残件0。公開成功・人間受講・独自Browser実行は確認範囲に含まない。
   - lessonId: next-ch05-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: next136_learning_review

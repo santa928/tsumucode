@@ -7,6 +7,9 @@ defaults:
   license: project-original
   modified: false
 items:
+  - id: next-release-history-authoring
+    visibility: authoring
+    path: release-history.yaml
   - id: next-original-2
     visibility: public
     path: chapters/next-ch01/chapter.yaml

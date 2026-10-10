@@ -25,6 +25,13 @@ import {
   type ReactReleaseHistory,
   type ReactPublishedRelease,
 } from './reactReleaseSchema';
+import {
+  NextReleaseApprovalSchema,
+  NextReleaseHistorySchema,
+  type NextReleaseApproval,
+  type NextReleaseHistory,
+  type NextPublishedRelease,
+} from './nextReleaseSchema';
 
 const jsContract = resolveReleaseCourseContract('javascript');
 const HashBindingSchema = z.union([Sha256Schema, z.literal('draft')]);
@@ -117,17 +124,20 @@ export type CourseReleaseApproval =
   | z.infer<typeof ReleaseApprovalSchema>
   | JavascriptReleaseApproval
   | TypescriptReleaseApproval
-  | ReactReleaseApproval;
+  | ReactReleaseApproval
+  | NextReleaseApproval;
 export type CourseReleaseHistory =
   | z.infer<typeof ReleaseHistorySchema>
   | JavascriptReleaseHistory
   | TypescriptReleaseHistory
-  | ReactReleaseHistory;
+  | ReactReleaseHistory
+  | NextReleaseHistory;
 export type CoursePublishedRelease =
   | z.infer<typeof PublishedReleaseSchema>
   | JavascriptPublishedRelease
   | TypescriptPublishedRelease
-  | ReactPublishedRelease;
+  | ReactPublishedRelease
+  | NextPublishedRelease;
 
 /** selected Courseのstrict schemaだけで承認を読む。混在/legacy JSを拒否する。 */
 export function parseCourseReleaseApproval(
@@ -143,6 +153,7 @@ export function parseCourseReleaseApproval(
   input: unknown,
 ): CourseReleaseApproval {
   const contract = resolveReleaseCourseContract(courseId);
+  if (contract.courseId === 'next') return NextReleaseApprovalSchema.parse(input);
   if (contract.courseId === 'react') return ReactReleaseApprovalSchema.parse(input);
   if (contract.courseId === 'typescript') return TypescriptReleaseApprovalSchema.parse(input);
   return contract.courseId === 'javascript'
@@ -164,6 +175,7 @@ export function parseCourseReleaseHistory(
   input: unknown,
 ): CourseReleaseHistory {
   const contract = resolveReleaseCourseContract(courseId);
+  if (contract.courseId === 'next') return NextReleaseHistorySchema.parse(input);
   if (contract.courseId === 'react') return ReactReleaseHistorySchema.parse(input);
   if (contract.courseId === 'typescript') return TypescriptReleaseHistorySchema.parse(input);
   return contract.courseId === 'javascript'

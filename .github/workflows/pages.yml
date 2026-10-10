@@ -21,7 +21,7 @@ on:
       course_id:
         description: 承認履歴と証拠を照合するCourse（品質検証は全site）
         type: choice
-        options: [html-css, javascript, typescript, react]
+        options: [html-css, javascript, typescript, react, next]
         required: true
         default: html-css
       source_sha:
@@ -73,8 +73,8 @@ jobs:
       - name: Build release verifier
         if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'
         run: ./scripts/docker-compose.sh build app
-      - name: Compile TypeScript candidate content for source review
-        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main' && (inputs.course_id == 'typescript' || inputs.course_id == 'react')
+      - name: Compile selected candidate content for source review
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main' && (inputs.course_id == 'typescript' || inputs.course_id == 'react' || inputs.course_id == 'next')
         run: ./scripts/docker-compose.sh run --rm app npm run content:compile
       - name: Resolve candidate, beta, or registered rollback
         if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'
@@ -184,11 +184,21 @@ jobs:
         if: needs.resolve.outputs.course_id != 'html-css' && needs.resolve.outputs.release_mode != 'rollback'
         run: ./scripts/docker-compose.sh run --rm app npm run release:continuity -- --quality-only --course-id html-css
       - name: Keep existing JavaScript continuity in the all-site gate
-        if: (needs.resolve.outputs.course_id == 'typescript' || needs.resolve.outputs.course_id == 'react') && needs.resolve.outputs.release_mode != 'rollback'
+        if: (needs.resolve.outputs.course_id == 'typescript' || needs.resolve.outputs.course_id == 'react' || needs.resolve.outputs.course_id == 'next') && needs.resolve.outputs.release_mode != 'rollback'
         run: ./scripts/docker-compose.sh run --rm app npm run release:continuity -- --quality-only --course-id javascript
       - name: Keep existing TypeScript continuity in the all-site gate
-        if: needs.resolve.outputs.course_id == 'react' && needs.resolve.outputs.release_mode != 'rollback'
+        if: (needs.resolve.outputs.course_id == 'react' || needs.resolve.outputs.course_id == 'next') && needs.resolve.outputs.release_mode != 'rollback'
         run: ./scripts/docker-compose.sh run --rm app npm run release:continuity -- --quality-only --course-id typescript
+      - name: Keep existing React continuity in the all-site gate
+        if: needs.resolve.outputs.course_id == 'next' && needs.resolve.outputs.release_mode != 'rollback'
+        run: ./scripts/docker-compose.sh run --rm app npm run release:continuity -- --quality-only --course-id react
+      - name: Confirm exact Next native CI before publication
+        if: needs.resolve.outputs.course_id == 'next' && needs.resolve.outputs.release_mode == 'candidate'
+        env:
+          WORKFLOW_HEAD_SHA: ${{ github.sha }}
+        run: >-
+          ./scripts/docker-compose.sh run --rm app node scripts/release/verifyNextNativeCi.mjs
+          --source-sha "$WORKFLOW_HEAD_SHA" --output /workspace/.release-next-native-gate.json
       - name: Confirm rollback checkout
         if: needs.resolve.outputs.release_mode == 'rollback'
         env:
@@ -264,8 +274,10 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: quality-evidence-${{ needs.resolve.outputs.verified_source_commit }}
+          include-hidden-files: true
           path: |
             release-quality.json
+            .release-next-native-gate.json
             playwright-report
             playwright-performance-report
             test-results
