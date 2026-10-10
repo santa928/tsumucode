@@ -4,7 +4,7 @@ releases: []
 candidate:
   revision: 2026-10-10.1
   status: approved
-  verifiedSourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
+  verifiedSourceCommit: 1e609d2e61fe95b5b481ec91d17b4f06a7482c7d
   canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
   courseManifestSha256: 8b7bf849887f09426f8dbaf18cfa453cd7f33f1c2c886083d7de5b5c7c2d38bc
   publicProvenanceSha256: 78c5f4a45436b7b8b0126938aa3c8f6ddd76690c0dd3c6152de524c9e694790c
@@ -28,7 +28,7 @@ candidate:
   tombstonedIds: []
   migrations: []
   syntheticProgressBundlePath: tests/fixtures/progress/python-previous-release-bundle.json
-  draftSourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
+  draftSourceCommit: 1e609d2e61fe95b5b481ec91d17b4f06a7482c7d
   draftCanonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
-  normalizedLearningInputSha256: 62effd028951703e17aa2810f5007d715e1cf1dabaf2a152dda7665ca2106145
+  normalizedLearningInputSha256: 0cc0934ed5f1538cd32c7d61dbaa52c2fdef16ad59ff49cf6fde92ca708fe745
   courseId: python-basics
