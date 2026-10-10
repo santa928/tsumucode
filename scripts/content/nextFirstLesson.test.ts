@@ -1,3 +1,6 @@
+import { readFile } from 'node:fs/promises';
+import { parse } from 'yaml';
+import { CourseSourceSchema } from './sourceSchema';
 import { describe, expect, it } from 'vitest';
 import { loadAuthoringCourse } from './compileCourse';
 import { NEXT_STARTER_FILES } from '../local/next-project-protocol.mjs';
@@ -6,7 +9,10 @@ import { CourseManifestSchema } from '../../src/core/content/schema';
 describe('Next最初の通常Lesson', () => {
   it('初期Sourceと固定実行契約を揃え、正負Fixtureと説明を通常Lessonへ接続する', async () => {
     const compiled = await loadAuthoringCourse('content/next');
-    expect(compiled.runtime.publicationStatus).toBe('draft');
+    const source = CourseSourceSchema.parse(
+      parse(await readFile('content/next/course.yaml', 'utf8')),
+    );
+    expect(compiled.runtime.publicationStatus).toBe(source.publicationStatus);
     expect(compiled.runtime.expectedTotals.standardExercises).toBe(7);
     const lesson = compiled.runtime.phases[0]!.chapters[0]!.lessons[0]!;
     expect(lesson.kind).toBe('standard');
