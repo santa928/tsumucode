@@ -72,7 +72,7 @@ describe('Next初公開の保存互換', () => {
       'next',
       parse(await readFile('content/next/release-history.yaml', 'utf8')),
     );
-    expect(history.courseId).toBe('next');
+    expect(history).toMatchObject({ courseId: 'next' });
     expect(history.candidate.syntheticProgressBundlePath).toBe(
       'tests/fixtures/progress/next-previous-release-bundle.json',
     );
