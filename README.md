@@ -89,11 +89,11 @@ HTML/CSSとDOMを使うJavaScript演習は「ブラウザで実行」と表示�
 
 実行できたことと教材の合格は別です。未対応・制限停止・環境障害を採点履歴へ保存しません。編集内容と前回の成功結果は保持します。DOM操作後の例外と未捕捉Promise拒否も、判定中の観測でコード診断へ反映します。遅延処理の予算・タイマー上限による停止は採点しません。Console実行は1500ms、100件・1件4KiB・合計64KiBの出力上限を設け、停止後は新しいWorkerで再試行します。DOM側の変数添字等の制約は残ります。dom / dom-form profileの`currentTarget`は同じDocumentのElementとdispatch後のnullに対応し、非Elementの取得は未対応として採点しません。Form用の`dom-form`はnative submitと学習者のpreventDefaultを操作ごとに観測します。通信・遷移は引き続き禁止し、Ch08-l03で取消と表示を確認します。詳細は[DOM実行の境界](docs/quality/browser-dom-runtime.md)を参照してください。実行方式と確認範囲は[Browser Console設計記録](docs/quality/browser-console-runtime.md)に記載しています。
 
-ローカルDocker学習版では、Closureのガイド練習と任意の追加練習2件を実Node.jsで実行できます。Next.jsの9教材では、説明と読書に加え、Local Docker環境で実page・限定GET/POST・Server Actionを確認できます。Pythonとターミナルは未実装です。Pagesや読書画面からlocalhostを探索しません。実行portと任意DOM portの境界・制限は[Issue #27の設計記録](docs/quality/runtime-execution-boundary.md)に記載しています。
+ローカルDocker学習版では、Closureのガイド練習と任意の追加練習2件を実Node.jsで実行できます。Next.jsの9教材では、説明と読書に加え、Local Docker環境で実page・限定GET/POST・Server Actionを確認できます。Pythonの入門演習はPagesでPyodide、Local Dockerで実CPythonを使います。ターミナルは未実装です。Pagesや読書画面からlocalhostを探索しません。実行portと任意DOM portの境界・制限は[Issue #27の設計記録](docs/quality/runtime-execution-boundary.md)に記載しています。
 
 ## ローカルNode.js学習
 
-Dockerを起動し、リポジトリ直下で次を実行します。初回は固定Node/Chromiumイメージの取得と学習画面のbuildを行います。ホストへのNode/npm導入は不要です。
+Dockerを起動し、リポジトリ直下で次を実行します。初回は固定Node/CPython/Chromiumイメージの取得と学習画面のbuildを行います。ホストへのNode/npm導入は不要です。
 
 ```bash
 ./scripts/learn.sh
@@ -133,6 +133,14 @@ Nextの固定依存・資源・CSP・採点範囲は[最初のNext Lessonの契�
 4173番または4175番の競合で起動できない場合は、既に起動した学習モードを確認し、他の作業のサービスを勝手に停止せず競合を解消してください。Host/Originの安全確認があるためportだけを変更しないでください。Docker切断時はDockerと学習モードを起動し直して、画面の「プレビューを更新」または「判定する」で再試行します。Browserへの自動切替はありません。
 
 PagesとLocalはOriginが異なり、IndexedDBは自動同期しません。移行元HomeからJSONを書き出し、移行先Homeで読み込み差分を確認して反映します。教材ID・進捗・下書き・採点履歴の形式は共通です。
+
+## ローカルPython学習
+
+同じ学習モードで「Python 値と変数の第一歩」からコード演習へ進みます。画面には「ローカル CPython 3.14.2で実行」と表示します。「プレビューを更新」で`main.py`の実出力を確認し、「判定する」でBrowser版と同じ2条件を確認します。終了コード0と教材の合格は別です。
+
+固定CPythonを使い捨ての隔離コンテナで実行します。Nodeと実行枠・資源上限を共有し、停止後は子processを含めて回収します。パッケージ追加や通信は扱いません。教材の採点範囲外でも正常終了した場合、出力を表示して「未対応」と案内し、採点履歴は増やしません。構文・実行エラーはコード診断として履歴へ残します。Browserへの自動切替はありません。
+
+PagesとLocalは別Originですが、同じ教材IDで下書き・進捗・採点履歴をJSON移送できます。固定image、API、Browserとの違い、検証範囲は[Local CPythonの契約](docs/quality/local-python-runtime.md)を参照してください。
 
 ## 端末データ、容量、引き継ぎ
 

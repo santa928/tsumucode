@@ -36,7 +36,10 @@ CMD ["node", "web.mjs"]
 FROM node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5 AS controller
 WORKDIR /app
 COPY --from=build /workspace/public/generated/content/courses/javascript/index.json ./course-index.json
+COPY --from=build /workspace/public/generated/content/courses/python-basics/index.json ./python-course-index.json
 COPY scripts/local/controller.mjs scripts/local/protocol.mjs scripts/local/docker-engine.mjs ./
+COPY scripts/local/python-profile.mjs ./
+COPY src/core/runtime/pythonLessonAnalysis.mjs ./python-lesson-analysis.mjs
 COPY scripts/local/project-protocol.mjs scripts/local/workspace-store.mjs scripts/local/project-engine.mjs scripts/local/resident-workspace.mjs ./
 COPY scripts/local/preview-contract.mjs scripts/local/next-data-preview.mjs scripts/local/next-form-preview.mjs scripts/local/preview-control.mjs scripts/local/preview-transport.mjs ./
 COPY scripts/local/project-grade-engine.mjs scripts/local/next-project-protocol.mjs scripts/local/next-routing-source.mjs scripts/local/next-data-source.mjs scripts/local/next-form-source.mjs scripts/local/next-production-source.mjs scripts/local/next-project-acceptance.mjs ./
@@ -57,6 +60,7 @@ COPY --from=dependencies /workspace/node_modules/playwright-core ./node_modules/
 COPY --from=dependencies /workspace/node_modules/@axe-core/playwright ./node_modules/@axe-core/playwright
 COPY --from=dependencies /workspace/node_modules/axe-core ./node_modules/axe-core
 COPY scripts/local ./scripts/local
+COPY src/core/runtime/pythonLessonAnalysis.mjs ./src/core/runtime/pythonLessonAnalysis.mjs
 CMD ["node", "scripts/local/preview-browser-acceptance.mjs"]
 
 # 正負Fixtureと通常Lessonの作者検証専用。learner/web/graderへ原稿を含めない。
@@ -75,3 +79,12 @@ COPY content/next ./content/next
 COPY scripts/local/next-build-acceptance.mjs ./
 USER 1000:1000
 CMD ["node", "next-build-acceptance.mjs"]
+
+# Pythonの通常Lesson検証専用。正負原稿は製品imageへ含めない。
+FROM browser-checks AS python-browser-checks
+COPY --from=dependencies /workspace/node_modules/yaml ./node_modules/yaml
+COPY content/python-basics ./content/python-basics
+COPY tests/local/python-learning.spec.ts ./tests/local/python-learning.spec.ts
+COPY tests/e2e/helpers/progress.ts tests/e2e/helpers/testBasePath.ts ./tests/e2e/helpers/
+COPY playwright.python-local.config.ts ./
+CMD ["node", "scripts/local/python-browser-acceptance.mjs"]

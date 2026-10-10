@@ -26,6 +26,13 @@ import {
   cleanupOwned,
   removeContainer,
 } from './docker-engine.mjs';
+import {
+  PYTHON_EXERCISE_ID,
+  PYTHON_PROFILE_ID,
+  PYTHON_IMAGE,
+  PYTHON_VERSION,
+  parsePythonAnalysis,
+} from './python-profile.mjs';
 import { WorkspaceStore } from './workspace-store.mjs';
 import { ProjectApplyError } from './project-engine.mjs';
 import { ResidentWorkspace } from './resident-workspace.mjs';
@@ -44,6 +51,7 @@ import { NEXT_PROFILE, NEXT_WORKSPACE, nextWorkspace } from './next-project-prot
 const owner = process.env.TSUMUCODE_LOCAL_OWNER;
 if (!owner || !/^[a-z0-9-]{1,80}$/u.test(owner)) throw new Error('Installation owner is required');
 const revision = JSON.parse(await readFile('/app/course-index.json', 'utf8')).revision;
+const pythonRevision = JSON.parse(await readFile('/app/python-course-index.json', 'utf8')).revision;
 const token = randomBytes(32).toString('hex');
 const results = new Map();
 let active;
@@ -102,7 +110,7 @@ function identity(input) {
     exerciseSessionId: input.exerciseSessionId,
     executionRevision: input.executionRevision,
     backend: 'local',
-    engine: 'node',
+    engine: input.runtimeProfileId === PYTHON_PROFILE_ID ? 'cpython' : 'node',
   };
 }
 
@@ -118,8 +126,8 @@ async function cancel(run, reason) {
   }
 }
 
-/** 作成・開始・監視・回収までを1つの排他枠で実行し、制限をDockerの外側で強制する。 */
-async function execute(run) {
+/** 1回の実containerを監視し、終了理由を維持して全資源を回収する。 */
+async function executePhase(run, analyze = false) {
   const started = performance.now();
   let executionStarted;
   let timeout;
@@ -127,55 +135,58 @@ async function execute(run) {
   const stdout = [];
   const stderr = [];
   let exitCode = null;
-  let errorMessage;
-  let cleanupSucceeded = false;
   try {
-    if (run.reason) return;
-    const container = await docker(
-      'POST',
-      '/containers/create',
-      containerConfig(run.input.files, owner),
-    );
-    run.containerId = container.Id;
     if (!run.reason) {
-      await docker('POST', `/containers/${container.Id}/start`);
-      executionStarted = performance.now();
-      timeout = setTimeout(() => {
-        void cancel(run, 'timeout').catch(() => {
-          recoveryNeeded = true;
-        });
-      }, LIMITS.wallMs);
-      output = followOutput(
-        container.Id,
-        (stream, data) => (stream === 2 ? stderr : stdout).push(data),
-        () => {
-          void cancel(run, 'output-limit').catch(() => {
+      const container = await docker(
+        'POST',
+        '/containers/create',
+        containerConfig(
+          run.input.files,
+          owner,
+          run.input.runtimeProfileId === PYTHON_PROFILE_ID,
+          analyze,
+        ),
+      );
+      run.containerId = container.Id;
+      if (!run.reason) {
+        await docker('POST', `/containers/${container.Id}/start`);
+        executionStarted = performance.now();
+        timeout = setTimeout(() => {
+          void cancel(run, 'timeout').catch(() => {
             recoveryNeeded = true;
           });
-        },
-      );
-      // outputの読取障害も失敗として扱い、未処理rejectionを残さない。
-      const outputDone = output.done.catch((error) => {
-        errorMessage = error.message;
-        run.reason = 'system-error';
-        void cancel(run, 'system-error').catch(() => {
-          recoveryNeeded = true;
+        }, LIMITS.wallMs);
+        output = followOutput(
+          container.Id,
+          (stream, data) => (stream === 2 ? stderr : stdout).push(data),
+          () => {
+            void cancel(run, 'output-limit').catch(() => {
+              recoveryNeeded = true;
+            });
+          },
+        );
+        const outputDone = output.done.catch((error) => {
+          run.errorMessage = error.message;
+          run.reason = 'system-error';
+          void cancel(run, 'system-error').catch(() => {
+            recoveryNeeded = true;
+          });
         });
-      });
-      const waited = await docker(
-        'POST',
-        `/containers/${container.Id}/wait?condition=not-running`,
-        undefined,
-        LIMITS.wallMs + 10000,
-      );
-      clearTimeout(timeout);
-      await outputDone;
-      exitCode = waited.StatusCode;
-      const inspected = await docker('GET', `/containers/${container.Id}/json`);
-      if (inspected.State.OOMKilled) run.reason = 'memory-limit';
+        const waited = await docker(
+          'POST',
+          `/containers/${container.Id}/wait?condition=not-running`,
+          undefined,
+          LIMITS.wallMs + 10000,
+        );
+        clearTimeout(timeout);
+        await outputDone;
+        exitCode = waited.StatusCode;
+        const inspected = await docker('GET', `/containers/${container.Id}/json`);
+        if (inspected.State.OOMKilled && run.reason !== 'system-error') run.reason = 'memory-limit';
+      }
     }
   } catch (error) {
-    errorMessage = error.message;
+    run.errorMessage = error.message;
     run.reason ??= 'system-error';
     recoveryNeeded = true;
   } finally {
@@ -184,83 +195,140 @@ async function execute(run) {
     if (run.containerId) {
       try {
         await removeContainer(run.containerId);
-        cleanupSucceeded = true;
+        run.containerId = undefined;
       } catch (error) {
-        errorMessage = error.message;
+        run.errorMessage = error.message;
         run.reason = 'system-error';
         recoveryNeeded = true;
       }
-    } else cleanupSucceeded = true;
-    // 不正UTF-8の置換でbytesが増える場合も、UIへ返すplain textを合計上限内にする。
-    const normalizedOut = Buffer.from(Buffer.concat(stdout).toString('utf8'));
-    const normalizedErr = Buffer.from(Buffer.concat(stderr).toString('utf8'));
-    if (normalizedOut.length + normalizedErr.length > LIMITS.outputBytes)
-      run.reason ??= 'output-limit';
-    const textOut = new TextDecoder().decode(normalizedOut.subarray(0, LIMITS.outputBytes), {
-      stream: true,
-    });
-    const textErr = new TextDecoder().decode(
-      normalizedErr.subarray(0, LIMITS.outputBytes - Buffer.byteLength(textOut)),
-      { stream: true },
-    );
+    }
+  }
+  const out = Buffer.from(Buffer.concat(stdout).toString('utf8'));
+  const err = Buffer.from(Buffer.concat(stderr).toString('utf8'));
+  if (out.length + err.length > LIMITS.outputBytes) run.reason ??= 'output-limit';
+  const textOut = new TextDecoder().decode(out.subarray(0, LIMITS.outputBytes), { stream: true });
+  const textErr = new TextDecoder().decode(
+    err.subarray(0, LIMITS.outputBytes - Buffer.byteLength(textOut)),
+    { stream: true },
+  );
+  return {
+    stdout: textOut,
+    stderr: textErr,
+    exitCode,
+    preparationMs: (executionStarted ?? performance.now()) - started,
+    executionMs: executionStarted === undefined ? 0 : performance.now() - executionStarted,
+  };
+}
+
+/** 固定AST解析と学習実行を同じ排他枠に置き、学習者の出力を採点factsにしない。 */
+async function execute(run) {
+  const python = run.input.runtimeProfileId === PYTHON_PROFILE_ID;
+  let facts;
+  let preparationMs = 0;
+  let executionMs = 0;
+  let executed = { stdout: '', stderr: '', exitCode: null };
+  try {
+    if (python && !run.reason) {
+      const analyzed = await executePhase(run, true);
+      preparationMs += analyzed.preparationMs;
+      executionMs += analyzed.executionMs;
+      if (!run.reason)
+        facts = parsePythonAnalysis(analyzed.stdout, analyzed.stderr, analyzed.exitCode);
+    }
+    if (!run.reason) {
+      executed = await executePhase(run);
+      preparationMs += executed.preparationMs;
+      executionMs += executed.executionMs;
+    }
+  } catch (error) {
+    run.errorMessage = error.message;
+    run.reason = 'system-error';
+  } finally {
     const status =
       run.reason === 'system-error'
         ? 'system-error'
         : run.reason
           ? 'stopped'
-          : exitCode === 0
-            ? 'succeeded'
-            : 'code-error';
+          : executed.exitCode !== 0
+            ? 'code-error'
+            : python && !facts.supported
+              ? 'unsupported'
+              : 'succeeded';
+    const label = python ? 'CPython' : 'Node';
     const diagnostics =
       status === 'succeeded'
         ? []
         : [
             {
-              code: `local-${run.reason ?? 'exit'}`,
-              kind: status === 'code-error' ? 'reference' : 'system',
+              code: `local-${run.reason ?? status}`,
+              kind:
+                status === 'code-error'
+                  ? python && /SyntaxError/u.test(executed.stderr)
+                    ? 'syntax'
+                    : 'reference'
+                  : status === 'unsupported'
+                    ? 'unsupported'
+                    : 'system',
               severity: 'error',
-              message: errorMessage ?? `Node termination: ${run.reason ?? exitCode}`,
+              message:
+                run.errorMessage ?? `${label} termination: ${run.reason ?? executed.exitCode}`,
               learnerMessage:
                 status === 'code-error'
-                  ? 'Node実行でエラーになりました。エラー出力を確認してください。'
-                  : status === 'system-error'
-                    ? 'ローカル実行環境に接続できません。Dockerと学習モードを確認して再実行してください。編集内容は保持しています。'
-                    : `実行を停止しました（${run.reason}）。採点していません。`,
+                  ? `${label}実行でエラーになりました。エラー出力を確認してください。`
+                  : status === 'unsupported'
+                    ? 'CPythonで実行しましたが、このLessonの採点は値・変数・加算・printだけに対応します。採点していません。'
+                    : status === 'system-error'
+                      ? 'ローカル実行環境に接続できません。Dockerと学習モードを確認して再実行してください。編集内容は保持しています。'
+                      : `実行を停止しました（${run.reason}）。採点していません。`,
             },
           ];
+    const sourceFile = python ? 'main.py' : 'script.js';
+    const prefix = python ? 'python' : 'javascript';
+    const evidence = [
+      {
+        id: `${prefix}.executed`,
+        value: python ? executed.exitCode === 0 && !run.reason : status === 'succeeded',
+      },
+      {
+        id: `${prefix}.source-sha256`,
+        file: sourceFile,
+        value: sourceHash(run.input.files[sourceFile]),
+      },
+    ];
+    if (python && status === 'succeeded')
+      evidence.push(
+        { id: 'python.stdout', value: executed.stdout },
+        { id: 'python.version', value: facts.version },
+        { id: 'python.numeric-variable-printed', value: facts.numericVariablePrinted },
+        { id: 'python.same-variable-addition-printed', value: facts.sameVariableAdditionPrinted },
+      );
+    if (!python) evidence.push({ id: 'javascript.budget-exhausted', value: status === 'stopped' });
     run.result = {
       ...identity(run.input),
       status,
       diagnostics,
-      engineVersion: process.version,
-      exitCode,
+      engineVersion: python ? PYTHON_VERSION : process.version,
+      exitCode: executed.exitCode,
       terminationReason: run.reason ?? 'exit',
-      stdout: textOut,
-      stderr: textErr,
-      preparationMs: (executionStarted ?? performance.now()) - started,
-      executionMs: executionStarted === undefined ? 0 : performance.now() - executionStarted,
-      evidence: [
-        { id: 'javascript.executed', value: status === 'succeeded' },
-        { id: 'javascript.budget-exhausted', value: status === 'stopped' },
-        {
-          id: 'javascript.source-sha256',
-          file: 'script.js',
-          value: sourceHash(run.input.files['script.js']),
-        },
-      ],
+      stdout: executed.stdout,
+      stderr: executed.stderr,
+      preparationMs,
+      executionMs,
+      evidence,
       console: [
-        ...textOut
+        ...executed.stdout
           .split('\n')
           .filter((line, index, lines) => index < lines.length - 1 || line !== '')
           .map((text) => ({ level: 'log', text })),
-        ...textErr
+        ...executed.stderr
           .split('\n')
           .filter((line, index, lines) => index < lines.length - 1 || line !== '')
           .map((text) => ({ level: 'error', text })),
       ].map((record, sequence) => ({ ...record, sequence })),
     };
-    run.input = { ...run.input, files: {} }; // 完了後に学習sourceをcontrollerへ保持しない。
-    if (cleanupSucceeded || recoveryNeeded) active = undefined;
+    run.input = { ...run.input, files: {} };
+    // 解析も実行も回収した後にだけ、同じ排他枠を次へ渡す。
+    active = undefined;
   }
 }
 
@@ -375,6 +443,17 @@ async function handle(req, res) {
           exact(input, []);
           value = await resident.status(id);
       }
+    } else if (req.url === '/api/python-capabilities') {
+      if (!active) await ready();
+      await docker('GET', `/images/${encodeURIComponent(PYTHON_IMAGE)}/json`);
+      value = {
+        apiVersion: API_VERSION,
+        exerciseIds: [PYTHON_EXERCISE_ID],
+        contentRevision: pythonRevision,
+        runtimeProfileId: PYTHON_PROFILE_ID,
+        engineVersion: PYTHON_VERSION,
+        limits: LIMITS,
+      };
     } else if (req.url === '/api/capabilities') {
       if (!active) await ready();
       value = {
@@ -387,7 +466,7 @@ async function handle(req, res) {
         limits: LIMITS,
       };
     } else if (req.url === '/api/runs') {
-      const validated = validateRun(input, revision);
+      const validated = validateRun(input, revision, pythonRevision);
       if (active) throw new RequestError(409, '実行中です。停止後にもう一度実行してください。');
       if (results.has(validated.runId))
         throw new RequestError(409, '同じ実行IDは再利用できません。');

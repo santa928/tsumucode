@@ -368,6 +368,17 @@ function EditableSession({
     ],
   );
   const state = useLearningSession(controller);
+  // 実CPythonの今回の診断出力は、保存済みの成功出力と分けて表示する。
+  const currentPythonOutput =
+    state.executionResult?.engine === 'cpython' &&
+    state.executionResult.executionRevision === state.executionRevision &&
+    (state.executionResult.status === 'unsupported' ||
+      state.executionResult.status === 'code-error')
+      ? state.executionResult.console
+      : undefined;
+  const consoleRecords = currentPythonOutput ?? state.runtimeOutput?.console ?? [];
+  const consoleFreshness =
+    currentPythonOutput === undefined ? (state.runtimeOutput?.freshness ?? 'current') : 'current';
   // 実行失敗の案内はその実行結果だけに結び付け、自動再描画での復帰後に残さない。
   // 保存・Resetなど別操作の失敗は従来のoperationErrorとして保持する。
   const displayedOperationError =
@@ -1001,7 +1012,7 @@ function EditableSession({
                   ? controller.environment.mode === 'console'
                     ? 'ブラウザで実行（Console専用）'
                     : 'ブラウザで実行'
-                  : `ローカル Node.js${state.executionResult?.engineVersion ? ` ${state.executionResult.engineVersion}` : ''}で実行`}
+                  : `ローカル ${controller.environment.engine === 'cpython' ? 'CPython' : 'Node.js'}${state.executionResult?.engineVersion ? ` ${state.executionResult.engineVersion}` : ''}で実行`}
               </p>
               {state.executionResult !== undefined &&
               state.executionResult.executionRevision === state.executionRevision ? (
@@ -1119,12 +1130,15 @@ function EditableSession({
                 <div>
                   <p>
                     {exercise.runtime?.kind === 'python'
-                      ? 'main.pyを編集し、「プレビューを更新」で実行結果をConsole（出力欄）に表示します。「判定する」は実行して要件を確かめます。この教材では数値・変数・加算・printを使い、入力待ちやpackageの追加は扱いません。'
+                      ? controller.environment.engine === 'cpython'
+                        ? 'main.pyを編集し、「プレビューを更新」で隔離したCPythonを実行します。「判定する」は同じ教材の値・変数・加算・printを確認します。教材外のコードが正常終了した場合は出力を表示し、採点しません。構文・実行エラーはコード診断になります。入力待ち・package追加・外部通信は扱いません。Docker障害後も編集内容を保持して再実行できます。'
+                        : 'main.pyを編集し、「プレビューを更新」で実行結果をConsole（出力欄）に表示します。「判定する」は実行して要件を確かめます。この教材では数値・変数・加算・printを使い、入力待ちやpackageの追加は扱いません。'
                       : controller.environment.backend === 'local'
                         ? '編集後に「プレビューを更新」でNode.jsを実行します。Docker切断時は学習モードを再起動し、もう一度実行してください。'
                         : 'script.jsを編集するとConsoleを更新します。配列・オブジェクトの添字と有限のPromise処理に対応します。HTML/CSSの描画・DOM・タイマー・外部通信は使えません。'}
                   </p>
-                  {exercise.runtime?.kind === 'python' ? (
+                  {exercise.runtime?.kind === 'python' &&
+                  controller.environment.backend === 'browser' ? (
                     <p>
                       <a
                         href={`${import.meta.env.BASE_URL}python-runtime/314.0.7/NOTICES.html`}
@@ -1137,10 +1151,10 @@ function EditableSession({
                     </p>
                   ) : null}
                   <RuntimeConsole
-                    records={(state.runtimeOutput?.console ?? []).slice(0, 200)}
-                    freshness={state.runtimeOutput?.freshness ?? 'current'}
+                    records={consoleRecords.slice(0, 200)}
+                    freshness={consoleFreshness}
                   />
-                  {(state.runtimeOutput?.console.length ?? 0) > 200 ? (
+                  {consoleRecords.length > 200 ? (
                     <p>表示は先頭200行までです。出力を減らして再実行してください。</p>
                   ) : null}
                 </div>
