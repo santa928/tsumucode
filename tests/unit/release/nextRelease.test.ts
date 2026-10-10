@@ -14,6 +14,10 @@ import {
 import { parseCourseReleaseHistory } from '../../../scripts/release/javascriptReleaseSchema';
 import { parse } from 'yaml';
 import {
+  buildReleaseReport,
+  parseReleaseReport,
+} from '../../../scripts/release/writeReleaseReport';
+import {
   hashNextReleaseEvidence,
   validateNextReleaseEvidence,
   NEXT_ACCEPTANCE_LESSONS,
@@ -63,13 +67,15 @@ describe('Next初公開の保存互換', () => {
       await expect(verifyNextSyntheticProgressBundle(course, sign(copy))).rejects.toThrow();
     },
   );
-  it('未承認draft台帳を既存Courseと同じstrict parserで読める', async () => {
+  it('Next台帳を既存Courseと同じstrict parserで読める', async () => {
     const history = parseCourseReleaseHistory(
       'next',
       parse(await readFile('content/next/release-history.yaml', 'utf8')),
     );
-    expect(history.candidate.status).toBe('draft');
-    expect(history.releases).toEqual([]);
+    expect(history.courseId).toBe('next');
+    expect(history.candidate.syntheticProgressBundlePath).toBe(
+      'tests/fixtures/progress/next-previous-release-bundle.json',
+    );
   });
 });
 
@@ -241,5 +247,34 @@ describe('Nextの独立証拠binding', () => {
     if (kind === '異なる公開Artifact') record.pagesStaticStudy.canonicalDistSha256 = 'b'.repeat(64);
     if (kind === '必須教材欠落') record.pagesStaticStudy.lessonIds.pop();
     expect(() => validateNextReleaseEvidence(record, hashes)).toThrow();
+  });
+});
+
+describe('Next公開Reportの再読込', () => {
+  it('公開後promotionに必要なNext bindingを保持し、欠落を拒否する', () => {
+    const input = {
+      courseId: 'next' as const,
+      revision: '2026-10-09.2',
+      draftSourceCommit: 'a'.repeat(40),
+      draftCanonicalDistSha256: 'b'.repeat(64),
+      normalizedLearningInputSha256: 'c'.repeat(64),
+      sourceSha: 'd'.repeat(40),
+      workflowHeadSha: 'e'.repeat(40),
+      releaseMode: 'candidate',
+      artifactDigest: 'f'.repeat(64),
+      courseHash: '1'.repeat(64),
+      provenanceHash: '2'.repeat(64),
+      qualityArtifactId: '1',
+      qualityArtifactDigest: `sha256:${'3'.repeat(64)}`,
+      workflowRunId: '2',
+      workflowRunAttempt: '1',
+      pageUrl: 'https://santa928.github.io/tsumucode/',
+    };
+    const report = buildReleaseReport(input);
+    expect(parseReleaseReport(report)).toEqual(input);
+    expect(() => parseReleaseReport(report.replace('- courseId: `next`\n', ''))).toThrow();
+    expect(() =>
+      parseReleaseReport(report.replace('agent-simulated-learning', 'real-human')),
+    ).toThrow();
   });
 });

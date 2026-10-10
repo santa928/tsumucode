@@ -143,7 +143,8 @@ export function parseReleaseReport(source: string): ReleaseReportInput {
   const isScopedCourse =
     selectedCourse === 'javascript' ||
     selectedCourse === 'typescript' ||
-    selectedCourse === 'react';
+    selectedCourse === 'react' ||
+    selectedCourse === 'next';
   const keys = isScopedCourse ? [...baseKeys, ...scopedCourseKeys] : baseKeys;
   if (metadata.size !== keys.length || keys.some((key) => !metadata.has(key))) {
     throw new Error('Release Report metadataに未知または欠落したkeyがあります');
@@ -181,7 +182,7 @@ export function parseReleaseReport(source: string): ReleaseReportInput {
       (input.releaseMode === 'beta' ? 'not-accepted-beta' : 'agent-simulated-learning') ||
       metadata.get('acceptanceLimit') !== 'agent-simulation-only-not-real-human-or-physical-device')
   ) {
-    throw new Error('JS/TS Reportの模擬学習/限界の区別が不正です');
+    throw new Error('Course Reportの模擬学習/限界の区別が不正です');
   }
   buildReleaseReport(input);
   return input;
