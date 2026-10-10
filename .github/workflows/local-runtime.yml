@@ -223,7 +223,7 @@ jobs:
           fi
       - name: Collect exact Next native resource evidence
         run: >-
-          docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges:true
+          docker run --rm --user "$(id -u):$(id -g)" --network none --read-only --cap-drop ALL --security-opt no-new-privileges:true
           -e TSUMUCODE_NEXT_SOURCE_SHA -e GITHUB_RUN_ID -e GITHUB_RUN_ATTEMPT
           --mount type=bind,src="$PWD",dst=/workspace
           --workdir /workspace
