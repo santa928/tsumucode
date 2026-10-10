@@ -6,7 +6,7 @@ import { once } from 'node:events';
 import { forwardPreviewResponse } from './preview-http-response.mjs';
 
 /** 実HTTPの2listenerで、転送の到着順・上限・固定ヘッダーを検査する。 */
-async function fixture(stream, operation, respond, limit = 32, complete) {
+async function fixture(stream, operation, respond, limit = 32, complete, bufferStream = false) {
   const source = createServer(respond);
   await new Promise((resolve) => source.listen(0, '127.0.0.1', resolve));
   const proxy = createServer((req, res) => {
@@ -17,6 +17,7 @@ async function fixture(stream, operation, respond, limit = 32, complete) {
           method: req.method,
           headers: { 'content-security-policy': "default-src 'none'" },
           stream,
+          bufferStream,
           limit,
           complete,
           fail: () => (res.headersSent ? res.destroy() : res.writeHead(502).end()),
@@ -146,3 +147,97 @@ test('Weatherの逐次応答でredirectや実行形式を通さない', async ()
     );
   }
 });
+
+test('採点用RSCは正常EOF後に固定長で送り、途中のheadersや本文を公開しない', async () => {
+  let completed = 0;
+  let release;
+  let written;
+  const gate = new Promise((resolve) => {
+    release = resolve;
+  });
+  const started = new Promise((resolve) => {
+    written = resolve;
+  });
+  await fixture(
+    true,
+    async (port) => {
+      let received = false;
+      const response = new Promise((resolve, reject) =>
+        request({ host: '127.0.0.1', port }, (reply) => {
+          received = true;
+          resolve(reply);
+        })
+          .on('error', reject)
+          .end(),
+      );
+      await started;
+      assert.equal(received, false);
+      assert.equal(completed, 0);
+      release();
+      const reply = await response;
+      assert.equal(reply.headers['content-length'], '12');
+      assert.equal(reply.headers['transfer-encoding'], undefined);
+      assert.equal(reply.headers['set-cookie'], undefined);
+      const chunks = [];
+      reply.on('data', (chunk) => chunks.push(chunk));
+      await once(reply, 'end');
+      assert.equal(Buffer.concat(chunks).toString(), 'loadingready');
+    },
+    async (req, res) => {
+      res.writeHead(200, { 'content-type': 'text/x-component', 'set-cookie': 'private=1' });
+      res.write('loading');
+      written();
+      await gate;
+      res.end('ready');
+    },
+    32,
+    () => completed++,
+    true,
+  );
+  assert.equal(completed, 1);
+});
+
+for (const [name, respond] of [
+  [
+    'byte上限超過',
+    (req, res) => res.writeHead(200, { 'content-type': 'text/x-component' }).end('x'.repeat(40)),
+  ],
+  [
+    '途中切断',
+    (req, res) => {
+      res.writeHead(200, { 'content-type': 'text/x-component' });
+      res.write('partial', () => res.destroy());
+    },
+  ],
+  [
+    '不許可の応答型',
+    (req, res) => res.writeHead(200, { 'content-type': 'application/javascript' }).end('private'),
+  ],
+  [
+    'redirect',
+    (req, res) =>
+      res.writeHead(302, { 'content-type': 'text/html', location: '/private' }).end('private'),
+  ],
+]) {
+  test(`採点用bufferの${name}は内容を一部も送らず、完了記録を作らない`, async () => {
+    let completed = 0;
+    await fixture(
+      true,
+      async (port) => {
+        const reply = await new Promise((resolve, reject) =>
+          request({ host: '127.0.0.1', port }, resolve).on('error', reject).end(),
+        );
+        const chunks = [];
+        reply.on('data', (chunk) => chunks.push(chunk));
+        await once(reply, 'end');
+        assert.equal(reply.statusCode, 502);
+        assert.equal(Buffer.concat(chunks).length, 0);
+      },
+      respond,
+      32,
+      () => completed++,
+      true,
+    );
+    assert.equal(completed, 0);
+  });
+}

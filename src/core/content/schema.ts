@@ -1378,6 +1378,9 @@ export const NextPageHttpRuleSchema = z
           'loading-error-not-found',
           'form-route-validation',
           'server-action-validation',
+          'project-structure',
+          'project-filter',
+          'project-presentation',
         ]),
       })
       .strict(),
@@ -2310,10 +2313,19 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
               exercise.id !== `${lesson.id}-e01` ||
               exercise.files.length !== paths.length ||
               paths.some((path) => !exercise.files.some((file) => file.path === path)) ||
-              exercise.validationRules.length !== 1 ||
-              !NextPageHttpRuleSchema.safeParse(exercise.validationRules[0]).success ||
-              exercise.validationRules[0]?.assertion.kind !== 'next-page-http' ||
-              exercise.validationRules[0].assertion.goal !== contract.goal
+              exercise.validationRules.length !== (contract.ruleGoals?.length ?? 1) ||
+              !exercise.validationRules.every(
+                (rule) => NextPageHttpRuleSchema.safeParse(rule).success,
+              ) ||
+              !hasSameStringSet(
+                exercise.validationRules.map((rule) =>
+                  rule.assertion.kind === 'next-page-http' &&
+                  typeof rule.assertion.goal === 'string'
+                    ? rule.assertion.goal
+                    : '',
+                ),
+                contract.ruleGoals ?? [contract.goal],
+              )
             ) {
               addIssue(
                 context,

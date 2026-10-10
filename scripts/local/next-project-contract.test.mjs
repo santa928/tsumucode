@@ -83,6 +83,8 @@ describe('Next専用の境界', () => {
     ['next-ch03-l02-e01', 576],
     ['next-ch04-l01-e01', 512],
     ['next-ch04-l02-e01', 512],
+    ['next-ch05-l01-e01', 896],
+    ['next-ch06-l01-e01', 896],
   ])('Workspace %s の固定メモリ上限だけを設定する', (workspaceId, memoryMiB) => {
     const config = projectConfig(
       { ...target, workspaceId, files: NEXT_STARTER_FILES },
@@ -91,6 +93,7 @@ describe('Next専用の境界', () => {
       'sha256:fixed',
     );
     expect(config.HostConfig.Memory).toBe(memoryMiB * 1024 * 1024);
+    expect(config.HostConfig.Memory).toBeLessThanOrEqual(1_000_000_000);
     expect(config.HostConfig.MemorySwap).toBe(config.HostConfig.Memory);
     expect(config.HostConfig.NanoCpus).toBe(1e9);
     expect(config.HostConfig.PidsLimit).toBe(64);

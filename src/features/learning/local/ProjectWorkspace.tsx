@@ -1,3 +1,4 @@
+import { PortableNextExport } from '../portable/PortableNextExport';
 import { Link } from 'react-router';
 import { nextWorkspace } from '../../../../scripts/local/next-project-protocol.mjs';
 import { LearningViewportShell } from '../layout/LearningViewportShell';
@@ -75,6 +76,22 @@ export function ProjectWorkspace({
             revision: lessonData.course.revision,
             selectedFile: 'app/page.tsx',
             profile: 'next-project-v1',
+            ...(lessonData.lesson.kind !== 'standard'
+              ? {
+                  requirements: lessonData.exercise.validationRules.map((rule) => ({
+                    ruleId: rule.id,
+                    requirementId: rule.groupId ?? rule.id,
+                    goal:
+                      rule.assertion.kind === 'next-page-http' &&
+                      typeof rule.assertion.goal === 'string'
+                        ? rule.assertion.goal
+                        : '',
+                    label: rule.label,
+                    expected: rule.feedback.expected,
+                    nextAction: rule.feedback.nextAction,
+                  })),
+                }
+              : {}),
           }
         : LOCAL_PROJECT,
     [lessonData],
@@ -412,6 +429,14 @@ function ProjectEditor({
           ) : (
             <p>環境へ接続すると、保存済みSourceまたは初期コードを開きます。</p>
           )}
+          {draft && previewContract?.ruleGoals ? (
+            <PortableNextExport
+              key={identity.workspaceId}
+              workspaceId={identity.workspaceId}
+              files={draft.files}
+              disabled={busy !== undefined}
+            />
+          ) : null}
         </section>
         <section aria-labelledby="local-project-preview-title">
           <h2 id="local-project-preview-title" className="mb-3 text-xl font-bold">
@@ -464,11 +489,19 @@ function ProjectEditor({
                 ? 'コードエラー'
                 : '未達成'}
           </h2>
-          <p>{result.checks[0]?.message}</p>
-          <p>期待する表示・応答: {result.checks[0]?.expected}</p>
-          <p className="break-words">
-            実際の表示: {result.checks[0]?.actual || '見出しを確認できませんでした。'}
-          </p>
+          <ul className="grid gap-3">
+            {result.checks.map((check) => (
+              <li key={check.ruleId}>
+                <p>
+                  {check.passed ? '達成' : '未達成'}: {check.message}
+                </p>
+                <p>期待する表示・応答: {check.expected}</p>
+                <p className="break-words">
+                  実際の表示: {check.actual || '確認できませんでした。'}
+                </p>
+              </li>
+            ))}
+          </ul>
           {result.diagnostics.map((diagnostic, index) => (
             <p key={index}>{diagnostic.message}</p>
           ))}

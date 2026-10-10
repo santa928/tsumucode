@@ -28,6 +28,14 @@ export interface ProjectIdentity {
   readonly revision: string;
   readonly selectedFile?: string;
   readonly profile?: WorkspaceProfile;
+  readonly requirements?: readonly {
+    readonly ruleId: string;
+    readonly requirementId: string;
+    readonly goal: string;
+    readonly label: string;
+    readonly expected: string;
+    readonly nextAction: string;
+  }[];
 }
 
 export function projectDraft(
@@ -70,6 +78,47 @@ export function projectValidation(
   identity: ProjectIdentity = LOCAL_PROJECT,
 ): ValidationResult {
   const passed = grade.status === 'pass';
+  if (identity.requirements) {
+    // 工程ごとの実観測だけを採用し、欠落・コードエラーを合格へ補完しない。
+    const checks = identity.requirements.map((requirement) => {
+      const observation = grade.projectChecks?.find(({ goal }) => goal === requirement.goal);
+      const complete = grade.status !== 'code-error' && observation?.passed === true;
+      return {
+        ruleId: requirement.ruleId,
+        requirementId: requirement.requirementId,
+        label: requirement.label,
+        expected: requirement.expected,
+        nextAction: requirement.nextAction,
+        required: true,
+        passed: complete,
+        requirementPassed: complete,
+        message: complete ? 'この工程の実URLと動作を確認しました。' : requirement.nextAction,
+        actual: observation?.actual ?? '工程の実観測がありません。',
+      };
+    });
+    return {
+      exerciseId: identity.exerciseId,
+      executionRevision: editRevision,
+      status:
+        grade.status === 'code-error'
+          ? 'code-error'
+          : passed && checks.every((check) => check.passed)
+            ? 'pass'
+            : 'incomplete',
+      checks,
+      passedRequirementIds: checks
+        .filter((check) => check.passed)
+        .map((check) => check.requirementId),
+      diagnostics: grade.diagnostics.map((message) => ({
+        code: 'local-project-javascript',
+        kind: 'reference' as const,
+        severity: 'error' as const,
+        message,
+        learnerMessage: message,
+      })),
+      evaluatedAt: grade.evaluatedAt,
+    };
+  }
   return {
     exerciseId: identity.exerciseId,
     executionRevision: editRevision,

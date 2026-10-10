@@ -63,12 +63,12 @@ export function projectConfig(record, owner, runId, imageId, preview = false) {
   if (record.profile === NEXT_PROFILE) {
     // Next CLIが生成する孫processもDocker initへ回収させる。
     config.HostConfig.Init = true;
-    // Routing・データ取得・失敗画面の3教材だけに限定し、要求から資源上限を選ばせない。
-    const memoryMiB = ['next-ch02-l01-e01', 'next-ch03-l01-e01', 'next-ch03-l02-e01'].includes(
-      record.workspaceId,
-    )
-      ? 576
-      : 512;
+    // 制作2教材は承認済み1GB以内。他教材の上限や要求から選べる範囲を広げない。
+    const memoryMiB = ['next-ch05-l01-e01', 'next-ch06-l01-e01'].includes(record.workspaceId)
+      ? 896
+      : ['next-ch02-l01-e01', 'next-ch03-l01-e01', 'next-ch03-l02-e01'].includes(record.workspaceId)
+        ? 576
+        : 512;
     config.HostConfig.Memory = memoryMiB * 1024 * 1024;
     config.HostConfig.MemorySwap = config.HostConfig.Memory;
     config.HostConfig.Tmpfs = {

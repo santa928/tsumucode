@@ -1,0 +1,34 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font: 1rem/1.7 system-ui, sans-serif;
+  color: #19352d;
+  background: #fffaf0;
+}
+main, nav {
+  max-width: 48rem;
+  margin: auto;
+  padding: 1.5rem;
+}
+a, button, select {
+  min-height: 44px;
+  display: inline-block;
+  padding: .5rem;
+  font: inherit;
+}
+a {
+  color: #175344;
+}
+:focus-visible {
+  outline: 3px solid #267153;
+  outline-offset: 4px;
+}
+img {
+  max-width: 100%;
+  height: auto;
+}
+h1, p {
+  overflow-wrap: anywhere;
+}

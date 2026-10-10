@@ -1,7 +1,11 @@
 import { randomUUID } from 'node:crypto';
 import { isNextForm } from './next-form-preview.mjs';
 import { readPreviewBody } from './preview-body.mjs';
+import { observeNextProduction } from './next-production-observations.mjs';
 import { observeNextForm } from './next-form-observations.mjs';
+import { createNextFormResponses } from './next-form-response.mjs';
+import { watchNextFormReceipts } from './next-form-receipts.mjs';
+import { installNextActionBodyDrain } from './next-form-drain.mjs';
 import { nextPreviewRequest } from './next-data-preview.mjs';
 import { forwardPreviewResponse } from './preview-http-response.mjs';
 import { observeNextData } from './next-data-observations.mjs';
@@ -33,16 +37,22 @@ import {
 const { metadata, socket } = JSON.parse(Buffer.from(process.argv[2], 'base64').toString('utf8'));
 const origin = previewOrigin(metadata.runId);
 const base = previewBase(metadata.workspaceId, metadata.runId);
-const parent = await lstat('/transport');
-const endpoint = await lstat('/transport/http.sock');
-assert.equal(parent.uid, 0);
-assert.equal(parent.gid, 1000);
-assert.equal(parent.mode & 0o777, 0o550);
-assert.ok(endpoint.isSocket());
-assert.equal(endpoint.uid, 1000);
-assert.equal(endpoint.gid, 1000);
-assert.equal(endpoint.dev, socket.dev);
-assert.equal(endpoint.ino, socket.ino);
+try {
+  const parent = await lstat('/transport');
+  const endpoint = await lstat('/transport/http.sock');
+  assert.equal(parent.uid, 0);
+  assert.equal(parent.gid, 1000);
+  assert.equal(parent.mode & 0o777, 0o550);
+  assert.ok(endpoint.isSocket());
+  assert.equal(endpoint.uid, 1000);
+  assert.equal(endpoint.gid, 1000);
+  assert.equal(endpoint.dev, socket.dev);
+  assert.equal(endpoint.ino, socket.ino);
+} catch {
+  // Browser起動前のidentity検証失敗も固定分類で残し、pathや実inode値は出さない。
+  process.stderr.write('TSUMUCODE_GRADE_PHASE:marker-before\nTSUMUCODE_GRADE_FAILURE:identity\n');
+  throw new Error('Grade transport identity could not be verified');
+}
 
 /** 認証情報を持たない固定HTTP bridge。実Viteの応答だけをboundedに渡す。 */
 function readHttp(path) {
@@ -82,6 +92,7 @@ async function marker() {
 }
 
 const form = isNextForm(metadata.workspaceId);
+const action = nextWorkspace(metadata.workspaceId)?.goal === 'server-action-validation';
 let formLease;
 const formMemo = `memo-${randomUUID().slice(0, 8)}`;
 async function formControl(op) {
@@ -99,6 +110,8 @@ async function formControl(op) {
   return JSON.parse(reply.body.toString());
 }
 let requests = 0;
+let formRequestNumber = 0;
+const formResponses = createNextFormResponses(origin);
 // 同じtrusted bridgeが全量送信したRSCだけを、部分応答と区別する。
 const completedResponses = new Map();
 async function completedResponse(response) {
@@ -133,10 +146,26 @@ const bridge = createServer(async (req, res) => {
   }
   requests++;
   const policy = nextPreviewRequest(req, metadata);
+  const formResponse = policy.post && action ? formResponses.begin(req.method, req.url) : undefined;
+  const formRequest = policy.post ? ++formRequestNumber : 0;
+  // 同じURLへの連続POSTを区別する。本文・URL・入力・予約IDは診断に含めない。
+  const formResponseEvent = (event) => {
+    if (formRequest >= 1 && formRequest <= 8)
+      process.stderr.write(
+        `TSUMUCODE_FORM_RESPONSE:${formRequest}:${event}:${Date.now() - started}\n`,
+      );
+  };
+  formResponseEvent('request-start');
+  res.once('finish', () => formResponseEvent('downstream-finished'));
   let timer;
   let upstream;
   const cancellation = new globalThis.AbortController();
+  req.once('aborted', () => {
+    if (formResponse) formResponse.failed = true;
+  });
   res.once('close', () => {
+    if (formResponse && !res.writableFinished) formResponse.failed = true;
+    if (!res.writableFinished) formResponseEvent('closed-before-finish');
     cancellation.abort();
     if (!req.complete) req.destroy();
     clearTimeout(timer);
@@ -144,6 +173,7 @@ const bridge = createServer(async (req, res) => {
     upstream?.destroy();
   });
   const fail = () => {
+    if (formResponse) formResponse.failed = true;
     if (res.destroyed || res.writableEnded) return;
     if (res.headersSent) res.destroy();
     else res.writeHead(503).end();
@@ -184,17 +214,26 @@ const bridge = createServer(async (req, res) => {
           : {}),
       },
     },
-    (reply) =>
+    (reply) => {
+      if (formResponse) formResponse.status = reply.statusCode;
+      reply.once('end', () => formResponseEvent('upstream-end'));
       forwardPreviewResponse(reply, res, {
         method: req.method,
-        headers: previewHeaders(metadata.runId, metadata.profile),
+        headers: {
+          ...previewHeaders(metadata.runId, metadata.profile),
+          ...(formResponse ? { 'x-tsumucode-form-response': String(formRequest) } : {}),
+        },
         limit: previewResponseLimit(req.url, metadata),
         stream: policy.stream,
+        // 採点ではActionの有限RSC全量を固定長で渡す。公開Proxyの逐次応答は変更しない。
+        bufferStream: action && policy.post,
         fail,
         complete: () => {
+          if (formResponse && !formResponse.failed) formResponse.complete = true;
           if (req.headers.rsc === '1') completedResponses.set(req.url, true);
         },
-      }),
+      });
+    },
   );
   upstream.on('error', fail);
   upstream.end(body);
@@ -285,6 +324,11 @@ await new Promise((resolve, reject) => {
   bridge.listen(4175, '127.0.0.1', resolve);
 });
 let browser;
+let formReceipts = () => [];
+const emitFormReceipt = (receipt) =>
+  process.stderr.write(
+    `TSUMUCODE_FORM_RECEIPT:${receipt.request}:${receipt.bridgeRequest}:${receipt.status}:${receipt.expectedBytes}:${receipt.receivedBytes}:${receipt.state}:${receipt.encoding}\n`,
+  );
 let phase;
 const started = Date.now();
 function step(value) {
@@ -305,6 +349,8 @@ try {
     args: ['--no-sandbox', '--disable-dev-shm-usage'],
   });
   const page = await browser.newPage();
+  if (action) await page.addInitScript(installNextActionBodyDrain, { origin, base });
+  if (action) formReceipts = await watchNextFormReceipts(page, origin, base, emitFormReceipt);
   const diagnostics = [];
   const consoleErrors = [];
   let navigations = 0;
@@ -319,6 +365,14 @@ try {
   const diagnostic = (message) => {
     if (diagnostics.length < 8) diagnostics.push(message.slice(0, 512));
   };
+  const browserFormRequests = new WeakMap();
+  const browserFormEvent = (request, event) => {
+    const sequence = browserFormRequests.get(request);
+    if (sequence)
+      process.stderr.write(
+        `TSUMUCODE_FORM_RESPONSE:${sequence}:${event}:${Date.now() - started}\n`,
+      );
+  };
   const contract = nextWorkspace(metadata.workspaceId);
   const weather = contract?.goal === 'loading-error-not-found';
   page.on('pageerror', (error) => {
@@ -328,6 +382,11 @@ try {
   });
   page.on('response', (response) => {
     const url = new URL(response.url());
+    const sequence = response.headers()['x-tsumucode-form-response'];
+    if (action && /^[1-8]$/u.test(sequence ?? '')) {
+      browserFormRequests.set(response.request(), Number(sequence));
+      browserFormEvent(response.request(), 'browser-response');
+    }
     // 意図したerror画面のdev診断は拒否したまま、教材の取得失敗と区別する。
     const diagnosticDenied =
       weather &&
@@ -353,9 +412,18 @@ try {
     if (response.status() >= 400 && !missing && !diagnosticDenied && !expectedFormFailure)
       diagnostic(`HTTP resource failed: ${response.status()}`);
   });
+  page.on('requestfinished', (request) => browserFormEvent(request, 'browser-finished'));
   page.on('requestfailed', (request) => {
     const error = request.failure()?.errorText ?? 'unknown';
-    if (error !== 'net::ERR_ABORTED') diagnostic(`HTTP resource failed: ${error}`);
+    const url = new URL(request.url());
+    const actionPost =
+      action &&
+      request.method() === 'POST' &&
+      url.origin === origin &&
+      [base.slice(0, -1), base].includes(url.pathname) &&
+      url.search === '';
+    browserFormEvent(request, error === 'net::ERR_ABORTED' ? 'browser-aborted' : 'browser-failed');
+    if (error !== 'net::ERR_ABORTED' || actionPost) diagnostic(`HTTP resource failed: ${error}`);
   });
   step('initial-navigation');
   const response = await page.goto(origin + base, { waitUntil: 'load', timeout: 5000 });
@@ -381,15 +449,33 @@ try {
   if (contract && contract.goal !== 'page-route-query' && !diagnostics.length) {
     try {
       lessonObservation = form
-        ? await observeNextForm(page, origin, base, contract.goal, formMemo, formControl, step)
-        : controlledData
-          ? await observeNextData(page, origin, base, contract.goal, readHttp, completedResponse)
-          : await observeNextLesson(page, origin, base, contract.goal);
+        ? await observeNextForm(
+            page,
+            origin,
+            base,
+            contract.goal,
+            formMemo,
+            formControl,
+            step,
+            formResponses.completed,
+          )
+        : contract.ruleGoals
+          ? await observeNextProduction(page, origin, base, contract.goal, step)
+          : controlledData
+            ? await observeNextData(page, origin, base, contract.goal, readHttp, completedResponse)
+            : await observeNextLesson(page, origin, base, contract.goal);
     } catch (error) {
       if (!(error instanceof NextLessonObservationError)) throw error;
       diagnostic(error.message);
     }
-    documentNavigation = documentVersion();
+    if (form)
+      step(
+        documentNavigation === documentVersion()
+          ? 'form-document-unchanged'
+          : 'form-document-changed',
+      );
+    // Form/Actionは同じ文書のまま送信する。観測中のreloadを基準更新で消さない。
+    if (!form) documentNavigation = documentVersion();
   }
   if (next && contract?.goal === 'page-route-query') {
     for (const [path, expected] of [
@@ -436,6 +522,17 @@ try {
         lessonObservation?.actual ??
         (next ? `${actual} / ${httpActual.join(' / ')}`.slice(0, 512) : actual),
       diagnostics,
+      ...(contract?.ruleGoals
+        ? {
+            projectChecks:
+              (diagnostics.length ? undefined : lessonObservation?.projectChecks) ??
+              contract.ruleGoals.map((goal) => ({
+                goal,
+                passed: false,
+                actual: '工程の実観測を完了できません。',
+              })),
+          }
+        : {}),
       // Consoleは合否の入力にせず、失敗時の原因をboundedに観察する情報だけとする。
       observation: { count, visible, navigations, consoleErrors },
       engineVersion: browser.version(),
@@ -466,6 +563,7 @@ try {
   process.stderr.write(`TSUMUCODE_GRADE_FAILURE:${reason}\n`);
   throw error;
 } finally {
+  formReceipts().forEach(emitFormReceipt);
   step('browser-close');
   await browser?.close();
   step('form-release');

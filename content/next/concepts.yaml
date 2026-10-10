@@ -106,3 +106,40 @@ concepts:
     prerequisiteConceptIds:
       - next-action-state
     minimumProjectLevel: transform
+  - id: next-project-structure
+    introducedBySlideId: next-ch05-l01-g01
+    prerequisiteConceptIds:
+      - next-navigation
+      - next-form-validation
+    minimumProjectLevel: compose
+  - id: next-project-filter
+    introducedBySlideId: next-ch05-l01-g02
+    prerequisiteConceptIds:
+      - next-project-structure
+    minimumProjectLevel: compose
+  - id: next-project-presentation
+    introducedBySlideId: next-ch05-l01-g03
+    prerequisiteConceptIds:
+      - next-project-filter
+    minimumProjectLevel: compose
+  - id: next-project-transfer
+    introducedBySlideId: next-ch06-l01-g01
+    prerequisiteConceptIds:
+      - next-project-structure
+      - next-project-filter
+      - next-project-presentation
+    minimumProjectLevel: compose
+  - id: next-project-audit
+    introducedBySlideId: next-ch06-l01-g02
+    prerequisiteConceptIds:
+      - next-project-structure
+      - next-project-filter
+      - next-project-presentation
+    minimumProjectLevel: compose
+  - id: next-source-export
+    introducedBySlideId: next-ch06-l01-g03
+    prerequisiteConceptIds:
+      - next-project-structure
+      - next-project-filter
+      - next-project-presentation
+    minimumProjectLevel: compose

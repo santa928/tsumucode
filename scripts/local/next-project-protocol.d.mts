@@ -17,7 +17,10 @@ export interface NextWorkspaceContract {
     | 'data-cache-revalidation'
     | 'loading-error-not-found'
     | 'form-route-validation'
-    | 'server-action-validation';
+    | 'server-action-validation'
+    | 'guided-travel-project'
+    | 'capstone-event-project';
+  readonly ruleGoals?: readonly ('project-structure' | 'project-filter' | 'project-presentation')[];
   readonly pages: readonly string[];
   readonly readonlyFiles?: readonly string[];
   readonly previewLabels: readonly string[];

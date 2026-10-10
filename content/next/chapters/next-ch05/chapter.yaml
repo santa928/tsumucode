@@ -1,0 +1,8 @@
+id: next-ch05
+sequence: 4
+title: 小さな旅の案内を工程ごとに作る
+goal: 実URL・GET選択・metadataと画像を3工程で完成し、同じSourceを持ち出す。
+estimatedMinutes: 55
+kind: guided-project
+lessonSources:
+  - lessons/next-ch05-l01/lesson.yaml

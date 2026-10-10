@@ -1,0 +1,48 @@
+id: next-ch05-l01
+kind: guided-project
+title: 小さな旅の案内を工程ごとに作る
+goal: 実URL・GET選択・metadataと画像を3工程で完成し、同じSourceを持ち出す。
+estimatedMinutes: 55
+prerequisiteLessonIds:
+  - next-ch04-l02
+slideSources:
+  - slides/g01-structure.md
+  - slides/g02-filter.md
+  - slides/g03-export.md
+exerciseSources:
+  - exercises/next-ch05-l01-e01/exercise.yaml
+reflection: 表示が同じでも、実URLとGET応答を確かめるのはなぜですか。
+glossaryRefs:
+  - get-selection
+  - metadata
+  - image
+nextLessonId: next-ch06-l01
+project:
+  id: next-travel-guided
+  briefSource: brief.md
+  guideSources:
+    - guide.md
+  checklist:
+    - id: next-travel-guided-check01
+      label: 構造と2つの詳細
+      required: true
+      ruleIds:
+        - next-ch05-l01-e01-r01
+    - id: next-travel-guided-check02
+      label: GET選択と不正値からの回復
+      required: true
+      ruleIds:
+        - next-ch05-l01-e01-r02
+    - id: next-travel-guided-check03
+      label: metadataと画像・読み順
+      required: true
+      ruleIds:
+        - next-ch05-l01-e01-r03
+completion:
+  kind: guided-project
+  requiredChecklistItemIds:
+    - next-travel-guided-check01
+    - next-travel-guided-check02
+    - next-travel-guided-check03
+  requiredExerciseIds:
+    - next-ch05-l01-e01

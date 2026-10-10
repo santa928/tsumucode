@@ -1,3 +1,4 @@
+import { nextWorkspace } from './next-project-protocol.mjs';
 import { isNextForm, nextFormRequest } from './next-form-preview.mjs';
 // 固定Next16.3.8のWeather navigation/retryだけで使うRSC契約。
 export const DATA_WORKSPACE = 'next-ch03-l01-e01';
@@ -70,6 +71,17 @@ export function nextDataRequest(req, target) {
 /** 資源経路は従来のまま、限定pageだけに追加の要求検査を適用する。 */
 export function nextPreviewRequest(req, target) {
   if (isNextForm(target.workspaceId)) return nextFormRequest(req, target);
+  if (nextWorkspace(target.workspaceId)?.ruleGoals) {
+    // 制作のGET選択は文書要求だけ。RSC/Actionやprefetchへ境界を広げない。
+    if (
+      !['GET', 'HEAD'].includes(req.method) ||
+      ['rsc', 'next-router-state-tree', 'next-url', 'next-router-prefetch', 'next-action'].some(
+        (key) => key in req.headers,
+      )
+    )
+      return undefined;
+    return { stream: false, headers: {} };
+  }
   const fixed = pages.get(target.workspaceId);
   if (!fixed) return { stream: false, headers: {} };
   const base = `/w/${target.workspaceId}/${target.runId}/`;

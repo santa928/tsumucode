@@ -130,7 +130,6 @@ const syntax = await finish((await start('const =;')).runId);
 assert.equal(syntax.status, 'code-error');
 assert.notEqual(syntax.exitCode, 0);
 const timeoutRun = await start('while(true){}');
-await sleep(250);
 const filter = encodeURIComponent(
   JSON.stringify({
     label: [
@@ -139,9 +138,31 @@ const filter = encodeURIComponent(
     ],
   }),
 );
-const containers = await docker('GET', `/containers/json?all=1&filters=${filter}`);
-assert.equal(containers.length, 1);
-const inspected = await docker('GET', `/containers/${containers[0].Id}/json`);
+/** 固定sleepで作成速度を仮定せず、実learnerの起動と必要な子processを期限内に観測する。 */
+async function activeLearner(minProcesses = 0) {
+  const deadline = Date.now() + 3000;
+  const inspectBeforeDeadline = (path) => {
+    const remaining = deadline - Date.now();
+    if (remaining <= 0) throw new Error('learnerの観測期限に到達しました。');
+    return docker('GET', path, undefined, remaining);
+  };
+  while (Date.now() < deadline) {
+    const containers = await inspectBeforeDeadline(`/containers/json?all=1&filters=${filter}`);
+    assert.ok(containers.length <= 1, '同じownerのlearnerは1個以内');
+    if (containers.length === 1) {
+      const inspected = await inspectBeforeDeadline(`/containers/${containers[0].Id}/json`);
+      if (inspected.State.Running) {
+        const processes =
+          minProcesses > 0 ? await inspectBeforeDeadline(`/containers/${inspected.Id}/top`) : null;
+        if (Date.now() < deadline && (!processes || processes.Processes.length >= minProcesses))
+          return inspected;
+      }
+    }
+    await sleep(50);
+  }
+  throw new Error('learnerの起動または子processを期限内に観測できません。');
+}
+const inspected = await activeLearner();
 assert.equal(inspected.Config.User, '1000:1000');
 assert.equal(inspected.HostConfig.ReadonlyRootfs, true);
 assert.equal(inspected.HostConfig.NetworkMode, 'none');
@@ -183,10 +204,8 @@ assert.equal(memory.terminationReason, 'memory-limit');
 const children = await start(
   "require('node:child_process').spawn(process.execPath,['-e','setInterval(()=>{},1000)'],{stdio:'ignore'});setInterval(()=>{},1000);",
 );
-await sleep(500);
-const childContainers = await docker('GET', `/containers/json?all=1&filters=${filter}`);
-assert.equal(childContainers.length, 1);
-const processes = await docker('GET', `/containers/${childContainers[0].Id}/top`);
+const childContainer = await activeLearner(3);
+const processes = await docker('GET', `/containers/${childContainer.Id}/top`);
 assert.ok(processes.Processes.length >= 3, 'bootstrap, learner, child must be observed');
 assert.equal(
   (await api(`/api/runs/${children.runId}/cancel`)).value.result.terminationReason,

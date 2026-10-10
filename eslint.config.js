@@ -16,6 +16,8 @@ export default tseslint.config(
       'content/next/chapters/next-ch02/lessons/*/exercises/**/*.{ts,tsx}',
       'content/next/chapters/next-ch03/lessons/*/exercises/**/*.{ts,tsx}',
       'content/next/chapters/next-ch04/lessons/*/exercises/**/*.{ts,tsx}',
+      'content/next/chapters/next-ch05/lessons/*/exercises/**/*.{ts,tsx}',
+      'content/next/chapters/next-ch06/lessons/*/exercises/**/*.{ts,tsx}',
       '.release-*',
       // 誤型を含むReact原稿は実TSX Compiler・Fixture検証へ渡す。
       'content/react/chapters/react-ch01/lessons/react-ch01-l01/exercises/**/*.tsx',

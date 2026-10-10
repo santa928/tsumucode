@@ -104,6 +104,19 @@ const gradeSchema = z.object({
   status: z.enum(['pass', 'incomplete', 'code-error']),
   actual: z.string().max(512),
   diagnostics: z.array(z.string().max(512)).max(8),
+  projectChecks: z
+    .array(
+      z.object({
+        goal: z.enum(['project-structure', 'project-filter', 'project-presentation']),
+        passed: z.boolean(),
+        actual: z.string().max(160),
+      }),
+    )
+    .length(3)
+    .refine((checks) => new Set(checks.map(({ goal }) => goal)).size === 3, {
+      message: '工程の重複は採用できません。',
+    })
+    .optional(),
   engineVersion: z.string().max(80),
   evaluatedAt: z.iso.datetime(),
 });

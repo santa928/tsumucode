@@ -100,3 +100,28 @@ entries:
     definition: Actionの送信が完了するまでの待機状態。入力と送信の無効化に使う。
     firstSlideId: next-ch04-l02-s03
     relatedIds: []
+  - id: get-selection
+    term: GETの選択
+    definition: 表示条件をqueryへ載せる操作。保存のPOSTとは区別する。
+    firstSlideId: next-ch05-l01-g02
+    relatedIds: []
+  - id: metadata
+    term: metadata
+    definition: Server page/layoutから文書のtitleやdescriptionを定義する情報。
+    firstSlideId: next-ch05-l01-g03
+    relatedIds: []
+  - id: image
+    term: Image
+    definition: Nextの画像Component。本教材では固定SVGのaltと寸法を指定する。
+    firstSlideId: next-ch05-l01-g03
+    relatedIds: []
+  - id: project-transfer
+    term: 制作の転移
+    definition: 既習の仕組みを別のBriefや条件に合わせて設計すること。
+    firstSlideId: next-ch06-l01-g01
+    relatedIds: []
+  - id: source-export
+    term: Source ZIP
+    definition: 現在のSourceと起動用の包装を持ち出すZIP。下書き記録のJSONとは別。
+    firstSlideId: next-ch06-l01-g03
+    relatedIds: []

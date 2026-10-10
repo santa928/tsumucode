@@ -30,6 +30,8 @@ const expectedCount = {
   'next-ch03-l02-e01': 9,
   'next-ch04-l01-e01': 9,
   'next-ch04-l02-e01': 9,
+  'next-ch05-l01-e01': 11,
+  'next-ch06-l01-e01': 12,
 };
 assert.equal(fixtures.length, expectedCount[workspace]);
 const owner = process.env.TSUMUCODE_LOCAL_OWNER;
@@ -86,12 +88,13 @@ async function owned() {
   );
 }
 /** learnerへ追加Nodeを作らず、固定socketから資源の実値を読む。 */
-async function resources() {
+async function resources(verify = true, learnerId, timeout = 2000) {
   const measured = await new Promise((resolve, reject) => {
     const req = request(
       {
         socketPath: join(TRANSPORT_ROOT, run.runId, 'http.sock'),
         path: '/__tsumucode_resources',
+        signal: globalThis.AbortSignal.timeout(timeout),
       },
       (res) => {
         const chunks = [];
@@ -112,18 +115,84 @@ async function resources() {
         });
       },
     );
-    req.setTimeout(2000, () => req.destroy(new Error('Resource deadline')));
+    req.setTimeout(timeout, () => req.destroy(new Error('Resource deadline')));
     req.on('error', reject);
     req.end();
   });
-  assert.equal(measured.zombies, 0, JSON.stringify(measured));
-  assert.equal(measured.memoryEvents.max, 0, JSON.stringify(measured));
-  assert.equal(measured.memoryEvents.oom, 0, JSON.stringify(measured));
-  assert.equal(measured.memoryEvents.oomKill, 0, JSON.stringify(measured));
-  assert.ok(measured.pids <= 64);
-  assert.ok(measured.workspaceBytes <= 64 * 1024 * 1024);
-  assert.ok(measured.temporaryBytes <= 64 * 1024 * 1024);
+  if (verify) {
+    if (measured.zombies > 0 && learnerId) await zombieDiagnostic(learnerId, measured);
+    assert.equal(measured.zombies, 0, JSON.stringify(measured));
+    assert.equal(measured.memoryEvents.max, 0, JSON.stringify(measured));
+    assert.equal(measured.memoryEvents.oom, 0, JSON.stringify(measured));
+    assert.equal(measured.memoryEvents.oomKill, 0, JSON.stringify(measured));
+    assert.ok(measured.pids <= 64);
+    assert.ok(measured.workspaceBytes <= 64 * 1024 * 1024);
+    assert.ok(measured.temporaryBytes <= 64 * 1024 * 1024);
+  }
   return measured;
+}
+
+/** 最初の失敗を保持し、同じlearnerの回収推移だけを1.5秒以内で観測する。 */
+async function zombieDiagnostic(learnerId, first) {
+  const started = Date.now();
+  const remaining = () => Math.max(1, 1500 - (Date.now() - started));
+  const [top, inspected] = await Promise.allSettled([
+    docker(
+      'GET',
+      `/containers/${learnerId}/top?ps_args=${encodeURIComponent('-eo pid,ppid,stat')}`,
+      undefined,
+      Math.min(500, remaining()),
+    ),
+    docker('GET', `/containers/${learnerId}/json`, undefined, Math.min(500, remaining())),
+  ]);
+  const pid = (value, parent = false) => {
+    const number =
+      typeof value === 'number'
+        ? value
+        : typeof value === 'string' && /^\d{1,10}$/u.test(value)
+          ? Number(value)
+          : NaN;
+    return Number.isInteger(number) && number >= (parent ? 0 : 1) && number <= 2147483647
+      ? number
+      : 'unknown';
+  };
+  const table = top.status === 'fulfilled' ? top.value : undefined;
+  const valid =
+    JSON.stringify(table?.Titles) === JSON.stringify(['PID', 'PPID', 'STAT']) &&
+    Array.isArray(table.Processes) &&
+    table.Processes.length <= 64 &&
+    table.Processes.every(
+      (row) =>
+        Array.isArray(row) &&
+        row.length === 3 &&
+        pid(row[0]) !== 'unknown' &&
+        pid(row[1], true) !== 'unknown' &&
+        typeof row[2] === 'string' &&
+        row[2].length <= 8 &&
+        /^[RSDZTtWXI][<NLsl+]*$/u.test(row[2]),
+    );
+  const samples = [{ elapsedMs: 0, measured: first }];
+  for (let index = 0; index < 3 && Date.now() - started < 1400; index++) {
+    await delay(100);
+    const measured = await resources(false, undefined, Math.min(500, remaining())).catch(
+      () => 'unavailable',
+    );
+    samples.push({ elapsedMs: Date.now() - started, measured });
+  }
+  console.error(
+    JSON.stringify({
+      resourceFailure: 'zombie',
+      initPid: inspected.status === 'fulfilled' ? pid(inspected.value?.State?.Pid) : 'unknown',
+      processes: valid
+        ? table.Processes.map(([processId, parentId, state]) => ({
+            pid: pid(processId),
+            ppid: pid(parentId, true),
+            state,
+          }))
+        : 'unavailable',
+      samples,
+    }),
+  );
 }
 
 async function save(files) {
@@ -185,15 +254,14 @@ try {
     const config = await docker('GET', `/containers/${learner.Id}/json`);
     assert.equal(config.Config.User, '1000:1000');
     assert.equal(config.HostConfig.Init, true);
-    const expectedMemoryMiB = [
-      'next-ch02-l01-e01',
-      'next-ch03-l01-e01',
-      'next-ch03-l02-e01',
-    ].includes(workspace)
-      ? 576
-      : 512;
+    const expectedMemoryMiB = ['next-ch05-l01-e01', 'next-ch06-l01-e01'].includes(workspace)
+      ? 896
+      : ['next-ch02-l01-e01', 'next-ch03-l01-e01', 'next-ch03-l02-e01'].includes(workspace)
+        ? 576
+        : 512;
     assert.equal(config.HostConfig.Memory, expectedMemoryMiB * 1024 * 1024);
     assert.equal(config.HostConfig.MemorySwap, config.HostConfig.Memory);
+    assert.ok(config.HostConfig.Memory <= 1_000_000_000);
     assert.equal(config.HostConfig.NanoCpus, 1e9);
     assert.equal(config.HostConfig.PidsLimit, 64);
     assert.equal(config.HostConfig.NetworkMode, 'none');
@@ -223,11 +291,47 @@ try {
         }),
       );
     }
+    if (graded.value.status !== fixture.expectedStatus) {
+      // 作者の失敗時だけ有限分類と実資源を残す。通常の資源検査は弱めない。
+      const state = await docker('GET', `/containers/${learner.Id}/json`).catch(() => undefined);
+      const logs = await docker(
+        'GET',
+        `/containers/${learner.Id}/logs?stdout=0&stderr=1&tail=100`,
+        undefined,
+        2000,
+        true,
+      ).catch(() => undefined);
+      const text = logs?.subarray(-64 * 1024).toString() ?? '';
+      console.error(
+        JSON.stringify({
+          fixture: fixture.id,
+          failureResources: await resources(false).catch(() => 'unavailable'),
+          learner: state
+            ? {
+                running: state.State.Running,
+                oomKilled: state.State.OOMKilled,
+                exitCode: state.State.ExitCode,
+              }
+            : 'removed',
+          nativeFailure: /heap out of memory|Reached heap limit/u.test(text)
+            ? 'heap-limit'
+            : /ENOSPC|No space left on device/u.test(text)
+              ? 'tmpfs-full'
+              : 'unknown',
+        }),
+      );
+    }
     assert.equal(
       graded.value.status,
       fixture.expectedStatus,
       JSON.stringify({ fixture: fixture.id, grade: graded.value }),
     );
+    if (contract.ruleGoals)
+      assert.deepEqual(
+        graded.value.projectChecks.map(({ goal, passed }) => ({ goal, passed })),
+        fixture.expectedChecks,
+        JSON.stringify({ fixture: fixture.id, grade: graded.value }),
+      );
     for (const [key, value] of Object.entries({ workspaceId: workspace, ...identity() })) {
       const field =
         key === 'expectedSourceRevision'
@@ -242,7 +346,7 @@ try {
       0,
     );
     assert.equal((await docker('GET', `/containers/${learner.Id}/json`)).State.OOMKilled, false);
-    const measured = await resources();
+    const measured = await resources(true, learner.Id);
     passed.push(fixture.id);
     console.log(
       JSON.stringify({

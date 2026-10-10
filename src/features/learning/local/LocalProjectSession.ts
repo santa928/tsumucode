@@ -319,7 +319,7 @@ export class LocalProjectSession {
       }
       const result = projectValidation(grade, draft.editRevision, this.identity);
       const snapshots = { ...current.draft.lastPassingSnapshots };
-      if (grade.status === 'pass')
+      if (result.status === 'pass')
         snapshots[this.identity.exerciseId] = {
           files: draft.files,
           editRevision: draft.editRevision,
@@ -336,11 +336,11 @@ export class LocalProjectSession {
       this.#set({
         result,
         message:
-          grade.status === 'pass'
+          result.status === 'pass'
             ? this.identity.profile === 'next-project-v1'
               ? '合格です。このLessonの実URLと動作を確認しました。'
               : '合格です。実サーバーの見出しを確認しました。'
-            : grade.status === 'code-error'
+            : result.status === 'code-error'
               ? 'コードにエラーがあります。'
               : 'まだ合格条件に届いていません。',
       });

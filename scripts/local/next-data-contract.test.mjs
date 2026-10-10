@@ -151,3 +151,39 @@ test('制御APIの変更を保存APIで拒否し、編集可能なpageのCAS・r
     await rm(directory, { recursive: true, force: true });
   }
 });
+
+for (const workspaceId of ['next-ch05-l01-e01', 'next-ch06-l01-e01']) {
+  test(`${workspaceId}の制作GETを有限URLへ限定し、RSC/Action/任意queryを拒否する`, () => {
+    const current = { ...target, workspaceId };
+    const root = `/w/${workspaceId}/${runId}/`;
+    for (const page of nextWorkspace(workspaceId).pages) {
+      const url = root + page;
+      assert.equal(previewRoute(url, current), true);
+      assert.deepEqual(
+        nextPreviewRequest({ method: 'GET', url, headers: { cookie: 'private' } }, current),
+        { stream: false, headers: {} },
+      );
+      for (const name of [
+        'rsc',
+        'next-router-state-tree',
+        'next-url',
+        'next-router-prefetch',
+        'next-action',
+      ])
+        assert.equal(
+          nextPreviewRequest({ method: 'GET', url, headers: { [name]: 'private' } }, current),
+          undefined,
+        );
+      assert.equal(nextPreviewRequest({ method: 'POST', url, headers: {} }, current), undefined);
+    }
+    for (const page of [
+      'api/catalog?x=1',
+      'banner.svg?x=1',
+      '_next/image?url=private',
+      '?x=1',
+      'trips?area=outdoor&x=1',
+      'events?availability=open&availability=full',
+    ])
+      assert.equal(previewRoute(root + page, current), false);
+  });
+}

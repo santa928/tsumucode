@@ -1,0 +1,8 @@
+id: next-ch06
+sequence: 5
+title: 読書会の案内を独力で作る
+goal: 残席の条件を一覧と詳細へ対応させ、独立した案内サイトを完成して持ち出す。
+estimatedMinutes: 70
+kind: capstone
+lessonSources:
+  - lessons/next-ch06-l01/lesson.yaml

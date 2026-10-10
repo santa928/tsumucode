@@ -2,6 +2,11 @@
 import { ROUTING_STARTER_FILES, BOUNDARY_STARTER_FILES } from './next-routing-source.mjs';
 import { DATA_STARTER_FILES, WEATHER_STARTER_FILES } from './next-data-source.mjs';
 import { FORM_STARTER_FILES, ACTION_STARTER_FILES } from './next-form-source.mjs';
+import {
+  GUIDED_PROJECT_STARTER_FILES,
+  CAPSTONE_PROJECT_STARTER_FILES,
+  NEXT_PROJECT_RULE_GOALS,
+} from './next-production-source.mjs';
 export const NEXT_PROFILE = 'next-project-v1';
 export const NEXT_WORKSPACE = 'next-ch01-l01-e01';
 export const NEXT_STARTER_FILES = Object.freeze({
@@ -43,6 +48,80 @@ export function GET(request: Request): Response {
 });
 
 export const NEXT_WORKSPACES = Object.freeze({
+  'next-ch05-l01-e01': {
+    files: GUIDED_PROJECT_STARTER_FILES,
+    goal: 'guided-travel-project',
+    ruleGoals: NEXT_PROJECT_RULE_GOALS,
+    pages: [
+      '',
+      'trips',
+      'trips/forest',
+      'trips/sea',
+      'trips?area=all',
+      'trips?area=outdoor',
+      'trips?area=indoor',
+      'trips?area=unknown',
+      'api/catalog',
+      'banner.svg',
+    ],
+    previewLabels: [
+      '入口と画像',
+      '旅の一覧',
+      '森の詳細',
+      '資料館の詳細',
+      'すべて',
+      '屋外だけ',
+      '室内だけ',
+      '不正な選択',
+      '実JSON',
+      '固定画像',
+    ],
+    readonlyFiles: [
+      'app/layout.tsx',
+      'app/globals.css',
+      'app/data.ts',
+      'app/catalog.ts',
+      'app/api/catalog/route.ts',
+      'public/banner.svg',
+    ],
+  },
+  'next-ch06-l01-e01': {
+    files: CAPSTONE_PROJECT_STARTER_FILES,
+    goal: 'capstone-event-project',
+    ruleGoals: NEXT_PROJECT_RULE_GOALS,
+    pages: [
+      '',
+      'events',
+      'events/morning',
+      'events/evening',
+      'events?availability=all',
+      'events?availability=open',
+      'events?availability=full',
+      'events?availability=unknown',
+      'api/catalog',
+      'banner.svg',
+    ],
+    previewLabels: [
+      '入口と画像',
+      '読書会一覧',
+      '朝の詳細',
+      '夕方の詳細',
+      'すべて',
+      '受付中だけ',
+      '受付終了だけ',
+      '不正な選択',
+      '実JSON',
+      '固定画像',
+    ],
+    readonlyFiles: [
+      'app/layout.tsx',
+      'app/globals.css',
+      'app/data.ts',
+      'app/catalog.ts',
+      'app/api/catalog/route.ts',
+      'public/banner.svg',
+    ],
+  },
   [NEXT_WORKSPACE]: {
     files: NEXT_STARTER_FILES,
     goal: 'page-route-query',

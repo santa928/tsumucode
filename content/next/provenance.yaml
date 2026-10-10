@@ -1522,3 +1522,786 @@ items:
   - id: next-form-original-505
     visibility: authoring
     path: chapters/next-ch04/lessons/next-ch04-l01/exercises/next-ch04-l01-e01/fixtures/alternative/app/api/note/route.ts
+  - id: next-project-original-506
+    visibility: public
+    path: chapters/next-ch05/chapter.yaml
+  - id: next-project-original-507
+    visibility: public
+    path: chapters/next-ch05/lessons/next-ch05-l01/brief.md
+  - id: next-project-original-508
+    visibility: public
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/exercise.yaml
+  - id: next-project-original-509
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/alternative/app/api/catalog/route.ts
+  - id: next-project-original-510
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/alternative/app/catalog.ts
+  - id: next-project-original-511
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/alternative/app/data.ts
+  - id: next-project-original-512
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/alternative/app/globals.css
+  - id: next-project-original-513
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/alternative/app/layout.tsx
+  - id: next-project-original-514
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/alternative/app/page.tsx
+  - id: next-project-original-515
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/alternative/app/trips/[id]/page.tsx
+  - id: next-project-original-516
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/alternative/app/trips/page.tsx
+  - id: next-project-original-517
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/alternative/public/banner.svg
+  - id: next-project-original-518
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/code-error/app/api/catalog/route.ts
+  - id: next-project-original-519
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/code-error/app/catalog.ts
+  - id: next-project-original-520
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/code-error/app/data.ts
+  - id: next-project-original-521
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/code-error/app/globals.css
+  - id: next-project-original-522
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/code-error/app/layout.tsx
+  - id: next-project-original-523
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/code-error/app/page.tsx
+  - id: next-project-original-524
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/code-error/app/trips/[id]/page.tsx
+  - id: next-project-original-525
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/code-error/app/trips/page.tsx
+  - id: next-project-original-526
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/code-error/public/banner.svg
+  - id: next-project-original-527
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/fake-navigation/app/api/catalog/route.ts
+  - id: next-project-original-528
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/fake-navigation/app/catalog.ts
+  - id: next-project-original-529
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/fake-navigation/app/data.ts
+  - id: next-project-original-530
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/fake-navigation/app/globals.css
+  - id: next-project-original-531
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/fake-navigation/app/layout.tsx
+  - id: next-project-original-532
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/fake-navigation/app/page.tsx
+  - id: next-project-original-533
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/fake-navigation/app/trips/[id]/page.tsx
+  - id: next-project-original-534
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/fake-navigation/app/trips/page.tsx
+  - id: next-project-original-535
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/fake-navigation/public/banner.svg
+  - id: next-project-original-536
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/filter-only/app/api/catalog/route.ts
+  - id: next-project-original-537
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/filter-only/app/catalog.ts
+  - id: next-project-original-538
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/filter-only/app/data.ts
+  - id: next-project-original-539
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/filter-only/app/globals.css
+  - id: next-project-original-540
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/filter-only/app/layout.tsx
+  - id: next-project-original-541
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/filter-only/app/page.tsx
+  - id: next-project-original-542
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/filter-only/app/trips/[id]/page.tsx
+  - id: next-project-original-543
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/filter-only/app/trips/page.tsx
+  - id: next-project-original-544
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/filter-only/public/banner.svg
+  - id: next-project-original-545
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/later-break/app/api/catalog/route.ts
+  - id: next-project-original-546
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/later-break/app/catalog.ts
+  - id: next-project-original-547
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/later-break/app/data.ts
+  - id: next-project-original-548
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/later-break/app/globals.css
+  - id: next-project-original-549
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/later-break/app/layout.tsx
+  - id: next-project-original-550
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/later-break/app/page.tsx
+  - id: next-project-original-551
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/later-break/app/trips/[id]/page.tsx
+  - id: next-project-original-552
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/later-break/app/trips/page.tsx
+  - id: next-project-original-553
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/later-break/public/banner.svg
+  - id: next-project-original-554
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/missing-image/app/api/catalog/route.ts
+  - id: next-project-original-555
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/missing-image/app/catalog.ts
+  - id: next-project-original-556
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/missing-image/app/data.ts
+  - id: next-project-original-557
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/missing-image/app/globals.css
+  - id: next-project-original-558
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/missing-image/app/layout.tsx
+  - id: next-project-original-559
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/missing-image/app/page.tsx
+  - id: next-project-original-560
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/missing-image/app/trips/[id]/page.tsx
+  - id: next-project-original-561
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/missing-image/app/trips/page.tsx
+  - id: next-project-original-562
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/missing-image/public/banner.svg
+  - id: next-project-original-563
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/solution/app/api/catalog/route.ts
+  - id: next-project-original-564
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/solution/app/catalog.ts
+  - id: next-project-original-565
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/solution/app/data.ts
+  - id: next-project-original-566
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/solution/app/globals.css
+  - id: next-project-original-567
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/solution/app/layout.tsx
+  - id: next-project-original-568
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/solution/app/page.tsx
+  - id: next-project-original-569
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/solution/app/trips/[id]/page.tsx
+  - id: next-project-original-570
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/solution/app/trips/page.tsx
+  - id: next-project-original-571
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/solution/public/banner.svg
+  - id: next-project-original-572
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/starter/app/api/catalog/route.ts
+  - id: next-project-original-573
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/starter/app/catalog.ts
+  - id: next-project-original-574
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/starter/app/data.ts
+  - id: next-project-original-575
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/starter/app/globals.css
+  - id: next-project-original-576
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/starter/app/layout.tsx
+  - id: next-project-original-577
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/starter/app/page.tsx
+  - id: next-project-original-578
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/starter/app/trips/[id]/page.tsx
+  - id: next-project-original-579
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/starter/app/trips/page.tsx
+  - id: next-project-original-580
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/starter/public/banner.svg
+  - id: next-project-original-581
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/structure-only/app/api/catalog/route.ts
+  - id: next-project-original-582
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/structure-only/app/catalog.ts
+  - id: next-project-original-583
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/structure-only/app/data.ts
+  - id: next-project-original-584
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/structure-only/app/globals.css
+  - id: next-project-original-585
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/structure-only/app/layout.tsx
+  - id: next-project-original-586
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/structure-only/app/page.tsx
+  - id: next-project-original-587
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/structure-only/app/trips/[id]/page.tsx
+  - id: next-project-original-588
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/structure-only/app/trips/page.tsx
+  - id: next-project-original-589
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/structure-only/public/banner.svg
+  - id: next-project-original-590
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/wrong-label/app/api/catalog/route.ts
+  - id: next-project-original-591
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/wrong-label/app/catalog.ts
+  - id: next-project-original-592
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/wrong-label/app/data.ts
+  - id: next-project-original-593
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/wrong-label/app/globals.css
+  - id: next-project-original-594
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/wrong-label/app/layout.tsx
+  - id: next-project-original-595
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/wrong-label/app/page.tsx
+  - id: next-project-original-596
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/wrong-label/app/trips/[id]/page.tsx
+  - id: next-project-original-597
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/wrong-label/app/trips/page.tsx
+  - id: next-project-original-598
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/wrong-label/public/banner.svg
+  - id: next-project-original-599
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/wrong-metadata/app/api/catalog/route.ts
+  - id: next-project-original-600
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/wrong-metadata/app/catalog.ts
+  - id: next-project-original-601
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/wrong-metadata/app/data.ts
+  - id: next-project-original-602
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/wrong-metadata/app/globals.css
+  - id: next-project-original-603
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/wrong-metadata/app/layout.tsx
+  - id: next-project-original-604
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/wrong-metadata/app/page.tsx
+  - id: next-project-original-605
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/wrong-metadata/app/trips/[id]/page.tsx
+  - id: next-project-original-606
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/wrong-metadata/app/trips/page.tsx
+  - id: next-project-original-607
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/fixtures/wrong-metadata/public/banner.svg
+  - id: next-project-original-608
+    visibility: public
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/instructions.md
+  - id: next-project-original-609
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/solution/app/api/catalog/route.ts
+  - id: next-project-original-610
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/solution/app/catalog.ts
+  - id: next-project-original-611
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/solution/app/data.ts
+  - id: next-project-original-612
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/solution/app/globals.css
+  - id: next-project-original-613
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/solution/app/layout.tsx
+  - id: next-project-original-614
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/solution/app/page.tsx
+  - id: next-project-original-615
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/solution/app/trips/[id]/page.tsx
+  - id: next-project-original-616
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/solution/app/trips/page.tsx
+  - id: next-project-original-617
+    visibility: authoring
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/solution/public/banner.svg
+  - id: next-project-original-618
+    visibility: public
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/starter/app/api/catalog/route.ts
+  - id: next-project-original-619
+    visibility: public
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/starter/app/catalog.ts
+  - id: next-project-original-620
+    visibility: public
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/starter/app/data.ts
+  - id: next-project-original-621
+    visibility: public
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/starter/app/globals.css
+  - id: next-project-original-622
+    visibility: public
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/starter/app/layout.tsx
+  - id: next-project-original-623
+    visibility: public
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/starter/app/page.tsx
+  - id: next-project-original-624
+    visibility: public
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/starter/app/trips/[id]/page.tsx
+  - id: next-project-original-625
+    visibility: public
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/starter/app/trips/page.tsx
+  - id: next-project-original-626
+    visibility: public
+    path: chapters/next-ch05/lessons/next-ch05-l01/exercises/next-ch05-l01-e01/starter/public/banner.svg
+  - id: next-project-original-627
+    visibility: public
+    path: chapters/next-ch05/lessons/next-ch05-l01/guide.md
+  - id: next-project-original-628
+    visibility: public
+    path: chapters/next-ch05/lessons/next-ch05-l01/lesson.yaml
+  - id: next-project-original-629
+    visibility: public
+    path: chapters/next-ch05/lessons/next-ch05-l01/slides/g01-structure.md
+  - id: next-project-original-630
+    visibility: public
+    path: chapters/next-ch05/lessons/next-ch05-l01/slides/g02-filter.md
+  - id: next-project-original-631
+    visibility: public
+    path: chapters/next-ch05/lessons/next-ch05-l01/slides/g03-export.md
+  - id: next-project-original-632
+    visibility: public
+    path: chapters/next-ch06/chapter.yaml
+  - id: next-project-original-633
+    visibility: public
+    path: chapters/next-ch06/lessons/next-ch06-l01/brief.md
+  - id: next-project-original-634
+    visibility: public
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/exercise.yaml
+  - id: next-project-original-635
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/alternative/app/api/catalog/route.ts
+  - id: next-project-original-636
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/alternative/app/catalog.ts
+  - id: next-project-original-637
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/alternative/app/data.ts
+  - id: next-project-original-638
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/alternative/app/events/[id]/page.tsx
+  - id: next-project-original-639
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/alternative/app/events/page.tsx
+  - id: next-project-original-640
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/alternative/app/globals.css
+  - id: next-project-original-641
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/alternative/app/layout.tsx
+  - id: next-project-original-642
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/alternative/app/page.tsx
+  - id: next-project-original-643
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/alternative/public/banner.svg
+  - id: next-project-original-644
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/code-error/app/api/catalog/route.ts
+  - id: next-project-original-645
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/code-error/app/catalog.ts
+  - id: next-project-original-646
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/code-error/app/data.ts
+  - id: next-project-original-647
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/code-error/app/events/[id]/page.tsx
+  - id: next-project-original-648
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/code-error/app/events/page.tsx
+  - id: next-project-original-649
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/code-error/app/globals.css
+  - id: next-project-original-650
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/code-error/app/layout.tsx
+  - id: next-project-original-651
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/code-error/app/page.tsx
+  - id: next-project-original-652
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/code-error/public/banner.svg
+  - id: next-project-original-653
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/fake-navigation/app/api/catalog/route.ts
+  - id: next-project-original-654
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/fake-navigation/app/catalog.ts
+  - id: next-project-original-655
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/fake-navigation/app/data.ts
+  - id: next-project-original-656
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/fake-navigation/app/events/[id]/page.tsx
+  - id: next-project-original-657
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/fake-navigation/app/events/page.tsx
+  - id: next-project-original-658
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/fake-navigation/app/globals.css
+  - id: next-project-original-659
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/fake-navigation/app/layout.tsx
+  - id: next-project-original-660
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/fake-navigation/app/page.tsx
+  - id: next-project-original-661
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/fake-navigation/public/banner.svg
+  - id: next-project-original-662
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/filter-only/app/api/catalog/route.ts
+  - id: next-project-original-663
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/filter-only/app/catalog.ts
+  - id: next-project-original-664
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/filter-only/app/data.ts
+  - id: next-project-original-665
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/filter-only/app/events/[id]/page.tsx
+  - id: next-project-original-666
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/filter-only/app/events/page.tsx
+  - id: next-project-original-667
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/filter-only/app/globals.css
+  - id: next-project-original-668
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/filter-only/app/layout.tsx
+  - id: next-project-original-669
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/filter-only/app/page.tsx
+  - id: next-project-original-670
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/filter-only/public/banner.svg
+  - id: next-project-original-671
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/ignore-seats/app/api/catalog/route.ts
+  - id: next-project-original-672
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/ignore-seats/app/catalog.ts
+  - id: next-project-original-673
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/ignore-seats/app/data.ts
+  - id: next-project-original-674
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/ignore-seats/app/events/[id]/page.tsx
+  - id: next-project-original-675
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/ignore-seats/app/events/page.tsx
+  - id: next-project-original-676
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/ignore-seats/app/globals.css
+  - id: next-project-original-677
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/ignore-seats/app/layout.tsx
+  - id: next-project-original-678
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/ignore-seats/app/page.tsx
+  - id: next-project-original-679
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/ignore-seats/public/banner.svg
+  - id: next-project-original-680
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/later-break/app/api/catalog/route.ts
+  - id: next-project-original-681
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/later-break/app/catalog.ts
+  - id: next-project-original-682
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/later-break/app/data.ts
+  - id: next-project-original-683
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/later-break/app/events/[id]/page.tsx
+  - id: next-project-original-684
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/later-break/app/events/page.tsx
+  - id: next-project-original-685
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/later-break/app/globals.css
+  - id: next-project-original-686
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/later-break/app/layout.tsx
+  - id: next-project-original-687
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/later-break/app/page.tsx
+  - id: next-project-original-688
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/later-break/public/banner.svg
+  - id: next-project-original-689
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/missing-image/app/api/catalog/route.ts
+  - id: next-project-original-690
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/missing-image/app/catalog.ts
+  - id: next-project-original-691
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/missing-image/app/data.ts
+  - id: next-project-original-692
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/missing-image/app/events/[id]/page.tsx
+  - id: next-project-original-693
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/missing-image/app/events/page.tsx
+  - id: next-project-original-694
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/missing-image/app/globals.css
+  - id: next-project-original-695
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/missing-image/app/layout.tsx
+  - id: next-project-original-696
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/missing-image/app/page.tsx
+  - id: next-project-original-697
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/missing-image/public/banner.svg
+  - id: next-project-original-698
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/solution/app/api/catalog/route.ts
+  - id: next-project-original-699
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/solution/app/catalog.ts
+  - id: next-project-original-700
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/solution/app/data.ts
+  - id: next-project-original-701
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/solution/app/events/[id]/page.tsx
+  - id: next-project-original-702
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/solution/app/events/page.tsx
+  - id: next-project-original-703
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/solution/app/globals.css
+  - id: next-project-original-704
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/solution/app/layout.tsx
+  - id: next-project-original-705
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/solution/app/page.tsx
+  - id: next-project-original-706
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/solution/public/banner.svg
+  - id: next-project-original-707
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/starter/app/api/catalog/route.ts
+  - id: next-project-original-708
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/starter/app/catalog.ts
+  - id: next-project-original-709
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/starter/app/data.ts
+  - id: next-project-original-710
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/starter/app/events/[id]/page.tsx
+  - id: next-project-original-711
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/starter/app/events/page.tsx
+  - id: next-project-original-712
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/starter/app/globals.css
+  - id: next-project-original-713
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/starter/app/layout.tsx
+  - id: next-project-original-714
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/starter/app/page.tsx
+  - id: next-project-original-715
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/starter/public/banner.svg
+  - id: next-project-original-716
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/structure-only/app/api/catalog/route.ts
+  - id: next-project-original-717
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/structure-only/app/catalog.ts
+  - id: next-project-original-718
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/structure-only/app/data.ts
+  - id: next-project-original-719
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/structure-only/app/events/[id]/page.tsx
+  - id: next-project-original-720
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/structure-only/app/events/page.tsx
+  - id: next-project-original-721
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/structure-only/app/globals.css
+  - id: next-project-original-722
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/structure-only/app/layout.tsx
+  - id: next-project-original-723
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/structure-only/app/page.tsx
+  - id: next-project-original-724
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/structure-only/public/banner.svg
+  - id: next-project-original-725
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/wrong-label/app/api/catalog/route.ts
+  - id: next-project-original-726
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/wrong-label/app/catalog.ts
+  - id: next-project-original-727
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/wrong-label/app/data.ts
+  - id: next-project-original-728
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/wrong-label/app/events/[id]/page.tsx
+  - id: next-project-original-729
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/wrong-label/app/events/page.tsx
+  - id: next-project-original-730
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/wrong-label/app/globals.css
+  - id: next-project-original-731
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/wrong-label/app/layout.tsx
+  - id: next-project-original-732
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/wrong-label/app/page.tsx
+  - id: next-project-original-733
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/wrong-label/public/banner.svg
+  - id: next-project-original-734
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/wrong-metadata/app/api/catalog/route.ts
+  - id: next-project-original-735
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/wrong-metadata/app/catalog.ts
+  - id: next-project-original-736
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/wrong-metadata/app/data.ts
+  - id: next-project-original-737
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/wrong-metadata/app/events/[id]/page.tsx
+  - id: next-project-original-738
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/wrong-metadata/app/events/page.tsx
+  - id: next-project-original-739
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/wrong-metadata/app/globals.css
+  - id: next-project-original-740
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/wrong-metadata/app/layout.tsx
+  - id: next-project-original-741
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/wrong-metadata/app/page.tsx
+  - id: next-project-original-742
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/fixtures/wrong-metadata/public/banner.svg
+  - id: next-project-original-743
+    visibility: public
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/instructions.md
+  - id: next-project-original-744
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/solution/app/api/catalog/route.ts
+  - id: next-project-original-745
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/solution/app/catalog.ts
+  - id: next-project-original-746
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/solution/app/data.ts
+  - id: next-project-original-747
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/solution/app/events/[id]/page.tsx
+  - id: next-project-original-748
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/solution/app/events/page.tsx
+  - id: next-project-original-749
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/solution/app/globals.css
+  - id: next-project-original-750
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/solution/app/layout.tsx
+  - id: next-project-original-751
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/solution/app/page.tsx
+  - id: next-project-original-752
+    visibility: authoring
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/solution/public/banner.svg
+  - id: next-project-original-753
+    visibility: public
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/starter/app/api/catalog/route.ts
+  - id: next-project-original-754
+    visibility: public
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/starter/app/catalog.ts
+  - id: next-project-original-755
+    visibility: public
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/starter/app/data.ts
+  - id: next-project-original-756
+    visibility: public
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/starter/app/events/[id]/page.tsx
+  - id: next-project-original-757
+    visibility: public
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/starter/app/events/page.tsx
+  - id: next-project-original-758
+    visibility: public
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/starter/app/globals.css
+  - id: next-project-original-759
+    visibility: public
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/starter/app/layout.tsx
+  - id: next-project-original-760
+    visibility: public
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/starter/app/page.tsx
+  - id: next-project-original-761
+    visibility: public
+    path: chapters/next-ch06/lessons/next-ch06-l01/exercises/next-ch06-l01-e01/starter/public/banner.svg
+  - id: next-project-original-762
+    visibility: public
+    path: chapters/next-ch06/lessons/next-ch06-l01/guide.md
+  - id: next-project-original-763
+    visibility: public
+    path: chapters/next-ch06/lessons/next-ch06-l01/lesson.yaml
+  - id: next-project-original-764
+    visibility: public
+    path: chapters/next-ch06/lessons/next-ch06-l01/slides/g01-structure.md
+  - id: next-project-original-765
+    visibility: public
+    path: chapters/next-ch06/lessons/next-ch06-l01/slides/g02-filter.md
+  - id: next-project-original-766
+    visibility: public
+    path: chapters/next-ch06/lessons/next-ch06-l01/slides/g03-export.md
