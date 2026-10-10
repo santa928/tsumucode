@@ -4,9 +4,9 @@ status: preflight-passed-final-ci-required
 publicationApprovalReference: owner:2026-10-10T14:24:29.529277+00:00:いいよ
 realHumanTrial: unverified
 lowEndPhysicalDevice: unverified
-verifiedSourceCommit: c7bf9bf2fb9809e6a9e81438e102e16614c660f0
+verifiedSourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
 canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
-candidateTreeSha256: 8b72412e0da14b014aa0ddf13be1f471c3b48c8b126287455fd93e91e9dccd4e
+candidateTreeSha256: 62effd028951703e17aa2810f5007d715e1cf1dabaf2a152dda7665ca2106145
 applicationSourceSha256: 2c248c2f3dd311509ec40f332eb4173c70e745c91aa860d875be5814054b815a
 dependencyLockSha256: 191461e31bb2d50d9be7b6fd91e2a63e14e7eee00634461bb4bc32bac0b7f0c8
 vendorSha256: 045d5d24240cecf642f5e6be03f02307e5334d28a8223365980312c85956bffc
@@ -15,51 +15,51 @@ personas:
     actor: python138_lesson_review
     method: independent-ai-source-review
     mandatoryFindings: 0
-    sourceCommit: c7bf9bf2fb9809e6a9e81438e102e16614c660f0
+    sourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
     canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
     report:
       path: .release-issue138/public-lesson-review.md
-      sha256: 62a1b11a8a828441f2acd18c0e198c829f78de844ac3c7ce2cb7918845aa1985
+      sha256: efcd17159d5224d57753d0df624ce2e7ebd252e0c04bab4b4f3cfe12430135ac
   - role: usability
     actor: python138_usability_persona
     method: independent-ai-source-review
     mandatoryFindings: 0
-    sourceCommit: c7bf9bf2fb9809e6a9e81438e102e16614c660f0
+    sourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
     canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
     report:
       path: .release-issue138/public-usability-review.md
-      sha256: d8ab5e8b8483e40fd3aa315048cb2db8a39639a6baf6d44df970564d5f8fac28
+      sha256: bdf24bf0e7bf51f97576e4376b15ed65e8cbb5953598dbb8341f7ca63ebbbc63
   - role: runtime-publication
     actor: python138_runtime_lifecycle_review
     method: independent-ai-source-review
     mandatoryFindings: 0
-    sourceCommit: c7bf9bf2fb9809e6a9e81438e102e16614c660f0
+    sourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
     canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
     report:
       path: .release-issue138/public-runtime-review.md
-      sha256: e901914135af0f630c8a4613ead9f8c5e859fda80c279157751d57674147e1a6
+      sha256: 3477215629dfe8e5a976c2eb5e7c51df8ff0ddf13b67503d75f042aae647a81e
 browserPreflight:
   - browser: chromium
     status: passed
-    sourceCommit: c7bf9bf2fb9809e6a9e81438e102e16614c660f0
+    sourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
     canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
     report:
       path: .release-issue138/public-chromium-proof.json
-      sha256: f429dda846bdab45da3fc076782f116f6b293b63ee7db02ad03ca1585352e55f
+      sha256: 3e7d590583ad7369fb5d108074c419d1957794bd14db3bd13167cf67bc32dda8
   - browser: firefox
     status: passed
-    sourceCommit: c7bf9bf2fb9809e6a9e81438e102e16614c660f0
+    sourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
     canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
     report:
       path: .release-issue138/public-firefox-proof.json
-      sha256: 48cad930a583701285aca628769d095059ac0960dd1ef454b9c38f7d9c163d38
+      sha256: 61df9ec8a9501c7fd5c09eae017bea99434fa51ab9c361d06a61261032bae50d
   - browser: webkit
     status: passed
-    sourceCommit: c7bf9bf2fb9809e6a9e81438e102e16614c660f0
+    sourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
     canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
     report:
       path: .release-issue138/public-webkit-proof.json
-      sha256: 86346e7c2e9492ca0f9d5f877f5385089c907964f24a7770d0c3f1ebc1b5e3a9
+      sha256: d09761dffc507fe0da411230cf7fc8d87acf35c1ecc3b8bbcd9917a2ee30aaba
 fixtureIds:
   - solution
   - alternate-name
@@ -75,10 +75,10 @@ pyodideVersion: 314.0.7
 pythonVersion: 3.14.2
 capabilityPreflight:
   path: .release-issue138/public-capability-proof.json
-  sha256: e455b411de4c062237867b0e7e16a9d46ac8a2e7f49bb38e5498c895870f5fea
+  sha256: 11c888da4b266114eb993c8db16602d6459f7ab5a8d98e86cca0ce2f126761cb
 uiPreflight:
   path: .release-issue138/public-ui-proof.json
-  sha256: a86fcc0e8d38e3c376e1a8ee2fe5888800fc9d407df176ca16feea4071c61c18
+  sha256: 8e4f7b1c259d528e6beef44a298f64392c15698a13f22b0d322dfa86cd875638
 licenseNoticesAndSourceOffer: bundled-and-checked
 homePathReadingCoreRequests: 0
 axeViolations: 0
@@ -87,16 +87,16 @@ privateOriginalsChecked: true
 independenceReview:
   reviewer: python138_runtime_lifecycle_review
   status: approved
-  sourceCommit: c7bf9bf2fb9809e6a9e81438e102e16614c660f0
+  sourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
   canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
-  productTreeSha256: 8b72412e0da14b014aa0ddf13be1f471c3b48c8b126287455fd93e91e9dccd4e
-  evidenceSha256: 28657f2441901352edfd3770f544178e900e198cfd6cea9de51e4c40c1277d71
+  productTreeSha256: 62effd028951703e17aa2810f5007d715e1cf1dabaf2a152dda7665ca2106145
+  evidenceSha256: 1afce8ed06a4780dded89638b2102be453c97e8a527f6a3416a1e47c77698281
   referenceSha256s:
-    - 62a1b11a8a828441f2acd18c0e198c829f78de844ac3c7ce2cb7918845aa1985
-    - d8ab5e8b8483e40fd3aa315048cb2db8a39639a6baf6d44df970564d5f8fac28
-    - e901914135af0f630c8a4613ead9f8c5e859fda80c279157751d57674147e1a6
-    - f429dda846bdab45da3fc076782f116f6b293b63ee7db02ad03ca1585352e55f
-    - 48cad930a583701285aca628769d095059ac0960dd1ef454b9c38f7d9c163d38
-    - 86346e7c2e9492ca0f9d5f877f5385089c907964f24a7770d0c3f1ebc1b5e3a9
-    - e455b411de4c062237867b0e7e16a9d46ac8a2e7f49bb38e5498c895870f5fea
-    - a86fcc0e8d38e3c376e1a8ee2fe5888800fc9d407df176ca16feea4071c61c18
+    - efcd17159d5224d57753d0df624ce2e7ebd252e0c04bab4b4f3cfe12430135ac
+    - bdf24bf0e7bf51f97576e4376b15ed65e8cbb5953598dbb8341f7ca63ebbbc63
+    - 3477215629dfe8e5a976c2eb5e7c51df8ff0ddf13b67503d75f042aae647a81e
+    - 3e7d590583ad7369fb5d108074c419d1957794bd14db3bd13167cf67bc32dda8
+    - 61df9ec8a9501c7fd5c09eae017bea99434fa51ab9c361d06a61261032bae50d
+    - d09761dffc507fe0da411230cf7fc8d87acf35c1ecc3b8bbcd9917a2ee30aaba
+    - 11c888da4b266114eb993c8db16602d6459f7ab5a8d98e86cca0ce2f126761cb
+    - 8e4f7b1c259d528e6beef44a298f64392c15698a13f22b0d322dfa86cd875638
