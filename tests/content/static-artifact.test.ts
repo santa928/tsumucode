@@ -52,6 +52,17 @@ afterEach(async () => {
 });
 
 describe('static artifact', () => {
+  it('Next JSONの重複keyに隠した開発URLを拒否する', async () => {
+    const source = nextWorkspace('next-ch03-l01-e01')!.files['app/data-url.ts'];
+    const root = await artifact('extra.json', '{}');
+    const directory = path.join(root, 'generated/content/courses/next/lessons');
+    await mkdir(directory, { recursive: true });
+    await writeFile(
+      path.join(directory, 'next-ch03-l01.json'),
+      `{"courseId":"next","lesson":{"id":"next-ch03-l01","title":"http://localhost:5174","title":"教材","exercises":[{"id":"next-ch03-l01-e01","files":[{"path":"app/data-url.ts","editable":false,"content":${JSON.stringify(source)}}]}]}}`,
+    );
+    await expect(checkStaticArtifact(root)).rejects.toThrow(/開発URL/u);
+  });
   it('Nextの固定SourceとZIP READMEだけを表示dataとして受理する', async () => {
     const source = nextWorkspace('next-ch03-l01-e01')!.files['app/data-url.ts'];
     if (source === undefined) throw new Error('固定Next Sourceがありません');

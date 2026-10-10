@@ -22,19 +22,55 @@ for (const workspace of WORKSPACES) {
   }
 }
 
+/** JSONの未知入力をobjectとして絞る。配列とnullは教材objectとして扱わない。 */
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+/** 重複keyをJSON.parseで消してURLを隠せないよう、除外前の原文を検査する。 */
+function hasDuplicateJsonKeys(relative: string, source: string): boolean {
+  let duplicate = false;
+  const visit = (node: ts.Node): void => {
+    if (ts.isObjectLiteralExpression(node)) {
+      const names = node.properties
+        .filter(ts.isPropertyAssignment)
+        .map(({ name }) =>
+          ts.isStringLiteralLike(name) || ts.isIdentifier(name) ? name.text : name.getText(),
+        );
+      if (new Set(names).size !== names.length) duplicate = true;
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(ts.parseJsonText(relative, source));
+  return duplicate;
+}
+
 /** 実行用URLの一般除外はせず、固定教材の表示用SourceとZIP READMEだけを照合する。 */
 export function withoutReviewedNextSource(relative: string, source: string): string {
   const lessonMatch =
     /^generated\/content\/courses\/next\/lessons\/(next-ch\d{2}-l\d{2})\.json$/u.exec(relative);
-  if (lessonMatch) {
+  if (lessonMatch?.[1]) {
+    if (hasDuplicateJsonKeys(relative, source)) return source;
     const workspace = `${lessonMatch[1]}-e01`;
     if (!WORKSPACES.includes(workspace)) return source;
     const contract = nextWorkspace(workspace)!;
-    const document = JSON.parse(source);
-    if (document.courseId !== 'next' || document.lesson?.id !== lessonMatch[1]) return source;
-    for (const exercise of document.lesson.exercises ?? []) {
-      if (exercise.id !== workspace) continue;
-      for (const file of exercise.files ?? []) {
+    const document: unknown = JSON.parse(source);
+    if (
+      !isRecord(document) ||
+      document.courseId !== 'next' ||
+      !isRecord(document.lesson) ||
+      document.lesson.id !== lessonMatch[1] ||
+      !Array.isArray(document.lesson.exercises)
+    )
+      return source;
+    const exercises: readonly unknown[] = document.lesson.exercises;
+    for (const exercise of exercises) {
+      if (!isRecord(exercise) || exercise.id !== workspace || !Array.isArray(exercise.files))
+        continue;
+      const files: readonly unknown[] = exercise.files;
+      for (const file of files) {
+        if (!isRecord(file) || typeof file.path !== 'string' || typeof file.content !== 'string')
+          continue;
         if (
           file.editable === false &&
           contract.readonlyFiles?.includes(file.path) &&

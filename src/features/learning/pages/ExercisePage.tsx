@@ -50,8 +50,32 @@ export function ExercisePage() {
         <h1>{data.exercise.title}</h1>
         <WorkshopNotice tone="neutral" title="この演習はLocal学習環境で実行します">
           Next.jsのpageとRoute
-          HandlerはDocker内の実サーバーで確認します。Pagesの静的表示では実行・採点できません。端末データを書き出してLocal環境へ移行してください。
+          HandlerはDocker内の実サーバーで確認します。Pagesでは説明と読書を提供し、実行・採点にはLocal学習環境が必要です。
         </WorkshopNotice>
+        <ol className="mt-4 list-decimal space-y-3 pl-6">
+          <li>
+            「学習一覧へ戻る」から「この端末の学習データ」を開き、
+            「全コースの進捗と下書きを書き出す」でJSONを保存します。
+          </li>
+          <li>
+            <a
+              className="font-bold underline"
+              href="https://github.com/santa928/tsumucode#ローカルnodejs学習"
+            >
+              READMEのLocal起動手順
+            </a>
+            に沿ってDockerを起動し、リポジトリ直下で <code>./scripts/learn.sh</code>
+            を実行します。READMEにある127.0.0.1の4173番のURLを開きます。
+          </li>
+          <li>
+            Localの学習一覧で「書き出した学習データを読み込む」を選び、保存したJSONの
+            差分を確認して「この内容を読み込む」を押します。「Next.jsの9教材を開く」から続けます。
+          </li>
+        </ol>
+        <p className="mt-4">
+          Source ZIPは制作物の持ち出し用です。進捗移行には端末データJSONを使います。
+          Cookie・認証・Cookieによる保存は未対応です。
+        </p>
       </section>
     );
   }

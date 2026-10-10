@@ -29,6 +29,7 @@ on:
       - .dockerignore
       - scripts/release/**
       - tests/unit/release/**
+      - tests/e2e/next-static-study.spec.ts
       - .github/workflows/local-runtime.yml
   pull_request:
     branches: [main]
@@ -58,6 +59,7 @@ on:
       - .dockerignore
       - scripts/release/**
       - tests/unit/release/**
+      - tests/e2e/next-static-study.spec.ts
       - .github/workflows/local-runtime.yml
 
 permissions:
