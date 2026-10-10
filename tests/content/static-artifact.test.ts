@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { copyFile, mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -12,6 +12,13 @@ import {
 import { resolveReleaseCourseContract } from '../../scripts/release/releaseCourseContracts';
 import { nextWorkspace } from '../../scripts/local/next-project-protocol.mjs';
 import packaging from '../../scripts/local/next-portable-packaging.json';
+import {
+  PythonDistributionManifestSchema,
+  PYTHON_PREFERRED_SOURCE_FILES,
+  pythonSourceOfferText,
+  pythonNoticesHtml,
+} from '../../scripts/build/pythonDistribution';
+import { sha256Text } from '../../scripts/release/releaseHashes';
 
 const temporaryRoots: string[] = [];
 
@@ -37,7 +44,10 @@ async function artifact(extraName: string, extraContent: string): Promise<string
     '<script src="/repository-name/assets/app.js"></script>',
   );
   await writeFile(path.join(root, 'assets/app.js'), 'safe application');
-  await writeFile(path.join(root, 'generated/content/catalog-v3.json'), '{}');
+  await writeFile(
+    path.join(root, 'generated/content/catalog-v3.json'),
+    '{"courses":[{"id":"html-css"}]}',
+  );
   await writeFile(path.join(root, 'generated/content/courses/html-css/index.json'), '{}');
   await writeFile(
     path.join(root, 'generated/content/courses/html-css/lessons/lesson-first.json'),
@@ -47,11 +57,76 @@ async function artifact(extraName: string, extraContent: string): Promise<string
   return root;
 }
 
+/** 固定配布物の欠落検査専用。合成Workerを実Pyodide/実学習の証拠として使用しない。 */
+async function pythonArtifact(): Promise<string> {
+  const root = await artifact('extra.json', '{}');
+  const compilation = await compileCourse('content/python-basics');
+  await writeSplitContentDeliveryTree(
+    path.join(root, 'generated/content'),
+    buildSplitContentDelivery([compilation], []),
+  );
+  const output = path.join(root, 'python-runtime/314.0.7');
+  const manifest = PythonDistributionManifestSchema.parse(
+    JSON.parse(await readFile('vendor/python/314.0.7/manifest.json', 'utf8')),
+  );
+  const mapping: Readonly<Record<string, string>> = {
+    'pyodide.asm.wasm': 'core.wasm',
+    'python_stdlib.zip': 'stdlib.zip',
+    'pyodide-lock.json': 'lock.json',
+  };
+  for (const { file } of manifest) {
+    const relative = mapping[file] ?? (file.startsWith('licenses/') ? file : undefined);
+    if (!relative) continue;
+    const destination = path.join(output, relative);
+    await mkdir(path.dirname(destination), { recursive: true });
+    await copyFile(path.join('vendor/python/314.0.7', file), destination);
+  }
+  for (const source of PYTHON_PREFERRED_SOURCE_FILES) {
+    const destination = path.join(output, 'sources', source);
+    await mkdir(path.dirname(destination), { recursive: true });
+    await copyFile(source, destination);
+  }
+  await writeFile(path.join(output, 'SOURCES.txt'), pythonSourceOfferText());
+  await writeFile(
+    path.join(output, 'NOTICES.html'),
+    pythonNoticesHtml(manifest.map(({ file }) => file)),
+  );
+  await writeFile(path.join(output, 'worker.js'), 'safe synthetic worker');
+  await writeFile(
+    path.join(output, 'worker.json'),
+    JSON.stringify({ sha256: sha256Text('safe synthetic worker') }),
+  );
+  return root;
+}
+
 afterEach(async () => {
   await Promise.all(temporaryRoots.splice(0).map((root) => rm(root, { recursive: true })));
 });
 
 describe('static artifact', () => {
+  it('Pythonの配布物・通知・編集可能な対象ソースを限定pathで受理する', async () => {
+    expect(
+      (await checkStaticArtifact(await pythonArtifact(), 'python-basics')).files,
+    ).toBeGreaterThan(40);
+  });
+  it.each(['MPL原文', '対象ソース', '案内link', 'Worker欠落', '未知binary'])(
+    'Pythonの%sを拒否する',
+    async (kind) => {
+      const root = await pythonArtifact();
+      const output = path.join(root, 'python-runtime/314.0.7');
+      if (kind === 'MPL原文') await rm(path.join(output, 'licenses/pyodide-MPL.txt'));
+      if (kind === '対象ソース')
+        await writeFile(
+          path.join(output, 'sources/src/adapters/runtime/python/pythonWorker.ts'),
+          'altered',
+        );
+      if (kind === '案内link') await writeFile(path.join(output, 'NOTICES.html'), '<h1>通知</h1>');
+      if (kind === 'Worker欠落') await rm(path.join(output, 'worker.js'));
+      if (kind === '未知binary') await writeFile(path.join(output, 'extra.wasm'), 'extra');
+      await expect(checkStaticArtifact(root, 'python-basics')).rejects.toThrow();
+    },
+  );
+
   it('Next JSONの重複keyに隠した開発URLを拒否する', async () => {
     const source = nextWorkspace('next-ch03-l01-e01')!.files['app/data-url.ts'];
     const root = await artifact('extra.json', '{}');

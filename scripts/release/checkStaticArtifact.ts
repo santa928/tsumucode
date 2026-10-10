@@ -4,6 +4,7 @@ import { pathToFileURL } from 'node:url';
 import { resolveReleaseCourseContract, type ReleaseCourseId } from './releaseCourseContracts';
 import { withoutReviewedNextSource } from './reviewedNextArtifact';
 import { hashFile } from './releaseHashes';
+import { z } from 'zod';
 import {
   PYTHON_VENDOR_ROOT,
   PYTHON_OUTPUT_ROOT,
@@ -34,6 +35,12 @@ async function pythonDistributionPaths(root: string): Promise<ReadonlySet<string
       throw new Error(`Python配布物または通知が固定入力と一致しません: ${relative}`);
     paths.add(relative);
   }
+  const worker = z
+    .object({ sha256: z.string().regex(/^[a-f0-9]{64}$/u) })
+    .strict()
+    .parse(JSON.parse(await readFile(path.join(root, `${prefix}worker.json`), 'utf8')));
+  if ((await hashFile(path.join(root, `${prefix}worker.js`))) !== worker.sha256)
+    throw new Error('Python Workerの配布hashが一致しません');
   for (const source of PYTHON_PREFERRED_SOURCE_FILES) {
     const relative = `${prefix}sources/${source}`;
     if ((await hashFile(path.join(root, relative))) !== (await hashFile(source)))
