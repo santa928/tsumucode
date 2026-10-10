@@ -18,7 +18,7 @@ steps:
     target: 文字列を変数へ直す
     starterAnchor: print("count")
     change: 引用符を外し、両方のprintで同じ変数を使います。
-    observe: Consoleに3と5がこの順で表示されることを確認します。
+    observe: Console（実行結果を表示する欄）に3と5がこの順で表示されることを確認します。
     requiresConceptIds:
       - python-value
       - python-variable

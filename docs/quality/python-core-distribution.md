@@ -1,0 +1,42 @@
+# Python固定coreの配布確認（Issue #138）
+
+## 対象と確認範囲
+
+ローカル実証はPyodide 314.0.7の公式coreを使う。archiveのサイズ・SHA-256と、入力5ファイルのhashは[再現手順](python-local-proof.md)で照合する。Workerはpyodide.mjs／pyodide.asm.mjsをbundleし、WASM・stdlib zip・lockを固定bytesとして読む。教材本文・コード例・2つのSVGは独自制作で、教材provenanceに記録している。
+
+実archiveの13項目とstdlib zipを確認したが、LICENSE／NOTICEファイルは同梱されていない。zipに追加のnative .so／.wasmはない。lockには357 packageの情報があるが、package一覧の存在は配布・実行を意味しない。今回の入力はcoreだけで、追加packageを取得しない。
+
+固定版の[Makefile.envs](https://github.com/pyodide/pyodide/blob/314.0.7/Makefile.envs)と[CPython build設定](https://github.com/pyodide/pyodide/blob/314.0.7/cpython/Makefile)、[組み込みmodule設定](https://github.com/pyodide/pyodide/blob/314.0.7/cpython/Setup.local)を照合した。Python 3.14.2／Emscripten 5.0.3に加え、次の通知を配布候補へ含める。ビルド設定からの対応付けであり、最適化後のbinaryを完全に分解したSBOMではない。
+
+## 固定版の通知とソース
+
+| 対象                   | 版・由来                                 | 原文と配布時の扱い                                                                                                                                                                                                                                                                                                                           |
+| ---------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Pyodide                | 314.0.7                                  | [MPL 2.0](https://github.com/pyodide/pyodide/blob/314.0.7/LICENSE)。license・既存通知を保持し、対象ソースの入手方法を示す。                                                                                                                                                                                                                  |
+| CPython／stdlib        | 3.14.2                                   | [LICENSE](https://github.com/python/cpython/blob/v3.14.2/LICENSE)と[補助通知](https://github.com/python/cpython/blob/v3.14.2/Doc/license.rst)。PSF／歴史的license・組み込み通知を保持し、Pyodideの変更を説明する。                                                                                                                           |
+| EmscriptenのJS runtime | 5.0.3                                    | [MIT／NCSAとNode由来通知](https://github.com/emscripten-core/emscripten/blob/5.0.3/LICENSE)を保持する。                                                                                                                                                                                                                                      |
+| musl libc              | Emscripten 5.0.3同梱                     | [COPYRIGHT](https://github.com/emscripten-core/emscripten/blob/5.0.3/system/lib/libc/musl/COPYRIGHT)のMIT・個別通知を保持する。                                                                                                                                                                                                              |
+| LLVM runtime           | Emscripten 5.0.3同梱                     | [libc++](https://github.com/emscripten-core/emscripten/blob/5.0.3/system/lib/libcxx/LICENSE.TXT)、[libc++abi](https://github.com/emscripten-core/emscripten/blob/5.0.3/system/lib/libcxxabi/LICENSE.TXT)、[compiler-rt](https://github.com/emscripten-core/emscripten/blob/5.0.3/system/lib/compiler-rt/LICENSE.TXT)の原文・例外を保持する。 |
+| libffi                 | f08493d249d2067c8b3207ba46693dd858f95db3 | [MIT通知](https://github.com/libffi/libffi/blob/f08493d249d2067c8b3207ba46693dd858f95db3/LICENSE)を保持する。                                                                                                                                                                                                                                |
+| hiwire                 | 6a1e67280a15d929ebeceee54a6358c9c8d5f697 | [MPL 2.0](https://github.com/pyodide/hiwire/blob/6a1e67280a15d929ebeceee54a6358c9c8d5f697/LICENSE)。固定commitのソース入手方法を示す。                                                                                                                                                                                                       |
+| liblzma                | XZ 5.2.2                                 | [COPYING](https://github.com/tukaani-project/xz/blob/v5.2.2/COPYING)ではliblzmaはpublic domain。CLI／build用GPLコードとは範囲が異なる。                                                                                                                                                                                                      |
+| Zstandard              | 1.5.7                                    | [BSD通知](https://github.com/python/cpython-source-deps/blob/zstd-1.5.7/LICENSE)を保持する。                                                                                                                                                                                                                                                 |
+| SQLite                 | 3.39.0（3390000）                        | [public domain説明](https://www.sqlite.org/copyright.html)と固定build出典を示す。                                                                                                                                                                                                                                                            |
+| zlib                   | Emscripten port 1.3.1                    | [README内の通知](https://github.com/madler/zlib/blob/v1.3.1/README)を保持する。                                                                                                                                                                                                                                                              |
+| bzip2                  | Emscripten port 1.0.6                    | [LICENSE](https://github.com/emscripten-ports/bzip2/blob/1.0.6/LICENSE)を保持する。                                                                                                                                                                                                                                                          |
+| Expat                  | CPython 3.14.2同梱                       | [COPYING](https://github.com/python/cpython/blob/v3.14.2/Modules/expat/COPYING)のMIT通知を保持する。                                                                                                                                                                                                                                         |
+| libmpdec               | CPython 3.14.2同梱                       | [source先頭のBSD通知](https://github.com/python/cpython/blob/v3.14.2/Modules/_decimal/libmpdec/basearith.c)を保持する。                                                                                                                                                                                                                      |
+| HACL*                  | CPython 3.14.2同梱                       | [source先頭のMIT通知](https://github.com/python/cpython/blob/v3.14.2/Modules/_hacl/Hacl_Hash_MD5.c)を保持する。                                                                                                                                                                                                                              |
+| MiniLZ4                | Emscripten 5.0.3同梱                     | [source先頭のPierre Curto MIT通知](https://github.com/emscripten-core/emscripten/blob/5.0.3/third_party/mini-lz4.js)を保持する。                                                                                                                                                                                                             |
+
+公式原文を私有領域へ保存し、取得URL・bytes・SHA-256を記録した。Web上のlatest説明だけで固定coreの条件を代用しない。CPython補助通知には今回無効化されているmoduleの通知もあるため、保守的に保持することと、そのmoduleを実行可能にすることを区別する。
+
+## 公開候補を作るときに必要な差分
+
+現私有artifactには上の通知を同梱していない。license原文の照合完了を、公開配布準備の完了とは扱わない。
+
+1. 公開対象assetにversion付きの第三者通知と原文を同梱し、UIまたは配布案内から入手できるようにする。生成Workerに原文が残るかも確認する。
+2. MPL対象のPyodide／hiwireについて、固定版ソース、PyodideのCPython patchとbuild設定、TsumuCode側のbundle入力・再現手順・変更内容への入手案内を作る。bundleされたコードだけを「ソース」として代用しない。対象ファイルのlicenseを公開時に確認する。
+3. coreのversion・hashと通知の組を公開buildで固定し、出力検査で通知・ソース案内の欠落を防ぐ。固定coreを変更する場合はこの対応付けも更新する。
+
+ここまでの原文と出典は確認済みだが、公開artifactでの通知・ソース案内の配置と配布検査は未実施である。公開用CSP、Course登録、Pagesの実Worker受け入れも別途必要で、現ローカル承認には含まれない。公開・push・PR・mergeは保留する。

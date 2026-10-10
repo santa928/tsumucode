@@ -6,7 +6,7 @@
 
 Node 24.18.0とこのlockfileの依存がある開発Dockerを使用する。固定[Pyodide 314.0.7 core](https://github.com/pyodide/pyodide/releases/download/314.0.7/pyodide-core-314.0.7.tar.bz2)を取得し、archiveのサイズ6,757,104 bytesとSHA-256 `2abdcc2e35208af406e07724cffa85bc582ced97e9028383ecf5462541393f95`を先に照合する。
 
-Docker内でarchiveを安全なtar展開機能で展開し、coreの5ファイルを`.release-issue138/core/pyodide/`へ置く。準備コマンドは各ファイルのbytes/hashも再照合する。coreや生成bundleは既存の`.release-*` ignore配下に置き、Gitへ追加しない。第三者配布物の公開license照合は別の公開受け入れとして残っている。
+Docker内でarchiveを安全なtar展開機能で展開し、coreの5ファイルを`.release-issue138/core/pyodide/`へ置く。準備コマンドは各ファイルのbytes/hashも再照合する。coreや生成bundleは既存の`.release-*` ignore配下に置き、Gitへ追加しない。第三者licenseの照合結果と公開時に必要な通知・ソース案内は[配布確認](python-core-distribution.md)を参照する。
 
 ## 私有artifactを作る
 
@@ -35,4 +35,12 @@ coreは演習の実行時にだけ取得する。失敗してもSourceを保持�
 
 通常buildでは`VITE_PYTHON_LOCAL_PROOF`を指定せず、作者用Course・coreをpublicへコピーしない。Python実証の実行器はbuild flagとloopback hostnameの両方を要求する。私有artifactをPagesへ転用しない。
 
-ローカル実証だけではIssue #138の実Pages Worker受け入れを満たさない。公開前に、配布license、追加の公開判断と公開範囲の検証、未確認Browser環境を別に扱う。
+## FirefoxのDocker検証
+
+PlaywrightのFirefoxをrootかつcap-drop ALLで起動すると、この環境ではページ作成前にsandboxのuid_map書き込みがEPERMになり、content processが異常終了した。PID上限到達・OOMの記録はなかった。
+
+同じimageの既存非rootユーザー（uid／gid 1000:1000）と--initを使い、network none・CPU 2・memory 2 GiB・pids 256・cap-drop ALL・no-new-privilegesを維持するとページ作成とPythonの代表実行が成功した。repository／依存を読み取り専用でmountし、検証出力は所有するDocker一時領域へ置く。profileや依存volumeを他作業と共有しない。browser sandboxを無効化せず、host IPCやcapability追加で回避しない。
+
+起動・ページ作成には段階ログとdeadline、検証全体には終了上限を付ける。正常・構文エラー・日本語分割出力・古いsourceの拒否の4代表ケースが成功した。10 Fixtureの一括実行は90秒上限で9件まで進んだため、全件成功とは扱わない。物理Firefoxでの受講確認とは別の証拠である。
+
+ローカル実証だけではIssue #138の実Pages Worker受け入れを満たさない。公開前に、通知・ソース案内を含む配布物、追加の公開判断と公開範囲の検証、実Pagesと物理端末を別に扱う。

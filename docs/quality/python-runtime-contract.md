@@ -29,11 +29,11 @@ sourceは100 KiB。stdout／stderr合計は64 KiB、1行4,096 bytes、結果は1
 
 Docker内の実Chromiumで、10 Fixtureを実Pyodideと製品採点器へ渡し、pass／incomplete／code-errorと未達Ruleを照合した。policyとは別の診断bundleでJS文字列実行、通信、保存、子Worker、内部参照、prototype、非同期障害、無限実行・停止・過大出力を確認した。親Storageのcanaryは不変、禁止通信の受信は0件だった。これは確認した経路と環境の証拠であり、任意コードを完全に隔離したとの主張ではない。
 
-製品UIで未達→修正→合格、構文エラー、reload後の下書き保持を確認した。core取得失敗時のSource・既存判定履歴の保持と再試行、構文エラー後のEditorフォーカスも確認した。desktop／mobileのaxe違反0件、Home・Path・スライド初期表示ではPython runtime/coreの取得0件。通常Course compilerの概念診断・欠落メタデータ0件、対象型検査・Lintと既存Controller／Console 58テストが成功した。内容と実行lifecycle・ローカル準備コマンドの独立レビューは必須残件0件。WebKitでも正常実行・構文エラー・明示flushした分割出力とstale source拒否を確認した。Firefoxの代表検証は結果が返らず所有コンテナを停止しており、Python動作の成功証拠はない。
+製品UIで未達→修正→合格、構文エラー、reload後の下書き保持を確認した。core取得失敗時のSource・既存判定履歴の保持と再試行、構文エラー後のEditorフォーカスも確認した。desktop／mobileのaxe違反0件、Home・Path・スライド初期表示ではPython runtime/coreの取得0件。通常Course compilerの概念診断・欠落メタデータ0件、対象型検査・Lintと既存Controller／Console 58テストが成功した。WebKitとFirefoxでも正常実行・構文エラー・明示flushした分割出力とstale source拒否を確認した。FirefoxはDockerの非rootユーザーで同じresource／capability制限を維持した代表検証であり、物理端末の証拠ではない。
 
-[ローカル再現手順](python-local-proof.md)は公開には使わない。境界コードの追加独立レビューはreview agentエラーで完了証拠がなく、既に得た境界指摘への修正と実測を保持する。
+[ローカル再現手順](python-local-proof.md)は公開には使わない。教材・使い勝手・運用安全性の独立レビューでPython画面のJS用案内を修正し、予測の答えを開示前に隠した。修正後の実表示・実行・答えの開閉とdesktop／mobileのaxe違反0件を確認し、必須残件は0件。実行境界の追加読み取りレビューでも必須指摘はなかった。これは通常経路の契約・コードを確認した範囲の結論であり、任意コードの完全隔離を保証しない。
 
-実Pages Worker、第三者coreの配布license、公開配信・公開前の範囲検証、実人・物理端末は未完である。#138は実Pages受け入れを含むため、ローカル実証だけでは閉じない。#15の後続#139以降の全curriculum、Local CPython、input／package対応はこの最小変更に含めない。
+[第三者coreのlicense原文と出典](python-core-distribution.md)は確認した。通知・MPL対象ソース案内の公開artifactへの同梱、実Pages Worker、公開配信・公開前の範囲検証、実人・物理端末は未完である。#138は実Pages受け入れを含むため、ローカル実証だけでは閉じない。#15の後続#139以降の全curriculum、Local CPython、input／package対応はこの最小変更に含めない。
 
 ## 一次資料
 

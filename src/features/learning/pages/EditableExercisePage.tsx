@@ -1118,9 +1118,11 @@ function EditableSession({
               {controller.environment.mode === 'console' ? (
                 <div>
                   <p>
-                    {controller.environment.backend === 'local'
-                      ? '編集後に「プレビューを更新」でNode.jsを実行します。Docker切断時は学習モードを再起動し、もう一度実行してください。'
-                      : 'script.jsを編集するとConsoleを更新します。配列・オブジェクトの添字と有限のPromise処理に対応します。HTML/CSSの描画・DOM・タイマー・外部通信は使えません。'}
+                    {exercise.runtime?.kind === 'python'
+                      ? 'main.pyを編集し、「プレビューを更新」で実行結果をConsole（出力欄）に表示します。「判定する」は実行して要件を確かめます。この教材では数値・変数・加算・printを使い、入力待ちやpackageの追加は扱いません。'
+                      : controller.environment.backend === 'local'
+                        ? '編集後に「プレビューを更新」でNode.jsを実行します。Docker切断時は学習モードを再起動し、もう一度実行してください。'
+                        : 'script.jsを編集するとConsoleを更新します。配列・オブジェクトの添字と有限のPromise処理に対応します。HTML/CSSの描画・DOM・タイマー・外部通信は使えません。'}
                   </p>
                   <RuntimeConsole
                     records={(state.runtimeOutput?.console ?? []).slice(0, 200)}
