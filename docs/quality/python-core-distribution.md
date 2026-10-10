@@ -6,7 +6,7 @@
 
 実archiveの13項目とstdlib zipを確認したが、LICENSE／NOTICEファイルは同梱されていない。zipに追加のnative .so／.wasmはない。lockには357 packageの情報があるが、package一覧の存在は配布・実行を意味しない。今回の入力はcoreだけで、追加packageを取得しない。
 
-固定版の[Makefile.envs](https://github.com/pyodide/pyodide/blob/314.0.7/Makefile.envs)と[CPython build設定](https://github.com/pyodide/pyodide/blob/314.0.7/cpython/Makefile)、[組み込みmodule設定](https://github.com/pyodide/pyodide/blob/314.0.7/cpython/Setup.local)を照合した。Python 3.14.2／Emscripten 5.0.3に加え、次の通知を配布候補へ含める。ビルド設定からの対応付けであり、最適化後のbinaryを完全に分解したSBOMではない。
+固定版の[Makefile.envs](https://github.com/pyodide/pyodide/blob/314.0.7/Makefile.envs)と[CPython build設定](https://github.com/pyodide/pyodide/blob/314.0.7/cpython/Makefile)、[組み込みmodule設定](https://github.com/pyodide/pyodide/blob/314.0.7/cpython/Setup.local)を照合した。Python 3.14.2／Emscripten 5.0.3に加え、次の通知を固定配布入力へ含める。ビルド設定からの対応付けであり、最適化後のbinaryを完全に分解したSBOMではない。
 
 ## 固定版の通知とソース
 
@@ -31,12 +31,12 @@
 
 公式原文を私有領域へ保存し、取得URL・bytes・SHA-256を記録した。Web上のlatest説明だけで固定coreの条件を代用しない。CPython補助通知には今回無効化されているmoduleの通知もあるため、保守的に保持することと、そのmoduleを実行可能にすることを区別する。
 
-## 公開候補を作るときに必要な差分
+## 公開配布の配置と検査
 
-現私有artifactには上の通知を同梱していない。license原文の照合完了を、公開配布準備の完了とは扱わない。
+固定core 5ファイルと18原文通知を`vendor/python/314.0.7/`へ保持し、manifestのpath集合・bytes・SHA-256をbuildで照合する。公開出力は`python-runtime/314.0.7/`に固定する。演習のライセンスリンクからNOTICES.html、全通知、SOURCES.txtを別タブで取得できる。
 
-1. 公開対象assetにversion付きの第三者通知と原文を同梱し、UIまたは配布案内から入手できるようにする。生成Workerに原文が残るかも確認する。
-2. MPL対象のPyodide／hiwireについて、固定版ソース、PyodideのCPython patchとbuild設定、TsumuCode側のbundle入力・再現手順・変更内容への入手案内を作る。bundleされたコードだけを「ソース」として代用しない。対象ファイルのlicenseを公開時に確認する。
-3. coreのversion・hashと通知の組を公開buildで固定し、出力検査で通知・ソース案内の欠落を防ぐ。固定coreを変更する場合はこの対応付けも更新する。
+MPL対象の固定上流ソース・patch・build設定の案内に加え、本配布に使用した変更前JS、編集可能なPython実行境界・build入力・依存lockをsources/へそのまま同梱する。生成Workerに変更内容と通知への案内を付ける。対象ソースは配布物と同時に提供し、承認メタデータのcommitだけが変わっても同じbytesになる。bundleだけを対象ソースとして代用しない。
 
-ここまでの原文と出典は確認済みだが、公開artifactでの通知・ソース案内の配置と配布検査は未実施である。公開用CSP、Course登録、Pagesの実Worker受け入れも別途必要で、現ローカル承認には含まれない。公開・push・PR・mergeは保留する。
+静的artifact検査はcoreと18原文通知の固定hash、全同梱ソースとrepository入力のhash、NOTICES/SOURCESの内容・リンクを照合する。WASM・zip・通知・TypeScriptソースの許可はこのversionと既知のpathに限定し、他のbinaryや未知のsourceを許可しない。
+
+2026-10-10の本人承認により、既存PagesへのPython入門公開とPython専用WASM生成許可が対象に加わった。任意WASMにも及ぶ許可であり、外部通信・保存・JavaScript evalの禁止は維持する。実Pagesの配信hash・Worker受入は公開後の検査を正とする。物理端末・実人受講は未確認として残す。

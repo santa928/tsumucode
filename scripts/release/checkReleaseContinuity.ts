@@ -18,6 +18,7 @@ import {
   type ReleaseCourseId,
 } from './releaseCourseContracts';
 import { parseCourseReleaseHistory, type CourseReleaseHistory } from './javascriptReleaseSchema';
+import { verifyPythonSyntheticProgressBundle } from './pythonSyntheticContinuity';
 import { verifyNextSyntheticProgressBundle } from './nextSyntheticContinuity';
 import { verifyReactSyntheticProgressBundle } from './reactSyntheticContinuity';
 import { verifyTypescriptSyntheticProgressBundle } from './typescriptSyntheticContinuity';
@@ -522,15 +523,17 @@ export async function checkReleaseContinuity(
   }
   const bundle: unknown = JSON.parse(await readFile(bundlePath, 'utf8'));
   const migration =
-    contract.courseId === 'next'
-      ? await verifyNextSyntheticProgressBundle(course, bundle)
-      : contract.courseId === 'react'
-        ? await verifyReactSyntheticProgressBundle(course, bundle)
-        : contract.courseId === 'typescript'
-          ? await verifyTypescriptSyntheticProgressBundle(course, bundle)
-          : contract.courseId === 'javascript'
-            ? await verifyJavascriptSyntheticProgressBundle(course, bundle)
-            : await verifySyntheticProgressBundle(course, bundle);
+    contract.courseId === 'python-basics'
+      ? await verifyPythonSyntheticProgressBundle(course, bundle)
+      : contract.courseId === 'next'
+        ? await verifyNextSyntheticProgressBundle(course, bundle)
+        : contract.courseId === 'react'
+          ? await verifyReactSyntheticProgressBundle(course, bundle)
+          : contract.courseId === 'typescript'
+            ? await verifyTypescriptSyntheticProgressBundle(course, bundle)
+            : contract.courseId === 'javascript'
+              ? await verifyJavascriptSyntheticProgressBundle(course, bundle)
+              : await verifySyntheticProgressBundle(course, bundle);
   return {
     revision: course.revision,
     persistentIds: persistentIds.length,

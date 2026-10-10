@@ -1,12 +1,12 @@
 # Python最小教材のローカル実証
 
-この手順は承認済みローカル環境だけに使う。公開Course登録、公開用CSPの適用、deployを行わない。実行境界・期限・現在の未完事項は[実行契約](python-runtime-contract.md)を参照する。
+この手順は承認済み公開接続をDockerで配信前に検証する。手順自体はdeployを行わない。実行境界・期限・現在の未完事項は[実行契約](python-runtime-contract.md)を参照する。
 
 ## 入力の準備
 
 Node 24.18.0とこのlockfileの依存がある開発Dockerを使用する。固定[Pyodide 314.0.7 core](https://github.com/pyodide/pyodide/releases/download/314.0.7/pyodide-core-314.0.7.tar.bz2)を取得し、archiveのサイズ6,757,104 bytesとSHA-256 `2abdcc2e35208af406e07724cffa85bc582ced97e9028383ecf5462541393f95`を先に照合する。
 
-Docker内でarchiveを安全なtar展開機能で展開し、coreの5ファイルを`.release-issue138/core/pyodide/`へ置く。準備コマンドは各ファイルのbytes/hashも再照合する。coreや生成bundleは既存の`.release-*` ignore配下に置き、Gitへ追加しない。第三者licenseの照合結果と公開時に必要な通知・ソース案内は[配布確認](python-core-distribution.md)を参照する。
+固定coreと通知は`vendor/python/314.0.7/`に保持する。通常buildの`build:python-assets`がmanifestの固定集合・bytes/hashを再照合し、version付き自己配信asset・原文通知・編集可能な対象ソースを生成する。生成物は`public/python-runtime/`のignore配下に置き、Gitへ追加しない。[配布確認](python-core-distribution.md)を参照する。
 
 ## 私有artifactを作る
 
@@ -17,7 +17,7 @@ npm run content:compile
 npx tsx scripts/local/preparePythonProof.ts
 ```
 
-準備コマンドはDocker外の実行を拒否する。出力先は`.release-issue138/local-dist`に固定する。通常5 CourseのCatalogを保持して作者用Python 1 Courseだけを私有Catalogへ追加し、固定core・strict classic Worker・hash metadata・製品HTMLを組み立てる。実行policyを迂回する診断bundleは生成しない。
+準備コマンドはDocker外の実行を拒否する。出力先は`.release-issue138/local-dist`に固定する。既存5 Courseと公開Python 1 Courseを通常compilerで作り、固定core・strict classic Worker・hash metadata・通知・対象ソース・製品HTMLを組み立てる。実行policyを迂回する診断bundleは生成しない。
 
 ## 表示する
 
@@ -27,13 +27,13 @@ npx tsx scripts/local/preparePythonProof.ts
 npx vite preview --host 0.0.0.0 --port 4173 --strictPort --base /tsumucode/ --outDir .release-issue138/local-dist
 ```
 
-最小教材は`#/courses/python-basics/lessons/python-basics-ch01-l01/slides/python-basics-ch01-l01-s01`、演習は`#/courses/python-basics/lessons/python-basics-ch01-l01/exercises/python-basics-ch01-l01-e01`へ直接移動する。draftなので通常HomeやLearningPathの教材選択には追加しない。
+最小教材は`#/courses/python-basics/lessons/python-basics-ch01-l01/slides/python-basics-ch01-l01-s01`、演習は`#/courses/python-basics/lessons/python-basics-ch01-l01/exercises/python-basics-ch01-l01-e01`へ直接移動する。通常Homeと前提なしのPython LearningPathからも選択できる。
 
 coreは演習の実行時にだけ取得する。失敗してもSourceを保持し、通常の「判定する」で再試行できる。入力・package追加・任意importはこのLessonの範囲外である。JSON保存・下書きは既存の製品サービスを使用する。
 
-## 通常buildとの区別
+## 通常buildとの一致
 
-通常buildでは`VITE_PYTHON_LOCAL_PROOF`を指定せず、作者用Course・coreをpublicへコピーしない。Python実証の実行器はbuild flagとloopback hostnameの両方を要求する。私有artifactをPagesへ転用しない。
+通常の`npm run build`も同じPython公開接続を含む。private proofは出力directoryとBASE_PATHを固定するだけで、教材・実行policy・通知を置き換えない。Home／Path／読書の初期取得、実10 Fixture、取得失敗後のsource・履歴保持と再試行、3browserの代表実行を確認する。
 
 ## FirefoxのDocker検証
 
@@ -43,4 +43,4 @@ PlaywrightのFirefoxをrootかつcap-drop ALLで起動すると、この環境�
 
 起動・ページ作成には段階ログとdeadline、検証全体には終了上限を付ける。正常・構文エラー・日本語分割出力・古いsourceの拒否の4代表ケースが成功した。10 Fixtureの一括実行は90秒上限で9件まで進んだため、全件成功とは扱わない。物理Firefoxでの受講確認とは別の証拠である。
 
-ローカル実証だけではIssue #138の実Pages Worker受け入れを満たさない。公開前に、通知・ソース案内を含む配布物、追加の公開判断と公開範囲の検証、実Pagesと物理端末を別に扱う。
+ローカル実証だけではIssue #138の実Pages Worker受け入れを満たさない。公開判断は本人承認済みである。配布物・公開範囲の検証と実Pagesの受入を完了し、物理端末の未確認は別に扱う。

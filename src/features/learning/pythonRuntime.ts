@@ -22,18 +22,12 @@ const CORE_FILES = [
   },
 ] as const;
 
-/** 公開環境でPython専用CSPを有効にしない。build flagとloopbackを両方要求する。 */
-function assertLocalPython(): void {
-  if (
-    import.meta.env.VITE_PYTHON_LOCAL_PROOF !== '1' ||
-    !['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname)
-  )
-    throw new Error('Python実証は承認されたlocal環境だけで使用できます');
-}
-
 /** 固定同origin assetを上限内で読み、bytes/hashを照合してからWorkerへ渡す。 */
 async function readBytes(name: string, maximum: number, signal: AbortSignal): Promise<ArrayBuffer> {
-  const url = new URL(`${import.meta.env.BASE_URL}python-local/${name}`, window.location.origin);
+  const url = new URL(
+    `${import.meta.env.BASE_URL}python-runtime/314.0.7/${name}`,
+    window.location.origin,
+  );
   const response = await fetch(url, { signal, credentials: 'omit', redirect: 'error' });
   if (!response.ok || response.body === null) throw new Error('Python固定assetを読み込めません');
   const reader = response.body.getReader();
@@ -66,8 +60,7 @@ async function sha256(bytes: ArrayBuffer): Promise<string> {
 }
 
 /** Python演習の実行時だけ固定coreを準備する。失敗したPromiseをcacheして再試行を妨げない。 */
-async function loadLocalCore(signal: AbortSignal): Promise<PythonCore> {
-  assertLocalPython();
+async function loadFixedCore(signal: AbortSignal): Promise<PythonCore> {
   const bytes = await Promise.all(
     CORE_FILES.map(async (file) => {
       const data = await readBytes(file.name, file.bytes, signal);
@@ -101,12 +94,11 @@ async function loadLocalCore(signal: AbortSignal): Promise<PythonCore> {
   };
 }
 
-/** 通常の読み書き・Controllerを維持し、作者用Python演習だけをConsole factoryへ接続する。 */
-export function preparePythonLocalCourse(
+/** 通常の読み書き・Controllerを維持し、Python最小演習だけをConsole factoryへ接続する。 */
+export function preparePythonCourse(
   course: Pick<CourseIndex, 'id' | 'runnerId' | 'validatorId'>,
   services: CourseRuntimeServices,
 ): void {
-  assertLocalPython();
   if (
     course.id !== 'python-basics' ||
     course.runnerId !== 'python' ||
@@ -127,7 +119,6 @@ export function selectBrowserConsoleRuntime(
   exercise: PythonCandidate,
   validationExercises: readonly PythonCandidate[],
 ) {
-  assertLocalPython();
   const eligible = (item: PythonCandidate): boolean =>
     item.id === 'python-basics-ch01-l01-e01' &&
     item.runtime?.kind === 'python' &&
@@ -139,7 +130,7 @@ export function selectBrowserConsoleRuntime(
   )
     throw new Error('Python最小演習の適用条件が一致しません');
   return {
-    createExecution: () => new PythonExecutionService(loadLocalCore),
+    createExecution: () => new PythonExecutionService(loadFixedCore),
     createValidator: () => new PythonLessonValidator(),
   };
 }

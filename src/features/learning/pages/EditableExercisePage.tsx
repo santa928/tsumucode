@@ -144,9 +144,9 @@ export function EditableExercisePage({ lease, ...data }: EditableExercisePagePro
     const abortController = new AbortController();
     void import('../javascriptRuntimeServices')
       .then(async ({ ensureCourseRuntime }) => {
-        if (import.meta.env.VITE_PYTHON_LOCAL_PROOF === '1' && data.course.id === 'python-basics') {
-          const python = await import('../pythonLocalRuntime');
-          python.preparePythonLocalCourse(data.course, learningRuntimeServices);
+        if (data.course.id === 'python-basics') {
+          const python = await import('../pythonRuntime');
+          python.preparePythonCourse(data.course, learningRuntimeServices);
           return python;
         }
         await ensureCourseRuntime(data.course, learningRuntimeServices);
@@ -1124,6 +1124,18 @@ function EditableSession({
                         ? '編集後に「プレビューを更新」でNode.jsを実行します。Docker切断時は学習モードを再起動し、もう一度実行してください。'
                         : 'script.jsを編集するとConsoleを更新します。配列・オブジェクトの添字と有限のPromise処理に対応します。HTML/CSSの描画・DOM・タイマー・外部通信は使えません。'}
                   </p>
+                  {exercise.runtime?.kind === 'python' ? (
+                    <p>
+                      <a
+                        href={`${import.meta.env.BASE_URL}python-runtime/314.0.7/NOTICES.html`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-bold underline"
+                      >
+                        Python実行環境のライセンスと対象ソース（別タブ）
+                      </a>
+                    </p>
+                  ) : null}
                   <RuntimeConsole
                     records={(state.runtimeOutput?.console ?? []).slice(0, 200)}
                     freshness={state.runtimeOutput?.freshness ?? 'current'}

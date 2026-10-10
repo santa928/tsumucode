@@ -367,7 +367,10 @@ export async function verifyApprovedQualityEvidence(
       throw new Error(`${recordName}の内部bindingがRelease approvalと一致しません`);
     }
   }
-  if ('courseId' in approval && approval.courseId === 'next') {
+  if ('courseId' in approval && approval.courseId === 'python-basics') {
+    const { verifyPythonQualityEvidence } = await import('./verifyPythonQualityEvidence');
+    await verifyPythonQualityEvidence(root, approval, qualitySources);
+  } else if ('courseId' in approval && approval.courseId === 'next') {
     const { verifyNextQualityEvidence } = await import('./verifyNextQualityEvidence');
     await verifyNextQualityEvidence(root, approval, qualitySources);
   } else if ('courseId' in approval && approval.courseId === 'react') {
@@ -401,6 +404,14 @@ export async function verifyReleaseSourceApproval(
   }
 
   await verifyApprovedQualityEvidence(root, approval, { revision: candidate.revision });
+  if ('courseId' in candidate && candidate.courseId === 'python-basics') {
+    if (
+      candidate.draftSourceCommit !== approval.verifiedSourceCommit ||
+      candidate.draftCanonicalDistSha256 !== approval.canonicalDistSha256 ||
+      candidate.normalizedLearningInputSha256 !== approval.candidateTreeSha256
+    )
+      throw new Error('Python初公開candidateのsource/artifact/input bindingが一致しません');
+  }
   if (
     'courseId' in candidate &&
     candidate.courseId === 'next' &&

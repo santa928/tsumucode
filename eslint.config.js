@@ -10,6 +10,8 @@ export default tseslint.config(
       'dist',
       'coverage',
       'public/generated/content',
+      'public/python-runtime',
+      'vendor',
       'content/**/*.js',
       // Next原稿は固定Nextの実compileと正負Fixtureで検証する。
       'content/next/chapters/next-ch01/lessons/next-ch01-l01/exercises/**/*.{ts,tsx}',
