@@ -42,7 +42,19 @@ async function api(path, body = {}) {
     req.end(payload);
   });
 }
-token = (await api('session')).value.token;
+// 起動直後の接続拒否だけを最大50回（100ms間隔）待ち、HTTP失敗や不正packetは再試行しない。
+for (let attempt = 0; attempt < 50; attempt += 1) {
+  try {
+    const session = await api('session');
+    assert.equal(session.status, 200);
+    assert.match(session.value.token, /^[a-f0-9]{64}$/u);
+    token = session.value.token;
+    break;
+  } catch (error) {
+    if (error.code !== 'ECONNREFUSED' || attempt === 49) throw error;
+    await sleep(100);
+  }
+}
 const capability = await api('python-capabilities');
 assert.equal(capability.status, 200);
 assert.equal(capability.value.engineVersion, '3.14.2');
