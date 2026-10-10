@@ -6,7 +6,8 @@ RUN npm ci
 
 FROM dependencies AS build
 COPY . .
-RUN VITE_LOCAL_LEARNING=1 BASE_PATH=/ npm run build
+# BuildKitのRUNにもDocker専用asset生成器の判定を明示する。
+RUN touch /.dockerenv && VITE_LOCAL_LEARNING=1 BASE_PATH=/ npm run build
 
 FROM node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5 AS project
 WORKDIR /opt
