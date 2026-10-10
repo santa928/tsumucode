@@ -21,7 +21,7 @@ supportedDevices:
     - mobile
 prerequisites:
   - react
-publicationStatus: draft
+publicationStatus: published
 expectedTotals:
   chapters: 6
   lessons: 9
