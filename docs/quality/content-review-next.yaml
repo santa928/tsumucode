@@ -1,11 +1,11 @@
 schemaVersion: 1
-releaseStatus: draft
-verifiedSourceCommit: draft
-canonicalDistSha256: draft
+releaseStatus: approved
+verifiedSourceCommit: 3021a054b27a51969f2658f91d585e81325bf4e8
+canonicalDistSha256: d8c7111939afd755eef8892ff3d647af69d189b7a5d8cb4cbf6cf6ec2d4d3bda
 lessons:
   - lessonId: next-ch01-l01
     authorId: tsumucode-next-course-authoring
-    reviewerId: next136_learning_review
+    reviewerId: next137_learning_publication_review
     sourceHash: 473ec69144034f572162a229ac93ecf2cee1bcbba30c62efe54335ff42f127cd
     accuracy: approved
     goalExerciseAlignment: approved
@@ -13,17 +13,20 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: "全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。\
-      公開candidate/配信SHAの受入は未完。詳細はnext-persona-review.md。以前の教材別実測は同記録に保持する。
-      以前の作者証拠（当時の条件）: 4 Slideの提示コードからの予測、pageとquery別HTTPの区別、工程・Hint・Solutionを3
-      AIペルソナで独立読解。作者の固定Next16.3.8で6Fixture、実画面の予測keyboard開閉、page/JSON変更、実例外の修復、\
-      停止/Source再開、狭幅/axe0、JSON移送を確認。 Reviewer IDs: next_learner_persona,
-      next_learning_design_persona,
-      next_runtime_safety_persona。独自実行は作者で、Reviewerはその実行証拠を確認する。実人の初心者受講テスト、全Co\
-      urse、正式公開完了とは扱わない。詳細はnext-persona-review.md。"
+    notes:
+      "今回の公開候補3021a054b27a51969f2658f91d585e81325bf4e8の独立AIソースレビュー必須残件0。9教材の学習順・Pages静的学習とLocal実HT\
+      TPの区別・Cookie/認証/Cookie保存の親14留保を確認。技術実測はnext-release-acceptance.yamlのexact
+      source/原本hashを正とし、Reviewer独自実行や実人受講とは扱わない。以下は以前の確認記録（当時の公開未完の記述を含む）:
+      全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。公開candidate/配信SHAの受入は未\
+      完。詳細はnext-persona-review.md。以前の教材別実測は同記録に保持する。 以前の作者証拠（当時の条件）: 4
+      Slideの提示コードからの予測、pageとquery別HTTPの区別、工程・Hint・Solutionを3
+      AIペルソナで独立読解。作者の固定Next16.3.8で6Fixture、実画面の予測keyboard開閉、page/JSON変更、実例外の修復、停止/Source再開、狭幅/axe0、\
+      JSON移送を確認。 Reviewer IDs: next_learner_persona, next_learning_design_persona,
+      next_runtime_safety_persona。独自実行は作者で、Reviewerはその実行証拠を確認する。実人の初心者受講テスト、全Course、正式公開完了とは扱わない。詳細\
+      はnext-persona-review.md。"
   - lessonId: next-ch02-l01
     authorId: tsumucode-next-course-authoring
-    reviewerId: next136_learning_review
+    reviewerId: next137_learning_publication_review
     sourceHash: fe61f25a4890aef4efd2c27a06a00ed4f3088b5a94823e4f161107d0768b7b0f
     accuracy: approved
     goalExerciseAlignment: approved
@@ -31,18 +34,21 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: "全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。\
-      公開candidate/配信SHAの受入は未完。詳細はnext-persona-review.md。以前の教材別実測は同記録に保持する。
-      以前の作者証拠（当時の条件）: 4 Slideの予測、page/layout/params、工程・Hint・Solutionを3
-      AIペルソナで独立読解。作者の固定Next16.3.8で8Fixture、実URL直接アクセス/reload/文書リンク、layout/2slug\
-      、詳細page500、修復/Source再開を確認。Next Linkのsoft
-      navigationやlayout状態保持は対象外。実画面のkeyboard/狭幅/axe0とJSON移送を確認。 Reviewer IDs:
+    notes:
+      "今回の公開候補3021a054b27a51969f2658f91d585e81325bf4e8の独立AIソースレビュー必須残件0。9教材の学習順・Pages静的学習とLocal実HT\
+      TPの区別・Cookie/認証/Cookie保存の親14留保を確認。技術実測はnext-release-acceptance.yamlのexact
+      source/原本hashを正とし、Reviewer独自実行や実人受講とは扱わない。以下は以前の確認記録（当時の公開未完の記述を含む）:
+      全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。公開candidate/配信SHAの受入は未\
+      完。詳細はnext-persona-review.md。以前の教材別実測は同記録に保持する。 以前の作者証拠（当時の条件）: 4
+      Slideの予測、page/layout/params、工程・Hint・Solutionを3
+      AIペルソナで独立読解。作者の固定Next16.3.8で8Fixture、実URL直接アクセス/reload/文書リンク、layout/2slug、詳細page500、修復/Source\
+      再開を確認。Next Linkのsoft navigationやlayout状態保持は対象外。実画面のkeyboard/狭幅/axe0とJSON移送を確認。 Reviewer IDs:
       next_learner_persona, next_learning_design_persona,
-      next_runtime_safety_persona。独自実行は作者で、Reviewerはその実行証拠を確認する。実人の初心者受講テスト、全Co\
-      urse、正式公開完了とは扱わない。詳細はnext-persona-review.md。"
+      next_runtime_safety_persona。独自実行は作者で、Reviewerはその実行証拠を確認する。実人の初心者受講テスト、全Course、正式公開完了とは扱わない。詳細\
+      はnext-persona-review.md。"
   - lessonId: next-ch02-l02
     authorId: tsumucode-next-course-authoring
-    reviewerId: next136_learning_review
+    reviewerId: next137_learning_publication_review
     sourceHash: 66d5a701dce8575a8eb512d1f045c0e6c2ddae844ebf131ea5b1857d213c9c8f
     accuracy: approved
     goalExerciseAlignment: approved
@@ -50,19 +56,22 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: "全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。\
-      公開candidate/配信SHAの受入は未完。詳細はnext-persona-review.md。以前の教材別実測は同記録に保持する。
-      以前の作者証拠（当時の条件）: 4 Slideの予測、CounterだけのClient境界修復、Server
-      async/Nodeと数値・文字列props、工程・Hint・Solutionを3
+    notes:
+      "今回の公開候補3021a054b27a51969f2658f91d585e81325bf4e8の独立AIソースレビュー必須残件0。9教材の学習順・Pages静的学習とLocal実HT\
+      TPの区別・Cookie/認証/Cookie保存の親14留保を確認。技術実測はnext-release-acceptance.yamlのexact
+      source/原本hashを正とし、Reviewer独自実行や実人受講とは扱わない。以下は以前の確認記録（当時の公開未完の記述を含む）:
+      全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。公開candidate/配信SHAの受入は未\
+      完。詳細はnext-persona-review.md。以前の教材別実測は同記録に保持する。 以前の作者証拠（当時の条件）: 4
+      Slideの予測、CounterだけのClient境界修復、Server async/Nodeと数値・文字列props、工程・Hint・Solutionを3
       AIペルソナで独立読解。作者の固定Next16.3.8で9Fixture、Starterのuse
-      client不足診断、修復後2→3→4/実reload2、Node依存/関数propsのdev診断とbuild失敗を確認。function-pro\
-      pのbuildはTS2322で先に失敗。実画面のkeyboard/狭幅/axe0とJSON移送を確認。 Reviewer IDs:
-      next_learner_persona, next_learning_design_persona,
-      next_runtime_safety_persona。独自実行は作者で、Reviewerはその実行証拠を確認する。実人の初心者受講テスト、全Co\
-      urse、正式公開完了とは扱わない。詳細はnext-persona-review.md。"
+      client不足診断、修復後2→3→4/実reload2、Node依存/関数propsのdev診断とbuild失敗を確認。function-propのbuildはTS2322で先に失敗。\
+      実画面のkeyboard/狭幅/axe0とJSON移送を確認。 Reviewer IDs: next_learner_persona,
+      next_learning_design_persona,
+      next_runtime_safety_persona。独自実行は作者で、Reviewerはその実行証拠を確認する。実人の初心者受講テスト、全Course、正式公開完了とは扱わない。詳細\
+      はnext-persona-review.md。"
   - lessonId: next-ch03-l01
     authorId: tsumucode-next-course-authoring
-    reviewerId: next136_learning_review
+    reviewerId: next137_learning_publication_review
     sourceHash: 8fd3235515e187cc804aeee38005f8332192f9a6d6a6f46a24b4004b848c9dc4
     accuracy: approved
     goalExerciseAlignment: approved
@@ -70,17 +79,21 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: "全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。\
-      公開candidate/配信SHAの受入は未完。詳細はnext-persona-review.md。以前の教材別実測は同記録に保持する。
-      以前の作者証拠（当時の条件）: 4 Slideの予測、再要求の対象→入口→対象操作、Server fetchの取得・保持・期限後更新を3
-      AIペルソナで独立読解。作者の固定Next16.3.8/512MiBの固定API分離試作8FixtureとSource保持/restart、正式整\
-      理後の通常UIで修復/合格版失効/keyboard/狭幅/axe0/JSON移送を確認。固定表示は不合格。 Reviewer IDs:
-      next_learner_persona, next_learning_design_persona,
-      next_runtime_safety_persona。独自実行は作者で、Reviewerはログと画像を照合。実人受講、全Course、正式公開完\
-      了とは扱わない。詳細はnext-persona-review.md。"
+    notes:
+      "今回の公開候補3021a054b27a51969f2658f91d585e81325bf4e8の独立AIソースレビュー必須残件0。9教材の学習順・Pages静的学習とLocal実HT\
+      TPの区別・Cookie/認証/Cookie保存の親14留保を確認。技術実測はnext-release-acceptance.yamlのexact
+      source/原本hashを正とし、Reviewer独自実行や実人受講とは扱わない。以下は以前の確認記録（当時の公開未完の記述を含む）:
+      全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。公開candidate/配信SHAの受入は未\
+      完。詳細はnext-persona-review.md。以前の教材別実測は同記録に保持する。 以前の作者証拠（当時の条件）: 4
+      Slideの予測、再要求の対象→入口→対象操作、Server fetchの取得・保持・期限後更新を3
+      AIペルソナで独立読解。作者の固定Next16.3.8/512MiBの固定API分離試作8FixtureとSource保持/restart、正式整理後の通常UIで修復/合格版失効/key\
+      board/狭幅/axe0/JSON移送を確認。固定表示は不合格。 Reviewer IDs: next_learner_persona,
+      next_learning_design_persona,
+      next_runtime_safety_persona。独自実行は作者で、Reviewerはログと画像を照合。実人受講、全Course、正式公開完了とは扱わない。詳細はnext-pers\
+      ona-review.md。"
   - lessonId: next-ch03-l02
     authorId: tsumucode-next-course-authoring
-    reviewerId: next136_learning_review
+    reviewerId: next137_learning_publication_review
     sourceHash: c16a7725be599d2a5992cc6dba34669121f6ae7f329fc05e14c6269582eff324
     accuracy: approved
     goalExerciseAlignment: approved
@@ -88,15 +101,18 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: "全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。\
-      公開candidate/配信SHAの受入は未完。詳細はnext-persona-review.md。以前の教材別実測は同記録に保持する。
-      以前の作者証拠（当時の条件）: 4 Slideの予測、待機→結果、retryによる実再取得、API404とstream済みpage200の区別を3
-      AIペルソナで独立読解。作者の固定Next16.3.8/512MiBの固定API分離試作9Fixture（常時status負例を含む）と、正式通常\
-      UIの修復/停止復旧/keyboard/狭幅/axe0/JSON移送を確認。実RSC途中のSource反映/停止の切断、旧版grade409、新版\
-      /再起動passを確認。 Reviewer IDs: next_learner_persona,
-      next_learning_design_persona,
-      next_runtime_safety_persona。独自実行は作者で、Reviewerはログと画像を照合。実人受講、全Course、正式公開完\
-      了とは扱わない。詳細はnext-persona-review.md。"
+    notes:
+      "今回の公開候補3021a054b27a51969f2658f91d585e81325bf4e8の独立AIソースレビュー必須残件0。9教材の学習順・Pages静的学習とLocal実HT\
+      TPの区別・Cookie/認証/Cookie保存の親14留保を確認。技術実測はnext-release-acceptance.yamlのexact
+      source/原本hashを正とし、Reviewer独自実行や実人受講とは扱わない。以下は以前の確認記録（当時の公開未完の記述を含む）:
+      全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。公開candidate/配信SHAの受入は未\
+      完。詳細はnext-persona-review.md。以前の教材別実測は同記録に保持する。 以前の作者証拠（当時の条件）: 4
+      Slideの予測、待機→結果、retryによる実再取得、API404とstream済みpage200の区別を3
+      AIペルソナで独立読解。作者の固定Next16.3.8/512MiBの固定API分離試作9Fixture（常時status負例を含む）と、正式通常UIの修復/停止復旧/keyboard/\
+      狭幅/axe0/JSON移送を確認。実RSC途中のSource反映/停止の切断、旧版grade409、新版/再起動passを確認。 Reviewer IDs:
+      next_learner_persona, next_learning_design_persona,
+      next_runtime_safety_persona。独自実行は作者で、Reviewerはログと画像を照合。実人受講、全Course、正式公開完了とは扱わない。詳細はnext-pers\
+      ona-review.md。"
   - lessonId: next-ch04-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: next137_learning_publication_review
@@ -107,8 +123,14 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。公開candidate/配信SHAの受入は未完。詳細はnext-persona-review.md。
-      2026-10-10の教材独立読解でCookie・認証・Cookie保存未対応と親Issue14留保の追記を確認、必須残件0。公開成功・人間受講・独自Browser実行は確認範囲に含まない。
+    notes:
+      "今回の公開候補3021a054b27a51969f2658f91d585e81325bf4e8の独立AIソースレビュー必須残件0。9教材の学習順・Pages静的学習とLocal実HT\
+      TPの区別・Cookie/認証/Cookie保存の親14留保を確認。技術実測はnext-release-acceptance.yamlのexact
+      source/原本hashを正とし、Reviewer独自実行や実人受講とは扱わない。以下は以前の確認記録（当時の公開未完の記述を含む）:
+      全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。公開candidate/配信SHAの受入は未\
+      完。詳細はnext-persona-review.md。
+      2026-10-10の教材独立読解でCookie・認証・Cookie保存未対応と親Issue14留保の追記を確認、必須残件0。公開成功・人間受講・独自Browser実行は確認範囲に含まな\
+      い。"
   - lessonId: next-ch04-l02
     authorId: tsumucode-next-course-authoring
     reviewerId: next137_learning_publication_review
@@ -119,11 +141,17 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。公開candidate/配信SHAの受入は未完。詳細はnext-persona-review.md。
-      2026-10-10の教材独立読解でCookie・認証・Cookie保存未対応と親Issue14留保の追記を確認、必須残件0。公開成功・人間受講・独自Browser実行は確認範囲に含まない。
+    notes:
+      "今回の公開候補3021a054b27a51969f2658f91d585e81325bf4e8の独立AIソースレビュー必須残件0。9教材の学習順・Pages静的学習とLocal実HT\
+      TPの区別・Cookie/認証/Cookie保存の親14留保を確認。技術実測はnext-release-acceptance.yamlのexact
+      source/原本hashを正とし、Reviewer独自実行や実人受講とは扱わない。以下は以前の確認記録（当時の公開未完の記述を含む）:
+      全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。公開candidate/配信SHAの受入は未\
+      完。詳細はnext-persona-review.md。
+      2026-10-10の教材独立読解でCookie・認証・Cookie保存未対応と親Issue14留保の追記を確認、必須残件0。公開成功・人間受講・独自Browser実行は確認範囲に含まな\
+      い。"
   - lessonId: next-ch05-l01
     authorId: tsumucode-next-course-authoring
-    reviewerId: next136_learning_review
+    reviewerId: next137_learning_publication_review
     sourceHash: 1e2d2390350b85c2d9328721d77457057aa3f95deef09606e61329e1c288e502
     accuracy: approved
     goalExerciseAlignment: approved
@@ -131,10 +159,15 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。公開candidate/配信SHAの受入は未完。詳細はnext-persona-review.md。
+    notes:
+      "今回の公開候補3021a054b27a51969f2658f91d585e81325bf4e8の独立AIソースレビュー必須残件0。9教材の学習順・Pages静的学習とLocal実HT\
+      TPの区別・Cookie/認証/Cookie保存の親14留保を確認。技術実測はnext-release-acceptance.yamlのexact
+      source/原本hashを正とし、Reviewer独自実行や実人受講とは扱わない。以下は以前の確認記録（当時の公開未完の記述を含む）:
+      全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。公開candidate/配信SHAの受入は未\
+      完。詳細はnext-persona-review.md。"
   - lessonId: next-ch06-l01
     authorId: tsumucode-next-course-authoring
-    reviewerId: next136_learning_review
+    reviewerId: next137_learning_publication_review
     sourceHash: 837986ca318ad7dedadbce559e618bb36f9c3e25583c0b67920127982b9fa761
     accuracy: approved
     goalExerciseAlignment: approved
@@ -142,4 +175,9 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。公開candidate/配信SHAの受入は未完。詳細はnext-persona-review.md。
+    notes:
+      "今回の公開候補3021a054b27a51969f2658f91d585e81325bf4e8の独立AIソースレビュー必須残件0。9教材の学習順・Pages静的学習とLocal実HT\
+      TPの区別・Cookie/認証/Cookie保存の親14留保を確認。技術実測はnext-release-acceptance.yamlのexact
+      source/原本hashを正とし、Reviewer独自実行や実人受講とは扱わない。以下は以前の確認記録（当時の公開未完の記述を含む）:
+      全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。公開candidate/配信SHAの受入は未\
+      完。詳細はnext-persona-review.md。"
