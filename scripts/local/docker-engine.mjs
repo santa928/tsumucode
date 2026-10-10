@@ -2,6 +2,7 @@ import { request } from 'node:http';
 import { Buffer } from 'node:buffer';
 import { setTimeout, clearTimeout } from 'node:timers';
 import { LIMITS, NODE_IMAGE } from './protocol.mjs';
+import { pythonCommand } from './python-profile.mjs';
 
 // learnerへ渡す固定bootstrap。ホストのshellやcontrollerでは学習コードを実行しない。
 const BOOTSTRAP = `const fs=require('node:fs');const cp=require('node:child_process');
@@ -60,8 +61,8 @@ export function docker(method, path, body, timeout = 20000, raw = false) {
 }
 
 /** API利用者の指定を混ぜず、固定profileから実コンテナ設定を組み立てる。 */
-export function containerConfig(files, owner) {
-  return {
+export function containerConfig(files, owner, python = false, analyze = false) {
+  const config = {
     Image: NODE_IMAGE,
     User: '1000:1000',
     WorkingDir: '/workspace',
@@ -97,6 +98,7 @@ export function containerConfig(files, owner) {
       },
     },
   };
+  return python ? { ...config, ...pythonCommand(files, analyze) } : config;
 }
 
 /** Docker multiplex framingを解き、stdout/stderrの総量を外側で制限する。 */

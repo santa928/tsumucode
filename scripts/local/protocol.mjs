@@ -10,6 +10,11 @@ export const EXERCISE_IDS = Object.freeze([
   'javascript-ch03-l05-e03',
 ]);
 export const PROFILE_ID = 'node-closure-v1';
+export const PYTHON_EXERCISE_ID = 'python-basics-ch01-l01-e01';
+export const PYTHON_PROFILE_ID = 'cpython-values-v1';
+export const PYTHON_VERSION = '3.14.2';
+export const PYTHON_IMAGE =
+  'python:3.14.2-slim-bookworm@sha256:e87711ef5c86aaeaa7031718a69db79d334d94c545c709583f651b8185870941';
 export const NODE_IMAGE =
   'node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5';
 export const LIMITS = Object.freeze({
@@ -44,7 +49,7 @@ function exactObject(value, keys) {
 }
 
 /** 固定教材の正規化済みファイルを検査する。パスを修復して受け入れない。 */
-export function validateRun(value, revision) {
+export function validateRun(value, revision, pythonRevision) {
   exactObject(value, [
     'apiVersion',
     'exerciseId',
@@ -55,12 +60,20 @@ export function validateRun(value, revision) {
     'executionRevision',
     'files',
   ]);
-  if (value.apiVersion !== API_VERSION || value.contentRevision !== revision)
+  const python = value.runtimeProfileId === PYTHON_PROFILE_ID;
+  if (
+    value.apiVersion !== API_VERSION ||
+    value.contentRevision !== (python ? pythonRevision : revision)
+  )
     throw new RequestError(
       409,
       '教材またはAPIの版が異なります。コードを保存して再読み込みしてください。',
     );
-  if (!EXERCISE_IDS.includes(value.exerciseId) || value.runtimeProfileId !== PROFILE_ID)
+  if (
+    python
+      ? value.exerciseId !== PYTHON_EXERCISE_ID
+      : !EXERCISE_IDS.includes(value.exerciseId) || value.runtimeProfileId !== PROFILE_ID
+  )
     throw new RequestError(422, 'この環境では未対応の演習です。');
   for (const key of ['runId', 'exerciseSessionId']) {
     if (typeof value[key] !== 'string' || !/^[\w:.-]{1,160}$/u.test(value[key]))
@@ -68,7 +81,7 @@ export function validateRun(value, revision) {
   }
   if (!Number.isSafeInteger(value.executionRevision) || value.executionRevision < 0)
     throw new RequestError(400, '編集版が不正です。');
-  exactObject(value.files, ['script.js', 'index.html', 'styles.css']);
+  exactObject(value.files, python ? ['main.py'] : ['script.js', 'index.html', 'styles.css']);
   let size = 0;
   for (const content of Object.values(value.files)) {
     if (typeof content !== 'string')

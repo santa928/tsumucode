@@ -198,7 +198,7 @@ export interface RunnerAdapter {
 /** 言語と独立した実行先。能力は現在利用するconsole／DOMに限定する。 */
 export interface ExecutionEnvironment {
   readonly backend: 'browser' | 'local';
-  readonly engine: 'browser-html-css' | 'browser-js' | 'browser-python' | 'node';
+  readonly engine: 'browser-html-css' | 'browser-js' | 'browser-python' | 'node' | 'cpython';
   readonly mode: 'console' | 'dom';
   readonly capabilities: readonly ('console' | 'dom')[];
 }
@@ -231,6 +231,8 @@ export interface ExecutionResult extends RunnerRenderResult, RunIdentity {
   readonly status: ExecutionStatus;
   /** 実環境が返す版。言語名やブラウザから推測しない。 */
   readonly engineVersion?: string;
+  /** 実processの終了コード。起動前停止や環境障害はnull。 */
+  readonly exitCode?: number | null;
 }
 
 export interface DomObservationPort {

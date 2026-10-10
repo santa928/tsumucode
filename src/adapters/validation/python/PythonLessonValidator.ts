@@ -27,8 +27,11 @@ const ruleSchema = z
   })
   .strict();
 
-/** 最小1演習の実出力と実AST事実をANDで採点する。DOMや別engineの証拠を受け入れない。 */
+/** 最小1演習の実出力と実AST事実をANDで採点する。指定外のengineやDOM証拠を受け入れない。 */
 export class PythonLessonValidator implements ValidatorAdapter {
+  /** 環境を明示し、同じ2Ruleでも別engineの観測を流用しない。 */
+  constructor(private readonly engine: 'browser-python' | 'cpython' = 'browser-python') {}
+
   /** Consoleだけの演習はviewportやDOM snapshotを要求しない。 */
   buildSnapshotPolicy(): SnapshotPolicy {
     return {
@@ -59,8 +62,8 @@ export class PythonLessonValidator implements ValidatorAdapter {
     if (
       context.exerciseId !== EXERCISE_ID ||
       execution === undefined ||
-      execution.backend !== 'browser' ||
-      execution.engine !== 'browser-python' ||
+      execution.backend !== (this.engine === 'cpython' ? 'local' : 'browser') ||
+      execution.engine !== this.engine ||
       Object.keys(context.files).length !== 1 ||
       typeof context.files['main.py'] !== 'string'
     )

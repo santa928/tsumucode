@@ -5,6 +5,18 @@ on:
     branches: [main]
     paths:
       - content/next/**
+      - content/python-basics/**
+      - src/adapters/runtime/local/Local*ExecutionService*
+      - src/adapters/validation/python/**
+      - src/core/runtime/pythonLessonAnalysis*
+      - src/core/runtime/contracts.ts
+      - src/core/learning/sessionReducer.ts
+      - tsconfig.node.json
+      - src/features/learning/localNodeRuntime.ts
+      - src/features/learning/pages/EditableExercisePage.tsx
+      - src/features/learning/session/LearningSessionController.ts
+      - tests/local/python-learning.spec.ts
+      - playwright.python-local.config.ts
       - scripts/content/fixtures/next-author-pilot*
       - scripts/content/sourceSchema.ts
       - src/core/content/schema.ts
@@ -36,6 +48,18 @@ on:
     branches: [main]
     paths:
       - content/next/**
+      - content/python-basics/**
+      - src/adapters/runtime/local/Local*ExecutionService*
+      - src/adapters/validation/python/**
+      - src/core/runtime/pythonLessonAnalysis*
+      - src/core/runtime/contracts.ts
+      - src/core/learning/sessionReducer.ts
+      - tsconfig.node.json
+      - src/features/learning/localNodeRuntime.ts
+      - src/features/learning/pages/EditableExercisePage.tsx
+      - src/features/learning/session/LearningSessionController.ts
+      - tests/local/python-learning.spec.ts
+      - playwright.python-local.config.ts
       - scripts/content/fixtures/next-author-pilot*
       - scripts/content/sourceSchema.ts
       - src/core/content/schema.ts
@@ -87,6 +111,8 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Prepare fixed one-shot Node image
         run: docker pull node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5
+      - name: Prepare fixed one-shot CPython image
+        run: docker pull python:3.14.2-slim-bookworm@sha256:e87711ef5c86aaeaa7031718a69db79d334d94c545c709583f651b8185870941
       - name: Build fixed learner and trusted services
         run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml --profile build-project build
       - name: Start isolated learning stack
@@ -101,6 +127,16 @@ jobs:
           docker exec -i "$controller" node --input-type=module < scripts/local/project-grade-acceptance.mjs
           docker exec -i "$controller" node --input-type=module < scripts/local/resident-acceptance.mjs
           docker exec -i "$controller" node --input-type=module < scripts/local/acceptance.mjs
+      - name: Verify fixed CPython execution, constraints and recovery
+        run: |
+          controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
+          docker exec -i "$controller" node --input-type=module < scripts/local/python-acceptance.mjs
+          docker exec -i -e TSUMUCODE_PYTHON_RESTART_PHASE=prepare "$controller" node --input-type=module < scripts/local/python-acceptance.mjs
+          docker kill --signal KILL "$controller"
+          ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml start controller
+          docker exec -i -e TSUMUCODE_PYTHON_RESTART_PHASE=verify "$controller" node --input-type=module < scripts/local/python-acceptance.mjs
+          docker build --file Dockerfile.learning --target python-browser-checks --tag "$TSUMUCODE_LOCAL_OWNER-python-browser-checks" .
+          docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256 --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-python-browser-checks"
       - name: Verify representative production learning UI and storage
         run: >-
           docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256
