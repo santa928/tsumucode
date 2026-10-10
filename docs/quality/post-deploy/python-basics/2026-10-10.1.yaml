@@ -1,0 +1,47 @@
+schemaVersion: 2
+status: approved
+revision: 2026-10-10.1
+tag: tsumucode-release-2026-10-10.1
+sourceCommit: 9e1002169b2770be28c5a1dd3467848e6088dfbe
+workflowHeadCommit: 935939604736f44e1a2bcc79983a0936706f94f7
+workflowRunId: "38083601048"
+workflowRunAttempt: 1
+reportArtifactId: "11683173060"
+reportArtifactDigest: sha256:6180b653f49a1150f7cbbdb15d42552d304b169a0e0dc34fc6f3053299a97df3
+pageUrl: https://santa928.github.io/tsumucode/
+pageVerificationStatus: passed
+reportVerificationStatus: passed
+tagVerificationStatus: passed
+verifiedBy: root-python138-operations / 実Pages三browser・公開461filesとPages
+  archive全bytes・Report・immutable tag照合。内部build
+  manifest1件は公式actionで除外。実人/物理端末は未確認。
+verifiedAt: 2026-10-10T22:20:09.413Z
+courseId: python-basics
+environmentAdmissionStatus: passed
+independentEnvironmentApproval: not-configured
+publicSmokeOperations:
+  - operationId: start
+    status: passed
+    evidenceSha256: e45bc343cf24c540722ecd8126ef1e04f774e3d617f40b6d7dc8308981f0ef9c
+    observedAt: 2026-10-10T22:20:09.413Z
+  - operationId: resume
+    status: passed
+    evidenceSha256: e45bc343cf24c540722ecd8126ef1e04f774e3d617f40b6d7dc8308981f0ef9c
+    observedAt: 2026-10-10T22:20:09.413Z
+  - operationId: grading
+    status: passed
+    evidenceSha256: e45bc343cf24c540722ecd8126ef1e04f774e3d617f40b6d7dc8308981f0ef9c
+    observedAt: 2026-10-10T22:20:09.413Z
+  - operationId: persistence
+    status: passed
+    evidenceSha256: e45bc343cf24c540722ecd8126ef1e04f774e3d617f40b6d7dc8308981f0ef9c
+    observedAt: 2026-10-10T22:20:09.413Z
+  - operationId: export
+    status: passed
+    evidenceSha256: e45bc343cf24c540722ecd8126ef1e04f774e3d617f40b6d7dc8308981f0ef9c
+    observedAt: 2026-10-10T22:20:09.413Z
+  - operationId: fresh-import
+    status: passed
+    evidenceSha256: e45bc343cf24c540722ecd8126ef1e04f774e3d617f40b6d7dc8308981f0ef9c
+    observedAt: 2026-10-10T22:20:09.413Z
+requiredUnconfirmed: 0
