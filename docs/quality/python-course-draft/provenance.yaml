@@ -1,0 +1,84 @@
+schemaVersion: 1
+defaults:
+  method: original-authored
+  createdAt: 2026-10-10
+  creator: TsumuCode project
+  sourceUrl: none
+  license: project-original
+  modified: false
+items:
+  - id: python-original-1
+    visibility: public
+    path: chapters/python-basics-ch01/chapter.yaml
+  - id: python-original-2
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l01/exercises/python-basics-ch01-l01-e01/exercise.yaml
+  - id: python-original-3
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l01/exercises/python-basics-ch01-l01-e01/fixtures/alternate-name.py
+  - id: python-original-4
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l01/exercises/python-basics-ch01-l01-e01/fixtures/different-variable-addition.py
+  - id: python-original-5
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l01/exercises/python-basics-ch01-l01-e01/fixtures/hardcoded-addition.py
+  - id: python-original-6
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l01/exercises/python-basics-ch01-l01-e01/fixtures/hardcoded.py
+  - id: python-original-7
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l01/exercises/python-basics-ch01-l01-e01/fixtures/reference-error.py
+  - id: python-original-8
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l01/exercises/python-basics-ch01-l01-e01/fixtures/string-output.py
+  - id: python-original-9
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l01/exercises/python-basics-ch01-l01-e01/fixtures/syntax-error.py
+  - id: python-original-10
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l01/exercises/python-basics-ch01-l01-e01/fixtures/wrong-addition.py
+  - id: python-original-11
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l01/exercises/python-basics-ch01-l01-e01/instructions.md
+  - id: python-original-12
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l01/exercises/python-basics-ch01-l01-e01/solution/main.py
+  - id: python-original-13
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l01/exercises/python-basics-ch01-l01-e01/starter/main.py
+  - id: python-original-14
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l01/lesson.yaml
+  - id: python-original-15
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l01/slides/s01.md
+  - id: python-original-16
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l01/slides/s02.md
+  - id: python-original-17
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l01/slides/s03.md
+  - id: python-original-18
+    visibility: public
+    path: concepts.yaml
+  - id: python-original-19
+    visibility: public
+    path: course.yaml
+  - id: python-original-20
+    visibility: public
+    path: glossary.yaml
+  - id: python-original-21
+    visibility: public
+    path: references/python-official.md
+  - id: python-original-fixture-solution
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l01/exercises/python-basics-ch01-l01-e01/fixtures/solution.py
+  - id: python-original-fixture-starter
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l01/exercises/python-basics-ch01-l01-e01/fixtures/starter.py
+  - id: python-s01-output-original
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l01/slides/assets/s01-output.svg
+  - id: python-s02-output-original
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l01/slides/assets/s02-output.svg

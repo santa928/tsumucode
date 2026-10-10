@@ -763,7 +763,8 @@ export class LearningSessionController {
             item.validationRules.every(
               (rule) =>
                 rule.target.kind === 'javascript-source' ||
-                rule.target.kind === 'javascript-console',
+                rule.target.kind === 'javascript-console' ||
+                (item.runtime?.kind === 'python' && rule.target.kind === 'python-source'),
             ),
         )
           ? ['console']
@@ -1016,7 +1017,8 @@ export class LearningSessionController {
             item.validationRules.every(
               (rule) =>
                 rule.target.kind === 'javascript-source' ||
-                rule.target.kind === 'javascript-console',
+                rule.target.kind === 'javascript-console' ||
+                (item.runtime?.kind === 'python' && rule.target.kind === 'python-source'),
             ),
         )
       )

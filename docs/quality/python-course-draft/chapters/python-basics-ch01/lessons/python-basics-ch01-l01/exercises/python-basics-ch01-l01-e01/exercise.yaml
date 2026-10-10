@@ -1,0 +1,200 @@
+id: python-basics-ch01-l01-e01
+kind: standard
+workspaceId: python-basics-ch01-l01-e01
+countsTowardStandardExerciseTotal: true
+title: 変数の値と加算の結果を表示する
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: python-value
+    minimumLevel: transform
+  - conceptId: python-variable
+    minimumLevel: transform
+  - conceptId: python-print
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: python-basics-ch01-l01-e01-step01
+    file: main.py
+    target: 文字列を変数へ直す
+    starterAnchor: print("count")
+    change: 引用符を外し、両方のprintで同じ変数を使います。
+    observe: Consoleに3と5がこの順で表示されることを確認します。
+    requiresConceptIds:
+      - python-value
+      - python-variable
+      - python-print
+    validationRuleIds:
+      - python-basics-ch01-l01-e01-r01
+      - python-basics-ch01-l01-e01-r02
+runtime:
+  kind: python
+  entryFile: main.py
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  profile: values-vars-print-v1
+files:
+  - path: main.py
+    language: python
+    source: starter/main.py
+    editable: true
+solutionFiles:
+  - path: main.py
+    language: python
+    source: solution/main.py
+    editable: false
+validationRules:
+  - id: python-basics-ch01-l01-e01-r01
+    label: 数値3に名前を付け、printでその変数の値を表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: numeric-variable-printed
+    feedback:
+      target: main.pyとConsoleの2行
+      expected: 数値3を変数で表示する
+      nextAction: 引用符を外し、代入した変数をprintで表示してください。
+    hintId: python-basics-ch01-l01-e01-h01
+    relatedSlideId: python-basics-ch01-l01-s02
+  - id: python-basics-ch01-l01-e01-r02
+    label: 同じ変数に2を足した結果をprintで表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: same-variable-addition-printed
+    feedback:
+      target: main.pyとConsoleの2行
+      expected: 同じ変数に2を足して5を表示する
+      nextAction: 答えを直接書かず、同じ変数に2を足してprintで表示してください。
+    hintId: python-basics-ch01-l01-e01-h02
+    relatedSlideId: python-basics-ch01-l01-s03
+hints:
+  - id: python-basics-ch01-l01-e01-h01
+    text: 引用符で囲むと、その文字列を表示します。変数の値を表示するときは、引用符を外して変数名を書きます。
+    level: 1
+    title: 引用符を比べる
+    relatedSlideId: python-basics-ch01-l01-s02
+  - id: python-basics-ch01-l01-e01-h02
+    text: 最初の行で付けた名前を、両方のprintで使います。答えの3や5を直接書くだけでは、変数を使った理由を確認できません。
+    level: 2
+    title: 同じ名前を使う
+    relatedSlideId: python-basics-ch01-l01-s03
+  - id: python-basics-ch01-l01-e01-h03
+    level: 3
+    title: 変数と足し算を表示する
+    text: count = 3、print(count)、print(count + 2)の順に書きます。答えを直接表示する方法と何が違うか説明しましょう。
+    relatedSlideId: python-basics-ch01-l01-s03
+relatedSlideIds:
+  - python-basics-ch01-l01-s01
+  - python-basics-ch01-l01-s02
+  - python-basics-ch01-l01-s03
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: solution
+    expectedStatus: pass
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/solution.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternate-name
+    expectedStatus: pass
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/alternate-name.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: starter
+    expectedStatus: incomplete
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/starter.py
+        editable: false
+    expectedFeedbackRuleIds:
+      - python-basics-ch01-l01-e01-r01
+      - python-basics-ch01-l01-e01-r02
+  - id: hardcoded
+    expectedStatus: incomplete
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/hardcoded.py
+        editable: false
+    expectedFeedbackRuleIds:
+      - python-basics-ch01-l01-e01-r01
+      - python-basics-ch01-l01-e01-r02
+  - id: hardcoded-addition
+    expectedStatus: incomplete
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/hardcoded-addition.py
+        editable: false
+    expectedFeedbackRuleIds:
+      - python-basics-ch01-l01-e01-r02
+  - id: different-variable-addition
+    expectedStatus: incomplete
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/different-variable-addition.py
+        editable: false
+    expectedFeedbackRuleIds:
+      - python-basics-ch01-l01-e01-r02
+  - id: string-output
+    expectedStatus: incomplete
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/string-output.py
+        editable: false
+    expectedFeedbackRuleIds:
+      - python-basics-ch01-l01-e01-r01
+      - python-basics-ch01-l01-e01-r02
+  - id: wrong-addition
+    expectedStatus: incomplete
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/wrong-addition.py
+        editable: false
+    expectedFeedbackRuleIds:
+      - python-basics-ch01-l01-e01-r01
+      - python-basics-ch01-l01-e01-r02
+  - id: syntax-error
+    expectedStatus: code-error
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/syntax-error.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: reference-error
+    expectedStatus: code-error
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/reference-error.py
+        editable: false
+    expectedFeedbackRuleIds: []

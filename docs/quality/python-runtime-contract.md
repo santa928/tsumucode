@@ -1,46 +1,44 @@
-# Python最小Lessonの実行境界案（Issue #138）
+# Python最小Lessonのローカル実行境界（Issue #138）
 
-## 現在地
+## 現在地と承認範囲
 
-値・変数・`print`の1 Lesson原稿と正誤Fixtureを`python-first-lesson-draft/`へ用意した。通常Catalog・LearningPath・公開contentには登録していない。製品実行器、Python公開、実人受講、物理端末検証は未完である。
+値・変数・printの1 Lessonを作者用の[通常Course構造](python-course-draft/course.yaml)へ組み立てた。3枚のスライド、予測・修正・Reflection、2要件、3 Hint、Solutionと10 Fixtureを含む。最初の[原稿](python-first-lesson-draft/lesson.yaml)は比較用に残す。通常のcontent・公開Catalog・LearningPathには登録しない。
 
-既存正本は[#27](https://github.com/santa928/tsumucode/issues/27)の`ExecutionService`契約と[Browser Console境界](browser-console-runtime.md)。実行成功と採点合格を分け、同じCourseProgress・下書き・JSON移送を再利用する。停止・Reset・離脱で旧run/session/revisionを失効させ、準備中のfetch/hash/compileの後着にも適用する。環境障害・未対応・制限停止では採点履歴を更新しない。
+2026-10-10の本人承認は、ローカルのPython専用opaque frame／Workerに限るWASM生成許可である。固定core以外のWASM生成にも許可が及ぶことを説明して承認を得た。外部通信・保存・JavaScript eval禁止を維持する。公開環境への適用・Python新規公開は含まない。
 
-## 最小設計
+ローカル接続はbuild時のVITE_PYTHON_LOCAL_PROOF=1とloopback hostnameを両方要求する。flagなしの通常buildではPython runtime chunkとWASM用CSPを除去する。core assetも通常public directoryへ置かない。
 
-- 固定Pyodide `314.0.7`のcoreを作者のDocker内で準備する。公式archiveは6,757,104 bytes、SHA-256は`2abdcc2e35208af406e07724cffa85bc582ced97e9028383ecf5462541393f95`。実interpreter版、実配信byte予算、第三者licenseは製品受け入れ前に別途確定する。
-- Python用実行器・採点器・Editorは演習到達時に遅延ロードする。Home・Path・読書の初期chunkには入れない。
-- 親側の信頼loaderが固定coreのbytes/hashを照合する。opaque iframe内Workerには固定bytesだけを供給し、native fetchや任意package取得を渡さない。JSからPythonへのglobal設定だけで隔離済みと扱わず、`pyodide_js._module`と`_api`を含めて実能力を検証する。
-- 最小Lessonは同期実行で、入力待ち・任意import・package導入は範囲外。初期化期限と学習実行期限を分け、外側のWorker terminationとframe除去で中止する。BrowserプロセスのOOMまで完全に隔離したとは保証しない。
-- stdout/stderrは`write(Uint8Array)`で受け、文字境界と改行・部分行を保つ。件数・1行・合計bytesの上限を信頼側でも照合する。`batched`だけで巨大な改行なし出力を安全と扱わない。
-- source factsは学習コード実行前の実Python ASTから取得する案とし、出力だけ合うhardcode・文字列と数値の混同を未達にする。任意の変数名でも同じ意味なら合格可能にする。
+既存正本は[#27](https://github.com/santa928/tsumucode/issues/27)のExecutionService契約と[Browser Console境界](browser-console-runtime.md)。同じController・下書き・進捗保存を使い、実行成功と採点合格を分ける。環境障害・未対応・制限停止では採点しない。
 
-## 現時点のブロッカーと未適用のCSP差分
+## 固定coreと実行
 
-私有Chromium probeで、親側compile済み`WebAssembly.Module`をopaque frameへ移送すると`messageerror`になることを確認した。最小classic WorkerへArrayBufferを渡した別probeでは、既存nonce限定CSPがWASM compileを`CompileError`で拒否した。module Workerの起動にも未解決の障害があり、正常Pyodide実行を確認したとは扱わない。
+- Pyodideは314.0.7、実interpreterはPython 3.14.2。公式archiveは6,757,104 bytes、SHA-256は2abdcc2e35208af406e07724cffa85bc582ced97e9028383ecf5462541393f95。
+- 親の信頼loaderが固定同origin assetを上限付きstreamで取得し、bytes/hashを照合する。WASM 9,598,218 bytes、stdlib 2,545,637 bytes、lock 119,077 bytesにWorker bundleを加える。準備に失敗したPromiseはcacheせず、残る並列fetchをabortする。
+- classic Workerには固定bytesとprivate MessagePortだけを渡す。loader用fetchは固定bytesを返すstubで、native通信能力を渡さない。初期化後はglobalとWorker prototypeの通信・保存・子Worker能力を除去し、pure intrinsicのprototypeを再帰的に固定する。
+- Python専用frameはsandbox=allow-scriptsのみ。script-srcはnonceとwasm-unsafe-eval、connect-srcはnone。JS unsafe-eval、allow-same-origin、外部取得許可は追加しない。既存JS／DOM実行器のCSPは変えない。
+- 最小教材policyは値・単一変数への代入・加算・単一引数printだけ。任意import、入力待ち、package追加、printの再束縛、実行系builtinの別名参照は未対応とし、未達とは区別する。
+- AST解析と学習sourceは別の新規Python globalsで動く。実ASTの2事実と実stdout、親が確定した元source SHA-256をANDで採点する。任意の変数名は許可し、答えだけのhardcodeや別の変数による加算は要件を満たさない。
 
-次の差分は提案のみで、製品にも私有probeにもまだ適用していない。
+## 期限・出力・結果
 
-```diff
--script-src 'nonce-${nonce}';
-+script-src 'nonce-${nonce}' 'wasm-unsafe-eval';
-```
+信頼側core準備は20秒、Worker初期化は15秒、学習実行は1.5秒。外側のframeがWorker termination・port close・Blob URL revokeを行ってから結果を返し、親がframeを除去する。手動停止、Reset、離脱、次のrunで旧generation／run／session／revisionを失効させる。BrowserプロセスのOOMまで完全に隔離する保証はない。
 
-対象はPython専用のopaque frameだけ。`unsafe-eval`によるJS文字列実行、`allow-same-origin`、外部通信の追加を含めない。既存JS/DOM Runnerや親画面のCSPを変更しない。
+sourceは100 KiB。stdout／stderr合計は64 KiB、1行4,096 bytes、結果は100行以内。別々のUTF-8 decoderで部分writeを結合する。Consoleは実write callbackの行開始順を保ち、Python自身のstdoutバッファリングは反映される。信頼側でもbytes・行数・schemaを照合する。コードのSyntaxError／実行エラー、初期化／Worker障害、未対応、期限／出力制限／手動停止を分ける。環境障害を未達や合格に変換しない。
 
-`wasm-unsafe-eval`は固定coreだけを許可する仕組みではない。到達可能なWASM compilerや`pyodide_js._module`の`addFunction`・`loadDynamicLibrary`・`loadWebAssemblyModule`にも影響する。初期化後の能力除去と、policyを迂回した診断Fixtureによる実証が必要である。未承認の権限拡張を待つユーザー指示に従い、この差分は本人確認前に実行しない。
+## ローカルの検証と残る受け入れ
 
-## 受け入れと検証順
+Docker内の実Chromiumで、10 Fixtureを実Pyodideと製品採点器へ渡し、pass／incomplete／code-errorと未達Ruleを照合した。policyとは別の診断bundleでJS文字列実行、通信、保存、子Worker、内部参照、prototype、非同期障害、無限実行・停止・過大出力を確認した。親Storageのcanaryは不変、禁止通信の受信は0件だった。これは確認した経路と環境の証拠であり、任意コードを完全に隔離したとの主張ではない。
 
-1. 固定core・license・配信bytes、Worker方式、最小CSPを確定する。
-2. 実Pyodideで値・変数・`print`、stdout/stderr、構文/名前エラーを確認する。
-3. JS連携・内部API・prototypeからの通信/Storage/子Worker/偽message、過大出力、停止後の後着をpolicy迂回Fixtureで確認する。
-4. 初期化失敗と再試行、無限実行のtimeout、中止、Reset/離脱、下書きと以前の合格履歴の保持を既存UIで確認する。
-5. 代表画面・a11y・遅延chunk・独立内容/コードレビュー・変更関連CIを確認する。実人/物理端末・新規公開は別受け入れとして保持する。
+製品UIで未達→修正→合格、構文エラー、reload後の下書き保持を確認した。core取得失敗時のSource・既存判定履歴の保持と再試行、構文エラー後のEditorフォーカスも確認した。desktop／mobileのaxe違反0件、Home・Path・スライド初期表示ではPython runtime/coreの取得0件。通常Course compilerの概念診断・欠落メタデータ0件、対象型検査・Lintと既存Controller／Console 58テストが成功した。内容と実行lifecycle・ローカル準備コマンドの独立レビューは必須残件0件。WebKitでも正常実行・構文エラー・明示flushした分割出力とstale source拒否を確認した。Firefoxの代表検証は結果が返らず所有コンテナを停止しており、Python動作の成功証拠はない。
+
+[ローカル再現手順](python-local-proof.md)は公開には使わない。境界コードの追加独立レビューはreview agentエラーで完了証拠がなく、既に得た境界指摘への修正と実測を保持する。
+
+実Pages Worker、第三者coreの配布license、公開配信・公開前の範囲検証、実人・物理端末は未完である。#138は実Pages受け入れを含むため、ローカル実証だけでは閉じない。#15の後続#139以降の全curriculum、Local CPython、input／package対応はこの最小変更に含めない。
 
 ## 一次資料
 
 - [公式coreの配布](https://pyodide.org/en/stable/usage/downloading-and-deploying.html)
+- [固定release](https://github.com/pyodide/pyodide/releases/tag/314.0.7)
 - [Worker要件](https://pyodide.org/en/stable/usage/webworker.html)
 - [loadPyodide API](https://pyodide.org/en/stable/usage/api/js-api.html)
 - [CSP3のWASM評価権限](https://www.w3.org/TR/CSP3/)

@@ -392,12 +392,25 @@ export const NextExerciseRuntimeSchema = z
   })
   .strict();
 
+/** 作者の最小Python Lesson宣言。実行器の公開登録や通信許可を意味しない。 */
+export const PythonExerciseRuntimeSchema = z
+  .object({
+    kind: z.literal('python'),
+    entryFile: z.literal('main.py'),
+    sourceType: z.literal('script'),
+    capabilityProfile: z.literal('core'),
+    primaryOutput: z.literal('console'),
+    profile: z.literal('values-vars-print-v1'),
+  })
+  .strict();
+
 /** Courseごとの実行設定をkindで識別する。 */
 export const ExerciseRuntimeSchema = z.discriminatedUnion('kind', [
   JavaScriptExerciseRuntimeSchema,
   TypeScriptExerciseRuntimeSchema,
   ReactExerciseRuntimeSchema,
   NextExerciseRuntimeSchema,
+  PythonExerciseRuntimeSchema,
 ]);
 
 /** selectorへ制御文字が混入していないことを文字コードで判定する。 */

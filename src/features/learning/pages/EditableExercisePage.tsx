@@ -56,7 +56,10 @@ const LazyCodeWorkspace = lazy(() =>
 type ExerciseLoaderData = Awaited<ReturnType<typeof exerciseLoader>>;
 type InitializationState = 'loading' | 'ready' | 'error';
 type RuntimePreparationState = 'loading' | 'ready' | 'error';
-type BrowserConsoleRuntime = typeof BrowserConsoleRuntimeModule;
+type BrowserConsoleRuntime = Pick<
+  typeof BrowserConsoleRuntimeModule,
+  'selectBrowserConsoleRuntime'
+>;
 
 interface RuntimePreparation {
   readonly consoleRuntime?: BrowserConsoleRuntime;
@@ -141,6 +144,11 @@ export function EditableExercisePage({ lease, ...data }: EditableExercisePagePro
     const abortController = new AbortController();
     void import('../javascriptRuntimeServices')
       .then(async ({ ensureCourseRuntime }) => {
+        if (import.meta.env.VITE_PYTHON_LOCAL_PROOF === '1' && data.course.id === 'python-basics') {
+          const python = await import('../pythonLocalRuntime');
+          python.preparePythonLocalCourse(data.course, learningRuntimeServices);
+          return python;
+        }
         await ensureCourseRuntime(data.course, learningRuntimeServices);
         return data.course.id === 'javascript' && localRuntime === undefined
           ? import('../browserConsoleRuntime')
