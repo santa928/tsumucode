@@ -1,0 +1,75 @@
+id: python-basics-ch01-l01
+exerciseId: python-basics-ch01-l01-e01
+publicationStatus: draft
+title: 値に名前を付けて表示する
+goal: 数値を変数へ代入し、文字列との違いを説明して、変数と加算の結果をprintで表示できる。
+estimatedMinutes: 20
+prerequisiteLessonIds: []
+slideSources:
+  - slides/01-values.md
+  - slides/02-variable.md
+  - slides/03-print.md
+instructionsSource: instructions.md
+entryFile: main.py
+starterSource: starter/main.py
+solutionSource: solution/main.py
+prediction:
+  prompt: 初期コードは何を、どの順で表示しますか。実行前に2行を予測してください。
+  expectedLines:
+    - count
+    - '5'
+requirements:
+  - id: python-basics-ch01-l01-e01-r01
+    label: 数値3に名前を付け、printでその変数の値を表示する
+    sourceFact: numeric-variable-printed
+  - id: python-basics-ch01-l01-e01-r02
+    label: 同じ変数に2を足した結果をprintで表示する
+    sourceFact: same-variable-addition-printed
+expectedStdout: "3\n5\n"
+hints:
+  - id: python-basics-ch01-l01-e01-h01
+    text: 引用符で囲むと、その文字列を表示します。変数の値を表示するときは、引用符を外して変数名を書きます。
+  - id: python-basics-ch01-l01-e01-h02
+    text: 最初の行で付けた名前を、両方のprintで使います。答えの3や5を直接書くだけでは、変数を使った理由を確認できません。
+reflection: 演習で修正したコードの1行目の3を4へ変えたら、2つの表示がどう変わるか、変数と加算を使って説明してください。
+fixtures:
+  - id: solution
+    source: solution/main.py
+    expectedStatus: pass
+    expectedStdout: "3\n5\n"
+  - id: alternate-name
+    source: fixtures/alternate-name.py
+    expectedStatus: pass
+    expectedStdout: "3\n5\n"
+  - id: starter
+    source: starter/main.py
+    expectedStatus: incomplete
+    expectedStdout: "count\n5\n"
+  - id: hardcoded
+    source: fixtures/hardcoded.py
+    expectedStatus: incomplete
+    expectedStdout: "3\n5\n"
+  - id: hardcoded-addition
+    source: fixtures/hardcoded-addition.py
+    expectedStatus: incomplete
+    expectedStdout: "3\n5\n"
+  - id: different-variable-addition
+    source: fixtures/different-variable-addition.py
+    expectedStatus: incomplete
+    expectedStdout: "3\n5\n"
+  - id: string-output
+    source: fixtures/string-output.py
+    expectedStatus: incomplete
+    expectedStdout: "3\n5\n"
+  - id: wrong-addition
+    source: fixtures/wrong-addition.py
+    expectedStatus: incomplete
+    expectedStdout: "3\n32\n"
+  - id: syntax-error
+    source: fixtures/syntax-error.py
+    expectedStatus: code-error
+    expectedError: SyntaxError
+  - id: reference-error
+    source: fixtures/reference-error.py
+    expectedStatus: code-error
+    expectedError: NameError
