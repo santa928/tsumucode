@@ -2,6 +2,7 @@ import { access, readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { resolveReleaseCourseContract, type ReleaseCourseId } from './releaseCourseContracts';
+import { withoutReviewedNextSource } from './reviewedNextArtifact';
 
 const ALLOWED_EXTENSIONS = new Set([
   '.html',
@@ -58,7 +59,11 @@ async function collectFiles(root: string, directory = root): Promise<readonly st
 
 /** Text Assetに開発URL、root直書きURL、authoring dataがないことを検証する。 */
 function assertSafeText(relative: string, source: string): void {
-  if (DEVELOPMENT_URL.test(withoutReviewedRouterFallback(relative, source))) {
+  if (
+    DEVELOPMENT_URL.test(
+      withoutReviewedNextSource(relative, withoutReviewedRouterFallback(relative, source)),
+    )
+  ) {
     throw new Error(`開発URLが残っています: ${relative}`);
   }
   if (

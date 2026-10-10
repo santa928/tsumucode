@@ -367,7 +367,10 @@ export async function verifyApprovedQualityEvidence(
       throw new Error(`${recordName}の内部bindingがRelease approvalと一致しません`);
     }
   }
-  if ('courseId' in approval && approval.courseId === 'react') {
+  if ('courseId' in approval && approval.courseId === 'next') {
+    const { verifyNextQualityEvidence } = await import('./verifyNextQualityEvidence');
+    await verifyNextQualityEvidence(root, approval, qualitySources);
+  } else if ('courseId' in approval && approval.courseId === 'react') {
     const { verifyReactQualityEvidence } = await import('./verifyReactQualityEvidence');
     await verifyReactQualityEvidence(root, approval, qualitySources);
   } else if ('courseId' in approval && approval.courseId === 'typescript') {
@@ -399,6 +402,22 @@ export async function verifyReleaseSourceApproval(
 
   await verifyApprovedQualityEvidence(root, approval, { revision: candidate.revision });
   if (
+    'courseId' in candidate &&
+    candidate.courseId === 'next' &&
+    'courseId' in approval &&
+    approval.courseId === 'next'
+  ) {
+    const { NextReleaseEvidenceSchema } = await import('./verifyNextQualityEvidence');
+    const validity = NextReleaseEvidenceSchema.parse(
+      parse(await readFile(path.join(root, approval.records.technicalAcceptance.path), 'utf8')),
+    );
+    if (
+      candidate.draftSourceCommit !== validity.draftInput.sourceCommit ||
+      candidate.draftCanonicalDistSha256 !== validity.draftCanonicalDistSha256 ||
+      candidate.normalizedLearningInputSha256 !== validity.draftInput.normalizedInputSha256
+    )
+      throw new Error('Next candidateと公開入力照合のbindingが一致しません');
+  } else if (
     'courseId' in candidate &&
     candidate.courseId === 'typescript' &&
     'courseId' in approval &&

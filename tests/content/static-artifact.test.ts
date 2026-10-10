@@ -10,6 +10,8 @@ import {
   writeSplitContentDeliveryTree,
 } from '../../scripts/content/splitContentDelivery';
 import { resolveReleaseCourseContract } from '../../scripts/release/releaseCourseContracts';
+import { nextWorkspace } from '../../scripts/local/next-project-protocol.mjs';
+import packaging from '../../scripts/local/next-portable-packaging.json';
 
 const temporaryRoots: string[] = [];
 
@@ -50,6 +52,89 @@ afterEach(async () => {
 });
 
 describe('static artifact', () => {
+  it('Next JSONの重複keyに隠した開発URLを拒否する', async () => {
+    const source = nextWorkspace('next-ch03-l01-e01')!.files['app/data-url.ts'];
+    const root = await artifact('extra.json', '{}');
+    const directory = path.join(root, 'generated/content/courses/next/lessons');
+    await mkdir(directory, { recursive: true });
+    await writeFile(
+      path.join(directory, 'next-ch03-l01.json'),
+      `{"courseId":"next","lesson":{"id":"next-ch03-l01","title":"http://localhost:5174","title":"教材","exercises":[{"id":"next-ch03-l01-e01","files":[{"path":"app/data-url.ts","editable":false,"content":${JSON.stringify(source)}}]}]}}`,
+    );
+    await expect(checkStaticArtifact(root)).rejects.toThrow(/開発URL/u);
+  });
+  it('Nextの固定SourceとZIP READMEだけを表示dataとして受理する', async () => {
+    const source = nextWorkspace('next-ch03-l01-e01')!.files['app/data-url.ts'];
+    if (source === undefined) throw new Error('固定Next Sourceがありません');
+    const root = await artifact(
+      'assets/next-project-protocol-reviewed.js',
+      `const files = { 'app/data-url.ts': ${JSON.stringify(source)} };`,
+    );
+    await writeFile(
+      path.join(root, 'assets/portableNextArchive-reviewed.js'),
+      `const packaging = { 'README.md': ${JSON.stringify(packaging['README.md'])} };`,
+    );
+    await expect(checkStaticArtifact(root)).resolves.toEqual({ files: 7 });
+  });
+
+  it.each(['改変Source', '他chunk', '通信URL追加', '直接引数', 'template補間'])(
+    'Nextの表示dataの許可を%sへ拡大しない',
+    async (kind) => {
+      const source = nextWorkspace('next-ch03-l01-e01')!.files['app/data-url.ts'];
+      if (source === undefined) throw new Error('固定Next Sourceがありません');
+      let content = `const files = { 'app/data-url.ts': ${JSON.stringify(source)} };`;
+      if (kind === '改変Source') content = content.replace('5174', '5175');
+      if (kind === '通信URL追加') content += 'fetch("http://127.0.0.1:5174/api/sample");';
+      if (kind === '直接引数') content = `fetch(${JSON.stringify(source)});`;
+      if (kind === 'template補間')
+        content = "const files = { 'app/data-url.ts': `http://127.0.0.1:${port}/api/sample` };";
+      const name = kind === '他chunk' ? 'app' : 'next-project-protocol';
+      await expect(
+        checkStaticArtifact(await artifact(`assets/${name}-reviewed.js`, content)),
+      ).rejects.toThrow(/開発URL/u);
+    },
+  );
+
+  it.each([
+    '固定Source',
+    'editable',
+    '別path',
+    '別exercise',
+    '別Course',
+    '改変Source',
+    '他fieldURL',
+  ])('Next Lesson JSONの%sを契約に従って照合する', async (kind) => {
+    const source = nextWorkspace('next-ch03-l01-e01')!.files['app/data-url.ts'];
+    if (source === undefined) throw new Error('固定Next Sourceがありません');
+    const document = {
+      courseId: kind === '別Course' ? 'javascript' : 'next',
+      lesson: {
+        id: 'next-ch03-l01',
+        title: kind === '他fieldURL' ? 'http://localhost:5174' : '教材',
+        exercises: [
+          {
+            id: kind === '別exercise' ? 'next-ch03-l02-e01' : 'next-ch03-l01-e01',
+            files: [
+              {
+                path: kind === '別path' ? 'app/page.tsx' : 'app/data-url.ts',
+                editable: kind === 'editable',
+                content: kind === '改変Source' ? source.replace('5174', '5175') : source,
+              },
+            ],
+          },
+        ],
+      },
+    };
+    const root = await artifact('extra.json', '{}');
+    await mkdir(path.join(root, 'generated/content/courses/next/lessons'), { recursive: true });
+    await writeFile(
+      path.join(root, 'generated/content/courses/next/lessons/next-ch03-l01.json'),
+      JSON.stringify(document),
+    );
+    if (kind === '固定Source') await expect(checkStaticArtifact(root)).resolves.toBeDefined();
+    else await expect(checkStaticArtifact(root)).rejects.toThrow(/開発URL/u);
+  });
+
   it('TSの技術検査を正式契約の15 Lessonへ合わせ、公開承認は専用Gateへ委ねる', async () => {
     const report = await checkStaticArtifact(await typescriptArtifact(), 'typescript');
     expect(report.files).toBeGreaterThan(20);

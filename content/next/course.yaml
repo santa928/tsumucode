@@ -1,7 +1,7 @@
 schemaVersion: 1
 id: next
 title: Next.js 実サーバーの第一歩
-description: 固定Nextの実HTTP、App Router、データ、Form/Actionから制作とSource持ち出しへ進む未公開教材。
+description: 固定Nextの実HTTP、App Router、データ、Form/Actionから制作とSource持ち出しへ進む9教材。実行と採点にはLocal Docker環境が必要です。
 audience: TypeScriptとReactを学んだ初学者
 estimatedMinutes: 345
 revision: 2026-10-09.2
@@ -11,6 +11,8 @@ glossarySource: glossary.yaml
 conceptsSource: concepts.yaml
 documentationSources:
   - references/next-official.md
+authoringSources:
+  - release-history.yaml
 supportedDevices:
   exercise: desktop
   study:
@@ -19,7 +21,7 @@ supportedDevices:
     - mobile
 prerequisites:
   - react
-publicationStatus: draft
+publicationStatus: published
 expectedTotals:
   chapters: 6
   lessons: 9
@@ -45,7 +47,7 @@ progressMigrations:
 phases:
   - id: next-p01-server
     title: 実サーバーの応答を確かめる
-    description: pageとRoute Handlerを区別し、queryを変えて実HTTPを観察する。
+    description: pageとRoute Handler、ServerとClientを区別し、データ・Form/Actionから3工程の制作とSource持ち出しへ進む。
     chapterSources:
       - chapters/next-ch01/chapter.yaml
       - chapters/next-ch02/chapter.yaml

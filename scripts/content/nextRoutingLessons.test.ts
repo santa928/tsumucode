@@ -1,3 +1,6 @@
+import { readFile } from 'node:fs/promises';
+import { parse } from 'yaml';
+import { CourseSourceSchema } from './sourceSchema';
 import { describe, expect, it } from 'vitest';
 import { loadAuthoringCourse } from './compileCourse';
 import { nextWorkspace } from '../local/next-project-protocol.mjs';
@@ -9,7 +12,10 @@ describe('Nextのルーティングと境界教材', () => {
     const course = await loadAuthoringCourse('content/next');
     const chapter = course.runtime.phases[0]!.chapters[1]!;
     expect(chapter.lessons.map(({ id }) => id)).toEqual(['next-ch02-l01', 'next-ch02-l02']);
-    expect(course.runtime.publicationStatus).toBe('draft');
+    const source = CourseSourceSchema.parse(
+      parse(await readFile('content/next/course.yaml', 'utf8')),
+    );
+    expect(course.runtime.publicationStatus).toBe(source.publicationStatus);
     for (const lesson of chapter.lessons) {
       expect(lesson.kind).toBe('standard');
       expect(lesson.slides).toHaveLength(4);

@@ -1,6 +1,12 @@
 import { z } from 'zod';
 
-export const ReleaseCourseIdSchema = z.enum(['html-css', 'javascript', 'typescript', 'react']);
+export const ReleaseCourseIdSchema = z.enum([
+  'html-css',
+  'javascript',
+  'typescript',
+  'react',
+  'next',
+]);
 export type ReleaseCourseId = z.infer<typeof ReleaseCourseIdSchema>;
 
 const htmlCssContract = {
@@ -114,22 +120,49 @@ const reactContract = {
   },
 } as const;
 
+const nextContract = {
+  courseId: 'next',
+  sourceRoot: 'content/next',
+  historyPath: 'content/next/release-history.yaml',
+  approvalPath: 'docs/quality/next-release-approval.yaml',
+  manifestRoot: 'generated/content/courses/next',
+  publicProvenancePath: 'generated/content/courses/next/provenance.json',
+  syntheticProgressBundlePath: 'tests/fixtures/progress/next-previous-release-bundle.json',
+  postDeployRoot: 'docs/quality/post-deploy/next',
+  schemaVersion: 2,
+  lessonCount: 9,
+  standardLessonCount: 7,
+  guidedLessonCount: 1,
+  capstoneLessonCount: 1,
+  chapterCount: 6,
+  phaseCount: 1,
+  estimatedMinutes: 345,
+  learningEvidenceKind: 'agent-simulated-learning',
+  records: {
+    contentReview: 'docs/quality/content-review-next.yaml',
+    technicalAcceptance: 'docs/quality/next-release-acceptance.yaml',
+  },
+} as const;
+
 export type ReleaseCourseContract =
   | typeof htmlCssContract
   | typeof javascriptContract
   | typeof typescriptContract
-  | typeof reactContract;
+  | typeof reactContract
+  | typeof nextContract;
 
 export function resolveReleaseCourseContract(courseId: 'html-css'): typeof htmlCssContract;
 export function resolveReleaseCourseContract(courseId: 'javascript'): typeof javascriptContract;
 export function resolveReleaseCourseContract(courseId: 'typescript'): typeof typescriptContract;
 export function resolveReleaseCourseContract(courseId: 'react'): typeof reactContract;
+export function resolveReleaseCourseContract(courseId: 'next'): typeof nextContract;
 export function resolveReleaseCourseContract(courseId: unknown): ReleaseCourseContract;
 /** 明示allowlistだけから固定pathと品質契約を解決し、未知Courseを拒否する。 */
 export function resolveReleaseCourseContract(courseId: unknown): ReleaseCourseContract {
   const selected = ReleaseCourseIdSchema.parse(courseId);
   if (selected === 'html-css') return htmlCssContract;
   if (selected === 'javascript') return javascriptContract;
+  if (selected === 'next') return nextContract;
   return selected === 'typescript' ? typescriptContract : reactContract;
 }
 
@@ -139,6 +172,7 @@ export const SITE_RELEASE_COURSE_IDS: readonly ReleaseCourseId[] = [
   'javascript',
   'typescript',
   'react',
+  'next',
 ];
 
 /** Productから除外する履歴は既知のliteral4fileだけに限定する。 */
@@ -147,6 +181,7 @@ export const RELEASE_HISTORY_PATHS: readonly string[] = [
   javascriptContract.historyPath,
   typescriptContract.historyPath,
   reactContract.historyPath,
+  nextContract.historyPath,
 ];
 
 /** JSのP→Mとcandidate除外へ同じ宣言済みliteral記録集合を提供する。revision以外をpattern化しない。 */

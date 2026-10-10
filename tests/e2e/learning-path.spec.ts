@@ -20,7 +20,18 @@ const reactPublished =
     .object({ publicationStatus: z.enum(['draft', 'published']) })
     .parse(parse(readFileSync('content/react/course.yaml', 'utf8'))).publicationStatus ===
   'published';
-const expectedRequiredCourses = reactPublished ? 4 : typescriptPublished ? 3 : 2;
+const nextPublished =
+  z
+    .object({ publicationStatus: z.enum(['draft', 'published']) })
+    .parse(parse(readFileSync('content/next/course.yaml', 'utf8'))).publicationStatus ===
+  'published';
+const expectedRequiredCourses = nextPublished
+  ? 5
+  : reactPublished
+    ? 4
+    : typescriptPublished
+      ? 3
+      : 2;
 
 const HOME_ROUTE = './#/';
 const PATH_ROUTE = './#/paths/frontend';
@@ -111,6 +122,17 @@ test('Pathの順序と必須Courseを表示し、既存Courseへロックなし�
     await expect(
       reactStep.getByRole('link', { name: 'React はじめの一歩を始める', exact: true }),
     ).toHaveAttribute('href', '#/courses/react/lessons/react-ch01-l01/slides/react-ch01-l01-s01');
+  }
+
+  if (nextPublished) {
+    const nextStep = steps.nth(4);
+    await expect(nextStep.getByText('必須', { exact: true })).toBeVisible();
+    await expect(
+      nextStep.getByText('前提コース：React はじめの一歩', { exact: true }),
+    ).toBeVisible();
+    await expect(
+      nextStep.getByRole('link', { name: 'Next.js 実サーバーの第一歩を始める', exact: true }),
+    ).toHaveAttribute('href', '#/courses/next/lessons/next-ch01-l01/slides/next-ch01-l01-s01');
   }
 
   await page

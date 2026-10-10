@@ -1,4 +1,4 @@
-# Nextの5 LessonのAIペルソナレビュー
+# Nextの9教材のAIペルソナレビュー
 
 対象はIssue #132/#133の`next-ch01-l01`、`next-ch02-l01`、`next-ch02-l02`と、
 Issue #134の`next-ch03-l01`、`next-ch03-l02`。
@@ -117,3 +117,54 @@ Routing peak494.94 MiB・余裕81.06 MiB、max/oom/oomKill0、checkpoint Zombie0
 教材の先行3ペルソナレビューは入力不変の範囲で継続適用し、今回の資源差分と新実測は
 独立運用Reviewerが生ログを再集計し、必須修正0件・条件付きGOと判断した。
 正式受入にはexact HEAD/main CIと実測余裕の確認を必要とする。
+
+## 制作2教材と全9教材の統合レビュー（Issue136/137）
+
+2026-10-09、`next136_learner_review`、`next136_learning_review`、
+`next136_runtime_review`が独立して制作2教材と全9教材の公開準備を読解した。
+レビューはAIによる査読と作者の実行証拠の照合で、Reviewerの独自実行や人間受講ではない。
+親Issue14のCookie条件は、管理資格情報をPreviewへ提供しない境界の成功へ置き換えない。
+Form/Actionは許可した固定実HTTPの範囲であり、認証・Cookie保存・外部サービスは未対応とする。
+
+First/Client/Form/Actionは512 MiB、Routing/Data/Weatherは576 MiB、
+Guided/Capstoneは本人承認の最大1,000,000,000bytes以内の896 MiBに固定する。
+全てswap同値、CPU1/PID64/非root/readonly/network:none、既存readiness/採点期限を維持する。
+
+制作2教材の23正負Fixture、3工程の部分達成・後工程破損・回復、実GET/異なる2詳細、
+metadata/Image/読み順/Keyboard、通常Lessonの実ZIP17ファイル一致、未反映編集保持、
+元Draft/Source分離、独立JSONの別Browser読み込み、停止/reload/restart、axe0と狭幅案内を確認した。
+最新通常操作の監視137sampleは上限到達/OOM/kill/Zombie0、peak約639/636 MiBだった。
+以前の起動中に一度Zombie1を観測した証拠は保持する。次sampleから同run終了まで0であり、
+全瞬間のZombie0を保証するものではない。既存の完了checkpoint検査を維持した。
+
+ZIPのみの別Docker production/root/subpath復元は、現在のSource・包装のbyte一致を
+運用Reviewerが独立照合して再利用した。Native採点と別環境production復元は別の受入である。
+JSON再読み込み時に内部goalが保存Schemaへ混入する問題を発見し、公開ValidationCheck項目だけの
+明示変換と合格Snapshot/採点履歴を読み直す回帰検証により是正した。
+
+全9教材の初心者reviewは初回のPreview選択案内の位置/label不一致を必須1件として指摘した。
+現在の「表示する応答」と2つのJSON選択肢へ案内を修正した。学習設計は必須0件。
+運用は実装必須0件だが、旧資源/期限文書、Nextの正式公開ゲートと静的Artifact検査適合を
+公開準備の残件とした。既存5教材の証拠を全Course公開完了へ拡大しない。
+
+Courseとレビュー台帳はdraftを維持する。全9教材の原稿hash・各実行証拠・3レビューを
+最終候補へ結び、正確なHEAD/main CI、公開導線/Pages静的学習とLocal実操作のsmoke、
+既存公開承認・Artifact/配信後の確認が揃うまで公開完了にしない。
+
+## 公開導線とゲートの独立レビュー（Issue137）
+
+2026-10-10、`next137_learner_publication_review`、
+`next137_learning_publication_review`、`next137_runtime_publication_review`が
+隔離ブランチの公開準備を読み取り専用で確認した。
+初心者・学習設計は9教材の案内、PagesからLocalへのJSON移行手順、
+Cookie・認証・Cookie保存未対応と親Issue14の留保を確認し、今回の本文修正の必須残件は0。
+運用レビューで見つかった公開承認状態と原本照合bindingの欠落を修正し、再レビューで必須残件0。
+これは原稿・実装の査読であり、Reviewerの独自Browser実行や実人受講の成功記録ではない。
+
+公開品質記録はNext専用の9教材・9Workspace・81FixtureとPages静的学習を使用し、
+既存React等のBrowserや性能記録をNextの成功へ差し替えない。
+既存4コースの継続性と全site品質検査を維持し、公開直前にはPからProductが不変な
+main SHAのLocal Runtime CI成功・必須step・資源証拠Artifactを公開APIで確認する。
+独立原本照合の承認は、実際の原本を確認してから品質記録全体hashと対象SHAへ結ぶ。
+最終の候補・CI・配信後の結果は`next-release-acceptance.yaml`、Release台帳、
+revision別の公開後記録を正とする。人間受講と実低性能端末は未確認として残す。
