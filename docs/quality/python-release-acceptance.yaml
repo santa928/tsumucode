@@ -1,0 +1,102 @@
+schemaVersion: 1
+courseId: python-basics
+status: preflight-passed-final-ci-required
+publicationApprovalReference: owner:2026-10-10T14:24:29.529277+00:00:いいよ
+realHumanTrial: unverified
+lowEndPhysicalDevice: unverified
+verifiedSourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
+canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
+candidateTreeSha256: 62effd028951703e17aa2810f5007d715e1cf1dabaf2a152dda7665ca2106145
+applicationSourceSha256: 2c248c2f3dd311509ec40f332eb4173c70e745c91aa860d875be5814054b815a
+dependencyLockSha256: 191461e31bb2d50d9be7b6fd91e2a63e14e7eee00634461bb4bc32bac0b7f0c8
+vendorSha256: 045d5d24240cecf642f5e6be03f02307e5334d28a8223365980312c85956bffc
+personas:
+  - role: lesson
+    actor: python138_lesson_review
+    method: independent-ai-source-review
+    mandatoryFindings: 0
+    sourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
+    canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
+    report:
+      path: .release-issue138/public-lesson-review.md
+      sha256: efcd17159d5224d57753d0df624ce2e7ebd252e0c04bab4b4f3cfe12430135ac
+  - role: usability
+    actor: python138_usability_persona
+    method: independent-ai-source-review
+    mandatoryFindings: 0
+    sourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
+    canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
+    report:
+      path: .release-issue138/public-usability-review.md
+      sha256: bdf24bf0e7bf51f97576e4376b15ed65e8cbb5953598dbb8341f7ca63ebbbc63
+  - role: runtime-publication
+    actor: python138_runtime_lifecycle_review
+    method: independent-ai-source-review
+    mandatoryFindings: 0
+    sourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
+    canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
+    report:
+      path: .release-issue138/public-runtime-review.md
+      sha256: 3477215629dfe8e5a976c2eb5e7c51df8ff0ddf13b67503d75f042aae647a81e
+browserPreflight:
+  - browser: chromium
+    status: passed
+    sourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
+    canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
+    report:
+      path: .release-issue138/public-chromium-proof.json
+      sha256: 3e7d590583ad7369fb5d108074c419d1957794bd14db3bd13167cf67bc32dda8
+  - browser: firefox
+    status: passed
+    sourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
+    canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
+    report:
+      path: .release-issue138/public-firefox-proof.json
+      sha256: 61df9ec8a9501c7fd5c09eae017bea99434fa51ab9c361d06a61261032bae50d
+  - browser: webkit
+    status: passed
+    sourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
+    canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
+    report:
+      path: .release-issue138/public-webkit-proof.json
+      sha256: d09761dffc507fe0da411230cf7fc8d87acf35c1ecc3b8bbcd9917a2ee30aaba
+fixtureIds:
+  - solution
+  - alternate-name
+  - starter
+  - hardcoded
+  - hardcoded-addition
+  - different-variable-addition
+  - string-output
+  - wrong-addition
+  - syntax-error
+  - reference-error
+pyodideVersion: 314.0.7
+pythonVersion: 3.14.2
+capabilityPreflight:
+  path: .release-issue138/public-capability-proof.json
+  sha256: 11c888da4b266114eb993c8db16602d6459f7ab5a8d98e86cca0ce2f126761cb
+uiPreflight:
+  path: .release-issue138/public-ui-proof.json
+  sha256: 8e4f7b1c259d528e6beef44a298f64392c15698a13f22b0d322dfa86cd875638
+licenseNoticesAndSourceOffer: bundled-and-checked
+homePathReadingCoreRequests: 0
+axeViolations: 0
+author: root-python138-implementation
+privateOriginalsChecked: true
+independenceReview:
+  reviewer: python138_runtime_lifecycle_review
+  status: approved
+  sourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
+  canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
+  productTreeSha256: 62effd028951703e17aa2810f5007d715e1cf1dabaf2a152dda7665ca2106145
+  evidenceSha256: 1afce8ed06a4780dded89638b2102be453c97e8a527f6a3416a1e47c77698281
+  referenceSha256s:
+    - efcd17159d5224d57753d0df624ce2e7ebd252e0c04bab4b4f3cfe12430135ac
+    - bdf24bf0e7bf51f97576e4376b15ed65e8cbb5953598dbb8341f7ca63ebbbc63
+    - 3477215629dfe8e5a976c2eb5e7c51df8ff0ddf13b67503d75f042aae647a81e
+    - 3e7d590583ad7369fb5d108074c419d1957794bd14db3bd13167cf67bc32dda8
+    - 61df9ec8a9501c7fd5c09eae017bea99434fa51ab9c361d06a61261032bae50d
+    - d09761dffc507fe0da411230cf7fc8d87acf35c1ecc3b8bbcd9917a2ee30aaba
+    - 11c888da4b266114eb993c8db16602d6459f7ab5a8d98e86cca0ce2f126761cb
+    - 8e4f7b1c259d528e6beef44a298f64392c15698a13f22b0d322dfa86cd875638

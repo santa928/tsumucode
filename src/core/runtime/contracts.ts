@@ -198,7 +198,7 @@ export interface RunnerAdapter {
 /** 言語と独立した実行先。能力は現在利用するconsole／DOMに限定する。 */
 export interface ExecutionEnvironment {
   readonly backend: 'browser' | 'local';
-  readonly engine: 'browser-html-css' | 'browser-js' | 'node';
+  readonly engine: 'browser-html-css' | 'browser-js' | 'browser-python' | 'node';
   readonly mode: 'console' | 'dom';
   readonly capabilities: readonly ('console' | 'dom')[];
 }

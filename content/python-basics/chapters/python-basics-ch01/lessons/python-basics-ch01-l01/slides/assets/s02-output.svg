@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 160" role="img" aria-labelledby="title desc">
+  <title id="title">コードと表示の関係</title>
+  <desc id="desc">countへ数値3を代入し、その名前をprintに渡すと値3を表示します。</desc>
+  <rect x="1" y="1" width="558" height="158" rx="12" fill="#f5f7fb" stroke="#ccd5e2"/>
+  <g fill="#192a42" font-family="sans-serif" font-size="20" text-anchor="middle">
+    <text x="150" y="50">count = 3</text>
+    <text x="405" y="50">print(count)</text>
+    <text x="280" y="128">表示は 3</text>
+  </g>
+  <path d="M150 70 L240 95 M405 70 L320 95" fill="none" stroke="#536985" stroke-width="2"/>
+</svg>

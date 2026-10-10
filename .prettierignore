@@ -19,3 +19,5 @@ playwright-report/
 test-results/
 lhci-report/
 *.svg
+vendor/
+public/python-runtime/

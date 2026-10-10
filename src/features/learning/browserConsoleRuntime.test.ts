@@ -1,19 +1,20 @@
 import { describe, expect, it } from 'vitest';
 import { fixtureCourse } from '../../../tests/fixtures/course';
 import { validationRule } from '../../../tests/fixtures/validation';
-import type { Exercise } from '../../core/content/types';
+import type { Exercise, JavaScriptExerciseRuntime } from '../../core/content/types';
 import { selectBrowserConsoleRuntime } from './browserConsoleRuntime';
 const base = fixtureCourse.phases[0]!.chapters[0]!.lessons[0]!.exercises[0]!;
+const runtime: JavaScriptExerciseRuntime = {
+  kind: 'javascript',
+  entryFile: 'script.js',
+  sourceType: 'script',
+  capabilityProfile: 'core',
+  primaryOutput: 'console',
+};
 const exercise: Exercise = {
   ...base,
   id: 'javascript-ch03-l05-e01',
-  runtime: {
-    kind: 'javascript',
-    entryFile: 'script.js',
-    sourceType: 'script',
-    capabilityProfile: 'core',
-    primaryOutput: 'console',
-  },
+  runtime,
   validationRules: [
     {
       ...validationRule(),
@@ -47,14 +48,13 @@ describe('Closure Console runtime selection', () => {
       ]),
     ).toBeUndefined();
     expect(
-      selectBrowserConsoleRuntime(
-        { ...exercise, runtime: { ...exercise.runtime!, sourceType: 'module' } },
-        [exercise],
-      ),
+      selectBrowserConsoleRuntime({ ...exercise, runtime: { ...runtime, sourceType: 'module' } }, [
+        exercise,
+      ]),
     ).toBeUndefined();
     expect(
       selectBrowserConsoleRuntime(
-        { ...exercise, runtime: { ...exercise.runtime!, primaryOutput: 'preview' } },
+        { ...exercise, runtime: { ...runtime, primaryOutput: 'preview' } },
         [exercise],
       ),
     ).toBeUndefined();

@@ -1,0 +1,8 @@
+id: python-basics-ch01
+sequence: 0
+title: 値と変数と表示
+goal: 数値を変数へ代入し、文字列との違いを説明して、変数と加算の結果をprintで表示できる。
+estimatedMinutes: 20
+kind: standard
+lessonSources:
+  - lessons/python-basics-ch01-l01/lesson.yaml

@@ -1,0 +1,9 @@
+schemaVersion: 1
+id: python-basics
+title: Python入門の学習パス
+description: 数値と文字列、変数、printの実出力を1教材で確かめます。
+publicationStatus: published
+steps:
+  - courseId: python-basics
+    role: required
+    prerequisiteCourseIds: []

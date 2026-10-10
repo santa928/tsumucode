@@ -56,7 +56,10 @@ const LazyCodeWorkspace = lazy(() =>
 type ExerciseLoaderData = Awaited<ReturnType<typeof exerciseLoader>>;
 type InitializationState = 'loading' | 'ready' | 'error';
 type RuntimePreparationState = 'loading' | 'ready' | 'error';
-type BrowserConsoleRuntime = typeof BrowserConsoleRuntimeModule;
+type BrowserConsoleRuntime = Pick<
+  typeof BrowserConsoleRuntimeModule,
+  'selectBrowserConsoleRuntime'
+>;
 
 interface RuntimePreparation {
   readonly consoleRuntime?: BrowserConsoleRuntime;
@@ -141,6 +144,11 @@ export function EditableExercisePage({ lease, ...data }: EditableExercisePagePro
     const abortController = new AbortController();
     void import('../javascriptRuntimeServices')
       .then(async ({ ensureCourseRuntime }) => {
+        if (data.course.id === 'python-basics') {
+          const python = await import('../pythonRuntime');
+          python.preparePythonCourse(data.course, learningRuntimeServices);
+          return python;
+        }
         await ensureCourseRuntime(data.course, learningRuntimeServices);
         return data.course.id === 'javascript' && localRuntime === undefined
           ? import('../browserConsoleRuntime')
@@ -1110,10 +1118,24 @@ function EditableSession({
               {controller.environment.mode === 'console' ? (
                 <div>
                   <p>
-                    {controller.environment.backend === 'local'
-                      ? '編集後に「プレビューを更新」でNode.jsを実行します。Docker切断時は学習モードを再起動し、もう一度実行してください。'
-                      : 'script.jsを編集するとConsoleを更新します。配列・オブジェクトの添字と有限のPromise処理に対応します。HTML/CSSの描画・DOM・タイマー・外部通信は使えません。'}
+                    {exercise.runtime?.kind === 'python'
+                      ? 'main.pyを編集し、「プレビューを更新」で実行結果をConsole（出力欄）に表示します。「判定する」は実行して要件を確かめます。この教材では数値・変数・加算・printを使い、入力待ちやpackageの追加は扱いません。'
+                      : controller.environment.backend === 'local'
+                        ? '編集後に「プレビューを更新」でNode.jsを実行します。Docker切断時は学習モードを再起動し、もう一度実行してください。'
+                        : 'script.jsを編集するとConsoleを更新します。配列・オブジェクトの添字と有限のPromise処理に対応します。HTML/CSSの描画・DOM・タイマー・外部通信は使えません。'}
                   </p>
+                  {exercise.runtime?.kind === 'python' ? (
+                    <p>
+                      <a
+                        href={`${import.meta.env.BASE_URL}python-runtime/314.0.7/NOTICES.html`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-bold underline"
+                      >
+                        Python実行環境のライセンスと対象ソース（別タブ）
+                      </a>
+                    </p>
+                  ) : null}
                   <RuntimeConsole
                     records={(state.runtimeOutput?.console ?? []).slice(0, 200)}
                     freshness={state.runtimeOutput?.freshness ?? 'current'}

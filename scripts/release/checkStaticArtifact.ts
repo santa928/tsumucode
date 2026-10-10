@@ -3,6 +3,58 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { resolveReleaseCourseContract, type ReleaseCourseId } from './releaseCourseContracts';
 import { withoutReviewedNextSource } from './reviewedNextArtifact';
+import { hashFile } from './releaseHashes';
+import { z } from 'zod';
+import {
+  PYTHON_VENDOR_ROOT,
+  PYTHON_OUTPUT_ROOT,
+  PythonDistributionManifestSchema,
+  PYTHON_PREFERRED_SOURCE_FILES,
+  pythonSourceOfferText,
+  pythonNoticesHtml,
+} from '../build/pythonDistribution';
+
+/** Pythonのbinary/通知は固定version・既知のpath・実hashだけを許可し、一般のzip等へ拡張しない。 */
+async function pythonDistributionPaths(root: string): Promise<ReadonlySet<string>> {
+  const prefix = `${PYTHON_OUTPUT_ROOT}/`;
+  const manifest = PythonDistributionManifestSchema.parse(
+    JSON.parse(await readFile(`${PYTHON_VENDOR_ROOT}/manifest.json`, 'utf8')),
+  );
+  const paths = new Set([`${prefix}SOURCES.txt`, `${prefix}NOTICES.html`]);
+  const mapping: Readonly<Record<string, string>> = {
+    'pyodide.asm.wasm': 'core.wasm',
+    'python_stdlib.zip': 'stdlib.zip',
+    'pyodide-lock.json': 'lock.json',
+  };
+  for (const entry of manifest) {
+    const output =
+      mapping[entry.file] ?? (entry.file.startsWith('licenses/') ? entry.file : undefined);
+    if (!output) continue;
+    const relative = prefix + output;
+    if ((await hashFile(path.join(root, relative))) !== entry.sha256)
+      throw new Error(`Python配布物または通知が固定入力と一致しません: ${relative}`);
+    paths.add(relative);
+  }
+  const worker = z
+    .object({ sha256: z.string().regex(/^[a-f0-9]{64}$/u) })
+    .strict()
+    .parse(JSON.parse(await readFile(path.join(root, `${prefix}worker.json`), 'utf8')));
+  if ((await hashFile(path.join(root, `${prefix}worker.js`))) !== worker.sha256)
+    throw new Error('Python Workerの配布hashが一致しません');
+  for (const source of PYTHON_PREFERRED_SOURCE_FILES) {
+    const relative = `${prefix}sources/${source}`;
+    if ((await hashFile(path.join(root, relative))) !== (await hashFile(source)))
+      throw new Error(`Python対象ソースが配布入力と一致しません: ${source}`);
+    paths.add(relative);
+  }
+  if (
+    (await readFile(path.join(root, `${prefix}SOURCES.txt`), 'utf8')) !== pythonSourceOfferText() ||
+    (await readFile(path.join(root, `${prefix}NOTICES.html`), 'utf8')) !==
+      pythonNoticesHtml(manifest.map(({ file }) => file))
+  )
+    throw new Error('Python配布案内と対象ソースのlinkが一致しません');
+  return paths;
+}
 
 const ALLOWED_EXTENSIONS = new Set([
   '.html',
@@ -98,6 +150,12 @@ export async function checkStaticArtifact(
   const contract = resolveReleaseCourseContract(courseId);
   const root = path.resolve(distDir);
   const files = await collectFiles(root);
+  const catalog = JSON.parse(
+    await readFile(path.join(root, 'generated/content/catalog-v3.json'), 'utf8'),
+  ) as { courses: readonly { id: string }[] };
+  const pythonPaths = catalog.courses.some(({ id }) => id === 'python-basics')
+    ? await pythonDistributionPaths(root)
+    : new Set<string>();
 
   for (const file of files) {
     const relative = path.relative(root, file).split(path.sep).join('/');
@@ -111,7 +169,7 @@ export async function checkStaticArtifact(
     if (
       relative.startsWith('../') ||
       path.isAbsolute(relative) ||
-      !ALLOWED_EXTENSIONS.has(extension) ||
+      (!ALLOWED_EXTENSIONS.has(extension) && !pythonPaths.has(relative)) ||
       relative.endsWith('.map') ||
       /(^|\/)(?:\.env(?:\.|$)|server(?:\.|\/|$)|secret(?:\.|\/|$))/iu.test(relative)
     ) {

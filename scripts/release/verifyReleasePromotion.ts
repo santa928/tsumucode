@@ -23,6 +23,7 @@ import {
   type CourseReleaseHistory,
 } from './javascriptReleaseSchema';
 import { ReactPostDeployVerificationSchema } from './reactReleaseSchema';
+import { PythonPostDeployVerificationSchema } from './pythonReleaseSchema';
 import { NextPostDeployVerificationSchema } from './nextReleaseSchema';
 import { TypescriptPostDeployVerificationSchema } from './typescriptReleaseSchema';
 import { verifyPublishedTag } from './verifyReleaseTarget';
@@ -71,15 +72,17 @@ export function validatePostDeployVerification(
 ): void {
   const courseId = release.courseId ?? 'html-css';
   const verification =
-    courseId === 'next'
-      ? NextPostDeployVerificationSchema.parse(source)
-      : courseId === 'react'
-        ? ReactPostDeployVerificationSchema.parse(source)
-        : courseId === 'typescript'
-          ? TypescriptPostDeployVerificationSchema.parse(source)
-          : courseId === 'javascript'
-            ? JavascriptPostDeployVerificationSchema.parse(source)
-            : PostDeployVerificationSchema.parse(source);
+    courseId === 'python-basics'
+      ? PythonPostDeployVerificationSchema.parse(source)
+      : courseId === 'next'
+        ? NextPostDeployVerificationSchema.parse(source)
+        : courseId === 'react'
+          ? ReactPostDeployVerificationSchema.parse(source)
+          : courseId === 'typescript'
+            ? TypescriptPostDeployVerificationSchema.parse(source)
+            : courseId === 'javascript'
+              ? JavascriptPostDeployVerificationSchema.parse(source)
+              : PostDeployVerificationSchema.parse(source);
   const expectedPath = expectedPostDeployVerificationPath(release.revision, courseId);
   if (release.postDeployVerificationPath !== expectedPath) {
     throw new Error(

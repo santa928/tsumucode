@@ -1,0 +1,20 @@
+schemaVersion: 2
+status: approved
+verifiedSourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
+candidateTreeSha256: 62effd028951703e17aa2810f5007d715e1cf1dabaf2a152dda7665ca2106145
+canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
+courseManifestSha256: 8b7bf849887f09426f8dbaf18cfa453cd7f33f1c2c886083d7de5b5c7c2d38bc
+publicProvenanceSha256: 78c5f4a45436b7b8b0126938aa3c8f6ddd76690c0dd3c6152de524c9e694790c
+visualBaselineSha256: b44880f5791528e91676e1090d8663068328bbabf6e5a85a1fb9ab7740a08152
+records:
+  contentReview:
+    path: docs/quality/content-review-python-basics.yaml
+    sha256: 9d548ed139a2e369baf8eeca6c1d745437760e586b818499c62f1663619de45d
+  technicalAcceptance:
+    path: docs/quality/python-release-acceptance.yaml
+    sha256: 432c57f01aef9ed364316300376cfacb508735171719ff3231cbbb504281f18a
+approvedBy: repository-owner santa928 / parent-thread
+  01a10b91-1aa7-7475-a007-c3fb4bce8017 / 2026-10-10T14:24:29.529277+00:00 いいよ /
+  Python入門の既存Pages公開・WASM許可・独立3 AIレビューと原本照合。実人・物理端末は未確認。
+approvedAt: 2026-10-10T15:31:51.260Z
+courseId: python-basics

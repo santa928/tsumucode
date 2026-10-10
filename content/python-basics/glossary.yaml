@@ -1,0 +1,17 @@
+schemaVersion: 1
+entries:
+  - id: python-value
+    term: 値
+    definition: プログラムが扱う数値や文字列など。
+    firstSlideId: python-basics-ch01-l01-s01
+    relatedIds: []
+  - id: python-variable
+    term: 変数
+    definition: 代入した値を名前で参照するための仕組み。
+    firstSlideId: python-basics-ch01-l01-s02
+    relatedIds: []
+  - id: python-print
+    term: print
+    definition: 括弧に渡した値を出力する関数。
+    firstSlideId: python-basics-ch01-l01-s01
+    relatedIds: []

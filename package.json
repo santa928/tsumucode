@@ -22,7 +22,7 @@
     "content:check:chapter": "tsx scripts/content/checkChapter.ts",
     "content:provenance": "tsx scripts/content/checkProvenance.ts content/html-css",
     "content:review": "tsx scripts/content/verifyContentReview.ts",
-    "dev": "npm run content:compile && vite",
+    "dev": "npm run content:compile && npm run build:python-assets && vite",
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run",
@@ -37,7 +37,7 @@
     "lint": "eslint .",
     "format:check": "prettier --check .",
     "build": "npm run content:compile && npm run build:app",
-    "build:app": "tsc -b && vite build && npm run build:inline-css",
+    "build:app": "tsc -b && npm run build:python-assets && vite build && npm run build:inline-css",
     "build:inline-css": "tsx scripts/inline-production-css.ts",
     "smoke:subpath": "tsx scripts/smoke-subpath.ts",
     "smoke:learning-chunks": "tsx scripts/check-learning-chunks.ts",
@@ -49,7 +49,8 @@
     "release:input": "tsx scripts/release/javascriptInputHashes.ts",
     "release:learning-coverage": "tsx scripts/release/javascriptLessonEvaluation.ts",
     "check": "npm run content:compile && npm run lint && npm run test:changed && npm run build:app && npm run smoke:learning-chunks",
-    "check:release": "npm run content:compile && npm run content:review && npm run lint && npm run test:run && npm run build:app && npm run smoke:learning-chunks"
+    "check:release": "npm run content:compile && npm run content:review && npm run lint && npm run test:run && npm run build:app && npm run smoke:learning-chunks",
+    "build:python-assets": "tsx scripts/build/preparePythonAssets.ts"
   },
   "dependencies": {
     "@codemirror/autocomplete": "6.20.3",
@@ -90,6 +91,7 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.3",
     "axe-core": "4.12.1",
+    "esbuild": "0.28.1",
     "eslint": "10.8.0",
     "eslint-plugin-react-hooks": "7.1.1",
     "eslint-plugin-react-refresh": "0.5.3",

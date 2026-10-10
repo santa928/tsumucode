@@ -1,0 +1,34 @@
+schemaVersion: 2
+courseId: python-basics
+releases: []
+candidate:
+  revision: 2026-10-10.1
+  status: approved
+  verifiedSourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
+  canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
+  courseManifestSha256: 8b7bf849887f09426f8dbaf18cfa453cd7f33f1c2c886083d7de5b5c7c2d38bc
+  publicProvenanceSha256: 78c5f4a45436b7b8b0126938aa3c8f6ddd76690c0dd3c6152de524c9e694790c
+  persistentIdsSha256: 95d420d91c4ae6bb64e1a46eab544a5119fc9d96389fa76fe8ccfbd710dd88c7
+  persistentIds:
+    - desktop-1280
+    - python-basics
+    - python-basics-ch01
+    - python-basics-ch01-l01
+    - python-basics-ch01-l01-e01
+    - python-basics-ch01-l01-e01-h01
+    - python-basics-ch01-l01-e01-h02
+    - python-basics-ch01-l01-e01-h03
+    - python-basics-ch01-l01-e01-r01
+    - python-basics-ch01-l01-e01-r02
+    - python-basics-ch01-l01-s01
+    - python-basics-ch01-l01-s02
+    - python-basics-ch01-l01-s03
+    - python-basics-p01
+  previousReleaseTag: null
+  tombstonedIds: []
+  migrations: []
+  syntheticProgressBundlePath: tests/fixtures/progress/python-previous-release-bundle.json
+  draftSourceCommit: 0628fb18fa02bd1e7e3e89033b9715aadbb2dcbd
+  draftCanonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
+  normalizedLearningInputSha256: 62effd028951703e17aa2810f5007d715e1cf1dabaf2a152dda7665ca2106145
+  courseId: python-basics

@@ -1,0 +1,36 @@
+schemaVersion: 1
+id: python-basics
+title: Python 値と変数の第一歩
+description: 数値と文字列を区別し、変数とprintの実出力を確かめる作者用の最小教材。現在は承認済みローカル環境だけで実証します。
+audience: プログラミングが初めての方
+estimatedMinutes: 20
+revision: 2026-10-10.1
+runnerId: python
+validatorId: python
+glossarySource: glossary.yaml
+conceptsSource: concepts.yaml
+documentationSources:
+  - references/python-official.md
+supportedDevices:
+  exercise: desktop
+  study:
+    - desktop
+    - tablet
+    - mobile
+prerequisites: []
+publicationStatus: draft
+expectedTotals:
+  chapters: 1
+  lessons: 1
+  conceptSlides: 3
+  standardExercises: 1
+  guidedProjectLessons: 0
+  capstoneLessons: 0
+  estimatedMinutes: 20
+provenanceManifestPath: provenance.yaml
+phases:
+  - id: python-basics-p01
+    title: 値を表示する
+    description: 数値を変数へ代入し、文字列との違いを説明して、変数と加算の結果をprintで表示できる。
+    chapterSources:
+      - chapters/python-basics-ch01/chapter.yaml
