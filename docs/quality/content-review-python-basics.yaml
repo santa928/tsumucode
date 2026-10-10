@@ -1,22 +1,16 @@
-{
-  'schemaVersion': 1,
-  'releaseStatus': 'draft',
-  'verifiedSourceCommit': 'draft',
-  'canonicalDistSha256': 'draft',
-  'lessons':
-    [
-      {
-        'lessonId': 'python-basics-ch01-l01',
-        'authorId': 'tsumucode-python-author',
-        'reviewerId': 'python138_lesson_review',
-        'sourceHash': '3f6313e6857d060856ecd2c39b647919d5e0ec94b0b531a9e76139671d66955b',
-        'accuracy': 'approved',
-        'goalExerciseAlignment': 'approved',
-        'unexplainedTerms': 0,
-        'hintLeakage': 0,
-        'examplesExecuted': true,
-        'decision': 'approved',
-        'notes': '独立AI教材レビューで必須指摘0。既存実Pyodideの10Fixtureを確認済み。公開用build・実Pagesの受入と実人受講は別に扱い、技術証拠はpython-release-acceptance.yamlのsource/artifact/原本hashへ固定する。',
-      },
-    ],
-}
+schemaVersion: 1
+releaseStatus: approved
+verifiedSourceCommit: c7bf9bf2fb9809e6a9e81438e102e16614c660f0
+canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
+lessons:
+  - lessonId: python-basics-ch01-l01
+    authorId: tsumucode-python-author
+    reviewerId: python138_lesson_review
+    sourceHash: 3f6313e6857d060856ecd2c39b647919d5e0ec94b0b531a9e76139671d66955b
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 独立AI教材レビューで必須指摘0。既存実Pyodideの10Fixtureを確認済み。公開用build・実Pagesの受入と実人受講は別に扱い、技術証拠はpython-release-acceptance.yamlのsource/artifact/原本hashへ固定する。
