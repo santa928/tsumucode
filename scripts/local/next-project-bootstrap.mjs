@@ -193,6 +193,22 @@ function ensureLatest() {
 
 /** 固定隔離の資源だけを読む。作者計測のために追加Node processを起動しない。 */
 async function resources() {
+  // PIDはlearner namespace内の値。後取得のDocker topが返すhost PIDとは区別する。
+  // 時刻とphaseは採取開始時点であり、後続の資源値と原子的なsnapshotではない。
+  const lifecycle = {
+    observedAtMs: Date.now(),
+    bootstrapPid: process.pid,
+    currentChildPid: child?.pid ?? null,
+    phase: stopping
+      ? 'stopping'
+      : updating
+        ? 'updating'
+        : paused
+          ? 'paused'
+          : active
+            ? 'ready'
+            : 'starting',
+  };
   const value = async (name) => Number((await readFile(`/sys/fs/cgroup/${name}`, 'utf8')).trim());
   const usage = async (path) => {
     const stat = await statfs(path);
@@ -206,7 +222,8 @@ async function resources() {
           if (error.code !== 'ENOENT') throw error;
           return '';
         });
-        return stat.slice(stat.lastIndexOf(')') + 2).startsWith('Z');
+        const [state, parent] = stat.slice(stat.lastIndexOf(')') + 2).split(' ');
+        return state === 'Z' ? { pid: Number(name), ppid: Number(parent), state } : null;
       }),
   );
   const events = Object.fromEntries(
@@ -217,6 +234,11 @@ async function resources() {
   );
   return {
     zombies: states.filter(Boolean).length,
+    // 後取得のtopでは短いZombieが既に消えるため、検出した同じ/proc読取を記録する。
+    // 件数の厳格な判定は全件を維持し、追加診断だけを最大4件へ限定する。
+    zombieProcesses: states.filter(Boolean).slice(0, 4),
+    zombieProcessesTruncated: states.filter(Boolean).length > 4,
+    lifecycle,
     memoryPeak: await value('memory.peak'),
     memoryCurrent: await value('memory.current'),
     memoryEvents: {
