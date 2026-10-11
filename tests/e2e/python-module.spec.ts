@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { strFromU8, unzipSync } from 'fflate';
@@ -54,76 +55,84 @@ async function finishPassing(page: Page, id: string) {
 }
 
 for (const id of lessons) {
-  test(`Python ${id}の固定2file正負Fixtureと保存・Resetを実環境で確認する`, async ({
-    page,
-  }, info) => {
-    test.setTimeout(360_000);
-    const exercise = parse(await readFile(`${root(id)}/exercise.yaml`, 'utf8')) as {
-      fixtures: {
-        id: string;
-        expectedStatus: string;
-        inputLines: string[];
-        expectedFeedbackRuleIds: string[];
-        files: { path: string; source: string }[];
-      }[];
-    };
-    await page.goto(route(id));
-    await expect(page.locator('.cm-content')).toBeVisible();
-    for (const fixture of exercise.fixtures) {
-      await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled({
-        timeout: 30_000,
-      });
-      const files: Record<string, string> = {};
-      for (const file of fixture.files) {
-        files[file.path] = await readFile(`${root(id)}/${file.source}`, 'utf8');
-      }
-      await editFiles(page, files);
-      if (id !== lessons[0]) {
-        await page
-          .getByLabel('入力を渡さない（行不足を確認する）')
-          .setChecked(fixture.inputLines.length === 0);
-        if (fixture.inputLines.length > 0)
-          await page
-            .getByLabel('実行前の入力（1行につきinput 1回）')
-            .fill(fixture.inputLines.join('\n'));
-      }
-      const before = (await draft(page, id))?.['validationHistory'];
-      await page.getByRole('button', { name: '判定する', exact: true }).click();
-      if (fixture.expectedStatus === 'system-error') {
-        await expect(page.getByText(/採点していません/).first()).toBeVisible({ timeout: 30_000 });
+  const exercise = parse(readFileSync(`${root(id)}/exercise.yaml`, 'utf8')) as {
+    fixtures: {
+      id: string;
+      expectedStatus: string;
+      inputLines: string[];
+      expectedFeedbackRuleIds: string[];
+      files: { path: string; source: string }[];
+    }[];
+  };
+  // 多数のWASM実行を作者Browserの単一contextへ蓄積しない。
+  for (let offset = 0; offset < exercise.fixtures.length; offset += 4) {
+    const fixtures = exercise.fixtures.slice(offset, offset + 4);
+    test(`Python ${id}の実Fixture ${String(offset + 1)}〜${String(offset + fixtures.length)}`, async ({
+      page,
+    }) => {
+      test.setTimeout(180_000);
+      await page.goto(route(id));
+      await expect(page.locator('.cm-content')).toBeVisible();
+      for (const fixture of fixtures) {
         await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled({
           timeout: 30_000,
         });
-        expect((await draft(page, id))?.['validationHistory'], fixture.id).toEqual(before);
-        await expect(page.getByRole('dialog')).toHaveCount(0);
-      } else {
-        if (fixture.expectedStatus === 'pass') await finishPassing(page, id);
-        else await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
-        await expect
-          .poll(
-            async () =>
-              (
-                (await draft(page, id))?.['validationHistory'] as { status: string }[] | undefined
-              )?.at(-1)?.status,
-            { message: fixture.id },
-          )
-          .toBe(fixture.expectedStatus);
-        const history = (await draft(page, id))?.['validationHistory'] as {
-          checks: { passed: boolean; ruleId: string }[];
-        }[];
-        expect(
-          history
-            .at(-1)
-            ?.checks.filter((check) => !check.passed)
-            .map((check) => check.ruleId),
-          fixture.id,
-        ).toEqual(fixture.expectedFeedbackRuleIds);
-        if (fixture.expectedStatus !== 'pass')
-          await page.getByRole('button', { name: '閉じる', exact: true }).click();
+        const files: Record<string, string> = {};
+        for (const file of fixture.files) {
+          files[file.path] = await readFile(`${root(id)}/${file.source}`, 'utf8');
+        }
+        await editFiles(page, files);
+        if (id !== lessons[0]) {
+          await page
+            .getByLabel('入力を渡さない（行不足を確認する）')
+            .setChecked(fixture.inputLines.length === 0);
+          if (fixture.inputLines.length > 0)
+            await page
+              .getByLabel('実行前の入力（1行につきinput 1回）')
+              .fill(fixture.inputLines.join('\n'));
+        }
+        const before = (await draft(page, id))?.['validationHistory'];
+        await page.getByRole('button', { name: '判定する', exact: true }).click();
+        if (fixture.expectedStatus === 'system-error') {
+          await expect(page.getByText(/採点していません/).first()).toBeVisible({ timeout: 30_000 });
+          await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled({
+            timeout: 30_000,
+          });
+          expect((await draft(page, id))?.['validationHistory'], fixture.id).toEqual(before);
+          await expect(page.getByRole('dialog')).toHaveCount(0);
+        } else {
+          if (fixture.expectedStatus === 'pass') await finishPassing(page, id);
+          else await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
+          await expect
+            .poll(
+              async () =>
+                (
+                  (await draft(page, id))?.['validationHistory'] as { status: string }[] | undefined
+                )?.at(-1)?.status,
+              { message: fixture.id },
+            )
+            .toBe(fixture.expectedStatus);
+          const history = (await draft(page, id))?.['validationHistory'] as {
+            checks: { passed: boolean; ruleId: string }[];
+          }[];
+          expect(
+            history
+              .at(-1)
+              ?.checks.filter((check) => !check.passed)
+              .map((check) => check.ruleId),
+            fixture.id,
+          ).toEqual(fixture.expectedFeedbackRuleIds);
+          if (fixture.expectedStatus !== 'pass')
+            await page.getByRole('button', { name: '閉じる', exact: true }).click();
+        }
+        await expect.poll(async () => (await draft(page, id))?.['files']).toEqual(files);
+        await expect(page.locator('iframe[title="Python実行環境"]')).toHaveCount(0);
       }
-      await expect.poll(async () => (await draft(page, id))?.['files']).toEqual(files);
-      await expect(page.locator('iframe[title="Python実行環境"]')).toHaveCount(0);
-    }
+    });
+  }
+  test(`Python ${id}の両file保存・再開・Resetを確認する`, async ({ page }, info) => {
+    await page.goto(route(id));
+    await expect(page.locator('.cm-content')).toBeVisible();
     const solution = await sources(id, 'solution');
     await editFiles(page, solution);
     if (id !== lessons[0]) {
@@ -147,7 +156,7 @@ for (const id of lessons) {
     await expect(page.getByRole('tab', { name: 'lesson_tools.py', exact: true })).toBeFocused();
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
     await page.screenshot({ path: info.outputPath(`${id}.png`), fullPage: true });
-    await page.reload();
+    await page.reload({ waitUntil: 'domcontentloaded' });
     await expect(page.locator('.cm-content')).toBeVisible();
     await page.getByRole('tab', { name: 'lesson_tools.py', exact: true }).click();
     await expect.poll(() => editorText(page)).toBe(solution['lesson_tools.py']);
