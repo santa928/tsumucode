@@ -114,23 +114,36 @@ describe('static artifact', () => {
       (await checkStaticArtifact(await pythonArtifact(), 'python-basics')).files,
     ).toBeGreaterThan(40);
   });
-  it.each(['MPL原文', '対象ソース', '案内link', 'Worker欠落', '未知binary'])(
-    'Pythonの%sを拒否する',
-    async (kind) => {
-      const root = await pythonArtifact();
-      const output = path.join(root, 'python-runtime/314.0.7');
-      if (kind === 'MPL原文') await rm(path.join(output, 'licenses/pyodide-MPL.txt'));
-      if (kind === '対象ソース')
-        await writeFile(
-          path.join(output, 'sources/src/adapters/runtime/python/pythonWorker.ts'),
-          'altered',
-        );
-      if (kind === '案内link') await writeFile(path.join(output, 'NOTICES.html'), '<h1>通知</h1>');
-      if (kind === 'Worker欠落') await rm(path.join(output, 'worker.js'));
-      if (kind === '未知binary') await writeFile(path.join(output, 'extra.wasm'), 'extra');
-      await expect(checkStaticArtifact(root, 'python-basics')).rejects.toThrow();
-    },
-  );
+  it.each([
+    'MPL原文',
+    '対象ソース',
+    '共有AST',
+    '入力profile',
+    '案内link',
+    'Worker欠落',
+    '未知binary',
+  ])('Pythonの%sを拒否する', async (kind) => {
+    const root = await pythonArtifact();
+    const output = path.join(root, 'python-runtime/314.0.7');
+    if (kind === 'MPL原文') await rm(path.join(output, 'licenses/pyodide-MPL.txt'));
+    if (kind === '対象ソース')
+      await writeFile(
+        path.join(output, 'sources/src/adapters/runtime/python/pythonWorker.ts'),
+        'altered',
+      );
+    if (kind === '共有AST' || kind === '入力profile')
+      await rm(
+        path.join(
+          output,
+          'sources/src/core/runtime',
+          kind === '共有AST' ? 'pythonLessonAnalysis.mjs' : 'pythonLessonProfiles.mjs',
+        ),
+      );
+    if (kind === '案内link') await writeFile(path.join(output, 'NOTICES.html'), '<h1>通知</h1>');
+    if (kind === 'Worker欠落') await rm(path.join(output, 'worker.js'));
+    if (kind === '未知binary') await writeFile(path.join(output, 'extra.wasm'), 'extra');
+    await expect(checkStaticArtifact(root, 'python-basics')).rejects.toThrow();
+  });
 
   it('Next JSONの重複keyに隠した開発URLを拒否する', async () => {
     const source = nextWorkspace('next-ch03-l01-e01')!.files['app/data-url.ts'];

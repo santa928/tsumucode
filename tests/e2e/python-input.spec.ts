@@ -30,6 +30,10 @@ for (const number of [2, 3, 4]) {
     await page.goto(`${base}#/courses/python-basics/lessons/${lessonId}/exercises/${exerciseId}`);
     await expect(page.locator('.cm-content')).toBeVisible();
     for (const fixture of exercise.fixtures) {
+      // 初回Previewの準備中はEditorが読取専用のため、編集可能になってから操作する。
+      await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled({
+        timeout: 30_000,
+      });
       const source = await readFile(`${sourceRoot}/${fixture.files[0]!.source}`, 'utf8');
       await replaceEditorText(page, source);
       if (number !== 4)
