@@ -91,6 +91,7 @@ for (const id of lessons) {
               .getByLabel('実行前の入力（1行につきinput 1回）')
               .fill(fixture.inputLines.join('\n'));
         }
+        await expect.poll(async () => (await draft(page, id))?.['files']).toEqual(files);
         const before = (await draft(page, id))?.['validationHistory'];
         await page.getByRole('button', { name: '判定する', exact: true }).click();
         if (fixture.expectedStatus === 'system-error') {
