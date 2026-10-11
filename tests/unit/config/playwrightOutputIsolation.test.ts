@@ -53,6 +53,7 @@ describe('Playwright output isolation', () => {
       'browser-dom-runtime.spec.ts',
       'typescript-release-smoke.spec.ts',
       'python-release-smoke.spec.ts',
+      'python-input.spec.ts',
     ];
 
     expect(chromium?.testMatch).toBeUndefined();
