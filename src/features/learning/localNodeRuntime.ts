@@ -1,3 +1,4 @@
+import { PYTHON_LESSONS } from '../../core/runtime/pythonLessonProfiles.mjs';
 import { LocalPythonExecutionService } from '../../adapters/runtime/local/LocalPythonExecutionService';
 import { PythonLessonValidator } from '../../adapters/validation/python/PythonLessonValidator';
 import { LocalNodeExecutionService } from '../../adapters/runtime/local/LocalNodeExecutionService';
@@ -13,15 +14,23 @@ const EXERCISE_IDS = new Set([
 
 /** 専用Local buildだけが持つ対象演習の組立て。API接続は明示実行時まで行わない。 */
 export const localRuntime: LocalLearningRuntime = {
-  createExecution(exercise, revision) {
-    if (exercise.id === 'python-basics-ch01-l01-e01' && exercise.runtime?.kind === 'python')
-      return new LocalPythonExecutionService(exercise.id, revision);
+  createExecution(exercise, revision, readInputLines) {
+    if (
+      Object.hasOwn(PYTHON_LESSONS, exercise.id) &&
+      exercise.runtime?.kind === 'python' &&
+      PYTHON_LESSONS[exercise.id]?.profile === exercise.runtime.profile
+    )
+      return new LocalPythonExecutionService(exercise.id, revision, readInputLines);
     return EXERCISE_IDS.has(exercise.id)
       ? new LocalNodeExecutionService(exercise.id, revision)
       : undefined;
   },
   createValidator(exercise) {
-    if (exercise.id === 'python-basics-ch01-l01-e01' && exercise.runtime?.kind === 'python')
+    if (
+      Object.hasOwn(PYTHON_LESSONS, exercise.id) &&
+      exercise.runtime?.kind === 'python' &&
+      PYTHON_LESSONS[exercise.id]?.profile === exercise.runtime.profile
+    )
       return new PythonLessonValidator('cpython');
     if (!EXERCISE_IDS.has(exercise.id)) return undefined;
     return new JavaScriptValidator({

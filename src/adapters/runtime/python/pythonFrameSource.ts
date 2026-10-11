@@ -60,7 +60,14 @@ function initializePythonFrame(limits: typeof PYTHON_LIMITS): void {
         failure('system-error', 'Python Workerの起動に失敗しました。');
       };
       worker.postMessage(
-        { wasm: data.wasm, stdlib: data.stdlib, lock: data.lock, source: data.source },
+        {
+          wasm: data.wasm,
+          stdlib: data.stdlib,
+          lock: data.lock,
+          source: data.source,
+          profile: data.profile,
+          inputLines: data.inputLines,
+        },
         [channel.port2],
       );
     } catch {

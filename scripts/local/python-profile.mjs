@@ -13,40 +13,59 @@ import base64
 import json
 import os
 import sys
-files = json.loads(base64.b64decode("".join(sys.argv[1:])).decode("utf-8"))
+payload = json.loads(base64.b64decode("".join(sys.argv[1:])).decode("utf-8"))
+files = payload["files"]
+with open("/workspace/.stdin", "xb") as stdin_file:
+    stdin_file.write(("\\n".join(payload["inputLines"]) + ("\\n" if payload["inputLines"] else "")).encode("utf-8"))
+stdin_fd = os.open("/workspace/.stdin", os.O_RDONLY)
+os.dup2(stdin_fd, 0)
+os.close(stdin_fd)
 with open("/workspace/main.py", "xb") as output:
     output.write(files["main.py"].encode("utf-8"))
 os.execv(sys.executable, [sys.executable, "-I", "-S", "-B", "-u", "/workspace/main.py"])
 `;
-const lessonProgram = pythonLessonAnalysis('TSUMUCODE_SOURCE').replace(
-  '"TSUMUCODE_SOURCE"',
-  '_source',
-);
-const analysis = `
+/** 教材profileは固定IDから決定し、解析結果は学習者stdoutと分離する。 */
+function analysisProgram(profile) {
+  const program = pythonLessonAnalysis('TSUMUCODE_SOURCE', profile)
+    .replace('"TSUMUCODE_SOURCE"', '_source')
+    .replace('_lesson_json.dumps({', '_lesson_result = _lesson_json.dumps({');
+  const fallback = {
+    supported: false,
+    numericVariablePrinted: false,
+    sameVariableAdditionPrinted: false,
+  };
+  if (profile !== 'values-vars-print-v1')
+    Object.assign(fallback, {
+      inputEchoed: false,
+      ageBoundaryBranched: false,
+      rangeIterated: false,
+    });
+  return `
 import base64
 import json
 import sys
 _source = base64.b64decode("".join(sys.argv[1:])).decode("utf-8")
 try:
-${lessonProgram
+${program
   .split('\n')
   .map((line) => '    ' + line)
   .join('\n')}
+    _result = json.loads(_lesson_result)
 except SyntaxError:
-    _lesson_supported = False
-    _lesson_printed = set()
-    _lesson_added = set()
-print(json.dumps({
-    "version": sys.version.split()[0],
-    "supported": _lesson_supported,
-    "numericVariablePrinted": bool(_lesson_printed),
-    "sameVariableAdditionPrinted": bool(_lesson_printed & _lesson_added),
-}))
+    _result = json.loads(${JSON.stringify(JSON.stringify(fallback))})
+_result["version"] = sys.version.split()[0]
+print(json.dumps(_result))
 `;
+}
 
 /** 固定CPythonと固定programだけを選び、長いsourceはshellを使わずargvへ分割する。 */
-export function pythonCommand(files, analyze = false) {
-  const input = analyze ? files['main.py'] : JSON.stringify(files);
+export function pythonCommand(
+  files,
+  analyze = false,
+  profile = 'values-vars-print-v1',
+  inputLines = [],
+) {
+  const input = analyze ? files['main.py'] : JSON.stringify({ files, inputLines });
   return {
     Image: PYTHON_IMAGE,
     Entrypoint: ['python'],
@@ -56,7 +75,7 @@ export function pythonCommand(files, analyze = false) {
       '-B',
       '-u',
       '-c',
-      analyze ? analysis : bootstrap,
+      analyze ? analysisProgram(profile) : bootstrap,
       ...(Buffer.from(input)
         .toString('base64')
         .match(/.{1,16384}/gu) ?? []),
@@ -65,10 +84,12 @@ export function pythonCommand(files, analyze = false) {
 }
 
 /** 学習コードを一度も実行しない解析containerの正常packetだけを信用する。 */
-export function parsePythonAnalysis(stdout, stderr, exitCode) {
+export function parsePythonAnalysis(stdout, stderr, exitCode, profile = 'values-vars-print-v1') {
   if (exitCode !== 0 || stderr !== '') throw new Error('CPython AST解析が失敗しました');
   const value = JSON.parse(stdout);
   const keys = ['version', 'supported', 'numericVariablePrinted', 'sameVariableAdditionPrinted'];
+  if (profile !== 'values-vars-print-v1')
+    keys.push('inputEchoed', 'ageBoundaryBranched', 'rangeIterated');
   if (
     !value ||
     typeof value !== 'object' ||

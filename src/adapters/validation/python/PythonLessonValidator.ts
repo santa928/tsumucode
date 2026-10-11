@@ -1,3 +1,8 @@
+import {
+  PYTHON_LESSONS,
+  validPythonInputLines,
+  expectedPythonOutput,
+} from '../../../core/runtime/pythonLessonProfiles.mjs';
 import { z } from 'zod';
 import type { SnapshotPolicy } from '../../../core/runtime/contracts';
 import type {
@@ -6,8 +11,13 @@ import type {
   ValidatorAdapter,
 } from '../../../core/validation/contracts';
 
-const EXERCISE_ID = 'python-basics-ch01-l01-e01';
-const facts = ['numeric-variable-printed', 'same-variable-addition-printed'] as const;
+const factNames = [
+  'numeric-variable-printed',
+  'same-variable-addition-printed',
+  'input-echoed',
+  'age-boundary-branched',
+  'range-iterated',
+] as const;
 const ruleSchema = z
   .object({
     id: z.string(),
@@ -18,7 +28,9 @@ const ruleSchema = z
     viewportMode: z.literal('all'),
     viewportIds: z.array(z.string()).min(1),
     target: z.object({ kind: z.literal('python-source'), file: z.literal('main.py') }).strict(),
-    assertion: z.object({ kind: z.literal('python-source-fact'), fact: z.enum(facts) }).strict(),
+    assertion: z
+      .object({ kind: z.literal('python-source-fact'), fact: z.enum(factNames) })
+      .strict(),
     feedback: z
       .object({ target: z.string(), expected: z.string(), nextAction: z.string() })
       .strict(),
@@ -27,9 +39,9 @@ const ruleSchema = z
   })
   .strict();
 
-/** 最小1演習の実出力と実AST事実をANDで採点する。指定外のengineやDOM証拠を受け入れない。 */
+/** 固定Python教材の実出力と実AST事実をANDで採点する。指定外のengineやDOM証拠を受け入れない。 */
 export class PythonLessonValidator implements ValidatorAdapter {
-  /** 環境を明示し、同じ2Ruleでも別engineの観測を流用しない。 */
+  /** 環境を明示し、同じRuleでも別engineの観測を流用しない。 */
   constructor(private readonly engine: 'browser-python' | 'cpython' = 'browser-python') {}
 
   /** Consoleだけの演習はviewportやDOM snapshotを要求しない。 */
@@ -47,6 +59,7 @@ export class PythonLessonValidator implements ValidatorAdapter {
   /** 元source hash・identity・stdoutとboolean factsを照合し、環境障害を未達と混ぜない。 */
   async validate(context: ValidationContext): Promise<ValidationResult> {
     const execution = context.execution;
+    const lesson = PYTHON_LESSONS[context.exerciseId];
     const base = {
       exerciseId: context.exerciseId,
       executionRevision: execution?.executionRevision ?? null,
@@ -60,7 +73,7 @@ export class PythonLessonValidator implements ValidatorAdapter {
       passedRequirementIds: [],
     });
     if (
-      context.exerciseId !== EXERCISE_ID ||
+      lesson === undefined ||
       execution === undefined ||
       execution.backend !== (this.engine === 'cpython' ? 'local' : 'browser') ||
       execution.engine !== this.engine ||
@@ -76,14 +89,14 @@ export class PythonLessonValidator implements ValidatorAdapter {
         passedRequirementIds: [],
       };
     if (execution.status !== 'succeeded') return system();
-    const parsed = z.array(ruleSchema).length(2).safeParse(context.rules);
+    const parsed = z.array(ruleSchema).length(lesson.facts.length).safeParse(context.rules);
     if (!parsed.success) return system();
     const rules = parsed.data;
     if (
       rules.some(
         (rule, index) =>
-          rule.id !== `${EXERCISE_ID}-r0${String(index + 1)}` ||
-          rule.assertion.fact !== facts[index],
+          rule.id !== `${context.exerciseId}-r0${String(index + 1)}` ||
+          rule.assertion.fact !== lesson.facts[index],
       )
     )
       return system();
@@ -103,7 +116,7 @@ export class PythonLessonValidator implements ValidatorAdapter {
       evidence.get('python.executed')?.value !== true ||
       typeof evidence.get('python.version')?.value !== 'string' ||
       typeof evidence.get('python.stdout')?.value !== 'string' ||
-      facts.some((fact) => typeof evidence.get(`python.${fact}`)?.value !== 'boolean') ||
+      lesson.facts.some((fact) => typeof evidence.get(`python.${fact}`)?.value !== 'boolean') ||
       context.console.length !== execution.console.length ||
       context.console.some(
         (row, index) =>
@@ -113,7 +126,21 @@ export class PythonLessonValidator implements ValidatorAdapter {
       )
     )
       return system();
-    const outputCorrect = evidence.get('python.stdout')!.value === '3\n5\n';
+    let inputLines: unknown = [];
+    if (lesson.profile !== 'values-vars-print-v1') {
+      const input = evidence.get('python.input-lines')?.value;
+      if (typeof input !== 'string') return system();
+      try {
+        inputLines = JSON.parse(input) as unknown;
+      } catch {
+        return system();
+      }
+      if (!validPythonInputLines(inputLines)) return system();
+    }
+    if (!validPythonInputLines(inputLines)) return system();
+    const expected = expectedPythonOutput(lesson.profile, inputLines);
+    if (expected === undefined) return system();
+    const outputCorrect = evidence.get('python.stdout')!.value === expected;
     const checks = rules.map((rule) => {
       const factCorrect = evidence.get(`python.${rule.assertion.fact}`)!.value === true;
       const passed = outputCorrect && factCorrect;
@@ -125,10 +152,10 @@ export class PythonLessonValidator implements ValidatorAdapter {
         passed,
         requirementPassed: passed,
         message: passed
-          ? '変数を使った表示と実出力を確認できました。'
-          : '表示結果と変数の使い方を確認してください。',
+          ? '教材のコード条件と実出力を確認できました。'
+          : '表示結果と教材のコード条件を確認してください。',
         expected: rule.feedback.expected,
-        actual: factCorrect ? '変数の使い方を確認済み' : 'この変数の使い方は未確認',
+        actual: factCorrect ? '教材のコード条件を確認済み' : '教材のコード条件は未確認',
         nextAction: passed ? '' : rule.feedback.nextAction,
         hintId: rule.hintId,
         relatedSlideId: rule.relatedSlideId,

@@ -1,3 +1,4 @@
+import { PYTHON_LESSONS, validPythonInputLines } from './pythonLessonProfiles.mjs';
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { Buffer } from 'node:buffer';
 import { URL } from 'node:url';
@@ -59,6 +60,7 @@ export function validateRun(value, revision, pythonRevision) {
     'exerciseSessionId',
     'executionRevision',
     'files',
+    ...(Object.hasOwn(value ?? {}, 'inputLines') ? ['inputLines'] : []),
   ]);
   const python = value.runtimeProfileId === PYTHON_PROFILE_ID;
   if (
@@ -71,10 +73,15 @@ export function validateRun(value, revision, pythonRevision) {
     );
   if (
     python
-      ? value.exerciseId !== PYTHON_EXERCISE_ID
+      ? !Object.hasOwn(PYTHON_LESSONS, value.exerciseId)
       : !EXERCISE_IDS.includes(value.exerciseId) || value.runtimeProfileId !== PROFILE_ID
   )
     throw new RequestError(422, 'この環境では未対応の演習です。');
+  if (Object.hasOwn(value, 'inputLines') && (!python || !validPythonInputLines(value.inputLines)))
+    throw new RequestError(
+      400,
+      '入力は16行・1 KiB以内で、行内の改行やNULを含めず指定してください。',
+    );
   for (const key of ['runId', 'exerciseSessionId']) {
     if (typeof value[key] !== 'string' || !/^[\w:.-]{1,160}$/u.test(value[key]))
       throw new RequestError(400, '実行IDが不正です。');

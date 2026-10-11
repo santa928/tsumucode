@@ -1,0 +1,152 @@
+id: python-basics-ch01-l03-e01
+kind: standard
+workspaceId: python-basics-ch01-l03-e01
+countsTowardStandardExerciseTotal: true
+title: 境界を含む条件で表示を分ける
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: python-input
+    minimumLevel: transform
+  - conceptId: python-int
+    minimumLevel: transform
+  - conceptId: python-branch
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: python-basics-ch01-l03-e01-step01
+    file: main.py
+    target: 18以上の比較へ直す
+    starterAnchor: 'if age > 18:'
+    change: '>=は同じ値も含みます。ifとelseの中は半角空白4つで揃えます。'
+    observe: 17・18・19を入力し、境界の18もadultになることを確認します。
+    requiresConceptIds:
+      - python-input
+      - python-int
+      - python-branch
+    validationRuleIds:
+      - python-basics-ch01-l03-e01-r01
+runtime:
+  kind: python
+  entryFile: main.py
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  profile: age-branch-v1
+files:
+  - path: main.py
+    language: python
+    source: starter/main.py
+    editable: true
+solutionFiles:
+  - path: main.py
+    language: python
+    source: solution/main.py
+    editable: false
+validationRules:
+  - id: python-basics-ch01-l03-e01-r01
+    label: 18以上でadult、それより小さければchildを表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: age-boundary-branched
+    feedback:
+      target: main.pyとConsole
+      expected: 18以上でadult、それより小さければchildを表示する
+      nextAction: '>=は同じ値も含みます。ifとelseの中は半角空白4つで揃えます。'
+    hintId: python-basics-ch01-l03-e01-h01
+    relatedSlideId: python-basics-ch01-l03-s02
+hints:
+  - id: python-basics-ch01-l03-e01-h01
+    level: 1
+    title: 最初の手掛かり
+    text: '18そのものを含む比較を選ぶ'
+    relatedSlideId: python-basics-ch01-l03-s02
+  - id: python-basics-ch01-l03-e01-h02
+    level: 2
+    title: コードを組み立てる
+    text: '入力は文字列なのでint(input())で整数に直します。age >= 18で18を含むかを比べます。'
+    relatedSlideId: python-basics-ch01-l03-s02
+  - id: python-basics-ch01-l03-e01-h03
+    level: 3
+    title: 解答と理由
+    text: 'if age >= 18: の下でadult、else: の下でchildをprintします。両方の行を同じ深さに字下げします。'
+    relatedSlideId: python-basics-ch01-l03-s02
+relatedSlideIds:
+  - python-basics-ch01-l03-s01
+  - python-basics-ch01-l03-s02
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: below
+    expectedStatus: pass
+    inputLines: ['17']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/below.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: solution
+    expectedStatus: pass
+    inputLines: ['18']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/solution.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: above
+    expectedStatus: pass
+    inputLines: ['19']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/above.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: starter
+    expectedStatus: incomplete
+    inputLines: ['18']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/starter.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch01-l03-e01-r01']
+  - id: hardcoded
+    expectedStatus: incomplete
+    inputLines: ['18']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/hardcoded.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch01-l03-e01-r01']
+  - id: empty
+    expectedStatus: code-error
+    inputLines: ['']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/empty.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: syntax-error
+    expectedStatus: code-error
+    inputLines: ['18']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/syntax-error.py
+        editable: false
+    expectedFeedbackRuleIds: []

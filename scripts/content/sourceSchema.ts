@@ -1,3 +1,4 @@
+import { validPythonInputLines } from '../../src/core/runtime/pythonLessonProfiles.mjs';
 import { acceptsReactQuizScenarios } from '../../src/core/content/reactQuizInteractions';
 import { acceptsReactHookScenarios } from '../../src/core/content/reactHookInteractions';
 import { acceptsReactReducerContextScenarios } from '../../src/core/content/reactReducerContextInteractions';
@@ -206,6 +207,20 @@ export const FixtureSourceSchema = z
     expectedStatus: z.enum(['pass', 'incomplete', 'code-error', 'system-error']),
     faultInjection: z.literal('stale-source-evidence').optional(),
     expectedDiagnosticCodes: z.array(IdSchema).min(1).max(16).optional(),
+    /** Python作者Fixtureだけの事前入力。公開payloadや進捗へ含めない。 */
+    inputLines: z
+      .array(
+        z
+          .string()
+          .max(1024)
+          .refine((line) => !/[\r\n\0]/u.test(line)),
+      )
+      .max(16)
+      .refine(
+        validPythonInputLines,
+        'Python入力は16行・1 KiB以内で制御文字を除いて指定してください',
+      )
+      .optional(),
     files: z.array(FileSourceSchema).min(1),
     expectedFeedbackRuleIds: z.array(ProgressRuleReferenceIdSchema),
   })

@@ -1,3 +1,4 @@
+import { PYTHON_LESSONS } from '../../core/runtime/pythonLessonProfiles.mjs';
 import type { CourseIndex, Exercise } from '../../core/content/types';
 import { PythonExecutionService } from '../../adapters/runtime/python/PythonExecutionService';
 import type { PythonCore } from '../../adapters/runtime/python/pythonProtocol';
@@ -120,8 +121,9 @@ export function selectBrowserConsoleRuntime(
   validationExercises: readonly PythonCandidate[],
 ) {
   const eligible = (item: PythonCandidate): boolean =>
-    item.id === 'python-basics-ch01-l01-e01' &&
+    Object.hasOwn(PYTHON_LESSONS, item.id) &&
     item.runtime?.kind === 'python' &&
+    PYTHON_LESSONS[item.id]?.profile === item.runtime.profile &&
     (item.interactionScenarios?.length ?? 0) === 0;
   if (
     !eligible(exercise) ||
@@ -130,7 +132,12 @@ export function selectBrowserConsoleRuntime(
   )
     throw new Error('Python最小演習の適用条件が一致しません');
   return {
-    createExecution: () => new PythonExecutionService(loadFixedCore),
+    createExecution: (readInputLines?: () => readonly string[]) =>
+      new PythonExecutionService(
+        loadFixedCore,
+        PYTHON_LESSONS[exercise.id]!.profile,
+        readInputLines,
+      ),
     createValidator: () => new PythonLessonValidator(),
   };
 }

@@ -17,6 +17,9 @@ export interface PythonResult {
   readonly reason?: 'syntax' | 'runtime' | 'output-limit' | 'time-limit' | 'manual-stop';
   readonly numericVariablePrinted?: boolean;
   readonly sameVariableAdditionPrinted?: boolean;
+  readonly inputEchoed?: boolean;
+  readonly ageBoundaryBranched?: boolean;
+  readonly rangeIterated?: boolean;
 }
 
 export const PYTHON_LIMITS = {

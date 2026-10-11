@@ -1,11 +1,17 @@
 import { restrictPythonWorker } from './pythonCapabilities';
 import { pythonLessonAnalysis } from './pythonLessonAnalysis';
 import { PYTHON_LIMITS, type PythonResult } from './pythonProtocol';
+import {
+  PYTHON_LESSONS,
+  validPythonInputLines,
+} from '../../../core/runtime/pythonLessonProfiles.mjs';
+import type { PythonLessonProfile } from '../../../core/runtime/pythonLessonProfiles.mjs';
 
 interface PyodideRuntime {
   runPython(source: string, options?: { globals: unknown }): unknown;
   setStdout(options: { write(bytes: Uint8Array): number }): void;
   setStderr(options: { write(bytes: Uint8Array): number }): void;
+  setStdin(options: { stdin(): string | null }): void;
 }
 type PyodideLoader = (options: Record<string, unknown>) => Promise<PyodideRuntime>;
 
@@ -56,7 +62,16 @@ export function initializePythonWorker(
     const outputState = { limited: false };
     let prepared = false;
     let version: string | undefined;
-    let facts: { numericVariablePrinted?: boolean; sameVariableAdditionPrinted?: boolean } = {};
+    let facts: Partial<
+      Pick<
+        PythonResult,
+        | 'numericVariablePrinted'
+        | 'sameVariableAdditionPrinted'
+        | 'inputEchoed'
+        | 'ageBoundaryBranched'
+        | 'rangeIterated'
+      >
+    > = {};
     const result = (status: PythonResult['status'], error?: string): PythonResult => ({
       type: 'python-result',
       status,
@@ -70,11 +85,15 @@ export function initializePythonWorker(
     try {
       if (typeof input !== 'object' || input === null) throw new Error('Python input missing');
       const data = input as Record<string, unknown>;
+      const profile = (data.profile ?? 'values-vars-print-v1') as PythonLessonProfile;
+      const inputLines: unknown = data.inputLines ?? [];
       if (
         !(data.wasm instanceof ArrayBuffer) ||
         !(data.stdlib instanceof ArrayBuffer) ||
         typeof data.source !== 'string' ||
-        encode(data.source).byteLength > PYTHON_LIMITS.sourceBytes
+        encode(data.source).byteLength > PYTHON_LIMITS.sourceBytes ||
+        !Object.values(PYTHON_LESSONS).some((lesson) => lesson.profile === profile) ||
+        !validPythonInputLines(inputLines)
       )
         throw new Error('Python input invalid');
       const wasm = await compile(data.wasm);
@@ -149,22 +168,19 @@ export function initializePythonWorker(
       };
       py.setStdout({ write: makeWriter('stdout') });
       py.setStderr({ write: makeWriter('stderr') });
+      let inputIndex = 0;
+      py.setStdin({ stdin: () => inputLines[inputIndex++] ?? null });
       restrictPythonWorker(root);
       prepared = true;
       send({ type: 'python-ready' });
       if (enforceLessonPolicy) {
-        const analysis = py.runPython(pythonLessonAnalysis(data.source), {
+        const analysis = py.runPython(pythonLessonAnalysis(data.source, profile), {
           globals: py.runPython('dict()'),
         });
         if (typeof analysis !== 'string') throw new Error('Python analysis unavailable');
         const parsed = JSON.parse(analysis) as Record<string, unknown>;
         if (parsed.supported !== true) {
-          send(
-            result(
-              'unsupported',
-              'このLessonは値・変数・加算・printだけに対応します。採点していません。',
-            ),
-          );
+          send(result('unsupported', 'このLessonの採点範囲外です。採点していません。'));
           return;
         }
         if (
@@ -175,6 +191,9 @@ export function initializePythonWorker(
         facts = {
           numericVariablePrinted: parsed.numericVariablePrinted,
           sameVariableAdditionPrinted: parsed.sameVariableAdditionPrinted,
+          inputEchoed: parsed.inputEchoed === true,
+          ageBoundaryBranched: parsed.ageBoundaryBranched === true,
+          rangeIterated: parsed.rangeIterated === true,
         };
       }
       py.runPython(data.source, { globals: py.runPython('dict()') });
@@ -200,10 +219,14 @@ export function initializePythonWorker(
         ...result(
           outputState.limited
             ? 'stopped'
-            : prepared && typeof errorType === 'string'
-              ? 'code-error'
-              : 'system-error',
-          message,
+            : errorType === 'EOFError'
+              ? 'unsupported'
+              : prepared && typeof errorType === 'string'
+                ? 'code-error'
+                : 'system-error',
+          errorType === 'EOFError'
+            ? '実行前の入力行が不足しています。実行中の入力待ちには未対応です。入力を追加して再実行してください。採点していません。'
+            : message,
         ),
         reason: outputState.limited
           ? 'output-limit'

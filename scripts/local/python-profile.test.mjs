@@ -2,6 +2,7 @@ import { expect, it } from 'vitest';
 import { validateRun, PYTHON_PROFILE_ID, PYTHON_EXERCISE_ID, PYTHON_IMAGE } from './protocol.mjs';
 import { containerConfig } from './docker-engine.mjs';
 import { parsePythonAnalysis } from './python-profile.mjs';
+import { validPythonInputLines } from '../../src/core/runtime/pythonLessonProfiles.mjs';
 
 const input = {
   apiVersion: 1,
@@ -27,6 +28,29 @@ it('Python要求は同じLessonとmain.pyだけを許可する', () => {
     { files: { 'main.py': 'x'.repeat(102401) } },
   ])
     expect(() => validateRun({ ...input, ...change }, 'javascript-r1', 'python-r1')).toThrow();
+});
+
+/** 空入力をEOFと区別し、文字数でなくUTF-8 bytesと制御文字を入口で制限する。 */
+it('事前入力は空1行とEOFを区別し、境界を超えるdataを拒否する', () => {
+  for (const lines of [[], [''], ['つむ'], ['x'.repeat(1024)], Array(16).fill(''), ['\t"\\']])
+    expect(validPythonInputLines(lines)).toBe(true);
+  for (const lines of [
+    ['x'.repeat(1025)],
+    ['あ'.repeat(342)],
+    Array(17).fill(''),
+    ['\n'],
+    ['\r'],
+    ['\0'],
+    ['\u0001'],
+    [1],
+  ])
+    expect(validPythonInputLines(lines)).toBe(false);
+  expect(
+    validateRun({ ...input, inputLines: [''] }, 'javascript-r1', 'python-r1').inputLines,
+  ).toEqual(['']);
+  expect(() =>
+    validateRun({ ...input, inputLines: ['x'.repeat(1025)] }, 'javascript-r1', 'python-r1'),
+  ).toThrow();
 });
 
 /** learnerとAST解析は両方とも管理socketもhost fileも取得できない。 */

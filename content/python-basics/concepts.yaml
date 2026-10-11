@@ -14,3 +14,25 @@ concepts:
     prerequisiteConceptIds:
       - python-value
     minimumProjectLevel: transform
+  - id: python-input
+    introducedBySlideId: python-basics-ch01-l02-s01
+    prerequisiteConceptIds:
+      - python-variable
+      - python-print
+    minimumProjectLevel: transform
+  - id: python-int
+    introducedBySlideId: python-basics-ch01-l03-s01
+    prerequisiteConceptIds:
+      - python-input
+    minimumProjectLevel: transform
+  - id: python-branch
+    introducedBySlideId: python-basics-ch01-l03-s01
+    prerequisiteConceptIds:
+      - python-int
+    minimumProjectLevel: transform
+  - id: python-range
+    introducedBySlideId: python-basics-ch01-l04-s01
+    prerequisiteConceptIds:
+      - python-variable
+      - python-print
+    minimumProjectLevel: transform

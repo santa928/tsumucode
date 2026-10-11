@@ -85,3 +85,138 @@ items:
   - id: python-release-history-original
     visibility: authoring
     path: release-history.yaml
+  - id: python-control-original-1
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l02/exercises/python-basics-ch01-l02-e01/exercise.yaml
+  - id: python-control-original-2
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l02/exercises/python-basics-ch01-l02-e01/fixtures/alternate-name.py
+  - id: python-control-original-3
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l02/exercises/python-basics-ch01-l02-e01/fixtures/empty.py
+  - id: python-control-original-4
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l02/exercises/python-basics-ch01-l02-e01/fixtures/hardcoded.py
+  - id: python-control-original-5
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l02/exercises/python-basics-ch01-l02-e01/fixtures/missing-input.py
+  - id: python-control-original-6
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l02/exercises/python-basics-ch01-l02-e01/fixtures/solution.py
+  - id: python-control-original-7
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l02/exercises/python-basics-ch01-l02-e01/fixtures/starter.py
+  - id: python-control-original-8
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l02/exercises/python-basics-ch01-l02-e01/fixtures/syntax-error.py
+  - id: python-control-original-9
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l02/exercises/python-basics-ch01-l02-e01/instructions.md
+  - id: python-control-original-10
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l02/exercises/python-basics-ch01-l02-e01/solution/main.py
+  - id: python-control-original-11
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l02/exercises/python-basics-ch01-l02-e01/starter/main.py
+  - id: python-control-original-12
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l02/lesson.yaml
+  - id: python-control-original-13
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l02/slides/s01.md
+  - id: python-control-original-14
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l02/slides/s02.md
+  - id: python-control-original-15
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l03/exercises/python-basics-ch01-l03-e01/exercise.yaml
+  - id: python-control-original-16
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l03/exercises/python-basics-ch01-l03-e01/fixtures/above.py
+  - id: python-control-original-17
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l03/exercises/python-basics-ch01-l03-e01/fixtures/below.py
+  - id: python-control-original-18
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l03/exercises/python-basics-ch01-l03-e01/fixtures/empty.py
+  - id: python-control-original-19
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l03/exercises/python-basics-ch01-l03-e01/fixtures/hardcoded.py
+  - id: python-control-original-20
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l03/exercises/python-basics-ch01-l03-e01/fixtures/solution.py
+  - id: python-control-original-21
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l03/exercises/python-basics-ch01-l03-e01/fixtures/starter.py
+  - id: python-control-original-22
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l03/exercises/python-basics-ch01-l03-e01/fixtures/syntax-error.py
+  - id: python-control-original-23
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l03/exercises/python-basics-ch01-l03-e01/instructions.md
+  - id: python-control-original-24
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l03/exercises/python-basics-ch01-l03-e01/solution/main.py
+  - id: python-control-original-25
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l03/exercises/python-basics-ch01-l03-e01/starter/main.py
+  - id: python-control-original-26
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l03/lesson.yaml
+  - id: python-control-original-27
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l03/slides/s01.md
+  - id: python-control-original-28
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l03/slides/s02.md
+  - id: python-control-original-29
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l04/exercises/python-basics-ch01-l04-e01/exercise.yaml
+  - id: python-control-original-30
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l04/exercises/python-basics-ch01-l04-e01/fixtures/alternate-name.py
+  - id: python-control-original-31
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l04/exercises/python-basics-ch01-l04-e01/fixtures/hardcoded.py
+  - id: python-control-original-32
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l04/exercises/python-basics-ch01-l04-e01/fixtures/one.py
+  - id: python-control-original-33
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l04/exercises/python-basics-ch01-l04-e01/fixtures/solution.py
+  - id: python-control-original-34
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l04/exercises/python-basics-ch01-l04-e01/fixtures/starter.py
+  - id: python-control-original-35
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l04/exercises/python-basics-ch01-l04-e01/fixtures/syntax-error.py
+  - id: python-control-original-36
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l04/exercises/python-basics-ch01-l04-e01/fixtures/zero.py
+  - id: python-control-original-37
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l04/exercises/python-basics-ch01-l04-e01/instructions.md
+  - id: python-control-original-38
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l04/exercises/python-basics-ch01-l04-e01/solution/main.py
+  - id: python-control-original-39
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l04/exercises/python-basics-ch01-l04-e01/starter/main.py
+  - id: python-control-original-40
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l04/lesson.yaml
+  - id: python-control-original-41
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l04/slides/s01.md
+  - id: python-control-original-42
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l04/slides/s02.md
+  - id: python-control-l02-output-original
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l02/slides/assets/s01-output.svg
+  - id: python-control-l03-output-original
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l03/slides/assets/s01-output.svg
+  - id: python-control-l04-output-original
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l04/slides/assets/s01-output.svg

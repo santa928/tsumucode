@@ -7,6 +7,10 @@ import type {
 } from '../../../core/runtime/contracts';
 import { createPythonFrameSource } from './pythonFrameSource';
 import { PYTHON_LIMITS, type PythonCore } from './pythonProtocol';
+import {
+  validPythonInputLines,
+  type PythonLessonProfile,
+} from '../../../core/runtime/pythonLessonProfiles.mjs';
 
 const payloadSchema = z.object({
   type: z.literal('python-result'),
@@ -23,6 +27,9 @@ const payloadSchema = z.object({
   reason: z.enum(['syntax', 'runtime', 'output-limit', 'time-limit', 'manual-stop']).optional(),
   numericVariablePrinted: z.boolean().optional(),
   sameVariableAdditionPrinted: z.boolean().optional(),
+  inputEchoed: z.boolean().optional(),
+  ageBoundaryBranched: z.boolean().optional(),
+  rangeIterated: z.boolean().optional(),
 });
 
 export type PythonCoreLoader = (signal: AbortSignal) => Promise<PythonCore>;
@@ -42,7 +49,11 @@ export class PythonExecutionService implements ExecutionService {
   #active: { stop(): Promise<void> } | undefined;
 
   /** loaderは信頼側の固定core供給責務。入力sourceからURLや許可を選ばせない。 */
-  constructor(private readonly loadCore: PythonCoreLoader) {}
+  constructor(
+    private readonly loadCore: PythonCoreLoader,
+    private readonly profile: PythonLessonProfile = 'values-vars-print-v1',
+    private readonly readInputLines: () => readonly string[] = () => [],
+  ) {}
 
   /** hashとrun identityを親で確定し、準備中・実行中の停止を同じ世代で失効する。 */
   async execute(request: ExecutionRequest): Promise<ExecutionResult> {
@@ -75,6 +86,9 @@ export class PythonExecutionService implements ExecutionService {
       failure('stopped', '実行を停止しました。採点していません。');
     const stale = (): boolean => this.#disposed || generation !== this.#generation;
     if (stale()) return stopped();
+    const inputLines = [...this.readInputLines()];
+    if (!validPythonInputLines(inputLines))
+      return failure('unsupported', '入力は16行・1 KiB以内にしてください。採点していません。');
     if (
       request.backend !== 'browser' ||
       request.engine !== 'browser-python' ||
@@ -153,7 +167,10 @@ export class PythonExecutionService implements ExecutionService {
             event.data.type === 'python-frame-ready'
           ) {
             ready = true;
-            frame.contentWindow?.postMessage(stopping ? 'python-stop' : { ...core, source }, '*');
+            frame.contentWindow?.postMessage(
+              stopping ? 'python-stop' : { ...core, source, profile: this.profile, inputLines },
+              '*',
+            );
             return;
           }
           const parsed = payloadSchema.safeParse(event.data);
@@ -208,6 +225,13 @@ export class PythonExecutionService implements ExecutionService {
                     { id: 'python.source-sha256', file: 'main.py', value: hash },
                     { id: 'python.stdout', value: payload.stdout },
                     { id: 'python.version', value: payload.version ?? '' },
+                    { id: 'python.input-lines', value: JSON.stringify(inputLines) },
+                    { id: 'python.input-echoed', value: payload.inputEchoed === true },
+                    {
+                      id: 'python.age-boundary-branched',
+                      value: payload.ageBoundaryBranched === true,
+                    },
+                    { id: 'python.range-iterated', value: payload.rangeIterated === true },
                     {
                       id: 'python.numeric-variable-printed',
                       value: payload.numericVariablePrinted === true,

@@ -1,3 +1,4 @@
+import { PYTHON_LESSONS, PYTHON_FACT_FIELDS } from './pythonLessonProfiles.mjs';
 import console from 'node:console';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
@@ -27,7 +28,6 @@ import {
   removeContainer,
 } from './docker-engine.mjs';
 import {
-  PYTHON_EXERCISE_ID,
   PYTHON_PROFILE_ID,
   PYTHON_IMAGE,
   PYTHON_VERSION,
@@ -145,6 +145,10 @@ async function executePhase(run, analyze = false) {
           owner,
           run.input.runtimeProfileId === PYTHON_PROFILE_ID,
           analyze,
+          {
+            profile: PYTHON_LESSONS[run.input.exerciseId]?.profile,
+            inputLines: run.input.inputLines ?? [],
+          },
         ),
       );
       run.containerId = container.Id;
@@ -233,7 +237,12 @@ async function execute(run) {
       preparationMs += analyzed.preparationMs;
       executionMs += analyzed.executionMs;
       if (!run.reason)
-        facts = parsePythonAnalysis(analyzed.stdout, analyzed.stderr, analyzed.exitCode);
+        facts = parsePythonAnalysis(
+          analyzed.stdout,
+          analyzed.stderr,
+          analyzed.exitCode,
+          PYTHON_LESSONS[run.input.exerciseId].profile,
+        );
     }
     if (!run.reason) {
       executed = await executePhase(run);
@@ -244,16 +253,20 @@ async function execute(run) {
     run.errorMessage = error.message;
     run.reason = 'system-error';
   } finally {
+    const inputExhausted =
+      python && /^EOFError:/u.test(executed.stderr.trimEnd().split('\n').at(-1) ?? '');
     const status =
       run.reason === 'system-error'
         ? 'system-error'
         : run.reason
           ? 'stopped'
-          : executed.exitCode !== 0
-            ? 'code-error'
-            : python && !facts.supported
-              ? 'unsupported'
-              : 'succeeded';
+          : python && inputExhausted
+            ? 'unsupported'
+            : executed.exitCode !== 0
+              ? 'code-error'
+              : python && !facts.supported
+                ? 'unsupported'
+                : 'succeeded';
     const label = python ? 'CPython' : 'Node';
     const diagnostics =
       status === 'succeeded'
@@ -276,7 +289,9 @@ async function execute(run) {
                 status === 'code-error'
                   ? `${label}実行でエラーになりました。エラー出力を確認してください。`
                   : status === 'unsupported'
-                    ? 'CPythonで実行しましたが、このLessonの採点は値・変数・加算・printだけに対応します。採点していません。'
+                    ? inputExhausted
+                      ? '実行前の入力行が不足しています。実行中の入力待ちには未対応です。入力を追加して再実行してください。採点していません。'
+                      : 'CPythonで実行しましたが、このLessonの採点範囲外です。採点していません。'
                     : status === 'system-error'
                       ? 'ローカル実行環境に接続できません。Dockerと学習モードを確認して再実行してください。編集内容は保持しています。'
                       : `実行を停止しました（${run.reason}）。採点していません。`,
@@ -301,6 +316,11 @@ async function execute(run) {
         { id: 'python.version', value: facts.version },
         { id: 'python.numeric-variable-printed', value: facts.numericVariablePrinted },
         { id: 'python.same-variable-addition-printed', value: facts.sameVariableAdditionPrinted },
+        { id: 'python.input-lines', value: JSON.stringify(run.input.inputLines ?? []) },
+        ...['input-echoed', 'age-boundary-branched', 'range-iterated'].map((fact) => ({
+          id: `python.${fact}`,
+          value: facts[PYTHON_FACT_FIELDS[fact]] === true,
+        })),
       );
     if (!python) evidence.push({ id: 'javascript.budget-exhausted', value: status === 'stopped' });
     run.result = {
@@ -448,7 +468,7 @@ async function handle(req, res) {
       await docker('GET', `/images/${encodeURIComponent(PYTHON_IMAGE)}/json`);
       value = {
         apiVersion: API_VERSION,
-        exerciseIds: [PYTHON_EXERCISE_ID],
+        exerciseIds: Object.keys(PYTHON_LESSONS),
         contentRevision: pythonRevision,
         runtimeProfileId: PYTHON_PROFILE_ID,
         engineVersion: PYTHON_VERSION,

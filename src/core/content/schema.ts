@@ -400,7 +400,7 @@ export const PythonExerciseRuntimeSchema = z
     sourceType: z.literal('script'),
     capabilityProfile: z.literal('core'),
     primaryOutput: z.literal('console'),
-    profile: z.literal('values-vars-print-v1'),
+    profile: z.enum(['values-vars-print-v1', 'input-echo-v1', 'age-branch-v1', 'range-loop-v1']),
   })
   .strict();
 

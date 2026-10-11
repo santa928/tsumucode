@@ -110,7 +110,7 @@ describe('Python公開の固定配布物と独立照合', () => {
   );
 });
 
-describe('Python初公開の保存互換', () => {
+describe('Pythonの教材追加後の保存互換', () => {
   it('既存5CourseとPythonのSource/成功版/カーソルを実migratorで保持する', async () => {
     const course = (await compileCourse('content/python-basics')).runtime;
     const bundle = JSON.parse(
@@ -119,6 +119,7 @@ describe('Python初公開の保存互換', () => {
     expect(await verifyPythonSyntheticProgressBundle(course, bundle)).toMatchObject({
       migratedCourses: 6,
       resetNotices: 0,
+      courseCurrentComplete: false,
     });
     delete bundle.courses.react;
     Reflect.deleteProperty(bundle, 'integrity');
