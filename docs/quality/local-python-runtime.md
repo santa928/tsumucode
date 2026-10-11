@@ -65,3 +65,5 @@ l08は`lesson_tools.py`のaddをmainから呼び、2組の結果を表示しま�
 両fileと選択file/cursor、成功Sourceは既存保存形式とJSON移送を使用します。「制作Sourceを持ち出す」はクリック時点の固定2.pyと起動READMEだけをZIPへ入れ、入力・進捗・実行tokenを含めません。展開先での実行は、その環境のPythonと権限に従います。例外・小制作の「入力を渡さない」は0行を渡し、空欄の空文字列1行と区別します。入力は保存しません。
 
 `python-module-profile.test.mjs`は固定file集合・合計容量・bundle hash・解析packetを確認します。`python-module.spec.ts`は通常画面で新3教材の47 Fixture、両fileの保存/Reset/再開、helper変更、古い結果拒否、Workspace非混入、ZIP/JSON、キーボードとa11yを検証します。Pagesの新規公開、#140/#196の実行途中の対話入力はこの変更に含めません。
+
+実行時の例外文にはinputの実値が含まれる場合があります。詳細は今回の非永続Consoleへ表示し、採点履歴には診断の分類・位置と固定案内だけを保存します。履歴やJSONから実入力を再現できる診断文をコピーしません。履歴のcode-error区分は維持します。

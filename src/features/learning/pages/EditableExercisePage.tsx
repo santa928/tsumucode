@@ -400,9 +400,10 @@ function EditableSession({
     ],
   );
   const state = useLearningSession(controller);
-  // 実CPythonの今回の診断出力は、保存済みの成功出力と分けて表示する。
+  // 両Python環境の今回の診断出力は、保存済みの成功出力と分けて表示する。
   const currentPythonOutput =
-    state.executionResult?.engine === 'cpython' &&
+    (state.executionResult?.engine === 'cpython' ||
+      state.executionResult?.engine === 'browser-python') &&
     state.executionResult.executionRevision === state.executionRevision &&
     (state.executionResult.status === 'unsupported' ||
       state.executionResult.status === 'code-error')

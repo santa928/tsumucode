@@ -73,7 +73,26 @@ export class PythonLessonValidator implements ValidatorAdapter {
       exerciseId: context.exerciseId,
       executionRevision: execution?.executionRevision ?? null,
       evaluatedAt: context.now,
-      diagnostics: context.diagnostics,
+      // 実行時の例外文にはinputの実値が入る。永続履歴は分類・位置と固定案内だけにする。
+      diagnostics:
+        execution?.status === 'code-error'
+          ? context.diagnostics.map(({ code, kind, severity, file, line, column }) => {
+              const message =
+                kind === 'syntax'
+                  ? 'Pythonの構文を確認してください。詳細は今回のConsole出力で確認できます。'
+                  : 'Pythonの名前や値の使い方を確認してください。詳細は今回のConsole出力で確認できます。';
+              return {
+                code,
+                kind,
+                severity,
+                ...(file === undefined ? {} : { file }),
+                ...(line === undefined ? {} : { line }),
+                ...(column === undefined ? {} : { column }),
+                message,
+                learnerMessage: message,
+              };
+            })
+          : context.diagnostics,
     };
     const system = (): ValidationResult => ({
       ...base,

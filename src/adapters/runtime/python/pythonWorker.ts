@@ -71,6 +71,13 @@ export function initializePythonWorker(
     let learnerExecuting = false;
     let moduleProfile = false;
     let version: string | undefined;
+    let writeStderr: ((bytes: Uint8Array) => number) | undefined;
+    // Pyodideが投げる例外はstderrへ自動出力されないため、今回のConsoleへ末尾を表示する。
+    // 通常出力と同じbyte・行制限を通し、保存用の診断とは分けて扱う。
+    const displayError = (message: string): void => {
+      const lastLine = message.trimEnd().split('\n').at(-1);
+      if (lastLine !== undefined && lastLine !== '') writeStderr?.(encode(`${lastLine}\n`));
+    };
     let facts: Partial<
       Pick<
         PythonResult,
@@ -185,7 +192,8 @@ export function initializePythonWorker(
         };
       };
       py.setStdout({ write: makeWriter('stdout') });
-      py.setStderr({ write: makeWriter('stderr') });
+      writeStderr = makeWriter('stderr');
+      py.setStderr({ write: writeStderr });
       let inputIndex = 0;
       py.setStdin({ stdin: () => inputLines[inputIndex++] ?? null });
       restrictPythonWorker(root);
@@ -205,6 +213,7 @@ export function initializePythonWorker(
         if (moduleProfile) {
           const packet = parsePythonModuleAnalysis(parsed);
           if (packet.state === 'syntax-error') {
+            displayError(packet.syntaxMessage ?? 'Python syntax error');
             send({
               ...result('code-error', packet.syntaxMessage ?? 'Python syntax error'),
               file: packet.syntaxFile ?? 'main.py',
@@ -271,6 +280,20 @@ export function initializePythonWorker(
       const message = error instanceof Error ? error.message : 'Python runtime failed';
       const errorType: unknown =
         typeof error === 'object' && error !== null ? Reflect.get(error, 'type') : undefined;
+      if (
+        !outputState.limited &&
+        prepared &&
+        (!moduleProfile || learnerExecuting) &&
+        typeof errorType === 'string' &&
+        errorType !== 'EOFError'
+      ) {
+        try {
+          displayError(message);
+        } catch {
+          // 詳細表示が出力上限に達した場合も、通常出力と同じ停止結果にする。
+          outputState.limited = true;
+        }
+      }
       send({
         ...result(
           outputState.limited
@@ -280,9 +303,11 @@ export function initializePythonWorker(
               : prepared && (!moduleProfile || learnerExecuting) && typeof errorType === 'string'
                 ? 'code-error'
                 : 'system-error',
-          errorType === 'EOFError'
-            ? '実行前の入力行が不足しています。実行中の入力待ちには未対応です。入力を追加して再実行してください。採点していません。'
-            : message,
+          outputState.limited
+            ? 'Python output limit'
+            : errorType === 'EOFError'
+              ? '実行前の入力行が不足しています。実行中の入力待ちには未対応です。入力を追加して再実行してください。採点していません。'
+              : message,
         ),
         reason: outputState.limited
           ? 'output-limit'

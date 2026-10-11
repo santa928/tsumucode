@@ -37,7 +37,7 @@ CPythonは固定3.14.2 image、UID/GID1000、readonly rootfs、network none、ho
 
 Browserは固定Pyodide core、opaque sandbox frameとrun専用Worker、private port、既存CSP・FFI/global制限を維持する。追加package・core以外の取得・fetch/WebSocket・保存API・子Workerの許可を追加しない。Source合計100 KiB、出力64 KiB、行4096 bytes・100行、準備20秒・初期化15秒・実行1.5秒を維持する。2fileの解析・importを含めて既存deadlineを適用し、時間が足りない場合に無断で上限を増やさない。BrowserにCPythonと同じOSの256 MiB/PID64強制があるとは主張しない。
 
-事前入力は16行・1 KiB、実行前snapshot固定、TAB以外の制御文字拒否の現契約を利用する。入力はdraft・成功Source・履歴・JSON・ZIPへ保存しない。再開時に再入力を案内する。Pagesからlocalhostを探索・接続しない。Localは既存同一origin/session認証経路だけを利用する。
+事前入力は16行・1 KiB、実行前snapshot固定、TAB以外の制御文字拒否の現契約を利用する。入力はdraft・成功Source・履歴・JSON・ZIPへ保存しない。例外文に混じる実入力も履歴へコピーせず、分類・位置と固定案内だけを保存する。詳細は今回の非永続Consoleで確認する。再開時に再入力を案内する。Pagesからlocalhostを探索・接続しない。Localは既存同一origin/session認証経路だけを利用する。
 
 ## 結果と採点の区別
 

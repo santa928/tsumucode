@@ -296,3 +296,35 @@ test('Python Module・例外・小制作の読書と予測を狭幅で確認す�
     [],
   );
 });
+
+test('Pythonの例外文に含まれる実入力を履歴とJSONへ保存しない', async ({ page }, info) => {
+  test.setTimeout(90_000);
+  const id = lessons[1]!;
+  const marker = '今回だけの入力非保存確認';
+  await page.goto(route(id));
+  const files = {
+    'main.py': 'from lesson_tools import parse_number\ntext = input()\nprint(parse_number(text))\n',
+    'lesson_tools.py': 'def parse_number(text):\n    return int(text)\n',
+  };
+  await editFiles(page, files);
+  await page.getByLabel('実行前の入力（1行につきinput 1回）').fill(marker);
+  await expect.poll(async () => (await draft(page, id))?.['files']).toEqual(files);
+  await page.getByRole('button', { name: '判定する', exact: true }).click();
+  await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
+  await expect
+    .poll(
+      async () =>
+        ((await draft(page, id))?.['validationHistory'] as { status: string }[] | undefined)?.at(-1)
+          ?.status,
+    )
+    .toBe('code-error');
+  await expect(page.getByRole('region', { name: 'Console出力' })).toContainText(marker);
+  expect(JSON.stringify(await draft(page, id))).not.toContain(marker);
+  await page.getByRole('button', { name: '閉じる', exact: true }).click();
+  await page.goto(`${base}#/`);
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: '全コースの進捗と下書きを書き出す', exact: true }).click();
+  const path = info.outputPath('input-not-saved.json');
+  await (await download).saveAs(path);
+  expect(await readFile(path, 'utf8')).not.toContain(marker);
+});
