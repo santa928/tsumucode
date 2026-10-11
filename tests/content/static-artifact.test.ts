@@ -106,9 +106,9 @@ afterEach(async () => {
 describe('static artifact', () => {
   it('Pythonの配布物・通知・編集可能な対象ソースを限定pathで受理する', async () => {
     expect(resolveReleaseCourseContract('python-basics')).toMatchObject({
-      lessonCount: 4,
-      standardLessonCount: 4,
-      estimatedMinutes: 50,
+      lessonCount: 7,
+      standardLessonCount: 7,
+      estimatedMinutes: 95,
     });
     expect(
       (await checkStaticArtifact(await pythonArtifact(), 'python-basics')).files,
