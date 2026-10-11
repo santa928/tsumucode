@@ -1,0 +1,14 @@
+id: python-basics-ch01-l06
+kind: standard
+title: 'Dictのkeyからvalueを読み書きする'
+goal: 'keyで値を更新し、forで渡されたkeyからvalueを取り出して合計できる。'
+estimatedMinutes: 15
+prerequisiteLessonIds: ['python-basics-ch01-l05']
+slideSources: [slides/s01.md, slides/s02.md]
+exerciseSources: [exercises/python-basics-ch01-l06-e01/exercise.yaml]
+reflection: 'for key in stockのkeyにはredやblueと数値のどちらが入りますか。stock[key]が必要な理由と、redの更新がtotalへ反映される行を説明してください。'
+glossaryRefs: [python-dict]
+completion:
+  kind: standard
+  finalSlideId: python-basics-ch01-l06-s02
+  requiredExerciseIds: [python-basics-ch01-l06-e01]

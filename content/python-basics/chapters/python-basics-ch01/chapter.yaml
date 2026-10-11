@@ -1,11 +1,14 @@
 id: python-basics-ch01
 sequence: 0
-title: 値・入力・条件分岐・反復
-goal: 値と変数を使い、実行前の入力・条件分岐・反復の実出力と境界を説明できる。
-estimatedMinutes: 50
+title: 値・入力・基本制御・Collection・Function
+goal: 値と変数を使い、入力・制御・Collection・Functionの実出力と境界を説明できる。
+estimatedMinutes: 95
 kind: standard
 lessonSources:
   - lessons/python-basics-ch01-l01/lesson.yaml
   - lessons/python-basics-ch01-l02/lesson.yaml
   - lessons/python-basics-ch01-l03/lesson.yaml
   - lessons/python-basics-ch01-l04/lesson.yaml
+  - lessons/python-basics-ch01-l05/lesson.yaml
+  - lessons/python-basics-ch01-l06/lesson.yaml
+  - lessons/python-basics-ch01-l07/lesson.yaml

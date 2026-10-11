@@ -1,4 +1,7 @@
-import { validPythonInputLines } from '../../../core/runtime/pythonLessonProfiles.mjs';
+import {
+  PYTHON_LESSONS,
+  validPythonInputLines,
+} from '../../../core/runtime/pythonLessonProfiles.mjs';
 import { z } from 'zod';
 import type {
   ExecutionRequest,
@@ -145,7 +148,10 @@ export class LocalConsoleExecutionService implements ExecutionService {
       const capability = z
         .object({
           apiVersion: z.literal(1),
-          exerciseIds: z.array(z.string().max(160)).max(4).optional(),
+          exerciseIds: z
+            .array(z.string().max(160))
+            .max(this.engine === 'cpython' ? Object.keys(PYTHON_LESSONS).length : 4)
+            .optional(),
           contentRevision: z.string(),
           runtimeProfileId: z.literal(
             this.engine === 'cpython' ? 'cpython-values-v1' : 'node-closure-v1',

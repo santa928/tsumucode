@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="120" viewBox="0 0 640 120" role="img" aria-labelledby="title">
+  <title id="title">add(3, 5) → 8</title>
+  <rect width="640" height="120" rx="12" fill="#132638" />
+  <text x="32" y="72" fill="#f4f8fc" font-size="28" font-family="monospace">add(3, 5) → 8</text>
+</svg>

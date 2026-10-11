@@ -220,3 +220,165 @@ items:
   - id: python-control-l04-output-original
     visibility: public
     path: chapters/python-basics-ch01/lessons/python-basics-ch01-l04/slides/assets/s01-output.svg
+  - id: python-collection-function-original-3
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l05/exercises/python-basics-ch01-l05-e01/exercise.yaml
+  - id: python-collection-function-original-5
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l05/exercises/python-basics-ch01-l05-e01/fixtures/alternate-name.py
+  - id: python-collection-function-original-6
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l05/exercises/python-basics-ch01-l05-e01/fixtures/empty.py
+  - id: python-collection-function-original-7
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l05/exercises/python-basics-ch01-l05-e01/fixtures/hardcoded.py
+  - id: python-collection-function-original-8
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l05/exercises/python-basics-ch01-l05-e01/fixtures/index-error.py
+  - id: python-collection-function-original-9
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l05/exercises/python-basics-ch01-l05-e01/fixtures/multiple-elements.py
+  - id: python-collection-function-original-10
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l05/exercises/python-basics-ch01-l05-e01/fixtures/separate-list.py
+  - id: python-collection-function-original-11
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l05/exercises/python-basics-ch01-l05-e01/fixtures/solution.py
+  - id: python-collection-function-original-12
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l05/exercises/python-basics-ch01-l05-e01/fixtures/starter.py
+  - id: python-collection-function-original-13
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l05/exercises/python-basics-ch01-l05-e01/fixtures/unused-loop.py
+  - id: python-collection-function-original-14
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l05/exercises/python-basics-ch01-l05-e01/fixtures/wrong-sum.py
+  - id: python-collection-function-original-15
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l05/exercises/python-basics-ch01-l05-e01/instructions.md
+  - id: python-collection-function-original-17
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l05/exercises/python-basics-ch01-l05-e01/solution/main.py
+  - id: python-collection-function-original-19
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l05/exercises/python-basics-ch01-l05-e01/starter/main.py
+  - id: python-collection-function-original-20
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l05/lesson.yaml
+  - id: python-collection-function-original-22
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l05/slides/s01.md
+  - id: python-collection-function-original-23
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l05/slides/s02.md
+  - id: python-collection-function-original-26
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l06/exercises/python-basics-ch01-l06-e01/exercise.yaml
+  - id: python-collection-function-original-28
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l06/exercises/python-basics-ch01-l06-e01/fixtures/alternate-name.py
+  - id: python-collection-function-original-29
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l06/exercises/python-basics-ch01-l06-e01/fixtures/empty.py
+  - id: python-collection-function-original-30
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l06/exercises/python-basics-ch01-l06-e01/fixtures/hardcoded.py
+  - id: python-collection-function-original-31
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l06/exercises/python-basics-ch01-l06-e01/fixtures/keys-not-values.py
+  - id: python-collection-function-original-32
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l06/exercises/python-basics-ch01-l06-e01/fixtures/missing-key.py
+  - id: python-collection-function-original-33
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l06/exercises/python-basics-ch01-l06-e01/fixtures/multiple-keys.py
+  - id: python-collection-function-original-34
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l06/exercises/python-basics-ch01-l06-e01/fixtures/solution.py
+  - id: python-collection-function-original-35
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l06/exercises/python-basics-ch01-l06-e01/fixtures/starter.py
+  - id: python-collection-function-original-36
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l06/exercises/python-basics-ch01-l06-e01/fixtures/unused-loop.py
+  - id: python-collection-function-original-37
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l06/exercises/python-basics-ch01-l06-e01/fixtures/wrong-value.py
+  - id: python-collection-function-original-38
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l06/exercises/python-basics-ch01-l06-e01/instructions.md
+  - id: python-collection-function-original-40
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l06/exercises/python-basics-ch01-l06-e01/solution/main.py
+  - id: python-collection-function-original-42
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l06/exercises/python-basics-ch01-l06-e01/starter/main.py
+  - id: python-collection-function-original-43
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l06/lesson.yaml
+  - id: python-collection-function-original-45
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l06/slides/s01.md
+  - id: python-collection-function-original-46
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l06/slides/s02.md
+  - id: python-collection-function-original-49
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l07/exercises/python-basics-ch01-l07-e01/exercise.yaml
+  - id: python-collection-function-original-51
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l07/exercises/python-basics-ch01-l07-e01/fixtures/commuted-and-renamed.py
+  - id: python-collection-function-original-52
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l07/exercises/python-basics-ch01-l07-e01/fixtures/constant-return.py
+  - id: python-collection-function-original-53
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l07/exercises/python-basics-ch01-l07-e01/fixtures/direct-return.py
+  - id: python-collection-function-original-54
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l07/exercises/python-basics-ch01-l07-e01/fixtures/no-return.py
+  - id: python-collection-function-original-55
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l07/exercises/python-basics-ch01-l07-e01/fixtures/outer-value.py
+  - id: python-collection-function-original-56
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l07/exercises/python-basics-ch01-l07-e01/fixtures/reference-error.py
+  - id: python-collection-function-original-57
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l07/exercises/python-basics-ch01-l07-e01/fixtures/solution.py
+  - id: python-collection-function-original-58
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l07/exercises/python-basics-ch01-l07-e01/fixtures/starter.py
+  - id: python-collection-function-original-59
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l07/exercises/python-basics-ch01-l07-e01/fixtures/stored-results.py
+  - id: python-collection-function-original-60
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l07/exercises/python-basics-ch01-l07-e01/fixtures/unused-function.py
+  - id: python-collection-function-original-61
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l07/exercises/python-basics-ch01-l07-e01/instructions.md
+  - id: python-collection-function-original-63
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l07/exercises/python-basics-ch01-l07-e01/solution/main.py
+  - id: python-collection-function-original-65
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l07/exercises/python-basics-ch01-l07-e01/starter/main.py
+  - id: python-collection-function-original-66
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l07/lesson.yaml
+  - id: python-collection-function-original-68
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l07/slides/s01.md
+  - id: python-collection-function-original-69
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l07/slides/s02.md
+  - id: python-data-l05-output-original
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l05/slides/assets/s01-output.svg
+  - id: python-data-l06-output-original
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l06/slides/assets/s01-output.svg
+  - id: python-data-l07-output-original
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l07/slides/assets/s01-output.svg

@@ -1,0 +1,14 @@
+id: python-basics-ch01-l05
+kind: standard
+title: 'Listの参照を共有して値を更新する'
+goal: 'aliasから更新したListを元の名前で読み、forで合計する理由を説明できる。'
+estimatedMinutes: 15
+prerequisiteLessonIds: ['python-basics-ch01-l04']
+slideSources: [slides/s01.md, slides/s02.md]
+exerciseSources: [exercises/python-basics-ch01-l05-e01/exercise.yaml]
+reflection: 'alias[0] = 4とalias = []は、numbersへ同じ影響を与えますか。更新後のnumbers[0]とtotalを、参照共有とforの各行に結び付けて説明してください。'
+glossaryRefs: [python-list]
+completion:
+  kind: standard
+  finalSlideId: python-basics-ch01-l05-s02
+  requiredExerciseIds: [python-basics-ch01-l05-e01]

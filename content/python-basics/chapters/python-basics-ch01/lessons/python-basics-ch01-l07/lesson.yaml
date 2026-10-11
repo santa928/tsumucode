@@ -1,0 +1,14 @@
+id: python-basics-ch01-l07
+kind: standard
+title: 'Functionの引数とreturn、外側の変数を比べる'
+goal: '異なる引数で呼び出した戻り値と、外側の同名変数が保持される理由を説明できる。'
+estimatedMinutes: 15
+prerequisiteLessonIds: ['python-basics-ch01-l06']
+slideSources: [slides/s01.md, slides/s02.md]
+exerciseSources: [exercises/python-basics-ch01-l07-e01/exercise.yaml]
+reflection: 'addの引数leftと外側のleft = 100は、同じ名前でもどこで使われますか。returnをprintへ置き換えた場合と比べ、8・10・100になる理由を各行へ結び付けて説明してください。'
+glossaryRefs: [python-function]
+completion:
+  kind: standard
+  finalSlideId: python-basics-ch01-l07-s02
+  requiredExerciseIds: [python-basics-ch01-l07-e01]

@@ -36,3 +36,15 @@ concepts:
       - python-variable
       - python-print
     minimumProjectLevel: transform
+  - id: python-list
+    introducedBySlideId: python-basics-ch01-l05-s01
+    prerequisiteConceptIds: ['python-variable', 'python-print', 'python-range']
+    minimumProjectLevel: transform
+  - id: python-dict
+    introducedBySlideId: python-basics-ch01-l06-s01
+    prerequisiteConceptIds: ['python-variable', 'python-print', 'python-range']
+    minimumProjectLevel: transform
+  - id: python-function
+    introducedBySlideId: python-basics-ch01-l07-s01
+    prerequisiteConceptIds: ['python-variable', 'python-print']
+    minimumProjectLevel: transform

@@ -1,3 +1,4 @@
+import { PYTHON_LESSONS } from '../../../core/runtime/pythonLessonProfiles.mjs';
 import { afterEach, expect, it, vi } from 'vitest';
 import { LocalPythonExecutionService } from './LocalPythonExecutionService';
 import type { ExecutionRequest } from '../../../core/runtime/contracts';
@@ -26,7 +27,7 @@ it.each(['valid', 'wrong-engine', 'wrong-version', 'stale-revision', 'invalid-ex
         : path.endsWith('/python-capabilities')
           ? {
               apiVersion: 1,
-              exerciseIds: ['python-basics-ch01-l01-e01'],
+              exerciseIds: Object.keys(PYTHON_LESSONS),
               contentRevision: 'python-r1',
               runtimeProfileId: 'cpython-values-v1',
               engineVersion: '3.14.2',

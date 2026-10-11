@@ -1,11 +1,20 @@
 export type PythonLessonProfile =
-  'values-vars-print-v1' | 'input-echo-v1' | 'age-branch-v1' | 'range-loop-v1';
+  | 'values-vars-print-v1'
+  | 'input-echo-v1'
+  | 'age-branch-v1'
+  | 'range-loop-v1'
+  | 'list-reference-sum-v1'
+  | 'dict-value-sum-v1'
+  | 'function-return-scope-v1';
 export type PythonSourceFact =
   | 'numeric-variable-printed'
   | 'same-variable-addition-printed'
   | 'input-echoed'
   | 'age-boundary-branched'
-  | 'range-iterated';
+  | 'range-iterated'
+  | 'list-reference-summed'
+  | 'dict-values-summed'
+  | 'function-return-scoped';
 export const PYTHON_LESSONS: Readonly<
   Record<
     string,
@@ -20,6 +29,9 @@ export const PYTHON_FACT_FIELDS: Readonly<
     | 'inputEchoed'
     | 'ageBoundaryBranched'
     | 'rangeIterated'
+    | 'listReferenceSummed'
+    | 'dictValuesSummed'
+    | 'functionReturnScoped'
   >
 >;
 /** 行数・UTF-8 bytes・制御文字の共通入力境界。 */

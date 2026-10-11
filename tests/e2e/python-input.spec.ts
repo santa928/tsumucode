@@ -12,11 +12,11 @@ async function storedDraft(page: Page, id: string) {
   return (await readStoredProgress(page)).drafts.find((draft) => draft['workspaceId'] === id);
 }
 
-for (const number of [2, 3, 4]) {
+for (const number of [2, 3, 4, 5, 6, 7]) {
   const lessonId = `python-basics-ch01-l0${String(number)}`;
   const exerciseId = `${lessonId}-e01`;
   const sourceRoot = `content/python-basics/chapters/python-basics-ch01/lessons/${lessonId}/exercises/${exerciseId}`;
-  test(`Python l0${String(number)}の正負Fixtureを実入力とASTで確認する`, async ({ page }) => {
+  test(`Python l0${String(number)}の正負Fixtureを実入力とASTで確認する`, async ({ page }, info) => {
     test.setTimeout(240_000);
     const exercise = parse(await readFile(`${sourceRoot}/exercise.yaml`, 'utf8')) as {
       fixtures: {
@@ -36,7 +36,7 @@ for (const number of [2, 3, 4]) {
       });
       const source = await readFile(`${sourceRoot}/${fixture.files[0]!.source}`, 'utf8');
       await replaceEditorText(page, source);
-      if (number !== 4)
+      if (number === 2 || number === 3)
         await page
           .getByLabel('実行前の入力（1行につきinput 1回）')
           .fill(fixture.inputLines.join('\n'));
@@ -74,6 +74,50 @@ for (const number of [2, 3, 4]) {
           .map((check) => check.ruleId),
         fixture.id,
       ).toEqual(fixture.expectedFeedbackRuleIds);
+      await page.getByRole('button', { name: '閉じる', exact: true }).click();
+      if (number >= 5 && fixture.id === 'empty') {
+        await expect(
+          page.getByRole('region', { name: 'Console出力' }).getByText('0', { exact: true }),
+        ).toBeVisible();
+      }
+      if (number >= 5 && fixture.expectedStatus === 'code-error') {
+        expect(await editorText(page)).toBe(source);
+      }
+    }
+    if (number >= 5) {
+      const solution = await readFile(`${sourceRoot}/solution/main.py`, 'utf8');
+      await replaceEditorText(page, solution);
+      await page.getByRole('button', { name: '判定する', exact: true }).click();
+      await expect(page.getByRole('heading', { name: 'できました', exact: true })).toBeVisible({
+        timeout: 30_000,
+      });
+      await page.getByRole('button', { name: '閉じる', exact: true }).click();
+      expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+      await page.screenshot({
+        path: info.outputPath(`python-l0${String(number)}-exercise.png`),
+        fullPage: true,
+      });
+      await page.reload();
+      await expect.poll(() => editorText(page)).toBe(solution);
+      await expect(page.getByRole('button', { name: '最初に戻す', exact: true })).toBeEnabled({
+        timeout: 30_000,
+      });
+      await page.getByRole('button', { name: '最初に戻す', exact: true }).click();
+      await page
+        .getByRole('dialog', { name: '最初のコードに戻しますか？' })
+        .getByRole('button', { name: '最初のコードに戻す', exact: true })
+        .click();
+      const starter = await readFile(`${sourceRoot}/starter/main.py`, 'utf8');
+      await expect.poll(() => editorText(page)).toBe(starter);
+      await page.getByRole('button', { name: '判定する', exact: true }).click();
+      await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
+      await expect
+        .poll(async () => {
+          const history = (await storedDraft(page, exerciseId))?.['validationHistory'] as
+            { status: string }[] | undefined;
+          return history?.at(-1)?.status;
+        })
+        .toBe('incomplete');
       await page.getByRole('button', { name: '閉じる', exact: true }).click();
     }
   });
@@ -158,4 +202,35 @@ test('整数変換エラー中のEOFErrorという入力を行不足へ誤分類
       return history?.at(-1)?.status;
     })
     .toBe('code-error');
+});
+
+test('Python Collection・Functionの読書と予測を狭幅・キーボードで確認する', async ({
+  page,
+}, info) => {
+  const requests: string[] = [];
+  page.on('request', (request) => requests.push(request.url()));
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const number of [5, 6, 7]) {
+    const id = `python-basics-ch01-l0${String(number)}`;
+    await page.goto(`${base}#/courses/python-basics/lessons/${id}/slides/${id}-s01`);
+    const answer = page.getByText('答えと理由を見る', { exact: true });
+    await expect(answer).toBeVisible();
+    await answer.focus();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('section[aria-label="結果を予測する"] details')).toHaveAttribute(
+      'open',
+      '',
+    );
+    expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    ).toBe(true);
+    await page.screenshot({
+      path: info.outputPath(`python-l0${String(number)}-reading.png`),
+      fullPage: true,
+    });
+  }
+  expect(requests.filter((url) => /python-runtime\/|assets\/pythonRuntime-/u.test(url))).toEqual(
+    [],
+  );
 });

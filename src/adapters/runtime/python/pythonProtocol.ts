@@ -20,6 +20,9 @@ export interface PythonResult {
   readonly inputEchoed?: boolean;
   readonly ageBoundaryBranched?: boolean;
   readonly rangeIterated?: boolean;
+  readonly listReferenceSummed?: boolean;
+  readonly dictValuesSummed?: boolean;
+  readonly functionReturnScoped?: boolean;
 }
 
 export const PYTHON_LIMITS = {
