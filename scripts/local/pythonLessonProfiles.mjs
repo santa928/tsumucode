@@ -3,4 +3,7 @@ export {
   PYTHON_LESSONS,
   PYTHON_FACT_FIELDS,
   validPythonInputLines,
+  isPythonModuleProfile,
+  pythonSourcePaths,
+  pythonSourceSnapshot,
 } from '../../src/core/runtime/pythonLessonProfiles.mjs';

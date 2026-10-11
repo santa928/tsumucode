@@ -382,3 +382,383 @@ items:
   - id: python-data-l07-output-original
     visibility: public
     path: chapters/python-basics-ch01/lessons/python-basics-ch01-l07/slides/assets/s01-output.svg
+  - id: python-module-original-1
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/exercise.yaml
+  - id: python-module-original-2
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/canonical/lesson_tools.py
+  - id: python-module-original-3
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/canonical/main.py
+  - id: python-module-original-4
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/commuted-addition/lesson_tools.py
+  - id: python-module-original-5
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/commuted-addition/main.py
+  - id: python-module-original-6
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/constant-return/lesson_tools.py
+  - id: python-module-original-7
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/constant-return/main.py
+  - id: python-module-original-8
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/double-left/lesson_tools.py
+  - id: python-module-original-9
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/double-left/main.py
+  - id: python-module-original-10
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/missing-return/lesson_tools.py
+  - id: python-module-original-11
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/missing-return/main.py
+  - id: python-module-original-12
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/renamed-parameters/lesson_tools.py
+  - id: python-module-original-13
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/renamed-parameters/main.py
+  - id: python-module-original-14
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/star-import/lesson_tools.py
+  - id: python-module-original-15
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/star-import/main.py
+  - id: python-module-original-16
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/stored-results/lesson_tools.py
+  - id: python-module-original-17
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/stored-results/main.py
+  - id: python-module-original-18
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/temporary-return/lesson_tools.py
+  - id: python-module-original-19
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/temporary-return/main.py
+  - id: python-module-original-20
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/unused-helper-hardcode/lesson_tools.py
+  - id: python-module-original-21
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/unused-helper-hardcode/main.py
+  - id: python-module-original-22
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/instructions.md
+  - id: python-module-original-23
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/solution/lesson_tools.py
+  - id: python-module-original-24
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/solution/main.py
+  - id: python-module-original-25
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/starter/lesson_tools.py
+  - id: python-module-original-26
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/starter/main.py
+  - id: python-module-original-27
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/lesson.yaml
+  - id: python-module-original-28
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/slides/s01.md
+  - id: python-module-original-29
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/slides/s02.md
+  - id: python-module-original-30
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/exercise.yaml
+  - id: python-module-original-31
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/broad-except/lesson_tools.py
+  - id: python-module-original-32
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/broad-except/main.py
+  - id: python-module-original-33
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/conversion-outside-try/lesson_tools.py
+  - id: python-module-original-34
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/conversion-outside-try/main.py
+  - id: python-module-original-35
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/direct-display-invalid/lesson_tools.py
+  - id: python-module-original-36
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/direct-display-invalid/main.py
+  - id: python-module-original-37
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/direct-display-normal/lesson_tools.py
+  - id: python-module-original-38
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/direct-display-normal/main.py
+  - id: python-module-original-39
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/empty-string/lesson_tools.py
+  - id: python-module-original-40
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/empty-string/main.py
+  - id: python-module-original-41
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/helper-syntax-error/lesson_tools.py
+  - id: python-module-original-42
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/helper-syntax-error/main.py
+  - id: python-module-original-43
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/input-exhausted/lesson_tools.py
+  - id: python-module-original-44
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/input-exhausted/main.py
+  - id: python-module-original-45
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/invalid/lesson_tools.py
+  - id: python-module-original-46
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/invalid/main.py
+  - id: python-module-original-47
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/negative/lesson_tools.py
+  - id: python-module-original-48
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/negative/main.py
+  - id: python-module-original-49
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/normal/lesson_tools.py
+  - id: python-module-original-50
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/normal/main.py
+  - id: python-module-original-51
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/signed-whitespace/lesson_tools.py
+  - id: python-module-original-52
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/signed-whitespace/main.py
+  - id: python-module-original-53
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/unicode-digits/lesson_tools.py
+  - id: python-module-original-54
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/unicode-digits/main.py
+  - id: python-module-original-55
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/unused-helper-hardcode/lesson_tools.py
+  - id: python-module-original-56
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/unused-helper-hardcode/main.py
+  - id: python-module-original-57
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/instructions.md
+  - id: python-module-original-58
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/solution/lesson_tools.py
+  - id: python-module-original-59
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/solution/main.py
+  - id: python-module-original-60
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/starter/lesson_tools.py
+  - id: python-module-original-61
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/starter/main.py
+  - id: python-module-original-62
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/lesson.yaml
+  - id: python-module-original-63
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/slides/s01.md
+  - id: python-module-original-64
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/slides/s02.md
+  - id: python-module-original-65
+    visibility: public
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/brief.md
+  - id: python-module-original-66
+    visibility: public
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/exercise.yaml
+  - id: python-module-original-67
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/broad-except/lesson_tools.py
+  - id: python-module-original-68
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/broad-except/main.py
+  - id: python-module-original-69
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/combined-alternative-invalid/lesson_tools.py
+  - id: python-module-original-70
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/combined-alternative-invalid/main.py
+  - id: python-module-original-71
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/combined-alternative-normal/lesson_tools.py
+  - id: python-module-original-72
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/combined-alternative-normal/main.py
+  - id: python-module-original-73
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/empty-second/lesson_tools.py
+  - id: python-module-original-74
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/empty-second/main.py
+  - id: python-module-original-75
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/four-six/lesson_tools.py
+  - id: python-module-original-76
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/four-six/main.py
+  - id: python-module-original-77
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/input-exhausted/lesson_tools.py
+  - id: python-module-original-78
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/input-exhausted/main.py
+  - id: python-module-original-79
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/integer-separators/lesson_tools.py
+  - id: python-module-original-80
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/integer-separators/main.py
+  - id: python-module-original-81
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/invalid-first/lesson_tools.py
+  - id: python-module-original-82
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/invalid-first/main.py
+  - id: python-module-original-83
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/invalid-second/lesson_tools.py
+  - id: python-module-original-84
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/invalid-second/main.py
+  - id: python-module-original-85
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/main-syntax-error/lesson_tools.py
+  - id: python-module-original-86
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/main-syntax-error/main.py
+  - id: python-module-original-87
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/negative/lesson_tools.py
+  - id: python-module-original-88
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/negative/main.py
+  - id: python-module-original-89
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/replace-total/lesson_tools.py
+  - id: python-module-original-90
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/replace-total/main.py
+  - id: python-module-original-91
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/three-five/lesson_tools.py
+  - id: python-module-original-92
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/three-five/main.py
+  - id: python-module-original-93
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/unhandled-conversion/lesson_tools.py
+  - id: python-module-original-94
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/unhandled-conversion/main.py
+  - id: python-module-original-95
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/unicode-digits/lesson_tools.py
+  - id: python-module-original-96
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/unicode-digits/main.py
+  - id: python-module-original-97
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/unused-loop-hardcode/lesson_tools.py
+  - id: python-module-original-98
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/unused-loop-hardcode/main.py
+  - id: python-module-original-99
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/zero/lesson_tools.py
+  - id: python-module-original-100
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/zero/main.py
+  - id: python-module-original-101
+    visibility: public
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/instructions.md
+  - id: python-module-original-102
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/solution/lesson_tools.py
+  - id: python-module-original-103
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/solution/main.py
+  - id: python-module-original-104
+    visibility: public
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/starter/lesson_tools.py
+  - id: python-module-original-105
+    visibility: public
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/starter/main.py
+  - id: python-module-original-106
+    visibility: public
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/guide.md
+  - id: python-module-original-107
+    visibility: public
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/lesson.yaml
+  - id: python-module-original-108
+    visibility: public
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/slides/s01.md
+  - id: python-module-original-109
+    visibility: public
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/slides/s02.md
+  - id: python-module-ch02-original
+    visibility: public
+    path: chapters/python-basics-ch02/chapter.yaml
+  - id: python-module-l08-flow-original
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/slides/assets/s01-flow.svg
+    method: original-svg
+  - id: python-module-l09-flow-original
+    visibility: public
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/slides/assets/s01-flow.svg
+    method: original-svg
+  - id: python-module-guard-exception-unrelated-helper-error-normal-main-py
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/unrelated-helper-error-normal/main.py
+  - id: python-module-guard-exception-unrelated-helper-error-normal-lesson-tools-py
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/unrelated-helper-error-normal/lesson_tools.py
+  - id: python-module-guard-exception-unrelated-helper-error-invalid-main-py
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/unrelated-helper-error-invalid/main.py
+  - id: python-module-guard-exception-unrelated-helper-error-invalid-lesson-tools-py
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/unrelated-helper-error-invalid/lesson_tools.py
+  - id: python-module-guard-exception-unrelated-try-error-main-py
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/unrelated-try-error/main.py
+  - id: python-module-guard-exception-unrelated-try-error-lesson-tools-py
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l09/exercises/python-basics-ch01-l09-e01/fixtures/unrelated-try-error/lesson_tools.py
+  - id: python-module-guard-project-unrelated-helper-error-normal-main-py
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/unrelated-helper-error-normal/main.py
+  - id: python-module-guard-project-unrelated-helper-error-normal-lesson-tools-py
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/unrelated-helper-error-normal/lesson_tools.py
+  - id: python-module-guard-project-unrelated-helper-error-invalid-main-py
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/unrelated-helper-error-invalid/main.py
+  - id: python-module-guard-project-unrelated-helper-error-invalid-lesson-tools-py
+    visibility: authoring
+    path: chapters/python-basics-ch02/lessons/python-basics-ch02-l01/exercises/python-basics-ch02-l01-e01/fixtures/unrelated-helper-error-invalid/lesson_tools.py
+  - id: python-module-guard-module-duplicate-parameters-main-py
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/duplicate-parameters/main.py
+  - id: python-module-guard-module-duplicate-parameters-lesson-tools-py
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/duplicate-parameters/lesson_tools.py
+  - id: python-module-guard-module-return-outside-function-main-py
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/return-outside-function/main.py
+  - id: python-module-guard-module-return-outside-function-lesson-tools-py
+    visibility: authoring
+    path: chapters/python-basics-ch01/lessons/python-basics-ch01-l08/exercises/python-basics-ch01-l08-e01/fixtures/return-outside-function/lesson_tools.py

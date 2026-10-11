@@ -1,4 +1,9 @@
-import { PYTHON_LESSONS, PYTHON_FACT_FIELDS } from './pythonLessonProfiles.mjs';
+import {
+  PYTHON_LESSONS,
+  PYTHON_FACT_FIELDS,
+  isPythonModuleProfile,
+  pythonSourceSnapshot,
+} from './pythonLessonProfiles.mjs';
 import console from 'node:console';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
@@ -227,6 +232,9 @@ async function executePhase(run, analyze = false) {
 /** 固定AST解析と学習実行を同じ排他枠に置き、学習者の出力を採点factsにしない。 */
 async function execute(run) {
   const python = run.input.runtimeProfileId === PYTHON_PROFILE_ID;
+  const profile = python ? PYTHON_LESSONS[run.input.exerciseId].profile : undefined;
+  const moduleProfile = python && isPythonModuleProfile(profile);
+  let analysisStatus;
   let facts;
   let preparationMs = 0;
   let executionMs = 0;
@@ -244,7 +252,11 @@ async function execute(run) {
           PYTHON_LESSONS[run.input.exerciseId].profile,
         );
     }
-    if (!run.reason) {
+    if (moduleProfile && facts && facts.state !== 'supported') {
+      analysisStatus = facts.state === 'syntax-error' ? 'code-error' : 'unsupported';
+      if (facts.syntaxMessage) executed.stderr = facts.syntaxMessage;
+    }
+    if (!run.reason && !analysisStatus) {
       executed = await executePhase(run);
       preparationMs += executed.preparationMs;
       executionMs += executed.executionMs;
@@ -260,13 +272,15 @@ async function execute(run) {
         ? 'system-error'
         : run.reason
           ? 'stopped'
-          : python && inputExhausted
-            ? 'unsupported'
-            : executed.exitCode !== 0
-              ? 'code-error'
-              : python && !facts.supported
-                ? 'unsupported'
-                : 'succeeded';
+          : analysisStatus
+            ? analysisStatus
+            : python && inputExhausted
+              ? 'unsupported'
+              : executed.exitCode !== 0
+                ? 'code-error'
+                : python && !facts.supported
+                  ? 'unsupported'
+                  : 'succeeded';
     const label = python ? 'CPython' : 'Node';
     const diagnostics =
       status === 'succeeded'
@@ -276,7 +290,8 @@ async function execute(run) {
               code: `local-${run.reason ?? status}`,
               kind:
                 status === 'code-error'
-                  ? python && /SyntaxError/u.test(executed.stderr)
+                  ? python &&
+                    (facts?.state === 'syntax-error' || /SyntaxError/u.test(executed.stderr))
                     ? 'syntax'
                     : 'reference'
                   : status === 'unsupported'
@@ -291,7 +306,9 @@ async function execute(run) {
                   : status === 'unsupported'
                     ? inputExhausted
                       ? '実行前の入力行が不足しています。実行中の入力待ちには未対応です。入力を追加して再実行してください。採点していません。'
-                      : 'CPythonで実行しましたが、このLessonの採点範囲外です。採点していません。'
+                      : moduleProfile
+                        ? 'このLessonの実行範囲外です。実行せず採点していません。'
+                        : 'CPythonで実行しましたが、このLessonの採点範囲外です。採点していません。'
                     : status === 'system-error'
                       ? 'ローカル実行環境に接続できません。Dockerと学習モードを確認して再実行してください。編集内容は保持しています。'
                       : `実行を停止しました（${run.reason}）。採点していません。`,
@@ -307,7 +324,9 @@ async function execute(run) {
       {
         id: `${prefix}.source-sha256`,
         file: sourceFile,
-        value: sourceHash(run.input.files[sourceFile]),
+        value: sourceHash(
+          python ? pythonSourceSnapshot(run.input.files, profile) : run.input.files[sourceFile],
+        ),
       },
     ];
     if (python && status === 'succeeded')
@@ -324,11 +343,16 @@ async function execute(run) {
           'list-reference-summed',
           'dict-values-summed',
           'function-return-scoped',
+          'module-imported',
+          'exception-handled',
+          'project-summed',
         ].map((fact) => ({
           id: `python.${fact}`,
           value: facts[PYTHON_FACT_FIELDS[fact]] === true,
         })),
       );
+    if (moduleProfile && status === 'succeeded')
+      evidence.push({ id: 'python.expected-output', value: facts.expectedOutput ?? '' });
     if (!python) evidence.push({ id: 'javascript.budget-exhausted', value: status === 'stopped' });
     run.result = {
       ...identity(run.input),

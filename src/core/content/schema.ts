@@ -408,6 +408,9 @@ export const PythonExerciseRuntimeSchema = z
       'list-reference-sum-v1',
       'dict-value-sum-v1',
       'function-return-scope-v1',
+      'module-import-v1',
+      'exception-recovery-v1',
+      'console-project-v1',
     ]),
   })
   .strict();

@@ -1,0 +1,334 @@
+id: python-basics-ch02-l01-e01
+kind: guided-project
+workspaceId: python-basics-ch02-l01-e01
+countsTowardStandardExerciseTotal: false
+title: '2行を合計する小さいConsoleを作る'
+projectId: python-console-project
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: python-exception
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: python-basics-ch02-l01-e01-step01
+    file: main.py
+    target: 'main.pyのfor内でtotalとparse_number(text)をaddへ渡して合計を引き継ぎます。'
+    starterAnchor: 'total = parse_number(text)'
+    change: 'main.pyのfor内でtotalとparse_number(text)をaddへ渡して合計を引き継ぎます。'
+    observe: '3と5なら8、不正な文字列なら整数を入力してください、最後に終了です。'
+    requiresConceptIds: [python-exception]
+    validationRuleIds: [python-basics-ch02-l01-e01-r01]
+runtime:
+  kind: python
+  entryFile: main.py
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  profile: console-project-v1
+files:
+  - path: main.py
+    language: python
+    source: starter/main.py
+    editable: true
+  - path: lesson_tools.py
+    language: python
+    source: starter/lesson_tools.py
+    editable: true
+solutionFiles:
+  - path: main.py
+    language: python
+    source: solution/main.py
+    editable: false
+  - path: lesson_tools.py
+    language: python
+    source: solution/lesson_tools.py
+    editable: false
+validationRules:
+  - id: python-basics-ch02-l01-e01-r01
+    label: 'List・for・Function・Module・例外を組み合わせ、2行の合計と不正文字列の案内を完成する。'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: project-summed
+    feedback:
+      target: main.py・lesson_tools.pyとConsole
+      expected: '3と5なら8、不正な文字列なら整数を入力してください、最後に終了です。'
+      nextAction: 'main.pyのfor内でtotalとparse_number(text)をaddへ渡して合計を引き継ぎます。'
+    hintId: python-basics-ch02-l01-e01-h01
+    relatedSlideId: python-basics-ch02-l01-s02
+hints:
+  - id: python-basics-ch02-l01-e01-h01
+    level: 1
+    title: '最初の手掛かり'
+    text: '各回の整数と、それまでのtotalは別です。'
+    relatedSlideId: python-basics-ch02-l01-s02
+  - id: python-basics-ch02-l01-e01-h02
+    level: 2
+    title: 'コードを組み立てる'
+    text: 'totalとparse_number(text)をaddへ渡します。'
+    relatedSlideId: python-basics-ch02-l01-s02
+  - id: python-basics-ch02-l01-e01-h03
+    level: 3
+    title: '解答と理由'
+    text: 'total = add(total, parse_number(text))で合計を引き継ぎ、forの後に表示します。'
+    relatedSlideId: python-basics-ch02-l01-s02
+relatedSlideIds: [python-basics-ch02-l01-s01, python-basics-ch02-l01-s02]
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: three-five
+    expectedStatus: pass
+    inputLines: ['3', '5']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/three-five/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/three-five/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: four-six
+    expectedStatus: pass
+    inputLines: ['4', '6']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/four-six/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/four-six/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: zero
+    expectedStatus: pass
+    inputLines: ['0', '0']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/zero/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/zero/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: negative
+    expectedStatus: pass
+    inputLines: ['-3', '5']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/negative/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/negative/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: invalid-second
+    expectedStatus: pass
+    inputLines: ['3', 'abc']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/invalid-second/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/invalid-second/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: invalid-first
+    expectedStatus: pass
+    inputLines: ['abc', '5']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/invalid-first/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/invalid-first/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: empty-second
+    expectedStatus: pass
+    inputLines: ['3', '']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/empty-second/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/empty-second/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: unicode-digits
+    expectedStatus: pass
+    inputLines: ['３', '５']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/unicode-digits/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/unicode-digits/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: integer-separators
+    expectedStatus: pass
+    inputLines: ['1_0', '2']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/integer-separators/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/integer-separators/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: replace-total
+    expectedStatus: incomplete
+    inputLines: ['3', '5']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/replace-total/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/replace-total/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch02-l01-e01-r01']
+  - id: unused-loop-hardcode
+    expectedStatus: incomplete
+    inputLines: ['3', '5']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/unused-loop-hardcode/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/unused-loop-hardcode/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch02-l01-e01-r01']
+  - id: unhandled-conversion
+    expectedStatus: code-error
+    inputLines: ['3', 'abc']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/unhandled-conversion/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/unhandled-conversion/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: input-exhausted
+    expectedStatus: system-error
+    inputLines: ['3']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/input-exhausted/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/input-exhausted/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: main-syntax-error
+    expectedStatus: code-error
+    inputLines: ['3', '5']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/main-syntax-error/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/main-syntax-error/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: broad-except
+    expectedStatus: system-error
+    inputLines: ['3', 'abc']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/broad-except/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/broad-except/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: combined-alternative-normal
+    expectedStatus: pass
+    inputLines: ['4', '6']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/combined-alternative-normal/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/combined-alternative-normal/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: combined-alternative-invalid
+    expectedStatus: pass
+    inputLines: ['3', 'abc']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/combined-alternative-invalid/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/combined-alternative-invalid/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: unrelated-helper-error-normal
+    expectedStatus: incomplete
+    inputLines: ['3', '5']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/unrelated-helper-error-normal/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/unrelated-helper-error-normal/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch02-l01-e01-r01']
+  - id: unrelated-helper-error-invalid
+    expectedStatus: incomplete
+    inputLines: ['3', 'abc']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/unrelated-helper-error-invalid/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/unrelated-helper-error-invalid/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch02-l01-e01-r01']

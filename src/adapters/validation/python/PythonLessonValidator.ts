@@ -2,6 +2,9 @@ import {
   PYTHON_LESSONS,
   validPythonInputLines,
   expectedPythonOutput,
+  isPythonModuleProfile,
+  validPythonFiles,
+  pythonSourceSnapshot,
 } from '../../../core/runtime/pythonLessonProfiles.mjs';
 import { z } from 'zod';
 import type { SnapshotPolicy } from '../../../core/runtime/contracts';
@@ -20,6 +23,9 @@ const factNames = [
   'list-reference-summed',
   'dict-values-summed',
   'function-return-scoped',
+  'module-imported',
+  'exception-handled',
+  'project-summed',
 ] as const;
 const ruleSchema = z
   .object({
@@ -80,8 +86,7 @@ export class PythonLessonValidator implements ValidatorAdapter {
       execution === undefined ||
       execution.backend !== (this.engine === 'cpython' ? 'local' : 'browser') ||
       execution.engine !== this.engine ||
-      Object.keys(context.files).length !== 1 ||
-      typeof context.files['main.py'] !== 'string'
+      !validPythonFiles(context.files, lesson.profile)
     )
       return system();
     if (execution.status === 'code-error')
@@ -109,7 +114,7 @@ export class PythonLessonValidator implements ValidatorAdapter {
     if (hashEvidence?.file !== 'main.py' || typeof hashEvidence.value !== 'string') return system();
     const digest = await crypto.subtle.digest(
       'SHA-256',
-      new TextEncoder().encode(context.files['main.py']),
+      new TextEncoder().encode(pythonSourceSnapshot(context.files, lesson.profile)),
     );
     const hash = [...new Uint8Array(digest)]
       .map((byte) => byte.toString(16).padStart(2, '0'))
@@ -141,8 +146,10 @@ export class PythonLessonValidator implements ValidatorAdapter {
       if (!validPythonInputLines(inputLines)) return system();
     }
     if (!validPythonInputLines(inputLines)) return system();
-    const expected = expectedPythonOutput(lesson.profile, inputLines);
-    if (expected === undefined) return system();
+    const expected = isPythonModuleProfile(lesson.profile)
+      ? evidence.get('python.expected-output')?.value
+      : expectedPythonOutput(lesson.profile, inputLines);
+    if (typeof expected !== 'string') return system();
     const outputCorrect = evidence.get('python.stdout')!.value === expected;
     const checks = rules.map((rule) => {
       const factCorrect = evidence.get(`python.${rule.assertion.fact}`)!.value === true;

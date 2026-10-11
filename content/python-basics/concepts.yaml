@@ -48,3 +48,11 @@ concepts:
     introducedBySlideId: python-basics-ch01-l07-s01
     prerequisiteConceptIds: ['python-variable', 'python-print']
     minimumProjectLevel: transform
+  - id: python-module
+    introducedBySlideId: python-basics-ch01-l08-s01
+    prerequisiteConceptIds: [python-function]
+    minimumProjectLevel: transform
+  - id: python-exception
+    introducedBySlideId: python-basics-ch01-l09-s01
+    prerequisiteConceptIds: [python-module, python-int]
+    minimumProjectLevel: transform

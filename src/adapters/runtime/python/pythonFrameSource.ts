@@ -65,6 +65,7 @@ function initializePythonFrame(limits: typeof PYTHON_LIMITS): void {
           stdlib: data.stdlib,
           lock: data.lock,
           source: data.source,
+          files: data.files,
           profile: data.profile,
           inputLines: data.inputLines,
         },

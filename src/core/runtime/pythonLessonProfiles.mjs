@@ -17,6 +17,9 @@ export const PYTHON_LESSONS = Object.freeze({
     profile: 'function-return-scope-v1',
     facts: ['function-return-scoped'],
   },
+  'python-basics-ch01-l08-e01': { profile: 'module-import-v1', facts: ['module-imported'] },
+  'python-basics-ch01-l09-e01': { profile: 'exception-recovery-v1', facts: ['exception-handled'] },
+  'python-basics-ch02-l01-e01': { profile: 'console-project-v1', facts: ['project-summed'] },
 });
 
 export const PYTHON_FACT_FIELDS = Object.freeze({
@@ -28,7 +31,38 @@ export const PYTHON_FACT_FIELDS = Object.freeze({
   'list-reference-summed': 'listReferenceSummed',
   'dict-values-summed': 'dictValuesSummed',
   'function-return-scoped': 'functionReturnScoped',
+  'module-imported': 'moduleImported',
+  'exception-handled': 'exceptionHandled',
+  'project-summed': 'projectSummed',
 });
+
+/** 固定2ファイル契約は新3profileだけへ適用し、旧教材を拡張しない。 */
+export function isPythonModuleProfile(profile) {
+  return ['module-import-v1', 'exception-recovery-v1', 'console-project-v1'].includes(profile);
+}
+
+export function pythonSourcePaths(profile) {
+  return isPythonModuleProfile(profile) ? ['main.py', 'lesson_tools.py'] : ['main.py'];
+}
+
+/** 欠落・余剰・別名を修復せず拒否し、両fileのUTF-8合計に既存上限を適用する。 */
+export function validPythonFiles(files, profile) {
+  if (!files || typeof files !== 'object' || Array.isArray(files)) return false;
+  const paths = pythonSourcePaths(profile);
+  return (
+    Object.keys(files).length === paths.length &&
+    paths.every((path) => Object.hasOwn(files, path) && typeof files[path] === 'string') &&
+    paths.reduce((bytes, path) => bytes + new TextEncoder().encode(files[path]).byteLength, 0) <=
+      100 * 1024
+  );
+}
+
+/** 新profileのhashは固定順のpathと内容を含め、helperだけの変更も失効させる。 */
+export function pythonSourceSnapshot(files, profile) {
+  return isPythonModuleProfile(profile)
+    ? JSON.stringify(pythonSourcePaths(profile).map((path) => [path, files[path]]))
+    : files['main.py'];
+}
 
 /** 空文字は1回分の空入力。改行を行区切り以外として渡さず、bytesと行数を制限する。 */
 export function validPythonInputLines(value) {
@@ -53,6 +87,7 @@ export function expectedPythonOutput(profile, lines) {
   if (profile === 'range-loop-v1') return '0\n1\n2\n';
   if (profile === 'list-reference-sum-v1' || profile === 'dict-value-sum-v1') return '4\n9\n';
   if (profile === 'function-return-scope-v1') return '8\n10\n100\n';
+  if (profile === 'module-import-v1') return '8\n10\n';
   if (lines.length === 0) return undefined;
   if (profile === 'input-echo-v1') return lines[0] + '\n';
   if (profile === 'age-branch-v1' && /^[+-]?\d+$/u.test(lines[0].trim())) {

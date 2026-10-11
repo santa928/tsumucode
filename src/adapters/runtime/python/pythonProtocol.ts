@@ -15,6 +15,7 @@ export interface PythonResult {
   readonly version?: string;
   readonly error?: string;
   readonly reason?: 'syntax' | 'runtime' | 'output-limit' | 'time-limit' | 'manual-stop';
+  readonly file?: 'main.py' | 'lesson_tools.py';
   readonly numericVariablePrinted?: boolean;
   readonly sameVariableAdditionPrinted?: boolean;
   readonly inputEchoed?: boolean;
@@ -23,6 +24,10 @@ export interface PythonResult {
   readonly listReferenceSummed?: boolean;
   readonly dictValuesSummed?: boolean;
   readonly functionReturnScoped?: boolean;
+  readonly moduleImported?: boolean;
+  readonly exceptionHandled?: boolean;
+  readonly projectSummed?: boolean;
+  readonly expectedOutput?: string | null;
 }
 
 export const PYTHON_LIMITS = {

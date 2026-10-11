@@ -1,3 +1,4 @@
+import { PortablePythonExport } from '../portable/PortablePythonExport';
 /** Desktop編集SessionをRepository復元後だけEditor・Preview・判定へ接続する。 */
 import {
   lazy,
@@ -233,6 +234,10 @@ class PythonInputBuffer {
   write(value: string): void {
     this.#lines = value.replaceAll('\r\n', '\n').split('\n');
   }
+  /** 空文字列1行とは別に、明示した行不足の確認では入力0行を送る。 */
+  clear(): void {
+    this.#lines = [];
+  }
 }
 
 /** 単一attemptのController lifecycleと全学習操作を画面へ接続する。 */
@@ -248,9 +253,12 @@ function EditableSession({
   const navigate = useNavigate();
   const [operation, setOperation] = useState<OperationState>('idle');
   const [pythonInput, setPythonInput] = useState('');
+  const [withoutPythonInput, setWithoutPythonInput] = useState(false);
   const acceptsPythonInput =
     exercise.runtime?.kind === 'python' &&
-    ['input-echo-v1', 'age-branch-v1'].includes(exercise.runtime.profile);
+    ['input-echo-v1', 'age-branch-v1', 'exception-recovery-v1', 'console-project-v1'].includes(
+      exercise.runtime.profile,
+    );
   const pythonInputBuffer = useMemo(
     () => new PythonInputBuffer(acceptsPythonInput ? [''] : []),
     [acceptsPythonInput],
@@ -1097,6 +1105,16 @@ function EditableSession({
             {course.id === 'html-css' && exercise.id === 'html-css-ch00-l01-e01' ? (
               <PortableHtmlExport files={workspaceFiles} disabled={busy} />
             ) : null}
+            {exercise.runtime?.kind === 'python' &&
+            ['module-import-v1', 'exception-recovery-v1', 'console-project-v1'].includes(
+              exercise.runtime.profile,
+            ) ? (
+              <PortablePythonExport
+                workspaceId={exercise.workspaceId}
+                files={workspaceFiles}
+                disabled={busy}
+              />
+            ) : null}
           </aside>
 
           <div
@@ -1155,8 +1173,8 @@ function EditableSession({
                   <p>
                     {exercise.runtime?.kind === 'python'
                       ? controller.environment.engine === 'cpython'
-                        ? 'main.pyを編集し、「プレビューを更新」で隔離したCPythonを実行します。「判定する」は教材のコード条件と実出力を確認します。実行前の入力行を使い、実行中に入力を追加する操作には未対応です。入力行不足は採点せず、構文・実行エラーはコード診断として表示します。package追加・外部通信は扱いません。'
-                        : 'main.pyを編集し、「プレビューを更新」でPyodideの実出力を表示します。「判定する」は教材のコード条件を確認します。実行前の入力行を使い、実行中に入力を追加する操作には未対応です。入力行不足は採点しません。package追加・外部通信は扱いません。'
+                        ? '教材のSourceを編集し、「プレビューを更新」で隔離したCPythonを実行します。「判定する」は教材のコード条件と実出力を確認します。実行前の入力行を使い、実行中に入力を追加する操作には未対応です。入力行不足は採点せず、構文・実行エラーはコード診断として表示します。package追加・外部通信は扱いません。'
+                        : '教材のSourceを編集し、「プレビューを更新」でPyodideの実出力を表示します。「判定する」は教材のコード条件を確認します。実行前の入力行を使い、実行中に入力を追加する操作には未対応です。入力行不足は採点しません。package追加・外部通信は扱いません。'
                       : controller.environment.backend === 'local'
                         ? '編集後に「プレビューを更新」でNode.jsを実行します。Docker切断時は学習モードを再起動し、もう一度実行してください。'
                         : 'script.jsを編集するとConsoleを更新します。配列・オブジェクトの添字と有限のPromise処理に対応します。HTML/CSSの描画・DOM・タイマー・外部通信は使えません。'}
@@ -1176,13 +1194,32 @@ function EditableSession({
                   ) : null}
                   {acceptsPythonInput ? (
                     <div>
+                      {exercise.runtime?.kind === 'python' &&
+                      ['exception-recovery-v1', 'console-project-v1'].includes(
+                        exercise.runtime.profile,
+                      ) ? (
+                        <label className="mb-2 flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={withoutPythonInput}
+                            disabled={busy}
+                            onChange={(event) => {
+                              const checked = event.target.checked;
+                              setWithoutPythonInput(checked);
+                              if (checked) pythonInputBuffer.clear();
+                              else pythonInputBuffer.write(pythonInput);
+                            }}
+                          />
+                          入力を渡さない（行不足を確認する）
+                        </label>
+                      ) : null}
                       <label htmlFor="python-stdin">実行前の入力（1行につきinput 1回）</label>
                       <textarea
                         id="python-stdin"
                         rows={3}
                         maxLength={1024}
                         value={pythonInput}
-                        disabled={busy}
+                        disabled={busy || withoutPythonInput}
                         aria-describedby="python-stdin-help"
                         onChange={(event) => {
                           const value = event.target.value;

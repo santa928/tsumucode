@@ -50,3 +50,13 @@ entries:
     definition: 'defで名前と引数、字下げした処理を定義し、呼び出して使うまとまり。returnで呼び出し元へ値を返す。引数は呼び出しごとのlocalな名前。'
     firstSlideId: python-basics-ch01-l07-s01
     relatedIds: []
+  - id: python-module
+    term: Moduleとimport
+    definition: 別ファイルで定義した名前をfromとimportで取り込み、関数を呼び出して使う仕組み。
+    firstSlideId: python-basics-ch01-l08-s01
+    relatedIds: [python-function]
+  - id: python-exception
+    term: tryとexcept ValueError
+    definition: try内の整数変換失敗をValueErrorとして受け止め、案内後に外の処理へ進む。
+    firstSlideId: python-basics-ch01-l09-s01
+    relatedIds: [python-int, python-module]

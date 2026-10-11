@@ -4,10 +4,17 @@ import { PYTHON_LIMITS, type PythonResult } from './pythonProtocol';
 import {
   PYTHON_LESSONS,
   validPythonInputLines,
+  validPythonFiles,
+  isPythonModuleProfile,
 } from '../../../core/runtime/pythonLessonProfiles.mjs';
 import type { PythonLessonProfile } from '../../../core/runtime/pythonLessonProfiles.mjs';
+import {
+  pythonModuleAnalysis,
+  parsePythonModuleAnalysis,
+} from '../../../core/runtime/pythonModuleAnalysis.mjs';
 
 interface PyodideRuntime {
+  FS: { mkdir(path: string): void; writeFile(path: string, source: string): void };
   runPython(source: string, options?: { globals: unknown }): unknown;
   setStdout(options: { write(bytes: Uint8Array): number }): void;
   setStderr(options: { write(bytes: Uint8Array): number }): void;
@@ -61,6 +68,8 @@ export function initializePythonWorker(
     let totalBytes = 0;
     const outputState = { limited: false };
     let prepared = false;
+    let learnerExecuting = false;
+    let moduleProfile = false;
     let version: string | undefined;
     let facts: Partial<
       Pick<
@@ -73,6 +82,10 @@ export function initializePythonWorker(
         | 'listReferenceSummed'
         | 'dictValuesSummed'
         | 'functionReturnScoped'
+        | 'moduleImported'
+        | 'exceptionHandled'
+        | 'projectSummed'
+        | 'expectedOutput'
       >
     > = {};
     const result = (status: PythonResult['status'], error?: string): PythonResult => ({
@@ -90,11 +103,13 @@ export function initializePythonWorker(
       const data = input as Record<string, unknown>;
       const profile = (data.profile ?? 'values-vars-print-v1') as PythonLessonProfile;
       const inputLines: unknown = data.inputLines ?? [];
+      moduleProfile = isPythonModuleProfile(profile);
+      const files = data.files ?? { 'main.py': data.source };
       if (
         !(data.wasm instanceof ArrayBuffer) ||
         !(data.stdlib instanceof ArrayBuffer) ||
         typeof data.source !== 'string' ||
-        encode(data.source).byteLength > PYTHON_LIMITS.sourceBytes ||
+        !validPythonFiles(files, profile) ||
         !Object.values(PYTHON_LESSONS).some((lesson) => lesson.profile === profile) ||
         !validPythonInputLines(inputLines)
       )
@@ -176,12 +191,28 @@ export function initializePythonWorker(
       restrictPythonWorker(root);
       prepared = true;
       send({ type: 'python-ready' });
-      if (enforceLessonPolicy) {
-        const analysis = py.runPython(pythonLessonAnalysis(data.source, profile), {
-          globals: py.runPython('dict()'),
-        });
+      if (enforceLessonPolicy || moduleProfile) {
+        const analysis = py.runPython(
+          moduleProfile
+            ? pythonModuleAnalysis(files, profile, inputLines)
+            : pythonLessonAnalysis(data.source, profile),
+          {
+            globals: py.runPython('dict()'),
+          },
+        );
         if (typeof analysis !== 'string') throw new Error('Python analysis unavailable');
         const parsed = JSON.parse(analysis) as Record<string, unknown>;
+        if (moduleProfile) {
+          const packet = parsePythonModuleAnalysis(parsed);
+          if (packet.state === 'syntax-error') {
+            send({
+              ...result('code-error', packet.syntaxMessage ?? 'Python syntax error'),
+              file: packet.syntaxFile ?? 'main.py',
+              reason: 'syntax',
+            });
+            return;
+          }
+        }
         if (parsed.supported !== true) {
           send(result('unsupported', 'このLessonの採点範囲外です。採点していません。'));
           return;
@@ -200,9 +231,28 @@ export function initializePythonWorker(
           listReferenceSummed: parsed.listReferenceSummed === true,
           dictValuesSummed: parsed.dictValuesSummed === true,
           functionReturnScoped: parsed.functionReturnScoped === true,
+          moduleImported: parsed.moduleImported === true,
+          exceptionHandled: parsed.exceptionHandled === true,
+          projectSummed: parsed.projectSummed === true,
+          ...(moduleProfile
+            ? { expectedOutput: parsePythonModuleAnalysis(parsed).expectedOutput }
+            : {}),
         };
       }
-      py.runPython(data.source, { globals: py.runPython('dict()') });
+      if (moduleProfile) {
+        // 固定名だけを書き、次runの新Workerへfile/cacheを引き継がない。
+        py.FS.mkdir('/workspace');
+        py.FS.writeFile('/workspace/main.py', files['main.py']!);
+        py.FS.writeFile('/workspace/lesson_tools.py', files['lesson_tools.py']!);
+        learnerExecuting = true;
+        py.runPython(
+          'import sys; sys.path.insert(0, "/workspace"); source = open("/workspace/main.py", "rb").read(); exec(compile(source, "/workspace/main.py", "exec"), {"__name__": "__main__", "__file__": "/workspace/main.py"})',
+          { globals: py.runPython('dict()') },
+        );
+      } else {
+        learnerExecuting = true;
+        py.runPython(data.source, { globals: py.runPython('dict()') });
+      }
       // policy迂回診断はnativeの次taskも観測する。タイマー参照を学習者へ渡さない。
       if (!enforceLessonPolicy)
         await new Promise<void>((resolve) => {
@@ -227,7 +277,7 @@ export function initializePythonWorker(
             ? 'stopped'
             : errorType === 'EOFError'
               ? 'unsupported'
-              : prepared && typeof errorType === 'string'
+              : prepared && (!moduleProfile || learnerExecuting) && typeof errorType === 'string'
                 ? 'code-error'
                 : 'system-error',
           errorType === 'EOFError'
