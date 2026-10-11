@@ -5,7 +5,10 @@ export type PythonLessonProfile =
   | 'range-loop-v1'
   | 'list-reference-sum-v1'
   | 'dict-value-sum-v1'
-  | 'function-return-scope-v1';
+  | 'function-return-scope-v1'
+  | 'module-import-v1'
+  | 'exception-recovery-v1'
+  | 'console-project-v1';
 export type PythonSourceFact =
   | 'numeric-variable-printed'
   | 'same-variable-addition-printed'
@@ -14,7 +17,10 @@ export type PythonSourceFact =
   | 'range-iterated'
   | 'list-reference-summed'
   | 'dict-values-summed'
-  | 'function-return-scoped';
+  | 'function-return-scoped'
+  | 'module-imported'
+  | 'exception-handled'
+  | 'project-summed';
 export const PYTHON_LESSONS: Readonly<
   Record<
     string,
@@ -32,10 +38,20 @@ export const PYTHON_FACT_FIELDS: Readonly<
     | 'listReferenceSummed'
     | 'dictValuesSummed'
     | 'functionReturnScoped'
+    | 'moduleImported'
+    | 'exceptionHandled'
+    | 'projectSummed'
   >
 >;
 /** 行数・UTF-8 bytes・制御文字の共通入力境界。 */
 export function validPythonInputLines(value: unknown): value is readonly string[];
+export function isPythonModuleProfile(profile: string): boolean;
+export function pythonSourcePaths(profile: string): string[];
+export function validPythonFiles(files: unknown, profile: string): files is Record<string, string>;
+export function pythonSourceSnapshot(
+  files: Readonly<Record<string, string>>,
+  profile: string,
+): string;
 export function expectedPythonOutput(
   profile: PythonLessonProfile,
   lines: readonly string[],

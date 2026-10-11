@@ -156,13 +156,13 @@ const pythonContract = {
   postDeployRoot: 'docs/quality/post-deploy/python-basics',
   schemaVersion: 2,
   // 現在の実装数。公開承認は別のsource/hash/品質gateで照合する。
-  lessonCount: 7,
-  standardLessonCount: 7,
-  guidedLessonCount: 0,
+  lessonCount: 10,
+  standardLessonCount: 9,
+  guidedLessonCount: 1,
   capstoneLessonCount: 0,
-  chapterCount: 1,
+  chapterCount: 2,
   phaseCount: 1,
-  estimatedMinutes: 95,
+  estimatedMinutes: 155,
   learningEvidenceKind: 'agent-simulated-learning',
   records: {
     contentReview: 'docs/quality/content-review-python-basics.yaml',

@@ -2,6 +2,9 @@ import {
   PYTHON_LESSONS,
   validPythonInputLines,
   expectedPythonOutput,
+  isPythonModuleProfile,
+  validPythonFiles,
+  pythonSourceSnapshot,
 } from '../../../core/runtime/pythonLessonProfiles.mjs';
 import { z } from 'zod';
 import type { SnapshotPolicy } from '../../../core/runtime/contracts';
@@ -20,6 +23,9 @@ const factNames = [
   'list-reference-summed',
   'dict-values-summed',
   'function-return-scoped',
+  'module-imported',
+  'exception-handled',
+  'project-summed',
 ] as const;
 const ruleSchema = z
   .object({
@@ -67,7 +73,26 @@ export class PythonLessonValidator implements ValidatorAdapter {
       exerciseId: context.exerciseId,
       executionRevision: execution?.executionRevision ?? null,
       evaluatedAt: context.now,
-      diagnostics: context.diagnostics,
+      // 実行時の例外文にはinputの実値が入る。永続履歴は分類・位置と固定案内だけにする。
+      diagnostics:
+        execution?.status === 'code-error'
+          ? context.diagnostics.map(({ code, kind, severity, file, line, column }) => {
+              const message =
+                kind === 'syntax'
+                  ? 'Pythonの構文を確認してください。詳細は今回のConsole出力で確認できます。'
+                  : 'Pythonの名前や値の使い方を確認してください。詳細は今回のConsole出力で確認できます。';
+              return {
+                code,
+                kind,
+                severity,
+                ...(file === undefined ? {} : { file }),
+                ...(line === undefined ? {} : { line }),
+                ...(column === undefined ? {} : { column }),
+                message,
+                learnerMessage: message,
+              };
+            })
+          : context.diagnostics,
     };
     const system = (): ValidationResult => ({
       ...base,
@@ -80,8 +105,7 @@ export class PythonLessonValidator implements ValidatorAdapter {
       execution === undefined ||
       execution.backend !== (this.engine === 'cpython' ? 'local' : 'browser') ||
       execution.engine !== this.engine ||
-      Object.keys(context.files).length !== 1 ||
-      typeof context.files['main.py'] !== 'string'
+      !validPythonFiles(context.files, lesson.profile)
     )
       return system();
     if (execution.status === 'code-error')
@@ -109,7 +133,7 @@ export class PythonLessonValidator implements ValidatorAdapter {
     if (hashEvidence?.file !== 'main.py' || typeof hashEvidence.value !== 'string') return system();
     const digest = await crypto.subtle.digest(
       'SHA-256',
-      new TextEncoder().encode(context.files['main.py']),
+      new TextEncoder().encode(pythonSourceSnapshot(context.files, lesson.profile)),
     );
     const hash = [...new Uint8Array(digest)]
       .map((byte) => byte.toString(16).padStart(2, '0'))
@@ -141,8 +165,10 @@ export class PythonLessonValidator implements ValidatorAdapter {
       if (!validPythonInputLines(inputLines)) return system();
     }
     if (!validPythonInputLines(inputLines)) return system();
-    const expected = expectedPythonOutput(lesson.profile, inputLines);
-    if (expected === undefined) return system();
+    const expected = isPythonModuleProfile(lesson.profile)
+      ? evidence.get('python.expected-output')?.value
+      : expectedPythonOutput(lesson.profile, inputLines);
+    if (typeof expected !== 'string') return system();
     const outputCorrect = evidence.get('python.stdout')!.value === expected;
     const checks = rules.map((rule) => {
       const factCorrect = evidence.get(`python.${rule.assertion.fact}`)!.value === true;

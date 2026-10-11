@@ -1,12 +1,12 @@
 # Pythonの固定Lessonと事前入力
 
-対象は`python-basics-ch01-l01-e01`から`l07-e01`までの7教材（値・変数、事前入力、条件分岐、反復、List、Dict、Function）です。PyodideとCPythonは教材ID、下書き、Rule、採点履歴、JSON移送を共通にします。Pagesからlocalhostを探索しません。ソースの追加は新規Pages公開を意味しません。
+対象は`python-basics-ch01-l01-e01`から`l09-e01`までと`python-basics-ch02-l01-e01`の10教材（値・変数、事前入力、条件分岐、反復、List、Dict、Function、Module、例外、小制作）です。PyodideとCPythonは教材ID、下書き、Rule、採点履歴、JSON移送を共通にします。Pagesからlocalhostを探索しません。ソースの追加は新規Pages公開を意味しません。
 
 ## 固定環境と隔離
 
 実行imageは`python:3.14.2-slim-bookworm@sha256:e87711ef5c86aaeaa7031718a69db79d334d94c545c709583f651b8185870941`です。profileは`cpython-values-v1`です。任意image・command・依存指定を受け付けません。`-I -S -B -u`で起動し、事前入力を専用tmpfsの読み取りファイルへ書き、標準入力として実CPythonへ渡します。入力がない場合は空のファイルです。
 
-既存の信頼controllerがNodeと同じ1件の実行枠を管理します。管理socketはcontrollerだけにあり、学習者のコンテナにはありません。学習者はUID/GID 1000、read-only rootfs、network none、host mountなし、capability全削除、no-new-privileges、既定seccompで実行します。必要な`main.py`だけを専用tmpfsへ渡し、workspaceとtmpは各8 MiBです。CPU 1、memory 256 MiB、PID 64、各実行phase 5秒、stdout/stderr合計64 KiB、Source 100 KiBが上限です。
+既存の信頼controllerがNodeと同じ1件の実行枠を管理します。管理socketはcontrollerだけにあり、学習者のコンテナにはありません。学習者はUID/GID 1000、read-only rootfs、network none、host mountなし、capability全削除、no-new-privileges、既定seccompで実行します。既存7教材は`main.py`、新3教材は固定`main.py`と`lesson_tools.py`を専用tmpfsへ渡し、workspaceとtmpは各8 MiBです。CPU 1、memory 256 MiB、PID 64、各実行phase 5秒、stdout/stderr合計64 KiB、Source 100 KiBが上限です。
 
 AST解析用と学習実行用のコンテナは分離します。解析にはBrowser版と同一のASTプログラムを使い、学習Sourceを実行しません。固定版・正常終了・厳密なJSONを確認してから実CPythonで学習コードを実行します。学習者のstdoutを解析factsにしません。両phaseの完了と回収まで実行枠を保持します。
 
@@ -40,7 +40,7 @@ Browserは固定PyodideのsetStdinへ実際の行を渡し、CPythonは固定boo
 
 追加3教材のRuleは、inputの結果を表示するAST事実、整数入力と18以上を比較するif/else、range(3)の変数をprintするforを確認します。AST事実だけでなく、実行Sourceのhash・同じrun/session/revision・実入力・実stdoutを照合します。表示の直書き、>で18を外す条件、range(0/1/2)は合格になりません。第1Lessonの2Ruleは維持します。
 
-APIは従来の固定cpython-values-v1と7つの固定exercise IDを使用します。inputLinesはPython要求だけの任意fieldであり、image/command/file path/資源上限の変更は受け付けません。入力不足・上限拒否・停止・環境障害では採点履歴を増やしません。
+APIは従来の固定cpython-values-v1と10個の固定exercise IDを使用します。inputLinesはPython要求だけの任意fieldであり、image/command/file path/資源上限の変更は受け付けません。入力不足・上限拒否・停止・環境障害では採点履歴を増やしません。
 
 ## 今回完了に含めない条件
 
@@ -53,3 +53,17 @@ l05は同じListを指すaliasから先頭を更新し、元のListを反復し�
 各profileは実stdoutと同一SourceのAST事実を照合します。使われない正しいloop/defと定数表示を合格にしません。変数名、加算の左右、Collection集計の+=、Functionの直接return・一時変数return・戻り値保存などの範囲は各instructionsに示します。一般的なPythonの同値性を証明する採点器ではなく、説明済みの固定課題の接続を確認します。AST解析は学習コードを実行せず、Docker隔離の代用にしません。
 
 既存4profileの解析packetは維持し、新3profileはlistReferenceSummed・dictValuesSummed・functionReturnScopedのbooleanを厳密に照合します。Local capabilityのID数上限は固定registryに合わせます。新しいOS・通信・package・対話待機能力は追加しません。#140の対話入力と#196は未完です。
+
+## Module・例外・小制作の固定2ファイル
+
+l08は`lesson_tools.py`のaddをmainから呼び、2組の結果を表示します。l09はparse_number内のintが投げるValueErrorを呼出し元の限定exceptで処理し、その後に終了を表示します。第2章l01は入力2行をListとforで合計する制作です。正常入力、不正文字列、入力不足、未処理例外、構文エラー、構造未達を区別します。整数の受理と期待出力は固定Python自身のintで求め、JavaScript Numberへ丸めません。
+
+新profileだけexact集合`main.py`＋`lesson_tools.py`、UTF-8内容合計100 KiBを受け付けます。任意path、追加ファイル、stdlib、helper内import、相対/star/as import、任意packageを許可しません。信頼側が固定/workspaceへ配置し、固定launcherで検索先を追加します。両fileのAST解析とcompileによる構文確認は学習コードを実行せず、実importは別の学習実行phaseで行います。新profileの教材外ASTは両環境で実行前に拒否します。
+
+両fileのpathと内容を固定順JSONへまとめたSHA-256を、解析・実行・採点で照合します。helper変更時も古い結果を採点しません。Localは各runのcontainerを回収し、Browserは各runのWorker/frameを破棄するためmodule cacheを次のrunや別Workspaceへ持ち越しません。既存7profileの単一Source hashとLocalの教材外実行表示は維持します。
+
+両fileと選択file/cursor、成功Sourceは既存保存形式とJSON移送を使用します。「制作Sourceを持ち出す」はクリック時点の固定2.pyと起動READMEだけをZIPへ入れ、入力・進捗・実行tokenを含めません。展開先での実行は、その環境のPythonと権限に従います。例外・小制作の「入力を渡さない」は0行を渡し、空欄の空文字列1行と区別します。入力は保存しません。
+
+`python-module-profile.test.mjs`は固定file集合・合計容量・bundle hash・解析packetを確認します。`python-module.spec.ts`は通常画面で新3教材の47 Fixture、両fileの保存/Reset/再開、helper変更、古い結果拒否、Workspace非混入、ZIP/JSON、キーボードとa11yを検証します。Pagesの新規公開、#140/#196の実行途中の対話入力はこの変更に含めません。
+
+実行時の例外文にはinputの実値が含まれる場合があります。詳細は今回の非永続Consoleへ表示し、採点履歴には診断の分類・位置と固定案内だけを保存します。履歴やJSONから実入力を再現できる診断文をコピーしません。履歴のcode-error区分は維持します。

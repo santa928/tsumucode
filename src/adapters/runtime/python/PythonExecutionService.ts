@@ -9,6 +9,8 @@ import { createPythonFrameSource } from './pythonFrameSource';
 import { PYTHON_LIMITS, type PythonCore } from './pythonProtocol';
 import {
   validPythonInputLines,
+  validPythonFiles,
+  pythonSourceSnapshot,
   type PythonLessonProfile,
 } from '../../../core/runtime/pythonLessonProfiles.mjs';
 
@@ -25,6 +27,7 @@ const payloadSchema = z.object({
   version: z.string().max(256).optional(),
   error: z.string().max(4096).optional(),
   reason: z.enum(['syntax', 'runtime', 'output-limit', 'time-limit', 'manual-stop']).optional(),
+  file: z.enum(['main.py', 'lesson_tools.py']).optional(),
   numericVariablePrinted: z.boolean().optional(),
   sameVariableAdditionPrinted: z.boolean().optional(),
   inputEchoed: z.boolean().optional(),
@@ -33,6 +36,10 @@ const payloadSchema = z.object({
   listReferenceSummed: z.boolean().optional(),
   dictValuesSummed: z.boolean().optional(),
   functionReturnScoped: z.boolean().optional(),
+  moduleImported: z.boolean().optional(),
+  exceptionHandled: z.boolean().optional(),
+  projectSummed: z.boolean().optional(),
+  expectedOutput: z.string().max(4096).nullable().optional(),
 });
 
 export type PythonCoreLoader = (signal: AbortSignal) => Promise<PythonCore>;
@@ -100,18 +107,16 @@ export class PythonExecutionService implements ExecutionService {
       return failure('system-error', 'Python実行環境が一致しません。');
     if (
       request.requiredCapabilities.some((capability) => capability !== 'console') ||
-      Object.keys(request.files).length !== 1 ||
-      typeof request.files['main.py'] !== 'string'
+      !validPythonFiles(request.files, this.profile)
     )
       return failure(
         'unsupported',
-        'この環境は単一main.pyのConsole演習だけに対応します。採点していません。',
+        '教材の固定Sourceと合計100 KiBの範囲を確認してください。採点していません。',
       );
     const source = request.files['main.py'];
+    const files = { ...request.files };
     const encoder = new TextEncoder();
-    const sourceBytes = encoder.encode(source);
-    if (sourceBytes.byteLength > PYTHON_LIMITS.sourceBytes)
-      return failure('unsupported', 'コードが解析上限を超えたため採点していません。');
+    const sourceBytes = encoder.encode(pythonSourceSnapshot(files, this.profile));
     const abort = new AbortController();
     this.#abort = abort;
     const preparation = { expired: false };
@@ -171,7 +176,9 @@ export class PythonExecutionService implements ExecutionService {
           ) {
             ready = true;
             frame.contentWindow?.postMessage(
-              stopping ? 'python-stop' : { ...core, source, profile: this.profile, inputLines },
+              stopping
+                ? 'python-stop'
+                : { ...core, source, files, profile: this.profile, inputLines },
               '*',
             );
             return;
@@ -218,7 +225,7 @@ export class PythonExecutionService implements ExecutionService {
                       severity: 'error',
                       message,
                       learnerMessage,
-                      file: 'main.py',
+                      file: payload.file ?? 'main.py',
                     },
                   ],
             evidence:
@@ -229,6 +236,10 @@ export class PythonExecutionService implements ExecutionService {
                     { id: 'python.stdout', value: payload.stdout },
                     { id: 'python.version', value: payload.version ?? '' },
                     { id: 'python.input-lines', value: JSON.stringify(inputLines) },
+                    { id: 'python.expected-output', value: payload.expectedOutput ?? '' },
+                    { id: 'python.module-imported', value: payload.moduleImported === true },
+                    { id: 'python.exception-handled', value: payload.exceptionHandled === true },
+                    { id: 'python.project-summed', value: payload.projectSummed === true },
                     { id: 'python.input-echoed', value: payload.inputEchoed === true },
                     {
                       id: 'python.age-boundary-branched',

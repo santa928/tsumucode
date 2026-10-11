@@ -7,8 +7,10 @@ on:
       - content/next/**
       - content/python-basics/**
       - src/adapters/runtime/local/Local*ExecutionService*
+      - src/adapters/runtime/python/**
       - src/adapters/validation/python/**
       - src/core/runtime/pythonLesson*
+      - src/core/runtime/pythonModule*
       - src/core/runtime/contracts.ts
       - src/core/learning/sessionReducer.ts
       - tsconfig.node.json
@@ -17,6 +19,7 @@ on:
       - src/features/learning/session/LearningSessionController.ts
       - tests/local/python-learning.spec.ts
       - tests/e2e/python-input.spec.ts
+      - tests/e2e/python-module.spec.ts
       - playwright.python-local.config.ts
       - scripts/content/fixtures/next-author-pilot*
       - scripts/content/sourceSchema.ts
@@ -51,8 +54,10 @@ on:
       - content/next/**
       - content/python-basics/**
       - src/adapters/runtime/local/Local*ExecutionService*
+      - src/adapters/runtime/python/**
       - src/adapters/validation/python/**
       - src/core/runtime/pythonLesson*
+      - src/core/runtime/pythonModule*
       - src/core/runtime/contracts.ts
       - src/core/learning/sessionReducer.ts
       - tsconfig.node.json
@@ -61,6 +66,7 @@ on:
       - src/features/learning/session/LearningSessionController.ts
       - tests/local/python-learning.spec.ts
       - tests/e2e/python-input.spec.ts
+      - tests/e2e/python-module.spec.ts
       - playwright.python-local.config.ts
       - scripts/content/fixtures/next-author-pilot*
       - scripts/content/sourceSchema.ts

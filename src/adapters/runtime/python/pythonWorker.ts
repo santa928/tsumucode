@@ -4,10 +4,17 @@ import { PYTHON_LIMITS, type PythonResult } from './pythonProtocol';
 import {
   PYTHON_LESSONS,
   validPythonInputLines,
+  validPythonFiles,
+  isPythonModuleProfile,
 } from '../../../core/runtime/pythonLessonProfiles.mjs';
 import type { PythonLessonProfile } from '../../../core/runtime/pythonLessonProfiles.mjs';
+import {
+  pythonModuleAnalysis,
+  parsePythonModuleAnalysis,
+} from '../../../core/runtime/pythonModuleAnalysis.mjs';
 
 interface PyodideRuntime {
+  FS: { mkdir(path: string): void; writeFile(path: string, source: string): void };
   runPython(source: string, options?: { globals: unknown }): unknown;
   setStdout(options: { write(bytes: Uint8Array): number }): void;
   setStderr(options: { write(bytes: Uint8Array): number }): void;
@@ -61,7 +68,16 @@ export function initializePythonWorker(
     let totalBytes = 0;
     const outputState = { limited: false };
     let prepared = false;
+    let learnerExecuting = false;
+    let moduleProfile = false;
     let version: string | undefined;
+    let writeStderr: ((bytes: Uint8Array) => number) | undefined;
+    // Pyodideが投げる例外はstderrへ自動出力されないため、今回のConsoleへ末尾を表示する。
+    // 通常出力と同じbyte・行制限を通し、保存用の診断とは分けて扱う。
+    const displayError = (message: string): void => {
+      const lastLine = message.trimEnd().split('\n').at(-1);
+      if (lastLine !== undefined && lastLine !== '') writeStderr?.(encode(`${lastLine}\n`));
+    };
     let facts: Partial<
       Pick<
         PythonResult,
@@ -73,6 +89,10 @@ export function initializePythonWorker(
         | 'listReferenceSummed'
         | 'dictValuesSummed'
         | 'functionReturnScoped'
+        | 'moduleImported'
+        | 'exceptionHandled'
+        | 'projectSummed'
+        | 'expectedOutput'
       >
     > = {};
     const result = (status: PythonResult['status'], error?: string): PythonResult => ({
@@ -90,11 +110,13 @@ export function initializePythonWorker(
       const data = input as Record<string, unknown>;
       const profile = (data.profile ?? 'values-vars-print-v1') as PythonLessonProfile;
       const inputLines: unknown = data.inputLines ?? [];
+      moduleProfile = isPythonModuleProfile(profile);
+      const files = data.files ?? { 'main.py': data.source };
       if (
         !(data.wasm instanceof ArrayBuffer) ||
         !(data.stdlib instanceof ArrayBuffer) ||
         typeof data.source !== 'string' ||
-        encode(data.source).byteLength > PYTHON_LIMITS.sourceBytes ||
+        !validPythonFiles(files, profile) ||
         !Object.values(PYTHON_LESSONS).some((lesson) => lesson.profile === profile) ||
         !validPythonInputLines(inputLines)
       )
@@ -170,18 +192,36 @@ export function initializePythonWorker(
         };
       };
       py.setStdout({ write: makeWriter('stdout') });
-      py.setStderr({ write: makeWriter('stderr') });
+      writeStderr = makeWriter('stderr');
+      py.setStderr({ write: writeStderr });
       let inputIndex = 0;
       py.setStdin({ stdin: () => inputLines[inputIndex++] ?? null });
       restrictPythonWorker(root);
       prepared = true;
       send({ type: 'python-ready' });
-      if (enforceLessonPolicy) {
-        const analysis = py.runPython(pythonLessonAnalysis(data.source, profile), {
-          globals: py.runPython('dict()'),
-        });
+      if (enforceLessonPolicy || moduleProfile) {
+        const analysis = py.runPython(
+          moduleProfile
+            ? pythonModuleAnalysis(files, profile, inputLines)
+            : pythonLessonAnalysis(data.source, profile),
+          {
+            globals: py.runPython('dict()'),
+          },
+        );
         if (typeof analysis !== 'string') throw new Error('Python analysis unavailable');
         const parsed = JSON.parse(analysis) as Record<string, unknown>;
+        if (moduleProfile) {
+          const packet = parsePythonModuleAnalysis(parsed);
+          if (packet.state === 'syntax-error') {
+            displayError(packet.syntaxMessage ?? 'Python syntax error');
+            send({
+              ...result('code-error', packet.syntaxMessage ?? 'Python syntax error'),
+              file: packet.syntaxFile ?? 'main.py',
+              reason: 'syntax',
+            });
+            return;
+          }
+        }
         if (parsed.supported !== true) {
           send(result('unsupported', 'このLessonの採点範囲外です。採点していません。'));
           return;
@@ -200,9 +240,28 @@ export function initializePythonWorker(
           listReferenceSummed: parsed.listReferenceSummed === true,
           dictValuesSummed: parsed.dictValuesSummed === true,
           functionReturnScoped: parsed.functionReturnScoped === true,
+          moduleImported: parsed.moduleImported === true,
+          exceptionHandled: parsed.exceptionHandled === true,
+          projectSummed: parsed.projectSummed === true,
+          ...(moduleProfile
+            ? { expectedOutput: parsePythonModuleAnalysis(parsed).expectedOutput }
+            : {}),
         };
       }
-      py.runPython(data.source, { globals: py.runPython('dict()') });
+      if (moduleProfile) {
+        // 固定名だけを書き、次runの新Workerへfile/cacheを引き継がない。
+        py.FS.mkdir('/workspace');
+        py.FS.writeFile('/workspace/main.py', files['main.py']!);
+        py.FS.writeFile('/workspace/lesson_tools.py', files['lesson_tools.py']!);
+        learnerExecuting = true;
+        py.runPython(
+          'import sys; sys.path.insert(0, "/workspace"); source = open("/workspace/main.py", "rb").read(); exec(compile(source, "/workspace/main.py", "exec"), {"__name__": "__main__", "__file__": "/workspace/main.py"})',
+          { globals: py.runPython('dict()') },
+        );
+      } else {
+        learnerExecuting = true;
+        py.runPython(data.source, { globals: py.runPython('dict()') });
+      }
       // policy迂回診断はnativeの次taskも観測する。タイマー参照を学習者へ渡さない。
       if (!enforceLessonPolicy)
         await new Promise<void>((resolve) => {
@@ -221,18 +280,34 @@ export function initializePythonWorker(
       const message = error instanceof Error ? error.message : 'Python runtime failed';
       const errorType: unknown =
         typeof error === 'object' && error !== null ? Reflect.get(error, 'type') : undefined;
+      if (
+        !outputState.limited &&
+        prepared &&
+        (!moduleProfile || learnerExecuting) &&
+        typeof errorType === 'string' &&
+        errorType !== 'EOFError'
+      ) {
+        try {
+          displayError(message);
+        } catch {
+          // 詳細表示が出力上限に達した場合も、通常出力と同じ停止結果にする。
+          outputState.limited = true;
+        }
+      }
       send({
         ...result(
           outputState.limited
             ? 'stopped'
             : errorType === 'EOFError'
               ? 'unsupported'
-              : prepared && typeof errorType === 'string'
+              : prepared && (!moduleProfile || learnerExecuting) && typeof errorType === 'string'
                 ? 'code-error'
                 : 'system-error',
-          errorType === 'EOFError'
-            ? '実行前の入力行が不足しています。実行中の入力待ちには未対応です。入力を追加して再実行してください。採点していません。'
-            : message,
+          outputState.limited
+            ? 'Python output limit'
+            : errorType === 'EOFError'
+              ? '実行前の入力行が不足しています。実行中の入力待ちには未対応です。入力を追加して再実行してください。採点していません。'
+              : message,
         ),
         reason: outputState.limited
           ? 'output-limit'

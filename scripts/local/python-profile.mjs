@@ -1,5 +1,7 @@
 import { Buffer } from 'node:buffer';
 import { pythonLessonAnalysis } from './python-lesson-analysis.mjs';
+import { pythonModuleAnalysis, parsePythonModuleAnalysis } from './pythonModuleAnalysis.mjs';
+import { isPythonModuleProfile } from './pythonLessonProfiles.mjs';
 import { PYTHON_VERSION, PYTHON_IMAGE } from './protocol.mjs';
 export {
   PYTHON_EXERCISE_ID,
@@ -29,10 +31,30 @@ os.dup2(stdin_fd, 0)
 os.close(stdin_fd)
 with open("/workspace/main.py", "xb") as output:
     output.write(files["main.py"].encode("utf-8"))
+if payload["module"]:
+    with open("/workspace/lesson_tools.py", "xb") as output:
+        output.write(files["lesson_tools.py"].encode("utf-8"))
+    launcher = 'import sys; sys.path.insert(0, "/workspace"); source = open("/workspace/main.py", "rb").read(); exec(compile(source, "/workspace/main.py", "exec"), {"__name__": "__main__", "__file__": "/workspace/main.py"})'
+    os.execv(sys.executable, [sys.executable, "-I", "-S", "-B", "-u", "-c", launcher])
 os.execv(sys.executable, [sys.executable, "-I", "-S", "-B", "-u", "/workspace/main.py"])
 `;
 /** 教材profileは固定IDから決定し、解析結果は学習者stdoutと分離する。 */
 function analysisProgram(profile) {
+  if (isPythonModuleProfile(profile)) {
+    const program = pythonModuleAnalysis({}, profile)
+      .replace('_json.loads("{}")', '_payload["files"]')
+      .replace('_json.loads("[]")', '_payload["inputLines"]')
+      .replace('_json.dumps(_analyze())', '_module_result = _analyze()');
+    return `
+import base64
+import json
+import sys
+_payload = json.loads(base64.b64decode("".join(sys.argv[1:])).decode("utf-8"))
+${program}
+_module_result["version"] = sys.version.split()[0]
+print(json.dumps(_module_result))
+`;
+  }
   const program = pythonLessonAnalysis('TSUMUCODE_SOURCE', profile)
     .replace('"TSUMUCODE_SOURCE"', '_source')
     .replace('_lesson_json.dumps({', '_lesson_result = _lesson_json.dumps({');
@@ -74,7 +96,9 @@ export function pythonCommand(
   profile = 'values-vars-print-v1',
   inputLines = [],
 ) {
-  const input = analyze ? files['main.py'] : JSON.stringify({ files, inputLines });
+  const module = isPythonModuleProfile(profile);
+  const input =
+    analyze && !module ? files['main.py'] : JSON.stringify({ files, inputLines, module });
   return {
     Image: PYTHON_IMAGE,
     Entrypoint: ['python'],
@@ -96,6 +120,11 @@ export function pythonCommand(
 export function parsePythonAnalysis(stdout, stderr, exitCode, profile = 'values-vars-print-v1') {
   if (exitCode !== 0 || stderr !== '') throw new Error('CPython AST解析が失敗しました');
   const value = JSON.parse(stdout);
+  if (isPythonModuleProfile(profile)) {
+    if (value?.version !== PYTHON_VERSION) throw new Error('CPythonの版が一致しません');
+    const { version, ...packet } = value;
+    return { ...parsePythonModuleAnalysis(packet), version };
+  }
   const keys = ['version', 'supported', 'numericVariablePrinted', 'sameVariableAdditionPrinted'];
   if (dataProfiles.has(profile)) keys.push(...dataFields);
   else if (profile !== 'values-vars-print-v1')

@@ -1,0 +1,8 @@
+id: python-basics-ch02
+sequence: 1
+title: Moduleと例外を使った小さい制作
+goal: 2ファイルで合計Consoleを作り、保存・再開・持ち出しまで確かめる。
+estimatedMinutes: 25
+kind: guided-project
+lessonSources:
+  - lessons/python-basics-ch02-l01/lesson.yaml

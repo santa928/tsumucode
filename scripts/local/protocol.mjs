@@ -1,4 +1,8 @@
-import { PYTHON_LESSONS, validPythonInputLines } from './pythonLessonProfiles.mjs';
+import {
+  PYTHON_LESSONS,
+  validPythonInputLines,
+  pythonSourcePaths,
+} from './pythonLessonProfiles.mjs';
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { Buffer } from 'node:buffer';
 import { URL } from 'node:url';
@@ -88,7 +92,12 @@ export function validateRun(value, revision, pythonRevision) {
   }
   if (!Number.isSafeInteger(value.executionRevision) || value.executionRevision < 0)
     throw new RequestError(400, '編集版が不正です。');
-  exactObject(value.files, python ? ['main.py'] : ['script.js', 'index.html', 'styles.css']);
+  exactObject(
+    value.files,
+    python
+      ? pythonSourcePaths(PYTHON_LESSONS[value.exerciseId].profile)
+      : ['script.js', 'index.html', 'styles.css'],
+  );
   let size = 0;
   for (const content of Object.values(value.files)) {
     if (typeof content !== 'string')
