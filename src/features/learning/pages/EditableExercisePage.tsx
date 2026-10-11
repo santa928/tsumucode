@@ -220,6 +220,21 @@ export function EditableExercisePage({ lease, ...data }: EditableExercisePagePro
   );
 }
 
+/** 入力を保存領域から切り離し、実行器へ次回分の行だけを渡す画面専用buffer。 */
+class PythonInputBuffer {
+  #lines: readonly string[];
+
+  constructor(lines: readonly string[]) {
+    this.#lines = lines;
+  }
+
+  readonly read = (): readonly string[] => this.#lines;
+
+  write(value: string): void {
+    this.#lines = value.replaceAll('\r\n', '\n').split('\n');
+  }
+}
+
 /** 単一attemptのController lifecycleと全学習操作を画面へ接続する。 */
 function EditableSession({
   course,
@@ -232,6 +247,14 @@ function EditableSession({
 }: EditableSessionProps) {
   const navigate = useNavigate();
   const [operation, setOperation] = useState<OperationState>('idle');
+  const [pythonInput, setPythonInput] = useState('');
+  const acceptsPythonInput =
+    exercise.runtime?.kind === 'python' &&
+    ['input-echo-v1', 'age-branch-v1'].includes(exercise.runtime.profile);
+  const pythonInputBuffer = useMemo(
+    () => new PythonInputBuffer(acceptsPythonInput ? [''] : []),
+    [acceptsPythonInput],
+  );
   const [operationError, setOperationError] = useState<string>();
   const [executionFailure, setExecutionFailure] = useState<ExecutionNotGradableError>();
   const [previewNeedsPrepare, setPreviewNeedsPrepare] = useState(false);
@@ -346,8 +369,8 @@ function EditableSession({
           learningRuntimeServices.notices.dismiss('error:exercise-save');
         },
         runner:
-          localRuntime?.createExecution(exercise, course.revision) ??
-          browserConsole?.createExecution() ??
+          localRuntime?.createExecution(exercise, course.revision, pythonInputBuffer.read) ??
+          browserConsole?.createExecution(pythonInputBuffer.read) ??
           new BrowserExecutionService(
             learningRuntimeServices.runnerRegistry.create(course.runnerId),
           ),
@@ -364,6 +387,7 @@ function EditableSession({
       resolvedWorkspaceAssets,
       validationTargets,
       validator,
+      pythonInputBuffer,
       workspaceLessons,
     ],
   );
@@ -1131,8 +1155,8 @@ function EditableSession({
                   <p>
                     {exercise.runtime?.kind === 'python'
                       ? controller.environment.engine === 'cpython'
-                        ? 'main.pyを編集し、「プレビューを更新」で隔離したCPythonを実行します。「判定する」は同じ教材の値・変数・加算・printを確認します。教材外のコードが正常終了した場合は出力を表示し、採点しません。構文・実行エラーはコード診断になります。入力待ち・package追加・外部通信は扱いません。Docker障害後も編集内容を保持して再実行できます。'
-                        : 'main.pyを編集し、「プレビューを更新」で実行結果をConsole（出力欄）に表示します。「判定する」は実行して要件を確かめます。この教材では数値・変数・加算・printを使い、入力待ちやpackageの追加は扱いません。'
+                        ? 'main.pyを編集し、「プレビューを更新」で隔離したCPythonを実行します。「判定する」は教材のコード条件と実出力を確認します。実行前の入力行を使い、実行中に入力を追加する操作には未対応です。入力行不足は採点せず、構文・実行エラーはコード診断として表示します。package追加・外部通信は扱いません。'
+                        : 'main.pyを編集し、「プレビューを更新」でPyodideの実出力を表示します。「判定する」は教材のコード条件を確認します。実行前の入力行を使い、実行中に入力を追加する操作には未対応です。入力行不足は採点しません。package追加・外部通信は扱いません。'
                       : controller.environment.backend === 'local'
                         ? '編集後に「プレビューを更新」でNode.jsを実行します。Docker切断時は学習モードを再起動し、もう一度実行してください。'
                         : 'script.jsを編集するとConsoleを更新します。配列・オブジェクトの添字と有限のPromise処理に対応します。HTML/CSSの描画・DOM・タイマー・外部通信は使えません。'}
@@ -1149,6 +1173,32 @@ function EditableSession({
                         Python実行環境のライセンスと対象ソース（別タブ）
                       </a>
                     </p>
+                  ) : null}
+                  {acceptsPythonInput ? (
+                    <div>
+                      <label htmlFor="python-stdin">実行前の入力（1行につきinput 1回）</label>
+                      <textarea
+                        id="python-stdin"
+                        rows={3}
+                        maxLength={1024}
+                        value={pythonInput}
+                        disabled={busy}
+                        aria-describedby="python-stdin-help"
+                        onChange={(event) => {
+                          const value = event.target.value;
+                          pythonInputBuffer.write(value);
+                          setPythonInput(value);
+                        }}
+                        className="w-full rounded border p-2"
+                      />
+                      <p id="python-stdin-help">
+                        空欄は空文字列1行です。最大16行・UTF-8で1
+                        KiB。実行ボタンを押した時点の入力で実行します。入力は保存・共有されません。実行中の入力待ちは未対応です。
+                      </p>
+                      <p role="status">
+                        {busy ? '入力を確定して実行しています' : '実行前の入力を受け付けています'}
+                      </p>
+                    </div>
                   ) : null}
                   <RuntimeConsole
                     records={consoleRecords.slice(0, 200)}

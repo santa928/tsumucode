@@ -15,3 +15,23 @@ entries:
     definition: 括弧に渡した値を出力する関数。
     firstSlideId: python-basics-ch01-l01-s01
     relatedIds: []
+  - id: python-input
+    term: input
+    definition: 標準入力から1行を読み、末尾の改行を除いた文字列を返す関数。
+    firstSlideId: python-basics-ch01-l02-s01
+    relatedIds: []
+  - id: python-int
+    term: int
+    definition: 整数として読める文字列を整数へ変換する関数。
+    firstSlideId: python-basics-ch01-l03-s01
+    relatedIds: []
+  - id: python-branch
+    term: ifとelse
+    definition: 条件が真か偽かで、実行する処理を分ける文。
+    firstSlideId: python-basics-ch01-l03-s01
+    relatedIds: []
+  - id: python-range
+    term: range
+    definition: 0から指定した終了値の直前までの整数を順に渡す仕組み。
+    firstSlideId: python-basics-ch01-l04-s01
+    relatedIds: []

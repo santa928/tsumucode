@@ -2,8 +2,8 @@ import { defineConfig, devices } from '@playwright/test';
 
 /** 固定CPythonの通常画面を専用Docker環境で検証する。 */
 export default defineConfig({
-  testDir: './tests/local',
-  testMatch: 'python-learning.spec.ts',
+  testDir: './tests',
+  testMatch: ['**/local/python-learning.spec.ts', '**/e2e/python-input.spec.ts'],
   workers: 1,
   retries: 0,
   timeout: 60_000,

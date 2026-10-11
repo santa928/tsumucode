@@ -6,7 +6,7 @@ import { ContentProgressMigrationService } from '../../src/core/persistence/cont
 import type { ProgressRepository } from '../../src/core/persistence/contracts';
 import { sha256Text } from './releaseHashes';
 
-/** 初公開の1Workspace・Source・合格履歴・成功版を実migratorで保持する。合成値は学習受入に使わない。 */
+/** 初公開の1Workspaceを教材追加後も実migratorで保持する。合成値は学習受入に使わない。 */
 export async function verifyPythonSyntheticProgressBundle(course: CourseManifest, input: unknown) {
   if (
     course.id !== 'python-basics' ||
@@ -32,19 +32,20 @@ export async function verifyPythonSyntheticProgressBundle(course: CourseManifest
   const lessons = course.phases.flatMap(({ chapters }) =>
     chapters.flatMap(({ lessons }) => lessons),
   );
+  const originalLessons = lessons.filter(({ id }) => id === 'python-basics-ch01-l01');
   const progress = seed.courses['python-basics'];
   if (
-    lessons.length !== 1 ||
+    originalLessons.length !== 1 ||
     !progress ||
     progress.contentRevision !== '2026-10-10.1' ||
     canonicalJson(Object.keys(progress.lessons).sort()) !==
-      canonicalJson(lessons.map(({ id }) => id).sort()) ||
+      canonicalJson(originalLessons.map(({ id }) => id).sort()) ||
     ['html-css', 'javascript', 'typescript', 'react', 'next'].some((id) => !seed.courses[id]) ||
     seed.quarantined.length !== 0
   )
-    throw new Error('Python合成Bundleの1教材/同revision/既存5Courseが不足しています');
+    throw new Error('Python合成Bundleの旧1教材/初公開revision/既存5Courseが不足しています');
   const drafts = Object.values(seed.drafts).filter(({ courseId }) => courseId === 'python-basics');
-  const exercises = lessons.flatMap(({ exercises }) => exercises);
+  const exercises = originalLessons.flatMap(({ exercises }) => exercises);
   if (
     drafts.length !== 1 ||
     exercises.length !== 1 ||
@@ -89,7 +90,13 @@ export async function verifyPythonSyntheticProgressBundle(course: CourseManifest
   const expected = { ...structuredClone(seed) };
   expected.courses = {
     ...expected.courses,
-    'python-basics': { ...progress, contentRevision: course.revision },
+    'python-basics': {
+      ...progress,
+      contentRevision: course.revision,
+      currentComplete:
+        progress.currentComplete &&
+        lessons.every(({ id }) => progress.lessons[id]?.currentComplete === true),
+    },
   };
   expected.drafts = Object.fromEntries(
     Object.entries(expected.drafts).map(([key, draft]) => [
@@ -120,6 +127,7 @@ export async function verifyPythonSyntheticProgressBundle(course: CourseManifest
       'Python移行がSource/進捗/工程履歴/成功版/既存Courseを保持できないか、冪等ではありません',
     );
   return {
+    courseCurrentComplete: result.snapshot.courses['python-basics']?.currentComplete,
     migratedCourses: Object.keys(result.snapshot.courses).length,
     migratedDrafts: Object.keys(result.snapshot.drafts).length,
     resetNotices: result.notices.length,

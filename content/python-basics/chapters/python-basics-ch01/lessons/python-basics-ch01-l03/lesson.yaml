@@ -1,0 +1,22 @@
+id: python-basics-ch01-l03
+kind: standard
+title: 境界を含む条件で表示を分ける
+goal: 18以上でadult、それより小さければchildを表示する理由を説明できる。
+estimatedMinutes: 10
+prerequisiteLessonIds:
+  - python-basics-ch01-l02
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+exerciseSources:
+  - exercises/python-basics-ch01-l03-e01/exercise.yaml
+reflection: 17・18・19を入力し、境界の18もadultになることを確認します。結果が変わる理由をコードの行と結び付けて説明してください。
+glossaryRefs:
+  - python-input
+  - python-int
+  - python-branch
+completion:
+  kind: standard
+  finalSlideId: python-basics-ch01-l03-s02
+  requiredExerciseIds:
+    - python-basics-ch01-l03-e01

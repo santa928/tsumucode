@@ -11,7 +11,7 @@ const EXERCISE_IDS = new Set([
   'javascript-ch03-l05-e03',
 ]);
 interface ConsoleRuntimeFactories {
-  createExecution(): ExecutionService;
+  createExecution(readInputLines?: () => readonly string[]): ExecutionService;
   createValidator(): ValidatorAdapter;
 }
 type ConsoleCandidate = Pick<

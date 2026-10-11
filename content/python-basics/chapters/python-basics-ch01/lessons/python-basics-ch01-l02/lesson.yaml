@@ -1,0 +1,20 @@
+id: python-basics-ch01-l02
+kind: standard
+title: 入力した文字列を表示する
+goal: 名前をそのまま表示する理由を説明できる。
+estimatedMinutes: 10
+prerequisiteLessonIds:
+  - python-basics-ch01-l01
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+exerciseSources:
+  - exercises/python-basics-ch01-l02-e01/exercise.yaml
+reflection: 入力欄へSoraと書き、空欄の場合も比べます。結果が変わる理由をコードの行と結び付けて説明してください。
+glossaryRefs:
+  - python-input
+completion:
+  kind: standard
+  finalSlideId: python-basics-ch01-l02-s02
+  requiredExerciseIds:
+    - python-basics-ch01-l02-e01

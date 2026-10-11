@@ -155,13 +155,14 @@ const pythonContract = {
   syntheticProgressBundlePath: 'tests/fixtures/progress/python-previous-release-bundle.json',
   postDeployRoot: 'docs/quality/post-deploy/python-basics',
   schemaVersion: 2,
-  lessonCount: 1,
-  standardLessonCount: 1,
+  // 現在の実装数。公開承認は別のsource/hash/品質gateで照合する。
+  lessonCount: 4,
+  standardLessonCount: 4,
   guidedLessonCount: 0,
   capstoneLessonCount: 0,
   chapterCount: 1,
   phaseCount: 1,
-  estimatedMinutes: 20,
+  estimatedMinutes: 50,
   learningEvidenceKind: 'agent-simulated-learning',
   records: {
     contentReview: 'docs/quality/content-review-python-basics.yaml',

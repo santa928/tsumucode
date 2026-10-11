@@ -1,0 +1,20 @@
+id: python-basics-ch01-l04
+kind: standard
+title: rangeの終了値と反復回数を確かめる
+goal: 0・1・2をforで順に表示する理由を説明できる。
+estimatedMinutes: 10
+prerequisiteLessonIds:
+  - python-basics-ch01-l03
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+exerciseSources:
+  - exercises/python-basics-ch01-l04-e01/exercise.yaml
+reflection: range(0)・range(1)・range(3)で0回・1回・3回を比べます。結果が変わる理由をコードの行と結び付けて説明してください。
+glossaryRefs:
+  - python-range
+completion:
+  kind: standard
+  finalSlideId: python-basics-ch01-l04-s02
+  requiredExerciseIds:
+    - python-basics-ch01-l04-e01

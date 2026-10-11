@@ -1,3 +1,4 @@
+import { validPythonInputLines } from '../../../core/runtime/pythonLessonProfiles.mjs';
 import { z } from 'zod';
 import type {
   ExecutionRequest,
@@ -64,6 +65,7 @@ export class LocalConsoleExecutionService implements ExecutionService {
     private readonly exerciseId: string,
     private readonly contentRevision: string,
     private readonly engine: 'node' | 'cpython',
+    private readonly readInputLines: () => readonly string[] = () => [],
   ) {
     this.languageId = engine === 'cpython' ? 'python' : 'javascript';
     this.environment = { backend: 'local', engine, mode: 'console', capabilities: ['console'] };
@@ -120,6 +122,9 @@ export class LocalConsoleExecutionService implements ExecutionService {
     const stale = (): boolean => this.#disposed || generation !== this.#generation;
     const stopped = (): ExecutionResult =>
       result('stopped', '実行を停止しました。採点していません。');
+    const inputLines = this.engine === 'cpython' ? [...this.readInputLines()] : undefined;
+    if (inputLines !== undefined && !validPythonInputLines(inputLines))
+      return result('unsupported', '入力は16行・1 KiB以内にしてください。採点していません。');
     let active: ActiveRun | undefined;
     try {
       // 切断中の停止失敗を永久エラーにしない。新要求の排他・孤児回収はcontrollerが強制する。
@@ -140,7 +145,7 @@ export class LocalConsoleExecutionService implements ExecutionService {
       const capability = z
         .object({
           apiVersion: z.literal(1),
-          exerciseIds: z.array(z.string().max(160)).max(3).optional(),
+          exerciseIds: z.array(z.string().max(160)).max(4).optional(),
           contentRevision: z.string(),
           runtimeProfileId: z.literal(
             this.engine === 'cpython' ? 'cpython-values-v1' : 'node-closure-v1',
@@ -165,6 +170,7 @@ export class LocalConsoleExecutionService implements ExecutionService {
         exerciseSessionId: request.exerciseSessionId,
         executionRevision: request.executionRevision,
         files: request.files,
+        ...(inputLines === undefined ? {} : { inputLines }),
       }).then(() => undefined);
       active = { request, created };
       this.#active = active;

@@ -61,7 +61,7 @@ export function docker(method, path, body, timeout = 20000, raw = false) {
 }
 
 /** API利用者の指定を混ぜず、固定profileから実コンテナ設定を組み立てる。 */
-export function containerConfig(files, owner, python = false, analyze = false) {
+export function containerConfig(files, owner, python = false, analyze = false, pythonOptions = {}) {
   const config = {
     Image: NODE_IMAGE,
     User: '1000:1000',
@@ -98,7 +98,12 @@ export function containerConfig(files, owner, python = false, analyze = false) {
       },
     },
   };
-  return python ? { ...config, ...pythonCommand(files, analyze) } : config;
+  return python
+    ? {
+        ...config,
+        ...pythonCommand(files, analyze, pythonOptions.profile, pythonOptions.inputLines),
+      }
+    : config;
 }
 
 /** Docker multiplex framingを解き、stdout/stderrの総量を外側で制限する。 */

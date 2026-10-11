@@ -1,0 +1,146 @@
+id: python-basics-ch01-l02-e01
+kind: standard
+workspaceId: python-basics-ch01-l02-e01
+countsTowardStandardExerciseTotal: true
+title: 入力した文字列を表示する
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: python-input
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: python-basics-ch01-l02-e01-step01
+    file: main.py
+    target: 引用符を外して入力の値を表示する
+    starterAnchor: 'print("name")'
+    change: 入力は文字列です。printには引用符を付けず変数名を渡します。
+    observe: 入力欄へSoraと書き、空欄の場合も比べます。
+    requiresConceptIds:
+      - python-input
+    validationRuleIds:
+      - python-basics-ch01-l02-e01-r01
+runtime:
+  kind: python
+  entryFile: main.py
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  profile: input-echo-v1
+files:
+  - path: main.py
+    language: python
+    source: starter/main.py
+    editable: true
+solutionFiles:
+  - path: main.py
+    language: python
+    source: solution/main.py
+    editable: false
+validationRules:
+  - id: python-basics-ch01-l02-e01-r01
+    label: 名前をそのまま表示する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: input-echoed
+    feedback:
+      target: main.pyとConsole
+      expected: 名前をそのまま表示する
+      nextAction: 入力は文字列です。printには引用符を付けず変数名を渡します。
+    hintId: python-basics-ch01-l02-e01-h01
+    relatedSlideId: python-basics-ch01-l02-s02
+hints:
+  - id: python-basics-ch01-l02-e01-h01
+    level: 1
+    title: 最初の手掛かり
+    text: '引用符の有無を比べる'
+    relatedSlideId: python-basics-ch01-l02-s02
+  - id: python-basics-ch01-l02-e01-h02
+    level: 2
+    title: コードを組み立てる
+    text: 'inputの戻り値をnameへ代入し、print(name)でその値を表示します。'
+    relatedSlideId: python-basics-ch01-l02-s02
+  - id: python-basics-ch01-l02-e01-h03
+    level: 3
+    title: 解答と理由
+    text: 'name = input()、print(name)の2行です。空欄を実行すると空の1行になります。'
+    relatedSlideId: python-basics-ch01-l02-s02
+relatedSlideIds:
+  - python-basics-ch01-l02-s01
+  - python-basics-ch01-l02-s02
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: solution
+    expectedStatus: pass
+    inputLines: ['Sora']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/solution.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: empty
+    expectedStatus: pass
+    inputLines: ['']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/empty.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternate-name
+    expectedStatus: pass
+    inputLines: ['つむ']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/alternate-name.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: starter
+    expectedStatus: incomplete
+    inputLines: ['Sora']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/starter.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch01-l02-e01-r01']
+  - id: hardcoded
+    expectedStatus: incomplete
+    inputLines: ['Sora']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/hardcoded.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch01-l02-e01-r01']
+  - id: missing-input
+    expectedStatus: system-error
+    inputLines: [Sora]
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/missing-input.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: syntax-error
+    expectedStatus: code-error
+    inputLines: ['Sora']
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/syntax-error.py
+        editable: false
+    expectedFeedbackRuleIds: []
