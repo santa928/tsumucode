@@ -7,3 +7,7 @@
 
 - input/int: https://docs.python.org/3.14/library/functions.html#input
 - if/for/range: https://docs.python.org/3.14/tutorial/controlflow.html
+
+- Listと参照共有: https://docs.python.org/3.14/tutorial/introduction.html#lists
+- Dict: https://docs.python.org/3.14/tutorial/datastructures.html#dictionaries
+- Function/returnとlocalな名前: https://docs.python.org/3.14/tutorial/controlflow.html#defining-functions

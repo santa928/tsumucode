@@ -1,6 +1,6 @@
 # Pythonの固定Lessonと事前入力
 
-対象は`python-basics-ch01-l01-e01`から`l04-e01`までの4教材（値・変数、事前入力、条件分岐、反復）です。PyodideとCPythonは教材ID、下書き、Rule、採点履歴、JSON移送を共通にします。Pagesからlocalhostを探索しません。ソースの追加は新規Pages公開を意味しません。
+対象は`python-basics-ch01-l01-e01`から`l07-e01`までの7教材（値・変数、事前入力、条件分岐、反復、List、Dict、Function）です。PyodideとCPythonは教材ID、下書き、Rule、採点履歴、JSON移送を共通にします。Pagesからlocalhostを探索しません。ソースの追加は新規Pages公開を意味しません。
 
 ## 固定環境と隔離
 
@@ -40,8 +40,16 @@ Browserは固定PyodideのsetStdinへ実際の行を渡し、CPythonは固定boo
 
 追加3教材のRuleは、inputの結果を表示するAST事実、整数入力と18以上を比較するif/else、range(3)の変数をprintするforを確認します。AST事実だけでなく、実行Sourceのhash・同じrun/session/revision・実入力・実stdoutを照合します。表示の直書き、>で18を外す条件、range(0/1/2)は合格になりません。第1Lessonの2Ruleは維持します。
 
-APIは従来の固定cpython-values-v1と4つの固定exercise IDを使用します。inputLinesはPython要求だけの任意fieldであり、image/command/file path/資源上限の変更は受け付けません。入力不足・上限拒否・停止・環境障害では採点履歴を増やしません。
+APIは従来の固定cpython-values-v1と7つの固定exercise IDを使用します。inputLinesはPython要求だけの任意fieldであり、image/command/file path/資源上限の変更は受け付けません。入力不足・上限拒否・停止・環境障害では採点履歴を増やしません。
 
 ## 今回完了に含めない条件
 
 #140の元の受け入れ条件にある「実行途中の入力待機」「入力待機中の中止・復帰」は、事前入力方式の検証で満たしたとは扱いません。入力受付・実行・中止・終了は通常画面で区別しますが、実行中の対話入力は残タスクとして維持します。Shell/PTY、SharedArrayBuffer、COOP/COEP、追加権限や公開先を導入していません。
+
+## Collection・Functionの固定教材
+
+l05は同じListを指すaliasから先頭を更新し、元のListを反復して合計します。l06はDictのkeyでvalueを更新し、forで受けたkeyからvalueを読んで合計します。空の観察は要素/keyの更新と読出しを除き、集計部分だけで0を確認します。l07は2引数を足してreturnし、異なる2組で呼び出します。Function内の同名引数と外側の100を比べます。入力は使いません。
+
+各profileは実stdoutと同一SourceのAST事実を照合します。使われない正しいloop/defと定数表示を合格にしません。変数名、加算の左右、Collection集計の+=、Functionの直接return・一時変数return・戻り値保存などの範囲は各instructionsに示します。一般的なPythonの同値性を証明する採点器ではなく、説明済みの固定課題の接続を確認します。AST解析は学習コードを実行せず、Docker隔離の代用にしません。
+
+既存4profileの解析packetは維持し、新3profileはlistReferenceSummed・dictValuesSummed・functionReturnScopedのbooleanを厳密に照合します。Local capabilityのID数上限は固定registryに合わせます。新しいOS・通信・package・対話待機能力は追加しません。#140の対話入力と#196は未完です。

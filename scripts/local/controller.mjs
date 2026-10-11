@@ -317,7 +317,14 @@ async function execute(run) {
         { id: 'python.numeric-variable-printed', value: facts.numericVariablePrinted },
         { id: 'python.same-variable-addition-printed', value: facts.sameVariableAdditionPrinted },
         { id: 'python.input-lines', value: JSON.stringify(run.input.inputLines ?? []) },
-        ...['input-echoed', 'age-boundary-branched', 'range-iterated'].map((fact) => ({
+        ...[
+          'input-echoed',
+          'age-boundary-branched',
+          'range-iterated',
+          'list-reference-summed',
+          'dict-values-summed',
+          'function-return-scoped',
+        ].map((fact) => ({
           id: `python.${fact}`,
           value: facts[PYTHON_FACT_FIELDS[fact]] === true,
         })),

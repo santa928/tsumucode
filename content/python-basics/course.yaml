@@ -1,10 +1,10 @@
 schemaVersion: 1
 id: python-basics
 title: Python 値と変数の第一歩
-description: 値と変数から事前入力・条件分岐・反復へ進み、実Pythonの出力を確かめる50分の入門教材。
+description: 値と変数から事前入力・条件分岐・反復・Collection・Functionへ進み、実Pythonの出力を確かめる95分の入門教材。
 audience: プログラミングが初めての方
-estimatedMinutes: 50
-revision: 2026-10-11.1
+estimatedMinutes: 95
+revision: 2026-10-11.2
 runnerId: python
 validatorId: python
 glossarySource: glossary.yaml
@@ -23,20 +23,23 @@ prerequisites: []
 publicationStatus: published
 expectedTotals:
   chapters: 1
-  lessons: 4
-  conceptSlides: 9
-  standardExercises: 4
+  lessons: 7
+  conceptSlides: 15
+  standardExercises: 7
   guidedProjectLessons: 0
   capstoneLessons: 0
-  estimatedMinutes: 50
+  estimatedMinutes: 95
 provenanceManifestPath: provenance.yaml
 progressMigrations:
   - fromRevision: 2026-10-10.1
     toRevision: 2026-10-11.1
     steps: []
+  - fromRevision: 2026-10-11.1
+    toRevision: 2026-10-11.2
+    steps: []
 phases:
   - id: python-basics-p01
-    title: 入力から基本制御へ進む
-    description: 値と変数から事前入力へ進み、条件と反復回数で変わる実出力を説明する。
+    title: 入力・基本制御からCollection・Functionへ進む
+    description: 値と変数から事前入力・制御へ進み、Collectionの読み書きとFunctionの戻り値を実出力で説明する。
     chapterSources:
       - chapters/python-basics-ch01/chapter.yaml

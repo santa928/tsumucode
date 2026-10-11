@@ -17,6 +17,9 @@ const factNames = [
   'input-echoed',
   'age-boundary-branched',
   'range-iterated',
+  'list-reference-summed',
+  'dict-values-summed',
+  'function-return-scoped',
 ] as const;
 const ruleSchema = z
   .object({

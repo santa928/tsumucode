@@ -70,6 +70,9 @@ export function initializePythonWorker(
         | 'inputEchoed'
         | 'ageBoundaryBranched'
         | 'rangeIterated'
+        | 'listReferenceSummed'
+        | 'dictValuesSummed'
+        | 'functionReturnScoped'
       >
     > = {};
     const result = (status: PythonResult['status'], error?: string): PythonResult => ({
@@ -194,6 +197,9 @@ export function initializePythonWorker(
           inputEchoed: parsed.inputEchoed === true,
           ageBoundaryBranched: parsed.ageBoundaryBranched === true,
           rangeIterated: parsed.rangeIterated === true,
+          listReferenceSummed: parsed.listReferenceSummed === true,
+          dictValuesSummed: parsed.dictValuesSummed === true,
+          functionReturnScoped: parsed.functionReturnScoped === true,
         };
       }
       py.runPython(data.source, { globals: py.runPython('dict()') });

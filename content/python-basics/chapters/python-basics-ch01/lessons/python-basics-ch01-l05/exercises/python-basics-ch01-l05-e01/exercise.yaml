@@ -1,0 +1,168 @@
+id: python-basics-ch01-l05-e01
+kind: standard
+workspaceId: python-basics-ch01-l05-e01
+countsTowardStandardExerciseTotal: true
+title: 'Listの参照を共有して値を更新する'
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: python-list
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: python-basics-ch01-l05-e01-step01
+    file: main.py
+    target: 'alias[0]を4へ更新し、numbersの先頭と合計を表示します。'
+    starterAnchor: 'alias[0] = 3'
+    change: 'alias[0]を4へ更新し、numbersの先頭と合計を表示します。'
+    observe: '先頭は4、合計は9です。alias = []への再代入と比べます。空Listはnumbers = []とtotal初期化・for集計・print(total)だけを実行し、更新と先頭表示を除いて0を確認します。'
+    requiresConceptIds: [python-list]
+    validationRuleIds: [python-basics-ch01-l05-e01-r01]
+runtime:
+  kind: python
+  entryFile: main.py
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  profile: list-reference-sum-v1
+files:
+  - path: main.py
+    language: python
+    source: starter/main.py
+    editable: true
+solutionFiles:
+  - path: main.py
+    language: python
+    source: solution/main.py
+    editable: false
+validationRules:
+  - id: python-basics-ch01-l05-e01-r01
+    label: 'aliasから更新したListを元の名前で読み、forで合計する理由を説明できる。'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: list-reference-summed
+    feedback:
+      target: main.pyとConsole
+      expected: '先頭は4、合計は9です。alias = []への再代入と比べます。空Listはnumbers = []とtotal初期化・for集計・print(total)だけを実行し、更新と先頭表示を除いて0を確認します。'
+      nextAction: 'alias[0]を4へ更新し、numbersの先頭と合計を表示します。'
+    hintId: python-basics-ch01-l05-e01-h01
+    relatedSlideId: python-basics-ch01-l05-s02
+hints:
+  - id: python-basics-ch01-l05-e01-h01
+    level: 1
+    title: 最初の手掛かり
+    text: 'aliasとnumbersは同じListを参照しています。'
+    relatedSlideId: python-basics-ch01-l05-s02
+  - id: python-basics-ch01-l05-e01-h02
+    level: 2
+    title: コードを組み立てる
+    text: 'alias[0] = 4で先頭を更新します。totalは0から始め、forのitemを1つずつ足します。'
+    relatedSlideId: python-basics-ch01-l05-s02
+  - id: python-basics-ch01-l05-e01-h03
+    level: 3
+    title: 解答と理由
+    text: 'alias[0] = 4へ直すと、numbers[0]は4、forで4と5を足したtotalは9です。'
+    relatedSlideId: python-basics-ch01-l05-s02
+relatedSlideIds: [python-basics-ch01-l05-s01, python-basics-ch01-l05-s02]
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: solution
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/solution.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternate-name
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/alternate-name.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: multiple-elements
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/multiple-elements.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: starter
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/starter.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch01-l05-e01-r01']
+  - id: empty
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/empty.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch01-l05-e01-r01']
+  - id: separate-list
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/separate-list.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch01-l05-e01-r01']
+  - id: wrong-sum
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/wrong-sum.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch01-l05-e01-r01']
+  - id: hardcoded
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/hardcoded.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch01-l05-e01-r01']
+  - id: unused-loop
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/unused-loop.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch01-l05-e01-r01']
+  - id: index-error
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/index-error.py
+        editable: false
+    expectedFeedbackRuleIds: []

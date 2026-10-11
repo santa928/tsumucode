@@ -1,0 +1,168 @@
+id: python-basics-ch01-l06-e01
+kind: standard
+workspaceId: python-basics-ch01-l06-e01
+countsTowardStandardExerciseTotal: true
+title: 'Dictのkeyからvalueを読み書きする'
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: python-dict
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: python-basics-ch01-l06-e01-step01
+    file: main.py
+    target: 'redのvalueを4へ更新し、更新後のvalueと全valueの合計を表示します。'
+    starterAnchor: 'stock["red"] = 3'
+    change: 'redのvalueを4へ更新し、更新後のvalueと全valueの合計を表示します。'
+    observe: 'redのvalueは4、合計は9です。空Dictはstockへ空Dictを代入し、total初期化・for集計・print(total)だけを実行し、redの更新と表示を除いて0を確認します。'
+    requiresConceptIds: [python-dict]
+    validationRuleIds: [python-basics-ch01-l06-e01-r01]
+runtime:
+  kind: python
+  entryFile: main.py
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  profile: dict-value-sum-v1
+files:
+  - path: main.py
+    language: python
+    source: starter/main.py
+    editable: true
+solutionFiles:
+  - path: main.py
+    language: python
+    source: solution/main.py
+    editable: false
+validationRules:
+  - id: python-basics-ch01-l06-e01-r01
+    label: 'keyで値を更新し、forで渡されたkeyからvalueを取り出して合計できる。'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: dict-values-summed
+    feedback:
+      target: main.pyとConsole
+      expected: 'redのvalueは4、合計は9です。空Dictはstockへ空Dictを代入し、total初期化・for集計・print(total)だけを実行し、redの更新と表示を除いて0を確認します。'
+      nextAction: 'redのvalueを4へ更新し、更新後のvalueと全valueの合計を表示します。'
+    hintId: python-basics-ch01-l06-e01-h01
+    relatedSlideId: python-basics-ch01-l06-s02
+hints:
+  - id: python-basics-ch01-l06-e01-h01
+    level: 1
+    title: 最初の手掛かり
+    text: 'Dictの角括弧にはindexの代わりにkeyを渡します。'
+    relatedSlideId: python-basics-ch01-l06-s02
+  - id: python-basics-ch01-l06-e01-h02
+    level: 2
+    title: コードを組み立てる
+    text: 'stock["red"] = 4で更新します。forではkeyが渡されるのでstock[key]をtotalへ足します。'
+    relatedSlideId: python-basics-ch01-l06-s02
+  - id: python-basics-ch01-l06-e01-h03
+    level: 3
+    title: 解答と理由
+    text: 'redを4へ更新し、forでstock[key]を加算します。print(stock["red"])は4、print(total)は9です。'
+    relatedSlideId: python-basics-ch01-l06-s02
+relatedSlideIds: [python-basics-ch01-l06-s01, python-basics-ch01-l06-s02]
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: solution
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/solution.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternate-name
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/alternate-name.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: multiple-keys
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/multiple-keys.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: starter
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/starter.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch01-l06-e01-r01']
+  - id: empty
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/empty.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch01-l06-e01-r01']
+  - id: wrong-value
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/wrong-value.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch01-l06-e01-r01']
+  - id: hardcoded
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/hardcoded.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch01-l06-e01-r01']
+  - id: unused-loop
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/unused-loop.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch01-l06-e01-r01']
+  - id: keys-not-values
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/keys-not-values.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: missing-key
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/missing-key.py
+        editable: false
+    expectedFeedbackRuleIds: []

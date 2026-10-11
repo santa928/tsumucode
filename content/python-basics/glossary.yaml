@@ -35,3 +35,18 @@ entries:
     definition: 0から指定した終了値の直前までの整数を順に渡す仕組み。
     firstSlideId: python-basics-ch01-l04-s01
     relatedIds: []
+  - id: python-list
+    term: List
+    definition: '順序を持つ複数の値。0始まりのindexで読み書きでき、別の名前へ代入すると同じListを参照する。'
+    firstSlideId: python-basics-ch01-l05-s01
+    relatedIds: []
+  - id: python-dict
+    term: Dict
+    definition: 'keyとvalueの組を持つ値。keyでvalueを読み書きし、forでDictを反復するとkeyが渡される。'
+    firstSlideId: python-basics-ch01-l06-s01
+    relatedIds: []
+  - id: python-function
+    term: Functionとreturn
+    definition: 'defで名前と引数、字下げした処理を定義し、呼び出して使うまとまり。returnで呼び出し元へ値を返す。引数は呼び出しごとのlocalな名前。'
+    firstSlideId: python-basics-ch01-l07-s01
+    relatedIds: []

@@ -30,6 +30,9 @@ const payloadSchema = z.object({
   inputEchoed: z.boolean().optional(),
   ageBoundaryBranched: z.boolean().optional(),
   rangeIterated: z.boolean().optional(),
+  listReferenceSummed: z.boolean().optional(),
+  dictValuesSummed: z.boolean().optional(),
+  functionReturnScoped: z.boolean().optional(),
 });
 
 export type PythonCoreLoader = (signal: AbortSignal) => Promise<PythonCore>;
@@ -232,6 +235,15 @@ export class PythonExecutionService implements ExecutionService {
                       value: payload.ageBoundaryBranched === true,
                     },
                     { id: 'python.range-iterated', value: payload.rangeIterated === true },
+                    {
+                      id: 'python.list-reference-summed',
+                      value: payload.listReferenceSummed === true,
+                    },
+                    { id: 'python.dict-values-summed', value: payload.dictValuesSummed === true },
+                    {
+                      id: 'python.function-return-scoped',
+                      value: payload.functionReturnScoped === true,
+                    },
                     {
                       id: 'python.numeric-variable-printed',
                       value: payload.numericVariablePrinted === true,

@@ -8,6 +8,13 @@ export {
   PYTHON_VERSION,
 } from './protocol.mjs';
 
+const dataProfiles = new Set([
+  'list-reference-sum-v1',
+  'dict-value-sum-v1',
+  'function-return-scope-v1',
+]);
+const dataFields = ['listReferenceSummed', 'dictValuesSummed', 'functionReturnScoped'];
+
 const bootstrap = `
 import base64
 import json
@@ -34,7 +41,9 @@ function analysisProgram(profile) {
     numericVariablePrinted: false,
     sameVariableAdditionPrinted: false,
   };
-  if (profile !== 'values-vars-print-v1')
+  if (dataProfiles.has(profile))
+    Object.assign(fallback, Object.fromEntries(dataFields.map((field) => [field, false])));
+  else if (profile !== 'values-vars-print-v1')
     Object.assign(fallback, {
       inputEchoed: false,
       ageBoundaryBranched: false,
@@ -88,7 +97,8 @@ export function parsePythonAnalysis(stdout, stderr, exitCode, profile = 'values-
   if (exitCode !== 0 || stderr !== '') throw new Error('CPython AST解析が失敗しました');
   const value = JSON.parse(stdout);
   const keys = ['version', 'supported', 'numericVariablePrinted', 'sameVariableAdditionPrinted'];
-  if (profile !== 'values-vars-print-v1')
+  if (dataProfiles.has(profile)) keys.push(...dataFields);
+  else if (profile !== 'values-vars-print-v1')
     keys.push('inputEchoed', 'ageBoundaryBranched', 'rangeIterated');
   if (
     !value ||
