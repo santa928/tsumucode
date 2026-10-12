@@ -14,7 +14,7 @@ Local CPythonは「プレビューを更新」（事前入力）、「練習実�
 
 `POST /api/practice/runs`は練習専用Source要求、`/api/practice/runs/:id`はpoll、`/input`・`/cancel`・`/ack`はidentity付き操作です。`POST /api/grades`は入力指定を拒否し、固定の作者入力・期待値だけを採用します。作者の解答Sourceは配信しません。各caseは同じSource/helperを別の使い捨てcontainerで実行し、全件のstdout一致と既存AST事実をANDにします。無入力Lessonも入力なしの実行caseを1件以上持ちます。失敗・不足・未知suiteを合格へ変換しません。最後の結果は通常Controllerの鮮度確認を経て1回だけ進捗へ反映します。
 
-#196の元の「本物のinput待機を信頼側で証明する」条件とBrowserでの実行途中入力は未完です。今回のLocal練習はユーザー承認の不信申告方式であり、元条件の達成とは扱いません。Pages公開は別判断です。
+#196の旧試作では、偽装した入力要求を受け入れることを検出しました。この失敗は履歴として維持します。その後ユーザーが「練習専用・不信の入力要求・固定Fixtureの別採点」へ仕様変更を承認したため、「信頼側で本物のinput待機だけを認定する」という撤回済み条件を現在の未完条件には数えません。今回の実装範囲はLocal CPythonです。当初の両環境を対象とする範囲ではBrowserの実行途中入力が残件であり、#196はOPENを維持します。Pages公開は別判断です。
 
 対象は`python-basics-ch01-l01-e01`から`l09-e01`までと`python-basics-ch02-l01-e01`の10教材（値・変数、事前入力、条件分岐、反復、List、Dict、Function、Module、例外、小制作）です。PyodideとCPythonは教材ID、下書き、Rule、採点履歴、JSON移送を共通にします。Pagesからlocalhostを探索しません。ソースの追加は新規Pages公開を意味しません。
 
