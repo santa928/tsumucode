@@ -1,0 +1,14 @@
+id: python-practice-ch01-l02
+kind: standard
+title: "Iteratorの消費位置と作り直し"
+goal: "同じiteratorのnextが消費位置を進め、復帰には元Listから新しく作る理由を説明できる。"
+estimatedMinutes: 15
+prerequisiteLessonIds: [python-practice-ch01-l01]
+slideSources: [slides/s01.md, slides/s02.md]
+exerciseSources: [exercises/python-practice-ch01-l02-e01/exercise.yaml]
+reflection: "4回のnextとfreshの結果を順に説明してください。iter(cursor)で先頭へ戻れないのはなぜですか。"
+glossaryRefs: [python-iterator, python-iterable]
+completion:
+  kind: standard
+  finalSlideId: python-practice-ch01-l02-s02
+  requiredExerciseIds: [python-practice-ch01-l02-e01]

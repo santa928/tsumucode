@@ -1,0 +1,14 @@
+id: python-practice-ch01-l01
+kind: standard
+title: "内包表記で変換とfilterを分ける"
+goal: "0を残すfilterと2倍の変換を説明し、空Listの結果も内包表記で確かめられる。"
+estimatedMinutes: 15
+prerequisiteLessonIds: []
+slideSources: [slides/s01.md, slides/s02.md]
+exerciseSources: [exercises/python-practice-ch01-l01-e01/exercise.yaml]
+reflection: "0が残る理由と、変換とfilterの各部分を説明してください。emptyから新しい結果はいくつ作られますか。"
+glossaryRefs: [python-comprehension]
+completion:
+  kind: standard
+  finalSlideId: python-practice-ch01-l01-s02
+  requiredExerciseIds: [python-practice-ch01-l01-e01]

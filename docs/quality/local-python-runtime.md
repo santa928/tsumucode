@@ -40,6 +40,16 @@ Pages/LocalのIndexedDBは自動同期しません。HomeでJSONを書き出し�
 
 ## 検証
 
+### 反復と遅延生成の草稿Course
+
+`python-practice` は基礎とは独立したrevision・進捗を持つ3教材です。`list-comprehension-filter-v1`、`iterator-consumption-v1`、`generator-lifecycle-v1` は、それぞれ説明済みの変換と条件、同じIteratorの消費と再生成、yieldを含む関数の呼び出しと消費をASTで確認します。固定データ・出力順・コード構造はinstructionsに示し、変数名の変更を許容します。使われない正しい構文と表示の直書きは合格にしません。
+
+学生の採点は同一SourceのAST事実と実stdoutを照合します。実Iteratorの同一性やGeneratorのCREATED/SUSPENDED/CLOSEDを直接観測するのは作者検証だけです。作者検証ではCPython 3.14.2とPyodide 314.0.7の実オブジェクトについて、空のList、複数回next、消費済みの再消費、新しいIterator、listによる一括消費を確認します。学生のすべての提出で内部状態を直接観測したとは扱いません。
+
+追加構文は単一の内包表記、iter/list/next、単一引数のGeneratorに限定します。import・属性・入れ子の内包表記・async・class・with・package追加を扱いません。既存の隔離・資源制限・単一main.pyを維持し、対話入力や新しい通信権限を追加しません。Local capabilityのcourseRevisionsで基礎と実践のrevisionを別々に照合し、実践のrevisionがない古いcontrollerは実践の採点に使いません。
+
+`python-iteration-acceptance.mjs` は両engineの正負28 Fixtureと作者の消費/lifecycle観測を行います。`python-iteration.spec.ts` は通常UIで同じFixture、保存・再読込・Reset・JSON移送・基礎との非混入、Preview再実行、Keyboardとa11yを確認します。草稿Courseであり、Pages公開とBrowserの実行途中入力は別の残件です。
+
 `python-profile.test.mjs`とLocal adapterの回帰に加え、`python-acceptance.mjs`は実Docker/CPythonの版、stdout/stderr、エラー、5秒timeout、実OOM、64 KiB出力、UID/seccomp/capability、通信拒否、socketなし、子processの停止回収、排他と再試行を検査します。
 
 `python-browser-checks` imageは通常UIから既存10 Fixtureと追加3教材の21 Fixtureを同じ期待status/Rule IDで確認し、保存・再読込・JSON移送、接続障害後の再試行、未対応出力、timeout・停止・古い結果、狭幅読書とa11yを確認します。原稿と作者Browserは製品imageへ含めません。CIのLocal Runtime boundaryで既存Node/Nextの回帰と併せて実行します。

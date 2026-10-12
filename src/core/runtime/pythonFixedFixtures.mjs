@@ -15,6 +15,15 @@ const fixtures = {
   'dict-value-sum-v1': [['dict', [], '4\n9\n']],
   'function-return-scope-v1': [['function', [], '8\n10\n100\n']],
   'module-import-v1': [['module', [], '8\n10\n']],
+  'list-comprehension-filter-v1': [['normal-and-empty', [], '[0, 6]\n[]\n']],
+  'iterator-consumption-v1': [['consume-and-recreate', [], '3\n5\nEND\nEND\n3\nEND\n']],
+  'generator-lifecycle-v1': [
+    [
+      'lazy-and-exhausted',
+      [],
+      '作成済み\n開始\n生成\n6\n生成\n10\nEND\nEND\n空を作成\n開始\nEND\nEND\nまとめて消費\n開始\n生成\n生成\n[6, 10]\nEND\n',
+    ],
+  ],
   'exception-recovery-v1': [
     ['integer', ['5'], '5\n終了\n'],
     ['invalid', ['five'], '整数を入力してください\n終了\n'],

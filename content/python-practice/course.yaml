@@ -1,0 +1,32 @@
+schemaVersion: 1
+id: python-practice
+title: Pythonの反復と遅延生成
+description: 基礎のList・for・Functionから、内包表記・Iteratorの消費・Generatorの再開へ進む45分の制作途中の教材。
+audience: Python基礎のList・for・Functionを学んだ方
+estimatedMinutes: 45
+revision: 2026-10-12.1
+runnerId: python
+validatorId: python
+glossarySource: glossary.yaml
+conceptsSource: concepts.yaml
+documentationSources: [references/python-official.md]
+supportedDevices:
+  exercise: desktop
+  study: [desktop, tablet, mobile]
+prerequisites: [python-basics]
+publicationStatus: draft
+expectedTotals:
+  chapters: 1
+  lessons: 3
+  conceptSlides: 6
+  standardExercises: 3
+  guidedProjectLessons: 0
+  capstoneLessons: 0
+  estimatedMinutes: 45
+provenanceManifestPath: provenance.yaml
+progressMigrations: []
+phases:
+  - id: python-practice-p01
+    title: 変換・消費・遅延生成
+    description: Listの一括変換と、状態を持つ反復を小さい実出力で比較する。
+    chapterSources: [chapters/python-practice-ch01/chapter.yaml]

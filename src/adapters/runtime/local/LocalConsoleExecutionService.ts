@@ -155,6 +155,10 @@ export class LocalConsoleExecutionService implements ExecutionService {
             .max(this.engine === 'cpython' ? Object.keys(PYTHON_LESSONS).length : 4)
             .optional(),
           contentRevision: z.string(),
+          courseRevisions: z
+            .object({ 'python-basics': z.string(), 'python-practice': z.string() })
+            .strict()
+            .optional(),
           runtimeProfileId: z.literal(
             this.engine === 'cpython' ? 'cpython-values-v1' : 'node-closure-v1',
           ),
@@ -167,7 +171,12 @@ export class LocalConsoleExecutionService implements ExecutionService {
           'unsupported',
           'このローカル環境では未対応の演習です。コードを保存して学習モードを再起動してください。採点していません。',
         );
-      if (capability.contentRevision !== this.contentRevision)
+      const expectedRevision =
+        this.engine === 'cpython' &&
+        PYTHON_LESSONS[this.exerciseId]?.courseId === 'python-practice'
+          ? capability.courseRevisions?.['python-practice']
+          : capability.contentRevision;
+      if (expectedRevision !== this.contentRevision)
         throw new Error('教材の版が異なります。コードを保存して学習モードを再起動してください。');
       const created = this.#api(fixedGrade ? 'grades' : 'runs', {
         apiVersion: 1,

@@ -1,0 +1,168 @@
+id: python-practice-ch01-l01-e01
+kind: standard
+workspaceId: python-practice-ch01-l01-e01
+countsTowardStandardExerciseTotal: true
+title: "内包表記で変換とfilterを分ける"
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: python-comprehension
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: python-practice-ch01-l01-e01-step01
+    file: main.py
+    target: "最初のfilterを>= 0へ直し、0も残します。"
+    starterAnchor: "if number > 0"
+    change: "最初のfilterを>= 0へ直し、0も残します。"
+    observe: "0を残すfilterと2倍の変換を説明し、空Listの結果も内包表記で確かめられる。"
+    requiresConceptIds: [python-comprehension]
+    validationRuleIds: [python-practice-ch01-l01-e01-r01]
+runtime:
+  kind: python
+  entryFile: main.py
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  profile: list-comprehension-filter-v1
+files:
+  - path: main.py
+    language: python
+    source: starter/main.py
+    editable: true
+solutionFiles:
+  - path: main.py
+    language: python
+    source: solution/main.py
+    editable: false
+validationRules:
+  - id: python-practice-ch01-l01-e01-r01
+    label: "0を残すfilterと2倍の変換を説明し、空Listの結果も内包表記で確かめられる。"
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: list-comprehension-filtered
+    feedback:
+      target: main.pyとConsole
+      expected: "0を残すfilterと2倍の変換を説明し、空Listの結果も内包表記で確かめられる。"
+      nextAction: "最初のfilterを>= 0へ直し、0も残します。"
+    hintId: python-practice-ch01-l01-e01-h01
+    relatedSlideId: python-practice-ch01-l01-s02
+hints:
+  - id: python-practice-ch01-l01-e01-h01
+    level: 1
+    title: 最初の手掛かり
+    text: "変換はnumber + number、残す条件はifの後ろです。"
+    relatedSlideId: python-practice-ch01-l01-s02
+  - id: python-practice-ch01-l01-e01-h02
+    level: 2
+    title: コードを組み立てる
+    text: "0も残すには、0より大きい条件と0以上の条件を区別します。"
+    relatedSlideId: python-practice-ch01-l01-s02
+  - id: python-practice-ch01-l01-e01-h03
+    level: 3
+    title: 解答と理由
+    text: "if number >= 0なら0と3が残り、変換後は[0, 6]です。[]からは[]ができます。"
+    relatedSlideId: python-practice-ch01-l01-s02
+relatedSlideIds: [python-practice-ch01-l01-s01, python-practice-ch01-l01-s02]
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: solution
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/solution.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternate-name
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/alternate-name.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: starter
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/starter.py
+        editable: false
+    expectedFeedbackRuleIds: [python-practice-ch01-l01-e01-r01]
+  - id: hardcoded
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/hardcoded.py
+        editable: false
+    expectedFeedbackRuleIds: [python-practice-ch01-l01-e01-r01]
+  - id: syntax-error
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/syntax-error.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: forbidden-attribute
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/forbidden-attribute.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: nested-comprehension
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/nested-comprehension.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: no-filter
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/no-filter.py
+        editable: false
+    expectedFeedbackRuleIds: [python-practice-ch01-l01-e01-r01]
+  - id: no-transform
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/no-transform.py
+        editable: false
+    expectedFeedbackRuleIds: [python-practice-ch01-l01-e01-r01]
+  - id: unused-comprehension
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/unused-comprehension.py
+        editable: false
+    expectedFeedbackRuleIds: [python-practice-ch01-l01-e01-r01]

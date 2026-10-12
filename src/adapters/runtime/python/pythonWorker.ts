@@ -92,6 +92,9 @@ export function initializePythonWorker(
         | 'moduleImported'
         | 'exceptionHandled'
         | 'projectSummed'
+        | 'listComprehensionFiltered'
+        | 'iteratorConsumed'
+        | 'generatorLifecycle'
         | 'expectedOutput'
       >
     > = {};
@@ -243,6 +246,9 @@ export function initializePythonWorker(
           moduleImported: parsed.moduleImported === true,
           exceptionHandled: parsed.exceptionHandled === true,
           projectSummed: parsed.projectSummed === true,
+          listComprehensionFiltered: parsed.listComprehensionFiltered === true,
+          iteratorConsumed: parsed.iteratorConsumed === true,
+          generatorLifecycle: parsed.generatorLifecycle === true,
           ...(moduleProfile
             ? { expectedOutput: parsePythonModuleAnalysis(parsed).expectedOutput }
             : {}),

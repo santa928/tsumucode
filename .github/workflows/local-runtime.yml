@@ -6,11 +6,13 @@ on:
     paths:
       - content/next/**
       - content/python-basics/**
+      - content/python-practice/**
       - src/adapters/runtime/local/Local*ExecutionService*
       - src/adapters/runtime/python/**
       - src/adapters/validation/python/**
       - src/core/runtime/pythonLesson*
       - src/core/runtime/pythonModule*
+      - src/core/runtime/pythonIteration*
       - src/core/runtime/pythonFixedFixtures*
       - src/adapters/runtime/local/LocalPythonPracticeClient*
       - src/core/runtime/contracts.ts
@@ -23,6 +25,7 @@ on:
       - tests/local/python-practice.spec.ts
       - tests/e2e/python-input.spec.ts
       - tests/e2e/python-module.spec.ts
+      - tests/e2e/python-iteration.spec.ts
       - playwright.python-local.config.ts
       - scripts/content/fixtures/next-author-pilot*
       - scripts/content/sourceSchema.ts
@@ -56,11 +59,13 @@ on:
     paths:
       - content/next/**
       - content/python-basics/**
+      - content/python-practice/**
       - src/adapters/runtime/local/Local*ExecutionService*
       - src/adapters/runtime/python/**
       - src/adapters/validation/python/**
       - src/core/runtime/pythonLesson*
       - src/core/runtime/pythonModule*
+      - src/core/runtime/pythonIteration*
       - src/core/runtime/pythonFixedFixtures*
       - src/adapters/runtime/local/LocalPythonPracticeClient*
       - src/core/runtime/contracts.ts
@@ -73,6 +78,7 @@ on:
       - tests/local/python-practice.spec.ts
       - tests/e2e/python-input.spec.ts
       - tests/e2e/python-module.spec.ts
+      - tests/e2e/python-iteration.spec.ts
       - playwright.python-local.config.ts
       - scripts/content/fixtures/next-author-pilot*
       - scripts/content/sourceSchema.ts
@@ -152,6 +158,11 @@ jobs:
           docker exec -i -e TSUMUCODE_PYTHON_RESTART_PHASE=verify "$controller" node --input-type=module < scripts/local/python-acceptance.mjs
           docker build --file Dockerfile.learning --target python-browser-checks --tag "$TSUMUCODE_LOCAL_OWNER-python-browser-checks" .
           docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256 --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-python-browser-checks"
+      - name: Verify real Python iteration fixtures and object lifecycle
+        run: |
+          docker build --file Dockerfile.learning --target python-iteration-checks --tag "$TSUMUCODE_LOCAL_OWNER-python-iteration-checks" .
+          docker run --rm --init --network none --cpus 1 --memory 512m --pids-limit 128 --cap-drop ALL --security-opt no-new-privileges:true --mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock --entrypoint node "$TSUMUCODE_LOCAL_OWNER-python-iteration-checks" scripts/local/python-iteration-acceptance.mjs
+          docker run --rm --init --network none --cpus 1 --memory 512m --pids-limit 128 --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-python-iteration-checks"
       - name: Verify representative production learning UI and storage
         run: >-
           docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256

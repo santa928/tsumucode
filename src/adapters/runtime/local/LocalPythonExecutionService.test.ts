@@ -61,6 +61,54 @@ const request: ExecutionRequest = {
   options: {},
 };
 
+it.each(['practice-r1', undefined, 'basics-r1'])(
+  '実践Courseのcapability revision %sを自身の版へ照合する',
+  async (practiceRevision) => {
+    const gradeRequest = { ...request, options: { purpose: 'grade' } };
+    const fetchMock = vi.fn(async (path: string) => {
+      if (path.endsWith('/session')) return Response.json({ apiVersion: 1, token: 'a'.repeat(64) });
+      if (path.endsWith('/python-capabilities'))
+        return Response.json({
+          apiVersion: 1,
+          exerciseIds: Object.keys(PYTHON_LESSONS),
+          contentRevision: 'basics-r1',
+          ...(practiceRevision === undefined
+            ? {}
+            : {
+                courseRevisions: {
+                  'python-basics': 'basics-r1',
+                  'python-practice': practiceRevision,
+                },
+              }),
+          runtimeProfileId: 'cpython-values-v1',
+          engineVersion: '3.14.2',
+        });
+      if (path.endsWith('/grades')) return Response.json({ state: 'running' });
+      return Response.json({
+        state: 'completed',
+        result: {
+          ...gradeRequest,
+          engineVersion: '3.14.2',
+          exitCode: 0,
+          status: 'succeeded',
+          diagnostics: [],
+          evidence: [],
+          console: [],
+        },
+      });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const result = await new LocalPythonExecutionService(
+      'python-practice-ch01-l01-e01',
+      'practice-r1',
+    ).execute(gradeRequest);
+    expect(result.status).toBe(practiceRevision === 'practice-r1' ? 'succeeded' : 'system-error');
+    expect(fetchMock.mock.calls.some(([path]) => path.endsWith('/grades'))).toBe(
+      practiceRevision === 'practice-r1',
+    );
+  },
+);
+
 /** HTTP正常でも別engine・版・古い編集結果を合格入力へ渡さない。 */
 it.each(['valid', 'wrong-engine', 'wrong-version', 'stale-revision', 'invalid-exit'])(
   'Python結果照合: %s',

@@ -145,7 +145,7 @@ export function EditableExercisePage({ lease, ...data }: EditableExercisePagePro
     const abortController = new AbortController();
     void import('../javascriptRuntimeServices')
       .then(async ({ ensureCourseRuntime }) => {
-        if (data.course.id === 'python-basics') {
+        if (['python-basics', 'python-practice'].includes(data.course.id)) {
           const python = await import('../pythonRuntime');
           python.preparePythonCourse(data.course, learningRuntimeServices);
           return python;
@@ -253,7 +253,8 @@ function EditableSession({
   const navigate = useNavigate();
   const [operation, setOperation] = useState<OperationState>('idle');
   const [practiceBusy, setPracticeBusy] = useState(false);
-  const PracticePanel = localRuntime?.PythonPracticePanel;
+  const PracticePanel =
+    course.id === 'python-basics' ? localRuntime?.PythonPracticePanel : undefined;
   const [pythonInput, setPythonInput] = useState('');
   const [withoutPythonInput, setWithoutPythonInput] = useState(false);
   const acceptsPythonInput =
@@ -1175,9 +1176,13 @@ function EditableSession({
                 <div>
                   <p>
                     {exercise.runtime?.kind === 'python'
-                      ? controller.environment.engine === 'cpython'
-                        ? '「プレビューを更新」は事前入力で実行します。「練習実行」は対話入力を使える未採点の実行です。「判定する」は練習入力を使わず、同じSourceを固定テストで別実行し、教材のコード条件と全ケースの実出力を確認します。package追加・外部通信は扱いません。'
-                        : '教材のSourceを編集し、「プレビューを更新」でPyodideの実出力を表示します。「判定する」は教材のコード条件を確認します。実行前の入力行を使い、実行中に入力を追加する操作には未対応です。入力行不足は採点しません。package追加・外部通信は扱いません。'
+                      ? course.id === 'python-practice'
+                        ? controller.environment.engine === 'cpython'
+                          ? '「プレビューを更新」で現在のSourceを実行します。プレビューは未採点です。「判定する」は同じSourceを固定テストで別実行し、教材のコード条件と実出力を確認します。この教材は入力を使いません。'
+                          : '「プレビューを更新」で現在のSourceをPyodideで実行します。プレビューは未採点です。「判定する」は教材のコード条件と実出力を確認します。この教材は入力を使いません。'
+                        : controller.environment.engine === 'cpython'
+                          ? '「プレビューを更新」は事前入力で実行します。「練習実行」は対話入力を使える未採点の実行です。「判定する」は練習入力を使わず、同じSourceを固定テストで別実行し、教材のコード条件と全ケースの実出力を確認します。package追加・外部通信は扱いません。'
+                          : '教材のSourceを編集し、「プレビューを更新」でPyodideの実出力を表示します。「判定する」は教材のコード条件を確認します。実行前の入力行を使い、実行中に入力を追加する操作には未対応です。入力行不足は採点しません。package追加・外部通信は扱いません。'
                       : controller.environment.backend === 'local'
                         ? '編集後に「プレビューを更新」でNode.jsを実行します。Docker切断時は学習モードを再起動し、もう一度実行してください。'
                         : 'script.jsを編集するとConsoleを更新します。配列・オブジェクトの添字と有限のPromise処理に対応します。HTML/CSSの描画・DOM・タイマー・外部通信は使えません。'}

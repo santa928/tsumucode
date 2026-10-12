@@ -61,6 +61,8 @@ export const PYTHON_PREFERRED_SOURCE_FILES = [
   'src/adapters/runtime/python/pythonWorker.ts',
   'src/core/runtime/pythonLessonAnalysis.mjs',
   'src/core/runtime/pythonLessonAnalysis.d.mts',
+  'src/core/runtime/pythonIterationAnalysis.mjs',
+  'src/core/runtime/pythonIterationAnalysis.d.mts',
   'src/core/runtime/pythonModuleAnalysis.mjs',
   'src/core/runtime/pythonModuleAnalysis.d.mts',
   'src/core/runtime/pythonLessonProfiles.mjs',

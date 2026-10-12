@@ -16,6 +16,12 @@ const dataProfiles = new Set([
   'function-return-scope-v1',
 ]);
 const dataFields = ['listReferenceSummed', 'dictValuesSummed', 'functionReturnScoped'];
+const iterationProfiles = new Set([
+  'list-comprehension-filter-v1',
+  'iterator-consumption-v1',
+  'generator-lifecycle-v1',
+]);
+const iterationFields = ['listComprehensionFiltered', 'iteratorConsumed', 'generatorLifecycle'];
 
 const bootstrap = `
 import base64
@@ -63,7 +69,9 @@ print(json.dumps(_module_result))
     numericVariablePrinted: false,
     sameVariableAdditionPrinted: false,
   };
-  if (dataProfiles.has(profile))
+  if (iterationProfiles.has(profile))
+    Object.assign(fallback, Object.fromEntries(iterationFields.map((field) => [field, false])));
+  else if (dataProfiles.has(profile))
     Object.assign(fallback, Object.fromEntries(dataFields.map((field) => [field, false])));
   else if (profile !== 'values-vars-print-v1')
     Object.assign(fallback, {
@@ -126,7 +134,8 @@ export function parsePythonAnalysis(stdout, stderr, exitCode, profile = 'values-
     return { ...parsePythonModuleAnalysis(packet), version };
   }
   const keys = ['version', 'supported', 'numericVariablePrinted', 'sameVariableAdditionPrinted'];
-  if (dataProfiles.has(profile)) keys.push(...dataFields);
+  if (iterationProfiles.has(profile)) keys.push(...iterationFields);
+  else if (dataProfiles.has(profile)) keys.push(...dataFields);
   else if (profile !== 'values-vars-print-v1')
     keys.push('inputEchoed', 'ageBoundaryBranched', 'rangeIterated');
   if (

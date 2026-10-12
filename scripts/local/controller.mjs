@@ -60,6 +60,9 @@ const owner = process.env.TSUMUCODE_LOCAL_OWNER;
 if (!owner || !/^[a-z0-9-]{1,80}$/u.test(owner)) throw new Error('Installation owner is required');
 const revision = JSON.parse(await readFile('/app/course-index.json', 'utf8')).revision;
 const pythonRevision = JSON.parse(await readFile('/app/python-course-index.json', 'utf8')).revision;
+const pythonPracticeRevision = JSON.parse(
+  await readFile('/app/python-practice-course-index.json', 'utf8'),
+).revision;
 const token = randomBytes(32).toString('hex');
 const results = new Map();
 const practice = new PracticeRunner(
@@ -347,20 +350,8 @@ async function execute(run) {
       evidence.push(
         { id: 'python.stdout', value: executed.stdout },
         { id: 'python.version', value: facts.version },
-        { id: 'python.numeric-variable-printed', value: facts.numericVariablePrinted },
-        { id: 'python.same-variable-addition-printed', value: facts.sameVariableAdditionPrinted },
         { id: 'python.input-lines', value: JSON.stringify(run.input.inputLines ?? []) },
-        ...[
-          'input-echoed',
-          'age-boundary-branched',
-          'range-iterated',
-          'list-reference-summed',
-          'dict-values-summed',
-          'function-return-scoped',
-          'module-imported',
-          'exception-handled',
-          'project-summed',
-        ].map((fact) => ({
+        ...Object.keys(PYTHON_FACT_FIELDS).map((fact) => ({
           id: `python.${fact}`,
           value: facts[PYTHON_FACT_FIELDS[fact]] === true,
         })),
@@ -477,6 +468,7 @@ async function handlePractice(url, input, res) {
       { ...input, runId: randomBytes(16).toString('hex') },
       revision,
       pythonRevision,
+      pythonPracticeRevision,
     );
     if (validated.runtimeProfileId !== PYTHON_PROFILE_ID)
       throw new RequestError(422, 'CPythonの練習だけに対応します。');
@@ -704,6 +696,10 @@ async function handle(req, res) {
         apiVersion: API_VERSION,
         exerciseIds: Object.keys(PYTHON_LESSONS),
         contentRevision: pythonRevision,
+        courseRevisions: {
+          'python-basics': pythonRevision,
+          'python-practice': pythonPracticeRevision,
+        },
         runtimeProfileId: PYTHON_PROFILE_ID,
         engineVersion: PYTHON_VERSION,
         limits: LIMITS,
@@ -724,7 +720,7 @@ async function handle(req, res) {
     } else if (req.url?.startsWith('/api/practice/')) {
       value = await handlePractice(req.url, input, res);
     } else if (req.url === '/api/runs' || req.url === '/api/grades') {
-      const validated = validateRun(input, revision, pythonRevision);
+      const validated = validateRun(input, revision, pythonRevision, pythonPracticeRevision);
       const fixedGrade = req.url === '/api/grades';
       if (
         fixedGrade &&
