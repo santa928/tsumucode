@@ -1,10 +1,10 @@
 schemaVersion: 1
 id: python-practice
-title: Pythonの反復とResource管理
-description: 基礎のList・for・Function・例外から、反復と遅延生成、正常時と例外時のResource終了処理へ進む60分の草稿教材。
+title: Pythonの反復とデータ処理
+description: 反復・Resource終了処理から、型注釈・dataclass・値検証・Testを結ぶデータProjectへ進む95分の草稿Course。
 audience: Python基礎のList・for・Function・例外を学んだ方
-estimatedMinutes: 60
-revision: 2026-10-12.2
+estimatedMinutes: 95
+revision: 2026-10-12.3
 runnerId: python
 validatorId: python
 glossarySource: glossary.yaml
@@ -16,17 +16,20 @@ supportedDevices:
 prerequisites: [python-basics]
 publicationStatus: draft
 expectedTotals:
-  chapters: 2
-  lessons: 4
-  conceptSlides: 8
+  chapters: 3
+  lessons: 5
+  conceptSlides: 11
   standardExercises: 4
-  guidedProjectLessons: 0
+  guidedProjectLessons: 1
   capstoneLessons: 0
-  estimatedMinutes: 60
+  estimatedMinutes: 95
 provenanceManifestPath: provenance.yaml
 progressMigrations:
   - fromRevision: 2026-10-12.1
     toRevision: 2026-10-12.2
+    steps: []
+  - fromRevision: 2026-10-12.2
+    toRevision: 2026-10-12.3
     steps: []
 phases:
   - id: python-practice-p01
@@ -37,3 +40,7 @@ phases:
     title: Resourceの終了処理
     description: 正常終了と例外終了で、同じstreamが閉じることを比較する。
     chapterSources: [chapters/python-practice-ch02/chapter.yaml]
+  - id: python-practice-p03
+    title: 型と値検証とTest
+    description: メモリ内の集計で、注釈・生成処理・明示検証を分ける。
+    chapterSources: [chapters/python-practice-ch03/chapter.yaml]

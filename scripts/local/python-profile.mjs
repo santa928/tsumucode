@@ -69,7 +69,8 @@ print(json.dumps(_module_result))
     numericVariablePrinted: false,
     sameVariableAdditionPrinted: false,
   };
-  if (profile === 'context-manager-close-v1') fallback.contextManagedClosed = false;
+  if (profile === 'dataclass-test-project-v1') fallback.dataProjectTested = false;
+  else if (profile === 'context-manager-close-v1') fallback.contextManagedClosed = false;
   else if (iterationProfiles.has(profile))
     Object.assign(fallback, Object.fromEntries(iterationFields.map((field) => [field, false])));
   else if (dataProfiles.has(profile))
@@ -135,7 +136,8 @@ export function parsePythonAnalysis(stdout, stderr, exitCode, profile = 'values-
     return { ...parsePythonModuleAnalysis(packet), version };
   }
   const keys = ['version', 'supported', 'numericVariablePrinted', 'sameVariableAdditionPrinted'];
-  if (profile === 'context-manager-close-v1') keys.push('contextManagedClosed');
+  if (profile === 'dataclass-test-project-v1') keys.push('dataProjectTested');
+  else if (profile === 'context-manager-close-v1') keys.push('contextManagedClosed');
   else if (iterationProfiles.has(profile)) keys.push(...iterationFields);
   else if (dataProfiles.has(profile)) keys.push(...dataFields);
   else if (profile !== 'values-vars-print-v1')

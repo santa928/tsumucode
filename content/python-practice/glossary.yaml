@@ -30,3 +30,23 @@ entries:
     definition: io標準libraryのメモリ内文字列stream。getvalueで内容、closedで閉じた状態を調べる。close後は内容を利用できない。
     firstSlideId: python-practice-ch02-l01-s01
     relatedIds: [python-context-manager]
+  - id: python-type-hint
+    term: Type hint
+    definition: 値や引数や戻り値の種類を書く注釈。Pythonの実行時に値を自動検証・変換する仕組みではない。
+    firstSlideId: python-practice-ch03-l01-s01
+    relatedIds: []
+  - id: python-dataclass
+    term: dataclass・Class・Instance
+    definition: 標準libraryが注釈付きfieldから初期化などを生成する仕組み。Classは設計、Instanceは作った1件、attributeはその値。
+    firstSlideId: python-practice-ch03-l01-s01
+    relatedIds: []
+  - id: python-data-validation
+    term: 値検証
+    definition: 受け入れる値の条件をifやraiseで明示する処理。型注釈やTestと役割が異なる。
+    firstSlideId: python-practice-ch03-l01-s02
+    relatedIds: []
+  - id: python-test
+    term: Testとassert
+    definition: 期待する結果と実際を比較する確認。assertはFalseならAssertionErrorを出すが、最適化実行では省略される。
+    firstSlideId: python-practice-ch03-l01-s03
+    relatedIds: []

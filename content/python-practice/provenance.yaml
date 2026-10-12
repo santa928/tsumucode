@@ -235,3 +235,84 @@ items:
   - id: python-practice-original-76
     visibility: public
     path: references/python-official.md
+  - id: python-practice-original-77
+    visibility: public
+    path: chapters/python-practice-ch03/chapter.yaml
+  - id: python-practice-original-80
+    visibility: public
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/brief.md
+  - id: python-practice-original-83
+    visibility: public
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/exercises/python-practice-ch03-l01-e01/exercise.yaml
+  - id: python-practice-original-85
+    visibility: authoring
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/exercises/python-practice-ch03-l01-e01/fixtures/custom-decorator.py
+  - id: python-practice-original-86
+    visibility: authoring
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/exercises/python-practice-ch03-l01-e01/fixtures/forbidden-attribute.py
+  - id: python-practice-original-87
+    visibility: authoring
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/exercises/python-practice-ch03-l01-e01/fixtures/forbidden-import.py
+  - id: python-practice-original-88
+    visibility: authoring
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/exercises/python-practice-ch03-l01-e01/fixtures/hardcoded.py
+  - id: python-practice-original-89
+    visibility: authoring
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/exercises/python-practice-ch03-l01-e01/fixtures/host-file.py
+  - id: python-practice-original-90
+    visibility: authoring
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/exercises/python-practice-ch03-l01-e01/fixtures/no-negative-check.py
+  - id: python-practice-original-91
+    visibility: authoring
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/exercises/python-practice-ch03-l01-e01/fixtures/other-workspace.py
+  - id: python-practice-original-92
+    visibility: authoring
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/exercises/python-practice-ch03-l01-e01/fixtures/parentheses.py
+  - id: python-practice-original-93
+    visibility: authoring
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/exercises/python-practice-ch03-l01-e01/fixtures/runtime-error.py
+  - id: python-practice-original-94
+    visibility: authoring
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/exercises/python-practice-ch03-l01-e01/fixtures/solution.py
+  - id: python-practice-original-95
+    visibility: authoring
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/exercises/python-practice-ch03-l01-e01/fixtures/starter.py
+  - id: python-practice-original-96
+    visibility: authoring
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/exercises/python-practice-ch03-l01-e01/fixtures/syntax-error.py
+  - id: python-practice-original-97
+    visibility: authoring
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/exercises/python-practice-ch03-l01-e01/fixtures/test-failure.py
+  - id: python-practice-original-98
+    visibility: authoring
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/exercises/python-practice-ch03-l01-e01/fixtures/tests-removed.py
+  - id: python-practice-original-99
+    visibility: authoring
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/exercises/python-practice-ch03-l01-e01/fixtures/unmanaged-stream.py
+  - id: python-practice-original-100
+    visibility: authoring
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/exercises/python-practice-ch03-l01-e01/fixtures/wrong-annotation.py
+  - id: python-practice-original-101
+    visibility: public
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/exercises/python-practice-ch03-l01-e01/instructions.md
+  - id: python-practice-original-103
+    visibility: authoring
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/exercises/python-practice-ch03-l01-e01/solution/main.py
+  - id: python-practice-original-105
+    visibility: public
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/exercises/python-practice-ch03-l01-e01/starter/main.py
+  - id: python-practice-original-106
+    visibility: public
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/guide.md
+  - id: python-practice-original-107
+    visibility: public
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/lesson.yaml
+  - id: python-practice-original-109
+    visibility: public
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/slides/s01.md
+  - id: python-practice-original-110
+    visibility: public
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/slides/s02.md
+  - id: python-practice-original-111
+    visibility: public
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/slides/s03.md

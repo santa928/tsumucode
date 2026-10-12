@@ -31,6 +31,7 @@ export interface PythonResult {
   readonly iteratorConsumed?: boolean;
   readonly generatorLifecycle?: boolean;
   readonly contextManagedClosed?: boolean;
+  readonly dataProjectTested?: boolean;
   readonly expectedOutput?: string | null;
 }
 

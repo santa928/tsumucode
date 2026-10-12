@@ -31,6 +31,7 @@ const factNames = [
   'iterator-consumed',
   'generator-lifecycle',
   'context-managed-closed',
+  'data-project-tested',
 ] as const;
 const ruleSchema = z
   .object({
@@ -215,6 +216,11 @@ export class PythonLessonValidator implements ValidatorAdapter {
       fixedOutputCorrect = parsedFixture.data.cases.every((fixture) => fixture.outputMatched);
     }
     const outputCorrect = fixedOutputCorrect && evidence.get('python.stdout')!.value === expected;
+    const observedOutput = evidence.get('python.stdout')!.value;
+    const testFailed =
+      lesson.profile === 'dataclass-test-project-v1' &&
+      typeof observedOutput === 'string' &&
+      observedOutput.split('\n').includes('Test失敗');
     const checks = rules.map((rule) => {
       const factCorrect = evidence.get(`python.${rule.assertion.fact}`)!.value === true;
       const passed = outputCorrect && factCorrect;
@@ -227,7 +233,9 @@ export class PythonLessonValidator implements ValidatorAdapter {
         requirementPassed: passed,
         message: passed
           ? '教材のコード条件と実出力を確認できました。'
-          : '表示結果と教材のコード条件を確認してください。',
+          : testFailed
+            ? 'Test失敗: 期待値と実際の結果を確認してください。'
+            : '表示結果と教材のコード条件を確認してください。',
         expected: rule.feedback.expected,
         actual: factCorrect ? '教材のコード条件を確認済み' : '教材のコード条件は未確認',
         nextAction: passed ? '' : rule.feedback.nextAction,

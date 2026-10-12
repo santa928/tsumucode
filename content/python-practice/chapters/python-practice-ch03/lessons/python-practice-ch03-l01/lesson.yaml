@@ -1,0 +1,24 @@
+id: python-practice-ch03-l01
+kind: guided-project
+title: 型とTestを使ってメモリ内データを集計する
+goal: dataclassの最小のClassとInstanceを使い、値検証・反復・withを組み合わせて正常/不正/空データのTestを通せる。
+estimatedMinutes: 35
+prerequisiteLessonIds: [python-practice-ch01-l03, python-practice-ch02-l01]
+slideSources: [slides/s01.md, slides/s02.md, slides/s03.md]
+exerciseSources: [exercises/python-practice-ch03-l01-e01/exercise.yaml]
+reflection: 型注釈が値を拒否しない理由、dataclassが生成する処理、値検証とTestの違いを説明してください。空データの合計と例外時のstream終了も説明してください。
+glossaryRefs:
+  [python-type-hint, python-dataclass, python-test, python-generator, python-context-manager]
+project:
+  id: python-data-project
+  briefSource: brief.md
+  guideSources: [guide.md]
+  checklist:
+    - id: python-data-project-check01
+      label: 型注釈・明示検証・反復とwithを結び、正常/不正/空データのTestを通す
+      required: true
+      ruleIds: [python-practice-ch03-l01-e01-r01]
+completion:
+  kind: guided-project
+  requiredChecklistItemIds: [python-data-project-check01]
+  requiredExerciseIds: [python-practice-ch03-l01-e01]

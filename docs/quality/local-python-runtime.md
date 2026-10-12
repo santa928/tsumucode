@@ -103,3 +103,13 @@ l08は`lesson_tools.py`のaddをmainから呼び、2組の結果を表示しま�
 `python-module-profile.test.mjs`は固定file集合・合計容量・bundle hash・解析packetを確認します。`python-module.spec.ts`は通常画面で新3教材の47 Fixture、両fileの保存/Reset/再開、helper変更、古い結果拒否、Workspace非混入、ZIP/JSON、キーボードとa11yを検証します。Pagesの新規公開、#140/#196の実行途中の対話入力はこの変更に含めません。
 
 実行時の例外文にはinputの実値が含まれる場合があります。詳細は今回の非永続Consoleへ表示し、採点履歴には診断の分類・位置と固定案内だけを保存します。履歴やJSONから実入力を再現できる診断文をコピーしません。履歴のcode-error区分は維持します。
+
+### Type hint・dataclass・Testの小Project
+
+草稿ch03-l01は固定単一main.pyで、標準dataclasses.dataclassとio.StringIOを使います。Recordの最小Class/Instance/attribute、注釈非強制、生成init、int変換と負値拒否、with内のyield→sumを組み合わせます。新profile dataclass-test-project-v1は限定教材構文を受け入れ、固定Class/Function名・型注釈・値検証・Test driverのASTと実stdoutをANDで採点します。括弧/空白/コメント/docstringは構造から独立させ、任意の等価Projectを判定するとは扱いません。
+
+Test driverが捕捉したAssertionErrorはConsole『Test失敗』とincompleteの固定案内、未捕捉例外はcode-error、教材外構文や環境障害はsystem-error/未採点です。新ValidationResult種別やtest serviceは追加しません。assertはTestだけに使い、値検証はif/raiseで行います。固定実行は最適化を指定しません。
+
+dataclassとClassの追加は採点grammarの拡張です。ASTは安全境界ではなく、既存のBrowser worker/CSP/deadlineとLocalの単発コンテナ・資源制限・socket非共有が実行境界です。Localの教材外Sourceを未採点で実行する既存挙動も維持します。OS file/通信/任意package/Browser入力/実行権限は追加しません。作者だけが実dataclass fields/注釈非強制/値検証/正常・空・不正時の実stream closeを観察し、提出毎のobject状態証拠とは扱いません。
+
+revision2026-10-12.2→.3は空stepsで移行し、旧4教材のSource/IDを保持します。Home/Path/Pages公開と既存Python基礎9教材のreview不足は別の保留です。

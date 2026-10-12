@@ -1,5 +1,8 @@
 /** Local採点の入力と期待値だけを固定する。作者の解答Sourceは配信しない。 */
 const fixtures = {
+  'dataclass-test-project-v1': [
+    ['normal-invalid-empty', [], 'True\n6\n0\n不正: ValueError\n不正: ValueError\nTest成功\n'],
+  ],
   'values-vars-print-v1': [['values', [], '3\n5\n']],
   'input-echo-v1': [
     ['name', ['Ada'], 'Ada\n'],

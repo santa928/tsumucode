@@ -144,7 +144,7 @@ PagesとLocalはOriginが異なり、IndexedDBは自動同期しません。移�
 
 PagesとLocalは別Originですが、同じ教材IDで下書き・進捗・採点履歴をJSON移送できます。固定image、API、Browserとの違い、検証範囲は[Local CPythonの契約](docs/quality/local-python-runtime.md)を参照してください。
 
-独立した草稿Course「Pythonの反復とResource管理」は、基礎のList・for・Function・例外を前提に、内包表記、Iteratorの消費、Generatorの再開、withの終了処理を4教材・60分で学びます。ローカル学習画面の `#/courses/python-practice` から確認できます。HomeやPathの公開一覧には追加していません。入力を使わず、Previewと判定で固定データ・空のList・消費後の反復、正常時と例外時のStringIO終了処理を確認します。StringIOは各runのメモリ内だけに置き、ファイルや通信を追加しません。採点は各課題で示したコードの接続と実出力を照合します。任意のPythonプログラムの同値性は判定しません。
+独立した草稿Course「Pythonの反復とデータ処理」は、基礎のList・for・Function・例外を前提に、内包表記、Iteratorの消費、Generatorの再開、withの終了処理、型注釈・dataclass・TestのデータProjectを5教材・95分で学びます。ローカル学習画面の `#/courses/python-practice` から確認できます。HomeやPathの公開一覧には追加していません。入力を使わず、Previewと判定で固定データ・空のList・消費後の反復、正常時と例外時のStringIO終了処理を確認します。StringIOは各runのメモリ内だけに置き、ファイルや通信を追加しません。採点は各課題で示したコードの接続と実出力を照合します。任意のPythonプログラムの同値性は判定しません。
 
 ## 端末データ、容量、引き継ぎ
 

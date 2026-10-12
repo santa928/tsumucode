@@ -96,6 +96,7 @@ export function initializePythonWorker(
         | 'iteratorConsumed'
         | 'generatorLifecycle'
         | 'contextManagedClosed'
+        | 'dataProjectTested'
         | 'expectedOutput'
       >
     > = {};
@@ -251,6 +252,7 @@ export function initializePythonWorker(
           iteratorConsumed: parsed.iteratorConsumed === true,
           generatorLifecycle: parsed.generatorLifecycle === true,
           contextManagedClosed: parsed.contextManagedClosed === true,
+          dataProjectTested: parsed.dataProjectTested === true,
           ...(moduleProfile
             ? { expectedOutput: parsePythonModuleAnalysis(parsed).expectedOutput }
             : {}),
