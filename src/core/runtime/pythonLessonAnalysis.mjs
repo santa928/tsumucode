@@ -1,5 +1,13 @@
+import { pythonIterationAnalysis } from './pythonIterationAnalysis.mjs';
+
 /** 実Python ASTで最小教材の説明範囲とsource factsを調べる。隔離の根拠には使わない。 */
 export function pythonLessonAnalysis(source, profile = 'values-vars-print-v1') {
+  if (
+    ['list-comprehension-filter-v1', 'iterator-consumption-v1', 'generator-lifecycle-v1'].includes(
+      profile,
+    )
+  )
+    return pythonIterationAnalysis(source, profile);
   if (['list-reference-sum-v1', 'dict-value-sum-v1', 'function-return-scope-v1'].includes(profile))
     return dataLessonAnalysis(source, profile);
   if (profile !== 'values-vars-print-v1') return controlLessonAnalysis(source, profile);

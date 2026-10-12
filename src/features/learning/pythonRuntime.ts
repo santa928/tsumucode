@@ -101,7 +101,7 @@ export function preparePythonCourse(
   services: CourseRuntimeServices,
 ): void {
   if (
-    course.id !== 'python-basics' ||
+    !['python-basics', 'python-practice'].includes(course.id) ||
     course.runnerId !== 'python' ||
     course.validatorId !== 'python'
   )

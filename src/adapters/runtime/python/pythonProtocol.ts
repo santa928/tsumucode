@@ -27,6 +27,9 @@ export interface PythonResult {
   readonly moduleImported?: boolean;
   readonly exceptionHandled?: boolean;
   readonly projectSummed?: boolean;
+  readonly listComprehensionFiltered?: boolean;
+  readonly iteratorConsumed?: boolean;
+  readonly generatorLifecycle?: boolean;
   readonly expectedOutput?: string | null;
 }
 

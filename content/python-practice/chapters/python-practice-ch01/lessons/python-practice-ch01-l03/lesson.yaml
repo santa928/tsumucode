@@ -1,0 +1,14 @@
+id: python-practice-ch01-l03
+kind: standard
+title: "Generatorを作り、進め、使い切る"
+goal: "作成時とnext時を区別し、yield後の再開・枯渇・listによる全消費を説明できる。"
+estimatedMinutes: 15
+prerequisiteLessonIds: [python-practice-ch01-l02]
+slideSources: [slides/s01.md, slides/s02.md]
+exerciseSources: [exercises/python-practice-ch01-l03-e01/exercise.yaml]
+reflection: "作成済みが開始より先なのはなぜですか。最後のyield直後と追加next後の違い、list(fresh)後のnextを説明してください。"
+glossaryRefs: [python-generator]
+completion:
+  kind: standard
+  finalSlideId: python-practice-ch01-l03-s02
+  requiredExerciseIds: [python-practice-ch01-l03-e01]

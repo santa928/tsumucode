@@ -39,11 +39,13 @@ FROM node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f
 WORKDIR /app
 COPY --from=build /workspace/public/generated/content/courses/javascript/index.json ./course-index.json
 COPY --from=build /workspace/public/generated/content/courses/python-basics/index.json ./python-course-index.json
+COPY --from=build /workspace/public/generated/content/courses/python-practice/index.json ./python-practice-course-index.json
 COPY src/core/runtime/pythonLessonProfiles.mjs ./
 COPY scripts/local/controller.mjs scripts/local/protocol.mjs scripts/local/docker-engine.mjs ./
 COPY scripts/local/python-profile.mjs scripts/local/python-practice.mjs scripts/local/python-practice.py ./
 COPY src/core/runtime/pythonFixedFixtures.mjs ./
 COPY src/core/runtime/pythonLessonAnalysis.mjs ./python-lesson-analysis.mjs
+COPY src/core/runtime/pythonIterationAnalysis.mjs ./
 COPY src/core/runtime/pythonModuleAnalysis.mjs ./pythonModuleAnalysis.mjs
 COPY scripts/local/project-protocol.mjs scripts/local/workspace-store.mjs scripts/local/project-engine.mjs scripts/local/resident-workspace.mjs ./
 COPY scripts/local/preview-contract.mjs scripts/local/next-data-preview.mjs scripts/local/next-form-preview.mjs scripts/local/preview-control.mjs scripts/local/preview-transport.mjs ./
@@ -68,6 +70,7 @@ COPY --from=dependencies /workspace/node_modules/axe-core ./node_modules/axe-cor
 COPY scripts/local ./scripts/local
 COPY src/core/runtime/pythonLessonAnalysis.mjs src/core/runtime/pythonLessonProfiles.mjs ./src/core/runtime/
 COPY src/core/runtime/pythonModuleAnalysis.mjs ./src/core/runtime/
+COPY src/core/runtime/pythonIterationAnalysis.mjs ./src/core/runtime/
 CMD ["node", "scripts/local/preview-browser-acceptance.mjs"]
 
 # 正負Fixtureと通常Lessonの作者検証専用。learner/web/graderへ原稿を含めない。
@@ -92,10 +95,17 @@ FROM browser-checks AS python-browser-checks
 COPY --from=dependencies /workspace/node_modules/yaml ./node_modules/yaml
 COPY --from=dependencies /workspace/node_modules/fflate ./node_modules/fflate
 COPY content/python-basics ./content/python-basics
+COPY content/python-practice ./content/python-practice
 COPY tests/local/python-learning.spec.ts ./tests/local/python-learning.spec.ts
 COPY tests/local/python-practice.spec.ts ./tests/local/python-practice.spec.ts
 COPY tests/e2e/python-input.spec.ts ./tests/e2e/python-input.spec.ts
 COPY tests/e2e/python-module.spec.ts ./tests/e2e/python-module.spec.ts
+COPY tests/e2e/python-iteration.spec.ts ./tests/e2e/python-iteration.spec.ts
 COPY tests/e2e/helpers/progress.ts tests/e2e/helpers/testBasePath.ts ./tests/e2e/helpers/
 COPY playwright.python-local.config.ts ./
 CMD ["node", "scripts/local/python-browser-acceptance.mjs"]
+
+# 反復教材の作者Fixture/実object観察専用。配信・learner imageへ原稿を渡さない。
+FROM python-browser-checks AS python-iteration-checks
+COPY vendor/python/314.0.7 ./vendor/python/314.0.7
+CMD ["node", "scripts/local/python-iteration-acceptance.mjs", "--pyodide"]

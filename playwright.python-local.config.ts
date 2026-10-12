@@ -8,6 +8,7 @@ export default defineConfig({
     '**/local/python-practice.spec.ts',
     '**/e2e/python-input.spec.ts',
     '**/e2e/python-module.spec.ts',
+    '**/e2e/python-iteration.spec.ts',
   ],
   workers: 1,
   retries: 0,

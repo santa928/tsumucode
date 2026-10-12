@@ -20,6 +20,21 @@ export const PYTHON_LESSONS = Object.freeze({
   'python-basics-ch01-l08-e01': { profile: 'module-import-v1', facts: ['module-imported'] },
   'python-basics-ch01-l09-e01': { profile: 'exception-recovery-v1', facts: ['exception-handled'] },
   'python-basics-ch02-l01-e01': { profile: 'console-project-v1', facts: ['project-summed'] },
+  'python-practice-ch01-l01-e01': {
+    courseId: 'python-practice',
+    profile: 'list-comprehension-filter-v1',
+    facts: ['list-comprehension-filtered'],
+  },
+  'python-practice-ch01-l02-e01': {
+    courseId: 'python-practice',
+    profile: 'iterator-consumption-v1',
+    facts: ['iterator-consumed'],
+  },
+  'python-practice-ch01-l03-e01': {
+    courseId: 'python-practice',
+    profile: 'generator-lifecycle-v1',
+    facts: ['generator-lifecycle'],
+  },
 });
 
 export const PYTHON_FACT_FIELDS = Object.freeze({
@@ -34,6 +49,9 @@ export const PYTHON_FACT_FIELDS = Object.freeze({
   'module-imported': 'moduleImported',
   'exception-handled': 'exceptionHandled',
   'project-summed': 'projectSummed',
+  'list-comprehension-filtered': 'listComprehensionFiltered',
+  'iterator-consumed': 'iteratorConsumed',
+  'generator-lifecycle': 'generatorLifecycle',
 });
 
 /** 固定2ファイル契約は新3profileだけへ適用し、旧教材を拡張しない。 */
@@ -88,6 +106,10 @@ export function expectedPythonOutput(profile, lines) {
   if (profile === 'list-reference-sum-v1' || profile === 'dict-value-sum-v1') return '4\n9\n';
   if (profile === 'function-return-scope-v1') return '8\n10\n100\n';
   if (profile === 'module-import-v1') return '8\n10\n';
+  if (profile === 'list-comprehension-filter-v1') return '[0, 6]\n[]\n';
+  if (profile === 'iterator-consumption-v1') return '3\n5\nEND\nEND\n3\nEND\n';
+  if (profile === 'generator-lifecycle-v1')
+    return '作成済み\n開始\n生成\n6\n生成\n10\nEND\nEND\n空を作成\n開始\nEND\nEND\nまとめて消費\n開始\n生成\n生成\n[6, 10]\nEND\n';
   if (lines.length === 0) return undefined;
   if (profile === 'input-echo-v1') return lines[0] + '\n';
   if (profile === 'age-branch-v1' && /^[+-]?\d+$/u.test(lines[0].trim())) {

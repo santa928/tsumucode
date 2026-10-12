@@ -1,0 +1,159 @@
+id: python-practice-ch01-l03-e01
+kind: standard
+workspaceId: python-practice-ch01-l03-e01
+countsTowardStandardExerciseTotal: true
+title: "Generatorを作り、進め、使い切る"
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: python-generator
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: python-practice-ch01-l03-e01-step01
+    file: main.py
+    target: "yieldする値をnumber + numberへ直し、6と10を生成します。"
+    starterAnchor: "yield number"
+    change: "yieldする値をnumber + numberへ直し、6と10を生成します。"
+    observe: "作成時とnext時を区別し、yield後の再開・枯渇・listによる全消費を説明できる。"
+    requiresConceptIds: [python-generator]
+    validationRuleIds: [python-practice-ch01-l03-e01-r01]
+runtime:
+  kind: python
+  entryFile: main.py
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  profile: generator-lifecycle-v1
+files:
+  - path: main.py
+    language: python
+    source: starter/main.py
+    editable: true
+solutionFiles:
+  - path: main.py
+    language: python
+    source: solution/main.py
+    editable: false
+validationRules:
+  - id: python-practice-ch01-l03-e01-r01
+    label: "作成時とnext時を区別し、yield後の再開・枯渇・listによる全消費を説明できる。"
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: generator-lifecycle
+    feedback:
+      target: main.pyとConsole
+      expected: "作成時とnext時を区別し、yield後の再開・枯渇・listによる全消費を説明できる。"
+      nextAction: "yieldする値をnumber + numberへ直し、6と10を生成します。"
+    hintId: python-practice-ch01-l03-e01-h01
+    relatedSlideId: python-practice-ch01-l03-s02
+hints:
+  - id: python-practice-ch01-l03-e01-h01
+    level: 1
+    title: 最初の手掛かり
+    text: "yieldは値を返して処理を中断し、次のnextでその続きへ進みます。"
+    relatedSlideId: python-practice-ch01-l03-s02
+  - id: python-practice-ch01-l03-e01-h02
+    level: 2
+    title: コードを組み立てる
+    text: "numberをそのまま渡すと3と5です。2倍の値を1つずつ渡します。"
+    relatedSlideId: python-practice-ch01-l03-s02
+  - id: python-practice-ch01-l03-e01-h03
+    level: 3
+    title: 解答と理由
+    text: "yield number + numberなら6と10です。さらにnextして初めて終端に達し、以後もENDです。"
+    relatedSlideId: python-practice-ch01-l03-s02
+relatedSlideIds: [python-practice-ch01-l03-s01, python-practice-ch01-l03-s02]
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: solution
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/solution.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternate-name
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/alternate-name.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: starter
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/starter.py
+        editable: false
+    expectedFeedbackRuleIds: [python-practice-ch01-l03-e01-r01]
+  - id: hardcoded
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/hardcoded.py
+        editable: false
+    expectedFeedbackRuleIds: [python-practice-ch01-l03-e01-r01]
+  - id: syntax-error
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/syntax-error.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: forbidden-attribute
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/forbidden-attribute.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: return-instead-of-yield
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/return-instead-of-yield.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: eager-list
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/eager-list.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: unused-generator
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/unused-generator.py
+        editable: false
+    expectedFeedbackRuleIds: [python-practice-ch01-l03-e01-r01]

@@ -27,6 +27,9 @@ const factNames = [
   'module-imported',
   'exception-handled',
   'project-summed',
+  'list-comprehension-filtered',
+  'iterator-consumed',
+  'generator-lifecycle',
 ] as const;
 const ruleSchema = z
   .object({

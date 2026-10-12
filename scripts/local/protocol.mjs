@@ -54,7 +54,7 @@ function exactObject(value, keys) {
 }
 
 /** 固定教材の正規化済みファイルを検査する。パスを修復して受け入れない。 */
-export function validateRun(value, revision, pythonRevision) {
+export function validateRun(value, revision, pythonRevision, pythonPracticeRevision) {
   exactObject(value, [
     'apiVersion',
     'exerciseId',
@@ -67,9 +67,15 @@ export function validateRun(value, revision, pythonRevision) {
     ...(Object.hasOwn(value ?? {}, 'inputLines') ? ['inputLines'] : []),
   ]);
   const python = value.runtimeProfileId === PYTHON_PROFILE_ID;
+  const expectedRevision = python
+    ? PYTHON_LESSONS[value.exerciseId]?.courseId === 'python-practice'
+      ? pythonPracticeRevision
+      : pythonRevision
+    : revision;
   if (
     value.apiVersion !== API_VERSION ||
-    value.contentRevision !== (python ? pythonRevision : revision)
+    typeof expectedRevision !== 'string' ||
+    value.contentRevision !== expectedRevision
   )
     throw new RequestError(
       409,

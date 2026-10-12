@@ -411,6 +411,9 @@ export const PythonExerciseRuntimeSchema = z
       'module-import-v1',
       'exception-recovery-v1',
       'console-project-v1',
+      'list-comprehension-filter-v1',
+      'iterator-consumption-v1',
+      'generator-lifecycle-v1',
     ]),
   })
   .strict();

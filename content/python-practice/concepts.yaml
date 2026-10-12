@@ -1,0 +1,14 @@
+schemaVersion: 1
+concepts:
+  - id: python-comprehension
+    introducedBySlideId: python-practice-ch01-l01-s01
+    prerequisiteConceptIds: []
+    minimumProjectLevel: transform
+  - id: python-iterator
+    introducedBySlideId: python-practice-ch01-l02-s01
+    prerequisiteConceptIds: []
+    minimumProjectLevel: transform
+  - id: python-generator
+    introducedBySlideId: python-practice-ch01-l03-s01
+    prerequisiteConceptIds: [python-iterator]
+    minimumProjectLevel: transform

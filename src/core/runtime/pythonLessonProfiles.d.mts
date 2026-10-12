@@ -8,7 +8,10 @@ export type PythonLessonProfile =
   | 'function-return-scope-v1'
   | 'module-import-v1'
   | 'exception-recovery-v1'
-  | 'console-project-v1';
+  | 'console-project-v1'
+  | 'list-comprehension-filter-v1'
+  | 'iterator-consumption-v1'
+  | 'generator-lifecycle-v1';
 export type PythonSourceFact =
   | 'numeric-variable-printed'
   | 'same-variable-addition-printed'
@@ -20,11 +23,18 @@ export type PythonSourceFact =
   | 'function-return-scoped'
   | 'module-imported'
   | 'exception-handled'
-  | 'project-summed';
+  | 'project-summed'
+  | 'list-comprehension-filtered'
+  | 'iterator-consumed'
+  | 'generator-lifecycle';
 export const PYTHON_LESSONS: Readonly<
   Record<
     string,
-    { readonly profile: PythonLessonProfile; readonly facts: readonly PythonSourceFact[] }
+    {
+      readonly profile: PythonLessonProfile;
+      readonly facts: readonly PythonSourceFact[];
+      readonly courseId?: 'python-practice';
+    }
   >
 >;
 export const PYTHON_FACT_FIELDS: Readonly<
@@ -41,6 +51,9 @@ export const PYTHON_FACT_FIELDS: Readonly<
     | 'moduleImported'
     | 'exceptionHandled'
     | 'projectSummed'
+    | 'listComprehensionFiltered'
+    | 'iteratorConsumed'
+    | 'generatorLifecycle'
   >
 >;
 /** 行数・UTF-8 bytes・制御文字の共通入力境界。 */

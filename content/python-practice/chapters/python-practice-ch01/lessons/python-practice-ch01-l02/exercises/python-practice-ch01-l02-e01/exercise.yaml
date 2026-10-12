@@ -1,0 +1,159 @@
+id: python-practice-ch01-l02-e01
+kind: standard
+workspaceId: python-practice-ch01-l02-e01
+countsTowardStandardExerciseTotal: true
+title: "Iteratorの消費位置と作り直し"
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: python-iterator
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: python-practice-ch01-l02-e01-step01
+    file: main.py
+    target: "freshを元のnumbersから作り、先頭の3へ戻します。"
+    starterAnchor: "fresh = iter(cursor)"
+    change: "freshを元のnumbersから作り、先頭の3へ戻します。"
+    observe: "同じiteratorのnextが消費位置を進め、復帰には元Listから新しく作る理由を説明できる。"
+    requiresConceptIds: [python-iterator]
+    validationRuleIds: [python-practice-ch01-l02-e01-r01]
+runtime:
+  kind: python
+  entryFile: main.py
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  profile: iterator-consumption-v1
+files:
+  - path: main.py
+    language: python
+    source: starter/main.py
+    editable: true
+solutionFiles:
+  - path: main.py
+    language: python
+    source: solution/main.py
+    editable: false
+validationRules:
+  - id: python-practice-ch01-l02-e01-r01
+    label: "同じiteratorのnextが消費位置を進め、復帰には元Listから新しく作る理由を説明できる。"
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: iterator-consumed
+    feedback:
+      target: main.pyとConsole
+      expected: "同じiteratorのnextが消費位置を進め、復帰には元Listから新しく作る理由を説明できる。"
+      nextAction: "freshを元のnumbersから作り、先頭の3へ戻します。"
+    hintId: python-practice-ch01-l02-e01-h01
+    relatedSlideId: python-practice-ch01-l02-s02
+hints:
+  - id: python-practice-ch01-l02-e01-h01
+    level: 1
+    title: 最初の手掛かり
+    text: "同じcursorのnextは先頭へ戻りません。"
+    relatedSlideId: python-practice-ch01-l02-s02
+  - id: python-practice-ch01-l02-e01-h02
+    level: 2
+    title: コードを組み立てる
+    text: "iter(cursor)は同じiteratorです。まだ要素を持つ元のnumbersと区別します。"
+    relatedSlideId: python-practice-ch01-l02-s02
+  - id: python-practice-ch01-l02-e01-h03
+    level: 3
+    title: 解答と理由
+    text: "fresh = iter(numbers)へ直すと新しい消費位置から3を取得します。空Listは最初からENDです。"
+    relatedSlideId: python-practice-ch01-l02-s02
+relatedSlideIds: [python-practice-ch01-l02-s01, python-practice-ch01-l02-s02]
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: solution
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/solution.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternate-name
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/alternate-name.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: starter
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/starter.py
+        editable: false
+    expectedFeedbackRuleIds: [python-practice-ch01-l02-e01-r01]
+  - id: hardcoded
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/hardcoded.py
+        editable: false
+    expectedFeedbackRuleIds: [python-practice-ch01-l02-e01-r01]
+  - id: syntax-error
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/syntax-error.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: forbidden-attribute
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/forbidden-attribute.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: recreated-every-next
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/recreated-every-next.py
+        editable: false
+    expectedFeedbackRuleIds: [python-practice-ch01-l02-e01-r01]
+  - id: exhausted-no-default
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/exhausted-no-default.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: next-list
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/next-list.py
+        editable: false
+    expectedFeedbackRuleIds: []

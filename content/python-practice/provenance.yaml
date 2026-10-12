@@ -1,0 +1,171 @@
+schemaVersion: 1
+defaults:
+  method: original-authored
+  createdAt: 2026-10-12
+  creator: TsumuCode project
+  sourceUrl: none
+  license: project-original
+  modified: false
+items:
+  - id: python-practice-original-1
+    visibility: public
+    path: chapters/python-practice-ch01/chapter.yaml
+  - id: python-practice-original-2
+    visibility: public
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l01/exercises/python-practice-ch01-l01-e01/exercise.yaml
+  - id: python-practice-original-3
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l01/exercises/python-practice-ch01-l01-e01/fixtures/alternate-name.py
+  - id: python-practice-original-4
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l01/exercises/python-practice-ch01-l01-e01/fixtures/forbidden-attribute.py
+  - id: python-practice-original-5
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l01/exercises/python-practice-ch01-l01-e01/fixtures/hardcoded.py
+  - id: python-practice-original-6
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l01/exercises/python-practice-ch01-l01-e01/fixtures/nested-comprehension.py
+  - id: python-practice-original-7
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l01/exercises/python-practice-ch01-l01-e01/fixtures/no-filter.py
+  - id: python-practice-original-8
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l01/exercises/python-practice-ch01-l01-e01/fixtures/no-transform.py
+  - id: python-practice-original-9
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l01/exercises/python-practice-ch01-l01-e01/fixtures/solution.py
+  - id: python-practice-original-10
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l01/exercises/python-practice-ch01-l01-e01/fixtures/starter.py
+  - id: python-practice-original-11
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l01/exercises/python-practice-ch01-l01-e01/fixtures/syntax-error.py
+  - id: python-practice-original-12
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l01/exercises/python-practice-ch01-l01-e01/fixtures/unused-comprehension.py
+  - id: python-practice-original-13
+    visibility: public
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l01/exercises/python-practice-ch01-l01-e01/instructions.md
+  - id: python-practice-original-14
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l01/exercises/python-practice-ch01-l01-e01/solution/main.py
+  - id: python-practice-original-15
+    visibility: public
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l01/exercises/python-practice-ch01-l01-e01/starter/main.py
+  - id: python-practice-original-16
+    visibility: public
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l01/lesson.yaml
+  - id: python-practice-original-17
+    visibility: public
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l01/slides/s01.md
+  - id: python-practice-original-18
+    visibility: public
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l01/slides/s02.md
+  - id: python-practice-original-19
+    visibility: public
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l02/exercises/python-practice-ch01-l02-e01/exercise.yaml
+  - id: python-practice-original-20
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l02/exercises/python-practice-ch01-l02-e01/fixtures/alternate-name.py
+  - id: python-practice-original-21
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l02/exercises/python-practice-ch01-l02-e01/fixtures/exhausted-no-default.py
+  - id: python-practice-original-22
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l02/exercises/python-practice-ch01-l02-e01/fixtures/forbidden-attribute.py
+  - id: python-practice-original-23
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l02/exercises/python-practice-ch01-l02-e01/fixtures/hardcoded.py
+  - id: python-practice-original-24
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l02/exercises/python-practice-ch01-l02-e01/fixtures/next-list.py
+  - id: python-practice-original-25
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l02/exercises/python-practice-ch01-l02-e01/fixtures/recreated-every-next.py
+  - id: python-practice-original-26
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l02/exercises/python-practice-ch01-l02-e01/fixtures/solution.py
+  - id: python-practice-original-27
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l02/exercises/python-practice-ch01-l02-e01/fixtures/starter.py
+  - id: python-practice-original-28
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l02/exercises/python-practice-ch01-l02-e01/fixtures/syntax-error.py
+  - id: python-practice-original-29
+    visibility: public
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l02/exercises/python-practice-ch01-l02-e01/instructions.md
+  - id: python-practice-original-30
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l02/exercises/python-practice-ch01-l02-e01/solution/main.py
+  - id: python-practice-original-31
+    visibility: public
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l02/exercises/python-practice-ch01-l02-e01/starter/main.py
+  - id: python-practice-original-32
+    visibility: public
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l02/lesson.yaml
+  - id: python-practice-original-33
+    visibility: public
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l02/slides/s01.md
+  - id: python-practice-original-34
+    visibility: public
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l02/slides/s02.md
+  - id: python-practice-original-35
+    visibility: public
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l03/exercises/python-practice-ch01-l03-e01/exercise.yaml
+  - id: python-practice-original-36
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l03/exercises/python-practice-ch01-l03-e01/fixtures/alternate-name.py
+  - id: python-practice-original-37
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l03/exercises/python-practice-ch01-l03-e01/fixtures/eager-list.py
+  - id: python-practice-original-38
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l03/exercises/python-practice-ch01-l03-e01/fixtures/forbidden-attribute.py
+  - id: python-practice-original-39
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l03/exercises/python-practice-ch01-l03-e01/fixtures/hardcoded.py
+  - id: python-practice-original-40
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l03/exercises/python-practice-ch01-l03-e01/fixtures/return-instead-of-yield.py
+  - id: python-practice-original-41
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l03/exercises/python-practice-ch01-l03-e01/fixtures/solution.py
+  - id: python-practice-original-42
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l03/exercises/python-practice-ch01-l03-e01/fixtures/starter.py
+  - id: python-practice-original-43
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l03/exercises/python-practice-ch01-l03-e01/fixtures/syntax-error.py
+  - id: python-practice-original-44
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l03/exercises/python-practice-ch01-l03-e01/fixtures/unused-generator.py
+  - id: python-practice-original-45
+    visibility: public
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l03/exercises/python-practice-ch01-l03-e01/instructions.md
+  - id: python-practice-original-46
+    visibility: authoring
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l03/exercises/python-practice-ch01-l03-e01/solution/main.py
+  - id: python-practice-original-47
+    visibility: public
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l03/exercises/python-practice-ch01-l03-e01/starter/main.py
+  - id: python-practice-original-48
+    visibility: public
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l03/lesson.yaml
+  - id: python-practice-original-49
+    visibility: public
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l03/slides/s01.md
+  - id: python-practice-original-50
+    visibility: public
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l03/slides/s02.md
+  - id: python-practice-original-51
+    visibility: public
+    path: concepts.yaml
+  - id: python-practice-original-52
+    visibility: public
+    path: course.yaml
+  - id: python-practice-original-53
+    visibility: public
+    path: glossary.yaml
+  - id: python-practice-original-54
+    visibility: public
+    path: references/python-official.md

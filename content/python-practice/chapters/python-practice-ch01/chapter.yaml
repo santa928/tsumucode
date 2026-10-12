@@ -1,0 +1,10 @@
+id: python-practice-ch01
+sequence: 0
+title: 内包表記・Iterator・Generator
+goal: データを変換する位置と、反復を消費する位置を説明する。
+estimatedMinutes: 45
+kind: standard
+lessonSources:
+  - lessons/python-practice-ch01-l01/lesson.yaml
+  - lessons/python-practice-ch01-l02/lesson.yaml
+  - lessons/python-practice-ch01-l03/lesson.yaml

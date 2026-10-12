@@ -39,6 +39,9 @@ const payloadSchema = z.object({
   moduleImported: z.boolean().optional(),
   exceptionHandled: z.boolean().optional(),
   projectSummed: z.boolean().optional(),
+  listComprehensionFiltered: z.boolean().optional(),
+  iteratorConsumed: z.boolean().optional(),
+  generatorLifecycle: z.boolean().optional(),
   expectedOutput: z.string().max(4096).nullable().optional(),
 });
 
@@ -240,6 +243,12 @@ export class PythonExecutionService implements ExecutionService {
                     { id: 'python.module-imported', value: payload.moduleImported === true },
                     { id: 'python.exception-handled', value: payload.exceptionHandled === true },
                     { id: 'python.project-summed', value: payload.projectSummed === true },
+                    {
+                      id: 'python.list-comprehension-filtered',
+                      value: payload.listComprehensionFiltered === true,
+                    },
+                    { id: 'python.iterator-consumed', value: payload.iteratorConsumed === true },
+                    { id: 'python.generator-lifecycle', value: payload.generatorLifecycle === true },
                     { id: 'python.input-echoed', value: payload.inputEchoed === true },
                     {
                       id: 'python.age-boundary-branched',

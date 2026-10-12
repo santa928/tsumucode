@@ -1,0 +1,38 @@
+schemaVersion: 1
+releaseStatus: draft
+verifiedSourceCommit: draft
+canonicalDistSha256: draft
+lessons:
+  - lessonId: python-practice-ch01-l01
+    authorId: tsumucode-python-author
+    reviewerId: issue196_learning_stop_review
+    sourceHash: 6e645239ce1dbb58f96537091e51e84124b757a8aabb987d2437ee9a56a1a3ab
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 独立AI教材レビューで必須指摘0。固定CPython 3.14.2とPyodide 314.0.7で正負Fixtureと作者の消費・lifecycleを実検証。学生の採点はASTの値の流れと実stdoutを照合する。草稿であり、実人受講・Pages公開は未実施。
+  - lessonId: python-practice-ch01-l02
+    authorId: tsumucode-python-author
+    reviewerId: issue196_learning_stop_review
+    sourceHash: be957031405d99d597b80cab99d0f4c0e4b7ef3004bb7fec99cb8bb207866fdd
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 独立AI教材レビューで必須指摘0。固定CPython 3.14.2とPyodide 314.0.7で正負Fixtureと作者の消費・lifecycleを実検証。学生の採点はASTの値の流れと実stdoutを照合する。草稿であり、実人受講・Pages公開は未実施。
+  - lessonId: python-practice-ch01-l03
+    authorId: tsumucode-python-author
+    reviewerId: issue196_learning_stop_review
+    sourceHash: 443683ca65f4e8753cc63b1d56044efb6d1553dcb281bf44c879c705da00f70d
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 独立AI教材レビューで必須指摘0。固定CPython 3.14.2とPyodide 314.0.7で正負Fixtureと作者の消費・lifecycleを実検証。学生の採点はASTの値の流れと実stdoutを照合する。草稿であり、実人受講・Pages公開は未実施。
