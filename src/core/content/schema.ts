@@ -414,6 +414,7 @@ export const PythonExerciseRuntimeSchema = z
       'list-comprehension-filter-v1',
       'iterator-consumption-v1',
       'generator-lifecycle-v1',
+      'context-manager-close-v1',
     ]),
   })
   .strict();

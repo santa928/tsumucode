@@ -42,13 +42,23 @@ Pages/LocalのIndexedDBは自動同期しません。HomeでJSONを書き出し�
 
 ### 反復と遅延生成の草稿Course
 
-`python-practice` は基礎とは独立したrevision・進捗を持つ3教材です。`list-comprehension-filter-v1`、`iterator-consumption-v1`、`generator-lifecycle-v1` は、それぞれ説明済みの変換と条件、同じIteratorの消費と再生成、yieldを含む関数の呼び出しと消費をASTで確認します。固定データ・出力順・コード構造はinstructionsに示し、変数名の変更を許容します。使われない正しい構文と表示の直書きは合格にしません。
+`python-practice` は基礎とは独立したrevision・進捗を持つ草稿Courseです。反復の3教材では、`list-comprehension-filter-v1`、`iterator-consumption-v1`、`generator-lifecycle-v1` は、それぞれ説明済みの変換と条件、同じIteratorの消費と再生成、yieldを含む関数の呼び出しと消費をASTで確認します。固定データ・出力順・コード構造はinstructionsに示し、変数名の変更を許容します。使われない正しい構文と表示の直書きは合格にしません。
 
 学生の採点は同一SourceのAST事実と実stdoutを照合します。実Iteratorの同一性やGeneratorのCREATED/SUSPENDED/CLOSEDを直接観測するのは作者検証だけです。作者検証ではCPython 3.14.2とPyodide 314.0.7の実オブジェクトについて、空のList、複数回next、消費済みの再消費、新しいIterator、listによる一括消費を確認します。学生のすべての提出で内部状態を直接観測したとは扱いません。
 
 追加構文は単一の内包表記、iter/list/next、単一引数のGeneratorに限定します。import・属性・入れ子の内包表記・async・class・with・package追加を扱いません。既存の隔離・資源制限・単一main.pyを維持し、対話入力や新しい通信権限を追加しません。Local capabilityのcourseRevisionsで基礎と実践のrevisionを別々に照合し、実践のrevisionがない古いcontrollerは実践の採点に使いません。
 
 `python-iteration-acceptance.mjs` は両engineの正負28 Fixtureと作者の消費/lifecycle観測を行います。`python-iteration.spec.ts` は通常UIで同じFixture、保存・再読込・Reset・JSON移送・基礎との非混入、Preview再実行、Keyboardとa11yを確認します。草稿Courseであり、Pages公開とBrowserの実行途中入力は別の残件です。
+
+### Context managerの正常・例外終了
+
+追加1教材の`context-manager-close-v1`は、固定`from io import StringIO`、with、getvalue()/closed/close()、raise ValueErrorとtry/exceptだけを採点範囲へ追加します。単一main.py、固定engine/image、使い捨てWorker/container、既存の権限・資源制限を維持します。StringIOは各runのメモリ内streamで、OSファイル・path・他Workspaceとの共有・通信を導入しません。一般のimport/属性を解禁しません。ASTは隔離の根拠にせず、Localの既存「教材外を実行して未採点と表示する」契約も維持します。
+
+課題は正常処理・途中例外・終了後利用の固定構成を維持し、streamの変数名だけ変更できます。同じstreamがwithの外でclosedとして参照され、終了後getvalueのValueErrorへつながることをASTの構造・役割名と実stdoutで照合します。未使用with、同じ表示の直書き、manual closeの同じstdoutは合格にしません。任意の同値programを判定する仕組みではありません。
+
+`python-context-acceptance.mjs`は両engineの正負14 Fixtureと、作者による実StringIOの正常/例外close・閉じたgetvalueの失敗・空buffer・再closeを直接観察します。学生の提出毎の直接object観察とは区別します。closeはbufferの利用終了で、物理memory上書きやGC時刻を保証しません。作者の固定実行helperは反復教材と共有し、作者socketをlearnerへ渡しません。
+
+Course revisionは2026-10-12.1から2026-10-12.2へ進め、旧3教材のID/Sourceを維持する空stepsのmigration edgeを持ちます。`python-context.spec.ts`は通常UIの正負Fixture・中止再試行・保存/Reset/JSON移送・旧revision記録をseedした移行・Keyboard/a11yを確認します。Pages公開と既存9教材のレビュー記録不足は別の公開前残件です。
 
 `python-profile.test.mjs`とLocal adapterの回帰に加え、`python-acceptance.mjs`は実Docker/CPythonの版、stdout/stderr、エラー、5秒timeout、実OOM、64 KiB出力、UID/seccomp/capability、通信拒否、socketなし、子processの停止回収、排他と再試行を検査します。
 

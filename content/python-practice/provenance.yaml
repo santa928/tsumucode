@@ -159,13 +159,79 @@ items:
     path: chapters/python-practice-ch01/lessons/python-practice-ch01-l03/slides/s02.md
   - id: python-practice-original-51
     visibility: public
-    path: concepts.yaml
+    path: chapters/python-practice-ch02/chapter.yaml
   - id: python-practice-original-52
     visibility: public
-    path: course.yaml
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/exercises/python-practice-ch02-l01-e01/exercise.yaml
   - id: python-practice-original-53
+    visibility: authoring
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/exercises/python-practice-ch02-l01-e01/fixtures/alternate-name.py
+  - id: python-practice-original-54
+    visibility: authoring
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/exercises/python-practice-ch02-l01-e01/fixtures/closed-use-not-caught.py
+  - id: python-practice-original-55
+    visibility: authoring
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/exercises/python-practice-ch02-l01-e01/fixtures/forbidden-attribute.py
+  - id: python-practice-original-56
+    visibility: authoring
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/exercises/python-practice-ch02-l01-e01/fixtures/forbidden-import.py
+  - id: python-practice-original-57
+    visibility: authoring
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/exercises/python-practice-ch02-l01-e01/fixtures/hardcoded.py
+  - id: python-practice-original-58
+    visibility: authoring
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/exercises/python-practice-ch02-l01-e01/fixtures/host-file.py
+  - id: python-practice-original-59
+    visibility: authoring
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/exercises/python-practice-ch02-l01-e01/fixtures/manual-close.py
+  - id: python-practice-original-60
+    visibility: authoring
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/exercises/python-practice-ch02-l01-e01/fixtures/no-exception.py
+  - id: python-practice-original-61
+    visibility: authoring
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/exercises/python-practice-ch02-l01-e01/fixtures/normal-not-managed.py
+  - id: python-practice-original-62
+    visibility: authoring
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/exercises/python-practice-ch02-l01-e01/fixtures/other-workspace.py
+  - id: python-practice-original-63
+    visibility: authoring
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/exercises/python-practice-ch02-l01-e01/fixtures/solution.py
+  - id: python-practice-original-64
+    visibility: authoring
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/exercises/python-practice-ch02-l01-e01/fixtures/starter.py
+  - id: python-practice-original-65
+    visibility: authoring
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/exercises/python-practice-ch02-l01-e01/fixtures/syntax-error.py
+  - id: python-practice-original-66
+    visibility: authoring
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/exercises/python-practice-ch02-l01-e01/fixtures/unused-with.py
+  - id: python-practice-original-67
+    visibility: public
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/exercises/python-practice-ch02-l01-e01/instructions.md
+  - id: python-practice-original-68
+    visibility: authoring
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/exercises/python-practice-ch02-l01-e01/solution/main.py
+  - id: python-practice-original-69
+    visibility: public
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/exercises/python-practice-ch02-l01-e01/starter/main.py
+  - id: python-practice-original-70
+    visibility: public
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/lesson.yaml
+  - id: python-practice-original-71
+    visibility: public
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/slides/s01.md
+  - id: python-practice-original-72
+    visibility: public
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/slides/s02.md
+  - id: python-practice-original-73
+    visibility: public
+    path: concepts.yaml
+  - id: python-practice-original-74
+    visibility: public
+    path: course.yaml
+  - id: python-practice-original-75
     visibility: public
     path: glossary.yaml
-  - id: python-practice-original-54
+  - id: python-practice-original-76
     visibility: public
     path: references/python-official.md

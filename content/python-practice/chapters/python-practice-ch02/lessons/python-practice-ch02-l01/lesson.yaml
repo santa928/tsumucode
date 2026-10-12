@@ -1,0 +1,14 @@
+id: python-practice-ch02-l01
+kind: standard
+title: withで正常時も例外時も閉じる
+goal: 例外でmanual closeへ到達しないコードをwithへ直し、終了後の利用不能を確かめられる。
+estimatedMinutes: 15
+prerequisiteLessonIds: []
+slideSources: [slides/s01.md, slides/s02.md]
+exerciseSources: [exercises/python-practice-ch02-l01-e01/exercise.yaml]
+reflection: raiseの後ろのcloseへ進まない理由と、withを抜けた後も変数があるのにgetvalueが失敗する理由を説明してください。
+glossaryRefs: [python-context-manager, python-stringio]
+completion:
+  kind: standard
+  finalSlideId: python-practice-ch02-l01-s02
+  requiredExerciseIds: [python-practice-ch02-l01-e01]

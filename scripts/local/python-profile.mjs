@@ -69,7 +69,8 @@ print(json.dumps(_module_result))
     numericVariablePrinted: false,
     sameVariableAdditionPrinted: false,
   };
-  if (iterationProfiles.has(profile))
+  if (profile === 'context-manager-close-v1') fallback.contextManagedClosed = false;
+  else if (iterationProfiles.has(profile))
     Object.assign(fallback, Object.fromEntries(iterationFields.map((field) => [field, false])));
   else if (dataProfiles.has(profile))
     Object.assign(fallback, Object.fromEntries(dataFields.map((field) => [field, false])));
@@ -134,7 +135,8 @@ export function parsePythonAnalysis(stdout, stderr, exitCode, profile = 'values-
     return { ...parsePythonModuleAnalysis(packet), version };
   }
   const keys = ['version', 'supported', 'numericVariablePrinted', 'sameVariableAdditionPrinted'];
-  if (iterationProfiles.has(profile)) keys.push(...iterationFields);
+  if (profile === 'context-manager-close-v1') keys.push('contextManagedClosed');
+  else if (iterationProfiles.has(profile)) keys.push(...iterationFields);
   else if (dataProfiles.has(profile)) keys.push(...dataFields);
   else if (profile !== 'values-vars-print-v1')
     keys.push('inputEchoed', 'ageBoundaryBranched', 'rangeIterated');

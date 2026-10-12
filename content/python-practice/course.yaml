@@ -1,10 +1,10 @@
 schemaVersion: 1
 id: python-practice
-title: Pythonの反復と遅延生成
-description: 基礎のList・for・Functionから、内包表記・Iteratorの消費・Generatorの再開へ進む45分の制作途中の教材。
-audience: Python基礎のList・for・Functionを学んだ方
-estimatedMinutes: 45
-revision: 2026-10-12.1
+title: Pythonの反復とResource管理
+description: 基礎のList・for・Function・例外から、反復と遅延生成、正常時と例外時のResource終了処理へ進む60分の草稿教材。
+audience: Python基礎のList・for・Function・例外を学んだ方
+estimatedMinutes: 60
+revision: 2026-10-12.2
 runnerId: python
 validatorId: python
 glossarySource: glossary.yaml
@@ -16,17 +16,24 @@ supportedDevices:
 prerequisites: [python-basics]
 publicationStatus: draft
 expectedTotals:
-  chapters: 1
-  lessons: 3
-  conceptSlides: 6
-  standardExercises: 3
+  chapters: 2
+  lessons: 4
+  conceptSlides: 8
+  standardExercises: 4
   guidedProjectLessons: 0
   capstoneLessons: 0
-  estimatedMinutes: 45
+  estimatedMinutes: 60
 provenanceManifestPath: provenance.yaml
-progressMigrations: []
+progressMigrations:
+  - fromRevision: 2026-10-12.1
+    toRevision: 2026-10-12.2
+    steps: []
 phases:
   - id: python-practice-p01
     title: 変換・消費・遅延生成
     description: Listの一括変換と、状態を持つ反復を小さい実出力で比較する。
     chapterSources: [chapters/python-practice-ch01/chapter.yaml]
+  - id: python-practice-p02
+    title: Resourceの終了処理
+    description: 正常終了と例外終了で、同じstreamが閉じることを比較する。
+    chapterSources: [chapters/python-practice-ch02/chapter.yaml]

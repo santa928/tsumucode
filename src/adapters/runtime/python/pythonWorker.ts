@@ -95,6 +95,7 @@ export function initializePythonWorker(
         | 'listComprehensionFiltered'
         | 'iteratorConsumed'
         | 'generatorLifecycle'
+        | 'contextManagedClosed'
         | 'expectedOutput'
       >
     > = {};
@@ -249,6 +250,7 @@ export function initializePythonWorker(
           listComprehensionFiltered: parsed.listComprehensionFiltered === true,
           iteratorConsumed: parsed.iteratorConsumed === true,
           generatorLifecycle: parsed.generatorLifecycle === true,
+          contextManagedClosed: parsed.contextManagedClosed === true,
           ...(moduleProfile
             ? { expectedOutput: parsePythonModuleAnalysis(parsed).expectedOutput }
             : {}),

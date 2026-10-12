@@ -1,0 +1,8 @@
+print('通常')
+print(False)
+print(True)
+print('例外')
+print(False)
+print('例外を受け止めた')
+print(True)
+print('終了後は利用できない')

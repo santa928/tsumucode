@@ -1,88 +1,19 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { Buffer } from 'node:buffer';
 import process from 'node:process';
 import console from 'node:console';
-import { setTimeout, clearTimeout } from 'node:timers';
 import { parse } from 'yaml';
-import { fileURLToPath, URL } from 'node:url';
-import { loadPyodide } from '../../vendor/python/314.0.7/pyodide.mjs';
 import { pythonLessonAnalysis } from '../../src/core/runtime/pythonLessonAnalysis.mjs';
 import {
   expectedPythonOutput,
   PYTHON_LESSONS,
 } from '../../src/core/runtime/pythonLessonProfiles.mjs';
-import { containerConfig, docker, followOutput, removeContainer } from './docker-engine.mjs';
 
-// 作者だけが固定Fixtureとobject状態を観察する。提出の信頼packetへ流用しない。
+import { createPythonAuthorExecutor } from './python-author-execution.mjs';
+
+// 作者の観察を学生の採点packetへ流用しない。
 const pyodide = process.argv.includes('--pyodide');
-const owner = 'tsumucode-issue144-author';
-const py = pyodide
-  ? await loadPyodide({
-      indexURL: fileURLToPath(new URL('../../vendor/python/314.0.7/', import.meta.url)),
-    })
-  : undefined;
-
-async function execute(program) {
-  if (py) {
-    let stdout = '';
-    let stderr = '';
-    py.setStdout({
-      batched: (line) => {
-        stdout += `${line}\n`;
-      },
-    });
-    py.setStderr({
-      batched: (line) => {
-        stderr += `${line}\n`;
-      },
-    });
-    const globals = py.runPython('dict()');
-    try {
-      py.runPython(program, { globals });
-      return { stdout, stderr, exitCode: 0 };
-    } catch (error) {
-      return { stdout, stderr: `${stderr}${error.message}`, exitCode: 1 };
-    } finally {
-      globals.destroy();
-    }
-  }
-  const config = containerConfig({ 'main.py': program }, owner, true);
-  config.Cmd = ['-I', '-S', '-B', '-u', '-c', program];
-  const created = await docker('POST', '/containers/create', config);
-  let watchdog;
-  try {
-    await docker('POST', `/containers/${created.Id}/start`);
-    watchdog = setTimeout(() => {
-      void removeContainer(created.Id);
-    }, 5000);
-    const chunks = { stdout: [], stderr: [] };
-    const output = followOutput(
-      created.Id,
-      (stream, bytes) => {
-        (stream === 2 ? chunks.stderr : chunks.stdout).push(bytes);
-      },
-      () => {
-        void removeContainer(created.Id);
-      },
-    );
-    const waited = await docker(
-      'POST',
-      `/containers/${created.Id}/wait?condition=not-running`,
-      undefined,
-      6000,
-    );
-    await output.done;
-    return {
-      stdout: Buffer.concat(chunks.stdout).toString('utf8'),
-      stderr: Buffer.concat(chunks.stderr).toString('utf8'),
-      exitCode: waited.StatusCode,
-    };
-  } finally {
-    clearTimeout(watchdog);
-    await removeContainer(created.Id);
-  }
-}
+const execute = await createPythonAuthorExecutor('tsumucode-issue144-author');
 
 let count = 0;
 for (let number = 1; number <= 3; number += 1) {

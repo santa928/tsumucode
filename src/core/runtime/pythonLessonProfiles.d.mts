@@ -11,7 +11,8 @@ export type PythonLessonProfile =
   | 'console-project-v1'
   | 'list-comprehension-filter-v1'
   | 'iterator-consumption-v1'
-  | 'generator-lifecycle-v1';
+  | 'generator-lifecycle-v1'
+  | 'context-manager-close-v1';
 export type PythonSourceFact =
   | 'numeric-variable-printed'
   | 'same-variable-addition-printed'
@@ -26,7 +27,8 @@ export type PythonSourceFact =
   | 'project-summed'
   | 'list-comprehension-filtered'
   | 'iterator-consumed'
-  | 'generator-lifecycle';
+  | 'generator-lifecycle'
+  | 'context-managed-closed';
 export const PYTHON_LESSONS: Readonly<
   Record<
     string,
@@ -54,6 +56,7 @@ export const PYTHON_FACT_FIELDS: Readonly<
     | 'listComprehensionFiltered'
     | 'iteratorConsumed'
     | 'generatorLifecycle'
+    | 'contextManagedClosed'
   >
 >;
 /** 行数・UTF-8 bytes・制御文字の共通入力境界。 */

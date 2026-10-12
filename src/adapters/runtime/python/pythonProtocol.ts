@@ -30,6 +30,7 @@ export interface PythonResult {
   readonly listComprehensionFiltered?: boolean;
   readonly iteratorConsumed?: boolean;
   readonly generatorLifecycle?: boolean;
+  readonly contextManagedClosed?: boolean;
   readonly expectedOutput?: string | null;
 }
 

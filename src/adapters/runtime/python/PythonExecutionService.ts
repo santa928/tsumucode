@@ -42,6 +42,7 @@ const payloadSchema = z.object({
   listComprehensionFiltered: z.boolean().optional(),
   iteratorConsumed: z.boolean().optional(),
   generatorLifecycle: z.boolean().optional(),
+  contextManagedClosed: z.boolean().optional(),
   expectedOutput: z.string().max(4096).nullable().optional(),
 });
 
@@ -248,7 +249,14 @@ export class PythonExecutionService implements ExecutionService {
                       value: payload.listComprehensionFiltered === true,
                     },
                     { id: 'python.iterator-consumed', value: payload.iteratorConsumed === true },
-                    { id: 'python.generator-lifecycle', value: payload.generatorLifecycle === true },
+                    {
+                      id: 'python.generator-lifecycle',
+                      value: payload.generatorLifecycle === true,
+                    },
+                    {
+                      id: 'python.context-managed-closed',
+                      value: payload.contextManagedClosed === true,
+                    },
                     { id: 'python.input-echoed', value: payload.inputEchoed === true },
                     {
                       id: 'python.age-boundary-branched',
