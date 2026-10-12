@@ -539,9 +539,10 @@ export class PracticeRun {
       inputBytes: this.inputBytes,
       activeMs: Math.round(this.activeMs),
       waitingMs: Math.round(this.waitingMs),
-      elapsedMs: Math.round(
-        (this.endedAt ?? performance.now()) - (this.startedAt ?? performance.now()),
-      ),
+      elapsedMs:
+        this.startedAt === undefined
+          ? 0
+          : Math.max(0, Math.round((this.endedAt ?? performance.now()) - this.startedAt)),
       stdout: Buffer.concat(this.stdout).toString('utf8'),
       stderr: Buffer.concat(this.stderr).toString('utf8') + this.partialControl.toString('utf8'),
       removed: Boolean(this.removed),

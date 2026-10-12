@@ -147,3 +147,27 @@ it('送信失敗を自動で再送せず、回収未確認を正常停止へ変�
   await expect(client.stop()).rejects.toThrow('回収');
   expect(await running).toBeInstanceOf(Error);
 });
+
+it('起動前の回収済み失敗をelapsedMs 0で受け取り、同じidentityをackする', async () => {
+  const current = {
+    ...(await snapshot()),
+    phase: 'ended' as const,
+    reason: 'system-error',
+    inputRequestSequence: null,
+    activeMs: 0,
+    elapsedMs: 0,
+    removed: true,
+  };
+  const fetchMock = vi.fn(async (path: string) => {
+    if (path.endsWith('/session')) return Response.json({ apiVersion: 1, token: 'a'.repeat(64) });
+    return Response.json({ ...current, purged: path.endsWith('/ack') });
+  });
+  vi.stubGlobal('fetch', fetchMock);
+  const received = vi.fn();
+  await new LocalPythonPracticeClient().start(request, received);
+  expect(received).toHaveBeenCalledWith(current);
+  expect(fetchMock.mock.calls.map(([path]) => path)).toContain(
+    `/api/practice/runs/${current.identity.runId}/ack`,
+  );
+  expect(fetchMock.mock.calls.some(([path]) => path.endsWith('/cancel'))).toBe(false);
+});

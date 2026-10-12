@@ -79,6 +79,7 @@ const engine = createServer(async (req, res) => {
       return hold(res, { State: { ...container.State } });
     return res.end(JSON.stringify({ State: container.State }));
   } else if (req.method === 'DELETE' || url.endsWith('/kill')) {
+    if (mode === 'attach-error') await delay(20);
     container.State.Running = false;
     container.State.Paused = false;
     container.logs?.end();
@@ -92,6 +93,10 @@ engine.on('upgrade', (req, socket) => {
   const id = req.url.split('?')[0].split('/')[3];
   const container = containers.get(id);
   assert.ok(container);
+  if (mode === 'attach-error') {
+    socket.end('HTTP/1.1 500 Internal Server Error\r\nContent-Length: 2\r\nConnection: close\r\n\r\n{}');
+    return;
+  }
   container.stdin = socket;
   socket.on('error', () => {});
   socket.on('data', (chunk) => {
@@ -238,6 +243,22 @@ try {
     );
     await api(`practice/runs/${identity.runId}/ack`, { identity });
   }
+  mode = 'attach-error';
+  const beforeStarts = starts;
+  const failedRun = await api('practice/runs', input(false));
+  assert.equal(failedRun.status, 202);
+  assert.equal(failedRun.value.reason, 'system-error');
+  assert.equal(failedRun.value.removed, true);
+  assert.equal(failedRun.value.elapsedMs, 0);
+  assert.equal(starts, beforeStarts);
+  const acknowledged = await api(`practice/runs/${failedRun.value.identity.runId}/ack`, {
+    identity: failedRun.value.identity,
+  });
+  assert.equal(acknowledged.status, 200);
+  assert.deepEqual(acknowledged.value.identity, failedRun.value.identity);
+  assert.equal(acknowledged.value.elapsedMs, 0);
+  assert.equal(acknowledged.value.purged, true);
+  mode = undefined;
   assert.equal(containers.size, 0);
   console.log(
     JSON.stringify({
@@ -247,6 +268,7 @@ try {
         'ready/analysis/create中のHTTP切断は遅延応答後もlearnerを開始しない',
         'unpause/inspect中のHTTP切断は遅延応答後もstdin書込み0・回収確認',
         '通常202/poll finishは取消せず、停止後入力は拒否',
+        '起動前のstdin接続失敗はelapsedMs 0・同じidentityで回収済み結果をackする',
       ],
     }),
   );
