@@ -5,6 +5,7 @@ export default defineConfig({
   testDir: './tests',
   testMatch: [
     '**/local/python-learning.spec.ts',
+    '**/local/python-practice.spec.ts',
     '**/e2e/python-input.spec.ts',
     '**/e2e/python-module.spec.ts',
   ],

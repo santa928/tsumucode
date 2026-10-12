@@ -7,6 +7,7 @@ import {
   pythonSourceSnapshot,
 } from '../../../core/runtime/pythonLessonProfiles.mjs';
 import { z } from 'zod';
+import { pythonFixedFixtures } from '../../../core/runtime/pythonFixedFixtures.mjs';
 import type { SnapshotPolicy } from '../../../core/runtime/contracts';
 import type {
   ValidationContext,
@@ -169,7 +170,47 @@ export class PythonLessonValidator implements ValidatorAdapter {
       ? evidence.get('python.expected-output')?.value
       : expectedPythonOutput(lesson.profile, inputLines);
     if (typeof expected !== 'string') return system();
-    const outputCorrect = evidence.get('python.stdout')!.value === expected;
+    let fixedOutputCorrect = true;
+    if (this.engine === 'cpython') {
+      const marker = evidence.get('python.fixed-fixtures')?.value;
+      if (typeof marker !== 'string') return system();
+      let packet: unknown;
+      try {
+        packet = JSON.parse(marker) as unknown;
+      } catch {
+        return system();
+      }
+      const parsedFixture = z
+        .object({
+          version: z.literal(1),
+          purpose: z.literal('grade'),
+          profile: z.literal(lesson.profile),
+          sourceHash: z.literal(hash),
+          cases: z
+            .array(
+              z
+                .object({
+                  id: z.string(),
+                  status: z.literal('succeeded'),
+                  outputMatched: z.boolean(),
+                })
+                .strict(),
+            )
+            .min(1)
+            .max(3),
+        })
+        .strict()
+        .safeParse(packet);
+      const expectedIds = pythonFixedFixtures(lesson.profile).map((fixture) => fixture.id);
+      if (
+        !parsedFixture.success ||
+        parsedFixture.data.cases.length !== expectedIds.length ||
+        parsedFixture.data.cases.some((fixture, index) => fixture.id !== expectedIds[index])
+      )
+        return system();
+      fixedOutputCorrect = parsedFixture.data.cases.every((fixture) => fixture.outputMatched);
+    }
+    const outputCorrect = fixedOutputCorrect && evidence.get('python.stdout')!.value === expected;
     const checks = rules.map((rule) => {
       const factCorrect = evidence.get(`python.${rule.assertion.fact}`)!.value === true;
       const passed = outputCorrect && factCorrect;

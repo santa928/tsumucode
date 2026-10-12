@@ -125,7 +125,9 @@ export class LocalConsoleExecutionService implements ExecutionService {
     const stale = (): boolean => this.#disposed || generation !== this.#generation;
     const stopped = (): ExecutionResult =>
       result('stopped', '実行を停止しました。採点していません。');
-    const inputLines = this.engine === 'cpython' ? [...this.readInputLines()] : undefined;
+    const fixedGrade = this.engine === 'cpython' && request.options.purpose === 'grade';
+    const inputLines =
+      this.engine === 'cpython' && !fixedGrade ? [...this.readInputLines()] : undefined;
     if (inputLines !== undefined && !validPythonInputLines(inputLines))
       return result('unsupported', '入力は16行・1 KiB以内にしてください。採点していません。');
     let active: ActiveRun | undefined;
@@ -167,7 +169,7 @@ export class LocalConsoleExecutionService implements ExecutionService {
         );
       if (capability.contentRevision !== this.contentRevision)
         throw new Error('教材の版が異なります。コードを保存して学習モードを再起動してください。');
-      const created = this.#api('runs', {
+      const created = this.#api(fixedGrade ? 'grades' : 'runs', {
         apiVersion: 1,
         exerciseId: this.exerciseId,
         contentRevision: this.contentRevision,
@@ -181,7 +183,8 @@ export class LocalConsoleExecutionService implements ExecutionService {
       active = { request, created };
       this.#active = active;
       await created;
-      for (let count = 0; count < 100; count += 1) {
+      const deadline = performance.now() + (fixedGrade ? 90000 : 15000);
+      while (performance.now() < deadline) {
         if (stale()) return stopped();
         const response = z
           .discriminatedUnion('state', [

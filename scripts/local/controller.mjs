@@ -4,6 +4,8 @@ import {
   isPythonModuleProfile,
   pythonSourceSnapshot,
 } from './pythonLessonProfiles.mjs';
+import { PracticeRunner, PRACTICE_LIMITS } from './python-practice.mjs';
+import { pythonFixedFixtures } from './pythonFixedFixtures.mjs';
 import console from 'node:console';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
@@ -12,6 +14,7 @@ import { Buffer } from 'node:buffer';
 import process from 'node:process';
 import { performance } from 'node:perf_hooks';
 import { TextDecoder } from 'node:util';
+import { URL } from 'node:url';
 import { setTimeout, clearTimeout } from 'node:timers';
 import {
   API_VERSION,
@@ -59,6 +62,10 @@ const revision = JSON.parse(await readFile('/app/course-index.json', 'utf8')).re
 const pythonRevision = JSON.parse(await readFile('/app/python-course-index.json', 'utf8')).revision;
 const token = randomBytes(32).toString('hex');
 const results = new Map();
+const practice = new PracticeRunner(
+  owner,
+  await readFile(new URL('./python-practice.py', import.meta.url), 'utf8'),
+);
 let active;
 let recoveryNeeded = true;
 let readyOperation;
@@ -75,6 +82,8 @@ const resident = new ResidentWorkspace({
   slot: {
     acquire(run) {
       if (closing) throw new RequestError(503, '学習環境を停止しています。');
+      if (practice.recoveryNeeded)
+        throw new RequestError(503, '前回の実行の回収を確認できません。');
       if (active) throw new RequestError(409, '実行中です。停止後にもう一度実行してください。');
       active = run;
     },
@@ -121,7 +130,12 @@ function identity(input) {
 
 /** 中止理由を先に固定し、コンテナ全体へ停止を要求する。 */
 async function cancel(run, reason) {
+  if (run.practice) {
+    await run.stop(reason);
+    return;
+  }
   run.reason ??= reason;
+  if (run.current) await cancel(run.current, reason);
   if (run.containerId) {
     try {
       await docker('POST', `/containers/${run.containerId}/kill`);
@@ -379,8 +393,187 @@ async function execute(run) {
     };
     run.input = { ...run.input, files: {} };
     // 解析も実行も回収した後にだけ、同じ排他枠を次へ渡す。
-    active = undefined;
+    if (active === run) active = undefined;
   }
+}
+
+/** 固定入力のfresh実行を同じ排他枠で集約し、練習runを一切使わない。 */
+async function executeFixedGrade(run) {
+  const input = run.input;
+  const profile = PYTHON_LESSONS[input.exerciseId].profile;
+  const suite = pythonFixedFixtures(profile);
+  const observations = [];
+  let selected;
+  let failed;
+  const deadline = setTimeout(() => {
+    void cancel(run, 'timeout').catch(() => {
+      recoveryNeeded = true;
+    });
+  }, 60000);
+  try {
+    for (const fixture of suite) {
+      // 取消理由は子phaseより先に固定し、case境界でも次containerを起動しない。
+      if (run.reason && selected) break;
+      const current = {
+        input: { ...input, runId: `${input.runId}:${fixture.id}`, inputLines: fixture.inputLines },
+        reason: run.reason,
+      };
+      run.current = current;
+      await execute(current);
+      selected ??= current.result;
+      const outputMatched =
+        current.result.status === 'succeeded' && current.result.stdout === fixture.expectedOutput;
+      observations.push({ id: fixture.id, status: current.result.status, outputMatched });
+      if (!outputMatched && (!failed || current.result.status !== 'succeeded'))
+        failed = current.result;
+      if (
+        run.reason ||
+        ['system-error', 'stopped', 'unsupported', 'code-error'].includes(current.result.status)
+      )
+        break;
+    }
+    const result = failed ?? selected;
+    if (!result) throw new Error('固定採点の結果がありません。');
+    run.result = {
+      ...result,
+      ...identity(input),
+      evidence: [
+        ...result.evidence,
+        {
+          id: 'python.fixed-fixtures',
+          value: JSON.stringify({
+            version: 1,
+            purpose: 'grade',
+            profile,
+            sourceHash: sourceHash(pythonSourceSnapshot(input.files, profile)),
+            cases: observations,
+          }),
+        },
+      ],
+    };
+    // 永続履歴へ渡るのは固定Fixtureの値だけ。練習の入力申告/Consoleは参照しない。
+    run.input = { ...input, files: {} };
+  } finally {
+    clearTimeout(deadline);
+    run.current = undefined;
+    if (active === run) active = undefined;
+  }
+}
+
+/** 作成・入力・poll・ackを練習専用identityで受け、採点結果を返さない。 */
+async function handlePractice(url, input, res) {
+  if (url === '/api/practice/runs') {
+    if (active) throw new RequestError(409, '実行中です。停止後にもう一度実行してください。');
+    exact(input, [
+      'apiVersion',
+      'exerciseId',
+      'contentRevision',
+      'runtimeProfileId',
+      'exerciseSessionId',
+      'executionRevision',
+      'files',
+    ]);
+    const validated = validateRun(
+      { ...input, runId: randomBytes(16).toString('hex') },
+      revision,
+      pythonRevision,
+    );
+    if (validated.runtimeProfileId !== PYTHON_PROFILE_ID)
+      throw new RequestError(422, 'CPythonの練習だけに対応します。');
+    const admission = { input: validated };
+    active = admission;
+    let run;
+    const disconnected = () => {
+      if (!res.writableEnded)
+        void cancel(run ?? admission, 'client-disconnected').catch(() => {
+          recoveryNeeded = true;
+        });
+    };
+    res.once('close', disconnected);
+    res.once('finish', () => res.off('close', disconnected));
+    const created = (async () => {
+      await ready();
+      if (
+        isPythonModuleProfile(PYTHON_LESSONS[validated.exerciseId].profile) &&
+        !admission.reason
+      ) {
+        const analysis = await executePhase(admission, true);
+        if (!admission.reason) {
+          const parsed = parsePythonAnalysis(
+            analysis.stdout,
+            analysis.stderr,
+            analysis.exitCode,
+            PYTHON_LESSONS[validated.exerciseId].profile,
+          );
+          if (parsed.state !== 'supported')
+            admission.reason = parsed.state === 'syntax-error' ? 'code-error' : 'unsupported';
+        }
+      }
+      if (closing || admission.reason)
+        throw new RequestError(
+          422,
+          'このSourceは練習実行できません。コードを確認してください。採点していません。',
+        );
+      const starting = practice.create(validated);
+      run = practice.active;
+      active = run;
+      run.done.finally(() => {
+        if (active === run) active = undefined;
+      });
+      await starting;
+      return run;
+    })();
+    admission.done = created
+      .then((current) => current.done)
+      .finally(() => {
+        if (active === admission) active = undefined;
+      });
+    admission.done.catch(() => {});
+    let current;
+    try {
+      current = await created;
+    } catch (error) {
+      res.off('close', disconnected);
+      throw error;
+    }
+    res.statusCode = 202;
+    return current.snapshot();
+  }
+  const matched = /^\/api\/practice\/runs\/([a-f0-9-]+)(?:\/(input|cancel|ack))?$/u.exec(url);
+  if (!matched) throw new RequestError(404, '練習APIがありません。');
+  const run = practice.records.get(matched[1]);
+  if (!run) throw new RequestError(404, '練習結果は期限切れです。再実行してください。');
+  const action = matched[2];
+  exact(
+    input,
+    action === 'input'
+      ? input.eof === true
+        ? ['identity', 'sequence', 'eof']
+        : ['identity', 'sequence', 'line']
+      : ['identity'],
+  );
+  if (!run.matches(input.identity))
+    throw new RequestError(409, '別の実行への入力は受け付けません。');
+  if (action === 'input') {
+    const disconnected = () => {
+      if (!res.writableEnded) void run.stop('client-disconnected');
+    };
+    res.once('close', disconnected);
+    res.once('finish', () => res.off('close', disconnected));
+    try {
+      await run.send(input.identity, input.sequence, input.line, input.eof === true);
+    } catch {
+      throw new RequestError(
+        409,
+        '入力の状態または上限が変わりました。同じ入力を再送せず状態を確認してください。',
+      );
+    } finally {
+      res.off('close', disconnected);
+    }
+  } else if (action === 'cancel') await run.stop('cancelled');
+  else if (action === 'ack') run.ack(input.identity);
+  else run.heartbeat(input.identity);
+  return run.snapshot();
 }
 
 /** HTTP bodyをboundedに取得し、JSONのみを受け入れる。 */
@@ -413,6 +606,8 @@ async function handle(req, res) {
     if (closing) throw new RequestError(503, '学習環境を停止しています。');
     if (
       req.url !== '/api/runs' &&
+      req.url !== '/api/grades' &&
+      !req.url?.startsWith('/api/practice/') &&
       !req.url?.startsWith('/api/workspaces/') &&
       (!input ||
         Array.isArray(input) ||
@@ -421,6 +616,14 @@ async function handle(req, res) {
     ) {
       throw new RequestError(400, 'この要求のbodyは空のobjectにしてください。');
     }
+    if (
+      practice.recoveryNeeded &&
+      ['/api/runs', '/api/grades', '/api/practice/runs'].includes(req.url)
+    )
+      throw new RequestError(
+        503,
+        '前回の回収を確認できません。Sourceを保存して学習モードを再起動してください。',
+      );
     let value;
     if (req.url === '/api/session') value = { apiVersion: API_VERSION, token };
     else if (
@@ -504,6 +707,8 @@ async function handle(req, res) {
         runtimeProfileId: PYTHON_PROFILE_ID,
         engineVersion: PYTHON_VERSION,
         limits: LIMITS,
+        practice: { purpose: 'practice', limits: PRACTICE_LIMITS },
+        fixedFixtureGrading: true,
       };
     } else if (req.url === '/api/capabilities') {
       if (!active) await ready();
@@ -516,8 +721,16 @@ async function handle(req, res) {
         engineVersion: process.version,
         limits: LIMITS,
       };
-    } else if (req.url === '/api/runs') {
+    } else if (req.url?.startsWith('/api/practice/')) {
+      value = await handlePractice(req.url, input, res);
+    } else if (req.url === '/api/runs' || req.url === '/api/grades') {
       const validated = validateRun(input, revision, pythonRevision);
+      const fixedGrade = req.url === '/api/grades';
+      if (
+        fixedGrade &&
+        (validated.runtimeProfileId !== PYTHON_PROFILE_ID || Object.hasOwn(input, 'inputLines'))
+      )
+        throw new RequestError(400, '固定採点へ練習入力を指定できません。');
       if (active) throw new RequestError(409, '実行中です。停止後にもう一度実行してください。');
       if (results.has(validated.runId))
         throw new RequestError(409, '同じ実行IDは再利用できません。');
@@ -529,12 +742,12 @@ async function handle(req, res) {
       run.done = preparation.then(
         () => {
           if (closing) run.reason ??= 'cancelled';
-          return execute(run);
+          return fixedGrade ? executeFixedGrade(run) : execute(run);
         },
         () => {
           run.reason = 'system-error';
           recoveryNeeded = true;
-          return execute(run);
+          return fixedGrade ? executeFixedGrade(run) : execute(run);
         },
       );
       try {

@@ -5,12 +5,13 @@ export type ConsoleFreshness = 'current' | 'previous-success';
 export interface RuntimeConsoleProps {
   readonly records: readonly RunnerConsoleRecord[];
   readonly freshness: ConsoleFreshness;
+  readonly label?: string;
 }
 
 /** Runnerのbounded plain text記録を、色だけに依存しないConsole一覧として表示する。 */
-export function RuntimeConsole({ records, freshness }: RuntimeConsoleProps) {
+export function RuntimeConsole({ records, freshness, label = 'Console出力' }: RuntimeConsoleProps) {
   return (
-    <section className="tc-runtime-console" role="region" aria-label="Console出力" tabIndex={0}>
+    <section className="tc-runtime-console" role="region" aria-label={label} tabIndex={0}>
       {freshness === 'previous-success' ? (
         <p className="tc-runtime-console-freshness">前回成功時のConsoleです</p>
       ) : null}

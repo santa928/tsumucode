@@ -29,6 +29,7 @@ for (const number of [2, 3, 4, 5, 6, 7]) {
     };
     await page.goto(`${base}#/courses/python-basics/lessons/${lessonId}/exercises/${exerciseId}`);
     await expect(page.locator('.cm-content')).toBeVisible();
+    const local = (await page.getByRole('region', { name: 'CPythonの練習実行' }).count()) > 0;
     for (const fixture of exercise.fixtures) {
       // 初回Previewの準備中はEditorが読取専用のため、編集可能になってから操作する。
       await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled({
@@ -41,8 +42,19 @@ for (const number of [2, 3, 4, 5, 6, 7]) {
           .getByLabel('実行前の入力（1行につきinput 1回）')
           .fill(fixture.inputLines.join('\n'));
       const previous = (await storedDraft(page, exerciseId))?.['validationHistory'];
+      // Localの採点入力は固定。空の事前入力によるValueErrorはPreviewで引き続き確認する。
+      if (local && number === 3 && fixture.id === 'empty') {
+        await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
+        await expect(page.getByRole('region', { name: 'Console出力', exact: true })).toContainText(
+          'ValueError',
+          { timeout: 30_000 },
+        );
+        expect((await storedDraft(page, exerciseId))?.['validationHistory']).toEqual(previous);
+      }
+      const expectedStatus =
+        local && number === 3 && fixture.id === 'empty' ? 'pass' : fixture.expectedStatus;
       await page.getByRole('button', { name: '判定する', exact: true }).click();
-      if (fixture.expectedStatus === 'system-error') {
+      if (expectedStatus === 'system-error') {
         await expect(page.getByText(/入力行が不足しています/).first()).toBeVisible({
           timeout: 30_000,
         });
@@ -63,7 +75,7 @@ for (const number of [2, 3, 4, 5, 6, 7]) {
           },
           { message: fixture.id },
         )
-        .toMatchObject({ status: fixture.expectedStatus });
+        .toMatchObject({ status: expectedStatus });
       const history = (await storedDraft(page, exerciseId))?.['validationHistory'] as {
         checks: { passed: boolean; ruleId: string }[];
       }[];
@@ -77,7 +89,9 @@ for (const number of [2, 3, 4, 5, 6, 7]) {
       await page.getByRole('button', { name: '閉じる', exact: true }).click();
       if (number >= 5 && fixture.id === 'empty') {
         await expect(
-          page.getByRole('region', { name: 'Console出力' }).getByText('0', { exact: true }),
+          page
+            .getByRole('region', { name: 'Console出力', exact: true })
+            .getByText('0', { exact: true }),
         ).toBeVisible();
       }
       if (number >= 5 && fixture.expectedStatus === 'code-error') {
@@ -139,14 +153,15 @@ test('事前入力の上限・非保存・実行中止・出力上限から復�
   await page.getByRole('button', { name: '閉じる', exact: true }).click();
   await input.fill('input-only-140-marker');
   await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
-  await expect(page.getByRole('region', { name: 'Console出力' })).toContainText(
+  await expect(page.getByRole('region', { name: 'Console出力', exact: true })).toContainText(
     'input-only-140-marker',
     { timeout: 30_000 },
   );
   expect(JSON.stringify(await readStoredProgress(page))).not.toContain('input-only-140-marker');
   const history = (await storedDraft(page, id))?.['validationHistory'];
   await input.fill('あ'.repeat(342));
-  await page.getByRole('button', { name: '判定する', exact: true }).click();
+  // 入力上限は事前Previewの契約。固定採点はこの入力欄を読まない。
+  await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
   await expect(page.getByText(/入力は16行・1 KiB以内/).first()).toBeVisible();
   expect((await storedDraft(page, id))?.['validationHistory']).toEqual(history);
   await input.fill('つむ');
@@ -192,6 +207,21 @@ test('整数変換エラー中のEOFErrorという入力を行不足へ誤分類
   );
   await expect(page.locator('.cm-content')).toBeVisible();
   await page.getByLabel('実行前の入力（1行につきinput 1回）').fill('EOFError');
+  const local = (await page.getByRole('region', { name: 'CPythonの練習実行' }).count()) > 0;
+  if (local) {
+    const before = (await storedDraft(page, 'python-basics-ch01-l03-e01'))?.['validationHistory'];
+    await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
+    await expect(page.getByRole('region', { name: 'Console出力', exact: true })).toContainText(
+      'ValueError',
+      {
+        timeout: 30_000,
+      },
+    );
+    expect((await storedDraft(page, 'python-basics-ch01-l03-e01'))?.['validationHistory']).toEqual(
+      before,
+    );
+    return;
+  }
   await page.getByRole('button', { name: '判定する', exact: true }).click();
   await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
   await expect

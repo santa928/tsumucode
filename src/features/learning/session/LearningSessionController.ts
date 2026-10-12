@@ -752,8 +752,14 @@ export class LearningSessionController {
       languageId: this.#execution.languageId,
       files: execution.files,
       presentation: { assets: this.input.resolvedAssets, viewport },
-      options:
-        this.input.exercise.runtime === undefined ? {} : { runtime: this.input.exercise.runtime },
+      options: {
+        ...(this.input.exercise.runtime === undefined
+          ? {}
+          : { runtime: this.input.exercise.runtime }),
+        ...(this.environment.backend === 'local' && this.environment.engine === 'cpython'
+          ? { purpose: commitPreview ? 'preview' : 'grade' }
+          : {}),
+      },
       requiredCapabilities:
         (this.environment.mode === 'console' ||
           this.input.exercise.runtime?.primaryOutput === 'console') &&

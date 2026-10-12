@@ -4,7 +4,7 @@ title: Python 値と変数の第一歩
 description: 値と変数から事前入力・条件分岐・反復・Collection・Function・Module・例外と小制作へ進み、実Pythonの出力を確かめる155分の入門教材。
 audience: プログラミングが初めての方
 estimatedMinutes: 155
-revision: 2026-10-11.3
+revision: 2026-10-12.1
 runnerId: python
 validatorId: python
 glossarySource: glossary.yaml
@@ -39,6 +39,9 @@ progressMigrations:
     steps: []
   - fromRevision: 2026-10-11.2
     toRevision: 2026-10-11.3
+    steps: []
+  - fromRevision: 2026-10-11.3
+    toRevision: 2026-10-12.1
     steps: []
 phases:
   - id: python-basics-p01

@@ -1,3 +1,4 @@
+import { LocalPythonPractice } from './local/LocalPythonPractice';
 import { PYTHON_LESSONS } from '../../core/runtime/pythonLessonProfiles.mjs';
 import { LocalPythonExecutionService } from '../../adapters/runtime/local/LocalPythonExecutionService';
 import { PythonLessonValidator } from '../../adapters/validation/python/PythonLessonValidator';
@@ -14,6 +15,7 @@ const EXERCISE_IDS = new Set([
 
 /** 専用Local buildだけが持つ対象演習の組立て。API接続は明示実行時まで行わない。 */
 export const localRuntime: LocalLearningRuntime = {
+  PythonPracticePanel: LocalPythonPractice,
   createExecution(exercise, revision, readInputLines) {
     if (
       Object.hasOwn(PYTHON_LESSONS, exercise.id) &&
