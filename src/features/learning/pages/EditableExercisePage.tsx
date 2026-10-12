@@ -252,6 +252,8 @@ function EditableSession({
 }: EditableSessionProps) {
   const navigate = useNavigate();
   const [operation, setOperation] = useState<OperationState>('idle');
+  const [practiceBusy, setPracticeBusy] = useState(false);
+  const PracticePanel = localRuntime?.PythonPracticePanel;
   const [pythonInput, setPythonInput] = useState('');
   const [withoutPythonInput, setWithoutPythonInput] = useState(false);
   const acceptsPythonInput =
@@ -452,7 +454,7 @@ function EditableSession({
     [],
   );
   const result = state.validationHistory.at(-1);
-  const busy = operation !== 'idle';
+  const busy = operation !== 'idle' || practiceBusy;
   const viewState: ExerciseViewState = {
     activeFilePath: state.selectedFile,
     activeStepId,
@@ -999,7 +1001,7 @@ function EditableSession({
                   : '判定しています'
                 : '判定する'}
             </button>
-            {(controller.environment.mode === 'console' && busy) ||
+            {(controller.environment.mode === 'console' && operation !== 'idle') ||
             (['typescript', 'react'].includes(exercise.runtime?.kind ?? '') &&
               (operation === 'preview' || operation === 'validate')) ? (
               <button
@@ -1174,7 +1176,7 @@ function EditableSession({
                   <p>
                     {exercise.runtime?.kind === 'python'
                       ? controller.environment.engine === 'cpython'
-                        ? '教材のSourceを編集し、「プレビューを更新」で隔離したCPythonを実行します。「判定する」は教材のコード条件と実出力を確認します。実行前の入力行を使い、実行中に入力を追加する操作には未対応です。入力行不足は採点せず、構文・実行エラーはコード診断として表示します。package追加・外部通信は扱いません。'
+                        ? '「プレビューを更新」は事前入力で実行します。「練習実行」は対話入力を使える未採点の実行です。「判定する」は練習入力を使わず、同じSourceを固定テストで別実行し、教材のコード条件と全ケースの実出力を確認します。package追加・外部通信は扱いません。'
                         : '教材のSourceを編集し、「プレビューを更新」でPyodideの実出力を表示します。「判定する」は教材のコード条件を確認します。実行前の入力行を使い、実行中に入力を追加する操作には未対応です。入力行不足は採点しません。package追加・外部通信は扱いません。'
                       : controller.environment.backend === 'local'
                         ? '編集後に「プレビューを更新」でNode.jsを実行します。Docker切断時は学習モードを再起動し、もう一度実行してください。'
@@ -1231,12 +1233,34 @@ function EditableSession({
                       />
                       <p id="python-stdin-help">
                         空欄は空文字列1行です。最大16行・UTF-8で1
-                        KiB。実行ボタンを押した時点の入力で実行します。入力は保存・共有されません。実行中の入力待ちは未対応です。
+                        KiB。実行ボタンを押した時点の入力で実行します。入力は保存・共有されません。
+                        {controller.environment.engine === 'cpython'
+                          ? 'この欄は事前入力のプレビュー専用です。対話練習と固定テスト採点は別の操作です。'
+                          : '実行中の入力待ちは未対応です。'}
                       </p>
                       <p role="status">
-                        {busy ? '入力を確定して実行しています' : '実行前の入力を受け付けています'}
+                        {practiceBusy
+                          ? '練習用の入力は下の専用欄で受け付けます'
+                          : controller.environment.engine === 'cpython' && operation === 'validate'
+                            ? '採点は固定入力で実行しています'
+                            : busy
+                              ? '入力を確定して実行しています'
+                              : '実行前の入力を受け付けています'}
                       </p>
                     </div>
+                  ) : null}
+                  {controller.environment.engine === 'cpython' && PracticePanel ? (
+                    <PracticePanel
+                      key={`${exercise.id}:${String(state.executionRevision)}`}
+                      exerciseId={exercise.id}
+                      contentRevision={course.revision}
+                      exerciseSessionId={`${course.id}:${exercise.id}`}
+                      executionRevision={state.executionRevision}
+                      files={state.files}
+                      disabled={operation !== 'idle' || !lease.isWritable()}
+                      onBusyChange={setPracticeBusy}
+                      prepare={() => controller.stop()}
+                    />
                   ) : null}
                   <RuntimeConsole
                     records={consoleRecords.slice(0, 200)}

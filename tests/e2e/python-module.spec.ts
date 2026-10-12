@@ -73,6 +73,7 @@ for (const id of lessons) {
       test.setTimeout(180_000);
       await page.goto(route(id));
       await expect(page.locator('.cm-content')).toBeVisible();
+      const local = (await page.getByRole('region', { name: 'CPythonの練習実行' }).count()) > 0;
       for (const fixture of fixtures) {
         await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled({
           timeout: 30_000,
@@ -93,8 +94,22 @@ for (const id of lessons) {
         }
         await expect.poll(async () => (await draft(page, id))?.['files']).toEqual(files);
         const before = (await draft(page, id))?.['validationHistory'];
+        if (local && fixture.id === 'input-exhausted') {
+          await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
+          await expect(page.getByText(/入力行が不足しています/).first()).toBeVisible({
+            timeout: 30_000,
+          });
+          expect((await draft(page, id))?.['validationHistory']).toEqual(before);
+        }
+        // 固定採点は全入力ケースをANDにする。旧正常入力だけの負例も、未処理例外を捕捉する。
+        const expectedStatus =
+          local && fixture.id === 'input-exhausted'
+            ? 'pass'
+            : local && id === lessons[2] && fixture.id === 'unused-loop-hardcode'
+              ? 'code-error'
+              : fixture.expectedStatus;
         await page.getByRole('button', { name: '判定する', exact: true }).click();
-        if (fixture.expectedStatus === 'system-error') {
+        if (expectedStatus === 'system-error') {
           await expect(page.getByText(/採点していません/).first()).toBeVisible({ timeout: 30_000 });
           await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled({
             timeout: 30_000,
@@ -102,7 +117,7 @@ for (const id of lessons) {
           expect((await draft(page, id))?.['validationHistory'], fixture.id).toEqual(before);
           await expect(page.getByRole('dialog')).toHaveCount(0);
         } else {
-          if (fixture.expectedStatus === 'pass') await finishPassing(page, id);
+          if (expectedStatus === 'pass') await finishPassing(page, id);
           else await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
           await expect
             .poll(
@@ -112,7 +127,7 @@ for (const id of lessons) {
                 )?.at(-1)?.status,
               { message: fixture.id },
             )
-            .toBe(fixture.expectedStatus);
+            .toBe(expectedStatus);
           const history = (await draft(page, id))?.['validationHistory'] as {
             checks: { passed: boolean; ruleId: string }[];
           }[];
@@ -122,8 +137,8 @@ for (const id of lessons) {
               ?.checks.filter((check) => !check.passed)
               .map((check) => check.ruleId),
             fixture.id,
-          ).toEqual(fixture.expectedFeedbackRuleIds);
-          if (fixture.expectedStatus !== 'pass')
+          ).toEqual(expectedStatus === 'code-error' ? [] : fixture.expectedFeedbackRuleIds);
+          if (expectedStatus !== 'pass')
             await page.getByRole('button', { name: '閉じる', exact: true }).click();
         }
         await expect.poll(async () => (await draft(page, id))?.['files']).toEqual(files);
@@ -208,7 +223,7 @@ test('Python 2fileのcache非混入・古い結果拒否・ZIP・JSON再開を�
   expect((await draft(page, id))?.['validationHistory']).toEqual(history);
   await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
   await expect(
-    page.getByRole('region', { name: 'Console出力' }).getByText('0', { exact: true }),
+    page.getByRole('region', { name: 'Console出力', exact: true }).getByText('0', { exact: true }),
   ).toBeVisible({ timeout: 30_000 });
   await page.goto(route(lessons[0]!));
   await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled({
@@ -217,7 +232,7 @@ test('Python 2fileのcache非混入・古い結果拒否・ZIP・JSON再開を�
   await editFiles(page, await sources(lessons[0]!, 'solution'));
   await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
   await expect(
-    page.getByRole('region', { name: 'Console出力' }).getByText('8', { exact: true }),
+    page.getByRole('region', { name: 'Console出力', exact: true }).getByText('8', { exact: true }),
   ).toBeVisible({ timeout: 30_000 });
   await page.goto(route(id));
   await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled({
@@ -309,6 +324,17 @@ test('Pythonの例外文に含まれる実入力を履歴とJSONへ保存しな�
   await editFiles(page, files);
   await page.getByLabel('実行前の入力（1行につきinput 1回）').fill(marker);
   await expect.poll(async () => (await draft(page, id))?.['files']).toEqual(files);
+  const local = (await page.getByRole('region', { name: 'CPythonの練習実行' }).count()) > 0;
+  if (local) {
+    await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
+    await expect(page.getByRole('region', { name: 'Console出力', exact: true })).toContainText(
+      marker,
+      {
+        timeout: 30_000,
+      },
+    );
+    expect((await draft(page, id))?.['validationHistory']).toEqual([]);
+  }
   await page.getByRole('button', { name: '判定する', exact: true }).click();
   await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
   await expect
@@ -318,7 +344,10 @@ test('Pythonの例外文に含まれる実入力を履歴とJSONへ保存しな�
           ?.status,
     )
     .toBe('code-error');
-  await expect(page.getByRole('region', { name: 'Console出力' })).toContainText(marker);
+  if (!local)
+    await expect(page.getByRole('region', { name: 'Console出力', exact: true })).toContainText(
+      marker,
+    );
   expect(JSON.stringify(await draft(page, id))).not.toContain(marker);
   await page.getByRole('button', { name: '閉じる', exact: true }).click();
   await page.goto(`${base}#/`);

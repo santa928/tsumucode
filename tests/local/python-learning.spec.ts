@@ -158,9 +158,13 @@ test('Local CPythonの10Fixtureは実出力と2Ruleで採点する', async ({ pa
     await close.click();
     if (fixture.expectedStatus === 'code-error') {
       const error = fixture.id === 'syntax-error' ? 'SyntaxError' : 'NameError';
-      await expect(page.getByRole('region', { name: 'Console出力' })).toContainText(error);
+      await expect(page.getByRole('region', { name: 'Console出力', exact: true })).toContainText(
+        error,
+      );
       await replaceEditorText(page, 'print(3)\n');
-      await expect(page.getByRole('region', { name: 'Console出力' })).not.toContainText(error);
+      await expect(
+        page.getByRole('region', { name: 'Console出力', exact: true }),
+      ).not.toContainText(error);
     }
     await expect(page.locator('iframe[title="Python実行環境"]')).toHaveCount(0);
   }
@@ -176,8 +180,12 @@ test('CPythonの未対応・timeout・停止・古い結果を採点せず、入
   await expect(
     page.getByText('この環境では未対応です。採点していません。', { exact: true }),
   ).toBeVisible();
-  await expect(page.getByRole('region', { name: 'Console出力' })).toContainText('残す出力');
-  await expect(page.getByRole('region', { name: 'Console出力' })).toContainText('stderr');
+  await expect(page.getByRole('region', { name: 'Console出力', exact: true })).toContainText(
+    '残す出力',
+  );
+  await expect(page.getByRole('region', { name: 'Console出力', exact: true })).toContainText(
+    'stderr',
+  );
   expect((await draft(page))?.['validationHistory']).toEqual([]);
   const loop = 'while True:\n    pass\n';
   await replaceEditorText(page, loop);
@@ -188,7 +196,7 @@ test('CPythonの未対応・timeout・停止・古い結果を採点せず、入
   expect(await editorText(page)).toBe(loop);
   expect((await draft(page))?.['validationHistory']).toEqual([]);
   const created = page.waitForResponse(
-    (response) => response.url().endsWith('/api/runs') && response.status() === 202,
+    (response) => response.url().endsWith('/api/grades') && response.status() === 202,
   );
   await page.getByRole('button', { name: '判定する', exact: true }).click();
   await created;
@@ -197,7 +205,7 @@ test('CPythonの未対応・timeout・停止・古い結果を採点せず、入
     page.getByText('実行を停止しました。採点していません。', { exact: true }),
   ).toBeVisible();
   const second = page.waitForResponse(
-    (response) => response.url().endsWith('/api/runs') && response.status() === 202,
+    (response) => response.url().endsWith('/api/grades') && response.status() === 202,
   );
   await page.getByRole('button', { name: '判定する', exact: true }).click();
   await second;

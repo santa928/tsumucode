@@ -2,7 +2,7 @@
 
 ## Project Brief
 
-事前入力2行を整数へ変換し、List・for・別moduleの関数を使って合計を表示するConsoleを作ります。不正な文字列の場合は案内を出し、どちらの場合も終了まで進みます。入力待機・外部サービス・package取得は使いません。
+入力2行を整数へ変換し、List・for・別moduleの関数を使って合計を表示するConsoleを作ります。不正な文字列の場合は案内を出し、どちらの場合も終了まで進みます。Browser版は事前入力を使います。Local CPython版は事前入力のプレビューと、実行途中に行を送る未採点の「練習実行」を分けます。「判定する」は正常入力・1行目が不正・2行目が不正の固定ケースを別実行し、すべての出力とコード条件を確認します。外部サービス・package取得は使いません。
 
 必要なSourceはmain.pyとlesson_tools.pyです。既習のFunction・Collection・反復・事前入力を、前2単位のModule・ValueErrorに接続します。
 

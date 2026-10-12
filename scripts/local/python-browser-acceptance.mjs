@@ -7,7 +7,12 @@ const server = await bridge(4173, 'web');
 try {
   const child = spawn(
     process.execPath,
-    ['node_modules/@playwright/test/cli.js', 'test', '--config=playwright.python-local.config.ts'],
+    [
+      'node_modules/@playwright/test/cli.js',
+      'test',
+      '--config=playwright.python-local.config.ts',
+      ...process.argv.slice(2),
+    ],
     { stdio: 'inherit', env: { ...process.env, BASE_PATH: '/' } },
   );
   process.exitCode = await new Promise((resolve, reject) => {
