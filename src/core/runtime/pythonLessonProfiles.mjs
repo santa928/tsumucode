@@ -35,6 +35,11 @@ export const PYTHON_LESSONS = Object.freeze({
     profile: 'generator-lifecycle-v1',
     facts: ['generator-lifecycle'],
   },
+  'python-practice-ch02-l01-e01': {
+    courseId: 'python-practice',
+    profile: 'context-manager-close-v1',
+    facts: ['context-managed-closed'],
+  },
 });
 
 export const PYTHON_FACT_FIELDS = Object.freeze({
@@ -52,6 +57,7 @@ export const PYTHON_FACT_FIELDS = Object.freeze({
   'list-comprehension-filtered': 'listComprehensionFiltered',
   'iterator-consumed': 'iteratorConsumed',
   'generator-lifecycle': 'generatorLifecycle',
+  'context-managed-closed': 'contextManagedClosed',
 });
 
 /** 固定2ファイル契約は新3profileだけへ適用し、旧教材を拡張しない。 */
@@ -108,6 +114,8 @@ export function expectedPythonOutput(profile, lines) {
   if (profile === 'module-import-v1') return '8\n10\n';
   if (profile === 'list-comprehension-filter-v1') return '[0, 6]\n[]\n';
   if (profile === 'iterator-consumption-v1') return '3\n5\nEND\nEND\n3\nEND\n';
+  if (profile === 'context-manager-close-v1')
+    return '通常\nFalse\nTrue\n例外\nFalse\n例外を受け止めた\nTrue\n終了後は利用できない\n';
   if (profile === 'generator-lifecycle-v1')
     return '作成済み\n開始\n生成\n6\n生成\n10\nEND\nEND\n空を作成\n開始\nEND\nEND\nまとめて消費\n開始\n生成\n生成\n[6, 10]\nEND\n';
   if (lines.length === 0) return undefined;

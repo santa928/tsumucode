@@ -17,6 +17,13 @@ const fixtures = {
   'module-import-v1': [['module', [], '8\n10\n']],
   'list-comprehension-filter-v1': [['normal-and-empty', [], '[0, 6]\n[]\n']],
   'iterator-consumption-v1': [['consume-and-recreate', [], '3\n5\nEND\nEND\n3\nEND\n']],
+  'context-manager-close-v1': [
+    [
+      'normal-and-exception-close',
+      [],
+      '通常\nFalse\nTrue\n例外\nFalse\n例外を受け止めた\nTrue\n終了後は利用できない\n',
+    ],
+  ],
   'generator-lifecycle-v1': [
     [
       'lazy-and-exhausted',

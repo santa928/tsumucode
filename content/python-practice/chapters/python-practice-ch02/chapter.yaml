@@ -1,0 +1,7 @@
+id: python-practice-ch02
+sequence: 1
+title: Resourceの終了処理
+goal: 正常終了と途中例外の両方で、同じstreamが閉じることを説明する。
+estimatedMinutes: 15
+kind: standard
+lessonSources: [lessons/python-practice-ch02-l01/lesson.yaml]

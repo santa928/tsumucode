@@ -1,7 +1,9 @@
 import { pythonIterationAnalysis } from './pythonIterationAnalysis.mjs';
+import { pythonContextAnalysis } from './pythonContextAnalysis.mjs';
 
 /** 実Python ASTで最小教材の説明範囲とsource factsを調べる。隔離の根拠には使わない。 */
 export function pythonLessonAnalysis(source, profile = 'values-vars-print-v1') {
+  if (profile === 'context-manager-close-v1') return pythonContextAnalysis(source);
   if (
     ['list-comprehension-filter-v1', 'iterator-consumption-v1', 'generator-lifecycle-v1'].includes(
       profile,

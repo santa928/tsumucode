@@ -30,6 +30,7 @@ const factNames = [
   'list-comprehension-filtered',
   'iterator-consumed',
   'generator-lifecycle',
+  'context-managed-closed',
 ] as const;
 const ruleSchema = z
   .object({

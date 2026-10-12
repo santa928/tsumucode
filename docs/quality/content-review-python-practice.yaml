@@ -36,3 +36,14 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes: 独立AI教材レビューで必須指摘0。固定CPython 3.14.2とPyodide 314.0.7で正負Fixtureと作者の消費・lifecycleを実検証。学生の採点はASTの値の流れと実stdoutを照合する。草稿であり、実人受講・Pages公開は未実施。
+  - lessonId: python-practice-ch02-l01
+    authorId: tsumucode-python-author
+    reviewerId: issue196_learning_stop_review
+    sourceHash: 22eb72f16a1bc6bc851d367cee6b7ef489399cb077322c4419b46da2a905c150
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 独立AI教材レビューのStringIO限定への正確性修正後、必須指摘0。固定CPython/Pyodideで14作者Fixtureと実objectの正常・例外close・終了後利用不能を確認。学生は固定構造・stream役割とstdoutで採点し、提出毎の直接object観察を主張しない。草稿・実人受講未確認・Pages公開保留。

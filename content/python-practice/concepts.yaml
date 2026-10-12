@@ -12,3 +12,7 @@ concepts:
     introducedBySlideId: python-practice-ch01-l03-s01
     prerequisiteConceptIds: [python-iterator]
     minimumProjectLevel: transform
+  - id: python-context-manager
+    introducedBySlideId: python-practice-ch02-l01-s01
+    prerequisiteConceptIds: []
+    minimumProjectLevel: transform

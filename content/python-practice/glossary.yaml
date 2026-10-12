@@ -2,17 +2,17 @@ schemaVersion: 1
 entries:
   - id: python-comprehension
     term: 内包表記
-    definition: "各要素を変換し、必要なら条件で残すものを選んで新しいListを作る記法。"
+    definition: '各要素を変換し、必要なら条件で残すものを選んで新しいListを作る記法。'
     firstSlideId: python-practice-ch01-l01-s01
     relatedIds: []
   - id: python-iterator
     term: Iterator
-    definition: "nextで次の値を取り出す消費位置を持つobject。iterator自身のiterは同じobjectを返し、枯渇後に先頭へ戻らない。"
+    definition: 'nextで次の値を取り出す消費位置を持つobject。iterator自身のiterは同じobjectを返し、枯渇後に先頭へ戻らない。'
     firstSlideId: python-practice-ch01-l02-s01
     relatedIds: []
   - id: python-generator
     term: Generatorとyield
-    definition: "yieldを含む関数の呼出しで作るiterator。作成では本体を進めず、nextでyieldまで進み、次のnextで続きを再開する。"
+    definition: 'yieldを含む関数の呼出しで作るiterator。作成では本体を進めず、nextでyieldまで進み、次のnextで続きを再開する。'
     firstSlideId: python-practice-ch01-l03-s01
     relatedIds: []
   - id: python-iterable
@@ -20,3 +20,13 @@ entries:
     definition: iterでiteratorを得られるもの。ListはIterableであり、そのListから新しい消費位置のiteratorを作れる。
     firstSlideId: python-practice-ch01-l02-s01
     relatedIds: [python-iterator]
+  - id: python-context-manager
+    term: Context managerとwith
+    definition: withの開始時と終了時の処理を持つobject。StringIOでは開始でstreamを受け取り、正常でも例外でも終了時にcloseする。
+    firstSlideId: python-practice-ch02-l01-s01
+    relatedIds: [python-stringio]
+  - id: python-stringio
+    term: StringIO
+    definition: io標準libraryのメモリ内文字列stream。getvalueで内容、closedで閉じた状態を調べる。close後は内容を利用できない。
+    firstSlideId: python-practice-ch02-l01-s01
+    relatedIds: [python-context-manager]
