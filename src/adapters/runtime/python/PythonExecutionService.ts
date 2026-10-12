@@ -43,6 +43,7 @@ const payloadSchema = z.object({
   iteratorConsumed: z.boolean().optional(),
   generatorLifecycle: z.boolean().optional(),
   contextManagedClosed: z.boolean().optional(),
+  dataProjectTested: z.boolean().optional(),
   expectedOutput: z.string().max(4096).nullable().optional(),
 });
 
@@ -256,6 +257,10 @@ export class PythonExecutionService implements ExecutionService {
                     {
                       id: 'python.context-managed-closed',
                       value: payload.contextManagedClosed === true,
+                    },
+                    {
+                      id: 'python.data-project-tested',
+                      value: payload.dataProjectTested === true,
                     },
                     { id: 'python.input-echoed', value: payload.inputEchoed === true },
                     {

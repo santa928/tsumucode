@@ -415,6 +415,7 @@ export const PythonExerciseRuntimeSchema = z
       'iterator-consumption-v1',
       'generator-lifecycle-v1',
       'context-manager-close-v1',
+      'dataclass-test-project-v1',
     ]),
   })
   .strict();

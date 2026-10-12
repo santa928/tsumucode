@@ -1,0 +1,6 @@
+print(True)
+print(6)
+print(0)
+print("不正: ValueError")
+print("不正: ValueError")
+print("Test成功")

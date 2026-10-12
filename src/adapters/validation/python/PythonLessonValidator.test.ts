@@ -210,3 +210,37 @@ it.each(['browser-python', 'cpython'] as const)(
     expect(context.console[0]?.text).toContain(input);
   },
 );
+
+it('データProjectのTest失敗・Runtime Error・未採点を区別する', async () => {
+  const context = await fixedContext('python-practice-ch03-l01-e01');
+  const validator = new PythonLessonValidator('cpython');
+  expect((await validator.validate(context)).status).toBe('pass');
+  const failed = {
+    ...context,
+    execution: {
+      ...context.execution!,
+      evidence: context.execution!.evidence.map((item) =>
+        item.id === 'python.stdout' ? { ...item, value: 'True\nTest失敗\n' } : item,
+      ),
+    },
+  };
+  const result = await validator.validate(failed);
+  expect(result.status).toBe('incomplete');
+  expect(result.checks[0]?.message).toContain('Test失敗');
+  expect(
+    (
+      await validator.validate({
+        ...context,
+        execution: { ...context.execution!, status: 'code-error' },
+      })
+    ).status,
+  ).toBe('code-error');
+  expect(
+    (
+      await validator.validate({
+        ...context,
+        execution: { ...context.execution!, status: 'system-error' },
+      })
+    ).status,
+  ).toBe('system-error');
+});

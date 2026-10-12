@@ -1,0 +1,8 @@
+id: python-practice-ch03
+title: 型・値検証・Testを結ぶ
+sequence: 2
+goal: 小さいデータ集計で、注釈と生成処理と実行時の確認を分ける。
+estimatedMinutes: 35
+kind: guided-project
+lessonSources:
+  - lessons/python-practice-ch03-l01/lesson.yaml

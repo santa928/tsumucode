@@ -13,3 +13,11 @@
 - [withの開始・正常終了・例外終了](https://docs.python.org/3.14/reference/compound_stmts.html#the-with-statement)
 
 この教材はメモリ内streamだけを扱います。ファイルpath・OSのfile descriptor・通信・任意標準libraryは学習範囲へ追加しません。closeはbufferを利用不能にする終了処理です。変数の消滅や、物理メモリの上書き・GC時刻を保証する操作ではありません。PyodideとCPythonの固定版で同じStringIO動作を実確認します。
+
+## 型・dataclass・Test
+
+- [型注釈は実行時に強制されない](https://docs.python.org/3.14/library/typing.html)
+- [dataclassのfield・初期化等の生成](https://docs.python.org/3.14/library/dataclasses.html)
+- [assertと最適化時の省略](https://docs.python.org/3.14/reference/simple_stmts.html#the-assert-statement)
+
+公式3.14系列資料は更新されます。本教材の固定実行版は3.14.2で、dataclassの最小使用とassert/値検証を実engineで確認します。型検査サービス・任意decorator・継承の詳細はここでは導入しません。

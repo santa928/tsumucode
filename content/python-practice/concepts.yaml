@@ -16,3 +16,19 @@ concepts:
     introducedBySlideId: python-practice-ch02-l01-s01
     prerequisiteConceptIds: []
     minimumProjectLevel: transform
+  - id: python-type-hint
+    introducedBySlideId: python-practice-ch03-l01-s01
+    prerequisiteConceptIds: []
+    minimumProjectLevel: transform
+  - id: python-dataclass
+    introducedBySlideId: python-practice-ch03-l01-s01
+    prerequisiteConceptIds: []
+    minimumProjectLevel: transform
+  - id: python-data-validation
+    introducedBySlideId: python-practice-ch03-l01-s02
+    prerequisiteConceptIds: []
+    minimumProjectLevel: transform
+  - id: python-test
+    introducedBySlideId: python-practice-ch03-l01-s03
+    prerequisiteConceptIds: []
+    minimumProjectLevel: transform

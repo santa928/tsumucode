@@ -1,6 +1,11 @@
 /* global TextEncoder */
 /** IDと教材構文を固定し、入力からprofileや実行先を選ばせない。 */
 export const PYTHON_LESSONS = Object.freeze({
+  'python-practice-ch03-l01-e01': {
+    courseId: 'python-practice',
+    profile: 'dataclass-test-project-v1',
+    facts: ['data-project-tested'],
+  },
   'python-basics-ch01-l01-e01': {
     profile: 'values-vars-print-v1',
     facts: ['numeric-variable-printed', 'same-variable-addition-printed'],
@@ -43,6 +48,7 @@ export const PYTHON_LESSONS = Object.freeze({
 });
 
 export const PYTHON_FACT_FIELDS = Object.freeze({
+  'data-project-tested': 'dataProjectTested',
   'numeric-variable-printed': 'numericVariablePrinted',
   'same-variable-addition-printed': 'sameVariableAdditionPrinted',
   'input-echoed': 'inputEchoed',
@@ -107,6 +113,8 @@ export function validPythonInputLines(value) {
 
 /** 実入力に対応する表示を照合する。採点できない入力を模擬合格へ変換しない。 */
 export function expectedPythonOutput(profile, lines) {
+  if (profile === 'dataclass-test-project-v1')
+    return 'True\n6\n0\n不正: ValueError\n不正: ValueError\nTest成功\n';
   if (profile === 'values-vars-print-v1') return '3\n5\n';
   if (profile === 'range-loop-v1') return '0\n1\n2\n';
   if (profile === 'list-reference-sum-v1' || profile === 'dict-value-sum-v1') return '4\n9\n';

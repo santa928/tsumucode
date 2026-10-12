@@ -183,7 +183,7 @@ test('旧実践revisionの移行とContextの保存・Reset・JSON移送を確�
   await expect(page.locator('.cm-content')).toBeVisible();
   await expect
     .poll(async () => (await draft(page, oldId))?.['contentRevision'])
-    .toBe('2026-10-12.2');
+    .toBe('2026-10-12.3');
   expect((await draft(page, oldId))?.['files']).toEqual(previous?.['files']);
   expect((await draft(page, oldId))?.['validationHistory']).toEqual(
     previous?.['validationHistory'],
@@ -213,7 +213,7 @@ test('旧実践revisionの移行とContextの保存・Reset・JSON移送を確�
   await replaceEditorText(page, solution);
   await grade(page, 'pass');
   await page.goto(`${base}#/`);
-  await expect(page.getByRole('link', { name: /Pythonの反復とResource管理/ })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /Pythonの反復とデータ処理/ })).toHaveCount(0);
   const downloading = page.waitForEvent('download');
   await page.getByRole('button', { name: '全コースの進捗と下書きを書き出す', exact: true }).click();
   const file = info.outputPath('python-context-progress.json');

@@ -47,6 +47,7 @@ COPY src/core/runtime/pythonFixedFixtures.mjs ./
 COPY src/core/runtime/pythonLessonAnalysis.mjs ./python-lesson-analysis.mjs
 COPY src/core/runtime/pythonIterationAnalysis.mjs ./
 COPY src/core/runtime/pythonContextAnalysis.mjs ./
+COPY src/core/runtime/pythonDataProjectAnalysis.mjs ./
 COPY src/core/runtime/pythonModuleAnalysis.mjs ./pythonModuleAnalysis.mjs
 COPY scripts/local/project-protocol.mjs scripts/local/workspace-store.mjs scripts/local/project-engine.mjs scripts/local/resident-workspace.mjs ./
 COPY scripts/local/preview-contract.mjs scripts/local/next-data-preview.mjs scripts/local/next-form-preview.mjs scripts/local/preview-control.mjs scripts/local/preview-transport.mjs ./
@@ -73,6 +74,7 @@ COPY src/core/runtime/pythonLessonAnalysis.mjs src/core/runtime/pythonLessonProf
 COPY src/core/runtime/pythonModuleAnalysis.mjs ./src/core/runtime/
 COPY src/core/runtime/pythonIterationAnalysis.mjs ./src/core/runtime/
 COPY src/core/runtime/pythonContextAnalysis.mjs ./src/core/runtime/
+COPY src/core/runtime/pythonDataProjectAnalysis.mjs ./src/core/runtime/
 CMD ["node", "scripts/local/preview-browser-acceptance.mjs"]
 
 # 正負Fixtureと通常Lessonの作者検証専用。learner/web/graderへ原稿を含めない。
@@ -104,6 +106,7 @@ COPY tests/e2e/python-input.spec.ts ./tests/e2e/python-input.spec.ts
 COPY tests/e2e/python-module.spec.ts ./tests/e2e/python-module.spec.ts
 COPY tests/e2e/python-iteration.spec.ts ./tests/e2e/python-iteration.spec.ts
 COPY tests/e2e/python-context.spec.ts ./tests/e2e/python-context.spec.ts
+COPY tests/e2e/python-data-project.spec.ts ./tests/e2e/python-data-project.spec.ts
 COPY tests/e2e/helpers/progress.ts tests/e2e/helpers/testBasePath.ts ./tests/e2e/helpers/
 COPY playwright.python-local.config.ts ./
 CMD ["node", "scripts/local/python-browser-acceptance.mjs"]

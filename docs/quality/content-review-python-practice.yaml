@@ -47,3 +47,15 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes: 独立AI教材レビューのStringIO限定への正確性修正後、必須指摘0。固定CPython/Pyodideで14作者Fixtureと実objectの正常・例外close・終了後利用不能を確認。学生は固定構造・stream役割とstdoutで採点し、提出毎の直接object観察を主張しない。草稿・実人受講未確認・Pages公開保留。
+
+  - lessonId: python-practice-ch03-l01
+    authorId: tsumucode-python-author
+    reviewerId: issue196_learning_stop_review
+    sourceHash: 0afface474d308b52c3ffd5e5ae64ad88c1d718154c8bb6d4ed56918a073e417
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 独立AI内容レビューのGenerator式・try/except/elseの説明追加後、必須指摘0。固定CPython/Pyodide各16Fixtureと作者の実dataclass fields・注釈非強制・明示値検証・正常/空/不正時のstream closeを確認。提出は固定構造と実stdoutを照合し、直接object観察を主張しない。草稿・実人受講未確認・公開保留。

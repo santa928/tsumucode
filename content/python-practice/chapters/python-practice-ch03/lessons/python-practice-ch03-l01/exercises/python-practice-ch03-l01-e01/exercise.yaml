@@ -1,0 +1,250 @@
+id: python-practice-ch03-l01-e01
+kind: guided-project
+workspaceId: python-practice-ch03-l01-e01
+countsTowardStandardExerciseTotal: false
+projectId: python-data-project
+title: 型・明示検証・集計を完成する
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: python-type-hint
+    minimumLevel: transform
+  - conceptId: python-dataclass
+    minimumLevel: transform
+  - conceptId: python-data-validation
+    minimumLevel: transform
+  - conceptId: python-test
+    minimumLevel: transform
+  - conceptId: python-generator
+    minimumLevel: transform
+  - conceptId: python-context-manager
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: python-practice-ch03-l01-e01-step01
+    file: main.py
+    target: Recordのamountの型注釈をintへ直します。
+    starterAnchor: 'amount: str'
+    change: Recordのamountの型注釈をintへ直します。
+    observe: 注釈を直しても、最初の文字列の観察はTrueのままです。
+    requiresConceptIds: [python-type-hint, python-dataclass]
+    validationRuleIds: [python-practice-ch03-l01-e01-r01]
+  - id: python-practice-ch03-l01-e01-step02
+    file: main.py
+    target: 負値を明示的なValueErrorで拒否します。
+    starterAnchor: pass
+    change: 負値のpassをValueErrorをraiseする処理へ直します。
+    observe: 不正文字列と負値はどちらもValueErrorで拒否します。
+    requiresConceptIds: [python-data-validation]
+    validationRuleIds: [python-practice-ch03-l01-e01-r01]
+  - id: python-practice-ch03-l01-e01-step03
+    file: main.py
+    target: yieldしたRecordのamountをsumで集計します。
+    starterAnchor: return 0
+    change: totalの0をGeneratorの各amountをsumで集計する処理へ直します。
+    observe: 正常は6、空は0で、固定Testが成功します。
+    requiresConceptIds: [python-generator, python-context-manager, python-test]
+    validationRuleIds: [python-practice-ch03-l01-e01-r01]
+runtime:
+  kind: python
+  entryFile: main.py
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  profile: dataclass-test-project-v1
+files:
+  - path: main.py
+    language: python
+    source: starter/main.py
+    editable: true
+solutionFiles:
+  - path: main.py
+    language: python
+    source: solution/main.py
+    editable: false
+validationRules:
+  - id: python-practice-ch03-l01-e01-r01
+    label: 型・値検証・反復とwithを結び、固定Testを通す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: data-project-tested
+    feedback:
+      target: main.pyとConsole
+      expected: 型注釈と値検証を分け、正常/空/不正文字列/負値のTestを成功させます。
+      nextAction: amountの注釈・負値の拒否・totalの集計を確認し、固定Testの期待値は維持してください。
+    hintId: python-practice-ch03-l01-e01-h01
+    relatedSlideId: python-practice-ch03-l01-s03
+hints:
+  - id: python-practice-ch03-l01-e01-h01
+    level: 1
+    title: 最初の手掛かり
+    text: 注釈を直すだけでは値を拒否しません。値検証と集計も完成する必要があります。
+    relatedSlideId: python-practice-ch03-l01-s01
+  - id: python-practice-ch03-l01-e01-h02
+    level: 2
+    title: コードを組み立てる
+    text: 負値はifとraiseで拒否し、read_recordsが返す各record.amountをsumへ渡します。
+    relatedSlideId: python-practice-ch03-l01-s02
+  - id: python-practice-ch03-l01-e01-h03
+    level: 3
+    title: 解答と理由
+    text: amount:intとValueErrorのraiseを使い、sum(record.amount for record in read_records(text))で正常6・空0を得ます。不正文字列と負値はValueErrorになり固定Testが成功します。
+    relatedSlideId: python-practice-ch03-l01-s03
+relatedSlideIds:
+  [python-practice-ch03-l01-s01, python-practice-ch03-l01-s02, python-practice-ch03-l01-s03]
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: solution
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/solution.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: parentheses
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/parentheses.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: starter
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/starter.py
+        editable: false
+    expectedFeedbackRuleIds: [python-practice-ch03-l01-e01-r01]
+  - id: no-negative-check
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/no-negative-check.py
+        editable: false
+    expectedFeedbackRuleIds: [python-practice-ch03-l01-e01-r01]
+  - id: wrong-annotation
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/wrong-annotation.py
+        editable: false
+    expectedFeedbackRuleIds: [python-practice-ch03-l01-e01-r01]
+  - id: test-failure
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/test-failure.py
+        editable: false
+    expectedFeedbackRuleIds: [python-practice-ch03-l01-e01-r01]
+  - id: tests-removed
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/tests-removed.py
+        editable: false
+    expectedFeedbackRuleIds: [python-practice-ch03-l01-e01-r01]
+  - id: hardcoded
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/hardcoded.py
+        editable: false
+    expectedFeedbackRuleIds: [python-practice-ch03-l01-e01-r01]
+  - id: unmanaged-stream
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/unmanaged-stream.py
+        editable: false
+    expectedFeedbackRuleIds: [python-practice-ch03-l01-e01-r01]
+  - id: runtime-error
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/runtime-error.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: syntax-error
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/syntax-error.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: forbidden-import
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/forbidden-import.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: custom-decorator
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/custom-decorator.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: forbidden-attribute
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/forbidden-attribute.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: host-file
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/host-file.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: other-workspace
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/other-workspace.py
+        editable: false
+    expectedFeedbackRuleIds: []
