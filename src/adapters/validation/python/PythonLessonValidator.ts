@@ -32,6 +32,8 @@ const factNames = [
   'generator-lifecycle',
   'context-managed-closed',
   'data-project-tested',
+  'class-instance-compared',
+  'methods-compared',
 ] as const;
 const ruleSchema = z
   .object({

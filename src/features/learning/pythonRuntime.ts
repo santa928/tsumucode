@@ -12,7 +12,7 @@ export function preparePythonCourse(
   services: CourseRuntimeServices,
 ): void {
   if (
-    !['python-basics', 'python-practice'].includes(course.id) ||
+    !['python-basics', 'python-practice', 'python-oop'].includes(course.id) ||
     course.runnerId !== 'python' ||
     course.validatorId !== 'python'
   )

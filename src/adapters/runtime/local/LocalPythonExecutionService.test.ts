@@ -49,6 +49,52 @@ it('固定採点は練習/Previewの入力を読まずgrades APIだけへSource�
 
 afterEach(() => vi.unstubAllGlobals());
 
+it.each(['oop-r1', 'oop-old', undefined])(
+  'OOPの実行は専用Course revisionを照合し、欠落時に基礎へfallbackしない: %s',
+  async (oopRevision) => {
+    const gradeRequest = { ...request, options: { purpose: 'grade' } };
+    const fetchMock = vi.fn(async (path: string) => {
+      if (path.endsWith('/session')) return Response.json({ apiVersion: 1, token: 'a'.repeat(64) });
+      if (path.endsWith('/python-capabilities')) {
+        return Response.json({
+          apiVersion: 1,
+          exerciseIds: Object.keys(PYTHON_LESSONS),
+          contentRevision: 'oop-r1',
+          courseRevisions: {
+            'python-basics': 'basics-r1',
+            'python-practice': 'practice-r1',
+            ...(oopRevision === undefined ? {} : { 'python-oop': oopRevision }),
+          },
+          runtimeProfileId: 'cpython-values-v1',
+          engineVersion: '3.14.2',
+        });
+      }
+      if (path.endsWith('/grades')) return Response.json({ state: 'running' });
+      return Response.json({
+        state: 'completed',
+        result: {
+          ...gradeRequest,
+          engineVersion: '3.14.2',
+          exitCode: 0,
+          status: 'succeeded',
+          diagnostics: [],
+          evidence: [],
+          console: [],
+        },
+      });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const result = await new LocalPythonExecutionService(
+      'python-oop-ch01-l02-e01',
+      'oop-r1',
+    ).execute(gradeRequest);
+    expect(result.status).toBe(oopRevision === 'oop-r1' ? 'succeeded' : 'system-error');
+    expect(fetchMock.mock.calls.some(([path]) => path.endsWith('/grades'))).toBe(
+      oopRevision === 'oop-r1',
+    );
+  },
+);
+
 const request: ExecutionRequest = {
   runId: 'python-run',
   exerciseSessionId: 'python-session',

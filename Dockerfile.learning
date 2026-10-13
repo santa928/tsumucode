@@ -40,6 +40,7 @@ WORKDIR /app
 COPY --from=build /workspace/public/generated/content/courses/javascript/index.json ./course-index.json
 COPY --from=build /workspace/public/generated/content/courses/python-basics/index.json ./python-course-index.json
 COPY --from=build /workspace/public/generated/content/courses/python-practice/index.json ./python-practice-course-index.json
+COPY --from=build /workspace/public/generated/content/courses/python-oop/index.json ./python-oop-course-index.json
 COPY src/core/runtime/pythonLessonProfiles.mjs ./
 COPY scripts/local/controller.mjs scripts/local/protocol.mjs scripts/local/docker-engine.mjs ./
 COPY scripts/local/python-profile.mjs scripts/local/python-practice.mjs scripts/local/python-practice.py ./
@@ -47,6 +48,7 @@ COPY src/core/runtime/pythonFixedFixtures.mjs ./
 COPY src/core/runtime/pythonLessonAnalysis.mjs ./python-lesson-analysis.mjs
 COPY src/core/runtime/pythonIterationAnalysis.mjs ./
 COPY src/core/runtime/pythonContextAnalysis.mjs ./
+COPY src/core/runtime/pythonOopAnalysis.mjs ./
 COPY src/core/runtime/pythonDataProjectAnalysis.mjs ./
 COPY src/core/runtime/pythonModuleAnalysis.mjs ./pythonModuleAnalysis.mjs
 COPY scripts/local/project-protocol.mjs scripts/local/workspace-store.mjs scripts/local/project-engine.mjs scripts/local/resident-workspace.mjs ./
@@ -74,6 +76,7 @@ COPY src/core/runtime/pythonLessonAnalysis.mjs src/core/runtime/pythonLessonProf
 COPY src/core/runtime/pythonModuleAnalysis.mjs ./src/core/runtime/
 COPY src/core/runtime/pythonIterationAnalysis.mjs ./src/core/runtime/
 COPY src/core/runtime/pythonContextAnalysis.mjs ./src/core/runtime/
+COPY src/core/runtime/pythonOopAnalysis.mjs ./src/core/runtime/
 COPY src/core/runtime/pythonDataProjectAnalysis.mjs ./src/core/runtime/
 CMD ["node", "scripts/local/preview-browser-acceptance.mjs"]
 
@@ -100,6 +103,7 @@ COPY --from=dependencies /workspace/node_modules/yaml ./node_modules/yaml
 COPY --from=dependencies /workspace/node_modules/fflate ./node_modules/fflate
 COPY content/python-basics ./content/python-basics
 COPY content/python-practice ./content/python-practice
+COPY content/python-oop ./content/python-oop
 COPY tests/local/python-learning.spec.ts ./tests/local/python-learning.spec.ts
 COPY tests/local/python-practice.spec.ts ./tests/local/python-practice.spec.ts
 COPY tests/e2e/python-input.spec.ts ./tests/e2e/python-input.spec.ts
@@ -107,6 +111,7 @@ COPY tests/e2e/python-module.spec.ts ./tests/e2e/python-module.spec.ts
 COPY tests/e2e/python-iteration.spec.ts ./tests/e2e/python-iteration.spec.ts
 COPY tests/e2e/python-context.spec.ts ./tests/e2e/python-context.spec.ts
 COPY tests/e2e/python-data-project.spec.ts ./tests/e2e/python-data-project.spec.ts
+COPY tests/e2e/python-oop.spec.ts ./tests/e2e/python-oop.spec.ts
 COPY tests/e2e/helpers/progress.ts tests/e2e/helpers/testBasePath.ts ./tests/e2e/helpers/
 COPY playwright.python-local.config.ts ./
 CMD ["node", "scripts/local/python-browser-acceptance.mjs"]

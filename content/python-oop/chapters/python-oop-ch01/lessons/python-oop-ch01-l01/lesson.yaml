@@ -1,0 +1,14 @@
+id: python-oop-ch01-l01
+kind: standard
+title: '別のInstanceと属性の参照先'
+goal: '別Instanceと同じ参照を区別し、Instance属性が同名のClass属性を隠すことを実出力で説明できる。'
+estimatedMinutes: 25
+prerequisiteLessonIds: []
+slideSources: ['slides/s01.md', 'slides/s02.md', 'slides/s03.md']
+exerciseSources: [exercises/python-oop-ch01-l01-e01/exercise.yaml]
+reflection: 'aliasのvalueを変えるとfirstとsecondのどちらが変わりますか。最後にfirst.factorだけが7のままなのはなぜですか。'
+glossaryRefs: ['python-class-instance', 'python-identity', 'python-attribute-lookup']
+completion:
+  kind: standard
+  finalSlideId: python-oop-ch01-l01-s03
+  requiredExerciseIds: [python-oop-ch01-l01-e01]

@@ -1,0 +1,37 @@
+schemaVersion: 1
+entries:
+  - id: python-class-instance
+    term: Classから別々のInstanceを作る
+    definition: 'ClassはInstanceを作る型。Instanceごとに値を持ち、selfは呼出先を受ける慣習名。'
+    firstSlideId: python-oop-ch01-l01-s01
+    relatedIds: []
+  - id: python-identity
+    term: 同じ値と同じobjectを分ける
+    definition: '値の等価性ではなく、2つの名前が同じobjectを参照するかをisで確かめること。'
+    firstSlideId: python-oop-ch01-l01-s02
+    relatedIds: []
+  - id: python-attribute-lookup
+    term: Instanceの属性がClassの属性を隠す
+    definition: 'この最小例ではInstance上の属性を先に使い、なければClassの属性を使う。'
+    firstSlideId: python-oop-ch01-l01-s03
+    relatedIds: []
+  - id: python-instance-method
+    term: Instance methodにはInstanceが渡る
+    definition: 'Instanceからの呼出しでは先頭へInstanceが渡り、Classから呼ぶときは明示するmethod。'
+    firstSlideId: python-oop-ch01-l02-s01
+    relatedIds: []
+  - id: python-classmethod
+    term: Class methodにはClassが渡る
+    definition: '先頭へ呼出先Classが渡るmethod。clsはそれを受ける慣習名。'
+    firstSlideId: python-oop-ch01-l02-s02
+    relatedIds: []
+  - id: python-staticmethod
+    term: Static methodは暗黙の引数を受けない
+    definition: 'InstanceやClassを暗黙に受けず、呼出時の明示引数で計算するmethod。'
+    firstSlideId: python-oop-ch01-l02-s03
+    relatedIds: []
+  - id: python-method-comparison
+    term: 同じ計算と実引数を比較する
+    definition: '同じ計算でも、Instance・Classの状態・明示引数のどれを使うかを比較すること。'
+    firstSlideId: python-oop-ch01-l02-s04
+    relatedIds: []

@@ -60,6 +60,9 @@ const owner = process.env.TSUMUCODE_LOCAL_OWNER;
 if (!owner || !/^[a-z0-9-]{1,80}$/u.test(owner)) throw new Error('Installation owner is required');
 const revision = JSON.parse(await readFile('/app/course-index.json', 'utf8')).revision;
 const pythonRevision = JSON.parse(await readFile('/app/python-course-index.json', 'utf8')).revision;
+const pythonOopRevision = JSON.parse(
+  await readFile('/app/python-oop-course-index.json', 'utf8'),
+).revision;
 const pythonPracticeRevision = JSON.parse(
   await readFile('/app/python-practice-course-index.json', 'utf8'),
 ).revision;
@@ -251,6 +254,8 @@ async function execute(run) {
   const python = run.input.runtimeProfileId === PYTHON_PROFILE_ID;
   const profile = python ? PYTHON_LESSONS[run.input.exerciseId].profile : undefined;
   const moduleProfile = python && isPythonModuleProfile(profile);
+  const oopProfile =
+    python && ['class-instance-lookup-v1', 'method-binding-comparison-v1'].includes(profile);
   let analysisStatus;
   let facts;
   let preparationMs = 0;
@@ -272,6 +277,10 @@ async function execute(run) {
     if (moduleProfile && facts && facts.state !== 'supported') {
       analysisStatus = facts.state === 'syntax-error' ? 'code-error' : 'unsupported';
       if (facts.syntaxMessage) executed.stderr = facts.syntaxMessage;
+    }
+    // OOPの未対応構文は実行せず、Browserと同じく非採点で返す。
+    if (oopProfile && facts?.supported === false && !facts.syntaxError) {
+      analysisStatus = 'unsupported';
     }
     if (!run.reason && !analysisStatus) {
       executed = await executePhase(run);
@@ -323,7 +332,7 @@ async function execute(run) {
                   : status === 'unsupported'
                     ? inputExhausted
                       ? '実行前の入力行が不足しています。実行中の入力待ちには未対応です。入力を追加して再実行してください。採点していません。'
-                      : moduleProfile
+                      : moduleProfile || oopProfile
                         ? 'このLessonの実行範囲外です。実行せず採点していません。'
                         : 'CPythonで実行しましたが、このLessonの採点範囲外です。採点していません。'
                     : status === 'system-error'
@@ -469,6 +478,7 @@ async function handlePractice(url, input, res) {
       revision,
       pythonRevision,
       pythonPracticeRevision,
+      pythonOopRevision,
     );
     if (validated.runtimeProfileId !== PYTHON_PROFILE_ID)
       throw new RequestError(422, 'CPythonの練習だけに対応します。');
@@ -699,6 +709,7 @@ async function handle(req, res) {
         courseRevisions: {
           'python-basics': pythonRevision,
           'python-practice': pythonPracticeRevision,
+          'python-oop': pythonOopRevision,
         },
         runtimeProfileId: PYTHON_PROFILE_ID,
         engineVersion: PYTHON_VERSION,
@@ -720,7 +731,13 @@ async function handle(req, res) {
     } else if (req.url?.startsWith('/api/practice/')) {
       value = await handlePractice(req.url, input, res);
     } else if (req.url === '/api/runs' || req.url === '/api/grades') {
-      const validated = validateRun(input, revision, pythonRevision, pythonPracticeRevision);
+      const validated = validateRun(
+        input,
+        revision,
+        pythonRevision,
+        pythonPracticeRevision,
+        pythonOopRevision,
+      );
       const fixedGrade = req.url === '/api/grades';
       if (
         fixedGrade &&

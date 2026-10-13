@@ -11,6 +11,7 @@ export default defineConfig({
     '**/e2e/python-iteration.spec.ts',
     '**/e2e/python-context.spec.ts',
     '**/e2e/python-data-project.spec.ts',
+    '**/e2e/python-oop.spec.ts',
   ],
   workers: 1,
   retries: 0,

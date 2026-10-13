@@ -416,6 +416,8 @@ export const PythonExerciseRuntimeSchema = z
       'generator-lifecycle-v1',
       'context-manager-close-v1',
       'dataclass-test-project-v1',
+      'class-instance-lookup-v1',
+      'method-binding-comparison-v1',
     ]),
   })
   .strict();

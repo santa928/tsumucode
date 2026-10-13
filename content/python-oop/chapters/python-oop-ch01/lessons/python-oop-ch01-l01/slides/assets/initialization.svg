@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 276" role="img" aria-labelledby="title desc">
+  <title id="title">initialization</title>
+  <desc id="desc">Counterの呼出しごとに新しいInstanceが初期化され、値3と5が別々に保存される説明図。</desc>
+  <rect width="420" height="276" fill="#f5f1df"/>
+  <g font-family="sans-serif" font-size="20" fill="#153c35">
+    <rect x="18" y="16" width="384" height="96" rx="10" fill="#fff" stroke="#17483d" stroke-width="2"/>
+    <text x="30" y="48">Counter(3) → first</text>
+    <text x="30" y="78">first.value = 3</text>
+    <rect x="18" y="120" width="384" height="96" rx="10" fill="#fff" stroke="#17483d" stroke-width="2"/>
+    <text x="30" y="152">Counter(5) → second</text>
+    <text x="30" y="182">second.value = 5</text>
+    <text x="18" y="236">selfはそれぞれの新しいInstance。</text>
+    <text x="18" y="264">値を別々に保存する。</text>
+  </g>
+</svg>

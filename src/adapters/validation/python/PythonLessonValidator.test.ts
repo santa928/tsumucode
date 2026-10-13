@@ -244,3 +244,40 @@ it('データProjectのTest失敗・Runtime Error・未採点を区別する', a
     ).status,
   ).toBe('system-error');
 });
+
+it.each(['python-oop-ch01-l01-e01', 'python-oop-ch01-l02-e01'])(
+  '%sは実出力・Class事実・同じSourceの固定suiteをすべて要求する',
+  async (exerciseId) => {
+    const context = await fixedContext(exerciseId);
+    const validator = new PythonLessonValidator('cpython');
+    expect((await validator.validate(context)).status).toBe('pass');
+    for (const evidenceId of [
+      'python.stdout',
+      ...PYTHON_LESSONS[exerciseId]!.facts.map((fact) => `python.${fact}`),
+    ]) {
+      const changed = {
+        ...context,
+        execution: {
+          ...context.execution!,
+          evidence: context.execution!.evidence.map((item) =>
+            item.id === evidenceId
+              ? { ...item, value: evidenceId === 'python.stdout' ? '6\n' : false }
+              : item,
+          ),
+        },
+      };
+      expect((await validator.validate(changed)).status).toBe('incomplete');
+    }
+    expect(
+      (await validator.validate({ ...context, files: { 'main.py': 'print(5)\n' } })).status,
+    ).toBe('system-error');
+    expect(
+      (
+        await validator.validate({
+          ...context,
+          execution: { ...context.execution!, status: 'code-error' },
+        })
+      ).status,
+    ).toBe('code-error');
+  },
+);

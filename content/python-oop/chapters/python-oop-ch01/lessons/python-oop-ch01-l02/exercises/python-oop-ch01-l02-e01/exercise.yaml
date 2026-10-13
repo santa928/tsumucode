@@ -1,0 +1,222 @@
+id: python-oop-ch01-l02-e01
+kind: standard
+workspaceId: python-oop-ch01-l02-e01
+countsTowardStandardExerciseTotal: true
+title: '同じ計算のself・cls・明示引数'
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: python-instance-method
+    minimumLevel: transform
+  - conceptId: python-classmethod
+    minimumLevel: transform
+  - conceptId: python-staticmethod
+    minimumLevel: transform
+  - conceptId: python-method-comparison
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: python-oop-ch01-l02-e01-step01
+    file: main.py
+    target: 'classmethodではcls.factor、staticmethodでは明示引数factorを使います。'
+    starterAnchor: 'return value * 2'
+    change: 'classmethodではcls.factor、staticmethodでは明示引数factorを使います。'
+    observe: '同じ倍率計算を3種類のmethodで実行し、self・cls・暗黙引数なしを呼出形式と実引数から説明できる。'
+    requiresConceptIds:
+      [
+        'python-instance-method',
+        'python-classmethod',
+        'python-staticmethod',
+        'python-method-comparison',
+      ]
+    validationRuleIds: [python-oop-ch01-l02-e01-r01]
+runtime:
+  kind: python
+  entryFile: main.py
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  profile: method-binding-comparison-v1
+files:
+  - path: main.py
+    language: python
+    source: starter/main.py
+    editable: true
+solutionFiles:
+  - path: main.py
+    language: python
+    source: solution/main.py
+    editable: false
+validationRules:
+  - id: python-oop-ch01-l02-e01-r01
+    label: '同じ倍率計算を3種類のmethodで実行し、self・cls・暗黙引数なしを呼出形式と実引数から説明できる。'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: methods-compared
+    feedback:
+      target: main.pyとConsole
+      expected: '同じ倍率計算を3種類のmethodで実行し、self・cls・暗黙引数なしを呼出形式と実引数から説明できる。'
+      nextAction: 'classmethodではcls.factor、staticmethodでは明示引数factorを使います。'
+    hintId: python-oop-ch01-l02-e01-h01
+    relatedSlideId: python-oop-ch01-l02-s04
+hints:
+  - id: python-oop-ch01-l02-e01-h01
+    level: 1
+    title: 最初の手掛かり
+    text: 'Classからの通常method呼出ではInstanceを明示します。classmethodでは呼出先Classが先頭へ渡ります。'
+    relatedSlideId: python-oop-ch01-l02-s04
+  - id: python-oop-ch01-l02-e01-h02
+    level: 2
+    title: コードを組み立てる
+    text: 'staticmethodのvalue/factorはどちらも呼出時の引数です。Classから暗黙の値は渡りません。'
+    relatedSlideId: python-oop-ch01-l02-s04
+  - id: python-oop-ch01-l02-e01-h03
+    level: 3
+    title: 解答と理由
+    text: 'doubled_fromはvalue * cls.factor、doubled_valueはvalue * factorです。Classの倍率4と、最後に渡す倍率2を区別します。'
+    relatedSlideId: python-oop-ch01-l02-s04
+relatedSlideIds:
+  [
+    'python-oop-ch01-l02-s01',
+    'python-oop-ch01-l02-s02',
+    'python-oop-ch01-l02-s03',
+    'python-oop-ch01-l02-s04',
+  ]
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: solution
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/solution.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternate-name
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/alternate-name.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: starter
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/starter.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-oop-ch01-l02-e01-r01']
+  - id: hardcoded-class-factor
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/hardcoded-class-factor.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-oop-ch01-l02-e01-r01']
+  - id: static-class-state
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/static-class-state.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-oop-ch01-l02-e01-r01']
+  - id: static-is-classmethod
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/static-is-classmethod.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-oop-ch01-l02-e01-r01']
+  - id: wrong-call
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/wrong-call.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: missing-self
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/missing-self.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: forbidden-attribute
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/forbidden-attribute.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: commuted-product
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/commuted-product.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: hardcoded
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/hardcoded.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-oop-ch01-l02-e01-r01']
+  - id: builtin-alias
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/builtin-alias.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: temporary-result
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/temporary-result.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: attribute-decorator
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/attribute-decorator.py
+        editable: false
+    expectedFeedbackRuleIds: []

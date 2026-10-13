@@ -1,6 +1,16 @@
 /* global TextEncoder */
 /** IDと教材構文を固定し、入力からprofileや実行先を選ばせない。 */
 export const PYTHON_LESSONS = Object.freeze({
+  'python-oop-ch01-l01-e01': {
+    courseId: 'python-oop',
+    profile: 'class-instance-lookup-v1',
+    facts: ['class-instance-compared'],
+  },
+  'python-oop-ch01-l02-e01': {
+    courseId: 'python-oop',
+    profile: 'method-binding-comparison-v1',
+    facts: ['methods-compared'],
+  },
   'python-practice-ch03-l01-e01': {
     courseId: 'python-practice',
     profile: 'dataclass-test-project-v1',
@@ -48,6 +58,8 @@ export const PYTHON_LESSONS = Object.freeze({
 });
 
 export const PYTHON_FACT_FIELDS = Object.freeze({
+  'class-instance-compared': 'classInstanceCompared',
+  'methods-compared': 'methodsCompared',
   'data-project-tested': 'dataProjectTested',
   'numeric-variable-printed': 'numericVariablePrinted',
   'same-variable-addition-printed': 'sameVariableAdditionPrinted',
@@ -113,6 +125,9 @@ export function validPythonInputLines(value) {
 
 /** 実入力に対応する表示を照合する。採点できない入力を模擬合格へ変換しない。 */
 export function expectedPythonOutput(profile, lines) {
+  if (profile === 'class-instance-lookup-v1') return 'True\nFalse\n3\n5\n2\n2\n7\n2\n2\n7\n4\n';
+  if (profile === 'method-binding-comparison-v1')
+    return '6\n6\n6\n6\n10\n10\n10\n10\n12\n12\n12\n6\n';
   if (profile === 'dataclass-test-project-v1')
     return 'True\n6\n0\n不正: ValueError\n不正: ValueError\nTest成功\n';
   if (profile === 'values-vars-print-v1') return '3\n5\n';

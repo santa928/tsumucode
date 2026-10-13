@@ -1,9 +1,12 @@
+import { pythonOopAnalysis } from './pythonOopAnalysis.mjs';
 import { pythonIterationAnalysis } from './pythonIterationAnalysis.mjs';
 import { pythonDataProjectAnalysis } from './pythonDataProjectAnalysis.mjs';
 import { pythonContextAnalysis } from './pythonContextAnalysis.mjs';
 
 /** 実Python ASTで最小教材の説明範囲とsource factsを調べる。隔離の根拠には使わない。 */
 export function pythonLessonAnalysis(source, profile = 'values-vars-print-v1') {
+  if (['class-instance-lookup-v1', 'method-binding-comparison-v1'].includes(profile))
+    return pythonOopAnalysis(source, profile);
   if (profile === 'dataclass-test-project-v1') return pythonDataProjectAnalysis(source);
   if (profile === 'context-manager-close-v1') return pythonContextAnalysis(source);
   if (

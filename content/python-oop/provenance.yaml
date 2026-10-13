@@ -1,0 +1,159 @@
+schemaVersion: 1
+defaults:
+  method: original-authored
+  createdAt: 2026-10-13
+  creator: TsumuCode project
+  sourceUrl: none
+  license: project-original
+  modified: false
+items:
+  - id: python-oop-original-1
+    visibility: public
+    path: chapters/python-oop-ch01/chapter.yaml
+  - id: python-oop-original-2
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/exercises/python-oop-ch01-l01-e01/exercise.yaml
+  - id: python-oop-original-3
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/exercises/python-oop-ch01-l01-e01/fixtures/alias-copy.py
+  - id: python-oop-original-4
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/exercises/python-oop-ch01-l01-e01/fixtures/alternate-name.py
+  - id: python-oop-original-5
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/exercises/python-oop-ch01-l01-e01/fixtures/class-write.py
+  - id: python-oop-original-6
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/exercises/python-oop-ch01-l01-e01/fixtures/forbidden-attribute.py
+  - id: python-oop-original-7
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/exercises/python-oop-ch01-l01-e01/fixtures/hardcoded.py
+  - id: python-oop-original-8
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/exercises/python-oop-ch01-l01-e01/fixtures/shared-value.py
+  - id: python-oop-original-9
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/exercises/python-oop-ch01-l01-e01/fixtures/solution.py
+  - id: python-oop-original-10
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/exercises/python-oop-ch01-l01-e01/fixtures/starter.py
+  - id: python-oop-original-11
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/exercises/python-oop-ch01-l01-e01/fixtures/wrong-constructor.py
+  - id: python-oop-original-12
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/exercises/python-oop-ch01-l01-e01/instructions.md
+  - id: python-oop-original-13
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/exercises/python-oop-ch01-l01-e01/solution/main.py
+  - id: python-oop-original-14
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/exercises/python-oop-ch01-l01-e01/starter/main.py
+  - id: python-oop-original-15
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/lesson.yaml
+  - id: python-oop-attribute-lookup-original
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/slides/assets/attribute-lookup.svg
+  - id: python-oop-identity-original
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/slides/assets/identity.svg
+  - id: python-oop-original-18
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/slides/s01.md
+  - id: python-oop-original-19
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/slides/s02.md
+  - id: python-oop-original-20
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/slides/s03.md
+  - id: python-oop-original-21
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/exercise.yaml
+  - id: python-oop-original-22
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/fixtures/alternate-name.py
+  - id: python-oop-original-23
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/fixtures/commuted-product.py
+  - id: python-oop-original-24
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/fixtures/forbidden-attribute.py
+  - id: python-oop-original-25
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/fixtures/hardcoded-class-factor.py
+  - id: python-oop-original-26
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/fixtures/hardcoded.py
+  - id: python-oop-original-27
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/fixtures/missing-self.py
+  - id: python-oop-original-28
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/fixtures/solution.py
+  - id: python-oop-original-29
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/fixtures/starter.py
+  - id: python-oop-original-30
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/fixtures/static-class-state.py
+  - id: python-oop-original-31
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/fixtures/static-is-classmethod.py
+  - id: python-oop-original-32
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/fixtures/wrong-call.py
+  - id: python-oop-original-33
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/instructions.md
+  - id: python-oop-original-34
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/solution/main.py
+  - id: python-oop-original-35
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/starter/main.py
+  - id: python-oop-original-36
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/lesson.yaml
+  - id: python-oop-method-binding-original
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/slides/assets/method-binding.svg
+  - id: python-oop-original-38
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/slides/s01.md
+  - id: python-oop-original-39
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/slides/s02.md
+  - id: python-oop-original-40
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/slides/s03.md
+  - id: python-oop-original-41
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/slides/s04.md
+  - id: python-oop-official-document-original
+    visibility: public
+    path: references/python-official.md
+  - id: python-oop-initialization-original
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/slides/assets/initialization.svg
+  - id: python-oop-instance-binding-original
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/slides/assets/instance-binding.svg
+  - id: python-oop-class-binding-original
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/slides/assets/class-binding.svg
+  - id: python-oop-static-binding-original
+    visibility: public
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/slides/assets/static-binding.svg
+  - id: python-oop-builtin-alias-1
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l01/exercises/python-oop-ch01-l01-e01/fixtures/builtin-alias.py
+  - id: python-oop-builtin-alias-2
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/fixtures/builtin-alias.py
+  - id: python-oop-temporary-result-original
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/fixtures/temporary-result.py
+  - id: python-oop-attribute-decorator-original
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/fixtures/attribute-decorator.py

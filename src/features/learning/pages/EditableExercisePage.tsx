@@ -149,7 +149,7 @@ export function EditableExercisePage({ lease, ...data }: EditableExercisePagePro
     const abortController = new AbortController();
     void import('../javascriptRuntimeServices')
       .then(async ({ ensureCourseRuntime }) => {
-        if (['python-basics', 'python-practice'].includes(data.course.id)) {
+        if (['python-basics', 'python-practice', 'python-oop'].includes(data.course.id)) {
           const python = await import('../pythonRuntime');
           python.preparePythonCourse(data.course, learningRuntimeServices);
           return python;
@@ -1195,7 +1195,7 @@ function EditableSession({
                 <div>
                   <p>
                     {exercise.runtime?.kind === 'python'
-                      ? course.id === 'python-practice'
+                      ? ['python-practice', 'python-oop'].includes(course.id)
                         ? controller.environment.engine === 'cpython'
                           ? '「プレビューを更新」で現在のSourceを実行します。プレビューは未採点です。「判定する」は同じSourceを固定テストで別実行し、教材のコード条件と実出力を確認します。この教材は入力を使いません。'
                           : '「プレビューを更新」で現在のSourceをPyodideで実行します。プレビューは未採点です。「判定する」は教材のコード条件と実出力を確認します。この教材は入力を使いません。'

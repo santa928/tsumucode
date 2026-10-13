@@ -1,0 +1,20 @@
+id: python-oop-ch01-l02
+kind: standard
+title: '同じ計算のself・cls・明示引数'
+goal: '同じ倍率計算を3種類のmethodで実行し、self・cls・暗黙引数なしを呼出形式と実引数から説明できる。'
+estimatedMinutes: 25
+prerequisiteLessonIds: ['python-oop-ch01-l01']
+slideSources: ['slides/s01.md', 'slides/s02.md', 'slides/s03.md', 'slides/s04.md']
+exerciseSources: [exercises/python-oop-ch01-l02-e01/exercise.yaml]
+reflection: 'Counter.doubled(first)とfirst.doubled()の引数を並べてください。Classの倍率を4へ変えても、最後のstaticmethodが6なのはなぜですか。'
+glossaryRefs:
+  [
+    'python-instance-method',
+    'python-classmethod',
+    'python-staticmethod',
+    'python-method-comparison',
+  ]
+completion:
+  kind: standard
+  finalSlideId: python-oop-ch01-l02-s04
+  requiredExerciseIds: [python-oop-ch01-l02-e01]

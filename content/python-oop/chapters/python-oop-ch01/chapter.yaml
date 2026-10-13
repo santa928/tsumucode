@@ -1,0 +1,9 @@
+id: python-oop-ch01
+sequence: 0
+title: Classと3種類のmethod
+goal: 属性の値の参照先と、暗黙に渡るInstance・Class・引数なしを区別する。
+estimatedMinutes: 50
+kind: standard
+lessonSources:
+  - lessons/python-oop-ch01-l01/lesson.yaml
+  - lessons/python-oop-ch01-l02/lesson.yaml
