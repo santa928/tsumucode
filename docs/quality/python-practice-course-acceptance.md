@@ -60,9 +60,12 @@ npm exec -- playwright test --config=tests/acceptance/python-practice.config.ts
 - 拡大した最終7図のsubpath build、CSS inline、subpath smoke、learning chunk isolation、静的Artifact507files検査が成功しました。図のlabel／titleは28px、説明は26pxの2行で、390pxの実表示でも読めるようにしました。
 - PC／390pxで全11Slideの読書検査2件がretry0で成功（7.4／6.7秒）。図の実読込、axe違反0、横overflowなし、本文末尾／Pager到達、Home／Path非掲載、Python core取得0を確認。Iterator／with／dataclassの両幅6画像を作者と独立UIレビューが直接確認しました。
 - 旧revision `2026-10-12.2`から最新`2026-10-13.1`までの移行とデータProjectの保存／reload／Reset／JSON移送は、実Browser UIで1件成功（31.4秒）。旧ContextとProjectを実gradeし、Source／履歴／成功Snapshotの保持を照合しました。図だけの拡大後も保存・実行・revisionの入力は同じで、この成功を再利用しています。
+- 旧revision `2026-10-12.1`から最新revisionへのContext移行と保存／Reset／JSON移送も、修正後の実Browser UIで1件成功（25.7秒、retry0）。最新期待をauthoringから読み、旧Source／履歴／成功Snapshot保持を引き続き照合しました。
 - Reactの限定読書収集は6件／1React fileだけを選び、新Python検査を除外しました。Unit収集もacceptanceを除外します。全React受入の再実行ではありません。
 
 作者のNode imageにBrowserがない初回起動失敗と、Gitを要求する全React収集の失敗は原本に保持しています。固定Browser imageとGit不要の限定収集で必要範囲を確認し、失敗を成功へ読み替えていません。生ログ・スクリーンショット・学習データは公開pushへ含めず、私有の作者原本を保持します。
+
+PRの初回Runtime CIでは旧with課題の移行検査に旧最新revision `2026-10-12.3`の期待値が残り、実際の移行先`2026-10-13.1`との不一致で失敗しました。新旧両移行検査の最新期待をauthoringのcourse.yamlから照合するように修正し、旧保存revisionのseedとSource／履歴／成功Snapshot保持の検査を維持します。製品の移行処理や検査条件は緩和していません。初回FAILは私有原本に保持し、修正した最終HEADの必要CIを別に確認します。
 
 内容／Runtime／UIの独立3レビューと現hashを対応付け、最終HEAD／マージSHAの必要CIはPRとローカル引継ぎへ記録します。Localは最終HEADの既存Runtime CIで新しい生成indexを組み込んだimageを使い、能力情報とのrevision一致を必須にした実gradeと移行検査の成功を確認します。古いcontroller imageの成功を新revisionの証拠へ流用しません。
 
