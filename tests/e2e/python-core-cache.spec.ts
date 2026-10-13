@@ -16,7 +16,7 @@ async function openHarness(page: Page) {
 
 for (const mode of ['cancel', 'replace', 'dispose', 'timeout'] as const) {
   test(`Python core準備の${mode}は旧完了を再利用しない`, async ({ page }) => {
-    test.setTimeout(60_000);
+    test.setTimeout(mode === 'timeout' ? 130_000 : 60_000);
     await openHarness(page);
     const result = await page.evaluate(async (race) => {
       const modulePath = new URL('./tests/e2e/helpers/pythonCoreCacheHarness.ts', location.href)
@@ -38,8 +38,8 @@ for (const mode of ['cancel', 'replace', 'dispose', 'timeout'] as const) {
     });
     if (mode === 'timeout') {
       expect(result.first.diagnostics[0]?.learnerMessage).toContain('時間内');
-      // 実時計の現行20秒期限を待つ。短縮期限やfake clockは使用しない。
-      expect(result.firstElapsed).toBeGreaterThanOrEqual(20_000);
+      // 実時計の取得90秒期限を待つ。短縮期限やfake clockは使用しない。
+      expect(result.firstElapsed).toBeGreaterThanOrEqual(90_000);
     }
     for (const [run, revision] of [
       [result.retry, 2],

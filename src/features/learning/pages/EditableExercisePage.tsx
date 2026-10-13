@@ -21,10 +21,14 @@ import {
   recordValidationFromIndex,
 } from '../../../core/persistence/progressUpdates';
 import { LeaseFenceRejectedError } from '../../../core/persistence/contracts';
-import type { ResolvedPreviewAsset } from '../../../core/runtime/contracts';
+import type {
+  ResolvedPreviewAsset,
+  ExecutionPreparationProgress,
+} from '../../../core/runtime/contracts';
 import { BrowserExecutionService } from '../../../core/runtime/BrowserExecutionService';
 import { localRuntime } from '@/features/learning/localRuntime';
 import { RuntimeConsole } from '../components/RuntimeConsole';
+import { PythonPreparationStatus } from '../components/PythonPreparationStatus';
 import { WorkshopNotice } from '../../../design-system/components/WorkshopNotice';
 import { resolvePublicAsset } from '../../../shared/lib/resolvePublicAsset';
 import type { WorkspaceLeaseAccess } from '../../progress/WorkspaceLeaseGate';
@@ -252,6 +256,10 @@ function EditableSession({
 }: EditableSessionProps) {
   const navigate = useNavigate();
   const [operation, setOperation] = useState<OperationState>('idle');
+  const [executionPreparation, setExecutionPreparation] = useState<{
+    controller: LearningSessionController;
+    progress: ExecutionPreparationProgress;
+  }>();
   const [practiceBusy, setPracticeBusy] = useState(false);
   const PracticePanel =
     course.id === 'python-basics' ? localRuntime?.PythonPracticePanel : undefined;
@@ -317,91 +325,91 @@ function EditableSession({
       learningRuntimeServices.validatorRegistry.create(course.validatorId),
     [course.validatorId, exercise, browserConsole],
   );
-  const controller = useMemo(
-    () =>
-      new LearningSessionController({
-        courseId: course.id,
-        lessonId: lesson.id,
-        exercise,
-        contentRevision: course.revision,
-        validationExercises: validationTargets.map(({ exercise: target }) => target),
-        resolvedAssets: resolvedWorkspaceAssets,
-        repository: learningRuntimeServices.repository,
-        onDirty: (draft) => {
-          learningRuntimeServices.passFreshness.markDirty(
-            draft.courseId,
-            draft.workspaceId,
-            allWorkspaceLocations.map(({ exerciseId }) => exerciseId),
-            draft.editRevision,
-          );
-        },
-        onBackgroundError: (error) => {
-          // 未対応・停止の理由は実行状態とEditor診断に表示済み。
-          if (error instanceof ExecutionNotGradableError) return;
-          learningRuntimeServices.notices.reportError('exercise-preview', error);
-        },
-        onSaveError: (error) => {
-          learningRuntimeServices.notices.reportError('exercise-save', error);
-        },
-        onSaveRecovered: () => {
-          learningRuntimeServices.notices.dismiss('error:exercise-save');
-        },
-        saveDraft: async (draft) => {
-          try {
-            await lease.runFencedWrite(async (_token, proof) => {
-              await learningRuntimeServices.runCourseProgressMutation(course.id, async () => {
-                const current = await learningRuntimeServices.repository.getCourseVersioned(
-                  course.id,
-                );
-                const invalidated = recordWorkspaceDraftMutationFromIndex(
-                  current.progress,
-                  course,
-                  workspaceLessons,
-                  draft,
-                );
-                if (invalidated === undefined) {
-                  await learningRuntimeServices.repository.putDraftFenced(draft, proof);
-                } else {
-                  await learningRuntimeServices.repository.putDraftAndCourseFenced(
-                    draft,
-                    invalidated,
-                    proof,
-                    current.version,
-                  );
-                }
-              });
-            });
-          } catch (error: unknown) {
-            if (error instanceof LeaseFenceRejectedError) {
-              learningRuntimeServices.progressService.retainEmergencyDraft(draft);
-            }
-            throw error;
-          }
-          learningRuntimeServices.notices.dismiss('error:exercise-save');
-        },
-        runner:
-          localRuntime?.createExecution(exercise, course.revision, pythonInputBuffer.read) ??
-          browserConsole?.createExecution(pythonInputBuffer.read) ??
-          new BrowserExecutionService(
-            learningRuntimeServices.runnerRegistry.create(course.runnerId),
-          ),
-        validator,
-        now: () => new Date().toISOString(),
-      }),
-    [
-      allWorkspaceLocations,
-      browserConsole,
-      course,
+  const controller = useMemo(() => {
+    const runner =
+      localRuntime?.createExecution(exercise, course.revision, pythonInputBuffer.read) ??
+      browserConsole?.createExecution(pythonInputBuffer.read, (progress) => {
+        setExecutionPreparation({ controller: owner, progress });
+      }) ??
+      new BrowserExecutionService(learningRuntimeServices.runnerRegistry.create(course.runnerId));
+    const owner = new LearningSessionController({
+      courseId: course.id,
+      lessonId: lesson.id,
       exercise,
-      lease,
-      lesson.id,
-      resolvedWorkspaceAssets,
-      validationTargets,
+      contentRevision: course.revision,
+      validationExercises: validationTargets.map(({ exercise: target }) => target),
+      resolvedAssets: resolvedWorkspaceAssets,
+      repository: learningRuntimeServices.repository,
+      onDirty: (draft) => {
+        learningRuntimeServices.passFreshness.markDirty(
+          draft.courseId,
+          draft.workspaceId,
+          allWorkspaceLocations.map(({ exerciseId }) => exerciseId),
+          draft.editRevision,
+        );
+      },
+      onBackgroundError: (error) => {
+        // 未対応・停止の理由は実行状態とEditor診断に表示済み。
+        if (error instanceof ExecutionNotGradableError) return;
+        learningRuntimeServices.notices.reportError('exercise-preview', error);
+      },
+      onSaveError: (error) => {
+        learningRuntimeServices.notices.reportError('exercise-save', error);
+      },
+      onSaveRecovered: () => {
+        learningRuntimeServices.notices.dismiss('error:exercise-save');
+      },
+      saveDraft: async (draft) => {
+        try {
+          await lease.runFencedWrite(async (_token, proof) => {
+            await learningRuntimeServices.runCourseProgressMutation(course.id, async () => {
+              const current = await learningRuntimeServices.repository.getCourseVersioned(
+                course.id,
+              );
+              const invalidated = recordWorkspaceDraftMutationFromIndex(
+                current.progress,
+                course,
+                workspaceLessons,
+                draft,
+              );
+              if (invalidated === undefined) {
+                await learningRuntimeServices.repository.putDraftFenced(draft, proof);
+              } else {
+                await learningRuntimeServices.repository.putDraftAndCourseFenced(
+                  draft,
+                  invalidated,
+                  proof,
+                  current.version,
+                );
+              }
+            });
+          });
+        } catch (error: unknown) {
+          if (error instanceof LeaseFenceRejectedError) {
+            learningRuntimeServices.progressService.retainEmergencyDraft(draft);
+          }
+          throw error;
+        }
+        learningRuntimeServices.notices.dismiss('error:exercise-save');
+      },
+      runner,
       validator,
-      pythonInputBuffer,
-      workspaceLessons,
-    ],
-  );
+      now: () => new Date().toISOString(),
+    });
+    return owner;
+  }, [
+    allWorkspaceLocations,
+    browserConsole,
+    course,
+    exercise,
+    lease,
+    lesson.id,
+    resolvedWorkspaceAssets,
+    validationTargets,
+    validator,
+    pythonInputBuffer,
+    workspaceLessons,
+  ]);
   const state = useLearningSession(controller);
   // 両Python環境の今回の診断出力は、保存済みの成功出力と分けて表示する。
   const currentPythonOutput =
@@ -494,6 +502,7 @@ function EditableSession({
 
   /** 画面操作の世代を進め、古いPromise callbackを後続操作から分離する。 */
   const beginOperation = useCallback((): number => {
+    setExecutionPreparation(undefined);
     operationAbortRef.current?.abort();
     operationAbortRef.current = new AbortController();
     setWaitingForLease(false);
@@ -1037,6 +1046,11 @@ function EditableSession({
       }
     >
       <div className="tc-exercise-stage-stack">
+        {operation !== 'idle' &&
+        executionPreparation?.controller === controller &&
+        executionPreparation.progress.executionRevision === state.executionRevision ? (
+          <PythonPreparationStatus progress={executionPreparation.progress} />
+        ) : null}
         <div
           className={`tc-exercise-workspace${previewExpanded ? ' tc-exercise-workspace-preview-expanded' : ''}`}
         >

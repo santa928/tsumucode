@@ -117,6 +117,7 @@ test('公開Pythonの実Worker・取得障害後の再試行・別タブ通知�
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.screenshot({ path: info.outputPath('python-public-exercise.png'), fullPage: true });
   await page.reload();
+  await expect(page.locator('.cm-content')).toBeVisible({ timeout: 30_000 });
   await expect.poll(() => editorText(page)).toBe(solution);
   await page.goto(`${base}#/`);
   const download = page.waitForEvent('download');
@@ -132,7 +133,9 @@ test('公開Pythonの実Worker・取得障害後の再試行・別タブ通知�
       mimeType: 'application/json',
       buffer: await readFile(bundlePath),
     });
-    await expect(imported.getByRole('region', { name: '読み込み差分' })).toBeVisible();
+    await expect(imported.getByRole('region', { name: '読み込み差分' })).toBeVisible({
+      timeout: 30_000,
+    });
     const reload = imported.waitForEvent('domcontentloaded');
     await imported.getByRole('button', { name: 'この内容を読み込む', exact: true }).click();
     await reload;
@@ -143,6 +146,8 @@ test('公開Pythonの実Worker・取得障害後の再試行・別タブ通知�
         lastPassingSnapshots: { [exerciseId]: { files: { 'main.py': solution } } },
       });
     await imported.goto(exerciseRoute);
+    // 新規Contextのruntime接続とEditor復元を待ってから、移送した全文を照合する。
+    await expect(imported.locator('.cm-content')).toBeVisible({ timeout: 30_000 });
     await expect.poll(() => editorText(imported)).toBe(solution);
   } finally {
     await fresh.close();

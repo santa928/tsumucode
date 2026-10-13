@@ -52,6 +52,7 @@ function initializePythonFrame(limits: typeof PYTHON_LIMITS): void {
           timer = setTimeout(() => {
             failure('stopped', '実行時間の上限に達したため停止しました。', 'time-limit');
           }, limits.executionMilliseconds);
+          parent.postMessage({ type: 'python-worker-ready' }, '*');
           return;
         }
         if (value.type === 'python-result') finish(value);

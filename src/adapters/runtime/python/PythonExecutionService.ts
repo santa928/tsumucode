@@ -4,9 +4,10 @@ import type {
   ExecutionResult,
   ExecutionService,
   ExecutionStatus,
+  ExecutionPreparationProgress,
 } from '../../../core/runtime/contracts';
 import { createPythonFrameSource } from './pythonFrameSource';
-import { PYTHON_LIMITS, type PythonCore } from './pythonProtocol';
+import { PYTHON_LIMITS, type PythonCore, type PythonCoreProgress } from './pythonProtocol';
 import {
   validPythonInputLines,
   validPythonFiles,
@@ -47,7 +48,10 @@ const payloadSchema = z.object({
   expectedOutput: z.string().max(4096).nullable().optional(),
 });
 
-export type PythonCoreLoader = (signal: AbortSignal) => Promise<PythonCore>;
+export type PythonCoreLoader = (
+  signal: AbortSignal,
+  reportProgress?: (progress: PythonCoreProgress) => void,
+) => Promise<PythonCore>;
 
 /** 作者の固定self-host coreだけで動くConsole実行器。公開Courseへの登録は別受け入れ。 */
 export class PythonExecutionService implements ExecutionService {
@@ -69,6 +73,7 @@ export class PythonExecutionService implements ExecutionService {
     private readonly loadCore: PythonCoreLoader,
     private readonly profile: PythonLessonProfile = 'values-vars-print-v1',
     private readonly readInputLines: () => readonly string[] = () => [],
+    private readonly reportProgress: (progress: ExecutionPreparationProgress) => void = () => {},
   ) {}
 
   /** hashとrun identityを親で確定し、準備中・実行中の停止を同じ世代で失効する。 */
@@ -125,11 +130,26 @@ export class PythonExecutionService implements ExecutionService {
     const sourceBytes = encoder.encode(pythonSourceSnapshot(files, this.profile));
     const abort = new AbortController();
     this.#abort = abort;
-    const preparation = { expired: false };
-    const preparationTimer = setTimeout(() => {
+    const preparation = { expired: false, downloadExpired: false };
+    const began = performance.now();
+    const sourceDeadline = began + PYTHON_LIMITS.preparationMilliseconds;
+    const downloadDeadline = began + PYTHON_LIMITS.downloadMilliseconds;
+    let receivedBytes = 0;
+    const report = (stage: ExecutionPreparationProgress['stage']): void => {
+      if (!stale() && !abort.signal.aborted)
+        this.reportProgress({ ...identity, stage, receivedBytes });
+    };
+    const sourceTimer = setTimeout(() => {
       preparation.expired = true;
       abort.abort();
     }, PYTHON_LIMITS.preparationMilliseconds);
+    const downloading = this.#core === undefined;
+    const downloadTimer = downloading
+      ? setTimeout(() => {
+          preparation.downloadExpired = true;
+          abort.abort();
+        }, PYTHON_LIMITS.downloadMilliseconds)
+      : undefined;
     try {
       const cancelled = new Promise<never>((_resolve, reject) => {
         abort.signal.addEventListener(
@@ -140,18 +160,48 @@ export class PythonExecutionService implements ExecutionService {
           { once: true },
         );
       });
+      const digestPromise = crypto.subtle.digest('SHA-256', sourceBytes).then((digest) => {
+        if (abort.signal.aborted || performance.now() >= sourceDeadline) {
+          preparation.expired = true;
+          throw new Error('Python Source preparation expired');
+        }
+        clearTimeout(sourceTimer);
+        return digest;
+      });
+      const corePromise =
+        this.#core ??
+        this.loadCore(abort.signal, (progress) => {
+          if (performance.now() >= downloadDeadline) {
+            preparation.downloadExpired = true;
+            abort.abort();
+            return;
+          }
+          receivedBytes = progress.receivedBytes;
+          report(progress.stage);
+        }).then((core) => {
+          const expired = performance.now() >= downloadDeadline;
+          if (abort.signal.aborted || expired) {
+            preparation.downloadExpired ||= expired;
+            throw new Error('Python core download expired');
+          }
+          clearTimeout(downloadTimer);
+          return core;
+        });
       const [core, digest] = await Promise.race([
-        Promise.all([
-          this.#core ?? this.loadCore(abort.signal),
-          crypto.subtle.digest('SHA-256', sourceBytes),
-        ]),
+        Promise.all([corePromise, digestPromise]),
         cancelled,
       ]);
-      clearTimeout(preparationTimer);
-      if (this.#abort === abort) this.#abort = undefined;
+      clearTimeout(sourceTimer);
+      clearTimeout(downloadTimer);
       if (stale()) return stopped();
+      if (abort.signal.aborted || (downloading && performance.now() >= downloadDeadline)) {
+        preparation.downloadExpired = downloading && performance.now() >= downloadDeadline;
+        throw new Error('Python preparation completed after its deadline');
+      }
+      if (this.#abort === abort) this.#abort = undefined;
       // 同じ実行器では照合済み固定bytesだけを再利用し、Source・Workerは毎run作り直す。
       this.#core = core;
+      report('initialize');
       const hash = [...new Uint8Array(digest)]
         .map((byte) => byte.toString(16).padStart(2, '0'))
         .join('');
@@ -192,6 +242,16 @@ export class PythonExecutionService implements ExecutionService {
                 : { ...core, source, files, profile: this.profile, inputLines },
               '*',
             );
+            return;
+          }
+          if (
+            ready &&
+            typeof event.data === 'object' &&
+            event.data !== null &&
+            'type' in event.data &&
+            event.data.type === 'python-worker-ready'
+          ) {
+            report('execute');
             return;
           }
           const parsed = payloadSchema.safeParse(event.data);
@@ -324,13 +384,17 @@ export class PythonExecutionService implements ExecutionService {
         ? stopped()
         : failure(
             'system-error',
-            preparation.expired
-              ? 'Python実行準備が時間内に完了しませんでした。採点していません。'
-              : 'Python実行準備に失敗しました。Sourceを保持して再試行してください。',
+            preparation.downloadExpired
+              ? 'Python固定実行環境の取得が時間内に完了しませんでした。編集内容を保持しています。「プレビューを更新」で再試行してください。'
+              : preparation.expired
+                ? 'Python実行準備が時間内に完了しませんでした。採点していません。'
+                : 'Python実行準備に失敗しました。Sourceを保持して再試行してください。',
           );
     } finally {
+      report('finished');
       abort.abort();
-      clearTimeout(preparationTimer);
+      clearTimeout(sourceTimer);
+      clearTimeout(downloadTimer);
       if (this.#abort === abort) this.#abort = undefined;
     }
   }
