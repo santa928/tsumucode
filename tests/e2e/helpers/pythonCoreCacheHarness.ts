@@ -182,6 +182,49 @@ export async function exerciseProgressCancellation() {
   }
 }
 
+/** 準備完了の同期通知から停止しても、旧Sourceのframe/Workerを生成しない。 */
+export async function exerciseInitializationCancellation(dispose: boolean) {
+  const core = await fixedFixture();
+  let loads = 0;
+  let addedFrames = 0;
+  const observer = new MutationObserver((records) => {
+    for (const record of records) {
+      for (const node of record.addedNodes) {
+        if (node instanceof HTMLIFrameElement) addedFrames += 1;
+      }
+    }
+  });
+  observer.observe(document.body, { childList: true });
+  const service = new PythonExecutionService(
+    async () => {
+      loads += 1;
+      return core;
+    },
+    undefined,
+    undefined,
+    (progress) => {
+      if (progress.runId === 'cache-run-1' && progress.stage === 'initialize')
+        void (dispose ? service.dispose() : service.stop());
+    },
+  );
+  try {
+    const first = await service.execute(request(1));
+    await new Promise<void>((resolve) => setTimeout(resolve, 0));
+    const framesBeforeRetry = addedFrames;
+    const retry = await service.execute(request(2));
+    const next = new PythonExecutionService(async () => core);
+    try {
+      const recreated = dispose ? await next.execute(request(3)) : undefined;
+      return { first, framesBeforeRetry, retry, recreated, loads };
+    } finally {
+      await next.dispose();
+    }
+  } finally {
+    observer.disconnect();
+    await service.dispose();
+  }
+}
+
 /** timer callbackがまだ動かなくても、期限後の照合・登録を拒否する単調clock境界試験。 */
 export async function exerciseClockBoundary(
   boundary: 'source' | 'source-timer' | 'assets' | 'registration',

@@ -19,7 +19,7 @@ Home／Path／読書での先読みはcore取得0の契約と衝突するため�
 - 初回取得と検証の上限は90秒。これは取得の有限上限であり、SLAや性能合格値ではありません。Source hashの20秒とは並列の独立期限です。新候補のcold成功率と成功時p95を測定し、待ち時間・物理端末・実人の受入を別に確認します。
 - 初回asset要求を出す前から同じ単調clockの絶対deadlineを持ち、取得・復号済みbytes/hash照合・worker metadataの検証までを含めます。進捗が届いてもdeadlineは延長しません。全体のAbortControllerと各streamのbytes上限を維持し、停止後の残る並列fetchも中止します。
 - 進捗は復号後の固定bytesの取得量と、取得／照合／初期化の段階を示します。gzipのContent-Lengthと復号後bytesを混ぜた百分率や、確証のない残り時間は表示しません。Worker bundleは既存2 MiB上限、metadataは1 KiB上限を維持します。
-- 取消・Source apply・Reset・離脱・disposeでは現行の世代失効とabortを使います。取消・取得失敗では学習者Sourceと保存済み履歴を残します。Source apply・Resetは既存の変更・starter復元仕様を維持します。取消や取得失敗を合格／未達へ変換せず、旧runの進捗・完了・cache登録・結果は受け付けません。
+- 取消・Source apply・Reset・離脱・disposeでは世代失効とabortを使います。PythonのSource applyには通常Editor変更を含み、旧取得・実行を即時停止して新Sourceの250ms previewを予約します。取消・取得失敗では学習者Sourceと保存済み履歴を残します。Source apply・Resetは既存の変更・starter復元仕様を維持します。取消や取得失敗を合格／未達へ変換せず、旧runの進捗・完了・cache登録・結果は受け付けません。
 - 失敗したPromiseと不完全coreは成功cacheへ入れず、stream／一時chunks／未検証bufferを破棄します。全assetの長さ・hash、lockとWorker metadata、現在世代、未取消、絶対deadlineを確認してからだけ完全coreを利用します。timer callbackが遅れた場合も、完了点でdeadlineを再確認して後着を拒否します。
 - 成功済みcoreは実行器内の固定bytesだけを保持し、disposeで参照を解放します。中止時にすでに有効な完全coreがあれば、Source／結果と混ぜずに保持できます。永続保存・無制限cache・複数の未検証core保持は追加しません。Browser全体のOOMまで隔離できる保証は引き続きありません。
 - 完全coreを渡した後のWorker初期化15秒、ready後のAST解析・Source反映・実行1.5秒、親の応答回収期限は現行値と境界を維持します。新frame／Worker／interpreter、Source100 KiB、出力合計64 KiB／行数、固定profile、CSP・能力制限・Source hash・run/session/revision照合を変更しません。取得用の時間を実行へ持ち越しません。

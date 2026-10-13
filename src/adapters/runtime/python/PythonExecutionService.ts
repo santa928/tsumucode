@@ -198,10 +198,12 @@ export class PythonExecutionService implements ExecutionService {
         preparation.downloadExpired = downloading && performance.now() >= downloadDeadline;
         throw new Error('Python preparation completed after its deadline');
       }
-      if (this.#abort === abort) this.#abort = undefined;
       // 同じ実行器では照合済み固定bytesだけを再利用し、Source・Workerは毎run作り直す。
       this.#core = core;
       report('initialize');
+      // 同期observerからstop/disposeされた場合も、旧Source用のframeを作らない。
+      if (stale()) return stopped();
+      if (this.#abort === abort) this.#abort = undefined;
       const hash = [...new Uint8Array(digest)]
         .map((byte) => byte.toString(16).padStart(2, '0'))
         .join('');

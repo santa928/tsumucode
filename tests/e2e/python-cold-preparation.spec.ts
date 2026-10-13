@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import type * as Harness from './helpers/pythonCoreCacheHarness';
+import { editorText, readStoredProgress, waitForStoredDraftContent } from './helpers/progress';
 import { testBasePath, testServerUrl } from './helpers/testBasePath';
 
 async function openHarness(page: Page) {
@@ -91,6 +92,79 @@ for (const ready of [false, true]) {
     expect(result.frames).toBe(0);
   });
 }
+
+for (const dispose of [false, true]) {
+  test(`Pythonのinitialize通知中の${dispose ? 'dispose' : 'stop'}は旧frameを生成しない`, async ({
+    page,
+  }) => {
+    await openHarness(page);
+    const result = await page.evaluate(async (disposing) => {
+      const modulePath = new URL('./tests/e2e/helpers/pythonCoreCacheHarness.ts', location.href)
+        .href;
+      const module = (await import(/* @vite-ignore */ modulePath)) as typeof Harness;
+      return module.exerciseInitializationCancellation(disposing);
+    }, dispose);
+    expect(result.first).toMatchObject({ status: 'stopped', evidence: [] });
+    expect(result.framesBeforeRetry).toBe(0);
+    expect(result.loads).toBe(1);
+    expect(result.retry.status).toBe(dispose ? 'stopped' : 'succeeded');
+    if (dispose) expect(result.recreated?.status).toBe('succeeded');
+  });
+}
+
+test('Python取得中のSource編集は旧取得を停止して新Sourceだけを実行する', async ({ page }) => {
+  test.setTimeout(45_000);
+  let requested!: () => void;
+  let release!: () => void;
+  const loading = new Promise<void>((resolve) => {
+    requested = resolve;
+  });
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  let coreRequests = 0;
+  let workers = 0;
+  page.on('worker', () => {
+    workers += 1;
+  });
+  await page.route('**/python-runtime/314.0.7/core.wasm', async (route) => {
+    coreRequests += 1;
+    if (coreRequests === 1) {
+      requested();
+      await held;
+    }
+    await route.continue().catch(() => undefined);
+  });
+  try {
+    await page.goto(
+      `${testBasePath()}#/courses/python-basics/lessons/python-basics-ch01-l01/exercises/python-basics-ch01-l01-e01`,
+    );
+    await loading;
+    const editor = page.locator('.cm-content');
+    await editor.click();
+    await page.keyboard.press('ControlOrMeta+A');
+    const source = 'count = 40\nprint(count + 2)\n';
+    await page.keyboard.insertText(source);
+    // 旧取得を解放する前に次の取得へ進めることが、即時abortの検出条件。
+    await expect.poll(() => coreRequests).toBe(2);
+    await expect(page.getByRole('region', { name: 'Console出力', exact: true })).toContainText(
+      '42',
+    );
+    expect(workers).toBe(1);
+    release();
+    await page.unrouteAll({ behavior: 'wait' });
+    await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'プレビューを更新', exact: true })).toBeEnabled();
+    expect(coreRequests).toBe(2);
+    expect(workers).toBe(2);
+    expect(await editorText(page)).toBe(source);
+    await waitForStoredDraftContent(page, source);
+    expect((await readStoredProgress(page)).drafts[0]?.['validationHistory']).toEqual([]);
+  } finally {
+    release();
+    await page.unrouteAll({ behavior: 'wait' });
+  }
+});
 
 test('Python取得中の進捗は読み上げ可能でキーボードから取消できる', async ({ page }) => {
   test.setTimeout(45_000);
