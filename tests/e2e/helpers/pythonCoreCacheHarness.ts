@@ -1,4 +1,7 @@
-import type { ExecutionRequest } from '../../../src/core/runtime/contracts';
+import type {
+  ExecutionRequest,
+  ExecutionPreparationProgress,
+} from '../../../src/core/runtime/contracts';
 import { PythonExecutionService } from '../../../src/adapters/runtime/python/PythonExecutionService';
 import type { PythonCore } from '../../../src/adapters/runtime/python/pythonProtocol';
 import { selectBrowserConsoleRuntime } from '../../../src/features/learning/pythonRuntime';
@@ -115,7 +118,7 @@ export async function exercisePreparationRace(mode: PreparationRace) {
 }
 
 /** 製品factoryのloaderで拒否したassetを保持せず、次の要求を新しく取得する。 */
-export async function exerciseLoaderRecovery() {
+function productionService(reportProgress?: (progress: ExecutionPreparationProgress) => void) {
   const exercise = {
     id: 'python-basics-ch01-l01-e01',
     runtime: {
@@ -129,7 +132,14 @@ export async function exerciseLoaderRecovery() {
     validationRules: [],
     interactionScenarios: [],
   };
-  const service = selectBrowserConsoleRuntime(exercise, [exercise]).createExecution();
+  return selectBrowserConsoleRuntime(exercise, [exercise]).createExecution(
+    undefined,
+    reportProgress,
+  );
+}
+
+export async function exerciseLoaderRecovery() {
+  const service = productionService();
   try {
     const failed = await service.execute(request(1));
     const failedFrames = document.querySelectorAll('iframe').length;
@@ -140,6 +150,216 @@ export async function exerciseLoaderRecovery() {
       failedFrames,
       retry,
       warm,
+      frames: document.querySelectorAll('iframe').length,
+    };
+  } finally {
+    await service.dispose();
+  }
+}
+
+/** 製品streamの途中で取消し、後着通知を止めて未保持のcoreを取り直す。 */
+export async function exerciseProgressCancellation() {
+  const events: ExecutionPreparationProgress[] = [];
+  let stoppedAt = 0;
+  let cancelling = false;
+  const service = productionService((progress) => {
+    events.push(progress);
+    if (!cancelling && progress.runId === 'cache-run-1' && progress.receivedBytes > 0) {
+      cancelling = true;
+      stoppedAt = events.length;
+      void service.stop();
+    }
+  });
+  try {
+    const first = await service.execute(request(1));
+    await new Promise<void>((resolve) => setTimeout(resolve, 0));
+    const oldEvents = events.filter((event) => event.runId === 'cache-run-1');
+    const framesAfterStop = document.querySelectorAll('iframe').length;
+    const retry = await service.execute(request(2));
+    return { first, retry, oldEvents, stoppedAt, framesAfterStop, events };
+  } finally {
+    await service.dispose();
+  }
+}
+
+/** 準備完了の同期通知から停止しても、旧Sourceのframe/Workerを生成しない。 */
+export async function exerciseInitializationCancellation(dispose: boolean) {
+  const core = await fixedFixture();
+  let loads = 0;
+  let addedFrames = 0;
+  const observer = new MutationObserver((records) => {
+    for (const record of records) {
+      for (const node of record.addedNodes) {
+        if (node instanceof HTMLIFrameElement) addedFrames += 1;
+      }
+    }
+  });
+  observer.observe(document.body, { childList: true });
+  const service = new PythonExecutionService(
+    async () => {
+      loads += 1;
+      return core;
+    },
+    undefined,
+    undefined,
+    (progress) => {
+      if (progress.runId === 'cache-run-1' && progress.stage === 'initialize')
+        void (dispose ? service.dispose() : service.stop());
+    },
+  );
+  try {
+    const first = await service.execute(request(1));
+    await new Promise<void>((resolve) => setTimeout(resolve, 0));
+    const framesBeforeRetry = addedFrames;
+    const retry = await service.execute(request(2));
+    const next = new PythonExecutionService(async () => core);
+    try {
+      const recreated = dispose ? await next.execute(request(3)) : undefined;
+      return { first, framesBeforeRetry, retry, recreated, loads };
+    } finally {
+      await next.dispose();
+    }
+  } finally {
+    observer.disconnect();
+    await service.dispose();
+  }
+}
+
+/** timer callbackがまだ動かなくても、期限後の照合・登録を拒否する単調clock境界試験。 */
+export async function exerciseClockBoundary(
+  boundary: 'source' | 'source-timer' | 'assets' | 'registration',
+) {
+  const core = await fixedFixture();
+  const digestDescriptor = Object.getOwnPropertyDescriptor(crypto.subtle, 'digest');
+  const nativeDigest = crypto.subtle.digest.bind(crypto.subtle);
+  const nowDescriptor = Object.getOwnPropertyDescriptor(performance, 'now');
+  const nativeNow = performance.now.bind(performance);
+  const originalSet = window.setTimeout;
+  const originalClear = window.clearTimeout;
+  let downloadTimer: ReturnType<typeof originalSet> | undefined;
+  let offset = 0;
+  let hashed!: () => void;
+  let hashValue: ArrayBuffer | undefined;
+  let releaseHash!: (value: ArrayBuffer) => void;
+  let releaseCore!: (value: PythonCore) => void;
+  const hashing = new Promise<void>((resolve) => {
+    hashed = resolve;
+  });
+  const delayedHash = new Promise<ArrayBuffer>((resolve) => {
+    releaseHash = resolve;
+  });
+  const delayedCore = new Promise<PythonCore>((resolve) => {
+    releaseCore = resolve;
+  });
+  let loads = 0;
+  const waitingForSource = boundary === 'source' || boundary === 'source-timer';
+  const events: ExecutionPreparationProgress[] = [];
+  const service = new PythonExecutionService(
+    async () => {
+      loads += 1;
+      return loads === 1 && !waitingForSource ? delayedCore : core;
+    },
+    undefined,
+    undefined,
+    (progress) => events.push(progress),
+  );
+  const restore = (): void => {
+    if (digestDescriptor === undefined) Reflect.deleteProperty(crypto.subtle, 'digest');
+    else Object.defineProperty(crypto.subtle, 'digest', digestDescriptor);
+    window.setTimeout = originalSet;
+    window.clearTimeout = originalClear;
+    if (nowDescriptor === undefined) Reflect.deleteProperty(performance, 'now');
+    else Object.defineProperty(performance, 'now', nowDescriptor);
+  };
+  try {
+    Object.defineProperty(performance, 'now', {
+      configurable: true,
+      value: () => nativeNow() + offset,
+    });
+    crypto.subtle.digest = (...args) =>
+      nativeDigest(...args).then((value) => {
+        hashValue = value;
+        hashed();
+        return waitingForSource ? delayedHash : value;
+      });
+    // Browserだけで呼ぶFixture。Node/DOMの型が重なるmethodへ関数代入せず差替える。
+    Object.defineProperty(window, 'setTimeout', {
+      configurable: true,
+      writable: true,
+      value: (callback: () => void, milliseconds?: number) => {
+        const timer = originalSet.call(window, callback, milliseconds);
+        if (milliseconds === 90_000) downloadTimer = timer;
+        return timer;
+      },
+    });
+    Object.defineProperty(window, 'clearTimeout', {
+      configurable: true,
+      writable: true,
+      value: (timer: ReturnType<typeof originalSet> | undefined) => {
+        originalClear.call(window, timer);
+        if (boundary === 'registration' && timer === downloadTimer) offset = 90_001;
+      },
+    });
+    const pending = service.execute(request(1));
+    await hashing;
+    await new Promise<void>((resolve) => originalSet.call(window, resolve, 0));
+    if (boundary === 'source') {
+      offset = 20_001;
+      if (hashValue === undefined) throw new Error('Source hashの完了を確認できません');
+      releaseHash(hashValue);
+    } else if (boundary !== 'source-timer') {
+      if (boundary === 'assets') offset = 90_001;
+      releaseCore(core);
+    }
+    const began = nativeNow();
+    const first = await pending;
+    const elapsed = nativeNow() - began;
+    const frames = document.querySelectorAll('iframe').length;
+    restore();
+    if (hashValue !== undefined) releaseHash(hashValue);
+    const retry = await service.execute(request(2));
+    return {
+      boundary,
+      clockReadAdjusted: boundary !== 'source-timer',
+      elapsed,
+      first,
+      retry,
+      loads,
+      frames,
+      firstEvents: events.filter((event) => event.runId === 'cache-run-1'),
+    };
+  } finally {
+    restore();
+    releaseCore(core);
+    if (hashValue !== undefined) releaseHash(hashValue);
+    await service.dispose();
+  }
+}
+
+/** 信頼Workerの応答を保留し、初期化15秒とready後1.5秒の実時計を確認する。 */
+export async function exerciseRuntimeDeadline(ready: boolean) {
+  const core = await fixedFixture();
+  const events: ExecutionPreparationProgress[] = [];
+  const service = new PythonExecutionService(
+    async () => ({
+      ...core,
+      workerSource: ready
+        ? 'self.onmessage = event => event.ports[0].postMessage({ type: "python-ready" });'
+        : 'self.onmessage = () => {};',
+    }),
+    undefined,
+    undefined,
+    (progress) => {
+      events.push(progress);
+    },
+  );
+  try {
+    const began = performance.now();
+    const result = await service.execute(request(1));
+    return {
+      result,
+      elapsed: performance.now() - began,
+      events,
       frames: document.querySelectorAll('iframe').length,
     };
   } finally {

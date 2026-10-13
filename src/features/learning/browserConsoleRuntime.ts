@@ -2,7 +2,7 @@ import { BrowserConsoleExecutionService } from '../../adapters/runtime/javascrip
 import { analyzeConsoleSourceFacts } from '../../adapters/runtime/javascript/analyzer/instrumentJavaScript';
 import { JavaScriptValidator } from '../../adapters/validation/javascript/JavaScriptValidator';
 import type { Exercise } from '../../core/content/types';
-import type { ExecutionService } from '../../core/runtime/contracts';
+import type { ExecutionService, ExecutionPreparationProgress } from '../../core/runtime/contracts';
 import type { ValidatorAdapter } from '../../core/validation/contracts';
 
 const EXERCISE_IDS = new Set([
@@ -11,7 +11,10 @@ const EXERCISE_IDS = new Set([
   'javascript-ch03-l05-e03',
 ]);
 interface ConsoleRuntimeFactories {
-  createExecution(readInputLines?: () => readonly string[]): ExecutionService;
+  createExecution(
+    readInputLines?: () => readonly string[],
+    reportProgress?: (progress: ExecutionPreparationProgress) => void,
+  ): ExecutionService;
   createValidator(): ValidatorAdapter;
 }
 type ConsoleCandidate = Pick<

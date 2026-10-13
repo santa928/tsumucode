@@ -226,6 +226,12 @@ export interface ExecutionRequest extends RunIdentity {
 export type ExecutionStatus =
   'succeeded' | 'type-error' | 'code-error' | 'unsupported' | 'stopped' | 'system-error';
 
+/** 実行結果や保存履歴と分け、現在runの準備段階だけを画面へ通知する。 */
+export interface ExecutionPreparationProgress extends RunIdentity {
+  readonly stage: 'download' | 'verify' | 'initialize' | 'execute' | 'finished';
+  readonly receivedBytes: number;
+}
+
 /** 実行終了の事実。教材の合否は含めずValidatorが別に判定する。 */
 export interface ExecutionResult extends RunnerRenderResult, RunIdentity {
   readonly status: ExecutionStatus;

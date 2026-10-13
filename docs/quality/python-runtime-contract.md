@@ -22,7 +22,7 @@ Python接続はPython演習でだけ遅延importする。固定coreは同origin�
 
 ## 期限・出力・結果
 
-信頼側core準備は20秒、Worker初期化は15秒、学習実行は1.5秒。外側のframeがWorker termination・port close・Blob URL revokeを行ってから結果を返し、親がframeを除去する。手動停止、Reset、離脱、次のrunで旧generation／run／session／revisionを失効させる。BrowserプロセスのOOMまで完全に隔離する保証はない。
+信頼側の固定asset取得・照合は最初の要求前から90秒の絶対期限、毎runのSource hashは並列の20秒期限です。進捗で延長せず、照合完了とcache登録前でも期限・取消・現在世代を確認します。Worker初期化は15秒、ready後のAST解析・Source反映・学習実行は1.5秒、親の応答回収は初期化と実行を含む18秒です。新run予定予算は最大108秒で、旧run停止待ちやBrowserのタイマー遅延は別です。外側のframeがWorker termination・port close・Blob URL revokeを行ってから結果を返し、親がframeを除去する。手動停止、Reset、離脱、次のrunで旧generation／run／session／revisionを失効させる。BrowserプロセスのOOMまで完全に隔離する保証はない。
 
 sourceは100 KiB。stdout／stderr合計は64 KiB、1行4,096 bytes、結果は100行以内。別々のUTF-8 decoderで部分writeを結合する。Consoleは実write callbackの行開始順を保ち、Python自身のstdoutバッファリングは反映される。信頼側でもbytes・行数・schemaを照合する。コードのSyntaxError／実行エラー、初期化／Worker障害、未対応、期限／出力制限／手動停止を分ける。環境障害を未達や合格に変換しない。
 
@@ -43,3 +43,11 @@ Docker内の実Chromiumで、10 Fixtureを実Pyodideと製品採点器へ渡し�
 - [Worker要件](https://pyodide.org/en/stable/usage/webworker.html)
 - [loadPyodide API](https://pyodide.org/en/stable/usage/api/js-api.html)
 - [CSP3のWASM評価権限](https://www.w3.org/TR/CSP3/)
+
+取得中は復号後の取得量と段階を示し、既存の停止操作で取消できます。不完全buffer・失敗Promiseを保持せず、後着の進捗／登録／結果は受け付けません。取消・環境障害はSourceと採点履歴を保持し、通常のプレビュー更新・判定で手動再試行します。[90秒仕様と受入条件](python-cold-preparation-proposal.md)を参照してください。
+
+PythonのEditor変更は旧取得・実行を即時停止し、新Sourceのdebounce previewへ切り替えます。準備完了の同期通知中にstop／disposeが呼ばれた場合も、通知後の世代確認で旧Source用のframe作成を拒否します。照合済み完全coreを既に保持していればstop後も再利用でき、disposeでは解放します。
+
+準備進捗と停止操作は現在のController・Source revision・run終了通知に結び付け、Editor変更後の自動取得中にも表示します。現在runが期限でabortした場合も終了を通知し、失効した旧runの通知は受け付けません。
+
+自動取得の途中で明示的なプレビュー更新・判定を予約すると、取得量表示が次の通知まで消える場合があります。通信が止まっていると長くなる可能性がありますが、操作の待機状態と停止ボタンは維持します。同じSourceの既存の実行queueを使い、別の結果・履歴へ置き換えません。

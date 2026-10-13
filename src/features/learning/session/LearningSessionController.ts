@@ -621,6 +621,12 @@ export class LearningSessionController {
     const editable = this.#editableFiles.get(path);
     if (editable === undefined) throw new Error(`FileがExerciseに存在しません: ${path}`);
     if (!editable) throw new Error(`Fileはeditableではありません: ${path}`);
+    // Pythonの長い初回取得を旧Sourceのまま続けず、次のdebounce実行へ切り替える。
+    if (this.environment.engine === 'browser-python') {
+      void this.stop().catch((error: unknown) => {
+        this.#reportBackgroundError(error);
+      });
+    }
     this.#markDraftMutation();
     this.#dispatch({ type: 'editor.changed', path, content });
     const draft = this.#draft();

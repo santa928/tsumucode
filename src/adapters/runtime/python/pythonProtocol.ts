@@ -6,6 +6,12 @@ export interface PythonCore {
   readonly lock: Readonly<Record<string, unknown>>;
 }
 
+/** 復号後の固定asset取得量。圧縮Content-Lengthや残り時間とは混ぜない。 */
+export interface PythonCoreProgress {
+  readonly stage: 'download' | 'verify';
+  readonly receivedBytes: number;
+}
+
 export interface PythonResult {
   readonly type: 'python-result';
   readonly status: 'succeeded' | 'code-error' | 'unsupported' | 'stopped' | 'system-error';
@@ -41,6 +47,7 @@ export const PYTHON_LIMITS = {
   lineBytes: 4096,
   lines: 100,
   preparationMilliseconds: 20_000,
+  downloadMilliseconds: 90_000,
   initializationMilliseconds: 15_000,
   executionMilliseconds: 1500,
 } as const;
