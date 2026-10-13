@@ -63,6 +63,7 @@ export async function exercisePreparationRace(mode: PreparationRace) {
   await loading;
   const preparingFrames = document.querySelectorAll('iframe').length;
   let first;
+  let firstElapsed: number;
   let retry;
   let recreated;
   let recreatedLoads = 0;
@@ -72,6 +73,7 @@ export async function exercisePreparationRace(mode: PreparationRace) {
       release(core);
       await service.dispose();
       first = await oldRun;
+      firstElapsed = performance.now() - began;
       retry = await service.execute(request(2));
       const nextService = new PythonExecutionService(async () => {
         recreatedLoads += 1;
@@ -86,9 +88,11 @@ export async function exercisePreparationRace(mode: PreparationRace) {
       if (mode === 'cancel') await service.stop();
       if (mode === 'replace') retry = await service.execute(request(2));
       first = await oldRun;
+      firstElapsed = performance.now() - began;
       if (retry === undefined) retry = await service.execute(request(2));
       release(staleCore);
-      await Promise.resolve();
+      // 旧loaderのPromise連鎖を終え、次runによる上書きが誤登録を隠さないようにする。
+      await new Promise<void>((resolve) => setTimeout(resolve, 0));
     }
     const warm = await service.execute(request(3));
     return {
@@ -100,6 +104,7 @@ export async function exercisePreparationRace(mode: PreparationRace) {
       loads,
       aborted: firstSignal?.aborted,
       elapsed: performance.now() - began,
+      firstElapsed,
       preparingFrames,
       frames: document.querySelectorAll('iframe').length,
     };

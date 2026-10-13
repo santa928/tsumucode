@@ -39,7 +39,7 @@ for (const mode of ['cancel', 'replace', 'dispose', 'timeout'] as const) {
     if (mode === 'timeout') {
       expect(result.first.diagnostics[0]?.learnerMessage).toContain('時間内');
       // 実時計の現行20秒期限を待つ。短縮期限やfake clockは使用しない。
-      expect(result.elapsed).toBeGreaterThanOrEqual(20_000);
+      expect(result.firstElapsed).toBeGreaterThanOrEqual(20_000);
     }
     for (const [run, revision] of [
       [result.retry, 2],
