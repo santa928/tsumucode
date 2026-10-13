@@ -66,7 +66,7 @@ test('公開Pythonの実Worker・取得障害後の再試行・別タブ通知�
   await expect
     .poll(async () => draft(page))
     .toMatchObject({ files: { 'main.py': solution }, validationHistory: [{ status: 'pass' }] });
-  const passed = await draft(page);
+  let passed = await draft(page);
   const link = page.getByRole('link', {
     name: 'Python実行環境のライセンスと対象ソース（別タブ）',
     exact: true,
@@ -83,6 +83,24 @@ test('公開Pythonの実Worker・取得障害後の再試行・別タブ通知�
   await page.route('**/python-runtime/314.0.7/core.wasm', (route) =>
     route.fulfill({ status: 503, body: 'unavailable' }),
   );
+  // 取得済みの固定coreでも変更したSourceを新Workerで実行し、前回の成功へ置き換えない。
+  await replaceEditorText(page, 'count =');
+  await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
+  await expect(page.getByText(/Pythonの構文を確認してください/).first()).toBeVisible({
+    timeout: 30_000,
+  });
+  expect((await draft(page))?.['validationHistory']).toEqual(passed?.['validationHistory']);
+  expect(await editorText(page)).toBe('count =');
+  await replaceEditorText(page, solution);
+  await page.getByRole('button', { name: '判定する', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'できました', exact: true })).toBeVisible({
+    timeout: 30_000,
+  });
+  await page.getByRole('button', { name: '閉じる', exact: true }).click();
+  passed = await draft(page);
+  // reload後の新実行器はcacheを持たず、取得失敗と保存・履歴保持を引き続き確認する。
+  await page.reload();
+  await expect.poll(() => editorText(page)).toBe(solution);
   await page.getByRole('button', { name: '判定する', exact: true }).click();
   await expect(
     page.getByText('実行環境で問題が起きました。採点していません。', { exact: true }),

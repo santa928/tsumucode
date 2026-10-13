@@ -14,6 +14,7 @@ Python接続はPython演習でだけ遅延importする。固定coreは同origin�
 
 - Pyodideは314.0.7、実interpreterはPython 3.14.2。公式archiveは6,757,104 bytes、SHA-256は2abdcc2e35208af406e07724cffa85bc582ced97e9028383ecf5462541393f95。
 - 親の信頼loaderが固定同origin assetを上限付きstreamで取得し、bytes/hashを照合する。WASM 9,598,218 bytes、stdlib 2,545,637 bytes、lock 119,077 bytesにWorker bundleを加える。準備に失敗したPromiseはcacheせず、残る並列fetchをabortする。
+- 同じ実行器では成功して照合済みの固定coreだけを保持し、disposeで参照を解放する。Source・入力・identity・Source hashは毎run確定し、frame／Worker／interpreterも新しく作る。Python globals・学習者Source・結果や、失敗／中止したPromiseはcacheしない。Home／Path／読書での先読みや永続保存は行わない。
 - classic Workerには固定bytesとprivate MessagePortだけを渡す。loader用fetchは固定bytesを返すstubで、native通信能力を渡さない。初期化後はglobalとWorker prototypeの通信・保存・子Worker能力を除去し、pure intrinsicのprototypeを再帰的に固定する。
 - Python専用frameはsandbox=allow-scriptsのみ。script-srcはnonceとwasm-unsafe-eval、connect-srcはnone。JS unsafe-eval、allow-same-origin、外部取得許可は追加しない。既存JS／DOM実行器のCSPは変えない。
 - 最小教材policyは値・単一変数への代入・加算・単一引数printだけ。任意import、入力待ち、package追加、printの再束縛、実行系builtinの別名参照は未対応とし、未達とは区別する。

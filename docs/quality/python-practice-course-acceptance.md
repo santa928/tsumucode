@@ -73,15 +73,19 @@ PRの初回Runtime CIでは旧with課題の移行検査に旧最新revision `202
 
 既存のWorker／frame、同origin固定core取得、ASTの有限文法、CPythonの隔離・資源・出力・回収条件は[Python実行契約](python-runtime-contract.md)と[Local実行境界](local-python-runtime.md)を正とし、今回緩和しません。型注釈やASTの形を、任意コードの安全性を証明する仕組みとは説明しません。
 
-読書中のcore取得0と既存bundle上限は配信・性能の技術確認です。低速CPU／回線での実践Projectの初回・操作時間、標本数とp95の受入は今回未確認です。テスト所要時間を操作性能へ読み替えず、未承認の性能予算を新たに作りません。実人の初心者受講・物理低性能端末も未確認です。独立内容／Runtime／UIレビューと自動テストを、初心者の理解や実機観察の完了とは扱いません。初心者模擬受講を採用する場合も、対象・方法・原本照合と本人承認を別に確認します。
+読書中のcore取得0と既存bundle上限は配信・性能の技術確認です。追加の[低速環境での補足観測](python-practice-performance.md)では、実践Projectの初回20件すべてが固定20秒の準備期限へ達し、暖機が成立せず操作標本は0件でした。失敗までのp95を成功時の性能へ読み替えず、未承認の性能予算を新たに作りません。是正と承認された性能受入、実人の初心者受講・物理低性能端末は未完です。独立内容／Runtime／UIレビューと自動テストを、初心者の理解や実機観察の完了とは扱いません。初心者模擬受講を採用する場合も、対象・方法・原本照合と本人承認を別に確認します。
 
-Nextの厳格checkpointで検出された短時間Zombieは[#204](https://github.com/santa928/tsumucode/issues/204)で原因を追跡します。関連記録は#142／PR199および#146です。初回FAILと限定診断を保持し、再確認・main成功を原因解明／解消とは扱いません。再発時は追加再試行せず、厳格なZombie0条件のままライフサイクル調査へ戻ります。
+Nextの厳格checkpointで検出された短時間Zombieは[#204／PR206](https://github.com/santa928/tsumucode/pull/206)で、固定Nextのstatic paths Worker終了処理とforkの回収を直接観測し、固定Worker Thread設定へ修正しました。#204は受入完了でCLOSEDです。過去のCI PID804／163と同一の発生元だったことは未確定で、初回FAILと限定診断を保持します。再発時は追加再試行せず、厳格なZombie0条件のままライフサイクル調査へ戻ります。
+
+PR205は修正を取り込んだHEAD `2f72815031e7858510f966b6b2ac95786326c0b1` の独立3レビューと両CIの初回成功後に通常mergeしました。merge／最新main `e18b2975743558c6f67ef511469382990684f278` の[Runtime CI](https://github.com/santa928/tsumucode/actions/runs/38360069214)と[Pages CI](https://github.com/santa928/tsumucode/actions/runs/38360068954)も初回成功し、treeはレビュー対象と一致しました。Pagesの配信jobはSKIPPEDで、新サイト公開はしていません。
+
+追加の[Python基礎内容レビュー](python-basics-content-review.md)で、全site Gateが検出した後続9教材の台帳欠落を実レビューと実例実行で補いました。基礎10教材の内容hashはstale0／rejected0です。新たな10教材全体の公開承認には流用せず、台帳の公開状態はdraft、旧公開承認と履歴はそのまま保持します。
 
 ## 公開前に残る条件
 
 - 公開候補を固定した時点の5Lesson内容hash／独立レビューと技術原本のbinding。今回の草稿教材承認を公開許可へ流用しない。
 - 承認された初心者受入方法、必要な性能受入、blocking findingの是正。実人・物理端末の未確認状態を維持する。
-- 既存の全site公開Gateが要求するPython基礎9教材のレビュー不足を別管理で解消する。
+- Python基礎9教材の実レビュー追加後も、新公開候補に対する全原本の独立照合・Source／tree／dist／品質・公開承認のbindingを確認する。
 - `python-practice`の公開契約と品質／Source／tree／dist bindingを定義し、専用承認・履歴・既存Gateの整合を確認する。現在の公開allowlistは`python-basics`までで、このCourseは未設定。
 - 本人の新規Pages公開／Home・Path追加許可を確認して、完成CourseだけをPython Pathへ追加する。
 - 正確な公開SHA／CI／配信hash、公開後の開始・再開・実判定・保存・Export／fresh Importを記録する。
