@@ -42,6 +42,8 @@ await writeFile(
     turbopackFileSystemCacheForDev: false,
     devValidationWorker: false,
     reactDebugChannel: false,
+    // static pathsの終了処理は非同期のため、短命な子processではなくthreadを使う。
+    workerThreads: true,
   },
 };
 `,

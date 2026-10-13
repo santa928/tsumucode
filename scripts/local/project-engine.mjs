@@ -61,7 +61,7 @@ export function projectConfig(record, owner, runId, imageId, preview = false) {
     'app.tsumucode.profile': record.profile ?? PROJECT_PROFILE,
   };
   if (record.profile === NEXT_PROFILE) {
-    // Next CLIが生成する孫processもDocker initへ回収させる。
+    // 親を失った子/孫processをDocker initへ回収させる。
     config.HostConfig.Init = true;
     // 制作2教材は承認済み1GB以内。他教材の上限や要求から選べる範囲を広げない。
     const memoryMiB = ['next-ch05-l01-e01', 'next-ch06-l01-e01'].includes(record.workspaceId)
