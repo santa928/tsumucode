@@ -1,7 +1,7 @@
 schemaVersion: 1
-releaseStatus: approved
-verifiedSourceCommit: 9e1002169b2770be28c5a1dd3467848e6088dfbe
-canonicalDistSha256: 35cb703f758e71424845e980a6339e9b149c4d26aef1f6799259b42a3857ce3c
+releaseStatus: draft
+verifiedSourceCommit: draft
+canonicalDistSha256: draft
 lessons:
   - lessonId: python-basics-ch01-l01
     authorId: tsumucode-python-author
@@ -14,3 +14,102 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes: 独立AI教材レビューで必須指摘0。既存実Pyodideの10Fixtureを確認済み。公開用build・実Pagesの受入と実人受講は別に扱い、技術証拠はpython-release-acceptance.yamlのsource/artifact/原本hashへ固定する。
+  - lessonId: python-basics-ch01-l02
+    authorId: tsumucode-python-author
+    reviewerId: codex-issue147-prepublication-review
+    sourceHash: 15642727234ad2a96b92ecdaf2345b072a02654c0cbc49c3cb79191bfbde1058
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
+  - lessonId: python-basics-ch01-l03
+    authorId: tsumucode-python-author
+    reviewerId: codex-issue147-prepublication-review
+    sourceHash: ccd316600891bca8d0b32daf2163978e83644147959e31995742608c1a2e2a78
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
+  - lessonId: python-basics-ch01-l04
+    authorId: tsumucode-python-author
+    reviewerId: codex-issue147-prepublication-review
+    sourceHash: 6561504d2e79344ae9f0655601da6c398c14a9ca2051c35ca830e92c8939c2bd
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
+  - lessonId: python-basics-ch01-l05
+    authorId: tsumucode-python-author
+    reviewerId: codex-issue147-prepublication-review
+    sourceHash: dbaae77c03ebf56c2f72e04919ed1fc2e00ccadb1791d958dfbd6f429866d99c
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
+  - lessonId: python-basics-ch01-l06
+    authorId: tsumucode-python-author
+    reviewerId: codex-issue147-prepublication-review
+    sourceHash: 0f2b5a388577a151939e4aa37eac295c6dc13014dcdacf57b8fcf362a3ed3a57
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
+  - lessonId: python-basics-ch01-l07
+    authorId: tsumucode-python-author
+    reviewerId: codex-issue147-prepublication-review
+    sourceHash: a08366eda8d12439511801e06ec69da7156ad462706a11480c57a6d5a8770de8
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
+  - lessonId: python-basics-ch01-l08
+    authorId: tsumucode-python-author
+    reviewerId: codex-issue147-prepublication-review
+    sourceHash: a0d9abfe05696d367a203cf225734e0ab3b8e5a456fbd53ed9972ab7f2d2dc91
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
+  - lessonId: python-basics-ch01-l09
+    authorId: tsumucode-python-author
+    reviewerId: codex-issue147-prepublication-review
+    sourceHash: 55239ab7d202adf2f7066122a9e6e21e208d8a5507a093ede7fcf70b4bbef86d
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
+  - lessonId: python-basics-ch02-l01
+    authorId: tsumucode-python-author
+    reviewerId: codex-issue147-prepublication-review
+    sourceHash: 1e2b72e0c48c49534ae1e14d1d8d1f73abcd056263e018a84b3c5f45e44f76ef
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
