@@ -444,6 +444,8 @@ export class PracticeRun {
       if (inspected.State.Running) {
         if (inspected.State.Paused) await this.api('POST', `/containers/${id}/unpause`);
         await this.api('POST', `/containers/${id}/kill`, undefined, 1500);
+        // kill応答だけで停止済みとせず、実プロセスの終了をboundedに待つ。
+        await this.api('POST', `/containers/${id}/wait?condition=not-running`, undefined, 1500);
       }
       const stopped = await this.api('GET', `/containers/${id}/json`);
       this.stoppedConfirmed = !stopped.State.Running;
