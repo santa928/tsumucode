@@ -14,6 +14,10 @@ Docker内の実Chromiumで20件の対象境界が成功し、retry・flakyは0�
 
 3Browser代表はChromium3件、Firefox2件、WebKit2件が成功し、全10作者FixtureをChromiumへ限定する既存のskipは2件です。途中のWebKit全体timeoutと、独立トレース成功時のOOM kill1件の原本は保持しています。修正後の各engineを独立Dockerで確認し、PID上限到達・OOM killは0件でした。Chromium／WebKitはPID256、FirefoxだけPID512とコンテナ内一時homeを使い、全engineで非root／read-only／cap-drop／no-new-privileges／メモリ3 GiBを維持しました。先のOOM発生原因の同一性や、任意のBrowserメモリ条件まで解決したとは扱いません。
 
-低速coldは既知Solutionと正規schemaを保存したfresh Context、HTTP cache disabled、1280×720、page CPU4x、RTT150ms、下り1.6Mbps／上り750Kbps、Docker production previewで観測します。一時workspace leaseをseedへ持ち込まず、現在runの実Worker・成功出力・履歴に残る採点成功を確認します。失敗表示時間を成功標本へ数えず、成功標本のみnearest-rank p95を計算します。正式20標本の結果は測定後に追記します。pilotと過去の失敗20標本は別に保持します。
+低速coldはデータProject `python-practice-ch03-l01-e01` の既知Solutionと正規schemaを保存したfresh Context、HTTP cache disabled、1280×720、page CPU4x、RTT150ms、下り1.6Mbps／上り750Kbps、Docker production previewのroot配信で観測しました。一時workspace leaseをseedへ持ち込まず、現在runの実Worker・成功出力・履歴に残る採点成功を要求しています。失敗表示時間を成功標本へ数えず、成功標本のみnearest-rank p95を計算します。pilotと過去の失敗20標本は別に保持します。
+
+正式20標本は20成功・失敗0でした。画面への遷移開始から初回の現在Console成功までのp95は **70,435.157 ms**、Controllerのpreview処理区間では **66,070.800 ms** です。遷移からの最小は70,257.908 ms、最大は70,604.041 msでした。各coldの後に保持coreで別Workerの採点を成功させ、保存Source全文と最新履歴のpassを20件すべて照合しています。このwarm採点時間はcoldのelapsedへ加えません。PID上限到達・OOM killは0件、当該測定コンテナのmemory peakは929,910,784 bytesでした。
+
+候補Source・tree・dist・probe・原本のhashをローカルの私有bindingで固定しています。原本・Source seed・画像・生成物は公開差分へ含めません。以前の20失敗標本はStarter／配信subpathなどの条件が異なり、今回の既知Solution／root配信と同じSourceの速度改善比較には使いません。Chrome149.0.7827.0の同一Browser内のfresh Contextで、既存常駐コンテナもあるローカル環境の観測です。Pagesのgzip配信、全教材、別Browser、専用物理端末の性能値や、初回待ちのSLAとして一般化しません。
 
 Worker／frameの実CPU倍率、物理端末、実初心者、公開配信は未確認です。任意の競合順序、GCの即時回収、Browser全体のメモリ上限／OOM隔離は保証しません。配信圧縮は変更しておらず、既存Pages HEAD由来の32.265秒は理論値のままです。性能受入・公開binding／許可・配信後受入は、実装の統合とは別の条件として残します。
