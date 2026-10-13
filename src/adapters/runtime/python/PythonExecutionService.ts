@@ -393,7 +393,8 @@ export class PythonExecutionService implements ExecutionService {
                 : 'Python実行準備に失敗しました。Sourceを保持して再試行してください。',
           );
     } finally {
-      report('finished');
+      // 自分の期限でabortした場合も、現在runの待機表示を終了する。
+      if (!stale()) this.reportProgress({ ...identity, stage: 'finished', receivedBytes });
       abort.abort();
       clearTimeout(sourceTimer);
       clearTimeout(downloadTimer);

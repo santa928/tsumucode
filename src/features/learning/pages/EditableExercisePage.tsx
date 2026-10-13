@@ -463,6 +463,12 @@ function EditableSession({
     [],
   );
   const result = state.validationHistory.at(-1);
+  const pythonPreparation =
+    executionPreparation?.controller === controller &&
+    executionPreparation.progress.executionRevision === state.executionRevision &&
+    executionPreparation.progress.stage !== 'finished'
+      ? executionPreparation.progress
+      : undefined;
   const busy = operation !== 'idle' || practiceBusy;
   const viewState: ExerciseViewState = {
     activeFilePath: state.selectedFile,
@@ -1011,7 +1017,8 @@ function EditableSession({
                   : '判定しています'
                 : '判定する'}
             </button>
-            {(controller.environment.mode === 'console' && operation !== 'idle') ||
+            {(controller.environment.mode === 'console' &&
+              (operation !== 'idle' || pythonPreparation !== undefined)) ||
             (['typescript', 'react'].includes(exercise.runtime?.kind ?? '') &&
               (operation === 'preview' || operation === 'validate')) ? (
               <button
@@ -1046,10 +1053,8 @@ function EditableSession({
       }
     >
       <div className="tc-exercise-stage-stack">
-        {operation !== 'idle' &&
-        executionPreparation?.controller === controller &&
-        executionPreparation.progress.executionRevision === state.executionRevision ? (
-          <PythonPreparationStatus progress={executionPreparation.progress} />
+        {pythonPreparation !== undefined ? (
+          <PythonPreparationStatus progress={pythonPreparation} />
         ) : null}
         <div
           className={`tc-exercise-workspace${previewExpanded ? ' tc-exercise-workspace-preview-expanded' : ''}`}

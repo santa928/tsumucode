@@ -47,3 +47,5 @@ Docker内の実Chromiumで、10 Fixtureを実Pyodideと製品採点器へ渡し�
 取得中は復号後の取得量と段階を示し、既存の停止操作で取消できます。不完全buffer・失敗Promiseを保持せず、後着の進捗／登録／結果は受け付けません。取消・環境障害はSourceと採点履歴を保持し、通常のプレビュー更新・判定で手動再試行します。[90秒仕様と受入条件](python-cold-preparation-proposal.md)を参照してください。
 
 PythonのEditor変更は旧取得・実行を即時停止し、新Sourceのdebounce previewへ切り替えます。準備完了の同期通知中にstop／disposeが呼ばれた場合も、通知後の世代確認で旧Source用のframe作成を拒否します。照合済み完全coreを既に保持していればstop後も再利用でき、disposeでは解放します。
+
+準備進捗と停止操作は現在のController・Source revision・run終了通知に結び付け、Editor変更後の自動取得中にも表示します。現在runが期限でabortした場合も終了を通知し、失効した旧runの通知は受け付けません。

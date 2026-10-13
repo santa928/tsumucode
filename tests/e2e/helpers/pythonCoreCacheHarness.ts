@@ -253,10 +253,16 @@ export async function exerciseClockBoundary(
   });
   let loads = 0;
   const waitingForSource = boundary === 'source' || boundary === 'source-timer';
-  const service = new PythonExecutionService(async () => {
-    loads += 1;
-    return loads === 1 && !waitingForSource ? delayedCore : core;
-  });
+  const events: ExecutionPreparationProgress[] = [];
+  const service = new PythonExecutionService(
+    async () => {
+      loads += 1;
+      return loads === 1 && !waitingForSource ? delayedCore : core;
+    },
+    undefined,
+    undefined,
+    (progress) => events.push(progress),
+  );
   const restore = (): void => {
     if (digestDescriptor === undefined) Reflect.deleteProperty(crypto.subtle, 'digest');
     else Object.defineProperty(crypto.subtle, 'digest', digestDescriptor);
@@ -320,6 +326,7 @@ export async function exerciseClockBoundary(
       retry,
       loads,
       frames,
+      firstEvents: events.filter((event) => event.runId === 'cache-run-1'),
     };
   } finally {
     restore();

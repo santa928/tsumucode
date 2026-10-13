@@ -38,6 +38,7 @@ for (const boundary of ['source', 'source-timer', 'assets', 'registration'] as c
       runId: 'cache-run-1',
     });
     expect(result.frames).toBe(0);
+    expect(result.firstEvents.at(-1)?.stage).toBe('finished');
     expect(result.retry).toMatchObject({ status: 'succeeded', runId: 'cache-run-2' });
     expect(result.loads).toBe(2);
   });
@@ -129,8 +130,8 @@ test('Python取得中のSource編集は旧取得を停止して新Sourceだけ�
   });
   await page.route('**/python-runtime/314.0.7/core.wasm', async (route) => {
     coreRequests += 1;
-    if (coreRequests === 1) {
-      requested();
+    if (coreRequests <= 2) {
+      if (coreRequests === 1) requested();
       await held;
     }
     await route.continue().catch(() => undefined);
@@ -147,15 +148,24 @@ test('Python取得中のSource編集は旧取得を停止して新Sourceだけ�
     await page.keyboard.insertText(source);
     // 旧取得を解放する前に次の取得へ進めることが、即時abortの検出条件。
     await expect.poll(() => coreRequests).toBe(2);
+    const region = page.getByRole('region', { name: 'Python実行環境の準備' });
+    await expect(region).toBeVisible();
+    await expect(region.getByRole('status')).toContainText('コードはまだ実行していません');
+    const stop = page.getByRole('button', { name: '実行を停止', exact: true });
+    await stop.focus();
+    await page.keyboard.press('Enter');
+    await expect(region).not.toBeVisible();
+    expect(workers).toBe(0);
+    release();
+    await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
     await expect(page.getByRole('region', { name: 'Console出力', exact: true })).toContainText(
       '42',
     );
     expect(workers).toBe(1);
-    release();
-    await page.unrouteAll({ behavior: 'wait' });
     await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
     await expect(page.getByRole('button', { name: 'プレビューを更新', exact: true })).toBeEnabled();
-    expect(coreRequests).toBe(2);
+    await page.unrouteAll({ behavior: 'wait' });
+    expect(coreRequests).toBe(3);
     expect(workers).toBe(2);
     expect(await editorText(page)).toBe(source);
     await waitForStoredDraftContent(page, source);
