@@ -447,6 +447,10 @@ export class PracticeRun {
         // kill応答だけで停止済みとせず、実プロセスの終了をboundedに待つ。
         await this.api('POST', `/containers/${id}/wait?condition=not-running`, undefined, 1500);
       }
+    } catch {
+      // stdin終了などとkillが交錯しても、要求の失敗だけで実停止を否定しない。
+    }
+    try {
       const stopped = await this.api('GET', `/containers/${id}/json`);
       this.stoppedConfirmed = !stopped.State.Running;
     } catch (error) {
