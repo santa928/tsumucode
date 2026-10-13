@@ -1,17 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 285" role="img" aria-labelledby="title desc">
-<title id="title">identity</title>
-<desc id="desc">firstとaliasは値3を持つ同じInstanceへ、secondは値3を持つ別Instanceへつながる説明図。</desc>
-<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0 0 L9 3 L0 6" fill="#17483d"/></marker></defs>
-<rect width="720" height="285" fill="#f5f1df"/>
-<rect x="40" y="65" width="170" height="65" rx="10" fill="#fff" stroke="#17483d" stroke-width="2"/>
-<text x="52" y="103.5" font-family="sans-serif" font-size="17" fill="#153c35">first / alias</text>
-<rect x="360" y="65" width="240" height="65" rx="10" fill="#fff" stroke="#17483d" stroke-width="2"/>
-<text x="372" y="103.5" font-family="sans-serif" font-size="17" fill="#153c35">Instance A: value 3</text>
-<rect x="40" y="155" width="170" height="55" rx="10" fill="#fff" stroke="#17483d" stroke-width="2"/>
-<text x="52" y="188.5" font-family="sans-serif" font-size="17" fill="#153c35">second</text>
-<rect x="360" y="155" width="240" height="55" rx="10" fill="#fff" stroke="#17483d" stroke-width="2"/>
-<text x="372" y="188.5" font-family="sans-serif" font-size="17" fill="#153c35">Instance B: value 3</text>
-<line x1="210" y1="95" x2="360" y2="95" stroke="#17483d" stroke-width="2" marker-end="url(#arrow)"/>
-<line x1="210" y1="180" x2="360" y2="180" stroke="#17483d" stroke-width="2" marker-end="url(#arrow)"/>
-<text x="24" y="264" font-family="sans-serif" font-size="17" fill="#153c35">同じ値でも別のInstance。isはobjectの同一性を比較</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 276" role="img" aria-labelledby="title desc">
+  <title id="title">identity</title>
+  <desc id="desc">firstとaliasは値3を持つ同じInstanceへ、secondは値3を持つ別Instanceへつながる説明図。</desc>
+  <rect width="420" height="276" fill="#f5f1df"/>
+  <g font-family="sans-serif" font-size="20" fill="#153c35">
+    <rect x="18" y="16" width="384" height="96" rx="10" fill="#fff" stroke="#17483d" stroke-width="2"/>
+    <text x="30" y="48">first / alias → Instance A</text>
+    <text x="30" y="78">value = 3（同じobject）</text>
+    <rect x="18" y="120" width="384" height="96" rx="10" fill="#fff" stroke="#17483d" stroke-width="2"/>
+    <text x="30" y="152">second → Instance B</text>
+    <text x="30" y="182">value = 3（別のobject）</text>
+    <text x="18" y="236">値が同じでも、Instanceは別。</text>
+    <text x="18" y="264">isはobjectの同一性を比べる。</text>
+  </g>
 </svg>

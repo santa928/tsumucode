@@ -207,7 +207,7 @@ if any(
     _lesson_supported = False
 if any(isinstance(node, _lesson_ast.FunctionDef) for node in _lesson_tree.body):
     _lesson_supported = False
-if len(_lesson_classes) == 1 and _lesson_tree.body[0] is _lesson_classes[0]:
+if _lesson_supported and len(_lesson_classes) == 1 and _lesson_tree.body[0] is _lesson_classes[0]:
     _lesson_class = _lesson_classes[0]
     _lesson_class_name = _lesson_class.name
     _lesson_class_body = _lesson_body(_lesson_class.body)

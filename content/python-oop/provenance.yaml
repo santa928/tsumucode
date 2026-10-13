@@ -154,3 +154,6 @@ items:
   - id: python-oop-temporary-result-original
     visibility: authoring
     path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/fixtures/temporary-result.py
+  - id: python-oop-attribute-decorator-original
+    visibility: authoring
+    path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/fixtures/attribute-decorator.py

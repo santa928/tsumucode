@@ -27,13 +27,18 @@ for (let number = 1; number <= 2; number += 1) {
       'print(_lesson_json.dumps({',
     );
     const analyzed = await execute(`${program.trimEnd()})\n`);
+    assert.equal(analyzed.exitCode, 0, `${fixture.id}: ${analyzed.stderr}`);
     const executed = await execute(source);
-    const facts = analyzed.exitCode === 0 ? JSON.parse(analyzed.stdout) : { supported: false };
+    const facts = JSON.parse(analyzed.stdout);
+    if (fixture.expectedStatus === 'system-error') {
+      assert.equal(facts.supported, false, fixture.id);
+      assert.equal(facts[field], false, fixture.id);
+    }
     const status =
-      executed.exitCode !== 0
-        ? 'code-error'
-        : facts.supported !== true
-          ? 'system-error'
+      facts.supported !== true
+        ? 'system-error'
+        : executed.exitCode !== 0
+          ? 'code-error'
           : facts[field] === true && executed.stdout === expectedPythonOutput(profile, [])
             ? 'pass'
             : 'incomplete';

@@ -276,6 +276,14 @@ async function execute(run) {
       analysisStatus = facts.state === 'syntax-error' ? 'code-error' : 'unsupported';
       if (facts.syntaxMessage) executed.stderr = facts.syntaxMessage;
     }
+    // OOPの未対応構文は実行せず、Browserと同じく非採点で返す。
+    if (
+      ['class-instance-lookup-v1', 'method-binding-comparison-v1'].includes(profile) &&
+      facts?.supported === false &&
+      !facts.syntaxError
+    ) {
+      analysisStatus = 'unsupported';
+    }
     if (!run.reason && !analysisStatus) {
       executed = await executePhase(run);
       preparationMs += executed.preparationMs;

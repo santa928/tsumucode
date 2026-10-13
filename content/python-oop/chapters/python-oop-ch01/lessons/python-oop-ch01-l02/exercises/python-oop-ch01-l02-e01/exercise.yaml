@@ -211,3 +211,12 @@ fixtures:
         source: fixtures/temporary-result.py
         editable: false
     expectedFeedbackRuleIds: []
+  - id: attribute-decorator
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/attribute-decorator.py
+        editable: false
+    expectedFeedbackRuleIds: []

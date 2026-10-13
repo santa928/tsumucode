@@ -66,6 +66,11 @@ for (const number of [1, 2]) {
       fullPage: true,
     });
 
+    if (number === 2) {
+      await replaceEditorText(page, 'class Counter(:\n    pass\n');
+      await grade(page, exerciseId, 'code-error');
+      expect((await draft(page, exerciseId))?.['lastPassingSnapshots']).toEqual(passed);
+    }
     const wrongCall = await readFile(
       `${directory}/fixtures/${number === 1 ? 'wrong-constructor' : 'wrong-call'}.py`,
       'utf8',
@@ -84,7 +89,10 @@ for (const number of [1, 2]) {
     await expect(button).toBeEnabled({ timeout: 30_000 });
 
     const beforeUnsupported = (await draft(page, exerciseId))?.['validationHistory'];
-    const unsupported = await readFile(`${directory}/fixtures/builtin-alias.py`, 'utf8');
+    const unsupported = await readFile(
+      `${directory}/fixtures/${number === 2 ? 'attribute-decorator' : 'builtin-alias'}.py`,
+      'utf8',
+    );
     await replaceEditorText(page, unsupported);
     await button.click();
     await expect(page.getByText(/採点していません/).last()).toBeVisible({ timeout: 30_000 });
@@ -104,7 +112,12 @@ for (const number of [1, 2]) {
 
 test('OOPの草稿Slideを狭幅で読み、Classとmethodの説明図を確認する', async ({ page }, info) => {
   for (const [lesson, slide] of [
+    ['python-oop-ch01-l01', 's01'],
+    ['python-oop-ch01-l01', 's02'],
     ['python-oop-ch01-l01', 's03'],
+    ['python-oop-ch01-l02', 's01'],
+    ['python-oop-ch01-l02', 's02'],
+    ['python-oop-ch01-l02', 's03'],
     ['python-oop-ch01-l02', 's04'],
   ] as const) {
     await page.goto(`${base}#/courses/python-oop/lessons/${lesson}/slides/${lesson}-${slide}`);
@@ -126,6 +139,12 @@ test('OOPの草稿Slideを狭幅で読み、Classとmethodの説明図を確認�
       path: info.outputPath(`${lesson}-${slide}-mobile.png`),
       fullPage: true,
     });
+    await page
+      .getByTestId('slide-stage')
+      .getByRole('img')
+      .screenshot({
+        path: info.outputPath(`${lesson}-${slide}-mobile-diagram.png`),
+      });
     await page.setViewportSize({ width: 1280, height: 960 });
   }
 });

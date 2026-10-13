@@ -97,8 +97,10 @@ ${program
   .map((line) => '    ' + line)
   .join('\n')}
     _result = json.loads(_lesson_result)
+${oopProfiles.has(profile) ? '    _result["syntaxError"] = False' : ''}
 except SyntaxError:
     _result = json.loads(${JSON.stringify(JSON.stringify(fallback))})
+${oopProfiles.has(profile) ? '    _result["syntaxError"] = True' : ''}
 _result["version"] = sys.version.split()[0]
 print(json.dumps(_result))
 `;
@@ -141,7 +143,7 @@ export function parsePythonAnalysis(stdout, stderr, exitCode, profile = 'values-
     return { ...parsePythonModuleAnalysis(packet), version };
   }
   const keys = ['version', 'supported', 'numericVariablePrinted', 'sameVariableAdditionPrinted'];
-  if (oopProfiles.has(profile)) keys.push(...oopFields);
+  if (oopProfiles.has(profile)) keys.push(...oopFields, 'syntaxError');
   else if (profile === 'dataclass-test-project-v1') keys.push('dataProjectTested');
   else if (profile === 'context-manager-close-v1') keys.push('contextManagedClosed');
   else if (iterationProfiles.has(profile)) keys.push(...iterationFields);

@@ -8,6 +8,7 @@ for (const profile of ['class-instance-lookup-v1', 'method-binding-comparison-v1
     const packet = {
       version: PYTHON_VERSION,
       supported: true,
+      syntaxError: false,
       numericVariablePrinted: false,
       sameVariableAdditionPrinted: false,
       classInstanceCompared: true,
@@ -19,6 +20,8 @@ for (const profile of ['class-instance-lookup-v1', 'method-binding-comparison-v1
       { ...packet, classInstanceCompared: undefined },
       { ...packet, version: '3.14.8' },
       { ...packet, extraFact: true },
+      { ...packet, syntaxError: 'false' },
+      { ...packet, syntaxError: undefined },
     ]) {
       assert.throws(() => parsePythonAnalysis(JSON.stringify(changed), '', 0, profile));
     }
