@@ -3,6 +3,7 @@ export {
   PYTHON_LESSONS,
   PYTHON_FACT_FIELDS,
   validPythonInputLines,
+  validPythonFiles,
   isPythonModuleProfile,
   pythonSourcePaths,
   pythonSourceSnapshot,
