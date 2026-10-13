@@ -200,6 +200,9 @@ test('旧実践revisionの移行とデータProjectの保存・Reset・JSON移�
   await replaceEditorSource(page, oldSolution);
   await grade(page, 'pass', oldId);
   const previous = await draft(page, oldId);
+  const course = parse(await readFile('content/python-practice/course.yaml', 'utf8')) as {
+    revision: string;
+  };
   // 同じ旧4教材IDの実成功記録を、前revisionの保存状態としてseedする。
   await page.goto(`${base}generated/content/catalog-v3.json`);
   await page.evaluate(async () => {
@@ -251,7 +254,7 @@ test('旧実践revisionの移行とデータProjectの保存・Reset・JSON移�
   await expect(page.locator('.cm-content')).toBeVisible();
   await expect
     .poll(async () => (await draft(page, oldId))?.['contentRevision'])
-    .toBe('2026-10-12.3');
+    .toBe(course.revision);
   expect((await draft(page, oldId))?.['files']).toEqual(previous?.['files']);
   expect((await draft(page, oldId))?.['validationHistory']).toEqual(
     previous?.['validationHistory'],
