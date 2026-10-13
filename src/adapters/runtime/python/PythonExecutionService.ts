@@ -62,6 +62,7 @@ export class PythonExecutionService implements ExecutionService {
   #disposed = false;
   #abort: AbortController | undefined;
   #active: { stop(): Promise<void> } | undefined;
+  #core: PythonCore | undefined;
 
   /** loaderは信頼側の固定core供給責務。入力sourceからURLや許可を選ばせない。 */
   constructor(
@@ -140,12 +141,17 @@ export class PythonExecutionService implements ExecutionService {
         );
       });
       const [core, digest] = await Promise.race([
-        Promise.all([this.loadCore(abort.signal), crypto.subtle.digest('SHA-256', sourceBytes)]),
+        Promise.all([
+          this.#core ?? this.loadCore(abort.signal),
+          crypto.subtle.digest('SHA-256', sourceBytes),
+        ]),
         cancelled,
       ]);
       clearTimeout(preparationTimer);
       if (this.#abort === abort) this.#abort = undefined;
       if (stale()) return stopped();
+      // 同じ実行器では照合済み固定bytesだけを再利用し、Source・Workerは毎run作り直す。
+      this.#core = core;
       const hash = [...new Uint8Array(digest)]
         .map((byte) => byte.toString(16).padStart(2, '0'))
         .join('');
@@ -339,6 +345,7 @@ export class PythonExecutionService implements ExecutionService {
   /** dispose後は再実行しない。Reset/離脱時はstopを使う。 */
   async dispose(): Promise<void> {
     this.#disposed = true;
+    this.#core = undefined;
     await this.stop();
   }
 }
