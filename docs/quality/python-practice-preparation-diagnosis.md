@@ -1,5 +1,7 @@
 # Python実践のcold準備期限の切り分け
 
+現行20秒のcore保持について、[取消・後着・dispose競合と不正asset拒否の動的検証](python-core-cache-acceptance.md)を別に確認しました。期限変更や性能達成の証拠とは分けます。
+
 Issue #147の初回20標本はそのまま保持し、再取得していません。基準はローカルcommit `9bad284`で記録した[未達の補足観測](python-practice-performance.md)です。追加診断は同じ固定Browser／Docker内loopback／production distで条件を1つずつ分け、製品の準備20秒・初期化15秒・実行1.5秒を維持しました。新サイト公開、Home／Path追加、Browser対話入力、PR205本文変更は行っていません。
 
 ## 失敗した段階と計時境界

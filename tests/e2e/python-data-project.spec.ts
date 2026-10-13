@@ -163,19 +163,44 @@ test('データProjectの停止・再試行はSourceと採点履歴を保持す�
   await replaceEditorSource(page, solution);
   await grade(page, 'pass');
   const history = (await draft(page))?.['validationHistory'];
-  // 実行準備の実通信だけを遅らせ、中止操作の時間を確保する。
+  // reload後の自動Preview取得を拒否し、手動判定をcold要求として実際に待つ。
+  let holding = false;
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  let requested!: () => void;
+  const loading = new Promise<void>((resolve) => {
+    requested = resolve;
+  });
   await page.route(/\/api\/session$|\/python-runtime\/314\.0\.7\/core\.wasm$/u, async (request) => {
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    if (!holding) {
+      await request.fulfill({ status: 503, body: 'cold準備試験' });
+      return;
+    }
+    requested();
+    await held;
     await request.continue().catch(() => undefined);
   });
-  await page.getByRole('button', { name: '判定する', exact: true }).click();
-  await page.getByRole('button', { name: '実行を停止', exact: true }).click();
-  await expect(
-    page.getByText('実行を停止しました。採点していません。', { exact: true }).first(),
-  ).toBeVisible({ timeout: 30_000 });
-  expect((await draft(page))?.['validationHistory']).toEqual(history);
-  expect(await editorSource(page)).toBe(solution);
-  await page.unrouteAll({ behavior: 'wait' });
+  try {
+    await page.reload();
+    await expect(page.locator('.cm-content')).toBeVisible();
+    await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled({
+      timeout: 30_000,
+    });
+    holding = true;
+    await page.getByRole('button', { name: '判定する', exact: true }).click();
+    await loading;
+    await page.getByRole('button', { name: '実行を停止', exact: true }).click();
+    await expect(
+      page.getByText('実行を停止しました。採点していません。', { exact: true }).first(),
+    ).toBeVisible({ timeout: 30_000 });
+    expect((await draft(page))?.['validationHistory']).toEqual(history);
+    expect(await editorSource(page)).toBe(solution);
+  } finally {
+    release();
+    await page.unrouteAll({ behavior: 'wait' });
+  }
   await grade(page, 'pass');
 });
 
