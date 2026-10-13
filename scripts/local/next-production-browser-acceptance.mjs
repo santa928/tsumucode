@@ -69,6 +69,60 @@ async function grade(checks) {
   );
 }
 
+/** フォーカス確認済みのEnterから実GETを待ち、失敗時は秘密値を含まない遷移記録を残す。 */
+async function enterNavigation(frame, expectedUrl) {
+  const events = [];
+  const record = (event, request, status) => {
+    if (!request.isNavigationRequest()) return;
+    events.push({
+      event,
+      method: request.method(),
+      path: new URL(request.url()).pathname + new URL(request.url()).search,
+      ...(status === undefined ? {} : { status }),
+      sameFrame: request.frame() === frame,
+    });
+    if (events.length > 12) events.shift();
+  };
+  const requested = (request) => record('request', request);
+  const failed = (request) => record('requestfailed', request);
+  const responded = (response) => record('response', response.request(), response.status());
+  page.on('response', responded);
+  page.on('request', requested);
+  page.on('requestfailed', failed);
+  try {
+    // focusや前の帰還をHTTPの30秒へ含めず、両Promiseの失敗を開始時から監視する。
+    const [reply] = await Promise.all([
+      page.waitForResponse(
+        (response) =>
+          response.frame() === frame &&
+          response.request().isNavigationRequest() &&
+          response.request().method() === 'GET' &&
+          response.url() === expectedUrl,
+      ),
+      page.keyboard.press('Enter'),
+    ]);
+    assert.equal(reply.status(), 200);
+    assert.equal(await reply.finished(), null);
+    await frame.waitForURL(expectedUrl, { waitUntil: 'domcontentloaded' });
+  } catch (error) {
+    console.error(
+      JSON.stringify({
+        navigationFailure: {
+          expectedPath: new URL(expectedUrl).pathname + new URL(expectedUrl).search,
+          frameDetached: frame.isDetached(),
+          framePath: new URL(frame.url()).pathname,
+          events,
+        },
+      }),
+    );
+    throw error;
+  } finally {
+    page.off('response', responded);
+    page.off('request', requested);
+    page.off('requestfailed', failed);
+  }
+}
+
 async function stop() {
   await page.getByRole('button', { name: '停止', exact: true }).click();
   await expect(status()).toContainText('停止済み');
@@ -213,23 +267,21 @@ try {
     await page.keyboard.press('Enter');
     await expect(preview().locator('h1#message')).toHaveText(capstone ? '読書会一覧' : '旅の一覧');
     for (let index = 0; index < ids.length; index++) {
-      const response = page.waitForResponse(
-        (reply) =>
-          reply.frame() === frame &&
-          reply.request().isNavigationRequest() &&
-          new URL(reply.url()).pathname === base + section + '/' + ids[index],
-      );
-      await preview().getByRole('link', { name: names[index], exact: true }).focus();
-      await page.keyboard.press('Enter');
-      const reply = await response;
-      assert.equal(reply.status(), 200);
-      assert.equal(await reply.finished(), null);
+      const link = preview().getByRole('link', { name: names[index], exact: true });
+      await link.focus();
+      await expect(link).toBeFocused();
+      await enterNavigation(frame, new URL(base + section + '/' + ids[index], frame.url()).href);
       await expect(preview().locator('h1#message')).toHaveText(names[index]);
       await expect(preview().locator(capstone ? '#booking-state' : '#area')).toHaveText(
         capstone ? (index === 0 ? '受付中' : '受付終了') : index === 0 ? '屋外' : '室内',
       );
-      await preview().getByRole('link', { name: '一覧へ戻る', exact: true }).focus();
-      await page.keyboard.press('Enter');
+      const back = preview().getByRole('link', { name: '一覧へ戻る', exact: true });
+      await back.focus();
+      await expect(back).toBeFocused();
+      await enterNavigation(frame, new URL(base + section, frame.url()).href);
+      await expect(preview().locator('h1#message')).toHaveText(
+        capstone ? '読書会一覧' : '旅の一覧',
+      );
     }
     for (let index = 0; index < values.length; index++) {
       const select = preview().getByLabel(capstone ? '受付状況' : '過ごす場所', { exact: true });
@@ -239,17 +291,10 @@ try {
       await expect(select).toHaveValue(values[index]);
       await page.keyboard.press('Tab');
       await expect(preview().getByRole('button', { name: '絞り込む', exact: true })).toBeFocused();
-      const response = page.waitForResponse(
-        (reply) =>
-          reply.frame() === frame &&
-          reply.request().isNavigationRequest() &&
-          reply.request().method() === 'GET' &&
-          new URL(reply.url()).search === `?${key}=${values[index]}`,
+      await enterNavigation(
+        frame,
+        new URL(base + section + `?${key}=${values[index]}`, frame.url()).href,
       );
-      await page.keyboard.press('Enter');
-      const reply = await response;
-      assert.equal(reply.status(), 200);
-      assert.equal(await reply.finished(), null);
       await expect(preview().locator('main li')).toHaveCount(1);
       await expect(preview().getByRole('link', { name: names[index], exact: true })).toBeVisible();
       if (index === 0) {
