@@ -27,7 +27,7 @@ export default defineConfig({
       reuseExistingServer: false,
     },
   ],
-  testMatch: '*.spec.ts',
+  testMatch: 'react-*.spec.ts',
   workers: 1,
   retries: 0,
   timeout: 120_000,

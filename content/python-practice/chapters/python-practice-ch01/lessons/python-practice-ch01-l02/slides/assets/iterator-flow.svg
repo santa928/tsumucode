@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" role="img" aria-labelledby="title description">
+  <title id="title">Iteratorと消費位置</title>
+  <desc id="description">元のListからiterでIteratorを作り、nextでその消費位置を進めます。別のIteratorを作ると消費位置も別になります。</desc>
+  <rect width="640" height="260" rx="16" fill="#ffffff" />
+  <g fill="#0f172a" font-family="system-ui, sans-serif">
+    <text x="24" y="36" font-size="28" font-weight="700">Iteratorと消費位置</text>
+    <rect x="24" y="66" width="176" height="82" rx="12" fill="#f1f5f9" stroke="#475569" />
+    <text x="112" y="116" text-anchor="middle" font-size="28" font-weight="600">元のList</text>
+    <rect x="224" y="66" width="176" height="82" rx="12" fill="#f1f5f9" stroke="#475569" />
+    <text x="312" y="116" text-anchor="middle" font-size="28" font-weight="600">iterで作る</text>
+    <rect x="424" y="66" width="176" height="82" rx="12" fill="#f1f5f9" stroke="#475569" />
+    <text x="512" y="116" text-anchor="middle" font-size="28" font-weight="600">nextで進む</text>
+    <text x="24" y="192" font-size="26">消費位置はIteratorが持つ</text>
+    <text x="24" y="230" font-size="26">別のiter(List)で消費位置も別になる</text>
+  </g>
+  <g fill="none" stroke="#475569" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 204 106 H 216 L 211 101 M 216 106 L 211 111" />
+    <path d="M 404 106 H 416 L 411 101 M 416 106 L 411 111" />
+  </g>
+</svg>

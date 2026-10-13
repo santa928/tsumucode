@@ -316,3 +316,31 @@ items:
   - id: python-practice-original-111
     visibility: public
     path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/slides/s03.md
+  - id: python-practice-comprehension-flow-original
+    visibility: public
+    createdAt: 2026-10-13
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l01/slides/assets/comprehension-flow.svg
+  - id: python-practice-iterator-flow-original
+    visibility: public
+    createdAt: 2026-10-13
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l02/slides/assets/iterator-flow.svg
+  - id: python-practice-generator-flow-original
+    visibility: public
+    createdAt: 2026-10-13
+    path: chapters/python-practice-ch01/lessons/python-practice-ch01-l03/slides/assets/generator-flow.svg
+  - id: python-practice-context-flow-original
+    visibility: public
+    createdAt: 2026-10-13
+    path: chapters/python-practice-ch02/lessons/python-practice-ch02-l01/slides/assets/context-flow.svg
+  - id: python-practice-dataclass-flow-original
+    visibility: public
+    createdAt: 2026-10-13
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/slides/assets/dataclass-flow.svg
+  - id: python-practice-validation-flow-original
+    visibility: public
+    createdAt: 2026-10-13
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/slides/assets/validation-flow.svg
+  - id: python-practice-test-flow-original
+    visibility: public
+    createdAt: 2026-10-13
+    path: chapters/python-practice-ch03/lessons/python-practice-ch03-l01/slides/assets/test-flow.svg
