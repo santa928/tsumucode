@@ -254,6 +254,8 @@ async function execute(run) {
   const python = run.input.runtimeProfileId === PYTHON_PROFILE_ID;
   const profile = python ? PYTHON_LESSONS[run.input.exerciseId].profile : undefined;
   const moduleProfile = python && isPythonModuleProfile(profile);
+  const oopProfile =
+    python && ['class-instance-lookup-v1', 'method-binding-comparison-v1'].includes(profile);
   let analysisStatus;
   let facts;
   let preparationMs = 0;
@@ -277,11 +279,7 @@ async function execute(run) {
       if (facts.syntaxMessage) executed.stderr = facts.syntaxMessage;
     }
     // OOPの未対応構文は実行せず、Browserと同じく非採点で返す。
-    if (
-      ['class-instance-lookup-v1', 'method-binding-comparison-v1'].includes(profile) &&
-      facts?.supported === false &&
-      !facts.syntaxError
-    ) {
+    if (oopProfile && facts?.supported === false && !facts.syntaxError) {
       analysisStatus = 'unsupported';
     }
     if (!run.reason && !analysisStatus) {
@@ -334,7 +332,7 @@ async function execute(run) {
                   : status === 'unsupported'
                     ? inputExhausted
                       ? '実行前の入力行が不足しています。実行中の入力待ちには未対応です。入力を追加して再実行してください。採点していません。'
-                      : moduleProfile
+                      : moduleProfile || oopProfile
                         ? 'このLessonの実行範囲外です。実行せず採点していません。'
                         : 'CPythonで実行しましたが、このLessonの採点範囲外です。採点していません。'
                     : status === 'system-error'
