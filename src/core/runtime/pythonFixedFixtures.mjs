@@ -1,5 +1,11 @@
 /** Local採点の入力と期待値だけを固定する。作者の解答Sourceは配信しない。 */
 const fixtures = {
+  'class-instance-lookup-v1': [
+    ['identity-and-lookup', [], 'True\nFalse\n3\n5\n2\n2\n7\n2\n2\n7\n4\n'],
+  ],
+  'method-binding-comparison-v1': [
+    ['three-methods', [], '6\n6\n6\n6\n10\n10\n10\n10\n12\n12\n12\n6\n'],
+  ],
   'dataclass-test-project-v1': [
     ['normal-invalid-empty', [], 'True\n6\n0\n不正: ValueError\n不正: ValueError\nTest成功\n'],
   ],

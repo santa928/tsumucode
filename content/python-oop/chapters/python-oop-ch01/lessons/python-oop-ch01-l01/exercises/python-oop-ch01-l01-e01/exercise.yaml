@@ -1,0 +1,172 @@
+id: python-oop-ch01-l01-e01
+kind: standard
+workspaceId: python-oop-ch01-l01-e01
+countsTowardStandardExerciseTotal: true
+title: '別のInstanceと属性の参照先'
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: python-class-instance
+    minimumLevel: transform
+  - conceptId: python-identity
+    minimumLevel: transform
+  - conceptId: python-attribute-lookup
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: python-oop-ch01-l01-e01-step01
+    file: main.py
+    target: 'aliasをfirstへの参照にし、倍率7はfirstだけへ保存します。'
+    starterAnchor: 'alias = Counter(3)'
+    change: 'aliasをfirstへの参照にし、倍率7はfirstだけへ保存します。'
+    observe: '別Instanceと同じ参照を区別し、Instance属性が同名のClass属性を隠すことを実出力で説明できる。'
+    requiresConceptIds: ['python-class-instance', 'python-identity', 'python-attribute-lookup']
+    validationRuleIds: [python-oop-ch01-l01-e01-r01]
+runtime:
+  kind: python
+  entryFile: main.py
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  profile: class-instance-lookup-v1
+files:
+  - path: main.py
+    language: python
+    source: starter/main.py
+    editable: true
+solutionFiles:
+  - path: main.py
+    language: python
+    source: solution/main.py
+    editable: false
+validationRules:
+  - id: python-oop-ch01-l01-e01-r01
+    label: '別Instanceと同じ参照を区別し、Instance属性が同名のClass属性を隠すことを実出力で説明できる。'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: class-instance-compared
+    feedback:
+      target: main.pyとConsole
+      expected: '別Instanceと同じ参照を区別し、Instance属性が同名のClass属性を隠すことを実出力で説明できる。'
+      nextAction: 'aliasをfirstへの参照にし、倍率7はfirstだけへ保存します。'
+    hintId: python-oop-ch01-l01-e01-h01
+    relatedSlideId: python-oop-ch01-l01-s03
+hints:
+  - id: python-oop-ch01-l01-e01-h01
+    level: 1
+    title: 最初の手掛かり
+    text: '同じ値3でも、新しいCounter(3)は別のInstanceです。'
+    relatedSlideId: python-oop-ch01-l01-s03
+  - id: python-oop-ch01-l01-e01-h02
+    level: 2
+    title: コードを組み立てる
+    text: 'alias = firstはobjectを複製しません。first.factor = 7はClassではなくfirstへ保存します。'
+    relatedSlideId: python-oop-ch01-l01-s03
+  - id: python-oop-ch01-l01-e01-h03
+    level: 3
+    title: 解答と理由
+    text: 'alias = firstとfirst.factor = 7へ直すと、True/Falseと、最後の倍率7/4が別々の参照先を示します。'
+    relatedSlideId: python-oop-ch01-l01-s03
+relatedSlideIds: ['python-oop-ch01-l01-s01', 'python-oop-ch01-l01-s02', 'python-oop-ch01-l01-s03']
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: solution
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/solution.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternate-name
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/alternate-name.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: starter
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/starter.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-oop-ch01-l01-e01-r01']
+  - id: alias-copy
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/alias-copy.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-oop-ch01-l01-e01-r01']
+  - id: class-write
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/class-write.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-oop-ch01-l01-e01-r01']
+  - id: shared-value
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/shared-value.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-oop-ch01-l01-e01-r01']
+  - id: wrong-constructor
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/wrong-constructor.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: forbidden-attribute
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/forbidden-attribute.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: hardcoded
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/hardcoded.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-oop-ch01-l01-e01-r01']
+  - id: builtin-alias
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/builtin-alias.py
+        editable: false
+    expectedFeedbackRuleIds: []

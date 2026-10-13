@@ -97,6 +97,8 @@ export function initializePythonWorker(
         | 'generatorLifecycle'
         | 'contextManagedClosed'
         | 'dataProjectTested'
+        | 'classInstanceCompared'
+        | 'methodsCompared'
         | 'expectedOutput'
       >
     > = {};
@@ -253,6 +255,8 @@ export function initializePythonWorker(
           generatorLifecycle: parsed.generatorLifecycle === true,
           contextManagedClosed: parsed.contextManagedClosed === true,
           dataProjectTested: parsed.dataProjectTested === true,
+          classInstanceCompared: parsed.classInstanceCompared === true,
+          methodsCompared: parsed.methodsCompared === true,
           ...(moduleProfile
             ? { expectedOutput: parsePythonModuleAnalysis(parsed).expectedOutput }
             : {}),

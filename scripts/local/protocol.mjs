@@ -54,7 +54,13 @@ function exactObject(value, keys) {
 }
 
 /** 固定教材の正規化済みファイルを検査する。パスを修復して受け入れない。 */
-export function validateRun(value, revision, pythonRevision, pythonPracticeRevision) {
+export function validateRun(
+  value,
+  revision,
+  pythonRevision,
+  pythonPracticeRevision,
+  pythonOopRevision,
+) {
   exactObject(value, [
     'apiVersion',
     'exerciseId',
@@ -68,9 +74,11 @@ export function validateRun(value, revision, pythonRevision, pythonPracticeRevis
   ]);
   const python = value.runtimeProfileId === PYTHON_PROFILE_ID;
   const expectedRevision = python
-    ? PYTHON_LESSONS[value.exerciseId]?.courseId === 'python-practice'
-      ? pythonPracticeRevision
-      : pythonRevision
+    ? PYTHON_LESSONS[value.exerciseId]?.courseId === 'python-oop'
+      ? pythonOopRevision
+      : PYTHON_LESSONS[value.exerciseId]?.courseId === 'python-practice'
+        ? pythonPracticeRevision
+        : pythonRevision
     : revision;
   if (
     value.apiVersion !== API_VERSION ||

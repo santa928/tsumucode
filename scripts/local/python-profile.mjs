@@ -10,6 +10,9 @@ export {
   PYTHON_VERSION,
 } from './protocol.mjs';
 
+const oopProfiles = new Set(['class-instance-lookup-v1', 'method-binding-comparison-v1']);
+const oopFields = ['classInstanceCompared', 'methodsCompared'];
+
 const dataProfiles = new Set([
   'list-reference-sum-v1',
   'dict-value-sum-v1',
@@ -69,7 +72,9 @@ print(json.dumps(_module_result))
     numericVariablePrinted: false,
     sameVariableAdditionPrinted: false,
   };
-  if (profile === 'dataclass-test-project-v1') fallback.dataProjectTested = false;
+  if (oopProfiles.has(profile))
+    Object.assign(fallback, Object.fromEntries(oopFields.map((field) => [field, false])));
+  else if (profile === 'dataclass-test-project-v1') fallback.dataProjectTested = false;
   else if (profile === 'context-manager-close-v1') fallback.contextManagedClosed = false;
   else if (iterationProfiles.has(profile))
     Object.assign(fallback, Object.fromEntries(iterationFields.map((field) => [field, false])));
@@ -136,7 +141,8 @@ export function parsePythonAnalysis(stdout, stderr, exitCode, profile = 'values-
     return { ...parsePythonModuleAnalysis(packet), version };
   }
   const keys = ['version', 'supported', 'numericVariablePrinted', 'sameVariableAdditionPrinted'];
-  if (profile === 'dataclass-test-project-v1') keys.push('dataProjectTested');
+  if (oopProfiles.has(profile)) keys.push(...oopFields);
+  else if (profile === 'dataclass-test-project-v1') keys.push('dataProjectTested');
   else if (profile === 'context-manager-close-v1') keys.push('contextManagedClosed');
   else if (iterationProfiles.has(profile)) keys.push(...iterationFields);
   else if (dataProfiles.has(profile)) keys.push(...dataFields);

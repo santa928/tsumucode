@@ -13,7 +13,9 @@ export type PythonLessonProfile =
   | 'iterator-consumption-v1'
   | 'generator-lifecycle-v1'
   | 'context-manager-close-v1'
-  | 'dataclass-test-project-v1';
+  | 'dataclass-test-project-v1'
+  | 'class-instance-lookup-v1'
+  | 'method-binding-comparison-v1';
 export type PythonSourceFact =
   | 'numeric-variable-printed'
   | 'same-variable-addition-printed'
@@ -30,14 +32,16 @@ export type PythonSourceFact =
   | 'iterator-consumed'
   | 'generator-lifecycle'
   | 'context-managed-closed'
-  | 'data-project-tested';
+  | 'data-project-tested'
+  | 'class-instance-compared'
+  | 'methods-compared';
 export const PYTHON_LESSONS: Readonly<
   Record<
     string,
     {
       readonly profile: PythonLessonProfile;
       readonly facts: readonly PythonSourceFact[];
-      readonly courseId?: 'python-practice';
+      readonly courseId?: 'python-practice' | 'python-oop';
     }
   >
 >;
@@ -60,6 +64,8 @@ export const PYTHON_FACT_FIELDS: Readonly<
     | 'generatorLifecycle'
     | 'contextManagedClosed'
     | 'dataProjectTested'
+    | 'classInstanceCompared'
+    | 'methodsCompared'
   >
 >;
 /** 行数・UTF-8 bytes・制御文字の共通入力境界。 */

@@ -38,6 +38,8 @@ export interface PythonResult {
   readonly generatorLifecycle?: boolean;
   readonly contextManagedClosed?: boolean;
   readonly dataProjectTested?: boolean;
+  readonly classInstanceCompared?: boolean;
+  readonly methodsCompared?: boolean;
   readonly expectedOutput?: string | null;
 }
 

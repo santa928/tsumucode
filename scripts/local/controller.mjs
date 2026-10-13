@@ -60,6 +60,9 @@ const owner = process.env.TSUMUCODE_LOCAL_OWNER;
 if (!owner || !/^[a-z0-9-]{1,80}$/u.test(owner)) throw new Error('Installation owner is required');
 const revision = JSON.parse(await readFile('/app/course-index.json', 'utf8')).revision;
 const pythonRevision = JSON.parse(await readFile('/app/python-course-index.json', 'utf8')).revision;
+const pythonOopRevision = JSON.parse(
+  await readFile('/app/python-oop-course-index.json', 'utf8'),
+).revision;
 const pythonPracticeRevision = JSON.parse(
   await readFile('/app/python-practice-course-index.json', 'utf8'),
 ).revision;
@@ -469,6 +472,7 @@ async function handlePractice(url, input, res) {
       revision,
       pythonRevision,
       pythonPracticeRevision,
+      pythonOopRevision,
     );
     if (validated.runtimeProfileId !== PYTHON_PROFILE_ID)
       throw new RequestError(422, 'CPythonの練習だけに対応します。');
@@ -699,6 +703,7 @@ async function handle(req, res) {
         courseRevisions: {
           'python-basics': pythonRevision,
           'python-practice': pythonPracticeRevision,
+          'python-oop': pythonOopRevision,
         },
         runtimeProfileId: PYTHON_PROFILE_ID,
         engineVersion: PYTHON_VERSION,
@@ -720,7 +725,13 @@ async function handle(req, res) {
     } else if (req.url?.startsWith('/api/practice/')) {
       value = await handlePractice(req.url, input, res);
     } else if (req.url === '/api/runs' || req.url === '/api/grades') {
-      const validated = validateRun(input, revision, pythonRevision, pythonPracticeRevision);
+      const validated = validateRun(
+        input,
+        revision,
+        pythonRevision,
+        pythonPracticeRevision,
+        pythonOopRevision,
+      );
       const fixedGrade = req.url === '/api/grades';
       if (
         fixedGrade &&

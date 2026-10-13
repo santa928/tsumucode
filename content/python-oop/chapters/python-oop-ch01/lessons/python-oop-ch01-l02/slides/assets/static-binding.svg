@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" aria-labelledby="title desc">
+<title id="title">static-binding</title>
+<desc id="desc">staticmethodは明示した値3と倍率2を受けるため、この実装はClass倍率4へ変更しても6を返す説明図。</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0 0 L9 3 L0 6" fill="#17483d"/></marker></defs>
+<rect width="720" height="250" fill="#f5f1df"/>
+<rect x="20" y="35" width="315" height="60" rx="10" fill="#fff" stroke="#17483d" stroke-width="2"/>
+<text x="32" y="72" font-family="sans-serif" font-size="17" fill="#153c35">Classの倍率変更前</text>
+<rect x="385" y="35" width="315" height="60" rx="10" fill="#fff" stroke="#17483d" stroke-width="2"/>
+<text x="397" y="72" font-family="sans-serif" font-size="17" fill="#153c35">value = 3 / factor = 2 → 6</text>
+<line x1="335" y1="65" x2="385" y2="65" stroke="#17483d" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="20" y="125" width="315" height="60" rx="10" fill="#fff" stroke="#17483d" stroke-width="2"/>
+<text x="32" y="162" font-family="sans-serif" font-size="17" fill="#153c35">Classの倍率4へ変更後</text>
+<rect x="385" y="125" width="315" height="60" rx="10" fill="#fff" stroke="#17483d" stroke-width="2"/>
+<text x="397" y="162" font-family="sans-serif" font-size="17" fill="#153c35">value = 3 / factor = 2 → 6</text>
+<line x1="335" y1="155" x2="385" y2="155" stroke="#17483d" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="24" y="228" font-family="sans-serif" font-size="17" fill="#153c35">この実装はClassの状態を読まず、明示引数から計算する</text>
+</svg>

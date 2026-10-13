@@ -1,0 +1,32 @@
+schemaVersion: 1
+id: python-oop
+title: PythonのClassとmethod
+description: 個別の値・属性の参照先と、同じ計算へ暗黙に渡る引数を比較する50分の草稿Course。
+audience: Python基礎のFunction・スコープとPython実践のdataclassを学んだ方
+estimatedMinutes: 50
+revision: 2026-10-13.1
+runnerId: python
+validatorId: python
+glossarySource: glossary.yaml
+conceptsSource: concepts.yaml
+documentationSources: [references/python-official.md]
+supportedDevices:
+  exercise: desktop
+  study: [desktop, tablet, mobile]
+prerequisites: [python-basics, python-practice]
+publicationStatus: draft
+expectedTotals:
+  chapters: 1
+  lessons: 2
+  conceptSlides: 7
+  standardExercises: 2
+  guidedProjectLessons: 0
+  capstoneLessons: 0
+  estimatedMinutes: 50
+provenanceManifestPath: provenance.yaml
+progressMigrations: []
+phases:
+  - id: python-oop-p01
+    title: 値の持ち主と暗黙の引数
+    description: ClassとInstanceを分け、同じ計算の呼出形式を比較する。
+    chapterSources: [chapters/python-oop-ch01/chapter.yaml]
