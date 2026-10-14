@@ -79,11 +79,7 @@ describe('Home先頭の小さな行動', () => {
   );
 
   it.each([
-    [
-      'in-progress',
-      'HTML/CSSの続きから',
-      `/courses/html-css/lessons/${lessonId}/resume`,
-    ],
+    ['in-progress', 'HTML/CSSの続きから', `/courses/html-css/lessons/${lessonId}/resume`],
     ['complete', '完成したHTML/CSSを見直す', '/courses/html-css'],
     ['revision-mismatch', '教材の更新を確認して続ける', '/courses/html-css'],
   ])('%sの正規の再開先と案内を一致させる', async (status, label, destination) => {
