@@ -1,6 +1,16 @@
 /* global TextEncoder */
 /** IDと教材構文を固定し、入力からprofileや実行先を選ばせない。 */
 export const PYTHON_LESSONS = Object.freeze({
+  'python-oop-ch03-l01-e01': {
+    courseId: 'python-oop',
+    profile: 'function-decorator-flow-v1',
+    facts: ['decorator-flow-compared'],
+  },
+  'python-oop-ch03-l02-e01': {
+    courseId: 'python-oop',
+    profile: 'wraps-metadata-preserved-v1',
+    facts: ['wraps-metadata-preserved'],
+  },
   'python-oop-ch02-l01-e01': {
     courseId: 'python-oop',
     profile: 'inheritance-delegation-v1',
@@ -73,6 +83,8 @@ export const PYTHON_LESSONS = Object.freeze({
 });
 
 export const PYTHON_FACT_FIELDS = Object.freeze({
+  'decorator-flow-compared': 'decoratorFlowCompared',
+  'wraps-metadata-preserved': 'wrapsMetadataPreserved',
   'inheritance-delegation-compared': 'inheritanceDelegationCompared',
   'property-range-validated': 'propertyRangeValidated',
   'dunder-protocols-used': 'dunderProtocolsUsed',
@@ -143,6 +155,10 @@ export function validPythonInputLines(value) {
 
 /** 実入力に対応する表示を照合する。採点できない入力を模擬合格へ変換しない。 */
 export function expectedPythonOutput(profile, lines) {
+  if (profile === 'function-decorator-flow-v1')
+    return 'False\n呼出 1\n5\n呼出 2\n5\n呼出 1\n7\n呼出 3\n負の値\n呼出 4\n2\n呼出 2\n8\n';
+  if (profile === 'wraps-metadata-preserved-v1')
+    return 'False\nTrue\nTrue\nTrue\n呼出 1\n5\n呼出 2\n5\n呼出 1\n7\n呼出 3\n負の値\n呼出 4\n2\n呼出 2\n8\n';
   if (profile === 'inheritance-delegation-v1') return '6\n9\n6\n8\n10\n9\n';
   if (profile === 'validated-property-v1')
     return '70\n90\n50\n範囲外\n90\n範囲外\n90\n0\n100\n初期値も範囲外\n';
@@ -180,9 +196,15 @@ export function isPythonObjectProtocolProfile(profile) {
   ].includes(profile);
 }
 
+/** 固定decorator教材だけへFunction変換とmetadataの解析を適用する。 */
+export function isPythonDecoratorProfile(profile) {
+  return ['function-decorator-flow-v1', 'wraps-metadata-preserved-v1'].includes(profile);
+}
+
 /** OOPの未対応構文とSyntaxErrorの事前分類を共有する。 */
 export function isPythonOopProfile(profile) {
   return (
+    isPythonDecoratorProfile(profile) ||
     isPythonObjectProtocolProfile(profile) ||
     ['class-instance-lookup-v1', 'method-binding-comparison-v1'].includes(profile)
   );

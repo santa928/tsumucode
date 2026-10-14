@@ -6,6 +6,7 @@ export {
   validPythonFiles,
   isPythonModuleProfile,
   isPythonObjectProtocolProfile,
+  isPythonDecoratorProfile,
   isPythonOopProfile,
   pythonSourcePaths,
   pythonSourceSnapshot,

@@ -95,3 +95,43 @@ entries:
     definition: 用途に合うdunderだけを作る。型が違えば実際にエラーになる。
     firstSlideId: python-oop-ch02-l03-s04
     relatedIds: []
+  - id: python-function-transform
+    term: Function objectを渡し、別のFunctionを受け取る
+    definition: Functionを渡すことと、呼び出した結果を渡すことは別。
+    firstSlideId: python-oop-ch03-l01-s01
+    relatedIds: []
+  - id: python-closure-state
+    term: Closureが覚える状態の持ち主を分ける
+    definition: 状態を全体で共有せず、外側の呼出しごとに持つ。
+    firstSlideId: python-oop-ch03-l01-s02
+    relatedIds: []
+  - id: python-argument-forwarding
+    term: 引数と戻り値をwrapperの先へ渡す
+    definition: 集める記法と、展開して渡す記法を区別する。
+    firstSlideId: python-oop-ch03-l01-s03
+    relatedIds: []
+  - id: python-decorator-syntax
+    term: '@記法と明示適用、例外の通り道を比べる'
+    definition: 例外の前に行った状態変更は、自動では巻き戻らない。
+    firstSlideId: python-oop-ch03-l01-s04
+    relatedIds: []
+  - id: python-metadata-loss
+    term: 動くwrapperでも名前と説明は失われる
+    definition: 正しい戻り値だけでは、説明情報の保持を確認できない。
+    firstSlideId: python-oop-ch03-l02-s01
+    relatedIds: []
+  - id: python-wraps-metadata
+    term: wrapsで元の名前・説明・参照を引き継ぐ
+    definition: 標準の補助関数で引き継ぐ。万能な動作保証ではない。
+    firstSlideId: python-oop-ch03-l02-s02
+    relatedIds: []
+  - id: python-wraps-behavior
+    term: metadataの修復と動作の修復を分ける
+    definition: 固定値を返すwrapperを、目標達成とは扱わない。
+    firstSlideId: python-oop-ch03-l02-s03
+    relatedIds: []
+  - id: python-wraps-comparison
+    term: 状態・metadata・実エラーを一緒に確かめる
+    definition: 説明情報と実際の動作を、別々の観測で確かめる。
+    firstSlideId: python-oop-ch03-l02-s04
+    relatedIds: []

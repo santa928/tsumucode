@@ -64,6 +64,18 @@ const lessons = [
     unsupported: 'attribute-decorator',
   },
   {
+    lesson: 'python-oop-ch03-l01',
+    output: '呼出 4',
+    wrong: 'wrong-call',
+    unsupported: 'builtin-alias',
+  },
+  {
+    lesson: 'python-oop-ch03-l02',
+    output: '呼出 4',
+    wrong: 'wrong-call',
+    unsupported: 'forbidden-attribute',
+  },
+  {
     lesson: 'python-oop-ch02-l03',
     output: '本:3',
     wrong: 'wrong-call',
@@ -137,7 +149,7 @@ for (const entry of lessons) {
   });
 }
 
-test('OOPの草稿Slideを狭幅で読み、Classとmethodの説明図を確認する', async ({ page }, info) => {
+test('OOPの草稿Slideを狭幅で読み、objectとFunctionの説明図を確認する', async ({ page }, info) => {
   for (const [lesson, slide] of [
     ['python-oop-ch01-l01', 's01'],
     ['python-oop-ch01-l01', 's02'],
@@ -158,6 +170,14 @@ test('OOPの草稿Slideを狭幅で読み、Classとmethodの説明図を確認�
     ['python-oop-ch02-l03', 's02'],
     ['python-oop-ch02-l03', 's03'],
     ['python-oop-ch02-l03', 's04'],
+    ['python-oop-ch03-l01', 's01'],
+    ['python-oop-ch03-l01', 's02'],
+    ['python-oop-ch03-l01', 's03'],
+    ['python-oop-ch03-l01', 's04'],
+    ['python-oop-ch03-l02', 's01'],
+    ['python-oop-ch03-l02', 's02'],
+    ['python-oop-ch03-l02', 's03'],
+    ['python-oop-ch03-l02', 's04'],
   ] as const) {
     await page.goto(`${base}#/courses/python-oop/lessons/${lesson}/slides/${lesson}-${slide}`);
     await expect(page.getByTestId('slide-stage')).toHaveAttribute(

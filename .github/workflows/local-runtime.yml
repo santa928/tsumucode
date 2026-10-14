@@ -18,6 +18,7 @@ on:
       - src/core/runtime/pythonDataProject*
       - src/core/runtime/pythonOop*
       - src/core/runtime/pythonObjectProtocol*
+      - src/core/runtime/pythonDecorator*
       - src/core/runtime/pythonFixedFixtures*
       - src/adapters/runtime/local/LocalPythonPracticeClient*
       - src/core/runtime/contracts.ts
@@ -79,6 +80,7 @@ on:
       - src/core/runtime/pythonDataProject*
       - src/core/runtime/pythonOop*
       - src/core/runtime/pythonObjectProtocol*
+      - src/core/runtime/pythonDecorator*
       - src/core/runtime/pythonFixedFixtures*
       - src/adapters/runtime/local/LocalPythonPracticeClient*
       - src/core/runtime/contracts.ts

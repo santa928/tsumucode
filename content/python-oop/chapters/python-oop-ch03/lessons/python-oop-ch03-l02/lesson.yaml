@@ -1,0 +1,25 @@
+id: python-oop-ch03-l02
+kind: standard
+title: wrapsでmetadataと動作を比べる
+goal: wrapsで名前・docstring・元への参照を保ち、metadataと引数・戻り値・例外・状態の正しさを別々に確認できる。
+estimatedMinutes: 25
+prerequisiteLessonIds:
+  - python-oop-ch03-l01
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/python-oop-ch03-l02-e01/exercise.yaml
+reflection: metadataが一致しても固定値のwrapperが正解にならないのはなぜですか。元への参照と同一objectはどう違いますか。
+glossaryRefs:
+  - python-metadata-loss
+  - python-wraps-metadata
+  - python-wraps-behavior
+  - python-wraps-comparison
+completion:
+  kind: standard
+  finalSlideId: python-oop-ch03-l02-s04
+  requiredExerciseIds:
+    - python-oop-ch03-l02-e01

@@ -1,0 +1,263 @@
+id: python-oop-ch03-l01-e01
+kind: standard
+workspaceId: python-oop-ch03-l01-e01
+countsTowardStandardExerciseTotal: true
+title: Function変換とClosureの受け渡し
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: python-function-transform
+    minimumLevel: transform
+  - conceptId: python-closure-state
+    minimumLevel: transform
+  - conceptId: python-argument-forwarding
+    minimumLevel: transform
+  - conceptId: python-decorator-syntax
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: python-oop-ch03-l01-e01-step01
+    file: main.py
+    target: wrapperの状態を増やし、受け取った位置引数と名前付き引数を元のFunctionへ渡し、その戻り値を返します。
+    starterAnchor: return 0
+    change: wrapperの状態を増やし、受け取った位置引数と名前付き引数を元のFunctionへ渡し、その戻り値を返します。
+    observe: Functionを渡してFunctionを返す変換と@の対応を説明し、引数・戻り値・例外とClosure状態を中継できる。
+    requiresConceptIds:
+      - python-function-transform
+      - python-closure-state
+      - python-argument-forwarding
+      - python-decorator-syntax
+    validationRuleIds:
+      - python-oop-ch03-l01-e01-r01
+runtime:
+  kind: python
+  entryFile: main.py
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  profile: function-decorator-flow-v1
+files:
+  - path: main.py
+    language: python
+    source: starter/main.py
+    editable: true
+solutionFiles:
+  - path: main.py
+    language: python
+    source: solution/main.py
+    editable: false
+validationRules:
+  - id: python-oop-ch03-l01-e01-r01
+    label: Functionを渡してFunctionを返す変換と@の対応を説明し、引数・戻り値・例外とClosure状態を中継できる。
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: decorator-flow-compared
+    feedback:
+      target: main.pyとConsole
+      expected: Functionを渡してFunctionを返す変換と@の対応を説明し、引数・戻り値・例外とClosure状態を中継できる。
+      nextAction: wrapperの状態を増やし、受け取った位置引数と名前付き引数を元のFunctionへ渡し、その戻り値を返します。
+    hintId: python-oop-ch03-l01-e01-h01
+    relatedSlideId: python-oop-ch03-l01-s04
+hints:
+  - id: python-oop-ch03-l01-e01-h01
+    level: 1
+    title: 考え方の手掛かり
+    text: 装飾する時点と、返されたwrapperを呼ぶ時点を分けて考えます。
+    relatedSlideId: python-oop-ch03-l01-s04
+  - id: python-oop-ch03-l01-e01-h02
+    level: 2
+    title: コードを組み立てる
+    text: countは外側の呼出しごとに作られます。元のFunctionへは集めた2種類の引数を展開して渡します。
+    relatedSlideId: python-oop-ch03-l01-s04
+  - id: python-oop-ch03-l01-e01-h03
+    level: 3
+    title: 解答と理由
+    text: countを1ずつ増やし、return function(*args, **kwargs)で結果と例外を呼出し元へ中継します。
+    relatedSlideId: python-oop-ch03-l01-s04
+relatedSlideIds:
+  - python-oop-ch03-l01-s01
+  - python-oop-ch03-l01-s02
+  - python-oop-ch03-l01-s03
+  - python-oop-ch03-l01-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: solution
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/solution.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: starter
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/starter.py
+        editable: false
+    expectedFeedbackRuleIds:
+      - python-oop-ch03-l01-e01-r01
+  - id: fixed-result
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/fixed-result.py
+        editable: false
+    expectedFeedbackRuleIds:
+      - python-oop-ch03-l01-e01-r01
+  - id: lost-return
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/lost-return.py
+        editable: false
+    expectedFeedbackRuleIds:
+      - python-oop-ch03-l01-e01-r01
+  - id: dropped-keywords
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/dropped-keywords.py
+        editable: false
+    expectedFeedbackRuleIds:
+      - python-oop-ch03-l01-e01-r01
+  - id: reset-state
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/reset-state.py
+        editable: false
+    expectedFeedbackRuleIds:
+      - python-oop-ch03-l01-e01-r01
+  - id: swallowed-error
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/swallowed-error.py
+        editable: false
+    expectedFeedbackRuleIds:
+      - python-oop-ch03-l01-e01-r01
+  - id: temporary-result
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/temporary-result.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: explicit-second-application
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/explicit-second-application.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternate-wrapper-names
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/alternate-wrapper-names.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: explicit-increment
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/explicit-increment.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: commuted-sum
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/commuted-sum.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: wrong-call
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/wrong-call.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: builtin-alias
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/builtin-alias.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: forbidden-attribute
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/forbidden-attribute.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: unsupported-import
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/unsupported-import.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: hardcoded
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/hardcoded.py
+        editable: false
+    expectedFeedbackRuleIds:
+      - python-oop-ch03-l01-e01-r01
+  - id: eager-call
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/eager-call.py
+        editable: false
+    expectedFeedbackRuleIds: []
