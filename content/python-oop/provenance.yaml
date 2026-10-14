@@ -1097,3 +1097,7 @@ items:
     visibility: public
     path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/slides/s03.md
     createdAt: 2026-10-14
+  - id: python-configured-decorator-renamed-update-original
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/renamed-explicit-ledger-update.py
+    createdAt: 2026-10-14

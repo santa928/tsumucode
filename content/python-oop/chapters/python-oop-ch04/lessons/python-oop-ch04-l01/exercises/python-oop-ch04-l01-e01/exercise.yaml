@@ -369,3 +369,12 @@ fixtures:
         source: fixtures/temporary-ledger-result.py
         editable: false
     expectedFeedbackRuleIds: []
+  - id: renamed-explicit-ledger-update
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/renamed-explicit-ledger-update.py
+        editable: false
+    expectedFeedbackRuleIds: []

@@ -261,7 +261,7 @@ def _target(node, doubled):
     expression = "value * 2 + extra" if doubled else "value + extra"
     if _project:
         expression = "ledger.add(" + expression + ")"
-    return _ast.dump(rename.visit(value)) == _ast.dump(rename.visit(_ast.parse(expression, mode="eval").body))
+    return _ast.dump(rename.visit(value)) == _ast.dump(_Rename({}).visit(_ast.parse(expression, mode="eval").body))
 
 
 def _ledger(node):
@@ -287,7 +287,7 @@ def _ledger(node):
     update = body[1]
     expected_update = _ast.parse("self.total += value").body[0]
     if isinstance(update, _ast.Assign) and len(update.targets) == 1:
-        expected_assign = rename.visit(_ast.parse("self.total = self.total + value").body[0])
+        expected_assign = _Rename({}).visit(_ast.parse("self.total = self.total + value").body[0])
         if _ast.dump(update) != _ast.dump(expected_assign):
             return False
     elif _ast.dump(update) != _ast.dump(expected_update):
