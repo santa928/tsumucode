@@ -11,6 +11,7 @@ export default tseslint.config(
       'coverage',
       'public/generated/content',
       'public/python-runtime',
+      'public/tailwind-runtime',
       'vendor',
       'content/**/*.js',
       // Next原稿は固定Nextの実compileと正負Fixtureで検証する。

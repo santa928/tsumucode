@@ -11,6 +11,7 @@ const CROSS_BROWSER_SMOKE_SPECS = [
   'typescript-release-smoke.spec.ts',
   'python-release-smoke.spec.ts',
   'python-input.spec.ts',
+  'tailwind.spec.ts',
 ] as const;
 
 /** 任意のGitHub Pages subpathへpreviewとVite serverを揃えた実ブラウザ設定を作る。 */

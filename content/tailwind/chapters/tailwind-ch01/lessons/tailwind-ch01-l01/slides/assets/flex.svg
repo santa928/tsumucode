@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" role="img" aria-labelledby="title desc">
+  <title id="title">blockからflexへ並びを変える</title>
+  <desc id="desc">blockからflexへ並びを変える。この教材の固定themeでの比較。</desc>
+  <rect x="1" y="1" width="638" height="298" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+  <g font-family="sans-serif" font-size="24" fill="#0f172a">
+    <text x="85" y="50">block</text><text x="420" y="50">flex</text><g fill="#dbeafe" stroke="#1e40af" stroke-width="2"><rect x="40" y="90" width="150" height="70" rx="8"/><rect x="40" y="180" width="150" height="70" rx="8"/><rect x="335" y="120" width="125" height="85" rx="8"/><rect x="480" y="120" width="125" height="85" rx="8"/></g><text x="65" y="133">調べる</text><text x="75" y="223">作る</text><text x="355" y="168">調べる</text><text x="510" y="168">作る</text><path d="M215 170 H300 M290 160 L300 170 L290 180" stroke="#334155" stroke-width="3" fill="none"/>
+  </g>
+</svg>

@@ -1,0 +1,10 @@
+{
+  "package": "@tailwindcss/browser",
+  "version": "4.3.2",
+  "license": "MIT",
+  "registry": "https://registry.npmjs.org/@tailwindcss/browser/-/browser-4.3.2.tgz",
+  "archiveSha256": "c595ead3047e4198c132761f9505d406de24ecb5409dd74824b9376882119a72",
+  "file": "browser.global.js",
+  "bytes": 276617,
+  "sha256": "0bc32045dd897c063f4966c608bbbe373e035fcafcb3dd8ee3b315d5e6165410"
+}

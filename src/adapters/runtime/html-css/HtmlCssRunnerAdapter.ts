@@ -7,7 +7,7 @@ import type {
   RunnerRenderResult,
   SnapshotRequest,
 } from '../../../core/runtime/contracts';
-import { createPreviewSrcdoc } from './createSrcdoc';
+import { createPreviewSrcdoc, type CreatePreviewSrcdocInput } from './createSrcdoc';
 import { diagnoseSyntax } from './diagnoseSyntax';
 import { type MaterializedPreviewAssets } from '../preview-kernel/materializePreviewAssets';
 import {
@@ -39,6 +39,16 @@ interface InFlightRender {
   promise?: Promise<RunnerRenderResult>;
 }
 
+/** 第二用途のTailwindだけが差し替える入力制限とtrusted srcdoc生成。 */
+export interface HtmlCssRunnerOptions {
+  readonly languageId: string;
+  readonly validateSource: (
+    input: ValidatedHtmlCssPreviewInput,
+    original: RunnerInput,
+  ) => readonly RunnerDiagnostic[];
+  readonly createSrcdoc: (input: CreatePreviewSrcdocInput, signal: AbortSignal) => Promise<string>;
+}
+
 /** staleまたはdisposeされた描画を同じError型で終了する。 */
 function renderAbortError(): Error {
   return new DOMException('Preview render superseded', 'AbortError');
@@ -53,12 +63,19 @@ function applyPreviewViewport(frame: HTMLIFrameElement, viewport: PreviewViewpor
 
 /** HTML/CSSをopaque-origin iframeへ描画し、認証済みSnapshotだけを返す。 */
 export class HtmlCssRunnerAdapter implements RunnerAdapter {
-  readonly languageId = 'html-css' as const;
+  readonly languageId: string;
+  readonly #options: HtmlCssRunnerOptions | undefined;
   #frame: HTMLIFrameElement | undefined;
   #active: ActivePreview | undefined;
   #restorable: RestorablePreview | undefined;
   #inFlight: InFlightRender | undefined;
   #generation = 0;
+
+  /** 既存HTML/CSSはそのまま、Tailwindは同じ取消・復旧・Snapshot契約を使う。 */
+  constructor(options?: HtmlCssRunnerOptions) {
+    this.#options = options;
+    this.languageId = options?.languageId ?? 'html-css';
+  }
 
   /** 旧frameの処理を解放し、新frameを最初の実renderへ備える。 */
   async prepare(frame: HTMLIFrameElement): Promise<void> {
@@ -76,8 +93,19 @@ export class HtmlCssRunnerAdapter implements RunnerAdapter {
     const frame = this.#frame;
     if (frame === undefined) return Promise.reject(new Error('Runner is not prepared'));
     let prepared: ValidatedHtmlCssPreviewInput;
+    let sourceDiagnostics: readonly RunnerDiagnostic[];
     try {
-      prepared = validateHtmlCssPreviewInput(input);
+      prepared = validateHtmlCssPreviewInput(input, this.languageId);
+      sourceDiagnostics = this.#options?.validateSource(prepared, input) ?? [];
+      if (sourceDiagnostics.some(({ severity }) => severity === 'error')) {
+        return Promise.resolve({
+          exerciseSessionId: input.exerciseSessionId,
+          executionRevision: input.executionRevision,
+          diagnostics: sourceDiagnostics,
+          evidence: [],
+          console: [],
+        });
+      }
     } catch (error) {
       return Promise.reject(error instanceof Error ? error : new Error(String(error)));
     }
@@ -88,7 +116,7 @@ export class HtmlCssRunnerAdapter implements RunnerAdapter {
       controller: new AbortController(),
     };
     this.#inFlight = operation;
-    const promise = this.#performRender(frame, input, prepared, operation);
+    const promise = this.#performRender(frame, input, prepared, operation, sourceDiagnostics);
     operation.promise = promise;
     return promise;
   }
@@ -125,6 +153,7 @@ export class HtmlCssRunnerAdapter implements RunnerAdapter {
     input: RunnerInput,
     prepared: ValidatedHtmlCssPreviewInput,
     operation: InFlightRender,
+    sourceDiagnostics: readonly RunnerDiagnostic[],
   ): Promise<RunnerRenderResult> {
     let materialized: MaterializedPreviewAssets | undefined;
     let bridge: PreviewBridgeClient | undefined;
@@ -146,7 +175,7 @@ export class HtmlCssRunnerAdapter implements RunnerAdapter {
 
       const scriptNonce = crypto.randomUUID().replaceAll('-', '');
       const bootstrapToken = crypto.randomUUID();
-      const srcdoc = createPreviewSrcdoc({
+      const srcdocInput: CreatePreviewSrcdocInput = {
         sanitizedDocument: preview.sanitizedDocument,
         css: preview.css,
         nonce: scriptNonce,
@@ -154,7 +183,11 @@ export class HtmlCssRunnerAdapter implements RunnerAdapter {
         exerciseSessionId: input.exerciseSessionId,
         executionRevision: input.executionRevision,
         viewport: input.viewport,
-      });
+      };
+      const srcdoc =
+        this.#options === undefined
+          ? createPreviewSrcdoc(srcdocInput)
+          : await this.#options.createSrcdoc(srcdocInput, operation.controller.signal);
       this.#assertCurrent(frame, operation);
 
       transitionStarted = true;
@@ -200,6 +233,7 @@ export class HtmlCssRunnerAdapter implements RunnerAdapter {
         exerciseSessionId: input.exerciseSessionId,
         executionRevision: input.executionRevision,
         diagnostics: [
+          ...sourceDiagnostics,
           ...htmlSyntaxDiagnostics,
           ...stylesheetDiagnostics,
           ...preview.sanitizerDiagnostics,
