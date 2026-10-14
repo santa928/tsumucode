@@ -421,6 +421,8 @@ export const PythonExerciseRuntimeSchema = z
       'inheritance-delegation-v1',
       'validated-property-v1',
       'length-string-protocol-v1',
+      'function-decorator-flow-v1',
+      'wraps-metadata-preserved-v1',
     ]),
   })
   .strict();

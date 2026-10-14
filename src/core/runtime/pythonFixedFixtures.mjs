@@ -1,5 +1,19 @@
 /** Local採点の入力と期待値だけを固定する。作者の解答Sourceは配信しない。 */
 const fixtures = {
+  'function-decorator-flow-v1': [
+    [
+      'decorator-observation',
+      [],
+      'False\n呼出 1\n5\n呼出 2\n5\n呼出 1\n7\n呼出 3\n負の値\n呼出 4\n2\n呼出 2\n8\n',
+    ],
+  ],
+  'wraps-metadata-preserved-v1': [
+    [
+      'decorator-observation',
+      [],
+      'False\nTrue\nTrue\nTrue\n呼出 1\n5\n呼出 2\n5\n呼出 1\n7\n呼出 3\n負の値\n呼出 4\n2\n呼出 2\n8\n',
+    ],
+  ],
   'inheritance-delegation-v1': [['object-protocol', [], '6\n9\n6\n8\n10\n9\n']],
   'validated-property-v1': [
     ['object-protocol', [], '70\n90\n50\n範囲外\n90\n範囲外\n90\n0\n100\n初期値も範囲外\n'],

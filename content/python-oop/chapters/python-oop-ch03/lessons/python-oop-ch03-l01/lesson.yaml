@@ -1,0 +1,24 @@
+id: python-oop-ch03-l01
+kind: standard
+title: Function変換とClosureの受け渡し
+goal: Functionを渡してFunctionを返す変換と@の対応を説明し、引数・戻り値・例外とClosure状態を中継できる。
+estimatedMinutes: 25
+prerequisiteLessonIds: []
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/python-oop-ch03-l01-e01/exercise.yaml
+reflection: 装飾時と呼出時を分けて、どのFunctionと状態が使われるか説明してください。例外の前の変更はどう残りますか。
+glossaryRefs:
+  - python-function-transform
+  - python-closure-state
+  - python-argument-forwarding
+  - python-decorator-syntax
+completion:
+  kind: standard
+  finalSlideId: python-oop-ch03-l01-s04
+  requiredExerciseIds:
+    - python-oop-ch03-l01-e01

@@ -18,7 +18,9 @@ export type PythonLessonProfile =
   | 'method-binding-comparison-v1'
   | 'inheritance-delegation-v1'
   | 'validated-property-v1'
-  | 'length-string-protocol-v1';
+  | 'length-string-protocol-v1'
+  | 'function-decorator-flow-v1'
+  | 'wraps-metadata-preserved-v1';
 export type PythonSourceFact =
   | 'numeric-variable-printed'
   | 'same-variable-addition-printed'
@@ -40,7 +42,9 @@ export type PythonSourceFact =
   | 'methods-compared'
   | 'inheritance-delegation-compared'
   | 'property-range-validated'
-  | 'dunder-protocols-used';
+  | 'dunder-protocols-used'
+  | 'decorator-flow-compared'
+  | 'wraps-metadata-preserved';
 export const PYTHON_LESSONS: Readonly<
   Record<
     string,
@@ -75,6 +79,8 @@ export const PYTHON_FACT_FIELDS: Readonly<
     | 'inheritanceDelegationCompared'
     | 'propertyRangeValidated'
     | 'dunderProtocolsUsed'
+    | 'decoratorFlowCompared'
+    | 'wrapsMetadataPreserved'
   >
 >;
 /** 行数・UTF-8 bytes・制御文字の共通入力境界。 */
@@ -93,3 +99,4 @@ export function expectedPythonOutput(
 
 export function isPythonObjectProtocolProfile(profile: string): boolean;
 export function isPythonOopProfile(profile: string): boolean;
+export function isPythonDecoratorProfile(profile: string): boolean;

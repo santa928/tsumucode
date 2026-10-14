@@ -95,3 +95,42 @@ for (const [index, profile] of [
     });
   });
 }
+
+for (const [number, profile] of [
+  'function-decorator-flow-v1',
+  'wraps-metadata-preserved-v1',
+].entries()) {
+  test(`${profile}はmetadataとFunction変換だけの厳密なpacketを要求する`, () => {
+    const packet = {
+      version: PYTHON_VERSION,
+      supported: true,
+      syntaxError: false,
+      numericVariablePrinted: false,
+      sameVariableAdditionPrinted: false,
+      decoratorFlowCompared: true,
+      wrapsMetadataPreserved: false,
+    };
+    assert.deepEqual(parsePythonAnalysis(JSON.stringify(packet), '', 0, profile), packet);
+    for (const changed of [
+      { ...packet, decoratorFlowCompared: 'true' },
+      { ...packet, wrapsMetadataPreserved: undefined },
+      { ...packet, syntaxError: undefined },
+      { ...packet, inheritanceDelegationCompared: false },
+    ])
+      assert.throws(() => parsePythonAnalysis(JSON.stringify(changed), '', 0, profile));
+    const request = {
+      apiVersion: 1,
+      exerciseId: `python-oop-ch03-l0${number + 1}-e01`,
+      contentRevision: 'decorator-r1',
+      runtimeProfileId: PYTHON_PROFILE_ID,
+      runId: 'decorator-run',
+      exerciseSessionId: 'decorator-session',
+      executionRevision: 1,
+      files: { 'main.py': 'print(5)\n' },
+    };
+    assert.equal(validateRun(request, 'js', 'basics', 'practice', 'decorator-r1'), request);
+    assert.throws(() => validateRun(request, 'js', 'basics', 'practice', 'oop-old'), {
+      status: 409,
+    });
+  });
+}

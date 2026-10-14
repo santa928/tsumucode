@@ -43,6 +43,8 @@ export interface PythonResult {
   readonly inheritanceDelegationCompared?: boolean;
   readonly propertyRangeValidated?: boolean;
   readonly dunderProtocolsUsed?: boolean;
+  readonly decoratorFlowCompared?: boolean;
+  readonly wrapsMetadataPreserved?: boolean;
   readonly expectedOutput?: string | null;
 }
 

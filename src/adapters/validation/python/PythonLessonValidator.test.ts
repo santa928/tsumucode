@@ -251,7 +251,9 @@ it.each([
   'python-oop-ch02-l01-e01',
   'python-oop-ch02-l02-e01',
   'python-oop-ch02-l03-e01',
-])('%sは実出力・Class事実・同じSourceの固定suiteをすべて要求する', async (exerciseId) => {
+  'python-oop-ch03-l01-e01',
+  'python-oop-ch03-l02-e01',
+])('%sは実出力・教材事実・同じSourceの固定suiteをすべて要求する', async (exerciseId) => {
   const context = await fixedContext(exerciseId);
   const validator = new PythonLessonValidator('cpython');
   expect((await validator.validate(context)).status).toBe('pass');

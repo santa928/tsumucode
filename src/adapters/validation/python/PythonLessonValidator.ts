@@ -37,6 +37,8 @@ const factNames = [
   'inheritance-delegation-compared',
   'property-range-validated',
   'dunder-protocols-used',
+  'decorator-flow-compared',
+  'wraps-metadata-preserved',
 ] as const;
 const ruleSchema = z
   .object({

@@ -10,4 +10,8 @@
 - [property](https://docs.python.org/3.14/library/functions.html#property): 属性の読取りと代入がgetter/setterへつながる契約を確認。
 - [Data model](https://docs.python.org/3.14/reference/datamodel.html): 長さ用dunderが0以上の整数、文字列表示用dunderが文字列を返し、len/str/printから呼ばれる契約を確認。
 
-一般decorator・多重継承・metaclass・descriptor自体の実装は扱いません。固定教材のAST事実と実出力を照合し、一般Pythonの自由な採点や提出ごとの直接object検査とは説明しません。
+- [Function definitions](https://docs.python.org/3.14/reference/compound_stmts.html#function-definitions): Function objectと装飾時／呼出時、単一decoratorと明示適用の対応を確認。
+- [nonlocal](https://docs.python.org/3.14/reference/simple_stmts.html#the-nonlocal-statement): 外側のFunctionの既存bindingを参照・再代入することを確認。
+- [wraps](https://docs.python.org/3.14/library/functools.html#functools.wraps): 名前・docstring等のmetadataと元への参照を引き継ぐ補助であることを確認。引数・戻り値・例外の中継を自動で実装するものとは扱わない。
+
+引数付きdecoratorの制作・多重継承・metaclass・descriptor自体の実装は扱いません。固定教材のAST事実と実出力を照合し、一般Pythonの自由な採点や提出ごとの直接object検査とは説明しません。

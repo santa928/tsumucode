@@ -1,10 +1,10 @@
 schemaVersion: 1
 id: python-oop
 title: PythonのClassとobjectの設計
-description: 値と引数の比較から、継承・委譲・Property・dunderの用途を選ぶ125分の草稿Course。
+description: Classとmethod、継承・委譲・Property・dunderとFunction変換・wrapsを比較する175分の草稿Course。
 audience: Python基礎のFunction・スコープとPython実践のdataclassを学んだ方
-estimatedMinutes: 125
-revision: 2026-10-14.1
+estimatedMinutes: 175
+revision: 2026-10-14.2
 runnerId: python
 validatorId: python
 glossarySource: glossary.yaml
@@ -22,13 +22,13 @@ prerequisites:
   - python-practice
 publicationStatus: draft
 expectedTotals:
-  chapters: 2
-  lessons: 5
-  conceptSlides: 19
-  standardExercises: 5
+  chapters: 3
+  lessons: 7
+  conceptSlides: 27
+  standardExercises: 7
   guidedProjectLessons: 0
   capstoneLessons: 0
-  estimatedMinutes: 125
+  estimatedMinutes: 175
 provenanceManifestPath: provenance.yaml
 progressMigrations: []
 phases:
@@ -42,3 +42,8 @@ phases:
     description: 継承と委譲、値検証、長さと文字列表示の用途を比較する。
     chapterSources:
       - chapters/python-oop-ch02/chapter.yaml
+  - id: python-oop-p03
+    title: Functionを変換し、契約を引き継ぐ
+    description: Closureの状態・引数と結果・例外の中継とmetadataの修復を比較する。
+    chapterSources:
+      - chapters/python-oop-ch03/chapter.yaml

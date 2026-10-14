@@ -102,6 +102,8 @@ export function initializePythonWorker(
         | 'inheritanceDelegationCompared'
         | 'propertyRangeValidated'
         | 'dunderProtocolsUsed'
+        | 'decoratorFlowCompared'
+        | 'wrapsMetadataPreserved'
         | 'expectedOutput'
       >
     > = {};
@@ -263,6 +265,8 @@ export function initializePythonWorker(
           inheritanceDelegationCompared: parsed.inheritanceDelegationCompared === true,
           propertyRangeValidated: parsed.propertyRangeValidated === true,
           dunderProtocolsUsed: parsed.dunderProtocolsUsed === true,
+          decoratorFlowCompared: parsed.decoratorFlowCompared === true,
+          wrapsMetadataPreserved: parsed.wrapsMetadataPreserved === true,
           ...(moduleProfile
             ? { expectedOutput: parsePythonModuleAnalysis(parsed).expectedOutput }
             : {}),

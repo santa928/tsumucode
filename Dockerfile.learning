@@ -50,6 +50,7 @@ COPY src/core/runtime/pythonIterationAnalysis.mjs ./
 COPY src/core/runtime/pythonContextAnalysis.mjs ./
 COPY src/core/runtime/pythonOopAnalysis.mjs ./
 COPY src/core/runtime/pythonObjectProtocolAnalysis.mjs ./
+COPY src/core/runtime/pythonDecoratorAnalysis.mjs ./
 COPY src/core/runtime/pythonDataProjectAnalysis.mjs ./
 COPY src/core/runtime/pythonModuleAnalysis.mjs ./pythonModuleAnalysis.mjs
 COPY scripts/local/project-protocol.mjs scripts/local/workspace-store.mjs scripts/local/project-engine.mjs scripts/local/resident-workspace.mjs ./
@@ -79,6 +80,7 @@ COPY src/core/runtime/pythonIterationAnalysis.mjs ./src/core/runtime/
 COPY src/core/runtime/pythonContextAnalysis.mjs ./src/core/runtime/
 COPY src/core/runtime/pythonOopAnalysis.mjs ./src/core/runtime/
 COPY src/core/runtime/pythonObjectProtocolAnalysis.mjs ./src/core/runtime/
+COPY src/core/runtime/pythonDecoratorAnalysis.mjs ./src/core/runtime/
 COPY src/core/runtime/pythonDataProjectAnalysis.mjs ./src/core/runtime/
 CMD ["node", "scripts/local/preview-browser-acceptance.mjs"]
 
