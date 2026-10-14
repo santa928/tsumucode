@@ -95,7 +95,7 @@ describe('summarizeLearningPathProgress', () => {
       status: 'in-progress',
       completedRequiredCourses: 1,
       totalRequiredCourses: 2,
-      actionPath: '/courses/javascript/lessons/js-values/slides/js-values-intro',
+      actionPath: '/courses/javascript/lessons/js-values/resume',
     });
     expect(summary.steps.map(({ course }) => course.id)).toEqual([
       'html-css',

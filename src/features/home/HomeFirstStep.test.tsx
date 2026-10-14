@@ -82,7 +82,7 @@ describe('Home先頭の小さな行動', () => {
     [
       'in-progress',
       'HTML/CSSの続きから',
-      `/courses/html-css/lessons/${lessonId}/slides/${lessonId}-s01`,
+      `/courses/html-css/lessons/${lessonId}/resume`,
     ],
     ['complete', '完成したHTML/CSSを見直す', '/courses/html-css'],
     ['revision-mismatch', '教材の更新を確認して続ける', '/courses/html-css'],

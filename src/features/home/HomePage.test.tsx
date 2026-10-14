@@ -152,7 +152,7 @@ describe('HomePage', () => {
       await screen.findByRole('link', { name: `${fixtureCourse.title}：つづきから` }),
     ).toHaveAttribute(
       'href',
-      '/courses/html-css/lessons/lesson-first-heading/slides/slide-html-role',
+      '/courses/html-css/lessons/lesson-first-heading/resume',
     );
     expect(
       screen.getByRole('link', { name: `${fixtureCourse.title}：スライドだけ見る` }),
