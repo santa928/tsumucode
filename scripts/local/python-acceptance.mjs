@@ -169,8 +169,21 @@ passed.push('構文・実行・異常終了・対応外とstdout/stderrを分離
 const timeout = await run('while True:\n    pass\n');
 assert.equal(timeout.status, 'stopped');
 assert.equal(timeout.terminationReason, 'timeout');
-const memory = await run('data = bytearray(512 * 1024 * 1024)\n');
-assert.equal(memory.status, 'stopped');
+// 巨大な単一確保はallocatorが先に拒否する場合がある。
+// 小分けの領域を保持し、実cgroup上限によるOOM killを観測する。
+const memory = await run(
+  'blocks = []\nfor index in range(128):\n    blocks.append(bytearray(4 * 1024 * 1024))\n',
+);
+assert.equal(
+  memory.status,
+  'stopped',
+  JSON.stringify({
+    status: memory.status,
+    terminationReason: memory.terminationReason,
+    exitCode: memory.exitCode,
+    stderr: memory.stderr,
+  }),
+);
 assert.equal(memory.terminationReason, 'memory-limit');
 const output = await run('print("x" * 100000)\n');
 assert.equal(output.status, 'stopped');
