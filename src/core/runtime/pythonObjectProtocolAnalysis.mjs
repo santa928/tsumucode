@@ -4,6 +4,7 @@ export function pythonObjectProtocolAnalysis(source, profile) {
 import ast as _ast
 import builtins as _builtins
 import json as _lesson_json
+import textwrap as _lesson_textwrap
 _tree = _ast.parse(${JSON.stringify(source)})
 _profile = ${JSON.stringify(profile)}
 _inheritance_profile = _profile == "inheritance-delegation-v1"
@@ -210,7 +211,8 @@ def _observations(nodes, source, renamed):
             node.id = renamed.get(node.id, node.id)
             return node
     actual = Rename().visit(_ast.Module(body=nodes, type_ignores=[]))
-    return _ast.dump(actual) == _ast.dump(_ast.parse(source))
+    # CPython wrapperによって文字列へ入った共通の字下げだけを除く。
+    return _ast.dump(actual) == _ast.dump(_ast.parse(_lesson_textwrap.dedent(source)))
 
 
 def _inheritance():

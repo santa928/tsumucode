@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import console from 'node:console';
 import { readFile } from 'node:fs/promises';
 import { parse } from 'yaml';
-import { pythonLessonAnalysis } from '../../src/core/runtime/pythonLessonAnalysis.mjs';
+import { pythonCommand } from './python-profile.mjs';
 import {
   expectedPythonOutput,
   PYTHON_LESSONS,
@@ -84,11 +84,12 @@ export async function verifyPythonObjectProtocols(execute) {
     const profile = PYTHON_LESSONS[exerciseId].profile;
     for (const fixture of exercise.fixtures) {
       const source = await readFile(`${exerciseDirectory}/${fixture.files[0].source}`, 'utf8');
-      const program = pythonLessonAnalysis(source, profile).replace(
-        '_lesson_json.dumps({',
-        'print(_lesson_json.dumps({',
+      // 製品の解析wrapperへ同じargvを渡し、文字列の字下げも含めて検証する。
+      const command = pythonCommand({ 'main.py': source }, true, profile);
+      const [program, ...arguments_] = command.Cmd.slice(command.Cmd.indexOf('-c') + 1);
+      const analyzed = await execute(
+        `import sys\nsys.argv = ${JSON.stringify(['analysis', ...arguments_])}\n${program}`,
       );
-      const analyzed = await execute(`${program.trimEnd()})\n`);
       assert.equal(analyzed.exitCode, 0, `${exerciseId}/${fixture.id}: ${analyzed.stderr}`);
       const facts = JSON.parse(analyzed.stdout);
       const executed = await execute(source);
