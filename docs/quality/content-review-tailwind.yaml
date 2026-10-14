@@ -1,0 +1,16 @@
+schemaVersion: 1
+releaseStatus: draft
+verifiedSourceCommit: draft
+canonicalDistSha256: draft
+lessons:
+  - lessonId: tailwind-ch01-l01
+    authorId: tsumucode-tailwind-author
+    reviewerId: cache_races_ui_claims_review
+    sourceHash: c0606f3dfc11d2399cd7cfb213ff658d160b7a892545bb0e097dd7ef3c412e0e
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 独立内容レビューで必須指摘0。固定compilerと製品Runnerで全9Fixtureの実Style判定を3Browserで確認し、4図のPC／390px画像を確認した。例検証は演習Fixtureを指し、全Slide断片の独立実行・実人理解・物理端末性能を意味しない。1演習の草稿であり、全面Course・Project・公開はIssue129〜131へ残す。

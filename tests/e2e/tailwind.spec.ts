@@ -16,6 +16,82 @@ const exerciseRoute = `${base}#/courses/tailwind/lessons/${lessonId}/exercises/$
 const authoring = await loadAuthoringCourse('content/tailwind');
 const exercise = authoring.exercises[0]!;
 
+test('拒否するHTMLの解析段階でも外部画像・frame・CSS・scriptを取得しない', async ({
+  page,
+}, info) => {
+  const harness = new URL('./tailwind-rejected-input.html', testServerUrl(4174)).href;
+  const externalRequests: string[] = [];
+  page.on('request', (request) => {
+    if (new URL(request.url()).hostname === 'tailwind-boundary.invalid') {
+      externalRequests.push(request.url());
+    }
+  });
+  await page.route('https://tailwind-boundary.invalid/**', (route) => route.abort());
+  await page.route(harness, (route) =>
+    route.fulfill({
+      contentType: 'text/html',
+      body: '<!doctype html><title>拒否入力の境界</title>',
+    }),
+  );
+  await page.goto(harness);
+  const rows = await page.evaluate(async (viewport) => {
+    const runnerPath = new URL(
+      './src/adapters/runtime/tailwind/TailwindRunnerAdapter.ts',
+      location.href,
+    ).href;
+    const { TailwindRunnerAdapter } = (await import(
+      /* @vite-ignore */ runnerPath
+    )) as typeof RunnerModule;
+    const runner = new TailwindRunnerAdapter();
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    const sources = [
+      '<img src="https://tailwind-boundary.invalid/image.png">',
+      '<iframe src="https://tailwind-boundary.invalid/frame"></iframe>',
+      '<iframe srcdoc="&lt;img src=&quot;https://tailwind-boundary.invalid/nested.png&quot;&gt;"></iframe>',
+      '<style>@import "https://tailwind-boundary.invalid/style.css";</style>',
+      '<link rel="stylesheet" href="https://tailwind-boundary.invalid/link.css">',
+      '<script src="https://tailwind-boundary.invalid/script.js"></script>',
+      '<div style="background:url(https://tailwind-boundary.invalid/background.png)"></div>',
+    ];
+    const observations = [];
+    try {
+      await runner.prepare(frame);
+      for (const [index, source] of sources.entries()) {
+        const result = await runner.render({
+          languageId: 'tailwind',
+          exerciseSessionId: 'rejected-input',
+          executionRevision: index + 1,
+          files: { 'index.html': source },
+          assets: [],
+          viewport,
+          options: {},
+        });
+        observations.push({
+          diagnostics: result.diagnostics.map(({ code }) => code),
+          srcdoc: frame.srcdoc,
+        });
+      }
+      // DOMParser由来の非同期取得も観測し、HTTP遮断を「試行なし」と混同しない。
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      return observations;
+    } finally {
+      await runner.dispose();
+      frame.remove();
+    }
+  }, exercise.previewViewports[0]!);
+  expect(rows).toHaveLength(7);
+  for (const row of rows) {
+    expect(row.diagnostics).toContain('TAILWIND_INPUT_UNSUPPORTED');
+    expect(row.srcdoc).toBe('');
+  }
+  expect(externalRequests).toEqual([]);
+  await info.attach('拒否入力の解析境界', {
+    body: JSON.stringify({ rows, externalRequests }, null, 2),
+    contentType: 'application/json',
+  });
+});
+
 test('固定compilerと製品Runnerで全9Fixtureを同revisionの実Style判定へ結ぶ', async ({
   page,
 }, info) => {
