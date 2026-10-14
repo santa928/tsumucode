@@ -418,6 +418,9 @@ export const PythonExerciseRuntimeSchema = z
       'dataclass-test-project-v1',
       'class-instance-lookup-v1',
       'method-binding-comparison-v1',
+      'inheritance-delegation-v1',
+      'validated-property-v1',
+      'length-string-protocol-v1',
     ]),
   })
   .strict();

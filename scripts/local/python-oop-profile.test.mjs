@@ -52,3 +52,46 @@ test('OOP教材は他Courseのrevisionを流用せず、固定main.pyだけを�
   );
   assert.throws(() => validateRun(request, 'js-r1', 'basics-r1', 'practice-r1'), { status: 409 });
 });
+
+for (const [index, profile] of [
+  'inheritance-delegation-v1',
+  'validated-property-v1',
+  'length-string-protocol-v1',
+].entries()) {
+  test(`${profile}は3つの事実と構文エラー区分を厳密に受け付ける`, () => {
+    const packet = {
+      version: PYTHON_VERSION,
+      supported: true,
+      syntaxError: false,
+      numericVariablePrinted: false,
+      sameVariableAdditionPrinted: false,
+      inheritanceDelegationCompared: true,
+      propertyRangeValidated: false,
+      dunderProtocolsUsed: false,
+    };
+    assert.deepEqual(parsePythonAnalysis(JSON.stringify(packet), '', 0, profile), packet);
+    for (const changed of [
+      { ...packet, propertyRangeValidated: undefined },
+      { ...packet, dunderProtocolsUsed: 'false' },
+      { ...packet, syntaxError: undefined },
+      { ...packet, methodsCompared: false },
+      { ...packet, version: '3.14.8' },
+    ]) {
+      assert.throws(() => parsePythonAnalysis(JSON.stringify(changed), '', 0, profile));
+    }
+    const request = {
+      apiVersion: 1,
+      exerciseId: `python-oop-ch02-l0${String(index + 1)}-e01`,
+      contentRevision: 'oop-r2',
+      runtimeProfileId: PYTHON_PROFILE_ID,
+      runId: 'object-run',
+      exerciseSessionId: 'object-session',
+      executionRevision: 1,
+      files: { 'main.py': 'print(3)\n' },
+    };
+    assert.equal(validateRun(request, 'js-r1', 'basics-r1', 'practice-r1', 'oop-r2'), request);
+    assert.throws(() => validateRun(request, 'js-r1', 'basics-r1', 'practice-r1', 'oop-r1'), {
+      status: 409,
+    });
+  });
+}

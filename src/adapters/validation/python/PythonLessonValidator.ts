@@ -34,6 +34,9 @@ const factNames = [
   'data-project-tested',
   'class-instance-compared',
   'methods-compared',
+  'inheritance-delegation-compared',
+  'property-range-validated',
+  'dunder-protocols-used',
 ] as const;
 const ruleSchema = z
   .object({

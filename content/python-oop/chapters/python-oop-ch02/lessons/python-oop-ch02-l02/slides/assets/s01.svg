@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 276" role="img" aria-labelledby="title desc">
+  <title id="title">Propertyは属性の読取りをmethodへつなぐ</title>
+  <desc id="desc">属性valueの読取りがgetterを呼び、内部値70を返す静的な図。</desc>
+  <rect width="420" height="276" fill="#f5f1df"/>
+  <g font-family="sans-serif" font-size="20" fill="#153c35">
+    <rect x="18" y="16" width="384" height="96" rx="10" fill="#fff" stroke="#17483d" stroke-width="2"/>
+    <text x="30" y="48">score.valueを読む</text>
+    <text x="30" y="78">getterのvalue(self)を呼ぶ</text>
+    <rect x="18" y="120" width="384" height="96" rx="10" fill="#fff" stroke="#17483d" stroke-width="2"/>
+    <text x="30" y="152">内部の_value = 70</text>
+    <text x="30" y="182">読取り結果は70</text>
+    <text x="18" y="236">利用側は属性として読む。</text>
+    <text x="18" y="264">内部名は秘密保護ではない。</text>
+  </g>
+</svg>

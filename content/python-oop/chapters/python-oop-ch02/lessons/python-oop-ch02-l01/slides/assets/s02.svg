@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 276" role="img" aria-labelledby="title desc">
+  <title id="title">継承した初期化でも値は個別に持つ</title>
+  <desc id="desc">子の作成時に継承した初期化で値3を保存し、子の計算で9を返す静的な図。</desc>
+  <rect width="420" height="276" fill="#f5f1df"/>
+  <g font-family="sans-serif" font-size="20" fill="#153c35">
+    <rect x="18" y="16" width="384" height="96" rx="10" fill="#fff" stroke="#17483d" stroke-width="2"/>
+    <text x="30" y="48">TripledCounter(3)</text>
+    <text x="30" y="78">継承した初期化 → child.value = 3</text>
+    <rect x="18" y="120" width="384" height="96" rx="10" fill="#fff" stroke="#17483d" stroke-width="2"/>
+    <text x="30" y="152">child.calculate()</text>
+    <text x="30" y="182">子の計算 → 3 × 3 = 9</text>
+    <text x="18" y="236">初期化の共有と、値の共有は別。</text>
+    <text x="18" y="264">selfはその新しいInstance。</text>
+  </g>
+</svg>

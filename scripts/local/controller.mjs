@@ -2,6 +2,7 @@ import {
   PYTHON_LESSONS,
   PYTHON_FACT_FIELDS,
   isPythonModuleProfile,
+  isPythonOopProfile,
   pythonSourceSnapshot,
 } from './pythonLessonProfiles.mjs';
 import { PracticeRunner, PRACTICE_LIMITS } from './python-practice.mjs';
@@ -254,8 +255,7 @@ async function execute(run) {
   const python = run.input.runtimeProfileId === PYTHON_PROFILE_ID;
   const profile = python ? PYTHON_LESSONS[run.input.exerciseId].profile : undefined;
   const moduleProfile = python && isPythonModuleProfile(profile);
-  const oopProfile =
-    python && ['class-instance-lookup-v1', 'method-binding-comparison-v1'].includes(profile);
+  const oopProfile = python && isPythonOopProfile(profile);
   let analysisStatus;
   let facts;
   let preparationMs = 0;

@@ -1,6 +1,21 @@
 /* global TextEncoder */
 /** IDと教材構文を固定し、入力からprofileや実行先を選ばせない。 */
 export const PYTHON_LESSONS = Object.freeze({
+  'python-oop-ch02-l01-e01': {
+    courseId: 'python-oop',
+    profile: 'inheritance-delegation-v1',
+    facts: ['inheritance-delegation-compared'],
+  },
+  'python-oop-ch02-l02-e01': {
+    courseId: 'python-oop',
+    profile: 'validated-property-v1',
+    facts: ['property-range-validated'],
+  },
+  'python-oop-ch02-l03-e01': {
+    courseId: 'python-oop',
+    profile: 'length-string-protocol-v1',
+    facts: ['dunder-protocols-used'],
+  },
   'python-oop-ch01-l01-e01': {
     courseId: 'python-oop',
     profile: 'class-instance-lookup-v1',
@@ -58,6 +73,9 @@ export const PYTHON_LESSONS = Object.freeze({
 });
 
 export const PYTHON_FACT_FIELDS = Object.freeze({
+  'inheritance-delegation-compared': 'inheritanceDelegationCompared',
+  'property-range-validated': 'propertyRangeValidated',
+  'dunder-protocols-used': 'dunderProtocolsUsed',
   'class-instance-compared': 'classInstanceCompared',
   'methods-compared': 'methodsCompared',
   'data-project-tested': 'dataProjectTested',
@@ -125,6 +143,10 @@ export function validPythonInputLines(value) {
 
 /** 実入力に対応する表示を照合する。採点できない入力を模擬合格へ変換しない。 */
 export function expectedPythonOutput(profile, lines) {
+  if (profile === 'inheritance-delegation-v1') return '6\n9\n6\n8\n10\n9\n';
+  if (profile === 'validated-property-v1')
+    return '70\n90\n50\n範囲外\n90\n範囲外\n90\n0\n100\n初期値も範囲外\n';
+  if (profile === 'length-string-protocol-v1') return '2\n本:2\n2\n3\n本:3\n0\n本:0\n';
   if (profile === 'class-instance-lookup-v1') return 'True\nFalse\n3\n5\n2\n2\n7\n2\n2\n7\n4\n';
   if (profile === 'method-binding-comparison-v1')
     return '6\n6\n6\n6\n10\n10\n10\n10\n12\n12\n12\n6\n';
@@ -147,4 +169,21 @@ export function expectedPythonOutput(profile, lines) {
     return BigInt(lines[0].trim()) >= 18n ? 'adult\n' : 'child\n';
   }
   return undefined;
+}
+
+/** 追加3教材の構文・packetを、既存のmethod比較教材から分ける。 */
+export function isPythonObjectProtocolProfile(profile) {
+  return [
+    'inheritance-delegation-v1',
+    'validated-property-v1',
+    'length-string-protocol-v1',
+  ].includes(profile);
+}
+
+/** OOPの未対応構文とSyntaxErrorの事前分類を共有する。 */
+export function isPythonOopProfile(profile) {
+  return (
+    isPythonObjectProtocolProfile(profile) ||
+    ['class-instance-lookup-v1', 'method-binding-comparison-v1'].includes(profile)
+  );
 }

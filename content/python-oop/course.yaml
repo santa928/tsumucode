@@ -1,32 +1,44 @@
 schemaVersion: 1
 id: python-oop
-title: PythonのClassとmethod
-description: 個別の値・属性の参照先と、同じ計算へ暗黙に渡る引数を比較する50分の草稿Course。
+title: PythonのClassとobjectの設計
+description: 値と引数の比較から、継承・委譲・Property・dunderの用途を選ぶ125分の草稿Course。
 audience: Python基礎のFunction・スコープとPython実践のdataclassを学んだ方
-estimatedMinutes: 50
-revision: 2026-10-13.1
+estimatedMinutes: 125
+revision: 2026-10-14.1
 runnerId: python
 validatorId: python
 glossarySource: glossary.yaml
 conceptsSource: concepts.yaml
-documentationSources: [references/python-official.md]
+documentationSources:
+  - references/python-official.md
 supportedDevices:
   exercise: desktop
-  study: [desktop, tablet, mobile]
-prerequisites: [python-basics, python-practice]
+  study:
+    - desktop
+    - tablet
+    - mobile
+prerequisites:
+  - python-basics
+  - python-practice
 publicationStatus: draft
 expectedTotals:
-  chapters: 1
-  lessons: 2
-  conceptSlides: 7
-  standardExercises: 2
+  chapters: 2
+  lessons: 5
+  conceptSlides: 19
+  standardExercises: 5
   guidedProjectLessons: 0
   capstoneLessons: 0
-  estimatedMinutes: 50
+  estimatedMinutes: 125
 provenanceManifestPath: provenance.yaml
 progressMigrations: []
 phases:
   - id: python-oop-p01
     title: 値の持ち主と暗黙の引数
     description: ClassとInstanceを分け、同じ計算の呼出形式を比較する。
-    chapterSources: [chapters/python-oop-ch01/chapter.yaml]
+    chapterSources:
+      - chapters/python-oop-ch01/chapter.yaml
+  - id: python-oop-p02
+    title: objectを組み立て、操作の契約を守る
+    description: 継承と委譲、値検証、長さと文字列表示の用途を比較する。
+    chapterSources:
+      - chapters/python-oop-ch02/chapter.yaml

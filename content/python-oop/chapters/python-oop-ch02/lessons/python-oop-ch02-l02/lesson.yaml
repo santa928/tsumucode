@@ -1,0 +1,25 @@
+id: python-oop-ch02-l02
+kind: standard
+title: Propertyで読み書きと値の条件を守る
+goal: Propertyの読取りと代入を区別し、初期化・代入の値検証と拒否後の値保持を説明できる。
+estimatedMinutes: 25
+prerequisiteLessonIds:
+  - python-oop-ch02-l01
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/python-oop-ch02-l02-e01/exercise.yaml
+reflection: propertyの読取りと代入ではどのmethodが呼ばれますか。値検証を代入より後にすると何が残りますか。
+glossaryRefs:
+  - python-property-read
+  - python-property-write
+  - python-property-validation
+  - python-property-invariants
+completion:
+  kind: standard
+  finalSlideId: python-oop-ch02-l02-s04
+  requiredExerciseIds:
+    - python-oop-ch02-l02-e01

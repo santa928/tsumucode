@@ -99,6 +99,9 @@ export function initializePythonWorker(
         | 'dataProjectTested'
         | 'classInstanceCompared'
         | 'methodsCompared'
+        | 'inheritanceDelegationCompared'
+        | 'propertyRangeValidated'
+        | 'dunderProtocolsUsed'
         | 'expectedOutput'
       >
     > = {};
@@ -257,6 +260,9 @@ export function initializePythonWorker(
           dataProjectTested: parsed.dataProjectTested === true,
           classInstanceCompared: parsed.classInstanceCompared === true,
           methodsCompared: parsed.methodsCompared === true,
+          inheritanceDelegationCompared: parsed.inheritanceDelegationCompared === true,
+          propertyRangeValidated: parsed.propertyRangeValidated === true,
+          dunderProtocolsUsed: parsed.dunderProtocolsUsed === true,
           ...(moduleProfile
             ? { expectedOutput: parsePythonModuleAnalysis(parsed).expectedOutput }
             : {}),

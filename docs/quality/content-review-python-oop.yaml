@@ -25,3 +25,36 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes: 独立内容レビューで必須指摘0。7図のPC／390px可読性を画像で確認。固定CPython 3.14.2とPyodide 314.0.7で各24Fixture・object観測2・Slide例7を検証。限定AST事実と実stdoutを照合する草稿であり、実人・物理端末・性能・Pages公開の受入を意味しない。Issue147と親17／正式公開152の残条件を保持する。
+  - lessonId: python-oop-ch02-l01
+    authorId: tsumucode-python-author
+    reviewerId: cache_races_ui_claims_review
+    sourceHash: 4bc205a5ec113864482ef47db9f8f6c05a797ead308139122c0577e921301c91
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 独立内容レビューで必須指摘0。新12図の390px表示と代表PCを画像で確認。固定CPython 3.14.2とPyodide 314.0.7で各70Fixture・object観測5・Slide例19を検証し、製品の解析wrapperも対象とする。限定AST事実と実stdoutを照合する草稿であり、実人・物理端末・性能・Pages公開の受入を意味しない。Issue147と親17／正式公開152の残条件を保持する。
+  - lessonId: python-oop-ch02-l02
+    authorId: tsumucode-python-author
+    reviewerId: cache_races_ui_claims_review
+    sourceHash: fd5febdb957a31292082681da7ecaaeef8f9fecb1bd6c1396863f34174ce0623
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 独立内容レビューで必須指摘0。新12図の390px表示と代表PCを画像で確認。固定CPython 3.14.2とPyodide 314.0.7で各70Fixture・object観測5・Slide例19を検証し、製品の解析wrapperも対象とする。限定AST事実と実stdoutを照合する草稿であり、実人・物理端末・性能・Pages公開の受入を意味しない。Issue147と親17／正式公開152の残条件を保持する。
+  - lessonId: python-oop-ch02-l03
+    authorId: tsumucode-python-author
+    reviewerId: cache_races_ui_claims_review
+    sourceHash: 4bc1e3c25a8b8c2c368e72067f61e5087604fdb3e47f5702dbce19b976fe45ea
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 独立内容レビューで必須指摘0。新12図の390px表示と代表PCを画像で確認。固定CPython 3.14.2とPyodide 314.0.7で各70Fixture・object観測5・Slide例19を検証し、製品の解析wrapperも対象とする。限定AST事実と実stdoutを照合する草稿であり、実人・物理端末・性能・Pages公開の受入を意味しない。Issue147と親17／正式公開152の残条件を保持する。

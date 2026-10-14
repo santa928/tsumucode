@@ -1,0 +1,10 @@
+id: python-oop-ch02
+sequence: 1
+title: objectの組立てと操作の契約
+goal: 継承と委譲、検証付きの属性、標準操作へつなぐdunderを目的から選ぶ。
+estimatedMinutes: 75
+kind: standard
+lessonSources:
+  - lessons/python-oop-ch02-l01/lesson.yaml
+  - lessons/python-oop-ch02-l02/lesson.yaml
+  - lessons/python-oop-ch02-l03/lesson.yaml

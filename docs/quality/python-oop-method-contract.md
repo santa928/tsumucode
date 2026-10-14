@@ -31,3 +31,5 @@ Issue148はPython OOPの最初の2 Lesson・2 Exercise・7 Slide、目安50分�
 正負Fixture・作者object観測は実CPython/Pyodideで実行する。通常画面の実行/判定、正解後の誤呼出し、Source/旧成功の保持、Reset/再実行、Keyboard/a11y、代表幅と静的図を確認する。Home初期への重いPython依存・作者Solution/Fixtureの配信非混入、対象compile/型/Lint/Unit、3独立最終レビュー、正確HEAD初回CIとmerge SHA main初回CIを記録する。
 
 Issue147の実人/物理端末/性能受入と公開binding・許可・配信後確認は引き続き未完のまま保持する。新Courseの公開は152で判断する。現在の草稿実装を受入や公開の完了に置き換えない。
+
+Issue149で追加する3学習単位と限定Runtimeの範囲は、[継承・Property・dunderの草稿契約](python-oop-object-contract.md)を参照する。
