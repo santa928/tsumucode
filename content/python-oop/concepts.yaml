@@ -6,25 +6,93 @@ concepts:
     minimumProjectLevel: transform
   - id: python-identity
     introducedBySlideId: python-oop-ch01-l01-s02
-    prerequisiteConceptIds: ['python-class-instance']
+    prerequisiteConceptIds:
+      - python-class-instance
     minimumProjectLevel: transform
   - id: python-attribute-lookup
     introducedBySlideId: python-oop-ch01-l01-s03
-    prerequisiteConceptIds: ['python-class-instance']
+    prerequisiteConceptIds:
+      - python-class-instance
     minimumProjectLevel: transform
   - id: python-instance-method
     introducedBySlideId: python-oop-ch01-l02-s01
-    prerequisiteConceptIds: ['python-class-instance']
+    prerequisiteConceptIds:
+      - python-class-instance
     minimumProjectLevel: transform
   - id: python-classmethod
     introducedBySlideId: python-oop-ch01-l02-s02
-    prerequisiteConceptIds: ['python-instance-method']
+    prerequisiteConceptIds:
+      - python-instance-method
     minimumProjectLevel: transform
   - id: python-staticmethod
     introducedBySlideId: python-oop-ch01-l02-s03
-    prerequisiteConceptIds: ['python-instance-method']
+    prerequisiteConceptIds:
+      - python-instance-method
     minimumProjectLevel: transform
   - id: python-method-comparison
     introducedBySlideId: python-oop-ch01-l02-s04
-    prerequisiteConceptIds: ['python-instance-method', 'python-classmethod', 'python-staticmethod']
+    prerequisiteConceptIds:
+      - python-instance-method
+      - python-classmethod
+      - python-staticmethod
+    minimumProjectLevel: transform
+  - id: python-inheritance
+    introducedBySlideId: python-oop-ch02-l01-s01
+    prerequisiteConceptIds:
+      - python-method-comparison
+    minimumProjectLevel: transform
+  - id: python-inherited-initialization
+    introducedBySlideId: python-oop-ch02-l01-s02
+    prerequisiteConceptIds:
+      - python-inheritance
+    minimumProjectLevel: transform
+  - id: python-composition
+    introducedBySlideId: python-oop-ch02-l01-s03
+    prerequisiteConceptIds:
+      - python-inherited-initialization
+    minimumProjectLevel: transform
+  - id: python-object-design-choice
+    introducedBySlideId: python-oop-ch02-l01-s04
+    prerequisiteConceptIds:
+      - python-composition
+    minimumProjectLevel: transform
+  - id: python-property-read
+    introducedBySlideId: python-oop-ch02-l02-s01
+    prerequisiteConceptIds:
+      - python-object-design-choice
+    minimumProjectLevel: transform
+  - id: python-property-write
+    introducedBySlideId: python-oop-ch02-l02-s02
+    prerequisiteConceptIds:
+      - python-property-read
+    minimumProjectLevel: transform
+  - id: python-property-validation
+    introducedBySlideId: python-oop-ch02-l02-s03
+    prerequisiteConceptIds:
+      - python-property-write
+    minimumProjectLevel: transform
+  - id: python-property-invariants
+    introducedBySlideId: python-oop-ch02-l02-s04
+    prerequisiteConceptIds:
+      - python-property-validation
+    minimumProjectLevel: transform
+  - id: python-dunder-length
+    introducedBySlideId: python-oop-ch02-l03-s01
+    prerequisiteConceptIds:
+      - python-property-invariants
+    minimumProjectLevel: transform
+  - id: python-dunder-string
+    introducedBySlideId: python-oop-ch02-l03-s02
+    prerequisiteConceptIds:
+      - python-dunder-length
+    minimumProjectLevel: transform
+  - id: python-object-copy
+    introducedBySlideId: python-oop-ch02-l03-s03
+    prerequisiteConceptIds:
+      - python-dunder-string
+    minimumProjectLevel: transform
+  - id: python-dunder-contract
+    introducedBySlideId: python-oop-ch02-l03-s04
+    prerequisiteConceptIds:
+      - python-object-copy
     minimumProjectLevel: transform

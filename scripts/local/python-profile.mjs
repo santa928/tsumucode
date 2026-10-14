@@ -1,7 +1,11 @@
 import { Buffer } from 'node:buffer';
 import { pythonLessonAnalysis } from './python-lesson-analysis.mjs';
 import { pythonModuleAnalysis, parsePythonModuleAnalysis } from './pythonModuleAnalysis.mjs';
-import { isPythonModuleProfile } from './pythonLessonProfiles.mjs';
+import {
+  isPythonModuleProfile,
+  isPythonObjectProtocolProfile,
+  isPythonOopProfile,
+} from './pythonLessonProfiles.mjs';
 import { PYTHON_VERSION, PYTHON_IMAGE } from './protocol.mjs';
 export {
   PYTHON_EXERCISE_ID,
@@ -10,8 +14,12 @@ export {
   PYTHON_VERSION,
 } from './protocol.mjs';
 
-const oopProfiles = new Set(['class-instance-lookup-v1', 'method-binding-comparison-v1']);
 const oopFields = ['classInstanceCompared', 'methodsCompared'];
+const objectProtocolFields = [
+  'inheritanceDelegationCompared',
+  'propertyRangeValidated',
+  'dunderProtocolsUsed',
+];
 
 const dataProfiles = new Set([
   'list-reference-sum-v1',
@@ -72,8 +80,16 @@ print(json.dumps(_module_result))
     numericVariablePrinted: false,
     sameVariableAdditionPrinted: false,
   };
-  if (oopProfiles.has(profile))
-    Object.assign(fallback, Object.fromEntries(oopFields.map((field) => [field, false])));
+  if (isPythonOopProfile(profile))
+    Object.assign(
+      fallback,
+      Object.fromEntries(
+        (isPythonObjectProtocolProfile(profile) ? objectProtocolFields : oopFields).map((field) => [
+          field,
+          false,
+        ]),
+      ),
+    );
   else if (profile === 'dataclass-test-project-v1') fallback.dataProjectTested = false;
   else if (profile === 'context-manager-close-v1') fallback.contextManagedClosed = false;
   else if (iterationProfiles.has(profile))
@@ -97,10 +113,10 @@ ${program
   .map((line) => '    ' + line)
   .join('\n')}
     _result = json.loads(_lesson_result)
-${oopProfiles.has(profile) ? '    _result["syntaxError"] = False' : ''}
+${isPythonOopProfile(profile) ? '    _result["syntaxError"] = False' : ''}
 except SyntaxError:
     _result = json.loads(${JSON.stringify(JSON.stringify(fallback))})
-${oopProfiles.has(profile) ? '    _result["syntaxError"] = True' : ''}
+${isPythonOopProfile(profile) ? '    _result["syntaxError"] = True' : ''}
 _result["version"] = sys.version.split()[0]
 print(json.dumps(_result))
 `;
@@ -143,7 +159,11 @@ export function parsePythonAnalysis(stdout, stderr, exitCode, profile = 'values-
     return { ...parsePythonModuleAnalysis(packet), version };
   }
   const keys = ['version', 'supported', 'numericVariablePrinted', 'sameVariableAdditionPrinted'];
-  if (oopProfiles.has(profile)) keys.push(...oopFields, 'syntaxError');
+  if (isPythonOopProfile(profile))
+    keys.push(
+      ...(isPythonObjectProtocolProfile(profile) ? objectProtocolFields : oopFields),
+      'syntaxError',
+    );
   else if (profile === 'dataclass-test-project-v1') keys.push('dataProjectTested');
   else if (profile === 'context-manager-close-v1') keys.push('contextManagedClosed');
   else if (iterationProfiles.has(profile)) keys.push(...iterationFields);

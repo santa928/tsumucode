@@ -40,6 +40,9 @@ export interface PythonResult {
   readonly dataProjectTested?: boolean;
   readonly classInstanceCompared?: boolean;
   readonly methodsCompared?: boolean;
+  readonly inheritanceDelegationCompared?: boolean;
+  readonly propertyRangeValidated?: boolean;
+  readonly dunderProtocolsUsed?: boolean;
   readonly expectedOutput?: string | null;
 }
 

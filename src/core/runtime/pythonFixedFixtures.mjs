@@ -1,5 +1,10 @@
 /** Local採点の入力と期待値だけを固定する。作者の解答Sourceは配信しない。 */
 const fixtures = {
+  'inheritance-delegation-v1': [['object-protocol', [], '6\n9\n6\n8\n10\n9\n']],
+  'validated-property-v1': [
+    ['object-protocol', [], '70\n90\n50\n範囲外\n90\n範囲外\n90\n0\n100\n初期値も範囲外\n'],
+  ],
+  'length-string-protocol-v1': [['object-protocol', [], '2\n本:2\n2\n3\n本:3\n0\n本:0\n']],
   'class-instance-lookup-v1': [
     ['identity-and-lookup', [], 'True\nFalse\n3\n5\n2\n2\n7\n2\n2\n7\n4\n'],
   ],

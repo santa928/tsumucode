@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { verifyPythonObjectProtocols } from './python-object-protocol-acceptance.mjs';
 import console from 'node:console';
 import { readFile } from 'node:fs/promises';
 import process from 'node:process';
@@ -11,7 +12,7 @@ import {
 import { createPythonAuthorExecutor } from './python-author-execution.mjs';
 
 // 作者だけがobjectを直接観察する。学生の採点は固定AST事実と実stdoutの照合を維持する。
-const execute = await createPythonAuthorExecutor('tsumucode-issue148-author');
+const execute = await createPythonAuthorExecutor('tsumucode-issue149-author');
 let count = 0;
 for (let number = 1; number <= 2; number += 1) {
   const lesson = `python-oop-ch01-l0${number}`;
@@ -99,12 +100,13 @@ print("object-observation: instance-binding/class-binding/no-binding")
     );
   }
 }
+const additional = await verifyPythonObjectProtocols(execute);
 console.log(
   JSON.stringify({
     engine: process.argv.includes('--pyodide') ? 'Pyodide 314.0.7' : 'CPython 3.14.2',
-    fixtures: count,
-    actualObjectObservations: 2,
-    slideExamples: 7,
+    fixtures: count + additional.fixtures,
+    actualObjectObservations: 2 + additional.actualObjectObservations,
+    slideExamples: 7 + additional.slideExamples,
     retries: 0,
   }),
 );

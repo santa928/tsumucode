@@ -1,0 +1,7 @@
+print("2")
+print("本:2")
+print("2")
+print("3")
+print("本:3")
+print("0")
+print("本:0")

@@ -1,0 +1,25 @@
+id: python-oop-ch02-l03
+kind: standard
+title: len・文字列表示とdunderの契約
+goal: lenと文字列表示から呼ばれるdunderの役割・返却型を説明し、Listの共有による副作用を避けられる。
+estimatedMinutes: 25
+prerequisiteLessonIds:
+  - python-oop-ch02-l02
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/python-oop-ch02-l03-e01/exercise.yaml
+reflection: len(shelf)とprint(shelf)はどのdunderを呼びますか。元Listの変更をshelfへ伝えないのはなぜですか。
+glossaryRefs:
+  - python-dunder-length
+  - python-dunder-string
+  - python-object-copy
+  - python-dunder-contract
+completion:
+  kind: standard
+  finalSlideId: python-oop-ch02-l03-s04
+  requiredExerciseIds:
+    - python-oop-ch02-l03-e01

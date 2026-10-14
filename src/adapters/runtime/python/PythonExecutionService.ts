@@ -47,6 +47,9 @@ const payloadSchema = z.object({
   dataProjectTested: z.boolean().optional(),
   classInstanceCompared: z.boolean().optional(),
   methodsCompared: z.boolean().optional(),
+  inheritanceDelegationCompared: z.boolean().optional(),
+  propertyRangeValidated: z.boolean().optional(),
+  dunderProtocolsUsed: z.boolean().optional(),
   expectedOutput: z.string().max(4096).nullable().optional(),
 });
 
@@ -337,6 +340,18 @@ export class PythonExecutionService implements ExecutionService {
                       value: payload.classInstanceCompared === true,
                     },
                     { id: 'python.methods-compared', value: payload.methodsCompared === true },
+                    {
+                      id: 'python.inheritance-delegation-compared',
+                      value: payload.inheritanceDelegationCompared === true,
+                    },
+                    {
+                      id: 'python.property-range-validated',
+                      value: payload.propertyRangeValidated === true,
+                    },
+                    {
+                      id: 'python.dunder-protocols-used',
+                      value: payload.dunderProtocolsUsed === true,
+                    },
                     { id: 'python.input-echoed', value: payload.inputEchoed === true },
                     {
                       id: 'python.age-boundary-branched',

@@ -38,11 +38,44 @@ async function grade(page: Page, exerciseId: string, status: string) {
   await page.getByRole('button', { name: '閉じる', exact: true }).click();
 }
 
-for (const number of [1, 2]) {
-  const lesson = `python-oop-ch01-l0${String(number)}`;
+const lessons = [
+  {
+    lesson: 'python-oop-ch01-l01',
+    output: 'True',
+    wrong: 'wrong-constructor',
+    unsupported: 'builtin-alias',
+  },
+  {
+    lesson: 'python-oop-ch01-l02',
+    output: '12',
+    wrong: 'wrong-call',
+    unsupported: 'attribute-decorator',
+  },
+  {
+    lesson: 'python-oop-ch02-l01',
+    output: '10',
+    wrong: 'wrong-call',
+    unsupported: 'builtin-alias',
+  },
+  {
+    lesson: 'python-oop-ch02-l02',
+    output: '初期値も範囲外',
+    wrong: 'wrong-call',
+    unsupported: 'attribute-decorator',
+  },
+  {
+    lesson: 'python-oop-ch02-l03',
+    output: '本:3',
+    wrong: 'wrong-call',
+    unsupported: 'forbidden-attribute',
+  },
+];
+for (const entry of lessons) {
+  const { lesson } = entry;
+  const chapter = lesson.slice(0, 'python-oop-ch01'.length);
   const exerciseId = `${lesson}-e01`;
-  const directory = `content/python-oop/chapters/python-oop-ch01/lessons/${lesson}/exercises/${exerciseId}`;
-  test(`OOP l0${String(number)}の実判定と、誤呼出し後のSource・成功版・Resetを確認する`, async ({
+  const directory = `content/python-oop/chapters/${chapter}/lessons/${lesson}/exercises/${exerciseId}`;
+  test(`${lesson}の実判定と、誤呼出し後のSource・成功版・Resetを確認する`, async ({
     page,
   }, info) => {
     test.setTimeout(180_000);
@@ -57,24 +90,21 @@ for (const number of [1, 2]) {
     await grade(page, exerciseId, 'pass');
     const passed = (await draft(page, exerciseId))?.['lastPassingSnapshots'];
     const output = page.getByRole('region', { name: 'Console出力', exact: true });
-    await expect(output).toContainText(number === 1 ? 'True' : '12');
+    await expect(output).toContainText(entry.output);
     await button.focus();
     await expect(button).toBeFocused();
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
     await page.screenshot({
-      path: info.outputPath(`python-oop-l0${String(number)}-passed.png`),
+      path: info.outputPath(`${lesson}-passed.png`),
       fullPage: true,
     });
 
-    if (number === 2) {
+    if (lesson !== 'python-oop-ch01-l01') {
       await replaceEditorText(page, 'class Counter(:\n    pass\n');
       await grade(page, exerciseId, 'code-error');
       expect((await draft(page, exerciseId))?.['lastPassingSnapshots']).toEqual(passed);
     }
-    const wrongCall = await readFile(
-      `${directory}/fixtures/${number === 1 ? 'wrong-constructor' : 'wrong-call'}.py`,
-      'utf8',
-    );
+    const wrongCall = await readFile(`${directory}/fixtures/${entry.wrong}.py`, 'utf8');
     await replaceEditorText(page, wrongCall);
     await grade(page, exerciseId, 'code-error');
     await expectSavedSource(page, exerciseId, wrongCall);
@@ -89,10 +119,7 @@ for (const number of [1, 2]) {
     await expect(button).toBeEnabled({ timeout: 30_000 });
 
     const beforeUnsupported = (await draft(page, exerciseId))?.['validationHistory'];
-    const unsupported = await readFile(
-      `${directory}/fixtures/${number === 2 ? 'attribute-decorator' : 'builtin-alias'}.py`,
-      'utf8',
-    );
+    const unsupported = await readFile(`${directory}/fixtures/${entry.unsupported}.py`, 'utf8');
     await replaceEditorText(page, unsupported);
     await button.click();
     await expect(page.getByText(/採点していません/).last()).toBeVisible({ timeout: 30_000 });
@@ -119,6 +146,18 @@ test('OOPの草稿Slideを狭幅で読み、Classとmethodの説明図を確認�
     ['python-oop-ch01-l02', 's02'],
     ['python-oop-ch01-l02', 's03'],
     ['python-oop-ch01-l02', 's04'],
+    ['python-oop-ch02-l01', 's01'],
+    ['python-oop-ch02-l01', 's02'],
+    ['python-oop-ch02-l01', 's03'],
+    ['python-oop-ch02-l01', 's04'],
+    ['python-oop-ch02-l02', 's01'],
+    ['python-oop-ch02-l02', 's02'],
+    ['python-oop-ch02-l02', 's03'],
+    ['python-oop-ch02-l02', 's04'],
+    ['python-oop-ch02-l03', 's01'],
+    ['python-oop-ch02-l03', 's02'],
+    ['python-oop-ch02-l03', 's03'],
+    ['python-oop-ch02-l03', 's04'],
   ] as const) {
     await page.goto(`${base}#/courses/python-oop/lessons/${lesson}/slides/${lesson}-${slide}`);
     await expect(page.getByTestId('slide-stage')).toHaveAttribute(

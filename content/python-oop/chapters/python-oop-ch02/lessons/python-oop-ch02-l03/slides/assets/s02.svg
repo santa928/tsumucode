@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 276" role="img" aria-labelledby="title desc">
+  <title id="title">print・strが使う文字列を返す</title>
+  <desc id="desc">printとstrがdunderを呼び、現在の個数を含む文字列を返す静的な図。</desc>
+  <rect width="420" height="276" fill="#f5f1df"/>
+  <g font-family="sans-serif" font-size="20" fill="#153c35">
+    <rect x="18" y="16" width="384" height="96" rx="10" fill="#fff" stroke="#17483d" stroke-width="2"/>
+    <text x="30" y="48">print(shelf) / str(shelf)</text>
+    <text x="30" y="78">Classの__str__を呼ぶ</text>
+    <rect x="18" y="120" width="384" height="96" rx="10" fill="#fff" stroke="#17483d" stroke-width="2"/>
+    <text x="30" y="152">len(self)の現在値は2</text>
+    <text x="30" y="182">文字列「本:2」を返す</text>
+    <text x="18" y="236">表示は現在の状態から作る。</text>
+    <text x="18" y="264">__str__は文字列を返す契約。</text>
+  </g>
+</svg>

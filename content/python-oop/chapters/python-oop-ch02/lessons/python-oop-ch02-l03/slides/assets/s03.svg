@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 276" role="img" aria-labelledby="title desc">
+  <title id="title">Listの共有と浅いコピーを区別する</title>
+  <desc id="desc">元Listを共有する側は3個となり、浅くコピーした側は2個を保つ静的な図。</desc>
+  <rect width="420" height="276" fill="#f5f1df"/>
+  <g font-family="sans-serif" font-size="20" fill="#153c35">
+    <rect x="18" y="16" width="384" height="96" rx="10" fill="#fff" stroke="#17483d" stroke-width="2"/>
+    <text x="30" y="48">元titlesへappend</text>
+    <text x="30" y="78">sharedも同じListで3個</text>
+    <rect x="18" y="120" width="384" height="96" rx="10" fill="#fff" stroke="#17483d" stroke-width="2"/>
+    <text x="30" y="152">copiedは外側をコピー</text>
+    <text x="30" y="182">コピー先は2個のまま</text>
+    <text x="18" y="236">代入は新しいListを作らない。</text>
+    <text x="18" y="264">浅いコピーの範囲を意識する。</text>
+  </g>
+</svg>

@@ -1,0 +1,25 @@
+id: python-oop-ch02-l01
+kind: standard
+title: 継承する計算と、参照を持つ委譲
+goal: 継承で振る舞いを上書きする場合と、別objectへ仕事を委譲する場合を選び、共有参照の影響を説明できる。
+estimatedMinutes: 25
+prerequisiteLessonIds:
+  - python-oop-ch01-l02
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/python-oop-ch02-l01-e01/exercise.yaml
+reflection: view.readとchild.calculateはなぜ別の変更を受けますか。呼出先を持つViewを継承で置き換える必要はありますか。
+glossaryRefs:
+  - python-inheritance
+  - python-inherited-initialization
+  - python-composition
+  - python-object-design-choice
+completion:
+  kind: standard
+  finalSlideId: python-oop-ch02-l01-s04
+  requiredExerciseIds:
+    - python-oop-ch02-l01-e01

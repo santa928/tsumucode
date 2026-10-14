@@ -5,6 +5,8 @@ export {
   validPythonInputLines,
   validPythonFiles,
   isPythonModuleProfile,
+  isPythonObjectProtocolProfile,
+  isPythonOopProfile,
   pythonSourcePaths,
   pythonSourceSnapshot,
 } from '../../src/core/runtime/pythonLessonProfiles.mjs';

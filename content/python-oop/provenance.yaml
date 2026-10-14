@@ -157,3 +157,347 @@ items:
   - id: python-oop-attribute-decorator-original
     visibility: authoring
     path: chapters/python-oop-ch01/lessons/python-oop-ch01-l02/exercises/python-oop-ch01-l02-e01/fixtures/attribute-decorator.py
+  - id: python-oop-ch02-original-51
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/chapter.yaml
+  - id: python-oop-ch02-original-52
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/exercises/python-oop-ch02-l01-e01/exercise.yaml
+  - id: python-oop-ch02-original-53
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/exercises/python-oop-ch02-l01-e01/fixtures/alternate-names.py
+  - id: python-oop-ch02-original-54
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/exercises/python-oop-ch02-l01-e01/fixtures/builtin-alias.py
+  - id: python-oop-ch02-original-55
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/exercises/python-oop-ch02-l01-e01/fixtures/commuted-product.py
+  - id: python-oop-ch02-original-56
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/exercises/python-oop-ch02-l01-e01/fixtures/copied-delegate-value.py
+  - id: python-oop-ch02-original-57
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/exercises/python-oop-ch02-l01-e01/fixtures/hardcoded.py
+  - id: python-oop-ch02-original-58
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/exercises/python-oop-ch02-l01-e01/fixtures/multiple-bases.py
+  - id: python-oop-ch02-original-59
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/exercises/python-oop-ch02-l01-e01/fixtures/no-delegation.py
+  - id: python-oop-ch02-original-60
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/exercises/python-oop-ch02-l01-e01/fixtures/no-override.py
+  - id: python-oop-ch02-original-61
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/exercises/python-oop-ch02-l01-e01/fixtures/shared-class-state.py
+  - id: python-oop-ch02-original-62
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/exercises/python-oop-ch02-l01-e01/fixtures/solution.py
+  - id: python-oop-ch02-original-63
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/exercises/python-oop-ch02-l01-e01/fixtures/starter.py
+  - id: python-oop-ch02-original-64
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/exercises/python-oop-ch02-l01-e01/fixtures/temporary-value.py
+  - id: python-oop-ch02-original-65
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/exercises/python-oop-ch02-l01-e01/fixtures/wrong-call.py
+  - id: python-oop-ch02-original-66
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/exercises/python-oop-ch02-l01-e01/instructions.md
+  - id: python-oop-ch02-original-67
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/exercises/python-oop-ch02-l01-e01/solution/main.py
+  - id: python-oop-ch02-original-68
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/exercises/python-oop-ch02-l01-e01/starter/main.py
+  - id: python-oop-ch02-original-69
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/lesson.yaml
+  - id: python-oop-ch02-l01-s01-original
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/slides/assets/s01.svg
+  - id: python-oop-ch02-l01-s02-original
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/slides/assets/s02.svg
+  - id: python-oop-ch02-l01-s03-original
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/slides/assets/s03.svg
+  - id: python-oop-ch02-l01-s04-original
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/slides/assets/s04.svg
+  - id: python-oop-ch02-original-74
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/slides/s01.md
+  - id: python-oop-ch02-original-75
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/slides/s02.md
+  - id: python-oop-ch02-original-76
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/slides/s03.md
+  - id: python-oop-ch02-original-77
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l01/slides/s04.md
+  - id: python-oop-ch02-original-78
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/exercise.yaml
+  - id: python-oop-ch02-original-79
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/fixtures/alternate-names.py
+  - id: python-oop-ch02-original-80
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/fixtures/attribute-decorator.py
+  - id: python-oop-ch02-original-81
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/fixtures/builtin-alias.py
+  - id: python-oop-ch02-original-82
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/fixtures/chained-range.py
+  - id: python-oop-ch02-original-83
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/fixtures/constructor-bypass.py
+  - id: python-oop-ch02-original-84
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/fixtures/hardcoded.py
+  - id: python-oop-ch02-original-85
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/fixtures/lower-only.py
+  - id: python-oop-ch02-original-86
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/fixtures/mutate-before-validation.py
+  - id: python-oop-ch02-original-87
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/fixtures/reject-boundaries.py
+  - id: python-oop-ch02-original-88
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/fixtures/reversed-bounds.py
+  - id: python-oop-ch02-original-89
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/fixtures/shared-class-state.py
+  - id: python-oop-ch02-original-90
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/fixtures/solution.py
+  - id: python-oop-ch02-original-91
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/fixtures/starter.py
+  - id: python-oop-ch02-original-92
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/fixtures/two-guards.py
+  - id: python-oop-ch02-original-93
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/fixtures/upper-only.py
+  - id: python-oop-ch02-original-94
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/fixtures/wrong-call.py
+  - id: python-oop-ch02-original-95
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/instructions.md
+  - id: python-oop-ch02-original-96
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/solution/main.py
+  - id: python-oop-ch02-original-97
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/starter/main.py
+  - id: python-oop-ch02-original-98
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/lesson.yaml
+  - id: python-oop-ch02-l02-s01-original
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/slides/assets/s01.svg
+  - id: python-oop-ch02-l02-s02-original
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/slides/assets/s02.svg
+  - id: python-oop-ch02-l02-s03-original
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/slides/assets/s03.svg
+  - id: python-oop-ch02-l02-s04-original
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/slides/assets/s04.svg
+  - id: python-oop-ch02-original-103
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/slides/s01.md
+  - id: python-oop-ch02-original-104
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/slides/s02.md
+  - id: python-oop-ch02-original-105
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/slides/s03.md
+  - id: python-oop-ch02-original-106
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/slides/s04.md
+  - id: python-oop-ch02-original-107
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/exercises/python-oop-ch02-l03-e01/exercise.yaml
+  - id: python-oop-ch02-original-108
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/exercises/python-oop-ch02-l03-e01/fixtures/alternate-names.py
+  - id: python-oop-ch02-original-109
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/exercises/python-oop-ch02-l03-e01/fixtures/builtin-alias.py
+  - id: python-oop-ch02-original-110
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/exercises/python-oop-ch02-l03-e01/fixtures/copy-method.py
+  - id: python-oop-ch02-original-111
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/exercises/python-oop-ch02-l03-e01/fixtures/forbidden-attribute.py
+  - id: python-oop-ch02-original-112
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/exercises/python-oop-ch02-l03-e01/fixtures/formatted-string.py
+  - id: python-oop-ch02-original-113
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/exercises/python-oop-ch02-l03-e01/fixtures/hardcoded-string.py
+  - id: python-oop-ch02-original-114
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/exercises/python-oop-ch02-l03-e01/fixtures/hardcoded.py
+  - id: python-oop-ch02-original-115
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/exercises/python-oop-ch02-l03-e01/fixtures/shared-class-state.py
+  - id: python-oop-ch02-original-116
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/exercises/python-oop-ch02-l03-e01/fixtures/shared-input.py
+  - id: python-oop-ch02-original-117
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/exercises/python-oop-ch02-l03-e01/fixtures/slice-copy.py
+  - id: python-oop-ch02-original-118
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/exercises/python-oop-ch02-l03-e01/fixtures/solution.py
+  - id: python-oop-ch02-original-119
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/exercises/python-oop-ch02-l03-e01/fixtures/starter.py
+  - id: python-oop-ch02-original-120
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/exercises/python-oop-ch02-l03-e01/fixtures/temporary-value.py
+  - id: python-oop-ch02-original-121
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/exercises/python-oop-ch02-l03-e01/fixtures/wrong-call.py
+  - id: python-oop-ch02-original-122
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/exercises/python-oop-ch02-l03-e01/fixtures/wrong-length-type.py
+  - id: python-oop-ch02-original-123
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/exercises/python-oop-ch02-l03-e01/fixtures/wrong-string-type.py
+  - id: python-oop-ch02-original-124
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/exercises/python-oop-ch02-l03-e01/instructions.md
+  - id: python-oop-ch02-original-125
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/exercises/python-oop-ch02-l03-e01/solution/main.py
+  - id: python-oop-ch02-original-126
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/exercises/python-oop-ch02-l03-e01/starter/main.py
+  - id: python-oop-ch02-original-127
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/lesson.yaml
+  - id: python-oop-ch02-l03-s01-original
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/slides/assets/s01.svg
+  - id: python-oop-ch02-l03-s02-original
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/slides/assets/s02.svg
+  - id: python-oop-ch02-l03-s03-original
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/slides/assets/s03.svg
+  - id: python-oop-ch02-l03-s04-original
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/slides/assets/s04.svg
+  - id: python-oop-ch02-original-132
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/slides/s01.md
+  - id: python-oop-ch02-original-133
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/slides/s02.md
+  - id: python-oop-ch02-original-134
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/slides/s03.md
+  - id: python-oop-ch02-original-135
+    visibility: public
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l03/slides/s04.md
+  - id: python-oop-ch02-positive-range-original
+    visibility: authoring
+    createdAt: 2026-10-14
+    path: chapters/python-oop-ch02/lessons/python-oop-ch02-l02/exercises/python-oop-ch02-l02-e01/fixtures/positive-range.py

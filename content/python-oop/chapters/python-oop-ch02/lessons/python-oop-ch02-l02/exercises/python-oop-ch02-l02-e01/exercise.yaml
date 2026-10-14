@@ -1,0 +1,255 @@
+id: python-oop-ch02-l02-e01
+kind: standard
+workspaceId: python-oop-ch02-l02-e01
+countsTowardStandardExerciseTotal: true
+title: Propertyで読み書きと値の条件を守る
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: python-property-read
+    minimumLevel: transform
+  - conceptId: python-property-write
+    minimumLevel: transform
+  - conceptId: python-property-validation
+    minimumLevel: transform
+  - conceptId: python-property-invariants
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: python-oop-ch02-l02-e01-step01
+    file: main.py
+    target: setterで下限0と上限100を検証してから、内部の_valueへ代入します。
+    starterAnchor: 'if value > 100:'
+    change: setterで下限0と上限100を検証してから、内部の_valueへ代入します。
+    observe: Propertyの読取りと代入を区別し、初期化・代入の値検証と拒否後の値保持を説明できる。
+    requiresConceptIds:
+      - python-property-read
+      - python-property-write
+      - python-property-validation
+      - python-property-invariants
+    validationRuleIds:
+      - python-oop-ch02-l02-e01-r01
+runtime:
+  kind: python
+  entryFile: main.py
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  profile: validated-property-v1
+files:
+  - path: main.py
+    language: python
+    source: starter/main.py
+    editable: true
+solutionFiles:
+  - path: main.py
+    language: python
+    source: solution/main.py
+    editable: false
+validationRules:
+  - id: python-oop-ch02-l02-e01-r01
+    label: Propertyの読取りと代入を区別し、初期化・代入の値検証と拒否後の値保持を説明できる。
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - desktop-1280
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: property-range-validated
+    feedback:
+      target: main.pyとConsole
+      expected: Propertyの読取りと代入を区別し、初期化・代入の値検証と拒否後の値保持を説明できる。
+      nextAction: setterで下限0と上限100を検証してから、内部の_valueへ代入します。
+    hintId: python-oop-ch02-l02-e01-h01
+    relatedSlideId: python-oop-ch02-l02-s04
+hints:
+  - id: python-oop-ch02-l02-e01-h01
+    level: 1
+    title: 考え方の手掛かり
+    text: 読取りはgetter、代入はsetterです。値の範囲は保存前に調べます。
+    relatedSlideId: python-oop-ch02-l02-s04
+  - id: python-oop-ch02-l02-e01-h02
+    level: 2
+    title: コードを組み立てる
+    text: 0と100は有効です。負の値と101を拒否しても、直前の値を保ちます。
+    relatedSlideId: python-oop-ch02-l02-s04
+  - id: python-oop-ch02-l02-e01-h03
+    level: 3
+    title: 解答と理由
+    text: value < 0 or value > 100ならValueErrorを送出し、その後にself._value =
+      valueを書きます。初期化もself.valueへ代入します。
+    relatedSlideId: python-oop-ch02-l02-s04
+relatedSlideIds:
+  - python-oop-ch02-l02-s01
+  - python-oop-ch02-l02-s02
+  - python-oop-ch02-l02-s03
+  - python-oop-ch02-l02-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: solution
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/solution.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: starter
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/starter.py
+        editable: false
+    expectedFeedbackRuleIds:
+      - python-oop-ch02-l02-e01-r01
+  - id: upper-only
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/upper-only.py
+        editable: false
+    expectedFeedbackRuleIds:
+      - python-oop-ch02-l02-e01-r01
+  - id: lower-only
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/lower-only.py
+        editable: false
+    expectedFeedbackRuleIds:
+      - python-oop-ch02-l02-e01-r01
+  - id: reject-boundaries
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/reject-boundaries.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: mutate-before-validation
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/mutate-before-validation.py
+        editable: false
+    expectedFeedbackRuleIds:
+      - python-oop-ch02-l02-e01-r01
+  - id: shared-class-state
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/shared-class-state.py
+        editable: false
+    expectedFeedbackRuleIds:
+      - python-oop-ch02-l02-e01-r01
+  - id: constructor-bypass
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/constructor-bypass.py
+        editable: false
+    expectedFeedbackRuleIds:
+      - python-oop-ch02-l02-e01-r01
+  - id: wrong-call
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/wrong-call.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: chained-range
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/chained-range.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: two-guards
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/two-guards.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: reversed-bounds
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/reversed-bounds.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternate-names
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/alternate-names.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: attribute-decorator
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/attribute-decorator.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: hardcoded
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/hardcoded.py
+        editable: false
+    expectedFeedbackRuleIds:
+      - python-oop-ch02-l02-e01-r01
+  - id: builtin-alias
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/builtin-alias.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: positive-range
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/positive-range.py
+        editable: false
+    expectedFeedbackRuleIds: []
