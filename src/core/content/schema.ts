@@ -423,6 +423,8 @@ export const PythonExerciseRuntimeSchema = z
       'length-string-protocol-v1',
       'function-decorator-flow-v1',
       'wraps-metadata-preserved-v1',
+      'configured-decorator-v1',
+      'decorator-ledger-project-v1',
     ]),
   })
   .strict();

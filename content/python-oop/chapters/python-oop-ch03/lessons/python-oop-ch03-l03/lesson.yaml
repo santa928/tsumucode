@@ -1,0 +1,25 @@
+id: python-oop-ch03-l03
+kind: standard
+title: 設定・装飾・呼出の3段階を分ける
+goal: 設定・装飾・呼出を分け、同じ設定から作る各wrapperの状態とmetadata・引数・戻り値・例外を保てる。
+estimatedMinutes: 30
+prerequisiteLessonIds:
+  - python-oop-ch03-l02
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+  - slides/s04.md
+exerciseSources:
+  - exercises/python-oop-ch03-l03-e01/exercise.yaml
+reflection: 設定を1回作り2つのFunctionへ適用したとき、共有する値と分かれる状態を説明してください。例外後の回数と記録値はどうなりますか。
+glossaryRefs:
+  - python-decorator-configuration
+  - python-decoration-timing
+  - python-configured-state
+  - python-configured-contract
+completion:
+  kind: standard
+  finalSlideId: python-oop-ch03-l03-s04
+  requiredExerciseIds:
+    - python-oop-ch03-l03-e01

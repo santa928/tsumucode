@@ -135,3 +135,38 @@ concepts:
     prerequisiteConceptIds:
       - python-wraps-behavior
     minimumProjectLevel: transform
+  - id: python-decorator-configuration
+    introducedBySlideId: python-oop-ch03-l03-s01
+    prerequisiteConceptIds:
+      - python-wraps-comparison
+    minimumProjectLevel: transform
+  - id: python-decoration-timing
+    introducedBySlideId: python-oop-ch03-l03-s02
+    prerequisiteConceptIds:
+      - python-decorator-configuration
+    minimumProjectLevel: transform
+  - id: python-configured-state
+    introducedBySlideId: python-oop-ch03-l03-s03
+    prerequisiteConceptIds:
+      - python-decoration-timing
+    minimumProjectLevel: transform
+  - id: python-configured-contract
+    introducedBySlideId: python-oop-ch03-l03-s04
+    prerequisiteConceptIds:
+      - python-configured-state
+    minimumProjectLevel: transform
+  - id: python-project-state-owners
+    introducedBySlideId: python-oop-ch04-l01-s01
+    prerequisiteConceptIds:
+      - python-configured-contract
+    minimumProjectLevel: transform
+  - id: python-project-forwarding
+    introducedBySlideId: python-oop-ch04-l01-s02
+    prerequisiteConceptIds:
+      - python-project-state-owners
+    minimumProjectLevel: transform
+  - id: python-project-recovery
+    introducedBySlideId: python-oop-ch04-l01-s03
+    prerequisiteConceptIds:
+      - python-project-forwarding
+    minimumProjectLevel: transform

@@ -769,3 +769,335 @@ items:
     visibility: authoring
     path: chapters/python-oop-ch03/lessons/python-oop-ch03-l02/exercises/python-oop-ch03-l02-e01/fixtures/eager-call.py
     createdAt: 2026-10-14
+  - id: python-configured-decorator-original-1
+    visibility: public
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/exercise.yaml
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-2
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/alternate-names.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-3
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/builtin-alias.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-4
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/commuted-calculation.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-5
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/dropped-keywords.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-6
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/empty-docstring.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-7
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/explicit-application.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-8
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/explicit-increment.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-9
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/explicit-wraps.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-10
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/fixed-label.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-11
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/fixed-result.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-12
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/forbidden-attribute.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-13
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/forbidden-import.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-14
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/hardcoded.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-15
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/late-increment.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-16
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/lost-return.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-17
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/no-wraps.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-18
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/reset-state.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-19
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/shared-config-state.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-20
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/solution.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-21
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/starter.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-22
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/swallowed-error.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-23
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/temporary-result.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-24
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/wraps-alias.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-25
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/wraps-module.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-26
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/fixtures/wrong-call.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-27
+    visibility: public
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/instructions.md
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-28
+    visibility: authoring
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/solution/main.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-29
+    visibility: public
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/exercises/python-oop-ch03-l03-e01/starter/main.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-30
+    visibility: public
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/lesson.yaml
+    createdAt: 2026-10-14
+  - id: python-oop-ch03-l03-s01-original
+    visibility: public
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/slides/assets/s01.svg
+    createdAt: 2026-10-14
+  - id: python-oop-ch03-l03-s02-original
+    visibility: public
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/slides/assets/s02.svg
+    createdAt: 2026-10-14
+  - id: python-oop-ch03-l03-s03-original
+    visibility: public
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/slides/assets/s03.svg
+    createdAt: 2026-10-14
+  - id: python-oop-ch03-l03-s04-original
+    visibility: public
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/slides/assets/s04.svg
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-35
+    visibility: public
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/slides/s01.md
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-36
+    visibility: public
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/slides/s02.md
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-37
+    visibility: public
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/slides/s03.md
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-38
+    visibility: public
+    path: chapters/python-oop-ch03/lessons/python-oop-ch03-l03/slides/s04.md
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-39
+    visibility: public
+    path: chapters/python-oop-ch04/chapter.yaml
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-40
+    visibility: public
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/brief.md
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-41
+    visibility: public
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/exercise.yaml
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-42
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/accept-negative.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-43
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/alternate-names.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-44
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/builtin-alias.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-45
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/commuted-calculation.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-46
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/dropped-keywords.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-47
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/empty-docstring.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-48
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/explicit-application.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-49
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/explicit-increment.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-50
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/explicit-ledger-update.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-51
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/explicit-wraps.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-52
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/fixed-label.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-53
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/fixed-result.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-54
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/forbidden-attribute.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-55
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/forbidden-import.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-56
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/hardcoded.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-57
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/late-increment.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-58
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/lost-return.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-59
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/mutate-before-check.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-60
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/no-wraps.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-61
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/reset-state.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-62
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/shared-config-state.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-63
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/shared-ledger-state.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-64
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/solution.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-65
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/starter.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-66
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/swallowed-error.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-67
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/temporary-ledger-result.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-68
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/temporary-result.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-69
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/wraps-alias.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-70
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/wraps-module.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-71
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/wrong-call.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-72
+    visibility: public
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/instructions.md
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-73
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/solution/main.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-74
+    visibility: public
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/starter/main.py
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-75
+    visibility: public
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/guide.md
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-76
+    visibility: public
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/lesson.yaml
+    createdAt: 2026-10-14
+  - id: python-oop-ch04-l01-s01-original
+    visibility: public
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/slides/assets/s01.svg
+    createdAt: 2026-10-14
+  - id: python-oop-ch04-l01-s02-original
+    visibility: public
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/slides/assets/s02.svg
+    createdAt: 2026-10-14
+  - id: python-oop-ch04-l01-s03-original
+    visibility: public
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/slides/assets/s03.svg
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-80
+    visibility: public
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/slides/s01.md
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-81
+    visibility: public
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/slides/s02.md
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-original-82
+    visibility: public
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/slides/s03.md
+    createdAt: 2026-10-14
+  - id: python-configured-decorator-renamed-update-original
+    visibility: authoring
+    path: chapters/python-oop-ch04/lessons/python-oop-ch04-l01/exercises/python-oop-ch04-l01-e01/fixtures/renamed-explicit-ledger-update.py
+    createdAt: 2026-10-14

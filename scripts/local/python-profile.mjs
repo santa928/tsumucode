@@ -5,6 +5,7 @@ import {
   isPythonModuleProfile,
   isPythonObjectProtocolProfile,
   isPythonDecoratorProfile,
+  isPythonDecoratorFactoryProfile,
   isPythonOopProfile,
 } from './pythonLessonProfiles.mjs';
 import { PYTHON_VERSION, PYTHON_IMAGE } from './protocol.mjs';
@@ -15,6 +16,7 @@ export {
   PYTHON_VERSION,
 } from './protocol.mjs';
 
+const factoryFields = ['configuredDecoratorCompared', 'decoratorProjectRecorded'];
 const decoratorFields = ['decoratorFlowCompared', 'wrapsMetadataPreserved'];
 const oopFields = ['classInstanceCompared', 'methodsCompared'];
 const objectProtocolFields = [
@@ -86,11 +88,13 @@ print(json.dumps(_module_result))
     Object.assign(
       fallback,
       Object.fromEntries(
-        (isPythonDecoratorProfile(profile)
-          ? decoratorFields
-          : isPythonObjectProtocolProfile(profile)
-            ? objectProtocolFields
-            : oopFields
+        (isPythonDecoratorFactoryProfile(profile)
+          ? factoryFields
+          : isPythonDecoratorProfile(profile)
+            ? decoratorFields
+            : isPythonObjectProtocolProfile(profile)
+              ? objectProtocolFields
+              : oopFields
         ).map((field) => [field, false]),
       ),
     );
@@ -165,11 +169,13 @@ export function parsePythonAnalysis(stdout, stderr, exitCode, profile = 'values-
   const keys = ['version', 'supported', 'numericVariablePrinted', 'sameVariableAdditionPrinted'];
   if (isPythonOopProfile(profile))
     keys.push(
-      ...(isPythonDecoratorProfile(profile)
-        ? decoratorFields
-        : isPythonObjectProtocolProfile(profile)
-          ? objectProtocolFields
-          : oopFields),
+      ...(isPythonDecoratorFactoryProfile(profile)
+        ? factoryFields
+        : isPythonDecoratorProfile(profile)
+          ? decoratorFields
+          : isPythonObjectProtocolProfile(profile)
+            ? objectProtocolFields
+            : oopFields),
       'syntaxError',
     );
   else if (profile === 'dataclass-test-project-v1') keys.push('dataProjectTested');

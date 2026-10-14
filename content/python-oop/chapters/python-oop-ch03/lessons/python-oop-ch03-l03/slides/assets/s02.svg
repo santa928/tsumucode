@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="258" viewBox="0 0 420 258" role="img" aria-label="設定はfactoryの本体、装飾はdecorateの本体、呼出はwrapperの本体の関係図。">
+  <rect width="420" height="258" rx="16" fill="#f5f1df"/>
+  <rect x="16" y="18" width="388" height="64" rx="10" fill="white" stroke="#00594f" stroke-width="2"/>
+  <text x="28" y="57" fill="#123d36" font-family="sans-serif" font-size="20">設定はfactoryの本体</text>
+  <rect x="16" y="94" width="388" height="64" rx="10" fill="white" stroke="#00594f" stroke-width="2"/>
+  <text x="28" y="133" fill="#123d36" font-family="sans-serif" font-size="20">装飾はdecorateの本体</text>
+  <rect x="16" y="170" width="388" height="64" rx="10" fill="white" stroke="#00594f" stroke-width="2"/>
+  <text x="28" y="209" fill="#123d36" font-family="sans-serif" font-size="20">呼出はwrapperの本体</text>
+</svg>

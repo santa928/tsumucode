@@ -1,10 +1,10 @@
 schemaVersion: 1
 id: python-oop
 title: PythonのClassとobjectの設計
-description: Classとmethod、継承・委譲・Property・dunderとFunction変換・wrapsを比較する175分の草稿Course。
+description: Classとmethod、継承・委譲・Property・dunderとFunction変換・設定付きdecoratorを記録Projectへ結ぶ240分の草稿Course。
 audience: Python基礎のFunction・スコープとPython実践のdataclassを学んだ方
-estimatedMinutes: 175
-revision: 2026-10-14.2
+estimatedMinutes: 240
+revision: 2026-10-14.3
 runnerId: python
 validatorId: python
 glossarySource: glossary.yaml
@@ -22,13 +22,13 @@ prerequisites:
   - python-practice
 publicationStatus: draft
 expectedTotals:
-  chapters: 3
-  lessons: 7
-  conceptSlides: 27
-  standardExercises: 7
-  guidedProjectLessons: 0
+  chapters: 4
+  lessons: 9
+  conceptSlides: 34
+  standardExercises: 8
+  guidedProjectLessons: 1
   capstoneLessons: 0
-  estimatedMinutes: 175
+  estimatedMinutes: 240
 provenanceManifestPath: provenance.yaml
 progressMigrations: []
 phases:
@@ -47,3 +47,8 @@ phases:
     description: Closureの状態・引数と結果・例外の中継とmetadataの修復を比較する。
     chapterSources:
       - chapters/python-oop-ch03/chapter.yaml
+  - id: python-oop-p04
+    title: 設定と記録の責務を結ぶ
+    description: ClassのInstance状態とwrapperの状態を分け、小さい記録Projectを完成する。
+    chapterSources:
+      - chapters/python-oop-ch04/chapter.yaml

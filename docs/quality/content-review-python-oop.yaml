@@ -80,3 +80,25 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes: 独立内容レビューで必須指摘0。新8図の390px表示と代表PC2画面を画像で確認。新2単元は固定CPython 3.14.2とPyodide 314.0.7で各40Fixture・Function観測2・Slide例8を検証し、製品の解析wrapperも対象とする。限定AST事実と実stdoutによる草稿の検証であり、実人・物理端末・性能・Pages公開の受入を意味しない。Issue147の未完受入と親17／正式公開152の残条件を保持する。
+  - lessonId: python-oop-ch03-l03
+    authorId: tsumucode-python-author
+    reviewerId: cache_races_ui_claims_review
+    sourceHash: 8b9756ca599d5ba911beb40d0d61f908da01c7d714d41c184f3bc8212020175f
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 独立内容レビューで初出の誤表現を修正し必須指摘0。新7図の390pxと代表PC2画面を画像で確認。新2単元は固定CPython3.14.2とPyodide314.0.7で各56Fixture・Function観測2・Slide例7を検証し、製品解析wrapperと別名＋明示更新の回帰も対象とする。限定AST事実と実stdoutによる草稿の検証であり、147の実人・物理端末・性能受入と新Pages公開の保留を維持する。正式Courseの受入・公開は親17と152の別判断に残す。
+  - lessonId: python-oop-ch04-l01
+    authorId: tsumucode-python-author
+    reviewerId: cache_races_ui_claims_review
+    sourceHash: 19ba27202e6a1906699a806ea044f0003ba39276508f7e9335ba6ec92c61afbe
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 独立内容レビューで初出の誤表現を修正し必須指摘0。新7図の390pxと代表PC2画面を画像で確認。新2単元は固定CPython3.14.2とPyodide314.0.7で各56Fixture・Function観測2・Slide例7を検証し、製品解析wrapperと別名＋明示更新の回帰も対象とする。限定AST事実と実stdoutによる草稿の検証であり、147の実人・物理端末・性能受入と新Pages公開の保留を維持する。正式Courseの受入・公開は親17と152の別判断に残す。

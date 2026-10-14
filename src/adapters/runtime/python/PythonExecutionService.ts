@@ -52,6 +52,8 @@ const payloadSchema = z.object({
   dunderProtocolsUsed: z.boolean().optional(),
   decoratorFlowCompared: z.boolean().optional(),
   wrapsMetadataPreserved: z.boolean().optional(),
+  configuredDecoratorCompared: z.boolean().optional(),
+  decoratorProjectRecorded: z.boolean().optional(),
   expectedOutput: z.string().max(4096).nullable().optional(),
 });
 
@@ -361,6 +363,14 @@ export class PythonExecutionService implements ExecutionService {
                     {
                       id: 'python.wraps-metadata-preserved',
                       value: payload.wrapsMetadataPreserved === true,
+                    },
+                    {
+                      id: 'python.configured-decorator-compared',
+                      value: payload.configuredDecoratorCompared === true,
+                    },
+                    {
+                      id: 'python.decorator-project-recorded',
+                      value: payload.decoratorProjectRecorded === true,
                     },
                     { id: 'python.input-echoed', value: payload.inputEchoed === true },
                     {

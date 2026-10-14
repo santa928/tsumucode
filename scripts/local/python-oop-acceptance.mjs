@@ -1,3 +1,4 @@
+import { verifyPythonConfiguredDecorators } from './python-configured-decorator-acceptance.mjs';
 import assert from 'node:assert/strict';
 import { verifyPythonDecorators } from './python-decorator-acceptance.mjs';
 import { verifyPythonObjectProtocols } from './python-object-protocol-acceptance.mjs';
@@ -103,13 +104,18 @@ print("object-observation: instance-binding/class-binding/no-binding")
 }
 const additional = await verifyPythonObjectProtocols(execute);
 const decorators = await verifyPythonDecorators(execute);
+const configured = await verifyPythonConfiguredDecorators(execute);
 console.log(
   JSON.stringify({
     engine: process.argv.includes('--pyodide') ? 'Pyodide 314.0.7' : 'CPython 3.14.2',
-    fixtures: count + additional.fixtures + decorators.fixtures,
+    fixtures: count + additional.fixtures + decorators.fixtures + configured.fixtures,
     actualObjectObservations:
-      2 + additional.actualObjectObservations + decorators.actualObjectObservations,
-    slideExamples: 7 + additional.slideExamples + decorators.slideExamples,
+      2 +
+      additional.actualObjectObservations +
+      decorators.actualObjectObservations +
+      configured.actualObjectObservations,
+    slideExamples:
+      7 + additional.slideExamples + decorators.slideExamples + configured.slideExamples,
     retries: 0,
   }),
 );

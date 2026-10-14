@@ -135,3 +135,38 @@ entries:
     definition: 説明情報と実際の動作を、別々の観測で確かめる。
     firstSlideId: python-oop-ch03-l02-s04
     relatedIds: []
+  - id: python-decorator-configuration
+    term: 設定を渡してdecoratorを作る
+    definition: 引数付きdecoratorは、設定からdecoratorを作るFunctionです。trace_calls("加算")の戻り値configuredは、まだ元の計算を実行しません。configured(add)が装飾済みFunctionを返します。ここではこれから作るtrace_callsと、既習のaddを使います。演習を完成した後の定義を前提にした例です。
+    firstSlideId: python-oop-ch03-l03-s01
+    relatedIds: []
+  - id: python-decoration-timing
+    term: 設定時・装飾時・呼出時を追う
+    definition: 3つの時点で実行する本体が変わります。次は関係を表示する短い例です。wrapsと回数は省いて時点だけを観察します。@factory("記録")も、factoryの結果へFunctionを渡す装飾です。
+    firstSlideId: python-oop-ch03-l03-s02
+    relatedIds: []
+  - id: python-configured-state
+    term: 同じ設定でもwrapperの状態は分ける
+    definition: labelは設定時のClosureへ保持します。callsはdecorateの中で0にし、装飾のたびに別の状態を作ります。factory側へcallsを置くと、同じ設定を再利用したwrapper同士で意図せず共有します。
+    firstSlideId: python-oop-ch03-l03-s03
+    relatedIds: []
+  - id: python-configured-contract
+    term: 設定を加えても中継の契約を守る
+    definition: 設定を受け取る層を増やしても、引数・戻り値・例外・metadataは前単元と同じ契約です。回数は元を呼ぶ前に増えるため、例外でも増加は残ります。wrapsだけでは中継や状態分離は保証されません。
+    firstSlideId: python-oop-ch03-l03-s04
+    relatedIds: []
+  - id: python-project-state-owners
+    term: 記録値と呼出回数の持ち主を分ける
+    definition: Projectでは記録のtotalをLedgerのInstanceへ置き、回数を各wrapperへ置きます。bookとagainは同じ設定でも別のwrapperです。Ledgerは前章と同じClassとInstance methodで、selfが呼出先を受けます。
+    firstSlideId: python-oop-ch04-l01-s01
+    relatedIds: []
+  - id: python-project-forwarding
+    term: 元の記録処理へ引数と結果を渡す
+    definition: decoratorは回数の表示を受け持ち、bookは通常記録、bonusは2倍の特典を計算し、Ledger.addが値を検証して記録します。wrapperが固定値を返すだけでは、totalも元の戻り値も保てません。metadataも別に確認します。
+    firstSlideId: python-oop-ch04-l01-s02
+    relatedIds: []
+  - id: python-project-recovery
+    term: 失敗後に保存して再開する
+    definition: 負値はLedger.addで更新前に拒否します。例外はwrapperから呼出元へ伝わり、回数は増えても記録値は変わりません。Sourceを保存して再読込で再開し、最初に戻すでstarterへ戻せます。移動には既存JSON転送を使います。
+    firstSlideId: python-oop-ch04-l01-s03
+    relatedIds: []

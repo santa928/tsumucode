@@ -1,0 +1,37 @@
+id: python-oop-ch04-l01
+kind: guided-project
+title: 設定付きdecoratorで記録Projectを作る
+goal: LedgerのInstance状態とwrapperの状態を分け、元の記録処理・例外・metadataを保って保存・再開できる。
+estimatedMinutes: 35
+prerequisiteLessonIds:
+  - python-oop-ch03-l03
+  - python-oop-ch01-l01
+  - python-oop-ch01-l02
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/python-oop-ch04-l01-e01/exercise.yaml
+reflection: 設定を1回作り2つのFunctionへ適用したとき、共有する値と分かれる状態を説明してください。例外後の回数と記録値はどうなりますか。
+glossaryRefs:
+  - python-project-state-owners
+  - python-project-forwarding
+  - python-project-recovery
+project:
+  id: python-decorator-ledger-project
+  briefSource: brief.md
+  guideSources:
+    - guide.md
+  checklist:
+    - id: python-decorator-ledger-project-check01
+      label: 設定・wrapper・Ledgerの状態を分け、元の動作とmetadataを保つ
+      required: true
+      ruleIds:
+        - python-oop-ch04-l01-e01-r01
+completion:
+  kind: guided-project
+  requiredChecklistItemIds:
+    - python-decorator-ledger-project-check01
+  requiredExerciseIds:
+    - python-oop-ch04-l01-e01

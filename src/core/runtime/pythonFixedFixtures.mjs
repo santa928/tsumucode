@@ -1,5 +1,19 @@
 /** Local採点の入力と期待値だけを固定する。作者の解答Sourceは配信しない。 */
 const fixtures = {
+  'configured-decorator-v1': [
+    [
+      'configured-observation',
+      [],
+      '加算 1\n5\n加算 2\n5\n倍算 1\n7\n加算 1\n2\n加算 3\n負の値\n加算 4\n2\n倍算 2\n8\n加算 2\n3\nTrue\nTrue\nTrue\ndouble\n',
+    ],
+  ],
+  'decorator-ledger-project-v1': [
+    [
+      'configured-observation',
+      [],
+      '記録 1\n5\n記録 2\n6\n特典 1\n5\n記録 1\n6\n記録 3\n負の値\n6 6\n記録 4\n8\n特典 2\n12\n記録 2\n14\nbook bonus\nTrue\nTrue\nTrue\n',
+    ],
+  ],
   'function-decorator-flow-v1': [
     [
       'decorator-observation',

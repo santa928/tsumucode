@@ -1,0 +1,318 @@
+id: python-oop-ch03-l03-e01
+kind: standard
+workspaceId: python-oop-ch03-l03-e01
+countsTowardStandardExerciseTotal: true
+title: 設定・装飾・呼出の3段階を分ける
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: python-decorator-configuration
+    minimumLevel: transform
+  - conceptId: python-decoration-timing
+    minimumLevel: transform
+  - conceptId: python-configured-state
+    minimumLevel: transform
+  - conceptId: python-configured-contract
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: python-oop-ch03-l03-e01-step01
+    file: main.py
+    target: wrapperの中継と状態の持ち主を直す
+    starterAnchor: return 0
+    change: callsをdecorate内で初期化し、同じ引数で元を呼んだ戻り値を返します。
+    observe: 設定・装飾・呼出を分け、同じ設定から作る各wrapperの状態とmetadata・引数・戻り値・例外を保てる。
+    requiresConceptIds:
+      - python-decorator-configuration
+      - python-decoration-timing
+      - python-configured-state
+      - python-configured-contract
+    validationRuleIds:
+      - python-oop-ch03-l03-e01-r01
+runtime:
+  kind: python
+  entryFile: main.py
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  profile: configured-decorator-v1
+files:
+  - path: main.py
+    language: python
+    source: starter/main.py
+    editable: true
+solutionFiles:
+  - path: main.py
+    language: python
+    source: solution/main.py
+    editable: false
+validationRules:
+  - id: python-oop-ch03-l03-e01-r01
+    label: 設定・装飾・呼出を分け、同じ設定から作る各wrapperの状態とmetadata・引数・戻り値・例外を保てる。
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: configured-decorator-compared
+    feedback:
+      target: main.pyとConsole
+      expected: 設定・装飾・呼出を分け、同じ設定から作る各wrapperの状態とmetadata・引数・戻り値・例外を保てる。
+      nextAction: 観察行を保ち、設定・wrapper・Instanceのどこへ状態を置くか確認してください。
+    hintId: python-oop-ch03-l03-e01-h01
+    relatedSlideId: python-oop-ch03-l03-s04
+hints:
+  - id: python-oop-ch03-l03-e01-h01
+    level: 1
+    title: 考え方の手掛かり
+    text: 設定値は同じでも、装飾するたびに新しいwrapperと回数が必要です。
+    relatedSlideId: python-oop-ch03-l03-s04
+  - id: python-oop-ch03-l03-e01-h02
+    level: 2
+    title: 処理を組み立てる
+    text: 回数をdecorate内で0にし、wrapperではnonlocalで増やしてから元のFunctionを呼びます。
+    relatedSlideId: python-oop-ch03-l03-s04
+  - id: python-oop-ch03-l03-e01-h03
+    level: 3
+    title: 解答と理由
+    text: wraps(function)をwrapperへ適用し、return function(*args, **kwargs)で中継します。
+    relatedSlideId: python-oop-ch03-l03-s04
+relatedSlideIds:
+  - python-oop-ch03-l03-s01
+  - python-oop-ch03-l03-s02
+  - python-oop-ch03-l03-s03
+  - python-oop-ch03-l03-s04
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: solution
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/solution.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: starter
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/starter.py
+        editable: false
+    expectedFeedbackRuleIds: [python-oop-ch03-l03-e01-r01]
+  - id: fixed-result
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/fixed-result.py
+        editable: false
+    expectedFeedbackRuleIds: [python-oop-ch03-l03-e01-r01]
+  - id: lost-return
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/lost-return.py
+        editable: false
+    expectedFeedbackRuleIds: [python-oop-ch03-l03-e01-r01]
+  - id: dropped-keywords
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/dropped-keywords.py
+        editable: false
+    expectedFeedbackRuleIds: [python-oop-ch03-l03-e01-r01]
+  - id: reset-state
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/reset-state.py
+        editable: false
+    expectedFeedbackRuleIds: [python-oop-ch03-l03-e01-r01]
+  - id: shared-config-state
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/shared-config-state.py
+        editable: false
+    expectedFeedbackRuleIds: [python-oop-ch03-l03-e01-r01]
+  - id: late-increment
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/late-increment.py
+        editable: false
+    expectedFeedbackRuleIds: [python-oop-ch03-l03-e01-r01]
+  - id: fixed-label
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/fixed-label.py
+        editable: false
+    expectedFeedbackRuleIds: [python-oop-ch03-l03-e01-r01]
+  - id: swallowed-error
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/swallowed-error.py
+        editable: false
+    expectedFeedbackRuleIds: [python-oop-ch03-l03-e01-r01]
+  - id: temporary-result
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/temporary-result.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternate-names
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/alternate-names.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: explicit-increment
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/explicit-increment.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: commuted-calculation
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/commuted-calculation.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: wraps-alias
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/wraps-alias.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: wraps-module
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/wraps-module.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: explicit-wraps
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/explicit-wraps.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: explicit-application
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/explicit-application.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: no-wraps
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/no-wraps.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: empty-docstring
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/empty-docstring.py
+        editable: false
+    expectedFeedbackRuleIds: [python-oop-ch03-l03-e01-r01]
+  - id: wrong-call
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/wrong-call.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: forbidden-import
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/forbidden-import.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: forbidden-attribute
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/forbidden-attribute.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: builtin-alias
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/builtin-alias.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: hardcoded
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/hardcoded.py
+        editable: false
+    expectedFeedbackRuleIds: [python-oop-ch03-l03-e01-r01]

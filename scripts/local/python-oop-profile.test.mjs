@@ -134,3 +134,45 @@ for (const [number, profile] of [
     });
   });
 }
+
+for (const [exerciseId, profile] of [
+  ['python-oop-ch03-l03-e01', 'configured-decorator-v1'],
+  ['python-oop-ch04-l01-e01', 'decorator-ledger-project-v1'],
+]) {
+  test(`${profile}は設定とProject専用のpacketを要求し、既存packetを混ぜない`, () => {
+    const packet = {
+      version: PYTHON_VERSION,
+      supported: true,
+      syntaxError: false,
+      numericVariablePrinted: false,
+      sameVariableAdditionPrinted: false,
+      configuredDecoratorCompared: true,
+      decoratorProjectRecorded: false,
+    };
+    assert.deepEqual(parsePythonAnalysis(JSON.stringify(packet), '', 0, profile), packet);
+    for (const changed of [
+      { ...packet, configuredDecoratorCompared: 'true' },
+      { ...packet, decoratorProjectRecorded: undefined },
+      { ...packet, syntaxError: undefined },
+      { ...packet, wrapsMetadataPreserved: false },
+    ])
+      assert.throws(() => parsePythonAnalysis(JSON.stringify(changed), '', 0, profile));
+    assert.throws(() =>
+      parsePythonAnalysis(JSON.stringify(packet), '', 0, 'wraps-metadata-preserved-v1'),
+    );
+    const request = {
+      apiVersion: 1,
+      exerciseId,
+      contentRevision: 'configured-r1',
+      runtimeProfileId: PYTHON_PROFILE_ID,
+      runId: 'configured-run',
+      exerciseSessionId: 'configured-session',
+      executionRevision: 1,
+      files: { 'main.py': 'print(5)\n' },
+    };
+    assert.equal(validateRun(request, 'js', 'basics', 'practice', 'configured-r1'), request);
+    assert.throws(() => validateRun(request, 'js', 'basics', 'practice', 'old-r1'), {
+      status: 409,
+    });
+  });
+}

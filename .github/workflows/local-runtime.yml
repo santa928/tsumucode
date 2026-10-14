@@ -136,7 +136,8 @@ concurrency:
 jobs:
   boundary:
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    # 教材追加後も全検査を完走できる余裕を持つ。learnerの実行上限は各検査で維持する。
+    timeout-minutes: 60
     env:
       TSUMUCODE_NEXT_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       TSUMUCODE_LOCAL_OWNER: tsumucode-learning-ci
