@@ -149,9 +149,29 @@ jobs:
           persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Prepare fixed one-shot Node image
-        run: docker pull node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5
+        run: |
+          # 同じ固定digestの取得だけを有限回試し、一時的なRegistry障害から復旧する。
+          for pull_attempt in 1 2 3; do
+            if docker pull node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5; then
+              exit 0
+            fi
+            if [ "$pull_attempt" -eq 3 ]; then
+              exit 1
+            fi
+            sleep 5
+          done
       - name: Prepare fixed one-shot CPython image
-        run: docker pull python:3.14.2-slim-bookworm@sha256:e87711ef5c86aaeaa7031718a69db79d334d94c545c709583f651b8185870941
+        run: |
+          # 同じ固定digestの取得だけを有限回試し、一時的なRegistry障害から復旧する。
+          for pull_attempt in 1 2 3; do
+            if docker pull python:3.14.2-slim-bookworm@sha256:e87711ef5c86aaeaa7031718a69db79d334d94c545c709583f651b8185870941; then
+              exit 0
+            fi
+            if [ "$pull_attempt" -eq 3 ]; then
+              exit 1
+            fi
+            sleep 5
+          done
       - name: Build fixed learner and trusted services
         run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml --profile build-project build
       - name: Start isolated learning stack
