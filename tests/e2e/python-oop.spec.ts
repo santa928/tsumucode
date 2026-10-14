@@ -42,6 +42,12 @@ async function grade(page: Page, exerciseId: string, status: string) {
   if (exerciseId === 'python-oop-ch04-l01-e01' && status === 'pass') {
     await page.goto(route('python-oop-ch04-l01'));
     await expect(page.locator('.cm-content')).toBeVisible();
+    const update = page.getByRole('button', { name: 'プレビューを更新', exact: true });
+    await expect(update).toBeEnabled({ timeout: 30_000 });
+    await update.click();
+    await expect(page.getByRole('region', { name: 'Console出力', exact: true })).toContainText(
+      'book bonus',
+    );
   } else await page.getByRole('button', { name: '閉じる', exact: true }).click();
 }
 
@@ -129,6 +135,14 @@ for (const entry of lessons) {
     await expect(page.getByLabel('実行前の入力（1行につきinput 1回）')).toHaveCount(0);
     await replaceEditorText(page, solution);
     await grade(page, exerciseId, 'pass');
+    if (lesson === 'python-oop-ch04-l01') {
+      const alternate = await readFile(
+        `${directory}/fixtures/renamed-explicit-ledger-update.py`,
+        'utf8',
+      );
+      await replaceEditorText(page, alternate);
+      await grade(page, exerciseId, 'pass');
+    }
     const passed = (await draft(page, exerciseId))?.['lastPassingSnapshots'];
     const output = page.getByRole('region', { name: 'Console出力', exact: true });
     await expect(output).toContainText(entry.output);
