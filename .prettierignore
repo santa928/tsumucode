@@ -21,3 +21,4 @@ lhci-report/
 *.svg
 vendor/
 public/python-runtime/
+public/tailwind-runtime/

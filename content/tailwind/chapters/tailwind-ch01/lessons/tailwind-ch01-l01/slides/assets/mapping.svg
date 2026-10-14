@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" role="img" aria-labelledby="title desc">
+  <title id="title">CSSとclassの対応</title>
+  <desc id="desc">CSSとclassの対応。この教材の固定themeでの比較。</desc>
+  <rect x="1" y="1" width="638" height="298" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+  <g font-family="sans-serif" font-size="24" fill="#0f172a">
+    <text x="30" y="65">CSS PropertyとValue</text><text x="425" y="65">Utility</text><g font-family="monospace" font-size="23"><text x="30" y="130">display: flex</text><text x="425" y="130">flex</text><text x="30" y="190">gap: 1rem</text><text x="425" y="190">gap-4</text><text x="30" y="250">padding: 1rem</text><text x="425" y="250">p-4</text></g><path d="M300 125 H390 M380 115 L390 125 L380 135 M300 185 H390 M380 175 L390 185 L380 195 M300 245 H390 M380 235 L390 245 L380 255" stroke="#1e40af" stroke-width="3" fill="none"/>
+  </g>
+</svg>

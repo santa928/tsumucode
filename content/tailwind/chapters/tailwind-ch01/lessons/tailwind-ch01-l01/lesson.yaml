@@ -1,0 +1,14 @@
+id: tailwind-ch01-l01
+kind: standard
+title: CSSの3つの指定をUtilityへ移す
+goal: flex・gap・paddingの役割を説明し、classと実際の見た目を一致させられる。
+estimatedMinutes: 20
+prerequisiteLessonIds: []
+slideSources: [slides/s01.md, slides/s02.md, slides/s03.md, slides/s04.md]
+exerciseSources: [exercises/tailwind-ch01-l01-e01/exercise.yaml]
+reflection: UtilityはCSSの指定を持つclass。gapは項目間、paddingは枠の内側を変える。
+glossaryRefs: [tailwind-utility, tailwind-flex, tailwind-gap, tailwind-padding]
+completion:
+  kind: standard
+  finalSlideId: tailwind-ch01-l01-s04
+  requiredExerciseIds: [tailwind-ch01-l01-e01]

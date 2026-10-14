@@ -104,6 +104,19 @@ export function createCourseRuntimeEnsurer(
     services: CourseRuntimeServices,
   ): Promise<void> {
     switch (course.id) {
+      case 'tailwind': {
+        assertCourseRuntimeIds(course, 'tailwind', 'html-css');
+        const { TailwindRunnerAdapter } =
+          await import('../../adapters/runtime/tailwind/TailwindRunnerAdapter');
+        if (!services.runnerRegistry.has('tailwind')) {
+          services.runnerRegistry.register('tailwind', () => new TailwindRunnerAdapter());
+        }
+        if (!services.validatorRegistry.has('html-css')) {
+          services.validatorRegistry.register('html-css', () => new ValidatorRuleEngine());
+        }
+        registerHtmlCssEditorLanguages(services.editorLanguageRegistry);
+        return;
+      }
       case 'html-css': {
         assertCourseRuntimeIds(course, 'html-css', 'html-css');
         if (!services.runnerRegistry.has('html-css')) {

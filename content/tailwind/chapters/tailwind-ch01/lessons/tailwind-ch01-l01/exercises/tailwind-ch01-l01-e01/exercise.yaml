@@ -1,0 +1,223 @@
+id: tailwind-ch01-l01-e01
+kind: standard
+workspaceId: tailwind-ch01-l01-e01
+countsTowardStandardExerciseTotal: true
+title: 横並びと2つの余白を作る
+instructionsSource: instructions.md
+requiresConcepts:
+  - { conceptId: tailwind-utility, minimumLevel: transform }
+  - { conceptId: tailwind-flex, minimumLevel: transform }
+  - { conceptId: tailwind-gap, minimumLevel: transform }
+  - { conceptId: tailwind-padding, minimumLevel: transform }
+scaffoldLevel: transform
+steps:
+  - id: set-display
+    file: index.html
+    target: 親の横並びを決めるid="cards"のdivのclass
+    starterAnchor: block
+    change: blockをflexへ置き換える
+    observe: 2つの項目が横に並ぶ
+    requiresConceptIds: [tailwind-flex]
+    validationRuleIds:
+      [tailwind-ch01-l01-e01-r01, tailwind-ch01-l01-e01-r04, tailwind-ch01-l01-e01-r05]
+  - id: set-gap
+    file: index.html
+    target: 項目どうしの間隔を決めるid="cards"のdivのclass
+    starterAnchor: gap-8
+    change: gap-8をgap-4へ置き換える
+    observe: 項目間が2remから1remへ縮む
+    requiresConceptIds: [tailwind-gap]
+    validationRuleIds: [tailwind-ch01-l01-e01-r02]
+  - id: set-padding
+    file: index.html
+    target: 枠の内側の余白を決めるid="cards"のdivのclass
+    starterAnchor: p-2
+    change: p-2をp-4へ置き換える
+    observe: 内側の余白が0.5remから1remへ広がる
+    requiresConceptIds: [tailwind-padding]
+    validationRuleIds: [tailwind-ch01-l01-e01-r03]
+files:
+  - { path: index.html, language: html, source: starter/index.html, editable: true }
+solutionFiles:
+  - { path: index.html, language: html, source: solution/index.html, editable: false }
+validationRules:
+  - id: tailwind-ch01-l01-e01-r01
+    label: 親の横並びをUtilityで指定する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [cards-360]
+    target: { kind: selector, selector: '#cards.flex' }
+    assertion:
+      kind: computed-style
+      property: display
+      operator: equals
+      expected: flex
+    feedback:
+      target: id="cards"のdivのdisplay
+      expected: "display\u304cflex"
+      nextAction: blockをflexへ直し、対応する見た目を確かめます。
+    hintId: tailwind-ch01-l01-e01-h01
+    relatedSlideId: tailwind-ch01-l01-s02
+  - id: tailwind-ch01-l01-e01-r02
+    label: 項目どうしの間隔をUtilityで指定する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [cards-360]
+    target: { kind: selector, selector: '#cards[class*="gap-"]' }
+    assertion:
+      kind: computed-style
+      property: gap
+      operator: equals
+      expected: 16px
+    feedback:
+      target: id="cards"のdivのgap
+      expected: "gap\u304c16px"
+      nextAction: gap-8をgap-4へ直し、対応する見た目を確かめます。
+    hintId: tailwind-ch01-l01-e01-h02
+    relatedSlideId: tailwind-ch01-l01-s03
+  - id: tailwind-ch01-l01-e01-r03
+    label: 枠の内側の余白をUtilityで指定する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [cards-360]
+    target: { kind: selector, selector: '#cards[class*="p-"]' }
+    assertion:
+      kind: computed-style
+      property: padding
+      operator: equals
+      expected: 16px
+    feedback:
+      target: id="cards"のdivのpadding
+      expected: "padding\u304c16px"
+      nextAction: p-2をp-4へ直し、対応する見た目を確かめます。
+    hintId: tailwind-ch01-l01-e01-h03
+    relatedSlideId: tailwind-ch01-l01-s04
+  - id: tailwind-ch01-l01-e01-r04
+    label: 横方向へ並べる
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [cards-360]
+    target: { kind: selector, selector: '#cards' }
+    assertion: { kind: computed-style, property: flex-direction, operator: equals, expected: row }
+    feedback:
+      target: id="cards"のdivのflex-direction
+      expected: 横方向のrow
+      nextAction: flex-colを追加した場合は外します。flexの初期方向は横です。
+    hintId: tailwind-ch01-l01-e01-h01
+    relatedSlideId: tailwind-ch01-l01-s02
+  - id: tailwind-ch01-l01-e01-r05
+    label: 2つの項目を残す
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [cards-360]
+    target: { kind: selector, selector: '#cards > *' }
+    assertion: { kind: count, operator: equals, expected: 2 }
+    feedback:
+      target: id="cards"のdivの子要素
+      expected: 2つの項目
+      nextAction: 調べると作るの2つの子要素を残します。親のclassを編集してください。
+    hintId: tailwind-ch01-l01-e01-h01
+    relatedSlideId: tailwind-ch01-l01-s02
+hints:
+  - id: tailwind-ch01-l01-e01-h01
+    level: 1
+    title: 親の横並びを確認する
+    text: id="cards"のdivを探し、blockをflexへ置き換えます。displayの変化をプレビューで確認します。
+    relatedSlideId: tailwind-ch01-l01-s02
+  - id: tailwind-ch01-l01-e01-h02
+    level: 2
+    title: 項目どうしの間隔を確認する
+    text: id="cards"のdivを探し、gap-8をgap-4へ置き換えます。gapの変化をプレビューで確認します。
+    relatedSlideId: tailwind-ch01-l01-s03
+  - id: tailwind-ch01-l01-e01-h03
+    level: 3
+    title: 枠の内側の余白を確認する
+    text: id="cards"のdivを探し、p-2をp-4へ置き換えます。paddingの変化をプレビューで確認します。
+    relatedSlideId: tailwind-ch01-l01-s04
+relatedSlideIds:
+  [tailwind-ch01-l01-s01, tailwind-ch01-l01-s02, tailwind-ch01-l01-s03, tailwind-ch01-l01-s04]
+previewViewports:
+  - { id: cards-360, width: 360, height: 240 }
+assets: []
+fixtures:
+  - id: tailwind-starter
+    expectedStatus: incomplete
+    files:
+      - { path: index.html, language: html, source: fixtures/starter/index.html, editable: false }
+    expectedFeedbackRuleIds:
+      [tailwind-ch01-l01-e01-r01, tailwind-ch01-l01-e01-r02, tailwind-ch01-l01-e01-r03]
+  - id: tailwind-solution
+    expectedStatus: pass
+    files:
+      - { path: index.html, language: html, source: fixtures/solution/index.html, editable: false }
+    expectedFeedbackRuleIds: []
+  - id: tailwind-numeric-alternative
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/numeric-alternative/index.html,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: tailwind-wrong-display
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/wrong-display/index.html,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: [tailwind-ch01-l01-e01-r01]
+  - id: tailwind-wrong-gap
+    expectedStatus: incomplete
+    files:
+      - { path: index.html, language: html, source: fixtures/wrong-gap/index.html, editable: false }
+    expectedFeedbackRuleIds: [tailwind-ch01-l01-e01-r02]
+  - id: tailwind-wrong-padding
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/wrong-padding/index.html,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: [tailwind-ch01-l01-e01-r03]
+  - id: tailwind-unknown-class
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/unknown-class/index.html,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: [tailwind-ch01-l01-e01-r01]
+  - id: tailwind-wrong-direction
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/wrong-direction/index.html,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: [tailwind-ch01-l01-e01-r04]
+  - id: tailwind-missing-item
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/missing-item/index.html,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: [tailwind-ch01-l01-e01-r05]

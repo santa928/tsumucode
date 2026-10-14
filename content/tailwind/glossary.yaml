@@ -1,0 +1,22 @@
+schemaVersion: 1
+entries:
+  - id: tailwind-utility
+    term: Utility
+    definition: '1つの見た目の役割に対応するCSS class。'
+    firstSlideId: tailwind-ch01-l01-s01
+    relatedIds: []
+  - id: tailwind-flex
+    term: flex
+    definition: '親にdisplay: flexを指定し、子をFlex itemにするUtility。'
+    firstSlideId: tailwind-ch01-l01-s02
+    relatedIds: []
+  - id: tailwind-gap
+    term: gap
+    definition: 'Flex itemどうしの間隔。枠の内側の余白とは別。'
+    firstSlideId: tailwind-ch01-l01-s03
+    relatedIds: []
+  - id: tailwind-padding
+    term: padding
+    definition: '要素の枠の内側に取る余白。'
+    firstSlideId: tailwind-ch01-l01-s04
+    relatedIds: []

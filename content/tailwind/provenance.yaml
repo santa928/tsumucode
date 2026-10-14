@@ -1,0 +1,90 @@
+schemaVersion: 1
+defaults:
+  method: original-authored
+  createdAt: 2026-10-14
+  creator: TsumuCode project
+  sourceUrl: none
+  license: project-original
+  modified: false
+items:
+  - id: tailwind-original-3
+    visibility: public
+    path: chapters/tailwind-ch01/chapter.yaml
+  - id: tailwind-original-8
+    visibility: public
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/exercises/tailwind-ch01-l01-e01/exercise.yaml
+  - id: tailwind-original-11
+    visibility: authoring
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/exercises/tailwind-ch01-l01-e01/fixtures/numeric-alternative/index.html
+  - id: tailwind-original-13
+    visibility: authoring
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/exercises/tailwind-ch01-l01-e01/fixtures/unknown-class/index.html
+  - id: tailwind-original-15
+    visibility: authoring
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/exercises/tailwind-ch01-l01-e01/fixtures/wrong-display/index.html
+  - id: tailwind-original-17
+    visibility: authoring
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/exercises/tailwind-ch01-l01-e01/fixtures/wrong-gap/index.html
+  - id: tailwind-original-19
+    visibility: authoring
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/exercises/tailwind-ch01-l01-e01/fixtures/wrong-padding/index.html
+  - id: tailwind-original-20
+    visibility: public
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/exercises/tailwind-ch01-l01-e01/instructions.md
+  - id: tailwind-original-22
+    visibility: authoring
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/exercises/tailwind-ch01-l01-e01/solution/index.html
+  - id: tailwind-original-24
+    visibility: public
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/exercises/tailwind-ch01-l01-e01/starter/index.html
+  - id: tailwind-original-25
+    visibility: public
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/lesson.yaml
+  - id: tailwind-spacing-original
+    visibility: public
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/slides/assets/spacing.svg
+  - id: tailwind-original-29
+    visibility: public
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/slides/s01.md
+  - id: tailwind-original-30
+    visibility: public
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/slides/s02.md
+  - id: tailwind-original-31
+    visibility: public
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/slides/s03.md
+  - id: tailwind-original-32
+    visibility: public
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/slides/s04.md
+  - id: tailwind-original-33
+    visibility: public
+    path: concepts.yaml
+  - id: tailwind-original-34
+    visibility: public
+    path: course.yaml
+  - id: tailwind-original-35
+    visibility: public
+    path: glossary.yaml
+  - id: tailwind-original-37
+    visibility: public
+    path: references/tailwind-official.md
+  - id: tailwind-mapping-original
+    visibility: public
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/slides/assets/mapping.svg
+  - id: tailwind-flex-original
+    visibility: public
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/slides/assets/flex.svg
+  - id: tailwind-comparison-original
+    visibility: public
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/slides/assets/comparison.svg
+  - id: tailwind-fixture-starter-original
+    visibility: authoring
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/exercises/tailwind-ch01-l01-e01/fixtures/starter/index.html
+  - id: tailwind-fixture-solution-original
+    visibility: authoring
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/exercises/tailwind-ch01-l01-e01/fixtures/solution/index.html
+  - id: tailwind-fixture-wrong-direction-original
+    visibility: authoring
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/exercises/tailwind-ch01-l01-e01/fixtures/wrong-direction/index.html
+  - id: tailwind-fixture-missing-item-original
+    visibility: authoring
+    path: chapters/tailwind-ch01/lessons/tailwind-ch01-l01/exercises/tailwind-ch01-l01-e01/fixtures/missing-item/index.html
