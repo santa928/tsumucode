@@ -39,6 +39,8 @@ const factNames = [
   'dunder-protocols-used',
   'decorator-flow-compared',
   'wraps-metadata-preserved',
+  'configured-decorator-compared',
+  'decorator-project-recorded',
 ] as const;
 const ruleSchema = z
   .object({

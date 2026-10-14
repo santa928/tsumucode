@@ -1,3 +1,5 @@
+import { pythonDecoratorFactoryAnalysis } from './pythonDecoratorFactoryAnalysis.mjs';
+import { isPythonDecoratorFactoryProfile } from './pythonLessonProfiles.mjs';
 import { pythonDecoratorAnalysis } from './pythonDecoratorAnalysis.mjs';
 import { isPythonDecoratorProfile } from './pythonLessonProfiles.mjs';
 import { pythonObjectProtocolAnalysis } from './pythonObjectProtocolAnalysis.mjs';
@@ -9,6 +11,8 @@ import { pythonContextAnalysis } from './pythonContextAnalysis.mjs';
 
 /** 実Python ASTで最小教材の説明範囲とsource factsを調べる。隔離の根拠には使わない。 */
 export function pythonLessonAnalysis(source, profile = 'values-vars-print-v1') {
+  if (isPythonDecoratorFactoryProfile(profile))
+    return pythonDecoratorFactoryAnalysis(source, profile);
   if (isPythonDecoratorProfile(profile)) return pythonDecoratorAnalysis(source, profile);
   if (isPythonObjectProtocolProfile(profile)) return pythonObjectProtocolAnalysis(source, profile);
   if (isPythonOopProfile(profile)) return pythonOopAnalysis(source, profile);

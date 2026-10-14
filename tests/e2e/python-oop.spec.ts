@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import { testBasePath } from './helpers/testBasePath';
 import { readStoredProgress, replaceEditorText } from './helpers/progress';
 
@@ -27,7 +27,11 @@ async function expectSavedSource(page: Page, exerciseId: string, source: string)
 
 async function grade(page: Page, exerciseId: string, status: string) {
   await page.getByRole('button', { name: '判定する', exact: true }).click();
-  await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
+  if (exerciseId === 'python-oop-ch04-l01-e01' && status === 'pass')
+    await expect(
+      page.getByRole('heading', { name: 'ピースがはまりました', exact: true }),
+    ).toBeVisible({ timeout: 30_000 });
+  else await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
   await expect
     .poll(async () => {
       const history = (await draft(page, exerciseId))?.['validationHistory'] as
@@ -35,10 +39,25 @@ async function grade(page: Page, exerciseId: string, status: string) {
       return history?.at(-1)?.status;
     })
     .toBe(status);
-  await page.getByRole('button', { name: '閉じる', exact: true }).click();
+  if (exerciseId === 'python-oop-ch04-l01-e01' && status === 'pass') {
+    await page.goto(route('python-oop-ch04-l01'));
+    await expect(page.locator('.cm-content')).toBeVisible();
+  } else await page.getByRole('button', { name: '閉じる', exact: true }).click();
 }
 
 const lessons = [
+  {
+    lesson: 'python-oop-ch03-l03',
+    output: '加算 4',
+    wrong: 'wrong-call',
+    unsupported: 'forbidden-attribute',
+  },
+  {
+    lesson: 'python-oop-ch04-l01',
+    output: 'book bonus',
+    wrong: 'wrong-call',
+    unsupported: 'forbidden-attribute',
+  },
   {
     lesson: 'python-oop-ch01-l01',
     output: 'True',
@@ -97,6 +116,16 @@ for (const entry of lessons) {
     await expect(page.locator('.cm-content')).toBeVisible();
     const button = page.getByRole('button', { name: '判定する', exact: true });
     await expect(button).toBeEnabled({ timeout: 30_000 });
+    if (lesson === 'python-oop-ch04-l01') {
+      await page.getByText('制作ブリーフと工程ガイド', { exact: true }).click();
+      await expect(
+        page.getByRole('heading', { name: '小さい記録Project', exact: true }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole('heading', { name: '予測してから2箇所を完成する', exact: true }),
+      ).toBeVisible();
+      await page.getByText('制作ブリーフと工程ガイド', { exact: true }).click();
+    }
     await expect(page.getByLabel('実行前の入力（1行につきinput 1回）')).toHaveCount(0);
     await replaceEditorText(page, solution);
     await grade(page, exerciseId, 'pass');
@@ -149,36 +178,13 @@ for (const entry of lessons) {
   });
 }
 
-test('OOPの草稿Slideを狭幅で読み、objectとFunctionの説明図を確認する', async ({ page }, info) => {
-  for (const [lesson, slide] of [
-    ['python-oop-ch01-l01', 's01'],
-    ['python-oop-ch01-l01', 's02'],
-    ['python-oop-ch01-l01', 's03'],
-    ['python-oop-ch01-l02', 's01'],
-    ['python-oop-ch01-l02', 's02'],
-    ['python-oop-ch01-l02', 's03'],
-    ['python-oop-ch01-l02', 's04'],
-    ['python-oop-ch02-l01', 's01'],
-    ['python-oop-ch02-l01', 's02'],
-    ['python-oop-ch02-l01', 's03'],
-    ['python-oop-ch02-l01', 's04'],
-    ['python-oop-ch02-l02', 's01'],
-    ['python-oop-ch02-l02', 's02'],
-    ['python-oop-ch02-l02', 's03'],
-    ['python-oop-ch02-l02', 's04'],
-    ['python-oop-ch02-l03', 's01'],
-    ['python-oop-ch02-l03', 's02'],
-    ['python-oop-ch02-l03', 's03'],
-    ['python-oop-ch02-l03', 's04'],
-    ['python-oop-ch03-l01', 's01'],
-    ['python-oop-ch03-l01', 's02'],
-    ['python-oop-ch03-l01', 's03'],
-    ['python-oop-ch03-l01', 's04'],
-    ['python-oop-ch03-l02', 's01'],
-    ['python-oop-ch03-l02', 's02'],
-    ['python-oop-ch03-l02', 's03'],
-    ['python-oop-ch03-l02', 's04'],
-  ] as const) {
+/** SlideをPCと狭幅で確認し、表示中の図とa11y結果を保存する。 */
+async function verifySlides(
+  page: Page,
+  info: TestInfo,
+  slides: readonly (readonly [string, string])[],
+) {
+  for (const [lesson, slide] of slides) {
     await page.goto(`${base}#/courses/python-oop/lessons/${lesson}/slides/${lesson}-${slide}`);
     await expect(page.getByTestId('slide-stage')).toHaveAttribute(
       'data-slide-id',
@@ -206,4 +212,48 @@ test('OOPの草稿Slideを狭幅で読み、objectとFunctionの説明図を確�
       });
     await page.setViewportSize({ width: 1280, height: 960 });
   }
+}
+
+test('OOPの草稿Slideを狭幅で読み、objectとFunctionの説明図を確認する', async ({ page }, info) => {
+  await verifySlides(page, info, [
+    ['python-oop-ch01-l01', 's01'],
+    ['python-oop-ch01-l01', 's02'],
+    ['python-oop-ch01-l01', 's03'],
+    ['python-oop-ch01-l02', 's01'],
+    ['python-oop-ch01-l02', 's02'],
+    ['python-oop-ch01-l02', 's03'],
+    ['python-oop-ch01-l02', 's04'],
+    ['python-oop-ch02-l01', 's01'],
+    ['python-oop-ch02-l01', 's02'],
+    ['python-oop-ch02-l01', 's03'],
+    ['python-oop-ch02-l01', 's04'],
+    ['python-oop-ch02-l02', 's01'],
+    ['python-oop-ch02-l02', 's02'],
+    ['python-oop-ch02-l02', 's03'],
+    ['python-oop-ch02-l02', 's04'],
+    ['python-oop-ch02-l03', 's01'],
+    ['python-oop-ch02-l03', 's02'],
+    ['python-oop-ch02-l03', 's03'],
+    ['python-oop-ch02-l03', 's04'],
+    ['python-oop-ch03-l01', 's01'],
+    ['python-oop-ch03-l01', 's02'],
+    ['python-oop-ch03-l01', 's03'],
+    ['python-oop-ch03-l01', 's04'],
+    ['python-oop-ch03-l02', 's01'],
+    ['python-oop-ch03-l02', 's02'],
+    ['python-oop-ch03-l02', 's03'],
+    ['python-oop-ch03-l02', 's04'],
+  ]);
+});
+
+test('設定付きdecoratorとProjectの草稿Slideを狭幅で確認する', async ({ page }, info) => {
+  await verifySlides(page, info, [
+    ['python-oop-ch03-l03', 's01'],
+    ['python-oop-ch03-l03', 's02'],
+    ['python-oop-ch03-l03', 's03'],
+    ['python-oop-ch03-l03', 's04'],
+    ['python-oop-ch04-l01', 's01'],
+    ['python-oop-ch04-l01', 's02'],
+    ['python-oop-ch04-l01', 's03'],
+  ]);
 });

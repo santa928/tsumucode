@@ -7,6 +7,7 @@ export {
   isPythonModuleProfile,
   isPythonObjectProtocolProfile,
   isPythonDecoratorProfile,
+  isPythonDecoratorFactoryProfile,
   isPythonOopProfile,
   pythonSourcePaths,
   pythonSourceSnapshot,

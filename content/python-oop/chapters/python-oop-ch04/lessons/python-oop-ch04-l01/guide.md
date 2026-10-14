@@ -1,0 +1,8 @@
+## 予測してから2箇所を完成する
+
+1. wrapperのreturn 0を、同じ引数で元のFunctionを呼んで戻り値を返す処理へ直します。回数は元を呼ぶ前に増やします。wrapsとdecorate内のcalls初期化は保ちます。
+2. Ledger.addのreturn 0を、負値をifとraiseで拒否し、self.totalを更新してその値を返す処理へ直します。値検証より先に更新すると、例外後に不正な値が残ります。
+3. firstとsecondの記録値、bookとbonusとagainの呼出回数を予測し、末尾の観察行で確かめます。失敗直後はfirst.totalもsecond.totalも6、最後はfirstが8、secondが14です。bookは4回、bonusとagainは各2回を試みます。
+4. 判定後にSourceを編集して保存し、再読込で全文が戻ることを確かめます。最初に戻すとstarterへ戻ります。移動には既存JSON転送を使えます。
+
+book・bonusのFunction名、Class名、設定値、入力と観察行は保ちます。固定ASTで中継と状態の持ち主を確認し、同じSourceの実Console出力と合わせて判定する限定課題です。教材外構文は未採点です。metadataの保持だけでは、元を呼ばない解や例外を握り潰す解は完成しません。TypeErrorなどの実行時エラーは未達と区別して表示します。

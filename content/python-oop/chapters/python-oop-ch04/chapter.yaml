@@ -1,0 +1,8 @@
+id: python-oop-ch04
+sequence: 3
+title: decoratorを記録Projectへ結ぶ
+goal: 設定・wrapperの状態・Instanceの記録を分け、元の動作を保つ。
+estimatedMinutes: 35
+kind: guided-project
+lessonSources:
+  - lessons/python-oop-ch04-l01/lesson.yaml

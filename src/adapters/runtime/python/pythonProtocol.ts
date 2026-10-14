@@ -45,6 +45,8 @@ export interface PythonResult {
   readonly dunderProtocolsUsed?: boolean;
   readonly decoratorFlowCompared?: boolean;
   readonly wrapsMetadataPreserved?: boolean;
+  readonly configuredDecoratorCompared?: boolean;
+  readonly decoratorProjectRecorded?: boolean;
   readonly expectedOutput?: string | null;
 }
 

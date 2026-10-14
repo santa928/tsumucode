@@ -1,0 +1,9 @@
+## 小さい記録Project
+
+設定付きdecoratorとLedgerを組み合わせ、通常記録と2倍の特典を計算します。外部サービス・OSファイル・追加フレームワークは使わず、メモリ内だけで完結します。
+
+trace_callsのlabelは設定、callsは各wrapper、totalは各LedgerのInstanceが持ちます。同じconfiguredを使うbookとagainもcallsを共有しません。同じLedgerを複数Functionへ渡した場合は、そのInstanceのtotalを続けて更新します。
+
+元の位置引数・名前付き引数を渡し、元の戻り値を返し、同じ例外を呼出元へ伝えます。wrapsで名前・docstring・元への参照を保ちます。負値は更新前に拒否します。固定印字だけは完成になりません。
+
+Sourceの保存・Reset・再読込による再開と、既存JSON転送を使います。BrowserはPyodide、Localは固定CPythonです。実人の理解・物理端末・性能・新Pages公開の受入はこのProjectの自動成功と区別します。

@@ -104,6 +104,8 @@ export function initializePythonWorker(
         | 'dunderProtocolsUsed'
         | 'decoratorFlowCompared'
         | 'wrapsMetadataPreserved'
+        | 'configuredDecoratorCompared'
+        | 'decoratorProjectRecorded'
         | 'expectedOutput'
       >
     > = {};
@@ -267,6 +269,8 @@ export function initializePythonWorker(
           dunderProtocolsUsed: parsed.dunderProtocolsUsed === true,
           decoratorFlowCompared: parsed.decoratorFlowCompared === true,
           wrapsMetadataPreserved: parsed.wrapsMetadataPreserved === true,
+          configuredDecoratorCompared: parsed.configuredDecoratorCompared === true,
+          decoratorProjectRecorded: parsed.decoratorProjectRecorded === true,
           ...(moduleProfile
             ? { expectedOutput: parsePythonModuleAnalysis(parsed).expectedOutput }
             : {}),

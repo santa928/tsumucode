@@ -2,8 +2,9 @@ id: python-oop-ch03
 sequence: 2
 title: Functionを変換するdecorator
 goal: Function objectとClosureを復習し、@・引数と結果・例外・wrapsを比較する。
-estimatedMinutes: 50
+estimatedMinutes: 80
 kind: standard
 lessonSources:
   - lessons/python-oop-ch03-l01/lesson.yaml
   - lessons/python-oop-ch03-l02/lesson.yaml
+  - lessons/python-oop-ch03-l03/lesson.yaml

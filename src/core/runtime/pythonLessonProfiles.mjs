@@ -1,6 +1,17 @@
 /* global TextEncoder */
 /** IDと教材構文を固定し、入力からprofileや実行先を選ばせない。 */
 export const PYTHON_LESSONS = Object.freeze({
+  'python-oop-ch03-l03-e01': {
+    courseId: 'python-oop',
+    profile: 'configured-decorator-v1',
+    facts: ['configured-decorator-compared'],
+  },
+  'python-oop-ch04-l01-e01': {
+    courseId: 'python-oop',
+    profile: 'decorator-ledger-project-v1',
+    facts: ['decorator-project-recorded'],
+  },
+
   'python-oop-ch03-l01-e01': {
     courseId: 'python-oop',
     profile: 'function-decorator-flow-v1',
@@ -83,6 +94,9 @@ export const PYTHON_LESSONS = Object.freeze({
 });
 
 export const PYTHON_FACT_FIELDS = Object.freeze({
+  'configured-decorator-compared': 'configuredDecoratorCompared',
+  'decorator-project-recorded': 'decoratorProjectRecorded',
+
   'decorator-flow-compared': 'decoratorFlowCompared',
   'wraps-metadata-preserved': 'wrapsMetadataPreserved',
   'inheritance-delegation-compared': 'inheritanceDelegationCompared',
@@ -155,6 +169,10 @@ export function validPythonInputLines(value) {
 
 /** 実入力に対応する表示を照合する。採点できない入力を模擬合格へ変換しない。 */
 export function expectedPythonOutput(profile, lines) {
+  if (profile === 'configured-decorator-v1')
+    return '加算 1\n5\n加算 2\n5\n倍算 1\n7\n加算 1\n2\n加算 3\n負の値\n加算 4\n2\n倍算 2\n8\n加算 2\n3\nTrue\nTrue\nTrue\ndouble\n';
+  if (profile === 'decorator-ledger-project-v1')
+    return '記録 1\n5\n記録 2\n6\n特典 1\n5\n記録 1\n6\n記録 3\n負の値\n6 6\n記録 4\n8\n特典 2\n12\n記録 2\n14\nbook bonus\nTrue\nTrue\nTrue\n';
   if (profile === 'function-decorator-flow-v1')
     return 'False\n呼出 1\n5\n呼出 2\n5\n呼出 1\n7\n呼出 3\n負の値\n呼出 4\n2\n呼出 2\n8\n';
   if (profile === 'wraps-metadata-preserved-v1')
@@ -201,9 +219,15 @@ export function isPythonDecoratorProfile(profile) {
   return ['function-decorator-flow-v1', 'wraps-metadata-preserved-v1'].includes(profile);
 }
 
+/** 設定付きdecoratorとProjectだけの構文・packetを選ぶ。 */
+export function isPythonDecoratorFactoryProfile(profile) {
+  return ['configured-decorator-v1', 'decorator-ledger-project-v1'].includes(profile);
+}
+
 /** OOPの未対応構文とSyntaxErrorの事前分類を共有する。 */
 export function isPythonOopProfile(profile) {
   return (
+    isPythonDecoratorFactoryProfile(profile) ||
     isPythonDecoratorProfile(profile) ||
     isPythonObjectProtocolProfile(profile) ||
     ['class-instance-lookup-v1', 'method-binding-comparison-v1'].includes(profile)

@@ -1,0 +1,11 @@
+## 設定と回数の持ち主を分ける
+
+trace_calls(label)は表示用の設定を受け取り、decorateを返します。decorate(function)が別々のcallsを持つwrapperを作り、wrapperの呼出しで元のFunctionへ引数・戻り値・例外を渡します。wrapsによるmetadataの保持も必要です。
+
+Project Briefとガイドを読み、wrapperのreturn 0を中継へ直してください。Ledger.addのreturn 0も、負値の明示拒否・Instanceのtotal更新・更新後の値を返す処理へ置き換えます。ClassとInstance methodは前章の既習事項です。
+
+記録値はfirstとsecondそれぞれのInstance、呼出回数はbook・bonus・againそれぞれのwrapperへ置きます。記録失敗でも呼出回数は増えますが、負値はtotalを変更しません。
+
+元のFunction/Class名、設定値、入力と末尾の観察行を保ちます。出力の固定印字だけは目標達成にしません。妥当な別名・途中値・加算順・明示適用・wrapsのimport別表現を扱う限定課題です。任意のPython表現を採点できるわけではなく、教材外構文は未採点です。元のTypeErrorやAttributeErrorは実行時エラーとして表示します。
+
+入力欄は使いません。判定後はSourceが保存され、再読込で再開できます。最初に戻すとstarterへ戻ります。Browser/Local間の移動には既存のJSON転送を使います。
