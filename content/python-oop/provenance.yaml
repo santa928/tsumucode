@@ -7,6 +7,18 @@ defaults:
   license: project-original
   modified: false
 items:
+  - id: python-oop-course-original
+    visibility: public
+    path: course.yaml
+    modified: true
+  - id: python-oop-concepts-original
+    visibility: public
+    path: concepts.yaml
+    modified: true
+  - id: python-oop-glossary-original
+    visibility: public
+    path: glossary.yaml
+    modified: true
   - id: python-oop-original-1
     visibility: public
     path: chapters/python-oop-ch01/chapter.yaml
