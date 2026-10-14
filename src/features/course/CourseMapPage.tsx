@@ -16,7 +16,7 @@ const KIND_LABEL = {
   capstone: '仕上げ制作',
 } as const;
 
-/** Phase、Chapter、Lessonの関係を、組み立て順が見えるコースマップとして表示する。 */
+/** Courseの現在進捗を示し、以前の達成記録と現在のコードの再判定を区別する。 */
 export function CourseMapPage() {
   const course = useLoaderData<typeof courseLoader>();
   const courseProgress = useCourseProgress(course.id);
@@ -156,6 +156,14 @@ export function CourseMapPage() {
                                 </span>
                               </div>
                               <p className="mt-3 text-workshop-muted">{lesson.goal}</p>
+                              {courseProgress.progress?.lessons[lesson.id]?.firstCompletedAt !==
+                                undefined &&
+                              courseProgress.progress.lessons[lesson.id]?.currentComplete ===
+                                false ? (
+                                <p className="mt-3 text-sm text-workshop-muted">
+                                  以前の達成記録は残っています。現在のコードを、もう一度「判定する」で確認してください。
+                                </p>
+                              ) : null}
                               <div className="mt-5">
                                 <ActionLink
                                   to={

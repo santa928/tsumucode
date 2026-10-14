@@ -6,14 +6,14 @@ lessons:
   - lessonId: python-oop-ch01-l01
     authorId: tsumucode-python-author
     reviewerId: cache_races_ui_claims_review
-    sourceHash: 2b594b542c4fd6b36225fc83277c3af6db69f19a8e916db2f96eed93460518f6
+    sourceHash: 25189c5dae586b9e3f654e5dec200ca18ff3a2d6c131eb06bc1134cf94c12b5e
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 独立内容レビューで必須指摘0。受入指摘に合わせ初回演習を2工程へ分け、最初の用語3件を改善した。演習Source／Solution／Fixture／採点条件は不変で、固定CPython 3.14.2とPyodide 314.0.7の各24Fixture・object観測2・Slide例7の旧実行入力と図の可読性証拠をその範囲で継承する。教材内容の承認は修正後のcomputer use再操作・性能・Pages公開の受入を意味せず、Issue147／152の残条件を保持する。
+    notes: '独立内容レビューでaccuracy／goalExerciseAlignment／decision承認、unexplainedTerms0・hintLeakage0。新規3名CUAの指摘に合わせ、初回演習の全体判定と11行の具体的期待出力を説明した。Source／Solution／Fixture／実行例・合格条件は不変で、旧実行入力へのexamplesExecuted承認をその範囲で継承する。新しい表示・migration・影響computer use再操作・必要CI・公開受入は別検証であり、Issue147／152の公開Gate／Path／配信後SHAは未完。'
   - lessonId: python-oop-ch01-l02
     authorId: tsumucode-python-author
     reviewerId: cache_races_ui_claims_review
@@ -94,11 +94,11 @@ lessons:
   - lessonId: python-oop-ch04-l01
     authorId: tsumucode-python-author
     reviewerId: cache_races_ui_claims_review
-    sourceHash: 19ba27202e6a1906699a806ea044f0003ba39276508f7e9335ba6ec92c61afbe
+    sourceHash: c7e3f674e42b8892782e5aa87291ae2b0bb5c1c8b3825e75b761093598ff9b87
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 独立内容レビューで初出の誤表現を修正し必須指摘0。新7図の390pxと代表PC2画面を画像で確認。新2単元は固定CPython3.14.2とPyodide314.0.7で各56Fixture・Function観測2・Slide例7を検証し、製品解析wrapperと別名＋明示更新の回帰も対象とする。限定AST事実と実stdoutによる草稿の検証であり、147の実人・物理端末・性能受入と新Pages公開の保留を維持する。正式Courseの受入・公開は親17と152の別判断に残す。
+    notes: '独立内容レビューでaccuracy／goalExerciseAlignment／decision承認、unexplainedTerms0・hintLeakage0。新規3名CUAの指摘に合わせ、Projectの説明を学習者向けに整理し、コード条件・値検証・例外・対応範囲の意味を保持した。Source／Solution／Fixture／実行例・合格条件は不変で、旧実行入力へのexamplesExecuted承認をその範囲で継承する。新しい表示・migration・影響computer use再操作・必要CI・公開受入は別検証であり、Issue147／152の公開Gate／Path／配信後SHAは未完。'

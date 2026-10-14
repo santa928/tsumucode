@@ -6,6 +6,8 @@
 
 今回の差分は7Slideのコード例への静的説明図、既存`code-preview`への分類、revision `2026-10-13.1`、対象読書検査とこの受入記録です。`publicationStatus: draft`を維持し、Home／Python Path追加、Pages公開、Browser対話入力、任意pip、外部DBは含めません。#147は公開後の条件が満たされるまでOpenです。
 
+上記は静的図の統合時の基準です。固定5192の新規3名computer useで再開・初回演習の合格と保存復元・小画面読書を確認した後、revision `2026-10-14.1` ではProjectの工程ガイドを学習者向けに整理します。`2026-10-13.1`からの空migrationで既存ID・コード・履歴を保持し、採点条件・実行例・Fixtureは変えません。小画面のCourse戻りとProject読書、再編集時の再判定案内は共通UIで改善します。この改善後の影響再操作と公開Gate／Path／配信後SHAは未完のまま残します。
+
 ## 概念・教材順・Projectの対応
 
 | 概念                  | 初出Slide    | 確認する行動                                                  | Projectとの対応                                                                |

@@ -57,16 +57,12 @@ lessons:
       Issue147の静的code-preview図と現revisionを独立内容レビューし、必須指摘0。図は実行証拠を代替しない。
   - lessonId: python-practice-ch03-l01
     authorId: tsumucode-python-author
-    reviewerId: issue196_learning_stop_review
-    sourceHash: 3f16beb86b1a67f652b4c053d2440dfb3a67ff6ad0fcab7c6471c3fd072254a5
+    reviewerId: cache_races_ui_claims_review
+    sourceHash: a72b6ad57235d1767abbbe8b265702c0635119bf8ad269154db755beb154211c
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      独立AI内容レビューのGenerator式・try/except/elseの説明追加後、必須指摘0。固定CPython/Pyodide各16Fixtureと作者の実dataclass
-      fields・注釈非強制・明示値検証・正常/空/不正時のstream
-      closeを確認。提出は固定構造と実stdoutを照合し、直接object観察を主張しない。草稿・実人受講未確認・公開保留。
-      Issue147の静的code-preview図と現revisionを独立内容レビューし、必須指摘0。図は実行証拠を代替しない。
+    notes: '独立内容レビューでaccuracy／goalExerciseAlignment／decision承認、unexplainedTerms0・hintLeakage0。新規3名CUAの指摘に合わせ、Projectの説明を学習者向けに整理し、コード条件・値検証・例外・対応範囲の意味を保持した。Source／Solution／Fixture／実行例・合格条件は不変で、旧実行入力へのexamplesExecuted承認をその範囲で継承する。新しい表示・migration・影響computer use再操作・必要CI・公開受入は別検証であり、Issue147／152の公開Gate／Path／配信後SHAは未完。'

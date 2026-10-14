@@ -4,7 +4,7 @@ title: Pythonの反復とデータ処理
 description: 反復・Resource終了処理から、型注釈・dataclass・値検証・Testを結ぶデータProjectへ進む95分の草稿Course。
 audience: Python基礎のList・for・Function・例外を学んだ方
 estimatedMinutes: 95
-revision: 2026-10-13.1
+revision: 2026-10-14.1
 runnerId: python
 validatorId: python
 glossarySource: glossary.yaml
@@ -33,6 +33,9 @@ progressMigrations:
     steps: []
   - fromRevision: 2026-10-12.3
     toRevision: 2026-10-13.1
+    steps: []
+  - fromRevision: 2026-10-13.1
+    toRevision: 2026-10-14.1
     steps: []
 phases:
   - id: python-practice-p01
