@@ -6,14 +6,14 @@ lessons:
   - lessonId: python-oop-ch01-l01
     authorId: tsumucode-python-author
     reviewerId: cache_races_ui_claims_review
-    sourceHash: 1779fbd23eb7aa34b95fe19b843204fe2168d764dbf77bc9a9443908973c0388
+    sourceHash: 2b594b542c4fd6b36225fc83277c3af6db69f19a8e916db2f96eed93460518f6
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 独立内容レビューで必須指摘0。7図のPC／390px可読性を画像で確認。固定CPython 3.14.2とPyodide 314.0.7で各24Fixture・object観測2・Slide例7を検証。限定AST事実と実stdoutを照合する草稿であり、実人・物理端末・性能・Pages公開の受入を意味しない。Issue147と親17／正式公開152の残条件を保持する。
+    notes: 独立内容レビューで必須指摘0。受入指摘に合わせ初回演習を2工程へ分け、最初の用語3件を改善した。演習Source／Solution／Fixture／採点条件は不変で、固定CPython 3.14.2とPyodide 314.0.7の各24Fixture・object観測2・Slide例7の旧実行入力と図の可読性証拠をその範囲で継承する。教材内容の承認は修正後のcomputer use再操作・性能・Pages公開の受入を意味せず、Issue147／152の残条件を保持する。
   - lessonId: python-oop-ch01-l02
     authorId: tsumucode-python-author
     reviewerId: cache_races_ui_claims_review

@@ -36,6 +36,17 @@ describe('SlideStage', () => {
     expect(within(stage).getByRole('heading', { level: 1, name: slide.title })).toBeVisible();
   });
 
+  it('指定された読書案内を本文より前に表示し、下部の図や予測を見つけられるようにする', () => {
+    const cue = '図や予測の問いまで読み、本文が続くときは下へスクロールしてください。';
+    render(<SlideStage slide={codePreviewSlide()} baseUrl="/tsumucode/" readingCue={cue} />);
+    const notice = screen.getByText(cue);
+    expect(notice).toBeVisible();
+    expect(
+      notice.compareDocumentPosition(screen.getByText('h1はページ全体の題名を表します。')) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).not.toBe(0);
+  });
+
   it('混在した説明・コード・結果を著者の順序で描画する', () => {
     const slide = codePreviewSlide();
     slide.blocks.push({ type: 'paragraph', text: '結果を見てから次の例へ進みます。' });

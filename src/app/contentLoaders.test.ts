@@ -23,6 +23,7 @@ import {
   exerciseLoader,
   homeLoader,
   learningPathLoader,
+  lessonResumeLoader,
   reviewLoader,
   slideLoader,
 } from './contentLoaders';
@@ -253,6 +254,88 @@ describe('分割教材 route loaders', () => {
       404,
     );
     expect(content.loadLessonManifest).not.toHaveBeenCalled();
+  });
+});
+
+describe('lessonResumeLoader', () => {
+  it('有効な保存Draftへredirectし、Lesson本文を追加取得しない', async () => {
+    const course = fixtureCourseIndex;
+    const lesson = course.phases[0]!.chapters[0]!.lessons[0]!;
+    const exercise = lesson.exercises[0]!;
+    runtime.repository.getDraft.mockResolvedValue({
+      courseId: course.id,
+      lessonId: lesson.id,
+      exerciseId: exercise.id,
+      workspaceId: exercise.workspaceId,
+      contentRevision: course.revision,
+      editRevision: 1,
+      files: { 'index.html': '<h1>保存した編集</h1>' },
+      selectedFile: 'index.html',
+      cursors: {},
+      validationHistory: [],
+      revealedHintIds: [],
+      lastPassingSnapshots: {},
+      updatedAt: '2026-10-14T00:00:00Z',
+    });
+
+    const response = await lessonResumeLoader({
+      params: { courseId: course.id, lessonId: lesson.id },
+    });
+    expect(response.status).toBe(302);
+    expect(response.headers.get('Location')).toBe(
+      `/courses/${course.id}/lessons/${lesson.id}/exercises/${exercise.id}`,
+    );
+    expect(runtime.repository.getDraft).toHaveBeenCalledWith(course.id, exercise.workspaceId);
+    expect(content.loadLessonManifest).not.toHaveBeenCalled();
+    expect(content.loadWorkspaceLessons).not.toHaveBeenCalled();
+  });
+
+  it('migrationが完了するまで保存値を読まず、失敗を保存なしへ読み替えない', async () => {
+    let releaseMigration!: () => void;
+    const migration = new Promise<void>((resolve) => {
+      releaseMigration = resolve;
+    });
+    runtime.ensureCourseIndex.mockImplementationOnce(async () => {
+      await migration;
+      return [];
+    });
+    const lesson = fixtureCourseIndex.phases[0]!.chapters[0]!.lessons[0]!;
+    const args = { params: { courseId: fixtureCourseIndex.id, lessonId: lesson.id } };
+    const pending = lessonResumeLoader(args);
+    await vi.waitFor(() => {
+      expect(runtime.ensureCourseIndex).toHaveBeenCalledOnce();
+    });
+    expect(runtime.repository.getCourse).not.toHaveBeenCalled();
+    expect(runtime.repository.getDraft).not.toHaveBeenCalled();
+    releaseMigration();
+    await pending;
+    const error = new Error('migrationの失敗');
+    runtime.ensureCourseIndex.mockRejectedValueOnce(error);
+    await expect(lessonResumeLoader(args)).rejects.toBe(error);
+  });
+
+  it('未知Lessonは404、保存読取の失敗は既存Routeエラーへ渡す', async () => {
+    await expectRouteStatus(
+      lessonResumeLoader({
+        params: {
+          courseId: fixtureCourseIndex.id,
+          lessonId: 'unknown-lesson',
+        },
+      }),
+      404,
+    );
+    expect(runtime.repository.getDraft).not.toHaveBeenCalled();
+    const lesson = fixtureCourseIndex.phases[0]!.chapters[0]!.lessons[0]!;
+    const error = new Error('保存読取の失敗');
+    runtime.repository.getCourse.mockRejectedValueOnce(error);
+    await expect(
+      lessonResumeLoader({
+        params: {
+          courseId: fixtureCourseIndex.id,
+          lessonId: lesson.id,
+        },
+      }),
+    ).rejects.toBe(error);
   });
 });
 

@@ -15,11 +15,19 @@ scaffoldLevel: transform
 steps:
   - id: python-oop-ch01-l01-e01-step01
     file: main.py
-    target: 'aliasをfirstへの参照にし、倍率7はfirstだけへ保存します。'
+    target: 'aliasの代入行'
     starterAnchor: 'alias = Counter(3)'
-    change: 'aliasをfirstへの参照にし、倍率7はfirstだけへ保存します。'
-    observe: '別Instanceと同じ参照を区別し、Instance属性が同名のClass属性を隠すことを実出力で説明できる。'
-    requiresConceptIds: ['python-class-instance', 'python-identity', 'python-attribute-lookup']
+    change: '新しいInstanceを作る代わりに、firstと同じobjectを参照するようにします。'
+    observe: '最初の比較がTrue、次の比較がFalseになるかを出力欄で確かめます。両方の変更を終えた後に「判定する」で確認します。'
+    requiresConceptIds: ['python-class-instance', 'python-identity']
+    validationRuleIds: [python-oop-ch01-l01-e01-r01]
+  - id: python-oop-ch01-l01-e01-step02
+    file: main.py
+    target: '最初に倍率7を代入する行'
+    starterAnchor: 'Counter.factor = 7'
+    change: 'Class全体ではなく、firstだけへ倍率7を保存します。後のCounter.factor = 4はそのまま残します。'
+    observe: '最後の2行はfirstが7、secondが4になるかを確かめます。同じClassの別Instanceまで倍率7になっていないかを比べます。'
+    requiresConceptIds: ['python-attribute-lookup']
     validationRuleIds: [python-oop-ch01-l01-e01-r01]
 runtime:
   kind: python
@@ -52,7 +60,7 @@ validationRules:
       kind: python-source-fact
       fact: class-instance-compared
     feedback:
-      target: main.pyとConsole
+      target: main.pyと出力欄
       expected: '別Instanceと同じ参照を区別し、Instance属性が同名のClass属性を隠すことを実出力で説明できる。'
       nextAction: 'aliasをfirstへの参照にし、倍率7はfirstだけへ保存します。'
     hintId: python-oop-ch01-l01-e01-h01

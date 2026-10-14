@@ -49,7 +49,13 @@ function TestLoadingState() {
 }
 
 /** 各Testで編集可否を固定し、実Routeと同じLoader dataを持つMemory Routerを表示する。 */
-function renderSlide(slideId: string, canEdit: boolean, onRender?: ProfilerOnRenderCallback) {
+function renderSlide(
+  slideId: string,
+  canEdit: boolean,
+  onRender?: ProfilerOnRenderCallback,
+  sourceCourse = course,
+) {
+  const sourceLesson = sourceCourse.phases[0]!.chapters[0]!.lessons[0]!;
   vi.stubGlobal(
     'matchMedia',
     vi.fn((query: string) => ({
@@ -64,9 +70,9 @@ function renderSlide(slideId: string, canEdit: boolean, onRender?: ProfilerOnRen
       {
         path: '/courses/:courseId/lessons/:lessonId/slides/:slideId',
         loader: ({ params }) => ({
-          course,
-          lesson,
-          slide: lesson.slides.find(({ id }) => id === params.slideId)!,
+          course: sourceCourse,
+          lesson: sourceLesson,
+          slide: sourceLesson.slides.find(({ id }) => id === params.slideId)!,
         }),
         HydrateFallback: TestLoadingState,
         element:
@@ -80,7 +86,7 @@ function renderSlide(slideId: string, canEdit: boolean, onRender?: ProfilerOnRen
       },
     ],
     {
-      initialEntries: [`/courses/html-css/lessons/lesson-first-heading/slides/${slideId}`],
+      initialEntries: [`/courses/${sourceCourse.id}/lessons/${sourceLesson.id}/slides/${slideId}`],
     },
   );
   render(<RouterProvider router={router} />);
@@ -99,6 +105,24 @@ beforeEach(() => {
 });
 
 describe('SlidePage', () => {
+  it('図がなくても予測の問いがあるPython Slideには冒頭の読書案内を表示する', async () => {
+    const python = structuredClone(course);
+    python.id = 'python-practice';
+    const slide = python.phases[0]!.chapters[0]!.lessons[0]!.slides[0]!;
+    slide.blocks = [
+      {
+        type: 'prediction',
+        prompt: '次の値を予測します。',
+        answer: '先頭の3です。',
+        explanation: '新しく作ると先頭から始まります。',
+      },
+    ];
+    renderSlide(slide.id, false, undefined, python);
+    expect(await screen.findByText('次の値を予測します。')).toBeVisible();
+    expect(
+      screen.getByText('図や予測の問いまで読み、本文が続くときは下へスクロールしてください。'),
+    ).toBeVisible();
+  });
   it('一覧をDrawerで開き、前後導線と左右Arrowで往復して見出しへFocusする', async () => {
     const router = renderSlide('slide-second', true);
 

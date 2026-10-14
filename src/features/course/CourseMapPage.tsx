@@ -1,6 +1,7 @@
 import { useLoaderData } from 'react-router';
 import type { courseLoader } from '../../app/contentLoaders';
 import { buildCourseMap } from '../../core/content/courseMap';
+import { lessonResumePath } from '../../core/content/lessonStart';
 import { ActionLink } from '../../design-system/components/ActionLink';
 import { PieceProgress } from '../../design-system/components/PieceProgress';
 import { StackedCard } from '../../design-system/components/StackedCard';
@@ -156,9 +157,19 @@ export function CourseMapPage() {
                               </div>
                               <p className="mt-3 text-workshop-muted">{lesson.goal}</p>
                               <div className="mt-5">
-                                <ActionLink to={lesson.startPath} className="w-full sm:w-auto">
+                                <ActionLink
+                                  to={
+                                    lesson.status === 'current' &&
+                                    courseProgress.progress !== undefined
+                                      ? lessonResumePath(course.id, lesson.id)
+                                      : lesson.startPath
+                                  }
+                                  className="w-full sm:w-auto"
+                                >
                                   {lesson.status === 'current'
-                                    ? `${lesson.title}レッスンを始める`
+                                    ? courseProgress.progress === undefined
+                                      ? `${lesson.title}レッスンを始める`
+                                      : `${lesson.title}レッスンを再開する`
                                     : `${lesson.title}レッスンを見る`}
                                 </ActionLink>
                               </div>

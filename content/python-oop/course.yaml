@@ -4,7 +4,7 @@ title: PythonのClassとobjectの設計
 description: Classとmethod、継承・委譲・Property・dunderとFunction変換・設定付きdecoratorを記録Projectへ結ぶ240分の草稿Course。
 audience: Python基礎のFunction・スコープとPython実践のdataclassを学んだ方
 estimatedMinutes: 240
-revision: 2026-10-14.3
+revision: 2026-10-14.4
 runnerId: python
 validatorId: python
 glossarySource: glossary.yaml
@@ -30,7 +30,10 @@ expectedTotals:
   capstoneLessons: 0
   estimatedMinutes: 240
 provenanceManifestPath: provenance.yaml
-progressMigrations: []
+progressMigrations:
+  - fromRevision: 2026-10-14.3
+    toRevision: 2026-10-14.4
+    steps: []
 phases:
   - id: python-oop-p01
     title: 値の持ち主と暗黙の引数

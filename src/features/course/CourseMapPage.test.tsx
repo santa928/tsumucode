@@ -106,6 +106,25 @@ describe('CourseMapPage', () => {
     );
   });
 
+  it('途中のLessonは先頭Slideではなく保存値を解決する再開Linkを表示する', async () => {
+    useCourseProgress.mockReturnValue({
+      status: 'ready',
+      progress: {
+        ...completedProgress,
+        lessons: {},
+        currentComplete: false,
+        currentLessonId: 'lesson-first-heading',
+      },
+      error: undefined,
+      retry: vi.fn(),
+    });
+    renderCourseMap();
+
+    expect(
+      await screen.findByRole('link', { name: '見出しを置くレッスンを再開する' }),
+    ).toHaveAttribute('href', '/courses/html-css/lessons/lesson-first-heading/resume');
+  });
+
   it('読込中をstatusで伝え、0件Courseでもprogressのmaxを正に保つ', async () => {
     useCourseProgress.mockReturnValue({
       status: 'loading',

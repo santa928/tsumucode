@@ -69,7 +69,7 @@ describe('summarizeCatalogCourseProgress', () => {
       status: 'in-progress',
       completedLessons: 0,
       totalLessons: 2,
-      actionPath: '/courses/html-css/lessons/lesson-second/exercises/exercise-second',
+      actionPath: '/courses/html-css/lessons/lesson-second/resume',
       currentLessonId: 'lesson-second',
     });
   });
@@ -87,7 +87,7 @@ describe('summarizeCatalogCourseProgress', () => {
       status: 'in-progress',
       completedLessons: 1,
       totalLessons: 2,
-      actionPath: '/courses/html-css/lessons/lesson-second/exercises/exercise-second',
+      actionPath: '/courses/html-css/lessons/lesson-second/resume',
       currentLessonId: 'lesson-second',
     });
   });

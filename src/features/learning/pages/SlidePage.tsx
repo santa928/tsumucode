@@ -259,6 +259,14 @@ export function SlidePage() {
             slide={slide}
             baseUrl={import.meta.env.BASE_URL}
             titleRef={slideTitleRef}
+            readingCue={
+              ['python-practice', 'python-oop'].includes(course.id) &&
+              slide.blocks.some(
+                ({ type }) => type === 'practice' || type === 'prediction' || type === 'image',
+              )
+                ? '図や予測の問いまで読み、本文が続くときは下へスクロールしてください。'
+                : undefined
+            }
           />
 
           {!next ? <OptionalPracticeLinks courseId={course.id} lesson={lesson} /> : null}

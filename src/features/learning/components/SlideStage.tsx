@@ -11,6 +11,8 @@ export interface SlideStageProps {
   readonly titleRef?: Ref<HTMLHeadingElement>;
   readonly reading?: boolean;
   readonly titleLevel?: 1 | 2;
+  /** 本文の下部へ続く図や問いを見落とさないため、見出し直後に表示する案内。 */
+  readonly readingCue?: string | undefined;
 }
 
 /** 見出しから例・結果・練習まで、PCと狭幅で同じ読み順を保持する。 */
@@ -21,6 +23,7 @@ export function SlideStage({
   codeReference,
   reading = false,
   titleLevel = 1,
+  readingCue,
 }: SlideStageProps) {
   const Heading = titleLevel === 1 ? 'h1' : 'h2';
   return (
@@ -39,6 +42,9 @@ export function SlideStage({
         >
           {slide.title}
         </Heading>
+        {readingCue === undefined ? null : (
+          <p className="mt-2 text-sm leading-6 text-workshop-muted">{readingCue}</p>
+        )}
       </header>
       <div className="tc-slide-stage-body tc-slide-author-order">
         <SlideCodeReference slide={codeReference} baseUrl={baseUrl} />

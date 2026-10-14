@@ -44,6 +44,18 @@ export async function definePythonDraftReadingTests(courseRoot: string): Promise
           );
           const stage = page.getByTestId('slide-stage');
           await expect(stage).toHaveAttribute('data-slide-id', slideId);
+          if (
+            slide.blocks.some(
+              ({ type }) => type === 'practice' || type === 'prediction' || type === 'image',
+            )
+          ) {
+            await expect(
+              stage.getByText(
+                '図や予測の問いまで読み、本文が続くときは下へスクロールしてください。',
+                { exact: true },
+              ),
+            ).toBeVisible();
+          }
           const images = stage.getByRole('img');
           if (slide.layout === 'code-preview') await expect(images.first()).toBeVisible();
           for (let index = 0; index < (await images.count()); index++)

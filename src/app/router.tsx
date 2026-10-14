@@ -90,6 +90,11 @@ function normalLearningChildren(options: AppRouterOptions): RouteObject[] {
       ...normalLearningRoute(options, 'course'),
     },
     {
+      path: 'courses/:courseId/lessons/:lessonId/resume',
+      HydrateFallback: ContentLoadingPage,
+      ...normalLearningRoute(options, 'resume'),
+    },
+    {
       path: 'courses/:courseId/lessons/:lessonId/slides/:slideId',
       HydrateFallback: ContentLoadingPage,
       ...normalLearningRoute(options, 'slide'),
