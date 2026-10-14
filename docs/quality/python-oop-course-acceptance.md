@@ -58,7 +58,9 @@ PC／390pxの全34Slideで図の読込、axe、横overflow、本文末尾とPage
 
 2026-10-14に、8 Course compile、OOP概念coverage complete、出典289 files／289 items、全8 Course・166 Lesson内容台帳のstale0／rejected0、対象型／Lint／整形、subpath build／inline CSS／smoke、learning chunk isolation、552 filesの静的Artifact検査を確認しました。OOP全34SlideのPC／390px読書2件が22.0／20.5秒で成功し、共有helperを抽出した実践Course全11Slideの回帰2件も7.5／6.6秒で成功しました。いずれもretry0で、図読込・axe違反0・横overflowなし・末尾／Pager到達・Home／Path非掲載・Python core取得0を確認しています。3method／Function変換／Project状態分離の両幅6画像を直接確認しました。
 
-初回検査で発見した出典3原稿の未登録と、作者のsmoke呼出で `BASE_PATH` を付け忘れた失敗は私有原本に保持します。前者は台帳登録で、後者は同じbuild条件の指定で是正し、成功済みcompile／coverage／buildは再実行していません。教材9Lessonの内容hashと既存演習・解析・依存は不変です。生ログ・画像・学習データは公開pushへ含めません。
+初回検査で発見した出典3原稿の未登録と、作者のsmoke呼出で `BASE_PATH` を付け忘れた失敗は私有原本に保持します。前者は台帳登録で、後者は同じbuild条件の指定で是正しました。その後、独立レビューが公開出典の再生成不足を検出しました。台帳変更もcompileの生成入力になるため、既存compile結果を再利用した判断を訂正し、再compile／buildとsubpath／chunk／Artifact境界を確認し直しました。
+
+生成元とdistの公開出典JSONには新3IDが存在し、両者が一致します。全552 filesの変更前後hashを照合し、変わったのはOOPの出典JSON1件だけでした。Lesson payload・SVG・JS・HTML・CSS・core・manifestは不変で、読書検査の4成功をこの条件で再利用します。教材9Lessonの内容hashと既存演習・解析・依存も不変です。初回レビューのP2と是正結果を私有原本に保持し、生ログ・画像・学習データは公開pushへ含めません。
 
 安全性は[Python実行契約](python-runtime-contract.md)と[Local実行境界](local-python-runtime.md)を参照し、Worker／frame、固定同origin core、CSP、期限、CPythonの資源・出力・停止／回収条件を緩和しません。#147のcold準備や既知Solutionでの観測を、OOP全9Lesson・物理端末・性能合格へ一般化しません。core遅延取得・bundle上限の技術確認と、承認された操作性能の受入は別です。
 
