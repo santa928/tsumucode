@@ -2,6 +2,7 @@
 import { redirect, type LoaderFunctionArgs } from 'react-router';
 import { courseContentRepository } from '../core/content/CourseContentRepository';
 import { exerciseRequirementIds } from '../core/content/exerciseRequirementIds';
+import { lessonStartTargetPath } from '../core/content/lessonStart';
 import {
   loadCourseCatalog,
   loadCourseIndex,
@@ -10,6 +11,7 @@ import {
 import {
   findExercise,
   findExerciseOwner,
+  findLessonOutline,
   findSlide,
   findSlideOwner,
 } from '../core/content/selectors';
@@ -23,6 +25,7 @@ import type {
   Slide,
 } from '../core/content/types';
 import { learningRuntimeServices } from '../features/learning/runtimeServices';
+import { lessonResumeTarget } from '../features/progress/lessonResumeTarget';
 import {
   createCatalogProgressMigrationPort,
   ensureCatalogCourseRevisions,
@@ -118,6 +121,31 @@ export async function courseLoader({ params }: CourseLoaderArgs): Promise<Course
   const course = await loadCourseIndex(import.meta.env.BASE_URL, entry);
   await learningRuntimeServices.ensureCourseIndex(course);
   return course;
+}
+
+/**
+ * migration完了後の保存値だけで再開先を解決し、本文取得・保存・採点は既存遷移先へ委ねる。
+ * 未知Lessonは404とし、保存読取の失敗を保存なしへ読み替えずRouteエラーへ渡す。
+ */
+export async function lessonResumeLoader(args: CourseLoaderArgs): Promise<Response> {
+  const course = await courseLoader(args);
+  let lesson: ReturnType<typeof findLessonOutline>;
+  try {
+    lesson = findLessonOutline(course, args.params.lessonId ?? '');
+  } catch {
+    return throwContentNotFound();
+  }
+  await learningRuntimeServices.ready;
+  const workspaceIds = [...new Set(lesson.exercises.map(({ workspaceId }) => workspaceId))];
+  const [progress, savedDrafts] = await Promise.all([
+    learningRuntimeServices.repository.getCourse(course.id),
+    Promise.all(
+      workspaceIds.map((id) => learningRuntimeServices.repository.getDraft(course.id, id)),
+    ),
+  ]);
+  const drafts = new Map(workspaceIds.map((id, index) => [id, savedDrafts[index]]));
+  const target = lessonResumeTarget(course, lesson, progress, drafts);
+  return redirect(lessonStartTargetPath(course.id, lesson.id, target));
 }
 
 /** URLのLesson IDとIndex上の所有関係を確認する。 */

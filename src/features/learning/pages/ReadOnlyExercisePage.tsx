@@ -9,6 +9,7 @@ import { StackedCard } from '../../../design-system/components/StackedCard';
 import { WorkshopNotice } from '../../../design-system/components/WorkshopNotice';
 import { resolvePublicAsset } from '../../../shared/lib/resolvePublicAsset';
 import { PreviewFrame } from '../components';
+import { SlideBlocks } from '../components/SlideBlocks';
 import { learningRuntimeServices } from '../runtimeServices';
 import { useAdjacentLessonPrefetch } from '../useAdjacentLessonPrefetch';
 
@@ -71,7 +72,7 @@ async function copyCurrentUrl(): Promise<void> {
   await Reflect.apply(writeText, clipboard, [window.location.href]);
 }
 
-/** 小画面ではEditorを起動せず、完了済みDraftだけをread-only Previewへ接続する。 */
+/** 小画面ではEditorを起動せず、Project読書・Courseへの戻りと現在合格のPreviewを提供する。 */
 export function ReadOnlyExercisePage({
   course,
   lesson,
@@ -190,9 +191,19 @@ export function ReadOnlyExercisePage({
     );
   }, []);
 
+  const courseReturnLink = (
+    <Link
+      to={`/courses/${course.id}`}
+      className="inline-flex min-h-11 items-center font-bold underline"
+    >
+      コースマップへ戻る
+    </Link>
+  );
+
   if (state.kind === 'error') {
     return (
       <div role="alert">
+        {courseReturnLink}
         <WorkshopNotice tone="correction" title="端末の進捗を読み込めませんでした">
           PC側のBundleから復元できます。元の端末データは変更していません。
         </WorkshopNotice>
@@ -244,14 +255,15 @@ export function ReadOnlyExercisePage({
     </>
   );
 
-  /** 保存領域待ちの有無だけを変え、PC案内の寸法と主要文言を初回から安定させる。 */
+  /** 保存確認中も戻り導線とProject読書を先に出し、既存PC案内を安定表示する。 */
   function renderGuide(checking: boolean) {
     return (
       <StackedCard
         as="article"
         className="mx-auto max-w-[var(--tc-content-reading)] bg-workshop-raised"
       >
-        <p className="font-black text-workshop-complete">{exercise.title}</p>
+        {courseReturnLink}
+        <p className="mt-4 font-black text-workshop-complete">{exercise.title}</p>
         <h1 className="mt-2 text-3xl font-black">PCで演習を開く</h1>
         <WorkshopNotice tone="learning" title="コード編集はPCから利用できます" className="mt-5">
           <p className="leading-7">
@@ -265,6 +277,27 @@ export function ReadOnlyExercisePage({
           </p>
           {transferGuidance}
         </WorkshopNotice>
+        {lesson.kind !== 'standard' ? (
+          <details className="mt-6">
+            <summary className="min-h-11 cursor-pointer font-bold">
+              制作ブリーフと工程ガイド
+            </summary>
+            <div className="mt-4 space-y-6">
+              <SlideBlocks
+                blocks={lesson.project.brief}
+                assets={exercise.assets}
+                baseUrl={import.meta.env.BASE_URL}
+                reading
+              />
+              <SlideBlocks
+                blocks={lesson.project.guide}
+                assets={exercise.assets}
+                baseUrl={import.meta.env.BASE_URL}
+                reading
+              />
+            </div>
+          </details>
+        ) : null}
       </StackedCard>
     );
   }
@@ -305,12 +338,7 @@ export function ReadOnlyExercisePage({
         <h2 className="text-xl font-black">PCで続きを編集する</h2>
         {transferGuidance}
       </StackedCard>
-      <Link
-        to={`/courses/${course.id}`}
-        className="mt-6 inline-flex min-h-11 items-center font-bold underline"
-      >
-        コースマップへ戻る
-      </Link>
+      <div className="mt-6">{courseReturnLink}</div>
     </section>
   );
 }

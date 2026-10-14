@@ -662,10 +662,29 @@ describe('Learning routes', () => {
       'href',
       '#/?focus=device-data',
     );
+    expect(screen.getByRole('link', { name: 'コースマップへ戻る' })).toHaveAttribute(
+      'href',
+      '#/courses/html-css',
+    );
     expect(screen.queryByTestId('code-workspace')).not.toBeInTheDocument();
     expect(runtime.runnerRegistry.create).not.toHaveBeenCalled();
     expect(runtime.ensureCourseIndex).toHaveBeenCalledTimes(1);
   }, 15_000);
+
+  it('小画面Projectで制作Briefを読めて、EditorとRunnerを起動せずCourseへ戻れる', async () => {
+    stubEditingCapability(false);
+    renderRoute('/courses/html-css/lessons/lesson-guided-step-1/exercises/exercise-guided-step-1');
+
+    expect(await screen.findByRole('heading', { name: 'PCで演習を開く' })).toBeInTheDocument();
+    await userEvent.click(screen.getByText('制作ブリーフと工程ガイド'));
+    expect(screen.getByText('同じSourceを次の工程へ積み重ねます。')).toBeVisible();
+    expect(screen.getByRole('link', { name: 'コースマップへ戻る' })).toHaveAttribute(
+      'href',
+      '#/courses/html-css',
+    );
+    expect(screen.queryByTestId('code-workspace')).not.toBeInTheDocument();
+    expect(runtime.runnerRegistry.create).not.toHaveBeenCalled();
+  });
 
   it('小画面の進捗確認中もPC案内を先に表示し、保存領域待ちをLCPへ持ち込まない', async () => {
     stubEditingCapability(false);

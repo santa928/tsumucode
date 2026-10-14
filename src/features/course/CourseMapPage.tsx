@@ -1,6 +1,7 @@
 import { useLoaderData } from 'react-router';
 import type { courseLoader } from '../../app/contentLoaders';
 import { buildCourseMap } from '../../core/content/courseMap';
+import { lessonResumePath } from '../../core/content/lessonStart';
 import { ActionLink } from '../../design-system/components/ActionLink';
 import { PieceProgress } from '../../design-system/components/PieceProgress';
 import { StackedCard } from '../../design-system/components/StackedCard';
@@ -15,7 +16,7 @@ const KIND_LABEL = {
   capstone: '仕上げ制作',
 } as const;
 
-/** Phase、Chapter、Lessonの関係を、組み立て順が見えるコースマップとして表示する。 */
+/** Courseの現在進捗を示し、以前の達成記録と現在のコードの再判定を区別する。 */
 export function CourseMapPage() {
   const course = useLoaderData<typeof courseLoader>();
   const courseProgress = useCourseProgress(course.id);
@@ -155,10 +156,28 @@ export function CourseMapPage() {
                                 </span>
                               </div>
                               <p className="mt-3 text-workshop-muted">{lesson.goal}</p>
+                              {courseProgress.progress?.lessons[lesson.id]?.firstCompletedAt !==
+                                undefined &&
+                              courseProgress.progress.lessons[lesson.id]?.currentComplete ===
+                                false ? (
+                                <p className="mt-3 text-sm text-workshop-muted">
+                                  以前の達成記録は残っています。現在のコードを、もう一度「判定する」で確認してください。
+                                </p>
+                              ) : null}
                               <div className="mt-5">
-                                <ActionLink to={lesson.startPath} className="w-full sm:w-auto">
+                                <ActionLink
+                                  to={
+                                    lesson.status === 'current' &&
+                                    courseProgress.progress !== undefined
+                                      ? lessonResumePath(course.id, lesson.id)
+                                      : lesson.startPath
+                                  }
+                                  className="w-full sm:w-auto"
+                                >
                                   {lesson.status === 'current'
-                                    ? `${lesson.title}レッスンを始める`
+                                    ? courseProgress.progress === undefined
+                                      ? `${lesson.title}レッスンを始める`
+                                      : `${lesson.title}レッスンを再開する`
                                     : `${lesson.title}レッスンを見る`}
                                 </ActionLink>
                               </div>

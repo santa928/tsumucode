@@ -6,6 +6,7 @@ import {
   exerciseLoader,
   homeLoader,
   learningPathLoader,
+  lessonResumeLoader,
   reviewLoader,
   slideLoader,
 } from './contentLoaders';
@@ -26,6 +27,7 @@ export const normalLearningRouteModules = {
   home: { loader: homeLoader, Component: HomePage },
   path: { loader: learningPathLoader, Component: LearningPathPage },
   course: { loader: courseLoader, Component: CourseMapPage },
+  resume: { loader: lessonResumeLoader },
   slide: { loader: slideLoader, Component: SlidePage },
   exercise: { loader: exerciseLoader, Component: ExercisePage },
   review: { loader: reviewLoader, Component: ReviewPage },

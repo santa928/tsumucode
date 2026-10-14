@@ -99,6 +99,27 @@ it('固定suiteを全件満たす場合だけLocal採点を合格にする', asy
   expect((await new PythonLessonValidator('cpython').validate(changed)).status).toBe('incomplete');
 });
 
+it('実行済みのfalse事実は未確認ではなく教材条件との不一致として示す', async () => {
+  const context = await fixedContext();
+  const factId = `python.${PYTHON_LESSONS[context.exerciseId]!.facts[0]!}`;
+  const changed: ValidationContext = {
+    ...context,
+    execution: {
+      ...context.execution!,
+      evidence: context.execution!.evidence.map((item) =>
+        item.id === factId ? { ...item, value: false } : item,
+      ),
+    },
+  };
+
+  const result = await new PythonLessonValidator('cpython').validate(changed);
+  expect(result.status).toBe('incomplete');
+  expect(result.checks[0]).toMatchObject({
+    passed: false,
+    actual: '教材のコード条件に一致しません',
+  });
+});
+
 it.each(['missing', 'practice', 'partial', 'identity', 'case-id'])(
   '練習や不完全な固定採点証拠を受け付けない: %s',
   async (mode) => {

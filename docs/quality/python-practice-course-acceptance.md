@@ -1,8 +1,12 @@
 # Python実践Courseの公開前技術受入（Issue #147）
 
+2026-10-14にユーザーが初心者向け使いやすさ・実機性能の受入方法を変更しました。新規3名の会話履歴なしcomputer useレビューを代替として使います。[承認された方法・初回3件の観測と限界・是正対象](python-computer-use-acceptance.md)を正とします。初回3件は実施済みですが、再開などのblocking findingの修正後再操作は未完です。以下の実人・物理端末の観察案は変更前の参考であり、必須待ちへ戻しません。新Pages公開の保留は維持します。
+
 対象は`python-practice`の3Chapter・5Lesson・11Slide・標準4演習・Guided Project1件、95分の草稿です。Python基礎のList・for・Function・例外を前提に、反復の状態とResource終了処理をデータ集計へ結びます。実行基盤を増やさず、固定CPython 3.14.2とPyodide 314.0.7を使います。
 
 今回の差分は7Slideのコード例への静的説明図、既存`code-preview`への分類、revision `2026-10-13.1`、対象読書検査とこの受入記録です。`publicationStatus: draft`を維持し、Home／Python Path追加、Pages公開、Browser対話入力、任意pip、外部DBは含めません。#147は公開後の条件が満たされるまでOpenです。
+
+上記は静的図の統合時の基準です。固定5192の新規3名computer useで再開・初回演習の合格と保存復元・小画面読書を確認した後、revision `2026-10-14.1` ではProjectの工程ガイドを学習者向けに整理します。`2026-10-13.1`からの空migrationで既存ID・コード・履歴を保持し、採点条件・実行例・Fixtureは変えません。小画面のCourse戻りとProject読書、再編集時の再判定案内は共通UIで改善します。この改善後の影響再操作と公開Gate／Path／配信後SHAは未完のまま残します。
 
 ## 概念・教材順・Projectの対応
 

@@ -1,18 +1,18 @@
 schemaVersion: 1
 entries:
   - id: python-class-instance
-    term: Classから別々のInstanceを作る
-    definition: ClassはInstanceを作る型。Instanceごとに値を持ち、selfは呼出先を受ける慣習名。
+    term: ClassとInstance（クラスとインスタンス）
+    definition: Classはobjectを作る型で、Instanceはその型から作った個別のobjectです。同じClassから作っても、Instanceごとに別の値を持てます。
     firstSlideId: python-oop-ch01-l01-s01
     relatedIds: []
   - id: python-identity
-    term: 同じ値と同じobjectを分ける
+    term: objectの同一性（is）
     definition: 値の等価性ではなく、2つの名前が同じobjectを参照するかをisで確かめること。
     firstSlideId: python-oop-ch01-l01-s02
     relatedIds: []
   - id: python-attribute-lookup
-    term: Instanceの属性がClassの属性を隠す
-    definition: この最小例ではInstance上の属性を先に使い、なければClassの属性を使う。
+    term: 属性の参照先
+    definition: 属性はobjectに名前を付けて保持した値です。この最小例ではInstance上の属性を先に使い、なければClassの属性を使います。
     firstSlideId: python-oop-ch01-l01-s03
     relatedIds: []
   - id: python-instance-method

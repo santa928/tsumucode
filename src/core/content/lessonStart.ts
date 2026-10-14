@@ -33,3 +33,8 @@ export function lessonStartTargetPath(
   const segment = target.kind === 'slide' ? 'slides' : 'exercises';
   return `/courses/${courseId}/lessons/${lessonId}/${segment}/${target.targetId}`;
 }
+
+/** 保存値をクリック時に解決する通常学習用のLesson再開URLを作る。 */
+export function lessonResumePath(courseId: string, lessonId: string): string {
+  return `/courses/${courseId}/lessons/${lessonId}/resume`;
+}

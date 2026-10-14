@@ -1,8 +1,14 @@
 # Python OOP Courseの公開前統合受入（Issue #152）
 
+2026-10-14にユーザーが初心者向け使いやすさ・実機性能の受入方法を変更しました。新規3名の会話履歴なしcomputer useレビューを代替として使います。[承認された方法・初回3件の観測と限界・是正対象](python-computer-use-acceptance.md)を正とします。初回3件は実施済みですが、再開などのblocking findingの修正後再操作は未完です。以下の実人・物理端末の観察案は変更前の参考であり、必須待ちへ戻しません。新Pages公開の保留は維持します。
+
 対象は `python-oop` の4 Chapter・9 Lesson・34 Slide・標準8演習・Guided Project1件、240分の草稿です。基準mainは `fdc77bf9ad6adde7a4eb801d6c930f5f7d72c11d`、Course revisionは `2026-10-14.3` です。#148〜#151の実装を統合済みで、Python基礎のFunction・スコープとPython実践のdataclassを学習前提にします。実践Courseが未公開であることと、OOPの独立設計・技術検証を進められることを分けます。
 
-今回は概念と課題・既存証拠の対応、統合読書検査、未完受入の手順を整えます。統合時に出典台帳への未登録を検出した `course.yaml`／`concepts.yaml`／`glossary.yaml` の3管理原稿も、独自作成物として登録します。教材本文・演習・採点処理は変更しません。Courseは `publicationStatus: draft` を維持します。Home／Python Path追加と新Pages公開は保留で、#147の未確認事項を確認済みにせず、#152も公開後の条件が満たされるまでOpenです。
+上記はrevision `.3`の統合時の基準です。統合時に出典台帳への未登録を検出した `course.yaml`／`concepts.yaml`／`glossary.yaml` の3管理原稿も、独自作成物として登録しました。Courseは `publicationStatus: draft` を維持し、Home／Python Path追加と新Pages公開は保留です。
+
+初回computer useの指摘是正では、最新基準main `7dba4412567c7d959a6a72bb66a1c915803858b4` に対し、初回演習の工程分割・最初の用語3件を改善し、revisionを `2026-10-14.4` へ進めました。空stepsのmigrationで既存ID・Source・履歴を保持しました。教材の採点条件・実行Source・Fixtureは変えず、不一致を「未確認」と表していた結果文言と、保存演習への再開導線・読書案内を修正しました。過去の `.3` の技術証拠はその入力と範囲を保持し、候補の再開・読書・必要CIや独立レビューと区別します。
+
+固定5192の新規3名再操作で再開の改善を確認した後、revision `2026-10-14.5` では初回演習の全体判定と具体的出力を説明し、Project本文を学習者向けに整理します。`.4`からの空migrationでID・コード・履歴を保持します。再編集の再判定案内と小画面の戻り／Project読書も対象です。評価・配信・公開の注意はこの品質文書へ保持し、学習画面の制作説明から外します。3名再操作の範囲と限界は共通受入文書を参照してください。この改善後の影響再操作と公開後条件は未完なので、#147／#152はOpenです。
 
 ## 概念と確認する行動
 

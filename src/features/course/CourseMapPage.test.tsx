@@ -87,6 +87,7 @@ describe('CourseMapPage', () => {
       'href',
       '/courses/html-css/lessons/lesson-first-heading/slides/slide-html-role',
     );
+    expect(screen.queryByText(/以前の達成記録は残っています/u)).not.toBeInTheDocument();
   });
 
   it('端末進捗から完了数とLesson状態を表示する', async () => {
@@ -104,6 +105,55 @@ describe('CourseMapPage', () => {
       'aria-valuetext',
       '1 / 1 ピース完了',
     );
+    expect(screen.queryByText(/以前の達成記録は残っています/u)).not.toBeInTheDocument();
+  });
+
+  it('途中のLessonは先頭Slideではなく保存値を解決する再開Linkを表示する', async () => {
+    useCourseProgress.mockReturnValue({
+      status: 'ready',
+      progress: {
+        ...completedProgress,
+        lessons: {},
+        currentComplete: false,
+        currentLessonId: 'lesson-first-heading',
+      },
+      error: undefined,
+      retry: vi.fn(),
+    });
+    renderCourseMap();
+
+    expect(
+      await screen.findByRole('link', { name: '見出しを置くレッスンを再開する' }),
+    ).toHaveAttribute('href', '/courses/html-css/lessons/lesson-first-heading/resume');
+  });
+
+  it('以前に達成したLessonを再編集したときは記録の保持と再判定を案内する', async () => {
+    useCourseProgress.mockReturnValue({
+      status: 'ready',
+      progress: {
+        ...completedProgress,
+        lessons: {
+          'lesson-first-heading': {
+            ...completedProgress.lessons['lesson-first-heading'],
+            passedExerciseIds: [],
+            currentComplete: false,
+          },
+        },
+        currentComplete: false,
+        currentLessonId: 'lesson-first-heading',
+      },
+      error: undefined,
+      retry: vi.fn(),
+    });
+    renderCourseMap();
+
+    expect(await screen.findByText('0 / 1')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        '以前の達成記録は残っています。現在のコードを、もう一度「判定する」で確認してください。',
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByText('現在のピース')).toHaveAttribute('data-status', 'current');
   });
 
   it('読込中をstatusで伝え、0件Courseでもprogressのmaxを正に保つ', async () => {

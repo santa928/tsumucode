@@ -1,5 +1,5 @@
 /** Course Manifestを読まず、Catalog metadataと端末進捗だけでCourse表示状態を導出する。 */
-import { lessonStartTargetPath } from '../../core/content/lessonStart';
+import { lessonResumePath, lessonStartTargetPath } from '../../core/content/lessonStart';
 import type { CourseCatalogEntry } from '../../core/content/types';
 import type { CourseProgress } from '../../core/persistence/contracts';
 
@@ -74,7 +74,9 @@ export function summarizeCatalogCourseProgress(
     actionPath:
       currentLessonId === undefined
         ? coursePath
-        : (lessonActionPath(course, currentLessonId) ?? coursePath),
+        : progress === undefined
+          ? (lessonActionPath(course, currentLessonId) ?? coursePath)
+          : lessonResumePath(course.id, currentLessonId),
     ...(currentLessonId === undefined ? {} : { currentLessonId }),
   };
 }

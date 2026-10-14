@@ -18,8 +18,8 @@ print(sum(number for number in []))
 
 固定Testの不正値を試すtry/except/elseでは、ValueErrorが出ればexcept、例外なしでtryを終えた場合だけelseへ進みます。elseのAssertionErrorは、本来拒否する値を受け入れてしまったことをTest失敗として示します。
 
-固定Testの入力・期待値・表示・Function/Class名は保ちます。Test成功は正常/空/不正文字列/負値の4値ケースを通った結果です。amountの注釈の正しさなどは別のSource条件です。Test成功でも注釈がstrのままなら判定は未達になります。assertの失敗はこのdriverがAssertionErrorだけを捕捉し、ConsoleへTest失敗、判定へ未達を表示します。未捕捉のTypeError等はRuntime Errorです。教材外構文や環境障害は未採点(system error)です。
+用意されたTestの入力・期待値・表示・Function/Class名は保ちます。Test成功は正常/空/不正文字列/負値の4つのケースを通った結果です。「判定する」ではamountの型注釈など、コードの書き方も確認します。Test成功でも注釈がstrのままなら判定は未達になります。assertの失敗は、確認用コードがAssertionErrorを捕捉して出力欄に「Test失敗」と表示します。捕捉しないTypeErrorなどは実行時エラーです。この教材で扱わない書き方や実行環境の問題は、不正解とは分けて案内します。
 
-assertは開発中のTestに使う確認で、実行時の値検証を代行しません。Pythonの最適化実行ではassertが省略されます。本教材の固定実行には最適化を指定しません。負値はifとraiseで拒否します。
+assertは開発中のTestに使う確認で、実行時の値検証を代行しません。Pythonの最適化実行ではassertが省略されます。この教材ではassertが省略される実行設定を使いません。負値はifとraiseで拒否します。
 
-Sourceは保存して再開できます。最初に戻すとstarterへ戻ります。Browser/Local間は既存JSON転送を使います。入力欄は使わず、文字列データは固定Test内で指定します。
+コードは保存して再開できます。「最初に戻す」で最初のコードへ戻ります。ブラウザとPCのローカル学習環境の間で移るときは、学習データを書き出して移動先で読み込んでください。入力欄は使わず、文字列データは用意されたTest内で指定します。
