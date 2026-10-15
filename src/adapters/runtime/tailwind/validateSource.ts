@@ -1,5 +1,7 @@
 import type { RunnerDiagnostic, RunnerInput } from '../../../core/runtime/contracts';
 import type { ValidatedHtmlCssPreviewInput } from '../preview-kernel/prepareHtmlCssPreview';
+import { TailwindExerciseRuntimeSchema } from '../../../core/content/schema';
+import { assertTailwindProjectCss } from './projectCss';
 
 const TAGS = new Set([
   'html',
@@ -77,15 +79,92 @@ const VARIANT_UTILITIES: Readonly<Record<string, ReadonlySet<string>>> = {
 };
 const ARBITRARY = /^(gap|p|w|max-w)-\[(\d{1,4}(?:\.\d{1,2})?)(px|rem)\]$/u;
 const PLAIN_CLASS = /^[a-z][a-z\d_-]*$/iu;
+const PROJECT_UTILITIES = new Set([
+  'note-card',
+  'p-card',
+  'gap-card',
+  'bg-brand',
+  'bg-paper',
+  'text-brand',
+  'text-paper',
+  'border-brand',
+  'outline-brand',
+]);
+const PROJECT_COLORS = new Set(['bg-brand', 'bg-paper', 'text-brand', 'text-paper']);
+type TailwindProfile = 'theme-project-v1' | undefined;
 
 /** 入力の未対応とcompiler取得・実装の障害を区別する。 */
-export class TailwindSourceError extends Error {}
+export class TailwindSourceError extends Error {
+  readonly file: 'index.html' | 'styles.css';
+
+  /** 既存教材はHTMLを既定とし、制作CSSの診断だけを対応タブへ結ぶ。 */
+  constructor(message: string, file: 'index.html' | 'styles.css' = 'index.html') {
+    super(message);
+    this.file = file;
+  }
+}
+
+/** 明示profileの固定2ソースだけを読み、検証済みCSSを原文のまま返す。 */
+export function getTailwindProjectCss(original: RunnerInput): string | undefined {
+  const runtime = original.options['runtime'];
+  if (runtime === undefined) return undefined;
+  if (!TailwindExerciseRuntimeSchema.safeParse(runtime).success) {
+    throw new TailwindSourceError('この制作のRuntime設定が固定profileと一致しません。');
+  }
+  const paths = Object.keys(original.files);
+  if (
+    paths.length !== 2 ||
+    !Object.hasOwn(original.files, 'index.html') ||
+    !Object.hasOwn(original.files, 'styles.css')
+  ) {
+    throw new TailwindSourceError('この制作ではindex.htmlとstyles.cssの2ファイルを使います。');
+  }
+  const css = original.files['styles.css']!;
+  try {
+    assertTailwindProjectCss(css);
+  } catch (error) {
+    throw new TailwindSourceError(
+      error instanceof Error ? error.message : 'styles.cssを確認します。',
+      'styles.css',
+    );
+  }
+  return css;
+}
+
+/** 制作課題のheadでは、固定CSS参照と文字コード・viewportだけを許可する。 */
+function isProjectHeadElement(element: Element, documentValue: Document): boolean {
+  if (element.parentElement !== documentValue.head) return false;
+  if (element.localName === 'link') {
+    return (
+      element.attributes.length === 2 &&
+      element.getAttribute('rel') === 'stylesheet' &&
+      element.getAttribute('href') === 'styles.css'
+    );
+  }
+  if (element.localName !== 'meta') return false;
+  return (
+    (element.attributes.length === 1 &&
+      element.getAttribute('charset')?.toLowerCase() === 'utf-8') ||
+    (element.attributes.length === 2 &&
+      element.getAttribute('name') === 'viewport' &&
+      element.getAttribute('content')?.replace(/\s+/gu, '') ===
+        'width=device-width,initial-scale=1.0')
+  );
+}
 
 /** 教材の有限Utility・単一variant・数値別解だけをcompilerへ渡す。 */
-export function isSupportedTailwindClass(token: string): boolean {
+export function isSupportedTailwindClass(token: string, profile?: TailwindProfile): boolean {
   if (UTILITIES.has(token)) return true;
+  if (profile === 'theme-project-v1' && PROJECT_UTILITIES.has(token)) return true;
   const [variant, utility, extra] = token.split(':');
   if (utility !== undefined) {
+    if (
+      profile === 'theme-project-v1' &&
+      extra === undefined &&
+      ((variant === 'hover' && PROJECT_COLORS.has(utility)) ||
+        (['focus', 'focus-visible'].includes(variant ?? '') && utility === 'outline-brand'))
+    )
+      return true;
     return (
       extra === undefined &&
       Object.hasOwn(VARIANT_UTILITIES, variant ?? '') &&
@@ -105,7 +184,13 @@ export function validateTailwindSource(
   input: ValidatedHtmlCssPreviewInput,
   original: RunnerInput,
 ): readonly RunnerDiagnostic[] {
-  if (input.entryFile !== 'index.html' || input.files.size !== 1 || original.assets.length !== 0) {
+  const projectCss = getTailwindProjectCss(original);
+  const profile = projectCss === undefined ? undefined : 'theme-project-v1';
+  if (
+    input.entryFile !== 'index.html' ||
+    input.files.size !== (profile === undefined ? 1 : 2) ||
+    original.assets.length !== 0
+  ) {
     throw new TailwindSourceError(
       'この実習ではindex.htmlだけを使います。追加CSS・画像・別ファイルは未対応です。',
     );
@@ -114,18 +199,23 @@ export function validateTailwindSource(
     throw new TailwindSourceError('この実習のHTMLは16KiBまでです。編集内容は残っています。');
   }
   const documentValue = new DOMParser().parseFromString(input.htmlSource, 'text/html');
+  if (profile !== undefined && documentValue.querySelectorAll('link').length !== 1) {
+    throw new TailwindSourceError('制作課題のheadにはstyles.cssへの参照を1個置きます。');
+  }
   const elements = [...documentValue.querySelectorAll('*')];
   if (elements.length > 128) throw new TailwindSourceError('この実習の要素数は128個までです。');
   let tokenCount = 0;
   const ids = new Set<string>();
   const unknown = new Set<string>();
   for (const element of elements) {
-    if (!TAGS.has(element.localName)) {
+    const projectHead = profile !== undefined && isProjectHeadElement(element, documentValue);
+    if (!TAGS.has(element.localName) && !projectHead) {
       throw new TailwindSourceError(
         `${element.localName}要素はこの実習では未対応です。CSSやJavaScriptは追加しません。`,
       );
     }
     for (const attribute of element.attributes) {
+      if (projectHead) continue;
       const buttonAttribute =
         element.localName === 'button' &&
         (attribute.name === 'disabled' ||
@@ -155,7 +245,7 @@ export function validateTailwindSource(
       tokenCount += 1;
       if (tokenCount > 64 || token.length > 64)
         throw new TailwindSourceError('classは合計64個・1個64文字までです。');
-      if (isSupportedTailwindClass(token)) continue;
+      if (isSupportedTailwindClass(token, profile)) continue;
       if (!PLAIN_CLASS.test(token)) {
         throw new TailwindSourceError(
           `${token}は未対応です。教材の有限Utility・単一のhover/focus/focus-visible/disabled/sm/mdと、gap/p/幅の数値px・remだけを使います。`,
@@ -175,10 +265,10 @@ export function validateTailwindSource(
 }
 
 /** 警告済みの未知classを除外し、有限文法だけを実compilerへ渡す。 */
-export function restrictTailwindClasses(documentValue: Document): void {
+export function restrictTailwindClasses(documentValue: Document, profile?: TailwindProfile): void {
   for (const element of documentValue.querySelectorAll('[class]')) {
     for (const token of [...element.classList]) {
-      if (!isSupportedTailwindClass(token)) element.classList.remove(token);
+      if (!isSupportedTailwindClass(token, profile)) element.classList.remove(token);
     }
   }
 }

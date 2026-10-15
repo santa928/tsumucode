@@ -1,0 +1,19 @@
+{
+  "name": "tsumucode-tailwind-project",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.18.0"
+  },
+  "scripts": {
+    "dev": "vite --strictPort",
+    "build": "vite build",
+    "preview": "vite preview --strictPort"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.3.2",
+    "tailwindcss": "4.3.2",
+    "vite": "8.2.0"
+  }
+}

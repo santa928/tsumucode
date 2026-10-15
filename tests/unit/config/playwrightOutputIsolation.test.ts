@@ -56,6 +56,7 @@ describe('Playwright output isolation', () => {
       'python-input.spec.ts',
       'tailwind.spec.ts',
       'tailwind-foundations.spec.ts',
+      'tailwind-project.spec.ts',
     ];
 
     expect(chromium?.testMatch).toBeUndefined();

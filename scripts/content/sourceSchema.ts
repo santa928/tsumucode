@@ -21,6 +21,7 @@ import { JAVASCRIPT_TEACHING_GOALS } from '../../src/core/content/javascriptTeac
 import {
   NextExerciseRuntimeSchema,
   PythonExerciseRuntimeSchema,
+  TailwindExerciseRuntimeSchema,
   ConceptDefinitionSchema,
   ConceptRequirementSchema,
   ContentProgressMigrationSchema,
@@ -199,6 +200,7 @@ export const ExerciseRuntimeSourceSchema = z.discriminatedUnion('kind', [
   ReactExerciseRuntimeSourceSchema,
   NextExerciseRuntimeSchema,
   PythonExerciseRuntimeSchema,
+  TailwindExerciseRuntimeSchema,
 ]);
 
 export const FixtureSourceSchema = z

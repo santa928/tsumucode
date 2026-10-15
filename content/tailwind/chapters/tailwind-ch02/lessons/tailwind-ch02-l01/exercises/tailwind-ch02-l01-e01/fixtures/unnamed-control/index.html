@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>読書カード</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="p-4">
+    <h1 class="text-xl leading-7 font-bold">読むことと作ること</h1>
+    <main id="cards" class="flex flex-col md:flex-row gap-card">
+      <section id="read-card" class="note-card">
+        <h2 class="text-lg font-bold">読む</h2>
+        <p>次に読む本と、気になったところを記録します。</p>
+      </section>
+      <section id="make-card" class="note-card">
+        <h2 class="text-lg font-bold">作る</h2>
+        <p>本から試してみたいことを、小さく作ります。</p>
+      </section>
+    </main>
+    <button
+      id="save"
+      type="button"
+      class="p-4 bg-brand text-paper outline-none hover:bg-paper hover:text-brand focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
+    ></button>
+  </body>
+</html>

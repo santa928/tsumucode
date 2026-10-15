@@ -1,5 +1,7 @@
 import { createPreviewSrcdoc, type CreatePreviewSrcdocInput } from '../html-css/createSrcdoc';
 import { restrictTailwindClasses } from './validateSource';
+import { assertTailwindProjectCss } from './projectCss';
+import { escapeStyleRawText } from '../preview-kernel/previewDocument';
 
 /** 固定compilerの出力styleだけを観測し、Utility生成の実Style確認後にBridgeを開始する。 */
 function compilerReadyRuntime(startBridge: () => void, executeCompiler: () => void): void {
@@ -67,9 +69,27 @@ function compilerReadyRuntime(startBridge: () => void, executeCompiler: () => vo
 }
 
 /** 学習DOM全量の後で、nonce script内の固定bundleと遅延Bridgeを直接実行する。 */
-export function createTailwindSrcdoc(input: CreatePreviewSrcdocInput, compiler: string): string {
-  restrictTailwindClasses(input.sanitizedDocument);
-  const output = new DOMParser().parseFromString(createPreviewSrcdoc(input), 'text/html');
+export function createTailwindSrcdoc(
+  input: CreatePreviewSrcdocInput,
+  compiler: string,
+  projectCss?: string,
+): string {
+  if (projectCss !== undefined) assertTailwindProjectCss(projectCss);
+  restrictTailwindClasses(
+    input.sanitizedDocument,
+    projectCss === undefined ? undefined : 'theme-project-v1',
+  );
+  const output = new DOMParser().parseFromString(
+    createPreviewSrcdoc(projectCss === undefined ? input : { ...input, css: '' }),
+    'text/html',
+  );
+  if (projectCss !== undefined) {
+    // 元ファイルは保存したまま、compiler入力だけを別typeのstyleへ載せる。
+    const style = output.createElement('style');
+    style.setAttribute('type', 'text/tailwindcss');
+    style.textContent = escapeStyleRawText(projectCss);
+    output.head.append(style);
+  }
   const script = output.querySelector<HTMLScriptElement>('[data-tsumucode-preview-bridge]');
   if (script === null) throw new Error('Tailwindのプレビュー構築に失敗しました。');
   const bridge = script.textContent;

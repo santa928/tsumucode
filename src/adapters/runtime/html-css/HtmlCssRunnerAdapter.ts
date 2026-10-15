@@ -46,7 +46,11 @@ export interface HtmlCssRunnerOptions {
     input: ValidatedHtmlCssPreviewInput,
     original: RunnerInput,
   ) => readonly RunnerDiagnostic[];
-  readonly createSrcdoc: (input: CreatePreviewSrcdocInput, signal: AbortSignal) => Promise<string>;
+  readonly createSrcdoc: (
+    input: CreatePreviewSrcdocInput,
+    signal: AbortSignal,
+    original: RunnerInput,
+  ) => Promise<string>;
 }
 
 /** staleまたはdisposeされた描画を同じError型で終了する。 */
@@ -187,7 +191,7 @@ export class HtmlCssRunnerAdapter implements RunnerAdapter {
       const srcdoc =
         this.#options === undefined
           ? createPreviewSrcdoc(srcdocInput)
-          : await this.#options.createSrcdoc(srcdocInput, operation.controller.signal);
+          : await this.#options.createSrcdoc(srcdocInput, operation.controller.signal, input);
       this.#assertCurrent(frame, operation);
 
       transitionStarted = true;

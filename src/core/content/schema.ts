@@ -429,6 +429,18 @@ export const PythonExerciseRuntimeSchema = z
   })
   .strict();
 
+/** 固定2ファイルのテーマ制作だけを、既存の1ファイル教材と区別する。 */
+export const TailwindExerciseRuntimeSchema = z
+  .object({
+    kind: z.literal('tailwind'),
+    entryFile: z.literal('index.html'),
+    sourceType: z.literal('script'),
+    capabilityProfile: z.literal('project'),
+    primaryOutput: z.literal('preview'),
+    profile: z.literal('theme-project-v1'),
+  })
+  .strict();
+
 /** Courseごとの実行設定をkindで識別する。 */
 export const ExerciseRuntimeSchema = z.discriminatedUnion('kind', [
   JavaScriptExerciseRuntimeSchema,
@@ -436,6 +448,7 @@ export const ExerciseRuntimeSchema = z.discriminatedUnion('kind', [
   ReactExerciseRuntimeSchema,
   NextExerciseRuntimeSchema,
   PythonExerciseRuntimeSchema,
+  TailwindExerciseRuntimeSchema,
 ]);
 
 /** selectorへ制御文字が混入していないことを文字コードで判定する。 */
@@ -2435,11 +2448,13 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
             const entryFile = exercise.files.find(
               (file) => canonicalPublicPath(file.path) === canonicalEntryFile,
             );
-            if (entryFile?.language !== exercise.runtime.kind) {
+            const entryLanguage =
+              exercise.runtime.kind === 'tailwind' ? 'html' : exercise.runtime.kind;
+            if (entryFile?.language !== entryLanguage) {
               addIssue(
                 context,
                 [...exercisePath, 'runtime', 'entryFile'],
-                `Runtime entryFileは${exercise.runtime.kind} Fileを参照してください`,
+                `Runtime entryFileは${entryLanguage} Fileを参照してください`,
               );
             }
           }

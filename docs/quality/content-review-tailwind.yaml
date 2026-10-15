@@ -47,3 +47,14 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes: 独立内容レビューで原稿・Hint・採点・正負Fixtureと別解、PC/390px画像を確認し必須指摘0。固定compilerの全新規22FixtureをChromiumで実描画判定。examplesExecutedは演習Fixtureを指し、Slide断片の個別実行・実人理解・Firefox/WebKit成功・公開受入は意味しない。
+  - lessonId: tailwind-ch02-l01
+    authorId: tsumucode-tailwind-130-author
+    reviewerId: cache_races_loader_review
+    sourceHash: 9366e3968ca9d2091e93eb95487829fe64f8d186abfbf8847e6f80e59cbf8c93
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 独立内容レビューでBrief・Guide・3Slide/図・Hint・解答と18Fixtureを確認し承認。子の文字色、再利用する2枚の識別、flex配置の反例を実REDから是正し、固定compilerで全4幅の正確な合否・失敗ID・診断なしを確認。examplesExecutedは演習Fixtureを指し、Slide断片の個別実行・実人理解・公開受入を意味しない。

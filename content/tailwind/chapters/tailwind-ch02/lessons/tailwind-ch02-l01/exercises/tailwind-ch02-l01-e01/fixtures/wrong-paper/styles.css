@@ -1,0 +1,13 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-brand: #0f3c4c;
+  --color-paper: #ffffff;
+  --spacing-card: 24px;
+}
+
+@layer components {
+  .note-card {
+    @apply p-card border border-brand bg-paper text-brand;
+  }
+}

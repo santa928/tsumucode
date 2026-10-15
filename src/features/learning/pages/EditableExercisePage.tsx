@@ -53,6 +53,7 @@ import {
 import { learningRuntimeServices } from '../runtimeServices';
 import { useAdjacentLessonPrefetch } from '../useAdjacentLessonPrefetch';
 import { PortableHtmlExport } from '../portable/PortableHtmlExport';
+import { PortableTailwindExport } from '../portable/PortableTailwindExport';
 
 const LazyCodeWorkspace = lazy(() =>
   import('../editor/CodeWorkspace').then((module) => ({ default: module.CodeWorkspace })),
@@ -1127,6 +1128,13 @@ function EditableSession({
             />
             {course.id === 'html-css' && exercise.id === 'html-css-ch00-l01-e01' ? (
               <PortableHtmlExport files={workspaceFiles} disabled={busy} />
+            ) : null}
+            {course.id === 'tailwind' && exercise.id === 'tailwind-ch02-l01-e01' ? (
+              <PortableTailwindExport
+                workspaceId={exercise.workspaceId}
+                files={workspaceFiles}
+                disabled={busy}
+              />
             ) : null}
             {exercise.runtime?.kind === 'python' &&
             ['module-import-v1', 'exception-recovery-v1', 'console-project-v1'].includes(

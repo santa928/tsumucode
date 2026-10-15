@@ -1,0 +1,66 @@
+id: tailwind-ch02-l01
+kind: guided-project
+title: テーマと共通の見た目を小さい制作へつなぐ
+goal: 共有tokenとCSSの部品で2枚の見た目を揃え、固定Viteのbuildへ原文を持ち出す。
+estimatedMinutes: 45
+prerequisiteLessonIds:
+  - tailwind-ch01-l04
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/tailwind-ch02-l01-e01/exercise.yaml
+reflection: 共有する値、CSSの部品、HTMLの内容と配置の責務を説明し、Sourceとbuild後の生成物を区別してください。
+glossaryRefs:
+  - tailwind-theme
+  - tailwind-reuse
+  - tailwind-apply
+  - tailwind-production
+  - tailwind-lockfile
+  - tailwind-vite-plugin
+project:
+  id: tailwind-reading-cards
+  briefSource: brief.md
+  guideSources:
+    - guide.md
+  checklist:
+    - id: tailwind-project-theme
+      label: 共有tokenの配色と余白を2枚へ反映する
+      required: true
+      ruleIds:
+        - tailwind-ch02-l01-e01-r02
+        - tailwind-ch02-l01-e01-r03
+        - tailwind-ch02-l01-e01-r04
+        - tailwind-ch02-l01-e01-r05
+        - tailwind-ch02-l01-e01-r08
+        - tailwind-ch02-l01-e01-r09
+        - tailwind-ch02-l01-e01-r12
+        - tailwind-ch02-l01-e01-r14
+        - tailwind-ch02-l01-e01-r15
+        - tailwind-ch02-l01-e01-r16
+    - id: tailwind-project-reuse
+      label: 2枚が共通のCSSの部品を使う
+      required: true
+      ruleIds:
+        - tailwind-ch02-l01-e01-r01
+    - id: tailwind-project-state
+      label: 代表幅と操作時の輪郭を保つ
+      required: true
+      ruleIds:
+        - tailwind-ch02-l01-e01-r06
+        - tailwind-ch02-l01-e01-r07
+        - tailwind-ch02-l01-e01-r10
+        - tailwind-ch02-l01-e01-r11
+        - tailwind-ch02-l01-e01-r13
+        - tailwind-ch02-l01-e01-r17
+        - tailwind-ch02-l01-e01-r18
+        - tailwind-ch02-l01-e01-r19
+completion:
+  kind: guided-project
+  requiredChecklistItemIds:
+    - tailwind-project-theme
+    - tailwind-project-reuse
+    - tailwind-project-state
+  requiredExerciseIds:
+    - tailwind-ch02-l01-e01

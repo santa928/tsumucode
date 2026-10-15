@@ -1,0 +1,87 @@
+name: Tailwind project contract
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - content/tailwind/**
+      - src/adapters/runtime/tailwind/**
+      - src/adapters/runtime/html-css/**
+      - src/adapters/runtime/preview-kernel/**
+      - src/core/content/**
+      - src/core/validation/**
+      - src/features/learning/session/**
+      - src/features/learning/pages/EditableExercisePage.tsx
+      - src/features/learning/portable/PortableSourceExport*
+      - src/features/learning/portable/PortableTailwindExport*
+      - src/features/learning/portable/portableTailwindArchive*
+      - src/features/learning/portable/tailwind-project/**
+      - tests/e2e/tailwind*.spec.ts
+      - tests/e2e/helpers/**
+      - scripts/ci/tailwind-project.sh
+      - scripts/content/**
+      - playwright.config.ts
+      - package*.json
+      - Dockerfile
+      - .github/workflows/tailwind-project.yml
+  push:
+    branches: [main]
+    paths:
+      - content/tailwind/**
+      - src/adapters/runtime/tailwind/**
+      - src/adapters/runtime/html-css/**
+      - src/adapters/runtime/preview-kernel/**
+      - src/core/content/**
+      - src/core/validation/**
+      - src/features/learning/session/**
+      - src/features/learning/pages/EditableExercisePage.tsx
+      - src/features/learning/portable/PortableSourceExport*
+      - src/features/learning/portable/PortableTailwindExport*
+      - src/features/learning/portable/portableTailwindArchive*
+      - src/features/learning/portable/tailwind-project/**
+      - tests/e2e/tailwind*.spec.ts
+      - tests/e2e/helpers/**
+      - scripts/ci/tailwind-project.sh
+      - scripts/content/**
+      - playwright.config.ts
+      - package*.json
+      - Dockerfile
+      - .github/workflows/tailwind-project.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tailwind-project-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  browser-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+      - name: Build the existing browser image
+        run: docker build --target app --tag tsumucode-tailwind-project-ci .
+      - name: Verify the project and prior revision in Docker
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+        run: >-
+          docker run --rm --cpus 2 --memory 4g --memory-swap 4g
+          --pids-limit 512 --shm-size 512m
+          --env BASE_PATH --env NODE_OPTIONS=--max-old-space-size=3072
+          --env GIT_CONFIG_COUNT=1 --env GIT_CONFIG_KEY_0=safe.directory
+          --env GIT_CONFIG_VALUE_0=/workspace
+          --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspace"
+          --mount type=volume,target=/workspace/node_modules
+          tsumucode-tailwind-project-ci sh scripts/ci/tailwind-project.sh
+      - name: Preserve browser and resource evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: tailwind-project-${{ github.event.pull_request.head.sha || github.sha }}
+          path: test-results/tailwind-*
+          if-no-files-found: warn
+          retention-days: 7
