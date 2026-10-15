@@ -30,4 +30,7 @@ for (const name of ['memory.peak', 'memory.events', 'pids.peak', 'pids.events'])
 await mkdir('test-results', { recursive: true });
 await writeFile('test-results/tailwind-resources.json', JSON.stringify(record, null, 2) + '\n');
 NODE
+
+# Docker内のDownloadは0600になるため、今回の公開Fixture証拠だけをrunnerから読めるようにする。
+chmod -R a+rX test-results/tailwind-*
 exit "$verification_status"
