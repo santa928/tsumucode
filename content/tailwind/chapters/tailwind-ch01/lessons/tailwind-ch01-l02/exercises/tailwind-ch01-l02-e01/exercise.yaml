@@ -51,9 +51,9 @@ steps:
   - id: color
     file: index.html
     target: mainのclass
-    starterAnchor: text-white
-    change: text-blackへ直す
-    observe: 白背景で黒文字を読める
+    starterAnchor: bg-black text-white
+    change: 背景と文字をbg-white text-blackの組へ直す
+    observe: 読める明暗差を保ったまま、白背景と黒文字へ変わる
     requiresConceptIds:
       - tailwind-color
     validationRuleIds:
@@ -87,7 +87,7 @@ validationRules:
       metric: width
       tolerance: 0.5
     feedback:
-      target: '#cardのwidthを確認する'
+      target: '#cardのwidth'
       expected: '248'
       nextAction: w-fullとmax-w-80へ直す。幅280pxで248px、幅640pxで320pxになるかを確かめます。
     hintId: tailwind-ch01-l02-e01-h01
@@ -109,7 +109,7 @@ validationRules:
       metric: width
       tolerance: 0.5
     feedback:
-      target: '#cardのwidthを確認する'
+      target: '#cardのwidth'
       expected: '320'
       nextAction: w-fullとmax-w-80へ直す。幅280pxで248px、幅640pxで320pxになるかを確かめます。
     hintId: tailwind-ch01-l02-e01-h01
@@ -131,7 +131,7 @@ validationRules:
       expected: 320
       property: max-width
     feedback:
-      target: '#cardのmax-widthを確認する'
+      target: '#cardのmax-width'
       expected: '320'
       nextAction: w-fullとmax-w-80へ直す。幅280pxで248px、幅640pxで320pxになるかを確かめます。
     hintId: tailwind-ch01-l02-e01-h01
@@ -153,7 +153,7 @@ validationRules:
       expected: 16
       property: padding
     feedback:
-      target: '#cardのpaddingを確認する'
+      target: '#cardのpadding'
       expected: '16'
       nextAction: p-4へ直す。内側の余白が16pxになるかを確かめます。
     hintId: tailwind-ch01-l02-e01-h01
@@ -175,7 +175,7 @@ validationRules:
       expected: 20
       property: font-size
     feedback:
-      target: '#card h1のfont-sizeを確認する'
+      target: '#card h1のfont-size'
       expected: '20'
       nextAction: text-xl leading-7へ直す。文字が20px、行が28pxになるかを確かめます。
     hintId: tailwind-ch01-l02-e01-h02
@@ -197,7 +197,7 @@ validationRules:
       expected: 28
       property: line-height
     feedback:
-      target: '#card h1のline-heightを確認する'
+      target: '#card h1のline-height'
       expected: '28'
       nextAction: text-xl leading-7へ直す。文字が20px、行が28pxになるかを確かめます。
     hintId: tailwind-ch01-l02-e01-h02
@@ -219,9 +219,9 @@ validationRules:
       expected: rgb(255, 255, 255)
       property: background-color
     feedback:
-      target: '#cardのbackground-colorを確認する'
+      target: '#cardのbackground-color'
       expected: rgb(255, 255, 255)
-      nextAction: text-blackへ直す。白背景で黒文字を読めるかを確かめます。
+      nextAction: 背景と文字をbg-white text-blackの組へ直します。文字と背景の明暗差を保って確認します。
     hintId: tailwind-ch01-l02-e01-h03
     relatedSlideId: tailwind-ch01-l02-s03
   - id: tailwind-ch01-l02-e01-r08
@@ -239,9 +239,9 @@ validationRules:
       kind: contrast
       minimum: 4.5
     feedback:
-      target: '#cardのcontrastを確認する'
-      expected: '4.5'
-      nextAction: text-blackへ直す。白背景で黒文字を読めるかを確かめます。
+      target: '#cardのcontrast'
+      expected: 見出しと本文が背景から読み取れる明暗差（コントラスト比4.5:1以上）
+      nextAction: 背景と文字をbg-white text-blackの組へ直します。文字と背景の明暗差を保って確認します。
     hintId: tailwind-ch01-l02-e01-h03
     relatedSlideId: tailwind-ch01-l02-s03
 hints:
@@ -286,7 +286,7 @@ fixtures:
       - tailwind-ch01-l02-e01-r04
       - tailwind-ch01-l02-e01-r05
       - tailwind-ch01-l02-e01-r06
-      - tailwind-ch01-l02-e01-r08
+      - tailwind-ch01-l02-e01-r07
   - id: tailwind-ch01-l02-solution
     expectedStatus: pass
     files:

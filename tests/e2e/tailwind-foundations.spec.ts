@@ -116,6 +116,8 @@ for (const exercise of exercises) {
   test(`${lessonId}の通常UIで保存・再読込・判定・Resetと実操作を確認する`, async ({
     page,
   }, info) => {
+    // 保存・再読込・a11y・Resetまでを含むため、複数操作全体の時間を確保する。
+    test.setTimeout(90_000);
     await page.goto(`${base}#/courses/tailwind/lessons/${lessonId}/exercises/${exercise.id}`);
     const grade = page.getByRole('button', { name: '判定する', exact: true });
     await expect(grade).toBeEnabled();
@@ -148,10 +150,13 @@ for (const exercise of exercises) {
       await expect(action).toHaveCSS('color', 'rgb(255, 255, 255)');
       await page.mouse.move(0, 0);
       await expect(action).toHaveCSS('background-color', 'rgb(255, 255, 255)');
-      await action.click();
+      // Firefoxはiframe自体にも一度止まるため、内容へ入る前の停止だけを許容する。
+      await page.getByTestId('runtime-preview-scroll').focus();
       await page.keyboard.press('Tab');
-      await expect(pending).not.toBeFocused();
-      await page.keyboard.press('Shift+Tab');
+      if (!(await action.evaluate((node) => node.matches(':focus')))) {
+        await expect(page.locator('[data-testid="runtime-preview-frame"] iframe')).toBeFocused();
+        await page.keyboard.press('Tab');
+      }
       await expect(action).toBeFocused();
       await expect(action).toHaveCSS('outline-width', '2px');
       await expect(action).toHaveCSS('outline-style', 'solid');
@@ -160,6 +165,9 @@ for (const exercise of exercises) {
       await expect(pending).toBeDisabled();
       await expect(pending).toHaveCSS('opacity', '0.5');
       await page.screenshot({ path: info.outputPath('keyboard-focus.png'), fullPage: true });
+      await page.keyboard.press('Tab');
+      await expect(pending).not.toBeFocused();
+      await expect(page.getByRole('button', { name: '説明を見直す', exact: true })).toBeFocused();
       // 判定前に実focusを外し、通常状態と検証用状態を混ぜない。
       await grade.focus();
     }
@@ -207,6 +215,8 @@ for (const narrow of [false, true]) {
   test(`${narrow ? '390px' : 'PC'}で新規8Slideの対応図・a11y・末尾到達を確認する`, async ({
     page,
   }, info) => {
+    // 8画面それぞれのa11y検査と画像保存に必要な時間を確保する。
+    test.setTimeout(60_000);
     await page.setViewportSize(narrow ? { width: 390, height: 844 } : { width: 1280, height: 900 });
     for (const lesson of authoring.runtime.phases[0]!.chapters[0]!.lessons.slice(1)) {
       for (const slide of lesson.slides) {

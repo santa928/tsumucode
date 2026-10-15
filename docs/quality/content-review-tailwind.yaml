@@ -17,7 +17,7 @@ lessons:
   - lessonId: tailwind-ch01-l02
     authorId: tsumucode-tailwind-129-author
     reviewerId: cache_races_loader_review
-    sourceHash: 33c08e71356903bb15ac5055c4844b7e8b66dc138e06f75fd0b999e801a0ad7c
+    sourceHash: 482b59de518afc0fceae3c69ef06cb0b28a8ab3e697630d6bbe1f65445169d3b
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
