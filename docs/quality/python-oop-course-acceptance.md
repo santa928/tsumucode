@@ -1,6 +1,6 @@
 # Python OOP Courseの公開前統合受入（Issue #152）
 
-2026-10-14にユーザーが初心者向け使いやすさ・実機性能の受入方法を変更しました。新規3名の会話履歴なしcomputer useレビューを代替として使います。[承認された方法・初回3件の観測と限界・是正対象](python-computer-use-acceptance.md)を正とします。初回3件は実施済みですが、再開などのblocking findingの修正後再操作は未完です。以下の実人・物理端末の観察案は変更前の参考であり、必須待ちへ戻しません。新Pages公開の保留は維持します。
+2026-10-14にユーザーが初心者向け使いやすさ・実機性能の受入方法を変更しました。新規3名の会話履歴なしcomputer useレビューを代替として使います。最新の[PR220で完了した影響再操作](python-computer-use-acceptance.md#pr220で完了した影響再操作)では、確認範囲の必須問題は解消済みです。初回・5192候補の観測と限界は同文書に保持します。以下の実人・物理端末の観察案は変更前の参考であり、必須待ちへ戻しません。新Pages公開の保留は維持します。
 
 対象は `python-oop` の4 Chapter・9 Lesson・34 Slide・標準8演習・Guided Project1件、240分の草稿です。基準mainは `fdc77bf9ad6adde7a4eb801d6c930f5f7d72c11d`、Course revisionは `2026-10-14.3` です。#148〜#151の実装を統合済みで、Python基礎のFunction・スコープとPython実践のdataclassを学習前提にします。実践Courseが未公開であることと、OOPの独立設計・技術検証を進められることを分けます。
 
@@ -8,7 +8,7 @@
 
 初回computer useの指摘是正では、最新基準main `7dba4412567c7d959a6a72bb66a1c915803858b4` に対し、初回演習の工程分割・最初の用語3件を改善し、revisionを `2026-10-14.4` へ進めました。空stepsのmigrationで既存ID・Source・履歴を保持しました。教材の採点条件・実行Source・Fixtureは変えず、不一致を「未確認」と表していた結果文言と、保存演習への再開導線・読書案内を修正しました。過去の `.3` の技術証拠はその入力と範囲を保持し、候補の再開・読書・必要CIや独立レビューと区別します。
 
-固定5192の新規3名再操作で再開の改善を確認した後、revision `2026-10-14.5` では初回演習の全体判定と具体的出力を説明し、Project本文を学習者向けに整理します。`.4`からの空migrationでID・コード・履歴を保持します。再編集の再判定案内と小画面の戻り／Project読書も対象です。評価・配信・公開の注意はこの品質文書へ保持し、学習画面の制作説明から外します。3名再操作の範囲と限界は共通受入文書を参照してください。この改善後の影響再操作と公開後条件は未完なので、#147／#152はOpenです。
+固定5192の新規3名再操作で再開の改善を確認した後、revision `2026-10-14.5` では初回演習の全体判定と具体的出力を説明し、Project本文を学習者向けに整理します。`.4`からの空migrationでID・コード・履歴を保持します。再編集の再判定案内と小画面の戻り／Project読書も対象です。評価・配信・公開の注意はこの品質文書へ保持し、学習画面の制作説明から外します。3名再操作の範囲と限界は共通受入文書を参照してください。この改善後の影響再操作はPR220で受入済みです。公開Gate／Path／配信後確認は未完なので、#147／#152はOpenです。
 
 ## 概念と確認する行動
 
@@ -70,9 +70,22 @@ PC／390pxの全34Slideで図の読込、axe、横overflow、本文末尾とPage
 
 安全性は[Python実行契約](python-runtime-contract.md)と[Local実行境界](local-python-runtime.md)を参照し、Worker／frame、固定同origin core、CSP、期限、CPythonの資源・出力・停止／回収条件を緩和しません。#147のcold準備や既知Solutionでの観測を、OOP全9Lesson・物理端末・性能合格へ一般化しません。core遅延取得・bundle上限の技術確認と、承認された操作性能の受入は別です。
 
+## 草稿Sourceと検査するdistの照合
+
+作者検証に使うSourceとdistを固定した後、既存のDocker環境で実行します。新しいbuildが不要なら1行目を省略し、既存distのDirectoryを第1引数へ指定できます。
+
+```sh
+./scripts/docker-compose.sh run --rm app npm run build
+./scripts/docker-compose.sh run --rm app node --import tsx scripts/content/checkPythonOopDraft.ts dist
+```
+
+現在の`python-oop`をCompilerで読み、実distのCourse本文・Catalog metadata／Index SHA・公開Provenance・参照Asset bytesを照合し、既存9Lesson内容レビューも確認します。Source／Catalog／distがすべてdraftで、Source／dist双方のPathのstepと前提参照に未登録であることが条件です。実践とOOPの固定2Courseだけが比較処理を共有し、既存の実践用CLIも維持します。検査はファイルや承認状態を書き換えません。
+
+成功時の`draft-matched`は、この草稿入力の一致だけを示します。`runtimeSha256`はRuntime JSONのhashで、Source treeやdist全体のhashではありません。一般の静的Artifact検査・実行・CUA・独立原本とのbinding・専用公開Gate・公開許可の完了とは別です。既存Python基礎の公開許可やallowlistを広げません。
+
 ## 初心者受入の準備と残る条件
 
-方法・対象者・使用端末・性能条件の承認が未確認です。実人の理解、物理低性能端末、承認された性能予算の合否は、AI内容レビューや自動検査で代行しません。承認後、観察者は先に回答を見せず、次の課題を進め、本人の言葉と操作・つまずき・必要な介助を私有原本へ記録します。
+承認済み代替方式とPR220の限定した影響再操作は、共通受入文書の範囲で完了しています。全9Lessonの理解や全操作、物理端末の観察、新しい数値性能SLAの合格へは拡張しません。以下は変更前の実人観察案として保持する参考であり、新たな必須待ちではありません。対象を追加する場合は、観察者が先に回答を見せず、本人の言葉と操作・つまずき・必要な介助を私有原本へ記録する想定です。
 
 1. 同じ倍率計算について、3methodが値と倍率をどこから受け取り、呼出しで何が自動供給されるか予測し、誤呼出しを修正する。
 2. 継承と委譲、Propertyによる不正更新、dunderとcopyの観測結果を説明する。各課題が初期化の繰返しだけになっていないか確認する。
@@ -82,4 +95,4 @@ PC／390pxの全34Slideで図の読込、axe、横overflow、本文末尾とPage
 
 未達やblocking findingは課題・Source・表示と結び、是正後に影響範囲を再確認します。人数・理解率・所要時間の閾値を未承認のまま作りません。合否と方法の妥当性、必要な性能受入は本人の承認に従います。
 
-公開前には、さらにOOP専用公開契約と既存Gateの整合、9Lesson内容hash／Source／tree／dist／harnessと原本のbinding、最新候補の独立3レビュー、blocking findingの是正、本人のPath追加・新Pages公開許可が必要です。既存Python基礎の許可をOOPへ流用しません。公開後は正確な配信SHA／hash、開始・再開・実判定・保存・Export／fresh Importを確認します。これらが未完の間は#152を閉じず、#147の保留も維持します。
+公開前には、さらにOOP専用公開契約と既存Gateの整合、9Lesson内容hash／Source／tree／dist／harnessと原本のbinding、最新候補の独立3レビュー、未解決blocking findingの是正、本人のPath追加・新Pages公開許可が必要です。既存の受入完了を一律に未完へ戻さず、後続変更が影響する範囲を確認します。既存Python基礎の許可をOOPへ流用しません。公開後は正確な配信SHA／hash、開始・再開・実判定・保存・Export／fresh Importを確認します。これらが未完の間は#152を閉じず、#147の保留も維持します。
