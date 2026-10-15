@@ -1,12 +1,12 @@
 # Python実践Courseの公開前技術受入（Issue #147）
 
-2026-10-14にユーザーが初心者向け使いやすさ・実機性能の受入方法を変更しました。新規3名の会話履歴なしcomputer useレビューを代替として使います。[承認された方法・初回3件の観測と限界・是正対象](python-computer-use-acceptance.md)を正とします。初回3件は実施済みですが、再開などのblocking findingの修正後再操作は未完です。以下の実人・物理端末の観察案は変更前の参考であり、必須待ちへ戻しません。新Pages公開の保留は維持します。
+2026-10-14にユーザーが初心者向け使いやすさ・実機性能の受入方法を変更しました。新規3名の会話履歴なしcomputer useレビューを代替として使います。[承認された方法・初回3件の観測と限界・是正対象](python-computer-use-acceptance.md)を正とします。修正後の新規3名による影響再操作も[PR220で受入済み](python-computer-use-acceptance.md#pr220で完了した影響再操作)で、確認範囲の必須問題は解消しました。元Sourceと確認範囲を維持し、後続候補全体の受入へ自動で広げません。以下の実人・物理端末の観察案は変更前の参考であり、必須待ちへ戻しません。新Pages公開の保留は維持します。
 
 対象は`python-practice`の3Chapter・5Lesson・11Slide・標準4演習・Guided Project1件、95分の草稿です。Python基礎のList・for・Function・例外を前提に、反復の状態とResource終了処理をデータ集計へ結びます。実行基盤を増やさず、固定CPython 3.14.2とPyodide 314.0.7を使います。
 
 今回の差分は7Slideのコード例への静的説明図、既存`code-preview`への分類、revision `2026-10-13.1`、対象読書検査とこの受入記録です。`publicationStatus: draft`を維持し、Home／Python Path追加、Pages公開、Browser対話入力、任意pip、外部DBは含めません。#147は公開後の条件が満たされるまでOpenです。
 
-上記は静的図の統合時の基準です。固定5192の新規3名computer useで再開・初回演習の合格と保存復元・小画面読書を確認した後、revision `2026-10-14.1` ではProjectの工程ガイドを学習者向けに整理します。`2026-10-13.1`からの空migrationで既存ID・コード・履歴を保持し、採点条件・実行例・Fixtureは変えません。小画面のCourse戻りとProject読書、再編集時の再判定案内は共通UIで改善します。この改善後の影響再操作と公開Gate／Path／配信後SHAは未完のまま残します。
+上記は静的図の統合時の基準です。固定5192の新規3名computer useで再開・初回演習の合格と保存復元・小画面読書を確認した後、revision `2026-10-14.1` ではProjectの工程ガイドを学習者向けに整理します。`2026-10-13.1`からの空migrationで既存ID・コード・履歴を保持し、採点条件・実行例・Fixtureは変えません。小画面のCourse戻りとProject読書、再編集時の再判定案内は共通UIで改善します。この改善後の影響再操作はPR220で受入済みです。公開Gate／Path／配信後SHAは別の未完条件として残します。
 
 ## 概念・教材順・Projectの対応
 
@@ -77,7 +77,9 @@ PRの初回Runtime CIでは旧with課題の移行検査に旧最新revision `202
 
 既存のWorker／frame、同origin固定core取得、ASTの有限文法、CPythonの隔離・資源・出力・回収条件は[Python実行契約](python-runtime-contract.md)と[Local実行境界](local-python-runtime.md)を正とし、今回緩和しません。型注釈やASTの形を、任意コードの安全性を証明する仕組みとは説明しません。
 
-読書中のcore取得0と既存bundle上限は配信・性能の技術確認です。追加の[低速環境での補足観測](python-practice-performance.md)では、実践Projectの初回20件すべてが固定20秒の準備期限へ達し、暖機が成立せず操作標本は0件でした。失敗までのp95を成功時の性能へ読み替えず、未承認の性能予算を新たに作りません。是正と承認された性能受入、実人の初心者受講・物理低性能端末は未完です。独立内容／Runtime／UIレビューと自動テストを、初心者の理解や実機観察の完了とは扱いません。初心者模擬受講を採用する場合も、対象・方法・原本照合と本人承認を別に確認します。
+読書中のcore取得0と既存bundle上限は配信・性能の技術確認です。[低速環境での補足観測](python-practice-performance.md)の初回20件は当時の固定20秒期限で失敗しました。その後、承認済み90秒取得分離の[正式cold20標本](python-cold-preparation-acceptance.md)は既知Solution／root配信で全成功し、成功時p95は70,435.157 msでした。条件の異なる旧失敗標本との改善率や、数値SLAの達成とは扱いません。
+
+初心者向け使いやすさ・実機性能は、承認済みの新規3名computer useによる代替評価を使い、PR220の確認範囲では修正後受入を完了しています。実人・物理端末の観察を実施した意味ではなく、その未測定を必須待ちへ戻しません。独立コードレビューや自動テストをCUAの実操作へ数えず、候補Source・確認範囲・原本の対応を維持します。90秒を性能合格値へ転用せず、未承認の数値予算も追加しません。
 
 Nextの厳格checkpointで検出された短時間Zombieは[#204／PR206](https://github.com/santa928/tsumucode/pull/206)で、固定Nextのstatic paths Worker終了処理とforkの回収を直接観測し、固定Worker Thread設定へ修正しました。#204は受入完了でCLOSEDです。過去のCI PID804／163と同一の発生元だったことは未確定で、初回FAILと限定診断を保持します。再発時は追加再試行せず、厳格なZombie0条件のままライフサイクル調査へ戻ります。
 
@@ -88,7 +90,7 @@ PR205は修正を取り込んだHEAD `2f72815031e7858510f966b6b2ac95786326c0b1` 
 ## 公開前に残る条件
 
 - 公開候補を固定した時点の5Lesson内容hash／独立レビューと技術原本のbinding。今回の草稿教材承認を公開許可へ流用しない。
-- 承認された初心者受入方法、必要な性能受入、blocking findingの是正。実人・物理端末の未確認状態を維持する。
+- 承認済み代替受入の原本と確認範囲を公開候補へ対応付ける。後続変更が影響する範囲を確認し、既存の受入完了を一律に未完へ戻さない。
 - Python基礎9教材の実レビュー追加後も、新公開候補に対する全原本の独立照合・Source／tree／dist／品質・公開承認のbindingを確認する。
 - `python-practice`の公開契約と品質／Source／tree／dist bindingを定義し、専用承認・履歴・既存Gateの整合を確認する。現在の公開allowlistは`python-basics`までで、このCourseは未設定。
 - 本人の新規Pages公開／Home・Path追加許可を確認して、完成CourseだけをPython Pathへ追加する。
