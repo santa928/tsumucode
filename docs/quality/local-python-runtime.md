@@ -113,3 +113,9 @@ Test driverが捕捉したAssertionErrorはConsole『Test失敗』とincomplete�
 dataclassとClassの追加は採点grammarの拡張です。ASTは安全境界ではなく、既存のBrowser worker/CSP/deadlineとLocalの単発コンテナ・資源制限・socket非共有が実行境界です。Localの教材外Sourceを未採点で実行する既存挙動も維持します。OS file/通信/任意package/Browser入力/実行権限は追加しません。作者だけが実dataclass fields/注釈非強制/値検証/正常・空・不正時の実stream closeを観察し、提出毎のobject状態証拠とは扱いません。
 
 revision2026-10-12.2→.3は空stepsで移行し、旧4教材のSource/IDを保持します。Home/Path/Pages公開と既存Python基礎9教材のreview不足は別の保留です。
+
+## CIのBrowser診断
+
+`Local Runtime boundary`はPythonのBrowser検証結果をホストへ保持し、`python-browser-evidence-<Source SHA>-<run attempt>`として7日間保存します。検証コンテナはrunnerのUID/GIDで動き、capabilityを追加せず出力先へ書き込みます。結果JSONと、生成された失敗画面・error contextを対象にします。再実行時も元attemptの記録を区別します。
+
+認証ヘッダー等を含み得るtraceはArtifactへ含めません。結果がない場合は警告になり、元の検証失敗を成功へ変換しません。失敗時は該当テストと画面の保存・実行・編集権の案内を照合し、ダイアログ未表示だけで原因を断定しないでください。成功した再実行も、最初の失敗原因が解消した証明とは区別します。

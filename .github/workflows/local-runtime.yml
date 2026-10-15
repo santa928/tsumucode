@@ -196,7 +196,21 @@ jobs:
           ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml start controller
           docker exec -i -e TSUMUCODE_PYTHON_RESTART_PHASE=verify "$controller" node --input-type=module < scripts/local/python-acceptance.mjs
           docker build --file Dockerfile.learning --target python-browser-checks --tag "$TSUMUCODE_LOCAL_OWNER-python-browser-checks" .
-          docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256 --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-python-browser-checks"
+          mkdir -p test-results
+          # capabilityを戻さず同じUID/GIDを使い、親のbind内でPlaywrightが出力先を再作成できるようにする。
+          docker run --rm --init --user "$(id -u):$(id -g)" --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256 --cap-drop ALL --security-opt no-new-privileges:true --mount "type=bind,source=$PWD/test-results,target=/workspace/test-results" "$TSUMUCODE_LOCAL_OWNER-python-browser-checks"
+      - name: Preserve Python Browser evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: python-browser-evidence-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          # 認証ヘッダー等を含み得るtraceは対象にせず、画面と判定結果だけを保持する。
+          path: |
+            test-results/local-python/results.json
+            test-results/local-python/**/*.png
+            test-results/local-python/**/error-context.md
+          if-no-files-found: warn
+          retention-days: 7
       - name: Verify real Python iteration fixtures and object lifecycle
         run: |
           docker build --file Dockerfile.learning --target python-iteration-checks --tag "$TSUMUCODE_LOCAL_OWNER-python-iteration-checks" .
