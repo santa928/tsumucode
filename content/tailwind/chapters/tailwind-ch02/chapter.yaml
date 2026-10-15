@@ -1,0 +1,8 @@
+id: tailwind-ch02
+sequence: 1
+title: 共通の見た目を制作へ持ち出す
+goal: テーマ・CSSの部品・HTMLの責務を分け、固定buildへつなぐ。
+estimatedMinutes: 45
+kind: guided-project
+lessonSources:
+  - lessons/tailwind-ch02-l01/lesson.yaml

@@ -300,3 +300,214 @@ items:
     visibility: authoring
     path: chapters/tailwind-ch01/lessons/tailwind-ch01-l03/exercises/tailwind-ch01-l03-e01/fixtures/missing-solid/index.html
     createdAt: 2026-10-15
+  - id: tailwind-130-e66936b20f06
+    visibility: public
+    path: chapters/tailwind-ch02/chapter.yaml
+    createdAt: 2026-10-15
+  - id: tailwind-ch02-l01-s01-mapping-original
+    visibility: public
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/slides/assets/s01.svg
+    createdAt: 2026-10-15
+    method: original-svg
+  - id: tailwind-ch02-l01-s02-mapping-original
+    visibility: public
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/slides/assets/s02.svg
+    createdAt: 2026-10-15
+    method: original-svg
+  - id: tailwind-ch02-l01-s03-mapping-original
+    visibility: public
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/slides/assets/s03.svg
+    createdAt: 2026-10-15
+    method: original-svg
+  - id: tailwind-130-5f80b7054c88
+    visibility: public
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/brief.md
+    createdAt: 2026-10-15
+  - id: tailwind-130-849d49a2e80e
+    visibility: public
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/exercise.yaml
+    createdAt: 2026-10-15
+  - id: tailwind-130-3e00beb40a22
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/duplicate-utilities/index.html
+    createdAt: 2026-10-15
+  - id: tailwind-130-b6cbcf9b1c89
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/duplicate-utilities/styles.css
+    createdAt: 2026-10-15
+  - id: tailwind-130-07b5b8005b5e
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/equivalent-order/index.html
+    createdAt: 2026-10-15
+  - id: tailwind-130-d94dfdef27c8
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/equivalent-order/styles.css
+    createdAt: 2026-10-15
+  - id: tailwind-130-13c5ec7056b0
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/solution/index.html
+    createdAt: 2026-10-15
+  - id: tailwind-130-ddcd8bf577e7
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/solution/styles.css
+    createdAt: 2026-10-15
+  - id: tailwind-130-6170b3a24567
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/starter/index.html
+    createdAt: 2026-10-15
+  - id: tailwind-130-078ab3d3a56d
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/starter/styles.css
+    createdAt: 2026-10-15
+  - id: tailwind-130-e963988ecbf9
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/unreadable-theme/index.html
+    createdAt: 2026-10-15
+  - id: tailwind-130-43955f9ca64d
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/unreadable-theme/styles.css
+    createdAt: 2026-10-15
+  - id: tailwind-130-8022dfdf9438
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/wrong-apply/index.html
+    createdAt: 2026-10-15
+  - id: tailwind-130-4f3b0c631379
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/wrong-apply/styles.css
+    createdAt: 2026-10-15
+  - id: tailwind-130-008e13cf824a
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/wrong-base/index.html
+    createdAt: 2026-10-15
+  - id: tailwind-130-8990cd0fdd69
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/wrong-base/styles.css
+    createdAt: 2026-10-15
+  - id: tailwind-130-250232f75558
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/wrong-brand/index.html
+    createdAt: 2026-10-15
+  - id: tailwind-130-5df7ba897704
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/wrong-brand/styles.css
+    createdAt: 2026-10-15
+  - id: tailwind-130-bb055061c0d7
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/wrong-breakpoint/index.html
+    createdAt: 2026-10-15
+  - id: tailwind-130-2c5f459f1c4f
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/wrong-breakpoint/styles.css
+    createdAt: 2026-10-15
+  - id: tailwind-130-a8c1338f9c3a
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/wrong-focus-token/index.html
+    createdAt: 2026-10-15
+  - id: tailwind-130-27df52f543e5
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/wrong-focus-token/styles.css
+    createdAt: 2026-10-15
+  - id: tailwind-130-122de3ef1580
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/wrong-paper/index.html
+    createdAt: 2026-10-15
+  - id: tailwind-130-1e496b15b8ee
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/wrong-paper/styles.css
+    createdAt: 2026-10-15
+  - id: tailwind-130-bb60900459c9
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/wrong-spacing/index.html
+    createdAt: 2026-10-15
+  - id: tailwind-130-a5cf6d6873b2
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/wrong-spacing/styles.css
+    createdAt: 2026-10-15
+  - id: tailwind-130-14b0a85b49e5
+    visibility: public
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/instructions.md
+    createdAt: 2026-10-15
+  - id: tailwind-130-8489439d9adf
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/solution/index.html
+    createdAt: 2026-10-15
+  - id: tailwind-130-3cead301b061
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/solution/styles.css
+    createdAt: 2026-10-15
+  - id: tailwind-130-3b756bdeab93
+    visibility: public
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/starter/index.html
+    createdAt: 2026-10-15
+  - id: tailwind-130-82bed99d1c1c
+    visibility: public
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/starter/styles.css
+    createdAt: 2026-10-15
+  - id: tailwind-130-e5091e51ca93
+    visibility: public
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/guide.md
+    createdAt: 2026-10-15
+  - id: tailwind-130-7b2510b2a720
+    visibility: public
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/lesson.yaml
+    createdAt: 2026-10-15
+  - id: tailwind-130-63984ca0b8bd
+    visibility: public
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/slides/s01.md
+    createdAt: 2026-10-15
+  - id: tailwind-130-6fb856aaac46
+    visibility: public
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/slides/s02.md
+    createdAt: 2026-10-15
+  - id: tailwind-130-2791aecc6b7d
+    visibility: public
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/slides/s03.md
+    createdAt: 2026-10-15
+  - id: tailwind-130-9d97a734dd91
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/disabled-control/index.html
+    createdAt: 2026-10-15
+  - id: tailwind-130-80288b147844
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/disabled-control/styles.css
+    createdAt: 2026-10-15
+  - id: tailwind-130-429f723369d9
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/unnamed-control/index.html
+    createdAt: 2026-10-15
+  - id: tailwind-130-b059d99cfc1d
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/unnamed-control/styles.css
+    createdAt: 2026-10-15
+  - id: tailwind-130-f60dc1f477ae
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/unreadable-heading/index.html
+    createdAt: 2026-10-15
+  - id: tailwind-130-b54128770a95
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/unreadable-heading/styles.css
+    createdAt: 2026-10-15
+  - id: tailwind-130-da622c30f744
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/unreadable-body/index.html
+    createdAt: 2026-10-15
+  - id: tailwind-130-8018f98fffe7
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/unreadable-body/styles.css
+    createdAt: 2026-10-15
+  - id: tailwind-130-d5caab315ba8
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/wrong-component-target/index.html
+    createdAt: 2026-10-15
+  - id: tailwind-130-c1fdf0a9b33c
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/wrong-component-target/styles.css
+    createdAt: 2026-10-15
+  - id: tailwind-130-db12547168d8
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/missing-flex/index.html
+    createdAt: 2026-10-15
+  - id: tailwind-130-1566b05a8e80
+    visibility: authoring
+    path: chapters/tailwind-ch02/lessons/tailwind-ch02-l01/exercises/tailwind-ch02-l01-e01/fixtures/missing-flex/styles.css
+    createdAt: 2026-10-15

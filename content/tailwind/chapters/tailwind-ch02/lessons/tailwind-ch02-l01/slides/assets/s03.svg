@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="184" viewBox="0 0 400 184">
+  <rect width="400" height="184" rx="12" fill="#fffaf0"/>
+  <rect x="10" y="10" width="380" height="50" rx="8" fill="#ffffff" stroke="#0f3c4c"/>
+  <text x="22" y="42" font-family="sans-serif" font-size="19" fill="#0f3c4c">HTML/CSSとlockfile</text>
+  <rect x="10" y="67" width="380" height="50" rx="8" fill="#ffffff" stroke="#0f3c4c"/>
+  <text x="22" y="99" font-family="sans-serif" font-size="19" fill="#0f3c4c">固定Vite Pluginでbuild</text>
+  <rect x="10" y="124" width="380" height="50" rx="8" fill="#ffffff" stroke="#0f3c4c"/>
+  <text x="22" y="156" font-family="sans-serif" font-size="19" fill="#0f3c4c">dist：生成CSSで表示</text>
+</svg>

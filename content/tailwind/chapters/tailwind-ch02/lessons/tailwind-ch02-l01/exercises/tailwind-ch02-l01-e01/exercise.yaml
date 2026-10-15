@@ -1,0 +1,837 @@
+id: tailwind-ch02-l01-e01
+kind: guided-project
+workspaceId: tailwind-ch02-l01-e01
+countsTowardStandardExerciseTotal: false
+title: 読書カードの見た目を共通化する
+projectId: tailwind-reading-cards
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: tailwind-theme
+    minimumLevel: transform
+  - conceptId: tailwind-reuse
+    minimumLevel: transform
+  - conceptId: tailwind-production
+    minimumLevel: read
+  - conceptId: tailwind-responsive
+    minimumLevel: transform
+  - conceptId: tailwind-focus
+    minimumLevel: transform
+  - conceptId: tailwind-hover
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: theme
+    file: styles.css
+    target: '@themeの3つの値'
+    starterAnchor: '--color-brand: #000000;'
+    change: brandを#0f3c4c、paperを#fffaf0、cardを24pxへ直す
+    observe: 2枚の配色、カード間隔、ボタンの色が一緒に変わる
+    requiresConceptIds:
+      - tailwind-theme
+    validationRuleIds:
+      - tailwind-ch02-l01-e01-r03
+      - tailwind-ch02-l01-e01-r04
+      - tailwind-ch02-l01-e01-r05
+      - tailwind-ch02-l01-e01-r08
+      - tailwind-ch02-l01-e01-r09
+      - tailwind-ch02-l01-e01-r16
+  - id: component
+    file: styles.css
+    target: .note-cardの@apply
+    starterAnchor: '@apply p-2 border border-brand bg-paper text-brand;'
+    change: p-2をp-cardへ直し、共有tokenの余白を使う
+    observe: 共通classを使うカードの内側の余白が24pxになる
+    requiresConceptIds:
+      - tailwind-reuse
+    validationRuleIds:
+      - tailwind-ch02-l01-e01-r02
+  - id: reuse
+    file: index.html
+    target: section#make-cardのclass
+    starterAnchor: class="p-card border border-brand bg-paper text-brand"
+    change: 個別のUtility列をnote-cardへ置き換える
+    observe: 2枚が同じCSSの部品を使い、共通の変更が両方へ届く
+    requiresConceptIds:
+      - tailwind-reuse
+    validationRuleIds:
+      - tailwind-ch02-l01-e01-r01
+  - id: verify
+    file: index.html
+    target: 親の幅条件とbuttonの操作状態
+    starterAnchor: focus-visible:outline-brand
+    change: 親とbuttonのclassを保ち、代表幅とTabで見た目を確かめる
+    observe: 767pxまで縦、768pxから横。Tabの輪郭とhoverの色が見える。ボタンの名前を残し、Tabで移動できる
+    requiresConceptIds:
+      - tailwind-responsive
+      - tailwind-focus
+      - tailwind-hover
+    validationRuleIds:
+      - tailwind-ch02-l01-e01-r06
+      - tailwind-ch02-l01-e01-r07
+      - tailwind-ch02-l01-e01-r10
+      - tailwind-ch02-l01-e01-r11
+      - tailwind-ch02-l01-e01-r13
+      - tailwind-ch02-l01-e01-r12
+      - tailwind-ch02-l01-e01-r14
+      - tailwind-ch02-l01-e01-r15
+      - tailwind-ch02-l01-e01-r17
+      - tailwind-ch02-l01-e01-r18
+      - tailwind-ch02-l01-e01-r19
+runtime:
+  kind: tailwind
+  entryFile: index.html
+  sourceType: script
+  capabilityProfile: project
+  primaryOutput: preview
+  profile: theme-project-v1
+files:
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: true
+  - path: styles.css
+    language: css
+    source: starter/styles.css
+    editable: true
+solutionFiles:
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+  - path: styles.css
+    language: css
+    source: solution/styles.css
+    editable: false
+validationRules:
+  - id: tailwind-ch02-l01-e01-r01
+    label: 2枚が共通のnote-cardを使う
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: '#read-card.note-card, #make-card.note-card'
+    assertion:
+      kind: count
+      operator: equals
+      expected: 2
+    feedback:
+      target: 2枚が共通のnote-cardを使う
+      expected: '2'
+      nextAction: section#read-cardとsection#make-cardのclassを確認します。2枚ともnote-cardを使い、同じCSSの部品から見た目を共有します。
+    hintId: tailwind-ch02-l01-e01-h02
+    relatedSlideId: tailwind-ch02-l01-s02
+  - id: tailwind-ch02-l01-e01-r02
+    label: 共通カードの内側の余白
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: .note-card
+    assertion:
+      kind: computed-style
+      operator: equals
+      property: padding
+      expected: 24px
+    feedback:
+      target: 共通カードの内側の余白
+      expected: 24px
+      nextAction: .note-cardの@applyでp-cardを使い、@themeの--spacing-cardを24pxにします。2枚の内側の余白を見比べます。
+    hintId: tailwind-ch02-l01-e01-h02
+    relatedSlideId: tailwind-ch02-l01-s02
+  - id: tailwind-ch02-l01-e01-r03
+    label: 共通カードのtheme文字色
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: .note-card
+    assertion:
+      kind: computed-style
+      operator: equals
+      property: color
+      expected: rgb(15, 60, 76)
+    feedback:
+      target: 共通カードのtheme文字色
+      expected: rgb(15, 60, 76)
+      nextAction: '@themeの--color-brandを#0f3c4cにし、.note-cardのtext-brandを確認します。2枚の文字へ同じ値が届くかを見ます。'
+    hintId: tailwind-ch02-l01-e01-h01
+    relatedSlideId: tailwind-ch02-l01-s01
+  - id: tailwind-ch02-l01-e01-r04
+    label: 共通カードのtheme背景色
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: .note-card
+    assertion:
+      kind: computed-style
+      operator: equals
+      property: background-color
+      expected: rgb(255, 250, 240)
+    feedback:
+      target: 共通カードのtheme背景色
+      expected: rgb(255, 250, 240)
+      nextAction: '@themeの--color-paperを#fffaf0にし、.note-cardのbg-paperを確認します。2枚の背景を見比べます。'
+    hintId: tailwind-ch02-l01-e01-h01
+    relatedSlideId: tailwind-ch02-l01-s01
+  - id: tailwind-ch02-l01-e01-r05
+    label: 親が指定するカード間隔
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: '#cards'
+    assertion:
+      kind: computed-style
+      operator: equals
+      property: gap
+      expected: 24px
+    feedback:
+      target: 親が指定するカード間隔
+      expected: 24px
+      nextAction: 親mainのgap-cardと@themeの--spacing-card（24px）を確認します。内側の余白との責務も見比べます。
+    hintId: tailwind-ch02-l01-e01-h01
+    relatedSlideId: tailwind-ch02-l01-s01
+  - id: tailwind-ch02-l01-e01-r06
+    label: 767pxまでの縦並び
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+    target:
+      kind: selector
+      selector: '#cards'
+    assertion:
+      kind: computed-style
+      operator: equals
+      property: flex-direction
+      expected: column
+    feedback:
+      target: 767pxまでの縦並び
+      expected: column
+      nextAction: 親mainをflex-col md:flex-rowにします。360/767pxでは縦、768/800pxでは横になるかを確かめます。
+    hintId: tailwind-ch02-l01-e01-h03
+    relatedSlideId: tailwind-ch02-l01-s03
+  - id: tailwind-ch02-l01-e01-r07
+    label: 768pxからの横並び
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: '#cards'
+    assertion:
+      kind: computed-style
+      operator: equals
+      property: flex-direction
+      expected: row
+    feedback:
+      target: 768pxからの横並び
+      expected: row
+      nextAction: 親mainをflex-col md:flex-rowにします。360/767pxでは縦、768/800pxでは横になるかを確かめます。
+    hintId: tailwind-ch02-l01-e01-h03
+    relatedSlideId: tailwind-ch02-l01-s03
+  - id: tailwind-ch02-l01-e01-r08
+    label: ボタンのtheme背景色
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: '#save'
+    assertion:
+      kind: computed-style
+      operator: equals
+      property: background-color
+      expected: rgb(15, 60, 76)
+    feedback:
+      target: ボタンのtheme背景色
+      expected: rgb(15, 60, 76)
+      nextAction: buttonのbg-brandと@themeの--color-brand（#0f3c4c）を確認します。通常時の背景とhover時を分けて見ます。
+    hintId: tailwind-ch02-l01-e01-h01
+    relatedSlideId: tailwind-ch02-l01-s01
+  - id: tailwind-ch02-l01-e01-r09
+    label: ボタンのtheme文字色
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: '#save'
+    assertion:
+      kind: computed-style
+      operator: equals
+      property: color
+      expected: rgb(255, 250, 240)
+    feedback:
+      target: ボタンのtheme文字色
+      expected: rgb(255, 250, 240)
+      nextAction: buttonのtext-paperと@themeの--color-paper（#fffaf0）を確認します。背景との明暗差を保ちます。
+    hintId: tailwind-ch02-l01-e01-h01
+    relatedSlideId: tailwind-ch02-l01-s01
+  - id: tailwind-ch02-l01-e01-r10
+    label: focus時の実線
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: '#save'
+    assertion:
+      kind: focus-visible-style
+      operator: equals
+      property: outline-style
+      expected: solid
+    feedback:
+      target: focus時の実線
+      expected: solid
+      nextAction: buttonにfocus-visible:outline-solid・outline-2・outline-brand・outline-offset-2を使います。各指定へfocus-visible:を付け、Tabで輪郭を確かめます。
+    hintId: tailwind-ch02-l01-e01-h03
+    relatedSlideId: tailwind-ch02-l01-s03
+  - id: tailwind-ch02-l01-e01-r11
+    label: focus時の輪郭の太さ
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: '#save'
+    assertion:
+      kind: focus-visible-style
+      operator: equals
+      property: outline-width
+      expected: 2px
+    feedback:
+      target: focus時の輪郭の太さ
+      expected: 2px
+      nextAction: buttonにfocus-visible:outline-solid・outline-2・outline-brand・outline-offset-2を使います。各指定へfocus-visible:を付け、Tabで輪郭を確かめます。
+    hintId: tailwind-ch02-l01-e01-h03
+    relatedSlideId: tailwind-ch02-l01-s03
+  - id: tailwind-ch02-l01-e01-r12
+    label: focus時のtheme輪郭色
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: '#save'
+    assertion:
+      kind: focus-visible-style
+      operator: equals
+      property: outline-color
+      expected: rgb(15, 60, 76)
+    feedback:
+      target: focus時のtheme輪郭色
+      expected: rgb(15, 60, 76)
+      nextAction: HTMLのfocus-visible:outline-brandと、CSSの--color-brand（#0f3c4c）を確認します。Tabでthemeの輪郭色を見ます。
+    hintId: tailwind-ch02-l01-e01-h03
+    relatedSlideId: tailwind-ch02-l01-s02
+  - id: tailwind-ch02-l01-e01-r13
+    label: focus時の輪郭と枠の間隔
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: '#save'
+    assertion:
+      kind: focus-visible-style
+      operator: equals
+      property: outline-offset
+      expected: 2px
+    feedback:
+      target: focus時の輪郭と枠の間隔
+      expected: 2px
+      nextAction: buttonのfocus-visible:outline-offset-2を確認します。輪郭と枠の間隔が2pxになるかをTabで見ます。
+    hintId: tailwind-ch02-l01-e01-h03
+    relatedSlideId: tailwind-ch02-l01-s03
+  - id: tailwind-ch02-l01-e01-r14
+    label: hover時のtheme背景色
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: '#save'
+    assertion:
+      kind: hover-style
+      operator: equals
+      property: background-color
+      expected: rgb(255, 250, 240)
+    feedback:
+      target: hover時のtheme背景色
+      expected: rgb(255, 250, 240)
+      nextAction: buttonのhover:bg-paperと、CSSの--color-paper（#fffaf0）を確認します。ポインターを重ねた背景を見ます。
+    hintId: tailwind-ch02-l01-e01-h03
+    relatedSlideId: tailwind-ch02-l01-s02
+  - id: tailwind-ch02-l01-e01-r15
+    label: hover時のtheme文字色
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: '#save'
+    assertion:
+      kind: hover-style
+      operator: equals
+      property: color
+      expected: rgb(15, 60, 76)
+    feedback:
+      target: hover時のtheme文字色
+      expected: rgb(15, 60, 76)
+      nextAction: buttonのhover:text-brandと、CSSの--color-brand（#0f3c4c）を確認します。ポインターを重ねた文字を見ます。
+    hintId: tailwind-ch02-l01-e01-h03
+    relatedSlideId: tailwind-ch02-l01-s02
+  - id: tailwind-ch02-l01-e01-r16
+    label: 共通カードと見出し・本文の読みやすい明暗差
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: .note-card, .note-card h2, .note-card p
+    assertion:
+      kind: contrast
+      minimum: 4.5
+    feedback:
+      target: 共通カードと見出し・本文の読みやすい明暗差
+      expected: 文字と背景のコントラスト比4.5:1以上
+      nextAction: brandを#0f3c4c、paperを#fffaf0にします。.note-cardのtext-brandとbg-paperを使い、見出し・本文の文字色を上書きしていないか確認します。
+    hintId: tailwind-ch02-l01-e01-h01
+    relatedSlideId: tailwind-ch02-l01-s01
+  - id: tailwind-ch02-l01-e01-r17
+    label: ボタンへTabで移動できる
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: '#save'
+    assertion:
+      kind: focusable
+      operator: equals
+      expected: true
+    feedback:
+      target: ボタンへTabで移動できる
+      expected: フォーカス可能
+      nextAction: buttonのdisabledを外し、Tabで移動して輪郭が見えることを確かめます。
+    hintId: tailwind-ch02-l01-e01-h03
+    relatedSlideId: tailwind-ch02-l01-s03
+  - id: tailwind-ch02-l01-e01-r18
+    label: ボタンに操作目的の名前がある
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: '#save'
+    assertion:
+      kind: accessible-name
+      operator: present
+    feedback:
+      target: ボタンに操作目的の名前がある
+      expected: 空でない操作目的の名前
+      nextAction: buttonの内容に「操作状態を試す」などの分かる名前を残します。
+    hintId: tailwind-ch02-l01-e01-h03
+    relatedSlideId: tailwind-ch02-l01-s03
+  - id: tailwind-ch02-l01-e01-r19
+    label: 親がflex layoutを使う
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: '#cards'
+    assertion:
+      kind: computed-style
+      operator: equals
+      property: display
+      expected: flex
+    feedback:
+      target: 親がflex layoutを使う
+      expected: 'display: flex'
+      nextAction: main#cardsの基本classにflexを残します。flex-colとmd:flex-rowは、flex layoutで方向を切り替えます。
+    hintId: tailwind-ch02-l01-e01-h03
+    relatedSlideId: tailwind-ch02-l01-s02
+hints:
+  - id: tailwind-ch02-l01-e01-h01
+    level: 1
+    title: 値のつながりを見る
+    text: '@themeのcolor-brandは文字・枠・ボタンへ、spacing-cardはカード内とカード間へ届きます。値を1か所ずつ変え、2枚を見比べます。'
+    relatedSlideId: tailwind-ch02-l01-s01
+  - id: tailwind-ch02-l01-e01-h02
+    level: 2
+    title: 共通の見た目を置く
+    text: .note-cardの@applyにp-cardを使い、2枚目の個別Utility列をnote-cardへ置き換えます。内容と並びのclassはHTMLに残します。
+    relatedSlideId: tailwind-ch02-l01-s02
+  - id: tailwind-ch02-l01-e01-h03
+    level: 3
+    title: 解答とbuildへのつなぎ方
+    text: brandは#0f3c4c、paperは#fffaf0、cardは24pxです。共通classはp-cardを使い、2枚でnote-cardを共有します。親のflex flex-col md:flex-rowとボタンのfocus-visible:outline-solid/2/brand/offset-2を保ちます。合格後はZIPのREADMEに沿い、外部でbuildと表示を確認します。
+    relatedSlideId: tailwind-ch02-l01-s03
+relatedSlideIds:
+  - tailwind-ch02-l01-s01
+  - tailwind-ch02-l01-s02
+  - tailwind-ch02-l01-s03
+previewViewports:
+  - id: mobile-360
+    width: 360
+    height: 600
+  - id: before-767
+    width: 767
+    height: 600
+  - id: at-768
+    width: 768
+    height: 600
+  - id: wide-800
+    width: 800
+    height: 600
+assets: []
+fixtures:
+  - id: tailwind-project-starter
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/starter/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/starter/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch02-l01-e01-r01
+      - tailwind-ch02-l01-e01-r02
+      - tailwind-ch02-l01-e01-r03
+      - tailwind-ch02-l01-e01-r04
+      - tailwind-ch02-l01-e01-r05
+      - tailwind-ch02-l01-e01-r08
+      - tailwind-ch02-l01-e01-r09
+      - tailwind-ch02-l01-e01-r12
+      - tailwind-ch02-l01-e01-r14
+      - tailwind-ch02-l01-e01-r15
+  - id: tailwind-project-solution
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/solution/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/solution/styles.css
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: tailwind-project-equivalent-order
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/equivalent-order/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/equivalent-order/styles.css
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: tailwind-project-wrong-brand
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/wrong-brand/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/wrong-brand/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch02-l01-e01-r03
+      - tailwind-ch02-l01-e01-r08
+      - tailwind-ch02-l01-e01-r12
+      - tailwind-ch02-l01-e01-r15
+  - id: tailwind-project-wrong-paper
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/wrong-paper/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/wrong-paper/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch02-l01-e01-r04
+      - tailwind-ch02-l01-e01-r09
+      - tailwind-ch02-l01-e01-r14
+  - id: tailwind-project-wrong-spacing
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/wrong-spacing/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/wrong-spacing/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch02-l01-e01-r02
+      - tailwind-ch02-l01-e01-r05
+  - id: tailwind-project-duplicate-utilities
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/duplicate-utilities/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/duplicate-utilities/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch02-l01-e01-r01
+  - id: tailwind-project-wrong-apply
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/wrong-apply/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/wrong-apply/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch02-l01-e01-r02
+  - id: tailwind-project-wrong-base
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/wrong-base/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/wrong-base/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch02-l01-e01-r06
+  - id: tailwind-project-wrong-breakpoint
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/wrong-breakpoint/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/wrong-breakpoint/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch02-l01-e01-r06
+  - id: tailwind-project-wrong-focus-token
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/wrong-focus-token/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/wrong-focus-token/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch02-l01-e01-r12
+  - id: tailwind-project-unreadable-theme
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/unreadable-theme/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/unreadable-theme/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch02-l01-e01-r03
+      - tailwind-ch02-l01-e01-r08
+      - tailwind-ch02-l01-e01-r12
+      - tailwind-ch02-l01-e01-r15
+      - tailwind-ch02-l01-e01-r16
+  - id: tailwind-project-disabled-control
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/disabled-control/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/disabled-control/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch02-l01-e01-r17
+  - id: tailwind-project-unnamed-control
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/unnamed-control/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/unnamed-control/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch02-l01-e01-r18
+  - id: tailwind-project-unreadable-heading
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/unreadable-heading/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/unreadable-heading/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch02-l01-e01-r16
+  - id: tailwind-project-unreadable-body
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/unreadable-body/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/unreadable-body/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch02-l01-e01-r16
+  - id: tailwind-project-wrong-component-target
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/wrong-component-target/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/wrong-component-target/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch02-l01-e01-r01
+  - id: tailwind-project-missing-flex
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/missing-flex/index.html
+        editable: false
+      - path: styles.css
+        language: css
+        source: fixtures/missing-flex/styles.css
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch02-l01-e01-r19

@@ -60,3 +60,33 @@ entries:
     definition: 360pxと800pxを見比べた後、767pxと768pxを確かめます。
     firstSlideId: tailwind-ch01-l04-s02
     relatedIds: []
+  - id: tailwind-theme
+    term: theme token
+    definition: 色や余白などの設計値。@themeの名前空間から対応するUtilityが作られる。
+    firstSlideId: tailwind-ch02-l01-s01
+    relatedIds: []
+  - id: tailwind-reuse
+    term: CSSのcomponent class
+    definition: 共通の見た目をまとめ、複数の要素で共有するclass。内容と配置はHTMLが担う。
+    firstSlideId: tailwind-ch02-l01-s02
+    relatedIds: []
+  - id: tailwind-apply
+    term: '@apply'
+    definition: 既存UtilityのCSS宣言を、共通classの中へまとめる命令。
+    firstSlideId: tailwind-ch02-l01-s02
+    relatedIds: []
+  - id: tailwind-production
+    term: production build
+    definition: HTMLとCSSなどのSourceから、配信に使う生成物を事前に作る処理。
+    firstSlideId: tailwind-ch02-l01-s03
+    relatedIds: []
+  - id: tailwind-lockfile
+    term: lockfile
+    definition: 依存の具体的なversionと照合情報を記録し、同じ依存の取得へ使うファイル。
+    firstSlideId: tailwind-ch02-l01-s03
+    relatedIds: []
+  - id: tailwind-vite-plugin
+    term: Vite Plugin
+    definition: ViteのbuildへTailwindのCSS生成を接続する固定の追加機能。
+    firstSlideId: tailwind-ch02-l01-s03
+    relatedIds: []
