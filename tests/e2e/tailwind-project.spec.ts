@@ -179,7 +179,9 @@ test('制作の2ソースを保存・再開し、途中ZIPと実操作・判定�
   );
 
   await replaceEditorText(page, solution['styles.css']!);
-  await page.getByRole('tab', { name: 'index.html', exact: true }).click();
+  await page
+    .getByRole('button', { name: `手順 3：${project.steps[2]!.change}`, exact: true })
+    .click();
   await replaceEditorText(page, solution['index.html']!);
   await expect
     .poll(async () => {
@@ -269,6 +271,60 @@ test('制作の2ソースを保存・再開し、途中ZIPと実操作・判定�
     .toEqual(starter);
   await expect(grade).toBeEnabled();
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+});
+
+test('制作途中をCourse Mapから再開し、工程と手動選択Fileを独立して復元する', async ({ page }) => {
+  test.setTimeout(90000);
+  const lessonId = 'tailwind-ch02-l01';
+  await page.goto(`${base}#/courses/tailwind/lessons/${lessonId}/exercises/${project.id}`);
+  await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled();
+  const css = project.files
+    .find(({ path }) => path === 'styles.css')!
+    .content.replace('#000000', '#265d63');
+  await page.getByRole('tab', { name: 'styles.css', exact: true }).click();
+  await replaceEditorText(page, css);
+  const step = project.steps[1]!;
+  const stepButton = page.getByRole('button', { name: `手順 2：${step.change}`, exact: true });
+  await stepButton.click();
+  await expect(page.getByText('保存済み', { exact: true })).toBeVisible();
+  await expect
+    .poll(async () => {
+      const draft = (await readStoredProgress(page)).drafts.find(
+        (row) => row['workspaceId'] === project.id,
+      );
+      return { activeStepId: draft?.['activeStepId'], selectedFile: draft?.['selectedFile'] };
+    })
+    .toEqual({ activeStepId: step.id, selectedFile: 'styles.css' });
+  await page.goto(`${base}#/courses/tailwind`);
+  const card = page
+    .locator('[data-lesson-piece]')
+    .filter({
+      has: page.getByRole('heading', {
+        name: 'テーマと共通の見た目を小さい制作へつなぐ',
+        exact: true,
+      }),
+    });
+  await expect(card).not.toContainText('未着手');
+  await card.getByRole('link', { name: /レッスンを再開する$/ }).click();
+  await expect(stepButton).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('.cm-content')).toContainText('#265d63');
+  await page.getByRole('tab', { name: 'index.html', exact: true }).click();
+  await expect(page.getByText('保存済み', { exact: true })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('tab', { name: 'index.html', exact: true })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  await expect(stepButton).toHaveAttribute('aria-expanded', 'true');
+  await page.getByRole('tab', { name: 'styles.css', exact: true }).click();
+  await expect(page.getByText('保存済み', { exact: true })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('tab', { name: 'styles.css', exact: true })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  await expect(stepButton).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('.cm-content')).toContainText('#265d63');
 });
 
 for (const narrow of [false, true]) {

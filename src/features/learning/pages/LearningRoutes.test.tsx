@@ -1107,6 +1107,42 @@ describe('Learning routes', () => {
     },
   );
 
+  it('同じFile内で選んだ工程をコース往復後も復元する', async () => {
+    vi.stubEnv('BASE_URL', '/resume-selected-step/');
+    const course = structuredClone(fixtureCourse);
+    const exercise = course.phases[0]!.chapters[0]!.lessons[0]!.exercises[0]!;
+    exercise.steps.push({
+      ...exercise.steps[0]!,
+      id: 'change-heading',
+      change: '見出しの文字を変える',
+    });
+    let saved: ExerciseDraft = { ...passingDraft(), lastPassingSnapshots: {} };
+    runtime.repository.getDraft.mockImplementation(async () => saved);
+    runtime.repository.putDraft.mockImplementation(async (draft) => {
+      saved = structuredClone(draft);
+    });
+    stubContentFetch(course);
+    stubEditingCapability(true);
+    stubAdapters();
+    renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
+    await findCodeWorkspace();
+    await userEvent.click(screen.getByRole('button', { name: '手順 2：見出しの文字を変える' }));
+    await act(async () => {
+      await router!.navigate('/courses/html-css');
+    });
+    await act(async () => {
+      await router!.navigate(
+        '/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading',
+      );
+    });
+    await findCodeWorkspace();
+    expect(screen.getByRole('button', { name: '手順 2：見出しの文字を変える' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
+    expect((await findEditorView()).state.doc.toString()).toBe('<main><h1>できた</h1></main>');
+  });
+
   it('未判定の演習から説明を選んで見直し、編集・Preview・Focusを保って戻れる', async () => {
     vi.stubEnv('BASE_URL', '/review-entry-route-test/');
     const reviewCourse = structuredClone(fixtureCourse);

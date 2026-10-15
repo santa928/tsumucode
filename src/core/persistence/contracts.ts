@@ -17,6 +17,8 @@ export interface ExerciseDraft {
   readonly editRevision: number;
   readonly files: Readonly<Record<string, string>>;
   readonly selectedFile: string;
+  /** 工程案内と編集中Fileは独立して復元する。旧Draftでは未保存。 */
+  readonly activeStepId?: string;
   readonly cursors: Readonly<Record<string, EditorCursor>>;
   readonly validationHistory: readonly ValidationResult[];
   readonly revealedHintIds: readonly string[];

@@ -418,6 +418,12 @@ function migrateDraftStep(
     editRevision: draft.editRevision,
     files: draft.files,
     selectedFile: draft.selectedFile,
+    ...(draft.activeStepId === undefined ||
+    exercise.id !== draft.exerciseId ||
+    lesson.id !== draft.lessonId ||
+    workspace.id !== draft.workspaceId
+      ? {}
+      : { activeStepId: draft.activeStepId }),
     cursors: draft.cursors,
     validationHistory: migrateValidationHistory(draft.validationHistory, actions, context),
     revealedHintIds: migrateIdList(draft.revealedHintIds, 'hint', actions, context),

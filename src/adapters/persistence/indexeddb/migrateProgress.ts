@@ -102,6 +102,8 @@ const DraftV2Schema = z
     editRevision: NonNegativeInteger,
     files: z.record(z.string(), z.string()),
     selectedFile: NonEmptyString,
+    // 補助的な工程位置の不正値だけで、保存Source全体を隔離しない。
+    activeStepId: NonEmptyString.max(128).optional().catch(undefined),
     cursors: z.record(z.string(), CursorSchema),
     validationHistory: z.array(ValidationResultSchema),
     revealedHintIds: StringList,
@@ -225,6 +227,8 @@ function migrateDraftV1(value: unknown, storedKey: string): ExerciseDraft | null
 /** schema v2 Draftを深く検証し、stored keyとの不一致も拒否する。 */
 function parseDraftV2(value: unknown, storedKey: string): ExerciseDraft | null {
   const parsed = parseValidated(DraftV2Schema, value) as ExerciseDraft | null;
+  if (parsed?.activeStepId === undefined && parsed !== null)
+    Reflect.deleteProperty(parsed, 'activeStepId');
   return parsed && storedKey === `${parsed.courseId}:${parsed.workspaceId}` ? parsed : null;
 }
 

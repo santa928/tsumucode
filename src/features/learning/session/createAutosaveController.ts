@@ -62,10 +62,18 @@ export function createAutosaveController(
   let activeSave: Promise<void> | undefined;
   let disposed = false;
   let recoveringFromError = false;
+  let status: AutosaveStatus = 'idle';
+
+  /** 予約中も保存中と知らせ、同じ状態の重複通知を避ける。 */
+  const setStatus = (next: AutosaveStatus): void => {
+    if (status === next) return;
+    status = next;
+    options.onStatus?.(next);
+  };
 
   /** 1件を保存し、失敗時はより新しいpendingがなければ同じDraftをretry用に戻す。 */
   const saveOne = async (draft: ExerciseDraft): Promise<void> => {
-    options.onStatus?.('saving');
+    setStatus('saving');
     try {
       await persist(draft);
       safelyMeasureDraftPersistence('saved');
@@ -73,11 +81,11 @@ export function createAutosaveController(
         recoveringFromError = false;
         notifySafely(() => options.onRecovered?.());
       }
-      if (!pending) options.onStatus?.('saved');
+      if (!pending) setStatus('saved');
     } catch (error) {
       if (!disposed) pending ??= draft;
       recoveringFromError = true;
-      options.onStatus?.('error');
+      setStatus('error');
       notifySafely(() => options.onError?.(error));
       throw error;
     }
@@ -109,6 +117,7 @@ export function createAutosaveController(
     schedule(draft) {
       if (disposed) return;
       pending = draft;
+      setStatus('saving');
       safelyMeasureDraftPersistence('input');
       if (timer) clearTimeout(timer);
       timer = setTimeout(() => {

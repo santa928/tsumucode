@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/cn';
 
-type Status = 'complete' | 'current' | 'not-started';
+type Status = 'complete' | 'current' | 'in-progress' | 'not-started';
 
 interface StatusBadgeProps {
   readonly status: Status;
@@ -10,12 +10,14 @@ interface StatusBadgeProps {
 const LABELS: Readonly<Record<Status, string>> = {
   complete: '完了',
   current: '現在のピース',
+  'in-progress': '作業中',
   'not-started': '未着手',
 };
 
 const STATUS_CLASSES: Readonly<Record<Status, string>> = {
   complete: 'bg-workshop-complete text-workshop-on-primary',
   current: 'bg-workshop-learning text-workshop-ink',
+  'in-progress': 'border-workshop-primary bg-workshop-surface text-workshop-primary',
   'not-started': 'border-workshop-border bg-workshop-raised text-workshop-muted',
 };
 

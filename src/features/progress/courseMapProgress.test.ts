@@ -68,6 +68,51 @@ function makeProgress(overrides: Partial<CourseProgress> = {}): CourseProgress {
 }
 
 describe('applyCourseProgress', () => {
+  it('Draftだけの既存データから最後の作業を再開し、他の作業中と完了を区別する', () => {
+    const times = new Map([
+      [FIRST_LESSON_ID, '2026-10-15T00:00:00Z'],
+      [SECOND_LESSON_ID, '2026-10-15T01:00:00Z'],
+    ]);
+    const result = applyCourseProgress(
+      makeTwoLessonMap(),
+      undefined,
+      fixtureCourse.revision,
+      times,
+    );
+    expect(result.phases[0]!.chapters[0]!.lessons.map(({ status }) => status)).toEqual([
+      'in-progress',
+      'current',
+    ]);
+    expect(result.completedLessons).toBe(0);
+    const completed = applyCourseProgress(
+      makeTwoLessonMap(),
+      makeProgress({
+        lessons: { [FIRST_LESSON_ID]: makeLessonProgress(FIRST_LESSON_ID, true) },
+      }),
+      fixtureCourse.revision,
+      times,
+    );
+    expect(completed.phases[0]!.chapters[0]!.lessons.map(({ status }) => status)).toEqual([
+      'complete',
+      'current',
+    ]);
+    expect(completed.completedLessons).toBe(1);
+  });
+
+  it('未知Lessonや不正時刻のDraftから作業状態を作らない', () => {
+    const map = makeTwoLessonMap();
+    const result = applyCourseProgress(
+      map,
+      undefined,
+      fixtureCourse.revision,
+      new Map([
+        ['unknown-lesson', NOW],
+        [SECOND_LESSON_ID, 'not-a-date'],
+      ]),
+    );
+    expect(result.phases).toEqual(map.phases);
+    expect(result.completedLessons).toBe(0);
+  });
   it('完了数を集計し、完了済み現在地から教材順の最初の未完了へfallbackする', () => {
     const result = applyCourseProgress(
       makeTwoLessonMap(),

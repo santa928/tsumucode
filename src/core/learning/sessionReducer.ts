@@ -24,6 +24,7 @@ export interface LearningSessionState {
   readonly phase: LearningPhase;
   readonly files: Readonly<Record<string, string>>;
   readonly selectedFile: string;
+  readonly activeStepId?: string;
   readonly cursors: Readonly<Record<string, EditorCursor>>;
   readonly executionRevision: number;
   readonly previewRevision: number | null;
@@ -39,12 +40,14 @@ export type LearningSessionAction =
   | { readonly type: 'phase.exercise' }
   | { readonly type: 'phase.completion' }
   | { readonly type: 'editor.selected'; readonly path: string }
+  | { readonly type: 'step.selected'; readonly stepId: string; readonly path: string }
   | { readonly type: 'editor.cursor'; readonly path: string; readonly cursor: EditorCursor }
   | { readonly type: 'editor.changed'; readonly path: string; readonly content: string }
   | {
       readonly type: 'editor.reset';
       readonly files: Readonly<Record<string, string>>;
       readonly selectedFile: string;
+      readonly activeStepId?: string;
     }
   | {
       readonly type: 'preview.completed';
@@ -69,6 +72,7 @@ export function createLearningSessionState(input: {
   readonly exerciseId: string;
   readonly files: Readonly<Record<string, string>>;
   readonly selectedFile: string;
+  readonly activeStepId?: string;
 }): LearningSessionState {
   return {
     ...input,
@@ -94,7 +98,14 @@ export function learningSessionReducer(
     case 'phase.completion':
       return { ...state, phase: 'completion' };
     case 'editor.selected':
-      return { ...state, selectedFile: action.path };
+      return { ...state, selectedFile: action.path, saveStatus: 'saving' };
+    case 'step.selected':
+      return {
+        ...state,
+        activeStepId: action.stepId,
+        selectedFile: action.path,
+        saveStatus: 'saving',
+      };
     case 'editor.cursor':
       return { ...state, cursors: { ...state.cursors, [action.path]: action.cursor } };
     case 'editor.changed':
@@ -118,6 +129,7 @@ export function learningSessionReducer(
         phase: 'exercise',
         files: { ...action.files },
         selectedFile: action.selectedFile,
+        ...(action.activeStepId === undefined ? {} : { activeStepId: action.activeStepId }),
         cursors: {},
         executionRevision: state.executionRevision + 1,
         previewRevision: null,
@@ -127,6 +139,7 @@ export function learningSessionReducer(
         saveStatus: 'saving',
       };
       Reflect.deleteProperty(resetState, 'reviewReturn');
+      if (action.activeStepId === undefined) Reflect.deleteProperty(resetState, 'activeStepId');
       Reflect.deleteProperty(resetState, 'runtimeOutput');
       Reflect.deleteProperty(resetState, 'executionResult');
       return resetState;
@@ -176,6 +189,6 @@ export function learningSessionReducer(
     case 'review.close':
       return { ...state, phase: 'exercise' };
     case 'save.changed':
-      return { ...state, saveStatus: action.status };
+      return state.saveStatus === action.status ? state : { ...state, saveStatus: action.status };
   }
 }

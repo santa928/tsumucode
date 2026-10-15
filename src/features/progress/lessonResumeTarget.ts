@@ -3,23 +3,20 @@ import { lessonStartTarget } from '../../core/content/lessonStart';
 import type { CourseIndex, LessonOutline, LessonStartTarget } from '../../core/content/types';
 import type { CourseProgress, ExerciseDraft } from '../../core/persistence/contracts';
 
-/**
- * 現行Lesson内の未完了Draftを優先し、閲覧途中・未合格Exercise・開始点の順で解決する。
- * workspace読取キーと所有ID/revisionを照合し、別Lessonの保存値へ飛ばない。保存は行わない。
- */
-export function lessonResumeTarget(
+/** 所有ID/revisionと読取キーが一致する、現行Lessonの最新未完了Draftだけを返す。 */
+export function findLessonResumeDraft(
   course: CourseIndex,
   lesson: LessonOutline,
   progress: CourseProgress | undefined,
   drafts: ReadonlyMap<string, ExerciseDraft | undefined>,
-): LessonStartTarget {
+): ExerciseDraft | undefined {
   const savedLesson =
     progress?.courseId === course.id && progress.contentRevision === course.revision
       ? progress.lessons[lesson.id]
       : undefined;
   const lessonProgress = savedLesson?.lessonId === lesson.id ? savedLesson : undefined;
   const passed = new Set(lessonProgress?.passedExerciseIds ?? []);
-  let latest: { readonly targetId: string; readonly updatedAt: number } | undefined;
+  let latest: { readonly draft: ExerciseDraft; readonly updatedAt: number } | undefined;
   for (const exercise of lesson.exercises) {
     const draft = drafts.get(exercise.workspaceId);
     if (
@@ -35,10 +32,27 @@ export function lessonResumeTarget(
     const updatedAt = Date.parse(draft.updatedAt);
     // 同時刻は先に現れた教材を保ち、Mapの登録順で再開先を変えない。
     if (Number.isFinite(updatedAt) && (latest === undefined || updatedAt > latest.updatedAt)) {
-      latest = { targetId: exercise.id, updatedAt };
+      latest = { draft, updatedAt };
     }
   }
-  if (latest !== undefined) return { kind: 'exercise', targetId: latest.targetId };
+  return latest?.draft;
+}
+
+/** 有効な未完了Draft、閲覧途中、未合格Exercise、開始点の順で再開先を解決する。 */
+export function lessonResumeTarget(
+  course: CourseIndex,
+  lesson: LessonOutline,
+  progress: CourseProgress | undefined,
+  drafts: ReadonlyMap<string, ExerciseDraft | undefined>,
+): LessonStartTarget {
+  const draft = findLessonResumeDraft(course, lesson, progress, drafts);
+  if (draft !== undefined) return { kind: 'exercise', targetId: draft.exerciseId };
+  const savedLesson =
+    progress?.courseId === course.id && progress.contentRevision === course.revision
+      ? progress.lessons[lesson.id]
+      : undefined;
+  const lessonProgress = savedLesson?.lessonId === lesson.id ? savedLesson : undefined;
+  const passed = new Set(lessonProgress?.passedExerciseIds ?? []);
 
   if (lesson.kind === 'standard') {
     const finishedReading =

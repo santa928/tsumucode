@@ -1384,6 +1384,104 @@ describe('LearningSessionController', () => {
     expect(latest?.lastPassingSnapshots).toEqual({});
   });
 
+  it('File選択はdebounceを待たず既存保存queueへ送り、Sourceと実行revisionを変えない', async () => {
+    const current = exercise({
+      files: [
+        { path: 'index.html', language: 'html', content: '<main></main>', editable: true },
+        { path: 'styles.css', language: 'css', content: 'main {}', editable: true },
+      ],
+    });
+    const persistence = repositoryHarness();
+    const controller = new LearningSessionController(
+      controllerInput({ exercise: current, repository: persistence.repository }),
+    );
+    controller.selectFile('styles.css');
+    await vi.advanceTimersByTimeAsync(0);
+    expect(persistence.putDraft).toHaveBeenCalledOnce();
+    expect(persistence.putDraft.mock.calls[0]?.[0]).toMatchObject({
+      selectedFile: 'styles.css',
+      editRevision: 0,
+      files: { 'index.html': '<main></main>', 'styles.css': 'main {}' },
+    });
+  });
+
+  it.each(['known', 'unknown', 'other-exercise'] as const)(
+    '工程位置%sをFileと独立して復元し、未知/別Exerciseは位置だけをfallbackする',
+    async (kind) => {
+      const step = baseExercise.steps[0]!;
+      const current = exercise({
+        steps: [step, { ...step, id: 'second-step' }],
+        files: [
+          ...baseExercise.files,
+          { path: 'styles.css', language: 'css', content: 'main {}', editable: true },
+        ],
+      });
+      const draft = storedDraft({
+        selectedFile: 'styles.css',
+        files: { 'index.html': '<main>保存Source</main>', 'styles.css': 'main { color: red; }' },
+        activeStepId: kind === 'unknown' ? 'removed-step' : 'second-step',
+        ...(kind === 'other-exercise' ? { exerciseId: 'other-exercise' } : {}),
+      });
+      const controller = new LearningSessionController(
+        controllerInput({ exercise: current, repository: repositoryHarness({ draft }).repository }),
+      );
+      await controller.initialize();
+      expect(controller.getSnapshot()).toMatchObject({
+        selectedFile: 'styles.css',
+        activeStepId: kind === 'known' ? 'second-step' : step.id,
+        files: draft.files,
+        executionRevision: draft.editRevision,
+      });
+      if (kind !== 'other-exercise')
+        expect(controller.getSnapshot().validationHistory).toEqual(draft.validationHistory);
+    },
+  );
+
+  it('工程を変更して保存・再構築でき、Reset後の再構築で旧工程を戻さない', async () => {
+    const step = baseExercise.steps[0]!;
+    const current = exercise({ steps: [step, { ...step, id: 'second-step' }] });
+    let saved: ExerciseDraft | undefined;
+    const persistence = repositoryHarness({
+      onPut: async (draft) => {
+        saved = structuredClone(draft);
+      },
+    });
+    const controller = new LearningSessionController(
+      controllerInput({ exercise: current, repository: persistence.repository }),
+    );
+    controller.selectStep('second-step');
+    await controller.flush();
+    expect(saved).toMatchObject({
+      activeStepId: 'second-step',
+      editRevision: 0,
+      validationHistory: [],
+      lastPassingSnapshots: {},
+    });
+    const restored = new LearningSessionController(
+      controllerInput({
+        exercise: current,
+        repository: repositoryHarness({ draft: saved! }).repository,
+      }),
+    );
+    await restored.initialize();
+    expect(restored.getSnapshot().activeStepId).toBe('second-step');
+    controller.edit('index.html', '<main>変更</main>');
+    controller.resetToStarter();
+    await controller.flush();
+    expect(saved).toMatchObject({
+      activeStepId: step.id,
+      files: { 'index.html': '<main></main>' },
+    });
+    const reset = new LearningSessionController(
+      controllerInput({
+        exercise: current,
+        repository: repositoryHarness({ draft: saved! }).repository,
+      }),
+    );
+    await reset.initialize();
+    expect(reset.getSnapshot().activeStepId).toBe(step.id);
+  });
+
   it('判定Draft保存中のFile選択を失わず、旧判定をstateと永続Draftへ残さない', async () => {
     const candidateSave = deferred<undefined>();
     let saveCount = 0;

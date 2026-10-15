@@ -404,6 +404,9 @@ export class LearningSessionController {
         exerciseId: input.exercise.id,
         files,
         selectedFile,
+        ...(input.exercise.steps[0] === undefined
+          ? {}
+          : { activeStepId: input.exercise.steps[0].id }),
       }),
       { type: 'phase.exercise' },
     );
@@ -522,6 +525,7 @@ export class LearningSessionController {
       editRevision: state.executionRevision,
       files: { ...state.files },
       selectedFile: state.selectedFile,
+      ...(state.activeStepId === undefined ? {} : { activeStepId: state.activeStepId }),
       cursors: { ...state.cursors },
       validationHistory: [...state.validationHistory],
       revealedHintIds: [...state.revealedHintIds],
@@ -571,13 +575,21 @@ export class LearningSessionController {
           }
         : undefined;
     this.#lastPassingSnapshots = clonePassingSnapshots(draft.lastPassingSnapshots);
+    const selectedFile = Object.hasOwn(files, draft.selectedFile)
+      ? draft.selectedFile
+      : this.#state.selectedFile;
+    const activeStep =
+      (isCurrentExercise
+        ? this.input.exercise.steps.find(({ id }) => id === draft.activeStepId)
+        : undefined) ??
+      this.input.exercise.steps.find(({ file }) => file === selectedFile) ??
+      this.input.exercise.steps[0];
     this.#replaceState({
       ...this.#state,
       files,
       executionRevision: draft.editRevision,
-      selectedFile: Object.hasOwn(files, draft.selectedFile)
-        ? draft.selectedFile
-        : this.#state.selectedFile,
+      selectedFile,
+      ...(activeStep === undefined ? {} : { activeStepId: activeStep.id }),
       cursors,
       validationHistory: isCurrentExercise
         ? draft.validationHistory.filter(({ exerciseId }) => exerciseId === this.input.exercise.id)
@@ -653,15 +665,16 @@ export class LearningSessionController {
     });
     this.#markDraftMutation();
     this.#clearPreviewTimer();
-    const selectedFile = Object.hasOwn(this.#starterFiles, this.#state.selectedFile)
-      ? this.#state.selectedFile
-      : this.#starterSelectedFile;
+    const selectedFile = this.#starterSelectedFile;
     this.#lastPassingSnapshots = {};
     this.#lastValidationBatch = [];
     this.#dispatch({
       type: 'editor.reset',
       files: this.#starterFiles,
       selectedFile,
+      ...(this.input.exercise.steps[0] === undefined
+        ? {}
+        : { activeStepId: this.input.exercise.steps[0].id }),
     });
     const draft = this.#draft();
     this.input.onDirty?.(draft);
@@ -676,6 +689,19 @@ export class LearningSessionController {
     this.#markDraftMutation();
     this.#dispatch({ type: 'editor.selected', path });
     this.#autosave.schedule(this.#draft());
+    // 失敗はautosaveの保存状態とonSaveErrorへ通知し、未処理rejectionを作らない。
+    void this.#autosave.flush().catch(() => undefined);
+  }
+
+  /** 既知の工程と対象Fileを同じDraftで保存し、手動File選択とは独立して復元する。 */
+  selectStep(stepId: string): void {
+    this.#assertAcceptingOperations();
+    const step = this.input.exercise.steps.find(({ id }) => id === stepId);
+    if (step === undefined) throw new Error(`工程が存在しません: ${stepId}`);
+    this.#markDraftMutation();
+    this.#dispatch({ type: 'step.selected', stepId: step.id, path: step.file });
+    this.#autosave.schedule(this.#draft());
+    void this.#autosave.flush().catch(() => undefined);
   }
 
   /** source範囲内の有限な非負整数cursorだけを保存する。 */
