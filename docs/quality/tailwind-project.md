@@ -2,6 +2,8 @@
 
 Issue130は草稿Courseへ1つのguided projectを追加する。共有する値は@theme、共通の見た目はCSSの.note-card、内容と配置はHTMLが担う。既存4教材のID・原稿を保持し、追加だけの空の進捗移行を使う。新規公開はIssue131の別工程。
 
+Issue131の作者検証で使う既存distは、[Tailwind草稿のSource照合](tailwind-draft-artifact.md)で現在のCourse原稿との対応を確認する。
+
 ## 入力の責務
 
 `theme-project-v1`を明示したTailwind Runtimeだけがindex.htmlとstyles.cssを受け付ける。導入4教材はRuntime省略のまま、既存の1ファイル制約を維持する。

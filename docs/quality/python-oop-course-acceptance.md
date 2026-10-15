@@ -79,7 +79,7 @@ PC／390pxの全34Slideで図の読込、axe、横overflow、本文末尾とPage
 ./scripts/docker-compose.sh run --rm app node --import tsx scripts/content/checkPythonOopDraft.ts dist
 ```
 
-現在の`python-oop`をCompilerで読み、実distのCourse本文・Catalog metadata／Index SHA・公開Provenance・参照Asset bytesを照合し、既存9Lesson内容レビューも確認します。Source／Catalog／distがすべてdraftで、Source／dist双方のPathのstepと前提参照に未登録であることが条件です。実践とOOPの固定2Courseだけが比較処理を共有し、既存の実践用CLIも維持します。検査はファイルや承認状態を書き換えません。
+現在の`python-oop`をCompilerで読み、実distのCourse本文・Catalog metadata／Index SHA・公開Provenance・参照Asset bytesを照合し、既存9Lesson内容レビューも確認します。Source／Catalog／distがすべてdraftで、Source／dist双方のPathのstepと前提参照に未登録であることが条件です。実践・OOP・Tailwindの固定3草稿が比較処理を共有し、実践・OOPの専用CLIは維持します。検査はファイルや承認状態を書き換えません。
 
 成功時の`draft-matched`は、この草稿入力の一致だけを示します。`runtimeSha256`はRuntime JSONのhashで、Source treeやdist全体のhashではありません。一般の静的Artifact検査・実行・CUA・独立原本とのbinding・専用公開Gate・公開許可の完了とは別です。既存Python基礎の公開許可やallowlistを広げません。
 

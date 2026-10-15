@@ -8,10 +8,11 @@ import { parse, stringify } from 'yaml';
 import { CourseManifestSchema } from '../../src/core/content/schema';
 import { checkPythonPracticeDraft } from '../../scripts/content/checkPythonPracticeDraft';
 import { checkPythonOopDraft } from '../../scripts/content/checkPythonOopDraft';
+import { checkTailwindDraft } from '../../scripts/content/checkTailwindDraft';
 import {
-  checkPythonDraftArtifact,
-  type PythonDraftCourseId,
-} from '../../scripts/content/checkPythonDraftArtifact';
+  checkDraftCourseArtifact,
+  type DraftCourseId,
+} from '../../scripts/content/checkDraftCourseArtifact';
 import {
   compileCourse,
   stringifyCanonicalJson,
@@ -24,7 +25,7 @@ import {
 import { readSplitCourseArtifacts } from '../../scripts/content/readSplitCourseArtifacts';
 import { verifyContentReview } from '../../scripts/content/verifyContentReview';
 
-let courseId: 'python-practice' | 'python-oop';
+let courseId: DraftCourseId;
 let root: string;
 let dist: string;
 let compilation: CompiledCourseArtifacts;
@@ -78,6 +79,7 @@ afterEach(async () => {
 describe.each([
   ['python-practice', checkPythonPracticeDraft, 5],
   ['python-oop', checkPythonOopDraft, 9],
+  ['tailwind', checkTailwindDraft, 5],
 ] as const)('%sの草稿Sourceとdistの照合', (selectedCourseId, checkDraft, lessonCount) => {
   beforeEach(async () => {
     courseId = selectedCourseId;
@@ -198,14 +200,14 @@ describe.each([
   });
 });
 
-describe('Python草稿照合の固定対象', () => {
+describe('草稿Course照合の固定対象', () => {
   it('未知のCourseはSourceやdistを読む前に拒否する', async () => {
     await expect(
-      checkPythonDraftArtifact(
+      checkDraftCourseArtifact(
         '/source-does-not-exist',
         '/dist-does-not-exist',
-        'python-basics' as PythonDraftCourseId,
+        'python-basics' as DraftCourseId,
       ),
-    ).rejects.toThrow('対象はpython-practiceとpython-oop');
+    ).rejects.toThrow('対象はpython-practice・python-oop・tailwind');
   });
 });
