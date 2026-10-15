@@ -116,6 +116,6 @@ revision2026-10-12.2→.3は空stepsで移行し、旧4教材のSource/IDを保�
 
 ## CIのBrowser診断
 
-`Local Runtime boundary`はPythonのBrowser検証結果をホストへ保持し、`python-browser-evidence-<Source SHA>-<run attempt>`として7日間保存します。結果JSONと、生成された失敗画面・error contextを対象にします。再実行時も元attemptの記録を区別します。
+`Local Runtime boundary`はPythonのBrowser検証結果をホストへ保持し、`python-browser-evidence-<Source SHA>-<run attempt>`として7日間保存します。検証コンテナはrunnerのUID/GIDで動き、capabilityを追加せず出力先へ書き込みます。結果JSONと、生成された失敗画面・error contextを対象にします。再実行時も元attemptの記録を区別します。
 
 認証ヘッダー等を含み得るtraceはArtifactへ含めません。結果がない場合は警告になり、元の検証失敗を成功へ変換しません。失敗時は該当テストと画面の保存・実行・編集権の案内を照合し、ダイアログ未表示だけで原因を断定しないでください。成功した再実行も、最初の失敗原因が解消した証明とは区別します。
