@@ -114,6 +114,39 @@ describe('parseValidatorRules', () => {
 });
 
 describe('buildSnapshotPolicy', () => {
+  it('hover-styleは通常Styleと分けて有限な対象とPropertyだけを要求する', () => {
+    const rules = parseValidatorRules([
+      validationRule({
+        target: { kind: 'selector', selector: '#action' },
+        assertion: {
+          kind: 'hover-style',
+          property: 'background-color',
+          operator: 'equals',
+          expected: 'rgb(0, 0, 0)',
+        },
+      }),
+    ]);
+    expect(buildSnapshotPolicy(rules)).toMatchObject({
+      selectors: ['#action'],
+      computedStyles: [],
+      hoverSelectors: ['#action'],
+      hoverComputedStyles: ['background-color'],
+    });
+    expect(() =>
+      parseValidatorRules([
+        validationRule({
+          target: { kind: 'node', tagName: 'button' },
+          assertion: {
+            kind: 'hover-style',
+            property: 'color',
+            operator: 'equals',
+            expected: 'black',
+          },
+        }),
+      ]),
+    ).toThrow();
+  });
+
   it('focus-visible-styleは対象Selectorと専用Computed Styleだけを検証用状態へ要求する', () => {
     const policy = buildSnapshotPolicy([
       validationRule({

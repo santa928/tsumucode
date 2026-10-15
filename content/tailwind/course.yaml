@@ -1,33 +1,42 @@
 schemaVersion: 1
 id: tailwind
-title: Tailwind CSSと見た目の第一歩
-description: CSSのdisplay・gap・paddingをUtility classへ対応させ、同じ見た目を確かめる草稿1レッスン。
+title: Tailwind CSSと見た目の基本
+description: CSSと対応させ、Utility・操作状態・幅の条件を描画で確かめる草稿4レッスン。
 audience: HTMLのclassとCSSのBox・Flexを学んだ初学者
-estimatedMinutes: 20
-revision: 2026-10-14.1
+estimatedMinutes: 85
+revision: 2026-10-15.1
 runnerId: tailwind
 validatorId: html-css
 glossarySource: glossary.yaml
 conceptsSource: concepts.yaml
-documentationSources: [references/tailwind-official.md]
+documentationSources:
+  - references/tailwind-official.md
 authoringSources: []
 supportedDevices:
   exercise: desktop
-  study: [desktop, tablet, mobile]
-prerequisites: [html-css]
+  study:
+    - desktop
+    - tablet
+    - mobile
+prerequisites:
+  - html-css
 publicationStatus: draft
 expectedTotals:
   chapters: 1
-  lessons: 1
-  conceptSlides: 4
-  standardExercises: 1
+  lessons: 4
+  conceptSlides: 12
+  standardExercises: 4
   guidedProjectLessons: 0
   capstoneLessons: 0
-  estimatedMinutes: 20
+  estimatedMinutes: 85
 provenanceManifestPath: provenance.yaml
-progressMigrations: []
+progressMigrations:
+  - fromRevision: 2026-10-14.1
+    toRevision: 2026-10-15.1
+    steps: []
 phases:
   - id: tailwind-p01-utilities
     title: CSSとUtilityを結ぶ
     description: クラス名・CSS Property・実際の見た目を対応させる。
-    chapterSources: [chapters/tailwind-ch01/chapter.yaml]
+    chapterSources:
+      - chapters/tailwind-ch01/chapter.yaml

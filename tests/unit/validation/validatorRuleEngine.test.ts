@@ -17,6 +17,41 @@ async function evaluate(assertion: HtmlCssRuleAssertion, snapshot = previewSnaps
 }
 
 describe('ValidatorRuleEngine statusと説明', () => {
+  it('hover描画の観測を通常色で代用せず、欠落・誤値を未達とする', async () => {
+    const assertion: HtmlCssRuleAssertion = {
+      kind: 'hover-style',
+      property: 'background-color',
+      operator: 'equals',
+      expected: 'rgb(0, 0, 0)',
+    };
+    const correct = previewSnapshot({
+      nodes: [
+        previewNode({
+          computedStyles: { 'background-color': 'rgb(255, 255, 255)' },
+          hoverComputedStyles: { 'background-color': 'rgb(0, 0, 0)' },
+        }),
+      ],
+    });
+    const wrong = previewSnapshot({
+      nodes: [
+        previewNode({
+          computedStyles: { 'background-color': 'rgb(0, 0, 0)' },
+          hoverComputedStyles: { 'background-color': 'rgb(255, 255, 255)' },
+        }),
+      ],
+    });
+    const absent = previewSnapshot({
+      nodes: [
+        previewNode({
+          computedStyles: { 'background-color': 'rgb(0, 0, 0)' },
+        }),
+      ],
+    });
+    await expect(evaluate(assertion, correct)).resolves.toMatchObject({ status: 'pass' });
+    await expect(evaluate(assertion, wrong)).resolves.toMatchObject({ status: 'incomplete' });
+    await expect(evaluate(assertion, absent)).resolves.toMatchObject({ status: 'incomplete' });
+  });
+
   it('source文字列に依存せずSnapshot条件だけでpassする', async () => {
     const result = await evaluate({
       kind: 'computed-style',

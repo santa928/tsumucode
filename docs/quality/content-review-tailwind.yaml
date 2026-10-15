@@ -5,12 +5,45 @@ canonicalDistSha256: draft
 lessons:
   - lessonId: tailwind-ch01-l01
     authorId: tsumucode-tailwind-author
-    reviewerId: cache_races_ui_claims_review
-    sourceHash: c0606f3dfc11d2399cd7cfb213ff658d160b7a892545bb0e097dd7ef3c412e0e
+    reviewerId: cache_races_loader_review
+    sourceHash: fed63068a4fc94abda07db4d539a0ecb927a9f4fa1db28b0f82721618ce02dff
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 独立内容レビューで必須指摘0。固定compilerと製品Runnerで全9Fixtureの実Style判定を3Browserで確認し、4図のPC／390px画像を確認した。例検証は演習Fixtureを指し、全Slide断片の独立実行・実人理解・物理端末性能を意味しない。1演習の草稿であり、全面Course・Project・公開はIssue129〜131へ残す。
+    notes: 既存Slideと図はIssue128の原文を維持し、追加入力範囲の説明だけ更新。独立内容レビューでhashを再承認。元9FixtureのChromium実描画証拠を適用範囲付きで再利用。
+  - lessonId: tailwind-ch01-l02
+    authorId: tsumucode-tailwind-129-author
+    reviewerId: cache_races_loader_review
+    sourceHash: 33c08e71356903bb15ac5055c4844b7e8b66dc138e06f75fd0b999e801a0ad7c
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 独立内容レビューで原稿・Hint・採点・正負Fixtureと別解、PC/390px画像を確認し必須指摘0。固定compilerの全新規22FixtureをChromiumで実描画判定。examplesExecutedは演習Fixtureを指し、Slide断片の個別実行・実人理解・Firefox/WebKit成功・公開受入は意味しない。
+  - lessonId: tailwind-ch01-l03
+    authorId: tsumucode-tailwind-129-author
+    reviewerId: cache_races_loader_review
+    sourceHash: a341e47a72ba42021279362e2cf7bacbba29db70fa5c0fcbc89fcdfa8daf771a
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 独立内容レビューで原稿・Hint・採点・正負Fixtureと別解、PC/390px画像を確認し必須指摘0。固定compilerの全新規22FixtureをChromiumで実描画判定。examplesExecutedは演習Fixtureを指し、Slide断片の個別実行・実人理解・Firefox/WebKit成功・公開受入は意味しない。
+  - lessonId: tailwind-ch01-l04
+    authorId: tsumucode-tailwind-129-author
+    reviewerId: cache_races_loader_review
+    sourceHash: 775a306de734538b5930d91d7f7cbe6914041855fed1bcf3d4853b2cbb15054b
+    accuracy: approved
+    goalExerciseAlignment: approved
+    unexplainedTerms: 0
+    hintLeakage: 0
+    examplesExecuted: true
+    decision: approved
+    notes: 独立内容レビューで原稿・Hint・採点・正負Fixtureと別解、PC/390px画像を確認し必須指摘0。固定compilerの全新規22FixtureをChromiumで実描画判定。examplesExecutedは演習Fixtureを指し、Slide断片の個別実行・実人理解・Firefox/WebKit成功・公開受入は意味しない。

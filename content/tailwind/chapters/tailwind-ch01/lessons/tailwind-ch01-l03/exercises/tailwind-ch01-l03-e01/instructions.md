@@ -1,0 +1,3 @@
+保存ボタンは通常は白背景・黒文字、hover中は黒背景・白文字にしてください。Tabで保存へ移動したとき、outline-solidで実線を戻し、黒い2pxの輪郭を2px離して示します。通常のoutline-noneは残します。送信準備中ボタンはdisabled属性とdisabled:opacity-50を組にし、Tab移動の対象外にします。予測してから実ポインター、Tab、Shift+Tabで確かめてください。click時も輪郭を出すfocus:という別解も許容します。この演習はhover対応端末で描画を判定します。
+
+追加CSS・style属性・script・外部参照は使いません。固定theme・root font-size 16pxです。採点は実際のStyleと幅に基づきます。Hint、保存された下書き、初期コードへ戻す操作を使えます。対応classの範囲はCourseの公式資料メモも参照してください。

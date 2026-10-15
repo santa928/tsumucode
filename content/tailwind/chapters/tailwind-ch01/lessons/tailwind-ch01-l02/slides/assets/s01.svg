@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="184" viewBox="0 0 400 184" role="img" aria-labelledby="title desc">
+  <title id="title">UtilityとCSSの対応</title>
+  <desc id="desc">親の内容幅248px。w-full → 248px。最大320px</desc>
+  <rect width="400" height="184" rx="12" fill="#f1f5f9"/>
+  <rect x="12" y="12" width="376" height="48" rx="8" fill="#fff" stroke="#334155"/>
+  <text x="200" y="43" text-anchor="middle" font-family="sans-serif" font-size="19" fill="#0f172a">親の内容幅248px</text>
+  <rect x="12" y="68" width="376" height="48" rx="8" fill="#fff" stroke="#334155"/>
+  <text x="200" y="99" text-anchor="middle" font-family="sans-serif" font-size="19" fill="#0f172a">w-full → 248px</text>
+  <rect x="12" y="124" width="376" height="48" rx="8" fill="#fff" stroke="#334155"/>
+  <text x="200" y="155" text-anchor="middle" font-family="sans-serif" font-size="19" fill="#0f172a">最大320px</text>
+</svg>

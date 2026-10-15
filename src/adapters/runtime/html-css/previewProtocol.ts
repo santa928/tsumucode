@@ -53,6 +53,7 @@ const PreviewNodeSchema = z
     inputValue: z.string().max(MAX_TEXT_LENGTH).optional(),
     computedStyles: ComputedStyleRecordSchema,
     focusVisibleComputedStyles: ComputedStyleRecordSchema,
+    hoverComputedStyles: ComputedStyleRecordSchema.optional(),
     rect: z
       .object({
         x: FiniteNumberSchema,

@@ -32,6 +32,9 @@ export interface SnapshotPolicy {
   readonly inputValueSelectors?: readonly string[];
   readonly attributes: readonly string[];
   readonly computedStyles: readonly string[];
+  /** hover対応環境でだけ、一時的な検証用状態を観測する。 */
+  readonly hoverSelectors?: readonly string[];
+  readonly hoverComputedStyles?: readonly string[];
   readonly focusVisibleSelectors: readonly string[];
   readonly focusVisibleComputedStyles: readonly string[];
   readonly includeAllElements: boolean;
@@ -154,6 +157,8 @@ export interface PreviewNode {
   readonly inputValue?: string | undefined;
   readonly computedStyles: Readonly<Record<string, string>>;
   readonly focusVisibleComputedStyles: Readonly<Record<string, string>>;
+  /** 通常Styleへのfallbackは行わない。要求のない旧Snapshotでは省略。 */
+  readonly hoverComputedStyles?: Readonly<Record<string, string>> | undefined;
   readonly rect: PreviewRect;
   readonly overflow: PreviewOverflow;
   readonly focusable: boolean;

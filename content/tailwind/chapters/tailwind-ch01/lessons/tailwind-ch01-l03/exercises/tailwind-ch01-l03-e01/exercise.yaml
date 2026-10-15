@@ -1,0 +1,422 @@
+id: tailwind-ch01-l03-e01
+kind: standard
+workspaceId: tailwind-ch01-l03-e01
+countsTowardStandardExerciseTotal: true
+title: hover・キーボードfocus・disabledを確かめる
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: tailwind-hover
+    minimumLevel: transform
+  - conceptId: tailwind-focus
+    minimumLevel: transform
+  - conceptId: tailwind-disabled
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: hover
+    file: index.html
+    target: 保存ボタンのclass
+    starterAnchor: id="action"
+    change: hover:bg-black hover:text-whiteを足す
+    observe: ポインターを外すと元の色へ戻る
+    requiresConceptIds:
+      - tailwind-hover
+    validationRuleIds:
+      - tailwind-ch01-l03-e01-r01
+      - tailwind-ch01-l03-e01-r02
+      - tailwind-ch01-l03-e01-r03
+      - tailwind-ch01-l03-e01-r04
+  - id: focus
+    file: index.html
+    target: 保存ボタンのclass
+    starterAnchor: outline-none
+    change: focus-visible:outline-solidと太さ・色・離れの指定を足す
+    observe: Tabで輪郭が見え、送信準備中を飛ばす
+    requiresConceptIds:
+      - tailwind-focus
+    validationRuleIds:
+      - tailwind-ch01-l03-e01-r05
+      - tailwind-ch01-l03-e01-r06
+      - tailwind-ch01-l03-e01-r07
+      - tailwind-ch01-l03-e01-r08
+      - tailwind-ch01-l03-e01-r12
+  - id: disabled
+    file: index.html
+    target: 送信準備中ボタン
+    starterAnchor: id="pending"
+    change: disabled属性を足す
+    observe: 操作できず半透明になる
+    requiresConceptIds:
+      - tailwind-disabled
+    validationRuleIds:
+      - tailwind-ch01-l03-e01-r09
+      - tailwind-ch01-l03-e01-r10
+      - tailwind-ch01-l03-e01-r11
+files:
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: true
+solutionFiles:
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: tailwind-ch01-l03-e01-r01
+    label: '#actionのbackground-colorを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - state-360
+    target:
+      kind: selector
+      selector: '#action'
+    assertion:
+      kind: computed-style
+      operator: equals
+      expected: rgb(255, 255, 255)
+      property: background-color
+    feedback:
+      target: '#actionのbackground-colorを確認する'
+      expected: rgb(255, 255, 255)
+      nextAction: hover:bg-black hover:text-whiteを足す。ポインターを外すと元の色へ戻るかを確かめます。
+    hintId: tailwind-ch01-l03-e01-h01
+    relatedSlideId: tailwind-ch01-l03-s01
+  - id: tailwind-ch01-l03-e01-r02
+    label: '#actionのcolorを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - state-360
+    target:
+      kind: selector
+      selector: '#action'
+    assertion:
+      kind: computed-style
+      operator: equals
+      expected: rgb(0, 0, 0)
+      property: color
+    feedback:
+      target: '#actionのcolorを確認する'
+      expected: rgb(0, 0, 0)
+      nextAction: hover:bg-black hover:text-whiteを足す。ポインターを外すと元の色へ戻るかを確かめます。
+    hintId: tailwind-ch01-l03-e01-h01
+    relatedSlideId: tailwind-ch01-l03-s01
+  - id: tailwind-ch01-l03-e01-r03
+    label: '#actionのbackground-colorを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - state-360
+    target:
+      kind: selector
+      selector: '#action'
+    assertion:
+      kind: hover-style
+      operator: equals
+      expected: rgb(0, 0, 0)
+      property: background-color
+    feedback:
+      target: '#actionのbackground-colorを確認する'
+      expected: rgb(0, 0, 0)
+      nextAction: hover:bg-black hover:text-whiteを足す。ポインターを外すと元の色へ戻るかを確かめます。
+    hintId: tailwind-ch01-l03-e01-h01
+    relatedSlideId: tailwind-ch01-l03-s01
+  - id: tailwind-ch01-l03-e01-r04
+    label: '#actionのcolorを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - state-360
+    target:
+      kind: selector
+      selector: '#action'
+    assertion:
+      kind: hover-style
+      operator: equals
+      expected: rgb(255, 255, 255)
+      property: color
+    feedback:
+      target: '#actionのcolorを確認する'
+      expected: rgb(255, 255, 255)
+      nextAction: hover:bg-black hover:text-whiteを足す。ポインターを外すと元の色へ戻るかを確かめます。
+    hintId: tailwind-ch01-l03-e01-h01
+    relatedSlideId: tailwind-ch01-l03-s01
+  - id: tailwind-ch01-l03-e01-r05
+    label: '#actionの通常時の輪郭を確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - state-360
+    target:
+      kind: selector
+      selector: '#action'
+    assertion:
+      kind: computed-style
+      property: outline-style
+      operator: equals
+      expected: none
+    feedback:
+      target: 保存ボタンの通常時の輪郭
+      expected: outline-styleがnone
+      nextAction: outline-noneを残し、focus時のoutline-solidなどと分けます。
+    hintId: tailwind-ch01-l03-e01-h02
+    relatedSlideId: tailwind-ch01-l03-s02
+  - id: tailwind-ch01-l03-e01-r06
+    label: '#actionのoutline-widthを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - state-360
+    target:
+      kind: selector
+      selector: '#action'
+    assertion:
+      kind: focus-visible-style
+      operator: equals
+      expected: 2
+      property: outline-width
+    feedback:
+      target: '#actionのoutline-widthを確認する'
+      expected: '2'
+      nextAction: focus-visible:outline-solidと太さ・色・離れの指定を足す。Tabで輪郭が見え、送信準備中を飛ばすかを確かめます。
+    hintId: tailwind-ch01-l03-e01-h02
+    relatedSlideId: tailwind-ch01-l03-s02
+  - id: tailwind-ch01-l03-e01-r07
+    label: '#actionのoutline-styleを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - state-360
+    target:
+      kind: selector
+      selector: '#action'
+    assertion:
+      kind: focus-visible-style
+      operator: equals
+      expected: solid
+      property: outline-style
+    feedback:
+      target: '#actionのoutline-styleを確認する'
+      expected: solid
+      nextAction: focus-visible:outline-solidと太さ・色・離れの指定を足す。Tabで輪郭が見え、送信準備中を飛ばすかを確かめます。
+    hintId: tailwind-ch01-l03-e01-h02
+    relatedSlideId: tailwind-ch01-l03-s02
+  - id: tailwind-ch01-l03-e01-r08
+    label: '#actionのoutline-offsetを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - state-360
+    target:
+      kind: selector
+      selector: '#action'
+    assertion:
+      kind: focus-visible-style
+      operator: equals
+      expected: 2
+      property: outline-offset
+    feedback:
+      target: '#actionのoutline-offsetを確認する'
+      expected: '2'
+      nextAction: focus-visible:outline-solidと太さ・色・離れの指定を足す。Tabで輪郭が見え、送信準備中を飛ばすかを確かめます。
+    hintId: tailwind-ch01-l03-e01-h02
+    relatedSlideId: tailwind-ch01-l03-s02
+  - id: tailwind-ch01-l03-e01-r09
+    label: '#pendingのdisabledを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - state-360
+    target:
+      kind: selector
+      selector: '#pending'
+    assertion:
+      kind: attribute
+      name: disabled
+      operator: present
+    feedback:
+      target: '#pendingのdisabledを確認する'
+      expected: disabled属性がある
+      nextAction: disabled属性を足す。操作できず半透明になるかを確かめます。
+    hintId: tailwind-ch01-l03-e01-h03
+    relatedSlideId: tailwind-ch01-l03-s03
+  - id: tailwind-ch01-l03-e01-r10
+    label: '#pendingのfocusableを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - state-360
+    target:
+      kind: selector
+      selector: '#pending'
+    assertion:
+      kind: focusable
+      operator: equals
+      expected: false
+    feedback:
+      target: '#pendingのfocusableを確認する'
+      expected: 'False'
+      nextAction: disabled属性を足す。操作できず半透明になるかを確かめます。
+    hintId: tailwind-ch01-l03-e01-h03
+    relatedSlideId: tailwind-ch01-l03-s03
+  - id: tailwind-ch01-l03-e01-r11
+    label: '#pendingのopacityを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - state-360
+    target:
+      kind: selector
+      selector: '#pending'
+    assertion:
+      kind: computed-style
+      operator: equals
+      expected: 0.5
+      property: opacity
+    feedback:
+      target: '#pendingのopacityを確認する'
+      expected: '0.5'
+      nextAction: disabled属性を足す。操作できず半透明になるかを確かめます。
+    hintId: tailwind-ch01-l03-e01-h03
+    relatedSlideId: tailwind-ch01-l03-s03
+  - id: tailwind-ch01-l03-e01-r12
+    label: '#actionのfocusableを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - state-360
+    target:
+      kind: selector
+      selector: '#action'
+    assertion:
+      kind: focusable
+      operator: equals
+      expected: true
+    feedback:
+      target: '#actionのfocusableを確認する'
+      expected: 'True'
+      nextAction: focus-visible:outline-solidと太さ・色・離れの指定を足す。Tabで輪郭が見え、送信準備中を飛ばすかを確かめます。
+    hintId: tailwind-ch01-l03-e01-h02
+    relatedSlideId: tailwind-ch01-l03-s02
+hints:
+  - id: tailwind-ch01-l03-e01-h01
+    level: 1
+    title: 保存ボタンのclassを確認する
+    text: 保存ボタンのclassのbg-white text-blackを探します。hover:bg-black
+      hover:text-whiteを足す。ポインターを外すと元の色へ戻るかをプレビューで確かめます。
+    relatedSlideId: tailwind-ch01-l03-s01
+  - id: tailwind-ch01-l03-e01-h02
+    level: 2
+    title: 保存ボタンのclassを確認する
+    text: outline-noneの後は太さだけでは線が出ません。focus-visible:outline-solidで実線へ戻し、outline-2・outline-black・outline-offset-2もfocus-visible:付きで指定します。
+    relatedSlideId: tailwind-ch01-l03-s02
+  - id: tailwind-ch01-l03-e01-h03
+    level: 3
+    title: 送信準備中ボタンを確認する
+    text: 送信準備中ボタンのid="pending"を探します。disabled属性を足す。操作できず半透明になるかをプレビューで確かめます。
+    relatedSlideId: tailwind-ch01-l03-s03
+relatedSlideIds:
+  - tailwind-ch01-l03-s01
+  - tailwind-ch01-l03-s02
+  - tailwind-ch01-l03-s03
+previewViewports:
+  - id: state-360
+    width: 360
+    height: 300
+assets: []
+fixtures:
+  - id: tailwind-ch01-l03-starter
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/starter/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch01-l03-e01-r03
+      - tailwind-ch01-l03-e01-r04
+      - tailwind-ch01-l03-e01-r06
+      - tailwind-ch01-l03-e01-r07
+      - tailwind-ch01-l03-e01-r08
+      - tailwind-ch01-l03-e01-r09
+      - tailwind-ch01-l03-e01-r10
+      - tailwind-ch01-l03-e01-r11
+  - id: tailwind-ch01-l03-solution
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/solution/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: tailwind-ch01-l03-focus-alternative
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/focus-alternative/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: tailwind-ch01-l03-always-dark
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/always-dark/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch01-l03-e01-r01
+      - tailwind-ch01-l03-e01-r02
+  - id: tailwind-ch01-l03-always-outline
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/always-outline/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch01-l03-e01-r05
+  - id: tailwind-ch01-l03-lost-focus
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/lost-focus/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch01-l03-e01-r06
+      - tailwind-ch01-l03-e01-r07
+      - tailwind-ch01-l03-e01-r08
+  - id: tailwind-ch01-l03-visual-only-disabled
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/visual-only-disabled/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch01-l03-e01-r09
+      - tailwind-ch01-l03-e01-r10
+  - id: tailwind-ch01-l03-missing-solid
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/missing-solid/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch01-l03-e01-r07

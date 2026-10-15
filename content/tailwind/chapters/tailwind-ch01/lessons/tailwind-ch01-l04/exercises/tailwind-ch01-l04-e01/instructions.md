@@ -1,0 +1,3 @@
+2つの項目を狭い幅では縦にし、768px以上では横にします。flex・gap-4・p-4と2つのsectionを残し、flex-directionを決めるclassを直します。まず360pxと800pxで予測し、次に767pxと768pxの境界で確認します。mdは48rem以上という条件です。smは640pxからなので早すぎます。prefixなしのflex-colが基本、md:flex-rowが条件に合うときの変更です。
+
+追加CSS・style属性・script・外部参照は使いません。固定theme・root font-size 16pxです。採点は実際のStyleと幅に基づきます。Hint、保存された下書き、初期コードへ戻す操作を使えます。対応classの範囲はCourseの公式資料メモも参照してください。

@@ -1,7 +1,11 @@
 id: tailwind-ch01
 sequence: 0
-title: 並びと2種類の余白
-goal: 横並び、項目間の間隔、枠の内側の余白をclassで調整する。
-estimatedMinutes: 20
+title: Utility・状態・幅の条件
+goal: 既習CSSと対応させ、余白・幅・文字・色と操作状態・レスポンシブを調整する。
+estimatedMinutes: 85
 kind: standard
-lessonSources: [lessons/tailwind-ch01-l01/lesson.yaml]
+lessonSources:
+  - lessons/tailwind-ch01-l01/lesson.yaml
+  - lessons/tailwind-ch01-l02/lesson.yaml
+  - lessons/tailwind-ch01-l03/lesson.yaml
+  - lessons/tailwind-ch01-l04/lesson.yaml
