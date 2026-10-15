@@ -1,12 +1,18 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
-import type { CourseProgress, ProgressRepository } from '../../core/persistence/contracts';
+import type {
+  CourseProgress,
+  ExerciseDraft,
+  ProgressRepository,
+} from '../../core/persistence/contracts';
 import { learningRuntimeServices } from '../learning/runtimeServices';
 
 const SAFE_READ_ERROR = 'コース進捗を読み込めませんでした。';
+const EMPTY_WORKSPACES: readonly string[] = Object.freeze([]);
 
 export interface CourseProgressPort {
   readonly ready: Promise<void>;
-  readonly repository: Pick<ProgressRepository, 'getCourse'>;
+  readonly repository: Pick<ProgressRepository, 'getCourse'> &
+    Partial<Pick<ProgressRepository, 'getDraft'>>;
   readonly subscribeData: (listener: () => void) => () => void;
   readonly getDataRevision: () => number;
 }
@@ -16,7 +22,7 @@ interface ObservableProgressRepository {
   readonly getDataRevision?: CourseProgressPort['getDataRevision'];
 }
 
-type InternalCourseProgressState =
+type InternalCourseProgressState = (
   | {
       readonly courseId: string;
       readonly status: 'loading';
@@ -34,7 +40,8 @@ type InternalCourseProgressState =
       readonly status: 'error';
       readonly progress: undefined;
       readonly error: string;
-    };
+    }
+) & { readonly drafts?: ReadonlyMap<string, ExerciseDraft | undefined> };
 
 type WithRetry<State> = State extends InternalCourseProgressState
   ? Omit<State, 'courseId'> & { readonly retry: () => void }
@@ -67,10 +74,11 @@ const DEFAULT_PORT: CourseProgressPort = {
   },
 };
 
-/** Repository準備後、data revision変更、pageshow、明示retryでCourse進捗を安全に読み直す。 */
+/** Course進捗と指定済みworkspaceのDraftを購読し、読み取りだけで再開情報を更新する。 */
 export function useCourseProgress(
   courseId: string,
   port: CourseProgressPort = DEFAULT_PORT,
+  workspaceIds: readonly string[] = EMPTY_WORKSPACES,
 ): CourseProgressState {
   const dataRevision = useSyncExternalStore(
     port.subscribeData,
@@ -113,9 +121,24 @@ export function useCourseProgress(
     void (async () => {
       try {
         await port.ready;
-        const progress = await port.repository.getCourse(courseId);
+        if (workspaceIds.length > 0 && port.repository.getDraft === undefined)
+          throw new Error('Draftの読み取りが利用できません');
+        const [progress, savedDrafts] = await Promise.all([
+          port.repository.getCourse(courseId),
+          Promise.all(workspaceIds.map((id) => port.repository.getDraft!(courseId, id))),
+        ]);
         if (generationRef.current !== generation) return;
-        setState({ courseId, status: 'ready', progress, error: undefined });
+        setState({
+          courseId,
+          status: 'ready',
+          progress,
+          error: undefined,
+          ...(workspaceIds.length === 0
+            ? {}
+            : {
+                drafts: new Map(workspaceIds.map((id, index) => [id, savedDrafts[index]])),
+              }),
+        });
       } catch {
         if (generationRef.current !== generation) return;
         setState({
@@ -130,7 +153,7 @@ export function useCourseProgress(
     return () => {
       if (generationRef.current === generation) generationRef.current += 1;
     };
-  }, [courseId, dataRevision, port, reloadRevision]);
+  }, [courseId, dataRevision, port, reloadRevision, workspaceIds]);
 
   if (state.courseId !== courseId) {
     return { status: 'loading', progress: undefined, error: undefined, retry };

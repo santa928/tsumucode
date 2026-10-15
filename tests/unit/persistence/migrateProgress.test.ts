@@ -5,6 +5,24 @@ import { schemaV1Progress } from '../../fixtures/progress/schema-v1';
 const now = '2026-07-10T00:00:00.000Z';
 
 describe('progress record migration', () => {
+  it.each(['write-heading', 'unknown-step', '', 7, 'x'.repeat(129)])(
+    '工程位置%sの読込でSourceと過去成功を保ち、不正な位置だけを落とす',
+    (activeStepId) => {
+      const old = migrateRepositorySnapshot(schemaV1Progress, now);
+      const key = 'fixture:workspace-1';
+      const before = old.drafts[key]!;
+      const result = migrateRepositorySnapshot(
+        { ...old, drafts: { [key]: { ...before, activeStepId } } },
+        now,
+      );
+      const valid =
+        typeof activeStepId === 'string' && activeStepId.length > 0 && activeStepId.length <= 128;
+      expect(result.quarantined).toEqual([]);
+      expect(result.drafts[key]).toEqual({ ...before, ...(valid ? { activeStepId } : {}) });
+      if (!valid) expect(result.drafts[key]).not.toHaveProperty('activeStepId');
+    },
+  );
+
   it('schema v1のcursor・pass snapshot・初回完了日時をschema v2へ移行する', () => {
     const before = structuredClone(schemaV1Progress);
     const result = migrateRepositorySnapshot(schemaV1Progress, now);

@@ -1,6 +1,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { CourseProgress } from '../../core/persistence/contracts';
+import { createExerciseDraft } from '../../../tests/fixtures/progress/all-courses-bundle';
 import { useCourseProgress, type CourseProgressPort } from './useCourseProgress';
 
 const NOW = '2026-07-10T00:00:00.000Z';
@@ -81,6 +82,55 @@ function createPort(
 }
 
 describe('useCourseProgress', () => {
+  it('指定したworkspaceだけを購読読込し、遅れた旧Draftを新しい位置へ上書きしない', async () => {
+    const initial = deferred<ReturnType<typeof createExerciseDraft> | undefined>();
+    const latest = { ...createExerciseDraft('html-css', 'rev-1'), activeStepId: 'second-step' };
+    const getCourse = vi.fn(async () => undefined);
+    const getDraft = vi.fn().mockReturnValueOnce(initial.promise).mockResolvedValue(latest);
+    const fake = createPort(getCourse);
+    const port = { ...fake.port, repository: { getCourse, getDraft } };
+    const ids = ['workspace-first-heading'];
+    const { result } = renderHook(() => useCourseProgress('html-css', port, ids));
+    await waitFor(() => {
+      expect(getDraft).toHaveBeenCalledWith('html-css', ids[0]);
+    });
+    act(() => {
+      fake.emitDataChanged();
+    });
+    await waitFor(() => {
+      expect(result.current.drafts?.get(ids[0]!)).toEqual(latest);
+    });
+    initial.resolve(createExerciseDraft('html-css', 'rev-1'));
+    await act(async () => {
+      await initial.promise;
+    });
+    expect(result.current.drafts?.get(ids[0]!)).toEqual(latest);
+    expect(getDraft).toHaveBeenCalledTimes(2);
+  });
+
+  it('Draft読込が失敗したとき再開情報を推測せず、明示retryで回復する', async () => {
+    const getCourse = vi.fn(async () => undefined);
+    const getDraft = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('保存領域を読めない'))
+      .mockResolvedValue(undefined);
+    const fake = createPort(getCourse);
+    const port = { ...fake.port, repository: { getCourse, getDraft } };
+    const ids = ['workspace-first-heading'];
+    const { result } = renderHook(() => useCourseProgress('html-css', port, ids));
+    await waitFor(() => {
+      expect(result.current.status).toBe('error');
+    });
+    expect(result.current.drafts).toBeUndefined();
+    act(() => {
+      result.current.retry();
+    });
+    await waitFor(() => {
+      expect(result.current.status).toBe('ready');
+    });
+    expect(result.current.drafts?.get(ids[0]!)).toBeUndefined();
+  });
+
   it('Repository準備中はloadingを返し、準備後のCourse進捗をreadyで返す', async () => {
     const repositoryReady = deferred<undefined>();
     const getCourse = vi.fn(async () => completedProgress);

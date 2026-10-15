@@ -12,6 +12,52 @@ import { fixtureCourse } from '../../fixtures/course';
 
 const now = '2026-07-15T00:00:00.000Z';
 
+it('教材IDが変わる移行は工程位置だけを落とし、ID不変の改訂は工程とSourceを保つ', async () => {
+  const original = oldSnapshot();
+  const key = 'html-css:workspace-old';
+  const input = {
+    ...original,
+    drafts: {
+      ...original.drafts,
+      [key]: { ...original.drafts[key]!, activeStepId: 'write-heading' },
+    },
+  };
+  const service = new ContentProgressMigrationService(repositoryFor(input));
+  service.registerCourse(migratingCourse);
+  const migrated = await service.migrateSnapshot(input);
+  const newKey = 'html-css:workspace-first-heading';
+  expect(migrated.drafts[newKey]).not.toHaveProperty('activeStepId');
+  expect(migrated.drafts[newKey]?.files).toEqual(input.drafts[key].files);
+  const current = {
+    ...migrated,
+    drafts: {
+      ...migrated.drafts,
+      [newKey]: { ...migrated.drafts[newKey]!, activeStepId: 'write-heading' },
+    },
+  };
+  const revisionOnly = new ContentProgressMigrationService(repositoryFor(current));
+  revisionOnly.registerCourse({
+    ...migratingCourse,
+    revision: 'rev-4',
+    progressMigrations: [
+      ...migratingCourse.progressMigrations,
+      { fromRevision: 'rev-3', toRevision: 'rev-4', steps: [] },
+    ],
+  });
+  const result = await revisionOnly.migrateSnapshot(current);
+  expect(result.drafts[newKey]).toMatchObject({
+    activeStepId: 'write-heading',
+    files: current.drafts[newKey].files,
+    validationHistory: current.drafts[newKey].validationHistory,
+    lastPassingSnapshots: Object.fromEntries(
+      Object.entries(current.drafts[newKey].lastPassingSnapshots).map(([id, snapshot]) => [
+        id,
+        { ...snapshot, contentRevision: 'rev-4' },
+      ]),
+    ),
+  });
+});
+
 it.each(['map-to', 'intentionally-reset'] as const)(
   '履歴のcheckpoint集約参照にも%sを適用し無関係な履歴を保つ',
   async (action) => {

@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useLoaderData } from 'react-router';
 import type { courseLoader } from '../../app/contentLoaders';
 import { buildCourseMap } from '../../core/content/courseMap';
@@ -9,6 +10,7 @@ import { StatusBadge } from '../../design-system/components/StatusBadge';
 import { WorkshopNotice } from '../../design-system/components/WorkshopNotice';
 import { applyCourseProgress } from '../progress/courseMapProgress';
 import { useCourseProgress } from '../progress/useCourseProgress';
+import { findLessonResumeDraft } from '../progress/lessonResumeTarget';
 
 const KIND_LABEL = {
   standard: '基礎レッスン',
@@ -19,8 +21,37 @@ const KIND_LABEL = {
 /** Courseの現在進捗を示し、以前の達成記録と現在のコードの再判定を区別する。 */
 export function CourseMapPage() {
   const course = useLoaderData<typeof courseLoader>();
-  const courseProgress = useCourseProgress(course.id);
-  const map = applyCourseProgress(buildCourseMap(course), courseProgress.progress, course.revision);
+  const lessons = useMemo(
+    () => course.phases.flatMap(({ chapters }) => chapters.flatMap(({ lessons: items }) => items)),
+    [course],
+  );
+  const workspaceIds = useMemo(
+    () => [
+      ...new Set(
+        lessons.flatMap(({ exercises }) => exercises.map(({ workspaceId }) => workspaceId)),
+      ),
+    ],
+    [lessons],
+  );
+  const courseProgress = useCourseProgress(course.id, undefined, workspaceIds);
+  const draftLessonTimes = new Map<string, string>();
+  if (courseProgress.drafts !== undefined) {
+    for (const lesson of lessons) {
+      const draft = findLessonResumeDraft(
+        course,
+        lesson,
+        courseProgress.progress,
+        courseProgress.drafts,
+      );
+      if (draft !== undefined) draftLessonTimes.set(lesson.id, draft.updatedAt);
+    }
+  }
+  const map = applyCourseProgress(
+    buildCourseMap(course),
+    courseProgress.progress,
+    course.revision,
+    draftLessonTimes,
+  );
 
   return (
     <article data-course-map aria-labelledby="course-map-title">
@@ -167,18 +198,22 @@ export function CourseMapPage() {
                               <div className="mt-5">
                                 <ActionLink
                                   to={
-                                    lesson.status === 'current' &&
-                                    courseProgress.progress !== undefined
+                                    lesson.status !== 'complete' &&
+                                    (draftLessonTimes.has(lesson.id) ||
+                                      (lesson.status === 'current' &&
+                                        courseProgress.progress !== undefined))
                                       ? lessonResumePath(course.id, lesson.id)
                                       : lesson.startPath
                                   }
                                   className="w-full sm:w-auto"
                                 >
-                                  {lesson.status === 'current'
-                                    ? courseProgress.progress === undefined
-                                      ? `${lesson.title}レッスンを始める`
-                                      : `${lesson.title}レッスンを再開する`
-                                    : `${lesson.title}レッスンを見る`}
+                                  {lesson.status !== 'complete' && draftLessonTimes.has(lesson.id)
+                                    ? `${lesson.title}レッスンを再開する`
+                                    : lesson.status === 'current'
+                                      ? courseProgress.progress === undefined
+                                        ? `${lesson.title}レッスンを始める`
+                                        : `${lesson.title}レッスンを再開する`
+                                      : `${lesson.title}レッスンを見る`}
                                 </ActionLink>
                               </div>
                             </div>

@@ -2,7 +2,7 @@
 import type { LessonOutline } from './types';
 import { lessonStartTarget, lessonStartTargetPath, type LessonStartSource } from './lessonStart';
 
-export type CourseMapStatus = 'complete' | 'current' | 'not-started';
+export type CourseMapStatus = 'complete' | 'current' | 'in-progress' | 'not-started';
 
 export interface CourseMapLesson {
   readonly id: string;

@@ -183,6 +183,42 @@ describe('canonical JSON', () => {
 });
 
 describe('all-course transfer', () => {
+  it('現行JSONの書出し・確認・読込で工程とSource・履歴・成功版を一緒に保つ', async () => {
+    const original = createAllCoursesSnapshot();
+    const key = 'html-css:workspace-first-heading';
+    const snapshot = {
+      ...original,
+      drafts: {
+        ...original.drafts,
+        [key]: { ...original.drafts[key]!, activeStepId: 'write-heading' },
+      },
+    };
+    const source = repositoryFor(snapshot);
+    const sourceMigrations = new ContentProgressMigrationService(source);
+    sourceMigrations.registerCourse(fixtureCourse);
+    sourceMigrations.registerCourse(sandboxCourse);
+    const exported = await new TransferService(source, sourceMigrations, {
+      appVersion: '1.0.0',
+      now: () => now,
+      id: () => 'export-position',
+    }).exportAll();
+    const target = repositoryFor(empty);
+    const targetMigrations = new ContentProgressMigrationService(target);
+    targetMigrations.registerCourse(fixtureCourse);
+    targetMigrations.registerCourse(sandboxCourse);
+    const service = new TransferService(target, targetMigrations, {
+      appVersion: '1.0.0',
+      now: () => now,
+      id: () => 'import-position',
+    });
+    const preview = await service.prepareImport(exported);
+    await service.applyImport(preview.id);
+    const imported = mockMethod(target, 'replaceSnapshotWithBackup').mock
+      .calls[0]?.[0] as RepositorySnapshot;
+    expect(imported.drafts[key]).toEqual(snapshot.drafts[key]);
+    expect(imported.quarantined).toEqual([]);
+  });
+
   it('全Courseをhash付きでexportし、同一snapshotの差分を返さない', async () => {
     const snapshot = createAllCoursesSnapshot();
     const repository = repositoryFor(snapshot);

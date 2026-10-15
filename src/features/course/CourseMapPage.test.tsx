@@ -4,7 +4,7 @@ import { createMemoryRouter } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fixtureCourse } from '../../../tests/fixtures/course';
-import type { CourseProgress } from '../../core/persistence/contracts';
+import type { CourseProgress, ExerciseDraft } from '../../core/persistence/contracts';
 import { CourseMapPage } from './CourseMapPage';
 
 const useCourseProgress = vi.hoisted(() => vi.fn());
@@ -88,6 +88,39 @@ describe('CourseMapPage', () => {
       '/courses/html-css/lessons/lesson-first-heading/slides/slide-html-role',
     );
     expect(screen.queryByText(/以前の達成記録は残っています/u)).not.toBeInTheDocument();
+  });
+
+  it('進捗が未作成でも保存済みの作業を見つけ、完了を増やさず再開できる', async () => {
+    const lesson = fixtureCourse.phases[0]!.chapters[0]!.lessons[0]!;
+    const exercise = lesson.exercises[0]!;
+    const draft: ExerciseDraft = {
+      courseId: fixtureCourse.id,
+      lessonId: lesson.id,
+      exerciseId: exercise.id,
+      workspaceId: exercise.workspaceId,
+      contentRevision: fixtureCourse.revision,
+      editRevision: 1,
+      files: { 'index.html': '<main>途中</main>' },
+      selectedFile: 'index.html',
+      cursors: {},
+      validationHistory: [],
+      revealedHintIds: [],
+      lastPassingSnapshots: {},
+      updatedAt: NOW,
+    };
+    useCourseProgress.mockReturnValue({
+      status: 'ready',
+      progress: undefined,
+      drafts: new Map([[exercise.workspaceId, draft]]),
+      error: undefined,
+      retry: vi.fn(),
+    });
+    renderCourseMap();
+    expect(
+      await screen.findByRole('link', { name: `${lesson.title}レッスンを再開する` }),
+    ).toHaveAttribute('href', `/courses/${fixtureCourse.id}/lessons/${lesson.id}/resume`);
+    expect(screen.queryByText('未着手')).not.toBeInTheDocument();
+    expect(screen.getByRole('progressbar', { name: 'コース進捗' })).toHaveAttribute('value', '0');
   });
 
   it('端末進捗から完了数とLesson状態を表示する', async () => {

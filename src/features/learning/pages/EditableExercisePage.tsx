@@ -281,7 +281,6 @@ function EditableSession({
   const [previewExpanded, setPreviewExpanded] = useState(false);
   const [waitingForLease, setWaitingForLease] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
-  const [activeStepId, setActiveStepId] = useState<string | undefined>(exercise.steps[0]?.id);
   const [drawerMode, setDrawerMode] = useState<'feedback' | 'hint'>();
   const [relatedSlideId, setRelatedSlideId] = useState<string>();
   const [editorFocusRequestId, setEditorFocusRequestId] = useState(0);
@@ -473,7 +472,7 @@ function EditableSession({
   const busy = operation !== 'idle' || practiceBusy;
   const viewState: ExerciseViewState = {
     activeFilePath: state.selectedFile,
-    activeStepId,
+    activeStepId: state.activeStepId,
     drawerMode,
     relatedSlideId,
     editorFocusRequestId,
@@ -541,11 +540,6 @@ function EditableSession({
         if (!isActive()) return;
         await controller.initialize();
         if (isActive()) {
-          // 復元したFileを動かさず、そのFileの最初の手順から案内を再開する。
-          const selectedFile = controller.getSnapshot().selectedFile;
-          setActiveStepId(
-            exercise.steps.find(({ file }) => file === selectedFile)?.id ?? exercise.steps[0]?.id,
-          );
           learningRuntimeServices.notices.dismiss('error:exercise-initialize');
           setInitializedSession({ controller, state: 'ready' });
         }
@@ -559,7 +553,7 @@ function EditableSession({
     return () => {
       abortController.abort();
     };
-  }, [controller, exercise.steps]);
+  }, [controller]);
 
   useEffect(() => lease.registerBeforeYield(() => controller.flush()), [controller, lease]);
 
@@ -836,8 +830,7 @@ function EditableSession({
     if (!lease.isWritable()) return;
     const step = exercise.steps.find(({ id }) => id === stepId);
     if (step === undefined) return;
-    setActiveStepId(step.id);
-    if (state.selectedFile !== step.file) controller.selectFile(step.file);
+    controller.selectStep(step.id);
   };
 
   /** 直接見直した説明はボタンへ、判定からの見直しは従来どおりEditorへ戻す。 */
@@ -855,7 +848,6 @@ function EditableSession({
     setOperationError(undefined);
     setDrawerMode(undefined);
     setRelatedSlideId(undefined);
-    setActiveStepId(exercise.steps[0]?.id);
 
     let changed: boolean;
     try {

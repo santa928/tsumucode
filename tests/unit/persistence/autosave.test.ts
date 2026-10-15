@@ -41,6 +41,23 @@ describe('draft autosave', () => {
     vi.useRealTimers();
   });
 
+  it('保存予約直後から未完了を知らせ、commitが終わるまで保存済みにしない', async () => {
+    const saving = deferred<undefined>();
+    const onStatus = vi.fn();
+    const autosave = createAutosaveController({} as ProgressRepository, {
+      delayMs: 450,
+      saveDraft: () => saving.promise,
+      onStatus,
+    });
+    autosave.schedule(draft(1));
+    expect(onStatus).toHaveBeenLastCalledWith('saving');
+    const flushing = autosave.flush();
+    expect(onStatus).not.toHaveBeenCalledWith('saved');
+    saving.resolve(undefined);
+    await flushing;
+    expect(onStatus).toHaveBeenLastCalledWith('saved');
+  });
+
   it('最後の入力だけを500ms以内に保存し、明示flushはtimerを待たない', async () => {
     const putDraft = vi.fn().mockResolvedValue(undefined);
     const statuses: string[] = [];
@@ -82,7 +99,7 @@ describe('draft autosave', () => {
     await flushing;
 
     expect(saveDraft.mock.calls.map(([value]) => value.editRevision)).toEqual([1, 2]);
-    expect(statuses).toEqual(['saving', 'saving', 'saved']);
+    expect(statuses).toEqual(['saving', 'saved']);
   });
 
   it('古いsave失敗で新しいpendingを上書きせず、次のflushで最新をretryする', async () => {
