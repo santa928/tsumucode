@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="184" viewBox="0 0 400 184" role="img" aria-labelledby="title desc">
+  <title id="title">UtilityとCSSの対応</title>
+  <desc id="desc">640px: sm開始。767px: 縦を保つ。768px: md開始</desc>
+  <rect width="400" height="184" rx="12" fill="#f1f5f9"/>
+  <rect x="12" y="12" width="376" height="48" rx="8" fill="#fff" stroke="#334155"/>
+  <text x="200" y="43" text-anchor="middle" font-family="sans-serif" font-size="19" fill="#0f172a">640px: sm開始</text>
+  <rect x="12" y="68" width="376" height="48" rx="8" fill="#fff" stroke="#334155"/>
+  <text x="200" y="99" text-anchor="middle" font-family="sans-serif" font-size="19" fill="#0f172a">767px: 縦を保つ</text>
+  <rect x="12" y="124" width="376" height="48" rx="8" fill="#fff" stroke="#334155"/>
+  <text x="200" y="155" text-anchor="middle" font-family="sans-serif" font-size="19" fill="#0f172a">768px: md開始</text>
+</svg>

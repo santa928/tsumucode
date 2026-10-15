@@ -336,13 +336,15 @@ function evaluateComputedStyle(
   node: PreviewNode,
   assertion: Extract<
     HtmlCssRuleAssertion,
-    { readonly kind: 'computed-style' | 'focus-visible-style' }
+    { readonly kind: 'computed-style' | 'focus-visible-style' | 'hover-style' }
   >,
 ): AssertionEvaluation {
   const styles =
     assertion.kind === 'focus-visible-style'
       ? node.focusVisibleComputedStyles
-      : node.computedStyles;
+      : assertion.kind === 'hover-style'
+        ? (node.hoverComputedStyles ?? {})
+        : node.computedStyles;
   const value = styles[assertion.property];
   if (assertion.operator === 'contains') {
     return { passed: value?.includes(assertion.expected) ?? false, actual: displayValue(value) };
@@ -591,6 +593,7 @@ function evaluateNodeAssertion(
         actual: displayValue(node.text),
       };
     case 'computed-style':
+    case 'hover-style':
     case 'focus-visible-style':
       return evaluateComputedStyle(node, assertion);
     case 'rect': {

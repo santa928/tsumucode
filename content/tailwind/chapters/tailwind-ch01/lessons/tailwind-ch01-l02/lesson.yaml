@@ -1,0 +1,23 @@
+id: tailwind-ch01-l02
+kind: standard
+title: 幅・余白・文字・色を組み合わせる
+goal: 幅の上限と内側の余白を分け、読める文字と色をCSSへ対応させる。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - tailwind-ch01-l01
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/tailwind-ch01-l02-e01/exercise.yaml
+reflection: 幅の上限と内側の余白を分け、読める文字と色をCSSへ対応させる。
+glossaryRefs:
+  - tailwind-sizing
+  - tailwind-typography
+  - tailwind-color
+completion:
+  kind: standard
+  finalSlideId: tailwind-ch01-l02-s03
+  requiredExerciseIds:
+    - tailwind-ch01-l02-e01

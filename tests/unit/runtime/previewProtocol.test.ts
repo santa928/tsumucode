@@ -104,6 +104,27 @@ describe('preview response schema', () => {
     expect(isPreviewResponse({ type: 'snapshot.response', payload: {} })).toBe(false);
   });
 
+  it('hover専用Styleは省略互換を保ち、非文字列値と上限超過recordを拒否する', () => {
+    const response = (styles: unknown) => ({
+      ...ready,
+      type: 'snapshot.response',
+      payload: snapshot({
+        nodes: [{ ...previewNode(), hoverComputedStyles: styles } as PreviewNode],
+      }),
+    });
+    expect(isPreviewResponse(response({ 'background-color': 'rgb(0, 0, 0)' }))).toBe(true);
+    expect(isPreviewResponse(response({ color: 7 }))).toBe(false);
+    expect(
+      isPreviewResponse(
+        response(
+          Object.fromEntries(
+            Array.from({ length: 129 }, (_, index) => [`p${String(index)}`, 'value']),
+          ),
+        ),
+      ),
+    ).toBe(false);
+  });
+
   it('Snapshotのunknown field・非有限数・負寸法・identity欠落を拒否する', () => {
     const envelope = {
       ...ready,

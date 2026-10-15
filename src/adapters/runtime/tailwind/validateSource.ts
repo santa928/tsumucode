@@ -15,6 +15,7 @@ const TAGS = new Set([
   'h2',
   'ul',
   'li',
+  'button',
 ]);
 const ATTRIBUTES = new Set(['class', 'id', 'lang', 'aria-label']);
 const UTILITIES = new Set([
@@ -39,20 +40,64 @@ const UTILITIES = new Set([
   'text-slate-900',
   'text-lg',
   'font-bold',
+  'w-full',
+  'w-80',
+  'max-w-80',
+  'text-base',
+  'text-xl',
+  'leading-6',
+  'leading-7',
+  'bg-black',
+  'text-black',
+  'text-white',
+  'border-black',
+  'opacity-50',
+  'opacity-100',
+  'outline-solid',
+  'outline-none',
+  'outline-2',
+  'outline-black',
+  'outline-offset-2',
 ]);
-const ARBITRARY = /^(?:gap|p)-\[(\d{1,3}(?:\.\d{1,2})?)(px|rem)\]$/u;
+const COLOR_UTILITIES = new Set(['bg-white', 'bg-black', 'text-black', 'text-white']);
+const FOCUS_UTILITIES = new Set([
+  'outline-solid',
+  'outline-none',
+  'outline-2',
+  'outline-black',
+  'outline-offset-2',
+]);
+const VARIANT_UTILITIES: Readonly<Record<string, ReadonlySet<string>>> = {
+  hover: COLOR_UTILITIES,
+  focus: FOCUS_UTILITIES,
+  'focus-visible': FOCUS_UTILITIES,
+  disabled: new Set(['opacity-50', 'opacity-100']),
+  sm: new Set(['flex-row', 'flex-col']),
+  md: new Set(['flex-row', 'flex-col']),
+};
+const ARBITRARY = /^(gap|p|w|max-w)-\[(\d{1,4}(?:\.\d{1,2})?)(px|rem)\]$/u;
 const PLAIN_CLASS = /^[a-z][a-z\d_-]*$/iu;
 
 /** 入力の未対応とcompiler取得・実装の障害を区別する。 */
 export class TailwindSourceError extends Error {}
 
-/** 許可する数値別解は有限のgap／paddingだけ。未知classをcompilerへ流さない。 */
+/** 教材の有限Utility・単一variant・数値別解だけをcompilerへ渡す。 */
 export function isSupportedTailwindClass(token: string): boolean {
   if (UTILITIES.has(token)) return true;
+  const [variant, utility, extra] = token.split(':');
+  if (utility !== undefined) {
+    return (
+      extra === undefined &&
+      Object.hasOwn(VARIANT_UTILITIES, variant ?? '') &&
+      VARIANT_UTILITIES[variant ?? '']?.has(utility) === true
+    );
+  }
   const match = ARBITRARY.exec(token);
   if (match === null) return false;
-  const value = Number(match[1]);
-  return value >= 0 && value <= (match[2] === 'px' ? 128 : 8);
+  const value = Number(match[2]);
+  const isSizing = match[1] === 'w' || match[1] === 'max-w';
+  const maximum = match[3] === 'px' ? (isSizing ? 1_024 : 128) : isSizing ? 64 : 8;
+  return value >= 0 && value <= maximum;
 }
 
 /** 対象外Sourceは未採点で保持し、安全な誤字だけをwarningと実Style判定へ進める。 */
@@ -81,8 +126,12 @@ export function validateTailwindSource(
       );
     }
     for (const attribute of element.attributes) {
+      const buttonAttribute =
+        element.localName === 'button' &&
+        (attribute.name === 'disabled' ||
+          (attribute.name === 'type' && attribute.value === 'button'));
       if (
-        !ATTRIBUTES.has(attribute.name) ||
+        (!ATTRIBUTES.has(attribute.name) && !buttonAttribute) ||
         attribute.value.length > 1_000 ||
         (attribute.name === 'id' && !/^[a-z][a-z\d-]{0,63}$/iu.test(attribute.value))
       ) {
@@ -109,7 +158,7 @@ export function validateTailwindSource(
       if (isSupportedTailwindClass(token)) continue;
       if (!PLAIN_CLASS.test(token)) {
         throw new TailwindSourceError(
-          `${token}は未対応です。gapとpの数値px／rem以外の任意値・variantは使えません。`,
+          `${token}は未対応です。教材の有限Utility・単一のhover/focus/focus-visible/disabled/sm/mdと、gap/p/幅の数値px・remだけを使います。`,
         );
       }
       unknown.add(token);

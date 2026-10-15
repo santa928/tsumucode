@@ -1,0 +1,270 @@
+id: tailwind-ch01-l04-e01
+kind: standard
+workspaceId: tailwind-ch01-l04-e01
+countsTowardStandardExerciseTotal: true
+title: 幅の条件で並びを切り替える
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: tailwind-responsive
+    minimumLevel: transform
+  - conceptId: tailwind-breakpoint
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: base
+    file: index.html
+    target: mainのclass
+    starterAnchor: flex-row
+    change: 基本指定をflex-colへ直す
+    observe: 360pxと767pxでは縦になる
+    requiresConceptIds:
+      - tailwind-responsive
+    validationRuleIds:
+      - tailwind-ch01-l04-e01-r01
+      - tailwind-ch01-l04-e01-r02
+  - id: breakpoint
+    file: index.html
+    target: mainのclass
+    starterAnchor: sm:flex-col
+    change: md:flex-rowへ直す
+    observe: 768pxと800pxでは横になる
+    requiresConceptIds:
+      - tailwind-breakpoint
+    validationRuleIds:
+      - tailwind-ch01-l04-e01-r03
+      - tailwind-ch01-l04-e01-r04
+      - tailwind-ch01-l04-e01-r05
+      - tailwind-ch01-l04-e01-r06
+files:
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: true
+solutionFiles:
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: tailwind-ch01-l04-e01-r01
+    label: '#cardsのflex-directionを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+    target:
+      kind: selector
+      selector: '#cards'
+    assertion:
+      kind: computed-style
+      operator: equals
+      expected: column
+      property: flex-direction
+    feedback:
+      target: '#cardsのflex-directionを確認する'
+      expected: column
+      nextAction: 基本指定をflex-colへ直す。360pxと767pxでは縦になるかを確かめます。
+    hintId: tailwind-ch01-l04-e01-h01
+    relatedSlideId: tailwind-ch01-l04-s01
+  - id: tailwind-ch01-l04-e01-r02
+    label: '#cardsのflex-directionを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - before-767
+    target:
+      kind: selector
+      selector: '#cards'
+    assertion:
+      kind: computed-style
+      operator: equals
+      expected: column
+      property: flex-direction
+    feedback:
+      target: '#cardsのflex-directionを確認する'
+      expected: column
+      nextAction: 基本指定をflex-colへ直す。360pxと767pxでは縦になるかを確かめます。
+    hintId: tailwind-ch01-l04-e01-h01
+    relatedSlideId: tailwind-ch01-l04-s01
+  - id: tailwind-ch01-l04-e01-r03
+    label: '#cardsのflex-directionを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: '#cards'
+    assertion:
+      kind: computed-style
+      operator: equals
+      expected: row
+      property: flex-direction
+    feedback:
+      target: '#cardsのflex-directionを確認する'
+      expected: row
+      nextAction: md:flex-rowへ直す。768pxと800pxでは横になるかを確かめます。
+    hintId: tailwind-ch01-l04-e01-h02
+    relatedSlideId: tailwind-ch01-l04-s02
+  - id: tailwind-ch01-l04-e01-r04
+    label: '#cardsのdisplayを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: '#cards'
+    assertion:
+      kind: computed-style
+      operator: equals
+      expected: flex
+      property: display
+    feedback:
+      target: '#cardsのdisplayを確認する'
+      expected: flex
+      nextAction: md:flex-rowへ直す。768pxと800pxでは横になるかを確かめます。
+    hintId: tailwind-ch01-l04-e01-h02
+    relatedSlideId: tailwind-ch01-l04-s02
+  - id: tailwind-ch01-l04-e01-r05
+    label: '#cards > sectionのcountを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: '#cards > section'
+    assertion:
+      kind: count
+      operator: equals
+      expected: 2
+    feedback:
+      target: '#cards > sectionのcountを確認する'
+      expected: '2'
+      nextAction: md:flex-rowへ直す。768pxと800pxでは横になるかを確かめます。
+    hintId: tailwind-ch01-l04-e01-h02
+    relatedSlideId: tailwind-ch01-l04-s02
+  - id: tailwind-ch01-l04-e01-r06
+    label: htmlのoverflow-xを確認する
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - mobile-360
+      - before-767
+      - at-768
+      - wide-800
+    target:
+      kind: selector
+      selector: html
+    assertion:
+      kind: overflow-x
+      operator: equals
+      expected: false
+    feedback:
+      target: htmlのoverflow-xを確認する
+      expected: 'False'
+      nextAction: md:flex-rowへ直す。768pxと800pxでは横になるかを確かめます。
+    hintId: tailwind-ch01-l04-e01-h02
+    relatedSlideId: tailwind-ch01-l04-s02
+hints:
+  - id: tailwind-ch01-l04-e01-h01
+    level: 1
+    title: mainのclassを確認する
+    text: prefix（前置名）なしの指定はすべての幅へ効きます。狭い幅で縦にする指定を先に決めます。
+    relatedSlideId: tailwind-ch01-l04-s01
+  - id: tailwind-ch01-l04-e01-h02
+    level: 2
+    title: mainのclassを確認する
+    text: mdは48rem以上、smは40rem以上です。root 16pxの環境で、767pxと768pxのどちらに適用されるかを比べます。
+    relatedSlideId: tailwind-ch01-l04-s02
+  - id: tailwind-ch01-l04-e01-h03
+    level: 3
+    title: 基本と条件付きの指定を組み合わせる
+    text: mainをflex flex-col md:flex-row gap-4 p-4にします。flex-colが基本、md:flex-rowが768px以上の上書きです。
+    relatedSlideId: tailwind-ch01-l04-s02
+relatedSlideIds:
+  - tailwind-ch01-l04-s01
+  - tailwind-ch01-l04-s02
+previewViewports:
+  - id: mobile-360
+    width: 360
+    height: 300
+  - id: before-767
+    width: 767
+    height: 300
+  - id: at-768
+    width: 768
+    height: 300
+  - id: wide-800
+    width: 800
+    height: 300
+assets: []
+fixtures:
+  - id: tailwind-ch01-l04-starter
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/starter/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch01-l04-e01-r01
+      - tailwind-ch01-l04-e01-r03
+  - id: tailwind-ch01-l04-solution
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/solution/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: tailwind-ch01-l04-explicit-base
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/explicit-base/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: tailwind-ch01-l04-wrong-sm
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/wrong-sm/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch01-l04-e01-r02
+  - id: tailwind-ch01-l04-always-row
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/always-row/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch01-l04-e01-r01
+      - tailwind-ch01-l04-e01-r02
+  - id: tailwind-ch01-l04-always-column
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/always-column/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch01-l04-e01-r03

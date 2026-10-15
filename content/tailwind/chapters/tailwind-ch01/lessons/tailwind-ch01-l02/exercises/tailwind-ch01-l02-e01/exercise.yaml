@@ -1,0 +1,352 @@
+id: tailwind-ch01-l02-e01
+kind: standard
+workspaceId: tailwind-ch01-l02-e01
+countsTowardStandardExerciseTotal: true
+title: 幅・余白・文字・色を組み合わせる
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: tailwind-sizing
+    minimumLevel: transform
+  - conceptId: tailwind-padding
+    minimumLevel: transform
+  - conceptId: tailwind-typography
+    minimumLevel: transform
+  - conceptId: tailwind-color
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: size
+    file: index.html
+    target: mainのclass
+    starterAnchor: w-80
+    change: w-fullとmax-w-80へ直す
+    observe: 幅280pxで248px、幅640pxで320pxになる
+    requiresConceptIds:
+      - tailwind-sizing
+    validationRuleIds:
+      - tailwind-ch01-l02-e01-r01
+      - tailwind-ch01-l02-e01-r02
+      - tailwind-ch01-l02-e01-r03
+  - id: spacing
+    file: index.html
+    target: mainのclass
+    starterAnchor: p-2
+    change: p-4へ直す
+    observe: 内側の余白が16pxになる
+    requiresConceptIds:
+      - tailwind-padding
+    validationRuleIds:
+      - tailwind-ch01-l02-e01-r04
+  - id: type
+    file: index.html
+    target: h1のclass
+    starterAnchor: text-base leading-6
+    change: text-xl leading-7へ直す
+    observe: 文字が20px、行が28pxになる
+    requiresConceptIds:
+      - tailwind-typography
+    validationRuleIds:
+      - tailwind-ch01-l02-e01-r05
+      - tailwind-ch01-l02-e01-r06
+  - id: color
+    file: index.html
+    target: mainのclass
+    starterAnchor: bg-black text-white
+    change: 背景と文字をbg-white text-blackの組へ直す
+    observe: 読める明暗差を保ったまま、白背景と黒文字へ変わる
+    requiresConceptIds:
+      - tailwind-color
+    validationRuleIds:
+      - tailwind-ch01-l02-e01-r07
+      - tailwind-ch01-l02-e01-r08
+files:
+  - path: index.html
+    language: html
+    source: starter/index.html
+    editable: true
+solutionFiles:
+  - path: index.html
+    language: html
+    source: solution/index.html
+    editable: false
+validationRules:
+  - id: tailwind-ch01-l02-e01-r01
+    label: '#cardのwidthを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - card-280
+    target:
+      kind: selector
+      selector: '#card'
+    assertion:
+      kind: rect
+      operator: equals
+      expected: 248
+      metric: width
+      tolerance: 0.5
+    feedback:
+      target: '#cardのwidth'
+      expected: '248'
+      nextAction: w-fullとmax-w-80へ直す。幅280pxで248px、幅640pxで320pxになるかを確かめます。
+    hintId: tailwind-ch01-l02-e01-h01
+    relatedSlideId: tailwind-ch01-l02-s01
+  - id: tailwind-ch01-l02-e01-r02
+    label: '#cardのwidthを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - card-640
+    target:
+      kind: selector
+      selector: '#card'
+    assertion:
+      kind: rect
+      operator: equals
+      expected: 320
+      metric: width
+      tolerance: 0.5
+    feedback:
+      target: '#cardのwidth'
+      expected: '320'
+      nextAction: w-fullとmax-w-80へ直す。幅280pxで248px、幅640pxで320pxになるかを確かめます。
+    hintId: tailwind-ch01-l02-e01-h01
+    relatedSlideId: tailwind-ch01-l02-s01
+  - id: tailwind-ch01-l02-e01-r03
+    label: '#cardのmax-widthを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - card-280
+      - card-640
+    target:
+      kind: selector
+      selector: '#card'
+    assertion:
+      kind: computed-style
+      operator: equals
+      expected: 320
+      property: max-width
+    feedback:
+      target: '#cardのmax-width'
+      expected: '320'
+      nextAction: w-fullとmax-w-80へ直す。幅280pxで248px、幅640pxで320pxになるかを確かめます。
+    hintId: tailwind-ch01-l02-e01-h01
+    relatedSlideId: tailwind-ch01-l02-s01
+  - id: tailwind-ch01-l02-e01-r04
+    label: '#cardのpaddingを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - card-280
+      - card-640
+    target:
+      kind: selector
+      selector: '#card'
+    assertion:
+      kind: computed-style
+      operator: equals
+      expected: 16
+      property: padding
+    feedback:
+      target: '#cardのpadding'
+      expected: '16'
+      nextAction: p-4へ直す。内側の余白が16pxになるかを確かめます。
+    hintId: tailwind-ch01-l02-e01-h01
+    relatedSlideId: tailwind-ch01-l02-s01
+  - id: tailwind-ch01-l02-e01-r05
+    label: '#card h1のfont-sizeを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - card-280
+      - card-640
+    target:
+      kind: selector
+      selector: '#card h1'
+    assertion:
+      kind: computed-style
+      operator: equals
+      expected: 20
+      property: font-size
+    feedback:
+      target: '#card h1のfont-size'
+      expected: '20'
+      nextAction: text-xl leading-7へ直す。文字が20px、行が28pxになるかを確かめます。
+    hintId: tailwind-ch01-l02-e01-h02
+    relatedSlideId: tailwind-ch01-l02-s02
+  - id: tailwind-ch01-l02-e01-r06
+    label: '#card h1のline-heightを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - card-280
+      - card-640
+    target:
+      kind: selector
+      selector: '#card h1'
+    assertion:
+      kind: computed-style
+      operator: equals
+      expected: 28
+      property: line-height
+    feedback:
+      target: '#card h1のline-height'
+      expected: '28'
+      nextAction: text-xl leading-7へ直す。文字が20px、行が28pxになるかを確かめます。
+    hintId: tailwind-ch01-l02-e01-h02
+    relatedSlideId: tailwind-ch01-l02-s02
+  - id: tailwind-ch01-l02-e01-r07
+    label: '#cardのbackground-colorを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - card-280
+      - card-640
+    target:
+      kind: selector
+      selector: '#card'
+    assertion:
+      kind: computed-style
+      operator: equals
+      expected: rgb(255, 255, 255)
+      property: background-color
+    feedback:
+      target: '#cardのbackground-color'
+      expected: rgb(255, 255, 255)
+      nextAction: 背景と文字をbg-white text-blackの組へ直します。文字と背景の明暗差を保って確認します。
+    hintId: tailwind-ch01-l02-e01-h03
+    relatedSlideId: tailwind-ch01-l02-s03
+  - id: tailwind-ch01-l02-e01-r08
+    label: '#cardのcontrastを確認する'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds:
+      - card-280
+      - card-640
+    target:
+      kind: selector
+      selector: '#card h1, #card p'
+    assertion:
+      kind: contrast
+      minimum: 4.5
+    feedback:
+      target: '#cardのcontrast'
+      expected: 見出しと本文が背景から読み取れる明暗差（コントラスト比4.5:1以上）
+      nextAction: 背景と文字をbg-white text-blackの組へ直します。文字と背景の明暗差を保って確認します。
+    hintId: tailwind-ch01-l02-e01-h03
+    relatedSlideId: tailwind-ch01-l02-s03
+hints:
+  - id: tailwind-ch01-l02-e01-h01
+    level: 1
+    title: 幅と上限の役割を分ける
+    text: mainの幅が親より広くならないか、幅の上限が必要かを分けて考えます。内側の余白はpaddingです。
+    relatedSlideId: tailwind-ch01-l02-s01
+  - id: tailwind-ch01-l02-e01-h02
+    level: 2
+    title: 文字と行の高さを分ける
+    text: textはfont-size、leadingはline-heightです。このthemeのrootは16pxなので、1.25remと1.75remをpxへ換算します。
+    relatedSlideId: tailwind-ch01-l02-s02
+  - id: tailwind-ch01-l02-e01-h03
+    level: 3
+    title: 必要なUtilityを確認する
+    text: mainはw-full max-w-80 p-4 bg-white text-black、h1はtext-xl leading-7 font-boldです。幅と文字を別々に確認します。
+    relatedSlideId: tailwind-ch01-l02-s03
+relatedSlideIds:
+  - tailwind-ch01-l02-s01
+  - tailwind-ch01-l02-s02
+  - tailwind-ch01-l02-s03
+previewViewports:
+  - id: card-280
+    width: 280
+    height: 300
+  - id: card-640
+    width: 640
+    height: 300
+assets: []
+fixtures:
+  - id: tailwind-ch01-l02-starter
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/starter/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch01-l02-e01-r01
+      - tailwind-ch01-l02-e01-r03
+      - tailwind-ch01-l02-e01-r04
+      - tailwind-ch01-l02-e01-r05
+      - tailwind-ch01-l02-e01-r06
+      - tailwind-ch01-l02-e01-r07
+  - id: tailwind-ch01-l02-solution
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/solution/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: tailwind-ch01-l02-numeric-alternative
+    expectedStatus: pass
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/numeric-alternative/index.html
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: tailwind-ch01-l02-fixed-width
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/fixed-width/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch01-l02-e01-r01
+  - id: tailwind-ch01-l02-no-max
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/no-max/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch01-l02-e01-r02
+      - tailwind-ch01-l02-e01-r03
+  - id: tailwind-ch01-l02-small-type
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/small-type/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch01-l02-e01-r05
+      - tailwind-ch01-l02-e01-r06
+  - id: tailwind-ch01-l02-unreadable
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/unreadable/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch01-l02-e01-r08
+  - id: tailwind-ch01-l02-unreadable-heading
+    expectedStatus: incomplete
+    files:
+      - path: index.html
+        language: html
+        source: fixtures/unreadable-heading/index.html
+        editable: false
+    expectedFeedbackRuleIds:
+      - tailwind-ch01-l02-e01-r08

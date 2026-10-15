@@ -32,6 +32,152 @@ function createSrcdoc(source: string, overrides: SrcdocOverrides = {}): string {
 }
 
 describe('secure srcdoc', () => {
+  it('hover観測を通常Styleから分離し、focus別解と反復後のCSS・属性を復元する', async () => {
+    const frame = document.createElement('iframe');
+    document.body.append(frame);
+    const child = frame.contentWindow!;
+    const messages: unknown[] = [];
+    const post = vi.spyOn(child.parent, 'postMessage').mockImplementation((value) => {
+      messages.push(value);
+    });
+    Object.defineProperty(child, 'matchMedia', {
+      value: () => ({ matches: true }),
+      configurable: true,
+    });
+    try {
+      const bridge = createBridgeSource({
+        exerciseSessionId: 'state-test',
+        executionRevision: 1,
+        bootstrapToken: 'bootstrap',
+        viewport: { id: 'desktop', width: 1024, height: 720 },
+      });
+      child.document.open();
+      const literalClass = `.${String.fromCharCode(92)}:hover[data-state=":hover"]{font-size:19px}`;
+      // eslint-disable-next-line @typescript-eslint/no-deprecated -- parser中のBridge実行を再現するTest専用fixture。
+      child.document.write(
+        `<!doctype html><head><style>${literalClass}button{color:rgb(0,0,0)}button:hover{color:rgb(255,255,255)}button:focus{outline-width:2px;outline-style:solid}button:focus-within{outline-width:9px}</style><script>${bridge}</script></head><body><button id="action" class=":hover" data-state=":hover">保存</button></body>`,
+      );
+      child.document.dispatchEvent(new Event('DOMContentLoaded'));
+      await vi.waitFor(() => {
+        expect(messages[0]).toMatchObject({ type: 'bridge.ready' });
+      });
+      const css = child.document.styleSheets[0]!.cssRules;
+      const original = [...css].map((rule) => rule.cssText);
+      for (const token of ['first', 'second']) {
+        child.dispatchEvent(
+          new MessageEvent('message', {
+            source: child.parent,
+            data: {
+              version: 1,
+              type: 'snapshot.request',
+              exerciseSessionId: 'state-test',
+              executionRevision: 1,
+              requestId: token,
+              oneTimeToken: token,
+              payload: {
+                selectors: ['#action'],
+                attributes: [],
+                computedStyles: ['color', 'font-size'],
+                hoverSelectors: ['#action'],
+                hoverComputedStyles: ['color'],
+                focusVisibleSelectors: ['#action'],
+                focusVisibleComputedStyles: ['outline-width'],
+                includeAllElements: false,
+              },
+            },
+          }),
+        );
+        const response = messages.at(-1) as {
+          type: string;
+          payload: { nodes: readonly { tagName: string }[] };
+        };
+        expect(response.type).toBe('snapshot.response');
+        expect(response.payload.nodes.find((node) => node.tagName === 'button')).toMatchObject({
+          computedStyles: { color: 'rgb(0, 0, 0)', 'font-size': '19px' },
+          hoverComputedStyles: { color: 'rgb(255, 255, 255)' },
+          focusVisibleComputedStyles: { 'outline-width': '2px' },
+        });
+        expect([...css].map((rule) => rule.cssText)).toEqual(original);
+        expect(child.document.querySelector('button')!.getAttributeNames()).toEqual([
+          'id',
+          'class',
+          'data-state',
+        ]);
+      }
+      const statePolicy = {
+        selectors: ['#action'],
+        attributes: [],
+        computedStyles: [],
+        hoverSelectors: ['#action'],
+        hoverComputedStyles: ['color'],
+        focusVisibleSelectors: [],
+        focusVisibleComputedStyles: [],
+        includeAllElements: false,
+      };
+      const badPolicies = [
+        { ...statePolicy, hoverComputedStyles: [] },
+        { ...statePolicy, hoverSelectors: ['#outside'] },
+        {
+          ...statePolicy,
+          hoverComputedStyles: Array.from(
+            { length: 129 },
+            (_, index) => `property-${String(index)}`,
+          ),
+        },
+      ];
+      for (const [index, payload] of badPolicies.entries()) {
+        child.dispatchEvent(
+          new MessageEvent('message', {
+            source: child.parent,
+            data: {
+              version: 1,
+              type: 'snapshot.request',
+              exerciseSessionId: 'state-test',
+              executionRevision: 1,
+              requestId: `invalid-${String(index)}`,
+              oneTimeToken: `invalid-${String(index)}`,
+              payload,
+            },
+          }),
+        );
+        expect(messages.at(-1)).toMatchObject({
+          type: 'bridge.error',
+          payload: 'Snapshot policy schema error',
+        });
+      }
+      Object.defineProperty(child, 'matchMedia', {
+        value: () => ({ matches: false }),
+        configurable: true,
+      });
+      child.dispatchEvent(
+        new MessageEvent('message', {
+          source: child.parent,
+          data: {
+            version: 1,
+            type: 'snapshot.request',
+            exerciseSessionId: 'state-test',
+            executionRevision: 1,
+            requestId: 'no-hover',
+            oneTimeToken: 'no-hover',
+            payload: statePolicy,
+          },
+        }),
+      );
+      const noHover = messages.at(-1) as { type: string; payload: string };
+      expect(noHover.type).toBe('bridge.error');
+      expect(noHover.payload).toContain('hover対応');
+      expect([...css].map((rule) => rule.cssText)).toEqual(original);
+      expect(child.document.querySelector('button')!.getAttributeNames()).toEqual([
+        'id',
+        'class',
+        'data-state',
+      ]);
+    } finally {
+      post.mockRestore();
+      frame.remove();
+    }
+  });
+
   it('reduce Viewportではprefers-reduced-motion Ruleを検証用Overrideへ展開する', () => {
     const parsed = new DOMParser().parseFromString(
       createSrcdoc('<main class="motion-card">Motion</main>', {

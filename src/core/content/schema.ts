@@ -817,6 +817,41 @@ const FocusVisibleStyleNumberAssertionSchema = z
     tolerance: z.number().nonnegative().optional(),
   })
   .strict();
+const HoverStyleEqualsAssertionSchema = z
+  .object({
+    kind: z.literal('hover-style'),
+    property: NonEmptyTextSchema,
+    operator: z.literal('equals'),
+    expected: z.union([z.string(), z.number()]),
+    tolerance: z.number().nonnegative().optional(),
+  })
+  .strict()
+  .superRefine((assertion, context) => {
+    if (typeof assertion.expected === 'string' && assertion.tolerance !== undefined) {
+      context.addIssue({
+        code: 'custom',
+        path: ['tolerance'],
+        message: '文字列比較へtoleranceは指定できません',
+      });
+    }
+  });
+const HoverStyleContainsAssertionSchema = z
+  .object({
+    kind: z.literal('hover-style'),
+    property: NonEmptyTextSchema,
+    operator: z.literal('contains'),
+    expected: NonEmptyTextSchema,
+  })
+  .strict();
+const HoverStyleNumberAssertionSchema = z
+  .object({
+    kind: z.literal('hover-style'),
+    property: NonEmptyTextSchema,
+    operator: z.enum(['gte', 'lte']),
+    expected: z.number(),
+    tolerance: z.number().nonnegative().optional(),
+  })
+  .strict();
 const RectAssertionSchema = z
   .object({
     kind: z.literal('rect'),
@@ -1069,6 +1104,9 @@ export const HtmlCssRuleAssertionSchema = z.union([
   FocusVisibleStyleEqualsAssertionSchema,
   FocusVisibleStyleContainsAssertionSchema,
   FocusVisibleStyleNumberAssertionSchema,
+  HoverStyleEqualsAssertionSchema,
+  HoverStyleContainsAssertionSchema,
+  HoverStyleNumberAssertionSchema,
   RectAssertionSchema,
   OverflowAssertionSchema,
   FocusableAssertionSchema,

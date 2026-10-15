@@ -55,6 +55,7 @@ describe('Playwright output isolation', () => {
       'python-release-smoke.spec.ts',
       'python-input.spec.ts',
       'tailwind.spec.ts',
+      'tailwind-foundations.spec.ts',
     ];
 
     expect(chromium?.testMatch).toBeUndefined();

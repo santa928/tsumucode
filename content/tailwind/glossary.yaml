@@ -2,7 +2,7 @@ schemaVersion: 1
 entries:
   - id: tailwind-utility
     term: Utility
-    definition: '1つの見た目の役割に対応するCSS class。'
+    definition: 1つの見た目の役割に対応するCSS class。
     firstSlideId: tailwind-ch01-l01-s01
     relatedIds: []
   - id: tailwind-flex
@@ -12,11 +12,51 @@ entries:
     relatedIds: []
   - id: tailwind-gap
     term: gap
-    definition: 'Flex itemどうしの間隔。枠の内側の余白とは別。'
+    definition: Flex itemどうしの間隔。枠の内側の余白とは別。
     firstSlideId: tailwind-ch01-l01-s03
     relatedIds: []
   - id: tailwind-padding
     term: padding
-    definition: '要素の枠の内側に取る余白。'
+    definition: 要素の枠の内側に取る余白。
     firstSlideId: tailwind-ch01-l01-s04
+    relatedIds: []
+  - id: tailwind-sizing
+    term: 幅100%と幅の上限は別の指定
+    definition: 'w-fullはwidth: 100%、max-w-80はmax-width: 20remです。'
+    firstSlideId: tailwind-ch01-l02-s01
+    relatedIds: []
+  - id: tailwind-typography
+    term: 文字の大きさと行の高さを分ける
+    definition: 'text-xlはfont-size: 1.25remで、既定の行の高さも設定します。'
+    firstSlideId: tailwind-ch01-l02-s02
+    relatedIds: []
+  - id: tailwind-color
+    term: 背景色と文字色を対で考える
+    definition: bg-whiteはbackground-color、text-blackはcolorを変えます。
+    firstSlideId: tailwind-ch01-l02-s03
+    relatedIds: []
+  - id: tailwind-hover
+    term: hoverはポインターが重なる間だけ
+    definition: hover:bg-blackは:hoverとbackground-colorを組み合わせます。
+    firstSlideId: tailwind-ch01-l03-s01
+    relatedIds: []
+  - id: tailwind-focus
+    term: キーボードfocusを見えるままにする
+    definition: focus-visible:はキーボード操作などでfocusを示すときのCSSです。
+    firstSlideId: tailwind-ch01-l03-s02
+    relatedIds: []
+  - id: tailwind-disabled
+    term: disabledは属性と見た目の組
+    definition: 'disabled:opacity-50は:disabled時にopacity: .5を指定します。'
+    firstSlideId: tailwind-ch01-l03-s03
+    relatedIds: []
+  - id: tailwind-responsive
+    term: prefixなしがすべての幅の基本
+    definition: flex-colを基本にし、md:flex-rowで48rem以上を横並びにします。
+    firstSlideId: tailwind-ch01-l04-s01
+    relatedIds: []
+  - id: tailwind-breakpoint
+    term: 切り替わる境界の前後を見る
+    definition: 360pxと800pxを見比べた後、767pxと768pxを確かめます。
+    firstSlideId: tailwind-ch01-l04-s02
     relatedIds: []

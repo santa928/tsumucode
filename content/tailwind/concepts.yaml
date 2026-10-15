@@ -6,13 +6,56 @@ concepts:
     minimumProjectLevel: transform
   - id: tailwind-flex
     introducedBySlideId: tailwind-ch01-l01-s02
-    prerequisiteConceptIds: [tailwind-utility]
+    prerequisiteConceptIds:
+      - tailwind-utility
     minimumProjectLevel: transform
   - id: tailwind-gap
     introducedBySlideId: tailwind-ch01-l01-s03
-    prerequisiteConceptIds: [tailwind-flex]
+    prerequisiteConceptIds:
+      - tailwind-flex
     minimumProjectLevel: transform
   - id: tailwind-padding
     introducedBySlideId: tailwind-ch01-l01-s04
-    prerequisiteConceptIds: [tailwind-gap]
+    prerequisiteConceptIds:
+      - tailwind-gap
+    minimumProjectLevel: transform
+  - id: tailwind-sizing
+    introducedBySlideId: tailwind-ch01-l02-s01
+    prerequisiteConceptIds:
+      - tailwind-utility
+    minimumProjectLevel: transform
+  - id: tailwind-typography
+    introducedBySlideId: tailwind-ch01-l02-s02
+    prerequisiteConceptIds:
+      - tailwind-utility
+    minimumProjectLevel: transform
+  - id: tailwind-color
+    introducedBySlideId: tailwind-ch01-l02-s03
+    prerequisiteConceptIds:
+      - tailwind-utility
+    minimumProjectLevel: transform
+  - id: tailwind-hover
+    introducedBySlideId: tailwind-ch01-l03-s01
+    prerequisiteConceptIds:
+      - tailwind-utility
+    minimumProjectLevel: transform
+  - id: tailwind-focus
+    introducedBySlideId: tailwind-ch01-l03-s02
+    prerequisiteConceptIds:
+      - tailwind-utility
+    minimumProjectLevel: transform
+  - id: tailwind-disabled
+    introducedBySlideId: tailwind-ch01-l03-s03
+    prerequisiteConceptIds:
+      - tailwind-utility
+    minimumProjectLevel: transform
+  - id: tailwind-responsive
+    introducedBySlideId: tailwind-ch01-l04-s01
+    prerequisiteConceptIds:
+      - tailwind-utility
+    minimumProjectLevel: transform
+  - id: tailwind-breakpoint
+    introducedBySlideId: tailwind-ch01-l04-s02
+    prerequisiteConceptIds:
+      - tailwind-utility
     minimumProjectLevel: transform

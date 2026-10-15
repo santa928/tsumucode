@@ -1,5 +1,7 @@
 # Tailwind最初のレッスン（Issue128）
 
+以下はIssue128時点の対象と検証記録。現在の追加入力契約と3単位の教材は[基本・状態・レスポンシブ](tailwind-foundations.md)を参照する。
+
 HTML/CSSのclass・Box・Flexを既習前提とする草稿1レッスン。4Slide、標準演習1件、20分。CSSのdisplay・gap・paddingをUtilityと実際の見た目へ対応させる。全課程・制作・本番CSS生成・公開はIssue129〜131で別途扱う。
 
 ## 固定compilerと配信

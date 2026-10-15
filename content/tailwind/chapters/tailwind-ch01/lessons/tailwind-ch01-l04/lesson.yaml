@@ -1,0 +1,21 @@
+id: tailwind-ch01-l04
+kind: standard
+title: 幅の条件で並びを切り替える
+goal: mobile-firstな基本指定とmdの最小幅をCSSのmedia条件へ対応させる。
+estimatedMinutes: 20
+prerequisiteLessonIds:
+  - tailwind-ch01-l03
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+exerciseSources:
+  - exercises/tailwind-ch01-l04-e01/exercise.yaml
+reflection: mobile-firstな基本指定とmdの最小幅をCSSのmedia条件へ対応させる。
+glossaryRefs:
+  - tailwind-responsive
+  - tailwind-breakpoint
+completion:
+  kind: standard
+  finalSlideId: tailwind-ch01-l04-s02
+  requiredExerciseIds:
+    - tailwind-ch01-l04-e01

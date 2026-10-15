@@ -6,6 +6,7 @@ import {
   TAILWIND_COMPILER,
 } from '../../../src/adapters/runtime/tailwind/compilerAsset';
 import {
+  TailwindSourceError,
   validateTailwindSource,
   restrictTailwindClasses,
 } from '../../../src/adapters/runtime/tailwind/validateSource';
@@ -36,6 +37,61 @@ function validate(source: string, overrides: Partial<RunnerInput> = {}) {
 afterEach(() => vi.unstubAllGlobals());
 
 describe('有限Tailwind Source', () => {
+  it.each(['constructor:bg-black', 'toString:bg-black', '__proto__:bg-black'])(
+    '継承property名のvariantも未対応診断で拒否する: %s',
+    (token) => {
+      expect(() => validate(`<div class="${token}"></div>`)).toThrow(TailwindSourceError);
+    },
+  );
+
+  it('基礎教材の幅・文字・色Utilityと数値別解をcompilerへ残す', () => {
+    const source =
+      '<section class="w-full max-w-80 p-4 text-xl leading-7 text-black bg-white"></section>';
+    expect(validate(source)).toEqual([]);
+    const documentValue = new DOMParser().parseFromString(source, 'text/html');
+    restrictTailwindClasses(documentValue);
+    expect(documentValue.querySelector('section')?.className).toBe(
+      'w-full max-w-80 p-4 text-xl leading-7 text-black bg-white',
+    );
+    expect(validate('<section class="max-w-[20rem] w-full"></section>')).toEqual([]);
+  });
+
+  it('outline-noneからfocus時の実線を復元するUtilityを許可する', () => {
+    expect(
+      validate(
+        '<button type="button" class="outline-none focus-visible:outline-solid focus-visible:outline-2">保存</button>',
+      ),
+    ).toEqual([]);
+    expect(
+      validate(
+        '<button type="button" class="outline-none focus:outline-solid focus:outline-2">保存</button>',
+      ),
+    ).toEqual([]);
+  });
+
+  it('状態教材のbuttonと有限hover・focus・disabledを許可する', () => {
+    const source =
+      '<button type="button" disabled class="bg-white text-black hover:bg-black hover:text-white focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2 disabled:opacity-50">保存</button>';
+    expect(validate(source)).toEqual([]);
+    const documentValue = new DOMParser().parseFromString(source, 'text/html');
+    restrictTailwindClasses(documentValue);
+    expect(documentValue.querySelector('button')?.getAttribute('class')).toBe(
+      new DOMParser().parseFromString(source, 'text/html').querySelector('button')?.className,
+    );
+  });
+
+  it('responsive教材の単一md variantを残し、任意selectorやvariant重ねは拒否する', () => {
+    const source = '<div class="flex flex-col md:flex-row gap-4"></div>';
+    expect(validate(source)).toEqual([]);
+    const documentValue = new DOMParser().parseFromString(source, 'text/html');
+    restrictTailwindClasses(documentValue);
+    expect(documentValue.querySelector('div')?.className).toBe('flex flex-col md:flex-row gap-4');
+    expect(() => validate('<div class="[&_*]:hidden"></div>')).toThrow();
+    expect(() => validate('<div class="md:hover:bg-black"></div>')).toThrow();
+    expect(() => validate('<button type="submit">保存</button>')).toThrow();
+    expect(() => validate('<div disabled></div>')).toThrow();
+  });
+
   it('対象外Sourceには具体的な診断を返し、compiler取得とiframe更新を始めない', async () => {
     const fetchAsset = vi.fn<typeof fetch>();
     vi.stubGlobal('fetch', fetchAsset);

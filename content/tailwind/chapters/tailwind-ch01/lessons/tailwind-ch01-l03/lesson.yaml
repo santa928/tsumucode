@@ -1,0 +1,23 @@
+id: tailwind-ch01-l03
+kind: standard
+title: hover・キーボードfocus・disabledを確かめる
+goal: 操作による状態変化とdisabled属性の意味を分け、読める色と見えるfocusを保つ。
+estimatedMinutes: 25
+prerequisiteLessonIds:
+  - tailwind-ch01-l02
+slideSources:
+  - slides/s01.md
+  - slides/s02.md
+  - slides/s03.md
+exerciseSources:
+  - exercises/tailwind-ch01-l03-e01/exercise.yaml
+reflection: 操作による状態変化とdisabled属性の意味を分け、読める色と見えるfocusを保つ。
+glossaryRefs:
+  - tailwind-hover
+  - tailwind-focus
+  - tailwind-disabled
+completion:
+  kind: standard
+  finalSlideId: tailwind-ch01-l03-s03
+  requiredExerciseIds:
+    - tailwind-ch01-l03-e01

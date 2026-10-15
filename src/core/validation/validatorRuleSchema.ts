@@ -14,6 +14,7 @@ const ASSERTION_KINDS = new Set([
   'count',
   'exists',
   'focus-visible-style',
+  'hover-style',
   'focusable',
   'overflow-x',
   'rect',
@@ -167,6 +168,7 @@ function assertRuleAssertion(value: Readonly<Record<string, unknown>>): void {
         return;
       break;
     case 'computed-style':
+    case 'hover-style':
     case 'focus-visible-style':
       if (!isNonEmptyText(value.property)) break;
       if (
@@ -286,8 +288,11 @@ function parseRuleEnvelope(value: unknown): HtmlCssValidationRuleDefinition {
   if (target.kind === 'source' && assertion.kind !== 'text') {
     throw new Error('source targetはtext assertionだけ使用できます');
   }
-  if (assertion.kind === 'focus-visible-style' && target.kind !== 'selector') {
-    throw new Error('focus-visible-style assertionはselector targetだけ使用できます');
+  if (
+    (assertion.kind === 'focus-visible-style' || assertion.kind === 'hover-style') &&
+    target.kind !== 'selector'
+  ) {
+    throw new Error(`${assertion.kind} assertionはselector targetだけ使用できます`);
   }
   if (
     assertion.kind === 'text' &&
@@ -342,6 +347,8 @@ export function buildSnapshotPolicy(
   const selectors = new Set<string>();
   const attributes = new Set<string>();
   const computedStyles = new Set<string>();
+  const hoverSelectors = new Set<string>();
+  const hoverComputedStyles = new Set<string>();
   const focusVisibleSelectors = new Set<string>();
   const focusVisibleComputedStyles = new Set<string>();
   let includeAllElements = false;
@@ -361,6 +368,10 @@ export function buildSnapshotPolicy(
       case 'computed-style':
         computedStyles.add(rule.assertion.property);
         break;
+      case 'hover-style':
+        if (rule.target.kind === 'selector') hoverSelectors.add(rule.target.selector);
+        hoverComputedStyles.add(rule.assertion.property);
+        break;
       case 'focus-visible-style':
         if (rule.target.kind === 'selector') focusVisibleSelectors.add(rule.target.selector);
         focusVisibleComputedStyles.add(rule.assertion.property);
@@ -378,6 +389,8 @@ export function buildSnapshotPolicy(
   assertPolicyCapacity('selector', selectors, MAX_SELECTORS);
   assertPolicyCapacity('attribute', attributes, MAX_ATTRIBUTES);
   assertPolicyCapacity('computed style', computedStyles, MAX_COMPUTED_STYLES);
+  assertPolicyCapacity('hover selector', hoverSelectors, MAX_SELECTORS);
+  assertPolicyCapacity('hover computed style', hoverComputedStyles, MAX_COMPUTED_STYLES);
   assertPolicyCapacity('focus-visible selector', focusVisibleSelectors, MAX_SELECTORS);
   assertPolicyCapacity(
     'focus-visible computed style',
@@ -391,6 +404,12 @@ export function buildSnapshotPolicy(
     computedStyles: [...computedStyles].sort(),
     focusVisibleSelectors: [...focusVisibleSelectors].sort(),
     focusVisibleComputedStyles: [...focusVisibleComputedStyles].sort(),
+    ...(hoverSelectors.size === 0
+      ? {}
+      : {
+          hoverSelectors: [...hoverSelectors].sort(),
+          hoverComputedStyles: [...hoverComputedStyles].sort(),
+        }),
     includeAllElements,
   };
 }

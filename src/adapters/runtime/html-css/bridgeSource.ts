@@ -170,6 +170,12 @@ function bridgeRuntime(config: BridgeConfig): void {
     const inputValueSelectors = objectKeys(value).includes('inputValueSelectors')
       ? value.inputValueSelectors
       : [];
+    const hoverSelectors = Object.prototype.hasOwnProperty.call(value, 'hoverSelectors')
+      ? value.hoverSelectors
+      : [];
+    const hoverComputedStyles = Object.prototype.hasOwnProperty.call(value, 'hoverComputedStyles')
+      ? value.hoverComputedStyles
+      : [];
     const attributes = value.attributes;
     const computedStyles = value.computedStyles;
     const focusVisibleSelectors = value.focusVisibleSelectors;
@@ -183,6 +189,12 @@ function bridgeRuntime(config: BridgeConfig): void {
         'focusVisibleSelectors',
         'focusVisibleComputedStyles',
         'includeAllElements',
+        ...(Object.prototype.hasOwnProperty.call(value, 'hoverSelectors')
+          ? ['hoverSelectors']
+          : []),
+        ...(Object.prototype.hasOwnProperty.call(value, 'hoverComputedStyles')
+          ? ['hoverComputedStyles']
+          : []),
         ...(Object.prototype.hasOwnProperty.call(value, 'inputValueSelectors')
           ? ['inputValueSelectors']
           : []),
@@ -190,6 +202,10 @@ function bridgeRuntime(config: BridgeConfig): void {
       !boundedStringArray(selectors, maxSelectors) ||
       !boundedStringArray(inputValueSelectors, maxSelectors) ||
       !inputValueSelectors.every((selector) => selectors.includes(selector)) ||
+      !boundedStringArray(hoverSelectors, maxSelectors) ||
+      !boundedStringArray(hoverComputedStyles, maxComputedStyles) ||
+      !hoverSelectors.every((selector) => selectors.includes(selector)) ||
+      (hoverSelectors.length === 0) !== (hoverComputedStyles.length === 0) ||
       !boundedStringArray(attributes, maxAttributes) ||
       !boundedStringArray(computedStyles, maxComputedStyles) ||
       !boundedStringArray(focusVisibleSelectors, maxSelectors) ||
@@ -201,6 +217,8 @@ function bridgeRuntime(config: BridgeConfig): void {
     return {
       selectors,
       inputValueSelectors,
+      hoverSelectors,
+      hoverComputedStyles,
       attributes,
       computedStyles,
       focusVisibleSelectors,
@@ -332,86 +350,106 @@ function bridgeRuntime(config: BridgeConfig): void {
     clientHeight: nonNegative(element.clientHeight),
   });
 
-  type MutableRuleContainer = {
-    readonly cssRules: CSSRuleList;
-    insertRule(rule: string, index?: number): number;
-    deleteRule(index: number): void;
+  /** 引用文字列とescapeを保ち、実際の状態pseudoだけを同じ特異性の属性へ移す。 */
+  const controlledSelector = (
+    selector: string,
+    attributes: Readonly<Record<'focus' | 'hover', string>>,
+  ): string => {
+    let result = '';
+    let quote: string | undefined;
+    for (let index = 0; index < selector.length; index += 1) {
+      const character = selector[index]!;
+      if (character === '\\') {
+        result += selector.slice(index, index + 2);
+        index += 1;
+        continue;
+      }
+      if (quote !== undefined) {
+        result += character;
+        if (character === quote) quote = undefined;
+        continue;
+      }
+      if (character === '"' || character === "'") {
+        quote = character;
+        result += character;
+        continue;
+      }
+      const pseudo =
+        character === ':'
+          ? /^:(hover|focus-visible|focus)(?![-\w\\\u0080-\uFFFF])/iu.exec(selector.slice(index))
+          : null;
+      if (pseudo === null) {
+        result += character;
+        continue;
+      }
+      const state = pseudo[1]!.toLowerCase() === 'hover' ? 'hover' : 'focus';
+      result += `[${attributes[state]}]`;
+      index += pseudo[0].length - 1;
+    }
+    return result;
   };
 
-  /** 実効な:focus-visible Ruleを同じcascade位置の検証用属性Ruleへ一時展開する。 */
-  const installFocusVisibleValidationState = (
-    elements: readonly Element[],
-    selectors: readonly string[],
-    token: string,
-  ): (() => void) => {
-    if (selectors.length === 0) return () => undefined;
-    const tokenSuffix = Array.from(
+  /** Rule本体・media・順序を動かさず状態を制御し、実pointer/focusとの混在を防ぐ。 */
+  const installValidationStyles = (token: string) => {
+    const suffix = Array.from(
       token,
       (character) => character.codePointAt(0)?.toString(36) ?? '0',
     ).join('-');
-    const attribute = `data-tsumucode-focus-${tokenSuffix}`;
-    const attributeSelector = `[${attribute}]`;
-    const targets = elements.filter(
-      (element) =>
-        element.ownerDocument === document &&
-        selectors.some((selector) => element.matches(selector)),
-    );
-    const previousAttributes = targets.map((element) => ({
-      element,
-      value: element.getAttribute(attribute),
-    }));
-    const insertions: { readonly container: MutableRuleContainer; readonly index: number }[] = [];
-    const isMutableContainer = (value: unknown): value is MutableRuleContainer =>
-      typeof value === 'object' &&
-      value !== null &&
-      'cssRules' in value &&
-      typeof (value as MutableRuleContainer).insertRule === 'function' &&
-      typeof (value as MutableRuleContainer).deleteRule === 'function';
-    const installRules = (container: MutableRuleContainer): void => {
-      for (let index = container.cssRules.length - 1; index >= 0; index -= 1) {
-        const rule = container.cssRules[index];
-        if (rule === undefined) continue;
+    const attributes = {
+      focus: `data-tsumucode-focus-${suffix}`,
+      hover: `data-tsumucode-hover-${suffix}`,
+    };
+    const changes: { readonly rule: CSSStyleRule; readonly selector: string }[] = [];
+    /** このSnapshotで置換したSelectorを元のCSSOMへ戻す。 */
+    const restore = (): void => {
+      for (const { rule, selector } of changes) rule.selectorText = selector;
+    };
+    /** 読めるRuleだけを辿り、入れ子の各Selectorを独立に置換する。 */
+    const visit = (rules: CSSRuleList): void => {
+      for (const rule of [...rules]) {
         const candidate = rule as CSSStyleRule;
-        if (
-          typeof candidate.selectorText === 'string' &&
-          candidate.selectorText.includes(':focus-visible')
-        ) {
-          const selector = candidate.selectorText.replace(/:focus-visible\b/gu, attributeSelector);
-          try {
-            const inserted = container.insertRule(
-              `${selector} { ${candidate.style.cssText} }`,
-              index + 1,
-            );
-            insertions.push({ container, index: inserted });
-          } catch {
-            // 個別の未知Selectorを理由に他の有効なFocus Ruleまで捨てない。
+        if (typeof candidate.selectorText === 'string') {
+          const selector = candidate.selectorText;
+          const controlled = controlledSelector(selector, attributes);
+          if (controlled !== selector) {
+            changes.push({ rule: candidate, selector });
+            candidate.selectorText = controlled;
+            if (candidate.selectorText !== controlled) {
+              throw new Error('検証用状態のSelectorを適用できません');
+            }
           }
         }
-        if (isMutableContainer(rule)) installRules(rule);
+        if ('cssRules' in rule) visit((rule as CSSGroupingRule).cssRules);
       }
     };
-    for (const stylesheet of [...document.styleSheets]) {
-      try {
-        installRules(stylesheet);
-      } catch {
-        // opaque-originから読めないSheetは検証対象へ展開しない。
-      }
-    }
-    for (const { element } of previousAttributes) element.setAttribute(attribute, token);
-    return () => {
-      for (let insertionIndex = insertions.length - 1; insertionIndex >= 0; insertionIndex -= 1) {
-        const insertion = insertions[insertionIndex];
-        if (insertion === undefined) continue;
+    try {
+      for (const stylesheet of [...document.styleSheets]) {
+        let rules: CSSRuleList;
         try {
-          insertion.container.deleteRule(insertion.index);
+          rules = stylesheet.cssRules;
         } catch {
-          // Snapshot後のcleanupは残りのRule復元を優先する。
+          continue;
         }
+        visit(rules);
       }
-      for (const { element, value } of previousAttributes) {
-        if (value === null) element.removeAttribute(attribute);
-        else element.setAttribute(attribute, value);
-      }
+    } catch (error) {
+      restore();
+      throw error;
+    }
+    return { attributes, restore };
+  };
+
+  /** 観測する1要素だけに状態属性を付け、元の属性値を必ず復元する。 */
+  const activateValidationState = (
+    element: Element,
+    attribute: string,
+    token: string,
+  ): (() => void) => {
+    const previous = element.getAttribute(attribute);
+    element.setAttribute(attribute, token);
+    return () => {
+      if (previous === null) element.removeAttribute(attribute);
+      else element.setAttribute(attribute, previous);
     };
   };
 
@@ -533,6 +571,7 @@ function bridgeRuntime(config: BridgeConfig): void {
     usedRequestIds.add(message.requestId);
     usedTokens.add(message.oneTimeToken);
 
+    let restoreValidationStyles: (() => void) | undefined;
     try {
       if (usedRequestIds.size > maxRequests) throw new Error('Snapshot request limit exceeded');
       const policy = parsePolicy(message.payload);
@@ -580,6 +619,11 @@ function bridgeRuntime(config: BridgeConfig): void {
         return left.compareDocumentPosition(right) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
       });
       const ids = new Map(elements.map((element, index) => [element, index + 1]));
+      const validationStyles =
+        policy.focusVisibleSelectors.length > 0 || policy.hoverSelectors.length > 0
+          ? installValidationStyles(message.oneTimeToken)
+          : undefined;
+      restoreValidationStyles = validationStyles?.restore;
       const baseNodes = elements.map((element, index) => {
         const isDocumentElement = element === document.documentElement;
         const isObservableReference = element.ownerDocument === observableDocument;
@@ -654,42 +698,65 @@ function bridgeRuntime(config: BridgeConfig): void {
           role,
         };
       });
-      const focusVisibleStyles = new Map<Element, Readonly<Record<string, string>>>();
-      const cleanupFocusVisible = installFocusVisibleValidationState(
-        elements,
-        policy.focusVisibleSelectors,
-        message.oneTimeToken,
-      );
-      try {
-        document.documentElement.getBoundingClientRect();
+      const stateToken = message.oneTimeToken;
+      /** 対象を1件ずつ有効化し、互いに独立した状態Styleを採る。 */
+      const observeState = (
+        selectors: readonly string[],
+        properties: readonly string[],
+        state: 'focus' | 'hover',
+      ): Map<Element, Readonly<Record<string, string>>> => {
+        const observations = new Map<Element, Readonly<Record<string, string>>>();
+        if (
+          selectors.length > 0 &&
+          state === 'hover' &&
+          !window.matchMedia('(hover: hover)').matches
+        ) {
+          throw new Error(
+            'この環境ではhover描画を確認できません。hover対応の端末で確認してください。',
+          );
+        }
         for (const element of elements) {
           if (
             element.ownerDocument !== document ||
-            !policy.focusVisibleSelectors.some((selector) => element.matches(selector))
-          ) {
+            !selectors.some((selector) => element.matches(selector))
+          )
             continue;
+          const attribute = validationStyles?.attributes[state];
+          if (attribute === undefined) continue;
+          const cleanup = activateValidationState(element, attribute, stateToken);
+          try {
+            document.documentElement.getBoundingClientRect();
+            const style = getComputedStyle(element);
+            observations.set(
+              element,
+              objectFromEntries(
+                properties.map((name) => {
+                  outputString(name, `${state} computed style name`, 256);
+                  return [
+                    name,
+                    outputString(style.getPropertyValue(name), `${state} computed style`),
+                  ];
+                }),
+              ),
+            );
+          } finally {
+            cleanup();
           }
-          const style = getComputedStyle(element);
-          focusVisibleStyles.set(
-            element,
-            objectFromEntries(
-              policy.focusVisibleComputedStyles.map((name) => {
-                outputString(name, 'focus-visible computed style name', 256);
-                const value = outputString(
-                  style.getPropertyValue(name),
-                  'focus-visible computed style',
-                );
-                return [name, value];
-              }),
-            ),
-          );
         }
-      } finally {
-        cleanupFocusVisible();
-      }
+        return observations;
+      };
+      const focusVisibleStyles = observeState(
+        policy.focusVisibleSelectors,
+        policy.focusVisibleComputedStyles,
+        'focus',
+      );
+      const hoverStyles = observeState(policy.hoverSelectors, policy.hoverComputedStyles, 'hover');
       const nodes = baseNodes.map((node, index) => ({
         ...node,
         focusVisibleComputedStyles: focusVisibleStyles.get(elements[index]!) ?? {},
+        ...(policy.hoverSelectors.length === 0
+          ? {}
+          : { hoverComputedStyles: hoverStyles.get(elements[index]!) ?? {} }),
       }));
       const root = document.documentElement;
       send('snapshot.response', message.requestId, message.oneTimeToken, {
@@ -702,6 +769,8 @@ function bridgeRuntime(config: BridgeConfig): void {
     } catch (error) {
       const detail = error instanceof Error ? error.message : String(error);
       send('bridge.error', message.requestId, message.oneTimeToken, detail.slice(0, 2_000));
+    } finally {
+      restoreValidationStyles?.();
     }
   });
 
