@@ -18,7 +18,8 @@ docker run --rm \
   sh -c 'npm ci --ignore-scripts --no-audit --no-fund && npm run build && npm run preview -- --host 0.0.0.0'
 ```
 
-ブラウザーで `http://localhost:4173/` を開きます。終了はCtrl+Cです。
+ブラウザーで、Viteが端末に表示するLocalのURLを開きます。
+上の例ではホスト側に公開したポート4173を使います。終了はCtrl+Cです。
 この例はmacOS/Linux等のshell用です。Docker内のNodeで依存取得・build・表示を順に行います。
 Dockerの初回image取得と `npm ci` は通信します。
 Nodeの公式imageとnpm registryから、固定versionとlockfileの依存を取得します。
