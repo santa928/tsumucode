@@ -1,4 +1,4 @@
-/** Python草稿2CourseのSourceとdistを照合する。公開契約や一般Artifact Gateは扱わない。 */
+/** 草稿3CourseのSourceとdistを照合する。公開契約や一般Artifact Gateは扱わない。 */
 import path from 'node:path';
 import { CourseCatalogV3Schema } from '../../src/core/content/deliverySchema';
 import type { LearningPathDefinition } from '../../src/core/content/types';
@@ -15,14 +15,15 @@ import { verifyContentReview } from './verifyContentReview';
 const COURSES = {
   'python-practice': { label: 'Python実践', cli: 'checkPythonPracticeDraft.ts' },
   'python-oop': { label: 'Python OOP', cli: 'checkPythonOopDraft.ts' },
+  tailwind: { label: 'Tailwind', cli: 'checkTailwindDraft.ts' },
 } as const;
 
-export type PythonDraftCourseId = keyof typeof COURSES;
+export type DraftCourseId = keyof typeof COURSES;
 
 /** 未知のCourseをファイル読込前に拒否し、固定の表示名とCLI名だけを返す。 */
-function resolveDraftCourse(courseId: PythonDraftCourseId) {
+function resolveDraftCourse(courseId: DraftCourseId) {
   if (!Object.hasOwn(COURSES, courseId)) {
-    throw new Error('草稿照合の対象はpython-practiceとpython-oopだけです');
+    throw new Error('草稿照合の対象はpython-practice・python-oop・tailwindだけです');
   }
   return COURSES[courseId];
 }
@@ -30,7 +31,7 @@ function resolveDraftCourse(courseId: PythonDraftCourseId) {
 /** 草稿Courseへのstepと前提参照を両方検出する。 */
 function includesCourse(
   paths: readonly LearningPathDefinition[],
-  targetCourseId: PythonDraftCourseId,
+  targetCourseId: DraftCourseId,
 ): boolean {
   return paths.some(({ steps }) =>
     steps.some(
@@ -45,10 +46,10 @@ function includesCourse(
  * 不一致、published、Path登録、既存教材レビューの未達は例外で拒否する。
  * 成功はこの草稿入力の一致であり、公開候補全体の受入や公開許可ではない。
  */
-export async function checkPythonDraftArtifact(
+export async function checkDraftCourseArtifact(
   root: string,
   distDir: string,
-  courseId: PythonDraftCourseId,
+  courseId: DraftCourseId,
 ) {
   const { label } = resolveDraftCourse(courseId);
   const courseRoot = path.join(root, 'content', courseId);
@@ -105,14 +106,14 @@ export async function checkPythonDraftArtifact(
 }
 
 /** 固定Course用CLIを実行し、失敗はstderrとexit1へ伝える。ファイルは変更しない。 */
-export async function runPythonDraftCli(courseId: PythonDraftCourseId): Promise<void> {
+export async function runDraftCourseCli(courseId: DraftCourseId): Promise<void> {
   try {
     const { cli } = resolveDraftCourse(courseId);
     const arguments_ = process.argv.slice(2);
     if (arguments_.length > 1 || arguments_[0]?.startsWith('-')) {
       throw new Error(`使い方: ${cli} [distのDirectory]`);
     }
-    const report = await checkPythonDraftArtifact(
+    const report = await checkDraftCourseArtifact(
       process.cwd(),
       path.resolve(arguments_[0] ?? 'dist'),
       courseId,
