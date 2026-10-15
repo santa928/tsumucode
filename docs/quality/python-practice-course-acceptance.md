@@ -87,6 +87,19 @@ PR205は修正を取り込んだHEAD `2f72815031e7858510f966b6b2ac95786326c0b1` 
 
 追加の[Python基礎内容レビュー](python-basics-content-review.md)で、全site Gateが検出した後続9教材の台帳欠落を実レビューと実例実行で補いました。基礎10教材の内容hashはstale0／rejected0です。新たな10教材全体の公開承認には流用せず、台帳の公開状態はdraft、旧公開承認と履歴はそのまま保持します。
 
+## 草稿Sourceと検査するdistの照合
+
+作者検証に使うSourceとdistを固定した後、既存のDocker環境で次を実行します。新しいbuildが不要な場合は、検査する既存distのDirectoryを第1引数へ指定できます。
+
+```sh
+./scripts/docker-compose.sh run --rm app npm run build
+./scripts/docker-compose.sh run --rm app node --import tsx scripts/content/checkPythonPracticeDraft.ts dist
+```
+
+このコマンドは現在の`python-practice`をCompilerで読み、実distのCourse本文・Catalog・Provenance・Asset bytesと照合し、既存の教材レビューも確認します。Source／Catalog／distはすべてdraftで、Source／dist双方のPathに未登録であることが条件です。検査はファイルや承認状態を書き換えません。
+
+成功時の`draft-matched`は、この草稿入力の一致だけを示します。`runtimeSha256`はRuntime JSONのhashで、Source treeやdist全体のhashではありません。古いまま内部SHAだけが整合したdistの利用を防ぐ検査であり、実行・CUA・一般の静的Artifact検査・公開Gate・独立原本照合・公開許可を完了した意味ではありません。公開候補全体の検査は別途必要です。既存のPython基礎1教材の公開許可やallowlistも広げません。
+
 ## 公開前に残る条件
 
 - 公開候補を固定した時点の5Lesson内容hash／独立レビューと技術原本のbinding。今回の草稿教材承認を公開許可へ流用しない。
