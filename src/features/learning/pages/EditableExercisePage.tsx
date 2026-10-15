@@ -541,6 +541,11 @@ function EditableSession({
         if (!isActive()) return;
         await controller.initialize();
         if (isActive()) {
+          // 復元したFileを動かさず、そのFileの最初の手順から案内を再開する。
+          const selectedFile = controller.getSnapshot().selectedFile;
+          setActiveStepId(
+            exercise.steps.find(({ file }) => file === selectedFile)?.id ?? exercise.steps[0]?.id,
+          );
           learningRuntimeServices.notices.dismiss('error:exercise-initialize');
           setInitializedSession({ controller, state: 'ready' });
         }
@@ -554,7 +559,7 @@ function EditableSession({
     return () => {
       abortController.abort();
     };
-  }, [controller]);
+  }, [controller, exercise.steps]);
 
   useEffect(() => lease.registerBeforeYield(() => controller.flush()), [controller, lease]);
 

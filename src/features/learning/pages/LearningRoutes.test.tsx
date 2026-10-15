@@ -1036,6 +1036,77 @@ describe('Learning routes', () => {
     expect(screen.getByTestId('runtime-preview-frame')).toBeInTheDocument();
   });
 
+  it.each([true, false])(
+    '下書きの選択ファイルに手順がある=%sで再開時の案内を選び、以後の手動操作を保つ',
+    async (hasMatchingStep) => {
+      vi.stubEnv('BASE_URL', `/resume-step-${String(hasMatchingStep)}/`);
+      const course = structuredClone(fixtureCourse);
+      const exercise = course.phases[0]!.chapters[0]!.lessons[0]!.exercises[0]!;
+      exercise.files.push({
+        path: 'styles.css',
+        language: 'css',
+        content: 'body {}',
+        editable: true,
+      });
+      if (hasMatchingStep) {
+        exercise.steps.push({
+          ...exercise.steps[0]!,
+          id: 'write-style',
+          file: 'styles.css',
+          starterAnchor: 'body {}',
+          change: '文字色を変える',
+        });
+      }
+      const files = {
+        'index.html': '<main><h1>保存した見出し</h1></main>',
+        'styles.css': 'body { color: red; }',
+      };
+      const saved = {
+        ...passingDraft(),
+        files,
+        selectedFile: 'styles.css',
+        lastPassingSnapshots: {},
+      };
+      runtime.repository.getDraft.mockResolvedValue(saved);
+      stubContentFetch(course);
+      stubEditingCapability(true);
+      stubAdapters();
+      const user = userEvent.setup();
+      renderRoute(
+        '/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading',
+      );
+      await findCodeWorkspace();
+      const editor = await findEditorView();
+      expect(editor.state.doc.toString()).toBe(files['styles.css']);
+      expect(screen.getByRole('tab', { name: 'styles.css' })).toHaveAttribute(
+        'aria-selected',
+        'true',
+      );
+      const expectedStep = screen.getByRole('button', {
+        name: hasMatchingStep ? '手順 2：文字色を変える' : '手順 1：h1要素を追加する',
+      });
+      expect(expectedStep).toHaveAttribute('aria-expanded', 'true');
+      expect(saved.files).toEqual(files);
+
+      await user.click(screen.getByRole('tab', { name: 'index.html' }));
+      expect(editor.state.doc.toString()).toBe(files['index.html']);
+      expect(expectedStep).toHaveAttribute('aria-expanded', 'true');
+      await user.click(screen.getByRole('button', { name: '手順 1：h1要素を追加する' }));
+      expect(screen.getByRole('button', { name: '手順 1：h1要素を追加する' })).toHaveAttribute(
+        'aria-expanded',
+        'true',
+      );
+      if (hasMatchingStep) {
+        await user.click(expectedStep);
+        expect(screen.getByRole('tab', { name: 'styles.css' })).toHaveAttribute(
+          'aria-selected',
+          'true',
+        );
+        expect(editor.state.doc.toString()).toBe(files['styles.css']);
+      }
+    },
+  );
+
   it('未判定の演習から説明を選んで見直し、編集・Preview・Focusを保って戻れる', async () => {
     vi.stubEnv('BASE_URL', '/review-entry-route-test/');
     const reviewCourse = structuredClone(fixtureCourse);

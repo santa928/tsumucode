@@ -191,6 +191,13 @@ test('制作の2ソースを保存・再開し、途中ZIPと実操作・判定�
     .toEqual(solution);
   await page.reload();
   await expect(page.locator('.cm-content')).toContainText('note-card');
+  await expect(page.getByRole('tab', { name: 'index.html', exact: true })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  await expect(page.getByRole('region', { name: '演習の手順' }).locator('code')).toHaveText(
+    'index.html',
+  );
   await page.getByRole('tab', { name: 'styles.css', exact: true }).click();
   await expect(page.locator('.cm-content')).toContainText('#0f3c4c');
   await expect(grade).toBeEnabled();
