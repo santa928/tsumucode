@@ -176,6 +176,68 @@ test('Python取得中のSource編集は旧取得を停止して新Sourceだけ�
   }
 });
 
+for (const action of ['プレビューを更新', '判定する']) {
+  test(`Python自動取得中の「${action}」予約で取得表示を失わず取消・再試行できる`, async ({
+    page,
+  }) => {
+    test.setTimeout(45_000);
+    let coreRequests = 0;
+    let workers = 0;
+    let release!: () => void;
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    page.on('worker', () => {
+      workers += 1;
+    });
+    await page.route('**/python-runtime/314.0.7/core.wasm', async (route) => {
+      coreRequests += 1;
+      if (coreRequests <= 2) await held;
+      await route.continue().catch(() => undefined);
+    });
+    try {
+      await page.goto(
+        `${testBasePath()}#/courses/python-basics/lessons/python-basics-ch01-l01/exercises/python-basics-ch01-l01-e01`,
+      );
+      await expect.poll(() => coreRequests).toBe(1);
+      await page.locator('.cm-content').click();
+      await page.keyboard.press('ControlOrMeta+A');
+      const source = 'count = 40\nprint(count + 2)\n';
+      await page.keyboard.insertText(source);
+      await expect.poll(() => coreRequests).toBe(2);
+      const preparation = page.getByRole('region', { name: 'Python実行環境の準備' });
+      await expect(preparation).toBeVisible();
+      const received = await preparation.getByText(/MiB取得済み/).innerText();
+      await page.getByRole('button', { name: action, exact: true }).click();
+      // 通信を保留したまま、次の進捗通知に頼らず表示を維持する。
+      await expect(preparation).toBeVisible();
+      await expect(preparation.getByText(/MiB取得済み/)).toHaveText(received);
+      await expect(preparation.getByRole('status')).toContainText('コードはまだ実行していません');
+      await page.screenshot({
+        path: test.info().outputPath('queued-python-preparation.png'),
+        fullPage: true,
+      });
+      const stop = page.getByRole('button', { name: '実行を停止', exact: true });
+      await stop.focus();
+      await page.keyboard.press('Enter');
+      await expect(preparation).not.toBeVisible();
+      expect(workers).toBe(0);
+      release();
+      await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
+      await expect(page.getByRole('region', { name: 'Console出力', exact: true })).toContainText(
+        '42',
+      );
+      expect(workers).toBe(1);
+      expect(await editorText(page)).toBe(source);
+      await waitForStoredDraftContent(page, source);
+      expect((await readStoredProgress(page)).drafts[0]?.['validationHistory']).toEqual([]);
+    } finally {
+      release();
+      await page.unrouteAll({ behavior: 'wait' });
+    }
+  });
+}
+
 test('Python取得中の進捗は読み上げ可能でキーボードから取消できる', async ({ page }) => {
   test.setTimeout(45_000);
   let requested!: () => void;
