@@ -104,6 +104,18 @@ afterEach(async () => {
 });
 
 describe('static artifact', () => {
+  it('Tailwind持出しの実READMEを含む配布JSを受理する', async () => {
+    const readme = await readFile(
+      'src/features/learning/portable/tailwind-project/README.md',
+      'utf8',
+    );
+    const root = await artifact(
+      'assets/portableTailwindArchive-readme.js',
+      `const readme = ${JSON.stringify(readme)};`,
+    );
+    await expect(checkStaticArtifact(root)).resolves.toEqual({ files: 6 });
+  });
+
   it('Pythonの配布物・通知・編集可能な対象ソースを限定pathで受理する', async () => {
     expect(resolveReleaseCourseContract('python-basics')).toMatchObject({
       lessonCount: 10,
