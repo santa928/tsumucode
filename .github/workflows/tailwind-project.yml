@@ -10,6 +10,7 @@ on:
       - src/adapters/runtime/preview-kernel/**
       - src/core/content/**
       - src/core/validation/**
+      - src/core/persistence/TabLeaseCoordinator.ts
       - src/features/learning/session/**
       - src/features/learning/pages/EditableExercisePage.tsx
       - src/features/learning/portable/PortableSourceExport*
@@ -33,6 +34,7 @@ on:
       - src/adapters/runtime/preview-kernel/**
       - src/core/content/**
       - src/core/validation/**
+      - src/core/persistence/TabLeaseCoordinator.ts
       - src/features/learning/session/**
       - src/features/learning/pages/EditableExercisePage.tsx
       - src/features/learning/portable/PortableSourceExport*

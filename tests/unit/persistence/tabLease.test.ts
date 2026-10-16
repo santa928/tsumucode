@@ -414,6 +414,210 @@ describe('TabLeaseCoordinator', () => {
     afterReload.dispose();
   });
 
+  it.each([
+    ['claim前', false],
+    ['claim CAS待機中', true],
+  ] as const)(
+    'reloadの%sに旧self tokenを再検証しても新claimを取り消さない',
+    async (_phase, holdClaim) => {
+      const hub = new BroadcastHub();
+      const clock = new FakeClock();
+      const storage = new MemoryStorage();
+      const lifecycleTarget = new EventTarget();
+      const persistence = new SharedLeasePersistence(() => clock.now);
+      const beforeReload = createCoordinator('tab-before', hub, clock, {
+        storage,
+        leasePersistence: persistence,
+      });
+      const oldHandle = beforeReload.acquire(COURSE_ID, WORKSPACE_ID, {
+        beforeYield: async () => {},
+      });
+      finishClaim(clock);
+      await flushPromises();
+      const ownerId = oldHandle.getSnapshot().ownerId;
+      const claimGate = deferred();
+      const claim = persistence.tryClaimWorkspaceLease.bind(persistence);
+      const claimSpy = vi
+        .spyOn(persistence, 'tryClaimWorkspaceLease')
+        .mockImplementationOnce(async (candidate) => {
+          if (holdClaim) await claimGate.promise;
+          return claim(candidate);
+        });
+      const afterReload = createCoordinator('tab-after', hub, clock, {
+        storage,
+        reuseStoredTabId: true,
+        leasePersistence: persistence,
+        lifecycleTarget,
+        isVisible: () => true,
+      });
+      const newHandle = afterReload.acquire(COURSE_ID, WORKSPACE_ID, {
+        beforeYield: async () => {},
+      });
+      try {
+        if (holdClaim) {
+          finishClaim(clock);
+          expect(claimSpy).toHaveBeenCalledOnce();
+        }
+        lifecycleTarget.dispatchEvent(new Event('focus'));
+        lifecycleTarget.dispatchEvent(new Event('pageshow'));
+        lifecycleTarget.dispatchEvent(new Event('visibilitychange'));
+        await flushPromises();
+        expect(newHandle.getSnapshot().status).toBe('claiming');
+        if (!holdClaim) finishClaim(clock);
+        claimGate.resolve();
+        await flushPromises();
+        expect(newHandle.getSnapshot()).toMatchObject({ status: 'owned', ownerId });
+        await expect(
+          oldHandle.runFencedWrite(async (_token, proof) => {
+            persistence.assertWrite(proof);
+          }),
+        ).rejects.toBeInstanceOf(LeaseFenceRejectedError);
+        await expect(
+          newHandle.runFencedWrite(async (_token, proof) => {
+            persistence.assertWrite(proof);
+          }),
+        ).resolves.toBeUndefined();
+      } finally {
+        claimGate.resolve();
+        claimSpy.mockRestore();
+        beforeReload.dispose();
+        afterReload.dispose();
+      }
+    },
+  );
+
+  it('別ownerのclaim CAS待機中の復帰通知もCAS拒否後はread-onlyへ収束する', async () => {
+    const hub = new BroadcastHub();
+    const clock = new FakeClock();
+    const lifecycleTarget = new EventTarget();
+    const persistence = new SharedLeasePersistence(() => clock.now);
+    const foreign = {
+      courseId: COURSE_ID,
+      workspaceId: WORKSPACE_ID,
+      ownerId: 'other-tab',
+      token: 'other-token',
+      dataEpoch: 0,
+      expiresAt: clock.now + 60,
+    };
+    persistence.forceOwner(foreign);
+    const claimGate = deferred();
+    const claim = persistence.tryClaimWorkspaceLease.bind(persistence);
+    const claimSpy = vi
+      .spyOn(persistence, 'tryClaimWorkspaceLease')
+      .mockImplementationOnce(async (candidate) => {
+        await claimGate.promise;
+        return claim(candidate);
+      });
+    const coordinator = createCoordinator('tab-a', hub, clock, {
+      leasePersistence: persistence,
+      lifecycleTarget,
+    });
+    const handle = coordinator.acquire(COURSE_ID, WORKSPACE_ID, { beforeYield: async () => {} });
+    try {
+      finishClaim(clock);
+      lifecycleTarget.dispatchEvent(new Event('pageshow'));
+      await flushPromises();
+      expect(handle.getSnapshot().status).toBe('claiming');
+      claimGate.resolve();
+      await flushPromises();
+      expect(handle.getSnapshot()).toMatchObject({ status: 'read-only', ownerId: foreign.ownerId });
+      const write = vi.fn(async () => {});
+      await expect(handle.runFencedWrite(write)).rejects.toThrow('編集権を保持していません');
+      expect(write).not.toHaveBeenCalled();
+      persistence.assertWrite(foreign);
+    } finally {
+      claimGate.resolve();
+      claimSpy.mockRestore();
+      coordinator.dispose();
+    }
+  });
+
+  it('先行する永続readの後着は期限切れ後に始まったclaimを予約し直さない', async () => {
+    const hub = new BroadcastHub();
+    const clock = new FakeClock();
+    const lifecycleTarget = new EventTarget();
+    const persistence = new SharedLeasePersistence(() => clock.now);
+    const oldOwner = {
+      courseId: COURSE_ID,
+      workspaceId: WORKSPACE_ID,
+      ownerId: 'closed-tab',
+      token: 'old-token',
+      dataEpoch: 0,
+      expiresAt: clock.now + 60,
+    };
+    persistence.forceOwner(oldOwner);
+    const coordinator = createCoordinator('tab-a', hub, clock, {
+      leasePersistence: persistence,
+      lifecycleTarget,
+    });
+    const handle = coordinator.acquire(COURSE_ID, WORKSPACE_ID, { beforeYield: async () => {} });
+    finishClaim(clock);
+    await flushPromises();
+    expect(handle.getSnapshot().status).toBe('read-only');
+    const readGate = deferred<WorkspaceLeaseProof>();
+    const readSpy = vi
+      .spyOn(persistence, 'readWorkspaceLease')
+      .mockImplementationOnce(() => readGate.promise);
+    try {
+      clock.advance(44);
+      lifecycleTarget.dispatchEvent(new Event('focus'));
+      expect(readSpy).toHaveBeenCalledOnce();
+      clock.advance(6);
+      expect(handle.getSnapshot().status).toBe('claiming');
+      readGate.resolve(oldOwner);
+      await flushPromises();
+      clock.advance(5);
+      await flushPromises();
+      expect(handle.getSnapshot()).toMatchObject({ status: 'owned', ownerId: 'tab-a-1' });
+    } finally {
+      readGate.resolve(oldOwner);
+      readSpy.mockRestore();
+      coordinator.dispose();
+    }
+  });
+
+  it('再claim中の復帰通知でもdata epoch不一致のCAS拒否を破棄しない', async () => {
+    const hub = new BroadcastHub();
+    const clock = new FakeClock();
+    const lifecycleTarget = new EventTarget();
+    const persistence = new SharedLeasePersistence(() => clock.now);
+    const coordinator = createCoordinator('tab-a', hub, clock, {
+      leasePersistence: persistence,
+      lifecycleTarget,
+    });
+    const handle = coordinator.acquire(COURSE_ID, WORKSPACE_ID, { beforeYield: async () => {} });
+    finishClaim(clock);
+    await flushPromises();
+    persistence.replaceAll();
+    lifecycleTarget.dispatchEvent(new Event('focus'));
+    await flushPromises();
+    expect(handle.getSnapshot().status).toBe('claiming');
+    const claimGate = deferred();
+    const claim = persistence.tryClaimWorkspaceLease.bind(persistence);
+    const claimSpy = vi
+      .spyOn(persistence, 'tryClaimWorkspaceLease')
+      .mockImplementationOnce(async (candidate) => {
+        await claimGate.promise;
+        return claim(candidate);
+      });
+    try {
+      finishClaim(clock);
+      expect(claimSpy).toHaveBeenCalledOnce();
+      lifecycleTarget.dispatchEvent(new Event('pageshow'));
+      await flushPromises();
+      claimGate.resolve();
+      await flushPromises();
+      expect(handle.getSnapshot().status).toBe('released');
+      const write = vi.fn(async () => {});
+      await expect(handle.runFencedWrite(write)).rejects.toThrow('編集権を保持していません');
+      expect(write).not.toHaveBeenCalled();
+    } finally {
+      claimGate.resolve();
+      claimSpy.mockRestore();
+      coordinator.dispose();
+    }
+  });
+
   it('late joinのprobeへownerがheartbeatで応答しread-onlyにする', () => {
     const hub = new BroadcastHub();
     const clock = new FakeClock();
