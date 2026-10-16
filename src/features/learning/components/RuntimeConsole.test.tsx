@@ -38,4 +38,17 @@ describe('RuntimeConsole', () => {
     expect(screen.getByText('前回成功時のConsoleです')).toBeVisible();
     expect(screen.getByText('前回の値')).toBeVisible();
   });
+
+  it('空文字の1行を未出力や空白文字と区別し、元のConsole値は変えない', () => {
+    const record = { sequence: 0, level: 'log' as const, text: '' };
+    const { rerender } = render(<RuntimeConsole records={[record]} freshness="current" />);
+
+    expect(screen.getByText('（空の1行）')).toBeVisible();
+    expect(screen.queryByText('まだConsole出力はありません')).not.toBeInTheDocument();
+    expect(record.text).toBe('');
+
+    rerender(<RuntimeConsole records={[{ ...record, text: ' ' }]} freshness="current" />);
+    expect(screen.queryByText('（空の1行）')).not.toBeInTheDocument();
+    expect(document.querySelector('code')?.textContent).toBe(' ');
+  });
 });

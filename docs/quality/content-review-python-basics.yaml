@@ -17,14 +17,14 @@ lessons:
   - lessonId: python-basics-ch01-l02
     authorId: tsumucode-python-author
     reviewerId: issue130_security_review
-    sourceHash: af2044b86b7f449e548444a1ed3c5641003db47c9ac3e4228a4c19bc9c539947
+    sourceHash: d1e92a76600dc4fd79c718ab9773db5f12c83599fe8a333bb11526529542be3a
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 独立AI担当issue130_security_reviewが全Lessonと実製品を照合し、Browser事前入力・全体1.5秒とLocal途中対話・未採点練習の案内を承認。正確性・目標整合・未説明語・Hint漏れの必須指摘0。実行Source・例コードは不変のため既存実行証拠を元条件で再利用。新たな実操作受入・Browser途中入力実装・公開許可とは別。
+    notes: 独立AI担当issue130_security_reviewが全Lessonと製品を再照合し、事前入力の操作例から環境差・空行とEOF・固定採点へ進む説明を承認。正確性・目標整合・未説明語・Hint漏れの必須指摘0。例コードは不変のため既存実行証拠を元条件で再利用。修正後候補の独立CUA・Browser途中入力実装・公開許可とは別。
   - lessonId: python-basics-ch01-l03
     authorId: tsumucode-python-author
     reviewerId: codex-issue147-prepublication-review

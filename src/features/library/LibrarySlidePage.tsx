@@ -64,6 +64,7 @@ export function LibrarySlidePage() {
   const glossary = resolveGlossary(course, lesson);
   const previousPath = previous?.path;
   const nextPath = next?.path;
+  const nextIsNewLesson = next !== undefined && next.lesson.id !== current.lesson.id;
   const positionLabel = `Lesson ${String(current.lessonIndex + 1)} / ${String(
     current.lessonCount,
   )}・Slide ${String(current.slideIndex + 1)} / ${String(current.slideCount)}`;
@@ -155,8 +156,12 @@ export function LibrarySlidePage() {
                 スライド目次へ戻る
               </Link>
             ) : (
-              <Link to={nextPath} aria-label="次のスライドへ" className="tc-library-pager-primary">
-                次へ →
+              <Link
+                to={nextPath}
+                aria-label={nextIsNewLesson ? '次のレッスンの説明へ' : '次のスライドへ'}
+                className="tc-library-pager-primary"
+              >
+                {nextIsNewLesson ? '次のレッスンの説明へ' : '次へ'} →
               </Link>
             )}
           </nav>

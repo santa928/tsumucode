@@ -116,9 +116,39 @@ it('実行済みのfalse事実は未確認ではなく教材条件との不一�
   expect(result.status).toBe('incomplete');
   expect(result.checks[0]).toMatchObject({
     passed: false,
-    actual: '教材のコード条件に一致しません',
+    actual: 'コード条件: 未達／出力: 一致',
   });
 });
+
+it.each([
+  [true, true, 'コード条件: 達成／出力: 一致', 'pass'],
+  [false, true, 'コード条件: 未達／出力: 一致', 'incomplete'],
+  [true, false, 'コード条件: 達成／出力: 不一致', 'incomplete'],
+  [false, false, 'コード条件: 未達／出力: 不一致', 'incomplete'],
+] as const)(
+  '入力Lessonのコード条件%sと出力%sを分けて示し、生出力を結果へ保存しない',
+  async (factCorrect, outputCorrect, actual, status) => {
+    const context = await fixedContext();
+    const privateOutput = '利用者の入力に由来する出力';
+    const changed: ValidationContext = {
+      ...context,
+      execution: {
+        ...context.execution!,
+        evidence: context.execution!.evidence.map((item) => {
+          if (item.id === 'python.input-echoed') return { ...item, value: factCorrect };
+          if (item.id === 'python.stdout' && !outputCorrect)
+            return { ...item, value: privateOutput };
+          return item;
+        }),
+      },
+    };
+
+    const result = await new PythonLessonValidator('cpython').validate(changed);
+    expect(result.status).toBe(status);
+    expect(result.checks[0]?.actual).toBe(actual);
+    expect(JSON.stringify(result)).not.toContain(privateOutput);
+  },
+);
 
 it.each(['missing', 'practice', 'partial', 'identity', 'case-id'])(
   '練習や不完全な固定採点証拠を受け付けない: %s',
