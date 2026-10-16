@@ -18,7 +18,7 @@ Contactは「連絡できる」だけでなく、Link名から相手と目的が
 
 ![ContactとResponsive確認](asset:contact-responsive-check)
 
-Contactは`contact`というidを持つsection要素の中へ、h2と「つむぎへ感想を送る」というa要素を置きます。
+Contactは`contact`というidを持つsection要素の中へ、h2と「つむぎへ感想を送る」というa要素を置きます。aの開始タグへ、判定用の目印`data-contact-link`を付けます。
 
 ```css
 .works-grid {

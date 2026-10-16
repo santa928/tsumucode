@@ -32,7 +32,7 @@ steps:
     file: index.html
     target: main内の最初のsection
     starterAnchor: '<section aria-labelledby="intro-title">'
-    change: src="asset:profile-avatar"とdata-profile-avatarを持つimgにaltを付け、h1、Worksへ進むPrimary LinkとHeroへまとめる
+    change: imgへsrc="asset:profile-avatar"、data-profile-avatar、altを付け、h1と、data-primary-linkを持ち#worksへ進むaをHeroへまとめる
     observe: 最初の画面で誰のページかと次の行動が伝わる
     requiresConceptIds: [hero]
     validationRuleIds:
@@ -95,7 +95,7 @@ validationRules:
     feedback:
       target: Profile AvatarのAccessible Name
       expected: 画像内容が分かる空でない説明
-      nextAction: 意味のあるAvatarのaltへ人物と内容を短く書きます。
+      nextAction: Avatarのimgへdata-profile-avatarを付け、altへ人物と内容を短く書きます。
     hintId: html-css-ch12-l02-e01-h02
     relatedSlideId: html-css-ch12-l02-g01
   - id: html-css-ch12-l02-e01-r04
@@ -109,7 +109,7 @@ validationRules:
     feedback:
       target: HeroのPrimary Link
       expected: '#worksへ進み目的が分かるLink'
-      nextAction: hrefを#worksにし、作品を見ることが分かるLink Textを書きます。
+      nextAction: Primary Linkのaへdata-primary-linkを付け、hrefを#worksにして、作品を見ることが分かるTextを書きます。
     hintId: html-css-ch12-l02-e01-h03
     relatedSlideId: html-css-ch12-l02-g01
   - id: html-css-ch12-l02-e01-r05

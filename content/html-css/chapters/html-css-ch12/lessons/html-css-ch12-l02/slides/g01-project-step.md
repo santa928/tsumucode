@@ -21,11 +21,13 @@ Navigationはページ内の道案内、Heroは「誰のページで、次に何
 ```html
 <nav aria-label="プロフィール内"><a href="#about">About</a><a href="#works">Works</a></nav>
 <section class="hero">
-  <img src="profile.svg" alt="Code Cardを持つつむぎ" />
+  <img data-profile-avatar src="asset:profile-avatar" alt="Code Cardを持つつむぎ" />
   <h1>つむぎの学習プロフィール</h1>
-  <a href="#works">つむぎの作品を見る</a>
+  <a data-primary-link href="#works">つむぎの作品を見る</a>
 </section>
 ```
+
+`data-profile-avatar`と`data-primary-link`は、判定する部品の目印です。開始タグへ属性として付けます。見た目を整えるClassや、画像内容を伝える`alt`の代わりにはなりません。
 
 :::practice
 prompt: Primary Linkを「見る」ではなく「つむぎの作品を見る」と書く理由を答えます。

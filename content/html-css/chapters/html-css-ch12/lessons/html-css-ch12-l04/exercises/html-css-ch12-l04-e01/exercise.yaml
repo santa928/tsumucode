@@ -14,7 +14,7 @@ steps:
     file: index.html
     target: main末尾のContact Section
     starterAnchor: '</main>'
-    change: bodyへdata-profile-pageを付け、h2、説明、相手と目的が分かるLinkを持つContactを追加する
+    change: bodyへdata-profile-pageを付け、h2、説明、data-contact-linkを持つaで相手と目的を伝えるContactを追加する
     observe: Contact Linkを単独で読んでも目的が伝わり、Page境界を2幅で測れる
     requiresConceptIds: [contact]
     validationRuleIds:
@@ -80,7 +80,7 @@ validationRules:
     feedback:
       target: Contact LinkのAccessible Name
       expected: 連絡方法と相手が分かる空でない名前
-      nextAction: Contact Linkへ誰に何を送るかが分かるTextを書きます。
+      nextAction: Contact Linkのaの開始タグへdata-contact-linkを付け、誰に何を送るかが分かるTextを書きます。
     hintId: html-css-ch12-l04-e01-h02
     relatedSlideId: html-css-ch12-l04-g01
   - id: html-css-ch12-l04-e01-r04
@@ -137,7 +137,7 @@ hints:
   - id: html-css-ch12-l04-e01-h02
     level: 2
     title: Contactを単独で読む
-    text: Linkだけを読んでも連絡先と行動が分かる文言にします。
+    text: Contactのaへdata-contact-linkを付け、Linkだけを読んでも連絡先と行動が分かる文言にします。
     relatedSlideId: html-css-ch12-l04-g01
   - id: html-css-ch12-l04-e01-h03
     level: 3

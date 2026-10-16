@@ -14,20 +14,24 @@ assets:
     provenanceId: ch12-skills-works-system-original
 ---
 
-内容のまとまりはHTMLで、繰り返す見た目はClassで表します。Skillsは`ul`、Worksは複数の`article`にして、役割に合うLayoutを選びます。
+内容はHTML、共通の見た目はClassで表します。Skillsは`ul`、Worksは複数の`article`にします。
+
+判定用の目印として、About本文の`p`へ`data-about-copy`、Skillsの`ul`へ`data-skill-list`を付けます。
 
 ![SkillsとWorksの部品構成](asset:skills-works-system)
 
 ```html
 <section class="surface-card">
   <div data-works-layout class="works-grid">
-    <article class="work-card">Profile Card</article>
-    <article class="work-card">Learning Note</article>
+    <article data-work-card class="work-card">Profile Card</article>
+    <article data-work-card class="work-card">Learning Note</article>
   </div>
 </section>
 ```
 
 `.works-grid`へ`display: grid`と`grid-template-columns: repeat(2, 1fr)`を指定します。
+
+作品画像の`img`へ`data-work-image`と`class="work-image"`を付けます。前者は判定用の目印、後者は次工程のCSS用です。
 
 :::practice
 prompt: Skill名の集まりにdivではなくulとliを使う理由を答えます。
@@ -35,4 +39,4 @@ expectedAction: 順序のない項目の集まりという意味をHTMLで表せ
 estimatedMinutes: 2
 :::
 
-実習ではAboutとSkillsを仕上げたあと、2件のWork CardをGridへ並べます。Responsive化は次の工程です。
+Work Cardを2件Gridへ並べます。Responsive化は次です。

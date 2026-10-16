@@ -14,7 +14,7 @@ steps:
     file: index.html
     target: AboutとWorks準備中のsection
     starterAnchor: '<section id="works" aria-labelledby="works-title">'
-    change: About本文を整え、3件のSkillをulへ入れ、2つのSectionでsurface-cardを再利用する
+    change: Aboutのsectionへdata-about、本文pへdata-about-copy、Skillのulへdata-skill-listを付けて3件のliを入れ、2つのSectionでsurface-cardを再利用する
     observe: About、Skill List、共通Surface、Line Heightの4判定が合格する
     requiresConceptIds: [skills]
     validationRuleIds:
@@ -34,7 +34,7 @@ steps:
     file: index.html
     target: '#works内の準備中Text'
     starterAnchor: '<p>最初のProfile Cardを準備中です。</p>'
-    change: 2件のarticleをdata-works-layout内へ置き、1件目へ説明的なaltを持つasset:profile-avatar画像を入れる
+    change: data-works-layoutを持つ親へdata-work-card付きarticleを2件置き、1件目のimgへdata-work-image、class="work-image"、説明的なaltとasset:profile-avatarを指定する
     observe: Worksが画像付きProfile CardとLearning Noteの2件として読める
     requiresConceptIds: [works]
     validationRuleIds:
@@ -67,7 +67,7 @@ validationRules:
     feedback:
       target: ProfileのAbout Section
       expected: data-aboutを持つSectionが存在する
-      nextAction: 学習内容と目標をまとめるAbout Sectionを追加します。
+      nextAction: 学習内容と目標をまとめるAboutのsectionへdata-aboutを付けます。
     hintId: html-css-ch12-l03-e01-h01
     relatedSlideId: html-css-ch12-l03-g01
   - id: html-css-ch12-l03-e01-r02
@@ -81,7 +81,7 @@ validationRules:
     feedback:
       target: Skill ListのList Item
       expected: liが3件以上
-      nextAction: ul内へ現在学んでいるSkillをliで3件以上追加します。
+      nextAction: Skillsのulの開始タグへdata-skill-listを付け、子のliへ現在学んでいるSkillを3件以上追加します。
     hintId: html-css-ch12-l03-e01-h02
     relatedSlideId: html-css-ch12-l03-g01
   - id: html-css-ch12-l03-e01-r03
@@ -114,7 +114,7 @@ validationRules:
     feedback:
       target: About本文のComputed Line Height
       expected: 24px以上
-      nextAction: 16px本文ならline-heightを1.5以上にします。
+      nextAction: About本文のpへdata-about-copyを付け、16px本文ならline-heightを1.5以上にします。
     hintId: html-css-ch12-l03-e01-h03
     relatedSlideId: html-css-ch12-l03-g01
   - id: html-css-ch12-l03-e01-r05
@@ -172,7 +172,7 @@ hints:
   - id: html-css-ch12-l03-e01-h02
     level: 2
     title: 内容とStyleを分ける
-    text: SkillsはList、共通の見た目は再利用Classで表します。
+    text: About本文のpへdata-about-copy、Skillsのulへdata-skill-listを付けます。共通の見た目は再利用Classで表します。
     relatedSlideId: html-css-ch12-l03-g01
   - id: html-css-ch12-l03-e01-h03
     level: 3

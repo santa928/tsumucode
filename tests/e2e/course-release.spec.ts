@@ -166,6 +166,29 @@ test('Chapter 12のSolutionを5工程で持ち越し、過去工程を含む累�
   }
 });
 
+test('Profileの目印不足を最終工程のFeedbackから修正できる', async ({ page }) => {
+  const step = PROFILE_STEPS[4];
+  const solution = await readExerciseSolution(step.chapterId, step.lessonId, step.exerciseId);
+  const markers = ['data-skill-list', 'data-about-copy', 'data-contact-link'];
+  let html = solution['index.html']!;
+  for (const marker of markers) html = html.replace(` ${marker}`, '');
+
+  await openEditableExercise(page, step.lessonId, step.exerciseId, step.title);
+  await replaceWorkspaceFiles(page, { ...solution, 'index.html': html });
+  await page.getByRole('button', { name: '判定する', exact: true }).click();
+  const feedback = page.getByRole('dialog', { name: '判定結果' });
+  await expect(feedback.getByRole('heading', { name: 'あと一歩', exact: true })).toBeVisible();
+  for (const marker of markers) await expect(feedback).toContainText(marker);
+
+  const stored = await readStoredProgress(page);
+  const draft = stored.drafts.find(({ workspaceId }) => workspaceId === PROFILE_WORKSPACE_ID);
+  expect((draft?.['files'] as Record<string, string>)['index.html']).toBe(html);
+  await feedback.getByRole('button', { name: '閉じる', exact: true }).click();
+  await replaceWorkspaceFiles(page, solution);
+  await page.getByRole('button', { name: '判定する', exact: true }).click();
+  await expect(page.getByTestId('learning-completion')).toBeVisible({ timeout: 20_000 });
+});
+
 test('Chapter 13 CapstoneをProfileとは別workspaceへ保存する', async ({ page }) => {
   const profile = PROFILE_STEPS[0];
   await openEditableExercise(page, profile.lessonId, profile.exerciseId, profile.title);
