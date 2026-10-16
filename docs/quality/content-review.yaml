@@ -510,9 +510,9 @@ lessons:
     decision: approved
     notes: 「Profile Siteの設計図を作る」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
   - lessonId: html-css-ch12-l02
-    authorId: tsumucode-dot-wording-author
-    reviewerId: tsumucode-independent-ai-review-2026-10-04
-    sourceHash: 05520d78c5a5d2a4bae43143e86085354b57fa494fd2a7fe0ed54dad8f3b8038
+    authorId: tsumucode-guided-marker-author
+    reviewerId: tsumucode-guided-marker-independent-content-review-2026-10-16
+    sourceHash: 1c5ef9b8eb13fcd48e3c4b6aa77c860485891f875e77b835357103226c380590
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -520,6 +520,11 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes: >-
+      2026-10-16: #107の判定用目印の説明・Step・feedback・Hintと関連Slideを独立AI内容レビュー。
+      accuracy/alignment承認、新規未説明用語0、意図しないhint leakage0。採点定義・ID・Starter・Solution・Fixtureは不変。
+      更新したHTML部分例をChromiumの実習画面へ実入力し、asset:profile-avatarの画像読込とaltを確認、画面画像も確認した。
+      新候補の独立native再観察は別途実施し、この内容レビューで実施済みとは扱わない。
+      以下は旧hash 05520d78c5a5d2a4bae43143e86085354b57fa494fd2a7fe0ed54dad8f3b8038 に対する従来の確認履歴であり、新内容の再実行結果へ読み替えない。
       2026-10-04: #102の手順と素材案内の2ファイルのみ独立AI差分レビュー。
       accuracy/alignment承認、新規未説明用語0、意図しないhint leakage0。
       asset:profile-avatarとdata-profile-avatarのコード例は公開版Chromiumへ実入力し画像表示とAvatar未達の解消を確認、画像を独立レビューした。
@@ -527,27 +532,39 @@ lessons:
       それらの3ブラウザ実行結果は従来の履歴として保持し、今回再実行したとは扱わない。
       新コード例のFirefox/WebKit、実在初心者観察、修正UI全体の実ブラウザ確認は未実施。
   - lessonId: html-css-ch12-l03
-    authorId: tsumucode-content-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: bcb7be5015862ecceca32252888fefcafc32519c56b265e1bad895a7ae26d89c
+    authorId: tsumucode-guided-marker-author
+    reviewerId: tsumucode-guided-marker-independent-content-review-2026-10-16
+    sourceHash: 8d0295238347f7730fa2e08547a3f6c27f7ada8d6218f6592c3bf493a85e4221
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 「AboutとSkillsを育てる」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+    notes: >-
+      2026-10-16: #107の判定用目印の説明・Step・feedback・Hintと関連Slideを独立AI内容レビュー。
+      accuracy/alignment承認、新規未説明用語0、意図しないhint leakage0。採点定義・ID・Starter・Solution・Fixtureは不変。
+      最終のHTML部分例をChromiumの実習画面へ実入力し、目印付きの2件のWork Cardの表示と画面画像を確認した。
+      新候補の独立native再観察は別途実施し、この内容レビューで実施済みとは扱わない。
+      以下は旧hash bcb7be5015862ecceca32252888fefcafc32519c56b265e1bad895a7ae26d89c に対する従来の確認履歴であり、新内容の再実行結果へ読み替えない。
+      「AboutとSkillsを育てる」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
   - lessonId: html-css-ch12-l04
-    authorId: tsumucode-content-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: c81c00d07bcd0ef2a7f92a5e64bb7aaa4c76ab43a8df44372c2897aa3e0fa6c1
+    authorId: tsumucode-guided-marker-author
+    reviewerId: tsumucode-guided-marker-independent-content-review-2026-10-16
+    sourceHash: 8e23b5c53eec9a25aea926ffc6e8e79facaea7de769150e20b5abe6087ca756b
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 「WorksとContactをResponsiveにする」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+    notes: >-
+      2026-10-16: #107の判定用目印の説明・Step・feedback・Hintと関連Slideを独立AI内容レビュー。
+      accuracy/alignment承認、新規未説明用語0、意図しないhint leakage0。採点定義・ID・Starter・Solution・Fixtureは不変。
+      CSS例はbyte不変のため従来の実行証拠を再利用。更新したContact目印の案内は累積判定の実画面で確認した。
+      新候補の独立native再観察は別途実施し、この内容レビューで実施済みとは扱わない。
+      以下は旧hash c81c00d07bcd0ef2a7f92a5e64bb7aaa4c76ab43a8df44372c2897aa3e0fa6c1 に対する従来の確認履歴であり、新内容の再実行結果へ読み替えない。
+      「WorksとContactをResponsiveにする」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
   - lessonId: html-css-ch12-l05
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification

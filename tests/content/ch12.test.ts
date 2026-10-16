@@ -121,6 +121,32 @@ describe('html-css-ch12', () => {
     }
   });
 
+  it.each([
+    ['02', 'r04', 'data-primary-link'],
+    ['03', 'r02', 'data-skill-list'],
+    ['03', 'r04', 'data-about-copy'],
+    ['04', 'r03', 'data-contact-link'],
+  ])(
+    '工程%sの%sで必要な目印%sをHTMLの作成時と未達時に案内する',
+    async (lessonNumber, ruleNumber, marker) => {
+      const exerciseId = `html-css-ch12-l${lessonNumber}-e01`;
+      const exercise = loaded.exercises.find(({ id }) => id === exerciseId)!;
+      const instructions = await readFile(
+        `${exerciseDirectory(lessonNumber)}/${exercise.instructionsSource}`,
+        'utf8',
+      );
+      const htmlSteps = (exercise.steps ?? [])
+        .filter(({ file }) => file === 'index.html')
+        .map(({ target, change }) => `${target}\n${change}`)
+        .join('\n');
+      const rule = exercise.validationRules.find(({ id }) => id === `${exerciseId}-${ruleNumber}`)!;
+
+      expect.soft(instructions).toContain(marker);
+      expect.soft(htmlSteps).toContain(marker);
+      expect.soft(rule.feedback.nextAction).toContain(marker);
+    },
+  );
+
   it('Guided Solutionへ既習化されていないCSS表現を持ち込まない', async () => {
     const unsupported =
       /scroll-behavior|clamp\(|\d+(?:\.\d+)?vw|box-shadow|rgb\([^)]*\/|\d+(?:\.\d+)?ch\b|:not\(|place-items|overflow-wrap|aspect-ratio/iu;
