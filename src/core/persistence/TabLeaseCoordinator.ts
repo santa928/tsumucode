@@ -1157,6 +1157,8 @@ class LeaseHandleImpl implements TabLeaseHandle {
   async #reconcilePersistentOwner(): Promise<void> {
     const persistence = this.#runtime.persistence();
     if (persistence === undefined || this.#disposed) return;
+    // 取得中の所有判定はCASへ任せ、並行readで世代やcandidateを失効させない。
+    if (this.#snapshot.status === 'claiming' && this.#candidate !== undefined) return;
     if (this.#revalidationInFlight !== undefined) {
       this.#revalidationRequested = true;
       return;
@@ -1172,6 +1174,8 @@ class LeaseHandleImpl implements TabLeaseHandle {
       return;
     }
     if (this.#isPersistenceOperationStale(generation)) return;
+    // read待ち中に期限切れ再claimが始まった場合も、元のprobe/CASを維持する。
+    if (this.#snapshot.status === 'claiming' && this.#candidate !== undefined) return;
     if (persisted !== undefined && persisted.expiresAt > this.#runtime.now()) {
       if (this.#adoptPersistedSelfOwner(persisted)) return;
       if (mustSettleOwnedSession) {
