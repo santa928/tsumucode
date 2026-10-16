@@ -135,7 +135,7 @@ describe('LibrarySlidePage', () => {
       'href',
       '/library/html-css/lessons/lesson-a/slides/slide-a-1',
     );
-    expect(screen.getByRole('link', { name: '次のスライドへ' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: '次のレッスンの説明へ' })).toHaveAttribute(
       'href',
       '/library/html-css/lessons/lesson-b/slides/slide-b-1',
     );
@@ -161,6 +161,14 @@ describe('LibrarySlidePage', () => {
     expect(screen.getByRole('link', { name: '通常学習へ戻る' })).toHaveAttribute(
       'href',
       '/courses/html-css',
+    );
+  });
+
+  it('同じLessonの途中は次のスライドへ進むことを示す', async () => {
+    renderLibrarySlide('slide-a-1');
+    expect(await screen.findByRole('link', { name: '次のスライドへ' })).toHaveAttribute(
+      'href',
+      '/library/html-css/lessons/lesson-a/slides/slide-a-2',
     );
   });
 

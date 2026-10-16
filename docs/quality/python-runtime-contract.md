@@ -26,6 +26,12 @@ Python接続はPython演習でだけ遅延importする。固定coreは同origin�
 
 sourceは100 KiB。stdout／stderr合計は64 KiB、1行4,096 bytes、結果は100行以内。別々のUTF-8 decoderで部分writeを結合する。Consoleは実write callbackの行開始順を保ち、Python自身のstdoutバッファリングは反映される。信頼側でもbytes・行数・schemaを照合する。コードのSyntaxError／実行エラー、初期化／Worker障害、未対応、期限／出力制限／手動停止を分ける。環境障害を未達や合格に変換しない。
 
+## 入力方式の承認済み方針（#196）
+
+Browser/Pyodideは実行前の入力を使い、ready後のAST解析・Source反映・学習実行を含む全体1.5秒の期限を維持します。実行途中に入力を待って行を追加・送信・再開する操作は未対応です。入力要求の申告で計算時計を停止したり、非採点練習を61.5秒へ延ばしたりする変更は行いません。
+
+実行途中の入力は、PCの[Local CPythonの未採点練習](local-python-runtime.md#現在のlocal練習と固定採点の契約)で扱います。Localの事前入力Preview、途中対話、固定入力の別採点は区別します。この案内整理はBrowser途中入力の実装ではなく、#196の当初要件と#140の未対応範囲を実装済みへ変更しません。新Pages公開やRuntimeの権限・資源上限の変更も含めません。
+
 ## ローカルの検証と残る受け入れ
 
 Docker内の実Chromiumで、10 Fixtureを実Pyodideと製品採点器へ渡し、pass／incomplete／code-errorと未達Ruleを照合した。policyとは別の診断bundleでJS文字列実行、通信、保存、子Worker、内部参照、prototype、非同期障害、無限実行・停止・過大出力を確認した。親Storageのcanaryは不変、禁止通信の受信は0件だった。これは確認した経路と環境の証拠であり、任意コードを完全に隔離したとの主張ではない。

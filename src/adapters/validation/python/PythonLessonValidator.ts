@@ -246,7 +246,13 @@ export class PythonLessonValidator implements ValidatorAdapter {
             ? 'Test失敗: 期待値と実際の結果を確認してください。'
             : '表示結果と教材のコード条件を確認してください。',
         expected: rule.feedback.expected,
-        actual: factCorrect ? '教材のコード条件を確認済み' : '教材のコード条件に一致しません',
+        // 履歴へ入力値や生出力を残さず、未達の種類だけを伝える。
+        actual:
+          lesson.profile === 'input-echo-v1'
+            ? `コード条件: ${factCorrect ? '達成' : '未達'}／出力: ${outputCorrect ? '一致' : '不一致'}`
+            : factCorrect
+              ? '教材のコード条件を確認済み'
+              : '教材のコード条件に一致しません',
         nextAction: passed ? '' : rule.feedback.nextAction,
         hintId: rule.hintId,
         relatedSlideId: rule.relatedSlideId,

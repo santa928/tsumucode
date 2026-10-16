@@ -1,7 +1,7 @@
 schemaVersion: 1
 id: python-basics
 title: Python入門の学習パス
-description: 値・変数から事前入力、条件分岐、反復へ進む4教材です。実行中の対話入力は未対応です。
+description: 値・変数から事前入力、条件分岐、反復を学び、一覧データと関数を使う小制作へ進みます。Browser版で実行中に入力を追加する操作は未対応です。
 publicationStatus: published
 steps:
   - courseId: python-basics

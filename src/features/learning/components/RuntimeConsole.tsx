@@ -26,7 +26,11 @@ export function RuntimeConsole({ records, freshness, label = 'Console出力' }: 
               data-console-level={record.level}
             >
               <span className="tc-runtime-console-level">{record.level}</span>
-              <code>{record.text}</code>
+              {record.text === '' ? (
+                <span className="tc-runtime-console-empty">（空の1行）</span>
+              ) : (
+                <code>{record.text}</code>
+              )}
             </li>
           ))}
         </ol>
