@@ -17,6 +17,16 @@ Tailwind 5教材、Python実践5教材、Python OOP 9教材の技術的な準備
 
 品質記録を追記した後も、Productが同一なら元のSourceを保持できます。計測時は `--measure --source-sha <元Source>`、通常検証時は記録の `candidate.sourceCommit` を使います。SourceはHEADの祖先である必要があります。除外するmetadataは固定3品質記録と固定3内容レビュー台帳の6fileだけです。任意のpath除外、未追跡Product、別Productの差分は許可しません。metadata自身は内容hash・品質記録hash・全参照集合へ別に結びます。
 
+## 記録の更新先と原本の引継ぎ
+
+| Course          | repo内の品質記録                                        |
+| --------------- | ------------------------------------------------------- |
+| tailwind        | `docs/quality/tailwind-release-preparation.yaml`        |
+| python-practice | `docs/quality/python-practice-release-preparation.yaml` |
+| python-oop      | `docs/quality/python-oop-release-preparation.yaml`      |
+
+計測後、選択した1記録へ実際のauthorとcandidateを記入し、私有Directory内に元操作・code review・独立照合のJSONとraw fileを揃えます。引継ぎ時はDirectory全体を許可された私有保存先から読み取り可能にし、相対pathを維持して内容hashを再照合します。保存先や原本を取得できなければdraftを保持し、不足分を実施済みにしません。原本・3codeレビュー・独立照合が揃った後だけ `ready-for-technical-verification` と各参照を記入して通常検証を実行します。このstatus自体は承認ではありません。
+
 ## 私有原本の形式
 
 全JSONは未知fieldを拒否します。実測値だけを記入し、不足値を合成値で埋めません。候補 `candidate` は計測出力をそのまま保持します。`sourceCommit`／`sourceTree` は40桁、他hashは64桁の小文字hexです。
@@ -49,7 +59,7 @@ Node、Local、portableは `automated-test` かつ `scopes: [runtime]` の場合
 
 `usability` は履歴なし・作者／3code担当とは別の `computer-use`、`executionTarget: browser-ui` です。必要LessonはTailwind全5、Python各最初と最後です。これは既存受入の限定範囲で、全Project実装能力の受入や物理端末の性能保証へ拡張しません。`accessibility`／`delivery` は全Lesson、`persistence` は最初と最後が必要です。これらのサイト操作も実サイトdistを保持します。
 
-入力指紋は `scripts/release/draftQualityInputHashes.ts` の `hashDraftQualityInputs(root, sourceCommit, courseId, scope, lessonIds)` で計測します。tsxから同helperをimportして、元Sourceの実値を記録してください。validatorは元Sourceと現候補の両方を再計測します。runtimeは対象Lessonの実行・検証fileと固定実行基盤、他scopeは対象教材と画面・配信基盤を含みます。他Lessonの追加やrevisionだけで旧runtimeを失効させません。画面基盤の変更は保守的に該当scopeを失効させます。単なる互換性の自己申告やSource SHAの付替えは受理しません。
+入力指紋は `scripts/release/draftQualityInputHashes.ts` の `hashDraftQualityInputs(root, sourceCommit, courseId, scope, lessonIds)` で計測します。tsxから同helperをimportして、元Sourceの実値を記録してください。validatorは元Sourceと現候補の両方を再計測します。全scopeに教材Compilerを含めます。runtimeは対象Lessonの選択metadata・実行・検証fileと固定実行基盤、他scopeは対象教材・Course共通metadata・public実Asset・画面・配信基盤を含みます。他Lessonの追加やrevisionだけで旧runtimeを失効させません。画面基盤の変更は保守的に該当scopeを失効させます。単なる互換性の自己申告やSource SHAの付替えは受理しません。
 
 3つのcode review JSONは `schemaVersion`、`courseId`、`actor`、`role`（`requirements-logic`／`security`／`structure` を各1名）、`sourceCommit`、`productTreeSha256`、`decision: approved`、`mandatoryFindings: 0`、`rawReport` です。3担当は相互に別で作者とも別です。レビュー原文を実際に照合し、元Sourceと同Productの範囲でのみ再利用します。
 

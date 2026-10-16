@@ -113,12 +113,17 @@ export async function hashDraftQualityInputs(
       ),
     );
     const runtimeLessonFile =
-      relative.includes('/exercises/') &&
-      (!relative.endsWith('.md') || /\/(?:starter|fixtures|solution)\//u.test(relative));
+      !relative.endsWith('.md') || /\/(?:starter|fixtures|solution)\//u.test(relative);
+    const courseShared =
+      scope !== 'runtime' &&
+      relative.startsWith(`${contract.sourceRoot}/`) &&
+      !relative.includes('/lessons/');
     const common =
       (lesson !== undefined && (scope !== 'runtime' || runtimeLessonFile)) ||
       (scope !== 'runtime' && relative === `${contract.sourceRoot}/course.yaml`) ||
       relative.startsWith(`${contract.sourceRoot}/assets/`) ||
+      courseShared ||
+      relative.startsWith('scripts/content/') ||
       ROOT_INPUTS.has(relative);
     const runtime =
       scope === 'runtime' &&
@@ -127,7 +132,10 @@ export async function hashDraftQualityInputs(
         relative.startsWith('vendor/') ||
         relative === 'Dockerfile.learning' ||
         relative === 'compose.learning.yaml');
-    const userInterface = scope !== 'runtime' && relative.startsWith('src/');
+    const userInterface =
+      scope !== 'runtime' &&
+      (relative.startsWith('src/') ||
+        (relative.startsWith('public/') && !relative.startsWith('public/generated/')));
     const delivery =
       scope === 'delivery' &&
       (relative.startsWith('scripts/build/') ||

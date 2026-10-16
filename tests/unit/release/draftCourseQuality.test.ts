@@ -297,6 +297,33 @@ afterEach(async () => {
 });
 
 describe('3草稿の私有原本と候補binding', () => {
+  it.each([
+    ['scripts/content/compileCourse.ts', 'runtime'],
+    ['scripts/content/compileCourse.ts', 'usability'],
+    ['content/tailwind/glossary.yaml', 'usability'],
+    ['content/tailwind/concepts.yaml', 'usability'],
+    ['content/tailwind/chapters/tailwind-ch01/chapter.yaml', 'accessibility'],
+    ['public/assets/course-diagram.svg', 'accessibility'],
+    ['content/tailwind/chapters/tailwind-ch01/lessons/tailwind-ch01-l01/lesson.yaml', 'runtime'],
+  ] as const)('実入力%sの変更で旧%s観測を再利用しない', async (relative, scope) => {
+    const f = await fixture();
+    const lessons = ['tailwind-ch01-l01'];
+    const before = await hashDraftQualityInputs(
+      f.root,
+      f.candidate.sourceCommit,
+      'tailwind',
+      scope,
+      lessons,
+    );
+    await mkdir(path.dirname(path.join(f.root, relative)), { recursive: true });
+    await writeFile(path.join(f.root, relative), 'changed compiler or visible input');
+    await git(f.root, ['add', '.']);
+    await git(f.root, ['commit', '-m', 'change compiler or visible input']);
+    const source = await git(f.root, ['rev-parse', 'HEAD']);
+    await expect(
+      hashDraftQualityInputs(f.root, source, 'tailwind', scope, lessons),
+    ).resolves.not.toBe(before);
+  });
   it.each(['python-practice', 'python-oop'] as const)(
     '%sのNode・Local・代表Browser原本を元Sourceのまま受理する',
     async (courseId) => {
