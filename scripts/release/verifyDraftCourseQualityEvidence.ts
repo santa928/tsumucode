@@ -141,6 +141,7 @@ export async function verifyDraftCourseQualityEvidence(
     const runtime = observation.scopes.includes('runtime');
     const browser = observation.executionTarget.startsWith('browser-');
     if (
+      (runtime && observation.scopes.length !== 1) ||
       (runtime &&
         !contract.runtimeRequirements.some(
           ({ target }) => target === observation.executionTarget,

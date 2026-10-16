@@ -126,6 +126,7 @@ export async function hashDraftQualityInputs(
       relative.startsWith('scripts/content/') ||
       relative.startsWith('scripts/build/') ||
       relative === 'scripts/inline-production-css.ts' ||
+      (relative.startsWith('public/') && !relative.startsWith('public/generated/')) ||
       ROOT_INPUTS.has(relative);
     const runtime =
       scope === 'runtime' &&
@@ -134,10 +135,7 @@ export async function hashDraftQualityInputs(
         relative.startsWith('vendor/') ||
         relative === 'Dockerfile.learning' ||
         relative === 'compose.learning.yaml');
-    const userInterface =
-      scope !== 'runtime' &&
-      (relative.startsWith('src/') ||
-        (relative.startsWith('public/') && !relative.startsWith('public/generated/')));
+    const userInterface = scope !== 'runtime' && relative.startsWith('src/');
     const delivery =
       scope === 'delivery' &&
       (relative.startsWith('scripts/build/') ||

@@ -301,8 +301,48 @@ afterEach(async () => {
 });
 
 describe('3草稿の私有原本と候補binding', () => {
+  it.each(['tailwind', 'python-practice'] as const)(
+    '%sのruntime原本にBrowser専用scopeを混在させて操作を代用しない',
+    async (courseId) => {
+      const f = await fixture(false, courseId);
+      const mixedScopes: DraftQualityScope[] = [
+        'runtime',
+        'accessibility',
+        'persistence',
+        'delivery',
+      ];
+      const observation = JSON.parse(
+        await readFile(path.join(f.evidence, 'runtime.json'), 'utf8'),
+      ) as Record<string, unknown>;
+      observation.scopes = mixedScopes;
+      observation.canonicalDistSha256 = f.candidate.canonicalDistSha256;
+      observation.inputSha256ByScope = Object.fromEntries(
+        await Promise.all(
+          mixedScopes.map(async (scope) => [
+            scope,
+            await hashDraftQualityInputs(
+              f.root,
+              f.candidate.sourceCommit,
+              courseId,
+              scope,
+              resolveDraftReleaseCourseContract(courseId).lessonIds,
+            ),
+          ]),
+        ),
+      );
+      f.record.observations = f.record.observations.filter(
+        (ref) => !['accessibility.json', 'persistence.json', 'delivery.json'].includes(ref.path),
+      );
+      f.record.observations[0] = await reference(f.evidence, 'runtime.json', observation);
+      await f.refreshOriginalsReview();
+      await expect(
+        verifyDraftCourseQualityEvidence(f.root, f.evidence, f.record, f.candidate),
+      ).rejects.toThrow(/実行対象/u);
+    },
+  );
   it.each([
     ['scripts/content/compileCourse.ts', 'runtime'],
+    ['public/tailwind-runtime/4.3.2/browser.global.js', 'runtime'],
     ['scripts/build/preparePythonAssets.ts', 'runtime'],
     ['scripts/build/preparePythonAssets.ts', 'usability'],
     ['scripts/inline-production-css.ts', 'accessibility'],

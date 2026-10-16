@@ -55,11 +55,13 @@ Tailwind 5教材、Python実践5教材、Python OOP 9教材の技術的な準備
 | Python実践 | `node-pyodide`／`local-cpython` 各全5、`browser-pyodide` 最初と最後 |
 | Python OOP | `node-pyodide`／`local-cpython` 各全9、`browser-pyodide` 最初と最後 |
 
+runtime原本のscopesは `[runtime]` だけとし、Browser向けのusability／accessibility／persistence／deliveryと混在させません。Browser向けscopeには `browser-ui` の別観測が必要です。
+
 Node、Local、portableは `automated-test` かつ `scopes: [runtime]` の場合だけサイトdistを適用外にできます。Nodeの成功でBrowser／Localを、Browserの成功で持ち出しproduction buildを代用できません。ZIPとbuild manifestは実bytesを照合しますが、その内容が実行成功を裏付けるかは独立原本照合が必要です。
 
 `usability` は履歴なし・作者／3code担当とは別の `computer-use`、`executionTarget: browser-ui` です。必要LessonはTailwind全5、Python各最初と最後です。これは既存受入の限定範囲で、全Project実装能力の受入や物理端末の性能保証へ拡張しません。`accessibility`／`delivery` は全Lesson、`persistence` は最初と最後が必要です。これらのサイト操作も実サイトdistを保持します。
 
-入力指紋は `scripts/release/draftQualityInputHashes.ts` の `hashDraftQualityInputs(root, sourceCommit, courseId, scope, lessonIds)` で計測します。tsxから同helperをimportして、元Sourceの実値を記録してください。validatorは元Sourceと現候補の両方を再計測します。全scopeに教材Compilerを含めます。runtimeは対象Lessonの選択metadata・実行・検証fileと固定実行基盤、他scopeは対象教材・Course共通metadata・public実Asset・画面・配信基盤を含みます。他Lessonの追加やrevisionだけで旧runtimeを失効させません。画面基盤の変更は保守的に該当scopeを失効させます。単なる互換性の自己申告やSource SHAの付替えは受理しません。
+入力指紋は `scripts/release/draftQualityInputHashes.ts` の `hashDraftQualityInputs(root, sourceCommit, courseId, scope, lessonIds)` で計測します。tsxから同helperをimportして、元Sourceの実値を記録してください。validatorは元Sourceと現候補の両方を再計測します。全scopeに教材Compiler・生成基盤・追跡Public Asset（public/generatedを除く）を含めます。runtimeは対象Lessonの選択metadata・実行・検証fileと固定実行基盤、他scopeは対象教材・Course共通metadata・画面・配信基盤を含みます。Public Assetや共通基盤の変更はCourseをまたいで保守的に失効させる場合があります。他Lessonの追加やrevisionだけで旧runtimeを失効させません。画面基盤の変更は保守的に該当scopeを失効させます。単なる互換性の自己申告やSource SHAの付替えは受理しません。
 
 3つのcode review JSONは `schemaVersion`、`courseId`、`actor`、`role`（`requirements-logic`／`security`／`structure` を各1名）、`sourceCommit`、`productTreeSha256`、`decision: approved`、`mandatoryFindings: 0`、`rawReport` です。3担当は相互に別で作者とも別です。レビュー原文を実際に照合し、元Sourceと同Productの範囲でのみ再利用します。
 
