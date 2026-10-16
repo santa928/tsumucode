@@ -5,6 +5,11 @@ import path from 'node:path';
 import { promisify } from 'node:util';
 import { canonicalJson } from '../../src/core/persistence/canonicalJson';
 import {
+  draftReleaseMetadataPaths,
+  resolveDraftReleaseCourseContract,
+  type DraftReleaseCourseId,
+} from './draftReleaseCourseContracts';
+import {
   isReleaseMetadataPath,
   resolveReleaseCourseContract,
   type ReleaseCourseId,
@@ -95,15 +100,40 @@ export async function hashReleaseCandidateTree(
   revision?: string,
 ): Promise<string> {
   resolveReleaseCourseContract(courseId);
+  return hashTrackedProductTree(repositoryRoot, fileOverrides, (relative) =>
+    isReleaseMetadataPath(relative, courseId, revision),
+  );
+}
+
+/** 固定3草稿の宣言済み品質記録だけを除外し、実Product bytesをhashする。 */
+export async function hashDraftReleaseCandidateTree(
+  repositoryRoot: string,
+  courseId: DraftReleaseCourseId,
+): Promise<string> {
+  resolveDraftReleaseCourseContract(courseId);
+  const metadata = draftReleaseMetadataPaths();
+  return hashTrackedProductTree(repositoryRoot, new Map(), (relative) => metadata.has(relative));
+}
+
+/** 公開済み契約と草稿契約でbyte列挙を共有し、除外規則は各固定入口に残す。 */
+async function hashTrackedProductTree(
+  repositoryRoot: string,
+  fileOverrides: ReadonlyMap<string, Uint8Array>,
+  isMetadataPath: (relative: string) => boolean,
+): Promise<string> {
   const root = path.resolve(repositoryRoot);
-  const { stdout } = await execFileAsync('git', ['ls-files', '-z'], {
-    cwd: root,
-    encoding: 'utf8',
-    maxBuffer: 32 * 1024 * 1024,
-  });
+  const { stdout } = await execFileAsync(
+    'git',
+    ['-c', `safe.directory=${root}`, 'ls-files', '-z'],
+    {
+      cwd: root,
+      encoding: 'utf8',
+      maxBuffer: 32 * 1024 * 1024,
+    },
+  );
   const tracked = stdout
     .split('\0')
-    .filter((relative) => relative !== '' && !isReleaseMetadataPath(relative, courseId, revision))
+    .filter((relative) => relative !== '' && !isMetadataPath(relative))
     .sort((left, right) => left.localeCompare(right));
   const unusedOverrides = new Set(fileOverrides.keys());
   const entries: TreeHashEntry[] = [];
