@@ -16,6 +16,7 @@ import {
   fixtureLessonManifest,
 } from '../../tests/fixtures/course';
 import type { CourseProgress, ExerciseDraft } from '../core/persistence/contracts';
+import { profileCompletionFixture } from '../../tests/fixtures/profileCompletion';
 import {
   catalogLoader,
   completionLoader,
@@ -340,6 +341,135 @@ describe('lessonResumeLoader', () => {
 });
 
 describe('completionLoader', () => {
+  it.each([
+    '前工程未達',
+    '前工程の完了記録なし',
+    '前工程snapshot欠落',
+    '前工程snapshotが古い',
+    '前工程snapshotの教材revision違い',
+    '前工程がdirty',
+    '前工程Manifest欠落',
+    '保存Draftのworkspace違い',
+  ])('Profileの最終工程だけが合格しても%sなら完成URLへ通さない', async (failure) => {
+    const fixture = profileCompletionFixture();
+    const previous = fixture.manifests[2]!.lesson;
+    const previousExercise = previous.exercises[0]!;
+    let progress = fixture.progress;
+    let draft = fixture.draft;
+    if (failure === '前工程未達') {
+      progress = {
+        ...progress,
+        lessons: {
+          ...progress.lessons,
+          [previous.id]: {
+            ...progress.lessons[previous.id]!,
+            currentComplete: false,
+            passedExerciseIds: [],
+          },
+        },
+      };
+    }
+    if (failure === '前工程の完了記録なし') {
+      progress = {
+        ...progress,
+        lessons: {
+          ...progress.lessons,
+          [previous.id]: { ...progress.lessons[previous.id]!, currentComplete: false },
+        },
+      };
+    }
+    if (failure === '前工程snapshot欠落') {
+      const snapshots = Object.fromEntries(
+        Object.entries(draft.lastPassingSnapshots).filter(([id]) => id !== previousExercise.id),
+      );
+      draft = { ...draft, lastPassingSnapshots: snapshots };
+    }
+    if (failure === '前工程snapshotが古い') {
+      draft = {
+        ...draft,
+        lastPassingSnapshots: {
+          ...draft.lastPassingSnapshots,
+          [previousExercise.id]: {
+            ...draft.lastPassingSnapshots[previousExercise.id]!,
+            editRevision: 0,
+          },
+        },
+      };
+    }
+    if (failure === '前工程snapshotの教材revision違い') {
+      draft = {
+        ...draft,
+        lastPassingSnapshots: {
+          ...draft.lastPassingSnapshots,
+          [previousExercise.id]: {
+            ...draft.lastPassingSnapshots[previousExercise.id]!,
+            contentRevision: 'old-content',
+          },
+        },
+      };
+    }
+    if (failure === '保存Draftのworkspace違い') {
+      draft = { ...draft, workspaceId: 'different-workspace' };
+    }
+    if (failure === '前工程がdirty') {
+      runtime.passFreshness.isDirty.mockImplementation(
+        (_courseId, _workspaceId, exerciseId) => exerciseId === previousExercise.id,
+      );
+    }
+    content.loadCourseCatalog.mockResolvedValue(fixture.catalog);
+    content.loadCourseIndex.mockResolvedValue(fixture.course);
+    content.loadWorkspaceLessons.mockResolvedValue(
+      failure === '前工程Manifest欠落'
+        ? fixture.manifests.filter(({ lesson }) => lesson.id !== previous.id)
+        : fixture.manifests,
+    );
+    runtime.repository.getCourse.mockResolvedValue(progress);
+    runtime.repository.getDraft.mockResolvedValue(draft);
+
+    await expectRouteStatus(
+      completionLoader({
+        params: {
+          courseId: fixture.course.id,
+          lessonId: fixture.lesson.id,
+          exerciseId: fixture.exercise.id,
+        },
+      }),
+      302,
+    );
+  });
+
+  it.each([1, 4])(
+    'Profileの工程%sは現在工程までが同じsnapshotで合格すれば完成へ通す',
+    async (stageIndex) => {
+      const fixture = profileCompletionFixture(stageIndex);
+      content.loadCourseCatalog.mockResolvedValue(fixture.catalog);
+      content.loadCourseIndex.mockResolvedValue(fixture.course);
+      content.loadWorkspaceLessons.mockResolvedValue(fixture.manifests.slice(0, stageIndex + 1));
+      runtime.repository.getCourse.mockResolvedValue({
+        ...fixture.progress,
+        lessons: Object.fromEntries(
+          fixture.manifests
+            .slice(0, stageIndex + 1)
+            .map(({ lesson }) => [lesson.id, fixture.progress.lessons[lesson.id]!]),
+        ),
+      });
+      runtime.repository.getDraft.mockImplementation(async (_courseId, workspaceId) =>
+        workspaceId === fixture.draft.workspaceId ? fixture.draft : undefined,
+      );
+
+      await expect(
+        completionLoader({
+          params: {
+            courseId: fixture.course.id,
+            lessonId: fixture.lesson.id,
+            exerciseId: fixture.exercise.id,
+          },
+        }),
+      ).resolves.toMatchObject({ exercise: { id: fixture.exercise.id } });
+      expect(runtime.repository.getDraft).toHaveBeenCalledTimes(1);
+    },
+  );
+
   it.each(['guided-project', 'capstone'] as const)(
     '実%sの宣言済みcheckpoint所有者をfresh snapshotへ解決する',
     async (kind) => {

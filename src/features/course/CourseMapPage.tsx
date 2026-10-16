@@ -11,6 +11,7 @@ import { WorkshopNotice } from '../../design-system/components/WorkshopNotice';
 import { applyCourseProgress } from '../progress/courseMapProgress';
 import { useCourseProgress } from '../progress/useCourseProgress';
 import { findLessonResumeDraft } from '../progress/lessonResumeTarget';
+import { sharedGuidedProjectStages } from '../progress/sharedGuidedProjectStages';
 
 const KIND_LABEL = {
   standard: '基礎レッスン',
@@ -32,6 +33,10 @@ export function CourseMapPage() {
       ),
     ],
     [lessons],
+  );
+  const sharedProjects = useMemo(() => sharedGuidedProjectStages(course), [course]);
+  const sharedStageIds = new Set(
+    sharedProjects.flatMap(({ lessons: stages }) => stages.map(({ id }) => id)),
   );
   const courseProgress = useCourseProgress(course.id, undefined, workspaceIds);
   const draftLessonTimes = new Map<string, string>();
@@ -158,6 +163,41 @@ export function CourseMapPage() {
                           </span>
                           {chapter.goal}
                         </p>
+                        {sharedProjects
+                          .filter(({ lessons: stages }) =>
+                            chapter.lessons.some(({ id }) => id === stages[0]!.id),
+                          )
+                          .map(({ workspaceId, lessons: stages }) => {
+                            const unfinished = stages.filter(
+                              ({ id }) =>
+                                courseProgress.progress?.lessons[id]?.currentComplete !== true,
+                            );
+                            return (
+                              <div
+                                key={workspaceId}
+                                className="mt-4 space-y-2 text-sm text-workshop-muted"
+                              >
+                                <p>
+                                  「工程合格」はその工程の条件を満たした記録です。制作全体は最終工程で全工程をまとめて判定します。
+                                </p>
+                                {courseProgress.status === 'ready' ? (
+                                  unfinished.length > 0 ? (
+                                    <>
+                                      <p className="font-bold">制作全体は未完了です。</p>
+                                      <p>
+                                        未合格の工程：
+                                        {unfinished.map(({ title }) => title).join('、')}
+                                      </p>
+                                    </>
+                                  ) : (
+                                    <p>
+                                      全工程に合格記録があります。制作全体の完成は最終工程の判定結果で確認してください。
+                                    </p>
+                                  )
+                                ) : null}
+                              </div>
+                            );
+                          })}
                       </header>
 
                       <ol className="list-none p-5 md:p-7">
@@ -176,7 +216,13 @@ export function CourseMapPage() {
                             <div className="min-w-0 rounded-workshop-md border border-workshop-border bg-workshop-raised p-4 md:p-5">
                               <div className="flex flex-wrap items-start justify-between gap-3">
                                 <div className="min-w-0">
-                                  <StatusBadge status={lesson.status} />
+                                  <StatusBadge
+                                    status={lesson.status}
+                                    {...(lesson.status === 'complete' &&
+                                    sharedStageIds.has(lesson.id)
+                                      ? { label: '工程合格' }
+                                      : {})}
+                                  />
                                   <h4 className="mt-3 text-xl font-black">{lesson.title}</h4>
                                 </div>
                                 <span

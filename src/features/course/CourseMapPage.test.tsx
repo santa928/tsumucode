@@ -5,6 +5,8 @@ import { RouterProvider } from 'react-router/dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fixtureCourse } from '../../../tests/fixtures/course';
 import type { CourseProgress, ExerciseDraft } from '../../core/persistence/contracts';
+import type { CourseIndex, CourseManifest } from '../../core/content/types';
+import { profileCompletionFixture } from '../../../tests/fixtures/profileCompletion';
 import { CourseMapPage } from './CourseMapPage';
 
 const useCourseProgress = vi.hoisted(() => vi.fn());
@@ -34,7 +36,7 @@ const completedProgress = {
 } satisfies CourseProgress;
 
 /** Course Map routeを指定教材で描画する。 */
-function renderCourseMap(course = fixtureCourse) {
+function renderCourseMap(course: CourseIndex | CourseManifest = fixtureCourse) {
   const router = createMemoryRouter(
     [
       {
@@ -51,6 +53,75 @@ function renderCourseMap(course = fixtureCourse) {
 }
 
 describe('CourseMapPage', () => {
+  it('共有Profileの工程合格と制作全体の未完了・未合格工程を区別する', async () => {
+    const fixture = profileCompletionFixture();
+    const unfinished = fixture.manifests.slice(2, 4).map(({ lesson }) => lesson);
+    useCourseProgress.mockReturnValue({
+      status: 'ready',
+      progress: {
+        ...fixture.progress,
+        lessons: {
+          ...fixture.progress.lessons,
+          ...Object.fromEntries(
+            unfinished.map(({ id }) => [
+              id,
+              { ...fixture.progress.lessons[id]!, currentComplete: false, passedExerciseIds: [] },
+            ]),
+          ),
+        },
+      },
+      drafts: new Map([[fixture.draft.workspaceId, fixture.draft]]),
+      error: undefined,
+      retry: vi.fn(),
+    });
+    renderCourseMap(fixture.course);
+
+    expect(await screen.findByText('制作全体は未完了です。')).toBeInTheDocument();
+    expect(screen.getAllByText('工程合格')).toHaveLength(3);
+    expect(screen.getByText(/未合格の工程：/u)).toHaveTextContent(unfinished[0]!.title);
+    expect(screen.getByText(/未合格の工程：/u)).toHaveTextContent(unfinished[1]!.title);
+    expect(screen.getByText(/最終工程で全工程をまとめて判定/u)).toBeInTheDocument();
+  });
+
+  it('全工程合格でも記録と最終工程での制作完成判定を区別する', async () => {
+    const fixture = profileCompletionFixture();
+    useCourseProgress.mockReturnValue({
+      status: 'ready',
+      progress: fixture.progress,
+      drafts: new Map([[fixture.draft.workspaceId, fixture.draft]]),
+      error: undefined,
+      retry: vi.fn(),
+    });
+    renderCourseMap(fixture.course);
+
+    expect(await screen.findByText(/全工程に合格記録があります/u)).toBeInTheDocument();
+    expect(screen.getAllByText('工程合格')).toHaveLength(5);
+    expect(screen.queryByText('制作全体は未完了です。')).not.toBeInTheDocument();
+  });
+
+  it('共有workspaceを持たない独立制作へ工程表示を追加しない', async () => {
+    const fixture = profileCompletionFixture();
+    for (const phase of fixture.course.phases) {
+      for (const chapter of phase.chapters) {
+        for (const lesson of chapter.lessons) {
+          if (lesson.kind !== 'guided-project') continue;
+          for (const exercise of lesson.exercises) exercise.workspaceId = exercise.id;
+        }
+      }
+    }
+    useCourseProgress.mockReturnValue({
+      status: 'ready',
+      progress: fixture.progress,
+      error: undefined,
+      retry: vi.fn(),
+    });
+    renderCourseMap(fixture.course);
+
+    expect(await screen.findAllByText('完了')).toHaveLength(5);
+    expect(screen.queryByText('工程合格')).not.toBeInTheDocument();
+    expect(screen.queryByText(/最終工程で全工程をまとめて判定/u)).not.toBeInTheDocument();
+  });
+
   it('著者の章番号を加算せず表示する', async () => {
     renderCourseMap();
     expect(await screen.findByText(/CHAPTER 00/u)).toBeInTheDocument();

@@ -14,6 +14,7 @@ import {
   findLessonOutline,
   findSlide,
   findSlideOwner,
+  resolveWorkspaceLessonIds,
 } from '../core/content/selectors';
 import type {
   CourseCatalogEntry,
@@ -291,15 +292,31 @@ function completionFreshnessExercises(lesson: Lesson): readonly Exercise[] | und
   return targets.size > 0 ? [...targets.values()] : undefined;
 }
 
-/** 完了要件と現在Exerciseを統合し、保存済み合格snapshotの鮮度をguardする。 */
+/** Guided制作は現在工程までの共有Lessonを含め、完了要件を所有Lesson付きで解決する。 */
+function completionTargets(data: ExerciseLoaderData) {
+  const lessonIds =
+    data.lesson.kind === 'guided-project'
+      ? resolveWorkspaceLessonIds(data.course, data.exercise.id).filter(
+          (id) => findLessonOutline(data.course, id).kind === 'guided-project',
+        )
+      : [data.lesson.id];
+  const targets = new Map<string, { readonly lessonId: string; readonly exercise: Exercise }>();
+  for (const lessonId of lessonIds) {
+    const lesson = data.workspaceLessons.find(({ id }) => id === lessonId);
+    if (lesson === undefined) return undefined;
+    const exercises = completionFreshnessExercises(lesson);
+    if (exercises === undefined) return undefined;
+    for (const exercise of exercises) targets.set(exercise.id, { lessonId, exercise });
+  }
+  targets.set(data.exercise.id, { lessonId: data.lesson.id, exercise: data.exercise });
+  return [...targets.values()];
+}
+
+/** 現在工程と必要なGuided前工程の合格記録・snapshot鮮度をguardする。 */
 export async function completionLoader(args: CourseLoaderArgs): Promise<ExerciseLoaderData> {
   const data = await exerciseLoader(args);
-  const lessonTargets = completionFreshnessExercises(data.lesson);
-  const targets =
-    lessonTargets === undefined
-      ? undefined
-      : [...new Map([...lessonTargets, data.exercise].map((item) => [item.id, item])).values()];
-  const workspaceIds = [...new Set(targets?.map(({ workspaceId }) => workspaceId) ?? [])];
+  const targets = completionTargets(data);
+  const workspaceIds = [...new Set(targets?.map(({ exercise }) => exercise.workspaceId) ?? [])];
   const [progress, drafts] = await Promise.all([
     learningRuntimeServices.repository.getCourse(data.course.id),
     Promise.all(
@@ -316,19 +333,24 @@ export async function completionLoader(args: CourseLoaderArgs): Promise<Exercise
   const lessonProgress = progress?.lessons[data.lesson.id];
   const allTargetsAreFresh =
     targets !== undefined &&
-    targets.every((exercise) => {
+    targets.every(({ lessonId, exercise }) => {
       const draft = draftByWorkspace.get(exercise.workspaceId);
       const snapshot = draft?.lastPassingSnapshots[exercise.id];
+      const ownerProgress = progress?.lessons[lessonId];
       return (
         !learningRuntimeServices.passFreshness.isDirty(
           data.course.id,
           exercise.workspaceId,
           exercise.id,
         ) &&
-        draft?.contentRevision === data.course.revision &&
+        draft?.courseId === data.course.id &&
+        draft.workspaceId === exercise.workspaceId &&
+        draft.contentRevision === data.course.revision &&
         snapshot?.contentRevision === data.course.revision &&
         snapshot.editRevision === draft.editRevision &&
-        lessonProgress?.passedExerciseIds.includes(exercise.id) === true
+        ownerProgress?.lessonId === lessonId &&
+        ownerProgress.currentComplete &&
+        ownerProgress.passedExerciseIds.includes(exercise.id)
       );
     });
   if (
