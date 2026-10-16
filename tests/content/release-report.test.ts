@@ -311,6 +311,79 @@ describe('manual release approval', () => {
     }).not.toThrow();
   });
 
+  const approvedComputerUseRecord = approvedNoviceRecord.replace(
+    '- participantCount: `1`',
+    `- evidenceKind: \`agent-computer-use\`
+- participantCount: \`0\`
+- agentCount: \`2\`
+- contextSharing: \`none\`
+- reviewerRole: \`independent\`
+- interactionMethod: \`computer-use\`
+- operationEvidenceSha256: \`${'a'.repeat(64)}\``,
+  );
+
+  it('履歴なし独立CUAの5Checkpointを実人参加者0名で受理する', () => {
+    expect(() => {
+      validateManualQualityRecord('noviceObservation', approvedComputerUseRecord);
+    }).not.toThrow();
+  });
+
+  it.each([
+    ['evidenceKind', 'agent-simulation'],
+    ['participantCount', '1'],
+    ['agentCount', '0'],
+    ['contextSharing', 'shared'],
+    ['reviewerRole', 'author'],
+    ['interactionMethod', 'test-run'],
+    ['operationEvidenceSha256', 'draft'],
+    ['approvedCheckpoints', '4'],
+    ['guidedProjectStatus', 'pending'],
+    ['capstoneStatus', 'pending'],
+    ['unresolvedFindings', '1'],
+    ['releaseStatus', 'draft'],
+  ])('CUAの%sが%sなら承認済み観察として受理しない', (key, value) => {
+    const record = approvedComputerUseRecord.replace(
+      new RegExp(`^- ${key}: .*\\n`, 'mu'),
+      `- ${key}: \`${value}\`\n`,
+    );
+    expect(() => {
+      validateManualQualityRecord('noviceObservation', record);
+    }).toThrow();
+  });
+
+  it.each([
+    'agentCount',
+    'contextSharing',
+    'reviewerRole',
+    'interactionMethod',
+    'operationEvidenceSha256',
+  ])('CUAの%sが欠落した記録を拒否する', (key) => {
+    const record = approvedComputerUseRecord.replace(new RegExp(`^- ${key}: .*\\n`, 'mu'), '');
+    expect(() => {
+      validateManualQualityRecord('noviceObservation', record);
+    }).toThrow();
+  });
+
+  it('明示的な真人観察は既存の参加者条件を保持する', () => {
+    const record = `${approvedNoviceRecord}- evidenceKind: \`human-novice\`\n`;
+    expect(() => {
+      validateManualQualityRecord('noviceObservation', record);
+    }).not.toThrow();
+    expect(() => {
+      validateManualQualityRecord(
+        'noviceObservation',
+        record.replace('- participantCount: `1`', '- participantCount: `0`'),
+      );
+    }).toThrow(/participantCount/u);
+  });
+
+  it('真人の人数があっても未知の評価方式を受理しない', () => {
+    const record = `${approvedNoviceRecord}- evidenceKind: \`agent-simulation\`\n`;
+    expect(() => {
+      validateManualQualityRecord('noviceObservation', record);
+    }).toThrow(/evidenceKind/u);
+  });
+
   it('VoiceOverが初回Release対象外になっていない手動記録を拒否する', () => {
     const accessibility = `# Accessibility Manual Review
 

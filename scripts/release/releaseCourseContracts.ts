@@ -21,8 +21,8 @@ const htmlCssContract = {
   postDeployRoot: 'docs/quality/post-deploy',
   schemaVersion: 1,
   lessonCount: 51,
-  learningEvidenceKind: 'human-novice',
-  requiredHumanCheckpoints: 5,
+  learningEvidenceKind: 'human-novice-or-agent-computer-use',
+  requiredCheckpoints: 5,
   records: {
     contentReview: 'docs/quality/content-review.yaml',
     visualReview: 'docs/quality/visual-review.md',

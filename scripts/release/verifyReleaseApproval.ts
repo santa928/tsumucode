@@ -160,7 +160,24 @@ export function validateManualQualityRecord(
       requireCount(recordName, metadata, 'unperformedChecks', (value) => value === 0, '0');
       return;
     case 'noviceObservation':
-      requireCount(recordName, metadata, 'participantCount', (value) => value >= 1, '1以上');
+      // 方式未記載の既存真人記録は保持し、CUAを実人の参加者数へ混ぜない。
+      if (metadata.get('evidenceKind') === 'agent-computer-use') {
+        requireCount(recordName, metadata, 'participantCount', (value) => value === 0, '0');
+        requireCount(recordName, metadata, 'agentCount', (value) => value >= 1, '1以上');
+        requireMetadata(recordName, metadata, 'contextSharing', 'none');
+        requireMetadata(recordName, metadata, 'reviewerRole', 'independent');
+        requireMetadata(recordName, metadata, 'interactionMethod', 'computer-use');
+        if (!Sha256Schema.safeParse(metadata.get('operationEvidenceSha256')).success) {
+          throw new Error(
+            'noviceObservation.operationEvidenceSha256に原操作証拠のSHA-256が必要です',
+          );
+        }
+      } else {
+        if (metadata.has('evidenceKind')) {
+          requireMetadata(recordName, metadata, 'evidenceKind', 'human-novice');
+        }
+        requireCount(recordName, metadata, 'participantCount', (value) => value >= 1, '1以上');
+      }
       requireCount(recordName, metadata, 'requiredCheckpoints', (value) => value === 5, '5');
       requireCount(recordName, metadata, 'approvedCheckpoints', (value) => value === 5, '5');
       requireMetadata(recordName, metadata, 'guidedProjectStatus', 'passed');

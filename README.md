@@ -238,7 +238,7 @@ Smokeは、HTMLが参照する初期Asset、教材Catalog v3、Course Index、Le
 
 ## GitHub Pagesへの公開
 
-公開は`main`へのpushだけでは始まりません。HTML/CSSは既存5品質記録と`docs/quality/release-approval.yaml`、JavaScriptはJS専用7記録と`docs/quality/javascript-release-approval.yaml`へ対象を固定します。JSの全52 Lesson（46 standard・5 Guided・1 Capstone、14章・4 Phase、1,010分）の教材評価は、新規・未確認Lessonだけ独立3役で一度実施し、確認済みは保持します。実在初心者・自然な誤解頻度・物理実機の証明ではなく、HTML/CSSの真人5Checkpoint条件を代替しません。実証前の記録はdraftです。
+公開は`main`へのpushだけでは始まりません。HTML/CSSは既存5品質記録と`docs/quality/release-approval.yaml`、JavaScriptはJS専用7記録と`docs/quality/javascript-release-approval.yaml`へ対象を固定します。JSの全52 Lesson（46 standard・5 Guided・1 Capstone、14章・4 Phase、1,010分）の教材評価は、新規・未確認Lessonだけ独立3役で一度実施し、確認済みは保持します。実在初心者・自然な誤解頻度・物理実機の証明ではありません。HTML/CSSは別の5 Checkpointを維持し、2026-10-14に承認された独立computer useによる代替受入を使えます。方式と記録条件は[観察runbook](docs/quality/novice-observation-runbook.md)を参照してください。実証前の記録はdraftです。
 
 dispatch直前に最新main SHAを固定し、承認済みProduct commit P以降に品質記録・literal履歴以外のProduct変更がないworkflow head Mを確認します。`source_sha`はP、RunのheadはMへ結びます。自分のcommit SHAを同じcommit内の記録へ埋めません。`github-pages`の既存保護はmain限定で、2026-10-02確認時はrequired reviewer未設定です。Environment通過を記録し、取得していない独立Environment人承認を主張しません。
 
