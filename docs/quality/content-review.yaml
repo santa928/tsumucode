@@ -290,16 +290,16 @@ lessons:
     decision: approved
     notes: 「再利用できるClassを作る」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
   - lessonId: html-css-ch07-l01
-    authorId: tsumucode-content-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: c3a8bda339f7f88b17d34c8d1cfe7d2b84809ccedcf2d95644a7718c5668f344
+    authorId: root-html-profile-card-implementation
+    reviewerId: issue130_security_review
+    sourceHash: a1e1b90e01e56f512b4b99710982927b98c8f774dab048a4b8cc90f681efb855
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 「Profile Cardを組み立て直す」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+    notes: 既習の表示条件を維持してr09の固定文字列制約を除去。ChromiumとWebKitで正負6ケースずつを実行。例コード不変の従来実行証拠は元条件で再利用し、Firefoxの追加検証、自然保存CSS、新native再操作は完了へ読み替えない。
   - lessonId: html-css-ch08-l01
     authorId: tsumucode-content-authoring
     reviewerId: tsumucode-quality-verification

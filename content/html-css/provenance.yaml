@@ -1311,6 +1311,12 @@ items:
   - id: release-ch07-l01-e01-incomplete-css
     visibility: authoring
     path: chapters/html-css-ch07/lessons/html-css-ch07-l01/exercises/html-css-ch07-l01-e01/fixtures/incomplete/styles.css
+  - id: release-ch07-l01-e01-reordered-css
+    visibility: authoring
+    path: chapters/html-css-ch07/lessons/html-css-ch07-l01/exercises/html-css-ch07-l01-e01/fixtures/valid-reordered/styles.css
+  - id: release-ch07-l01-e01-missing-border-box-css
+    visibility: authoring
+    path: chapters/html-css-ch07/lessons/html-css-ch07-l01/exercises/html-css-ch07-l01-e01/fixtures/missing-border-box/styles.css
   - id: ch07-profile-avatar-integration-original
     visibility: public
     path: chapters/html-css-ch07/lessons/html-css-ch07-l01/exercises/html-css-ch07-l01-e01/assets/profile-avatar.svg
