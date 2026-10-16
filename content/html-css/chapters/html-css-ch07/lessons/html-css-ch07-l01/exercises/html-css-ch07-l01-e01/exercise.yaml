@@ -30,9 +30,9 @@ steps:
       - html-css-ch07-l01-e01-r08
   - id: contain-card-in-shell
     file: styles.css
-    target: '[data-profile-card] Ruleの先頭とwidth Declaration'
+    target: '[data-profile-card] Ruleのbox-sizingとwidth Declaration'
     starterAnchor: 'width: 360px;'
-    change: Rule先頭へbox-sizing border-boxを追加し、widthを100%へ変更する
+    change: box-sizing border-boxを追加し、widthを100%へ変更する
     observe: 320pxのShell内へPaddingとBorderを含むCardが収まり、横Overflowがfalseになる
     requiresConceptIds: [profile-card-integration]
     validationRuleIds:
@@ -43,21 +43,19 @@ steps:
     target: '[data-profile-card] Ruleのpadding Declaration'
     starterAnchor: 'padding: 12px;'
     change: Valueを24pxへ変更する
-    observe: Card内部のComputed Paddingが24pxになり、統合Sourceの順序もそろう
+    observe: Card内部のComputed Paddingが24pxになる
     requiresConceptIds: [profile-card-integration]
     validationRuleIds:
       - html-css-ch07-l01-e01-r06
-      - html-css-ch07-l01-e01-r09
   - id: darken-profile-text
     file: styles.css
     target: '[data-profile-card] Ruleのcolor Declaration'
     starterAnchor: 'color: #a0a0a0;'
     change: Valueを#24323dへ変更する
-    observe: 白い背景とのContrast Ratioが4.5対1以上になり、統合Sourceもそろう
+    observe: 白い背景とのContrast Ratioが4.5対1以上になる
     requiresConceptIds: [profile-card-integration]
     validationRuleIds:
       - html-css-ch07-l01-e01-r05
-      - html-css-ch07-l01-e01-r09
   - id: open-profile-line-height
     file: styles.css
     target: '[data-bio] Ruleのline-height Declaration'
@@ -214,21 +212,22 @@ validationRules:
     hintId: html-css-ch07-l01-e01-h01
     relatedSlideId: html-css-ch07-l01-r01
   - id: html-css-ch07-l01-e01-r09
-    label: CardのSizing、Padding、Colorを統合して記述する
+    label: Cardの幅へPaddingとBorderを含める
     required: true
     group: all
     viewportMode: all
     viewportIds: [desktop-1280]
-    target: { kind: source, file: styles.css }
+    target: { kind: selector, selector: '[data-profile-card]' }
     assertion:
-      kind: text
-      operator: contains-normalized
-      expected: '[data-profile-card] { box-sizing: border-box; width: 100%; padding: 24px; color: #24323d; background-color: #fff;'
+      kind: computed-style
+      property: box-sizing
+      operator: equals
+      expected: border-box
     feedback:
-      target: Profile CardのCSS Source
-      expected: border-box、100%、24px、#24323d、白背景
-      nextAction: Reflectionの見本順に5つのDeclarationをそろえます。
-    hintId: html-css-ch07-l01-e01-h03
+      target: Profile CardのBox Sizing
+      expected: border-box
+      nextAction: 'CardのRuleへbox-sizing: border-boxを指定し、PaddingとBorderを幅に含めます。'
+    hintId: html-css-ch07-l01-e01-h02
     relatedSlideId: html-css-ch07-l01-r01
   - id: html-css-ch07-l01-e01-r10
     label: 自己紹介へLine Height 1.5を記述する
@@ -256,7 +255,7 @@ hints:
   - id: html-css-ch07-l01-e01-h02
     level: 2
     title: 実寸と文字を確認する
-    text: ContainerのOverflowと、自己紹介のComputed Line Heightを確認します。
+    text: Cardのbox-sizingとPadding、ContainerのOverflow、自己紹介のLine Heightを確認します。
     relatedSlideId: html-css-ch07-l01-r01
   - id: html-css-ch07-l01-e01-h03
     level: 3
@@ -290,6 +289,38 @@ fixtures:
           editable: false,
         }
     expectedFeedbackRuleIds: []
+  - id: html-css-ch07-l01-e01-valid-reordered-css
+    expectedStatus: pass
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/valid-reordered/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: []
+  - id: html-css-ch07-l01-e01-missing-border-box
+    expectedStatus: incomplete
+    files:
+      - {
+          path: index.html,
+          language: html,
+          source: fixtures/valid-alternative/index.html,
+          editable: false,
+        }
+      - {
+          path: styles.css,
+          language: css,
+          source: fixtures/missing-border-box/styles.css,
+          editable: false,
+        }
+    expectedFeedbackRuleIds: [html-css-ch07-l01-e01-r03, html-css-ch07-l01-e01-r09]
   - id: html-css-ch07-l01-e01-incomplete
     expectedStatus: incomplete
     files:
@@ -300,4 +331,4 @@ fixtures:
           editable: false,
         }
       - { path: styles.css, language: css, source: fixtures/incomplete/styles.css, editable: false }
-    expectedFeedbackRuleIds: [html-css-ch07-l01-e01-r03, html-css-ch07-l01-e01-r09]
+    expectedFeedbackRuleIds: [html-css-ch07-l01-e01-r03]
