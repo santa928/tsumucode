@@ -16,15 +16,15 @@ lessons:
     notes: 独立AI教材レビューで必須指摘0。既存実Pyodideの10Fixtureを確認済み。公開用build・実Pagesの受入と実人受講は別に扱い、技術証拠はpython-release-acceptance.yamlのsource/artifact/原本hashへ固定する。
   - lessonId: python-basics-ch01-l02
     authorId: tsumucode-python-author
-    reviewerId: codex-issue147-prepublication-review
-    sourceHash: 15642727234ad2a96b92ecdaf2345b072a02654c0cbc49c3cb79191bfbde1058
+    reviewerId: issue130_security_review
+    sourceHash: af2044b86b7f449e548444a1ed3c5641003db47c9ac3e4228a4c19bc9c539947
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
+    notes: 独立AI担当issue130_security_reviewが全Lessonと実製品を照合し、Browser事前入力・全体1.5秒とLocal途中対話・未採点練習の案内を承認。正確性・目標整合・未説明語・Hint漏れの必須指摘0。実行Source・例コードは不変のため既存実行証拠を元条件で再利用。新たな実操作受入・Browser途中入力実装・公開許可とは別。
   - lessonId: python-basics-ch01-l03
     authorId: tsumucode-python-author
     reviewerId: codex-issue147-prepublication-review
