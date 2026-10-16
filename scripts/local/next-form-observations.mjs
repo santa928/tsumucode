@@ -35,13 +35,29 @@ export async function observeNextForm(
     if (checkPending) {
       // 初回保存は固定350ms待つ。入力と送信の双方が同じ入力を保護する。
       await page.waitForTimeout(75);
-      const sending = page.getByRole('button', { name: '送信中…', exact: true });
-      passed =
-        (await sending.count()) === 1 &&
-        (await sending.isDisabled()) &&
-        (await input.isDisabled()) &&
-        passed;
-      if ((await sending.count()) === 1) await sending.evaluate((element) => element.click());
+      // role名は応答時に変わるため、同じnodeを保持して再検索の待機を避ける。
+      const sending = await page
+        .getByRole('button', { name: '送信中…', exact: true })
+        .elementHandles();
+      try {
+        passed =
+          sending.length === 1 &&
+          (await sending[0].isDisabled()) &&
+          (await input.isDisabled()) &&
+          passed;
+        if (sending.length === 1) await sending[0].evaluate((element) => element.click());
+      } catch (error) {
+        // 対象nodeの切断だけを未達とし、Browser接続障害等は上位へ返す。
+        if (
+          error instanceof Error &&
+          error.message.split('\n', 1)[0] ===
+            'elementHandle.isDisabled: Element is not attached to the DOM'
+        )
+          return false;
+        throw error;
+      } finally {
+        await Promise.all(sending.map((element) => element.dispose()));
+      }
     }
     step('form-response-headers');
     const response = await received;
