@@ -4,7 +4,7 @@ import { cp, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/pr
 import path from 'node:path';
 import { tmpdir } from 'node:os';
 import { promisify } from 'node:util';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { canonicalJson } from '../../../src/core/persistence/canonicalJson';
 import { sha256Text } from '../../../scripts/release/releaseHashes';
 import {
@@ -74,6 +74,9 @@ async function fixture(actualCourse = false, courseId: DraftReleaseCourseId = 't
   await mkdir(evidence);
   await writeFile(path.join(root, '.gitignore'), 'private/\n');
   await git(root, ['init']);
+  // Composeのreadonly Git remapを、この合成repoにだけ置き換える。
+  vi.stubEnv('GIT_DIR', path.join(root, '.git'));
+  vi.stubEnv('GIT_WORK_TREE', root);
   await git(root, ['config', 'user.name', 'Synthetic Test']);
   await git(root, ['config', 'user.email', 'test@example.invalid']);
   const contract = resolveDraftReleaseCourseContract(courseId);
@@ -289,6 +292,7 @@ async function fixture(actualCourse = false, courseId: DraftReleaseCourseId = 't
 }
 
 afterEach(async () => {
+  vi.unstubAllEnvs();
   await Promise.all(
     temporaryRoots.splice(0).map(async (root) => {
       await rm(root, { recursive: true });
