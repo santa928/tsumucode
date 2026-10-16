@@ -10,4 +10,4 @@ GridとFlexはどちらでも合格します。工程3で完成したAbout、Ski
 
 `data-contact-link`はContact Linkを判定する目印です。`a`の開始タグへ付け、`href="#contact"`などの移動先と併記します。Linkの名前や移動先を置き換えるものではありません。
 
-この演習のプレビューでは`mailto:`のLinkを使えません。連絡先のTextを置く要素へ`id="contact-address"`を付け、`href="#contact-address"`のページ内Linkで連絡先を案内できます。メールの送信操作は不要です。
+この演習のプレビューでは`mailto:`のLinkを使えません。連絡先のTextを置く要素へ`id="contact-address"`を付け、`href="#contact-address"`のページ内Linkで連絡先を案内できます。プレビューではLinkの移動も停止するため、移動先とidの対応をコードで確認します。メールの送信操作は不要です。
