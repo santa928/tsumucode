@@ -508,7 +508,7 @@ function EditableSession({
 
   /** 画面操作の世代を進め、古いPromise callbackを後続操作から分離する。 */
   const beginOperation = useCallback((): number => {
-    setExecutionPreparation(undefined);
+    // 同じSourceの取得中runはqueue内で続くため、画面操作の予約だけでは進捗を消さない。
     operationAbortRef.current?.abort();
     operationAbortRef.current = new AbortController();
     setWaitingForLease(false);
@@ -1024,6 +1024,7 @@ function EditableSession({
                 className="tc-exercise-pager-secondary"
                 onClick={() => {
                   const generation = beginOperation();
+                  setExecutionPreparation(undefined);
                   void controller
                     .stop()
                     .then(() => {
