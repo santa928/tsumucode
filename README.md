@@ -199,6 +199,8 @@ SourceやAssetを追加したら、同じ変更で`provenance.yaml`へ登録し�
 
 作業中とpush/PRの`check`は、教材Compile、Lint、変更関連test、型検査を含むProduction Build、学習用Chunk分離を実行します。教材Reviewは通常Actionsの別ステップで警告・Summaryへ記録し、承認待ちでも動作検証を進めます。通常CIの成功は教材承認を意味せず、公開前の`check:release`ではReview失敗を必ず停止条件にします。testはGit差分とVitestのimport依存関係で選び、教材変更では動的読込のContent testも補います。依存・共通test設定の変更時だけ全Unit/Component/Content testへ拡大します。ローカルの差分基準は`HEAD`、CIではpush前のSHAまたはPRのbase SHAです。
 
+Tailwind・Python実践・Python OOPの草稿は、[専用の公開前契約と私有原本照合](docs/quality/draft-course-publication-contracts.md)で検査します。技術検証の成功は公開許可とは別です。
+
 通常Actionsはブラウザ未導入のDocker stageを使い、5分以内を目標、8分を上限とします。新しいpushで古い開発Runを取消し、公開Runとは待ち行列を分離します。詳しい選択基準と削除したtestは[開発中の検証方針](docs/quality/development-testing.md)に記載しています。
 
 ```bash
