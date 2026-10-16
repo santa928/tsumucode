@@ -10,25 +10,37 @@ type Declarations = Map<string, Declaration>;
 /** コメントと整形を除き、文字列・結合子・数値単位を保つ構文上の比較キーを作る。 */
 function syntaxKey(node: CssNode, source: string): string {
   if (node.name === 'Comment') return '';
-  if (node.name === 'NumberLiteral') {
-    const unit = node.getChild('Unit');
-    const number = source.slice(node.from, unit?.from ?? node.to);
-    return `Number(${String(Number(number))},${unit === null ? '' : source.slice(unit.from, unit.to).toLowerCase()})`;
+  const pending: (CssNode | string)[] = [node];
+  const parts: string[] = [];
+  while (pending.length > 0) {
+    const current = pending.pop()!;
+    if (typeof current === 'string') {
+      if (current !== '') parts.push(current);
+      continue;
+    }
+    if (current.name === 'Comment') continue;
+    parts.push('node', current.name);
+    pending.push('end');
+    if (current.name === 'NumberLiteral') {
+      const unit = current.getChild('Unit');
+      parts.push(
+        String(Number(source.slice(current.from, unit?.from ?? current.to))),
+        unit === null ? '' : source.slice(unit.from, unit.to).toLowerCase(),
+      );
+    } else if (current.firstChild === null) {
+      const text = source.slice(current.from, current.to);
+      parts.push(
+        current.name === 'ValueName' || current.name === 'Unit' ? text.toLowerCase() : text,
+      );
+    } else {
+      let offset = current.to;
+      for (let child = current.lastChild; child !== null; child = child.prevSibling) {
+        pending.push(source.slice(child.to, offset).trim(), child);
+        offset = child.from;
+      }
+      pending.push(source.slice(current.from, offset).trim());
+    }
   }
-  if (node.firstChild === null) {
-    const text = source.slice(node.from, node.to);
-    return JSON.stringify([
-      node.name,
-      node.name === 'ValueName' || node.name === 'Unit' ? text.toLowerCase() : text,
-    ]);
-  }
-  const parts: string[] = [node.name];
-  let offset = node.from;
-  for (let child: CssNode | null = node.firstChild; child !== null; child = child.nextSibling) {
-    parts.push(source.slice(offset, child.from).trim(), syntaxKey(child, source));
-    offset = child.to;
-  }
-  parts.push(source.slice(offset, node.to).trim());
   return JSON.stringify(parts);
 }
 

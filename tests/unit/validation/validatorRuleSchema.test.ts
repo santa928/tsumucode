@@ -7,6 +7,26 @@ import {
 import { validationRule } from '../../fixtures/validation';
 
 describe('parseValidatorRules', () => {
+  it.each(['contains', 'contains-normalized', 'contains-css-declarations'])(
+    '%sを配列などの非string演算子として受理しない',
+    (operator) => {
+      for (const value of [[operator], null, {}, 123]) {
+        for (const target of [
+          { kind: 'source', file: 'styles.css' },
+          { kind: 'selector', selector: '.work-image' },
+        ]) {
+          const rule = {
+            ...validationRule(),
+            target,
+            assertion: { kind: 'text', operator: value, expected: '.work-image { width:100%; }' },
+          };
+          expect(HtmlCssValidationRuleDefinitionSchema.safeParse(rule).success).toBe(false);
+          expect(() => parseValidatorRules([rule])).toThrow();
+        }
+      }
+    },
+  );
+
   it('CSS宣言比較をauthoringとruntimeの両方でCSS Sourceだけに限定する', () => {
     const rule = validationRule({
       target: { kind: 'source', file: 'styles.css' },

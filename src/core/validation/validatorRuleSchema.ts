@@ -161,9 +161,8 @@ function assertRuleAssertion(value: Readonly<Record<string, unknown>>): void {
       )
         return;
       if (
-        ['contains', 'contains-normalized', 'contains-css-declarations'].includes(
-          String(value.operator),
-        ) &&
+        typeof value.operator === 'string' &&
+        ['contains', 'contains-normalized', 'contains-css-declarations'].includes(value.operator) &&
         exact(['expected', 'kind', 'operator']) &&
         isNonEmptyText(value.expected)
       )

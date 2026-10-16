@@ -33,6 +33,13 @@ async function grade(source: string) {
 }
 
 describe('Profile画像の3宣言', () => {
+  it('必要宣言以外の深い式もキーを増幅させず処理する', async () => {
+    const expression = `${'calc('.repeat(128)}1px${')'.repeat(128)}`;
+    expect(
+      await grade(`.work-image { width:100%; max-width:100%; height:auto; margin:${expression}; }`),
+    ).toMatchObject({ status: 'pass' });
+  });
+
   it.each([
     '.work-image { width:100%; max-width:100%; height:auto; }',
     '.work-image { height:auto; width:100%; object-fit:cover; max-width:100%; }',
