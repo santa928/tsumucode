@@ -14,8 +14,8 @@ steps:
     file: index.html
     target: main末尾のContact Section
     starterAnchor: '</main>'
-    change: bodyへdata-profile-pageを付け、h2、説明、data-contact-linkを持つaで相手と目的を伝えるContactを追加する
-    observe: Contact Linkを単独で読んでも目的が伝わり、Page境界を2幅で測れる
+    change: bodyへdata-profile-pageを付け、h2、説明、data-contact-linkを持つaでContactを追加する。プレビューではmailto:を使えません
+    observe: プレビューではLinkの移動を止めます。連絡先を示すページ内Linkのhref="#contact-address"と、連絡先要素のid="contact-address"の対応をコードで確認する
     requiresConceptIds: [contact]
     validationRuleIds:
       - html-css-ch12-l04-e01-r03
@@ -120,12 +120,12 @@ validationRules:
     target: { kind: source, file: styles.css }
     assertion:
       kind: text
-      operator: contains-normalized
-      expected: '.work-image { display: block; width: 100%; max-width: 100%; height: auto; }'
+      operator: contains-css-declarations
+      expected: '.work-image { width: 100%; max-width: 100%; height: auto; }'
     feedback:
       target: Work ImageのResponsive Source
       expected: widthとmax-width 100%、height auto
-      nextAction: .work-imageへ3つの境界を指定します。
+      nextAction: .work-imageへwidth 100%、max-width 100%、height autoを指定します。宣言の順序と追加Propertyは問いません。
     hintId: html-css-ch12-l04-e01-h03
     relatedSlideId: html-css-ch12-l04-g01
 hints:
@@ -137,7 +137,7 @@ hints:
   - id: html-css-ch12-l04-e01-h02
     level: 2
     title: Contactを単独で読む
-    text: Contactのaへdata-contact-linkを付け、Linkだけを読んでも連絡先と行動が分かる文言にします。
+    text: Contactのaへdata-contact-linkと、連絡先と行動が分かる文言を付けます。プレビューではmailto:を使えず、Linkの移動も停止します。href="#contact-address"と連絡先要素のid="contact-address"の対応をコードで確認します。
     relatedSlideId: html-css-ch12-l04-g01
   - id: html-css-ch12-l04-e01-h03
     level: 3

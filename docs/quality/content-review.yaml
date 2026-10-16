@@ -549,9 +549,9 @@ lessons:
       以下は旧hash bcb7be5015862ecceca32252888fefcafc32519c56b265e1bad895a7ae26d89c に対する従来の確認履歴であり、新内容の再実行結果へ読み替えない。
       「AboutとSkillsを育てる」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
   - lessonId: html-css-ch12-l04
-    authorId: tsumucode-guided-marker-author
-    reviewerId: tsumucode-guided-marker-independent-content-review-2026-10-16
-    sourceHash: 8e23b5c53eec9a25aea926ffc6e8e79facaea7de769150e20b5abe6087ca756b
+    authorId: tsumucode-image-source-author
+    reviewerId: tsumucode-contact-visible-independent-content-review-2026-10-16
+    sourceHash: 767bdf292b27872d885306e582b0c18cb8fc4ef8c2011b367ed7d7fc38aab414
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -559,6 +559,19 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes: >-
+      2026-10-16: Contact案内の表示先を独立AI内容再レビュー。Structured Step使用時に非表示となるfallback本文から、通常StepとHint2にも制限を明記。
+      mailto不可に加え、プレビューではLink移動を停止する仕様とhref/idをコードで確認する代替を説明。URL許可範囲・sandbox・画像判定は不変。
+      通常手順とHint2の実UIで旧表示のREDと新表示のGREENを確認し、画像も確認。掲載CSS例は不変のため元Sourceの実行証拠を再利用。
+      元候補5206/source79a5abcdの独立nativeでは工程4・5を受入済みだが、この追加案内の独立native確認とは区別する。
+      以下は旧hash 051b512d8247b2f1531a63eb80502d26e61ecad4a028f5280f2bad120c725d8d に対する画像Source改善時の確認履歴。
+      2026-10-16: #107の画像Source条件とmailto案内を独立AI内容レビュー。
+      width 100%・max-width 100%・height autoを保ち、未説明のdisplay block必須と宣言順依存を除去。
+      既存Overflow判定・ID・Starter・Solution・Fixtureを維持。新規未説明用語0、意図しないhint leakage0。
+      掲載CSS例を工程4のSolutionへ実入力し、画像の旧CSSブロックを除いた状態で合格を確認、画面画像も確認した。
+      新未見5205の回収入力は一切変更せず、隔離Chromiumで工程4・5の合格を確認。
+      これは実装担当の再生検証であり、新候補の独立native再観察とは区別する。
+      mailtoの許可先やsandboxは拡張せず、プレビュー制限とページ内の連絡先への代替を説明した。
+      以下は旧hash 8e23b5c53eec9a25aea926ffc6e8e79facaea7de769150e20b5abe6087ca756b に対する従来の確認履歴であり、今回再実行したとは扱わない。
       2026-10-16: #107の判定用目印の説明・Step・feedback・Hintと関連Slideを独立AI内容レビュー。
       accuracy/alignment承認、新規未説明用語0、意図しないhint leakage0。採点定義・ID・Starter・Solution・Fixtureは不変。
       CSS例はbyte不変のため従来の実行証拠を再利用。更新したContact目印の案内は累積判定の実画面で確認した。

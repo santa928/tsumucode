@@ -25,9 +25,9 @@ Contactは`contact`というidを持つsection要素の中へ、h2と「つむ�
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
 }
 .work-image {
-  display: block;
   width: 100%;
   max-width: 100%;
+  height: auto;
 }
 ```
 
