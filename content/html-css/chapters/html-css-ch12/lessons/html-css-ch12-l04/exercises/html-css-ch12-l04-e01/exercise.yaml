@@ -120,12 +120,12 @@ validationRules:
     target: { kind: source, file: styles.css }
     assertion:
       kind: text
-      operator: contains-normalized
-      expected: '.work-image { display: block; width: 100%; max-width: 100%; height: auto; }'
+      operator: contains-css-declarations
+      expected: '.work-image { width: 100%; max-width: 100%; height: auto; }'
     feedback:
       target: Work ImageのResponsive Source
       expected: widthとmax-width 100%、height auto
-      nextAction: .work-imageへ3つの境界を指定します。
+      nextAction: .work-imageへwidth 100%、max-width 100%、height autoを指定します。宣言の順序と追加Propertyは問いません。
     hintId: html-css-ch12-l04-e01-h03
     relatedSlideId: html-css-ch12-l04-g01
 hints:

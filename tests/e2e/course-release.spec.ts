@@ -189,6 +189,21 @@ test('Profileの目印不足を最終工程のFeedbackから修正できる', as
   await expect(page.getByTestId('learning-completion')).toBeVisible({ timeout: 20_000 });
 });
 
+test('Profile画像はCSS宣言の順序や追加Propertyに依存せず累積判定できる', async ({ page }) => {
+  const step = PROFILE_STEPS[4];
+  const solution = await readExerciseSolution(step.chapterId, step.lessonId, step.exerciseId);
+  const css = solution['styles.css']!.replace(
+    /\.work-image\s*\{[^}]*\}/u,
+    '.work-image { height: auto; object-fit: cover; max-width: 100%; width: 100%; }',
+  );
+  expect(css).not.toBe(solution['styles.css']);
+
+  await openEditableExercise(page, step.lessonId, step.exerciseId, step.title);
+  await replaceWorkspaceFiles(page, { ...solution, 'styles.css': css });
+  await page.getByRole('button', { name: '判定する', exact: true }).click();
+  await expect(page.getByTestId('learning-completion')).toBeVisible({ timeout: 20_000 });
+});
+
 test('Chapter 13 CapstoneをProfileとは別workspaceへ保存する', async ({ page }) => {
   const profile = PROFILE_STEPS[0];
   await openEditableExercise(page, profile.lessonId, profile.exerciseId, profile.title);

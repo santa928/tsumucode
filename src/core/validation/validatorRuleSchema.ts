@@ -161,7 +161,9 @@ function assertRuleAssertion(value: Readonly<Record<string, unknown>>): void {
       )
         return;
       if (
-        (value.operator === 'contains' || value.operator === 'contains-normalized') &&
+        ['contains', 'contains-normalized', 'contains-css-declarations'].includes(
+          String(value.operator),
+        ) &&
         exact(['expected', 'kind', 'operator']) &&
         isNonEmptyText(value.expected)
       )
@@ -296,10 +298,19 @@ function parseRuleEnvelope(value: unknown): HtmlCssValidationRuleDefinition {
   }
   if (
     assertion.kind === 'text' &&
-    assertion.operator === 'contains-normalized' &&
+    (assertion.operator === 'contains-normalized' ||
+      assertion.operator === 'contains-css-declarations') &&
     target.kind !== 'source'
   ) {
-    throw new Error('contains-normalizedはsource targetだけ使用できます');
+    throw new Error(`${assertion.operator}はsource targetだけ使用できます`);
+  }
+  if (
+    assertion.kind === 'text' &&
+    assertion.operator === 'contains-css-declarations' &&
+    target.kind === 'source' &&
+    !String(target.file).toLowerCase().endsWith('.css')
+  ) {
+    throw new Error('contains-css-declarationsはCSS fileだけ使用できます');
   }
   return structuredClone(value) as HtmlCssValidationRuleDefinition;
 }

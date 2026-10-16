@@ -1,3 +1,4 @@
+import { containsCssDeclarations } from './cssSourceDeclarations';
 import type {
   HtmlCssRuleAssertion,
   HtmlCssRuleTarget,
@@ -253,10 +254,14 @@ function evaluateSourceAssertion(
       ? source === assertion.expected
       : assertion.operator === 'contains-normalized'
         ? normalizeSourceWhitespace(source).includes(normalizeSourceWhitespace(assertion.expected))
-        : source.includes(assertion.expected);
+        : assertion.operator === 'contains-css-declarations'
+          ? containsCssDeclarations(source, assertion.expected)
+          : source.includes(assertion.expected);
+  const subject =
+    assertion.operator === 'contains-css-declarations' ? '必要なCSS宣言' : '指定文字列';
   return {
     passed,
-    actual: `${target.file}: 指定文字列${passed ? 'あり' : 'なし'}`,
+    actual: `${target.file}: ${subject}${passed ? 'あり' : 'なし'}`,
   };
 }
 

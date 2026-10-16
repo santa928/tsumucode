@@ -760,6 +760,13 @@ const NormalizedTextContainsAssertionSchema = z
     expected: NonBlankPreservedTextSchema,
   })
   .strict();
+const CssDeclarationsContainsAssertionSchema = z
+  .object({
+    kind: z.literal('text'),
+    operator: z.literal('contains-css-declarations'),
+    expected: NonBlankPreservedTextSchema,
+  })
+  .strict();
 const ComputedStyleEqualsAssertionSchema = z
   .object({
     kind: z.literal('computed-style'),
@@ -1111,6 +1118,7 @@ export const HtmlCssRuleAssertionSchema = z.union([
   TextEqualsAssertionSchema,
   TextContainsAssertionSchema,
   NormalizedTextContainsAssertionSchema,
+  CssDeclarationsContainsAssertionSchema,
   ComputedStyleEqualsAssertionSchema,
   ComputedStyleContainsAssertionSchema,
   ComputedStyleNumberAssertionSchema,
@@ -1290,13 +1298,26 @@ export const HtmlCssValidationRuleDefinitionSchema = z
     }
     if (
       rule.assertion.kind === 'text' &&
-      rule.assertion.operator === 'contains-normalized' &&
+      rule.assertion.operator === 'contains-css-declarations' &&
+      rule.target.kind === 'source' &&
+      !rule.target.file.toLowerCase().endsWith('.css')
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['target', 'file'],
+        message: 'contains-css-declarationsはCSS fileだけで使用できます',
+      });
+    }
+    if (
+      rule.assertion.kind === 'text' &&
+      (rule.assertion.operator === 'contains-normalized' ||
+        rule.assertion.operator === 'contains-css-declarations') &&
       rule.target.kind !== 'source'
     ) {
       context.addIssue({
         code: 'custom',
         path: ['assertion', 'operator'],
-        message: 'contains-normalizedはsource targetだけで使用できます',
+        message: `${rule.assertion.operator}はsource targetだけで使用できます`,
       });
     }
   });
