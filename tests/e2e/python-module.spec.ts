@@ -187,6 +187,8 @@ for (const id of lessons) {
     await expect
       .poll(async () => (await draft(page, id))?.['files'])
       .toEqual(await sources(id, 'starter'));
+    // 保存後に続くResetの実行も待ち、次の画面へ排他枠を持ち越さない。
+    await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled();
   });
 }
 
