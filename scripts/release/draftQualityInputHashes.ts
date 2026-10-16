@@ -124,6 +124,8 @@ export async function hashDraftQualityInputs(
       relative.startsWith(`${contract.sourceRoot}/assets/`) ||
       courseShared ||
       relative.startsWith('scripts/content/') ||
+      relative.startsWith('scripts/build/') ||
+      relative === 'scripts/inline-production-css.ts' ||
       ROOT_INPUTS.has(relative);
     const runtime =
       scope === 'runtime' &&

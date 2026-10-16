@@ -299,6 +299,9 @@ afterEach(async () => {
 describe('3草稿の私有原本と候補binding', () => {
   it.each([
     ['scripts/content/compileCourse.ts', 'runtime'],
+    ['scripts/build/preparePythonAssets.ts', 'runtime'],
+    ['scripts/build/preparePythonAssets.ts', 'usability'],
+    ['scripts/inline-production-css.ts', 'accessibility'],
     ['scripts/content/compileCourse.ts', 'usability'],
     ['content/tailwind/glossary.yaml', 'usability'],
     ['content/tailwind/concepts.yaml', 'usability'],
