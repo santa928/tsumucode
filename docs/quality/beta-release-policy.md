@@ -7,7 +7,7 @@
 
 ## 目的
 
-正式Releaseの品質基準や承認記録を緩めず、完全初心者による全Checkpoint・Guided Project・Capstoneの観察が終わる前でも、個人・身内で利用するTsumuCodeをGitHub Pagesへ公開できるようにする。
+正式Releaseの品質基準や承認記録を緩めず、承認された方式による全Checkpoint・Guided Project・Capstoneの観察が終わる前でも、個人・身内で利用するTsumuCodeをGitHub Pagesへ公開できるようにする。
 
 β公開は教材やRuntimeの簡易版ではない。正式版と同じ公開前品質Gateを通す一方、「全教材を完全初心者が完走した」という手動検証済みの主張、正式Release tag、正式Release台帳への登録だけを行わない。
 
@@ -23,7 +23,7 @@
 | REQ-BETA-006 | 追加 | βDeployでは正式Release tagを作らず、`release-history.yaml`へReleaseを追加しない                                                                                                        |
 | REQ-BETA-007 | 追加 | TsumuCode名の横へ、Layoutの高さを増やさない小さな「β」表示を追加する                                                                                                                   |
 | REQ-BETA-008 | 維持 | GitHub Pagesは認証を追加せず、URLを知る人以外も閲覧可能な公開Siteとして扱う                                                                                                            |
-| REQ-BETA-009 | 追加 | 正式版への昇格条件は、5 Checkpoint、Guided Project、Capstone、未解決Finding 0件の初心者観察完了とする                                                                                  |
+| REQ-BETA-009 | 追加 | 正式版への昇格条件は、5 Checkpoint、Guided Project、Capstone、未解決Finding 0件の初心者観察完了とする（10/14承認の独立computer useを含む。方式・原本bindingは観察runbookを参照）       |
 | REQ-BETA-010 | 追加 | push/PRではfast gateだけを実行し、Browser・性能・Evidenceを含む公開前gateは明示deploy dispatchで1回だけ実行する                                                                        |
 
 REQ-BETA-003の変更理由は、同一SHAに対する3 Engine全E2Eの二重実行をなくし、Browser差を検出する代表smokeへ責務を絞るためである。影響としてFirefox/WebKitの全画面回帰は毎回網羅しない。代替案は従来の3 Engine全件実行、復帰条件はBrowser固有障害の検出、またはRuntime・Security・互換性変更で代表smokeでは不足すると判断した場合とする。保留・削除する既存要件はない。

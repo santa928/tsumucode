@@ -59,12 +59,12 @@ function draftApproval() {
 }
 
 describe('Course別通常公開の固定契約', () => {
-  it('HTMLの51Lesson/真人5Checkpoint契約とJSの52Lesson/全54操作を区別する', () => {
+  it('HTMLの51Lesson/承認方式5Checkpoint契約とJSの52Lesson/全54操作を区別する', () => {
     const html = resolveReleaseCourseContract('html-css');
     const js = resolveReleaseCourseContract('javascript');
     expect(html.lessonCount).toBe(51);
-    expect(html.learningEvidenceKind).toBe('human-novice');
-    expect(html.requiredHumanCheckpoints).toBe(5);
+    expect(html.learningEvidenceKind).toBe('human-novice-or-agent-computer-use');
+    expect(html.requiredCheckpoints).toBe(5);
     expect(js.lessonCount).toBe(52);
     expect(js.requiredExerciseCount).toBe(52);
     expect(js.optionalExerciseIds).toEqual(['javascript-ch03-l05-e02', 'javascript-ch03-l05-e03']);

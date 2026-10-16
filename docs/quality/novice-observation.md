@@ -16,7 +16,11 @@
 - facilitatorPolicy: `口頭補助、正解誘導、実装者による代理回答を禁止する`
 - bindingPolicy: `部分観察をproduct source commitへ固定した。Starter Reset後の最終source binding、canonical dist結合、全Checkpoint、Project、Teach-backは未承認・未完了`
 
-## 現在の観察範囲
+## 最新の受入方法と残る操作
+
+2026-10-14の本人承認と後続指示に基づき、初心者向け使いやすさ・実機性能の受入には、コンテキストを共有しない独立サブエージェントのcomputer useを適用します。[runbookの代替受入](novice-observation-runbook.md#承認済みの独立computer-useによる代替受入)に従い、実人・物理端末待ちへ戻しません。下記のNOV-001は過去の実人部分観察として保持し、CUAの結果へ付け替えません。未実施の5 Checkpoint・制作・Reset後の再操作と原本bindingが残り、現記録はdraftです。代替受入の承認は、操作完了や正式公開の承認ではありません。
+
+## 過去の実人観察範囲
 
 NOV-001から、Chapter 00の実習と導入Slide 3枚目まで自力で進行できたとの報告を得た。一方、観察時点では、HTMLとCSSを全消去した場合にStarterコードへ戻す製品内手段がないFindingを得た。現在は、Exerciseの全fileを確認付きでStarterへ戻すResetを実装し、取消、Starter Preview、IndexedDBへの全file byte一致とreload後の永続化、Keyboard／Focus、4 desktop viewport、低Heightを含む自動Gateに合格している。所要時間、環境詳細、Teach-back、残りCheckpoint、Guided、Capstoneは未記録のため、導入Checkpointを含めて合格扱いにしない。NOV-001または別の完全初心者による同範囲の再観察と全Checkpointの観察が完了するまでRelease承認を保留する。
 
