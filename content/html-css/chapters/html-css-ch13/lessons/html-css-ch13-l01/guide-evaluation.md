@@ -22,8 +22,10 @@ NavigationとEvent Posterの目的が支援技術へ伝わることを確認し�
 
 ## Manual Content Review
 
-自動判定の前に、Event名とTagline、開催日・会場・入場条件、AccessまたはContact、主催者情報を読み上げます。これらの事実関係と相互の矛盾は自動判定へ任せず、Briefに対する提出前チェックとして自分で確認します。
+自動判定の前に、Event名とTagline、開催日・時間・会場・入場条件、AccessまたはContact、主催者情報を読み上げます。Posterと本文の開催設定が、7月26日、11:00–18:00、NORTH HALL、入場無料で一致することも確認します。これらの事実関係と相互の矛盾は自動判定へ任せず、Briefに対する提出前チェックとして自分で確認します。自動判定の合格だけで、この内容確認が済んだことにはなりません。
 
 ## Keyboard and Contrast
 
 Primary ActionへKeyboardで到達でき、TextとBackgroundが4.5対1以上であることを確認します。Pointerや色の見え方に依存せず内容を利用できるためです。
+
+プレビューでは`mailto:`のLinkを使えず、Linkの移動も停止します。予約方法や連絡先へのページ内Linkを選んだ場合は、KeyboardでFocusできることと、`href`の`#`より後の値が案内先の`id`と一致することをコードで確認します。実際の予約やメール送信は不要です。

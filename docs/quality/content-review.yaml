@@ -590,13 +590,22 @@ lessons:
     decision: approved
     notes: 「アクセシビリティとPolishを完了する」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
   - lessonId: html-css-ch13-l01
-    authorId: tsumucode-content-authoring
-    reviewerId: tsumucode-quality-verification
-    sourceHash: cbdf1c47bfa534d690b9def34367eb9b97cdc833dc7cb4acba9a27f6289470a2
+    authorId: tsumucode-capstone-guidance-author
+    reviewerId: tsumucode-capstone-guidance-independent-review-2026-10-17
+    sourceHash: 7b26b0887728435109234eecdaa243980cc117e2aa847acf1b73e26b65f96574
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 「個人制作展のLanding Pageを完成する」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
+    notes: >-
+      2026-10-17: source 6f743f3a5adae183824118e3360885626191d930 の案内差分を、実装していない3名が要件・ロジック、セキュリティ、可読性・構造の各観点で独立レビューし承認。必須指摘0、任意指摘0。
+      Brief・Guide・手順本文と初期工程票に、mailto不可、fragmentとidの対応、Link移動停止、実予約・送信不要を説明した。
+      Posterの7月26日・11:00–18:00・NORTH HALL・入場無料を本文と照合する設定として明記し、未指定項の仮設定と手動内容確認を自動合格から区別した。
+      accuracy/alignment承認、新規未説明用語0、意図しないhint leakage0。採点・ID・Starter・Solution・Fixture・sandboxは不変。
+      隔離Chromiumで通常工程票とBrief・Guideの表示を確認し、画面画像を実見。既存のChapter 13・HTML/CSS公開契約8テストと教材生成・Build・chunk検査は成功。
+      固定候補5210の独立native再観察でも、資料への到達とリンク制限・代替・開催設定・手動確認の理解を確認した。制作の編集・再判定は実施していない。
+      Card幅とContrastの具体的な測定操作についての別指摘は既存教材との照合対象とし、今回の説明修正の受入や実在初心者の制作完了と混同しない。
+      以下は旧hash cbdf1c47bfa534d690b9def34367eb9b97cdc833dc7cb4acba9a27f6289470a2 に対する従来の確認履歴であり、今回の再実行結果へ読み替えない。
+      「個人制作展のLanding Pageを完成する」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
