@@ -4,6 +4,8 @@ type Status = 'complete' | 'current' | 'in-progress' | 'not-started';
 
 interface StatusBadgeProps {
   readonly status: Status;
+  /** 局所的な達成など、利用文脈に合わせた状態名を表示する。 */
+  readonly label?: string;
   readonly className?: string;
 }
 
@@ -22,7 +24,7 @@ const STATUS_CLASSES: Readonly<Record<Status, string>> = {
 };
 
 /** 学習状態を色、data属性、日本語Textの組み合わせで伝える。 */
-export function StatusBadge({ status, className }: StatusBadgeProps) {
+export function StatusBadge({ status, label, className }: StatusBadgeProps) {
   return (
     <span
       data-status={status}
@@ -32,7 +34,7 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
         className,
       )}
     >
-      {LABELS[status]}
+      {label ?? LABELS[status]}
     </span>
   );
 }
