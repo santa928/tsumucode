@@ -590,9 +590,9 @@ lessons:
     decision: approved
     notes: 「アクセシビリティとPolishを完了する」の概念説明、用語参照、GoalとExerciseの整合、Solution・Starter・Fixtureの3ブラウザ実行結果を確認。
   - lessonId: html-css-ch13-l01
-    authorId: tsumucode-capstone-guidance-author
-    reviewerId: tsumucode-capstone-guidance-independent-review-2026-10-17
-    sourceHash: 7b26b0887728435109234eecdaa243980cc117e2aa847acf1b73e26b65f96574
+    authorId: tsumucode-capstone-brief-first-author
+    reviewerId: issue107_requirements_review
+    sourceHash: 37b7700b55ced173a5842ea4eaa645186de9e30ce0b606b55dd4518924a34356
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -600,6 +600,12 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes: >-
+      2026-10-18: 独立要件担当が最小StarterとBrief・Goal・補助・採点の対応を原資料で確認し、accuracy/alignment/decisionを承認。新規未説明用語0、意図しない解答露出0、必須修正0。
+      開始HTMLは実行骨格・Stylesheet接続・Page目印だけ、開始CSSはBrief既存のColor Tokenだけへ絞った。説明コメントと任意の初期Layout等を除去し、starterAnchorを残る骨格とTokenへ対応させた。補助本文に残ったStarterコメント削除の古い案内も除いた。Briefへの解法移植、採点条件・Solution・Fixture・保存契約の変更なし。
+      新Starterは通常Compilerから実Route・CodeMirrorの全初期Fileへ通し、HTML DOMとCSS構造、初期Briefと補助閉、明示補助開示を自動検査した。関連6ファイル128テスト成功。
+      examplesExecutedは未変更Solution/Fixtureの有効な既存実行証拠の再利用と、この新Starterの限定検査を指す。新Starterの3ブラウザ実行、実画面のCSS描画、独力制作を検証済みとはしない。
+      5217の本人原文は開始コメントの構造支援利用を明言しており、厳密Brief-only未達を維持する。新固定候補と新しい独立担当のfresh観察、最終HEADのコードレビューとCIは別の残条件で、#107/P1・統合・公開の承認ではない。
+      以下は旧hash 7b26b0887728435109234eecdaa243980cc117e2aa847acf1b73e26b65f96574 に対する確認履歴であり、旧担当の承認・Starter不変・3ブラウザ実行を新hashへ付け替えない。
       2026-10-17: source 6f743f3a5adae183824118e3360885626191d930 の案内差分を、実装していない3名が要件・ロジック、セキュリティ、可読性・構造の各観点で独立レビューし承認。必須指摘0、任意指摘0。
       Brief・Guide・手順本文と初期工程票に、mailto不可、fragmentとidの対応、Link移動停止、実予約・送信不要を説明した。
       Posterの7月26日・11:00–18:00・NORTH HALL・入場無料を本文と照合する設定として明記し、未指定項の仮設定と手動内容確認を自動合格から区別した。

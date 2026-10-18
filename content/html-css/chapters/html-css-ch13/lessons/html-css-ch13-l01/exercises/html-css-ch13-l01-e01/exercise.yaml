@@ -12,7 +12,7 @@ steps:
   - id: translate-semantic-requirements
     file: index.html
     target: body内のSemantic Structure、Navigation、Poster
-    starterAnchor: '<!-- 1. Structureと名前:'
+    starterAnchor: '<body data-capstone-page>'
     change: Briefの開催設定を使い、Landmark、h1、Navigation名、Poster alt、予約とContactのページ内Linkを設計する
     observe: >-
       見た目を外してもEventのPurposeと情報の位置が伝わる。
@@ -32,7 +32,7 @@ steps:
   - id: choose-layout-and-boundaries
     file: styles.css
     target: Event Card群と4 Viewportの境界
-    starterAnchor: '/* 2. Layoutと境界:'
+    starterAnchor: ':root {'
     change: GridまたはFlexを選び、3件以上のCardを360px以下へ保ち、4幅の横Overflowを防ぐ
     observe: 390、768、1280、1440pxでCardの関係と読み順が保たれる
     requiresConceptIds: [capstone-requirement-trace]
@@ -45,7 +45,7 @@ steps:
   - id: audit-operation-and-contrast
     file: styles.css
     target: 主要ActionとPage全体
-    starterAnchor: '/* 3. 最終Audit:'
+    starterAnchor: '--surface: #fffdf8;'
     change: 予約と問い合わせActionのKeyboard Focus、本文Contrast 4.5対1以上を確認する
     observe: Pointerや色の見え方に依存せず、Event情報と予約導線を利用できる
     requiresConceptIds: [capstone-requirement-trace]
