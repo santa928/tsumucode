@@ -205,15 +205,18 @@ export function CourseMapPage() {
                           <li
                             key={lesson.id}
                             data-lesson-piece
-                            className="group grid grid-cols-[2.5rem_minmax(0,1fr)] gap-3 pb-6 last:pb-0 md:grid-cols-[3rem_minmax(0,1fr)] md:gap-5"
+                            className="group grid grid-cols-1 gap-3 pb-6 last:pb-0 sm:grid-cols-[2.5rem_minmax(0,1fr)] md:grid-cols-[3rem_minmax(0,1fr)] md:gap-5"
                           >
-                            <div aria-hidden="true" className="relative flex justify-center">
-                              <span className="absolute bottom-[-1.5rem] top-10 w-1 bg-workshop-workbench group-last:hidden" />
+                            <div
+                              aria-hidden="true"
+                              className="relative flex justify-start sm:justify-center"
+                            >
+                              <span className="absolute bottom-[-1.5rem] top-10 hidden w-1 bg-workshop-workbench group-last:hidden sm:block" />
                               <span className="relative grid size-10 place-items-center rounded-workshop-piece border-2 border-workshop-primary bg-workshop-canvas font-black text-workshop-primary shadow-[var(--tc-shadow-piece)]">
                                 {lessonIndex + 1}
                               </span>
                             </div>
-                            <div className="min-w-0 rounded-workshop-md border border-workshop-border bg-workshop-raised p-4 md:p-5">
+                            <div className="min-w-0 rounded-workshop-md border border-workshop-border bg-workshop-raised p-4 [overflow-wrap:anywhere] md:p-5">
                               <div className="flex flex-wrap items-start justify-between gap-3">
                                 <div className="min-w-0">
                                   <StatusBadge

@@ -17,6 +17,9 @@ on:
       - src/features/learning/portable/PortableTailwindExport*
       - src/features/learning/portable/portableTailwindArchive*
       - src/features/learning/portable/tailwind-project/**
+      - src/features/course/CourseMapPage.tsx
+      - src/features/progress/lessonResumeTarget.ts
+      - tests/e2e/course-reading.spec.ts
       - tests/e2e/tailwind*.spec.ts
       - tests/e2e/helpers/**
       - scripts/ci/tailwind-project.sh
@@ -41,6 +44,9 @@ on:
       - src/features/learning/portable/PortableTailwindExport*
       - src/features/learning/portable/portableTailwindArchive*
       - src/features/learning/portable/tailwind-project/**
+      - src/features/course/CourseMapPage.tsx
+      - src/features/progress/lessonResumeTarget.ts
+      - tests/e2e/course-reading.spec.ts
       - tests/e2e/tailwind*.spec.ts
       - tests/e2e/helpers/**
       - scripts/ci/tailwind-project.sh
