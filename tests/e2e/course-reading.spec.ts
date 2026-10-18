@@ -64,9 +64,9 @@ test('狭幅で全Slideを読んだLessonはCourse再訪後も解説へ戻る', 
     has: page.getByRole('heading', { name: '幅・余白・文字・色を組み合わせる', exact: true }),
   });
   await lesson.getByRole('link').click();
-  await page.screenshot({ path: info.outputPath('reading-revisit.png') });
   await expect(page).toHaveURL(new RegExp(`/slides/${LAST_SLIDE}$`, 'u'));
   await expect(
     page.getByRole('heading', { name: '背景色と文字色を対で考える', exact: true }),
   ).toBeVisible();
+  await page.screenshot({ path: info.outputPath('reading-revisit.png') });
 });
