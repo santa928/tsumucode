@@ -3,7 +3,6 @@ import { EditorView } from '@codemirror/view';
 import userEvent from '@testing-library/user-event';
 import { RouterProvider } from 'react-router/dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { compileCourse } from '../../../../scripts/content/compileCourse';
 import { fixtureCourse } from '../../../../tests/fixtures/course';
 import { createSplitCourseFetchFixture } from '../../../../tests/fixtures/splitCourseDelivery';
 import {
@@ -715,7 +714,11 @@ afterEach(() => {
 describe('Learning routes', () => {
   it('実教材のCapstone開始画面はEditorの全初期Fileにも構造解法や工程説明を露出しない', async () => {
     vi.stubEnv('BASE_URL', '/capstone-real-starter/');
-    const { runtime: course } = await compileCourse('content/html-css');
+    // Node専用CompilerはVitestで読み、ブラウザ向けの型依存へ混ぜない。
+    const compiler = await vi.importActual<{
+      readonly compileCourse: (root: string) => Promise<{ runtime: CourseManifest }>;
+    }>('../../../../scripts/content/compileCourse');
+    const { runtime: course } = await compiler.compileCourse('content/html-css');
     stubContentFetch(course);
     stubEditingCapability(true);
     const adapters = stubAdapters();
