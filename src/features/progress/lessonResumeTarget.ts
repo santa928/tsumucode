@@ -3,6 +3,21 @@ import { lessonStartTarget } from '../../core/content/lessonStart';
 import type { CourseIndex, LessonOutline, LessonStartTarget } from '../../core/content/types';
 import type { CourseProgress, ExerciseDraft } from '../../core/persistence/contracts';
 
+/** 読書端末では最終Slide閲覧後も解説を開き、旧revisionや別Lessonの保存値は使わない。 */
+export function lessonReadingTarget(
+  course: CourseIndex,
+  lesson: LessonOutline,
+  progress: CourseProgress | undefined,
+): LessonStartTarget | undefined {
+  const savedLesson =
+    progress?.courseId === course.id && progress.contentRevision === course.revision
+      ? progress.lessons[lesson.id]
+      : undefined;
+  const savedSlideId = savedLesson?.lessonId === lesson.id ? savedLesson.currentSlideId : undefined;
+  const slide = lesson.slides.find(({ id }) => id === savedSlideId) ?? lesson.slides[0];
+  return slide === undefined ? undefined : { kind: 'slide', targetId: slide.id };
+}
+
 /** 所有ID/revisionと読取キーが一致する、現行Lessonの最新未完了Draftだけを返す。 */
 export function findLessonResumeDraft(
   course: CourseIndex,

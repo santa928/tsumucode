@@ -2,7 +2,7 @@ import { expect, it } from 'vitest';
 import { fixtureCourseIndex } from '../../../tests/fixtures/course';
 import type { LessonOutline } from '../../core/content/types';
 import type { CourseProgress, ExerciseDraft } from '../../core/persistence/contracts';
-import { lessonResumeTarget } from './lessonResumeTarget';
+import { lessonReadingTarget, lessonResumeTarget } from './lessonResumeTarget';
 
 const course = fixtureCourseIndex;
 const lesson = course.phases[0]!.chapters[0]!.lessons[0]!;
@@ -76,6 +76,56 @@ it('最終Slideを読み終えたら未合格Exerciseへ再開する', () => {
   expect(
     lessonResumeTarget(course, lesson, progress(finalSlideId, [finalSlideId]), new Map()),
   ).toEqual({ kind: 'exercise', targetId: exercise.id });
+});
+
+it('読書の再開は最終Slideも保持し、進捗や合格数を変更しない', () => {
+  const finalSlideId = lesson.slides.at(-1)!.id;
+  const saved = progress(finalSlideId, [finalSlideId]);
+  const before = structuredClone(saved);
+  expect(lessonReadingTarget(course, lesson, saved)).toEqual({
+    kind: 'slide',
+    targetId: finalSlideId,
+  });
+  expect(saved).toEqual(before);
+});
+
+it.each([
+  undefined,
+  { ...progress('unknown-slide') },
+  { ...progress(lesson.slides[0]!.id), courseId: 'other-course' },
+  { ...progress(lesson.slides[0]!.id), contentRevision: 'old-revision' },
+  {
+    ...progress(lesson.slides[0]!.id),
+    lessons: {
+      [lesson.id]: { ...progress(lesson.slides[0]!.id).lessons[lesson.id]!, lessonId: 'other' },
+    },
+  },
+])('読書の保存値が無効なら現行の先頭Slideを開く: %j', (saved) => {
+  const first = lesson.slides[0]!;
+  const second = { ...first, id: 'new-first-slide' };
+  const currentLesson = { ...lesson, slides: [second, first] };
+  expect(lessonReadingTarget(course, currentLesson, saved)).toEqual({
+    kind: 'slide',
+    targetId: second.id,
+  });
+});
+
+it('制作も読書ではSlideを優先し、Slideがない教材は既存導線へ委ねる', () => {
+  const project: LessonOutline = {
+    ...lesson,
+    kind: 'guided-project',
+    requiredChecklistItems: [],
+    completion: {
+      kind: 'guided-project',
+      requiredChecklistItemIds: [],
+      requiredExerciseIds: [exercise.id],
+    },
+  };
+  expect(lessonReadingTarget(course, project, undefined)).toEqual({
+    kind: 'slide',
+    targetId: lesson.slides[0]!.id,
+  });
+  expect(lessonReadingTarget(course, { ...project, slides: [] }, undefined)).toBeUndefined();
 });
 
 it('最後の閲覧Slideが未知なら不正なURLを作らず開始先へ戻す', () => {
