@@ -223,6 +223,76 @@ const learningRoutesCourse: CourseManifest = CourseManifestSchema.parse({
   ],
 });
 
+/** CapstoneとGuidedの初期支援表示を同じ小さな教材で比較する。 */
+function projectInstructionCourse(
+  kind: 'capstone' | 'guided-project',
+  courseId: 'html-css' | 'javascript' = 'html-css',
+): CourseManifest {
+  const source = structuredClone(fixtureCourse);
+  const phase = source.phases[0]!;
+  const chapter = phase.chapters[0]!;
+  const lesson = chapter.lessons[0]!;
+  const exercise = lesson.exercises[0]!;
+  const ruleIds = exercise.validationRules.map(({ groupId, id }) => groupId ?? id);
+  return CourseManifestSchema.parse({
+    ...source,
+    id: courseId,
+    expectedTotals: {
+      ...source.expectedTotals,
+      standardExercises: 0,
+      guidedProjectLessons: kind === 'guided-project' ? 1 : 0,
+      capstoneLessons: kind === 'capstone' ? 1 : 0,
+    },
+    phases: [
+      {
+        ...phase,
+        chapters: [
+          {
+            ...chapter,
+            kind,
+            lessons: [
+              {
+                ...lesson,
+                kind,
+                exercises: [
+                  {
+                    ...exercise,
+                    kind,
+                    projectId: 'fixture-project',
+                    countsTowardStandardExerciseTotal: false,
+                  },
+                ],
+                project: {
+                  id: 'fixture-project',
+                  brief: [
+                    { type: 'paragraph', text: '展示会の開催情報を伝えるページを自分で作ります。' },
+                  ],
+                  guide: [{ type: 'paragraph', text: '見出しの実装を評価する補助ガイドです。' }],
+                  checklist: [
+                    { id: 'fixture-checklist', label: '構造を確認する', required: true, ruleIds },
+                  ],
+                },
+                completion:
+                  kind === 'capstone'
+                    ? {
+                        kind,
+                        requiredRuleIds: ruleIds,
+                        requiredViewportIds: exercise.previewViewports.map(({ id }) => id),
+                      }
+                    : {
+                        kind,
+                        requiredChecklistItemIds: ['fixture-checklist'],
+                        requiredExerciseIds: [exercise.id],
+                      },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  });
+}
+
 /** Console初期選択を実画面まで通す最小JavaScript Courseを作る。 */
 const javascriptLearningRoutesCourse: CourseManifest = CourseManifestSchema.parse({
   ...fixtureCourse,
@@ -630,7 +700,8 @@ beforeEach(() => {
 afterEach(() => {
   router?.dispose();
   router = undefined;
-  window.location.hash = originalHash;
+  // 次のTestのRouterへ遅延hashchangeを届けず、URLだけを復元する。
+  window.history.replaceState({}, '', `${window.location.pathname}${originalHash}`);
   vi.unstubAllGlobals();
   vi.unstubAllEnvs();
   if (originalClipboard === undefined) {
@@ -641,6 +712,84 @@ afterEach(() => {
 });
 
 describe('Learning routes', () => {
+  it('Capstone初回はBriefだけを表示し、ガイドと工程の実装説明を描画しない', async () => {
+    vi.stubEnv('BASE_URL', '/capstone-brief-first/');
+    stubContentFetch(projectInstructionCourse('capstone'));
+    stubEditingCapability(true);
+    const adapters = stubAdapters();
+    renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
+    await findCodeWorkspace();
+
+    expect(screen.getByText('展示会の開催情報を伝えるページを自分で作ります。')).toBeVisible();
+    expect(screen.queryByText('見出しの実装を評価する補助ガイドです。')).not.toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: '演習の手順' })).not.toBeInTheDocument();
+    expect(screen.queryByText('main要素の内側')).not.toBeInTheDocument();
+    expect(adapters.validate).not.toHaveBeenCalled();
+  });
+
+  it('Capstoneの補助は明示操作で開閉でき、再訪では閉じた状態へ戻る', async () => {
+    vi.stubEnv('BASE_URL', '/capstone-brief-help/');
+    stubContentFetch(projectInstructionCourse('capstone'));
+    stubEditingCapability(true);
+    stubAdapters();
+    const user = userEvent.setup();
+    renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
+    await findCodeWorkspace();
+
+    const supportButton = screen.getByRole('button', { name: '制作の補助を見る' });
+    expect(supportButton).toHaveAttribute('aria-expanded', 'false');
+    supportButton.focus();
+    await user.keyboard('{Enter}');
+    expect(await screen.findByText('見出しの実装を評価する補助ガイドです。')).toBeVisible();
+    expect(supportButton).toHaveAttribute('aria-expanded', 'true');
+    expect(supportButton).toHaveFocus();
+    expect(screen.getByText('main要素の内側')).toBeVisible();
+    await user.click(supportButton);
+    await waitFor(() => {
+      expect(screen.queryByText('見出しの実装を評価する補助ガイドです。')).not.toBeInTheDocument();
+      expect(screen.queryByText('main要素の内側')).not.toBeInTheDocument();
+    });
+    expect(supportButton).toHaveAttribute('aria-expanded', 'false');
+    await user.click(supportButton);
+    expect(await screen.findByText('main要素の内側')).toBeVisible();
+    await act(async () => {
+      await router!.navigate('/courses/html-css');
+      await router!.navigate(
+        '/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading',
+      );
+    });
+    await findCodeWorkspace();
+    expect(screen.queryByText('main要素の内側')).not.toBeInTheDocument();
+    expect(screen.getByText('展示会の開催情報を伝えるページを自分で作ります。')).toBeVisible();
+  });
+
+  it('他コースのCapstoneは既存の工程表示を維持する', async () => {
+    vi.stubEnv('BASE_URL', '/other-capstone-instructions/');
+    stubContentFetch(projectInstructionCourse('capstone', 'javascript'));
+    stubEditingCapability(true);
+    stubAdapters();
+    renderRoute(
+      '/courses/javascript/lessons/lesson-first-heading/exercises/exercise-first-heading',
+    );
+    await findCodeWorkspace();
+
+    expect(screen.getByText('main要素の内側')).toBeVisible();
+    expect(screen.queryByText('制作の補助を見る')).not.toBeInTheDocument();
+  });
+
+  it('Guided制作は既存の工程表示を維持する', async () => {
+    vi.stubEnv('BASE_URL', '/guided-instructions-unchanged/');
+    stubContentFetch(projectInstructionCourse('guided-project'));
+    stubEditingCapability(true);
+    stubAdapters();
+    renderRoute('/courses/html-css/lessons/lesson-first-heading/exercises/exercise-first-heading');
+    await findCodeWorkspace();
+
+    expect(screen.getByText('main要素の内側')).toBeVisible();
+    expect(screen.getByRole('region', { name: '演習の手順' })).toBeVisible();
+    expect(screen.queryByText('制作の補助を見る')).not.toBeInTheDocument();
+  });
+
   it('小画面ではEditorとRunnerを起動せず、PC理由・非同期説明・Export導線を表示する', async () => {
     stubEditingCapability(false);
     Object.defineProperty(navigator, 'clipboard', {

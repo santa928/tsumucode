@@ -40,6 +40,7 @@ import {
   SaveStatus,
 } from '../components';
 import { SlideBlocks } from '../components/SlideBlocks';
+import { CapstoneInstructions } from '../components/CapstoneInstructions';
 import { SlideCodeReference } from '../components/SlideCodeReference';
 import { createCodeMirrorEditor } from '../editor/createCodeMirrorEditor';
 import { LearningToolRail } from '../layout/LearningToolRail';
@@ -833,6 +834,18 @@ function EditableSession({
     controller.selectStep(step.id);
   };
 
+  const briefFirstCapstone = course.id === 'html-css' && lesson.kind === 'capstone';
+  const instructionPane = (
+    <ExerciseInstructionPane
+      steps={exercise.steps}
+      activeStepId={viewState.activeStepId}
+      onStepChange={selectStep}
+      fallbackInstructions={exercise.instructions}
+      fallbackAssets={exercise.assets}
+      baseUrl={import.meta.env.BASE_URL}
+    />
+  );
+
   /** 直接見直した説明はボタンへ、判定からの見直しは従来どおりEditorへ戻す。 */
   const closeRelatedSlide = (): void => {
     setRelatedSlideId(undefined);
@@ -1099,7 +1112,7 @@ function EditableSession({
                 </div>
               </details>
             ) : null}
-            {lesson.kind !== 'standard' ? (
+            {lesson.kind !== 'standard' && !briefFirstCapstone ? (
               <details className="tc-exercise-project-brief">
                 <summary>制作ブリーフと工程ガイド</summary>
                 <div>
@@ -1116,14 +1129,18 @@ function EditableSession({
                 </div>
               </details>
             ) : null}
-            <ExerciseInstructionPane
-              steps={exercise.steps}
-              activeStepId={viewState.activeStepId}
-              onStepChange={selectStep}
-              fallbackInstructions={exercise.instructions}
-              fallbackAssets={exercise.assets}
-              baseUrl={import.meta.env.BASE_URL}
-            />
+            {briefFirstCapstone ? (
+              <CapstoneInstructions
+                brief={lesson.project.brief}
+                guide={lesson.project.guide}
+                assets={exercise.assets}
+                baseUrl={import.meta.env.BASE_URL}
+              >
+                {instructionPane}
+              </CapstoneInstructions>
+            ) : (
+              instructionPane
+            )}
             {course.id === 'html-css' && exercise.id === 'html-css-ch00-l01-e01' ? (
               <PortableHtmlExport files={workspaceFiles} disabled={busy} />
             ) : null}

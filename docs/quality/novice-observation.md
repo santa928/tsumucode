@@ -219,9 +219,19 @@ ContrastはCSSエディタの色からsRGB輝度を計算した値です。Ink `
 
 [runbookのCheckpoint・合格条件・Session後の処理](novice-observation-runbook.md)は、CapstoneをBriefだけから完成すること（73/83/116行）と、教材変更後に影響するCheckpointを再観察すること（151–152行）を要求します。旧5207の新規制作はBrief・instructions・Evaluation Guideの変更前であり、5214は保存済みLPを修正してGuide・手順1も参照しています。この違いは公開Gateだけの保留ではなく、#107の現行Capstone受入そのものの不足です。先行の3レビュー承認とCI成功で置き換えません。教材・runbook・採点を今回の結果へ合わせて緩和しません。
 
-新しい隔離候補は`http://127.0.0.1:5215/tsumucode/`、準備時のmain Sourceは`4aa269b2045df5b2ce7f6d89b6a02de32d32d09e`です。新たにDockerでcompile/build/inline CSS/chunk検査を行い、固定dist SHA-256は`7a251ef351cb32da1a2a558ccad4800b04b5f8b2f21059ee186320e1f990dd6b`でした。以前の候補と配信内容が同じでも、旧操作結果を新規制作の結果へ付け替えません。indexとCapstone JSONのHTTP一致だけを確認し、回答コードの投入、JSON注入、browser保存操作はしていません。新規native観察は未実施で、上記の4担当数にも加算しません。
+新しい隔離候補は`http://127.0.0.1:5215/tsumucode/`、準備時のmain Sourceは`4aa269b2045df5b2ce7f6d89b6a02de32d32d09e`です。新たにDockerでcompile/build/inline CSS/chunk検査を行い、固定dist SHA-256は`7a251ef351cb32da1a2a558ccad4800b04b5f8b2f21059ee186320e1f990dd6b`でした。以前の候補と配信内容が同じでも、旧操作結果を新規制作の結果へ付け替えません。indexとCapstone JSONのHTTP一致だけを確認し、回答コードの投入、JSON注入、browser保存操作はしていません。その後の新規nativeは、開始画面の工程手順を読んでBrief-only条件未達となり中断しました。制作・判定・保存/reloadの検証は未実施です。5215は別の未達観察として記録し、5212〜5214の4担当数には合算しません。
 
 新しいblind担当が、初期コードからBriefだけを用いて制作・通常判定・保存/reloadと選択理由の説明を行います。Evaluation Guide、工程手順、Hint、Solution、旧コード、他担当の結果は利用しません。初期状態、実際に参照した支援、偶発露出、判断・修正・行き詰まり、Viewport/a11yの確認範囲を原文で記録し、条件未達を合格扱いにしません。旧作品・Profile・保存復帰の証拠を消去せず、#106からの全再実施も要求しません。
+
+### Brief-only開始時の支援露出と表示修正
+
+5215の新担当は、開始HTML、工程1〜3の見出し、展開済み工程1の具体的な実装説明を読んだため、Brief-only未達として中断しました。既存作品は見当たらず、Guide・Hint・Solutionは開かず、コード変更・消去・判定・外部送信も行っていません。失敗原文とSource/origin/担当参照を別manifestへ固定し、SHA-256は`bcc63714be711a07be1dbae9d38fe0fad3946e7f3c9db5fcfa94e9fea55b6194`です。初期画像の記録は報告されていますが、画像原本は未取得です。
+
+実装では手順未選択でも第1工程を表示し、現在の手順を閉じる通常controlはありませんでした。Preview集中表示も画面内の一時状態で、再読込後へ保持されません。主担当による通常UI操作の再現とは称さず、本人の未達報告とコードを照合した結果です。
+
+HTML/CSSのCapstoneだけ、Briefを初期表示し、評価ガイドと工程手順は「制作の補助を見る」を明示的に開くまで描画しない表示へ修正します。補助の開閉は画面内に留め、再訪は閉じた状態から始めます。新しい保存項目を追加せず、既存の工程選択・判定・Hint・Reset・教材・runbookは変えません。Standard/Guidedと他コースのCapstoneは従来の表示を維持します。
+
+この実装・回帰テスト・コードレビュー・CIの成功だけで、Brief-only制作を受入済みとはしません。修正後の別originと新しいblind担当で、初期支援非表示、実際の参照資料・偶発露出、ゼロからの制作と選択理由、判定・保存/reloadを再観察するまで#107とP1-CAPSTONE-FRESHは未完です。
 
 ### 残す非blockingの改善提案
 
