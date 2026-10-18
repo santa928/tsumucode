@@ -279,9 +279,15 @@ export function CourseMapPage() {
                                   </p>
                                 ) : null}
                                 <div className="mt-5">
-                                  <ActionLink to={lessonPath} className="w-full sm:w-auto">
-                                    {lessonLabel}
-                                  </ActionLink>
+                                  {!canEdit && courseProgress.status === 'loading' ? (
+                                    <p className="min-h-11 text-sm text-workshop-muted">
+                                      閲覧位置を確認しています。
+                                    </p>
+                                  ) : (
+                                    <ActionLink to={lessonPath} className="w-full sm:w-auto">
+                                      {lessonLabel}
+                                    </ActionLink>
+                                  )}
                                 </div>
                               </div>
                             </li>

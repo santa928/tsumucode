@@ -170,6 +170,20 @@ describe('CourseMapPage', () => {
     expect(screen.getByText(/解説の閲覧位置と、演習の合格記録は別/u)).toBeInTheDocument();
   });
 
+  it('読書端末の保存位置を読み込む間は先頭Slideへ移動させない', async () => {
+    useEditingCapability.mockReturnValue(false);
+    useCourseProgress.mockReturnValue({
+      status: 'loading',
+      progress: undefined,
+      error: undefined,
+      retry: vi.fn(),
+    });
+    renderCourseMap();
+
+    expect(await screen.findByText('端末のコース進捗を確認しています。')).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /見出しを置く/u })).not.toBeInTheDocument();
+  });
+
   it('読書端末では制作の解説を開き、Slideのない制作には既存の入口を残す', async () => {
     useEditingCapability.mockReturnValue(false);
     const fixture = profileCompletionFixture();
