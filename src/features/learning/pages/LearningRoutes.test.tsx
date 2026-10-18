@@ -3,6 +3,7 @@ import { EditorView } from '@codemirror/view';
 import userEvent from '@testing-library/user-event';
 import { RouterProvider } from 'react-router/dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { compileCourse } from '../../../../scripts/content/compileCourse';
 import { fixtureCourse } from '../../../../tests/fixtures/course';
 import { createSplitCourseFetchFixture } from '../../../../tests/fixtures/splitCourseDelivery';
 import {
@@ -712,6 +713,45 @@ afterEach(() => {
 });
 
 describe('Learning routes', () => {
+  it('実教材のCapstone開始画面はEditorの全初期Fileにも構造解法や工程説明を露出しない', async () => {
+    vi.stubEnv('BASE_URL', '/capstone-real-starter/');
+    const { runtime: course } = await compileCourse('content/html-css');
+    stubContentFetch(course);
+    stubEditingCapability(true);
+    const adapters = stubAdapters();
+    const user = userEvent.setup();
+    renderRoute('/courses/html-css/lessons/html-css-ch13-l01/exercises/html-css-ch13-l01-e01');
+    await findCodeWorkspace();
+
+    expect(screen.getByRole('region', { name: '制作ブリーフ' })).toBeVisible();
+    const supportButton = screen.getByRole('button', { name: '制作の補助を見る' });
+    expect(supportButton).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByRole('region', { name: '演習の手順' })).not.toBeInTheDocument();
+    expect(screen.queryByText('Evaluation Guide')).not.toBeInTheDocument();
+
+    const editor = await findEditorView();
+    const html = editor.state.doc.toString();
+    expect(html).not.toMatch(/<!--|<(?:header|main|footer|h[1-6]|nav)\b/iu);
+    const starterDocument = new DOMParser().parseFromString(html, 'text/html');
+    expect(starterDocument.body.hasAttribute('data-capstone-page')).toBe(true);
+    expect(starterDocument.body.children).toHaveLength(0);
+    expect(starterDocument.querySelector('link[rel="stylesheet"]')?.getAttribute('href')).toBe(
+      'styles.css',
+    );
+
+    await user.click(screen.getByRole('tab', { name: 'styles.css' }));
+    const css = editor.state.doc.toString();
+    expect(css).not.toContain('/*');
+    expect(css.trim()).toMatch(/^:root\s*\{[^{}]+\}$/u);
+    expect(css).toContain('--paper: #f5efe3;');
+    expect(css).toContain('--surface: #fffdf8;');
+    expect(adapters.validate).not.toHaveBeenCalled();
+
+    await user.click(supportButton);
+    expect(screen.getByText('Evaluation Guide')).toBeVisible();
+    expect(screen.getByRole('region', { name: '演習の手順' })).toBeVisible();
+  }, 30_000);
+
   it('Capstone初回はBriefだけを表示し、ガイドと工程の実装説明を描画しない', async () => {
     vi.stubEnv('BASE_URL', '/capstone-brief-first/');
     stubContentFetch(projectInstructionCourse('capstone'));
