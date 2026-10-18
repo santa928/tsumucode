@@ -33,7 +33,9 @@ export function CapstoneInstructions({
           className="min-h-11 text-left font-black underline underline-offset-4"
           aria-expanded={showSupport}
           aria-controls={supportId}
-          onClick={() => setShowSupport((shown) => !shown)}
+          onClick={() => {
+            setShowSupport((shown) => !shown);
+          }}
         >
           {showSupport ? '制作の補助を閉じる' : '制作の補助を見る'}
         </button>
