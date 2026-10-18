@@ -95,7 +95,7 @@ jobs:
           retention-days: 7
       - name: Bind the static preview to its checkout
         if: success()
-        run: git rev-parse HEAD 'HEAD^{tree}' > test-results/tailwind-preview-identity.txt
+        run: git rev-parse HEAD 'HEAD^{tree}' > tailwind-preview-identity.txt
       - name: Preserve static preview for independent UI review
         if: success()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
@@ -103,7 +103,7 @@ jobs:
           name: tailwind-preview-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             dist
-            test-results/tailwind-preview-identity.txt
+            tailwind-preview-identity.txt
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 1
