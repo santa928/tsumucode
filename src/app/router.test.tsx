@@ -16,6 +16,9 @@ const content = vi.hoisted(() => ({
   loadCourseIndex: vi.fn(),
   loadLessonManifest: vi.fn(),
 }));
+const useEditingCapability = vi.hoisted(() => vi.fn());
+
+vi.mock('../shared/device/editingCapability', () => ({ useEditingCapability }));
 
 vi.mock('../core/content/loadCourseCatalog', async (importOriginal) => {
   const actual = await importOriginal<typeof LoadCourseCatalogModule>();
@@ -88,6 +91,7 @@ let router: ReturnType<typeof createAppRouter> | undefined;
 const ROUTER_READY_TIMEOUT_MS = 5_000;
 
 beforeEach(() => {
+  useEditingCapability.mockReturnValue(false);
   content.loadCourseCatalog.mockReset().mockResolvedValue(structuredClone(fixtureCatalog));
   content.loadCourseIndex.mockReset().mockResolvedValue(structuredClone(fixtureCourseIndex));
   content.loadLessonManifest.mockReset().mockResolvedValue(structuredClone(fixtureLessonManifest));
@@ -234,19 +238,26 @@ describe('createAppRouter', () => {
     expect(router.state.location.pathname).toBe('/paths/frontend');
   });
 
-  it('Course URLへ直接アクセスして検証済みコースマップを表示する', async () => {
-    window.location.hash = '#/courses/html-css';
-    router = createAppRouter();
-    render(<RouterProvider router={router} />);
+  it.each([
+    { canEdit: true, label: '見出しを置くレッスンを始める' },
+    { canEdit: false, label: '見出しを置くの解説を読む' },
+  ])(
+    'Course URLへ直接アクセスして端末に合う入口を表示する: $canEdit',
+    async ({ canEdit, label }) => {
+      useEditingCapability.mockReturnValue(canEdit);
+      window.location.hash = '#/courses/html-css';
+      router = createAppRouter();
+      render(<RouterProvider router={router} />);
 
-    expect(
-      await screen.findByRole('heading', { level: 1, name: fixtureCourse.title }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: '見出しを置くレッスンを始める' })).toHaveAttribute(
-      'href',
-      '#/courses/html-css/lessons/lesson-first-heading/slides/slide-html-role',
-    );
-  });
+      expect(
+        await screen.findByRole('heading', { level: 1, name: fixtureCourse.title }),
+      ).toBeInTheDocument();
+      expect(await screen.findByRole('link', { name: label })).toHaveAttribute(
+        'href',
+        '#/courses/html-css/lessons/lesson-first-heading/slides/slide-html-role',
+      );
+    },
+  );
 
   it('Course取得中を通知してからコースマップへ遷移する', async () => {
     let resolveCatalog!: () => void;
