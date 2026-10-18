@@ -8,26 +8,30 @@ function focusMainContent(event: MouseEvent<HTMLAnchorElement>): void {
   document.getElementById('main-content')?.focus();
 }
 
-/** 目次だけにBrandとHome復帰を表示し、Viewerの高さを消費しない。 */
-function LibraryCatalogHeader() {
+/** 目次にはBrandを示し、通読では現在位置から教材選択へ戻れる小さい操作欄にする。 */
+function LibraryCatalogHeader({ continuous }: { readonly continuous: boolean }) {
   return (
-    <header className="tc-site-header border-b border-workshop-border bg-workshop-surface">
+    <header
+      className={`tc-site-header border-b border-workshop-border bg-workshop-surface${continuous ? ' tc-reading-navigation' : ''}`}
+    >
       <div className="tc-content-frame mx-auto flex min-h-14 w-full max-w-[var(--tc-content-max)] flex-wrap items-center justify-between gap-3 py-2">
-        <Link
-          to="/"
-          aria-label="TsumuCodeホームへ（ベータ版）"
-          className="inline-flex min-h-11 items-center gap-3 font-black"
-        >
-          <span aria-hidden="true" className="grid grid-cols-2 gap-0.5">
-            <span className="size-2.5 rounded-workshop-piece bg-workshop-learning" />
-            <span className="size-2.5 rounded-workshop-piece bg-workshop-complete" />
-            <span className="col-span-2 h-2.5 rounded-workshop-piece bg-workshop-primary" />
-          </span>
-          <span className="inline-flex items-center gap-2 text-xl">
-            TsumuCode
-            <BetaBadge />
-          </span>
-        </Link>
+        {continuous ? null : (
+          <Link
+            to="/"
+            aria-label="TsumuCodeホームへ（ベータ版）"
+            className="inline-flex min-h-11 items-center gap-3 font-black"
+          >
+            <span aria-hidden="true" className="grid grid-cols-2 gap-0.5">
+              <span className="size-2.5 rounded-workshop-piece bg-workshop-learning" />
+              <span className="size-2.5 rounded-workshop-piece bg-workshop-complete" />
+              <span className="col-span-2 h-2.5 rounded-workshop-piece bg-workshop-primary" />
+            </span>
+            <span className="inline-flex items-center gap-2 text-xl">
+              TsumuCode
+              <BetaBadge />
+            </span>
+          </Link>
+        )}
         <Link
           to="/"
           className="inline-flex min-h-11 items-center rounded-workshop-sm px-3 py-2 font-bold hover:bg-workshop-workbench"
@@ -45,6 +49,9 @@ export function LibraryShell() {
   const viewer = /^\/library\/(?:pilot\/)?[^/]+\/lessons\/[^/]+\/slides\/[^/]+\/?$/u.test(
     location.pathname,
   );
+  const continuous = /^\/library\/(?:pilot\/)?[^/]+\/lessons\/[^/]+\/read\/?$/u.test(
+    location.pathname,
+  );
 
   return (
     <div
@@ -56,7 +63,7 @@ export function LibraryShell() {
       <a href="#main-content" onClick={focusMainContent} className="tc-skip-link">
         本文へ移動
       </a>
-      {viewer ? null : <LibraryCatalogHeader />}
+      {viewer ? null : <LibraryCatalogHeader continuous={continuous} />}
       <main
         id="main-content"
         tabIndex={-1}

@@ -1505,6 +1505,11 @@
 }
 
 /* 通読は固定ViewportのSlideとは分け、本文の自然な高さでDocumentをスクロールする。 */
+.tc-reading-navigation {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
 .tc-reading-article {
   max-width: 52rem;
   margin-inline: auto;
@@ -1553,7 +1558,7 @@
   font-weight: 700;
 }
 .tc-reading-article [data-reading-section] {
-  scroll-margin-block-start: 1rem;
+  scroll-margin-block-start: 4.5rem;
   min-width: 0;
 }
 .tc-reading-article .tc-slide-stage {

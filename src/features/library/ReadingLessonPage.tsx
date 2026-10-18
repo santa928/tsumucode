@@ -55,7 +55,12 @@ function ReadingLessonSession({
         frame = 0;
         if (stopped) return;
         let current = lesson.slides[0]!.id;
-        const line = window.innerHeight * 0.2;
+        const first = sections.current.get(lesson.slides[0]!.id);
+        const margin = first
+          ? Number.parseFloat(getComputedStyle(first).scrollMarginBlockStart)
+          : 0;
+        // 狭い高さや文字拡大でも、固定ナビゲーション下に復元した節を現在位置に含める。
+        const line = Math.max(window.innerHeight * 0.2, Number.isFinite(margin) ? margin : 0);
         for (const slide of lesson.slides) {
           const node = sections.current.get(slide.id);
           if (node !== undefined && node.getBoundingClientRect().top <= line) current = slide.id;

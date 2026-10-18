@@ -1,9 +1,87 @@
 import { readStoredProgress, seedCompletedProgress } from './helpers/progress';
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 const PILOT = './#/library/pilot';
 const CLOSURE = `${PILOT}/javascript/lessons/javascript-ch03-l05/read`;
 const KEY = 'tsumucode-reading-v1';
+
+/** 復元・scroll検出・React描画・位置保存をフレーム順に進め、旧位置との比較を避ける。 */
+async function settleReadingPosition(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    for (let frame = 0; frame < 8; frame += 1) {
+      await new Promise<void>((resolve) => {
+        requestAnimationFrame(() => {
+          resolve();
+        });
+      });
+    }
+  });
+}
+
+for (const [textScale, height] of [
+  [100, 844],
+  [200, 844],
+  [200, 400],
+] as const) {
+  test(`狭幅の通読で教材選択へ戻っても読んだ節から再開する（文字${String(textScale)}%・高さ${String(height)}）`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height });
+    await page.goto('./#/library/html-css/lessons/html-css-ch00-l01/read');
+    if (textScale !== 100) {
+      await page.evaluate(() => {
+        document.documentElement.style.fontSize = '200%';
+      });
+    }
+    await page
+      .getByRole('navigation', { name: 'このレッスンの目次' })
+      .getByRole('link', { name: 'CSSは色などの見た目を受け持つ' })
+      .click();
+    const target = 'html-css-ch00-l01-s03';
+    const section = page.locator(`[data-reading-section="${target}"]`);
+    await expect(page.getByRole('textbox', { name: '読書位置のURL', exact: true })).toHaveValue(
+      new RegExp(`slide=${target}$`, 'u'),
+    );
+    await settleReadingPosition(page);
+    const currentPosition = () =>
+      page.evaluate((key) => {
+        const saved = JSON.parse(localStorage.getItem(key) ?? '{}') as {
+          positions?: { slideId: string }[];
+        };
+        return saved.positions?.[0]?.slideId;
+      }, KEY);
+    await expect.poll(currentPosition).toBe(target);
+    await section.getByText('答えと理由を見る', { exact: true }).click();
+
+    const home = page.getByRole('banner').getByRole('link', { name: '教材を選ぶ' });
+    // 通常のリンク到達で画面が動く場合も、描画と保存を待ってから離脱する。
+    await home.scrollIntoViewIfNeeded();
+    await settleReadingPosition(page);
+    await expect.poll(currentPosition).toBe(target);
+    await home.focus();
+    await expect(home).toBeFocused();
+    await home.press('Enter');
+    await expect(
+      page.getByRole('heading', { level: 1, name: '学びたいピースを選ぶ' }),
+    ).toBeVisible();
+    await page.reload();
+    await page.getByRole('link', { name: '解説を読む', exact: true }).click();
+    const resume = page.getByRole('link', { name: 'HTML/CSS はじめの一歩：読書の続きから' });
+    await expect(resume).toHaveAttribute('href', new RegExp(`slide=${target}$`, 'u'));
+    await resume.click();
+    await expect(page).toHaveURL(new RegExp(`slide=${target}$`, 'u'));
+    const heading = section.getByRole('heading', { level: 2 });
+    await expect(heading).toBeInViewport();
+    const headingBox = await heading.boundingBox();
+    const headerBox = await page.getByRole('banner').boundingBox();
+    expect(headingBox).not.toBeNull();
+    expect(headerBox).not.toBeNull();
+    expect(headingBox!.y).toBeGreaterThanOrEqual(headerBox!.y + headerBox!.height);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
+  });
+}
 
 test('3Lessonを通読し、同じ端末の読書位置とあとで試すを復元する', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
