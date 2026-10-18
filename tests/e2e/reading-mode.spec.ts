@@ -9,7 +9,11 @@ const KEY = 'tsumucode-reading-v1';
 async function settleReadingPosition(page: Page): Promise<void> {
   await page.evaluate(async () => {
     for (let frame = 0; frame < 8; frame += 1) {
-      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+      await new Promise<void>((resolve) => {
+        requestAnimationFrame(() => {
+          resolve();
+        });
+      });
     }
   });
 }
@@ -57,6 +61,9 @@ for (const [textScale, height] of [
     await home.focus();
     await expect(home).toBeFocused();
     await home.press('Enter');
+    await expect(
+      page.getByRole('heading', { level: 1, name: '学びたいピースを選ぶ' }),
+    ).toBeVisible();
     await page.reload();
     await page.getByRole('link', { name: '解説を読む', exact: true }).click();
     const resume = page.getByRole('link', { name: 'HTML/CSS はじめの一歩：読書の続きから' });
