@@ -17,6 +17,9 @@ on:
       - src/features/learning/portable/PortableTailwindExport*
       - src/features/learning/portable/portableTailwindArchive*
       - src/features/learning/portable/tailwind-project/**
+      - src/features/course/CourseMapPage.tsx
+      - src/features/progress/lessonResumeTarget.ts
+      - tests/e2e/course-reading.spec.ts
       - tests/e2e/tailwind*.spec.ts
       - tests/e2e/helpers/**
       - scripts/ci/tailwind-project.sh
@@ -41,6 +44,9 @@ on:
       - src/features/learning/portable/PortableTailwindExport*
       - src/features/learning/portable/portableTailwindArchive*
       - src/features/learning/portable/tailwind-project/**
+      - src/features/course/CourseMapPage.tsx
+      - src/features/progress/lessonResumeTarget.ts
+      - tests/e2e/course-reading.spec.ts
       - tests/e2e/tailwind*.spec.ts
       - tests/e2e/helpers/**
       - scripts/ci/tailwind-project.sh
@@ -87,3 +93,17 @@ jobs:
           path: test-results/tailwind-*
           if-no-files-found: warn
           retention-days: 7
+      - name: Bind the static preview to its checkout
+        if: success()
+        run: git rev-parse HEAD 'HEAD^{tree}' > tailwind-preview-identity.txt
+      - name: Preserve static preview for independent UI review
+        if: success()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: tailwind-preview-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            dist
+            tailwind-preview-identity.txt
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 1

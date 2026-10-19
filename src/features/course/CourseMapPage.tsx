@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useLoaderData } from 'react-router';
 import type { courseLoader } from '../../app/contentLoaders';
 import { buildCourseMap } from '../../core/content/courseMap';
-import { lessonResumePath } from '../../core/content/lessonStart';
+import { lessonResumePath, lessonStartTargetPath } from '../../core/content/lessonStart';
 import { ActionLink } from '../../design-system/components/ActionLink';
 import { PieceProgress } from '../../design-system/components/PieceProgress';
 import { StackedCard } from '../../design-system/components/StackedCard';
@@ -10,8 +10,9 @@ import { StatusBadge } from '../../design-system/components/StatusBadge';
 import { WorkshopNotice } from '../../design-system/components/WorkshopNotice';
 import { applyCourseProgress } from '../progress/courseMapProgress';
 import { useCourseProgress } from '../progress/useCourseProgress';
-import { findLessonResumeDraft } from '../progress/lessonResumeTarget';
+import { findLessonResumeDraft, lessonReadingTarget } from '../progress/lessonResumeTarget';
 import { sharedGuidedProjectStages } from '../progress/sharedGuidedProjectStages';
+import { useEditingCapability } from '../../shared/device/editingCapability';
 
 const KIND_LABEL = {
   standard: '基礎レッスン',
@@ -22,6 +23,7 @@ const KIND_LABEL = {
 /** Courseの現在進捗を示し、以前の達成記録と現在のコードの再判定を区別する。 */
 export function CourseMapPage() {
   const course = useLoaderData<typeof courseLoader>();
+  const canEdit = useEditingCapability();
   const lessons = useMemo(
     () => course.phases.flatMap(({ chapters }) => chapters.flatMap(({ lessons: items }) => items)),
     [course],
@@ -39,6 +41,12 @@ export function CourseMapPage() {
     sharedProjects.flatMap(({ lessons: stages }) => stages.map(({ id }) => id)),
   );
   const courseProgress = useCourseProgress(course.id, undefined, workspaceIds);
+  const readingTargets = new Map(
+    lessons.map((lesson) => [
+      lesson.id,
+      canEdit ? undefined : lessonReadingTarget(course, lesson, courseProgress.progress),
+    ]),
+  );
   const draftLessonTimes = new Map<string, string>();
   if (courseProgress.drafts !== undefined) {
     for (const lesson of lessons) {
@@ -72,6 +80,11 @@ export function CourseMapPage() {
           {map.title}
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-workshop-muted">{map.description}</p>
+        {!canEdit ? (
+          <p className="mt-4 max-w-2xl text-workshop-muted">
+            解説の閲覧位置と、演習の合格記録は別です。保存した閲覧位置があれば、そこから解説を開きます。演習は編集できるPCで取り組めます。
+          </p>
+        ) : null}
         <p className="mt-4 font-bold text-workshop-muted">
           全{course.expectedTotals.chapters}章・約{map.estimatedMinutes}分
         </p>
@@ -201,70 +214,85 @@ export function CourseMapPage() {
                       </header>
 
                       <ol className="list-none p-5 md:p-7">
-                        {chapter.lessons.map((lesson, lessonIndex) => (
-                          <li
-                            key={lesson.id}
-                            data-lesson-piece
-                            className="group grid grid-cols-[2.5rem_minmax(0,1fr)] gap-3 pb-6 last:pb-0 md:grid-cols-[3rem_minmax(0,1fr)] md:gap-5"
-                          >
-                            <div aria-hidden="true" className="relative flex justify-center">
-                              <span className="absolute bottom-[-1.5rem] top-10 w-1 bg-workshop-workbench group-last:hidden" />
-                              <span className="relative grid size-10 place-items-center rounded-workshop-piece border-2 border-workshop-primary bg-workshop-canvas font-black text-workshop-primary shadow-[var(--tc-shadow-piece)]">
-                                {lessonIndex + 1}
-                              </span>
-                            </div>
-                            <div className="min-w-0 rounded-workshop-md border border-workshop-border bg-workshop-raised p-4 md:p-5">
-                              <div className="flex flex-wrap items-start justify-between gap-3">
-                                <div className="min-w-0">
-                                  <StatusBadge
-                                    status={lesson.status}
-                                    {...(lesson.status === 'complete' &&
-                                    sharedStageIds.has(lesson.id)
-                                      ? { label: '工程合格' }
-                                      : {})}
-                                  />
-                                  <h4 className="mt-3 text-xl font-black">{lesson.title}</h4>
-                                </div>
-                                <span
-                                  data-lesson-minutes
-                                  className="rounded-workshop-sm bg-workshop-workbench px-3 py-1 text-sm font-bold"
-                                >
-                                  {lesson.estimatedMinutes}分
+                        {chapter.lessons.map((lesson, lessonIndex) => {
+                          const readingTarget = readingTargets.get(lesson.id);
+                          const resumesLesson =
+                            lesson.status !== 'complete' &&
+                            (draftLessonTimes.has(lesson.id) ||
+                              (lesson.status === 'current' &&
+                                courseProgress.progress !== undefined));
+                          const lessonPath =
+                            readingTarget !== undefined
+                              ? lessonStartTargetPath(course.id, lesson.id, readingTarget)
+                              : resumesLesson
+                                ? lessonResumePath(course.id, lesson.id)
+                                : lesson.startPath;
+                          const lessonLabel =
+                            readingTarget !== undefined
+                              ? `${lesson.title}の解説を読む`
+                              : resumesLesson
+                                ? `${lesson.title}レッスンを再開する`
+                                : lesson.status === 'current'
+                                  ? `${lesson.title}レッスンを始める`
+                                  : `${lesson.title}レッスンを見る`;
+                          return (
+                            <li
+                              key={lesson.id}
+                              data-lesson-piece
+                              className="group grid grid-cols-1 gap-3 pb-6 last:pb-0 sm:grid-cols-[2.5rem_minmax(0,1fr)] md:grid-cols-[3rem_minmax(0,1fr)] md:gap-5"
+                            >
+                              <div
+                                aria-hidden="true"
+                                className="relative flex justify-start sm:justify-center"
+                              >
+                                <span className="absolute bottom-[-1.5rem] top-10 hidden w-1 bg-workshop-workbench group-last:hidden sm:block" />
+                                <span className="relative grid size-10 place-items-center rounded-workshop-piece border-2 border-workshop-primary bg-workshop-canvas font-black text-workshop-primary shadow-[var(--tc-shadow-piece)]">
+                                  {lessonIndex + 1}
                                 </span>
                               </div>
-                              <p className="mt-3 text-workshop-muted">{lesson.goal}</p>
-                              {courseProgress.progress?.lessons[lesson.id]?.firstCompletedAt !==
-                                undefined &&
-                              courseProgress.progress.lessons[lesson.id]?.currentComplete ===
-                                false ? (
-                                <p className="mt-3 text-sm text-workshop-muted">
-                                  以前の達成記録は残っています。現在のコードを、もう一度「判定する」で確認してください。
-                                </p>
-                              ) : null}
-                              <div className="mt-5">
-                                <ActionLink
-                                  to={
-                                    lesson.status !== 'complete' &&
-                                    (draftLessonTimes.has(lesson.id) ||
-                                      (lesson.status === 'current' &&
-                                        courseProgress.progress !== undefined))
-                                      ? lessonResumePath(course.id, lesson.id)
-                                      : lesson.startPath
-                                  }
-                                  className="w-full sm:w-auto"
-                                >
-                                  {lesson.status !== 'complete' && draftLessonTimes.has(lesson.id)
-                                    ? `${lesson.title}レッスンを再開する`
-                                    : lesson.status === 'current'
-                                      ? courseProgress.progress === undefined
-                                        ? `${lesson.title}レッスンを始める`
-                                        : `${lesson.title}レッスンを再開する`
-                                      : `${lesson.title}レッスンを見る`}
-                                </ActionLink>
+                              <div className="min-w-0 rounded-workshop-md border border-workshop-border bg-workshop-raised p-4 [overflow-wrap:anywhere] md:p-5">
+                                <div className="flex flex-wrap items-start justify-between gap-3">
+                                  <div className="min-w-0">
+                                    <StatusBadge
+                                      status={lesson.status}
+                                      {...(lesson.status === 'complete' &&
+                                      sharedStageIds.has(lesson.id)
+                                        ? { label: '工程合格' }
+                                        : {})}
+                                    />
+                                    <h4 className="mt-3 text-xl font-black">{lesson.title}</h4>
+                                  </div>
+                                  <span
+                                    data-lesson-minutes
+                                    className="rounded-workshop-sm bg-workshop-workbench px-3 py-1 text-sm font-bold"
+                                  >
+                                    {lesson.estimatedMinutes}分
+                                  </span>
+                                </div>
+                                <p className="mt-3 text-workshop-muted">{lesson.goal}</p>
+                                {courseProgress.progress?.lessons[lesson.id]?.firstCompletedAt !==
+                                  undefined &&
+                                courseProgress.progress.lessons[lesson.id]?.currentComplete ===
+                                  false ? (
+                                  <p className="mt-3 text-sm text-workshop-muted">
+                                    以前の達成記録は残っています。現在のコードを、もう一度「判定する」で確認してください。
+                                  </p>
+                                ) : null}
+                                <div className="mt-5">
+                                  {!canEdit && courseProgress.status === 'loading' ? (
+                                    <p className="min-h-11 text-sm text-workshop-muted">
+                                      閲覧位置を確認しています。
+                                    </p>
+                                  ) : (
+                                    <ActionLink to={lessonPath} className="w-full sm:w-auto">
+                                      {lessonLabel}
+                                    </ActionLink>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          </li>
-                        ))}
+                            </li>
+                          );
+                        })}
                       </ol>
                     </StackedCard>
                   );

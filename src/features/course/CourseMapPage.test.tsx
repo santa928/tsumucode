@@ -10,8 +10,10 @@ import { profileCompletionFixture } from '../../../tests/fixtures/profileComplet
 import { CourseMapPage } from './CourseMapPage';
 
 const useCourseProgress = vi.hoisted(() => vi.fn());
+const useEditingCapability = vi.hoisted(() => vi.fn());
 
 vi.mock('../progress/useCourseProgress', () => ({ useCourseProgress }));
+vi.mock('../../shared/device/editingCapability', () => ({ useEditingCapability }));
 
 const NOW = '2026-07-10T00:00:00.000Z';
 
@@ -128,12 +130,83 @@ describe('CourseMapPage', () => {
   });
 
   beforeEach(() => {
+    useEditingCapability.mockReturnValue(true);
     useCourseProgress.mockReturnValue({
       status: 'ready',
       progress: undefined,
       error: undefined,
       retry: vi.fn(),
     });
+  });
+
+  it('読書端末では最終Slideを読んだ後も演習ではなく保存した解説へ戻る', async () => {
+    useEditingCapability.mockReturnValue(false);
+    useCourseProgress.mockReturnValue({
+      status: 'ready',
+      progress: {
+        ...completedProgress,
+        currentComplete: false,
+        currentLessonId: 'lesson-first-heading',
+        lessons: {
+          'lesson-first-heading': {
+            ...completedProgress.lessons['lesson-first-heading'],
+            currentSlideId: 'slide-html-role',
+            passedExerciseIds: [],
+            currentComplete: false,
+          },
+        },
+      },
+      error: undefined,
+      retry: vi.fn(),
+    });
+    renderCourseMap();
+
+    const link = await screen.findByRole('link', { name: /見出しを置く/u });
+    expect(link).toHaveAttribute(
+      'href',
+      '/courses/html-css/lessons/lesson-first-heading/slides/slide-html-role',
+    );
+    expect(link).toHaveAccessibleName('見出しを置くの解説を読む');
+    expect(screen.getByText(/解説の閲覧位置と、演習の合格記録は別/u)).toBeInTheDocument();
+  });
+
+  it('読書端末の保存位置を読み込む間は先頭Slideへ移動させない', async () => {
+    useEditingCapability.mockReturnValue(false);
+    useCourseProgress.mockReturnValue({
+      status: 'loading',
+      progress: undefined,
+      error: undefined,
+      retry: vi.fn(),
+    });
+    renderCourseMap();
+
+    expect(await screen.findByText('端末のコース進捗を確認しています。')).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /見出しを置く/u })).not.toBeInTheDocument();
+  });
+
+  it('読書端末では制作の解説を開き、Slideのない制作には既存の入口を残す', async () => {
+    useEditingCapability.mockReturnValue(false);
+    const fixture = profileCompletionFixture();
+    const lessons = fixture.course.phases.flatMap(({ chapters }) =>
+      chapters.flatMap(({ lessons }) => lessons),
+    );
+    const readingLesson = lessons.find((lesson) => lesson.slides.length > 0)!;
+    const noSlideLesson = lessons.find((lesson) => lesson.id !== readingLesson.id)!;
+    noSlideLesson.slides = [];
+    renderCourseMap(fixture.course);
+
+    expect(
+      await screen.findByRole('link', { name: `${readingLesson.title}の解説を読む` }),
+    ).toHaveAttribute(
+      'href',
+      `/courses/${fixture.course.id}/lessons/${readingLesson.id}/slides/${readingLesson.slides[0]!.id}`,
+    );
+    expect(
+      screen.getByRole('link', { name: new RegExp(noSlideLesson.title, 'u') }),
+    ).toHaveAttribute(
+      'href',
+      `/courses/${fixture.course.id}/lessons/${noSlideLesson.id}/exercises/${noSlideLesson.exercises[0]!.id}`,
+    );
   });
 
   it('Course、Phase、Chapter、Lessonを省略しない見出し階層で表示する', async () => {
