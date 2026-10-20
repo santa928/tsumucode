@@ -1,8 +1,9 @@
 # FormとServer Actionの2 Lesson（Issue #135）
 
-未公開Next Courseに`next-ch04-l01`と`next-ch04-l02`を追加する。
+Issue #135では、当時未公開だったNext Courseへ`next-ch04-l01`と`next-ch04-l02`を追加した。
 React/TypeScriptと既存Next Lessonを前提に、入力検証・一時失敗・同じ内容の再試行を扱う。
-外部DB・認証サービス・依存・通信・費用は追加せず、Courseはdraftを維持する。
+当時は外部DB・認証サービス・依存・通信・費用を追加せず、draftで検証した。
+現在の9教材は公開済みであり、この文書の限定Cookie基盤はCookie専用Lessonや追加公開の完了を意味しない。
 
 ## 学習とSource
 
@@ -43,7 +44,8 @@ Domain指定・任意Path・永続期限・未知属性・同名重複は採用�
 `Path=/w/<workspace>/<run UUID>`（末尾slashなし）、`HttpOnly; SameSite=Strict`とする。
 static chunk、HMR/WebSocket、他のNext/Vite教材、採点にはこの例外を適用しない。
 
-Cookieの寿命はrun単位。同じrunのSource反映では保持し、停止後の新runには引き継がない。
+Cookieはrun単位で分離する。同じrunのSource反映では保持し、停止後の新runには引き継がない。
+旧CookieがBrowserに残っていても、新runのhost・Pathとは一致しない。
 Cookie応答のheaders発行直前にもrun・Source版/hash・socket dev/inode・非採点を確認し、
 確認時点で失効していた応答とcontrol不通を拒否する。既にBrowserへ送ったheadersは撤回できず、
 同run内のSource版ごとのCookie完全初期化や、HTTP完了とCookie保存の原子性は保証しない。
