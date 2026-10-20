@@ -116,7 +116,7 @@ function upstreamHeaders(req, target, websocket = false) {
   // 検査済みtheme以外のCookie/Authorization/token/Forwarded等は転送しない。
   return {
     host: req.headers.host,
-    ...(!websocket ? nextPreviewRequest(req, target)?.headers : {}),
+    ...(!websocket ? nextPreviewRequest(req, target, { allowLessonTheme: true })?.headers : {}),
     ...(req.headers.origin ? { origin: req.headers.origin } : {}),
     ...(req.headers['content-type'] ? { 'content-type': req.headers['content-type'] } : {}),
   };

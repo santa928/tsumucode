@@ -108,6 +108,7 @@ try {
     const files = {};
     for (const file of exercise.files)
       files[file.path] = await readFile(`${directory}/solution/${file.path}`, 'utf8');
+    const solution = { ...files };
     const server = workspaceId === FORM_WORKSPACE ? 'app/api/note/route.ts' : 'app/actions.ts';
     const path = `/api/workspaces/${workspaceId}`;
     const original = await api(path);
@@ -227,6 +228,42 @@ try {
     await fresh.waitForLoadState('networkidle');
     await submit(fresh, 'read', 'absent');
     await fresh.close();
+    // 採点Browserが自分で書いたCookieも、共有policyの既定拒否でServerへ渡さない。
+    const client = 'app/note-form.tsx';
+    const gradeFiles = {
+      ...solution,
+      [client]: solution[client].replace('import {', 'import { useEffect,').replace(
+        'export default function NoteForm() {',
+        `export default function NoteForm() {
+  useEffect(() => { document.cookie = 'lesson-theme=dark; Path=/'; }, []);`,
+      ),
+      [server]:
+        solution[server].replace(
+          'const raw =',
+          `if ((await cookies()).has('lesson-theme')) throw new Error('Grader Cookie boundary');
+  const raw =`,
+        ) + "\nimport { cookies } from 'next/headers';\n",
+    };
+    assert.notEqual(gradeFiles[client], solution[client]);
+    saved = await api(`${path}/source`, {
+      expectedSourceRevision: saved.sourceRevision,
+      files: gradeFiles,
+    });
+    saved = await api(`${path}/apply`, {
+      runId: active.runId,
+      expectedSourceRevision: saved.sourceRevision,
+      expectedSourceHash: saved.sourceHash,
+    });
+    const graded = await api(`${path}/grade`, {
+      runId: active.runId,
+      expectedSourceRevision: saved.sourceRevision,
+      expectedSourceHash: saved.sourceHash,
+    });
+    assert.equal(
+      graded.status,
+      'pass',
+      '採点内で自己設定したCookieをServerへ渡さず既存条件を判定する',
+    );
     await tab?.close();
     await manager.locator('iframe[title="Cookie境界の実Next"]').evaluate((node) => node.remove());
     await api(`${path}/stop`, { runId: active.runId });
@@ -242,6 +279,7 @@ try {
     passed.push(
       `${workspaceId}: 実set/read/delete・有限転送・HttpOnly/Strict/host/Path・同run反映保持・新run分離`,
     );
+    passed.push(`${workspaceId}: 採点BrowserのCookie自己設定を上流へ渡さない`);
   }
   const management = (await context.cookies('http://127.0.0.1:4173')).find(
     ({ name }) => name === 'management-fixture',

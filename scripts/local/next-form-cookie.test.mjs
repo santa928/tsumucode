@@ -7,6 +7,7 @@ import {
   ACTION_WORKSPACE,
 } from './next-form-preview.mjs';
 import { lessonThemeRequestHeaders, lessonThemeResponseHeaders } from './next-form-cookie.mjs';
+import { nextPreviewRequest } from './next-data-preview.mjs';
 
 const target = {
   workspaceId: FORM_WORKSPACE,
@@ -31,6 +32,11 @@ const req = {
   },
 };
 
+test('採点と他の共有policy呼出しは、明示許可なしにtheme Cookieを転送しない', () => {
+  const request = { ...req, headers: { ...req.headers, cookie: 'lesson-theme=dark' } };
+  assert.equal(nextPreviewRequest(request, target).headers.cookie, undefined);
+});
+
 test('固定2教材の有効POSTはthemeだけを渡し、資格情報を採用しない', () => {
   for (const workspaceId of [FORM_WORKSPACE, ACTION_WORKSPACE]) {
     const action = workspaceId === ACTION_WORKSPACE;
@@ -54,7 +60,11 @@ test('固定2教材の有効POSTはthemeだけを渡し、資格情報を採用�
           : {}),
       },
     };
-    const headers = nextFormRequest(request, { ...target, workspaceId }).headers;
+    const headers = nextFormRequest(
+      request,
+      { ...target, workspaceId },
+      { allowLessonTheme: true },
+    ).headers;
     assert.equal(headers.cookie, 'lesson-theme=light');
     for (const key of ['authorization', 'x-tsumucode-token', 'forwarded'])
       assert.equal(headers[key], undefined);
@@ -100,6 +110,8 @@ test('別profile・run・教材・静的資産・Origin・採点へ許可を広�
     { workspaceId: 'next-ch01-l01-e01' },
     { grading: true },
     { runId: 'old-run' },
+    { sourceHash: undefined },
+    { sourceRevision: undefined },
   ])
     assert.deepEqual(lessonThemeRequestHeaders({ ...req, headers }, { ...target, ...patch }), {});
   for (const patch of [

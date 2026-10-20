@@ -29,7 +29,7 @@ async function fixture(
           bufferStream,
           limit,
           complete,
-          beforeHeaders,
+          beforeHeaders: beforeHeaders ? () => beforeHeaders(reply) : undefined,
           fail: () => (res.headersSent ? res.destroy() : res.writeHead(502).end()),
         }),
     );
@@ -85,33 +85,51 @@ test('逐次・全量応答とも送信前に実行失効／採点開始／contr
     },
   };
   for (const stream of [false, true]) {
-    for (const current of [{ ...target, sourceRevision: 2 }, { ...target, grading: true }, null]) {
+    for (const changed of [{ ...target, sourceRevision: 2 }, { ...target, grading: true }, null]) {
       let completed = 0;
+      let current = target;
+      let checking;
+      let release;
+      const started = new Promise((resolve) => {
+        checking = resolve;
+      });
+      const gate = new Promise((resolve) => {
+        release = resolve;
+      });
       await fixture(
         stream,
         async (port) => {
-          const response = await globalThis.fetch(`http://127.0.0.1:${port}`);
+          let received = false;
+          const pending = globalThis.fetch(`http://127.0.0.1:${port}`).then((response) => {
+            received = true;
+            return response;
+          });
+          await started;
+          assert.equal(received, false, 'control照合待ち中はheadersを発行しない');
+          current = changed;
+          release();
+          const response = await pending;
           assert.equal(response.status, 502);
           assert.equal(response.headers.get('set-cookie'), null);
           assert.equal(await response.text(), '');
         },
-        (request, res) => res.writeHead(200, { 'content-type': 'text/html' }).end('ready'),
+        (request, res) =>
+          res
+            .writeHead(200, {
+              'content-type': 'text/html',
+              'set-cookie': 'lesson-theme=dark; Path=/',
+            })
+            .end('ready'),
         32,
         () => completed++,
         false,
-        () =>
-          lessonThemeResponseHeaders(
-            req,
-            target,
-            {
-              statusCode: 200,
-              headers: { 'set-cookie': ['lesson-theme=dark'] },
-            },
-            async () => {
-              if (!current) throw new Error('Control unavailable');
-              return current;
-            },
-          ),
+        (upstream) =>
+          lessonThemeResponseHeaders(req, target, upstream, async () => {
+            checking();
+            await gate;
+            if (!current) throw new Error('Control unavailable');
+            return current;
+          }),
       );
       assert.equal(completed, 0);
     }

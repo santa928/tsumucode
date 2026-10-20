@@ -140,7 +140,7 @@ export class ResidentWorkspace {
       profile: run.record.profile,
       ...run.socket,
       ...(streaming || form ? { sourceRevision: run.record.sourceRevision } : {}),
-      ...(form ? { grading: run.grading === true } : {}),
+      ...(form ? { grading: run.grading === true, sourceHash: run.record.sourceHash } : {}),
     };
   }
 

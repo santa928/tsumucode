@@ -1,6 +1,10 @@
 import { Buffer } from 'node:buffer';
 
-/** 固定ヘッダー・byte上限・応答型を保ち、任意の送信直前検査は失敗時に応答を拒否する。 */
+/**
+ * 固定ヘッダー・byte上限・応答型を保つ。
+ * beforeHeadersは送信直前に追加ヘッダー（またはそのPromise）を返すtrusted検査。
+ * 失敗時は応答を拒否し、待機中に切断された場合もheadersを発行しない。
+ */
 export function forwardPreviewResponse(
   upstream,
   res,

@@ -34,6 +34,7 @@ test('Formのdocument要求は有限themeだけを転送し、他のCookieを渡
       },
     },
     metadata,
+    { allowLessonTheme: true },
   );
   assert.deepEqual(policy.headers, { cookie: 'lesson-theme=dark' });
 });

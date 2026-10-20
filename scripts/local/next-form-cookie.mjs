@@ -9,6 +9,9 @@ function eligible(req, target) {
     target.profile !== 'next-project-v1' ||
     ![FORM_WORKSPACE, ACTION_WORKSPACE].includes(target.workspaceId) ||
     !/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/u.test(target.runId) ||
+    !Number.isSafeInteger(target.sourceRevision) ||
+    target.sourceRevision < 1 ||
+    !/^[a-f0-9]{64}$/u.test(target.sourceHash ?? '') ||
     target.grading === true ||
     req.headers.host !== `${target.runId}.localhost:4175`
   )
@@ -87,7 +90,7 @@ function canonicalCookie(fields, target) {
   return value === '' ? `${cookie}; Max-Age=0; Expires=${epoch}` : cookie;
 }
 
-/** headers発行直前に同じ実行・Source・socket・非採点を確認し、失効応答は拒否する。 */
+/** 検査済み公開POSTのheaders発行直前に実行・Source・socket・非採点を確認し、失効応答は拒否する。 */
 export async function lessonThemeResponseHeaders(req, target, upstream, lookup) {
   if (
     !eligible(req, target) ||
