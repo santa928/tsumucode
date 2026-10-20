@@ -230,13 +230,28 @@ try {
     await fresh.close();
     // 採点Browserが自分で書いたCookieも、共有policyの既定拒否でServerへ渡さない。
     const client = 'app/note-form.tsx';
+    const inputAnchor = "const [input, setInput] = useState('');";
+    assert.equal(solution[client].split(inputAnchor).length, 2, '両教材の一意な入力stateを使う');
+    assert.equal(
+      solution[client].split('disabled={pending}').length,
+      3,
+      '入力と送信を両方保護する',
+    );
+    assert.equal(solution[server].split('const raw =').length, 2, 'Server検査を確実に挿入する');
     const gradeFiles = {
       ...solution,
-      [client]: solution[client].replace('import {', 'import { useEffect,').replace(
-        'export default function NoteForm() {',
-        `export default function NoteForm() {
-  useEffect(() => { document.cookie = 'lesson-theme=dark; Path=/'; }, []);`,
-      ),
+      [client]: solution[client]
+        .replace('import {', 'import { useEffect,')
+        .replace(
+          inputAnchor,
+          `${inputAnchor}
+  const [cookieReady, setCookieReady] = useState(false);
+  useEffect(() => {
+    document.cookie = 'lesson-theme=dark; Path=/';
+    setCookieReady(document.cookie.split('; ').includes('lesson-theme=dark'));
+  }, []);`,
+        )
+        .replaceAll('disabled={pending}', 'disabled={pending || !cookieReady}'),
       [server]:
         solution[server].replace(
           'const raw =',
@@ -244,7 +259,13 @@ try {
   const raw =`,
         ) + "\nimport { cookies } from 'next/headers';\n",
     };
-    assert.notEqual(gradeFiles[client], solution[client]);
+    assert.ok(gradeFiles[client].includes("document.cookie = 'lesson-theme=dark; Path=/';"));
+    assert.ok(
+      gradeFiles[client].includes(
+        "setCookieReady(document.cookie.split('; ').includes('lesson-theme=dark'))",
+      ),
+    );
+    assert.equal(gradeFiles[client].split('disabled={pending || !cookieReady}').length, 3);
     saved = await api(`${path}/source`, {
       expectedSourceRevision: saved.sourceRevision,
       files: gradeFiles,
