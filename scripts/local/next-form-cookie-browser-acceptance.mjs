@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import console from 'node:console';
+import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { setTimeout as delay } from 'node:timers/promises';
 import { URL } from 'node:url';
@@ -8,12 +9,14 @@ import { parse } from 'yaml';
 import { bridge } from './browser-test-bridge.mjs';
 import { previewOrigin, previewBase } from './preview-contract.mjs';
 import { FORM_WORKSPACE, ACTION_WORKSPACE } from './next-form-preview.mjs';
+import { watchDocumentVersion } from './next-project-observations.mjs';
 
 // 作者/CI専用。Cookie jarやfetchを模擬せず、実NextのServerコードとBrowserの送信で検証する。
 const bridges = [await bridge(4173, 'web'), await bridge(4175, 'preview')];
 const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
 const context = await browser.newContext();
 const navigationCounts = new WeakMap();
+const documentVersions = new WeakMap();
 const browserEvents = { requestFailed: 0, pageError: 0 };
 context.on('page', (page) => {
   page.on('framenavigated', (frame) => {
@@ -54,6 +57,16 @@ async function start(workspaceId, sourceRevision) {
   assert.fail('Cookie fixture readiness deadline');
 }
 
+/** 診断用markerを実Documentに一度だけ置く。初期値なしの照合では再生成しない。 */
+async function documentMarker(frame, initial) {
+  return frame.evaluate((value) => {
+    const key = '__tsumucodeAuthorCookieDocument';
+    if (value && !Object.hasOwn(globalThis.document, key))
+      Object.defineProperty(globalThis.document, key, { value });
+    return globalThis.document[key] ?? null;
+  }, initial);
+}
+
 /** Actor自身の文書・route・入力を照合し、HTTP完了とClientの表示を別々に検証する。 */
 async function submit(surface, input, expected) {
   const frame = surface.mainFrame?.() ?? surface;
@@ -62,17 +75,28 @@ async function submit(surface, input, expected) {
   const routes = form
     ? [new URL('api/note', actorUrl).href]
     : [actorUrl.href, actorUrl.href.replace(/\/$/u, '')];
+  let version = documentVersions.get(frame);
+  if (!version) {
+    version = watchDocumentVersion(frame.page(), frame);
+    documentVersions.set(frame, version);
+  }
+  const marker = await documentMarker(frame, randomUUID());
+  assert.equal(typeof marker, 'string');
+  const currentSequence = ++sequence;
+  // readは毎回固有入力にし、前のsaved表示を次の成功へ流用しない。
+  const requestInput = input.startsWith('read') ? `${input}-${currentSequence}` : input;
   const snapshot = {
-    sequence: ++sequence,
+    sequence: currentSequence,
     workspace: form ? 'form' : 'action',
     surface: surface === frame ? 'iframe' : 'tab',
     stage: input,
-    navigations: navigationCounts.get(frame) ?? 0,
+    navigationEventsBefore: navigationCounts.get(frame) ?? 0,
+    documentVersionBefore: version(),
     ...browserEvents,
   };
   const field = frame.getByLabel('メモ', { exact: true });
   await expect(field).toBeEnabled();
-  await field.fill(input);
+  await field.fill(requestInput);
   const reply = context.waitForEvent('response', {
     predicate: (response) => {
       const request = response.request();
@@ -80,7 +104,7 @@ async function submit(surface, input, expected) {
         request.method() === 'POST' &&
         request.frame() === frame &&
         routes.includes(response.url()) &&
-        (!form || request.postDataJSON()?.input === input)
+        (!form || request.postDataJSON()?.input === requestInput)
       );
     },
     timeout: 15000,
@@ -92,32 +116,48 @@ async function submit(surface, input, expected) {
     const response = await reply;
     snapshot.httpStatus = response.status();
     snapshot.completed = (await response.finished()) === null;
+    snapshot.navigationRequest = response.request().isNavigationRequest();
     assert.equal(snapshot.httpStatus, 200);
     assert.equal(snapshot.completed, true);
+    assert.equal(snapshot.navigationRequest, false);
     if (form) {
       const state = await response.json();
       snapshot.serverSaved = state.status === 'saved';
-      snapshot.serverInputMatches = state.input === input;
+      snapshot.serverInputMatches = state.input === requestInput;
       assert.equal(snapshot.serverSaved, true);
       assert.equal(snapshot.serverInputMatches, true);
       if (expected !== undefined) assert.equal(state.message, `theme:${expected}`);
+    } else {
+      snapshot.actionRsc =
+        response.headers()['content-type']?.startsWith('text/x-component') === true;
+      assert.equal(snapshot.actionRsc, true);
     }
     const result = frame.locator('#note-result');
     await expect(result).toHaveAttribute('data-state', 'saved');
     if (expected !== undefined) await expect(result).toHaveText(`theme:${expected}`);
-    await expect(field).toHaveValue(input);
+    await expect(field).toHaveValue(requestInput);
     await expect(field).toBeEnabled();
     assert.equal(frame.isDetached(), false);
-    assert.equal(navigationCounts.get(frame) ?? 0, snapshot.navigations);
+    const text = await result.textContent();
+    snapshot.documentMatches = (await documentMarker(frame)) === marker;
+    snapshot.navigationEventsAfter = navigationCounts.get(frame) ?? 0;
+    snapshot.documentVersionAfter = version();
+    assert.equal(snapshot.documentMatches, true);
+    assert.equal(snapshot.documentVersionAfter, snapshot.documentVersionBefore);
+    assert.equal(frame.url(), actorUrl.href);
     console.log(JSON.stringify({ ...snapshot, outcome: 'saved' }));
-    return result.textContent();
+    return text;
   } catch (error) {
     // Cookie・本文・URL・Sourceを出さず、文書置換と入力/結果の不一致だけ残す。
-    snapshot.sameDocument =
-      !frame.isDetached() && (navigationCounts.get(frame) ?? 0) === snapshot.navigations;
+    snapshot.documentMatches = await documentMarker(frame).then(
+      (value) => !frame.isDetached() && value === marker,
+      () => false,
+    );
+    snapshot.navigationEventsAfter = navigationCounts.get(frame) ?? 0;
+    snapshot.documentVersionAfter = version();
     snapshot.actorUrlMatches = frame.url() === actorUrl.href;
     snapshot.fieldMatches = await field.inputValue({ timeout: 1000 }).then(
-      (value) => value === input,
+      (value) => value === requestInput,
       () => false,
     );
     snapshot.domState = await frame
@@ -126,6 +166,8 @@ async function submit(surface, input, expected) {
         timeout: 1000,
       })
       .catch(() => 'unavailable');
+    if (!['idle', 'saved', 'invalid', 'failed', 'unavailable'].includes(snapshot.domState))
+      snapshot.domState = 'unexpected';
     console.log(JSON.stringify({ ...snapshot, browserEvents, outcome: 'failed' }));
     throw error;
   }

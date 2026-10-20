@@ -96,6 +96,30 @@ try {
     });
     assert.ok(version() > reloaded);
     console.log('same-url history / reload / URL roundtrip: PASS');
+    await identityPage.goto(origin + '/');
+    await identityPage.evaluate((src) => {
+      const frame = globalThis.document.createElement('iframe');
+      frame.src = src;
+      globalThis.document.body.append(frame);
+    }, origin + '/');
+    const actor = identityPage.frames().find((frame) => frame !== identityPage.mainFrame());
+    assert.ok(actor);
+    await actor.waitForLoadState('load');
+    const actorVersion = watchDocumentVersion(identityPage, actor);
+    const actorLoaded = actorVersion();
+    await actor.evaluate(() => globalThis.history.replaceState(null, '', globalThis.location.href));
+    assert.equal(actorVersion(), actorLoaded);
+    await actor.goto(origin + '/');
+    assert.ok(actorVersion() > actorLoaded, 'iframeの実文書要求を検出する');
+    const actorReloaded = actorVersion();
+    await identityPage.evaluate(() => globalThis.history.replaceState(null, '', '/parent-only'));
+    assert.equal(actorVersion(), actorReloaded, '他FrameのURL変更は混ぜない');
+    await actor.evaluate(() => {
+      globalThis.history.pushState(null, '', '/temporary');
+      globalThis.history.replaceState(null, '', '/');
+    });
+    assert.ok(actorVersion() > actorReloaded, 'iframeのURL往復も検出する');
+    console.log('iframe same-url history / document request / URL roundtrip / isolation: PASS');
   } finally {
     await identityPage.close();
   }
