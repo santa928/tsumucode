@@ -23,6 +23,21 @@ const metadata = {
 };
 const base = previewBase(metadata.workspaceId, metadata.runId).slice(0, -1);
 
+test('Formのdocument要求は有限themeだけを転送し、他のCookieを渡さない', () => {
+  const policy = nextFormRequest(
+    {
+      method: 'GET',
+      url: `${base}/`,
+      headers: {
+        host: `${metadata.runId}.localhost:4175`,
+        cookie: 'management=private; lesson-theme=dark; other=secret',
+      },
+    },
+    metadata,
+  );
+  assert.deepEqual(policy.headers, { cookie: 'lesson-theme=dark' });
+});
+
 test('限定2教材の実POST形式とOriginを検査し、内部経路と他教材を開かない', () => {
   for (const workspaceId of [FORM_WORKSPACE, ACTION_WORKSPACE]) {
     const target = { ...metadata, workspaceId };

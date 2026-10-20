@@ -31,8 +31,37 @@ ServerファイルとClient formだけを編集対象とし、layout/page/CSS/st
 Actionのdocumentには末尾slashがある。document rootとcanonical rootの2表記を同じpageとして
 認め、未知path/query・内部store/controlを公開しない。Host/Originは現在runへ完全一致し、
 Origin欠落/nullを拒否する。Viteの固定native echoに限るOrigin:null例外は適用しない。
-Cookie・Authorization・管理token・Forwarded・採点相関IDを公開Proxyの転送allowlistへ入れない。
-CSP・no-store・nosniff・Set-Cookie/redirect抑止・sealed socketとinode照合を維持する。
+Authorization・管理token・Forwarded・採点相関IDを公開Proxyの転送allowlistへ入れない。
+Cookieは後述の固定themeだけを例外とし、CSP・no-store・nosniff・redirect抑止・sealed socketとinode照合を維持する。
+
+## 承認済みの固定Cookie境界（#137）
+
+この2教材のdocument読取と既存POSTに限り、`lesson-theme=light`または`lesson-theme=dark`を転送する。
+他名Cookieは除去し、同名重複・補正が必要な値・壊れた構文はCookieなしとして扱う。
+Set-Cookieは成功した既存POSTだけで許可し、session setと明示的な期限切れdeleteを再生成する。
+Domain指定・任意Path・永続期限・未知属性・同名重複は採用しない。出力は常にhost-only、
+`Path=/w/<workspace>/<run UUID>`（末尾slashなし）、`HttpOnly; SameSite=Strict`とする。
+static chunk、HMR/WebSocket、他のNext/Vite教材、採点にはこの例外を適用しない。
+
+Cookieの寿命はrun単位。同じrunのSource反映では保持し、停止後の新runには引き継がない。
+Cookie応答のheaders発行直前にもrun・Source版/hash・socket dev/inode・非採点を確認し、
+確認時点で失効していた応答とcontrol不通を拒否する。既にBrowserへ送ったheadersは撤回できず、
+同run内のSource版ごとのCookie完全初期化や、HTTP完了とCookie保存の原子性は保証しない。
+既存の採点器はCookie演習の合格判定を提供しない。
+
+Strict Cookieは埋込み画面の第三者Cookie制限で使えない場合がある。
+埋込みで実際に保存・読取できない場合だけ、対象2教材の案内から同じrunのPreviewを別タブで開く。
+ブラウザ設定や管理originの変更、SameSiteの緩和は行わない。
+learnerのJavaScriptが自分のoriginへ任意の非HttpOnly Cookieを書くことを全面禁止する契約ではなく、
+Proxyの入出力制限と管理host・新runへの分離を保証する。
+新しいCookie専用Lessonや正式公開はこの基盤変更に含まれない。
+
+`next-form-cookie-browser-acceptance.mjs`は作者専用Sourceで実Nextの`cookies()`を呼び、
+Browserの自動Cookie送信によるset/read/delete、埋込みの成否、必要時の別タブ、
+HttpOnly/Strict/host/Path、同runの反映保持、新run分離と他名Cookie遮断を確認する。
+手動CookieヘッダーやAPIRequestContextのjarを成功の代用にしない。
+API仕様は[Next.js cookies](https://nextjs.org/docs/app/api-reference/functions/cookies)、
+host/pathの意味は[RFC 6265](https://www.rfc-editor.org/rfc/rfc6265.html)を参照する。
 
 本文64KiBは全量受信後にだけ上流へ送る。公開POSTの応答512KiB・全体30秒・同時HTTP8を維持する。
 途中切断・期限・Source/run変更では上流を回収する。headers送信後の失敗では接続を閉じ、

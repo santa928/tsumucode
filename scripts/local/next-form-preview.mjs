@@ -1,5 +1,9 @@
-export const FORM_WORKSPACE = 'next-ch04-l01-e01';
-export const ACTION_WORKSPACE = 'next-ch04-l02-e01';
+import {
+  FORM_WORKSPACE,
+  ACTION_WORKSPACE,
+  lessonThemeRequestHeaders,
+} from './next-form-cookie.mjs';
+export { FORM_WORKSPACE, ACTION_WORKSPACE } from './next-form-cookie.mjs';
 export const ACTION_ROOT_TREE = encodeURIComponent(
   JSON.stringify(['', { children: ['__PAGE__', {}, null, null, 4096] }, null, null, 4112]),
 );
@@ -17,7 +21,7 @@ export function nextFormPostRoute(raw, target) {
   );
 }
 
-/** 固定版の実ブラウザが送る有限ヘッダーを検査する。Cookie等は転送対象にしない。 */
+/** 固定Browserの有限ヘッダーと、承認済みtheme Cookieだけを検査する。 */
 export function nextFormRequest(req, target) {
   if (!isNextForm(target.workspaceId)) return undefined;
   const headers = req.headers;
@@ -33,7 +37,7 @@ export function nextFormRequest(req, target) {
     // api/noteのGETやcanonical rootのGETを、新しい公開経路にしない。
     const root = `/w/${target.workspaceId}/${target.runId}`;
     if (req.url === `${root}/api/note` || req.url === root) return undefined;
-    return { stream: false, headers: {} };
+    return { stream: false, headers: lessonThemeRequestHeaders(req, target) };
   }
   if (
     req.method !== 'POST' ||
@@ -49,7 +53,7 @@ export function nextFormRequest(req, target) {
   if (target.workspaceId === FORM_WORKSPACE) {
     if (headers['content-type'] !== 'application/json' || nextKeys.some((key) => key in headers))
       return undefined;
-    return { stream: false, headers: {}, post: true };
+    return { stream: false, headers: lessonThemeRequestHeaders(req, target), post: true };
   }
   if (
     !/^multipart\/form-data; boundary=----WebKitFormBoundary[A-Za-z0-9]{16}$/u.test(
@@ -65,6 +69,7 @@ export function nextFormRequest(req, target) {
     stream: true,
     post: true,
     headers: {
+      ...lessonThemeRequestHeaders(req, target),
       'next-action': headers['next-action'],
       'next-router-state-tree': ACTION_ROOT_TREE,
       accept: 'text/x-component',

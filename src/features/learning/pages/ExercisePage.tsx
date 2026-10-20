@@ -74,7 +74,8 @@ export function ExercisePage() {
         </ol>
         <p className="mt-4">
           Source ZIPは制作物の持ち出し用です。進捗移行には端末データJSONを使います。
-          Cookie・認証・Cookieによる保存は未対応です。
+          LocalのForm／Server Action教材ではlesson-theme=light／darkだけを扱えます。
+          その他のCookie・認証・永続保存は未対応です。
         </p>
       </section>
     );
