@@ -1,7 +1,8 @@
 schemaVersion: 1
-releaseStatus: approved
-verifiedSourceCommit: 3021a054b27a51969f2658f91d585e81325bf4e8
-canonicalDistSha256: d8c7111939afd755eef8892ff3d647af69d189b7a5d8cb4cbf6cf6ec2d4d3bda
+# 更新本文の公開bindingは未確認。公開済みmetadataと過去の受入記録は維持する。
+releaseStatus: draft
+verifiedSourceCommit: draft
+canonicalDistSha256: draft
 lessons:
   - lessonId: next-ch01-l01
     authorId: tsumucode-next-course-authoring
@@ -115,16 +116,21 @@ lessons:
       ona-review.md。"
   - lessonId: next-ch04-l01
     authorId: tsumucode-next-course-authoring
-    reviewerId: next137_learning_publication_review
-    sourceHash: 34587c4ef1abb0f472224843385a4c40c93bb7703847185b5e40709330be23d3
+    reviewerId: issue137_content_reassessment
+    sourceHash: 6a6554e4ae5f9999acac5f094f07910e1aaf8ee32be41d3bab30e9e830406152
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      "今回の公開候補3021a054b27a51969f2658f91d585e81325bf4e8の独立AIソースレビュー必須残件0。9教材の学習順・Pages静的学習とLocal実HT\
+    notes: "2026-10-22の独立AI内容レビューで限定Cookie追記を承認。元Source
+      bd5002cc25dcc286d433c83ca22dac78953f7d75の作者Runtime39408320479を原本照合
+      （gh run view --log、SHA-256 2b87f84e34ddc34381b0cf05aa2a3f29461f793ee96dd50de30a95c8b861337b）。
+      既存9fixture・通常Lessonと実Cookieのset/read/delete・属性・同run反映保持・新run分離を確認。
+      採点遮断と管理Cookie不変は最終assert到達から確認し、値の直接印字とは扱わない。
+      Reviewer独自実行・独立UX・人間受講・Cookie専用Lesson/採点・新公開の承認は含まない。
+      以下は当時の履歴: 今回の公開候補3021a054b27a51969f2658f91d585e81325bf4e8の独立AIソースレビュー必須残件0。9教材の学習順・Pages静的学習とLocal実HT\
       TPの区別・Cookie/認証/Cookie保存の親14留保を確認。技術実測はnext-release-acceptance.yamlのexact
       source/原本hashを正とし、Reviewer独自実行や実人受講とは扱わない。以下は以前の確認記録（当時の公開未完の記述を含む）:
       全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。公開candidate/配信SHAの受入は未\
@@ -133,16 +139,21 @@ lessons:
       い。"
   - lessonId: next-ch04-l02
     authorId: tsumucode-next-course-authoring
-    reviewerId: next137_learning_publication_review
-    sourceHash: d96aaa2f0e53498de38a6d0b68dcb26bf55f6058c916cc3d80747d47afdb815a
+    reviewerId: issue137_content_reassessment
+    sourceHash: 2f4ec8e92d145a848a179c46be5a6d9731015933cf8c226ee5cdae556d8de65d
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      "今回の公開候補3021a054b27a51969f2658f91d585e81325bf4e8の独立AIソースレビュー必須残件0。9教材の学習順・Pages静的学習とLocal実HT\
+    notes: "2026-10-22の独立AI内容レビューで限定Cookie追記を承認。元Source
+      bd5002cc25dcc286d433c83ca22dac78953f7d75の作者Runtime39408320479を原本照合
+      （gh run view --log、SHA-256 2b87f84e34ddc34381b0cf05aa2a3f29461f793ee96dd50de30a95c8b861337b）。
+      既存9fixture・通常Lessonと実Cookieのset/read/delete・属性・同run反映保持・新run分離を確認。
+      採点遮断と管理Cookie不変は最終assert到達から確認し、値の直接印字とは扱わない。
+      Reviewer独自実行・独立UX・人間受講・Cookie専用Lesson/採点・新公開の承認は含まない。
+      以下は当時の履歴: 今回の公開候補3021a054b27a51969f2658f91d585e81325bf4e8の独立AIソースレビュー必須残件0。9教材の学習順・Pages静的学習とLocal実HT\
       TPの区別・Cookie/認証/Cookie保存の親14留保を確認。技術実測はnext-release-acceptance.yamlのexact
       source/原本hashを正とし、Reviewer独自実行や実人受講とは扱わない。以下は以前の確認記録（当時の公開未完の記述を含む）:
       全9教材を独立AI初心者・学習設計・運用ペルソナで読解。作者のFixture・通常UI・移送・資源証拠を確認。人間受講や公開成功とは扱わない。公開candidate/配信SHAの受入は未\

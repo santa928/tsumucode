@@ -119,6 +119,18 @@ jobs:
           BASE_PATH: /${{ github.event.repository.name }}/
           TEST_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || 'HEAD^' }}
         run: ./scripts/docker-compose.sh run --rm -e BASE_PATH -e TEST_BASE_SHA app npm run check
+      - name: Bind the static preview to its checkout
+        run: git rev-parse HEAD 'HEAD^{tree}' > static-preview-identity.txt
+      - name: Preserve static preview for independent UI review
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: static-preview-${{ needs.resolve.outputs.checkout_sha }}
+          path: |
+            dist
+            static-preview-identity.txt
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 1
       - name: Content review status
         id: content_review
         continue-on-error: true
