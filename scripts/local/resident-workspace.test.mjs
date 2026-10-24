@@ -9,11 +9,18 @@ import { ResidentWorkspace } from './resident-workspace.mjs';
 import { STARTER_FILES, PROJECT_LIMITS } from './project-protocol.mjs';
 import { RequestError } from './protocol.mjs';
 import { ProjectApplyError } from './project-engine.mjs';
+import { FORM_STARTER_FILES } from './next-form-source.mjs';
 
-async function fixture(operation, preview = false, limits = PROJECT_LIMITS) {
+async function fixture(
+  operation,
+  preview = false,
+  limits = PROJECT_LIMITS,
+  workspaceId = 'one',
+  files = STARTER_FILES,
+) {
   const directory = await mkdtemp(join(tmpdir(), 'resident-test-'));
   const store = new WorkspaceStore(directory);
-  await store.save('one', 0, STARTER_FILES);
+  await store.save(workspaceId, 0, files);
   let active;
   let recovery = false;
   const removed = [];
@@ -97,14 +104,30 @@ async function fixture(operation, preview = false, limits = PROJECT_LIMITS) {
   }
 }
 
-async function state(manager, expected) {
+async function state(manager, expected, workspaceId = 'one') {
   for (let i = 0; i < 50; i++) {
-    const result = await manager.status('one');
+    const result = await manager.status(workspaceId);
     if (result.lastRun?.state === expected) return result;
     await delay(20);
   }
   throw new Error(`Missing state ${expected}`);
 }
+
+test('Formの実control targetには反映済みSource hashを載せる', async () => {
+  const workspaceId = 'next-ch04-l01-e01';
+  await fixture(
+    async ({ manager }) => {
+      await manager.start(workspaceId, { expectedSourceRevision: 1 });
+      const ready = await state(manager, 'ready', workspaceId);
+      const target = manager.previewTarget();
+      assert.equal(target.sourceHash, ready.lastRun.sourceHash);
+    },
+    true,
+    PROJECT_LIMITS,
+    workspaceId,
+    FORM_STARTER_FILES,
+  );
+});
 
 function gradeInput(workspace) {
   return {

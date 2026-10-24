@@ -1,0 +1,19 @@
+schemaVersion: 2
+status: approved
+verifiedSourceCommit: 3021a054b27a51969f2658f91d585e81325bf4e8
+candidateTreeSha256: 7b532ff761bc4a12cceb043e46ce1527e31aceb15156f512c9203e173e002648
+canonicalDistSha256: d8c7111939afd755eef8892ff3d647af69d189b7a5d8cb4cbf6cf6ec2d4d3bda
+courseManifestSha256: 4421da400786cc188fa11db5aa26c139bc6bdf9150de4dd73e929b1de9d101ab
+publicProvenanceSha256: a577ff8815e8e27eca907b8e0e203b200a07aab323b792536ba04ae61c857c99
+visualBaselineSha256: b44880f5791528e91676e1090d8663068328bbabf6e5a85a1fb9ab7740a08152
+records:
+  contentReview:
+    path: docs/quality/content-review-next.yaml
+    sha256: 3ec97088e43210a2598174698a7f4ebbd0ec22d1ec8f8cf7877d95bd87df8c12
+  technicalAcceptance:
+    path: docs/quality/next-release-acceptance.yaml
+    sha256: 224940b9c6deec0d70dc8bfe00758925cfb5d24b5708a51a7c388fc7d04f03c3
+approvedBy: repository-owner santa928 / parent-thread 01a10b91-1aa7-7475-a007-c3fb4bce8017 /
+  Next9教材の既存Pages公開へのユーザー「おっけー」; 独立3 AIソースレビュー・運用原本照合
+approvedAt: 2026-10-10T07:34:02.689Z
+courseId: next

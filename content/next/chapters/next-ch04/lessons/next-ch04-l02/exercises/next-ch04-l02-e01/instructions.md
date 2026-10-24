@@ -10,4 +10,4 @@ useActionState(saveNote, initialState)は[state, formAction, pending]を返し�
 
 保存・反映したSource版を判定します。判定は専用のメモを使うため、Previewで試したメモの履歴を消しません。判定中はPreviewの送信を待ってください。停止後もコードの下書きは残ります。
 
-Cookie・認証・Cookieによる保存は未対応です。親Issue #14で扱う残タスクです。この教材の練習用履歴はSource反映や停止再開で初期化されます。
+サーバーのCookieはlesson-theme=light／darkだけを扱えます。同じrunのSource反映では保持され、停止後の新しいrunには引き継がれません。埋込みで保存・読取できない場合はPreviewの案内から別タブを開いて試します。その他のCookie・認証・永続保存と、Cookie専用演習の採点は未対応です。この教材のメモ履歴はSource反映や停止再開で初期化されます。

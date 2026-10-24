@@ -1,4 +1,5 @@
 import { PortableNextExport } from '../portable/PortableNextExport';
+import { LessonCookieNotice } from './LessonCookieNotice';
 import { Link } from 'react-router';
 import { nextWorkspace } from '../../../../scripts/local/next-project-protocol.mjs';
 import { LearningViewportShell } from '../layout/LearningViewportShell';
@@ -459,6 +460,9 @@ function ProjectEditor({
                 ))}
               </select>
             </label>
+          ) : null}
+          {preview ? (
+            <LessonCookieNotice workspaceId={identity.workspaceId} previewUrl={preview} />
           ) : null}
           {preview ? (
             <iframe

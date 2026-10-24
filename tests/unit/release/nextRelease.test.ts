@@ -13,6 +13,7 @@ import {
 } from '../../../scripts/release/nextInputHashes';
 import { parseCourseReleaseHistory } from '../../../scripts/release/javascriptReleaseSchema';
 import { parse } from 'yaml';
+import { NextReleaseHistorySchema } from '../../../scripts/release/nextReleaseSchema';
 import {
   buildReleaseReport,
   parseReleaseReport,
@@ -20,6 +21,9 @@ import {
 import {
   hashNextReleaseEvidence,
   validateNextReleaseEvidence,
+  validateNextPublishedUpdate,
+  validateNextPublicationHistory,
+  NextReleaseEvidenceSchema,
   NEXT_ACCEPTANCE_LESSONS,
   type NextReleaseEvidence,
 } from '../../../scripts/release/verifyNextQualityEvidence';
@@ -111,6 +115,17 @@ describe('Nextの公開入力', () => {
   it('Course公開状態とReact直後のrequired登録だけを許可する', async () => {
     const { draft, final } = await inputs();
     expect(() => compareNextLearningInputs(draft, final)).not.toThrow();
+  });
+  it('公開済み更新では同一sourceのpublished/required入力を受理する', async () => {
+    const { final } = await inputs();
+    expect(() => compareNextLearningInputs(final, final, 'published-update')).not.toThrow();
+    expect(() => compareNextLearningInputs(final, final)).toThrow();
+  });
+  it('更新を初公開へ偽装した入力と異なるsourceを拒否する', async () => {
+    const { draft, final, files } = await inputs();
+    expect(() => compareNextLearningInputs(draft, final, 'published-update')).toThrow();
+    const otherSource = createNextInputManifest('c'.repeat(40), files);
+    expect(() => compareNextLearningInputs(final, otherSource, 'published-update')).toThrow();
   });
   it('metadata変更に混ぜた教材文面変更を拒否する', async () => {
     const { draft, files } = await inputs();
@@ -233,6 +248,46 @@ describe('Nextの独立証拠binding', () => {
   it('9教材・81実測・3独立読解と未確認の範囲を保持する', async () => {
     expect(validateNextReleaseEvidence(await evidence(), hashes).realHumanTrial).toBe('unverified');
   });
+  it('公開済み更新も新sourceの全9教材・81Fixture・独立原本照合を要求する', async () => {
+    const record = await evidence();
+    record.draftInput = record.finalInput;
+    record.nativePreflight.sourceCommit = record.verifiedSourceCommit;
+    record.nativeEvidence.sha256 = sha256Text(
+      JSON.stringify(record.nativePreflight, null, 2) + '\n',
+    );
+    Reflect.set(record, 'publication', {
+      mode: 'published-update',
+      previousRelease: {
+        revision: '2026-10-09.2',
+        tag: 'tsumucode-release-2026-10-09.2',
+        sourceCommit: 'c'.repeat(40),
+        acceptance: {
+          path: 'docs/quality/history/next/2026-10-09.2-acceptance.yaml',
+          sha256: 'd'.repeat(64),
+        },
+      },
+    });
+    Reflect.set(
+      record,
+      'cookieAuthenticationPersistence',
+      'theme-cookie-only-authentication-persistence-deferred-issue-14',
+    );
+    record.independenceReview.referenceSha256s = [
+      ...record.personas.map(({ report }) => report.sha256),
+      record.nativeEvidence.sha256,
+      record.pagesStaticStudy.report.sha256,
+    ];
+    record.independenceReview.evidenceSha256 = hashNextReleaseEvidence(record);
+    expect(() => validateNextReleaseEvidence(record, hashes)).not.toThrow();
+    const missing = structuredClone(record);
+    missing.personas[0]!.lessons.pop();
+    missing.independenceReview.evidenceSha256 = hashNextReleaseEvidence(missing);
+    expect(() => validateNextReleaseEvidence(missing, hashes)).toThrow();
+    const noHistory = structuredClone(record);
+    Reflect.deleteProperty(noHistory, 'publication');
+    noHistory.independenceReview.evidenceSha256 = hashNextReleaseEvidence(noHistory);
+    expect(() => validateNextReleaseEvidence(noHistory, hashes)).toThrow();
+  });
   it.each([
     '原本差替え',
     '未確認を合格',
@@ -247,6 +302,129 @@ describe('Nextの独立証拠binding', () => {
     if (kind === '異なる公開Artifact') record.pagesStaticStudy.canonicalDistSha256 = 'b'.repeat(64);
     if (kind === '必須教材欠落') record.pagesStaticStudy.lessonIds.pop();
     expect(() => validateNextReleaseEvidence(record, hashes)).toThrow();
+  });
+});
+
+describe('Next更新公開の過去release binding', () => {
+  it('履歴から更新方式を強制し、初公開形式で過去の公開を隠せない', async () => {
+    const record = await evidence();
+    const hashes = new Map(NEXT_ACCEPTANCE_LESSONS.map((id) => [id, 'a'.repeat(64)]));
+    expect(() => validateNextReleaseEvidence(record, hashes)).not.toThrow();
+    const history = NextReleaseHistorySchema.parse(
+      parse(await readFile('content/next/release-history.yaml', 'utf8')),
+    );
+    expect(() => {
+      validateNextPublicationHistory(record, '2026-10-24.1', history.releases);
+    }).toThrow();
+    record.publication = { mode: 'initial-publication' };
+    expect(() => {
+      validateNextPublicationHistory(record, '2026-10-24.1', history.releases);
+    }).toThrow();
+  });
+  it('履歴から正当な初公開・更新と各promotion後を区別する', async () => {
+    const initial = NextReleaseEvidenceSchema.parse(
+      parse(await readFile('docs/quality/history/next/2026-10-09.2-acceptance.yaml', 'utf8')),
+    );
+    const history = NextReleaseHistorySchema.parse(
+      parse(await readFile('content/next/release-history.yaml', 'utf8')),
+    );
+    expect(validateNextPublicationHistory(initial, '2026-10-09.2', [])).toBeUndefined();
+    expect(
+      validateNextPublicationHistory(initial, '2026-10-09.2', history.releases),
+    ).toBeUndefined();
+    const record = await evidence();
+    const previous = history.releases[0]!;
+    record.publication = {
+      mode: 'published-update',
+      previousRelease: {
+        revision: previous.revision,
+        tag: previous.tag,
+        sourceCommit: previous.sourceCommit,
+        acceptance: {
+          path: 'docs/quality/history/next/2026-10-09.2-acceptance.yaml',
+          sha256: 'a'.repeat(64),
+        },
+      },
+    };
+    expect(validateNextPublicationHistory(record, '2026-10-24.1', history.releases)).toEqual(
+      previous,
+    );
+    const current = {
+      ...previous,
+      revision: '2026-10-24.1',
+      sourceCommit: record.verifiedSourceCommit,
+      canonicalDistSha256: record.canonicalDistSha256,
+    };
+    expect(
+      validateNextPublicationHistory(record, '2026-10-24.1', [...history.releases, current]),
+    ).toEqual(previous);
+    expect(() => {
+      validateNextPublicationHistory(record, '2026-10-24.1', []);
+    }).toThrow();
+    expect(() => {
+      validateNextPublicationHistory(record, '2026-10-24.1', [
+        { ...current, sourceCommit: 'f'.repeat(40) },
+      ]);
+    }).toThrow();
+  });
+
+  it('旧v1受入の独立fingerprintを既存のまま読める', async () => {
+    const archived = NextReleaseEvidenceSchema.parse(
+      parse(await readFile('docs/quality/history/next/2026-10-09.2-acceptance.yaml', 'utf8')),
+    );
+    expect(hashNextReleaseEvidence(archived)).toBe(archived.independenceReview.evidenceSha256);
+    expect(archived.publication).toBeUndefined();
+  });
+  it('直前の公開と原本を固定し、revision再利用や別sourceへの差替えを拒否する', async () => {
+    const old = await evidence();
+    const archived = JSON.stringify(old);
+    const previous = {
+      revision: '2026-10-09.2',
+      tag: 'tsumucode-release-2026-10-09.2',
+      sourceCommit: old.verifiedSourceCommit,
+      canonicalDistSha256: old.canonicalDistSha256,
+    };
+    const record = structuredClone(old);
+    record.verifiedSourceCommit = 'c'.repeat(40);
+    record.publication = {
+      mode: 'published-update',
+      previousRelease: {
+        revision: previous.revision,
+        tag: previous.tag,
+        sourceCommit: previous.sourceCommit,
+        acceptance: {
+          path: 'docs/quality/history/next/2026-10-09.2-acceptance.yaml',
+          sha256: sha256Text(archived),
+        },
+      },
+    };
+    expect(() => {
+      validateNextPublishedUpdate(record, '2026-10-24.1', previous, archived);
+    }).not.toThrow();
+    expect(() => {
+      validateNextPublishedUpdate(record, '2026-10-09.2', previous, archived);
+    }).toThrow();
+    expect(() => {
+      validateNextPublishedUpdate(record, '2026-10-08.9', previous, archived);
+    }).toThrow();
+    expect(() => {
+      validateNextPublishedUpdate(record, '2026-10-24.1', undefined, archived);
+    }).toThrow();
+    expect(() => {
+      validateNextPublishedUpdate(record, '2026-10-24.1', previous, archived + ' ');
+    }).toThrow();
+    expect(() => {
+      validateNextPublishedUpdate(
+        record,
+        '2026-10-24.1',
+        { ...previous, sourceCommit: 'd'.repeat(40) },
+        archived,
+      );
+    }).toThrow();
+    record.verifiedSourceCommit = previous.sourceCommit;
+    expect(() => {
+      validateNextPublishedUpdate(record, '2026-10-24.1', previous, archived);
+    }).toThrow();
   });
 });
 

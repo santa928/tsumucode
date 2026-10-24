@@ -168,3 +168,60 @@ main SHAのLocal Runtime CI成功・必須step・資源証拠Artifactを公開AP
 独立原本照合の承認は、実際の原本を確認してから品質記録全体hashと対象SHAへ結ぶ。
 最終の候補・CI・配信後の結果は`next-release-acceptance.yaml`、Release台帳、
 revision別の公開後記録を正とする。人間受講と実低性能端末は未確認として残す。
+
+## 固定theme Cookieの独立実操作（PR250）
+
+2026-10-24、元候補 `5f313f89c800ef021b6e3abc4dcbffbae0eb37bb` の
+既存Form・Server Actionだけを、履歴なしの別担当が専用Chromiumの新contextで操作した。
+検証用Sourceは `lesson-theme=light/dark` の保存・読取・削除を可視結果にする入力であり、
+正式教材やCookie専用の採点を追加したものではない。製品コードと他者の結論は渡さず、
+ActionのSource反映では提供した検証入力2ファイルを通常エディターから貼り付けた。
+Cookie注入、管理APIの直呼び出し、他Cookie・認証操作、採点は行っていない。
+
+| 担当                             | 独立して実操作した範囲                                                                                                                          | 判定      |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| `issue137_cookie_form_ready_ux`  | 通常教材入口から接続。埋込みの読取がabsentとなった後、画面の別タブ案内からlight保存・dark変更・読取・clear削除。Tab/Enter送信と学習一覧への帰還 | 必須指摘0 |
+| `issue137_cookie_action_resumer` | 上記のAction操作。同runのSource反映後にdark保持。通常UIの停止・再起動で新runはabsent、下書き保持。Esc/Tabでエディターから退出し学習一覧へ帰還   | 必須指摘0 |
+
+Formの観測runは `81e2775a-c26b-441d-92bf-d8785b6c34b1`。
+Actionは `3fefe391-f03e-4f50-847d-5388a364cbc4` の反映前後で同じURLを維持し、
+再起動後の `2d7d31df-cacf-4661-b542-a7862faf381a` ではCookieを引き継がなかった。
+両担当は撮影画像そのものを確認し、進行担当も保存・反映後のdarkと新runのabsentを実見した。
+生ログ・画像・操作用データは私有の作業記録に保持し、ここへ転載しない。
+
+初回の別担当 `issue137_cookie_form_learner` は、準備イメージ名の不適合により起動できず、
+Cookie操作は未確認だった。この失敗を成功に変更せず、準備を直して新担当で上記を確認した。
+Form初回利用担当の最終再接続時はrunが既に停止済みであり、その担当の停止クリック成功とは扱わない。
+
+接続済み状態の説明、未接続時の状態表記、別タブからの帰還案内に任意改善が残る。
+今回の実操作は実人受講、他ブラウザ・狭幅・スクリーンリーダー、無操作停止、
+他Cookie・認証・永続保存、Cookie専用採点、全Course受入の成功を意味しない。
+既存の内容再承認と作者の自動診断は、それぞれの元Sourceと確認範囲を維持する。
+
+追加担当 `issue250_form_source_restart_ux` はForm個別の反映・再起動を独立実操作し、必須指摘0。
+同run `8dd368e7-5a30-4126-8685-44a9d46de0ef` のSource反映後もdarkを保持し、
+停止・再起動後の `5c727356-0720-426b-8ec8-76db7cff7d02` はabsentとなった。
+下書きの確認コメント、Tab/Enter、Esc/Tab退出、学習一覧への帰還とForm再開も確認した。
+入力全文一致は未検証であり、下書き保持は確認コメントと再訪後の表示から判断した。
+担当は通常UI停止後にBrowserとbridgeをcloseし、REPLの終了コード0を確認した。
+終了記録の最終追記だけは接続切断で保存できなかったため、担当の最終報告を別に保持する。
+公開済みrevisionの履歴・初公開時の受入原本は維持し、今回の公開先commitとArtifactへの
+承認bindingは継続公開ゲートの確認が済むまで未確定とする。
+
+## 公開済みNextの更新受入
+
+継続更新でも独立3役による全9教材の現在の可視内容hash確認、9Workspace/81Fixtureの資源実測、
+Pages静的9教材の1280/390px・axe・進捗移送・Local案内、独立原本照合を維持する。
+未変更教材の旧承認だけを自動継承する方式は採用しない。
+
+初公開のdraftからpublished/requiredへの検証は従来のままとし、更新公開は明示的な
+`published-update` で区別する。更新後の同一sourceを事前入力Sと公開入力Pの両方へ固定し、
+published/requiredの維持、直前の公開release/tagとの結び付き、revisionの単調増加を要求する。
+既存の `draftInput` / `draftSourceCommit` は更新公開に限り「更新後の事前検証入力」を表し、
+初公開における草稿入力の意味は変更しない。
+
+旧受入・承認原本は `docs/quality/history/next/2026-10-09.2-*.yaml` に保存する。
+公開tagはProduct sourceを指すため、受入原本のbytesはtagのmessageに結ばれた
+workflow commitから取得して照合する。旧source・Artifact・原本fingerprintを新しい実測へ付け替えない。
+公開直前のexact-main native CI、全siteの品質・継続性・Artifact承認・公開後確認も維持する。
+今回の更新先revisionは `2026-10-24.1` とし、既存revisionから永続IDを変えない空の移行を追加する。

@@ -4,6 +4,18 @@ import { ContentProgressMigrationSchema } from '../../src/core/content/schema';
 export const RevisionSchema = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}\.\d+$/u, 'revisionはYYYY-MM-DD.N形式で指定してください');
+
+/** YYYY-MM-DD.Nを日付と通番へ分け、公開revisionの単調増加を検査する。 */
+export function isNewerRevision(left: string, right: string): boolean {
+  const parts = (revision: string): readonly [string, number] => {
+    const match = /^(\d{4}-\d{2}-\d{2})\.(\d+)$/u.exec(revision);
+    if (!match?.[1] || !match[2]) throw new Error(`不正なrevisionです: ${revision}`);
+    return [match[1], Number(match[2])];
+  };
+  const [leftDate, leftSequence] = parts(left);
+  const [rightDate, rightSequence] = parts(right);
+  return leftDate > rightDate || (leftDate === rightDate && leftSequence > rightSequence);
+}
 export const CommitShaSchema = z.string().regex(/^[a-f0-9]{40}$/u);
 export const Sha256Schema = z.string().regex(/^[a-f0-9]{64}$/u);
 export const ArtifactDigestSchema = z.string().regex(/^sha256:[a-f0-9]{64}$/u);

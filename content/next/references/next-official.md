@@ -32,7 +32,7 @@ Next16.3.8 / Node24.18.0 / React・ReactDOM19.2.7 / TypeScript6.0.3。PR83の固
 
 ClientのHTML制約とServer側validationを区別し、useActionStateの戻り値とAction引数を分けて説明します。非制御入力のリセットに依存せず、失敗後の入力はcontrolled inputで保持します。FormのHTTP400/503/200と、HTTP200にも結果状態を含むServer Actionを区別します。
 
-限定2教材のPOSTは現在runのHost/Originを照合し、JSON API1経路または固定Action rootだけを許可します。documentの末尾slash付きrootとcanonical rootの2表記を同じpageとして扱い、queryや他のpathは許可しません。Cookie・Authorization・管理tokenは転送しません。本文64KiBは全量受信後に送信し、応答512KiB・30秒を維持します。練習用履歴は同じlearner内だけに保持され、Source反映と停止再開で初期化されます。採点専用の短命な相関IDはServer helperへだけ渡し、Previewの履歴を消さずに採点します。制御APIをBrowserへ公開しません。同じlearnerの編集可能なServerコードが自分のloopbackへ接続できる境界は変わりません。
+限定2教材のPOSTは現在runのHost/Originを照合し、JSON API1経路または固定Action rootだけを許可します。documentの末尾slash付きrootとcanonical rootの2表記を同じpageとして扱い、queryや他のpathは許可しません。Cookieはlesson-theme=light／darkだけをrun単位で転送し、その他のCookie・Authorization・管理tokenは遮断します。Cookieはhost-only・固定Path・HttpOnly・SameSite=Strictに再生成し、埋込みで使えない場合だけ別タブで確認します。本文64KiBは全量受信後に送信し、応答512KiB・30秒を維持します。練習用履歴は同じlearner内だけに保持され、Source反映と停止再開で初期化されます。採点専用の短命な相関IDはServer helperへだけ渡し、Previewの履歴を消さずに採点します。制御APIをBrowserへ公開しません。同じlearnerの編集可能なServerコードが自分のloopbackへ接続できる境界は変わりません。
 
 ## 制作と持ち出し（固定実測版16.3.8）
 
@@ -40,4 +40,13 @@ ClientのHTML制約とServer側validationを区別し、useActionStateの戻り�
 - [Image](https://nextjs.org/docs/app/api-reference/components/image)：alt、寸法、unoptimized。本教材は固定SVGを元画像のまま表示します。
 - [page](https://nextjs.org/docs/app/api-reference/file-conventions/page)：Promiseのparams/searchParamsとGET選択。
 
-公式サイトの最新版表示は16.4.0ですが、教材のmanifest/lockは16.3.8を維持します。制作2教材はGET選択だけで、保存や新しいActionを追加しません。固定SVGと9Sourceだけを持ち出し、端末JSONの進捗移送と分けます。学習用Nativeの9教材は、First/Client/Form/Actionが512MiB、Routing/Data/Weatherが576MiB、Guided Project/Capstoneが896MiBです。追加swapなし・CPU1・PID64を維持します。持ち出しproductionは同梱Composeの512MiBです。Pagesでは説明と読書を提供し、実行・採点はLocal Docker環境で行います。Cookie・認証・Cookieによる保存は未対応で、親Issue #14の残タスクです。
+公式サイトの最新版表示は16.4.0ですが、教材のmanifest/lockは16.3.8を維持します。
+制作2教材はGET選択だけで、保存や新しいActionを追加しません。
+固定SVGと9Sourceだけを持ち出し、端末JSONの進捗移送と分けます。
+学習用Nativeの9教材は、First/Client/Form/Actionが512MiB、Routing/Data/Weatherが576MiB、Guided Project/Capstoneが896MiBです。
+追加swapなし・CPU1・PID64を維持します。
+持ち出しproductionは同梱Composeの512MiBです。
+Pagesでは説明と読書を提供し、実行・採点はLocal Docker環境で行います。
+Form／Actionでは固定themeの保存・読取・削除だけを扱い、その他のCookie・認証・Cookieの永続保存・Cookie専用採点は対象外です。
+公開の実績は、revision別の受入記録・公開履歴・配信後確認を正とします。
+固定themeは同じrunのSource反映では保持され、新runには引き継がれません。

@@ -3,15 +3,15 @@ import { URL } from 'node:url';
 import { NextLessonObservationError } from './next-observation-error.mjs';
 export { NextLessonObservationError } from './next-observation-error.mjs';
 
-/** Pageの寿命内で実文書要求とURL変更を数え、同一URLの履歴更新を除外する。 */
-export function watchDocumentVersion(page) {
+/** Pageの寿命内で指定Frame（既定はmainFrame）の実文書要求とURL変更を数え、同URLの履歴更新を除外する。 */
+export function watchDocumentVersion(page, actor = page.mainFrame()) {
   let version = 0;
-  let url = page.url();
+  let url = actor.url();
   page.on('request', (request) => {
-    if (request.isNavigationRequest() && request.frame() === page.mainFrame()) version++;
+    if (request.isNavigationRequest() && request.frame() === actor) version++;
   });
   page.on('framenavigated', (frame) => {
-    if (frame === page.mainFrame() && frame.url() !== url) {
+    if (frame === actor && frame.url() !== url) {
       url = frame.url();
       version++;
     }
