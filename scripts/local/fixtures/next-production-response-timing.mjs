@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict';
+import console from 'node:console';
+import process from 'node:process';
+import { setTimeout } from 'node:timers';
 import { setTimeout as delay } from 'node:timers/promises';
 import { observeNextProduction } from '../next-production-observations.mjs';
 
