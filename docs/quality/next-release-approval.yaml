@@ -1,18 +1,19 @@
 schemaVersion: 2
-status: draft
-verifiedSourceCommit: draft
-candidateTreeSha256: draft
-canonicalDistSha256: draft
-courseManifestSha256: draft
-publicProvenanceSha256: draft
-visualBaselineSha256: draft
+status: approved
+verifiedSourceCommit: bb33e307ecc6edaa79db44801cee373025ed54df
+candidateTreeSha256: 3c62011c7060a382f6295499ee067b366276ca551fb38da07c86245f96943116
+canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
+courseManifestSha256: a3bffc974c7d6b8acd23df4c92f3c82aee90e5af1cefc367e4039fe1857145ac
+publicProvenanceSha256: a577ff8815e8e27eca907b8e0e203b200a07aab323b792536ba04ae61c857c99
+visualBaselineSha256: 7a0e521b69e98742c21028098dbb73d4357f08c70673a7131cd3dfd094136369
 records:
   contentReview:
     path: docs/quality/content-review-next.yaml
-    sha256: draft
+    sha256: f1200271c3a58834f7baaf35c23d84f44b6884e2ba64c920abc3dd317e326c81
   technicalAcceptance:
     path: docs/quality/next-release-acceptance.yaml
-    sha256: draft
-approvedBy: draft
-approvedAt: draft
+    sha256: 325e2009d384c002eddf77827dc8e3ef15fe44588a8a982202b88c8f564c0712
+approvedBy: repository-owner
+  santa928（PR250残確認後merge/Pages更新公開の明示許可を親スレッド01a15708-d642-74a7-aeaa-f940b617e0d4経由で受領）
+approvedAt: 2026-10-24T17:52:33.138Z
 courseId: next
