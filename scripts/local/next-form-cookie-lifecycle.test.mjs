@@ -1,10 +1,14 @@
 import assert from 'node:assert/strict';
-import { once } from 'node:events';
+import { EventEmitter, once } from 'node:events';
 import { createServer } from 'node:http';
 import { connect } from 'node:net';
 import { setTimeout as delay } from 'node:timers/promises';
 import test from 'node:test';
-import { cleanupCookieAcceptance, withCookieDeadline } from './next-form-cookie-lifecycle.mjs';
+import {
+  cleanupCookieAcceptance,
+  finishCookieResponse,
+  withCookieDeadline,
+} from './next-form-cookie-lifecycle.mjs';
 
 /** 回帰自体が停止しないよう、対象の期限より長い独立した失敗期限を置く。 */
 async function testDeadline(operation) {
@@ -26,6 +30,60 @@ test('応答完了の未解決Promiseを期限超過として失敗させる', a
     testDeadline(withCookieDeadline(() => new Promise(() => {}), 30, 'response-finished')),
     /Cookie acceptance deadline: response-finished/u,
   );
+});
+
+/** 実Browserで確認した「失敗通知後もfinishedは未解決」をイベント境界で再現する。 */
+function responseHarness() {
+  const context = new EventEmitter();
+  let failed = false;
+  const request = { failure: () => (failed ? { errorText: '非公開の通信詳細' } : null) };
+  const completion = Promise.withResolvers();
+  return {
+    context,
+    response: { request: () => request, finished: () => completion.promise },
+    fail: (target = request) => {
+      if (target === request) failed = true;
+      context.emit('requestfailed', target);
+    },
+    finish: () => completion.resolve(null),
+  };
+}
+
+test('選択Requestの失敗を応答期限まで待たず固定分類で伝える', async () => {
+  const fixture = responseHarness();
+  const pending = finishCookieResponse(fixture.context, fixture.response, 100);
+  fixture.fail();
+  await assert.rejects(testDeadline(pending), {
+    name: 'CookieAcceptanceRequestError',
+    message: 'Cookie acceptance request failed',
+  });
+  assert.equal(fixture.context.listenerCount('requestfailed'), 0);
+});
+
+test('Response選択前に失敗済みの同一Requestも失敗として伝える', async () => {
+  const fixture = responseHarness();
+  fixture.fail();
+  await assert.rejects(testDeadline(finishCookieResponse(fixture.context, fixture.response, 100)), {
+    name: 'CookieAcceptanceRequestError',
+  });
+  assert.equal(fixture.context.listenerCount('requestfailed'), 0);
+});
+
+test('別Requestの失敗では落とさず選択応答の正常完了を待つ', async () => {
+  const fixture = responseHarness();
+  const pending = finishCookieResponse(fixture.context, fixture.response, 100);
+  fixture.fail({ failure: () => ({ errorText: '別通信' }) });
+  fixture.finish();
+  assert.equal(await testDeadline(pending), null);
+  assert.equal(fixture.context.listenerCount('requestfailed'), 0);
+});
+
+test('応答未完了は期限超過にし終端監視も回収する', async () => {
+  const fixture = responseHarness();
+  await assert.rejects(testDeadline(finishCookieResponse(fixture.context, fixture.response, 30)), {
+    name: 'CookieAcceptanceDeadlineError',
+  });
+  assert.equal(fixture.context.listenerCount('requestfailed'), 0);
 });
 
 test('停止失敗でもBrowserとbridgeを回収し、元の失敗を結果へ残す', async () => {

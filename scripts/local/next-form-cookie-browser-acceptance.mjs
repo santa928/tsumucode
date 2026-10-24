@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { Buffer } from 'node:buffer';
 import console from 'node:console';
 import process from 'node:process';
 import { randomUUID } from 'node:crypto';
@@ -13,7 +14,11 @@ import { bridge } from './browser-test-bridge.mjs';
 import { previewOrigin, previewBase } from './preview-contract.mjs';
 import { FORM_WORKSPACE, ACTION_WORKSPACE } from './next-form-preview.mjs';
 import { watchDocumentVersion } from './next-project-observations.mjs';
-import { cleanupCookieAcceptance, withCookieDeadline } from './next-form-cookie-lifecycle.mjs';
+import {
+  cleanupCookieAcceptance,
+  finishCookieResponse,
+  withCookieDeadline,
+} from './next-form-cookie-lifecycle.mjs';
 
 // 作者/CI専用。Cookie jarやfetchを模擬せず、実NextのServerコードとBrowserの送信で検証する。
 const bridges = [];
@@ -149,6 +154,39 @@ async function submit(surface, input, expected) {
   };
   const field = frame.getByLabel('メモ', { exact: true });
   let reply;
+  let selectedRequest;
+  const candidates = [];
+  /** 送信前から候補だけを追跡する。本文を出さず、入力の包含も診断にだけ使う。 */
+  const onRequest = (request) => {
+    if (request.method() !== 'POST' || request.frame() !== frame || !routes.includes(request.url()))
+      return;
+    const body = request.postDataBuffer();
+    candidates.push({
+      request,
+      inputIncluded: body ? body.includes(Buffer.from(requestInput)) : null,
+      startedMs: Math.round(performance.now() - startedAt),
+      terminal: 'pending',
+    });
+  };
+  /** 同じRequest objectの終端だけを対応付け、別通信の失敗を混ぜない。 */
+  const terminal = (request, state) => {
+    const candidate = candidates.find((item) => item.request === request);
+    if (!candidate) return;
+    candidate.terminal = state;
+    candidate.terminalMs = Math.round(performance.now() - startedAt);
+  };
+  const onFinished = (request) => terminal(request, 'finished');
+  const onFailed = (request) => terminal(request, 'failed');
+  /** 固定分類・連番・boolean・時刻だけを残し、Request/URL/資格情報は出力しない。 */
+  const requestSnapshot = () =>
+    candidates.map(({ request, ...observation }, index) => ({
+      ordinal: index + 1,
+      selected: request === selectedRequest,
+      ...observation,
+    }));
+  context.on('request', onRequest);
+  context.on('requestfinished', onFinished);
+  context.on('requestfailed', onFailed);
   try {
     progress('submit-start', 'started');
     marker = await step('document-marker', () => documentMarker(frame, randomUUID()), 5000);
@@ -184,8 +222,10 @@ async function submit(surface, input, expected) {
       15000,
     );
     const response = await step('response-headers', () => reply, 15000);
+    selectedRequest = response.request();
     snapshot.httpStatus = response.status();
-    snapshot.completed = (await step('response-finished', () => response.finished())) === null;
+    snapshot.completed =
+      (await step('response-finished', () => finishCookieResponse(context, response))) === null;
     snapshot.navigationRequest = response.request().isNavigationRequest();
     assert.equal(snapshot.httpStatus, 200);
     assert.equal(snapshot.completed, true);
@@ -218,7 +258,7 @@ async function submit(surface, input, expected) {
     assert.equal(snapshot.documentMatches, true);
     assert.equal(snapshot.documentVersionAfter, snapshot.documentVersionBefore);
     assert.equal(frame.url(), actorUrl.href);
-    console.log(JSON.stringify({ ...snapshot, outcome: 'saved' }));
+    console.log(JSON.stringify({ ...snapshot, requests: requestSnapshot(), outcome: 'saved' }));
     return text;
   } catch (error) {
     // 任意の診断より先に失敗を残し、診断自体も有限にする。
@@ -250,8 +290,19 @@ async function submit(surface, input, expected) {
     ).catch(() => 'unavailable');
     if (!['idle', 'saved', 'invalid', 'failed', 'unavailable'].includes(snapshot.domState))
       snapshot.domState = 'unexpected';
-    console.log(JSON.stringify({ ...snapshot, browserEvents, outcome: 'failed' }));
+    console.log(
+      JSON.stringify({
+        ...snapshot,
+        requests: requestSnapshot(),
+        browserEvents,
+        outcome: 'failed',
+      }),
+    );
     throw error;
+  } finally {
+    context.off('request', onRequest);
+    context.off('requestfinished', onFinished);
+    context.off('requestfailed', onFailed);
   }
 }
 

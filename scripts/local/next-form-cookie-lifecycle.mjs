@@ -17,6 +17,33 @@ export async function withCookieDeadline(operation, timeoutMs, stage) {
   }
 }
 
+/**
+ * 選択したRequestの切断を失敗として伝え、正常時だけ従来のHTTP完了を待つ。
+ * Playwrightのfinishedはrequestfailed後も未解決になり得る。詳細本文は例外へ含めない。
+ * 失敗済みRequestも照合し、成功・失敗・期限超過の全経路で監視を外す。
+ */
+export async function finishCookieResponse(context, response, timeoutMs = 30000) {
+  const request = response.request();
+  const failure = Promise.withResolvers();
+  const onFailed = (failedRequest) => {
+    if (failedRequest !== request) return;
+    const error = new Error('Cookie acceptance request failed');
+    error.name = 'CookieAcceptanceRequestError';
+    failure.reject(error);
+  };
+  context.on('requestfailed', onFailed);
+  if (request.failure()) onFailed(request);
+  try {
+    return await withCookieDeadline(
+      () => Promise.race([response.finished(), failure.promise]),
+      timeoutMs,
+      'response-finished',
+    );
+  } finally {
+    context.off('requestfailed', onFailed);
+  }
+}
+
 /** 一つの回収失敗で後続を省略せず、この検査が所有する接続だけを閉じる。 */
 export async function cleanupCookieAcceptance({
   stop,
