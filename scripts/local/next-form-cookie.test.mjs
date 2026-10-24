@@ -197,9 +197,7 @@ test('不正・重複・永続化・Domain・未知属性・別PathのSet-Cookie
           statusCode: 200,
           headers: { 'set-cookie': fields },
         },
-        async () => {
-          throw new Error('Lookup must not run');
-        },
+        async () => target,
       ),
       {},
     );
@@ -238,4 +236,36 @@ test('run・Source・socket・採点状態の変更とcontrol不通はCookie応�
       throw new Error('Unavailable');
     }),
   );
+});
+
+test('Cookieを返さないAction応答も送信前に失効を拒否する', async () => {
+  const actionTarget = { ...target, workspaceId: ACTION_WORKSPACE };
+  const actionRequest = {
+    ...req,
+    url: `/w/${ACTION_WORKSPACE}/${target.runId}/`,
+  };
+  for (const headers of [{}, { 'set-cookie': ['lesson-theme=invalid'] }]) {
+    const upstream = { statusCode: 200, headers };
+    for (const patch of [{ sourceRevision: 2 }, { grading: true }, { runId: 'other' }])
+      await assert.rejects(
+        lessonThemeResponseHeaders(actionRequest, actionTarget, upstream, async () => ({
+          ...actionTarget,
+          ...patch,
+        })),
+      );
+    await assert.rejects(
+      lessonThemeResponseHeaders(actionRequest, actionTarget, upstream, async () => {
+        throw new Error('Unavailable');
+      }),
+    );
+    let lookups = 0;
+    assert.deepEqual(
+      await lessonThemeResponseHeaders(actionRequest, actionTarget, upstream, async () => {
+        lookups++;
+        return actionTarget;
+      }),
+      {},
+    );
+    assert.equal(lookups, 1);
+  }
 });

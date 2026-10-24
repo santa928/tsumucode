@@ -46,7 +46,8 @@ static chunk、HMR/WebSocket、他のNext/Vite教材、採点にはこの例外�
 
 Cookieはrun単位で分離する。同じrunのSource反映では保持し、停止後の新runには引き継がない。
 旧CookieがBrowserに残っていても、新runのhost・Pathとは一致しない。
-Cookie応答のheaders発行直前にもrun・Source版/hash・socket dev/inode・非採点を確認し、
+固定2教材の成功POST応答はCookieの有無にかかわらず、headers発行直前に
+run・Source版/hash・socket dev/inode・非採点を確認し、
 確認時点で失効していた応答とcontrol不通を拒否する。既にBrowserへ送ったheadersは撤回できず、
 同run内のSource版ごとのCookie完全初期化や、HTTP完了とCookie保存の原子性は保証しない。
 既存の採点器はCookie演習の合格判定を提供しない。

@@ -100,10 +100,10 @@ export async function lessonThemeResponseHeaders(req, target, upstream, lookup) 
   )
     return {};
   const cookie = canonicalCookie(upstream.headers['set-cookie'], target);
-  if (!cookie) return {};
+  // Cookieのない読取結果も、全量受信中に失効したrunから公開しない。
   const current = await lookup();
   const keys = ['workspaceId', 'profile', 'runId', 'sourceRevision', 'sourceHash', 'dev', 'ino'];
   if (!current || current.grading === true || keys.some((key) => current[key] !== target[key]))
     throw new Error('Expired lesson Cookie response');
-  return { 'set-cookie': cookie };
+  return cookie ? { 'set-cookie': cookie } : {};
 }
