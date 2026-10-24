@@ -67,7 +67,9 @@ host/pathの意味は[RFC 6265](https://www.rfc-editor.org/rfc/rfc6265.html)を�
 
 本文64KiBは全量受信後にだけ上流へ送る。公開POSTの応答512KiB・全体30秒・同時HTTP8を維持する。
 途中切断・期限・Source/run変更では上流を回収する。headers送信後の失敗では接続を閉じ、
-二度目のheadersを書かない。承認済みAction RSCだけを逐次送信する。
+二度目のheadersを書かない。固定Action POSTのRSCは正常EOFまで全量検査し、
+送信直前に許可を再確認してからContent-Length付きで渡す。途中結果やSet-Cookieを先行公開しない。
+Form・文書GET・Weatherの転送方式は維持する。
 既存Next/Viteの許可経路や資源上限を広げない。
 
 ## 採点と競合
@@ -77,11 +79,12 @@ HTTP全量完了・可視DOM・保存履歴を照合する。固定成功表示�
 Actionの完了はtrusted bridgeが付ける送信連番1→2→3と、実ResponseのURL・method・statusを
 厳密に対応させる。正常な上流EOF・下流送信完了に加え、対応するDOMとreadonly履歴を要求する。
 部分stream・旧送信の完了・切断・上限超過・対象POSTのBrowser中断を成功として扱わない。
-採点器内のAction POSTだけは、512KiB以内のRSCを正常EOFまで受信し、Content-Length付きで
-Browserへ渡す。Browser側でも固定Action POSTのResponseのcloneを正常EOFまで読み、
+公開Proxyと採点器内の固定Action POSTは、512KiB以内のRSCを正常EOFまで受信し、Content-Length付きで
+Browserへ渡す。採点器のBrowser側では固定Action POSTのResponseのcloneを正常EOFまで読み、
 実byte数とContent-Lengthを照合してから、元ResponseをNextのdecoderへ渡す。
 元ResponseのURL・type・redirected・未消費body、fetchの引数・signalを保持し、再試行しない。
-公開Proxyの逐次送信と、固定350msの保存待ち・pending検査は維持する。
+通常UIのfetchやdecoderには採点用の全量読取処理を追加しない。
+固定350msの保存待ち・pending検査は維持する。
 全体10秒の採点期限を維持し、前後のrun/revision/hashと文書版を一致させる。
 Form観測中の文書版を基準更新で消さず、同URLのreplaceStateは許可し、実reloadは拒否する。
 最大8POSTのCDP受信量は診断だけに使う。header欠落はunknownとして残し、本文・URL・入力値を

@@ -66,7 +66,7 @@ test('実HTTP応答は送信直前の許可ヘッダーだけを追加する', a
   );
 });
 
-test('逐次・全量応答とも送信前に実行失効／採点開始／control不通を拒否する', async () => {
+test('逐次・全量・Action bufferとも送信前に実行失効／採点開始／control不通を拒否する', async () => {
   const target = {
     workspaceId: 'next-ch04-l01-e01',
     profile: 'next-project-v1',
@@ -84,7 +84,11 @@ test('逐次・全量応答とも送信前に実行失効／採点開始／contr
       origin: `http://${target.runId}.localhost:4175`,
     },
   };
-  for (const stream of [false, true]) {
+  for (const [stream, bufferStream] of [
+    [false, false],
+    [true, false],
+    [true, true],
+  ]) {
     for (const changed of [{ ...target, sourceRevision: 2 }, { ...target, grading: true }, null]) {
       let completed = 0;
       let current = target;
@@ -122,7 +126,7 @@ test('逐次・全量応答とも送信前に実行失効／採点開始／contr
             .end('ready'),
         32,
         () => completed++,
-        false,
+        bufferStream,
         (upstream) =>
           lessonThemeResponseHeaders(req, target, upstream, async () => {
             checking();
@@ -315,7 +319,7 @@ for (const [name, respond] of [
       res.writeHead(302, { 'content-type': 'text/html', location: '/private' }).end('private'),
   ],
 ]) {
-  test(`採点用bufferの${name}は内容を一部も送らず、完了記録を作らない`, async () => {
+  test(`Action bufferの${name}は内容を一部も送らず、完了記録を作らない`, async () => {
     let completed = 0;
     await fixture(
       true,

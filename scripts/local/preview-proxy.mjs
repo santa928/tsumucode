@@ -6,6 +6,7 @@ import { lstat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { Buffer } from 'node:buffer';
 import { lessonThemeResponseHeaders } from './next-form-cookie.mjs';
+import { ACTION_WORKSPACE } from './next-form-preview.mjs';
 import { URL } from 'node:url';
 import { setTimeout, clearTimeout, setInterval, clearInterval } from 'node:timers';
 import {
@@ -203,6 +204,8 @@ const server = createServer(async (req, res) => {
           headers: previewHeaders(target.runId, target.profile),
           limit: previewResponseLimit(req.url, target),
           stream: policy.stream,
+          // 固定Actionの有限RSCだけを正常EOFまで検査し、部分応答を公開しない。
+          bufferStream: target.workspaceId === ACTION_WORKSPACE && policy.post,
           beforeHeaders: () => lessonThemeResponseHeaders(req, target, upstream, lookup),
           fail: () => errorResponse(res, 502, target),
         });
