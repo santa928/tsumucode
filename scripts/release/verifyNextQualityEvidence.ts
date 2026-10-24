@@ -162,6 +162,26 @@ export function hashNextReleaseEvidence(record: NextReleaseEvidence): string {
   );
 }
 
+/** 実履歴から受入方式を照合し、昇格済みの今回版を除いた直前の公開を返す。 */
+export function validateNextPublicationHistory(
+  record: NextReleaseEvidence,
+  revision: string,
+  releases: readonly NextPublishedRelease[],
+): NextPublishedRelease | undefined {
+  const latest = releases.at(-1);
+  const promoted = latest?.revision === revision;
+  if (
+    promoted &&
+    (latest.sourceCommit !== record.verifiedSourceCommit ||
+      latest.canonicalDistSha256 !== record.canonicalDistSha256)
+  )
+    throw new Error('昇格済みNext releaseと現在の公開受入が一致しません');
+  const previous = releases.at(promoted ? -2 : -1);
+  if ((record.publication?.mode === 'published-update') !== Boolean(previous))
+    throw new Error('Nextの公開履歴と初公開/更新の受入方式が一致しません');
+  return previous;
+}
+
 /** 直前の公開履歴と保存した受入原本を結び、過去の承認を新しい実測へ付け替えない。 */
 export function validateNextPublishedUpdate(
   record: NextReleaseEvidence,
@@ -301,20 +321,11 @@ export async function verifyNextQualityEvidence(
     parse(sources.get('technicalAcceptance') ?? ''),
     hashes,
   );
+  const history = NextReleaseHistorySchema.parse(
+    parse(await readFile(path.join(root, 'content/next/release-history.yaml'), 'utf8')),
+  );
+  const previous = validateNextPublicationHistory(record, runtime.revision, history.releases);
   if (record.publication?.mode === 'published-update') {
-    const history = NextReleaseHistorySchema.parse(
-      parse(await readFile(path.join(root, 'content/next/release-history.yaml'), 'utf8')),
-    );
-    const latest = history.releases.at(-1);
-    const promoted = latest?.revision === runtime.revision;
-    if (
-      promoted &&
-      (latest.sourceCommit !== record.verifiedSourceCommit ||
-        latest.canonicalDistSha256 !== record.canonicalDistSha256)
-    )
-      throw new Error('昇格済みNext releaseと現在の公開受入が一致しません');
-    // 公開後の再検査でも、今回版をその版自身の「直前release」として扱わない。
-    const previous = history.releases.at(promoted ? -2 : -1);
     const archived = await readFile(
       path.join(root, record.publication.previousRelease.acceptance.path),
       'utf8',

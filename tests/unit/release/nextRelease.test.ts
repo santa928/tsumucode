@@ -13,6 +13,7 @@ import {
 } from '../../../scripts/release/nextInputHashes';
 import { parseCourseReleaseHistory } from '../../../scripts/release/javascriptReleaseSchema';
 import { parse } from 'yaml';
+import { NextReleaseHistorySchema } from '../../../scripts/release/nextReleaseSchema';
 import {
   buildReleaseReport,
   parseReleaseReport,
@@ -21,6 +22,7 @@ import {
   hashNextReleaseEvidence,
   validateNextReleaseEvidence,
   validateNextPublishedUpdate,
+  validateNextPublicationHistory,
   NextReleaseEvidenceSchema,
   NEXT_ACCEPTANCE_LESSONS,
   type NextReleaseEvidence,
@@ -304,6 +306,68 @@ describe('Nextの独立証拠binding', () => {
 });
 
 describe('Next更新公開の過去release binding', () => {
+  it('履歴から更新方式を強制し、初公開形式で過去の公開を隠せない', async () => {
+    const record = await evidence();
+    const hashes = new Map(NEXT_ACCEPTANCE_LESSONS.map((id) => [id, 'a'.repeat(64)]));
+    expect(() => validateNextReleaseEvidence(record, hashes)).not.toThrow();
+    const history = NextReleaseHistorySchema.parse(
+      parse(await readFile('content/next/release-history.yaml', 'utf8')),
+    );
+    expect(() => {
+      validateNextPublicationHistory(record, '2026-10-24.1', history.releases);
+    }).toThrow();
+    record.publication = { mode: 'initial-publication' };
+    expect(() => {
+      validateNextPublicationHistory(record, '2026-10-24.1', history.releases);
+    }).toThrow();
+  });
+  it('履歴から正当な初公開・更新と各promotion後を区別する', async () => {
+    const initial = NextReleaseEvidenceSchema.parse(
+      parse(await readFile('docs/quality/history/next/2026-10-09.2-acceptance.yaml', 'utf8')),
+    );
+    const history = NextReleaseHistorySchema.parse(
+      parse(await readFile('content/next/release-history.yaml', 'utf8')),
+    );
+    expect(validateNextPublicationHistory(initial, '2026-10-09.2', [])).toBeUndefined();
+    expect(
+      validateNextPublicationHistory(initial, '2026-10-09.2', history.releases),
+    ).toBeUndefined();
+    const record = await evidence();
+    const previous = history.releases[0]!;
+    record.publication = {
+      mode: 'published-update',
+      previousRelease: {
+        revision: previous.revision,
+        tag: previous.tag,
+        sourceCommit: previous.sourceCommit,
+        acceptance: {
+          path: 'docs/quality/history/next/2026-10-09.2-acceptance.yaml',
+          sha256: 'a'.repeat(64),
+        },
+      },
+    };
+    expect(validateNextPublicationHistory(record, '2026-10-24.1', history.releases)).toEqual(
+      previous,
+    );
+    const current = {
+      ...previous,
+      revision: '2026-10-24.1',
+      sourceCommit: record.verifiedSourceCommit,
+      canonicalDistSha256: record.canonicalDistSha256,
+    };
+    expect(
+      validateNextPublicationHistory(record, '2026-10-24.1', [...history.releases, current]),
+    ).toEqual(previous);
+    expect(() => {
+      validateNextPublicationHistory(record, '2026-10-24.1', []);
+    }).toThrow();
+    expect(() => {
+      validateNextPublicationHistory(record, '2026-10-24.1', [
+        { ...current, sourceCommit: 'f'.repeat(40) },
+      ]);
+    }).toThrow();
+  });
+
   it('旧v1受入の独立fingerprintを既存のまま読める', async () => {
     const archived = NextReleaseEvidenceSchema.parse(
       parse(await readFile('docs/quality/history/next/2026-10-09.2-acceptance.yaml', 'utf8')),
