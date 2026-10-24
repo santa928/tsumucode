@@ -1,3 +1,5 @@
+// @vitest-environment node
+// Node子processの終了を検査し、FixtureのURLを実ファイルとして解決する。
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import process from 'node:process';
