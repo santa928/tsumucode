@@ -1,11 +1,11 @@
 schemaVersion: 1
 releaseStatus: approved
-verifiedSourceCommit: bb33e307ecc6edaa79db44801cee373025ed54df
+verifiedSourceCommit: efa0e78b04be65ab683118d4024d6aeff78b342b
 canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
 lessons:
   - lessonId: next-ch01-l01
     authorId: tsumucode-next-course-authoring
-    reviewerId: /root/issue250_structure_learning_review
+    reviewerId: /root/issue250_p4_structure_review
     sourceHash: 473ec69144034f572162a229ac93ecf2cee1bcbba30c62efe54335ff42f127cd
     accuracy: approved
     goalExerciseAlignment: approved
@@ -13,14 +13,13 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開更新候補bb33e307ecc6edaa79db44801cee373025ed54dfについて独立3名が全9教材の可視入力を必須0で再承認。P1原読解とP3までのGit/教材指紋の不変性を区別し、旧7教材の承認を自動継承しない。Native
-      CI 40113102846の9教材81Fixtureと採点Cookie隔離の完了原本を確認。Pages9教材1280/390px・JSON引継ぎは元観測Source
-      b91f88937e01fd4ab706293516f8b0565c9806e9のまま再利用し、P3成果物のdist全583file・37988224bytesが直接比較で一致することと適用先Sourceを別reportへ結ぶ。P3で新たにPages実操作したとは記録しない。独立Cookie
-      UIの元Sourceは5f313f89c800ef021b6e3abc4dcbffbae0eb37bbで、同run反映保持/新run分離の観測を不変参照する。P3のlocal Core
-      probeはgrade未実施、採点を含む正常完走は上記CIを正とする。有限theme以外のCookie・認証・Cookieの永続保存・専用Cookie採点は対象外。原本hashと元条件はnext-release-acceptance.yamlおよびnext-persona-review.mdを参照。実人受講・物理低端末は未確認。配信成功は公開後記録で別に確認する。
+    notes: 公開更新候補efa0e78b04be65ab683118d4024d6aeff78b342bの全9教材を独立3名が必須指摘0で再承認。原読解Sourceと学習入力の不変照合を区別し、原観測を現在Sourceの新操作へ付け替えない。同候補Native
+      CI 40138471957の必須17工程・9教材81Fixtureと資源原本を照合。Pages CI
+      40138471956の成果物は元B91の全583配信ファイルとbyte一致し、1280/390pxの全9教材・JSON引継ぎの元観測を限定適用する。Cookieの元5f313f89でのForm/Action
+      Source反映・新run分離と、元9fa81b63でのAction通常入口・保存/変更/削除・keyboard/pending/帰還を区別して保持する。Production待機の厳格Node回帰8件は制御APIタイミングの観測であり、実Next合格の代用ではない。旧CI失敗の同一原因は未確定。theme-cookieのみを許可し、認証・永続Cookie保存・専用Cookie採点は範囲外。原本hash・元Source・条件はnext-release-acceptance.yamlの5原本と独立receiptに結合。実人受講・物理低端末は未確認。配信成功は公開後に別記する。
   - lessonId: next-ch02-l01
     authorId: tsumucode-next-course-authoring
-    reviewerId: /root/issue250_structure_learning_review
+    reviewerId: /root/issue250_p4_structure_review
     sourceHash: fe61f25a4890aef4efd2c27a06a00ed4f3088b5a94823e4f161107d0768b7b0f
     accuracy: approved
     goalExerciseAlignment: approved
@@ -28,14 +27,13 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開更新候補bb33e307ecc6edaa79db44801cee373025ed54dfについて独立3名が全9教材の可視入力を必須0で再承認。P1原読解とP3までのGit/教材指紋の不変性を区別し、旧7教材の承認を自動継承しない。Native
-      CI 40113102846の9教材81Fixtureと採点Cookie隔離の完了原本を確認。Pages9教材1280/390px・JSON引継ぎは元観測Source
-      b91f88937e01fd4ab706293516f8b0565c9806e9のまま再利用し、P3成果物のdist全583file・37988224bytesが直接比較で一致することと適用先Sourceを別reportへ結ぶ。P3で新たにPages実操作したとは記録しない。独立Cookie
-      UIの元Sourceは5f313f89c800ef021b6e3abc4dcbffbae0eb37bbで、同run反映保持/新run分離の観測を不変参照する。P3のlocal Core
-      probeはgrade未実施、採点を含む正常完走は上記CIを正とする。有限theme以外のCookie・認証・Cookieの永続保存・専用Cookie採点は対象外。原本hashと元条件はnext-release-acceptance.yamlおよびnext-persona-review.mdを参照。実人受講・物理低端末は未確認。配信成功は公開後記録で別に確認する。
+    notes: 公開更新候補efa0e78b04be65ab683118d4024d6aeff78b342bの全9教材を独立3名が必須指摘0で再承認。原読解Sourceと学習入力の不変照合を区別し、原観測を現在Sourceの新操作へ付け替えない。同候補Native
+      CI 40138471957の必須17工程・9教材81Fixtureと資源原本を照合。Pages CI
+      40138471956の成果物は元B91の全583配信ファイルとbyte一致し、1280/390pxの全9教材・JSON引継ぎの元観測を限定適用する。Cookieの元5f313f89でのForm/Action
+      Source反映・新run分離と、元9fa81b63でのAction通常入口・保存/変更/削除・keyboard/pending/帰還を区別して保持する。Production待機の厳格Node回帰8件は制御APIタイミングの観測であり、実Next合格の代用ではない。旧CI失敗の同一原因は未確定。theme-cookieのみを許可し、認証・永続Cookie保存・専用Cookie採点は範囲外。原本hash・元Source・条件はnext-release-acceptance.yamlの5原本と独立receiptに結合。実人受講・物理低端末は未確認。配信成功は公開後に別記する。
   - lessonId: next-ch02-l02
     authorId: tsumucode-next-course-authoring
-    reviewerId: /root/issue250_structure_learning_review
+    reviewerId: /root/issue250_p4_structure_review
     sourceHash: 66d5a701dce8575a8eb512d1f045c0e6c2ddae844ebf131ea5b1857d213c9c8f
     accuracy: approved
     goalExerciseAlignment: approved
@@ -43,14 +41,13 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開更新候補bb33e307ecc6edaa79db44801cee373025ed54dfについて独立3名が全9教材の可視入力を必須0で再承認。P1原読解とP3までのGit/教材指紋の不変性を区別し、旧7教材の承認を自動継承しない。Native
-      CI 40113102846の9教材81Fixtureと採点Cookie隔離の完了原本を確認。Pages9教材1280/390px・JSON引継ぎは元観測Source
-      b91f88937e01fd4ab706293516f8b0565c9806e9のまま再利用し、P3成果物のdist全583file・37988224bytesが直接比較で一致することと適用先Sourceを別reportへ結ぶ。P3で新たにPages実操作したとは記録しない。独立Cookie
-      UIの元Sourceは5f313f89c800ef021b6e3abc4dcbffbae0eb37bbで、同run反映保持/新run分離の観測を不変参照する。P3のlocal Core
-      probeはgrade未実施、採点を含む正常完走は上記CIを正とする。有限theme以外のCookie・認証・Cookieの永続保存・専用Cookie採点は対象外。原本hashと元条件はnext-release-acceptance.yamlおよびnext-persona-review.mdを参照。実人受講・物理低端末は未確認。配信成功は公開後記録で別に確認する。
+    notes: 公開更新候補efa0e78b04be65ab683118d4024d6aeff78b342bの全9教材を独立3名が必須指摘0で再承認。原読解Sourceと学習入力の不変照合を区別し、原観測を現在Sourceの新操作へ付け替えない。同候補Native
+      CI 40138471957の必須17工程・9教材81Fixtureと資源原本を照合。Pages CI
+      40138471956の成果物は元B91の全583配信ファイルとbyte一致し、1280/390pxの全9教材・JSON引継ぎの元観測を限定適用する。Cookieの元5f313f89でのForm/Action
+      Source反映・新run分離と、元9fa81b63でのAction通常入口・保存/変更/削除・keyboard/pending/帰還を区別して保持する。Production待機の厳格Node回帰8件は制御APIタイミングの観測であり、実Next合格の代用ではない。旧CI失敗の同一原因は未確定。theme-cookieのみを許可し、認証・永続Cookie保存・専用Cookie採点は範囲外。原本hash・元Source・条件はnext-release-acceptance.yamlの5原本と独立receiptに結合。実人受講・物理低端末は未確認。配信成功は公開後に別記する。
   - lessonId: next-ch03-l01
     authorId: tsumucode-next-course-authoring
-    reviewerId: /root/issue250_structure_learning_review
+    reviewerId: /root/issue250_p4_structure_review
     sourceHash: 8fd3235515e187cc804aeee38005f8332192f9a6d6a6f46a24b4004b848c9dc4
     accuracy: approved
     goalExerciseAlignment: approved
@@ -58,14 +55,13 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開更新候補bb33e307ecc6edaa79db44801cee373025ed54dfについて独立3名が全9教材の可視入力を必須0で再承認。P1原読解とP3までのGit/教材指紋の不変性を区別し、旧7教材の承認を自動継承しない。Native
-      CI 40113102846の9教材81Fixtureと採点Cookie隔離の完了原本を確認。Pages9教材1280/390px・JSON引継ぎは元観測Source
-      b91f88937e01fd4ab706293516f8b0565c9806e9のまま再利用し、P3成果物のdist全583file・37988224bytesが直接比較で一致することと適用先Sourceを別reportへ結ぶ。P3で新たにPages実操作したとは記録しない。独立Cookie
-      UIの元Sourceは5f313f89c800ef021b6e3abc4dcbffbae0eb37bbで、同run反映保持/新run分離の観測を不変参照する。P3のlocal Core
-      probeはgrade未実施、採点を含む正常完走は上記CIを正とする。有限theme以外のCookie・認証・Cookieの永続保存・専用Cookie採点は対象外。原本hashと元条件はnext-release-acceptance.yamlおよびnext-persona-review.mdを参照。実人受講・物理低端末は未確認。配信成功は公開後記録で別に確認する。
+    notes: 公開更新候補efa0e78b04be65ab683118d4024d6aeff78b342bの全9教材を独立3名が必須指摘0で再承認。原読解Sourceと学習入力の不変照合を区別し、原観測を現在Sourceの新操作へ付け替えない。同候補Native
+      CI 40138471957の必須17工程・9教材81Fixtureと資源原本を照合。Pages CI
+      40138471956の成果物は元B91の全583配信ファイルとbyte一致し、1280/390pxの全9教材・JSON引継ぎの元観測を限定適用する。Cookieの元5f313f89でのForm/Action
+      Source反映・新run分離と、元9fa81b63でのAction通常入口・保存/変更/削除・keyboard/pending/帰還を区別して保持する。Production待機の厳格Node回帰8件は制御APIタイミングの観測であり、実Next合格の代用ではない。旧CI失敗の同一原因は未確定。theme-cookieのみを許可し、認証・永続Cookie保存・専用Cookie採点は範囲外。原本hash・元Source・条件はnext-release-acceptance.yamlの5原本と独立receiptに結合。実人受講・物理低端末は未確認。配信成功は公開後に別記する。
   - lessonId: next-ch03-l02
     authorId: tsumucode-next-course-authoring
-    reviewerId: /root/issue250_structure_learning_review
+    reviewerId: /root/issue250_p4_structure_review
     sourceHash: c16a7725be599d2a5992cc6dba34669121f6ae7f329fc05e14c6269582eff324
     accuracy: approved
     goalExerciseAlignment: approved
@@ -73,14 +69,13 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開更新候補bb33e307ecc6edaa79db44801cee373025ed54dfについて独立3名が全9教材の可視入力を必須0で再承認。P1原読解とP3までのGit/教材指紋の不変性を区別し、旧7教材の承認を自動継承しない。Native
-      CI 40113102846の9教材81Fixtureと採点Cookie隔離の完了原本を確認。Pages9教材1280/390px・JSON引継ぎは元観測Source
-      b91f88937e01fd4ab706293516f8b0565c9806e9のまま再利用し、P3成果物のdist全583file・37988224bytesが直接比較で一致することと適用先Sourceを別reportへ結ぶ。P3で新たにPages実操作したとは記録しない。独立Cookie
-      UIの元Sourceは5f313f89c800ef021b6e3abc4dcbffbae0eb37bbで、同run反映保持/新run分離の観測を不変参照する。P3のlocal Core
-      probeはgrade未実施、採点を含む正常完走は上記CIを正とする。有限theme以外のCookie・認証・Cookieの永続保存・専用Cookie採点は対象外。原本hashと元条件はnext-release-acceptance.yamlおよびnext-persona-review.mdを参照。実人受講・物理低端末は未確認。配信成功は公開後記録で別に確認する。
+    notes: 公開更新候補efa0e78b04be65ab683118d4024d6aeff78b342bの全9教材を独立3名が必須指摘0で再承認。原読解Sourceと学習入力の不変照合を区別し、原観測を現在Sourceの新操作へ付け替えない。同候補Native
+      CI 40138471957の必須17工程・9教材81Fixtureと資源原本を照合。Pages CI
+      40138471956の成果物は元B91の全583配信ファイルとbyte一致し、1280/390pxの全9教材・JSON引継ぎの元観測を限定適用する。Cookieの元5f313f89でのForm/Action
+      Source反映・新run分離と、元9fa81b63でのAction通常入口・保存/変更/削除・keyboard/pending/帰還を区別して保持する。Production待機の厳格Node回帰8件は制御APIタイミングの観測であり、実Next合格の代用ではない。旧CI失敗の同一原因は未確定。theme-cookieのみを許可し、認証・永続Cookie保存・専用Cookie採点は範囲外。原本hash・元Source・条件はnext-release-acceptance.yamlの5原本と独立receiptに結合。実人受講・物理低端末は未確認。配信成功は公開後に別記する。
   - lessonId: next-ch04-l01
     authorId: tsumucode-next-course-authoring
-    reviewerId: /root/issue250_structure_learning_review
+    reviewerId: /root/issue250_p4_structure_review
     sourceHash: 6a6554e4ae5f9999acac5f094f07910e1aaf8ee32be41d3bab30e9e830406152
     accuracy: approved
     goalExerciseAlignment: approved
@@ -88,14 +83,13 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開更新候補bb33e307ecc6edaa79db44801cee373025ed54dfについて独立3名が全9教材の可視入力を必須0で再承認。P1原読解とP3までのGit/教材指紋の不変性を区別し、旧7教材の承認を自動継承しない。Native
-      CI 40113102846の9教材81Fixtureと採点Cookie隔離の完了原本を確認。Pages9教材1280/390px・JSON引継ぎは元観測Source
-      b91f88937e01fd4ab706293516f8b0565c9806e9のまま再利用し、P3成果物のdist全583file・37988224bytesが直接比較で一致することと適用先Sourceを別reportへ結ぶ。P3で新たにPages実操作したとは記録しない。独立Cookie
-      UIの元Sourceは5f313f89c800ef021b6e3abc4dcbffbae0eb37bbで、同run反映保持/新run分離の観測を不変参照する。P3のlocal Core
-      probeはgrade未実施、採点を含む正常完走は上記CIを正とする。有限theme以外のCookie・認証・Cookieの永続保存・専用Cookie採点は対象外。原本hashと元条件はnext-release-acceptance.yamlおよびnext-persona-review.mdを参照。実人受講・物理低端末は未確認。配信成功は公開後記録で別に確認する。
+    notes: 公開更新候補efa0e78b04be65ab683118d4024d6aeff78b342bの全9教材を独立3名が必須指摘0で再承認。原読解Sourceと学習入力の不変照合を区別し、原観測を現在Sourceの新操作へ付け替えない。同候補Native
+      CI 40138471957の必須17工程・9教材81Fixtureと資源原本を照合。Pages CI
+      40138471956の成果物は元B91の全583配信ファイルとbyte一致し、1280/390pxの全9教材・JSON引継ぎの元観測を限定適用する。Cookieの元5f313f89でのForm/Action
+      Source反映・新run分離と、元9fa81b63でのAction通常入口・保存/変更/削除・keyboard/pending/帰還を区別して保持する。Production待機の厳格Node回帰8件は制御APIタイミングの観測であり、実Next合格の代用ではない。旧CI失敗の同一原因は未確定。theme-cookieのみを許可し、認証・永続Cookie保存・専用Cookie採点は範囲外。原本hash・元Source・条件はnext-release-acceptance.yamlの5原本と独立receiptに結合。実人受講・物理低端末は未確認。配信成功は公開後に別記する。
   - lessonId: next-ch04-l02
     authorId: tsumucode-next-course-authoring
-    reviewerId: /root/issue250_structure_learning_review
+    reviewerId: /root/issue250_p4_structure_review
     sourceHash: 2f4ec8e92d145a848a179c46be5a6d9731015933cf8c226ee5cdae556d8de65d
     accuracy: approved
     goalExerciseAlignment: approved
@@ -103,14 +97,13 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開更新候補bb33e307ecc6edaa79db44801cee373025ed54dfについて独立3名が全9教材の可視入力を必須0で再承認。P1原読解とP3までのGit/教材指紋の不変性を区別し、旧7教材の承認を自動継承しない。Native
-      CI 40113102846の9教材81Fixtureと採点Cookie隔離の完了原本を確認。Pages9教材1280/390px・JSON引継ぎは元観測Source
-      b91f88937e01fd4ab706293516f8b0565c9806e9のまま再利用し、P3成果物のdist全583file・37988224bytesが直接比較で一致することと適用先Sourceを別reportへ結ぶ。P3で新たにPages実操作したとは記録しない。独立Cookie
-      UIの元Sourceは5f313f89c800ef021b6e3abc4dcbffbae0eb37bbで、同run反映保持/新run分離の観測を不変参照する。P3のlocal Core
-      probeはgrade未実施、採点を含む正常完走は上記CIを正とする。有限theme以外のCookie・認証・Cookieの永続保存・専用Cookie採点は対象外。原本hashと元条件はnext-release-acceptance.yamlおよびnext-persona-review.mdを参照。実人受講・物理低端末は未確認。配信成功は公開後記録で別に確認する。
+    notes: 公開更新候補efa0e78b04be65ab683118d4024d6aeff78b342bの全9教材を独立3名が必須指摘0で再承認。原読解Sourceと学習入力の不変照合を区別し、原観測を現在Sourceの新操作へ付け替えない。同候補Native
+      CI 40138471957の必須17工程・9教材81Fixtureと資源原本を照合。Pages CI
+      40138471956の成果物は元B91の全583配信ファイルとbyte一致し、1280/390pxの全9教材・JSON引継ぎの元観測を限定適用する。Cookieの元5f313f89でのForm/Action
+      Source反映・新run分離と、元9fa81b63でのAction通常入口・保存/変更/削除・keyboard/pending/帰還を区別して保持する。Production待機の厳格Node回帰8件は制御APIタイミングの観測であり、実Next合格の代用ではない。旧CI失敗の同一原因は未確定。theme-cookieのみを許可し、認証・永続Cookie保存・専用Cookie採点は範囲外。原本hash・元Source・条件はnext-release-acceptance.yamlの5原本と独立receiptに結合。実人受講・物理低端末は未確認。配信成功は公開後に別記する。
   - lessonId: next-ch05-l01
     authorId: tsumucode-next-course-authoring
-    reviewerId: /root/issue250_structure_learning_review
+    reviewerId: /root/issue250_p4_structure_review
     sourceHash: 1e2d2390350b85c2d9328721d77457057aa3f95deef09606e61329e1c288e502
     accuracy: approved
     goalExerciseAlignment: approved
@@ -118,14 +111,13 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開更新候補bb33e307ecc6edaa79db44801cee373025ed54dfについて独立3名が全9教材の可視入力を必須0で再承認。P1原読解とP3までのGit/教材指紋の不変性を区別し、旧7教材の承認を自動継承しない。Native
-      CI 40113102846の9教材81Fixtureと採点Cookie隔離の完了原本を確認。Pages9教材1280/390px・JSON引継ぎは元観測Source
-      b91f88937e01fd4ab706293516f8b0565c9806e9のまま再利用し、P3成果物のdist全583file・37988224bytesが直接比較で一致することと適用先Sourceを別reportへ結ぶ。P3で新たにPages実操作したとは記録しない。独立Cookie
-      UIの元Sourceは5f313f89c800ef021b6e3abc4dcbffbae0eb37bbで、同run反映保持/新run分離の観測を不変参照する。P3のlocal Core
-      probeはgrade未実施、採点を含む正常完走は上記CIを正とする。有限theme以外のCookie・認証・Cookieの永続保存・専用Cookie採点は対象外。原本hashと元条件はnext-release-acceptance.yamlおよびnext-persona-review.mdを参照。実人受講・物理低端末は未確認。配信成功は公開後記録で別に確認する。
+    notes: 公開更新候補efa0e78b04be65ab683118d4024d6aeff78b342bの全9教材を独立3名が必須指摘0で再承認。原読解Sourceと学習入力の不変照合を区別し、原観測を現在Sourceの新操作へ付け替えない。同候補Native
+      CI 40138471957の必須17工程・9教材81Fixtureと資源原本を照合。Pages CI
+      40138471956の成果物は元B91の全583配信ファイルとbyte一致し、1280/390pxの全9教材・JSON引継ぎの元観測を限定適用する。Cookieの元5f313f89でのForm/Action
+      Source反映・新run分離と、元9fa81b63でのAction通常入口・保存/変更/削除・keyboard/pending/帰還を区別して保持する。Production待機の厳格Node回帰8件は制御APIタイミングの観測であり、実Next合格の代用ではない。旧CI失敗の同一原因は未確定。theme-cookieのみを許可し、認証・永続Cookie保存・専用Cookie採点は範囲外。原本hash・元Source・条件はnext-release-acceptance.yamlの5原本と独立receiptに結合。実人受講・物理低端末は未確認。配信成功は公開後に別記する。
   - lessonId: next-ch06-l01
     authorId: tsumucode-next-course-authoring
-    reviewerId: /root/issue250_structure_learning_review
+    reviewerId: /root/issue250_p4_structure_review
     sourceHash: 837986ca318ad7dedadbce559e618bb36f9c3e25583c0b67920127982b9fa761
     accuracy: approved
     goalExerciseAlignment: approved
@@ -133,8 +125,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開更新候補bb33e307ecc6edaa79db44801cee373025ed54dfについて独立3名が全9教材の可視入力を必須0で再承認。P1原読解とP3までのGit/教材指紋の不変性を区別し、旧7教材の承認を自動継承しない。Native
-      CI 40113102846の9教材81Fixtureと採点Cookie隔離の完了原本を確認。Pages9教材1280/390px・JSON引継ぎは元観測Source
-      b91f88937e01fd4ab706293516f8b0565c9806e9のまま再利用し、P3成果物のdist全583file・37988224bytesが直接比較で一致することと適用先Sourceを別reportへ結ぶ。P3で新たにPages実操作したとは記録しない。独立Cookie
-      UIの元Sourceは5f313f89c800ef021b6e3abc4dcbffbae0eb37bbで、同run反映保持/新run分離の観測を不変参照する。P3のlocal Core
-      probeはgrade未実施、採点を含む正常完走は上記CIを正とする。有限theme以外のCookie・認証・Cookieの永続保存・専用Cookie採点は対象外。原本hashと元条件はnext-release-acceptance.yamlおよびnext-persona-review.mdを参照。実人受講・物理低端末は未確認。配信成功は公開後記録で別に確認する。
+    notes: 公開更新候補efa0e78b04be65ab683118d4024d6aeff78b342bの全9教材を独立3名が必須指摘0で再承認。原読解Sourceと学習入力の不変照合を区別し、原観測を現在Sourceの新操作へ付け替えない。同候補Native
+      CI 40138471957の必須17工程・9教材81Fixtureと資源原本を照合。Pages CI
+      40138471956の成果物は元B91の全583配信ファイルとbyte一致し、1280/390pxの全9教材・JSON引継ぎの元観測を限定適用する。Cookieの元5f313f89でのForm/Action
+      Source反映・新run分離と、元9fa81b63でのAction通常入口・保存/変更/削除・keyboard/pending/帰還を区別して保持する。Production待機の厳格Node回帰8件は制御APIタイミングの観測であり、実Next合格の代用ではない。旧CI失敗の同一原因は未確定。theme-cookieのみを許可し、認証・永続Cookie保存・専用Cookie採点は範囲外。原本hash・元Source・条件はnext-release-acceptance.yamlの5原本と独立receiptに結合。実人受講・物理低端末は未確認。配信成功は公開後に別記する。

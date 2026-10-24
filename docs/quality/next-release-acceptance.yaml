@@ -15,14 +15,14 @@ publicationApprovalReference: repository-owner santa928 / 2026-10-24
 realHumanTrial: unverified
 lowEndPhysicalDevice: unverified
 cookieAuthenticationPersistence: theme-cookie-only-authentication-persistence-deferred-issue-14
-verifiedSourceCommit: bb33e307ecc6edaa79db44801cee373025ed54df
+verifiedSourceCommit: efa0e78b04be65ab683118d4024d6aeff78b342b
 canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
-candidateTreeSha256: 3c62011c7060a382f6295499ee067b366276ca551fb38da07c86245f96943116
+candidateTreeSha256: 9ff4f10f96b51a326eac2719bd80d8b492e3db3239a0dc93be95c01a3b07db14
 draftCanonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
 draftInput: &a1
   schemaVersion: 1
   courseId: next
-  sourceCommit: bb33e307ecc6edaa79db44801cee373025ed54df
+  sourceCommit: efa0e78b04be65ab683118d4024d6aeff78b342b
   scope: next-learning-input-v1
   publicationMetadata:
     coursePublicationStatus: published
@@ -19948,6 +19948,10 @@ draftInput: &a1
       rawSha256: 410dec42850cf6f5246cff566a7bf48c237b3692dc9cbbd41af6b65a0029c47c
       normalizedSha256: 410dec42850cf6f5246cff566a7bf48c237b3692dc9cbbd41af6b65a0029c47c
       normalizedBytes: 1471
+    - path: scripts/local/fixtures/next-production-response-timing.mjs
+      rawSha256: c939c8090fb180f247a999f24a25a1ae0acf3fc4f3c0f8e8bb192faf6e9e2eb8
+      normalizedSha256: c939c8090fb180f247a999f24a25a1ae0acf3fc4f3c0f8e8bb192faf6e9e2eb8
+      normalizedBytes: 3554
     - path: scripts/local/next-build-acceptance.mjs
       rawSha256: 3d847ce1470e72eb391f7afa4da628d31885c1944397f6a160a3b01f0b6ac88e
       normalizedSha256: 3d847ce1470e72eb391f7afa4da628d31885c1944397f6a160a3b01f0b6ac88e
@@ -20001,25 +20005,25 @@ draftInput: &a1
       normalizedSha256: a241f9e3160e3e4ac96e59721718dde72e25978ce55e4544b3e966006aa52a17
       normalizedBytes: 8088
     - path: scripts/local/next-form-cookie-browser-acceptance.mjs
-      rawSha256: ea0d45685a3154259829583732904bdd20733117961c75c5f834b3da35afeed3
-      normalizedSha256: ea0d45685a3154259829583732904bdd20733117961c75c5f834b3da35afeed3
-      normalizedBytes: 25668
+      rawSha256: ddce841a791a28c63d49f76ab645883f8efd3634f6b3b9c63b805158239f4e27
+      normalizedSha256: ddce841a791a28c63d49f76ab645883f8efd3634f6b3b9c63b805158239f4e27
+      normalizedBytes: 27538
     - path: scripts/local/next-form-cookie-lifecycle.mjs
-      rawSha256: 05525e782e0b1d72ef3b2dea610fa8ba8a550168c6b775fdc67b2d2a32841c2c
-      normalizedSha256: 05525e782e0b1d72ef3b2dea610fa8ba8a550168c6b775fdc67b2d2a32841c2c
-      normalizedBytes: 1994
+      rawSha256: 0bbdc0e52f45bd0538550a3db97f79de4ed722723491c12b4277f078252180cd
+      normalizedSha256: 0bbdc0e52f45bd0538550a3db97f79de4ed722723491c12b4277f078252180cd
+      normalizedBytes: 3026
     - path: scripts/local/next-form-cookie-lifecycle.test.mjs
-      rawSha256: 3920ed5511dfb748ec26b57cd404fe39a11d2bd4ef3af5d3f6d9c0cefb7428e3
-      normalizedSha256: 3920ed5511dfb748ec26b57cd404fe39a11d2bd4ef3af5d3f6d9c0cefb7428e3
-      normalizedBytes: 3604
+      rawSha256: 1a0c6eb9749b8cdd06aecb4164756f919f020498fd0693d9e404dd69c746b60e
+      normalizedSha256: 1a0c6eb9749b8cdd06aecb4164756f919f020498fd0693d9e404dd69c746b60e
+      normalizedBytes: 5871
     - path: scripts/local/next-form-cookie.mjs
-      rawSha256: 0674783b8edcd843c5e1c145641ee73b4f520983a650bc8c95b7fd71e881e186
-      normalizedSha256: 0674783b8edcd843c5e1c145641ee73b4f520983a650bc8c95b7fd71e881e186
-      normalizedBytes: 4784
+      rawSha256: 9aa2bad81fd3db17878c0c7254fd665986a1ee402f93c186bb76cb7daef5d0fa
+      normalizedSha256: 9aa2bad81fd3db17878c0c7254fd665986a1ee402f93c186bb76cb7daef5d0fa
+      normalizedBytes: 4868
     - path: scripts/local/next-form-cookie.test.mjs
-      rawSha256: 7f4e74e282bac9534ea08fa6188d2d14c5c515f2a382e5b7c1f217dba48e3094
-      normalizedSha256: 7f4e74e282bac9534ea08fa6188d2d14c5c515f2a382e5b7c1f217dba48e3094
-      normalizedBytes: 7565
+      rawSha256: 6360f11bfe1e4f7d463d946cf3a42d0a85f99c1fe99b63515fd6ada1932490b6
+      normalizedSha256: 6360f11bfe1e4f7d463d946cf3a42d0a85f99c1fe99b63515fd6ada1932490b6
+      normalizedBytes: 8585
     - path: scripts/local/next-form-drain-acceptance.mjs
       rawSha256: 7b628afc04fcb4d345a27613c2b1a1fc656c09b9ffe63ff942acc1a97285343c
       normalizedSha256: 7b628afc04fcb4d345a27613c2b1a1fc656c09b9ffe63ff942acc1a97285343c
@@ -20081,9 +20085,13 @@ draftInput: &a1
       normalizedSha256: c9f9dbedd204497118bf4822755cf15073001ddf495b627590fc5b03677bef7a
       normalizedBytes: 20748
     - path: scripts/local/next-production-observations.mjs
-      rawSha256: fbd691b41a3223d5d2c2082dff1ec98804a50b12c9eba670a7f1fc3763579c1c
-      normalizedSha256: fbd691b41a3223d5d2c2082dff1ec98804a50b12c9eba670a7f1fc3763579c1c
-      normalizedBytes: 8271
+      rawSha256: 6f81e65addc0a9dbf813944772e8b655f82a9f6b264f034a5d5c8ce1f104bc62
+      normalizedSha256: 6f81e65addc0a9dbf813944772e8b655f82a9f6b264f034a5d5c8ce1f104bc62
+      normalizedBytes: 8559
+    - path: scripts/local/next-production-observations.test.mjs
+      rawSha256: 5814d2a2297b4469aed7666b1a669ce4ed1243fe66b76253d05ebf2659eeb3ab
+      normalizedSha256: 5814d2a2297b4469aed7666b1a669ce4ed1243fe66b76253d05ebf2659eeb3ab
+      normalizedBytes: 1277
     - path: scripts/local/next-production-source.mjs
       rawSha256: bff6853b66c082c9d5e1e9050a07abe6732daa26054456ab75f9123ef733285d
       normalizedSha256: bff6853b66c082c9d5e1e9050a07abe6732daa26054456ab75f9123ef733285d
@@ -20169,13 +20177,13 @@ draftInput: &a1
       normalizedSha256: 21a47fd2448333ad266d064212d319cb2c7f1a72e744b529789baafc80c389b0
       normalizedBytes: 2405
     - path: scripts/local/preview-http-response.test.mjs
-      rawSha256: e76b5dcefe46f342428c6c7562042a8b89a68eed8b62fb69ca9c7f1f6807da0d
-      normalizedSha256: e76b5dcefe46f342428c6c7562042a8b89a68eed8b62fb69ca9c7f1f6807da0d
-      normalizedBytes: 10491
+      rawSha256: cc07d42c3e38cbf1d7c29e3599a24086e80503e7481c0a123563bf5659721e49
+      normalizedSha256: cc07d42c3e38cbf1d7c29e3599a24086e80503e7481c0a123563bf5659721e49
+      normalizedBytes: 10571
     - path: scripts/local/preview-proxy.mjs
-      rawSha256: 0943a9d2394a81bdadd8039c75becb8176cc481264b4f6a57f708183bb437d17
-      normalizedSha256: 0943a9d2394a81bdadd8039c75becb8176cc481264b4f6a57f708183bb437d17
-      normalizedBytes: 11173
+      rawSha256: ad7cd60f9fdad89ccfe3f3b5586b93353acc0817a0de604cd88953cc101dc410
+      normalizedSha256: ad7cd60f9fdad89ccfe3f3b5586b93353acc0817a0de604cd88953cc101dc410
+      normalizedBytes: 11420
     - path: scripts/local/preview-transport.mjs
       rawSha256: 1193a7ffa2b990a04a0ddf09eef6739c0a7a7325d998437a1a1ec23a4bbf233f
       normalizedSha256: 1193a7ffa2b990a04a0ddf09eef6739c0a7a7325d998437a1a1ec23a4bbf233f
@@ -23744,19 +23752,19 @@ draftInput: &a1
       rawSha256: 3b8e26cf90cbe78637c96523a6a8583b0ce32f260c441d0c071b2f0725e9f4f4
       normalizedSha256: 3b8e26cf90cbe78637c96523a6a8583b0ce32f260c441d0c071b2f0725e9f4f4
       normalizedBytes: 753
-  normalizedInputSha256: 36675f8b5006b6b5125d34382312087f1fb327e763c552bbafe471d96dec936d
+  normalizedInputSha256: eb3a8797e4cd8877b2cd6c70a8876cca86e01371a270addef5395e94d38ce800
 finalInput: *a1
 applicationSourceSha256: 5c6fcd89fafe494ab7bc1917e1bea0aa68a87120a3750bb5e321bc6f46182cf8
 dependencyLockSha256: 191461e31bb2d50d9be7b6fd91e2a63e14e7eee00634461bb4bc32bac0b7f0c8
 personas:
   - role: learner
-    actor: /root/issue250_logic_learner_review
-    session: /root/issue250_logic_learner_review
+    actor: /root/issue250_p4_logic_review
+    session: /root/issue250_p4_logic_review/p8-efa0e78b04be
     method: independent-ai-source-review
     mandatoryFindings: 0
     report:
-      path: private/issue250-release-evidence/p3/learner-review.json
-      sha256: 4fe08e0ede4ffbe914ca7a62475d3694cf5cf0bc6fc7c6849d8b05f1c044acdf
+      path: private/issue250-release-evidence/p8/learner-review.json
+      sha256: 4e0cb4f1d4544c46ee22f74ac6c696abae887298d76d48d0cd77f4104919422a
     lessons:
       - lessonId: next-ch01-l01
         learnerContentSha256: 6af5e963b5ab3dd54642510032ca6797c79b2c04250921082e9bbb0fd65247a2
@@ -23777,13 +23785,13 @@ personas:
       - lessonId: next-ch06-l01
         learnerContentSha256: 23cab027cd6efeeb34c5f1afdf9ce266ed58a244433bdf026e595246805a189f
   - role: learning-design
-    actor: /root/issue250_structure_learning_review
-    session: /root/issue250_structure_learning_review
+    actor: /root/issue250_p4_structure_review
+    session: /root/issue250_p4_structure_review/p8
     method: independent-ai-source-review
     mandatoryFindings: 0
     report:
-      path: private/issue250-release-evidence/p3/learning-review.json
-      sha256: bfd3cd9d0c8e27b46c1076940c9a1e509dfd4b35dd4dfcb46ab79e4324f430a1
+      path: private/issue250-release-evidence/p8/learning-review.json
+      sha256: 302ecf800bbb355b9c85229696db807598877382a882e1dca371479247fc5ad2
     lessons:
       - lessonId: next-ch01-l01
         learnerContentSha256: 6af5e963b5ab3dd54642510032ca6797c79b2c04250921082e9bbb0fd65247a2
@@ -23804,13 +23812,13 @@ personas:
       - lessonId: next-ch06-l01
         learnerContentSha256: 23cab027cd6efeeb34c5f1afdf9ce266ed58a244433bdf026e595246805a189f
   - role: runtime-publication
-    actor: /root/issue250_security_runtime_review
-    session: /root/issue250_security_runtime_review
+    actor: /root/issue250_p4_security_review
+    session: /root/issue250_p4_security_review
     method: independent-ai-source-review
     mandatoryFindings: 0
     report:
-      path: private/issue250-release-evidence/p3/runtime-review.json
-      sha256: 54562409202ffd6027d9213cdcdfd7914dd7aa228c8ce970c36153425ac5cb64
+      path: private/issue250-release-evidence/p8/runtime-review.json
+      sha256: b72ef0a1d5de76a7d055e6da61d9f33e89c3a99598b79405dca45162bcf1131a
     lessons:
       - lessonId: next-ch01-l01
         learnerContentSha256: 6af5e963b5ab3dd54642510032ca6797c79b2c04250921082e9bbb0fd65247a2
@@ -23833,16 +23841,16 @@ personas:
 nativePreflight:
   schemaVersion: 1
   courseId: next
-  sourceCommit: bb33e307ecc6edaa79db44801cee373025ed54df
-  workflowRunId: "40113102846"
+  sourceCommit: efa0e78b04be65ab683118d4024d6aeff78b342b
+  workflowRunId: "40138471957"
   workflowRunAttempt: 1
   scope: 9教材81Fixtureのcheckpoint。通常UIの連続監視ではありません。
   workspaces:
     - workspaceId: next-ch04-l02-e01
       fixtureCount: 9
       limitMiB: 512
-      peakBytes: 467714048
-      maximumPids: 39
+      peakBytes: 456622080
+      maximumPids: 43
       memoryEvents:
         max: 0
         oom: 0
@@ -23851,8 +23859,8 @@ nativePreflight:
     - workspaceId: next-ch05-l01-e01
       fixtureCount: 11
       limitMiB: 896
-      peakBytes: 639852544
-      maximumPids: 40
+      peakBytes: 637681664
+      maximumPids: 38
       memoryEvents:
         max: 0
         oom: 0
@@ -23861,7 +23869,7 @@ nativePreflight:
     - workspaceId: next-ch06-l01-e01
       fixtureCount: 12
       limitMiB: 896
-      peakBytes: 649281536
+      peakBytes: 641933312
       maximumPids: 38
       memoryEvents:
         max: 0
@@ -23871,8 +23879,8 @@ nativePreflight:
     - workspaceId: next-ch01-l01-e01
       fixtureCount: 6
       limitMiB: 512
-      peakBytes: 485834752
-      maximumPids: 44
+      peakBytes: 474316800
+      maximumPids: 40
       memoryEvents:
         max: 0
         oom: 0
@@ -23881,8 +23889,8 @@ nativePreflight:
     - workspaceId: next-ch02-l01-e01
       fixtureCount: 8
       limitMiB: 576
-      peakBytes: 555855872
-      maximumPids: 40
+      peakBytes: 549748736
+      maximumPids: 45
       memoryEvents:
         max: 0
         oom: 0
@@ -23891,8 +23899,8 @@ nativePreflight:
     - workspaceId: next-ch02-l02-e01
       fixtureCount: 9
       limitMiB: 512
-      peakBytes: 494567424
-      maximumPids: 40
+      peakBytes: 481521664
+      maximumPids: 42
       memoryEvents:
         max: 0
         oom: 0
@@ -23901,7 +23909,7 @@ nativePreflight:
     - workspaceId: next-ch03-l01-e01
       fixtureCount: 8
       limitMiB: 576
-      peakBytes: 579846144
+      peakBytes: 575115264
       maximumPids: 38
       memoryEvents:
         max: 0
@@ -23911,7 +23919,7 @@ nativePreflight:
     - workspaceId: next-ch03-l02-e01
       fixtureCount: 9
       limitMiB: 576
-      peakBytes: 570564608
+      peakBytes: 569602048
       maximumPids: 39
       memoryEvents:
         max: 0
@@ -23921,18 +23929,18 @@ nativePreflight:
     - workspaceId: next-ch04-l01-e01
       fixtureCount: 9
       limitMiB: 512
-      peakBytes: 488484864
-      maximumPids: 44
+      peakBytes: 487378944
+      maximumPids: 39
       memoryEvents:
         max: 0
         oom: 0
         oomKill: 0
       zombies: 0
 nativeEvidence:
-  path: private/issue250-release-evidence/p3/native-preflight.json
-  sha256: 2769d01fea621a10a6db8ff7a05e41d1ecde49dc2829cc2a2f935ebec5b63588
+  path: private/issue250-release-evidence/p8/native-preflight.json
+  sha256: d6e2ddbad37476b1644ce143314c7cd2651581b218b71deb28bf085753ed1831
 pagesStaticStudy:
-  sourceCommit: bb33e307ecc6edaa79db44801cee373025ed54df
+  sourceCommit: efa0e78b04be65ab683118d4024d6aeff78b342b
   canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
   viewports:
     - 1280
@@ -23953,20 +23961,20 @@ pagesStaticStudy:
   progressRoundTrip: passed
   localHandoff: passed
   report:
-    path: private/issue250-release-evidence/p3/pages-static-study-report.json
-    sha256: e9dc520861d50738ba99b9a86551cdc4a7e911f56d314805ae8066147f868903
+    path: private/issue250-release-evidence/p8/pages-static-study-report.json
+    sha256: 56587666a53723384ce539f222b979c45d51f487f4f2e8cc0d889c6c82e2bbe5
 author: codex-primary-issue250
 privateOriginalsChecked: true
 independenceReview:
-  reviewer: /root/issue250_security_runtime_review
+  reviewer: /root/issue250_p4_security_review
   status: approved
-  sourceCommit: bb33e307ecc6edaa79db44801cee373025ed54df
+  sourceCommit: efa0e78b04be65ab683118d4024d6aeff78b342b
   canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
-  productTreeSha256: 3c62011c7060a382f6295499ee067b366276ca551fb38da07c86245f96943116
-  evidenceSha256: 106339ad350c4835e2ae4d9f5c6400e8aa8086a6c27894e2ba313f3bf6d67221
+  productTreeSha256: 9ff4f10f96b51a326eac2719bd80d8b492e3db3239a0dc93be95c01a3b07db14
+  evidenceSha256: e9b2b00619885fc4a3f5b0a3228711f54a88d07f0c071e7faaf5e572bffc8054
   referenceSha256s:
-    - 2769d01fea621a10a6db8ff7a05e41d1ecde49dc2829cc2a2f935ebec5b63588
-    - 4fe08e0ede4ffbe914ca7a62475d3694cf5cf0bc6fc7c6849d8b05f1c044acdf
-    - 54562409202ffd6027d9213cdcdfd7914dd7aa228c8ce970c36153425ac5cb64
-    - bfd3cd9d0c8e27b46c1076940c9a1e509dfd4b35dd4dfcb46ab79e4324f430a1
-    - e9dc520861d50738ba99b9a86551cdc4a7e911f56d314805ae8066147f868903
+    - 302ecf800bbb355b9c85229696db807598877382a882e1dca371479247fc5ad2
+    - 4e0cb4f1d4544c46ee22f74ac6c696abae887298d76d48d0cd77f4104919422a
+    - 56587666a53723384ce539f222b979c45d51f487f4f2e8cc0d889c6c82e2bbe5
+    - b72ef0a1d5de76a7d055e6da61d9f33e89c3a99598b79405dca45162bcf1131a
+    - d6e2ddbad37476b1644ce143314c7cd2651581b218b71deb28bf085753ed1831
