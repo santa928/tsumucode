@@ -1,7 +1,8 @@
+# 直前P2の教材別記録は保持し、新候補への公開bindingは再確認待ち。
 schemaVersion: 1
-releaseStatus: approved
-verifiedSourceCommit: b91f88937e01fd4ab706293516f8b0565c9806e9
-canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
+releaseStatus: draft
+verifiedSourceCommit: draft
+canonicalDistSha256: draft
 lessons:
   - lessonId: next-ch01-l01
     authorId: tsumucode-next-course-authoring

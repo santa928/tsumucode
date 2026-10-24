@@ -40,4 +40,13 @@ ClientのHTML制約とServer側validationを区別し、useActionStateの戻り�
 - [Image](https://nextjs.org/docs/app/api-reference/components/image)：alt、寸法、unoptimized。本教材は固定SVGを元画像のまま表示します。
 - [page](https://nextjs.org/docs/app/api-reference/file-conventions/page)：Promiseのparams/searchParamsとGET選択。
 
-公式サイトの最新版表示は16.4.0ですが、教材のmanifest/lockは16.3.8を維持します。制作2教材はGET選択だけで、保存や新しいActionを追加しません。固定SVGと9Sourceだけを持ち出し、端末JSONの進捗移送と分けます。学習用Nativeの9教材は、First/Client/Form/Actionが512MiB、Routing/Data/Weatherが576MiB、Guided Project/Capstoneが896MiBです。追加swapなし・CPU1・PID64を維持します。持ち出しproductionは同梱Composeの512MiBです。Pagesでは説明と読書を提供し、実行・採点はLocal Docker環境で行います。Form／Actionの固定theme以外のCookie・認証・永続保存と、Cookie専用演習の採点・正式公開は親Issue #14／#137の残タスクです。固定themeは同じrunのSource反映では保持され、新runには引き継がれません。
+公式サイトの最新版表示は16.4.0ですが、教材のmanifest/lockは16.3.8を維持します。
+制作2教材はGET選択だけで、保存や新しいActionを追加しません。
+固定SVGと9Sourceだけを持ち出し、端末JSONの進捗移送と分けます。
+学習用Nativeの9教材は、First/Client/Form/Actionが512MiB、Routing/Data/Weatherが576MiB、Guided Project/Capstoneが896MiBです。
+追加swapなし・CPU1・PID64を維持します。
+持ち出しproductionは同梱Composeの512MiBです。
+Pagesでは説明と読書を提供し、実行・採点はLocal Docker環境で行います。
+Form／Actionでは固定themeの保存・読取・削除だけを扱い、その他のCookie・認証・Cookieの永続保存・Cookie専用採点は対象外です。
+公開の実績は、revision別の受入記録・公開履歴・配信後確認を正とします。
+固定themeは同じrunのSource反映では保持され、新runには引き継がれません。

@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
 import console from 'node:console';
+import process from 'node:process';
 import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
+import { performance } from 'node:perf_hooks';
+import { setTimeout } from 'node:timers';
 import { setTimeout as delay } from 'node:timers/promises';
 import { URL } from 'node:url';
 import { chromium, expect } from '@playwright/test';
@@ -10,50 +13,101 @@ import { bridge } from './browser-test-bridge.mjs';
 import { previewOrigin, previewBase } from './preview-contract.mjs';
 import { FORM_WORKSPACE, ACTION_WORKSPACE } from './next-form-preview.mjs';
 import { watchDocumentVersion } from './next-project-observations.mjs';
+import { cleanupCookieAcceptance, withCookieDeadline } from './next-form-cookie-lifecycle.mjs';
 
 // 作者/CI専用。Cookie jarやfetchを模擬せず、実NextのServerコードとBrowserの送信で検証する。
-const bridges = [await bridge(4173, 'web'), await bridge(4175, 'preview')];
-const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
-const context = await browser.newContext();
+const bridges = [];
+let browser;
+let context;
+let manager;
 const navigationCounts = new WeakMap();
 const documentVersions = new WeakMap();
 const browserEvents = { requestFailed: 0, pageError: 0 };
-context.on('page', (page) => {
-  page.on('framenavigated', (frame) => {
-    navigationCounts.set(frame, (navigationCounts.get(frame) ?? 0) + 1);
-  });
-  page.on('requestfailed', () => browserEvents.requestFailed++);
-  page.on('pageerror', () => browserEvents.pageError++);
-});
-const manager = await context.newPage();
 const passed = [];
 let sequence = 0;
 let token;
 let active;
+let workspace = 'setup';
+let currentStage = 'initialization';
+let failure;
+const startedAt = performance.now();
+
+/** 固定の段階と成否だけを記録し、URL・Cookie・token・Source本文を出力しない。 */
+function progress(stage, outcome) {
+  currentStage = stage;
+  console.log(
+    JSON.stringify({
+      event: 'cookie-acceptance',
+      stage,
+      outcome,
+      workspace,
+      sequence,
+      elapsedMs: Math.round(performance.now() - startedAt),
+    }),
+  );
+}
+
+/** 開始と完了を対応付け、HTTP完了やBrowser protocolの無期限待機を失敗にする。 */
+async function step(stage, operation, timeoutMs = 30000) {
+  progress(stage, 'started');
+  try {
+    const result = await withCookieDeadline(operation, timeoutMs, stage);
+    progress(stage, 'completed');
+    return result;
+  } catch (error) {
+    progress(stage, error.name === 'CookieAcceptanceDeadlineError' ? 'deadline' : 'failed');
+    throw error;
+  }
+}
+
+// cleanup後の孤立handleも有限にする。正常終了をtimerだけで引き延ばさない。
+setTimeout(() => {
+  progress(currentStage, 'process-deadline');
+  process.exit(1);
+}, 240000).unref();
 
 /** 管理APIだけに管理tokenを付ける。Preview操作にはこのAPIRequestContextを使わない。 */
-async function api(path, value = {}) {
-  const response = await context.request.post(`http://127.0.0.1:4173${path}`, {
-    headers: { origin: 'http://127.0.0.1:4173', ...(token ? { 'x-tsumucode-token': token } : {}) },
-    data: value,
-    timeout: 30000,
-  });
-  assert.ok(response.ok(), `Cookie author API ${path}: ${response.status()}`);
-  return response.json();
+async function api(path, value = {}, timeoutMs = 30000) {
+  const operation = async () => {
+    const response = await context.request.post(`http://127.0.0.1:4173${path}`, {
+      headers: {
+        origin: 'http://127.0.0.1:4173',
+        ...(token ? { 'x-tsumucode-token': token } : {}),
+      },
+      data: value,
+      timeout: timeoutMs,
+    });
+    assert.ok(response.ok(), `Cookie author API ${path}: ${response.status()}`);
+    return response.json();
+  };
+  const action = path.split('/').at(-1);
+  // 固定API名だけを記録する。readinessのGET相当pollは段階ログを増やさない。
+  return ['session', 'source', 'start', 'apply', 'grade', 'stop'].includes(action)
+    ? step(`api-${action}`, operation, timeoutMs)
+    : withCookieDeadline(operation, timeoutMs, 'control-api');
 }
 
 /** 自分の検証runだけを起動し、既存のready契約を待つ。 */
 async function start(workspaceId, sourceRevision) {
   const path = `/api/workspaces/${workspaceId}`;
-  const started = await api(`${path}/start`, { expectedSourceRevision: sourceRevision });
+  const deadline = performance.now() + 30000;
+  const remaining = () => Math.max(1, deadline - performance.now());
+  const started = await step('run-start', () =>
+    api(`${path}/start`, { expectedSourceRevision: sourceRevision }, remaining()),
+  );
   active = { path, runId: started.runId };
-  for (let attempt = 0; attempt < 100; attempt++) {
-    const saved = await api(path);
+  progress('readiness', 'started');
+  while (performance.now() < deadline) {
+    const saved = await api(path, {}, remaining());
     assert.equal(saved.lastRun.runId, active.runId);
-    if (saved.lastRun.state === 'ready') return saved;
+    if (saved.lastRun.state === 'ready') {
+      progress('readiness', 'completed');
+      return saved;
+    }
     assert.notEqual(saved.lastRun.state, 'failed', 'Cookie fixture run failed');
-    await delay(200);
+    await delay(Math.min(200, remaining()));
   }
+  progress('readiness', 'deadline');
   assert.fail('Cookie fixture readiness deadline');
 }
 
@@ -80,8 +134,7 @@ async function submit(surface, input, expected) {
     version = watchDocumentVersion(frame.page(), frame);
     documentVersions.set(frame, version);
   }
-  const marker = await documentMarker(frame, randomUUID());
-  assert.equal(typeof marker, 'string');
+  let marker;
   const currentSequence = ++sequence;
   // readは毎回固有入力にし、前のsaved表示を次の成功へ流用しない。
   const requestInput = input.startsWith('read') ? `${input}-${currentSequence}` : input;
@@ -95,33 +148,50 @@ async function submit(surface, input, expected) {
     ...browserEvents,
   };
   const field = frame.getByLabel('メモ', { exact: true });
-  await expect(field).toBeEnabled();
-  await field.fill(requestInput);
-  const reply = context.waitForEvent('response', {
-    predicate: (response) => {
-      const request = response.request();
-      return (
-        request.method() === 'POST' &&
-        request.frame() === frame &&
-        routes.includes(response.url()) &&
-        (!form || request.postDataJSON()?.input === requestInput)
-      );
-    },
-    timeout: 15000,
-  });
-  // 操作が失敗しても、先に登録した待機のrejectを未処理にしない。
-  void reply.catch(() => {});
+  let reply;
   try {
-    await frame.getByRole('button', { name: '保存する', exact: true }).press('Enter');
-    const response = await reply;
+    progress('submit-start', 'started');
+    marker = await step('document-marker', () => documentMarker(frame, randomUUID()), 5000);
+    assert.equal(typeof marker, 'string');
+    await step(
+      'fill',
+      async () => {
+        await expect(field).toBeEnabled();
+        await field.fill(requestInput, { timeout: 15000 });
+      },
+      20000,
+    );
+    reply = context.waitForEvent('response', {
+      predicate: (response) => {
+        const request = response.request();
+        return (
+          request.method() === 'POST' &&
+          request.frame() === frame &&
+          routes.includes(response.url()) &&
+          (!form || request.postDataJSON()?.input === requestInput)
+        );
+      },
+      timeout: 15000,
+    });
+    // 操作が失敗しても、先に登録した待機のrejectを未処理にしない。
+    void reply.catch(() => {});
+    await step(
+      'press',
+      () =>
+        frame
+          .getByRole('button', { name: '保存する', exact: true })
+          .press('Enter', { timeout: 15000 }),
+      15000,
+    );
+    const response = await step('response-headers', () => reply, 15000);
     snapshot.httpStatus = response.status();
-    snapshot.completed = (await response.finished()) === null;
+    snapshot.completed = (await step('response-finished', () => response.finished())) === null;
     snapshot.navigationRequest = response.request().isNavigationRequest();
     assert.equal(snapshot.httpStatus, 200);
     assert.equal(snapshot.completed, true);
     assert.equal(snapshot.navigationRequest, false);
     if (form) {
-      const state = await response.json();
+      const state = await step('response-json', () => response.json(), 5000);
       snapshot.serverSaved = state.status === 'saved';
       snapshot.serverInputMatches = state.input === requestInput;
       assert.equal(snapshot.serverSaved, true);
@@ -133,13 +203,16 @@ async function submit(surface, input, expected) {
       assert.equal(snapshot.actionRsc, true);
     }
     const result = frame.locator('#note-result');
-    await expect(result).toHaveAttribute('data-state', 'saved');
-    if (expected !== undefined) await expect(result).toHaveText(`theme:${expected}`);
-    await expect(field).toHaveValue(requestInput);
-    await expect(field).toBeEnabled();
+    await step('dom-assert', async () => {
+      await expect(result).toHaveAttribute('data-state', 'saved');
+      if (expected !== undefined) await expect(result).toHaveText(`theme:${expected}`);
+      await expect(field).toHaveValue(requestInput);
+      await expect(field).toBeEnabled();
+    });
     assert.equal(frame.isDetached(), false);
-    const text = await result.textContent();
-    snapshot.documentMatches = (await documentMarker(frame)) === marker;
+    const text = await step('result-text', () => result.textContent({ timeout: 1000 }), 1500);
+    snapshot.documentMatches =
+      (await step('document-marker', () => documentMarker(frame), 5000)) === marker;
     snapshot.navigationEventsAfter = navigationCounts.get(frame) ?? 0;
     snapshot.documentVersionAfter = version();
     assert.equal(snapshot.documentMatches, true);
@@ -148,24 +221,33 @@ async function submit(surface, input, expected) {
     console.log(JSON.stringify({ ...snapshot, outcome: 'saved' }));
     return text;
   } catch (error) {
+    // 任意の診断より先に失敗を残し、診断自体も有限にする。
+    progress('submit-failed', 'failed');
     // Cookie・本文・URL・Sourceを出さず、文書置換と入力/結果の不一致だけ残す。
-    snapshot.documentMatches = await documentMarker(frame).then(
-      (value) => !frame.isDetached() && value === marker,
+    snapshot.documentMatches = await withCookieDeadline(
+      () => documentMarker(frame),
+      1000,
+      'diagnostic-document',
+    ).then(
+      (value) => typeof marker === 'string' && !frame.isDetached() && value === marker,
       () => false,
     );
     snapshot.navigationEventsAfter = navigationCounts.get(frame) ?? 0;
     snapshot.documentVersionAfter = version();
     snapshot.actorUrlMatches = frame.url() === actorUrl.href;
-    snapshot.fieldMatches = await field.inputValue({ timeout: 1000 }).then(
+    snapshot.fieldMatches = await withCookieDeadline(
+      () => field.inputValue({ timeout: 1000 }),
+      1000,
+      'diagnostic-input',
+    ).then(
       (value) => value === requestInput,
       () => false,
     );
-    snapshot.domState = await frame
-      .locator('#note-result')
-      .getAttribute('data-state', {
-        timeout: 1000,
-      })
-      .catch(() => 'unavailable');
+    snapshot.domState = await withCookieDeadline(
+      () => frame.locator('#note-result').getAttribute('data-state', { timeout: 1000 }),
+      1000,
+      'diagnostic-state',
+    ).catch(() => 'unavailable');
     if (!['idle', 'saved', 'invalid', 'failed', 'unavailable'].includes(snapshot.domState))
       snapshot.domState = 'unexpected';
     console.log(JSON.stringify({ ...snapshot, browserEvents, outcome: 'failed' }));
@@ -175,20 +257,42 @@ async function submit(surface, input, expected) {
 
 /** 通常UIと同じiframe設定で新文書を作る。CookieやBrowser contextは変更しない。 */
 async function mountEmbedded(url) {
-  await manager.locator('iframe[title="Cookie境界の実Next"]').evaluateAll((nodes) => {
-    for (const node of nodes) node.remove();
-  });
-  await manager.evaluate((src) => {
-    const frame = globalThis.document.createElement('iframe');
-    frame.title = 'Cookie境界の実Next';
-    frame.sandbox = 'allow-scripts allow-same-origin allow-forms';
-    frame.src = src;
-    globalThis.document.body.append(frame);
-  }, url);
-  await manager.frameLocator('iframe[title="Cookie境界の実Next"]').locator('#note').waitFor();
+  await step(
+    'embedded-remove',
+    () =>
+      manager.locator('iframe[title="Cookie境界の実Next"]').evaluateAll((nodes) => {
+        for (const node of nodes) node.remove();
+      }),
+    5000,
+  );
+  await step(
+    'embedded-create',
+    () =>
+      manager.evaluate((src) => {
+        const frame = globalThis.document.createElement('iframe');
+        frame.title = 'Cookie境界の実Next';
+        frame.sandbox = 'allow-scripts allow-same-origin allow-forms';
+        frame.src = src;
+        globalThis.document.body.append(frame);
+      }, url),
+    5000,
+  );
+  await step(
+    'embedded-ready',
+    () =>
+      manager
+        .frameLocator('iframe[title="Cookie境界の実Next"]')
+        .locator('#note')
+        .waitFor({ timeout: 15000 }),
+    15000,
+  );
   const embedded = manager.frames().find((candidate) => candidate.url() === url);
   assert.ok(embedded);
-  await embedded.waitForLoadState('networkidle');
+  await step(
+    'network-idle',
+    () => embedded.waitForLoadState('networkidle', { timeout: 15000 }),
+    15000,
+  );
   return embedded;
 }
 
@@ -225,12 +329,48 @@ export async function POST(request: Request): Promise<Response> {
 }
 
 try {
-  await manager.goto('http://127.0.0.1:4173/');
+  for (const [port, hostname] of [
+    [4173, 'web'],
+    [4175, 'preview'],
+  ]) {
+    const server = await step('bridge-create', () => bridge(port, hostname), 5000);
+    const sockets = new Set();
+    server.on('connection', (socket) => {
+      sockets.add(socket);
+      socket.once('close', () => sockets.delete(socket));
+    });
+    bridges.push({ server, sockets });
+  }
+  browser = await step('browser-launch', () =>
+    chromium.launch({ headless: true, args: ['--no-sandbox'], timeout: 30000 }),
+  );
+  context = await step('browser-context', () => browser.newContext(), 5000);
+  context.setDefaultTimeout(15000);
+  context.setDefaultNavigationTimeout(15000);
+  context.on('page', (page) => {
+    page.on('framenavigated', (frame) => {
+      navigationCounts.set(frame, (navigationCounts.get(frame) ?? 0) + 1);
+    });
+    page.on('requestfailed', () => browserEvents.requestFailed++);
+    page.on('pageerror', () => browserEvents.pageError++);
+  });
+  manager = await step('manager-page', () => context.newPage(), 5000);
+  await step(
+    'manager-goto',
+    () => manager.goto('http://127.0.0.1:4173/', { timeout: 15000 }),
+    15000,
+  );
   token = (await api('/api/session')).token;
-  await context.addCookies([
-    { name: 'management-fixture', value: 'unchanged', url: 'http://127.0.0.1:4173' },
-  ]);
+  await step(
+    'management-fixture',
+    () =>
+      context.addCookies([
+        { name: 'management-fixture', value: 'unchanged', url: 'http://127.0.0.1:4173' },
+      ]),
+    5000,
+  );
   for (const workspaceId of [FORM_WORKSPACE, ACTION_WORKSPACE]) {
+    workspace = workspaceId === FORM_WORKSPACE ? 'form' : 'action';
     const lesson = workspaceId.slice(0, -4);
     const directory = `content/next/chapters/next-ch04/lessons/${lesson}/exercises/${workspaceId}`;
     const exercise = parse(await readFile(`${directory}/exercise.yaml`, 'utf8'));
@@ -254,53 +394,79 @@ try {
     const origin = previewOrigin(active.runId);
     const url = origin + previewBase(workspaceId, active.runId);
     // 許可Cookieの成功用注入ではなく、他名CookieがServerへ届かないことを検証する攻撃入力。
-    await context.addCookies([
-      {
-        name: 'unrelated-fixture',
-        value: 'blocked',
-        domain: `${active.runId}.localhost`,
-        path: '/',
-      },
-    ]);
+    await step(
+      'unrelated-fixture',
+      () =>
+        context.addCookies([
+          {
+            name: 'unrelated-fixture',
+            value: 'blocked',
+            domain: `${active.runId}.localhost`,
+            path: '/',
+          },
+        ]),
+      5000,
+    );
     const embedded = await mountEmbedded(url);
     await submit(embedded, 'dark', 'absent');
     const embeddedRead = await submit(embedded, 'read');
     assert.ok(['theme:dark', 'theme:absent'].includes(embeddedRead));
     let surface = embedded;
     let tab;
+    progress('surface-selection', 'started');
     if (embeddedRead === 'theme:absent') {
       passed.push(`${workspaceId}: 埋込みでStrict Cookie保存/送信不可を実観測`);
-      tab = await context.newPage();
-      await tab.goto(url);
-      await tab.waitForLoadState('networkidle');
+      tab = await step('new-page', () => context.newPage(), 5000);
+      await step('goto', () => tab.goto(url, { timeout: 15000 }), 15000);
+      await step(
+        'network-idle',
+        () => tab.waitForLoadState('networkidle', { timeout: 15000 }),
+        15000,
+      );
       surface = tab;
     } else passed.push(`${workspaceId}: 埋込みで実Cookie読取`);
+    progress('surface-selection', 'completed');
     const responses = [];
     const requests = [];
     const collect = (response) => {
       if (response.url().startsWith(origin) && response.request().method() === 'POST') {
-        responses.push(response.allHeaders().then((headers) => headers['set-cookie']));
-        requests.push(
-          response
-            .request()
-            .allHeaders()
-            .then((headers) => headers.cookie),
-        );
+        const responseHeaders = withCookieDeadline(
+          () => response.allHeaders(),
+          5000,
+          'response-cookie-headers',
+        ).then((headers) => headers['set-cookie']);
+        const requestHeaders = withCookieDeadline(
+          () => response.request().allHeaders(),
+          5000,
+          'request-cookie-headers',
+        ).then((headers) => headers.cookie);
+        // callback内の失敗を未処理にせず、後のPromise.allで必ず検査する。
+        void responseHeaders.catch(() => {});
+        void requestHeaders.catch(() => {});
+        responses.push(responseHeaders);
+        requests.push(requestHeaders);
       }
     };
     context.on('response', collect);
     await submit(surface, 'light');
     await submit(surface, 'read', 'light');
-    let cookie = (await context.cookies(url)).find(({ name }) => name === 'lesson-theme');
+    let cookie = (await step('cookie-read', () => context.cookies(url), 5000)).find(
+      ({ name }) => name === 'lesson-theme',
+    );
     assert.ok(cookie);
     assert.equal(cookie.domain, `${active.runId}.localhost`);
     assert.equal(cookie.path, previewBase(workspaceId, active.runId).slice(0, -1));
     assert.equal(cookie.httpOnly, true);
     assert.equal(cookie.sameSite, 'Strict');
     assert.equal(
-      await surface
-        .locator('body')
-        .evaluate(() => globalThis.document.cookie.includes('lesson-theme=')),
+      await step(
+        'http-only-check',
+        () =>
+          surface
+            .locator('body')
+            .evaluate(() => globalThis.document.cookie.includes('lesson-theme=')),
+        5000,
+      ),
       false,
     );
     await submit(surface, 'dark', 'light');
@@ -319,13 +485,19 @@ try {
     assert.equal(saved.lastRun.sourceHash, applying.sourceHash);
     // apply完了とHMR完了は別。選択済みsurfaceで新文書を開き、Cookie保持を検証する。
     if (tab) {
-      await tab.goto(url);
-      await tab.waitForLoadState('networkidle');
+      await step('goto-after-apply', () => tab.goto(url, { timeout: 15000 }), 15000);
+      await step(
+        'network-idle',
+        () => tab.waitForLoadState('networkidle', { timeout: 15000 }),
+        15000,
+      );
     } else surface = await mountEmbedded(url);
     await submit(surface, 'read-after-apply', 'dark');
     await submit(surface, 'clear', 'dark');
     await submit(surface, 'read', 'absent');
-    cookie = (await context.cookies(url)).find(({ name }) => name === 'lesson-theme');
+    cookie = (await step('cookie-read', () => context.cookies(url), 5000)).find(
+      ({ name }) => name === 'lesson-theme',
+    );
     assert.equal(cookie, undefined);
     const cookieHeaders = await Promise.all(responses);
     assert.ok(cookieHeaders.some((value) => value?.includes('lesson-theme=light;')));
@@ -334,11 +506,16 @@ try {
     assert.ok(cookieRequests.some((value) => value?.includes('unrelated-fixture=blocked')));
     assert.ok(cookieRequests.some((value) => value?.includes('lesson-theme=light')));
     await submit(surface, 'dark', 'absent');
-    await surface.locator('body').evaluate(() => {
-      globalThis.document.cookie = 'lesson-theme=light; Domain=localhost; Path=/';
-    });
+    await step(
+      'parent-domain-check',
+      () =>
+        surface.locator('body').evaluate(() => {
+          globalThis.document.cookie = 'lesson-theme=light; Domain=localhost; Path=/';
+        }),
+      5000,
+    );
     assert.equal(
-      (await context.cookies(url)).some(
+      (await step('cookie-read', () => context.cookies(url), 5000)).some(
         ({ name, domain }) =>
           name === 'lesson-theme' && ['localhost', '.localhost'].includes(domain),
       ),
@@ -349,11 +526,22 @@ try {
     active = undefined;
     saved = await start(workspaceId, saved.sourceRevision);
     assert.notEqual(active.runId, oldRun);
-    const fresh = await context.newPage();
-    await fresh.goto(previewOrigin(active.runId) + previewBase(workspaceId, active.runId));
-    await fresh.waitForLoadState('networkidle');
+    const fresh = await step('new-page', () => context.newPage(), 5000);
+    await step(
+      'fresh-goto',
+      () =>
+        fresh.goto(previewOrigin(active.runId) + previewBase(workspaceId, active.runId), {
+          timeout: 15000,
+        }),
+      15000,
+    );
+    await step(
+      'network-idle',
+      () => fresh.waitForLoadState('networkidle', { timeout: 15000 }),
+      15000,
+    );
     await submit(fresh, 'read', 'absent');
-    await fresh.close();
+    await step('fresh-close', () => fresh.close(), 5000);
     // 採点Browserが自分で書いたCookieも、共有policyの既定拒否でServerへ渡さない。
     const client = 'app/note-form.tsx';
     const inputAnchor = "const [input, setInput] = useState('');";
@@ -411,8 +599,12 @@ try {
       'pass',
       '採点内で自己設定したCookieをServerへ渡さず既存条件を判定する',
     );
-    await tab?.close();
-    await manager.locator('iframe[title="Cookie境界の実Next"]').evaluate((node) => node.remove());
+    if (tab) await step('tab-close', () => tab.close(), 5000);
+    await step(
+      'embedded-remove',
+      () => manager.locator('iframe[title="Cookie境界の実Next"]').evaluate((node) => node.remove()),
+      5000,
+    );
     await api(`${path}/stop`, { runId: active.runId });
     active = undefined;
     context.off('response', collect);
@@ -428,14 +620,32 @@ try {
     );
     passed.push(`${workspaceId}: 採点BrowserのCookie自己設定を上流へ渡さない`);
   }
-  const management = (await context.cookies('http://127.0.0.1:4173')).find(
-    ({ name }) => name === 'management-fixture',
-  );
+  const management = (
+    await step('management-read', () => context.cookies('http://127.0.0.1:4173'), 5000)
+  ).find(({ name }) => name === 'management-fixture');
   assert.equal(management?.value, 'unchanged');
   console.log(JSON.stringify({ passed }));
+} catch (error) {
+  failure = error;
+  progress(currentStage, 'failed');
 } finally {
-  if (active) await api(`${active.path}/stop`, { runId: active.runId });
-  await context.close();
-  await browser.close();
-  for (const server of bridges) await new Promise((resolve) => server.close(resolve));
+  const cleanupFailures = await cleanupCookieAcceptance({
+    stop: active ? () => api(`${active.path}/stop`, { runId: active.runId }) : undefined,
+    context,
+    browser,
+    bridges,
+    onStage: progress,
+  });
+  if (failure || cleanupFailures.length > 0) {
+    console.error(
+      JSON.stringify({
+        event: 'cookie-acceptance',
+        outcome: 'failed',
+        initialFailure: Boolean(failure),
+        initialCategory: failure?.name,
+        cleanupFailures,
+      }),
+    );
+    process.exitCode = 1;
+  } else progress('acceptance', 'completed');
 }

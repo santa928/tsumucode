@@ -120,7 +120,10 @@ Pages/Local間の下書き/進捗は既存の端末データJSONで移行でき�
 `app/page.tsx`の見出しと`app/api/question/route.ts`のquery別JSONを編集し、
 保存して起動・反映した後、同じ実サーバーのpageと2つのGET応答を判定します。
 Pagesでは説明と読書を提供し、Nextサーバーは起動しません。下書きと進捗は端末データJSONで移行します。
-Cookie・認証・Cookieによる保存は未対応です。これらは[親Issue #14](https://github.com/santa928/tsumucode/issues/14)の残タスクです。Form/Actionの練習用履歴はSource反映や停止再開で初期化されます。
+LocalのForm／Server Action教材では、固定Cookie `lesson-theme=light/dark` の保存・読取・削除だけに対応します。
+同じrunのSource反映で保持し、停止・再起動した新しいrunには引き継がれません。
+その他のCookie・認証・Cookieの永続保存とCookie専用採点は対象外です。
+Form/Actionの練習用投稿履歴はSource反映や停止再開で初期化され、固定Cookieとは別の状態です。
 Nextの固定依存・資源・CSP・採点範囲は[最初のNext Lessonの契約](docs/quality/next-first-lesson.md)、限定POSTは[Form/Actionの固定契約](docs/quality/next-form-action-boundary.md)を参照してください。
 
 保存・Resetの確認範囲と制約は[常駐Workspace設計・検証記録](docs/quality/local-resident-workspace.md)にあります。
