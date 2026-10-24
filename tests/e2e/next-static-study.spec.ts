@@ -47,7 +47,10 @@ for (const width of [1280, 390]) {
         page.getByText('この演習はLocal学習環境で実行します', { exact: true }),
       ).toBeVisible();
       await expect(page.getByText(/全コースの進捗と下書きを書き出す/u)).toBeVisible();
-      await expect(page.getByText(/Cookie・認証・Cookieによる保存は未対応/u)).toBeVisible();
+      await expect(
+        page.getByText(/LocalのForm／Server Action教材ではlesson-theme=light／darkだけ/u),
+      ).toBeVisible();
+      await expect(page.getByText(/その他のCookie・認証・永続保存は未対応/u)).toBeVisible();
       await expect(page.getByRole('button', { name: '判定する', exact: true })).toHaveCount(0);
       expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
       const back = page.getByRole('link', { name: '学習一覧へ戻る', exact: true });

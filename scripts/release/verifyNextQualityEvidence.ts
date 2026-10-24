@@ -1,4 +1,7 @@
 import path from 'node:path';
+import { readFile } from 'node:fs/promises';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import { parse } from 'yaml';
 import { z } from 'zod';
 import { canonicalJson } from '../../src/core/persistence/canonicalJson';
@@ -6,13 +9,16 @@ import { compileCourse } from '../content/compileCourse';
 import { verifyContentReview } from '../content/verifyContentReview';
 import { javascriptLearnerContentSha256 } from './javascriptLessonEvaluation';
 import { hashDirectory, hashFile, sha256Text } from './releaseHashes';
-import { CommitShaSchema, Sha256Schema } from './releaseSchema';
+import { CommitShaSchema, Sha256Schema, RevisionSchema, isNewerRevision } from './releaseSchema';
 import {
   NextInputManifestSchema,
   compareNextLearningInputs,
   readNextLearningInput,
 } from './nextInputHashes';
-import type { NextReleaseApproval } from './nextReleaseSchema';
+import type { NextReleaseApproval, NextPublishedRelease } from './nextReleaseSchema';
+import { NextReleaseHistorySchema } from './nextReleaseSchema';
+
+const execFileAsync = promisify(execFile);
 
 export const NEXT_ACCEPTANCE_LESSONS = [
   'next-ch01-l01',
@@ -44,12 +50,39 @@ const NativeWorkspace = z
 export const NextReleaseEvidenceSchema = z
   .object({
     schemaVersion: z.literal(1),
+    publication: z
+      .discriminatedUnion('mode', [
+        z.object({ mode: z.literal('initial-publication') }).strict(),
+        z
+          .object({
+            mode: z.literal('published-update'),
+            previousRelease: z
+              .object({
+                revision: RevisionSchema,
+                tag: z.string().regex(/^tsumucode-release-\d{4}-\d{2}-\d{2}\.\d+$/u),
+                sourceCommit: CommitShaSchema,
+                acceptance: Reference.extend({
+                  path: z
+                    .string()
+                    .regex(
+                      /^docs\/quality\/history\/next\/\d{4}-\d{2}-\d{2}\.\d+-acceptance\.yaml$/u,
+                    ),
+                }),
+              })
+              .strict(),
+          })
+          .strict(),
+      ])
+      .optional(),
     courseId: z.literal('next'),
     status: z.literal('preflight-passed-final-ci-required'),
     publicationApprovalReference: z.string().min(1),
     realHumanTrial: z.literal('unverified'),
     lowEndPhysicalDevice: z.literal('unverified'),
-    cookieAuthenticationPersistence: z.literal('unsupported-deferred-issue-14'),
+    cookieAuthenticationPersistence: z.enum([
+      'unsupported-deferred-issue-14',
+      'theme-cookie-only-authentication-persistence-deferred-issue-14',
+    ]),
     verifiedSourceCommit: CommitShaSchema,
     canonicalDistSha256: Sha256Schema,
     candidateTreeSha256: Sha256Schema,
@@ -129,13 +162,49 @@ export function hashNextReleaseEvidence(record: NextReleaseEvidence): string {
   );
 }
 
+/** 直前の公開履歴と保存した受入原本を結び、過去の承認を新しい実測へ付け替えない。 */
+export function validateNextPublishedUpdate(
+  record: NextReleaseEvidence,
+  revision: string,
+  previous:
+    | Pick<NextPublishedRelease, 'revision' | 'tag' | 'sourceCommit' | 'canonicalDistSha256'>
+    | undefined,
+  archivedAcceptance: string,
+): void {
+  if (record.publication?.mode !== 'published-update') return;
+  const binding = record.publication.previousRelease;
+  if (
+    !previous ||
+    !isNewerRevision(revision, previous.revision) ||
+    record.verifiedSourceCommit === previous.sourceCommit ||
+    binding.revision !== previous.revision ||
+    binding.tag !== previous.tag ||
+    binding.sourceCommit !== previous.sourceCommit ||
+    binding.acceptance.path !== `docs/quality/history/next/${previous.revision}-acceptance.yaml` ||
+    binding.acceptance.sha256 !== sha256Text(archivedAcceptance)
+  )
+    throw new Error('Next更新公開の直前release・revision・受入原本bindingが一致しません');
+  const archived = NextReleaseEvidenceSchema.parse(parse(archivedAcceptance));
+  if (
+    archived.verifiedSourceCommit !== previous.sourceCommit ||
+    archived.canonicalDistSha256 !== previous.canonicalDistSha256
+  )
+    throw new Error('保存したNext受入原本が直前の公開source/artifactと一致しません');
+}
+
 /** S→Pで許可した公開metadata以外の変更、教材の欠落、未承認資源への置換を拒否する。 */
 export function validateNextReleaseEvidence(
   input: unknown,
   learnerHashes: ReadonlyMap<string, string>,
 ) {
   const record = NextReleaseEvidenceSchema.parse(input);
-  compareNextLearningInputs(record.draftInput, record.finalInput);
+  const mode = record.publication?.mode ?? 'initial-publication';
+  compareNextLearningInputs(record.draftInput, record.finalInput, mode);
+  if (
+    mode === 'initial-publication' &&
+    record.cookieAuthenticationPersistence !== 'unsupported-deferred-issue-14'
+  )
+    throw new Error('初公開時のCookie留保を更新公開の確認へ置き換えることはできません');
   const expected = [...NEXT_ACCEPTANCE_LESSONS].sort();
   const review = record.independenceReview;
   const references = [
@@ -232,6 +301,36 @@ export async function verifyNextQualityEvidence(
     parse(sources.get('technicalAcceptance') ?? ''),
     hashes,
   );
+  if (record.publication?.mode === 'published-update') {
+    const history = NextReleaseHistorySchema.parse(
+      parse(await readFile(path.join(root, 'content/next/release-history.yaml'), 'utf8')),
+    );
+    const latest = history.releases.at(-1);
+    const promoted = latest?.revision === runtime.revision;
+    if (
+      promoted &&
+      (latest.sourceCommit !== record.verifiedSourceCommit ||
+        latest.canonicalDistSha256 !== record.canonicalDistSha256)
+    )
+      throw new Error('昇格済みNext releaseと現在の公開受入が一致しません');
+    // 公開後の再検査でも、今回版をその版自身の「直前release」として扱わない。
+    const previous = history.releases.at(promoted ? -2 : -1);
+    const archived = await readFile(
+      path.join(root, record.publication.previousRelease.acceptance.path),
+      'utf8',
+    );
+    validateNextPublishedUpdate(record, runtime.revision, previous, archived);
+    if (!previous) throw new Error('Next更新公開の直前releaseがありません');
+    const { verifyPublishedTag } = await import('./verifyReleaseTarget');
+    await verifyPublishedTag(root, previous);
+    const { stdout } = await execFileAsync(
+      'git',
+      ['show', `${previous.workflowHeadCommit}:docs/quality/next-release-acceptance.yaml`],
+      { cwd: root, maxBuffer: 4 * 1024 * 1024 },
+    );
+    if (archived !== stdout)
+      throw new Error('保存したNext受入原本が公開tagに結ばれたworkflow commitの内容と一致しません');
+  }
   if (
     record.verifiedSourceCommit !== approval.verifiedSourceCommit ||
     record.canonicalDistSha256 !== approval.canonicalDistSha256 ||

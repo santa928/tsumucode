@@ -150,7 +150,7 @@ releases:
     postDeployVerificationSha256: a0d37192eb93c2bcc0c8b9266623870b9f649a1265db9378f320ad9a15a79438
 candidate:
   courseId: next
-  revision: 2026-10-09.2
+  revision: 2026-10-24.1
   status: draft
   verifiedSourceCommit: draft
   canonicalDistSha256: draft
@@ -160,7 +160,22 @@ candidate:
   persistentIds: []
   previousReleaseTag: tsumucode-release-2026-10-09.2
   tombstonedIds: *a1
-  migrations: *a2
+  migrations:
+    - fromRevision: 2026-10-08.1
+      toRevision: 2026-10-08.2
+      steps: []
+    - fromRevision: 2026-10-08.2
+      toRevision: 2026-10-08.3
+      steps: []
+    - fromRevision: 2026-10-08.3
+      toRevision: 2026-10-09.1
+      steps: []
+    - fromRevision: 2026-10-09.1
+      toRevision: 2026-10-09.2
+      steps: []
+    - fromRevision: 2026-10-09.2
+      toRevision: 2026-10-24.1
+      steps: []
   syntheticProgressBundlePath: tests/fixtures/progress/next-previous-release-bundle.json
   draftSourceCommit: draft
   draftCanonicalDistSha256: draft

@@ -124,7 +124,8 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: "2026-10-22の独立AI内容レビューで限定Cookie追記を承認。元Source
+    notes:
+      "2026-10-24の独立UI担当issue137_cookie_form_ready_uxが元候補5f313f89c800ef021b6e3abc4dcbffbae0eb37bbで通常入口・埋込みで読取不可となった後の別タブ案内・固定themeの保存/変更/読取/削除を実操作し、必須指摘0。追加の履歴なし担当issue250_form_source_restart_uxも同run反映後dark保持・停止再起動の新runでabsent・下書き確認コメント保持を実操作し、必須指摘0。詳細はnext-persona-review.md。内容査読・作者診断・独立UIを区別し、新しい公開bindingは未確定。過去記録: 2026-10-22の独立AI内容レビューで限定Cookie追記を承認。元Source
       bd5002cc25dcc286d433c83ca22dac78953f7d75の作者Runtime39408320479を原本照合
       （gh run view --log、SHA-256 2b87f84e34ddc34381b0cf05aa2a3f29461f793ee96dd50de30a95c8b861337b）。
       既存9fixture・通常Lessonと実Cookieのset/read/delete・属性・同run反映保持・新run分離を確認。
@@ -147,7 +148,8 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: "2026-10-22の独立AI内容レビューで限定Cookie追記を承認。元Source
+    notes:
+      "2026-10-24の独立UI担当issue137_cookie_action_resumerが元候補5f313f89c800ef021b6e3abc4dcbffbae0eb37bbで通常入口・埋込みで読取不可となった後の別タブ案内・固定themeの保存/変更/読取/削除を実操作し、必須指摘0。同runのSource反映後のdark保持、停止再起動の新runでabsentと下書き保持も独立実操作。詳細はnext-persona-review.md。内容査読・作者診断・独立UIを区別し、新しい公開bindingは未確定。過去記録: 2026-10-22の独立AI内容レビューで限定Cookie追記を承認。元Source
       bd5002cc25dcc286d433c83ca22dac78953f7d75の作者Runtime39408320479を原本照合
       （gh run view --log、SHA-256 2b87f84e34ddc34381b0cf05aa2a3f29461f793ee96dd50de30a95c8b861337b）。
       既存9fixture・通常Lessonと実Cookieのset/read/delete・属性・同run反映保持・新run分離を確認。
