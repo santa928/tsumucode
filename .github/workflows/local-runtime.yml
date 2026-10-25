@@ -1,6 +1,14 @@
 name: Local Runtime boundary
 
 on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 全体検証か、正式受入に使わないCookie限定再現を選ぶ
+        type: choice
+        required: true
+        default: full
+        options: [full, cookie]
   push:
     branches: [main]
     paths:
@@ -135,6 +143,7 @@ concurrency:
 
 jobs:
   boundary:
+    if: github.event_name != 'workflow_dispatch' || inputs.target == 'full'
     runs-on: ubuntu-24.04
     # 教材追加後も全検査を完走できる余裕を持つ。learnerの実行上限は各検査で維持する。
     timeout-minutes: 60
@@ -422,5 +431,92 @@ jobs:
           if-no-files-found: error
           retention-days: 30
       - name: Stop only this learning stack and preserve Source volume
+        if: always()
+        run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml down
+
+  cookie_reproduction:
+    if: github.event_name == 'workflow_dispatch' && inputs.target == 'cookie'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      TSUMUCODE_NEXT_SOURCE_SHA: ${{ github.sha }}
+      TSUMUCODE_LOCAL_OWNER: tsumucode-learning-cookie-reproduction-ci
+      TSUMUCODE_LOCAL_SOCKET: /var/run/docker.sock
+      TSUMUCODE_COOKIE_DIAGNOSTICS: '1'
+      COMPOSE_PARALLEL_LIMIT: 1
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Prepare fixed one-shot Node image
+        run: |
+          # 同じ固定digestの取得だけを有限回試し、一時的なRegistry障害から復旧する。
+          for pull_attempt in 1 2 3; do
+            if docker pull node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5; then
+              exit 0
+            fi
+            if [ "$pull_attempt" -eq 3 ]; then
+              exit 1
+            fi
+            sleep 5
+          done
+      - name: Prepare fixed one-shot CPython image
+        run: |
+          # 同じ固定digestの取得だけを有限回試し、一時的なRegistry障害から復旧する。
+          for pull_attempt in 1 2 3; do
+            if docker pull python:3.14.2-slim-bookworm@sha256:e87711ef5c86aaeaa7031718a69db79d334d94c545c709583f651b8185870941; then
+              exit 0
+            fi
+            if [ "$pull_attempt" -eq 3 ]; then
+              exit 1
+            fi
+            sleep 5
+          done
+      - name: Build fixed learner and trusted services
+        run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml --profile build-project build
+      - name: Start isolated learning stack
+        run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml up --no-build -d web controller preview
+      - name: Build fixed Next Browser for limited reproduction
+        run: docker build --file Dockerfile.learning --target next-browser-checks --tag "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" .
+      - name: Reproduce only bounded Action operations
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          mkdir -p .release-cookie-transport
+          docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256 \
+            -e TSUMUCODE_COOKIE_CDP=0 -e TSUMUCODE_COOKIE_REPRODUCTION=action-47 \
+            --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" \
+            node scripts/local/next-form-cookie-browser-acceptance.mjs \
+            2>&1 | tee .release-cookie-transport/browser.log
+      - name: Collect bounded Cookie transport diagnostics
+        if: always()
+        run: |
+          set -euo pipefail
+          if [ -f .release-cookie-transport/browser.log ]; then
+            preview=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q preview)
+            if [ -n "$preview" ]; then
+              docker logs "$preview" 2>&1 | python3 -c '
+          import json, sys
+          for line in sys.stdin:
+              try:
+                  value = json.loads(line)
+              except json.JSONDecodeError:
+                  continue
+              if isinstance(value, dict) and value.get("event") == "main-cookie-transport":
+                  print(json.dumps(value, separators=(",", ":")))
+          ' > .release-cookie-transport/preview.jsonl
+            fi
+          fi
+      - name: Preserve bounded Cookie transport diagnostics
+        if: always() && hashFiles('.release-cookie-transport/browser.log') != ''
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: cookie-reproduction-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          path: .release-cookie-transport/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+      - name: Stop only this diagnostic stack and preserve Source volume
         if: always()
         run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml down

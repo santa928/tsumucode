@@ -41,6 +41,8 @@ let workspace = 'setup';
 let currentStage = 'initialization';
 let failure;
 const startedAt = performance.now();
+// 手動の限定再現だけで使い、通常の受入・採点と区別する。
+const limitedReproduction = process.env.TSUMUCODE_COOKIE_REPRODUCTION === 'action-47';
 
 /** 固定の段階と成否だけを記録し、URL・Cookie・token・Source本文を出力しない。 */
 function progress(stage, outcome) {
@@ -281,12 +283,35 @@ async function submit(surface, input, expected) {
     const atomicDom = await withCookieDeadline(
       () =>
         frame.evaluate(
-          ({ input, message, expectedMarker, url }) => {
+          ({ input, message, expectedMarker, url, requestUrl, requestStartedAt }) => {
+            const timing =
+              typeof requestStartedAt === 'number' && requestStartedAt > 0 && requestUrl
+                ? globalThis.performance
+                    .getEntriesByName(requestUrl)
+                    .filter(
+                      (entry) =>
+                        entry.initiatorType === 'fetch' &&
+                        globalThis.performance.timeOrigin + entry.startTime >= requestStartedAt - 2,
+                    )
+                : [];
+            const entry = timing.length === 1 ? timing[0] : undefined;
             const field = globalThis.document.querySelector('#note');
             const result = globalThis.document.querySelector('#note-result');
             const button = field?.form?.querySelector('button[type="submit"]');
             return {
               evaluatedAtEpochMs: Date.now(),
+              resourceTimingCandidates: timing.length,
+              resourceTiming: entry
+                ? {
+                    startEpochMs: globalThis.performance.timeOrigin + entry.startTime,
+                    requestStartDeltaMs:
+                      globalThis.performance.timeOrigin + entry.startTime - requestStartedAt,
+                    responseEnd: entry.responseEnd,
+                    transferSize: entry.transferSize,
+                    encodedBodySize: entry.encodedBodySize,
+                    decodedBodySize: entry.decodedBodySize,
+                  }
+                : null,
               fieldMatches: field?.value === input,
               resultSaved: result?.getAttribute('data-state') === 'saved',
               expectedMessageMatches: message === null ? null : result?.textContent === message,
@@ -304,6 +329,8 @@ async function submit(surface, input, expected) {
             message: expected === undefined ? null : `theme:${expected}`,
             expectedMarker: marker,
             url: actorUrl.href,
+            requestUrl: selectedRequest?.url() ?? null,
+            requestStartedAt: selectedRequest?.timing().startTime ?? null,
           },
         ),
       1000,
@@ -457,7 +484,7 @@ try {
     chromium.launch({ headless: true, args: ['--no-sandbox'], timeout: 30000 }),
   );
   context = await step('browser-context', () => browser.newContext(), 5000);
-  const cdpObserverEnabled = process.env.TSUMUCODE_COOKIE_CDP !== '0';
+  const cdpObserverEnabled = !limitedReproduction && process.env.TSUMUCODE_COOKIE_CDP !== '0';
   transportObserver = await installChromiumObserver(context, { enabled: cdpObserverEnabled });
   // Cookie工程自身の実行版と上限を記録する。他工程の版を流用しない。
   console.log(
@@ -472,7 +499,8 @@ try {
       nodeVersion: process.version,
       architecture: process.arch,
       memoryMax: (await readFile('/sys/fs/cgroup/memory.max', 'utf8')).trim(),
-      grade: 'included-canonical',
+      grade: limitedReproduction ? 'excluded-diagnostic-only' : 'included-canonical',
+      plannedOperations: limitedReproduction ? 47 : 22,
       faultInjection: false,
       forcedGc: false,
       fetchReplacement: false,
@@ -503,7 +531,9 @@ try {
       ]),
     5000,
   );
-  for (const workspaceId of [FORM_WORKSPACE, ACTION_WORKSPACE]) {
+  for (const workspaceId of limitedReproduction
+    ? [ACTION_WORKSPACE]
+    : [FORM_WORKSPACE, ACTION_WORKSPACE]) {
     workspace = workspaceId === FORM_WORKSPACE ? 'form' : 'action';
     const lesson = workspaceId.slice(0, -4);
     const directory = `content/next/chapters/next-ch04/lessons/${lesson}/exercises/${workspaceId}`;
@@ -633,6 +663,17 @@ try {
       ({ name }) => name === 'lesson-theme',
     );
     assert.equal(cookie, undefined);
+    if (limitedReproduction) {
+      // 6組を上限とし、成功/失敗を理由に回数を延長しない。
+      for (let cycle = 0; cycle < 6; cycle++) {
+        await submit(surface, 'light', 'absent');
+        await submit(surface, 'read', 'light');
+        await submit(surface, 'dark', 'light');
+        await submit(surface, 'read', 'dark');
+        await submit(surface, 'clear', 'dark');
+        await submit(surface, 'read', 'absent');
+      }
+    }
     const cookieHeaders = await Promise.all(responses);
     assert.ok(cookieHeaders.some((value) => value?.includes('lesson-theme=light;')));
     assert.ok(cookieHeaders.some((value) => value?.includes('Max-Age=0')));
@@ -676,63 +717,65 @@ try {
     );
     await submit(fresh, 'read', 'absent');
     await step('fresh-close', () => fresh.close(), 5000);
-    // 採点Browserが自分で書いたCookieも、共有policyの既定拒否でServerへ渡さない。
-    const client = 'app/note-form.tsx';
-    const inputAnchor = "const [input, setInput] = useState('');";
-    assert.equal(solution[client].split(inputAnchor).length, 2, '両教材の一意な入力stateを使う');
-    assert.equal(
-      solution[client].split('disabled={pending}').length,
-      3,
-      '入力と送信を両方保護する',
-    );
-    assert.equal(solution[server].split('const raw =').length, 2, 'Server検査を確実に挿入する');
-    const gradeFiles = {
-      ...solution,
-      [client]: solution[client]
-        .replace('import {', 'import { useEffect,')
-        .replace(
-          inputAnchor,
-          `${inputAnchor}
+    if (!limitedReproduction) {
+      // 採点Browserが自分で書いたCookieも、共有policyの既定拒否でServerへ渡さない。
+      const client = 'app/note-form.tsx';
+      const inputAnchor = "const [input, setInput] = useState('');";
+      assert.equal(solution[client].split(inputAnchor).length, 2, '両教材の一意な入力stateを使う');
+      assert.equal(
+        solution[client].split('disabled={pending}').length,
+        3,
+        '入力と送信を両方保護する',
+      );
+      assert.equal(solution[server].split('const raw =').length, 2, 'Server検査を確実に挿入する');
+      const gradeFiles = {
+        ...solution,
+        [client]: solution[client]
+          .replace('import {', 'import { useEffect,')
+          .replace(
+            inputAnchor,
+            `${inputAnchor}
   const [cookieReady, setCookieReady] = useState(false);
   useEffect(() => {
     document.cookie = 'lesson-theme=dark; Path=/';
     setCookieReady(document.cookie.split('; ').includes('lesson-theme=dark'));
   }, []);`,
-        )
-        .replaceAll('disabled={pending}', 'disabled={pending || !cookieReady}'),
-      [server]:
-        solution[server].replace(
-          'const raw =',
-          `if ((await cookies()).has('lesson-theme')) throw new Error('Grader Cookie boundary');
+          )
+          .replaceAll('disabled={pending}', 'disabled={pending || !cookieReady}'),
+        [server]:
+          solution[server].replace(
+            'const raw =',
+            `if ((await cookies()).has('lesson-theme')) throw new Error('Grader Cookie boundary');
   const raw =`,
-        ) + "\nimport { cookies } from 'next/headers';\n",
-    };
-    assert.ok(gradeFiles[client].includes("document.cookie = 'lesson-theme=dark; Path=/';"));
-    assert.ok(
-      gradeFiles[client].includes(
-        "setCookieReady(document.cookie.split('; ').includes('lesson-theme=dark'))",
-      ),
-    );
-    assert.equal(gradeFiles[client].split('disabled={pending || !cookieReady}').length, 3);
-    saved = await api(`${path}/source`, {
-      expectedSourceRevision: saved.sourceRevision,
-      files: gradeFiles,
-    });
-    saved = await api(`${path}/apply`, {
-      runId: active.runId,
-      expectedSourceRevision: saved.sourceRevision,
-      expectedSourceHash: saved.sourceHash,
-    });
-    const graded = await api(`${path}/grade`, {
-      runId: active.runId,
-      expectedSourceRevision: saved.sourceRevision,
-      expectedSourceHash: saved.sourceHash,
-    });
-    assert.equal(
-      graded.status,
-      'pass',
-      '採点内で自己設定したCookieをServerへ渡さず既存条件を判定する',
-    );
+          ) + "\nimport { cookies } from 'next/headers';\n",
+      };
+      assert.ok(gradeFiles[client].includes("document.cookie = 'lesson-theme=dark; Path=/';"));
+      assert.ok(
+        gradeFiles[client].includes(
+          "setCookieReady(document.cookie.split('; ').includes('lesson-theme=dark'))",
+        ),
+      );
+      assert.equal(gradeFiles[client].split('disabled={pending || !cookieReady}').length, 3);
+      saved = await api(`${path}/source`, {
+        expectedSourceRevision: saved.sourceRevision,
+        files: gradeFiles,
+      });
+      saved = await api(`${path}/apply`, {
+        runId: active.runId,
+        expectedSourceRevision: saved.sourceRevision,
+        expectedSourceHash: saved.sourceHash,
+      });
+      const graded = await api(`${path}/grade`, {
+        runId: active.runId,
+        expectedSourceRevision: saved.sourceRevision,
+        expectedSourceHash: saved.sourceHash,
+      });
+      assert.equal(
+        graded.status,
+        'pass',
+        '採点内で自己設定したCookieをServerへ渡さず既存条件を判定する',
+      );
+    }
     if (tab) await step('tab-close', () => tab.close(), 5000);
     await step(
       'embedded-remove',
@@ -752,7 +795,11 @@ try {
     passed.push(
       `${workspaceId}: 実set/read/delete・有限転送・HttpOnly/Strict/host/Path・同run反映保持・新run分離`,
     );
-    passed.push(`${workspaceId}: 採点BrowserのCookie自己設定を上流へ渡さない`);
+    passed.push(
+      limitedReproduction
+        ? `${workspaceId}: 限定再現のみ・採点は対象外`
+        : `${workspaceId}: 採点BrowserのCookie自己設定を上流へ渡さない`,
+    );
   }
   const management = (
     await step('management-read', () => context.cookies('http://127.0.0.1:4173'), 5000)
@@ -781,5 +828,5 @@ try {
       }),
     );
     process.exitCode = 1;
-  } else progress('acceptance', 'completed');
+  } else progress(limitedReproduction ? 'limited-reproduction' : 'acceptance', 'completed');
 }
