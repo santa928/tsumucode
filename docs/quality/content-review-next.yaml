@@ -1,6 +1,6 @@
 schemaVersion: 1
 releaseStatus: approved
-verifiedSourceCommit: d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863b
+verifiedSourceCommit: 775ed87495fff6de0f283acb0023b1dc4648efca
 canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
 lessons:
   - lessonId: next-ch01-l01
@@ -13,7 +13,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開回復候補d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863bへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。差分は公開タグ検証のCLI依存分離で、既存3担当が限定コード差分を承認。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開回復候補775ed87495fff6de0f283acb0023b1dc4648efcaへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。今回の差分はNode専用テストのbyte-identical命名と明示起動パスの修正で、テスト16件・assert・期限・失敗条件・他のVitest280ファイルを維持し、既存3担当が限定差分を承認。公開タグ検証のCLI依存分離は前候補d10ca8aの有効な検証を保持する。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch02-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -24,7 +24,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開回復候補d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863bへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。差分は公開タグ検証のCLI依存分離で、既存3担当が限定コード差分を承認。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開回復候補775ed87495fff6de0f283acb0023b1dc4648efcaへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。今回の差分はNode専用テストのbyte-identical命名と明示起動パスの修正で、テスト16件・assert・期限・失敗条件・他のVitest280ファイルを維持し、既存3担当が限定差分を承認。公開タグ検証のCLI依存分離は前候補d10ca8aの有効な検証を保持する。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch02-l02
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -35,7 +35,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開回復候補d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863bへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。差分は公開タグ検証のCLI依存分離で、既存3担当が限定コード差分を承認。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開回復候補775ed87495fff6de0f283acb0023b1dc4648efcaへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。今回の差分はNode専用テストのbyte-identical命名と明示起動パスの修正で、テスト16件・assert・期限・失敗条件・他のVitest280ファイルを維持し、既存3担当が限定差分を承認。公開タグ検証のCLI依存分離は前候補d10ca8aの有効な検証を保持する。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch03-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -46,7 +46,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開回復候補d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863bへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。差分は公開タグ検証のCLI依存分離で、既存3担当が限定コード差分を承認。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開回復候補775ed87495fff6de0f283acb0023b1dc4648efcaへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。今回の差分はNode専用テストのbyte-identical命名と明示起動パスの修正で、テスト16件・assert・期限・失敗条件・他のVitest280ファイルを維持し、既存3担当が限定差分を承認。公開タグ検証のCLI依存分離は前候補d10ca8aの有効な検証を保持する。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch03-l02
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -57,7 +57,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開回復候補d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863bへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。差分は公開タグ検証のCLI依存分離で、既存3担当が限定コード差分を承認。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開回復候補775ed87495fff6de0f283acb0023b1dc4648efcaへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。今回の差分はNode専用テストのbyte-identical命名と明示起動パスの修正で、テスト16件・assert・期限・失敗条件・他のVitest280ファイルを維持し、既存3担当が限定差分を承認。公開タグ検証のCLI依存分離は前候補d10ca8aの有効な検証を保持する。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch04-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -68,7 +68,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開回復候補d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863bへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。差分は公開タグ検証のCLI依存分離で、既存3担当が限定コード差分を承認。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開回復候補775ed87495fff6de0f283acb0023b1dc4648efcaへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。今回の差分はNode専用テストのbyte-identical命名と明示起動パスの修正で、テスト16件・assert・期限・失敗条件・他のVitest280ファイルを維持し、既存3担当が限定差分を承認。公開タグ検証のCLI依存分離は前候補d10ca8aの有効な検証を保持する。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch04-l02
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -79,7 +79,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開回復候補d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863bへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。差分は公開タグ検証のCLI依存分離で、既存3担当が限定コード差分を承認。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開回復候補775ed87495fff6de0f283acb0023b1dc4648efcaへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。今回の差分はNode専用テストのbyte-identical命名と明示起動パスの修正で、テスト16件・assert・期限・失敗条件・他のVitest280ファイルを維持し、既存3担当が限定差分を承認。公開タグ検証のCLI依存分離は前候補d10ca8aの有効な検証を保持する。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch05-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -90,7 +90,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開回復候補d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863bへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。差分は公開タグ検証のCLI依存分離で、既存3担当が限定コード差分を承認。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開回復候補775ed87495fff6de0f283acb0023b1dc4648efcaへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。今回の差分はNode専用テストのbyte-identical命名と明示起動パスの修正で、テスト16件・assert・期限・失敗条件・他のVitest280ファイルを維持し、既存3担当が限定差分を承認。公開タグ検証のCLI依存分離は前候補d10ca8aの有効な検証を保持する。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch06-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -101,4 +101,4 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開回復候補d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863bへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。差分は公開タグ検証のCLI依存分離で、既存3担当が限定コード差分を承認。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開回復候補775ed87495fff6de0f283acb0023b1dc4648efcaへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。今回の差分はNode専用テストのbyte-identical命名と明示起動パスの修正で、テスト16件・assert・期限・失敗条件・他のVitest280ファイルを維持し、既存3担当が限定差分を承認。公開タグ検証のCLI依存分離は前候補d10ca8aの有効な検証を保持する。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
