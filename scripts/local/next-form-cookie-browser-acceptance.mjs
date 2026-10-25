@@ -11,7 +11,10 @@ import { URL } from 'node:url';
 import { chromium, expect } from '@playwright/test';
 import { parse } from 'yaml';
 import { bridge } from './browser-test-bridge.mjs';
-import { installChromiumObserver } from './next-cookie-transport-observations.mjs';
+import {
+  cookieNetworkErrorClass,
+  installChromiumObserver,
+} from './next-cookie-transport-observations.mjs';
 import { previewOrigin, previewBase } from './preview-contract.mjs';
 import { FORM_WORKSPACE, ACTION_WORKSPACE } from './next-form-preview.mjs';
 import { watchDocumentVersion } from './next-project-observations.mjs';
@@ -177,6 +180,8 @@ async function submit(surface, input, expected) {
     if (!candidate) return;
     candidate.terminal = state;
     candidate.terminalMs = Math.round(performance.now() - startedAt);
+    if (state === 'failed')
+      candidate.errorClass = cookieNetworkErrorClass(request.failure()?.errorText);
   };
   const onFinished = (request) => terminal(request, 'finished');
   const onFailed = (request) => terminal(request, 'failed');
@@ -452,12 +457,14 @@ try {
     chromium.launch({ headless: true, args: ['--no-sandbox'], timeout: 30000 }),
   );
   context = await step('browser-context', () => browser.newContext(), 5000);
-  transportObserver = await installChromiumObserver(context);
+  const cdpObserverEnabled = process.env.TSUMUCODE_COOKIE_CDP !== '0';
+  transportObserver = await installChromiumObserver(context, { enabled: cdpObserverEnabled });
   // Cookie工程自身の実行版と上限を記録する。他工程の版を流用しない。
   console.log(
     JSON.stringify({
       event: 'main-cookie-transport',
       boundary: 'scope',
+      cdpObserverEnabled,
       browserVersion: browser.version(),
       playwrightVersion: JSON.parse(
         await readFile('node_modules/playwright-core/package.json', 'utf8'),

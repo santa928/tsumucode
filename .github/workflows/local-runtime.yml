@@ -323,9 +323,19 @@ jobs:
           set -euo pipefail
           mkdir -p .release-cookie-transport
           docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256 \
+            -e TSUMUCODE_COOKIE_CDP=1 \
             --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" \
             sh -c 'node --test scripts/local/next-form-cookie-lifecycle.test.mjs && node scripts/local/next-form-cookie-browser-acceptance.mjs' \
             2>&1 | tee .release-cookie-transport/browser.log
+      - name: Compare complete Cookie operations without Chromium observer
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256 \
+            -e TSUMUCODE_COOKIE_CDP=0 \
+            --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" \
+            node scripts/local/next-form-cookie-browser-acceptance.mjs \
+            2>&1 | tee .release-cookie-transport/browser-off.log
       - name: Collect bounded Cookie transport diagnostics
         if: always()
         run: |

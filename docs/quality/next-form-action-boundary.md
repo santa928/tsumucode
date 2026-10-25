@@ -129,6 +129,11 @@ Cookie・全header・生のCDP識別子を保存しない。CIはCookie工程の
 CDPのframeやloaderを照合できない場合はunknownとし、欠落イベントを正常完了の証拠にしない。
 CDPのencodedDataLengthとHTTP本文長も混同しない。採点・期限・正常HTTP終端・DOM照合の
 合格条件は維持し、診断の成功やDOM表示だけで実Requestの失敗を合格へ変換しない。
+観測の影響を切り分けるCI対照は、同じbuildで通常の全Cookie操作・採点をON→OFFの固定順で
+各1回を上限に行う。ONが失敗した場合はOFFを省略し、比較未完として扱う。
+`TSUMUCODE_COOKIE_CDP=0`はCDP session・pagehide binding・注入scriptの作成を
+省く。Node側の中継診断は両方で保持し、OFFでのRequest失敗も固定分類として残す。
+同じSource内容でも版番号や直前の履歴は進むため、一組の差だけで因果を断定しない。
 
 #136の持ち出しProjectと#137の全Course公開は別ゲート。今回のdev実行を正式公開や
 外部DBへの永続保存の証拠にはしない。

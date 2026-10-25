@@ -10,7 +10,14 @@ const failures = new Set([
   'net::ERR_EMPTY_RESPONSE',
   'net::ERR_FAILED',
   'net::ERR_HTTP2_PROTOCOL_ERROR',
+  'net::ERR_INSUFFICIENT_RESOURCES',
+  'net::ERR_NETWORK_CHANGED',
 ]);
+
+/** 任意の例外本文は保存せず、Browser由来の既知分類だけを残す。 */
+export function cookieNetworkErrorClass(errorText) {
+  return failures.has(errorText) ? errorText : 'other';
+}
 
 /** 固定enumと数値・booleanだけを出力し、URL/header/body/opaque IDを保存しない。 */
 function emit(stage, fields) {
@@ -73,7 +80,9 @@ function observation(record) {
 }
 
 /** Page作成時に観測を開始する。submit間にCDP初期化待ちを追加しない。 */
-export async function installChromiumObserver(context) {
+export async function installChromiumObserver(context, { enabled = true } = {}) {
+  // OFF対照では初期化自体を省き、CDP・pagehide binding・注入scriptを作らない。
+  if (!enabled) return { begin() {}, end() {} };
   const pages = new WeakMap();
   await context.exposeBinding('__tsumuPrivateTransportPagehide', ({ frame }, event) => {
     const state = pages.get(frame.page());
@@ -208,7 +217,7 @@ export async function installChromiumObserver(context) {
       if (!record) return;
       record.terminal = 'failed';
       record.terminalCdpSeconds = event.timestamp;
-      record.errorClass = failures.has(event.errorText) ? event.errorText : 'other';
+      record.errorClass = cookieNetworkErrorClass(event.errorText);
       record.canceled = event.canceled === true;
       emit('failed', observation(record));
     });
