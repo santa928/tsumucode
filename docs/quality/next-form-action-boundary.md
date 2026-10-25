@@ -122,18 +122,11 @@ Preview履歴保持・修正回復・版失効・a11y・narrow・下書き・端
 production buildは`next-build-acceptance.mjs next-ch04`で新2教材だけを選んで確認できる。
 CIでは既存教材を含む標準の全ケースを通す。
 
-Cookie工程では選択Requestの終端とCDPの失敗分類・受信量、bridgeの受信完了・送信完了・
-socket所有連番を診断する。Preview側の同じ診断は`TSUMUCODE_COOKIE_DIAGNOSTICS=1`で明示し、
-通常Composeでは無効にする。記録は固定分類・連番・長さ・時刻と実行版に限り、本文・URL・
-Cookie・全header・生のCDP識別子を保存しない。CIはCookie工程の失敗時にも限定artifactを保存する。
-CDPのframeやloaderを照合できない場合はunknownとし、欠落イベントを正常完了の証拠にしない。
-CDPのencodedDataLengthとHTTP本文長も混同しない。採点・期限・正常HTTP終端・DOM照合の
-合格条件は維持し、診断の成功やDOM表示だけで実Requestの失敗を合格へ変換しない。
-観測の影響を切り分けるCI対照は、同じbuildで通常の全Cookie操作・採点をON→OFFの固定順で
-各1回を上限に行う。ONが失敗した場合はOFFを省略し、比較未完として扱う。
-`TSUMUCODE_COOKIE_CDP=0`はCDP session・pagehide binding・注入scriptの作成を
-省く。Node側の中継診断は両方で保持し、OFFでのRequest失敗も固定分類として残す。
-同じSource内容でも版番号や直前の履歴は進むため、一組の差だけで因果を断定しない。
+Cookie工程は選択Requestの終端、実consumerの読了、bridgeの受信完了・送信完了・socket所有連番を記録する。
+Previewの対応番号と転送診断は`TSUMUCODE_COOKIE_DIAGNOSTICS=1`で明示し、通常Composeでは無効にする。
+作者検査とCIではこの番号を使い、対応不明な応答を完了扱いにしない。
+記録は固定分類・連番・長さ・時刻と実行版に限り、本文・URL・Cookie・全headerを保存しない。
+CIはCookie工程の失敗時にも限定artifactを保存する。DOM表示や診断の成功だけを本文完了へ代用しない。
 
 #136の持ち出しProjectと#137の全Course公開は別ゲート。今回のdev実行を正式公開や
 外部DBへの永続保存の証拠にはしない。
@@ -148,23 +141,17 @@ NextのSource反映はpause・固定exec・実HTTPの版確認を合わせて既
 
 Form採点は実POSTの全量完了・可視state・保存履歴で準備と結果を確認するため、networkidleの固定500ms待機を重ねない。他教材の文書静止契約は維持する。8秒以上の採点ではDocker起動を含む全体時間と固定phase進捗だけを記録し、10秒への余裕を判断できるようにする。過去Action UIの超過段階は未確定で、今回の変更だけで原因解消と断定しない。
 
-## 手動の限定再現
+## 作者Actionの完了判定
 
-`Local Runtime boundary`の手動実行で`target=cookie`を指定すると、固定imageと既存の隔離・
-資源上限を使い、Actionだけの47操作を1回行う。CDPは初期化せず、採点と他教材の検査は省く。
-15分のjob上限と既存の操作期限を維持し、失敗時にも固定分類・受信量と終端の記録を残す。
-失敗後に取得するResourceTimingもURL・本文を保存せず、候補が不明・複数なら正常完了と扱わない。
-
-この診断は正式受入ではない。`cookie-reproduction-*`だけを保存し、Native資源証拠を作らない。
-通常のpush/PRと手動`target=full`は従来の全体検証を続ける。公開検証器はmainへのpushの成功だけを
-対象とするため、手動診断の成功を公開条件へ代用しない。
-
-`target=native`はNext・フォーム・Cookieを使わず、同じ固定Browserで通常fetchの読了と
-通信終端を別々に記録する。各8回を上限に、no-storeのreader/arrayBufferとno-cacheのreaderを
-比較する。接続はコンテナ内のloopbackだけで、故障注入・GC・再試行は行わない。
-`native-fetch-observations-*`は原因切り分け専用で、正式受入や公開の成功証拠には使わない。
-
-手動`target=cookie`では作者用reader観測も初期化する。Previewの診断連番で応答とconsumerを対応付け、
+作者用Browserだけにreader観測を初期化する。Previewの診断連番で応答とconsumerを対応付け、
 既存のreadが返したbyte数・EOF・例外・cancelだけを記録する。追加read・drain・fetch置換は行わず、
 元のResponse/body/reader/read Promiseを維持する。cloneの読了は元consumerの読了へ流用しない。
-失敗後の記録を増やすだけで、Request失敗を合格へ変更しない。通常の受入とlearnerには適用しない。
+learnerと採点の実行コードには適用しない。
+
+作者Actionは、正常通信でも実consumerのEOFを必須にする。
+選択Requestが現在入力を含む唯一の送信であり、元Responseの連番・単一stream/reader・固定長と
+実byte数が一致し、EOF・例外なし・cancelなしを確認する。DOMと文書identityの最終確認時にも
+同じ証拠を取り直し、遅れて生じたcancelや別入力・別文書への切替を拒否する。
+Chromiumの`ERR_ABORTED`は、この全条件を満たす場合だけ通信失敗へ採用せず、記録には残す。
+他の通信失敗・終端不明・本文欠落・対応不明・cloneの読了は引き続き失敗とする。
+Formの通信完了、採点、既存の操作期限、通常のlearner UIは変更しない。

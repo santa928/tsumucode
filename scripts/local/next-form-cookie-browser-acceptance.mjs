@@ -11,10 +11,7 @@ import { URL } from 'node:url';
 import { chromium, expect } from '@playwright/test';
 import { parse } from 'yaml';
 import { bridge } from './browser-test-bridge.mjs';
-import {
-  cookieNetworkErrorClass,
-  installChromiumObserver,
-} from './next-cookie-transport-observations.mjs';
+
 import {
   completeActionReader,
   installActionReaderObservation,
@@ -24,6 +21,8 @@ import { FORM_WORKSPACE, ACTION_WORKSPACE } from './next-form-preview.mjs';
 import { watchDocumentVersion } from './next-project-observations.mjs';
 import {
   cleanupCookieAcceptance,
+  cookieNetworkErrorClass,
+  finishCookieActionResponse,
   finishCookieResponse,
   withCookieDeadline,
 } from './next-form-cookie-lifecycle.mjs';
@@ -32,7 +31,7 @@ import {
 const bridges = [];
 let browser;
 let context;
-let transportObserver;
+
 let manager;
 const navigationCounts = new WeakMap();
 const documentVersions = new WeakMap();
@@ -45,9 +44,6 @@ let workspace = 'setup';
 let currentStage = 'initialization';
 let failure;
 const startedAt = performance.now();
-// 手動の限定再現だけで使い、通常の受入・採点と区別する。
-const limitedReproduction = process.env.TSUMUCODE_COOKIE_REPRODUCTION === 'action-47';
-const readerObserverEnabled = limitedReproduction && process.env.TSUMUCODE_COOKIE_READER === '1';
 
 /** 固定の段階と成否だけを記録し、URL・Cookie・token・Source本文を出力しない。 */
 function progress(stage, outcome) {
@@ -169,8 +165,9 @@ async function submit(surface, input, expected) {
   let selectedRequest;
   let readerOrdinal;
   let readerLength;
+  let encoding;
   const candidates = [];
-  transportObserver.begin(frame, currentSequence, routes, requestInput);
+
   /** 送信前から候補だけを追跡する。本文を出さず、入力の包含も診断にだけ使う。 */
   const onRequest = (request) => {
     if (request.method() !== 'POST' || request.frame() !== frame || !routes.includes(request.url()))
@@ -201,6 +198,38 @@ async function submit(surface, input, expected) {
       selected: request === selectedRequest,
       ...observation,
     }));
+  /** 既存readerの終端を待つだけで、本文を別途読み出さない。 */
+  const verifyActionConsumer = async () => {
+    assert.equal(candidates.length, 1, 'Action送信を一つに対応付ける');
+    assert.ok(candidates[0].request === selectedRequest, '選択したAction Requestを使う');
+    assert.equal(candidates[0].inputIncluded, true, '現在入力のActionだけを検査する');
+    assert.ok(Number.isSafeInteger(readerOrdinal) && readerOrdinal > 0);
+    assert.ok(Number.isSafeInteger(readerLength) && readerLength > 0 && readerLength <= 512 * 1024);
+    assert.ok(encoding === undefined, '固定長identity応答だけを対応付ける');
+    const handle = await frame.waitForFunction(
+      (ordinal) => {
+        const record = globalThis.__tsumucodeActionReaderSnapshot?.(ordinal);
+        return record &&
+          (record.done ||
+            record.error ||
+            record.cancelled ||
+            record.invalidChunk ||
+            record.overflow ||
+            record.readers > 1 ||
+            record.streams > 1)
+          ? record
+          : false;
+      },
+      readerOrdinal,
+      { timeout: 30000 },
+    );
+    try {
+      snapshot.consumer = await handle.jsonValue();
+      return completeActionReader(snapshot.consumer, readerOrdinal, readerLength);
+    } finally {
+      await handle.dispose();
+    }
+  };
   context.on('request', onRequest);
   context.on('requestfinished', onFinished);
   context.on('requestfailed', onFailed);
@@ -240,16 +269,25 @@ async function submit(surface, input, expected) {
     );
     const response = await step('response-headers', () => reply, 15000);
     selectedRequest = response.request();
-    if (readerObserverEnabled && !form) {
+    if (!form) {
       const headers = response.headers();
       const ordinal = headers['x-tsumucode-cookie-observation'];
       const length = headers['content-length'];
       readerOrdinal = /^[1-9]\d{0,8}$/u.test(ordinal ?? '') ? Number(ordinal) : null;
       readerLength = /^\d{1,6}$/u.test(length ?? '') ? Number(length) : null;
+      encoding = headers['content-encoding'];
     }
     snapshot.httpStatus = response.status();
-    snapshot.completed =
-      (await step('response-finished', () => finishCookieResponse(context, response))) === null;
+    if (!form) {
+      const completion = await step('response-finished', () =>
+        finishCookieActionResponse(context, response, verifyActionConsumer),
+      );
+      snapshot.completed = completion.completed;
+      snapshot.browserTerminal = completion.browserTerminal;
+      snapshot.consumerEof = completion.consumerEof;
+    } else
+      snapshot.completed =
+        (await step('response-finished', () => finishCookieResponse(context, response))) === null;
     snapshot.navigationRequest = response.request().isNavigationRequest();
     assert.equal(snapshot.httpStatus, 200);
     assert.equal(snapshot.completed, true);
@@ -282,6 +320,46 @@ async function submit(surface, input, expected) {
     assert.equal(snapshot.documentMatches, true);
     assert.equal(snapshot.documentVersionAfter, snapshot.documentVersionBefore);
     assert.equal(frame.url(), actorUrl.href);
+    if (!form) {
+      // DOM確認までのcancel/errorも拒否し、別文書・別入力の証拠を流用しない。
+      const final = await step(
+        'consumer-final-confirmation',
+        () =>
+          frame.evaluate(
+            ({ ordinal, marker, input, message, url }) => ({
+              reader: globalThis.__tsumucodeActionReaderSnapshot?.(ordinal) ?? null,
+              documentMatches: globalThis.document.__tsumucodeAuthorCookieDocument === marker,
+              urlMatches: globalThis.location.href === url,
+              inputMatches: globalThis.document.querySelector('#note')?.value === input,
+              enabledMatches: globalThis.document.querySelector('#note')?.disabled === false,
+              savedMatches:
+                globalThis.document.querySelector('#note-result')?.getAttribute('data-state') ===
+                  'saved' &&
+                globalThis.document.querySelector('#note-result')?.textContent === message,
+            }),
+            {
+              ordinal: readerOrdinal,
+              marker,
+              input: requestInput,
+              message: expected === undefined ? text : 'theme:' + expected,
+              url: actorUrl.href,
+            },
+          ),
+        5000,
+      );
+      assert.equal(candidates.length, 1);
+      assert.ok(candidates[0].request === selectedRequest && candidates[0].inputIncluded === true);
+      assert.equal(completeActionReader(final.reader, readerOrdinal, readerLength), true);
+      for (const key of [
+        'documentMatches',
+        'urlMatches',
+        'inputMatches',
+        'enabledMatches',
+        'savedMatches',
+      ])
+        assert.equal(final[key], true);
+      snapshot.consumer = final.reader;
+    }
     console.log(
       JSON.stringify({
         ...snapshot,
@@ -357,7 +435,7 @@ async function submit(surface, input, expected) {
             url: actorUrl.href,
             requestUrl: selectedRequest?.url() ?? null,
             requestStartedAt: selectedRequest?.timing().startTime ?? null,
-            readerOrdinal: readerObserverEnabled ? readerOrdinal : null,
+            readerOrdinal: readerOrdinal,
           },
         ),
       1000,
@@ -415,7 +493,6 @@ async function submit(surface, input, expected) {
     );
     throw error;
   } finally {
-    transportObserver.end(frame, currentSequence);
     context.off('request', onRequest);
     context.off('requestfinished', onFinished);
     context.off('requestfailed', onFailed);
@@ -516,16 +593,14 @@ try {
     chromium.launch({ headless: true, args: ['--no-sandbox'], timeout: 30000 }),
   );
   context = await step('browser-context', () => browser.newContext(), 5000);
-  if (readerObserverEnabled) await context.addInitScript(installActionReaderObservation);
-  const cdpObserverEnabled = !limitedReproduction && process.env.TSUMUCODE_COOKIE_CDP !== '0';
-  transportObserver = await installChromiumObserver(context, { enabled: cdpObserverEnabled });
+  await context.addInitScript(installActionReaderObservation);
+
   // Cookie工程自身の実行版と上限を記録する。他工程の版を流用しない。
   console.log(
     JSON.stringify({
       event: 'main-cookie-transport',
       boundary: 'scope',
-      cdpObserverEnabled,
-      readerObserverEnabled,
+      readerObserverEnabled: true,
       browserVersion: browser.version(),
       playwrightVersion: JSON.parse(
         await readFile('node_modules/playwright-core/package.json', 'utf8'),
@@ -533,8 +608,8 @@ try {
       nodeVersion: process.version,
       architecture: process.arch,
       memoryMax: (await readFile('/sys/fs/cgroup/memory.max', 'utf8')).trim(),
-      grade: limitedReproduction ? 'excluded-diagnostic-only' : 'included-canonical',
-      plannedOperations: limitedReproduction ? 47 : 22,
+      grade: 'included-canonical',
+      plannedOperations: 22,
       faultInjection: false,
       forcedGc: false,
       fetchReplacement: false,
@@ -565,9 +640,7 @@ try {
       ]),
     5000,
   );
-  for (const workspaceId of limitedReproduction
-    ? [ACTION_WORKSPACE]
-    : [FORM_WORKSPACE, ACTION_WORKSPACE]) {
+  for (const workspaceId of [FORM_WORKSPACE, ACTION_WORKSPACE]) {
     workspace = workspaceId === FORM_WORKSPACE ? 'form' : 'action';
     const lesson = workspaceId.slice(0, -4);
     const directory = `content/next/chapters/next-ch04/lessons/${lesson}/exercises/${workspaceId}`;
@@ -578,10 +651,7 @@ try {
     const solution = { ...files };
     const server = workspaceId === FORM_WORKSPACE ? 'app/api/note/route.ts' : 'app/actions.ts';
     const path = `/api/workspaces/${workspaceId}`;
-    if (limitedReproduction) {
-      // 新しい診断stackだけをCAS 0で初期化する。既存Sourceがあれば409で止める。
-      await api(`${path}/source`, { expectedSourceRevision: 0, files: solution });
-    }
+
     const original = await api(path);
     assert.ok(
       !['starting', 'ready', 'applying'].includes(original.lastRun?.state),
@@ -701,17 +771,7 @@ try {
       ({ name }) => name === 'lesson-theme',
     );
     assert.equal(cookie, undefined);
-    if (limitedReproduction) {
-      // 6組を上限とし、成功/失敗を理由に回数を延長しない。
-      for (let cycle = 0; cycle < 6; cycle++) {
-        await submit(surface, 'light', 'absent');
-        await submit(surface, 'read', 'light');
-        await submit(surface, 'dark', 'light');
-        await submit(surface, 'read', 'dark');
-        await submit(surface, 'clear', 'dark');
-        await submit(surface, 'read', 'absent');
-      }
-    }
+
     const cookieHeaders = await Promise.all(responses);
     assert.ok(cookieHeaders.some((value) => value?.includes('lesson-theme=light;')));
     assert.ok(cookieHeaders.some((value) => value?.includes('Max-Age=0')));
@@ -755,7 +815,7 @@ try {
     );
     await submit(fresh, 'read', 'absent');
     await step('fresh-close', () => fresh.close(), 5000);
-    if (!limitedReproduction) {
+    {
       // 採点Browserが自分で書いたCookieも、共有policyの既定拒否でServerへ渡さない。
       const client = 'app/note-form.tsx';
       const inputAnchor = "const [input, setInput] = useState('');";
@@ -833,11 +893,7 @@ try {
     passed.push(
       `${workspaceId}: 実set/read/delete・有限転送・HttpOnly/Strict/host/Path・同run反映保持・新run分離`,
     );
-    passed.push(
-      limitedReproduction
-        ? `${workspaceId}: 限定再現のみ・採点は対象外`
-        : `${workspaceId}: 採点BrowserのCookie自己設定を上流へ渡さない`,
-    );
+    passed.push(`${workspaceId}: 採点BrowserのCookie自己設定を上流へ渡さない`);
   }
   const management = (
     await step('management-read', () => context.cookies('http://127.0.0.1:4173'), 5000)
@@ -866,5 +922,5 @@ try {
       }),
     );
     process.exitCode = 1;
-  } else progress(limitedReproduction ? 'limited-reproduction' : 'acceptance', 'completed');
+  } else progress('acceptance', 'completed');
 }
