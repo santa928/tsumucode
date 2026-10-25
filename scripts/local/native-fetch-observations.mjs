@@ -1,7 +1,7 @@
 // 作者診断専用。Next・フォーム・Cookieを使わずBrowserの読了と通信終端を分ける。
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import process from 'node:process';
 import console from 'node:console';
 import { clearTimeout, setTimeout } from 'node:timers';
@@ -113,12 +113,21 @@ try {
     forcedGc: false,
     rows,
   };
-  await writeFile('/evidence/result.json', JSON.stringify(result, null, 2) + '\n');
   console.log(JSON.stringify(result));
 } finally {
   await browser?.close();
   server.closeAllConnections();
   await new Promise((resolve) => server.close(resolve));
-  await writeFile('/evidence/memory.peak', await readFile('/sys/fs/cgroup/memory.peak'));
-  await writeFile('/evidence/memory.events', await readFile('/sys/fs/cgroup/memory.events'));
+  // 診断保存の失敗で元のBrowser例外を覆わず、固定の資源記録だけ標準出力へ残す。
+  console.log(
+    JSON.stringify({
+      event: 'native-fetch-resources',
+      peak: (
+        await readFile('/sys/fs/cgroup/memory.peak', 'utf8').catch(() => 'unavailable')
+      ).trim(),
+      events: (
+        await readFile('/sys/fs/cgroup/memory.events', 'utf8').catch(() => 'unavailable')
+      ).trim(),
+    }),
+  );
 }

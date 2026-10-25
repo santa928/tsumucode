@@ -449,10 +449,9 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p .release-native-fetch
-          docker run --rm --init --network none --read-only --tmpfs /tmp:rw,size=128m \
+          docker run --rm --init --network none \
             --cpus 2 --memory 1g --memory-swap 1g --pids-limit 256 \
             --cap-drop ALL --security-opt no-new-privileges:true \
-            --mount "type=bind,source=$PWD/.release-native-fetch,target=/evidence" \
             tsumucode-native-fetch-ci node scripts/local/native-fetch-observations.mjs \
             2>&1 | tee .release-native-fetch/browser.log
       - name: Preserve native fetch observations separately from release proof
