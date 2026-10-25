@@ -515,7 +515,7 @@ jobs:
           set -euo pipefail
           mkdir -p .release-cookie-transport
           docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256 \
-            -e TSUMUCODE_COOKIE_CDP=0 -e TSUMUCODE_COOKIE_REPRODUCTION=action-47 \
+            -e TSUMUCODE_COOKIE_CDP=0 -e TSUMUCODE_COOKIE_REPRODUCTION=action-47 -e TSUMUCODE_COOKIE_READER=1 \
             --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" \
             node scripts/local/next-form-cookie-browser-acceptance.mjs \
             2>&1 | tee .release-cookie-transport/browser.log

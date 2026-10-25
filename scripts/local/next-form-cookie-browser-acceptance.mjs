@@ -15,6 +15,10 @@ import {
   cookieNetworkErrorClass,
   installChromiumObserver,
 } from './next-cookie-transport-observations.mjs';
+import {
+  completeActionReader,
+  installActionReaderObservation,
+} from './next-cookie-reader-observation.mjs';
 import { previewOrigin, previewBase } from './preview-contract.mjs';
 import { FORM_WORKSPACE, ACTION_WORKSPACE } from './next-form-preview.mjs';
 import { watchDocumentVersion } from './next-project-observations.mjs';
@@ -43,6 +47,7 @@ let failure;
 const startedAt = performance.now();
 // 手動の限定再現だけで使い、通常の受入・採点と区別する。
 const limitedReproduction = process.env.TSUMUCODE_COOKIE_REPRODUCTION === 'action-47';
+const readerObserverEnabled = limitedReproduction && process.env.TSUMUCODE_COOKIE_READER === '1';
 
 /** 固定の段階と成否だけを記録し、URL・Cookie・token・Source本文を出力しない。 */
 function progress(stage, outcome) {
@@ -162,6 +167,8 @@ async function submit(surface, input, expected) {
   const field = frame.getByLabel('メモ', { exact: true });
   let reply;
   let selectedRequest;
+  let readerOrdinal;
+  let readerLength;
   const candidates = [];
   transportObserver.begin(frame, currentSequence, routes, requestInput);
   /** 送信前から候補だけを追跡する。本文を出さず、入力の包含も診断にだけ使う。 */
@@ -233,6 +240,13 @@ async function submit(surface, input, expected) {
     );
     const response = await step('response-headers', () => reply, 15000);
     selectedRequest = response.request();
+    if (readerObserverEnabled && !form) {
+      const headers = response.headers();
+      const ordinal = headers['x-tsumucode-cookie-observation'];
+      const length = headers['content-length'];
+      readerOrdinal = /^[1-9]\d{0,8}$/u.test(ordinal ?? '') ? Number(ordinal) : null;
+      readerLength = /^\d{1,6}$/u.test(length ?? '') ? Number(length) : null;
+    }
     snapshot.httpStatus = response.status();
     snapshot.completed =
       (await step('response-finished', () => finishCookieResponse(context, response))) === null;
@@ -283,7 +297,15 @@ async function submit(surface, input, expected) {
     const atomicDom = await withCookieDeadline(
       () =>
         frame.evaluate(
-          ({ input, message, expectedMarker, url, requestUrl, requestStartedAt }) => {
+          ({
+            input,
+            message,
+            expectedMarker,
+            url,
+            requestUrl,
+            requestStartedAt,
+            readerOrdinal,
+          }) => {
             const timing =
               typeof requestStartedAt === 'number' && requestStartedAt > 0 && requestUrl
                 ? globalThis.performance
@@ -300,6 +322,10 @@ async function submit(surface, input, expected) {
             const button = field?.form?.querySelector('button[type="submit"]');
             return {
               evaluatedAtEpochMs: Date.now(),
+              observedReader:
+                typeof readerOrdinal === 'number'
+                  ? (globalThis.__tsumucodeActionReaderSnapshot?.(readerOrdinal) ?? null)
+                  : null,
               resourceTimingCandidates: timing.length,
               resourceTiming: entry
                 ? {
@@ -331,6 +357,7 @@ async function submit(surface, input, expected) {
             url: actorUrl.href,
             requestUrl: selectedRequest?.url() ?? null,
             requestStartedAt: selectedRequest?.timing().startTime ?? null,
+            readerOrdinal: readerObserverEnabled ? readerOrdinal : null,
           },
         ),
       1000,
@@ -344,6 +371,11 @@ async function submit(surface, input, expected) {
         sequence: currentSequence,
         epochMs: Date.now(),
         ...atomicDom,
+        consumerEofProven: completeActionReader(
+          atomicDom.observedReader,
+          readerOrdinal,
+          readerLength,
+        ),
       }),
     );
     // Cookie・本文・URL・Sourceを出さず、文書置換と入力/結果の不一致だけ残す。
@@ -484,6 +516,7 @@ try {
     chromium.launch({ headless: true, args: ['--no-sandbox'], timeout: 30000 }),
   );
   context = await step('browser-context', () => browser.newContext(), 5000);
+  if (readerObserverEnabled) await context.addInitScript(installActionReaderObservation);
   const cdpObserverEnabled = !limitedReproduction && process.env.TSUMUCODE_COOKIE_CDP !== '0';
   transportObserver = await installChromiumObserver(context, { enabled: cdpObserverEnabled });
   // Cookie工程自身の実行版と上限を記録する。他工程の版を流用しない。
@@ -492,6 +525,7 @@ try {
       event: 'main-cookie-transport',
       boundary: 'scope',
       cdpObserverEnabled,
+      readerObserverEnabled,
       browserVersion: browser.version(),
       playwrightVersion: JSON.parse(
         await readFile('node_modules/playwright-core/package.json', 'utf8'),

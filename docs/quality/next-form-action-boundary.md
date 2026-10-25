@@ -163,3 +163,8 @@ Form採点は実POSTの全量完了・可視state・保存履歴で準備と結�
 通信終端を別々に記録する。各8回を上限に、no-storeのreader/arrayBufferとno-cacheのreaderを
 比較する。接続はコンテナ内のloopbackだけで、故障注入・GC・再試行は行わない。
 `native-fetch-observations-*`は原因切り分け専用で、正式受入や公開の成功証拠には使わない。
+
+手動`target=cookie`では作者用reader観測も初期化する。Previewの診断連番で応答とconsumerを対応付け、
+既存のreadが返したbyte数・EOF・例外・cancelだけを記録する。追加read・drain・fetch置換は行わず、
+元のResponse/body/reader/read Promiseを維持する。cloneの読了は元consumerの読了へ流用しない。
+失敗後の記録を増やすだけで、Request失敗を合格へ変更しない。通常の受入とlearnerには適用しない。

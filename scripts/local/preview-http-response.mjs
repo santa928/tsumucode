@@ -124,6 +124,7 @@ export function forwardPreviewResponse(
       ...additional,
       'content-type': type,
       ...(bufferStream ? { 'content-length': bytes } : {}),
+      ...(postOrdinal !== null ? { 'x-tsumucode-cookie-observation': String(postOrdinal) } : {}),
     });
     return true;
   };
