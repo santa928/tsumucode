@@ -544,6 +544,10 @@ try {
     const solution = { ...files };
     const server = workspaceId === FORM_WORKSPACE ? 'app/api/note/route.ts' : 'app/actions.ts';
     const path = `/api/workspaces/${workspaceId}`;
+    if (limitedReproduction) {
+      // 新しい診断stackだけをCAS 0で初期化する。既存Sourceがあれば409で止める。
+      await api(`${path}/source`, { expectedSourceRevision: 0, files: solution });
+    }
     const original = await api(path);
     assert.ok(
       !['starting', 'ready', 'applying'].includes(original.lastRun?.state),
