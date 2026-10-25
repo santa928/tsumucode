@@ -139,11 +139,11 @@ releases:
     draftSourceCommit: 328d20e861c1d870602ece020c7d3eb9082bd4b6
     draftCanonicalDistSha256: c342f091b97a7ba92054f781a5fdb5c52dc9e3f256ed6643a567cf2fa0efb613
     normalizedLearningInputSha256: 60a80cb514f91d912b804fad4bc35905536b267d843f0bb491006c7ada78af2d
-    qualityArtifactId: "11666620579"
+    qualityArtifactId: '11666620579'
     qualityArtifactDigest: sha256:b75b689ec678036b89965b2f465e06e4c9028d1327155d2d909d2b5dc315180e
-    reportArtifactId: "11666775579"
+    reportArtifactId: '11666775579'
     reportArtifactDigest: sha256:7a8e03288d36e9e574d3d7462024497a780b6643e7cffef7af6500aa5f3060c5
-    workflowRunId: "38039044448"
+    workflowRunId: '38039044448'
     workflowRunAttempt: 1
     pageUrl: https://santa928.github.io/tsumucode/
     postDeployVerificationPath: docs/quality/post-deploy/next/2026-10-09.2.yaml
@@ -152,7 +152,7 @@ candidate:
   courseId: next
   revision: 2026-10-24.1
   status: approved
-  verifiedSourceCommit: efa0e78b04be65ab683118d4024d6aeff78b342b
+  verifiedSourceCommit: d55127b6763ab74509827c2cbc805987de991a0e
   canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
   courseManifestSha256: a3bffc974c7d6b8acd23df4c92f3c82aee90e5af1cefc367e4039fe1857145ac
   publicProvenanceSha256: a577ff8815e8e27eca907b8e0e203b200a07aab323b792536ba04ae61c857c99
@@ -286,6 +286,6 @@ candidate:
       toRevision: 2026-10-24.1
       steps: []
   syntheticProgressBundlePath: tests/fixtures/progress/next-previous-release-bundle.json
-  draftSourceCommit: efa0e78b04be65ab683118d4024d6aeff78b342b
+  draftSourceCommit: d55127b6763ab74509827c2cbc805987de991a0e
   draftCanonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
-  normalizedLearningInputSha256: eb3a8797e4cd8877b2cd6c70a8876cca86e01371a270addef5395e94d38ce800
+  normalizedLearningInputSha256: a8c2adcb7f3274755095e2f16849063a0e9c977e2b1f7d777a0913c37e96a9a0
