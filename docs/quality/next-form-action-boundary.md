@@ -1,8 +1,9 @@
 # FormとServer Actionの2 Lesson（Issue #135）
 
-未公開Next Courseに`next-ch04-l01`と`next-ch04-l02`を追加する。
+Issue #135では、当時未公開だったNext Courseへ`next-ch04-l01`と`next-ch04-l02`を追加した。
 React/TypeScriptと既存Next Lessonを前提に、入力検証・一時失敗・同じ内容の再試行を扱う。
-外部DB・認証サービス・依存・通信・費用は追加せず、Courseはdraftを維持する。
+当時は外部DB・認証サービス・依存・通信・費用を追加せず、draftで検証した。
+現在の9教材は公開済みであり、この文書の限定Cookie基盤はCookie専用Lessonや追加公開の完了を意味しない。
 
 ## 学習とSource
 
@@ -31,12 +32,45 @@ ServerファイルとClient formだけを編集対象とし、layout/page/CSS/st
 Actionのdocumentには末尾slashがある。document rootとcanonical rootの2表記を同じpageとして
 認め、未知path/query・内部store/controlを公開しない。Host/Originは現在runへ完全一致し、
 Origin欠落/nullを拒否する。Viteの固定native echoに限るOrigin:null例外は適用しない。
-Cookie・Authorization・管理token・Forwarded・採点相関IDを公開Proxyの転送allowlistへ入れない。
-CSP・no-store・nosniff・Set-Cookie/redirect抑止・sealed socketとinode照合を維持する。
+Authorization・管理token・Forwarded・採点相関IDを公開Proxyの転送allowlistへ入れない。
+Cookieは後述の固定themeだけを例外とし、CSP・no-store・nosniff・redirect抑止・sealed socketとinode照合を維持する。
+
+## 承認済みの固定Cookie境界（#137）
+
+この2教材のdocument読取と既存POSTに限り、`lesson-theme=light`または`lesson-theme=dark`を転送する。
+他名Cookieは除去し、同名重複・補正が必要な値・壊れた構文はCookieなしとして扱う。
+Set-Cookieは成功した既存POSTだけで許可し、session setと明示的な期限切れdeleteを再生成する。
+Domain指定・任意Path・永続期限・未知属性・同名重複は採用しない。出力は常にhost-only、
+`Path=/w/<workspace>/<run UUID>`（末尾slashなし）、`HttpOnly; SameSite=Strict`とする。
+static chunk、HMR/WebSocket、他のNext/Vite教材、採点にはこの例外を適用しない。
+
+Cookieはrun単位で分離する。同じrunのSource反映では保持し、停止後の新runには引き継がない。
+旧CookieがBrowserに残っていても、新runのhost・Pathとは一致しない。
+固定2教材の成功POST応答はCookieの有無にかかわらず、headers発行直前に
+run・Source版/hash・socket dev/inode・非採点を確認し、
+確認時点で失効していた応答とcontrol不通を拒否する。既にBrowserへ送ったheadersは撤回できず、
+同run内のSource版ごとのCookie完全初期化や、HTTP完了とCookie保存の原子性は保証しない。
+既存の採点器はCookie演習の合格判定を提供しない。
+
+Strict Cookieは埋込み画面の第三者Cookie制限で使えない場合がある。
+埋込みで実際に保存・読取できない場合だけ、対象2教材の案内から同じrunのPreviewを別タブで開く。
+ブラウザ設定や管理originの変更、SameSiteの緩和は行わない。
+learnerのJavaScriptが自分のoriginへ任意の非HttpOnly Cookieを書くことを全面禁止する契約ではなく、
+Proxyの入出力制限と管理host・新runへの分離を保証する。
+新しいCookie専用Lessonや正式公開はこの基盤変更に含まれない。
+
+`next-form-cookie-browser-acceptance.mjs`は作者専用Sourceで実Nextの`cookies()`を呼び、
+Browserの自動Cookie送信によるset/read/delete、埋込みの成否、必要時の別タブ、
+HttpOnly/Strict/host/Path、同runの反映保持、新run分離と他名Cookie遮断を確認する。
+手動CookieヘッダーやAPIRequestContextのjarを成功の代用にしない。
+API仕様は[Next.js cookies](https://nextjs.org/docs/app/api-reference/functions/cookies)、
+host/pathの意味は[RFC 6265](https://www.rfc-editor.org/rfc/rfc6265.html)を参照する。
 
 本文64KiBは全量受信後にだけ上流へ送る。公開POSTの応答512KiB・全体30秒・同時HTTP8を維持する。
 途中切断・期限・Source/run変更では上流を回収する。headers送信後の失敗では接続を閉じ、
-二度目のheadersを書かない。承認済みAction RSCだけを逐次送信する。
+二度目のheadersを書かない。固定Action POSTのRSCは正常EOFまで全量検査し、
+送信直前に許可を再確認してからContent-Length付きで渡す。途中結果やSet-Cookieを先行公開しない。
+Form・文書GET・Weatherの転送方式は維持する。
 既存Next/Viteの許可経路や資源上限を広げない。
 
 ## 採点と競合
@@ -46,11 +80,12 @@ HTTP全量完了・可視DOM・保存履歴を照合する。固定成功表示�
 Actionの完了はtrusted bridgeが付ける送信連番1→2→3と、実ResponseのURL・method・statusを
 厳密に対応させる。正常な上流EOF・下流送信完了に加え、対応するDOMとreadonly履歴を要求する。
 部分stream・旧送信の完了・切断・上限超過・対象POSTのBrowser中断を成功として扱わない。
-採点器内のAction POSTだけは、512KiB以内のRSCを正常EOFまで受信し、Content-Length付きで
-Browserへ渡す。Browser側でも固定Action POSTのResponseのcloneを正常EOFまで読み、
+公開Proxyと採点器内の固定Action POSTは、512KiB以内のRSCを正常EOFまで受信し、Content-Length付きで
+Browserへ渡す。採点器のBrowser側では固定Action POSTのResponseのcloneを正常EOFまで読み、
 実byte数とContent-Lengthを照合してから、元ResponseをNextのdecoderへ渡す。
 元ResponseのURL・type・redirected・未消費body、fetchの引数・signalを保持し、再試行しない。
-公開Proxyの逐次送信と、固定350msの保存待ち・pending検査は維持する。
+通常UIのfetchやdecoderには採点用の全量読取処理を追加しない。
+固定350msの保存待ち・pending検査は維持する。
 全体10秒の採点期限を維持し、前後のrun/revision/hashと文書版を一致させる。
 Form観測中の文書版を基準更新で消さず、同URLのreplaceStateは許可し、実reloadは拒否する。
 最大8POSTのCDP受信量は診断だけに使う。header欠落はunknownとして残し、本文・URL・入力値を

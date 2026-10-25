@@ -64,6 +64,8 @@ export async function observeNextProduction(page, origin, base, goal, step) {
       (reply) => reply.url() === origin + base + path && reply.request().isNavigationRequest(),
       { timeout: 2000 },
     );
+    // 操作待機中の拒否も処理済みにし、元のresponseの失敗は後続awaitで伝える。
+    void response.catch(() => {});
     await link.focus();
     await page.keyboard.press('Enter');
     const valid = await documentResponse(await response, path);
@@ -143,6 +145,8 @@ export async function observeNextProduction(page, origin, base, goal, step) {
           reply.request().isNavigationRequest(),
         { timeout: 2000 },
       );
+      // focus/pressが先に失敗しても、応答待ちの二次的な未処理拒否を残さない。
+      void response.catch(() => {});
       await button.focus();
       await page.keyboard.press('Enter');
       filter = (await documentResponse(await response, path)) && filter;

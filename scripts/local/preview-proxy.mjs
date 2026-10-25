@@ -5,6 +5,8 @@ import { createServer, request } from 'node:http';
 import { lstat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { Buffer } from 'node:buffer';
+import { lessonThemeResponseHeaders } from './next-form-cookie.mjs';
+import { ACTION_WORKSPACE } from './next-form-preview.mjs';
 import { URL } from 'node:url';
 import { setTimeout, clearTimeout, setInterval, clearInterval } from 'node:timers';
 import {
@@ -111,11 +113,11 @@ function permitted(req, target, websocket = false) {
   );
 }
 
-function upstreamHeaders(req, target) {
-  // Cookie/Authorization/token/Forwarded等を自動転送しない。
+function upstreamHeaders(req, target, websocket = false) {
+  // 検査済みtheme以外のCookie/Authorization/token/Forwarded等は転送しない。
   return {
     host: req.headers.host,
-    ...nextPreviewRequest(req, target)?.headers,
+    ...(!websocket ? nextPreviewRequest(req, target, { allowLessonTheme: true })?.headers : {}),
     ...(req.headers.origin ? { origin: req.headers.origin } : {}),
     ...(req.headers['content-type'] ? { 'content-type': req.headers['content-type'] } : {}),
   };
@@ -202,6 +204,9 @@ const server = createServer(async (req, res) => {
           headers: previewHeaders(target.runId, target.profile),
           limit: previewResponseLimit(req.url, target),
           stream: policy.stream,
+          // 固定Actionの有限RSCだけを正常EOFまで検査し、部分応答を公開しない。
+          bufferStream: target.workspaceId === ACTION_WORKSPACE && policy.post,
+          beforeHeaders: () => lessonThemeResponseHeaders(req, target, upstream, lookup),
           fail: () => errorResponse(res, 502, target),
         });
       },
@@ -279,7 +284,7 @@ server.on('upgrade', async (req, client, head) => {
       method: 'GET',
       path: req.url,
       headers: {
-        ...upstreamHeaders(req, target),
+        ...upstreamHeaders(req, target, true),
         connection: 'Upgrade',
         upgrade: 'websocket',
         'sec-websocket-key': req.headers['sec-websocket-key'],

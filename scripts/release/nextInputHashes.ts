@@ -255,9 +255,21 @@ function validateManifest(input: NextInputManifest): NextInputManifest {
 export function compareNextLearningInputs(
   draftInput: NextInputManifest,
   finalInput: NextInputManifest,
+  mode: 'initial-publication' | 'published-update' = 'initial-publication',
 ): readonly string[] {
   const draft = validateManifest(draftInput);
   const final = validateManifest(finalInput);
+  if (mode === 'published-update') {
+    if (
+      draft.publicationMetadata.coursePublicationStatus !== 'published' ||
+      !draft.publicationMetadata.frontendNextRequired ||
+      final.publicationMetadata.coursePublicationStatus !== 'published' ||
+      !final.publicationMetadata.frontendNextRequired ||
+      JSON.stringify(draft) !== JSON.stringify(final)
+    )
+      throw new Error('公開済み更新の事前入力と公開入力は同一source・同一内容である必要があります');
+    return [];
+  }
   if (
     draft.publicationMetadata.coursePublicationStatus !== 'draft' ||
     draft.publicationMetadata.frontendNextRequired ||

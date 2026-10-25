@@ -16,8 +16,11 @@ Local専用代表課題の画面・採点への接続は [Workspace学習の契�
 
 UUIDはcontrollerが生成し、停止・再開で再利用しない。異なるportだけではCookieが分離されないため、
 管理はIP host、Previewはrun専用hostとする。host Cookie・localStorage・IndexedDBは新runへ引き継がない。
-Preview URL/control応答には管理tokenやSourceを含めない。Cookie、Authorization、管理token、Forwarded等を
-learnerへ転送せず、learnerのSet-Cookie、redirect、CORS、CSP応答で境界を緩和させない。
+Preview URL/control応答には管理tokenやSourceを含めない。Authorization、管理token、Forwarded等を
+learnerへ転送せず、learnerのredirect、CORS、CSP応答で境界を緩和させない。
+Cookie/Set-Cookieは原則遮断し、承認済みForm/Actionの2教材だけで`lesson-theme=light/dark`を
+厳密抽出・再生成する。[固定Cookie境界](next-form-action-boundary.md#承認済みの固定cookie境界137)の
+host-only/Path/HttpOnly/Strict、送信直前の実行照合とrun寿命を適用する。
 
 proxyは現在runのHostとraw pathを検査する。固定4file、Vite clientとその固定env module、
 HMR、診断用`api/echo`だけを許可する。管理API、別Workspace、絶対URL、percent encoding、
@@ -72,7 +75,7 @@ Sourceを保持する。保存待ち中の停止、readiness期限後のseal、�
 
 当初のVite echoだけのPOST契約に加え、Nextの固定教材ごとに必要なGET/RSCを定義する。
 FormとServer Actionの公開POSTは、本人承認済みの2教材に限定する。
-Cookie・管理tokenを渡さず、現在runのHost/Origin・形式・本文/応答上限を検査する。
+固定theme以外のCookie・管理tokenを渡さず、現在runのHost/Origin・形式・本文/応答上限を検査する。
 一般的なPOSTや任意proxyを許可したとは扱わない。
 詳細は[Form/Actionの固定契約](next-form-action-boundary.md)を参照する。
 

@@ -1,10 +1,14 @@
 import { Buffer } from 'node:buffer';
 
-/** 固定ヘッダー・byte上限・応答型を保つ。採点用Actionだけは全量受信後に送れる。 */
+/**
+ * 固定ヘッダー・byte上限・応答型を保つ。
+ * beforeHeadersは送信直前に追加ヘッダー（またはそのPromise）を返すtrusted検査。
+ * 失敗時は応答を拒否し、待機中に切断された場合もheadersを発行しない。
+ */
 export function forwardPreviewResponse(
   upstream,
   res,
-  { method, headers, limit, stream, bufferStream = false, fail, complete },
+  { method, headers, limit, stream, bufferStream = false, fail, complete, beforeHeaders },
 ) {
   let failed = false;
   const reject = () => {
@@ -29,7 +33,19 @@ export function forwardPreviewResponse(
   const chunks = [];
   let bytes = 0;
   const streaming = stream && !bufferStream;
-  if (streaming) res.writeHead(status, { ...headers, 'content-type': type });
+  // 非逐次応答ではEOF後、逐次応答では最初のbyte前に現在の許可を取り直す。
+  const writeHeaders = async () => {
+    const additional = await beforeHeaders?.();
+    if (failed || res.destroyed) return false;
+    res.writeHead(status, {
+      ...headers,
+      ...additional,
+      'content-type': type,
+      ...(bufferStream ? { 'content-length': bytes } : {}),
+    });
+    return true;
+  };
+  if (streaming) upstream.pause();
   upstream.on('data', (chunk) => {
     bytes += chunk.length;
     if (failed || res.destroyed) return;
@@ -43,16 +59,20 @@ export function forwardPreviewResponse(
       res.once('drain', () => upstream.resume());
     }
   });
-  upstream.on('end', () => {
+  upstream.on('end', async () => {
     if (failed || res.destroyed) return;
-    if (!streaming)
-      res.writeHead(status, {
-        ...headers,
-        'content-type': type,
-        ...(bufferStream ? { 'content-length': bytes } : {}),
+    try {
+      if (!streaming && !(await writeHeaders())) return;
+      if (failed || res.destroyed) return;
+      res.end(method === 'HEAD' || streaming ? undefined : Buffer.concat(chunks), () => {
+        if (res.writableFinished && !failed) complete?.();
       });
-    res.end(method === 'HEAD' || streaming ? undefined : Buffer.concat(chunks), () => {
-      if (res.writableFinished && !failed) complete?.();
-    });
+    } catch {
+      reject();
+    }
   });
+  if (streaming)
+    void writeHeaders().then((written) => {
+      if (written) upstream.resume();
+    }, reject);
 }

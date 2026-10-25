@@ -68,9 +68,9 @@ export function nextDataRequest(req, target) {
   };
 }
 
-/** 資源経路は従来のまま、限定pageだけに追加の要求検査を適用する。 */
-export function nextPreviewRequest(req, target) {
-  if (isNextForm(target.workspaceId)) return nextFormRequest(req, target);
+/** 資源経路は従来のまま限定pageを検査する。Cookie例外のoptionsは公開Previewだけが明示指定する。 */
+export function nextPreviewRequest(req, target, options) {
+  if (isNextForm(target.workspaceId)) return nextFormRequest(req, target, options);
   if (nextWorkspace(target.workspaceId)?.ruleGoals) {
     // 制作のGET選択は文書要求だけ。RSC/Actionやprefetchへ境界を広げない。
     if (

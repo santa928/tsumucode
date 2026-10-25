@@ -28,6 +28,7 @@ import {
   verifyStoredPostDeployVerification,
 } from './verifyReleasePromotion';
 import { verifyPublishedTag } from './verifyReleaseTarget';
+import { isNewerRevision } from './releaseSchema';
 
 export type { ReleaseHistory } from './releaseSchema';
 
@@ -55,20 +56,6 @@ export interface ContinuityReport {
   readonly migratedCourses: number;
   readonly migratedDrafts: number;
   readonly resetNotices: number;
-}
-
-/** YYYY-MM-DD.N revisionを日付と通番へ分け、単調増加比較できる値へ変換する。 */
-function revisionParts(revision: string): readonly [string, number] {
-  const match = /^(\d{4}-\d{2}-\d{2})\.(\d+)$/u.exec(revision);
-  if (!match?.[1] || !match[2]) throw new Error(`不正なrevisionです: ${revision}`);
-  return [match[1], Number(match[2])];
-}
-
-/** leftがrightより新しいrevisionかを日付と通番で判定する。 */
-function isNewerRevision(left: string, right: string): boolean {
-  const [leftDate, leftSequence] = revisionParts(left);
-  const [rightDate, rightSequence] = revisionParts(right);
-  return leftDate > rightDate || (leftDate === rightDate && leftSequence > rightSequence);
 }
 
 /** migration stepが参照する移行前IDをaction差へ依存せず返す。 */
