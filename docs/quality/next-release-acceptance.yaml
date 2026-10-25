@@ -14,14 +14,14 @@ publicationApprovalReference: repository-owner santa928 / 2026-10-25 実consumer
 realHumanTrial: unverified
 lowEndPhysicalDevice: unverified
 cookieAuthenticationPersistence: theme-cookie-only-authentication-persistence-deferred-issue-14
-verifiedSourceCommit: d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863b
+verifiedSourceCommit: 775ed87495fff6de0f283acb0023b1dc4648efca
 canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
-candidateTreeSha256: 6d9e0dc6497dde6c1d004bc77a7591dac043f7b3d595c717d2681ac8287358ff
+candidateTreeSha256: 5da0276d3720933991c7d3f4fbb283875ad2c716c8ab7eaf72aecc4e8e8dfe96
 draftCanonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
 draftInput: &a1
   schemaVersion: 1
   courseId: next
-  sourceCommit: d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863b
+  sourceCommit: 775ed87495fff6de0f283acb0023b1dc4648efca
   scope: next-learning-input-v1
   publicationMetadata:
     coursePublicationStatus: published
@@ -36,9 +36,9 @@ draftInput: &a1
       normalizedSha256: 0ce42ea2978cead13d5367a85c9152ec9e183a5a702f2a01e14debbc7fc9f61d
       normalizedBytes: 365
     - path: .github/workflows/local-runtime.yml
-      rawSha256: 0fcd2b4355bf488a330a568dc76f7a75e5a692d66a3afbb424a711c57c35afde
-      normalizedSha256: 0fcd2b4355bf488a330a568dc76f7a75e5a692d66a3afbb424a711c57c35afde
-      normalizedBytes: 26180
+      rawSha256: 17ba3d72adcfe847e8e576128998593166645d78f63c93c8d0936877914b5b2c
+      normalizedSha256: 17ba3d72adcfe847e8e576128998593166645d78f63c93c8d0936877914b5b2c
+      normalizedBytes: 26185
     - path: .github/workflows/pages.yml
       rawSha256: 3ca5123ddcd88f6cab3e36d1459c45a53e5f73776da5c03ccb2d209ce72de563
       normalizedSha256: 3ca5123ddcd88f6cab3e36d1459c45a53e5f73776da5c03ccb2d209ce72de563
@@ -20015,7 +20015,7 @@ draftInput: &a1
       rawSha256: c290d9f112078703a70e3015cb0049a871a52e89ae9b969346f6c75fa0576f7b
       normalizedSha256: c290d9f112078703a70e3015cb0049a871a52e89ae9b969346f6c75fa0576f7b
       normalizedBytes: 5042
-    - path: scripts/local/next-form-cookie-lifecycle.test.mjs
+    - path: scripts/local/next-form-cookie-lifecycle.node-test.mjs
       rawSha256: dce157f9fde6d17032a8be98be4db038bd0fc87496fe0fe5b266835d68f2a850
       normalizedSha256: dce157f9fde6d17032a8be98be4db038bd0fc87496fe0fe5b266835d68f2a850
       normalizedBytes: 9661
@@ -23759,7 +23759,7 @@ draftInput: &a1
       rawSha256: 3b8e26cf90cbe78637c96523a6a8583b0ce32f260c441d0c071b2f0725e9f4f4
       normalizedSha256: 3b8e26cf90cbe78637c96523a6a8583b0ce32f260c441d0c071b2f0725e9f4f4
       normalizedBytes: 753
-  normalizedInputSha256: 97262bb544dd00e264d7f826f507434f650b4c17e614f2eb3ab6f394d862a576
+  normalizedInputSha256: 1be9b7489c622efe15d93dbb29208c3a4c8311c843d48ea242a65312ada98578
 finalInput: *a1
 applicationSourceSha256: 5c6fcd89fafe494ab7bc1917e1bea0aa68a87120a3750bb5e321bc6f46182cf8
 dependencyLockSha256: 191461e31bb2d50d9be7b6fd91e2a63e14e7eee00634461bb4bc32bac0b7f0c8
@@ -23848,15 +23848,15 @@ personas:
 nativePreflight:
   schemaVersion: 1
   courseId: next
-  sourceCommit: d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863b
-  workflowRunId: '40214610787'
+  sourceCommit: 775ed87495fff6de0f283acb0023b1dc4648efca
+  workflowRunId: '40228984076'
   workflowRunAttempt: 1
   scope: 9教材81Fixtureのcheckpoint。通常UIの連続監視ではありません。
   workspaces:
     - workspaceId: next-ch04-l02-e01
       fixtureCount: 9
       limitMiB: 512
-      peakBytes: 459907072
+      peakBytes: 458588160
       maximumPids: 40
       memoryEvents:
         max: 0
@@ -23866,7 +23866,7 @@ nativePreflight:
     - workspaceId: next-ch05-l01-e01
       fixtureCount: 11
       limitMiB: 896
-      peakBytes: 637521920
+      peakBytes: 639881216
       maximumPids: 38
       memoryEvents:
         max: 0
@@ -23876,7 +23876,7 @@ nativePreflight:
     - workspaceId: next-ch06-l01-e01
       fixtureCount: 12
       limitMiB: 896
-      peakBytes: 640897024
+      peakBytes: 650854400
       maximumPids: 38
       memoryEvents:
         max: 0
@@ -23886,7 +23886,7 @@ nativePreflight:
     - workspaceId: next-ch01-l01-e01
       fixtureCount: 6
       limitMiB: 512
-      peakBytes: 483041280
+      peakBytes: 479125504
       maximumPids: 40
       memoryEvents:
         max: 0
@@ -23896,8 +23896,8 @@ nativePreflight:
     - workspaceId: next-ch02-l01-e01
       fixtureCount: 8
       limitMiB: 576
-      peakBytes: 547246080
-      maximumPids: 43
+      peakBytes: 559874048
+      maximumPids: 38
       memoryEvents:
         max: 0
         oom: 0
@@ -23906,8 +23906,8 @@ nativePreflight:
     - workspaceId: next-ch02-l02-e01
       fixtureCount: 9
       limitMiB: 512
-      peakBytes: 490385408
-      maximumPids: 47
+      peakBytes: 498417664
+      maximumPids: 40
       memoryEvents:
         max: 0
         oom: 0
@@ -23916,8 +23916,8 @@ nativePreflight:
     - workspaceId: next-ch03-l01-e01
       fixtureCount: 8
       limitMiB: 576
-      peakBytes: 573845504
-      maximumPids: 39
+      peakBytes: 578658304
+      maximumPids: 38
       memoryEvents:
         max: 0
         oom: 0
@@ -23926,8 +23926,8 @@ nativePreflight:
     - workspaceId: next-ch03-l02-e01
       fixtureCount: 9
       limitMiB: 576
-      peakBytes: 571863040
-      maximumPids: 40
+      peakBytes: 576786432
+      maximumPids: 39
       memoryEvents:
         max: 0
         oom: 0
@@ -23936,7 +23936,7 @@ nativePreflight:
     - workspaceId: next-ch04-l01-e01
       fixtureCount: 9
       limitMiB: 512
-      peakBytes: 488931328
+      peakBytes: 491331584
       maximumPids: 40
       memoryEvents:
         max: 0
@@ -23944,10 +23944,10 @@ nativePreflight:
         oomKill: 0
       zombies: 0
 nativeEvidence:
-  path: private/issue250-release-evidence/p17/cycle-fix/native-preflight.json
-  sha256: e198c4d2ddc30567458348954e39190acf4441486d0d56831bd987724bb3e1da
+  path: private/issue250-release-evidence/p19/node-runner/native-preflight.json
+  sha256: 3156eab5671b2cffc17fec1bf4e08a126f46b10a2495b1004c757cb8f49436be
 pagesStaticStudy:
-  sourceCommit: d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863b
+  sourceCommit: 775ed87495fff6de0f283acb0023b1dc4648efca
   canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
   viewports:
     - 1280
@@ -23968,20 +23968,20 @@ pagesStaticStudy:
   progressRoundTrip: passed
   localHandoff: passed
   report:
-    path: private/issue250-release-evidence/p17/cycle-fix/pages-static-study-report.json
-    sha256: 9cd825f41c039e64ce97339b30e394d52963ac50e2126e39fb11c3aa8ea9abac
+    path: private/issue250-release-evidence/p19/node-runner/pages-static-study-report.json
+    sha256: 8a2fad0de36ea9ea90a93fd90e2801bdfe12af321b64ca990c655bc2a8d4e46b
 author: codex-primary-issue250
 privateOriginalsChecked: true
 independenceReview:
   reviewer: /root/consumer_final_security
   status: approved
-  sourceCommit: d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863b
+  sourceCommit: 775ed87495fff6de0f283acb0023b1dc4648efca
   canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
-  productTreeSha256: 6d9e0dc6497dde6c1d004bc77a7591dac043f7b3d595c717d2681ac8287358ff
-  evidenceSha256: 79d35443802b098ced7499f39248cffabd909d771a9bfb137cc93d8b051c1df4
+  productTreeSha256: 5da0276d3720933991c7d3f4fbb283875ad2c716c8ab7eaf72aecc4e8e8dfe96
+  evidenceSha256: f21b5abbb2227fe2b3430de3cdff5815c42687d580e6d7e485eadd0f2bf02cc4
   referenceSha256s:
     - 117e15332ae08b249609eadf5abeae8758994f1bd7aaefc8d91ddc20544e733e
+    - 3156eab5671b2cffc17fec1bf4e08a126f46b10a2495b1004c757cb8f49436be
     - 5a5a66007c3ebb0810d4338a2f1f224aa96761b262ce9c2b2781203338f87e4b
-    - 9cd825f41c039e64ce97339b30e394d52963ac50e2126e39fb11c3aa8ea9abac
+    - 8a2fad0de36ea9ea90a93fd90e2801bdfe12af321b64ca990c655bc2a8d4e46b
     - d0dd4d9c57d24769f17d2a69883d105e374442f2bf2b1131cec4f7d408444e6e
-    - e198c4d2ddc30567458348954e39190acf4441486d0d56831bd987724bb3e1da
