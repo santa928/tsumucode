@@ -158,3 +158,8 @@ Form採点は実POSTの全量完了・可視state・保存履歴で準備と結�
 この診断は正式受入ではない。`cookie-reproduction-*`だけを保存し、Native資源証拠を作らない。
 通常のpush/PRと手動`target=full`は従来の全体検証を続ける。公開検証器はmainへのpushの成功だけを
 対象とするため、手動診断の成功を公開条件へ代用しない。
+
+`target=native`はNext・フォーム・Cookieを使わず、同じ固定Browserで通常fetchの読了と
+通信終端を別々に記録する。各8回を上限に、no-storeのreader/arrayBufferとno-cacheのreaderを
+比較する。接続はコンテナ内のloopbackだけで、故障注入・GC・再試行は行わない。
+`native-fetch-observations-*`は原因切り分け専用で、正式受入や公開の成功証拠には使わない。

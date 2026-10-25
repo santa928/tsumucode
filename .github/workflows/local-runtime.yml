@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       target:
-        description: 全体検証か、正式受入に使わないCookie限定再現を選ぶ
+        description: 全体検証か、正式受入に使わない限定診断を選ぶ
         type: choice
         required: true
         default: full
-        options: [full, cookie]
+        options: [full, cookie, native]
   push:
     branches: [main]
     paths:
@@ -433,6 +433,37 @@ jobs:
       - name: Stop only this learning stack and preserve Source volume
         if: always()
         run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml down
+
+  native_reproduction:
+    if: github.event_name == 'workflow_dispatch' && inputs.target == 'native'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+      - name: Build fixed Browser for native fetch isolation
+        run: docker build --file Dockerfile.learning --target browser-checks --tag tsumucode-native-fetch-ci .
+      - name: Compare native reader and buffered fetch without Next or Cookie
+        timeout-minutes: 2
+        run: |
+          set -euo pipefail
+          mkdir -p .release-native-fetch
+          docker run --rm --init --network none --read-only --tmpfs /tmp:rw,size=128m \
+            --cpus 2 --memory 1g --memory-swap 1g --pids-limit 256 \
+            --cap-drop ALL --security-opt no-new-privileges:true \
+            --mount "type=bind,source=$PWD/.release-native-fetch,target=/evidence" \
+            tsumucode-native-fetch-ci node scripts/local/native-fetch-observations.mjs \
+            2>&1 | tee .release-native-fetch/browser.log
+      - name: Preserve native fetch observations separately from release proof
+        if: always() && hashFiles('.release-native-fetch/browser.log') != ''
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: native-fetch-observations-${{ github.sha }}-${{ github.run_attempt }}
+          path: .release-native-fetch/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
 
   cookie_reproduction:
     if: github.event_name == 'workflow_dispatch' && inputs.target == 'cookie'
