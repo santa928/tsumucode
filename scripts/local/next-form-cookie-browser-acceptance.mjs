@@ -11,6 +11,7 @@ import { URL } from 'node:url';
 import { chromium, expect } from '@playwright/test';
 import { parse } from 'yaml';
 import { bridge } from './browser-test-bridge.mjs';
+import { installChromiumObserver } from './next-cookie-transport-observations.mjs';
 import { previewOrigin, previewBase } from './preview-contract.mjs';
 import { FORM_WORKSPACE, ACTION_WORKSPACE } from './next-form-preview.mjs';
 import { watchDocumentVersion } from './next-project-observations.mjs';
@@ -24,6 +25,7 @@ import {
 const bridges = [];
 let browser;
 let context;
+let transportObserver;
 let manager;
 const navigationCounts = new WeakMap();
 const documentVersions = new WeakMap();
@@ -156,6 +158,7 @@ async function submit(surface, input, expected) {
   let reply;
   let selectedRequest;
   const candidates = [];
+  transportObserver.begin(frame, currentSequence, routes, requestInput);
   /** 送信前から候補だけを追跡する。本文を出さず、入力の包含も診断にだけ使う。 */
   const onRequest = (request) => {
     if (request.method() !== 'POST' || request.frame() !== frame || !routes.includes(request.url()))
@@ -258,11 +261,59 @@ async function submit(surface, input, expected) {
     assert.equal(snapshot.documentMatches, true);
     assert.equal(snapshot.documentVersionAfter, snapshot.documentVersionBefore);
     assert.equal(frame.url(), actorUrl.href);
-    console.log(JSON.stringify({ ...snapshot, requests: requestSnapshot(), outcome: 'saved' }));
+    console.log(
+      JSON.stringify({
+        ...snapshot,
+        requests: requestSnapshot(),
+        outcome: 'saved',
+      }),
+    );
     return text;
   } catch (error) {
     // 任意の診断より先に失敗を残し、診断自体も有限にする。
     progress('submit-failed', 'failed');
+    // 失敗が既に確定した後だけ原子的に読む。正常操作間に待機を足さない。
+    const atomicDom = await withCookieDeadline(
+      () =>
+        frame.evaluate(
+          ({ input, message, expectedMarker, url }) => {
+            const field = globalThis.document.querySelector('#note');
+            const result = globalThis.document.querySelector('#note-result');
+            const button = field?.form?.querySelector('button[type="submit"]');
+            return {
+              evaluatedAtEpochMs: Date.now(),
+              fieldMatches: field?.value === input,
+              resultSaved: result?.getAttribute('data-state') === 'saved',
+              expectedMessageMatches: message === null ? null : result?.textContent === message,
+              inputDisabled: field ? field.disabled : null,
+              buttonDisabled: button ? button.disabled : null,
+              sendingText: button
+                ? /保存中|送信中|保存しています/u.test(button.textContent ?? '')
+                : null,
+              markerMatches: globalThis.document.__tsumucodeAuthorCookieDocument === expectedMarker,
+              urlMatches: globalThis.location.href === url,
+            };
+          },
+          {
+            input: requestInput,
+            message: expected === undefined ? null : `theme:${expected}`,
+            expectedMarker: marker,
+            url: actorUrl.href,
+          },
+        ),
+      1000,
+      'diagnostic-atomic-dom',
+    ).catch(() => ({ unavailable: true }));
+    console.log(
+      JSON.stringify({
+        event: 'main-cookie-transport',
+        boundary: 'dom',
+        stage: 'failed-operation',
+        sequence: currentSequence,
+        epochMs: Date.now(),
+        ...atomicDom,
+      }),
+    );
     // Cookie・本文・URL・Sourceを出さず、文書置換と入力/結果の不一致だけ残す。
     snapshot.documentMatches = await withCookieDeadline(
       () => documentMarker(frame),
@@ -300,6 +351,7 @@ async function submit(surface, input, expected) {
     );
     throw error;
   } finally {
+    transportObserver.end(frame, currentSequence);
     context.off('request', onRequest);
     context.off('requestfinished', onFinished);
     context.off('requestfailed', onFailed);
@@ -384,7 +436,11 @@ try {
     [4173, 'web'],
     [4175, 'preview'],
   ]) {
-    const server = await step('bridge-create', () => bridge(port, hostname), 5000);
+    const server = await step(
+      'bridge-create',
+      () => bridge(port, hostname, { observeCookie: true }),
+      5000,
+    );
     const sockets = new Set();
     server.on('connection', (socket) => {
       sockets.add(socket);
@@ -396,6 +452,26 @@ try {
     chromium.launch({ headless: true, args: ['--no-sandbox'], timeout: 30000 }),
   );
   context = await step('browser-context', () => browser.newContext(), 5000);
+  transportObserver = await installChromiumObserver(context);
+  // Cookie工程自身の実行版と上限を記録する。他工程の版を流用しない。
+  console.log(
+    JSON.stringify({
+      event: 'main-cookie-transport',
+      boundary: 'scope',
+      browserVersion: browser.version(),
+      playwrightVersion: JSON.parse(
+        await readFile('node_modules/playwright-core/package.json', 'utf8'),
+      ).version,
+      nodeVersion: process.version,
+      architecture: process.arch,
+      memoryMax: (await readFile('/sys/fs/cgroup/memory.max', 'utf8')).trim(),
+      grade: 'included-canonical',
+      faultInjection: false,
+      forcedGc: false,
+      fetchReplacement: false,
+      delaysAdded: false,
+    }),
+  );
   context.setDefaultTimeout(15000);
   context.setDefaultNavigationTimeout(15000);
   context.on('page', (page) => {

@@ -1,10 +1,56 @@
 import { Buffer } from 'node:buffer';
-import { test } from 'vitest';
+import { test, vi } from 'vitest';
+import console from 'node:console';
 import assert from 'node:assert/strict';
 import { createServer, request } from 'node:http';
 import { once } from 'node:events';
 import { forwardPreviewResponse } from './preview-http-response.mjs';
 import { lessonThemeResponseHeaders } from './next-form-cookie.mjs';
+
+test('明示したAction診断は実HTTPの長さと終端だけを記録し、本文とCookieを残さない', async () => {
+  vi.stubEnv('TSUMUCODE_COOKIE_DIAGNOSTICS', '1');
+  const records = [];
+  const logger = vi
+    .spyOn(console, 'log')
+    .mockImplementation((line) => records.push(JSON.parse(line)));
+  try {
+    await fixture(
+      true,
+      async (port) => {
+        const response = await globalThis.fetch(`http://127.0.0.1:${port}`, { method: 'POST' });
+        assert.equal(response.status, 200);
+        assert.equal(response.headers.get('content-length'), '12');
+        assert.equal(await response.text(), 'private-body');
+      },
+      (req, res) =>
+        res
+          .writeHead(200, {
+            'content-type': 'text/x-component',
+            'set-cookie': 'private-cookie=secret',
+          })
+          .end('private-body'),
+      32,
+      undefined,
+      true,
+    );
+    assert.ok(
+      records.some(
+        (record) =>
+          record.stage === 'upstream-end' && record.upstreamComplete && record.bytes === 12,
+      ),
+    );
+    assert.ok(records.some((record) => record.stage === 'headers' && record.contentLength === 12));
+    assert.ok(
+      records.some((record) => record.stage === 'downstream-finish' && record.writableFinished),
+    );
+    const serialized = JSON.stringify(records);
+    for (const forbidden of ['private-body', 'private-cookie', 'secret', '127.0.0.1'])
+      assert.equal(serialized.includes(forbidden), false);
+  } finally {
+    logger.mockRestore();
+    vi.unstubAllEnvs();
+  }
+});
 
 /** 実HTTPの2listenerで、転送の到着順・上限・固定ヘッダーを検査する。 */
 async function fixture(

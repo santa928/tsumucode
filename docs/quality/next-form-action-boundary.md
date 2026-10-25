@@ -122,6 +122,14 @@ Preview履歴保持・修正回復・版失効・a11y・narrow・下書き・端
 production buildは`next-build-acceptance.mjs next-ch04`で新2教材だけを選んで確認できる。
 CIでは既存教材を含む標準の全ケースを通す。
 
+Cookie工程では選択Requestの終端とCDPの失敗分類・受信量、bridgeの受信完了・送信完了・
+socket所有連番を診断する。Preview側の同じ診断は`TSUMUCODE_COOKIE_DIAGNOSTICS=1`で明示し、
+通常Composeでは無効にする。記録は固定分類・連番・長さ・時刻と実行版に限り、本文・URL・
+Cookie・全header・生のCDP識別子を保存しない。CIはCookie工程の失敗時にも限定artifactを保存する。
+CDPのframeやloaderを照合できない場合はunknownとし、欠落イベントを正常完了の証拠にしない。
+CDPのencodedDataLengthとHTTP本文長も混同しない。採点・期限・正常HTTP終端・DOM照合の
+合格条件は維持し、診断の成功やDOM表示だけで実Requestの失敗を合格へ変換しない。
+
 #136の持ち出しProjectと#137の全Course公開は別ゲート。今回のdev実行を正式公開や
 外部DBへの永続保存の証拠にはしない。
 
