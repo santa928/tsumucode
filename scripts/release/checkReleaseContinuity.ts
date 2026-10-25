@@ -27,7 +27,7 @@ import {
   verifyReleasePromotion,
   verifyStoredPostDeployVerification,
 } from './verifyReleasePromotion';
-import { verifyPublishedTag } from './verifyReleaseTarget';
+import { verifyPublishedTag } from './verifyPublishedTag';
 import { isNewerRevision } from './releaseSchema';
 
 export type { ReleaseHistory } from './releaseSchema';

@@ -17,6 +17,7 @@ import {
 } from './nextInputHashes';
 import type { NextReleaseApproval, NextPublishedRelease } from './nextReleaseSchema';
 import { NextReleaseHistorySchema } from './nextReleaseSchema';
+import { verifyPublishedTag } from './verifyPublishedTag';
 
 const execFileAsync = promisify(execFile);
 
@@ -332,7 +333,6 @@ export async function verifyNextQualityEvidence(
     );
     validateNextPublishedUpdate(record, runtime.revision, previous, archived);
     if (!previous) throw new Error('Next更新公開の直前releaseがありません');
-    const { verifyPublishedTag } = await import('./verifyReleaseTarget');
     await verifyPublishedTag(root, previous);
     const { stdout } = await execFileAsync(
       'git',

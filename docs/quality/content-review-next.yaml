@@ -1,6 +1,6 @@
 schemaVersion: 1
 releaseStatus: approved
-verifiedSourceCommit: d55127b6763ab74509827c2cbc805987de991a0e
+verifiedSourceCommit: d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863b
 canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
 lessons:
   - lessonId: next-ch01-l01
@@ -13,17 +13,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: "現在候補d55127b6763ab74509827c2cbc805987de991a0eへ、元S
-      efa0e78での教材判定を全9可視入力・配信583file不変性で限定適用。元読解Source/actor、元操作と未確認事項は原本を保持し、今回の新操作とはしない。Actionは本人\
-      承認した実consumer EOF方式を毎操作検証し、旧障害の原因解消は未断定。今回Native原本はRuntime40199608776。以下は元Sの履歴記録:
-      公開更新候補efa0e78b04be65ab683118d4024d6aeff78b342bの全9教材を独立3名が必須指摘0で再承認。原読解Sourceと学習入力の不変照合を区別し、原観\
-      測を現在Sourceの新操作へ付け替えない。同候補Native CI 40138471957の必須17工程・9教材81Fixtureと資源原本を照合。Pages CI
-      40138471956の成果物は元B91の全583配信ファイルとbyte一致し、1280/390pxの全9教材・JSON引継ぎの元観測を限定適用する。Cookieの元5f313f89での\
-      Form/Action
-      Source反映・新run分離と、元9fa81b63でのAction通常入口・保存/変更/削除・keyboard/pending/帰還を区別して保持する。Production待機の厳格N\
-      ode回帰8件は制御APIタイミングの観測であり、実Next合格の代用ではない。旧CI失敗の同一原因は未確定。theme-cookieのみを許可し、認証・永続Cookie保存・専用Coo\
-      kie採点は範囲外。原本hash・元Source・条件はnext-release-acceptance.yamlの5原本と独立receiptに結合。実人受講・物理低端末は未確認。配信成功\
-      は公開後に別記する。"
+    notes: 公開回復候補d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863bへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。差分は公開タグ検証のCLI依存分離で、既存3担当が限定コード差分を承認。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch02-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -34,17 +24,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: "現在候補d55127b6763ab74509827c2cbc805987de991a0eへ、元S
-      efa0e78での教材判定を全9可視入力・配信583file不変性で限定適用。元読解Source/actor、元操作と未確認事項は原本を保持し、今回の新操作とはしない。Actionは本人\
-      承認した実consumer EOF方式を毎操作検証し、旧障害の原因解消は未断定。今回Native原本はRuntime40199608776。以下は元Sの履歴記録:
-      公開更新候補efa0e78b04be65ab683118d4024d6aeff78b342bの全9教材を独立3名が必須指摘0で再承認。原読解Sourceと学習入力の不変照合を区別し、原観\
-      測を現在Sourceの新操作へ付け替えない。同候補Native CI 40138471957の必須17工程・9教材81Fixtureと資源原本を照合。Pages CI
-      40138471956の成果物は元B91の全583配信ファイルとbyte一致し、1280/390pxの全9教材・JSON引継ぎの元観測を限定適用する。Cookieの元5f313f89での\
-      Form/Action
-      Source反映・新run分離と、元9fa81b63でのAction通常入口・保存/変更/削除・keyboard/pending/帰還を区別して保持する。Production待機の厳格N\
-      ode回帰8件は制御APIタイミングの観測であり、実Next合格の代用ではない。旧CI失敗の同一原因は未確定。theme-cookieのみを許可し、認証・永続Cookie保存・専用Coo\
-      kie採点は範囲外。原本hash・元Source・条件はnext-release-acceptance.yamlの5原本と独立receiptに結合。実人受講・物理低端末は未確認。配信成功\
-      は公開後に別記する。"
+    notes: 公開回復候補d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863bへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。差分は公開タグ検証のCLI依存分離で、既存3担当が限定コード差分を承認。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch02-l02
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -55,17 +35,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: "現在候補d55127b6763ab74509827c2cbc805987de991a0eへ、元S
-      efa0e78での教材判定を全9可視入力・配信583file不変性で限定適用。元読解Source/actor、元操作と未確認事項は原本を保持し、今回の新操作とはしない。Actionは本人\
-      承認した実consumer EOF方式を毎操作検証し、旧障害の原因解消は未断定。今回Native原本はRuntime40199608776。以下は元Sの履歴記録:
-      公開更新候補efa0e78b04be65ab683118d4024d6aeff78b342bの全9教材を独立3名が必須指摘0で再承認。原読解Sourceと学習入力の不変照合を区別し、原観\
-      測を現在Sourceの新操作へ付け替えない。同候補Native CI 40138471957の必須17工程・9教材81Fixtureと資源原本を照合。Pages CI
-      40138471956の成果物は元B91の全583配信ファイルとbyte一致し、1280/390pxの全9教材・JSON引継ぎの元観測を限定適用する。Cookieの元5f313f89での\
-      Form/Action
-      Source反映・新run分離と、元9fa81b63でのAction通常入口・保存/変更/削除・keyboard/pending/帰還を区別して保持する。Production待機の厳格N\
-      ode回帰8件は制御APIタイミングの観測であり、実Next合格の代用ではない。旧CI失敗の同一原因は未確定。theme-cookieのみを許可し、認証・永続Cookie保存・専用Coo\
-      kie採点は範囲外。原本hash・元Source・条件はnext-release-acceptance.yamlの5原本と独立receiptに結合。実人受講・物理低端末は未確認。配信成功\
-      は公開後に別記する。"
+    notes: 公開回復候補d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863bへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。差分は公開タグ検証のCLI依存分離で、既存3担当が限定コード差分を承認。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch03-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -76,17 +46,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: "現在候補d55127b6763ab74509827c2cbc805987de991a0eへ、元S
-      efa0e78での教材判定を全9可視入力・配信583file不変性で限定適用。元読解Source/actor、元操作と未確認事項は原本を保持し、今回の新操作とはしない。Actionは本人\
-      承認した実consumer EOF方式を毎操作検証し、旧障害の原因解消は未断定。今回Native原本はRuntime40199608776。以下は元Sの履歴記録:
-      公開更新候補efa0e78b04be65ab683118d4024d6aeff78b342bの全9教材を独立3名が必須指摘0で再承認。原読解Sourceと学習入力の不変照合を区別し、原観\
-      測を現在Sourceの新操作へ付け替えない。同候補Native CI 40138471957の必須17工程・9教材81Fixtureと資源原本を照合。Pages CI
-      40138471956の成果物は元B91の全583配信ファイルとbyte一致し、1280/390pxの全9教材・JSON引継ぎの元観測を限定適用する。Cookieの元5f313f89での\
-      Form/Action
-      Source反映・新run分離と、元9fa81b63でのAction通常入口・保存/変更/削除・keyboard/pending/帰還を区別して保持する。Production待機の厳格N\
-      ode回帰8件は制御APIタイミングの観測であり、実Next合格の代用ではない。旧CI失敗の同一原因は未確定。theme-cookieのみを許可し、認証・永続Cookie保存・専用Coo\
-      kie採点は範囲外。原本hash・元Source・条件はnext-release-acceptance.yamlの5原本と独立receiptに結合。実人受講・物理低端末は未確認。配信成功\
-      は公開後に別記する。"
+    notes: 公開回復候補d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863bへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。差分は公開タグ検証のCLI依存分離で、既存3担当が限定コード差分を承認。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch03-l02
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -97,17 +57,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: "現在候補d55127b6763ab74509827c2cbc805987de991a0eへ、元S
-      efa0e78での教材判定を全9可視入力・配信583file不変性で限定適用。元読解Source/actor、元操作と未確認事項は原本を保持し、今回の新操作とはしない。Actionは本人\
-      承認した実consumer EOF方式を毎操作検証し、旧障害の原因解消は未断定。今回Native原本はRuntime40199608776。以下は元Sの履歴記録:
-      公開更新候補efa0e78b04be65ab683118d4024d6aeff78b342bの全9教材を独立3名が必須指摘0で再承認。原読解Sourceと学習入力の不変照合を区別し、原観\
-      測を現在Sourceの新操作へ付け替えない。同候補Native CI 40138471957の必須17工程・9教材81Fixtureと資源原本を照合。Pages CI
-      40138471956の成果物は元B91の全583配信ファイルとbyte一致し、1280/390pxの全9教材・JSON引継ぎの元観測を限定適用する。Cookieの元5f313f89での\
-      Form/Action
-      Source反映・新run分離と、元9fa81b63でのAction通常入口・保存/変更/削除・keyboard/pending/帰還を区別して保持する。Production待機の厳格N\
-      ode回帰8件は制御APIタイミングの観測であり、実Next合格の代用ではない。旧CI失敗の同一原因は未確定。theme-cookieのみを許可し、認証・永続Cookie保存・専用Coo\
-      kie採点は範囲外。原本hash・元Source・条件はnext-release-acceptance.yamlの5原本と独立receiptに結合。実人受講・物理低端末は未確認。配信成功\
-      は公開後に別記する。"
+    notes: 公開回復候補d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863bへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。差分は公開タグ検証のCLI依存分離で、既存3担当が限定コード差分を承認。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch04-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -118,17 +68,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: "現在候補d55127b6763ab74509827c2cbc805987de991a0eへ、元S
-      efa0e78での教材判定を全9可視入力・配信583file不変性で限定適用。元読解Source/actor、元操作と未確認事項は原本を保持し、今回の新操作とはしない。Actionは本人\
-      承認した実consumer EOF方式を毎操作検証し、旧障害の原因解消は未断定。今回Native原本はRuntime40199608776。以下は元Sの履歴記録:
-      公開更新候補efa0e78b04be65ab683118d4024d6aeff78b342bの全9教材を独立3名が必須指摘0で再承認。原読解Sourceと学習入力の不変照合を区別し、原観\
-      測を現在Sourceの新操作へ付け替えない。同候補Native CI 40138471957の必須17工程・9教材81Fixtureと資源原本を照合。Pages CI
-      40138471956の成果物は元B91の全583配信ファイルとbyte一致し、1280/390pxの全9教材・JSON引継ぎの元観測を限定適用する。Cookieの元5f313f89での\
-      Form/Action
-      Source反映・新run分離と、元9fa81b63でのAction通常入口・保存/変更/削除・keyboard/pending/帰還を区別して保持する。Production待機の厳格N\
-      ode回帰8件は制御APIタイミングの観測であり、実Next合格の代用ではない。旧CI失敗の同一原因は未確定。theme-cookieのみを許可し、認証・永続Cookie保存・専用Coo\
-      kie採点は範囲外。原本hash・元Source・条件はnext-release-acceptance.yamlの5原本と独立receiptに結合。実人受講・物理低端末は未確認。配信成功\
-      は公開後に別記する。"
+    notes: 公開回復候補d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863bへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。差分は公開タグ検証のCLI依存分離で、既存3担当が限定コード差分を承認。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch04-l02
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -139,17 +79,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: "現在候補d55127b6763ab74509827c2cbc805987de991a0eへ、元S
-      efa0e78での教材判定を全9可視入力・配信583file不変性で限定適用。元読解Source/actor、元操作と未確認事項は原本を保持し、今回の新操作とはしない。Actionは本人\
-      承認した実consumer EOF方式を毎操作検証し、旧障害の原因解消は未断定。今回Native原本はRuntime40199608776。以下は元Sの履歴記録:
-      公開更新候補efa0e78b04be65ab683118d4024d6aeff78b342bの全9教材を独立3名が必須指摘0で再承認。原読解Sourceと学習入力の不変照合を区別し、原観\
-      測を現在Sourceの新操作へ付け替えない。同候補Native CI 40138471957の必須17工程・9教材81Fixtureと資源原本を照合。Pages CI
-      40138471956の成果物は元B91の全583配信ファイルとbyte一致し、1280/390pxの全9教材・JSON引継ぎの元観測を限定適用する。Cookieの元5f313f89での\
-      Form/Action
-      Source反映・新run分離と、元9fa81b63でのAction通常入口・保存/変更/削除・keyboard/pending/帰還を区別して保持する。Production待機の厳格N\
-      ode回帰8件は制御APIタイミングの観測であり、実Next合格の代用ではない。旧CI失敗の同一原因は未確定。theme-cookieのみを許可し、認証・永続Cookie保存・専用Coo\
-      kie採点は範囲外。原本hash・元Source・条件はnext-release-acceptance.yamlの5原本と独立receiptに結合。実人受講・物理低端末は未確認。配信成功\
-      は公開後に別記する。"
+    notes: 公開回復候補d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863bへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。差分は公開タグ検証のCLI依存分離で、既存3担当が限定コード差分を承認。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch05-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -160,17 +90,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: "現在候補d55127b6763ab74509827c2cbc805987de991a0eへ、元S
-      efa0e78での教材判定を全9可視入力・配信583file不変性で限定適用。元読解Source/actor、元操作と未確認事項は原本を保持し、今回の新操作とはしない。Actionは本人\
-      承認した実consumer EOF方式を毎操作検証し、旧障害の原因解消は未断定。今回Native原本はRuntime40199608776。以下は元Sの履歴記録:
-      公開更新候補efa0e78b04be65ab683118d4024d6aeff78b342bの全9教材を独立3名が必須指摘0で再承認。原読解Sourceと学習入力の不変照合を区別し、原観\
-      測を現在Sourceの新操作へ付け替えない。同候補Native CI 40138471957の必須17工程・9教材81Fixtureと資源原本を照合。Pages CI
-      40138471956の成果物は元B91の全583配信ファイルとbyte一致し、1280/390pxの全9教材・JSON引継ぎの元観測を限定適用する。Cookieの元5f313f89での\
-      Form/Action
-      Source反映・新run分離と、元9fa81b63でのAction通常入口・保存/変更/削除・keyboard/pending/帰還を区別して保持する。Production待機の厳格N\
-      ode回帰8件は制御APIタイミングの観測であり、実Next合格の代用ではない。旧CI失敗の同一原因は未確定。theme-cookieのみを許可し、認証・永続Cookie保存・専用Coo\
-      kie採点は範囲外。原本hash・元Source・条件はnext-release-acceptance.yamlの5原本と独立receiptに結合。実人受講・物理低端末は未確認。配信成功\
-      は公開後に別記する。"
+    notes: 公開回復候補d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863bへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。差分は公開タグ検証のCLI依存分離で、既存3担当が限定コード差分を承認。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch06-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -181,14 +101,4 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: "現在候補d55127b6763ab74509827c2cbc805987de991a0eへ、元S
-      efa0e78での教材判定を全9可視入力・配信583file不変性で限定適用。元読解Source/actor、元操作と未確認事項は原本を保持し、今回の新操作とはしない。Actionは本人\
-      承認した実consumer EOF方式を毎操作検証し、旧障害の原因解消は未断定。今回Native原本はRuntime40199608776。以下は元Sの履歴記録:
-      公開更新候補efa0e78b04be65ab683118d4024d6aeff78b342bの全9教材を独立3名が必須指摘0で再承認。原読解Sourceと学習入力の不変照合を区別し、原観\
-      測を現在Sourceの新操作へ付け替えない。同候補Native CI 40138471957の必須17工程・9教材81Fixtureと資源原本を照合。Pages CI
-      40138471956の成果物は元B91の全583配信ファイルとbyte一致し、1280/390pxの全9教材・JSON引継ぎの元観測を限定適用する。Cookieの元5f313f89での\
-      Form/Action
-      Source反映・新run分離と、元9fa81b63でのAction通常入口・保存/変更/削除・keyboard/pending/帰還を区別して保持する。Production待機の厳格N\
-      ode回帰8件は制御APIタイミングの観測であり、実Next合格の代用ではない。旧CI失敗の同一原因は未確定。theme-cookieのみを許可し、認証・永続Cookie保存・専用Coo\
-      kie採点は範囲外。原本hash・元Source・条件はnext-release-acceptance.yamlの5原本と独立receiptに結合。実人受講・物理低端末は未確認。配信成功\
-      は公開後に別記する。"
+    notes: 公開回復候補d10ca8a80b2b50fe53397ebffdf8e8f4ee7d863bへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。差分は公開タグ検証のCLI依存分離で、既存3担当が限定コード差分を承認。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。

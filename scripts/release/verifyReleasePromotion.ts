@@ -26,7 +26,7 @@ import { ReactPostDeployVerificationSchema } from './reactReleaseSchema';
 import { PythonPostDeployVerificationSchema } from './pythonReleaseSchema';
 import { NextPostDeployVerificationSchema } from './nextReleaseSchema';
 import { TypescriptPostDeployVerificationSchema } from './typescriptReleaseSchema';
-import { verifyPublishedTag } from './verifyReleaseTarget';
+import { verifyPublishedTag } from './verifyPublishedTag';
 import { parseReleaseReport, type ReleaseReportInput } from './writeReleaseReport';
 
 const execFileAsync = promisify(execFile);
