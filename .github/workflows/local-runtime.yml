@@ -142,6 +142,7 @@ jobs:
       TSUMUCODE_NEXT_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       TSUMUCODE_LOCAL_OWNER: tsumucode-learning-ci
       TSUMUCODE_LOCAL_SOCKET: /var/run/docker.sock
+      TSUMUCODE_COOKIE_DIAGNOSTICS: '1'
       COMPOSE_PARALLEL_LIMIT: 1
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -318,11 +319,41 @@ jobs:
             docker exec -i "$preview" node --input-type=module -e "$(cat scripts/local/next-form-http-acceptance.mjs)"
       - name: Verify bounded lesson Cookie with real Next and Browser
         timeout-minutes: 5
-        run: >-
-          docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256
-          --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-next-browser-checks"
-          sh -c 'node --test scripts/local/next-form-cookie-lifecycle.test.mjs &&
-          node scripts/local/next-form-cookie-browser-acceptance.mjs'
+        run: |
+          set -euo pipefail
+          mkdir -p .release-cookie-transport
+          docker run --rm --init --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256 \
+            --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" \
+            sh -c 'node --test scripts/local/next-form-cookie-lifecycle.test.mjs && node scripts/local/next-form-cookie-browser-acceptance.mjs' \
+            2>&1 | tee .release-cookie-transport/browser.log
+      - name: Collect bounded Cookie transport diagnostics
+        if: always()
+        run: |
+          set -euo pipefail
+          if [ -f .release-cookie-transport/browser.log ]; then
+            preview=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q preview)
+            if [ -n "$preview" ]; then
+              docker logs "$preview" 2>&1 | python3 -c '
+          import json, sys
+          for line in sys.stdin:
+              try:
+                  value = json.loads(line)
+              except json.JSONDecodeError:
+                  continue
+              if isinstance(value, dict) and value.get("event") == "main-cookie-transport":
+                  print(json.dumps(value, separators=(",", ":")))
+          ' > .release-cookie-transport/preview.jsonl
+            fi
+          fi
+      - name: Preserve bounded Cookie transport diagnostics
+        if: always() && hashFiles('.release-cookie-transport/browser.log') != ''
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: cookie-transport-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          path: .release-cookie-transport/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
       - name: Verify Weather RSC cancellation on Source apply and stop
         run: |
           set -euo pipefail

@@ -1,3 +1,22 @@
+const networkFailureClasses = new Set([
+  'net::ERR_ABORTED',
+  'net::ERR_CONTENT_LENGTH_MISMATCH',
+  'net::ERR_INCOMPLETE_CHUNKED_ENCODING',
+  'net::ERR_CONTENT_DECODING_FAILED',
+  'net::ERR_CONNECTION_RESET',
+  'net::ERR_CONNECTION_CLOSED',
+  'net::ERR_EMPTY_RESPONSE',
+  'net::ERR_FAILED',
+  'net::ERR_HTTP2_PROTOCOL_ERROR',
+  'net::ERR_INSUFFICIENT_RESOURCES',
+  'net::ERR_NETWORK_CHANGED',
+]);
+
+/** 任意の例外本文は保存せず、Browser由来の既知分類だけを残す。 */
+export function cookieNetworkErrorClass(errorText) {
+  return networkFailureClasses.has(errorText) ? errorText : 'other';
+}
+
 /** Cookie検査の未完了待機を失敗にする。取消不能な操作は呼出元のcleanupで回収する。 */
 export async function withCookieDeadline(operation, timeoutMs, stage) {
   let timer;
@@ -42,6 +61,47 @@ export async function finishCookieResponse(context, response, timeoutMs = 30000)
   } finally {
     context.off('requestfailed', onFailed);
   }
+}
+
+/**
+ * 作者Actionだけ、同じ元Responseのconsumer EOFを毎回必須にする。
+ * ChromiumのERR_ABORTEDはEOF証拠がある場合だけ固定分類として残し、他の失敗は伝える。
+ * verifyConsumerは追加readをせず、一意対応・byte数・EOF・例外/cancelなしを検査する。
+ */
+export async function finishCookieActionResponse(
+  context,
+  response,
+  verifyConsumer,
+  timeoutMs = 30000,
+) {
+  return withCookieDeadline(
+    async () => {
+      let browserTerminal = 'finished';
+      try {
+        const result = await finishCookieResponse(context, response, timeoutMs);
+        if (result !== null) {
+          const error = new Error('Cookie acceptance request failed');
+          error.name = 'CookieAcceptanceRequestError';
+          throw error;
+        }
+      } catch (error) {
+        if (
+          error.name !== 'CookieAcceptanceRequestError' ||
+          response.request().failure()?.errorText !== 'net::ERR_ABORTED'
+        )
+          throw error;
+        browserTerminal = 'net::ERR_ABORTED';
+      }
+      if ((await verifyConsumer()) !== true) {
+        const error = new Error('Cookie acceptance consumer did not complete');
+        error.name = 'CookieAcceptanceConsumerError';
+        throw error;
+      }
+      return { completed: true, browserTerminal, consumerEof: true };
+    },
+    timeoutMs,
+    'action-consumer-eof',
+  );
 }
 
 /** 一つの回収失敗で後続を省略せず、この検査が所有する接続だけを閉じる。 */

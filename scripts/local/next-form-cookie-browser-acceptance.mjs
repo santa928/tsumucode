@@ -11,11 +11,18 @@ import { URL } from 'node:url';
 import { chromium, expect } from '@playwright/test';
 import { parse } from 'yaml';
 import { bridge } from './browser-test-bridge.mjs';
+
+import {
+  completeActionReader,
+  installActionReaderObservation,
+} from './next-cookie-reader-observation.mjs';
 import { previewOrigin, previewBase } from './preview-contract.mjs';
 import { FORM_WORKSPACE, ACTION_WORKSPACE } from './next-form-preview.mjs';
 import { watchDocumentVersion } from './next-project-observations.mjs';
 import {
   cleanupCookieAcceptance,
+  cookieNetworkErrorClass,
+  finishCookieActionResponse,
   finishCookieResponse,
   withCookieDeadline,
 } from './next-form-cookie-lifecycle.mjs';
@@ -24,6 +31,7 @@ import {
 const bridges = [];
 let browser;
 let context;
+
 let manager;
 const navigationCounts = new WeakMap();
 const documentVersions = new WeakMap();
@@ -155,7 +163,11 @@ async function submit(surface, input, expected) {
   const field = frame.getByLabel('メモ', { exact: true });
   let reply;
   let selectedRequest;
+  let readerOrdinal;
+  let readerLength;
+  let encoding;
   const candidates = [];
+
   /** 送信前から候補だけを追跡する。本文を出さず、入力の包含も診断にだけ使う。 */
   const onRequest = (request) => {
     if (request.method() !== 'POST' || request.frame() !== frame || !routes.includes(request.url()))
@@ -174,6 +186,8 @@ async function submit(surface, input, expected) {
     if (!candidate) return;
     candidate.terminal = state;
     candidate.terminalMs = Math.round(performance.now() - startedAt);
+    if (state === 'failed')
+      candidate.errorClass = cookieNetworkErrorClass(request.failure()?.errorText);
   };
   const onFinished = (request) => terminal(request, 'finished');
   const onFailed = (request) => terminal(request, 'failed');
@@ -184,6 +198,38 @@ async function submit(surface, input, expected) {
       selected: request === selectedRequest,
       ...observation,
     }));
+  /** 既存readerの終端を待つだけで、本文を別途読み出さない。 */
+  const verifyActionConsumer = async () => {
+    assert.equal(candidates.length, 1, 'Action送信を一つに対応付ける');
+    assert.ok(candidates[0].request === selectedRequest, '選択したAction Requestを使う');
+    assert.equal(candidates[0].inputIncluded, true, '現在入力のActionだけを検査する');
+    assert.ok(Number.isSafeInteger(readerOrdinal) && readerOrdinal > 0);
+    assert.ok(Number.isSafeInteger(readerLength) && readerLength > 0 && readerLength <= 512 * 1024);
+    assert.ok(encoding === undefined, '固定長identity応答だけを対応付ける');
+    const handle = await frame.waitForFunction(
+      (ordinal) => {
+        const record = globalThis.__tsumucodeActionReaderSnapshot?.(ordinal);
+        return record &&
+          (record.done ||
+            record.error ||
+            record.cancelled ||
+            record.invalidChunk ||
+            record.overflow ||
+            record.readers > 1 ||
+            record.streams > 1)
+          ? record
+          : false;
+      },
+      readerOrdinal,
+      { timeout: 30000 },
+    );
+    try {
+      snapshot.consumer = await handle.jsonValue();
+      return completeActionReader(snapshot.consumer, readerOrdinal, readerLength);
+    } finally {
+      await handle.dispose();
+    }
+  };
   context.on('request', onRequest);
   context.on('requestfinished', onFinished);
   context.on('requestfailed', onFailed);
@@ -223,9 +269,25 @@ async function submit(surface, input, expected) {
     );
     const response = await step('response-headers', () => reply, 15000);
     selectedRequest = response.request();
+    if (!form) {
+      const headers = response.headers();
+      const ordinal = headers['x-tsumucode-cookie-observation'];
+      const length = headers['content-length'];
+      readerOrdinal = /^[1-9]\d{0,8}$/u.test(ordinal ?? '') ? Number(ordinal) : null;
+      readerLength = /^\d{1,6}$/u.test(length ?? '') ? Number(length) : null;
+      encoding = headers['content-encoding'];
+    }
     snapshot.httpStatus = response.status();
-    snapshot.completed =
-      (await step('response-finished', () => finishCookieResponse(context, response))) === null;
+    if (!form) {
+      const completion = await step('response-finished', () =>
+        finishCookieActionResponse(context, response, verifyActionConsumer),
+      );
+      snapshot.completed = completion.completed;
+      snapshot.browserTerminal = completion.browserTerminal;
+      snapshot.consumerEof = completion.consumerEof;
+    } else
+      snapshot.completed =
+        (await step('response-finished', () => finishCookieResponse(context, response))) === null;
     snapshot.navigationRequest = response.request().isNavigationRequest();
     assert.equal(snapshot.httpStatus, 200);
     assert.equal(snapshot.completed, true);
@@ -258,11 +320,142 @@ async function submit(surface, input, expected) {
     assert.equal(snapshot.documentMatches, true);
     assert.equal(snapshot.documentVersionAfter, snapshot.documentVersionBefore);
     assert.equal(frame.url(), actorUrl.href);
-    console.log(JSON.stringify({ ...snapshot, requests: requestSnapshot(), outcome: 'saved' }));
+    if (!form) {
+      // DOM確認までのcancel/errorも拒否し、別文書・別入力の証拠を流用しない。
+      const final = await step(
+        'consumer-final-confirmation',
+        () =>
+          frame.evaluate(
+            ({ ordinal, marker, input, message, url }) => ({
+              reader: globalThis.__tsumucodeActionReaderSnapshot?.(ordinal) ?? null,
+              documentMatches: globalThis.document.__tsumucodeAuthorCookieDocument === marker,
+              urlMatches: globalThis.location.href === url,
+              inputMatches: globalThis.document.querySelector('#note')?.value === input,
+              enabledMatches: globalThis.document.querySelector('#note')?.disabled === false,
+              savedMatches:
+                globalThis.document.querySelector('#note-result')?.getAttribute('data-state') ===
+                  'saved' &&
+                globalThis.document.querySelector('#note-result')?.textContent === message,
+            }),
+            {
+              ordinal: readerOrdinal,
+              marker,
+              input: requestInput,
+              message: expected === undefined ? text : 'theme:' + expected,
+              url: actorUrl.href,
+            },
+          ),
+        5000,
+      );
+      assert.equal(candidates.length, 1);
+      assert.ok(candidates[0].request === selectedRequest && candidates[0].inputIncluded === true);
+      assert.equal(completeActionReader(final.reader, readerOrdinal, readerLength), true);
+      for (const key of [
+        'documentMatches',
+        'urlMatches',
+        'inputMatches',
+        'enabledMatches',
+        'savedMatches',
+      ])
+        assert.equal(final[key], true);
+      snapshot.consumer = final.reader;
+    }
+    console.log(
+      JSON.stringify({
+        ...snapshot,
+        requests: requestSnapshot(),
+        outcome: 'saved',
+      }),
+    );
     return text;
   } catch (error) {
     // 任意の診断より先に失敗を残し、診断自体も有限にする。
     progress('submit-failed', 'failed');
+    // 失敗が既に確定した後だけ原子的に読む。正常操作間に待機を足さない。
+    const atomicDom = await withCookieDeadline(
+      () =>
+        frame.evaluate(
+          ({
+            input,
+            message,
+            expectedMarker,
+            url,
+            requestUrl,
+            requestStartedAt,
+            readerOrdinal,
+          }) => {
+            const timing =
+              typeof requestStartedAt === 'number' && requestStartedAt > 0 && requestUrl
+                ? globalThis.performance
+                    .getEntriesByName(requestUrl)
+                    .filter(
+                      (entry) =>
+                        entry.initiatorType === 'fetch' &&
+                        globalThis.performance.timeOrigin + entry.startTime >= requestStartedAt - 2,
+                    )
+                : [];
+            const entry = timing.length === 1 ? timing[0] : undefined;
+            const field = globalThis.document.querySelector('#note');
+            const result = globalThis.document.querySelector('#note-result');
+            const button = field?.form?.querySelector('button[type="submit"]');
+            return {
+              evaluatedAtEpochMs: Date.now(),
+              observedReader:
+                typeof readerOrdinal === 'number'
+                  ? (globalThis.__tsumucodeActionReaderSnapshot?.(readerOrdinal) ?? null)
+                  : null,
+              resourceTimingCandidates: timing.length,
+              resourceTiming: entry
+                ? {
+                    startEpochMs: globalThis.performance.timeOrigin + entry.startTime,
+                    requestStartDeltaMs:
+                      globalThis.performance.timeOrigin + entry.startTime - requestStartedAt,
+                    responseEnd: entry.responseEnd,
+                    transferSize: entry.transferSize,
+                    encodedBodySize: entry.encodedBodySize,
+                    decodedBodySize: entry.decodedBodySize,
+                  }
+                : null,
+              fieldMatches: field?.value === input,
+              resultSaved: result?.getAttribute('data-state') === 'saved',
+              expectedMessageMatches: message === null ? null : result?.textContent === message,
+              inputDisabled: field ? field.disabled : null,
+              buttonDisabled: button ? button.disabled : null,
+              sendingText: button
+                ? /保存中|送信中|保存しています/u.test(button.textContent ?? '')
+                : null,
+              markerMatches: globalThis.document.__tsumucodeAuthorCookieDocument === expectedMarker,
+              urlMatches: globalThis.location.href === url,
+            };
+          },
+          {
+            input: requestInput,
+            message: expected === undefined ? null : `theme:${expected}`,
+            expectedMarker: marker,
+            url: actorUrl.href,
+            requestUrl: selectedRequest?.url() ?? null,
+            requestStartedAt: selectedRequest?.timing().startTime ?? null,
+            readerOrdinal: readerOrdinal,
+          },
+        ),
+      1000,
+      'diagnostic-atomic-dom',
+    ).catch(() => ({ unavailable: true }));
+    console.log(
+      JSON.stringify({
+        event: 'main-cookie-transport',
+        boundary: 'dom',
+        stage: 'failed-operation',
+        sequence: currentSequence,
+        epochMs: Date.now(),
+        ...atomicDom,
+        consumerEofProven: completeActionReader(
+          atomicDom.observedReader,
+          readerOrdinal,
+          readerLength,
+        ),
+      }),
+    );
     // Cookie・本文・URL・Sourceを出さず、文書置換と入力/結果の不一致だけ残す。
     snapshot.documentMatches = await withCookieDeadline(
       () => documentMarker(frame),
@@ -384,7 +577,11 @@ try {
     [4173, 'web'],
     [4175, 'preview'],
   ]) {
-    const server = await step('bridge-create', () => bridge(port, hostname), 5000);
+    const server = await step(
+      'bridge-create',
+      () => bridge(port, hostname, { observeCookie: true }),
+      5000,
+    );
     const sockets = new Set();
     server.on('connection', (socket) => {
       sockets.add(socket);
@@ -396,6 +593,29 @@ try {
     chromium.launch({ headless: true, args: ['--no-sandbox'], timeout: 30000 }),
   );
   context = await step('browser-context', () => browser.newContext(), 5000);
+  await context.addInitScript(installActionReaderObservation);
+
+  // Cookie工程自身の実行版と上限を記録する。他工程の版を流用しない。
+  console.log(
+    JSON.stringify({
+      event: 'main-cookie-transport',
+      boundary: 'scope',
+      readerObserverEnabled: true,
+      browserVersion: browser.version(),
+      playwrightVersion: JSON.parse(
+        await readFile('node_modules/playwright-core/package.json', 'utf8'),
+      ).version,
+      nodeVersion: process.version,
+      architecture: process.arch,
+      memoryMax: (await readFile('/sys/fs/cgroup/memory.max', 'utf8')).trim(),
+      grade: 'included-canonical',
+      plannedOperations: 22,
+      faultInjection: false,
+      forcedGc: false,
+      fetchReplacement: false,
+      delaysAdded: false,
+    }),
+  );
   context.setDefaultTimeout(15000);
   context.setDefaultNavigationTimeout(15000);
   context.on('page', (page) => {
@@ -431,6 +651,7 @@ try {
     const solution = { ...files };
     const server = workspaceId === FORM_WORKSPACE ? 'app/api/note/route.ts' : 'app/actions.ts';
     const path = `/api/workspaces/${workspaceId}`;
+
     const original = await api(path);
     assert.ok(
       !['starting', 'ready', 'applying'].includes(original.lastRun?.state),
@@ -550,6 +771,7 @@ try {
       ({ name }) => name === 'lesson-theme',
     );
     assert.equal(cookie, undefined);
+
     const cookieHeaders = await Promise.all(responses);
     assert.ok(cookieHeaders.some((value) => value?.includes('lesson-theme=light;')));
     assert.ok(cookieHeaders.some((value) => value?.includes('Max-Age=0')));
@@ -593,63 +815,65 @@ try {
     );
     await submit(fresh, 'read', 'absent');
     await step('fresh-close', () => fresh.close(), 5000);
-    // 採点Browserが自分で書いたCookieも、共有policyの既定拒否でServerへ渡さない。
-    const client = 'app/note-form.tsx';
-    const inputAnchor = "const [input, setInput] = useState('');";
-    assert.equal(solution[client].split(inputAnchor).length, 2, '両教材の一意な入力stateを使う');
-    assert.equal(
-      solution[client].split('disabled={pending}').length,
-      3,
-      '入力と送信を両方保護する',
-    );
-    assert.equal(solution[server].split('const raw =').length, 2, 'Server検査を確実に挿入する');
-    const gradeFiles = {
-      ...solution,
-      [client]: solution[client]
-        .replace('import {', 'import { useEffect,')
-        .replace(
-          inputAnchor,
-          `${inputAnchor}
+    {
+      // 採点Browserが自分で書いたCookieも、共有policyの既定拒否でServerへ渡さない。
+      const client = 'app/note-form.tsx';
+      const inputAnchor = "const [input, setInput] = useState('');";
+      assert.equal(solution[client].split(inputAnchor).length, 2, '両教材の一意な入力stateを使う');
+      assert.equal(
+        solution[client].split('disabled={pending}').length,
+        3,
+        '入力と送信を両方保護する',
+      );
+      assert.equal(solution[server].split('const raw =').length, 2, 'Server検査を確実に挿入する');
+      const gradeFiles = {
+        ...solution,
+        [client]: solution[client]
+          .replace('import {', 'import { useEffect,')
+          .replace(
+            inputAnchor,
+            `${inputAnchor}
   const [cookieReady, setCookieReady] = useState(false);
   useEffect(() => {
     document.cookie = 'lesson-theme=dark; Path=/';
     setCookieReady(document.cookie.split('; ').includes('lesson-theme=dark'));
   }, []);`,
-        )
-        .replaceAll('disabled={pending}', 'disabled={pending || !cookieReady}'),
-      [server]:
-        solution[server].replace(
-          'const raw =',
-          `if ((await cookies()).has('lesson-theme')) throw new Error('Grader Cookie boundary');
+          )
+          .replaceAll('disabled={pending}', 'disabled={pending || !cookieReady}'),
+        [server]:
+          solution[server].replace(
+            'const raw =',
+            `if ((await cookies()).has('lesson-theme')) throw new Error('Grader Cookie boundary');
   const raw =`,
-        ) + "\nimport { cookies } from 'next/headers';\n",
-    };
-    assert.ok(gradeFiles[client].includes("document.cookie = 'lesson-theme=dark; Path=/';"));
-    assert.ok(
-      gradeFiles[client].includes(
-        "setCookieReady(document.cookie.split('; ').includes('lesson-theme=dark'))",
-      ),
-    );
-    assert.equal(gradeFiles[client].split('disabled={pending || !cookieReady}').length, 3);
-    saved = await api(`${path}/source`, {
-      expectedSourceRevision: saved.sourceRevision,
-      files: gradeFiles,
-    });
-    saved = await api(`${path}/apply`, {
-      runId: active.runId,
-      expectedSourceRevision: saved.sourceRevision,
-      expectedSourceHash: saved.sourceHash,
-    });
-    const graded = await api(`${path}/grade`, {
-      runId: active.runId,
-      expectedSourceRevision: saved.sourceRevision,
-      expectedSourceHash: saved.sourceHash,
-    });
-    assert.equal(
-      graded.status,
-      'pass',
-      '採点内で自己設定したCookieをServerへ渡さず既存条件を判定する',
-    );
+          ) + "\nimport { cookies } from 'next/headers';\n",
+      };
+      assert.ok(gradeFiles[client].includes("document.cookie = 'lesson-theme=dark; Path=/';"));
+      assert.ok(
+        gradeFiles[client].includes(
+          "setCookieReady(document.cookie.split('; ').includes('lesson-theme=dark'))",
+        ),
+      );
+      assert.equal(gradeFiles[client].split('disabled={pending || !cookieReady}').length, 3);
+      saved = await api(`${path}/source`, {
+        expectedSourceRevision: saved.sourceRevision,
+        files: gradeFiles,
+      });
+      saved = await api(`${path}/apply`, {
+        runId: active.runId,
+        expectedSourceRevision: saved.sourceRevision,
+        expectedSourceHash: saved.sourceHash,
+      });
+      const graded = await api(`${path}/grade`, {
+        runId: active.runId,
+        expectedSourceRevision: saved.sourceRevision,
+        expectedSourceHash: saved.sourceHash,
+      });
+      assert.equal(
+        graded.status,
+        'pass',
+        '採点内で自己設定したCookieをServerへ渡さず既存条件を判定する',
+      );
+    }
     if (tab) await step('tab-close', () => tab.close(), 5000);
     await step(
       'embedded-remove',

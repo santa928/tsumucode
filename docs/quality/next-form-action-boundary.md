@@ -122,6 +122,12 @@ Preview履歴保持・修正回復・版失効・a11y・narrow・下書き・端
 production buildは`next-build-acceptance.mjs next-ch04`で新2教材だけを選んで確認できる。
 CIでは既存教材を含む標準の全ケースを通す。
 
+Cookie工程は選択Requestの終端、実consumerの読了、bridgeの受信完了・送信完了・socket所有連番を記録する。
+Previewの対応番号と転送診断は`TSUMUCODE_COOKIE_DIAGNOSTICS=1`で明示し、通常Composeでは無効にする。
+作者検査とCIではこの番号を使い、対応不明な応答を完了扱いにしない。
+記録は固定分類・連番・長さ・時刻と実行版に限り、本文・URL・Cookie・全headerを保存しない。
+CIはCookie工程の失敗時にも限定artifactを保存する。DOM表示や診断の成功だけを本文完了へ代用しない。
+
 #136の持ち出しProjectと#137の全Course公開は別ゲート。今回のdev実行を正式公開や
 外部DBへの永続保存の証拠にはしない。
 
@@ -134,3 +140,18 @@ NextのSource反映はpause・固定exec・実HTTPの版確認を合わせて既
 採点の期限診断では、10秒で結果の受理を禁止してから、所有graderの固定phase進捗を最大200msで採取して回収する。200msは診断取得の上限であり、採点期限を延長しない。コンテナ回収は既存のDocker API期限内で行い、200ms以内の完了を保証しない。実POSTのheaders/body/DOM、Browser終了と予約解放を区別するが、本文・メモ・header・予約ID・Source・例外本文は記録しない。停止やSource変更の通常cancelには診断待ちを追加しない。
 
 Form採点は実POSTの全量完了・可視state・保存履歴で準備と結果を確認するため、networkidleの固定500ms待機を重ねない。他教材の文書静止契約は維持する。8秒以上の採点ではDocker起動を含む全体時間と固定phase進捗だけを記録し、10秒への余裕を判断できるようにする。過去Action UIの超過段階は未確定で、今回の変更だけで原因解消と断定しない。
+
+## 作者Actionの完了判定
+
+作者用Browserだけにreader観測を初期化する。Previewの診断連番で応答とconsumerを対応付け、
+既存のreadが返したbyte数・EOF・例外・cancelだけを記録する。追加read・drain・fetch置換は行わず、
+元のResponse/body/reader/read Promiseを維持する。cloneの読了は元consumerの読了へ流用しない。
+learnerと採点の実行コードには適用しない。
+
+作者Actionは、正常通信でも実consumerのEOFを必須にする。
+選択Requestが現在入力を含む唯一の送信であり、元Responseの連番・単一stream/reader・固定長と
+実byte数が一致し、EOF・例外なし・cancelなしを確認する。DOMと文書identityの最終確認時にも
+同じ証拠を取り直し、遅れて生じたcancelや別入力・別文書への切替を拒否する。
+Chromiumの`ERR_ABORTED`は、この全条件を満たす場合だけ通信失敗へ採用せず、記録には残す。
+他の通信失敗・終端不明・本文欠落・対応不明・cloneの読了は引き続き失敗とする。
+Formの通信完了、採点、既存の操作期限、通常のlearner UIは変更しない。

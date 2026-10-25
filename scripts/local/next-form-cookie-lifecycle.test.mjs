@@ -6,9 +6,27 @@ import { setTimeout as delay } from 'node:timers/promises';
 import test from 'node:test';
 import {
   cleanupCookieAcceptance,
+  cookieNetworkErrorClass,
+  finishCookieActionResponse,
   finishCookieResponse,
   withCookieDeadline,
 } from './next-form-cookie-lifecycle.mjs';
+
+test('Request失敗は固定分類だけを残し、任意の例外本文を保存しない', () => {
+  for (const error of [
+    'net::ERR_ABORTED',
+    'net::ERR_INSUFFICIENT_RESOURCES',
+    'net::ERR_NETWORK_CHANGED',
+  ])
+    assert.equal(cookieNetworkErrorClass(error), error);
+  for (const error of [
+    undefined,
+    null,
+    'https://private.invalid/?token=private',
+    'unexpected input',
+  ])
+    assert.equal(cookieNetworkErrorClass(error), 'other');
+});
 
 /** 回帰自体が停止しないよう、対象の期限より長い独立した失敗期限を置く。 */
 async function testDeadline(operation) {
@@ -33,10 +51,10 @@ test('応答完了の未解決Promiseを期限超過として失敗させる', a
 });
 
 /** 実Browserで確認した「失敗通知後もfinishedは未解決」をイベント境界で再現する。 */
-function responseHarness() {
+function responseHarness(errorText = '非公開の通信詳細') {
   const context = new EventEmitter();
   let failed = false;
-  const request = { failure: () => (failed ? { errorText: '非公開の通信詳細' } : null) };
+  const request = { failure: () => (failed ? { errorText } : null) };
   const completion = Promise.withResolvers();
   return {
     context,
@@ -84,6 +102,125 @@ test('応答未完了は期限超過にし終端監視も回収する', async ()
     name: 'CookieAcceptanceDeadlineError',
   });
   assert.equal(fixture.context.listenerCount('requestfailed'), 0);
+});
+
+test('作者Actionは正常通信でも実consumerのEOF確認を必須にする', async () => {
+  const fixture = responseHarness();
+  let verified = 0;
+  fixture.finish();
+  const result = await testDeadline(
+    finishCookieActionResponse(
+      fixture.context,
+      fixture.response,
+      async () => {
+        verified++;
+        return true;
+      },
+      100,
+    ),
+  );
+  assert.deepEqual(result, { completed: true, browserTerminal: 'finished', consumerEof: true });
+  assert.equal(verified, 1);
+});
+
+test('同じRequestのERR_ABORTEDは実consumer EOFが確認できた場合だけ分類として残す', async () => {
+  const fixture = responseHarness('net::ERR_ABORTED');
+  fixture.fail();
+  const result = await testDeadline(
+    finishCookieActionResponse(fixture.context, fixture.response, async () => true, 100),
+  );
+  assert.deepEqual(result, {
+    completed: true,
+    browserTerminal: 'net::ERR_ABORTED',
+    consumerEof: true,
+  });
+  assert.equal(fixture.context.listenerCount('requestfailed'), 0);
+});
+
+test('ERR_ABORTEDがあってもconsumer未完了・対応不明なら合格にしない', async () => {
+  const fixture = responseHarness('net::ERR_ABORTED');
+  fixture.fail();
+  await assert.rejects(
+    testDeadline(
+      finishCookieActionResponse(fixture.context, fixture.response, async () => false, 100),
+    ),
+    { name: 'CookieAcceptanceConsumerError' },
+  );
+});
+
+test('ERR_ABORTED以外の通信失敗はconsumer検査で上書きしない', async () => {
+  const fixture = responseHarness('net::ERR_CONNECTION_RESET');
+  let verified = false;
+  fixture.fail();
+  await assert.rejects(
+    testDeadline(
+      finishCookieActionResponse(
+        fixture.context,
+        fixture.response,
+        async () => {
+          verified = true;
+          return true;
+        },
+        100,
+      ),
+    ),
+    { name: 'CookieAcceptanceRequestError' },
+  );
+  assert.equal(verified, false);
+});
+
+test('consumer検査の例外は元の失敗として伝える', async () => {
+  const fixture = responseHarness();
+  fixture.finish();
+  await assert.rejects(
+    testDeadline(
+      finishCookieActionResponse(
+        fixture.context,
+        fixture.response,
+        async () => {
+          throw new Error('consumer verification failed');
+        },
+        100,
+      ),
+    ),
+    /consumer verification failed/u,
+  );
+});
+
+test('consumer EOFの待機にも同じ全体期限を適用する', async () => {
+  const fixture = responseHarness();
+  fixture.finish();
+  await assert.rejects(
+    testDeadline(
+      finishCookieActionResponse(
+        fixture.context,
+        fixture.response,
+        () => new Promise(() => {}),
+        30,
+      ),
+    ),
+    { name: 'CookieAcceptanceDeadlineError' },
+  );
+});
+
+test('通信終端自体が不明ならconsumer検査だけで正常完了へ変更しない', async () => {
+  const fixture = responseHarness();
+  let verified = false;
+  await assert.rejects(
+    testDeadline(
+      finishCookieActionResponse(
+        fixture.context,
+        fixture.response,
+        async () => {
+          verified = true;
+          return true;
+        },
+        30,
+      ),
+    ),
+    { name: 'CookieAcceptanceDeadlineError' },
+  );
+  assert.equal(verified, false);
 });
 
 test('停止失敗でもBrowserとbridgeを回収し、元の失敗を結果へ残す', async () => {

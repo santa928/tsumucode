@@ -57,6 +57,8 @@ services:
     networks: [learning]
     stop_grace_period: 30s
   preview:
+    environment:
+      TSUMUCODE_COOKIE_DIAGNOSTICS: ${TSUMUCODE_COOKIE_DIAGNOSTICS:-0}
     build:
       context: .
       dockerfile: Dockerfile.learning
