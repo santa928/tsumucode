@@ -152,7 +152,7 @@ candidate:
   courseId: next
   revision: 2026-10-24.1
   status: approved
-  verifiedSourceCommit: 775ed87495fff6de0f283acb0023b1dc4648efca
+  verifiedSourceCommit: c16beec9538f6c19c59ce29c5427e66c26322624
   canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
   courseManifestSha256: a3bffc974c7d6b8acd23df4c92f3c82aee90e5af1cefc367e4039fe1857145ac
   publicProvenanceSha256: a577ff8815e8e27eca907b8e0e203b200a07aab323b792536ba04ae61c857c99
@@ -286,6 +286,6 @@ candidate:
       toRevision: 2026-10-24.1
       steps: []
   syntheticProgressBundlePath: tests/fixtures/progress/next-previous-release-bundle.json
-  draftSourceCommit: 775ed87495fff6de0f283acb0023b1dc4648efca
+  draftSourceCommit: c16beec9538f6c19c59ce29c5427e66c26322624
   draftCanonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
-  normalizedLearningInputSha256: 1be9b7489c622efe15d93dbb29208c3a4c8311c843d48ea242a65312ada98578
+  normalizedLearningInputSha256: b264255ae8c8414bc9eee314792572971888dab9d9bbbc53c286261ac58e2b69

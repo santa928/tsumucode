@@ -14,14 +14,14 @@ publicationApprovalReference: repository-owner santa928 / 2026-10-25 実consumer
 realHumanTrial: unverified
 lowEndPhysicalDevice: unverified
 cookieAuthenticationPersistence: theme-cookie-only-authentication-persistence-deferred-issue-14
-verifiedSourceCommit: 775ed87495fff6de0f283acb0023b1dc4648efca
+verifiedSourceCommit: c16beec9538f6c19c59ce29c5427e66c26322624
 canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
-candidateTreeSha256: 5da0276d3720933991c7d3f4fbb283875ad2c716c8ab7eaf72aecc4e8e8dfe96
+candidateTreeSha256: 14845a91c37e37a8ee52a94062b1d4418889f547e1e614781ede27a74ccc3dcc
 draftCanonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
 draftInput: &a1
   schemaVersion: 1
   courseId: next
-  sourceCommit: 775ed87495fff6de0f283acb0023b1dc4648efca
+  sourceCommit: c16beec9538f6c19c59ce29c5427e66c26322624
   scope: next-learning-input-v1
   publicationMetadata:
     coursePublicationStatus: published
@@ -40,13 +40,13 @@ draftInput: &a1
       normalizedSha256: 17ba3d72adcfe847e8e576128998593166645d78f63c93c8d0936877914b5b2c
       normalizedBytes: 26185
     - path: .github/workflows/pages.yml
-      rawSha256: 3ca5123ddcd88f6cab3e36d1459c45a53e5f73776da5c03ccb2d209ce72de563
-      normalizedSha256: 3ca5123ddcd88f6cab3e36d1459c45a53e5f73776da5c03ccb2d209ce72de563
-      normalizedBytes: 24189
+      rawSha256: 2c688e9c4326bea53c5cbee59319bd74b95bae9ff0cb5c1db45f79c117371428
+      normalizedSha256: 2c688e9c4326bea53c5cbee59319bd74b95bae9ff0cb5c1db45f79c117371428
+      normalizedBytes: 26426
     - path: .github/workflows/tailwind-project.yml
-      rawSha256: 727f689ec8970a9743ec69b239c365dd5a2dcf3619a8b9b12299163abb4acacf
-      normalizedSha256: 727f689ec8970a9743ec69b239c365dd5a2dcf3619a8b9b12299163abb4acacf
-      normalizedBytes: 4196
+      rawSha256: adbe91f2eee3cef9871bd8a710cdd145dc8a69f036dbacaa8977933a755d9417
+      normalizedSha256: adbe91f2eee3cef9871bd8a710cdd145dc8a69f036dbacaa8977933a755d9417
+      normalizedBytes: 5365
     - path: .prettierignore
       rawSha256: 25fe325232dcf3f01625e7789c1c91602fae4f8e2fb0580d9a9f53157ccc854b
       normalizedSha256: 25fe325232dcf3f01625e7789c1c91602fae4f8e2fb0580d9a9f53157ccc854b
@@ -19719,6 +19719,10 @@ draftInput: &a1
       rawSha256: 6c21c06b98953d8d1a0420f379fedb09c25094c349a7ca9b0b117d81b0a1bba3
       normalizedSha256: 6c21c06b98953d8d1a0420f379fedb09c25094c349a7ca9b0b117d81b0a1bba3
       normalizedBytes: 8862
+    - path: scripts/ci/release-browser-recovery.sh
+      rawSha256: 54738427394e3f86e528bb2932cb3399c28710c26c821520106726a12d769055
+      normalizedSha256: 54738427394e3f86e528bb2932cb3399c28710c26c821520106726a12d769055
+      normalizedBytes: 1543
     - path: scripts/ci/tailwind-project.sh
       rawSha256: 4d4c2c5b9891a64887a391e2143a5be0a0da896008d0c53c95456a60f53c798d
       normalizedSha256: 4d4c2c5b9891a64887a391e2143a5be0a0da896008d0c53c95456a60f53c798d
@@ -22668,9 +22672,9 @@ draftInput: &a1
       normalizedSha256: d9d016415ccc66f4e7b23913fbad103ed323d22480d37f1d5fd49676eb5430d3
       normalizedBytes: 6109
     - path: tests/e2e/javascript-learning.spec.ts
-      rawSha256: 06bbe06c5bb957a5ff3e6c11836860ce46e5897c2d74d1a2e22d1684f7ab7c5b
-      normalizedSha256: 06bbe06c5bb957a5ff3e6c11836860ce46e5897c2d74d1a2e22d1684f7ab7c5b
-      normalizedBytes: 14874
+      rawSha256: ae497a246e8d0f9400556e2b6863c80e616d71d1e45a393ff50c48af3886922f
+      normalizedSha256: ae497a246e8d0f9400556e2b6863c80e616d71d1e45a393ff50c48af3886922f
+      normalizedBytes: 15578
     - path: tests/e2e/javascript-loading-state.spec.ts
       rawSha256: 6aba741facc6a5e60158ad61621f45988c7f3e25d1178e6ac00b826edf62a94a
       normalizedSha256: 6aba741facc6a5e60158ad61621f45988c7f3e25d1178e6ac00b826edf62a94a
@@ -22768,9 +22772,9 @@ draftInput: &a1
       normalizedSha256: 1114938b0aaa20172ef4af1f6dc8c9d911f7cbf6982491754513896349112475
       normalizedBytes: 17163
     - path: tests/e2e/python-oop.spec.ts
-      rawSha256: f0fcaf8356fac855d00ffadb5e4317a65163a7404152b19ec259e049bca2f721
-      normalizedSha256: f0fcaf8356fac855d00ffadb5e4317a65163a7404152b19ec259e049bca2f721
-      normalizedBytes: 10633
+      rawSha256: c935340cab6ea588a48e79211b230647bd87f0c1eefc1c1d47fd43c5dd12d555
+      normalizedSha256: c935340cab6ea588a48e79211b230647bd87f0c1eefc1c1d47fd43c5dd12d555
+      normalizedBytes: 10692
     - path: tests/e2e/python-release-smoke.spec.ts
       rawSha256: 438dd1885b022fde35b4a394dd49dc4933f7738cdecf21cfbd3d6c3ce2848d21
       normalizedSha256: 438dd1885b022fde35b4a394dd49dc4933f7738cdecf21cfbd3d6c3ce2848d21
@@ -22856,21 +22860,21 @@ draftInput: &a1
       normalizedSha256: 74f622a04d92ab961c0c4f5bfa321ad254773dd0ff3a65d0f82c2f41a487f36b
       normalizedBytes: 12219
     - path: tests/e2e/slide-library.spec.ts
-      rawSha256: 59826648d185b7cbb338ed4e2fdd9327678043987a02c7841c28b5835539826d
-      normalizedSha256: 59826648d185b7cbb338ed4e2fdd9327678043987a02c7841c28b5835539826d
-      normalizedBytes: 6135
+      rawSha256: 111847fe51651758adfa628218603c83b89b7d5ef776756e4ce183076666739d
+      normalizedSha256: 111847fe51651758adfa628218603c83b89b7d5ef776756e4ce183076666739d
+      normalizedBytes: 6157
     - path: tests/e2e/tailwind-foundations.spec.ts
-      rawSha256: 9247650bbd4811920a120bbc3b5ea92ba3c433e819dfbf43b6a7298aaf9c0674
-      normalizedSha256: 9247650bbd4811920a120bbc3b5ea92ba3c433e819dfbf43b6a7298aaf9c0674
-      normalizedBytes: 17996
+      rawSha256: 25c9cade5043f8e6ed81ee36aa3443b8868f64744cc4fc2c9463409727970548
+      normalizedSha256: 25c9cade5043f8e6ed81ee36aa3443b8868f64744cc4fc2c9463409727970548
+      normalizedBytes: 18366
     - path: tests/e2e/tailwind-project.spec.ts
       rawSha256: ab12905ebf90516a5c6bad5b3a9a8a4a538b0631445df2248ba8333a333eadf5
       normalizedSha256: ab12905ebf90516a5c6bad5b3a9a8a4a538b0631445df2248ba8333a333eadf5
       normalizedBytes: 15425
     - path: tests/e2e/tailwind.spec.ts
-      rawSha256: 75920dde154e1375e9f8e4016cf977d42ffe3c59d2510e70965dba3ddb3a9143
-      normalizedSha256: 75920dde154e1375e9f8e4016cf977d42ffe3c59d2510e70965dba3ddb3a9143
-      normalizedBytes: 19662
+      rawSha256: 0f0db1ea79a153226c397691fc3db2a5a9a3e4c50a38568c560d7982359be29e
+      normalizedSha256: 0f0db1ea79a153226c397691fc3db2a5a9a3e4c50a38568c560d7982359be29e
+      normalizedBytes: 19734
     - path: tests/e2e/typescript-boundary-grading.spec.ts
       rawSha256: c14da98c996c46c3b102b1b664bb44277fa1147597e4b8ba3a78bc3437753fff
       normalizedSha256: c14da98c996c46c3b102b1b664bb44277fa1147597e4b8ba3a78bc3437753fff
@@ -22944,13 +22948,13 @@ draftInput: &a1
       normalizedSha256: 3cde221bfca3c69c7f97a906e54b3860b1ad3db44a58adc3d03efabcb794d986
       normalizedBytes: 92172
     - path: tests/e2e/visual-regression.spec.ts-snapshots/course-map-mobile-portrait-chromium-linux.png
-      rawSha256: 1aff7f5a52bb62fc674ca8420658edaba6e3bf2b6f408c99c63452b318f44a3e
-      normalizedSha256: 1aff7f5a52bb62fc674ca8420658edaba6e3bf2b6f408c99c63452b318f44a3e
-      normalizedBytes: 57250
+      rawSha256: 2f47de1188643c9fe847eb1312e2c8a43dc1243394fa6f007064c35134b92104
+      normalizedSha256: 2f47de1188643c9fe847eb1312e2c8a43dc1243394fa6f007064c35134b92104
+      normalizedBytes: 64539
     - path: tests/e2e/visual-regression.spec.ts-snapshots/course-map-tablet-portrait-chromium-linux.png
-      rawSha256: 80ef7a3e64f275632cbf606766ea493d0fc4a814e4acb235c8310e37c73fd3fb
-      normalizedSha256: 80ef7a3e64f275632cbf606766ea493d0fc4a814e4acb235c8310e37c73fd3fb
-      normalizedBytes: 104672
+      rawSha256: 47f163bf822564c6ae9cab2777b114be0137f4a1af40d589a9cb413636d5b69d
+      normalizedSha256: 47f163bf822564c6ae9cab2777b114be0137f4a1af40d589a9cb413636d5b69d
+      normalizedBytes: 114717
     - path: tests/e2e/visual-regression.spec.ts-snapshots/exercise-desktop-compact-chromium-linux.png
       rawSha256: 00b312572934e0cd91f1202e617a6a8238e9d4aa377c86c1079a640816432a83
       normalizedSha256: 00b312572934e0cd91f1202e617a6a8238e9d4aa377c86c1079a640816432a83
@@ -22968,13 +22972,13 @@ draftInput: &a1
       normalizedSha256: bc55237d448ef4590729c2688722314a78dc94f78e3b5a90e69d80129e9bbb67
       normalizedBytes: 144453
     - path: tests/e2e/visual-regression.spec.ts-snapshots/exercise-mobile-portrait-chromium-linux.png
-      rawSha256: 719afb422d7dd22229413f11788342f977d6a5c55f8cc2440c717ad172613816
-      normalizedSha256: 719afb422d7dd22229413f11788342f977d6a5c55f8cc2440c717ad172613816
-      normalizedBytes: 55035
+      rawSha256: c4ccaed59b4fd1f9169d85970b3d66782588566799f794c47a7b0351dc9f8122
+      normalizedSha256: c4ccaed59b4fd1f9169d85970b3d66782588566799f794c47a7b0351dc9f8122
+      normalizedBytes: 57871
     - path: tests/e2e/visual-regression.spec.ts-snapshots/exercise-tablet-portrait-chromium-linux.png
-      rawSha256: 34e6e96db3dca8a0234ba15c81ee32cdbe6debcd89b6bb08eb5e4f115dd0b6e4
-      normalizedSha256: 34e6e96db3dca8a0234ba15c81ee32cdbe6debcd89b6bb08eb5e4f115dd0b6e4
-      normalizedBytes: 57143
+      rawSha256: 575dcb629d1e260b0912ab7eb5b7e15ab388b83cc6512a764b1efd5057f0ad3d
+      normalizedSha256: 575dcb629d1e260b0912ab7eb5b7e15ab388b83cc6512a764b1efd5057f0ad3d
+      normalizedBytes: 60350
     - path: tests/e2e/visual-regression.spec.ts-snapshots/home-desktop-compact-chromium-linux.png
       rawSha256: f0f9425c2a7b796ad7620310b3b73e091aeada545a113e9a1fc0ebb0c096fa24
       normalizedSha256: f0f9425c2a7b796ad7620310b3b73e091aeada545a113e9a1fc0ebb0c096fa24
@@ -23072,9 +23076,9 @@ draftInput: &a1
       normalizedSha256: 2ed5a573a066e8a1d961239c581368a3b4af92dbf7d0236204c9637a0d574438
       normalizedBytes: 136620
     - path: tests/e2e/visual-regression.spec.ts-snapshots/javascript-exercise-mobile-portrait-chromium-linux.png
-      rawSha256: 21223a86e0449db9393f389c2a5e1327321411b16a2246fb76ee25d85772f51b
-      normalizedSha256: 21223a86e0449db9393f389c2a5e1327321411b16a2246fb76ee25d85772f51b
-      normalizedBytes: 55340
+      rawSha256: e77d53ce578b374c38e9a58dc5df880f67795712629c2662637b6bd831ec8b21
+      normalizedSha256: e77d53ce578b374c38e9a58dc5df880f67795712629c2662637b6bd831ec8b21
+      normalizedBytes: 58142
     - path: tests/e2e/visual-regression.spec.ts-snapshots/javascript-hint-desktop-compact-chromium-linux.png
       rawSha256: 62260121dfbd9c7e72153568cd63f24881b6f4a127ded390de8247623a5da12b
       normalizedSha256: 62260121dfbd9c7e72153568cd63f24881b6f4a127ded390de8247623a5da12b
@@ -23456,9 +23460,9 @@ draftInput: &a1
       normalizedSha256: 9677e46b5c550e143a13514ec2b0708af3254752414b7292b5d87d2a6276c879
       normalizedBytes: 1654
     - path: tests/pages-workflow.test.ts
-      rawSha256: 59c257ce72fc608585393b8f6e6cb7224f09a82caf6a1f8a486be64365d3e553
-      normalizedSha256: 59c257ce72fc608585393b8f6e6cb7224f09a82caf6a1f8a486be64365d3e553
-      normalizedBytes: 14652
+      rawSha256: df72487e2b1b2b6141ab61645f8665500607468de7f6d49eec1136117253f876
+      normalizedSha256: df72487e2b1b2b6141ab61645f8665500607468de7f6d49eec1136117253f876
+      normalizedBytes: 15150
     - path: tests/performance/bundle-budget.test.ts
       rawSha256: ae3100eb8542500311cea7471fe835d3fdc640e6bf8e3e468b56c4d8a4410234
       normalizedSha256: ae3100eb8542500311cea7471fe835d3fdc640e6bf8e3e468b56c4d8a4410234
@@ -23759,7 +23763,7 @@ draftInput: &a1
       rawSha256: 3b8e26cf90cbe78637c96523a6a8583b0ce32f260c441d0c071b2f0725e9f4f4
       normalizedSha256: 3b8e26cf90cbe78637c96523a6a8583b0ce32f260c441d0c071b2f0725e9f4f4
       normalizedBytes: 753
-  normalizedInputSha256: 1be9b7489c622efe15d93dbb29208c3a4c8311c843d48ea242a65312ada98578
+  normalizedInputSha256: b264255ae8c8414bc9eee314792572971888dab9d9bbbc53c286261ac58e2b69
 finalInput: *a1
 applicationSourceSha256: 5c6fcd89fafe494ab7bc1917e1bea0aa68a87120a3750bb5e321bc6f46182cf8
 dependencyLockSha256: 191461e31bb2d50d9be7b6fd91e2a63e14e7eee00634461bb4bc32bac0b7f0c8
@@ -23848,16 +23852,16 @@ personas:
 nativePreflight:
   schemaVersion: 1
   courseId: next
-  sourceCommit: 775ed87495fff6de0f283acb0023b1dc4648efca
-  workflowRunId: '40228984076'
+  sourceCommit: c16beec9538f6c19c59ce29c5427e66c26322624
+  workflowRunId: '40258801299'
   workflowRunAttempt: 1
   scope: 9教材81Fixtureのcheckpoint。通常UIの連続監視ではありません。
   workspaces:
     - workspaceId: next-ch04-l02-e01
       fixtureCount: 9
       limitMiB: 512
-      peakBytes: 458588160
-      maximumPids: 40
+      peakBytes: 453734400
+      maximumPids: 38
       memoryEvents:
         max: 0
         oom: 0
@@ -23866,7 +23870,7 @@ nativePreflight:
     - workspaceId: next-ch05-l01-e01
       fixtureCount: 11
       limitMiB: 896
-      peakBytes: 639881216
+      peakBytes: 635224064
       maximumPids: 38
       memoryEvents:
         max: 0
@@ -23876,7 +23880,7 @@ nativePreflight:
     - workspaceId: next-ch06-l01-e01
       fixtureCount: 12
       limitMiB: 896
-      peakBytes: 650854400
+      peakBytes: 645398528
       maximumPids: 38
       memoryEvents:
         max: 0
@@ -23886,8 +23890,8 @@ nativePreflight:
     - workspaceId: next-ch01-l01-e01
       fixtureCount: 6
       limitMiB: 512
-      peakBytes: 479125504
-      maximumPids: 40
+      peakBytes: 477401088
+      maximumPids: 38
       memoryEvents:
         max: 0
         oom: 0
@@ -23896,8 +23900,8 @@ nativePreflight:
     - workspaceId: next-ch02-l01-e01
       fixtureCount: 8
       limitMiB: 576
-      peakBytes: 559874048
-      maximumPids: 38
+      peakBytes: 550023168
+      maximumPids: 41
       memoryEvents:
         max: 0
         oom: 0
@@ -23906,8 +23910,8 @@ nativePreflight:
     - workspaceId: next-ch02-l02-e01
       fixtureCount: 9
       limitMiB: 512
-      peakBytes: 498417664
-      maximumPids: 40
+      peakBytes: 487870464
+      maximumPids: 38
       memoryEvents:
         max: 0
         oom: 0
@@ -23916,7 +23920,7 @@ nativePreflight:
     - workspaceId: next-ch03-l01-e01
       fixtureCount: 8
       limitMiB: 576
-      peakBytes: 578658304
+      peakBytes: 560709632
       maximumPids: 38
       memoryEvents:
         max: 0
@@ -23926,7 +23930,7 @@ nativePreflight:
     - workspaceId: next-ch03-l02-e01
       fixtureCount: 9
       limitMiB: 576
-      peakBytes: 576786432
+      peakBytes: 569700352
       maximumPids: 39
       memoryEvents:
         max: 0
@@ -23936,18 +23940,18 @@ nativePreflight:
     - workspaceId: next-ch04-l01-e01
       fixtureCount: 9
       limitMiB: 512
-      peakBytes: 491331584
-      maximumPids: 40
+      peakBytes: 485855232
+      maximumPids: 38
       memoryEvents:
         max: 0
         oom: 0
         oomKill: 0
       zombies: 0
 nativeEvidence:
-  path: private/issue250-release-evidence/p19/node-runner/native-preflight.json
-  sha256: 3156eab5671b2cffc17fec1bf4e08a126f46b10a2495b1004c757cb8f49436be
+  path: private/issue250-release-evidence/p20/browser-gate-recovery/native-preflight.json
+  sha256: 012eaf005ff88c75e830392ab7a4467029b5b3e94bdfdf5b37dad04a15e099ff
 pagesStaticStudy:
-  sourceCommit: 775ed87495fff6de0f283acb0023b1dc4648efca
+  sourceCommit: c16beec9538f6c19c59ce29c5427e66c26322624
   canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
   viewports:
     - 1280
@@ -23968,20 +23972,20 @@ pagesStaticStudy:
   progressRoundTrip: passed
   localHandoff: passed
   report:
-    path: private/issue250-release-evidence/p19/node-runner/pages-static-study-report.json
-    sha256: 8a2fad0de36ea9ea90a93fd90e2801bdfe12af321b64ca990c655bc2a8d4e46b
+    path: private/issue250-release-evidence/p20/browser-gate-recovery/pages-static-study-report.json
+    sha256: f0cb3da9f71c4d8035f8b470d32cc28d88f95909888d21aaeb9f7223c362d6d8
 author: codex-primary-issue250
 privateOriginalsChecked: true
 independenceReview:
   reviewer: /root/consumer_final_security
   status: approved
-  sourceCommit: 775ed87495fff6de0f283acb0023b1dc4648efca
+  sourceCommit: c16beec9538f6c19c59ce29c5427e66c26322624
   canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
-  productTreeSha256: 5da0276d3720933991c7d3f4fbb283875ad2c716c8ab7eaf72aecc4e8e8dfe96
-  evidenceSha256: f21b5abbb2227fe2b3430de3cdff5815c42687d580e6d7e485eadd0f2bf02cc4
+  productTreeSha256: 14845a91c37e37a8ee52a94062b1d4418889f547e1e614781ede27a74ccc3dcc
+  evidenceSha256: 3235dac174b43b92c79f473492b2b42b72f4a2050e2b1572b5daefa864ba3441
   referenceSha256s:
+    - 012eaf005ff88c75e830392ab7a4467029b5b3e94bdfdf5b37dad04a15e099ff
     - 117e15332ae08b249609eadf5abeae8758994f1bd7aaefc8d91ddc20544e733e
-    - 3156eab5671b2cffc17fec1bf4e08a126f46b10a2495b1004c757cb8f49436be
     - 5a5a66007c3ebb0810d4338a2f1f224aa96761b262ce9c2b2781203338f87e4b
-    - 8a2fad0de36ea9ea90a93fd90e2801bdfe12af321b64ca990c655bc2a8d4e46b
     - d0dd4d9c57d24769f17d2a69883d105e374442f2bf2b1131cec4f7d408444e6e
+    - f0cb3da9f71c4d8035f8b470d32cc28d88f95909888d21aaeb9f7223c362d6d8

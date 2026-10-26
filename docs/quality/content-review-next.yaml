@@ -1,6 +1,6 @@
 schemaVersion: 1
 releaseStatus: approved
-verifiedSourceCommit: 775ed87495fff6de0f283acb0023b1dc4648efca
+verifiedSourceCommit: c16beec9538f6c19c59ce29c5427e66c26322624
 canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
 lessons:
   - lessonId: next-ch01-l01
@@ -13,7 +13,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開回復候補775ed87495fff6de0f283acb0023b1dc4648efcaへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。今回の差分はNode専用テストのbyte-identical命名と明示起動パスの修正で、テスト16件・assert・期限・失敗条件・他のVitest280ファイルを維持し、既存3担当が限定差分を承認。公開タグ検証のCLI依存分離は前候補d10ca8aの有効な検証を保持する。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開回復候補c16beec9538f6c19c59ce29c5427e66c26322624への適用確認。9教材hash・学習画面・固定依存は元efa0e78・d55127b・775ed87と不変。元読解b809b15と原UI観測B91のSource・担当・制限を保持し、新規読解や実操作へ付け替えない。差分は公開横断テストの同期、既存UI変更への確認済み5画像追随、全3Browser・1workerの工程分離と証拠結合。全649検査の集合・Tailwind全49Fixtureの所有範囲・最大240分の運用枠を記録し、既存3担当が限定差分を承認。固定32件の補助CIは元Source5e8f8dfのまま保持し、新SourceのNative原本・実CLI・最終CI・公開後確認とは分けて結合する。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch02-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -24,7 +24,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開回復候補775ed87495fff6de0f283acb0023b1dc4648efcaへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。今回の差分はNode専用テストのbyte-identical命名と明示起動パスの修正で、テスト16件・assert・期限・失敗条件・他のVitest280ファイルを維持し、既存3担当が限定差分を承認。公開タグ検証のCLI依存分離は前候補d10ca8aの有効な検証を保持する。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開回復候補c16beec9538f6c19c59ce29c5427e66c26322624への適用確認。9教材hash・学習画面・固定依存は元efa0e78・d55127b・775ed87と不変。元読解b809b15と原UI観測B91のSource・担当・制限を保持し、新規読解や実操作へ付け替えない。差分は公開横断テストの同期、既存UI変更への確認済み5画像追随、全3Browser・1workerの工程分離と証拠結合。全649検査の集合・Tailwind全49Fixtureの所有範囲・最大240分の運用枠を記録し、既存3担当が限定差分を承認。固定32件の補助CIは元Source5e8f8dfのまま保持し、新SourceのNative原本・実CLI・最終CI・公開後確認とは分けて結合する。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch02-l02
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -35,7 +35,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開回復候補775ed87495fff6de0f283acb0023b1dc4648efcaへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。今回の差分はNode専用テストのbyte-identical命名と明示起動パスの修正で、テスト16件・assert・期限・失敗条件・他のVitest280ファイルを維持し、既存3担当が限定差分を承認。公開タグ検証のCLI依存分離は前候補d10ca8aの有効な検証を保持する。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開回復候補c16beec9538f6c19c59ce29c5427e66c26322624への適用確認。9教材hash・学習画面・固定依存は元efa0e78・d55127b・775ed87と不変。元読解b809b15と原UI観測B91のSource・担当・制限を保持し、新規読解や実操作へ付け替えない。差分は公開横断テストの同期、既存UI変更への確認済み5画像追随、全3Browser・1workerの工程分離と証拠結合。全649検査の集合・Tailwind全49Fixtureの所有範囲・最大240分の運用枠を記録し、既存3担当が限定差分を承認。固定32件の補助CIは元Source5e8f8dfのまま保持し、新SourceのNative原本・実CLI・最終CI・公開後確認とは分けて結合する。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch03-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -46,7 +46,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開回復候補775ed87495fff6de0f283acb0023b1dc4648efcaへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。今回の差分はNode専用テストのbyte-identical命名と明示起動パスの修正で、テスト16件・assert・期限・失敗条件・他のVitest280ファイルを維持し、既存3担当が限定差分を承認。公開タグ検証のCLI依存分離は前候補d10ca8aの有効な検証を保持する。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開回復候補c16beec9538f6c19c59ce29c5427e66c26322624への適用確認。9教材hash・学習画面・固定依存は元efa0e78・d55127b・775ed87と不変。元読解b809b15と原UI観測B91のSource・担当・制限を保持し、新規読解や実操作へ付け替えない。差分は公開横断テストの同期、既存UI変更への確認済み5画像追随、全3Browser・1workerの工程分離と証拠結合。全649検査の集合・Tailwind全49Fixtureの所有範囲・最大240分の運用枠を記録し、既存3担当が限定差分を承認。固定32件の補助CIは元Source5e8f8dfのまま保持し、新SourceのNative原本・実CLI・最終CI・公開後確認とは分けて結合する。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch03-l02
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -57,7 +57,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開回復候補775ed87495fff6de0f283acb0023b1dc4648efcaへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。今回の差分はNode専用テストのbyte-identical命名と明示起動パスの修正で、テスト16件・assert・期限・失敗条件・他のVitest280ファイルを維持し、既存3担当が限定差分を承認。公開タグ検証のCLI依存分離は前候補d10ca8aの有効な検証を保持する。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開回復候補c16beec9538f6c19c59ce29c5427e66c26322624への適用確認。9教材hash・学習画面・固定依存は元efa0e78・d55127b・775ed87と不変。元読解b809b15と原UI観測B91のSource・担当・制限を保持し、新規読解や実操作へ付け替えない。差分は公開横断テストの同期、既存UI変更への確認済み5画像追随、全3Browser・1workerの工程分離と証拠結合。全649検査の集合・Tailwind全49Fixtureの所有範囲・最大240分の運用枠を記録し、既存3担当が限定差分を承認。固定32件の補助CIは元Source5e8f8dfのまま保持し、新SourceのNative原本・実CLI・最終CI・公開後確認とは分けて結合する。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch04-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -68,7 +68,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開回復候補775ed87495fff6de0f283acb0023b1dc4648efcaへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。今回の差分はNode専用テストのbyte-identical命名と明示起動パスの修正で、テスト16件・assert・期限・失敗条件・他のVitest280ファイルを維持し、既存3担当が限定差分を承認。公開タグ検証のCLI依存分離は前候補d10ca8aの有効な検証を保持する。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開回復候補c16beec9538f6c19c59ce29c5427e66c26322624への適用確認。9教材hash・学習画面・固定依存は元efa0e78・d55127b・775ed87と不変。元読解b809b15と原UI観測B91のSource・担当・制限を保持し、新規読解や実操作へ付け替えない。差分は公開横断テストの同期、既存UI変更への確認済み5画像追随、全3Browser・1workerの工程分離と証拠結合。全649検査の集合・Tailwind全49Fixtureの所有範囲・最大240分の運用枠を記録し、既存3担当が限定差分を承認。固定32件の補助CIは元Source5e8f8dfのまま保持し、新SourceのNative原本・実CLI・最終CI・公開後確認とは分けて結合する。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch04-l02
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -79,7 +79,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開回復候補775ed87495fff6de0f283acb0023b1dc4648efcaへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。今回の差分はNode専用テストのbyte-identical命名と明示起動パスの修正で、テスト16件・assert・期限・失敗条件・他のVitest280ファイルを維持し、既存3担当が限定差分を承認。公開タグ検証のCLI依存分離は前候補d10ca8aの有効な検証を保持する。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開回復候補c16beec9538f6c19c59ce29c5427e66c26322624への適用確認。9教材hash・学習画面・固定依存は元efa0e78・d55127b・775ed87と不変。元読解b809b15と原UI観測B91のSource・担当・制限を保持し、新規読解や実操作へ付け替えない。差分は公開横断テストの同期、既存UI変更への確認済み5画像追随、全3Browser・1workerの工程分離と証拠結合。全649検査の集合・Tailwind全49Fixtureの所有範囲・最大240分の運用枠を記録し、既存3担当が限定差分を承認。固定32件の補助CIは元Source5e8f8dfのまま保持し、新SourceのNative原本・実CLI・最終CI・公開後確認とは分けて結合する。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch05-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -90,7 +90,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開回復候補775ed87495fff6de0f283acb0023b1dc4648efcaへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。今回の差分はNode専用テストのbyte-identical命名と明示起動パスの修正で、テスト16件・assert・期限・失敗条件・他のVitest280ファイルを維持し、既存3担当が限定差分を承認。公開タグ検証のCLI依存分離は前候補d10ca8aの有効な検証を保持する。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開回復候補c16beec9538f6c19c59ce29c5427e66c26322624への適用確認。9教材hash・学習画面・固定依存は元efa0e78・d55127b・775ed87と不変。元読解b809b15と原UI観測B91のSource・担当・制限を保持し、新規読解や実操作へ付け替えない。差分は公開横断テストの同期、既存UI変更への確認済み5画像追随、全3Browser・1workerの工程分離と証拠結合。全649検査の集合・Tailwind全49Fixtureの所有範囲・最大240分の運用枠を記録し、既存3担当が限定差分を承認。固定32件の補助CIは元Source5e8f8dfのまま保持し、新SourceのNative原本・実CLI・最終CI・公開後確認とは分けて結合する。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch06-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -101,4 +101,4 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開回復候補775ed87495fff6de0f283acb0023b1dc4648efcaへの適用確認。9教材hash・学習画面・固定依存は元efa0e78およびd55127bと不変。元読解b809b15と原UI観測B91のSource・担当・制限は原本のまま保持し、新しい読解や実操作へ付け替えない。今回の差分はNode専用テストのbyte-identical命名と明示起動パスの修正で、テスト16件・assert・期限・失敗条件・他のVitest280ファイルを維持し、既存3担当が限定差分を承認。公開タグ検証のCLI依存分離は前候補d10ca8aの有効な検証を保持する。新SourceのNative原本と実CLI・最終CI・公開後確認を別々に結ぶ。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開回復候補c16beec9538f6c19c59ce29c5427e66c26322624への適用確認。9教材hash・学習画面・固定依存は元efa0e78・d55127b・775ed87と不変。元読解b809b15と原UI観測B91のSource・担当・制限を保持し、新規読解や実操作へ付け替えない。差分は公開横断テストの同期、既存UI変更への確認済み5画像追随、全3Browser・1workerの工程分離と証拠結合。全649検査の集合・Tailwind全49Fixtureの所有範囲・最大240分の運用枠を記録し、既存3担当が限定差分を承認。固定32件の補助CIは元Source5e8f8dfのまま保持し、新SourceのNative原本・実CLI・最終CI・公開後確認とは分けて結合する。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
