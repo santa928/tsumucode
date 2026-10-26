@@ -273,58 +273,106 @@ test('制作の2ソースを保存・再開し、途中ZIPと実操作・判定�
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
 });
 
-test('制作途中をCourse Mapから再開し、工程と手動選択Fileを独立して復元する', async ({ page }) => {
+test('制作途中をCourse Mapから再開し、工程と手動選択Fileを独立して復元する', async ({
+  page,
+}, info) => {
   test.setTimeout(90000);
-  const lessonId = 'tailwind-ch02-l01';
-  await page.goto(`${base}#/courses/tailwind/lessons/${lessonId}/exercises/${project.id}`);
-  await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled();
-  const css = project.files
-    .find(({ path }) => path === 'styles.css')!
-    .content.replace('#000000', '#265d63');
-  await page.getByRole('tab', { name: 'styles.css', exact: true }).click();
-  await replaceEditorText(page, css);
-  const step = project.steps[1]!;
-  const stepButton = page.getByRole('button', { name: `手順 2：${step.change}`, exact: true });
-  await stepButton.click();
-  await expect(page.getByText('保存済み', { exact: true })).toBeVisible();
-  await expect
-    .poll(async () => {
-      const draft = (await readStoredProgress(page)).drafts.find(
-        (row) => row['workspaceId'] === project.id,
-      );
-      return { activeStepId: draft?.['activeStepId'], selectedFile: draft?.['selectedFile'] };
-    })
-    .toEqual({ activeStepId: step.id, selectedFile: 'styles.css' });
-  await page.goto(`${base}#/courses/tailwind`);
-  const card = page
-    .locator('[data-lesson-piece]')
-    .filter({
+  // 実reload判定を観測するだけに留め、tab IDやLease、時刻を上書きしない。
+  await page.addInitScript(() => {
+    if (window !== window.top) return;
+    const key = 'tsumucode-editing:tab-id:v1';
+    const previous = sessionStorage.getItem(key);
+    const calls: { types: string[]; legacyType: number | null }[] = [];
+    const nativeEntries = performance.getEntriesByType.bind(performance);
+    performance.getEntriesByType = (type) => {
+      const entries = nativeEntries(type);
+      if (type === 'navigation' && calls.length < 16) {
+        // 旧Navigation Timingは存在と値だけを読み、未実装環境も観測失敗にしない。
+        const legacy = performance as unknown as { navigation?: { type?: number } };
+        calls.push({
+          types: entries.map((entry) => (entry as PerformanceNavigationTiming).type),
+          legacyType: legacy.navigation?.type ?? null,
+        });
+      }
+      return entries;
+    };
+    Object.defineProperty(window, '__tsumucodeLeaseNavigation', {
+      value: () => ({
+        previousPresent: previous !== null,
+        storedIdReused: previous !== null && previous === sessionStorage.getItem(key),
+        readyState: document.readyState,
+        calls,
+      }),
+    });
+  });
+  try {
+    const lessonId = 'tailwind-ch02-l01';
+    await page.goto(`${base}#/courses/tailwind/lessons/${lessonId}/exercises/${project.id}`);
+    await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled();
+    const css = project.files
+      .find(({ path }) => path === 'styles.css')!
+      .content.replace('#000000', '#265d63');
+    await page.getByRole('tab', { name: 'styles.css', exact: true }).click();
+    await replaceEditorText(page, css);
+    const step = project.steps[1]!;
+    const stepButton = page.getByRole('button', { name: `手順 2：${step.change}`, exact: true });
+    await stepButton.click();
+    await expect(page.getByText('保存済み', { exact: true })).toBeVisible();
+    await expect
+      .poll(async () => {
+        const draft = (await readStoredProgress(page)).drafts.find(
+          (row) => row['workspaceId'] === project.id,
+        );
+        return { activeStepId: draft?.['activeStepId'], selectedFile: draft?.['selectedFile'] };
+      })
+      .toEqual({ activeStepId: step.id, selectedFile: 'styles.css' });
+    await page.goto(`${base}#/courses/tailwind`);
+    const card = page.locator('[data-lesson-piece]').filter({
       has: page.getByRole('heading', {
         name: 'テーマと共通の見た目を小さい制作へつなぐ',
         exact: true,
       }),
     });
-  await expect(card).not.toContainText('未着手');
-  await card.getByRole('link', { name: /レッスンを再開する$/ }).click();
-  await expect(stepButton).toHaveAttribute('aria-expanded', 'true');
-  await expect(page.locator('.cm-content')).toContainText('#265d63');
-  await page.getByRole('tab', { name: 'index.html', exact: true }).click();
-  await expect(page.getByText('保存済み', { exact: true })).toBeVisible();
-  await page.reload();
-  await expect(page.getByRole('tab', { name: 'index.html', exact: true })).toHaveAttribute(
-    'aria-selected',
-    'true',
-  );
-  await expect(stepButton).toHaveAttribute('aria-expanded', 'true');
-  await page.getByRole('tab', { name: 'styles.css', exact: true }).click();
-  await expect(page.getByText('保存済み', { exact: true })).toBeVisible();
-  await page.reload();
-  await expect(page.getByRole('tab', { name: 'styles.css', exact: true })).toHaveAttribute(
-    'aria-selected',
-    'true',
-  );
-  await expect(stepButton).toHaveAttribute('aria-expanded', 'true');
-  await expect(page.locator('.cm-content')).toContainText('#265d63');
+    await expect(card).not.toContainText('未着手');
+    await card.getByRole('link', { name: /レッスンを再開する$/ }).click();
+    await expect(stepButton).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('.cm-content')).toContainText('#265d63');
+    await page.getByRole('tab', { name: 'index.html', exact: true }).click();
+    await expect(page.getByText('保存済み', { exact: true })).toBeVisible();
+    await page.reload();
+    await expect(page.getByRole('tab', { name: 'index.html', exact: true })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    await expect(stepButton).toHaveAttribute('aria-expanded', 'true');
+    await page.getByRole('tab', { name: 'styles.css', exact: true }).click();
+    await expect(page.getByText('保存済み', { exact: true })).toBeVisible();
+    await page.reload();
+    await expect(page.getByRole('tab', { name: 'styles.css', exact: true })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    await expect(stepButton).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('.cm-content')).toContainText('#265d63');
+  } finally {
+    // 失敗時にも実判定を残す。識別子・秘密値・学習ソースは証拠へ含めない。
+    const observation: unknown = await page
+      .evaluate(() => {
+        const probe = (
+          window as unknown as {
+            __tsumucodeLeaseNavigation?: () => unknown;
+          }
+        ).__tsumucodeLeaseNavigation;
+        return probe?.() ?? { probeMissing: true };
+      })
+      .catch((error: unknown) => ({
+        observationError: error instanceof Error ? error.name : 'UnknownError',
+      }));
+    await info.attach('lease-navigation-observation', {
+      body: JSON.stringify(observation, null, 2),
+      contentType: 'application/json',
+    });
+  }
 });
 
 for (const narrow of [false, true]) {
