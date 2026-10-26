@@ -14,14 +14,14 @@ publicationApprovalReference: repository-owner santa928 / 2026-10-25 実consumer
 realHumanTrial: unverified
 lowEndPhysicalDevice: unverified
 cookieAuthenticationPersistence: theme-cookie-only-authentication-persistence-deferred-issue-14
-verifiedSourceCommit: 4a017a7eb0e79dd4bb0ec4a38417637158cb8046
+verifiedSourceCommit: e8a077994f5c4cba891e15141dddf5002b1fb7f0
 canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
-candidateTreeSha256: abdac193be723bd55f8da5b885ce2ec82d546f502fe9cd0629e79c28adad0df5
+candidateTreeSha256: 1553e9edb3839e54106cfb6a30d695f125e5ed45737d6494eb374461aec9c84a
 draftCanonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
 draftInput: &a1
   schemaVersion: 1
   courseId: next
-  sourceCommit: 4a017a7eb0e79dd4bb0ec4a38417637158cb8046
+  sourceCommit: e8a077994f5c4cba891e15141dddf5002b1fb7f0
   scope: next-learning-input-v1
   publicationMetadata:
     coursePublicationStatus: published
@@ -23476,9 +23476,9 @@ draftInput: &a1
       normalizedSha256: 60fd4f972b50f5b67ed097cad65502f393c1ec071297bbe85cf5317f0c5d6b7f
       normalizedBytes: 925
     - path: tests/performance/interactions.spec.ts
-      rawSha256: b569a6275d843ec7e85a1590bbc6ff9223e362bf1881a8ade24812bf34f5f7dd
-      normalizedSha256: b569a6275d843ec7e85a1590bbc6ff9223e362bf1881a8ade24812bf34f5f7dd
-      normalizedBytes: 33749
+      rawSha256: 876eb67d0bb49fddc52ce91edbd3df1a17fc22d636ebff7cf7542b5d4ec85d92
+      normalizedSha256: 876eb67d0bb49fddc52ce91edbd3df1a17fc22d636ebff7cf7542b5d4ec85d92
+      normalizedBytes: 34018
     - path: tests/performance/javascript-performance.spec.ts
       rawSha256: 0c22d77cbb10ca12f227db569cec19acd02b44242953b14e9235b53408edec06
       normalizedSha256: 0c22d77cbb10ca12f227db569cec19acd02b44242953b14e9235b53408edec06
@@ -23763,7 +23763,7 @@ draftInput: &a1
       rawSha256: 3b8e26cf90cbe78637c96523a6a8583b0ce32f260c441d0c071b2f0725e9f4f4
       normalizedSha256: 3b8e26cf90cbe78637c96523a6a8583b0ce32f260c441d0c071b2f0725e9f4f4
       normalizedBytes: 753
-  normalizedInputSha256: 7be6ac1f5fe53ccffe8be1f6a2122222d29f58b0cb121e25930ee456b6799164
+  normalizedInputSha256: 4caa93380af432c8986f8916e3f39214ae26f60cf37b433df70f485c423a0411
 finalInput: *a1
 applicationSourceSha256: 5c6fcd89fafe494ab7bc1917e1bea0aa68a87120a3750bb5e321bc6f46182cf8
 dependencyLockSha256: 191461e31bb2d50d9be7b6fd91e2a63e14e7eee00634461bb4bc32bac0b7f0c8
@@ -23852,16 +23852,16 @@ personas:
 nativePreflight:
   schemaVersion: 1
   courseId: next
-  sourceCommit: 4a017a7eb0e79dd4bb0ec4a38417637158cb8046
-  workflowRunId: '40339619380'
+  sourceCommit: e8a077994f5c4cba891e15141dddf5002b1fb7f0
+  workflowRunId: '40390640171'
   workflowRunAttempt: 1
   scope: 9教材81Fixtureのcheckpoint。通常UIの連続監視ではありません。
   workspaces:
     - workspaceId: next-ch04-l02-e01
       fixtureCount: 9
       limitMiB: 512
-      peakBytes: 449421312
-      maximumPids: 40
+      peakBytes: 452886528
+      maximumPids: 39
       memoryEvents:
         max: 0
         oom: 0
@@ -23870,8 +23870,8 @@ nativePreflight:
     - workspaceId: next-ch05-l01-e01
       fixtureCount: 11
       limitMiB: 896
-      peakBytes: 633442304
-      maximumPids: 38
+      peakBytes: 626855936
+      maximumPids: 40
       memoryEvents:
         max: 0
         oom: 0
@@ -23880,8 +23880,8 @@ nativePreflight:
     - workspaceId: next-ch06-l01-e01
       fixtureCount: 12
       limitMiB: 896
-      peakBytes: 634617856
-      maximumPids: 44
+      peakBytes: 629411840
+      maximumPids: 39
       memoryEvents:
         max: 0
         oom: 0
@@ -23890,8 +23890,8 @@ nativePreflight:
     - workspaceId: next-ch01-l01-e01
       fixtureCount: 6
       limitMiB: 512
-      peakBytes: 471719936
-      maximumPids: 38
+      peakBytes: 471502848
+      maximumPids: 40
       memoryEvents:
         max: 0
         oom: 0
@@ -23900,8 +23900,8 @@ nativePreflight:
     - workspaceId: next-ch02-l01-e01
       fixtureCount: 8
       limitMiB: 576
-      peakBytes: 561266688
-      maximumPids: 40
+      peakBytes: 548671488
+      maximumPids: 42
       memoryEvents:
         max: 0
         oom: 0
@@ -23910,8 +23910,8 @@ nativePreflight:
     - workspaceId: next-ch02-l02-e01
       fixtureCount: 9
       limitMiB: 512
-      peakBytes: 481103872
-      maximumPids: 39
+      peakBytes: 471838720
+      maximumPids: 38
       memoryEvents:
         max: 0
         oom: 0
@@ -23920,8 +23920,8 @@ nativePreflight:
     - workspaceId: next-ch03-l01-e01
       fixtureCount: 8
       limitMiB: 576
-      peakBytes: 556478464
-      maximumPids: 41
+      peakBytes: 556212224
+      maximumPids: 39
       memoryEvents:
         max: 0
         oom: 0
@@ -23930,8 +23930,8 @@ nativePreflight:
     - workspaceId: next-ch03-l02-e01
       fixtureCount: 9
       limitMiB: 576
-      peakBytes: 564928512
-      maximumPids: 39
+      peakBytes: 567341056
+      maximumPids: 38
       memoryEvents:
         max: 0
         oom: 0
@@ -23940,18 +23940,18 @@ nativePreflight:
     - workspaceId: next-ch04-l01-e01
       fixtureCount: 9
       limitMiB: 512
-      peakBytes: 484225024
-      maximumPids: 40
+      peakBytes: 476372992
+      maximumPids: 44
       memoryEvents:
         max: 0
         oom: 0
         oomKill: 0
       zombies: 0
 nativeEvidence:
-  path: private/issue250-release-evidence/p22/merge-ownership/native-preflight.json
-  sha256: d3c3427db350f976c37b28c8b4677441ece88b58aceb3530b4d1e1dc55db493d
+  path: private/issue250-release-evidence/p23/performance-resume/native-preflight.json
+  sha256: c7cd1baac6385b5b375c6c261a5e7f110d96e1658e7519efb4f0c0fa70267559
 pagesStaticStudy:
-  sourceCommit: 4a017a7eb0e79dd4bb0ec4a38417637158cb8046
+  sourceCommit: e8a077994f5c4cba891e15141dddf5002b1fb7f0
   canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
   viewports:
     - 1280
@@ -23972,20 +23972,20 @@ pagesStaticStudy:
   progressRoundTrip: passed
   localHandoff: passed
   report:
-    path: private/issue250-release-evidence/p22/merge-ownership/pages-static-study-report.json
-    sha256: e86aafd16863b17561083a078fc2ced2bdf75ce11b0d6e3daea73e62b01025fb
+    path: private/issue250-release-evidence/p23/performance-resume/pages-static-study-report.json
+    sha256: 8199c051f69b75df93f688c1bc676818f1cce30e7dfa962971646f1609668d90
 author: codex-primary-issue250
 privateOriginalsChecked: true
 independenceReview:
   reviewer: /root/consumer_final_security
   status: approved
-  sourceCommit: 4a017a7eb0e79dd4bb0ec4a38417637158cb8046
+  sourceCommit: e8a077994f5c4cba891e15141dddf5002b1fb7f0
   canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
-  productTreeSha256: abdac193be723bd55f8da5b885ce2ec82d546f502fe9cd0629e79c28adad0df5
-  evidenceSha256: 37c6edfa8e9ae138bdf4236165528c38a01915e62a62dd832feac0cd439a02b7
+  productTreeSha256: 1553e9edb3839e54106cfb6a30d695f125e5ed45737d6494eb374461aec9c84a
+  evidenceSha256: e9ac78f92970e0cee9b4b1c4e1c2506cc1e155a8d4d1cd6a50ec65a6ff91abf4
   referenceSha256s:
     - 117e15332ae08b249609eadf5abeae8758994f1bd7aaefc8d91ddc20544e733e
     - 5a5a66007c3ebb0810d4338a2f1f224aa96761b262ce9c2b2781203338f87e4b
+    - 8199c051f69b75df93f688c1bc676818f1cce30e7dfa962971646f1609668d90
+    - c7cd1baac6385b5b375c6c261a5e7f110d96e1658e7519efb4f0c0fa70267559
     - d0dd4d9c57d24769f17d2a69883d105e374442f2bf2b1131cec4f7d408444e6e
-    - d3c3427db350f976c37b28c8b4677441ece88b58aceb3530b4d1e1dc55db493d
-    - e86aafd16863b17561083a078fc2ced2bdf75ce11b0d6e3daea73e62b01025fb
