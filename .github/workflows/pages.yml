@@ -249,19 +249,21 @@ jobs:
           SMOKE_OUTCOME: ${{ steps.browser_smoke.outcome }}
         run: |
           set -euo pipefail
-          if [ "$CHROMIUM_OUTCOME" = success ] && [ "$SMOKE_OUTCOME" = success ]; then
-            test -s test-results/e2e-blobs/chromium/report.zip
-            test -s test-results/e2e-blobs/smoke/report.zip
-          fi
-          mkdir -p test-results/e2e-blobs/merge
-          for group in chromium smoke; do
-            if [ -s "test-results/e2e-blobs/$group/report.zip" ]; then
-              cp "test-results/e2e-blobs/$group/report.zip" "test-results/e2e-blobs/merge/$group.zip"
-            fi
-          done
-          ./scripts/docker-compose.sh run --rm -e BASE_PATH app \
-            node node_modules/playwright/cli.js merge-reports \
-            --config=playwright.config.ts test-results/e2e-blobs/merge
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e CHROMIUM_OUTCOME -e SMOKE_OUTCOME app \
+            bash -euo pipefail -c '
+              if [ "$CHROMIUM_OUTCOME" = success ] && [ "$SMOKE_OUTCOME" = success ]; then
+                test -s test-results/e2e-blobs/chromium/report.zip
+                test -s test-results/e2e-blobs/smoke/report.zip
+              fi
+              mkdir -p test-results/e2e-blobs/merge
+              for group in chromium smoke; do
+                if [ -s "test-results/e2e-blobs/$group/report.zip" ]; then
+                  cp "test-results/e2e-blobs/$group/report.zip" "test-results/e2e-blobs/merge/$group.zip"
+                fi
+              done
+              node node_modules/playwright/cli.js merge-reports \
+                --config=playwright.config.ts test-results/e2e-blobs/merge
+            '
       - name: Performance budgets
         env:
           BASE_PATH: /${{ github.event.repository.name }}/

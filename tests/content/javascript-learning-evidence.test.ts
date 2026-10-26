@@ -555,6 +555,20 @@ it('分割Browserの欠落・証拠混在・結果結合の省略や失敗吸収
     ],
     ['結合のecho化', (steps) => (steps.find((step) => step.name === merge)!.run = 'echo reports')],
     [
+      '結合先のhost作成',
+      (steps) => {
+        const step = steps.find((item) => item.name === merge)!;
+        step.run = 'mkdir -p test-results/e2e-blobs/merge\n' + step.run;
+      },
+    ],
+    [
+      '工程結果のcontainer転送省略',
+      (steps) => {
+        const step = steps.find((item) => item.name === merge)!;
+        step.run = step.run.replace(' -e CHROMIUM_OUTCOME -e SMOKE_OUTCOME', '');
+      },
+    ],
+    [
       '片blob欠落の許容',
       (steps) => {
         const step = steps.find((item) => item.name === merge)!;

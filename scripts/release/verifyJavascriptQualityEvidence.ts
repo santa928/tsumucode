@@ -40,22 +40,24 @@ export const JAVASCRIPT_REQUIRED_VISUAL_SCREENS = [
   'javascript-capstone',
 ].flatMap((screen) => ['1280x720', '390x844'].map((viewport) => `${screen}@${viewport}`));
 
-// workflowの結合処理は改行も契約に含め、検査省略や失敗の握り潰しへ差し替えられないようにする。
+// 改行と作成側コンテナ内での準備も契約に含め、所有者差・検査省略・失敗の握り潰しを防ぐ。
 const BROWSER_EVIDENCE_MERGE_SCRIPT = String.raw`
 set -euo pipefail
-if [ "$CHROMIUM_OUTCOME" = success ] && [ "$SMOKE_OUTCOME" = success ]; then
-  test -s test-results/e2e-blobs/chromium/report.zip
-  test -s test-results/e2e-blobs/smoke/report.zip
-fi
-mkdir -p test-results/e2e-blobs/merge
-for group in chromium smoke; do
-  if [ -s "test-results/e2e-blobs/$group/report.zip" ]; then
-    cp "test-results/e2e-blobs/$group/report.zip" "test-results/e2e-blobs/merge/$group.zip"
-  fi
-done
-./scripts/docker-compose.sh run --rm -e BASE_PATH app \
-  node node_modules/playwright/cli.js merge-reports \
-  --config=playwright.config.ts test-results/e2e-blobs/merge
+./scripts/docker-compose.sh run --rm -e BASE_PATH -e CHROMIUM_OUTCOME -e SMOKE_OUTCOME app \
+  bash -euo pipefail -c '
+    if [ "$CHROMIUM_OUTCOME" = success ] && [ "$SMOKE_OUTCOME" = success ]; then
+      test -s test-results/e2e-blobs/chromium/report.zip
+      test -s test-results/e2e-blobs/smoke/report.zip
+    fi
+    mkdir -p test-results/e2e-blobs/merge
+    for group in chromium smoke; do
+      if [ -s "test-results/e2e-blobs/$group/report.zip" ]; then
+        cp "test-results/e2e-blobs/$group/report.zip" "test-results/e2e-blobs/merge/$group.zip"
+      fi
+    done
+    node node_modules/playwright/cli.js merge-reports \
+      --config=playwright.config.ts test-results/e2e-blobs/merge
+  '
 `.trim();
 
 /** 事前検査済みの記録でも、既存全品質CI成功前の配信を許さない。 */
