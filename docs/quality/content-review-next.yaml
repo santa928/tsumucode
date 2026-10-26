@@ -1,6 +1,6 @@
 schemaVersion: 1
 releaseStatus: approved
-verifiedSourceCommit: 965ff069e37227beafc863d84187b9a9b7db5e3e
+verifiedSourceCommit: 4a017a7eb0e79dd4bb0ec4a38417637158cb8046
 canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
 lessons:
   - lessonId: next-ch01-l01
@@ -14,9 +14,10 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes:
-      公開回復候補965ff069e37227beafc863d84187b9a9b7db5e3eへの適用確認。9教材hash・学習画面・固定依存は元efa0e78・d55127b・775ed87・c16beecと不変。元読解b809b15と原UI観測B91のSource・担当・制限を保持し、新規読解や実操作へ付け替えない。既存の公開横断テスト同期、確認済み5画像追随、全3Browser・1workerの工程分離と証拠結合に加え、最終workflow
-      guardを2工程の完全な条件照合へ同期した。Firefox自動化のreloadがnavigate/0を報告する実観測に対し、製品の排他・4秒Leaseを維持し、永続保存と準備完了を条件待ちして元の検査を行う。期限前write拒否・期限後再取得・旧proof拒否の回帰検査を追加し、不要な観測wrapperは削除した。全649検査・Tailwind全49Fixture・最大240分運用枠を維持。既存3担当の未変更範囲承認と今回5差分の承認、新Source
-      Native原本・静的成果物583ファイル完全一致を結合する。補助CI32件は元5e8f8df、追加観測18件は元d0e787fとして保持し、新Sourceへ付け替えない。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+      公開回復候補4a017a7eb0e79dd4bb0ec4a38417637158cb8046への適用確認。9教材hash・学習画面・固定依存は元b809b15・d55127b・c16beec・965ff06と不変。元読解b809b15・原UI観測B91と3personaのSource・担当・原本hash・制限を保持し、新しい読解や実操作へ付け替えない。今回の3差分はBrowser証拠のmkdir/copy/公式mergeを作成側appコンテナ内へまとめ、厳格workflow
+      guardと負対照を同期するもの。sudo/chmod/chown・権限追加・製品/API/TTL・検査範囲・閾値の変更はない。Linux
+      root所有0755とrunner相当UID1001で旧失敗を再現し、新処理の正対照・失敗保持・片blob欠落拒否を確認した。公開run40314031651の2blob原本を再利用した実結合で647成功・既存2skip・失敗/Flaky0を確認し、元Source
+      main2446547の結果として保持する。新SourceのBrowser実行や公開成功へ付け替えない。3担当の今回限定承認と未変更範囲承認、新SourceのNative・静的583ファイル完全一致を結合する。前段の補助32件は元5e8f8df、追加観測18件は元d0e787fとして保持する。Cookie取消の旧原因は未断定、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch02-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -28,9 +29,10 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes:
-      公開回復候補965ff069e37227beafc863d84187b9a9b7db5e3eへの適用確認。9教材hash・学習画面・固定依存は元efa0e78・d55127b・775ed87・c16beecと不変。元読解b809b15と原UI観測B91のSource・担当・制限を保持し、新規読解や実操作へ付け替えない。既存の公開横断テスト同期、確認済み5画像追随、全3Browser・1workerの工程分離と証拠結合に加え、最終workflow
-      guardを2工程の完全な条件照合へ同期した。Firefox自動化のreloadがnavigate/0を報告する実観測に対し、製品の排他・4秒Leaseを維持し、永続保存と準備完了を条件待ちして元の検査を行う。期限前write拒否・期限後再取得・旧proof拒否の回帰検査を追加し、不要な観測wrapperは削除した。全649検査・Tailwind全49Fixture・最大240分運用枠を維持。既存3担当の未変更範囲承認と今回5差分の承認、新Source
-      Native原本・静的成果物583ファイル完全一致を結合する。補助CI32件は元5e8f8df、追加観測18件は元d0e787fとして保持し、新Sourceへ付け替えない。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+      公開回復候補4a017a7eb0e79dd4bb0ec4a38417637158cb8046への適用確認。9教材hash・学習画面・固定依存は元b809b15・d55127b・c16beec・965ff06と不変。元読解b809b15・原UI観測B91と3personaのSource・担当・原本hash・制限を保持し、新しい読解や実操作へ付け替えない。今回の3差分はBrowser証拠のmkdir/copy/公式mergeを作成側appコンテナ内へまとめ、厳格workflow
+      guardと負対照を同期するもの。sudo/chmod/chown・権限追加・製品/API/TTL・検査範囲・閾値の変更はない。Linux
+      root所有0755とrunner相当UID1001で旧失敗を再現し、新処理の正対照・失敗保持・片blob欠落拒否を確認した。公開run40314031651の2blob原本を再利用した実結合で647成功・既存2skip・失敗/Flaky0を確認し、元Source
+      main2446547の結果として保持する。新SourceのBrowser実行や公開成功へ付け替えない。3担当の今回限定承認と未変更範囲承認、新SourceのNative・静的583ファイル完全一致を結合する。前段の補助32件は元5e8f8df、追加観測18件は元d0e787fとして保持する。Cookie取消の旧原因は未断定、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch02-l02
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -42,9 +44,10 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes:
-      公開回復候補965ff069e37227beafc863d84187b9a9b7db5e3eへの適用確認。9教材hash・学習画面・固定依存は元efa0e78・d55127b・775ed87・c16beecと不変。元読解b809b15と原UI観測B91のSource・担当・制限を保持し、新規読解や実操作へ付け替えない。既存の公開横断テスト同期、確認済み5画像追随、全3Browser・1workerの工程分離と証拠結合に加え、最終workflow
-      guardを2工程の完全な条件照合へ同期した。Firefox自動化のreloadがnavigate/0を報告する実観測に対し、製品の排他・4秒Leaseを維持し、永続保存と準備完了を条件待ちして元の検査を行う。期限前write拒否・期限後再取得・旧proof拒否の回帰検査を追加し、不要な観測wrapperは削除した。全649検査・Tailwind全49Fixture・最大240分運用枠を維持。既存3担当の未変更範囲承認と今回5差分の承認、新Source
-      Native原本・静的成果物583ファイル完全一致を結合する。補助CI32件は元5e8f8df、追加観測18件は元d0e787fとして保持し、新Sourceへ付け替えない。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+      公開回復候補4a017a7eb0e79dd4bb0ec4a38417637158cb8046への適用確認。9教材hash・学習画面・固定依存は元b809b15・d55127b・c16beec・965ff06と不変。元読解b809b15・原UI観測B91と3personaのSource・担当・原本hash・制限を保持し、新しい読解や実操作へ付け替えない。今回の3差分はBrowser証拠のmkdir/copy/公式mergeを作成側appコンテナ内へまとめ、厳格workflow
+      guardと負対照を同期するもの。sudo/chmod/chown・権限追加・製品/API/TTL・検査範囲・閾値の変更はない。Linux
+      root所有0755とrunner相当UID1001で旧失敗を再現し、新処理の正対照・失敗保持・片blob欠落拒否を確認した。公開run40314031651の2blob原本を再利用した実結合で647成功・既存2skip・失敗/Flaky0を確認し、元Source
+      main2446547の結果として保持する。新SourceのBrowser実行や公開成功へ付け替えない。3担当の今回限定承認と未変更範囲承認、新SourceのNative・静的583ファイル完全一致を結合する。前段の補助32件は元5e8f8df、追加観測18件は元d0e787fとして保持する。Cookie取消の旧原因は未断定、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch03-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -56,9 +59,10 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes:
-      公開回復候補965ff069e37227beafc863d84187b9a9b7db5e3eへの適用確認。9教材hash・学習画面・固定依存は元efa0e78・d55127b・775ed87・c16beecと不変。元読解b809b15と原UI観測B91のSource・担当・制限を保持し、新規読解や実操作へ付け替えない。既存の公開横断テスト同期、確認済み5画像追随、全3Browser・1workerの工程分離と証拠結合に加え、最終workflow
-      guardを2工程の完全な条件照合へ同期した。Firefox自動化のreloadがnavigate/0を報告する実観測に対し、製品の排他・4秒Leaseを維持し、永続保存と準備完了を条件待ちして元の検査を行う。期限前write拒否・期限後再取得・旧proof拒否の回帰検査を追加し、不要な観測wrapperは削除した。全649検査・Tailwind全49Fixture・最大240分運用枠を維持。既存3担当の未変更範囲承認と今回5差分の承認、新Source
-      Native原本・静的成果物583ファイル完全一致を結合する。補助CI32件は元5e8f8df、追加観測18件は元d0e787fとして保持し、新Sourceへ付け替えない。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+      公開回復候補4a017a7eb0e79dd4bb0ec4a38417637158cb8046への適用確認。9教材hash・学習画面・固定依存は元b809b15・d55127b・c16beec・965ff06と不変。元読解b809b15・原UI観測B91と3personaのSource・担当・原本hash・制限を保持し、新しい読解や実操作へ付け替えない。今回の3差分はBrowser証拠のmkdir/copy/公式mergeを作成側appコンテナ内へまとめ、厳格workflow
+      guardと負対照を同期するもの。sudo/chmod/chown・権限追加・製品/API/TTL・検査範囲・閾値の変更はない。Linux
+      root所有0755とrunner相当UID1001で旧失敗を再現し、新処理の正対照・失敗保持・片blob欠落拒否を確認した。公開run40314031651の2blob原本を再利用した実結合で647成功・既存2skip・失敗/Flaky0を確認し、元Source
+      main2446547の結果として保持する。新SourceのBrowser実行や公開成功へ付け替えない。3担当の今回限定承認と未変更範囲承認、新SourceのNative・静的583ファイル完全一致を結合する。前段の補助32件は元5e8f8df、追加観測18件は元d0e787fとして保持する。Cookie取消の旧原因は未断定、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch03-l02
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -70,9 +74,10 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes:
-      公開回復候補965ff069e37227beafc863d84187b9a9b7db5e3eへの適用確認。9教材hash・学習画面・固定依存は元efa0e78・d55127b・775ed87・c16beecと不変。元読解b809b15と原UI観測B91のSource・担当・制限を保持し、新規読解や実操作へ付け替えない。既存の公開横断テスト同期、確認済み5画像追随、全3Browser・1workerの工程分離と証拠結合に加え、最終workflow
-      guardを2工程の完全な条件照合へ同期した。Firefox自動化のreloadがnavigate/0を報告する実観測に対し、製品の排他・4秒Leaseを維持し、永続保存と準備完了を条件待ちして元の検査を行う。期限前write拒否・期限後再取得・旧proof拒否の回帰検査を追加し、不要な観測wrapperは削除した。全649検査・Tailwind全49Fixture・最大240分運用枠を維持。既存3担当の未変更範囲承認と今回5差分の承認、新Source
-      Native原本・静的成果物583ファイル完全一致を結合する。補助CI32件は元5e8f8df、追加観測18件は元d0e787fとして保持し、新Sourceへ付け替えない。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+      公開回復候補4a017a7eb0e79dd4bb0ec4a38417637158cb8046への適用確認。9教材hash・学習画面・固定依存は元b809b15・d55127b・c16beec・965ff06と不変。元読解b809b15・原UI観測B91と3personaのSource・担当・原本hash・制限を保持し、新しい読解や実操作へ付け替えない。今回の3差分はBrowser証拠のmkdir/copy/公式mergeを作成側appコンテナ内へまとめ、厳格workflow
+      guardと負対照を同期するもの。sudo/chmod/chown・権限追加・製品/API/TTL・検査範囲・閾値の変更はない。Linux
+      root所有0755とrunner相当UID1001で旧失敗を再現し、新処理の正対照・失敗保持・片blob欠落拒否を確認した。公開run40314031651の2blob原本を再利用した実結合で647成功・既存2skip・失敗/Flaky0を確認し、元Source
+      main2446547の結果として保持する。新SourceのBrowser実行や公開成功へ付け替えない。3担当の今回限定承認と未変更範囲承認、新SourceのNative・静的583ファイル完全一致を結合する。前段の補助32件は元5e8f8df、追加観測18件は元d0e787fとして保持する。Cookie取消の旧原因は未断定、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch04-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -84,9 +89,10 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes:
-      公開回復候補965ff069e37227beafc863d84187b9a9b7db5e3eへの適用確認。9教材hash・学習画面・固定依存は元efa0e78・d55127b・775ed87・c16beecと不変。元読解b809b15と原UI観測B91のSource・担当・制限を保持し、新規読解や実操作へ付け替えない。既存の公開横断テスト同期、確認済み5画像追随、全3Browser・1workerの工程分離と証拠結合に加え、最終workflow
-      guardを2工程の完全な条件照合へ同期した。Firefox自動化のreloadがnavigate/0を報告する実観測に対し、製品の排他・4秒Leaseを維持し、永続保存と準備完了を条件待ちして元の検査を行う。期限前write拒否・期限後再取得・旧proof拒否の回帰検査を追加し、不要な観測wrapperは削除した。全649検査・Tailwind全49Fixture・最大240分運用枠を維持。既存3担当の未変更範囲承認と今回5差分の承認、新Source
-      Native原本・静的成果物583ファイル完全一致を結合する。補助CI32件は元5e8f8df、追加観測18件は元d0e787fとして保持し、新Sourceへ付け替えない。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+      公開回復候補4a017a7eb0e79dd4bb0ec4a38417637158cb8046への適用確認。9教材hash・学習画面・固定依存は元b809b15・d55127b・c16beec・965ff06と不変。元読解b809b15・原UI観測B91と3personaのSource・担当・原本hash・制限を保持し、新しい読解や実操作へ付け替えない。今回の3差分はBrowser証拠のmkdir/copy/公式mergeを作成側appコンテナ内へまとめ、厳格workflow
+      guardと負対照を同期するもの。sudo/chmod/chown・権限追加・製品/API/TTL・検査範囲・閾値の変更はない。Linux
+      root所有0755とrunner相当UID1001で旧失敗を再現し、新処理の正対照・失敗保持・片blob欠落拒否を確認した。公開run40314031651の2blob原本を再利用した実結合で647成功・既存2skip・失敗/Flaky0を確認し、元Source
+      main2446547の結果として保持する。新SourceのBrowser実行や公開成功へ付け替えない。3担当の今回限定承認と未変更範囲承認、新SourceのNative・静的583ファイル完全一致を結合する。前段の補助32件は元5e8f8df、追加観測18件は元d0e787fとして保持する。Cookie取消の旧原因は未断定、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch04-l02
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -98,9 +104,10 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes:
-      公開回復候補965ff069e37227beafc863d84187b9a9b7db5e3eへの適用確認。9教材hash・学習画面・固定依存は元efa0e78・d55127b・775ed87・c16beecと不変。元読解b809b15と原UI観測B91のSource・担当・制限を保持し、新規読解や実操作へ付け替えない。既存の公開横断テスト同期、確認済み5画像追随、全3Browser・1workerの工程分離と証拠結合に加え、最終workflow
-      guardを2工程の完全な条件照合へ同期した。Firefox自動化のreloadがnavigate/0を報告する実観測に対し、製品の排他・4秒Leaseを維持し、永続保存と準備完了を条件待ちして元の検査を行う。期限前write拒否・期限後再取得・旧proof拒否の回帰検査を追加し、不要な観測wrapperは削除した。全649検査・Tailwind全49Fixture・最大240分運用枠を維持。既存3担当の未変更範囲承認と今回5差分の承認、新Source
-      Native原本・静的成果物583ファイル完全一致を結合する。補助CI32件は元5e8f8df、追加観測18件は元d0e787fとして保持し、新Sourceへ付け替えない。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+      公開回復候補4a017a7eb0e79dd4bb0ec4a38417637158cb8046への適用確認。9教材hash・学習画面・固定依存は元b809b15・d55127b・c16beec・965ff06と不変。元読解b809b15・原UI観測B91と3personaのSource・担当・原本hash・制限を保持し、新しい読解や実操作へ付け替えない。今回の3差分はBrowser証拠のmkdir/copy/公式mergeを作成側appコンテナ内へまとめ、厳格workflow
+      guardと負対照を同期するもの。sudo/chmod/chown・権限追加・製品/API/TTL・検査範囲・閾値の変更はない。Linux
+      root所有0755とrunner相当UID1001で旧失敗を再現し、新処理の正対照・失敗保持・片blob欠落拒否を確認した。公開run40314031651の2blob原本を再利用した実結合で647成功・既存2skip・失敗/Flaky0を確認し、元Source
+      main2446547の結果として保持する。新SourceのBrowser実行や公開成功へ付け替えない。3担当の今回限定承認と未変更範囲承認、新SourceのNative・静的583ファイル完全一致を結合する。前段の補助32件は元5e8f8df、追加観測18件は元d0e787fとして保持する。Cookie取消の旧原因は未断定、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch05-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -112,9 +119,10 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes:
-      公開回復候補965ff069e37227beafc863d84187b9a9b7db5e3eへの適用確認。9教材hash・学習画面・固定依存は元efa0e78・d55127b・775ed87・c16beecと不変。元読解b809b15と原UI観測B91のSource・担当・制限を保持し、新規読解や実操作へ付け替えない。既存の公開横断テスト同期、確認済み5画像追随、全3Browser・1workerの工程分離と証拠結合に加え、最終workflow
-      guardを2工程の完全な条件照合へ同期した。Firefox自動化のreloadがnavigate/0を報告する実観測に対し、製品の排他・4秒Leaseを維持し、永続保存と準備完了を条件待ちして元の検査を行う。期限前write拒否・期限後再取得・旧proof拒否の回帰検査を追加し、不要な観測wrapperは削除した。全649検査・Tailwind全49Fixture・最大240分運用枠を維持。既存3担当の未変更範囲承認と今回5差分の承認、新Source
-      Native原本・静的成果物583ファイル完全一致を結合する。補助CI32件は元5e8f8df、追加観測18件は元d0e787fとして保持し、新Sourceへ付け替えない。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+      公開回復候補4a017a7eb0e79dd4bb0ec4a38417637158cb8046への適用確認。9教材hash・学習画面・固定依存は元b809b15・d55127b・c16beec・965ff06と不変。元読解b809b15・原UI観測B91と3personaのSource・担当・原本hash・制限を保持し、新しい読解や実操作へ付け替えない。今回の3差分はBrowser証拠のmkdir/copy/公式mergeを作成側appコンテナ内へまとめ、厳格workflow
+      guardと負対照を同期するもの。sudo/chmod/chown・権限追加・製品/API/TTL・検査範囲・閾値の変更はない。Linux
+      root所有0755とrunner相当UID1001で旧失敗を再現し、新処理の正対照・失敗保持・片blob欠落拒否を確認した。公開run40314031651の2blob原本を再利用した実結合で647成功・既存2skip・失敗/Flaky0を確認し、元Source
+      main2446547の結果として保持する。新SourceのBrowser実行や公開成功へ付け替えない。3担当の今回限定承認と未変更範囲承認、新SourceのNative・静的583ファイル完全一致を結合する。前段の補助32件は元5e8f8df、追加観測18件は元d0e787fとして保持する。Cookie取消の旧原因は未断定、実人受講・物理低端末・認証Cookieの留保を維持する。
   - lessonId: next-ch06-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -126,6 +134,7 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes:
-      公開回復候補965ff069e37227beafc863d84187b9a9b7db5e3eへの適用確認。9教材hash・学習画面・固定依存は元efa0e78・d55127b・775ed87・c16beecと不変。元読解b809b15と原UI観測B91のSource・担当・制限を保持し、新規読解や実操作へ付け替えない。既存の公開横断テスト同期、確認済み5画像追随、全3Browser・1workerの工程分離と証拠結合に加え、最終workflow
-      guardを2工程の完全な条件照合へ同期した。Firefox自動化のreloadがnavigate/0を報告する実観測に対し、製品の排他・4秒Leaseを維持し、永続保存と準備完了を条件待ちして元の検査を行う。期限前write拒否・期限後再取得・旧proof拒否の回帰検査を追加し、不要な観測wrapperは削除した。全649検査・Tailwind全49Fixture・最大240分運用枠を維持。既存3担当の未変更範囲承認と今回5差分の承認、新Source
-      Native原本・静的成果物583ファイル完全一致を結合する。補助CI32件は元5e8f8df、追加観測18件は元d0e787fとして保持し、新Sourceへ付け替えない。Cookie取消の旧原因は未断定で、実人受講・物理低端末・認証Cookieの留保を維持する。
+      公開回復候補4a017a7eb0e79dd4bb0ec4a38417637158cb8046への適用確認。9教材hash・学習画面・固定依存は元b809b15・d55127b・c16beec・965ff06と不変。元読解b809b15・原UI観測B91と3personaのSource・担当・原本hash・制限を保持し、新しい読解や実操作へ付け替えない。今回の3差分はBrowser証拠のmkdir/copy/公式mergeを作成側appコンテナ内へまとめ、厳格workflow
+      guardと負対照を同期するもの。sudo/chmod/chown・権限追加・製品/API/TTL・検査範囲・閾値の変更はない。Linux
+      root所有0755とrunner相当UID1001で旧失敗を再現し、新処理の正対照・失敗保持・片blob欠落拒否を確認した。公開run40314031651の2blob原本を再利用した実結合で647成功・既存2skip・失敗/Flaky0を確認し、元Source
+      main2446547の結果として保持する。新SourceのBrowser実行や公開成功へ付け替えない。3担当の今回限定承認と未変更範囲承認、新SourceのNative・静的583ファイル完全一致を結合する。前段の補助32件は元5e8f8df、追加観測18件は元d0e787fとして保持する。Cookie取消の旧原因は未断定、実人受講・物理低端末・認証Cookieの留保を維持する。
