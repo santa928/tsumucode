@@ -457,13 +457,13 @@ it('実workflowの必須品質Gateの省略・失敗許容・deploy依存削除�
       deploy: { needs: string[] };
     };
   };
-  const skipped = structuredClone(workflow);
-  skipped.jobs.quality.steps = skipped.jobs.quality.steps.filter(
-    ({ name }) => name !== 'Chromium full and cross-browser smoke',
-  );
-  expect(() => {
-    assertJavascriptFinalQualityWorkflow(stringify(skipped));
-  }).toThrow('必須');
+  for (const required of ['Chromium full', 'Firefox and WebKit smoke']) {
+    const skipped = structuredClone(workflow);
+    skipped.jobs.quality.steps = skipped.jobs.quality.steps.filter(({ name }) => name !== required);
+    expect(() => {
+      assertJavascriptFinalQualityWorkflow(stringify(skipped));
+    }).toThrow('必須');
+  }
   const allowed = structuredClone(workflow);
   allowed.jobs.quality.steps.find(({ name }) => name === 'Release quality')!['continue-on-error'] =
     true;
@@ -493,5 +493,99 @@ it('同名stepのecho・失敗握り潰し・Artifact検査の差し替えを拒
     expect(() => {
       assertJavascriptFinalQualityWorkflow(stringify(changed));
     }).toThrow('必須');
+  }
+});
+
+it('分割Browserの欠落・証拠混在・結果結合の省略や失敗吸収を拒否する', async () => {
+  interface Step {
+    name: string;
+    id?: string;
+    run: string;
+    if?: string;
+    env?: Record<string, string>;
+    'timeout-minutes'?: number;
+    'continue-on-error'?: boolean;
+  }
+  const source = await readFile('.github/workflows/pages.yml', 'utf8');
+  const original = parse(source) as { jobs: { quality: { steps: Step[] } } };
+  const browser = 'Firefox and WebKit smoke';
+  const merge = 'Merge full and smoke browser evidence';
+  const faults: readonly [string, (steps: Step[]) => void][] = [
+    [
+      '結合工程の削除',
+      (steps) =>
+        steps.splice(
+          steps.findIndex((step) => step.name === merge),
+          1,
+        ),
+    ],
+    ['Browser条件skip', (steps) => (steps.find((step) => step.name === browser)!.if = 'false')],
+    [
+      'Browser失敗吸収',
+      (steps) => (steps.find((step) => step.name === browser)!['continue-on-error'] = true),
+    ],
+    [
+      'Browser片方の削除',
+      (steps) => {
+        const step = steps.find((item) => item.name === browser)!;
+        step.run = step.run.replace(' --project=webkit', '');
+      },
+    ],
+    [
+      'Browser検査の縮小',
+      (steps) => (steps.find((step) => step.name === browser)!.run += ' --grep one-case'),
+    ],
+    [
+      'blobの混在',
+      (steps) => {
+        steps.find((step) => step.name === browser)!.env!.PLAYWRIGHT_BLOB_OUTPUT_FILE =
+          '/workspace/test-results/e2e-blobs/chromium/report.zip';
+      },
+    ],
+    [
+      'raw出力の混在',
+      (steps) => {
+        const step = steps.find((item) => item.name === browser)!;
+        step.run = step.run.replace('e2e-artifacts/smoke', 'e2e-artifacts/chromium');
+      },
+    ],
+    [
+      'outcomeの差し替え',
+      (steps) => (steps.find((step) => step.name === merge)!.env!.SMOKE_OUTCOME = 'success'),
+    ],
+    ['結合のecho化', (steps) => (steps.find((step) => step.name === merge)!.run = 'echo reports')],
+    [
+      '片blob欠落の許容',
+      (steps) => {
+        const step = steps.find((item) => item.name === merge)!;
+        step.run = step.run.replace('  test -s test-results/e2e-blobs/smoke/report.zip\n', '');
+      },
+    ],
+    [
+      '片blobだけの結合',
+      (steps) => {
+        const step = steps.find((item) => item.name === merge)!;
+        step.run = step.run.replace('for group in chromium smoke', 'for group in chromium');
+      },
+    ],
+    [
+      '結合失敗の吸収',
+      (steps) => (steps.find((step) => step.name === merge)!['continue-on-error'] = true),
+    ],
+    [
+      '結合順序の逆転',
+      (steps) => {
+        const index = steps.findIndex((step) => step.name === merge);
+        const [step] = steps.splice(index, 1);
+        steps.unshift(step!);
+      },
+    ],
+  ];
+  for (const [name, mutate] of faults) {
+    const changed = structuredClone(original);
+    mutate(changed.jobs.quality.steps);
+    expect(() => {
+      assertJavascriptFinalQualityWorkflow(stringify(changed));
+    }, name).toThrow('必須');
   }
 });

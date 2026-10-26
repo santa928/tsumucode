@@ -62,11 +62,21 @@ describe('TsumuCode Pages workflow', () => {
     const artifact = index('Static artifact gate');
     expect(bundle).toBeGreaterThan(index('Release quality'));
     expect(artifact).toBeGreaterThan(bundle);
-    for (const name of [
-      'Chromium full and cross-browser smoke',
-      'Performance budgets',
-      'Lighthouse budgets',
-    ]) {
+    const browserSteps = steps.filter(({ run }) => run?.includes('npm run test:e2e'));
+    expect(browserSteps.length).toBeGreaterThan(0);
+    expect(
+      browserSteps
+        .flatMap(({ run }) =>
+          Array.from((run ?? '').matchAll(/--project=(\w+)/gu), (match) => match[1]),
+        )
+        .sort(),
+    ).toEqual(['chromium', 'firefox', 'webkit']);
+    for (const step of browserSteps) {
+      expect(steps.indexOf(step)).toBeGreaterThan(artifact);
+      expect(step.if).toBeUndefined();
+      expect(step['continue-on-error']).not.toBe(true);
+    }
+    for (const name of ['Performance budgets', 'Lighthouse budgets']) {
       expect(index(name)).toBeGreaterThan(artifact);
     }
     for (const step of steps.slice(bundle, artifact + 1)) {

@@ -1,18 +1,18 @@
 schemaVersion: 2
 status: approved
-verifiedSourceCommit: 775ed87495fff6de0f283acb0023b1dc4648efca
-candidateTreeSha256: 5da0276d3720933991c7d3f4fbb283875ad2c716c8ab7eaf72aecc4e8e8dfe96
+verifiedSourceCommit: 965ff069e37227beafc863d84187b9a9b7db5e3e
+candidateTreeSha256: ba790ec7beef76c2fab3dc29c4df59f70a2ed3b205023f3c5bcf41c931f96e4f
 canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
 courseManifestSha256: a3bffc974c7d6b8acd23df4c92f3c82aee90e5af1cefc367e4039fe1857145ac
 publicProvenanceSha256: a577ff8815e8e27eca907b8e0e203b200a07aab323b792536ba04ae61c857c99
-visualBaselineSha256: 7a0e521b69e98742c21028098dbb73d4357f08c70673a7131cd3dfd094136369
+visualBaselineSha256: d46346c4f03f9f7c15ef535e2d6452563fedaf65e8fe2ca8dd6a6176e23020e3
 records:
   contentReview:
     path: docs/quality/content-review-next.yaml
-    sha256: ecc512dda76f82d06eaf5f35812e76ae737c1488df1073f29d72b6d2b221d0c3
+    sha256: fe21ec28ec105cd1385b6769ad60029c59354ce2adca110eed1cb9234591c951
   technicalAcceptance:
     path: docs/quality/next-release-acceptance.yaml
-    sha256: 955b83ead0f6fd6b660b4600db1fe467c1531613ccefb79f834787427470d049
+    sha256: 193edb2aaf2847acd312170dd4e15826d629a7ea4c6b52a0e942828bb3460685
 approvedBy: repository-owner santa928（実consumer EOF方式・最終検証後のmerge/公開を明示承認）
-approvedAt: 2026-10-25T20:58:35.435Z
+approvedAt: 2026-10-26T05:31:30.429Z
 courseId: next

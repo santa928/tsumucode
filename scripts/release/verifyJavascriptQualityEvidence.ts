@@ -40,6 +40,24 @@ export const JAVASCRIPT_REQUIRED_VISUAL_SCREENS = [
   'javascript-capstone',
 ].flatMap((screen) => ['1280x720', '390x844'].map((viewport) => `${screen}@${viewport}`));
 
+// workflowの結合処理は改行も契約に含め、検査省略や失敗の握り潰しへ差し替えられないようにする。
+const BROWSER_EVIDENCE_MERGE_SCRIPT = String.raw`
+set -euo pipefail
+if [ "$CHROMIUM_OUTCOME" = success ] && [ "$SMOKE_OUTCOME" = success ]; then
+  test -s test-results/e2e-blobs/chromium/report.zip
+  test -s test-results/e2e-blobs/smoke/report.zip
+fi
+mkdir -p test-results/e2e-blobs/merge
+for group in chromium smoke; do
+  if [ -s "test-results/e2e-blobs/$group/report.zip" ]; then
+    cp "test-results/e2e-blobs/$group/report.zip" "test-results/e2e-blobs/merge/$group.zip"
+  fi
+done
+./scripts/docker-compose.sh run --rm -e BASE_PATH app \
+  node node_modules/playwright/cli.js merge-reports \
+  --config=playwright.config.ts test-results/e2e-blobs/merge
+`.trim();
+
 /** 事前検査済みの記録でも、既存全品質CI成功前の配信を許さない。 */
 export function assertJavascriptFinalQualityWorkflow(source: string): void {
   const workflow = parse(source) as {
@@ -49,7 +67,15 @@ export function assertJavascriptFinalQualityWorkflow(source: string): void {
         needs?: unknown;
         if?: unknown;
         'continue-on-error'?: unknown;
-        steps?: { name?: string; run?: string; if?: unknown; 'continue-on-error'?: unknown }[];
+        steps?: {
+          name?: string;
+          id?: string;
+          run?: string;
+          if?: unknown;
+          env?: Readonly<Record<string, unknown>>;
+          'timeout-minutes'?: unknown;
+          'continue-on-error'?: unknown;
+        }[];
       }
     >;
   };
@@ -67,8 +93,12 @@ export function assertJavascriptFinalQualityWorkflow(source: string): void {
       './scripts/docker-compose.sh run --rm app npm run release:check -- --course-id "$RELEASE_COURSE_ID"',
     ],
     [
-      'Chromium full and cross-browser smoke',
-      './scripts/docker-compose.sh run --rm -e BASE_PATH app npm run test:e2e',
+      'Chromium full',
+      './scripts/docker-compose.sh run --rm -e BASE_PATH -e PLAYWRIGHT_BLOB_OUTPUT_FILE app npm run test:e2e -- --project=chromium --workers=1 --reporter=list,blob --output=test-results/e2e-artifacts/chromium',
+    ],
+    [
+      'Firefox and WebKit smoke',
+      './scripts/docker-compose.sh run --rm -e BASE_PATH -e PLAYWRIGHT_BLOB_OUTPUT_FILE app npm run test:e2e -- --project=firefox --project=webkit --workers=1 --reporter=list,blob --output=test-results/e2e-artifacts/smoke',
     ],
     [
       'Performance budgets',
@@ -98,8 +128,10 @@ export function assertJavascriptFinalQualityWorkflow(source: string): void {
   if (!Array.isArray(deploy.needs) || !deploy.needs.includes('quality'))
     throw new Error('最終品質CI前の配信を許可できません');
   for (const [name, command] of required) {
-    const step = quality.steps?.find((step) => step.name === name);
+    const matches = quality.steps?.filter((step) => step.name === name) ?? [];
+    const step = matches[0];
     if (
+      matches.length !== 1 ||
       step?.run?.trim().replace(/\s+/gu, ' ') !== command ||
       step['continue-on-error'] !== undefined ||
       (step.if !== undefined &&
@@ -110,6 +142,49 @@ export function assertJavascriptFinalQualityWorkflow(source: string): void {
     )
       throw new Error('必須の最終品質CIが不正です: ' + name);
   }
+  const steps = quality.steps ?? [];
+  const basePath = '/${{ github.event.repository.name }}/';
+  for (const [name, id, group] of [
+    ['Chromium full', 'browser_chromium', 'chromium'],
+    ['Firefox and WebKit smoke', 'browser_smoke', 'smoke'],
+  ] as const) {
+    const step = steps.find((item) => item.name === name)!;
+    if (
+      step.id !== id ||
+      step['timeout-minutes'] !== 120 ||
+      canonicalJson(step.env ?? null) !==
+        canonicalJson({
+          BASE_PATH: basePath,
+          PLAYWRIGHT_BLOB_OUTPUT_FILE: `/workspace/test-results/e2e-blobs/${group}/report.zip`,
+        })
+    )
+      throw new Error('必須のBrowser工程の資源・証拠条件が不正です: ' + name);
+  }
+  const merges = steps.filter((step) => step.name === 'Merge full and smoke browser evidence');
+  const merge = merges[0];
+  if (
+    merges.length !== 1 ||
+    merge?.['continue-on-error'] !== undefined ||
+    merge?.if !==
+      "always() && (steps.browser_chromium.outcome != 'skipped' || steps.browser_smoke.outcome != 'skipped')" ||
+    canonicalJson(merge.env ?? null) !==
+      canonicalJson({
+        BASE_PATH: basePath,
+        CHROMIUM_OUTCOME: '${{ steps.browser_chromium.outcome }}',
+        SMOKE_OUTCOME: '${{ steps.browser_smoke.outcome }}',
+      }) ||
+    merge.run?.replace(/\r\n/gu, '\n').trim() !== BROWSER_EVIDENCE_MERGE_SCRIPT
+  )
+    throw new Error('必須のBrowser結果結合CIが不正です');
+  const order = [
+    'Static artifact gate',
+    'Chromium full',
+    'Firefox and WebKit smoke',
+    'Merge full and smoke browser evidence',
+    'Performance budgets',
+  ].map((name) => steps.findIndex((step) => step.name === name));
+  if (order.some((index, offset) => index < 0 || (offset > 0 && index <= order[offset - 1]!)))
+    throw new Error('必須のBrowser検査と証拠結合の順序が不正です');
 }
 
 /** compileで消費した実Lesson directoryをID/hash集合へ結び、未読/staleを拒否する。 */

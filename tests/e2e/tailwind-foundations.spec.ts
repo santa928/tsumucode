@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import type { PreviewSnapshot, SnapshotPolicy } from '../../src/core/runtime/contracts';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
@@ -10,7 +11,14 @@ import type * as ValidatorModule from '../../src/core/validation/validatorRuleEn
 
 const base = testBasePath();
 const authoring = await loadAuthoringCourse('content/tailwind');
-const exercises = authoring.exercises.slice(1);
+// 複数Fileと専用runtimeを使うProjectは専用specで検査し、ここは基礎3単位を受け持つ。
+const exercises = authoring.exercises.filter(
+  ({ id }) => id.startsWith('tailwind-ch01-') && id !== 'tailwind-ch01-l01-e01',
+);
+assert.deepEqual(
+  exercises.map(({ id }) => id),
+  ['tailwind-ch01-l02-e01', 'tailwind-ch01-l03-e01', 'tailwind-ch01-l04-e01'],
+);
 
 test('新規3単位の全Fixtureを固定compiler・全指定幅・状態Styleで判定する', async ({
   page,

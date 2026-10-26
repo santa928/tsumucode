@@ -88,3 +88,17 @@ fsによる教材読込はimport依存に現れないためContent suiteを明�
 ## 性能目標
 
 push/PRの実行時間5分以内、上限8分（Runnerの割当待ちは別）。Release Runはこの上限の対象外。
+
+## 正式公開Browser検査の工程と限定確認
+
+正式公開ではChromium全件とFirefox/WebKit smokeを1workerずつ直列で実行する。
+各工程の上限は120分、E2E全体の最大枠は240分である。個々のtest期限・比較閾値・失敗条件は維持する。
+工程ごとの出力とblobを別ディレクトリへ保存し、公式の `playwright merge-reports` で従来のJSON/HTMLへ結合する。
+両工程が成功した場合も、片方のblobが欠けていれば拒否する。失敗した工程を結合処理の成功で上書きしない。
+
+Mac側の資源で変更関連の確認が完走できない場合、既存の固定4GiB/1worker CI経路を手動で利用できる。
+`gh workflow run tailwind-project.yml --ref <branch> -f release_browser_recovery=true`
+で実行し、対象は公開回復の固定spec/操作に限る。初回失敗のtrace・JSON・資源実測を保存する。
+この限定結果は、正式公開の全Browser/性能/継続性Gateの代わりにはならない。
+
+Tailwindの制作再開検査は、reload前に選択Fileと工程の永続保存を確認し、reload後は編集権とRuntimeの準備完了（判定buttonが有効）を確認してから従来のFile・工程・CSS検査を行う。Firefox自動化でreloadが`navigate`として報告される[上流の既知報告](https://github.com/microsoft/playwright/issues/40223)と同じ挙動を確認したためである。準備待ちは製品のLease期限4秒＋既存UI待機5秒＋余裕1秒の最大10秒に限定する。製品の排他制御・期限・ID、準備後の5秒assert、test全体90秒、全browserの対象は変えない。期限前の書込み拒否と期限後の自動再取得はUnitでも確認する。

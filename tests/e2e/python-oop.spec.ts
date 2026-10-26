@@ -45,6 +45,7 @@ async function grade(page: Page, exerciseId: string, status: string) {
     const update = page.getByRole('button', { name: 'プレビューを更新', exact: true });
     await expect(update).toBeEnabled({ timeout: 30_000 });
     await update.click();
+    await expect(update).toBeEnabled({ timeout: 30_000 });
     await expect(page.getByRole('region', { name: 'Console出力', exact: true })).toContainText(
       'book bonus',
     );

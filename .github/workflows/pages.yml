@@ -219,11 +219,49 @@ jobs:
         env:
           VERIFIED_SOURCE_COMMIT: ${{ needs.resolve.outputs.verified_source_commit }}
         run: test "$(git rev-parse HEAD)" = "$VERIFIED_SOURCE_COMMIT"
-      - name: Chromium full and cross-browser smoke
+      # 全3browserの網羅を保ち、1workerの直列実行を2工程へ分ける。
+      # E2E全体の最大枠は120分から240分となるが、各testの期限と失敗条件は変えない。
+      - name: Chromium full
+        id: browser_chromium
         timeout-minutes: 120
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
-        run: ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run test:e2e
+          PLAYWRIGHT_BLOB_OUTPUT_FILE: /workspace/test-results/e2e-blobs/chromium/report.zip
+        run: >-
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e PLAYWRIGHT_BLOB_OUTPUT_FILE
+          app npm run test:e2e -- --project=chromium --workers=1 --reporter=list,blob
+          --output=test-results/e2e-artifacts/chromium
+      - name: Firefox and WebKit smoke
+        id: browser_smoke
+        timeout-minutes: 120
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+          PLAYWRIGHT_BLOB_OUTPUT_FILE: /workspace/test-results/e2e-blobs/smoke/report.zip
+        run: >-
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e PLAYWRIGHT_BLOB_OUTPUT_FILE
+          app npm run test:e2e -- --project=firefox --project=webkit --workers=1 --reporter=list,blob
+          --output=test-results/e2e-artifacts/smoke
+      - name: Merge full and smoke browser evidence
+        if: always() && (steps.browser_chromium.outcome != 'skipped' || steps.browser_smoke.outcome != 'skipped')
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+          CHROMIUM_OUTCOME: ${{ steps.browser_chromium.outcome }}
+          SMOKE_OUTCOME: ${{ steps.browser_smoke.outcome }}
+        run: |
+          set -euo pipefail
+          if [ "$CHROMIUM_OUTCOME" = success ] && [ "$SMOKE_OUTCOME" = success ]; then
+            test -s test-results/e2e-blobs/chromium/report.zip
+            test -s test-results/e2e-blobs/smoke/report.zip
+          fi
+          mkdir -p test-results/e2e-blobs/merge
+          for group in chromium smoke; do
+            if [ -s "test-results/e2e-blobs/$group/report.zip" ]; then
+              cp "test-results/e2e-blobs/$group/report.zip" "test-results/e2e-blobs/merge/$group.zip"
+            fi
+          done
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH app \
+            node node_modules/playwright/cli.js merge-reports \
+            --config=playwright.config.ts test-results/e2e-blobs/merge
       - name: Performance budgets
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
@@ -308,6 +346,9 @@ jobs:
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
         with:
           path: dist
+      - name: Stop only quality job containers
+        if: always()
+        run: ./scripts/docker-compose.sh down --remove-orphans
       - name: Prepare failure diagnostics
         if: failure()
         run: |

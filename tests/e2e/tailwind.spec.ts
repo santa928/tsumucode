@@ -367,7 +367,9 @@ test('通常UIで誤値・正例・保存・Hint・Reset・取得失敗後の再
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(page.getByRole('dialog')).toContainText('項目どうしの間隔');
   const hint = page.getByRole('button', { name: /次のヒントを見る/ }).first();
+  await expect(hint).toBeEnabled();
   await hint.focus();
+  await expect(hint).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(page.getByRole('region', { name: 'ヒント', exact: true })).toContainText(
     '親の横並び',

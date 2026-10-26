@@ -296,21 +296,32 @@ test('制作途中をCourse Mapから再開し、工程と手動選択Fileを独
     })
     .toEqual({ activeStepId: step.id, selectedFile: 'styles.css' });
   await page.goto(`${base}#/courses/tailwind`);
-  const card = page
-    .locator('[data-lesson-piece]')
-    .filter({
-      has: page.getByRole('heading', {
-        name: 'テーマと共通の見た目を小さい制作へつなぐ',
-        exact: true,
-      }),
-    });
+  const card = page.locator('[data-lesson-piece]').filter({
+    has: page.getByRole('heading', {
+      name: 'テーマと共通の見た目を小さい制作へつなぐ',
+      exact: true,
+    }),
+  });
   await expect(card).not.toContainText('未着手');
   await card.getByRole('link', { name: /レッスンを再開する$/ }).click();
   await expect(stepButton).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('.cm-content')).toContainText('#265d63');
   await page.getByRole('tab', { name: 'index.html', exact: true }).click();
   await expect(page.getByText('保存済み', { exact: true })).toBeVisible();
+  await expect
+    .poll(async () => {
+      const draft = (await readStoredProgress(page)).drafts.find(
+        (row) => row['workspaceId'] === project.id,
+      );
+      return { activeStepId: draft?.['activeStepId'], selectedFile: draft?.['selectedFile'] };
+    })
+    .toEqual({ activeStepId: step.id, selectedFile: 'index.html' });
   await page.reload();
+  // Firefox自動化のnavigate判定では、既存Leaseの4秒期限後に再取得してからRuntimeが起動する。
+  // 排他制御を迂回せず、4秒+既存のUI待機5秒に余裕1秒を加えた範囲で実準備完了を確認する。
+  await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled({
+    timeout: 10_000,
+  });
   await expect(page.getByRole('tab', { name: 'index.html', exact: true })).toHaveAttribute(
     'aria-selected',
     'true',
@@ -318,7 +329,18 @@ test('制作途中をCourse Mapから再開し、工程と手動選択Fileを独
   await expect(stepButton).toHaveAttribute('aria-expanded', 'true');
   await page.getByRole('tab', { name: 'styles.css', exact: true }).click();
   await expect(page.getByText('保存済み', { exact: true })).toBeVisible();
+  await expect
+    .poll(async () => {
+      const draft = (await readStoredProgress(page)).drafts.find(
+        (row) => row['workspaceId'] === project.id,
+      );
+      return { activeStepId: draft?.['activeStepId'], selectedFile: draft?.['selectedFile'] };
+    })
+    .toEqual({ activeStepId: step.id, selectedFile: 'styles.css' });
   await page.reload();
+  await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled({
+    timeout: 10_000,
+  });
   await expect(page.getByRole('tab', { name: 'styles.css', exact: true })).toHaveAttribute(
     'aria-selected',
     'true',

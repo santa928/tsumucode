@@ -93,7 +93,7 @@ test('Home経由で標準・Guided・Capstoneを巡回しても保存済みSnaps
   await expect(page).toHaveURL(/html-css-ch00-l01-s01$/u);
 
   await openSlideFromLibraryDrawer(page, 'html-css-ch00-l01-s04');
-  await page.getByRole('link', { name: '次のスライドへ' }).click();
+  await page.getByRole('link', { name: '次のレッスンの説明へ', exact: true }).click();
   await expect(page).toHaveURL(/html-css-ch00-l02\/slides\/html-css-ch00-l02-s01$/u);
 
   await openSlideFromLibraryDrawer(page, 'html-css-ch01-l01-s01');
