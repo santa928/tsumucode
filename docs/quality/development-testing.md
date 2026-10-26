@@ -100,3 +100,5 @@ Mac側の資源で変更関連の確認が完走できない場合、既存の�
 `gh workflow run tailwind-project.yml --ref <branch> -f release_browser_recovery=true`
 で実行し、対象は公開回復の固定spec/操作に限る。初回失敗のtrace・JSON・資源実測を保存する。
 この限定結果は、正式公開の全Browser/性能/継続性Gateの代わりにはならない。
+
+Tailwindの制作再開検査は、reload前に選択Fileと工程の永続保存を確認し、reload後は編集権とRuntimeの準備完了（判定buttonが有効）を確認してから従来のFile・工程・CSS検査を行う。Firefox自動化でreloadが`navigate`として報告される[上流の既知報告](https://github.com/microsoft/playwright/issues/40223)と同じ挙動を確認したためである。準備待ちは製品のLease期限4秒＋既存UI待機5秒＋余裕1秒の最大10秒に限定する。製品の排他制御・期限・ID、準備後の5秒assert、test全体90秒、全browserの対象は変えない。期限前の書込み拒否と期限後の自動再取得はUnitでも確認する。

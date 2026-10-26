@@ -414,6 +414,69 @@ describe('TabLeaseCoordinator', () => {
     afterReload.dispose();
   });
 
+  it('navigate判定の再訪は保存済みtab IDを使わず、永続ownerの期限後だけ編集へ復帰する', async () => {
+    const hub = new BroadcastHub();
+    const clock = new FakeClock();
+    const storage = new MemoryStorage();
+    const persistence = new SharedLeasePersistence(() => clock.now);
+    const previousOwnerId = 'tab-before-1';
+    const expiresAt = clock.now + 60;
+    storage.setItem('tsumucode-editing:tab-id:v1', previousOwnerId);
+    const previous = await persistence.tryClaimWorkspaceLease({
+      courseId: COURSE_ID,
+      workspaceId: WORKSPACE_ID,
+      ownerId: previousOwnerId,
+      token: 'previous-document-proof',
+      expiresAt,
+    });
+    expect(previous.acquired).toBe(true);
+    if (!previous.acquired) throw new Error('旧documentのLeaseを準備できません');
+    vi.stubGlobal('performance', {
+      getEntriesByType: () => [{ type: 'navigate' }],
+      navigation: { type: 0 },
+    });
+    let coordinator: TabLeaseCoordinator | undefined;
+    try {
+      coordinator = createCoordinator('tab-after', hub, clock, {
+        storage,
+        leasePersistence: persistence,
+      });
+      const handle = coordinator.acquire(COURSE_ID, WORKSPACE_ID, {
+        beforeYield: async () => {},
+      });
+      finishClaim(clock);
+      await flushPromises();
+      expect(storage.getItem('tsumucode-editing:tab-id:v1')).not.toBe(previousOwnerId);
+      expect(handle.getSnapshot()).toMatchObject({ status: 'read-only', ownerId: previousOwnerId });
+      const write = vi.fn();
+      await expect(handle.runFencedWrite(write)).rejects.toThrow('編集権を保持していません');
+      expect(write).not.toHaveBeenCalled();
+      clock.advance(expiresAt - clock.now - 1);
+      await flushPromises();
+      expect(handle.getSnapshot().status).toBe('read-only');
+      clock.advance(1);
+      await flushPromises();
+      finishClaim(clock);
+      await flushPromises();
+      expect(handle.getSnapshot()).toMatchObject({
+        status: 'owned',
+        ownerId: storage.getItem('tsumucode-editing:tab-id:v1'),
+      });
+      expect(() => {
+        persistence.assertWrite(previous.proof);
+      }).toThrow(LeaseFenceRejectedError);
+      await expect(
+        handle.runFencedWrite(async (_token, proof) => {
+          persistence.assertWrite(proof);
+          return 'current owner';
+        }),
+      ).resolves.toBe('current owner');
+    } finally {
+      coordinator?.dispose();
+      vi.unstubAllGlobals();
+    }
+  });
+
   it.each([
     ['claim前', false],
     ['claim CAS待機中', true],
