@@ -43,7 +43,7 @@ test.afterEach(async ({ page }) => {
 
 test('Promiseの説明を未判定で選び直しても選択欄が収まり、下書きとPreviewを保つ', async ({
   page,
-}) => {
+}, info) => {
   await openEditableJavaScriptExercise(page, {
     lessonId: 'javascript-ch10-l01',
     exerciseId: 'javascript-ch10-l01-e01',
@@ -60,18 +60,37 @@ test('Promiseの説明を未判定で選び直しても選択欄が収まり、�
   const select = dialog.getByRole('combobox', { name: '見直す説明' });
   await expect(select).toHaveValue('javascript-ch10-l01-s04');
   await select.selectOption('javascript-ch10-l01-s03');
-  const fits = await select.evaluate((element) => {
-    const body = element.closest('.tc-learning-drawer-body');
-    if (!(body instanceof HTMLElement)) return false;
-    const box = element.getBoundingClientRect();
-    const container = body.getBoundingClientRect();
-    const styles = getComputedStyle(body);
-    return (
-      box.left >= container.left + Number.parseFloat(styles.paddingLeft) &&
-      box.right <= container.right - Number.parseFloat(styles.paddingRight)
-    );
-  });
-  expect(fits).toBe(true);
+  let lastBounds: unknown = null;
+  try {
+    // 開閉中も同じ厳密な包含条件を使い、失敗時は実測座標を残す。
+    await expect
+      .poll(async () => {
+        const bounds = await select.evaluate((element) => {
+          const body = element.closest('.tc-learning-drawer-body');
+          if (!(body instanceof HTMLElement)) return { fits: false, missingContainer: true };
+          const box = element.getBoundingClientRect();
+          const container = body.getBoundingClientRect();
+          const styles = getComputedStyle(body);
+          const left = container.left + Number.parseFloat(styles.paddingLeft);
+          const right = container.right - Number.parseFloat(styles.paddingRight);
+          return {
+            fits: box.left >= left && box.right <= right,
+            boxLeft: box.left,
+            boxRight: box.right,
+            contentLeft: left,
+            contentRight: right,
+          };
+        });
+        lastBounds = bounds;
+        return bounds.fits;
+      })
+      .toBe(true);
+  } finally {
+    await info.attach('見直し選択欄の実測座標', {
+      body: JSON.stringify(lastBounds, null, 2),
+      contentType: 'application/json',
+    });
+  }
   await dialog.getByRole('button', { name: '演習へ戻る' }).click();
   await expect(review).toBeFocused();
   await expect.poll(() => editorText(page)).toBe(source);

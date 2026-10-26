@@ -1,6 +1,12 @@
 name: Tailwind project contract
 
 on:
+  workflow_dispatch:
+    inputs:
+      release_browser_recovery:
+        description: 公開回復の変更関連Browser検査だけを実行する
+        type: boolean
+        default: false
   pull_request:
     branches: [main]
     paths:
@@ -23,6 +29,7 @@ on:
       - tests/e2e/tailwind*.spec.ts
       - tests/e2e/helpers/**
       - scripts/ci/tailwind-project.sh
+      - scripts/ci/release-browser-recovery.sh
       - scripts/content/**
       - playwright.config.ts
       - package*.json
@@ -50,6 +57,7 @@ on:
       - tests/e2e/tailwind*.spec.ts
       - tests/e2e/helpers/**
       - scripts/ci/tailwind-project.sh
+      - scripts/ci/release-browser-recovery.sh
       - scripts/content/**
       - playwright.config.ts
       - package*.json
@@ -74,6 +82,7 @@ jobs:
       - name: Build the existing browser image
         run: docker build --target app --tag tsumucode-tailwind-project-ci .
       - name: Verify the project and prior revision in Docker
+        if: inputs.release_browser_recovery != true
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
         run: >-
@@ -85,12 +94,27 @@ jobs:
           --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspace"
           --mount type=volume,target=/workspace/node_modules
           tsumucode-tailwind-project-ci sh scripts/ci/tailwind-project.sh
+      - name: Verify bounded release browser regressions in Docker
+        if: github.event_name == 'workflow_dispatch' && inputs.release_browser_recovery == true
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+        run: >-
+          docker run --rm --cpus 2 --memory 4g --memory-swap 4g
+          --pids-limit 512 --shm-size 512m
+          --env BASE_PATH --env NODE_OPTIONS=--max-old-space-size=3072
+          --env GIT_CONFIG_COUNT=1 --env GIT_CONFIG_KEY_0=safe.directory
+          --env GIT_CONFIG_VALUE_0=/workspace
+          --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspace"
+          --mount type=volume,target=/workspace/node_modules
+          tsumucode-tailwind-project-ci sh scripts/ci/release-browser-recovery.sh
       - name: Preserve browser and resource evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: tailwind-project-${{ github.event.pull_request.head.sha || github.sha }}
-          path: test-results/tailwind-*
+          path: |
+            test-results/tailwind-*
+            test-results/release-browser-recovery-*
           if-no-files-found: warn
           retention-days: 7
       - name: Bind the static preview to its checkout

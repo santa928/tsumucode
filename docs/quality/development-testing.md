@@ -88,3 +88,15 @@ fsによる教材読込はimport依存に現れないためContent suiteを明�
 ## 性能目標
 
 push/PRの実行時間5分以内、上限8分（Runnerの割当待ちは別）。Release Runはこの上限の対象外。
+
+## 正式公開Browser検査の工程と限定確認
+
+正式公開ではChromium全件とFirefox/WebKit smokeを1workerずつ直列で実行する。
+各工程の上限は120分、E2E全体の最大枠は240分である。個々のtest期限・比較閾値・失敗条件は維持する。
+工程ごとの出力とblobを別ディレクトリへ保存し、公式の `playwright merge-reports` で従来のJSON/HTMLへ結合する。
+両工程が成功した場合も、片方のblobが欠けていれば拒否する。失敗した工程を結合処理の成功で上書きしない。
+
+Mac側の資源で変更関連の確認が完走できない場合、既存の固定4GiB/1worker CI経路を手動で利用できる。
+`gh workflow run tailwind-project.yml --ref <branch> -f release_browser_recovery=true`
+で実行し、対象は公開回復の固定spec/操作に限る。初回失敗のtrace・JSON・資源実測を保存する。
+この限定結果は、正式公開の全Browser/性能/継続性Gateの代わりにはならない。
