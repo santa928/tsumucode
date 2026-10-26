@@ -151,7 +151,7 @@ releases:
 candidate:
   courseId: next
   revision: 2026-10-24.1
-  status: approved
+  status: draft
   verifiedSourceCommit: 4a017a7eb0e79dd4bb0ec4a38417637158cb8046
   canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
   courseManifestSha256: a3bffc974c7d6b8acd23df4c92f3c82aee90e5af1cefc367e4039fe1857145ac
