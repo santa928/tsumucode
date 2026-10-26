@@ -439,10 +439,16 @@ test('主要5操作、Event Timing、Draft永続化が予算内に完了する',
   );
 
   await page.getByRole('link', { name: 'コースマップへ戻る' }).click();
+  // 閲覧済み進捗の読込後に確定する再開リンクを待ち、初期表示との競合を計測へ混ぜない。
   const lessonLink = page.getByRole('link', {
-    name: 'Webページを作る3つの役割レッスンを始める',
+    name: 'Webページを作る3つの役割レッスンを再開する',
+    exact: true,
   });
   await expect(lessonLink).toBeVisible();
+  await expect(lessonLink).toHaveAttribute(
+    'href',
+    '#/courses/html-css/lessons/html-css-ch00-l01/resume',
+  );
   measurements.push(
     await measureInteraction(
       page,
