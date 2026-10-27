@@ -1,7 +1,7 @@
 schemaVersion: 1
 releaseStatus: approved
-verifiedSourceCommit: e8a077994f5c4cba891e15141dddf5002b1fb7f0
-canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
+verifiedSourceCommit: f1fcd0397f539770a31879219962c03fb5ab118c
+canonicalDistSha256: 689c6e1fddaa1f907b91a473cafed7a6f149fd6ac61e1883d441ccf216727a41
 lessons:
   - lessonId: next-ch01-l01
     authorId: tsumucode-next-course-authoring
@@ -13,10 +13,8 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      公開回復候補e8a077994f5c4cba891e15141dddf5002b1fb7f0への適用確認。9教材hash・画面・固定依存は元b809b15・d55127b・4a017a7と不変。元読解b809b15・原UI観測B91と3personaのSource・担当・原本hash・制限を保持し、新しい読解や実操作へ付け替えない。今回の製品外修正は性能テストの計測前準備を保存済みLessonの再開linkに同期するもの。exact名・resume
-      hrefの成立後に従来のclick起点・ready
-      probe・5操作を計測し、性能閾値・120秒期限は変更しない。元mainf234310の公開run40364203725は647成功・既存2skip・失敗/Flaky0、所有者修正後の公式結合も成功、次の性能1件だけが進捗ready前の開始linkを待って失敗した記録を保持する。限定性能5操作と既存再開契約15unitは元3f86fadの同一codeで成功。新SourceのNativeと静的583ファイル完全一致を今回の限定承認へ結合する。補助32件は元5e8f8df、追加観測18件は元d0e787fとして保持する。Cookie取消の旧原因は未断定、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開更新Source
+      f1fcd0397f539770a31879219962c03fb5ab118cへの適用確認。旧独立3persona原本のSource・担当・hashと実人受講/物理低端末/認証Cookieの未確認を保持し、現在9教材の可視hash/sourceHash一致を各担当が独立照合。新しい教材読解や実操作への付替えはしない。今回の内容外差分はCI事前検証とHome→目次のPUSH時focus/scroll導線。現在SourceのNative9workspace81fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に確認。ローカルの2server実行OOMと私有config起動失敗を保存し、本番previewだけの同一spec成功へ遡って置換しない。旧Cookie取消/CPython誤分類の原因は未断定。元の教材判断のreviewerIdは保持。
   - lessonId: next-ch02-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -27,10 +25,8 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      公開回復候補e8a077994f5c4cba891e15141dddf5002b1fb7f0への適用確認。9教材hash・画面・固定依存は元b809b15・d55127b・4a017a7と不変。元読解b809b15・原UI観測B91と3personaのSource・担当・原本hash・制限を保持し、新しい読解や実操作へ付け替えない。今回の製品外修正は性能テストの計測前準備を保存済みLessonの再開linkに同期するもの。exact名・resume
-      hrefの成立後に従来のclick起点・ready
-      probe・5操作を計測し、性能閾値・120秒期限は変更しない。元mainf234310の公開run40364203725は647成功・既存2skip・失敗/Flaky0、所有者修正後の公式結合も成功、次の性能1件だけが進捗ready前の開始linkを待って失敗した記録を保持する。限定性能5操作と既存再開契約15unitは元3f86fadの同一codeで成功。新SourceのNativeと静的583ファイル完全一致を今回の限定承認へ結合する。補助32件は元5e8f8df、追加観測18件は元d0e787fとして保持する。Cookie取消の旧原因は未断定、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開更新Source
+      f1fcd0397f539770a31879219962c03fb5ab118cへの適用確認。旧独立3persona原本のSource・担当・hashと実人受講/物理低端末/認証Cookieの未確認を保持し、現在9教材の可視hash/sourceHash一致を各担当が独立照合。新しい教材読解や実操作への付替えはしない。今回の内容外差分はCI事前検証とHome→目次のPUSH時focus/scroll導線。現在SourceのNative9workspace81fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に確認。ローカルの2server実行OOMと私有config起動失敗を保存し、本番previewだけの同一spec成功へ遡って置換しない。旧Cookie取消/CPython誤分類の原因は未断定。元の教材判断のreviewerIdは保持。
   - lessonId: next-ch02-l02
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -41,10 +37,8 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      公開回復候補e8a077994f5c4cba891e15141dddf5002b1fb7f0への適用確認。9教材hash・画面・固定依存は元b809b15・d55127b・4a017a7と不変。元読解b809b15・原UI観測B91と3personaのSource・担当・原本hash・制限を保持し、新しい読解や実操作へ付け替えない。今回の製品外修正は性能テストの計測前準備を保存済みLessonの再開linkに同期するもの。exact名・resume
-      hrefの成立後に従来のclick起点・ready
-      probe・5操作を計測し、性能閾値・120秒期限は変更しない。元mainf234310の公開run40364203725は647成功・既存2skip・失敗/Flaky0、所有者修正後の公式結合も成功、次の性能1件だけが進捗ready前の開始linkを待って失敗した記録を保持する。限定性能5操作と既存再開契約15unitは元3f86fadの同一codeで成功。新SourceのNativeと静的583ファイル完全一致を今回の限定承認へ結合する。補助32件は元5e8f8df、追加観測18件は元d0e787fとして保持する。Cookie取消の旧原因は未断定、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開更新Source
+      f1fcd0397f539770a31879219962c03fb5ab118cへの適用確認。旧独立3persona原本のSource・担当・hashと実人受講/物理低端末/認証Cookieの未確認を保持し、現在9教材の可視hash/sourceHash一致を各担当が独立照合。新しい教材読解や実操作への付替えはしない。今回の内容外差分はCI事前検証とHome→目次のPUSH時focus/scroll導線。現在SourceのNative9workspace81fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に確認。ローカルの2server実行OOMと私有config起動失敗を保存し、本番previewだけの同一spec成功へ遡って置換しない。旧Cookie取消/CPython誤分類の原因は未断定。元の教材判断のreviewerIdは保持。
   - lessonId: next-ch03-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -55,10 +49,8 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      公開回復候補e8a077994f5c4cba891e15141dddf5002b1fb7f0への適用確認。9教材hash・画面・固定依存は元b809b15・d55127b・4a017a7と不変。元読解b809b15・原UI観測B91と3personaのSource・担当・原本hash・制限を保持し、新しい読解や実操作へ付け替えない。今回の製品外修正は性能テストの計測前準備を保存済みLessonの再開linkに同期するもの。exact名・resume
-      hrefの成立後に従来のclick起点・ready
-      probe・5操作を計測し、性能閾値・120秒期限は変更しない。元mainf234310の公開run40364203725は647成功・既存2skip・失敗/Flaky0、所有者修正後の公式結合も成功、次の性能1件だけが進捗ready前の開始linkを待って失敗した記録を保持する。限定性能5操作と既存再開契約15unitは元3f86fadの同一codeで成功。新SourceのNativeと静的583ファイル完全一致を今回の限定承認へ結合する。補助32件は元5e8f8df、追加観測18件は元d0e787fとして保持する。Cookie取消の旧原因は未断定、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開更新Source
+      f1fcd0397f539770a31879219962c03fb5ab118cへの適用確認。旧独立3persona原本のSource・担当・hashと実人受講/物理低端末/認証Cookieの未確認を保持し、現在9教材の可視hash/sourceHash一致を各担当が独立照合。新しい教材読解や実操作への付替えはしない。今回の内容外差分はCI事前検証とHome→目次のPUSH時focus/scroll導線。現在SourceのNative9workspace81fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に確認。ローカルの2server実行OOMと私有config起動失敗を保存し、本番previewだけの同一spec成功へ遡って置換しない。旧Cookie取消/CPython誤分類の原因は未断定。元の教材判断のreviewerIdは保持。
   - lessonId: next-ch03-l02
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -69,10 +61,8 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      公開回復候補e8a077994f5c4cba891e15141dddf5002b1fb7f0への適用確認。9教材hash・画面・固定依存は元b809b15・d55127b・4a017a7と不変。元読解b809b15・原UI観測B91と3personaのSource・担当・原本hash・制限を保持し、新しい読解や実操作へ付け替えない。今回の製品外修正は性能テストの計測前準備を保存済みLessonの再開linkに同期するもの。exact名・resume
-      hrefの成立後に従来のclick起点・ready
-      probe・5操作を計測し、性能閾値・120秒期限は変更しない。元mainf234310の公開run40364203725は647成功・既存2skip・失敗/Flaky0、所有者修正後の公式結合も成功、次の性能1件だけが進捗ready前の開始linkを待って失敗した記録を保持する。限定性能5操作と既存再開契約15unitは元3f86fadの同一codeで成功。新SourceのNativeと静的583ファイル完全一致を今回の限定承認へ結合する。補助32件は元5e8f8df、追加観測18件は元d0e787fとして保持する。Cookie取消の旧原因は未断定、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開更新Source
+      f1fcd0397f539770a31879219962c03fb5ab118cへの適用確認。旧独立3persona原本のSource・担当・hashと実人受講/物理低端末/認証Cookieの未確認を保持し、現在9教材の可視hash/sourceHash一致を各担当が独立照合。新しい教材読解や実操作への付替えはしない。今回の内容外差分はCI事前検証とHome→目次のPUSH時focus/scroll導線。現在SourceのNative9workspace81fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に確認。ローカルの2server実行OOMと私有config起動失敗を保存し、本番previewだけの同一spec成功へ遡って置換しない。旧Cookie取消/CPython誤分類の原因は未断定。元の教材判断のreviewerIdは保持。
   - lessonId: next-ch04-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -83,10 +73,8 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      公開回復候補e8a077994f5c4cba891e15141dddf5002b1fb7f0への適用確認。9教材hash・画面・固定依存は元b809b15・d55127b・4a017a7と不変。元読解b809b15・原UI観測B91と3personaのSource・担当・原本hash・制限を保持し、新しい読解や実操作へ付け替えない。今回の製品外修正は性能テストの計測前準備を保存済みLessonの再開linkに同期するもの。exact名・resume
-      hrefの成立後に従来のclick起点・ready
-      probe・5操作を計測し、性能閾値・120秒期限は変更しない。元mainf234310の公開run40364203725は647成功・既存2skip・失敗/Flaky0、所有者修正後の公式結合も成功、次の性能1件だけが進捗ready前の開始linkを待って失敗した記録を保持する。限定性能5操作と既存再開契約15unitは元3f86fadの同一codeで成功。新SourceのNativeと静的583ファイル完全一致を今回の限定承認へ結合する。補助32件は元5e8f8df、追加観測18件は元d0e787fとして保持する。Cookie取消の旧原因は未断定、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開更新Source
+      f1fcd0397f539770a31879219962c03fb5ab118cへの適用確認。旧独立3persona原本のSource・担当・hashと実人受講/物理低端末/認証Cookieの未確認を保持し、現在9教材の可視hash/sourceHash一致を各担当が独立照合。新しい教材読解や実操作への付替えはしない。今回の内容外差分はCI事前検証とHome→目次のPUSH時focus/scroll導線。現在SourceのNative9workspace81fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に確認。ローカルの2server実行OOMと私有config起動失敗を保存し、本番previewだけの同一spec成功へ遡って置換しない。旧Cookie取消/CPython誤分類の原因は未断定。元の教材判断のreviewerIdは保持。
   - lessonId: next-ch04-l02
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -97,10 +85,8 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      公開回復候補e8a077994f5c4cba891e15141dddf5002b1fb7f0への適用確認。9教材hash・画面・固定依存は元b809b15・d55127b・4a017a7と不変。元読解b809b15・原UI観測B91と3personaのSource・担当・原本hash・制限を保持し、新しい読解や実操作へ付け替えない。今回の製品外修正は性能テストの計測前準備を保存済みLessonの再開linkに同期するもの。exact名・resume
-      hrefの成立後に従来のclick起点・ready
-      probe・5操作を計測し、性能閾値・120秒期限は変更しない。元mainf234310の公開run40364203725は647成功・既存2skip・失敗/Flaky0、所有者修正後の公式結合も成功、次の性能1件だけが進捗ready前の開始linkを待って失敗した記録を保持する。限定性能5操作と既存再開契約15unitは元3f86fadの同一codeで成功。新SourceのNativeと静的583ファイル完全一致を今回の限定承認へ結合する。補助32件は元5e8f8df、追加観測18件は元d0e787fとして保持する。Cookie取消の旧原因は未断定、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開更新Source
+      f1fcd0397f539770a31879219962c03fb5ab118cへの適用確認。旧独立3persona原本のSource・担当・hashと実人受講/物理低端末/認証Cookieの未確認を保持し、現在9教材の可視hash/sourceHash一致を各担当が独立照合。新しい教材読解や実操作への付替えはしない。今回の内容外差分はCI事前検証とHome→目次のPUSH時focus/scroll導線。現在SourceのNative9workspace81fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に確認。ローカルの2server実行OOMと私有config起動失敗を保存し、本番previewだけの同一spec成功へ遡って置換しない。旧Cookie取消/CPython誤分類の原因は未断定。元の教材判断のreviewerIdは保持。
   - lessonId: next-ch05-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -111,10 +97,8 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      公開回復候補e8a077994f5c4cba891e15141dddf5002b1fb7f0への適用確認。9教材hash・画面・固定依存は元b809b15・d55127b・4a017a7と不変。元読解b809b15・原UI観測B91と3personaのSource・担当・原本hash・制限を保持し、新しい読解や実操作へ付け替えない。今回の製品外修正は性能テストの計測前準備を保存済みLessonの再開linkに同期するもの。exact名・resume
-      hrefの成立後に従来のclick起点・ready
-      probe・5操作を計測し、性能閾値・120秒期限は変更しない。元mainf234310の公開run40364203725は647成功・既存2skip・失敗/Flaky0、所有者修正後の公式結合も成功、次の性能1件だけが進捗ready前の開始linkを待って失敗した記録を保持する。限定性能5操作と既存再開契約15unitは元3f86fadの同一codeで成功。新SourceのNativeと静的583ファイル完全一致を今回の限定承認へ結合する。補助32件は元5e8f8df、追加観測18件は元d0e787fとして保持する。Cookie取消の旧原因は未断定、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開更新Source
+      f1fcd0397f539770a31879219962c03fb5ab118cへの適用確認。旧独立3persona原本のSource・担当・hashと実人受講/物理低端末/認証Cookieの未確認を保持し、現在9教材の可視hash/sourceHash一致を各担当が独立照合。新しい教材読解や実操作への付替えはしない。今回の内容外差分はCI事前検証とHome→目次のPUSH時focus/scroll導線。現在SourceのNative9workspace81fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に確認。ローカルの2server実行OOMと私有config起動失敗を保存し、本番previewだけの同一spec成功へ遡って置換しない。旧Cookie取消/CPython誤分類の原因は未断定。元の教材判断のreviewerIdは保持。
   - lessonId: next-ch06-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -125,7 +109,5 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes:
-      公開回復候補e8a077994f5c4cba891e15141dddf5002b1fb7f0への適用確認。9教材hash・画面・固定依存は元b809b15・d55127b・4a017a7と不変。元読解b809b15・原UI観測B91と3personaのSource・担当・原本hash・制限を保持し、新しい読解や実操作へ付け替えない。今回の製品外修正は性能テストの計測前準備を保存済みLessonの再開linkに同期するもの。exact名・resume
-      hrefの成立後に従来のclick起点・ready
-      probe・5操作を計測し、性能閾値・120秒期限は変更しない。元mainf234310の公開run40364203725は647成功・既存2skip・失敗/Flaky0、所有者修正後の公式結合も成功、次の性能1件だけが進捗ready前の開始linkを待って失敗した記録を保持する。限定性能5操作と既存再開契約15unitは元3f86fadの同一codeで成功。新SourceのNativeと静的583ファイル完全一致を今回の限定承認へ結合する。補助32件は元5e8f8df、追加観測18件は元d0e787fとして保持する。Cookie取消の旧原因は未断定、実人受講・物理低端末・認証Cookieの留保を維持する。
+    notes: 公開更新Source
+      f1fcd0397f539770a31879219962c03fb5ab118cへの適用確認。旧独立3persona原本のSource・担当・hashと実人受講/物理低端末/認証Cookieの未確認を保持し、現在9教材の可視hash/sourceHash一致を各担当が独立照合。新しい教材読解や実操作への付替えはしない。今回の内容外差分はCI事前検証とHome→目次のPUSH時focus/scroll導線。現在SourceのNative9workspace81fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に確認。ローカルの2server実行OOMと私有config起動失敗を保存し、本番previewだけの同一spec成功へ遡って置換しない。旧Cookie取消/CPython誤分類の原因は未断定。元の教材判断のreviewerIdは保持。
