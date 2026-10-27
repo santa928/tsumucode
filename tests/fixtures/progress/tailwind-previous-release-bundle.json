@@ -1,0 +1,1159 @@
+{
+  "schemaVersion": 2,
+  "courses": {
+    "html-css": {
+      "courseId": "html-css",
+      "contentRevision": "2026-07-16.3",
+      "lessons": {},
+      "currentComplete": false,
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "javascript": {
+      "courseId": "javascript",
+      "contentRevision": "2026-10-02.5",
+      "lessons": {},
+      "currentComplete": false,
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "typescript": {
+      "courseId": "typescript",
+      "contentRevision": "2026-10-06.4",
+      "lessons": {},
+      "currentComplete": false,
+      "updatedAt": "2026-10-06T00:00:00.000Z"
+    },
+    "react": {
+      "courseId": "react",
+      "contentRevision": "2026-10-07.6",
+      "lessons": {},
+      "currentComplete": false,
+      "firstCompletedAt": "2026-10-07T00:00:00.000Z",
+      "updatedAt": "2026-10-07T00:00:00.000Z"
+    },
+    "next": {
+      "courseId": "next",
+      "contentRevision": "2026-10-09.1",
+      "currentComplete": false,
+      "updatedAt": "2026-10-10T00:00:00.000Z",
+      "currentLessonId": "next-ch06-l01",
+      "currentChapterId": "next-ch06",
+      "lessons": {}
+    },
+    "python-basics": {
+      "courseId": "python-basics",
+      "contentRevision": "2026-10-10.1",
+      "lessons": {},
+      "currentComplete": false,
+      "updatedAt": "2026-10-10T00:00:00.000Z"
+    },
+    "tailwind": {
+      "courseId": "tailwind",
+      "contentRevision": "2026-10-15.1",
+      "lessons": {
+        "tailwind-ch01-l01": {
+          "lessonId": "tailwind-ch01-l01",
+          "viewedSlideIds": [
+            "tailwind-ch01-l01-s01",
+            "tailwind-ch01-l01-s02",
+            "tailwind-ch01-l01-s03",
+            "tailwind-ch01-l01-s04"
+          ],
+          "passedExerciseIds": ["tailwind-ch01-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "tailwind-ch01-l01-e01-r01",
+            "tailwind-ch01-l01-e01-r02",
+            "tailwind-ch01-l01-e01-r03",
+            "tailwind-ch01-l01-e01-r04",
+            "tailwind-ch01-l01-e01-r05"
+          ],
+          "passedViewportIds": ["cards-360"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-27T00:00:00.000Z"
+        },
+        "tailwind-ch01-l02": {
+          "lessonId": "tailwind-ch01-l02",
+          "viewedSlideIds": [
+            "tailwind-ch01-l02-s01",
+            "tailwind-ch01-l02-s02",
+            "tailwind-ch01-l02-s03"
+          ],
+          "passedExerciseIds": ["tailwind-ch01-l02-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "tailwind-ch01-l02-e01-r01",
+            "tailwind-ch01-l02-e01-r02",
+            "tailwind-ch01-l02-e01-r03",
+            "tailwind-ch01-l02-e01-r04",
+            "tailwind-ch01-l02-e01-r05",
+            "tailwind-ch01-l02-e01-r06",
+            "tailwind-ch01-l02-e01-r07",
+            "tailwind-ch01-l02-e01-r08"
+          ],
+          "passedViewportIds": ["card-280", "card-640"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-27T00:00:00.000Z"
+        },
+        "tailwind-ch01-l03": {
+          "lessonId": "tailwind-ch01-l03",
+          "viewedSlideIds": [
+            "tailwind-ch01-l03-s01",
+            "tailwind-ch01-l03-s02",
+            "tailwind-ch01-l03-s03"
+          ],
+          "passedExerciseIds": ["tailwind-ch01-l03-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "tailwind-ch01-l03-e01-r01",
+            "tailwind-ch01-l03-e01-r02",
+            "tailwind-ch01-l03-e01-r03",
+            "tailwind-ch01-l03-e01-r04",
+            "tailwind-ch01-l03-e01-r05",
+            "tailwind-ch01-l03-e01-r06",
+            "tailwind-ch01-l03-e01-r07",
+            "tailwind-ch01-l03-e01-r08",
+            "tailwind-ch01-l03-e01-r09",
+            "tailwind-ch01-l03-e01-r10",
+            "tailwind-ch01-l03-e01-r11",
+            "tailwind-ch01-l03-e01-r12"
+          ],
+          "passedViewportIds": ["state-360"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-27T00:00:00.000Z"
+        },
+        "tailwind-ch01-l04": {
+          "lessonId": "tailwind-ch01-l04",
+          "viewedSlideIds": ["tailwind-ch01-l04-s01", "tailwind-ch01-l04-s02"],
+          "passedExerciseIds": ["tailwind-ch01-l04-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [
+            "tailwind-ch01-l04-e01-r01",
+            "tailwind-ch01-l04-e01-r02",
+            "tailwind-ch01-l04-e01-r03",
+            "tailwind-ch01-l04-e01-r04",
+            "tailwind-ch01-l04-e01-r05",
+            "tailwind-ch01-l04-e01-r06"
+          ],
+          "passedViewportIds": ["mobile-360", "before-767", "at-768", "wide-800"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-27T00:00:00.000Z"
+        },
+        "tailwind-ch02-l01": {
+          "lessonId": "tailwind-ch02-l01",
+          "viewedSlideIds": [
+            "tailwind-ch02-l01-s01",
+            "tailwind-ch02-l01-s02",
+            "tailwind-ch02-l01-s03"
+          ],
+          "passedExerciseIds": ["tailwind-ch02-l01-e01"],
+          "passedChecklistItemIds": [
+            "tailwind-project-theme",
+            "tailwind-project-reuse",
+            "tailwind-project-state"
+          ],
+          "passedRuleIds": [
+            "tailwind-ch02-l01-e01-r01",
+            "tailwind-ch02-l01-e01-r02",
+            "tailwind-ch02-l01-e01-r03",
+            "tailwind-ch02-l01-e01-r04",
+            "tailwind-ch02-l01-e01-r05",
+            "tailwind-ch02-l01-e01-r06",
+            "tailwind-ch02-l01-e01-r07",
+            "tailwind-ch02-l01-e01-r08",
+            "tailwind-ch02-l01-e01-r09",
+            "tailwind-ch02-l01-e01-r10",
+            "tailwind-ch02-l01-e01-r11",
+            "tailwind-ch02-l01-e01-r12",
+            "tailwind-ch02-l01-e01-r13",
+            "tailwind-ch02-l01-e01-r14",
+            "tailwind-ch02-l01-e01-r15",
+            "tailwind-ch02-l01-e01-r16",
+            "tailwind-ch02-l01-e01-r17",
+            "tailwind-ch02-l01-e01-r18",
+            "tailwind-ch02-l01-e01-r19"
+          ],
+          "passedViewportIds": ["mobile-360", "before-767", "at-768", "wide-800"],
+          "currentComplete": true,
+          "firstCompletedAt": "2026-10-27T00:00:00.000Z"
+        }
+      },
+      "currentComplete": true,
+      "updatedAt": "2026-10-27T00:00:00.000Z"
+    }
+  },
+  "drafts": {
+    "python-basics:python-basics-ch01-l01-e01": {
+      "courseId": "python-basics",
+      "lessonId": "python-basics-ch01-l01",
+      "exerciseId": "python-basics-ch01-l01-e01",
+      "workspaceId": "python-basics-ch01-l01-e01",
+      "contentRevision": "2026-10-10.1",
+      "editRevision": 3,
+      "files": {
+        "main.py": "count = 3\nprint(count)\nprint(count + 2)\n"
+      },
+      "selectedFile": "main.py",
+      "cursors": {
+        "main.py": {
+          "anchor": 0,
+          "head": 1
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "python-basics-ch01-l01-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [
+            {
+              "ruleId": "python-basics-ch01-l01-e01-r01",
+              "requirementId": "python-basics-ch01-l01-e01-r01",
+              "label": "合成保持検査用。学習受入の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。学習・採点の成功証拠ではありません。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "python-basics-ch01-l01-e01-r02",
+              "requirementId": "python-basics-ch01-l01-e01-r02",
+              "label": "合成保持検査用。学習受入の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。学習・採点の成功証拠ではありません。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            }
+          ],
+          "passedRequirementIds": [
+            "python-basics-ch01-l01-e01-r01",
+            "python-basics-ch01-l01-e01-r02"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-10T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": [],
+      "reviewSlideId": "next-ch01-l01-s01",
+      "reviewScrollOffset": 32,
+      "lastPassingSnapshots": {
+        "python-basics-ch01-l01-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-10.1",
+          "files": {
+            "main.py": "count = 3\nprint(count)\nprint(count + 2)\n"
+          },
+          "evaluatedAt": "2026-10-10T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-10T00:00:00.000Z"
+    },
+    "tailwind:tailwind-ch01-l01-e01": {
+      "courseId": "tailwind",
+      "lessonId": "tailwind-ch01-l01",
+      "exerciseId": "tailwind-ch01-l01-e01",
+      "workspaceId": "tailwind-ch01-l01-e01",
+      "contentRevision": "2026-10-15.1",
+      "editRevision": 3,
+      "files": {
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <title>2つの項目</title>\n  </head>\n  <body>\n    <div id=\"cards\" class=\"block gap-8 p-2 border border-slate-400 rounded\">\n      <div class=\"bg-slate-100\">調べる</div>\n      <div class=\"bg-slate-100\">作る</div>\n    </div>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "index.html",
+      "cursors": {
+        "index.html": {
+          "anchor": 0,
+          "head": 1
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "tailwind-ch01-l01-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [
+            {
+              "ruleId": "tailwind-ch01-l01-e01-r01",
+              "requirementId": "tailwind-ch01-l01-e01-r01",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l01-e01-r02",
+              "requirementId": "tailwind-ch01-l01-e01-r02",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l01-e01-r03",
+              "requirementId": "tailwind-ch01-l01-e01-r03",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l01-e01-r04",
+              "requirementId": "tailwind-ch01-l01-e01-r04",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l01-e01-r05",
+              "requirementId": "tailwind-ch01-l01-e01-r05",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            }
+          ],
+          "passedRequirementIds": [
+            "tailwind-ch01-l01-e01-r01",
+            "tailwind-ch01-l01-e01-r02",
+            "tailwind-ch01-l01-e01-r03",
+            "tailwind-ch01-l01-e01-r04",
+            "tailwind-ch01-l01-e01-r05"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-27T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["tailwind-ch01-l01-e01-h01"],
+      "reviewSlideId": "tailwind-ch01-l01-s01",
+      "reviewScrollOffset": 32,
+      "lastPassingSnapshots": {
+        "tailwind-ch01-l01-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-15.1",
+          "files": {
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <title>2つの項目</title>\n  </head>\n  <body>\n    <div id=\"cards\" class=\"block gap-8 p-2 border border-slate-400 rounded\">\n      <div class=\"bg-slate-100\">調べる</div>\n      <div class=\"bg-slate-100\">作る</div>\n    </div>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-27T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-27T00:00:00.000Z"
+    },
+    "tailwind:tailwind-ch01-l02-e01": {
+      "courseId": "tailwind",
+      "lessonId": "tailwind-ch01-l02",
+      "exerciseId": "tailwind-ch01-l02-e01",
+      "workspaceId": "tailwind-ch01-l02-e01",
+      "contentRevision": "2026-10-15.1",
+      "editRevision": 3,
+      "files": {
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <title>Utilityを確かめる</title>\n  </head>\n  <body class=\"p-4\">\n    <main id=\"card\" class=\"w-80 p-2 bg-black text-white\">\n      <h1 class=\"text-base leading-6 font-bold\">読書メモ</h1>\n      <p>次に読む本を記録します。</p>\n    </main>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "index.html",
+      "cursors": {
+        "index.html": {
+          "anchor": 0,
+          "head": 1
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "tailwind-ch01-l02-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [
+            {
+              "ruleId": "tailwind-ch01-l02-e01-r01",
+              "requirementId": "tailwind-ch01-l02-e01-r01",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l02-e01-r02",
+              "requirementId": "tailwind-ch01-l02-e01-r02",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l02-e01-r03",
+              "requirementId": "tailwind-ch01-l02-e01-r03",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l02-e01-r04",
+              "requirementId": "tailwind-ch01-l02-e01-r04",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l02-e01-r05",
+              "requirementId": "tailwind-ch01-l02-e01-r05",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l02-e01-r06",
+              "requirementId": "tailwind-ch01-l02-e01-r06",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l02-e01-r07",
+              "requirementId": "tailwind-ch01-l02-e01-r07",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l02-e01-r08",
+              "requirementId": "tailwind-ch01-l02-e01-r08",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            }
+          ],
+          "passedRequirementIds": [
+            "tailwind-ch01-l02-e01-r01",
+            "tailwind-ch01-l02-e01-r02",
+            "tailwind-ch01-l02-e01-r03",
+            "tailwind-ch01-l02-e01-r04",
+            "tailwind-ch01-l02-e01-r05",
+            "tailwind-ch01-l02-e01-r06",
+            "tailwind-ch01-l02-e01-r07",
+            "tailwind-ch01-l02-e01-r08"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-27T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["tailwind-ch01-l02-e01-h01"],
+      "reviewSlideId": "tailwind-ch01-l02-s01",
+      "reviewScrollOffset": 32,
+      "lastPassingSnapshots": {
+        "tailwind-ch01-l02-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-15.1",
+          "files": {
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <title>Utilityを確かめる</title>\n  </head>\n  <body class=\"p-4\">\n    <main id=\"card\" class=\"w-80 p-2 bg-black text-white\">\n      <h1 class=\"text-base leading-6 font-bold\">読書メモ</h1>\n      <p>次に読む本を記録します。</p>\n    </main>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-27T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-27T00:00:00.000Z"
+    },
+    "tailwind:tailwind-ch01-l03-e01": {
+      "courseId": "tailwind",
+      "lessonId": "tailwind-ch01-l03",
+      "exerciseId": "tailwind-ch01-l03-e01",
+      "workspaceId": "tailwind-ch01-l03-e01",
+      "contentRevision": "2026-10-15.1",
+      "editRevision": 3,
+      "files": {
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <title>Utilityを確かめる</title>\n  </head>\n  <body class=\"p-4\">\n    <main class=\"flex flex-col gap-4\">\n      <button id=\"action\" type=\"button\" class=\"p-4 bg-white text-black outline-none\">保存</button>\n      <button id=\"pending\" type=\"button\" class=\"p-4 bg-white text-black disabled:opacity-50\">\n        送信準備中\n      </button>\n    </main>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "index.html",
+      "cursors": {
+        "index.html": {
+          "anchor": 0,
+          "head": 1
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "tailwind-ch01-l03-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [
+            {
+              "ruleId": "tailwind-ch01-l03-e01-r01",
+              "requirementId": "tailwind-ch01-l03-e01-r01",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l03-e01-r02",
+              "requirementId": "tailwind-ch01-l03-e01-r02",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l03-e01-r03",
+              "requirementId": "tailwind-ch01-l03-e01-r03",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l03-e01-r04",
+              "requirementId": "tailwind-ch01-l03-e01-r04",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l03-e01-r05",
+              "requirementId": "tailwind-ch01-l03-e01-r05",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l03-e01-r06",
+              "requirementId": "tailwind-ch01-l03-e01-r06",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l03-e01-r07",
+              "requirementId": "tailwind-ch01-l03-e01-r07",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l03-e01-r08",
+              "requirementId": "tailwind-ch01-l03-e01-r08",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l03-e01-r09",
+              "requirementId": "tailwind-ch01-l03-e01-r09",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l03-e01-r10",
+              "requirementId": "tailwind-ch01-l03-e01-r10",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l03-e01-r11",
+              "requirementId": "tailwind-ch01-l03-e01-r11",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l03-e01-r12",
+              "requirementId": "tailwind-ch01-l03-e01-r12",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            }
+          ],
+          "passedRequirementIds": [
+            "tailwind-ch01-l03-e01-r01",
+            "tailwind-ch01-l03-e01-r02",
+            "tailwind-ch01-l03-e01-r03",
+            "tailwind-ch01-l03-e01-r04",
+            "tailwind-ch01-l03-e01-r05",
+            "tailwind-ch01-l03-e01-r06",
+            "tailwind-ch01-l03-e01-r07",
+            "tailwind-ch01-l03-e01-r08",
+            "tailwind-ch01-l03-e01-r09",
+            "tailwind-ch01-l03-e01-r10",
+            "tailwind-ch01-l03-e01-r11",
+            "tailwind-ch01-l03-e01-r12"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-27T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["tailwind-ch01-l03-e01-h01"],
+      "reviewSlideId": "tailwind-ch01-l03-s01",
+      "reviewScrollOffset": 32,
+      "lastPassingSnapshots": {
+        "tailwind-ch01-l03-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-15.1",
+          "files": {
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <title>Utilityを確かめる</title>\n  </head>\n  <body class=\"p-4\">\n    <main class=\"flex flex-col gap-4\">\n      <button id=\"action\" type=\"button\" class=\"p-4 bg-white text-black outline-none\">保存</button>\n      <button id=\"pending\" type=\"button\" class=\"p-4 bg-white text-black disabled:opacity-50\">\n        送信準備中\n      </button>\n    </main>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-27T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-27T00:00:00.000Z"
+    },
+    "tailwind:tailwind-ch01-l04-e01": {
+      "courseId": "tailwind",
+      "lessonId": "tailwind-ch01-l04",
+      "exerciseId": "tailwind-ch01-l04-e01",
+      "workspaceId": "tailwind-ch01-l04-e01",
+      "contentRevision": "2026-10-15.1",
+      "editRevision": 3,
+      "files": {
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <title>Utilityを確かめる</title>\n  </head>\n  <body class=\"p-4\">\n    <main id=\"cards\" class=\"flex flex-row sm:flex-col gap-4 p-4 bg-white text-black\">\n      <section class=\"p-4 border border-black\">調べる</section>\n      <section class=\"p-4 border border-black\">作る</section>\n    </main>\n  </body>\n</html>\n"
+      },
+      "selectedFile": "index.html",
+      "cursors": {
+        "index.html": {
+          "anchor": 0,
+          "head": 1
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "tailwind-ch01-l04-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [
+            {
+              "ruleId": "tailwind-ch01-l04-e01-r01",
+              "requirementId": "tailwind-ch01-l04-e01-r01",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l04-e01-r02",
+              "requirementId": "tailwind-ch01-l04-e01-r02",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l04-e01-r03",
+              "requirementId": "tailwind-ch01-l04-e01-r03",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l04-e01-r04",
+              "requirementId": "tailwind-ch01-l04-e01-r04",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l04-e01-r05",
+              "requirementId": "tailwind-ch01-l04-e01-r05",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch01-l04-e01-r06",
+              "requirementId": "tailwind-ch01-l04-e01-r06",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            }
+          ],
+          "passedRequirementIds": [
+            "tailwind-ch01-l04-e01-r01",
+            "tailwind-ch01-l04-e01-r02",
+            "tailwind-ch01-l04-e01-r03",
+            "tailwind-ch01-l04-e01-r04",
+            "tailwind-ch01-l04-e01-r05",
+            "tailwind-ch01-l04-e01-r06"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-27T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["tailwind-ch01-l04-e01-h01"],
+      "reviewSlideId": "tailwind-ch01-l04-s01",
+      "reviewScrollOffset": 32,
+      "lastPassingSnapshots": {
+        "tailwind-ch01-l04-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-15.1",
+          "files": {
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <title>Utilityを確かめる</title>\n  </head>\n  <body class=\"p-4\">\n    <main id=\"cards\" class=\"flex flex-row sm:flex-col gap-4 p-4 bg-white text-black\">\n      <section class=\"p-4 border border-black\">調べる</section>\n      <section class=\"p-4 border border-black\">作る</section>\n    </main>\n  </body>\n</html>\n"
+          },
+          "evaluatedAt": "2026-10-27T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-27T00:00:00.000Z"
+    },
+    "tailwind:tailwind-ch02-l01-e01": {
+      "courseId": "tailwind",
+      "lessonId": "tailwind-ch02-l01",
+      "exerciseId": "tailwind-ch02-l01-e01",
+      "workspaceId": "tailwind-ch02-l01-e01",
+      "contentRevision": "2026-10-15.1",
+      "editRevision": 3,
+      "files": {
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>読書カード</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body class=\"p-4\">\n    <h1 class=\"text-xl leading-7 font-bold\">読むことと作ること</h1>\n    <main id=\"cards\" class=\"flex flex-col md:flex-row gap-card\">\n      <section id=\"read-card\" class=\"note-card\">\n        <h2 class=\"text-lg font-bold\">読む</h2>\n        <p>次に読む本と、気になったところを記録します。</p>\n      </section>\n      <section id=\"make-card\" class=\"p-card border border-brand bg-paper text-brand\">\n        <h2 class=\"text-lg font-bold\">作る</h2>\n        <p>本から試してみたいことを、小さく作ります。</p>\n      </section>\n    </main>\n    <button\n      id=\"save\"\n      type=\"button\"\n      class=\"p-4 bg-brand text-paper outline-none hover:bg-paper hover:text-brand focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2\"\n    >\n      操作状態を試す\n    </button>\n  </body>\n</html>\n",
+        "styles.css": "@import 'tailwindcss';\n\n@theme {\n  --color-brand: #000000;\n  --color-paper: #ffffff;\n  --spacing-card: 8px;\n}\n\n@layer components {\n  .note-card {\n    @apply p-2 border border-brand bg-paper text-brand;\n  }\n}\n"
+      },
+      "selectedFile": "index.html",
+      "cursors": {
+        "index.html": {
+          "anchor": 0,
+          "head": 1
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "tailwind-ch02-l01-e01",
+          "executionRevision": 3,
+          "status": "incomplete",
+          "checks": [],
+          "passedRequirementIds": [],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-27T00:00:00.000Z"
+        },
+        {
+          "exerciseId": "tailwind-ch02-l01-e01",
+          "executionRevision": 3,
+          "status": "incomplete",
+          "checks": [],
+          "passedRequirementIds": [],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-27T00:00:00.000Z"
+        },
+        {
+          "exerciseId": "tailwind-ch02-l01-e01",
+          "executionRevision": 3,
+          "status": "pass",
+          "checks": [
+            {
+              "ruleId": "tailwind-ch02-l01-e01-r01",
+              "requirementId": "tailwind-ch02-l01-e01-r01",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch02-l01-e01-r02",
+              "requirementId": "tailwind-ch02-l01-e01-r02",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch02-l01-e01-r03",
+              "requirementId": "tailwind-ch02-l01-e01-r03",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch02-l01-e01-r04",
+              "requirementId": "tailwind-ch02-l01-e01-r04",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch02-l01-e01-r05",
+              "requirementId": "tailwind-ch02-l01-e01-r05",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch02-l01-e01-r06",
+              "requirementId": "tailwind-ch02-l01-e01-r06",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch02-l01-e01-r07",
+              "requirementId": "tailwind-ch02-l01-e01-r07",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch02-l01-e01-r08",
+              "requirementId": "tailwind-ch02-l01-e01-r08",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch02-l01-e01-r09",
+              "requirementId": "tailwind-ch02-l01-e01-r09",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch02-l01-e01-r10",
+              "requirementId": "tailwind-ch02-l01-e01-r10",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch02-l01-e01-r11",
+              "requirementId": "tailwind-ch02-l01-e01-r11",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch02-l01-e01-r12",
+              "requirementId": "tailwind-ch02-l01-e01-r12",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch02-l01-e01-r13",
+              "requirementId": "tailwind-ch02-l01-e01-r13",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch02-l01-e01-r14",
+              "requirementId": "tailwind-ch02-l01-e01-r14",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch02-l01-e01-r15",
+              "requirementId": "tailwind-ch02-l01-e01-r15",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch02-l01-e01-r16",
+              "requirementId": "tailwind-ch02-l01-e01-r16",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch02-l01-e01-r17",
+              "requirementId": "tailwind-ch02-l01-e01-r17",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch02-l01-e01-r18",
+              "requirementId": "tailwind-ch02-l01-e01-r18",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            },
+            {
+              "ruleId": "tailwind-ch02-l01-e01-r19",
+              "requirementId": "tailwind-ch02-l01-e01-r19",
+              "label": "移行専用の合成値。学習合格の証拠ではありません。",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "移行専用の合成値。",
+              "expected": "synthetic",
+              "actual": "synthetic",
+              "nextAction": "synthetic"
+            }
+          ],
+          "passedRequirementIds": [
+            "tailwind-ch02-l01-e01-r01",
+            "tailwind-ch02-l01-e01-r02",
+            "tailwind-ch02-l01-e01-r03",
+            "tailwind-ch02-l01-e01-r04",
+            "tailwind-ch02-l01-e01-r05",
+            "tailwind-ch02-l01-e01-r06",
+            "tailwind-ch02-l01-e01-r07",
+            "tailwind-ch02-l01-e01-r08",
+            "tailwind-ch02-l01-e01-r09",
+            "tailwind-ch02-l01-e01-r10",
+            "tailwind-ch02-l01-e01-r11",
+            "tailwind-ch02-l01-e01-r12",
+            "tailwind-ch02-l01-e01-r13",
+            "tailwind-ch02-l01-e01-r14",
+            "tailwind-ch02-l01-e01-r15",
+            "tailwind-ch02-l01-e01-r16",
+            "tailwind-ch02-l01-e01-r17",
+            "tailwind-ch02-l01-e01-r18",
+            "tailwind-ch02-l01-e01-r19"
+          ],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-27T00:00:00.000Z"
+        }
+      ],
+      "revealedHintIds": ["tailwind-ch02-l01-e01-h01"],
+      "reviewSlideId": "tailwind-ch02-l01-s01",
+      "reviewScrollOffset": 32,
+      "lastPassingSnapshots": {
+        "tailwind-ch02-l01-e01": {
+          "editRevision": 3,
+          "contentRevision": "2026-10-15.1",
+          "files": {
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>読書カード</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body class=\"p-4\">\n    <h1 class=\"text-xl leading-7 font-bold\">読むことと作ること</h1>\n    <main id=\"cards\" class=\"flex flex-col md:flex-row gap-card\">\n      <section id=\"read-card\" class=\"note-card\">\n        <h2 class=\"text-lg font-bold\">読む</h2>\n        <p>次に読む本と、気になったところを記録します。</p>\n      </section>\n      <section id=\"make-card\" class=\"p-card border border-brand bg-paper text-brand\">\n        <h2 class=\"text-lg font-bold\">作る</h2>\n        <p>本から試してみたいことを、小さく作ります。</p>\n      </section>\n    </main>\n    <button\n      id=\"save\"\n      type=\"button\"\n      class=\"p-4 bg-brand text-paper outline-none hover:bg-paper hover:text-brand focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2\"\n    >\n      操作状態を試す\n    </button>\n  </body>\n</html>\n",
+            "styles.css": "@import 'tailwindcss';\n\n@theme {\n  --color-brand: #000000;\n  --color-paper: #ffffff;\n  --spacing-card: 8px;\n}\n\n@layer components {\n  .note-card {\n    @apply p-2 border border-brand bg-paper text-brand;\n  }\n}\n"
+          },
+          "evaluatedAt": "2026-10-27T00:00:00.000Z"
+        }
+      },
+      "updatedAt": "2026-10-27T00:00:00.000Z"
+    }
+  },
+  "quarantined": [],
+  "appVersion": "synthetic-tailwind-release-not-learning-evidence",
+  "exportedAt": "2026-10-27T00:00:00.000Z",
+  "integrity": {
+    "algorithm": "SHA-256",
+    "digest": "bf95f916f1f168e122f1e6532702338f518b1cf9b620e61aa76f919122421ddf"
+  }
+}

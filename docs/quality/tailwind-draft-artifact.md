@@ -1,5 +1,7 @@
 # Tailwind草稿のSourceとdistの照合（Issue #131）
 
+正式公開契約の追加後は[専用公開手順](tailwind-normal-release-policy.md)で元の草稿受入と新しい公開候補を照合します。下記CLIは元の固定草稿を検査するもので、Product変更後に元候補のSourceを付け替える用途には使いません。
+
 作者検証に使うSourceとdistを固定した後、既存のDocker環境で実行します。新しいbuildが不要なら1行目を省略し、既存distのDirectoryを第1引数へ指定できます。
 
 ```sh

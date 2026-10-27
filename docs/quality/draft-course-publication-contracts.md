@@ -1,6 +1,8 @@
 # 3草稿の公開前契約と私有原本の照合
 
-Tailwind 5教材、Python実践5教材、Python OOP 9教材の技術的な準備を、既存の6公開Courseとは別の固定契約で検査します。成功は `draft-candidate-verified`、`publicationAuthorized: false` です。公開入口、Home／Path、workflowの公開対象、承認履歴を追加しません。実際の公開は別途本人許可と専用の公開契約への接続が必要です。
+Tailwindの正式公開契約は[専用公開手順](tailwind-normal-release-policy.md)へ接続しました。元の草稿受入を保持し、公開候補の承認・入力照合・配信後確認は別条件です。以下は草稿検査の契約であり、正式公開の許可を返しません。
+
+Tailwind 5教材、Python実践5教材、Python OOP 9教材の技術的な準備を、既存の6公開Courseとは別の固定契約で検査します。成功は `draft-candidate-verified`、`publicationAuthorized: false` です。この草稿検査は公開入口、Home／Path、承認履歴を書き換えません。実際の公開は別途本人許可と専用の公開契約への接続が必要です。
 
 初期の3つの `*-release-preparation.yaml` は意図的に `draft` です。CLIの合成テストやschema実装は、実教材のcomputer use、原本照合、公開受入の完了に数えません。過去に受入済みの観測は元Source／tree／distを保持します。実人・物理端末待ちには戻しません。
 

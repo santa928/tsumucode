@@ -328,12 +328,14 @@ describe('Next更新公開の過去release binding', () => {
     const history = NextReleaseHistorySchema.parse(
       parse(await readFile('content/next/release-history.yaml', 'utf8')),
     );
+    // 初公開から次の更新までのsnapshotを固定し、後続promotionの追記を混在させない。
+    const initialReleases = history.releases.slice(0, 1);
     expect(validateNextPublicationHistory(initial, '2026-10-09.2', [])).toBeUndefined();
     expect(
-      validateNextPublicationHistory(initial, '2026-10-09.2', history.releases),
+      validateNextPublicationHistory(initial, '2026-10-09.2', initialReleases),
     ).toBeUndefined();
     const record = await evidence();
-    const previous = history.releases[0]!;
+    const previous = initialReleases[0]!;
     record.publication = {
       mode: 'published-update',
       previousRelease: {
@@ -346,7 +348,7 @@ describe('Next更新公開の過去release binding', () => {
         },
       },
     };
-    expect(validateNextPublicationHistory(record, '2026-10-24.1', history.releases)).toEqual(
+    expect(validateNextPublicationHistory(record, '2026-10-24.1', initialReleases)).toEqual(
       previous,
     );
     const current = {
@@ -356,7 +358,7 @@ describe('Next更新公開の過去release binding', () => {
       canonicalDistSha256: record.canonicalDistSha256,
     };
     expect(
-      validateNextPublicationHistory(record, '2026-10-24.1', [...history.releases, current]),
+      validateNextPublicationHistory(record, '2026-10-24.1', [...initialReleases, current]),
     ).toEqual(previous);
     expect(() => {
       validateNextPublicationHistory(record, '2026-10-24.1', []);

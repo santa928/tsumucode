@@ -1,9 +1,32 @@
 schemaVersion: 1
 courseId: tailwind
-status: draft
+status: ready-for-technical-verification
 publicationAuthorized: false
-author: draft
-candidate: null
-observations: []
-codeReviews: []
-originalsReview: null
+author: /root
+candidate:
+  sourceCommit: 37e689387f75bc7060739369977e7b7b8df93700
+  sourceTree: 5251646d75c74c5d8962f5c979099d45eb788056
+  productTreeSha256: c6a577329ca95e4e0a2bb7e63ec8e3d0ed0199e25ab047f6d88f559ff5541271
+  canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
+  runtimeSha256: cb99bba62cf43c7b52a16aa251230827f542271238e45dda99cc395ead1d74e4
+  publicProvenanceSha256: 9276a917b6314059c9dd21ee087a44390880061d81e8b24c43b533136b00b490
+  contentReviewSha256: 35108dcfe4cb5a86fc5896ba1c5f7d0510ffafb976e3ea246c91084f36bd9220
+observations:
+  - path: browser-runtime-observation.json
+    sha256: 111fa33be9758de18cfc163b5d34e1208d84cb1c1daa4e0bd6816e76e68ec4a5
+  - path: browser-quality-observation.json
+    sha256: 336038ab21ca62aab10c2ea7eb0591572d0a6b37237909c94ff98bc132258079
+  - path: portable-runtime-observation.json
+    sha256: d6e2086f3d1f776e3ead1fe030b9929cc2d7ac5c87f8cf50344bd7198e4b30f7
+  - path: usability-observation.json
+    sha256: ec0092c277db93400a1333261d941a6e1378b3f857be9b94ec16178d7e92df52
+codeReviews:
+  - path: code-reviews/logic.json
+    sha256: 68fc4182ed65070ed26a1dae5bf83e1f327589eba0c8b5bab1ffcc624b69b80a
+  - path: code-reviews/security.json
+    sha256: 684463aab28f0348f2f66385e5653fbaf1cc095c9974b047fd7f2efcbfffdfc8
+  - path: code-reviews/structure.json
+    sha256: 36521b53e95cea3e381555a251e2e7fbd8c08386de8609be3ea0bbe9c0300b60
+originalsReview:
+  path: originals-review.json
+  sha256: 8a66e58ce84d793a0cd836fbcdd508ee87dc5d5d64917d092fcdd07d7eb1fae3

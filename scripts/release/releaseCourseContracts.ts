@@ -7,6 +7,7 @@ export const ReleaseCourseIdSchema = z.enum([
   'react',
   'next',
   'python-basics',
+  'tailwind',
 ]);
 export type ReleaseCourseId = z.infer<typeof ReleaseCourseIdSchema>;
 
@@ -170,13 +171,38 @@ const pythonContract = {
   },
 } as const;
 
+const tailwindContract = {
+  courseId: 'tailwind',
+  sourceRoot: 'content/tailwind',
+  historyPath: 'content/tailwind/release-history.yaml',
+  approvalPath: 'docs/quality/tailwind-release-approval.yaml',
+  manifestRoot: 'generated/content/courses/tailwind',
+  publicProvenancePath: 'generated/content/courses/tailwind/provenance.json',
+  syntheticProgressBundlePath: 'tests/fixtures/progress/tailwind-previous-release-bundle.json',
+  postDeployRoot: 'docs/quality/post-deploy/tailwind',
+  schemaVersion: 2,
+  lessonCount: 5,
+  standardLessonCount: 4,
+  guidedLessonCount: 1,
+  capstoneLessonCount: 0,
+  chapterCount: 2,
+  phaseCount: 1,
+  estimatedMinutes: 130,
+  learningEvidenceKind: 'human-novice-or-agent-computer-use',
+  records: {
+    contentReview: 'docs/quality/content-review-tailwind.yaml',
+    technicalAcceptance: 'docs/quality/tailwind-release-acceptance.yaml',
+  },
+} as const;
+
 export type ReleaseCourseContract =
   | typeof htmlCssContract
   | typeof javascriptContract
   | typeof typescriptContract
   | typeof reactContract
   | typeof nextContract
-  | typeof pythonContract;
+  | typeof pythonContract
+  | typeof tailwindContract;
 
 export function resolveReleaseCourseContract(courseId: 'html-css'): typeof htmlCssContract;
 export function resolveReleaseCourseContract(courseId: 'javascript'): typeof javascriptContract;
@@ -184,10 +210,12 @@ export function resolveReleaseCourseContract(courseId: 'typescript'): typeof typ
 export function resolveReleaseCourseContract(courseId: 'react'): typeof reactContract;
 export function resolveReleaseCourseContract(courseId: 'next'): typeof nextContract;
 export function resolveReleaseCourseContract(courseId: 'python-basics'): typeof pythonContract;
+export function resolveReleaseCourseContract(courseId: 'tailwind'): typeof tailwindContract;
 export function resolveReleaseCourseContract(courseId: unknown): ReleaseCourseContract;
 /** 明示allowlistだけから固定pathと品質契約を解決し、未知Courseを拒否する。 */
 export function resolveReleaseCourseContract(courseId: unknown): ReleaseCourseContract {
   const selected = ReleaseCourseIdSchema.parse(courseId);
+  if (selected === 'tailwind') return tailwindContract;
   if (selected === 'html-css') return htmlCssContract;
   if (selected === 'javascript') return javascriptContract;
   if (selected === 'python-basics') return pythonContract;
@@ -203,6 +231,7 @@ export const SITE_RELEASE_COURSE_IDS: readonly ReleaseCourseId[] = [
   'react',
   'next',
   'python-basics',
+  'tailwind',
 ];
 
 /** Productから除外する履歴は既知のliteral4fileだけに限定する。 */
@@ -213,6 +242,7 @@ export const RELEASE_HISTORY_PATHS: readonly string[] = [
   reactContract.historyPath,
   nextContract.historyPath,
   pythonContract.historyPath,
+  tailwindContract.historyPath,
 ];
 
 /** JSのP→Mとcandidate除外へ同じ宣言済みliteral記録集合を提供する。revision以外をpattern化しない。 */
