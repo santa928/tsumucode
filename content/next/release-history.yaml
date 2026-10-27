@@ -299,7 +299,7 @@ releases:
     normalizedLearningInputSha256: 4caa93380af432c8986f8916e3f39214ae26f60cf37b433df70f485c423a0411
     courseId: next
 candidate:
-  revision: 2026-10-24.1
+  revision: 2026-10-27.1
   status: draft
   verifiedSourceCommit: draft
   canonicalDistSha256: draft
@@ -324,6 +324,9 @@ candidate:
       steps: []
     - fromRevision: 2026-10-09.2
       toRevision: 2026-10-24.1
+      steps: []
+    - fromRevision: 2026-10-24.1
+      toRevision: 2026-10-27.1
       steps: []
   syntheticProgressBundlePath: tests/fixtures/progress/next-previous-release-bundle.json
   draftSourceCommit: draft
