@@ -2,6 +2,26 @@
 import { readFileSync } from 'node:fs';
 import { z } from 'zod';
 import { expect, it } from 'vitest';
+import { ESLint } from 'eslint';
+
+it('型付きLintは各対象のleaf設定とenum比較ルールを維持する', async () => {
+  const lint = new ESLint();
+  const settings = z.object({
+    languageOptions: z.object({ parserOptions: z.object({ project: z.array(z.string()) }) }),
+    rules: z.record(z.string(), z.unknown()),
+  });
+  const app = settings.parse(
+    await lint.calculateConfigForFile('src/features/library/LibraryIndexPage.tsx'),
+  );
+  const tools = settings.parse(await lint.calculateConfigForFile('scripts/checkBeforePush.ts'));
+  expect(app.languageOptions.parserOptions.project).toEqual(['./tsconfig.app.json']);
+  expect(tools.languageOptions.parserOptions.project).toEqual(['./tsconfig.node.json']);
+  for (const config of [app, tools]) {
+    expect(
+      z.array(z.unknown()).parse(config.rules['@typescript-eslint/no-unsafe-enum-comparison'])[0],
+    ).toBe(2);
+  }
+});
 
 it('全参照projectを既存設定のまま型検査する', () => {
   const root = z

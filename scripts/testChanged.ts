@@ -23,21 +23,9 @@ const fullSuite = files.some((file) =>
 
 /** npm execでtestを実行し、失敗を呼び出し元へそのまま返す。 */
 function runTests(args: readonly string[]): void {
-  const workerLimit = process.env['TSUMUCODE_TEST_MAX_WORKERS'];
-  if (workerLimit !== undefined && !/^[1-9]\d*$/u.test(workerLimit)) {
-    throw new Error('TSUMUCODE_TEST_MAX_WORKERSは正の整数を指定してください。');
-  }
   const result = spawnSync(
     'npm',
-    [
-      'exec',
-      '--',
-      'vitest',
-      ...args,
-      '--config',
-      'scripts/vitestChanged.config.ts',
-      ...(workerLimit === undefined ? [] : [`--maxWorkers=${workerLimit}`]),
-    ],
+    ['exec', '--', 'vitest', ...args, '--config', 'scripts/vitestChanged.config.ts'],
     { stdio: 'inherit' },
   );
   if (result.error) throw result.error;

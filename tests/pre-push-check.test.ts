@@ -30,10 +30,9 @@ function fixture() {
   );
   chmodSync(npm, 0o700);
   // Composeのread-only Git mountを、fixtureのGit操作へ引き継がない。
-  const fixtureEnvironment = { ...process.env };
-  for (const name of Object.keys(fixtureEnvironment)) {
-    if (name.startsWith('GIT_')) delete fixtureEnvironment[name];
-  }
+  const fixtureEnvironment = Object.fromEntries(
+    Object.entries(process.env).filter(([name]) => !name.startsWith('GIT_')),
+  );
   const git = (...args: string[]) =>
     execFileSync('git', args, { cwd: repository, encoding: 'utf8', env: fixtureEnvironment });
   git('init', '--quiet');
