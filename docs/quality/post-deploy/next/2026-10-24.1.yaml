@@ -1,0 +1,57 @@
+schemaVersion: 2
+status: approved
+revision: 2026-10-24.1
+tag: tsumucode-release-2026-10-24.1
+sourceCommit: e8a077994f5c4cba891e15141dddf5002b1fb7f0
+workflowHeadCommit: 05debfbb4fbbf608d2e91d4a6a2689daa15d006a
+workflowRunId: '40412255220'
+workflowRunAttempt: 1
+reportArtifactId: '12701442774'
+reportArtifactDigest: sha256:17ffb8f58618079b5ed23957aaf42782107cf1c055038a4eefe7e2356ed0a5cb
+pageUrl: https://santa928.github.io/tsumucode/
+pageVerificationStatus: passed
+reportVerificationStatus: passed
+tagVerificationStatus: passed
+verifiedBy: next137_publication / 作者Docker公開Browserとexact main Native原本の照合。実人受講・物理低端末・認証Cookieは含めない。
+verifiedAt: 2026-10-27T01:25:18.094Z
+courseId: next
+environmentAdmissionStatus: passed
+independentEnvironmentApproval: not-configured
+publicSmokeOperations:
+  - operationId: start
+    status: passed
+    evidenceSha256: 34fc2bc198102344d0dc1ee680315b9d8bc6477bdf3a1c46327ec2c39472175d
+    observedAt: 2026-10-27T01:14:53.658484+00:00
+  - operationId: resume
+    status: passed
+    evidenceSha256: 03306536cff232d2cf248faf365c185fe4e795b23458577062d39958fbb032c2
+    observedAt: 2026-10-26T22:21:26Z
+  - operationId: grading
+    status: passed
+    evidenceSha256: 03306536cff232d2cf248faf365c185fe4e795b23458577062d39958fbb032c2
+    observedAt: 2026-10-26T22:18:12Z
+  - operationId: persistence
+    status: passed
+    evidenceSha256: 34fc2bc198102344d0dc1ee680315b9d8bc6477bdf3a1c46327ec2c39472175d
+    observedAt: 2026-10-27T01:14:53.658484+00:00
+  - operationId: export
+    status: passed
+    evidenceSha256: 34fc2bc198102344d0dc1ee680315b9d8bc6477bdf3a1c46327ec2c39472175d
+    observedAt: 2026-10-27T01:14:53.658484+00:00
+  - operationId: fresh-import
+    status: passed
+    evidenceSha256: 34fc2bc198102344d0dc1ee680315b9d8bc6477bdf3a1c46327ec2c39472175d
+    observedAt: 2026-10-27T01:14:53.658484+00:00
+  - operationId: pages-static-study
+    status: passed
+    evidenceSha256: 34fc2bc198102344d0dc1ee680315b9d8bc6477bdf3a1c46327ec2c39472175d
+    observedAt: 2026-10-27T01:14:53.658484+00:00
+  - operationId: local-real-http
+    status: passed
+    evidenceSha256: 03306536cff232d2cf248faf365c185fe4e795b23458577062d39958fbb032c2
+    observedAt: 2026-10-26T22:20:24Z
+  - operationId: local-source-zip
+    status: passed
+    evidenceSha256: 03306536cff232d2cf248faf365c185fe4e795b23458577062d39958fbb032c2
+    observedAt: 2026-10-26T22:18:12Z
+requiredUnconfirmed: 0
