@@ -1,10 +1,11 @@
-import { render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { createMemoryRouter } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fixtureCatalog, fixtureCourse } from '../../../tests/fixtures/course';
 import type { CourseProgress } from '../../core/persistence/contracts';
 import { HomePage } from './HomePage';
+import { LibraryIndexPage } from '../library/LibraryIndexPage';
 
 const useCourseProgress = vi.hoisted(() => vi.fn());
 const useLearningPathProgress = vi.hoisted(() => vi.fn());
@@ -15,6 +16,33 @@ vi.mock('../progress/useLearningPathProgress', () => ({ useLearningPathProgress 
 vi.mock('../progress/ProgressTransferPanel', () => ({
   ProgressTransferPanel: () => <section aria-label="端末データPanel">端末データを管理</section>,
 }));
+
+/** 実Homeリンクから目次へ遷移し、履歴操作と直接URLを同じRouterで確認する。 */
+function renderHomeWithLibrary(initialEntries = ['/']) {
+  const router = createMemoryRouter(
+    [
+      {
+        path: '/',
+        loader: () => ({
+          catalog: fixtureCatalog,
+          publishedCourses: [fixtureCatalog.courses[0]!],
+          publishedPaths: fixtureCatalog.learningPaths,
+        }),
+        HydrateFallback: () => <p>教材を準備中</p>,
+        element: <HomePage />,
+      },
+      {
+        path: '/library/:courseId',
+        loader: () => fixtureCourse,
+        HydrateFallback: () => <p>目次を準備中</p>,
+        element: <LibraryIndexPage />,
+      },
+    ],
+    { initialEntries },
+  );
+  render(<RouterProvider router={router} />);
+  return router;
+}
 
 describe('HomePage', () => {
   beforeEach(() => {
@@ -50,6 +78,51 @@ describe('HomePage', () => {
       error: undefined,
       retry: vi.fn(),
     });
+  });
+
+  it('Homeから新しく読書目次を開くと見出しへfocusし、先頭を表示する', async () => {
+    const scroll = vi.spyOn(window, 'scrollTo').mockReturnValue(undefined);
+    renderHomeWithLibrary();
+    fireEvent.click(
+      await screen.findByRole('link', { name: `${fixtureCourse.title}：スライドだけ見る` }),
+    );
+    const heading = await screen.findByRole('heading', {
+      level: 1,
+      name: `${fixtureCourse.title} スライド目次`,
+    });
+    expect(heading).toHaveFocus();
+    expect(scroll).toHaveBeenCalledWith(0, 0);
+  });
+
+  it('目次への戻る・進むではHomeの入口状態が残っていても位置を上書きしない', async () => {
+    const scroll = vi.spyOn(window, 'scrollTo').mockReturnValue(undefined);
+    const router = renderHomeWithLibrary();
+    fireEvent.click(
+      await screen.findByRole('link', { name: `${fixtureCourse.title}：スライドだけ見る` }),
+    );
+    await screen.findByRole('heading', { level: 1, name: `${fixtureCourse.title} スライド目次` });
+    await act(async () => {
+      await router.navigate(-1);
+    });
+    await screen.findByRole('heading', { level: 1, name: '学びたいピースを選ぶ' });
+    scroll.mockClear();
+    await act(async () => {
+      await router.navigate(1);
+    });
+    await screen.findByRole('heading', { level: 1, name: `${fixtureCourse.title} スライド目次` });
+    expect(router.state.historyAction).toBe('POP');
+    expect(scroll).not.toHaveBeenCalled();
+  });
+
+  it('読書目次の直接URLを開いても入口用のfocus・位置変更をしない', async () => {
+    const scroll = vi.spyOn(window, 'scrollTo').mockReturnValue(undefined);
+    renderHomeWithLibrary([`/library/${fixtureCourse.id}`]);
+    const heading = await screen.findByRole('heading', {
+      level: 1,
+      name: `${fixtureCourse.title} スライド目次`,
+    });
+    expect(scroll).not.toHaveBeenCalled();
+    expect(heading).not.toHaveFocus();
   });
 
   it('公開Courseの対象者・時間・開始導線を工房の棚として表示する', async () => {
