@@ -1,0 +1,43 @@
+name: Author CPython memory observation
+
+on:
+  push:
+    branches: [codex/issue137-cpython-oom-classification]
+    paths:
+      - scripts/ci/python-memory-observation.py
+      - .github/workflows/python-memory-observation.yml
+
+permissions:
+  contents: read
+
+jobs:
+  observe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+      - name: Prepare the existing fixed runtime images
+        run: |
+          docker pull node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5
+          docker pull python:3.14.2-slim-bookworm@sha256:e87711ef5c86aaeaa7031718a69db79d334d94c545c709583f651b8185870941
+      - name: Observe bounded memory and explicit exit controls
+        run: python3 scripts/ci/python-memory-observation.py
+      - name: Clean only the disposable probe containers
+        if: always()
+        run: |
+          for role in learner config-generator; do
+            for container in $(docker ps -aq --filter label=app.tsumucode.owner=tsumucode-cpython-memory-observation --filter "label=app.tsumucode.role=$role"); do
+              docker stop --time 1 "$container"
+              docker rm "$container"
+            done
+          done
+      - name: Preserve the author observations
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: python-memory-observation-${{ github.sha }}
+          path: .python-memory-observation/
+          if-no-files-found: warn
+          retention-days: 7
