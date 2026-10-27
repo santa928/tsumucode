@@ -1,7 +1,7 @@
 import { ReadingResume } from './ReadingResume';
 import { readingLessonPath } from './readingTargets';
 import { useLayoutEffect, useRef } from 'react';
-import { Link, useLoaderData, useLocation, useNavigationType } from 'react-router';
+import { Link, NavigationType, useLoaderData, useLocation, useNavigationType } from 'react-router';
 import type { libraryCourseLoader } from '../../app/libraryContentLoaders';
 import type { LessonOutline } from '../../core/content/types';
 import { buildLibrarySlidePath } from './courseSlideSequence';
@@ -36,7 +36,7 @@ export function LibraryIndexPage() {
 
   useLayoutEffect(() => {
     // Homeから新しく開いた目次だけを整える。履歴復帰と読書URLの位置は上書きしない。
-    if (navigation !== 'PUSH' || !fromHome) return;
+    if (navigation !== NavigationType.Push || !fromHome) return;
     heading.current?.focus({ preventScroll: true });
     window.scrollTo(0, 0);
   }, [fromHome, location.key, navigation]);
