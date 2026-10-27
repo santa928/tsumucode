@@ -275,10 +275,12 @@ function validateCourseIndex(index: CourseIndexValue, context: z.RefinementCtx):
         workspaces.push(...lesson.exercises.map(({ workspaceId }) => workspaceId));
         for (const slide of lesson.slides) {
           allSlideIds.add(slide.id);
+          // expectedTotals.conceptSlidesは概念系4種類の最低枚数。純concept/全Slideの実数とは別。
           if (['concept', 'comparison', 'diagram', 'code'].includes(slide.kind)) {
             totals.conceptSlides += 1;
           }
         }
+        // Full Course検証と同じく、完了必須かにかかわらず全standard（追加演習を含む）を数える。
         totals.standardExercises += lesson.exercises.filter(
           ({ kind }) => kind === 'standard',
         ).length;

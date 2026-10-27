@@ -56,9 +56,9 @@ Homeの「今回の学習」には、初回は目安10分で見出しと背景�
 
 その下には、複数のコースをおすすめ順に並べる「学習パス」と自由に選べる教材棚を残しています。学習パスは順番を案内する設計図であり、各コースは独立して開始・完了できます。前のコースが未完了でもロックされず、学びたいコースから直接始められます。端末データのImport/Export・復旧操作もHome下部から利用できます。
 
-現在公開している「フロントエンド学習パス」にはHTML/CSSコースだけを収録しています。JavaScript、TypeScript、Reactなどのコースは、教材と品質確認が完成してから順次このパスへ追加します。学習パスの直リンクは[`#/paths/frontend`](http://localhost:5173/#/paths/frontend)です。
+Sourceで`published`を指定している「フロントエンド学習パス」にはHTML/CSS、JavaScript、TypeScript、React、Next.jsを収録しています。Python基礎も独立した公開指定のCourseです。Tailwind、Python実践、Python OOPは`draft`で、通常の教材棚・公開学習パスへ掲載しません。これらはSource上の状態であり、実際のデプロイ状況の確認とは別です。学習パスの直リンクは[`#/paths/frontend`](http://localhost:5173/#/paths/frontend)です。
 
-JavaScriptは、安全な複数ファイル実行基盤とChapter 00〜13の52 Lesson／202 ConceptSlide／54 Exercise（Course完了必須52＋任意Closure2、推定1,010分）を`draft`として品質検証中です。既存46 Lesson／760分に、学習クイズのGuided制作5 Lesson／100分とCapstone制作1 Lesson／150分を加えています。1,010分は教材の推定所要時間の合計です。値・条件分岐・Function・Arrayから`map`・`filter`・`reduce`・immutable update、Module・Error・Debugと、DOMで要素を探して文字やclassを変え、新しい要素の接続と複数要素への操作を行う4単元、クリック処理の登録と実行、入力のたびに現在値を表示する操作と、Formの送信を止めて入力を使う操作と、空白を除いた入力を検証する操作、操作の間で値を保持するStateと、値から表示をそろえるrenderとArrayから一覧を作り、元のデータを残して絞り込む方法、同梱の問題データをPromiseとasync/awaitで受け取り表示し、失敗を知らせて再試行し、読み込み中の案内と操作可否をそろえる方法、標準ボタンとEscapeでヒントを操作し、開始・戻る操作に合わせてFocusを移し、操作名と開閉状態をそろえる方法を学べます。制作では問題表示・回答・得点・結果・再挑戦を積み上げ、Capstoneでカテゴリ選択・進捗・Keyboard操作も扱います。通常の公開学習パスにはまだ掲載せず、改訂済み単元をHomeの試用目次から利用できます。Homeの「制作途中のレッスンを試す」→試用目次の「一続きに読む：JavaScriptで画面の文字を変える」→Readerの演習リンク→演習の「← コース」で、全52 LessonのCourse Mapへ進めます。開発時は[最初のJavaScriptスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s01)、[Chapter 06の最初のスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch06-l01/slides/javascript-ch06-l01-s01)、[Debug演習](http://localhost:5173/#/courses/javascript/lessons/javascript-ch06-l04/exercises/javascript-ch06-l04-e01)の直接URLから確認できます。`draft`は非掲載を意味するだけで、Production Artifactへ含まれる教材を機密情報として扱うものではありません。
+JavaScriptはSourceで`published`を指定しており、安全な複数ファイル実行基盤とChapter 00〜13の52 Lessonを備えます。全202 Slideの種類別内訳はconcept170・comparison10・code21・diagram1です。54 Exerciseは標準必須46・追加Closure2・手順付き制作5・独立課題1に分かれます。`expectedTotals.standardExercises=48`は追加2件を含み、`expectedTotals.conceptSlides=202`は概念系4種類の最低枚数です。1,010分はLesson設定時間の合計で、人間の実測学習時間は未計測です。HTML/CSSを知るJavaScript初学者向けに、値・制御・データからDOM・Event・非同期へ進み、学習クイズの問題表示・回答・得点・結果・再挑戦を積み上げます。Capstoneではカテゴリ選択・進捗・Keyboard操作も扱います。この枚数・演習数で教材の十分性や実務能力を保証するものではありません。開発時は[最初のJavaScriptスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s01)から確認できます。`draft`の教材もProduction Artifactへ含まれるため、非掲載を機密性の保証として扱いません。
 
 学習パスの進捗は、この端末に保存された各コースの進捗からその都度計算します。学習パス専用の進捗Recordは作らないため、既存の書き出し・読み込み形式や各コースの下書きはそのまま利用できます。
 
@@ -170,7 +170,7 @@ Slideは文章・コード・結果を教材の記述順に表示します。静
 
 ## 教材SourceとProvenance
 
-教材の唯一のSource of truthは`content/html-css/`です。生成物を直接編集しません。
+教材の唯一のSource of truthは各`content/<course-id>/`です。生成物を直接編集しません。以下はHTML/CSSの例です。
 
 - `content/html-css/course.yaml`: コース構造、公開状態、教材Revision
 - `content/html-css/concepts.yaml`: Conceptの前提関係、初出Slide、Project要求Level
@@ -195,6 +195,28 @@ SourceやAssetを追加したら、同じ変更で`provenance.yaml`へ登録し�
 ```bash
 ./scripts/docker-compose.sh run --rm app npm run content:coverage
 ```
+
+### 教材量を比較する作者用の指標
+
+全Courseを同じ定義で比較するには、参照先をCompileして集計する次の読取専用Reportを使います。生成物・教材内容・ID・URL・進捗保存は変更しません。分類できないSourceは状態が判定可能かも含めて「集計不能」と表示し、終了Code 1にします。未知の値を推測したり、0件として合算したりしません。
+
+```bash
+./scripts/docker-compose.sh run --rm app npx --no-install tsx scripts/content/reportCourseMetrics.ts
+```
+
+Reportは`published`と`draft`を分け、各Courseの対象者・前提Course・対象範囲・Lessonの到達目標を添えます。`publicationStatus`は通常の教材棚・公開学習パスへの掲載指定で、実際のデプロイ確認とは別です。草稿を含む全Courseの合計を公開教材量として扱いません。
+
+| 指標                   | 数え方                                                                                                                                              |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 全Slide／種類別Slide   | Lessonが参照するSlideを全件、8種類の`kind`別に集計。Projectのbrief/guide本文はSlideへ換算しない                                                     |
+| 概念説明Slide          | `kind=concept`のみ。内容の十分性や独立した概念数の測定ではない                                                                                      |
+| legacy概念系の最低枚数 | `expectedTotals.conceptSlides`。`concept/comparison/diagram/code`合計の下限で、実数と別掲する。追加分割を許可する既存契約を維持                     |
+| 標準演習               | `kind=standard`全件。`countsTowardStandardExerciseTotal=true`を既存validationが保証する                                                             |
+| 標準必須／追加演習     | `completion.requiredExerciseIds`に入る標準演習／入らない標準演習。追加は標準演習の内数                                                              |
+| 手順付き制作／独立課題 | `kind=guided-project`／`kind=capstone`をLesson数とExercise数で別掲。同じProjectの複数工程を作品数へ読み替えず、capstone分類を自力習得の証拠にしない |
+| 時間                   | Course設定値とLesson設定合計を併記。実測学習時間は未計測。改訂作業時間やAI操作時間を学習時間に加算しない                                            |
+
+`expectedTotals`はCourse SourceからCompilerが投影し、Full CourseとCourse Indexの双方で検証します。`conceptSlides`だけは最低枚数、章・Lesson・標準演習・制作Lesson・設定時間は実体との一致が必要です。作者Reportは宣言値と実体を分けて表示します。学習者向けLibraryの枚数は実際のSlide配列、Course Mapの章数は検証済みmetadataから読み、Home・Course Map・学習パスの時間は同じ設定値です。枚数比較だけで教材の十分性・実務能力を判断せず、到達目標や前提条件を合わせて確認してください。
 
 ## 品質ゲート
 
