@@ -1,0 +1,38 @@
+schemaVersion: 1
+courseId: tailwind
+status: draft
+verifiedSourceCommit: draft
+canonicalDistSha256: draft
+candidateTreeSha256: draft
+publicationApprovalReference: draft
+computerUseApprovalReference: draft
+realHumanTrial: unverified
+lowEndPhysicalDevice: unverified
+author: /root/tailwind_issue131_completion
+draftCandidate:
+  sourceCommit: 37e689387f75bc7060739369977e7b7b8df93700
+  sourceTree: 5251646d75c74c5d8962f5c979099d45eb788056
+  productTreeSha256: c6a577329ca95e4e0a2bb7e63ec8e3d0ed0199e25ab047f6d88f559ff5541271
+  canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
+  runtimeSha256: cb99bba62cf43c7b52a16aa251230827f542271238e45dda99cc395ead1d74e4
+  publicProvenanceSha256: 9276a917b6314059c9dd21ee087a44390880061d81e8b24c43b533136b00b490
+  contentReviewSha256: 35108dcfe4cb5a86fc5896ba1c5f7d0510ffafb976e3ea246c91084f36bd9220
+draftQualityRecordSha256: e9ce93fb73cf80d6708b940eeb6ed5c1940a0a8ff160b9590fa2ab83a5e37fb3
+technicalVerification:
+  path: technical-verification.json
+  sha256: 0d05a01b22577a6bd4410dfd4a284c765f5fde100a220d8ca4d7f2c9767b659c
+draftOriginalsReview:
+  path: originals-review.json
+  sha256: 8a66e58ce84d793a0cd836fbcdd508ee87dc5d5d64917d092fcdd07d7eb1fae3
+codeReviews: []
+normalizedLearningInputSha256: 5df5c9560ea018f36f91abcd63153cdab545ff07a5a7fe61663d30205eda1497
+independenceReview:
+  reviewer: draft
+  status: pending
+  sourceCommit: draft
+  productTreeSha256: draft
+  evidenceSha256: draft
+  checkedReferences: []
+  rawReport:
+    path: publication-originals-review.json
+    sha256: draft

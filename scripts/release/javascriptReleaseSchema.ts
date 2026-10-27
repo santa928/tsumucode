@@ -41,6 +41,14 @@ import {
   type PythonPublishedRelease,
 } from './pythonReleaseSchema';
 
+import {
+  TailwindReleaseApprovalSchema,
+  TailwindReleaseHistorySchema,
+  type TailwindReleaseApproval,
+  type TailwindReleaseHistory,
+  type TailwindPublishedRelease,
+} from './tailwindReleaseSchema';
+
 const jsContract = resolveReleaseCourseContract('javascript');
 const HashBindingSchema = z.union([Sha256Schema, z.literal('draft')]);
 const LearningBindingShape = {
@@ -134,21 +142,24 @@ export type CourseReleaseApproval =
   | TypescriptReleaseApproval
   | ReactReleaseApproval
   | NextReleaseApproval
-  | PythonReleaseApproval;
+  | PythonReleaseApproval
+  | TailwindReleaseApproval;
 export type CourseReleaseHistory =
   | z.infer<typeof ReleaseHistorySchema>
   | JavascriptReleaseHistory
   | TypescriptReleaseHistory
   | ReactReleaseHistory
   | NextReleaseHistory
-  | PythonReleaseHistory;
+  | PythonReleaseHistory
+  | TailwindReleaseHistory;
 export type CoursePublishedRelease =
   | z.infer<typeof PublishedReleaseSchema>
   | JavascriptPublishedRelease
   | TypescriptPublishedRelease
   | ReactPublishedRelease
   | NextPublishedRelease
-  | PythonPublishedRelease;
+  | PythonPublishedRelease
+  | TailwindPublishedRelease;
 
 /** selected Courseのstrict schemaだけで承認を読む。混在/legacy JSを拒否する。 */
 export function parseCourseReleaseApproval(
@@ -164,6 +175,7 @@ export function parseCourseReleaseApproval(
   input: unknown,
 ): CourseReleaseApproval {
   const contract = resolveReleaseCourseContract(courseId);
+  if (contract.courseId === 'tailwind') return TailwindReleaseApprovalSchema.parse(input);
   if (contract.courseId === 'python-basics') return PythonReleaseApprovalSchema.parse(input);
   if (contract.courseId === 'next') return NextReleaseApprovalSchema.parse(input);
   if (contract.courseId === 'react') return ReactReleaseApprovalSchema.parse(input);
@@ -187,6 +199,7 @@ export function parseCourseReleaseHistory(
   input: unknown,
 ): CourseReleaseHistory {
   const contract = resolveReleaseCourseContract(courseId);
+  if (contract.courseId === 'tailwind') return TailwindReleaseHistorySchema.parse(input);
   if (contract.courseId === 'python-basics') return PythonReleaseHistorySchema.parse(input);
   if (contract.courseId === 'next') return NextReleaseHistorySchema.parse(input);
   if (contract.courseId === 'react') return ReactReleaseHistorySchema.parse(input);

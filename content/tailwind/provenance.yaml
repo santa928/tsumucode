@@ -7,6 +7,9 @@ defaults:
   license: project-original
   modified: false
 items:
+  - id: tailwind-release-history-authoring
+    visibility: authoring
+    path: release-history.yaml
   - id: tailwind-original-3
     visibility: public
     path: chapters/tailwind-ch01/chapter.yaml
