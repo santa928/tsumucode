@@ -145,7 +145,8 @@ export function parseReleaseReport(source: string): ReleaseReportInput {
     selectedCourse === 'typescript' ||
     selectedCourse === 'react' ||
     selectedCourse === 'next' ||
-    selectedCourse === 'python-basics';
+    selectedCourse === 'python-basics' ||
+    selectedCourse === 'tailwind';
   const keys = isScopedCourse ? [...baseKeys, ...scopedCourseKeys] : baseKeys;
   if (metadata.size !== keys.length || keys.some((key) => !metadata.has(key))) {
     throw new Error('Release Report metadataに未知または欠落したkeyがあります');

@@ -11,7 +11,15 @@ import {
   parseCourseReleaseHistory,
 } from '../../../scripts/release/javascriptReleaseSchema';
 import { resolveBetaTarget } from '../../../scripts/release/verifyReleaseTarget';
-import { validatePostDeployVerification } from '../../../scripts/release/verifyReleasePromotion';
+import {
+  assertReleaseReportMatches,
+  validatePostDeployVerification,
+} from '../../../scripts/release/verifyReleasePromotion';
+import {
+  buildReleaseReport,
+  parseReleaseReport,
+} from '../../../scripts/release/writeReleaseReport';
+import { TailwindPublishedReleaseSchema } from '../../../scripts/release/tailwindReleaseSchema';
 import {
   normalizeTailwindFrontend,
   normalizeTailwindPublicationFile,
@@ -289,5 +297,91 @@ describe('Tailwind独立原本照合receipt', () => {
     expect(() =>
       validateTailwindReleaseEvidence({ ...original, realHumanTrial: 'verified' }),
     ).toThrow();
+  });
+});
+
+describe('Tailwind公開Reportの再読込', () => {
+  /** 合成metadataだけでReportと台帳の契約を検査し、公開の実測証拠には使用しない。 */
+  function fixture() {
+    const input = {
+      courseId: 'tailwind' as const,
+      revision: '2026-10-15.2',
+      draftSourceCommit: 'a'.repeat(40),
+      draftCanonicalDistSha256: 'b'.repeat(64),
+      normalizedLearningInputSha256: 'c'.repeat(64),
+      sourceSha: 'd'.repeat(40),
+      workflowHeadSha: 'e'.repeat(40),
+      releaseMode: 'candidate',
+      artifactDigest: 'f'.repeat(64),
+      courseHash: '1'.repeat(64),
+      provenanceHash: '2'.repeat(64),
+      qualityArtifactId: '1',
+      qualityArtifactDigest: `sha256:${'3'.repeat(64)}`,
+      workflowRunId: '2',
+      workflowRunAttempt: '1',
+      pageUrl: 'https://example.test/tsumucode/',
+    };
+    const release = TailwindPublishedReleaseSchema.parse({
+      courseId: input.courseId,
+      revision: input.revision,
+      tag: 'tsumucode-release-2026-10-15.2',
+      sourceCommit: input.sourceSha,
+      workflowHeadCommit: input.workflowHeadSha,
+      canonicalDistSha256: input.artifactDigest,
+      courseManifestSha256: input.courseHash,
+      publicProvenanceSha256: input.provenanceHash,
+      qualityArtifactId: input.qualityArtifactId,
+      qualityArtifactDigest: input.qualityArtifactDigest,
+      workflowRunId: input.workflowRunId,
+      workflowRunAttempt: 1,
+      pageUrl: input.pageUrl,
+      draftSourceCommit: input.draftSourceCommit,
+      draftCanonicalDistSha256: input.draftCanonicalDistSha256,
+      normalizedLearningInputSha256: input.normalizedLearningInputSha256,
+      persistentIdsSha256: '4'.repeat(64),
+      persistentIds: [],
+      previousReleaseTag: null,
+      tombstonedIds: [],
+      migrations: [],
+      syntheticProgressBundlePath: 'tests/fixtures/progress/tailwind-previous-release-bundle.json',
+      postDeployVerificationPath: 'docs/quality/post-deploy/tailwind/2026-10-15.2.yaml',
+      postDeployVerificationSha256: '5'.repeat(64),
+      reportArtifactId: '3',
+      reportArtifactDigest: `sha256:${'6'.repeat(64)}`,
+    });
+    return { input, release, report: buildReleaseReport(input) };
+  }
+
+  it('builderからparserを通して公開台帳とのbindingを保持する', () => {
+    const { input, release, report } = fixture();
+    const parsed = parseReleaseReport(report);
+    expect(parsed).toEqual(input);
+    expect(() => assertReleaseReportMatches(release, parsed)).not.toThrow();
+  });
+
+  it.each([
+    'courseId',
+    'revision',
+    'draftSourceCommit',
+    'draftCanonicalDistSha256',
+    'normalizedLearningInputSha256',
+    'acceptanceEvidenceKind',
+    'acceptanceLimit',
+  ])('必須metadata %sの欠落を拒否する', (key) => {
+    const { report } = fixture();
+    const missing = report
+      .split('\n')
+      .filter((line) => !line.startsWith(`- ${key}: `))
+      .join('\n');
+    expect(() => parseReleaseReport(missing)).toThrow('未知または欠落したkey');
+  });
+
+  it('別CourseのReportやCourse metadataの重複をTailwind台帳へ混在させない', () => {
+    const { release, report } = fixture();
+    const otherCourse = parseReleaseReport(
+      report.replace('- courseId: `tailwind`', '- courseId: `react`'),
+    );
+    expect(() => assertReleaseReportMatches(release, otherCourse)).toThrow('courseId');
+    expect(() => parseReleaseReport(`${report}\n- courseId: \`react\`\n`)).toThrow('重複');
   });
 });
