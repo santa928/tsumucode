@@ -116,6 +116,7 @@ function CourseShelfCard({ course }: { readonly course: CourseCatalogEntry }) {
           </ActionLink>
           <Link
             to={`/library/${course.id}`}
+            state={{ readingCatalogEntry: 'home' }}
             aria-label={`${course.title}：スライドだけ見る`}
             className="inline-flex min-h-11 w-full items-center justify-center rounded-workshop-md border-2 border-workshop-primary px-5 py-3 font-bold text-workshop-primary sm:w-auto"
           >
