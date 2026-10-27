@@ -231,18 +231,37 @@ def main():
         ], text=True, timeout=20).strip()
         # 元Node受入は実web proxyを使う。認証値を出力せず接続開始だけ待つ。
         readiness = """
+        import { request } from 'node:http';
         import { setTimeout as sleep } from 'node:timers/promises';
         for (let attempt = 0; attempt < 50; attempt += 1) {
           try {
-            const response = await fetch('http://web:4173/api/session', {
-              method: 'POST',
-              headers: { host: '127.0.0.1:4173', origin: 'http://127.0.0.1:4173' },
+            await new Promise((resolve, reject) => {
+              const req = request({
+                hostname: 'web',
+                port: 4173,
+                path: '/api/session',
+                method: 'POST',
+                headers: {
+                  host: '127.0.0.1:4173',
+                  origin: 'http://127.0.0.1:4173',
+                  'content-type': 'application/json',
+                  'content-length': 2,
+                },
+              }, (response) => {
+                response.on('error', reject);
+                response.on('end', () => {
+                  if (response.statusCode === 200) resolve();
+                  else reject(new Error(`Readiness HTTP ${response.statusCode}`));
+                });
+                response.resume();
+              });
+              req.setTimeout(1000, () => req.destroy(new Error('Readiness timeout')));
+              req.on('error', reject);
+              req.end('{}');
             });
-            if (response.status !== 200) throw new Error('Unexpected readiness status');
-            await response.arrayBuffer();
             break;
           } catch (error) {
-            if (attempt === 49) throw error;
+            if (error.code !== 'ECONNREFUSED' || attempt === 49) throw error;
             await sleep(100);
           }
         }
