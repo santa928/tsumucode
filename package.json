@@ -49,7 +49,7 @@
     "release:input": "tsx scripts/release/javascriptInputHashes.ts",
     "release:learning-coverage": "tsx scripts/release/javascriptLessonEvaluation.ts",
     "check": "npm run content:compile && npm run lint && npm run test:changed && npm run build:app && npm run smoke:learning-chunks",
-    "check:prepush": "tsx scripts/checkBeforePush.ts",
+    "check:prepush": "sh scripts/checkBeforePush.sh",
     "check:release": "npm run content:compile && npm run content:review && npm run lint && npm run test:run && npm run build:app && npm run smoke:learning-chunks",
     "build:python-assets": "tsx scripts/build/preparePythonAssets.ts"
   },
