@@ -182,9 +182,11 @@ describe('Tailwind正式公開の固定境界', () => {
       })),
       requiredUnconfirmed: 0,
     };
-    expect(() => validatePostDeployVerification(record, binding, digest)).not.toThrow();
+    expect(() => {
+      validatePostDeployVerification(record, binding, digest);
+    }).not.toThrow();
     for (const missing of ['recommended-path', 'portable-production-build']) {
-      expect(() =>
+      expect(() => {
         validatePostDeployVerification(
           {
             ...record,
@@ -194,8 +196,8 @@ describe('Tailwind正式公開の固定境界', () => {
           },
           binding,
           digest,
-        ),
-      ).toThrow();
+        );
+      }).toThrow();
     }
   });
 });
@@ -258,13 +260,13 @@ describe('Tailwind独立原本照合receipt', () => {
       codeReviews: ['requirements-logic', 'security', 'structure'].map((role, index) => ({
         schemaVersion: 1,
         courseId: 'tailwind',
-        actor: index === 0 ? 'independent-reviewer' : `reviewer-${index}`,
+        actor: index === 0 ? 'independent-reviewer' : `reviewer-${String(index)}`,
         role,
         sourceCommit: 'a'.repeat(40),
         productTreeSha256: 'c'.repeat(64),
         decision: 'approved',
         mandatoryFindings: 0,
-        rawReport: { path: `review-${index}.json`, sha256: 'b'.repeat(64) },
+        rawReport: { path: `review-${String(index)}.json`, sha256: 'b'.repeat(64) },
       })),
       normalizedLearningInputSha256: '7'.repeat(64),
       independenceReview: {
@@ -356,7 +358,9 @@ describe('Tailwind公開Reportの再読込', () => {
     const { input, release, report } = fixture();
     const parsed = parseReleaseReport(report);
     expect(parsed).toEqual(input);
-    expect(() => assertReleaseReportMatches(release, parsed)).not.toThrow();
+    expect(() => {
+      assertReleaseReportMatches(release, parsed);
+    }).not.toThrow();
   });
 
   it.each([
@@ -381,7 +385,9 @@ describe('Tailwind公開Reportの再読込', () => {
     const otherCourse = parseReleaseReport(
       report.replace('- courseId: `tailwind`', '- courseId: `react`'),
     );
-    expect(() => assertReleaseReportMatches(release, otherCourse)).toThrow('courseId');
+    expect(() => {
+      assertReleaseReportMatches(release, otherCourse);
+    }).toThrow('courseId');
     expect(() => parseReleaseReport(`${report}\n- courseId: \`react\`\n`)).toThrow('重複');
   });
 });

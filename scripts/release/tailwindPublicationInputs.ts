@@ -88,7 +88,7 @@ export function normalizeTailwindPublicationFile(relative: string, source: strin
   if ([...source.matchAll(/^publicationStatus: (draft|published)$/gmu)].length !== 1)
     throw new Error('Tailwind公開状態は一意な固定形式が必要です');
   return source
-    .replace(/^authoringSources:\n  - release-history.yaml$/mu, 'authoringSources: []')
+    .replace(/^authoringSources:\n {2}- release-history.yaml$/mu, 'authoringSources: []')
     .replace(/^publicationStatus: (draft|published)$/gmu, 'publicationStatus: draft')
     .replace(
       /^description: CSSと対応させ、Utility・操作状態・幅の条件からテーマと制作へつなぐ5レッスン。$/mu,
