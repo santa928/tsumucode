@@ -68,6 +68,24 @@ const pythonPracticeRevision = JSON.parse(
   await readFile('/app/python-practice-course-index.json', 'utf8'),
 ).revision;
 const token = randomBytes(32).toString('hex');
+const terminationDiagnostics = process.env.TSUMUCODE_TERMINATION_DIAGNOSTICS === '1';
+
+/** 作者限定でrunと終了観測を結び、入力本文・認証値・全設定は出力しない。 */
+function traceTermination(run, event, details) {
+  if (!terminationDiagnostics || !run.input) return;
+  console.error(
+    JSON.stringify({
+      kind: 'author-termination-observation',
+      event,
+      runId: run.input.runId,
+      profileId: run.input.runtimeProfileId,
+      wallTime: new Date().toISOString(),
+      monotonicMs: performance.now(),
+      ...details,
+    }),
+  );
+}
+
 const results = new Map();
 const practice = new PracticeRunner(
   owner,
@@ -145,6 +163,11 @@ async function cancel(run, reason) {
   if (run.current) await cancel(run.current, reason);
   if (run.containerId) {
     try {
+      traceTermination(run, 'kill-request', {
+        containerId: run.containerId,
+        requestedReason: reason,
+        currentReason: run.reason,
+      });
       await docker('POST', `/containers/${run.containerId}/kill`);
     } catch (error) {
       if (error.status !== 404 && error.status !== 409) throw error;
@@ -155,6 +178,8 @@ async function cancel(run, reason) {
 /** 1回の実containerを監視し、終了理由を維持して全資源を回収する。 */
 async function executePhase(run, analyze = false) {
   const started = performance.now();
+  const phase = analyze ? 'analysis' : 'execution';
+  const observation = terminationDiagnostics ? { phase, phaseStartedMs: started } : undefined;
   let executionStarted;
   let timeout;
   let output;
@@ -178,10 +203,16 @@ async function executePhase(run, analyze = false) {
         ),
       );
       run.containerId = container.Id;
+      if (observation) {
+        observation.containerId = container.Id;
+        observation.createdMs = performance.now();
+      }
       if (!run.reason) {
         await docker('POST', `/containers/${container.Id}/start`);
         executionStarted = performance.now();
+        if (observation) observation.startAcknowledgedMs = executionStarted;
         timeout = setTimeout(() => {
+          traceTermination(run, 'timer-fired', { phase, containerId: container.Id });
           void cancel(run, 'timeout').catch(() => {
             recoveryNeeded = true;
           });
@@ -196,6 +227,7 @@ async function executePhase(run, analyze = false) {
           },
         );
         const outputDone = output.done.catch((error) => {
+          if (observation) observation.outputError = error.message;
           run.errorMessage = error.message;
           run.reason = 'system-error';
           void cancel(run, 'system-error').catch(() => {
@@ -208,14 +240,27 @@ async function executePhase(run, analyze = false) {
           undefined,
           LIMITS.wallMs + 10000,
         );
+        if (observation) {
+          observation.waitResponse = waited;
+          observation.waitCompletedMs = performance.now();
+        }
         clearTimeout(timeout);
         await outputDone;
+        if (observation) observation.outputCompletedMs = performance.now();
         exitCode = waited.StatusCode;
         const inspected = await docker('GET', `/containers/${container.Id}/json`);
+        if (observation) {
+          observation.inspectedContainerId = inspected.Id;
+          observation.inspectState = inspected.State;
+          observation.inspectCompletedMs = performance.now();
+          observation.reasonBeforeClassification = run.reason ?? null;
+        }
         if (inspected.State.OOMKilled && run.reason !== 'system-error') run.reason = 'memory-limit';
+        if (observation) observation.reasonAfterClassification = run.reason ?? null;
       }
     }
   } catch (error) {
+    if (observation) observation.phaseError = error.message;
     run.errorMessage = error.message;
     run.reason ??= 'system-error';
     recoveryNeeded = true;
@@ -223,14 +268,20 @@ async function executePhase(run, analyze = false) {
     clearTimeout(timeout);
     output?.close();
     if (run.containerId) {
+      if (observation) observation.deletedContainerId = run.containerId;
       try {
         await removeContainer(run.containerId);
+        if (observation) observation.removed = true;
         run.containerId = undefined;
       } catch (error) {
+        if (observation) observation.cleanupError = error.message;
         run.errorMessage = error.message;
         run.reason = 'system-error';
         recoveryNeeded = true;
       }
+    }
+    if (observation) {
+      traceTermination(run, 'phase-finished', { ...observation, finalReason: run.reason ?? null });
     }
   }
   const out = Buffer.from(Buffer.concat(stdout).toString('utf8'));
