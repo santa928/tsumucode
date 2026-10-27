@@ -1,8 +1,10 @@
 """作者専用CIで固定CPythonのOOM状態通知を観測する。受入判定は変更しない。"""
 
+import calendar
 import datetime
 import http.client
 import json
+import re
 import socket
 import subprocess
 import threading
@@ -20,7 +22,7 @@ PYTHON_IMAGE = (
     "e87711ef5c86aaeaa7031718a69db79d334d94c545c709583f651b8185870941"
 )
 OWNER = "tsumucode-cpython-memory-observation"
-OUTPUT = Path(".python-memory-observation")
+OUTPUT = Path("test-results/python-memory-observation")
 MEMORY_SOURCE = (
     "blocks = []\n"
     "for index in range(128):\n"
@@ -48,10 +50,26 @@ def docker_api(method, path, body=None, raw=False):
         response = connection.getresponse()
         data = response.read(2 * 1024 * 1024 + 1)
         if response.status >= 300 or len(data) > 2 * 1024 * 1024:
-            raise RuntimeError(f"Docker API {method} {path}: {response.status}")
+            message = data[:1024].decode("utf-8", errors="replace")
+            raise RuntimeError(
+                f"Docker API {method} {path}: {response.status}: {message}"
+            )
         return data if raw else json.loads(data) if data else None
     finally:
         connection.close()
+
+
+def event_timestamp(created):
+    """DockerのUTC生成日時を、APIが要求するUnix秒.9桁小数へ損失なく変換する。"""
+    match = re.fullmatch(
+        r"(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})(?:\.(\d{1,9}))?Z", created
+    )
+    if match is None:
+        raise ValueError("Unexpected Docker creation timestamp")
+    date = datetime.datetime.strptime(match.group(1), "%Y-%m-%dT%H:%M:%S")
+    seconds = calendar.timegm(date.timetuple())
+    fraction = (match.group(2) or "").ljust(9, "0")
+    return f"{seconds}.{fraction}"
 
 
 def inspect_owned(identifier):
@@ -120,9 +138,10 @@ def observe_case(name, config):
                     "state": state,
                 }
             )
+        now = time.time_ns()
         parameters = {
-            "since": initial["Created"],
-            "until": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "since": event_timestamp(initial["Created"]),
+            "until": f"{now // 1000000000}.{now % 1000000000:09d}",
             "filters": json.dumps({"container": [identifier]}),
         }
         record["eventsQuery"] = parameters
@@ -137,25 +156,33 @@ def observe_case(name, config):
             }
             for event in map(json.loads, events.splitlines())
         ]
+    except Exception as error:
+        record["observationError"] = str(error)
+        raise
     finally:
-        watchdog.cancel()
-        if watchdog_started:
-            watchdog.join(timeout=11)
-            if watchdog.is_alive():
-                raise RuntimeError("Probe watchdog did not finish")
-        record["watchdogFired"] = deadline_fired.is_set()
-        record["watchdogErrors"] = watchdog_errors
-        observed = inspect_owned(identifier)
-        if observed["State"]["Running"]:
-            docker_api("POST", f"/containers/{identifier}/stop?t=1")
-        docker_api("DELETE", f"/containers/{identifier}")
-        record["ownedContainerRemoved"] = True
-        (OUTPUT / f"{name}.json").write_text(json.dumps(record, indent=2) + "\n")
+        try:
+            watchdog.cancel()
+            if watchdog_started:
+                watchdog.join(timeout=11)
+                if watchdog.is_alive():
+                    raise RuntimeError("Probe watchdog did not finish")
+            observed = inspect_owned(identifier)
+            if observed["State"]["Running"]:
+                docker_api("POST", f"/containers/{identifier}/stop?t=1")
+            docker_api("DELETE", f"/containers/{identifier}")
+            record["ownedContainerRemoved"] = True
+        except Exception as error:
+            record["cleanupError"] = str(error)
+            raise
+        finally:
+            record["watchdogFired"] = deadline_fired.is_set()
+            record["watchdogErrors"] = watchdog_errors
+            (OUTPUT / f"{name}.json").write_text(json.dumps(record, indent=2) + "\n")
     return record
 
 
 if __name__ == "__main__":
-    OUTPUT.mkdir(exist_ok=True)
+    OUTPUT.mkdir(parents=True, exist_ok=True)
     endpoint = subprocess.check_output(
         ["docker", "context", "inspect", "--format", "{{.Endpoints.docker.Host}}"],
         text=True,
