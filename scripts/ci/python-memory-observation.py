@@ -4,6 +4,7 @@ import json
 import os
 import re
 import subprocess
+import sys
 import threading
 import time
 from pathlib import Path, PurePosixPath
@@ -32,8 +33,8 @@ def host_snapshot(name):
     (OUTPUT / name).write_text(json.dumps(value, indent=2) + "\n")
 
 
-def learner_location(identifier, owner):
-    """同じlearnerのPIDとcgroupを結び、終了済み・再利用されたPIDは未確認にする。"""
+def container_location(identifier, owner, role="learner"):
+    """同じ所有containerのPID・cgroup・祖先の資源を読み、欠測は明示する。"""
     result = {"containerId": identifier, "timeNs": time.time_ns()}
     inspected = json.loads(
         subprocess.check_output(["docker", "inspect", identifier], text=True, timeout=5)
@@ -42,14 +43,16 @@ def learner_location(identifier, owner):
     if (
         inspected["Id"] != identifier
         or labels.get("app.tsumucode.owner") != owner
-        or labels.get("app.tsumucode.role") != "learner"
+        or labels.get("app.tsumucode.role") != role
     ):
-        raise RuntimeError("Learner identity mismatch")
+        raise RuntimeError("Container identity mismatch")
     pid = inspected["State"]["Pid"]
+    result["owner"] = owner
+    result["role"] = role
     result["pid"] = pid
     result["running"] = inspected["State"]["Running"]
     if pid <= 0:
-        result["unavailable"] = "Learner had already exited"
+        result["unavailable"] = "Container had already exited"
         return result
     membership = read_metadata(f"/proc/{pid}/cgroup")
     result["membership"] = membership
@@ -61,10 +64,15 @@ def learner_location(identifier, owner):
             result["unavailable"] = "PID cgroup identity was not confirmed"
             continue
         cgroup = Path("/sys/fs/cgroup") / str(relative).lstrip("/")
-        result["memory"] = {
-            field: read_metadata(cgroup / field)
-            for field in ["memory.events", "memory.current", "memory.max"]
-        }
+        result["memory"] = {}
+        while True:
+            result["memory"][str(cgroup)] = {
+                field: read_metadata(cgroup / field)
+                for field in ["memory.events", "memory.current", "memory.max", "memory.pressure"]
+            }
+            if cgroup == Path("/sys/fs/cgroup"):
+                break
+            cgroup = cgroup.parent
     return result
 
 
@@ -77,6 +85,10 @@ def observe_events(process, owner, errors):
             for line in process.stdout:
                 try:
                     event = json.loads(line)
+                    attributes = event.get("Actor", {}).get("Attributes", {})
+                    actual_owner = attributes.get("app.tsumucode.owner")
+                    if actual_owner not in observation_owners(owner):
+                        continue
                     identifier = event.get("Actor", {}).get("ID", "")
                     action = event.get("Action", "").split(":", 1)[0]
                     record = {
@@ -85,7 +97,8 @@ def observe_events(process, owner, errors):
                         "containerId": identifier,
                         "timeNano": event.get("timeNano"),
                     }
-                    attributes = event.get("Actor", {}).get("Attributes", {})
+                    record["owner"] = actual_owner
+                    record["role"] = attributes.get("app.tsumucode.role")
                     record["termination"] = {
                         key: attributes[key] for key in ["signal", "exitCode"] if key in attributes
                     }
@@ -95,7 +108,7 @@ def observe_events(process, owner, errors):
                     if action != "start" or labels.get("app.tsumucode.role") != "learner":
                         continue
                     try:
-                        location = learner_location(identifier, owner)
+                        location = container_location(identifier, actual_owner)
                     except Exception as error:
                         location = {"containerId": identifier, "unavailable": str(error)}
                     locations.write(json.dumps(location) + "\n")
@@ -109,7 +122,7 @@ def observe_events(process, owner, errors):
 def record_journal(started_seconds):
     """関連サービスのOOM・kill行だけを残し、権限不足と一致なしを区別する。"""
     commands = {
-        "kernel": ["journalctl", "--kernel"],
+        "kernel": ["journalctl", "--dmesg"],
         "daemon": [
             "journalctl", "--unit", "docker", "--unit", "containerd",
             "--unit", "systemd-oomd",
@@ -150,7 +163,7 @@ def cleanup_container(identifier, owner, role, result):
             try:
                 if action == "logs":
                     suffix = "after-stop" if "stop" in result else "before-stop"
-                    with (OUTPUT / f"{role}-{suffix}.log").open("wb") as output:
+                    with (OUTPUT / f"{role}-{identifier[:12]}-{suffix}.log").open("wb") as output:
                         captured = subprocess.run(
                             ["docker", "logs", identifier], stdout=output,
                             stderr=subprocess.STDOUT, timeout=10,
@@ -172,10 +185,67 @@ def cleanup_container(identifier, owner, role, result):
         result.setdefault("errors", []).append(str(error))
 
 
-def main():
-    """通常判定を変えず、Nodeの先行実行と元Python受入を各1回だけ通す。"""
+def observation_owners(owner):
+    """元の受入が作る固定4ownerだけを対象にし、他作業を含めない。"""
+    return [owner, owner + "-grade-sentinel", owner + "-sentinel", owner + "-diagnostic"]
+
+
+def compose_command():
+    """元Composeへ観測flagと所有labelだけのoverrideを重ねる。"""
+    return ["./scripts/docker-compose.sh", "-p", os.environ["TSUMUCODE_OBSERVATION_OWNER"],
+            "-f", "compose.learning.yaml", "-f", str(OUTPUT / "compose-observation.yaml")]
+
+
+def prepare_compose():
+    """既存6targetを通常手順でbuildし、元の設定やfixtureは変更しない。"""
     owner = os.environ["TSUMUCODE_OBSERVATION_OWNER"]
-    if re.fullmatch(r"tsumucode-cpython-observe-\d+-\d+", owner) is None:
+    if re.fullmatch(r"tsumucode-learning-cpython-observe-\d+-\d+", owner) is None:
+        raise RuntimeError("Fixed CI observation owner required")
+    OUTPUT.mkdir(parents=True, exist_ok=True)
+    labels = {"app.tsumucode.owner": owner}
+    services = {
+        name: {"build": {"labels": labels}, "labels": {**labels, "app.tsumucode.role": name}}
+        for name in ["project", "next-project", "grader", "web", "controller", "preview"]
+    }
+    services["controller"]["environment"] = {"TSUMUCODE_TERMINATION_DIAGNOSTICS": "1"}
+    override = {"services": services, "networks": {name: {"labels": labels} for name in ["web", "learning"]}}
+    (OUTPUT / "compose-observation.yaml").write_text(json.dumps(override, indent=2) + "\n")
+    with (OUTPUT / "build.log").open("wb") as output:
+        subprocess.run(compose_command() + ["--profile", "build-project", "build"],
+                       stdout=output, stderr=subprocess.STDOUT, check=True, timeout=180)
+
+
+def snapshot_resources(name, owner):
+    """前処理の区切りで所有containerと祖先の資源を保存し、欠測なら先へ進まない。"""
+    host_snapshot(name + "-host.json")
+    records = []
+    for observed_owner in observation_owners(owner):
+        identifiers = subprocess.check_output([
+            "docker", "ps", "-aq", "--no-trunc", "--filter",
+            f"label=app.tsumucode.owner={observed_owner}",
+        ], text=True, timeout=10).split()
+        for identifier in identifiers:
+            inspected = json.loads(subprocess.check_output(["docker", "inspect", identifier], text=True, timeout=5))[0]
+            role = inspected["Config"]["Labels"].get("app.tsumucode.role")
+            record = container_location(identifier, observed_owner, role)
+            records.append(record)
+    (OUTPUT / (name + "-resources.json")).write_text(json.dumps(records, indent=2) + "\n")
+    running_services = {record["role"] for record in records if record.get("running") and record["owner"] == owner}
+    if not {"web", "controller", "preview"}.issubset(running_services):
+        raise RuntimeError("Original Compose services were not running")
+    for record in records:
+        if not record.get("running"):
+            continue
+        memory = record.get("memory", {})
+        leaf = next(iter(memory.values()), {})
+        if record.get("unavailable") or any("value" not in leaf.get(field, {}) for field in ["memory.events", "memory.current", "memory.max"]):
+            raise RuntimeError("Running container resource observation was unavailable")
+
+
+def main():
+    """元Compose・Browser・採点・常駐・Node・Pythonの前処理を各1回観測する。"""
+    owner = os.environ["TSUMUCODE_OBSERVATION_OWNER"]
+    if re.fullmatch(r"tsumucode-learning-cpython-observe-\d+-\d+", owner) is None:
         raise RuntimeError("Fixed CI observation owner required")
     OUTPUT.mkdir(parents=True, exist_ok=True)
     started_ns = time.time_ns()
@@ -189,7 +259,7 @@ def main():
     events = subprocess.Popen(
         [
             "docker", "events", "--since", f"{started_ns // 1000000000}.{started_ns % 1000000000:09d}",
-            "--filter", f"label=app.tsumucode.owner={owner}", "--filter", "type=container",
+            "--filter", "label=app.tsumucode.owner", "--filter", "type=container",
             "--format", "{{json .}}",
         ],
         stdout=subprocess.PIPE, stderr=event_stderr, text=True,
@@ -197,38 +267,15 @@ def main():
     reader = threading.Thread(target=observe_events, args=(events, owner, event_errors), daemon=True)
     reader.start()
     identifier = None
-    web = None
-    network = None
     result = {"status": "incomplete", "sourceCommit": os.environ["GITHUB_SHA"], "acceptances": []}
     try:
-        network = subprocess.check_output([
-            "docker", "network", "create", "--internal", "--label",
-            f"app.tsumucode.owner={owner}", owner + "-internal",
-        ], text=True, timeout=10).strip()
-        identifier = subprocess.check_output(
-            [
-                "docker", "run", "--detach", "--init", "--pull", "never",
-                "--name", owner + "-controller", "--label", f"app.tsumucode.owner={owner}",
-                "--label", "app.tsumucode.role=controller", "--network", network,
-                "--network-alias", "controller",
-                "--user", "0:1000", "--read-only", "--memory", "512m", "--cpus", "1",
-                "--pids-limit", "128", "--cap-drop", "ALL", "--security-opt", "no-new-privileges:true",
-                "--env", f"TSUMUCODE_LOCAL_OWNER={owner}",
-                "--env", "TSUMUCODE_TERMINATION_DIAGNOSTICS=1",
-                "--mount", "type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock",
-                owner + "-controller:author",
-            ],
-            text=True, timeout=20,
-        ).strip()
-        web = subprocess.check_output([
-            "docker", "run", "--detach", "--init", "--pull", "never",
-            "--name", owner + "-web", "--label", f"app.tsumucode.owner={owner}",
-            "--label", "app.tsumucode.role=web", "--network", network,
-            "--network-alias", "web", "--user", "1000:1000", "--read-only",
-            "--memory", "256m", "--cpus", "1", "--pids-limit", "128",
-            "--cap-drop", "ALL", "--security-opt", "no-new-privileges:true",
-            owner + "-web:author",
-        ], text=True, timeout=20).strip()
+        compose = compose_command()
+        with (OUTPUT / "start.log").open("wb") as output:
+            subprocess.run(compose + ["up", "--no-build", "-d", "web", "controller", "preview"],
+                           stdout=output, stderr=subprocess.STDOUT, check=True, timeout=30)
+        identifier = subprocess.check_output(compose + ["ps", "-q", "controller"], text=True, timeout=10).strip()
+        if re.fullmatch(r"[0-9a-f]{64}", identifier) is None:
+            raise RuntimeError("Controller ID was not confirmed")
         # 元Node受入は実web proxyを使う。認証値を出力せず接続開始だけ待つ。
         readiness = """
         import { request } from 'node:http';
@@ -269,7 +316,20 @@ def main():
         subprocess.run([
             "docker", "exec", identifier, "node", "--input-type=module", "--eval", readiness,
         ], check=True, timeout=10)
-        for name in ["acceptance.mjs", "python-acceptance.mjs"]:
+        snapshot_resources("before-browser", owner)
+        with (OUTPUT / "browser-prefix.log").open("wb") as output:
+            browser = subprocess.run([
+                "docker", "run", "--rm", "--init", "--network", owner + "_web",
+                "--label", f"app.tsumucode.owner={owner}", "--label", "app.tsumucode.role=browser",
+                "--cpus", "2", "--memory", "1g", "--pids-limit", "256",
+                "--cap-drop", "ALL", "--security-opt", "no-new-privileges:true",
+                owner + "-grader:local",
+            ], stdout=output, stderr=subprocess.STDOUT, timeout=60)
+        result["acceptances"].append({"name": "original-browser-prefix", "returnCode": browser.returncode})
+        snapshot_resources("after-browser", owner)
+        if browser.returncode != 0:
+            raise RuntimeError("Original Browser prefix failed")
+        for name in ["project-grade-acceptance.mjs", "resident-acceptance.mjs", "acceptance.mjs", "python-acceptance.mjs"]:
             with (OUTPUT / (name + ".log")).open("wb") as output:
                 accepted = subprocess.run(
                     ["docker", "exec", "-i", identifier, "node", "--input-type=module"],
@@ -277,6 +337,7 @@ def main():
                     stderr=subprocess.STDOUT, timeout=60,
                 )
             result["acceptances"].append({"name": name, "returnCode": accepted.returncode})
+            snapshot_resources("after-" + name, owner)
             if accepted.returncode != 0:
                 raise RuntimeError(f"Original acceptance failed: {name}")
         result["status"] = "controller-observation-complete-not-full-runtime-acceptance"
@@ -289,18 +350,26 @@ def main():
         except Exception as error:
             event_errors.append(f"Host snapshot: {error}")
         result["cleanup"] = {}
-        if web:
-            result["cleanup"]["web"] = {}
-            cleanup_container(web, owner, "web", result["cleanup"]["web"])
-        if identifier:
-            result["cleanup"]["controller"] = {}
-            cleanup_container(identifier, owner, "controller", result["cleanup"]["controller"])
-        if network:
+        for observed_owner in observation_owners(owner):
             try:
-                removed = subprocess.run(["docker", "network", "rm", network], capture_output=True, text=True, timeout=10)
-                result["cleanup"]["network"] = {"returnCode": removed.returncode, "stderr": removed.stderr}
+                identifiers = subprocess.check_output([
+                    "docker", "ps", "-aq", "--no-trunc", "--filter",
+                    f"label=app.tsumucode.owner={observed_owner}",
+                ], text=True, timeout=10).split()
+                for current in identifiers:
+                    inspected = json.loads(subprocess.check_output(["docker", "inspect", current], text=True, timeout=5))[0]
+                    role = inspected["Config"]["Labels"].get("app.tsumucode.role")
+                    if role not in {"learner", "grader", "web", "controller", "preview", "browser"}:
+                        raise RuntimeError("Unexpected owned cleanup role")
+                    result["cleanup"][current] = {}
+                    cleanup_container(current, observed_owner, role, result["cleanup"][current])
             except Exception as error:
-                result["cleanup"]["network"] = {"error": str(error)}
+                result["cleanup"][observed_owner] = {"error": str(error)}
+        try:
+            down = subprocess.run(compose_command() + ["down", "--timeout", "30"], capture_output=True, text=True, timeout=40)
+            result["cleanup"]["compose"] = {"returnCode": down.returncode, "stderr": down.stderr}
+        except Exception as error:
+            result["cleanup"]["compose"] = {"error": str(error)}
         result["eventsExitBeforeStop"] = events.poll()
         if result["eventsExitBeforeStop"] is not None:
             event_errors.append("Event stream exited before the observation ended")
@@ -327,4 +396,9 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if sys.argv[1:] == ["--prepare"]:
+        prepare_compose()
+    elif len(sys.argv) == 1:
+        main()
+    else:
+        raise RuntimeError("Unsupported observation arguments")
