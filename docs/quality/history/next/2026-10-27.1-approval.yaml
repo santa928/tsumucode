@@ -1,0 +1,18 @@
+schemaVersion: 2
+status: approved
+verifiedSourceCommit: f1fcd0397f539770a31879219962c03fb5ab118c
+candidateTreeSha256: 4b5a8d4411a2a2b8aa12e464b803f02119d10059075225687ea35ab738707988
+canonicalDistSha256: 689c6e1fddaa1f907b91a473cafed7a6f149fd6ac61e1883d441ccf216727a41
+courseManifestSha256: accf5fd532b7ac9ab877699dffbee9c20d0448c9224689ff7f33c716631fce73
+publicProvenanceSha256: a577ff8815e8e27eca907b8e0e203b200a07aab323b792536ba04ae61c857c99
+visualBaselineSha256: d46346c4f03f9f7c15ef535e2d6452563fedaf65e8fe2ca8dd6a6176e23020e3
+records:
+  contentReview:
+    path: docs/quality/content-review-next.yaml
+    sha256: 4e7c25c00e85f136dc86c81de59183e0cfda68dde6506b7becb7c4a84b6c5d44
+  technicalAcceptance:
+    path: docs/quality/next-release-acceptance.yaml
+    sha256: 542bd35a007a6418f2553fc7b9a03a21f3aa4d1bc6a0299ede4ca2899c515174
+approvedBy: repository-owner santa928（CI改善・統合後検証と正式公開の続行を明示承認。実人/低端末/認証Cookie未確認を維持）
+approvedAt: 2026-10-27T20:35:04.138Z
+courseId: next
