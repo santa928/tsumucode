@@ -16,7 +16,7 @@ test('説明が指す文字列を横スクロールなしで読め、コード�
     await page.goto(slidePath('courses', 's04'));
     await expect(page.getByTestId('slide-stage')).toBeVisible();
     await page.evaluate((value) => {
-      document.documentElement.style.fontSize = `${value}%`;
+      document.documentElement.style.fontSize = `${String(value)}%`;
     }, scale);
     const code = page.locator('.tc-slide-code[data-code-role="input"] pre');
     expect(await code.textContent()).toBe(
@@ -80,7 +80,7 @@ test('モバイルでは引継ぎ案内を展開せず本文から前後へ進�
     await page.goto(slidePath('library', 's02'));
     await expect(page.getByTestId('slide-stage')).toBeVisible();
     await page.evaluate((value) => {
-      document.documentElement.style.fontSize = `${value}%`;
+      document.documentElement.style.fontSize = `${String(value)}%`;
     }, scale);
     const disclosure = page.getByText('読書位置のURL・PCへの引き継ぎ', { exact: true });
     const controls = page.getByRole('complementary', { name: '読書の続きとPCへの引き継ぎ' });
