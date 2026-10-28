@@ -46,7 +46,11 @@ export function reactReadingScenarios(goal: string | undefined): JavaScriptInter
       ]
     : [operations];
   return groups.map((group, index) => ({
-    id: filtering ? (index === 0 ? 'reading-filtering' : 'reading-empty-read') : goal + '-toggles',
+    id: filtering
+      ? index === 0
+        ? 'reading-filtering'
+        : 'reading-empty-read'
+      : String(goal) + '-toggles',
     label: filtering ? '表示条件と読書状態から件数を導く' : '親の読書状態を個別に変更して戻す',
     actions: group.map(([id, selector]) => ({ id, kind: 'click', selector })),
     checkpoints: group.map(([id, , state, filter]) => {

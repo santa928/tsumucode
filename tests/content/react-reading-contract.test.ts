@@ -42,6 +42,15 @@ describe('読書リスト3段階の配布範囲と採点', () => {
         exercise.solutionFiles.map((file) => [file.path, file.content]),
       );
       expect(isReadingWorkspace(solution, exercise.runtime.profile)).toBe(true);
+      for (const fixture of exercise.fixtures) {
+        expect(
+          isReadingWorkspace(
+            Object.fromEntries(fixture.files.map((file) => [file.path, file.content])),
+            exercise.runtime.profile,
+          ),
+          fixture.id,
+        ).toBe(true);
+      }
       const checked = analyzeReadingList(solution);
       expect(checked.diagnostics).toEqual([]);
       expect(checked.facts.definesBookComponent).toBe(true);

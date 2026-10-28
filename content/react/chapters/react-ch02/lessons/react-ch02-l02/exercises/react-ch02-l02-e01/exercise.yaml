@@ -1,994 +1,889 @@
-id: 'react-ch02-l02-e01'
-kind: 'standard'
-workspaceId: 'react-ch02-l02-e01'
+id: react-ch02-l02-e01
+kind: standard
+workspaceId: react-ch02-l02-e01
 countsTowardStandardExerciseTotal: true
-title: '読書状態を親でまとめる'
-instructionsSource: 'instructions.md'
+title: 読書状態を親でまとめる
+instructionsSource: instructions.md
 requiresConcepts:
-  - conceptId: 'react-reading-state'
-    minimumLevel: 'compose'
-scaffoldLevel: 'compose'
+  - conceptId: react-reading-state
+    minimumLevel: compose
+scaffoldLevel: compose
 runtime:
-  kind: 'react'
-  entryFile: 'main.tsx'
-  sourceType: 'module'
-  capabilityProfile: 'dom'
-  primaryOutput: 'preview'
-  profile: 'reading-state-v1'
-  learningGoal: 'reading-state'
+  kind: react
+  entryFile: main.tsx
+  sourceType: module
+  capabilityProfile: dom
+  primaryOutput: preview
+  profile: reading-state-v1
+  learningGoal: reading-state
 steps:
-  - id: 'react-ch02-l02-e01-step01'
-    file: 'components.tsx'
-    target: '読書状態を親でまとめる'
-    starterAnchor: 'export function App'
-    change: '親のStateから一覧を表示し、対象の本だけを更新して初期状態へ戻す。'
-    observe: '同じ本の切り替え・別の本・最初に戻すを順に確かめます。'
+  - id: react-ch02-l02-e01-step01
+    file: components.tsx
+    target: components.tsxのApp。型、initialBooks、BookCardは用意されています。補助部品や関数の分け方は自由です。
+    starterAnchor: export function App
+    change: 親で本の状態を持ち、idがbooksの一覧へBookCardを並べます。操作したidの本だけを切り替え、一覧のKeyには本のidを使います。idがresetで「最初に戻す」と表示するbuttonを作り、3冊を初期状態へ戻してください。
+    observe: 別の本を続けて切り替えても他の本は変わらず、同じ本を2回押すと元へ戻ります。「最初に戻す」の後も切り替えられることを確かめます。
     requiresConceptIds:
-      - 'react-reading-state'
+      - react-reading-state
     validationRuleIds:
-      - 'react-ch02-l02-e01-r01'
-      - 'react-ch02-l02-e01-r02'
+      - react-ch02-l02-e01-r01
+      - react-ch02-l02-e01-r02
 files:
-  - path: 'BookCard.tsx'
-    language: 'react'
-    source: 'starter/BookCard.tsx'
+  - path: BookCard.tsx
+    language: react
+    source: starter/BookCard.tsx
     editable: false
-  - path: 'components.tsx'
-    language: 'react'
-    source: 'starter/components.tsx'
+  - path: components.tsx
+    language: react
+    source: starter/components.tsx
     editable: true
-  - path: 'data.ts'
-    language: 'typescript'
-    source: 'starter/data.ts'
+  - path: data.ts
+    language: typescript
+    source: starter/data.ts
     editable: false
-  - path: 'index.html'
-    language: 'html'
-    source: 'starter/index.html'
+  - path: index.html
+    language: html
+    source: starter/index.html
     editable: false
-  - path: 'main.tsx'
-    language: 'react'
-    source: 'starter/main.tsx'
+  - path: main.tsx
+    language: react
+    source: starter/main.tsx
     editable: false
-  - path: 'types.ts'
-    language: 'typescript'
-    source: 'starter/types.ts'
+  - path: types.ts
+    language: typescript
+    source: starter/types.ts
     editable: false
 solutionFiles:
-  - path: 'BookCard.tsx'
-    language: 'react'
-    source: 'solution/BookCard.tsx'
+  - path: BookCard.tsx
+    language: react
+    source: solution/BookCard.tsx
     editable: false
-  - path: 'components.tsx'
-    language: 'react'
-    source: 'solution/components.tsx'
+  - path: components.tsx
+    language: react
+    source: solution/components.tsx
     editable: false
-  - path: 'data.ts'
-    language: 'typescript'
-    source: 'solution/data.ts'
+  - path: data.ts
+    language: typescript
+    source: solution/data.ts
     editable: false
-  - path: 'index.html'
-    language: 'html'
-    source: 'solution/index.html'
+  - path: index.html
+    language: html
+    source: solution/index.html
     editable: false
-  - path: 'main.tsx'
-    language: 'react'
-    source: 'solution/main.tsx'
+  - path: main.tsx
+    language: react
+    source: solution/main.tsx
     editable: false
-  - path: 'types.ts'
-    language: 'typescript'
-    source: 'solution/types.ts'
+  - path: types.ts
+    language: typescript
+    source: solution/types.ts
     editable: false
 validationRules:
-  - id: 'react-ch02-l02-e01-r01'
-    label: '最初の3冊の題名と読書状態を表示する'
+  - id: react-ch02-l02-e01-r01
+    label: 最初の3冊の題名と読書状態を表示する
     required: true
-    group: 'all'
-    viewportMode: 'all'
+    group: all
+    viewportMode: all
     viewportIds:
-      - 'desktop-1280'
-    hintId: 'react-ch02-l02-e01-h01'
-    relatedSlideId: 'react-ch02-l02-s01'
+      - desktop-1280
+    hintId: react-ch02-l02-e01-h01
+    relatedSlideId: react-ch02-l02-s01
     target:
-      kind: 'selector'
+      kind: selector
       selector: '#books'
     assertion:
-      kind: 'text'
-      operator: 'equals'
-      expected: '星の地図未読読了にする雨の日の本既読未読にする森の記録未読読了にする'
+      kind: text
+      operator: equals
+      expected: 星の地図未読読了にする雨の日の本既読未読にする森の記録未読読了にする
     feedback:
-      target: 'components.tsxとプレビュー'
-      expected: '最初の3冊の題名と読書状態を表示する'
-      nextAction: '表示をまとめて変える値は、各カードより共通の親へ置きます。'
-  - id: 'react-ch02-l02-e01-r02'
-    label: '親のStateから一覧を表示し、対象の本だけを更新して初期状態へ戻す。'
+      target: components.tsxとプレビュー
+      expected: 最初の3冊の題名と読書状態を表示する
+      nextAction: 表示をまとめて変える値は、各カードより共通の親へ置きます。
+  - id: react-ch02-l02-e01-r02
+    label: 親のStateから一覧を表示し、対象の本だけを更新して初期状態へ戻す。
     required: true
-    group: 'all'
-    viewportMode: 'all'
+    group: all
+    viewportMode: all
     viewportIds:
-      - 'desktop-1280'
-    hintId: 'react-ch02-l02-e01-h01'
-    relatedSlideId: 'react-ch02-l02-s01'
+      - desktop-1280
+    hintId: react-ch02-l02-e01-h01
+    relatedSlideId: react-ch02-l02-s01
     target:
-      kind: 'react-learning'
-      file: 'components.tsx'
+      kind: react-learning
+      file: components.tsx
     assertion:
-      kind: 'react-learning'
-      goal: 'reading-state'
+      kind: react-learning
+      goal: reading-state
     feedback:
-      target: 'components.tsxとプレビュー'
-      expected: '親のStateから一覧を表示し、対象の本だけを更新して初期状態へ戻す。'
-      nextAction: '表示をまとめて変える値は、各カードより共通の親へ置きます。'
+      target: components.tsxとプレビュー
+      expected: 親のStateから一覧を表示し、対象の本だけを更新して初期状態へ戻す。
+      nextAction: 表示をまとめて変える値は、各カードより共通の親へ置きます。
 interactionScenarios:
-  [
-    {
-      'id': 'reading-state-toggles',
-      'label': '親の読書状態を個別に変更して戻す',
-      'actions':
-        [
-          { 'id': 'finish-stars', 'kind': 'click', 'selector': '#toggle-stars' },
-          { 'id': 'reopen-stars', 'kind': 'click', 'selector': '#toggle-stars' },
-          { 'id': 'reopen-rain', 'kind': 'click', 'selector': '#toggle-rain' },
-          { 'id': 'finish-forest', 'kind': 'click', 'selector': '#toggle-forest' },
-          { 'id': 'reset', 'kind': 'click', 'selector': '#reset' },
-          { 'id': 'finish-forest-again', 'kind': 'click', 'selector': '#toggle-forest' },
-          { 'id': 'reset-again', 'kind': 'click', 'selector': '#reset' },
-        ],
-      'checkpoints':
-        [
-          {
-            'id': 'after-finish-stars',
-            'afterActionId': 'finish-stars',
-            'expectations':
-              [
-                {
-                  'id': 'books',
-                  'kind': 'selector-text',
-                  'selector': '#books',
-                  'equals': '星の地図既読未読にする雨の日の本既読未読にする森の記録未読読了にする',
-                },
-                {
-                  'id': 'state-stars',
-                  'kind': 'attribute',
-                  'selector': '#toggle-stars',
-                  'name': 'aria-pressed',
-                  'equals': 'true',
-                },
-                {
-                  'id': 'state-rain',
-                  'kind': 'attribute',
-                  'selector': '#toggle-rain',
-                  'name': 'aria-pressed',
-                  'equals': 'true',
-                },
-                {
-                  'id': 'state-forest',
-                  'kind': 'attribute',
-                  'selector': '#toggle-forest',
-                  'name': 'aria-pressed',
-                  'equals': 'false',
-                },
-              ],
-          },
-          {
-            'id': 'after-reopen-stars',
-            'afterActionId': 'reopen-stars',
-            'expectations':
-              [
-                {
-                  'id': 'books',
-                  'kind': 'selector-text',
-                  'selector': '#books',
-                  'equals': '星の地図未読読了にする雨の日の本既読未読にする森の記録未読読了にする',
-                },
-                {
-                  'id': 'state-stars',
-                  'kind': 'attribute',
-                  'selector': '#toggle-stars',
-                  'name': 'aria-pressed',
-                  'equals': 'false',
-                },
-                {
-                  'id': 'state-rain',
-                  'kind': 'attribute',
-                  'selector': '#toggle-rain',
-                  'name': 'aria-pressed',
-                  'equals': 'true',
-                },
-                {
-                  'id': 'state-forest',
-                  'kind': 'attribute',
-                  'selector': '#toggle-forest',
-                  'name': 'aria-pressed',
-                  'equals': 'false',
-                },
-              ],
-          },
-          {
-            'id': 'after-reopen-rain',
-            'afterActionId': 'reopen-rain',
-            'expectations':
-              [
-                {
-                  'id': 'books',
-                  'kind': 'selector-text',
-                  'selector': '#books',
-                  'equals': '星の地図未読読了にする雨の日の本未読読了にする森の記録未読読了にする',
-                },
-                {
-                  'id': 'state-stars',
-                  'kind': 'attribute',
-                  'selector': '#toggle-stars',
-                  'name': 'aria-pressed',
-                  'equals': 'false',
-                },
-                {
-                  'id': 'state-rain',
-                  'kind': 'attribute',
-                  'selector': '#toggle-rain',
-                  'name': 'aria-pressed',
-                  'equals': 'false',
-                },
-                {
-                  'id': 'state-forest',
-                  'kind': 'attribute',
-                  'selector': '#toggle-forest',
-                  'name': 'aria-pressed',
-                  'equals': 'false',
-                },
-              ],
-          },
-          {
-            'id': 'after-finish-forest',
-            'afterActionId': 'finish-forest',
-            'expectations':
-              [
-                {
-                  'id': 'books',
-                  'kind': 'selector-text',
-                  'selector': '#books',
-                  'equals': '星の地図未読読了にする雨の日の本未読読了にする森の記録既読未読にする',
-                },
-                {
-                  'id': 'state-stars',
-                  'kind': 'attribute',
-                  'selector': '#toggle-stars',
-                  'name': 'aria-pressed',
-                  'equals': 'false',
-                },
-                {
-                  'id': 'state-rain',
-                  'kind': 'attribute',
-                  'selector': '#toggle-rain',
-                  'name': 'aria-pressed',
-                  'equals': 'false',
-                },
-                {
-                  'id': 'state-forest',
-                  'kind': 'attribute',
-                  'selector': '#toggle-forest',
-                  'name': 'aria-pressed',
-                  'equals': 'true',
-                },
-              ],
-          },
-          {
-            'id': 'after-reset',
-            'afterActionId': 'reset',
-            'expectations':
-              [
-                {
-                  'id': 'books',
-                  'kind': 'selector-text',
-                  'selector': '#books',
-                  'equals': '星の地図未読読了にする雨の日の本既読未読にする森の記録未読読了にする',
-                },
-                {
-                  'id': 'state-stars',
-                  'kind': 'attribute',
-                  'selector': '#toggle-stars',
-                  'name': 'aria-pressed',
-                  'equals': 'false',
-                },
-                {
-                  'id': 'state-rain',
-                  'kind': 'attribute',
-                  'selector': '#toggle-rain',
-                  'name': 'aria-pressed',
-                  'equals': 'true',
-                },
-                {
-                  'id': 'state-forest',
-                  'kind': 'attribute',
-                  'selector': '#toggle-forest',
-                  'name': 'aria-pressed',
-                  'equals': 'false',
-                },
-              ],
-          },
-          {
-            'id': 'after-finish-forest-again',
-            'afterActionId': 'finish-forest-again',
-            'expectations':
-              [
-                {
-                  'id': 'books',
-                  'kind': 'selector-text',
-                  'selector': '#books',
-                  'equals': '星の地図未読読了にする雨の日の本既読未読にする森の記録既読未読にする',
-                },
-                {
-                  'id': 'state-stars',
-                  'kind': 'attribute',
-                  'selector': '#toggle-stars',
-                  'name': 'aria-pressed',
-                  'equals': 'false',
-                },
-                {
-                  'id': 'state-rain',
-                  'kind': 'attribute',
-                  'selector': '#toggle-rain',
-                  'name': 'aria-pressed',
-                  'equals': 'true',
-                },
-                {
-                  'id': 'state-forest',
-                  'kind': 'attribute',
-                  'selector': '#toggle-forest',
-                  'name': 'aria-pressed',
-                  'equals': 'true',
-                },
-              ],
-          },
-          {
-            'id': 'after-reset-again',
-            'afterActionId': 'reset-again',
-            'expectations':
-              [
-                {
-                  'id': 'books',
-                  'kind': 'selector-text',
-                  'selector': '#books',
-                  'equals': '星の地図未読読了にする雨の日の本既読未読にする森の記録未読読了にする',
-                },
-                {
-                  'id': 'state-stars',
-                  'kind': 'attribute',
-                  'selector': '#toggle-stars',
-                  'name': 'aria-pressed',
-                  'equals': 'false',
-                },
-                {
-                  'id': 'state-rain',
-                  'kind': 'attribute',
-                  'selector': '#toggle-rain',
-                  'name': 'aria-pressed',
-                  'equals': 'true',
-                },
-                {
-                  'id': 'state-forest',
-                  'kind': 'attribute',
-                  'selector': '#toggle-forest',
-                  'name': 'aria-pressed',
-                  'equals': 'false',
-                },
-              ],
-          },
-        ],
-    },
-  ]
+  - id: reading-state-toggles
+    label: 親の読書状態を個別に変更して戻す
+    actions:
+      - id: finish-stars
+        kind: click
+        selector: '#toggle-stars'
+      - id: reopen-stars
+        kind: click
+        selector: '#toggle-stars'
+      - id: reopen-rain
+        kind: click
+        selector: '#toggle-rain'
+      - id: finish-forest
+        kind: click
+        selector: '#toggle-forest'
+      - id: reset
+        kind: click
+        selector: '#reset'
+      - id: finish-forest-again
+        kind: click
+        selector: '#toggle-forest'
+      - id: reset-again
+        kind: click
+        selector: '#reset'
+    checkpoints:
+      - id: after-finish-stars
+        afterActionId: finish-stars
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図既読未読にする雨の日の本既読未読にする森の記録未読読了にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'true'
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'true'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'false'
+      - id: after-reopen-stars
+        afterActionId: reopen-stars
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図未読読了にする雨の日の本既読未読にする森の記録未読読了にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'true'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'false'
+      - id: after-reopen-rain
+        afterActionId: reopen-rain
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図未読読了にする雨の日の本未読読了にする森の記録未読読了にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'false'
+      - id: after-finish-forest
+        afterActionId: finish-forest
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図未読読了にする雨の日の本未読読了にする森の記録既読未読にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'true'
+      - id: after-reset
+        afterActionId: reset
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図未読読了にする雨の日の本既読未読にする森の記録未読読了にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'true'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'false'
+      - id: after-finish-forest-again
+        afterActionId: finish-forest-again
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図未読読了にする雨の日の本既読未読にする森の記録既読未読にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'true'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'true'
+      - id: after-reset-again
+        afterActionId: reset-again
+        expectations:
+          - id: books
+            kind: selector-text
+            selector: '#books'
+            equals: 星の地図未読読了にする雨の日の本既読未読にする森の記録未読読了にする
+          - id: state-stars
+            kind: attribute
+            selector: '#toggle-stars'
+            name: aria-pressed
+            equals: 'false'
+          - id: state-rain
+            kind: attribute
+            selector: '#toggle-rain'
+            name: aria-pressed
+            equals: 'true'
+          - id: state-forest
+            kind: attribute
+            selector: '#toggle-forest'
+            name: aria-pressed
+            equals: 'false'
 hints:
-  - id: 'react-ch02-l02-e01-h01'
+  - id: react-ch02-l02-e01-h01
     level: 1
-    title: '最初の手掛かり'
-    text: '表示をまとめて変える値は、各カードより共通の親へ置きます。'
-    relatedSlideId: 'react-ch02-l02-s01'
-  - id: 'react-ch02-l02-e01-h02'
+    title: 最初の手掛かり
+    text: 表示をまとめて変える値は、各カードより共通の親へ置きます。
+    relatedSlideId: react-ch02-l02-s01
+  - id: react-ch02-l02-e01-h02
     level: 2
-    title: '値と操作の流れを追う'
-    text: 'State更新関数で直前の配列を受け取り、IDが合う本だけ違う値へします。'
-    relatedSlideId: 'react-ch02-l02-s01'
-  - id: 'react-ch02-l02-e01-h03'
+    title: 値と操作の流れを追う
+    text: State更新関数で直前の配列を受け取り、IDが合う本だけ違う値へします。
+    relatedSlideId: react-ch02-l02-s01
+  - id: react-ch02-l02-e01-h03
     level: 3
-    title: '小さい例で確かめる'
-    text: 'mapの中でbook.id === idを確かめます。該当する本は{ ...book, read: !book.read }、他の本は元のbookを使うと、元配列を直接変えずに更新できます。'
-    relatedSlideId: 'react-ch02-l02-s01'
+    title: 小さい例で確かめる
+    text: 'mapの中でbook.id === idを確かめます。該当する本は{ ...book, read: !book.read
+      }、他の本は元のbookを使うと、元配列を直接変えずに更新できます。'
+    relatedSlideId: react-ch02-l02-s01
 relatedSlideIds:
-  - 'react-ch02-l02-s01'
-  - 'react-ch02-l02-s02'
+  - react-ch02-l02-s01
+  - react-ch02-l02-s02
 previewViewports:
-  - id: 'desktop-1280'
+  - id: desktop-1280
     width: 1280
     height: 720
 assets: []
 fixtures:
-  - id: 'solution'
-    expectedStatus: 'pass'
+  - id: solution
+    expectedStatus: pass
     expectedFeedbackRuleIds: []
     files:
-      - path: 'BookCard.tsx'
-        language: 'react'
-        source: 'fixtures/solution/BookCard.tsx'
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/solution/BookCard.tsx
         editable: false
-      - path: 'components.tsx'
-        language: 'react'
-        source: 'fixtures/solution/components.tsx'
+      - path: components.tsx
+        language: react
+        source: fixtures/solution/components.tsx
         editable: false
-      - path: 'data.ts'
-        language: 'typescript'
-        source: 'fixtures/solution/data.ts'
+      - path: data.ts
+        language: typescript
+        source: fixtures/solution/data.ts
         editable: false
-      - path: 'index.html'
-        language: 'html'
-        source: 'fixtures/solution/index.html'
+      - path: index.html
+        language: html
+        source: fixtures/solution/index.html
         editable: false
-      - path: 'main.tsx'
-        language: 'react'
-        source: 'fixtures/solution/main.tsx'
+      - path: main.tsx
+        language: react
+        source: fixtures/solution/main.tsx
         editable: false
-      - path: 'types.ts'
-        language: 'typescript'
-        source: 'fixtures/solution/types.ts'
+      - path: types.ts
+        language: typescript
+        source: fixtures/solution/types.ts
         editable: false
-  - id: 'alternative-named-map'
-    expectedStatus: 'pass'
+  - id: alternative-named-map
+    expectedStatus: pass
     expectedFeedbackRuleIds: []
     files:
-      - path: 'BookCard.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-named-map/BookCard.tsx'
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/alternative-named-map/BookCard.tsx
         editable: false
-      - path: 'components.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-named-map/components.tsx'
+      - path: components.tsx
+        language: react
+        source: fixtures/alternative-named-map/components.tsx
         editable: false
-      - path: 'data.ts'
-        language: 'typescript'
-        source: 'fixtures/alternative-named-map/data.ts'
+      - path: data.ts
+        language: typescript
+        source: fixtures/alternative-named-map/data.ts
         editable: false
-      - path: 'index.html'
-        language: 'html'
-        source: 'fixtures/alternative-named-map/index.html'
+      - path: index.html
+        language: html
+        source: fixtures/alternative-named-map/index.html
         editable: false
-      - path: 'main.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-named-map/main.tsx'
+      - path: main.tsx
+        language: react
+        source: fixtures/alternative-named-map/main.tsx
         editable: false
-      - path: 'types.ts'
-        language: 'typescript'
-        source: 'fixtures/alternative-named-map/types.ts'
+      - path: types.ts
+        language: typescript
+        source: fixtures/alternative-named-map/types.ts
         editable: false
-  - id: 'starter'
-    expectedStatus: 'incomplete'
-    expectedFeedbackRuleIds:
-      - 'react-ch02-l02-e01-r01'
-      - 'react-ch02-l02-e01-r02'
-      - 'interaction:reading-state-toggles:after-finish-stars:books'
-      - 'interaction:reading-state-toggles:after-finish-stars:state-stars'
-      - 'interaction:reading-state-toggles:after-finish-stars:state-rain'
-      - 'interaction:reading-state-toggles:after-finish-stars:state-forest'
-      - 'interaction:reading-state-toggles:after-reopen-stars:books'
-      - 'interaction:reading-state-toggles:after-reopen-stars:state-stars'
-      - 'interaction:reading-state-toggles:after-reopen-stars:state-rain'
-      - 'interaction:reading-state-toggles:after-reopen-stars:state-forest'
-      - 'interaction:reading-state-toggles:after-reopen-rain:books'
-      - 'interaction:reading-state-toggles:after-reopen-rain:state-stars'
-      - 'interaction:reading-state-toggles:after-reopen-rain:state-rain'
-      - 'interaction:reading-state-toggles:after-reopen-rain:state-forest'
-      - 'interaction:reading-state-toggles:after-finish-forest:books'
-      - 'interaction:reading-state-toggles:after-finish-forest:state-stars'
-      - 'interaction:reading-state-toggles:after-finish-forest:state-rain'
-      - 'interaction:reading-state-toggles:after-finish-forest:state-forest'
-      - 'interaction:reading-state-toggles:after-reset:books'
-      - 'interaction:reading-state-toggles:after-reset:state-stars'
-      - 'interaction:reading-state-toggles:after-reset:state-rain'
-      - 'interaction:reading-state-toggles:after-reset:state-forest'
-      - 'interaction:reading-state-toggles:after-finish-forest-again:books'
-      - 'interaction:reading-state-toggles:after-finish-forest-again:state-stars'
-      - 'interaction:reading-state-toggles:after-finish-forest-again:state-rain'
-      - 'interaction:reading-state-toggles:after-finish-forest-again:state-forest'
-      - 'interaction:reading-state-toggles:after-reset-again:books'
-      - 'interaction:reading-state-toggles:after-reset-again:state-stars'
-      - 'interaction:reading-state-toggles:after-reset-again:state-rain'
-      - 'interaction:reading-state-toggles:after-reset-again:state-forest'
-    files:
-      - path: 'BookCard.tsx'
-        language: 'react'
-        source: 'fixtures/starter/BookCard.tsx'
-        editable: false
-      - path: 'components.tsx'
-        language: 'react'
-        source: 'fixtures/starter/components.tsx'
-        editable: false
-      - path: 'data.ts'
-        language: 'typescript'
-        source: 'fixtures/starter/data.ts'
-        editable: false
-      - path: 'index.html'
-        language: 'html'
-        source: 'fixtures/starter/index.html'
-        editable: false
-      - path: 'main.tsx'
-        language: 'react'
-        source: 'fixtures/starter/main.tsx'
-        editable: false
-      - path: 'types.ts'
-        language: 'typescript'
-        source: 'fixtures/starter/types.ts'
-        editable: false
-  - id: 'all-books-toggle'
-    expectedStatus: 'incomplete'
-    expectedFeedbackRuleIds:
-      - 'interaction:reading-state-toggles:after-finish-stars:books'
-      - 'interaction:reading-state-toggles:after-finish-stars:state-rain'
-      - 'interaction:reading-state-toggles:after-finish-stars:state-forest'
-      - 'interaction:reading-state-toggles:after-reopen-rain:books'
-      - 'interaction:reading-state-toggles:after-reopen-rain:state-stars'
-      - 'interaction:reading-state-toggles:after-reopen-rain:state-forest'
-      - 'interaction:reading-state-toggles:after-finish-forest:books'
-      - 'interaction:reading-state-toggles:after-finish-forest:state-rain'
-      - 'interaction:reading-state-toggles:after-finish-forest:state-forest'
-      - 'interaction:reading-state-toggles:after-finish-forest-again:books'
-      - 'interaction:reading-state-toggles:after-finish-forest-again:state-stars'
-      - 'interaction:reading-state-toggles:after-finish-forest-again:state-rain'
-    files:
-      - path: 'BookCard.tsx'
-        language: 'react'
-        source: 'fixtures/all-books-toggle/BookCard.tsx'
-        editable: false
-      - path: 'components.tsx'
-        language: 'react'
-        source: 'fixtures/all-books-toggle/components.tsx'
-        editable: false
-      - path: 'data.ts'
-        language: 'typescript'
-        source: 'fixtures/all-books-toggle/data.ts'
-        editable: false
-      - path: 'index.html'
-        language: 'html'
-        source: 'fixtures/all-books-toggle/index.html'
-        editable: false
-      - path: 'main.tsx'
-        language: 'react'
-        source: 'fixtures/all-books-toggle/main.tsx'
-        editable: false
-      - path: 'types.ts'
-        language: 'typescript'
-        source: 'fixtures/all-books-toggle/types.ts'
-        editable: false
-  - id: 'one-way-toggle'
-    expectedStatus: 'incomplete'
-    expectedFeedbackRuleIds:
-      - 'interaction:reading-state-toggles:after-reopen-stars:books'
-      - 'interaction:reading-state-toggles:after-reopen-stars:state-stars'
-      - 'interaction:reading-state-toggles:after-reopen-rain:books'
-      - 'interaction:reading-state-toggles:after-reopen-rain:state-stars'
-      - 'interaction:reading-state-toggles:after-reopen-rain:state-rain'
-      - 'interaction:reading-state-toggles:after-finish-forest:books'
-      - 'interaction:reading-state-toggles:after-finish-forest:state-stars'
-      - 'interaction:reading-state-toggles:after-finish-forest:state-rain'
-    files:
-      - path: 'BookCard.tsx'
-        language: 'react'
-        source: 'fixtures/one-way-toggle/BookCard.tsx'
-        editable: false
-      - path: 'components.tsx'
-        language: 'react'
-        source: 'fixtures/one-way-toggle/components.tsx'
-        editable: false
-      - path: 'data.ts'
-        language: 'typescript'
-        source: 'fixtures/one-way-toggle/data.ts'
-        editable: false
-      - path: 'index.html'
-        language: 'html'
-        source: 'fixtures/one-way-toggle/index.html'
-        editable: false
-      - path: 'main.tsx'
-        language: 'react'
-        source: 'fixtures/one-way-toggle/main.tsx'
-        editable: false
-      - path: 'types.ts'
-        language: 'typescript'
-        source: 'fixtures/one-way-toggle/types.ts'
-        editable: false
-  - id: 'index-key'
-    expectedStatus: 'incomplete'
-    expectedFeedbackRuleIds:
-      - 'react-ch02-l02-e01-r02'
-    files:
-      - path: 'BookCard.tsx'
-        language: 'react'
-        source: 'fixtures/index-key/BookCard.tsx'
-        editable: false
-      - path: 'components.tsx'
-        language: 'react'
-        source: 'fixtures/index-key/components.tsx'
-        editable: false
-      - path: 'data.ts'
-        language: 'typescript'
-        source: 'fixtures/index-key/data.ts'
-        editable: false
-      - path: 'index.html'
-        language: 'html'
-        source: 'fixtures/index-key/index.html'
-        editable: false
-      - path: 'main.tsx'
-        language: 'react'
-        source: 'fixtures/index-key/main.tsx'
-        editable: false
-      - path: 'types.ts'
-        language: 'typescript'
-        source: 'fixtures/index-key/types.ts'
-        editable: false
-  - id: 'unused-card'
-    expectedStatus: 'incomplete'
-    expectedFeedbackRuleIds:
-      - 'react-ch02-l02-e01-r02'
-    files:
-      - path: 'BookCard.tsx'
-        language: 'react'
-        source: 'fixtures/unused-card/BookCard.tsx'
-        editable: false
-      - path: 'components.tsx'
-        language: 'react'
-        source: 'fixtures/unused-card/components.tsx'
-        editable: false
-      - path: 'data.ts'
-        language: 'typescript'
-        source: 'fixtures/unused-card/data.ts'
-        editable: false
-      - path: 'index.html'
-        language: 'html'
-        source: 'fixtures/unused-card/index.html'
-        editable: false
-      - path: 'main.tsx'
-        language: 'react'
-        source: 'fixtures/unused-card/main.tsx'
-        editable: false
-      - path: 'types.ts'
-        language: 'typescript'
-        source: 'fixtures/unused-card/types.ts'
-        editable: false
-  - id: 'dummy-state'
-    expectedStatus: 'incomplete'
-    expectedFeedbackRuleIds:
-      - 'react-ch02-l02-e01-r02'
-    files:
-      - path: 'BookCard.tsx'
-        language: 'react'
-        source: 'fixtures/dummy-state/BookCard.tsx'
-        editable: false
-      - path: 'components.tsx'
-        language: 'react'
-        source: 'fixtures/dummy-state/components.tsx'
-        editable: false
-      - path: 'data.ts'
-        language: 'typescript'
-        source: 'fixtures/dummy-state/data.ts'
-        editable: false
-      - path: 'index.html'
-        language: 'html'
-        source: 'fixtures/dummy-state/index.html'
-        editable: false
-      - path: 'main.tsx'
-        language: 'react'
-        source: 'fixtures/dummy-state/main.tsx'
-        editable: false
-      - path: 'types.ts'
-        language: 'typescript'
-        source: 'fixtures/dummy-state/types.ts'
-        editable: false
-  - id: 'alternative-nested-parent'
-    expectedStatus: 'pass'
+  - id: starter
+    expectedStatus: code-error
     expectedFeedbackRuleIds: []
     files:
-      - path: 'BookCard.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-nested-parent/BookCard.tsx'
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/starter/BookCard.tsx
         editable: false
-      - path: 'components.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-nested-parent/components.tsx'
+      - path: components.tsx
+        language: react
+        source: fixtures/starter/components.tsx
         editable: false
-      - path: 'data.ts'
-        language: 'typescript'
-        source: 'fixtures/alternative-nested-parent/data.ts'
+      - path: data.ts
+        language: typescript
+        source: fixtures/starter/data.ts
         editable: false
-      - path: 'index.html'
-        language: 'html'
-        source: 'fixtures/alternative-nested-parent/index.html'
+      - path: index.html
+        language: html
+        source: fixtures/starter/index.html
         editable: false
-      - path: 'main.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-nested-parent/main.tsx'
+      - path: main.tsx
+        language: react
+        source: fixtures/starter/main.tsx
         editable: false
-      - path: 'types.ts'
-        language: 'typescript'
-        source: 'fixtures/alternative-nested-parent/types.ts'
-        editable: false
-  - id: 'alternative-props-list'
-    expectedStatus: 'pass'
-    expectedFeedbackRuleIds: []
-    files:
-      - path: 'BookCard.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-props-list/BookCard.tsx'
-        editable: false
-      - path: 'components.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-props-list/components.tsx'
-        editable: false
-      - path: 'data.ts'
-        language: 'typescript'
-        source: 'fixtures/alternative-props-list/data.ts'
-        editable: false
-      - path: 'index.html'
-        language: 'html'
-        source: 'fixtures/alternative-props-list/index.html'
-        editable: false
-      - path: 'main.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-props-list/main.tsx'
-        editable: false
-      - path: 'types.ts'
-        language: 'typescript'
-        source: 'fixtures/alternative-props-list/types.ts'
-        editable: false
-  - id: 'alternative-key-variable'
-    expectedStatus: 'pass'
-    expectedFeedbackRuleIds: []
-    files:
-      - path: 'BookCard.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-key-variable/BookCard.tsx'
-        editable: false
-      - path: 'components.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-key-variable/components.tsx'
-        editable: false
-      - path: 'data.ts'
-        language: 'typescript'
-        source: 'fixtures/alternative-key-variable/data.ts'
-        editable: false
-      - path: 'index.html'
-        language: 'html'
-        source: 'fixtures/alternative-key-variable/index.html'
-        editable: false
-      - path: 'main.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-key-variable/main.tsx'
-        editable: false
-      - path: 'types.ts'
-        language: 'typescript'
-        source: 'fixtures/alternative-key-variable/types.ts'
-        editable: false
-  - id: 'unused-jsx'
-    expectedStatus: 'incomplete'
-    expectedFeedbackRuleIds:
-      - 'react-ch02-l02-e01-r02'
-    files:
-      - path: 'BookCard.tsx'
-        language: 'react'
-        source: 'fixtures/unused-jsx/BookCard.tsx'
-        editable: false
-      - path: 'components.tsx'
-        language: 'react'
-        source: 'fixtures/unused-jsx/components.tsx'
-        editable: false
-      - path: 'data.ts'
-        language: 'typescript'
-        source: 'fixtures/unused-jsx/data.ts'
-        editable: false
-      - path: 'index.html'
-        language: 'html'
-        source: 'fixtures/unused-jsx/index.html'
-        editable: false
-      - path: 'main.tsx'
-        language: 'react'
-        source: 'fixtures/unused-jsx/main.tsx'
-        editable: false
-      - path: 'types.ts'
-        language: 'typescript'
-        source: 'fixtures/unused-jsx/types.ts'
-        editable: false
-  - id: 'alternative-fragment'
-    expectedStatus: 'pass'
-    expectedFeedbackRuleIds: []
-    files:
-      - path: 'BookCard.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-fragment/BookCard.tsx'
-        editable: false
-      - path: 'components.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-fragment/components.tsx'
-        editable: false
-      - path: 'data.ts'
-        language: 'typescript'
-        source: 'fixtures/alternative-fragment/data.ts'
-        editable: false
-      - path: 'index.html'
-        language: 'html'
-        source: 'fixtures/alternative-fragment/index.html'
-        editable: false
-      - path: 'main.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-fragment/main.tsx'
-        editable: false
-      - path: 'types.ts'
-        language: 'typescript'
-        source: 'fixtures/alternative-fragment/types.ts'
-        editable: false
-  - id: 'alternative-copied-book'
-    expectedStatus: 'pass'
-    expectedFeedbackRuleIds: []
-    files:
-      - path: 'BookCard.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-copied-book/BookCard.tsx'
-        editable: false
-      - path: 'components.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-copied-book/components.tsx'
-        editable: false
-      - path: 'data.ts'
-        language: 'typescript'
-        source: 'fixtures/alternative-copied-book/data.ts'
-        editable: false
-      - path: 'index.html'
-        language: 'html'
-        source: 'fixtures/alternative-copied-book/index.html'
-        editable: false
-      - path: 'main.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-copied-book/main.tsx'
-        editable: false
-      - path: 'types.ts'
-        language: 'typescript'
-        source: 'fixtures/alternative-copied-book/types.ts'
-        editable: false
-  - id: 'mutable-state-book'
-    expectedStatus: 'code-error'
-    expectedFeedbackRuleIds: []
-    files:
-      - path: 'BookCard.tsx'
-        language: 'react'
-        source: 'fixtures/mutable-state-book/BookCard.tsx'
-        editable: false
-      - path: 'components.tsx'
-        language: 'react'
-        source: 'fixtures/mutable-state-book/components.tsx'
-        editable: false
-      - path: 'data.ts'
-        language: 'typescript'
-        source: 'fixtures/mutable-state-book/data.ts'
-        editable: false
-      - path: 'index.html'
-        language: 'html'
-        source: 'fixtures/mutable-state-book/index.html'
-        editable: false
-      - path: 'main.tsx'
-        language: 'react'
-        source: 'fixtures/mutable-state-book/main.tsx'
-        editable: false
-      - path: 'types.ts'
-        language: 'typescript'
-        source: 'fixtures/mutable-state-book/types.ts'
+      - path: types.ts
+        language: typescript
+        source: fixtures/starter/types.ts
         editable: false
     expectedDiagnosticCodes:
-      - 'react-type-error-0'
-  - id: 'alternative-fresh-copy'
-    expectedStatus: 'pass'
+      - react-interaction-target
+  - id: all-books-toggle
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - interaction:reading-state-toggles:after-finish-stars:books
+      - interaction:reading-state-toggles:after-finish-stars:state-rain
+      - interaction:reading-state-toggles:after-finish-stars:state-forest
+      - interaction:reading-state-toggles:after-reopen-rain:books
+      - interaction:reading-state-toggles:after-reopen-rain:state-stars
+      - interaction:reading-state-toggles:after-reopen-rain:state-forest
+      - interaction:reading-state-toggles:after-finish-forest:books
+      - interaction:reading-state-toggles:after-finish-forest:state-rain
+      - interaction:reading-state-toggles:after-finish-forest:state-forest
+      - interaction:reading-state-toggles:after-finish-forest-again:books
+      - interaction:reading-state-toggles:after-finish-forest-again:state-stars
+      - interaction:reading-state-toggles:after-finish-forest-again:state-rain
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/all-books-toggle/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/all-books-toggle/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/all-books-toggle/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/all-books-toggle/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/all-books-toggle/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/all-books-toggle/types.ts
+        editable: false
+  - id: one-way-toggle
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - interaction:reading-state-toggles:after-reopen-stars:books
+      - interaction:reading-state-toggles:after-reopen-stars:state-stars
+      - interaction:reading-state-toggles:after-reopen-rain:books
+      - interaction:reading-state-toggles:after-reopen-rain:state-stars
+      - interaction:reading-state-toggles:after-reopen-rain:state-rain
+      - interaction:reading-state-toggles:after-finish-forest:books
+      - interaction:reading-state-toggles:after-finish-forest:state-stars
+      - interaction:reading-state-toggles:after-finish-forest:state-rain
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/one-way-toggle/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/one-way-toggle/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/one-way-toggle/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/one-way-toggle/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/one-way-toggle/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/one-way-toggle/types.ts
+        editable: false
+  - id: index-key
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch02-l02-e01-r02
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/index-key/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/index-key/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/index-key/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/index-key/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/index-key/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/index-key/types.ts
+        editable: false
+  - id: unused-card
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch02-l02-e01-r02
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/unused-card/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/unused-card/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/unused-card/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/unused-card/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/unused-card/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/unused-card/types.ts
+        editable: false
+  - id: dummy-state
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch02-l02-e01-r02
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/dummy-state/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/dummy-state/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/dummy-state/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/dummy-state/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/dummy-state/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/dummy-state/types.ts
+        editable: false
+  - id: alternative-nested-parent
+    expectedStatus: pass
     expectedFeedbackRuleIds: []
     files:
-      - path: 'BookCard.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-fresh-copy/BookCard.tsx'
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/alternative-nested-parent/BookCard.tsx
         editable: false
-      - path: 'components.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-fresh-copy/components.tsx'
+      - path: components.tsx
+        language: react
+        source: fixtures/alternative-nested-parent/components.tsx
         editable: false
-      - path: 'data.ts'
-        language: 'typescript'
-        source: 'fixtures/alternative-fresh-copy/data.ts'
+      - path: data.ts
+        language: typescript
+        source: fixtures/alternative-nested-parent/data.ts
         editable: false
-      - path: 'index.html'
-        language: 'html'
-        source: 'fixtures/alternative-fresh-copy/index.html'
+      - path: index.html
+        language: html
+        source: fixtures/alternative-nested-parent/index.html
         editable: false
-      - path: 'main.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-fresh-copy/main.tsx'
+      - path: main.tsx
+        language: react
+        source: fixtures/alternative-nested-parent/main.tsx
         editable: false
-      - path: 'types.ts'
-        language: 'typescript'
-        source: 'fixtures/alternative-fresh-copy/types.ts'
+      - path: types.ts
+        language: typescript
+        source: fixtures/alternative-nested-parent/types.ts
         editable: false
-  - id: 'alternative-copy-helper'
-    expectedStatus: 'pass'
+  - id: alternative-props-list
+    expectedStatus: pass
     expectedFeedbackRuleIds: []
     files:
-      - path: 'BookCard.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-copy-helper/BookCard.tsx'
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/alternative-props-list/BookCard.tsx
         editable: false
-      - path: 'components.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-copy-helper/components.tsx'
+      - path: components.tsx
+        language: react
+        source: fixtures/alternative-props-list/components.tsx
         editable: false
-      - path: 'data.ts'
-        language: 'typescript'
-        source: 'fixtures/alternative-copy-helper/data.ts'
+      - path: data.ts
+        language: typescript
+        source: fixtures/alternative-props-list/data.ts
         editable: false
-      - path: 'index.html'
-        language: 'html'
-        source: 'fixtures/alternative-copy-helper/index.html'
+      - path: index.html
+        language: html
+        source: fixtures/alternative-props-list/index.html
         editable: false
-      - path: 'main.tsx'
-        language: 'react'
-        source: 'fixtures/alternative-copy-helper/main.tsx'
+      - path: main.tsx
+        language: react
+        source: fixtures/alternative-props-list/main.tsx
         editable: false
-      - path: 'types.ts'
-        language: 'typescript'
-        source: 'fixtures/alternative-copy-helper/types.ts'
+      - path: types.ts
+        language: typescript
+        source: fixtures/alternative-props-list/types.ts
         editable: false
-  - id: 'identity-copy-helper'
-    expectedStatus: 'code-error'
+  - id: alternative-key-variable
+    expectedStatus: pass
     expectedFeedbackRuleIds: []
     files:
-      - path: 'BookCard.tsx'
-        language: 'react'
-        source: 'fixtures/identity-copy-helper/BookCard.tsx'
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/alternative-key-variable/BookCard.tsx
         editable: false
-      - path: 'components.tsx'
-        language: 'react'
-        source: 'fixtures/identity-copy-helper/components.tsx'
+      - path: components.tsx
+        language: react
+        source: fixtures/alternative-key-variable/components.tsx
         editable: false
-      - path: 'data.ts'
-        language: 'typescript'
-        source: 'fixtures/identity-copy-helper/data.ts'
+      - path: data.ts
+        language: typescript
+        source: fixtures/alternative-key-variable/data.ts
         editable: false
-      - path: 'index.html'
-        language: 'html'
-        source: 'fixtures/identity-copy-helper/index.html'
+      - path: index.html
+        language: html
+        source: fixtures/alternative-key-variable/index.html
         editable: false
-      - path: 'main.tsx'
-        language: 'react'
-        source: 'fixtures/identity-copy-helper/main.tsx'
+      - path: main.tsx
+        language: react
+        source: fixtures/alternative-key-variable/main.tsx
         editable: false
-      - path: 'types.ts'
-        language: 'typescript'
-        source: 'fixtures/identity-copy-helper/types.ts'
+      - path: types.ts
+        language: typescript
+        source: fixtures/alternative-key-variable/types.ts
+        editable: false
+  - id: unused-jsx
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch02-l02-e01-r02
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/unused-jsx/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/unused-jsx/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/unused-jsx/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/unused-jsx/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/unused-jsx/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/unused-jsx/types.ts
+        editable: false
+  - id: alternative-fragment
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/alternative-fragment/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/alternative-fragment/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/alternative-fragment/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/alternative-fragment/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/alternative-fragment/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/alternative-fragment/types.ts
+        editable: false
+  - id: alternative-copied-book
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/alternative-copied-book/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/alternative-copied-book/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/alternative-copied-book/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/alternative-copied-book/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/alternative-copied-book/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/alternative-copied-book/types.ts
+        editable: false
+  - id: mutable-state-book
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/mutable-state-book/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/mutable-state-book/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/mutable-state-book/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/mutable-state-book/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/mutable-state-book/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/mutable-state-book/types.ts
         editable: false
     expectedDiagnosticCodes:
-      - 'react-type-error-0'
-  - id: 'unused-key-map'
-    expectedStatus: 'incomplete'
-    expectedFeedbackRuleIds:
-      - 'react-ch02-l02-e01-r02'
+      - react-type-error-0
+  - id: alternative-fresh-copy
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
     files:
-      - path: 'BookCard.tsx'
-        language: 'react'
-        source: 'fixtures/unused-key-map/BookCard.tsx'
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/alternative-fresh-copy/BookCard.tsx
         editable: false
-      - path: 'components.tsx'
-        language: 'react'
-        source: 'fixtures/unused-key-map/components.tsx'
+      - path: components.tsx
+        language: react
+        source: fixtures/alternative-fresh-copy/components.tsx
         editable: false
-      - path: 'data.ts'
-        language: 'typescript'
-        source: 'fixtures/unused-key-map/data.ts'
+      - path: data.ts
+        language: typescript
+        source: fixtures/alternative-fresh-copy/data.ts
         editable: false
-      - path: 'index.html'
-        language: 'html'
-        source: 'fixtures/unused-key-map/index.html'
+      - path: index.html
+        language: html
+        source: fixtures/alternative-fresh-copy/index.html
         editable: false
-      - path: 'main.tsx'
-        language: 'react'
-        source: 'fixtures/unused-key-map/main.tsx'
+      - path: main.tsx
+        language: react
+        source: fixtures/alternative-fresh-copy/main.tsx
         editable: false
-      - path: 'types.ts'
-        language: 'typescript'
-        source: 'fixtures/unused-key-map/types.ts'
+      - path: types.ts
+        language: typescript
+        source: fixtures/alternative-fresh-copy/types.ts
+        editable: false
+  - id: alternative-copy-helper
+    expectedStatus: pass
+    expectedFeedbackRuleIds: []
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/alternative-copy-helper/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/alternative-copy-helper/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/alternative-copy-helper/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/alternative-copy-helper/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/alternative-copy-helper/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/alternative-copy-helper/types.ts
+        editable: false
+  - id: identity-copy-helper
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/identity-copy-helper/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/identity-copy-helper/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/identity-copy-helper/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/identity-copy-helper/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/identity-copy-helper/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/identity-copy-helper/types.ts
+        editable: false
+    expectedDiagnosticCodes:
+      - react-type-error-0
+  - id: unused-key-map
+    expectedStatus: incomplete
+    expectedFeedbackRuleIds:
+      - react-ch02-l02-e01-r02
+    files:
+      - path: BookCard.tsx
+        language: react
+        source: fixtures/unused-key-map/BookCard.tsx
+        editable: false
+      - path: components.tsx
+        language: react
+        source: fixtures/unused-key-map/components.tsx
+        editable: false
+      - path: data.ts
+        language: typescript
+        source: fixtures/unused-key-map/data.ts
+        editable: false
+      - path: index.html
+        language: html
+        source: fixtures/unused-key-map/index.html
+        editable: false
+      - path: main.tsx
+        language: react
+        source: fixtures/unused-key-map/main.tsx
+        editable: false
+      - path: types.ts
+        language: typescript
+        source: fixtures/unused-key-map/types.ts
         editable: false

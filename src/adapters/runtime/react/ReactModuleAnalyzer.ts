@@ -158,7 +158,8 @@ export class ReactModuleAnalyzer {
       (input.files[REACT_MODULE_FILE] !== STUB && input.files[REACT_MODULE_FILE] !== QUIZ_STUB)
     )
       throw new Error('React Analyzer入力の予約moduleが一致しません');
-    const result = await this.#client.analyze(input);
+    // 全moduleの安全解析は維持し、Reactで消費しない汎用教材factだけを収集対象から外す。
+    const result = await this.#client.analyze({ ...input, factCollection: 'module-boundary' });
     if (result.status !== 'success' || !('modules' in result)) return result;
     const reserved = result.modules.filter((item) => item.file === REACT_MODULE_FILE);
     if (reserved.length !== 1 || reserved[0]?.dependencies.length)

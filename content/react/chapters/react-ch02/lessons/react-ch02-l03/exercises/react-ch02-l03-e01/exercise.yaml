@@ -19,10 +19,12 @@ runtime:
 steps:
   - id: react-ch02-l03-e01-step01
     file: components.tsx
-    target: 仕様から絞り込みと件数を作る
+    target: components.tsxのApp。動く一覧とBookCardを土台に、追加する値と計算を自分で選びます。
     starterAnchor: export function App
-    change: 現在の本と表示条件から一覧・表示件数・全体の既読件数を計算する。
-    observe: 0件・再切り替え・最初に戻すまで、一覧と2つの件数を確かめます。
+    change:
+      「すべて」「未読」「既読」のbutton（idはそれぞれfilter-all/filter-unread/filter-read）で表示を切り替え、選択中だけaria-pressedをtrueにします。表示件数はidがcountの要素へ「2件」、全体の既読件数はidがsummaryの要素へ「既読1件
+      / 全3件」の形で出してください。
+    observe: 初期表示は3件、既読1件です。絞り込んでも元の3冊を残し、本を切り替えると一覧と2つの件数が更新されます。0件から別条件へ戻せること、idがresetの「最初に戻す」で本と表示条件が戻り、その後も切り替えられることを確かめます。
     requiresConceptIds:
       - react-reading-filter
     validationRuleIds:
@@ -801,83 +803,8 @@ fixtures:
         source: fixtures/alternative-helper/types.ts
         editable: false
   - id: starter
-    expectedStatus: incomplete
-    expectedFeedbackRuleIds:
-      - react-ch02-l03-e01-r03
-      - react-ch02-l03-e01-r04
-      - interaction:reading-filtering:after-unread:books
-      - interaction:reading-filtering:after-unread:count
-      - interaction:reading-filtering:after-unread:summary
-      - interaction:reading-filtering:after-unread:filter-all
-      - interaction:reading-filtering:after-unread:filter-unread
-      - interaction:reading-filtering:after-unread:filter-read
-      - interaction:reading-filtering:after-finish-stars:books
-      - interaction:reading-filtering:after-finish-stars:count
-      - interaction:reading-filtering:after-finish-stars:summary
-      - interaction:reading-filtering:after-finish-stars:filter-all
-      - interaction:reading-filtering:after-finish-stars:filter-unread
-      - interaction:reading-filtering:after-finish-stars:filter-read
-      - interaction:reading-filtering:after-finish-forest:books
-      - interaction:reading-filtering:after-finish-forest:count
-      - interaction:reading-filtering:after-finish-forest:summary
-      - interaction:reading-filtering:after-finish-forest:filter-all
-      - interaction:reading-filtering:after-finish-forest:filter-unread
-      - interaction:reading-filtering:after-finish-forest:filter-read
-      - interaction:reading-filtering:after-read:count
-      - interaction:reading-filtering:after-read:summary
-      - interaction:reading-filtering:after-read:filter-all
-      - interaction:reading-filtering:after-read:filter-unread
-      - interaction:reading-filtering:after-read:filter-read
-      - interaction:reading-filtering:after-reopen-rain:books
-      - interaction:reading-filtering:after-reopen-rain:count
-      - interaction:reading-filtering:after-reopen-rain:summary
-      - interaction:reading-filtering:after-reopen-rain:filter-all
-      - interaction:reading-filtering:after-reopen-rain:filter-unread
-      - interaction:reading-filtering:after-reopen-rain:filter-read
-      - interaction:reading-filtering:after-all:count
-      - interaction:reading-filtering:after-all:summary
-      - interaction:reading-filtering:after-all:filter-all
-      - interaction:reading-filtering:after-all:filter-unread
-      - interaction:reading-filtering:after-all:filter-read
-      - interaction:reading-filtering:after-select-before-reset:books
-      - interaction:reading-filtering:after-select-before-reset:count
-      - interaction:reading-filtering:after-select-before-reset:summary
-      - interaction:reading-filtering:after-select-before-reset:filter-all
-      - interaction:reading-filtering:after-select-before-reset:filter-unread
-      - interaction:reading-filtering:after-select-before-reset:filter-read
-      - interaction:reading-filtering:after-reset:count
-      - interaction:reading-filtering:after-reset:summary
-      - interaction:reading-filtering:after-reset:filter-all
-      - interaction:reading-filtering:after-reset:filter-unread
-      - interaction:reading-filtering:after-reset:filter-read
-      - interaction:reading-empty-read:after-select-before-repeat:books
-      - interaction:reading-empty-read:after-select-before-repeat:count
-      - interaction:reading-empty-read:after-select-before-repeat:summary
-      - interaction:reading-empty-read:after-select-before-repeat:filter-all
-      - interaction:reading-empty-read:after-select-before-repeat:filter-unread
-      - interaction:reading-empty-read:after-select-before-repeat:filter-read
-      - interaction:reading-empty-read:after-reset-before-repeat:count
-      - interaction:reading-empty-read:after-reset-before-repeat:summary
-      - interaction:reading-empty-read:after-reset-before-repeat:filter-all
-      - interaction:reading-empty-read:after-reset-before-repeat:filter-unread
-      - interaction:reading-empty-read:after-reset-before-repeat:filter-read
-      - interaction:reading-empty-read:after-read-again:books
-      - interaction:reading-empty-read:after-read-again:count
-      - interaction:reading-empty-read:after-read-again:summary
-      - interaction:reading-empty-read:after-read-again:filter-all
-      - interaction:reading-empty-read:after-read-again:filter-unread
-      - interaction:reading-empty-read:after-read-again:filter-read
-      - interaction:reading-empty-read:after-reopen-last:books
-      - interaction:reading-empty-read:after-reopen-last:count
-      - interaction:reading-empty-read:after-reopen-last:summary
-      - interaction:reading-empty-read:after-reopen-last:filter-all
-      - interaction:reading-empty-read:after-reopen-last:filter-unread
-      - interaction:reading-empty-read:after-reopen-last:filter-read
-      - interaction:reading-empty-read:after-all-again:count
-      - interaction:reading-empty-read:after-all-again:summary
-      - interaction:reading-empty-read:after-all-again:filter-all
-      - interaction:reading-empty-read:after-all-again:filter-unread
-      - interaction:reading-empty-read:after-all-again:filter-read
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
     files:
       - path: BookCard.tsx
         language: react
@@ -903,6 +830,8 @@ fixtures:
         language: typescript
         source: fixtures/starter/types.ts
         editable: false
+    expectedDiagnosticCodes:
+      - react-interaction-target
   - id: fixed-count
     expectedStatus: incomplete
     expectedFeedbackRuleIds:
@@ -1011,18 +940,8 @@ fixtures:
         source: fixtures/reset-keeps-filter/types.ts
         editable: false
   - id: destructive-filter
-    expectedStatus: incomplete
-    expectedFeedbackRuleIds:
-      - interaction:reading-filtering:after-unread:summary
-      - interaction:reading-filtering:after-finish-stars:summary
-      - interaction:reading-filtering:after-finish-forest:summary
-      - interaction:reading-filtering:after-read:books
-      - interaction:reading-filtering:after-read:state-rain
-      - interaction:reading-filtering:after-read:count
-      - interaction:reading-filtering:after-read:summary
-      - interaction:reading-filtering:after-all:books
-      - interaction:reading-filtering:after-all:state-rain
-      - interaction:reading-filtering:after-all:count
+    expectedStatus: code-error
+    expectedFeedbackRuleIds: []
     files:
       - path: BookCard.tsx
         language: react
@@ -1048,6 +967,8 @@ fixtures:
         language: typescript
         source: fixtures/destructive-filter/types.ts
         editable: false
+    expectedDiagnosticCodes:
+      - react-interaction-target
   - id: alternative-empty-branch
     expectedStatus: pass
     expectedFeedbackRuleIds: []

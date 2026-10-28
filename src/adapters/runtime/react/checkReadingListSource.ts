@@ -75,7 +75,7 @@ function bindingFields(binding: ts.BindingName, name: string): readonly string[]
 
 /** 内側の変数・引数を優先し、別スコープの同名宣言を取り違えない。 */
 function sourceBinding(name: string, from: ts.Node): SourceBinding | undefined {
-  for (let scope: ts.Node | undefined = from; scope; scope = scope.parent) {
+  for (let scope = from; ; scope = scope.parent) {
     if (ts.isFunctionLike(scope)) {
       for (const parameter of scope.parameters) {
         const fields = bindingFields(parameter.name, name);
@@ -100,6 +100,7 @@ function sourceBinding(name: string, from: ts.Node): SourceBinding | undefined {
         }
       }
     }
+    if (ts.isSourceFile(scope)) break;
   }
   return undefined;
 }
@@ -190,7 +191,10 @@ function rendererKeys(renderer: MapRenderer): { renders: boolean; stable: boolea
     );
   };
   const expression = (value: ts.Expression): void => {
-    if (ts.isParenthesizedExpression(value)) return expression(value.expression);
+    if (ts.isParenthesizedExpression(value)) {
+      expression(value.expression);
+      return;
+    }
     if (ts.isIdentifier(value)) {
       const binding = sourceBinding(value.text, value);
       if (
@@ -230,7 +234,7 @@ function rendererKeys(renderer: MapRenderer): { renders: boolean; stable: boolea
             attribute.initializer.expression &&
             isId(attribute.initializer.expression),
         );
-      stable &&= Boolean(keyed);
+      stable &&= keyed;
     }
   };
   const returns = (node: ts.Node): void => {
@@ -550,7 +554,7 @@ export function analyzeReadingList(files: Readonly<Record<string, string>>): {
           reject(statement, 'この課題は用意された型・データ・BookCardとuseStateを使います。');
         if (module === 'react') {
           const bindings = statement.importClause?.namedBindings;
-          if (!bindings || !ts.isNamedImports(bindings) || statement.importClause?.name)
+          if (!bindings || !ts.isNamedImports(bindings) || statement.importClause.name)
             reject(statement, 'ReactからはuseStateだけを名前付きimportします。');
           else
             for (const item of bindings.elements) {

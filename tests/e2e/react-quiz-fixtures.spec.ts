@@ -253,6 +253,10 @@ for (const lesson of [
       expect(row.diagnostics, fixture.id).toEqual(fixture.expectedDiagnosticCodes ?? []);
       expect(row.failedRules, fixture.id).toEqual([...fixture.expectedFeedbackRuleIds].sort());
     }
+    for (const row of observations.filter(({ id }) => id === 'after-event-error')) {
+      expect(row.status).toBe('recovered');
+      expect(row.diagnostics).toEqual([]);
+    }
     expect(observations.find(({ id }) => id === 'stale-source')).toMatchObject({
       status: 'system-error',
       diagnostics: ['react-source-mismatch'],
