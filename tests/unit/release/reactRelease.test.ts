@@ -121,7 +121,7 @@ async function evidence(): Promise<ReactReleaseEvidence> {
         uiEvidence: reference,
       })),
     })),
-    performance: (['react-ch01-l01-e01', 'react-ch01-l11-e01', 'react-ch03-l01-e01'] as const).map(
+    performance: (['react-ch01-l01-e01', 'react-ch01-l11-e01', 'react-ch04-l01-e01'] as const).map(
       (exerciseId) => {
         const raw = JSON.stringify({
           captureBinding: {
@@ -164,9 +164,9 @@ async function evidence(): Promise<ReactReleaseEvidence> {
     ),
     browserMatrix: (['chromium', 'firefox', 'webkit'] as const).map((engine) => ({
       engine,
-      passedLessons: 15,
+      passedLessons: 18,
       failedLessons: 0,
-      generalLessons: 14,
+      generalLessons: 17,
       refUiLessons: 1,
       sourceCommit: commit,
       canonicalDistSha256: hash,
@@ -194,7 +194,7 @@ const learners = new Map(REACT_ACCEPTANCE_LESSONS.map((id) => [id, hash]));
 describe('React専用公開境界', () => {
   it('専用履歴・承認の混在と未登録metadataを拒否する', async () => {
     const contract = resolveReleaseCourseContract('react');
-    expect(contract.lessonCount).toBe(15);
+    expect(contract.lessonCount).toBe(18);
     expect(contract.guidedLessonCount).toBe(2);
     expect(contract.capstoneLessonCount).toBe(1);
     const history: unknown = parse(await readFile(contract.historyPath, 'utf8'));
@@ -230,12 +230,14 @@ describe('React専用公開境界', () => {
     );
     expect(() => createReactInputManifest(commit, input.files)).toThrow('required');
   });
-  it('合成Bundleを実移行へ通して全教材・14Workspace・履歴・Snapshotを保持する', async () => {
+  it('旧15教材の合成Bundleを新18教材の確認証拠として流用しない', async () => {
     const course = (await compileCourse('content/react')).runtime;
     const bundle: unknown = JSON.parse(
       await readFile('tests/fixtures/progress/react-previous-release-bundle.json', 'utf8'),
     );
-    expect((await verifyReactSyntheticProgressBundle(course, bundle)).resetNotices).toBe(0);
+    await expect(verifyReactSyntheticProgressBundle(course, bundle)).rejects.toThrow(
+      '全教材/旧revision/既存Course',
+    );
     const tampered = structuredClone(bundle) as { integrity: { digest: string } };
     tampered.integrity.digest = '0'.repeat(64);
     await expect(verifyReactSyntheticProgressBundle(course, tampered)).rejects.toThrow('hash');
@@ -254,7 +256,7 @@ describe('React専用公開境界', () => {
       await rm(root, { recursive: true });
     }
   });
-  it('全45組と20標本の正常証拠を受け入れる', async () => {
+  it('全54組と20標本の正常証拠を受け入れる', async () => {
     expect(validateReactReleaseEvidence(await evidence(), learners).personas).toHaveLength(3);
   });
   it.each([

@@ -1,13 +1,13 @@
 import type { Question } from './types';
 export const questions: readonly Question[] = [
   {
-    text: '1 + 1 の結果は？',
-    correctId: '2',
-    choices: ['2', '3'],
+    text: 'ページの骨組みを作る言語は？',
+    correctId: 'HTML',
+    choices: ['HTML', 'CSS'],
   },
   {
-    text: '3 > 5 の結果は？',
-    correctId: 'false',
-    choices: ['true', 'false'],
+    text: '見た目を整える言語は？',
+    correctId: 'CSS',
+    choices: ['JavaScript', 'CSS'],
   },
 ];

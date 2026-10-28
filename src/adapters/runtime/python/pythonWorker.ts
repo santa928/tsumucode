@@ -88,7 +88,7 @@ export function initializePythonWorker(
         | 'rangeIterated'
         | 'listReferenceSummed'
         | 'dictValuesSummed'
-        | 'functionReturnScoped'
+        | 'functionBehaviorVerified'
         | 'moduleImported'
         | 'exceptionHandled'
         | 'projectSummed'
@@ -253,7 +253,7 @@ export function initializePythonWorker(
           rangeIterated: parsed.rangeIterated === true,
           listReferenceSummed: parsed.listReferenceSummed === true,
           dictValuesSummed: parsed.dictValuesSummed === true,
-          functionReturnScoped: parsed.functionReturnScoped === true,
+          functionBehaviorVerified: parsed.functionBehaviorVerified === true,
           moduleImported: parsed.moduleImported === true,
           exceptionHandled: parsed.exceptionHandled === true,
           projectSummed: parsed.projectSummed === true,

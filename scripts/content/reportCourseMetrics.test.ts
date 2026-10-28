@@ -64,8 +64,8 @@ describe('Course Metrics', () => {
 
   it.each([
     ['javascript', 202, 170, 202],
-    ['python-basics', 21, 19, 19],
-    ['react', 48, 30, 30],
+    ['python-basics', 29, 27, 27],
+    ['react', 54, 36, 36],
   ])('%sの全Slide・純concept・legacy最低宣言を分ける', (id, total, pure, minimum) => {
     const metrics = report.courses.find((course) => course.id === id)!;
     expect(metrics.slides.total).toBe(total);

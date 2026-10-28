@@ -1,18 +1,32 @@
 import { writeFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
-import { loadAuthoringCourse } from '../../scripts/content/compileCourse';
 import { testServerUrl } from './helpers/testBasePath';
 import type * as RunnerModule from '../../src/adapters/runtime/react/ReactRunnerAdapter';
 import type * as InteractionModule from '../../src/features/learning/session/runInteractionScenario';
 import type { RunnerDiagnostic } from '../../src/core/runtime/contracts';
 import type * as ValidatorModule from '../../src/adapters/validation/react/ReactValidator';
 
-for (const lesson of ['react-ch02-l01', 'react-ch02-l02', 'react-ch03-l01']) {
-  test(`${lesson}のクイズFixtureを実Compiler・Props/Stateの由来・実DOMのANDで判定する`, async ({
+for (const lesson of [
+  'react-ch02-l01',
+  'react-ch02-l02',
+  'react-ch02-l03',
+  'react-ch03-l01',
+  'react-ch03-l02',
+  'react-ch04-l01',
+]) {
+  test(`${lesson}のFixtureを実Compiler・部品/Stateの由来・実DOMのANDで判定する`, async ({
     page,
   }, info) => {
     test.setTimeout(180_000);
-    const editableFile = lesson === 'react-ch02-l01' ? 'QuestionCard.tsx' : 'quizState.ts';
+    const editableFile = lesson.startsWith('react-ch02')
+      ? lesson === 'react-ch02-l01'
+        ? 'BookCard.tsx'
+        : 'components.tsx'
+      : lesson === 'react-ch03-l01'
+        ? 'QuestionCard.tsx'
+        : 'quizState.ts';
+    // Discovery側へ教材Compilerを読み込まず、実行Workerだけで教材を検証する。
+    const { loadAuthoringCourse } = await import('../../scripts/content/compileCourse');
     const exercise = (await loadAuthoringCourse('content/react')).exercises.find(
       ({ id }) => id === `${lesson}-e01`,
     )!;

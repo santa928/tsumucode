@@ -1,9 +1,10 @@
-id: react-ch02
+id: 'react-ch02'
 sequence: 1
-title: 'Guided Project: 型付きクイズ'
-goal: Briefから型付きの表示・純粋State・実操作を責務ごとにつなぐ
-estimatedMinutes: 85
-kind: guided-project
+title: '読書リストを組み立てる'
+goal: '1冊の部品から親のState、仕様に沿う絞り込みと件数へ、書く範囲を広げる。'
+estimatedMinutes: 75
+kind: 'standard'
 lessonSources:
-  - lessons/react-ch02-l01/lesson.yaml
-  - lessons/react-ch02-l02/lesson.yaml
+  - 'lessons/react-ch02-l01/lesson.yaml'
+  - 'lessons/react-ch02-l02/lesson.yaml'
+  - 'lessons/react-ch02-l03/lesson.yaml'

@@ -9,4 +9,4 @@
 
 外部との同期や購読はないのでEffect・cleanupを増やしません。Context・Ref・Reducerの使用も合格条件ではありません。型、元Sourceの有限Fact、元Sourceの実React操作をすべて満たす必要があります。任意の構文を採点する仕組みではなく、用意済みの型・関数・純粋な分岐/次State・Propsからのmapへ範囲を絞ります。型alias、引数名の変更、括弧、block callback、正誤をconstへ分ける別解を扱います。
 
-Capstoneはreact-quiz-capstone、Guidedはreact-quiz-guidedという別Workspaceです。CapstoneのReset・保存・進捗はGuidedを変更しません。名前などの一時Stateは新しい実行で初期化され、保存は原文と学習Progressを対象にします。見積り時間は初心者の実測ではありません。
+2工程はreact-quiz-guidedという同じWorkspaceです。両工程で2Fileを編集でき、前工程へ戻っても後工程のStateを拒否しません。原文と合格時Snapshotは共有し、判定履歴/Hintは工程ごとです。名前などの一時Stateは新しい実行で初期化され、保存は原文と学習Progressを対象にします。見積り時間は初心者の実測ではありません。

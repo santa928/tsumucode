@@ -1,0 +1,242 @@
+id: python-basics-ch01-l12-e01
+kind: standard
+workspaceId: python-basics-ch01-l12-e01
+countsTowardStandardExerciseTotal: true
+title: 'Moduleの関数を別ファイルから呼ぶ'
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: python-module
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: python-basics-ch01-l12-e01-step01
+    file: lesson_tools.py
+    target: 'lesson_tools.pyでleftとrightを足してreturnします。'
+    starterAnchor: 'return left + left'
+    change: 'lesson_tools.pyでleftとrightを足してreturnします。'
+    observe: '8、10の順に表示します。'
+    requiresConceptIds: [python-module]
+    validationRuleIds: [python-basics-ch01-l12-e01-r01]
+runtime:
+  kind: python
+  entryFile: main.py
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  profile: module-import-v1
+files:
+  - path: main.py
+    language: python
+    source: starter/main.py
+    editable: true
+  - path: lesson_tools.py
+    language: python
+    source: starter/lesson_tools.py
+    editable: true
+solutionFiles:
+  - path: main.py
+    language: python
+    source: solution/main.py
+    editable: false
+  - path: lesson_tools.py
+    language: python
+    source: solution/lesson_tools.py
+    editable: false
+validationRules:
+  - id: python-basics-ch01-l12-e01-r01
+    label: '別fileの関数をimportして呼び、helperの変更が次の実行へ反映されると説明できる。'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: module-imported
+    feedback:
+      target: main.py・lesson_tools.pyとConsole
+      expected: '8、10の順に表示します。'
+      nextAction: 'lesson_tools.pyでleftとrightを足してreturnします。'
+    hintId: python-basics-ch01-l12-e01-h01
+    relatedSlideId: python-basics-ch01-l12-s02
+hints:
+  - id: python-basics-ch01-l12-e01-h01
+    level: 1
+    title: '最初の手掛かり'
+    text: 'from lesson_tools import addは別fileの名前を取り込みます。'
+    relatedSlideId: python-basics-ch01-l12-s02
+  - id: python-basics-ch01-l12-e01-h02
+    level: 2
+    title: 'コードを組み立てる'
+    text: 'addの2つの引数を足してreturnします。'
+    relatedSlideId: python-basics-ch01-l12-s02
+  - id: python-basics-ch01-l12-e01-h03
+    level: 3
+    title: '解答と理由'
+    text: 'return left + rightなら3/5は8、4/6は10です。'
+    relatedSlideId: python-basics-ch01-l12-s02
+relatedSlideIds: [python-basics-ch01-l12-s01, python-basics-ch01-l12-s02]
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: canonical
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/canonical/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/canonical/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: commuted-addition
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/commuted-addition/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/commuted-addition/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: temporary-return
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/temporary-return/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/temporary-return/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: stored-results
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/stored-results/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/stored-results/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: renamed-parameters
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/renamed-parameters/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/renamed-parameters/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: double-left
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/double-left/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/double-left/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch01-l12-e01-r01']
+  - id: constant-return
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/constant-return/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/constant-return/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch01-l12-e01-r01']
+  - id: unused-helper-hardcode
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/unused-helper-hardcode/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/unused-helper-hardcode/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch01-l12-e01-r01']
+  - id: missing-return
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/missing-return/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/missing-return/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: ['python-basics-ch01-l12-e01-r01']
+  - id: star-import
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/star-import/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/star-import/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: duplicate-parameters
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/duplicate-parameters/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/duplicate-parameters/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: return-outside-function
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/return-outside-function/main.py
+        editable: false
+      - path: lesson_tools.py
+        language: python
+        source: fixtures/return-outside-function/lesson_tools.py
+        editable: false
+    expectedFeedbackRuleIds: []

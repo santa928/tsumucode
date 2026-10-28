@@ -1,9 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="520" height="140" viewBox="0 0 520 140" role="img" aria-labelledby="title">
-  <title id="title">mainからhelperを呼び、ValueError → 案内 → 終了へ進む</title>
-  <rect width="520" height="140" rx="16" fill="#f3f7fa" />
-  <g fill="#14304a" font-family="sans-serif" font-size="16" text-anchor="middle">
-    <text x="260" y="35">main.py → lesson_tools.py</text>
-    <text x="260" y="70">parse_number("abc")</text>
-    <text x="260" y="110">ValueError → 案内 → 終了</text>
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="140" viewBox="0 0 680 140" role="img" aria-labelledby="title"><title id="title">3 と 5、和を return、戻り値 + 2</title><rect width="680" height="140" fill="#f8fafc"/><rect x="15" y="38" width="200" height="64" rx="8" fill="#e0f2fe" stroke="#0369a1"/><text x="115" y="76" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#0c4a6e">3 と 5</text><path d="M216 70h22m-7-7 7 7-7 7" stroke="#0369a1" fill="none"/><rect x="240" y="38" width="200" height="64" rx="8" fill="#e0f2fe" stroke="#0369a1"/><text x="340" y="76" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#0c4a6e">和を return</text><path d="M441 70h22m-7-7 7 7-7 7" stroke="#0369a1" fill="none"/><rect x="465" y="38" width="200" height="64" rx="8" fill="#e0f2fe" stroke="#0369a1"/><text x="565" y="76" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#0c4a6e">戻り値 + 2</text></svg>

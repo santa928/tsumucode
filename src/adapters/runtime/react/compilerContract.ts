@@ -1,3 +1,4 @@
+import type { ReadingListFacts } from './checkReadingListSource';
 import type { QuizFacts } from './checkQuizSource';
 import {
   isTypeScriptCompileInput,
@@ -14,6 +15,9 @@ import type { RefFacts } from './checkRefSource';
 import type { ExternalSourceFacts } from './checkExternalSource';
 
 export type ReactProfile =
+  | 'reading-card-v1'
+  | 'reading-state-v1'
+  | 'reading-filter-v1'
   | 'props-card-v1'
   | 'static-components-v1'
   | 'interactive-state-v1'
@@ -32,6 +36,7 @@ export type ReactCompileResult =
   | Exclude<TypeScriptCompileResult, { status: 'ready' }>
   | (Extract<TypeScriptCompileResult, { status: 'ready' }> & {
       readonly facts?:
+        | ReadingListFacts
         | StaticComponentFacts
         | InteractiveStateFacts
         | ControlledFormFacts
@@ -51,6 +56,9 @@ export function isReactCompileInput(value: unknown): value is ReactCompileInput 
     return false;
   if (
     Object.hasOwn(input, 'profile') &&
+    input['profile'] !== 'reading-card-v1' &&
+    input['profile'] !== 'reading-state-v1' &&
+    input['profile'] !== 'reading-filter-v1' &&
     input['profile'] !== 'props-card-v1' &&
     input['profile'] !== 'static-components-v1' &&
     input['profile'] !== 'interactive-state-v1' &&
@@ -87,6 +95,9 @@ export function isReactCompileResult(
 ): value is ReactCompileResult {
   let compiled = value;
   const expectedFacts: Partial<Record<ReactProfile, string>> = {
+    'reading-card-v1': 'definesBookComponent,ownsReadingState,usesStableBookKeys',
+    'reading-state-v1': 'definesBookComponent,ownsReadingState,usesStableBookKeys',
+    'reading-filter-v1': 'definesBookComponent,ownsReadingState,usesStableBookKeys',
     'quiz-workshop-v1':
       'advancesAnsweredQuestion,createsInitialState,forwardsSelectedChoice,guardsRepeatedAnswer,rendersQuestion,scoresActualAnswer,usesPureStateFunctions,usesStableChoiceKeys',
     'quiz-capstone-v1':

@@ -36,7 +36,7 @@ const payloadSchema = z.object({
   rangeIterated: z.boolean().optional(),
   listReferenceSummed: z.boolean().optional(),
   dictValuesSummed: z.boolean().optional(),
-  functionReturnScoped: z.boolean().optional(),
+  functionBehaviorVerified: z.boolean().optional(),
   moduleImported: z.boolean().optional(),
   exceptionHandled: z.boolean().optional(),
   projectSummed: z.boolean().optional(),
@@ -384,8 +384,8 @@ export class PythonExecutionService implements ExecutionService {
                     },
                     { id: 'python.dict-values-summed', value: payload.dictValuesSummed === true },
                     {
-                      id: 'python.function-return-scoped',
-                      value: payload.functionReturnScoped === true,
+                      id: 'python.function-behavior-verified',
+                      value: payload.functionBehaviorVerified === true,
                     },
                     {
                       id: 'python.numeric-variable-printed',

@@ -23,7 +23,7 @@ const factNames = [
   'range-iterated',
   'list-reference-summed',
   'dict-values-summed',
-  'function-return-scoped',
+  'function-behavior-verified',
   'module-imported',
   'exception-handled',
   'project-summed',

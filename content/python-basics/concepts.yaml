@@ -48,11 +48,27 @@ concepts:
     introducedBySlideId: python-basics-ch01-l07-s01
     prerequisiteConceptIds: ['python-variable', 'python-print']
     minimumProjectLevel: transform
-  - id: python-module
+  - id: python-function-arguments
     introducedBySlideId: python-basics-ch01-l08-s01
     prerequisiteConceptIds: [python-function]
     minimumProjectLevel: transform
-  - id: python-exception
+  - id: python-function-return
     introducedBySlideId: python-basics-ch01-l09-s01
+    prerequisiteConceptIds: [python-function-arguments]
+    minimumProjectLevel: compose
+  - id: python-function-print-return
+    introducedBySlideId: python-basics-ch01-l10-s01
+    prerequisiteConceptIds: [python-function-return]
+    minimumProjectLevel: compose
+  - id: python-function-scope
+    introducedBySlideId: python-basics-ch01-l11-s01
+    prerequisiteConceptIds: [python-function-print-return]
+    minimumProjectLevel: compose
+  - id: python-module
+    introducedBySlideId: python-basics-ch01-l12-s01
+    prerequisiteConceptIds: [python-function-return, python-function-scope]
+    minimumProjectLevel: transform
+  - id: python-exception
+    introducedBySlideId: python-basics-ch01-l13-s01
     prerequisiteConceptIds: [python-module, python-int]
     minimumProjectLevel: transform

@@ -29,7 +29,7 @@ export interface PythonResult {
   readonly rangeIterated?: boolean;
   readonly listReferenceSummed?: boolean;
   readonly dictValuesSummed?: boolean;
-  readonly functionReturnScoped?: boolean;
+  readonly functionBehaviorVerified?: boolean;
   readonly moduleImported?: boolean;
   readonly exceptionHandled?: boolean;
   readonly projectSummed?: boolean;

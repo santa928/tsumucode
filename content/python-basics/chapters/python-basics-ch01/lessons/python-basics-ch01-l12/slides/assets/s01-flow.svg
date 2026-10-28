@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="140" viewBox="0 0 520 140" role="img" aria-labelledby="title">
+  <title id="title">mainからhelperを呼び、8へ進む</title>
+  <rect width="520" height="140" rx="16" fill="#f3f7fa" />
+  <g fill="#14304a" font-family="sans-serif" font-size="16" text-anchor="middle">
+    <text x="260" y="35">main.py → lesson_tools.py</text>
+    <text x="260" y="70">add(3, 5)</text>
+    <text x="260" y="110">8</text>
+  </g>
+</svg>

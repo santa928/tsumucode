@@ -1,0 +1,14 @@
+id: python-basics-ch01-l10
+kind: standard
+title: 'printとreturnの役割を比べる'
+goal: '表示する関数の呼び出し結果と、和を返す関数の戻り値をそれぞれ表示する。'
+estimatedMinutes: 15
+prerequisiteLessonIds: [python-basics-ch01-l09]
+slideSources: [slides/s01.md, slides/s02.md]
+exerciseSources: [exercises/python-basics-ch01-l10-e01/exercise.yaml]
+reflection: '予想と違った点、開いたヒント、自分で決めた部分を書きましょう。どの行から値が表示されたか、自分の言葉でも確かめます。'
+glossaryRefs: [python-function]
+completion:
+  kind: standard
+  finalSlideId: python-basics-ch01-l10-s02
+  requiredExerciseIds: [python-basics-ch01-l10-e01]

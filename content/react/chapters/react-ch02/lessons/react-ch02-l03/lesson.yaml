@@ -1,0 +1,23 @@
+id: 'react-ch02-l03'
+kind: 'standard'
+title: '仕様から絞り込みと件数を作る'
+goal: '現在の本と表示条件から一覧・表示件数・全体の既読件数を計算する。'
+estimatedMinutes: 30
+prerequisiteLessonIds:
+  - 'react-ch02-l02'
+slideSources:
+  - 'slides/s01.md'
+  - 'slides/s02.md'
+exerciseSources:
+  - 'exercises/react-ch02-l03-e01/exercise.yaml'
+reflection: '予想と違った点、開いたヒント、自分で決めた部分を振り返りましょう。'
+glossaryRefs:
+  - 'props'
+  - 'state'
+  - 'key'
+completion:
+  kind: 'standard'
+  finalSlideId: 'react-ch02-l03-s02'
+  requiredExerciseIds:
+    - 'react-ch02-l03-e01'
+nextLessonId: 'react-ch03-l01'

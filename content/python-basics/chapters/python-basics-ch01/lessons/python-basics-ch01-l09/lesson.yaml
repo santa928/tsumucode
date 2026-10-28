@@ -1,13 +1,13 @@
 id: python-basics-ch01-l09
 kind: standard
-title: 'helperのValueErrorを呼出し元で処理する'
-goal: 'helperのValueErrorがmainへ伝わり、限定exceptで案内後に復帰する理由を説明できる。'
-estimatedMinutes: 20
+title: '戻り値を受け取って使う'
+goal: '2つの値を足す関数を自作し、戻り値を変数や次の計算へつなげられる。'
+estimatedMinutes: 15
 prerequisiteLessonIds: [python-basics-ch01-l08]
 slideSources: [slides/s01.md, slides/s02.md]
 exerciseSources: [exercises/python-basics-ch01-l09-e01/exercise.yaml]
-reflection: 'helperのValueErrorがmainへ伝わり、限定exceptで案内後に復帰する理由を説明できる。 入力不足と不正な文字列、mainとhelperの役割を分けて説明してください。'
-glossaryRefs: [python-exception]
+reflection: '予想と違った点、開いたヒント、自分で決めた部分を書きましょう。どの行から値が表示されたか、自分の言葉でも確かめます。'
+glossaryRefs: [python-function]
 completion:
   kind: standard
   finalSlideId: python-basics-ch01-l09-s02

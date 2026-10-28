@@ -1,55 +1,33 @@
-import { createRoot } from 'react-dom/client';
 import { useState } from 'react';
-import type { ChangeEvent } from 'react';
-import { QuestionCard } from './QuestionCard';
-import { questions } from './data';
-import { createState, answer, advance } from './quizState';
-function QuizShell() {
-  const [state, setState] = useState(createState);
-  const [name, setName] = useState('');
-  const question = questions.at(state.index);
-  function receive(choice: string) {
-    document.getElementById('received')?.replaceChildren(choice);
-    if (question) setState((previous) => answer(previous, question, choice));
+import { createRoot } from 'react-dom/client';
+import { BookCard } from './BookCard';
+import { initialBooks } from './data';
+import type { Book } from './types';
+
+function App() {
+  const [books, setBooks] = useState<readonly Book[]>(initialBooks);
+
+  function toggle(id: string) {
+    setBooks((current) =>
+      current.map((book) => (book.id === id ? { ...book, read: !book.read } : book)),
+    );
   }
-  function change(event: ChangeEvent<HTMLInputElement>) {
-    setName(event.currentTarget.value);
-  }
+
   return (
     <section>
-      <label htmlFor="name">名前</label>
-      <input id="name" value={name} onChange={change} />
-      <p>
-        得点: <output id="score">{state.score}</output>
-      </p>
-      {question ? (
-        <QuestionCard question={question} answered={state.answered} onAnswer={receive} />
-      ) : (
-        <p id="result" role="status">
-          全問終了
-        </p>
-      )}
-      <button
-        id="next"
-        type="button"
-        disabled={!state.answered || !question}
-        onClick={() => setState((previous) => advance(previous))}
-      >
-        次の問題
-      </button>
-      <button
-        id="retry"
-        type="button"
-        onClick={() => {
-          document.getElementById('received')?.replaceChildren('未回答');
-          setState(createState());
-        }}
-      >
-        再挑戦
+      <h1>読書リスト</h1>
+      <ul id="books">
+        {books.map((book) => (
+          <BookCard key={book.id} book={book} onToggle={toggle} />
+        ))}
+      </ul>
+      <button id="reset" type="button" onClick={() => setBooks(initialBooks)}>
+        最初に戻す
       </button>
     </section>
   );
 }
-const root = document.getElementById('root');
-if (!root) throw new Error('表示先がありません');
-createRoot(root).render(<QuizShell />);
+
+const container = document.getElementById('root');
+if (container === null) throw new Error('表示先がありません');
+createRoot(container).render(<App />);

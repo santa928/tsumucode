@@ -184,7 +184,7 @@ it.each(['missing', 'practice', 'partial', 'identity', 'case-id'])(
 );
 
 it('helperだけの編集でも古い固定採点のhashを失効させる', async () => {
-  const context = await fixedContext('python-basics-ch01-l08-e01');
+  const context = await fixedContext('python-basics-ch01-l12-e01');
   expect((await new PythonLessonValidator('cpython').validate(context)).status).toBe('pass');
   const changed = {
     ...context,
@@ -226,7 +226,7 @@ it.each(['browser-python', 'cpython'] as const)(
       learnerMessage: `ValueError: '${input}'`,
     } as const;
     const context: ValidationContext = {
-      exerciseId: 'python-basics-ch01-l09-e01',
+      exerciseId: 'python-basics-ch01-l13-e01',
       files: { 'main.py': '', 'lesson_tools.py': '' },
       rules: [],
       snapshots: {},

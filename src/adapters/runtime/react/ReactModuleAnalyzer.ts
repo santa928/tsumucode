@@ -38,6 +38,11 @@ const PACKAGES: Readonly<Record<string, readonly string[]>> = {
 /** 課題とFileの責務に対応するHookだけを許可し、旧profileへ新APIを開放しない。 */
 function reactExports(profile: ReactProfile, file: string): readonly string[] | undefined {
   switch (profile) {
+    case 'reading-card-v1':
+      return file === 'main.js' ? ['useState'] : undefined;
+    case 'reading-state-v1':
+    case 'reading-filter-v1':
+      return file === 'components.js' ? ['useState'] : undefined;
     case 'quiz-workshop-v1':
     case 'quiz-capstone-v1':
       return file === 'main.js' ? ['useState'] : undefined;
