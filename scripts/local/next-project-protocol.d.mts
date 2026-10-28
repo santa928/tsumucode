@@ -27,3 +27,24 @@ export interface NextWorkspaceContract {
 }
 export const NEXT_WORKSPACES: Readonly<Record<string, NextWorkspaceContract>>;
 export function nextWorkspace(id: string): NextWorkspaceContract | undefined;
+
+export interface CompiledNativeCatalog {
+  readonly schemaVersion: 1;
+  readonly mode: 'compiled' | 'bootstrap-legacy';
+  readonly workspaces: readonly {
+    readonly id: string;
+    readonly courseId: string;
+    readonly template: string;
+  }[];
+}
+export function nextTemplate(goal: string): NextWorkspaceContract | undefined;
+export function nextContractForExercise(
+  id: string,
+  template?: string,
+): NextWorkspaceContract | undefined;
+export function createNextWorkspaceRegistry(input: unknown): {
+  readonly mode: string;
+  get(id: string): NextWorkspaceContract | undefined;
+  register(id: string, template: string): NextWorkspaceContract;
+};
+export function registerBrowserNextWorkspace(id: string, template: string): NextWorkspaceContract;

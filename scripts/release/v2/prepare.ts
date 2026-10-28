@@ -7,6 +7,7 @@ import {
 } from '../../content/splitContentDelivery';
 import { buildInventory } from './inventory';
 import { planRelease } from './plan';
+import { verifyNativeCatalog } from './nativeCatalog';
 import { hashArtifact } from './identity';
 
 /** Compile the candidate once. Authoring evidence never changes the public projection. */
@@ -57,6 +58,7 @@ export async function prepareRelease(
     // Authoring destination is task-owned staging, never a deployable artifact.
     await writeSplitContentDeliveryTree(authoringOutput, authoring);
     const inventory = buildInventory(compilation.compilations);
+    verifyNativeCatalog(inventory, compilation.nativeWorkspaceCatalog);
     return {
       schemaVersion: 1,
       inventory,

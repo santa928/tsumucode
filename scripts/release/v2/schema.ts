@@ -31,6 +31,7 @@ export const ExerciseInventorySchema = z
     runtimeKind: RuntimeKindSchema,
     profile: z.string().min(1),
     capability: z.string().min(1),
+    nativeTemplate: IdSchema.optional(),
     digest: DigestSchema,
     solutionSourceDigest: DigestSchema,
     starterSourceDigest: DigestSchema,

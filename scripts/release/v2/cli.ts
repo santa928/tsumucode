@@ -25,6 +25,7 @@ import {
   readContentReceiptFile,
   ContentInspectionRequestSchema,
 } from './contentOriginals';
+import { verifyNativeCatalogFile } from './nativeCatalog';
 import { readInventoryAtSource } from './sourceInventory';
 
 const PreparationSchema = z
@@ -39,6 +40,7 @@ const optionNames: Readonly<Record<string, readonly string[]>> = {
   shadow: [],
   'inspect-content': ['private-root', 'request'],
   'stage-content': [],
+  'verify-native-catalog': ['file'],
   baseline: ['repository', 'site-url'],
   prepare: ['baseline', 'public-output', 'authoring-output'],
   preview: [],
@@ -145,6 +147,13 @@ export async function runCli(
           ),
         ],
       };
+      break;
+    }
+    case 'verify-native-catalog': {
+      const snapshot = PreparationSchema.parse(
+        await jsonFile(path.join(root, '.release-v2/preparation.json')),
+      );
+      result = await verifyNativeCatalogFile(snapshot.inventory, input(values.file, '--file'));
       break;
     }
     case 'stage-content':

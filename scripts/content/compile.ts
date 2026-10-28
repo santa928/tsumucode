@@ -10,6 +10,8 @@ import {
   type CompiledCourseArtifacts,
 } from './compileCourse';
 import { compileLearningPaths } from './learningPaths';
+import { buildNativeWorkspaceCatalog } from './nativeWorkspaceCatalog';
+import type { CompiledNativeCatalog } from '../local/next-project-protocol.mjs';
 import { buildSplitContentDelivery, writeSplitContentDeliveryTree } from './splitContentDelivery';
 
 export interface CompileContentOptions {
@@ -21,6 +23,7 @@ export interface CompileContentOptions {
 
 export interface CompilationSummary {
   readonly catalog: CourseCatalogV3;
+  readonly nativeWorkspaceCatalog: CompiledNativeCatalog;
   readonly compilations: readonly CompiledCourseArtifacts[];
   readonly learningPaths: readonly LearningPathDefinition[];
   readonly courseCount: number;
@@ -285,6 +288,7 @@ export async function compileContent(options: CompileContentOptions): Promise<Co
       courseIds.add(course.id);
       compilations.push(compilation);
     }
+    const nativeWorkspaceCatalog = buildNativeWorkspaceCatalog(compilations);
     const learningPaths = await compileLearningPaths(path.join(sourceRoot, 'learning-paths'));
     const delivery = buildSplitContentDelivery(compilations, learningPaths, options.publication);
     const catalogRoundTrip = JSON.parse(
@@ -302,6 +306,7 @@ export async function compileContent(options: CompileContentOptions): Promise<Co
     }
     summary = {
       catalog: catalogRoundTrip,
+      nativeWorkspaceCatalog,
       compilations,
       learningPaths,
       courseCount: delivery.courses.length,
@@ -365,6 +370,15 @@ async function main(): Promise<void> {
     checkOnly,
     publication: arguments_.includes('--public') ? 'public' : 'authoring',
   });
+  // An image-only sidecar; never add private authoring data or extra public files.
+  if (process.env.TSUMUCODE_NATIVE_CONTRACTS_OUTPUT === '1') {
+    if (checkOnly) throw new Error('Cannot emit Native catalog from check-only compilation');
+    await writeFile(
+      path.resolve(process.cwd(), '.release-native-contracts.json'),
+      stringifyCanonicalJson(summary.nativeWorkspaceCatalog),
+      { flag: 'wx', mode: 0o644 },
+    );
+  }
   console.log(
     `教材${String(summary.courseCount)} Courseを${checkOnly ? '検証' : 'Compile'}しました。`,
   );

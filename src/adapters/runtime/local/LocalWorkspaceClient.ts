@@ -1,6 +1,10 @@
 /** Local専用画面のSource・runを検証する。管理tokenはinstanceのメモリだけに保持する。 */
 import { z } from 'zod';
-import { NEXT_WORKSPACE, nextWorkspace } from '../../../../scripts/local/next-project-protocol.mjs';
+import {
+  NEXT_WORKSPACE,
+  nextWorkspace,
+  registerBrowserNextWorkspace,
+} from '../../../../scripts/local/next-project-protocol.mjs';
 
 const profile = z.enum(['vite-project-v1', 'next-project-v1']);
 export type WorkspaceProfile = z.infer<typeof profile>;
@@ -148,8 +152,13 @@ export class LocalWorkspaceClient {
   constructor(
     readonly id: string,
     readonly profile: WorkspaceProfile = 'vite-project-v1',
+    contract?: string,
   ) {
     workspaceId.parse(id);
+    if (contract !== undefined) {
+      if (profile !== 'next-project-v1') throw new Error('Next contract requires Next profile');
+      registerBrowserNextWorkspace(id, contract);
+    }
     this.#path = `/api/workspaces/${id}`;
   }
 

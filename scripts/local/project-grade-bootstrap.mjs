@@ -403,7 +403,7 @@ try {
       response.status() === 404;
     const expectedFormFailure =
       form &&
-      metadata.workspaceId === 'next-ch04-l01-e01' &&
+      nextWorkspace(metadata.workspaceId)?.goal === 'form-route-validation' &&
       url.origin === origin &&
       url.pathname === `${base}api/note` &&
       url.search === '' &&

@@ -196,6 +196,18 @@ jobs:
           done
       - name: Build fixed learner and trusted services
         run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml --profile build-project build
+      - name: Match baked Native contracts to frozen compiler inventory
+        if: inputs.candidate_artifact_id != ''
+        run: |
+          set -euo pipefail
+          mkdir -p .release-v2/native-catalogs
+          ./scripts/docker-compose.sh build app
+          for service in project next-project controller preview grader; do
+            catalog_path=compiled-native-workspaces.json
+            if [ "$service" = grader ]; then catalog_path=scripts/local/compiled-native-workspaces.json; fi
+            ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml run --rm --no-deps --entrypoint node "$service" --input-type=module -e 'import fs from "node:fs"; process.stdout.write(fs.readFileSync(process.argv[1], "utf8"))' "$catalog_path" > ".release-v2/native-catalogs/$service.json"
+            ./scripts/docker-compose.sh run --rm app npm run release:flow -- verify-native-catalog --file ".release-v2/native-catalogs/$service.json" --output ".release-v2/native-catalogs/$service-verified.json"
+          done
       - name: Start isolated learning stack
         run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml up --no-build -d web controller preview
       - name: Verify real Browser HTTP, HMR and Preview boundary
@@ -465,6 +477,8 @@ jobs:
         run: |
           set -euo pipefail
           docker build --file Dockerfile.learning --target learning-native-checks --tag "$TSUMUCODE_LOCAL_OWNER-learning-native-checks" .
+          docker run --rm --network none --cap-drop ALL --security-opt no-new-privileges:true "$TSUMUCODE_LOCAL_OWNER-learning-native-checks" node --input-type=module -e 'import fs from "node:fs"; process.stdout.write(fs.readFileSync("scripts/local/compiled-native-workspaces.json", "utf8"))' > .release-v2/native-catalogs/learning-native.json
+          ./scripts/docker-compose.sh run --rm app npm run release:flow -- verify-native-catalog --file .release-v2/native-catalogs/learning-native.json --output .release-v2/native-catalogs/learning-native-verified.json
           mkdir -p .release-v2/native-learning-reports
           for engine in chromium firefox webkit; do
             docker run --rm --init --user 1000:1000 --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256 \

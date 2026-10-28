@@ -1,3 +1,4 @@
+import { nextContractForExercise } from '../../local/next-project-protocol.mjs';
 import type { CompiledCourseArtifacts } from '../../content/compileCourse';
 import { javascriptLearnerContentSha256 } from '../javascriptLessonEvaluation';
 import { hashValue } from './identity';
@@ -46,6 +47,14 @@ export function buildInventory(compilations: readonly CompiledCourseArtifacts[])
             kind: exercise.kind,
             workspaceId: exercise.workspaceId,
             runtimeKind,
+            ...(exercise.runtime?.kind === 'next'
+              ? {
+                  nativeTemplate: nextContractForExercise(
+                    exercise.workspaceId,
+                    exercise.runtime.contract,
+                  )?.goal,
+                }
+              : {}),
             profile:
               exercise.runtime && 'profile' in exercise.runtime
                 ? exercise.runtime.profile

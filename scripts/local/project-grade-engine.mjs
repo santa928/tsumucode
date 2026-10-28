@@ -233,7 +233,9 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
       if (
         phase === 'form-reserve' &&
         reason === 'form-busy' &&
-        ['next-ch04-l01-e01', 'next-ch04-l02-e01'].includes(source.workspaceId)
+        ['form-route-validation', 'server-action-validation'].includes(
+          nextWorkspace(source.workspaceId)?.goal,
+        )
       )
         throw new RequestError(
           409,
@@ -319,7 +321,11 @@ export async function gradeProject({ owner, image, source, runId, socket, signal
           ...(receipts.length ? { receipts } : {}),
         }),
       );
-    else if (['next-ch04-l01-e01', 'next-ch04-l02-e01'].includes(source.workspaceId))
+    else if (
+      ['form-route-validation', 'server-action-validation'].includes(
+        nextWorkspace(source.workspaceId)?.goal,
+      )
+    )
       // 再起動後の期限調査用。Sourceや入力を出さず、固定段階と時間だけを残す。
       console.error(
         'Next grade timing',

@@ -1,7 +1,7 @@
 import { PortableNextExport } from '../portable/PortableNextExport';
 import { LessonCookieNotice } from './LessonCookieNotice';
 import { Link } from 'react-router';
-import { nextWorkspace } from '../../../../scripts/local/next-project-protocol.mjs';
+import { nextContractForExercise } from '../../../../scripts/local/next-project-protocol.mjs';
 import { LearningViewportShell } from '../layout/LearningViewportShell';
 import { LearningToolRail } from '../layout/LearningToolRail';
 import type { ExerciseLoaderData } from '../../../app/contentLoaders';
@@ -117,7 +117,13 @@ export function ProjectWorkspace({
       }
       if (abort.signal.aborted) return;
       current = new LocalProjectSession(
-        new LocalWorkspaceClient(identity.workspaceId, identity.profile),
+        new LocalWorkspaceClient(
+          identity.workspaceId,
+          identity.profile,
+          lessonData?.exercise.runtime?.kind === 'next'
+            ? lessonData.exercise.runtime.contract
+            : undefined,
+        ),
         async (next) => {
           try {
             await access.runFencedWrite(async (_, proof) => {
@@ -217,7 +223,14 @@ function ProjectEditor({
   readonly access: WorkspaceLeaseAccess;
 }) {
   const [previewPath, setPreviewPath] = useState('');
-  const previewContract = lessonData ? nextWorkspace(identity.workspaceId) : undefined;
+  const previewContract = lessonData
+    ? nextContractForExercise(
+        identity.workspaceId,
+        lessonData.exercise.runtime?.kind === 'next'
+          ? lessonData.exercise.runtime.contract
+          : undefined,
+      )
+    : undefined;
   const snapshot = useSyncExternalStore(session.subscribe, session.getSnapshot);
   const adapter = useMemo(() => createCodeMirrorEditor(services.editorLanguageRegistry), []);
   const editing = useEditingCapability() && access.isWritable();

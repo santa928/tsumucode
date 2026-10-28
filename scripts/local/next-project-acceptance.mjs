@@ -252,9 +252,15 @@ try {
     const config = await docker('GET', `/containers/${learner.Id}/json`);
     assert.equal(config.Config.User, '1000:1000');
     assert.equal(config.HostConfig.Init, true);
-    const expectedMemoryMiB = ['next-ch05-l01-e01', 'next-ch06-l01-e01'].includes(workspace)
+    const expectedMemoryMiB = ['guided-travel-project', 'capstone-event-project'].includes(
+      contract.goal,
+    )
       ? 896
-      : ['next-ch02-l01-e01', 'next-ch03-l01-e01', 'next-ch03-l02-e01'].includes(workspace)
+      : [
+            'nested-dynamic-navigation',
+            'data-cache-revalidation',
+            'loading-error-not-found',
+          ].includes(contract.goal)
         ? 576
         : 512;
     assert.equal(config.HostConfig.Memory, expectedMemoryMiB * 1024 * 1024);
