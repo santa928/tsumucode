@@ -36,6 +36,7 @@ export async function expectSlideScrollReachable(
   expect(end.y + end.height).toBeGreaterThan(owner.y);
   if (withReadingControls) {
     const controls = page.getByRole('complementary', { name: '読書の続きとPCへの引き継ぎ' });
+    await controls.getByText('読書位置のURL・PCへの引き継ぎ', { exact: true }).click();
     for (const action of [
       controls.getByRole('link', { name: 'この位置から一続きに読む' }),
       controls.getByRole('textbox').last(),

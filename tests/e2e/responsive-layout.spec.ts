@@ -1074,6 +1074,10 @@ test('閲覧Viewerの長いCodeだけを横Scrollし、Document幅は広げな�
   }));
   expect(metrics.scrollWidth).toBeGreaterThan(metrics.clientWidth);
   expect(metrics.overflowX).toBe('auto');
+  await code.focus();
+  await code.press('ArrowRight');
+  await expect.poll(() => code.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
+  await expect(page).toHaveURL(/html-css-ch03-l04-s02$/u);
   await code.evaluate((element) => {
     element.scrollLeft = element.scrollWidth;
   });

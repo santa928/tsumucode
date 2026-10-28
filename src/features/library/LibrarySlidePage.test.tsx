@@ -123,6 +123,17 @@ function renderLibrarySlide(slideId: string) {
 }
 
 describe('LibrarySlidePage', () => {
+  it('引き継ぎ案内は必要時に開け、閉じたまま次へ進める', async () => {
+    renderLibrarySlide('slide-a-1');
+    const disclosure = await screen.findByText('読書位置のURL・PCへの引き継ぎ');
+    expect(screen.getByLabelText('読書位置のURL')).not.toBeVisible();
+    await userEvent.click(disclosure);
+    expect(screen.getByRole('textbox', { name: '読書位置のURL' })).toBeVisible();
+    await userEvent.click(disclosure);
+    await userEvent.click(screen.getByRole('link', { name: '次のスライドへ' }));
+    expect(await screen.findByRole('heading', { level: 1, name: 'Aのまとめ' })).toHaveFocus();
+  });
+
   it('進捗UIとExerciseを置かず、Lesson境界を越える前後導線とLibrary内Drawerを表示する', async () => {
     renderLibrarySlide('slide-a-2');
 
