@@ -36,6 +36,7 @@ import {
 } from './sourceSchema';
 
 export interface AuthoringFixture {
+  readonly inputLines?: readonly string[];
   readonly id: string;
   readonly expectedStatus: 'pass' | 'incomplete' | 'code-error' | 'system-error';
   readonly faultInjection?: 'stale-source-evidence';
@@ -555,6 +556,7 @@ async function compileExercise(
     fixtures.push({
       id: fixture.id,
       expectedStatus: fixture.expectedStatus,
+      ...(fixture.inputLines === undefined ? {} : { inputLines: fixture.inputLines }),
       ...(fixture.faultInjection === undefined ? {} : { faultInjection: fixture.faultInjection }),
       ...(fixture.expectedDiagnosticCodes === undefined
         ? {}

@@ -73,11 +73,23 @@ export function planRelease(input: ReleaseInventory, baselineInput?: unknown): R
               : (['browser'] as const);
         for (const mode of modes)
           for (const fixture of [
-            { id: 'solution', caseKind: 'solution' as const },
-            { id: 'starter', caseKind: 'starter' as const },
+            {
+              id: 'solution',
+              caseKind: 'solution' as const,
+              sourceDigest: exercise.solutionSourceDigest,
+              expectedStatus: 'pass' as const,
+            },
+            {
+              id: 'starter',
+              caseKind: 'starter' as const,
+              sourceDigest: exercise.starterSourceDigest,
+              expectedStatus: 'not-pass' as const,
+            },
             ...exercise.fixtures.map((fixture) => ({
               id: fixture.id,
               caseKind: 'authored' as const,
+              sourceDigest: fixture.sourceDigest,
+              expectedStatus: fixture.expectedStatus,
             })),
           ]) {
             targets.push({
@@ -92,6 +104,8 @@ export function planRelease(input: ReleaseInventory, baselineInput?: unknown): R
               runtimeKind: exercise.runtimeKind,
               mode,
               inputDigest: exercise.digest,
+              sourceDigest: fixture.sourceDigest,
+              expectedStatus: fixture.expectedStatus,
             });
           }
       }

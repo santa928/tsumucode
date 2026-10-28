@@ -155,3 +155,12 @@ describe('immutable artifact identity', () => {
     await expect(hashArtifact(root)).rejects.toThrow(/symbolic|symlink|通常|link/i);
   });
 });
+
+it('retains Python authored input lines in same-pass verification metadata only', async () => {
+  const python = await compileCourse('content/python-basics');
+  const inputExercise = python.authoringExercises!.find(
+    ({ id }) => id === 'python-basics-ch01-l02-e01',
+  )!;
+  expect(inputExercise.fixtures.some((fixture) => Object.hasOwn(fixture, 'inputLines'))).toBe(true);
+  expect(JSON.stringify(python.runtime)).not.toContain('inputLines');
+});

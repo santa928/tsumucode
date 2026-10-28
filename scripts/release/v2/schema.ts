@@ -18,6 +18,7 @@ export const FixtureSchema = z
     id: IdSchema,
     expectedStatus: z.enum(['pass', 'incomplete', 'code-error', 'system-error']),
     digest: DigestSchema,
+    sourceDigest: DigestSchema,
   })
   .strict();
 export const ExerciseInventorySchema = z
@@ -29,6 +30,8 @@ export const ExerciseInventorySchema = z
     profile: z.string().min(1),
     capability: z.string().min(1),
     digest: DigestSchema,
+    solutionSourceDigest: DigestSchema,
+    starterSourceDigest: DigestSchema,
     fixtures: z.array(FixtureSchema),
   })
   .strict();
@@ -75,6 +78,10 @@ export const TargetSchema = z
     mode: z.enum(['browser', 'pyodide', 'cpython', 'local']).optional(),
     role: z.enum(['novice', 'recovery', 'maker']).optional(),
     inputDigest: DigestSchema,
+    sourceDigest: DigestSchema.optional(),
+    expectedStatus: z
+      .enum(['pass', 'incomplete', 'code-error', 'system-error', 'not-pass'])
+      .optional(),
   })
   .strict();
 export const PlanSchema = z

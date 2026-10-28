@@ -1,6 +1,7 @@
 import type { CompiledCourseArtifacts } from '../../content/compileCourse';
 import { javascriptLearnerContentSha256 } from '../javascriptLessonEvaluation';
 import { hashValue } from './identity';
+import { fixtureFiles, fixtureSourceDigest } from './fixtureSource';
 import { InventorySchema, RuntimeKindSchema, type ReleaseInventory } from './schema';
 
 function unique(values: readonly string[], scope: string): void {
@@ -50,11 +51,18 @@ export function buildInventory(compilations: readonly CompiledCourseArtifacts[])
                 : 'default',
             capability: exercise.runtime?.capabilityProfile ?? 'html-css',
             digest: hashValue(full),
+            solutionSourceDigest: fixtureSourceDigest(fixtureFiles(full, full.solutionFiles)),
+            starterSourceDigest: fixtureSourceDigest(fixtureFiles(full, [])),
             fixtures: full.fixtures
               .map((fixture) => ({
                 id: fixture.id,
                 expectedStatus: fixture.expectedStatus,
                 digest: hashValue(fixture),
+                sourceDigest: fixtureSourceDigest(
+                  fixtureFiles(full, fixture.files),
+                  fixture.faultInjection,
+                  fixture.inputLines,
+                ),
               }))
               .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)),
           };
