@@ -1,0 +1,52 @@
+import { InventorySchema, PlanSchema } from './schema';
+import { createExecutionPlan, ExecutionPlanSchema } from './executionPlan';
+import { hashValue } from './identity';
+import { verifyTestExecution } from './testManifest';
+import { readBrowserCoverage } from './browserCoverage';
+import { readPersistenceCoverage } from './persistenceCoverage';
+/** Independent declared tests and actual Source/status observations must both match. */
+export function observeTestSuite(
+  suite: string,
+  report: unknown,
+  planInput: unknown,
+  executionInput: unknown,
+  inventoryInput: unknown,
+): string[] {
+  const plan = PlanSchema.parse(planInput),
+    execution = ExecutionPlanSchema.parse(executionInput),
+    inventory = InventorySchema.parse(inventoryInput);
+  if (hashValue(execution) !== hashValue(createExecutionPlan(plan, execution.testManifests)))
+    throw new Error('Unbound execution plan');
+  const manifest = execution.testManifests.find((item) => item.suite === suite),
+    requirement = execution.requirements.find((item) => item.suite === suite);
+  if (!manifest || !requirement) throw new Error('Unknown test suite');
+  const targets = verifyTestExecution(report, manifest);
+  const required = new Set(requirement.targets);
+  const fixtures = plan.targets.filter(
+    (target) => target.kind === 'fixture' && required.has(target.key),
+  );
+  if (fixtures.length) targets.push(...readBrowserCoverage(report, fixtures, manifest.project));
+  const persistence = plan.targets.filter(
+    (target) => target.kind === 'persistence' && required.has(target.key),
+  );
+  if (persistence.length)
+    targets.push(
+      ...readPersistenceCoverage(
+        report,
+        persistence,
+        inventory.courses.map(({ id }) => id),
+        inventory.courses.reduce(
+          (total, course) =>
+            total + course.lessons.reduce((count, lesson) => count + lesson.exercises.length, 0),
+          0,
+        ),
+      ),
+    );
+  if (
+    new Set(targets).size !== targets.length ||
+    targets.length !== required.size ||
+    targets.some((target) => !required.has(target))
+  )
+    throw new Error('Incomplete observed suite');
+  return targets.sort();
+}
