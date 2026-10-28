@@ -1,0 +1,14 @@
+id: python-basics-ch01-l11
+kind: standard
+title: '関数内と外の名前を区別する'
+goal: '外側と同じ名前の引数を持つ関数で和を返し、最後に外側の値100を表示する。'
+estimatedMinutes: 15
+prerequisiteLessonIds: [python-basics-ch01-l10]
+slideSources: [slides/s01.md, slides/s02.md]
+exerciseSources: [exercises/python-basics-ch01-l11-e01/exercise.yaml]
+reflection: '予想と違った点、開いたヒント、自分で決めた部分を、手元のノートなどに書いて振り返りましょう。どの行から値が表示されたか、自分の言葉でも確かめます。'
+glossaryRefs: [python-function]
+completion:
+  kind: standard
+  finalSlideId: python-basics-ch01-l11-s02
+  requiredExerciseIds: [python-basics-ch01-l11-e01]

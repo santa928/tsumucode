@@ -21,11 +21,14 @@ export const REACT_ACCEPTANCE_LESSONS = [
   ...Array.from({ length: 12 }, (_, index) => `react-ch01-l${String(index + 1).padStart(2, '0')}`),
   'react-ch02-l01',
   'react-ch02-l02',
+  'react-ch02-l03',
   'react-ch03-l01',
+  'react-ch03-l02',
+  'react-ch04-l01',
 ] as const;
 const Role = z.enum(['A', 'B', 'C']);
 const Reference = z.object({ path: z.string().min(1), sha256: Sha256Schema }).strict();
-const Representative = z.enum(['react-ch01-l01-e01', 'react-ch01-l11-e01', 'react-ch03-l01-e01']);
+const Representative = z.enum(['react-ch01-l01-e01', 'react-ch01-l11-e01', 'react-ch04-l01-e01']);
 const PerformanceSchema = z
   .object({
     captureBinding: z
@@ -103,7 +106,7 @@ export const ReactReleaseEvidenceSchema = z
                   })
                   .strict(),
               )
-              .length(15),
+              .length(18),
           })
           .strict(),
       )
@@ -126,9 +129,9 @@ export const ReactReleaseEvidenceSchema = z
         z
           .object({
             engine: z.enum(['chromium', 'firefox', 'webkit']),
-            passedLessons: z.literal(15),
+            passedLessons: z.literal(18),
             failedLessons: z.literal(0),
-            generalLessons: z.literal(14),
+            generalLessons: z.literal(17),
             refUiLessons: z.literal(1),
             reportSha256s: z.array(Sha256Schema).min(1),
             sourceCommit: CommitShaSchema,
@@ -174,7 +177,7 @@ export function hashReactReleaseEvidence(input: ReactReleaseEvidence): string {
     .digest('hex');
 }
 
-/** 3役×全15教材、3 Engineと承認済み20標本予算を省略せず照合する。 */
+/** 3役×全18教材、3 Engineと承認済み20標本予算を省略せず照合する。 */
 export function validateReactReleaseEvidence(
   input: unknown,
   learnerHashes: ReadonlyMap<string, string>,
@@ -207,7 +210,7 @@ export function validateReactReleaseEvidence(
           learnerHashes.get(lessonId) !== learnerContentSha256,
       )
     )
-      throw new Error('React模擬受入の全15教材/可視入力が一致しません');
+      throw new Error('React模擬受入の全18教材/可視入力が一致しません');
   }
   if (
     new Set(record.personas.map(({ report }) => report.sha256)).size !== 3 ||
@@ -269,14 +272,14 @@ export async function verifyReactQualityEvidence(
   if (
     course.publicationStatus !== 'published' ||
     course.phases.length !== 2 ||
-    chapters.length !== 3 ||
-    lessons.length !== 15 ||
-    lessons.filter(({ kind }) => kind === 'standard').length !== 12 ||
+    chapters.length !== 4 ||
+    lessons.length !== 18 ||
+    lessons.filter(({ kind }) => kind === 'standard').length !== 15 ||
     lessons.filter(({ kind }) => kind === 'guided-project').length !== 2 ||
     lessons.filter(({ kind }) => kind === 'capstone').length !== 1 ||
-    lessons.reduce((sum, { estimatedMinutes }) => sum + estimatedMinutes, 0) !== 490
+    lessons.reduce((sum, { estimatedMinutes }) => sum + estimatedMinutes, 0) !== 565
   )
-    throw new Error('React published/15/12+2+1/3/2/490契約が一致しません');
+    throw new Error('React published/18/15+2+1/4/2/565契約が一致しません');
   const hashes = new Map(
     lessons.map((lesson) => [
       lesson.id,

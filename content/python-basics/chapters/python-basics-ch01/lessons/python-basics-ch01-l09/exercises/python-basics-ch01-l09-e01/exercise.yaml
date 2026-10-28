@@ -2,20 +2,20 @@ id: python-basics-ch01-l09-e01
 kind: standard
 workspaceId: python-basics-ch01-l09-e01
 countsTowardStandardExerciseTotal: true
-title: 'helperのValueErrorを呼出し元で処理する'
+title: '戻り値を受け取って使う'
 instructionsSource: instructions.md
 requiresConcepts:
-  - conceptId: python-exception
-    minimumLevel: transform
-scaffoldLevel: transform
+  - conceptId: python-function-return
+    minimumLevel: compose
+scaffoldLevel: compose
 steps:
   - id: python-basics-ch01-l09-e01-step01
     file: main.py
-    target: 'main.pyのparse_number(text)をtryの内側で呼びます。'
-    starterAnchor: 'number = parse_number(text)'
-    change: 'main.pyのparse_number(text)をtryの内側で呼びます。'
-    observe: '18なら18、abcなら整数を入力してください、最後に終了です。'
-    requiresConceptIds: [python-exception]
+    target: '関数名・結果の変数名・戻り値の使い方'
+    starterAnchor: '# 2つの値を足して返す関数を、ここに書きます。'
+    change: '完成した関数は用意していません。2引数の加算関数と呼び出しを自分で書きます。3と5の戻り値を変数へ受け取り2を足して表示し、4と6の戻り値にも2を足して表示してください。10と12の2行が必要です。関数名や結果を保存する変数名は選べます。'
+    observe: 'Consoleは10、12です。'
+    requiresConceptIds: [python-function-return]
     validationRuleIds: [python-basics-ch01-l09-e01-r01]
 runtime:
   kind: python
@@ -23,28 +23,20 @@ runtime:
   sourceType: script
   capabilityProfile: core
   primaryOutput: console
-  profile: exception-recovery-v1
+  profile: function-result-v1
 files:
   - path: main.py
     language: python
     source: starter/main.py
-    editable: true
-  - path: lesson_tools.py
-    language: python
-    source: starter/lesson_tools.py
     editable: true
 solutionFiles:
   - path: main.py
     language: python
     source: solution/main.py
     editable: false
-  - path: lesson_tools.py
-    language: python
-    source: solution/lesson_tools.py
-    editable: false
 validationRules:
   - id: python-basics-ch01-l09-e01-r01
-    label: 'helperのValueErrorがmainへ伝わり、限定exceptで案内後に復帰する理由を説明できる。'
+    label: '2つの値を足す関数を自作し、戻り値を変数や次の計算へつなげられる。'
     required: true
     group: all
     viewportMode: all
@@ -54,28 +46,28 @@ validationRules:
       file: main.py
     assertion:
       kind: python-source-fact
-      fact: exception-handled
+      fact: function-behavior-verified
     feedback:
-      target: main.py・lesson_tools.pyとConsole
-      expected: '18なら18、abcなら整数を入力してください、最後に終了です。'
-      nextAction: 'main.pyのparse_number(text)をtryの内側で呼びます。'
+      target: main.pyとConsole
+      expected: '2つの値を足す関数を自作し、戻り値を変数や次の計算へつなげられる。'
+      nextAction: 'まず2引数の関数にreturnを書きます。呼び出しを代入の右辺へ置き、受け取った値を次の計算に使います。'
     hintId: python-basics-ch01-l09-e01-h01
     relatedSlideId: python-basics-ch01-l09-s02
 hints:
   - id: python-basics-ch01-l09-e01-h01
     level: 1
-    title: '最初の手掛かり'
-    text: 'int(text)で不正な文字列はValueErrorになります。'
+    title: 最初の手掛かり
+    text: '関数の中で値を返す行と、関数の外で表示する行を分けます。'
     relatedSlideId: python-basics-ch01-l09-s02
   - id: python-basics-ch01-l09-e01-h02
     level: 2
-    title: 'コードを組み立てる'
-    text: 'parse_number(text)をtryの中へ置きます。'
+    title: 処理の流れを確かめる
+    text: '`受け取る名前 = 関数名(3, 5)`の形で、最初の戻り値を保存します。'
     relatedSlideId: python-basics-ch01-l09-s02
   - id: python-basics-ch01-l09-e01-h03
     level: 3
-    title: '解答と理由'
-    text: 'except ValueErrorで案内し、終了のprintはtry/exceptの外です。'
+    title: 解答と別解の考え方
+    text: 'たとえば`def total(a, b):`の中で`return a + b`と書くと、`value = total(1, 2)`で`3`を受け取れます。課題の2組の値へ当てはめましょう。'
     relatedSlideId: python-basics-ch01-l09-s02
 relatedSlideIds: [python-basics-ch01-l09-s01, python-basics-ch01-l09-s02]
 previewViewports:
@@ -84,211 +76,84 @@ previewViewports:
     height: 720
 assets: []
 fixtures:
-  - id: normal
+  - id: solution
     expectedStatus: pass
-    inputLines: ['18']
-    files:
-      - path: main.py
-        language: python
-        source: fixtures/normal/main.py
-        editable: false
-      - path: lesson_tools.py
-        language: python
-        source: fixtures/normal/lesson_tools.py
-        editable: false
-    expectedFeedbackRuleIds: []
-  - id: invalid
-    expectedStatus: pass
-    inputLines: ['abc']
-    files:
-      - path: main.py
-        language: python
-        source: fixtures/invalid/main.py
-        editable: false
-      - path: lesson_tools.py
-        language: python
-        source: fixtures/invalid/lesson_tools.py
-        editable: false
-    expectedFeedbackRuleIds: []
-  - id: empty-string
-    expectedStatus: pass
-    inputLines: ['']
-    files:
-      - path: main.py
-        language: python
-        source: fixtures/empty-string/main.py
-        editable: false
-      - path: lesson_tools.py
-        language: python
-        source: fixtures/empty-string/lesson_tools.py
-        editable: false
-    expectedFeedbackRuleIds: []
-  - id: negative
-    expectedStatus: pass
-    inputLines: ['-2']
-    files:
-      - path: main.py
-        language: python
-        source: fixtures/negative/main.py
-        editable: false
-      - path: lesson_tools.py
-        language: python
-        source: fixtures/negative/lesson_tools.py
-        editable: false
-    expectedFeedbackRuleIds: []
-  - id: signed-whitespace
-    expectedStatus: pass
-    inputLines: ['  +18  ']
-    files:
-      - path: main.py
-        language: python
-        source: fixtures/signed-whitespace/main.py
-        editable: false
-      - path: lesson_tools.py
-        language: python
-        source: fixtures/signed-whitespace/lesson_tools.py
-        editable: false
-    expectedFeedbackRuleIds: []
-  - id: unicode-digits
-    expectedStatus: pass
-    inputLines: ['１８']
-    files:
-      - path: main.py
-        language: python
-        source: fixtures/unicode-digits/main.py
-        editable: false
-      - path: lesson_tools.py
-        language: python
-        source: fixtures/unicode-digits/lesson_tools.py
-        editable: false
-    expectedFeedbackRuleIds: []
-  - id: conversion-outside-try
-    expectedStatus: code-error
-    inputLines: ['abc']
-    files:
-      - path: main.py
-        language: python
-        source: fixtures/conversion-outside-try/main.py
-        editable: false
-      - path: lesson_tools.py
-        language: python
-        source: fixtures/conversion-outside-try/lesson_tools.py
-        editable: false
-    expectedFeedbackRuleIds: []
-  - id: unused-helper-hardcode
-    expectedStatus: incomplete
-    inputLines: ['18']
-    files:
-      - path: main.py
-        language: python
-        source: fixtures/unused-helper-hardcode/main.py
-        editable: false
-      - path: lesson_tools.py
-        language: python
-        source: fixtures/unused-helper-hardcode/lesson_tools.py
-        editable: false
-    expectedFeedbackRuleIds: ['python-basics-ch01-l09-e01-r01']
-  - id: helper-syntax-error
-    expectedStatus: code-error
-    inputLines: ['18']
-    files:
-      - path: main.py
-        language: python
-        source: fixtures/helper-syntax-error/main.py
-        editable: false
-      - path: lesson_tools.py
-        language: python
-        source: fixtures/helper-syntax-error/lesson_tools.py
-        editable: false
-    expectedFeedbackRuleIds: []
-  - id: input-exhausted
-    expectedStatus: system-error
     inputLines: []
     files:
       - path: main.py
         language: python
-        source: fixtures/input-exhausted/main.py
-        editable: false
-      - path: lesson_tools.py
-        language: python
-        source: fixtures/input-exhausted/lesson_tools.py
+        source: fixtures/solution.py
         editable: false
     expectedFeedbackRuleIds: []
-  - id: broad-except
-    expectedStatus: system-error
-    inputLines: ['abc']
-    files:
-      - path: main.py
-        language: python
-        source: fixtures/broad-except/main.py
-        editable: false
-      - path: lesson_tools.py
-        language: python
-        source: fixtures/broad-except/lesson_tools.py
-        editable: false
-    expectedFeedbackRuleIds: []
-  - id: direct-display-normal
+  - id: alternative
     expectedStatus: pass
-    inputLines: ['18']
+    inputLines: []
     files:
       - path: main.py
         language: python
-        source: fixtures/direct-display-normal/main.py
-        editable: false
-      - path: lesson_tools.py
-        language: python
-        source: fixtures/direct-display-normal/lesson_tools.py
+        source: fixtures/alternative.py
         editable: false
     expectedFeedbackRuleIds: []
-  - id: direct-display-invalid
-    expectedStatus: pass
-    inputLines: ['abc']
+  - id: starter
+    expectedStatus: incomplete
+    inputLines: []
     files:
       - path: main.py
         language: python
-        source: fixtures/direct-display-invalid/main.py
+        source: fixtures/starter.py
         editable: false
-      - path: lesson_tools.py
+    expectedFeedbackRuleIds: [python-basics-ch01-l09-e01-r01]
+  - id: misconception
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
         language: python
-        source: fixtures/direct-display-invalid/lesson_tools.py
+        source: fixtures/misconception.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l09-e01-r01]
+  - id: output-only
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/output-only.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l09-e01-r01]
+  - id: reference-error
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/reference-error.py
         editable: false
     expectedFeedbackRuleIds: []
-  - id: unrelated-helper-error-normal
+  - id: unused-correct-function
     expectedStatus: incomplete
-    inputLines: ['18']
+    inputLines: []
     files:
       - path: main.py
         language: python
-        source: fixtures/unrelated-helper-error-normal/main.py
+        source: fixtures/unused-correct-function.py
         editable: false
-      - path: lesson_tools.py
-        language: python
-        source: fixtures/unrelated-helper-error-normal/lesson_tools.py
-        editable: false
-    expectedFeedbackRuleIds: ['python-basics-ch01-l09-e01-r01']
-  - id: unrelated-helper-error-invalid
+    expectedFeedbackRuleIds: [python-basics-ch01-l09-e01-r01]
+  - id: unrelated-stored-offset
     expectedStatus: incomplete
-    inputLines: ['abc']
+    inputLines: []
     files:
       - path: main.py
         language: python
-        source: fixtures/unrelated-helper-error-invalid/main.py
+        source: fixtures/unrelated-stored-offset.py
         editable: false
-      - path: lesson_tools.py
-        language: python
-        source: fixtures/unrelated-helper-error-invalid/lesson_tools.py
-        editable: false
-    expectedFeedbackRuleIds: ['python-basics-ch01-l09-e01-r01']
-  - id: unrelated-try-error
+    expectedFeedbackRuleIds: [python-basics-ch01-l09-e01-r01]
+  - id: unused-second-result
     expectedStatus: incomplete
-    inputLines: ['abc']
+    inputLines: []
     files:
       - path: main.py
         language: python
-        source: fixtures/unrelated-try-error/main.py
+        source: fixtures/unused-second-result.py
         editable: false
-      - path: lesson_tools.py
-        language: python
-        source: fixtures/unrelated-try-error/lesson_tools.py
-        editable: false
-    expectedFeedbackRuleIds: ['python-basics-ch01-l09-e01-r01']
+    expectedFeedbackRuleIds: [python-basics-ch01-l09-e01-r01]

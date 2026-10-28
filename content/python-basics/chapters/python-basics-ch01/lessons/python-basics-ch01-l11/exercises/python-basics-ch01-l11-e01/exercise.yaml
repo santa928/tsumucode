@@ -1,0 +1,159 @@
+id: python-basics-ch01-l11-e01
+kind: standard
+workspaceId: python-basics-ch01-l11-e01
+countsTowardStandardExerciseTotal: true
+title: '関数内と外の名前を区別する'
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: python-function-scope
+    minimumLevel: compose
+scaffoldLevel: compose
+steps:
+  - id: python-basics-ch01-l11-e01-step01
+    file: main.py
+    target: '関数名・計算の書き方・呼び出しと表示の組み立て'
+    starterAnchor: 'left = 100'
+    change: '細かい修正手順はありません。外側のleft = 100を残し、引数の1つにleftという名前を使う加算関数を自作します。3と5、4と6の戻り値を順に表示し、最後に外側のleftを表示してください。8、10、100の3行から、同じ名前の使える範囲を説明しましょう。'
+    observe: 'Consoleは8、10、100です。'
+    requiresConceptIds: [python-function-scope]
+    validationRuleIds: [python-basics-ch01-l11-e01-r01]
+runtime:
+  kind: python
+  entryFile: main.py
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  profile: function-scope-v2
+files:
+  - path: main.py
+    language: python
+    source: starter/main.py
+    editable: true
+solutionFiles:
+  - path: main.py
+    language: python
+    source: solution/main.py
+    editable: false
+validationRules:
+  - id: python-basics-ch01-l11-e01-r01
+    label: '外側と同じ名前の引数を持つ関数で和を返し、最後に外側の値100を表示する。'
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: function-behavior-verified
+    feedback:
+      target: main.pyとConsole
+      expected: '外側と同じ名前の引数を持つ関数で和を返し、最後に外側の値100を表示する。'
+      nextAction: '引数のleftは呼び出しごとに受け取る名前です。計算の値をreturnし、最後のprint(left)は関数の外に置きます。'
+    hintId: python-basics-ch01-l11-e01-h01
+    relatedSlideId: python-basics-ch01-l11-s02
+hints:
+  - id: python-basics-ch01-l11-e01-h01
+    level: 1
+    title: 最初の手掛かり
+    text: '`def`の括弧の中の`left`と、最初の行の`left`に別の印を付けます。'
+    relatedSlideId: python-basics-ch01-l11-s02
+  - id: python-basics-ch01-l11-e01-h02
+    level: 2
+    title: 処理の流れを確かめる
+    text: '関数の外へ渡すのは、内側の名前ではなく`return`した値です。'
+    relatedSlideId: python-basics-ch01-l11-s02
+  - id: python-basics-ch01-l11-e01-h03
+    level: 3
+    title: 解答と別解の考え方
+    text: '外側が`left = 100`でも、引数の`left`へ`1`を渡した呼び出しでは内側は`1`です。`return`した和と、最後に外側で読む`left`を分けて追いましょう。'
+    relatedSlideId: python-basics-ch01-l11-s02
+relatedSlideIds: [python-basics-ch01-l11-s01, python-basics-ch01-l11-s02]
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: solution
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/solution.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: alternative
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/alternative.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: starter
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/starter.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l11-e01-r01]
+  - id: misconception
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/misconception.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l11-e01-r01]
+  - id: output-only
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/output-only.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l11-e01-r01]
+  - id: reference-error
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/reference-error.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: unused-correct-function
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/unused-correct-function.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l11-e01-r01]
+  - id: local-name-outside
+    expectedStatus: code-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/local-name-outside.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: unused-second-result
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/unused-second-result.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l11-e01-r01]

@@ -28,9 +28,10 @@ const objectProtocolFields = [
 const dataProfiles = new Set([
   'list-reference-sum-v1',
   'dict-value-sum-v1',
-  'function-return-scope-v1',
+
 ]);
-const dataFields = ['listReferenceSummed', 'dictValuesSummed', 'functionReturnScoped'];
+const dataFields = ['listReferenceSummed', 'dictValuesSummed'];
+const functionProfiles = new Set(["function-call-v1","function-arguments-v1","function-result-v1","function-print-return-v1","function-scope-v2"]);
 const iterationProfiles = new Set([
   'list-comprehension-filter-v1',
   'iterator-consumption-v1',
@@ -104,6 +105,7 @@ print(json.dumps(_module_result))
     Object.assign(fallback, Object.fromEntries(iterationFields.map((field) => [field, false])));
   else if (dataProfiles.has(profile))
     Object.assign(fallback, Object.fromEntries(dataFields.map((field) => [field, false])));
+  else if (functionProfiles.has(profile)) fallback.functionBehaviorVerified = false;
   else if (profile !== 'values-vars-print-v1')
     Object.assign(fallback, {
       inputEchoed: false,
@@ -182,6 +184,7 @@ export function parsePythonAnalysis(stdout, stderr, exitCode, profile = 'values-
   else if (profile === 'context-manager-close-v1') keys.push('contextManagedClosed');
   else if (iterationProfiles.has(profile)) keys.push(...iterationFields);
   else if (dataProfiles.has(profile)) keys.push(...dataFields);
+  else if (functionProfiles.has(profile)) keys.push('functionBehaviorVerified');
   else if (profile !== 'values-vars-print-v1')
     keys.push('inputEchoed', 'ageBoundaryBranched', 'rangeIterated');
   if (

@@ -1104,495 +1104,495 @@ items:
   - id: react-quiz-original-1
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/chapter.yaml
+    path: chapters/react-ch03/chapter.yaml
   - id: react-quiz-original-2
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l01/brief.md
+    path: chapters/react-ch03/lessons/react-ch03-l01/brief.md
   - id: react-quiz-original-3
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/exercise.yaml
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/exercise.yaml
   - id: react-quiz-original-4
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/alias-QuestionCard.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/alias-QuestionCard.tsx
   - id: react-quiz-original-5
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/alias-quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/alias-quizState.ts
   - id: react-quiz-original-6
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/alternative-QuestionCard.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/alternative-QuestionCard.tsx
   - id: react-quiz-original-7
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/alternative-quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/alternative-quizState.ts
   - id: react-quiz-original-8
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/data.ts
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/data.ts
   - id: react-quiz-original-9
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/fixed-label-QuestionCard.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/fixed-label-QuestionCard.tsx
   - id: react-quiz-original-10
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/fixed-label-quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/fixed-label-quizState.ts
   - id: react-quiz-original-11
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/index.html
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/index.html
   - id: react-quiz-original-12
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/main.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/main.tsx
   - id: react-quiz-original-13
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/side-effect-QuestionCard.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/side-effect-QuestionCard.tsx
   - id: react-quiz-original-14
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/side-effect-quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/side-effect-quizState.ts
   - id: react-quiz-original-15
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/solution-QuestionCard.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/solution-QuestionCard.tsx
   - id: react-quiz-original-16
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/solution-quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/solution-quizState.ts
   - id: react-quiz-original-17
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/starter-QuestionCard.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/starter-QuestionCard.tsx
   - id: react-quiz-original-18
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/starter-quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/starter-quizState.ts
   - id: react-quiz-original-19
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/types.ts
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/types.ts
   - id: react-quiz-original-20
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/wrong-callback-QuestionCard.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/wrong-callback-QuestionCard.tsx
   - id: react-quiz-original-21
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/wrong-callback-quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/wrong-callback-quizState.ts
   - id: react-quiz-original-22
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/wrong-key-QuestionCard.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/wrong-key-QuestionCard.tsx
   - id: react-quiz-original-23
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/wrong-key-quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/wrong-key-quizState.ts
   - id: react-quiz-original-24
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/instructions.md
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/instructions.md
   - id: react-quiz-original-25
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/solution/QuestionCard.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/solution/QuestionCard.tsx
   - id: react-quiz-original-26
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/solution/data.ts
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/solution/data.ts
   - id: react-quiz-original-27
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/solution/index.html
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/solution/index.html
   - id: react-quiz-original-28
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/solution/main.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/solution/main.tsx
   - id: react-quiz-original-29
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/solution/quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/solution/quizState.ts
   - id: react-quiz-original-30
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/solution/types.ts
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/solution/types.ts
   - id: react-quiz-original-31
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/starter/QuestionCard.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/starter/QuestionCard.tsx
   - id: react-quiz-original-32
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/starter/data.ts
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/starter/data.ts
   - id: react-quiz-original-33
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/starter/index.html
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/starter/index.html
   - id: react-quiz-original-34
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/starter/main.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/starter/main.tsx
   - id: react-quiz-original-35
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/starter/quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/starter/quizState.ts
   - id: react-quiz-original-36
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/starter/types.ts
+    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/starter/types.ts
   - id: react-quiz-original-37
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l01/guide.md
+    path: chapters/react-ch03/lessons/react-ch03-l01/guide.md
   - id: react-quiz-original-38
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l01/lesson.yaml
+    path: chapters/react-ch03/lessons/react-ch03-l01/lesson.yaml
   - id: react-quiz-original-39
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l01/slides/s01.md
+    path: chapters/react-ch03/lessons/react-ch03-l01/slides/s01.md
   - id: react-quiz-original-40
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l01/slides/s02.md
+    path: chapters/react-ch03/lessons/react-ch03-l01/slides/s02.md
   - id: react-quiz-original-41
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l01/slides/s03.md
+    path: chapters/react-ch03/lessons/react-ch03-l01/slides/s03.md
   - id: react-quiz-original-42
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l02/brief.md
+    path: chapters/react-ch03/lessons/react-ch03-l02/brief.md
   - id: react-quiz-original-43
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/exercise.yaml
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/exercise.yaml
   - id: react-quiz-original-44
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alias-QuestionCard.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/alias-QuestionCard.tsx
   - id: react-quiz-original-45
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alias-quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/alias-quizState.ts
   - id: react-quiz-original-46
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-QuestionCard.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/alternative-QuestionCard.tsx
   - id: react-quiz-original-47
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/alternative-quizState.ts
   - id: react-quiz-original-48
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/data.ts
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/data.ts
   - id: react-quiz-original-49
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/fixed-label-QuestionCard.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/fixed-label-QuestionCard.tsx
   - id: react-quiz-original-50
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/fixed-label-quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/fixed-label-quizState.ts
   - id: react-quiz-original-51
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/fixed-score-QuestionCard.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/fixed-score-QuestionCard.tsx
   - id: react-quiz-original-52
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/fixed-score-quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/fixed-score-quizState.ts
   - id: react-quiz-original-53
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/index.html
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/index.html
   - id: react-quiz-original-54
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/main.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/main.tsx
   - id: react-quiz-original-55
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/missing-guard-QuestionCard.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/missing-guard-QuestionCard.tsx
   - id: react-quiz-original-56
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/missing-guard-quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/missing-guard-quizState.ts
   - id: react-quiz-original-57
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/side-effect-QuestionCard.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/side-effect-QuestionCard.tsx
   - id: react-quiz-original-58
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/side-effect-quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/side-effect-quizState.ts
   - id: react-quiz-original-59
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/solution-QuestionCard.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/solution-QuestionCard.tsx
   - id: react-quiz-original-60
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/solution-quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/solution-quizState.ts
   - id: react-quiz-original-61
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/starter-QuestionCard.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/starter-QuestionCard.tsx
   - id: react-quiz-original-62
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/starter-quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/starter-quizState.ts
   - id: react-quiz-original-63
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/types.ts
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/types.ts
   - id: react-quiz-original-64
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/instructions.md
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/instructions.md
   - id: react-quiz-original-65
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/solution/QuestionCard.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/solution/QuestionCard.tsx
   - id: react-quiz-original-66
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/solution/data.ts
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/solution/data.ts
   - id: react-quiz-original-67
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/solution/index.html
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/solution/index.html
   - id: react-quiz-original-68
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/solution/main.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/solution/main.tsx
   - id: react-quiz-original-69
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/solution/quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/solution/quizState.ts
   - id: react-quiz-original-70
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/solution/types.ts
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/solution/types.ts
   - id: react-quiz-original-71
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/starter/QuestionCard.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/starter/QuestionCard.tsx
   - id: react-quiz-original-72
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/starter/data.ts
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/starter/data.ts
   - id: react-quiz-original-73
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/starter/index.html
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/starter/index.html
   - id: react-quiz-original-74
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/starter/main.tsx
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/starter/main.tsx
   - id: react-quiz-original-75
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/starter/quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/starter/quizState.ts
   - id: react-quiz-original-76
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/starter/types.ts
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/starter/types.ts
   - id: react-quiz-original-77
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l02/guide.md
+    path: chapters/react-ch03/lessons/react-ch03-l02/guide.md
   - id: react-quiz-original-78
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l02/lesson.yaml
+    path: chapters/react-ch03/lessons/react-ch03-l02/lesson.yaml
   - id: react-quiz-original-79
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l02/slides/s01.md
+    path: chapters/react-ch03/lessons/react-ch03-l02/slides/s01.md
   - id: react-quiz-original-80
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l02/slides/s02.md
+    path: chapters/react-ch03/lessons/react-ch03-l02/slides/s02.md
   - id: react-quiz-original-81
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l02/slides/s03.md
+    path: chapters/react-ch03/lessons/react-ch03-l02/slides/s03.md
   - id: react-quiz-original-82
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch03/chapter.yaml
+    path: chapters/react-ch04/chapter.yaml
   - id: react-quiz-original-83
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch03/lessons/react-ch03-l01/brief.md
+    path: chapters/react-ch04/lessons/react-ch04-l01/brief.md
   - id: react-quiz-original-84
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/exercise.yaml
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/exercise.yaml
   - id: react-quiz-original-85
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/alternative-QuestionCard.tsx
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/fixtures/alternative-QuestionCard.tsx
   - id: react-quiz-original-86
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/alternative-quizState.ts
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/fixtures/alternative-quizState.ts
   - id: react-quiz-original-87
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/data.ts
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/fixtures/data.ts
   - id: react-quiz-original-88
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/fixed-label-QuestionCard.tsx
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/fixtures/fixed-label-QuestionCard.tsx
   - id: react-quiz-original-89
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/fixed-label-quizState.ts
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/fixtures/fixed-label-quizState.ts
   - id: react-quiz-original-90
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/guided-copy-QuestionCard.tsx
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/fixtures/guided-copy-QuestionCard.tsx
   - id: react-quiz-original-91
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/guided-copy-quizState.ts
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/fixtures/guided-copy-quizState.ts
   - id: react-quiz-original-92
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/index.html
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/fixtures/index.html
   - id: react-quiz-original-93
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/main.tsx
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/fixtures/main.tsx
   - id: react-quiz-original-94
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/missing-guard-QuestionCard.tsx
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/fixtures/missing-guard-QuestionCard.tsx
   - id: react-quiz-original-95
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/missing-guard-quizState.ts
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/fixtures/missing-guard-quizState.ts
   - id: react-quiz-original-96
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/reset-prior-score-QuestionCard.tsx
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/fixtures/reset-prior-score-QuestionCard.tsx
   - id: react-quiz-original-97
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/reset-prior-score-quizState.ts
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/fixtures/reset-prior-score-quizState.ts
   - id: react-quiz-original-98
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/side-effect-QuestionCard.tsx
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/fixtures/side-effect-QuestionCard.tsx
   - id: react-quiz-original-99
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/side-effect-quizState.ts
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/fixtures/side-effect-quizState.ts
   - id: react-quiz-original-100
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/solution-QuestionCard.tsx
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/fixtures/solution-QuestionCard.tsx
   - id: react-quiz-original-101
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/solution-quizState.ts
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/fixtures/solution-quizState.ts
   - id: react-quiz-original-102
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/starter-QuestionCard.tsx
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/fixtures/starter-QuestionCard.tsx
   - id: react-quiz-original-103
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/starter-quizState.ts
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/fixtures/starter-quizState.ts
   - id: react-quiz-original-104
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/fixtures/types.ts
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/fixtures/types.ts
   - id: react-quiz-original-105
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/instructions.md
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/instructions.md
   - id: react-quiz-original-106
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/solution/QuestionCard.tsx
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/solution/QuestionCard.tsx
   - id: react-quiz-original-107
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/solution/data.ts
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/solution/data.ts
   - id: react-quiz-original-108
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/solution/index.html
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/solution/index.html
   - id: react-quiz-original-109
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/solution/main.tsx
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/solution/main.tsx
   - id: react-quiz-original-110
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/solution/quizState.ts
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/solution/quizState.ts
   - id: react-quiz-original-111
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/solution/types.ts
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/solution/types.ts
   - id: react-quiz-original-112
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/starter/QuestionCard.tsx
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/starter/QuestionCard.tsx
   - id: react-quiz-original-113
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/starter/data.ts
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/starter/data.ts
   - id: react-quiz-original-114
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/starter/index.html
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/starter/index.html
   - id: react-quiz-original-115
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/starter/main.tsx
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/starter/main.tsx
   - id: react-quiz-original-116
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/starter/quizState.ts
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/starter/quizState.ts
   - id: react-quiz-original-117
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch03/lessons/react-ch03-l01/exercises/react-ch03-l01-e01/starter/types.ts
+    path: chapters/react-ch04/lessons/react-ch04-l01/exercises/react-ch04-l01-e01/starter/types.ts
   - id: react-quiz-original-118
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch03/lessons/react-ch03-l01/guide.md
+    path: chapters/react-ch04/lessons/react-ch04-l01/guide.md
   - id: react-quiz-original-119
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch03/lessons/react-ch03-l01/lesson.yaml
+    path: chapters/react-ch04/lessons/react-ch04-l01/lesson.yaml
   - id: react-quiz-original-120
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch03/lessons/react-ch03-l01/slides/s01.md
+    path: chapters/react-ch04/lessons/react-ch04-l01/slides/s01.md
   - id: react-quiz-original-121
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch03/lessons/react-ch03-l01/slides/s02.md
+    path: chapters/react-ch04/lessons/react-ch04-l01/slides/s02.md
   - id: react-quiz-original-122
     createdAt: 2026-10-07
     visibility: public
-    path: chapters/react-ch03/lessons/react-ch03-l01/slides/s03.md
+    path: chapters/react-ch04/lessons/react-ch04-l01/slides/s03.md
   - id: react-quiz-wrong-type-original
     createdAt: 2026-10-07
     visibility: authoring
-    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/wrong-type-quizState.ts
+    path: chapters/react-ch03/lessons/react-ch03-l02/exercises/react-ch03-l02-e01/fixtures/wrong-type-quizState.ts
   - id: react-ch01-l01-s03-props-reading-flow-original
     visibility: public
     path: chapters/react-ch01/lessons/react-ch01-l01/slides/assets/s03-props-reading-flow.svg
@@ -1659,15 +1659,768 @@ items:
   - id: react-ch01-l12-s02-reading-flow-original
     visibility: public
     path: chapters/react-ch01/lessons/react-ch01-l12/slides/assets/s02-reading-flow.svg
-  - id: react-ch02-l01-s01-reading-flow-original
-    visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l01/slides/assets/s01-reading-flow.svg
-  - id: react-ch02-l02-s01-reading-flow-original
-    visibility: public
-    path: chapters/react-ch02/lessons/react-ch02-l02/slides/assets/s01-reading-flow.svg
   - id: react-ch03-l01-s01-reading-flow-original
     visibility: public
     path: chapters/react-ch03/lessons/react-ch03-l01/slides/assets/s01-reading-flow.svg
+  - id: react-ch03-l02-s01-reading-flow-original
+    visibility: public
+    path: chapters/react-ch03/lessons/react-ch03-l02/slides/assets/s01-reading-flow.svg
+  - id: react-ch04-l01-s01-reading-flow-original
+    visibility: public
+    path: chapters/react-ch04/lessons/react-ch04-l01/slides/assets/s01-reading-flow.svg
   - id: react-release-history-authoring
     visibility: authoring
     path: release-history.yaml
+  - id: react-reading-original-438
+    visibility: public
+    path: chapters/react-ch02/chapter.yaml
+  - id: react-reading-original-443
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/exercise.yaml
+  - id: react-reading-original-446
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/alternative-helper/BookCard.tsx
+  - id: react-reading-original-447
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/alternative-helper/data.ts
+  - id: react-reading-original-448
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/alternative-helper/index.html
+  - id: react-reading-original-449
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/alternative-helper/main.tsx
+  - id: react-reading-original-450
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/alternative-helper/types.ts
+  - id: react-reading-original-452
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/callback-on-render/BookCard.tsx
+  - id: react-reading-original-453
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/callback-on-render/data.ts
+  - id: react-reading-original-454
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/callback-on-render/index.html
+  - id: react-reading-original-455
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/callback-on-render/main.tsx
+  - id: react-reading-original-456
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/callback-on-render/types.ts
+  - id: react-reading-original-458
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/no-callback/BookCard.tsx
+  - id: react-reading-original-459
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/no-callback/data.ts
+  - id: react-reading-original-460
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/no-callback/index.html
+  - id: react-reading-original-461
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/no-callback/main.tsx
+  - id: react-reading-original-462
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/no-callback/types.ts
+  - id: react-reading-original-464
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/solution/BookCard.tsx
+  - id: react-reading-original-465
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/solution/data.ts
+  - id: react-reading-original-466
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/solution/index.html
+  - id: react-reading-original-467
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/solution/main.tsx
+  - id: react-reading-original-468
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/solution/types.ts
+  - id: react-reading-original-470
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/starter/BookCard.tsx
+  - id: react-reading-original-471
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/starter/data.ts
+  - id: react-reading-original-472
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/starter/index.html
+  - id: react-reading-original-473
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/starter/main.tsx
+  - id: react-reading-original-474
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/starter/types.ts
+  - id: react-reading-original-476
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/wrong-id/BookCard.tsx
+  - id: react-reading-original-477
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/wrong-id/data.ts
+  - id: react-reading-original-478
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/wrong-id/index.html
+  - id: react-reading-original-479
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/wrong-id/main.tsx
+  - id: react-reading-original-480
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/fixtures/wrong-id/types.ts
+  - id: react-reading-original-481
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/instructions.md
+  - id: react-reading-original-483
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/solution/BookCard.tsx
+  - id: react-reading-original-484
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/solution/data.ts
+  - id: react-reading-original-485
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/solution/index.html
+  - id: react-reading-original-486
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/solution/main.tsx
+  - id: react-reading-original-487
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/solution/types.ts
+  - id: react-reading-original-489
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/starter/BookCard.tsx
+  - id: react-reading-original-490
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/starter/data.ts
+  - id: react-reading-original-491
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/starter/index.html
+  - id: react-reading-original-492
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/starter/main.tsx
+  - id: react-reading-original-493
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l01/exercises/react-ch02-l01-e01/starter/types.ts
+  - id: react-reading-original-494
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l01/lesson.yaml
+  - id: react-ch02-l01-flow-original
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l01/slides/assets/s01-flow.svg
+  - id: react-reading-original-498
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l01/slides/s01.md
+  - id: react-reading-original-499
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l01/slides/s02.md
+  - id: react-reading-original-503
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/exercise.yaml
+  - id: react-reading-original-506
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/all-books-toggle/BookCard.tsx
+  - id: react-reading-original-507
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/all-books-toggle/components.tsx
+  - id: react-reading-original-508
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/all-books-toggle/data.ts
+  - id: react-reading-original-509
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/all-books-toggle/index.html
+  - id: react-reading-original-510
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/all-books-toggle/main.tsx
+  - id: react-reading-original-511
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/all-books-toggle/types.ts
+  - id: react-reading-original-513
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-named-map/BookCard.tsx
+  - id: react-reading-original-514
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-named-map/components.tsx
+  - id: react-reading-original-515
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-named-map/data.ts
+  - id: react-reading-original-516
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-named-map/index.html
+  - id: react-reading-original-517
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-named-map/main.tsx
+  - id: react-reading-original-518
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-named-map/types.ts
+  - id: react-reading-original-520
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/index-key/BookCard.tsx
+  - id: react-reading-original-521
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/index-key/components.tsx
+  - id: react-reading-original-522
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/index-key/data.ts
+  - id: react-reading-original-523
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/index-key/index.html
+  - id: react-reading-original-524
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/index-key/main.tsx
+  - id: react-reading-original-525
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/index-key/types.ts
+  - id: react-reading-original-527
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/one-way-toggle/BookCard.tsx
+  - id: react-reading-original-528
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/one-way-toggle/components.tsx
+  - id: react-reading-original-529
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/one-way-toggle/data.ts
+  - id: react-reading-original-530
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/one-way-toggle/index.html
+  - id: react-reading-original-531
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/one-way-toggle/main.tsx
+  - id: react-reading-original-532
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/one-way-toggle/types.ts
+  - id: react-reading-original-534
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/solution/BookCard.tsx
+  - id: react-reading-original-535
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/solution/components.tsx
+  - id: react-reading-original-536
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/solution/data.ts
+  - id: react-reading-original-537
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/solution/index.html
+  - id: react-reading-original-538
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/solution/main.tsx
+  - id: react-reading-original-539
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/solution/types.ts
+  - id: react-reading-original-541
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/starter/BookCard.tsx
+  - id: react-reading-original-542
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/starter/components.tsx
+  - id: react-reading-original-543
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/starter/data.ts
+  - id: react-reading-original-544
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/starter/index.html
+  - id: react-reading-original-545
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/starter/main.tsx
+  - id: react-reading-original-546
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/starter/types.ts
+  - id: react-reading-original-547
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/instructions.md
+  - id: react-reading-original-549
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/solution/BookCard.tsx
+  - id: react-reading-original-550
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/solution/components.tsx
+  - id: react-reading-original-551
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/solution/data.ts
+  - id: react-reading-original-552
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/solution/index.html
+  - id: react-reading-original-553
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/solution/main.tsx
+  - id: react-reading-original-554
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/solution/types.ts
+  - id: react-reading-original-556
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/starter/BookCard.tsx
+  - id: react-reading-original-557
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/starter/components.tsx
+  - id: react-reading-original-558
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/starter/data.ts
+  - id: react-reading-original-559
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/starter/index.html
+  - id: react-reading-original-560
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/starter/main.tsx
+  - id: react-reading-original-561
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/starter/types.ts
+  - id: react-reading-original-562
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l02/lesson.yaml
+  - id: react-ch02-l02-flow-original
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l02/slides/assets/s01-flow.svg
+  - id: react-reading-original-566
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l02/slides/s01.md
+  - id: react-reading-original-567
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l02/slides/s02.md
+  - id: react-reading-original-571
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/exercise.yaml
+  - id: react-reading-original-574
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/alternative-helper/BookCard.tsx
+  - id: react-reading-original-575
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/alternative-helper/components.tsx
+  - id: react-reading-original-576
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/alternative-helper/data.ts
+  - id: react-reading-original-577
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/alternative-helper/index.html
+  - id: react-reading-original-578
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/alternative-helper/main.tsx
+  - id: react-reading-original-579
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/alternative-helper/types.ts
+  - id: react-reading-original-581
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/destructive-filter/BookCard.tsx
+  - id: react-reading-original-582
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/destructive-filter/components.tsx
+  - id: react-reading-original-583
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/destructive-filter/data.ts
+  - id: react-reading-original-584
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/destructive-filter/index.html
+  - id: react-reading-original-585
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/destructive-filter/main.tsx
+  - id: react-reading-original-586
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/destructive-filter/types.ts
+  - id: react-reading-original-588
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/fixed-count/BookCard.tsx
+  - id: react-reading-original-589
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/fixed-count/components.tsx
+  - id: react-reading-original-590
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/fixed-count/data.ts
+  - id: react-reading-original-591
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/fixed-count/index.html
+  - id: react-reading-original-592
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/fixed-count/main.tsx
+  - id: react-reading-original-593
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/fixed-count/types.ts
+  - id: react-reading-original-595
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/reset-keeps-filter/BookCard.tsx
+  - id: react-reading-original-596
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/reset-keeps-filter/components.tsx
+  - id: react-reading-original-597
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/reset-keeps-filter/data.ts
+  - id: react-reading-original-598
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/reset-keeps-filter/index.html
+  - id: react-reading-original-599
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/reset-keeps-filter/main.tsx
+  - id: react-reading-original-600
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/reset-keeps-filter/types.ts
+  - id: react-reading-original-602
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/solution/BookCard.tsx
+  - id: react-reading-original-603
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/solution/components.tsx
+  - id: react-reading-original-604
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/solution/data.ts
+  - id: react-reading-original-605
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/solution/index.html
+  - id: react-reading-original-606
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/solution/main.tsx
+  - id: react-reading-original-607
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/solution/types.ts
+  - id: react-reading-original-609
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/starter/BookCard.tsx
+  - id: react-reading-original-610
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/starter/components.tsx
+  - id: react-reading-original-611
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/starter/data.ts
+  - id: react-reading-original-612
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/starter/index.html
+  - id: react-reading-original-613
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/starter/main.tsx
+  - id: react-reading-original-614
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/starter/types.ts
+  - id: react-reading-original-616
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/visible-summary/BookCard.tsx
+  - id: react-reading-original-617
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/visible-summary/components.tsx
+  - id: react-reading-original-618
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/visible-summary/data.ts
+  - id: react-reading-original-619
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/visible-summary/index.html
+  - id: react-reading-original-620
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/visible-summary/main.tsx
+  - id: react-reading-original-621
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/visible-summary/types.ts
+  - id: react-reading-original-622
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/instructions.md
+  - id: react-reading-original-624
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/solution/BookCard.tsx
+  - id: react-reading-original-625
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/solution/components.tsx
+  - id: react-reading-original-626
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/solution/data.ts
+  - id: react-reading-original-627
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/solution/index.html
+  - id: react-reading-original-628
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/solution/main.tsx
+  - id: react-reading-original-629
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/solution/types.ts
+  - id: react-reading-original-631
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/starter/BookCard.tsx
+  - id: react-reading-original-632
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/starter/components.tsx
+  - id: react-reading-original-633
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/starter/data.ts
+  - id: react-reading-original-634
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/starter/index.html
+  - id: react-reading-original-635
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/starter/main.tsx
+  - id: react-reading-original-636
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/starter/types.ts
+  - id: react-reading-original-637
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l03/lesson.yaml
+  - id: react-ch02-l03-flow-original
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l03/slides/assets/s01-flow.svg
+  - id: react-reading-original-641
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l03/slides/s01.md
+  - id: react-reading-original-642
+    visibility: public
+    path: chapters/react-ch02/lessons/react-ch02-l03/slides/s02.md
+  - id: react-ch02-l02-unused-card-data-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/unused-card/data.ts
+  - id: react-ch02-l02-unused-card-main-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/unused-card/main.tsx
+  - id: react-ch02-l02-unused-card-index-html-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/unused-card/index.html
+  - id: react-ch02-l02-unused-card-bookcard-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/unused-card/BookCard.tsx
+  - id: react-ch02-l02-unused-card-types-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/unused-card/types.ts
+  - id: react-ch02-l02-unused-card-components-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/unused-card/components.tsx
+  - id: react-ch02-l02-dummy-state-data-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/dummy-state/data.ts
+  - id: react-ch02-l02-dummy-state-main-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/dummy-state/main.tsx
+  - id: react-ch02-l02-dummy-state-index-html-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/dummy-state/index.html
+  - id: react-ch02-l02-dummy-state-bookcard-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/dummy-state/BookCard.tsx
+  - id: react-ch02-l02-dummy-state-types-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/dummy-state/types.ts
+  - id: react-ch02-l02-dummy-state-components-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/dummy-state/components.tsx
+  - id: react-ch02-l02-alternative-nested-parent-data-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-nested-parent/data.ts
+  - id: react-ch02-l02-alternative-nested-parent-main-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-nested-parent/main.tsx
+  - id: react-ch02-l02-alternative-nested-parent-index-html-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-nested-parent/index.html
+  - id: react-ch02-l02-alternative-nested-parent-bookcard-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-nested-parent/BookCard.tsx
+  - id: react-ch02-l02-alternative-nested-parent-types-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-nested-parent/types.ts
+  - id: react-ch02-l02-alternative-nested-parent-components-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-nested-parent/components.tsx
+  - id: react-ch02-l02-alternative-props-list-data-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-props-list/data.ts
+  - id: react-ch02-l02-alternative-props-list-main-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-props-list/main.tsx
+  - id: react-ch02-l02-alternative-props-list-index-html-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-props-list/index.html
+  - id: react-ch02-l02-alternative-props-list-bookcard-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-props-list/BookCard.tsx
+  - id: react-ch02-l02-alternative-props-list-types-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-props-list/types.ts
+  - id: react-ch02-l02-alternative-props-list-components-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-props-list/components.tsx
+  - id: react-ch02-l02-alternative-key-variable-data-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-key-variable/data.ts
+  - id: react-ch02-l02-alternative-key-variable-main-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-key-variable/main.tsx
+  - id: react-ch02-l02-alternative-key-variable-index-html-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-key-variable/index.html
+  - id: react-ch02-l02-alternative-key-variable-bookcard-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-key-variable/BookCard.tsx
+  - id: react-ch02-l02-alternative-key-variable-types-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-key-variable/types.ts
+  - id: react-ch02-l02-alternative-key-variable-components-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-key-variable/components.tsx
+  - id: react-ch02-l02-unused-jsx-data-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/unused-jsx/data.ts
+  - id: react-ch02-l02-unused-jsx-main-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/unused-jsx/main.tsx
+  - id: react-ch02-l02-unused-jsx-index-html-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/unused-jsx/index.html
+  - id: react-ch02-l02-unused-jsx-bookcard-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/unused-jsx/BookCard.tsx
+  - id: react-ch02-l02-unused-jsx-types-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/unused-jsx/types.ts
+  - id: react-ch02-l02-unused-jsx-components-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/unused-jsx/components.tsx
+  - id: react-ch02-l02-alternative-fragment-data-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-fragment/data.ts
+  - id: react-ch02-l02-alternative-fragment-main-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-fragment/main.tsx
+  - id: react-ch02-l02-alternative-fragment-index-html-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-fragment/index.html
+  - id: react-ch02-l02-alternative-fragment-bookcard-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-fragment/BookCard.tsx
+  - id: react-ch02-l02-alternative-fragment-types-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-fragment/types.ts
+  - id: react-ch02-l02-alternative-fragment-components-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-fragment/components.tsx
+  - id: react-ch02-l02-alternative-copied-book-data-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-copied-book/data.ts
+  - id: react-ch02-l02-alternative-copied-book-main-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-copied-book/main.tsx
+  - id: react-ch02-l02-alternative-copied-book-index-html-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-copied-book/index.html
+  - id: react-ch02-l02-alternative-copied-book-bookcard-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-copied-book/BookCard.tsx
+  - id: react-ch02-l02-alternative-copied-book-types-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-copied-book/types.ts
+  - id: react-ch02-l02-alternative-copied-book-components-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-copied-book/components.tsx
+  - id: react-ch02-l02-mutable-state-book-data-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/mutable-state-book/data.ts
+  - id: react-ch02-l02-mutable-state-book-main-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/mutable-state-book/main.tsx
+  - id: react-ch02-l02-mutable-state-book-index-html-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/mutable-state-book/index.html
+  - id: react-ch02-l02-mutable-state-book-bookcard-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/mutable-state-book/BookCard.tsx
+  - id: react-ch02-l02-mutable-state-book-types-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/mutable-state-book/types.ts
+  - id: react-ch02-l02-mutable-state-book-components-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/mutable-state-book/components.tsx
+  - id: react-ch02-l02-alternative-fresh-copy-data-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-fresh-copy/data.ts
+  - id: react-ch02-l02-alternative-fresh-copy-main-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-fresh-copy/main.tsx
+  - id: react-ch02-l02-alternative-fresh-copy-index-html-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-fresh-copy/index.html
+  - id: react-ch02-l02-alternative-fresh-copy-bookcard-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-fresh-copy/BookCard.tsx
+  - id: react-ch02-l02-alternative-fresh-copy-types-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-fresh-copy/types.ts
+  - id: react-ch02-l02-alternative-fresh-copy-components-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-fresh-copy/components.tsx
+  - id: react-ch02-l02-alternative-copy-helper-data-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-copy-helper/data.ts
+  - id: react-ch02-l02-alternative-copy-helper-main-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-copy-helper/main.tsx
+  - id: react-ch02-l02-alternative-copy-helper-index-html-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-copy-helper/index.html
+  - id: react-ch02-l02-alternative-copy-helper-bookcard-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-copy-helper/BookCard.tsx
+  - id: react-ch02-l02-alternative-copy-helper-types-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-copy-helper/types.ts
+  - id: react-ch02-l02-alternative-copy-helper-components-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/alternative-copy-helper/components.tsx
+  - id: react-ch02-l02-identity-copy-helper-data-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/identity-copy-helper/data.ts
+  - id: react-ch02-l02-identity-copy-helper-main-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/identity-copy-helper/main.tsx
+  - id: react-ch02-l02-identity-copy-helper-index-html-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/identity-copy-helper/index.html
+  - id: react-ch02-l02-identity-copy-helper-bookcard-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/identity-copy-helper/BookCard.tsx
+  - id: react-ch02-l02-identity-copy-helper-types-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/identity-copy-helper/types.ts
+  - id: react-ch02-l02-identity-copy-helper-components-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/identity-copy-helper/components.tsx
+  - id: react-ch02-l03-alternative-empty-branch-data-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/alternative-empty-branch/data.ts
+  - id: react-ch02-l03-alternative-empty-branch-main-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/alternative-empty-branch/main.tsx
+  - id: react-ch02-l03-alternative-empty-branch-index-html-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/alternative-empty-branch/index.html
+  - id: react-ch02-l03-alternative-empty-branch-bookcard-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/alternative-empty-branch/BookCard.tsx
+  - id: react-ch02-l03-alternative-empty-branch-types-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/alternative-empty-branch/types.ts
+  - id: react-ch02-l03-alternative-empty-branch-components-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/alternative-empty-branch/components.tsx
+  - id: react-ch02-l02-unused-key-map-data-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/unused-key-map/data.ts
+  - id: react-ch02-l02-unused-key-map-main-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/unused-key-map/main.tsx
+  - id: react-ch02-l02-unused-key-map-index-html-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/unused-key-map/index.html
+  - id: react-ch02-l02-unused-key-map-bookcard-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/unused-key-map/BookCard.tsx
+  - id: react-ch02-l02-unused-key-map-types-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/unused-key-map/types.ts
+  - id: react-ch02-l02-unused-key-map-components-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l02/exercises/react-ch02-l02-e01/fixtures/unused-key-map/components.tsx
+  - id: react-ch02-l03-reset-blocks-toggle-bookcard-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/reset-blocks-toggle/BookCard.tsx
+  - id: react-ch02-l03-reset-blocks-toggle-components-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/reset-blocks-toggle/components.tsx
+  - id: react-ch02-l03-reset-blocks-toggle-data-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/reset-blocks-toggle/data.ts
+  - id: react-ch02-l03-reset-blocks-toggle-index-html-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/reset-blocks-toggle/index.html
+  - id: react-ch02-l03-reset-blocks-toggle-main-tsx-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/reset-blocks-toggle/main.tsx
+  - id: react-ch02-l03-reset-blocks-toggle-types-ts-original
+    visibility: authoring
+    path: chapters/react-ch02/lessons/react-ch02-l03/exercises/react-ch02-l03-e01/fixtures/reset-blocks-toggle/types.ts

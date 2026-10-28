@@ -1,0 +1,12 @@
+## 責務と制作順
+
+1. Briefから今回の正誤と回答済みの条件を予測し、2Fileの修正順を決めます。
+2. QuestionCardは型付きPropsの本文・選択肢・回答済み・Callbackを使います。Stateを別に作らず、同じ選択肢を表示とKeyとonAnswerへつなぎます。
+3. quizStateはcreateState・answer・advanceの3関数です。引数のreadonly Stateを書き換えず、純粋に次のStateを返します。名前のStateは別なので再挑戦でも残ります。
+4. 実操作、Checklist、保存往復、Resetを確認し、なぜ今回の更新条件にしたか説明します。
+
+用意済みmain.tsxの親がクイズStateを1つ所有し、functional updateで前のStateを学習者のanswer/advanceへ渡します。名前のcontrolled inputは別Stateです。固定data.tsの配列をatで読み、範囲外はundefinedとなるので結果を描画します。親の「選んだ回答」は実Callbackが受け取った値の観測で、未完の得点処理に依存しません。indexから問題/結果を導くため、結果用のStateは不要です。
+
+外部との同期や購読はないのでEffect・cleanupを増やしません。Context・Ref・Reducerの使用も合格条件ではありません。型、元Sourceの有限Fact、元Sourceの実React操作をすべて満たす必要があります。任意の構文を採点する仕組みではなく、用意済みの型・関数・純粋な分岐/次State・Propsからのmapへ範囲を絞ります。型alias、引数名の変更、括弧、block callback、正誤をconstへ分ける別解を扱います。
+
+Capstoneはreact-quiz-capstone、Guidedはreact-quiz-guidedという別Workspaceです。CapstoneのReset・保存・進捗はGuidedを変更しません。名前などの一時Stateは新しい実行で初期化され、保存は原文と学習Progressを対象にします。見積り時間は初心者の実測ではありません。

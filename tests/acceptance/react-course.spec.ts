@@ -11,7 +11,7 @@ const captureBinding = await captureReactAcceptance('tests/acceptance/react-cour
 const { exercises } = await loadAuthoringCourse('content/react');
 
 // Refのnative focusは実クリックと通常UI採点をreact-ref-focus.spec.tsで3Browser確認する。
-// 残る正負Fixtureは各教材の既存試験へ任せ、ここでは14教材の正例を実行する。
+// 残る正負Fixtureは各教材の既存試験へ任せ、ここでは17教材の正例を実行する。
 for (const exercise of exercises.filter((exercise) => exercise.id !== 'react-ch01-l10-e01')) {
   test(`${exercise.id}の正例を実Worker・React・全Scenario・Validatorで判定する`, async ({
     page,

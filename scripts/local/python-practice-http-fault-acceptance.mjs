@@ -146,7 +146,7 @@ function api(path, body = {}, capture) {
 const revision = JSON.parse(await readFile('/app/python-course-index.json', 'utf8')).revision;
 const input = (module) => ({
   apiVersion: 1,
-  exerciseId: module ? 'python-basics-ch01-l08-e01' : 'python-basics-ch01-l02-e01',
+  exerciseId: module ? 'python-basics-ch01-l12-e01' : 'python-basics-ch01-l02-e01',
   contentRevision: revision,
   runtimeProfileId: 'cpython-values-v1',
   exerciseSessionId: 'fault-session',

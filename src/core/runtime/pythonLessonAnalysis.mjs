@@ -24,7 +24,17 @@ export function pythonLessonAnalysis(source, profile = 'values-vars-print-v1') {
     )
   )
     return pythonIterationAnalysis(source, profile);
-  if (['list-reference-sum-v1', 'dict-value-sum-v1', 'function-return-scope-v1'].includes(profile))
+  if (
+    [
+      'function-call-v1',
+      'function-arguments-v1',
+      'function-result-v1',
+      'function-print-return-v1',
+      'function-scope-v2',
+    ].includes(profile)
+  )
+    return functionLessonAnalysis(source, profile);
+  if (['list-reference-sum-v1', 'dict-value-sum-v1'].includes(profile))
     return dataLessonAnalysis(source, profile);
   if (profile !== 'values-vars-print-v1') return controlLessonAnalysis(source, profile);
   return `
@@ -187,7 +197,7 @@ _lesson_allowed = (
     _lesson_ast.FunctionDef, _lesson_ast.arguments, _lesson_ast.arg, _lesson_ast.Return,
 )
 _lesson_reserved = set(dir(_lesson_builtins))
-_lesson_functions = {node.name for node in _lesson_tree.body if isinstance(node, _lesson_ast.FunctionDef)} if _lesson_profile == "function-return-scope-v1" else set()
+_lesson_functions = set()
 _lesson_supported = True
 for _lesson_node in _lesson_ast.walk(_lesson_tree):
     if not isinstance(_lesson_node, _lesson_allowed):
@@ -283,63 +293,215 @@ if _lesson_profile in ("list-reference-sum-v1", "dict-value-sum-v1") and len(_le
             else:
                 _lesson_dict = matched
 
-if _lesson_profile == "function-return-scope-v1" and len(_lesson_body) >= 5:
-    outer, function = _lesson_body[:2]
-    if _lesson_assignment(outer) and _lesson_constant(outer.value, 100) and isinstance(function, _lesson_ast.FunctionDef):
-        args = function.args
-        parameters = [arg.arg for arg in args.args]
-        valid_args = (
-            len(parameters) == 2 and len(set(parameters)) == 2
-            and not args.posonlyargs and not args.kwonlyargs and not args.defaults and not args.kw_defaults
-            and args.vararg is None and args.kwarg is None and not function.decorator_list and function.returns is None
-            and all(arg.annotation is None for arg in args.args)
-            and function.name not in parameters and function.name != outer.targets[0].id
-            and outer.targets[0].id in parameters
-        )
-        expression = None
-        if len(function.body) == 1 and isinstance(function.body[0], _lesson_ast.Return):
-            expression = function.body[0].value
-        if len(function.body) == 2 and _lesson_assignment(function.body[0]) and isinstance(function.body[1], _lesson_ast.Return):
-            binding = function.body[0].targets[0].id
-            if binding not in parameters and _lesson_name(function.body[1].value, binding):
-                expression = function.body[0].value
-        valid_return = (
-            isinstance(expression, _lesson_ast.BinOp) and isinstance(expression.op, _lesson_ast.Add)
-            and isinstance(expression.left, _lesson_ast.Name) and isinstance(expression.right, _lesson_ast.Name)
-            and {expression.left.id, expression.right.id} == set(parameters)
-        )
-        bindings = {outer.targets[0].id: "outer"}
-        printed = []
-        valid_flow = True
-        def _lesson_result(node):
-            if isinstance(node, _lesson_ast.Name):
-                return bindings.get(node.id)
-            if isinstance(node, _lesson_ast.Call) and _lesson_name(node.func, function.name) and len(node.args) == 2 and not node.keywords:
-                if all(isinstance(arg, _lesson_ast.Constant) and type(arg.value) is int for arg in node.args):
-                    values = sorted(arg.value for arg in node.args)
-                    return "first" if values == [3, 5] else "second" if values == [4, 6] else None
-            return None
-        for statement in _lesson_body[2:]:
-            if _lesson_assignment(statement):
-                name = statement.targets[0].id
-                result = _lesson_result(statement.value)
-                if name in (outer.targets[0].id, function.name) or result not in ("first", "second"):
-                    valid_flow = False
-                bindings[name] = result
-            else:
-                arg = _lesson_print_arg(statement)
-                result = _lesson_result(arg)
-                if result is None:
-                    valid_flow = False
-                printed.append(result)
-        _lesson_function = valid_args and valid_return and valid_flow and printed == ["first", "second", "outer"]
 _lesson_json.dumps({
     "supported": _lesson_supported,
     "numericVariablePrinted": False,
     "sameVariableAdditionPrinted": False,
     "listReferenceSummed": _lesson_list,
     "dictValuesSummed": _lesson_dict,
-    "functionReturnScoped": _lesson_function,
+})
+`;
+}
+
+/** 関数5段階を有限ASTとして追う。学習者Sourceをeval/execせず、別入力の意味も検査する。 */
+function functionLessonAnalysis(source, profile) {
+  return `
+import ast as _lesson_ast
+import builtins as _lesson_builtins
+import json as _lesson_json
+_lesson_tree = _lesson_ast.parse(${JSON.stringify(source)})
+_lesson_profile = ${JSON.stringify(profile)}
+_lesson_functions = {node.name: node for node in _lesson_tree.body if isinstance(node, _lesson_ast.FunctionDef)}
+_lesson_allowed = (
+    _lesson_ast.Module, _lesson_ast.FunctionDef, _lesson_ast.arguments, _lesson_ast.arg,
+    _lesson_ast.Assign, _lesson_ast.Expr, _lesson_ast.Return, _lesson_ast.Name,
+    _lesson_ast.Store, _lesson_ast.Load, _lesson_ast.Constant, _lesson_ast.Call,
+    _lesson_ast.BinOp, _lesson_ast.Add, _lesson_ast.UnaryOp, _lesson_ast.USub, _lesson_ast.UAdd,
+)
+_lesson_supported = len(list(_lesson_ast.walk(_lesson_tree))) <= 300
+_lesson_reserved = set(dir(_lesson_builtins))
+for _lesson_node in _lesson_ast.walk(_lesson_tree):
+    if not isinstance(_lesson_node, _lesson_allowed):
+        _lesson_supported = False
+    if isinstance(_lesson_node, _lesson_ast.Constant) and type(_lesson_node.value) not in (int, str, type(None)):
+        _lesson_supported = False
+    if isinstance(_lesson_node, _lesson_ast.Name) and (
+        _lesson_node.id.startswith("_") or
+        (isinstance(_lesson_node.ctx, _lesson_ast.Store) and _lesson_node.id in _lesson_reserved)
+    ):
+        _lesson_supported = False
+    if isinstance(_lesson_node, _lesson_ast.Assign) and (
+        len(_lesson_node.targets) != 1 or not isinstance(_lesson_node.targets[0], _lesson_ast.Name)
+    ):
+        _lesson_supported = False
+    if isinstance(_lesson_node, _lesson_ast.Call) and (
+        not isinstance(_lesson_node.func, _lesson_ast.Name) or
+        _lesson_node.func.id not in ({"print"} | set(_lesson_functions)) or
+        _lesson_node.keywords
+    ):
+        _lesson_supported = False
+    if isinstance(_lesson_node, _lesson_ast.FunctionDef):
+        args = _lesson_node.args
+        names = [arg.arg for arg in args.args]
+        if (
+            _lesson_node not in _lesson_tree.body or _lesson_node.decorator_list or
+            _lesson_node.returns is not None or args.posonlyargs or args.kwonlyargs or
+            args.defaults or args.kw_defaults or args.vararg or args.kwarg or
+            len(set(names)) != len(names) or any(arg.annotation is not None for arg in args.args) or
+            any(name.startswith("_") or name in _lesson_reserved for name in names + [_lesson_node.name])
+        ):
+            _lesson_supported = False
+
+_lesson_outputs = []
+_lesson_calls = []
+_lesson_globals = {}
+_lesson_steps = 0
+
+# 同名の関数でも、渡した2数ごとに戻り値の由来を区別する。
+def _lesson_call_origin(name, arguments):
+    return "call-args:" + name + ":" + _lesson_json.dumps(arguments)
+
+# 数値と出所を一緒に運び、表示の直書きと戻り値の利用を区別する。
+def _lesson_value(node, local, owner="", depth=0):
+    global _lesson_steps
+    _lesson_steps += 1
+    if _lesson_steps > 1000 or depth > 8:
+        raise ValueError("bounded flow")
+    if isinstance(node, _lesson_ast.Constant):
+        return (node.value, set())
+    if isinstance(node, _lesson_ast.Name):
+        if node.id in local:
+            return local[node.id]
+        return _lesson_globals[node.id]
+    if isinstance(node, _lesson_ast.BinOp) and isinstance(node.op, _lesson_ast.Add):
+        left = _lesson_value(node.left, local, owner, depth + 1)
+        right = _lesson_value(node.right, local, owner, depth + 1)
+        if type(left[0]) is not int or type(right[0]) is not int:
+            raise ValueError("integer addition")
+        return (left[0] + right[0], left[1] | right[1])
+    if isinstance(node, _lesson_ast.UnaryOp):
+        value = _lesson_value(node.operand, local, owner, depth + 1)
+        if type(value[0]) is not int:
+            raise ValueError("integer sign")
+        return ((-value[0] if isinstance(node.op, _lesson_ast.USub) else value[0]), value[1])
+    if isinstance(node, _lesson_ast.Call) and isinstance(node.func, _lesson_ast.Name):
+        name = node.func.id
+        arguments = [_lesson_value(arg, local, owner, depth + 1) for arg in node.args]
+        if name == "print":
+            if len(arguments) != 1:
+                raise ValueError("single display")
+            _lesson_outputs.append((arguments[0][0], arguments[0][1] | {"display:" + owner}))
+            return (None, set())
+        function = _lesson_functions[name]
+        if len(arguments) != len(function.args.args):
+            raise ValueError("argument count")
+        local_values = dict(zip([arg.arg for arg in function.args.args], arguments))
+        result = _lesson_body(function.body, local_values, name, depth + 1)
+        result = (result[0], result[1] | {"call:" + name, _lesson_call_origin(name, [arg[0] for arg in arguments])})
+        _lesson_calls.append((name, [arg[0] for arg in arguments], result[0]))
+        return result
+    raise ValueError("unknown expression")
+
+def _lesson_body(body, local, owner="", depth=0):
+    for statement in body:
+        if isinstance(statement, _lesson_ast.FunctionDef):
+            if owner:
+                raise ValueError("nested function")
+        elif isinstance(statement, _lesson_ast.Assign):
+            name = statement.targets[0].id
+            if name in _lesson_functions:
+                raise ValueError("replaced function")
+            value = _lesson_value(statement.value, local, owner, depth)
+            stored = {"stored"} if not owner else set()
+            if not owner and isinstance(statement.value, _lesson_ast.Call):
+                stored |= {"stored-" + origin for origin in value[1] if origin.startswith("call-args:")}
+            local[name] = (value[0], value[1] | stored)
+        elif isinstance(statement, _lesson_ast.Expr):
+            _lesson_value(statement.value, local, owner, depth)
+        elif isinstance(statement, _lesson_ast.Return) and owner:
+            return (None, set()) if statement.value is None else _lesson_value(statement.value, local, owner, depth)
+        else:
+            raise ValueError("unknown statement")
+    return (None, set())
+
+_lesson_verified = False
+if _lesson_supported:
+    try:
+        _lesson_body(_lesson_tree.body, _lesson_globals)
+        _lesson_actual_outputs = list(_lesson_outputs)
+        _lesson_actual_calls = list(_lesson_calls)
+        _lesson_initial_globals = dict(_lesson_globals)
+
+        def _lesson_sum_behavior(name, displayed):
+            global _lesson_steps
+            function = _lesson_functions[name]
+            if len(function.args.args) != 2:
+                return False
+            for first, second in [(2, 7), (-3, 5), (0, 0)]:
+                _lesson_outputs.clear()
+                _lesson_steps = 0
+                local = {function.args.args[0].arg: (first, set()), function.args.args[1].arg: (second, set())}
+                result = _lesson_body(function.body, local, name)
+                if displayed:
+                    if result[0] is not None or [row[0] for row in _lesson_outputs] != [first + second]:
+                        return False
+                elif result[0] != first + second or _lesson_outputs:
+                    return False
+            return True
+
+        def _lesson_pair_calls(name):
+            return [args for called, args, result in _lesson_actual_calls if called == name] == [[3, 5], [4, 6]]
+
+        for _lesson_name, _lesson_function in _lesson_functions.items():
+            if _lesson_profile == "function-call-v1":
+                _lesson_verified |= (
+                    not _lesson_function.args.args and
+                    [name for name, args, result in _lesson_actual_calls] == [_lesson_name, _lesson_name] and
+                    [row[0] for row in _lesson_actual_outputs] == [8, 8] and
+                    all("display:" + _lesson_name in row[1] for row in _lesson_actual_outputs)
+                )
+            elif _lesson_profile == "function-arguments-v1":
+                _lesson_verified |= _lesson_pair_calls(_lesson_name) and _lesson_sum_behavior(_lesson_name, True)
+            elif _lesson_profile == "function-result-v1":
+                _lesson_verified |= (
+                    _lesson_pair_calls(_lesson_name) and _lesson_sum_behavior(_lesson_name, False) and
+                    len(_lesson_actual_outputs) == 2 and
+                    _lesson_call_origin(_lesson_name, [3, 5]) in _lesson_actual_outputs[0][1] and
+                    _lesson_call_origin(_lesson_name, [4, 6]) in _lesson_actual_outputs[1][1] and
+                    "stored-" + _lesson_call_origin(_lesson_name, [3, 5]) in _lesson_actual_outputs[0][1]
+                )
+            elif _lesson_profile == "function-print-return-v1" and _lesson_sum_behavior(_lesson_name, False):
+                for show in _lesson_functions:
+                    if show != _lesson_name and _lesson_sum_behavior(show, True) and len(_lesson_actual_outputs) == 3:
+                        first, missing, returned = _lesson_actual_outputs
+                        _lesson_verified |= (
+                            "display:" + show in first[1] and
+                            missing[0] is None and {"call:" + show, "stored"} <= missing[1] and
+                            "call:" + _lesson_name in returned[1]
+                        )
+            elif _lesson_profile == "function-scope-v2":
+                parameters = [arg.arg for arg in _lesson_function.args.args]
+                _lesson_verified |= (
+                    "left" in parameters and _lesson_pair_calls(_lesson_name) and
+                    _lesson_sum_behavior(_lesson_name, False) and len(_lesson_actual_outputs) == 3 and
+                    _lesson_call_origin(_lesson_name, [3, 5]) in _lesson_actual_outputs[0][1] and
+                    _lesson_call_origin(_lesson_name, [4, 6]) in _lesson_actual_outputs[1][1] and
+                    _lesson_initial_globals.get("left", (None,))[0] == 100 and
+                    isinstance(_lesson_tree.body[-1], _lesson_ast.Expr) and
+                    isinstance(_lesson_tree.body[-1].value, _lesson_ast.Call) and
+                    isinstance(_lesson_tree.body[-1].value.func, _lesson_ast.Name) and
+                    _lesson_tree.body[-1].value.func.id == "print" and
+                    len(_lesson_tree.body[-1].value.args) == 1 and
+                    isinstance(_lesson_tree.body[-1].value.args[0], _lesson_ast.Name) and
+                    _lesson_tree.body[-1].value.args[0].id == "left"
+                )
+    except (ValueError, KeyError, TypeError, IndexError, RecursionError):
+        _lesson_verified = False
+_lesson_json.dumps({
+    "supported": _lesson_supported,
+    "numericVariablePrinted": False,
+    "sameVariableAdditionPrinted": False,
+    "functionBehaviorVerified": bool(_lesson_verified),
 })
 `;
 }

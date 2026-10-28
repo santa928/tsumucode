@@ -2,7 +2,7 @@ id: python-basics-ch01
 sequence: 0
 title: 値・入力・基本制御・Collection・Function
 goal: 値と変数を使い、入力・制御・Collection・Functionの実出力と境界を説明できる。
-estimatedMinutes: 130
+estimatedMinutes: 184
 kind: standard
 lessonSources:
   - lessons/python-basics-ch01-l01/lesson.yaml
@@ -14,3 +14,7 @@ lessonSources:
   - lessons/python-basics-ch01-l07/lesson.yaml
   - lessons/python-basics-ch01-l08/lesson.yaml
   - lessons/python-basics-ch01-l09/lesson.yaml
+  - lessons/python-basics-ch01-l10/lesson.yaml
+  - lessons/python-basics-ch01-l11/lesson.yaml
+  - lessons/python-basics-ch01-l12/lesson.yaml
+  - lessons/python-basics-ch01-l13/lesson.yaml

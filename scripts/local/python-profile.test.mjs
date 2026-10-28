@@ -86,7 +86,7 @@ it('解析の偽装・余剰情報・異常終了を採点factsとして受け�
 });
 
 /** 新しい固定教材も、旧packetや欠落・余剰のfactsを実観測へ昇格させない。 */
-it.each(['list-reference-sum-v1', 'dict-value-sum-v1', 'function-return-scope-v1'])(
+it.each(['list-reference-sum-v1', 'dict-value-sum-v1'])(
   '%sの解析packetの全booleanを厳密に照合する',
   (profile) => {
     const packet = {
@@ -96,7 +96,6 @@ it.each(['list-reference-sum-v1', 'dict-value-sum-v1', 'function-return-scope-v1
       sameVariableAdditionPrinted: false,
       listReferenceSummed: true,
       dictValuesSummed: false,
-      functionReturnScoped: false,
     };
     expect(parsePythonAnalysis(JSON.stringify(packet), '', 0, profile)).toEqual(packet);
     for (const invalid of [

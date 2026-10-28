@@ -4,8 +4,8 @@ import { readStoredProgress, waitForDraftSaved } from '../e2e/helpers/progress';
 import { testServerUrl } from '../e2e/helpers/testBasePath';
 import { expectStoredViewedSlide } from '../e2e/helpers/releaseCourse';
 
-const guided = 'react-ch02-l01';
-const capstone = 'react-ch03-l01';
+const guided = 'react-ch03-l01';
+const capstone = 'react-ch04-l01';
 
 /** 保存済みSourceを比較し、編集の仮想化や単なるDOM表示へ依存しない。 */
 async function writeSource(
@@ -46,7 +46,7 @@ test('Reactの合格済みGuidedと型失敗Capstoneを実Export/Importで保持
     page.getByRole('heading', { level: 1, name: '型付きの問題をComponentへ渡す', exact: true }),
   ).toBeVisible();
   const card = await readFile(
-    `content/react/chapters/react-ch02/lessons/${guided}/exercises/${guided}-e01/solution/QuestionCard.tsx`,
+    `content/react/chapters/react-ch03/lessons/${guided}/exercises/${guided}-e01/solution/QuestionCard.tsx`,
     'utf8',
   );
   await writeSource(page, 'react-quiz-guided', 'QuestionCard.tsx', card);
@@ -60,7 +60,7 @@ test('Reactの合格済みGuidedと型失敗Capstoneを実Export/Importで保持
     page.getByRole('heading', { level: 1, name: '誤答から再回答できる練習クイズ', exact: true }),
   ).toBeVisible();
   const state = await readFile(
-    `content/react/chapters/react-ch03/lessons/${capstone}/exercises/${capstone}-e01/solution/quizState.ts`,
+    `content/react/chapters/react-ch04/lessons/${capstone}/exercises/${capstone}-e01/solution/quizState.ts`,
     'utf8',
   );
   const invalid = state.replace('score: 0,', 'score: true,');

@@ -9,7 +9,7 @@ import { isQuizWorkspace } from '../../src/adapters/runtime/react/quizScaffold';
 import { analyzeQuizSource } from '../../src/adapters/runtime/react/checkQuizSource';
 import { reactQuizScenarios } from '../../src/core/content/reactQuizInteractions';
 
-const lessonIds = ['react-ch02-l01', 'react-ch02-l02', 'react-ch03-l01'];
+const lessonIds = ['react-ch03-l01', 'react-ch03-l02', 'react-ch04-l01'];
 it('Guided2工程の編集責務を共有し、Capstoneの保存/Reset/Progress契約を分ける', async () => {
   const { runtime: course, exercises } = await loadAuthoringCourse('content/react');
   expect(course.publicationStatus).toBe('published');
@@ -58,7 +58,7 @@ it('Guided2工程の編集責務を共有し、Capstoneの保存/Reset/Progress�
 it('全工程の全操作を公開/authoring両Schemaで要求する', async () => {
   const { runtime: course } = await loadAuthoringCourse('content/react');
   for (const lessonId of lessonIds) {
-    const chapter = lessonId.includes('ch02') ? 'react-ch02' : 'react-ch03';
+    const chapter = lessonId.includes('ch03') ? 'react-ch03' : 'react-ch04';
     const source = ExerciseSourceSchema.parse(
       YAML.parse(
         await readFile(
@@ -107,7 +107,7 @@ it('実教材の正例・別解を原文で確認し、固定ラベルとGuided�
           result.facts.usesStableChoiceKeys &&
           result.facts.forwardsSelectedChoice,
       ).toBe(true);
-      if (!lesson.endsWith('ch02-l01'))
+      if (!lesson.endsWith('ch03-l01'))
         expect(Object.values(result.facts).every(Boolean)).toBe(true);
     }
     const bad = exercise.fixtures.find((item) => item.id === 'fixed-label')!;

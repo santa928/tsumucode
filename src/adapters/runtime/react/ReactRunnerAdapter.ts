@@ -33,6 +33,7 @@ interface RunnerOptions {
   readonly runnerFactory?: () => RunnerAdapter;
 }
 interface SourceContext {
+  readonly profile: string;
   readonly maps: Readonly<Record<string, string>>;
   readonly files: Readonly<Record<string, string>>;
 }
@@ -171,7 +172,7 @@ export class ReactRunnerAdapter implements RunnerAdapter {
         result.executionRevision !== snapshot.executionRevision
       )
         throw new Error('React runner identity mismatch');
-      this.#source = { maps: compiled.sourceMaps, files };
+      this.#source = { maps: compiled.sourceMaps, files, profile: runtime.data.runtime.profile };
       return {
         ...result,
         diagnostics: this.#map(result.diagnostics),
@@ -209,13 +210,45 @@ export class ReactRunnerAdapter implements RunnerAdapter {
   /** Interaction診断も元TSへ戻し、停止・置換後の応答は返さない。 */
   async interact(request: InteractionRequest): Promise<InteractionResult> {
     const generation = this.#generation;
-    if (!this.#source || !this.#runner?.interact) throw this.#abort();
-    const result = await this.#runner.interact(request);
-    this.#assertCurrent(generation);
-    return {
-      ...result,
-      ...(result.diagnostics ? { diagnostics: this.#map(result.diagnostics) } : {}),
-    };
+    const source = this.#source;
+    if (!source || !this.#runner?.interact) throw this.#abort();
+    try {
+      const result = await this.#runner.interact(request);
+      this.#assertCurrent(generation);
+      return {
+        ...result,
+        ...(result.diagnostics ? { diagnostics: this.#map(result.diagnostics) } : {}),
+      };
+    } catch (error) {
+      this.#assertCurrent(generation);
+      // 認証済みbridgeの既知エラーだけを、読書課題の必要button不足として返す。
+      // 未実行の操作を成功扱いせず、後続の採点はcode-errorで停止する。
+      if (
+        !['reading-card-v1', 'reading-state-v1', 'reading-filter-v1'].includes(source.profile) ||
+        !(error instanceof Error) ||
+        error.message !==
+          'JavaScript interaction failed (target-not-found): Interaction target was not found'
+      )
+        throw error;
+      return {
+        exerciseSessionId: request.exerciseSessionId,
+        executionRevision: request.executionRevision,
+        frameGeneration: request.frameGeneration,
+        requestId: request.requestId,
+        console: [],
+        diagnostics: [
+          {
+            code: 'react-interaction-target',
+            kind: 'reference',
+            severity: 'error',
+            file: source.profile === 'reading-card-v1' ? 'BookCard.tsx' : 'components.tsx',
+            message: 'Required reading-list interaction target was not found',
+            learnerMessage:
+              '操作に必要なbuttonが見つかりません。演習で指定されたIDと、今の表示条件を確認してください。',
+          },
+        ],
+      };
+    }
   }
 
   /** 中止を即座に確定し、両Worker・iframeの解放完了まで待つ。 */

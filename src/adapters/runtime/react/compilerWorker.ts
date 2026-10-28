@@ -1,3 +1,5 @@
+import { analyzeReadingList } from './checkReadingListSource';
+import { isReadingScaffold } from './readingListScaffold';
 /// <reference lib="webworker" />
 import { compileReactTypeScript } from '../typescript/compileTypeScript';
 import { analyzeInteractiveState } from './checkInteractiveStateSource';
@@ -62,6 +64,10 @@ self.onmessage = (event: MessageEvent<unknown>): void => {
   const profile = value.input.profile;
   const analysis = (() => {
     switch (profile) {
+      case 'reading-card-v1':
+      case 'reading-state-v1':
+      case 'reading-filter-v1':
+        return analyzeReadingList(input.files);
       case 'quiz-workshop-v1':
       case 'quiz-capstone-v1':
         return analyzeQuizSource(input.files, profile === 'quiz-capstone-v1');
@@ -87,7 +93,8 @@ self.onmessage = (event: MessageEvent<unknown>): void => {
   })();
   const hooks = ['ref-focus-v1', 'effect-sync-v1', 'custom-source-hook-v1'].includes(profile);
   const quiz = profile === 'quiz-workshop-v1' || profile === 'quiz-capstone-v1';
-  const fixed = quiz
+  const reading = ['reading-card-v1', 'reading-state-v1', 'reading-filter-v1'].includes(profile);
+  const fixed = reading ? isReadingScaffold(input.files, profile) : quiz
     ? isQuizScaffold(input.files, profile)
     : hooks
       ? isHookScaffold(input.files, profile)

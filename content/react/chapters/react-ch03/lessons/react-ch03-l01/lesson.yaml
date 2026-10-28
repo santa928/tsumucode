@@ -1,24 +1,26 @@
 id: react-ch03-l01
-kind: capstone
-title: 誤答から再回答できる練習クイズ
-goal: 別Briefから必要な更新を選び、誤答でも累積得点を保って同じ問題へ再回答し、独立した作品を完成する。
-estimatedMinutes: 60
+kind: guided-project
+title: 型付きの問題をComponentへ渡す
+goal: 型付きPropsから選択肢の一覧を作り、一意なKeyと同じ選択肢のCallbackを親へつなぐ。
+estimatedMinutes: 40
 prerequisiteLessonIds:
-  - react-ch02-l02
+  - react-ch02-l03
+  - react-ch01-l05
+  - react-ch01-l07
 slideSources:
   - slides/s01.md
   - slides/s02.md
   - slides/s03.md
 exerciseSources:
   - exercises/react-ch03-l01-e01/exercise.yaml
-reflection: 別Briefから必要な更新を選び、誤答でも累積得点を保って同じ問題へ再回答し、独立した作品を完成する。
+reflection: 型付きPropsから選択肢の一覧を作り、一意なKeyと同じ選択肢のCallbackを親へつなぐ。
 glossaryRefs:
-  - brief-transfer
+  - quiz-workspace
   - props
   - state
   - key
 project:
-  id: react-quiz-capstone
+  id: react-quiz-guided
   briefSource: brief.md
   guideSources:
     - guide.md
@@ -34,33 +36,14 @@ project:
       label: 実操作と保存への接続
       required: true
       ruleIds:
-        - interaction:quiz-practice-flow:name
-        - interaction:quiz-practice-flow:early-next
-        - interaction:quiz-practice-flow:correct
-        - interaction:quiz-practice-flow:next
-        - interaction:quiz-practice-flow:wrong
-        - interaction:quiz-practice-flow:second-correct
-        - interaction:quiz-practice-flow:duplicate
-        - interaction:quiz-practice-flow:result
-        - interaction:quiz-practice-flow:retry
-        - interaction:quiz-practice-wrong-next:wrong
-        - interaction:quiz-practice-wrong-next:next
+        - interaction:quiz-card-callback:initial
+        - interaction:quiz-card-callback:name
+        - interaction:quiz-card-callback:selected
 completion:
-  kind: capstone
-  requiredRuleIds:
-    - react-ch03-l01-e01-r01
-    - react-ch03-l01-e01-r02
-    - react-ch03-l01-e01-r03
-    - interaction:quiz-practice-flow:name
-    - interaction:quiz-practice-flow:early-next
-    - interaction:quiz-practice-flow:correct
-    - interaction:quiz-practice-flow:next
-    - interaction:quiz-practice-flow:wrong
-    - interaction:quiz-practice-flow:second-correct
-    - interaction:quiz-practice-flow:duplicate
-    - interaction:quiz-practice-flow:result
-    - interaction:quiz-practice-flow:retry
-    - interaction:quiz-practice-wrong-next:wrong
-    - interaction:quiz-practice-wrong-next:next
-  requiredViewportIds:
-    - desktop-1280
+  kind: guided-project
+  requiredChecklistItemIds:
+    - react-ch03-l01-source
+    - react-ch03-l01-behavior
+  requiredExerciseIds:
+    - react-ch03-l01-e01
+nextLessonId: react-ch03-l02

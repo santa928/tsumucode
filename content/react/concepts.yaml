@@ -130,20 +130,36 @@ concepts:
       - react-custom-hook-extraction
     minimumProjectLevel: transform
   - id: react-quiz-components
-    introducedBySlideId: react-ch02-l01-s01
+    introducedBySlideId: react-ch03-l01-s01
     prerequisiteConceptIds:
       - react-props-render
       - react-list-key
     minimumProjectLevel: compose
   - id: react-quiz-state
-    introducedBySlideId: react-ch02-l02-s01
+    introducedBySlideId: react-ch03-l02-s01
     prerequisiteConceptIds:
       - react-state-updater
       - react-derived-state
     minimumProjectLevel: compose
   - id: react-quiz-brief-transfer
-    introducedBySlideId: react-ch03-l01-s01
+    introducedBySlideId: react-ch04-l01-s01
     prerequisiteConceptIds:
       - react-quiz-components
       - react-quiz-state
     minimumProjectLevel: compose
+  - id: 'react-reading-card'
+    introducedBySlideId: 'react-ch02-l01-s01'
+    prerequisiteConceptIds:
+      - 'react-props-render'
+      - 'react-state-props-callback'
+    minimumProjectLevel: 'compose'
+  - id: 'react-reading-state'
+    introducedBySlideId: 'react-ch02-l02-s01'
+    prerequisiteConceptIds:
+      - 'react-reading-card'
+    minimumProjectLevel: 'compose'
+  - id: 'react-reading-filter'
+    introducedBySlideId: 'react-ch02-l03-s01'
+    prerequisiteConceptIds:
+      - 'react-reading-state'
+    minimumProjectLevel: 'compose'

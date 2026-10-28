@@ -8,7 +8,7 @@ import { testBasePath } from './helpers/testBasePath';
 import { editorText, replaceEditorText, readStoredProgress } from './helpers/progress';
 
 const base = testBasePath();
-const lessons = ['python-basics-ch01-l08', 'python-basics-ch01-l09', 'python-basics-ch02-l01'];
+const lessons = ['python-basics-ch01-l12', 'python-basics-ch01-l13', 'python-basics-ch02-l01'];
 const paths = ['main.py', 'lesson_tools.py'];
 const root = (id: string) =>
   `content/python-basics/chapters/${id.slice(0, -4)}/lessons/${id}/exercises/${id}-e01`;

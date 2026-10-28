@@ -1,3 +1,4 @@
+import { isReadingWorkspace } from './readingListScaffold';
 import { isQuizWorkspace } from './quizScaffold';
 import { isInteractiveStateWorkspace } from './interactiveStateScaffold';
 import { isPropsWorkspace } from './propsCardScaffold';
@@ -11,6 +12,8 @@ export function isReactWorkspace(
   files: Readonly<Record<string, string>>,
   profile: unknown,
 ): boolean {
+  if (['reading-card-v1', 'reading-state-v1', 'reading-filter-v1'].includes(String(profile)))
+    return isReadingWorkspace(files, String(profile));
   if (profile === 'quiz-workshop-v1' || profile === 'quiz-capstone-v1')
     return isQuizWorkspace(files, profile);
   if (

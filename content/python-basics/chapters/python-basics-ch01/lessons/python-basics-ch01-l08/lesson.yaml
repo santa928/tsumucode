@@ -1,13 +1,13 @@
 id: python-basics-ch01-l08
 kind: standard
-title: 'Moduleの関数を別ファイルから呼ぶ'
-goal: '別fileの関数をimportして呼び、helperの変更が次の実行へ反映されると説明できる。'
-estimatedMinutes: 15
+title: '引数へ別の値を渡す'
+goal: '呼び出しの値が2つの引数へ順番に入り、同じ関数で別の足し算ができる。'
+estimatedMinutes: 12
 prerequisiteLessonIds: [python-basics-ch01-l07]
 slideSources: [slides/s01.md, slides/s02.md]
 exerciseSources: [exercises/python-basics-ch01-l08-e01/exercise.yaml]
-reflection: 'importだけで関数が呼ばれますか。helperを修正した後に再実行する理由を説明してください。'
-glossaryRefs: [python-module]
+reflection: '予想と違った点、開いたヒント、自分で決めた部分を、手元のノートなどに書いて振り返りましょう。どの行から値が表示されたか、自分の言葉でも確かめます。'
+glossaryRefs: [python-function]
 completion:
   kind: standard
   finalSlideId: python-basics-ch01-l08-s02

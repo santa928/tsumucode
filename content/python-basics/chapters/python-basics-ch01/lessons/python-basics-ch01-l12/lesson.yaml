@@ -1,0 +1,14 @@
+id: python-basics-ch01-l12
+kind: standard
+title: 'Moduleの関数を別ファイルから呼ぶ'
+goal: '別fileの関数をimportして呼び、helperの変更が次の実行へ反映されると説明できる。'
+estimatedMinutes: 15
+prerequisiteLessonIds: [python-basics-ch01-l11]
+slideSources: [slides/s01.md, slides/s02.md]
+exerciseSources: [exercises/python-basics-ch01-l12-e01/exercise.yaml]
+reflection: 'importだけで関数が呼ばれますか。helperを修正した後に再実行する理由を説明してください。'
+glossaryRefs: [python-module]
+completion:
+  kind: standard
+  finalSlideId: python-basics-ch01-l12-s02
+  requiredExerciseIds: [python-basics-ch01-l12-e01]

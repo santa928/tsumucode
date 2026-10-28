@@ -1,3 +1,4 @@
+import { acceptsReactReadingScenarios } from '../../src/core/content/reactReadingInteractions';
 import { validPythonInputLines } from '../../src/core/runtime/pythonLessonProfiles.mjs';
 import { acceptsReactQuizScenarios } from '../../src/core/content/reactQuizInteractions';
 import { acceptsReactHookScenarios } from '../../src/core/content/reactHookInteractions';
@@ -135,6 +136,9 @@ export const ReactExerciseRuntimeSourceSchema = z
     capabilityProfile: z.literal('dom'),
     primaryOutput: z.literal('preview'),
     profile: z.enum([
+      'reading-card-v1',
+      'reading-state-v1',
+      'reading-filter-v1',
       'props-card-v1',
       'static-components-v1',
       'interactive-state-v1',
@@ -149,6 +153,9 @@ export const ReactExerciseRuntimeSourceSchema = z
     ]),
     learningGoal: z
       .enum([
+        'reading-card',
+        'reading-state',
+        'reading-filter',
         'reuse',
         'composition',
         'counter',
@@ -169,27 +176,33 @@ export const ReactExerciseRuntimeSourceSchema = z
   .strict()
   .refine(
     (runtime) =>
-      runtime.profile === 'quiz-workshop-v1'
-        ? ['quiz-card', 'quiz-state'].includes(runtime.learningGoal ?? '')
-        : runtime.profile === 'quiz-capstone-v1'
-          ? runtime.learningGoal === 'quiz-capstone'
-          : runtime.profile === 'static-components-v1'
-            ? ['reuse', 'composition'].includes(runtime.learningGoal ?? '')
-            : runtime.profile === 'interactive-state-v1'
-              ? ['counter', 'immutable-list'].includes(runtime.learningGoal ?? '')
-              : runtime.profile === 'controlled-form-v1'
-                ? ['controlled-form', 'shared-state'].includes(runtime.learningGoal ?? '')
-                : runtime.profile === 'reducer-form-v1'
-                  ? runtime.learningGoal === 'reducer-form'
-                  : runtime.profile === 'context-sharing-v1'
-                    ? runtime.learningGoal === 'context-sharing'
-                    : runtime.profile === 'ref-focus-v1'
-                      ? runtime.learningGoal === 'ref-focus'
-                      : runtime.profile === 'effect-sync-v1'
-                        ? runtime.learningGoal === 'external-sync'
-                        : runtime.profile === 'custom-source-hook-v1'
-                          ? runtime.learningGoal === 'source-hook'
-                          : runtime.learningGoal === undefined,
+      runtime.profile === 'reading-card-v1'
+        ? runtime.learningGoal === 'reading-card'
+        : runtime.profile === 'reading-state-v1'
+          ? runtime.learningGoal === 'reading-state'
+          : runtime.profile === 'reading-filter-v1'
+            ? runtime.learningGoal === 'reading-filter'
+            : runtime.profile === 'quiz-workshop-v1'
+              ? ['quiz-card', 'quiz-state'].includes(runtime.learningGoal ?? '')
+              : runtime.profile === 'quiz-capstone-v1'
+                ? runtime.learningGoal === 'quiz-capstone'
+                : runtime.profile === 'static-components-v1'
+                  ? ['reuse', 'composition'].includes(runtime.learningGoal ?? '')
+                  : runtime.profile === 'interactive-state-v1'
+                    ? ['counter', 'immutable-list'].includes(runtime.learningGoal ?? '')
+                    : runtime.profile === 'controlled-form-v1'
+                      ? ['controlled-form', 'shared-state'].includes(runtime.learningGoal ?? '')
+                      : runtime.profile === 'reducer-form-v1'
+                        ? runtime.learningGoal === 'reducer-form'
+                        : runtime.profile === 'context-sharing-v1'
+                          ? runtime.learningGoal === 'context-sharing'
+                          : runtime.profile === 'ref-focus-v1'
+                            ? runtime.learningGoal === 'ref-focus'
+                            : runtime.profile === 'effect-sync-v1'
+                              ? runtime.learningGoal === 'external-sync'
+                              : runtime.profile === 'custom-source-hook-v1'
+                                ? runtime.learningGoal === 'source-hook'
+                                : runtime.learningGoal === undefined,
     { message: 'React課題の学習目標をprofileに合わせて指定してください' },
   );
 
@@ -374,6 +387,9 @@ export const ExerciseSourceSchema = z
           )
         : (exercise.runtime?.kind === 'react' &&
             [
+              'reading-card-v1',
+              'reading-state-v1',
+              'reading-filter-v1',
               'interactive-state-v1',
               'controlled-form-v1',
               'reducer-form-v1',
@@ -395,6 +411,19 @@ export const ExerciseSourceSchema = z
         path: ['interactionScenarios'],
         message:
           'Interaction Scenarioは既存JSのDOM/async profileか固定TS境界/クイズ工程で指定してください',
+      });
+    }
+    if (
+      exercise.runtime?.kind === 'react' &&
+      ['reading-card-v1', 'reading-state-v1', 'reading-filter-v1'].includes(
+        exercise.runtime.profile,
+      ) &&
+      !acceptsReactReadingScenarios(exercise.runtime.learningGoal, exercise.interactionScenarios)
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['interactionScenarios'],
+        message: '読書リスト教材には個別更新・再操作・0件・resetの全Scenarioが必要です',
       });
     }
     if (

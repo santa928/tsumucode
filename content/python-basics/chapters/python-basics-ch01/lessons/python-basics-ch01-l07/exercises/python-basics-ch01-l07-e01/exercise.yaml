@@ -2,7 +2,7 @@ id: python-basics-ch01-l07-e01
 kind: standard
 workspaceId: python-basics-ch01-l07-e01
 countsTowardStandardExerciseTotal: true
-title: 'Functionの引数とreturn、外側の変数を比べる'
+title: '定義した関数を呼ぶ'
 instructionsSource: instructions.md
 requiresConcepts:
   - conceptId: python-function
@@ -11,10 +11,10 @@ scaffoldLevel: transform
 steps:
   - id: python-basics-ch01-l07-e01-step01
     file: main.py
-    target: '2つの引数を足してreturnし、3と5、4と6の2組で呼び出します。'
-    starterAnchor: 'result = left + left'
-    change: '2つの引数を足してreturnし、3と5、4と6の2組で呼び出します。'
-    observe: '戻り値は8と10、最後に表示する外側のleftは100のままです。'
+    target: '関数を呼ぶ位置と回数'
+    starterAnchor: 'def show_sum():'
+    change: 'まず呼び出す前の出力を予測してください。その後、定義は残して関数の外に呼び出しを2回書き、8が2行表示されることを確かめます。print(8)を外へ2回書く方法では、定義を再利用したことを確かめられません。'
+    observe: 'Consoleは8、8です。'
     requiresConceptIds: [python-function]
     validationRuleIds: [python-basics-ch01-l07-e01-r01]
 runtime:
@@ -23,7 +23,7 @@ runtime:
   sourceType: script
   capabilityProfile: core
   primaryOutput: console
-  profile: function-return-scope-v1
+  profile: function-call-v1
 files:
   - path: main.py
     language: python
@@ -36,7 +36,7 @@ solutionFiles:
     editable: false
 validationRules:
   - id: python-basics-ch01-l07-e01-r01
-    label: '異なる引数で呼び出した戻り値と、外側の同名変数が保持される理由を説明できる。'
+    label: '関数の定義と実行を区別し、同じ処理を必要な回数呼び出せる。'
     required: true
     group: all
     viewportMode: all
@@ -46,28 +46,28 @@ validationRules:
       file: main.py
     assertion:
       kind: python-source-fact
-      fact: function-return-scoped
+      fact: function-behavior-verified
     feedback:
       target: main.pyとConsole
-      expected: '戻り値は8と10、最後に表示する外側のleftは100のままです。'
-      nextAction: '2つの引数を足してreturnし、3と5、4と6の2組で呼び出します。'
+      expected: '関数の定義と実行を区別し、同じ処理を必要な回数呼び出せる。'
+      nextAction: '関数名と()を組にした行を、字下げせず2回書きます。'
     hintId: python-basics-ch01-l07-e01-h01
     relatedSlideId: python-basics-ch01-l07-s02
 hints:
   - id: python-basics-ch01-l07-e01-h01
     level: 1
     title: 最初の手掛かり
-    text: '引数leftとrightには、呼び出しの括弧の値が順に入ります。'
+    text: '`def`は処理に名前を付ける行です。動かす行は、その下へ別に書きます。'
     relatedSlideId: python-basics-ch01-l07-s02
   - id: python-basics-ch01-l07-e01-h02
     level: 2
-    title: コードを組み立てる
-    text: 'result = left + rightをreturnします。Function内のleftは引数であり、外側の100を参照しません。'
+    title: 処理の流れを確かめる
+    text: '関数名の後ろに`()`を付けます。関数の外の行は字下げしません。'
     relatedSlideId: python-basics-ch01-l07-s02
   - id: python-basics-ch01-l07-e01-h03
     level: 3
-    title: 解答と理由
-    text: 'return left + rightと直接書く別解も正解です。3 + 5は8、4 + 6は10です。外側へ代入していないので最後のleftは100です。'
+    title: 解答と別解の考え方
+    text: '1回呼ぶ書き方は`show_sum()`です。もう1回呼ぶ行を自分で追加しましょう。'
     relatedSlideId: python-basics-ch01-l07-s02
 relatedSlideIds: [python-basics-ch01-l07-s01, python-basics-ch01-l07-s02]
 previewViewports:
@@ -85,31 +85,13 @@ fixtures:
         source: fixtures/solution.py
         editable: false
     expectedFeedbackRuleIds: []
-  - id: direct-return
+  - id: alternative
     expectedStatus: pass
     inputLines: []
     files:
       - path: main.py
         language: python
-        source: fixtures/direct-return.py
-        editable: false
-    expectedFeedbackRuleIds: []
-  - id: commuted-and-renamed
-    expectedStatus: pass
-    inputLines: []
-    files:
-      - path: main.py
-        language: python
-        source: fixtures/commuted-and-renamed.py
-        editable: false
-    expectedFeedbackRuleIds: []
-  - id: stored-results
-    expectedStatus: pass
-    inputLines: []
-    files:
-      - path: main.py
-        language: python
-        source: fixtures/stored-results.py
+        source: fixtures/alternative.py
         editable: false
     expectedFeedbackRuleIds: []
   - id: starter
@@ -120,43 +102,25 @@ fixtures:
         language: python
         source: fixtures/starter.py
         editable: false
-    expectedFeedbackRuleIds: ['python-basics-ch01-l07-e01-r01']
-  - id: constant-return
+    expectedFeedbackRuleIds: [python-basics-ch01-l07-e01-r01]
+  - id: misconception
     expectedStatus: incomplete
     inputLines: []
     files:
       - path: main.py
         language: python
-        source: fixtures/constant-return.py
+        source: fixtures/misconception.py
         editable: false
-    expectedFeedbackRuleIds: ['python-basics-ch01-l07-e01-r01']
-  - id: no-return
+    expectedFeedbackRuleIds: [python-basics-ch01-l07-e01-r01]
+  - id: output-only
     expectedStatus: incomplete
     inputLines: []
     files:
       - path: main.py
         language: python
-        source: fixtures/no-return.py
+        source: fixtures/output-only.py
         editable: false
-    expectedFeedbackRuleIds: ['python-basics-ch01-l07-e01-r01']
-  - id: unused-function
-    expectedStatus: incomplete
-    inputLines: []
-    files:
-      - path: main.py
-        language: python
-        source: fixtures/unused-function.py
-        editable: false
-    expectedFeedbackRuleIds: ['python-basics-ch01-l07-e01-r01']
-  - id: outer-value
-    expectedStatus: incomplete
-    inputLines: []
-    files:
-      - path: main.py
-        language: python
-        source: fixtures/outer-value.py
-        editable: false
-    expectedFeedbackRuleIds: ['python-basics-ch01-l07-e01-r01']
+    expectedFeedbackRuleIds: [python-basics-ch01-l07-e01-r01]
   - id: reference-error
     expectedStatus: code-error
     inputLines: []

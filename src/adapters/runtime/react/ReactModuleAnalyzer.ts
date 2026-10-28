@@ -38,6 +38,11 @@ const PACKAGES: Readonly<Record<string, readonly string[]>> = {
 /** 課題とFileの責務に対応するHookだけを許可し、旧profileへ新APIを開放しない。 */
 function reactExports(profile: ReactProfile, file: string): readonly string[] | undefined {
   switch (profile) {
+    case 'reading-card-v1':
+      return file === 'main.js' ? ['useState'] : undefined;
+    case 'reading-state-v1':
+    case 'reading-filter-v1':
+      return file === 'components.js' ? ['useState'] : undefined;
     case 'quiz-workshop-v1':
     case 'quiz-capstone-v1':
       return file === 'main.js' ? ['useState'] : undefined;
@@ -153,7 +158,8 @@ export class ReactModuleAnalyzer {
       (input.files[REACT_MODULE_FILE] !== STUB && input.files[REACT_MODULE_FILE] !== QUIZ_STUB)
     )
       throw new Error('React Analyzer入力の予約moduleが一致しません');
-    const result = await this.#client.analyze(input);
+    // 全moduleの安全解析は維持し、Reactで消費しない汎用教材factだけを収集対象から外す。
+    const result = await this.#client.analyze({ ...input, factCollection: 'module-boundary' });
     if (result.status !== 'success' || !('modules' in result)) return result;
     const reserved = result.modules.filter((item) => item.file === REACT_MODULE_FILE);
     if (reserved.length !== 1 || reserved[0]?.dependencies.length)
