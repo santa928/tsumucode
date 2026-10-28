@@ -153,7 +153,7 @@ releases:
     courseManifestSha256: a3bffc974c7d6b8acd23df4c92f3c82aee90e5af1cefc367e4039fe1857145ac
     publicProvenanceSha256: a577ff8815e8e27eca907b8e0e203b200a07aab323b792536ba04ae61c857c99
     persistentIdsSha256: 7e6e561262b2b3515f8de71bfe630cfbb9501de3106e7697e07abf2c123195f8
-    persistentIds: &a1
+    persistentIds:
       - desktop-1280
       - next
       - next-bookclub-capstone
@@ -298,16 +298,169 @@ releases:
     draftCanonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
     normalizedLearningInputSha256: 4caa93380af432c8986f8916e3f39214ae26f60cf37b433df70f485c423a0411
     courseId: next
+  - revision: 2026-10-27.1
+    canonicalDistSha256: 689c6e1fddaa1f907b91a473cafed7a6f149fd6ac61e1883d441ccf216727a41
+    courseManifestSha256: accf5fd532b7ac9ab877699dffbee9c20d0448c9224689ff7f33c716631fce73
+    publicProvenanceSha256: a577ff8815e8e27eca907b8e0e203b200a07aab323b792536ba04ae61c857c99
+    persistentIdsSha256: 7e6e561262b2b3515f8de71bfe630cfbb9501de3106e7697e07abf2c123195f8
+    persistentIds:
+      - desktop-1280
+      - next
+      - next-bookclub-capstone
+      - next-bookclub-capstone-check01
+      - next-bookclub-capstone-check02
+      - next-bookclub-capstone-check03
+      - next-ch01
+      - next-ch01-l01
+      - next-ch01-l01-e01
+      - next-ch01-l01-e01-h01
+      - next-ch01-l01-e01-h02
+      - next-ch01-l01-e01-h03
+      - next-ch01-l01-e01-r01
+      - next-ch01-l01-s01
+      - next-ch01-l01-s02
+      - next-ch01-l01-s03
+      - next-ch01-l01-s04
+      - next-ch02
+      - next-ch02-l01
+      - next-ch02-l01-e01
+      - next-ch02-l01-e01-h01
+      - next-ch02-l01-e01-h02
+      - next-ch02-l01-e01-h03
+      - next-ch02-l01-e01-r01
+      - next-ch02-l01-s01
+      - next-ch02-l01-s02
+      - next-ch02-l01-s03
+      - next-ch02-l01-s04
+      - next-ch02-l02
+      - next-ch02-l02-e01
+      - next-ch02-l02-e01-h01
+      - next-ch02-l02-e01-h02
+      - next-ch02-l02-e01-h03
+      - next-ch02-l02-e01-r01
+      - next-ch02-l02-s01
+      - next-ch02-l02-s02
+      - next-ch02-l02-s03
+      - next-ch02-l02-s04
+      - next-ch03
+      - next-ch03-l01
+      - next-ch03-l01-e01
+      - next-ch03-l01-e01-h01
+      - next-ch03-l01-e01-h02
+      - next-ch03-l01-e01-h03
+      - next-ch03-l01-e01-r01
+      - next-ch03-l01-s01
+      - next-ch03-l01-s02
+      - next-ch03-l01-s03
+      - next-ch03-l01-s04
+      - next-ch03-l02
+      - next-ch03-l02-e01
+      - next-ch03-l02-e01-h01
+      - next-ch03-l02-e01-h02
+      - next-ch03-l02-e01-h03
+      - next-ch03-l02-e01-r01
+      - next-ch03-l02-s01
+      - next-ch03-l02-s02
+      - next-ch03-l02-s03
+      - next-ch03-l02-s04
+      - next-ch04
+      - next-ch04-l01
+      - next-ch04-l01-e01
+      - next-ch04-l01-e01-h01
+      - next-ch04-l01-e01-h02
+      - next-ch04-l01-e01-h03
+      - next-ch04-l01-e01-r01
+      - next-ch04-l01-s01
+      - next-ch04-l01-s02
+      - next-ch04-l01-s03
+      - next-ch04-l01-s04
+      - next-ch04-l02
+      - next-ch04-l02-e01
+      - next-ch04-l02-e01-h01
+      - next-ch04-l02-e01-h02
+      - next-ch04-l02-e01-h03
+      - next-ch04-l02-e01-r01
+      - next-ch04-l02-s01
+      - next-ch04-l02-s02
+      - next-ch04-l02-s03
+      - next-ch04-l02-s04
+      - next-ch05
+      - next-ch05-l01
+      - next-ch05-l01-e01
+      - next-ch05-l01-e01-h01
+      - next-ch05-l01-e01-h02
+      - next-ch05-l01-e01-h03
+      - next-ch05-l01-e01-r01
+      - next-ch05-l01-e01-r02
+      - next-ch05-l01-e01-r03
+      - next-ch05-l01-g01
+      - next-ch05-l01-g02
+      - next-ch05-l01-g03
+      - next-ch06
+      - next-ch06-l01
+      - next-ch06-l01-e01
+      - next-ch06-l01-e01-h01
+      - next-ch06-l01-e01-h02
+      - next-ch06-l01-e01-h03
+      - next-ch06-l01-e01-r01
+      - next-ch06-l01-e01-r02
+      - next-ch06-l01-e01-r03
+      - next-ch06-l01-g01
+      - next-ch06-l01-g02
+      - next-ch06-l01-g03
+      - next-p01-server
+      - next-travel-guided
+      - next-travel-guided-check01
+      - next-travel-guided-check02
+      - next-travel-guided-check03
+    previousReleaseTag: tsumucode-release-2026-10-24.1
+    tombstonedIds: []
+    migrations:
+      - fromRevision: 2026-10-08.1
+        toRevision: 2026-10-08.2
+        steps: []
+      - fromRevision: 2026-10-08.2
+        toRevision: 2026-10-08.3
+        steps: []
+      - fromRevision: 2026-10-08.3
+        toRevision: 2026-10-09.1
+        steps: []
+      - fromRevision: 2026-10-09.1
+        toRevision: 2026-10-09.2
+        steps: []
+      - fromRevision: 2026-10-09.2
+        toRevision: 2026-10-24.1
+        steps: []
+      - fromRevision: 2026-10-24.1
+        toRevision: 2026-10-27.1
+        steps: []
+    syntheticProgressBundlePath: tests/fixtures/progress/next-previous-release-bundle.json
+    tag: tsumucode-release-2026-10-27.1
+    sourceCommit: f1fcd0397f539770a31879219962c03fb5ab118c
+    workflowHeadCommit: 7c860178c8f75dd60a474115f4113f30bca5f8d6
+    qualityArtifactId: '12781194413'
+    qualityArtifactDigest: sha256:1bb80412448c824f6b7b46b98af3b68ef4439cebc0bb86fa9d97b9d531bf3604
+    reportArtifactId: '12783175504'
+    reportArtifactDigest: sha256:9ed40033d6333089c24af20d5ed7eb993b4c83891ca3ae5fd2ab4907942b80a3
+    workflowRunId: '40597796093'
+    workflowRunAttempt: 1
+    pageUrl: https://santa928.github.io/tsumucode/
+    postDeployVerificationPath: docs/quality/post-deploy/next/2026-10-27.1.yaml
+    postDeployVerificationSha256: 98e8be8761d5442262e5b5bf5d236c93571f189f5e60fe6c9ec6abd3f35170e0
+    draftSourceCommit: f1fcd0397f539770a31879219962c03fb5ab118c
+    draftCanonicalDistSha256: 689c6e1fddaa1f907b91a473cafed7a6f149fd6ac61e1883d441ccf216727a41
+    normalizedLearningInputSha256: 074d70e8a60b2d4e2b79424bcbbfaccfb122236c9fba152ca0f372e2f304f7e2
+    courseId: next
 candidate:
   revision: 2026-10-27.1
-  status: approved
-  verifiedSourceCommit: f1fcd0397f539770a31879219962c03fb5ab118c
-  canonicalDistSha256: 689c6e1fddaa1f907b91a473cafed7a6f149fd6ac61e1883d441ccf216727a41
-  courseManifestSha256: accf5fd532b7ac9ab877699dffbee9c20d0448c9224689ff7f33c716631fce73
-  publicProvenanceSha256: a577ff8815e8e27eca907b8e0e203b200a07aab323b792536ba04ae61c857c99
-  persistentIdsSha256: 7e6e561262b2b3515f8de71bfe630cfbb9501de3106e7697e07abf2c123195f8
-  persistentIds: *a1
-  previousReleaseTag: tsumucode-release-2026-10-24.1
+  status: draft
+  verifiedSourceCommit: draft
+  canonicalDistSha256: draft
+  courseManifestSha256: draft
+  publicProvenanceSha256: draft
+  persistentIdsSha256: draft
+  persistentIds: []
+  previousReleaseTag: tsumucode-release-2026-10-27.1
   tombstonedIds: []
   migrations:
     - fromRevision: 2026-10-08.1
@@ -329,7 +482,7 @@ candidate:
       toRevision: 2026-10-27.1
       steps: []
   syntheticProgressBundlePath: tests/fixtures/progress/next-previous-release-bundle.json
-  draftSourceCommit: f1fcd0397f539770a31879219962c03fb5ab118c
-  draftCanonicalDistSha256: 689c6e1fddaa1f907b91a473cafed7a6f149fd6ac61e1883d441ccf216727a41
-  normalizedLearningInputSha256: 074d70e8a60b2d4e2b79424bcbbfaccfb122236c9fba152ca0f372e2f304f7e2
+  draftSourceCommit: draft
+  draftCanonicalDistSha256: draft
+  normalizedLearningInputSha256: draft
   courseId: next
