@@ -25,7 +25,7 @@ for (const [textScale, height] of [
 ] as const) {
   test(`狭幅の通読で教材選択へ戻っても読んだ節から再開する（文字${String(textScale)}%・高さ${String(height)}）`, async ({
     page,
-  }) => {
+  }, info) => {
     await page.setViewportSize({ width: 390, height });
     await page.goto('./#/library/html-css/lessons/html-css-ch00-l01/read');
     if (textScale !== 100) {
@@ -43,6 +43,22 @@ for (const [textScale, height] of [
       new RegExp(`slide=${target}$`, 'u'),
     );
     await settleReadingPosition(page);
+    const boundary = await section.evaluate((node) => {
+      const first = document.querySelector<HTMLElement>('[data-reading-section]');
+      const margin = first ? Number.parseFloat(getComputedStyle(first).scrollMarginBlockStart) : 0;
+      return {
+        top: node.getBoundingClientRect().top,
+        line: Math.max(innerHeight * 0.2, Number.isFinite(margin) ? margin : 0),
+        scrollY,
+        height: innerHeight,
+        fontSize: getComputedStyle(document.documentElement).fontSize,
+        devicePixelRatio,
+      };
+    });
+    await info.attach('reading-position-boundary', {
+      body: JSON.stringify(boundary, null, 2),
+      contentType: 'application/json',
+    });
     const currentPosition = () =>
       page.evaluate((key) => {
         const saved = JSON.parse(localStorage.getItem(key) ?? '{}') as {
@@ -50,6 +66,20 @@ for (const [textScale, height] of [
         };
         return saved.positions?.[0]?.slideId;
       }, KEY);
+    await expect.poll(currentPosition).toBe(target);
+    // 判定線を明確に越えていない節を、URL指定だけで現在位置に固定しない。
+    await section.evaluate((node) => {
+      const first = document.querySelector<HTMLElement>('[data-reading-section]');
+      const margin = first ? Number.parseFloat(getComputedStyle(first).scrollMarginBlockStart) : 0;
+      const line = Math.max(innerHeight * 0.2, Number.isFinite(margin) ? margin : 0);
+      window.scrollBy({ top: node.getBoundingClientRect().top - line - 2, behavior: 'auto' });
+    });
+    await settleReadingPosition(page);
+    await expect.poll(currentPosition).toBe('html-css-ch00-l01-s02');
+    await section.evaluate((node) => {
+      node.scrollIntoView({ block: 'start', behavior: 'auto' });
+    });
+    await settleReadingPosition(page);
     await expect.poll(currentPosition).toBe(target);
     await section.getByText('答えと理由を見る', { exact: true }).click();
 
