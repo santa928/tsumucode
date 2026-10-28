@@ -38,10 +38,6 @@ export function buildInventory(compilations: readonly CompiledCourseArtifacts[])
             full.fixtures.map((fixture) => fixture.id),
             exercise.id + '/fixtures',
           );
-          if (
-            full.fixtures.some((fixture) => fixture.id === 'solution' || fixture.id === 'starter')
-          )
-            throw new Error('Fixture ID collides with solution/starter');
           const runtimeKind = RuntimeKindSchema.parse(exercise.runtime?.kind ?? runner);
           return {
             id: exercise.id,

@@ -69,6 +69,7 @@ export const TargetSchema = z
     lessonId: IdSchema,
     exerciseId: IdSchema.optional(),
     fixtureId: IdSchema.optional(),
+    caseKind: z.enum(['solution', 'starter', 'authored']).optional(),
     runtimeKind: RuntimeKindSchema.optional(),
     mode: z.enum(['browser', 'pyodide', 'cpython', 'local']).optional(),
     role: z.enum(['novice', 'recovery', 'maker']).optional(),
@@ -125,6 +126,7 @@ export const SuiteResultSchema = z
     targets: z.array(z.string().min(1)),
     startedAt: z.iso.datetime(),
     finishedAt: z.iso.datetime(),
+    expiresAt: z.iso.datetime(),
     reportDigest: DigestSchema,
   })
   .strict();

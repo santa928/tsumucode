@@ -65,6 +65,28 @@ describe('manifest driven release inventory', () => {
     expect(new Set(plan.targets.map((target) => target.key)).size).toBe(plan.targets.length);
   });
 
+  it('keeps authored cases named starter or solution separate from built-in cases', async () => {
+    const { buildInventory } = await import('../../../../scripts/release/v2/inventory');
+    const { planRelease } = await import('../../../../scripts/release/v2/plan');
+    const first = html.authoringExercises![0]!;
+    const edited = {
+      ...first,
+      fixtures: [
+        ...first.fixtures,
+        { ...first.fixtures[0]!, id: 'starter' },
+        { ...first.fixtures[0]!, id: 'solution' },
+      ],
+    };
+    const inventory = buildInventory([
+      { ...html, authoringExercises: [edited, ...html.authoringExercises!.slice(1)] },
+    ]);
+    const targets = planRelease(inventory).targets.filter(
+      (target) => target.exerciseId === first.id && target.fixtureId === 'starter',
+    );
+    expect(targets).toHaveLength(2);
+    expect(new Set(targets.map((target) => target.key)).size).toBe(2);
+  });
+
   it('does not reset learner evaluation for a course revision or navigation-only edit', async () => {
     const { buildInventory } = await import('../../../../scripts/release/v2/inventory');
     const before = buildInventory([html]);
