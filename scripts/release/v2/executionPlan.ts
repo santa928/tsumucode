@@ -50,6 +50,10 @@ export const ExecutionPlanSchema = z
   .object({
     schemaVersion: z.literal(1),
     releasePlanDigest: z.string().regex(/^[a-f0-9]{64}$/u),
+    publicContentDigest: z
+      .string()
+      .regex(/^[a-f0-9]{64}$/u)
+      .optional(),
     testManifests: z.array(TestSuiteManifestSchema).length(TEST_SUITES.length),
     requirements: z.array(SuiteRequirementSchema).min(1),
   })
@@ -80,9 +84,17 @@ function fixtureOwner(
   return choices[0]!.suite;
 }
 /** Expected targets are assigned from independently frozen source tests, never from success self-reports. */
-export function createExecutionPlan(planInput: unknown, manifestsInput: unknown): ExecutionPlan {
+export function createExecutionPlan(
+  planInput: unknown,
+  manifestsInput: unknown,
+  publicContentDigest?: string,
+): ExecutionPlan {
   const plan = PlanSchema.parse(planInput),
     manifests = z.array(TestSuiteManifestSchema).length(TEST_SUITES.length).parse(manifestsInput);
+  if (plan.targets.some((target) => target.kind === 'learning-engine'))
+    throw new Error(
+      'New-Lesson learning engine observations pending; cannot qualify this target yet',
+    );
   if (
     new Set(manifests.map(({ suite }) => suite)).size !== manifests.length ||
     TEST_SUITES.some(
@@ -138,6 +150,7 @@ export function createExecutionPlan(planInput: unknown, manifestsInput: unknown)
   return ExecutionPlanSchema.parse({
     schemaVersion: 1,
     releasePlanDigest,
+    ...(publicContentDigest ? { publicContentDigest } : {}),
     testManifests: manifests,
     requirements: [
       requirement('artifact-preflight', 'build', [
@@ -175,7 +188,11 @@ export function testCommand(suite: string, list: boolean): string[] {
   ];
 }
 /** Same checkout/lock, fixed commands only. Source collection starts no browser or learner execution. */
-export async function collectExecutionPlan(root: string, planInput: unknown) {
+export async function collectExecutionPlan(
+  root: string,
+  planInput: unknown,
+  publicContentDigest?: string,
+) {
   const manifests: TestSuiteManifest[] = [];
   for (const definition of TEST_SUITES) {
     const output = await exec(
@@ -231,5 +248,5 @@ export async function collectExecutionPlan(root: string, planInput: unknown) {
     .sort();
   if (JSON.stringify(full.tests.map(({ key }) => key).sort()) !== JSON.stringify(combined))
     throw new Error('Chromium shard union omits source tests');
-  return createExecutionPlan(planInput, manifests);
+  return createExecutionPlan(planInput, manifests, publicContentDigest);
 }

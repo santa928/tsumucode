@@ -6,7 +6,7 @@ import { withoutReviewedNextSource } from './reviewedNextArtifact';
 import { hashFile } from './releaseHashes';
 import { z } from 'zod';
 import { InventorySchema, type ReleaseInventory } from './v2/schema';
-import { hashBytes } from './v2/identity';
+import { hashBytes, hashArtifact, ArtifactManifestSchema } from './v2/identity';
 import { ProgressCatalogSchema } from '../../src/core/content/progressCatalog';
 import { CourseCatalogV3Schema } from '../../src/core/content/deliverySchema';
 import { readSplitCourseArtifacts } from '../content/readSplitCourseArtifacts';
@@ -151,6 +151,7 @@ export interface StaticArtifactReport {
 export async function checkStaticArtifact(
   distDir: string,
   courseId: ReleaseCourseId | ReleaseInventory = 'html-css',
+  publicContentInput?: unknown,
 ): Promise<StaticArtifactReport> {
   const inventory = typeof courseId === 'string' ? undefined : InventorySchema.parse(courseId);
   const contract =
@@ -197,6 +198,11 @@ export async function checkStaticArtifact(
   await access(path.join(root, 'index.html'));
   await access(path.join(root, 'generated/content/catalog-v3.json'));
   if (inventory) {
+    const expectedContent = ArtifactManifestSchema.parse(publicContentInput);
+    if (
+      (await hashArtifact(path.join(root, 'generated/content'))).digest !== expectedContent.digest
+    )
+      throw new Error('Generated public file closure differs from the single compile');
     const parsedCatalog = CourseCatalogV3Schema.parse(catalog);
     if (!parsedCatalog.progressCatalog) throw new Error('Missing known-course progress contracts');
     const progressBytes = await readFile(path.join(root, parsedCatalog.progressCatalog.path));

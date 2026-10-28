@@ -28,6 +28,8 @@ const inventory = InventorySchema.parse({
   ],
 });
 function setup() {
+  const publicFiles = [{ path: 'catalog-v3.json', bytes: 2, sha256: 'a'.repeat(64) }];
+  const publicContent = { digest: hashValue(publicFiles), files: publicFiles };
   const proof = {
     schemaVersion: 1,
     repository: 'owner/site',
@@ -62,7 +64,7 @@ function setup() {
     project,
     tests: [{ key: suite + '/case', exerciseIds: [] }],
   }));
-  const executionPlan = createExecutionPlan(plan, manifests);
+  const executionPlan = createExecutionPlan(plan, manifests, hashValue(publicContent));
   const recipe = {
     sourceCommit: '3'.repeat(40),
     sourceTree: '4'.repeat(40),
@@ -101,6 +103,7 @@ function setup() {
   }));
   return {
     inventory,
+    publicContent,
     plan,
     executionPlan,
     candidate,

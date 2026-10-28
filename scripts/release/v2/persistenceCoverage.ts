@@ -5,6 +5,7 @@ const ObservationSchema = z
     rows: z.array(z.object({ key: z.string().min(1), inputDigest: DigestSchema }).strict()).min(1),
     knownCourses: z.array(IdSchema).min(1),
     workspaces: z.number().int().nonnegative(),
+    workspaceKeys: z.array(z.string().min(1)),
     synthetic: z.literal(true),
   })
   .strict();
@@ -13,7 +14,7 @@ export function readPersistenceCoverage(
   input: unknown,
   targetsInput: unknown,
   courseIds: readonly string[],
-  workspaceCount: number,
+  workspaceKeys: readonly string[],
 ): string[] {
   const targets = z.array(TargetSchema).min(1).parse(targetsInput);
   if (
@@ -80,7 +81,10 @@ export function readPersistenceCoverage(
   if (observations.length !== 1) throw new Error('Missing or duplicate persistence roundtrip');
   const actual = observations[0]!;
   if (
-    actual.workspaces !== workspaceCount ||
+    actual.workspaces !== workspaceKeys.length ||
+    actual.workspaceKeys.length !== workspaceKeys.length ||
+    new Set(actual.workspaceKeys).size !== workspaceKeys.length ||
+    workspaceKeys.some((key) => !actual.workspaceKeys.includes(key)) ||
     actual.knownCourses.length !== courseIds.length ||
     new Set(actual.knownCourses).size !== courseIds.length ||
     courseIds.some((id) => !actual.knownCourses.includes(id))

@@ -15,7 +15,10 @@ export function observeTestSuite(
   const plan = PlanSchema.parse(planInput),
     execution = ExecutionPlanSchema.parse(executionInput),
     inventory = InventorySchema.parse(inventoryInput);
-  if (hashValue(execution) !== hashValue(createExecutionPlan(plan, execution.testManifests)))
+  if (
+    hashValue(execution) !==
+    hashValue(createExecutionPlan(plan, execution.testManifests, execution.publicContentDigest))
+  )
     throw new Error('Unbound execution plan');
   const manifest = execution.testManifests.find((item) => item.suite === suite),
     requirement = execution.requirements.find((item) => item.suite === suite);
@@ -35,11 +38,15 @@ export function observeTestSuite(
         report,
         persistence,
         inventory.courses.map(({ id }) => id),
-        inventory.courses.reduce(
-          (total, course) =>
-            total + course.lessons.reduce((count, lesson) => count + lesson.exercises.length, 0),
-          0,
-        ),
+        [
+          ...new Set(
+            inventory.courses.flatMap((course) =>
+              course.lessons.flatMap((lesson) =>
+                lesson.exercises.map((exercise) => course.id + ':' + exercise.workspaceId),
+              ),
+            ),
+          ),
+        ].sort(),
       ),
     );
   if (

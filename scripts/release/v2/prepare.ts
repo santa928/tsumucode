@@ -57,7 +57,12 @@ export async function prepareRelease(
     // Authoring destination is task-owned staging, never a deployable artifact.
     await writeSplitContentDeliveryTree(authoringOutput, authoring);
     const inventory = buildInventory(compilation.compilations);
-    return { schemaVersion: 1, inventory, plan: planRelease(inventory, baseline) };
+    return {
+      schemaVersion: 1,
+      inventory,
+      plan: planRelease(inventory, baseline),
+      publicContent: await hashArtifact(publicOutput),
+    };
   } catch (error) {
     await rm(second, { recursive: true, force: true });
     throw error;

@@ -10,6 +10,7 @@ import {
 } from '../../../../scripts/content/splitContentDelivery';
 import { buildInventory } from '../../../../scripts/release/v2/inventory';
 const roots: string[] = [];
+const publicClosures = new Map<string, unknown>();
 afterEach(async () => {
   for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true });
 });
@@ -24,13 +25,17 @@ async function artifact() {
     buildSplitContentDelivery([renamed], [], 'public'),
   );
   await writeFile(path.join(root, 'index.html'), '<p>Public static app</p>');
+  const { hashArtifact } = await import('../../../../scripts/release/v2/identity');
+  publicClosures.set(root, await hashArtifact(path.join(root, 'generated/content')));
   return { root, inventory: buildInventory([renamed]) };
 }
 describe('generic public artifact gate', () => {
   it('accepts a future topic without a fixed course-name registry', async () => {
     const { checkStaticArtifact } = await import('../../../../scripts/release/checkStaticArtifact');
     const { root, inventory } = await artifact();
-    expect((await checkStaticArtifact(root, inventory)).files).toBeGreaterThan(0);
+    expect(
+      (await checkStaticArtifact(root, inventory, publicClosures.get(root))).files,
+    ).toBeGreaterThan(0);
   });
   it.each(['missing-course', 'draft', 'missing-lesson', 'extra-lesson', 'private-payload'])(
     'rejects %s from the expected public inventory',
@@ -51,7 +56,9 @@ describe('generic public artifact gate', () => {
         );
       if (failure === 'private-payload')
         await writeFile(path.join(root, 'leak.json'), '\u007b"solutionFiles":[]\u007d');
-      await expect(checkStaticArtifact(root, inventory)).rejects.toThrow();
+      await expect(
+        checkStaticArtifact(root, inventory, publicClosures.get(root)),
+      ).rejects.toThrow();
     },
   );
 });
@@ -77,6 +84,6 @@ it.each(['hash', 'missing', 'unknown-payload'])(
       catalog.progressCatalog.sha256 = canonicalSha256(value);
       await writeFile(catalogPath, stringifyCanonicalJson(catalog));
     }
-    await expect(checkStaticArtifact(root, inventory)).rejects.toThrow();
+    await expect(checkStaticArtifact(root, inventory, publicClosures.get(root))).rejects.toThrow();
   },
 );

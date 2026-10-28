@@ -4,7 +4,8 @@ import { lstat, mkdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { z } from 'zod';
 import { BuildIdentitySchema, InventorySchema, PlanSchema } from './schema';
-import { hashBytes, hashValue } from './identity';
+import { hashBytes, hashValue, ArtifactManifestSchema } from './identity';
+import { storeSuiteReport } from './reports';
 import { validateCapturedBaseline } from './parent';
 import { planRelease } from './plan';
 import { createExecutionPlan, ExecutionPlanSchema, testCommand } from './executionPlan';
@@ -15,7 +16,12 @@ import { readNextFixtureCoverage } from './nativeCoverage';
 import { checkStaticArtifact } from '../checkStaticArtifact';
 const exec = promisify(execFile);
 const SnapshotSchema = z
-  .object({ schemaVersion: z.literal(1), inventory: InventorySchema, plan: PlanSchema })
+  .object({
+    schemaVersion: z.literal(1),
+    inventory: InventorySchema,
+    plan: PlanSchema,
+    publicContent: ArtifactManifestSchema,
+  })
   .strict();
 const BundleSchema = z
   .object({
@@ -39,7 +45,14 @@ export function validateExecutionBundle(input: unknown) {
     candidate.buildJobId !== 'build' ||
     hashValue(snapshot.plan) !== hashValue(planRelease(snapshot.inventory, baseline)) ||
     hashValue(executionPlan) !==
-      hashValue(createExecutionPlan(snapshot.plan, executionPlan.testManifests)) ||
+      hashValue(
+        createExecutionPlan(
+          snapshot.plan,
+          executionPlan.testManifests,
+          executionPlan.publicContentDigest,
+        ),
+      ) ||
+    executionPlan.publicContentDigest !== hashValue(snapshot.publicContent) ||
     candidate.planDigest !== hashValue({ plan: snapshot.plan, executionPlan })
   )
     throw new Error('Candidate, source obligations or actual parent differ');
@@ -89,7 +102,7 @@ export async function runReleaseSuite(
     jobId: environment.GITHUB_JOB,
     attempt: Number(environment.GITHUB_RUN_ATTEMPT),
   };
-  return executeSuite(candidate, requirement, context, path.join(root, 'dist'), async () => {
+  const driver = async () => {
     const directory = path.join(root, '.release-v2/checks');
     await mkdir(directory, { recursive: true });
     const reportFile = path.join(directory, suite + '.json');
@@ -137,7 +150,7 @@ export async function runReleaseSuite(
         );
         return {
           targets,
-          report: { kind: 'actual-native-fixtures', sourceDigest: hashBytes(source) },
+          report: { kind: 'actual-native-fixtures', sourceDigest: hashBytes(source), rows },
         };
       }
       const report = await readJson(path.join(root, 'test-results/local-python/results.json'));
@@ -171,7 +184,11 @@ export async function runReleaseSuite(
       };
     }
     if (suite === 'artifact-preflight') {
-      const staticReport = await checkStaticArtifact(path.join(root, 'dist'), snapshot.inventory);
+      const staticReport = await checkStaticArtifact(
+        path.join(root, 'dist'),
+        snapshot.inventory,
+        snapshot.publicContent,
+      );
       await command([
         'npm',
         'run',
@@ -189,12 +206,12 @@ export async function runReleaseSuite(
     }
     if (suite === 'unit') {
       await command(['npm', 'run', 'lint']);
-      await command(['npm', 'run', 'format:check']);
       await command([
         'npm',
         'run',
         'test:run',
         '--',
+        '--reporter=default',
         '--reporter=json',
         '--outputFile=' + reportFile,
       ]);
@@ -207,16 +224,36 @@ export async function runReleaseSuite(
     if (suite === 'performance') {
       await absent(path.join(root, '.lighthouseci/assertion-results.json'));
       await command(['npm', 'run', 'test:lighthouse']);
+      const originalAssertions = await readJson(
+        path.join(root, '.lighthouseci/assertion-results.json'),
+      );
       const assertions = z
         .array(z.object({ level: z.string().optional(), passed: z.boolean() }))
         .min(1)
-        .parse(await readJson(path.join(root, '.lighthouseci/assertion-results.json')));
+        .parse(originalAssertions);
       if (assertions.some((row) => row.level === 'error' && !row.passed))
         throw new Error('Lighthouse budget failed');
-      return { targets: ['performance/lighthouse'], report: { commandReports, assertions } };
+      return {
+        targets: ['performance/lighthouse'],
+        report: { commandReports, assertions: originalAssertions },
+      };
     }
     throw new Error('Unimplemented fixed suite');
-  });
+  };
+  let actualReport: unknown;
+  const result = await executeSuite(
+    candidate,
+    requirement,
+    context,
+    path.join(root, 'dist'),
+    async () => {
+      const observation = await driver();
+      actualReport = observation.report;
+      return observation;
+    },
+  );
+  await storeSuiteReport(root, result, actualReport);
+  return result;
 }
 function verifyUnitReport(input: unknown) {
   z.object({

@@ -2,6 +2,8 @@ import { createHash } from 'node:crypto';
 import { lstat, readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { canonicalJson } from '../../../src/core/persistence/canonicalJson';
+import { z } from 'zod';
+import { DigestSchema } from './schema';
 
 export function hashValue(value: unknown): string {
   return createHash('sha256').update(canonicalJson(value)).digest('hex');
@@ -18,6 +20,29 @@ export interface ArtifactIdentity {
   readonly digest: string;
   readonly files: readonly ArtifactFile[];
 }
+export const ArtifactManifestSchema = z
+  .object({
+    digest: DigestSchema,
+    files: z
+      .array(
+        z
+          .object({
+            path: z.string().min(1),
+            bytes: z.number().int().nonnegative(),
+            sha256: DigestSchema,
+          })
+          .strict(),
+      )
+      .min(1),
+  })
+  .strict()
+  .superRefine((value, context) => {
+    if (
+      value.digest !== hashValue(value.files) ||
+      new Set(value.files.map(({ path }) => path)).size !== value.files.length
+    )
+      context.addIssue({ code: 'custom', message: 'Invalid public file closure' });
+  });
 
 /** Hash the actual byte tree; never follow links or accept hidden host paths. */
 export async function hashArtifact(directory: string): Promise<ArtifactIdentity> {

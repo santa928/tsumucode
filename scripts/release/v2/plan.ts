@@ -24,9 +24,43 @@ export function planRelease(input: ReleaseInventory, baselineInput?: unknown): R
       ) ?? [],
   );
   const targets: ReleaseTarget[] = [];
+  // Do not silently shrink a previously published negative/fixture contract during migration.
+  for (const oldCourse of baseline?.inventory.courses.filter(
+    (course) => course.publicationStatus === 'published',
+  ) ?? []) {
+    const currentCourse = published.find((course) => course.id === oldCourse.id);
+    for (const oldLesson of oldCourse.lessons)
+      for (const oldExercise of oldLesson.exercises) {
+        const currentExercise = currentCourse?.lessons
+          .find((lesson) => lesson.id === oldLesson.id)
+          ?.exercises.find((exercise) => exercise.id === oldExercise.id);
+        if (!currentExercise)
+          throw new Error('Published exercise removal requires review: ' + oldExercise.id);
+        for (const fixture of oldExercise.fixtures) {
+          const current = currentExercise.fixtures.find((row) => row.id === fixture.id);
+          if (!current || (fixture.expectedStatus !== 'pass' && current.expectedStatus === 'pass'))
+            throw new Error(
+              'Published fixture removal or weakening requires review: ' +
+                oldExercise.id +
+                '/' +
+                fixture.id,
+            );
+        }
+      }
+  }
   for (const course of published)
     for (const lesson of course.lessons) {
       const prefix = course.id + '/' + lesson.id;
+      if (!previous.has(prefix))
+        for (const engine of ['chromium', 'firefox', 'webkit'] as const)
+          targets.push({
+            key: prefix + '/learning-engine/' + engine,
+            kind: 'learning-engine',
+            engine,
+            courseId: course.id,
+            lessonId: lesson.id,
+            inputDigest: lesson.learnerDigest,
+          });
       if (previous.get(prefix) !== lesson.learnerDigest) {
         targets.push({
           key: prefix + '/content',

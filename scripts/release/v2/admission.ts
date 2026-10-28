@@ -6,7 +6,7 @@ import {
   PlanSchema,
   RecipeSchema,
 } from './schema';
-import { hashValue } from './identity';
+import { hashValue, ArtifactManifestSchema } from './identity';
 import { validateCapturedBaseline } from './parent';
 import { planRelease } from './plan';
 import { ExecutionPlanSchema, createExecutionPlan } from './executionPlan';
@@ -36,6 +36,7 @@ export interface AdmissionInput {
   readonly currentBaseline: unknown;
   readonly contentReceipts: unknown;
   readonly context: unknown;
+  readonly publicContent: unknown;
 }
 /** Trusted caller re-reads actual main/recipe/deployment and native needs statuses. No network self-claims qualify. */
 export function qualifyRelease(input: AdmissionInput) {
@@ -44,10 +45,12 @@ export function qualifyRelease(input: AdmissionInput) {
     executionPlan = ExecutionPlanSchema.parse(input.executionPlan),
     candidate = BuildIdentitySchema.parse(input.candidate),
     context = ContextSchema.parse(input.context);
+  const publicContent = ArtifactManifestSchema.parse(input.publicContent);
   const captured = validateCapturedBaseline(input.capturedBaseline),
     current = validateCapturedBaseline(input.currentBaseline);
   if (
-    hashValue(captured.baseline) !== hashValue(current.baseline) ||
+    hashValue({ ...captured.proof, observedAt: null }) !==
+      hashValue({ ...current.proof, observedAt: null }) ||
     captured.proof.repository !== context.repository ||
     current.proof.repository !== context.repository
   )
@@ -61,7 +64,11 @@ export function qualifyRelease(input: AdmissionInput) {
     throw new Error('Stale source, recipe or producer');
   if (
     hashValue(plan) !== hashValue(planRelease(inventory, captured.baseline)) ||
-    hashValue(executionPlan) !== hashValue(createExecutionPlan(plan, executionPlan.testManifests))
+    hashValue(executionPlan) !==
+      hashValue(
+        createExecutionPlan(plan, executionPlan.testManifests, executionPlan.publicContentDigest),
+      ) ||
+    executionPlan.publicContentDigest !== hashValue(publicContent)
   )
     throw new Error('Plan is not derived from actual inventory and source tests');
   const planDigest = hashValue({ plan, executionPlan });

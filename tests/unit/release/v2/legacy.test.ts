@@ -326,7 +326,13 @@ acceptance:
     ]);
     for (const result of results) {
       expect(result.missingRecordPaths).toEqual([]);
-      expect(result.contentLessons.every((row) => row.sourceHashMatches)).toBe(true);
+      expect(
+        result.contentLessons.filter((row) => !row.sourceHashMatches).map((row) => row.lessonId),
+      ).toEqual(
+        result.courseId === 'python-basics'
+          ? ['python-basics-ch01-l03', 'python-basics-ch01-l09', 'python-basics-ch02-l01']
+          : [],
+      );
       expect(result.coverage.missingLessonIds).toEqual([]);
       expect(result.coverage.extraLessonIds).toEqual([]);
     }

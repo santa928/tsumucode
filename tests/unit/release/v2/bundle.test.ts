@@ -28,7 +28,36 @@ function setup() {
       },
     ],
   });
-  const plan = planRelease(inventory),
+  const proof = {
+    schemaVersion: 1,
+    repository: 'owner/site',
+    deploymentId: '501',
+    sourceCommit: '1'.repeat(40),
+    workflowHeadCommit: '2'.repeat(40),
+    runId: '500',
+    tag: 'refs/tags/tsumucode-release-1',
+    tagDigest: 'a'.repeat(64),
+    artifactDigest: 'b'.repeat(64),
+    artifactDigestFormat: 'legacy-canonical-dist',
+    projection: 'authoring',
+    inventoryDigest: hashValue(inventory),
+    publicContentDigest: 'c'.repeat(64),
+    publicFiles: 1,
+    observedAt: '2026-10-28T10:00:00Z',
+  };
+  const capturedBaseline = {
+    proof,
+    baseline: {
+      deploymentId: '501',
+      sourceCommit: proof.sourceCommit,
+      artifactDigest: proof.artifactDigest,
+      sourceRecordDigest: hashValue(proof),
+      inventory,
+    },
+  };
+  const files = [{ path: 'catalog-v3.json', bytes: 2, sha256: 'a'.repeat(64) }];
+  const publicContent = { digest: hashValue(files), files };
+  const plan = planRelease(inventory, capturedBaseline.baseline),
     executionPlan = createExecutionPlan(
       plan,
       TEST_SUITES.map(({ suite, producerJobId, project }) => ({
@@ -37,6 +66,7 @@ function setup() {
         project,
         tests: [{ key: suite + '/case', exerciseIds: [] }],
       })),
+      hashValue(publicContent),
     );
   const candidate = {
     schemaVersion: 1,
@@ -57,7 +87,12 @@ function setup() {
       basePath: '/site/',
     },
   };
-  return { snapshot: { schemaVersion: 1, inventory, plan }, executionPlan, candidate };
+  return {
+    snapshot: { schemaVersion: 1, inventory, plan, publicContent },
+    capturedBaseline,
+    executionPlan,
+    candidate,
+  };
 }
 describe('immutable release execution bundle', () => {
   it('binds candidate to the independently reproducible source obligations', async () => {

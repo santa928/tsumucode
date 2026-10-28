@@ -47,7 +47,9 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: receipts-unit-unit-${{ github.run_id }}-${{ github.run_attempt }}
-          path: .release-v2/receipts/
+          path: |
+            .release-v2/receipts/
+            .release-v2/reports/
           include-hidden-files: true
           if-no-files-found: warn
           retention-days: 90
@@ -115,7 +117,9 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: receipts-browser-${{ matrix.suite }}-${{ github.run_id }}-${{ github.run_attempt }}
-          path: .release-v2/receipts/
+          path: |
+            .release-v2/receipts/
+            .release-v2/reports/
           include-hidden-files: true
           if-no-files-found: warn
           retention-days: 90
@@ -167,7 +171,9 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: receipts-public_boundary-public-${{ github.run_id }}-${{ github.run_attempt }}
-          path: .release-v2/receipts/
+          path: |
+            .release-v2/receipts/
+            .release-v2/reports/
           include-hidden-files: true
           if-no-files-found: warn
           retention-days: 90
@@ -220,7 +226,9 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: receipts-performance-performance-${{ github.run_id }}-${{ github.run_attempt }}
-          path: .release-v2/receipts/
+          path: |
+            .release-v2/receipts/
+            .release-v2/reports/
           include-hidden-files: true
           if-no-files-found: warn
           retention-days: 90
@@ -269,7 +277,7 @@ jobs:
         with:
           pattern: receipts-*
           merge-multiple: true
-          path: .release-v2/receipts
+          path: .release-v2
       - name: Build fixed aggregation tool
         run: ./scripts/docker-compose.sh build app
       - name: Re-read actual main and deployed parent before admission

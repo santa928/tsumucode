@@ -1,4 +1,4 @@
-import { lstat, mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { lstat, mkdtemp, readFile, rm } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import { parseArgs } from 'node:util';
@@ -7,7 +7,8 @@ import { z } from 'zod';
 import { compileContent } from '../../content/compile';
 import { checkStaticArtifact } from '../checkStaticArtifact';
 import { buildInventory } from './inventory';
-import { hashValue } from './identity';
+import { hashValue, ArtifactManifestSchema } from './identity';
+import { writeProtocolJson } from './json';
 import { readLegacyEvidence } from './legacy';
 import { planRelease } from './plan';
 import { compareLegacy } from './shadow';
@@ -21,7 +22,12 @@ import { runReleaseSuite } from './runner';
 import { qualifyCurrentRelease } from './qualify';
 
 const PreparationSchema = z
-  .object({ schemaVersion: z.literal(1), inventory: InventorySchema, plan: PlanSchema })
+  .object({
+    schemaVersion: z.literal(1),
+    inventory: InventorySchema,
+    plan: PlanSchema,
+    publicContent: ArtifactManifestSchema.optional(),
+  })
   .strict();
 const optionNames: Readonly<Record<string, readonly string[]>> = {
   shadow: [],
@@ -156,6 +162,7 @@ export async function runCli(
       result = await checkStaticArtifact(
         values.dist ? input(values.dist, '--dist') : path.join(root, 'dist'),
         snapshot.inventory,
+        snapshot.publicContent,
       );
       break;
     }
@@ -165,7 +172,8 @@ export async function runCli(
       );
       if (hashValue(snapshot.plan) !== hashValue(planRelease(snapshot.inventory, baseline)))
         throw new Error('Snapshot plan differs from its inventory or parent');
-      result = await collectExecutionPlan(root, snapshot.plan);
+      if (!snapshot.publicContent) throw new Error('Missing single-compile public closure');
+      result = await collectExecutionPlan(root, snapshot.plan, hashValue(snapshot.publicContent));
       break;
     }
     case 'candidate': {
@@ -180,7 +188,15 @@ export async function runCli(
         );
         if (
           hashValue(execution) !==
-          hashValue(createExecutionPlan(snapshot.plan, execution.testManifests))
+            hashValue(
+              createExecutionPlan(
+                snapshot.plan,
+                execution.testManifests,
+                execution.publicContentDigest,
+              ),
+            ) ||
+          !snapshot.publicContent ||
+          execution.publicContentDigest !== hashValue(snapshot.publicContent)
         )
           throw new Error('Execution plan differs from required test obligations');
       }
@@ -209,8 +225,7 @@ export async function runCli(
     }
   }
   if (result === undefined) throw new Error('Unimplemented release command');
-  await mkdir(path.dirname(output), { recursive: true });
-  await writeFile(output, JSON.stringify(result, null, 2) + '\n', { flag: 'wx', mode: 0o600 });
+  await writeProtocolJson(output, result);
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   runCli(process.argv.slice(2)).catch((error: unknown) => {

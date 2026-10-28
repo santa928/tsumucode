@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { expect, test, type Page } from '@playwright/test';
+import { z } from 'zod';
 import { CourseCatalogV3Schema, CourseIndexSchema } from '../../src/core/content/deliverySchema';
 import { canonicalJson, sha256 } from '../../src/core/persistence/canonicalJson';
 import type {
@@ -160,6 +161,12 @@ test('manifestの全Lesson・workspaceと公開対象外の既知進捗を実Ind
         rows,
         knownCourses: observed.courses.map((course) => course['courseId']),
         workspaces: observed.drafts.length,
+        workspaceKeys: observed.drafts
+          .map(
+            (draft) =>
+              z.string().parse(draft['courseId']) + ':' + z.string().parse(draft['workspaceId']),
+          )
+          .sort(),
         synthetic: true,
       }),
       contentType: 'application/json',

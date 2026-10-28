@@ -8,7 +8,9 @@ import { qualifyRelease } from './admission';
 import { readRecipe } from './candidate';
 import { loadExecutionBundle, readJson } from './runner';
 import { selectResultAttempts } from './attempts';
-import { repositoryEnvironment } from './identity';
+import { repositoryEnvironment, hashValue } from './identity';
+import { verifyStoredReports } from './reports';
+import { verifyCandidateArtifact } from './verify';
 const exec = promisify(execFile);
 /** Fresh actual main/deployment and native workflow needs are read at the last non-deploying gate. */
 export async function qualifyCurrentRelease(
@@ -16,6 +18,18 @@ export async function qualifyCurrentRelease(
   environment: NodeJS.ProcessEnv = process.env,
 ) {
   const { snapshot, executionPlan, candidate, capturedBaseline } = await loadExecutionBundle(root);
+  if (
+    environment.GITHUB_REPOSITORY !== candidate.repository ||
+    environment.GITHUB_RUN_ID !== candidate.runId ||
+    environment.GITHUB_SHA !== candidate.recipe.sourceCommit ||
+    environment.GITHUB_JOB !== 'aggregate' ||
+    environment.GITHUB_EVENT_NAME !== 'workflow_dispatch' ||
+    environment.GITHUB_REF !== 'refs/heads/main'
+  )
+    throw new Error('Wrong final release context');
+  const recipe = await readRecipe(root, candidate.recipe.sourceCommit, candidate.recipe.basePath);
+  if (hashValue(recipe) !== hashValue(candidate.recipe)) throw new Error('Final recipe changed');
+  await verifyCandidateArtifact(candidate, path.join(root, 'dist'));
   const siteUrl =
     'https://' + candidate.repository.split('/')[0]! + '.github.io' + candidate.recipe.basePath;
   const currentBaseline = await captureBaseline({
@@ -53,8 +67,10 @@ export async function qualifyCurrentRelease(
     candidate,
     await Promise.all(files.map((name) => readJson(path.join(receipts, name)))),
   );
+  await verifyStoredReports(root, results);
   return qualifyRelease({
     inventory: snapshot.inventory,
+    publicContent: snapshot.publicContent,
     plan: snapshot.plan,
     executionPlan,
     candidate,
@@ -67,7 +83,7 @@ export async function qualifyCurrentRelease(
       runId: environment.GITHUB_RUN_ID,
       sourceCommit: environment.GITHUB_SHA,
       currentMainCommit,
-      recipe: await readRecipe(root, candidate.recipe.sourceCommit, candidate.recipe.basePath),
+      recipe,
       eventName: environment.GITHUB_EVENT_NAME,
       ref: environment.GITHUB_REF,
       attempt: Number(environment.GITHUB_RUN_ATTEMPT),

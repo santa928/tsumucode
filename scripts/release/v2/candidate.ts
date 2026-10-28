@@ -65,7 +65,10 @@ export async function createCandidate(
     executionPlanInput === undefined ? undefined : ExecutionPlanSchema.parse(executionPlanInput);
   if (
     executionPlan &&
-    hashValue(executionPlan) !== hashValue(createExecutionPlan(plan, executionPlan.testManifests))
+    hashValue(executionPlan) !==
+      hashValue(
+        createExecutionPlan(plan, executionPlan.testManifests, executionPlan.publicContentDigest),
+      )
   )
     throw new Error('Unbound execution plan');
   const recipe = await readRecipe(root, context.sourceCommit, basePath);

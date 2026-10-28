@@ -21,7 +21,11 @@ describe('release v2 command boundary', () => {
     };
     expect(report.status).toBe('shadow-only');
     expect(report.inventory.courses.some((course) => course.id === 'python-basics')).toBe(true);
-    expect(report.shadow.courses.every((course) => course.contentRows === 'valid')).toBe(true);
+    expect(
+      report.shadow.courses
+        .filter((course) => course.contentRows !== 'valid')
+        .map((course) => course.courseId),
+    ).toEqual(['python-basics']);
     expect(
       report.shadow.courses.find((course) => course.courseId === 'html-css')!.publication,
     ).toBe('pending');

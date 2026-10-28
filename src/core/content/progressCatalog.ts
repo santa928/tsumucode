@@ -2,7 +2,6 @@
 import { z } from 'zod';
 import { CourseEntityIdsSchema } from './deliverySchema';
 import { ContentProgressMigrationSchema, IdSchema, NonEmptyTextSchema } from './schema';
-import type { CourseMigrationDescriptor } from '../persistence/contentProgressMigration';
 import type { CourseIndex } from './types';
 
 const DescriptorSchema = z
@@ -64,7 +63,7 @@ export const ProgressCatalogSchema = z
     }
   });
 export type ProgressCatalog = z.infer<typeof ProgressCatalogSchema>;
-export function projectProgressDescriptor(index: CourseIndex): CourseMigrationDescriptor {
+export function projectProgressDescriptor(index: CourseIndex): z.infer<typeof DescriptorSchema> {
   return DescriptorSchema.parse({
     id: index.id,
     revision: index.revision,

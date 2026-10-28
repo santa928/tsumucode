@@ -72,7 +72,8 @@ export type LessonInventory = z.infer<typeof LessonInventorySchema>;
 export const TargetSchema = z
   .object({
     key: z.string().min(1),
-    kind: z.enum(['fixture', 'content', 'learning', 'project', 'persistence']),
+    kind: z.enum(['fixture', 'content', 'learning', 'learning-engine', 'project', 'persistence']),
+    engine: z.enum(['chromium', 'firefox', 'webkit']).optional(),
     courseId: IdSchema,
     lessonId: IdSchema,
     exerciseId: IdSchema.optional(),

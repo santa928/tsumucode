@@ -12,6 +12,7 @@ function report() {
     rows: [{ key: target.key, inputDigest: target.inputDigest }],
     knownCourses: ['topic', 'dormant'],
     workspaces: 2,
+    workspaceKeys: ['topic:workspace', 'dormant:workspace'],
     synthetic: true,
   };
 }
@@ -46,9 +47,14 @@ describe('actual persistence observation', () => {
   it('binds synthetic roundtrip observations to every current published target and known course', async () => {
     const { readPersistenceCoverage } =
       await import('../../../../scripts/release/v2/persistenceCoverage');
-    expect(readPersistenceCoverage(browser(report()), [target], ['topic', 'dormant'], 2)).toEqual([
-      target.key,
-    ]);
+    expect(
+      readPersistenceCoverage(
+        browser(report()),
+        [target],
+        ['topic', 'dormant'],
+        ['topic:workspace', 'dormant:workspace'],
+      ),
+    ).toEqual([target.key]);
   });
   it.each(['missing', 'stale', 'duplicate', 'unknown', 'dormant', 'workspace', 'not-synthetic'])(
     'rejects %s evidence',
@@ -64,7 +70,12 @@ describe('actual persistence observation', () => {
       if (failure === 'workspace') value.workspaces = 1;
       if (failure === 'not-synthetic') value.synthetic = false;
       expect(() =>
-        readPersistenceCoverage(browser(value), [target], ['topic', 'dormant'], 2),
+        readPersistenceCoverage(
+          browser(value),
+          [target],
+          ['topic', 'dormant'],
+          ['topic:workspace', 'dormant:workspace'],
+        ),
       ).toThrow();
     },
   );
