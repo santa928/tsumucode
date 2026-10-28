@@ -223,6 +223,7 @@ test('試用1枚表示は対象外Lessonを先読みせず、通読との往復�
   await page.getByRole('button', { name: 'スライド目次を開く' }).click();
   await expect(page.getByRole('dialog').getByRole('link')).toHaveCount(84);
   await page.getByRole('button', { name: '閉じる', exact: true }).click();
+  await page.getByText('読書位置のURL・PCへの引き継ぎ', { exact: true }).click();
   await page.getByRole('link', { name: 'この位置から一続きに読む' }).click();
   await expect(page).toHaveURL(/read\?slide=javascript-ch00-l01-s04$/u);
   await expect(page.locator('[data-reading-section="javascript-ch00-l01-s04"]')).toBeInViewport();

@@ -83,13 +83,8 @@ export function ReadingControls({ course, lesson, position, recordPosition = tru
     mode === 'slides'
       ? `${readingLessonPath(course.id, lesson.id, pilot)}?slide=${encodeURIComponent(slideId)}`
       : readingSlidePath(course.id, lesson.id, slideId, pilot);
-  return (
-    <aside className="tc-reading-controls" aria-label="読書の続きとPCへの引き継ぎ">
-      <p>読書の続きはこの端末・このサイトに保存します。演習の合否やPCの続きは変わりません。</p>
-      {saveFailed ? <p role="status">続き位置を保存できません。本文はそのまま読めます。</p> : null}
-      {saved.invalid ? (
-        <p role="status">前の読書記録を復元できませんでした。本文は先頭から読めます。</p>
-      ) : null}
+  const actions = (
+    <>
       <Link to={alternative}>
         {mode === 'slides' ? 'この位置から一続きに読む' : 'この位置を1枚ずつ読む'}
       </Link>
@@ -137,6 +132,23 @@ export function ReadingControls({ course, lesson, position, recordPosition = tru
           </div>
         );
       })}
+    </>
+  );
+  return (
+    <aside className="tc-reading-controls" aria-label="読書の続きとPCへの引き継ぎ">
+      <p>読書の続きはこの端末・このサイトに保存します。演習の合否やPCの続きは変わりません。</p>
+      {saveFailed ? <p role="status">続き位置を保存できません。本文はそのまま読めます。</p> : null}
+      {saved.invalid ? (
+        <p role="status">前の読書記録を復元できませんでした。本文は先頭から読めます。</p>
+      ) : null}
+      {mode === 'slides' ? (
+        <details key={slideId} className="tc-reading-options">
+          <summary>読書位置のURL・PCへの引き継ぎ</summary>
+          <div className="tc-reading-options-content">{actions}</div>
+        </details>
+      ) : (
+        actions
+      )}
     </aside>
   );
 }

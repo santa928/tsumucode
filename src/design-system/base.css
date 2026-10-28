@@ -460,6 +460,11 @@
   .tc-slide-code pre {
     overflow-x: auto;
   }
+  .tc-slide-code[data-code-role='input'] pre {
+    /* Sourceの改行とコピー内容を保ち、狭い枠でも説明対象を見つけられるようにする。 */
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
   .tc-slide-code-line {
     box-decoration-break: clone;
   }
@@ -536,6 +541,10 @@
 
   .tc-slide-stage .tc-slide-blocks pre {
     max-height: min(15rem, 32dvh);
+  }
+  /* 折り返した入力は本文側で読み進め、コード枠内の縦方向へ隠さない。 */
+  .tc-slide-stage .tc-slide-blocks .tc-slide-code[data-code-role='input'] pre {
+    max-height: none;
   }
 
   .tc-slide-stage-migration-note {
@@ -1581,6 +1590,16 @@
   border-radius: 0.5rem;
   padding: 0.5rem 1rem;
   font-weight: 700;
+}
+.tc-reading-options summary {
+  min-height: 44px;
+  padding-block: 0.5rem;
+  cursor: pointer;
+  font-weight: 700;
+}
+.tc-reading-options-content {
+  display: grid;
+  gap: 1rem;
 }
 .tc-reading-share,
 .tc-reading-share label,
