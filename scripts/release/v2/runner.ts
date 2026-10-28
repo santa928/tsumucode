@@ -8,7 +8,12 @@ import { hashBytes, hashValue, ArtifactManifestSchema } from './identity';
 import { storeSuiteReport } from './reports';
 import { validateCapturedBaseline } from './parent';
 import { planRelease } from './plan';
-import { createExecutionPlan, ExecutionPlanSchema, testCommand } from './executionPlan';
+import {
+  createExecutionPlan,
+  ExecutionPlanSchema,
+  testCommand,
+  TEST_SUITES,
+} from './executionPlan';
 import { readRecipe } from './candidate';
 import { executeSuite } from './execute';
 import { observeTestSuite } from './observed';
@@ -95,7 +100,11 @@ export async function runReleaseSuite(
     throw new Error('Wrong source or release event');
   const recipe = await readRecipe(root, candidate.recipe.sourceCommit, candidate.recipe.basePath);
   if (hashValue(recipe) !== hashValue(candidate.recipe)) throw new Error('Source recipe changed');
-  if (observeNative !== ['native-python', 'native-next'].includes(suite))
+  if (
+    observeNative !==
+    (suite === 'native-next' ||
+      TEST_SUITES.some((row) => row.suite === suite && row.producerJobId === 'boundary'))
+  )
     throw new Error('Wrong native execution path');
   const context = {
     runId: environment.GITHUB_RUN_ID,
@@ -153,7 +162,14 @@ export async function runReleaseSuite(
           report: { kind: 'actual-native-fixtures', sourceDigest: hashBytes(source), rows },
         };
       }
-      const report = await readJson(path.join(root, 'test-results/local-python/results.json'));
+      const report = await readJson(
+        path.join(
+          root,
+          suite.startsWith('native-learning-')
+            ? '.release-v2/native-learning-reports/' + suite + '.json'
+            : 'test-results/local-python/results.json',
+        ),
+      );
       return {
         targets: observeTestSuite(suite, report, snapshot.plan, executionPlan, snapshot.inventory),
         report,

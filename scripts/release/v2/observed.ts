@@ -25,6 +25,19 @@ export function observeTestSuite(
   if (!manifest || !requirement) throw new Error('Unknown test suite');
   const targets = verifyTestExecution(report, manifest);
   const required = new Set(requirement.targets);
+  targets.push(
+    ...plan.targets
+      .filter(
+        (target) =>
+          target.kind === 'learning-engine' &&
+          required.has(target.key) &&
+          target.engine === manifest.project &&
+          manifest.tests.some((test) =>
+            test.lessonKeys?.includes(target.courseId + '/' + target.lessonId),
+          ),
+      )
+      .map((target) => target.key),
+  );
   const fixtures = plan.targets.filter(
     (target) => target.kind === 'fixture' && required.has(target.key),
   );

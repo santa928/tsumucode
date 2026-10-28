@@ -181,6 +181,7 @@ jobs:
         run: |
           ./scripts/docker-compose.sh run --rm app npm run release:flow -- baseline --repository "$GITHUB_REPOSITORY" --site-url "$SITE_URL" --output .release-v2/baseline.json
           ./scripts/docker-compose.sh run --rm app npm run release:flow -- prepare --baseline .release-v2/baseline.json --output .release-v2/preparation.json
+          ./scripts/docker-compose.sh run --rm app npm run release:flow -- stage-content --output .release-v2/content-receipts.json
       - name: Build public app once
         run: ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run build:app
       - name: Check actual public bytes and early budgets

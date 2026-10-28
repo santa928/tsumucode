@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
+import { TEST_SUITES } from '../../../../scripts/release/v2/executionPlan';
 const fixture = {
   key: 'topic/lesson/exercise/solution/solution/browser',
   kind: 'fixture',
@@ -32,15 +33,9 @@ const plan = {
   ],
 };
 function manifests() {
-  const definitions: [string, string, string][] = [
-    ['browser-chromium-1', 'browser', 'chromium'],
-    ['browser-chromium-2', 'browser', 'chromium'],
-    ['browser-firefox', 'browser', 'firefox'],
-    ['browser-webkit', 'browser', 'webkit'],
-    ['browser-public', 'public_boundary', 'chromium'],
-    ['browser-performance', 'performance', 'chromium'],
-    ['native-python', 'boundary', ''],
-  ];
+  const definitions: readonly (readonly [string, string, string])[] = TEST_SUITES.map(
+    (row) => [row.suite, row.producerJobId, row.project] as const,
+  );
   return definitions.map(([suite, producerJobId, project]) => ({
     suite,
     producerJobId,

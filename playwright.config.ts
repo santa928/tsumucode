@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 import { testServerUrl } from './tests/e2e/helpers/testBasePath';
 
 const CROSS_BROWSER_SMOKE_SPECS = [
+  'manifest-learning.spec.ts',
   'initial-preview.spec.ts',
   'exercise-reset.spec.ts',
   'editor-input-support.spec.ts',

@@ -128,6 +128,15 @@ COPY tests/e2e/helpers/pythonFixtureCoverage.ts ./tests/e2e/helpers/pythonFixtur
 COPY playwright.python-local.config.ts ./
 CMD ["node", "scripts/local/python-browser-acceptance.mjs"]
 
+# Same-source Native learning UI only. Never copied into a learner/controller/web image.
+FROM python-browser-checks AS learning-native-checks
+COPY content ./content
+COPY src/core/runtime/pythonFixedFixtures.mjs ./src/core/runtime/pythonFixedFixtures.mjs
+COPY tests/e2e/helpers/manifestLearning.ts ./tests/e2e/helpers/manifestLearning.ts
+COPY tests/local/manifest-next-learning.spec.ts ./tests/local/manifest-next-learning.spec.ts
+COPY playwright.learning-native.config.ts ./
+CMD ["node", "scripts/local/manifest-learning-browser-acceptance.mjs", "chromium"]
+
 # 反復教材の作者Fixture/実object観察専用。配信・learner imageへ原稿を渡さない。
 FROM python-browser-checks AS python-iteration-checks
 COPY vendor/python/314.0.7 ./vendor/python/314.0.7

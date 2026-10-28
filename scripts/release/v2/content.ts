@@ -26,6 +26,7 @@ const ReceiptSchema = z
     originalsCheckedBy: z.string().min(1),
   })
   .strict();
+export const ContentReceiptSchema = ReceiptSchema;
 export const BaselineSchema = z
   .object({
     deploymentId: z.string().regex(/^[1-9]\d*$/u),

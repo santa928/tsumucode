@@ -1,5 +1,9 @@
 import { z } from 'zod';
 import { IdSchema, JobKeySchema } from './schema';
+const LessonKeySchema = z.string().refine((value) => {
+  const parts = value.split('/');
+  return parts.length === 2 && parts.every((part) => IdSchema.safeParse(part).success);
+}, 'Invalid lesson key');
 const ProjectSchema = z.string().regex(/^(?:[a-z][a-z0-9-]*|)$/u);
 export const TestSuiteManifestSchema = z
   .object({
@@ -7,7 +11,15 @@ export const TestSuiteManifestSchema = z
     producerJobId: JobKeySchema,
     project: ProjectSchema,
     tests: z
-      .array(z.object({ key: z.string().min(1).max(300), exerciseIds: z.array(IdSchema) }).strict())
+      .array(
+        z
+          .object({
+            key: z.string().min(1).max(300),
+            exerciseIds: z.array(IdSchema),
+            lessonKeys: z.array(LessonKeySchema).optional(),
+          })
+          .strict(),
+      )
       .min(1),
   })
   .strict();
@@ -40,7 +52,7 @@ function collect(input: unknown, project: string, executed: boolean) {
     .object({ errors: z.array(z.unknown()).default([]), suites: z.array(z.unknown()).min(1) })
     .parse(input);
   if (report.errors.length) throw new Error('Test collection or execution errors');
-  const entries: { key: string; exerciseIds: string[] }[] = [];
+  const entries: { key: string; exerciseIds: string[]; lessonKeys?: string[] }[] = [];
   function visit(value: unknown): void {
     const suite = SuiteSchema.parse(value);
     for (const spec of suite.specs)
@@ -57,7 +69,16 @@ function collect(input: unknown, project: string, executed: boolean) {
           .map(({ description }) => IdSchema.parse(description));
         if (new Set(exerciseIds).size !== exerciseIds.length)
           throw new Error('Duplicate exercise annotation');
-        entries.push({ key: spec.id + '/' + project, exerciseIds });
+        const lessonKeys = test.annotations
+          .filter(({ type }) => type === 'release-lesson')
+          .map(({ description }) => LessonKeySchema.parse(description));
+        if (new Set(lessonKeys).size !== lessonKeys.length)
+          throw Error('Duplicate lesson annotation');
+        entries.push({
+          key: spec.id + '/' + project,
+          exerciseIds,
+          ...(lessonKeys.length ? { lessonKeys } : {}),
+        });
       }
     for (const child of suite.suites) visit(child);
   }
@@ -103,7 +124,9 @@ export function verifyTestExecution(input: unknown, manifestInput: unknown): str
       return (
         !expected ||
         JSON.stringify([...expected.exerciseIds].sort()) !==
-          JSON.stringify([...test.exerciseIds].sort())
+          JSON.stringify([...test.exerciseIds].sort()) ||
+        JSON.stringify([...(expected.lessonKeys ?? [])].sort()) !==
+          JSON.stringify([...(test.lessonKeys ?? [])].sort())
       );
     })
   )

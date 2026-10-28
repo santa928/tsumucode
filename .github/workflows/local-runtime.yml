@@ -460,6 +460,18 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 30
+      - name: Verify new Native lessons in every required browser engine
+        if: inputs.candidate_artifact_id != ''
+        run: |
+          set -euo pipefail
+          docker build --file Dockerfile.learning --target learning-native-checks --tag "$TSUMUCODE_LOCAL_OWNER-learning-native-checks" .
+          mkdir -p .release-v2/native-learning-reports
+          for engine in chromium firefox webkit; do
+            docker run --rm --init --user 1000:1000 --network "${TSUMUCODE_LOCAL_OWNER}_web" --cpus 2 --memory 1g --pids-limit 256 \
+              --cap-drop ALL --security-opt no-new-privileges:true \
+              --mount "type=bind,src=$PWD/.release-v2/preparation.json,dst=/workspace/.release-v2/preparation.json,readonly" \
+              "$TSUMUCODE_LOCAL_OWNER-learning-native-checks" node scripts/local/manifest-learning-browser-acceptance.mjs "$engine" > ".release-v2/native-learning-reports/native-learning-$engine.json"
+          done
       - name: Bind native observations to the same-run candidate
         if: inputs.candidate_artifact_id != ''
         env:
@@ -468,6 +480,10 @@ jobs:
           ./scripts/docker-compose.sh build app
           ./scripts/docker-compose.sh run --rm -e BASE_PATH -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF app npm run release:flow -- observe-native --suite native-python --output .release-v2/receipts/native-python-$GITHUB_RUN_ATTEMPT.json
           ./scripts/docker-compose.sh run --rm -e BASE_PATH -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF app npm run release:flow -- observe-native --suite native-next --output .release-v2/receipts/native-next-$GITHUB_RUN_ATTEMPT.json
+          for engine in chromium firefox webkit; do
+            suite="native-learning-$engine"
+            ./scripts/docker-compose.sh run --rm -e BASE_PATH -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF app npm run release:flow -- observe-native --suite "$suite" --output ".release-v2/receipts/$suite-$GITHUB_RUN_ATTEMPT.json"
+          done
       - name: Preserve same-run native receipts
         if: inputs.candidate_artifact_id != ''
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a

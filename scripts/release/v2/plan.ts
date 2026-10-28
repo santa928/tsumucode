@@ -56,6 +56,9 @@ export function planRelease(input: ReleaseInventory, baselineInput?: unknown): R
           targets.push({
             key: prefix + '/learning-engine/' + engine,
             kind: 'learning-engine',
+            runtimeKind: lesson.exercises.some((exercise) => exercise.runtimeKind === 'next')
+              ? 'next'
+              : course.runner,
             engine,
             courseId: course.id,
             lessonId: lesson.id,

@@ -39,6 +39,12 @@ export const TEST_SUITES = [
     args: ['manifest-progress-roundtrip.spec.ts', '--project=chromium'],
   },
   { suite: 'native-python', producerJobId: 'boundary', project: '', args: [] },
+  ...(['chromium', 'firefox', 'webkit'] as const).map((engine) => ({
+    suite: `native-learning-${engine}` as const,
+    producerJobId: 'boundary' as const,
+    project: engine,
+    args: ['--project=' + engine],
+  })),
   {
     suite: 'browser-performance',
     producerJobId: 'performance',
@@ -91,10 +97,6 @@ export function createExecutionPlan(
 ): ExecutionPlan {
   const plan = PlanSchema.parse(planInput),
     manifests = z.array(TestSuiteManifestSchema).length(TEST_SUITES.length).parse(manifestsInput);
-  if (plan.targets.some((target) => target.kind === 'learning-engine'))
-    throw new Error(
-      'New-Lesson learning engine observations pending; cannot qualify this target yet',
-    );
   if (
     new Set(manifests.map(({ suite }) => suite)).size !== manifests.length ||
     TEST_SUITES.some(
@@ -132,6 +134,18 @@ export function createExecutionPlan(
         assigned
           .get(fixtureOwner(plan, manifests, target.exerciseId, target.mode))!
           .push(target.key);
+    } else if (target.kind === 'learning-engine') {
+      const owners = manifests.filter(
+        (manifest) =>
+          manifest.project === target.engine &&
+          manifest.producerJobId === (target.runtimeKind === 'next' ? 'boundary' : 'browser') &&
+          manifest.tests.some((test) =>
+            test.lessonKeys?.includes(target.courseId + '/' + target.lessonId),
+          ),
+      );
+      if (owners.length !== 1)
+        throw Error('New-Lesson learning engine driver missing or duplicated');
+      assigned.get(owners[0]!.suite)!.push(target.key);
     } else if (target.kind === 'persistence') assigned.get('browser-public')!.push(target.key);
   }
   const releasePlanDigest = hashValue(plan),
@@ -170,8 +184,9 @@ export function createExecutionPlan(
 export function testCommand(suite: string, list: boolean): string[] {
   const definition = TEST_SUITES.find((item) => item.suite === suite);
   if (!definition) throw new Error('Unknown fixed test suite');
-  const config =
-    suite === 'native-python'
+  const config = suite.startsWith('native-learning-')
+    ? 'playwright.learning-native.config.ts'
+    : suite === 'native-python'
       ? 'playwright.python-local.config.ts'
       : suite === 'browser-performance'
         ? 'playwright.performance.config.ts'
@@ -209,7 +224,7 @@ export async function collectExecutionPlan(
         env: {
           ...process.env,
           TSUMUCODE_AUTHORING_PREVIEW: definition.suite === 'browser-public' ? '0' : '1',
-          BASE_PATH: definition.suite === 'native-python' ? '/' : process.env['BASE_PATH'],
+          BASE_PATH: definition.producerJobId === 'boundary' ? '/' : process.env['BASE_PATH'],
         },
       },
     );

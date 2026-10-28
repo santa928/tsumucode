@@ -20,6 +20,12 @@ import { validateCapturedBaseline } from './parent';
 import { collectExecutionPlan, ExecutionPlanSchema, createExecutionPlan } from './executionPlan';
 import { runReleaseSuite } from './runner';
 import { qualifyCurrentRelease } from './qualify';
+import {
+  inspectContentOriginal,
+  readContentReceiptFile,
+  ContentInspectionRequestSchema,
+} from './contentOriginals';
+import { readInventoryAtSource } from './sourceInventory';
 
 const PreparationSchema = z
   .object({
@@ -31,6 +37,8 @@ const PreparationSchema = z
   .strict();
 const optionNames: Readonly<Record<string, readonly string[]>> = {
   shadow: [],
+  'inspect-content': ['private-root', 'request'],
+  'stage-content': [],
   baseline: ['repository', 'site-url'],
   prepare: ['baseline', 'public-output', 'authoring-output'],
   preview: [],
@@ -116,6 +124,37 @@ export async function runCli(
     : undefined;
   let result: unknown;
   switch (command) {
+    case 'inspect-content': {
+      const request = ContentInspectionRequestSchema.parse(
+        await jsonFile(input(values.request, '--request')),
+      );
+      const source = await readInventoryAtSource(
+        root,
+        request.metadata.sourceCommit,
+        request.metadata.courseId,
+      );
+      result = {
+        schemaVersion: 1,
+        receipts: [
+          await inspectContentOriginal(
+            input(values['private-root'], '--private-root'),
+            request.reference,
+            request.metadata,
+            request.inspectorId,
+            source,
+          ),
+        ],
+      };
+      break;
+    }
+    case 'stage-content':
+      result = {
+        schemaVersion: 1,
+        receipts: await readContentReceiptFile(
+          path.join(root, 'docs/quality/content-v2-receipts.json'),
+        ),
+      };
+      break;
     case 'shadow':
       result = await shadow(root);
       break;

@@ -10,6 +10,8 @@ import { loadExecutionBundle, readJson } from './runner';
 import { selectResultAttempts } from './attempts';
 import { repositoryEnvironment, hashValue } from './identity';
 import { verifyStoredReports } from './reports';
+import { readContentReceiptFile } from './contentOriginals';
+import { readInventoryAtSource } from './sourceInventory';
 import { verifyCandidateArtifact } from './verify';
 const exec = promisify(execFile);
 /** Fresh actual main/deployment and native workflow needs are read at the last non-deploying gate. */
@@ -30,6 +32,24 @@ export async function qualifyCurrentRelease(
   const recipe = await readRecipe(root, candidate.recipe.sourceCommit, candidate.recipe.basePath);
   if (hashValue(recipe) !== hashValue(candidate.recipe)) throw new Error('Final recipe changed');
   await verifyCandidateArtifact(candidate, path.join(root, 'dist'));
+  const contentReceipts = await readContentReceiptFile(
+    path.join(root, '.release-v2/content-receipts.json'),
+  );
+  for (const key of new Set(
+    contentReceipts.map((receipt) => receipt.sourceCommit + '/' + receipt.courseId),
+  )) {
+    const [sourceCommit, courseId] = key.split('/');
+    const source = await readInventoryAtSource(root, sourceCommit!, courseId!);
+    for (const receipt of contentReceipts.filter(
+      (row) => row.sourceCommit === sourceCommit && row.courseId === courseId,
+    )) {
+      const lesson = source.inventory.courses
+        .find((row) => row.id === receipt.courseId)
+        ?.lessons.find((row) => row.id === receipt.lessonId);
+      if (lesson?.learnerDigest !== receipt.learnerDigest)
+        throw Error('Content receipt source differs');
+    }
+  }
   const siteUrl =
     'https://' + candidate.repository.split('/')[0]! + '.github.io' + candidate.recipe.basePath;
   const currentBaseline = await captureBaseline({
@@ -77,7 +97,7 @@ export async function qualifyCurrentRelease(
     results,
     capturedBaseline,
     currentBaseline,
-    contentReceipts: [],
+    contentReceipts,
     context: {
       repository: environment.GITHUB_REPOSITORY,
       runId: environment.GITHUB_RUN_ID,
