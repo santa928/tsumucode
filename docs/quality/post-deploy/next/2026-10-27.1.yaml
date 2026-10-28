@@ -1,0 +1,58 @@
+schemaVersion: 2
+status: approved
+revision: 2026-10-27.1
+tag: tsumucode-release-2026-10-27.1
+sourceCommit: f1fcd0397f539770a31879219962c03fb5ab118c
+workflowHeadCommit: 7c860178c8f75dd60a474115f4113f30bca5f8d6
+workflowRunId: '40597796093'
+workflowRunAttempt: 1
+reportArtifactId: '12783175504'
+reportArtifactDigest: sha256:9ed40033d6333089c24af20d5ed7eb993b4c83891ca3ae5fd2ab4907942b80a3
+pageUrl: https://santa928.github.io/tsumucode/
+pageVerificationStatus: passed
+reportVerificationStatus: passed
+tagVerificationStatus: passed
+verifiedBy: 公開済み事実の記帳 / 原Report・tag・Artifact・公開Browser・当時main
+  Native原本を照合。全site原本は646成功・1flaky・2skipで初回全件成功は未達、Firefox原因未解消。旧観測日時を維持し、実人・物理低端末・認証Cookieは未確認。
+verifiedAt: 2026-10-28T07:52:16.389Z
+courseId: next
+environmentAdmissionStatus: passed
+independentEnvironmentApproval: not-configured
+publicSmokeOperations:
+  - operationId: start
+    status: passed
+    evidenceSha256: 5c4c7377f0fa00bb482fb9daf1b570bd7c4b96c5acd1c04a007959c3cd88de8d
+    observedAt: 2026-10-28T00:50:33.525Z
+  - operationId: resume
+    status: passed
+    evidenceSha256: 8e09b996a9911c7b91f4aaee056679d3b9ccd3a77144e470338697dacad2c1d5
+    observedAt: 2026-10-27T22:45:16Z
+  - operationId: grading
+    status: passed
+    evidenceSha256: 8e09b996a9911c7b91f4aaee056679d3b9ccd3a77144e470338697dacad2c1d5
+    observedAt: 2026-10-27T22:41:57Z
+  - operationId: persistence
+    status: passed
+    evidenceSha256: 5c4c7377f0fa00bb482fb9daf1b570bd7c4b96c5acd1c04a007959c3cd88de8d
+    observedAt: 2026-10-28T00:50:33.525Z
+  - operationId: export
+    status: passed
+    evidenceSha256: 5c4c7377f0fa00bb482fb9daf1b570bd7c4b96c5acd1c04a007959c3cd88de8d
+    observedAt: 2026-10-28T00:50:33.525Z
+  - operationId: fresh-import
+    status: passed
+    evidenceSha256: 5c4c7377f0fa00bb482fb9daf1b570bd7c4b96c5acd1c04a007959c3cd88de8d
+    observedAt: 2026-10-28T00:50:33.525Z
+  - operationId: pages-static-study
+    status: passed
+    evidenceSha256: 5c4c7377f0fa00bb482fb9daf1b570bd7c4b96c5acd1c04a007959c3cd88de8d
+    observedAt: 2026-10-28T00:50:33.525Z
+  - operationId: local-real-http
+    status: passed
+    evidenceSha256: 8e09b996a9911c7b91f4aaee056679d3b9ccd3a77144e470338697dacad2c1d5
+    observedAt: 2026-10-27T22:44:12Z
+  - operationId: local-source-zip
+    status: passed
+    evidenceSha256: 8e09b996a9911c7b91f4aaee056679d3b9ccd3a77144e470338697dacad2c1d5
+    observedAt: 2026-10-27T22:41:57Z
+requiredUnconfirmed: 0
