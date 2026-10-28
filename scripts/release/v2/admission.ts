@@ -5,6 +5,7 @@ import {
   InventorySchema,
   PlanSchema,
   RecipeSchema,
+  DigestSchema,
 } from './schema';
 import { hashValue, ArtifactManifestSchema } from './identity';
 import { validateCapturedBaseline } from './parent';
@@ -26,6 +27,36 @@ const ContextSchema = z
     jobs: z.record(z.string(), z.enum(['success', 'failure', 'cancelled', 'skipped'])),
   })
   .strict();
+export const QualificationSchema = z
+  .object({
+    schemaVersion: z.literal(1),
+    status: z.literal('qualified'),
+    candidateDigest: DigestSchema,
+    parent: PlanSchema.shape.parent,
+    qualifiedAt: z.iso.datetime(),
+    technical: z
+      .object({
+        status: z.literal('technical-passed'),
+        candidateDigest: DigestSchema,
+        buildAttempt: z.number().int().positive(),
+        verificationAttempts: z.array(z.number().int().positive()).min(1),
+        suites: z.array(z.string().min(1)).min(1),
+      })
+      .strict(),
+    content: z
+      .object({
+        status: z.enum(['maintenance', 'approved']),
+        carriedLessons: z.array(z.string()),
+        newlyApprovedLessons: z.array(z.string()),
+        technicalRechecks: z.array(
+          z.object({ lesson: z.string(), scopes: z.array(z.string()) }).strict(),
+        ),
+      })
+      .strict(),
+    projects: z.array(z.string()),
+  })
+  .strict();
+
 export interface AdmissionInput {
   readonly inventory: unknown;
   readonly plan: unknown;
@@ -113,7 +144,7 @@ export function qualifyRelease(input: AdmissionInput) {
     projects.push(target.key);
   }
   const content = verifyContent(inventory, input.contentReceipts, captured.baseline);
-  return {
+  return QualificationSchema.parse({
     schemaVersion: 1,
     status: 'qualified' as const,
     candidateDigest: hashValue(candidate),
@@ -122,5 +153,5 @@ export function qualifyRelease(input: AdmissionInput) {
     content,
     projects,
     qualifiedAt: context.now,
-  };
+  });
 }
