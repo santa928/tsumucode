@@ -45,6 +45,7 @@ describe('Playwright output isolation', () => {
     const firefox = e2eConfig.projects?.find((project) => project.name === 'firefox');
     const webkit = e2eConfig.projects?.find((project) => project.name === 'webkit');
     const smokeSpecs = [
+      'manifest-learning.spec.ts',
       'initial-preview.spec.ts',
       'exercise-reset.spec.ts',
       'editor-input-support.spec.ts',
