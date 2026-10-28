@@ -1860,11 +1860,29 @@ export const ExpectedTotalsSchema = z
       .number()
       .int()
       .nonnegative()
-      .describe('学習上必要な追加分割を許可するConcept Slide最低枚数'),
-    standardExercises: z.number().int().nonnegative(),
-    guidedProjectLessons: z.number().int().nonnegative(),
-    capstoneLessons: z.number().int().nonnegative(),
-    estimatedMinutes: z.number().int().nonnegative(),
+      .describe(
+        'concept/comparison/diagram/code合計の最低枚数。kind=conceptの実数や全Slide数ではない',
+      ),
+    standardExercises: z
+      .number()
+      .int()
+      .nonnegative()
+      .describe('kind=standardの演習全件。追加演習も含む'),
+    guidedProjectLessons: z
+      .number()
+      .int()
+      .nonnegative()
+      .describe('手順付き制作のLesson数。作品数ではない'),
+    capstoneLessons: z
+      .number()
+      .int()
+      .nonnegative()
+      .describe('独立課題kindのLesson数。自力習得の実測ではない'),
+    estimatedMinutes: z
+      .number()
+      .int()
+      .nonnegative()
+      .describe('Lesson設定時間の合計。実測学習時間ではない'),
   })
   .strict();
 
