@@ -42,6 +42,18 @@ if (fullSuite) {
     compilerChanged || files.some((file) => /^(content\/|scripts\/content\/)/u.test(file))
       ? ['tests/content', 'scripts/content']
       : [];
+  if (
+    compilerChanged ||
+    files.some((file) =>
+      /^(content\/|scripts\/(?:content|release)\/|docs\/quality\/|\.github\/workflows\/)/u.test(
+        file,
+      ),
+    )
+  ) {
+    // fsで読む台帳・workflowはimport graphに現れないため、公開契約を明示的に補う。
+    dynamicDirectories.push('tests/unit/release', 'scripts/release');
+  }
+  if (files.includes('scripts/testChanged.ts')) selected.add('scripts/testChanged.test.ts');
   if (compilerChanged) {
     // Workerの動的読込で切れる依存を、呼出側と教材契約の両方から補う。
     selected.add('src/adapters/runtime/typescript/TypeScriptCompilerClient.ts');

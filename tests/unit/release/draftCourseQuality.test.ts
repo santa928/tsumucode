@@ -489,7 +489,6 @@ describe('3草稿の私有原本と候補binding', () => {
     ).resolves.toBeUndefined();
   });
   it.each([
-    ['tailwind', 5],
     ['python-practice', 5],
     ['python-oop', 9],
   ] as const)('%sの固定契約を準備しても公開allowlistへ登録しない', (courseId, count) => {

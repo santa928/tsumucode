@@ -75,7 +75,7 @@ export default tseslint.config(
     ],
     languageOptions: {
       parserOptions: {
-        projectService: true,
+        project: ['./tsconfig.node.json'],
         tsconfigRootDir: import.meta.dirname,
       },
     },
@@ -85,6 +85,15 @@ export default tseslint.config(
       // Schema検証後のindexed accessと非同期Adapter interfaceを明示的に許可する。
       '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/require-await': 'off',
+    },
+  },
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    languageOptions: {
+      parserOptions: {
+        // leaf設定を使い分け、各processに不要なProgramを作らない。
+        project: ['./tsconfig.app.json'],
+      },
     },
   },
 );

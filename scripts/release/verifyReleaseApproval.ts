@@ -384,7 +384,10 @@ export async function verifyApprovedQualityEvidence(
       throw new Error(`${recordName}の内部bindingがRelease approvalと一致しません`);
     }
   }
-  if ('courseId' in approval && approval.courseId === 'python-basics') {
+  if ('courseId' in approval && approval.courseId === 'tailwind') {
+    const { verifyTailwindQualityEvidence } = await import('./verifyTailwindQualityEvidence');
+    await verifyTailwindQualityEvidence(root, approval, qualitySources);
+  } else if ('courseId' in approval && approval.courseId === 'python-basics') {
     const { verifyPythonQualityEvidence } = await import('./verifyPythonQualityEvidence');
     await verifyPythonQualityEvidence(root, approval, qualitySources);
   } else if ('courseId' in approval && approval.courseId === 'next') {
@@ -421,6 +424,23 @@ export async function verifyReleaseSourceApproval(
   }
 
   await verifyApprovedQualityEvidence(root, approval, { revision: candidate.revision });
+  if (
+    'courseId' in candidate &&
+    candidate.courseId === 'tailwind' &&
+    'courseId' in approval &&
+    approval.courseId === 'tailwind'
+  ) {
+    const { TailwindReleaseEvidenceSchema } = await import('./verifyTailwindQualityEvidence');
+    const evidence = TailwindReleaseEvidenceSchema.parse(
+      parse(await readFile(path.join(root, approval.records.technicalAcceptance.path), 'utf8')),
+    );
+    if (
+      candidate.draftSourceCommit !== evidence.draftCandidate.sourceCommit ||
+      candidate.draftCanonicalDistSha256 !== evidence.draftCandidate.canonicalDistSha256 ||
+      candidate.normalizedLearningInputSha256 !== evidence.normalizedLearningInputSha256
+    )
+      throw new Error('Tailwind candidateと草稿受入/公開入力bindingが一致しません');
+  }
   if ('courseId' in candidate && candidate.courseId === 'python-basics') {
     if (
       candidate.draftSourceCommit !== approval.verifiedSourceCommit ||

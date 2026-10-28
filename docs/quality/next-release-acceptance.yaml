@@ -2,26 +2,28 @@ schemaVersion: 1
 publication:
   mode: published-update
   previousRelease:
-    revision: 2026-10-09.2
-    tag: tsumucode-release-2026-10-09.2
-    sourceCommit: 3021a054b27a51969f2658f91d585e81325bf4e8
+    revision: 2026-10-24.1
+    tag: tsumucode-release-2026-10-24.1
+    sourceCommit: e8a077994f5c4cba891e15141dddf5002b1fb7f0
     acceptance:
-      path: docs/quality/history/next/2026-10-09.2-acceptance.yaml
-      sha256: 224940b9c6deec0d70dc8bfe00758925cfb5d24b5708a51a7c388fc7d04f03c3
+      path: docs/quality/history/next/2026-10-24.1-acceptance.yaml
+      sha256: 5784ece2116e39e81081c42e50f922c66ee13adf56bec5e44c9254ffce1297ec
 courseId: next
 status: preflight-passed-final-ci-required
-publicationApprovalReference: repository-owner santa928 / 2026-10-25 実consumer EOF方式・最終検証後のmerge/公開を明示承認。旧失敗の原因解消とは区別する。
+publicationApprovalReference: repository-owner santa928 / 2026-10-27
+  CI改善を優先し、PR267統合・main
+  CI成功後、固定Sourceと全件/Browser/性能/公開後確認を維持した正式公開の続行を明示承認。教材拡張は保留。
 realHumanTrial: unverified
 lowEndPhysicalDevice: unverified
 cookieAuthenticationPersistence: theme-cookie-only-authentication-persistence-deferred-issue-14
-verifiedSourceCommit: e8a077994f5c4cba891e15141dddf5002b1fb7f0
-canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
-candidateTreeSha256: 1553e9edb3839e54106cfb6a30d695f125e5ed45737d6494eb374461aec9c84a
-draftCanonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
+verifiedSourceCommit: f1fcd0397f539770a31879219962c03fb5ab118c
+canonicalDistSha256: 689c6e1fddaa1f907b91a473cafed7a6f149fd6ac61e1883d441ccf216727a41
+candidateTreeSha256: 4b5a8d4411a2a2b8aa12e464b803f02119d10059075225687ea35ab738707988
+draftCanonicalDistSha256: 689c6e1fddaa1f907b91a473cafed7a6f149fd6ac61e1883d441ccf216727a41
 draftInput: &a1
   schemaVersion: 1
   courseId: next
-  sourceCommit: e8a077994f5c4cba891e15141dddf5002b1fb7f0
+  sourceCommit: f1fcd0397f539770a31879219962c03fb5ab118c
   scope: next-learning-input-v1
   publicationMetadata:
     coursePublicationStatus: published
@@ -40,9 +42,9 @@ draftInput: &a1
       normalizedSha256: 17ba3d72adcfe847e8e576128998593166645d78f63c93c8d0936877914b5b2c
       normalizedBytes: 26185
     - path: .github/workflows/pages.yml
-      rawSha256: 3b258589a685f62729bb6c3d0429d52d4d2841cd3231d0a5d3cfa617394ff939
-      normalizedSha256: 3b258589a685f62729bb6c3d0429d52d4d2841cd3231d0a5d3cfa617394ff939
-      normalizedBytes: 26559
+      rawSha256: f9817f81675ee8b2364eb95981cab6ef802c2362f5e7a97488fb3be35187bb1d
+      normalizedSha256: f9817f81675ee8b2364eb95981cab6ef802c2362f5e7a97488fb3be35187bb1d
+      normalizedBytes: 27140
     - path: .github/workflows/tailwind-project.yml
       rawSha256: adbe91f2eee3cef9871bd8a710cdd145dc8a69f036dbacaa8977933a755d9417
       normalizedSha256: adbe91f2eee3cef9871bd8a710cdd145dc8a69f036dbacaa8977933a755d9417
@@ -12724,9 +12726,9 @@ draftInput: &a1
       normalizedSha256: 49f8f6553a7d306c2b483667b86b0512bd173db17021c6101af2f5303741f940
       normalizedBytes: 4409
     - path: content/next/course.yaml
-      rawSha256: f08f5ca9600f6d4bd57397900f518f1d189de0b89cfc4d961fb000aab8cd4e1c
-      normalizedSha256: 97335932a8d7c6d9789ebddd728d77fe8efbbc6816d6e874235f632c65d67a74
-      normalizedBytes: 1752
+      rawSha256: 582edd2fad6f88bbeae1e8fc22310b2cdcd040a112e3dc799d3a5a3ccc347534
+      normalizedSha256: 85be8f6ef3dd39851c6b2e083b96e3be6f98daef63b9bfa37dd06b0c7ab2b1b2
+      normalizedBytes: 1826
     - path: content/next/glossary.yaml
       rawSha256: ce39682315ad9e98de08a2b5211703fe2c6182cf716372acf389daba08aab75d
       normalizedSha256: ce39682315ad9e98de08a2b5211703fe2c6182cf716372acf389daba08aab75d
@@ -17736,17 +17738,17 @@ draftInput: &a1
       normalizedSha256: 0099b44305de11b5a4577d6b7ca90d5fd94e28379240bef7a5ec203a7c8784ca
       normalizedBytes: 2403
     - path: content/tailwind/course.yaml
-      rawSha256: 88dd2ebf8b2b34a1430dfc45bca60a01cb5953acb8798e1cbf34fde0aae8d3e4
-      normalizedSha256: 88dd2ebf8b2b34a1430dfc45bca60a01cb5953acb8798e1cbf34fde0aae8d3e4
-      normalizedBytes: 1262
+      rawSha256: 5171d514f8360c38ec60cf0b9a89d788f54fc711caf33f996b99785745dc0a01
+      normalizedSha256: 5171d514f8360c38ec60cf0b9a89d788f54fc711caf33f996b99785745dc0a01
+      normalizedBytes: 1284
     - path: content/tailwind/glossary.yaml
       rawSha256: a6fa26bc3892da5c3593ad505996ac47cbddf0cc6df6ba8a59a2e68814f7443f
       normalizedSha256: a6fa26bc3892da5c3593ad505996ac47cbddf0cc6df6ba8a59a2e68814f7443f
       normalizedBytes: 3794
     - path: content/tailwind/provenance.yaml
-      rawSha256: 59d71c58de77c88b6c513d96c0751c5246746d5c2afb2ec6846159c2677dff5c
-      normalizedSha256: 59d71c58de77c88b6c513d96c0751c5246746d5c2afb2ec6846159c2677dff5c
-      normalizedBytes: 24566
+      rawSha256: c94a898e3428c17f19af2982679f126503fbef1467b929119f757799f04a6d11
+      normalizedSha256: c94a898e3428c17f19af2982679f126503fbef1467b929119f757799f04a6d11
+      normalizedBytes: 24666
     - path: content/tailwind/references/tailwind-official.md
       rawSha256: c747d03448677aa89ef838603871c2c2a1f4bb276a41b9c2c44cccdf81d48b28
       normalizedSha256: c747d03448677aa89ef838603871c2c2a1f4bb276a41b9c2c44cccdf81d48b28
@@ -19648,9 +19650,9 @@ draftInput: &a1
       normalizedSha256: cb4f35d909cc34577e69b73f24942f9b2082e0c86153084853a59d6146af7671
       normalizedBytes: 110871
     - path: eslint.config.js
-      rawSha256: 285210e8e0874b1761382716831a1dd98eaf1d7150961f249de6251d0c5f6613
-      normalizedSha256: 285210e8e0874b1761382716831a1dd98eaf1d7150961f249de6251d0c5f6613
-      normalizedBytes: 5021
+      rawSha256: 2ae5ad247c6b2510de65ee0908fa9c1d7b058dfe6f4f2bde213f4aa2625d2756
+      normalizedSha256: 2ae5ad247c6b2510de65ee0908fa9c1d7b058dfe6f4f2bde213f4aa2625d2756
+      normalizedBytes: 5268
     - path: index.html
       rawSha256: 6bbed69652cdfe1c29b449e4ef45c0f5ea235d38072ed4e8882edeee3360ab0a
       normalizedSha256: 6bbed69652cdfe1c29b449e4ef45c0f5ea235d38072ed4e8882edeee3360ab0a
@@ -19664,9 +19666,9 @@ draftInput: &a1
       normalizedSha256: 191461e31bb2d50d9be7b6fd91e2a63e14e7eee00634461bb4bc32bac0b7f0c8
       normalizedBytes: 323665
     - path: package.json
-      rawSha256: f30704025c366cbbecd6fa7cd854d4e67abeea3ea761ce70d3a5d6f27e1b856e
-      normalizedSha256: f30704025c366cbbecd6fa7cd854d4e67abeea3ea761ce70d3a5d6f27e1b856e
-      normalizedBytes: 4348
+      rawSha256: f7521f5a33613e5486a97f4b330e11858d2bc566ef4349e83280a894590e5b85
+      normalizedSha256: f7521f5a33613e5486a97f4b330e11858d2bc566ef4349e83280a894590e5b85
+      normalizedBytes: 4598
     - path: playwright.config.ts
       rawSha256: 4e9fcf0c86d51cf9dbad5b7c5cb822c47246330b7b9bfb97f78b65dcbe452429
       normalizedSha256: 4e9fcf0c86d51cf9dbad5b7c5cb822c47246330b7b9bfb97f78b65dcbe452429
@@ -19719,6 +19721,14 @@ draftInput: &a1
       rawSha256: 6c21c06b98953d8d1a0420f379fedb09c25094c349a7ca9b0b117d81b0a1bba3
       normalizedSha256: 6c21c06b98953d8d1a0420f379fedb09c25094c349a7ca9b0b117d81b0a1bba3
       normalizedBytes: 8862
+    - path: scripts/checkBeforePush.sh
+      rawSha256: 0361e06d2e0b385c3d6a420aad5b16e042458166c7a3bffc479dc25438f137f7
+      normalizedSha256: 0361e06d2e0b385c3d6a420aad5b16e042458166c7a3bffc479dc25438f137f7
+      normalizedBytes: 653
+    - path: scripts/checkBeforePush.ts
+      rawSha256: 7ea351db597e228508c8b437243c54f12edd04a12f60aaf9b59aacd360741da1
+      normalizedSha256: 7ea351db597e228508c8b437243c54f12edd04a12f60aaf9b59aacd360741da1
+      normalizedBytes: 3792
     - path: scripts/ci/release-browser-recovery.sh
       rawSha256: 54738427394e3f86e528bb2932cb3399c28710c26c821520106726a12d769055
       normalizedSha256: 54738427394e3f86e528bb2932cb3399c28710c26c821520106726a12d769055
@@ -20380,9 +20390,9 @@ draftInput: &a1
       normalizedSha256: 0dde831a8ab2a6a2794d1dda7d459297263544faeafb0d0fdaa4d10008e7320d
       normalizedBytes: 6308
     - path: scripts/release/checkReleaseContinuity.ts
-      rawSha256: ed237a9d777828a281d0f2eecccda79a4d2203221a320cfdd390bd87a3e106d0
-      normalizedSha256: ed237a9d777828a281d0f2eecccda79a4d2203221a320cfdd390bd87a3e106d0
-      normalizedBytes: 24299
+      rawSha256: 5466ef43d1aa79a579e4917559ba502f0054caeb9d9ce785063467e7f455bf89
+      normalizedSha256: 5466ef43d1aa79a579e4917559ba502f0054caeb9d9ce785063467e7f455bf89
+      normalizedBytes: 24515
     - path: scripts/release/checkStaticArtifact.ts
       rawSha256: fdfa544bf118d839e779ee18b98f54d2d565b4ee5d49f0bacb148a889c748ac3
       normalizedSha256: fdfa544bf118d839e779ee18b98f54d2d565b4ee5d49f0bacb148a889c748ac3
@@ -20412,9 +20422,9 @@ draftInput: &a1
       normalizedSha256: 286d484ad0a4a44b702a82a057ed28556cb31c0474078c3e9fbc37e9036af238
       normalizedBytes: 25345
     - path: scripts/release/javascriptReleaseSchema.ts
-      rawSha256: c28195e3d76748f3b65aa4daea63d7eb139f2a16b0d2498677cd42c0b938a799
-      normalizedSha256: c28195e3d76748f3b65aa4daea63d7eb139f2a16b0d2498677cd42c0b938a799
-      normalizedBytes: 7110
+      rawSha256: 237ae54393571b17dd08b5aa8d774d24861abc298a018f0d678c0ef1fee7d375
+      normalizedSha256: 237ae54393571b17dd08b5aa8d774d24861abc298a018f0d678c0ef1fee7d375
+      normalizedBytes: 7580
     - path: scripts/release/javascriptSyntheticContinuity.ts
       rawSha256: ba44b6d9f6856ec5b01ddc9f2c63e1feeb635cf7a06b5c562fb91d23291412e0
       normalizedSha256: ba44b6d9f6856ec5b01ddc9f2c63e1feeb635cf7a06b5c562fb91d23291412e0
@@ -20456,9 +20466,9 @@ draftInput: &a1
       normalizedSha256: 8233705566dc54644e82f8c95980fa510eabc0fc99556e140a06b4a1398bcbd8
       normalizedBytes: 4254
     - path: scripts/release/releaseCourseContracts.ts
-      rawSha256: 54529ebb655975ddb604b63733b2bb1cfb457f91ff49cc78fb52bd285535a17c
-      normalizedSha256: 54529ebb655975ddb604b63733b2bb1cfb457f91ff49cc78fb52bd285535a17c
-      normalizedBytes: 9614
+      rawSha256: d5825b84e5ef79e39218d70f7a5d84bce89b6448a29cd2492803a498049e0858
+      normalizedSha256: d5825b84e5ef79e39218d70f7a5d84bce89b6448a29cd2492803a498049e0858
+      normalizedBytes: 10744
     - path: scripts/release/releaseHashes.ts
       rawSha256: 06a48e017753f1cb8a142a4079978628c8342af1e3d6efa604dd6b78c99cbc63
       normalizedSha256: 06a48e017753f1cb8a142a4079978628c8342af1e3d6efa604dd6b78c99cbc63
@@ -20471,6 +20481,18 @@ draftInput: &a1
       rawSha256: ed674a992485becf442ee4156351376c127cc8bb6665c92c667e2fcaa48fefc2
       normalizedSha256: ed674a992485becf442ee4156351376c127cc8bb6665c92c667e2fcaa48fefc2
       normalizedBytes: 4454
+    - path: scripts/release/tailwindPublicationInputs.ts
+      rawSha256: 548cb8ac77bb8e8a65c0b77a43c8ac209cc90713e88f6da809ea6445b32ea009
+      normalizedSha256: 548cb8ac77bb8e8a65c0b77a43c8ac209cc90713e88f6da809ea6445b32ea009
+      normalizedBytes: 6364
+    - path: scripts/release/tailwindReleaseSchema.ts
+      rawSha256: 3b95577bf4021ea5f1ac0157a3c35076a95249b8aa337f7cda1b1a27d91c635c
+      normalizedSha256: 3b95577bf4021ea5f1ac0157a3c35076a95249b8aa337f7cda1b1a27d91c635c
+      normalizedBytes: 3380
+    - path: scripts/release/tailwindSyntheticContinuity.ts
+      rawSha256: 9886fb2e9a61c64368079be47730042be2fb91792af3cee168da5e722aaa2482
+      normalizedSha256: 9886fb2e9a61c64368079be47730042be2fb91792af3cee168da5e722aaa2482
+      normalizedBytes: 5572
     - path: scripts/release/typescriptAcceptanceSchema.ts
       rawSha256: 4ee9114e50139d0ea7e47a2acb6a08d099abae9dbe440d73937b22c6ef741176
       normalizedSha256: 4ee9114e50139d0ea7e47a2acb6a08d099abae9dbe440d73937b22c6ef741176
@@ -20516,17 +20538,21 @@ draftInput: &a1
       normalizedSha256: f6e2e277ba054659e6ca49d8bce70495b262716f3f3d1164f6177740c53361f8
       normalizedBytes: 14196
     - path: scripts/release/verifyReleaseApproval.ts
-      rawSha256: e924d423dc2b880ac809fdf9d3960f69ca00cd1f13a080422d83da747c5ef53b
-      normalizedSha256: e924d423dc2b880ac809fdf9d3960f69ca00cd1f13a080422d83da747c5ef53b
-      normalizedBytes: 27206
+      rawSha256: 1b2c52b381de4b10fbf49ea20b4bcd4455cfba862a13f9b38b817ff7f68f6c99
+      normalizedSha256: 1b2c52b381de4b10fbf49ea20b4bcd4455cfba862a13f9b38b817ff7f68f6c99
+      normalizedBytes: 28237
     - path: scripts/release/verifyReleasePromotion.ts
-      rawSha256: e286190dd75b52cacc3d43d73237cd80ae254d66d9ab6209d130335f6658df5a
-      normalizedSha256: e286190dd75b52cacc3d43d73237cd80ae254d66d9ab6209d130335f6658df5a
-      normalizedBytes: 17577
+      rawSha256: 2a2ad265d156227aaefa4b3ce0123b5ce18b511c5641fbad0b8190deae52ce6d
+      normalizedSha256: 2a2ad265d156227aaefa4b3ce0123b5ce18b511c5641fbad0b8190deae52ce6d
+      normalizedBytes: 17865
     - path: scripts/release/verifyReleaseTarget.ts
-      rawSha256: 7b284ebdaad31d11641c68dcd87581b51e615b5bcec8a515c8267604cdfa2968
-      normalizedSha256: 7b284ebdaad31d11641c68dcd87581b51e615b5bcec8a515c8267604cdfa2968
-      normalizedBytes: 10433
+      rawSha256: 68c26d78154151c357ca2256d4c7effd78db4a95bdf9ca2fa350c001930c33bb
+      normalizedSha256: 68c26d78154151c357ca2256d4c7effd78db4a95bdf9ca2fa350c001930c33bb
+      normalizedBytes: 10518
+    - path: scripts/release/verifyTailwindQualityEvidence.ts
+      rawSha256: 8782ab00a2d406bbd29f3cbdbb33f9ff7ffae6e8b9344306e074ea04d2db6b66
+      normalizedSha256: 8782ab00a2d406bbd29f3cbdbb33f9ff7ffae6e8b9344306e074ea04d2db6b66
+      normalizedBytes: 7491
     - path: scripts/release/verifyTypescriptAcceptance.ts
       rawSha256: 7e9ee043b954bfd9defe41d621e3984ffbb18814581695b6a24fa83812e113ae
       normalizedSha256: 7e9ee043b954bfd9defe41d621e3984ffbb18814581695b6a24fa83812e113ae
@@ -20536,9 +20562,9 @@ draftInput: &a1
       normalizedSha256: a427e47578f0c477086f9b9999232eaa1db110eb8a5effeb1641b86930203d06
       normalizedBytes: 10433
     - path: scripts/release/writeReleaseReport.ts
-      rawSha256: 4a6a625ec35c3d5ba891e89bc179a7f562e490a04140dcf6f76ecb414e1b72d3
-      normalizedSha256: 4a6a625ec35c3d5ba891e89bc179a7f562e490a04140dcf6f76ecb414e1b72d3
-      normalizedBytes: 12789
+      rawSha256: 4a9f7893a90d1e27365e59b4dcafda8ceb219e5cb714531598d8d9749ee453b8
+      normalizedSha256: 4a9f7893a90d1e27365e59b4dcafda8ceb219e5cb714531598d8d9749ee453b8
+      normalizedBytes: 12826
     - path: scripts/smoke-subpath.test.ts
       rawSha256: 4b9ed0aa82c416f967b8c106e03f09ab9b54dcc5ed8488f44b618bc6757f06c4
       normalizedSha256: 4b9ed0aa82c416f967b8c106e03f09ab9b54dcc5ed8488f44b618bc6757f06c4
@@ -20547,10 +20573,14 @@ draftInput: &a1
       rawSha256: 83829140ce4c10244130b74ddf98303e73e2fe53589de4f2644283764e205b1c
       normalizedSha256: 83829140ce4c10244130b74ddf98303e73e2fe53589de4f2644283764e205b1c
       normalizedBytes: 7363
+    - path: scripts/testChanged.test.ts
+      rawSha256: 663145770c47af38e31415df4b33aedbdb0ed709dffaa7d7826d9de83a57b368
+      normalizedSha256: 663145770c47af38e31415df4b33aedbdb0ed709dffaa7d7826d9de83a57b368
+      normalizedBytes: 3337
     - path: scripts/testChanged.ts
-      rawSha256: 580120ca6723f9d78fc96fbed3160eec88d5d6813a34f8cfb5ebb2d62ff52349
-      normalizedSha256: 580120ca6723f9d78fc96fbed3160eec88d5d6813a34f8cfb5ebb2d62ff52349
-      normalizedBytes: 2696
+      rawSha256: b31999ef8d443c5e63656503dc1bb773d4ed9d975d73566560b915625115775f
+      normalizedSha256: b31999ef8d443c5e63656503dc1bb773d4ed9d975d73566560b915625115775f
+      normalizedBytes: 3161
     - path: scripts/vitestChanged.config.ts
       rawSha256: f80392c784c2fbb7c76aa07bc1551472e920f02c9bcab1af40668fd2b2ffb71b
       normalizedSha256: f80392c784c2fbb7c76aa07bc1551472e920f02c9bcab1af40668fd2b2ffb71b
@@ -21528,13 +21558,13 @@ draftInput: &a1
       normalizedSha256: 302d60bdf8c50e0d0dceb46a3b6b02b59f515678d70dbe1c7392667f69a37ff1
       normalizedBytes: 5594
     - path: src/features/home/HomePage.test.tsx
-      rawSha256: a5147897b5e2ba8cc1f74a53f986594f6133bd4558c2625e2d466142e5f7787d
-      normalizedSha256: a5147897b5e2ba8cc1f74a53f986594f6133bd4558c2625e2d466142e5f7787d
-      normalizedBytes: 9708
+      rawSha256: 7d5ccec09f754324cf4220ffb18acc7ed65511406dee0b72253060d7d4431407
+      normalizedSha256: 7d5ccec09f754324cf4220ffb18acc7ed65511406dee0b72253060d7d4431407
+      normalizedBytes: 12578
     - path: src/features/home/HomePage.tsx
-      rawSha256: 7eac72b94ea64746b62b13632ce1a76f2607ef3a83359e2841a4a35aa6631478
-      normalizedSha256: 7eac72b94ea64746b62b13632ce1a76f2607ef3a83359e2841a4a35aa6631478
-      normalizedBytes: 12377
+      rawSha256: d9d0ff5078f4e1874585bdc70c56d30dc8d415240962c65626181481a4ffbc6b
+      normalizedSha256: d9d0ff5078f4e1874585bdc70c56d30dc8d415240962c65626181481a4ffbc6b
+      normalizedBytes: 12429
     - path: src/features/home/firstActivity.ts
       rawSha256: 0001900fde0a9786779251ad8812072e2d2ce54ce62f03febc902fce680e0ead
       normalizedSha256: 0001900fde0a9786779251ad8812072e2d2ce54ce62f03febc902fce680e0ead
@@ -21988,9 +22018,9 @@ draftInput: &a1
       normalizedSha256: 258002e2e5a669d0d472e3492a1896c90f0076137ddeaf00a8204b9e5cef84b0
       normalizedBytes: 5672
     - path: src/features/library/LibraryIndexPage.tsx
-      rawSha256: 8604bde224f5e15355370b20d212a89fbee13f8bb59c059222da357c03f9f9bf
-      normalizedSha256: 8604bde224f5e15355370b20d212a89fbee13f8bb59c059222da357c03f9f9bf
-      normalizedBytes: 4489
+      rawSha256: 54435da149b421da10378c616ed8fe17a81e103f7d03a5a91ee4ab06666cf547
+      normalizedSha256: 54435da149b421da10378c616ed8fe17a81e103f7d03a5a91ee4ab06666cf547
+      normalizedBytes: 5297
     - path: src/features/library/LibraryShell.test.tsx
       rawSha256: d5fef1a06023d7a8e6332c40285601e6d14789a86af2f146e279a1c6c1b50dc2
       normalizedSha256: d5fef1a06023d7a8e6332c40285601e6d14789a86af2f146e279a1c6c1b50dc2
@@ -23403,6 +23433,10 @@ draftInput: &a1
       rawSha256: a55dc18a00142954fe315af215a50e85b603ed0f5b03e996566eabf7bc01f6fc
       normalizedSha256: a55dc18a00142954fe315af215a50e85b603ed0f5b03e996566eabf7bc01f6fc
       normalizedBytes: 1608
+    - path: tests/fixtures/progress/tailwind-previous-release-bundle.json
+      rawSha256: 61bafdd1bbb07064fcfcac40e22574d863eba17dd049be2f5618ed30b193e48c
+      normalizedSha256: 61bafdd1bbb07064fcfcac40e22574d863eba17dd049be2f5618ed30b193e48c
+      normalizedBytes: 49824
     - path: tests/fixtures/progress/typescript-previous-release-bundle.json
       rawSha256: 333761d7caf856e68d19b70e78a24b349c1c11f750b835b5fce81f19346e138c
       normalizedSha256: 333761d7caf856e68d19b70e78a24b349c1c11f750b835b5fce81f19346e138c
@@ -23460,9 +23494,9 @@ draftInput: &a1
       normalizedSha256: 9677e46b5c550e143a13514ec2b0708af3254752414b7292b5d87d2a6276c879
       normalizedBytes: 1654
     - path: tests/pages-workflow.test.ts
-      rawSha256: df72487e2b1b2b6141ab61645f8665500607468de7f6d49eec1136117253f876
-      normalizedSha256: df72487e2b1b2b6141ab61645f8665500607468de7f6d49eec1136117253f876
-      normalizedBytes: 15150
+      rawSha256: 154376ab65d867681ae1fbbb8f2057205bdcd91da322727ad7d4551e04312435
+      normalizedSha256: 154376ab65d867681ae1fbbb8f2057205bdcd91da322727ad7d4551e04312435
+      normalizedBytes: 15195
     - path: tests/performance/bundle-budget.test.ts
       rawSha256: ae3100eb8542500311cea7471fe835d3fdc640e6bf8e3e468b56c4d8a4410234
       normalizedSha256: ae3100eb8542500311cea7471fe835d3fdc640e6bf8e3e468b56c4d8a4410234
@@ -23495,10 +23529,18 @@ draftInput: &a1
       rawSha256: af7b9f7b5c7470327bd682adefd283e8aa8d5df17cb299dcd9bfc57a7081c696
       normalizedSha256: af7b9f7b5c7470327bd682adefd283e8aa8d5df17cb299dcd9bfc57a7081c696
       normalizedBytes: 4103
+    - path: tests/pre-push-check.test.ts
+      rawSha256: 57afdf3d3b533c45a3c0a1ec54ef59ada2e66bbfe03f6acf16f87981a20c7dd0
+      normalizedSha256: 57afdf3d3b533c45a3c0a1ec54ef59ada2e66bbfe03f6acf16f87981a20c7dd0
+      normalizedBytes: 5713
     - path: tests/test-base-path.test.ts
       rawSha256: 515adb1c3e8a846bbdb97a05d85271b9d6bdf476d2e6116130c2ba67f3c27a89
       normalizedSha256: 515adb1c3e8a846bbdb97a05d85271b9d6bdf476d2e6116130c2ba67f3c27a89
       normalizedBytes: 2329
+    - path: tests/typecheck-projects.test.ts
+      rawSha256: b413ed5dba466ca2fa9d192274e010e9e758be57d926e1ca9648a343c98e2414
+      normalizedSha256: b413ed5dba466ca2fa9d192274e010e9e758be57d926e1ca9648a343c98e2414
+      normalizedBytes: 1985
     - path: tests/unit/config/playwrightOutputIsolation.test.ts
       rawSha256: d1403480aecf0f364bf6d388a335a4c28c68b33dfc103e988a1d4766813da70f
       normalizedSha256: d1403480aecf0f364bf6d388a335a4c28c68b33dfc103e988a1d4766813da70f
@@ -23560,17 +23602,17 @@ draftInput: &a1
       normalizedSha256: 656326fe87a417aff6d4f26dd367afeb938aeb979a5c2b8c6697a07a1589721f
       normalizedBytes: 2505
     - path: tests/unit/release/draftCourseQuality.test.ts
-      rawSha256: 71623f57f13e34c30fe418bfa102c9da261b7093ed09b47aa0e93a34ad37e4a7
-      normalizedSha256: 71623f57f13e34c30fe418bfa102c9da261b7093ed09b47aa0e93a34ad37e4a7
-      normalizedBytes: 27880
+      rawSha256: c683adc38e9c902085e3e18071154c17f208df26ca74bbf298a79ef47ebe6bf7
+      normalizedSha256: c683adc38e9c902085e3e18071154c17f208df26ca74bbf298a79ef47ebe6bf7
+      normalizedBytes: 27859
     - path: tests/unit/release/nextNativeEvidence.test.mjs
       rawSha256: 1bf77fddf3095cb81abe7fff37819b6bfcd86d176e04b6bc97bb08ff0f7b7d7e
       normalizedSha256: 1bf77fddf3095cb81abe7fff37819b6bfcd86d176e04b6bc97bb08ff0f7b7d7e
       normalizedBytes: 4158
     - path: tests/unit/release/nextRelease.test.ts
-      rawSha256: 835ad87e2b2fc6e01d48b89d446452078a964f82649d2b055cc43481e6f91a11
-      normalizedSha256: 835ad87e2b2fc6e01d48b89d446452078a964f82649d2b055cc43481e6f91a11
-      normalizedBytes: 18528
+      rawSha256: e00086a2041e6cc52a94968f8cdf4ef17e881954ea16694cd3dd8ae0fccd93cf
+      normalizedSha256: e00086a2041e6cc52a94968f8cdf4ef17e881954ea16694cd3dd8ae0fccd93cf
+      normalizedBytes: 18697
     - path: tests/unit/release/pythonRelease.test.ts
       rawSha256: cd4600e629f31d8440b9e356a4a5ca3aa5efa723d68534ebcd197892e19bdad3
       normalizedSha256: cd4600e629f31d8440b9e356a4a5ca3aa5efa723d68534ebcd197892e19bdad3
@@ -23579,6 +23621,10 @@ draftInput: &a1
       rawSha256: d5b42208fe8b6a37bcd5ff3a5029c1e97d7ccb2b3df5c1d40f360f06029397e9
       normalizedSha256: d5b42208fe8b6a37bcd5ff3a5029c1e97d7ccb2b3df5c1d40f360f06029397e9
       normalizedBytes: 11806
+    - path: tests/unit/release/tailwindRelease.test.ts
+      rawSha256: 091bfb9bd11c824325513b9719a476f489797aa0d82e2a5abec9d8c336625d79
+      normalizedSha256: 091bfb9bd11c824325513b9719a476f489797aa0d82e2a5abec9d8c336625d79
+      normalizedBytes: 15545
     - path: tests/unit/release/typescriptAcceptance.test.ts
       rawSha256: 5f94f182f36272331597d40e810293db910f22db1be72706e38d2b73b8e00c06
       normalizedSha256: 5f94f182f36272331597d40e810293db910f22db1be72706e38d2b73b8e00c06
@@ -23588,9 +23634,9 @@ draftInput: &a1
       normalizedSha256: 92bcb91a317fa5399c97e05665a3da3c19054a1e66b4b7fc417cb0e7c12727ca
       normalizedBytes: 8735
     - path: tests/unit/release/typescriptRelease.test.ts
-      rawSha256: 3abf8c86383ab31291f3b6cb1e4c289f3449bd00a5b76a1ca1293243de9875d9
-      normalizedSha256: 3abf8c86383ab31291f3b6cb1e4c289f3449bd00a5b76a1ca1293243de9875d9
-      normalizedBytes: 10757
+      rawSha256: 00a6619cde4bc8f75b9f4d52b92dbe1f2ab0211b0b9e5a1c844c81d293855603
+      normalizedSha256: 00a6619cde4bc8f75b9f4d52b92dbe1f2ab0211b0b9e5a1c844c81d293855603
+      normalizedBytes: 10824
     - path: tests/unit/runtime/TypeScriptCompilerClient.test.ts
       rawSha256: 4ddb306afcc28e4b6c4635dadf83891a95b178d84f9c9635c13b74033360997e
       normalizedSha256: 4ddb306afcc28e4b6c4635dadf83891a95b178d84f9c9635c13b74033360997e
@@ -23760,22 +23806,22 @@ draftInput: &a1
       normalizedSha256: 9a137ce2b39b4fa1b222cf7d404fdbd801fcb5dbaf03d65ee9c46aa6bd80b9c8
       normalizedBytes: 271
     - path: vitest.config.ts
-      rawSha256: 3b8e26cf90cbe78637c96523a6a8583b0ce32f260c441d0c071b2f0725e9f4f4
-      normalizedSha256: 3b8e26cf90cbe78637c96523a6a8583b0ce32f260c441d0c071b2f0725e9f4f4
-      normalizedBytes: 753
-  normalizedInputSha256: 4caa93380af432c8986f8916e3f39214ae26f60cf37b433df70f485c423a0411
+      rawSha256: 731bc33262d270828818c24547108ef2508f3c28fbd28f6f1e2439be0f37f1e6
+      normalizedSha256: 731bc33262d270828818c24547108ef2508f3c28fbd28f6f1e2439be0f37f1e6
+      normalizedBytes: 1061
+  normalizedInputSha256: 074d70e8a60b2d4e2b79424bcbbfaccfb122236c9fba152ca0f372e2f304f7e2
 finalInput: *a1
-applicationSourceSha256: 5c6fcd89fafe494ab7bc1917e1bea0aa68a87120a3750bb5e321bc6f46182cf8
+applicationSourceSha256: c23bf8defb213fdb3b616b9334e3c3cb6734b70acd9bbccb46b96b18e5a03eb4
 dependencyLockSha256: 191461e31bb2d50d9be7b6fd91e2a63e14e7eee00634461bb4bc32bac0b7f0c8
 personas:
   - role: learner
-    actor: /root/consumer_final_logic
-    session: /root/consumer_final_logic/d55127b-applicability
+    actor: /root/next_update_logic
+    session: /root/next_update_logic/f1fcd03-learner-applicability
     method: independent-ai-source-review
     mandatoryFindings: 0
     report:
-      path: private/issue250-release-evidence/p16/learner-review.json
-      sha256: 5a5a66007c3ebb0810d4338a2f1f224aa96761b262ce9c2b2781203338f87e4b
+      path: private/ci-stability-2026-10-27/next-p-learner-review.json
+      sha256: 6193328c5b176142c1b9dbbeac57a9b5187b1e24ff5eca37a19998790d4db3df
     lessons:
       - lessonId: next-ch01-l01
         learnerContentSha256: 6af5e963b5ab3dd54642510032ca6797c79b2c04250921082e9bbb0fd65247a2
@@ -23796,13 +23842,13 @@ personas:
       - lessonId: next-ch06-l01
         learnerContentSha256: 23cab027cd6efeeb34c5f1afdf9ce266ed58a244433bdf026e595246805a189f
   - role: learning-design
-    actor: /root/consumer_final_structure
-    session: /root/consumer_final_structure/d55127b-applicability
+    actor: /root/next_update_structure
+    session: /root/next_update_structure/f1fcd03-applicability-2026-10-27
     method: independent-ai-source-review
     mandatoryFindings: 0
     report:
-      path: private/issue250-release-evidence/p16/learning-review.json
-      sha256: d0dd4d9c57d24769f17d2a69883d105e374442f2bf2b1131cec4f7d408444e6e
+      path: private/ci-stability-2026-10-27/next-p-learning-review.json
+      sha256: f6b59de9795ec0d1f90bbb1c9525e6b3e3a091b3ddca8c813e077824b175a018
     lessons:
       - lessonId: next-ch01-l01
         learnerContentSha256: 6af5e963b5ab3dd54642510032ca6797c79b2c04250921082e9bbb0fd65247a2
@@ -23823,13 +23869,13 @@ personas:
       - lessonId: next-ch06-l01
         learnerContentSha256: 23cab027cd6efeeb34c5f1afdf9ce266ed58a244433bdf026e595246805a189f
   - role: runtime-publication
-    actor: /root/consumer_final_security
-    session: /root/consumer_final_security/d55127b-applicability
+    actor: /root/next_update_security
+    session: /root/next_update_security/f1fcd03-applicability
     method: independent-ai-source-review
     mandatoryFindings: 0
     report:
-      path: private/issue250-release-evidence/p16/runtime-review.json
-      sha256: 117e15332ae08b249609eadf5abeae8758994f1bd7aaefc8d91ddc20544e733e
+      path: private/ci-stability-2026-10-27/next-p-runtime-review.json
+      sha256: e121205f8af3d1aee0dab89138675a86fe73f4e34deb35d2ad0c750705789262
     lessons:
       - lessonId: next-ch01-l01
         learnerContentSha256: 6af5e963b5ab3dd54642510032ca6797c79b2c04250921082e9bbb0fd65247a2
@@ -23852,15 +23898,15 @@ personas:
 nativePreflight:
   schemaVersion: 1
   courseId: next
-  sourceCommit: e8a077994f5c4cba891e15141dddf5002b1fb7f0
-  workflowRunId: '40390640171'
+  sourceCommit: f1fcd0397f539770a31879219962c03fb5ab118c
+  workflowRunId: '40573105573'
   workflowRunAttempt: 1
   scope: 9教材81Fixtureのcheckpoint。通常UIの連続監視ではありません。
   workspaces:
     - workspaceId: next-ch04-l02-e01
       fixtureCount: 9
       limitMiB: 512
-      peakBytes: 452886528
+      peakBytes: 453980160
       maximumPids: 39
       memoryEvents:
         max: 0
@@ -23870,8 +23916,8 @@ nativePreflight:
     - workspaceId: next-ch05-l01-e01
       fixtureCount: 11
       limitMiB: 896
-      peakBytes: 626855936
-      maximumPids: 40
+      peakBytes: 636395520
+      maximumPids: 39
       memoryEvents:
         max: 0
         oom: 0
@@ -23880,7 +23926,7 @@ nativePreflight:
     - workspaceId: next-ch06-l01-e01
       fixtureCount: 12
       limitMiB: 896
-      peakBytes: 629411840
+      peakBytes: 636928000
       maximumPids: 39
       memoryEvents:
         max: 0
@@ -23890,8 +23936,8 @@ nativePreflight:
     - workspaceId: next-ch01-l01-e01
       fixtureCount: 6
       limitMiB: 512
-      peakBytes: 471502848
-      maximumPids: 40
+      peakBytes: 470097920
+      maximumPids: 41
       memoryEvents:
         max: 0
         oom: 0
@@ -23900,8 +23946,8 @@ nativePreflight:
     - workspaceId: next-ch02-l01-e01
       fixtureCount: 8
       limitMiB: 576
-      peakBytes: 548671488
-      maximumPids: 42
+      peakBytes: 549040128
+      maximumPids: 41
       memoryEvents:
         max: 0
         oom: 0
@@ -23910,8 +23956,8 @@ nativePreflight:
     - workspaceId: next-ch02-l02-e01
       fixtureCount: 9
       limitMiB: 512
-      peakBytes: 471838720
-      maximumPids: 38
+      peakBytes: 480743424
+      maximumPids: 39
       memoryEvents:
         max: 0
         oom: 0
@@ -23920,7 +23966,7 @@ nativePreflight:
     - workspaceId: next-ch03-l01-e01
       fixtureCount: 8
       limitMiB: 576
-      peakBytes: 556212224
+      peakBytes: 555503616
       maximumPids: 39
       memoryEvents:
         max: 0
@@ -23930,8 +23976,8 @@ nativePreflight:
     - workspaceId: next-ch03-l02-e01
       fixtureCount: 9
       limitMiB: 576
-      peakBytes: 567341056
-      maximumPids: 38
+      peakBytes: 566480896
+      maximumPids: 40
       memoryEvents:
         max: 0
         oom: 0
@@ -23940,19 +23986,19 @@ nativePreflight:
     - workspaceId: next-ch04-l01-e01
       fixtureCount: 9
       limitMiB: 512
-      peakBytes: 476372992
-      maximumPids: 44
+      peakBytes: 486785024
+      maximumPids: 38
       memoryEvents:
         max: 0
         oom: 0
         oomKill: 0
       zombies: 0
 nativeEvidence:
-  path: private/issue250-release-evidence/p23/performance-resume/native-preflight.json
-  sha256: c7cd1baac6385b5b375c6c261a5e7f110d96e1658e7519efb4f0c0fa70267559
+  path: private/ci-stability-2026-10-27/next-p-native-evidence.json
+  sha256: a7e6b2b6c1c943a1c527c1f46c378570bb4adc2c09589ccd51ee51942fd46762
 pagesStaticStudy:
-  sourceCommit: e8a077994f5c4cba891e15141dddf5002b1fb7f0
-  canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
+  sourceCommit: f1fcd0397f539770a31879219962c03fb5ab118c
+  canonicalDistSha256: 689c6e1fddaa1f907b91a473cafed7a6f149fd6ac61e1883d441ccf216727a41
   viewports:
     - 1280
     - 390
@@ -23972,20 +24018,20 @@ pagesStaticStudy:
   progressRoundTrip: passed
   localHandoff: passed
   report:
-    path: private/issue250-release-evidence/p23/performance-resume/pages-static-study-report.json
-    sha256: 8199c051f69b75df93f688c1bc676818f1cce30e7dfa962971646f1609668d90
-author: codex-primary-issue250
+    path: private/ci-stability-2026-10-27/next-p-pages-static-study-report.json
+    sha256: 493b4c1fbfcdf5db8f56521259cded85d6ab312e4b630118ff6a0dfc27c9a93b
+author: /root
 privateOriginalsChecked: true
 independenceReview:
-  reviewer: /root/consumer_final_security
-  status: approved
-  sourceCommit: e8a077994f5c4cba891e15141dddf5002b1fb7f0
-  canonicalDistSha256: 49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3
-  productTreeSha256: 1553e9edb3839e54106cfb6a30d695f125e5ed45737d6494eb374461aec9c84a
-  evidenceSha256: e9ac78f92970e0cee9b4b1c4e1c2506cc1e155a8d4d1cd6a50ec65a6ff91abf4
+  reviewer: /root/next_update_security
+  sourceCommit: f1fcd0397f539770a31879219962c03fb5ab118c
+  canonicalDistSha256: 689c6e1fddaa1f907b91a473cafed7a6f149fd6ac61e1883d441ccf216727a41
+  productTreeSha256: 4b5a8d4411a2a2b8aa12e464b803f02119d10059075225687ea35ab738707988
+  evidenceSha256: c83bbada0043d387d37de2af8b67b65dd00a3f68b3bcc12235a1bdfea0072e3a
   referenceSha256s:
-    - 117e15332ae08b249609eadf5abeae8758994f1bd7aaefc8d91ddc20544e733e
-    - 5a5a66007c3ebb0810d4338a2f1f224aa96761b262ce9c2b2781203338f87e4b
-    - 8199c051f69b75df93f688c1bc676818f1cce30e7dfa962971646f1609668d90
-    - c7cd1baac6385b5b375c6c261a5e7f110d96e1658e7519efb4f0c0fa70267559
-    - d0dd4d9c57d24769f17d2a69883d105e374442f2bf2b1131cec4f7d408444e6e
+    - 493b4c1fbfcdf5db8f56521259cded85d6ab312e4b630118ff6a0dfc27c9a93b
+    - 6193328c5b176142c1b9dbbeac57a9b5187b1e24ff5eca37a19998790d4db3df
+    - a7e6b2b6c1c943a1c527c1f46c378570bb4adc2c09589ccd51ee51942fd46762
+    - e121205f8af3d1aee0dab89138675a86fe73f4e34deb35d2ad0c750705789262
+    - f6b59de9795ec0d1f90bbb1c9525e6b3e3a091b3ddca8c813e077824b175a018
+  status: approved

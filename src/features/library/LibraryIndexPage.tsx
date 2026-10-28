@@ -1,6 +1,7 @@
 import { ReadingResume } from './ReadingResume';
 import { readingLessonPath } from './readingTargets';
-import { Link, useLoaderData } from 'react-router';
+import { useLayoutEffect, useRef } from 'react';
+import { Link, NavigationType, useLoaderData, useLocation, useNavigationType } from 'react-router';
 import type { libraryCourseLoader } from '../../app/libraryContentLoaders';
 import type { LessonOutline } from '../../core/content/types';
 import { buildLibrarySlidePath } from './courseSlideSequence';
@@ -23,13 +24,31 @@ function requireFirstSlide(lesson: LessonOutline) {
 /** 進捗状態を参照せず、公開Courseの全Slide入口を階層目次として表示する。 */
 export function LibraryIndexPage() {
   const course = useLoaderData<typeof libraryCourseLoader>();
+  const location = useLocation();
+  const navigation = useNavigationType();
+  const heading = useRef<HTMLHeadingElement>(null);
+  const state: unknown = location.state;
+  const fromHome =
+    typeof state === 'object' &&
+    state !== null &&
+    'readingCatalogEntry' in state &&
+    state.readingCatalogEntry === 'home';
+
+  useLayoutEffect(() => {
+    // Homeから新しく開いた目次だけを整える。履歴復帰と読書URLの位置は上書きしない。
+    if (navigation !== NavigationType.Push || !fromHome) return;
+    heading.current?.focus({ preventScroll: true });
+    window.scrollTo(0, 0);
+  }, [fromHome, location.key, navigation]);
 
   return (
     <div className="tc-library-index">
       <header className="tc-library-index-hero">
         <div>
           <p className="tc-library-index-kicker">設計図ライブラリ</p>
-          <h1>{course.title} スライド目次</h1>
+          <h1 ref={heading} tabIndex={-1}>
+            {course.title} スライド目次
+          </h1>
           <p className="tc-library-index-lead">進捗を変えずに、すべてのスライドを自由に読めます</p>
         </div>
         <Link to={`/courses/${course.id}`} className="tc-library-study-return">

@@ -153,7 +153,7 @@ releases:
     courseManifestSha256: a3bffc974c7d6b8acd23df4c92f3c82aee90e5af1cefc367e4039fe1857145ac
     publicProvenanceSha256: a577ff8815e8e27eca907b8e0e203b200a07aab323b792536ba04ae61c857c99
     persistentIdsSha256: 7e6e561262b2b3515f8de71bfe630cfbb9501de3106e7697e07abf2c123195f8
-    persistentIds:
+    persistentIds: &a1
       - desktop-1280
       - next
       - next-bookclub-capstone
@@ -299,14 +299,14 @@ releases:
     normalizedLearningInputSha256: 4caa93380af432c8986f8916e3f39214ae26f60cf37b433df70f485c423a0411
     courseId: next
 candidate:
-  revision: 2026-10-24.1
-  status: draft
-  verifiedSourceCommit: draft
-  canonicalDistSha256: draft
-  courseManifestSha256: draft
-  publicProvenanceSha256: draft
-  persistentIdsSha256: draft
-  persistentIds: []
+  revision: 2026-10-27.1
+  status: approved
+  verifiedSourceCommit: f1fcd0397f539770a31879219962c03fb5ab118c
+  canonicalDistSha256: 689c6e1fddaa1f907b91a473cafed7a6f149fd6ac61e1883d441ccf216727a41
+  courseManifestSha256: accf5fd532b7ac9ab877699dffbee9c20d0448c9224689ff7f33c716631fce73
+  publicProvenanceSha256: a577ff8815e8e27eca907b8e0e203b200a07aab323b792536ba04ae61c857c99
+  persistentIdsSha256: 7e6e561262b2b3515f8de71bfe630cfbb9501de3106e7697e07abf2c123195f8
+  persistentIds: *a1
   previousReleaseTag: tsumucode-release-2026-10-24.1
   tombstonedIds: []
   migrations:
@@ -325,8 +325,11 @@ candidate:
     - fromRevision: 2026-10-09.2
       toRevision: 2026-10-24.1
       steps: []
+    - fromRevision: 2026-10-24.1
+      toRevision: 2026-10-27.1
+      steps: []
   syntheticProgressBundlePath: tests/fixtures/progress/next-previous-release-bundle.json
-  draftSourceCommit: draft
-  draftCanonicalDistSha256: draft
-  normalizedLearningInputSha256: draft
+  draftSourceCommit: f1fcd0397f539770a31879219962c03fb5ab118c
+  draftCanonicalDistSha256: 689c6e1fddaa1f907b91a473cafed7a6f149fd6ac61e1883d441ccf216727a41
+  normalizedLearningInputSha256: 074d70e8a60b2d4e2b79424bcbbfaccfb122236c9fba152ca0f372e2f304f7e2
   courseId: next

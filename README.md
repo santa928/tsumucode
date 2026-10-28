@@ -233,6 +233,16 @@ Tailwind・Python実践・Python OOPの草稿は、[専用の公開前契約と�
 ./scripts/docker-compose.sh run --rm app npm run format:check
 ```
 
+push前は、変更をローカルcommitしたcleanなcheckoutで、PRのbase SHA（mainへのpushは変更前SHA）を明示して次を実行します。`check:prepush`はNode/直接依存の固定版を照合し、provenanceと既存の`check`全工程を実行します。手動で選んだテストやPrettierだけの成功を代用しません。失敗・OOM・signal終了・未commit変更・検証中のSource変更があれば成功記録を出さず、pushを止めます。
+
+```bash
+./scripts/docker-compose.sh run --rm -e BASE_PATH=/tsumucode/ app npm run check:prepush -- <baseの40文字SHA>
+```
+
+資源を限る場合は`-e TSUMUCODE_TEST_MAX_WORKERS=1`でtestの並列数だけを下げられます。対象・期待値・失敗条件はCIと同じです。Docker内でメモリとCPUの上限を設け、同時に別の重い検証を起動しません。型検査は既存のapp/tools両projectを別processで実行し、Lintもsrc・scripts・tests・残りの全件を別processに分け、checkerのメモリを持ち越しません。対象・設定は減らしません。成功出力のcommit/tree/base/lock hashと実コマンド・上限・exitを保存し、その後Sourceを変更した場合だけ影響範囲を検証し直します。必要な型・Lintがローカルで未完了のまま、確認をCIへ持ち越してpushしません。
+
+正式公開候補の確定後は、同じ入口へ`--release`を加え、教材承認と全Unit/Component/Contentを含む既存`check:release`を先に通します。実CLIの`release:target`も、workflowと同じCourse/Source/workflow-headと生成済み教材で解決を確認します。これらの成功はBrowser・性能・公開成功を意味しません。正式qualityではその同じ候補のBrowser/性能・出力集約を一度実行し、既存証拠はSource・生成物hash・検査条件が一致する範囲だけ再利用します。公開後の配信物と実操作確認も別に行います。
+
 明示deployの`check:release`では教材Reviewと全Unit/Component/Content testを実行します。Chromiumの機能E2Eと代表画像比較、Firefox/WebKitの代表cross-browser smoke、固定演習の実ブラウザ性能、配信量、Lighthouse Mobileもこの公開Runで実行します。重複する画像比較17ケースは`npm run test:visual:extended`で対象変更時に明示実行します。画像比較の自動retryは行いません。Runtime、Security、Browser互換性へ触れた変更では、作業中に変更面の代表Browser検証を追加します。
 
 公開Runは同じProduction buildのbundle容量/manifest/subpathとStatic Artifactを先に検査し、成功後にBrowser E2E・操作性能・Lighthouseへ進みます。単独の`test:performance`もbundle検査を先に行います。静的検査済みの公開Runでは`test:performance:browser`で重複を避けます。
