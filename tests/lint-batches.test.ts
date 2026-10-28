@@ -59,3 +59,13 @@ it('propagates a real lint failure and never runs later batches or prints succes
   expect(result.stdout).not.toContain('Lint batch 2/2');
   expect(result.stdout).not.toContain('Lint passed');
 }, 30000);
+
+it('propagates selection/configuration errors before running a lint batch', async () => {
+  const root = await fixture();
+  await writeFile(path.join(root, 'eslint.config.mjs'), 'export default [;\n');
+  const result = spawnSync(process.execPath, [cli], { cwd: root, encoding: 'utf8' });
+  expect(result.status).not.toBe(0);
+  expect(result.stderr).toContain('SyntaxError');
+  expect(result.stdout).not.toContain('Lint batch');
+  expect(result.stdout).not.toContain('Lint passed');
+}, 30000);
