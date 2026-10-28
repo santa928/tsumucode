@@ -10,6 +10,7 @@ import { BaselineSchema } from './content';
 import { BuildIdentitySchema, CommitSchema } from './schema';
 import { buildInventory } from './inventory';
 import { hashBytes, hashValue, repositoryEnvironment } from './identity';
+import { AppRecordSchema, parseAppBinding } from './appRecord';
 
 const exec = promisify(execFile);
 export interface CaptureOptions {
@@ -57,7 +58,14 @@ export async function captureBaseline(options: CaptureOptions) {
     (
       await exec('git', args, { cwd: options.root, encoding: 'utf8', env: gitEnvironment })
     ).stdout.trim();
-  const tags = (await git('for-each-ref', '--format=%(refname)', 'refs/tags/tsumucode-release-*'))
+  const tags = (
+    await git(
+      'for-each-ref',
+      '--format=%(refname)',
+      'refs/tags/tsumucode-release-*',
+      'refs/tags/tsumucode-app-*',
+    )
+  )
     .split('\n')
     .filter(Boolean);
   const matches = [];
@@ -71,13 +79,26 @@ export async function captureBaseline(options: CaptureOptions) {
         })
       ).stdout,
       message = object.slice(object.indexOf('\n\n') + 2);
-    if (
-      !message.split(/\s+/u).includes('head=' + actual.workflowHeadCommit) ||
-      !message.split(/\s+/u).some((token) => token.startsWith('workflow=' + actual.runId + '-'))
-    )
-      continue;
+    let binding;
     const source = CommitSchema.parse(await git('rev-parse', tag + '^{}'));
-    const binding = parseLegacyBinding(message, source, actual.workflowHeadCommit, actual.runId);
+    if (tag.startsWith('refs/tags/tsumucode-app-')) {
+      const record = AppRecordSchema.parse(JSON.parse(message) as unknown);
+      if (
+        record.workflowHeadCommit !== actual.workflowHeadCommit ||
+        record.candidate.runId !== actual.runId ||
+        record.deploymentId !== actual.deploymentId ||
+        record.state !== 'verified'
+      )
+        continue;
+      binding = parseAppBinding(message, source, { ...actual, repository });
+    } else {
+      if (
+        !message.split(/\s+/u).includes('head=' + actual.workflowHeadCommit) ||
+        !message.split(/\s+/u).some((token) => token.startsWith('workflow=' + actual.runId + '-'))
+      )
+        continue;
+      binding = parseLegacyBinding(message, source, actual.workflowHeadCommit, actual.runId);
+    }
     if (new URL(binding.pageUrl).href !== actual.siteUrl)
       throw new Error('Historical tag URL differs from actual deployment');
     matches.push({ tag, binding, tagDigest: hashBytes(object) });
@@ -110,6 +131,13 @@ export async function captureBaseline(options: CaptureOptions) {
         (async (relative) =>
           fetchBytes(new URL('generated/content/' + relative, actual.siteUrl).href)),
     );
+    if (
+      (original.binding.inventoryDigest !== undefined &&
+        original.binding.inventoryDigest !== hashValue(inventory)) ||
+      (original.binding.publicContentDigest !== undefined &&
+        original.binding.publicContentDigest !== publicContent.digest)
+    )
+      throw new Error('Current source or public content differs from its app record');
     const proof = {
       schemaVersion: 1,
       repository,
@@ -120,7 +148,7 @@ export async function captureBaseline(options: CaptureOptions) {
       tag: original.tag,
       tagDigest: original.tagDigest,
       artifactDigest: original.binding.artifactDigest,
-      artifactDigestFormat: 'legacy-canonical-dist',
+      artifactDigestFormat: original.binding.artifactDigestFormat,
       projection: original.binding.projection,
       inventoryDigest: hashValue(inventory),
       publicContentDigest: publicContent.digest,

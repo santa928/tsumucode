@@ -55,3 +55,28 @@ describe('generic public artifact gate', () => {
     },
   );
 });
+
+it.each(['hash', 'missing', 'unknown-payload'])(
+  'rejects progress metadata %s before publication',
+  async (failure) => {
+    const { root, inventory } = await artifact();
+    const { checkStaticArtifact } = await import('../../../../scripts/release/checkStaticArtifact');
+    const file = path.join(root, 'generated/content/progress-catalog.json');
+    if (failure === 'missing') await rm(file);
+    else if (failure === 'hash') await writeFile(file, '{}');
+    else {
+      const { readFile } = await import('node:fs/promises');
+      const { canonicalSha256 } = await import('../../../../scripts/content/splitCourseArtifacts');
+      const catalogPath = path.join(root, 'generated/content/catalog-v3.json');
+      const catalog = JSON.parse(await readFile(catalogPath, 'utf8')) as {
+        progressCatalog: { sha256: string };
+      };
+      const value = { schemaVersion: 1, courses: [{ unsupported: true }] };
+      const { stringifyCanonicalJson } = await import('../../../../scripts/content/compileCourse');
+      await writeFile(file, stringifyCanonicalJson(value));
+      catalog.progressCatalog.sha256 = canonicalSha256(value);
+      await writeFile(catalogPath, stringifyCanonicalJson(catalog));
+    }
+    await expect(checkStaticArtifact(root, inventory)).rejects.toThrow();
+  },
+);

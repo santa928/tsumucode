@@ -6,6 +6,8 @@ import { withoutReviewedNextSource } from './reviewedNextArtifact';
 import { hashFile } from './releaseHashes';
 import { z } from 'zod';
 import { InventorySchema, type ReleaseInventory } from './v2/schema';
+import { hashBytes } from './v2/identity';
+import { ProgressCatalogSchema } from '../../src/core/content/progressCatalog';
 import { CourseCatalogV3Schema } from '../../src/core/content/deliverySchema';
 import { readSplitCourseArtifacts } from '../content/readSplitCourseArtifacts';
 import {
@@ -196,6 +198,30 @@ export async function checkStaticArtifact(
   await access(path.join(root, 'generated/content/catalog-v3.json'));
   if (inventory) {
     const parsedCatalog = CourseCatalogV3Schema.parse(catalog);
+    if (!parsedCatalog.progressCatalog) throw new Error('Missing known-course progress contracts');
+    const progressBytes = await readFile(path.join(root, parsedCatalog.progressCatalog.path));
+    if (hashBytes(progressBytes) !== parsedCatalog.progressCatalog.sha256)
+      throw new Error('Progress catalog integrity differs');
+    const progress = ProgressCatalogSchema.parse(
+      JSON.parse(progressBytes.toString('utf8')) as unknown,
+    );
+    if (
+      progress.courses.length !== inventory.courses.length ||
+      inventory.courses.some((expected) => {
+        const descriptor = progress.courses.find(({ id }) => id === expected.id);
+        return (
+          !descriptor ||
+          descriptor.revision !== expected.revision ||
+          JSON.stringify(descriptor.entityIds.lesson) !==
+            JSON.stringify(expected.lessons.map(({ id }) => id)) ||
+          JSON.stringify(descriptor.entityIds.exercise) !==
+            JSON.stringify(
+              expected.lessons.flatMap(({ exercises }) => exercises.map(({ id }) => id)),
+            )
+        );
+      })
+    )
+      throw new Error('Known-course progress contracts differ from source inventory');
     const published = inventory.courses.filter(
       (course) => course.publicationStatus === 'published',
     );

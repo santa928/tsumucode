@@ -93,6 +93,9 @@ export function parseLegacyBinding(
     artifactDigest,
     pageUrl,
     projection: 'authoring' as const,
+    artifactDigestFormat: 'legacy-canonical-dist' as const,
+    inventoryDigest: undefined,
+    publicContentDigest: undefined,
   };
 }
 
