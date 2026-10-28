@@ -1,6 +1,14 @@
 name: Local Runtime boundary
 
 on:
+  workflow_call:
+    inputs:
+      candidate_artifact_id:
+        type: string
+        required: true
+      metadata_artifact_id:
+        type: string
+        required: true
   push:
     branches: [main]
     paths:
@@ -130,8 +138,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: local-runtime-${{ github.ref }}
-  cancel-in-progress: true
+  group: local-runtime-${{ inputs.candidate_artifact_id != '' && github.run_id || github.ref }}
+  cancel-in-progress: ${{ inputs.candidate_artifact_id == '' }}
 
 jobs:
   boundary:
@@ -147,8 +155,21 @@ jobs:
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
+          fetch-depth: 0
           persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Download same-run public candidate
+        if: inputs.candidate_artifact_id != ''
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          artifact-ids: ${{ inputs.candidate_artifact_id }}
+          path: dist
+      - name: Download same-run frozen obligations
+        if: inputs.metadata_artifact_id != ''
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          artifact-ids: ${{ inputs.metadata_artifact_id }}
+          path: .release-v2
       - name: Prepare fixed one-shot Node image
         run: |
           # 同じ固定digestの取得だけを有限回試し、一時的なRegistry障害から復旧する。
@@ -236,7 +257,30 @@ jobs:
           node scripts/local/project-browser-acceptance.mjs
       - name: Prepare bounded Next resource evidence
         run: mkdir -p .release-next-native-ci
+      - name: Verify compiler-selected Next fixtures and resources
+        if: inputs.candidate_artifact_id != ''
+        run: |
+          set -euo pipefail
+          docker build --file Dockerfile.learning --target next-browser-checks --tag "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" .
+          controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
+          python3 - <<'PYLIST' > .release-next-native-ci/workspaces.tsv
+          import json
+          snapshot = json.load(open('.release-v2/preparation.json'))
+          for course in snapshot['inventory']['courses']:
+              if course['publicationStatus'] != 'published':
+                  continue
+              for lesson in course['lessons']:
+                  for exercise in lesson['exercises']:
+                      if exercise['runtimeKind'] == 'next':
+                          print('	'.join([exercise['workspaceId'], course['id'], lesson['id'], exercise['id']]))
+          PYLIST
+          test -s .release-next-native-ci/workspaces.tsv
+          while IFS=$'\t' read -r workspace course lesson exercise; do
+            docker run --rm --network none "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" node scripts/local/next-fixture-packet.mjs "$workspace" "$course" "$lesson" "$exercise" |
+              docker exec -i -e TSUMUCODE_NEXT_WORKSPACE="$workspace" "$controller" node next-project-acceptance.mjs | tee -a .release-next-native-ci/fixtures.log
+          done < .release-next-native-ci/workspaces.tsv
       - name: Verify Next Action response completion, resources and recovery
+        if: inputs.candidate_artifact_id == ''
         run: |
           set -euo pipefail
           docker build --file Dockerfile.learning --target next-browser-checks --tag "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" .
@@ -244,6 +288,7 @@ jobs:
           docker run --rm --network none "$TSUMUCODE_LOCAL_OWNER-next-browser-checks" node scripts/local/next-fixture-packet.mjs next-ch04-l02-e01 |
             docker exec -i -e TSUMUCODE_NEXT_WORKSPACE=next-ch04-l02-e01 "$controller" node next-project-acceptance.mjs | tee -a .release-next-native-ci/fixtures.log
       - name: Verify Next production Project stages and resources
+        if: inputs.candidate_artifact_id == ''
         run: |
           set -euo pipefail
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
@@ -252,6 +297,7 @@ jobs:
               docker exec -i -e TSUMUCODE_NEXT_WORKSPACE="$workspace" "$controller" node next-project-acceptance.mjs | tee -a .release-next-native-ci/fixtures.log
           done
       - name: Verify Next real page, query HTTP, resources and recovery
+        if: inputs.candidate_artifact_id == ''
         run: |
           set -euo pipefail
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
@@ -284,6 +330,7 @@ jobs:
           "$TSUMUCODE_LOCAL_OWNER-next-browser-checks"
           node scripts/local/next-form-drain-acceptance.mjs
       - name: Verify Next nested routing and Client interaction fixtures
+        if: inputs.candidate_artifact_id == ''
         run: |
           set -euo pipefail
           controller=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q controller)
@@ -396,6 +443,7 @@ jobs:
             docker logs "$controller" 2>&1 | grep -E '^Next (Source apply failure|grade (deadline|slow|timing|failure)) ' || true
           fi
       - name: Collect exact Next native resource evidence
+        if: inputs.candidate_artifact_id == ''
         run: >-
           docker run --rm --user "$(id -u):$(id -g)" --network none --read-only --cap-drop ALL --security-opt no-new-privileges:true
           -e TSUMUCODE_NEXT_SOURCE_SHA -e GITHUB_RUN_ID -e GITHUB_RUN_ATTEMPT
@@ -404,6 +452,7 @@ jobs:
           node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5
           node scripts/release/nextNativeEvidence.mjs .release-next-native-ci/fixtures.log .release-next-native-ci/evidence.json
       - name: Upload exact Next native resource evidence
+        if: inputs.candidate_artifact_id == ''
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: next-native-evidence-${{ github.event.pull_request.head.sha || github.sha }}
@@ -411,6 +460,26 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 30
+      - name: Bind native observations to the same-run candidate
+        if: inputs.candidate_artifact_id != ''
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+        run: |
+          ./scripts/docker-compose.sh build app
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF app npm run release:flow -- observe-native --suite native-python --output .release-v2/receipts/native-python-$GITHUB_RUN_ATTEMPT.json
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF app npm run release:flow -- observe-native --suite native-next --output .release-v2/receipts/native-next-$GITHUB_RUN_ATTEMPT.json
+      - name: Preserve same-run native receipts
+        if: inputs.candidate_artifact_id != ''
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: receipts-boundary-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .release-v2/receipts/native-*.json
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 90
+      - name: Stop only Native receipt verifier
+        if: always() && inputs.candidate_artifact_id != ''
+        run: ./scripts/docker-compose.sh down --remove-orphans
       - name: Stop only this learning stack and preserve Source volume
         if: always()
         run: ./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml down

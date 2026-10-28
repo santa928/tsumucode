@@ -68,6 +68,8 @@ export function qualifyRelease(input: AdmissionInput) {
   if (candidate.planDigest !== planDigest)
     throw new Error('Candidate lacks frozen test obligations');
   const producerIds = new Set(executionPlan.requirements.map(({ producerJobId }) => producerJobId));
+  // Full native isolation remains mandatory even when no native course is published.
+  producerIds.add('boundary');
   if ([...producerIds].some((job) => context.jobs[job] !== 'success'))
     throw new Error('Required native workflow job did not pass');
   const technical = verifyResults(candidate, executionPlan.requirements, input.results, {

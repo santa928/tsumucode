@@ -38,6 +38,7 @@ function manifests() {
     ['browser-firefox', 'browser', 'firefox'],
     ['browser-webkit', 'browser', 'webkit'],
     ['browser-public', 'public_boundary', 'chromium'],
+    ['browser-performance', 'performance', 'chromium'],
     ['native-python', 'boundary', ''],
   ];
   return definitions.map(([suite, producerJobId, project]) => ({
@@ -63,6 +64,8 @@ describe('workflow execution plan', () => {
       execution.requirements.find((item) => item.suite === 'browser-public')?.targets,
     ).toContain('topic/lesson/persistence');
     expect(execution.requirements.some((item) => item.suite === 'native-next')).toBe(false);
+    expect(execution.requirements.some((item) => item.suite === 'browser-performance')).toBe(true);
+    expect(execution.requirements.some((item) => item.suite === 'native-isolation')).toBe(false);
   });
   it.each([
     'missing-suite',

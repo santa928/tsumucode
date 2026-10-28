@@ -228,7 +228,11 @@ describe('TsumuCode Pages workflow', () => {
     const references = [...source.matchAll(/^\s*uses:\s+([^\s]+)$/gmu)].map((match) => match[1]);
 
     expect(references.length).toBeGreaterThanOrEqual(5);
-    for (const reference of references) expect(reference).toMatch(/^[^@]+@[a-f0-9]{40}$/u);
+    for (const reference of references) {
+      if (reference?.startsWith('./'))
+        expect(reference).toBe('./.github/workflows/release-v2-checks.yml');
+      else expect(reference).toMatch(/^[^@]+@[a-f0-9]{40}$/u);
+    }
   });
 
   it('dispatch入力をrunへ直接展開せずenv経由で引用する', () => {

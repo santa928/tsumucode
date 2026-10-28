@@ -17,6 +17,8 @@ import { createCandidate } from './candidate';
 import { captureBaseline } from './captureBaseline';
 import { validateCapturedBaseline } from './parent';
 import { collectExecutionPlan, ExecutionPlanSchema, createExecutionPlan } from './executionPlan';
+import { runReleaseSuite } from './runner';
+import { qualifyCurrentRelease } from './qualify';
 
 const PreparationSchema = z
   .object({ schemaVersion: z.literal(1), inventory: InventorySchema, plan: PlanSchema })
@@ -29,6 +31,9 @@ const optionNames: Readonly<Record<string, readonly string[]>> = {
   candidate: ['snapshot', 'baseline', 'artifact-id', 'dist', 'execution-plan'],
   freeze: ['snapshot', 'baseline'],
   static: ['snapshot', 'dist'],
+  'run-suite': ['suite'],
+  'observe-native': ['suite'],
+  qualify: [],
 };
 async function jsonFile(file: string): Promise<unknown> {
   return JSON.parse(await readFile(file, 'utf8')) as unknown;
@@ -107,6 +112,18 @@ export async function runCli(
   switch (command) {
     case 'shadow':
       result = await shadow(root);
+      break;
+    case 'run-suite':
+    case 'observe-native':
+      result = await runReleaseSuite(
+        root,
+        required(values.suite, '--suite'),
+        environment,
+        command === 'observe-native',
+      );
+      break;
+    case 'qualify':
+      result = await qualifyCurrentRelease(root, environment);
       break;
     case 'baseline':
       result = validateCapturedBaseline(

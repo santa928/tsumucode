@@ -88,7 +88,7 @@ CMD ["node", "scripts/local/preview-browser-acceptance.mjs"]
 FROM browser-checks AS next-browser-checks
 COPY --from=dependencies /workspace/node_modules/yaml ./node_modules/yaml
 COPY --from=dependencies /workspace/node_modules/fflate ./node_modules/fflate
-COPY content/next ./content/next
+COPY content ./content
 CMD ["node", "scripts/local/next-project-browser-acceptance.mjs"]
 
 # Next教材のproduction build診断専用。原稿は実行/管理imageへ含めない。
@@ -105,6 +105,13 @@ CMD ["node", "next-build-acceptance.mjs"]
 FROM browser-checks AS python-browser-checks
 COPY --from=dependencies /workspace/node_modules/yaml ./node_modules/yaml
 COPY --from=dependencies /workspace/node_modules/fflate ./node_modules/fflate
+COPY --from=dependencies /workspace/node_modules/zod ./node_modules/zod
+# 実行後のSource/fixture照合はtrusted検証imageだけが行う。learnerへ原稿を渡さない。
+COPY scripts/content ./scripts/content
+COPY scripts/release/v2 ./scripts/release/v2
+COPY src/core/content ./src/core/content
+COPY src/core/persistence/canonicalJson.ts ./src/core/persistence/canonicalJson.ts
+COPY src/shared/lib/resolvePublicAsset.ts ./src/shared/lib/resolvePublicAsset.ts
 COPY content/python-basics ./content/python-basics
 COPY content/python-practice ./content/python-practice
 COPY content/python-oop ./content/python-oop
@@ -117,6 +124,7 @@ COPY tests/e2e/python-context.spec.ts ./tests/e2e/python-context.spec.ts
 COPY tests/e2e/python-data-project.spec.ts ./tests/e2e/python-data-project.spec.ts
 COPY tests/e2e/python-oop.spec.ts ./tests/e2e/python-oop.spec.ts
 COPY tests/e2e/helpers/progress.ts tests/e2e/helpers/testBasePath.ts ./tests/e2e/helpers/
+COPY tests/e2e/helpers/pythonFixtureCoverage.ts ./tests/e2e/helpers/pythonFixtureCoverage.ts
 COPY playwright.python-local.config.ts ./
 CMD ["node", "scripts/local/python-browser-acceptance.mjs"]
 

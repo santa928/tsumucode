@@ -39,6 +39,12 @@ export const TEST_SUITES = [
     args: ['manifest-progress-roundtrip.spec.ts', '--project=chromium'],
   },
   { suite: 'native-python', producerJobId: 'boundary', project: '', args: [] },
+  {
+    suite: 'browser-performance',
+    producerJobId: 'performance',
+    project: 'chromium',
+    args: ['--project=chromium'],
+  },
 ] as const;
 export const ExecutionPlanSchema = z
   .object({
@@ -143,8 +149,7 @@ export function createExecutionPlan(planInput: unknown, manifestsInput: unknown)
       ...manifests.map((manifest) =>
         requirement(manifest.suite, manifest.producerJobId, assigned.get(manifest.suite)!),
       ),
-      requirement('performance', 'performance', ['performance/browser', 'performance/lighthouse']),
-      requirement('native-isolation', 'boundary', ['native/isolation']),
+      requirement('performance', 'performance', ['performance/lighthouse']),
       ...(nativeNext.length ? [requirement('native-next', 'boundary', nativeNext)] : []),
     ],
   });
@@ -155,16 +160,18 @@ export function testCommand(suite: string, list: boolean): string[] {
   const config =
     suite === 'native-python'
       ? 'playwright.python-local.config.ts'
-      : suite === 'browser-public'
-        ? 'playwright.config.ts'
-        : 'playwright.authoring.config.ts';
+      : suite === 'browser-performance'
+        ? 'playwright.performance.config.ts'
+        : suite === 'browser-public'
+          ? 'playwright.config.ts'
+          : 'playwright.authoring.config.ts';
   return [
     'test',
     '--config=' + config,
     ...definition.args,
     '--grep-invert',
     '@visual-extended',
-    ...(list ? ['--list', '--reporter=json'] : ['--workers=1']),
+    ...(list ? ['--list', '--reporter=json'] : ['--workers=1', '--retries=0']),
   ];
 }
 /** Same checkout/lock, fixed commands only. Source collection starts no browser or learner execution. */
