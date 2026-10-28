@@ -34,7 +34,7 @@
     "test:performance": "npm run test:bundle && npm run test:performance:browser",
     "test:lighthouse": "lhci autorun --config=lighthouserc.cjs",
     "typecheck": "tsc -b tsconfig.app.json && tsc -b tsconfig.node.json",
-    "lint": "eslint src && eslint scripts && eslint tests && eslint . --ignore-pattern \"src/**\" --ignore-pattern \"scripts/**\" --ignore-pattern \"tests/**\"",
+    "lint": "node scripts/lintInBatches.mjs",
     "format:check": "prettier --check .",
     "build": "npm run content:compile && npm run build:app",
     "build:app": "npm run typecheck && npm run build:python-assets && vite build && npm run build:inline-css",
