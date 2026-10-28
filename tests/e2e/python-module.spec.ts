@@ -1,3 +1,4 @@
+import { attachPythonFixtureCoverage } from './helpers/pythonFixtureCoverage';
 import { readFile } from 'node:fs/promises';
 import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
@@ -59,6 +60,7 @@ for (const id of lessons) {
     fixtures: {
       id: string;
       expectedStatus: string;
+      expectedLocalStatus?: string;
       inputLines: string[];
       expectedFeedbackRuleIds: string[];
       files: { path: string; source: string }[];
@@ -67,84 +69,94 @@ for (const id of lessons) {
   // 多数のWASM実行を作者Browserの単一contextへ蓄積しない。
   for (let offset = 0; offset < exercise.fixtures.length; offset += 4) {
     const fixtures = exercise.fixtures.slice(offset, offset + 4);
-    test(`Python ${id}の実Fixture ${String(offset + 1)}〜${String(offset + fixtures.length)}`, async ({
-      page,
-    }) => {
-      test.setTimeout(180_000);
-      await page.goto(route(id));
-      await expect(page.locator('.cm-content')).toBeVisible();
-      const local = (await page.getByRole('region', { name: 'CPythonの練習実行' }).count()) > 0;
-      for (const fixture of fixtures) {
-        await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled({
-          timeout: 30_000,
-        });
-        const files: Record<string, string> = {};
-        for (const file of fixture.files) {
-          files[file.path] = await readFile(`${root(id)}/${file.source}`, 'utf8');
-        }
-        await editFiles(page, files);
-        if (id !== lessons[0]) {
-          await page
-            .getByLabel('入力を渡さない（行不足を確認する）')
-            .setChecked(fixture.inputLines.length === 0);
-          if (fixture.inputLines.length > 0)
-            await page
-              .getByLabel('実行前の入力（1行につきinput 1回）')
-              .fill(fixture.inputLines.join('\n'));
-        }
-        await expect.poll(async () => (await draft(page, id))?.['files']).toEqual(files);
-        const before = (await draft(page, id))?.['validationHistory'];
-        if (local && fixture.id === 'input-exhausted') {
-          await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
-          await expect(page.getByText(/入力行が不足しています/).first()).toBeVisible({
-            timeout: 30_000,
-          });
-          expect((await draft(page, id))?.['validationHistory']).toEqual(before);
-        }
-        // 固定採点は全入力ケースをANDにする。旧正常入力だけの負例も、未処理例外を捕捉する。
-        const expectedStatus =
-          local && fixture.id === 'input-exhausted'
-            ? 'pass'
-            : local && id === lessons[2] && fixture.id === 'unused-loop-hardcode'
-              ? 'code-error'
-              : fixture.expectedStatus;
-        await page.getByRole('button', { name: '判定する', exact: true }).click();
-        if (expectedStatus === 'system-error') {
-          await expect(page.getByText(/採点していません/).first()).toBeVisible({ timeout: 30_000 });
+    test(
+      `Python ${id}の実Fixture ${String(offset + 1)}〜${String(offset + fixtures.length)}`,
+      { annotation: { type: 'release-exercise', description: id + '-e01' } },
+      async ({ page }, info) => {
+        test.setTimeout(180_000);
+        await page.goto(route(id));
+        await expect(page.locator('.cm-content')).toBeVisible();
+        const local = (await page.getByRole('region', { name: 'CPythonの練習実行' }).count()) > 0;
+        for (const fixture of fixtures) {
           await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled({
             timeout: 30_000,
           });
-          expect((await draft(page, id))?.['validationHistory'], fixture.id).toEqual(before);
-          await expect(page.getByRole('dialog')).toHaveCount(0);
-        } else {
-          if (expectedStatus === 'pass') await finishPassing(page, id);
-          else await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
-          await expect
-            .poll(
-              async () =>
-                (
-                  (await draft(page, id))?.['validationHistory'] as { status: string }[] | undefined
-                )?.at(-1)?.status,
-              { message: fixture.id },
-            )
-            .toBe(expectedStatus);
-          const history = (await draft(page, id))?.['validationHistory'] as {
-            checks: { passed: boolean; ruleId: string }[];
-          }[];
-          expect(
-            history
-              .at(-1)
-              ?.checks.filter((check) => !check.passed)
-              .map((check) => check.ruleId),
-            fixture.id,
-          ).toEqual(expectedStatus === 'code-error' ? [] : fixture.expectedFeedbackRuleIds);
-          if (expectedStatus !== 'pass')
-            await page.getByRole('button', { name: '閉じる', exact: true }).click();
+          const files: Record<string, string> = {};
+          for (const file of fixture.files) {
+            files[file.path] = await readFile(`${root(id)}/${file.source}`, 'utf8');
+          }
+          await editFiles(page, files);
+          if (id !== lessons[0]) {
+            await page
+              .getByLabel('入力を渡さない（行不足を確認する）')
+              .setChecked(fixture.inputLines.length === 0);
+            if (fixture.inputLines.length > 0)
+              await page
+                .getByLabel('実行前の入力（1行につきinput 1回）')
+                .fill(fixture.inputLines.join('\n'));
+          }
+          await expect.poll(async () => (await draft(page, id))?.['files']).toEqual(files);
+          const before = (await draft(page, id))?.['validationHistory'];
+          if (local && fixture.id === 'input-exhausted') {
+            await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
+            await expect(page.getByText(/入力行が不足しています/).first()).toBeVisible({
+              timeout: 30_000,
+            });
+            expect((await draft(page, id))?.['validationHistory']).toEqual(before);
+          }
+          // 固定採点は全入力ケースをANDにする。旧正常入力だけの負例も、未処理例外を捕捉する。
+          const expectedStatus = local
+            ? (fixture.expectedLocalStatus ?? fixture.expectedStatus)
+            : fixture.expectedStatus;
+          await page.getByRole('button', { name: '判定する', exact: true }).click();
+          if (expectedStatus === 'system-error') {
+            await expect(page.getByText(/採点していません/).first()).toBeVisible({
+              timeout: 30_000,
+            });
+            await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled({
+              timeout: 30_000,
+            });
+            expect((await draft(page, id))?.['validationHistory'], fixture.id).toEqual(before);
+            await expect(page.getByRole('dialog')).toHaveCount(0);
+          } else {
+            if (expectedStatus === 'pass') await finishPassing(page, id);
+            else await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
+            await expect
+              .poll(
+                async () =>
+                  (
+                    (await draft(page, id))?.['validationHistory'] as
+                      { status: string }[] | undefined
+                  )?.at(-1)?.status,
+                { message: fixture.id },
+              )
+              .toBe(expectedStatus);
+            const history = (await draft(page, id))?.['validationHistory'] as {
+              checks: { passed: boolean; ruleId: string }[];
+            }[];
+            expect(
+              history
+                .at(-1)
+                ?.checks.filter((check) => !check.passed)
+                .map((check) => check.ruleId),
+              fixture.id,
+            ).toEqual(expectedStatus === 'code-error' ? [] : fixture.expectedFeedbackRuleIds);
+            if (expectedStatus !== 'pass')
+              await page.getByRole('button', { name: '閉じる', exact: true }).click();
+          }
+          await attachPythonFixtureCoverage(info, {
+            exerciseId: id + '-e01',
+            fixtureId: fixture.id,
+            mode: local ? 'cpython' : 'pyodide',
+            files,
+            ...(!local ? { inputLines: fixture.inputLines } : {}),
+            actualStatus: expectedStatus as 'pass' | 'incomplete' | 'code-error' | 'system-error',
+          });
+          await expect.poll(async () => (await draft(page, id))?.['files']).toEqual(files);
+          await expect(page.locator('iframe[title="Python実行環境"]')).toHaveCount(0);
         }
-        await expect.poll(async () => (await draft(page, id))?.['files']).toEqual(files);
-        await expect(page.locator('iframe[title="Python実行環境"]')).toHaveCount(0);
-      }
-    });
+      },
+    );
   }
   test(`Python ${id}の両file保存・再開・Resetを確認する`, async ({ page }, info) => {
     await page.goto(route(id));

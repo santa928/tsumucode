@@ -16,6 +16,7 @@ import { prepareRelease, createAuthoringPreview } from './prepare';
 import { createCandidate } from './candidate';
 import { captureBaseline } from './captureBaseline';
 import { validateCapturedBaseline } from './parent';
+import { collectExecutionPlan, ExecutionPlanSchema, createExecutionPlan } from './executionPlan';
 
 const PreparationSchema = z
   .object({ schemaVersion: z.literal(1), inventory: InventorySchema, plan: PlanSchema })
@@ -25,7 +26,8 @@ const optionNames: Readonly<Record<string, readonly string[]>> = {
   baseline: ['repository', 'site-url'],
   prepare: ['baseline', 'public-output', 'authoring-output'],
   preview: [],
-  candidate: ['snapshot', 'baseline', 'artifact-id', 'dist'],
+  candidate: ['snapshot', 'baseline', 'artifact-id', 'dist', 'execution-plan'],
+  freeze: ['snapshot', 'baseline'],
   static: ['snapshot', 'dist'],
 };
 async function jsonFile(file: string): Promise<unknown> {
@@ -140,12 +142,31 @@ export async function runCli(
       );
       break;
     }
+    case 'freeze': {
+      const snapshot = PreparationSchema.parse(
+        await jsonFile(input(values.snapshot, '--snapshot')),
+      );
+      if (hashValue(snapshot.plan) !== hashValue(planRelease(snapshot.inventory, baseline)))
+        throw new Error('Snapshot plan differs from its inventory or parent');
+      result = await collectExecutionPlan(root, snapshot.plan);
+      break;
+    }
     case 'candidate': {
       const snapshot = PreparationSchema.parse(
         await jsonFile(input(values.snapshot, '--snapshot')),
       );
       if (hashValue(snapshot.plan) !== hashValue(planRelease(snapshot.inventory, baseline)))
         throw new Error('Snapshot plan differs from its inventory or parent');
+      if (values['execution-plan']) {
+        const execution = ExecutionPlanSchema.parse(
+          await jsonFile(input(values['execution-plan'], '--execution-plan')),
+        );
+        if (
+          hashValue(execution) !==
+          hashValue(createExecutionPlan(snapshot.plan, execution.testManifests))
+        )
+          throw new Error('Execution plan differs from required test obligations');
+      }
       result = await createCandidate(
         root,
         values.dist ? input(values.dist, '--dist') : path.join(root, 'dist'),
@@ -161,6 +182,11 @@ export async function runCli(
           ref: required(environment.GITHUB_REF, 'GITHUB_REF'),
         },
         environment.BASE_PATH ?? '/',
+        values['execution-plan']
+          ? ExecutionPlanSchema.parse(
+              await jsonFile(input(values['execution-plan'], '--execution-plan')),
+            )
+          : undefined,
       );
       break;
     }

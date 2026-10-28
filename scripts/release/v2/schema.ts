@@ -19,6 +19,8 @@ export const FixtureSchema = z
     expectedStatus: z.enum(['pass', 'incomplete', 'code-error', 'system-error']),
     digest: DigestSchema,
     sourceDigest: DigestSchema,
+    nativeSourceDigest: DigestSchema.optional(),
+    expectedLocalStatus: z.enum(['pass', 'incomplete', 'code-error', 'system-error']).optional(),
   })
   .strict();
 export const ExerciseInventorySchema = z
@@ -32,6 +34,8 @@ export const ExerciseInventorySchema = z
     digest: DigestSchema,
     solutionSourceDigest: DigestSchema,
     starterSourceDigest: DigestSchema,
+    nativeSolutionSourceDigest: DigestSchema.optional(),
+    nativeStarterSourceDigest: DigestSchema.optional(),
     fixtures: z.array(FixtureSchema),
   })
   .strict();
@@ -72,6 +76,7 @@ export const TargetSchema = z
     courseId: IdSchema,
     lessonId: IdSchema,
     exerciseId: IdSchema.optional(),
+    workspaceId: IdSchema.optional(),
     fixtureId: IdSchema.optional(),
     caseKind: z.enum(['solution', 'starter', 'authored']).optional(),
     runtimeKind: RuntimeKindSchema.optional(),

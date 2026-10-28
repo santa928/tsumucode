@@ -76,22 +76,32 @@ export function planRelease(input: ReleaseInventory, baselineInput?: unknown): R
             {
               id: 'solution',
               caseKind: 'solution' as const,
-              sourceDigest: exercise.solutionSourceDigest,
+              sourceDigest:
+                mode === 'cpython'
+                  ? exercise.nativeSolutionSourceDigest
+                  : exercise.solutionSourceDigest,
               expectedStatus: 'pass' as const,
             },
             {
               id: 'starter',
               caseKind: 'starter' as const,
-              sourceDigest: exercise.starterSourceDigest,
+              sourceDigest:
+                mode === 'cpython'
+                  ? exercise.nativeStarterSourceDigest
+                  : exercise.starterSourceDigest,
               expectedStatus: 'not-pass' as const,
             },
             ...exercise.fixtures.map((fixture) => ({
               id: fixture.id,
               caseKind: 'authored' as const,
-              sourceDigest: fixture.sourceDigest,
-              expectedStatus: fixture.expectedStatus,
+              sourceDigest: mode === 'cpython' ? fixture.nativeSourceDigest : fixture.sourceDigest,
+              expectedStatus:
+                mode === 'cpython'
+                  ? (fixture.expectedLocalStatus ?? fixture.expectedStatus)
+                  : fixture.expectedStatus,
             })),
           ]) {
+            if (!fixture.sourceDigest) throw new Error('Missing runtime-mode fixture input');
             targets.push({
               key:
                 prefix + '/' + exercise.id + '/' + fixture.caseKind + '/' + fixture.id + '/' + mode,
@@ -99,6 +109,7 @@ export function planRelease(input: ReleaseInventory, baselineInput?: unknown): R
               courseId: course.id,
               lessonId: lesson.id,
               exerciseId: exercise.id,
+              workspaceId: exercise.workspaceId,
               fixtureId: fixture.id,
               caseKind: fixture.caseKind,
               runtimeKind: exercise.runtimeKind,

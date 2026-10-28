@@ -1,7 +1,7 @@
 import type { CompiledCourseArtifacts } from '../../content/compileCourse';
 import { javascriptLearnerContentSha256 } from '../javascriptLessonEvaluation';
 import { hashValue } from './identity';
-import { fixtureFiles, fixtureSourceDigest } from './fixtureSource';
+import { builtinFixtureDigests, fixtureFiles, fixtureSourceDigest } from './fixtureSource';
 import { InventorySchema, RuntimeKindSchema, type ReleaseInventory } from './schema';
 
 function unique(values: readonly string[], scope: string): void {
@@ -40,6 +40,7 @@ export function buildInventory(compilations: readonly CompiledCourseArtifacts[])
             exercise.id + '/fixtures',
           );
           const runtimeKind = RuntimeKindSchema.parse(exercise.runtime?.kind ?? runner);
+          const python = runtimeKind === 'python';
           return {
             id: exercise.id,
             kind: exercise.kind,
@@ -51,13 +52,18 @@ export function buildInventory(compilations: readonly CompiledCourseArtifacts[])
                 : 'default',
             capability: exercise.runtime?.capabilityProfile ?? 'html-css',
             digest: hashValue(full),
-            solutionSourceDigest: fixtureSourceDigest(fixtureFiles(full, full.solutionFiles)),
-            starterSourceDigest: fixtureSourceDigest(fixtureFiles(full, [])),
+            ...builtinFixtureDigests(full, python),
             fixtures: full.fixtures
               .map((fixture) => ({
                 id: fixture.id,
                 expectedStatus: fixture.expectedStatus,
                 digest: hashValue(fixture),
+                ...(python
+                  ? {
+                      nativeSourceDigest: fixtureSourceDigest(fixtureFiles(full, fixture.files)),
+                      expectedLocalStatus: fixture.expectedLocalStatus ?? fixture.expectedStatus,
+                    }
+                  : {}),
                 sourceDigest: fixtureSourceDigest(
                   fixtureFiles(full, fixture.files),
                   fixture.faultInjection,

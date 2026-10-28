@@ -134,6 +134,7 @@ fixtures:
     expectedFeedbackRuleIds: ['python-basics-ch01-l03-e01-r01']
   - id: empty
     expectedStatus: code-error
+    expectedLocalStatus: pass
     inputLines: ['']
     files:
       - path: main.py

@@ -1,7 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { parse } from 'yaml';
 import {
   editorText,
   readStoredProgress,
@@ -151,49 +150,5 @@ test('公開Pythonの実Worker・取得障害後の再試行・別タブ通知�
     await expect.poll(() => editorText(imported)).toBe(solution);
   } finally {
     await fresh.close();
-  }
-});
-
-test('公開Pythonの10Fixtureは実出力と2Ruleで採点する', async ({ page, browserName }) => {
-  test.skip(browserName !== 'chromium', '全10件はChromium、他browserは代表公開経路を検証する');
-  test.setTimeout(180_000);
-  const exercise = parse(await readFile(`${sourceRoot}/exercise.yaml`, 'utf8')) as {
-    fixtures: {
-      id: string;
-      expectedStatus: string;
-      expectedFeedbackRuleIds: string[];
-      files: { source: string }[];
-    }[];
-  };
-  await page.goto(exerciseRoute);
-  await expect(page.locator('.cm-content')).toBeVisible();
-  for (const fixture of exercise.fixtures) {
-    const source = await readFile(`${sourceRoot}/${fixture.files[0]!.source}`, 'utf8');
-    await replaceEditorText(page, source);
-    await page.getByRole('button', { name: '判定する', exact: true }).click();
-    await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
-    await expect
-      .poll(async () => {
-        const history = (await draft(page))?.['validationHistory'] as
-          { status: string; checks: { passed: boolean; ruleId: string }[] }[] | undefined;
-        return history?.at(-1);
-      })
-      .toMatchObject({ status: fixture.expectedStatus });
-    const history = (await draft(page))?.['validationHistory'] as {
-      checks: { passed: boolean; ruleId: string }[];
-    }[];
-    expect(
-      history
-        .at(-1)
-        ?.checks.filter(({ passed }) => !passed)
-        .map(({ ruleId }) => ruleId),
-      fixture.id,
-    ).toEqual(fixture.expectedFeedbackRuleIds);
-    const close = page.getByRole('button', {
-      name: '閉じる',
-      exact: true,
-    });
-    await close.click();
-    await expect(page.locator('iframe[title="Python実行環境"]')).toHaveCount(0);
   }
 });

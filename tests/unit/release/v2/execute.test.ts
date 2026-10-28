@@ -33,7 +33,12 @@ async function setup() {
 afterEach(async () => {
   for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true });
 });
-const requirement = { suite: 'browser', inputDigest: 'e'.repeat(64), targets: ['actual/case'] };
+const requirement = {
+  suite: 'browser',
+  producerJobId: '202',
+  inputDigest: 'e'.repeat(64),
+  targets: ['actual/case'],
+};
 const context = { runId: '101', jobId: '202', attempt: 2 };
 describe('same artifact suite execution', () => {
   it('emits a receipt only after an actual successful driver and exact target coverage', async () => {

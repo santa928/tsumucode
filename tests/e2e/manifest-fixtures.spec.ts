@@ -12,6 +12,8 @@ import {
 import { testServerUrl } from './helpers/testBasePath';
 import { loadRuntimeModulePath } from './helpers/javascriptRunnerModule';
 
+// Separate contexts and immutable inputs make exercise groups safe to shard; each job still uses one worker.
+test.describe.configure({ mode: 'parallel' });
 const adapters = {
   'html-css': [
     'src/adapters/runtime/html-css/index.ts',
@@ -55,34 +57,38 @@ for (const entry of catalog.courses.filter(
   for (const exercise of index.phases.flatMap(({ chapters }) =>
     chapters.flatMap(({ lessons }) => lessons.flatMap(({ exercises }) => exercises)),
   )) {
-    test(entry.id + ' ' + exercise.id + ' manifest fixtures', async ({ page }, info) => {
-      test.setTimeout(180_000);
-      const mapping = kind === 'javascript' ? undefined : adapters[kind as keyof typeof adapters];
-      const runtime =
-        kind === 'javascript'
-          ? await loadJavaScriptFixtureRuntime()
-          : kind === 'html-css'
-            ? HTML_FIXTURE_RUNTIME
-            : {
-                runnerModulePath: await loadRuntimeModulePath(mapping![0]),
-                runnerExportName: mapping![1],
-                validatorModulePath:
-                  kind === 'tailwind'
-                    ? new URL(mapping![2], testServerUrl(4174)).href
-                    : await loadRuntimeModulePath(mapping![2]),
-                validatorExportName: mapping![3],
-                languageId: kind,
-              };
-      await assertCourseFixtureGate(
-        page,
-        {
-          courseRoot: 'content/' + entry.id,
-          courseId: entry.id,
-          exerciseIds: [exercise.id],
-          runtime,
-        },
-        info,
-      );
-    });
+    test(
+      entry.id + ' ' + exercise.id + ' manifest fixtures',
+      { annotation: { type: 'release-exercise', description: exercise.id } },
+      async ({ page }, info) => {
+        test.setTimeout(180_000);
+        const mapping = kind === 'javascript' ? undefined : adapters[kind as keyof typeof adapters];
+        const runtime =
+          kind === 'javascript'
+            ? await loadJavaScriptFixtureRuntime()
+            : kind === 'html-css'
+              ? HTML_FIXTURE_RUNTIME
+              : {
+                  runnerModulePath: await loadRuntimeModulePath(mapping![0]),
+                  runnerExportName: mapping![1],
+                  validatorModulePath:
+                    kind === 'tailwind'
+                      ? new URL(mapping![2], testServerUrl(4174)).href
+                      : await loadRuntimeModulePath(mapping![2]),
+                  validatorExportName: mapping![3],
+                  languageId: kind,
+                };
+        await assertCourseFixtureGate(
+          page,
+          {
+            courseRoot: 'content/' + entry.id,
+            courseId: entry.id,
+            exerciseIds: [exercise.id],
+            runtime,
+          },
+          info,
+        );
+      },
+    );
   }
 }

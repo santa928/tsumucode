@@ -25,7 +25,11 @@ export async function executeSuite(
   const candidate = BuildIdentitySchema.parse(candidateInput);
   const requirement = SuiteRequirementSchema.parse(requirementInput);
   const context = ExecutionContextSchema.parse(contextInput);
-  if (candidate.runId !== context.runId || candidate.buildAttempt > context.attempt)
+  if (
+    candidate.runId !== context.runId ||
+    candidate.buildAttempt > context.attempt ||
+    context.jobId !== requirement.producerJobId
+  )
     throw new Error('Wrong run or verification attempt');
   if (new Set(requirement.targets).size !== requirement.targets.length)
     throw new Error('Duplicate required targets');

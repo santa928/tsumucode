@@ -207,6 +207,8 @@ export const FixtureSourceSchema = z
   .object({
     id: IdSchema,
     expectedStatus: z.enum(['pass', 'incomplete', 'code-error', 'system-error']),
+    /** CPython uses trusted fixed grading inputs; this preserves a distinct authored expectation. */
+    expectedLocalStatus: z.enum(['pass', 'incomplete', 'code-error', 'system-error']).optional(),
     faultInjection: z.literal('stale-source-evidence').optional(),
     expectedDiagnosticCodes: z.array(IdSchema).min(1).max(16).optional(),
     /** Python作者Fixtureだけの事前入力。公開payloadや進捗へ含めない。 */

@@ -55,7 +55,7 @@ COPY src/core/runtime/pythonDataProjectAnalysis.mjs ./
 COPY src/core/runtime/pythonModuleAnalysis.mjs ./pythonModuleAnalysis.mjs
 COPY scripts/local/project-protocol.mjs scripts/local/workspace-store.mjs scripts/local/project-engine.mjs scripts/local/resident-workspace.mjs ./
 COPY scripts/local/preview-contract.mjs scripts/local/next-data-preview.mjs scripts/local/next-form-preview.mjs scripts/local/next-form-cookie.mjs scripts/local/preview-control.mjs scripts/local/preview-transport.mjs ./
-COPY scripts/local/project-grade-engine.mjs scripts/local/next-project-protocol.mjs scripts/local/next-routing-source.mjs scripts/local/next-data-source.mjs scripts/local/next-form-source.mjs scripts/local/next-production-source.mjs scripts/local/next-project-acceptance.mjs ./
+COPY scripts/local/project-grade-engine.mjs scripts/local/next-project-protocol.mjs scripts/local/next-routing-source.mjs scripts/local/next-data-source.mjs scripts/local/next-form-source.mjs scripts/local/next-production-source.mjs scripts/local/next-project-acceptance.mjs scripts/local/native-fixture-digest.mjs ./
 CMD ["node", "controller.mjs"]
 
 FROM node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5 AS preview

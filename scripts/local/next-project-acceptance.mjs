@@ -9,6 +9,7 @@ import { docker } from './docker-engine.mjs';
 import { NEXT_PROFILE, NEXT_WORKSPACE, nextWorkspace } from './next-project-protocol.mjs';
 import { ORIGIN } from './protocol.mjs';
 import { TRANSPORT_ROOT } from './preview-contract.mjs';
+import { nativeFixtureSourceDigest } from './native-fixture-digest.mjs';
 
 // controller内の作者検証。外側の固定Fixture packetはshell経由で実行せずSourceとしてAPIへ保存する。
 const chunks = [];
@@ -22,18 +23,15 @@ const fixtures = JSON.parse(Buffer.concat(chunks).toString());
 const workspace = process.env.TSUMUCODE_NEXT_WORKSPACE ?? NEXT_WORKSPACE;
 const contract = nextWorkspace(workspace);
 assert.ok(contract);
-const expectedCount = {
-  [NEXT_WORKSPACE]: 6,
-  'next-ch02-l01-e01': 8,
-  'next-ch02-l02-e01': 9,
-  'next-ch03-l01-e01': 8,
-  'next-ch03-l02-e01': 9,
-  'next-ch04-l01-e01': 9,
-  'next-ch04-l02-e01': 9,
-  'next-ch05-l01-e01': 11,
-  'next-ch06-l01-e01': 12,
-};
-assert.equal(fixtures.length, expectedCount[workspace]);
+assert.ok(Array.isArray(fixtures) && fixtures.length > 0, 'Native fixtures must not be empty');
+assert.equal(
+  new Set(fixtures.map(({ id }) => id)).size,
+  fixtures.length,
+  'Duplicate native fixtures',
+);
+assert.ok(
+  fixtures.some(({ id }) => id === 'solution') && fixtures.some(({ id }) => id === 'starter'),
+);
 const owner = process.env.TSUMUCODE_LOCAL_OWNER;
 assert.ok(owner);
 const path = `/api/workspaces/${workspace}`;
@@ -351,6 +349,9 @@ try {
     console.log(
       JSON.stringify({
         fixture: fixture.id,
+        workspaceId: workspace,
+        sourceDigest: nativeFixtureSourceDigest(saved.files),
+        limitMiB: expectedMemoryMiB,
         status: graded.value.status,
         actual: graded.value.actual,
         measured,

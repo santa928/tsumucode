@@ -11,6 +11,7 @@ import {
   RecipeSchema,
 } from './schema';
 import { hashArtifact, hashBytes, hashValue, repositoryEnvironment } from './identity';
+import { createExecutionPlan, ExecutionPlanSchema } from './executionPlan';
 
 const exec = promisify(execFile);
 const BuildContextSchema = z
@@ -56,9 +57,17 @@ export async function createCandidate(
   artifactId: string,
   contextInput: unknown,
   basePath = '/',
+  executionPlanInput?: unknown,
 ) {
   const context = BuildContextSchema.parse(contextInput);
   const plan = PlanSchema.parse(planInput);
+  const executionPlan =
+    executionPlanInput === undefined ? undefined : ExecutionPlanSchema.parse(executionPlanInput);
+  if (
+    executionPlan &&
+    hashValue(executionPlan) !== hashValue(createExecutionPlan(plan, executionPlan.testManifests))
+  )
+    throw new Error('Unbound execution plan');
   const recipe = await readRecipe(root, context.sourceCommit, basePath);
   const artifact = await hashArtifact(directory);
   return BuildIdentitySchema.parse({
@@ -69,7 +78,7 @@ export async function createCandidate(
     buildAttempt: context.attempt,
     artifactDigest: artifact.digest,
     artifactId,
-    planDigest: hashValue(plan),
+    planDigest: executionPlan ? hashValue({ plan, executionPlan }) : hashValue(plan),
     recipe,
   });
 }

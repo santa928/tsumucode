@@ -7,6 +7,11 @@ on:
     branches: [main]
   workflow_dispatch:
     inputs:
+      migration_checks:
+        description: 新フローの候補buildと同run成果物を検証する（配信なし・main限定）
+        type: boolean
+        required: true
+        default: false
       deploy:
         description: main限定の保護Environmentを経由し検証済みArtifactを公開する
         type: boolean
@@ -59,6 +64,12 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Reject mixed migration and deploy modes
+        if: github.event_name == 'workflow_dispatch' && inputs.migration_checks == true && inputs.deploy == true
+        run: exit 1
+      - name: Reject migration outside main
+        if: github.event_name == 'workflow_dispatch' && inputs.migration_checks == true && github.ref != 'refs/heads/main'
+        run: exit 1
       - name: Reject deploy dispatch outside main
         if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref != 'refs/heads/main'
         run: exit 1
@@ -96,7 +107,7 @@ jobs:
         run: sed -n '1,30p' .release-target >> "$GITHUB_OUTPUT"
 
   fast:
-    if: github.event_name == 'push' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.deploy != true)
+    if: (github.event_name == 'push' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.deploy != true)) && inputs.migration_checks != true
     needs: resolve
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -140,6 +151,88 @@ jobs:
         run: |
           echo "::warning::教材レビューの確認が必要です。動作検証とは別の結果で、公開前には必須です。Content review statusのログを確認してください。"
           echo "教材レビュー: 要確認。通常CIの成功は教材承認を意味しません。公開前のcheck:releaseは未承認・hash不一致で停止します。" >> "$GITHUB_STEP_SUMMARY"
+
+  # Staged migration: only the read-only candidate producer is enabled here.
+  # Qualification/deployment remains unavailable until its required same-run receipts are connected.
+  build:
+    if: github.event_name == 'workflow_dispatch' && inputs.migration_checks == true && inputs.deploy != true && github.ref == 'refs/heads/main'
+    needs: resolve
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    env:
+      BASE_PATH: /${{ github.event.repository.name }}/
+      TSUMUCODE_TEST_MAX_WORKERS: '1'
+    outputs:
+      candidate_artifact_id: ${{ steps.candidate_files.outputs['artifact-id'] }}
+      candidate_archive_digest: ${{ steps.candidate_files.outputs['artifact-digest'] }}
+      metadata_artifact_id: ${{ steps.candidate_metadata.outputs['artifact-id'] }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Build fixed verification image
+        run: ./scripts/docker-compose.sh build app
+      - name: Capture actual deployed parent and compile both projections once
+        env:
+          SITE_URL: https://santa928.github.io/tsumucode/
+        run: |
+          ./scripts/docker-compose.sh run --rm app npm run release:flow -- baseline --repository "$GITHUB_REPOSITORY" --site-url "$SITE_URL" --output .release-v2/baseline.json
+          ./scripts/docker-compose.sh run --rm app npm run release:flow -- prepare --baseline .release-v2/baseline.json --output .release-v2/preparation.json
+      - name: Build public app once
+        run: ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run build:app
+      - name: Check actual public bytes and early budgets
+        run: |
+          ./scripts/docker-compose.sh run --rm app npm run release:flow -- static --snapshot .release-v2/preparation.json --output .release-v2/static.json
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run test:bundle -- --reporter=json --outputFile=.release-v2/bundle.json
+          ./scripts/docker-compose.sh run --rm app sh -ec 'npm run smoke:learning-chunks > .release-v2/chunks.txt'
+      - name: Prepare same-build authoring preview and freeze required checks
+        run: |
+          ./scripts/docker-compose.sh run --rm app npm run release:flow -- preview --output .release-v2/preview.json
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH app npm run release:flow -- freeze --snapshot .release-v2/preparation.json --baseline .release-v2/baseline.json --output .release-v2/execution-plan.json
+      - name: Preserve exact candidate files
+        id: candidate_files
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: dist
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 90
+      - name: Bind uploaded candidate to frozen checks
+        env:
+          ARTIFACT_ID: ${{ steps.candidate_files.outputs['artifact-id'] }}
+        run: >-
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e GITHUB_REPOSITORY -e GITHUB_RUN_ID
+          -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF
+          app npm run release:flow -- candidate --snapshot .release-v2/preparation.json
+          --baseline .release-v2/baseline.json --execution-plan .release-v2/execution-plan.json
+          --artifact-id "$ARTIFACT_ID" --output .release-v2/candidate.json
+      - name: Preserve immutable candidate metadata and authoring projection
+        id: candidate_metadata
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: candidate-metadata-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .release-v2
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 90
+      - name: Report migration checkpoint
+        run: echo '候補build・対象一覧・同run成果物の凍結まで完了。品質集約／配信は未実施です。' >> "$GITHUB_STEP_SUMMARY"
+      - name: Preserve migration failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: migration-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .release-v2
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Stop only candidate tool containers
+        if: always()
+        run: ./scripts/docker-compose.sh down --remove-orphans
 
   quality:
     if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'

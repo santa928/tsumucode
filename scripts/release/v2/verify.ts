@@ -5,12 +5,14 @@ import {
   CommitSchema,
   DigestSchema,
   IdSchema,
+  JobKeySchema,
   SuiteResultSchema,
 } from './schema';
 
 export const SuiteRequirementSchema = z
   .object({
     suite: IdSchema,
+    producerJobId: JobKeySchema,
     inputDigest: DigestSchema,
     targets: z.array(z.string().min(1)).min(1),
   })
@@ -78,6 +80,7 @@ export function verifyResults(
   for (const requirement of requirements) {
     const result = results.find((result) => result.suite === requirement.suite)!;
     if (
+      result.jobId !== requirement.producerJobId ||
       result.status !== 'passed' ||
       result.candidateDigest !== candidateDigest ||
       result.recipeDigest !== recipeDigest ||

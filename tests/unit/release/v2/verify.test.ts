@@ -28,6 +28,7 @@ const candidate = BuildIdentitySchema.parse({
 });
 const requirement = {
   suite: 'browser-chromium',
+  producerJobId: '401',
   inputDigest: 'f'.repeat(64),
   targets: ['topic/lesson/solution', 'topic/lesson/starter'],
 };
@@ -210,4 +211,11 @@ describe('deployment truth after a failed report', () => {
       }).state,
     ).toBe('unknown');
   });
+});
+
+it('refuses a result emitted by a different same-run producer job', async () => {
+  const { verifyResults } = await import('../../../../scripts/release/v2/verify');
+  const result = passed();
+  result.jobId = '402';
+  expect(() => verifyResults(candidate, [requirement], [result], context)).toThrow();
 });
