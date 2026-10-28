@@ -1,7 +1,7 @@
 schemaVersion: 1
 releaseStatus: approved
-verifiedSourceCommit: f1fcd0397f539770a31879219962c03fb5ab118c
-canonicalDistSha256: 689c6e1fddaa1f907b91a473cafed7a6f149fd6ac61e1883d441ccf216727a41
+verifiedSourceCommit: 957f595486d8a418ab6525ac22d5e817d5df4c3c
+canonicalDistSha256: 6a19fef01316332d1189b2efb8d0a02d1e6dd8de2c9878297fa29c4559a34cfc
 lessons:
   - lessonId: next-ch01-l01
     authorId: tsumucode-next-course-authoring
@@ -13,8 +13,10 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開更新Source
-      f1fcd0397f539770a31879219962c03fb5ab118cへの適用確認。旧独立3persona原本のSource・担当・hashと実人受講/物理低端末/認証Cookieの未確認を保持し、現在9教材の可視hash/sourceHash一致を各担当が独立照合。新しい教材読解や実操作への付替えはしない。今回の内容外差分はCI事前検証とHome→目次のPUSH時focus/scroll導線。現在SourceのNative9workspace81fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に確認。ローカルの2server実行OOMと私有config起動失敗を保存し、本番previewだけの同一spec成功へ遡って置換しない。旧Cookie取消/CPython誤分類の原因は未断定。元の教材判断のreviewerIdは保持。
+    notes: 読書UI公開Source
+      957f595486d8a418ab6525ac22d5e817d5df4c3cへの適用確認。旧評価/失敗原本はf1および旧workflow7cのGit記録・private原本に保持。9教材の章/glossary/conceptsと公開Lesson
+      payloadは同一（外側courseRevisionのみ27→28）、SourceHash/可視hashを2役が独立再計算して一致。これは新しい学習実操作や学習効果の証明ではない。今回SourceのNative9群81Fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に照合し、runtime-publication役が5原本の最終bindingを確認。実人/物理低端末/認証Cookieは未確認。旧Firefox
+      flaky1・初回全件成功未達、旧Cookie取消/CPython誤分類の原因未確定を維持。
   - lessonId: next-ch02-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -25,8 +27,10 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開更新Source
-      f1fcd0397f539770a31879219962c03fb5ab118cへの適用確認。旧独立3persona原本のSource・担当・hashと実人受講/物理低端末/認証Cookieの未確認を保持し、現在9教材の可視hash/sourceHash一致を各担当が独立照合。新しい教材読解や実操作への付替えはしない。今回の内容外差分はCI事前検証とHome→目次のPUSH時focus/scroll導線。現在SourceのNative9workspace81fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に確認。ローカルの2server実行OOMと私有config起動失敗を保存し、本番previewだけの同一spec成功へ遡って置換しない。旧Cookie取消/CPython誤分類の原因は未断定。元の教材判断のreviewerIdは保持。
+    notes: 読書UI公開Source
+      957f595486d8a418ab6525ac22d5e817d5df4c3cへの適用確認。旧評価/失敗原本はf1および旧workflow7cのGit記録・private原本に保持。9教材の章/glossary/conceptsと公開Lesson
+      payloadは同一（外側courseRevisionのみ27→28）、SourceHash/可視hashを2役が独立再計算して一致。これは新しい学習実操作や学習効果の証明ではない。今回SourceのNative9群81Fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に照合し、runtime-publication役が5原本の最終bindingを確認。実人/物理低端末/認証Cookieは未確認。旧Firefox
+      flaky1・初回全件成功未達、旧Cookie取消/CPython誤分類の原因未確定を維持。
   - lessonId: next-ch02-l02
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -37,8 +41,10 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開更新Source
-      f1fcd0397f539770a31879219962c03fb5ab118cへの適用確認。旧独立3persona原本のSource・担当・hashと実人受講/物理低端末/認証Cookieの未確認を保持し、現在9教材の可視hash/sourceHash一致を各担当が独立照合。新しい教材読解や実操作への付替えはしない。今回の内容外差分はCI事前検証とHome→目次のPUSH時focus/scroll導線。現在SourceのNative9workspace81fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に確認。ローカルの2server実行OOMと私有config起動失敗を保存し、本番previewだけの同一spec成功へ遡って置換しない。旧Cookie取消/CPython誤分類の原因は未断定。元の教材判断のreviewerIdは保持。
+    notes: 読書UI公開Source
+      957f595486d8a418ab6525ac22d5e817d5df4c3cへの適用確認。旧評価/失敗原本はf1および旧workflow7cのGit記録・private原本に保持。9教材の章/glossary/conceptsと公開Lesson
+      payloadは同一（外側courseRevisionのみ27→28）、SourceHash/可視hashを2役が独立再計算して一致。これは新しい学習実操作や学習効果の証明ではない。今回SourceのNative9群81Fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に照合し、runtime-publication役が5原本の最終bindingを確認。実人/物理低端末/認証Cookieは未確認。旧Firefox
+      flaky1・初回全件成功未達、旧Cookie取消/CPython誤分類の原因未確定を維持。
   - lessonId: next-ch03-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -49,8 +55,10 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開更新Source
-      f1fcd0397f539770a31879219962c03fb5ab118cへの適用確認。旧独立3persona原本のSource・担当・hashと実人受講/物理低端末/認証Cookieの未確認を保持し、現在9教材の可視hash/sourceHash一致を各担当が独立照合。新しい教材読解や実操作への付替えはしない。今回の内容外差分はCI事前検証とHome→目次のPUSH時focus/scroll導線。現在SourceのNative9workspace81fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に確認。ローカルの2server実行OOMと私有config起動失敗を保存し、本番previewだけの同一spec成功へ遡って置換しない。旧Cookie取消/CPython誤分類の原因は未断定。元の教材判断のreviewerIdは保持。
+    notes: 読書UI公開Source
+      957f595486d8a418ab6525ac22d5e817d5df4c3cへの適用確認。旧評価/失敗原本はf1および旧workflow7cのGit記録・private原本に保持。9教材の章/glossary/conceptsと公開Lesson
+      payloadは同一（外側courseRevisionのみ27→28）、SourceHash/可視hashを2役が独立再計算して一致。これは新しい学習実操作や学習効果の証明ではない。今回SourceのNative9群81Fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に照合し、runtime-publication役が5原本の最終bindingを確認。実人/物理低端末/認証Cookieは未確認。旧Firefox
+      flaky1・初回全件成功未達、旧Cookie取消/CPython誤分類の原因未確定を維持。
   - lessonId: next-ch03-l02
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -61,8 +69,10 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開更新Source
-      f1fcd0397f539770a31879219962c03fb5ab118cへの適用確認。旧独立3persona原本のSource・担当・hashと実人受講/物理低端末/認証Cookieの未確認を保持し、現在9教材の可視hash/sourceHash一致を各担当が独立照合。新しい教材読解や実操作への付替えはしない。今回の内容外差分はCI事前検証とHome→目次のPUSH時focus/scroll導線。現在SourceのNative9workspace81fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に確認。ローカルの2server実行OOMと私有config起動失敗を保存し、本番previewだけの同一spec成功へ遡って置換しない。旧Cookie取消/CPython誤分類の原因は未断定。元の教材判断のreviewerIdは保持。
+    notes: 読書UI公開Source
+      957f595486d8a418ab6525ac22d5e817d5df4c3cへの適用確認。旧評価/失敗原本はf1および旧workflow7cのGit記録・private原本に保持。9教材の章/glossary/conceptsと公開Lesson
+      payloadは同一（外側courseRevisionのみ27→28）、SourceHash/可視hashを2役が独立再計算して一致。これは新しい学習実操作や学習効果の証明ではない。今回SourceのNative9群81Fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に照合し、runtime-publication役が5原本の最終bindingを確認。実人/物理低端末/認証Cookieは未確認。旧Firefox
+      flaky1・初回全件成功未達、旧Cookie取消/CPython誤分類の原因未確定を維持。
   - lessonId: next-ch04-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -73,8 +83,10 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開更新Source
-      f1fcd0397f539770a31879219962c03fb5ab118cへの適用確認。旧独立3persona原本のSource・担当・hashと実人受講/物理低端末/認証Cookieの未確認を保持し、現在9教材の可視hash/sourceHash一致を各担当が独立照合。新しい教材読解や実操作への付替えはしない。今回の内容外差分はCI事前検証とHome→目次のPUSH時focus/scroll導線。現在SourceのNative9workspace81fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に確認。ローカルの2server実行OOMと私有config起動失敗を保存し、本番previewだけの同一spec成功へ遡って置換しない。旧Cookie取消/CPython誤分類の原因は未断定。元の教材判断のreviewerIdは保持。
+    notes: 読書UI公開Source
+      957f595486d8a418ab6525ac22d5e817d5df4c3cへの適用確認。旧評価/失敗原本はf1および旧workflow7cのGit記録・private原本に保持。9教材の章/glossary/conceptsと公開Lesson
+      payloadは同一（外側courseRevisionのみ27→28）、SourceHash/可視hashを2役が独立再計算して一致。これは新しい学習実操作や学習効果の証明ではない。今回SourceのNative9群81Fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に照合し、runtime-publication役が5原本の最終bindingを確認。実人/物理低端末/認証Cookieは未確認。旧Firefox
+      flaky1・初回全件成功未達、旧Cookie取消/CPython誤分類の原因未確定を維持。
   - lessonId: next-ch04-l02
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -85,8 +97,10 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開更新Source
-      f1fcd0397f539770a31879219962c03fb5ab118cへの適用確認。旧独立3persona原本のSource・担当・hashと実人受講/物理低端末/認証Cookieの未確認を保持し、現在9教材の可視hash/sourceHash一致を各担当が独立照合。新しい教材読解や実操作への付替えはしない。今回の内容外差分はCI事前検証とHome→目次のPUSH時focus/scroll導線。現在SourceのNative9workspace81fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に確認。ローカルの2server実行OOMと私有config起動失敗を保存し、本番previewだけの同一spec成功へ遡って置換しない。旧Cookie取消/CPython誤分類の原因は未断定。元の教材判断のreviewerIdは保持。
+    notes: 読書UI公開Source
+      957f595486d8a418ab6525ac22d5e817d5df4c3cへの適用確認。旧評価/失敗原本はf1および旧workflow7cのGit記録・private原本に保持。9教材の章/glossary/conceptsと公開Lesson
+      payloadは同一（外側courseRevisionのみ27→28）、SourceHash/可視hashを2役が独立再計算して一致。これは新しい学習実操作や学習効果の証明ではない。今回SourceのNative9群81Fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に照合し、runtime-publication役が5原本の最終bindingを確認。実人/物理低端末/認証Cookieは未確認。旧Firefox
+      flaky1・初回全件成功未達、旧Cookie取消/CPython誤分類の原因未確定を維持。
   - lessonId: next-ch05-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -97,8 +111,10 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開更新Source
-      f1fcd0397f539770a31879219962c03fb5ab118cへの適用確認。旧独立3persona原本のSource・担当・hashと実人受講/物理低端末/認証Cookieの未確認を保持し、現在9教材の可視hash/sourceHash一致を各担当が独立照合。新しい教材読解や実操作への付替えはしない。今回の内容外差分はCI事前検証とHome→目次のPUSH時focus/scroll導線。現在SourceのNative9workspace81fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に確認。ローカルの2server実行OOMと私有config起動失敗を保存し、本番previewだけの同一spec成功へ遡って置換しない。旧Cookie取消/CPython誤分類の原因は未断定。元の教材判断のreviewerIdは保持。
+    notes: 読書UI公開Source
+      957f595486d8a418ab6525ac22d5e817d5df4c3cへの適用確認。旧評価/失敗原本はf1および旧workflow7cのGit記録・private原本に保持。9教材の章/glossary/conceptsと公開Lesson
+      payloadは同一（外側courseRevisionのみ27→28）、SourceHash/可視hashを2役が独立再計算して一致。これは新しい学習実操作や学習効果の証明ではない。今回SourceのNative9群81Fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に照合し、runtime-publication役が5原本の最終bindingを確認。実人/物理低端末/認証Cookieは未確認。旧Firefox
+      flaky1・初回全件成功未達、旧Cookie取消/CPython誤分類の原因未確定を維持。
   - lessonId: next-ch06-l01
     authorId: tsumucode-next-course-authoring
     reviewerId: /root/consumer_final_structure
@@ -109,5 +125,7 @@ lessons:
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 公開更新Source
-      f1fcd0397f539770a31879219962c03fb5ab118cへの適用確認。旧独立3persona原本のSource・担当・hashと実人受講/物理低端末/認証Cookieの未確認を保持し、現在9教材の可視hash/sourceHash一致を各担当が独立照合。新しい教材読解や実操作への付替えはしない。今回の内容外差分はCI事前検証とHome→目次のPUSH時focus/scroll導線。現在SourceのNative9workspace81fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に確認。ローカルの2server実行OOMと私有config起動失敗を保存し、本番previewだけの同一spec成功へ遡って置換しない。旧Cookie取消/CPython誤分類の原因は未断定。元の教材判断のreviewerIdは保持。
+    notes: 読書UI公開Source
+      957f595486d8a418ab6525ac22d5e817d5df4c3cへの適用確認。旧評価/失敗原本はf1および旧workflow7cのGit記録・private原本に保持。9教材の章/glossary/conceptsと公開Lesson
+      payloadは同一（外側courseRevisionのみ27→28）、SourceHash/可視hashを2役が独立再計算して一致。これは新しい学習実操作や学習効果の証明ではない。今回SourceのNative9群81Fixtureと現在distのPages静的34slide×PC/mobile・進捗JSON引継ぎを別々に照合し、runtime-publication役が5原本の最終bindingを確認。実人/物理低端末/認証Cookieは未確認。旧Firefox
+      flaky1・初回全件成功未達、旧Cookie取消/CPython誤分類の原因未確定を維持。
