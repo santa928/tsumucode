@@ -62,7 +62,7 @@ describe('読書リスト3段階の配布範囲と採点', () => {
   });
 
   it.each([1, 2, 3])('第%s段階の連続操作を削除・弱体化した教材を拒否する', async (stage) => {
-    const lesson = `react-ch02-l0${stage}`;
+    const lesson = `react-ch02-l0${String(stage)}`;
     const source = ExerciseSourceSchema.parse(
       YAML.parse(
         await readFile(

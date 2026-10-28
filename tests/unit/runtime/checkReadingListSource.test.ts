@@ -198,7 +198,7 @@ it.each([
       ['BookCard.tsx', 'components.tsx'].map(async (name) => [
         name,
         await readFile(root + '/' + name, 'utf8'),
-      ]),
+      ] as const),
     ),
   );
   const checked = analyzeReadingList(files);
@@ -215,7 +215,7 @@ it('可変型へコピーしても、State内の本を直接書き換える更�
       ['BookCard.tsx', 'components.tsx'].map(async (name) => [
         name,
         await readFile(root + '/' + name, 'utf8'),
-      ]),
+      ] as const),
     ),
   );
   const checked = analyzeReadingList(files);
