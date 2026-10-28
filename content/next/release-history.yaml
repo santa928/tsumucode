@@ -569,7 +569,6 @@ candidate:
     - next-travel-guided-check01
     - next-travel-guided-check02
     - next-travel-guided-check03
-  previousReleaseTag: tsumucode-release-2026-10-24.1
   previousReleaseTag: tsumucode-release-2026-10-27.1
   tombstonedIds: []
   migrations:
