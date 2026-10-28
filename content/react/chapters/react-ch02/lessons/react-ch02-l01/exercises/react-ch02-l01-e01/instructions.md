@@ -20,6 +20,8 @@ Bookのid/title/readとBookCardPropsのbook/onToggleは用意された型を使�
 - 1冊のbuttonのidはtoggle-と本のidをつなぎます。星の地図ならtoggle-starsです。aria-pressedにはその本のreadを渡します。
 - 最初に戻すbuttonのidはreset、表示は「最初に戻す」です。
 
+aria-pressedは、読み上げ機能にbuttonの選択状態を伝える属性です。この課題では、既読ならtrue、未読ならfalseになるbook.readを渡します。
+
 ## 実行後の確認
 
 「プレビューを更新」で表示を確認し、buttonを操作してから「判定する」で確かめます。判定はコードと指定の連続操作を確認します。ヒントなしで書けたことや、説明を理解したことまでは自動判定しません。開いたヒント、自分で決めた部分、予想と違った点を振り返りましょう。

@@ -72,7 +72,7 @@ lessons:
   - lessonId: python-basics-ch01-l07
     authorId: tsumucode-python-author
     reviewerId: pending-independent-review
-    sourceHash: 0d3b7e255d5a3873bf33223e4d02ff602f5adfdbf5e8188d27f274be260e5a41
+    sourceHash: 653367d6fd23e49378fb57dc485efbbdc426b987dbaeca60db53b053fe542f89
     accuracy: rejected
     goalExerciseAlignment: rejected
     unexplainedTerms: 0
@@ -85,7 +85,7 @@ lessons:
   - lessonId: python-basics-ch01-l08
     authorId: tsumucode-representative-author
     reviewerId: pending-independent-review
-    sourceHash: dd5718c8d56678a8a6bdbdf87957c6e47e1e94ada7275af061eaeb63276549b3
+    sourceHash: 4e043127ccfcf16abeed532947ff3a4a40e33106e8662c636fb44af8adcbb9eb
     accuracy: rejected
     goalExerciseAlignment: rejected
     unexplainedTerms: 0
@@ -96,7 +96,7 @@ lessons:
   - lessonId: python-basics-ch01-l09
     authorId: tsumucode-representative-author
     reviewerId: pending-independent-review
-    sourceHash: 2d3c2f59dccd6996d12d35baedf598c8d2e2aacaef31691cbcd20cda5d480770
+    sourceHash: f851db2b66aaf1b15656c4609e0f132241b3381ae66b733cab4e305a653f61b8
     accuracy: rejected
     goalExerciseAlignment: rejected
     unexplainedTerms: 0
@@ -107,7 +107,7 @@ lessons:
   - lessonId: python-basics-ch01-l10
     authorId: tsumucode-representative-author
     reviewerId: pending-independent-review
-    sourceHash: 762f8491f8704b840831b88302a3b8a4d9335dd91a99ed0ebaebcc5d15892c90
+    sourceHash: 760b2179e055582f5822046a969a430a0c66581067551b3e470f802ac13015ef
     accuracy: rejected
     goalExerciseAlignment: rejected
     unexplainedTerms: 0
@@ -118,7 +118,7 @@ lessons:
   - lessonId: python-basics-ch01-l11
     authorId: tsumucode-representative-author
     reviewerId: pending-independent-review
-    sourceHash: 437ca968026ccbd5cd5bbcfa8de9ef60dadfe4b54f56732711a1f94fb9e5f3a5
+    sourceHash: a16317c5bb200c5ed07edda210d4883ef45c7d13afc2454a3605c33112dbb0a4
     accuracy: rejected
     goalExerciseAlignment: rejected
     unexplainedTerms: 0

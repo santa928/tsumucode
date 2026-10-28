@@ -21,7 +21,7 @@ steps:
     file: BookCard.tsx
     target: BookCard.tsxのBookCard。本の型とbook/onToggle、親と初期3冊は用意されています。
     starterAnchor: export function BookCard
-    change: book.titleと「既読／未読」を表示し、未読のbuttonは「読了にする」、既読なら「未読にする」とします。buttonのidはtoggle-にbook.idをつなぎ、aria-pressedにbook.readを渡します。押したときだけonToggleへ本のidを渡してください。
+    change: book.titleと「既読／未読」を表示し、未読のbuttonは「読了にする」、既読なら「未読にする」とします。buttonのidはtoggle-にbook.idをつなぎます。aria-pressedは読み上げ機能にbuttonの選択状態を伝える属性です。この課題では既読ならtrue、未読ならfalseになるbook.readを渡します。押したときだけonToggleへ本のidを渡してください。
     observe: 「星の地図」を2回押すと元へ戻り、他の本は変わりません。親の「最初に戻す」も確かめます。補助関数や装飾は自由です。
     requiresConceptIds:
       - react-reading-card
