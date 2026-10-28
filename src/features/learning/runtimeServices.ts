@@ -5,6 +5,7 @@ import type { CourseIndex } from '../../core/content/types';
 import {
   ContentProgressMigrationService,
   type ContentMigrationNotice,
+  type CourseMigrationDescriptor,
 } from '../../core/persistence/contentProgressMigration';
 import { PassFreshnessRegistry } from '../../core/persistence/PassFreshnessRegistry';
 import { localProjectDescriptor } from '../../core/persistence/localProjectDescriptor';
@@ -69,7 +70,7 @@ export interface LearningRuntimeServiceOptions {
   readonly contentMigrations?: ContentProgressMigrationService;
   readonly transferService?: TransferServicePort;
   readonly leaseCoordinator?: TabLeaseCoordinator;
-  readonly loadTransferCourseIndexes?: () => Promise<readonly CourseIndex[]>;
+  readonly loadTransferCourseIndexes?: () => Promise<readonly CourseMigrationDescriptor[]>;
   readonly notices?: RuntimeNoticeStore;
   readonly runnerRegistry?: RunnerRegistry;
   readonly runnerRegistrations?: readonly (readonly [string, RunnerFactory])[];
@@ -138,8 +139,17 @@ class LazyTransferService implements TransferServicePort {
 }
 
 /** Catalogの全Course IndexをGitHub Pagesの現在Base Pathから検証済みで読み込む。 */
-export async function loadTransferCourseIndexesFromCatalog(): Promise<readonly CourseIndex[]> {
+export async function loadTransferCourseIndexesFromCatalog(): Promise<
+  readonly CourseMigrationDescriptor[]
+> {
   const catalog = await loadCourseCatalog(import.meta.env.BASE_URL);
+  if (catalog.progressCatalog) {
+    const { courseContentRepository } = await import('../../core/content/CourseContentRepository');
+    return courseContentRepository.loadProgressCatalog(
+      import.meta.env.BASE_URL,
+      catalog.progressCatalog,
+    );
+  }
   return Promise.all(
     catalog.courses.map((entry) => loadCourseIndex(import.meta.env.BASE_URL, entry)),
   );
@@ -323,7 +333,7 @@ export function createLearningRuntimeServices(
     editorLanguageRegistry.register(id, factory);
   }
   const courseIndexMigrations = new Map<string, Promise<readonly ContentMigrationNotice[]>>();
-  const registeredCourseIndexes = new Map<string, CourseIndex>();
+  const registeredCourseIndexes = new Map<string, CourseMigrationDescriptor>();
   const courseProgressMutations = new Map<string, Promise<void>>();
   let openPromise: Promise<void> | undefined;
   let transferCatalogPromise: Promise<void> | undefined;
@@ -341,7 +351,9 @@ export function createLearningRuntimeServices(
   }
 
   /** Course Indexをmigrationへsingle-flight登録し、発生したnoticeを保持して返す。 */
-  function ensureCourseIndex(index: CourseIndex): Promise<readonly ContentMigrationNotice[]> {
+  function ensureCourseIndex(
+    index: CourseMigrationDescriptor,
+  ): Promise<readonly ContentMigrationNotice[]> {
     registeredCourseIndexes.set(index.id, index);
     const key = JSON.stringify([index.id, index.revision]);
     const current = courseIndexMigrations.get(key);

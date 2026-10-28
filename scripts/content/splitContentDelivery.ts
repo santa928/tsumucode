@@ -13,6 +13,11 @@ import type {
 import { stringifyCanonicalJson, type CompiledCourseArtifacts } from './compileCourse';
 import { resolveInside } from './io';
 import {
+  ProgressCatalogSchema,
+  projectProgressDescriptor,
+  type ProgressCatalog,
+} from '../../src/core/content/progressCatalog';
+import {
   canonicalSha256,
   splitCourseArtifacts,
   type SplitCourseArtifacts,
@@ -25,6 +30,7 @@ export interface SplitContentDeliveryCourse {
 
 export interface SplitContentDelivery {
   readonly catalog: CourseCatalogV3;
+  readonly progressCatalog?: ProgressCatalog;
   readonly courses: readonly SplitContentDeliveryCourse[];
 }
 
@@ -98,11 +104,24 @@ export function buildSplitContentDelivery(
       }
     }
   }
+  const progressCatalog = ProgressCatalogSchema.parse({
+    schemaVersion: 1,
+    courses: [...allCourses]
+      .sort((a, b) => a.split.index.id.localeCompare(b.split.index.id))
+      .map(({ split }) => projectProgressDescriptor(split.index)),
+  });
   return {
-    catalog: createCourseCatalog(
-      courses.map(({ split }) => split.index),
-      learningPaths.filter(({ publicationStatus }) => publicationStatus === 'published'),
-    ),
+    progressCatalog,
+    catalog: {
+      ...createCourseCatalog(
+        courses.map(({ split }) => split.index),
+        learningPaths.filter(({ publicationStatus }) => publicationStatus === 'published'),
+      ),
+      progressCatalog: {
+        path: 'generated/content/progress-catalog.json',
+        sha256: canonicalSha256(progressCatalog),
+      },
+    },
     courses,
   };
 }
@@ -136,6 +155,12 @@ export async function writeSplitContentDeliveryTree(
 ): Promise<void> {
   const files = new Map<string, StagedFile>();
   registerStagedFile(files, 'catalog-v3.json', stringifyCanonicalJson(delivery.catalog));
+  if (delivery.progressCatalog)
+    registerStagedFile(
+      files,
+      'progress-catalog.json',
+      stringifyCanonicalJson(delivery.progressCatalog),
+    );
   for (const course of [...delivery.courses].sort((left, right) =>
     left.split.index.id < right.split.index.id
       ? -1
