@@ -81,6 +81,10 @@ export const PlanSchema = z
   .object({
     schemaVersion: z.literal(1),
     inventoryDigest: DigestSchema,
+    parent: z
+      .object({ deploymentId: z.string().regex(/^[1-9]\d*$/u), sourceRecordDigest: DigestSchema })
+      .strict()
+      .nullable(),
     publishedCourses: z.array(IdSchema).min(1),
     targets: z.array(TargetSchema).min(1),
   })

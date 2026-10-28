@@ -51,7 +51,8 @@
     "check": "npm run content:compile && npm run lint && npm run test:changed && npm run build:app && npm run smoke:learning-chunks",
     "check:prepush": "sh scripts/checkBeforePush.sh",
     "check:release": "npm run content:compile && npm run content:review && npm run lint && npm run test:run && npm run build:app && npm run smoke:learning-chunks",
-    "build:python-assets": "tsx scripts/build/preparePythonAssets.ts"
+    "build:python-assets": "tsx scripts/build/preparePythonAssets.ts",
+    "release:flow": "tsx scripts/release/v2/cli.ts"
   },
   "dependencies": {
     "@codemirror/autocomplete": "6.20.3",

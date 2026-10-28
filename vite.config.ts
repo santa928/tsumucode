@@ -12,10 +12,14 @@ export function normalizeBasePath(value: string | undefined): string {
   return normalizePublicBasePath(value);
 }
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
   const env = loadEnv(mode, '.', '');
   return {
     base: normalizeBasePath(env.BASE_PATH),
+    publicDir:
+      command === 'serve' && env.TSUMUCODE_AUTHORING_PREVIEW === '1'
+        ? '.release-v2/authoring-public'
+        : 'public',
     plugins: [react(), tailwindcss(), reactPreviewSourcePlugin()],
     test: { maxWorkers: 2 },
     build: {

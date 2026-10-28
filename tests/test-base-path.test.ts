@@ -44,6 +44,19 @@ describe('Playwright test base path', () => {
     );
   });
 
+  it('authoring checks serve the same app from separate preview and source data roots', () => {
+    const config = createPlaywrightConfig('/tsumucode/', 'authoring');
+    const servers = Array.isArray(config.webServer) ? config.webServer : [config.webServer];
+    expect(servers.find((server) => server?.url?.includes(':4173/'))?.command).toContain(
+      '--outDir .release-v2/authoring-dist',
+    );
+    expect(
+      servers.find((server) => server?.url?.includes(':4174/'))?.env?.[
+        'TSUMUCODE_AUTHORING_PREVIEW'
+      ],
+    ).toBe('1');
+  });
+
   it('E2E sourceへ既定repository名を埋め込まない', async () => {
     const sourcePaths = (await readdir('tests/e2e', { recursive: true })).filter(
       (sourcePath) => sourcePath.endsWith('.ts') && sourcePath !== 'helpers/testBasePath.ts',

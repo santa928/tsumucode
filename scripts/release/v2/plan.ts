@@ -101,6 +101,9 @@ export function planRelease(input: ReleaseInventory, baselineInput?: unknown): R
   return PlanSchema.parse({
     schemaVersion: 1,
     inventoryDigest: hashValue(inventory),
+    parent: baseline
+      ? { deploymentId: baseline.deploymentId, sourceRecordDigest: baseline.sourceRecordDigest }
+      : null,
     publishedCourses: published.map((course) => course.id),
     targets,
   });

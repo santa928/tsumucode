@@ -1,34 +1,41 @@
-import { lstat, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { lstat, mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import { parseArgs } from 'node:util';
 import { pathToFileURL } from 'node:url';
+import { z } from 'zod';
 import { compileContent } from '../../content/compile';
+import { checkStaticArtifact } from '../checkStaticArtifact';
 import { buildInventory } from './inventory';
 import { hashValue } from './identity';
 import { readLegacyEvidence } from './legacy';
 import { planRelease } from './plan';
 import { compareLegacy } from './shadow';
+import { InventorySchema, PlanSchema } from './schema';
+import { prepareRelease, createAuthoringPreview } from './prepare';
+import { createCandidate } from './candidate';
+import { captureBaseline } from './captureBaseline';
+import { validateCapturedBaseline } from './parent';
 
-/** Report generation never grants publication approval or modifies historical evidence. */
-export async function runCli(args: readonly string[]): Promise<void> {
-  const [command, ...rest] = args;
-  if (command !== 'shadow') throw new Error('Unknown release v2 command');
-  const { values } = parseArgs({
-    args: rest,
-    options: { root: { type: 'string' }, output: { type: 'string' } },
-    strict: true,
-    allowPositionals: false,
-  });
-  if (!values.output) throw new Error('--output is required');
-  const output = path.resolve(values.output);
-  try {
-    await lstat(output);
-    throw new Error('Output already exists');
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
-  }
-  const root = path.resolve(values.root ?? process.cwd());
+const PreparationSchema = z
+  .object({ schemaVersion: z.literal(1), inventory: InventorySchema, plan: PlanSchema })
+  .strict();
+const optionNames: Readonly<Record<string, readonly string[]>> = {
+  shadow: [],
+  baseline: ['repository', 'site-url'],
+  prepare: ['baseline', 'public-output', 'authoring-output'],
+  preview: [],
+  candidate: ['snapshot', 'baseline', 'artifact-id', 'dist'],
+  static: ['snapshot', 'dist'],
+};
+async function jsonFile(file: string): Promise<unknown> {
+  return JSON.parse(await readFile(file, 'utf8')) as unknown;
+}
+function required(value: string | undefined, name: string) {
+  if (!value) throw new Error('Missing ' + name);
+  return value;
+}
+async function shadow(root: string) {
   const temporary = await mkdtemp(path.join(os.tmpdir(), 'release-shadow-'));
   try {
     const compilation = await compileContent({
@@ -44,7 +51,7 @@ export async function runCli(args: readonly string[]): Promise<void> {
         .filter((course) => course.publicationStatus === 'published')
         .map((course) => course.id),
     );
-    const report = {
+    return {
       schemaVersion: 1,
       status: 'shadow-only',
       inventory,
@@ -52,10 +59,115 @@ export async function runCli(args: readonly string[]): Promise<void> {
       plan: planRelease(inventory),
       shadow: compareLegacy(inventory, legacy),
     };
-    await writeFile(output, JSON.stringify(report, null, 2) + '\n', { flag: 'wx', mode: 0o600 });
   } finally {
     await rm(temporary, { recursive: true, force: true });
   }
+}
+
+/** Fixed commands only. Candidate construction is technical identity, never publication approval. */
+export async function runCli(
+  args: readonly string[],
+  environment: NodeJS.ProcessEnv = process.env,
+): Promise<void> {
+  const [command, ...rest] = args;
+  if (!command || !Object.hasOwn(optionNames, command))
+    throw new Error('Unknown release v2 command');
+  const options: Record<string, { type: 'string' }> = {
+    root: { type: 'string' },
+    output: { type: 'string' },
+  };
+  for (const name of optionNames[command]!) options[name] = { type: 'string' };
+  const { values } = parseArgs({ args: rest, options, strict: true, allowPositionals: false });
+  const root = path.resolve(values.root ?? process.cwd());
+  const output = path.resolve(root, required(values.output, '--output'));
+  for (const protectedPath of [
+    'dist',
+    'public',
+    '.release-v2/authoring-dist',
+    '.release-v2/authoring-public',
+  ]) {
+    const protectedRoot = path.resolve(root, protectedPath);
+    if (output === protectedRoot || output.startsWith(protectedRoot + path.sep))
+      throw new Error('Receipt output overlaps artifact data');
+  }
+  try {
+    await lstat(output);
+    throw new Error('Output already exists');
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+  }
+  const input = (value: string | undefined, name: string) =>
+    path.resolve(root, required(value, name));
+  const baseline = values.baseline
+    ? validateCapturedBaseline(await jsonFile(input(values.baseline, '--baseline'))).baseline
+    : undefined;
+  let result: unknown;
+  switch (command) {
+    case 'shadow':
+      result = await shadow(root);
+      break;
+    case 'baseline':
+      result = validateCapturedBaseline(
+        await captureBaseline({
+          root,
+          repository: required(values.repository, '--repository'),
+          siteUrl: required(values['site-url'], '--site-url'),
+        }),
+      );
+      break;
+    case 'prepare':
+      result = await prepareRelease(
+        path.join(root, 'content'),
+        values['public-output']
+          ? input(values['public-output'], '--public-output')
+          : path.join(root, 'public/generated/content'),
+        values['authoring-output']
+          ? input(values['authoring-output'], '--authoring-output')
+          : path.join(root, '.release-v2/authoring-public/generated/content'),
+        baseline,
+      );
+      break;
+    case 'preview':
+      result = await createAuthoringPreview(root);
+      break;
+    case 'static': {
+      const snapshot = PreparationSchema.parse(
+        await jsonFile(input(values.snapshot, '--snapshot')),
+      );
+      result = await checkStaticArtifact(
+        values.dist ? input(values.dist, '--dist') : path.join(root, 'dist'),
+        snapshot.inventory,
+      );
+      break;
+    }
+    case 'candidate': {
+      const snapshot = PreparationSchema.parse(
+        await jsonFile(input(values.snapshot, '--snapshot')),
+      );
+      if (hashValue(snapshot.plan) !== hashValue(planRelease(snapshot.inventory, baseline)))
+        throw new Error('Snapshot plan differs from its inventory or parent');
+      result = await createCandidate(
+        root,
+        values.dist ? input(values.dist, '--dist') : path.join(root, 'dist'),
+        snapshot.plan,
+        required(values['artifact-id'], '--artifact-id'),
+        {
+          repository: required(environment.GITHUB_REPOSITORY, 'GITHUB_REPOSITORY'),
+          runId: required(environment.GITHUB_RUN_ID, 'GITHUB_RUN_ID'),
+          jobId: required(environment.GITHUB_JOB, 'GITHUB_JOB'),
+          attempt: Number(required(environment.GITHUB_RUN_ATTEMPT, 'GITHUB_RUN_ATTEMPT')),
+          sourceCommit: required(environment.GITHUB_SHA, 'GITHUB_SHA'),
+          eventName: required(environment.GITHUB_EVENT_NAME, 'GITHUB_EVENT_NAME'),
+          ref: required(environment.GITHUB_REF, 'GITHUB_REF'),
+        },
+        environment.BASE_PATH ?? '/',
+      );
+      break;
+    }
+  }
+  if (result === undefined) throw new Error('Unimplemented release command');
+  await mkdir(path.dirname(output), { recursive: true });
+  await writeFile(output, JSON.stringify(result, null, 2) + '\n', { flag: 'wx', mode: 0o600 });
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   runCli(process.argv.slice(2)).catch((error: unknown) => {

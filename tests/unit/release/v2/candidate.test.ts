@@ -10,6 +10,7 @@ const exec = promisify(execFile),
   roots: string[] = [];
 const plan = {
   schemaVersion: 1,
+  parent: null,
   inventoryDigest: 'a'.repeat(64),
   publishedCourses: ['topic'],
   targets: [
