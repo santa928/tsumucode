@@ -5,6 +5,9 @@ import { resolveReleaseCourseContract, type ReleaseCourseId } from './releaseCou
 import { withoutReviewedNextSource } from './reviewedNextArtifact';
 import { hashFile } from './releaseHashes';
 import { z } from 'zod';
+import { InventorySchema, type ReleaseInventory } from './v2/schema';
+import { CourseCatalogV3Schema } from '../../src/core/content/deliverySchema';
+import { readSplitCourseArtifacts } from '../content/readSplitCourseArtifacts';
 import {
   PYTHON_VENDOR_ROOT,
   PYTHON_OUTPUT_ROOT,
@@ -145,15 +148,23 @@ export interface StaticArtifactReport {
 /** Pages Artifactを再帰検査し、Server File、秘密、開発URL、Root Asset漏れを拒否する。 */
 export async function checkStaticArtifact(
   distDir: string,
-  courseId: ReleaseCourseId = 'html-css',
+  courseId: ReleaseCourseId | ReleaseInventory = 'html-css',
 ): Promise<StaticArtifactReport> {
-  const contract = resolveReleaseCourseContract(courseId);
+  const inventory = typeof courseId === 'string' ? undefined : InventorySchema.parse(courseId);
+  const contract =
+    typeof courseId === 'string' ? resolveReleaseCourseContract(courseId) : undefined;
   const root = path.resolve(distDir);
   const files = await collectFiles(root);
   const catalog = JSON.parse(
     await readFile(path.join(root, 'generated/content/catalog-v3.json'), 'utf8'),
   ) as { courses: readonly { id: string }[] };
-  const pythonPaths = catalog.courses.some(({ id }) => id === 'python-basics')
+  const pythonPaths = (
+    inventory
+      ? inventory.courses.some(
+          (course) => course.publicationStatus === 'published' && course.runner === 'python',
+        )
+      : catalog.courses.some(({ id }) => id === 'python-basics')
+  )
     ? await pythonDistributionPaths(root)
     : new Set<string>();
 
@@ -183,22 +194,54 @@ export async function checkStaticArtifact(
 
   await access(path.join(root, 'index.html'));
   await access(path.join(root, 'generated/content/catalog-v3.json'));
-  await access(path.join(root, 'generated/content/courses/html-css/index.json'));
-  const lessons = await readdir(path.join(root, 'generated/content/courses/html-css/lessons'));
-  if (!lessons.some((lesson) => lesson.endsWith('.json'))) {
-    throw new Error('公開Lesson Artifactがありません: html-css');
-  }
-  if (contract.courseId !== 'html-css') {
-    const { readSplitCourseArtifacts } = await import('../content/readSplitCourseArtifacts');
-    const course = await readSplitCourseArtifacts(root, contract.courseId);
-    const lessonCount = course.phases.flatMap(({ chapters }) =>
-      chapters.flatMap(({ lessons }) => lessons),
-    ).length;
-    if (course.id !== contract.courseId || lessonCount !== contract.lessonCount)
-      throw new Error(
-        `${contract.courseId} ArtifactのCourse/${String(contract.lessonCount)} Lessonが不一致です`,
+  if (inventory) {
+    const parsedCatalog = CourseCatalogV3Schema.parse(catalog);
+    const published = inventory.courses.filter(
+      (course) => course.publicationStatus === 'published',
+    );
+    if (
+      !published.length ||
+      parsedCatalog.courses.length !== published.length ||
+      parsedCatalog.courses.some(
+        (entry) =>
+          entry.publicationStatus !== 'published' ||
+          !published.some((course) => course.id === entry.id),
+      )
+    )
+      throw new Error('Public course set differs from the inventory');
+    for (const expected of published) {
+      const course = await readSplitCourseArtifacts(root, expected.id);
+      const actualLessons = course.phases.flatMap((phase) =>
+        phase.chapters.flatMap((chapter) => chapter.lessons),
       );
-    await access(path.join(root, contract.publicProvenancePath));
+      if (
+        course.publicationStatus !== 'published' ||
+        course.revision !== expected.revision ||
+        course.runnerId !== expected.runner ||
+        actualLessons.length !== expected.lessons.length ||
+        expected.lessons.some((lesson) => !actualLessons.some((actual) => actual.id === lesson.id))
+      )
+        throw new Error('Public lesson set differs from the inventory: ' + expected.id);
+      await access(path.join(root, course.provenanceManifestPath));
+    }
+  } else {
+    await access(path.join(root, 'generated/content/courses/html-css/index.json'));
+    const lessons = await readdir(path.join(root, 'generated/content/courses/html-css/lessons'));
+    if (!lessons.some((lesson) => lesson.endsWith('.json'))) {
+      throw new Error('公開Lesson Artifactがありません: html-css');
+    }
+    if (contract && contract.courseId !== 'html-css') {
+      const { readSplitCourseArtifacts } = await import('../content/readSplitCourseArtifacts');
+      const course = await readSplitCourseArtifacts(root, contract.courseId);
+      const lessonCount = course.phases.flatMap(({ chapters }) =>
+        chapters.flatMap(({ lessons }) => lessons),
+      ).length;
+      if (course.id !== contract.courseId || lessonCount !== contract.lessonCount)
+        throw new Error(
+          `${contract.courseId} ArtifactのCourse/${String(contract.lessonCount)} Lessonが不一致です`,
+        );
+      await access(path.join(root, contract.publicProvenancePath));
+    }
   }
 
   return { files: files.length };

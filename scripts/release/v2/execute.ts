@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import { hashValue } from './identity';
-import { BuildIdentitySchema, SuiteResultSchema } from './schema';
+import { BuildIdentitySchema, JobKeySchema, SuiteResultSchema } from './schema';
 import { SuiteRequirementSchema, verifyCandidateArtifact } from './verify';
 
 const ExecutionContextSchema = z
   .object({
     runId: z.string().regex(/^[1-9]\d*$/u),
-    jobId: z.string().regex(/^[1-9]\d*$/u),
+    jobId: JobKeySchema,
     attempt: z.number().int().positive(),
   })
   .strict();

@@ -47,3 +47,23 @@ export async function hashArtifact(directory: string): Promise<ArtifactIdentity>
   if (files.length === 0) throw new Error('Artifact is empty');
   return { digest: hashValue(files), files };
 }
+
+/** Honor mounted worktree metadata only for the current workspace; isolate ordinary checkouts. */
+export async function repositoryEnvironment(root: string): Promise<NodeJS.ProcessEnv> {
+  const metadata = await lstat(path.join(root, '.git'));
+  if (metadata.isDirectory()) {
+    const ignored = new Set([
+      'GIT_DIR',
+      'GIT_WORK_TREE',
+      'GIT_COMMON_DIR',
+      'GIT_INDEX_FILE',
+      'GIT_OBJECT_DIRECTORY',
+      'GIT_ALTERNATE_OBJECT_DIRECTORIES',
+      'GIT_NAMESPACE',
+    ]);
+    return Object.fromEntries(Object.entries(process.env).filter(([name]) => !ignored.has(name)));
+  }
+  if (!metadata.isFile() || path.resolve(root) !== path.resolve(process.cwd()))
+    throw new Error('Unsupported or ambiguous repository metadata');
+  return { ...process.env };
+}

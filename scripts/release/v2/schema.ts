@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const DigestSchema = z.string().regex(/^[a-f0-9]{64}$/u);
 export const CommitSchema = z.string().regex(/^[a-f0-9]{40}$/u);
+export const JobKeySchema = z.string().regex(/^[A-Za-z0-9_-]{1,128}$/u);
 export const IdSchema = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/u);
 export const RuntimeKindSchema = z.enum([
   'html-css',
@@ -103,7 +104,7 @@ export const BuildIdentitySchema = z
     schemaVersion: z.literal(1),
     repository: z.string().regex(/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/u),
     runId: z.string().regex(/^[1-9]\d*$/u),
-    buildJobId: z.string().regex(/^[1-9]\d*$/u),
+    buildJobId: JobKeySchema,
     buildAttempt: z.number().int().positive(),
     artifactDigest: DigestSchema,
     artifactId: z.string().regex(/^[1-9]\d*$/u),
@@ -120,7 +121,7 @@ export const SuiteResultSchema = z
     inputDigest: DigestSchema,
     recipeDigest: DigestSchema,
     runId: z.string().regex(/^[1-9]\d*$/u),
-    jobId: z.string().regex(/^[1-9]\d*$/u),
+    jobId: JobKeySchema,
     verificationAttempt: z.number().int().positive(),
     status: z.enum(['passed', 'failed', 'pending']),
     targets: z.array(z.string().min(1)),

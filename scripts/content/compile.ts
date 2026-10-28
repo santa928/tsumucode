@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { lstat, mkdir, readdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import type { CourseCatalogV3 } from '../../src/core/content/types';
+import type { CourseCatalogV3, LearningPathDefinition } from '../../src/core/content/types';
 import {
   compileCourse,
   stringifyCanonicalJson,
@@ -22,6 +22,7 @@ export interface CompileContentOptions {
 export interface CompilationSummary {
   readonly catalog: CourseCatalogV3;
   readonly compilations: readonly CompiledCourseArtifacts[];
+  readonly learningPaths: readonly LearningPathDefinition[];
   readonly courseCount: number;
   readonly warnings: readonly string[];
 }
@@ -302,6 +303,7 @@ export async function compileContent(options: CompileContentOptions): Promise<Co
     summary = {
       catalog: catalogRoundTrip,
       compilations,
+      learningPaths,
       courseCount: delivery.courses.length,
       warnings: [],
     };
