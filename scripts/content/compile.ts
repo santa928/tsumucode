@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { lstat, mkdir, readdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import type { CourseCatalogV3, CourseManifest } from '../../src/core/content/types';
+import type { CourseCatalogV3 } from '../../src/core/content/types';
 import {
   compileCourse,
   stringifyCanonicalJson,
@@ -16,10 +16,12 @@ export interface CompileContentOptions {
   readonly sourceRoot: string;
   readonly outputRoot: string;
   readonly checkOnly: boolean;
+  readonly publication?: 'authoring' | 'public';
 }
 
 export interface CompilationSummary {
   readonly catalog: CourseCatalogV3;
+  readonly compilations: readonly CompiledCourseArtifacts[];
   readonly courseCount: number;
   readonly warnings: readonly string[];
 }
@@ -264,7 +266,6 @@ export async function compileContent(options: CompileContentOptions): Promise<Co
   const backupRoot = `${outputRoot}.backup-${randomUUID()}`;
   const lockRoot = `${outputRoot}.lock`;
   const lockToken = randomUUID();
-  const courses: CourseManifest[] = [];
   const compilations: CompiledCourseArtifacts[] = [];
   const courseIds = new Set<string>();
   let ownsLock = false;
@@ -281,11 +282,10 @@ export async function compileContent(options: CompileContentOptions): Promise<Co
       }
       if (courseIds.has(course.id)) throw new Error(`Course IDが重複しています: ${course.id}`);
       courseIds.add(course.id);
-      courses.push(course);
       compilations.push(compilation);
     }
     const learningPaths = await compileLearningPaths(path.join(sourceRoot, 'learning-paths'));
-    const delivery = buildSplitContentDelivery(compilations, learningPaths);
+    const delivery = buildSplitContentDelivery(compilations, learningPaths, options.publication);
     const catalogRoundTrip = JSON.parse(
       stringifyCanonicalJson(delivery.catalog),
     ) as CourseCatalogV3;
@@ -299,7 +299,12 @@ export async function compileContent(options: CompileContentOptions): Promise<Co
       await publishStaging(stagingRoot, outputRoot, backupRoot);
       published = true;
     }
-    summary = { catalog: catalogRoundTrip, courseCount: courses.length, warnings: [] };
+    summary = {
+      catalog: catalogRoundTrip,
+      compilations,
+      courseCount: delivery.courses.length,
+      warnings: [],
+    };
   } catch (error) {
     operationError = toError(error);
   }
@@ -346,16 +351,17 @@ export async function compileContent(options: CompileContentOptions): Promise<Co
 async function main(): Promise<void> {
   const arguments_ = process.argv.slice(2);
   if (
-    arguments_.some((argument) => argument !== '--check') ||
-    arguments_.filter((item) => item === '--check').length > 1
+    arguments_.some((argument) => argument !== '--check' && argument !== '--public') ||
+    new Set(arguments_).size !== arguments_.length
   ) {
-    throw new Error('Usage: tsx scripts/content/compile.ts [--check]');
+    throw new Error('Usage: tsx scripts/content/compile.ts [--check] [--public]');
   }
   const checkOnly = arguments_.includes('--check');
   const summary = await compileContent({
     sourceRoot: path.resolve(process.cwd(), 'content'),
     outputRoot: path.resolve(process.cwd(), 'public/generated/content'),
     checkOnly,
+    publication: arguments_.includes('--public') ? 'public' : 'authoring',
   });
   console.log(
     `教材${String(summary.courseCount)} Courseを${checkOnly ? '検証' : 'Compile'}しました。`,

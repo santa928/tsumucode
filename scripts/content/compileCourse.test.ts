@@ -12,6 +12,28 @@ import { readSplitCourseArtifacts } from './readSplitCourseArtifacts';
 
 const temporaryRoots: string[] = [];
 
+describe('compileCourse authoring inventory', () => {
+  it('compileCourseは同じCompileで得たSolution／Fixtureを追加metadataとして返す', async () => {
+    const compilation = await compileCourse(
+      path.resolve('tests/fixtures/foundation-content/html-css'),
+    );
+    expect(compilation.authoringExercises?.map(({ id }) => id)).toEqual(['exercise-first-heading']);
+    expect(compilation.authoringExercises?.[0]?.solutionFiles[0]?.content).toContain('<h1>');
+    expect(
+      compilation.authoringExercises?.[0]?.fixtures.map(({ id, expectedStatus }) => [
+        id,
+        expectedStatus,
+      ]),
+    ).toEqual([
+      ['solution', 'pass'],
+      ['missing-heading', 'incomplete'],
+      ['wrong-heading-text', 'incomplete'],
+      ['duplicate-heading', 'incomplete'],
+    ]);
+    expect(stringifyCanonicalJson(compilation.runtime)).not.toMatch(/solutionFiles|fixtures/u);
+  });
+});
+
 describe('stringifyCanonicalJson', () => {
   it('公開JSONをkey順を固定した1行へ最小化する', () => {
     expect(stringifyCanonicalJson({ z: 1, a: { y: 2, b: true } })).toBe(
@@ -383,6 +405,76 @@ async function readArtifactTree(
 }
 
 describe('minimal Course compilation', () => {
+  it('既存形式でLessonを追加すると固定件数変更なしで作者用演習まで列挙する', async () => {
+    const root = await createTemporaryRoot();
+    const sourceRoot = path.join(root, 'source');
+    const courseRoot = await writeMinimalCourse(sourceRoot);
+    const lessonRoot = 'chapters/ch00/lessons/lesson-first';
+    const replaceIds = (source: string): string =>
+      source
+        .replaceAll('lesson-first', 'lesson-second')
+        .replaceAll('exercise-first', 'exercise-second')
+        .replaceAll('workspace-first', 'workspace-second')
+        .replaceAll('slide-html-role', 'slide-second-role')
+        .replaceAll('html-role-art', 'second-role-art')
+        .replaceAll('rule-h1', 'rule-second-h1')
+        .replaceAll('hint-h1', 'hint-second-h1')
+        .replaceAll('authoring-solution', 'authoring-second-solution')
+        .replaceAll('authoring-fixture', 'authoring-second-fixture');
+    for (const [relativePath, base64] of await readArtifactTree(courseRoot)) {
+      if (relativePath.startsWith(`${lessonRoot}/`)) {
+        await writeFixtureFile(
+          courseRoot,
+          replaceIds(relativePath),
+          replaceIds(Buffer.from(base64, 'base64').toString('utf8')),
+        );
+      }
+    }
+    const provenancePath = path.join(courseRoot, 'provenance.yaml');
+    const provenance = await readFile(provenancePath, 'utf8');
+    await writeFile(
+      provenancePath,
+      provenance + replaceIds(provenance.slice(provenance.indexOf('  - id: public-html-role-art'))),
+    );
+    const chapterPath = path.join(courseRoot, 'chapters/ch00/chapter.yaml');
+    await writeFile(
+      chapterPath,
+      (await readFile(chapterPath, 'utf8'))
+        .replace('estimatedMinutes: 15', 'estimatedMinutes: 30')
+        .replace(
+          'lessonSources: [lessons/lesson-first/lesson.yaml]',
+          'lessonSources: [lessons/lesson-first/lesson.yaml, lessons/lesson-second/lesson.yaml]',
+        ),
+    );
+    const coursePath = path.join(courseRoot, 'course.yaml');
+    await writeFile(
+      coursePath,
+      (await readFile(coursePath, 'utf8'))
+        .replaceAll('estimatedMinutes: 15', 'estimatedMinutes: 30')
+        .replace('lessons: 1', 'lessons: 2')
+        .replace('conceptSlides: 1', 'conceptSlides: 2')
+        .replace('standardExercises: 1', 'standardExercises: 2'),
+    );
+
+    const summary = await compileContent({
+      sourceRoot,
+      outputRoot: path.join(root, 'generated/content'),
+      checkOnly: true,
+    });
+
+    expect(summary.catalog.courses[0]?.lessonStarts.map(({ lessonId }) => lessonId)).toEqual([
+      'lesson-first',
+      'lesson-second',
+    ]);
+    expect(summary.compilations[0]?.authoringExercises?.map(({ id }) => id)).toEqual([
+      'exercise-first',
+      'exercise-second',
+    ]);
+    expect(summary.compilations[0]?.authoringExercises?.[1]?.fixtures).toMatchObject([
+      { id: 'solution', expectedStatus: 'pass' },
+    ]);
+  });
+
   it('Interaction ScenarioをAuthoringと公開Runtimeの両方へ投影する', async () => {
     const root = await createTemporaryRoot();
     const sourceRoot = path.join(root, 'source');

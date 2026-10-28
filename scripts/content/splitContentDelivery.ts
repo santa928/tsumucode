@@ -74,15 +74,34 @@ export function createCourseCatalog(
 export function buildSplitContentDelivery(
   compilations: readonly CompiledCourseArtifacts[],
   learningPaths: readonly LearningPathDefinition[],
+  publication: 'authoring' | 'public' = 'authoring',
 ): SplitContentDelivery {
-  const courses = compilations.map((compilation) => ({
+  const allCourses = compilations.map((compilation) => ({
     compilation,
     split: splitCourseArtifacts(projectCourseForSplitDelivery(compilation.runtime)),
   }));
+  // 除外対象のSourceも既存の参照契約で検証してから公開集合を固定する。
+  const authoringCatalog = createCourseCatalog(
+    allCourses.map(({ split }) => split.index),
+    learningPaths,
+  );
+  if (publication === 'authoring') return { catalog: authoringCatalog, courses: allCourses };
+
+  const courses = allCourses.filter(({ split }) => split.index.publicationStatus === 'published');
+  const publicCourseIds = new Set(courses.map(({ split }) => split.index.id));
+  for (const { split } of courses) {
+    for (const prerequisiteId of split.index.prerequisites) {
+      if (!publicCourseIds.has(prerequisiteId)) {
+        throw new Error(
+          `公開Course ${split.index.id}のprerequisiteは公開対象にありません: ${prerequisiteId}`,
+        );
+      }
+    }
+  }
   return {
     catalog: createCourseCatalog(
       courses.map(({ split }) => split.index),
-      learningPaths,
+      learningPaths.filter(({ publicationStatus }) => publicationStatus === 'published'),
     ),
     courses,
   };

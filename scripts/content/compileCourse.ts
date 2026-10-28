@@ -66,6 +66,7 @@ interface CourseCompilation {
 
 export interface CompiledCourseArtifacts {
   readonly runtime: CourseManifest;
+  readonly authoringExercises?: readonly AuthoringExercise[];
   readonly publicProvenance: PublicProvenanceManifest;
   readonly assets: ReadonlyMap<string, Uint8Array>;
 }
@@ -967,6 +968,7 @@ export async function compileCourse(courseRoot: string): Promise<CompiledCourseA
   const compilation = await buildCourseCompilation(courseRoot);
   return {
     runtime: compilation.authoring.runtime,
+    authoringExercises: compilation.authoring.exercises,
     publicProvenance: compilation.publicProvenance,
     assets: compilation.assets,
   };
