@@ -193,7 +193,7 @@ lessons:
   - lessonId: react-ch02-l02
     authorId: tsumucode-representative-author
     reviewerId: pending-independent-review
-    sourceHash: cc38d922b0978f51bac4394a992a74bfc4c9c605936136cbf7975f6925fe51cf
+    sourceHash: 10ef3efd2883cd403753d1af14a0a276f98059c90303b975d9b20bfa75a7b2b2
     accuracy: rejected
     goalExerciseAlignment: rejected
     unexplainedTerms: 0
@@ -204,7 +204,7 @@ lessons:
   - lessonId: react-ch02-l03
     authorId: tsumucode-representative-author
     reviewerId: pending-independent-review
-    sourceHash: a338ff13824e6e0ffc84e9148ca7d100ccfb5f006f46e1671784699fdb237274
+    sourceHash: 99497cedd8899374431d55207ebd7e56465a242fb053303724071d96f33a9dd0
     accuracy: rejected
     goalExerciseAlignment: rejected
     unexplainedTerms: 0
