@@ -823,7 +823,8 @@ class LeaseHandleImpl implements TabLeaseHandle {
         if (persisted !== undefined && persisted.expiresAt > this.#runtime.now()) {
           if (!this.#adoptPersistedSelfOwner(persisted)) this.#becomeReadOnly(persisted);
         } else {
-          this.#beginClaim();
+          // CAS再取得中も既存Sessionを保持する。claimingではwrite fenceは閉じたまま。
+          this.#beginClaim(true);
         }
       }
     })();
@@ -865,7 +866,7 @@ class LeaseHandleImpl implements TabLeaseHandle {
   }
 
   /** probe後のclaim候補を新tokenで開始する。 */
-  #beginClaim(): void {
+  #beginClaim(revalidating = false): void {
     if (this.#disposed) return;
     if (!this.#runtime.coordinationAvailable() && this.#runtime.persistence() === undefined) {
       this.activateFallback();
@@ -884,7 +885,11 @@ class LeaseHandleImpl implements TabLeaseHandle {
     this.#bestCandidate = candidate;
     this.#observedOwner = undefined;
     this.#owner = undefined;
-    this.#setSnapshot({ status: 'claiming', coordination: this.#coordination() });
+    this.#setSnapshot({
+      status: 'claiming',
+      coordination: this.#coordination(),
+      ...(revalidating ? { revalidating: true } : {}),
+    });
     const posted = this.#runtime.post({
       version: MESSAGE_VERSION,
       type: 'probe',
@@ -996,7 +1001,7 @@ class LeaseHandleImpl implements TabLeaseHandle {
       this.#becomeReadOnly(result.owner);
       return;
     }
-    this.#beginClaim();
+    this.#beginClaim(this.#snapshot.revalidating === true);
   }
 
   /** CAS成功proofだけをownedへ昇格し、Broadcastへは通知だけを送る。 */

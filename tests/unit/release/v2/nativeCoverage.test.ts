@@ -23,6 +23,14 @@ const row = {
   limitMiB: 512,
   measured: {
     zombies: 0,
+    zombieProcesses: [],
+    zombieProcessesTruncated: false,
+    lifecycle: {
+      observedAtMs: 1793272780607,
+      bootstrapPid: 7,
+      currentChildPid: 43,
+      phase: 'ready',
+    },
     memoryPeak: 1000000,
     memoryCurrent: 900000,
     pids: 4,
@@ -50,6 +58,12 @@ describe('native fixture evidence', () => {
     'pids',
     'nonfinite',
     'zero-memory',
+    'diagnostic-zombie',
+    'diagnostic-truncated',
+    'missing-lifecycle',
+    'unknown-lifecycle',
+    'invalid-pid',
+    'unknown-measurement',
   ])('rejects %s native evidence', async (failure) => {
     const { readNextFixtureCoverage } =
       await import('../../../../scripts/release/v2/nativeCoverage');
@@ -64,6 +78,14 @@ describe('native fixture evidence', () => {
     if (failure === 'pids') changed.measured.pids = 65;
     if (failure === 'nonfinite') changed.measured.memoryPeak = Number.POSITIVE_INFINITY;
     if (failure === 'zero-memory') changed.measured.memoryPeak = 0;
+    if (failure === 'diagnostic-zombie')
+      Object.assign(changed.measured, { zombieProcesses: [{ pid: 43, ppid: 7, state: 'Z' }] });
+    if (failure === 'diagnostic-truncated') changed.measured.zombieProcessesTruncated = true;
+    if (failure === 'missing-lifecycle') Reflect.deleteProperty(changed.measured, 'lifecycle');
+    if (failure === 'unknown-lifecycle') changed.measured.lifecycle.phase = 'unrecognized';
+    if (failure === 'invalid-pid') changed.measured.lifecycle.bootstrapPid = 0;
+    if (failure === 'unknown-measurement') Object.assign(changed.measured, { unexpected: true });
+
     expect(() =>
       readNextFixtureCoverage(
         failure === 'missing' ? [] : failure === 'duplicate' ? [changed, changed] : [changed],
