@@ -37,6 +37,7 @@ export const QualificationSchema = z
     technical: z
       .object({
         status: z.literal('technical-passed'),
+        expiresAt: z.iso.datetime(),
         candidateDigest: DigestSchema,
         buildAttempt: z.number().int().positive(),
         verificationAttempts: z.array(z.number().int().positive()).min(1),
@@ -66,6 +67,7 @@ export interface AdmissionInput {
   readonly capturedBaseline: unknown;
   readonly currentBaseline: unknown;
   readonly contentReceipts: unknown;
+  readonly contentWithdrawals?: unknown;
   readonly context: unknown;
   readonly publicContent: unknown;
 }
@@ -143,7 +145,12 @@ export function qualifyRelease(input: AdmissionInput) {
       throw new Error('Project lacks actual fixture and persistence coverage');
     projects.push(target.key);
   }
-  const content = verifyContent(inventory, input.contentReceipts, captured.baseline);
+  const content = verifyContent(
+    inventory,
+    input.contentReceipts,
+    captured.baseline,
+    input.contentWithdrawals,
+  );
   return QualificationSchema.parse({
     schemaVersion: 1,
     status: 'qualified' as const,

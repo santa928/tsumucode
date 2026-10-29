@@ -72,6 +72,7 @@ describe('release result verification', () => {
     const { verifyResults } = await import('../../../../scripts/release/v2/verify');
     const result = verifyResults(candidate, [requirement], [passed()], context);
     expect(result.status).toBe('technical-passed');
+    expect(Reflect.get(result, 'expiresAt')).toBe(passed().expiresAt);
     expect(result.buildAttempt).toBe(1);
     expect(result.verificationAttempts).toEqual([2]);
     expect(candidate.buildAttempt).toBe(1);

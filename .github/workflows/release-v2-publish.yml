@@ -1,0 +1,161 @@
+name: Fixed same-run Pages publisher
+
+# Staged reusable boundary. It has no trigger or caller until migration acceptance is complete.
+on:
+  workflow_call:
+    inputs:
+      candidate_artifact_id:
+        type: string
+        required: true
+      metadata_artifact_id:
+        type: string
+        required: true
+      qualification_artifact_id:
+        type: string
+        required: true
+      qualification_sha256:
+        type: string
+        required: true
+    outputs:
+      page_url:
+        value: ${{ jobs.deploy.outputs.page_url }}
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      CANDIDATE_ARTIFACT_ID: ${{ inputs.candidate_artifact_id }}
+      METADATA_ARTIFACT_ID: ${{ inputs.metadata_artifact_id }}
+      QUALIFICATION_ARTIFACT_ID: ${{ inputs.qualification_artifact_id }}
+      QUALIFICATION_SHA256: ${{ inputs.qualification_sha256 }}
+    steps:
+      - name: Download exact same-run public bytes
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          artifact-ids: ${{ inputs.candidate_artifact_id }}
+          path: dist
+      - name: Download exact same-run build metadata
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          artifact-ids: ${{ inputs.metadata_artifact_id }}
+          path: .release-v2
+      - name: Download pinned same-run aggregate qualification
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          artifact-ids: ${{ inputs.qualification_artifact_id }}
+          path: .release-v2
+      - name: Recheck fixed bytes and actual parent after Environment
+        id: acceptance
+        run: |
+          node --input-type=module <<'JS'
+          // This code is embedded in the reviewed workflow. It never imports candidate Source code.
+          import {createHash} from 'node:crypto';
+          import {readFile, readdir, lstat} from 'node:fs/promises';
+          import path from 'node:path';
+          const ensure = (condition,message) => { if (!condition) throw Error(message); };
+          const digest = bytes => createHash('sha256').update(bytes).digest('hex');
+          const codePoints = (a,b) => {
+            const left=Array.from(a,c=>c.codePointAt(0)), right=Array.from(b,c=>c.codePointAt(0));
+            for(let i=0;i<Math.min(left.length,right.length);i++) if(left[i]!==right[i]) return left[i]-right[i];
+            return left.length-right.length;
+          };
+          const canonical = value => {
+            if(Array.isArray(value)) return '['+value.map(canonical).join(',')+']';
+            if(value!==null && typeof value==='object') return '{'+Object.keys(value).sort(codePoints).map(key=>JSON.stringify(key)+':'+canonical(value[key])).join(',')+'}';
+            return JSON.stringify(value);
+          };
+          const hashValue = value => digest(canonical(value));
+          const read = async file => {
+            const bytes=await readFile(file); ensure(bytes.length<=4*1024*1024,'Oversized publication metadata');
+            return {bytes,value:JSON.parse(bytes.toString('utf8'))};
+          };
+          const repository=process.env.GITHUB_REPOSITORY, source=process.env.GITHUB_SHA, runId=process.env.GITHUB_RUN_ID;
+          ensure(/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repository??''),'Invalid repository');
+          ensure(/^[a-f0-9]{40}$/.test(source??'') && /^[1-9]\d*$/.test(runId??''),'Invalid execution identity');
+          ensure(process.env.GITHUB_EVENT_NAME==='workflow_dispatch' && process.env.GITHUB_REF==='refs/heads/main','Wrong publication context');
+          for(const name of ['CANDIDATE_ARTIFACT_ID','METADATA_ARTIFACT_ID','QUALIFICATION_ARTIFACT_ID'])
+            ensure(/^[1-9]\d*$/.test(process.env[name]??''),'Missing pinned same-run artifact');
+          const {value:candidate}=await read('.release-v2/candidate.json');
+          const {value:snapshot}=await read('.release-v2/preparation.json');
+          const {value:baseline}=await read('.release-v2/baseline.json');
+          const {value:executionPlan}=await read('.release-v2/execution-plan.json');
+          const {bytes:qualificationBytes,value:qualification}=await read('.release-v2/qualification.json');
+          ensure(/^[a-f0-9]{64}$/.test(process.env.QUALIFICATION_SHA256??'') && digest(qualificationBytes)===process.env.QUALIFICATION_SHA256,'Qualification byte pin differs');
+          ensure(candidate.schemaVersion===1 && candidate.repository===repository && candidate.runId===runId && candidate.buildJobId==='build' && candidate.recipe.sourceCommit===source && candidate.artifactId===process.env.CANDIDATE_ARTIFACT_ID,'Unbound publication candidate');
+          ensure(Number.isSafeInteger(candidate.buildAttempt) && candidate.buildAttempt>0 && Number.isSafeInteger(Number(process.env.GITHUB_RUN_ATTEMPT)) && candidate.buildAttempt<=Number(process.env.GITHUB_RUN_ATTEMPT),'Invalid candidate attempt');
+          const base='/'+repository.split('/')[1]+'/';
+          ensure(candidate.recipe.basePath===base,'Wrong public base path');
+          ensure(candidate.planDigest===hashValue({plan:snapshot.plan,executionPlan}),'Frozen obligations differ');
+          ensure(qualification.schemaVersion===1 && qualification.status==='qualified' && qualification.candidateDigest===hashValue(candidate) && qualification.technical?.status==='technical-passed' && qualification.technical.candidateDigest===hashValue(candidate) && qualification.technical.buildAttempt===candidate.buildAttempt,'Unqualified publication candidate');
+          ensure(hashValue(qualification.parent)===hashValue(snapshot.plan.parent),'Qualification parent differs');
+          ensure(Number.isFinite(Date.parse(qualification.qualifiedAt)) && Date.parse(qualification.qualifiedAt)<=Date.now() && Date.parse(qualification.technical.expiresAt)>Date.now(),'Qualification expired while awaiting publication');
+          ensure(baseline.proof.repository===repository && baseline.baseline.deploymentId===baseline.proof.deploymentId && baseline.baseline.sourceCommit===baseline.proof.sourceCommit && baseline.baseline.artifactDigest===baseline.proof.artifactDigest && baseline.baseline.sourceRecordDigest===hashValue(baseline.proof) && baseline.proof.inventoryDigest===hashValue(baseline.baseline.inventory),'Invalid captured parent proof');
+          ensure(snapshot.plan.parent?.deploymentId===baseline.proof.deploymentId && snapshot.plan.parent?.sourceRecordDigest===hashValue(baseline.proof),'Plan parent differs');
+          for(const key of ['deploymentId','runId']) ensure(/^[1-9]\d*$/.test(baseline.proof[key]),'Invalid parent identity');
+          const files=[];
+          async function visit(directory) {
+            for(const child of (await readdir(directory)).sort()) {
+              const file=path.join(directory,child), stat=await lstat(file), relative=path.relative('dist',file).split(path.sep).join('/');
+              ensure(!stat.isSymbolicLink() && !relative.split('/').some(part=>part==='.git'||part==='.github'),'Unsafe deployment file');
+              if(stat.isDirectory()) await visit(file);
+              else {
+                ensure(stat.isFile() && !relative.includes('\\') && !/[\u0000-\u001f\u007f?#]/u.test(relative),'Unsafe deployment path');
+                const bytes=await readFile(file); files.push({path:relative,bytes:bytes.length,sha256:digest(bytes)});
+              }
+            }
+          }
+          ensure((await lstat('dist')).isDirectory() && !(await lstat('dist')).isSymbolicLink(),'Invalid deployment root');
+          await visit('dist');
+          ensure(files.length>0 && hashValue(files)===candidate.artifactDigest,'Deployment bytes differ from the qualified artifact');
+          const api=async relative => {
+            const response=await fetch('https://api.github.com/repos/'+repository+relative,{redirect:'error',signal:AbortSignal.timeout(15000),headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}});
+            ensure(response.status===200,'Publication state unavailable');
+            ensure(response.body,'Missing publication state');
+            const reader=response.body.getReader(), chunks=[]; let size=0;
+            try {
+              for(;;) { const result=await reader.read(); if(result.done) break; size+=result.value.length;
+                if(size>1024*1024) { await reader.cancel(); throw Error('Oversized publication state'); }
+                chunks.push(result.value);
+              }
+            } finally { reader.releaseLock(); }
+            const bytes=new Uint8Array(size); let offset=0;
+            for(const chunk of chunks) { bytes.set(chunk,offset); offset+=chunk.length; }
+            return JSON.parse(new TextDecoder().decode(bytes));
+          };
+          ensure((await api('/git/ref/heads/main')).object?.sha===source,'Main changed while awaiting publication');
+          const deployments=await api('/deployments?environment=github-pages&per_page=1');
+          const actual=deployments[0];
+          ensure(actual && String(actual.id)===baseline.proof.deploymentId && actual.sha===baseline.proof.workflowHeadCommit && actual.ref==='main' && actual.environment==='github-pages','Actual deployed parent changed');
+          const statuses=await api('/deployments/'+actual.id+'/statuses');
+          const site='https://'+repository.split('/')[0]+'.github.io'+base;
+          const log=new URL(statuses[0]?.log_url??'https://invalid.invalid/');
+          const prefix='/'+repository+'/actions/runs/'+baseline.proof.runId+'/job/';
+          ensure(statuses[0]?.state==='success' && statuses[0].environment_url===site && log.origin==='https://github.com' && log.pathname.startsWith(prefix) && /^[1-9]\d*$/.test(log.pathname.slice(prefix.length)),'Actual deployed parent is unverified');
+          console.log('Qualified bytes and actual parent confirmed after the protected Environment. No Source code executed.');
+          JS
+      - name: Package the same verified files for Pages
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
+        with:
+          name: v2-pages-${{ github.run_id }}-${{ github.run_attempt }}
+          path: dist
+          include-hidden-files: true
+          retention-days: 1
+      - name: Deploy the same verified files
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128
+        with:
+          artifact_name: v2-pages-${{ github.run_id }}-${{ github.run_attempt }}

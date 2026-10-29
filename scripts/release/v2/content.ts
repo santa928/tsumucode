@@ -27,6 +27,15 @@ const ReceiptSchema = z
   })
   .strict();
 export const ContentReceiptSchema = ReceiptSchema;
+export const ContentWithdrawalSchema = z
+  .object({
+    courseId: IdSchema,
+    lessonId: IdSchema,
+    learnerDigest: DigestSchema,
+    sourceCommit: CommitSchema,
+    reason: z.enum(['approval-withdrawn', 'known-finding']),
+  })
+  .strict();
 export const BaselineSchema = z
   .object({
     deploymentId: z.string().regex(/^[1-9]\d*$/u),
@@ -55,9 +64,17 @@ export function verifyContent(
   inventoryInput: unknown,
   receiptsInput: unknown,
   baselineInput?: unknown,
+  withdrawalsInput: unknown = [],
 ) {
   const inventory = InventorySchema.parse(inventoryInput);
   const receipts = z.array(ReceiptSchema).parse(receiptsInput);
+  const withdrawals = z.array(ContentWithdrawalSchema).parse(withdrawalsInput);
+  const withdrawn = new Set<string>();
+  for (const row of withdrawals) {
+    const key = row.courseId + '/' + row.lessonId + '/' + row.learnerDigest;
+    if (withdrawn.has(key)) throw Error('Duplicate content withdrawal');
+    withdrawn.add(key);
+  }
   const baseline = baselineInput === undefined ? undefined : BaselineSchema.parse(baselineInput);
   const current = publishedLessons(inventory);
   const previous = baseline
@@ -90,6 +107,8 @@ export function verifyContent(
   const newlyApprovedLessons: string[] = [];
   const technicalRechecks: { lesson: string; scopes: string[] }[] = [];
   for (const [key, lesson] of current) {
+    if (withdrawn.has(key + '/' + lesson.learnerDigest))
+      throw Error('Explicit content withdrawal blocks publication: ' + key);
     const old = previous.get(key);
     if (old?.learnerDigest === lesson.learnerDigest) carriedLessons.push(key);
     else {

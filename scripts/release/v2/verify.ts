@@ -99,6 +99,11 @@ export function verifyResults(
   }
   return {
     status: 'technical-passed' as const,
+    expiresAt: results.reduce(
+      (earliest, result) =>
+        Date.parse(result.expiresAt) < Date.parse(earliest) ? result.expiresAt : earliest,
+      results[0]!.expiresAt,
+    ),
     candidateDigest,
     buildAttempt: candidate.buildAttempt,
     verificationAttempts: [...new Set(results.map((result) => result.verificationAttempt))].sort(

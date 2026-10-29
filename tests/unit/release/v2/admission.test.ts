@@ -4,7 +4,7 @@ import { hashValue } from '../../../../scripts/release/v2/identity';
 import { planRelease } from '../../../../scripts/release/v2/plan';
 import { createExecutionPlan, TEST_SUITES } from '../../../../scripts/release/v2/executionPlan';
 import { InventorySchema } from '../../../../scripts/release/v2/schema';
-const inventory = InventorySchema.parse({
+const baseInventory = InventorySchema.parse({
   schemaVersion: 1,
   fingerprintVersion: 1,
   courses: [
@@ -28,6 +28,7 @@ const inventory = InventorySchema.parse({
   ],
 });
 function setup() {
+  const inventory = structuredClone(baseInventory);
   const publicFiles = [{ path: 'catalog-v3.json', bytes: 2, sha256: 'a'.repeat(64) }];
   const publicContent = { digest: hashValue(publicFiles), files: publicFiles };
   const proof = {
@@ -170,4 +171,22 @@ describe('final same-run admission', () => {
     if (failure === 'wrong-build') input.candidate.buildJobId = 'browser';
     expect(() => qualifyRelease(input)).toThrow();
   });
+});
+
+it('blocks withdrawn deployed content even when every technical suite passed', async () => {
+  const { qualifyRelease } = await import('../../../../scripts/release/v2/admission');
+  expect(() =>
+    qualifyRelease({
+      ...setup(),
+      contentWithdrawals: [
+        {
+          courseId: 'topic',
+          lessonId: 'lesson',
+          learnerDigest: 'a'.repeat(64),
+          sourceCommit: '1'.repeat(40),
+          reason: 'known-finding',
+        },
+      ],
+    }),
+  ).toThrow(/withdraw/i);
 });

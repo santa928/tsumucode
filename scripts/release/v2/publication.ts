@@ -122,7 +122,8 @@ export function createVerifiedAppRecord(
     smoke.artifactDigest !== candidate.artifactDigest ||
     hashValue(smoke.actual) !== hashValue(actual) ||
     Date.parse(qualification.qualifiedAt) > Date.parse(smoke.observedAt) ||
-    Date.parse(smoke.observedAt) > now
+    Date.parse(smoke.observedAt) > now ||
+    Date.parse(qualification.technical.expiresAt) <= now
   )
     throw Error('Unbound or stale deployment record input');
   return AppRecordSchema.parse({

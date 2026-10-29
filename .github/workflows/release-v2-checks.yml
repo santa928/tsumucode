@@ -9,6 +9,13 @@ on:
       metadata_artifact_id:
         type: string
         required: true
+    outputs:
+      qualification_artifact_id:
+        description: Immutable same-run aggregate artifact
+        value: ${{ jobs.aggregate.outputs.qualification_artifact_id }}
+      qualification_sha256:
+        description: SHA256 of the exact qualification.json bytes
+        value: ${{ jobs.aggregate.outputs.qualification_sha256 }}
 
 permissions:
   contents: read
@@ -253,6 +260,9 @@ jobs:
     needs: [unit, boundary, browser, public_boundary, performance]
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    outputs:
+      qualification_artifact_id: ${{ steps.qualification_artifact.outputs['artifact-id'] }}
+      qualification_sha256: ${{ steps.qualification_digest.outputs.sha256 }}
     permissions:
       contents: read
     env:
@@ -286,7 +296,13 @@ jobs:
           -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT
           -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF
           app npm run release:flow -- qualify --output .release-v2/qualification.json
+      - name: Pin exact qualification bytes
+        id: qualification_digest
+        run: |
+          digest="$(sha256sum .release-v2/qualification.json)"
+          echo "sha256=${digest%% *}" >> "$GITHUB_OUTPUT"
       - name: Preserve qualified checkpoint
+        id: qualification_artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: qualification-${{ github.run_id }}-${{ github.run_attempt }}

@@ -1,9 +1,10 @@
 import { lstat, readFile, realpath } from 'node:fs/promises';
 import path from 'node:path';
 import { z } from 'zod';
-import { ContentReceiptSchema } from './content';
+import { ContentReceiptSchema, ContentWithdrawalSchema } from './content';
 import { InventorySchema, CommitSchema } from './schema';
 import { hashBytes, hashValue } from './identity';
+import { readInventoryAtSource } from './sourceInventory';
 const MetadataSchema = ContentReceiptSchema.omit({
   originalDigest: true,
   receiptDigest: true,
@@ -104,22 +105,52 @@ export async function inspectContentOriginal(
   return ContentReceiptSchema.parse({ ...unsigned, receiptDigest: hashValue(unsigned) });
 }
 /** CI consumes only minimal independently inspected sidecars, never private original directories. */
-export async function readContentReceiptFile(file: string) {
+export async function readContentPolicyFile(file: string) {
   let raw: string;
   try {
     raw = await readFile(file, 'utf8');
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return [];
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT')
+      return { schemaVersion: 1 as const, receipts: [], withdrawals: [] };
     throw error;
   }
   if (Buffer.byteLength(raw) > 4 * 1024 * 1024) throw Error('Content sidecar exceeds limit');
   const value = z
-    .object({ schemaVersion: z.literal(1), receipts: z.array(ContentReceiptSchema) })
+    .object({
+      schemaVersion: z.literal(1),
+      receipts: z.array(ContentReceiptSchema),
+      withdrawals: z.array(ContentWithdrawalSchema).default([]),
+    })
     .strict()
     .parse(JSON.parse(raw) as unknown);
   for (const receipt of value.receipts) {
     const { receiptDigest, ...unsigned } = receipt;
     if (receiptDigest !== hashValue(unsigned)) throw Error('Content receipt digest differs');
   }
-  return value.receipts;
+  return value;
+}
+export async function readContentReceiptFile(file: string) {
+  const policy = await readContentPolicyFile(file);
+  if (policy.withdrawals.length)
+    throw Error('Content policy includes withdrawals; receipt-only reading is forbidden');
+  return policy.receipts;
+}
+
+/** Every declaration refers to an actual archived source, including historical withdrawal scope. */
+export async function readVerifiedContentPolicy(root: string, file: string) {
+  const policy = await readContentPolicyFile(file);
+  const declarations = [...policy.receipts, ...policy.withdrawals];
+  for (const key of new Set(declarations.map((row) => row.sourceCommit + '/' + row.courseId))) {
+    const [sourceCommit, courseId] = key.split('/');
+    const source = await readInventoryAtSource(root, sourceCommit!, courseId!);
+    for (const row of declarations.filter(
+      (row) => row.sourceCommit === sourceCommit && row.courseId === courseId,
+    )) {
+      const lesson = source.inventory.courses
+        .find((course) => course.id === row.courseId)
+        ?.lessons.find((lesson) => lesson.id === row.lessonId);
+      if (lesson?.learnerDigest !== row.learnerDigest) throw Error('Content policy source differs');
+    }
+  }
+  return policy;
 }

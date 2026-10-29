@@ -152,6 +152,38 @@ it('reads an actual immutable Git source inventory and refuses an unavailable so
   const source = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
   const result = await readInventoryAtSource(process.cwd(), source, 'html-css');
   expect(result.sourceCommit).toBe(source);
+  const { readVerifiedContentPolicy } =
+    await import('../../../../scripts/release/v2/contentOriginals');
+  const policyRoot = await mkdtemp(path.join(os.tmpdir(), 'content-policy-source-'));
+  roots.push(policyRoot);
+  const policyFile = path.join(policyRoot, 'policy.json');
+  const lesson = result.inventory.courses[0]!.lessons[0]!;
+  const withdrawal = {
+    courseId: 'html-css',
+    lessonId: lesson.id,
+    learnerDigest: lesson.learnerDigest,
+    sourceCommit: source,
+    reason: 'known-finding',
+  };
+  await writeFile(
+    policyFile,
+    JSON.stringify({ schemaVersion: 1, receipts: [], withdrawals: [withdrawal] }),
+  );
+  expect((await readVerifiedContentPolicy(process.cwd(), policyFile)).withdrawals).toEqual([
+    withdrawal,
+  ]);
+  await writeFile(
+    policyFile,
+    JSON.stringify({
+      schemaVersion: 1,
+      receipts: [],
+      withdrawals: [{ ...withdrawal, learnerDigest: '0'.repeat(64) }],
+    }),
+  );
+  await expect(readVerifiedContentPolicy(process.cwd(), policyFile)).rejects.toThrow(
+    /source differs/,
+  );
+
   // The real workspace metadata is intentionally read-only in CI. Create synthetic objects only
   // in a private repository; shared object data is read-only and no foreign config is loaded.
   const root = await mkdtemp(path.join(os.tmpdir(), 'content-source-git-'));

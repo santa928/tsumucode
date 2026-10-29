@@ -22,10 +22,12 @@ import { runReleaseSuite } from './runner';
 import { qualifyCurrentRelease } from './qualify';
 import {
   inspectContentOriginal,
-  readContentReceiptFile,
+  readVerifiedContentPolicy,
   ContentInspectionRequestSchema,
 } from './contentOriginals';
 import { verifyNativeCatalogFile } from './nativeCatalog';
+import { verifyContent } from './content';
+import { verifyCurrentPublicDeployment, prepareCurrentAppRecord } from './publicationService';
 import { readInventoryAtSource } from './sourceInventory';
 
 const PreparationSchema = z
@@ -50,6 +52,8 @@ const optionNames: Readonly<Record<string, readonly string[]>> = {
   'run-suite': ['suite'],
   'observe-native': ['suite'],
   qualify: [],
+  'public-smoke': [],
+  'record-plan': [],
 };
 async function jsonFile(file: string): Promise<unknown> {
   return JSON.parse(await readFile(file, 'utf8')) as unknown;
@@ -157,14 +161,21 @@ export async function runCli(
       result = await verifyNativeCatalogFile(snapshot.inventory, input(values.file, '--file'));
       break;
     }
-    case 'stage-content':
-      result = {
-        schemaVersion: 1,
-        receipts: await readContentReceiptFile(
-          path.join(root, 'docs/quality/content-v2-receipts.json'),
-        ),
-      };
+    case 'stage-content': {
+      const snapshot = PreparationSchema.parse(
+        await jsonFile(path.join(root, '.release-v2/preparation.json')),
+      );
+      const captured = validateCapturedBaseline(
+        await jsonFile(path.join(root, '.release-v2/baseline.json')),
+      );
+      const policy = await readVerifiedContentPolicy(
+        root,
+        path.join(root, 'docs/quality/content-v2-receipts.json'),
+      );
+      verifyContent(snapshot.inventory, policy.receipts, captured.baseline, policy.withdrawals);
+      result = policy;
       break;
+    }
     case 'shadow':
       result = await shadow(root);
       break;
@@ -179,6 +190,12 @@ export async function runCli(
       break;
     case 'qualify':
       result = await qualifyCurrentRelease(root, environment);
+      break;
+    case 'public-smoke':
+      result = await verifyCurrentPublicDeployment(root, environment);
+      break;
+    case 'record-plan':
+      result = await prepareCurrentAppRecord(root, environment);
       break;
     case 'baseline':
       result = validateCapturedBaseline(

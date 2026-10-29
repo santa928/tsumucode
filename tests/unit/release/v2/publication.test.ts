@@ -66,6 +66,7 @@ const qualification = {
   parent: null,
   technical: {
     status: 'technical-passed',
+    expiresAt: '2026-10-30T21:00:00Z',
     candidateDigest: hashValue(candidate),
     buildAttempt: 1,
     verificationAttempts: [1],
@@ -162,6 +163,7 @@ it.each([
   'smoke',
   'digest',
   'clock',
+  'expired',
   'tag-source',
   'tag-content',
 ])('never overwrites a %s conflict or creates a fake successful record', async (kind) => {
@@ -177,6 +179,7 @@ it.each([
   const q = structuredClone(qualification),
     s = structuredClone(smoke);
   let c = candidate;
+  if (kind === 'expired') q.technical.expiresAt = '2026-10-28T21:01:30Z';
   if (kind === 'failed-quality') q.technical.status = 'failed';
   if (kind === 'missing-quality') q.technical.suites = [];
   if (kind === 'candidate') c = { ...candidate, runId: '102' };
