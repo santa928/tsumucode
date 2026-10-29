@@ -3,6 +3,7 @@ import { mkdtemp, writeFile, rm, symlink } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import { afterEach, expect, it } from 'vitest';
+import { gitFixtureEnvironment } from './gitFixture';
 import { hashBytes, hashValue } from '../../../../scripts/release/v2/identity';
 const roots: string[] = [];
 afterEach(async () => {
@@ -151,14 +152,31 @@ it('reads an actual immutable Git source inventory and refuses an unavailable so
   const source = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
   const result = await readInventoryAtSource(process.cwd(), source, 'html-css');
   expect(result.sourceCommit).toBe(source);
-  const tree = execFileSync('git', ['rev-parse', 'HEAD^{tree}'], { encoding: 'utf8' }).trim();
+  // The real workspace metadata is intentionally read-only in CI. Create synthetic objects only
+  // in a private local clone; its shared alternate object database is consumed read-only.
+  const root = await mkdtemp(path.join(os.tmpdir(), 'content-source-git-'));
+  roots.push(root);
+  const common = execFileSync('git', ['rev-parse', '--path-format=absolute', '--git-common-dir'], {
+    encoding: 'utf8',
+  }).trim();
+  const gitEnvironment = gitFixtureEnvironment();
+  execFileSync('git', ['clone', '--local', '--shared', '--no-checkout', common, root], {
+    env: gitEnvironment,
+  });
+  execFileSync('git', ['checkout', '--detach', source], { cwd: root, env: gitEnvironment });
+  const tree = execFileSync('git', ['rev-parse', 'HEAD^{tree}'], {
+    cwd: root,
+    env: gitEnvironment,
+    encoding: 'utf8',
+  }).trim();
   const independentSource = execFileSync(
     'git',
     ['commit-tree', tree, '-m', 'synthetic non-ancestor Source test'],
     {
+      cwd: root,
       encoding: 'utf8',
       env: {
-        ...process.env,
+        ...gitEnvironment,
         GIT_AUTHOR_NAME: 'Synthetic fixture',
         GIT_AUTHOR_EMAIL: 'fixture@example.invalid',
         GIT_COMMITTER_NAME: 'Synthetic fixture',
@@ -166,7 +184,7 @@ it('reads an actual immutable Git source inventory and refuses an unavailable so
       },
     },
   ).trim();
-  const rebased = await readInventoryAtSource(process.cwd(), independentSource, 'html-css');
+  const rebased = await readInventoryAtSource(root, independentSource, 'html-css');
   expect(rebased.sourceCommit).toBe(independentSource);
   expect(rebased.inventory).toEqual(result.inventory);
   expect(result.inventory.courses.length).toBeGreaterThan(0);

@@ -2,20 +2,26 @@
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { compileCourse } from '../../../../scripts/content/compileCourse';
+
 import {
   buildSplitContentDelivery,
   writeSplitContentDeliveryTree,
 } from '../../../../scripts/content/splitContentDelivery';
 import { buildInventory } from '../../../../scripts/release/v2/inventory';
+let compiledFixture: Awaited<ReturnType<typeof compileCourse>>;
+beforeAll(async () => {
+  compiledFixture = await compileCourse('content/html-css');
+}, 60000);
+
 const roots: string[] = [];
 const publicClosures = new Map<string, unknown>();
 afterEach(async () => {
   for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true });
 });
 async function artifact() {
-  const compilation = await compileCourse('content/html-css');
+  const compilation = structuredClone(compiledFixture);
   const renamed = { ...compilation, runtime: { ...compilation.runtime, id: 'future-topic' } };
   const root = await mkdtemp(path.join(os.tmpdir(), 'release-static-'));
   roots.push(root);

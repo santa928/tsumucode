@@ -1,12 +1,18 @@
 // @vitest-environment node
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { compileCourse } from '../../../../scripts/content/compileCourse';
+
 import { buildSplitContentDelivery } from '../../../../scripts/content/splitContentDelivery';
 import { canonicalSha256 } from '../../../../scripts/content/splitCourseArtifacts';
 
+let compiledFixture: Awaited<ReturnType<typeof compileCourse>>;
+beforeAll(async () => {
+  compiledFixture = await compileCourse('content/html-css');
+}, 60000);
+
 describe('public projection preserves known dormant progress contracts', () => {
   it('keeps draft identity and migration metadata without publishing draft lessons or files', async () => {
-    const source = await compileCourse('content/html-css');
+    const source = structuredClone(compiledFixture);
     const draft = {
       ...source,
       runtime: { ...source.runtime, id: 'dormant-course', publicationStatus: 'draft' as const },
@@ -31,7 +37,7 @@ describe('public projection preserves known dormant progress contracts', () => {
   });
   it('rejects duplicate courses and unknown learner payload fields', async () => {
     const { ProgressCatalogSchema } = await import('../../../../src/core/content/progressCatalog');
-    const source = await compileCourse('content/html-css');
+    const source = structuredClone(compiledFixture);
     const delivery = buildSplitContentDelivery([source], [], 'public');
     const progress = ProgressCatalogSchema.parse(Reflect.get(delivery, 'progressCatalog'));
     expect(() =>

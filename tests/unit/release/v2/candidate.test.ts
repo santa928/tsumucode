@@ -5,6 +5,7 @@ import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { gitFixtureEnvironment } from './gitFixture';
 import { hashArtifact, hashValue } from '../../../../scripts/release/v2/identity';
 const exec = promisify(execFile),
   roots: string[] = [];
@@ -26,7 +27,7 @@ const plan = {
 async function checkout() {
   const root = await mkdtemp(path.join(os.tmpdir(), 'release-checkout-'));
   roots.push(root);
-  const git = (...args: string[]) => exec('git', args, { cwd: root });
+  const git = (...args: string[]) => exec('git', args, { cwd: root, env: gitFixtureEnvironment() });
   await git('init', '-b', 'main');
   await mkdir(path.join(root, '.github/workflows'), { recursive: true });
   await writeFile(path.join(root, '.github/workflows/pages.yml'), 'name: reviewed workflow\n');

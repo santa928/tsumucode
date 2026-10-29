@@ -266,11 +266,12 @@ export function createNextWorkspaceRegistry(input) {
     },
   });
 }
-if (
-  globalThis.process?.env?.TSUMUCODE_REQUIRE_COMPILED_NATIVE_CATALOG === '1' &&
-  catalog.mode !== 'compiled'
-)
-  throw Error('Runtime image requires a compiled Native catalog');
+/** Learner bootstrap checks the sealed image input without passing controller policy via Env. */
+export function requireCompiledNativeCatalog() {
+  if (catalog.mode !== 'compiled') throw Error('Runtime image requires a compiled Native catalog');
+}
+if (globalThis.process?.env?.TSUMUCODE_REQUIRE_COMPILED_NATIVE_CATALOG === '1')
+  requireCompiledNativeCatalog();
 const registry = createNextWorkspaceRegistry(catalog);
 export function registerBrowserNextWorkspace(id, template) {
   return registry.register(id, template);
