@@ -73,8 +73,10 @@ async function setup() {
   let existing: { targetCommit: string; message: string } | undefined;
   let deploymentId = 501;
   let workflowHead = bundle.candidate.recipe.sourceCommit;
+  let clock = '2026-10-29T02:01:00Z';
+  let createdAt: string | undefined = '2026-10-29T02:00:15Z';
   const io: PublicationTransport = {
-    now: () => '2026-10-29T02:01:00Z',
+    now: () => clock,
     publicFile: async (url, size) => {
       expect(url).toBe('https://owner.github.io/site/index.html');
       expect(size).toBe(bytes.length);
@@ -85,7 +87,15 @@ async function setup() {
       if (url.endsWith('/deployments?environment=github-pages&per_page=1'))
         return {
           status: 200,
-          body: [{ id: deploymentId, sha: workflowHead, ref: 'main', environment: 'github-pages' }],
+          body: [
+            {
+              id: deploymentId,
+              sha: workflowHead,
+              ref: 'main',
+              environment: 'github-pages',
+              created_at: createdAt,
+            },
+          ],
         };
       if (url.endsWith('/statuses'))
         return {
@@ -127,6 +137,12 @@ async function setup() {
     },
     moveDeployment() {
       deploymentId++;
+    },
+    setClock(value: string) {
+      clock = value;
+    },
+    setDeploymentClock(value: string | undefined) {
+      createdAt = value;
     },
     changeWorkflow() {
       workflowHead = '0'.repeat(40);
@@ -198,7 +214,7 @@ it.each([
     row.environment.RELEASE_FLOW_V2_QUALIFICATION_SHA256 = hashBytes(bytes);
   }
   if (kind === 'expired') {
-    row.qualification.technical.expiresAt = '2026-10-29T02:00:30Z';
+    row.qualification.technical.expiresAt = '2026-10-29T02:00:10Z';
     const bytes = Buffer.from(JSON.stringify(row.qualification));
     await writeFile(path.join(row.root, '.release-v2/qualification.json'), bytes);
     row.environment.RELEASE_FLOW_V2_QUALIFICATION_SHA256 = hashBytes(bytes);
@@ -236,3 +252,39 @@ it('refuses record preparation after actual deployment moves or the immutable ta
     JSON.parse(await readFile(path.join(row.root, '.release-v2/public-smoke.json'), 'utf8')),
   ).toEqual(smoke);
 });
+
+it('recovers only the already deployed candidate after expiry without renewing publication permission', async () => {
+  const row = await setup();
+  row.setClock('2026-10-31T02:01:00Z');
+  const smoke = await verifyCurrentPublicDeployment(row.root, row.environment, row.io);
+  await writeFile(path.join(row.root, '.release-v2/public-smoke.json'), JSON.stringify(smoke));
+  await writeFile(
+    path.join(row.root, '.release-v2/public-operations.json'),
+    JSON.stringify(
+      await syntheticPublishedOperations(
+        row.bundle.candidate,
+        row.bundle.snapshot.inventory,
+        smoke.actual,
+        row.io.now(),
+      ),
+    ),
+  );
+  const prepared = await prepareCurrentAppRecord(row.root, row.environment, row.io);
+  expect(prepared.state).toBe('record-plan-only');
+  expect(prepared.record.qualificationDigest).toBe(hashValue(row.qualification));
+  row.setExisting({
+    targetCommit: row.environment.GITHUB_SHA,
+    message: JSON.stringify(prepared.record),
+  });
+  expect((await prepareCurrentAppRecord(row.root, row.environment, row.io)).state).toBe('recorded');
+});
+it.each([undefined, 'not-a-date', '2026-10-29T01:59:59Z', '2026-10-31T02:01:00Z'])(
+  'refuses missing, prequalification or future actual deployment clock %s',
+  async (createdAt) => {
+    const row = await setup();
+    row.setDeploymentClock(createdAt);
+    await expect(
+      verifyCurrentPublicDeployment(row.root, row.environment, row.io),
+    ).rejects.toThrow();
+  },
+);

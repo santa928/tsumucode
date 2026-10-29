@@ -93,6 +93,7 @@ it.each(['candidate', 'artifact', 'actual', 'plan', 'missing', 'duplicate', 'fut
       workflowHeadCommit: candidate.recipe.sourceCommit,
       runId: candidate.runId,
       siteUrl: 'https://owner.github.io/site/',
+      createdAt: '2026-10-29T03:59:00Z',
     };
     const proof = await syntheticPublishedOperations(
       candidate,
@@ -175,6 +176,7 @@ it.each(['passed', 'missing', 'skip', 'retry', 'wrong-url', 'wrong-key', 'wrong-
       workflowHeadCommit: candidate.recipe.sourceCommit,
       runId: candidate.runId,
       siteUrl: 'https://owner.github.io/site/',
+      createdAt: '2026-10-29T03:59:00Z',
     };
     const collected = browserReport(plan, candidate, hashValue(candidate), false),
       report = browserReport(plan, candidate, hashValue(candidate), true);

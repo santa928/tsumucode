@@ -135,8 +135,7 @@ async function currentInputs(
     qualification.technical.candidateDigest !== hashValue(candidate) ||
     qualification.technical.buildAttempt !== candidate.buildAttempt ||
     hashValue(qualification.parent) !== hashValue(snapshot.plan.parent) ||
-    Date.parse(qualification.qualifiedAt) > Date.parse(z.iso.datetime().parse(now)) ||
-    Date.parse(qualification.technical.expiresAt) <= Date.parse(now)
+    Date.parse(qualification.qualifiedAt) > Date.parse(z.iso.datetime().parse(now))
   )
     throw Error('Qualification belongs to another candidate or parent');
   return { ...bundle, qualification };
@@ -146,6 +145,7 @@ async function actualDeployment(
   siteUrl: string,
   workflowHead: string,
   io: PublicationTransport,
+  qualification: z.infer<typeof QualificationSchema>,
 ) {
   const prefix = '/repos/' + repository;
   const deployments = z
@@ -160,9 +160,16 @@ async function actualDeployment(
   const actual = {
     repository,
     ...parseActualDeployment(deployments[0], statuses[0], repository, siteUrl),
+    createdAt: z.iso.datetime().parse(deployments[0]!.created_at),
   };
   if (actual.workflowHeadCommit !== workflowHead)
     throw Error('Actual v2 deployment has another workflow Source');
+  if (
+    Date.parse(qualification.qualifiedAt) > Date.parse(actual.createdAt) ||
+    Date.parse(qualification.technical.expiresAt) <= Date.parse(actual.createdAt) ||
+    Date.parse(actual.createdAt) > Date.parse(z.iso.datetime().parse(io.now()))
+  )
+    throw Error('Qualification was not valid at actual deployment');
   return actual;
 }
 export async function verifyCurrentPublicDeployment(
@@ -170,7 +177,7 @@ export async function verifyCurrentPublicDeployment(
   environment: NodeJS.ProcessEnv,
   io = publicationTransport(environment),
 ) {
-  const { candidate } = await currentInputs(root, environment, 'report', io.now());
+  const { candidate, qualification } = await currentInputs(root, environment, 'report', io.now());
   const artifact = await hashArtifact(path.join(root, 'dist'));
   const siteUrl =
     'https://' + candidate.repository.split('/')[0]! + '.github.io' + candidate.recipe.basePath;
@@ -178,7 +185,14 @@ export async function verifyCurrentPublicDeployment(
   return verifyPublicDeployment(
     candidate,
     artifact,
-    () => actualDeployment(candidate.repository, siteUrl, candidate.recipe.sourceCommit, io),
+    () =>
+      actualDeployment(
+        candidate.repository,
+        siteUrl,
+        candidate.recipe.sourceCommit,
+        io,
+        qualification,
+      ),
     async (relative) => {
       const file = files.get(relative);
       if (!file) throw Error('Unknown public file');
@@ -227,6 +241,7 @@ export async function prepareCurrentAppRecord(
     siteUrl,
     candidate.recipe.sourceCommit,
     io,
+    qualification,
   );
   const record = createVerifiedAppRecord(
     candidate,
@@ -257,7 +272,12 @@ export async function runCurrentPublicOperations(
   environment: NodeJS.ProcessEnv,
   io = publicationTransport(environment),
 ) {
-  const { candidate, snapshot } = await currentInputs(root, environment, 'report', io.now());
+  const { candidate, snapshot, qualification } = await currentInputs(
+    root,
+    environment,
+    'report',
+    io.now(),
+  );
   const smoke = z
     .object({
       status: z.literal('passed'),
@@ -273,6 +293,7 @@ export async function runCurrentPublicOperations(
     site,
     candidate.recipe.sourceCommit,
     io,
+    qualification,
   );
   if (
     smoke.candidateDigest !== hashValue(candidate) ||
@@ -328,7 +349,15 @@ export async function runCurrentPublicOperations(
   const report = await run(false);
   if (
     hashValue(before) !==
-    hashValue(await actualDeployment(candidate.repository, site, candidate.recipe.sourceCommit, io))
+    hashValue(
+      await actualDeployment(
+        candidate.repository,
+        site,
+        candidate.recipe.sourceCommit,
+        io,
+        qualification,
+      ),
+    )
   )
     throw Error('Deployment moved during public operations');
   return observePublishedOperations(

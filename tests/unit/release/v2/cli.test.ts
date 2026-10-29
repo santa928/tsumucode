@@ -154,6 +154,7 @@ it('routes public observation and record planning to read-only services and pres
       workflowHeadCommit: '1'.repeat(40),
       runId: '101',
       siteUrl: 'https://owner.github.io/site/',
+      createdAt: '2026-10-29T02:59:00Z',
     },
     checkedFiles: 1,
     observedAt: '2026-10-29T03:00:00Z',

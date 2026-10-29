@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import {
   BuildIdentitySchema,
-  CommitSchema,
   DigestSchema,
   IdSchema,
   InventorySchema,
   RuntimeKindSchema,
+  PublishedDeploymentSchema,
 } from './schema';
 import { hashValue, hashBytes } from './identity';
 import { parseTestList, verifyTestExecution } from './testManifest';
@@ -70,15 +70,7 @@ export const PublishedOperationsReceiptSchema = z
     inventoryDigest: DigestSchema,
     planDigest: DigestSchema,
     reportDigest: DigestSchema,
-    actual: z
-      .object({
-        repository: BuildIdentitySchema.shape.repository,
-        deploymentId: z.string().regex(/^[1-9]\d*$/u),
-        workflowHeadCommit: CommitSchema,
-        runId: BuildIdentitySchema.shape.runId,
-        siteUrl: z.url(),
-      })
-      .strict(),
+    actual: PublishedDeploymentSchema,
     targets: z.array(z.string().min(1)).min(1),
     observedAt: z.iso.datetime(),
   })
@@ -103,7 +95,8 @@ export function verifyPublishedOperationsReceipt(
     hashValue(receipt.actual) !== hashValue(actualInput) ||
     new Set(receipt.targets).size !== receipt.targets.length ||
     hashValue([...receipt.targets].sort()) !== hashValue(required) ||
-    Date.parse(receipt.observedAt) > Date.parse(z.iso.datetime().parse(now))
+    Date.parse(receipt.observedAt) > Date.parse(z.iso.datetime().parse(now)) ||
+    Date.parse(receipt.actual.createdAt) > Date.parse(receipt.observedAt)
   )
     throw Error('Incomplete or mismatched public operation observation');
   return receipt;

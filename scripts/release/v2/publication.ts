@@ -3,29 +3,26 @@ import { verifyPublishedOperationsReceipt } from './publishedOperations';
 import { QualificationSchema } from './admission';
 import { AppRecordSchema } from './appRecord';
 import { ArtifactManifestSchema, hashBytes, hashValue } from './identity';
-import { BuildIdentitySchema, CommitSchema, DigestSchema, InventorySchema } from './schema';
-const ActualSchema = z
-  .object({
-    repository: BuildIdentitySchema.shape.repository,
-    deploymentId: z.string().regex(/^[1-9]\d*$/u),
-    workflowHeadCommit: CommitSchema,
-    runId: BuildIdentitySchema.shape.runId,
-    siteUrl: z.url(),
-  })
-  .strict();
+import {
+  BuildIdentitySchema,
+  CommitSchema,
+  DigestSchema,
+  InventorySchema,
+  PublishedDeploymentSchema,
+} from './schema';
 const SmokeSchema = z
   .object({
     schemaVersion: z.literal(1),
     status: z.literal('passed'),
     candidateDigest: DigestSchema,
     artifactDigest: DigestSchema,
-    actual: ActualSchema,
+    actual: PublishedDeploymentSchema,
     checkedFiles: z.number().int().positive(),
     observedAt: z.iso.datetime(),
   })
   .strict();
 function deploymentFor(candidate: z.infer<typeof BuildIdentitySchema>, input: unknown) {
-  const actual = ActualSchema.parse(input);
+  const actual = PublishedDeploymentSchema.parse(input);
   const owner = candidate.repository.split('/')[0]!;
   const base = candidate.recipe.basePath;
   if (
@@ -71,6 +68,8 @@ export async function verifyPublicDeployment(
     )
       throw Error('Unsafe public file path');
   const actual = deploymentFor(candidate, await readActual());
+  if (Date.parse(actual.createdAt) > Date.parse(z.iso.datetime().parse(observedAt)))
+    throw Error('Deployment clock is after observation');
   let index = 0;
   const completion = await Promise.allSettled(
     Array.from({ length: Math.min(4, artifact.files.length) }, async () => {
@@ -135,7 +134,10 @@ export function createVerifiedAppRecord(
     Date.parse(qualification.qualifiedAt) > Date.parse(smoke.observedAt) ||
     Date.parse(qualification.qualifiedAt) > Date.parse(operations.observedAt) ||
     Date.parse(smoke.observedAt) > now ||
-    Date.parse(qualification.technical.expiresAt) <= now
+    Date.parse(qualification.qualifiedAt) > Date.parse(actual.createdAt) ||
+    Date.parse(qualification.technical.expiresAt) <= Date.parse(actual.createdAt) ||
+    Date.parse(actual.createdAt) > Date.parse(smoke.observedAt) ||
+    Date.parse(actual.createdAt) > Date.parse(operations.observedAt)
   )
     throw Error('Unbound or stale deployment record input');
   return AppRecordSchema.parse({

@@ -131,6 +131,17 @@ export const BuildIdentitySchema = z
   })
   .strict();
 export type BuildIdentity = z.infer<typeof BuildIdentitySchema>;
+/** Post-deploy identity includes GitHub's server-created timestamp, never a caller clock. */
+export const PublishedDeploymentSchema = z
+  .object({
+    repository: BuildIdentitySchema.shape.repository,
+    deploymentId: z.string().regex(/^[1-9]\d*$/u),
+    workflowHeadCommit: CommitSchema,
+    runId: BuildIdentitySchema.shape.runId,
+    siteUrl: z.url(),
+    createdAt: z.iso.datetime(),
+  })
+  .strict();
 export const SuiteResultSchema = z
   .object({
     schemaVersion: z.literal(1),

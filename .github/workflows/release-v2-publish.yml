@@ -292,7 +292,7 @@ jobs:
           const operations=await pinned('.release-v2/public-operations.json',process.env.PUBLIC_OPERATIONS_SHA256);
           const record=prepared.record, now=Date.now();
           ensure(candidate.repository===repository && candidate.runId===runId && candidate.recipe.sourceCommit===source && candidate.artifactId===process.env.CANDIDATE_ARTIFACT_ID,'Wrong record candidate');
-          ensure(qualification.status==='qualified' && qualification.candidateDigest===hashValue(candidate) && qualification.technical?.candidateDigest===hashValue(candidate) && qualification.technical.status==='technical-passed' && qualification.technical.buildAttempt===candidate.buildAttempt && Date.parse(qualification.technical.expiresAt)>now,'Unqualified or expired record');
+          ensure(qualification.status==='qualified' && qualification.candidateDigest===hashValue(candidate) && qualification.technical?.candidateDigest===hashValue(candidate) && qualification.technical.status==='technical-passed' && qualification.technical.buildAttempt===candidate.buildAttempt && Number.isFinite(Date.parse(qualification.technical.expiresAt)),'Unqualified record');
           ensure(prepared.schemaVersion===1 && ['record-plan-only','recorded'].includes(prepared.state),'Invalid record preparation');
           ensure(Object.keys(record).sort().join(',')===['schemaVersion','repository','workflowHeadCommit','candidate','deploymentId','siteUrl','publicContentDigest','inventoryDigest','state','qualificationDigest','smokeDigest','observedAt'].sort().join(','),'Unexpected app record data');
           ensure(record.schemaVersion===2 && record.state==='verified' && record.repository===repository && record.workflowHeadCommit===source && hashValue(record.candidate)===hashValue(candidate) && record.qualificationDigest===hashValue(qualification) && record.inventoryDigest===hashValue(snapshot.inventory) && record.publicContentDigest===snapshot.publicContent.digest && record.smokeDigest===hashValue({bytes:smoke,operations}),'Unbound record data');
@@ -319,7 +319,10 @@ jobs:
             const status=(await get('/deployments/'+record.deploymentId+'/statuses'))[0];
             const log=new URL(status?.log_url??'https://invalid.invalid/'),prefix='/'+repository+'/actions/runs/'+runId+'/job/';
             ensure(status?.state==='success' && status.environment_url===site && log.origin==='https://github.com' && log.pathname.startsWith(prefix) && /^[1-9]\d*$/.test(log.pathname.slice(prefix.length)),'Actual record deployment is not verified');
-            ensure(hashValue(smoke.actual)===hashValue({repository,deploymentId:record.deploymentId,workflowHeadCommit:source,runId,siteUrl:site}),'Smoke belongs to another deployment');
+            const createdAt=deployment.created_at,created=Date.parse(createdAt);
+            ensure(typeof createdAt==='string' && Number.isFinite(created) && Date.parse(qualification.qualifiedAt)<=created && created<Date.parse(qualification.technical.expiresAt) && created<=now,'Qualification was not valid at actual deployment');
+            ensure(created<=Date.parse(smoke.observedAt) && created<=Date.parse(operations.observedAt),'Observation predates actual deployment');
+            ensure(hashValue(smoke.actual)===hashValue({repository,deploymentId:record.deploymentId,workflowHeadCommit:source,runId,siteUrl:site,createdAt}),'Smoke belongs to another deployment');
           };
           const stable=value=>({...value,observedAt:null,smokeDigest:null});
           const existing=async()=>{

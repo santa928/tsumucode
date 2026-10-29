@@ -35,6 +35,7 @@ const actual = {
   workflowHeadCommit: '3'.repeat(40),
   runId: '101',
   siteUrl: 'https://owner.github.io/site/',
+  createdAt: '2026-10-28T21:00:30Z',
 };
 const inventory = InventorySchema.parse({
   schemaVersion: 1,
@@ -187,7 +188,7 @@ it.each([
   const q = structuredClone(qualification),
     s = structuredClone(smoke);
   let c = candidate;
-  if (kind === 'expired') q.technical.expiresAt = '2026-10-28T21:01:30Z';
+  if (kind === 'expired') q.technical.expiresAt = '2026-10-28T21:00:20Z';
   if (kind === 'failed-quality') q.technical.status = 'failed';
   if (kind === 'missing-quality') q.technical.suites = [];
   if (kind === 'candidate') c = { ...candidate, runId: '102' };
@@ -251,4 +252,54 @@ it('does not issue a verified app record from byte-only post-deploy evidence', a
       '2026-10-28T21:02:00.000Z',
     ),
   ).toThrow(/operation|public UI|observation/i);
+});
+
+it.each([
+  'same-deployment',
+  'expired-at-deployment',
+  'before-qualification',
+  'future-deployment',
+  'smoke-before-deployment',
+  'operations-before-deployment',
+  'missing-clock',
+])('permits late record recovery only for a valid actual deployment clock: %s', async (kind) => {
+  const { createVerifiedAppRecord } = await import('../../../../scripts/release/v2/publication');
+  const deployed = { ...actual };
+  const q = structuredClone(qualification);
+  q.technical.expiresAt = '2026-10-28T22:00:00Z';
+  if (kind === 'expired-at-deployment') q.technical.expiresAt = '2026-10-28T21:00:20Z';
+  if (kind === 'before-qualification') deployed.createdAt = '2026-10-28T20:59:59Z';
+  if (kind === 'future-deployment') {
+    deployed.createdAt = '2026-10-30T21:00:00Z';
+    q.technical.expiresAt = '2026-10-31T21:00:00Z';
+  }
+  const observedAt = '2026-10-29T21:00:00Z';
+  const smoke = {
+    schemaVersion: 1,
+    status: 'passed',
+    candidateDigest: hashValue(candidate),
+    artifactDigest: candidate.artifactDigest,
+    actual: deployed,
+    checkedFiles: 1,
+    observedAt: kind === 'smoke-before-deployment' ? '2026-10-28T21:00:10Z' : observedAt,
+  };
+  const operations = await syntheticPublishedOperations(candidate, inventory, deployed, observedAt);
+  if (kind === 'operations-before-deployment') operations.observedAt = '2026-10-28T21:00:10Z';
+  const actualInput =
+    kind === 'missing-clock'
+      ? Object.fromEntries(Object.entries(deployed).filter(([key]) => key !== 'createdAt'))
+      : deployed;
+  const call = () =>
+    createVerifiedAppRecord(
+      candidate,
+      { inventory, publicContent: artifact },
+      q,
+      smoke,
+      actualInput,
+      observedAt,
+      operations,
+    );
+  if (kind === 'same-deployment')
+    expect(call()).toMatchObject({ state: 'verified', qualificationDigest: hashValue(q) });
+  else expect(call).toThrow();
 });
