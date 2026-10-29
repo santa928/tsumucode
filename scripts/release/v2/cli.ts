@@ -64,7 +64,8 @@ async function shadow(root: string) {
     const compilation = await compileContent({
       sourceRoot: path.join(root, 'content'),
       outputRoot: path.join(temporary, 'generated/content'),
-      checkOnly: false,
+      // Shadow consumes the fully validated in-memory compilation, never a generated tree.
+      checkOnly: true,
       publication: 'public',
     });
     const inventory = buildInventory(compilation.compilations);

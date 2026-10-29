@@ -2,18 +2,26 @@
 import { mkdtemp, readFile, writeFile, rm } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 const roots: string[] = [];
 afterEach(async () => {
+  vi.restoreAllMocks();
   for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true });
 });
 describe('release v2 command boundary', () => {
   it('writes a real manifest-derived shadow report with old record states and no new approvals', async () => {
+    const compiler = await import('../../../../scripts/content/compile');
+    const actualCompile = compiler.compileContent;
+    const compile = vi.spyOn(compiler, 'compileContent').mockImplementation((options) => {
+      if (!options.checkOnly) throw new Error('Shadow must not stage unused generated artifacts');
+      return actualCompile(options);
+    });
     const { runCli } = await import('../../../../scripts/release/v2/cli');
     const root = await mkdtemp(path.join(os.tmpdir(), 'release-cli-'));
     roots.push(root);
     const output = path.join(root, 'shadow.json');
     await runCli(['shadow', '--root', process.cwd(), '--output', output]);
+    expect(compile).toHaveBeenCalledTimes(1);
     const report = JSON.parse(await readFile(output, 'utf8')) as {
       status: string;
       inventory: { courses: { id: string; lessons: unknown[] }[] };

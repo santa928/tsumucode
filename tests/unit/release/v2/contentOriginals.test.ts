@@ -153,16 +153,18 @@ it('reads an actual immutable Git source inventory and refuses an unavailable so
   const result = await readInventoryAtSource(process.cwd(), source, 'html-css');
   expect(result.sourceCommit).toBe(source);
   // The real workspace metadata is intentionally read-only in CI. Create synthetic objects only
-  // in a private local clone; its shared alternate object database is consumed read-only.
+  // in a private repository; shared object data is read-only and no foreign config is loaded.
   const root = await mkdtemp(path.join(os.tmpdir(), 'content-source-git-'));
   roots.push(root);
   const common = execFileSync('git', ['rev-parse', '--path-format=absolute', '--git-common-dir'], {
     encoding: 'utf8',
   }).trim();
   const gitEnvironment = gitFixtureEnvironment();
-  execFileSync('git', ['clone', '--local', '--shared', '--no-checkout', common, root], {
-    env: gitEnvironment,
-  });
+  execFileSync('git', ['init', '-b', 'main', root], { env: gitEnvironment });
+  await writeFile(
+    path.join(root, '.git/objects/info/alternates'),
+    path.join(common, 'objects') + '\n',
+  );
   execFileSync('git', ['checkout', '--detach', source], { cwd: root, env: gitEnvironment });
   const tree = execFileSync('git', ['rev-parse', 'HEAD^{tree}'], {
     cwd: root,
