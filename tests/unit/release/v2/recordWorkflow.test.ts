@@ -6,7 +6,7 @@ import path from 'node:path';
 import os from 'node:os';
 import { expect, it, afterEach } from 'vitest';
 import { parse } from 'yaml';
-import { releaseFixture } from './releaseFixture';
+import { releaseFixture, syntheticPublishedOperations } from './releaseFixture';
 import { hashValue, hashBytes } from '../../../../scripts/release/v2/identity';
 import {
   createVerifiedAppRecord,
@@ -27,6 +27,7 @@ async function workflow() {
       };
       report: {
         permissions: Record<string, string>;
+        env: Record<string, string>;
         outputs: Record<string, string>;
         steps: { id?: string; run?: string }[];
       };
@@ -78,6 +79,12 @@ async function setup(mode = 'create') {
     checkedFiles: 1,
     observedAt: new Date(now - 30000).toISOString(),
   };
+  const operations = await syntheticPublishedOperations(
+    candidate,
+    bundle.snapshot.inventory,
+    actual,
+    new Date(now - 20000).toISOString(),
+  );
   const record = createVerifiedAppRecord(
     candidate,
     { inventory: bundle.snapshot.inventory, publicContent: bundle.snapshot.publicContent },
@@ -85,6 +92,7 @@ async function setup(mode = 'create') {
     smoke,
     actual,
     new Date(now - 10000).toISOString(),
+    operations,
   );
   const prepared = {
     schemaVersion: 1,
@@ -102,6 +110,8 @@ async function setup(mode = 'create') {
     await writeFile(path.join(root, '.release-v2/' + file + '.json'), JSON.stringify(value));
   await writeFile(path.join(root, '.release-v2/qualification.json'), qualificationBytes);
   await writeFile(path.join(root, '.release-v2/public-smoke.json'), smokeBytes);
+  const operationsBytes = Buffer.from(JSON.stringify(operations));
+  await writeFile(path.join(root, '.release-v2/public-operations.json'), operationsBytes);
   await writeFile(path.join(root, '.release-v2/app-record-plan.json'), planBytes);
   const environment = {
     ...process.env,
@@ -114,6 +124,7 @@ async function setup(mode = 'create') {
     CANDIDATE_ARTIFACT_ID: candidate.artifactId,
     QUALIFICATION_SHA256: hashBytes(qualificationBytes),
     PUBLIC_SMOKE_SHA256: hashBytes(smokeBytes),
+    PUBLIC_OPERATIONS_SHA256: hashBytes(operationsBytes),
     RECORD_PLAN_SHA256: hashBytes(planBytes),
     GH_TOKEN: 'synthetic-write-token',
     GITHUB_OUTPUT: path.join(root, 'outputs'),
@@ -207,6 +218,22 @@ it.each(['pin', 'extra'])('rejects altered %s data before writes', async (kind) 
   }
   await expect(row.run()).rejects.toThrow();
   expect((await row.calls()).filter((call) => call.method === 'POST')).toEqual([]);
+});
+it('runs actual public Browser operations in the existing browser-equipped Docker target', async () => {
+  const value = await workflow();
+  const target = value.jobs.report.env['TSUMUCODE_DOCKER_TARGET'];
+  if (!target) throw Error('Publication observer Docker target is missing');
+  const dockerfile = await readFile('Dockerfile', 'utf8');
+  const lines = dockerfile.split('\n');
+  const stage = lines
+    .slice(lines.findIndex((line) => line.endsWith(' AS ' + target)))
+    .join('\n')
+    .split(/\nFROM /u)[0];
+  expect(stage).toContain('playwright install --with-deps chromium');
+  expect(value.jobs.report.permissions).toEqual({ contents: 'read' });
+  expect(
+    value.jobs.report.steps.some((step) => step.run?.includes('release:flow -- public-operations')),
+  ).toBe(true);
 });
 it('keeps record write authority separate from the read-only observer and pinned exact report download', async () => {
   const value = await workflow();

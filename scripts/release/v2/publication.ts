@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { verifyPublishedOperationsReceipt } from './publishedOperations';
 import { QualificationSchema } from './admission';
 import { AppRecordSchema } from './appRecord';
 import { ArtifactManifestSchema, hashBytes, hashValue } from './identity';
@@ -104,6 +105,7 @@ export function createVerifiedAppRecord(
   smokeInput: unknown,
   actualInput: unknown,
   observedAt: string,
+  operationsInput?: unknown,
 ) {
   const candidate = BuildIdentitySchema.parse(candidateInput),
     actual = deploymentFor(candidate, actualInput);
@@ -113,6 +115,15 @@ export function createVerifiedAppRecord(
     .parse(snapshotInput);
   const qualification = QualificationSchema.parse(qualificationInput),
     smoke = SmokeSchema.parse(smokeInput);
+  if (operationsInput === undefined)
+    throw Error('Required public operation observation is missing');
+  const operations = verifyPublishedOperationsReceipt(
+    candidate,
+    snapshot.inventory,
+    actual,
+    operationsInput,
+    observedAt,
+  );
   const now = Date.parse(z.iso.datetime().parse(observedAt));
   if (
     qualification.candidateDigest !== hashValue(candidate) ||
@@ -122,6 +133,7 @@ export function createVerifiedAppRecord(
     smoke.artifactDigest !== candidate.artifactDigest ||
     hashValue(smoke.actual) !== hashValue(actual) ||
     Date.parse(qualification.qualifiedAt) > Date.parse(smoke.observedAt) ||
+    Date.parse(qualification.qualifiedAt) > Date.parse(operations.observedAt) ||
     Date.parse(smoke.observedAt) > now ||
     Date.parse(qualification.technical.expiresAt) <= now
   )
@@ -137,7 +149,7 @@ export function createVerifiedAppRecord(
     inventoryDigest: hashValue(snapshot.inventory),
     state: 'verified',
     qualificationDigest: hashValue(qualification),
-    smokeDigest: hashValue(smoke),
+    smokeDigest: hashValue({ bytes: smoke, operations }),
     observedAt,
   });
 }

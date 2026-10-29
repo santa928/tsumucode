@@ -27,7 +27,11 @@ import {
 } from './contentOriginals';
 import { verifyNativeCatalogFile } from './nativeCatalog';
 import { verifyContent } from './content';
-import { verifyCurrentPublicDeployment, prepareCurrentAppRecord } from './publicationService';
+import {
+  verifyCurrentPublicDeployment,
+  prepareCurrentAppRecord,
+  runCurrentPublicOperations,
+} from './publicationService';
 import { readInventoryAtSource } from './sourceInventory';
 
 const PreparationSchema = z
@@ -53,6 +57,7 @@ const optionNames: Readonly<Record<string, readonly string[]>> = {
   'observe-native': ['suite'],
   qualify: [],
   'public-smoke': [],
+  'public-operations': [],
   'record-plan': [],
 };
 async function jsonFile(file: string): Promise<unknown> {
@@ -193,6 +198,9 @@ export async function runCli(
       break;
     case 'public-smoke':
       result = await verifyCurrentPublicDeployment(root, environment);
+      break;
+    case 'public-operations':
+      result = await runCurrentPublicOperations(root, environment);
       break;
     case 'record-plan':
       result = await prepareCurrentAppRecord(root, environment);

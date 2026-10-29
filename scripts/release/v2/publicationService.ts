@@ -1,6 +1,8 @@
 import path from 'node:path';
 import { z } from 'zod';
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import { loadExecutionBundle, readJson } from './runner';
 import { readRecipe } from './candidate';
 import { verifyCandidateArtifact } from './verify';
@@ -13,6 +15,11 @@ import {
   verifyPublicDeployment,
 } from './publication';
 import { CommitSchema, DigestSchema } from './schema';
+import {
+  observePublishedOperations,
+  PublishedOperationsReceiptSchema,
+} from './publishedOperations';
+const exec = promisify(execFile);
 
 type ApiReply = { readonly status: number; readonly body: unknown };
 export interface PublicationTransport {
@@ -212,6 +219,7 @@ export async function prepareCurrentAppRecord(
     io.now(),
   );
   const smoke = await readJson(path.join(root, '.release-v2/public-smoke.json'));
+  const operations = await readJson(path.join(root, '.release-v2/public-operations.json'));
   const siteUrl =
     'https://' + candidate.repository.split('/')[0]! + '.github.io' + candidate.recipe.basePath;
   const actual = await actualDeployment(
@@ -227,6 +235,7 @@ export async function prepareCurrentAppRecord(
     smoke,
     actual,
     io.now(),
+    operations,
   );
   const tagName = 'tsumucode-app-' + candidate.runId + '-' + record.deploymentId;
   const plan = planAppRecordRecovery(
@@ -240,4 +249,94 @@ export async function prepareCurrentAppRecord(
     record,
     plan,
   };
+}
+
+/** Fixed no-retry browser producer. Caller has read authority only; no supplied command or URL is accepted. */
+export async function runCurrentPublicOperations(
+  root: string,
+  environment: NodeJS.ProcessEnv,
+  io = publicationTransport(environment),
+) {
+  const { candidate, snapshot } = await currentInputs(root, environment, 'report', io.now());
+  const smoke = z
+    .object({
+      status: z.literal('passed'),
+      candidateDigest: DigestSchema,
+      artifactDigest: DigestSchema,
+      actual: PublishedOperationsReceiptSchema.shape.actual,
+    })
+    .parse(await readJson(path.join(root, '.release-v2/public-smoke.json')));
+  const site =
+    'https://' + candidate.repository.split('/')[0]! + '.github.io' + candidate.recipe.basePath;
+  const before = await actualDeployment(
+    candidate.repository,
+    site,
+    candidate.recipe.sourceCommit,
+    io,
+  );
+  if (
+    smoke.candidateDigest !== hashValue(candidate) ||
+    smoke.artifactDigest !== candidate.artifactDigest ||
+    hashValue(smoke.actual) !== hashValue(before)
+  )
+    throw Error('Public operations lack the actual byte-verified deployment');
+  const run = async (list: boolean) => {
+    const file = path.join(
+      root,
+      list
+        ? '.release-v2/public-operations-list.json'
+        : '.release-v2/public-operations-report.json',
+    );
+    try {
+      const { stdout } = await exec(
+        process.execPath,
+        [
+          path.join(root, 'node_modules/@playwright/test/cli.js'),
+          'test',
+          '--config',
+          'playwright.published.config.ts',
+          ...(list ? ['--list'] : []),
+          '--reporter=json',
+        ],
+        {
+          cwd: root,
+          env: { ...environment, TSUMUCODE_PUBLISHED_OPERATIONS: '1' },
+          encoding: 'buffer',
+          timeout: list ? 30000 : 15 * 60 * 1000,
+          killSignal: 'SIGINT',
+          maxBuffer: 16 * 1024 * 1024,
+        },
+      );
+      await writeFile(file, stdout, { flag: 'wx' });
+      return stdout;
+    } catch (error) {
+      const stdout = (error as { stdout?: unknown }).stdout;
+      if (Buffer.isBuffer(stdout) && stdout.length <= 16 * 1024 * 1024)
+        await writeFile(file, stdout, { flag: 'wx' });
+      const stderr = (error as { stderr?: unknown }).stderr;
+      if (Buffer.isBuffer(stderr))
+        await writeFile(file + '.stderr', stderr.subarray(0, 65536), { flag: 'wx' });
+      throw Error(
+        'Public operation ' + (list ? 'collection' : 'execution') + ' failed; see bounded report',
+        { cause: error },
+      );
+    }
+  };
+  const collection: unknown = JSON.parse(
+    new TextDecoder('utf-8', { fatal: true }).decode(await run(true)),
+  );
+  const report = await run(false);
+  if (
+    hashValue(before) !==
+    hashValue(await actualDeployment(candidate.repository, site, candidate.recipe.sourceCommit, io))
+  )
+    throw Error('Deployment moved during public operations');
+  return observePublishedOperations(
+    candidate,
+    snapshot.inventory,
+    before,
+    collection,
+    report,
+    io.now(),
+  );
 }

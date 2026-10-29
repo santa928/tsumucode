@@ -19,6 +19,7 @@
     "vitest.config.ts",
     "vitest.bundle.config.ts",
     "playwright.config.ts",
+    "playwright.published.config.ts",
     "playwright.authoring.config.ts",
     "playwright.local.config.ts",
     "playwright.learning-native.config.ts",

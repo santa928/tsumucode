@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { InventorySchema } from '../../../../scripts/release/v2/schema';
+import { BuildIdentitySchema, InventorySchema } from '../../../../scripts/release/v2/schema';
 import { planRelease } from '../../../../scripts/release/v2/plan';
 import { createExecutionPlan, TEST_SUITES } from '../../../../scripts/release/v2/executionPlan';
 import { hashValue } from '../../../../scripts/release/v2/identity';
@@ -92,4 +92,30 @@ export function releaseFixture() {
     executionPlan,
     candidate,
   };
+}
+
+/** Synthetic receipt for protocol unit tests only; never a real browser observation. */
+export async function syntheticPublishedOperations(
+  candidateInput: unknown,
+  inventory: unknown,
+  actual: unknown,
+  observedAt: string,
+) {
+  const { planPublishedOperations, PublishedOperationsReceiptSchema } =
+    await import('../../../../scripts/release/v2/publishedOperations');
+  const candidate = BuildIdentitySchema.parse(candidateInput),
+    plan = planPublishedOperations(inventory);
+  return PublishedOperationsReceiptSchema.parse({
+    schemaVersion: 1,
+    status: 'passed',
+    producerJobId: 'report',
+    candidateDigest: hashValue(candidate),
+    artifactDigest: candidate.artifactDigest,
+    inventoryDigest: plan.inventoryDigest,
+    planDigest: hashValue(plan),
+    reportDigest: 'a'.repeat(64),
+    actual,
+    targets: plan.targets.map((row) => row.key),
+    observedAt,
+  });
 }

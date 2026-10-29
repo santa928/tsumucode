@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { expect, it } from 'vitest';
+import { syntheticPublishedOperations } from './releaseFixture';
 import { hashValue, hashBytes } from '../../../../scripts/release/v2/identity';
 import { BuildIdentitySchema, InventorySchema } from '../../../../scripts/release/v2/schema';
 import { parseAppBinding } from '../../../../scripts/release/v2/appRecord';
@@ -95,6 +96,12 @@ it('matches all public bytes and rechecks actual deployment before generating a 
     '2026-10-28T21:01:00.000Z',
   );
   expect(reads).toBe(2);
+  const operations = await syntheticPublishedOperations(
+    candidate,
+    inventory,
+    actual,
+    '2026-10-28T21:01:00.000Z',
+  );
   const record = createVerifiedAppRecord(
     candidate,
     { inventory, publicContent: artifact },
@@ -102,6 +109,7 @@ it('matches all public bytes and rechecks actual deployment before generating a 
     smoke,
     actual,
     '2026-10-28T21:02:00.000Z',
+    operations,
   );
   expect(
     parseAppBinding(JSON.stringify(record), candidate.recipe.sourceCommit, actual).artifactDigest,
@@ -186,6 +194,12 @@ it.each([
   if (kind === 'qualification') q.candidateDigest = 'f'.repeat(64);
   if (kind === 'smoke') s.actual.deploymentId = '502';
   if (kind === 'digest') s.artifactDigest = 'f'.repeat(64);
+  const operations = await syntheticPublishedOperations(
+    candidate,
+    inventory,
+    actual,
+    '2026-10-28T21:01:00.000Z',
+  );
   if (kind.startsWith('tag-')) {
     const record = createVerifiedAppRecord(
       c,
@@ -194,6 +208,7 @@ it.each([
       s,
       actual,
       '2026-10-28T21:02:00.000Z',
+      operations,
     );
     const other = { ...record, qualificationDigest: 'f'.repeat(64) };
     expect(() =>
@@ -211,6 +226,29 @@ it.each([
         s,
         actual,
         kind === 'clock' ? '2026-10-28T20:00:00.000Z' : '2026-10-28T21:02:00.000Z',
+        operations,
       ),
     ).toThrow();
+});
+
+it('does not issue a verified app record from byte-only post-deploy evidence', async () => {
+  const { verifyPublicDeployment, createVerifiedAppRecord } =
+    await import('../../../../scripts/release/v2/publication');
+  const byteSmoke = await verifyPublicDeployment(
+    candidate,
+    artifact,
+    async () => actual,
+    async () => data,
+    '2026-10-28T21:01:00.000Z',
+  );
+  expect(() =>
+    createVerifiedAppRecord(
+      candidate,
+      { inventory, publicContent: artifact },
+      qualification,
+      byteSmoke,
+      actual,
+      '2026-10-28T21:02:00.000Z',
+    ),
+  ).toThrow(/operation|public UI|observation/i);
 });

@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, writeFile, readFile, rm } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import { afterEach, expect, it, vi } from 'vitest';
-import { releaseFixture } from './releaseFixture';
+import { releaseFixture, syntheticPublishedOperations } from './releaseFixture';
 import { hashArtifact, hashBytes, hashValue } from '../../../../scripts/release/v2/identity';
 import * as recipes from '../../../../scripts/release/v2/candidate';
 import {
@@ -139,6 +139,17 @@ it('binds public smoke and a sanitized record plan to the pinned aggregate and a
   expect(smoke.checkedFiles).toBe(1);
   expect(row.recipe).toHaveBeenCalledWith(row.root, row.environment.GITHUB_SHA, '/site/');
   await writeFile(path.join(row.root, '.release-v2/public-smoke.json'), JSON.stringify(smoke));
+  await writeFile(
+    path.join(row.root, '.release-v2/public-operations.json'),
+    JSON.stringify(
+      await syntheticPublishedOperations(
+        row.bundle.candidate,
+        row.bundle.snapshot.inventory,
+        smoke.actual,
+        row.io.now(),
+      ),
+    ),
+  );
   const prepared = await prepareCurrentAppRecord(row.root, row.environment, row.io);
   expect(prepared).toMatchObject({
     state: 'record-plan-only',
@@ -202,6 +213,17 @@ it('refuses record preparation after actual deployment moves or the immutable ta
   const row = await setup();
   const smoke = await verifyCurrentPublicDeployment(row.root, row.environment, row.io);
   await writeFile(path.join(row.root, '.release-v2/public-smoke.json'), JSON.stringify(smoke));
+  await writeFile(
+    path.join(row.root, '.release-v2/public-operations.json'),
+    JSON.stringify(
+      await syntheticPublishedOperations(
+        row.bundle.candidate,
+        row.bundle.snapshot.inventory,
+        smoke.actual,
+        row.io.now(),
+      ),
+    ),
+  );
   const prepared = await prepareCurrentAppRecord(row.root, row.environment, row.io);
   row.setExisting({ targetCommit: '0'.repeat(40), message: JSON.stringify(prepared.record) });
   await expect(prepareCurrentAppRecord(row.root, row.environment, row.io)).rejects.toThrow(

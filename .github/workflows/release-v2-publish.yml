@@ -173,11 +173,12 @@ jobs:
     env:
       BASE_PATH: /${{ github.event.repository.name }}/
       RELEASE_FLOW_V2_QUALIFICATION_SHA256: ${{ inputs.qualification_sha256 }}
-      TSUMUCODE_DOCKER_TARGET: development
+      TSUMUCODE_DOCKER_TARGET: app
     outputs:
       report_artifact_id: ${{ steps.public_report.outputs['artifact-id'] }}
       record_plan_sha256: ${{ steps.report_pins.outputs.record_plan_sha256 }}
       public_smoke_sha256: ${{ steps.report_pins.outputs.public_smoke_sha256 }}
+      public_operations_sha256: ${{ steps.report_pins.outputs.public_operations_sha256 }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
@@ -200,6 +201,7 @@ jobs:
       - name: Verify every public file and prepare sanitized immutable record
         run: |
           ./scripts/docker-compose.sh run --rm -e BASE_PATH -e RELEASE_FLOW_V2_QUALIFICATION_SHA256 -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF app npm run release:flow -- public-smoke --output .release-v2/public-smoke.json
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e RELEASE_FLOW_V2_QUALIFICATION_SHA256 -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF app npm run release:flow -- public-operations --output .release-v2/public-operations.json
           ./scripts/docker-compose.sh run --rm -e BASE_PATH -e RELEASE_FLOW_V2_QUALIFICATION_SHA256 -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF app npm run release:flow -- record-plan --output .release-v2/app-record-plan.json
       - name: Pin sanitized report bytes
         id: report_pins
@@ -208,6 +210,8 @@ jobs:
           echo "record_plan_sha256=${digest%% *}" >> "$GITHUB_OUTPUT"
           digest="$(sha256sum .release-v2/public-smoke.json)"
           echo "public_smoke_sha256=${digest%% *}" >> "$GITHUB_OUTPUT"
+          digest="$(sha256sum .release-v2/public-operations.json)"
+          echo "public_operations_sha256=${digest%% *}" >> "$GITHUB_OUTPUT"
       - name: Preserve exact public observation and record plan
         id: public_report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
@@ -215,10 +219,20 @@ jobs:
           name: public-report-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             .release-v2/public-smoke.json
+            .release-v2/public-operations.json
             .release-v2/app-record-plan.json
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 90
+      - name: Preserve unverified publication diagnostics
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: public-observation-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .release-v2/public-operation*
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
       - name: Stop only publication observer
         if: always()
         run: ./scripts/docker-compose.sh down --remove-orphans
@@ -234,6 +248,7 @@ jobs:
       QUALIFICATION_SHA256: ${{ inputs.qualification_sha256 }}
       RECORD_PLAN_SHA256: ${{ needs.report.outputs.record_plan_sha256 }}
       PUBLIC_SMOKE_SHA256: ${{ needs.report.outputs.public_smoke_sha256 }}
+      PUBLIC_OPERATIONS_SHA256: ${{ needs.report.outputs.public_operations_sha256 }}
     outputs:
       state: ${{ steps.write_record.outputs.state }}
       tag_name: ${{ steps.write_record.outputs.tag_name }}
@@ -274,15 +289,20 @@ jobs:
           const qualification=await pinned('.release-v2/qualification.json',process.env.QUALIFICATION_SHA256);
           const prepared=await pinned('.release-v2/app-record-plan.json',process.env.RECORD_PLAN_SHA256);
           const smoke=await pinned('.release-v2/public-smoke.json',process.env.PUBLIC_SMOKE_SHA256);
+          const operations=await pinned('.release-v2/public-operations.json',process.env.PUBLIC_OPERATIONS_SHA256);
           const record=prepared.record, now=Date.now();
           ensure(candidate.repository===repository && candidate.runId===runId && candidate.recipe.sourceCommit===source && candidate.artifactId===process.env.CANDIDATE_ARTIFACT_ID,'Wrong record candidate');
           ensure(qualification.status==='qualified' && qualification.candidateDigest===hashValue(candidate) && qualification.technical?.candidateDigest===hashValue(candidate) && qualification.technical.status==='technical-passed' && qualification.technical.buildAttempt===candidate.buildAttempt && Date.parse(qualification.technical.expiresAt)>now,'Unqualified or expired record');
           ensure(prepared.schemaVersion===1 && ['record-plan-only','recorded'].includes(prepared.state),'Invalid record preparation');
           ensure(Object.keys(record).sort().join(',')===['schemaVersion','repository','workflowHeadCommit','candidate','deploymentId','siteUrl','publicContentDigest','inventoryDigest','state','qualificationDigest','smokeDigest','observedAt'].sort().join(','),'Unexpected app record data');
-          ensure(record.schemaVersion===2 && record.state==='verified' && record.repository===repository && record.workflowHeadCommit===source && hashValue(record.candidate)===hashValue(candidate) && record.qualificationDigest===hashValue(qualification) && record.inventoryDigest===hashValue(snapshot.inventory) && record.publicContentDigest===snapshot.publicContent.digest && record.smokeDigest===hashValue(smoke),'Unbound record data');
+          ensure(record.schemaVersion===2 && record.state==='verified' && record.repository===repository && record.workflowHeadCommit===source && hashValue(record.candidate)===hashValue(candidate) && record.qualificationDigest===hashValue(qualification) && record.inventoryDigest===hashValue(snapshot.inventory) && record.publicContentDigest===snapshot.publicContent.digest && record.smokeDigest===hashValue({bytes:smoke,operations}),'Unbound record data');
           const site='https://'+repository.split('/')[0]+'.github.io/'+repository.split('/')[1]+'/';
           ensure(record.siteUrl===site && /^[1-9]\d*$/.test(record.deploymentId) && smoke.status==='passed' && smoke.candidateDigest===hashValue(candidate) && smoke.artifactDigest===candidate.artifactDigest && Number.isSafeInteger(smoke.checkedFiles) && smoke.checkedFiles>0,'Unverified public record');
           ensure(Date.parse(qualification.qualifiedAt)<=Date.parse(smoke.observedAt) && Date.parse(smoke.observedAt)<=Date.parse(record.observedAt) && Date.parse(record.observedAt)<=now,'Invalid record clock');
+          const publicCourses=snapshot.inventory.courses.filter(row=>row.publicationStatus==='published').sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0);
+          const requiredOperations=[...new Set(['launch','reading-resume','progress-transfer',...publicCourses.flatMap(course=>course.lessons.flatMap(lesson=>lesson.exercises.map(exercise=>exercise.runtimeKind+'/'+exercise.capability+'/'+(exercise.runtimeKind==='next'?'local-guide':'grade-persist'))))])].sort();
+          ensure(operations.schemaVersion===1 && operations.status==='passed' && operations.producerJobId==='report' && operations.candidateDigest===hashValue(candidate) && operations.artifactDigest===candidate.artifactDigest && operations.inventoryDigest===hashValue({...snapshot.inventory,courses:publicCourses}) && hashValue(operations.actual)===hashValue(smoke.actual) && Array.isArray(operations.targets) && new Set(operations.targets).size===operations.targets.length && hashValue([...operations.targets].sort())===hashValue(requiredOperations) && /^[a-f0-9]{64}$/.test(operations.reportDigest),'Incomplete public operation observation');
+          ensure(Date.parse(qualification.qualifiedAt)<=Date.parse(operations.observedAt) && Date.parse(operations.observedAt)<=Date.parse(record.observedAt),'Invalid public operation clock');
           const tagName='tsumucode-app-'+runId+'-'+record.deploymentId;
           ensure(prepared.plan?.tagName===tagName && prepared.plan.targetCommit===source && ['create-annotated-record','reuse-record'].includes(prepared.plan.action),'Unexpected record action');
           const api=async(relative,body)=>{
