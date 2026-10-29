@@ -1,4 +1,7 @@
-import { nextWorkspace } from '../../../scripts/local/next-project-protocol.mjs';
+import {
+  nextContractForExercise,
+  nextTemplate,
+} from '../../../scripts/local/next-project-protocol.mjs';
 import { acceptsReactQuizScenarios } from './reactQuizInteractions';
 import { acceptsReactHookScenarios } from './reactHookInteractions';
 import { acceptsReactReducerContextScenarios } from './reactReducerContextInteractions';
@@ -389,6 +392,10 @@ export const NextExerciseRuntimeSchema = z
     capabilityProfile: z.literal('project'),
     primaryOutput: z.literal('preview'),
     profile: z.literal('next-project-v1'),
+    contract: z
+      .string()
+      .refine((value) => nextTemplate(value) !== undefined, 'Unknown Native execution contract')
+      .optional(),
   })
   .strict();
 
@@ -2432,13 +2439,16 @@ function validateCourse(course: CourseManifestValue, context: z.RefinementCtx): 
           currentIds.workspace.add(exercise.workspaceId);
 
           if (exercise.runtime?.kind === 'next') {
-            const contract = nextWorkspace(exercise.workspaceId);
+            const contract = nextContractForExercise(
+              exercise.workspaceId,
+              exercise.runtime.contract,
+            );
             const paths = contract ? Object.keys(contract.files) : [];
             if (
-              course.id !== 'next' ||
+              (exercise.runtime.contract === undefined && course.id !== 'next') ||
               !contract ||
-              exercise.id !== exercise.workspaceId ||
-              exercise.id !== `${lesson.id}-e01` ||
+              (exercise.runtime.contract === undefined &&
+                (exercise.id !== exercise.workspaceId || exercise.id !== `${lesson.id}-e01`)) ||
               exercise.files.length !== paths.length ||
               paths.some((path) => !exercise.files.some((file) => file.path === path)) ||
               exercise.validationRules.length !== (contract.ruleGoals?.length ?? 1) ||

@@ -1,23 +1,24 @@
-import {
-  FORM_WORKSPACE,
-  ACTION_WORKSPACE,
-  lessonThemeRequestHeaders,
-} from './next-form-cookie.mjs';
+import { nextWorkspace } from './next-project-protocol.mjs';
+import { lessonThemeRequestHeaders } from './next-form-cookie.mjs';
 export { FORM_WORKSPACE, ACTION_WORKSPACE } from './next-form-cookie.mjs';
 export const ACTION_ROOT_TREE = encodeURIComponent(
   JSON.stringify(['', { children: ['__PAGE__', {}, null, null, 4096] }, null, null, 4112]),
 );
 
 export function isNextForm(workspaceId) {
-  return [FORM_WORKSPACE, ACTION_WORKSPACE].includes(workspaceId);
+  return ['form-route-validation', 'server-action-validation'].includes(
+    nextWorkspace(workspaceId)?.goal,
+  );
 }
 
 /** 固定2教材のPOST候補だけを認める。内部store/controlは公開しない。 */
 export function nextFormPostRoute(raw, target) {
   const root = `/w/${target.workspaceId}/${target.runId}`;
   return (
-    (target.workspaceId === FORM_WORKSPACE && raw === `${root}/api/note`) ||
-    (target.workspaceId === ACTION_WORKSPACE && [root, `${root}/`].includes(raw))
+    (nextWorkspace(target.workspaceId)?.goal === 'form-route-validation' &&
+      raw === `${root}/api/note`) ||
+    (nextWorkspace(target.workspaceId)?.goal === 'server-action-validation' &&
+      [root, `${root}/`].includes(raw))
   );
 }
 
@@ -53,7 +54,7 @@ export function nextFormRequest(req, target, { allowLessonTheme = false } = {}) 
     headers['sec-fetch-dest'] !== 'empty'
   )
     return undefined;
-  if (target.workspaceId === FORM_WORKSPACE) {
+  if (nextWorkspace(target.workspaceId)?.goal === 'form-route-validation') {
     if (headers['content-type'] !== 'application/json' || nextKeys.some((key) => key in headers))
       return undefined;
     return {

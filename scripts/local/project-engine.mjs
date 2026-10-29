@@ -64,9 +64,14 @@ export function projectConfig(record, owner, runId, imageId, preview = false) {
     // 親を失った子/孫processをDocker initへ回収させる。
     config.HostConfig.Init = true;
     // 制作2教材は承認済み1GB以内。他教材の上限や要求から選べる範囲を広げない。
-    const memoryMiB = ['next-ch05-l01-e01', 'next-ch06-l01-e01'].includes(record.workspaceId)
+    const goal = nextWorkspace(record.workspaceId)?.goal;
+    const memoryMiB = ['guided-travel-project', 'capstone-event-project'].includes(goal)
       ? 896
-      : ['next-ch02-l01-e01', 'next-ch03-l01-e01', 'next-ch03-l02-e01'].includes(record.workspaceId)
+      : [
+            'nested-dynamic-navigation',
+            'data-cache-revalidation',
+            'loading-error-not-found',
+          ].includes(goal)
         ? 576
         : 512;
     config.HostConfig.Memory = memoryMiB * 1024 * 1024;

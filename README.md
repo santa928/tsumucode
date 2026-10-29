@@ -239,7 +239,7 @@ push前は、変更をローカルcommitしたcleanなcheckoutで、PRのbase SH
 ./scripts/docker-compose.sh run --rm -e BASE_PATH=/tsumucode/ app npm run check:prepush -- <baseの40文字SHA>
 ```
 
-資源を限る場合は`-e TSUMUCODE_TEST_MAX_WORKERS=1`でtestの並列数だけを下げられます。対象・期待値・失敗条件はCIと同じです。Docker内でメモリとCPUの上限を設け、同時に別の重い検証を起動しません。型検査は既存のapp/tools両projectを別processで実行し、Lintもsrc・scripts・tests・残りの全件を別processに分け、checkerのメモリを持ち越しません。対象・設定は減らしません。成功出力のcommit/tree/base/lock hashと実コマンド・上限・exitを保存し、その後Sourceを変更した場合だけ影響範囲を検証し直します。必要な型・Lintがローカルで未完了のまま、確認をCIへ持ち越してpushしません。
+資源を限る場合は`-e TSUMUCODE_TEST_MAX_WORKERS=1`でtestの並列数だけを下げられます。対象・期待値・失敗条件はCIと同じです。Docker内でメモリとCPUの上限を設け、同時に別の重い検証を起動しません。型検査は既存のapp/tools両projectを別processで実行し、Lintもsrc・scripts・tests・残りの全件を別processに分け、checkerのメモリを持ち越しません。対象・設定は減らしません。Lintは同じESLint設定で選ばれる全ファイルを64件ずつ直列実行し、一括実行時のメモリ集中を避けます。失敗したbatchがあれば後続へ進まず全体を失敗にします。成功出力のcommit/tree/base/lock hashと実コマンド・上限・exitを保存し、その後Sourceを変更した場合だけ影響範囲を検証し直します。必要な型・Lintがローカルで未完了のまま、確認をCIへ持ち越してpushしません。
 
 正式公開候補の確定後は、同じ入口へ`--release`を加え、教材承認と全Unit/Component/Contentを含む既存`check:release`を先に通します。実CLIの`release:target`も、workflowと同じCourse/Source/workflow-headと生成済み教材で解決を確認します。これらの成功はBrowser・性能・公開成功を意味しません。正式qualityではその同じ候補のBrowser/性能・出力集約を一度実行し、既存証拠はSource・生成物hash・検査条件が一致する範囲だけ再利用します。公開後の配信物と実操作確認も別に行います。
 

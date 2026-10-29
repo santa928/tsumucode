@@ -217,6 +217,7 @@ fixtures:
     expectedFeedbackRuleIds: ['python-basics-ch02-l01-e01-r01']
   - id: unused-loop-hardcode
     expectedStatus: incomplete
+    expectedLocalStatus: code-error
     inputLines: ['3', '5']
     files:
       - path: main.py
@@ -243,6 +244,7 @@ fixtures:
     expectedFeedbackRuleIds: []
   - id: input-exhausted
     expectedStatus: system-error
+    expectedLocalStatus: pass
     inputLines: ['3']
     files:
       - path: main.py

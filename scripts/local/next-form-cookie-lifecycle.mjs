@@ -4,6 +4,7 @@ const networkFailureClasses = new Set([
   'net::ERR_INCOMPLETE_CHUNKED_ENCODING',
   'net::ERR_CONTENT_DECODING_FAILED',
   'net::ERR_CONNECTION_RESET',
+  'net::ERR_CONNECTION_REFUSED',
   'net::ERR_CONNECTION_CLOSED',
   'net::ERR_EMPTY_RESPONSE',
   'net::ERR_FAILED',
@@ -15,6 +16,31 @@ const networkFailureClasses = new Set([
 /** 任意の例外本文は保存せず、Browser由来の既知分類だけを残す。 */
 export function cookieNetworkErrorClass(errorText) {
   return networkFailureClasses.has(errorText) ? errorText : 'other';
+}
+
+/** Playwright例外を閉じた分類に写す。URL・Cookie・任意の本文/例外名は転記しない。 */
+export function cookieFailureClass(error) {
+  if (!(error instanceof Error)) return 'other';
+  if (
+    [
+      'CookieAcceptanceDeadlineError',
+      'CookieAcceptanceRequestError',
+      'CookieAcceptanceConsumerError',
+      'TimeoutError',
+    ].includes(error.name)
+  )
+    return error.name;
+  if (error.code === 'ERR_ASSERTION') return 'assertion';
+  const network = error.message.match(/\bnet::ERR_[A-Z_]+\b/u)?.[0];
+  if (network) return cookieNetworkErrorClass(network);
+  if (error.message.includes('Target page, context or browser has been closed'))
+    return 'target-closed';
+  if (error.message.includes('Page crashed')) return 'page-crashed';
+  if (/Navigation to .* is interrupted by another navigation/u.test(error.message))
+    return 'navigation-interrupted';
+  if (error.message.includes('Execution context was destroyed'))
+    return 'execution-context-destroyed';
+  return 'other';
 }
 
 /** Cookie検査の未完了待機を失敗にする。取消不能な操作は呼出元のcleanupで回収する。 */

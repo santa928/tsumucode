@@ -36,6 +36,8 @@ import {
 } from './sourceSchema';
 
 export interface AuthoringFixture {
+  readonly inputLines?: readonly string[];
+  readonly expectedLocalStatus?: AuthoringFixture['expectedStatus'];
   readonly id: string;
   readonly expectedStatus: 'pass' | 'incomplete' | 'code-error' | 'system-error';
   readonly faultInjection?: 'stale-source-evidence';
@@ -66,6 +68,7 @@ interface CourseCompilation {
 
 export interface CompiledCourseArtifacts {
   readonly runtime: CourseManifest;
+  readonly authoringExercises?: readonly AuthoringExercise[];
   readonly publicProvenance: PublicProvenanceManifest;
   readonly assets: ReadonlyMap<string, Uint8Array>;
 }
@@ -551,9 +554,15 @@ async function compileExercise(
     for (const file of fixture.files) {
       fixtureFiles.push(await compileFile(directory, file, context, 'fixture'));
     }
+    if (fixture.expectedLocalStatus !== undefined && source.runtime?.kind !== 'python')
+      throw new Error('Local fixture expectations require Python runtime');
     fixtures.push({
       id: fixture.id,
       expectedStatus: fixture.expectedStatus,
+      ...(fixture.inputLines === undefined ? {} : { inputLines: fixture.inputLines }),
+      ...(fixture.expectedLocalStatus === undefined
+        ? {}
+        : { expectedLocalStatus: fixture.expectedLocalStatus }),
       ...(fixture.faultInjection === undefined ? {} : { faultInjection: fixture.faultInjection }),
       ...(fixture.expectedDiagnosticCodes === undefined
         ? {}
@@ -967,6 +976,7 @@ export async function compileCourse(courseRoot: string): Promise<CompiledCourseA
   const compilation = await buildCourseCompilation(courseRoot);
   return {
     runtime: compilation.authoring.runtime,
+    authoringExercises: compilation.authoring.exercises,
     publicProvenance: compilation.publicProvenance,
     assets: compilation.assets,
   };

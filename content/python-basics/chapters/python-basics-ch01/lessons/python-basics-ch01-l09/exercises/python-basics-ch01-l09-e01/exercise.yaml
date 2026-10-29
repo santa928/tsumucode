@@ -203,6 +203,7 @@ fixtures:
     expectedFeedbackRuleIds: []
   - id: input-exhausted
     expectedStatus: system-error
+    expectedLocalStatus: pass
     inputLines: []
     files:
       - path: main.py

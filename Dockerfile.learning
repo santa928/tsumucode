@@ -8,13 +8,14 @@ FROM dependencies AS build
 COPY . .
 # BuildKitのRUNにもDocker専用asset生成器の判定を明示する。
 ARG LOCAL_LEARNING=1
-RUN touch /.dockerenv && VITE_LOCAL_LEARNING=$LOCAL_LEARNING BASE_PATH=/ npm run build
+RUN touch /.dockerenv && TSUMUCODE_NATIVE_CONTRACTS_OUTPUT=1 VITE_LOCAL_LEARNING=$LOCAL_LEARNING BASE_PATH=/ npm run build
 
 FROM node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5 AS project
 WORKDIR /opt
 COPY --from=dependencies /workspace/node_modules ./node_modules
 COPY scripts/local/project-bootstrap.mjs scripts/local/project-apply.mjs scripts/local/next-project-protocol.mjs scripts/local/next-routing-source.mjs scripts/local/next-data-source.mjs scripts/local/next-form-source.mjs scripts/local/next-production-source.mjs ./
 USER 1000:1000
+COPY --from=build /workspace/.release-native-contracts.json ./compiled-native-workspaces.json
 CMD ["node", "/opt/project-bootstrap.mjs"]
 
 FROM node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5 AS next-project
@@ -24,6 +25,7 @@ RUN node --input-type=module -e "import fs from 'node:fs'; const pilot = JSON.pa
     && npm ci --ignore-scripts --no-audit --no-fund --userconfig /dev/null
 WORKDIR /opt
 COPY scripts/local/next-project-bootstrap.mjs scripts/local/next-data-backend.mjs scripts/local/next-form-backend.mjs scripts/local/next-form-preview.mjs scripts/local/next-form-cookie.mjs scripts/local/preview-body.mjs scripts/local/next-data-backend-build.mjs scripts/local/project-apply.mjs scripts/local/next-project-protocol.mjs scripts/local/next-routing-source.mjs scripts/local/next-data-source.mjs scripts/local/next-form-source.mjs scripts/local/next-production-source.mjs ./
+COPY --from=build /workspace/.release-native-contracts.json ./compiled-native-workspaces.json
 RUN node /opt/next-data-backend-build.mjs
 USER 1000:1000
 CMD ["node", "/opt/next-project-bootstrap.mjs"]
@@ -55,13 +57,17 @@ COPY src/core/runtime/pythonDataProjectAnalysis.mjs ./
 COPY src/core/runtime/pythonModuleAnalysis.mjs ./pythonModuleAnalysis.mjs
 COPY scripts/local/project-protocol.mjs scripts/local/workspace-store.mjs scripts/local/project-engine.mjs scripts/local/resident-workspace.mjs ./
 COPY scripts/local/preview-contract.mjs scripts/local/next-data-preview.mjs scripts/local/next-form-preview.mjs scripts/local/next-form-cookie.mjs scripts/local/preview-control.mjs scripts/local/preview-transport.mjs ./
-COPY scripts/local/project-grade-engine.mjs scripts/local/next-project-protocol.mjs scripts/local/next-routing-source.mjs scripts/local/next-data-source.mjs scripts/local/next-form-source.mjs scripts/local/next-production-source.mjs scripts/local/next-project-acceptance.mjs ./
+COPY scripts/local/project-grade-engine.mjs scripts/local/next-project-protocol.mjs scripts/local/next-routing-source.mjs scripts/local/next-data-source.mjs scripts/local/next-form-source.mjs scripts/local/next-production-source.mjs scripts/local/next-project-acceptance.mjs scripts/local/native-fixture-digest.mjs ./
+COPY --from=build /workspace/.release-native-contracts.json ./compiled-native-workspaces.json
+ENV TSUMUCODE_REQUIRE_COMPILED_NATIVE_CATALOG=1
 CMD ["node", "controller.mjs"]
 
 FROM node:24.18.0-bookworm-slim@sha256:cb4e8f7c443347358b7875e717c29e27bf9befc8f5a26cf18af3c3dec80e58c5 AS preview
 WORKDIR /app
 COPY src/core/runtime/pythonLessonProfiles.mjs ./
 COPY scripts/local/preview-proxy.mjs scripts/local/preview-body.mjs scripts/local/preview-http-response.mjs scripts/local/preview-contract.mjs scripts/local/next-data-preview.mjs scripts/local/next-form-preview.mjs scripts/local/next-form-cookie.mjs scripts/local/protocol.mjs scripts/local/next-project-protocol.mjs scripts/local/next-routing-source.mjs scripts/local/next-data-source.mjs scripts/local/next-form-source.mjs scripts/local/next-production-source.mjs ./
+COPY --from=build /workspace/.release-native-contracts.json ./compiled-native-workspaces.json
+ENV TSUMUCODE_REQUIRE_COMPILED_NATIVE_CATALOG=1
 CMD ["node", "preview-proxy.mjs"]
 
 # trusted採点/作者/CI用。Browserを固定し、learner・web・controller imageへ含めない。
@@ -74,6 +80,8 @@ COPY --from=dependencies /workspace/node_modules/playwright-core ./node_modules/
 COPY --from=dependencies /workspace/node_modules/@axe-core/playwright ./node_modules/@axe-core/playwright
 COPY --from=dependencies /workspace/node_modules/axe-core ./node_modules/axe-core
 COPY scripts/local ./scripts/local
+COPY --from=build /workspace/.release-native-contracts.json ./scripts/local/compiled-native-workspaces.json
+ENV TSUMUCODE_REQUIRE_COMPILED_NATIVE_CATALOG=1
 COPY src/core/runtime/pythonLessonAnalysis.mjs src/core/runtime/pythonLessonProfiles.mjs ./src/core/runtime/
 COPY src/core/runtime/pythonModuleAnalysis.mjs ./src/core/runtime/
 COPY src/core/runtime/pythonIterationAnalysis.mjs ./src/core/runtime/
@@ -88,7 +96,7 @@ CMD ["node", "scripts/local/preview-browser-acceptance.mjs"]
 FROM browser-checks AS next-browser-checks
 COPY --from=dependencies /workspace/node_modules/yaml ./node_modules/yaml
 COPY --from=dependencies /workspace/node_modules/fflate ./node_modules/fflate
-COPY content/next ./content/next
+COPY content ./content
 CMD ["node", "scripts/local/next-project-browser-acceptance.mjs"]
 
 # Next教材のproduction build診断専用。原稿は実行/管理imageへ含めない。
@@ -105,6 +113,13 @@ CMD ["node", "next-build-acceptance.mjs"]
 FROM browser-checks AS python-browser-checks
 COPY --from=dependencies /workspace/node_modules/yaml ./node_modules/yaml
 COPY --from=dependencies /workspace/node_modules/fflate ./node_modules/fflate
+COPY --from=dependencies /workspace/node_modules/zod ./node_modules/zod
+# 実行後のSource/fixture照合はtrusted検証imageだけが行う。learnerへ原稿を渡さない。
+COPY scripts/content ./scripts/content
+COPY scripts/release/v2 ./scripts/release/v2
+COPY src/core/content ./src/core/content
+COPY src/core/persistence/canonicalJson.ts ./src/core/persistence/canonicalJson.ts
+COPY src/shared/lib/resolvePublicAsset.ts ./src/shared/lib/resolvePublicAsset.ts
 COPY content/python-basics ./content/python-basics
 COPY content/python-practice ./content/python-practice
 COPY content/python-oop ./content/python-oop
@@ -117,8 +132,18 @@ COPY tests/e2e/python-context.spec.ts ./tests/e2e/python-context.spec.ts
 COPY tests/e2e/python-data-project.spec.ts ./tests/e2e/python-data-project.spec.ts
 COPY tests/e2e/python-oop.spec.ts ./tests/e2e/python-oop.spec.ts
 COPY tests/e2e/helpers/progress.ts tests/e2e/helpers/testBasePath.ts ./tests/e2e/helpers/
+COPY tests/e2e/helpers/pythonFixtureCoverage.ts ./tests/e2e/helpers/pythonFixtureCoverage.ts
 COPY playwright.python-local.config.ts ./
 CMD ["node", "scripts/local/python-browser-acceptance.mjs"]
+
+# Same-source Native learning UI only. Never copied into a learner/controller/web image.
+FROM python-browser-checks AS learning-native-checks
+COPY content ./content
+COPY src/core/runtime/pythonFixedFixtures.mjs ./src/core/runtime/pythonFixedFixtures.mjs
+COPY tests/e2e/helpers/manifestLearning.ts ./tests/e2e/helpers/manifestLearning.ts
+COPY tests/local/manifest-next-learning.spec.ts ./tests/local/manifest-next-learning.spec.ts
+COPY playwright.learning-native.config.ts ./
+CMD ["node", "scripts/local/manifest-learning-browser-acceptance.mjs", "chromium"]
 
 # 反復教材の作者Fixture/実object観察専用。配信・learner imageへ原稿を渡さない。
 FROM python-browser-checks AS python-iteration-checks

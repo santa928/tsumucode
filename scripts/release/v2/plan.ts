@@ -1,0 +1,172 @@
+import { hashValue } from './identity';
+import { BaselineSchema } from './content';
+import {
+  InventorySchema,
+  PlanSchema,
+  type ReleaseInventory,
+  type ReleasePlan,
+  type ReleaseTarget,
+} from './schema';
+
+/** All expected targets come from validated compiler inventory, never from test self-reports. */
+export function planRelease(input: ReleaseInventory, baselineInput?: unknown): ReleasePlan {
+  const inventory = InventorySchema.parse(input);
+  const published = inventory.courses.filter((course) => course.publicationStatus === 'published');
+  if (published.length === 0) throw new Error('No published course in the release');
+  const baseline = baselineInput === undefined ? undefined : BaselineSchema.parse(baselineInput);
+  const previous = new Map(
+    baseline?.inventory.courses
+      .filter((course) => course.publicationStatus === 'published')
+      .flatMap((course) =>
+        course.lessons.map(
+          (lesson) => [course.id + '/' + lesson.id, lesson.learnerDigest] as const,
+        ),
+      ) ?? [],
+  );
+  const targets: ReleaseTarget[] = [];
+  // Do not silently shrink a previously published negative/fixture contract during migration.
+  for (const oldCourse of baseline?.inventory.courses.filter(
+    (course) => course.publicationStatus === 'published',
+  ) ?? []) {
+    const currentCourse = published.find((course) => course.id === oldCourse.id);
+    for (const oldLesson of oldCourse.lessons)
+      for (const oldExercise of oldLesson.exercises) {
+        const currentExercise = currentCourse?.lessons
+          .find((lesson) => lesson.id === oldLesson.id)
+          ?.exercises.find((exercise) => exercise.id === oldExercise.id);
+        if (!currentExercise)
+          throw new Error('Published exercise removal requires review: ' + oldExercise.id);
+        for (const fixture of oldExercise.fixtures) {
+          const current = currentExercise.fixtures.find((row) => row.id === fixture.id);
+          if (!current || (fixture.expectedStatus !== 'pass' && current.expectedStatus === 'pass'))
+            throw new Error(
+              'Published fixture removal or weakening requires review: ' +
+                oldExercise.id +
+                '/' +
+                fixture.id,
+            );
+        }
+      }
+  }
+  for (const course of published)
+    for (const lesson of course.lessons) {
+      const prefix = course.id + '/' + lesson.id;
+      if (!previous.has(prefix))
+        for (const engine of ['chromium', 'firefox', 'webkit'] as const)
+          targets.push({
+            key: prefix + '/learning-engine/' + engine,
+            kind: 'learning-engine',
+            runtimeKind: lesson.exercises.some((exercise) => exercise.runtimeKind === 'next')
+              ? 'next'
+              : course.runner,
+            engine,
+            courseId: course.id,
+            lessonId: lesson.id,
+            inputDigest: lesson.learnerDigest,
+          });
+      if (previous.get(prefix) !== lesson.learnerDigest) {
+        targets.push({
+          key: prefix + '/content',
+          kind: 'content',
+          courseId: course.id,
+          lessonId: lesson.id,
+          inputDigest: lesson.learnerDigest,
+        });
+        for (const role of ['novice', 'recovery', 'maker'] as const)
+          targets.push({
+            key: prefix + '/learning/' + role,
+            kind: 'learning',
+            courseId: course.id,
+            lessonId: lesson.id,
+            role,
+            inputDigest: lesson.learnerDigest,
+          });
+      }
+      if (lesson.kind !== 'standard')
+        targets.push({
+          key: prefix + '/project',
+          kind: 'project',
+          courseId: course.id,
+          lessonId: lesson.id,
+          inputDigest: hashValue([
+            lesson.learnerDigest,
+            lesson.exerciseDigest,
+            lesson.persistenceDigest,
+          ]),
+        });
+      targets.push({
+        key: prefix + '/persistence',
+        kind: 'persistence',
+        courseId: course.id,
+        lessonId: lesson.id,
+        inputDigest: lesson.persistenceDigest,
+      });
+      for (const exercise of lesson.exercises) {
+        const modes =
+          exercise.runtimeKind === 'python'
+            ? (['pyodide', 'cpython'] as const)
+            : exercise.runtimeKind === 'next'
+              ? (['local'] as const)
+              : (['browser'] as const);
+        for (const mode of modes)
+          for (const fixture of [
+            {
+              id: 'solution',
+              caseKind: 'solution' as const,
+              sourceDigest:
+                mode === 'cpython'
+                  ? exercise.nativeSolutionSourceDigest
+                  : exercise.solutionSourceDigest,
+              expectedStatus: 'pass' as const,
+            },
+            {
+              id: 'starter',
+              caseKind: 'starter' as const,
+              sourceDigest:
+                mode === 'cpython'
+                  ? exercise.nativeStarterSourceDigest
+                  : exercise.starterSourceDigest,
+              expectedStatus: 'not-pass' as const,
+            },
+            ...exercise.fixtures.map((fixture) => ({
+              id: fixture.id,
+              caseKind: 'authored' as const,
+              sourceDigest: mode === 'cpython' ? fixture.nativeSourceDigest : fixture.sourceDigest,
+              expectedStatus:
+                mode === 'cpython'
+                  ? (fixture.expectedLocalStatus ?? fixture.expectedStatus)
+                  : fixture.expectedStatus,
+            })),
+          ]) {
+            if (!fixture.sourceDigest) throw new Error('Missing runtime-mode fixture input');
+            targets.push({
+              key:
+                prefix + '/' + exercise.id + '/' + fixture.caseKind + '/' + fixture.id + '/' + mode,
+              kind: 'fixture',
+              courseId: course.id,
+              lessonId: lesson.id,
+              exerciseId: exercise.id,
+              workspaceId: exercise.workspaceId,
+              fixtureId: fixture.id,
+              caseKind: fixture.caseKind,
+              runtimeKind: exercise.runtimeKind,
+              mode,
+              inputDigest: exercise.digest,
+              sourceDigest: fixture.sourceDigest,
+              expectedStatus: fixture.expectedStatus,
+            });
+          }
+      }
+    }
+  if (new Set(targets.map((target) => target.key)).size !== targets.length)
+    throw new Error('Duplicate release target keys');
+  return PlanSchema.parse({
+    schemaVersion: 1,
+    inventoryDigest: hashValue(inventory),
+    parent: baseline
+      ? { deploymentId: baseline.deploymentId, sourceRecordDigest: baseline.sourceRecordDigest }
+      : null,
+    publishedCourses: published.map((course) => course.id),
+    targets,
+  });
+}

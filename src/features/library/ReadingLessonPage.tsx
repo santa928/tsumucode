@@ -63,7 +63,9 @@ function ReadingLessonSession({
         const line = Math.max(window.innerHeight * 0.2, Number.isFinite(margin) ? margin : 0);
         for (const slide of lesson.slides) {
           const node = sections.current.get(slide.id);
-          if (node !== undefined && node.getBoundingClientRect().top <= line) current = slide.id;
+          // 整数のスクロール位置と小数の矩形の丸め差を、1 CSS px以内だけ許容する。
+          if (node !== undefined && node.getBoundingClientRect().top <= line + 1)
+            current = slide.id;
         }
         setActiveSlide(current); // 同じIDなら再描画・保存しない。
       });

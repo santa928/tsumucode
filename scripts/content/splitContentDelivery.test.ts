@@ -31,6 +31,103 @@ afterEach(async () => {
 });
 
 describe('split content delivery', () => {
+  it('public投影は共有Assetを保持しdraft専用bytesとPathを除外する', async () => {
+    const stagingRoot = await createTemporaryRoot();
+    const compilation = await compileCourse(
+      path.resolve('tests/fixtures/foundation-content/html-css'),
+    );
+    const draft = {
+      ...compilation,
+      runtime: CourseManifestSchema.parse({
+        ...compilation.runtime,
+        id: 'draft-course',
+        publicationStatus: 'draft',
+      }),
+      assets: new Map([
+        ...compilation.assets,
+        ['assets/draft-course/private.svg', new TextEncoder().encode('draft-only-bytes')],
+      ]),
+    };
+    const draftPath: LearningPathDefinition = {
+      id: 'draft-path',
+      title: '作者Path',
+      description: 'draft Courseを確認する',
+      publicationStatus: 'draft',
+      steps: [{ courseId: 'draft-course', role: 'required', prerequisiteCourseIds: [] }],
+    };
+    const delivery = buildSplitContentDelivery([compilation, draft], [draftPath], 'public');
+
+    await writeSplitContentDeliveryTree(stagingRoot, delivery);
+
+    expect(delivery.catalog.courses.map(({ id }) => id)).toEqual(['html-css']);
+    expect(delivery.catalog.learningPaths).toEqual([]);
+    const sharedAsset = await readFile(
+      path.join(stagingRoot, 'assets/html-css/html-structure.svg'),
+    );
+    expect(new Uint8Array(sharedAsset)).toEqual(
+      compilation.assets.get('assets/html-css/html-structure.svg'),
+    );
+    await expect(lstat(path.join(stagingRoot, 'assets/draft-course'))).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+    await expect(lstat(path.join(stagingRoot, 'courses/draft-course'))).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+  });
+
+  it('public投影は公開Courseが除外Courseを前提にすると拒否する', async () => {
+    const compilation = await compileCourse(
+      path.resolve('tests/fixtures/foundation-content/html-css'),
+    );
+    const draft = {
+      ...compilation,
+      runtime: CourseManifestSchema.parse({
+        ...compilation.runtime,
+        id: 'draft-course',
+        publicationStatus: 'draft',
+      }),
+    };
+    const published = {
+      ...compilation,
+      runtime: CourseManifestSchema.parse({
+        ...compilation.runtime,
+        prerequisites: ['draft-course'],
+      }),
+    };
+    expect(() => buildSplitContentDelivery([published, draft], [], 'public')).toThrow(
+      /html-css.*draft-course/u,
+    );
+  });
+
+  it('public投影は除外Courseを要求する公開Pathを黙って書き換えない', async () => {
+    const compilation = await compileCourse(
+      path.resolve('tests/fixtures/foundation-content/html-css'),
+    );
+    const draft = {
+      ...compilation,
+      runtime: CourseManifestSchema.parse({
+        ...compilation.runtime,
+        id: 'draft-course',
+        publicationStatus: 'draft',
+      }),
+    };
+    expect(() =>
+      buildSplitContentDelivery(
+        [compilation, draft],
+        [
+          {
+            id: 'published-path',
+            title: '公開Path',
+            description: '除外対象を要求する',
+            publicationStatus: 'published',
+            steps: [{ courseId: 'draft-course', role: 'required', prerequisiteCourseIds: [] }],
+          },
+        ],
+        'public',
+      ),
+    ).toThrow(/LearningPath/u);
+  });
+
   it('Catalog v3と分割Course treeだけを指定stagingへ書く', async () => {
     const stagingRoot = await createTemporaryRoot();
     const compilation = await compileCourse(

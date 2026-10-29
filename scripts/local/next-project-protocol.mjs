@@ -1,4 +1,5 @@
-// 固定Next教材だけを扱う。APIからprofileや設定を自由に選ばせない。
+import catalog from './compiled-native-workspaces.json' with { type: 'json' };
+// Compilerが列挙したIDに既知の有限契約だけを結び付ける。APIから設定を追加させない。
 import { ROUTING_STARTER_FILES, BOUNDARY_STARTER_FILES } from './next-routing-source.mjs';
 import { DATA_STARTER_FILES, WEATHER_STARTER_FILES } from './next-data-source.mjs';
 import { FORM_STARTER_FILES, ACTION_STARTER_FILES } from './next-form-source.mjs';
@@ -195,11 +196,89 @@ export const NEXT_WORKSPACES = Object.freeze({
   },
 });
 
-/** 未知WorkspaceはNextの固定契約へ入れない。 */
-export function nextWorkspace(id) {
-  return Object.hasOwn(NEXT_WORKSPACES, id) ? NEXT_WORKSPACES[id] : undefined;
+/** Finite trusted implementation primitives; catalog entries contain no executable code. */
+export function nextTemplate(goal) {
+  return Object.values(NEXT_WORKSPACES).find((contract) => contract.goal === goal);
 }
-
+export function nextContractForExercise(id, template) {
+  const old = Object.hasOwn(NEXT_WORKSPACES, id) ? NEXT_WORKSPACES[id] : undefined;
+  if (template === undefined) return old;
+  const selected = nextTemplate(template);
+  return selected && (!old || old.goal === template) ? selected : undefined;
+}
+export function createNextWorkspaceRegistry(input) {
+  const exact = (value, keys) =>
+    value !== null &&
+    typeof value === 'object' &&
+    !Array.isArray(value) &&
+    Object.keys(value).length === keys.length &&
+    keys.every((key) => Object.hasOwn(value, key));
+  if (
+    !exact(input, ['schemaVersion', 'mode', 'workspaces']) ||
+    input.schemaVersion !== 1 ||
+    !['compiled', 'bootstrap-legacy'].includes(input.mode) ||
+    !Array.isArray(input.workspaces)
+  )
+    throw Error('Invalid Native catalog');
+  if (input.mode === 'bootstrap-legacy' && input.workspaces.length)
+    throw Error('Bootstrap cannot declare new workspaces');
+  const mode = input.mode;
+  const allowed = new Map(mode === 'bootstrap-legacy' ? Object.entries(NEXT_WORKSPACES) : []);
+  const seen = new Set();
+  for (const row of input.workspaces) {
+    if (
+      !exact(row, ['id', 'courseId', 'template']) ||
+      typeof row.id !== 'string' ||
+      row.id.length > 64 ||
+      !/^[a-z0-9]+(?:-[a-z0-9]+)*$/u.test(row.id) ||
+      typeof row.courseId !== 'string' ||
+      !/^[a-z0-9]+(?:-[a-z0-9]+)*$/u.test(row.courseId) ||
+      seen.has(row.id)
+    )
+      throw Error('Invalid or duplicate Native declaration');
+    const old = Object.hasOwn(NEXT_WORKSPACES, row.id) ? NEXT_WORKSPACES[row.id] : undefined;
+    const contract = nextTemplate(row.template);
+    if (!contract || (old && (old.goal !== row.template || row.courseId !== 'next')))
+      throw Error('Unknown or rebound Native execution contract');
+    seen.add(row.id);
+    allowed.set(row.id, contract);
+  }
+  return Object.freeze({
+    mode,
+    get: (id) => allowed.get(id),
+    register: (id, template) => {
+      const existing = allowed.get(id);
+      if (existing) {
+        if (existing.goal !== template) throw Error('Native contract cannot be rebound');
+        return existing;
+      }
+      if (
+        mode !== 'bootstrap-legacy' ||
+        typeof id !== 'string' ||
+        id.length > 64 ||
+        !/^[a-z0-9]+(?:-[a-z0-9]+)*$/u.test(id) ||
+        !nextTemplate(template)
+      )
+        throw Error('Workspace is not declared by the trusted compiler catalog');
+      const contract = nextTemplate(template);
+      allowed.set(id, contract);
+      return contract;
+    },
+  });
+}
+/** Learner bootstrap checks the sealed image input without passing controller policy via Env. */
+export function requireCompiledNativeCatalog() {
+  if (catalog.mode !== 'compiled') throw Error('Runtime image requires a compiled Native catalog');
+}
+if (globalThis.process?.env?.TSUMUCODE_REQUIRE_COMPILED_NATIVE_CATALOG === '1')
+  requireCompiledNativeCatalog();
+const registry = createNextWorkspaceRegistry(catalog);
+export function registerBrowserNextWorkspace(id, template) {
+  return registry.register(id, template);
+}
+export function nextWorkspace(id) {
+  return registry.get(id);
+}
 export function workspaceProfile(id) {
   return nextWorkspace(id) ? NEXT_PROFILE : 'vite-project-v1';
 }

@@ -6,10 +6,12 @@ import { createServer, request } from 'node:http';
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { setTimeout as delay } from 'node:timers/promises';
-import { nextWorkspace } from './next-project-protocol.mjs';
+import { nextWorkspace, requireCompiledNativeCatalog } from './next-project-protocol.mjs';
 import { nextFormBackend } from './next-form-backend.mjs';
 import { isNextForm, nextFormPostRoute } from './next-form-preview.mjs';
 import { nextDataBackend } from './next-data-backend.mjs';
+
+requireCompiledNativeCatalog();
 
 // 固定設定・依存だけで起動する。編集可能なserver moduleも非rootの同じ隔離内で実行する。
 const { files, metadata, preview } = JSON.parse(

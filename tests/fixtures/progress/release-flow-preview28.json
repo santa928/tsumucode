@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 2,
+  "courses": {
+    "html-css": {
+      "courseId": "html-css",
+      "contentRevision": "2026-07-29.1",
+      "lessons": {
+        "html-css-ch00-l01": {
+          "lessonId": "html-css-ch00-l01",
+          "viewedSlideIds": ["html-css-ch00-l01-s01"],
+          "passedExerciseIds": ["html-css-ch00-l01-e01"],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": ["html-css-ch00-l01-e01-r01", "html-css-ch00-l01-e01-r02"],
+          "passedViewportIds": ["desktop-1280"],
+          "currentComplete": false,
+          "currentSlideId": "html-css-ch00-l01-s01"
+        }
+      },
+      "currentComplete": false,
+      "updatedAt": "2026-10-29T06:35:18.336Z",
+      "currentLessonId": "html-css-ch00-l01",
+      "currentChapterId": "html-css-ch00"
+    },
+    "javascript": {
+      "courseId": "javascript",
+      "contentRevision": "2026-10-02.5",
+      "lessons": {
+        "javascript-ch00-l01": {
+          "lessonId": "javascript-ch00-l01",
+          "viewedSlideIds": ["javascript-ch00-l01-s01"],
+          "passedExerciseIds": [],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [],
+          "passedViewportIds": [],
+          "currentComplete": false,
+          "currentSlideId": "javascript-ch00-l01-s01"
+        }
+      },
+      "currentComplete": false,
+      "updatedAt": "2026-10-29T06:35:10.247Z",
+      "currentLessonId": "javascript-ch00-l01",
+      "currentChapterId": "javascript-ch00"
+    },
+    "next": {
+      "courseId": "next",
+      "contentRevision": "2026-10-28.1",
+      "lessons": {
+        "next-ch01-l01": {
+          "lessonId": "next-ch01-l01",
+          "viewedSlideIds": ["next-ch01-l01-s01"],
+          "passedExerciseIds": [],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [],
+          "passedViewportIds": [],
+          "currentComplete": false,
+          "currentSlideId": "next-ch01-l01-s01"
+        }
+      },
+      "currentComplete": false,
+      "updatedAt": "2026-10-29T06:35:10.449Z",
+      "currentLessonId": "next-ch01-l01",
+      "currentChapterId": "next-ch01"
+    },
+    "python-basics": {
+      "courseId": "python-basics",
+      "contentRevision": "2026-10-12.1",
+      "lessons": {
+        "python-basics-ch01-l01": {
+          "lessonId": "python-basics-ch01-l01",
+          "viewedSlideIds": ["python-basics-ch01-l01-s01"],
+          "passedExerciseIds": [],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [],
+          "passedViewportIds": [],
+          "currentComplete": false,
+          "currentSlideId": "python-basics-ch01-l01-s01"
+        }
+      },
+      "currentComplete": false,
+      "updatedAt": "2026-10-29T06:35:10.632Z",
+      "currentLessonId": "python-basics-ch01-l01",
+      "currentChapterId": "python-basics-ch01"
+    },
+    "react": {
+      "courseId": "react",
+      "contentRevision": "2026-10-07.7",
+      "lessons": {
+        "react-ch01-l01": {
+          "lessonId": "react-ch01-l01",
+          "viewedSlideIds": ["react-ch01-l01-s01"],
+          "passedExerciseIds": [],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [],
+          "passedViewportIds": [],
+          "currentComplete": false,
+          "currentSlideId": "react-ch01-l01-s01"
+        }
+      },
+      "currentComplete": false,
+      "updatedAt": "2026-10-29T06:35:10.934Z",
+      "currentLessonId": "react-ch01-l01",
+      "currentChapterId": "react-ch01"
+    },
+    "typescript": {
+      "courseId": "typescript",
+      "contentRevision": "2026-10-06.4",
+      "lessons": {
+        "typescript-ch01-l01": {
+          "lessonId": "typescript-ch01-l01",
+          "viewedSlideIds": ["typescript-ch01-l01-s01"],
+          "passedExerciseIds": [],
+          "passedChecklistItemIds": [],
+          "passedRuleIds": [],
+          "passedViewportIds": [],
+          "currentComplete": false,
+          "currentSlideId": "typescript-ch01-l01-s01"
+        }
+      },
+      "currentComplete": false,
+      "updatedAt": "2026-10-29T06:35:11.144Z",
+      "currentLessonId": "typescript-ch01-l01",
+      "currentChapterId": "typescript-ch01"
+    }
+  },
+  "drafts": {
+    "html-css:html-css-ch00-l01-e01": {
+      "courseId": "html-css",
+      "lessonId": "html-css-ch00-l01",
+      "exerciseId": "html-css-ch00-l01-e01",
+      "workspaceId": "html-css-ch00-l01-e01",
+      "contentRevision": "2026-07-29.1",
+      "editRevision": 2,
+      "files": {
+        "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>最初のWebページ</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"learning-note\">\n      <h1>わたしの学習ノート</h1>\n      <p>HTMLは内容、CSSは見た目を受け持ちます。</p>\n    </main>\n  </body>\n</html>\n\n",
+        "styles.css": "body {\n  margin: 0;\n  min-height: 100vh;\n  background-color: #fffaf0;\n  color: #19352d;\n  font-family: system-ui, sans-serif;\n}\n\n.learning-note {\n  max-width: 42rem;\n  margin: 0 auto;\n  padding: 4rem 2rem;\n}\n\n"
+      },
+      "selectedFile": "styles.css",
+      "activeStepId": "change-heading-text",
+      "cursors": {
+        "index.html": {
+          "anchor": 370,
+          "head": 370
+        },
+        "styles.css": {
+          "anchor": 209,
+          "head": 209
+        }
+      },
+      "validationHistory": [
+        {
+          "exerciseId": "html-css-ch00-l01-e01",
+          "executionRevision": 2,
+          "status": "pass",
+          "checks": [
+            {
+              "ruleId": "html-css-ch00-l01-e01-r01",
+              "requirementId": "html-css-ch00-l01-e01-r01",
+              "label": "h1の内容を学習ノートへ変える",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "h1の内容を学習ノートへ変える：条件を満たしています",
+              "expected": "h1の内容が「わたしの学習ノート」",
+              "actual": "[desktop-1280] わたしの学習ノート",
+              "nextAction": "index.htmlのh1開始Tagと終了Tagの間を書き換えます。",
+              "hintId": "html-css-ch00-l01-e01-h01",
+              "relatedSlideId": "html-css-ch00-l01-s02"
+            },
+            {
+              "ruleId": "html-css-ch00-l01-e01-r02",
+              "requirementId": "html-css-ch00-l01-e01-r02",
+              "label": "bodyの背景を生成り色にする",
+              "required": true,
+              "passed": true,
+              "requirementPassed": true,
+              "message": "bodyの背景を生成り色にする：条件を満たしています",
+              "expected": "bodyの背景色が#fffaf0",
+              "actual": "[desktop-1280] rgb(255, 250, 240)",
+              "nextAction": "用意されたbackground-colorの右側を#fffaf0へ置き換えます。",
+              "hintId": "html-css-ch00-l01-e01-h02",
+              "relatedSlideId": "html-css-ch00-l01-s03"
+            }
+          ],
+          "passedRequirementIds": ["html-css-ch00-l01-e01-r01", "html-css-ch00-l01-e01-r02"],
+          "diagnostics": [],
+          "evaluatedAt": "2026-10-29T06:35:18.336Z"
+        }
+      ],
+      "revealedHintIds": [],
+      "lastPassingSnapshots": {
+        "html-css-ch00-l01-e01": {
+          "editRevision": 2,
+          "contentRevision": "2026-07-29.1",
+          "files": {
+            "index.html": "<!doctype html>\n<html lang=\"ja\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>最初のWebページ</title>\n    <link rel=\"stylesheet\" href=\"styles.css\" />\n  </head>\n  <body>\n    <main class=\"learning-note\">\n      <h1>わたしの学習ノート</h1>\n      <p>HTMLは内容、CSSは見た目を受け持ちます。</p>\n    </main>\n  </body>\n</html>\n\n",
+            "styles.css": "body {\n  margin: 0;\n  min-height: 100vh;\n  background-color: #fffaf0;\n  color: #19352d;\n  font-family: system-ui, sans-serif;\n}\n\n.learning-note {\n  max-width: 42rem;\n  margin: 0 auto;\n  padding: 4rem 2rem;\n}\n\n"
+          },
+          "evaluatedAt": "2026-10-29T06:35:18.335Z"
+        }
+      },
+      "updatedAt": "2026-10-29T06:35:18.336Z"
+    }
+  },
+  "quarantined": []
+}

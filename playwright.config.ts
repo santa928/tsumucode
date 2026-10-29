@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 import { testServerUrl } from './tests/e2e/helpers/testBasePath';
 
 const CROSS_BROWSER_SMOKE_SPECS = [
+  'manifest-learning.spec.ts',
   'initial-preview.spec.ts',
   'exercise-reset.spec.ts',
   'editor-input-support.spec.ts',
@@ -17,7 +18,13 @@ const CROSS_BROWSER_SMOKE_SPECS = [
 ] as const;
 
 /** 任意のGitHub Pages subpathへpreviewとVite serverを揃えた実ブラウザ設定を作る。 */
-export function createPlaywrightConfig(basePath = process.env['BASE_PATH']) {
+export function createPlaywrightConfig(
+  basePath = process.env['BASE_PATH'],
+  projection: 'public' | 'authoring' = process.env['TSUMUCODE_AUTHORING_PREVIEW'] === '1'
+    ? 'authoring'
+    : 'public',
+) {
+  const authoring = projection === 'authoring';
   return defineConfig({
     testDir: './tests/e2e',
     outputDir: 'test-results/e2e-artifacts',
@@ -37,12 +44,15 @@ export function createPlaywrightConfig(basePath = process.env['BASE_PATH']) {
     },
     webServer: [
       {
-        command: 'npm run preview -- --host 0.0.0.0 --port 4173 --strictPort',
+        command:
+          'npm run preview -- --host 0.0.0.0 --port 4173 --strictPort' +
+          (authoring ? ' --outDir .release-v2/authoring-dist' : ''),
         url: testServerUrl(4173, basePath),
         reuseExistingServer: false,
       },
       {
         command: 'npm exec vite -- --host 0.0.0.0 --port 4174 --strictPort',
+        env: { TSUMUCODE_AUTHORING_PREVIEW: authoring ? '1' : '0' },
         url: testServerUrl(4174, basePath),
         reuseExistingServer: false,
       },

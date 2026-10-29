@@ -1,0 +1,317 @@
+name: Same-run release qualification
+
+on:
+  workflow_call:
+    inputs:
+      candidate_artifact_id:
+        type: string
+        required: true
+      metadata_artifact_id:
+        type: string
+        required: true
+    outputs:
+      qualification_artifact_id:
+        description: Immutable same-run aggregate artifact
+        value: ${{ jobs.aggregate.outputs.qualification_artifact_id }}
+      qualification_sha256:
+        description: SHA256 of the exact qualification.json bytes
+        value: ${{ jobs.aggregate.outputs.qualification_sha256 }}
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    needs: []
+    permissions:
+      contents: read
+    env:
+      BASE_PATH: /${{ github.event.repository.name }}/
+      TSUMUCODE_TEST_MAX_WORKERS: '1'
+      TSUMUCODE_DOCKER_TARGET: development
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          artifact-ids: ${{ inputs.candidate_artifact_id }}
+          path: dist
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          artifact-ids: ${{ inputs.metadata_artifact_id }}
+          path: .release-v2
+      - name: Build fixed verification tool
+        run: ./scripts/docker-compose.sh build app
+      - name: Execute frozen unit obligations
+        run: |
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF --volume "$PWD/.release-v2/authoring-public/generated/content:/workspace/public/generated/content:ro" app npm run release:flow -- run-suite --suite unit --output .release-v2/receipts/unit-$GITHUB_RUN_ATTEMPT.json
+      - name: Preserve passed receipts and bounded reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: receipts-unit-unit-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .release-v2/receipts/
+            .release-v2/reports/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Preserve failed verification diagnostics
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: diagnostics-unit-unit-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .release-v2/checks/
+            test-results/
+            lhci-report/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Stop only this verification tool
+        if: always()
+        run: ./scripts/docker-compose.sh down --remove-orphans
+
+  boundary:
+    needs: unit
+    uses: ./.github/workflows/local-runtime.yml
+    permissions:
+      contents: read
+    with:
+      candidate_artifact_id: ${{ inputs.candidate_artifact_id }}
+      metadata_artifact_id: ${{ inputs.metadata_artifact_id }}
+
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    needs: boundary
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        suite: [browser-chromium-1, browser-chromium-2, browser-firefox, browser-webkit]
+    env:
+      BASE_PATH: /${{ github.event.repository.name }}/
+      TSUMUCODE_TEST_MAX_WORKERS: '1'
+      SUITE: ${{ matrix.suite }}
+    # The fixed suite is selected by workflow metadata, never by an evidence file.
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          artifact-ids: ${{ inputs.candidate_artifact_id }}
+          path: dist
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          artifact-ids: ${{ inputs.metadata_artifact_id }}
+          path: .release-v2
+      - name: Build fixed verification tool
+        run: ./scripts/docker-compose.sh build app
+      - name: Execute frozen browser obligations
+        run: |
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF --volume "$PWD/.release-v2/authoring-public/generated/content:/workspace/public/generated/content:ro" app npm run release:flow -- run-suite --suite "$SUITE" --output ".release-v2/receipts/$SUITE-$GITHUB_RUN_ATTEMPT.json"
+      - name: Preserve passed receipts and bounded reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: receipts-browser-${{ matrix.suite }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .release-v2/receipts/
+            .release-v2/reports/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Preserve failed verification diagnostics
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: diagnostics-browser-${{ matrix.suite }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .release-v2/checks/
+            test-results/
+            lhci-report/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Stop only this verification tool
+        if: always()
+        run: ./scripts/docker-compose.sh down --remove-orphans
+
+  public_boundary:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    needs: browser
+    permissions:
+      contents: read
+    env:
+      BASE_PATH: /${{ github.event.repository.name }}/
+      TSUMUCODE_TEST_MAX_WORKERS: '1'
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          artifact-ids: ${{ inputs.candidate_artifact_id }}
+          path: dist
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          artifact-ids: ${{ inputs.metadata_artifact_id }}
+          path: .release-v2
+      - name: Build fixed verification tool
+        run: ./scripts/docker-compose.sh build app
+      - name: Execute frozen public_boundary obligations
+        run: |
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF app npm run release:flow -- run-suite --suite browser-public --output .release-v2/receipts/browser-public-$GITHUB_RUN_ATTEMPT.json
+      - name: Preserve passed receipts and bounded reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: receipts-public_boundary-public-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .release-v2/receipts/
+            .release-v2/reports/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Preserve failed verification diagnostics
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: diagnostics-public_boundary-public-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .release-v2/checks/
+            test-results/
+            lhci-report/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Stop only this verification tool
+        if: always()
+        run: ./scripts/docker-compose.sh down --remove-orphans
+
+  performance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    needs: public_boundary
+    permissions:
+      contents: read
+    env:
+      BASE_PATH: /${{ github.event.repository.name }}/
+      TSUMUCODE_TEST_MAX_WORKERS: '1'
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          artifact-ids: ${{ inputs.candidate_artifact_id }}
+          path: dist
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          artifact-ids: ${{ inputs.metadata_artifact_id }}
+          path: .release-v2
+      - name: Build fixed verification tool
+        run: ./scripts/docker-compose.sh build app
+      - name: Execute frozen performance obligations
+        run: |
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF app npm run release:flow -- run-suite --suite browser-performance --output .release-v2/receipts/browser-performance-$GITHUB_RUN_ATTEMPT.json
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF app npm run release:flow -- run-suite --suite performance --output .release-v2/receipts/performance-$GITHUB_RUN_ATTEMPT.json
+      - name: Preserve passed receipts and bounded reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: receipts-performance-performance-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .release-v2/receipts/
+            .release-v2/reports/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Preserve failed verification diagnostics
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: diagnostics-performance-performance-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .release-v2/checks/
+            test-results/
+            lhci-report/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Stop only this verification tool
+        if: always()
+        run: ./scripts/docker-compose.sh down --remove-orphans
+
+  aggregate:
+    if: always()
+    needs: [unit, boundary, browser, public_boundary, performance]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      qualification_artifact_id: ${{ steps.qualification_artifact.outputs['artifact-id'] }}
+      qualification_sha256: ${{ steps.qualification_digest.outputs.sha256 }}
+    permissions:
+      contents: read
+    env:
+      BASE_PATH: /${{ github.event.repository.name }}/
+      RELEASE_V2_NEEDS: ${{ toJSON(needs) }}
+      TSUMUCODE_DOCKER_TARGET: development
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          artifact-ids: ${{ inputs.candidate_artifact_id }}
+          path: dist
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          artifact-ids: ${{ inputs.metadata_artifact_id }}
+          path: .release-v2
+      - name: Download same-run independent receipts
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          pattern: receipts-*
+          merge-multiple: true
+          path: .release-v2
+      - name: Build fixed aggregation tool
+        run: ./scripts/docker-compose.sh build app
+      - name: Re-read actual main and deployed parent before admission
+        run: >-
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e RELEASE_V2_NEEDS
+          -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT
+          -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF
+          app npm run release:flow -- qualify --output .release-v2/qualification.json
+      - name: Pin exact qualification bytes
+        id: qualification_digest
+        run: |
+          digest="$(sha256sum .release-v2/qualification.json)"
+          echo "sha256=${digest%% *}" >> "$GITHUB_OUTPUT"
+      - name: Preserve qualified checkpoint
+        id: qualification_artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: qualification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .release-v2/qualification.json
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 90
+      - name: Report non-deploying migration result
+        run: echo '同runの必須品質検査と現在のmain／公開中の親版を照合しました。移行検査のため配信はしていません。' >> "$GITHUB_STEP_SUMMARY"
+      - name: Stop only aggregation tool
+        if: always()
+        run: ./scripts/docker-compose.sh down --remove-orphans

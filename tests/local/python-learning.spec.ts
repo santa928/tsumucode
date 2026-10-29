@@ -1,3 +1,4 @@
+import { attachPythonFixtureCoverage } from '../e2e/helpers/pythonFixtureCoverage';
 import { readFile } from 'node:fs/promises';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
@@ -117,58 +118,70 @@ test('Local CPythonの実プロセス・接続障害後の再試行・新規Cont
   }
 });
 
-test('Local CPythonの10Fixtureは実出力と2Ruleで採点する', async ({ page }) => {
-  test.setTimeout(180_000);
-  const exercise = parse(await readFile(`${sourceRoot}/exercise.yaml`, 'utf8')) as {
-    fixtures: {
-      id: string;
-      expectedStatus: string;
-      expectedFeedbackRuleIds: string[];
-      files: { source: string }[];
-    }[];
-  };
-  await page.goto(exerciseRoute);
-  await expect(page.locator('.cm-content')).toBeVisible();
-  for (const fixture of exercise.fixtures) {
-    const source = await readFile(`${sourceRoot}/${fixture.files[0]!.source}`, 'utf8');
-    await replaceEditorText(page, source);
-    await page.getByRole('button', { name: '判定する', exact: true }).click();
-    await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
-    await expect
-      .poll(async () => {
-        const history = (await draft(page))?.['validationHistory'] as
-          { status: string; checks: { passed: boolean; ruleId: string }[] }[] | undefined;
-        return history?.at(-1);
-      })
-      .toMatchObject({ status: fixture.expectedStatus });
-    const history = (await draft(page))?.['validationHistory'] as {
-      checks: { passed: boolean; ruleId: string }[];
-    }[];
-    expect(
-      history
-        .at(-1)
-        ?.checks.filter(({ passed }) => !passed)
-        .map(({ ruleId }) => ruleId),
-      fixture.id,
-    ).toEqual(fixture.expectedFeedbackRuleIds);
-    const close = page.getByRole('button', {
-      name: '閉じる',
-      exact: true,
-    });
-    await close.click();
-    if (fixture.expectedStatus === 'code-error') {
-      const error = fixture.id === 'syntax-error' ? 'SyntaxError' : 'NameError';
-      await expect(page.getByRole('region', { name: 'Console出力', exact: true })).toContainText(
-        error,
-      );
-      await replaceEditorText(page, 'print(3)\n');
-      await expect(
-        page.getByRole('region', { name: 'Console出力', exact: true }),
-      ).not.toContainText(error);
+test(
+  'Local CPythonの10Fixtureは実出力と2Ruleで採点する',
+  { annotation: { type: 'release-exercise', description: exerciseId } },
+  async ({ page }, info) => {
+    test.setTimeout(180_000);
+    const exercise = parse(await readFile(`${sourceRoot}/exercise.yaml`, 'utf8')) as {
+      fixtures: {
+        id: string;
+        expectedStatus: string;
+        expectedFeedbackRuleIds: string[];
+        files: { source: string }[];
+      }[];
+    };
+    await page.goto(exerciseRoute);
+    await expect(page.locator('.cm-content')).toBeVisible();
+    for (const fixture of exercise.fixtures) {
+      const source = await readFile(`${sourceRoot}/${fixture.files[0]!.source}`, 'utf8');
+      await replaceEditorText(page, source);
+      await page.getByRole('button', { name: '判定する', exact: true }).click();
+      await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
+      await expect
+        .poll(async () => {
+          const history = (await draft(page))?.['validationHistory'] as
+            { status: string; checks: { passed: boolean; ruleId: string }[] }[] | undefined;
+          return history?.at(-1);
+        })
+        .toMatchObject({ status: fixture.expectedStatus });
+      const history = (await draft(page))?.['validationHistory'] as {
+        checks: { passed: boolean; ruleId: string }[];
+      }[];
+      expect(
+        history
+          .at(-1)
+          ?.checks.filter(({ passed }) => !passed)
+          .map(({ ruleId }) => ruleId),
+        fixture.id,
+      ).toEqual(fixture.expectedFeedbackRuleIds);
+      const close = page.getByRole('button', {
+        name: '閉じる',
+        exact: true,
+      });
+      await close.click();
+      await attachPythonFixtureCoverage(info, {
+        exerciseId,
+        fixtureId: fixture.id,
+        mode: 'cpython',
+        files: { 'main.py': source },
+        actualStatus: fixture.expectedStatus as
+          'pass' | 'incomplete' | 'code-error' | 'system-error',
+      });
+      if (fixture.expectedStatus === 'code-error') {
+        const error = fixture.id === 'syntax-error' ? 'SyntaxError' : 'NameError';
+        await expect(page.getByRole('region', { name: 'Console出力', exact: true })).toContainText(
+          error,
+        );
+        await replaceEditorText(page, 'print(3)\n');
+        await expect(
+          page.getByRole('region', { name: 'Console出力', exact: true }),
+        ).not.toContainText(error);
+      }
+      await expect(page.locator('iframe[title="Python実行環境"]')).toHaveCount(0);
     }
-    await expect(page.locator('iframe[title="Python実行環境"]')).toHaveCount(0);
-  }
-});
+  },
+);
 
 test('CPythonの未対応・timeout・停止・古い結果を採点せず、入力から再試行する', async ({ page }) => {
   test.setTimeout(90_000);

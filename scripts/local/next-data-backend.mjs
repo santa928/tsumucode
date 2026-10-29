@@ -17,7 +17,8 @@ export async function nextDataBackend(workspaceId, base) {
   const compiled = JSON.parse(
     await readFile(new URL('./next-data-api.json', import.meta.url), 'utf8'),
   );
-  const source = compiled[workspaceId];
+  const source = compiled[contract.goal];
+  if (typeof source !== 'string') throw new Error('Missing fixed Native backend');
   const module = await import(
     'data:text/javascript;base64,' + Buffer.from(source).toString('base64')
   );

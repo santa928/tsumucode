@@ -1,3 +1,4 @@
+import { nextWorkspace } from './next-project-protocol.mjs';
 export const FORM_WORKSPACE = 'next-ch04-l01-e01';
 export const ACTION_WORKSPACE = 'next-ch04-l02-e01';
 const name = 'lesson-theme';
@@ -7,7 +8,9 @@ const epoch = 'Thu, 01 Jan 1970 00:00:00 GMT';
 function eligible(req, target) {
   if (
     target.profile !== 'next-project-v1' ||
-    ![FORM_WORKSPACE, ACTION_WORKSPACE].includes(target.workspaceId) ||
+    !['form-route-validation', 'server-action-validation'].includes(
+      nextWorkspace(target.workspaceId)?.goal,
+    ) ||
     !/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/u.test(target.runId) ||
     !Number.isSafeInteger(target.sourceRevision) ||
     target.sourceRevision < 1 ||
@@ -23,7 +26,7 @@ function eligible(req, target) {
   return (
     req.method === 'POST' &&
     req.headers.origin === origin &&
-    (target.workspaceId === FORM_WORKSPACE
+    (nextWorkspace(target.workspaceId)?.goal === 'form-route-validation'
       ? req.url === `${root}/api/note`
       : [root, `${root}/`].includes(req.url))
   );

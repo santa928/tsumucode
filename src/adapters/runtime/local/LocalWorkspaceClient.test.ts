@@ -206,3 +206,20 @@ it('HTTP成功でも別Next教材の固定ファイルをSourceへ採用しな�
     new LocalWorkspaceClient('next-ch02-l01-e01', 'next-project-v1').status(),
   ).rejects.toThrow();
 });
+
+it('registers a compiler-declared finite contract without sending an executable contract to the server', () => {
+  const client = new LocalWorkspaceClient(
+    'future-page-contract',
+    'next-project-v1',
+    'page-route-query',
+  );
+  expect(client.id).toBe('future-page-contract');
+  expect(nextWorkspace(client.id)?.goal).toBe('page-route-query');
+  expect(
+    () =>
+      new LocalWorkspaceClient('future-untrusted-contract', 'next-project-v1', 'arbitrary-code'),
+  ).toThrow();
+  expect(
+    () => new LocalWorkspaceClient('future-vite-contract', 'vite-project-v1', 'page-route-query'),
+  ).toThrow();
+});

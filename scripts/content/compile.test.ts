@@ -13,6 +13,8 @@ import {
 } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import { afterEach, describe, expect, it } from 'vitest';
 import { compileContent, publishStaging } from './compile';
 
@@ -35,6 +37,109 @@ afterEach(async () => {
 });
 
 describe('compileContent output safety', () => {
+  it('CLI --public --checkは公開投影を選びOutputへ書き込まない', async () => {
+    const root = await createTemporaryRoot();
+    await cp(path.resolve('tests/fixtures/foundation-content'), path.join(root, 'content'), {
+      recursive: true,
+    });
+    await cp(path.join(root, 'content/html-css'), path.join(root, 'content/draft-course'), {
+      recursive: true,
+    });
+    const coursePath = path.join(root, 'content/draft-course/course.yaml');
+    await writeFile(
+      coursePath,
+      (await readFile(coursePath, 'utf8'))
+        .replace('publicationStatus: published', 'publicationStatus: draft')
+        .replace('id: html-css', 'id: draft-course'),
+    );
+
+    const { stdout } = await promisify(execFile)(
+      process.execPath,
+      [
+        '--import',
+        import.meta.resolve('tsx'),
+        path.resolve('scripts/content/compile.ts'),
+        '--public',
+        '--check',
+      ],
+      { cwd: root },
+    );
+
+    expect(stdout).toContain('教材1 Courseを検証');
+    await expect(lstat(path.join(root, 'public'))).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('publicはdraftのCourse／Path／Assetを出力せず全Courseの作者情報を同じCompile結果へ残す', async () => {
+    const root = await createTemporaryRoot();
+    const sourceRoot = path.join(root, 'source');
+    const outputRoot = path.join(root, 'public/generated/content');
+    await cp(path.resolve('tests/fixtures/foundation-content'), sourceRoot, { recursive: true });
+    const draftRoot = path.join(sourceRoot, 'new-course');
+    await cp(path.join(sourceRoot, 'html-css'), draftRoot, { recursive: true });
+    const coursePath = path.join(draftRoot, 'course.yaml');
+    await writeFile(
+      coursePath,
+      (await readFile(coursePath, 'utf8'))
+        .replace('id: html-css', 'id: new-course')
+        .replace('publicationStatus: published', 'publicationStatus: draft'),
+    );
+    await writeFile(
+      path.join(sourceRoot, 'learning-paths/draft-path.yaml'),
+      `schemaVersion: 1
+id: draft-path
+title: 作者用Path
+description: 新しいCourseの確認
+publicationStatus: draft
+steps:
+  - courseId: new-course
+    role: required
+    prerequisiteCourseIds: []
+`,
+    );
+
+    const summary = await compileContent({
+      sourceRoot,
+      outputRoot,
+      checkOnly: false,
+      publication: 'public',
+    });
+
+    expect(summary.courseCount).toBe(1);
+    expect(summary.catalog.courses.map(({ id }) => id)).toEqual(['html-css']);
+    expect(summary.catalog.learningPaths.map(({ id }) => id)).toEqual(['frontend']);
+    expect(summary.compilations.map(({ runtime }) => runtime.id)).toEqual([
+      'html-css',
+      'new-course',
+    ]);
+    const draft = summary.compilations[1];
+    expect(draft?.runtime.phases[0]?.chapters[0]?.lessons[0]?.id).toBe('lesson-first-heading');
+    expect(draft?.authoringExercises?.[0]).toMatchObject({
+      id: 'exercise-first-heading',
+      solutionFiles: [{ path: 'index.html' }],
+    });
+    expect(draft?.authoringExercises?.[0]?.solutionFiles[0]?.content).toContain('<h1>');
+    expect(draft?.authoringExercises?.[0]?.fixtures.length).toBeGreaterThan(0);
+    await expect(lstat(path.join(outputRoot, 'courses/new-course'))).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+    await expect(lstat(path.join(outputRoot, 'assets/new-course'))).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+    await expect(
+      readFile(path.join(outputRoot, 'assets/html-css/html-structure.svg'), 'utf8'),
+    ).resolves.toContain('<svg');
+    const lesson = await readFile(
+      path.join(outputRoot, 'courses/html-css/lessons/lesson-first-heading.json'),
+      'utf8',
+    );
+    expect(lesson).not.toMatch(/solutionFiles|fixtures/u);
+
+    const authoring = await compileContent({ sourceRoot, outputRoot, checkOnly: true });
+    expect(authoring.courseCount).toBe(2);
+    expect(authoring.catalog.courses.map(({ id }) => id)).toEqual(['html-css', 'new-course']);
+    expect(authoring.catalog.learningPaths.map(({ id }) => id)).toEqual(['draft-path', 'frontend']);
+  });
+
   it('production compilerはCatalog v3と分割Courseだけをatomic publishする', async () => {
     const root = await createTemporaryRoot();
     const sourceRoot = path.join(root, 'source');
