@@ -4,6 +4,7 @@ import { createServer } from 'node:http';
 import { connect } from 'node:net';
 import { setTimeout as delay } from 'node:timers/promises';
 import test from 'node:test';
+import * as lifecycle from './next-form-cookie-lifecycle.mjs';
 import {
   cleanupCookieAcceptance,
   cookieNetworkErrorClass,
@@ -11,6 +12,52 @@ import {
   finishCookieResponse,
   withCookieDeadline,
 } from './next-form-cookie-lifecycle.mjs';
+
+test('遷移の失敗はURLや秘密値を含めず固定分類にする', () => {
+  const examples = [
+    ['page.goto: net::ERR_ABORTED at https://private.invalid/?token=private', 'net::ERR_ABORTED'],
+    [
+      'page.goto: net::ERR_CONNECTION_REFUSED at https://private.invalid/',
+      'net::ERR_CONNECTION_REFUSED',
+    ],
+    ['page.goto: Target page, context or browser has been closed', 'target-closed'],
+    ['page.goto: Page crashed', 'page-crashed'],
+    [
+      'page.goto: Navigation to "https://private.invalid" is interrupted by another navigation to "https://private.invalid/new"',
+      'navigation-interrupted',
+    ],
+    [
+      'Execution context was destroyed, most likely because of a navigation',
+      'execution-context-destroyed',
+    ],
+  ];
+  for (const [message, expected] of examples)
+    assert.equal(lifecycle.cookieFailureClass?.(new Error(message)), expected);
+});
+
+test('期限・採点通信・assertionの失敗も固定分類だけを残す', () => {
+  for (const name of [
+    'CookieAcceptanceDeadlineError',
+    'CookieAcceptanceRequestError',
+    'CookieAcceptanceConsumerError',
+    'TimeoutError',
+  ]) {
+    const error = new Error('private token and Cookie value');
+    error.name = name;
+    assert.equal(lifecycle.cookieFailureClass?.(error), name);
+  }
+  assert.equal(
+    lifecycle.cookieFailureClass?.(new assert.AssertionError({ message: 'private' })),
+    'assertion',
+  );
+});
+
+test('未知の例外名・本文・非例外値を診断へ転記しない', () => {
+  const error = new Error('https://private.invalid/?secret=value');
+  error.name = 'PrivateCookieValue';
+  for (const value of [error, undefined, null, 'private', { message: 'secret', name: 'secret' }])
+    assert.equal(lifecycle.cookieFailureClass?.(value), 'other');
+});
 
 test('Request失敗は固定分類だけを残し、任意の例外本文を保存しない', () => {
   for (const error of [

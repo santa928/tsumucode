@@ -21,6 +21,7 @@ import { FORM_WORKSPACE, ACTION_WORKSPACE } from './next-form-preview.mjs';
 import { watchDocumentVersion } from './next-project-observations.mjs';
 import {
   cleanupCookieAcceptance,
+  cookieFailureClass,
   cookieNetworkErrorClass,
   finishCookieActionResponse,
   finishCookieResponse,
@@ -46,7 +47,7 @@ let failure;
 const startedAt = performance.now();
 
 /** 固定の段階と成否だけを記録し、URL・Cookie・token・Source本文を出力しない。 */
-function progress(stage, outcome) {
+function progress(stage, outcome, failureClass) {
   currentStage = stage;
   console.log(
     JSON.stringify({
@@ -56,6 +57,7 @@ function progress(stage, outcome) {
       workspace,
       sequence,
       elapsedMs: Math.round(performance.now() - startedAt),
+      ...(failureClass ? { failureClass, browserConnected: browser?.isConnected() ?? false } : {}),
     }),
   );
 }
@@ -68,7 +70,11 @@ async function step(stage, operation, timeoutMs = 30000) {
     progress(stage, 'completed');
     return result;
   } catch (error) {
-    progress(stage, error.name === 'CookieAcceptanceDeadlineError' ? 'deadline' : 'failed');
+    progress(
+      stage,
+      error.name === 'CookieAcceptanceDeadlineError' ? 'deadline' : 'failed',
+      cookieFailureClass(error),
+    );
     throw error;
   }
 }
@@ -918,6 +924,7 @@ try {
         outcome: 'failed',
         initialFailure: Boolean(failure),
         initialCategory: failure?.name,
+        failureClass: cookieFailureClass(failure),
         cleanupFailures,
       }),
     );
