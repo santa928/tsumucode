@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { expect, test, type Page } from '@playwright/test';
@@ -14,17 +14,15 @@ import { hashValue } from '../../scripts/release/v2/identity';
 import { readStoredProgress } from './helpers/progress';
 import { testBasePath } from './helpers/testBasePath';
 
-const authoringRoot = existsSync('.release-v2/authoring-public/generated/content/catalog-v3.json')
-  ? '.release-v2/authoring-public'
-  : 'public';
+const contentRoot = process.env['TSUMUCODE_RELEASE_V2'] === '1' ? 'dist' : 'public';
 const catalog = CourseCatalogV3Schema.parse(
   JSON.parse(
-    readFileSync(path.join(authoringRoot, 'generated/content/catalog-v3.json'), 'utf8'),
+    readFileSync(path.join(contentRoot, 'generated/content/catalog-v3.json'), 'utf8'),
   ) as unknown,
 );
 const indexes = catalog.courses.map((entry) =>
   CourseIndexSchema.parse(
-    JSON.parse(readFileSync(path.join(authoringRoot, entry.indexPath), 'utf8')) as unknown,
+    JSON.parse(readFileSync(path.join(contentRoot, entry.indexPath), 'utf8')) as unknown,
   ),
 );
 const now = '2026-10-28T00:00:00.000Z';
@@ -108,20 +106,11 @@ async function assertActualSnapshot(page: Page, expected: RepositorySnapshot) {
   return stored;
 }
 
-test('manifestの全Lesson・workspaceと公開対象外の既知進捗を実IndexedDBからExport・再Importする', async ({
+test('manifestの全Lesson・workspaceと既知進捗を実IndexedDBからExport・再Importする', async ({
   page,
   browser,
 }, info) => {
   test.setTimeout(90_000);
-  if (process.env['TSUMUCODE_RELEASE_V2'] === '1') {
-    const publicCatalog = CourseCatalogV3Schema.parse(
-      JSON.parse(readFileSync('dist/generated/content/catalog-v3.json', 'utf8')) as unknown,
-    );
-    expect(
-      publicCatalog.courses.every(({ publicationStatus }) => publicationStatus === 'published'),
-    ).toBe(true);
-    expect(publicCatalog.progressCatalog).toBeDefined();
-  }
   const snapshot = syntheticSnapshot();
   const unsigned = { ...snapshot, appVersion: '0.1.0', exportedAt: now };
   await importJson(
@@ -137,6 +126,7 @@ test('manifestの全Lesson・workspaceと公開対象外の既知進捗を実Ind
   const file = info.outputPath('all-known-progress.json');
   await (await download).saveAs(file);
   const exported = await readFile(file, 'utf8');
+  await page.close();
   const context = await browser.newContext();
   try {
     const imported = await context.newPage();

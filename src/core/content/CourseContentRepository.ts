@@ -157,25 +157,6 @@ export class CourseContentRepository implements CourseContentRepositoryContract 
     });
   }
 
-  /** Catalogのhashに結び付けた本文なしの進捗契約をImport時だけ読む。 */
-  async loadProgressCatalog(
-    baseUrl: string,
-    reference: NonNullable<CourseCatalogV3['progressCatalog']>,
-  ) {
-    const resource = resolveContentResource(baseUrl, reference.path);
-    return this.singleFlight(JSON.stringify([resource, reference.sha256]), async () => {
-      const bytes = await fetchBytes(resource);
-      await this.assertIntegrity(bytes, reference.sha256, resource);
-      const { ProgressCatalogSchema } = await import('./progressCatalog');
-      try {
-        return ProgressCatalogSchema.parse(parseJsonBytes(bytes, resource)).courses;
-      } catch (error) {
-        if (error instanceof ContentLoadError) throw error;
-        throw new ContentLoadError('schema', resource, error);
-      }
-    });
-  }
-
   /** 現在Exerciseまでの同一workspaceを所有するLessonだけを教材順で取得する。 */
   async loadWorkspaceLessons(
     baseUrl: string,

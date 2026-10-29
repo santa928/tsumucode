@@ -223,7 +223,6 @@ export async function collectExecutionPlan(
         timeout: 120000,
         env: {
           ...process.env,
-          TSUMUCODE_AUTHORING_PREVIEW: definition.suite === 'browser-public' ? '0' : '1',
           BASE_PATH: definition.producerJobId === 'boundary' ? '/' : process.env['BASE_PATH'],
         },
       },

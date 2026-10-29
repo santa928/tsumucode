@@ -18,7 +18,6 @@ export interface CompileContentOptions {
   readonly sourceRoot: string;
   readonly outputRoot: string;
   readonly checkOnly: boolean;
-  readonly publication?: 'authoring' | 'public';
 }
 
 export interface CompilationSummary {
@@ -290,7 +289,7 @@ export async function compileContent(options: CompileContentOptions): Promise<Co
     }
     const nativeWorkspaceCatalog = buildNativeWorkspaceCatalog(compilations);
     const learningPaths = await compileLearningPaths(path.join(sourceRoot, 'learning-paths'));
-    const delivery = buildSplitContentDelivery(compilations, learningPaths, options.publication);
+    const delivery = buildSplitContentDelivery(compilations, learningPaths);
     const catalogRoundTrip = JSON.parse(
       stringifyCanonicalJson(delivery.catalog),
     ) as CourseCatalogV3;
@@ -368,7 +367,6 @@ async function main(): Promise<void> {
     sourceRoot: path.resolve(process.cwd(), 'content'),
     outputRoot: path.resolve(process.cwd(), 'public/generated/content'),
     checkOnly,
-    publication: arguments_.includes('--public') ? 'public' : 'authoring',
   });
   // An image-only sidecar; never add private authoring data or extra public files.
   if (process.env.TSUMUCODE_NATIVE_CONTRACTS_OUTPUT === '1') {

@@ -615,10 +615,6 @@ const CourseCatalogV3BaseSchema = z
   .object({
     schemaVersion: z.literal(3),
     courses: z.array(CourseCatalogEntryV3Schema).min(1),
-    progressCatalog: z
-      .object({ path: z.literal('generated/content/progress-catalog.json'), sha256: Sha256Schema })
-      .strict()
-      .optional(),
     learningPaths: z.array(LearningPathDefinitionSchema),
   })
   .strict();

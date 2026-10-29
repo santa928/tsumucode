@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { mkdtemp, readFile, rm, mkdir, symlink } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, cp, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -9,68 +9,41 @@ afterEach(async () => {
   for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true });
 });
 describe('single compilation release preparation', () => {
-  it('produces public and authoring trees plus the plan from one source traversal', async () => {
+  it('produces one sanitized tree with draft indexes and the same known-course inventory', async () => {
     const { prepareRelease } = await import('../../../../scripts/release/v2/prepare');
     const root = await mkdtemp(path.join(os.tmpdir(), 'release-prepare-'));
     roots.push(root);
-    const publicOutput = path.join(root, 'public/generated/content'),
-      authoringOutput = path.join(root, 'authoring/generated/content');
-    const result = await prepareRelease(path.resolve('content'), publicOutput, authoringOutput);
-    const published = CourseCatalogV3Schema.parse(
-      JSON.parse(await readFile(path.join(publicOutput, 'catalog-v3.json'), 'utf8')),
+    const sourceRoot = path.join(root, 'source');
+    await cp(path.resolve('tests/fixtures/foundation-content'), sourceRoot, { recursive: true });
+    await cp(path.join(sourceRoot, 'html-css'), path.join(sourceRoot, 'new-topic'), {
+      recursive: true,
+    });
+    const coursePath = path.join(sourceRoot, 'new-topic/course.yaml');
+    await writeFile(
+      coursePath,
+      (await readFile(coursePath, 'utf8'))
+        .replace('id: html-css', 'id: new-topic')
+        .replace('publicationStatus: published', 'publicationStatus: draft'),
     );
-    const authoring = CourseCatalogV3Schema.parse(
-      JSON.parse(await readFile(path.join(authoringOutput, 'catalog-v3.json'), 'utf8')),
+    const output = path.join(root, 'public/generated/content');
+    const result = await prepareRelease(sourceRoot, output);
+    const catalog = CourseCatalogV3Schema.parse(
+      JSON.parse(await readFile(path.join(output, 'catalog-v3.json'), 'utf8')),
     );
-    expect(published.courses.every((course) => course.publicationStatus === 'published')).toBe(
-      true,
+    expect(catalog.courses.map(({ id }) => id)).toEqual(['html-css', 'new-topic']);
+    expect(catalog.courses.find(({ id }) => id === 'new-topic')?.publicationStatus).toBe('draft');
+    expect(result.inventory.courses.map(({ id }) => id)).toEqual(
+      catalog.courses.map(({ id }) => id),
     );
-    expect(authoring.courses.some((course) => course.publicationStatus === 'draft')).toBe(true);
-    expect(result.inventory.courses.map((course) => course.id)).toEqual(
-      authoring.courses.map((course) => course.id),
+    expect(result.plan.publishedCourses).toEqual(['html-css']);
+    expect(Reflect.get(catalog, 'progressCatalog')).toBeUndefined();
+    await expect(readFile(path.join(output, 'progress-catalog.json'))).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+    const lesson = await readFile(
+      path.join(output, 'courses/new-topic/lessons/lesson-first-heading.json'),
+      'utf8',
     );
-    expect(result.plan.publishedCourses).toEqual(published.courses.map((course) => course.id));
-    const first = published.courses[0]!;
-    expect(
-      await readFile(
-        path.join(publicOutput, first.indexPath.replace('generated/content/', '')),
-        'utf8',
-      ),
-    ).toBe(
-      await readFile(
-        path.join(authoringOutput, first.indexPath.replace('generated/content/', '')),
-        'utf8',
-      ),
-    );
-  }, 30000);
-  it.each(['owned', 'symlink'])(
-    'rejects an authoring output with %s ownership before compilation',
-    async (kind) => {
-      const { prepareRelease } = await import('../../../../scripts/release/v2/prepare');
-      const root = await mkdtemp(path.join(os.tmpdir(), 'release-prepare-owner-'));
-      roots.push(root);
-      const owner = path.join(root, 'owner');
-      await mkdir(owner);
-      const target = path.join(root, 'authoring');
-      if (kind === 'owned') await mkdir(target);
-      else await symlink(owner, target);
-      await expect(
-        prepareRelease(
-          path.join(root, 'unread-source'),
-          path.join(root, 'public/generated/content'),
-          target,
-        ),
-      ).rejects.toThrow(/ownership|symlink/);
-    },
-  );
-  it('does not allow authoring and public paths to alias', async () => {
-    const { prepareRelease } = await import('../../../../scripts/release/v2/prepare');
-    await expect(
-      prepareRelease(
-        path.resolve('content'),
-        '/tmp/same/generated/content',
-        '/tmp/same/generated/content',
-      ),
-    ).rejects.toThrow();
+    expect(lesson).not.toMatch(/solutionFiles|fixtures/u);
   });
 });

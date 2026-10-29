@@ -57,7 +57,8 @@ export function parseAppBinding(
     artifactDigest: record.candidate.artifactDigest,
     artifactDigestFormat: 'canonical-dist-v1' as const,
     pageUrl: record.siteUrl,
-    projection: 'public' as const,
+    // Historical field: the single sanitized tree includes draft indexes, like the original site.
+    projection: 'authoring' as const,
     inventoryDigest: record.inventoryDigest,
     publicContentDigest: record.publicContentDigest,
   };

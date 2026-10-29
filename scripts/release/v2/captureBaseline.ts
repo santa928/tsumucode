@@ -121,7 +121,6 @@ export async function captureBaseline(options: CaptureOptions) {
     const compilation = await compileContent({
       sourceRoot: path.join(temporary, 'content'),
       outputRoot: output,
-      publication: original.binding.projection,
       checkOnly: false,
     });
     const inventory = buildInventory(compilation.compilations);
