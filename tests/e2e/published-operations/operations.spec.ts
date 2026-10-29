@@ -95,6 +95,20 @@ if (process.env['TSUMUCODE_PUBLISHED_OPERATIONS'] === '1') {
               .map((row) => row.id)
               .sort(),
           );
+          const reading = plan.targets.find((row) => row.kind === 'reading-resume')!;
+          const model = await course(reading.courseId!);
+          const lesson = model.phases
+            .flatMap((row) => row.chapters.flatMap((chapter) => chapter.lessons))
+            .find((row) => row.id === reading.lessonId)!;
+          const slide = lesson.slides[0]!;
+          await page
+            .getByRole('article', { name: model.title, exact: true })
+            .getByRole('link', { name: model.title + '：最初のピースを置く', exact: true })
+            .click();
+          await expect
+            .poll(() => new URL(page.url()).hash)
+            .toBe('#/courses/' + model.id + '/lessons/' + lesson.id + '/slides/' + slide.id);
+          await expect(page.getByTestId('slide-stage')).toHaveAttribute('data-slide-id', slide.id);
         } else if (target.kind === 'reading-resume') {
           await page.setViewportSize({ width: 390, height: 400 });
           await page.goto(
@@ -162,15 +176,47 @@ if (process.env['TSUMUCODE_PUBLISHED_OPERATIONS'] === '1') {
           await expect
             .poll(async () => JSON.stringify((await readStoredProgress(page)).courses))
             .toContain(slide.id);
+          const editing = plan.targets.find((row) => row.kind === 'grade-persist');
+          if (!editing) throw Error('No public editable workspace for draft transfer');
+          const full = await loadAuthoringCourse(path.join('content', editing.courseId!));
+          const exercise = full.exercises.find((row) => row.id === editing.exerciseId)!;
+          const file = exercise.files.find((row) => row.editable && row.content.trim().length > 0);
+          if (!file) throw Error('No nonempty public editable file for draft transfer');
+          const route =
+            './#/courses/' +
+            editing.courseId! +
+            '/lessons/' +
+            editing.lessonId! +
+            '/exercises/' +
+            editing.exerciseId!;
+          const draftContent = file.content + '\n';
+          await page.goto(route);
+          await page.getByRole('tab', { name: file.path, exact: true }).click();
+          const editor = page.getByRole('textbox', {
+            name: file.path + ' のコードエディター',
+            exact: true,
+          });
+          await editor.click();
+          await page.keyboard.press(process.platform === 'darwin' ? 'Meta+A' : 'Control+A');
+          await page.keyboard.insertText(draftContent);
+          await waitForStoredDraftContent(page, draftContent);
           await page.goto('./#/');
-          const before = await readStoredProgress(page),
-            download = page.waitForEvent('download');
+          const before = await readStoredProgress(page);
+          expect(before.drafts.length).toBeGreaterThan(0);
+          const transferred = before.drafts.find(
+            (row) =>
+              row['courseId'] === editing.courseId && row['workspaceId'] === exercise.workspaceId,
+          );
+          expect(z.record(z.string(), z.string()).parse(transferred?.['files'])[file.path]).toBe(
+            draftContent,
+          );
+          const download = page.waitForEvent('download');
           await page
             .getByRole('button', { name: '全コースの進捗と下書きを書き出す', exact: true })
             .click();
-          const file = info.outputPath('synthetic-public-progress.json');
-          await (await download).saveAs(file);
-          const bytes = await readFile(file);
+          const downloadPath = info.outputPath('synthetic-public-progress.json');
+          await (await download).saveAs(downloadPath);
+          const bytes = await readFile(downloadPath);
           const baseURL = info.project.use.baseURL;
           if (typeof baseURL !== 'string') throw Error('Missing public operation base URL');
           const fresh = await browser.newContext({ baseURL });
@@ -191,6 +237,25 @@ if (process.env['TSUMUCODE_PUBLISHED_OPERATIONS'] === '1') {
             const after = await readStoredProgress(imported);
             expect(after.courses).toEqual(before.courses);
             expect(after.drafts).toEqual(before.drafts);
+            await imported.goto(route);
+            await imported.getByRole('tab', { name: file.path, exact: true }).click();
+            const restoredEditor = imported.getByRole('textbox', {
+              name: file.path + ' のコードエディター',
+              exact: true,
+            });
+            await expect(restoredEditor).toBeVisible();
+            await restoredEditor.focus();
+            await imported.keyboard.press(
+              process.platform === 'darwin' ? 'Meta+End' : 'Control+End',
+            );
+            await expect(restoredEditor).toContainText(
+              draftContent.trimEnd().split('\n').filter(Boolean).at(-1)!,
+            );
+            await imported.goto('./#/');
+            await expect(
+              imported.getByRole('heading', { level: 1, name: '学びたいピースを選ぶ' }),
+            ).toBeVisible();
+            const beforeTamper = await readStoredProgress(imported);
             const bad = z
               .record(z.string(), z.unknown())
               .parse(JSON.parse(bytes.toString('utf8')) as unknown);
@@ -202,8 +267,8 @@ if (process.env['TSUMUCODE_PUBLISHED_OPERATIONS'] === '1') {
             });
             await expect(imported.getByRole('alert')).toBeVisible();
             const unchanged = await readStoredProgress(imported);
-            expect(unchanged.courses).toEqual(after.courses);
-            expect(unchanged.drafts).toEqual(after.drafts);
+            expect(unchanged.courses).toEqual(beforeTamper.courses);
+            expect(unchanged.drafts).toEqual(beforeTamper.drafts);
           } finally {
             await fresh.close();
           }
