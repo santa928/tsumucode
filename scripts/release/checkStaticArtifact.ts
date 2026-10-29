@@ -6,8 +6,7 @@ import { withoutReviewedNextSource } from './reviewedNextArtifact';
 import { hashFile } from './releaseHashes';
 import { z } from 'zod';
 import { InventorySchema, type ReleaseInventory } from './v2/schema';
-import { hashBytes, hashArtifact, ArtifactManifestSchema } from './v2/identity';
-import { ProgressCatalogSchema } from '../../src/core/content/progressCatalog';
+import { hashArtifact, ArtifactManifestSchema } from './v2/identity';
 import { CourseCatalogV3Schema } from '../../src/core/content/deliverySchema';
 import { readSplitCourseArtifacts } from '../content/readSplitCourseArtifacts';
 import {
@@ -163,9 +162,7 @@ export async function checkStaticArtifact(
   ) as { courses: readonly { id: string }[] };
   const pythonPaths = (
     inventory
-      ? inventory.courses.some(
-          (course) => course.publicationStatus === 'published' && course.runner === 'python',
-        )
+      ? inventory.courses.some((course) => course.runner === 'python')
       : catalog.courses.some(({ id }) => id === 'python-basics')
   )
     ? await pythonDistributionPaths(root)
@@ -204,50 +201,24 @@ export async function checkStaticArtifact(
     )
       throw new Error('Generated public file closure differs from the single compile');
     const parsedCatalog = CourseCatalogV3Schema.parse(catalog);
-    if (!parsedCatalog.progressCatalog) throw new Error('Missing known-course progress contracts');
-    const progressBytes = await readFile(path.join(root, parsedCatalog.progressCatalog.path));
-    if (hashBytes(progressBytes) !== parsedCatalog.progressCatalog.sha256)
-      throw new Error('Progress catalog integrity differs');
-    const progress = ProgressCatalogSchema.parse(
-      JSON.parse(progressBytes.toString('utf8')) as unknown,
-    );
     if (
-      progress.courses.length !== inventory.courses.length ||
-      inventory.courses.some((expected) => {
-        const descriptor = progress.courses.find(({ id }) => id === expected.id);
-        return (
-          !descriptor ||
-          descriptor.revision !== expected.revision ||
-          JSON.stringify(descriptor.entityIds.lesson) !==
-            JSON.stringify(expected.lessons.map(({ id }) => id)) ||
-          JSON.stringify(descriptor.entityIds.exercise) !==
-            JSON.stringify(
-              expected.lessons.flatMap(({ exercises }) => exercises.map(({ id }) => id)),
-            )
-        );
-      })
-    )
-      throw new Error('Known-course progress contracts differ from source inventory');
-    const published = inventory.courses.filter(
-      (course) => course.publicationStatus === 'published',
-    );
-    if (
-      !published.length ||
-      parsedCatalog.courses.length !== published.length ||
+      parsedCatalog.courses.length !== inventory.courses.length ||
       parsedCatalog.courses.some(
         (entry) =>
-          entry.publicationStatus !== 'published' ||
-          !published.some((course) => course.id === entry.id),
+          !inventory.courses.some(
+            (course) =>
+              course.id === entry.id && course.publicationStatus === entry.publicationStatus,
+          ),
       )
     )
       throw new Error('Public course set differs from the inventory');
-    for (const expected of published) {
+    for (const expected of inventory.courses) {
       const course = await readSplitCourseArtifacts(root, expected.id);
       const actualLessons = course.phases.flatMap((phase) =>
         phase.chapters.flatMap((chapter) => chapter.lessons),
       );
       if (
-        course.publicationStatus !== 'published' ||
+        course.publicationStatus !== expected.publicationStatus ||
         course.revision !== expected.revision ||
         course.runnerId !== expected.runner ||
         actualLessons.length !== expected.lessons.length ||

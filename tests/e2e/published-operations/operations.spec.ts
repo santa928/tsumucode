@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import { z } from 'zod';
+import { CourseCatalogV3Schema } from '../../../src/core/content/deliverySchema';
 import { BuildIdentitySchema, InventorySchema } from '../../../scripts/release/v2/schema';
 import { planPublishedOperations } from '../../../scripts/release/v2/publishedOperations';
 import { hashValue } from '../../../scripts/release/v2/identity';
@@ -82,18 +83,13 @@ if (process.env['TSUMUCODE_PUBLISHED_OPERATIONS'] === '1') {
           await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
           const catalog = await page.request.get('generated/content/catalog-v3.json');
           expect(catalog.ok()).toBe(true);
-          const value = z
-            .object({
-              courses: z.array(
-                z.object({ id: z.string(), publicationStatus: z.literal('published') }),
-              ),
-            })
-            .parse((await catalog.json()) as unknown);
-          expect(value.courses.map((row) => row.id).sort()).toEqual(
-            snapshot.inventory.courses
-              .filter((row) => row.publicationStatus === 'published')
-              .map((row) => row.id)
-              .sort(),
+          const value = CourseCatalogV3Schema.parse((await catalog.json()) as unknown);
+          const identity = (row: { id: string; publicationStatus: string }) => ({
+            id: row.id,
+            publicationStatus: row.publicationStatus,
+          });
+          expect(value.courses.map(identity).sort((a, b) => a.id.localeCompare(b.id))).toEqual(
+            snapshot.inventory.courses.map(identity).sort((a, b) => a.id.localeCompare(b.id)),
           );
           const reading = plan.targets.find((row) => row.kind === 'reading-resume')!;
           const model = await course(reading.courseId!);

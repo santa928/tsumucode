@@ -196,7 +196,7 @@ describe('independent review regressions', () => {
     expect((await stat(file)).mode & 0o777).toBe(0o644);
     await expect(writeProtocolJson(file, { changed: true })).rejects.toThrow();
   });
-  it('rejects uncatalogued draft JSON and draft-only assets after the one public compile', async () => {
+  it('rejects uncatalogued JSON and assets after the single sanitized compile', async () => {
     const { compileCourse } = await import('../../../../scripts/content/compileCourse');
     const { buildSplitContentDelivery, writeSplitContentDeliveryTree } =
       await import('../../../../scripts/content/splitContentDelivery');
@@ -207,10 +207,7 @@ describe('independent review regressions', () => {
     roots.push(root);
     const content = path.join(root, 'generated/content');
     await mkdir(content, { recursive: true });
-    await writeSplitContentDeliveryTree(
-      content,
-      buildSplitContentDelivery([compilation], [], 'public'),
-    );
+    await writeSplitContentDeliveryTree(content, buildSplitContentDelivery([compilation], []));
     await writeFile(path.join(root, 'index.html'), '<p>public</p>');
     const expected = await hashArtifact(content),
       current = buildInventory([compilation]);

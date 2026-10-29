@@ -16,6 +16,7 @@ import path from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { afterEach, describe, expect, it } from 'vitest';
+import { CourseIndexSchema } from '../../src/core/content/deliverySchema';
 import { compileContent, publishStaging } from './compile';
 
 const temporaryRoots: string[] = [];
@@ -37,7 +38,7 @@ afterEach(async () => {
 });
 
 describe('compileContent output safety', () => {
-  it('CLI --public --checkは公開投影を選びOutputへ書き込まない', async () => {
+  it('CLI --checkは全配信集合を検証しOutputへ書き込まない', async () => {
     const root = await createTemporaryRoot();
     await cp(path.resolve('tests/fixtures/foundation-content'), path.join(root, 'content'), {
       recursive: true,
@@ -59,17 +60,16 @@ describe('compileContent output safety', () => {
         '--import',
         import.meta.resolve('tsx'),
         path.resolve('scripts/content/compile.ts'),
-        '--public',
         '--check',
       ],
       { cwd: root },
     );
 
-    expect(stdout).toContain('教材1 Courseを検証');
+    expect(stdout).toContain('教材2 Courseを検証');
     await expect(lstat(path.join(root, 'public'))).rejects.toMatchObject({ code: 'ENOENT' });
   });
 
-  it('publicはdraftのCourse／Path／Assetを出力せず全Courseの作者情報を同じCompile結果へ残す', async () => {
+  it('配信集合はdraftも含め1つにし、解答とfixtureは同じCompileの非配信結果だけへ残す', async () => {
     const root = await createTemporaryRoot();
     const sourceRoot = path.join(root, 'source');
     const outputRoot = path.join(root, 'public/generated/content');
@@ -101,12 +101,11 @@ steps:
       sourceRoot,
       outputRoot,
       checkOnly: false,
-      publication: 'public',
     });
 
-    expect(summary.courseCount).toBe(1);
-    expect(summary.catalog.courses.map(({ id }) => id)).toEqual(['html-css']);
-    expect(summary.catalog.learningPaths.map(({ id }) => id)).toEqual(['frontend']);
+    expect(summary.courseCount).toBe(2);
+    expect(summary.catalog.courses.map(({ id }) => id)).toEqual(['html-css', 'new-course']);
+    expect(summary.catalog.learningPaths.map(({ id }) => id)).toEqual(['draft-path', 'frontend']);
     expect(summary.compilations.map(({ runtime }) => runtime.id)).toEqual([
       'html-css',
       'new-course',
@@ -119,12 +118,16 @@ steps:
     });
     expect(draft?.authoringExercises?.[0]?.solutionFiles[0]?.content).toContain('<h1>');
     expect(draft?.authoringExercises?.[0]?.fixtures.length).toBeGreaterThan(0);
-    await expect(lstat(path.join(outputRoot, 'courses/new-course'))).rejects.toMatchObject({
-      code: 'ENOENT',
-    });
-    await expect(lstat(path.join(outputRoot, 'assets/new-course'))).rejects.toMatchObject({
-      code: 'ENOENT',
-    });
+    expect(
+      CourseIndexSchema.parse(
+        JSON.parse(
+          await readFile(path.join(outputRoot, 'courses/new-course/index.json'), 'utf8'),
+        ) as unknown,
+      ).publicationStatus,
+    ).toBe('draft');
+    await expect(
+      readFile(path.join(outputRoot, 'assets/new-course/html-structure.svg'), 'utf8'),
+    ).resolves.toContain('<svg');
     await expect(
       readFile(path.join(outputRoot, 'assets/html-css/html-structure.svg'), 'utf8'),
     ).resolves.toContain('<svg');
@@ -133,11 +136,6 @@ steps:
       'utf8',
     );
     expect(lesson).not.toMatch(/solutionFiles|fixtures/u);
-
-    const authoring = await compileContent({ sourceRoot, outputRoot, checkOnly: true });
-    expect(authoring.courseCount).toBe(2);
-    expect(authoring.catalog.courses.map(({ id }) => id)).toEqual(['html-css', 'new-course']);
-    expect(authoring.catalog.learningPaths.map(({ id }) => id)).toEqual(['draft-path', 'frontend']);
   });
 
   it('production compilerはCatalog v3と分割Courseだけをatomic publishする', async () => {

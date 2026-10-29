@@ -3,6 +3,7 @@ import { lstat, mkdtemp, readFile, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
+import { CourseIndexSchema } from '../../src/core/content/deliverySchema';
 import { CourseManifestSchema } from '../../src/core/content/schema';
 import type { LearningPathDefinition } from '../../src/core/content/types';
 import { fixtureCourse } from '../../tests/fixtures/course';
@@ -31,7 +32,7 @@ afterEach(async () => {
 });
 
 describe('split content delivery', () => {
-  it('public投影は共有Assetを保持しdraft専用bytesとPathを除外する', async () => {
+  it('単一treeは共有Assetとdraftの配信bytesを保持する', async () => {
     const stagingRoot = await createTemporaryRoot();
     const compilation = await compileCourse(
       path.resolve('tests/fixtures/foundation-content/html-css'),
@@ -44,7 +45,6 @@ describe('split content delivery', () => {
         publicationStatus: 'draft',
       }),
       assets: new Map([
-        ...compilation.assets,
         ['assets/draft-course/private.svg', new TextEncoder().encode('draft-only-bytes')],
       ]),
     };
@@ -55,51 +55,31 @@ describe('split content delivery', () => {
       publicationStatus: 'draft',
       steps: [{ courseId: 'draft-course', role: 'required', prerequisiteCourseIds: [] }],
     };
-    const delivery = buildSplitContentDelivery([compilation, draft], [draftPath], 'public');
+    const delivery = buildSplitContentDelivery([compilation, draft], [draftPath]);
 
     await writeSplitContentDeliveryTree(stagingRoot, delivery);
 
-    expect(delivery.catalog.courses.map(({ id }) => id)).toEqual(['html-css']);
-    expect(delivery.catalog.learningPaths).toEqual([]);
+    expect(delivery.catalog.courses.map(({ id }) => id)).toEqual(['draft-course', 'html-css']);
+    expect(delivery.catalog.learningPaths).toEqual([draftPath]);
     const sharedAsset = await readFile(
       path.join(stagingRoot, 'assets/html-css/html-structure.svg'),
     );
     expect(new Uint8Array(sharedAsset)).toEqual(
       compilation.assets.get('assets/html-css/html-structure.svg'),
     );
-    await expect(lstat(path.join(stagingRoot, 'assets/draft-course'))).rejects.toMatchObject({
-      code: 'ENOENT',
-    });
-    await expect(lstat(path.join(stagingRoot, 'courses/draft-course'))).rejects.toMatchObject({
-      code: 'ENOENT',
-    });
+    await expect(
+      readFile(path.join(stagingRoot, 'assets/draft-course/private.svg'), 'utf8'),
+    ).resolves.toBe('draft-only-bytes');
+    expect(
+      CourseIndexSchema.parse(
+        JSON.parse(
+          await readFile(path.join(stagingRoot, 'courses/draft-course/index.json'), 'utf8'),
+        ) as unknown,
+      ).publicationStatus,
+    ).toBe('draft');
   });
 
-  it('public投影は公開Courseが除外Courseを前提にすると拒否する', async () => {
-    const compilation = await compileCourse(
-      path.resolve('tests/fixtures/foundation-content/html-css'),
-    );
-    const draft = {
-      ...compilation,
-      runtime: CourseManifestSchema.parse({
-        ...compilation.runtime,
-        id: 'draft-course',
-        publicationStatus: 'draft',
-      }),
-    };
-    const published = {
-      ...compilation,
-      runtime: CourseManifestSchema.parse({
-        ...compilation.runtime,
-        prerequisites: ['draft-course'],
-      }),
-    };
-    expect(() => buildSplitContentDelivery([published, draft], [], 'public')).toThrow(
-      /html-css.*draft-course/u,
-    );
-  });
-
-  it('public投影は除外Courseを要求する公開Pathを黙って書き換えない', async () => {
+  it('公開Pathの教材承認状態を配信可視性と混同しない', async () => {
     const compilation = await compileCourse(
       path.resolve('tests/fixtures/foundation-content/html-css'),
     );
@@ -123,7 +103,6 @@ describe('split content delivery', () => {
             steps: [{ courseId: 'draft-course', role: 'required', prerequisiteCourseIds: [] }],
           },
         ],
-        'public',
       ),
     ).toThrow(/LearningPath/u);
   });

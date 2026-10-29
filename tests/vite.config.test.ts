@@ -1,7 +1,6 @@
 // @vitest-environment node
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import viteConfiguration, { normalizeBasePath } from '../vite.config';
-afterEach(() => vi.unstubAllEnvs());
+import { describe, expect, it } from 'vitest';
+import { normalizeBasePath } from '../vite.config';
 
 const ERROR = 'BASE_PATHは同一OriginのPathで指定してください。';
 
@@ -34,17 +33,5 @@ describe('normalizeBasePath', () => {
     '/repo#fragment',
   ])('外部Originまたは非canonical Pathを拒否する: %s', (value) => {
     expect(() => normalizeBasePath(value)).toThrow(ERROR);
-  });
-});
-
-describe('authoring data projection', () => {
-  it('uses authoring data for the source server while keeping builds on the public projection', () => {
-    vi.stubEnv('TSUMUCODE_AUTHORING_PREVIEW', '1');
-    if (typeof viteConfiguration !== 'function')
-      throw new Error('Vite configuration must be a factory');
-    expect(viteConfiguration({ mode: 'test', command: 'serve' }).publicDir).toBe(
-      '.release-v2/authoring-public',
-    );
-    expect(viteConfiguration({ mode: 'test', command: 'build' }).publicDir).toBe('public');
   });
 });

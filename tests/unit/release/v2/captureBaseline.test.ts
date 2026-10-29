@@ -74,7 +74,6 @@ describe('live baseline capture protocol', () => {
       await compileContent({
         sourceRoot: path.join(root, 'content'),
         outputRoot: output,
-        publication: format === 'legacy' ? 'authoring' : 'public',
         checkOnly: false,
       });
       if (format === 'app') {

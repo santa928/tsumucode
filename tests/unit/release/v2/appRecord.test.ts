@@ -49,7 +49,7 @@ describe('automatic same-artifact app record', () => {
       sourceCommit: candidate.recipe.sourceCommit,
       artifactDigest: candidate.artifactDigest,
       artifactDigestFormat: 'canonical-dist-v1',
-      projection: 'public',
+      projection: 'authoring',
       inventoryDigest: record.inventoryDigest,
     });
   });

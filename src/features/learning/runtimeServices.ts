@@ -143,13 +143,6 @@ export async function loadTransferCourseIndexesFromCatalog(): Promise<
   readonly CourseMigrationDescriptor[]
 > {
   const catalog = await loadCourseCatalog(import.meta.env.BASE_URL);
-  if (catalog.progressCatalog) {
-    const { courseContentRepository } = await import('../../core/content/CourseContentRepository');
-    return courseContentRepository.loadProgressCatalog(
-      import.meta.env.BASE_URL,
-      catalog.progressCatalog,
-    );
-  }
   return Promise.all(
     catalog.courses.map((entry) => loadCourseIndex(import.meta.env.BASE_URL, entry)),
   );

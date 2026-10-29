@@ -13,7 +13,7 @@ import { readLegacyEvidence } from './legacy';
 import { planRelease } from './plan';
 import { compareLegacy } from './shadow';
 import { InventorySchema, PlanSchema } from './schema';
-import { prepareRelease, createAuthoringPreview } from './prepare';
+import { prepareRelease } from './prepare';
 import { createCandidate } from './candidate';
 import { captureBaseline } from './captureBaseline';
 import { validateCapturedBaseline } from './parent';
@@ -48,8 +48,7 @@ const optionNames: Readonly<Record<string, readonly string[]>> = {
   'stage-content': [],
   'verify-native-catalog': ['file'],
   baseline: ['repository', 'site-url'],
-  prepare: ['baseline', 'public-output', 'authoring-output'],
-  preview: [],
+  prepare: ['baseline', 'public-output'],
   candidate: ['snapshot', 'baseline', 'artifact-id', 'dist', 'execution-plan'],
   freeze: ['snapshot', 'baseline'],
   static: ['snapshot', 'dist'],
@@ -75,7 +74,6 @@ async function shadow(root: string) {
       outputRoot: path.join(temporary, 'generated/content'),
       // Shadow consumes the fully validated in-memory compilation, never a generated tree.
       checkOnly: true,
-      publication: 'public',
     });
     const inventory = buildInventory(compilation.compilations);
     const legacy = await readLegacyEvidence(
@@ -113,12 +111,7 @@ export async function runCli(
   const { values } = parseArgs({ args: rest, options, strict: true, allowPositionals: false });
   const root = path.resolve(values.root ?? process.cwd());
   const output = path.resolve(root, required(values.output, '--output'));
-  for (const protectedPath of [
-    'dist',
-    'public',
-    '.release-v2/authoring-dist',
-    '.release-v2/authoring-public',
-  ]) {
+  for (const protectedPath of ['dist', 'public']) {
     const protectedRoot = path.resolve(root, protectedPath);
     if (output === protectedRoot || output.startsWith(protectedRoot + path.sep))
       throw new Error('Receipt output overlaps artifact data');
@@ -220,14 +213,8 @@ export async function runCli(
         values['public-output']
           ? input(values['public-output'], '--public-output')
           : path.join(root, 'public/generated/content'),
-        values['authoring-output']
-          ? input(values['authoring-output'], '--authoring-output')
-          : path.join(root, '.release-v2/authoring-public/generated/content'),
         baseline,
       );
-      break;
-    case 'preview':
-      result = await createAuthoringPreview(root);
       break;
     case 'static': {
       const snapshot = PreparationSchema.parse(

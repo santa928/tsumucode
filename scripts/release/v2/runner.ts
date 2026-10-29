@@ -188,9 +188,6 @@ export async function runReleaseSuite(
         {
           ...environment,
           PLAYWRIGHT_JSON_OUTPUT_FILE: reportFile,
-          TSUMUCODE_AUTHORING_PREVIEW: ['browser-public', 'browser-performance'].includes(suite)
-            ? '0'
-            : '1',
         },
       );
       const report = await readJson(reportFile);

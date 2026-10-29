@@ -48,7 +48,7 @@ jobs:
         run: ./scripts/docker-compose.sh build app
       - name: Execute frozen unit obligations
         run: |
-          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF --volume "$PWD/.release-v2/authoring-public/generated/content:/workspace/public/generated/content:ro" app npm run release:flow -- run-suite --suite unit --output .release-v2/receipts/unit-$GITHUB_RUN_ATTEMPT.json
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF --volume "$PWD/dist/generated/content:/workspace/public/generated/content:ro" app npm run release:flow -- run-suite --suite unit --output .release-v2/receipts/unit-$GITHUB_RUN_ATTEMPT.json
       - name: Preserve passed receipts and bounded reports
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
@@ -118,7 +118,7 @@ jobs:
         run: ./scripts/docker-compose.sh build app
       - name: Execute frozen browser obligations
         run: |
-          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF --volume "$PWD/.release-v2/authoring-public/generated/content:/workspace/public/generated/content:ro" app npm run release:flow -- run-suite --suite "$SUITE" --output ".release-v2/receipts/$SUITE-$GITHUB_RUN_ATTEMPT.json"
+          ./scripts/docker-compose.sh run --rm -e BASE_PATH -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_JOB -e GITHUB_RUN_ATTEMPT -e GITHUB_SHA -e GITHUB_EVENT_NAME -e GITHUB_REF --volume "$PWD/dist/generated/content:/workspace/public/generated/content:ro" app npm run release:flow -- run-suite --suite "$SUITE" --output ".release-v2/receipts/$SUITE-$GITHUB_RUN_ATTEMPT.json"
       - name: Preserve passed receipts and bounded reports
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a

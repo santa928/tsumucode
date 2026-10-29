@@ -837,37 +837,3 @@ describe('ContentProgressMigrationService', () => {
     expect(mockMethod(repository, 'restoreBackup')).not.toHaveBeenCalled();
   });
 });
-
-it('公開対象外の教材も本文なしの進捗契約でImport・移行し、旧Sourceと履歴を同じように保つ', async () => {
-  const { projectProgressDescriptor, ProgressCatalogSchema } =
-    await import('../../../src/core/content/progressCatalog');
-  const input = oldSnapshot();
-  const full = new ContentProgressMigrationService(repositoryFor(input), {
-    id: () => 'same-record',
-    now: () => now,
-  });
-  full.registerCourse(migratingCourse);
-  const expected = await full.migrateSnapshotWithNotices(input, { requireRegisteredCourses: true });
-  const catalog = ProgressCatalogSchema.parse({
-    schemaVersion: 1,
-    courses: [
-      {
-        ...projectProgressDescriptor(splitCourseArtifacts(fixtureCourse).index),
-        revision: migratingCourse.revision,
-        progressMigrations: migratingCourse.progressMigrations,
-      },
-    ],
-  });
-  const dormant = new ContentProgressMigrationService(repositoryFor(input), {
-    id: () => 'same-record',
-    now: () => now,
-  });
-  dormant.registerCourseDescriptor(catalog.courses[0]!);
-  await expect(
-    dormant.migrateSnapshotWithNotices(input, { requireRegisteredCourses: true }),
-  ).resolves.toEqual(expected);
-  const unknown = new ContentProgressMigrationService(repositoryFor(input));
-  await expect(
-    unknown.migrateSnapshotWithNotices(input, { requireRegisteredCourses: true }),
-  ).rejects.toThrow(/未登録Course/u);
-});
