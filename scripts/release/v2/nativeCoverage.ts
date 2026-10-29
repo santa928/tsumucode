@@ -4,6 +4,17 @@ const Bytes = z.number().int().nonnegative();
 const MeasurementSchema = z
   .object({
     zombies: z.literal(0),
+    zombieProcesses: z.tuple([]),
+    zombieProcessesTruncated: z.literal(false),
+    // Same resource sample emitted by next-project-bootstrap; diagnostic context is not ownership evidence.
+    lifecycle: z
+      .object({
+        observedAtMs: z.number().int().positive(),
+        bootstrapPid: z.number().int().positive(),
+        currentChildPid: z.number().int().positive().nullable(),
+        phase: z.enum(['stopping', 'updating', 'paused', 'ready', 'starting']),
+      })
+      .strict(),
     memoryPeak: Bytes.positive(),
     memoryCurrent: Bytes,
     pids: z.number().int().min(1).max(64),

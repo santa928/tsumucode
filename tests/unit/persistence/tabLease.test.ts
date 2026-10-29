@@ -1257,6 +1257,120 @@ describe('TabLeaseCoordinator', () => {
     coordinator.dispose();
   });
 
+  it.each([false, true])(
+    '期限切れself leaseの再claim中もSessionとwrite拒否を保つ（再試行=%s）',
+    async (retryClaim) => {
+      const hub = new BroadcastHub();
+      const clock = new FakeClock();
+      const lifecycleTarget = new EventTarget();
+      const persistence = new SharedLeasePersistence(() => clock.now);
+      const coordinator = createCoordinator('tab-a', hub, clock, {
+        leasePersistence: persistence,
+        lifecycleTarget,
+        isVisible: () => true,
+      });
+      const handle = coordinator.acquire(COURSE_ID, WORKSPACE_ID, { beforeYield: async () => {} });
+      finishClaim(clock);
+      await flushPromises();
+      const oldProof = (await persistence.readWorkspaceLease(COURSE_ID, WORKSPACE_ID))!;
+      const transitions: ReturnType<typeof handle.getSnapshot>[] = [];
+      handle.subscribe(() => transitions.push(handle.getSnapshot()));
+      const claimGate = deferred();
+      const claim = persistence.tryClaimWorkspaceLease.bind(persistence);
+      const claimSpy = vi.spyOn(persistence, 'tryClaimWorkspaceLease');
+      if (retryClaim) claimSpy.mockResolvedValueOnce({ acquired: false });
+      claimSpy.mockImplementationOnce(async (candidate) => {
+        await claimGate.promise;
+        return claim(candidate);
+      });
+      clock.now = oldProof.expiresAt;
+      lifecycleTarget.dispatchEvent(new Event('focus'));
+      await flushPromises();
+      clock.advance(10);
+      await flushPromises();
+
+      if (retryClaim) {
+        clock.advance(10);
+        await flushPromises();
+      }
+
+      expect(handle.getSnapshot()).toMatchObject({ status: 'claiming' });
+      await expect(handle.runFencedWrite(async () => undefined)).rejects.toThrow('編集権');
+      expect(() => {
+        persistence.assertWrite(oldProof);
+      }).toThrow(LeaseFenceRejectedError);
+      expect(transitions.filter(({ status }) => status !== 'owned')).not.toHaveLength(0);
+      expect(
+        transitions
+          .filter(({ status }) => status !== 'owned')
+          .every(({ revalidating }) => revalidating === true),
+      ).toBe(true);
+      claimGate.resolve();
+      await flushPromises();
+
+      expect(handle.getSnapshot()).toMatchObject({ status: 'owned' });
+      expect(handle.getSnapshot().revalidating).toBeUndefined();
+      await expect(
+        handle.runFencedWrite(async (_token, proof) => {
+          expect(proof.token).not.toBe(oldProof.token);
+          persistence.assertWrite(proof);
+        }),
+      ).resolves.toBeUndefined();
+      coordinator.dispose();
+    },
+  );
+
+  it.each(['foreign-owner', 'data-epoch'] as const)(
+    '期限切れself lease再claim中の%s変更で編集を再開しない',
+    async (change) => {
+      const hub = new BroadcastHub();
+      const clock = new FakeClock();
+      const lifecycleTarget = new EventTarget();
+      const persistence = new SharedLeasePersistence(() => clock.now);
+      const coordinator = createCoordinator('tab-a', hub, clock, {
+        leasePersistence: persistence,
+        lifecycleTarget,
+        isVisible: () => true,
+      });
+      const handle = coordinator.acquire(COURSE_ID, WORKSPACE_ID, { beforeYield: async () => {} });
+      finishClaim(clock);
+      await flushPromises();
+      const claimGate = deferred();
+      const claim = persistence.tryClaimWorkspaceLease.bind(persistence);
+      vi.spyOn(persistence, 'tryClaimWorkspaceLease').mockImplementationOnce(async (candidate) => {
+        await claimGate.promise;
+        return claim(candidate);
+      });
+      clock.now = handle.getSnapshot().expiresAt!;
+      lifecycleTarget.dispatchEvent(new Event('focus'));
+      await flushPromises();
+      clock.advance(10);
+      await flushPromises();
+      if (change === 'data-epoch') persistence.replaceAll();
+      else {
+        persistence.forceOwner({
+          courseId: COURSE_ID,
+          workspaceId: WORKSPACE_ID,
+          ownerId: 'tab-b-owner',
+          token: 'tab-b-token',
+          dataEpoch: 0,
+          expiresAt: clock.now + 60,
+        });
+      }
+      claimGate.resolve();
+      await flushPromises();
+
+      expect(handle.getSnapshot()).toMatchObject(
+        change === 'data-epoch'
+          ? { status: 'released' }
+          : { status: 'read-only', ownerId: 'tab-b-owner' },
+      );
+      expect(handle.getSnapshot().revalidating).toBeUndefined();
+      await expect(handle.runFencedWrite(async () => undefined)).rejects.toThrow('編集権');
+      coordinator.dispose();
+    },
+  );
+
   it('focusで即新規writeを閉じ、pending flushをsettleしてからowner不一致へ収束する', async () => {
     const hub = new BroadcastHub();
     const clock = new FakeClock();
