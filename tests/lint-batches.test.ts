@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, readFile, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
@@ -68,4 +68,39 @@ it('propagates selection/configuration errors before running a lint batch', asyn
   expect(result.stderr).toContain('SyntaxError');
   expect(result.stdout).not.toContain('Lint batch');
   expect(result.stdout).not.toContain('Lint passed');
+}, 30000);
+
+it('checks every file once without sharing a process between the app and Node leaf Programs', async () => {
+  const root = await fixture();
+  await writeFile(
+    path.join(root, 'eslint.config.mjs'),
+    `import {appendFileSync} from 'node:fs';
+import path from 'node:path';
+const programs = new Set();
+const leafRule = {
+  meta:{schema:[],messages:{mixed:'Different leaf Programs share one process'}},
+  create(context){return {Program(node){
+    const file=path.relative(process.cwd(),context.filename);
+    programs.add(file.startsWith('src'+path.sep)?'app':'node');
+    appendFileSync('visited.jsonl',JSON.stringify({file,pid:process.pid})+'\\n');
+    if(programs.size>1)context.report({node,messageId:'mixed'});
+  }}}
+};
+export default [{ignores:['eslint.config.mjs']},{files:['**/*.ts'],plugins:{boundary:{rules:{leaf:leafRule}}},rules:{'boundary/leaf':'error'}}];\n`,
+  );
+  for (const file of ['scripts/tool.ts', 'src/main.ts']) {
+    await mkdir(path.dirname(path.join(root, file)), { recursive: true });
+    await writeFile(path.join(root, file), 'export const sample=1;\n');
+  }
+  const result = spawnSync(process.execPath, [cli], { cwd: root, encoding: 'utf8' });
+  expect(result.status, result.stdout + result.stderr).toBe(0);
+  const visits = (await readFile(path.join(root, 'visited.jsonl'), 'utf8'))
+    .trim()
+    .split('\n')
+    .map((line) => JSON.parse(line) as { file: string; pid: number });
+  expect(visits.map(({ file }) => file).sort()).toEqual([
+    path.join('scripts', 'tool.ts'),
+    path.join('src', 'main.ts'),
+  ]);
+  expect(new Set(visits.map(({ pid }) => pid)).size).toBe(2);
 }, 30000);

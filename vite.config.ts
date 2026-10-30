@@ -12,10 +12,15 @@ export function normalizeBasePath(value: string | undefined): string {
   return normalizePublicBasePath(value);
 }
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command, isPreview }) => {
   const env = loadEnv(mode, '.', '');
   return {
     base: normalizeBasePath(env.BASE_PATH),
+    // Internal source harnesses consume the frozen candidate's runtime assets too.
+    publicDir:
+      command === 'serve' && mode !== 'test' && !isPreview && env.TSUMUCODE_RELEASE_V2 === '1'
+        ? 'dist'
+        : 'public',
     plugins: [react(), tailwindcss(), reactPreviewSourcePlugin()],
     test: { maxWorkers: 2 },
     build: {
