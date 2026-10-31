@@ -43,6 +43,58 @@ export function cookieFailureClass(error) {
   return 'other';
 }
 
+/** 対象Pageの文書遷移だけを有限件で記録する。URL・Cookie・header・本文は渡さない。 */
+export function watchCookieNavigation(page, expectedUrl, record) {
+  const requests = new WeakMap();
+  let ordinal = 0;
+  let recorded = 0;
+  const emit = (row) => {
+    if (recorded++ < 32) record(row);
+  };
+  const request = (request) => {
+    if (!request.isNavigationRequest() || request.frame() !== page.mainFrame()) return;
+    const id = ++ordinal;
+    requests.set(request, id);
+    emit({ kind: 'request', ordinal: id, expected: request.url() === expectedUrl });
+  };
+  const observed = (kind, request, extra = {}) => {
+    const id = requests.get(request);
+    if (id !== undefined) emit({ kind, ordinal: id, ...extra });
+  };
+  const events = [
+    ['request', request],
+    [
+      'response',
+      (response) => observed('response', response.request(), { status: response.status() }),
+    ],
+    ['requestfinished', (request) => observed('finished', request)],
+    [
+      'requestfailed',
+      (request) =>
+        observed('failed', request, {
+          failureClass: cookieNetworkErrorClass(request.failure()?.errorText),
+        }),
+    ],
+    [
+      'framenavigated',
+      (frame) => {
+        if (frame === page.mainFrame())
+          emit({
+            kind: 'commit',
+            expected: frame.url() === expectedUrl,
+            blank: frame.url() === 'about:blank',
+          });
+      },
+    ],
+    ['close', () => emit({ kind: 'close' })],
+    ['crash', () => emit({ kind: 'crash' })],
+  ];
+  for (const [name, listener] of events) page.on(name, listener);
+  return () => {
+    for (const [name, listener] of events) page.off(name, listener);
+  };
+}
+
 /** Cookie検査の未完了待機を失敗にする。取消不能な操作は呼出元のcleanupで回収する。 */
 export async function withCookieDeadline(operation, timeoutMs, stage) {
   let timer;
