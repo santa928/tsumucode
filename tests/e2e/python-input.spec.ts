@@ -1,4 +1,5 @@
 import { attachPythonFixtureCoverage } from './helpers/pythonFixtureCoverage';
+import { observeLocalConsole } from './helpers/localConsoleDiagnostics';
 import { testBasePath } from './helpers/testBasePath';
 import { readFile } from 'node:fs/promises';
 import AxeBuilder from '@axe-core/playwright';
@@ -7,6 +8,18 @@ import { parse } from 'yaml';
 import { editorText, readStoredProgress, replaceEditorText } from './helpers/progress';
 
 const base = testBasePath();
+const consoleDiagnostics = new WeakMap<Page, ReturnType<typeof observeLocalConsole>>();
+test.beforeEach(async ({ page }) => {
+  consoleDiagnostics.set(page, observeLocalConsole(page));
+});
+test.afterEach(async ({ page }, info) => {
+  const observer = consoleDiagnostics.get(page);
+  observer?.stop();
+  if (info.status !== info.expectedStatus) {
+    // 診断の保存失敗で元の検証結果を上書きしない。
+    await observer?.attach(info).catch(() => undefined);
+  }
+});
 
 /** 同じ通常画面をCPython/Pyodide双方で検証する。合成の実行結果は使わない。 */
 async function storedDraft(page: Page, id: string) {
@@ -36,87 +49,90 @@ for (const number of [2, 3, 4, 5, 6, 7]) {
       await expect(page.locator('.cm-content')).toBeVisible();
       const local = (await page.getByRole('region', { name: 'CPythonの練習実行' }).count()) > 0;
       for (const fixture of exercise.fixtures) {
-        // 初回Previewの準備中はEditorが読取専用のため、編集可能になってから操作する。
-        await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled({
-          timeout: 30_000,
-        });
-        const source = await readFile(`${sourceRoot}/${fixture.files[0]!.source}`, 'utf8');
-        await replaceEditorText(page, source);
-        if (number === 2 || number === 3)
-          await page
-            .getByLabel('実行前の入力（1行につきinput 1回）')
-            .fill(fixture.inputLines.join('\n'));
-        const previous = (await storedDraft(page, exerciseId))?.['validationHistory'];
-        // Localの採点入力は固定。空の事前入力によるValueErrorはPreviewで引き続き確認する。
-        if (local && number === 3 && fixture.id === 'empty') {
-          await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
-          await expect(
-            page.getByRole('region', { name: 'Console出力', exact: true }),
-          ).toContainText('ValueError', { timeout: 30_000 });
-          expect((await storedDraft(page, exerciseId))?.['validationHistory']).toEqual(previous);
-        }
-        const expectedStatus = local
-          ? (fixture.expectedLocalStatus ?? fixture.expectedStatus)
-          : fixture.expectedStatus;
-        await page.getByRole('button', { name: '判定する', exact: true }).click();
-        if (expectedStatus === 'system-error') {
-          await expect(page.getByText(/入力行が不足しています/).first()).toBeVisible({
+        await test.step(fixture.id, async () => {
+          // 初回Previewの準備中はEditorが読取専用のため、編集可能になってから操作する。
+          await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeEnabled({
             timeout: 30_000,
           });
-          expect((await storedDraft(page, exerciseId))?.['validationHistory'], fixture.id).toEqual(
-            previous,
-          );
-          expect(await editorText(page)).toBe(source);
-          await expect(page.getByRole('dialog')).toHaveCount(0);
+          const source = await readFile(`${sourceRoot}/${fixture.files[0]!.source}`, 'utf8');
+          await replaceEditorText(page, source);
+          if (number === 2 || number === 3)
+            await page
+              .getByLabel('実行前の入力（1行につきinput 1回）')
+              .fill(fixture.inputLines.join('\n'));
+          const previous = (await storedDraft(page, exerciseId))?.['validationHistory'];
+          // Localの採点入力は固定。空の事前入力によるValueErrorはPreviewで引き続き確認する。
+          if (local && number === 3 && fixture.id === 'empty') {
+            await page.getByRole('button', { name: 'プレビューを更新', exact: true }).click();
+            await expect(
+              page.getByRole('region', { name: 'Console出力', exact: true }),
+            ).toContainText('ValueError', { timeout: 30_000 });
+            expect((await storedDraft(page, exerciseId))?.['validationHistory']).toEqual(previous);
+          }
+          const expectedStatus = local
+            ? (fixture.expectedLocalStatus ?? fixture.expectedStatus)
+            : fixture.expectedStatus;
+          await page.getByRole('button', { name: '判定する', exact: true }).click();
+          if (expectedStatus === 'system-error') {
+            await expect(page.getByText(/入力行が不足しています/).first()).toBeVisible({
+              timeout: 30_000,
+            });
+            expect(
+              (await storedDraft(page, exerciseId))?.['validationHistory'],
+              fixture.id,
+            ).toEqual(previous);
+            expect(await editorText(page)).toBe(source);
+            await expect(page.getByRole('dialog')).toHaveCount(0);
+            await attachPythonFixtureCoverage(info, {
+              exerciseId,
+              fixtureId: fixture.id,
+              mode: local ? 'cpython' : 'pyodide',
+              files: { 'main.py': source },
+              ...(!local ? { inputLines: fixture.inputLines } : {}),
+              actualStatus: 'system-error',
+            });
+            return;
+          }
+          await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
+          await expect
+            .poll(
+              async () => {
+                const history = (await storedDraft(page, exerciseId))?.['validationHistory'] as
+                  { status: string; checks: { passed: boolean; ruleId: string }[] }[] | undefined;
+                return history?.at(-1);
+              },
+              { message: fixture.id },
+            )
+            .toMatchObject({ status: expectedStatus });
+          const history = (await storedDraft(page, exerciseId))?.['validationHistory'] as {
+            checks: { passed: boolean; ruleId: string }[];
+          }[];
+          expect(
+            history
+              .at(-1)
+              ?.checks.filter((check) => !check.passed)
+              .map((check) => check.ruleId),
+            fixture.id,
+          ).toEqual(fixture.expectedFeedbackRuleIds);
+          await page.getByRole('button', { name: '閉じる', exact: true }).click();
+          if (number >= 5 && fixture.id === 'empty') {
+            await expect(
+              page
+                .getByRole('region', { name: 'Console出力', exact: true })
+                .getByText('0', { exact: true }),
+            ).toBeVisible();
+          }
+          if (number >= 5 && fixture.expectedStatus === 'code-error') {
+            expect(await editorText(page)).toBe(source);
+          }
           await attachPythonFixtureCoverage(info, {
             exerciseId,
             fixtureId: fixture.id,
             mode: local ? 'cpython' : 'pyodide',
             files: { 'main.py': source },
             ...(!local ? { inputLines: fixture.inputLines } : {}),
-            actualStatus: 'system-error',
+            actualStatus: expectedStatus as 'pass' | 'incomplete' | 'code-error' | 'system-error',
           });
-          continue;
-        }
-        await expect(page.getByRole('dialog')).toBeVisible({ timeout: 30_000 });
-        await expect
-          .poll(
-            async () => {
-              const history = (await storedDraft(page, exerciseId))?.['validationHistory'] as
-                { status: string; checks: { passed: boolean; ruleId: string }[] }[] | undefined;
-              return history?.at(-1);
-            },
-            { message: fixture.id },
-          )
-          .toMatchObject({ status: expectedStatus });
-        const history = (await storedDraft(page, exerciseId))?.['validationHistory'] as {
-          checks: { passed: boolean; ruleId: string }[];
-        }[];
-        expect(
-          history
-            .at(-1)
-            ?.checks.filter((check) => !check.passed)
-            .map((check) => check.ruleId),
-          fixture.id,
-        ).toEqual(fixture.expectedFeedbackRuleIds);
-        await page.getByRole('button', { name: '閉じる', exact: true }).click();
-        if (number >= 5 && fixture.id === 'empty') {
-          await expect(
-            page
-              .getByRole('region', { name: 'Console出力', exact: true })
-              .getByText('0', { exact: true }),
-          ).toBeVisible();
-        }
-        if (number >= 5 && fixture.expectedStatus === 'code-error') {
-          expect(await editorText(page)).toBe(source);
-        }
-        await attachPythonFixtureCoverage(info, {
-          exerciseId,
-          fixtureId: fixture.id,
-          mode: local ? 'cpython' : 'pyodide',
-          files: { 'main.py': source },
-          ...(!local ? { inputLines: fixture.inputLines } : {}),
-          actualStatus: expectedStatus as 'pass' | 'incomplete' | 'code-error' | 'system-error',
         });
       }
       if (number >= 5) {

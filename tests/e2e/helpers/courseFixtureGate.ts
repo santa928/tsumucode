@@ -1,4 +1,4 @@
-import { expect, type Page, type TestInfo } from '@playwright/test';
+import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import {
   loadAuthoringCourse,
   type AuthoringExercise,
@@ -22,6 +22,7 @@ import {
   loadBrowserConsoleModulePath,
 } from './javascriptRunnerModule';
 import { testBasePath, testServerUrl } from './testBasePath';
+import { fixtureFeedbackRuleIds, type FixtureFeedbackScope } from './fixtureFeedback';
 import type { RunnerRenderResult, ExecutionResult } from '../../../src/core/runtime/contracts';
 import { hashValue } from '../../../scripts/release/v2/identity';
 import { fixtureSourceDigest } from '../../../scripts/release/v2/fixtureSource';
@@ -58,6 +59,7 @@ interface BrowserFixtureEvaluationInput {
   readonly runnerExportName: string;
   readonly validatorExportName: string;
   readonly languageId: string;
+  readonly feedbackScope: FixtureFeedbackScope;
   readonly consoleModulePath?: string;
   readonly harnessUrl?: string;
 }
@@ -94,7 +96,7 @@ export function createCases(
     const solution: BrowserFixtureCase = {
       caseKind: 'solution',
       fixtureId: 'solution',
-      id: `${authoring.id}/solution`,
+      id: `${authoring.id}/solution/solution`,
       exercise,
       workspaceAssets: workspaceAssets.get(authoring.workspaceId) ?? authoring.assets,
       files: payloadFiles(authoring, solutionFiles),
@@ -104,14 +106,14 @@ export function createCases(
     const starter: BrowserFixtureCase = {
       caseKind: 'starter',
       fixtureId: 'starter',
-      id: `${authoring.id}/starter`,
+      id: `${authoring.id}/starter/starter`,
       exercise,
       workspaceAssets: workspaceAssets.get(authoring.workspaceId) ?? authoring.assets,
       files: payloadFiles(authoring, []),
       expectedStatus: 'not-pass',
     };
     const fixtureCases = fixtures.map((fixture: AuthoringFixture): BrowserFixtureCase => ({
-      id: `${authoring.id}/${fixture.id}`,
+      id: `${authoring.id}/authored/${fixture.id}`,
       caseKind: 'authored',
       fixtureId: fixture.id,
       exercise,
@@ -412,7 +414,7 @@ export async function evaluateCase(
             nextRequestId,
             assertGradable: (interaction) => {
               if ((interaction.diagnostics ?? []).some(({ severity }) => severity === 'error')) {
-              interactionDiagnostics = interaction.diagnostics ?? [];
+                interactionDiagnostics = interaction.diagnostics ?? [];
                 throw new Error(
                   `Fixture Interaction実行不能: ${JSON.stringify(interaction.diagnostics)}`,
                 );
@@ -474,6 +476,7 @@ export async function disposeFixtureHarness(page: Page): Promise<void> {
 }
 
 export const HTML_FIXTURE_RUNTIME: BrowserFixtureRuntimeInput = {
+  feedbackScope: 'requirement',
   runnerModulePath: new URL('src/adapters/runtime/html-css/index.ts', testServerUrl(4174)).href,
   validatorModulePath: new URL('src/core/validation/validatorRuleEngine.ts', testServerUrl(4174))
     .href,
@@ -490,6 +493,7 @@ export async function loadJavaScriptFixtureRuntime(): Promise<BrowserFixtureRunt
     loadBrowserConsoleModulePath(),
   ]);
   return {
+    feedbackScope: 'requirement',
     runnerModulePath,
     validatorModulePath,
     consoleModulePath,
@@ -503,7 +507,30 @@ interface CourseFixtureGateInput {
   readonly courseRoot: string;
   readonly courseId: string;
   readonly exerciseIds?: readonly string[];
+  readonly caseId?: string;
   readonly runtime: BrowserFixtureRuntimeInput;
+}
+
+/** 固定checkoutの教材と配信descriptorを一組の検査入力として読む。 */
+async function readFixtureInputs(courseRoot: string, courseId: string) {
+  const [authoring, generatedCourse] = await Promise.all([
+    loadAuthoringCourse(courseRoot),
+    readSplitCourseArtifacts('public', courseId),
+  ]);
+  return { authoring, generatedCourse };
+}
+
+const fixtureInputs = new Map<string, ReturnType<typeof readFixtureInputs>>();
+
+/** 不変checkoutの教材入力だけをprocess内で共有する。実行器・観測・合否は共有しない。 */
+export function loadFixtureInputs(courseRoot: string, courseId: string) {
+  const key = JSON.stringify([courseRoot, courseId]);
+  let input = fixtureInputs.get(key);
+  if (input === undefined) {
+    input = readFixtureInputs(courseRoot, courseId);
+    fixtureInputs.set(key, input);
+  }
+  return input;
 }
 
 /** 1 CourseのSolution、Starter、Fixtureを実Browser runtimeへ通す。 */
@@ -513,8 +540,7 @@ export async function assertCourseFixtureGate(
   info: TestInfo,
 ): Promise<void> {
   await observeRuntimePage(page);
-  const authoring = await loadAuthoringCourse(input.courseRoot);
-  const generatedCourse = await readSplitCourseArtifacts('public', input.courseId);
+  const { authoring, generatedCourse } = await loadFixtureInputs(input.courseRoot, input.courseId);
   const generatedIds = generatedCourse.phases.flatMap(({ chapters }) =>
     chapters.flatMap(({ lessons }) =>
       lessons.flatMap(({ exercises }) => exercises.map(({ id }) => id)),
@@ -556,7 +582,12 @@ export async function assertCourseFixtureGate(
     });
   }
   const filter = process.env['COURSE_FIXTURE_FILTER'];
-  const cases = filter === undefined ? allCases : allCases.filter(({ id }) => id.includes(filter));
+  const cases = allCases.filter(
+    ({ id }) =>
+      (input.caseId === undefined || id === input.caseId) &&
+      (filter === undefined || id.includes(filter)),
+  );
+  if (input.caseId !== undefined) expect(cases.map(({ id }) => id)).toEqual([input.caseId]);
   expect(cases.length, `Fixture filterに一致するcaseがありません: ${filter ?? ''}`).toBeGreaterThan(
     0,
   );
@@ -586,68 +617,71 @@ export async function assertCourseFixtureGate(
   }
   await page.goto(input.runtime.harnessUrl ?? testBasePath());
 
+  let primaryFailure: { readonly error: unknown } | undefined;
   try {
     let unexpectedSystemErrors = 0;
     const expectedUnhandledRejections: string[] = [];
     for (const fixtureCase of cases) {
-      const previousErrors = await readRuntimeErrors(page);
-      let result: ValidationResult;
-      try {
-        result = await evaluateCase(page, fixtureCase, input.runtime);
-      } catch (error) {
-        const runtimeErrors = await readRuntimeErrors(page);
-        throw new Error(
-          `${fixtureCase.id}: ${error instanceof Error ? error.message : String(error)}; runtimeErrors=${JSON.stringify(runtimeErrors)}`,
-          { cause: error },
-        );
-      }
-      let assertionContext = `${fixtureCase.id}\n${JSON.stringify(result, null, 2)}`;
-      if (result.status === 'system-error' && fixtureCase.expectedStatus !== 'system-error') {
-        unexpectedSystemErrors += 1;
-        assertionContext += `\nruntimeErrors=${JSON.stringify(await readRuntimeErrors(page))}`;
-      }
-      if (fixtureCase.expectedStatus === 'not-pass') {
-        expect(result.status, assertionContext).not.toBe('pass');
-        expect(result.status, assertionContext).not.toBe('system-error');
-        observe(fixtureCase, result);
-        continue;
-      }
-      expect(result.status, assertionContext).toBe(fixtureCase.expectedStatus);
-      if (fixtureCase.expectedDiagnosticCodes !== undefined) {
-        const diagnosticCodes = [
-          ...new Set(
-            result.diagnostics
-              .filter(({ severity }) => severity === 'error')
-              .map(({ code }) => code),
-          ),
-        ].sort();
-        expect(diagnosticCodes, assertionContext).toEqual(
-          [...fixtureCase.expectedDiagnosticCodes].sort(),
-        );
-      }
-      const failedFeedbackRuleIds = result.checks
-        .filter(({ passed }) => !passed)
-        .map(({ ruleId }) => ruleId)
-        .sort();
-      expect(failedFeedbackRuleIds, assertionContext).toEqual(
-        [...(fixtureCase.expectedFeedbackRuleIds ?? [])].sort(),
-      );
-      if (
-        fixtureCase.expectedStatus === 'code-error' &&
-        fixtureCase.expectedDiagnosticCodes?.includes('javascript-runtime')
-      ) {
-        const errors = await readRuntimeErrors(page);
-        const actualMessages = result.diagnostics
-          .filter(({ severity }) => severity === 'error')
-          .map(({ message }) => message);
-        for (const rejection of errors.unhandledRejections.slice(
-          previousErrors.unhandledRejections.length,
-        )) {
-          expect(actualMessages, assertionContext).toContain(rejection);
-          expectedUnhandledRejections.push(rejection);
+      await test.step(fixtureCase.id, async () => {
+        const previousErrors = await readRuntimeErrors(page);
+        let result: ValidationResult;
+        try {
+          result = await evaluateCase(page, fixtureCase, input.runtime);
+        } catch (error) {
+          const runtimeErrors = await readRuntimeErrors(page);
+          throw new Error(
+            `${fixtureCase.id}: ${error instanceof Error ? error.message : String(error)}; runtimeErrors=${JSON.stringify(runtimeErrors)}`,
+            { cause: error },
+          );
         }
-      }
-      observe(fixtureCase, result);
+        let assertionContext = `${fixtureCase.id}\n${JSON.stringify(result, null, 2)}`;
+        if (result.status === 'system-error' && fixtureCase.expectedStatus !== 'system-error') {
+          unexpectedSystemErrors += 1;
+          assertionContext += `\nruntimeErrors=${JSON.stringify(await readRuntimeErrors(page))}`;
+        }
+        if (fixtureCase.expectedStatus === 'not-pass') {
+          expect(result.status, assertionContext).not.toBe('pass');
+          expect(result.status, assertionContext).not.toBe('system-error');
+          observe(fixtureCase, result);
+          return;
+        }
+        expect(result.status, assertionContext).toBe(fixtureCase.expectedStatus);
+        if (fixtureCase.expectedDiagnosticCodes !== undefined) {
+          const diagnosticCodes = [
+            ...new Set(
+              result.diagnostics
+                .filter(({ severity }) => severity === 'error')
+                .map(({ code }) => code),
+            ),
+          ].sort();
+          expect(diagnosticCodes, assertionContext).toEqual(
+            [...fixtureCase.expectedDiagnosticCodes].sort(),
+          );
+        }
+        const failedFeedbackRuleIds = fixtureFeedbackRuleIds(
+          result.checks,
+          input.runtime.feedbackScope,
+        );
+        expect(failedFeedbackRuleIds, assertionContext).toEqual(
+          [...(fixtureCase.expectedFeedbackRuleIds ?? [])].sort(),
+        );
+        if (
+          fixtureCase.expectedStatus === 'code-error' &&
+          fixtureCase.expectedDiagnosticCodes?.includes('javascript-runtime')
+        ) {
+          const errors = await readRuntimeErrors(page);
+          const actualMessages = result.diagnostics
+            .filter(({ severity }) => severity === 'error')
+            .map(({ message }) => message);
+          for (const rejection of errors.unhandledRejections.slice(
+            previousErrors.unhandledRejections.length,
+          )) {
+            expect(actualMessages, assertionContext).toContain(rejection);
+            expectedUnhandledRejections.push(rejection);
+          }
+        }
+        observe(fixtureCase, result);
+      });
     }
 
     await Promise.all(contentResponseChecks);
@@ -662,7 +696,24 @@ export async function assertCourseFixtureGate(
       body: JSON.stringify(observations),
       contentType: 'application/json',
     });
-  } finally {
-    await disposeFixtureHarness(page);
+  } catch (error) {
+    primaryFailure = { error };
   }
+  try {
+    await disposeFixtureHarness(page);
+  } catch (cleanupFailure) {
+    if (primaryFailure !== undefined) {
+      const detail =
+        primaryFailure.error instanceof Error
+          ? primaryFailure.error.message
+          : 'Fixture検証で未知の例外が発生しました';
+      throw new AggregateError(
+        [primaryFailure.error, cleanupFailure],
+        `${detail}\nFixture解放にも失敗しました`,
+        { cause: cleanupFailure },
+      );
+    }
+    throw cleanupFailure;
+  }
+  if (primaryFailure !== undefined) throw primaryFailure.error;
 }
