@@ -10,6 +10,7 @@ import type {
   RunnerInput,
   SnapshotPolicy,
   RunnerAdapter,
+  RunnerDiagnostic,
 } from '../../../src/core/runtime/contracts';
 import type { ValidationContext, ValidationResult } from '../../../src/core/validation/contracts';
 import type { ValidatorAdapter } from '../../../src/core/validation/contracts';
@@ -360,64 +361,88 @@ export async function evaluateCase(
   const policy = extendSnapshotPolicyForInteractions(initial.policy, [fixtureCase.exercise]);
   const checkpoints: Record<string, Awaited<ReturnType<typeof runInteractionScenario>>> = {};
   const nextRequestId = (): string => crypto.randomUUID();
-  for (const viewport of fixtureCase.exercise.previewViewports) {
-    checkpoints[viewport.id] = [];
-    for (const scenario of fixtureCase.exercise.interactionScenarios ?? []) {
-      checkpoints[viewport.id]!.push(
-        ...(await runInteractionScenario({
-          exerciseSessionId: initial.runnerInput.exerciseSessionId,
-          executionRevision: initial.runnerInput.executionRevision,
-          viewport,
-          policy,
-          scenario,
-          render: () =>
-            page.evaluate(
-              async (input) => {
+  let interactionDiagnostics: readonly RunnerDiagnostic[] = [];
+  try {
+    for (const viewport of fixtureCase.exercise.previewViewports) {
+      checkpoints[viewport.id] = [];
+      for (const scenario of fixtureCase.exercise.interactionScenarios ?? []) {
+        checkpoints[viewport.id]!.push(
+          ...(await runInteractionScenario({
+            exerciseSessionId: initial.runnerInput.exerciseSessionId,
+            executionRevision: initial.runnerInput.executionRevision,
+            viewport,
+            policy,
+            scenario,
+            render: () =>
+              page.evaluate(
+                async (input) => {
+                  const harness = (
+                    window as typeof window & {
+                      __tsumucodeCourseFixtureHarness?: { runner: RunnerAdapter };
+                    }
+                  ).__tsumucodeCourseFixtureHarness;
+                  if (harness === undefined) throw new Error('Fixture Runnerがありません');
+                  return harness.runner.render(input);
+                },
+                { ...initial.runnerInput, viewport },
+              ),
+            interact: (request) =>
+              page.evaluate(async (request) => {
+                const harness = (
+                  window as typeof window & {
+                    __tsumucodeCourseFixtureHarness?: { runner: RunnerAdapter };
+                  }
+                ).__tsumucodeCourseFixtureHarness;
+                if (harness?.runner.interact === undefined)
+                  throw new Error('Fixture RunnerがInteractionに対応していません');
+                return harness.runner.interact(request);
+              }, request),
+            requestSnapshot: (request) =>
+              page.evaluate(async (request) => {
                 const harness = (
                   window as typeof window & {
                     __tsumucodeCourseFixtureHarness?: { runner: RunnerAdapter };
                   }
                 ).__tsumucodeCourseFixtureHarness;
                 if (harness === undefined) throw new Error('Fixture Runnerがありません');
-                return harness.runner.render(input);
-              },
-              { ...initial.runnerInput, viewport },
-            ),
-          interact: (request) =>
-            page.evaluate(async (request) => {
-              const harness = (
-                window as typeof window & {
-                  __tsumucodeCourseFixtureHarness?: { runner: RunnerAdapter };
-                }
-              ).__tsumucodeCourseFixtureHarness;
-              if (harness?.runner.interact === undefined)
-                throw new Error('Fixture RunnerがInteractionに対応していません');
-              return harness.runner.interact(request);
-            }, request),
-          requestSnapshot: (request) =>
-            page.evaluate(async (request) => {
-              const harness = (
-                window as typeof window & {
-                  __tsumucodeCourseFixtureHarness?: { runner: RunnerAdapter };
-                }
-              ).__tsumucodeCourseFixtureHarness;
-              if (harness === undefined) throw new Error('Fixture Runnerがありません');
-              return harness.runner.requestSnapshot(request);
-            }, request),
-          // Fixtureは編集を並行実行しない。非同期結果のidentity確認は製品helperが行う。
-          assertFresh: () => undefined,
-          nextRequestId,
-          assertGradable: (interaction) => {
-            if ((interaction.diagnostics ?? []).some(({ severity }) => severity === 'error')) {
-              throw new Error(
-                `Fixture Interaction実行不能: ${JSON.stringify(interaction.diagnostics)}`,
-              );
-            }
-          },
-        })),
-      );
+                return harness.runner.requestSnapshot(request);
+              }, request),
+            // Fixtureは編集を並行実行しない。非同期結果のidentity確認は製品helperが行う。
+            assertFresh: () => undefined,
+            nextRequestId,
+            assertGradable: (interaction) => {
+              if ((interaction.diagnostics ?? []).some(({ severity }) => severity === 'error')) {
+              interactionDiagnostics = interaction.diagnostics ?? [];
+                throw new Error(
+                  `Fixture Interaction実行不能: ${JSON.stringify(interaction.diagnostics)}`,
+                );
+              }
+            },
+          })),
+        );
+      }
     }
+  } catch (error) {
+    // Only an actual Runner-reported code failure can become a negative fixture result.
+    if (!interactionDiagnostics.some(({ severity }) => severity === 'error')) throw error;
   }
+  const diagnostics = [...initial.context.diagnostics, ...interactionDiagnostics];
+  const context: ValidationContext = {
+    ...initial.context,
+    diagnostics,
+    interactionCheckpoints: checkpoints,
+    ...(interactionDiagnostics.length > 0 && initial.context.execution
+      ? {
+          execution: {
+            ...initial.context.execution,
+            diagnostics,
+            status: interactionDiagnostics.some(({ kind }) => kind === 'system')
+              ? ('system-error' as const)
+              : ('code-error' as const),
+          },
+        }
+      : {}),
+  };
   return page.evaluate(
     async (input) => {
       const module = (await import(/* @vite-ignore */ input.validatorModulePath)) as Record<
@@ -427,7 +452,7 @@ export async function evaluateCase(
       const Validator = module[input.validatorExportName] as new () => ValidatorAdapter;
       return new Validator().validate(input.context);
     },
-    { ...runtime, context: { ...initial.context, interactionCheckpoints: checkpoints } },
+    { ...runtime, context },
   );
 }
 
@@ -563,7 +588,9 @@ export async function assertCourseFixtureGate(
 
   try {
     let unexpectedSystemErrors = 0;
+    const expectedUnhandledRejections: string[] = [];
     for (const fixtureCase of cases) {
+      const previousErrors = await readRuntimeErrors(page);
       let result: ValidationResult;
       try {
         result = await evaluateCase(page, fixtureCase, input.runtime);
@@ -599,12 +626,27 @@ export async function assertCourseFixtureGate(
         );
       }
       const failedFeedbackRuleIds = result.checks
-        .filter(({ requirementPassed }) => !requirementPassed)
+        .filter(({ passed }) => !passed)
         .map(({ ruleId }) => ruleId)
         .sort();
       expect(failedFeedbackRuleIds, assertionContext).toEqual(
         [...(fixtureCase.expectedFeedbackRuleIds ?? [])].sort(),
       );
+      if (
+        fixtureCase.expectedStatus === 'code-error' &&
+        fixtureCase.expectedDiagnosticCodes?.includes('javascript-runtime')
+      ) {
+        const errors = await readRuntimeErrors(page);
+        const actualMessages = result.diagnostics
+          .filter(({ severity }) => severity === 'error')
+          .map(({ message }) => message);
+        for (const rejection of errors.unhandledRejections.slice(
+          previousErrors.unhandledRejections.length,
+        )) {
+          expect(actualMessages, assertionContext).toContain(rejection);
+          expectedUnhandledRejections.push(rejection);
+        }
+      }
       observe(fixtureCase, result);
     }
 
@@ -613,7 +655,7 @@ export async function assertCourseFixtureGate(
     expect(unexpectedSystemErrors).toBe(0);
     await expect(readRuntimeErrors(page)).resolves.toEqual({
       pageErrors: [],
-      unhandledRejections: [],
+      unhandledRejections: expectedUnhandledRejections,
       consoleErrors: [],
     });
     await info.attach('release-fixtures-v1', {

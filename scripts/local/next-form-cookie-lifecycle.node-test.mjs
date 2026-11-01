@@ -360,3 +360,88 @@ test('upgrade済みの自分の接続を破棄してbridgeを終了する', asyn
     server.close();
   }
 });
+
+/** 文書navigationの診断だけを発火する。Cookieや実通信の成功を合成しない。 */
+function navigationFixture() {
+  const page = new EventEmitter();
+  const frame = { url: () => 'about:blank' };
+  page.mainFrame = () => frame;
+  return { page, frame };
+}
+
+test('文書navigationの対応と終端をURL本文なしで記録する', () => {
+  const { page, frame } = navigationFixture();
+  const records = [];
+  const url = 'http://private.invalid/hidden-route';
+  const stop = lifecycle.watchCookieNavigation(page, url, (record) => records.push(record));
+  const request = {
+    isNavigationRequest: () => true,
+    frame: () => frame,
+    url: () => url,
+    failure: () => ({ errorText: 'net::ERR_ABORTED' }),
+  };
+  page.emit('request', request);
+  page.emit('response', { request: () => request, status: () => 200 });
+  page.emit('requestfailed', request);
+  page.emit('framenavigated', frame);
+  assert.deepEqual(
+    records.map(({ kind }) => kind),
+    ['request', 'response', 'failed', 'commit'],
+  );
+  assert.equal(records[0].expected, true);
+  assert.equal(records[1].status, 200);
+  assert.equal(records[2].failureClass, 'net::ERR_ABORTED');
+  assert.equal(records[3].blank, true);
+  assert.ok(!JSON.stringify(records).includes(url));
+  stop();
+  for (const name of [
+    'request',
+    'response',
+    'requestfailed',
+    'requestfinished',
+    'framenavigated',
+    'close',
+    'crash',
+  ])
+    assert.equal(page.listenerCount(name), 0);
+});
+
+test('別Frame・通常fetchと未知の例外本文は診断へ持ち込まない', () => {
+  const { page, frame } = navigationFixture();
+  const records = [];
+  const stop = lifecycle.watchCookieNavigation(page, 'http://private.invalid/expected', (row) =>
+    records.push(row),
+  );
+  const request = {
+    isNavigationRequest: () => true,
+    frame: () => ({}),
+    url: () => 'hidden',
+    failure: () => null,
+  };
+  page.emit('request', request);
+  page.emit('request', { ...request, isNavigationRequest: () => false, frame: () => frame });
+  assert.equal(records.length, 0);
+  const own = {
+    ...request,
+    frame: () => frame,
+    failure: () => ({ errorText: 'hidden-runtime-detail' }),
+  };
+  page.emit('request', own);
+  page.emit('requestfailed', own);
+  assert.equal(records[1].failureClass, 'other');
+  assert.ok(!JSON.stringify(records).includes('hidden-runtime-detail'));
+  stop();
+});
+
+test('navigation診断は有限件で止まり、観測解除後は記録しない', () => {
+  const { page } = navigationFixture();
+  const records = [];
+  const stop = lifecycle.watchCookieNavigation(page, 'http://private.invalid/', (row) =>
+    records.push(row),
+  );
+  for (let i = 0; i < 200; i++) page.emit('close');
+  assert.equal(records.length, 32);
+  stop();
+  page.emit('crash');
+  assert.equal(records.length, 32);
+});

@@ -1,5 +1,6 @@
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import { setTimeout as pause } from 'node:timers/promises';
 import { mkdtemp, writeFile, rm } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
@@ -20,17 +21,28 @@ export interface CaptureOptions {
   readonly readJson?: (url: string) => Promise<unknown>;
   readonly readPublicFile?: (relative: string) => Promise<Uint8Array>;
 }
-async function fetchBytes(url: string): Promise<Uint8Array> {
-  const response = await fetch(url, {
-    redirect: 'error',
-    signal: AbortSignal.timeout(15000),
-    headers: { 'Cache-Control': 'no-cache' },
-  });
-  if (!response.ok) throw new Error('Public baseline request failed: ' + String(response.status));
-  const bytes = new Uint8Array(await response.arrayBuffer());
-  if (bytes.length > 16 * 1024 * 1024)
-    throw new Error('Public baseline response exceeds its limit');
-  return bytes;
+/** Retry only bounded, transient delivery statuses; no failed response body becomes evidence. */
+export async function fetchBytes(url: string): Promise<Uint8Array> {
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const response = await fetch(url, {
+      redirect: 'error',
+      signal: AbortSignal.timeout(15000),
+      headers: { 'Cache-Control': 'no-cache' },
+    });
+    if (!response.ok) {
+      if ([502, 503, 504].includes(response.status) && attempt < 3) {
+        await response.body?.cancel();
+        await pause(attempt * 100);
+        continue;
+      }
+      throw new Error('Public baseline request failed: ' + String(response.status));
+    }
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    if (bytes.length > 16 * 1024 * 1024)
+      throw new Error('Public baseline response exceeds its limit');
+    return bytes;
+  }
+  throw new Error('Public baseline attempt limit reached');
 }
 
 /** Capture the deployed source, never the mutable current candidate. No raw learner evidence is read. */

@@ -37,6 +37,10 @@ async function writeFiles(page: Page, exercise: AuthoringExercise, solution: boo
 async function closeFeedback(page: Page) {
   const dialog = page.getByRole('dialog', { name: '判定結果' });
   if (await dialog.isVisible()) {
+    // Persisted history can be visible before the remaining progress write releases busy.
+    await expect(dialog.getByRole('button', { name: '閉じる', exact: true })).toBeEnabled({
+      timeout: 15000,
+    });
     await page.keyboard.press('Escape');
     await expect(dialog).toBeHidden({ timeout: 15000 });
   }

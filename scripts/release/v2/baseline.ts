@@ -110,7 +110,20 @@ export async function matchPublicTree(
     Array.from({ length: Math.min(4, expected.files.length) }, async () => {
       while (index < expected.files.length) {
         const file = expected.files[index++]!;
-        const actual = await fetchFile(file.path);
+        let actual: Uint8Array;
+        try {
+          actual = await fetchFile(file.path);
+        } catch (error: unknown) {
+          // Only the public path and bounded HTTP status may reach the CLI message.
+          const detail =
+            error instanceof Error &&
+            /^Public baseline request failed: [1-5]\d{2}$/u.test(error.message)
+              ? error.message
+              : error instanceof Error && error.name === 'TimeoutError'
+                ? 'request timeout'
+                : 'request failed';
+          throw new Error(file.path + ' (' + detail + ')', { cause: error });
+        }
         if (actual.length !== file.bytes || hashBytes(actual) !== file.sha256)
           throw new Error('Public content differs from recorded source: ' + file.path);
       }
@@ -118,6 +131,10 @@ export async function matchPublicTree(
   );
   const failure = completion.find((result) => result.status === 'rejected');
   if (failure?.status === 'rejected')
-    throw new Error('Public content could not be verified', { cause: failure.reason });
+    throw new Error(
+      'Public content could not be verified: ' +
+        (failure.reason instanceof Error ? failure.reason.message : 'unknown failure'),
+      { cause: failure.reason },
+    );
   return { digest: expected.digest, files: expected.files.length };
 }

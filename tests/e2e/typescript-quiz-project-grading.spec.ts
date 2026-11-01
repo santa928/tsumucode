@@ -1,13 +1,27 @@
 import { expect, test } from '@playwright/test';
+import { build } from 'esbuild';
 import type * as RunnerModule from '../../src/adapters/runtime/typescript/TypeScriptRunnerAdapter';
 import type * as ValidatorModule from '../../src/adapters/validation/typescript/TypeScriptValidator';
 import type * as InteractionModule from '../../src/features/learning/session/runInteractionScenario';
 import type { InteractionResult, RunnerDiagnostic } from '../../src/core/runtime/contracts';
 import { testServerUrl } from './helpers/testBasePath';
+import { loadRuntimeModulePath } from './helpers/javascriptRunnerModule';
 import { writeFile } from 'node:fs/promises';
 import { loadAuthoringCourse } from '../../scripts/content/compileCourse';
 
 const course = await loadAuthoringCourse('content/typescript');
+// 実操作helperだけを同じSourceからbundleし、候補Workerと同originで実行する。
+const interactionBundle = await build({
+  entryPoints: ['src/features/learning/session/runInteractionScenario.ts'],
+  bundle: true,
+  write: false,
+  format: 'esm',
+  platform: 'browser',
+  target: 'es2023',
+});
+if (interactionBundle.outputFiles.length !== 1)
+  throw new Error('実操作helperは単一moduleが必要です');
+const interactionScript = interactionBundle.outputFiles[0]!.text;
 
 for (const learningMode of ['data', 'state', 'boundary'] as const) {
   const lesson = learningMode === 'data' ? '01' : learningMode === 'state' ? '02' : '03';
@@ -18,34 +32,42 @@ for (const learningMode of ['data', 'state', 'boundary'] as const) {
     test(`${learningMode}/${fixture.id}の製品採点は${contract}`, async ({ page }, testInfo) => {
       test.setTimeout(60_000);
       if (exercise.runtime?.kind !== 'typescript') throw new Error('TypeScript runtimeが必要です');
-      const harness = new URL('__typescript-annotation-grading', testServerUrl(4174)).href;
+      const harness = new URL('__typescript-annotation-grading', testServerUrl(4173)).href;
       await page.route(harness, (route) =>
         route.fulfill({
           contentType: 'text/html',
           body: '<!doctype html><title>型注釈採点</title>',
         }),
       );
+      const interactionPath = new URL('__typescript-interaction-runtime.js', testServerUrl(4173))
+        .href;
+      await page.route(interactionPath, (route) =>
+        route.fulfill({ contentType: 'text/javascript', body: interactionScript }),
+      );
       await page.goto(harness);
+      // 公開候補のWorkerを検証し、開発用module読込を解析期限へ混ぜない。
+      const [runnerPath, validatorPath] = await Promise.all([
+        loadRuntimeModulePath('src/adapters/runtime/typescript/TypeScriptRunnerAdapter.ts'),
+        loadRuntimeModulePath('src/adapters/validation/typescript/TypeScriptValidator.ts'),
+      ]);
       const observations = await page.evaluate(
-        async ({ fixtures, rules, runtime, exerciseId, viewport, scenarios }) => {
-          const runnerPath = new URL(
-            './src/adapters/runtime/typescript/TypeScriptRunnerAdapter.ts',
-            location.href,
-          ).href;
-          const validatorPath = new URL(
-            './src/adapters/validation/typescript/TypeScriptValidator.ts',
-            location.href,
-          ).href;
+        async ({
+          fixtures,
+          rules,
+          runtime,
+          exerciseId,
+          viewport,
+          scenarios,
+          runnerPath,
+          validatorPath,
+          interactionPath,
+        }) => {
           const { TypeScriptRunnerAdapter } = (await import(
             /* @vite-ignore */ runnerPath
           )) as typeof RunnerModule;
           const { TypeScriptValidator } = (await import(
             /* @vite-ignore */ validatorPath
           )) as typeof ValidatorModule;
-          const interactionPath = new URL(
-            './src/features/learning/session/runInteractionScenario.ts',
-            location.href,
-          ).href;
           const { runInteractionScenario, extendSnapshotPolicyForInteractions } = (await import(
             /* @vite-ignore */ interactionPath
           )) as typeof InteractionModule;
@@ -171,6 +193,9 @@ for (const learningMode of ['data', 'state', 'boundary'] as const) {
           }
         },
         {
+          runnerPath,
+          validatorPath,
+          interactionPath,
           fixtures: [fixture],
           rules: exercise.validationRules,
           runtime: exercise.runtime,

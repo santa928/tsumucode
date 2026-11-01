@@ -78,6 +78,27 @@ describe('actual deployed baseline binding', () => {
       ),
     ).rejects.toThrow();
   });
+  it('identifies a failed public path and bounded HTTP status without logging arbitrary error text', async () => {
+    const { matchPublicTree } = await import('../../../../scripts/release/v2/baseline');
+    const root = await mkdtemp(path.join(os.tmpdir(), 'release-baseline-status-'));
+    roots.push(root);
+    await writeFile(path.join(root, 'asset.svg'), '<svg/>');
+    await expect(
+      matchPublicTree(root, async () => {
+        throw new Error('Public baseline request failed: 503');
+      }),
+    ).rejects.toMatchObject({
+      message:
+        'Public content could not be verified: asset.svg (Public baseline request failed: 503)',
+    });
+    await expect(
+      matchPublicTree(root, async () => {
+        throw new Error('arbitrary-private-detail');
+      }),
+    ).rejects.toMatchObject({
+      message: 'Public content could not be verified: asset.svg (request failed)',
+    });
+  });
   it.each(['missing', 'pending', 'failure', 'wrong-url', 'wrong-ref', 'wrong-run'])(
     'does not infer current public source from %s deployment',
     async (failure) => {

@@ -26,6 +26,7 @@ import {
   finishCookieActionResponse,
   finishCookieResponse,
   withCookieDeadline,
+  watchCookieNavigation,
 } from './next-form-cookie-lifecycle.mjs';
 
 // 作者/CI専用。Cookie jarやfetchを模擬せず、実NextのServerコードとBrowserの送信で検証する。
@@ -505,8 +506,8 @@ async function submit(surface, input, expected) {
   }
 }
 
-/** 通常UIと同じiframe設定で新文書を作る。CookieやBrowser contextは変更しない。 */
-async function mountEmbedded(url) {
+/** Source更新前に旧iframeのHMR文書だけを外し、Cookie jarは同じContextへ保つ。 */
+async function removeEmbedded() {
   await step(
     'embedded-remove',
     () =>
@@ -515,6 +516,11 @@ async function mountEmbedded(url) {
       }),
     5000,
   );
+}
+
+/** 通常UIと同じiframe設定で新文書を作る。CookieやBrowser contextは変更しない。 */
+async function mountEmbedded(url) {
+  await removeEmbedded();
   await step(
     'embedded-create',
     () =>
@@ -749,27 +755,49 @@ try {
     );
     await submit(surface, 'dark', 'light');
     await submit(surface, 'read', 'dark');
-    // 同runのSource反映はCookieの寿命を変えない。run分離と版ごとの初期化を混同しない。
-    files[server] += '\n// 同runの版更新を確認する。\n';
-    saved = await api(`${path}/source`, { expectedSourceRevision: saved.sourceRevision, files });
-    const applying = saved;
-    saved = await api(`${path}/apply`, {
-      runId: active.runId,
-      expectedSourceRevision: applying.sourceRevision,
-      expectedSourceHash: applying.sourceHash,
-    });
-    assert.equal(saved.lastRun.runId, active.runId);
-    assert.equal(saved.lastRun.sourceRevision, applying.sourceRevision);
-    assert.equal(saved.lastRun.sourceHash, applying.sourceHash);
-    // apply完了とHMR完了は別。選択済みsurfaceで新文書を開き、Cookie保持を検証する。
-    if (tab) {
-      await step('goto-after-apply', () => tab.goto(url, { timeout: 15000 }), 15000);
-      await step(
-        'network-idle',
-        () => tab.waitForLoadState('networkidle', { timeout: 15000 }),
-        15000,
-      );
-    } else surface = await mountEmbedded(url);
+    const stopNavigation = tab
+      ? watchCookieNavigation(tab, url, (observation) =>
+          console.log(
+            JSON.stringify({
+              event: 'cookie-navigation',
+              workspace,
+              sequence,
+              stage: currentStage,
+              ...observation,
+            }),
+          ),
+        )
+      : () => {};
+    try {
+      // 旧文書のHMRによるreloadと、apply後の明示navigationを競合させない。
+      // 同じPage/Contextを維持し、Cookieの再注入やnavigation失敗の許容はしない。
+      if (tab)
+        await step('detach-before-apply', () => tab.goto('about:blank', { timeout: 15000 }), 15000);
+      else await removeEmbedded();
+      // 同runのSource反映はCookieの寿命を変えない。run分離と版ごとの初期化を混同しない。
+      files[server] += '\n// 同runの版更新を確認する。\n';
+      saved = await api(`${path}/source`, { expectedSourceRevision: saved.sourceRevision, files });
+      const applying = saved;
+      saved = await api(`${path}/apply`, {
+        runId: active.runId,
+        expectedSourceRevision: applying.sourceRevision,
+        expectedSourceHash: applying.sourceHash,
+      });
+      assert.equal(saved.lastRun.runId, active.runId);
+      assert.equal(saved.lastRun.sourceRevision, applying.sourceRevision);
+      assert.equal(saved.lastRun.sourceHash, applying.sourceHash);
+      // apply完了とHMR完了は別。選択済みsurfaceで新文書を開き、Cookie保持を検証する。
+      if (tab) {
+        await step('goto-after-apply', () => tab.goto(url, { timeout: 15000 }), 15000);
+        await step(
+          'network-idle',
+          () => tab.waitForLoadState('networkidle', { timeout: 15000 }),
+          15000,
+        );
+      } else surface = await mountEmbedded(url);
+    } finally {
+      stopNavigation();
+    }
     await submit(surface, 'read-after-apply', 'dark');
     await submit(surface, 'clear', 'dark');
     await submit(surface, 'read', 'absent');

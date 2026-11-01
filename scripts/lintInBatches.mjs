@@ -44,13 +44,17 @@ if (args[0] === '--list') {
     if (!Array.isArray(files) || !files.length || files.some((file) => typeof file !== 'string'))
       throw Error('Invalid lint file selection');
     const binary = path.join(path.dirname(require.resolve('eslint/package.json')), 'bin/eslint.js');
-    const size = 64,
-      total = Math.ceil(files.length / size);
-    for (let offset = 0; offset < files.length; offset += size) {
-      console.log('Lint batch ' + String(offset / size + 1) + '/' + String(total));
+    // Match eslint.config.js's leaf split so one process never retains both typed Programs.
+    const appFile = (file) => file.startsWith('src' + path.sep) && /\.tsx?$/u.test(file);
+    const batches = [];
+    for (const group of [files.filter((file) => !appFile(file)), files.filter(appFile)])
+      for (let offset = 0; offset < group.length; offset += 64)
+        batches.push(group.slice(offset, offset + 64));
+    for (const [index, batch] of batches.entries()) {
+      console.log('Lint batch ' + String(index + 1) + '/' + String(batches.length));
       const result = spawnSync(
         process.execPath,
-        [binary, '--no-warn-ignored', '--', ...files.slice(offset, offset + size)],
+        [binary, '--no-warn-ignored', '--', ...batch],
         { stdio: 'inherit' },
       );
       if (result.error) throw result.error;
