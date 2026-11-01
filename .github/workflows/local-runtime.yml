@@ -241,6 +241,7 @@ jobs:
           # 認証ヘッダー等を含み得るtraceは対象にせず、画面と判定結果だけを保持する。
           path: |
             test-results/local-python/results.json
+            test-results/local-python/runtime-resource.json
             test-results/local-python/**/*.png
             test-results/local-python/**/error-context.md
           if-no-files-found: warn
@@ -454,6 +455,13 @@ jobs:
           if [ -n "$controller" ]; then
             docker logs "$controller" 2>&1 | grep -E '^Next (Source apply failure|grade (deadline|slow|timing|failure)) ' || true
           fi
+          for service in controller web; do
+            container=$(./scripts/docker-compose.sh -p "$TSUMUCODE_LOCAL_OWNER" -f compose.learning.yaml ps -q "$service")
+            if [ -n "$container" ]; then
+              echo "Python $service memory events"
+              docker exec "$container" cat /sys/fs/cgroup/memory.events || true
+            fi
+          done
       - name: Collect exact Next native resource evidence
         if: inputs.candidate_artifact_id == ''
         run: >-
