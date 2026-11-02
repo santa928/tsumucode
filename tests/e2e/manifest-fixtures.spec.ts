@@ -13,6 +13,7 @@ import {
 } from './helpers/courseFixtureGate';
 import { testServerUrl } from './helpers/testBasePath';
 import { loadRuntimeModulePath } from './helpers/javascriptRunnerModule';
+import { orderFixtureCourses } from './helpers/fixtureCourseOrder';
 
 // exerciseを同じshardへ置き、fixture間ではContextとRunnerを独立させる。
 test.describe.configure({ mode: 'parallel' });
@@ -49,12 +50,15 @@ const adapters = {
 const catalog = CourseCatalogV3Schema.parse(
   JSON.parse(readFileSync('public/generated/content/catalog-v3.json', 'utf8')) as unknown,
 );
-for (const entry of catalog.courses.filter(
-  ({ publicationStatus }) => publicationStatus === 'published',
-)) {
-  const index = CourseIndexSchema.parse(
-    JSON.parse(readFileSync(path.join('public', entry.indexPath), 'utf8')) as unknown,
-  );
+const fixtureCourses = catalog.courses
+  .filter(({ publicationStatus }) => publicationStatus === 'published')
+  .map((entry) => ({
+    entry,
+    index: CourseIndexSchema.parse(
+      JSON.parse(readFileSync(path.join('public', entry.indexPath), 'utf8')) as unknown,
+    ),
+  }));
+for (const { entry, index } of orderFixtureCourses(fixtureCourses)) {
   const kind = index.runnerId;
   // Python/Next have distinct service contracts; their required targets remain unqualified here.
   if (kind === 'python' || kind === 'next') continue;
