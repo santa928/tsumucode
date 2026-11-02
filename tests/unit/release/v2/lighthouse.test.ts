@@ -12,7 +12,7 @@ function reports() {
   return context.urls.flatMap((requestedUrl, index) =>
     [0, 1].map((run) => ({
       requestedUrl,
-      fetchTime: `2026-11-02T10:00:0${index * 2 + run + 1}.000Z`,
+      fetchTime: `2026-11-02T10:00:0${String(index * 2 + run + 1)}.000Z`,
       lighthouseVersion: '12.8.2',
       audits: {
         'largest-contentful-paint': { numericValue: 1200 },
