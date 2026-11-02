@@ -229,46 +229,60 @@ async function verifySlides(
   }
 }
 
-test('OOPの草稿Slideを狭幅で読み、objectとFunctionの説明図を確認する', async ({ page }, info) => {
-  await verifySlides(page, info, [
-    ['python-oop-ch01-l01', 's01'],
-    ['python-oop-ch01-l01', 's02'],
-    ['python-oop-ch01-l01', 's03'],
-    ['python-oop-ch01-l02', 's01'],
-    ['python-oop-ch01-l02', 's02'],
-    ['python-oop-ch01-l02', 's03'],
-    ['python-oop-ch01-l02', 's04'],
-    ['python-oop-ch02-l01', 's01'],
-    ['python-oop-ch02-l01', 's02'],
-    ['python-oop-ch02-l01', 's03'],
-    ['python-oop-ch02-l01', 's04'],
-    ['python-oop-ch02-l02', 's01'],
-    ['python-oop-ch02-l02', 's02'],
-    ['python-oop-ch02-l02', 's03'],
-    ['python-oop-ch02-l02', 's04'],
-    ['python-oop-ch02-l03', 's01'],
-    ['python-oop-ch02-l03', 's02'],
-    ['python-oop-ch02-l03', 's03'],
-    ['python-oop-ch02-l03', 's04'],
-    ['python-oop-ch03-l01', 's01'],
-    ['python-oop-ch03-l01', 's02'],
-    ['python-oop-ch03-l01', 's03'],
-    ['python-oop-ch03-l01', 's04'],
-    ['python-oop-ch03-l02', 's01'],
-    ['python-oop-ch03-l02', 's02'],
-    ['python-oop-ch03-l02', 's03'],
-    ['python-oop-ch03-l02', 's04'],
-  ]);
-});
+const slideGroups = [
+  {
+    name: 'OOPの草稿Slideを狭幅で読み、objectとFunctionの説明図を確認する',
+    slides: [
+      ['python-oop-ch01-l01', 's01'],
+      ['python-oop-ch01-l01', 's02'],
+      ['python-oop-ch01-l01', 's03'],
+      ['python-oop-ch01-l02', 's01'],
+      ['python-oop-ch01-l02', 's02'],
+      ['python-oop-ch01-l02', 's03'],
+      ['python-oop-ch01-l02', 's04'],
+      ['python-oop-ch02-l01', 's01'],
+      ['python-oop-ch02-l01', 's02'],
+      ['python-oop-ch02-l01', 's03'],
+      ['python-oop-ch02-l01', 's04'],
+      ['python-oop-ch02-l02', 's01'],
+      ['python-oop-ch02-l02', 's02'],
+      ['python-oop-ch02-l02', 's03'],
+      ['python-oop-ch02-l02', 's04'],
+      ['python-oop-ch02-l03', 's01'],
+      ['python-oop-ch02-l03', 's02'],
+      ['python-oop-ch02-l03', 's03'],
+      ['python-oop-ch02-l03', 's04'],
+      ['python-oop-ch03-l01', 's01'],
+      ['python-oop-ch03-l01', 's02'],
+      ['python-oop-ch03-l01', 's03'],
+      ['python-oop-ch03-l01', 's04'],
+      ['python-oop-ch03-l02', 's01'],
+      ['python-oop-ch03-l02', 's02'],
+      ['python-oop-ch03-l02', 's03'],
+      ['python-oop-ch03-l02', 's04'],
+    ],
+  },
+  {
+    name: '設定付きdecoratorとProjectの草稿Slideを狭幅で確認する',
+    slides: [
+      ['python-oop-ch03-l03', 's01'],
+      ['python-oop-ch03-l03', 's02'],
+      ['python-oop-ch03-l03', 's03'],
+      ['python-oop-ch03-l03', 's04'],
+      ['python-oop-ch04-l01', 's01'],
+      ['python-oop-ch04-l01', 's02'],
+      ['python-oop-ch04-l01', 's03'],
+    ],
+  },
+] as const;
 
-test('設定付きdecoratorとProjectの草稿Slideを狭幅で確認する', async ({ page }, info) => {
-  await verifySlides(page, info, [
-    ['python-oop-ch03-l03', 's01'],
-    ['python-oop-ch03-l03', 's02'],
-    ['python-oop-ch03-l03', 's03'],
-    ['python-oop-ch03-l03', 's04'],
-    ['python-oop-ch04-l01', 's01'],
-    ['python-oop-ch04-l01', 's02'],
-    ['python-oop-ch04-l01', 's03'],
-  ]);
-});
+// 全Slideの同じPC/mobile検査を、各projectの従来の期限で1枚ずつ独立させる。
+for (const { name, slides } of slideGroups) {
+  for (const [index, slide] of slides.entries()) {
+    test(`${name}: ${slide[0]}-${slide[1]}`, async ({ page }, info) => {
+      // 旧loopの2枚目以降が戻していたdesktop viewportも維持する。
+      if (index > 0) await page.setViewportSize({ width: 1280, height: 960 });
+      await verifySlides(page, info, [slide]);
+    });
+  }
+}
