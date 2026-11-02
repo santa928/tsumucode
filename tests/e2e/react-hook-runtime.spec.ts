@@ -64,9 +64,12 @@ for (const lesson of lessons) {
         timeout: 20_000,
       })
       .toEqual(expect.arrayContaining([expect.objectContaining({ status: 'incomplete' })]));
-    await expect(page.getByRole('dialog', { name: '判定結果', exact: true })).toBeVisible();
+    const feedback = page.getByRole('dialog', { name: '判定結果', exact: true });
+    await expect(feedback).toBeVisible();
+    // 履歴とDrawer表示の後にも最終の進捗保存が続くため、Dismiss可能になるまで待つ。
+    await expect(feedback.getByRole('button', { name: '閉じる', exact: true })).toBeEnabled();
     await page.keyboard.press('Escape');
-    await expect(page.getByRole('dialog', { name: '判定結果', exact: true })).toHaveCount(0);
+    await expect(feedback).toHaveCount(0);
     const solution = await readFile(`${root}/solution/${editableFile}`, 'utf8');
     await replaceSource(page, solution);
     const update = page.getByRole('button', { name: 'プレビューを更新', exact: true });
