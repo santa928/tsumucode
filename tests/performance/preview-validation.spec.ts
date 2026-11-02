@@ -22,7 +22,8 @@ interface PerformanceCourseProbe {
 }
 
 const manifest = await loadPerformanceManifest();
-const course = (await readSplitCourseArtifacts('public', 'html-css')) as PerformanceCourseProbe;
+const contentRoot = process.env['TSUMUCODE_RELEASE_V2'] === '1' ? 'dist' : 'public';
+const course = (await readSplitCourseArtifacts(contentRoot, 'html-css')) as PerformanceCourseProbe;
 const lessons = course.phases.flatMap(({ chapters }) =>
   chapters.flatMap(({ lessons: chapterLessons }) => chapterLessons),
 );

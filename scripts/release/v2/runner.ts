@@ -1,6 +1,7 @@
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { lstat, mkdir, readFile } from 'node:fs/promises';
+import { lstat, mkdir, readFile, readdir } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { z } from 'zod';
 import { BuildIdentitySchema, InventorySchema, PlanSchema } from './schema';
@@ -19,6 +20,7 @@ import { executeSuite } from './execute';
 import { observeTestSuite } from './observed';
 import { readNextFixtureCoverage } from './nativeCoverage';
 import { checkStaticArtifact } from '../checkStaticArtifact';
+import { readLighthouseCoverage } from './lighthouse';
 const exec = promisify(execFile);
 const SnapshotSchema = z
   .object({
@@ -236,19 +238,45 @@ export async function runReleaseSuite(
     }
     if (suite === 'performance') {
       await absent(path.join(root, '.lighthouseci/assertion-results.json'));
+      const configuration: unknown = createRequire(import.meta.url)(
+        path.join(root, 'lighthouserc.cjs'),
+      );
+      const { collect } = z
+        .object({
+          ci: z.object({
+            collect: z.object({
+              url: z.array(z.url()).min(1),
+              numberOfRuns: z.number().int().positive(),
+            }),
+          }),
+        })
+        .parse(configuration).ci;
+      const startedAt = new Date().toISOString();
       await command(['npm', 'run', 'test:lighthouse']);
       const originalAssertions = await readJson(
         path.join(root, '.lighthouseci/assertion-results.json'),
       );
-      const assertions = z
-        .array(z.object({ level: z.string().optional(), passed: z.boolean() }))
-        .min(1)
-        .parse(originalAssertions);
-      if (assertions.some((row) => row.level === 'error' && !row.passed))
-        throw new Error('Lighthouse budget failed');
+      const directory = path.join(root, '.lighthouseci');
+      const reports = await Promise.all(
+        (await readdir(directory))
+          .filter((name) => /^lhr-\d+\.json$/u.test(name))
+          .map(async (name) => {
+            const file = path.join(directory, name);
+            if (!(await lstat(file)).isFile()) throw new Error('Invalid Lighthouse report file');
+            return readJson(file);
+          }),
+      );
       return {
         targets: ['performance/lighthouse'],
-        report: { commandReports, assertions: originalAssertions },
+        report: {
+          commandReports,
+          ...readLighthouseCoverage(reports, originalAssertions, {
+            urls: collect.url,
+            runs: collect.numberOfRuns,
+            startedAt,
+            now: new Date().toISOString(),
+          }),
+        },
       };
     }
     throw new Error('Unimplemented fixed suite');
