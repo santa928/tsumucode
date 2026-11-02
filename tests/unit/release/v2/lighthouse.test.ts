@@ -41,6 +41,8 @@ describe('Lighthouseの実測出力', () => {
     'future',
     'runtime',
     'metric',
+    'infinite-metric',
+    'infinite-script',
     'script',
   ])('%sの実測を空の失敗一覧で成功にしない', (failure) => {
     const changed = reports();
@@ -53,6 +55,11 @@ describe('Lighthouseの実測出力', () => {
     if (failure === 'runtime') Object.assign(changed[0]!, { runtimeError: { code: 'FAILED' } });
     if (failure === 'metric')
       changed[0]!.audits['largest-contentful-paint'].numericValue = Number.NaN;
+    if (failure === 'infinite-metric')
+      changed[0]!.audits['largest-contentful-paint'].numericValue = Number.POSITIVE_INFINITY;
+    if (failure === 'infinite-script')
+      changed[0]!.audits['resource-summary'].details.items[0]!.transferSize =
+        Number.POSITIVE_INFINITY;
     if (failure === 'script') changed[0]!.audits['resource-summary'].details.items.length = 0;
     expect(() => readLighthouseCoverage(changed, [], context)).toThrow();
   });

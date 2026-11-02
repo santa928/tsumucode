@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { hashValue } from './identity';
 
-const MetricSchema = z.object({ numericValue: z.number().nonnegative().finite() });
+const MetricSchema = z.object({ numericValue: z.number().nonnegative() });
 const ReportSchema = z.object({
   requestedUrl: z.url(),
   fetchTime: z.iso.datetime(),
@@ -13,7 +13,7 @@ const ReportSchema = z.object({
     'resource-summary': z.object({
       details: z.object({
         items: z.array(
-          z.object({ resourceType: z.string(), transferSize: z.number().nonnegative().finite() }),
+          z.object({ resourceType: z.string(), transferSize: z.number().nonnegative() }),
         ),
       }),
     }),
