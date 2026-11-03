@@ -32,15 +32,18 @@ lessons:
       本文差分の教材レビューであり、修正版UI・実人の学習・公開承認の証拠にはしない。観測範囲と未確認はpython-interactive-input.mdに記録。
   - lessonId: python-basics-ch01-l03
     authorId: tsumucode-python-author
-    reviewerId: codex-issue147-prepublication-review
-    sourceHash: ccd316600891bca8d0b32daf2163978e83644147959e31995742608c1a2e2a78
+    reviewerId: codex-input-boundary-review-fixture-metadata-delta
+    sourceHash: 5e12aadbc7afda6ce001cb12312c850277611cbafbbb98fc061b5524259199ba
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
+    notes: >-
+      独立AI Runtime担当input_boundary_reviewが、94a84770で追加されたexpectedLocalStatusと旧E2E直書き条件が同じ期待値であることを静読確認。差分に残るImportantなし。
+      今回はLocal期待値メタデータの移設だけ。Goal・本文・例・Hint・Starter・Solution・Fixture Source・固定採点の意味は不変で、旧レビューと掲載例の実行証拠は不変部分と当時の条件に限って参照する。
+      旧承認行の原本はpython-local-fixture-metadata-review.mdにbytesを保持。新たな実測・通常UI・実人の観察・公開承認を示す行ではない。全体releaseStatusはdraftを維持。
   - lessonId: python-basics-ch01-l04
     authorId: tsumucode-python-author
     reviewerId: codex-issue147-prepublication-review
@@ -98,23 +101,29 @@ lessons:
     notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
   - lessonId: python-basics-ch01-l09
     authorId: tsumucode-python-author
-    reviewerId: codex-issue147-prepublication-review
-    sourceHash: 55239ab7d202adf2f7066122a9e6e21e208d8a5507a093ede7fcf70b4bbef86d
+    reviewerId: codex-input-boundary-review-fixture-metadata-delta
+    sourceHash: d7b1ff76af95bea183580d394865f53f015c975826d1c326383365dad1571402
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
+    notes: >-
+      独立AI Runtime担当input_boundary_reviewが、94a84770で追加されたexpectedLocalStatusと旧E2E直書き条件が同じ期待値であることを静読確認。差分に残るImportantなし。
+      今回はLocal期待値メタデータの移設だけ。Goal・本文・例・Hint・Starter・Solution・Fixture Source・固定採点の意味は不変で、旧レビューと掲載例の実行証拠は不変部分と当時の条件に限って参照する。
+      旧承認行の原本はpython-local-fixture-metadata-review.mdにbytesを保持。新たな実測・通常UI・実人の観察・公開承認を示す行ではない。全体releaseStatusはdraftを維持。
   - lessonId: python-basics-ch02-l01
     authorId: tsumucode-python-author
-    reviewerId: codex-issue147-prepublication-review
-    sourceHash: 1e2b72e0c48c49534ae1e14d1d8d1f73abcd056263e018a84b3c5f45e44f76ef
+    reviewerId: codex-input-boundary-review-fixture-metadata-delta
+    sourceHash: 33fd804e43128ed76c8aad53b017107361048d46a7694ef739a0dae40376cfb3
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
+    notes: >-
+      独立AI Runtime担当input_boundary_reviewが、94a84770で追加されたexpectedLocalStatusと旧E2E直書き条件が同じ期待値であることを静読確認。差分に残るImportantなし。
+      今回はLocal期待値メタデータの移設だけ。Goal・本文・例・Hint・Starter・Solution・Fixture Source・固定採点の意味は不変で、旧レビューと掲載例の実行証拠は不変部分と当時の条件に限って参照する。
+      旧承認行の原本はpython-local-fixture-metadata-review.mdにbytesを保持。新たな実測・通常UI・実人の観察・公開承認を示す行ではない。全体releaseStatusはdraftを維持。
