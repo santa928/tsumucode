@@ -1,7 +1,7 @@
 import { hashValue } from '../../../scripts/release/v2/identity';
 import type { BrowserFixtureCase } from './courseFixtureGate';
 
-/** Every logical oracle stays attached to the exact execution input that it checks. */
+/** 各logicalの期待値を、それが検証する完全一致の実行入力へ結び付ける。 */
 export function groupFixtureExecutions(
   cases: readonly BrowserFixtureCase[],
 ): readonly (readonly BrowserFixtureCase[])[] {
@@ -40,7 +40,7 @@ function compatibleExpectations(a: BrowserFixtureCase, b: BrowserFixtureCase): b
     )
   )
     return false;
-  // The starter's not-pass oracle intentionally has no diagnostic/rule constraints.
+  // Starterのnot-passは、診断やRuleについての制約を意図的に持たない。
   if (a.expectedStatus === 'not-pass' || b.expectedStatus === 'not-pass') return true;
   const equal = (left: readonly string[], right: readonly string[]) =>
     hashValue([...left].sort()) === hashValue([...right].sort());

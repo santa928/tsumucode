@@ -1,6 +1,8 @@
 # Manifest fixture execution sharing
 
-The manifest fixture gate retains every Solution, Starter and authored fixture as a logical contract. `createCases` still produces the same identities and expectations. Only equivalent executions within one exercise are shared; the TypeScript and React specialist suites are unchanged.
+The manifest fixture gate retains every Solution, Starter and authored fixture as a logical contract. `createCases` still produces the same identities and expectations. Only equivalent executions within one exercise are shared.
+
+The two built TypeScript specialist suites retain 12 canaries from 92 authored inputs; the manifest gate owns all 80 transferred inputs' exact status, diagnostic code set and failed rule IDs. The specialist canaries still check AND behavior, four data diagnostics, and independent stop/recovery. Raw diagnostic order, multiplicity and warning rejection for every transferred browser input are not preserved: existing units and canaries cover those details. The generic interaction helper runs in Node while the specialist helper runs in the browser, so their coverage is not identical. Compiler source tests and React specialist suites remain unchanged because their layer and runner reuse check different behavior.
 
 | Contract                   | Execution and oracle after grouping                                                                                                                                                                                                                                                      |
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
