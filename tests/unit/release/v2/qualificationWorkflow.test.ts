@@ -8,6 +8,40 @@ import { expect, it } from 'vitest';
 import { parse } from 'yaml';
 import { hashBytes } from '../../../../scripts/release/v2/identity';
 const exec = promisify(execFile);
+
+it.each([
+  ['browser', 'browser-firefox'],
+  ['public_boundary', 'browser-public'],
+])('%sは失敗診断を保持し、再Import用の合成downloadを開かない', async (job, suite) => {
+  const workflow = parse(await readFile('.github/workflows/release-v2-checks.yml', 'utf8')) as {
+    jobs: Record<
+      string,
+      { steps: { name?: string; if?: string; with?: { path?: string } }[] }
+    >;
+  };
+  const diagnostics = workflow.jobs[job]!.steps.find(
+    (step) => step.name === 'Preserve failed verification diagnostics',
+  )!;
+  expect(diagnostics.if).toBe('failure()');
+  const patterns = diagnostics.with!.path!
+    .trim()
+    .split('\n')
+    .map((pattern) => pattern.trim().replaceAll('${{ matrix.suite }}', suite));
+  // upload-artifactのディレクトリ指定は再帰的に収集する。
+  const selected = (file: string) =>
+    patterns.some((pattern) =>
+      path.matchesGlob(file, pattern.endsWith('/') ? pattern + '**' : pattern),
+    );
+  const directory = `.release-v2/checks/${suite}-artifacts/example/`;
+  expect(selected(`.release-v2/checks/${suite}.json`)).toBe(true);
+  for (const file of ['error-context.md', 'test-failed-1.png', 'trace.zip']) {
+    expect(selected(directory + file), file).toBe(true);
+  }
+  for (const file of ['python-progress.json', 'progress-export.zip', 'private.json']) {
+    expect(selected(directory + file), file).toBe(false);
+  }
+});
+
 it('exports the exact aggregate artifact and raw qualification byte pin without introducing a new privilege', async () => {
   const workflow = parse(await readFile('.github/workflows/release-v2-checks.yml', 'utf8')) as {
     on: { workflow_call: { outputs: Record<string, { value: string }> } };

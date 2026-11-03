@@ -95,7 +95,8 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        suite: [browser-chromium-1, browser-chromium-2, browser-firefox, browser-webkit]
+        # 前回失敗したFirefoxの診断を先に取得し、全suiteの必須条件は保つ。
+        suite: [browser-firefox, browser-chromium-1, browser-chromium-2, browser-webkit]
     env:
       BASE_PATH: /${{ github.event.repository.name }}/
       TSUMUCODE_TEST_MAX_WORKERS: '1'
@@ -136,9 +137,10 @@ jobs:
         with:
           name: diagnostics-browser-${{ matrix.suite }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            .release-v2/checks/
-            test-results/
-            lhci-report/
+            .release-v2/checks/${{ matrix.suite }}.json
+            .release-v2/checks/${{ matrix.suite }}-artifacts/**/error-context.md
+            .release-v2/checks/${{ matrix.suite }}-artifacts/**/*.png
+            .release-v2/checks/${{ matrix.suite }}-artifacts/**/trace.zip
           include-hidden-files: true
           if-no-files-found: warn
           retention-days: 7
@@ -190,9 +192,10 @@ jobs:
         with:
           name: diagnostics-public_boundary-public-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            .release-v2/checks/
-            test-results/
-            lhci-report/
+            .release-v2/checks/browser-public.json
+            .release-v2/checks/browser-public-artifacts/**/error-context.md
+            .release-v2/checks/browser-public-artifacts/**/*.png
+            .release-v2/checks/browser-public-artifacts/**/trace.zip
           include-hidden-files: true
           if-no-files-found: warn
           retention-days: 7
