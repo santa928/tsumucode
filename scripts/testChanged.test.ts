@@ -24,6 +24,7 @@ function selectedTests(changed: string): readonly string[] {
     'tests/pages-workflow.test.ts',
     'tests/unit/config/playwrightOutputIsolation.test.ts',
     'tests/content/course.test.ts',
+    'tests/content/javascript-learning-evidence.test.ts',
     'tests/unit/release/typescriptRelease.test.ts',
     'tests/unit/release/nextRelease.test.ts',
     'scripts/testChanged.ts',
@@ -87,4 +88,10 @@ it.each([
 
 it('selector自体の変更でも自身の回帰testを漏らさない', () => {
   expect(selectedTests('scripts/testChanged.ts')).toContain('scripts/testChanged.test.ts');
+});
+
+it('workflow変更ではfsで実workflowを読む旧品質契約testも選択する', () => {
+  expect(selectedTests('.github/workflows/pages.yml')).toContain(
+    'tests/content/javascript-learning-evidence.test.ts',
+  );
 });

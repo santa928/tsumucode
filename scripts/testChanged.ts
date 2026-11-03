@@ -71,6 +71,10 @@ if (fullSuite) {
     selected.add('tests/pages-workflow.test.ts');
     selected.add('tests/unit/config/playwrightOutputIsolation.test.ts');
   }
+  if (files.some((file) => /^\.github\/workflows\//u.test(file))) {
+    // 旧契約と現workflowの境界もfs読込で検査するためimport graphでは選ばれない。
+    selected.add('tests/content/javascript-learning-evidence.test.ts');
+  }
   console.log(`変更関連test: ${base}との差分 ${String(files.length)} file`);
   // 動的読込test自身もrelatedへ渡し、import graphとの重複実行を避ける。
   runTests(['related', '--run', '--passWithNoTests', ...selected]);

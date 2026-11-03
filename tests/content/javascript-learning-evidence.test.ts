@@ -1,8 +1,11 @@
 // @vitest-environment node
+import { execFile } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
+import { promisify } from 'node:util';
 import { parse, stringify } from 'yaml';
 import { describe, expect, it } from 'vitest';
 import { assertJavascriptFinalQualityWorkflow } from '../../scripts/release/verifyJavascriptQualityEvidence';
+import { repositoryEnvironment } from '../../scripts/release/v2/identity';
 import {
   createJavascriptInputManifest,
   compareJavascriptLearningInputs,
@@ -44,6 +47,16 @@ function inputFiles(published = false): Map<string, Uint8Array> {
 }
 const draftInput = createJavascriptInputManifest(source, inputFiles());
 const finalInput = createJavascriptInputManifest(finalSource, inputFiles(true));
+
+/** 接続前の実workflowに対する旧契約。現候補の品質成功や公開資格には使わない。 */
+async function legacyQualityWorkflow(): Promise<string> {
+  const { stdout } = await promisify(execFile)(
+    'git',
+    ['show', 'f629fc6113fe398ad6cd74d16e2a2c0ca95872ff:.github/workflows/pages.yml'],
+    { env: await repositoryEnvironment(process.cwd()), maxBuffer: 1024 * 1024 },
+  );
+  return stdout;
+}
 
 /** 偽のroot観測bindingはUnit内だけに限定し、実候補の証拠へ使わない。 */
 function candidate(phase: 'draft-learning' | 'final-candidate'): JavascriptCandidateObservation {
@@ -446,8 +459,13 @@ describe('配信前の自動検査状態の正直な区別', () => {
   });
 });
 
-it('実workflowの必須品質Gateの省略・失敗許容・deploy依存削除を拒否する', async () => {
-  const source = await readFile('.github/workflows/pages.yml', 'utf8');
+it('現v2 workflowを旧方式の品質成功として認めない', async () => {
+  const current = await readFile('.github/workflows/pages.yml', 'utf8');
+  expect(() => assertJavascriptFinalQualityWorkflow(current)).toThrow('最終品質CI');
+});
+
+it('接続前の固定workflowで必須品質Gateの省略・失敗許容・deploy依存削除を拒否する', async () => {
+  const source = await legacyQualityWorkflow();
   expect(() => {
     assertJavascriptFinalQualityWorkflow(source);
   }).not.toThrow();
@@ -478,7 +496,7 @@ it('実workflowの必須品質Gateの省略・失敗許容・deploy依存削除�
 });
 
 it('同名stepのecho・失敗握り潰し・Artifact検査の差し替えを拒否する', async () => {
-  const source = await readFile('.github/workflows/pages.yml', 'utf8');
+  const source = await legacyQualityWorkflow();
   const original = parse(source) as {
     jobs: { quality: { steps: { name: string; run: string }[] } };
   };
@@ -506,7 +524,7 @@ it('分割Browserの欠落・証拠混在・結果結合の省略や失敗吸収
     'timeout-minutes'?: number;
     'continue-on-error'?: boolean;
   }
-  const source = await readFile('.github/workflows/pages.yml', 'utf8');
+  const source = await legacyQualityWorkflow();
   const original = parse(source) as { jobs: { quality: { steps: Step[] } } };
   const browser = 'Firefox and WebKit smoke';
   const merge = 'Merge full and smoke browser evidence';
