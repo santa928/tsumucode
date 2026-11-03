@@ -4,7 +4,7 @@ import { cp, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/pr
 import path from 'node:path';
 import { tmpdir } from 'node:os';
 import { promisify } from 'node:util';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { canonicalJson } from '../../../src/core/persistence/canonicalJson';
 import { sha256Text } from '../../../scripts/release/releaseHashes';
 import {
@@ -35,6 +35,14 @@ import type {
   DraftQualityReference,
   DraftQualityScope,
 } from '../../../scripts/release/draftCourseQualitySchema';
+
+// 同一の不変教材をfixture作成のたびにbuildし直さず、実検証器による再compileは保持する。
+let tailwindFixtureDelivery: ReturnType<typeof buildSplitContentDelivery>;
+beforeAll(async () => {
+  const contract = resolveDraftReleaseCourseContract('tailwind');
+  const compilation = await compileCourse(contract.sourceRoot);
+  tailwindFixtureDelivery = buildSplitContentDelivery([compilation], []);
+});
 
 const execFileAsync = promisify(execFile);
 const temporaryRoots: string[] = [];
@@ -123,10 +131,10 @@ async function fixture(actualCourse = false, courseId: DraftReleaseCourseId = 't
         originalsReview: null,
       }),
     );
-    const compilation = await compileCourse(path.join(root, contract.sourceRoot));
+    if (courseId !== 'tailwind') throw new Error('実教材fixtureはtailwindを使います');
     await writeSplitContentDeliveryTree(
       path.join(dist, 'generated/content'),
-      buildSplitContentDelivery([compilation], []),
+      tailwindFixtureDelivery,
     );
     const html = path.join(dist, 'generated/content/courses/html-css');
     await mkdir(path.join(html, 'lessons'), { recursive: true });
