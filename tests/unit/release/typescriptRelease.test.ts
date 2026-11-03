@@ -130,20 +130,24 @@ describe('TypeScript正式Releaseの隔離された契約', () => {
     ).toBe(false);
     expect(isReleaseMetadataPath('docs/quality/arbitrary.yaml', 'typescript')).toBe(false);
   });
-  it('TSのdispatchでも既存2 Courseの継続性と全site最終CIを省略しない', async () => {
+  it('旧TS継続性処理を保全し、新入口は固定Course一覧や選別に依存しない', async () => {
     const workflow = parse(await readFile('.github/workflows/pages.yml', 'utf8')) as {
-      on: { workflow_dispatch: { inputs: { course_id: { options: string[] } } } };
-      jobs: { quality: { steps: { name?: string; if?: string; run?: string }[] } };
+      on: { workflow_dispatch: { inputs: { course_id: { type: string; options?: string[] } } } };
+      jobs: {
+        quality: { if: string; steps: { name?: string; if?: string; run?: string }[] };
+        build: { if: string; steps: { run?: string }[] };
+        qualification: { needs: string; uses: string };
+      };
     };
-    expect(workflow.on.workflow_dispatch.inputs.course_id.options).toEqual([
-      'html-css',
-      'javascript',
-      'typescript',
-      'react',
-      'next',
-      'python-basics',
-      'tailwind',
-    ]);
+    expect(workflow.on.workflow_dispatch.inputs.course_id.type).toBe('string');
+    expect(workflow.on.workflow_dispatch.inputs.course_id.options).toBeUndefined();
+    expect(workflow.jobs.quality.if).toBe('${{ false }}');
+    expect(workflow.jobs.build.if).not.toContain('inputs.course_id');
+    expect(workflow.jobs.build.steps.map(({ run }) => run ?? '').join('\n')).not.toContain(
+      '--course-id',
+    );
+    expect(workflow.jobs.qualification.needs).toBe('build');
+    expect(workflow.jobs.qualification.uses).toBe('./.github/workflows/release-v2-checks.yml');
     const step = workflow.jobs.quality.steps.find(
       ({ name }) => name === 'Keep existing JavaScript continuity in the all-site gate',
     );
