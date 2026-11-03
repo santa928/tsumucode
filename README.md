@@ -235,6 +235,8 @@ Tailwind・Python実践・Python OOPの草稿は、[専用の公開前契約と�
 
 push前は、変更をローカルcommitしたcleanなcheckoutで、PRのbase SHA（mainへのpushは変更前SHA）を明示して次を実行します。`check:prepush`はNode/直接依存の固定版を照合し、provenanceと既存の`check`全工程を実行します。手動で選んだテストやPrettierだけの成功を代用しません。失敗・OOM・signal終了・未commit変更・検証中のSource変更があれば成功記録を出さず、pushを止めます。
 
+低速・少メモリの作者検証環境で、実教材準備が既定のUnit用wall-clock枠を超える場合だけ、`TSUMUCODE_TEST_BUDGET_PROFILE=constrained` を明示できます。未指定時のVitest既定値と通常CIは変えません。この固定プロファイルは作者側testを20秒・準備hookを60秒にし、各caseの明示期限、学習者Runnerの計算/待機/回収上限、性能のassertion、対象選択と検査内容は維持します。使用した環境・profile・HEADを検証記録に残し、性能合格や実人観察へ読み替えません。Composeでは `-e TSUMUCODE_TEST_BUDGET_PROFILE=constrained` を渡します。
+
 ```bash
 ./scripts/docker-compose.sh run --rm -e BASE_PATH=/tsumucode/ app npm run check:prepush -- <baseの40文字SHA>
 ```
