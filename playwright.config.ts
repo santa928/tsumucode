@@ -12,6 +12,7 @@ const CROSS_BROWSER_SMOKE_SPECS = [
   'typescript-release-smoke.spec.ts',
   'python-release-smoke.spec.ts',
   'python-input.spec.ts',
+  'python-interactive.spec.ts',
   'tailwind.spec.ts',
   'tailwind-foundations.spec.ts',
   'tailwind-project.spec.ts',
