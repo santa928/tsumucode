@@ -310,8 +310,8 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 90
-      - name: Report non-deploying migration result
-        run: echo '同runの必須品質検査と現在のmain／公開中の親版を照合しました。移行検査のため配信はしていません。' >> "$GITHUB_STEP_SUMMARY"
+      - name: Report qualified candidate
+        run: echo '同runの必須品質検査と現在のmain／公開中の親版を照合し、固定候補の資格を保存しました。公開時は続く保護Environmentでも再照合します。' >> "$GITHUB_STEP_SUMMARY"
       - name: Stop only aggregation tool
         if: always()
         run: ./scripts/docker-compose.sh down --remove-orphans

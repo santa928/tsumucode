@@ -1,5 +1,28 @@
 # 開発中の検証方針
 
+## 同一run成果物の公開入口（2026-11-03）
+
+通常のpush／PRは品質検査だけを行う。公開する場合はActionsの`TsumuCode Pages`を
+`main`で明示実行し、`deploy=true`、`migration_checks=false`、`release_mode=candidate`を選ぶ。
+`source_sha`は空欄またはその実行のmain SHAだけを受け付ける。コースは教材一覧から列挙し、
+互換入力`course_id`は新しい公開対象の選択に使わない。β・旧Sourceの直接配信はこの入口では受け付けない。
+
+公開候補は一度buildし、同じrunで必須品質検査・現在main・公開中の親版を照合する。
+続く既存の固定publisherへ、候補・メタデータ・資格のartifact IDと資格ファイルのSHA256を
+出力から直接渡す。別runの成功や、Source変更前の資格で代用しない。
+保護Environmentの通過後もbytes・main・親版・有効期限を再確認してから、その同じ候補を配信する。
+Environmentが生成する今回run自身の未完了deploymentはSHA・Environment・run URLで識別して
+1件だけ分離する。その直後が元の親版であることを要求し、他runの配信介在を無視しない。
+
+公開後は専用の合成データで操作と保存を確認し、全公開bytesと実deploymentを照合して
+immutableなapp記録を作る。Sourceを動かす観測jobはread-onlyのまま、配信と記帳の権限jobは
+checkoutやnpm実行を行わない。呼出jobの権限宣言は既存の配信／記帳jobへ渡す上限であり、
+子jobではそれぞれの最小権限に絞る。新しい認証やリポジトリ設定の変更は不要。
+
+配信しない受入は`migration_checks=true`、`deploy=false`で行う。両方true、main以外、
+未対応mode、現在mainと異なるSourceは拒否する。旧公開jobと旧resolverの本体は休止して保全し、
+新方式との二重配信を防ぐ。旧gateの撤去、教材追加、実運用の復旧受入はこの接続変更に含めない。
+
 開発中のpush/PRで30分の検査待ちを作らず、変更に対応する失敗だけを早く返す。
 
 ## 初版の要件差分（2026-09-27）
