@@ -461,7 +461,9 @@ describe('配信前の自動検査状態の正直な区別', () => {
 
 it('現v2 workflowを旧方式の品質成功として認めない', async () => {
   const current = await readFile('.github/workflows/pages.yml', 'utf8');
-  expect(() => assertJavascriptFinalQualityWorkflow(current)).toThrow('最終品質CI');
+  expect(() => {
+    assertJavascriptFinalQualityWorkflow(current);
+  }).toThrow('最終品質CI');
 });
 
 it('接続前の固定workflowで必須品質Gateの省略・失敗許容・deploy依存削除を拒否する', async () => {
