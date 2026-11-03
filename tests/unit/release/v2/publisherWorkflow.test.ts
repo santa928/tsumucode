@@ -94,6 +94,11 @@ async function setup() {
     QUALIFICATION_ARTIFACT_ID: '303',
     QUALIFICATION_SHA256: hashBytes(qualified),
   };
+  const setDeployments = (values: unknown[]) => {
+    states['/deployments?environment=github-pages&per_page=1'] = values.slice(0, 1);
+    states['/deployments?environment=github-pages&per_page=2'] = values.slice(0, 2);
+  };
+  setDeployments(states['/deployments?environment=github-pages&per_page=1'] as unknown[]);
   // No package manager or candidate script may execute inside the privileged publisher.
   await writeFile(
     path.join(root, 'package.json'),
@@ -110,7 +115,7 @@ async function setup() {
     await writeFile(file, mock + body);
     return exec(process.execPath, [file], { cwd: root, env: environment, timeout: 10000 });
   };
-  return { root, bundle, qualification, states, environment, run };
+  return { root, bundle, qualification, states, environment, run, setDeployments };
 }
 it('rechecks real downloaded bytes and actual parent after Environment without checkout or Source execution', async () => {
   const row = await setup();
@@ -129,9 +134,7 @@ it('rechecks real downloaded bytes and actual parent after Environment without c
   expect(packaging).toBeGreaterThan(job.steps.findIndex((step) => step.id === 'acceptance'));
   expect(job.steps[packaging]!.with).toMatchObject({ 'include-hidden-files': true, path: 'dist' });
   expect(job.steps[packaging + 1]!.with!.artifact_name).toBe(job.steps[packaging]!.with!.name);
-  expect(await readFile('.github/workflows/pages.yml', 'utf8')).not.toContain(
-    'release-v2-publish.yml',
-  );
+  expect(await readFile('.github/workflows/pages.yml', 'utf8')).toContain('release-v2-publish.yml');
 });
 it.each([
   'main',
@@ -148,8 +151,7 @@ it.each([
 ])('stops %s mismatch at the actual fixed publisher boundary', async (kind) => {
   const row = await setup();
   if (kind === 'main') row.states['/git/ref/heads/main'] = { object: { sha: '0'.repeat(40) } };
-  if (kind === 'parent')
-    row.states['/deployments?environment=github-pages&per_page=1'] = [{ id: 999 }];
+  if (kind === 'parent') row.setDeployments([{ id: 999 }]);
   if (kind === 'parent-status') row.states['/deployments/501/statuses'] = [{ state: 'pending' }];
   if (kind === 'expired') {
     row.qualification.technical.expiresAt = new Date(Date.now() - 1000).toISOString();
@@ -167,5 +169,59 @@ it.each([
     await mkdir(path.join(row.root, 'dist/.git'));
     await writeFile(path.join(row.root, 'dist/.git/data'), 'not deployable');
   }
+  await expect(row.run()).rejects.toThrow();
+});
+
+async function ownEnvironment() {
+  const row = await setup();
+  const parent = (row.states['/deployments?environment=github-pages&per_page=2'] as unknown[])[0];
+  const self = {
+    id: 601,
+    sha: row.environment.GITHUB_SHA,
+    ref: 'main',
+    environment: 'github-pages',
+  };
+  const status = {
+    state: 'in_progress',
+    environment_url: '',
+    log_url: 'https://github.com/owner/site/actions/runs/101/job/602',
+  };
+  row.states['/deployments/601/statuses'] = [status];
+  row.setDeployments([self, parent]);
+  return { ...row, self, status, parent };
+}
+
+it.each(['job', 'run'])(
+  'recognizes this Environment deployment by its exact %s URL before checking the parent',
+  async (kind) => {
+    const row = await ownEnvironment();
+    if (kind === 'run') row.status.log_url = 'https://github.com/owner/site/actions/runs/101';
+    await expect(row.run()).resolves.toBeDefined();
+  },
+);
+
+it.each([
+  'sha',
+  'ref',
+  'environment',
+  'foreign-run',
+  'failed',
+  'already-success',
+  'foreign-between',
+  'missing-parent',
+  'wrong-site',
+])('does not ignore an unverified Environment deployment: %s', async (kind) => {
+  const row = await ownEnvironment();
+  if (kind === 'sha') row.self.sha = '0'.repeat(40);
+  if (kind === 'ref') row.self.ref = 'feature';
+  if (kind === 'environment') row.self.environment = 'other';
+  if (kind === 'foreign-run')
+    row.status.log_url = 'https://github.com/owner/site/actions/runs/999/job/602';
+  if (kind === 'failed') row.status.state = 'failure';
+  if (kind === 'already-success') row.status.state = 'success';
+  if (kind === 'wrong-site') row.status.environment_url = 'https://other.invalid/';
+  if (kind === 'foreign-between') row.setDeployments([row.self, { id: 700 }, row.parent]);
+  else if (kind === 'missing-parent') row.setDeployments([row.self]);
+  else row.setDeployments([row.self, row.parent]);
   await expect(row.run()).rejects.toThrow();
 });

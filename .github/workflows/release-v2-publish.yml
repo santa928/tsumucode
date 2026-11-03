@@ -1,6 +1,6 @@
 name: Fixed same-run Pages publisher
 
-# Staged reusable boundary. It has no trigger or caller until migration acceptance is complete.
+# Called only by the explicit main/candidate publication gate in pages.yml; no direct trigger.
 on:
   workflow_call:
     inputs:
@@ -141,11 +141,38 @@ jobs:
             return JSON.parse(new TextDecoder().decode(bytes));
           };
           ensure((await api('/git/ref/heads/main')).object?.sha===source,'Main changed while awaiting publication');
-          const deployments=await api('/deployments?environment=github-pages&per_page=1');
-          const actual=deployments[0];
+          const deployments=await api('/deployments?environment=github-pages&per_page=2');
+          ensure(Array.isArray(deployments) && deployments.length>0 && deployments.length<=2,'Missing deployment history');
+          const site='https://'+repository.split('/')[0]+'.github.io'+base;
+          let actual=deployments[0];
+          if(String(actual?.id)!==baseline.proof.deploymentId) {
+            // Environmentへの入場で、配信前に今回run自身の未完了deploymentが生成される。
+            ensure(
+              /^[1-9]\d*$/.test(String(actual?.id)) && actual.sha===source &&
+              actual.ref==='main' && actual.environment==='github-pages',
+              'Unexpected deployment before the published parent'
+            );
+            const ownStatuses = await api('/deployments/'+actual.id+'/statuses');
+            const ownStatus = ownStatuses[0];
+            const ownLog = new URL(ownStatus?.log_url??'https://invalid.invalid/');
+            const ownRunPath = '/'+repository+'/actions/runs/'+runId;
+            const ownJobPath = ownRunPath+'/job/';
+            const ownPathMatches = ownLog.pathname===ownRunPath || (
+              ownLog.pathname.startsWith(ownJobPath) &&
+              /^[1-9]\d*$/.test(ownLog.pathname.slice(ownJobPath.length))
+            );
+            ensure(
+              ['pending','queued','in_progress'].includes(ownStatus?.state) &&
+              [undefined,'',site].includes(ownStatus?.environment_url) &&
+              ownLog.origin==='https://github.com' && !ownLog.username && !ownLog.password &&
+              !ownLog.search && !ownLog.hash && ownPathMatches,
+              'Unverified current Environment deployment'
+            );
+            // 自己deployment1件だけを除外し、他runの介在は親不一致として停止する。
+            actual = deployments[1];
+          }
           ensure(actual && String(actual.id)===baseline.proof.deploymentId && actual.sha===baseline.proof.workflowHeadCommit && actual.ref==='main' && actual.environment==='github-pages','Actual deployed parent changed');
           const statuses=await api('/deployments/'+actual.id+'/statuses');
-          const site='https://'+repository.split('/')[0]+'.github.io'+base;
           const log=new URL(statuses[0]?.log_url??'https://invalid.invalid/');
           const prefix='/'+repository+'/actions/runs/'+baseline.proof.runId+'/job/';
           ensure(statuses[0]?.state==='success' && statuses[0].environment_url===site && log.origin==='https://github.com' && log.pathname.startsWith(prefix) && /^[1-9]\d*$/.test(log.pathname.slice(prefix.length)),'Actual deployed parent is unverified');

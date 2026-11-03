@@ -18,19 +18,18 @@ on:
         required: true
         default: false
       release_mode:
-        description: 正式候補、身内向けβ、公開済みReleaseへのrollback
+        description: 最新mainの正式候補（β・旧版への復旧はこの入口では未対応）
         type: choice
-        options: [candidate, beta, rollback]
+        options: [candidate]
         required: true
         default: candidate
       course_id:
-        description: 承認履歴と証拠を照合するCourse（品質検証は全site）
-        type: choice
-        options: [html-css, javascript, typescript, react, next, python-basics, tailwind]
-        required: true
-        default: html-css
+        description: 旧入口との互換用。新方式は教材一覧から全対象を自動選択する
+        type: string
+        required: false
+        default: ''
       source_sha:
-        description: candidate承認、身内向けβ、または公開済みReleaseに登録された40文字SHA
+        description: 空欄または現在mainの40文字SHAのみ。過去の候補へは配信しない
         type: string
         required: false
         default: ''
@@ -73,8 +72,18 @@ jobs:
       - name: Reject deploy dispatch outside main
         if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref != 'refs/heads/main'
         run: exit 1
-      - name: Use event SHA for quality-only runs
-        if: github.event_name != 'workflow_dispatch' || inputs.deploy != true
+      - name: Reject unsupported publication inputs
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true
+        env:
+          RELEASE_MODE: ${{ inputs.release_mode }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          EVENT_SHA: ${{ github.sha }}
+        run: |
+          if [ "$RELEASE_MODE" != candidate ] || { [ -n "$SOURCE_SHA" ] && [ "$SOURCE_SHA" != "$EVENT_SHA" ]; }; then
+            echo '::error::新しい公開入口は最新mainのcandidateだけを受け付けます。'
+            exit 1
+          fi
+      - name: Bind the event SHA for checks and publication
         id: default_target
         env:
           EVENT_SHA: ${{ github.sha }}
@@ -82,13 +91,13 @@ jobs:
           echo "checkout_sha=$EVENT_SHA" >> "$GITHUB_OUTPUT"
           echo "verified_source_commit=$EVENT_SHA" >> "$GITHUB_OUTPUT"
       - name: Build release verifier
-        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'
+        if: ${{ false }}
         run: ./scripts/docker-compose.sh build app
       - name: Compile selected candidate content for source review
-        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main' && (inputs.course_id == 'typescript' || inputs.course_id == 'react' || inputs.course_id == 'next' || inputs.course_id == 'python-basics' || inputs.course_id == 'tailwind')
+        if: ${{ false }}
         run: ./scripts/docker-compose.sh run --rm app npm run content:compile
       - name: Resolve candidate, beta, or registered rollback
-        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'
+        if: ${{ false }}
         env:
           RELEASE_MODE: ${{ inputs.release_mode }}
           SOURCE_SHA: ${{ inputs.source_sha }}
@@ -102,7 +111,7 @@ jobs:
           --course-id "$RELEASE_COURSE_ID"
           --github-output /workspace/.release-target
       - name: Export resolved target
-        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'
+        if: ${{ false }}
         id: target
         run: sed -n '1,30p' .release-target >> "$GITHUB_OUTPUT"
 
@@ -152,10 +161,9 @@ jobs:
           echo "::warning::教材レビューの確認が必要です。動作検証とは別の結果で、公開前には必須です。Content review statusのログを確認してください。"
           echo "教材レビュー: 要確認。通常CIの成功は教材承認を意味しません。公開前のcheck:releaseは未承認・hash不一致で停止します。" >> "$GITHUB_STEP_SUMMARY"
 
-  # Staged migration: only the read-only candidate producer is enabled here.
-  # Qualification/deployment remains unavailable until its required same-run receipts are connected.
+  # Both read-only admission and explicit publication freeze one candidate in this run.
   build:
-    if: github.event_name == 'workflow_dispatch' && inputs.migration_checks == true && inputs.deploy != true && github.ref == 'refs/heads/main'
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && ((inputs.migration_checks == true && inputs.deploy != true) || (inputs.migration_checks != true && inputs.deploy == true && inputs.release_mode == 'candidate'))
     needs: resolve
     runs-on: ubuntu-24.04
     timeout-minutes: 30
@@ -224,7 +232,7 @@ jobs:
           if-no-files-found: error
           retention-days: 90
       - name: Report migration checkpoint
-        run: echo '公開候補を一度buildし対象・同run成果物を凍結しました。続いて必須品質検査を実行します。移行検査では配信しません。' >> "$GITHUB_STEP_SUMMARY"
+        run: echo '公開候補を一度buildし対象・同run成果物を凍結しました。続いて必須品質検査を実行します。' >> "$GITHUB_STEP_SUMMARY"
       - name: Preserve migration failure diagnostics
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
@@ -247,8 +255,25 @@ jobs:
       candidate_artifact_id: ${{ needs.build.outputs.candidate_artifact_id }}
       metadata_artifact_id: ${{ needs.build.outputs.metadata_artifact_id }}
 
+  publish:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy == true && inputs.migration_checks != true && inputs.release_mode == 'candidate'
+    needs: [build, qualification]
+    uses: ./.github/workflows/release-v2-publish.yml
+    # The reusable workflow narrows these existing capabilities per job:
+    # Source observer is read-only; deployment and immutable record writer execute no Source.
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    with:
+      candidate_artifact_id: ${{ needs.build.outputs.candidate_artifact_id }}
+      metadata_artifact_id: ${{ needs.build.outputs.metadata_artifact_id }}
+      qualification_artifact_id: ${{ needs.qualification.outputs.qualification_artifact_id }}
+      qualification_sha256: ${{ needs.qualification.outputs.qualification_sha256 }}
+
+  # Keep legacy job bodies suspended until representative publication and recovery are proven.
   quality:
-    if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'
+    if: ${{ false }}
     needs: resolve
     runs-on: ubuntu-24.04
     env:
@@ -488,7 +513,7 @@ jobs:
           retention-days: 7
 
   deploy:
-    if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'
+    if: ${{ false }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -505,7 +530,7 @@ jobs:
         uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128
 
   report:
-    if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'
+    if: ${{ false }}
     needs: [resolve, quality, deploy]
     runs-on: ubuntu-24.04
     permissions:
@@ -566,7 +591,7 @@ jobs:
           retention-days: 90
 
   record_release:
-    if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && inputs.release_mode == 'candidate' && github.ref == 'refs/heads/main'
+    if: ${{ false }}
     needs: [resolve, quality, deploy, report]
     runs-on: ubuntu-24.04
     permissions:

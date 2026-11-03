@@ -17,6 +17,7 @@ interface WorkflowStep {
 
 interface WorkflowJob {
   readonly if?: string;
+  readonly uses?: string;
   readonly needs?: readonly string[];
   readonly permissions?: Readonly<Record<string, string>>;
   readonly environment?: Readonly<Record<string, unknown>>;
@@ -37,22 +38,23 @@ function workflow(): { readonly source: string; readonly parsed: PagesWorkflow }
 }
 
 describe('TsumuCode Pages workflow', () => {
-  it('新規checkoutのTS・React・Next・Python・Tailwind承認検証にはcontent生成を先に成功させる', () => {
+  it('旧コース別resolverを休止し、公開対象をevent SHAへ固定する', () => {
     const steps = workflow().parsed.jobs?.resolve?.steps ?? [];
-    const compile = steps.find(
-      ({ name }) => name === 'Compile selected candidate content for source review',
-    );
-    const resolve = steps.find(
-      ({ name }) => name === 'Resolve candidate, beta, or registered rollback',
-    );
-    expect(compile).toBeDefined();
-    expect(resolve).toBeDefined();
-    expect(steps.indexOf(compile!)).toBeLessThan(steps.indexOf(resolve!));
-    expect(compile?.if).toBe(
-      `${resolve?.if ?? ''} && (inputs.course_id == 'typescript' || inputs.course_id == 'react' || inputs.course_id == 'next' || inputs.course_id == 'python-basics' || inputs.course_id == 'tailwind')`,
-    );
-    expect(compile?.run).toBe('./scripts/docker-compose.sh run --rm app npm run content:compile');
-    expect(compile?.['continue-on-error']).not.toBe(true);
+    for (const name of [
+      'Build release verifier',
+      'Compile selected candidate content for source review',
+      'Resolve candidate, beta, or registered rollback',
+      'Export resolved target',
+    ])
+      expect(steps.find((step) => step.name === name)?.if).toBe('${{ false }}');
+    const target = steps.find(({ id }) => id === 'default_target');
+    expect(target?.if).toBeUndefined();
+    expect(target?.run).toContain('checkout_sha=$EVENT_SHA');
+    expect(
+      steps.find(({ name }) => name === 'Reject unsupported publication inputs')?.[
+        'continue-on-error'
+      ],
+    ).not.toBe(true);
   });
 
   it('同じRelease buildのbundle/static失敗を全Browser開始前に返す', () => {
@@ -155,12 +157,10 @@ describe('TsumuCode Pages workflow', () => {
     expect(parsed.on).toHaveProperty('workflow_dispatch.inputs.deploy.type', 'boolean');
     expect(parsed.on).toHaveProperty('workflow_dispatch.inputs.release_mode.options', [
       'candidate',
-      'beta',
-      'rollback',
     ]);
-    expect(parsed.jobs?.deploy?.if).toContain("github.event_name == 'workflow_dispatch'");
-    expect(parsed.jobs?.deploy?.if).toContain('inputs.deploy == true');
-    expect(parsed.jobs?.deploy?.if).toContain("github.ref == 'refs/heads/main'");
+    expect(parsed.jobs?.publish?.if).toContain("github.event_name == 'workflow_dispatch'");
+    expect(parsed.jobs?.publish?.if).toContain('inputs.deploy == true');
+    expect(parsed.jobs?.publish?.if).toContain("github.ref == 'refs/heads/main'");
   });
 
   it('Deploy jobを保護Environmentと最小権限のdeploy-pages 1 stepへ限定する', () => {
@@ -174,7 +174,7 @@ describe('TsumuCode Pages workflow', () => {
     );
   });
 
-  it('betaは公開前Gateを共有し正式Approvalとtag記録だけを実行しない', () => {
+  it('休止中の旧beta処理を保全し、新入口との二重配信を防ぐ', () => {
     const { parsed, source } = workflow();
     const qualitySteps = parsed.jobs?.quality?.steps ?? [];
     const betaContinuity = qualitySteps.find(
@@ -187,9 +187,7 @@ describe('TsumuCode Pages workflow', () => {
     expect(betaContinuity?.if).toContain("needs.resolve.outputs.release_mode == 'beta'");
     expect(betaContinuity?.run).toContain('release:continuity -- --quality-only');
     expect(candidateBinding?.if).toBe("needs.resolve.outputs.release_mode == 'candidate'");
-    expect(parsed.jobs?.record_release?.if).toBe(
-      "github.event_name == 'workflow_dispatch' && inputs.deploy == true && inputs.release_mode == 'candidate' && github.ref == 'refs/heads/main'",
-    );
+    expect(parsed.jobs?.record_release?.if).toBe('${{ false }}');
     expect(source).toContain('npm run test:e2e');
     expect(source).toContain('npm run test:performance');
     expect(source).toContain('npm run test:lighthouse');
@@ -202,9 +200,7 @@ describe('TsumuCode Pages workflow', () => {
 
     expect(fast?.if).toContain("github.event_name == 'push'");
     expect(fast?.if).toContain("github.event_name == 'pull_request'");
-    expect(parsed.jobs?.quality?.if).toBe(
-      "github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/main'",
-    );
+    expect(parsed.jobs?.quality?.if).toBe('${{ false }}');
     expect(source).toContain('npm run check');
     expect(source).toContain('-e TEST_BASE_SHA');
     expect(source).not.toContain('npm run test:e2e');
@@ -213,13 +209,16 @@ describe('TsumuCode Pages workflow', () => {
     expect(source).not.toContain('release:report');
   });
 
-  it('既定権限をread-onlyにしRelease tag jobだけcontents writeを持つ', () => {
+  it('既定をread-onlyにし、公開権限をSourceを実行しない既存reusableへ渡す', () => {
     const parsed = workflow().parsed;
 
     expect(parsed.permissions).toEqual({ contents: 'read' });
     expect(parsed.jobs?.record_release?.permissions).toEqual({ contents: 'write' });
+    expect(parsed.jobs?.publish?.uses).toBe('./.github/workflows/release-v2-publish.yml');
+    expect(parsed.jobs?.publish?.steps).toBeUndefined();
     for (const [name, job] of Object.entries(parsed.jobs ?? {})) {
-      if (name !== 'record_release') expect(job.permissions?.contents).not.toBe('write');
+      if (!['record_release', 'publish'].includes(name))
+        expect(job.permissions?.contents).not.toBe('write');
     }
   });
 
@@ -230,7 +229,10 @@ describe('TsumuCode Pages workflow', () => {
     expect(references.length).toBeGreaterThanOrEqual(5);
     for (const reference of references) {
       if (reference?.startsWith('./'))
-        expect(reference).toBe('./.github/workflows/release-v2-checks.yml');
+        expect([
+          './.github/workflows/release-v2-checks.yml',
+          './.github/workflows/release-v2-publish.yml',
+        ]).toContain(reference);
       else expect(reference).toMatch(/^[^@]+@[a-f0-9]{40}$/u);
     }
   });
