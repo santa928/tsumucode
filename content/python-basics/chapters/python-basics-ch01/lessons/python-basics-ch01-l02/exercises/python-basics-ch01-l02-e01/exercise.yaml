@@ -65,7 +65,7 @@ hints:
   - id: python-basics-ch01-l02-e01-h02
     level: 2
     title: コードを組み立てる
-    text: 'inputの戻り値をnameへ代入し、print(name)でその値を表示します。'
+    text: 'input()が読み取った文字列をnameへ代入し、print(name)でその値を表示します。'
     relatedSlideId: python-basics-ch01-l02-s02
   - id: python-basics-ch01-l02-e01-h03
     level: 3
