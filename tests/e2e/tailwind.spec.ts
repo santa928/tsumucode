@@ -451,7 +451,12 @@ for (const narrow of [false, true]) {
     await page.setViewportSize(narrow ? { width: 390, height: 844 } : { width: 1280, height: 900 });
     await page.goto(base + '#/');
     await expect(page.getByRole('main')).toBeVisible();
-    await expect(page.getByRole('link', { name: authoring.runtime.title })).toHaveCount(0);
+    await expect(
+      page.getByRole('link', {
+        name: authoring.runtime.title + '：最初のピースを置く',
+        exact: true,
+      }),
+    ).toBeVisible();
     await page.goto(base + '#/paths/frontend');
     await expect(
       page.getByRole('heading', { name: 'フロントエンド学習パス', exact: true }),

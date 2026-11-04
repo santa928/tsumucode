@@ -25,6 +25,11 @@ const nextPublished =
     .object({ publicationStatus: z.enum(['draft', 'published']) })
     .parse(parse(readFileSync('content/next/course.yaml', 'utf8'))).publicationStatus ===
   'published';
+const tailwindPublished =
+  z
+    .object({ publicationStatus: z.enum(['draft', 'published']) })
+    .parse(parse(readFileSync('content/tailwind/course.yaml', 'utf8'))).publicationStatus ===
+  'published';
 const expectedRequiredCourses = nextPublished
   ? 5
   : reactPublished
@@ -87,13 +92,15 @@ test('Pathの順序と必須Courseを表示し、既存Courseへロックなし�
   ).toBeVisible();
 
   const steps = page.getByRole('list', { name: '学習パスのコース順' }).getByRole('listitem');
-  await expect(steps).toHaveCount(expectedRequiredCourses);
+  await expect(steps).toHaveCount(expectedRequiredCourses + Number(tailwindPublished));
+  const requiredSteps = steps.filter({ has: page.getByText('必須', { exact: true }) });
+  await expect(requiredSteps).toHaveCount(expectedRequiredCourses);
   await expect(steps.first().getByText('必須', { exact: true })).toBeVisible();
   const courseLink = steps.first().getByRole('link', {
     name: 'HTML/CSS はじめの一歩を始める',
   });
   await expect(courseLink).toBeEnabled();
-  const javascriptStep = steps.nth(1);
+  const javascriptStep = requiredSteps.nth(1);
   await expect(javascriptStep.getByText('必須', { exact: true })).toBeVisible();
   const javascriptLink = javascriptStep.getByRole('link', {
     name: 'JavaScript はじめの一歩を始める',
@@ -106,7 +113,7 @@ test('Pathの順序と必須Courseを表示し、既存Courseへロックなし�
   );
 
   if (typescriptPublished) {
-    const typescriptStep = steps.nth(2);
+    const typescriptStep = requiredSteps.nth(2);
     await expect(typescriptStep.getByText('必須', { exact: true })).toBeVisible();
     await expect(
       typescriptStep.getByRole('link', { name: 'TypeScript はじめの一歩を始める', exact: true }),
@@ -117,7 +124,7 @@ test('Pathの順序と必須Courseを表示し、既存Courseへロックなし�
   }
 
   if (reactPublished) {
-    const reactStep = steps.nth(3);
+    const reactStep = requiredSteps.nth(3);
     await expect(reactStep.getByText('必須', { exact: true })).toBeVisible();
     await expect(
       reactStep.getByRole('link', { name: 'React はじめの一歩を始める', exact: true }),
@@ -125,7 +132,7 @@ test('Pathの順序と必須Courseを表示し、既存Courseへロックなし�
   }
 
   if (nextPublished) {
-    const nextStep = steps.nth(4);
+    const nextStep = requiredSteps.nth(4);
     await expect(nextStep.getByText('必須', { exact: true })).toBeVisible();
     await expect(
       nextStep.getByText('前提コース：React はじめの一歩', { exact: true }),

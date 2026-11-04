@@ -56,7 +56,7 @@ Homeの「今回の学習」には、初回は目安10分で見出しと背景�
 
 その下には、複数のコースをおすすめ順に並べる「学習パス」と自由に選べる教材棚を残しています。学習パスは順番を案内する設計図であり、各コースは独立して開始・完了できます。前のコースが未完了でもロックされず、学びたいコースから直接始められます。端末データのImport/Export・復旧操作もHome下部から利用できます。
 
-Sourceで`published`を指定している「フロントエンド学習パス」にはHTML/CSS、JavaScript、TypeScript、React、Next.jsを収録しています。Python基礎も独立した公開指定のCourseです。Tailwind、Python実践、Python OOPは`draft`で、通常の教材棚・公開学習パスへ掲載しません。これらはSource上の状態であり、実際のデプロイ状況の確認とは別です。学習パスの直リンクは[`#/paths/frontend`](http://localhost:5173/#/paths/frontend)です。
+Sourceで`published`を指定している「フロントエンド学習パス」にはHTML/CSS、JavaScript、TypeScript、React、Next.jsを収録しています。Tailwind CSSはHTML/CSS直後の選択式recommended Courseで、未開始・未完了でも後続の必須Courseへ進めます。Python基礎も独立した公開指定のCourseです。Python実践、Python OOPは`draft`で、通常の教材棚・公開学習パスへ掲載しません。これらはSource上の状態であり、実際のデプロイ状況の確認とは別です。学習パスの直リンクは[`#/paths/frontend`](http://localhost:5173/#/paths/frontend)です。
 
 JavaScriptはSourceで`published`を指定しており、安全な複数ファイル実行基盤とChapter 00〜13の52 Lessonを備えます。全202 Slideの種類別内訳はconcept170・comparison10・code21・diagram1です。54 Exerciseは標準必須46・追加Closure2・手順付き制作5・独立課題1に分かれます。`expectedTotals.standardExercises=48`は追加2件を含み、`expectedTotals.conceptSlides=202`は概念系4種類の最低枚数です。1,010分はLesson設定時間の合計で、人間の実測学習時間は未計測です。HTML/CSSを知るJavaScript初学者向けに、値・制御・データからDOM・Event・非同期へ進み、学習クイズの問題表示・回答・得点・結果・再挑戦を積み上げます。Capstoneではカテゴリ選択・進捗・Keyboard操作も扱います。この枚数・演習数で教材の十分性や実務能力を保証するものではありません。開発時は[最初のJavaScriptスライド](http://localhost:5173/#/courses/javascript/lessons/javascript-ch00-l01/slides/javascript-ch00-l01-s01)から確認できます。`draft`の教材もProduction Artifactへ含まれるため、非掲載を機密性の保証として扱いません。
 
@@ -224,7 +224,7 @@ Reportは`published`と`draft`を分け、各Courseの対象者・前提Course�
 
 作業中とpush/PRの`check`は、教材Compile、Lint、変更関連test、型検査を含むProduction Build、学習用Chunk分離を実行します。教材Reviewは通常Actionsの別ステップで警告・Summaryへ記録し、承認待ちでも動作検証を進めます。通常CIの成功は教材承認を意味せず、公開前の`check:release`ではReview失敗を必ず停止条件にします。testはGit差分とVitestのimport依存関係で選び、教材変更では動的読込のContent testも補います。依存・共通test設定の変更時だけ全Unit/Component/Content testへ拡大します。ローカルの差分基準は`HEAD`、CIではpush前のSHAまたはPRのbase SHAです。
 
-Tailwind・Python実践・Python OOPの草稿は、[専用の公開前契約と私有原本照合](docs/quality/draft-course-publication-contracts.md)で検査します。技術検証の成功は公開許可とは別です。
+Python実践・Python OOPの草稿は、[専用の公開前契約と私有原本照合](docs/quality/draft-course-publication-contracts.md)で検査します。Tailwindの旧受入は[固定5教材の限定移行](docs/quality/tailwind-historical-acceptance.md)で元の範囲を保持します。技術検証の成功は公開許可とは別です。
 
 通常Actionsはブラウザ未導入のDocker stageを使い、5分以内を目標、8分を上限とします。新しいpushで古い開発Runを取消し、公開Runとは待ち行列を分離します。詳しい選択基準と削除したtestは[開発中の検証方針](docs/quality/development-testing.md)に記載しています。
 

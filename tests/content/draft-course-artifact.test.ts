@@ -93,6 +93,7 @@ describe.each([
       `docs/quality/content-review-${courseId}.yaml`,
       path.join(root, `docs/quality/content-review-${courseId}.yaml`),
     );
+    await updateCourse({ publicationStatus: 'draft' });
     compilation = await compileCourse(path.join(root, `content/${courseId}`));
     await writeDelivery();
   });
