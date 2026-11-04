@@ -4,7 +4,7 @@ import { cp, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/pr
 import path from 'node:path';
 import { tmpdir } from 'node:os';
 import { promisify } from 'node:util';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { canonicalJson } from '../../../src/core/persistence/canonicalJson';
 import { sha256Text } from '../../../scripts/release/releaseHashes';
 import {
@@ -35,6 +35,20 @@ import type {
   DraftQualityReference,
   DraftQualityScope,
 } from '../../../scripts/release/draftCourseQualitySchema';
+
+// 同一の不変教材をfixture作成のたびにbuildし直さず、実検証器による再compileは保持する。
+let tailwindFixtureDelivery: ReturnType<typeof buildSplitContentDelivery>;
+let tailwindFixtureCandidate: DraftCandidateBinding | undefined;
+beforeAll(async () => {
+  try {
+    const contract = resolveDraftReleaseCourseContract('tailwind');
+    const compilation = await compileCourse(contract.sourceRoot);
+    tailwindFixtureDelivery = buildSplitContentDelivery([compilation], []);
+    tailwindFixtureCandidate = (await fixture(true)).candidate;
+  } finally {
+    await cleanFixtures();
+  }
+});
 
 const execFileAsync = promisify(execFile);
 const temporaryRoots: string[] = [];
@@ -125,10 +139,10 @@ async function fixture(actualCourse = false, courseId: DraftReleaseCourseId = 't
         originalsReview: null,
       }),
     );
-    const compilation = await compileCourse(path.join(root, contract.sourceRoot));
+    if (courseId !== 'tailwind') throw new Error('実教材fixtureはtailwindを使います');
     await writeSplitContentDeliveryTree(
       path.join(dist, 'generated/content'),
-      buildSplitContentDelivery([compilation], []),
+      tailwindFixtureDelivery,
     );
     const html = path.join(dist, 'generated/content/courses/html-css');
     await mkdir(path.join(html, 'lessons'), { recursive: true });
@@ -139,17 +153,29 @@ async function fixture(actualCourse = false, courseId: DraftReleaseCourseId = 't
   await git(root, ['add', '.']);
   await git(root, ['commit', '-m', 'synthetic initial input']);
   const sourceCommit = await git(root, ['rev-parse', 'HEAD']);
-  const candidate: DraftCandidateBinding = actualCourse
-    ? (await measureDraftReleaseCandidate(root, dist, courseId)).candidate
-    : {
-        sourceCommit,
-        sourceTree: await readDraftSourceTree(root, sourceCommit),
-        productTreeSha256: 'a'.repeat(64),
-        canonicalDistSha256: 'b'.repeat(64),
-        runtimeSha256: 'c'.repeat(64),
-        publicProvenanceSha256: 'd'.repeat(64),
-        contentReviewSha256: 'e'.repeat(64),
-      };
+  let candidate: DraftCandidateBinding;
+  if (actualCourse) {
+    const sourceTree = await readDraftSourceTree(root, sourceCommit);
+    if (tailwindFixtureCandidate === undefined) {
+      candidate = (await measureDraftReleaseCandidate(root, dist, courseId)).candidate;
+    } else {
+      // 不変の生成入力と原本treeが同じfixtureだけ、期待値の生成を共有する。
+      if (sourceTree !== tailwindFixtureCandidate.sourceTree) {
+        throw new Error('実教材fixtureの原本treeが共有した期待値と一致しません');
+      }
+      candidate = { ...tailwindFixtureCandidate, sourceCommit, sourceTree };
+    }
+  } else {
+    candidate = {
+      sourceCommit,
+      sourceTree: await readDraftSourceTree(root, sourceCommit),
+      productTreeSha256: 'a'.repeat(64),
+      canonicalDistSha256: 'b'.repeat(64),
+      runtimeSha256: 'c'.repeat(64),
+      publicProvenanceSha256: 'd'.repeat(64),
+      contentReviewSha256: 'e'.repeat(64),
+    };
+  }
   const record: DraftCourseQualityRecord = {
     schemaVersion: 1,
     courseId: courseId,
@@ -293,14 +319,16 @@ async function fixture(actualCourse = false, courseId: DraftReleaseCourseId = 't
   return { root, evidence, dist, record, candidate, refreshReview, refreshOriginalsReview };
 }
 
-afterEach(async () => {
+async function cleanFixtures() {
   vi.unstubAllEnvs();
   await Promise.all(
     temporaryRoots.splice(0).map(async (root) => {
       await rm(root, { recursive: true });
     }),
   );
-});
+}
+
+afterEach(cleanFixtures);
 
 describe('3草稿の私有原本と候補binding', () => {
   it.each(['tailwind', 'python-practice'] as const)(
@@ -449,36 +477,44 @@ describe('3草稿の私有原本と候補binding', () => {
       verifyDraftCourseQualityEvidence(f.root, f.evidence, f.record, f.candidate),
     ).rejects.toThrow();
   });
-  it('実Compilerの草稿一致から全原本bindingまで検証しても公開許可を返さない', async () => {
-    const f = await fixture(true);
-    await writeFile(
-      path.join(f.root, resolveDraftReleaseCourseContract('tailwind').qualityPath),
-      JSON.stringify(f.record),
-    );
-    await expect(
-      checkDraftReleaseCandidate(f.root, f.dist, f.evidence, 'tailwind'),
-    ).resolves.toMatchObject({
-      status: 'draft-candidate-verified',
-      publicationAuthorized: false,
-      lessonsReviewed: 5,
-      candidate: f.candidate,
-    });
-  }, REAL_COURSE_BINDING_TIMEOUT_MS);
+  it(
+    '実Compilerの草稿一致から全原本bindingまで検証しても公開許可を返さない',
+    async () => {
+      const f = await fixture(true);
+      await writeFile(
+        path.join(f.root, resolveDraftReleaseCourseContract('tailwind').qualityPath),
+        JSON.stringify(f.record),
+      );
+      await expect(
+        checkDraftReleaseCandidate(f.root, f.dist, f.evidence, 'tailwind'),
+      ).resolves.toMatchObject({
+        status: 'draft-candidate-verified',
+        publicationAuthorized: false,
+        lessonsReviewed: 5,
+        candidate: f.candidate,
+      });
+    },
+    REAL_COURSE_BINDING_TIMEOUT_MS,
+  );
 
-  it('実候補の未commit Product変更を品質記録のhash一致で隠さない', async () => {
-    const f = await fixture(true);
-    await writeFile(
-      path.join(f.root, resolveDraftReleaseCourseContract('tailwind').qualityPath),
-      JSON.stringify(f.record),
-    );
-    await writeFile(
-      path.join(f.root, 'src/features/learning/control.ts'),
-      'export const state = 3;',
-    );
-    await expect(
-      checkDraftReleaseCandidate(f.root, f.dist, f.evidence, 'tailwind'),
-    ).rejects.toThrow(/Product入力/u);
-  }, REAL_COURSE_BINDING_TIMEOUT_MS);
+  it(
+    '実候補の未commit Product変更を品質記録のhash一致で隠さない',
+    async () => {
+      const f = await fixture(true);
+      await writeFile(
+        path.join(f.root, resolveDraftReleaseCourseContract('tailwind').qualityPath),
+        JSON.stringify(f.record),
+      );
+      await writeFile(
+        path.join(f.root, 'src/features/learning/control.ts'),
+        'export const state = 3;',
+      );
+      await expect(
+        checkDraftReleaseCandidate(f.root, f.dist, f.evidence, 'tailwind'),
+      ).rejects.toThrow(/Product入力/u);
+    },
+    REAL_COURSE_BINDING_TIMEOUT_MS,
+  );
   it('宣言済み品質metadataだけのcommit後も元Product Sourceを保持できる', async () => {
     const f = await fixture();
     const contract = resolveDraftReleaseCourseContract('tailwind');

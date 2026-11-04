@@ -51,3 +51,68 @@ describe('manifest fixtureの独立した選択identity', () => {
     }
   });
 });
+
+// Different logical identities may share execution, but never lose their own oracles.
+describe('manifest fixture execution sharing', () => {
+  it('retains every logical identity and its stricter authored oracle', async () => {
+    const { groupFixtureExecutions } = await import('../../../e2e/helpers/fixtureExecutionGroups');
+    const cases = createCases(typed.exercises);
+    const groups = groupFixtureExecutions(cases);
+    expect(
+      groups
+        .flat()
+        .map(({ id }) => id)
+        .sort(),
+    ).toEqual(cases.map(({ id }) => id).sort());
+    const group = groups.find((rows) =>
+      rows.some(({ id }) => id === 'typescript-ch06-l03-e01/starter/starter'),
+    )!;
+    expect(group.map(({ expectedStatus }) => expectedStatus)).toEqual(['not-pass', 'incomplete']);
+    expect(group[1]!.expectedFeedbackRuleIds!.length).toBeGreaterThan(0);
+    expect(group.every((row) => cases.includes(row))).toBe(true);
+  });
+
+  it('never shares a different exercise, files, fault, assets, runtime or conflicting oracle', async () => {
+    const { groupFixtureExecutions } = await import('../../../e2e/helpers/fixtureExecutionGroups');
+    const source = createCases(typed.exercises)[0]!;
+    const withoutRuntime = { ...source.exercise };
+    Reflect.deleteProperty(withoutRuntime, 'runtime');
+    const variants = [
+      { ...source, id: 'other-exercise', exercise: { ...source.exercise, id: 'other' } },
+      { ...source, id: 'other-files', files: { ...source.files, 'other.ts': 'changed' } },
+      { ...source, id: 'other-fault', faultInjection: 'stale-source-evidence' as const },
+      { ...source, id: 'other-assets', workspaceAssets: [] },
+      { ...source, id: 'other-runtime', exercise: withoutRuntime },
+      { ...source, id: 'wrong-status', expectedStatus: 'code-error' as const },
+      { ...source, id: 'wrong-diagnostic', expectedDiagnosticCodes: ['missing'] },
+      { ...source, id: 'wrong-rule', expectedFeedbackRuleIds: ['missing'] },
+    ];
+    // Make each pair independently, so an unrelated variant cannot hide a bad merge.
+    for (const variant of variants) {
+      const base =
+        variant.id === 'wrong-diagnostic' ? { ...source, expectedDiagnosticCodes: [] } : source;
+      const assetBase =
+        variant.id === 'other-assets'
+          ? { ...base, workspaceAssets: html.exercises.flatMap(({ assets }) => assets) }
+          : base;
+      expect(groupFixtureExecutions([assetBase, variant]), variant.id).toHaveLength(2);
+    }
+    expect(groupFixtureExecutions([source, { ...source, id: 'same-input' }])).toHaveLength(1);
+  });
+
+  it('keeps incompatible exact statuses separate even when a coarse starter is present', async () => {
+    const { groupFixtureExecutions } = await import('../../../e2e/helpers/fixtureExecutionGroups');
+    const source = createCases(typed.exercises)[0]!;
+    const cases = [
+      { ...source, id: 'starter', expectedStatus: 'not-pass' as const },
+      { ...source, id: 'incomplete', expectedStatus: 'incomplete' as const },
+      { ...source, id: 'code-error', expectedStatus: 'code-error' as const },
+      { ...source, id: 'system-error', expectedStatus: 'system-error' as const },
+    ];
+    expect(groupFixtureExecutions(cases).map((rows) => rows.map(({ id }) => id))).toEqual([
+      ['starter', 'incomplete'],
+      ['code-error'],
+      ['system-error'],
+    ]);
+  });
+});

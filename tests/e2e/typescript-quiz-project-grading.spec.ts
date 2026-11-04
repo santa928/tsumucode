@@ -26,8 +26,20 @@ const interactionScript = interactionBundle.outputFiles[0]!.text;
 for (const learningMode of ['data', 'state', 'boundary'] as const) {
   const lesson = learningMode === 'data' ? '01' : learningMode === 'state' ? '02' : '03';
   const exercise = course.exercises.find(({ id }) => id === `typescript-ch06-l${lesson}-e01`)!;
-  // 全fixtureを個別ケースにし、累積時間超過と各入力の採点失敗を区別する。
-  for (const fixture of exercise.fixtures) {
+  // 全authored入力のstatus/診断/失敗Ruleはmanifest-fixtures.spec.tsが担当する。
+  // 各profileのBrowser内interaction helper、AND oracle、4件の型診断を独立に残す。
+  const canaryIds =
+    learningMode === 'data'
+      ? ['solution', 'starter', 'wrong-text']
+      : learningMode === 'state'
+        ? ['solution', 'wrong-logic-choice']
+        : ['solution'];
+  const canaries = canaryIds.map((id) => {
+    const fixture = exercise.fixtures.find((fixture) => fixture.id === id);
+    if (fixture === undefined) throw new Error(`Quiz canaryがありません: ${exercise.id}/${id}`);
+    return fixture;
+  });
+  for (const fixture of canaries) {
     const contract = '元TSの型と値の接続と実DOM操作をANDで判定する';
     test(`${learningMode}/${fixture.id}の製品採点は${contract}`, async ({ page }, testInfo) => {
       test.setTimeout(60_000);

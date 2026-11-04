@@ -26,8 +26,14 @@ const interactionScript = interactionBundle.outputFiles[0]!.text;
 for (const learningMode of ['dom', 'unknown', 'async'] as const) {
   const lesson = learningMode === 'dom' ? '01' : learningMode === 'unknown' ? '02' : '03';
   const exercise = course.exercises.find(({ id }) => id === `typescript-ch05-l${lesson}-e01`)!;
-  // 個別fixtureの採点と、複数入力の累積時間・メモリを分離する。
-  for (const fixture of exercise.fixtures) {
+  // 全authored入力のstatus/診断/失敗Ruleはmanifest-fixtures.spec.tsが担当する。
+  // Browser内interaction helperの各profileと、型条件pass・実操作failのAND oracleを残す。
+  const canaries = ['solution', 'wrong-result'].map((id) => {
+    const fixture = exercise.fixtures.find((fixture) => fixture.id === id);
+    if (fixture === undefined) throw new Error(`Boundary canaryがありません: ${exercise.id}/${id}`);
+    return fixture;
+  });
+  for (const fixture of canaries) {
     const contract = '元TSの境界確認と実DOM操作をANDで判定する';
     test(`${learningMode}/${fixture.id}の製品採点は${contract}`, async ({ page }, testInfo) => {
       test.setTimeout(60_000);
