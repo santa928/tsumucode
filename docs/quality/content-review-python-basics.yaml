@@ -15,9 +15,9 @@ lessons:
     decision: approved
     notes: 独立AI教材レビューで必須指摘0。既存実Pyodideの10Fixtureを確認済み。公開用build・実Pagesの受入と実人受講は別に扱い、技術証拠はpython-release-acceptance.yamlのsource/artifact/原本hashへ固定する。
   - lessonId: python-basics-ch01-l02
-    authorId: tsumucode-python-author
-    reviewerId: input196-learning-review-delta
-    sourceHash: 2f3e5b80cdd3c0578a3b0aa5abc51de993bf4864032e2a324309ab5483b2e469
+    authorId: root-l02-hint-editor
+    reviewerId: l02-content-main000f
+    sourceHash: 16480e62760656224c7159c16b21b0e5250858467b6bc6c75e807f4cc2b0e88e
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
@@ -25,11 +25,11 @@ lessons:
     examplesExecuted: true
     decision: approved
     notes: >-
-      独立AI input_personaが固定previewの入力・空行・EOF・中止/再開・実採点・reloadを観測し、Browserの説明不一致を指摘。
-      初回観測を確定後、修正したs01とinstructionsの本文だけを静読し、操作との整合と残るImportantなしを確認。
-      変更はこの2文書の環境/対話操作の説明のみ。Goal・例コード・Hint・Starter・Solution・Rule・Fixtureは不変で、元の独立承認と実行証拠をその範囲に限り再利用。
-      旧hash d1e92a76600dc4fd79c718ab9773db5f12c83599fe8a333bb11526529542be3aの承認原本はpython-input-review-previous.mdと16bbf554のGit blobに保持。
-      本文差分の教材レビューであり、修正版UI・実人の学習・公開承認の証拠にはしない。観測範囲と未確認はpython-interactive-input.mdに記録。
+      独立AI content役が説明・目標・演習・ヒントを照合し、ヒント2の未説明語を指摘。input()が読み取った文字列という説明へ修正して再確認した。
+      例コード2件・入力条件7件のCPython実行結果は、コード・入力・期待値の同一性を確認した範囲で再利用。新Sourceで再実行したとは記録しない。
+      Source 2d841b2aのConsoleスクロール修正は表示だけで、教材・採点・実行条件は不変。内容役の承認とUI操作の受入を区別する。
+      旧台帳は000fb1e4のGit blob、旧公開時の承認はpython-input-review-previous.mdと16bbf554のGit blobに保持。
+      この記録はAIによる内容レビューであり、実人の学習効果や公開資格の承認ではない。
   - lessonId: python-basics-ch01-l03
     authorId: tsumucode-python-author
     reviewerId: codex-input-boundary-review-fixture-metadata-delta

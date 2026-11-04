@@ -35,9 +35,14 @@ test('Pythonの入力・対話練習・Consoleへ通常スクロールで到達�
   }).toPass();
   await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeInViewport();
   // 既存のConsoleのTab停止点にも、入力欄から通常の順序で到達できる。
-  await page.getByLabel('実行前の入力（1行につきinput 1回）').press('Tab');
-  await page.getByRole('button', { name: '練習実行', exact: true }).press('Tab');
-  await page.getByRole('region', { name: '練習のConsole出力', exact: true }).press('Tab');
+  const practice = page.getByRole('button', { name: '練習実行', exact: true });
+  await expect(practice).toBeEnabled({ timeout: 30_000 });
+  await page.getByLabel('実行前の入力（1行につきinput 1回）').focus();
+  await page.keyboard.press('Tab');
+  await expect(practice).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('region', { name: '練習のConsole出力', exact: true })).toBeFocused();
+  await page.keyboard.press('Tab');
   await expect(consoleOutput).toBeFocused();
   await expect(consoleOutput).toBeInViewport();
 });
