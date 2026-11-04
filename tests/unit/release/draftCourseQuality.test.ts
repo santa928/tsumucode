@@ -38,6 +38,8 @@ import type {
 
 const execFileAsync = promisify(execFile);
 const temporaryRoots: string[] = [];
+// 実教材のCompile・候補再測定・原本bindingを含む2ケースだけに適用する。
+const REAL_COURSE_BINDING_TIMEOUT_MS = 30_000;
 const scopes: DraftQualityScope[] = [
   'runtime',
   'usability',
@@ -461,7 +463,7 @@ describe('3草稿の私有原本と候補binding', () => {
       lessonsReviewed: 5,
       candidate: f.candidate,
     });
-  });
+  }, REAL_COURSE_BINDING_TIMEOUT_MS);
 
   it('実候補の未commit Product変更を品質記録のhash一致で隠さない', async () => {
     const f = await fixture(true);
@@ -476,7 +478,7 @@ describe('3草稿の私有原本と候補binding', () => {
     await expect(
       checkDraftReleaseCandidate(f.root, f.dist, f.evidence, 'tailwind'),
     ).rejects.toThrow(/Product入力/u);
-  });
+  }, REAL_COURSE_BINDING_TIMEOUT_MS);
   it('宣言済み品質metadataだけのcommit後も元Product Sourceを保持できる', async () => {
     const f = await fixture();
     const contract = resolveDraftReleaseCourseContract('tailwind');

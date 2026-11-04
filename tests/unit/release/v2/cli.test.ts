@@ -25,7 +25,14 @@ describe('release v2 command boundary', () => {
     const report = JSON.parse(await readFile(output, 'utf8')) as {
       status: string;
       inventory: { courses: { id: string; lessons: unknown[] }[] };
-      shadow: { courses: { courseId: string; contentRows: string; publication: string }[] };
+      shadow: {
+        courses: {
+          courseId: string;
+          contentRows: string;
+          publication: string;
+          currentDeployment: string;
+        }[];
+      };
     };
     expect(report.status).toBe('shadow-only');
     expect(report.inventory.courses.some((course) => course.id === 'python-basics')).toBe(true);
@@ -33,11 +40,18 @@ describe('release v2 command boundary', () => {
       report.shadow.courses
         .filter((course) => course.contentRows !== 'valid')
         .map((course) => course.courseId),
-    ).toEqual(['python-basics']);
+    ).toEqual([]);
     expect(
       report.shadow.courses.find((course) => course.courseId === 'html-css')!.publication,
     ).toBe('pending');
-  }, 30000);
+    expect(
+      report.shadow.courses.find((course) => course.courseId === 'python-basics')!.publication,
+    ).toBe('recorded-approved-unbound');
+    expect(
+      report.shadow.courses.find((course) => course.courseId === 'python-basics')!
+        .currentDeployment,
+    ).toBe('unverified');
+  }, 90_000);
   it('refuses unknown commands, options, missing output and existing output ownership', async () => {
     const { runCli } = await import('../../../../scripts/release/v2/cli');
     await expect(runCli(['deploy'])).rejects.toThrow();

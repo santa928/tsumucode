@@ -59,6 +59,11 @@ import { PortableTailwindExport } from '../portable/PortableTailwindExport';
 const LazyCodeWorkspace = lazy(() =>
   import('../editor/CodeWorkspace').then((module) => ({ default: module.CodeWorkspace })),
 );
+const BrowserPythonPractice = lazy(() =>
+  import('../components/BrowserPythonPractice').then((module) => ({
+    default: module.BrowserPythonPractice,
+  })),
+);
 
 type ExerciseLoaderData = Awaited<ReturnType<typeof exerciseLoader>>;
 type InitializationState = 'loading' | 'ready' | 'error';
@@ -264,7 +269,13 @@ function EditableSession({
   }>();
   const [practiceBusy, setPracticeBusy] = useState(false);
   const PracticePanel =
-    course.id === 'python-basics' ? localRuntime?.PythonPracticePanel : undefined;
+    course.id === 'python-basics'
+      ? (localRuntime?.PythonPracticePanel ??
+        (exercise.runtime?.kind === 'python' &&
+        ['input-echo-v1', 'age-branch-v1', 'range-loop-v1'].includes(exercise.runtime.profile)
+          ? BrowserPythonPractice
+          : undefined))
+      : undefined;
   const [pythonInput, setPythonInput] = useState('');
   const [withoutPythonInput, setWithoutPythonInput] = useState(false);
   const acceptsPythonInput =
@@ -1224,7 +1235,7 @@ function EditableSession({
                           : 'コードを編集すると出力を自動更新します。「プレビューを更新」で再実行もできます。この実行は未採点です。「判定する」は教材のコード条件と実出力を確認します。この教材は入力を使いません。'
                         : controller.environment.engine === 'cpython'
                           ? '「プレビューを更新」は事前入力で実行します。「練習実行」は対話入力を使える未採点の実行です。「判定する」は練習入力を使わず、同じSourceを固定テストで別実行し、教材のコード条件と全ケースの実出力を確認します。package追加・外部通信は扱いません。'
-                          : 'コードを編集すると出力を自動更新します。入力欄だけを変えた場合や、同じコードをもう一度実行する場合は「プレビューを更新」を押します。「判定する」は事前入力と教材のコード条件を確認します。実行中の追加入力は未対応で、入力行不足は採点しません。'
+                          : `コードを編集すると出力を自動更新します。入力欄だけを変えた場合や、同じコードをもう一度実行する場合は「プレビューを更新」を押します。「判定する」は事前入力と教材のコード条件を確認します。${PracticePanel ? '対話入力の対応状況と操作は下の欄で確認できます。' : '実行中の追加入力は未対応です。'}入力行不足は採点しません。`
                       : controller.environment.backend === 'local'
                         ? '編集後に「プレビューを更新」でNode.jsを実行します。Docker切断時は学習モードを再起動し、もう一度実行してください。'
                         : 'script.jsを編集するとConsoleを更新します。配列・オブジェクトの添字と有限のPromise処理に対応します。HTML/CSSの描画・DOM・タイマー・外部通信は使えません。'}
@@ -1283,7 +1294,9 @@ function EditableSession({
                         KiB。実行開始時点の入力で実行します。入力は保存・共有されません。
                         {controller.environment.engine === 'cpython'
                           ? 'この欄は事前入力のプレビュー専用です。対話練習と固定テスト採点は別の操作です。'
-                          : '実行中の入力待ちは未対応です。'}
+                          : PracticePanel
+                            ? '対話練習の対応状況と入力欄は下に表示します。練習の結果は採点へ反映しません。'
+                            : '実行中の入力待ちは未対応です。'}
                       </p>
                       <p role="status">
                         {practiceBusy
@@ -1296,18 +1309,20 @@ function EditableSession({
                       </p>
                     </div>
                   ) : null}
-                  {controller.environment.engine === 'cpython' && PracticePanel ? (
-                    <PracticePanel
-                      key={`${exercise.id}:${String(state.executionRevision)}`}
-                      exerciseId={exercise.id}
-                      contentRevision={course.revision}
-                      exerciseSessionId={`${course.id}:${exercise.id}`}
-                      executionRevision={state.executionRevision}
-                      files={state.files}
-                      disabled={operation !== 'idle' || !lease.isWritable()}
-                      onBusyChange={setPracticeBusy}
-                      prepare={() => controller.stop()}
-                    />
+                  {PracticePanel ? (
+                    <Suspense fallback={<p>対話練習を準備しています。</p>}>
+                      <PracticePanel
+                        key={`${exercise.id}:${String(state.executionRevision)}`}
+                        exerciseId={exercise.id}
+                        contentRevision={course.revision}
+                        exerciseSessionId={`${course.id}:${exercise.id}`}
+                        executionRevision={state.executionRevision}
+                        files={state.files}
+                        disabled={operation !== 'idle' || !lease.isWritable()}
+                        onBusyChange={setPracticeBusy}
+                        prepare={() => controller.stop()}
+                      />
+                    </Suspense>
                   ) : null}
                   <RuntimeConsole
                     records={consoleRecords.slice(0, 200)}

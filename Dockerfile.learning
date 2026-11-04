@@ -126,6 +126,7 @@ COPY content/python-oop ./content/python-oop
 COPY tests/local/python-learning.spec.ts ./tests/local/python-learning.spec.ts
 COPY tests/local/python-practice.spec.ts ./tests/local/python-practice.spec.ts
 COPY tests/e2e/python-input.spec.ts ./tests/e2e/python-input.spec.ts
+COPY tests/e2e/python-interactive.spec.ts ./tests/e2e/python-interactive.spec.ts
 COPY tests/e2e/python-module.spec.ts ./tests/e2e/python-module.spec.ts
 COPY tests/e2e/python-iteration.spec.ts ./tests/e2e/python-iteration.spec.ts
 COPY tests/e2e/python-context.spec.ts ./tests/e2e/python-context.spec.ts

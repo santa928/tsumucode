@@ -328,11 +328,7 @@ acceptance:
       expect(result.missingRecordPaths).toEqual([]);
       expect(
         result.contentLessons.filter((row) => !row.sourceHashMatches).map((row) => row.lessonId),
-      ).toEqual(
-        result.courseId === 'python-basics'
-          ? ['python-basics-ch01-l03', 'python-basics-ch01-l09', 'python-basics-ch02-l01']
-          : [],
-      );
+      ).toEqual([]);
       expect(result.coverage.missingLessonIds).toEqual([]);
       expect(result.coverage.extraLessonIds).toEqual([]);
     }

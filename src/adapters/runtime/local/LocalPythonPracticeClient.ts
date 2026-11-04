@@ -4,44 +4,16 @@ import {
   pythonSourceSnapshot,
 } from '../../../core/runtime/pythonLessonProfiles.mjs';
 
-const identitySchema = z
-  .object({
-    runId: z.uuid(),
-    sessionId: z.string().max(160),
-    executionRevision: z.number().int().nonnegative(),
-    sourceHash: z.string().regex(/^[a-f0-9]{64}$/u),
-  })
-  .strict();
-const snapshotSchema = z
-  .object({
-    purpose: z.literal('practice'),
-    identity: identitySchema,
-    phase: z.enum(['preparing', 'running', 'pausing', 'waiting-input', 'resuming', 'ended']),
-    reason: z.string().max(64).nullable(),
-    inputRequestSequence: z.number().int().min(1).max(17).nullable(),
-    inputCount: z.number().int().min(0).max(16),
-    inputBytes: z.number().int().min(0).max(1024),
-    activeMs: z.number().int().nonnegative(),
-    waitingMs: z.number().int().nonnegative(),
-    elapsedMs: z.number().int().nonnegative(),
-    stdout: z.string().max(65536),
-    stderr: z.string().max(65536),
-    removed: z.boolean(),
-    recoveryNeeded: z.boolean(),
-    purged: z.boolean(),
-    exitCode: z.number().int().min(0).max(255).nullable(),
-  })
-  .strict();
-
-export type PythonPracticeSnapshot = z.infer<typeof snapshotSchema>;
-type PracticeIdentity = PythonPracticeSnapshot['identity'];
-export interface PythonPracticeRequest {
-  readonly exerciseId: string;
-  readonly contentRevision: string;
-  readonly exerciseSessionId: string;
-  readonly executionRevision: number;
-  readonly files: Readonly<Record<string, string>>;
-}
+import {
+  pythonPracticeSnapshotSchema as snapshotSchema,
+  type PythonPracticeSnapshot,
+  type PythonPracticeRequest,
+  type PythonPracticeIdentity as PracticeIdentity,
+} from '../python/pythonPracticeContract';
+export type {
+  PythonPracticeSnapshot,
+  PythonPracticeRequest,
+} from '../python/pythonPracticeContract';
 
 /** 練習専用client。ExecutionService/Validator/進捗Repositoryへ結果を渡さない。 */
 export class LocalPythonPracticeClient {

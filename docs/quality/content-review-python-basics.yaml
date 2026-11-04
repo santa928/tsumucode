@@ -16,26 +16,34 @@ lessons:
     notes: 独立AI教材レビューで必須指摘0。既存実Pyodideの10Fixtureを確認済み。公開用build・実Pagesの受入と実人受講は別に扱い、技術証拠はpython-release-acceptance.yamlのsource/artifact/原本hashへ固定する。
   - lessonId: python-basics-ch01-l02
     authorId: tsumucode-python-author
-    reviewerId: issue130_security_review
-    sourceHash: d1e92a76600dc4fd79c718ab9773db5f12c83599fe8a333bb11526529542be3a
+    reviewerId: input196-learning-review-delta
+    sourceHash: 2f3e5b80cdd3c0578a3b0aa5abc51de993bf4864032e2a324309ab5483b2e469
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: 独立AI担当issue130_security_reviewが全Lessonと製品を再照合し、事前入力の操作例から環境差・空行とEOF・固定採点へ進む説明を承認。正確性・目標整合・未説明語・Hint漏れの必須指摘0。例コードは不変のため既存実行証拠を元条件で再利用。修正後候補の独立CUA・Browser途中入力実装・公開許可とは別。
+    notes: >-
+      独立AI input_personaが固定previewの入力・空行・EOF・中止/再開・実採点・reloadを観測し、Browserの説明不一致を指摘。
+      初回観測を確定後、修正したs01とinstructionsの本文だけを静読し、操作との整合と残るImportantなしを確認。
+      変更はこの2文書の環境/対話操作の説明のみ。Goal・例コード・Hint・Starter・Solution・Rule・Fixtureは不変で、元の独立承認と実行証拠をその範囲に限り再利用。
+      旧hash d1e92a76600dc4fd79c718ab9773db5f12c83599fe8a333bb11526529542be3aの承認原本はpython-input-review-previous.mdと16bbf554のGit blobに保持。
+      本文差分の教材レビューであり、修正版UI・実人の学習・公開承認の証拠にはしない。観測範囲と未確認はpython-interactive-input.mdに記録。
   - lessonId: python-basics-ch01-l03
     authorId: tsumucode-python-author
-    reviewerId: codex-issue147-prepublication-review
-    sourceHash: ccd316600891bca8d0b32daf2163978e83644147959e31995742608c1a2e2a78
+    reviewerId: codex-input-boundary-review-fixture-metadata-delta
+    sourceHash: 5e12aadbc7afda6ce001cb12312c850277611cbafbbb98fc061b5524259199ba
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
+    notes: >-
+      独立AI Runtime担当input_boundary_reviewが、94a84770で追加されたexpectedLocalStatusと旧E2E直書き条件が同じ期待値であることを静読確認。差分に残るImportantなし。
+      今回はLocal期待値メタデータの移設だけ。Goal・本文・例・Hint・Starter・Solution・Fixture Source・固定採点の意味は不変で、旧レビューと掲載例の実行証拠は不変部分と当時の条件に限って参照する。
+      旧承認行の原本はpython-local-fixture-metadata-review.mdにbytesを保持。新たな実測・通常UI・実人の観察・公開承認を示す行ではない。全体releaseStatusはdraftを維持。
   - lessonId: python-basics-ch01-l04
     authorId: tsumucode-python-author
     reviewerId: codex-issue147-prepublication-review
@@ -93,23 +101,29 @@ lessons:
     notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
   - lessonId: python-basics-ch01-l09
     authorId: tsumucode-python-author
-    reviewerId: codex-issue147-prepublication-review
-    sourceHash: 55239ab7d202adf2f7066122a9e6e21e208d8a5507a093ede7fcf70b4bbef86d
+    reviewerId: codex-input-boundary-review-fixture-metadata-delta
+    sourceHash: d7b1ff76af95bea183580d394865f53f015c975826d1c326383365dad1571402
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
+    notes: >-
+      独立AI Runtime担当input_boundary_reviewが、94a84770で追加されたexpectedLocalStatusと旧E2E直書き条件が同じ期待値であることを静読確認。差分に残るImportantなし。
+      今回はLocal期待値メタデータの移設だけ。Goal・本文・例・Hint・Starter・Solution・Fixture Source・固定採点の意味は不変で、旧レビューと掲載例の実行証拠は不変部分と当時の条件に限って参照する。
+      旧承認行の原本はpython-local-fixture-metadata-review.mdにbytesを保持。新たな実測・通常UI・実人の観察・公開承認を示す行ではない。全体releaseStatusはdraftを維持。
   - lessonId: python-basics-ch02-l01
     authorId: tsumucode-python-author
-    reviewerId: codex-issue147-prepublication-review
-    sourceHash: 1e2b72e0c48c49534ae1e14d1d8d1f73abcd056263e018a84b3c5f45e44f76ef
+    reviewerId: codex-input-boundary-review-fixture-metadata-delta
+    sourceHash: 33fd804e43128ed76c8aad53b017107361048d46a7694ef739a0dae40376cfb3
     accuracy: approved
     goalExerciseAlignment: approved
     unexplainedTerms: 0
     hintLeakage: 0
     examplesExecuted: true
     decision: approved
-    notes: Codex /rootが目標・前提・全Slide・演習指示・段階・Rule・Hint・Starter・Solutionを実レビューし、必須修正0。固定CPython 3.14.2で説明例・境界例を実行。範囲・継続文脈・私有原本はpython-basics-content-review.mdを参照。内容レビューであり、実人受講・新たな公開許可は未完。
+    notes: >-
+      独立AI Runtime担当input_boundary_reviewが、94a84770で追加されたexpectedLocalStatusと旧E2E直書き条件が同じ期待値であることを静読確認。差分に残るImportantなし。
+      今回はLocal期待値メタデータの移設だけ。Goal・本文・例・Hint・Starter・Solution・Fixture Source・固定採点の意味は不変で、旧レビューと掲載例の実行証拠は不変部分と当時の条件に限って参照する。
+      旧承認行の原本はpython-local-fixture-metadata-review.mdにbytesを保持。新たな実測・通常UI・実人の観察・公開承認を示す行ではない。全体releaseStatusはdraftを維持。
