@@ -125,6 +125,14 @@ async function fixture(actualCourse = false, courseId: DraftReleaseCourseId = 't
         originalsReview: null,
       }),
     );
+    const courseFile = path.join(root, contract.sourceRoot, 'course.yaml');
+    await writeFile(
+      courseFile,
+      (await readFile(courseFile, 'utf8')).replace(
+        /^publicationStatus: published$/mu,
+        'publicationStatus: draft',
+      ),
+    );
     const compilation = await compileCourse(path.join(root, contract.sourceRoot));
     await writeSplitContentDeliveryTree(
       path.join(dist, 'generated/content'),

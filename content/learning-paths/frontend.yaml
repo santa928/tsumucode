@@ -7,6 +7,9 @@ steps:
   - courseId: html-css
     role: required
     prerequisiteCourseIds: []
+  - courseId: tailwind
+    role: recommended
+    prerequisiteCourseIds: [html-css]
   - courseId: javascript
     role: required
     prerequisiteCourseIds: [html-css]

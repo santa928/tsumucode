@@ -24,7 +24,9 @@ describe('release v2 command boundary', () => {
     expect(compile).toHaveBeenCalledTimes(1);
     const report = JSON.parse(await readFile(output, 'utf8')) as {
       status: string;
-      inventory: { courses: { id: string; lessons: unknown[] }[] };
+      inventory: {
+        courses: { id: string; publicationStatus: string; lessons: unknown[] }[];
+      };
       shadow: {
         courses: {
           courseId: string;
@@ -40,7 +42,18 @@ describe('release v2 command boundary', () => {
       report.shadow.courses
         .filter((course) => course.contentRows !== 'valid')
         .map((course) => course.courseId),
-    ).toEqual([]);
+    ).toEqual(
+      report.inventory.courses.some(
+        (course) => course.id === 'tailwind' && course.publicationStatus === 'published',
+      )
+        ? ['tailwind']
+        : [],
+    );
+    const tailwind = report.shadow.courses.find((course) => course.courseId === 'tailwind');
+    if (tailwind) {
+      // The new bounded receipt is separate from the legacy-record shadow diagnostics.
+      expect(tailwind).toMatchObject({ contentRows: 'missing', publication: 'unknown' });
+    }
     expect(
       report.shadow.courses.find((course) => course.courseId === 'html-css')!.publication,
     ).toBe('pending');

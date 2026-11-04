@@ -1,7 +1,7 @@
 schemaVersion: 1
 id: tailwind
 title: Tailwind CSSと見た目の基本
-description: CSSと対応させ、Utility・操作状態・幅の条件からテーマと制作へつなぐ草稿5レッスン。
+description: CSSと対応させ、Utility・操作状態・幅の条件からテーマと制作へつなぐ5レッスン。
 audience: HTMLのclassとCSSのBox・Flexを学んだ初学者
 estimatedMinutes: 130
 revision: 2026-10-15.2
@@ -21,7 +21,7 @@ supportedDevices:
     - mobile
 prerequisites:
   - html-css
-publicationStatus: draft
+publicationStatus: published
 expectedTotals:
   chapters: 2
   lessons: 5
