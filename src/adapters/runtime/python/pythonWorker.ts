@@ -20,6 +20,11 @@ interface PyodideRuntime {
   setStderr(options: { write(bytes: Uint8Array): number }): void;
   setStdin(options: { stdin(): string | null }): void;
 }
+interface PythonCallable {
+  (value: unknown): unknown;
+  callPromising(value: unknown): Promise<unknown>;
+  destroy(): void;
+}
 type PyodideLoader = (options: Record<string, unknown>) => Promise<PyodideRuntime>;
 
 /** 固定coreをclassic Workerへbundleする作者用entry。診断時だけ教材policyを迂回できる。 */
@@ -57,11 +62,19 @@ export function initializePythonWorker(
     const send = (value: unknown): void => {
       apply(post, port, [value]);
     };
-    void run(event.data, send);
+    void run(event.data, send, (receive) => {
+      port.onmessage = (message: MessageEvent<unknown>) => {
+        receive(message.data);
+      };
+    });
   });
 
   /** 信頼frameからの固定bytesだけを受け、native fetchをloaderにも渡さない。 */
-  async function run(input: unknown, send: (value: unknown) => void): Promise<void> {
+  async function run(
+    input: unknown,
+    send: (value: unknown) => void,
+    subscribe: (receive: (value: unknown) => void) => void,
+  ): Promise<void> {
     let stdout = '';
     let stderr = '';
     const rows: { level: 'log' | 'error'; text: string }[] = [];
@@ -70,6 +83,7 @@ export function initializePythonWorker(
     let prepared = false;
     let learnerExecuting = false;
     let moduleProfile = false;
+    let practice = false;
     let version: string | undefined;
     let writeStderr: ((bytes: Uint8Array) => number) | undefined;
     // Pyodideが投げる例外はstderrへ自動出力されないため、今回のConsoleへ末尾を表示する。
@@ -122,6 +136,7 @@ export function initializePythonWorker(
     try {
       if (typeof input !== 'object' || input === null) throw new Error('Python input missing');
       const data = input as Record<string, unknown>;
+      practice = data.purpose === 'practice';
       const profile = (data.profile ?? 'values-vars-print-v1') as PythonLessonProfile;
       const inputLines: unknown = data.inputLines ?? [];
       moduleProfile = isPythonModuleProfile(profile);
@@ -208,6 +223,131 @@ export function initializePythonWorker(
       py.setStdout({ write: makeWriter('stdout') });
       writeStderr = makeWriter('stderr');
       py.setStderr({ write: writeStderr });
+      if (practice) {
+        // この同期AST集合以外では、待機task後にも別の学習者callbackが走り得る。
+        // 汎用Pythonや作者用policy bypassへ対話待機を拡張しない。
+        if (
+          !enforceLessonPolicy ||
+          !['input-echo-v1', 'age-branch-v1', 'range-loop-v1'].includes(profile)
+        )
+          throw new Error('この教材のBrowser対話練習には未対応です。');
+        let analysis: unknown;
+        try {
+          analysis = JSON.parse(String(py.runPython(pythonLessonAnalysis(data.source, profile))));
+        } catch (error: unknown) {
+          if (
+            typeof error === 'object' &&
+            error !== null &&
+            Reflect.get(error, 'type') === 'SyntaxError'
+          ) {
+            displayError(error instanceof Error ? error.message : 'Python syntax error');
+            send(result('code-error', 'Pythonの構文を確認してください。未採点です。'));
+            return;
+          }
+          throw error;
+        }
+        if (
+          typeof analysis !== 'object' ||
+          analysis === null ||
+          !('supported' in analysis) ||
+          analysis.supported !== true
+        ) {
+          send(result('unsupported', 'この教材の同期構文の範囲で練習してください。未採点です。'));
+          return;
+        }
+        let pending: ((packet: string) => void) | undefined;
+        let sequence = 0;
+        let selfTesting = true;
+        const install = py.runPython(`
+import builtins
+import json
+from pyodide.ffi import run_sync
+def install(readline):
+    eof = False
+    def input(prompt="", /):
+        nonlocal eof
+        if eof:
+            raise EOFError("EOF when reading a line")
+        if prompt:
+            print(prompt, end="", flush=True)
+        packet = json.loads(run_sync(readline()))
+        if packet.get("eof") is True:
+            eof = True
+            raise EOFError("EOF when reading a line")
+        return packet["line"]
+    builtins.input = input
+install
+`) as PythonCallable;
+        install(
+          () =>
+            new Promise<string>((resolve) => {
+              if (selfTesting) {
+                schedule(() => {
+                  resolve(JSON.stringify({ line: '' }));
+                }, 0);
+                return;
+              }
+              if (pending !== undefined) throw new Error('Python input already pending');
+              pending = resolve;
+              const requestSequence = ++sequence;
+              // 学習者の同期stackがJSPIでyieldした後のtaskからだけ待機を申告する。
+              schedule(() => {
+                if (pending !== undefined && sequence === requestSequence)
+                  send({ type: 'python-practice-wait', sequence: requestSequence, stdout, stderr });
+              }, 0);
+            }),
+        );
+        install.destroy();
+        subscribe((value) => {
+          if (typeof value !== 'object' || value === null) return;
+          const packet = value as Record<string, unknown>;
+          if (
+            packet.type !== 'python-practice-input' ||
+            packet.sequence !== sequence ||
+            pending === undefined
+          )
+            return;
+          if (
+            packet.eof !== true &&
+            (typeof packet.line !== 'string' || !validPythonInputLines([packet.line]))
+          )
+            return;
+          const resolve = pending;
+          pending = undefined;
+          resolve(JSON.stringify(packet.eof === true ? { eof: true } : { line: packet.line }));
+        });
+        const execute = py.runPython(
+          'def execute(source):\n    exec(compile(source, "/workspace/main.py", "exec"), {"__name__": "__main__"})\nexecute',
+        ) as PythonCallable;
+        const warmup = py.runPython(
+          'def warmup(promise):\n    from pyodide.ffi import run_sync\n    return run_sync(promise)\nwarmup',
+        ) as PythonCallable;
+        // Promise用PyProxyのprototype生成を、既存intrinsic固定より前に済ませる。
+        await warmup.callPromising(
+          new Promise<string>((resolve) => {
+            schedule(() => {
+              resolve('warmup');
+            }, 0);
+          }),
+        );
+        warmup.destroy();
+        restrictPythonWorker(root);
+        try {
+          // API名だけで対応を名乗らず、能力除去後の実際の待機/再開を先に確かめる。
+          await execute.callPromising('input()');
+        } catch {
+          send({ type: 'python-practice-unavailable' });
+          return;
+        }
+        selfTesting = false;
+        prepared = true;
+        learnerExecuting = true;
+        send({ type: 'python-ready' });
+        await execute.callPromising(data.source);
+        execute.destroy();
+        send(result('succeeded'));
+        return;
+      }
       let inputIndex = 0;
       py.setStdin({ stdin: () => inputLines[inputIndex++] ?? null });
       restrictPythonWorker(root);
@@ -334,7 +474,9 @@ export function initializePythonWorker(
           outputState.limited
             ? 'Python output limit'
             : errorType === 'EOFError'
-              ? '実行前の入力行が不足しています。実行中の入力待ちには未対応です。入力を追加して再実行してください。採点していません。'
+              ? practice
+                ? '入力を終了しました（EOF）。未採点です。'
+                : '実行前の入力行が不足しています。実行中の入力待ちには未対応です。入力を追加して再実行してください。採点していません。'
               : message,
         ),
         reason: outputState.limited

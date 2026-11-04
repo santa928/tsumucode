@@ -38,6 +38,8 @@ on:
       - tests/local/python-learning.spec.ts
       - tests/local/python-practice.spec.ts
       - tests/e2e/python-input.spec.ts
+      - tests/e2e/python-interactive.spec.ts
+      - src/features/learning/components/*PythonPractice*
       - tests/e2e/python-module.spec.ts
       - tests/e2e/python-iteration.spec.ts
       - tests/e2e/python-context.spec.ts
@@ -100,6 +102,8 @@ on:
       - tests/local/python-learning.spec.ts
       - tests/local/python-practice.spec.ts
       - tests/e2e/python-input.spec.ts
+      - tests/e2e/python-interactive.spec.ts
+      - src/features/learning/components/*PythonPractice*
       - tests/e2e/python-module.spec.ts
       - tests/e2e/python-iteration.spec.ts
       - tests/e2e/python-context.spec.ts

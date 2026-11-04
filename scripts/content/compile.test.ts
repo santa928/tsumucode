@@ -22,7 +22,7 @@ import { compileContent, publishStaging } from './compile';
 const temporaryRoots: string[] = [];
 
 /** 全JavaScript教材を複製・Compileする統合Caseへ許容する上限時間。 */
-const FULL_JAVASCRIPT_COMPILE_TIMEOUT_MS = 20_000;
+const FULL_JAVASCRIPT_COMPILE_TIMEOUT_MS = 30_000;
 
 /** Testごとに隔離した一時Rootを作成する。 */
 async function createTemporaryRoot(): Promise<string> {

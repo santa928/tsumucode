@@ -7,6 +7,7 @@ export default defineConfig({
     '**/local/python-learning.spec.ts',
     '**/local/python-practice.spec.ts',
     '**/e2e/python-input.spec.ts',
+    '**/e2e/python-interactive.spec.ts',
     '**/e2e/python-module.spec.ts',
     '**/e2e/python-iteration.spec.ts',
     '**/e2e/python-context.spec.ts',
