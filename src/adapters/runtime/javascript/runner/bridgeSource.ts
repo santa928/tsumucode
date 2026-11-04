@@ -380,6 +380,7 @@ function createRuntimeState(
   const usedTokens = new Set<string>();
   let checkpoints = 0;
   let startedAt = now();
+  let moduleEvaluationPending = false;
   let functionDepth = 0;
   let learnerExecutionDepth = 0;
   const submitObservation = config.observeSubmit
@@ -867,6 +868,12 @@ function createRuntimeState(
     reportError(error: unknown): void {
       runtimeError = errorRecord(error);
     },
+    /** 取得・parse待ちを除き、最初のModule本体から一度だけ実行時間を測る。 */
+    beginModuleEvaluation(): void {
+      if (!moduleEvaluationPending) return;
+      moduleEvaluationPending = false;
+      startedAt = now();
+    },
     checkLoop(): boolean {
       return hasBudget();
     },
@@ -904,6 +911,7 @@ function createRuntimeState(
     },
     runModule(loader: () => Promise<unknown>, cleanup: () => void): void {
       resetCallbackBudget();
+      moduleEvaluationPending = true;
       learnerExecutionDepth += 1;
       void Promise.resolve()
         .then(() => (currentTargetReady && submitReady ? loader() : undefined))
@@ -911,6 +919,7 @@ function createRuntimeState(
           runtimeError = errorRecord(error);
         })
         .finally(() => {
+          moduleEvaluationPending = false;
           learnerExecutionDepth = Math.max(0, learnerExecutionDepth - 1);
           try {
             cleanup();

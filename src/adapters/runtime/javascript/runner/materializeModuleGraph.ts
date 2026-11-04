@@ -111,7 +111,8 @@ function prepareModule(
   sourceSegments.push(module.instrumentedCode.slice(cursor));
   sourceSegments[0] =
     `const ${guardIdentifier}=globalThis[${JSON.stringify(runtimeKey)}];` +
-    `if(!${guardIdentifier})throw new Error("JavaScript runtime is unavailable");\n` +
+    `if(!${guardIdentifier})throw new Error("JavaScript runtime is unavailable");` +
+    `${guardIdentifier}.beginModuleEvaluation();\n` +
     (sourceSegments[0] ?? '');
   const lastIndex = sourceSegments.length - 1;
   const encodedSourcePath = module.file.split('/').map(encodeURIComponent).join('/');
