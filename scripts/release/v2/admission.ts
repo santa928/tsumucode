@@ -13,6 +13,7 @@ import { planRelease } from './plan';
 import { ExecutionPlanSchema, createExecutionPlan } from './executionPlan';
 import { verifyResults } from './verify';
 import { verifyContent } from './content';
+import { HistoricalAcceptanceSummarySchema } from './tailwindHistoricalAcceptance';
 const ContextSchema = z
   .object({
     repository: BuildIdentitySchema.shape.repository,
@@ -46,14 +47,29 @@ export const QualificationSchema = z
       .strict(),
     content: z
       .object({
-        status: z.enum(['maintenance', 'approved']),
+        status: z.enum(['maintenance', 'approved', 'historical']),
         carriedLessons: z.array(z.string()),
         newlyApprovedLessons: z.array(z.string()),
+        historicallyAcceptedLessons: z.array(z.string()).optional(),
+        historicalAcceptance: HistoricalAcceptanceSummarySchema.optional(),
         technicalRechecks: z.array(
           z.object({ lesson: z.string(), scopes: z.array(z.string()) }).strict(),
         ),
       })
-      .strict(),
+      .strict()
+      .superRefine((value, context) => {
+        const migrated = value.historicallyAcceptedLessons?.length ?? 0;
+        if (
+          (value.status === 'historical' ||
+            migrated > 0 ||
+            value.historicalAcceptance !== undefined) &&
+          (!migrated || !value.historicalAcceptance || value.status === 'maintenance')
+        )
+          context.addIssue({
+            code: 'custom',
+            message: 'Historical qualification must retain its evidence and scope',
+          });
+      }),
     projects: z.array(z.string()),
   })
   .strict();
@@ -68,6 +84,7 @@ export interface AdmissionInput {
   readonly currentBaseline: unknown;
   readonly contentReceipts: unknown;
   readonly contentWithdrawals?: unknown;
+  readonly historicalAcceptances?: unknown;
   readonly context: unknown;
   readonly publicContent: unknown;
 }
@@ -150,6 +167,7 @@ export function qualifyRelease(input: AdmissionInput) {
     input.contentReceipts,
     captured.baseline,
     input.contentWithdrawals,
+    input.historicalAcceptances,
   );
   return QualificationSchema.parse({
     schemaVersion: 1,

@@ -33,6 +33,7 @@ import {
   runCurrentPublicOperations,
 } from './publicationService';
 import { readInventoryAtSource } from './sourceInventory';
+import { readVerifiedTailwindHistoricalAcceptance } from './tailwindHistoricalAcceptance';
 
 const PreparationSchema = z
   .object({
@@ -170,7 +171,14 @@ export async function runCli(
         root,
         path.join(root, 'docs/quality/content-v2-receipts.json'),
       );
-      verifyContent(snapshot.inventory, policy.receipts, captured.baseline, policy.withdrawals);
+      const historical = await readVerifiedTailwindHistoricalAcceptance(root, snapshot.inventory);
+      verifyContent(
+        snapshot.inventory,
+        policy.receipts,
+        captured.baseline,
+        policy.withdrawals,
+        historical,
+      );
       result = policy;
       break;
     }
