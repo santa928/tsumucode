@@ -6,6 +6,7 @@ import {
 
 afterEach(() => {
   vi.useRealTimers();
+  vi.restoreAllMocks();
   vi.unstubAllGlobals();
 });
 const request = {
@@ -171,3 +172,84 @@ it('起動前の回収済み失敗をelapsedMs 0で受け取り、同じidentity
   );
   expect(fetchMock.mock.calls.some(([path]) => path.endsWith('/cancel'))).toBe(false);
 });
+
+it.each(['restart', 'cancel-pending'])(
+  '別clientへの画面復帰は旧runの回収を待ち、待機中の中止も維持する: %s',
+  async (mode) => {
+    const current = await snapshot();
+    const nextId = 'e67b5131-e5df-4f8c-bad0-c6bfbfbda372';
+    const next = { ...current, identity: { ...current.identity, runId: nextId } };
+    // Hash自体はこの競合の対象外。実値と一致する応答をmicrotaskだけで返す。
+    const digest = Uint8Array.from(current.identity.sourceHash.match(/../gu)!, (byte) =>
+      Number.parseInt(byte, 16),
+    );
+    vi.spyOn(crypto.subtle, 'digest').mockResolvedValue(digest.buffer);
+    vi.useFakeTimers();
+    let releaseOld!: () => void;
+    const oldRemoval = new Promise<void>((resolve) => {
+      releaseOld = resolve;
+    });
+    let active: PythonPracticeSnapshot | undefined;
+    let created = 0;
+    let rejectedOverlap = 0;
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (path: string, init: RequestInit) => {
+        if (path.endsWith('/session'))
+          return Response.json({ apiVersion: 1, token: 'a'.repeat(64) });
+        if (path.endsWith('/practice/runs')) {
+          if (active) {
+            rejectedOverlap += 1;
+            return Response.json(
+              { error: '実行中です。停止後にもう一度実行してください。' },
+              { status: 409 },
+            );
+          }
+          active = created++ === 0 ? current : next;
+          return Response.json(active);
+        }
+        if (typeof init.body !== 'string') throw new Error('JSON request bodyが必要です。');
+        const identity = (JSON.parse(init.body) as { identity: { runId: string } }).identity;
+        const owned = identity.runId === current.identity.runId ? current : next;
+        if (path.endsWith('/cancel')) {
+          if (owned === current) await oldRemoval;
+          if (active?.identity.runId === owned.identity.runId) active = undefined;
+          return Response.json({ ...owned, phase: 'ended', reason: 'cancelled', removed: true });
+        }
+        if (path.endsWith('/ack'))
+          return Response.json({
+            ...owned,
+            phase: 'ended',
+            reason: 'cancelled',
+            removed: true,
+            purged: true,
+          });
+        return Response.json(owned);
+      }),
+    );
+    const previous = new LocalPythonPracticeClient();
+    const previousSnapshots = vi.fn();
+    const previousRun = previous.start(request, previousSnapshots);
+    await vi.advanceTimersByTimeAsync(0);
+    const removal = previous.stop(); // unmountは完了を待たずに戻る。
+    const returned = new LocalPythonPracticeClient();
+    const received = vi.fn();
+    const resumed = returned.start(request, received).catch((error: unknown) => error);
+    await vi.advanceTimersByTimeAsync(0);
+    const cancelled = mode === 'cancel-pending' ? returned.stop() : undefined;
+    releaseOld();
+    await removal;
+    await vi.advanceTimersByTimeAsync(0);
+    const cleanup = returned.stop();
+    await vi.advanceTimersByTimeAsync(200);
+    await cleanup;
+    await cancelled;
+    await previousRun;
+    expect(previousSnapshots).toHaveBeenCalledWith(current);
+    expect(await resumed).toBeUndefined();
+    expect(rejectedOverlap).toBe(0);
+    if (mode === 'restart') expect(received).toHaveBeenCalledWith(next);
+    else expect(received).not.toHaveBeenCalled();
+    expect(active).toBeUndefined();
+  },
+);

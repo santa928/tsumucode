@@ -15,6 +15,10 @@ export type {
   PythonPracticeRequest,
 } from '../python/pythonPracticeContract';
 
+// SPAの離脱でclientが置き換わっても、同じcontroller枠の回収完了を待つ。
+// 完了だけを共有し、identityや生Consoleはmoduleへ残さない。
+let pendingPracticeCleanup: Promise<void> = Promise.resolve();
+
 /** 練習専用client。ExecutionService/Validator/進捗Repositoryへ結果を渡さない。 */
 export class LocalPythonPracticeClient {
   #token: string | undefined;
@@ -70,8 +74,10 @@ export class LocalPythonPracticeClient {
     request: PythonPracticeRequest,
     onSnapshot: (value: PythonPracticeSnapshot) => void,
   ): Promise<void> {
-    await this.stop();
+    const stopping = this.stop();
     const generation = this.#generation;
+    await stopping;
+    if (generation !== this.#generation) return;
     const profile = PYTHON_LESSONS[request.exerciseId]?.profile;
     if (profile === undefined) throw new Error('この教材の練習実行には未対応です。');
     const digest = await crypto.subtle.digest(
@@ -146,11 +152,13 @@ export class LocalPythonPracticeClient {
     this.#generation += 1;
     const creation = this.#creation;
     const known = this.#identity;
+    const precedingCleanup = pendingPracticeCleanup;
     this.#identity = undefined;
     this.#creation = undefined;
     this.#cleanup = this.#cleanup
       .catch(() => undefined)
       .then(async () => {
+        await precedingCleanup;
         const created = await creation?.catch(() => undefined);
         const identity = known ?? created?.identity;
         if (identity === undefined) return undefined;
@@ -167,6 +175,10 @@ export class LocalPythonPracticeClient {
           );
         return this.#ack(identity);
       });
+    pendingPracticeCleanup = this.#cleanup.then(
+      () => undefined,
+      () => undefined,
+    );
     return this.#cleanup;
   }
 }

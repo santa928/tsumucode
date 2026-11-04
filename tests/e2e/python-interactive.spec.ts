@@ -131,14 +131,40 @@ test('対話入力の送信・空行・EOF・中止と編集/離脱後の復旧�
   await start.click();
   await expect(input).toBeFocused({ timeout: preparationTimeout });
   await input.fill('離脱で破棄する入力196');
-  await page.goto(`${base}#/`);
-  await page.goto(route);
-  await expect(page.locator('.cm-content')).toBeVisible();
-  await expect(input).toHaveCount(0);
-  expect(await editorText(page)).toBe(changed);
-  expect(await preserved(page)).toEqual(before);
-  await start.click();
-  await expect(input).toBeFocused({ timeout: preparationTimeout });
+  const localPractice = (await panel.getAttribute('aria-label')) === 'CPythonの練習実行';
+  const cancellation = '**/api/practice/runs/*/cancel';
+  let cancellationObserved = false;
+  let releaseCancellation!: () => void;
+  const cancellationGate = new Promise<void>((resolve) => {
+    releaseCancellation = resolve;
+  });
+  if (localPractice) {
+    // 旧runの回収requestを新画面の開始操作まで保持し、環境速度によらず境界を確認する。
+    await page.route(cancellation, async (route) => {
+      cancellationObserved = true;
+      await cancellationGate;
+      await route.continue();
+    });
+  }
+  try {
+    await page.goto(`${base}#/`);
+    if (localPractice) await expect.poll(() => cancellationObserved).toBe(true);
+    await page.goto(route);
+    await expect(page.locator('.cm-content')).toBeVisible();
+    await expect(input).toHaveCount(0);
+    expect(await editorText(page)).toBe(changed);
+    expect(await preserved(page)).toEqual(before);
+    await start.click();
+    if (localPractice)
+      await expect(
+        panel.getByText('練習実行を準備しています。未採点です。', { exact: true }),
+      ).toBeVisible();
+    releaseCancellation();
+    await expect(input).toBeFocused({ timeout: preparationTimeout });
+  } finally {
+    releaseCancellation();
+    if (localPractice) await page.unroute(cancellation);
+  }
   await input.fill('復旧196');
   await input.press('Enter');
   await expect(panel.getByText('正常終了しました。未採点です。', { exact: true })).toBeVisible();
