@@ -9,6 +9,39 @@ import { editorText, readStoredProgress, replaceEditorText } from './helpers/pro
 
 const base = testBasePath();
 const consoleDiagnostics = new WeakMap<Page, ReturnType<typeof observeLocalConsole>>();
+
+test('Pythonの入力・対話練習・Consoleへ通常スクロールで到達できる', async ({ page }) => {
+  await page.setViewportSize({ width: 1200, height: 682 });
+  await page.goto(
+    `${base}#/courses/python-basics/lessons/python-basics-ch01-l02/exercises/python-basics-ch01-l02-e01`,
+  );
+  await expect(page.locator('.cm-content')).toBeVisible();
+  const preview = page.getByTestId('runtime-preview-frame');
+  const bounds = await preview.boundingBox();
+  if (!bounds) throw new Error('Consoleの表示領域がありません');
+  const consoleOutput = page.getByRole('region', { name: 'Console出力', exact: true });
+  // AX clickによる自動scrollを使わず、学習者と同じwheel操作で到達する。
+  await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+  await page.mouse.wheel(0, 1200);
+  await expect(async () => {
+    const frame = await preview.boundingBox();
+    const output = await consoleOutput.boundingBox();
+    expect(frame).not.toBeNull();
+    expect(output).not.toBeNull();
+    expect(output!.y).toBeGreaterThanOrEqual(Math.max(0, frame!.y));
+    expect(output!.y + output!.height).toBeLessThanOrEqual(
+      Math.min(682, frame!.y + frame!.height) + 1,
+    );
+  }).toPass();
+  await expect(page.getByRole('button', { name: '判定する', exact: true })).toBeInViewport();
+  // 既存のConsoleのTab停止点にも、入力欄から通常の順序で到達できる。
+  await page.getByLabel('実行前の入力（1行につきinput 1回）').press('Tab');
+  await page.getByRole('button', { name: '練習実行', exact: true }).press('Tab');
+  await page.getByRole('region', { name: '練習のConsole出力', exact: true }).press('Tab');
+  await expect(consoleOutput).toBeFocused();
+  await expect(consoleOutput).toBeInViewport();
+});
+
 test.beforeEach(async ({ page }) => {
   consoleDiagnostics.set(page, observeLocalConsole(page));
 });
