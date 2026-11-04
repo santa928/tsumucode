@@ -45,6 +45,14 @@ describe('prepareModuleGraph', () => {
     expect(graph.modules[1]?.sourceSegments[0]).toContain(
       'const __tsumuBudget=globalThis["__tsumuRuntime_1234"]',
     );
+    // 全Moduleの本体に先行する。最初の関数やLoopまで処理を計上漏れさせない。
+    for (const module of graph.modules) {
+      const source = assemble(module, { 'src/score.js': 'blob:iframe-score' });
+      expect(source).toContain('__tsumuBudget.beginModuleEvaluation();');
+      expect(source.indexOf('__tsumuBudget.beginModuleEvaluation();')).toBeLessThan(
+        source.indexOf(module.file === 'src/score.js' ? 'export const score' : 'console.log'),
+      );
+    }
   });
 
   it('閉じていないgraphはURL生成前のPlan段階で拒否する', () => {

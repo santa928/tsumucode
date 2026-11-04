@@ -301,6 +301,78 @@ test('static Module graphをopaque Previewで実行し、依存Sourceとgraph証
   expect(graphEvidence?.value).toEqual(expect.stringMatching(/^[a-f0-9]{64}$/u));
 });
 
+for (const preparationMs of [0, 300]) {
+  test(`Module Blob準備${preparationMs.toString()}msの後も短い本体を実行できる`, async ({
+    page,
+  }) => {
+    const preparations: string[] = [];
+    page.on('console', (message) => {
+      if (message.text().startsWith('test-module-blob-preparation:')) {
+        preparations.push(message.text());
+      }
+    });
+    // trusted Blob準備だけ時計を進める。実ESM/import・guard・外側deadlineは製品のまま。
+    await page.addInitScript((elapsed) => {
+      if (window === window.parent) return;
+      const nativeNow = performance.now.bind(performance);
+      const createObjectURL = URL.createObjectURL.bind(URL);
+      const recordPreparation = console.debug.bind(console);
+      let preparation = 0;
+      Object.defineProperty(performance, 'now', { value: () => nativeNow() + preparation });
+      URL.createObjectURL = (blob: Blob) => {
+        const url = createObjectURL(blob);
+        preparation += elapsed;
+        recordPreparation(`test-module-blob-preparation:${elapsed.toString()}`);
+        return url;
+      };
+    }, preparationMs);
+    const result = await runJavaScriptHarness(page, {
+      sourceType: 'module',
+      capabilityProfile: 'modules',
+      entryFile: 'main.js',
+      files: {
+        'main.js': "import { readValue } from './value.js'; console.log(readValue());",
+        'value.js': 'export function readValue() { return 7; }',
+      },
+    });
+    expect(result.rejection).toBeNull();
+    expect(result.diagnostics).toEqual([]);
+    expect(result.console.map(({ text }) => text)).toEqual(['7']);
+    expect(result.evidence).toContainEqual({ id: 'javascript.executed', value: true });
+    // runtime自身のBlobと依存2件で注入が実際に働いたことも検査する。
+    expect(preparations.length).toBeGreaterThanOrEqual(3);
+    expect(preparations.every((entry) => entry.endsWith(`:${preparationMs.toString()}`))).toBe(
+      true,
+    );
+  });
+}
+
+test('Moduleをまたぐcheckpoint合算とimport先の再帰深さを制限する', async ({ page }) => {
+  const cases = [
+    {
+      'main.js':
+        "import { value } from './value.js'; for(let i=0;i<60000;i++){} console.log(value);",
+      'value.js': 'for(let i=0;i<60000;i++){} export const value=7;',
+    },
+    {
+      'main.js': "import { recurse } from './value.js'; recurse();",
+      'value.js': 'export function recurse(){recurse();}',
+    },
+  ];
+  for (const files of cases) {
+    const result = await runJavaScriptHarness(page, {
+      sourceType: 'module',
+      capabilityProfile: 'modules',
+      entryFile: 'main.js',
+      files,
+    });
+    expect(result.rejection).toBeNull();
+    expect(result.diagnostics).toContainEqual(
+      expect.objectContaining({ code: 'javascript-budget', kind: 'system' }),
+    );
+  }
+});
+
 test('不正なModule graphをfail-closedで拒否し、未解析コードを実行しない', async ({ page }) => {
   const cases = [
     {
