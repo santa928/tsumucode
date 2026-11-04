@@ -108,11 +108,12 @@ describe('Tailwind正式公開の固定境界', () => {
     ).toThrow();
   });
 
-  it('公開状態だけを正規化し、revisionや教材変更を保持する', async () => {
+  it('公開metadataだけを正規化し、revisionや教材変更を保持する', async () => {
     const source = await readFile('content/tailwind/course.yaml', 'utf8');
     const draft = source
       .replace('publicationStatus: published', 'publicationStatus: draft')
-      .replace('authoringSources:\n  - release-history.yaml', 'authoringSources: []');
+      .replace('authoringSources:\n  - release-history.yaml', 'authoringSources: []')
+      .replace('テーマと制作へつなぐ5レッスン。', 'テーマと制作へつなぐ草稿5レッスン。');
     expect(
       normalizeTailwindPublicationFile(
         'content/tailwind/course.yaml',

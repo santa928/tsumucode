@@ -91,7 +91,17 @@ async function inputs() {
         'content/learning-paths/frontend.yaml',
         'package.json',
         'package-lock.json',
-      ].map(async (relative) => [relative, await readFile(relative)] as const),
+      ].map(
+        async (relative) =>
+          [
+            relative,
+            await readFile(
+              relative === 'content/learning-paths/frontend.yaml'
+                ? 'tests/fixtures/release/next-initial-frontend.yaml'
+                : relative,
+            ),
+          ] as const,
+      ),
     ),
   );
   const courseSource = new TextDecoder().decode(files.get('content/next/course.yaml'));
