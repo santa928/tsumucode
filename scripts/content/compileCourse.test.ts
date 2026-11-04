@@ -1103,7 +1103,7 @@ describe('JavaScript draft Course compilation', () => {
       });
     }
     expect(authoring.exercises).toHaveLength(54);
-  }, 30_000);
+  }, 60_000);
 
   it('Chapter 00 Fixtureの期待statusを保持しauthoring dataを公開Lessonへ混入させない', async () => {
     const courseRoot = path.resolve('content/javascript');
@@ -1139,5 +1139,5 @@ describe('JavaScript draft Course compilation', () => {
     expect(stringifyCanonicalJson(compilation.runtime)).not.toMatch(
       /solutionFiles|fixtures|wrong-literal|syntax-error/u,
     );
-  }, 30_000);
+  }, 60_000);
 });

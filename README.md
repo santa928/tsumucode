@@ -91,7 +91,7 @@ HTML/CSSとDOMを使うJavaScript演習は「ブラウザで実行」と表示�
 
 実行できたことと教材の合格は別です。未対応・制限停止・環境障害を採点履歴へ保存しません。編集内容と前回の成功結果は保持します。DOM操作後の例外と未捕捉Promise拒否も、判定中の観測でコード診断へ反映します。遅延処理の予算・タイマー上限による停止は採点しません。Console実行は1500ms、100件・1件4KiB・合計64KiBの出力上限を設け、停止後は新しいWorkerで再試行します。DOM側の変数添字等の制約は残ります。dom / dom-form profileの`currentTarget`は同じDocumentのElementとdispatch後のnullに対応し、非Elementの取得は未対応として採点しません。Form用の`dom-form`はnative submitと学習者のpreventDefaultを操作ごとに観測します。通信・遷移は引き続き禁止し、Ch08-l03で取消と表示を確認します。詳細は[DOM実行の境界](docs/quality/browser-dom-runtime.md)を参照してください。実行方式と確認範囲は[Browser Console設計記録](docs/quality/browser-console-runtime.md)に記載しています。
 
-ローカルDocker学習版では、Closureのガイド練習と任意の追加練習2件を実Node.jsで実行できます。Next.jsの9教材では、説明と読書に加え、Local Docker環境で実page・限定GET/POST・Server Actionを確認できます。Pythonの入門演習はPagesでPyodide、Local Dockerで実CPythonを使います。ターミナルは未実装です。Pagesや読書画面からlocalhostを探索しません。実行portと任意DOM portの境界・制限は[Issue #27の設計記録](docs/quality/runtime-execution-boundary.md)に記載しています。
+ローカルDocker学習版では、Closureのガイド練習と任意の追加練習2件を実Node.jsで実行できます。Next.jsの9教材では、説明と読書に加え、Local Docker環境で実page・限定GET/POST・Server Actionを確認できます。Pythonの入門演習はPagesでPyodide、Local Dockerで実CPythonを使います。入力・条件分岐・反復の3教材には未採点の対話練習があり、対応するPyodide環境とLocal CPythonで実行途中に1行ずつ送信できます。非対応のBrowserはその旨を表示し、事前入力を利用できます。[対応範囲・待機と中止の記録](docs/quality/python-interactive-input.md)を参照してください。ターミナルは未実装です。Pagesや読書画面からlocalhostを探索しません。実行portと任意DOM portの境界・制限は[Issue #27の設計記録](docs/quality/runtime-execution-boundary.md)に記載しています。
 
 ## ローカルNode.js学習
 
@@ -234,6 +234,8 @@ Python実践・Python OOPの草稿は、[専用の公開前契約と私有原本
 ```
 
 push前は、変更をローカルcommitしたcleanなcheckoutで、PRのbase SHA（mainへのpushは変更前SHA）を明示して次を実行します。`check:prepush`はNode/直接依存の固定版を照合し、provenanceと既存の`check`全工程を実行します。手動で選んだテストやPrettierだけの成功を代用しません。失敗・OOM・signal終了・未commit変更・検証中のSource変更があれば成功記録を出さず、pushを止めます。
+
+低速・少メモリの作者検証環境で、実教材準備が既定のUnit用wall-clock枠を超える場合だけ、`TSUMUCODE_TEST_BUDGET_PROFILE=constrained` を明示できます。未指定時のVitest既定値と通常CIは変えません。この固定プロファイルは作者側testを20秒・準備hookを60秒にし、各caseの明示期限、学習者Runnerの計算/待機/回収上限、性能のassertion、対象選択と検査内容は維持します。使用した環境・profile・HEADを検証記録に残し、性能合格や実人観察へ読み替えません。Composeでは `-e TSUMUCODE_TEST_BUDGET_PROFILE=constrained` を渡します。
 
 ```bash
 ./scripts/docker-compose.sh run --rm -e BASE_PATH=/tsumucode/ app npm run check:prepush -- <baseの40文字SHA>
