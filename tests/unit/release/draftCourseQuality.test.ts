@@ -38,10 +38,16 @@ import type {
 
 // 同一の不変教材をfixture作成のたびにbuildし直さず、実検証器による再compileは保持する。
 let tailwindFixtureDelivery: ReturnType<typeof buildSplitContentDelivery>;
+let tailwindFixtureCandidate: DraftCandidateBinding | undefined;
 beforeAll(async () => {
-  const contract = resolveDraftReleaseCourseContract('tailwind');
-  const compilation = await compileCourse(contract.sourceRoot);
-  tailwindFixtureDelivery = buildSplitContentDelivery([compilation], []);
+  try {
+    const contract = resolveDraftReleaseCourseContract('tailwind');
+    const compilation = await compileCourse(contract.sourceRoot);
+    tailwindFixtureDelivery = buildSplitContentDelivery([compilation], []);
+    tailwindFixtureCandidate = (await fixture(true)).candidate;
+  } finally {
+    await cleanFixtures();
+  }
 });
 
 const execFileAsync = promisify(execFile);
@@ -145,17 +151,29 @@ async function fixture(actualCourse = false, courseId: DraftReleaseCourseId = 't
   await git(root, ['add', '.']);
   await git(root, ['commit', '-m', 'synthetic initial input']);
   const sourceCommit = await git(root, ['rev-parse', 'HEAD']);
-  const candidate: DraftCandidateBinding = actualCourse
-    ? (await measureDraftReleaseCandidate(root, dist, courseId)).candidate
-    : {
-        sourceCommit,
-        sourceTree: await readDraftSourceTree(root, sourceCommit),
-        productTreeSha256: 'a'.repeat(64),
-        canonicalDistSha256: 'b'.repeat(64),
-        runtimeSha256: 'c'.repeat(64),
-        publicProvenanceSha256: 'd'.repeat(64),
-        contentReviewSha256: 'e'.repeat(64),
-      };
+  let candidate: DraftCandidateBinding;
+  if (actualCourse) {
+    const sourceTree = await readDraftSourceTree(root, sourceCommit);
+    if (tailwindFixtureCandidate === undefined) {
+      candidate = (await measureDraftReleaseCandidate(root, dist, courseId)).candidate;
+    } else {
+      // 不変の生成入力と原本treeが同じfixtureだけ、期待値の生成を共有する。
+      if (sourceTree !== tailwindFixtureCandidate.sourceTree) {
+        throw new Error('実教材fixtureの原本treeが共有した期待値と一致しません');
+      }
+      candidate = { ...tailwindFixtureCandidate, sourceCommit, sourceTree };
+    }
+  } else {
+    candidate = {
+      sourceCommit,
+      sourceTree: await readDraftSourceTree(root, sourceCommit),
+      productTreeSha256: 'a'.repeat(64),
+      canonicalDistSha256: 'b'.repeat(64),
+      runtimeSha256: 'c'.repeat(64),
+      publicProvenanceSha256: 'd'.repeat(64),
+      contentReviewSha256: 'e'.repeat(64),
+    };
+  }
   const record: DraftCourseQualityRecord = {
     schemaVersion: 1,
     courseId: courseId,
@@ -299,14 +317,16 @@ async function fixture(actualCourse = false, courseId: DraftReleaseCourseId = 't
   return { root, evidence, dist, record, candidate, refreshReview, refreshOriginalsReview };
 }
 
-afterEach(async () => {
+async function cleanFixtures() {
   vi.unstubAllEnvs();
   await Promise.all(
     temporaryRoots.splice(0).map(async (root) => {
       await rm(root, { recursive: true });
     }),
   );
-});
+}
+
+afterEach(cleanFixtures);
 
 describe('3草稿の私有原本と候補binding', () => {
   it.each(['tailwind', 'python-practice'] as const)(
