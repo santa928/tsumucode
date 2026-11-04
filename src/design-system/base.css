@@ -1008,6 +1008,12 @@
     padding: var(--tc-space-3);
   }
 
+  .tc-exercise-preview > [data-runtime-mode='console'] {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+
   .tc-runtime-output-header {
     display: flex;
     min-width: 0;

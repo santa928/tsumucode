@@ -1224,7 +1224,10 @@ function EditableSession({
           </div>
 
           <div className="tc-exercise-preview">
-            <div data-testid="runtime-preview-frame">
+            <div
+              data-testid="runtime-preview-frame"
+              data-runtime-mode={controller.environment.mode}
+            >
               {controller.environment.mode === 'console' ? (
                 <div>
                   <p>
