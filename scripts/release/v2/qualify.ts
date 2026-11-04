@@ -12,6 +12,7 @@ import { repositoryEnvironment, hashValue } from './identity';
 import { verifyStoredReports } from './reports';
 import { readVerifiedContentPolicy } from './contentOriginals';
 import { verifyCandidateArtifact } from './verify';
+import { readVerifiedTailwindHistoricalAcceptance } from './tailwindHistoricalAcceptance';
 const exec = promisify(execFile);
 /** Fresh actual main/deployment and native workflow needs are read at the last non-deploying gate. */
 export async function qualifyCurrentRelease(
@@ -34,6 +35,10 @@ export async function qualifyCurrentRelease(
   const contentPolicy = await readVerifiedContentPolicy(
     root,
     path.join(root, '.release-v2/content-receipts.json'),
+  );
+  const historicalAcceptances = await readVerifiedTailwindHistoricalAcceptance(
+    root,
+    snapshot.inventory,
   );
   const siteUrl =
     'https://' + candidate.repository.split('/')[0]! + '.github.io' + candidate.recipe.basePath;
@@ -84,6 +89,7 @@ export async function qualifyCurrentRelease(
     currentBaseline,
     contentReceipts: contentPolicy.receipts,
     contentWithdrawals: contentPolicy.withdrawals,
+    historicalAcceptances,
     context: {
       repository: environment.GITHUB_REPOSITORY,
       runId: environment.GITHUB_RUN_ID,

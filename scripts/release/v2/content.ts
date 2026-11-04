@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { CommitSchema, DigestSchema, IdSchema, InventorySchema } from './schema';
 import type { LessonInventory, ReleaseInventory } from './schema';
+import { validateTailwindHistoricalAcceptance } from './tailwindHistoricalAcceptance';
 
 const ReceiptSchema = z
   .object({
@@ -65,10 +66,16 @@ export function verifyContent(
   receiptsInput: unknown,
   baselineInput?: unknown,
   withdrawalsInput: unknown = [],
+  historicalInput: unknown = [],
 ) {
   const inventory = InventorySchema.parse(inventoryInput);
   const receipts = z.array(ReceiptSchema).parse(receiptsInput);
   const withdrawals = z.array(ContentWithdrawalSchema).parse(withdrawalsInput);
+  const historical = z
+    .array(z.unknown())
+    .max(1)
+    .parse(historicalInput)
+    .map(validateTailwindHistoricalAcceptance)[0];
   const withdrawn = new Set<string>();
   for (const row of withdrawals) {
     const key = row.courseId + '/' + row.lessonId + '/' + row.learnerDigest;
@@ -80,6 +87,16 @@ export function verifyContent(
   const previous = baseline
     ? publishedLessons(baseline.inventory)
     : new Map<string, LessonInventory>();
+  if (
+    historical &&
+    inventory.courses.some(
+      (course) => course.id === historical.courseId && course.publicationStatus === 'published',
+    )
+  ) {
+    for (const lesson of historical.lessons)
+      if (!current.has(historical.courseId + '/' + lesson.id))
+        throw Error('Historical lesson removed: ' + lesson.id);
+  }
   for (const key of previous.keys())
     if (!current.has(key)) throw new Error(`Published lesson removed: ${key}`);
   const receiptKeys = new Set<string>();
@@ -105,12 +122,19 @@ export function verifyContent(
   }
   const carriedLessons: string[] = [];
   const newlyApprovedLessons: string[] = [];
+  const historicallyAcceptedLessons: string[] = [];
   const technicalRechecks: { lesson: string; scopes: string[] }[] = [];
   for (const [key, lesson] of current) {
     if (withdrawn.has(key + '/' + lesson.learnerDigest))
       throw Error('Explicit content withdrawal blocks publication: ' + key);
     const old = previous.get(key);
+    const priorAcceptance =
+      historical && historical.courseId === key.split('/')[0]
+        ? historical.lessons.find(({ id }) => id === lesson.id)
+        : undefined;
     if (old?.learnerDigest === lesson.learnerDigest) carriedLessons.push(key);
+    else if (priorAcceptance?.learnerDigest === lesson.learnerDigest)
+      historicallyAcceptedLessons.push(key);
     else {
       const rows = receipts.filter((row) => `${row.courseId}/${row.lessonId}` === key);
       for (const role of roles)
@@ -123,17 +147,36 @@ export function verifyContent(
       }
       newlyApprovedLessons.push(key);
     }
-    if (old) {
+    const prior =
+      old ??
+      (priorAcceptance?.learnerDigest === lesson.learnerDigest ? priorAcceptance : undefined);
+    if (prior) {
       const scopes = (['exercise', 'navigation', 'persistence'] as const).filter(
-        (scope) => old[`${scope}Digest`] !== lesson[`${scope}Digest`],
+        (scope) => prior[`${scope}Digest`] !== lesson[`${scope}Digest`],
       );
       if (scopes.length) technicalRechecks.push({ lesson: key, scopes });
     }
   }
   return {
-    status: newlyApprovedLessons.length ? ('approved' as const) : ('maintenance' as const),
+    status: newlyApprovedLessons.length
+      ? ('approved' as const)
+      : historicallyAcceptedLessons.length
+        ? ('historical' as const)
+        : ('maintenance' as const),
     carriedLessons,
     newlyApprovedLessons,
     technicalRechecks,
+    ...(historicallyAcceptedLessons.length && historical
+      ? {
+          historicallyAcceptedLessons,
+          historicalAcceptance: {
+            migrationId: historical.migrationId,
+            sourceCommit: historical.sourceCommit,
+            receiptDigest: historical.receiptDigest,
+            uiActorCount: historical.uiObservation.actorCount,
+            unverified: historical.unverified,
+          },
+        }
+      : {}),
   };
 }

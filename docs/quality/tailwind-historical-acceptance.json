@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "migrationId": "tailwind-2026-10-27",
+  "courseId": "tailwind",
+  "sourceCommit": "37e689387f75bc7060739369977e7b7b8df93700",
+  "sourceTree": "5251646d75c74c5d8962f5c979099d45eb788056",
+  "observedSourceCommit": "e8a077994f5c4cba891e15141dddf5002b1fb7f0",
+  "observedArtifactDigest": "49baf318459ba8d625436b2d788b4a5ffea1acf90e93c679031525f05329b9e3",
+  "contentReview": {
+    "path": "docs/quality/content-review-tailwind.yaml",
+    "sha256": "35108dcfe4cb5a86fc5896ba1c5f7d0510ffafb976e3ea246c91084f36bd9220",
+    "sourceCommit": "37e689387f75bc7060739369977e7b7b8df93700"
+  },
+  "qualityRecord": {
+    "path": "docs/quality/tailwind-release-preparation.yaml",
+    "sha256": "e9ce93fb73cf80d6708b940eeb6ed5c1940a0a8ff160b9590fa2ab83a5e37fb3",
+    "sourceCommit": "b06225d4de6c6a65cc80ff8d107e5c155146f58c"
+  },
+  "uiObservation": {
+    "actor": "/root/tailwind_learning_acceptance",
+    "method": "computer-use",
+    "contextSharing": "none",
+    "originalDigest": "ec0092c277db93400a1333261d941a6e1378b3f857be9b94ec16178d7e92df52",
+    "actorCount": 1
+  },
+  "originalsInspection": {
+    "actor": "/root/tailwind_original_audit",
+    "historicalReviewDigest": "8a66e58ce84d793a0cd836fbcdd508ee87dc5d5d64917d092fcdd07d7eb1fae3",
+    "auditReportDigest": "78c4ffb7a0ed968eabcf4e3c7c80e934b7a775dd1e20404dba6a9ed2834d1b10",
+    "checkedPrivateReferences": 54,
+    "uniquePrivateFiles": 26,
+    "checkedZipMembers": 6,
+    "unrecomputedArtifactDeclarations": 10
+  },
+  "authorizationReference": "docs/quality/tailwind-historical-acceptance.md",
+  "unverified": [
+    "real-human-learning",
+    "low-end-physical-device",
+    "historical-learner-hover-l3-l5",
+    "historical-learner-project-width-tab",
+    "historical-learner-zip-outcome",
+    "historical-learner-progress-export-import",
+    "historical-learner-reload-restart",
+    "historical-learner-l4-800px",
+    "ten-historical-output-byte-declarations"
+  ],
+  "lessons": [
+    {
+      "id": "tailwind-ch01-l01",
+      "learnerDigest": "c936735c545a758a967276b3687d7fd1722cfa4e2be41c502c805b431b97734a",
+      "exerciseDigest": "9450c0087a22eccef087bb850571c32149c6b93607df26cc4368d3bbab4d5b94",
+      "navigationDigest": "df75f58d960410c0c8db5f9d309b7057b713cc2e58fed7f045027f3218363c2e",
+      "persistenceDigest": "248431abadd4df6f089c14127b9b4aaf57eedb3ad1c0c651822c4acb082d6870"
+    },
+    {
+      "id": "tailwind-ch01-l02",
+      "learnerDigest": "8cb0f2ee097ab47226fc16297c1873d185e4710f64277199f52717d5f24e1f5e",
+      "exerciseDigest": "eb658c54dc6e05905ff352d9a3b5ef779d2e5f10ea09fded259933d378ed7341",
+      "navigationDigest": "5323c65fc23c3bf41a890320abeb85c2db8ec1d189194a285a0dfba4909df7d8",
+      "persistenceDigest": "02c2288cd483595d6fdce96bf5cbc1dd0c83eff56daaeeca549d58f42eec9aa4"
+    },
+    {
+      "id": "tailwind-ch01-l03",
+      "learnerDigest": "2b1310f0f8741119583611897289366945eb7869ad9c1f3f425dc06dbf8f3ca9",
+      "exerciseDigest": "589b38ae648a2396659b73e85d9af8c717b9f984e5c65c4f0d1ff7f4e5ab14ca",
+      "navigationDigest": "a392a0237e8fae832608215f95cc8f2d2017e0fdac1f151266825f178be3dae4",
+      "persistenceDigest": "b79337fb9d7d33cbce293fc338386548c9b17dd514a3f9d16986e075db0dc804"
+    },
+    {
+      "id": "tailwind-ch01-l04",
+      "learnerDigest": "f2f80b58053bdf568d234247bcc9383fd70740cb532ed9df0fff8a872faac61d",
+      "exerciseDigest": "a816075606557359d1215dc8f9a0e3690fb66120a794665aaa714b4ac4309f92",
+      "navigationDigest": "c0633b0c692226fce5173ff0929593f607efbd389cc21a3f60a80cd024e15c7e",
+      "persistenceDigest": "c73add4c232ee202a7f477f8a5898cd252d3638255f4f6aa86d781a18a7f2d4c"
+    },
+    {
+      "id": "tailwind-ch02-l01",
+      "learnerDigest": "dda9f8b275a6be57fc3d75b69f365b019fdf203f835f4b76993105695484aa1d",
+      "exerciseDigest": "9126840c3304f345983f12750720b4bd0ad9c0399a62553d75df15e0ee3d3430",
+      "navigationDigest": "a61f0ec4b020ba30c8b2451ce56c46d1d8968239e68b10da786c479818ad9f24",
+      "persistenceDigest": "eb3cb619314187baafb1b2a5971c733ca945bbab7b904e9b396e866c39d93318"
+    }
+  ],
+  "receiptDigest": "066fa7f11378a9d1b0f22b9d3443f5bdce484aea270e82725c66ebf3f5625386"
+}
