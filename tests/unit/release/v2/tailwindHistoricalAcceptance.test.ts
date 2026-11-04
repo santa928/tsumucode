@@ -189,18 +189,15 @@ describe('bounded Tailwind historical acceptance', () => {
       await import('../../../../scripts/release/v2/tailwindHistoricalAcceptance');
     const root = await mkdtemp(path.join(os.tmpdir(), 'tailwind-rejected-'));
     try {
-      await promisify(execFile)(
-        'git',
-        [
-          '-c',
-          'safe.directory=' + process.cwd(),
-          'clone',
-          '--shared',
-          '--no-checkout',
-          process.cwd(),
-          root,
-        ],
-        { env: gitFixtureEnvironment() },
+      const exec = promisify(execFile);
+      const common = (
+        await exec('git', ['rev-parse', '--path-format=absolute', '--git-common-dir'])
+      ).stdout.trim();
+      // Own metadata/config; only immutable source objects come from the read-only CI mount.
+      await exec('git', ['init', '--quiet', root], { env: gitFixtureEnvironment() });
+      await writeFile(
+        path.join(root, '.git/objects/info/alternates'),
+        path.join(common, 'objects') + '\n',
       );
       await mkdir(path.dirname(path.join(root, TAILWIND_HISTORICAL_PATH)), { recursive: true });
       await writeFile(path.join(root, TAILWIND_HISTORICAL_PATH), JSON.stringify(historical));
