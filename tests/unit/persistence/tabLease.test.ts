@@ -477,6 +477,60 @@ describe('TabLeaseCoordinator', () => {
     }
   });
 
+  it('期限timerが時計上の期限より早く発火しても、期限前は拒否し期限後に編集へ復帰する', async () => {
+    const hub = new BroadcastHub();
+    const clock = new FakeClock();
+    const persistence = new SharedLeasePersistence(() => clock.now);
+    const expiresAt = clock.now + 60;
+    await persistence.tryClaimWorkspaceLease({
+      courseId: COURSE_ID,
+      workspaceId: WORKSPACE_ID,
+      ownerId: 'previous-document',
+      token: 'previous-proof',
+      expiresAt,
+    });
+    let firedEarly = false;
+    const coordinator = createCoordinator('current-document', hub, clock, {
+      leasePersistence: persistence,
+      setTimeout: (callback, delay) => {
+        // timerとDate.nowの境界差を、最初の長い期限待ちだけ1ms早めて再現する。
+        if (!firedEarly && delay > 20) {
+          firedEarly = true;
+          return clock.setTimeout(callback, delay - 1);
+        }
+        return clock.setTimeout(callback, delay);
+      },
+    });
+    try {
+      const handle = coordinator.acquire(COURSE_ID, WORKSPACE_ID, {
+        beforeYield: async () => {},
+      });
+      finishClaim(clock);
+      await flushPromises();
+      expect(handle.getSnapshot().status).toBe('read-only');
+      clock.advance(expiresAt - clock.now - 1);
+      await flushPromises();
+      expect(firedEarly).toBe(true);
+      expect(handle.getSnapshot().status).toBe('read-only');
+      await expect(handle.runFencedWrite(async () => 'too early')).rejects.toThrow(
+        '編集権を保持していません',
+      );
+      clock.advance(1);
+      await flushPromises();
+      finishClaim(clock);
+      await flushPromises();
+      expect(handle.getSnapshot().status).toBe('owned');
+      await expect(
+        handle.runFencedWrite(async (_token, proof) => {
+          persistence.assertWrite(proof);
+          return 'current owner';
+        }),
+      ).resolves.toBe('current owner');
+    } finally {
+      coordinator.dispose();
+    }
+  });
+
   it.each([
     ['claim前', false],
     ['claim CAS待機中', true],
