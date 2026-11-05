@@ -14,6 +14,9 @@ import { ExecutionPlanSchema, createExecutionPlan } from './executionPlan';
 import { verifyResults } from './verify';
 import { verifyContent } from './content';
 import { HistoricalAcceptanceSummarySchema } from './tailwindHistoricalAcceptance';
+import { verifyMovementInputs } from './movement';
+import { MovementLearnerAcceptanceSchema } from './learnerMovement';
+import { MovementPredecessorSummarySchema } from './movementPredecessor';
 const ContextSchema = z
   .object({
     repository: BuildIdentitySchema.shape.repository,
@@ -52,6 +55,8 @@ export const QualificationSchema = z
         newlyApprovedLessons: z.array(z.string()),
         historicallyAcceptedLessons: z.array(z.string()).optional(),
         historicalAcceptance: HistoricalAcceptanceSummarySchema.optional(),
+        movementLearnerAcceptance: z.array(MovementLearnerAcceptanceSchema).min(1).optional(),
+        movementPredecessor: MovementPredecessorSummarySchema.optional(),
         technicalRechecks: z.array(
           z.object({ lesson: z.string(), scopes: z.array(z.string()) }).strict(),
         ),
@@ -60,7 +65,7 @@ export const QualificationSchema = z
       .superRefine((value, context) => {
         const migrated = value.historicallyAcceptedLessons?.length ?? 0;
         if (
-          (value.status === 'historical' ||
+          ((value.status === 'historical' && !value.movementLearnerAcceptance?.length) ||
             migrated > 0 ||
             value.historicalAcceptance !== undefined) &&
           (!migrated || !value.historicalAcceptance || value.status === 'maintenance')
@@ -87,6 +92,7 @@ export interface AdmissionInput {
   readonly historicalAcceptances?: unknown;
   readonly context: unknown;
   readonly publicContent: unknown;
+  readonly movementInputs?: unknown;
 }
 /** Trusted caller re-reads actual main/recipe/deployment and native needs statuses. No network self-claims qualify. */
 export function qualifyRelease(input: AdmissionInput) {
@@ -98,6 +104,10 @@ export function qualifyRelease(input: AdmissionInput) {
   const publicContent = ArtifactManifestSchema.parse(input.publicContent);
   const captured = validateCapturedBaseline(input.capturedBaseline),
     current = validateCapturedBaseline(input.currentBaseline);
+  const movement =
+    input.movementInputs === undefined
+      ? undefined
+      : verifyMovementInputs(input.movementInputs, inventory, captured.baseline);
   if (
     hashValue({ ...captured.proof, observedAt: null }) !==
       hashValue({ ...current.proof, observedAt: null }) ||
@@ -113,7 +123,7 @@ export function qualifyRelease(input: AdmissionInput) {
   )
     throw new Error('Stale source, recipe or producer');
   if (
-    hashValue(plan) !== hashValue(planRelease(inventory, captured.baseline)) ||
+    hashValue(plan) !== hashValue(planRelease(inventory, captured.baseline, movement)) ||
     hashValue(executionPlan) !==
       hashValue(
         createExecutionPlan(plan, executionPlan.testManifests, executionPlan.publicContentDigest),
@@ -168,6 +178,7 @@ export function qualifyRelease(input: AdmissionInput) {
     captured.baseline,
     input.contentWithdrawals,
     input.historicalAcceptances,
+    movement,
   );
   return QualificationSchema.parse({
     schemaVersion: 1,

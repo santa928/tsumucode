@@ -14,7 +14,7 @@ const files = {
 };
 const input = {
   apiVersion: 1,
-  exerciseId: 'python-basics-ch01-l08-e01',
+  exerciseId: 'python-basics-ch01-l12-e01',
   contentRevision: 'r1',
   runtimeProfileId: PYTHON_PROFILE_ID,
   runId: 'module-run',

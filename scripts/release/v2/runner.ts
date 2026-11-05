@@ -21,6 +21,7 @@ import { observeTestSuite } from './observed';
 import { readNextFixtureCoverage } from './nativeCoverage';
 import { checkStaticArtifact } from '../checkStaticArtifact';
 import { readLighthouseCoverage } from './lighthouse';
+import { MovementInputsSchema, verifyMovementInputs, readMovementDeclaration } from './movement';
 const exec = promisify(execFile);
 const SnapshotSchema = z
   .object({
@@ -28,6 +29,7 @@ const SnapshotSchema = z
     inventory: InventorySchema,
     plan: PlanSchema,
     publicContent: ArtifactManifestSchema,
+    movementInputs: MovementInputsSchema.optional(),
   })
   .strict();
 const BundleSchema = z
@@ -48,9 +50,13 @@ export function validateExecutionBundle(input: unknown) {
         ? undefined
         : validateCapturedBaseline(bundle.capturedBaseline).baseline;
   const { snapshot, executionPlan, candidate } = bundle;
+  const movement =
+    snapshot.movementInputs === undefined
+      ? undefined
+      : verifyMovementInputs(snapshot.movementInputs, snapshot.inventory, baseline);
   if (
     candidate.buildJobId !== 'build' ||
-    hashValue(snapshot.plan) !== hashValue(planRelease(snapshot.inventory, baseline)) ||
+    hashValue(snapshot.plan) !== hashValue(planRelease(snapshot.inventory, baseline, movement)) ||
     hashValue(executionPlan) !==
       hashValue(
         createExecutionPlan(
@@ -66,12 +72,19 @@ export function validateExecutionBundle(input: unknown) {
   return bundle;
 }
 export async function loadExecutionBundle(root: string) {
-  return validateExecutionBundle({
+  const bundle = validateExecutionBundle({
     snapshot: await readJson(path.join(root, '.release-v2/preparation.json')),
     executionPlan: await readJson(path.join(root, '.release-v2/execution-plan.json')),
     candidate: await readJson(path.join(root, '.release-v2/candidate.json')),
     capturedBaseline: await readJson(path.join(root, '.release-v2/baseline.json')),
   });
+  const declaration = await readMovementDeclaration(root);
+  if (
+    hashValue(declaration ?? null) !==
+    hashValue(bundle.snapshot.movementInputs?.declaration ?? null)
+  )
+    throw Error('Movement snapshot differs from source policy');
+  return bundle;
 }
 async function absent(file: string) {
   try {

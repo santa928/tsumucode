@@ -90,6 +90,7 @@ export async function qualifyCurrentRelease(
     contentReceipts: contentPolicy.receipts,
     contentWithdrawals: contentPolicy.withdrawals,
     historicalAcceptances,
+    movementInputs: snapshot.movementInputs,
     context: {
       repository: environment.GITHUB_REPOSITORY,
       runId: environment.GITHUB_RUN_ID,

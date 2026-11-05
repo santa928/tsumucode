@@ -1,6 +1,7 @@
 /** 分割配信ArtifactをRuntimeでstrict検証し、親Artifactとの対応も照合する。 */
 import { CourseCatalogV3Schema, CourseIndexSchema, LessonManifestSchema } from './deliverySchema';
 import type { CourseCatalog, CourseCatalogEntry, CourseIndex, LessonManifest } from './types';
+import { assertActiveExerciseRuntime } from './activeExerciseRuntime';
 
 /** Catalog v3をstrict公開契約で検証する。 */
 export function parseRuntimeCourseCatalogV3(value: unknown): CourseCatalog {
@@ -34,6 +35,9 @@ export function parseIntegrityVerifiedLessonManifest(
   lessonId: string,
 ): LessonManifest {
   const manifest = LessonManifestSchema.parse(value);
+  for (const exercise of manifest.lesson.exercises) {
+    assertActiveExerciseRuntime(exercise.runtime);
+  }
   const exists = index.phases.some(({ chapters }) =>
     chapters.some(({ lessons }) => lessons.some(({ id }) => id === lessonId)),
   );

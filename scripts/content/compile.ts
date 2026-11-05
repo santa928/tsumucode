@@ -7,6 +7,7 @@ import type { CourseCatalogV3, LearningPathDefinition } from '../../src/core/con
 import {
   compileCourse,
   stringifyCanonicalJson,
+  type CompileCourseOptions,
   type CompiledCourseArtifacts,
 } from './compileCourse';
 import { compileLearningPaths } from './learningPaths';
@@ -14,7 +15,7 @@ import { buildNativeWorkspaceCatalog } from './nativeWorkspaceCatalog';
 import type { CompiledNativeCatalog } from '../local/next-project-protocol.mjs';
 import { buildSplitContentDelivery, writeSplitContentDeliveryTree } from './splitContentDelivery';
 
-export interface CompileContentOptions {
+export interface CompileContentOptions extends CompileCourseOptions {
   readonly sourceRoot: string;
   readonly outputRoot: string;
   readonly checkOnly: boolean;
@@ -278,7 +279,7 @@ export async function compileContent(options: CompileContentOptions): Promise<Co
 
   try {
     for (const directory of courseDirectories) {
-      const compilation = await compileCourse(path.join(sourceRoot, directory));
+      const compilation = await compileCourse(path.join(sourceRoot, directory), options);
       const course = compilation.runtime;
       if (course.id !== directory) {
         throw new Error(`Course directory名とCourse IDが一致しません: ${directory}/${course.id}`);

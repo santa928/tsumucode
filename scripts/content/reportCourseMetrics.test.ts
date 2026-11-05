@@ -64,7 +64,7 @@ describe('Course Metrics', () => {
 
   it.each([
     ['javascript', 202, 170, 202],
-    ['python-basics', 21, 19, 19],
+    ['python-basics', 33, 31, 31],
     ['react', 48, 30, 30],
   ])('%sの全Slide・純concept・legacy最低宣言を分ける', (id, total, pure, minimum) => {
     const metrics = report.courses.find((course) => course.id === id)!;
