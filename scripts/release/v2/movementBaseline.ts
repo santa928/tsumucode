@@ -51,7 +51,7 @@ export function resolveMovementBaseline(
   return bound;
 }
 
-/** 既存CLIが取得したfresh proofに、固定private入力の宣言bound proofだけを結ぶ。 */
+/** fresh proofに元scopeの実proofを結ぶ。clean checkoutでは版管理された固定原本を使う。 */
 export async function readMovementBaselineProofs(
   root: string,
   binding: Binding,
@@ -62,8 +62,13 @@ export async function readMovementBaselineProofs(
   try {
     bytes = await readFile(path.join(root, '.release-v2/movement-baseline-proof.json'));
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return undefined;
-    throw error;
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+    try {
+      bytes = await readFile(path.join(root, 'docs/quality/movement-baseline-proof-v2.json'));
+    } catch (recordedError) {
+      if ((recordedError as NodeJS.ErrnoException).code === 'ENOENT') return undefined;
+      throw recordedError;
+    }
   }
   if (bytes.length > 64 * 1024) throw Error('Movement original baseline proof exceeds limit');
   const original: unknown = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes));

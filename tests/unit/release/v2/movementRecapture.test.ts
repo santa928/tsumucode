@@ -1,5 +1,8 @@
 // @vitest-environment node
 import { beforeAll, describe, expect, it } from 'vitest';
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
 import {
   consumeVerifiedMovement,
   verifyMovementInputs,
@@ -7,6 +10,7 @@ import {
 import { planRelease } from '../../../../scripts/release/v2/plan';
 import { validateCapturedBaseline } from '../../../../scripts/release/v2/parent';
 import { hashValue } from '../../../../scripts/release/v2/identity';
+import { readMovementBaselineProofs } from '../../../../scripts/release/v2/movementBaseline';
 import {
   captureAtTwoTimes,
   FRESH_CAPTURE_TIME,
@@ -74,6 +78,44 @@ describe('宣言がbindした元proofとfresh再captureの時刻だけの整合'
     expect(() =>
       verifyMovementInputs(fixture.bound.inputs, fixture.bound.inventory, fixture.freshBaseline),
     ).toThrow(/baseline/iu);
+  });
+
+  it('clean checkoutの固定元proofを読み、再captureした親へ元の承認scopeを接続する', async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), 'movement-recorded-proof-'));
+    try {
+      const directory = path.join(root, 'docs/quality');
+      await mkdir(directory, { recursive: true });
+      const file = path.join(directory, 'movement-baseline-proof-v2.json');
+      await writeFile(file, JSON.stringify(fixture.inputs.baselineProofs.original));
+      const proofs = await readMovementBaselineProofs(
+        root,
+        fixture.bound.inputs.declaration.body.baseline,
+        fixture.freshBaseline,
+        fixture.inputs.baselineProofs.current,
+      );
+      expect(proofs).toEqual(fixture.inputs.baselineProofs);
+      expect(() =>
+        verifyMovementInputs(
+          { ...fixture.bound.inputs, baselineProofs: proofs },
+          fixture.bound.inventory,
+          fixture.freshBaseline,
+        ),
+      ).not.toThrow();
+      await writeFile(
+        file,
+        JSON.stringify({ ...fixture.inputs.baselineProofs.original, deploymentId: '502' }),
+      );
+      await expect(
+        readMovementBaselineProofs(
+          root,
+          fixture.bound.inputs.declaration.body.baseline,
+          fixture.freshBaseline,
+          fixture.inputs.baselineProofs.current,
+        ),
+      ).rejects.toThrow(/proof|baseline/iu);
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
   });
 
   it.each(['original', 'current'] as const)('proof対の%s欠落を許可しない', (missing) => {

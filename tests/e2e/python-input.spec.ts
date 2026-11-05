@@ -248,6 +248,13 @@ for (const suffix of [
           })
           .toBe('incomplete');
         await page.getByRole('button', { name: '閉じる', exact: true }).click();
+        await replaceEditorText(page, solution);
+        await page.getByRole('button', { name: '判定する', exact: true }).click();
+        await expect(page.getByRole('heading', { name: 'できました', exact: true })).toBeVisible({
+          timeout: 30_000,
+        });
+        await page.getByRole('button', { name: '閉じる', exact: true }).click();
+        expect(await editorText(page)).toBe(solution);
       }
     },
   );
