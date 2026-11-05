@@ -1,7 +1,9 @@
 import { z } from 'zod';
-import { CommitSchema, DigestSchema, IdSchema, InventorySchema } from './schema';
+import { CommitSchema, DigestSchema, IdSchema, InventorySchema, BaselineSchema } from './schema';
 import type { LessonInventory, ReleaseInventory } from './schema';
 import { validateTailwindHistoricalAcceptance } from './tailwindHistoricalAcceptance';
+import { consumeVerifiedMovement } from './movement';
+import { MovementLearnerAcceptanceSchema } from './learnerMovement';
 
 const ReceiptSchema = z
   .object({
@@ -37,15 +39,7 @@ export const ContentWithdrawalSchema = z
     reason: z.enum(['approval-withdrawn', 'known-finding']),
   })
   .strict();
-export const BaselineSchema = z
-  .object({
-    deploymentId: z.string().regex(/^[1-9]\d*$/u),
-    sourceCommit: CommitSchema,
-    artifactDigest: DigestSchema,
-    sourceRecordDigest: DigestSchema,
-    inventory: InventorySchema,
-  })
-  .strict();
+export { BaselineSchema } from './schema';
 export type ContentBaseline = z.infer<typeof BaselineSchema>;
 export type ContentReceipt = z.infer<typeof ReceiptSchema>;
 const roles = ['content', 'novice', 'recovery', 'maker'] as const;
@@ -67,6 +61,7 @@ export function verifyContent(
   baselineInput?: unknown,
   withdrawalsInput: unknown = [],
   historicalInput: unknown = [],
+  movementInput?: unknown,
 ) {
   const inventory = InventorySchema.parse(inventoryInput);
   const receipts = z.array(ReceiptSchema).parse(receiptsInput);
@@ -83,6 +78,7 @@ export function verifyContent(
     withdrawn.add(key);
   }
   const baseline = baselineInput === undefined ? undefined : BaselineSchema.parse(baselineInput);
+  const movement = consumeVerifiedMovement(movementInput, inventory, baseline);
   const current = publishedLessons(inventory);
   const previous = baseline
     ? publishedLessons(baseline.inventory)
@@ -106,6 +102,8 @@ export function verifyContent(
     if (!lesson || lesson.learnerDigest !== receipt.learnerDigest)
       throw new Error(`Stale or unknown content receipt: ${key}`);
     const roleKey = `${key}/${receipt.role}`;
+    if (movement?.rechecks.has(key) && receipt.sourceCommit !== movement.candidateContentCommit)
+      throw new Error(`Movement requires a fresh candidate-source receipt: ${roleKey}`);
     if (receiptKeys.has(roleKey)) throw new Error(`Duplicate receipt: ${roleKey}`);
     receiptKeys.add(roleKey);
     if (
@@ -124,16 +122,47 @@ export function verifyContent(
   const newlyApprovedLessons: string[] = [];
   const historicallyAcceptedLessons: string[] = [];
   const technicalRechecks: { lesson: string; scopes: string[] }[] = [];
+  const movementLearnerAcceptance: z.infer<typeof MovementLearnerAcceptanceSchema>[] = [];
   for (const [key, lesson] of current) {
     if (withdrawn.has(key + '/' + lesson.learnerDigest))
       throw Error('Explicit content withdrawal blocks publication: ' + key);
     const old = previous.get(key);
+    const learnerCarry = movement?.learnerCarries.get(key);
+    if (
+      learnerCarry &&
+      withdrawals.some(
+        (row) =>
+          row.courseId === learnerCarry.courseId &&
+          row.lessonId === learnerCarry.fromLessonId &&
+          row.learnerDigest === learnerCarry.fromLearnerDigest,
+      )
+    )
+      throw Error('Explicit historical content withdrawal blocks publication: ' + key);
     const priorAcceptance =
       historical && historical.courseId === key.split('/')[0]
         ? historical.lessons.find(({ id }) => id === lesson.id)
         : undefined;
-    if (old?.learnerDigest === lesson.learnerDigest) carriedLessons.push(key);
-    else if (priorAcceptance?.learnerDigest === lesson.learnerDigest)
+    if (learnerCarry) {
+      if (learnerCarry.kind === 'content-delta') {
+        const content = receipts.find(
+          (row) => `${row.courseId}/${row.lessonId}` === key && row.role === 'content',
+        );
+        if (!content) throw Error('Missing content receipt: ' + key);
+        if (content.sourceCommit !== learnerCarry.candidateContentCommit)
+          throw Error('Movement requires a fresh candidate-source receipt: ' + key + '/content');
+        movementLearnerAcceptance.push(
+          MovementLearnerAcceptanceSchema.parse({
+            ...learnerCarry,
+            contentReceiptDigest: content.receiptDigest,
+          }),
+        );
+      } else movementLearnerAcceptance.push(MovementLearnerAcceptanceSchema.parse(learnerCarry));
+    } else if (!movement?.rechecks.has(key) && old?.learnerDigest === lesson.learnerDigest)
+      carriedLessons.push(key);
+    else if (
+      !movement?.rechecks.has(key) &&
+      priorAcceptance?.learnerDigest === lesson.learnerDigest
+    )
       historicallyAcceptedLessons.push(key);
     else {
       const rows = receipts.filter((row) => `${row.courseId}/${row.lessonId}` === key);
@@ -148,7 +177,9 @@ export function verifyContent(
       newlyApprovedLessons.push(key);
     }
     const prior =
-      old ??
+      (learnerCarry
+        ? previous.get(learnerCarry.courseId + '/' + learnerCarry.fromLessonId)
+        : old) ??
       (priorAcceptance?.learnerDigest === lesson.learnerDigest ? priorAcceptance : undefined);
     if (prior) {
       const scopes = (['exercise', 'navigation', 'persistence'] as const).filter(
@@ -160,12 +191,14 @@ export function verifyContent(
   return {
     status: newlyApprovedLessons.length
       ? ('approved' as const)
-      : historicallyAcceptedLessons.length
+      : historicallyAcceptedLessons.length || movementLearnerAcceptance.length
         ? ('historical' as const)
         : ('maintenance' as const),
     carriedLessons,
     newlyApprovedLessons,
     technicalRechecks,
+    ...(movementLearnerAcceptance.length ? { movementLearnerAcceptance } : {}),
+    ...(movement?.predecessorSummary ? { movementPredecessor: movement.predecessorSummary } : {}),
     ...(historicallyAcceptedLessons.length && historical
       ? {
           historicallyAcceptedLessons,

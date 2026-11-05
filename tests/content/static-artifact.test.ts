@@ -5,6 +5,9 @@ import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { checkStaticArtifact } from '../../scripts/release/checkStaticArtifact';
 import { compileCourse } from '../../scripts/content/compileCourse';
+import { buildInventory } from '../../scripts/release/v2/inventory';
+import { hashArtifact } from '../../scripts/release/v2/identity';
+import type { ReleaseInventory } from '../../scripts/release/v2/schema';
 import {
   buildSplitContentDelivery,
   writeSplitContentDeliveryTree,
@@ -58,13 +61,33 @@ async function artifact(extraName: string, extraContent: string): Promise<string
 }
 
 /** 固定配布物の欠落検査専用。合成Workerを実Pyodide/実学習の証拠として使用しない。 */
+const pythonArtifacts = new Map<
+  string,
+  {
+    inventory: ReleaseInventory;
+    publicContent: Awaited<ReturnType<typeof hashArtifact>>;
+  }
+>();
+
+/** 現候補はCompiler inventoryで検査し、旧公開契約の定数へ合わせない。 */
+function checkPythonArtifact(root: string) {
+  const expected = pythonArtifacts.get(root);
+  if (!expected) throw new Error('Python合成ArtifactのCompiler入力がありません');
+  return checkStaticArtifact(root, expected.inventory, expected.publicContent);
+}
+
 async function pythonArtifact(): Promise<string> {
   const root = await artifact('extra.json', '{}');
   const compilation = await compileCourse('content/python-basics');
+  await rm(path.join(root, 'generated/content'), { recursive: true });
   await writeSplitContentDeliveryTree(
     path.join(root, 'generated/content'),
     buildSplitContentDelivery([compilation], []),
   );
+  pythonArtifacts.set(root, {
+    inventory: buildInventory([compilation]),
+    publicContent: await hashArtifact(path.join(root, 'generated/content')),
+  });
   const output = path.join(root, 'python-runtime/314.0.7');
   const manifest = PythonDistributionManifestSchema.parse(
     JSON.parse(await readFile('vendor/python/314.0.7/manifest.json', 'utf8')),
@@ -122,9 +145,9 @@ describe('static artifact', () => {
       standardLessonCount: 9,
       estimatedMinutes: 155,
     });
-    expect(
-      (await checkStaticArtifact(await pythonArtifact(), 'python-basics')).files,
-    ).toBeGreaterThan(40);
+    const root = await pythonArtifact();
+    expect(pythonArtifacts.get(root)?.inventory.courses[0]?.lessons).toHaveLength(16);
+    expect((await checkPythonArtifact(root)).files).toBeGreaterThan(40);
   });
   it.each([
     'MPL原文',
@@ -154,7 +177,21 @@ describe('static artifact', () => {
     if (kind === '案内link') await writeFile(path.join(output, 'NOTICES.html'), '<h1>通知</h1>');
     if (kind === 'Worker欠落') await rm(path.join(output, 'worker.js'));
     if (kind === '未知binary') await writeFile(path.join(output, 'extra.wasm'), 'extra');
-    await expect(checkStaticArtifact(root, 'python-basics')).rejects.toThrow();
+    await expect(checkPythonArtifact(root)).rejects.toThrow();
+  });
+
+  it.each([
+    'pythonDecoratorFactoryAnalysis.mjs',
+    'pythonDecoratorAnalysis.mjs',
+    'pythonObjectProtocolAnalysis.mjs',
+    'pythonOopAnalysis.mjs',
+  ])('Pythonのimport先%sの欠落と改変を拒否する', async (module) => {
+    const root = await pythonArtifact();
+    const source = path.join(root, 'python-runtime/314.0.7/sources/src/core/runtime', module);
+    await writeFile(source, 'altered');
+    await expect(checkPythonArtifact(root)).rejects.toThrow();
+    await rm(source);
+    await expect(checkPythonArtifact(root)).rejects.toThrow();
   });
 
   it('Next JSONの重複keyに隠した開発URLを拒否する', async () => {

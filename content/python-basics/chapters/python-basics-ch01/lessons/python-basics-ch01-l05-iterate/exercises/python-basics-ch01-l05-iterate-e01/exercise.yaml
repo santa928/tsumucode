@@ -1,0 +1,283 @@
+id: python-basics-ch01-l05-iterate-e01
+kind: standard
+workspaceId: python-basics-ch01-l05-iterate-e01
+countsTowardStandardExerciseTotal: true
+title: Listの各要素をforで合計する
+instructionsSource: instructions.md
+requiresConcepts:
+  - conceptId: python-list
+    minimumLevel: transform
+scaffoldLevel: transform
+steps:
+  - id: python-basics-ch01-l05-iterate-e01-step01
+    file: main.py
+    target: 'total = 0を書き、足す前の合計を用意します。'
+    starterAnchor: '# 合計を0で初期化します。'
+    change: 'total = 0を書き、足す前の合計を用意します。'
+    observe: '合計は0から始めます。[4, 5]なら最初に4を足します。'
+    requiresConceptIds: [python-list]
+    validationRuleIds: [python-basics-ch01-l05-iterate-e01-r01]
+  - id: python-basics-ch01-l05-iterate-e01-step02
+    file: main.py
+    target: 'for item in numbers: と、字下げしたtotal = total + itemを書きます。'
+    starterAnchor: '# forでListの各要素を合計へ足します。'
+    change: 'for item in numbers: と、字下げしたtotal = total + itemを書きます。'
+    observe: '[4, 5]ならtotalは0→4→9へ変わります。[1, 3, 5]など合計が9になる別の整数のListも正解です。'
+    requiresConceptIds: [python-list]
+    validationRuleIds: [python-basics-ch01-l05-iterate-e01-r01]
+  - id: python-basics-ch01-l05-iterate-e01-step03
+    file: main.py
+    target: 'forの外側へprint(total)を書きます。'
+    starterAnchor: '# forの後で合計を表示します。'
+    change: 'forの外側へprint(total)を書きます。'
+    observe: '判定では合計9を1回表示します。空Listの観察ではforが0回で0を表示します。観察後は合計が9になるListへ戻します。'
+    requiresConceptIds: [python-list]
+    validationRuleIds: [python-basics-ch01-l05-iterate-e01-r01]
+runtime:
+  kind: python
+  entryFile: main.py
+  sourceType: script
+  capabilityProfile: core
+  primaryOutput: console
+  profile: list-iterate-sum-v1
+files:
+  - path: main.py
+    language: python
+    source: starter/main.py
+    editable: true
+solutionFiles:
+  - path: main.py
+    language: python
+    source: solution/main.py
+    editable: false
+validationRules:
+  - id: python-basics-ch01-l05-iterate-e01-r01
+    label: Listから受け取る各要素を、0から始めた合計へ繰り返し足せる。
+    required: true
+    group: all
+    viewportMode: all
+    viewportIds: [desktop-1280]
+    target:
+      kind: python-source
+      file: main.py
+    assertion:
+      kind: python-source-fact
+      fact: list-iterated-summed
+    feedback:
+      target: main.pyとConsole
+      expected: Listの各整数をforで1つずつ合計へ足し、forの後に9を1行表示します。合計が9になる別のListも正解です。
+      nextAction: totalを0で初期化し、forの内側で各itemを足し、forの後でtotalを表示してください。
+    hintId: python-basics-ch01-l05-iterate-e01-h01
+    relatedSlideId: python-basics-ch01-l05-iterate-s02
+hints:
+  - id: python-basics-ch01-l05-iterate-e01-h01
+    level: 1
+    title: 最初の手掛かり
+    text: 'rangeのLessonと同じforを使います。inの後ろをnumbersにすると、Listの要素を順に受け取ります。'
+    relatedSlideId: python-basics-ch01-l05-iterate-s02
+  - id: python-basics-ch01-l05-iterate-e01-h02
+    level: 2
+    title: コードを組み立てる
+    text: 'total = 0で始め、for item in numbers: の内側へtotal = total + itemを書きます。print(total)は字下げしません。'
+    relatedSlideId: python-basics-ch01-l05-iterate-s02
+  - id: python-basics-ch01-l05-iterate-e01-h03
+    level: 3
+    title: 解答と理由
+    text: 'numbers = [4, 5]の後にtotal = 0、for item in numbers:、字下げしたtotal = total + item、字下げしないprint(total)を書くと9になります。'
+    relatedSlideId: python-basics-ch01-l05-iterate-s02
+relatedSlideIds: [python-basics-ch01-l05-iterate-s01, python-basics-ch01-l05-iterate-s02]
+previewViewports:
+  - id: desktop-1280
+    width: 1280
+    height: 720
+assets: []
+fixtures:
+  - id: positive-sign
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/positive-sign.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: negative-wrong-sum
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/negative-wrong-sum.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l05-iterate-e01-r01]
+  - id: negative-integers
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/negative-integers.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: mutated-list-after-sum
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/mutated-list-after-sum.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l05-iterate-e01-r01]
+  - id: temporary-print
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/temporary-print.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: solution
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/solution.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: starter
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/starter.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l05-iterate-e01-r01]
+  - id: alternate-name
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/alternate-name.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: add-reversed
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/add-reversed.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: augmented
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/augmented.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: temporary
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/temporary.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: temporary-sum
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/temporary-sum.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: multiple-elements
+    expectedStatus: pass
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/multiple-elements.py
+        editable: false
+    expectedFeedbackRuleIds: []
+  - id: empty-list
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/empty-list.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l05-iterate-e01-r01]
+  - id: wrong-sum
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/wrong-sum.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l05-iterate-e01-r01]
+  - id: hardcoded
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/hardcoded.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l05-iterate-e01-r01]
+  - id: unused-loop
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/unused-loop.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l05-iterate-e01-r01]
+  - id: replace-total
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/replace-total.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l05-iterate-e01-r01]
+  - id: reset-total
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/reset-total.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l05-iterate-e01-r01]
+  - id: wrong-initial
+    expectedStatus: incomplete
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/wrong-initial.py
+        editable: false
+    expectedFeedbackRuleIds: [python-basics-ch01-l05-iterate-e01-r01]
+  - id: unsupported-call
+    expectedStatus: system-error
+    inputLines: []
+    files:
+      - path: main.py
+        language: python
+        source: fixtures/unsupported-call.py
+        editable: false
+    expectedFeedbackRuleIds: []

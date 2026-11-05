@@ -1,5 +1,6 @@
 import { hashValue } from './identity';
 import { BaselineSchema } from './content';
+import { consumeVerifiedMovement } from './movement';
 import {
   InventorySchema,
   PlanSchema,
@@ -9,11 +10,16 @@ import {
 } from './schema';
 
 /** All expected targets come from validated compiler inventory, never from test self-reports. */
-export function planRelease(input: ReleaseInventory, baselineInput?: unknown): ReleasePlan {
+export function planRelease(
+  input: ReleaseInventory,
+  baselineInput?: unknown,
+  movementInput?: unknown,
+): ReleasePlan {
   const inventory = InventorySchema.parse(input);
   const published = inventory.courses.filter((course) => course.publicationStatus === 'published');
   if (published.length === 0) throw new Error('No published course in the release');
   const baseline = baselineInput === undefined ? undefined : BaselineSchema.parse(baselineInput);
+  const movement = consumeVerifiedMovement(movementInput, inventory, baseline);
   const previous = new Map(
     baseline?.inventory.courses
       .filter((course) => course.publicationStatus === 'published')
@@ -31,6 +37,8 @@ export function planRelease(input: ReleaseInventory, baselineInput?: unknown): R
     const currentCourse = published.find((course) => course.id === oldCourse.id);
     for (const oldLesson of oldCourse.lessons)
       for (const oldExercise of oldLesson.exercises) {
+        if (movement?.resolved.has(oldCourse.id + '/' + oldLesson.id + '/' + oldExercise.id))
+          continue;
         const currentExercise = currentCourse?.lessons
           .find((lesson) => lesson.id === oldLesson.id)
           ?.exercises.find((exercise) => exercise.id === oldExercise.id);
@@ -51,7 +59,8 @@ export function planRelease(input: ReleaseInventory, baselineInput?: unknown): R
   for (const course of published)
     for (const lesson of course.lessons) {
       const prefix = course.id + '/' + lesson.id;
-      if (!previous.has(prefix))
+      const learnerCarry = movement?.learnerCarries.get(prefix);
+      if (!previous.has(prefix) || movement?.rechecks.has(prefix))
         for (const engine of ['chromium', 'firefox', 'webkit'] as const)
           targets.push({
             key: prefix + '/learning-engine/' + engine,
@@ -64,7 +73,11 @@ export function planRelease(input: ReleaseInventory, baselineInput?: unknown): R
             lessonId: lesson.id,
             inputDigest: lesson.learnerDigest,
           });
-      if (previous.get(prefix) !== lesson.learnerDigest) {
+      if (
+        (!learnerCarry &&
+          (previous.get(prefix) !== lesson.learnerDigest || movement?.rechecks.has(prefix))) ||
+        learnerCarry?.kind === 'content-delta'
+      ) {
         targets.push({
           key: prefix + '/content',
           kind: 'content',
@@ -72,15 +85,16 @@ export function planRelease(input: ReleaseInventory, baselineInput?: unknown): R
           lessonId: lesson.id,
           inputDigest: lesson.learnerDigest,
         });
-        for (const role of ['novice', 'recovery', 'maker'] as const)
-          targets.push({
-            key: prefix + '/learning/' + role,
-            kind: 'learning',
-            courseId: course.id,
-            lessonId: lesson.id,
-            role,
-            inputDigest: lesson.learnerDigest,
-          });
+        if (!learnerCarry)
+          for (const role of ['novice', 'recovery', 'maker'] as const)
+            targets.push({
+              key: prefix + '/learning/' + role,
+              kind: 'learning',
+              courseId: course.id,
+              lessonId: lesson.id,
+              role,
+              inputDigest: lesson.learnerDigest,
+            });
       }
       if (lesson.kind !== 'standard')
         targets.push({
@@ -163,6 +177,7 @@ export function planRelease(input: ReleaseInventory, baselineInput?: unknown): R
   return PlanSchema.parse({
     schemaVersion: 1,
     inventoryDigest: hashValue(inventory),
+    ...(movement ? { movementDeclarationDigest: movement.declarationDigest } : {}),
     parent: baseline
       ? { deploymentId: baseline.deploymentId, sourceRecordDigest: baseline.sourceRecordDigest }
       : null,

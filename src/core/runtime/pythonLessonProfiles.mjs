@@ -59,17 +59,41 @@ export const PYTHON_LESSONS = Object.freeze({
   'python-basics-ch01-l02-e01': { profile: 'input-echo-v1', facts: ['input-echoed'] },
   'python-basics-ch01-l03-e01': { profile: 'age-branch-v1', facts: ['age-boundary-branched'] },
   'python-basics-ch01-l04-e01': { profile: 'range-loop-v1', facts: ['range-iterated'] },
+  'python-basics-ch01-l05-values-e01': {
+    profile: 'list-values-update-v1',
+    facts: ['list-values-updated'],
+  },
+  'python-basics-ch01-l05-iterate-e01': {
+    profile: 'list-iterate-sum-v1',
+    facts: ['list-iterated-summed'],
+  },
   'python-basics-ch01-l05-e01': {
     profile: 'list-reference-sum-v1',
     facts: ['list-reference-summed'],
   },
   'python-basics-ch01-l06-e01': { profile: 'dict-value-sum-v1', facts: ['dict-values-summed'] },
   'python-basics-ch01-l07-e01': {
-    profile: 'function-return-scope-v1',
-    facts: ['function-return-scoped'],
+    profile: 'function-call-v1',
+    facts: ['function-behavior-verified'],
   },
-  'python-basics-ch01-l08-e01': { profile: 'module-import-v1', facts: ['module-imported'] },
-  'python-basics-ch01-l09-e01': { profile: 'exception-recovery-v1', facts: ['exception-handled'] },
+  'python-basics-ch01-l08-e01': {
+    profile: 'function-arguments-v1',
+    facts: ['function-behavior-verified'],
+  },
+  'python-basics-ch01-l09-e01': {
+    profile: 'function-result-v1',
+    facts: ['function-behavior-verified'],
+  },
+  'python-basics-ch01-l10-e01': {
+    profile: 'function-print-return-v1',
+    facts: ['function-behavior-verified'],
+  },
+  'python-basics-ch01-l11-e01': {
+    profile: 'function-scope-v2',
+    facts: ['function-behavior-verified'],
+  },
+  'python-basics-ch01-l12-e01': { profile: 'module-import-v1', facts: ['module-imported'] },
+  'python-basics-ch01-l13-e01': { profile: 'exception-recovery-v1', facts: ['exception-handled'] },
   'python-basics-ch02-l01-e01': { profile: 'console-project-v1', facts: ['project-summed'] },
   'python-practice-ch01-l01-e01': {
     courseId: 'python-practice',
@@ -110,9 +134,11 @@ export const PYTHON_FACT_FIELDS = Object.freeze({
   'input-echoed': 'inputEchoed',
   'age-boundary-branched': 'ageBoundaryBranched',
   'range-iterated': 'rangeIterated',
+  'list-values-updated': 'listValuesUpdated',
+  'list-iterated-summed': 'listIteratedSummed',
   'list-reference-summed': 'listReferenceSummed',
   'dict-values-summed': 'dictValuesSummed',
-  'function-return-scoped': 'functionReturnScoped',
+  'function-behavior-verified': 'functionBehaviorVerified',
   'module-imported': 'moduleImported',
   'exception-handled': 'exceptionHandled',
   'project-summed': 'projectSummed',
@@ -188,8 +214,14 @@ export function expectedPythonOutput(profile, lines) {
     return 'True\n6\n0\n不正: ValueError\n不正: ValueError\nTest成功\n';
   if (profile === 'values-vars-print-v1') return '3\n5\n';
   if (profile === 'range-loop-v1') return '0\n1\n2\n';
+  if (profile === 'list-values-update-v1') return '3\n4\n';
+  if (profile === 'list-iterate-sum-v1') return '9\n';
   if (profile === 'list-reference-sum-v1' || profile === 'dict-value-sum-v1') return '4\n9\n';
-  if (profile === 'function-return-scope-v1') return '8\n10\n100\n';
+  if (profile === 'function-call-v1') return '8\n8\n';
+  if (profile === 'function-arguments-v1') return '8\n10\n';
+  if (profile === 'function-result-v1') return '10\n12\n';
+  if (profile === 'function-print-return-v1') return '8\nNone\n8\n';
+  if (profile === 'function-scope-v2') return '8\n10\n100\n';
   if (profile === 'module-import-v1') return '8\n10\n';
   if (profile === 'list-comprehension-filter-v1') return '[0, 6]\n[]\n';
   if (profile === 'iterator-consumption-v1') return '3\n5\nEND\nEND\n3\nEND\n';

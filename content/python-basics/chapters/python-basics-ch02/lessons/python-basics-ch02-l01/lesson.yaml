@@ -3,7 +3,7 @@ kind: guided-project
 title: '2行を合計する小さいConsoleを作る'
 goal: 'List・for・Function・Module・例外を組み合わせ、2行の合計と不正文字列の案内を完成する。'
 estimatedMinutes: 25
-prerequisiteLessonIds: [python-basics-ch01-l09]
+prerequisiteLessonIds: [python-basics-ch01-l13]
 slideSources: [slides/s01.md, slides/s02.md]
 exerciseSources: [exercises/python-basics-ch02-l01-e01/exercise.yaml]
 reflection: 'List・for・Function・Module・例外を組み合わせ、2行の合計と不正文字列の案内を完成する。 入力不足と不正な文字列、mainとhelperの役割を分けて説明してください。'

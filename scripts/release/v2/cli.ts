@@ -34,6 +34,7 @@ import {
 } from './publicationService';
 import { readInventoryAtSource } from './sourceInventory';
 import { readVerifiedTailwindHistoricalAcceptance } from './tailwindHistoricalAcceptance';
+import { MovementInputsSchema, verifyMovementInputs, readMovementDeclaration } from './movement';
 
 const PreparationSchema = z
   .object({
@@ -41,6 +42,7 @@ const PreparationSchema = z
     inventory: InventorySchema,
     plan: PlanSchema,
     publicContent: ArtifactManifestSchema.optional(),
+    movementInputs: MovementInputsSchema.optional(),
   })
   .strict();
 const optionNames: Readonly<Record<string, readonly string[]>> = {
@@ -62,6 +64,19 @@ const optionNames: Readonly<Record<string, readonly string[]>> = {
 };
 async function jsonFile(file: string): Promise<unknown> {
   return JSON.parse(await readFile(file, 'utf8')) as unknown;
+}
+/** 全CLI再構築入口で、現policyと固定原本payloadが同じ宣言へ拘束されることを確認する。 */
+async function snapshotMovement(
+  root: string,
+  snapshot: z.infer<typeof PreparationSchema>,
+  baseline: unknown,
+) {
+  const declaration = await readMovementDeclaration(root);
+  if (hashValue(declaration ?? null) !== hashValue(snapshot.movementInputs?.declaration ?? null))
+    throw Error('Movement snapshot differs from source policy');
+  return snapshot.movementInputs === undefined
+    ? undefined
+    : verifyMovementInputs(snapshot.movementInputs, snapshot.inventory, baseline);
 }
 function required(value: string | undefined, name: string) {
   if (!value) throw new Error('Missing ' + name);
@@ -125,9 +140,10 @@ export async function runCli(
   }
   const input = (value: string | undefined, name: string) =>
     path.resolve(root, required(value, name));
-  const baseline = values.baseline
-    ? validateCapturedBaseline(await jsonFile(input(values.baseline, '--baseline'))).baseline
+  const capturedBaseline = values.baseline
+    ? validateCapturedBaseline(await jsonFile(input(values.baseline, '--baseline')))
     : undefined;
+  const baseline = capturedBaseline?.baseline;
   let result: unknown;
   switch (command) {
     case 'inspect-content': {
@@ -172,12 +188,14 @@ export async function runCli(
         path.join(root, 'docs/quality/content-v2-receipts.json'),
       );
       const historical = await readVerifiedTailwindHistoricalAcceptance(root, snapshot.inventory);
+      const movement = await snapshotMovement(root, snapshot, captured.baseline);
       verifyContent(
         snapshot.inventory,
         policy.receipts,
         captured.baseline,
         policy.withdrawals,
         historical,
+        movement,
       );
       result = policy;
       break;
@@ -222,6 +240,7 @@ export async function runCli(
           ? input(values['public-output'], '--public-output')
           : path.join(root, 'public/generated/content'),
         baseline,
+        capturedBaseline?.proof,
       );
       break;
     case 'static': {
@@ -239,7 +258,10 @@ export async function runCli(
       const snapshot = PreparationSchema.parse(
         await jsonFile(input(values.snapshot, '--snapshot')),
       );
-      if (hashValue(snapshot.plan) !== hashValue(planRelease(snapshot.inventory, baseline)))
+      const movement = await snapshotMovement(root, snapshot, baseline);
+      if (
+        hashValue(snapshot.plan) !== hashValue(planRelease(snapshot.inventory, baseline, movement))
+      )
         throw new Error('Snapshot plan differs from its inventory or parent');
       if (!snapshot.publicContent) throw new Error('Missing single-compile public closure');
       result = await collectExecutionPlan(root, snapshot.plan, hashValue(snapshot.publicContent));
@@ -249,7 +271,10 @@ export async function runCli(
       const snapshot = PreparationSchema.parse(
         await jsonFile(input(values.snapshot, '--snapshot')),
       );
-      if (hashValue(snapshot.plan) !== hashValue(planRelease(snapshot.inventory, baseline)))
+      const movement = await snapshotMovement(root, snapshot, baseline);
+      if (
+        hashValue(snapshot.plan) !== hashValue(planRelease(snapshot.inventory, baseline, movement))
+      )
         throw new Error('Snapshot plan differs from its inventory or parent');
       if (values['execution-plan']) {
         const execution = ExecutionPlanSchema.parse(

@@ -59,11 +59,13 @@ async function browserGrade(
     z.array(z.object({ status: z.string() })).parse((await draft())?.['validationHistory'] ?? []);
   const before = (await history()).length;
   if (exercise.runtime?.kind === 'python') {
+    const profile = exercise.runtime.profile;
+    if (profile === 'function-return-scope-v1') {
+      throw new Error('Retired Python exercise profile: function-return-scope-v1');
+    }
     const input = page.getByLabel('実行前の入力（1行につきinput 1回）');
     if (await input.isVisible())
-      await input.fill(
-        (pythonFixedFixtures(exercise.runtime.profile)[0]?.inputLines ?? []).join('\n'),
-      );
+      await input.fill((pythonFixedFixtures(profile)[0]?.inputLines ?? []).join('\n'));
   }
   await page.getByRole('button', { name: '判定する', exact: true }).click();
   const actual = expect.poll(

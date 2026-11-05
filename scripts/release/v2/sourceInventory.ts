@@ -9,7 +9,8 @@ import { CommitSchema, IdSchema } from './schema';
 import { repositoryEnvironment } from './identity';
 const exec = promisify(execFile);
 /** Read the original Git source, never the mutable candidate or declared content hash alone. */
-export async function readInventoryAtSource(root: string, input: string, courseInput: string) {
+/** Git原本を同じCompilerで読み、移動比較に必要なauthoring原本も返す。 */
+export async function readAuthoringAtSource(root: string, input: string, courseInput: string) {
   const courseId = IdSchema.parse(courseInput);
   const sourceCommit = CommitSchema.parse(input),
     environment = await repositoryEnvironment(root);
@@ -32,9 +33,22 @@ export async function readInventoryAtSource(root: string, input: string, courseI
     const archive = path.join(temporary, 'source.tar');
     await writeFile(archive, stdout, { flag: 'wx', mode: 0o600 });
     await exec('tar', ['-xf', archive, '-C', temporary]);
-    const result = await compileCourse(path.join(temporary, 'content', courseId));
-    return { sourceCommit, inventory: buildInventory([result]) };
+    const result = await compileCourse(path.join(temporary, 'content', courseId), {
+      historicalSource: true,
+    });
+    return {
+      sourceCommit,
+      inventory: buildInventory([result]),
+      authoringExercises: result.authoringExercises,
+      compilation: result,
+    };
   } finally {
     await rm(temporary, { recursive: true, force: true });
   }
+}
+
+/** 既存の原本receipt readerが要求するstrictな返値形状を維持する。 */
+export async function readInventoryAtSource(root: string, input: string, courseInput: string) {
+  const { sourceCommit, inventory } = await readAuthoringAtSource(root, input, courseInput);
+  return { sourceCommit, inventory };
 }
