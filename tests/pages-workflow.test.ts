@@ -12,6 +12,7 @@ interface WorkflowStep {
   readonly name?: string;
   readonly uses?: string;
   readonly run?: string;
+  readonly env?: Readonly<Record<string, string>>;
   readonly with?: Readonly<Record<string, unknown>>;
 }
 
@@ -109,12 +110,16 @@ describe('TsumuCode Pages workflow', () => {
     const jobs = workflow().parsed.jobs;
     const steps = jobs?.fast?.steps ?? [];
     const review = steps.find(({ run }) => run?.endsWith('npm run content:review'));
-    const check = steps.find(({ run }) => run?.endsWith('npm run check'));
+    const check = steps.find(({ run }) => run?.endsWith('npm run "$CHECK_SCRIPT"'));
     const release = jobs?.quality?.steps?.find(({ run }) => run?.endsWith('npm run check:release'));
 
     expect(scripts['check']).not.toContain('content:review');
+    expect(scripts['check:ci']).not.toContain('content:review');
     expect(scripts['check:release']).toContain('npm run content:review &&');
     expect(check).toBeDefined();
+    expect(check?.env?.CHECK_SCRIPT).toBe(
+      "${{ github.event_name == 'pull_request' && 'check:ci' || 'check' }}",
+    );
     expect(check?.['continue-on-error']).not.toBe(true);
     expect(review?.['continue-on-error']).toBe(true);
     expect(steps.indexOf(review!)).toBeGreaterThan(steps.indexOf(check!));
@@ -201,7 +206,7 @@ describe('TsumuCode Pages workflow', () => {
     expect(fast?.if).toContain("github.event_name == 'push'");
     expect(fast?.if).toContain("github.event_name == 'pull_request'");
     expect(parsed.jobs?.quality?.if).toBe('${{ false }}');
-    expect(source).toContain('npm run check');
+    expect(source).toContain('npm run "$CHECK_SCRIPT"');
     expect(source).toContain('-e TEST_BASE_SHA');
     expect(source).not.toContain('npm run test:e2e');
     expect(source).not.toContain('npm run test:performance');

@@ -87,7 +87,9 @@ describe('push前検証CLIの失敗伝播', () => {
     const { invoke, head, calls } = fixture();
     const result = invoke([head, '--release']);
     expect(result.status).toBe(0);
-    expect(readFileSync(calls, 'utf8')).toBe('run content:provenance\nrun check:release\n');
+    expect(readFileSync(calls, 'utf8')).toBe(
+      'run content:provenance\nrun typecheck\nrun check:release\n',
+    );
     expect(result.stdout).toContain('"scope":"release-unit-build"');
     expect(result.stdout).toContain('"browserPerformancePublicationVerified":false');
   });
@@ -105,7 +107,7 @@ describe('push前検証CLIの失敗伝播', () => {
     const { invoke, head, calls } = fixture();
     const result = invoke([head]);
     expect(result.status).toBe(0);
-    expect(readFileSync(calls, 'utf8')).toBe('run content:provenance\nrun check\n');
+    expect(readFileSync(calls, 'utf8')).toBe('run content:provenance\nrun typecheck\nrun check\n');
     expect(result.stdout).toContain('"status":"pre-push-check-passed"');
     expect(result.stdout).toContain(`"head":"${head}"`);
     expect(result.stdout).toContain(`"base":"${head}"`);
@@ -124,6 +126,14 @@ describe('push前検証CLIの失敗伝播', () => {
     const result = invoke([head], { FAIL_STAGE: 'content:provenance' });
     expect(result.status).toBe(7);
     expect(readFileSync(calls, 'utf8')).toBe('run content:provenance\n');
+    expect(result.stdout).not.toContain('pre-push-check-passed');
+  });
+
+  it.each([false, true])('公開前指定=%sでも型検査失敗で後続gateへ進めない', (release) => {
+    const { invoke, head, calls } = fixture();
+    const result = invoke(release ? [head, '--release'] : [head], { FAIL_STAGE: 'typecheck' });
+    expect(result.status).toBe(7);
+    expect(readFileSync(calls, 'utf8')).toBe('run content:provenance\nrun typecheck\n');
     expect(result.stdout).not.toContain('pre-push-check-passed');
   });
 
