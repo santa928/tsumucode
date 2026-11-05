@@ -15,6 +15,9 @@ export type {
   PythonPracticeRequest,
 } from '../python/pythonPracticeContract';
 
+// Home離脱でclientが替わっても、未完了の回収だけは新しい作成より先に待つ。
+const pendingCleanups = new Set<Promise<PythonPracticeSnapshot | undefined>>();
+
 /** 練習専用client。ExecutionService/Validator/進捗Repositoryへ結果を渡さない。 */
 export class LocalPythonPracticeClient {
   #token: string | undefined;
@@ -70,21 +73,26 @@ export class LocalPythonPracticeClient {
     request: PythonPracticeRequest,
     onSnapshot: (value: PythonPracticeSnapshot) => void,
   ): Promise<void> {
-    await this.stop();
+    const stopping = this.stop();
     const generation = this.#generation;
+    await stopping;
+    await Promise.all(pendingCleanups);
+    if (generation !== this.#generation) return;
     const profile = PYTHON_LESSONS[request.exerciseId]?.profile;
     if (profile === undefined) throw new Error('この教材の練習実行には未対応です。');
     const digest = await crypto.subtle.digest(
       'SHA-256',
       new TextEncoder().encode(pythonSourceSnapshot(request.files, profile)),
     );
+    if (generation !== this.#generation) return;
     const hash = [...new Uint8Array(digest)]
       .map((byte) => byte.toString(16).padStart(2, '0'))
       .join('');
-    this.#token = z
+    const token = z
       .object({ apiVersion: z.literal(1), token: z.string().regex(/^[a-f0-9]{64}$/u) })
       .parse(await this.#api('session', {})).token;
     if (generation !== this.#generation) return;
+    this.#token = token;
     this.#creation = this.#api('practice/runs', {
       apiVersion: 1,
       runtimeProfileId: 'cpython-values-v1',
@@ -167,6 +175,13 @@ export class LocalPythonPracticeClient {
           );
         return this.#ack(identity);
       });
+    const cleanup = this.#cleanup;
+    pendingCleanups.add(cleanup);
+    // 失敗は元Promiseから呼出し元と待機中のstartへ伝え、完了した履歴は保持しない。
+    void cleanup.then(
+      () => pendingCleanups.delete(cleanup),
+      () => pendingCleanups.delete(cleanup),
+    );
     return this.#cleanup;
   }
 }

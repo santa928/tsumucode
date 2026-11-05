@@ -171,3 +171,141 @@ it('起動前の回収済み失敗をelapsedMs 0で受け取り、同じidentity
   );
   expect(fetchMock.mock.calls.some(([path]) => path.endsWith('/cancel'))).toBe(false);
 });
+
+function deferred() {
+  let resolve!: () => void;
+  const promise = new Promise<void>((done) => {
+    resolve = done;
+  });
+  return { promise, resolve };
+}
+
+it.each(['cancel', 'ack'] as const)(
+  '#196: 旧clientの%s待ち中は別clientが新しいrunを作成しない',
+  async (blockedPhase) => {
+    const current = await snapshot();
+    const digest = Uint8Array.from(current.identity.sourceHash.match(/../gu) ?? [], (byte) =>
+      Number.parseInt(byte, 16),
+    ).buffer;
+    vi.stubGlobal('crypto', { subtle: { digest: vi.fn(async () => digest) } });
+    vi.useFakeTimers();
+    const delivered = deferred();
+    const cleanupBlocked = deferred();
+    const releaseCleanup = deferred();
+    const terminal = { ...current, phase: 'ended', reason: 'cancelled', removed: true };
+    const nextRequest = { ...request, exerciseSessionId: 'next-session', executionRevision: 4 };
+    const next = {
+      ...terminal,
+      identity: {
+        ...current.identity,
+        runId: 'c8e59e32-a90b-4db0-b0dc-08e3913baef9',
+        sessionId: nextRequest.exerciseSessionId,
+        executionRevision: nextRequest.executionRevision,
+      },
+    };
+    let oldPurged = false;
+    let creations = 0;
+    const fetchMock = vi.fn(async (path: string) => {
+      if (path.endsWith('/session'))
+        return Response.json({ apiVersion: 1, token: 'a'.repeat(64) });
+      if (path.endsWith('/practice/runs')) {
+        creations += 1;
+        if (creations === 1) return Response.json(current);
+        return oldPurged
+          ? Response.json(next)
+          : Response.json({ error: '旧runの回収がまだ完了していません。' }, { status: 409 });
+      }
+      if (path.includes(current.identity.runId)) {
+        if (path.endsWith('/' + blockedPhase)) {
+          cleanupBlocked.resolve();
+          await releaseCleanup.promise;
+        }
+        if (path.endsWith('/ack')) oldPurged = true;
+        return Response.json({ ...terminal, purged: path.endsWith('/ack') });
+      }
+      return Response.json({ ...next, purged: path.endsWith('/ack') });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const previousClient = new LocalPythonPracticeClient();
+    const previousRunning = previousClient.start(request, () => {
+      delivered.resolve();
+    });
+    await delivered.promise;
+    const stopping = previousClient.stop();
+    await cleanupBlocked.promise;
+    const received = vi.fn();
+    const nextRunning = new LocalPythonPracticeClient()
+      .start(nextRequest, received)
+      .then(() => undefined, (error: unknown) => error);
+    let result: unknown;
+    try {
+      // digestとfetchは即時解決するmock。未解決なのは明示した旧回収gateだけ。
+      await vi.advanceTimersByTimeAsync(0);
+      expect(creations).toBe(1);
+      expect(received).not.toHaveBeenCalled();
+    } finally {
+      releaseCleanup.resolve();
+      await stopping;
+      await vi.advanceTimersByTimeAsync(150);
+      await previousRunning;
+      result = await nextRunning;
+    }
+    expect(result).toBeUndefined();
+    expect(creations).toBe(2);
+    expect(received).toHaveBeenCalledWith(next);
+  },
+);
+
+it.each(['hash', 'session'] as const)(
+  '#196: %s準備中のstop後に旧startが次のAPIへ再開しない',
+  async (blockedPhase) => {
+    const current = await snapshot();
+    const digest = Uint8Array.from(current.identity.sourceHash.match(/../gu) ?? [], (byte) =>
+      Number.parseInt(byte, 16),
+    ).buffer;
+    const preparationBlocked = deferred();
+    const releasePreparation = deferred();
+    vi.stubGlobal('crypto', {
+      subtle: {
+        digest: vi.fn(async () => {
+          if (blockedPhase === 'hash') {
+            preparationBlocked.resolve();
+            await releasePreparation.promise;
+          }
+          return digest;
+        }),
+      },
+    });
+    const calls: string[] = [];
+    vi.stubGlobal('fetch', vi.fn(async (path: string) => {
+      calls.push(path);
+      if (path.endsWith('/session')) {
+        if (blockedPhase === 'session') {
+          preparationBlocked.resolve();
+          await releasePreparation.promise;
+        }
+        return Response.json({ apiVersion: 1, token: 'a'.repeat(64) });
+      }
+      return Response.json({
+        ...current,
+        phase: 'ended',
+        reason: 'cancelled',
+        removed: true,
+        purged: path.endsWith('/ack'),
+      });
+    }));
+    const client = new LocalPythonPracticeClient();
+    const received = vi.fn();
+    const running = client.start(request, received);
+    await preparationBlocked.promise;
+    const stopping = client.stop();
+    releasePreparation.resolve();
+    await stopping;
+    await running;
+    expect(calls.filter((path) => path.endsWith('/session'))).toHaveLength(
+      blockedPhase === 'hash' ? 0 : 1,
+    );
+    expect(calls.some((path) => path.endsWith('/practice/runs'))).toBe(false);
+    expect(received).not.toHaveBeenCalled();
+  },
+);
