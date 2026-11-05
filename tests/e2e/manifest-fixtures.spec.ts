@@ -14,8 +14,9 @@ import {
 import { testServerUrl } from './helpers/testBasePath';
 import { loadRuntimeModulePath } from './helpers/javascriptRunnerModule';
 import { orderFixtureCourses } from './helpers/fixtureCourseOrder';
+import { groupFixtureExecutions } from './helpers/fixtureExecutionGroups';
 
-// exerciseを同じshardへ置き、fixture間ではContextとRunnerを独立させる。
+// exerciseを同じshardへ置き、同一入力groupごとにContextとRunnerを独立させる。
 test.describe.configure({ mode: 'parallel' });
 const adapters = {
   'html-css': [
@@ -66,7 +67,8 @@ for (const { entry, index } of orderFixtureCourses(fixtureCourses)) {
     throw new Error('Missing manifest fixture driver: ' + kind);
   const { authoring } = await loadFixtureInputs('content/' + entry.id, entry.id);
   const caseIdsByExercise = new Map<string, string[]>();
-  for (const fixture of createCases(authoring.exercises)) {
+  for (const [fixture] of groupFixtureExecutions(createCases(authoring.exercises))) {
+    if (!fixture) throw new Error('Empty fixture execution group');
     const ids = caseIdsByExercise.get(fixture.exercise.id) ?? [];
     ids.push(fixture.id);
     caseIdsByExercise.set(fixture.exercise.id, ids);

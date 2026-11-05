@@ -26,7 +26,8 @@ const interactionScript = interactionBundle.outputFiles[0]!.text;
 for (const learningMode of ['dom', 'unknown', 'async'] as const) {
   const lesson = learningMode === 'dom' ? '01' : learningMode === 'unknown' ? '02' : '03';
   const exercise = course.exercises.find(({ id }) => id === `typescript-ch05-l${lesson}-e01`)!;
-  // 個別fixtureの採点と、複数入力の累積時間・メモリを分離する。
+  // Browser内helperとraw診断の全入力保証を、manifestの集合oracleへ置き換えない。
+  // 同じ入力のmanifest内共有とは別に、各fixtureの採点を独立して確認する。
   for (const fixture of exercise.fixtures) {
     const contract = '元TSの境界確認と実DOM操作をANDで判定する';
     test(`${learningMode}/${fixture.id}の製品採点は${contract}`, async ({ page }, testInfo) => {
