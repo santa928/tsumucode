@@ -93,9 +93,9 @@ jobs:
       contents: read
     strategy:
       fail-fast: false
-      max-parallel: 1
+      # 各suiteは別のGitHub-hosted runnerで同じ固定候補を検証する。
+      max-parallel: 4
       matrix:
-        # 前回失敗したFirefoxの診断を先に取得し、全suiteの必須条件は保つ。
         suite: [browser-firefox, browser-chromium-1, browser-chromium-2, browser-webkit]
     env:
       BASE_PATH: /${{ github.event.repository.name }}/
