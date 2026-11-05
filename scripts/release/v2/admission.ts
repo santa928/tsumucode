@@ -13,6 +13,7 @@ import { planRelease } from './plan';
 import { ExecutionPlanSchema, createExecutionPlan } from './executionPlan';
 import { verifyResults } from './verify';
 import { verifyContent } from './content';
+import { PythonHistoricalSummarySchema } from './pythonHistoricalAcceptance';
 import { HistoricalAcceptanceSummarySchema } from './tailwindHistoricalAcceptance';
 import { verifyMovementInputs } from './movement';
 import { MovementLearnerAcceptanceSchema } from './learnerMovement';
@@ -57,15 +58,35 @@ export const QualificationSchema = z
         historicalAcceptance: HistoricalAcceptanceSummarySchema.optional(),
         movementLearnerAcceptance: z.array(MovementLearnerAcceptanceSchema).min(1).optional(),
         movementPredecessor: MovementPredecessorSummarySchema.optional(),
+        pythonHistoricalAcceptances: z
+          .array(PythonHistoricalSummarySchema)
+          .min(1)
+          .max(2)
+          .optional(),
         technicalRechecks: z.array(
           z.object({ lesson: z.string(), scopes: z.array(z.string()) }).strict(),
         ),
       })
       .strict()
       .superRefine((value, context) => {
-        const migrated = value.historicallyAcceptedLessons?.length ?? 0;
+        const migratedKeys = value.historicallyAcceptedLessons ?? [];
+        const migrated = migratedKeys.filter((key) => key.startsWith('tailwind/')).length;
+        const pythonKeys = migratedKeys.filter((key) => !key.startsWith('tailwind/'));
+        const summaries = value.pythonHistoricalAcceptances ?? [];
+        const summaryCourses = new Set(summaries.map((row) => row.courseId));
         if (
-          ((value.status === 'historical' && !value.movementLearnerAcceptance?.length) ||
+          summaryCourses.size !== summaries.length ||
+          pythonKeys.some(
+            (key) => !summaryCourses.has(key.split('/')[0] as 'python-practice' | 'python-oop'),
+          ) ||
+          summaries.some((row) => !pythonKeys.some((key) => key.startsWith(row.courseId + '/'))) ||
+          (pythonKeys.length > 0 && value.status === 'maintenance')
+        )
+          context.addIssue({ code: 'custom', message: 'Python historical scope must be retained' });
+        if (
+          ((value.status === 'historical' &&
+            !value.movementLearnerAcceptance?.length &&
+            !pythonKeys.length) ||
             migrated > 0 ||
             value.historicalAcceptance !== undefined) &&
           (!migrated || !value.historicalAcceptance || value.status === 'maintenance')

@@ -1,9 +1,17 @@
 import { z } from 'zod';
 import { CommitSchema, DigestSchema, IdSchema, InventorySchema, BaselineSchema } from './schema';
 import type { LessonInventory, ReleaseInventory } from './schema';
-import { validateTailwindHistoricalAcceptance } from './tailwindHistoricalAcceptance';
 import { consumeVerifiedMovement } from './movement';
 import { MovementLearnerAcceptanceSchema } from './learnerMovement';
+import {
+  validateTailwindHistoricalAcceptance,
+  type TailwindHistoricalAcceptance,
+} from './tailwindHistoricalAcceptance';
+import {
+  validatePythonHistoricalAcceptance,
+  pythonHistoricalSummary,
+} from './pythonHistoricalAcceptance';
+import { hashValue } from './identity';
 
 const ReceiptSchema = z
   .object({
@@ -66,11 +74,22 @@ export function verifyContent(
   const inventory = InventorySchema.parse(inventoryInput);
   const receipts = z.array(ReceiptSchema).parse(receiptsInput);
   const withdrawals = z.array(ContentWithdrawalSchema).parse(withdrawalsInput);
-  const historical = z
+  const histories = z
     .array(z.unknown())
-    .max(1)
+    .max(3)
     .parse(historicalInput)
-    .map(validateTailwindHistoricalAcceptance)[0];
+    .map((row) => {
+      const course = z.object({ courseId: z.string() }).parse(row).courseId;
+      return course === 'python-practice' || course === 'python-oop'
+        ? validatePythonHistoricalAcceptance(row)
+        : validateTailwindHistoricalAcceptance(row);
+    });
+  if (new Set(histories.map((row) => row.courseId)).size !== histories.length)
+    throw Error('Duplicate historical course');
+  const historical = histories.find(
+    (row): row is TailwindHistoricalAcceptance => !('receipt' in row),
+  );
+  const pythonHistories = histories.filter((row) => row.courseId !== 'tailwind');
   const withdrawn = new Set<string>();
   for (const row of withdrawals) {
     const key = row.courseId + '/' + row.lessonId + '/' + row.learnerDigest;
@@ -83,15 +102,37 @@ export function verifyContent(
   const previous = baseline
     ? publishedLessons(baseline.inventory)
     : new Map<string, LessonInventory>();
-  if (
-    historical &&
-    inventory.courses.some(
-      (course) => course.id === historical.courseId && course.publicationStatus === 'published',
-    )
-  ) {
-    for (const lesson of historical.lessons)
-      if (!current.has(historical.courseId + '/' + lesson.id))
+  for (const history of histories) {
+    const course = inventory.courses.find((row) => row.id === history.courseId);
+    if (!course || course.publicationStatus !== 'published') continue;
+    for (const lesson of history.lessons)
+      if (!current.has(history.courseId + '/' + lesson.id))
         throw Error('Historical lesson removed: ' + lesson.id);
+    if ('receipt' in history) {
+      if (
+        course.lessons.length !== history.lessons.length ||
+        new Set(course.lessons.map((row) => row.id)).size !== course.lessons.length
+      )
+        throw Error('Python historical lesson set differs');
+      if (withdrawals.some((row) => row.courseId === course.id))
+        throw Error('Python historical withdrawal blocks this fixed case');
+      for (const lesson of course.lessons) {
+        const prior = history.lessons.find((row) => row.id === lesson.id)!;
+        if (
+          prior.learnerDigest !== lesson.learnerDigest ||
+          !lesson.exercises.length ||
+          hashValue(lesson.exercises) !== lesson.exerciseDigest
+        )
+          throw Error('Python historical content or exercise inventory differs');
+        if (
+          course.id === 'python-oop' &&
+          (['exercise', 'navigation', 'persistence'] as const).some(
+            (scope) => prior[`${scope}Digest`] !== lesson[`${scope}Digest`],
+          )
+        )
+          throw Error('Python OOP historical fingerprint differs');
+      }
+    }
   }
   for (const key of previous.keys())
     if (!current.has(key)) throw new Error(`Published lesson removed: ${key}`);
@@ -138,10 +179,9 @@ export function verifyContent(
       )
     )
       throw Error('Explicit historical content withdrawal blocks publication: ' + key);
-    const priorAcceptance =
-      historical && historical.courseId === key.split('/')[0]
-        ? historical.lessons.find(({ id }) => id === lesson.id)
-        : undefined;
+    const priorAcceptance = histories
+      .find((row) => row.courseId === key.split('/')[0])
+      ?.lessons.find(({ id }) => id === lesson.id);
     if (learnerCarry) {
       if (learnerCarry.kind === 'content-delta') {
         const content = receipts.find(
@@ -199,9 +239,22 @@ export function verifyContent(
     technicalRechecks,
     ...(movementLearnerAcceptance.length ? { movementLearnerAcceptance } : {}),
     ...(movement?.predecessorSummary ? { movementPredecessor: movement.predecessorSummary } : {}),
-    ...(historicallyAcceptedLessons.length && historical
+    ...(historicallyAcceptedLessons.length ? { historicallyAcceptedLessons } : {}),
+    ...(pythonHistories.some((history) =>
+      historicallyAcceptedLessons.some((key) => key.startsWith(history.courseId + '/')),
+    )
       ? {
-          historicallyAcceptedLessons,
+          pythonHistoricalAcceptances: pythonHistories
+            .filter((history) =>
+              historicallyAcceptedLessons.some((key) => key.startsWith(history.courseId + '/')),
+            )
+            .map((history) =>
+              pythonHistoricalSummary('receipt' in history ? history.receipt : history),
+            ),
+        }
+      : {}),
+    ...(historicallyAcceptedLessons.some((key) => key.startsWith('tailwind/')) && historical
+      ? {
           historicalAcceptance: {
             migrationId: historical.migrationId,
             sourceCommit: historical.sourceCommit,

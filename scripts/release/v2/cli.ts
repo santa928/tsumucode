@@ -33,6 +33,7 @@ import {
   runCurrentPublicOperations,
 } from './publicationService';
 import { readInventoryAtSource } from './sourceInventory';
+import { readVerifiedPythonHistoricalAcceptances } from './pythonHistoricalAcceptance';
 import { readVerifiedTailwindHistoricalAcceptance } from './tailwindHistoricalAcceptance';
 import { MovementInputsSchema, verifyMovementInputs, readMovementDeclaration } from './movement';
 
@@ -187,8 +188,11 @@ export async function runCli(
         root,
         path.join(root, 'docs/quality/content-v2-receipts.json'),
       );
-      const historical = await readVerifiedTailwindHistoricalAcceptance(root, snapshot.inventory);
       const movement = await snapshotMovement(root, snapshot, captured.baseline);
+      const historical = [
+        ...(await readVerifiedTailwindHistoricalAcceptance(root, snapshot.inventory)),
+        ...(await readVerifiedPythonHistoricalAcceptances(root, snapshot.inventory)),
+      ];
       verifyContent(
         snapshot.inventory,
         policy.receipts,
