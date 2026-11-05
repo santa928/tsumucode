@@ -477,6 +477,180 @@ describe('TabLeaseCoordinator', () => {
     }
   });
 
+  it('期限timerが時計上の期限より早く発火しても、期限前は拒否し期限後に編集へ復帰する', async () => {
+    const hub = new BroadcastHub();
+    const clock = new FakeClock();
+    const persistence = new SharedLeasePersistence(() => clock.now);
+    const expiresAt = clock.now + 60;
+    await persistence.tryClaimWorkspaceLease({
+      courseId: COURSE_ID,
+      workspaceId: WORKSPACE_ID,
+      ownerId: 'previous-document',
+      token: 'previous-proof',
+      expiresAt,
+    });
+    let firedEarly = false;
+    const coordinator = createCoordinator('current-document', hub, clock, {
+      leasePersistence: persistence,
+      setTimeout: (callback, delay) => {
+        // timerとDate.nowの境界差を、最初の長い期限待ちだけ1ms早めて再現する。
+        if (!firedEarly && delay > 20) {
+          firedEarly = true;
+          return clock.setTimeout(callback, delay - 1);
+        }
+        return clock.setTimeout(callback, delay);
+      },
+    });
+    try {
+      const handle = coordinator.acquire(COURSE_ID, WORKSPACE_ID, {
+        beforeYield: async () => {},
+      });
+      finishClaim(clock);
+      await flushPromises();
+      expect(handle.getSnapshot().status).toBe('read-only');
+      clock.advance(expiresAt - clock.now - 1);
+      await flushPromises();
+      expect(firedEarly).toBe(true);
+      expect(handle.getSnapshot().status).toBe('read-only');
+      await expect(handle.runFencedWrite(async () => 'too early')).rejects.toThrow(
+        '編集権を保持していません',
+      );
+      clock.advance(1);
+      await flushPromises();
+      finishClaim(clock);
+      await flushPromises();
+      expect(handle.getSnapshot().status).toBe('owned');
+      await expect(
+        handle.runFencedWrite(async (_token, proof) => {
+          persistence.assertWrite(proof);
+          return 'current owner';
+        }),
+      ).resolves.toBe('current owner');
+    } finally {
+      coordinator.dispose();
+    }
+  });
+
+  it('heartbeat延長後に旧期限timerが届いても、延長期限前のclaimとwriteを拒否する', async () => {
+    const hub = new BroadcastHub();
+    const clock = new FakeClock();
+    const persistence = new SharedLeasePersistence(() => clock.now);
+    const expiresAt = clock.now + 60;
+    const previous = await persistence.tryClaimWorkspaceLease({
+      courseId: COURSE_ID,
+      workspaceId: WORKSPACE_ID,
+      ownerId: 'previous-document',
+      token: 'previous-proof',
+      expiresAt,
+    });
+    if (!previous.acquired) throw new Error('旧documentのLeaseを準備できません');
+    let oldExpiry: (() => void) | undefined;
+    const coordinator = createCoordinator('current-document', hub, clock, {
+      leasePersistence: persistence,
+      setTimeout: (callback, delay) => {
+        // cancel時点ですでに配送待ちだった旧expiryを、後から1回だけ届ける。
+        if (oldExpiry === undefined && delay > 20) oldExpiry = callback;
+        return clock.setTimeout(callback, delay);
+      },
+    });
+    try {
+      const handle = coordinator.acquire(COURSE_ID, WORKSPACE_ID, {
+        beforeYield: async () => {},
+      });
+      finishClaim(clock);
+      await flushPromises();
+      expect(handle.getSnapshot().status).toBe('read-only');
+      expect(oldExpiry).toBeDefined();
+      const extended = await persistence.heartbeatWorkspaceLease(previous.proof, expiresAt + 60);
+      hub.channels[0]!.receive({
+        version: 1,
+        type: 'heartbeat',
+        courseId: COURSE_ID,
+        workspaceId: WORKSPACE_ID,
+        senderId: extended.ownerId,
+        token: extended.token,
+        sentAt: clock.now,
+        expiresAt: extended.expiresAt,
+      });
+      await flushPromises();
+      expect(handle.getSnapshot()).toMatchObject({
+        status: 'read-only',
+        expiresAt: extended.expiresAt,
+      });
+      clock.advance(expiresAt - clock.now);
+      oldExpiry!();
+      expect(handle.getSnapshot().status).toBe('read-only');
+      const write = vi.fn();
+      await expect(handle.runFencedWrite(write)).rejects.toThrow('編集権を保持していません');
+      expect(write).not.toHaveBeenCalled();
+      clock.advance(extended.expiresAt - clock.now - 1);
+      await flushPromises();
+      expect(handle.getSnapshot().status).toBe('read-only');
+      clock.advance(1);
+      finishClaim(clock);
+      await flushPromises();
+      expect(handle.getSnapshot().status).toBe('owned');
+      await expect(
+        handle.runFencedWrite(async (_token, proof) => {
+          persistence.assertWrite(proof);
+          return 'current owner';
+        }),
+      ).resolves.toBe('current owner');
+    } finally {
+      coordinator.dispose();
+    }
+  });
+
+  it('wall clockが後退してもtimerだけで期限前にclaimせず、時計が追いついた後に復帰する', async () => {
+    const hub = new BroadcastHub();
+    const clock = new FakeClock();
+    let wallOffset = 0;
+    const now = () => clock.now + wallOffset;
+    const persistence = new SharedLeasePersistence(now);
+    const expiresAt = now() + 60;
+    await persistence.tryClaimWorkspaceLease({
+      courseId: COURSE_ID,
+      workspaceId: WORKSPACE_ID,
+      ownerId: 'previous-document',
+      token: 'previous-proof',
+      expiresAt,
+    });
+    const coordinator = createCoordinator('current-document', hub, clock, {
+      now,
+      leasePersistence: persistence,
+    });
+    try {
+      const handle = coordinator.acquire(COURSE_ID, WORKSPACE_ID, {
+        beforeYield: async () => {},
+      });
+      finishClaim(clock);
+      await flushPromises();
+      wallOffset = -30;
+      clock.advance(expiresAt - clock.now);
+      expect(now()).toBe(expiresAt - 30);
+      expect(handle.getSnapshot().status).toBe('read-only');
+      const write = vi.fn();
+      await expect(handle.runFencedWrite(write)).rejects.toThrow('編集権を保持していません');
+      expect(write).not.toHaveBeenCalled();
+      clock.advance(29);
+      await flushPromises();
+      expect(handle.getSnapshot().status).toBe('read-only');
+      clock.advance(1);
+      expect(now()).toBe(expiresAt);
+      finishClaim(clock);
+      await flushPromises();
+      expect(handle.getSnapshot().status).toBe('owned');
+      await expect(
+        handle.runFencedWrite(async (_token, proof) => {
+          persistence.assertWrite(proof);
+          return 'current owner';
+        }),
+      ).resolves.toBe('current owner');
+    } finally {
+      coordinator.dispose();
+    }
+  });
+
   it.each([
     ['claim前', false],
     ['claim CAS待機中', true],
