@@ -22,3 +22,6 @@ lhci-report/
 vendor/
 public/python-runtime/
 public/tailwind-runtime/
+# 固定足場と承認済みの仕様制作原本は、実Compiler・教材digestとのbytes一致を保つ。
+content/react/chapters/react-ch02/lessons/react-ch02-l0[123]/exercises/**/index.html
+content/react/chapters/react-ch02/lessons/react-ch02-l04/exercises/**/*.tsx

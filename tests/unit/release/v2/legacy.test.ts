@@ -322,7 +322,7 @@ acceptance:
       'python-basics',
     ]);
     expect(results.map(({ contentLessons }) => contentLessons.length)).toEqual([
-      51, 52, 15, 15, 9, 10,
+      51, 52, 15, 21, 9, 10,
     ]);
     for (const result of results) {
       expect(result.missingRecordPaths).toEqual([]);
