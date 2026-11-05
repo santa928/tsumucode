@@ -277,10 +277,10 @@ export function ProgressTransferPanel({
         この端末の学習データ
       </h2>
       <p className="mt-3 text-workshop-muted">
-        ログインはありません。進捗と下書きはこのブラウザの端末領域へ保存されます。
+        ログインはありません。演習の合否を含む進捗と下書きは、この端末のブラウザにサイト（Origin）ごとに保存されます。端末やサイトをまたぐ自動同期はありません。
       </p>
       <p className="mt-2 text-workshop-muted">
-        書き出すJSONには、全コースの進捗と編集中のコードが含まれます。別のPCでは、このJSONを選んで読み込んでください。
+        書き出すJSONには、全コースの進捗と編集中のコードが含まれます。別のPCでは、このJSONを選んで読み込んでください。読書の続き位置は別に保存され、このJSONには含まれません。
       </p>
       <p className="mt-3 border-l-4 border-workshop-learning pl-4 font-bold">
         公開URLが変わる前に必ず書き出してください。OwnerやCustom
