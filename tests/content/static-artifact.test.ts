@@ -275,6 +275,37 @@ describe('static artifact', () => {
     });
   });
 
+  it.each(['leaked.provenance.json', 'generated/content/courses/html-css/provenance.json'])(
+    '%sの公開Provenanceを受理する',
+    async (name) => {
+      const content =
+        '{"items":[{"id":"intro-slide","visibility":"public","path":"slides/intro.md"}]}';
+      await expect(checkStaticArtifact(await artifact(name, content))).resolves.toEqual({
+        files: 6,
+      });
+    },
+  );
+
+  it('無関係なJSONをProvenanceとして検査しない', async () => {
+    const content = '{"example":{"visibility":"authoring","path":"solution/example.ts"}}';
+    await expect(
+      checkStaticArtifact(await artifact('provenance-example.json', content)),
+    ).resolves.toEqual({ files: 6 });
+  });
+
+  it.each([
+    ['visibility', '{"items":[{"visibility":"authoring","path":"slides/intro.md"}]}'],
+    ['solution path', '{"items":[{"visibility":"public","path":"exercise/solution/main.js"}]}'],
+    ['fixtures path', '{"items":[{"visibility":"public","path":"exercise/fixtures/main.js"}]}'],
+    ['fixtures id', '{"items":[{"id":"fixtures-private","visibility":"public"}]}'],
+  ])('実配信名のProvenanceの作者専用%sを拒否する', async (_field, content) => {
+    await expect(
+      checkStaticArtifact(
+        await artifact('generated/content/courses/html-css/provenance.json', content),
+      ),
+    ).rejects.toThrow(/Authoring Provenance/u);
+  });
+
   it.each([
     ['server.php', '<?php'],
     ['app.js.map', '{}'],

@@ -134,7 +134,7 @@ function assertSafeText(relative: string, source: string): void {
     throw new Error(`Authoring専用dataが公開Artifactにあります: ${relative}`);
   }
   if (
-    relative.endsWith('.provenance.json') &&
+    /(?:^|[/.])provenance\.json$/u.test(relative) &&
     (/"visibility"\s*:\s*"authoring"/u.test(source) ||
       /"(?:id|path)"\s*:\s*"[^"]*(?:solution|fixtures)/iu.test(source))
   ) {
