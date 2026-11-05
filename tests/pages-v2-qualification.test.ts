@@ -5,7 +5,7 @@ import { parse } from 'yaml';
 type Job = {
   needs?: string | string[];
   uses?: string;
-  strategy?: { ['max-parallel']?: number; matrix?: { suite?: string[] } };
+  strategy?: { ['max-parallel']?: number; ['fail-fast']?: boolean; matrix?: { suite?: string[] } };
   steps?: { uses?: string; with?: Record<string, unknown>; run?: string; name?: string }[];
   permissions?: Record<string, string>;
   if?: string;
@@ -17,13 +17,14 @@ function read(file: string) {
   };
 }
 describe('same-run migration qualification graph', () => {
-  it('downloads only caller-produced same-run artifact IDs and keeps browser work in one queue', () => {
+  it('downloads only caller-produced same-run artifact IDs and keeps four required browser suites isolated', () => {
     const workflow = read('.github/workflows/release-v2-checks.yml');
     expect(workflow.on).toHaveProperty('workflow_call');
     for (const name of ['unit', 'browser', 'public_boundary', 'performance', 'aggregate']) {
       const job = workflow.jobs[name]!;
       expect(job).toBeDefined();
       expect(job.permissions).toEqual({ contents: 'read' });
+      expect(job).not.toHaveProperty('continue-on-error');
       const downloads = job.steps!.filter((step) => step.uses?.includes('download-artifact'));
       expect(downloads.length).toBeGreaterThanOrEqual(2);
       for (const step of downloads) {
@@ -31,8 +32,17 @@ describe('same-run migration qualification graph', () => {
         expect(step.with).not.toHaveProperty('github-token');
       }
     }
-    expect(workflow.jobs.browser!.strategy?.['max-parallel']).toBe(1);
+    expect(workflow.jobs.browser!.strategy?.matrix?.suite).toEqual([
+      'browser-firefox',
+      'browser-chromium-1',
+      'browser-chromium-2',
+      'browser-webkit',
+    ]);
+    expect(workflow.jobs.browser!.strategy?.['max-parallel']).toBe(4);
+    expect(workflow.jobs.browser!.strategy?.['fail-fast']).toBe(false);
+    expect(workflow.jobs.browser!.needs).toBe('boundary');
     expect(workflow.jobs.boundary!.uses).toBe('./.github/workflows/local-runtime.yml');
+    expect(workflow.jobs.boundary!.permissions).toEqual({ contents: 'read' });
     expect(workflow.jobs.aggregate!.if).toContain('always()');
     expect(workflow.jobs.aggregate!.needs).toEqual(
       expect.arrayContaining(['unit', 'browser', 'public_boundary', 'performance', 'boundary']),
