@@ -143,6 +143,7 @@ FROM python-browser-checks AS learning-native-checks
 COPY content ./content
 COPY src/core/runtime/pythonFixedFixtures.mjs ./src/core/runtime/pythonFixedFixtures.mjs
 COPY tests/e2e/helpers/manifestLearning.ts ./tests/e2e/helpers/manifestLearning.ts
+COPY tests/e2e/helpers/editorDocument.ts ./tests/e2e/helpers/editorDocument.ts
 COPY tests/local/manifest-next-learning.spec.ts ./tests/local/manifest-next-learning.spec.ts
 COPY playwright.learning-native.config.ts ./
 CMD ["node", "scripts/local/manifest-learning-browser-acceptance.mjs", "chromium"]
